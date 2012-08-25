@@ -21,32 +21,21 @@
  *
  */
 
-#include "rpc/rpcsetup.h"
+
+#ifndef RS_RPC_PROTO_SYSTEM_H
+#define RS_RPC_PROTO_SYSTEM_H
+
 #include "rpc/rpcserver.h"
 
-#include "rpc/proto/rpcprotopeers.h"
-#include "rpc/proto/rpcprotosystem.h"
-
-#include "rpc/rpcecho.h"
-
-RpcMediator *CreateRpcSystem(RpcComms *comms)
+class RpcProtoSystem: public RpcQueueService
 {
-	RpcMediator *med = new RpcMediator(comms);
-	RpcServer *server = new RpcServer(med);
+public:
+	RpcProtoSystem(uint32_t serviceId);
+//	virtual msgsAccepted(std::list<uint32_t> &msgIds); /* not used at the moment */
+	virtual int processMsg(uint32_t msgId, uint32_t req_id, const std::string &msg);
 
-	/* add services */
-	RpcProtoPeers *peers = new RpcProtoPeers(1);
-	server->addService(peers);
+	virtual int processSystemStatus(uint32_t msg_id, uint32_t req_id, const std::string &msg);
+};
 
-	RpcProtoSystem *system = new RpcProtoSystem(1);
-	server->addService(system);
 
-	/* Finally an Echo Service - which will echo back any unprocesses commands. */
-	RpcEcho *echo = new RpcEcho(1);
-	server->addService(echo);
-
-	med->setRpcServer(server);
-
-	return med;
-}
-
+#endif /* RS_PROTO_SYSTEM_H */

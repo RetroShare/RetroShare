@@ -205,37 +205,37 @@ void protobuf_AddDesc_peers_2eproto() {
   already_here = true;
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-  ::rsctrl::base::protobuf_AddDesc_base_2eproto();
+  ::rsctrl::core::protobuf_AddDesc_core_2eproto();
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\013peers.proto\022\014rsctrl.peers\032\nbase.proto\""
-    "\246\002\n\014RequestPeers\0221\n\003set\030\001 \002(\0162$.rsctrl.p"
+    "\n\013peers.proto\022\014rsctrl.peers\032\ncore.proto\""
+    "\251\002\n\014RequestPeers\0221\n\003set\030\001 \002(\0162$.rsctrl.p"
     "eers.RequestPeers.SetOption\0223\n\004info\030\002 \002("
     "\0162%.rsctrl.peers.RequestPeers.InfoOption"
-    "\022\017\n\007gpg_ids\030\003 \003(\t\"[\n\tSetOption\022\t\n\005OWNID\020"
-    "\001\022\n\n\006LISTED\020\002\022\n\n\006ONLINE\020\003\022\013\n\007FRIENDS\020\004\022\t"
-    "\n\005VALID\020\005\022\n\n\006SIGNED\020\006\022\007\n\003ALL\020\007\"@\n\nInfoOp"
-    "tion\022\014\n\010NAMEONLY\020\001\022\t\n\005BASIC\020\002\022\014\n\010LOCATIO"
-    "N\020\003\022\013\n\007ALLINFO\020\004\"[\n\020ResponsePeerList\022#\n\006"
-    "status\030\001 \002(\0132\023.rsctrl.base.Status\022\"\n\005pee"
-    "rs\030\002 \003(\0132\023.rsctrl.base.Person\"\242\001\n\016Reques"
-    "tAddPeer\022\016\n\006gpg_id\030\001 \002(\t\0220\n\003cmd\030\002 \002(\0162#."
-    "rsctrl.peers.RequestAddPeer.AddCmd\022\014\n\004ce"
-    "rt\030\003 \001(\t\"@\n\006AddCmd\022\010\n\004NOOP\020\000\022\007\n\003ADD\020\001\022\n\n"
-    "\006REMOVE\020\002\022\n\n\006IMPORT\020\003\022\013\n\007EXAMINE\020\004\"Z\n\017Re"
-    "sponseAddPeer\022#\n\006status\030\001 \002(\0132\023.rsctrl.b"
-    "ase.Status\022\"\n\005peers\030\002 \003(\0132\023.rsctrl.base."
-    "Person\"\231\001\n\021RequestModifyPeer\0223\n\003cmd\030\001 \002("
-    "\0162&.rsctrl.peers.RequestModifyPeer.ModCm"
-    "d\022\"\n\005peers\030\002 \003(\0132\023.rsctrl.base.Person\"+\n"
-    "\006ModCmd\022\010\n\004NOOP\020\000\022\013\n\007ADDRESS\020\001\022\n\n\006DYNDNS"
-    "\020\002\"]\n\022ResponseModifyPeer\022#\n\006status\030\001 \002(\013"
-    "2\023.rsctrl.base.Status\022\"\n\005peers\030\002 \003(\0132\023.r"
-    "sctrl.base.Person*^\n\rRequestMsgIds\022\026\n\022Ms"
-    "gId_RequestPeers\020\001\022\030\n\024MsgId_RequestAddPe"
-    "er\020\002\022\033\n\027MsgId_RequestModifyPeer\020\003*e\n\016Res"
-    "ponseMsgIds\022\032\n\026MsgId_ResponsePeerList\020\001\022"
-    "\031\n\025MsgId_ResponseAddPeer\020\002\022\034\n\030MsgId_Resp"
-    "onseModifyPeer\020\003", 1136);
+    "\022\017\n\007gpg_ids\030\003 \003(\t\"^\n\tSetOption\022\t\n\005OWNID\020"
+    "\001\022\n\n\006LISTED\020\002\022\r\n\tCONNECTED\020\003\022\013\n\007FRIENDS\020"
+    "\004\022\t\n\005VALID\020\005\022\n\n\006SIGNED\020\006\022\007\n\003ALL\020\007\"@\n\nInf"
+    "oOption\022\014\n\010NAMEONLY\020\001\022\t\n\005BASIC\020\002\022\014\n\010LOCA"
+    "TION\020\003\022\013\n\007ALLINFO\020\004\"[\n\020ResponsePeerList\022"
+    "#\n\006status\030\001 \002(\0132\023.rsctrl.core.Status\022\"\n\005"
+    "peers\030\002 \003(\0132\023.rsctrl.core.Person\"\242\001\n\016Req"
+    "uestAddPeer\022\016\n\006gpg_id\030\001 \002(\t\0220\n\003cmd\030\002 \002(\016"
+    "2#.rsctrl.peers.RequestAddPeer.AddCmd\022\014\n"
+    "\004cert\030\003 \001(\t\"@\n\006AddCmd\022\010\n\004NOOP\020\000\022\007\n\003ADD\020\001"
+    "\022\n\n\006REMOVE\020\002\022\n\n\006IMPORT\020\003\022\013\n\007EXAMINE\020\004\"Z\n"
+    "\017ResponseAddPeer\022#\n\006status\030\001 \002(\0132\023.rsctr"
+    "l.core.Status\022\"\n\005peers\030\002 \003(\0132\023.rsctrl.co"
+    "re.Person\"\231\001\n\021RequestModifyPeer\0223\n\003cmd\030\001"
+    " \002(\0162&.rsctrl.peers.RequestModifyPeer.Mo"
+    "dCmd\022\"\n\005peers\030\002 \003(\0132\023.rsctrl.core.Person"
+    "\"+\n\006ModCmd\022\010\n\004NOOP\020\000\022\013\n\007ADDRESS\020\001\022\n\n\006DYN"
+    "DNS\020\002\"]\n\022ResponseModifyPeer\022#\n\006status\030\001 "
+    "\002(\0132\023.rsctrl.core.Status\022\"\n\005peers\030\002 \003(\0132"
+    "\023.rsctrl.core.Person*^\n\rRequestMsgIds\022\026\n"
+    "\022MsgId_RequestPeers\020\001\022\030\n\024MsgId_RequestAd"
+    "dPeer\020\002\022\033\n\027MsgId_RequestModifyPeer\020\003*e\n\016"
+    "ResponseMsgIds\022\032\n\026MsgId_ResponsePeerList"
+    "\020\001\022\031\n\025MsgId_ResponseAddPeer\020\002\022\034\n\030MsgId_R"
+    "esponseModifyPeer\020\003", 1139);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "peers.proto", &protobuf_RegisterTypes);
   RequestPeers::default_instance_ = new RequestPeers();
@@ -315,7 +315,7 @@ bool RequestPeers_SetOption_IsValid(int value) {
 #ifndef _MSC_VER
 const RequestPeers_SetOption RequestPeers::OWNID;
 const RequestPeers_SetOption RequestPeers::LISTED;
-const RequestPeers_SetOption RequestPeers::ONLINE;
+const RequestPeers_SetOption RequestPeers::CONNECTED;
 const RequestPeers_SetOption RequestPeers::FRIENDS;
 const RequestPeers_SetOption RequestPeers::VALID;
 const RequestPeers_SetOption RequestPeers::SIGNED;
@@ -667,7 +667,7 @@ ResponsePeerList::ResponsePeerList()
 }
 
 void ResponsePeerList::InitAsDefaultInstance() {
-  status_ = const_cast< ::rsctrl::base::Status*>(&::rsctrl::base::Status::default_instance());
+  status_ = const_cast< ::rsctrl::core::Status*>(&::rsctrl::core::Status::default_instance());
 }
 
 ResponsePeerList::ResponsePeerList(const ResponsePeerList& from)
@@ -715,7 +715,7 @@ ResponsePeerList* ResponsePeerList::New() const {
 void ResponsePeerList::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (has_status()) {
-      if (status_ != NULL) status_->::rsctrl::base::Status::Clear();
+      if (status_ != NULL) status_->::rsctrl::core::Status::Clear();
     }
   }
   peers_.Clear();
@@ -729,7 +729,7 @@ bool ResponsePeerList::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required .rsctrl.base.Status status = 1;
+      // required .rsctrl.core.Status status = 1;
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
@@ -742,7 +742,7 @@ bool ResponsePeerList::MergePartialFromCodedStream(
         break;
       }
       
-      // repeated .rsctrl.base.Person peers = 2;
+      // repeated .rsctrl.core.Person peers = 2;
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
@@ -775,13 +775,13 @@ bool ResponsePeerList::MergePartialFromCodedStream(
 
 void ResponsePeerList::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // required .rsctrl.base.Status status = 1;
+  // required .rsctrl.core.Status status = 1;
   if (has_status()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       1, this->status(), output);
   }
   
-  // repeated .rsctrl.base.Person peers = 2;
+  // repeated .rsctrl.core.Person peers = 2;
   for (int i = 0; i < this->peers_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       2, this->peers(i), output);
@@ -795,14 +795,14 @@ void ResponsePeerList::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* ResponsePeerList::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // required .rsctrl.base.Status status = 1;
+  // required .rsctrl.core.Status status = 1;
   if (has_status()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
         1, this->status(), target);
   }
   
-  // repeated .rsctrl.base.Person peers = 2;
+  // repeated .rsctrl.core.Person peers = 2;
   for (int i = 0; i < this->peers_size(); i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
@@ -820,7 +820,7 @@ int ResponsePeerList::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required .rsctrl.base.Status status = 1;
+    // required .rsctrl.core.Status status = 1;
     if (has_status()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -828,7 +828,7 @@ int ResponsePeerList::ByteSize() const {
     }
     
   }
-  // repeated .rsctrl.base.Person peers = 2;
+  // repeated .rsctrl.core.Person peers = 2;
   total_size += 1 * this->peers_size();
   for (int i = 0; i < this->peers_size(); i++) {
     total_size +=
@@ -864,7 +864,7 @@ void ResponsePeerList::MergeFrom(const ResponsePeerList& from) {
   peers_.MergeFrom(from.peers_);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from.has_status()) {
-      mutable_status()->::rsctrl::base::Status::MergeFrom(from.status());
+      mutable_status()->::rsctrl::core::Status::MergeFrom(from.status());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
@@ -1281,7 +1281,7 @@ ResponseAddPeer::ResponseAddPeer()
 }
 
 void ResponseAddPeer::InitAsDefaultInstance() {
-  status_ = const_cast< ::rsctrl::base::Status*>(&::rsctrl::base::Status::default_instance());
+  status_ = const_cast< ::rsctrl::core::Status*>(&::rsctrl::core::Status::default_instance());
 }
 
 ResponseAddPeer::ResponseAddPeer(const ResponseAddPeer& from)
@@ -1329,7 +1329,7 @@ ResponseAddPeer* ResponseAddPeer::New() const {
 void ResponseAddPeer::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (has_status()) {
-      if (status_ != NULL) status_->::rsctrl::base::Status::Clear();
+      if (status_ != NULL) status_->::rsctrl::core::Status::Clear();
     }
   }
   peers_.Clear();
@@ -1343,7 +1343,7 @@ bool ResponseAddPeer::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required .rsctrl.base.Status status = 1;
+      // required .rsctrl.core.Status status = 1;
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
@@ -1356,7 +1356,7 @@ bool ResponseAddPeer::MergePartialFromCodedStream(
         break;
       }
       
-      // repeated .rsctrl.base.Person peers = 2;
+      // repeated .rsctrl.core.Person peers = 2;
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
@@ -1389,13 +1389,13 @@ bool ResponseAddPeer::MergePartialFromCodedStream(
 
 void ResponseAddPeer::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // required .rsctrl.base.Status status = 1;
+  // required .rsctrl.core.Status status = 1;
   if (has_status()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       1, this->status(), output);
   }
   
-  // repeated .rsctrl.base.Person peers = 2;
+  // repeated .rsctrl.core.Person peers = 2;
   for (int i = 0; i < this->peers_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       2, this->peers(i), output);
@@ -1409,14 +1409,14 @@ void ResponseAddPeer::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* ResponseAddPeer::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // required .rsctrl.base.Status status = 1;
+  // required .rsctrl.core.Status status = 1;
   if (has_status()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
         1, this->status(), target);
   }
   
-  // repeated .rsctrl.base.Person peers = 2;
+  // repeated .rsctrl.core.Person peers = 2;
   for (int i = 0; i < this->peers_size(); i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
@@ -1434,7 +1434,7 @@ int ResponseAddPeer::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required .rsctrl.base.Status status = 1;
+    // required .rsctrl.core.Status status = 1;
     if (has_status()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -1442,7 +1442,7 @@ int ResponseAddPeer::ByteSize() const {
     }
     
   }
-  // repeated .rsctrl.base.Person peers = 2;
+  // repeated .rsctrl.core.Person peers = 2;
   total_size += 1 * this->peers_size();
   for (int i = 0; i < this->peers_size(); i++) {
     total_size +=
@@ -1478,7 +1478,7 @@ void ResponseAddPeer::MergeFrom(const ResponseAddPeer& from) {
   peers_.MergeFrom(from.peers_);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from.has_status()) {
-      mutable_status()->::rsctrl::base::Status::MergeFrom(from.status());
+      mutable_status()->::rsctrl::core::Status::MergeFrom(from.status());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
@@ -1641,7 +1641,7 @@ bool RequestModifyPeer::MergePartialFromCodedStream(
         break;
       }
       
-      // repeated .rsctrl.base.Person peers = 2;
+      // repeated .rsctrl.core.Person peers = 2;
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
@@ -1680,7 +1680,7 @@ void RequestModifyPeer::SerializeWithCachedSizes(
       1, this->cmd(), output);
   }
   
-  // repeated .rsctrl.base.Person peers = 2;
+  // repeated .rsctrl.core.Person peers = 2;
   for (int i = 0; i < this->peers_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       2, this->peers(i), output);
@@ -1700,7 +1700,7 @@ void RequestModifyPeer::SerializeWithCachedSizes(
       1, this->cmd(), target);
   }
   
-  // repeated .rsctrl.base.Person peers = 2;
+  // repeated .rsctrl.core.Person peers = 2;
   for (int i = 0; i < this->peers_size(); i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
@@ -1725,7 +1725,7 @@ int RequestModifyPeer::ByteSize() const {
     }
     
   }
-  // repeated .rsctrl.base.Person peers = 2;
+  // repeated .rsctrl.core.Person peers = 2;
   total_size += 1 * this->peers_size();
   for (int i = 0; i < this->peers_size(); i++) {
     total_size +=
@@ -1820,7 +1820,7 @@ ResponseModifyPeer::ResponseModifyPeer()
 }
 
 void ResponseModifyPeer::InitAsDefaultInstance() {
-  status_ = const_cast< ::rsctrl::base::Status*>(&::rsctrl::base::Status::default_instance());
+  status_ = const_cast< ::rsctrl::core::Status*>(&::rsctrl::core::Status::default_instance());
 }
 
 ResponseModifyPeer::ResponseModifyPeer(const ResponseModifyPeer& from)
@@ -1868,7 +1868,7 @@ ResponseModifyPeer* ResponseModifyPeer::New() const {
 void ResponseModifyPeer::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (has_status()) {
-      if (status_ != NULL) status_->::rsctrl::base::Status::Clear();
+      if (status_ != NULL) status_->::rsctrl::core::Status::Clear();
     }
   }
   peers_.Clear();
@@ -1882,7 +1882,7 @@ bool ResponseModifyPeer::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required .rsctrl.base.Status status = 1;
+      // required .rsctrl.core.Status status = 1;
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
@@ -1895,7 +1895,7 @@ bool ResponseModifyPeer::MergePartialFromCodedStream(
         break;
       }
       
-      // repeated .rsctrl.base.Person peers = 2;
+      // repeated .rsctrl.core.Person peers = 2;
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
@@ -1928,13 +1928,13 @@ bool ResponseModifyPeer::MergePartialFromCodedStream(
 
 void ResponseModifyPeer::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // required .rsctrl.base.Status status = 1;
+  // required .rsctrl.core.Status status = 1;
   if (has_status()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       1, this->status(), output);
   }
   
-  // repeated .rsctrl.base.Person peers = 2;
+  // repeated .rsctrl.core.Person peers = 2;
   for (int i = 0; i < this->peers_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       2, this->peers(i), output);
@@ -1948,14 +1948,14 @@ void ResponseModifyPeer::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* ResponseModifyPeer::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // required .rsctrl.base.Status status = 1;
+  // required .rsctrl.core.Status status = 1;
   if (has_status()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
         1, this->status(), target);
   }
   
-  // repeated .rsctrl.base.Person peers = 2;
+  // repeated .rsctrl.core.Person peers = 2;
   for (int i = 0; i < this->peers_size(); i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
@@ -1973,7 +1973,7 @@ int ResponseModifyPeer::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required .rsctrl.base.Status status = 1;
+    // required .rsctrl.core.Status status = 1;
     if (has_status()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -1981,7 +1981,7 @@ int ResponseModifyPeer::ByteSize() const {
     }
     
   }
-  // repeated .rsctrl.base.Person peers = 2;
+  // repeated .rsctrl.core.Person peers = 2;
   total_size += 1 * this->peers_size();
   for (int i = 0; i < this->peers_size(); i++) {
     total_size +=
@@ -2017,7 +2017,7 @@ void ResponseModifyPeer::MergeFrom(const ResponseModifyPeer& from) {
   peers_.MergeFrom(from.peers_);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from.has_status()) {
-      mutable_status()->::rsctrl::base::Status::MergeFrom(from.status());
+      mutable_status()->::rsctrl::core::Status::MergeFrom(from.status());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());

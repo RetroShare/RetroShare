@@ -23,7 +23,7 @@
 #include <google/protobuf/repeated_field.h>
 #include <google/protobuf/extension_set.h>
 #include <google/protobuf/generated_message_reflection.h>
-#include "base.pb.h"
+#include "core.pb.h"
 // @@protoc_insertion_point(includes)
 
 namespace rsctrl {
@@ -44,7 +44,7 @@ class ResponseModifyPeer;
 enum RequestPeers_SetOption {
   RequestPeers_SetOption_OWNID = 1,
   RequestPeers_SetOption_LISTED = 2,
-  RequestPeers_SetOption_ONLINE = 3,
+  RequestPeers_SetOption_CONNECTED = 3,
   RequestPeers_SetOption_FRIENDS = 4,
   RequestPeers_SetOption_VALID = 5,
   RequestPeers_SetOption_SIGNED = 6,
@@ -225,7 +225,7 @@ class RequestPeers : public ::google::protobuf::Message {
   typedef RequestPeers_SetOption SetOption;
   static const SetOption OWNID = RequestPeers_SetOption_OWNID;
   static const SetOption LISTED = RequestPeers_SetOption_LISTED;
-  static const SetOption ONLINE = RequestPeers_SetOption_ONLINE;
+  static const SetOption CONNECTED = RequestPeers_SetOption_CONNECTED;
   static const SetOption FRIENDS = RequestPeers_SetOption_FRIENDS;
   static const SetOption VALID = RequestPeers_SetOption_VALID;
   static const SetOption SIGNED = RequestPeers_SetOption_SIGNED;
@@ -388,24 +388,24 @@ class ResponsePeerList : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required .rsctrl.base.Status status = 1;
+  // required .rsctrl.core.Status status = 1;
   inline bool has_status() const;
   inline void clear_status();
   static const int kStatusFieldNumber = 1;
-  inline const ::rsctrl::base::Status& status() const;
-  inline ::rsctrl::base::Status* mutable_status();
-  inline ::rsctrl::base::Status* release_status();
+  inline const ::rsctrl::core::Status& status() const;
+  inline ::rsctrl::core::Status* mutable_status();
+  inline ::rsctrl::core::Status* release_status();
   
-  // repeated .rsctrl.base.Person peers = 2;
+  // repeated .rsctrl.core.Person peers = 2;
   inline int peers_size() const;
   inline void clear_peers();
   static const int kPeersFieldNumber = 2;
-  inline const ::rsctrl::base::Person& peers(int index) const;
-  inline ::rsctrl::base::Person* mutable_peers(int index);
-  inline ::rsctrl::base::Person* add_peers();
-  inline const ::google::protobuf::RepeatedPtrField< ::rsctrl::base::Person >&
+  inline const ::rsctrl::core::Person& peers(int index) const;
+  inline ::rsctrl::core::Person* mutable_peers(int index);
+  inline ::rsctrl::core::Person* add_peers();
+  inline const ::google::protobuf::RepeatedPtrField< ::rsctrl::core::Person >&
       peers() const;
-  inline ::google::protobuf::RepeatedPtrField< ::rsctrl::base::Person >*
+  inline ::google::protobuf::RepeatedPtrField< ::rsctrl::core::Person >*
       mutable_peers();
   
   // @@protoc_insertion_point(class_scope:rsctrl.peers.ResponsePeerList)
@@ -415,8 +415,8 @@ class ResponsePeerList : public ::google::protobuf::Message {
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
-  ::rsctrl::base::Status* status_;
-  ::google::protobuf::RepeatedPtrField< ::rsctrl::base::Person > peers_;
+  ::rsctrl::core::Status* status_;
+  ::google::protobuf::RepeatedPtrField< ::rsctrl::core::Person > peers_;
   
   mutable int _cached_size_;
   ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
@@ -621,24 +621,24 @@ class ResponseAddPeer : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required .rsctrl.base.Status status = 1;
+  // required .rsctrl.core.Status status = 1;
   inline bool has_status() const;
   inline void clear_status();
   static const int kStatusFieldNumber = 1;
-  inline const ::rsctrl::base::Status& status() const;
-  inline ::rsctrl::base::Status* mutable_status();
-  inline ::rsctrl::base::Status* release_status();
+  inline const ::rsctrl::core::Status& status() const;
+  inline ::rsctrl::core::Status* mutable_status();
+  inline ::rsctrl::core::Status* release_status();
   
-  // repeated .rsctrl.base.Person peers = 2;
+  // repeated .rsctrl.core.Person peers = 2;
   inline int peers_size() const;
   inline void clear_peers();
   static const int kPeersFieldNumber = 2;
-  inline const ::rsctrl::base::Person& peers(int index) const;
-  inline ::rsctrl::base::Person* mutable_peers(int index);
-  inline ::rsctrl::base::Person* add_peers();
-  inline const ::google::protobuf::RepeatedPtrField< ::rsctrl::base::Person >&
+  inline const ::rsctrl::core::Person& peers(int index) const;
+  inline ::rsctrl::core::Person* mutable_peers(int index);
+  inline ::rsctrl::core::Person* add_peers();
+  inline const ::google::protobuf::RepeatedPtrField< ::rsctrl::core::Person >&
       peers() const;
-  inline ::google::protobuf::RepeatedPtrField< ::rsctrl::base::Person >*
+  inline ::google::protobuf::RepeatedPtrField< ::rsctrl::core::Person >*
       mutable_peers();
   
   // @@protoc_insertion_point(class_scope:rsctrl.peers.ResponseAddPeer)
@@ -648,8 +648,8 @@ class ResponseAddPeer : public ::google::protobuf::Message {
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
-  ::rsctrl::base::Status* status_;
-  ::google::protobuf::RepeatedPtrField< ::rsctrl::base::Person > peers_;
+  ::rsctrl::core::Status* status_;
+  ::google::protobuf::RepeatedPtrField< ::rsctrl::core::Person > peers_;
   
   mutable int _cached_size_;
   ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
@@ -749,16 +749,16 @@ class RequestModifyPeer : public ::google::protobuf::Message {
   inline ::rsctrl::peers::RequestModifyPeer_ModCmd cmd() const;
   inline void set_cmd(::rsctrl::peers::RequestModifyPeer_ModCmd value);
   
-  // repeated .rsctrl.base.Person peers = 2;
+  // repeated .rsctrl.core.Person peers = 2;
   inline int peers_size() const;
   inline void clear_peers();
   static const int kPeersFieldNumber = 2;
-  inline const ::rsctrl::base::Person& peers(int index) const;
-  inline ::rsctrl::base::Person* mutable_peers(int index);
-  inline ::rsctrl::base::Person* add_peers();
-  inline const ::google::protobuf::RepeatedPtrField< ::rsctrl::base::Person >&
+  inline const ::rsctrl::core::Person& peers(int index) const;
+  inline ::rsctrl::core::Person* mutable_peers(int index);
+  inline ::rsctrl::core::Person* add_peers();
+  inline const ::google::protobuf::RepeatedPtrField< ::rsctrl::core::Person >&
       peers() const;
-  inline ::google::protobuf::RepeatedPtrField< ::rsctrl::base::Person >*
+  inline ::google::protobuf::RepeatedPtrField< ::rsctrl::core::Person >*
       mutable_peers();
   
   // @@protoc_insertion_point(class_scope:rsctrl.peers.RequestModifyPeer)
@@ -768,7 +768,7 @@ class RequestModifyPeer : public ::google::protobuf::Message {
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
-  ::google::protobuf::RepeatedPtrField< ::rsctrl::base::Person > peers_;
+  ::google::protobuf::RepeatedPtrField< ::rsctrl::core::Person > peers_;
   int cmd_;
   
   mutable int _cached_size_;
@@ -837,24 +837,24 @@ class ResponseModifyPeer : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required .rsctrl.base.Status status = 1;
+  // required .rsctrl.core.Status status = 1;
   inline bool has_status() const;
   inline void clear_status();
   static const int kStatusFieldNumber = 1;
-  inline const ::rsctrl::base::Status& status() const;
-  inline ::rsctrl::base::Status* mutable_status();
-  inline ::rsctrl::base::Status* release_status();
+  inline const ::rsctrl::core::Status& status() const;
+  inline ::rsctrl::core::Status* mutable_status();
+  inline ::rsctrl::core::Status* release_status();
   
-  // repeated .rsctrl.base.Person peers = 2;
+  // repeated .rsctrl.core.Person peers = 2;
   inline int peers_size() const;
   inline void clear_peers();
   static const int kPeersFieldNumber = 2;
-  inline const ::rsctrl::base::Person& peers(int index) const;
-  inline ::rsctrl::base::Person* mutable_peers(int index);
-  inline ::rsctrl::base::Person* add_peers();
-  inline const ::google::protobuf::RepeatedPtrField< ::rsctrl::base::Person >&
+  inline const ::rsctrl::core::Person& peers(int index) const;
+  inline ::rsctrl::core::Person* mutable_peers(int index);
+  inline ::rsctrl::core::Person* add_peers();
+  inline const ::google::protobuf::RepeatedPtrField< ::rsctrl::core::Person >&
       peers() const;
-  inline ::google::protobuf::RepeatedPtrField< ::rsctrl::base::Person >*
+  inline ::google::protobuf::RepeatedPtrField< ::rsctrl::core::Person >*
       mutable_peers();
   
   // @@protoc_insertion_point(class_scope:rsctrl.peers.ResponseModifyPeer)
@@ -864,8 +864,8 @@ class ResponseModifyPeer : public ::google::protobuf::Message {
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
-  ::rsctrl::base::Status* status_;
-  ::google::protobuf::RepeatedPtrField< ::rsctrl::base::Person > peers_;
+  ::rsctrl::core::Status* status_;
+  ::google::protobuf::RepeatedPtrField< ::rsctrl::core::Person > peers_;
   
   mutable int _cached_size_;
   ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
@@ -978,7 +978,7 @@ RequestPeers::mutable_gpg_ids() {
 
 // ResponsePeerList
 
-// required .rsctrl.base.Status status = 1;
+// required .rsctrl.core.Status status = 1;
 inline bool ResponsePeerList::has_status() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
@@ -989,45 +989,45 @@ inline void ResponsePeerList::clear_has_status() {
   _has_bits_[0] &= ~0x00000001u;
 }
 inline void ResponsePeerList::clear_status() {
-  if (status_ != NULL) status_->::rsctrl::base::Status::Clear();
+  if (status_ != NULL) status_->::rsctrl::core::Status::Clear();
   clear_has_status();
 }
-inline const ::rsctrl::base::Status& ResponsePeerList::status() const {
+inline const ::rsctrl::core::Status& ResponsePeerList::status() const {
   return status_ != NULL ? *status_ : *default_instance_->status_;
 }
-inline ::rsctrl::base::Status* ResponsePeerList::mutable_status() {
+inline ::rsctrl::core::Status* ResponsePeerList::mutable_status() {
   set_has_status();
-  if (status_ == NULL) status_ = new ::rsctrl::base::Status;
+  if (status_ == NULL) status_ = new ::rsctrl::core::Status;
   return status_;
 }
-inline ::rsctrl::base::Status* ResponsePeerList::release_status() {
+inline ::rsctrl::core::Status* ResponsePeerList::release_status() {
   clear_has_status();
-  ::rsctrl::base::Status* temp = status_;
+  ::rsctrl::core::Status* temp = status_;
   status_ = NULL;
   return temp;
 }
 
-// repeated .rsctrl.base.Person peers = 2;
+// repeated .rsctrl.core.Person peers = 2;
 inline int ResponsePeerList::peers_size() const {
   return peers_.size();
 }
 inline void ResponsePeerList::clear_peers() {
   peers_.Clear();
 }
-inline const ::rsctrl::base::Person& ResponsePeerList::peers(int index) const {
+inline const ::rsctrl::core::Person& ResponsePeerList::peers(int index) const {
   return peers_.Get(index);
 }
-inline ::rsctrl::base::Person* ResponsePeerList::mutable_peers(int index) {
+inline ::rsctrl::core::Person* ResponsePeerList::mutable_peers(int index) {
   return peers_.Mutable(index);
 }
-inline ::rsctrl::base::Person* ResponsePeerList::add_peers() {
+inline ::rsctrl::core::Person* ResponsePeerList::add_peers() {
   return peers_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::rsctrl::base::Person >&
+inline const ::google::protobuf::RepeatedPtrField< ::rsctrl::core::Person >&
 ResponsePeerList::peers() const {
   return peers_;
 }
-inline ::google::protobuf::RepeatedPtrField< ::rsctrl::base::Person >*
+inline ::google::protobuf::RepeatedPtrField< ::rsctrl::core::Person >*
 ResponsePeerList::mutable_peers() {
   return &peers_;
 }
@@ -1179,7 +1179,7 @@ inline ::std::string* RequestAddPeer::release_cert() {
 
 // ResponseAddPeer
 
-// required .rsctrl.base.Status status = 1;
+// required .rsctrl.core.Status status = 1;
 inline bool ResponseAddPeer::has_status() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
@@ -1190,45 +1190,45 @@ inline void ResponseAddPeer::clear_has_status() {
   _has_bits_[0] &= ~0x00000001u;
 }
 inline void ResponseAddPeer::clear_status() {
-  if (status_ != NULL) status_->::rsctrl::base::Status::Clear();
+  if (status_ != NULL) status_->::rsctrl::core::Status::Clear();
   clear_has_status();
 }
-inline const ::rsctrl::base::Status& ResponseAddPeer::status() const {
+inline const ::rsctrl::core::Status& ResponseAddPeer::status() const {
   return status_ != NULL ? *status_ : *default_instance_->status_;
 }
-inline ::rsctrl::base::Status* ResponseAddPeer::mutable_status() {
+inline ::rsctrl::core::Status* ResponseAddPeer::mutable_status() {
   set_has_status();
-  if (status_ == NULL) status_ = new ::rsctrl::base::Status;
+  if (status_ == NULL) status_ = new ::rsctrl::core::Status;
   return status_;
 }
-inline ::rsctrl::base::Status* ResponseAddPeer::release_status() {
+inline ::rsctrl::core::Status* ResponseAddPeer::release_status() {
   clear_has_status();
-  ::rsctrl::base::Status* temp = status_;
+  ::rsctrl::core::Status* temp = status_;
   status_ = NULL;
   return temp;
 }
 
-// repeated .rsctrl.base.Person peers = 2;
+// repeated .rsctrl.core.Person peers = 2;
 inline int ResponseAddPeer::peers_size() const {
   return peers_.size();
 }
 inline void ResponseAddPeer::clear_peers() {
   peers_.Clear();
 }
-inline const ::rsctrl::base::Person& ResponseAddPeer::peers(int index) const {
+inline const ::rsctrl::core::Person& ResponseAddPeer::peers(int index) const {
   return peers_.Get(index);
 }
-inline ::rsctrl::base::Person* ResponseAddPeer::mutable_peers(int index) {
+inline ::rsctrl::core::Person* ResponseAddPeer::mutable_peers(int index) {
   return peers_.Mutable(index);
 }
-inline ::rsctrl::base::Person* ResponseAddPeer::add_peers() {
+inline ::rsctrl::core::Person* ResponseAddPeer::add_peers() {
   return peers_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::rsctrl::base::Person >&
+inline const ::google::protobuf::RepeatedPtrField< ::rsctrl::core::Person >&
 ResponseAddPeer::peers() const {
   return peers_;
 }
-inline ::google::protobuf::RepeatedPtrField< ::rsctrl::base::Person >*
+inline ::google::protobuf::RepeatedPtrField< ::rsctrl::core::Person >*
 ResponseAddPeer::mutable_peers() {
   return &peers_;
 }
@@ -1260,27 +1260,27 @@ inline void RequestModifyPeer::set_cmd(::rsctrl::peers::RequestModifyPeer_ModCmd
   cmd_ = value;
 }
 
-// repeated .rsctrl.base.Person peers = 2;
+// repeated .rsctrl.core.Person peers = 2;
 inline int RequestModifyPeer::peers_size() const {
   return peers_.size();
 }
 inline void RequestModifyPeer::clear_peers() {
   peers_.Clear();
 }
-inline const ::rsctrl::base::Person& RequestModifyPeer::peers(int index) const {
+inline const ::rsctrl::core::Person& RequestModifyPeer::peers(int index) const {
   return peers_.Get(index);
 }
-inline ::rsctrl::base::Person* RequestModifyPeer::mutable_peers(int index) {
+inline ::rsctrl::core::Person* RequestModifyPeer::mutable_peers(int index) {
   return peers_.Mutable(index);
 }
-inline ::rsctrl::base::Person* RequestModifyPeer::add_peers() {
+inline ::rsctrl::core::Person* RequestModifyPeer::add_peers() {
   return peers_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::rsctrl::base::Person >&
+inline const ::google::protobuf::RepeatedPtrField< ::rsctrl::core::Person >&
 RequestModifyPeer::peers() const {
   return peers_;
 }
-inline ::google::protobuf::RepeatedPtrField< ::rsctrl::base::Person >*
+inline ::google::protobuf::RepeatedPtrField< ::rsctrl::core::Person >*
 RequestModifyPeer::mutable_peers() {
   return &peers_;
 }
@@ -1289,7 +1289,7 @@ RequestModifyPeer::mutable_peers() {
 
 // ResponseModifyPeer
 
-// required .rsctrl.base.Status status = 1;
+// required .rsctrl.core.Status status = 1;
 inline bool ResponseModifyPeer::has_status() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
@@ -1300,45 +1300,45 @@ inline void ResponseModifyPeer::clear_has_status() {
   _has_bits_[0] &= ~0x00000001u;
 }
 inline void ResponseModifyPeer::clear_status() {
-  if (status_ != NULL) status_->::rsctrl::base::Status::Clear();
+  if (status_ != NULL) status_->::rsctrl::core::Status::Clear();
   clear_has_status();
 }
-inline const ::rsctrl::base::Status& ResponseModifyPeer::status() const {
+inline const ::rsctrl::core::Status& ResponseModifyPeer::status() const {
   return status_ != NULL ? *status_ : *default_instance_->status_;
 }
-inline ::rsctrl::base::Status* ResponseModifyPeer::mutable_status() {
+inline ::rsctrl::core::Status* ResponseModifyPeer::mutable_status() {
   set_has_status();
-  if (status_ == NULL) status_ = new ::rsctrl::base::Status;
+  if (status_ == NULL) status_ = new ::rsctrl::core::Status;
   return status_;
 }
-inline ::rsctrl::base::Status* ResponseModifyPeer::release_status() {
+inline ::rsctrl::core::Status* ResponseModifyPeer::release_status() {
   clear_has_status();
-  ::rsctrl::base::Status* temp = status_;
+  ::rsctrl::core::Status* temp = status_;
   status_ = NULL;
   return temp;
 }
 
-// repeated .rsctrl.base.Person peers = 2;
+// repeated .rsctrl.core.Person peers = 2;
 inline int ResponseModifyPeer::peers_size() const {
   return peers_.size();
 }
 inline void ResponseModifyPeer::clear_peers() {
   peers_.Clear();
 }
-inline const ::rsctrl::base::Person& ResponseModifyPeer::peers(int index) const {
+inline const ::rsctrl::core::Person& ResponseModifyPeer::peers(int index) const {
   return peers_.Get(index);
 }
-inline ::rsctrl::base::Person* ResponseModifyPeer::mutable_peers(int index) {
+inline ::rsctrl::core::Person* ResponseModifyPeer::mutable_peers(int index) {
   return peers_.Mutable(index);
 }
-inline ::rsctrl::base::Person* ResponseModifyPeer::add_peers() {
+inline ::rsctrl::core::Person* ResponseModifyPeer::add_peers() {
   return peers_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::rsctrl::base::Person >&
+inline const ::google::protobuf::RepeatedPtrField< ::rsctrl::core::Person >&
 ResponseModifyPeer::peers() const {
   return peers_;
 }
-inline ::google::protobuf::RepeatedPtrField< ::rsctrl::base::Person >*
+inline ::google::protobuf::RepeatedPtrField< ::rsctrl::core::Person >*
 ResponseModifyPeer::mutable_peers() {
   return &peers_;
 }

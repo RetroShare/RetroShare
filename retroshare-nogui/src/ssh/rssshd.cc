@@ -77,7 +77,7 @@ int RsSshd::init(std::string pathrsakey)
     //ssh_bind_options_set(mBind, SSH_BIND_OPTIONS_DSAKEY, arg);
     //ssh_bind_options_set(mBind, SSH_BIND_OPTIONS_HOSTKEY, arg);
     ssh_bind_options_set(mBind, SSH_BIND_OPTIONS_RSAKEY, pathrsakey.c_str());
-    ssh_bind_options_set(mBind, SSH_BIND_OPTIONS_LOG_VERBOSITY_STR, "3");
+    //ssh_bind_options_set(mBind, SSH_BIND_OPTIONS_LOG_VERBOSITY_STR, "3");
 
     mState = RSSSHD_STATE_INIT_OK;
     mBindState = 0;

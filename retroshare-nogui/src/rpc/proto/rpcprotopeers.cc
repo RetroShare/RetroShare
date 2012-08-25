@@ -25,6 +25,8 @@
 #include "rpc/proto/gencc/peers.pb.h"
 
 #include <retroshare/rspeers.h>
+#include <retroshare/rsdisc.h>
+
 #include <iostream>
 #include <algorithm>
 
@@ -45,8 +47,8 @@ int RpcProtoPeers::processMsg(uint32_t msg_id, uint32_t req_id, const std::strin
 	bool isResponse = isRpcMsgIdResponse(msg_id);
 
 
-	std::cerr << "RpcProtoPeers::processMsg() topbyte: " << topbyte;
-	std::cerr << " service: " << service << " submsg: " << submsg;
+	std::cerr << "RpcProtoPeers::processMsg() topbyte: " << (int32_t) topbyte;
+	std::cerr << " service: " << (int32_t) service << " submsg: " << (int32_t) submsg;
 	std::cerr << std::endl;
 
 	if (isResponse)
@@ -57,14 +59,14 @@ int RpcProtoPeers::processMsg(uint32_t msg_id, uint32_t req_id, const std::strin
 	}
 
 
-	if (topbyte != (uint8_t) rsctrl::base::BASE)
+	if (topbyte != (uint8_t) rsctrl::core::CORE)
 	{
 		std::cerr << "RpcProtoPeers::processMsg() Extension Mismatch - not processing";
 		std::cerr << std::endl;
 		return 0;
 	}
 
-	if (service != (uint16_t) rsctrl::base::PEERS)
+	if (service != (uint16_t) rsctrl::core::PEERS)
 	{
 		std::cerr << "RpcProtoPeers::processMsg() Service Mismatch - not processing";
 		std::cerr << std::endl;
@@ -105,7 +107,38 @@ int RpcProtoPeers::processAddPeer(uint32_t msg_id, uint32_t req_id, const std::s
 	std::cerr << "RpcProtoPeers::processAddPeer() NOT FINISHED";
 	std::cerr << std::endl;
 
-	return 0;
+	// response.
+	rsctrl::peers::ResponseAddPeer resp;
+	bool success = false;
+
+        if (success)
+	{
+		rsctrl::core::Status *status = resp.mutable_status();
+		status->set_code(rsctrl::core::Status::SUCCESS);
+	}
+	else
+	{
+		rsctrl::core::Status *status = resp.mutable_status();
+		status->set_code(rsctrl::core::Status::NO_IMPL_YET);
+	}
+
+
+	std::string outmsg;
+	if (!resp.SerializeToString(&outmsg))
+	{
+		std::cerr << "RpcProtoPeers::processAddPeer() ERROR SerialiseToString()";
+		std::cerr << std::endl;
+		return 0;
+	}
+	
+	// Correctly Name Message.
+	uint32_t out_msg_id = constructMsgId(rsctrl::core::CORE, rsctrl::core::PEERS, 
+				rsctrl::peers::MsgId_ResponseAddPeer, true);
+
+	// queue it.
+	queueResponse(out_msg_id, req_id, outmsg);
+
+	return 1;
 }
 
 
@@ -114,7 +147,39 @@ int RpcProtoPeers::processModifyPeer(uint32_t msg_id, uint32_t req_id, const std
 	std::cerr << "RpcProtoPeers::processModifyPeer() NOT FINISHED";
 	std::cerr << std::endl;
 
-	return 0;
+
+	// response.
+	rsctrl::peers::ResponseModifyPeer resp;
+	bool success = false;
+
+        if (success)
+	{
+		rsctrl::core::Status *status = resp.mutable_status();
+		status->set_code(rsctrl::core::Status::SUCCESS);
+	}
+	else
+	{
+		rsctrl::core::Status *status = resp.mutable_status();
+		status->set_code(rsctrl::core::Status::NO_IMPL_YET);
+	}
+
+
+	std::string outmsg;
+	if (!resp.SerializeToString(&outmsg))
+	{
+		std::cerr << "RpcProtoPeers::processModifyPeer() ERROR SerialiseToString()";
+		std::cerr << std::endl;
+		return 0;
+	}
+	
+	// Correctly Name Message.
+	uint32_t out_msg_id = constructMsgId(rsctrl::core::CORE, rsctrl::core::PEERS, 
+				rsctrl::peers::MsgId_ResponseModifyPeer, true);
+
+	// queue it.
+	queueResponse(out_msg_id, req_id, outmsg);
+
+	return 1;
 }
 
 
@@ -135,17 +200,22 @@ int RpcProtoPeers::processRequestPeers(uint32_t msg_id, uint32_t req_id, const s
 
 	// Get the list of gpg_id to generate data for.
 	std::list<std::string> ids;
-	bool onlyOnline = false;
+	bool onlyConnected = false;
+        bool success = true;
 	switch(reqp.set())
 	{
 		case rsctrl::peers::RequestPeers::OWNID:
 		{
+			std::cerr << "RpcProtoPeers::processRequestPeers() OWNID";
+			std::cerr << std::endl;
 			std::string own_id = rsPeers->getGPGOwnId();
 			ids.push_back(own_id);
 			break;
 		}
 		case rsctrl::peers::RequestPeers::LISTED: 
 		{
+			std::cerr << "RpcProtoPeers::processRequestPeers() LISTED";
+			std::cerr << std::endl;
 			/* extract ids from request (TODO) */
 			std::string own_id = rsPeers->getGPGOwnId();
 			ids.push_back(own_id);
@@ -153,12 +223,16 @@ int RpcProtoPeers::processRequestPeers(uint32_t msg_id, uint32_t req_id, const s
 
 		}
 		case rsctrl::peers::RequestPeers::ALL:
+			std::cerr << "RpcProtoPeers::processRequestPeers() ALL";
+			std::cerr << std::endl;
 			rsPeers->getGPGAllList(ids);
 			break;
-		case rsctrl::peers::RequestPeers::ONLINE:
+		case rsctrl::peers::RequestPeers::CONNECTED:
 		{
+			std::cerr << "RpcProtoPeers::processRequestPeers() CONNECTED";
+			std::cerr << std::endl;
 			 /* this ones a bit hard too */
-			onlyOnline = true;
+			onlyConnected = true;
 			std::list<std::string> ssl_ids;
 			std::list<std::string>::const_iterator sit;
 			rsPeers->getOnlineList(ssl_ids);
@@ -176,12 +250,18 @@ int RpcProtoPeers::processRequestPeers(uint32_t msg_id, uint32_t req_id, const s
 			break;
 		}
 		case rsctrl::peers::RequestPeers::FRIENDS:
+			std::cerr << "RpcProtoPeers::processRequestPeers() FRIENDS";
+			std::cerr << std::endl;
 			rsPeers->getGPGAcceptedList(ids);
 			break;
 		case rsctrl::peers::RequestPeers::SIGNED:
+			std::cerr << "RpcProtoPeers::processRequestPeers() SIGNED";
+			std::cerr << std::endl;
 			rsPeers->getGPGSignedList(ids);
 			break;
 		case rsctrl::peers::RequestPeers::VALID:
+			std::cerr << "RpcProtoPeers::processRequestPeers() VALID";
+			std::cerr << std::endl;
 			rsPeers->getGPGSignedList(ids);
 			break;
 	}
@@ -215,13 +295,41 @@ int RpcProtoPeers::processRequestPeers(uint32_t msg_id, uint32_t req_id, const s
 			continue; /* uhm.. */
 		}
 
-		rsctrl::base::Person *person = respp.add_peers();
-
+		rsctrl::core::Person *person = respp.add_peers();
 
 		/* fill in key gpg details */
+		person->set_gpg_id(*git);
+		person->set_name(details.name);
 
+		std::cerr << "RpcProtoPeers::processRequestPeers() Adding GPGID: ";
+		std::cerr << *git << " name: " << details.name;
+		std::cerr << std::endl;
 
-
+		if (details.state & RS_PEER_STATE_FRIEND)
+		{
+			person->set_relation(rsctrl::core::Person::FRIEND);
+		}
+		else 
+		{
+			std::list<std::string> common_friends;
+			rsDisc->getDiscGPGFriends(*git, common_friends);
+			int size = common_friends.size();
+			if (size)
+			{
+				if (size > 2)
+				{
+					person->set_relation(rsctrl::core::Person::FRIEND_OF_MANY_FRIENDS);
+				}
+				else
+				{
+					person->set_relation(rsctrl::core::Person::FRIEND_OF_FRIENDS);
+				}
+			}
+			else
+			{
+				person->set_relation(rsctrl::core::Person::UNKNOWN);
+			}
+		}
 		
 		if (getLocations)
 		{
@@ -240,13 +348,65 @@ int RpcProtoPeers::processRequestPeers(uint32_t msg_id, uint32_t req_id, const s
 				{
 					continue; /* uhm.. */
 				}
+				if ((onlyConnected) && 
+					(!(ssldetails.state & RS_PEER_STATE_CONNECTED)))
+				{
+					continue;
+				}
 
-				rsctrl::base::Location *loc = person->add_locations();
+				rsctrl::core::Location *loc = person->add_locations();
+
+		std::cerr << "RpcProtoPeers::processRequestPeers() \t Adding Location: ";
+		std::cerr << *sit << " loc: " << ssldetails.location;
+		std::cerr << std::endl;
 
 				/* fill in ssl details */
+				loc->set_ssl_id(*sit);
+				loc->set_location(ssldetails.location);
+
+				/* set addresses */
+				rsctrl::core::IpAddr *laddr = loc->mutable_localaddr();
+				laddr->set_addr(ssldetails.localAddr);
+				laddr->set_port(ssldetails.localPort);
+
+				rsctrl::core::IpAddr *eaddr = loc->mutable_extaddr();
+				eaddr->set_addr(ssldetails.extAddr);
+				eaddr->set_port(ssldetails.extPort);
+
+				/* translate status */
+				uint32_t loc_state = 0;
+				//dont think this state should be here.
+				//if (ssldetails.state & RS_PEER_STATE_FRIEND)
+				if (ssldetails.state & RS_PEER_STATE_ONLINE)
+				{
+					loc_state |= (uint32_t) rsctrl::core::Location::ONLINE;
+				}
+				if (ssldetails.state & RS_PEER_STATE_CONNECTED)
+				{
+					loc_state |= (uint32_t) rsctrl::core::Location::CONNECTED;
+				}
+				if (ssldetails.state & RS_PEER_STATE_UNREACHABLE)
+				{
+					loc_state |= (uint32_t) rsctrl::core::Location::UNREACHABLE;
+				}
+
+				loc->set_state(loc_state);
 			}
 		}
 	}
+
+        if (success)
+	{
+		rsctrl::core::Status *status = respp.mutable_status();
+		status->set_code(rsctrl::core::Status::SUCCESS);
+	}
+	else
+	{
+		rsctrl::core::Status *status = respp.mutable_status();
+		status->set_code(rsctrl::core::Status::FAILED);
+		status->set_msg("Unknown ERROR");
+	}
+
 
 	std::string outmsg;
 	if (!respp.SerializeToString(&outmsg))
@@ -257,7 +417,7 @@ int RpcProtoPeers::processRequestPeers(uint32_t msg_id, uint32_t req_id, const s
 	}
 	
 	// Correctly Name Message.
-	uint32_t out_msg_id = constructMsgId(rsctrl::base::BASE, rsctrl::base::PEERS, 
+	uint32_t out_msg_id = constructMsgId(rsctrl::core::CORE, rsctrl::core::PEERS, 
 				rsctrl::peers::MsgId_ResponsePeerList, true);
 
 	// queue it.

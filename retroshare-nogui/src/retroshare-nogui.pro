@@ -185,15 +185,19 @@ sshserver {
 protorpc {
 	# Proto Services
 	HEADERS += rpc/proto/rpcprotopeers.h \
+		rpc/proto/rpcprotosystem.h \
 
 	SOURCES += rpc/proto/rpcprotopeers.cc \
+		rpc/proto/rpcprotosystem.cc \
 
 	# Generated ProtoBuf Code the RPC System
-	HEADERS += rpc/proto/gencc/base.pb.h \
+	HEADERS += rpc/proto/gencc/core.pb.h \
 		rpc/proto/gencc/peers.pb.h \
+		rpc/proto/gencc/system.pb.h \
 
-	SOURCES += rpc/proto/gencc/base.pb.cc \
+	SOURCES += rpc/proto/gencc/core.pb.cc \
 		rpc/proto/gencc/peers.pb.cc \
+		rpc/proto/gencc/system.pb.cc \
 
         QMAKE_CFLAGS += -pthread
         QMAKE_CXXFLAGS += -pthread
