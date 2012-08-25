@@ -27,7 +27,7 @@ message RequestPeers {
   enum SetOption {
     OWNID   = 1;
     LISTED  = 2; 
-    ONLINE  = 3; 
+    CONNECTED = 3;
     FRIENDS = 4;
     VALID   = 5; 	
     SIGNED  = 6; 	

@@ -73,7 +73,7 @@ message SearchHit {
   }
 
   required rsctrl.core.File file 	= 1;
-  required int no_hits 			= 2
+  required uint32 no_hits 		= 2;
   required LocFlag loc 			= 3;
 
 }
@@ -93,7 +93,7 @@ message SearchSet {
   optional RequestBasicSearch basic_req		= 3;
   optional RequestAdvSearch   adv_req		= 4;
 
-  repeated SearchHit				= 5;
+  repeated SearchHit	      hits		= 5;
 
 }
 
@@ -128,7 +128,7 @@ message RequestCloseSearch {
 // REQUEST: RequestListShares
 message RequestListShares {
 
-  required int depth = 1;		// HOW Many Directories to drill down.
+  required uint32 depth = 1;		// HOW Many Directories to drill down.
   repeated string ShareLocation = 2;
 }
 
@@ -136,8 +136,6 @@ message ShareLocation {
   required string ssl_id = 1;
   required string path = 2;
 }
-
-message 
 
 
 

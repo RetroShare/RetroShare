@@ -27,31 +27,58 @@ enum PackageId {
 
 message Status {
   enum StatusCode {
-    FAILED        = 0;
-    INVALID_QUERY = 1;
-    SUCCESS       = 2;
-    READMSG       = 3;
+    FAILED        	= 0;
+    NO_IMPL_YET		= 1;
+    INVALID_QUERY 	= 2;
+    SUCCESS       	= 3;
+    READMSG       	= 4;
   }
   required StatusCode code = 1;
   optional string msg = 2;
 }
 
 ///////////////////////////////////////////////////////////////
+
+message IpAddr {
+  required string addr = 1 [default = ""];
+  required uint32 port = 2 [default = 0];  // must be 16 bit, 0 for unknown.
+}
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
 // Peer structures, mainly rsctrl.peers related.
 
 message Location {
+
+  enum StateFlags {	// ORd together...
+    ONLINE 		= 1;
+    CONNECTED		= 2;
+    UNREACHABLE		= 4;
+  }
+
   required string ssl_id = 1;
   required string location = 2;
 
-  required string localaddr = 3;
-  required string extaddr   = 4;
+  required IpAddr localaddr = 3;
+  required IpAddr extaddr   = 4;
+
+  required uint32 state = 5;  // Not an ENUM as ORd together.
 }
 
 message Person {
+
+  enum Relationship {	
+    FRIEND 			= 1;
+    FRIEND_OF_MANY_FRIENDS 	= 2;  // 3+ at the moment.
+    FRIEND_OF_FRIENDS		= 3;  // 1 or 2.
+    UNKNOWN			= 4;
+  }
+
   required string gpg_id = 1;
   required string name = 2;
+  required Relationship relation = 3;
 
-  repeated Location locations = 3;
+  repeated Location locations = 4;
 }
 
 ///////////////////////////////////////////////////////////////
@@ -113,7 +140,5 @@ message BandwidthSet {
 
 
 ///////////////////////////////////////////////////////////////
-
-
 
 

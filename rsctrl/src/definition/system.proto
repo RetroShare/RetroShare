@@ -1,4 +1,4 @@
-package rsctrl.peers;
+package rsctrl.system;
 
 import "core.proto";
 
@@ -42,8 +42,8 @@ message ResponseSystemStatus {
   required rsctrl.core.Status status = 1;
 
   // Peers.
-  required uint32 peer_count = 2;
-  required uint32 online_count = 3;
+  required uint32 no_peers 		= 2;
+  required uint32 no_connected 		= 3;
 
   // Basic Network Information.
   required NetCode net_status = 4;
