@@ -27,6 +27,7 @@
  */
 
 #include <queue>
+#include <ctime>
 
 #include "rsgxs.h"
 #include "rsgds.h"
@@ -39,6 +40,7 @@
 typedef std::map<RsGxsGroupId, std::vector<RsGxsMsgItem*> > GxsMsgDataMap;
 typedef std::map<RsGxsGroupId, RsGxsGrpItem*> GxsGroupDataMap;
 typedef std::map<RsGxsGroupId, std::vector<RsMsgMetaData> > GxsMsgMetaMap;
+
 
 /*!
  * This should form the parent class to \n
@@ -74,7 +76,6 @@ public:
     RsGenExchange(RsGeneralDataService* gds, RsNetworkExchangeService* ns, RsSerialType* serviceSerialiser, uint16_t mServType);
 
     virtual ~RsGenExchange();
-
 
     /** S: Observer implementation **/
 
@@ -155,7 +156,7 @@ protected:
 public:
 
     /*!
-     * This allows the client service to acknowledge that their msgs has
+     * This allows the client service to acknowledge that their msgs has \n
      * been created/modified and retrieve the create/modified msg ids
      * @param token the token related to modification/create request
      * @param msgIds map of grpid->msgIds of message created/modified
@@ -164,7 +165,7 @@ public:
     bool acknowledgeTokenMsg(const uint32_t& token, RsGxsGrpMsgIdPair& msgId);
 
     /*!
-	 * This allows the client service to acknowledge that their grps has
+         * This allows the client service to acknowledge that their grps has \n
 	 * been created/modified and retrieve the create/modified grp ids
 	 * @param token the token related to modification/create request
 	 * @param msgIds vector of ids of groups created/modified
@@ -177,19 +178,21 @@ protected:
     /** Modifications **/
 
     /*!
-     * Enables publication of a group item
-     * If the item exists already this is simply versioned
-     * This will induce a related change message
-     * Ownership of item passes to this rsgenexchange
+     * Enables publication of a group item \n
+     * If the item exists already this is simply versioned \n
+     * This will induce a related change message \n
+     * Ownership of item passes to this rsgenexchange \n
      * @param token
      * @param grpItem
      */
     void publishGroup(uint32_t& token, RsGxsGrpItem* grpItem);
 
     /*!
-     * Enables publication of a message item
-     * If the item exists already this is simply versioned
-     * This will induce a related a change message
+     * Enables publication of a message item \n
+     * Setting mOrigMsgId meta member to blank \n
+     * leads to this msg being an original msg \n
+     * if mOrigMsgId is not blank the msgId then this msg is \n
+     * considered a versioned msg \n
      * Ownership of item passes to this rsgenexchange
      * @param token
      * @param msgItem

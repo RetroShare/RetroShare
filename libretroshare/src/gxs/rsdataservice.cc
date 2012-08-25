@@ -778,6 +778,7 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
             {
                 RsGxsMsgMetaData* meta = *meta_lit;
                 delete meta;
+                meta_lit = msgMetaV.erase(meta_lit);
             }
         }
     }

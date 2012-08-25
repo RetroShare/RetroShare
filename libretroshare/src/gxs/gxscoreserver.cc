@@ -48,19 +48,18 @@ void GxsCoreServer::run()
 {
 	std::set<RsGxsService*>::iterator sit;
 
-	double timeDelta = 0.2;
+        double timeDelta = 0.02;
 
 	while(isRunning())
 	{
+            for(sit = mGxsServices.begin(); sit != mGxsServices.end(); sit++)
+                            (*sit)->tick();
 
 #ifndef WINDOWS_SYS
         usleep((int) (timeDelta * 1000000));
 #else
         Sleep((int) (timeDelta * 1000));
 #endif
-
-		for(sit = mGxsServices.begin(); sit != mGxsServices.end(); sit++)
-				(*sit)->tick();
 
 	}
 }

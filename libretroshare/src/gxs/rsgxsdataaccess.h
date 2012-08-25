@@ -153,14 +153,6 @@ public:
      */
     bool getMsgData(const uint32_t &token, NxsMsgDataResult& msgData);
 
-    /*!
-     *
-     * @param token request token to be redeemed
-     * @param msgIds
-     * @return false if data cannot be found for token
-     */
-    bool getMsgRelatedInfo(const uint32_t &token, GxsMsgIdResult &msgIds);
-
 private:
 
     /** helper functions to implement token service **/
@@ -231,7 +223,7 @@ private:
      * Convenience function to delete the ids
      * @param filter the meta filter to clean
      */
-    void cleanseMetaFilter(MsgMetaFilter& filter);
+    void cleanseMsgMetaMap(GxsMsgMetaResult& result);
 
 public:
 

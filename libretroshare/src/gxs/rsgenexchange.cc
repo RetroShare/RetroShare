@@ -551,7 +551,7 @@ void RsGenExchange::publishMsgs()
 		{
 			msg->metaData = new RsGxsMsgMetaData();
                         msg->msg.setBinData(mData, size);
-			*(msg->metaData) = msgItem->meta;
+                        *(msg->metaData) = msgItem->meta;
                         size = msg->metaData->serial_size();
                         char metaDataBuff[size];
 
@@ -560,8 +560,24 @@ void RsGenExchange::publishMsgs()
 
 			ok = createMessage(msg);
 
-			if(ok)
+                        if(ok)
+                        {
+                            msg->metaData->mPublishTs = time(NULL);
+
+                            // empty orig msg id means this is the original
+                            // msg
+                            // TODO: a non empty msgid means one should at least
+                            // have the msg on disk, after which this msg is signed
+                            // based on the security settings
+                            // public grp (sign by grp public pub key, private/id: signed by
+                            // id
+                            if(msg->metaData->mOrigMsgId.empty())
+                            {
+                                msg->metaData->mOrigMsgId = msg->metaData->mMsgId;
+                            }
+
                             ok = mDataAccess->addMsgData(msg);
+                        }
 
                         // add to published to allow acknowledgement
                         mMsgNotify.insert(std::make_pair(mit->first, std::make_pair(msg->grpId, msg->msgId)));

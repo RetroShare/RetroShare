@@ -119,7 +119,7 @@ class RsThread
 	RsThread();
 virtual ~RsThread() {}
 
-virtual void start() { createThread(*this); }
+virtual void start() { mIsRunning = true; createThread(*this); }
 virtual void run() = 0; /* called once the thread is started */
 virtual	void join(); /* waits for the the mTid thread to stop */
 virtual	void stop(); /* calls pthread_exit() */
