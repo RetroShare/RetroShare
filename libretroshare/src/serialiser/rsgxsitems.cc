@@ -22,6 +22,7 @@
 		this->mParentId = rGxsMeta.mParentId;
 		this->mPublishTs = rGxsMeta.mPublishTs;
 		this->mThreadId = rGxsMeta.mThreadId;
+                this->mServiceString = rGxsMeta.mServiceString;
 	}
 
 
@@ -37,4 +38,5 @@
 		this->mPublishTs = rGxsMeta.mPublishTs;
 		this->mSubscribeFlags = rGxsMeta.mSubscribeFlags;
 		this->mGroupName = rGxsMeta.mGroupName;
+                this->mServiceString = rGxsMeta.mServiceString;
 	}

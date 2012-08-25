@@ -11,7 +11,7 @@ class RsDummyNetService: public RsNetworkExchangeService
 {
 public:
 
-     RsNetworkExchangeService(){ return;}
+     RsDummyNetService(){ return;}
 
      void setSyncAge(uint32_t age){}
 
@@ -28,16 +28,16 @@ public:
 
 
 
-uint16_t RS_SERVICE_TYPE_DUMMY = 0x01;
-uint8_t RS_PKT_SUBTYPE_DUMMY_MSG = 0x02;
-uint8_t RS_PKT_SUBTYPE_DUMMY_GRP = 0x03;
+const uint16_t RS_SERVICE_TYPE_DUMMY = 0x01;
+const uint8_t RS_PKT_SUBTYPE_DUMMY_MSG = 0x02;
+const uint8_t RS_PKT_SUBTYPE_DUMMY_GRP = 0x03;
 
 
 class RsDummyMsg : public RsGxsMsgItem
 {
 public:
     RsDummyMsg() : RsGxsMsgItem(RS_SERVICE_TYPE_DUMMY, RS_PKT_SUBTYPE_DUMMY_MSG) { return; }
-    virtual RsDummyMsg() { return; }
+    virtual ~RsDummyMsg() { return; }
 
     std::string msgData;
 
@@ -48,8 +48,10 @@ public:
 
 class RsDummyGrp : public RsGxsGrpItem
 {
+public:
+
     RsDummyGrp() : RsGxsGrpItem(RS_SERVICE_TYPE_DUMMY, RS_PKT_SUBTYPE_DUMMY_GRP) { return; }
-    virtual RsDummyGrp() { return; }
+    virtual ~RsDummyGrp() { return; }
 
 
 
@@ -69,7 +71,7 @@ public:
     RsDummySerialiser()
     :RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DUMMY)
     { return; }
-    virtual     ~RsGxsPhotoSerialiser() { return; }
+    virtual     ~RsDummySerialiser() { return; }
 
     uint32_t    size(RsItem *item);
     bool        serialise  (RsItem *item, void *data, uint32_t *size);

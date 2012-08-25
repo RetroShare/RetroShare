@@ -1,9 +1,14 @@
 
 TEMPLATE = app
 TARGET = rsgenexcahnge_test
-
+CONFIG += debug
 
 win32 {
+
+            DEFINES *= WINDOWS_SYS \
+                WIN32 \
+                STATICLIB \
+                MINGW
 
         # Switch on extra warnings
         QMAKE_CFLAGS += -Wextra
@@ -25,13 +30,12 @@ win32 {
     LIBS += C:\Development\Rs\v0.5-gxs-b1/libretroshare/libretroshare-build-desktop/lib/libretroshare.a
     LIBS += C:\Development\Rs\v0.5-gxs-b1\openpgpsdk\openpgpsdk-build-desktop\lib\libops.a
     LIBS += C:\Development\Libraries\sqlite\sqlite-autoconf-3070900\lib\libsqlite3.a
-    LIBS += -L"../../../lib"
+    LIBS += -L"../lib"
     LIBS += -lssl -lcrypto -lgpgme -lpthreadGC2d -lminiupnpc -lz -lbz2
 # added after bitdht
 #    LIBS += -lws2_32
         LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
         LIBS += -lole32 -lwinmm
-        RC_FILE = gui/images/retroshare_win.rc
 
         # export symbols for the plugins
         #LIBS += -Wl,--export-all-symbols,--out-implib,lib/libretroshare-gui.a
@@ -41,6 +45,11 @@ win32 {
     GPG_ERROR_DIR = ../../../../lib/libgpg-error-1.7
     GPGME_DIR  = ../../../../lib/gpgme-1.1.8
     INCLUDEPATH += . $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
+                SQLITE_DIR = ../../Libraries/sqlite/sqlite-autoconf-3070900
+                INCLUDEPATH += . \
+                    $${SQLITE_DIR}
+
+    LIBS += -lws2_32
 
 
 

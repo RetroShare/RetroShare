@@ -1,7 +1,7 @@
 #include "genexchangetestservice.h"
 
 GenExchangeTestService::GenExchangeTestService(RsGeneralDataService *dataServ, RsNetworkExchangeService * netService)
-    : RsGenExchange(dataServ, netService)
+    : RsGenExchange(dataServ, netService, new RsDummySerialiser(), RS_SERVICE_TYPE_DUMMY)
 {
 
 }

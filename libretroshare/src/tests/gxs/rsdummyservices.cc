@@ -69,7 +69,7 @@ RsItem* RsDummySerialiser::deserialise(void *data, uint32_t *size)
 
 uint32_t    RsDummySerialiser::sizeDummyMsgItem(RsDummyMsg *item)
 {
-    s += 8; // header
+    uint32_t s = 8; // header
     s += GetTlvStringSize(item->msgData);
 
     return s;
@@ -135,7 +135,7 @@ RsDummyMsg *    RsDummySerialiser::deserialiseDummyMsgItem(void *data, uint32_t 
     /* skip the header */
     offset += 8;
 
-    ok &= GetTlvString(data, *size, offset, 1, item->msgData);
+    ok &= GetTlvString(data, *size, &offset, 1, item->msgData);
 
     if (!ok)
     {
@@ -148,7 +148,7 @@ RsDummyMsg *    RsDummySerialiser::deserialiseDummyMsgItem(void *data, uint32_t 
 
 uint32_t    RsDummySerialiser::sizeDummyGrpItem(RsDummyGrp *item)
 {
-    s += 8;
+    uint32_t s = 8;
     s += GetTlvStringSize(item->grpData);
 
     return s;
@@ -212,7 +212,7 @@ RsDummyGrp *    RsDummySerialiser::deserialiseDummyGrpItem(void *data, uint32_t 
     /* skip the header */
     offset += 8;
 
-    ok &= GetTlvString(data, *size, offset, 1, item->grpData);
+    ok &= GetTlvString(data, *size, &offset, 1, item->grpData);
 
     if (!ok)
     {

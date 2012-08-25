@@ -2,6 +2,12 @@
 #define GENEXCHANGETESTER_H
 
 #include "genexchangetestservice.h"
+#include "gxs/rsgds.h"
+#include "gxs/rsnxs.h"
+#include "gxs/gxscoreserver.h"
+
+bool operator ==(const RsMsgMetaData& lMeta, const RsMsgMetaData& rMeta);
+bool operator ==(const RsDummyMsg& lMsg, const RsDummyMsg& rMsg);
 
 /*!
  * The job of the service tester is to send dummy msg items to the GenExchange service
@@ -12,20 +18,24 @@ class GenExchangeTester
 {
 public:
 
-    void pollForToken(uint32_t);
+    void pollForToken(uint32_t, const RsTokReqOptionsV2& opts);
 
-    GenExchangeTester(GenExchangeTestService* testService);
+    GenExchangeTester();
 
     bool testMsgSubmissionRetrieval();
     bool testMsgIdRetrieval();
-    bool testSpecificMsgRetrieval();
+    bool testRelatedMsgIdRetrieval_Parents();
+    bool testRelatedMsgIdRetrieval_OrigMsgId();
+    bool testRelatedMsgIdRetrieval_Latest();
+    bool testSpecificMsgMetaRetrieval();
 
     bool testGrpSubmissionRetrieval();
     bool testSpecificGrpRetrieval();
     bool testGrpIdRetrieval();
+    bool testGrpMetaRetrieval();
 
-    bool testGrpSubscribeRequest();
-    bool testGrpStatusRequest();
+    bool testGrpMetaModRequest();
+    bool testMsgMetaModRequest();
 
 private:
 
@@ -42,34 +52,45 @@ private:
     void storeMsgMeta(GxsMsgMetaMap& msgMetaData);
     void storeMsgIds(GxsMsgIdResult& msgIds);
 
-    void storeGrpData(GxsMsgDataMap& grpData);
-    void storeGrpMeta(GxsMsgMetaMap& grpMetaData);
-    void storeGrpId(GxsMsgIdResult& grpIds);
+    void storeGrpData(std::vector<RsGxsGrpItem*>& grpData);
+    void storeGrpMeta(std::list<RsGroupMetaData>& grpMetaData);
+    void storeGrpId(std::list<RsGxsGroupId>& grpIds);
 
-    void init(RsDummyGrp* grpItem);
-    void init(RsGroupMetaData&);
-    void init(RsDummyMsg* msgItem);
-    void init(RsMsgMetaData&);
+    void init(RsDummyGrp* grpItem) const;
+    void init(RsGroupMetaData&) const;
+    void init(RsDummyMsg* msgItem) const;
+    void init(RsMsgMetaData&) const;
 
-    bool operator ==(const RsMsgMetaData& lMeta, const RsMsgMetaData& rMeta);
-    bool operator ==(const RsDummyMsg& lMsg, const RsDummyMsg& rMsg);
+    uint32_t randNum() const;
+private:
+
+    void createMsgs(std::vector<RsDummyMsg*>& msgs, int nMsgs) const;
 
 private:
 
+
     RsMutex mGenTestMutex;
 
-    GxsMsgDataMap mGrpDataOut, mGrpDataIn;
-    GxsMsgMetaMap mGrpMetaDataOut, mGrpMetaDataIn;
-    GxsMsgIdResult mGrpIdsOut, mGrpIdsIn;
+    std::vector<RsGxsGrpItem*> mGrpDataOut, mGrpDataIn;
+    std::list<RsGroupMetaData> mGrpMetaDataOut, mGrpMetaDataIn;
+    std::list<RsGxsGroupId> mGrpIdsOut, mGrpIdsIn;
 
     GxsMsgDataMap mMsgDataOut, mMsgDataIn;
     GxsMsgMetaMap mMsgMetaDataOut, mMsgMetaDataIn;
     GxsMsgIdResult mMsgIdsOut, mMsgIdsIn;
 
+    std::vector<RsGxsGroupId> mRandGrpIds; // ids that exist to help group testing
+
 private:
 
     GenExchangeTestService* mTestService;
     RsTokenServiceV2* mTokenService;
+
+    RsNetworkExchangeService* mNxs;
+    RsGeneralDataService* mDataStore;
+
+    GxsCoreServer mGxsCore;
+
 };
 
 #endif // GENEXCHANGETESTER_H

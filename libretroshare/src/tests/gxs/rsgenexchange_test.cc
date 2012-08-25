@@ -12,17 +12,16 @@ INITTEST();
 
 int main()
 {
+    GenExchangeTester tester;
 
+    CHECK(tester.testMsgSubmissionRetrieval()); REPORT("testMsgSubmissionRetrieval()");
+    CHECK(tester.testSpecificMsgMetaRetrieval()); REPORT("testSpecificMsgMetaRetrieval()");
+    CHECK(tester.testMsgIdRetrieval()); REPORT("tester.testMsgIdRetrieval()");
+    CHECK(tester.testRelatedMsgIdRetrieval_Parents()); REPORT("tester.testRelatedMsgIdRetrieval_Parents()");
+    CHECK(tester.testRelatedMsgIdRetrieval_OrigMsgId()); REPORT("tester.testRelatedMsgIdRetrieval_OrigMsgId()");
+    CHECK(tester.testRelatedMsgIdRetrieval_Latest()); REPORT("tester.testRelatedMsgIdRetrieval_Latest()");
 
-    GxsCoreServer gxsCore;
+    FINALREPORT("RsGenExchangeTest");
 
-    // create data service and dummy net service
-    RsDummyNetService dummyNet;
-    RsDataService dataStore("./", "testServiceDb", 0, NULL);
-    GenExchangeTestService testService;
-    gxsCore.addService(&testService);
-    createThread(gxsCore);
-
-
-
+    return 0;
 }
