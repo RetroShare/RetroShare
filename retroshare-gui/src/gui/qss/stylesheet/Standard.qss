@@ -1,1 +1,55 @@
 /* Standard stylesheet for RetroShare */
+
+/* Standard rules */
+
+QFrame#titleBarFrame, QFrame#toolBarFrame {
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
+	border: 1px solid #CCCCCC;
+}
+
+/* HeaderFrame */
+
+HeaderFrame {
+	background-image: url(:/images/headerFrame.png);
+	border: 0px;
+}
+HeaderFrame QLabel#headerLabel {
+	color: rgb(255, 255, 255);
+}
+
+/* FriendsDialog */
+
+FriendsDialog QLabel#nicknameLabel {
+	color: rgb(50, 205, 50);
+}
+FriendsDialog QFrame#headerFrame {
+	background-image: url(:/images/headerFrame.png);
+	border: 0px;
+}
+
+/* ChannelFeed */
+
+ChannelFeed QFrame#headerFrame {
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #F2F2F2, stop:1 #E6E6E6);
+	border: 1px solid #CCCCCC;
+}
+
+ChannelFeed QFrame#headerFrame QLabel#iconLabel {
+	border: 2px solid white;
+}
+
+/* ForumsDialog */
+
+ForumsDialog QLabel#forumName, ForumsDialog QLabel#threadTitle
+{
+	border: 2px solid #CCCCCC;
+	border-radius:6px;
+	background: white;
+}
+
+ForumsDialog2 QLabel#forumName, ForumsDialog2 QLabel#threadTitle
+{
+	border: 2px solid #CCCCCC;
+	border-radius:6px;
+	background: white;
+}

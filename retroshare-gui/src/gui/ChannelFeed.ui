@@ -16,7 +16,7 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QFrame" name="chanFrame">
+     <widget class="QFrame" name="channelTreeFrame">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
         <horstretch>0</horstretch>
@@ -40,69 +40,53 @@
         <number>0</number>
        </property>
        <item row="0" column="0">
-        <widget class="QFrame" name="chheaderframe">
-         <property name="styleSheet">
-          <string notr="true"> QFrame#chheaderframe{
-background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                       stop:0 #FEFEFE, stop:1 #E8E8E8);
-
-border: 1px solid #CCCCCC;}
-
-</string>
-         </property>
+        <widget class="QFrame" name="titleBarFrame">
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <layout class="QGridLayout" name="gridLayout_5">
+         <layout class="QHBoxLayout" name="horizontalLayout">
           <property name="margin">
            <number>2</number>
           </property>
-          <item row="0" column="0">
-           <layout class="QGridLayout" name="_2">
-            <property name="verticalSpacing">
-             <number>0</number>
+          <item>
+           <widget class="QLabel" name="titleBarPixmap">
+            <property name="maximumSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
             </property>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label">
-              <property name="maximumSize">
-               <size>
-                <width>24</width>
-                <height>24</height>
-               </size>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="pixmap">
-               <pixmap resource="images.qrc">:/images/channels32.png</pixmap>
-              </property>
-              <property name="scaledContents">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QLabel" name="channellabel">
-              <property name="font">
-               <font>
-                <family>Arial</family>
-                <pointsize>10</pointsize>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>Channels</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="pixmap">
+             <pixmap resource="images.qrc">:/images/channels32.png</pixmap>
+            </property>
+            <property name="scaledContents">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
-          <item row="0" column="1">
-           <spacer name="horizontalSpacer_3">
+          <item>
+           <widget class="QLabel" name="titleBarLabel">
+            <property name="font">
+             <font>
+              <family>Arial</family>
+              <pointsize>10</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Channels</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="spacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -114,33 +98,7 @@ border: 1px solid #CCCCCC;}
             </property>
            </spacer>
           </item>
-          <item row="0" column="4">
-           <widget class="QToolButton" name="newChannelButton">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
-            <property name="focusPolicy">
-             <enum>Qt::NoFocus</enum>
-            </property>
-            <property name="toolTip">
-             <string>Create Channel</string>
-            </property>
-            <property name="icon">
-             <iconset resource="images.qrc">
-              <normaloff>:/images/add_channel24.png</normaloff>:/images/add_channel24.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>32</width>
-              <height>16</height>
-             </size>
-            </property>
-            <property name="autoRaise">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="3">
+          <item>
            <widget class="QToolButton" name="displayButton">
             <property name="focusPolicy">
              <enum>Qt::NoFocus</enum>
@@ -166,6 +124,32 @@ border: 1px solid #CCCCCC;}
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QToolButton" name="newChannelButton">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
+            <property name="toolTip">
+             <string>Create Channel</string>
+            </property>
+            <property name="icon">
+             <iconset resource="images.qrc">
+              <normaloff>:/images/add_channel24.png</normaloff>:/images/add_channel24.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>32</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -182,169 +166,73 @@ border: 1px solid #CCCCCC;}
       </layout>
      </widget>
      <widget class="QWidget" name="layoutWidget">
-      <layout class="QGridLayout" name="gridLayout_4">
+      <layout class="QGridLayout" name="channelLayout">
        <item row="0" column="0">
-        <widget class="QFrame" name="frame">
-         <property name="styleSheet">
-          <string notr="true"> QFrame#frame{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                       stop:0 #F2F2F2, stop:1 #E6E6E6);
-border: 1px solid #CCCCCC;}
-</string>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_3">
-          <property name="verticalSpacing">
-           <number>0</number>
-          </property>
+        <widget class="QFrame" name="headerFrame">
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
           <property name="margin">
-           <number>0</number>
+           <number>4</number>
           </property>
-          <item row="0" column="0">
-           <layout class="QGridLayout" name="gridLayout_2">
-            <property name="horizontalSpacing">
-             <number>16</number>
+          <item>
+           <widget class="QLabel" name="iconLabel">
+            <property name="minimumSize">
+             <size>
+              <width>64</width>
+              <height>64</height>
+             </size>
             </property>
-            <property name="margin">
-             <number>9</number>
+            <property name="maximumSize">
+             <size>
+              <width>64</width>
+              <height>64</height>
+             </size>
             </property>
-            <item row="0" column="0">
-             <widget class="QLabel" name="iconLabel">
-              <property name="minimumSize">
-               <size>
-                <width>64</width>
-                <height>64</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>64</width>
-                <height>64</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QLabel{
-border: 2px solid white;
-border-radius: 10px;
-}</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="pixmap">
-               <pixmap resource="images.qrc">:/images/channels.png</pixmap>
-              </property>
-              <property name="scaledContents">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QLabel" name="nameLabel">
-              <property name="palette">
-               <palette>
-                <active/>
-                <inactive/>
-                <disabled/>
-               </palette>
-              </property>
-              <property name="font">
-               <font>
-                <family>Microsoft Sans Serif</family>
-                <pointsize>22</pointsize>
-                <weight>50</weight>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string notr="true">Channel Name</string>
-              </property>
-              <property name="scaledContents">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="1" column="0">
-           <widget class="Line" name="line">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="pixmap">
+             <pixmap resource="images.qrc">:/images/channels.png</pixmap>
+            </property>
+            <property name="scaledContents">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <layout class="QGridLayout" name="gridLayout">
-            <property name="leftMargin">
-             <number>2</number>
+          <item>
+           <widget class="QLabel" name="nameLabel">
+            <property name="palette">
+             <palette>
+              <active/>
+              <inactive/>
+              <disabled/>
+             </palette>
             </property>
-            <property name="rightMargin">
-             <number>2</number>
+            <property name="font">
+             <font>
+              <family>Microsoft Sans Serif</family>
+              <pointsize>22</pointsize>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
             </property>
-            <item row="0" column="2">
-             <spacer name="horizontalSpacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="0" column="1">
-             <widget class="QToolButton" name="postButton">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>25</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>26</height>
-               </size>
-              </property>
-              <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
-              </property>
-              <property name="toolTip">
-               <string>Post to Channel</string>
-              </property>
-              <property name="icon">
-               <iconset resource="images.qrc">
-                <normaloff>:/images/mail_send.png</normaloff>:/images/mail_send.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>32</width>
-                <height>16</height>
-               </size>
-              </property>
-              <property name="autoRaise">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-           </layout>
+            <property name="text">
+             <string notr="true">Channel Name</string>
+            </property>
+            <property name="scaledContents">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
        </item>
-       <item row="2" column="0">
+       <item row="4" column="0">
         <widget class="QScrollArea" name="scrollArea">
          <property name="widgetResizable">
           <bool>true</bool>
@@ -354,7 +242,7 @@ border-radius: 10px;
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>364</width>
+            <width>398</width>
             <height>16</height>
            </rect>
           </property>
@@ -378,7 +266,7 @@ border-radius: 10px;
          </widget>
         </widget>
        </item>
-       <item row="1" column="0">
+       <item row="3" column="0">
         <layout class="QHBoxLayout" name="progressLayout">
          <item>
           <widget class="QLabel" name="progressLabel">
@@ -398,6 +286,88 @@ border-radius: 10px;
           </widget>
          </item>
         </layout>
+       </item>
+       <item row="2" column="0">
+        <widget class="QFrame" name="toolBarFrame">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <property name="margin">
+           <number>2</number>
+          </property>
+          <item>
+           <widget class="QToolButton" name="postButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>26</height>
+             </size>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
+            <property name="toolTip">
+             <string>Post to Channel</string>
+            </property>
+            <property name="icon">
+             <iconset resource="images.qrc">
+              <normaloff>:/images/mail_send.png</normaloff>:/images/mail_send.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>32</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>314</width>
+              <height>10</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="Line" name="line">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

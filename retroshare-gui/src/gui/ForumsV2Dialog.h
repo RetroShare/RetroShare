@@ -216,7 +216,6 @@ private:
     std::string mCurrThreadId;
     int subscribeFlags;
 
-    QFont m_ForumNameFont;
     int lastViewType;
     std::string lastForumID;
 

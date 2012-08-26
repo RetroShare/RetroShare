@@ -112,25 +112,12 @@
      </widget>
     </item>
     <item row="1" column="0">
-     <widget class="QFrame" name="frame">
+     <widget class="QFrame" name="toolBarFrame">
       <property name="maximumSize">
        <size>
         <width>16777215</width>
         <height>32</height>
        </size>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">#frame { 
-border-image:none; 
-background-color: qlineargradient(x1: 0, y1: 0, x2: 0.0, y2: 1.0,
-stop: 0 #ffffff,
-stop: 0.4 #eeeeee,
-stop: 0.401 #e2e2e2,
-stop: 1 #dddddd);
-color: #CCCCCC;
-border-top: 1px solid #606060;
-border-bottom: 1px solid #CCCCCC;
-}</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
@@ -138,11 +125,35 @@ border-bottom: 1px solid #CCCCCC;
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QGridLayout" name="gridLayout_2">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
        <property name="margin">
         <number>2</number>
        </property>
-       <item row="0" column="1">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="filterLineLabel">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="images.qrc">:/images/find-16.png</pixmap>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="LineEditClear" name="filterLineEdit">
+           <property name="toolTip">
+            <string>Search Friends</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
         <widget class="QToolButton" name="addIMAccountButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -180,7 +191,7 @@ border-bottom: 1px solid #CCCCCC;
          </property>
         </widget>
        </item>
-       <item row="0" column="2">
+       <item>
         <widget class="QToolButton" name="shareButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
@@ -212,31 +223,7 @@ border-bottom: 1px solid #CCCCCC;
          </property>
         </widget>
        </item>
-       <item row="0" column="0">
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <property name="spacing">
-          <number>2</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="label_3">
-           <property name="text">
-            <string/>
-           </property>
-           <property name="pixmap">
-            <pixmap resource="images.qrc">:/images/find-16.png</pixmap>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="LineEditClear" name="filterLineEdit">
-           <property name="toolTip">
-            <string>Search Friends</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="0" column="3">
+       <item>
         <widget class="QToolButton" name="displaytoolButton">
          <property name="icon">
           <iconset resource="images.qrc">
@@ -319,6 +306,11 @@ stop:0 #FEFEFE, stop:1 #E8E8E8);
  </widget>
  <customwidgets>
   <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header>gui/common/LineEditClear.h</header>
+  </customwidget>
+  <customwidget>
    <class>AvatarWidget</class>
    <extends>QLabel</extends>
    <header>gui/common/AvatarWidget.h</header>
@@ -329,11 +321,6 @@ stop:0 #FEFEFE, stop:1 #E8E8E8);
    <extends>QWidget</extends>
    <header>gui/common/FriendList.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>LineEditClear</class>
-   <extends>QLineEdit</extends>
-   <header>gui/common/LineEditClear.h</header>
   </customwidget>
   <customwidget>
    <class>LogoBar</class>

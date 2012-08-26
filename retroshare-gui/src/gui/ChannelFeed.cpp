@@ -490,16 +490,13 @@ void ChannelFeed::updateChannelMsgs()
         return;
     }
 
+    QPixmap chanImage;
     if (ci.pngImageLen != 0) {
-        QPixmap chanImage;
         chanImage.loadFromData(ci.pngChanImage, ci.pngImageLen, "PNG");
-        iconLabel->setPixmap(chanImage);
-        iconLabel->setStyleSheet("QLabel{border: 3px solid white;}");
     } else {
-        QPixmap defaulImage(CHAN_DEFAULT_IMAGE);
-        iconLabel->setPixmap(defaulImage);
-        iconLabel->setStyleSheet("QLabel{border: 2px solid white;border-radius: 10px;}");
+        chanImage = QPixmap(CHAN_DEFAULT_IMAGE);
     }
+    iconLabel->setPixmap(chanImage);
     iconLabel->setEnabled(true);
 
     /* set Channel name */

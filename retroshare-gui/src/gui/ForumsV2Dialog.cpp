@@ -203,10 +203,6 @@ ForumsV2Dialog::ForumsV2Dialog(QWidget *parent)
     QTreeWidgetItem *headerItem = ui.threadTreeWidget->headerItem();
     headerItem->setText(COLUMN_THREAD_READ, "");
 
-    m_ForumNameFont = QFont("Times", 12, QFont::Bold);
-    ui.forumName->setFont(m_ForumNameFont);
-    ui.threadTitle->setFont(m_ForumNameFont);
-
     /* Initialize group tree */
     ui.forumTreeWidget->initDisplayMenu(ui.displayButton);
 

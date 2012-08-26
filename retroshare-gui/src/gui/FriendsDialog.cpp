@@ -88,7 +88,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     last_status_send_time = 0 ;
     inChatCharFormatChanged = false;
 
-    connect( ui.mypersonalstatuslabel, SIGNAL(clicked()), SLOT(statusmessage()));
+    connect( ui.mypersonalstatusLabel, SIGNAL(clicked()), SLOT(statusmessage()));
     connect( ui.actionSet_your_Avatar, SIGNAL(triggered()), this, SLOT(getAvatar()));
     connect( ui.actionSet_your_Personal_Message, SIGNAL(triggered()), this, SLOT(statusmessage()));
     connect( ui.addfileButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
@@ -212,7 +212,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     // add self nick and Avatar to Friends.
     RsPeerDetails pd ;
     if (rsPeers->getPeerDetails(rsPeers->getOwnId(),pd)) {
-        ui.nicklabel->setText(PeerDefs::nameWithLocation(pd));
+        ui.nicknameLabel->setText(PeerDefs::nameWithLocation(pd));
     }
 
     /* Hide platform specific features */
@@ -755,7 +755,7 @@ void FriendsDialog::on_actionCreate_New_Channel_activated()
 /** Loads own personal status */
 void FriendsDialog::loadmypersonalstatus()
 {
-    ui.mypersonalstatuslabel->setText(QString::fromUtf8(rsMsgs->getCustomStateString().c_str()));
+    ui.mypersonalstatusLabel->setText(QString::fromUtf8(rsMsgs->getCustomStateString().c_str()));
 }
 
 void FriendsDialog::statusmessage()

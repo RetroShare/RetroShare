@@ -25,59 +25,43 @@
         <number>0</number>
        </property>
        <item row="0" column="0">
-        <widget class="QFrame" name="frame_2">
-         <property name="styleSheet">
-          <string notr="true"> QFrame#frame_2{
-background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                       stop:0 #FEFEFE, stop:1 #E8E8E8);
-
-border: 1px solid #CCCCCC;}
-
-</string>
-         </property>
+        <widget class="QFrame" name="titleBarFrame">
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <layout class="QGridLayout" name="gridLayout_2">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
           <property name="margin">
            <number>2</number>
           </property>
-          <item row="0" column="0">
-           <layout class="QGridLayout" name="gridLayout_8">
-            <property name="verticalSpacing">
-             <number>0</number>
+          <item>
+           <widget class="QLabel" name="titleBarPixmap">
+            <property name="text">
+             <string/>
             </property>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="pixmap">
-               <pixmap resource="images.qrc">:/images/user/friends24.png</pixmap>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QLabel" name="friendslabel">
-              <property name="font">
-               <font>
-                <family>Arial</family>
-                <pointsize>10</pointsize>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>Friends</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
+            <property name="pixmap">
+             <pixmap resource="images.qrc">:/images/user/friends24.png</pixmap>
+            </property>
+           </widget>
           </item>
-          <item row="0" column="2">
+          <item>
+           <widget class="QLabel" name="titleBarLabel">
+            <property name="font">
+             <font>
+              <family>Arial</family>
+              <pointsize>10</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Friends</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <spacer>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -90,36 +74,7 @@ border: 1px solid #CCCCCC;}
             </property>
            </spacer>
           </item>
-          <item row="0" column="4">
-           <widget class="QToolButton" name="menutoolButton">
-            <property name="focusPolicy">
-             <enum>Qt::NoFocus</enum>
-            </property>
-            <property name="toolTip">
-             <string>Add</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="images.qrc">
-              <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>32</width>
-              <height>16</height>
-             </size>
-            </property>
-            <property name="popupMode">
-             <enum>QToolButton::InstantPopup</enum>
-            </property>
-            <property name="autoRaise">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="3">
+          <item>
            <widget class="QToolButton" name="displayButton">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -136,6 +91,35 @@ border: 1px solid #CCCCCC;}
             <property name="icon">
              <iconset resource="images.qrc">
               <normaloff>:/images/looknfeel.png</normaloff>:/images/looknfeel.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>32</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="popupMode">
+             <enum>QToolButton::InstantPopup</enum>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="menutoolButton">
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
+            <property name="toolTip">
+             <string>Add</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="images.qrc">
+              <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -181,13 +165,7 @@ border: 1px solid #CCCCCC;}
         <number>1</number>
        </property>
        <item row="0" column="0">
-        <widget class="QFrame" name="frame">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
+        <widget class="QFrame" name="headerFrame">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -199,15 +177,6 @@ border: 1px solid #CCCCCC;}
            <width>16777215</width>
            <height>70</height>
           </size>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">QFrame#frame{background-image: url(:/images/connect/connectFriendBanner.png)}</string>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
          </property>
          <layout class="QGridLayout" name="gridLayout">
           <property name="leftMargin">
@@ -233,7 +202,7 @@ border: 1px solid #CCCCCC;}
            </widget>
           </item>
           <item row="0" column="1" colspan="2">
-           <widget class="QLabel" name="nicklabel">
+           <widget class="QLabel" name="nicknameLabel">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -245,43 +214,6 @@ border: 1px solid #CCCCCC;}
               <width>16777215</width>
               <height>42</height>
              </size>
-            </property>
-            <property name="palette">
-             <palette>
-              <active>
-               <colorrole role="WindowText">
-                <brush brushstyle="SolidPattern">
-                 <color alpha="255">
-                  <red>50</red>
-                  <green>205</green>
-                  <blue>50</blue>
-                 </color>
-                </brush>
-               </colorrole>
-              </active>
-              <inactive>
-               <colorrole role="WindowText">
-                <brush brushstyle="SolidPattern">
-                 <color alpha="255">
-                  <red>50</red>
-                  <green>205</green>
-                  <blue>50</blue>
-                 </color>
-                </brush>
-               </colorrole>
-              </inactive>
-              <disabled>
-               <colorrole role="WindowText">
-                <brush brushstyle="SolidPattern">
-                 <color alpha="255">
-                  <red>118</red>
-                  <green>116</green>
-                  <blue>108</blue>
-                 </color>
-                </brush>
-               </colorrole>
-              </disabled>
-             </palette>
             </property>
             <property name="font">
              <font>
@@ -320,7 +252,7 @@ border: 1px solid #CCCCCC;}
            </spacer>
           </item>
           <item row="1" column="1">
-           <widget class="QToolButton" name="mypersonalstatuslabel">
+           <widget class="QToolButton" name="mypersonalstatusLabel">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -355,19 +287,18 @@ border: 1px solid #CCCCCC;}
           </attribute>
           <layout class="QGridLayout" name="gridLayout_3">
            <item row="1" column="0">
-            <widget class="QFrame" name="buttonframe">
+            <widget class="QFrame" name="toolBarFrame">
              <property name="maximumSize">
               <size>
                <width>16777215</width>
                <height>38</height>
               </size>
              </property>
-             <property name="styleSheet">
-              <string notr="true"> QFrame#buttonframe{
-background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                       stop:0 #FEFEFE, stop:1 #E8E8E8);
-
-border: 1px solid #CCCCCC;}</string>
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
              </property>
              <layout class="QHBoxLayout" name="horizontalLayout">
               <property name="margin">
@@ -677,31 +608,27 @@ border: 1px solid #CCCCCC;}</string>
                </widget>
               </item>
               <item>
-               <layout class="QGridLayout" name="gridLayout_7">
-                <item row="0" column="0">
-                 <spacer>
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeType">
-                   <enum>QSizePolicy::Expanding</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>321</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item row="0" column="1">
-                 <widget class="QPushButton" name="Sendbtn">
-                  <property name="text">
-                   <string>Send</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
+               <spacer>
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Expanding</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>321</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QPushButton" name="Sendbtn">
+                <property name="text">
+                 <string>Send</string>
+                </property>
+               </widget>
               </item>
              </layout>
             </widget>
@@ -965,6 +892,12 @@ background: white;}</string>
    <header>gui/common/LinkTextBrowser.h</header>
   </customwidget>
   <customwidget>
+   <class>HashBox</class>
+   <extends>QScrollArea</extends>
+   <header location="global">gui/common/HashBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>ChatTabWidget</class>
    <extends>QTabWidget</extends>
    <header location="global">gui/chat/ChatTabWidget.h</header>
@@ -974,12 +907,6 @@ background: white;}</string>
    <class>AvatarWidget</class>
    <extends>QLabel</extends>
    <header>gui/common/AvatarWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>HashBox</class>
-   <extends>QScrollArea</extends>
-   <header location="global">gui/common/HashBox.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

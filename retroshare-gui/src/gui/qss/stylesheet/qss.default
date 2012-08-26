@@ -1,6 +1,8 @@
 /* Default stylesheet
    This file is used as default for all stylesheets and can be overloaded */
 
+/* AvatarWidget */
+
 AvatarWidget{border-width: 10px;}
 AvatarWidget[frameState="NORMAL"]{border-image:url(:/images/avatarstatus-bg-116.png);}
 AvatarWidget[frameState="OFFLINE"]{border-image:url(:/images/avatarstatus-bg-offline-116.png);}
