@@ -391,10 +391,20 @@ bool GenExchangeTester::testGrpMetaModRequest()
    bool ok = true;
 
    std::string newServiceString;
+   uint32_t newGrpStatus = randNum();
+   uint32_t newSubscribeGrpFlag = randNum();
    randString(SHORT_STR, newServiceString);
 
    // mod service flag for first grp
     mTestService->setGroupServiceStringTS(token, grpIds[0], newServiceString);
+    pollForToken(token, opts);
+    ok = mTestService->acknowledgeTokenGrp(token, grpId);
+
+    mTestService->setGroupStatusFlagTS(token, grpIds[0], newGrpStatus);
+    pollForToken(token, opts);
+    ok = mTestService->acknowledgeTokenGrp(token, grpId);
+
+    mTestService->setGroupSubscribeFlagTS(token, grpIds[0], newSubscribeGrpFlag);
     pollForToken(token, opts);
     ok = mTestService->acknowledgeTokenGrp(token, grpId);
 
@@ -416,6 +426,13 @@ bool GenExchangeTester::testGrpMetaModRequest()
        if(meta.mServiceString != newServiceString)
            ok = false;
 
+       if(meta.mSubscribeFlags != newSubscribeGrpFlag)
+           ok = false;
+
+       if(meta.mGroupStatus != newGrpStatus)
+           ok = false;
+
+
    }
 
        breakDown();
@@ -425,8 +442,6 @@ bool GenExchangeTester::testGrpMetaModRequest()
 
 void GenExchangeTester::setUpLargeGrps(uint32_t nGrps)
 {
-
-
     for(int i=0; i < nGrps; i++)
     {
         RsDummyGrp* dgrp = new RsDummyGrp();
@@ -440,6 +455,97 @@ void GenExchangeTester::setUpLargeGrps(uint32_t nGrps)
         mTestService->acknowledgeTokenGrp(token, grpId);
         mGrpIdsOut.push_back(grpId);
     }
+}
+
+bool GenExchangeTester::testMsgMetaModRequest()
+{
+    setUp();
+    setUpGrps();
+
+    RsDummyMsg* msg = new RsDummyMsg();
+    init(msg);
+
+    msg->meta.mGroupId = mRandGrpIds[(rand()%3)];
+    uint32_t token;
+    RsDummyMsg* msgOut = new RsDummyMsg();
+    *msgOut = *msg;
+    mTestService->publishDummyMsg(token, msg);
+
+    // poll will block until found
+    RsTokReqOptionsV2 opts;
+    opts.mReqType = 4200;
+    pollForToken(token, opts);
+    RsGxsGrpMsgIdPair msgId;
+
+    mTestService->acknowledgeTokenMsg(token, msgId);
+
+    if(msgId.first.empty() || msgId.second.empty()){
+        breakDown();
+        return false;
+    }
+
+    std::string newServiceString;
+    randString(SHORT_STR, newServiceString);
+
+    // first modify service string
+    mTestService->setMsgServiceStringTS(token, msgId, newServiceString);
+    pollForToken(token, opts);
+
+    mTestService->acknowledgeTokenMsg(token, msgId);
+
+    uint32_t newStatus = 2;
+    // first modify service string
+    mTestService->setMsgStatusFlagTS(token, msgId, newStatus);
+    pollForToken(token, opts);
+
+    mTestService->acknowledgeTokenMsg(token, msgId);
+
+    // now request msg
+    GxsMsgReq req;
+    std::vector<RsGxsMessageId> msgV;
+    msgV.push_back(msgId.second);
+    req.insert(std::make_pair(msgId.first, msgV));
+
+    opts.mReqType = GXS_REQUEST_TYPE_MSG_META;
+    mTokenService->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, req);
+
+    // poll again
+    pollForToken(token, opts);
+
+    bool ok = true;
+
+    if(mMsgMetaDataIn.empty())
+        ok = false;
+
+    if(ok){
+
+        GxsMsgMetaMap::iterator mit = mMsgMetaDataIn.begin();
+        std::vector<RsMsgMetaData>& metaV = mit->second;
+
+        RsMsgMetaData meta;
+        if(metaV.empty()){
+            ok = false;
+        }else{
+            meta = *(metaV.begin());
+        }
+
+
+        if(meta.mServiceString != newServiceString)
+            ok &= false;
+
+        if(meta.mMsgStatus != newStatus)
+            ok &= false;
+
+
+    }
+
+    /********************/
+
+    // complete
+    breakDown();
+
+    return ok;
+
 }
 
 bool GenExchangeTester::testMsgSubmissionRetrieval()

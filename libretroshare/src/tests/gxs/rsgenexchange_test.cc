@@ -20,6 +20,7 @@ int main()
     CHECK(tester.testRelatedMsgIdRetrieval_Parents()); REPORT("tester.testRelatedMsgIdRetrieval_Parents()");
     CHECK(tester.testRelatedMsgIdRetrieval_OrigMsgId()); REPORT("tester.testRelatedMsgIdRetrieval_OrigMsgId()");
     CHECK(tester.testRelatedMsgIdRetrieval_Latest()); REPORT("tester.testRelatedMsgIdRetrieval_Latest()");
+    CHECK(tester.testMsgMetaModRequest()); REPORT("tester.testMsgMetaModRequest()");
 
     CHECK(tester.testGrpSubmissionRetrieval()); REPORT("tester.testGrpSubmissionRetrieval()");
     CHECK(tester.testGrpMetaRetrieval()); REPORT("tester.testGrpMetaRetrieval()");
