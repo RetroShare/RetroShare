@@ -50,3 +50,29 @@ bool GenExchangeTestService::getMsgListTS(const uint32_t &token, GxsMsgIdResult 
 {
     return getMsgList(token, msgIds);
 }
+
+void GenExchangeTestService::setGroupServiceStringTS(uint32_t &token, const RsGxsGroupId &grpId, const std::string &servString)
+{
+        RsGenExchange::setGroupServiceString(token, grpId, servString);
+}
+
+void GenExchangeTestService::setGroupStatusFlagTS(uint32_t &token, const RsGxsGroupId &grpId, const uint32_t &status)
+{
+    RsGenExchange::setGroupStatusFlag(token, grpId, status);
+}
+
+void GenExchangeTestService::setGroupSubscribeFlagTS(uint32_t &token, const RsGxsGroupId &grpId, const uint32_t &status)
+{
+    RsGenExchange::setGroupSubscribeFlag(token, grpId, status);
+}
+
+void GenExchangeTestService::setMsgServiceStringTS(uint32_t &token, const RsGxsGrpMsgIdPair &msgId, const std::string &servString)
+{
+    RsGenExchange::setMsgServiceString(token, msgId, servString);
+}
+
+void GenExchangeTestService::setMsgStatusFlagTS(uint32_t &token, const RsGxsGrpMsgIdPair &msgId, const uint32_t &status)
+{
+    RsGenExchange::setMsgStatusFlag(token, msgId, status);
+}
+

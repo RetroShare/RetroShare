@@ -476,7 +476,6 @@ bool RetroDb::sqlUpdate(const std::string &tableName, std::string whereClause, c
 
     // execute query
     return execSQL(sqlQuery);
-
 }
 
 

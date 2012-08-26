@@ -59,6 +59,17 @@ public:
      */
     bool getMsgDataTS(const uint32_t &token, GxsMsgDataMap& msgItems);
 
+
+    void setGroupSubscribeFlagTS(uint32_t& token, const RsGxsGroupId& grpId, const uint32_t& status);
+
+    void setGroupStatusFlagTS(uint32_t& token, const RsGxsGroupId& grpId, const uint32_t& status);
+
+    void setGroupServiceStringTS(uint32_t& token, const RsGxsGroupId& grpId, const std::string& servString);
+
+    void setMsgStatusFlagTS(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, const uint32_t& status);
+
+    void setMsgServiceStringTS(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, const std::string& servString );
+
 };
 
 #endif // GENEXCHANGETESTSERVICE_H

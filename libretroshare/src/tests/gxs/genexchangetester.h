@@ -9,6 +9,9 @@
 bool operator ==(const RsMsgMetaData& lMeta, const RsMsgMetaData& rMeta);
 bool operator ==(const RsDummyMsg& lMsg, const RsDummyMsg& rMsg);
 
+bool operator ==(const RsGroupMetaData& lMeta, const RsGroupMetaData& rMeta);
+bool operator ==(const RsDummyGrp& lMsg, const RsDummyGrp& rMsg);
+
 /*!
  * The job of the service tester is to send dummy msg items to the GenExchange service
  * and then retrieve them (ignoring ackowledge message)
@@ -47,6 +50,13 @@ private:
 
 
     void setUpGrps(); // to be called at start of msg tests
+
+    /*!
+     * Can be called at start grpId or grpMeta test
+     * to help out
+     * ids are store is mGrpIdsOut
+     */
+    void setUpLargeGrps(uint32_t nGrps);
 
     void storeMsgData(GxsMsgDataMap& msgData);
     void storeMsgMeta(GxsMsgMetaMap& msgMetaData);

@@ -268,6 +268,7 @@ void RsGxsGrpMetaData::operator =(const RsGroupMetaData& rMeta)
 	this->mSubscribeFlags = rMeta.mSubscribeFlags;
 	this->mGroupName = rMeta.mGroupName;
 	this->mServiceString = rMeta.mServiceString;
+        this->mSignFlags = rMeta.mSignFlags;
 }
 
 void RsGxsMsgMetaData::operator =(const RsMsgMetaData& rMeta)

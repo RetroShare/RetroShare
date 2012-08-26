@@ -624,20 +624,21 @@ void RsGenExchange::publishGrps()
 
 		if(ok)
 		{
-			grp->metaData = new RsGxsGrpMetaData();
-			*(grp->metaData) = grpItem->meta;
-            createGroup(grp);
-            size = grp->metaData->serial_size();
-            char mData[size];
-            grp->metaData->mGroupId = grp->grpId;
-            ok = grp->metaData->serialise(mData, size);
-            grp->meta.setBinData(mData, size);
+                    grp->metaData = new RsGxsGrpMetaData();
+                    grpItem->meta.mPublishTs = time(NULL);
+                    *(grp->metaData) = grpItem->meta;
+                    createGroup(grp);
+                    size = grp->metaData->serial_size();
+                    char mData[size];
+                    grp->metaData->mGroupId = grp->grpId;
+                    ok = grp->metaData->serialise(mData, size);
+                    grp->meta.setBinData(mData, size);
 
-			ok = mDataAccess->addGroupData(grp);
+                    ok = mDataAccess->addGroupData(grp);
 
-			// add to published to allow acknowledgement
-                        mGrpNotify.insert(std::make_pair(mit->first, grp->grpId));
-			mDataAccess->updatePublicRequestStatus(mit->first, RsTokenServiceV2::GXS_REQUEST_STATUS_COMPLETE);
+                    // add to published to allow acknowledgement
+                    mGrpNotify.insert(std::make_pair(mit->first, grp->grpId));
+                    mDataAccess->updatePublicRequestStatus(mit->first, RsTokenServiceV2::GXS_REQUEST_STATUS_COMPLETE);
 		}
 
 		if(!ok)

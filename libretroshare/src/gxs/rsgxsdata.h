@@ -56,6 +56,7 @@ public:
     std::string mGroupName;
     uint32_t    mGroupFlags;
     uint32_t    mPublishTs;
+    uint32_t    mSignFlags;
     std::string mAuthorId;
 
 

@@ -21,6 +21,11 @@ int main()
     CHECK(tester.testRelatedMsgIdRetrieval_OrigMsgId()); REPORT("tester.testRelatedMsgIdRetrieval_OrigMsgId()");
     CHECK(tester.testRelatedMsgIdRetrieval_Latest()); REPORT("tester.testRelatedMsgIdRetrieval_Latest()");
 
+    CHECK(tester.testGrpSubmissionRetrieval()); REPORT("tester.testGrpSubmissionRetrieval()");
+    CHECK(tester.testGrpMetaRetrieval()); REPORT("tester.testGrpMetaRetrieval()");
+    CHECK(tester.testGrpIdRetrieval()); REPORT("tester.testGrpIdRetrieval()");
+    CHECK(tester.testGrpMetaModRequest()); REPORT("tester.testGrpMetaModRequest()");
+
     FINALREPORT("RsGenExchangeTest");
 
     return 0;

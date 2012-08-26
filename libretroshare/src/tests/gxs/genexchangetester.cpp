@@ -126,6 +126,321 @@ void GenExchangeTester::breakDown()
     mGrpMetaDataOut.clear();
 }
 
+bool GenExchangeTester::testGrpSubmissionRetrieval()
+{
+
+
+    setUp();
+
+    // create some random grps to allow msg testing
+
+   RsDummyGrp* dgrp1 = new RsDummyGrp();
+   RsDummyGrp* dgrp2 = new RsDummyGrp();
+   RsDummyGrp* dgrp3 = new RsDummyGrp();
+
+   RsDummyGrp* dgrp1_copy = new RsDummyGrp();
+   RsDummyGrp* dgrp2_copy = new RsDummyGrp();
+   RsDummyGrp* dgrp3_copy = new RsDummyGrp();
+
+   init(dgrp1);
+   init(dgrp2);
+   init(dgrp3);
+
+   RsTokReqOptionsV2 opts;
+   opts.mReqType = 45000;
+   uint32_t token;
+   RsGxsGroupId grpId;
+
+   *dgrp1_copy = *dgrp1;
+   mTestService->publishDummyGrp(token, dgrp1);
+   pollForToken(token, opts);
+   mTestService->acknowledgeTokenGrp(token, grpId);
+   dgrp1_copy->meta.mGroupId = grpId;
+   mGrpDataOut.push_back(dgrp1_copy);
+
+   *dgrp2_copy = *dgrp2;
+   mTestService->publishDummyGrp(token, dgrp2);
+   pollForToken(token, opts);
+   mTestService->acknowledgeTokenGrp(token, grpId);
+   dgrp2_copy->meta.mGroupId = grpId;
+   mGrpDataOut.push_back(dgrp2_copy);
+
+   *dgrp3_copy = *dgrp3;
+   mTestService->publishDummyGrp(token, dgrp3);
+   pollForToken(token, opts);
+   mTestService->acknowledgeTokenGrp(token, grpId);
+   dgrp3_copy->meta.mGroupId = grpId;
+   mGrpDataOut.push_back(dgrp3_copy);
+
+   opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+
+   std::list<RsGxsGroupId> grpIds;
+   mTokenService->requestGroupInfo(token, 0, opts, grpIds);
+
+   pollForToken(token, opts);
+
+   std::vector<RsGxsGrpItem*>::iterator lit_out = mGrpDataOut.begin();
+
+   bool ok = true;
+
+   for(; lit_out != mGrpDataOut.end(); lit_out++)
+   {
+       RsDummyGrp* grpOut = dynamic_cast<RsDummyGrp*>(*lit_out);
+       if(!grpOut)
+       {
+           ok = false;
+           break;
+       }
+
+
+
+       std::vector<RsGxsGrpItem*>::iterator lit_in = mGrpDataIn.begin();
+
+       bool found = true;
+       for(; lit_in != mGrpDataIn.end(); lit_in++)
+       {
+            RsDummyGrp* grpIn = dynamic_cast<RsDummyGrp*>(*lit_in);
+
+            if(!grpIn)
+            {
+                ok = false;
+                break;
+            }
+
+            if(grpIn->meta.mGroupId == grpOut->meta.mGroupId)
+            {
+                found = true;
+                ok &= *grpIn == *grpOut;
+            }
+       }
+
+       if(!found)
+       {
+           ok = false;
+           break;
+       }
+   }
+
+   breakDown();
+   return ok;
+}
+
+bool GenExchangeTester::testGrpMetaRetrieval()
+{
+    setUp();
+
+    // create some random grps to allow msg testing
+
+   RsDummyGrp* dgrp1 = new RsDummyGrp();
+   RsDummyGrp* dgrp2 = new RsDummyGrp();
+   RsDummyGrp* dgrp3 = new RsDummyGrp();
+
+   init(dgrp1);
+   init(dgrp2);
+   init(dgrp3);
+
+   RsTokReqOptionsV2 opts;
+   opts.mReqType = 45000;
+   uint32_t token;
+   RsGxsGroupId grpId;
+
+   RsGroupMetaData tempMeta;
+
+   tempMeta = dgrp1->meta;
+   mTestService->publishDummyGrp(token, dgrp1);
+   pollForToken(token, opts);
+   mTestService->acknowledgeTokenGrp(token, grpId);
+   tempMeta.mGroupId = grpId;
+   mGrpMetaDataOut.push_back(tempMeta);
+
+
+   tempMeta = dgrp2->meta;
+   mTestService->publishDummyGrp(token, dgrp2);
+   pollForToken(token, opts);
+   mTestService->acknowledgeTokenGrp(token, grpId);
+   tempMeta.mGroupId = grpId;
+   mGrpMetaDataOut.push_back(tempMeta);
+
+   tempMeta = dgrp3->meta;
+   mTestService->publishDummyGrp(token, dgrp3);
+   pollForToken(token, opts);
+   mTestService->acknowledgeTokenGrp(token, grpId);
+   tempMeta.mGroupId = grpId;
+   mGrpMetaDataOut.push_back(tempMeta);
+
+
+   opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+
+   std::list<RsGxsGroupId> grpIds;
+   mTokenService->requestGroupInfo(token, 0, opts, grpIds);
+
+   pollForToken(token, opts);
+
+   std::list<RsGroupMetaData>::iterator lit_out = mGrpMetaDataOut.begin();
+
+   bool ok = true;
+
+   for(; lit_out != mGrpMetaDataOut.end(); lit_out++)
+   {
+       const RsGroupMetaData& grpMetaOut = *lit_out;
+
+       std::list<RsGroupMetaData>::iterator lit_in = mGrpMetaDataIn.begin();
+
+       bool found = true;
+       for(; lit_in != mGrpMetaDataIn.end(); lit_in++)
+       {
+            const RsGroupMetaData& grpMetaIn = *lit_in;
+
+            if(grpMetaOut.mGroupId == grpMetaIn.mGroupId)
+            {
+                found = true;
+                ok &= grpMetaIn == grpMetaOut;
+            }
+       }
+
+       if(!found)
+       {
+           ok = false;
+           break;
+       }
+   }
+
+   breakDown();
+   return ok;
+}
+
+bool GenExchangeTester::testGrpIdRetrieval()
+{
+    setUp();
+    setUpLargeGrps(30); // create a large amount of grps
+
+
+    RsTokReqOptionsV2 opts;
+    opts.mReqType = GXS_REQUEST_TYPE_GROUP_IDS;
+    uint32_t token;
+    std::list<RsGxsGroupId> grpIds;
+    mTokenService->requestGroupInfo(token, 0, opts, grpIds);
+
+    pollForToken(token, opts);
+
+    std::list<RsGxsGroupId>::iterator lit_out = mGrpIdsOut.begin();
+
+    bool ok = true;
+
+    for(; lit_out != mGrpIdsOut.end(); lit_out++)
+    {
+        std::list<RsGxsGroupId>::iterator lit_in = mGrpIdsIn.begin();
+
+        bool found = true;
+        for(; lit_in != mGrpIdsIn.end(); lit_in++)
+        {
+
+             if(*lit_out == *lit_in)
+             {
+                 found = true;
+             }
+        }
+
+        if(!found)
+        {
+            ok = false;
+            break;
+        }
+    }
+
+    breakDown();
+    return ok;
+}
+
+
+bool GenExchangeTester::testGrpMetaModRequest()
+{
+
+    setUp();
+
+    // create some random grps to allow msg testing
+
+   RsDummyGrp* dgrp1 = new RsDummyGrp();
+   RsDummyGrp* dgrp2 = new RsDummyGrp();
+   RsDummyGrp* dgrp3 = new RsDummyGrp();
+   init(dgrp1);
+   init(dgrp2);
+   init(dgrp3);
+
+   uint32_t token;
+   RsTokReqOptionsV2 opts;
+   opts.mReqType = 45000;
+   std::vector<RsGxsGroupId> grpIds;
+   RsGxsGroupId grpId;
+
+   mTestService->publishDummyGrp(token, dgrp1);
+   pollForToken(token, opts);
+   mTestService->acknowledgeTokenGrp(token, grpId);
+   grpIds.push_back(grpId);
+
+   mTestService->publishDummyGrp(token, dgrp2);
+   pollForToken(token, opts);
+   mTestService->acknowledgeTokenGrp(token, grpId);
+   grpIds.push_back(grpId);
+
+   mTestService->publishDummyGrp(token, dgrp3);
+   pollForToken(token, opts);
+   mTestService->acknowledgeTokenGrp(token, grpId);
+   grpIds.push_back(grpId);
+
+   bool ok = true;
+
+   std::string newServiceString;
+   randString(SHORT_STR, newServiceString);
+
+   // mod service flag for first grp
+    mTestService->setGroupServiceStringTS(token, grpIds[0], newServiceString);
+    pollForToken(token, opts);
+    ok = mTestService->acknowledgeTokenGrp(token, grpId);
+
+    std::list<RsGxsGroupId> reqGrpIds;
+    reqGrpIds.push_back(grpIds[0]);
+    opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+    mTokenService->requestGroupInfo(token, 0, opts, reqGrpIds);
+    pollForToken(token, opts);
+
+
+
+   if(mGrpMetaDataIn.empty())
+       ok = false;
+
+   if(ok)
+   {
+       RsGroupMetaData meta = *(mGrpMetaDataIn.begin());
+
+       if(meta.mServiceString != newServiceString)
+           ok = false;
+
+   }
+
+       breakDown();
+       return ok;
+}
+
+
+void GenExchangeTester::setUpLargeGrps(uint32_t nGrps)
+{
+
+
+    for(int i=0; i < nGrps; i++)
+    {
+        RsDummyGrp* dgrp = new RsDummyGrp();
+        RsGxsGroupId grpId;
+        uint32_t token;
+        init(dgrp);
+        RsTokReqOptionsV2 opts;
+        opts.mReqType = 4000;
+        mTestService->publishDummyGrp(token, dgrp);
+        pollForToken(token, opts);
+        mTestService->acknowledgeTokenGrp(token, grpId);
+        mGrpIdsOut.push_back(grpId);
+    }
+}
 
 bool GenExchangeTester::testMsgSubmissionRetrieval()
 {
@@ -821,18 +1136,6 @@ void GenExchangeTester::createMsgs(std::vector<RsDummyMsg *> &msgs, int nMsgs) c
 }
 
 
-
-bool GenExchangeTester::testGrpIdRetrieval()
-{
-    return false;
-}
-
-bool GenExchangeTester::testGrpMetaModRequest()
-{
-    return false;
-}
-
-
 // helper functions
 
 void GenExchangeTester::storeGrpMeta(std::list<RsGroupMetaData> &grpMetaData){
@@ -870,6 +1173,21 @@ void GenExchangeTester::storeMsgIds(GxsMsgIdResult &msgIds)
 
 void GenExchangeTester::init(RsGroupMetaData &grpMeta) const
 {
+    randString(SHORT_STR, grpMeta.mGroupId);
+    randString(SHORT_STR, grpMeta.mAuthorId);
+    randString(SHORT_STR, grpMeta.mGroupName);
+    randString(SHORT_STR, grpMeta.mServiceString);
+
+
+    grpMeta.mGroupFlags = randNum();
+    grpMeta.mLastPost = randNum();
+    grpMeta.mGroupStatus = randNum();
+    grpMeta.mMsgCount = randNum();
+    grpMeta.mPop = randNum();
+    grpMeta.mSignFlags = randNum();
+    grpMeta.mPublishTs = randNum();
+    grpMeta.mSubscribeFlags = randNum();
+
 }
 
 void GenExchangeTester::init(RsMsgMetaData &msgMeta) const
@@ -913,6 +1231,35 @@ bool operator ==(const RsMsgMetaData& lMeta, const RsMsgMetaData& rMeta)
     return true;
 }
 
+bool operator ==(const RsGroupMetaData& lMeta, const RsGroupMetaData& rMeta)
+{
+    if(lMeta.mAuthorId != rMeta.mAuthorId) return false;
+    if(lMeta.mGroupFlags != rMeta.mGroupFlags) return false;
+    if(lMeta.mGroupId != rMeta.mGroupId) return false;
+    if(lMeta.mGroupName != rMeta.mGroupName) return false;
+    if(lMeta.mGroupStatus != rMeta.mGroupStatus) return false;
+    if(lMeta.mLastPost != rMeta.mLastPost) return false;
+    if(lMeta.mMsgCount != rMeta.mMsgCount) return false;
+    if(lMeta.mPop != rMeta.mPop) return false;
+   // if(lMeta.mPublishTs != rMeta.mPublishTs) return false; set in gxs
+    if(lMeta.mServiceString != rMeta.mServiceString) return false;
+    if(lMeta.mSignFlags != rMeta.mSignFlags) return false;
+    if(lMeta.mSubscribeFlags != rMeta.mSubscribeFlags) return false;
+
+    return true;
+}
+
+bool operator ==(const RsDummyGrp& lGrp, const RsDummyGrp& rGrp)
+{
+
+    if(lGrp.grpData != rGrp.grpData) return false;
+    if(! (lGrp.meta == rGrp.meta)) return false;
+
+    return true;
+
+
+}
+
 bool operator ==(const RsDummyMsg& lMsg, const RsDummyMsg& rMsg)
 {
     if(lMsg.msgData != rMsg.msgData) return false;
@@ -923,7 +1270,8 @@ bool operator ==(const RsDummyMsg& lMsg, const RsDummyMsg& rMsg)
 
 void GenExchangeTester::init(RsDummyGrp *grpItem) const
 {
-
+    randString(SHORT_STR, grpItem->grpData);
+    init(grpItem->meta);
 }
 
 void GenExchangeTester::init(RsDummyMsg *msgItem) const
