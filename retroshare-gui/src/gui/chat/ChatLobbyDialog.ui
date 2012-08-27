@@ -32,7 +32,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QFrame" name="leftsideframe">
+      <widget class="QFrame" name="leftsideFrame">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -44,15 +44,6 @@
          <width>14</width>
          <height>16777215</height>
         </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QFrame#frame{border: transparent}</string>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
         <property name="margin">
@@ -110,15 +101,6 @@
          <height>16777215</height>
         </size>
        </property>
-       <property name="styleSheet">
-        <string notr="true">border: transparent;</string>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
-       </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <property name="leftMargin">
          <number>0</number>
@@ -133,15 +115,7 @@
          <number>3</number>
         </property>
         <item>
-         <widget class="QListWidget" name="participantsList">
-          <property name="styleSheet">
-           <string notr="true">QListWidget{
-  border: 1px solid #B8B6B1;
-  border-radius: 6px;
-  background: white;
-}</string>
-          </property>
-         </widget>
+         <widget class="QListWidget" name="participantsList"/>
         </item>
        </layout>
       </widget>

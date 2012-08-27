@@ -47,8 +47,7 @@ CreateChannel::CreateChannel(QWidget *parent)
 	connect( ui.cancelButton, SIGNAL( clicked ( bool ) ), this, SLOT( cancelChannel( ) ) );
 	connect( ui.createButton, SIGNAL( clicked ( bool ) ), this, SLOT( createChannel( ) ) );
 
-	connect( ui.LogoButton, SIGNAL(clicked() ), this , SLOT(addChannelLogo()));
-	connect( ui.ChannelLogoButton, SIGNAL(clicked() ), this , SLOT(addChannelLogo()));
+	connect( ui.logoButton, SIGNAL(clicked() ), this , SLOT(addChannelLogo()));
 	connect( ui.pubKeyShare_cb, SIGNAL( clicked() ), this, SLOT( setShareList( ) ));
 
 	if (!ui.pubKeyShare_cb->isChecked()) {
@@ -150,5 +149,5 @@ void CreateChannel::addChannelLogo() // the same function as in EditChanDetails
 	picture = img;
 
 	// to show the selected
-	ui.ChannelLogoButton->setIcon(picture);
+	ui.logoLabel->setPixmap(picture);
 }

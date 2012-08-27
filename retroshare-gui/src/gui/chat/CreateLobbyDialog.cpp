@@ -65,6 +65,8 @@ CreateLobbyDialog::CreateLobbyDialog(const std::list<std::string>& peer_list, in
 	}
 
 	checkTextFields();
+
+	ui->lobbyName_LE->setFocus();
 }
 
 CreateLobbyDialog::~CreateLobbyDialog()

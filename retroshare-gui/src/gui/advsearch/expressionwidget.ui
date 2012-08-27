@@ -31,10 +31,6 @@
   <property name="windowTitle">
    <string>Expression Widget</string>
   </property>
-  <property name="styleSheet">
-   <string notr="true">QWidget#ExpressionWidget{
-background: transparent;}</string>
-  </property>
   <layout class="QHBoxLayout">
    <property name="spacing">
     <number>6</number>
@@ -56,12 +52,6 @@ background: transparent;}</string>
        <height>26</height>
       </size>
      </property>
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
     </widget>
    </item>
    <item>
@@ -77,12 +67,6 @@ background: transparent;}</string>
        <width>100</width>
        <height>26</height>
       </size>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
      </property>
     </widget>
    </item>
@@ -100,12 +84,6 @@ background: transparent;}</string>
        <height>26</height>
       </size>
      </property>
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
     </widget>
    </item>
    <item>
@@ -122,33 +100,12 @@ background: transparent;}</string>
        <height>26</height>
       </size>
      </property>
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
     </widget>
    </item>
    <item>
     <widget class="QPushButton" name="deleteExprButton">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>20</width>
-       <height>20</height>
-      </size>
-     </property>
      <property name="toolTip">
       <string>Delete this expression</string>
-     </property>
-     <property name="text">
-      <string/>
      </property>
      <property name="icon">
       <iconset resource="../images.qrc">

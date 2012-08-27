@@ -485,8 +485,8 @@ void ChannelFeed::updateChannelMsgs()
     if (!rsChannels->getChannelInfo(mChannelId, ci)) {
         postButton->setEnabled(false);
         nameLabel->setText(tr("No Channel Selected"));
-        iconLabel->setPixmap(QPixmap(":/images/channels.png"));
-        iconLabel->setEnabled(false);
+        logoLabel->setPixmap(QPixmap(":/images/channels.png"));
+        logoLabel->setEnabled(false);
         return;
     }
 
@@ -496,8 +496,8 @@ void ChannelFeed::updateChannelMsgs()
     } else {
         chanImage = QPixmap(CHAN_DEFAULT_IMAGE);
     }
-    iconLabel->setPixmap(chanImage);
-    iconLabel->setEnabled(true);
+    logoLabel->setPixmap(chanImage);
+    logoLabel->setEnabled(true);
 
     /* set Channel name */
     nameLabel->setText(QString::fromStdWString(ci.channelName));

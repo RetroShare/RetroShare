@@ -29,53 +29,6 @@
        <height>130</height>
       </size>
      </property>
-     <property name="styleSheet">
-      <string notr="true">QFrame#frame{ 
-background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-stop:0 #FEFEFE, stop:1 #E8E8E8);
-
-border: 1px solid #CCCCCC;}
-
-QToolButton, QPushButton, QComboBox { 
-border-image: url(:/images/btn_26.png) 4;
-border-width: 4;
-padding: 0px 6px;
-font-size: 12px;
-}
-
-*{
-color: black;
-}
-
-QComboBox QAbstractItemView {
-background-color:white;
-}
-
-QComboBox::down-arrow {
-image: url(:/images/combobox_arrow.png);
-}
-
-QComboBox:drop-down
-{
-subcontrol-origin: padding;
-subcontrol-position: top right;
-border-left-style: none; 
-border-top-right-radius: 1px;
-border-bottom-right-radius: 1px;
-}
-
-QToolButton:hover, QPushButton:hover, QComboBox:hover {
-border-image: url(:/images/btn_26_hover.png) 4;
-}
-
-QToolButton:disabled, QPushButton:disabled, QComboBox::disabled {
-color:gray;
-}
-
-QToolButton:pressed, QPushButton:pressed{
-border-image: url(:/images/btn_26_pressed.png) 4;
-}</string>
-     </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
@@ -99,13 +52,6 @@ border-image: url(:/images/btn_26_pressed.png) 4;
         </property>
         <property name="autoFillBackground">
          <bool>false</bool>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">QWidget#frame{ 
-background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-stop:0 #FEFEFE, stop:1 #E8E8E8);
-
-border: 1px solid #CCCCCC;}</string>
         </property>
         <property name="title">
          <string>Search Criteria</string>
@@ -137,12 +83,6 @@ border: 1px solid #CCCCCC;}</string>
            <property name="autoFillBackground">
             <bool>false</bool>
            </property>
-           <property name="frameShape">
-            <enum>QFrame::NoFrame</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
           </widget>
          </item>
          <item>
@@ -173,9 +113,6 @@ border: 1px solid #CCCCCC;}</string>
          <widget class="QPushButton" name="addExprButton">
           <property name="toolTip">
            <string>Add a further search criterion.</string>
-          </property>
-          <property name="text">
-           <string/>
           </property>
           <property name="icon">
            <iconset resource="../images.qrc">

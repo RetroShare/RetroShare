@@ -33,15 +33,6 @@
         <height>82</height>
        </size>
       </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::NoFrame</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
       <layout class="QGridLayout" name="gridLayout_5">
        <property name="margin">
         <number>6</number>
@@ -78,9 +69,6 @@
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
-           </property>
-           <property name="text">
-            <string/>
            </property>
            <property name="popupMode">
             <enum>QToolButton::InstantPopup</enum>
@@ -155,23 +143,8 @@
        </item>
        <item>
         <widget class="QToolButton" name="addIMAccountButton">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
          <property name="toolTip">
           <string>Add a Friend</string>
-         </property>
-         <property name="text">
-          <string/>
          </property>
          <property name="icon">
           <iconset resource="images.qrc">
@@ -183,9 +156,6 @@
            <height>24</height>
           </size>
          </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextBesideIcon</enum>
-         </property>
          <property name="autoRaise">
           <bool>true</bool>
          </property>
@@ -193,20 +163,8 @@
        </item>
        <item>
         <widget class="QToolButton" name="shareButton">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
          <property name="toolTip">
           <string>Share Files for your Friends</string>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="text">
-          <string/>
          </property>
          <property name="icon">
           <iconset resource="images.qrc">
@@ -247,19 +205,12 @@
      </widget>
     </item>
     <item row="3" column="0">
-     <widget class="LogoBar" name="logoframe">
+     <widget class="LogoBar" name="logoFrame">
       <property name="minimumSize">
        <size>
         <width>0</width>
         <height>65</height>
        </size>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QFrame#logoframe{ 
-background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-stop:0 #FEFEFE, stop:1 #E8E8E8);
-
-border: 1px solid #CCCCCC;}</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
@@ -270,14 +221,11 @@ border: 1px solid #CCCCCC;}</string>
      </widget>
     </item>
     <item row="2" column="0">
-     <widget class="QFrame" name="frame_2">
-      <property name="styleSheet">
-       <string notr="true">QFrame#frame_2{ 
-background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-stop:0 #FEFEFE, stop:1 #E8E8E8);
-}</string>
-      </property>
+     <widget class="QFrame" name="friendListFrame">
       <layout class="QGridLayout" name="gridLayout_3">
+       <property name="margin">
+        <number>3</number>
+       </property>
        <item row="1" column="0">
         <widget class="FriendList" name="friendList" native="true">
          <property name="sizePolicy">

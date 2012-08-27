@@ -43,32 +43,12 @@ EditChanDetails::EditChanDetails(QWidget *parent, Qt::WFlags flags, std::string 
     connect(ui.applyButton, SIGNAL(clicked()), this, SLOT(applyDialog()));
     connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(closeinfodlg()));
   
-    connect( ui.LogoButton, SIGNAL(clicked() ), this , SLOT(addChannelLogo()));	
-    connect( ui.ChannelLogoButton, SIGNAL(clicked() ), this , SLOT(addChannelLogo()));
+    connect( ui.logoButton, SIGNAL(clicked() ), this , SLOT(addChannelLogo()));
     
-    ui.ChannelLogoButton->setDisabled(true);
-    ui.LogoButton->setDisabled(true);
+    ui.logoButton->setDisabled(true);
+    ui.logoLabel->setDisabled(true);
 
     loadChannel();
-
-}
-
-
-/**
- Overloads the default show() slot so we can set opacity*/
-
-void EditChanDetails::show()
-{
-
-  if(!this->isVisible()) {
-    QDialog::show();
-
-  }
-}
-
-void EditChanDetails::closeEvent (QCloseEvent * event)
-{
-    QWidget::closeEvent(event);
 }
 
 void EditChanDetails::closeinfodlg()
@@ -76,13 +56,11 @@ void EditChanDetails::closeinfodlg()
 	close();
 }
 
-
 void EditChanDetails::loadChannel()
 {
-
     if (!rsChannels)
     {
-            return;
+        return;
     }
 
     ChannelInfo ci;
@@ -95,23 +73,21 @@ void EditChanDetails::loadChannel()
     ui.DescriptiontextEdit->setText(QString::fromStdWString(ci.channelDesc));
     
 	// Set Channel Logo
+	QPixmap chanImage;
     if(ci.pngImageLen != 0)
     {
-        QPixmap chanImage;
         chanImage.loadFromData(ci.pngChanImage, ci.pngImageLen, "PNG");
-        ui.ChannelLogoButton->setIcon(QIcon(chanImage));
     }
     else
     {
-        QPixmap defaulImage(CHAN_DEFAULT_IMAGE);
-        ui.ChannelLogoButton->setIcon(QIcon(defaulImage));
+        chanImage = QPixmap(CHAN_DEFAULT_IMAGE);
     }
+    ui.logoLabel->setPixmap(chanImage);
 
 }
 
 void EditChanDetails::applyDialog()
 {
-
     if(!rsChannels)
         return;
 
@@ -124,7 +100,6 @@ void EditChanDetails::applyDialog()
     ci.channelName = misc::removeNewLine(ui.nameline->text()).toStdWString();
     ci.channelDesc = ui.DescriptiontextEdit->document()->toPlainText().toStdWString();
 
-
     /* reload now */
     rsChannels->channelEditInfo(mChannelId, ci);
 
@@ -133,7 +108,6 @@ void EditChanDetails::applyDialog()
 
     return;
 }
-
 
 void EditChanDetails::addChannelLogo() // the same function as in CreateChannel
 {
@@ -145,6 +119,5 @@ void EditChanDetails::addChannelLogo() // the same function as in CreateChannel
 	picture = img;
 
 	// to show the selected
-	ui.ChannelLogoButton->setIcon(picture);
+	ui.logoLabel->setPixmap(picture);
 }
-

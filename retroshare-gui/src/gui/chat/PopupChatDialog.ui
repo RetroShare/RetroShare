@@ -45,15 +45,6 @@
          <height>16777215</height>
         </size>
        </property>
-       <property name="styleSheet">
-        <string notr="true">QFrame#frame{border: transparent}</string>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
-       </property>
        <layout class="QVBoxLayout" name="verticalLayout">
         <property name="margin">
          <number>0</number>

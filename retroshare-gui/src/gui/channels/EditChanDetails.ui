@@ -116,7 +116,7 @@
           </spacer>
          </item>
          <item row="0" column="1">
-          <widget class="QPushButton" name="LogoButton">
+          <widget class="QPushButton" name="logoButton">
            <property name="text">
             <string>Add Channel Logo</string>
            </property>
@@ -127,7 +127,7 @@
           </widget>
          </item>
          <item row="0" column="0" rowspan="2">
-          <widget class="QToolButton" name="ChannelLogoButton">
+          <widget class="QLabel" name="logoLabel">
            <property name="minimumSize">
             <size>
              <width>64</width>
@@ -140,24 +140,17 @@
              <height>64</height>
             </size>
            </property>
-           <property name="styleSheet">
-            <string notr="true">
-border: 2px solid white;
-border-radius: 10px;
-</string>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
            </property>
-           <property name="text">
-            <string/>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
            </property>
-           <property name="icon">
-            <iconset resource="../images.qrc">
-             <normaloff>:/images/channels.png</normaloff>:/images/channels.png</iconset>
+           <property name="pixmap">
+            <pixmap resource="../images.qrc">:/images/channels.png</pixmap>
            </property>
-           <property name="iconSize">
-            <size>
-             <width>64</width>
-             <height>64</height>
-            </size>
+           <property name="scaledContents">
+            <bool>true</bool>
            </property>
           </widget>
          </item>

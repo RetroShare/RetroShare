@@ -17,7 +17,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <widget class="QWidget" name="layoutWidget">
-      <layout class="QGridLayout" name="gridLayout_4">
+      <layout class="QGridLayout" name="friendListLayout">
        <property name="horizontalSpacing">
         <number>6</number>
        </property>
@@ -160,7 +160,7 @@
       </layout>
      </widget>
      <widget class="QWidget" name="layoutWidget_1">
-      <layout class="QGridLayout" name="gridLayout_5">
+      <layout class="QGridLayout" name="tabLayout">
        <property name="verticalSpacing">
         <number>1</number>
        </property>
@@ -887,6 +887,18 @@ background: white;}</string>
  </widget>
  <customwidgets>
   <customwidget>
+   <class>AvatarWidget</class>
+   <extends>QLabel</extends>
+   <header>gui/common/AvatarWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>FriendList</class>
+   <extends>QWidget</extends>
+   <header>gui/common/FriendList.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>LinkTextBrowser</class>
    <extends>QTextBrowser</extends>
    <header>gui/common/LinkTextBrowser.h</header>
@@ -901,18 +913,6 @@ background: white;}</string>
    <class>ChatTabWidget</class>
    <extends>QTabWidget</extends>
    <header location="global">gui/chat/ChatTabWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>AvatarWidget</class>
-   <extends>QLabel</extends>
-   <header>gui/common/AvatarWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>FriendList</class>
-   <extends>QWidget</extends>
-   <header>gui/common/FriendList.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

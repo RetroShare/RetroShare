@@ -139,9 +139,6 @@ p, li { white-space: pre-wrap; }
               <height>0</height>
              </size>
             </property>
-            <property name="text">
-             <string/>
-            </property>
             <property name="pixmap">
              <pixmap resource="../images.qrc">:/images/thumb-default-video.png</pixmap>
             </property>
@@ -298,7 +295,7 @@ p, li { white-space: pre-wrap; }
                <x>0</x>
                <y>0</y>
                <width>511</width>
-               <height>28</height>
+               <height>24</height>
               </rect>
              </property>
              <property name="sizePolicy">
@@ -327,16 +324,6 @@ p, li { white-space: pre-wrap; }
                 </property>
                 <property name="toolTip">
                  <string>Drag and Drop Files from Search Results</string>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true">QFrame#fileFrame{border: 2px solid black; 
-background: white;}</string>
-                </property>
-                <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Raised</enum>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_3"/>
                </widget>

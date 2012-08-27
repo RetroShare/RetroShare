@@ -91,15 +91,15 @@ ChatWidget::ChatWidget(QWidget *parent) :
 
 	connect(ui->textBrowser, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuTextBrowser(QPoint)));
 
-	connect(ui->chattextEdit, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenu(QPoint)));
+	connect(ui->chatTextEdit, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenu(QPoint)));
 	// reset text and color after removing all characters from the QTextEdit and after calling QTextEdit::clear
-	connect(ui->chattextEdit, SIGNAL(currentCharFormatChanged(QTextCharFormat)), this, SLOT(chatCharFormatChanged()));
+	connect(ui->chatTextEdit, SIGNAL(currentCharFormatChanged(QTextCharFormat)), this, SLOT(chatCharFormatChanged()));
 
-	ui->infoframe->setVisible(false);
-	ui->statusmessagelabel->hide();
+	ui->infoFrame->setVisible(false);
+	ui->statusMessageLabel->hide();
 
 	setAcceptDrops(true);
-	ui->chattextEdit->setAcceptDrops(false);
+	ui->chatTextEdit->setAcceptDrops(false);
 	ui->hashBox->setDropWidget(this);
 	ui->hashBox->setAutoHide(true);
 
@@ -115,7 +115,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	menu->addAction(ui->actionMessageHistory);
 	ui->pushtoolsButton->setMenu(menu);
 
-	ui->chattextEdit->installEventFilter(this);
+	ui->chatTextEdit->installEventFilter(this);
 
 #ifdef RS_RELEASE_VERSION
 	ui->attachPictureButton->setVisible(false);
@@ -133,7 +133,7 @@ ChatWidget::~ChatWidget()
 
 void ChatWidget::addChatButton(QPushButton *button)
 {
-	ui->chatButtonLayout->addWidget(button) ;
+	ui->toolBarFrame->layout()->addWidget(button) ;
 }
 
 void ChatWidget::init(const std::string &peerId, const QString &title)
@@ -220,7 +220,7 @@ void ChatWidget::processSettings(bool load)
 
 bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 {
-	if (obj == ui->chattextEdit) {
+	if (obj == ui->chatTextEdit) {
 		if (event->type() == QEvent::KeyPress) {
 			updateStatusTyping();
 
@@ -236,7 +236,7 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 				} else {
 					if (keyEvent->modifiers() & Qt::ControlModifier) {
 						// insert return
-						ui->chattextEdit->textCursor().insertText("\n");
+						ui->chatTextEdit->textCursor().insertText("\n");
 					} else {
 						// send message with Enter
 						sendChat();
@@ -296,7 +296,7 @@ void ChatWidget::removeFromParent(QWidget *oldParent)
 
 void ChatWidget::focusDialog()
 {
-	ui->chattextEdit->setFocus();
+	ui->chatTextEdit->setFocus();
 }
 
 void ChatWidget::setWelcomeMessage(QString &text)
@@ -363,7 +363,7 @@ bool ChatWidget::isActive()
 void ChatWidget::pasteLink()
 {
 	std::cerr << "In paste link" << std::endl;
-	ui->chattextEdit->insertHtml(RSLinkClipboard::toHtml());
+	ui->chatTextEdit->insertHtml(RSLinkClipboard::toHtml());
 }
 
 void ChatWidget::pasteOwnCertificateLink()
@@ -373,7 +373,7 @@ void ChatWidget::pasteOwnCertificateLink()
 	std::string ownId = rsPeers->getOwnId() ;
 
 	if( link.createCertificate(ownId) )	{
-		ui->chattextEdit->insertHtml(link.toHtml() + " ");
+		ui->chatTextEdit->insertHtml(link.toHtml() + " ");
 	}
 }
 
@@ -381,7 +381,7 @@ void ChatWidget::contextMenu(QPoint /*point*/)
 {
 	std::cerr << "In context menu" << std::endl;
 
-	QMenu *contextMnu = ui->chattextEdit->createStandardContextMenu();
+	QMenu *contextMnu = ui->chatTextEdit->createStandardContextMenu();
 
 	contextMnu->addSeparator();
 	QAction *action = contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
@@ -413,7 +413,7 @@ void ChatWidget::chatCharFormatChanged()
 
 	// Reset font and color before inserting a character if edit box is empty
 	// (color info disappears when the user deletes all text)
-	if (ui->chattextEdit->toPlainText().isEmpty()) {
+	if (ui->chatTextEdit->toPlainText().isEmpty()) {
 		setColorAndFont();
 	}
 
@@ -445,7 +445,7 @@ void ChatWidget::updateStatusTyping()
 
 void ChatWidget::sendChat()
 {
-	QTextEdit *chatWidget = ui->chattextEdit;
+	QTextEdit *chatWidget = ui->chatTextEdit;
 
 	if (chatWidget->toPlainText().isEmpty()) {
 		// nothing to send
@@ -478,13 +478,13 @@ void ChatWidget::sendChat()
 
 void ChatWidget::on_closeInfoFrameButton_clicked()
 {
-	ui->infoframe->setVisible(false);
+	ui->infoFrame->setVisible(false);
 }
 
 void ChatWidget::chooseColor()
 {
 	bool ok;
-	QRgb color = QColorDialog::getRgba(ui->chattextEdit->textColor().rgba(), &ok, window());
+	QRgb color = QColorDialog::getRgba(ui->chatTextEdit->textColor().rgba(), &ok, window());
 	if (ok) {
 		currentColor = QColor(color);
 		PeerSettings->setPrivateChatColor(peerId, currentColor.name());
@@ -531,10 +531,10 @@ void ChatWidget::setColorAndFont()
 	currentFont.setUnderline(ui->textunderlineButton->isChecked());
 	currentFont.setItalic(ui->textitalicButton->isChecked());
 
-	ui->chattextEdit->setFont(currentFont);
-	ui->chattextEdit->setTextColor(currentColor);
+	ui->chatTextEdit->setFont(currentFont);
+	ui->chatTextEdit->setTextColor(currentColor);
 
-	ui->chattextEdit->setFocus();
+	ui->chatTextEdit->setFocus();
 }
 
 void ChatWidget::setFont()
@@ -550,7 +550,7 @@ void ChatWidget::smileyWidget()
 
 void ChatWidget::addSmiley()
 {
-	ui->chattextEdit->textCursor().insertText(qobject_cast<QPushButton*>(sender())->toolTip().split("|").first());
+	ui->chatTextEdit->textCursor().insertText(qobject_cast<QPushButton*>(sender())->toolTip().split("|").first());
 }
 
 void ChatWidget::clearChatHistory()
@@ -568,7 +568,7 @@ void ChatWidget::deleteChatHistory()
 
 void ChatWidget::messageHistory()
 {
-	ImHistoryBrowser imBrowser(peerId, ui->chattextEdit, window());
+	ImHistoryBrowser imBrowser(peerId, ui->chatTextEdit, window());
 	imBrowser.exec();
 }
 
@@ -686,27 +686,27 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
 
 		switch (status) {
 		case RS_STATUS_OFFLINE:
-			ui->infoframe->setVisible(true);
-			ui->infolabel->setText(peerName + " " + tr("apears to be Offline.") +"\n" + tr("Messages you send will be delivered after Friend is again Online"));
+			ui->infoFrame->setVisible(true);
+			ui->infoLabel->setText(peerName + " " + tr("apears to be Offline.") +"\n" + tr("Messages you send will be delivered after Friend is again Online"));
 			break;
 
 		case RS_STATUS_INACTIVE:
-			ui->infoframe->setVisible(true);
-			ui->infolabel->setText(peerName + " " + tr("is Idle and may not reply"));
+			ui->infoFrame->setVisible(true);
+			ui->infoLabel->setText(peerName + " " + tr("is Idle and may not reply"));
 			break;
 
 		case RS_STATUS_ONLINE:
-			ui->infoframe->setVisible(false);
+			ui->infoFrame->setVisible(false);
 			break;
 
 		case RS_STATUS_AWAY:
-			ui->infolabel->setText(peerName + " " + tr("is Away and may not reply"));
-			ui->infoframe->setVisible(true);
+			ui->infoLabel->setText(peerName + " " + tr("is Away and may not reply"));
+			ui->infoFrame->setVisible(true);
 			break;
 
 		case RS_STATUS_BUSY:
-			ui->infolabel->setText(peerName + " " + tr("is Busy and may not reply"));
-			ui->infoframe->setVisible(true);
+			ui->infoLabel->setText(peerName + " " + tr("is Busy and may not reply"));
+			ui->infoFrame->setVisible(true);
 			break;
 		}
 
@@ -747,11 +747,11 @@ void ChatWidget::updatePeersCustomStateString(const QString& peer_id, const QStr
 	if (stdPeerId == peerId) {
 		// the peers status string has changed
 		if (status_string.isEmpty()) {
-			ui->statusmessagelabel->hide();
+			ui->statusMessageLabel->hide();
 		} else {
-			ui->statusmessagelabel->show();
+			ui->statusMessageLabel->show();
 			status_text = RsHtml().formatText(NULL, status_string, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
-			ui->statusmessagelabel->setText(status_text);
+			ui->statusMessageLabel->setText(status_text);
 		}
 	}
 }
