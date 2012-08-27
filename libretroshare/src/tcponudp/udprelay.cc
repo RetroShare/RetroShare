@@ -29,8 +29,10 @@
 /*
  * #define DEBUG_UDP_RELAY 		1
  * #define DEBUG_UDP_RELAY_PKTS		1
+ * #define DEBUG_UDP_RELAY_ERRORS	1
  */
 
+#define DEBUG_UDP_RELAY_ERRORS	1
 
 #ifdef DEBUG_UDP_RELAY
 // DEBUG FUNCTION
@@ -93,7 +95,7 @@ int     UdpRelayReceiver::addUdpPeer(UdpPeer *peer, UdpRelayAddrSet *endPoints, 
 		bool ok = (it == mStreams.end());
 		if (!ok)
 		{
-#ifdef DEBUG_UDP_RELAY
+#ifdef DEBUG_UDP_RELAY_ERRORS
 			std::cerr << "UdpRelayReceiver::addUdpPeer() ERROR Peer already exists!" << std::endl;
 #endif
 			return 0;
@@ -154,7 +156,7 @@ int     UdpRelayReceiver::removeUdpPeer(UdpPeer *peer)
 
 	if (!found)
 	{
-#ifdef DEBUG_UDP_RELAY
+#ifdef DEBUG_UDP_RELAY_ERRORS
 		std::cerr << "UdpRelayReceiver::removeUdpPeer() Warning: Failed to find UdpPeer" << std::endl;
 #endif
 		return 0;
@@ -173,7 +175,7 @@ int     UdpRelayReceiver::removeUdpPeer(UdpPeer *peer)
 		else
 		{
 			/* ERROR */	
-#ifdef DEBUG_UDP_RELAY
+#ifdef DEBUG_UDP_RELAY_ERRORS
 			std::cerr << "UdpRelayReceiver::removeUdpPeer() ERROR failed to find Mapping" << std::endl;
 #endif
 		}
@@ -270,7 +272,7 @@ int UdpRelayReceiver::checkRelays()
 
 		if (rit->second.mBandwidth > rit->second.mBandwidthLimit)
 		{
-#ifdef DEBUG_UDP_RELAY
+#ifdef DEBUG_UDP_RELAY_ERRORS
 			std::cerr << "UdpRelayReceiver::checkRelays() ";
 			std::cerr << "Dropping Relay due to excessive Bandwidth: " << rit->second.mBandwidth;
 			std::cerr << " Exceeding Limit: " << rit->second.mBandwidthLimit;
@@ -283,7 +285,7 @@ int UdpRelayReceiver::checkRelays()
 		}
 		else if (now - rit->second.mLastTS > RELAY_TIMEOUT)
 		{
-#ifdef DEBUG_UDP_RELAY
+#ifdef DEBUG_UDP_RELAY_ERRORS
 			/* if haven't transmitted for ages -> drop */
 			std::cerr << "UdpRelayReceiver::checkRelays() ";
 			std::cerr << "Dropping Relay due to Timeout: " << rit->first;
@@ -354,7 +356,7 @@ int UdpRelayReceiver::addUdpRelay(UdpRelayAddrSet *addrSet, int &relayClass, uin
 	int ok = (rit == mRelays.end());
 	if (!ok)
 	{
-#ifdef DEBUG_UDP_RELAY
+#ifdef DEBUG_UDP_RELAY_ERRORS
 		std::cerr << "UdpRelayReceiver::addUdpRelay() ERROR Peer already exists!" << std::endl;
 #endif
 		return 0;
@@ -381,7 +383,7 @@ int UdpRelayReceiver::addUdpRelay(UdpRelayAddrSet *addrSet, int &relayClass, uin
 		return 1;
 	}
 
-#ifdef DEBUG_UDP_RELAY
+#ifdef DEBUG_UDP_RELAY_ERRORS
 	std::cerr << "UdpRelayReceiver::addUdpRelay() WARNING Too many Relays!" << std::endl;
 #endif
 	return 0;
@@ -731,8 +733,8 @@ int UdpRelayReceiver::recvPkt(void *data, int size, struct sockaddr_in &from)
  
 	if (!isUdpRelayPacket(data, size))
 	{
-#ifdef DEBUG_UDP_RELAY_PKTS
-		std::cerr << "UdpRelayReceiver::recvPkt() is Not RELAY Pkt";
+#ifdef DEBUG_UDP_RELAY
+		std::cerr << "UdpRelayReceiver::recvPkt() ERROR: is Not RELAY Pkt";
 		std::cerr << std::endl;
 #endif
 		return 0;
@@ -742,6 +744,10 @@ int UdpRelayReceiver::recvPkt(void *data, int size, struct sockaddr_in &from)
 	UdpRelayAddrSet addrSet;
 	if (!extractUdpRelayAddrSet(data, size, addrSet))
 	{
+#ifdef DEBUG_UDP_RELAY_ERRORS
+		std::cerr << "UdpRelayReceiver::recvPkt() ERROR: cannot extract Addresses";
+		std::cerr << std::endl;
+#endif
 		/* fails most basic test, drop */
 		return 0; 
 	}
