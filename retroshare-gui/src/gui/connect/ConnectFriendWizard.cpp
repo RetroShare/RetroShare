@@ -160,6 +160,8 @@ void ConnectFriendWizard::initializePage(int id)
 		cleanfriendCertTimer->setInterval(1000); // 1 second
 		connect(cleanfriendCertTimer, SIGNAL(timeout()), this, SLOT(cleanFriendCert()));
 
+		ui->userCertOldFormatButton->setChecked(true); 
+
 		toggleFormatState(false);
 		toggleSignatureState(false);
 		updateOwnCert();

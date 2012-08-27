@@ -66,6 +66,8 @@ ConfCertDialog::ConfCertDialog(const std::string& id, QWidget *parent, Qt::WFlag
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
 
+	 ui._useOldFormat_CB->setChecked(true) ;
+
 	ui.headerFrame->setHeaderImage(QPixmap(":/images/user/identityinfo48.png"));
 	ui.headerFrame->setHeaderText(tr("Friend Details"));
 

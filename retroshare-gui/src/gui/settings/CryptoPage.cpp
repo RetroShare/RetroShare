@@ -42,6 +42,7 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WFlags flags)
   connect(ui.saveButton, SIGNAL(clicked()), this, SLOT(fileSaveAs()));
   connect(ui._includeSignatures_CB, SIGNAL(toggled(bool)), this, SLOT(load()));
   connect(ui._copyLink_PB, SIGNAL(clicked()), this, SLOT(copyRSLink()));
+  connect(ui._useOldFormat_CB, SIGNAL(toggled(bool)), this, SLOT(load()));
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -68,7 +69,7 @@ CryptoPage::load()
     QFont font("Courier New",9,50,false) ;
     ui.certtextEdit->setFont(font) ;
 
-    ui.certtextEdit->setPlainText(QString::fromUtf8(rsPeers->GetRetroshareInvite(ui._includeSignatures_CB->isChecked()).c_str()));
+    ui.certtextEdit->setPlainText(QString::fromUtf8(rsPeers->GetRetroshareInvite(ui._includeSignatures_CB->isChecked(),ui._useOldFormat_CB->isChecked()).c_str()));
     ui.certtextEdit->setReadOnly(true);
     ui.certtextEdit->setMinimumHeight(200);
 }

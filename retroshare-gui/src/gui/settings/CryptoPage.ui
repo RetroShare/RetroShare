@@ -79,6 +79,16 @@
      </property>
     </widget>
    </item>
+   <item row="1" column="3">
+    <widget class="QCheckBox" name="_useOldFormat_CB">
+     <property name="text">
+      <string>Use old key format</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <resources/>
