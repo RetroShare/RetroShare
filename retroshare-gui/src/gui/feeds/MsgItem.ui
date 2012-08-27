@@ -46,7 +46,7 @@ border-radius: 10px}</string>
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
-        <layout class="QGridLayout" name="gridLayout">
+        <layout class="QGridLayout" name="gridLayout_3">
          <property name="verticalSpacing">
           <number>0</number>
          </property>

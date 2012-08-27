@@ -127,12 +127,9 @@
       </property>
       <layout class="QGridLayout" name="gridLayout_5">
        <item row="0" column="0">
-        <widget class="QFrame" name="frame_2">
-         <property name="styleSheet">
-          <string notr="true">QFrame#frame_2{
-background-color: white;
-
-border: 2px solid #CCCCCC;}</string>
+        <widget class="QFrame" name="frame_1">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
           <item row="0" column="0" colspan="3">
@@ -417,12 +414,9 @@ border: 2px solid #CCCCCC;}</string>
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QFrame" name="frame_3">
-         <property name="styleSheet">
-          <string notr="true">QFrame#frame_3{
-background-color: white;
-
-border: 2px solid #CCCCCC;}</string>
+        <widget class="QFrame" name="frame_2">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
          </property>
          <layout class="QGridLayout" name="gridLayout_6">
           <item row="0" column="0" colspan="4">
@@ -710,12 +704,9 @@ border: 2px solid #CCCCCC;}</string>
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QFrame" name="frame_4">
-         <property name="styleSheet">
-          <string notr="true">QFrame#frame_4{
-background-color: white;
-
-border: 2px solid #CCCCCC;}</string>
+        <widget class="QFrame" name="frame_3">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
@@ -1166,8 +1157,6 @@ border: 2px solid #CCCCCC;}</string>
   </layout>
  </widget>
  <resources>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

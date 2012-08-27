@@ -17,9 +17,6 @@
    <iconset resource="../images.qrc">
     <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
   </property>
-  <property name="styleSheet">
-   <string notr="true">QToolBar#toolBar{background-image: url(:/images/connect/connectFriendBanner.png)}</string>
-  </property>
   <property name="toolButtonStyle">
    <enum>Qt::ToolButtonTextUnderIcon</enum>
   </property>
@@ -282,6 +279,9 @@ p, li { white-space: pre-wrap; }
   <widget class="QToolBar" name="toolBar">
    <property name="windowTitle">
     <string notr="true">toolBar</string>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>

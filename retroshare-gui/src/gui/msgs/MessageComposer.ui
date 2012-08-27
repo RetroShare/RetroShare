@@ -17,10 +17,6 @@
    <iconset resource="../images.qrc">
     <normaloff>:/images/folder-draft.png</normaloff>:/images/folder-draft.png</iconset>
   </property>
-  <property name="styleSheet">
-   <string notr="true">QToolBar#toolBar{background-image: url(:/images/connect/connectFriendBanner.png)}
-</string>
-  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_3">
     <item row="0" column="0">
@@ -185,19 +181,12 @@
           <number>2</number>
          </property>
          <item row="5" column="0">
-          <widget class="QFrame" name="frame">
+          <widget class="QFrame" name="toolBarFrame">
            <property name="maximumSize">
             <size>
              <width>16777215</width>
              <height>38</height>
             </size>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QFrame#frame{ 
-background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-stop:0 #FEFEFE, stop:1 #E8E8E8);
-
-border: 1px solid #CCCCCC;}</string>
            </property>
            <property name="frameShape">
             <enum>QFrame::StyledPanel</enum>

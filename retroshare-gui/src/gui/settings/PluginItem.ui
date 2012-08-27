@@ -25,17 +25,8 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="styleSheet">
-      <string notr="true">QFrame#frame{border: 2px solid #A8B8D1; 
-background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-stop: 0 #FCFDFE, stop: 1 #E2E8EF);
-border-radius: 0px}</string>
-     </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_6">
       <item>

@@ -116,15 +116,6 @@
           </item>
           <item>
            <widget class="QGroupBox" name="groupBoxIRCColors">
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="styleSheet">
-             <string notr="true"/>
-            </property>
             <property name="title">
              <string>Chat Font</string>
             </property>
@@ -355,7 +346,7 @@
           <enum>QTabWidget::North</enum>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="publicTab">
           <attribute name="title">

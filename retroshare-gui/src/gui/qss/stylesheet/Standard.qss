@@ -60,6 +60,10 @@ ForumsDialog2 QLabel#forumName, ForumsDialog2 QLabel#threadTitle
 	background: white;
 }
 
+CreateForumMsg > QToolBar#toolBar, CreateForumV2Msg > QToolBar#toolBar {
+	background-image: url(:/images/headerFrame.png);
+}
+
 /* MessengerWindow */
 
 MessengerWindow QFrame#logoFrame { 
@@ -98,4 +102,25 @@ ChatWidget QFrame#infoFrame {
 	border-radius: 6px;
 	background: #FFFFD7;
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
+}
+
+/* Messages */
+
+MessageComposer > QToolBar#toolBar  {
+	background-image: url(:/images/headerFrame.png);
+}
+
+/* Profile */
+
+ProfileWidget QFrame#frame_1, ProfileWidget QFrame#frame_2, ProfileWidget QFrame#frame_3 {
+	background-color: white;
+	border: 2px solid #CCCCCC;
+}
+
+/* Settings */
+
+PluginItem > QFrame#frame {
+	border: 2px solid #A8B8D1; 
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #FCFDFE, stop: 1 #E2E8EF);
+	border-radius: 0px
 }
