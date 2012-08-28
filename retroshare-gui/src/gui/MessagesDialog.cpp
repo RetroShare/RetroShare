@@ -344,10 +344,6 @@ void MessagesDialog::processSettings(bool load)
             msgwheader->restoreState(Settings->value("MessageTree").toByteArray());
         }
 
-        // state of quick view list
-        bool value = Settings->value("QuickViewList", true).toBool();
-        ui.quickViewsButton->setChecked(value);
-
         // state of splitter
         ui.msgSplitter->restoreState(Settings->value("Splitter").toByteArray());
         ui.msgSplitter_2->restoreState(Settings->value("Splitter2").toByteArray());
@@ -362,9 +358,6 @@ void MessagesDialog::processSettings(bool load)
         // state of message tree
         Settings->setValue("MessageTree", msgwheader->saveState());
         Settings->setValue("MessageTreeVersion", messageTreeVersion);
-
-        // state of quick view list
-        Settings->setValue("QuickViewList", ui.quickViewsButton->isChecked());
 
         // state of splitter
         Settings->setValue("Splitter", ui.msgSplitter->saveState());

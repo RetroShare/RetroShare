@@ -10,13 +10,6 @@
     <height>582</height>
    </rect>
   </property>
-  <property name="styleSheet">
-   <string notr="true">QTextEdit{ 
-border: 1px solid #B8B6B1;
-border-radius: 6px;
-background: white;
-}</string>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
     <widget class="QTabWidget" name="tabWidget">

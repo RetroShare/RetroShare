@@ -25,7 +25,7 @@
     <number>0</number>
    </property>
    <item row="0" column="0">
-    <widget class="QFrame" name="headerFrame">
+    <widget class="HeaderFrame" name="headerFrame">
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
      </property>
@@ -307,6 +307,12 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>HeaderFrame</class>
+   <extends>QFrame</extends>
+   <header>gui/common/HeaderFrame.h</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>FriendSelectionWidget</class>
    <extends>QWidget</extends>

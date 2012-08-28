@@ -261,7 +261,6 @@ HEADERS +=  rshare.h \
             gui/SoundManager.h \
             gui/FileTransferInfoWidget.h \
             gui/HelpDialog.h \
-            gui/InfoDialog.h \
             gui/LogoBar.h \
             gui/xprogressbar.h \
             gui/plugins/PluginInterface.h \
@@ -444,7 +443,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/MessagesDialog.ui \
             gui/help/browser/helpbrowser.ui \
             gui/HelpDialog.ui \
-            gui/InfoDialog.ui \
             gui/DetailsDialog.ui \
             gui/FriendRecommendDialog.ui \
             gui/bwgraph/bwgraph.ui \
@@ -568,7 +566,6 @@ SOURCES +=  main.cpp \
             gui/help/browser/helpbrowser.cpp \
             gui/help/browser/helptextbrowser.cpp \
             gui/HelpDialog.cpp \
-            gui/InfoDialog.cpp \
             gui/LogoBar.cpp \
             gui/xprogressbar.cpp \
             lang/languagesupport.cpp \

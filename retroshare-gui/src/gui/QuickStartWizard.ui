@@ -32,43 +32,6 @@
    <iconset resource="images.qrc">
     <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
   </property>
-  <property name="styleSheet">
-   <string notr="true">QComboBox QAbstractItemView { 
-background-color:white;
-}
-
-QComboBox::down-arrow {
-image: url(:/images/combobox_arrow.png);
-}
-
-QComboBox:drop-down
-{
-subcontrol-origin: padding;
-subcontrol-position: top right;
-border-left-style: none; 
-border-top-right-radius: 1px;
-border-bottom-right-radius: 1px;
-}
-
-QToolButton, QPushButton, QComboBox { 
-border-image: url(:/images/btn_26.png) 4;
-border-width: 4;
-padding: 0px 6px;
-font-size: 12px;
-}
-
-QToolButton:hover, QPushButton:hover, QComboBox:hover { 
-border-image: url(:/images/btn_26_hover.png) 4;
-}
-
-QToolButton:disabled, QPushButton:disabled, QComboBox::disabled {
-color:gray;
-}
-
-QToolButton:pressed, QPushButton:pressed{
-border-image: url(:/images/btn_26_pressed.png) 4;
-}</string>
-  </property>
   <property name="modal">
    <bool>true</bool>
   </property>
@@ -80,27 +43,14 @@ border-image: url(:/images/btn_26_pressed.png) 4;
     <number>0</number>
    </property>
    <item row="0" column="0">
-    <widget class="HeaderFrame" name="headerFrame">
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-    </widget>
+    <widget class="HeaderFrame" name="headerFrame"/>
    </item>
    <item row="1" column="0">
     <widget class="QStackedWidget" name="pagesWizard">
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
      <property name="currentIndex">
       <number>0</number>
      </property>
      <widget class="QWidget" name="pageWelcome">
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="margin">
         <number>0</number>

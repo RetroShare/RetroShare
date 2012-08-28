@@ -67,9 +67,6 @@
         <property name="toolTip">
          <string>New Message</string>
         </property>
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
         <property name="text">
          <string>Compose</string>
         </property>
@@ -123,9 +120,6 @@
         </property>
         <property name="toolTip">
          <string>Reply to selected message</string>
-        </property>
-        <property name="styleSheet">
-         <string notr="true"/>
         </property>
         <property name="text">
          <string>Reply</string>
@@ -256,9 +250,6 @@
         </property>
         <property name="toolTip">
          <string>Remove selected message</string>
-        </property>
-        <property name="styleSheet">
-         <string notr="true"/>
         </property>
         <property name="text">
          <string>Delete</string>
@@ -467,9 +458,6 @@
    </item>
    <item row="1" column="0">
     <widget class="RSTabWidget" name="tabWidget">
-     <property name="layoutDirection">
-      <enum>Qt::LeftToRight</enum>
-     </property>
      <property name="tabsClosable">
       <bool>true</bool>
      </property>
@@ -489,21 +477,12 @@
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <widget class="QFrame" name="frame_2">
+         <widget class="QFrame" name="sideBarFrame">
           <property name="maximumSize">
            <size>
             <width>160</width>
             <height>16777215</height>
            </size>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">QFrame#frame_2{border: none;}</string>
-          </property>
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
           </property>
           <layout class="QGridLayout" name="gridLayout_3">
            <property name="horizontalSpacing">
@@ -523,22 +502,10 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>0</height>
-              </size>
-             </property>
              <property name="maximumSize">
               <size>
                <width>160</width>
                <height>130</height>
-              </size>
-             </property>
-             <property name="baseSize">
-              <size>
-               <width>0</width>
-               <height>0</height>
               </size>
              </property>
              <property name="font">
@@ -548,15 +515,6 @@
              </property>
              <property name="contextMenuPolicy">
               <enum>Qt::CustomContextMenu</enum>
-             </property>
-             <property name="styleSheet">
-              <string notr="true"/>
-             </property>
-             <property name="lineWidth">
-              <number>1</number>
-             </property>
-             <property name="midLineWidth">
-              <number>0</number>
              </property>
              <property name="isWrapping" stdset="0">
               <bool>false</bool>
@@ -670,79 +628,82 @@
             </widget>
            </item>
            <item row="0" column="0">
-            <widget class="QPushButton" name="Folders_Button">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>22</height>
-              </size>
+            <widget class="QFrame" name="folderFrame">
+             <property name="autoFillBackground">
+              <bool>true</bool>
              </property>
-             <property name="maximumSize">
-              <size>
-               <width>160</width>
-               <height>22</height>
-              </size>
-             </property>
-             <property name="layoutDirection">
-              <enum>Qt::LeftToRight</enum>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">QPushButton#Folders_Button{ 
-background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-stop:0 #FEFEFE, stop:1 #E8E8E8);
-border: 1px solid #CCCCCC;
-text-align: left;
-padding: 4px;
-}
-
-</string>
-             </property>
-             <property name="text">
-              <string>Folders</string>
-             </property>
-             <property name="checkable">
-              <bool>false</bool>
-             </property>
-             <property name="checked">
-              <bool>false</bool>
-             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_2">
+              <property name="topMargin">
+               <number>3</number>
+              </property>
+              <property name="bottomMargin">
+               <number>3</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="folderPixmap">
+                <property name="maximumSize">
+                 <size>
+                  <width>16</width>
+                  <height>16</height>
+                 </size>
+                </property>
+                <property name="pixmap">
+                 <pixmap resource="images.qrc">:/images/foldermail.png</pixmap>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="folderLabel">
+                <property name="text">
+                 <string>Folders</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </widget>
            </item>
            <item row="2" column="0">
-            <widget class="QPushButton" name="quickViewsButton">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>22</height>
-              </size>
+            <widget class="QFrame" name="quickViewFrame">
+             <property name="autoFillBackground">
+              <bool>true</bool>
              </property>
-             <property name="maximumSize">
-              <size>
-               <width>160</width>
-               <height>22</height>
-              </size>
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
              </property>
-             <property name="styleSheet">
-              <string notr="true">QPushButton#quickViewsButton{ 
-background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-stop:0 #FEFEFE, stop:1 #E8E8E8);
-text-align: left;
-
-border: 1px solid #CCCCCC;}</string>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
              </property>
-             <property name="text">
-              <string>Quick View</string>
-             </property>
-             <property name="icon">
-              <iconset resource="images.qrc">
-               <normaloff>:/images/tag24.png</normaloff>:/images/tag24.png</iconset>
-             </property>
-             <property name="checkable">
-              <bool>false</bool>
-             </property>
-             <property name="checked">
-              <bool>false</bool>
-             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_3">
+              <property name="topMargin">
+               <number>3</number>
+              </property>
+              <property name="bottomMargin">
+               <number>3</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="quickViewPixmap">
+                <property name="maximumSize">
+                 <size>
+                  <width>16</width>
+                  <height>16</height>
+                 </size>
+                </property>
+                <property name="pixmap">
+                 <pixmap resource="images.qrc">:/images/tag24.png</pixmap>
+                </property>
+                <property name="scaledContents">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="quickViewLabel">
+                <property name="text">
+                 <string>Quick View</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </widget>
            </item>
           </layout>

@@ -16,9 +16,6 @@
    </property>
    <item row="1" column="0">
     <widget class="QSplitter" name="splitter">
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
@@ -43,10 +40,6 @@
          </property>
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">#remoteDirTreeView{border: 1px solid #CCCCCC;
-background: white;}</string>
          </property>
          <property name="dragEnabled">
           <bool>true</bool>
@@ -97,10 +90,6 @@ background: white;}</string>
          </property>
          <property name="acceptDrops">
           <bool>false</bool>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">#localDirTreeView{border: 1px solid #CCCCCC;
-background: white;}</string>
          </property>
          <property name="dragEnabled">
           <bool>true</bool>

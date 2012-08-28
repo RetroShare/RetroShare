@@ -13,6 +13,7 @@ HeaderFrame {
 	background-image: url(:/images/headerFrame.png);
 	border: 0px;
 }
+
 HeaderFrame > QLabel#headerLabel {
 	color: rgb(255, 255, 255);
 }
@@ -26,6 +27,10 @@ FriendsDialog QFrame#headerFrame {
 
 FriendsDialog QFrame#headerFrame > QLabel#nicknameLabel {
 	color: rgb(50, 205, 50);
+}
+
+FriendsDialog QTextEdit#lineEdit {
+	border: 1px solid #CCCCCC;
 }
 
 /* Channels */
@@ -110,6 +115,11 @@ MessageComposer > QToolBar#toolBar  {
 	background-image: url(:/images/headerFrame.png);
 }
 
+MessagesDialog QFrame#folderFrame, MessagesDialog QFrame#quickViewFrame {
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
+	border: 1px solid #CCCCCC;
+}
+
 /* Profile */
 
 ProfileWidget QFrame#frame_1, ProfileWidget QFrame#frame_2, ProfileWidget QFrame#frame_3 {
@@ -123,4 +133,30 @@ PluginItem > QFrame#frame {
 	border: 2px solid #A8B8D1; 
 	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #FCFDFE, stop: 1 #E2E8EF);
 	border-radius: 0px
+}
+
+/* Network */
+
+/*NetworkView > QGraphWidget#graphicsView
+{
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 lightgray, stop:1 darkgray);
+}
+*/
+
+/* GetStartedDialog */
+
+GetStartedDialog QTextEdit {
+	border: 1px solid #B8B6B1;
+	border-radius: 6px;
+	background: white;
+}
+
+/* GenCertDialog */
+
+GenCertDialog > QFrame#headerFrame {
+	background-image: url(:/images/genbackground.png);
+}
+
+GenCertDialog > QFrame#headerFrame > QLabel#headerLabel {
+	color: rgb(255, 255, 255);
 }

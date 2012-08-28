@@ -152,9 +152,6 @@
            <height>0</height>
           </size>
          </property>
-         <property name="styleSheet">
-          <string notr="true">b{}</string>
-         </property>
         </widget>
        </item>
       </layout>
@@ -682,12 +679,6 @@ background: white;}</string>
                </item>
                <item>
                 <widget class="QTextEdit" name="lineEdit">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
@@ -699,10 +690,6 @@ background: white;}</string>
                  </property>
                  <property name="toolTip">
                   <string>Messages entered here are sent to all connected friends</string>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true">QTextEdit#lineEdit{border: 1px solid #CCCCCC;
-}</string>
                  </property>
                 </widget>
                </item>

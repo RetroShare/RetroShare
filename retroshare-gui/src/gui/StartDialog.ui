@@ -61,11 +61,9 @@
       <item row="0" column="1">
        <widget class="QToolButton" name="toolButton">
         <property name="styleSheet">
-         <string notr="true">QToolButton{
-border-image: url(:/images/avatar_background.png);
-
-}
-</string>
+         <string notr="true">QToolButton {
+	border-image: url(:/images/avatar_background.png);
+}</string>
         </property>
         <property name="text">
          <string/>

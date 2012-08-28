@@ -21,11 +21,7 @@
     <number>0</number>
    </property>
    <item row="0" column="0">
-    <widget class="GraphWidget" name="graphicsView">
-     <property name="styleSheet">
-      <string>background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 lightgray, stop:1 darkgray);</string>
-     </property>
-    </widget>
+    <widget class="GraphWidget" name="graphicsView"/>
    </item>
    <item row="1" column="0">
     <layout class="QGridLayout">

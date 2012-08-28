@@ -35,9 +35,6 @@
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
-         <property name="lineWidth">
-          <number>0</number>
-         </property>
          <property name="editTriggers">
           <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
          </property>
@@ -234,8 +231,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>100</width>
-             <height>30</height>
+             <width>596</width>
+             <height>102</height>
             </rect>
            </property>
           </widget>
