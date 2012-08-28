@@ -11,14 +11,13 @@
 // of peers
 
 
-class NxsNetDummyMgr1 : public RsNxsNetMgr
+class NxsNetDummyMgr : public RsNxsNetMgr
 {
 
 public:
 
-	NxsNetDummyMgr1() : mOwnId("peerA") {
+    NxsNetDummyMgr(std::string ownId, std::set<std::string> peers) : mOwnId(ownId), mPeers(peers) {
 
-		mPeers.insert("peerB");
 	}
 
     std::string getOwnId()  { return mOwnId; }
@@ -29,26 +28,6 @@ private:
     std::string mOwnId;
     std::set<std::string> mPeers;
 
-};
-
-class NxsNetDummyMgr2 : public RsNxsNetMgr
-{
-
-public:
-
-	NxsNetDummyMgr2() : mOwnId("peerB") {
-
-		mPeers.insert("peerA");
-
-	}
-
-    std::string getOwnId()  { return mOwnId; }
-    void getOnlineList(std::set<std::string>& ssl_peers) { ssl_peers = mPeers; }
-
-private:
-
-    std::string mOwnId;
-    std::set<std::string> mPeers;
 };
 
 
@@ -73,7 +52,7 @@ public:
 	 * This construct the test hub
 	 * for a give scenario in mind
 	 */
-    NxsTestHub(NxsTestScenario*);
+    NxsTestHub(NxsTestScenario*, std::set<std::string>& peers);
 
 
     /*!
@@ -97,12 +76,13 @@ public:
     void cleanUp();
 private:
 
-    std::pair<p3Service*, p3Service*> mServicePairs;
-    std::pair<RsGxsNetService*, RsGxsNetService*> netServicePairs;
-    NxsTestScenario *mTestScenario;
+    std::map<std::string, p3Service*> mServices;
+    std::map<std::string, RsGxsNetService*> mNetServices;
+    std::map<std::string, NxsMessageTestObserver*> mObservers;
 
-    NxsNetDummyMgr1 netMgr1;
-    NxsNetDummyMgr2 netMgr2;
+    std::map<std::string, std::vector<RsItem*> > mPeerQueues;
+
+    NxsTestScenario *mTestScenario;
 
 };
 
