@@ -29,7 +29,7 @@
 #include "gui/msgs/MessageComposer.h"
 #include "gui/common/StatusDefs.h"
 #include "gui/connect/ConfCertDialog.h"
-#include "gui/connect/FriendRequest.h"
+#include "gui/connect/ConnectFriendWizard.h"
 #include "gui/common/AvatarDefs.h"
 
 #include "gui/notifyqt.h"
@@ -330,9 +330,10 @@ void SecurityItem::friendRequest()
 	std::cerr << "SecurityItem::friendReguest()";
 	std::cerr << std::endl;
 #endif
-    
-    FriendRequest *frDlg = new FriendRequest(mGpgId);
-    frDlg->show();
+
+	ConnectFriendWizard *connectFriendWizard = new ConnectFriendWizard;
+	connectFriendWizard->setGpgId(mGpgId, true);
+	connectFriendWizard->show();
 }
 
 void SecurityItem::peerDetails()

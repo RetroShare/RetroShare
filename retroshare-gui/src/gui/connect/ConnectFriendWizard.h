@@ -31,6 +31,7 @@ public:
 	~ConnectFriendWizard();
 
 	void setCertificate(const QString &certificate, bool friendRequest);
+	void setGpgId(const std::string &gpgId, bool friendRequest);
 
 	virtual bool validateCurrentPage();
 	virtual int nextId() const;

@@ -557,7 +557,7 @@ background: white;
           </font>
          </property>
          <property name="text">
-          <string>You have a friend request .</string>
+          <string notr="true">You have a friend request from</string>
          </property>
         </widget>
        </item>

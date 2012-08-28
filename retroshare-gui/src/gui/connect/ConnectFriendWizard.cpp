@@ -64,6 +64,8 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 {
 	ui->setupUi(this);
 
+	setAttribute(Qt::WA_DeleteOnClose, true);
+
 	/* add stylesheet to title */
 	QList<int> ids = pageIds();
 	for (QList<int>::iterator it = ids.begin(); it != ids.end(); ++it) {
@@ -117,6 +119,17 @@ void ConnectFriendWizard::setCertificate(const QString &certificate, bool friend
 		setField("errorMessage", tr("Certificate Load Failed") + ": " + QString::fromUtf8(error_string.c_str()));
 		setStartId(Page_ErrorMessage);
 	}
+}
+
+void ConnectFriendWizard::setGpgId(const std::string &gpgId, bool friendRequest)
+{
+	if (!rsPeers->getPeerDetails(gpgId, peerDetails)) {
+		setField("errorMessage", tr("Cannot get peer details of gpg key %1").arg(QString::fromStdString(gpgId)));
+		setStartId(Page_ErrorMessage);
+		return;
+	}
+
+	setStartId(friendRequest ? Page_FriendRequest : Page_Conclusion);
 }
 
 ConnectFriendWizard::~ConnectFriendWizard()

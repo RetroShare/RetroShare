@@ -19,7 +19,7 @@
 
 #include "FriendRequestToaster.h"
 #include "gui/FriendsDialog.h"
-#include "gui/connect/FriendRequest.h"
+#include "gui/connect/ConnectFriendWizard.h"
 #include "util/WidgetBackgroundImage.h"
 
 #include <retroshare/rspeers.h>
@@ -61,7 +61,9 @@ FriendRequestToaster::FriendRequestToaster(const std::string &gpgId, const QStri
 
 void FriendRequestToaster::friendrequestButtonSlot()
 {
-	FriendRequest *frDlg = new FriendRequest(mGpgId);
-	frDlg->show();
+	ConnectFriendWizard *connectFriendWizard = new ConnectFriendWizard;
+	connectFriendWizard->setGpgId(mGpgId, true);
+	connectFriendWizard->show();
+
 	hide();
 }

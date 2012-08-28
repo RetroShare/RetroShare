@@ -311,7 +311,6 @@ HEADERS +=  rshare.h \
             gui/channels/ShareKey.h \
             gui/channels/ChannelUserNotify.h \
             gui/connect/ConfCertDialog.h \
-            gui/connect/FriendRequest.h \
             gui/msgs/MessageComposer.h \
             gui/msgs/MessageWindow.h \
             gui/msgs/MessageWidget.h \
@@ -462,7 +461,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/chat/CreateLobbyDialog.ui \
             gui/ChatLobbyWidget.ui \
             gui/connect/ConfCertDialog.ui \
-            gui/connect/FriendRequest.ui \
             gui/connect/ConnectFriendWizard.ui \
             gui/msgs/MessageComposer.ui \
             gui/msgs/MessageWindow.ui\
@@ -607,7 +605,6 @@ SOURCES +=  main.cpp \
             gui/chat/ChatStyle.cpp \
             gui/chat/ChatUserNotify.cpp \
             gui/connect/ConfCertDialog.cpp \
-            gui/connect/FriendRequest.cpp \
             gui/msgs/MessageComposer.cpp \
             gui/msgs/MessageWidget.cpp \
             gui/msgs/MessageWindow.cpp \
