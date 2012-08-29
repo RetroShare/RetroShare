@@ -14,8 +14,10 @@ enum ExtensionId { CORE = 0; }
 enum PackageId { 
   PEERS = 1; 
   SYSTEM = 2;
-  FILES = 3;
-  MSGS = 4;
+  // BELOW HERE IS STILL BEING DESIGNED.
+  //CHAT = 3;
+  //FILES = 4;
+  //MSGS = 5;
 
   // THEORETICAL ONES.
   GXS = 1000; 
