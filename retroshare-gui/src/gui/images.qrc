@@ -178,6 +178,7 @@
         <file>images/fileshare24.png</file>
         <file>images/fileshare32.png</file>
         <file>images/fileshare48.png</file>
+        <file>images/fileshare64.png</file>
         <file>images/find.png</file>
         <file>images/find-16.png</file>
         <file>images/emoticons/kopete/kopete020.png</file>
@@ -460,6 +461,7 @@
         <file>images/user/identity32.png</file>
         <file>images/user/identity48.png</file>
         <file>images/user/identityinfo48.png</file>
+        <file>images/user/identityinfo64.png</file>
         <file>images/user/identityoffline24.png</file>
         <file>images/user/identity24away.png</file>
         <file>images/user/identity24busy.png</file>

@@ -51,7 +51,7 @@ ShareManager::ShareManager(QWidget *parent, Qt::WFlags flags)
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
 
-    ui.headerFrame->setHeaderImage(QPixmap(":/images/fileshare48.png"));
+    ui.headerFrame->setHeaderImage(QPixmap(":/images/fileshare64.png"));
     ui.headerFrame->setHeaderText(tr("Share Manager"));
 
     isLoading = false;

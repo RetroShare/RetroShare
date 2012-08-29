@@ -68,7 +68,7 @@ ConfCertDialog::ConfCertDialog(const std::string& id, QWidget *parent, Qt::WFlag
 
 	 ui._useOldFormat_CB->setChecked(true) ;
 
-	ui.headerFrame->setHeaderImage(QPixmap(":/images/user/identityinfo48.png"));
+	ui.headerFrame->setHeaderImage(QPixmap(":/images/user/identityinfo64.png"));
 	ui.headerFrame->setHeaderText(tr("Friend Details"));
 
 	setAttribute(Qt::WA_DeleteOnClose, true);
