@@ -332,6 +332,7 @@ void SecurityItem::friendRequest()
 #endif
 
 	ConnectFriendWizard *connectFriendWizard = new ConnectFriendWizard;
+	connectFriendWizard->setAttribute(Qt::WA_DeleteOnClose, true);
 	connectFriendWizard->setGpgId(mGpgId, true);
 	connectFriendWizard->show();
 }

@@ -657,10 +657,6 @@
               <property name="contextMenuPolicy">
                <enum>Qt::CustomContextMenu</enum>
               </property>
-              <property name="styleSheet">
-               <string notr="true">QTextEdit#msgText{border: 1px solid #CCCCCC;
-background: white;}</string>
-              </property>
               <property name="readOnly">
                <bool>true</bool>
               </property>

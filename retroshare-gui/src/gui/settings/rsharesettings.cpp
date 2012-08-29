@@ -114,7 +114,7 @@ void RshareSettings::initSettings()
 #endif
 
   setDefault(SETTING_LANGUAGE, LanguageSupport::defaultLanguageCode());
-  setDefault(SETTING_SHEETNAME, true); 
+  setDefault(SETTING_SHEETNAME, ":Standard");
 
   /* defaults here are not ideal.... but dusent matter */
 

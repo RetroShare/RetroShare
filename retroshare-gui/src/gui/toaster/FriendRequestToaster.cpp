@@ -62,6 +62,7 @@ FriendRequestToaster::FriendRequestToaster(const std::string &gpgId, const QStri
 void FriendRequestToaster::friendrequestButtonSlot()
 {
 	ConnectFriendWizard *connectFriendWizard = new ConnectFriendWizard;
+	connectFriendWizard->setAttribute(Qt::WA_DeleteOnClose, true);
 	connectFriendWizard->setGpgId(mGpgId, true);
 	connectFriendWizard->show();
 

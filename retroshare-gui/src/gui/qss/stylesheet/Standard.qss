@@ -29,7 +29,7 @@ FriendsDialog QFrame#headerFrame > QLabel#nicknameLabel {
 	color: rgb(50, 205, 50);
 }
 
-FriendsDialog QTextEdit#lineEdit {
+FriendsDialog QTextEdit#msgText, FriendsDialog QTextEdit#lineEdit {
 	border: 1px solid #CCCCCC;
 }
 
@@ -159,4 +159,12 @@ GenCertDialog > QFrame#headerFrame {
 
 GenCertDialog > QFrame#headerFrame > QLabel#headerLabel {
 	color: rgb(255, 255, 255);
+}
+
+/* ConnectFriendWizard */
+
+ConnectFriendWizard QWizardPage#FriendRequestPage > QFrame#frame {
+	border: 2px solid #CCCCCC;
+	border-radius:6px;
+	background: white;
 }

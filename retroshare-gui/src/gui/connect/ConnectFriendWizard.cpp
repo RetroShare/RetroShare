@@ -64,8 +64,6 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 {
 	ui->setupUi(this);
 
-	setAttribute(Qt::WA_DeleteOnClose, true);
-
 	/* add stylesheet to title */
 	QList<int> ids = pageIds();
 	for (QList<int>::iterator it = ids.begin(); it != ids.end(); ++it) {
@@ -301,7 +299,8 @@ void ConnectFriendWizard::initializePage(int id)
 	case Page_FriendRequest:
 		{
 			std::cerr << "Friend request page id : " << peerDetails.id << "; gpg_id : " << peerDetails.gpg_id << std::endl;
-			
+
+			ui->fr_avatar->setFrameType(AvatarWidget::NORMAL_FRAME);
 			setPixmap(QWizard::LogoPixmap, QPixmap(":/images/user/user_request48.png"));
 
 			//set the radio button to sign the GPG key
