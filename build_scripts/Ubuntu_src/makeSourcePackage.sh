@@ -111,7 +111,8 @@ mv -f retroshare-0.5/debian/control.tmp retroshare-0.5/debian/control
 
 cd retroshare-0.5
 
-for i in precise squeeze oneiric karmic lucid maverick natty; do
+for i in sid; do
+#for i in precise squeeze oneiric karmic lucid maverick natty; do
 	echo copying changelog for $i
 	cat ../changelog | sed -e s/XXXXXX/"$svn"/g | sed -e s/YYYYYY/"$i"/g > debian/changelog
 
