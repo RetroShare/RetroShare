@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo This script is going to build the debian source package for RetroShare VOIP plugin, from the svn.
-nosvn=true
+#nosvn=true
 workdir=retroshare-voip-plugin-0.5.3
 
 if test -d "$workdir" ;  then
@@ -85,6 +85,7 @@ else
 	mkdir -p Common
 	cd Common
 	svn co -r$svn https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/plugins/Common . 2> /dev/null
+	cd ..
 fi
 cd ../../..
 #
@@ -123,6 +124,7 @@ echo Preparing package
 #./cleanProFile.sh $workdir/src/libretroshare/libretroshare.pro
 #./cleanProFile.sh $workdir/src/retroshare-gui/retroshare-gui.pro
 
+mv $workdir/retroshare-0.5.pro $workdir/$workdir.pro
 cp voip-plugin/src.pro $workdir/src/src.pro
 cp voip-plugin/plugins.pro $workdir/src/plugins/plugins.pro
 cp $workdir/src/retroshare-gui/gui/chat/PopupChatDialog.ui $workdir/src/plugins/VOIP/gui/PopupChatDialog.ui
@@ -148,6 +150,7 @@ cp $workdir/src/retroshare-gui/gui/chat/PopupChatDialog.ui $workdir/src/plugins/
 # Call debuild to make the source debian package
 
 echo Calling debuild...
+cp voip-plugin/debian_dirs $workdir/debian/dirs
 cp voip-plugin/debian_rules $workdir/debian/rules
 cat voip-plugin/debian_control | sed -e s/XXXXXX/"$version"/g > $workdir/debian/control.tmp
 mv -f $workdir/debian/control.tmp $workdir/debian/control

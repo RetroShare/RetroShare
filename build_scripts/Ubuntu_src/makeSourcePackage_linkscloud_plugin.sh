@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo This script is going to build the debian source package for RetroShare LinksCloud plugin, from the svn.
-nosvn=true
+#nosvn=true
 workdir=retroshare-linkscloud-plugin-0.5.3
 
 if test -d "$workdir" ;  then
@@ -85,6 +85,7 @@ else
 	mkdir -p Common
 	cd Common
 	svn co -r$svn https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/plugins/Common . 2> /dev/null
+	cd ..
 fi
 cd ../../..
 #
@@ -119,6 +120,7 @@ fi
 
 echo Preparing package
 
+mv $workdir/retroshare-0.5.pro $workdir/$workdir.pro
 cp linkscloud-plugin/src.pro $workdir/src/src.pro
 cp linkscloud-plugin/plugins.pro $workdir/src/plugins/plugins.pro
 ./linkscloud-plugin/cleanProFile.sh $workdir/src/plugins/LinksCloud/LinksCloud.pro

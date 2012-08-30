@@ -28,7 +28,7 @@ install: build
 	dh_testroot
 	dh_clean -k
 	dh_installdirs
-	install -D -m 644 builddir/src/plugins/LinksCloud/libLinksCloud.so.1.0.0 $(CURDIR)/debian/retroshare-voip-plugin/usr/lib/retroshare/extensions/rsplugin_LinksCloud.so
+	install -D -m 644 builddir/src/plugins/LinksCloud/libLinksCloud.so.1.0.0 $(CURDIR)/debian/retroshare-linkscloud-plugin/usr/lib/retroshare/extensions/rsplugin_LinksCloud.so
 
 # Add here commands to install the package into debian/your_appname
 #    cd builddir && $(MAKE) INSTALL_ROOT=$(CURDIR)/debian/$(APPNAME) install
