@@ -344,8 +344,8 @@ Section  $(sec_data) sec_data
   ;File /r emoticons\*.*   
 	
   ; Add Chat Style
-  ;SetOutPath "$INSTDIR\style\"
-  ;File /r style\*.*   
+  SetOutPath "$APPDATA\RetroShare\stylesheets\"
+  File /r gui\qss\chat\bubble   
 	
 SectionEnd
 
