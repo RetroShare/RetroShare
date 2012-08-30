@@ -43,8 +43,6 @@
 /****
  * #define DEBUG_VORS		1
  ****/
-#define DEBUG_VORS		1
-
 
 /* DEFINE INTERFACE POINTER! */
 RsVoip *rsVoip = NULL;
