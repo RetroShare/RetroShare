@@ -61,7 +61,7 @@ namespace QtSpeex {
 		void networkPacketReady();
 
 	protected:
-                virtual qint64 readData(char *data, qint64 maxSize) {return false;} //not used for input processor
+                virtual qint64 readData(char * /*data*/, qint64 /*maxSize*/) {return false;} //not used for input processor
 		virtual qint64 writeData(const char *data, qint64 maxSize);
                 virtual bool isSequential() const;
 
@@ -97,7 +97,7 @@ namespace QtSpeex {
 
         protected:
                 virtual qint64 readData(char *data, qint64 maxSize);
-                virtual qint64 writeData(const char *data, qint64 maxSize) {return 0;} //not used for output processor
+                virtual qint64 writeData(const char * /*data*/, qint64 /*maxSize*/) {return 0;} //not used for output processor
                 virtual bool isSequential() const;
 
         signals:

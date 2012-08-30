@@ -166,7 +166,9 @@ p3VoRS::p3VoRS(RsPluginHandler *handler,PluginNotifier *notifier)
 
 int	p3VoRS::tick()
 {
+#ifdef DEBUG_VORS
 	std::cerr << "ticking p3VoRS" << std::endl;
+#endif
 
 	processIncoming();
 	sendPackets();
@@ -236,7 +238,9 @@ int p3VoRS::sendVoipRinging(const std::string& peer_id)
 
 int p3VoRS::sendVoipData(const std::string& peer_id,const RsVoipDataChunk& chunk)
 {
+#ifdef DEBUG_VORS
 	std::cerr << "Sending " << chunk.size << " bytes of voip data." << std::endl;
+#endif
 
 	RsVoipDataItem *item = new RsVoipDataItem ;
 
@@ -314,19 +318,27 @@ void p3VoRS::handleProtocol(RsVoipProtocolItem *item)
 
 	switch(item->protocol)
 	{
-		case RsVoipProtocolItem::VoipProtocol_Ring: std::cerr << "p3VoRS::handleProtocol(): Received protocol ring item." << std::endl;
-																  mNotify->notifyReceivedVoipInvite(item->PeerId());
+		case RsVoipProtocolItem::VoipProtocol_Ring: mNotify->notifyReceivedVoipInvite(item->PeerId());
+#ifdef DEBUG_VORS
+																  std::cerr << "p3VoRS::handleProtocol(): Received protocol ring item." << std::endl;
+#endif
 																  break ;
 
-		case RsVoipProtocolItem::VoipProtocol_Ackn: std::cerr << "p3VoRS::handleProtocol(): Received protocol accept call" << std::endl;
-																  mNotify->notifyReceivedVoipAccept(item->PeerId());
+		case RsVoipProtocolItem::VoipProtocol_Ackn: mNotify->notifyReceivedVoipAccept(item->PeerId());
+#ifdef DEBUG_VORS
+																  std::cerr << "p3VoRS::handleProtocol(): Received protocol accept call" << std::endl;
+#endif
 																  break ;
 
-		case RsVoipProtocolItem::VoipProtocol_Close: std::cerr << "p3VoRS::handleProtocol(): Received protocol Close call." << std::endl;
-																  mNotify->notifyReceivedVoipHangUp(item->PeerId());
+		case RsVoipProtocolItem::VoipProtocol_Close: mNotify->notifyReceivedVoipHangUp(item->PeerId());
+#ifdef DEBUG_VORS
+																  std::cerr << "p3VoRS::handleProtocol(): Received protocol Close call." << std::endl;
+#endif
 																  break ;
 		default:
+#ifdef DEBUG_VORS
 																  std::cerr << "p3VoRS::handleProtocol(): Received protocol item # " << item->protocol << ": not handled yet ! Sorry" << std::endl;
+#endif
 																  break ;
 	}
 

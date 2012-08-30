@@ -13,7 +13,7 @@ lessThan(QT_VER_MAJ, 4) | lessThan(QT_VER_MIN, 7) | win32 {
    QT += multimedia
 }
 
-INCLUDEPATH += ../../retroshare-gui/src/temp/ui
+INCLUDEPATH += ../../retroshare-gui/src/temp/ui ../../libretroshare/src
 
 #################################### Windows #####################################
 
