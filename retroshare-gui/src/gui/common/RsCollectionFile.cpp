@@ -166,10 +166,10 @@ bool RsCollectionFile::load(const QString& filename, bool showError /* = true*/)
 	return ok;
 }
 
-bool RsCollectionFile::load()
+bool RsCollectionFile::load(QWidget *parent)
 {
 	QString filename;
-	if (!misc::getOpenFileName(NULL, RshareSettings::LASTDIR_EXTRAFILE, QApplication::translate("RsCollectionFile", "Open collection file"), QApplication::translate("RsCollectionFile", "Collection files") + " (*." + RsCollectionFile::ExtensionString + ")", filename))
+	if (!misc::getOpenFileName(parent, RshareSettings::LASTDIR_EXTRAFILE, QApplication::translate("RsCollectionFile", "Open collection file"), QApplication::translate("RsCollectionFile", "Collection files") + " (*." + RsCollectionFile::ExtensionString + ")", filename))
 		return false;
 
 	std::cerr << "Got file name: " << filename.toStdString() << std::endl;
@@ -197,10 +197,10 @@ bool RsCollectionFile::save(const QString& filename) const
 	return true;
 }
 
-bool RsCollectionFile::save() const
+bool RsCollectionFile::save(QWidget *parent) const
 {
 	QString filename;
-	if(!misc::getSaveFileName(NULL, RshareSettings::LASTDIR_EXTRAFILE, QApplication::translate("RsCollectionFile", "Create collection file"), QApplication::translate("RsCollectionFile", "Collection files") + " (*." + RsCollectionFile::ExtensionString + ")", filename))
+	if(!misc::getSaveFileName(parent, RshareSettings::LASTDIR_EXTRAFILE, QApplication::translate("RsCollectionFile", "Create collection file"), QApplication::translate("RsCollectionFile", "Collection files") + " (*." + RsCollectionFile::ExtensionString + ")", filename))
 		return false;
 
 	if (!filename.endsWith("." + RsCollectionFile::ExtensionString))

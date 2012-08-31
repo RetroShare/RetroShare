@@ -55,7 +55,7 @@ class RetroshareDirModel : public QAbstractItemModel
 
 		/* Callback from GUI */
 		void downloadSelected(const QModelIndexList &list);
-		void createCollectionFile(const QModelIndexList &list);
+		void createCollectionFile(QWidget *parent, const QModelIndexList &list);
 
 		void getDirDetailsFromSelect (const QModelIndexList &list, std::vector <DirDetails>& dirVec);
 

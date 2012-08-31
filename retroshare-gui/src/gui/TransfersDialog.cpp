@@ -1666,7 +1666,7 @@ QString TransfersDialog::getSources(int row, QStandardItemModel *model)
 void TransfersDialog::openCollection()
 {
 	RsCollectionFile Collection;
-	if (Collection.load()) {
+	if (Collection.load(this)) {
 		Collection.downloadFiles();
 	}
 }

@@ -433,7 +433,7 @@ void SharedFilesDialog::createCollectionFile()
 
 	std::cerr << "Creating a collection file!" << std::endl;
 	QModelIndexList lst = getLocalSelected();
-	localModel->createCollectionFile(lst);
+	localModel->createCollectionFile(this, lst);
 }
 void SharedFilesDialog::downloadRemoteSelected()
 {

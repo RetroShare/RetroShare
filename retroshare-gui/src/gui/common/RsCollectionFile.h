@@ -34,6 +34,7 @@
 #include <retroshare/rsfiles.h>
 
 class QDomElement ;
+class QWidget;
 
 class RsCollectionFile
 {
@@ -46,11 +47,11 @@ class RsCollectionFile
 		RsCollectionFile(const std::vector<DirDetails>& file_entries) ;
 
 		// Loads file from disk.
-		bool load();
+		bool load(QWidget *parent);
 		bool load(const QString& filename, bool showError = true);
 
 		// Save to disk
-		bool save() const ;
+		bool save(QWidget *parent) const ;
 		bool save(const QString& filename) const ;
 
 		// Download the content.

@@ -879,7 +879,7 @@ bool RetroshareDirModel::requestDirDetails(void *ref,DirDetails& details,uint32_
 	return rsFiles->RequestDirDetails(ref, details, flags) ;
 }
 
-void RetroshareDirModel::createCollectionFile(const QModelIndexList &list)
+void RetroshareDirModel::createCollectionFile(QWidget *parent, const QModelIndexList &list)
 {
 	if(RemoteMode)
 	{
@@ -890,7 +890,7 @@ void RetroshareDirModel::createCollectionFile(const QModelIndexList &list)
 	std::vector <DirDetails> dirVec;
 	getDirDetailsFromSelect(list, dirVec);
 
-	RsCollectionFile(dirVec).save();
+	RsCollectionFile(dirVec).save(parent);
 }
 
 void RetroshareDirModel::downloadSelected(const QModelIndexList &list)
