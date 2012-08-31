@@ -89,6 +89,11 @@ static void displayWarningAboutDSAKeys()
 int main(int argc, char *argv[])
 { 
 #ifdef WINDOWS_SYS
+	// The current directory of the application is changed when using the native dialog on Windows
+	// This is a quick fix until libretroshare is using a absolute path in the portable Version
+	extern bool Q_GUI_EXPORT qt_use_native_dialogs;
+	qt_use_native_dialogs = false;
+
 	{
 		/* Set the current directory to the application dir,
 		   because the start dir with autostart from the registry run key is not the exe dir */
