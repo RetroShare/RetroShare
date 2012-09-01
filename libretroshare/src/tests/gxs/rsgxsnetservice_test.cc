@@ -25,7 +25,7 @@ int main()
 	// now get things started
 	createThread(hub);
 
-        double timeDelta = 30;
+        double timeDelta = 50;
 
 	// put this thread to sleep for 10 secs
         // make thread sleep for a bit

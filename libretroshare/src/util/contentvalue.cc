@@ -112,6 +112,7 @@ ContentValue::ContentValue(ContentValue &from){
         default:
             std::cerr << "ContentValue::ContentValue(ContentValue &from):"
                     << "Error! Unrecognised data type!" << std::endl;
+            break;
         }
     }
 }

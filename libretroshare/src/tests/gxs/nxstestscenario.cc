@@ -8,6 +8,7 @@
 #include "nxstestscenario.h"
 #include "gxs/rsdataservice.h"
 #include "data_support.h"
+#include <stdio.h>
 
 NxsMessageTest::NxsMessageTest(uint16_t servtype)
 : mServType(servtype), mMsgTestMtx("mMsgTestMtx")
@@ -42,7 +43,7 @@ RsGeneralDataService* NxsMessageTest::getDataService(const std::string& peer)
 {
     if(mPeerStoreMap.find(peer) != mPeerStoreMap.end()) return NULL;
 
-    RsDataService* dStore = new RsDataService("./", peer.c_str(), mServType);
+    RsDataService* dStore = new RsDataService("./", peer, mServType);
     mStoreNames.insert(peer);
     mPeerStoreMap.insert(std::make_pair(peer, dStore));
     populateStore(dStore);
@@ -134,7 +135,6 @@ void NxsMessageTest::populateStore(RsGeneralDataService* dStore)
 void NxsMessageTest::cleanUp()
 {
 
-
     std::map<std::string, RsGeneralDataService*>::iterator mit = mPeerStoreMap.begin();
 
     for(; mit != mPeerStoreMap.end(); mit++)
@@ -177,5 +177,18 @@ void NxsMessageTestObserver::notifyNewGroups(std::vector<RsNxsGrp *> &groups)
 void NxsMessageTestObserver::notifyNewMessages(std::vector<RsNxsMsg *> &messages)
 {
 
+	std::vector<RsNxsMsg*>::iterator vit = messages.begin();
+	std::map<RsNxsMsg*, RsGxsMsgMetaData*> msgs;
+
+	for(; vit != messages.end(); vit++)
+	{
+		RsNxsMsg* msg = *vit;
+		RsGxsMsgMetaData* meta = new RsGxsMsgMetaData();
+		meta->mGroupId = msg->grpId;
+		meta->mMsgId = msg->msgId;
+		msgs.insert(std::make_pair(msg, meta));
+	}
+
+	mStore->storeMessage(msgs);
 }
 

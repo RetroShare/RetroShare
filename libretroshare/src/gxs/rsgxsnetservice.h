@@ -395,6 +395,9 @@ private:
     RsMutex mNxsMutex;
 
     uint32_t mSyncTs;
+    // TODO: remove, temp, for testing.
+    // subscription handled outside netservice
+    std::set<std::string> mGroupSubscribedTo;
     const uint32_t mSYNC_PERIOD;
 
 };
