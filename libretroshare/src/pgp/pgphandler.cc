@@ -1224,8 +1224,9 @@ bool PGPHandler::mergeKeySignatures(ops_keydata_t *dst,const ops_keydata_t *src)
 		{
 			uint8_t tag ;
 			uint32_t length ;
+			unsigned char *tmp_data = src->packets[i].raw ; // put it in a tmp variable because read_packetHeader() will modify it!!
 
-			PGPKeyParser::read_packetHeader(src->packets[i].raw,tag,length) ;
+			PGPKeyParser::read_packetHeader(tmp_data,tag,length) ;
 
 			if(tag == PGPKeyParser::PGP_PACKET_TAG_SIGNATURE)
 				to_add.insert(src->packets[i]) ;
