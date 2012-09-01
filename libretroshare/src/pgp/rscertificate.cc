@@ -730,7 +730,7 @@ std::string RsCertificate::toStdString_oldFormat() const
 		return res ;
 
 	res += SSLID_BEGIN_SECTION ;
-	res += location_id.toStdString() ;
+	res += location_id.toStdString(false) ;
 	res += ";" ;
 	res += LOCATION_BEGIN_SECTION ;
 	res += location_name ;
