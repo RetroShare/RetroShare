@@ -1398,15 +1398,23 @@ bool PGPHandler::locked_syncPublicKeyring()
 	// Now check if the pubring was locally modified, which needs saving it again
 	if(_pubring_changed)
 	{
+		std::string tmp_keyring_file = _pubring_path + ".tmp" ;
+
 		std::cerr << "Local changes in public keyring. Writing to disk..." << std::endl;
-		if(!ops_write_keyring_to_file(_pubring,ops_false,_pubring_path.c_str(),ops_true)) 
-			std::cerr << "Cannot write public keyring. Disk full? Disk quota exceeded?" << std::endl;
-		else
+		if(!ops_write_keyring_to_file(_pubring,ops_false,tmp_keyring_file.c_str(),ops_true)) 
 		{
-			std::cerr << "Done." << std::endl;
-			_pubring_last_update_time = time(NULL) ;	// should we get this value from the disk instead??
-			_pubring_changed = false ;
+			std::cerr << "Cannot write public keyring tmp file. Disk full? Disk quota exceeded?" << std::endl;
+			return false ;
 		}
+		if(!RsDirUtil::renameFile(tmp_keyring_file,_pubring_path))
+		{
+			std::cerr << "Cannot rename tmp pubring file " << tmp_keyring_file << " into actual pubring file " << _pubring_path << ". Check writing permissions?!?" << std::endl;
+			return false ;
+		}
+
+		std::cerr << "Done." << std::endl;
+		_pubring_last_update_time = time(NULL) ;	// should we get this value from the disk instead??
+		_pubring_changed = false ;
 	}
 	return true ;
 }
