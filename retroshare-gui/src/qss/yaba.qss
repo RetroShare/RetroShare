@@ -3,6 +3,17 @@
                                        stop:0 #6F6F6F, stop:1 #979797);
  }
 
+HeaderFrame {
+	background-image: url(:/images/headerFrame.png);
+	border: 0px;
+}
+
+QFrame#titleBarFrame, QFrame#toolBarFrame {
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                       stop:0 #FBC957, stop:1 #D79704);
+                                       
+}
+
 QDialog, QMainWindow, QStatusBar{
    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                        stop:0 #6F6F6F, stop:1 #979797);
@@ -11,6 +22,14 @@ QDialog, QMainWindow, QStatusBar{
 QWidget#chatcentralwidget{
    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                        stop:0 #6F6F6F, stop:1 #979797);
+}
+
+/* Channels */
+
+ChannelFeed QFrame#headerFrame {
+  background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                       stop:0 #FBC957, stop:1 #D79704);
+	border: 1px solid #CCCCCC;
 }
 
 /* Customize the toolbar. */

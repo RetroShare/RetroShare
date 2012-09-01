@@ -5,6 +5,10 @@ QToolBar {
 
 }
 
+HeaderFrame {
+	background-image: url(:/images/headerFrame.png);
+	border: 0px;
+}
 
 QPushButton#okButton {
 	min-height: 27px;

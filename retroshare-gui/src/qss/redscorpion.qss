@@ -5,7 +5,11 @@
 QDialog{
          background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 red, stop: 1 darkred);
+}
 
+HeaderFrame {
+	background-image: url(:/images/headerFrame.png);
+	border: 0px;
 }
 
 /* Customize the toolbar. */

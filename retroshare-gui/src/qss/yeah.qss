@@ -3,6 +3,10 @@
                                        stop:0 lightgray, stop:1 darkgray);
 }
 
+HeaderFrame {
+	background-image: url(:/images/headerFrame.png);
+	border: 0px;
+}
 
 QDialog{
    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,

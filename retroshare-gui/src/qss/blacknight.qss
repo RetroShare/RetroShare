@@ -1,3 +1,7 @@
+HeaderFrame {
+	background-image: url(:/images/headerFrame.png);
+	border: 0px;
+}
 
 QWidget{
 background: black;

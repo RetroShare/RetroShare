@@ -8,6 +8,10 @@ QDialog{
                                      stop: 0 #77AEF1, stop: 0.4 #86BBF7);
 }
 
+HeaderFrame {
+	background-image: url(:/images/headerFrame.png);
+	border: 0px;
+}
 
 /* Customize the toolbar. */
 QToolBar#toolBar {

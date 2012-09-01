@@ -1,3 +1,17 @@
+QFrame#titleBarFrame, QFrame#toolBarFrame {
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
+	border: 1px solid #CCCCCC;
+}
+
+HeaderFrame {
+	background-image: url(:/images/headerFrame.png);
+	border: 0px;
+}
+
+HeaderFrame > QLabel#headerLabel {
+	color: rgb(255, 255, 255);
+}
+
 .QWidget {
    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                        stop:0 lightgray, stop:1 darkgray);

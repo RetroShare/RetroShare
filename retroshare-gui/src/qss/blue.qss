@@ -3,6 +3,11 @@
    border-color: transparent;
 }
 
+HeaderFrame {
+	background-image: url(:/images/headerFrame.png);
+	border: 0px;
+}
+
 QDialog{
    background-color: #c4dafa;
 
