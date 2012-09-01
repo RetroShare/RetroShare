@@ -26,43 +26,6 @@
    <iconset resource="../images.qrc">
     <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
   </property>
-  <property name="styleSheet">
-   <string notr="true">QToolButton, QPushButton, QComboBox { 
-border-image: url(:/images/btn_26.png) 4;
-border-width: 4;
-padding: 0px 6px;
-font-size: 12px;
-}
-
-QComboBox QAbstractItemView {
-background-color:white;
-}
-
-QComboBox::down-arrow {
-image: url(:/images/combobox_arrow.png);
-}
-
-QComboBox:drop-down
-{
-subcontrol-origin: padding;
-subcontrol-position: top right;
-border-left-style: none; 
-border-top-right-radius: 1px;
-border-bottom-right-radius: 1px;
-}
-
-QToolButton:hover, QPushButton:hover, QComboBox:hover {
-border-image: url(:/images/btn_26_hover.png) 4;
-}
-
-QToolButton:disabled, QPushButton:disabled, QComboBox::disabled {
-color:gray;
-}
-
-QToolButton:pressed, QPushButton:pressed{
-border-image: url(:/images/btn_26_pressed.png) 4;
-}</string>
-  </property>
   <layout class="QGridLayout" name="gridLayout_3">
    <property name="margin">
     <number>0</number>
@@ -77,19 +40,6 @@ border-image: url(:/images/btn_26_pressed.png) 4;
        <width>0</width>
        <height>30</height>
       </size>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QFrame#frame{ 
-background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-stop:0 #FEFEFE, stop:1 #E8E8E8);
-
-border: 1px solid #CCCCCC;}</string>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="1" column="0">
@@ -128,9 +78,6 @@ border: 1px solid #CCCCCC;}</string>
                <width>16777215</width>
                <height>26</height>
               </size>
-             </property>
-             <property name="styleSheet">
-              <string notr="true"/>
              </property>
              <property name="text">
               <string>Generate New Identity</string>

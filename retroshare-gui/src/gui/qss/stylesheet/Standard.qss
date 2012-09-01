@@ -18,6 +18,28 @@ HeaderFrame > QLabel#headerLabel {
 	color: rgb(255, 255, 255);
 }
 
+/* GenCertDialog */
+
+GenCertDialog > QFrame#headerFrame {
+	background-image: url(:/images/genbackground.png);
+}
+
+GenCertDialog > QFrame#headerFrame > QLabel#headerLabel {
+	color: rgb(255, 255, 255);
+}
+
+GenCertDialog > QFrame#frame {
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
+	border: 1px solid #CCCCCC;
+}
+
+/* ProfileManager */
+
+ProfileManager > QFrame#frame {
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
+	border: 1px solid #CCCCCC;
+}
+
 /* FriendsDialog */
 
 FriendsDialog QFrame#headerFrame {

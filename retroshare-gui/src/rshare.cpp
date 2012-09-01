@@ -87,7 +87,7 @@ Rshare::qt_msg_handler(QtMsgType type, const char *s)
 /** Constructor. Parses the command-line arguments, resets Rshare's
  * configuration (if requested), and sets up the GUI style and language
  * translation. */
-Rshare::Rshare(QStringList args, int &argc, char **argv, QString dir)
+Rshare::Rshare(QStringList args, int &argc, char **argv, const QString &dir)
 : QApplication(argc, argv)
 {
   qInstallMsgHandler(qt_msg_handler);
@@ -345,6 +345,10 @@ Rshare::setSheet(QString sheet)
   }
   /* Apply the specified GUI stylesheet */
     _stylesheet = sheet;
+
+    /* load the StyleSheet*/
+    loadStyleSheet(_stylesheet);
+
     return true;
 }
 

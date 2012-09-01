@@ -71,8 +71,6 @@ void GenCertDialog::init()
 
 	 ui.genPGPuser->clear() ;
 
-  QString titleString("<span style=\"font-size:17pt; font-weight:500;" "color:white;\">%1</span>");
-
     std::list<std::string> pgpIds;
     std::list<std::string>::iterator it;
     bool foundGPGKeys = false;
@@ -91,29 +89,24 @@ void GenCertDialog::init()
 
     if (foundGPGKeys) {
         ui.no_gpg_key_label->hide();
-        ui.progressBar->hide();
         ui.new_gpg_key_checkbox->setChecked(false);
         setWindowTitle(tr("Create new Location"));
         ui.genButton->setText(tr("Generate new Location"));
-        ui.label_3->setText( titleString.arg( tr("Create a new Location") ) ) ;
+        ui.headerLabel->setText(tr("Create a new Location"));
         genNewGPGKey = false;
     } else {
         ui.no_gpg_key_label->show();
         ui.new_gpg_key_checkbox->setChecked(true);
         ui.new_gpg_key_checkbox->setEnabled(false);
-        ui.progressBar->hide();
         setWindowTitle(tr("Create new Identity"));
         ui.genButton->setText(tr("Generate new Identity"));
-        ui.label_3->setText( titleString.arg( tr("Create a new Identity") ) ) ;
+        ui.headerLabel->setText(tr("Create a new Identity"));
         genNewGPGKey = true;
     }
     newGPGKeyGenUiSetup();
 }
 
 void GenCertDialog::newGPGKeyGenUiSetup() {
-
-    QString titleStr("<span style=\"font-size:17pt; font-weight:500;"
-                               "color:white;\">%1</span>");
 
     if (ui.new_gpg_key_checkbox->isChecked()) {
         genNewGPGKey = true;
@@ -132,7 +125,7 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
 //		  ui.importIdentity_PB->hide() ;
         setWindowTitle(tr("Create new Identity"));
         ui.genButton->setText(tr("Generate new Identity"));
-        ui.label_3->setText( titleStr.arg( tr("Create a new Identity") ) ) ;
+        ui.headerLabel->setText(tr("Create a new Identity"));
     } else {
         genNewGPGKey = false;
         ui.name_label->hide();
@@ -147,7 +140,7 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
         ui.importIdentity_PB->show() ;
         setWindowTitle(tr("Create new Location"));
         ui.genButton->setText(tr("Generate new Location"));
-        ui.label_3->setText( titleStr.arg( tr("Create a new Location") ) ) ;
+        ui.headerLabel->setText(tr("Create a new Location"));
     }
 }
 
@@ -240,7 +233,6 @@ void GenCertDialog::genPerson()
             std::string err_string;
             ui.no_gpg_key_label->setText(tr("Generating new GPG key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. \n\nFill in your GPG password when asked, to sign your new key."));
             ui.no_gpg_key_label->show();
-            ui.progressBar->show();
             ui.new_gpg_key_checkbox->hide();
             ui.name_label->hide();
             ui.name_input->hide();

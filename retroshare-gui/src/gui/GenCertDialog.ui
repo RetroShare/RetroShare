@@ -17,47 +17,6 @@
    <iconset resource="images.qrc">
     <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
   </property>
-  <property name="styleSheet">
-   <string notr="true">QToolButton, QPushButton, QComboBox { 
-border-image: url(:/images/btn_26.png) 4;
-border-width: 4;
-padding: 0px 6px;
-font-size: 12px;
-}
-
-*{
-color: black;
-}
-
-QComboBox QAbstractItemView {
-background-color:white;
-}
-
-QComboBox::down-arrow {
-image: url(:/images/combobox_arrow.png);
-}
-
-QComboBox:drop-down
-{
-subcontrol-origin: padding;
-subcontrol-position: top right;
-border-left-style: none; 
-border-top-right-radius: 1px;
-border-bottom-right-radius: 1px;
-}
-
-QToolButton:hover, QPushButton:hover, QComboBox:hover {
-border-image: url(:/images/btn_26_hover.png) 4;
-}
-
-QToolButton:disabled, QPushButton:disabled, QComboBox::disabled {
-color:gray;
-}
-
-QToolButton:pressed, QPushButton:pressed{
-border-image: url(:/images/btn_26_pressed.png) 4;
-}</string>
-  </property>
   <layout class="QGridLayout" name="gridLayout_3">
    <property name="margin">
     <number>0</number>
@@ -72,19 +31,6 @@ border-image: url(:/images/btn_26_pressed.png) 4;
        <width>0</width>
        <height>30</height>
       </size>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QFrame#frame{ 
-background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-stop:0 #FEFEFE, stop:1 #E8E8E8);
-
-border: 1px solid #CCCCCC;}</string>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
@@ -116,19 +62,6 @@ border: 1px solid #CCCCCC;}</string>
           </widget>
          </item>
          <item row="1" column="0" colspan="2">
-          <widget class="QProgressBar" name="progressBar">
-           <property name="maximum">
-            <number>0</number>
-           </property>
-           <property name="value">
-            <number>-1</number>
-           </property>
-           <property name="textVisible">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0" colspan="2">
           <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0,0,0">
            <property name="spacing">
             <number>6</number>
@@ -197,7 +130,7 @@ border: 1px solid #CCCCCC;}</string>
            </item>
           </layout>
          </item>
-         <item row="3" column="0">
+         <item row="2" column="0">
           <widget class="QLabel" name="progress_label">
            <property name="maximumSize">
             <size>
@@ -210,42 +143,42 @@ border: 1px solid #CCCCCC;}</string>
            </property>
           </widget>
          </item>
-         <item row="4" column="0">
+         <item row="3" column="0">
           <widget class="QLabel" name="genPGPuserlabel">
            <property name="text">
             <string>Use identity</string>
            </property>
           </widget>
          </item>
-         <item row="4" column="1">
+         <item row="3" column="1">
           <widget class="QComboBox" name="genPGPuser">
            <property name="toolTip">
             <string>Your profile is associated to a GPG key. RetroShare currently ignores DSA keys.</string>
            </property>
           </widget>
          </item>
-         <item row="5" column="0">
+         <item row="4" column="0">
           <widget class="QLabel" name="name_label">
            <property name="text">
             <string>Name</string>
            </property>
           </widget>
          </item>
-         <item row="5" column="1">
+         <item row="4" column="1">
           <widget class="QLineEdit" name="name_input">
            <property name="toolTip">
             <string>Enter here your nickname</string>
            </property>
           </widget>
          </item>
-         <item row="6" column="0">
+         <item row="5" column="0">
           <widget class="QLabel" name="email_label">
            <property name="text">
             <string>Email</string>
            </property>
           </widget>
          </item>
-         <item row="6" column="1">
+         <item row="5" column="1">
           <widget class="QLineEdit" name="email_input">
            <property name="toolTip">
             <string>Be careful: this email will be visible to your friends and friends 
@@ -254,7 +187,7 @@ anonymous, you can use a fake email.</string>
            </property>
           </widget>
          </item>
-         <item row="7" column="0">
+         <item row="6" column="0">
           <widget class="QLabel" name="password_label">
            <property name="toolTip">
             <string>This Password is for GPG</string>
@@ -264,7 +197,7 @@ anonymous, you can use a fake email.</string>
            </property>
           </widget>
          </item>
-         <item row="7" column="1">
+         <item row="6" column="1">
           <widget class="QLineEdit" name="password_input">
            <property name="toolTip">
             <string>Put a strong password here. This password protects your GPG key.</string>
@@ -277,17 +210,17 @@ anonymous, you can use a fake email.</string>
            </property>
           </widget>
          </item>
-         <item row="8" column="0">
+         <item row="7" column="0">
           <widget class="QLabel" name="location_label">
            <property name="text">
             <string>Location</string>
            </property>
           </widget>
          </item>
-         <item row="8" column="1">
+         <item row="7" column="1">
           <widget class="QLineEdit" name="location_input"/>
          </item>
-         <item row="9" column="1">
+         <item row="8" column="1">
           <widget class="QLabel" name="label_location2">
            <property name="minimumSize">
             <size>
@@ -309,16 +242,13 @@ anonymous, you can use a fake email.</string>
            </property>
           </widget>
          </item>
-         <item row="10" column="1">
+         <item row="9" column="1">
           <widget class="QPushButton" name="genButton">
            <property name="maximumSize">
             <size>
              <width>16777215</width>
              <height>26</height>
             </size>
-           </property>
-           <property name="styleSheet">
-            <string notr="true"/>
            </property>
            <property name="text">
             <string>Generate New Identity</string>
@@ -329,7 +259,7 @@ anonymous, you can use a fake email.</string>
            </property>
           </widget>
          </item>
-         <item row="11" column="0" colspan="2">
+         <item row="10" column="0" colspan="2">
           <spacer name="verticalSpacer">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
@@ -349,16 +279,12 @@ anonymous, you can use a fake email.</string>
     </widget>
    </item>
    <item row="0" column="0">
-    <widget class="QFrame" name="frame_2">
+    <widget class="QFrame" name="headerFrame">
      <property name="maximumSize">
       <size>
        <width>16777215</width>
        <height>140</height>
       </size>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QFrame#frame_2{background-image: url(:/images/genbackground.png);} 
-</string>
      </property>
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
@@ -374,7 +300,7 @@ anonymous, you can use a fake email.</string>
        <number>3</number>
       </property>
       <item>
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="headerImage">
         <property name="maximumSize">
          <size>
           <width>128</width>
@@ -393,20 +319,21 @@ anonymous, you can use a fake email.</string>
        </widget>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <layout class="QVBoxLayout" name="headerLayout">
         <item>
-         <widget class="QLabel" name="label_3">
+         <widget class="QLabel" name="headerLabel">
+          <property name="font">
+           <font>
+            <pointsize>16</pointsize>
+           </font>
+          </property>
           <property name="text">
-           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:16pt; color:#ffffff;&quot;&gt;Create a new Identity&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>Create a new Identity</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_2">
+         <widget class="QLabel" name="headerLabel2">
           <property name="text">
            <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;

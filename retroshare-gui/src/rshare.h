@@ -56,7 +56,7 @@ class Rshare : public QApplication
 
 public:
   /** Constructor. */
-  Rshare(QStringList args, int &argc, char **argv, QString dir);
+  Rshare(QStringList args, int &argc, char **argv, const QString &dir);
   /** Destructor. */
   ~Rshare();
 

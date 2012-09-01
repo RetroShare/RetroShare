@@ -231,9 +231,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
         config file RetroShare.conf */
     connect(ui.actionQuit, SIGNAL(triggered()), this, SLOT(doQuit()));
 
-    /* load the StyleSheet*/
-    Rshare::loadStyleSheet(Rshare::stylesheet());
-
     QList<QPair<MainPage*, QAction*> > notify;
 
     /* Create the Main pages and actions */
