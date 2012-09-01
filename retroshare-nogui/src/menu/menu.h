@@ -232,7 +232,7 @@ public:
 	uint32_t drawHeader(uint32_t drawFlags, std::string &buffer); 
 
 	// RsSystem Interface.
-        virtual void reset();
+        virtual void reset(uint32_t chan_id);
         virtual int tick();
 
 

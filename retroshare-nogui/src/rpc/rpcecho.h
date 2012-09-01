@@ -31,7 +31,7 @@ class RpcEcho: public RpcQueueService
 {
 public:
 	RpcEcho(uint32_t serviceId);
-	virtual int processMsg(uint32_t msgId, uint32_t req_id, const std::string &msg); 
+	virtual int processMsg(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg); 
 };
 
 

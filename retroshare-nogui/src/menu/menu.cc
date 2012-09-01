@@ -37,7 +37,7 @@
  */
 
         // RsTermServer Interface.
-void MenuInterface::reset()
+void MenuInterface::reset(uint32_t /* chan_id */)
 {
 	mBase->reset();
 	mCurrentMenu = mBase;
@@ -59,7 +59,9 @@ int MenuInterface::tick()
 	uint8_t keypress;
 	std::string output;
 
-	int read = mComms->recv(&keypress, 1);
+	uint32_t chan_id = 1; // dummy - for menu system.
+
+	int read = mComms->recv(chan_id, &keypress, 1);
 #ifdef MENU_DEBUG
 	std::cerr << "MenuInterface::tick() read " << read << " bytes";
 	std::cerr << std::endl;
@@ -78,7 +80,7 @@ int MenuInterface::tick()
 	else
 	{
 		/* error, NON BLOCKING is handled by recv returning 0 */
-		mComms->error("Bad Input");
+		mComms->error(chan_id, "Bad Input");
 		return -1;
 	}
 
@@ -121,7 +123,7 @@ int MenuInterface::tick()
 
 	if (output.size() > 0)
 	{
-		mComms->send(output);
+		mComms->send(chan_id, output);
 	}
 
 	return (haveInput);

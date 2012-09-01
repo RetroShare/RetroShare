@@ -38,9 +38,9 @@ RpcMediator::RpcMediator(RpcComms *c)
 	return; 
 }
 
-void RpcMediator::reset()
+void RpcMediator::reset(uint32_t chan_id)
 {
-	mServer->reset();
+	mServer->reset(chan_id);
 }
 
 
@@ -57,6 +57,11 @@ int RpcMediator::tick()
 		worked = true;
 	}
 
+	if (mServer->checkEvents())
+	{
+		worked = true;
+	}
+
 	if (worked)
 		return 1;
 	else
@@ -68,19 +73,26 @@ int RpcMediator::tick()
 int RpcMediator::recv()
 {
 	int recvd = 0;
-	while(recv_msg())
+
+	std::list<uint32_t> chan_ids;
+	std::list<uint32_t>::iterator it;
+        mComms->active_channels(chan_ids);
+	for(it = chan_ids.begin(); it != chan_ids.end(); it++)
 	{
-		recvd = 1;
+		while(recv_msg(*it))
+		{
+			recvd = 1;
+		}
 	}
 	return recvd;
 }
 
 
-int RpcMediator::recv_msg()
+int RpcMediator::recv_msg(uint32_t chan_id)
 {
 	/* nothing in here needs a Mutex... */
 
-	if (!mComms->recv_ready())
+	if (!mComms->recv_ready(chan_id))
 	{
 		return 0;
 	}
@@ -99,14 +111,14 @@ int RpcMediator::recv_msg()
         std::cerr << "RpcMediator::recv_msg() get Header: " << bufsize;
         std::cerr << " bytes" << std::endl;
 
-	int read = mComms->recv_blocking(buffer, bufsize);
+	int read = mComms->recv_blocking(chan_id, buffer, bufsize);
 	if (read != bufsize)
 	{
 		/* error */
         	std::cerr << "RpcMediator::recv_msg() Error Reading Header: " << bufsize;
         	std::cerr << " bytes" << std::endl;
 
-		mComms->error("Failed to Recv Header");
+		mComms->error(chan_id, "Failed to Recv Header");
 		return 0;
 	}
 
@@ -116,11 +128,12 @@ int RpcMediator::recv_msg()
         	std::cerr << "RpcMediator::recv_msg() Error Deserialising Header";
         	std::cerr << std::endl;
 
-		mComms->error("Failed to Deserialise Header");
+		mComms->error(chan_id, "Failed to Deserialise Header");
 		return 0;
 	}
 
-       	std::cerr << "RpcMediator::recv_msg() MsgId: " << msg_id;
+       	std::cerr << "RpcMediator::recv_msg() ChanId: " << chan_id;
+	std::cerr << " MsgId: " << msg_id;
        	std::cerr << " ReqId: " << req_id;
        	std::cerr << std::endl;
 
@@ -128,27 +141,27 @@ int RpcMediator::recv_msg()
        	std::cerr << " bytes" << std::endl;
 
 	/* grab real size */
-	read = mComms->recv_blocking(msg_body, msg_size);
+	read = mComms->recv_blocking(chan_id, msg_body, msg_size);
 	if (read != msg_size)
 	{
 		/* error */
        		std::cerr << "RpcMediator::recv_msg() Error Reading Body: " << bufsize;
        		std::cerr << " bytes" << std::endl;
 
-		mComms->error("Failed to Recv MsgBody");
+		mComms->error(chan_id, "Failed to Recv MsgBody");
 		return 0;
 	}
-	mServer->processMsg(msg_id, req_id, msg_body);
+	mServer->processMsg(chan_id, msg_id, req_id, msg_body);
 
 	return 1;
 }
 
 
-int RpcMediator::send(uint32_t msg_id, uint32_t req_id, const std::string &msg)
+int RpcMediator::send(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg)
 
 {
 	std::cerr << "RpcMediator::send(" << msg_id << "," << req_id << ", len(";
-	std::cerr << msg.size() << "))";
+	std::cerr << msg.size() << ")) on chan_id: " << chan_id;
 	std::cerr << std::endl;
 
 	uint8_t buffer[kMsgHeaderSize];
@@ -164,22 +177,22 @@ int RpcMediator::send(uint32_t msg_id, uint32_t req_id, const std::string &msg)
 		return 0;
 	}
 
-	if (!mComms->send(buffer, bufsize))
+	if (!mComms->send(chan_id, buffer, bufsize))
 	{
 		std::cerr << "RpcMediator::send() Send Header Failed";
 		std::cerr << std::endl;
 		/* error */
-		mComms->error("Failed to Send Header");
+		mComms->error(chan_id, "Failed to Send Header");
 		return 0;
 	}
 
 	/* now send the body */
-	if (!mComms->send(msg))
+	if (!mComms->send(chan_id, msg))
 	{
 		std::cerr << "RpcMediator::send() Send Body Failed";
 		std::cerr << std::endl;
 		/* error */
-		mComms->error("Failed to Send Msg");
+		mComms->error(chan_id, "Failed to Send Msg");
 		return 0;
 	}
 	return 1;

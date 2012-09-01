@@ -43,12 +43,12 @@ public:
 	void setRpcServer(RpcServer *s) { mServer = s; } /* Must only be called during setup */
 
 	// Overloaded from RpcSystem.
-virtual void reset();
+virtual void reset(uint32_t chan_id);
 virtual int tick();
 
 	int recv();
-	int recv_msg();
-	int send(uint32_t msg_id, uint32_t req_id, const std::string &msg);
+	int recv_msg(uint32_t chan_id);
+	int send(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg);
 
 private:
 	RpcComms *mComms;

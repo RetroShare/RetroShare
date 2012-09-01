@@ -471,7 +471,8 @@ int RsSshd::doRpcSystem()
 		return 0;
 	}
 
-	mRpcSystem->reset(); // clear everything for new user.
+	uint32_t dummy_chan_id = 1;
+	mRpcSystem->reset(dummy_chan_id); // clear everything for new user.
 
 	bool okay = true;
 	while(okay)
@@ -511,8 +512,18 @@ int RsSshd::isOkay()
     	return (mState == RSSSHD_STATE_CONNECTED);
 }
 
+        std::list<uint32_t>::iterator it;
+int RsSshd::active_channels(std::list<uint32_t> &chan_ids)
+{
+	if (isOkay())
+	{
+		chan_ids.push_back(1); // dummy for now.
+	}
 
-int RsSshd::error(std::string msg)
+	return 1;
+}
+
+int RsSshd::error(uint32_t chan_id, std::string msg)
 {
 	std::cerr << "RsSshd::error(" << msg << ")";
 	std::cerr << std::endl;
@@ -522,14 +533,14 @@ int RsSshd::error(std::string msg)
 }
 
 
-int RsSshd::recv_ready()
+int RsSshd::recv_ready(uint32_t chan_id)
 {
 	int bytes = ssh_channel_poll(mChannel, 0);
 	return bytes;		
 }
 
 
-int RsSshd::recv(uint8_t *buffer, int bytes)
+int RsSshd::recv(uint32_t chan_id, uint8_t *buffer, int bytes)
 {
 #if LIBSSH_VERSION_INT >= SSH_VERSION_INT(0,5,0)
 	int size = ssh_channel_read_nonblocking(mChannel, buffer, bytes, 0);
@@ -540,7 +551,7 @@ int RsSshd::recv(uint8_t *buffer, int bytes)
 }
 
 
-int RsSshd::recv(std::string &buffer, int bytes)
+int RsSshd::recv(uint32_t chan_id, std::string &buffer, int bytes)
 {
 	char input[bytes];
 #if LIBSSH_VERSION_INT >= SSH_VERSION_INT(0,5,0)
@@ -556,7 +567,7 @@ int RsSshd::recv(std::string &buffer, int bytes)
 }
 
 
-int RsSshd::recv_blocking(uint8_t *buffer, int bytes)
+int RsSshd::recv_blocking(uint32_t chan_id, uint8_t *buffer, int bytes)
 {
 #if LIBSSH_VERSION_INT >= SSH_VERSION_INT(0,5,0)
 	int size = ssh_channel_read(mChannel, buffer, bytes, 0);
@@ -567,7 +578,7 @@ int RsSshd::recv_blocking(uint8_t *buffer, int bytes)
 }
 
 
-int RsSshd::recv_blocking(std::string &buffer, int bytes)
+int RsSshd::recv_blocking(uint32_t chan_id, std::string &buffer, int bytes)
 {
 	char input[bytes];
 #if LIBSSH_VERSION_INT >= SSH_VERSION_INT(0,5,0)
@@ -582,7 +593,7 @@ int RsSshd::recv_blocking(std::string &buffer, int bytes)
 	return size;
 }
 
-int RsSshd::send(uint8_t *buffer, int bytes)
+int RsSshd::send(uint32_t chan_id, uint8_t *buffer, int bytes)
 {
 #if LIBSSH_VERSION_INT >= SSH_VERSION_INT(0,5,0)
 	ssh_channel_write(mChannel, buffer, bytes);
@@ -592,7 +603,7 @@ int RsSshd::send(uint8_t *buffer, int bytes)
 	return 1;
 }
 
-int RsSshd::send(const std::string &buffer)
+int RsSshd::send(uint32_t chan_id, const std::string &buffer)
 {
 #if LIBSSH_VERSION_INT >= SSH_VERSION_INT(0,5,0)
 	ssh_channel_write(mChannel, buffer.c_str(), buffer.size());

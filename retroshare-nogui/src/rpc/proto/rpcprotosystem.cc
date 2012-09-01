@@ -39,7 +39,7 @@ RpcProtoSystem::RpcProtoSystem(uint32_t serviceId)
 
 //RpcProtoSystem::msgsAccepted(std::list<uint32_t> &msgIds); /* not used at the moment */
 
-int RpcProtoSystem::processMsg(uint32_t msg_id, uint32_t req_id, const std::string &msg)
+int RpcProtoSystem::processMsg(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg)
 {
 	/* check the msgId */
 	uint8_t topbyte = getRpcMsgIdExtension(msg_id); 
@@ -84,7 +84,7 @@ int RpcProtoSystem::processMsg(uint32_t msg_id, uint32_t req_id, const std::stri
 	switch(submsg)
 	{
 		case rsctrl::system::MsgId_RequestSystemStatus:
-			processSystemStatus(msg_id, req_id, msg);
+			processSystemStatus(chan_id, msg_id, req_id, msg);
 			break;
 		default:
 			std::cerr << "RpcProtoSystem::processMsg() ERROR should never get here";
@@ -97,7 +97,7 @@ int RpcProtoSystem::processMsg(uint32_t msg_id, uint32_t req_id, const std::stri
 }
 
 
-int RpcProtoSystem::processSystemStatus(uint32_t msg_id, uint32_t req_id, const std::string &msg)
+int RpcProtoSystem::processSystemStatus(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg)
 {
 	std::cerr << "RpcProtoSystem::processSystemStatus()";
 	std::cerr << std::endl;
@@ -205,7 +205,7 @@ int RpcProtoSystem::processSystemStatus(uint32_t msg_id, uint32_t req_id, const 
 				rsctrl::system::MsgId_ResponseSystemStatus, true);
 
 	// queue it.
-	queueResponse(out_msg_id, req_id, outmsg);
+	queueResponse(chan_id, out_msg_id, req_id, outmsg);
 
 	return 1;
 }

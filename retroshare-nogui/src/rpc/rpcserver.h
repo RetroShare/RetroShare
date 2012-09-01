@@ -48,6 +48,7 @@ uint32_t constructMsgId(uint8_t ext, uint16_t service, uint8_t submsg, bool is_r
 class RpcQueuedMsg
 {
 public:
+	uint32_t mChanId;
 	uint32_t mMsgId;
 	uint32_t mReqId;
 	std::string mMsg;
@@ -58,26 +59,47 @@ class RpcService
 {
 public:
 	RpcService(uint32_t /* serviceId */ ) { return; }
-	virtual void reset() { return; } 
+	virtual void reset(uint32_t /* chan_id */) { return; } 
 	virtual int msgsAccepted(std::list<uint32_t> & /* msgIds */) { return 0; } /* not used at the moment */
-	virtual int processMsg(uint32_t msgId, uint32_t req_id, const std::string &msg) = 0;     /* returns 0 - not handled, > 0, accepted */
-	virtual int getResponse(uint32_t &msgId, uint32_t &req_id, std::string &msg) = 0;  /* 0 - not ready, > 0 heres the response */
+	virtual int processMsg(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg) = 0;     /* returns 0 - not handled, > 0, accepted */
+	virtual int getResponse(uint32_t &chan_id, uint32_t &msgId, uint32_t &req_id, std::string &msg) = 0;  /* 0 - not ready, > 0 heres the response */
+
+	virtual int getEvents(std::list<RpcQueuedMsg> & /* events */) { return 0; } /* 0 = none, optional feature */
 };
 
+class RpcEventRegister
+{
+	public:
+	uint32_t mChanId;
+	uint32_t mReqId;
+	uint32_t mEventId; // THIS IS A LOCAL PARAMETER, Service Specific
+};
 
 /* Implements a Queue for quick implementation of Instant Response Services */
 class RpcQueueService: public RpcService
 {
 public:
 	RpcQueueService(uint32_t serviceId);
-virtual void reset();
-virtual int getResponse(uint32_t &msgId, uint32_t &req_id, std::string &msg);
+virtual void reset(uint32_t chan_id);
+virtual int getResponse(uint32_t &chan_id, uint32_t &msg_id, uint32_t &req_id, std::string &msg);
+virtual int getEvents(std::list<RpcQueuedMsg> &events);
 
 protected:
-	int queueResponse(uint32_t msgId, uint32_t req_id, const std::string &msg);
+	int queueResponse(uint32_t chan_id, uint32_t msgId, uint32_t req_id, const std::string &msg);
+
+virtual int locked_checkForEvents(uint32_t event, const std::list<RpcEventRegister> &registered, std::list<RpcQueuedMsg> &events); // Overload for functionality.
+
+	int registerForEvents(uint32_t chan_id, uint32_t req_id, uint32_t event_id);
+	int deregisterForEvents(uint32_t chan_id, uint32_t req_id, uint32_t event_id);
+
+	int clearEventsForChannel(uint32_t chan_id);
+	int printEventRegister(std::ostream &out);
+
 private:
         RsMutex mQueueMtx;
+
 	std::map<uint32_t, RpcQueuedMsg> mResponses;
+	std::map<uint32_t, std::list<RpcEventRegister> > mEventRegister;
 };
 
 
@@ -98,14 +120,15 @@ class RpcServer
 public:
 	RpcServer(RpcMediator *med);
 	int addService(RpcService *service);
-	int processMsg(uint32_t msgId, uint32_t req_id, const std::string &msg);
+	int processMsg(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg);
 	bool checkPending();
+	bool checkEvents();
 
-	void reset();
+	void reset(uint32_t chan_id);
 
 private:
 	bool sendQueuedMsgs(std::list<RpcQueuedMsg> &msgs);
-	int queueRequest_locked(uint32_t msgId, uint32_t req_id, RpcService *service);
+	int queueRequest_locked(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, RpcService *service);
 
 	RpcMediator *mMediator;
 

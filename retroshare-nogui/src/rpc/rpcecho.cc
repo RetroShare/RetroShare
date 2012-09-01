@@ -29,10 +29,10 @@ RpcEcho::RpcEcho(uint32_t serviceId)
 	return; 
 }
 
-int RpcEcho::processMsg(uint32_t msg_id, uint32_t req_id, const std::string &msg)
+int RpcEcho::processMsg(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg)
 {
 	/* */
-	queueResponse(msg_id, req_id, msg);
+	queueResponse(chan_id, msg_id, req_id, msg);
 	return 1;
 }
 

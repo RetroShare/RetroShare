@@ -32,9 +32,9 @@ class RpcProtoSystem: public RpcQueueService
 public:
 	RpcProtoSystem(uint32_t serviceId);
 //	virtual msgsAccepted(std::list<uint32_t> &msgIds); /* not used at the moment */
-	virtual int processMsg(uint32_t msgId, uint32_t req_id, const std::string &msg);
+	virtual int processMsg(uint32_t chan_id, uint32_t msgId, uint32_t req_id, const std::string &msg);
 
-	virtual int processSystemStatus(uint32_t msg_id, uint32_t req_id, const std::string &msg);
+	virtual int processSystemStatus(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg);
 };
 
 

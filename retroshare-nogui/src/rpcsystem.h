@@ -25,6 +25,7 @@
 #ifndef RS_RPC_SYSTEM_H
 #define RS_RPC_SYSTEM_H
 
+#include <list>
 #include <string>
 #include <inttypes.h>
 
@@ -32,18 +33,20 @@ class RpcComms
 {
 public:
         virtual int isOkay() = 0;
-        virtual int error(std::string msg) = 0;
+        virtual int error(uint32_t chan_id, std::string msg) = 0;
 
-        virtual int recv_ready() = 0;
-        virtual int recv(uint8_t *buffer, int bytes) = 0;
-        virtual int recv(std::string &buffer, int bytes) = 0;
+        virtual int active_channels(std::list<uint32_t> &chan_ids) = 0;
+
+        virtual int recv_ready(uint32_t chan_id) = 0;
+        virtual int recv(uint32_t chan_id, uint8_t *buffer, int bytes) = 0;
+        virtual int recv(uint32_t chan_id, std::string &buffer, int bytes) = 0;
 
 	// these make it easier...
-        virtual int recv_blocking(uint8_t *buffer, int bytes) = 0;
-        virtual int recv_blocking(std::string &buffer, int bytes) = 0;
+        virtual int recv_blocking(uint32_t chan_id, uint8_t *buffer, int bytes) = 0;
+        virtual int recv_blocking(uint32_t chan_id, std::string &buffer, int bytes) = 0;
 
-        virtual int send(uint8_t *buffer, int bytes) = 0;
-        virtual int send(const std::string &buffer) = 0;
+        virtual int send(uint32_t chan_id, uint8_t *buffer, int bytes) = 0;
+        virtual int send(uint32_t chan_id, const std::string &buffer) = 0;
 
         virtual int setSleepPeriods(float /* busy */, float /* idle */) { return 0; }
 };
@@ -53,7 +56,7 @@ class RpcSystem
 {
 public:
 	/* this must be regularly ticked to update the display */
-	virtual void reset() = 0; 
+	virtual void reset(uint32_t chan_id) = 0; 
 	virtual int tick() = 0;
 };
 

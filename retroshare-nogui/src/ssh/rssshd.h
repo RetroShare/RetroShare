@@ -83,17 +83,18 @@ int 	adduserpwdhash(std::string username, std::string hash);
 
 	// RsComms Interface.
         virtual int isOkay();
-        virtual int error(std::string msg);
+        virtual int error(uint32_t chan_id, std::string msg);
 
-        virtual int recv_ready();
+        virtual int active_channels(std::list<uint32_t> &chan_ids);
+        virtual int recv_ready(uint32_t chan_id);
 
-        virtual int recv(uint8_t *buffer, int bytes);
-        virtual int recv(std::string &buffer, int bytes);
-        virtual int recv_blocking(uint8_t *buffer, int bytes);
-        virtual int recv_blocking(std::string &buffer, int bytes);
+        virtual int recv(uint32_t chan_id, uint8_t *buffer, int bytes);
+        virtual int recv(uint32_t chan_id, std::string &buffer, int bytes);
+        virtual int recv_blocking(uint32_t chan_id, uint8_t *buffer, int bytes);
+        virtual int recv_blocking(uint32_t chan_id, std::string &buffer, int bytes);
 
-        virtual int send(uint8_t *buffer, int bytes);
-        virtual int send(const std::string &buffer);
+        virtual int send(uint32_t chan_id, uint8_t *buffer, int bytes);
+        virtual int send(uint32_t chan_id, const std::string &buffer);
 
 	virtual int setSleepPeriods(float busy, float idle);
 

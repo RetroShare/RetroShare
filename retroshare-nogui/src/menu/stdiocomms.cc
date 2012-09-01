@@ -66,7 +66,16 @@ int StdioComms::isOkay()
 }
 
 
-int StdioComms::error(std::string msg)
+int StdioComms::active_channels(std::list<uint32_t> &chan_ids)
+{
+	if (isOkay())
+	{
+		chan_ids.push_back(1); // only one possible here (stdin/stdout)
+	}
+	return 1;
+}
+
+int StdioComms::error(uint32_t chan_id, std::string msg)
 {
 	std::cerr << "StdioComms::error(" << msg << ")";
 	std::cerr << std::endl;
@@ -75,14 +84,14 @@ int StdioComms::error(std::string msg)
 
 
 
-int StdioComms::recv_ready()
+int StdioComms::recv_ready(uint32_t chan_id)
 {
 	/* should be proper poll / select! - but we don't use this at the moment */
 	return 1;
 }
 
 
-int StdioComms::recv(uint8_t *buffer, int bytes)
+int StdioComms::recv(uint32_t chan_id, uint8_t *buffer, int bytes)
 {
 	int size = read(mIn, buffer, bytes);
 	std::cerr << "StdioComms::recv() returned: " << size;
@@ -102,7 +111,7 @@ int StdioComms::recv(uint8_t *buffer, int bytes)
 }
 
 
-int StdioComms::recv(std::string &buffer, int bytes)
+int StdioComms::recv(uint32_t chan_id, std::string &buffer, int bytes)
 {
 	uint8_t tmpbuffer[bytes];
 	int size = read(mIn, tmpbuffer, bytes);
@@ -114,7 +123,7 @@ int StdioComms::recv(std::string &buffer, int bytes)
 }
 
 	// these make it easier...
-int StdioComms::recv_blocking(uint8_t *buffer, int bytes)
+int StdioComms::recv_blocking(uint32_t chan_id, uint8_t *buffer, int bytes)
 {
 	int totalread = 0;
 	while(totalread < bytes)
@@ -137,10 +146,10 @@ int StdioComms::recv_blocking(uint8_t *buffer, int bytes)
 }
 
 
-int StdioComms::recv_blocking(std::string &buffer, int bytes)
+int StdioComms::recv_blocking(uint32_t chan_id, std::string &buffer, int bytes)
 {
 	uint8_t tmpbuffer[bytes];
-	int size = recv_blocking(tmpbuffer, bytes);
+	int size = recv_blocking(chan_id, tmpbuffer, bytes);
 
 	if (size < 0)
 		return size; // error.
@@ -152,14 +161,14 @@ int StdioComms::recv_blocking(std::string &buffer, int bytes)
 }
 
 
-int StdioComms::send(uint8_t *buffer, int bytes)
+int StdioComms::send(uint32_t chan_id, uint8_t *buffer, int bytes)
 {
 	write(mOut, buffer, bytes);
 	return bytes;
 }
 
 
-int StdioComms::send(const std::string &output)
+int StdioComms::send(uint32_t chan_id, const std::string &output)
 {
 	if (output.size() > 0)
 	{

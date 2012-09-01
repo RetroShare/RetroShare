@@ -38,7 +38,7 @@ RpcProtoPeers::RpcProtoPeers(uint32_t serviceId)
 
 //RpcProtoPeers::msgsAccepted(std::list<uint32_t> &msgIds); /* not used at the moment */
 
-int RpcProtoPeers::processMsg(uint32_t msg_id, uint32_t req_id, const std::string &msg)
+int RpcProtoPeers::processMsg(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg)
 {
 	/* check the msgId */
 	uint8_t topbyte = getRpcMsgIdExtension(msg_id); 
@@ -83,13 +83,13 @@ int RpcProtoPeers::processMsg(uint32_t msg_id, uint32_t req_id, const std::strin
 	switch(submsg)
 	{
 		case rsctrl::peers::MsgId_RequestPeers:
-			processRequestPeers(msg_id, req_id, msg);
+			processRequestPeers(chan_id, msg_id, req_id, msg);
 			break;
 		case rsctrl::peers::MsgId_RequestAddPeer:
-			processAddPeer(msg_id, req_id, msg);
+			processAddPeer(chan_id, msg_id, req_id, msg);
 			break;
 		case rsctrl::peers::MsgId_RequestModifyPeer:
-			processModifyPeer(msg_id, req_id, msg);
+			processModifyPeer(chan_id, msg_id, req_id, msg);
 			break;
 		default:
 			std::cerr << "RpcProtoPeers::processMsg() ERROR should never get here";
@@ -102,7 +102,7 @@ int RpcProtoPeers::processMsg(uint32_t msg_id, uint32_t req_id, const std::strin
 }
 
 
-int RpcProtoPeers::processAddPeer(uint32_t msg_id, uint32_t req_id, const std::string &msg)
+int RpcProtoPeers::processAddPeer(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg)
 {
 	std::cerr << "RpcProtoPeers::processAddPeer() NOT FINISHED";
 	std::cerr << std::endl;
@@ -136,13 +136,13 @@ int RpcProtoPeers::processAddPeer(uint32_t msg_id, uint32_t req_id, const std::s
 				rsctrl::peers::MsgId_ResponseAddPeer, true);
 
 	// queue it.
-	queueResponse(out_msg_id, req_id, outmsg);
+	queueResponse(chan_id, out_msg_id, req_id, outmsg);
 
 	return 1;
 }
 
 
-int RpcProtoPeers::processModifyPeer(uint32_t msg_id, uint32_t req_id, const std::string &msg)
+int RpcProtoPeers::processModifyPeer(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg)
 {
 	std::cerr << "RpcProtoPeers::processModifyPeer() NOT FINISHED";
 	std::cerr << std::endl;
@@ -177,14 +177,14 @@ int RpcProtoPeers::processModifyPeer(uint32_t msg_id, uint32_t req_id, const std
 				rsctrl::peers::MsgId_ResponseModifyPeer, true);
 
 	// queue it.
-	queueResponse(out_msg_id, req_id, outmsg);
+	queueResponse(chan_id, out_msg_id, req_id, outmsg);
 
 	return 1;
 }
 
 
 
-int RpcProtoPeers::processRequestPeers(uint32_t msg_id, uint32_t req_id, const std::string &msg)
+int RpcProtoPeers::processRequestPeers(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg)
 {
 	std::cerr << "RpcProtoPeers::processRequestPeers()";
 	std::cerr << std::endl;
@@ -421,7 +421,7 @@ int RpcProtoPeers::processRequestPeers(uint32_t msg_id, uint32_t req_id, const s
 				rsctrl::peers::MsgId_ResponsePeerList, true);
 
 	// queue it.
-	queueResponse(out_msg_id, req_id, outmsg);
+	queueResponse(chan_id, out_msg_id, req_id, outmsg);
 
 	return 1;
 }
