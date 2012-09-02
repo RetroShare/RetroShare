@@ -999,9 +999,12 @@ bool ftTransferModule::locked_tickPeerTransfer(peerInfo &info)
 	uint64_t req_offset = 0;
 	uint32_t req_size =0 ;
 
-	if (locked_getChunk(info.peerId,next_req,req_offset,req_size))
-	{
-		if (req_size > 0)
+	// Loop over multiple calls to the file creator: for some reasons the file creator might not be able to
+	// give a plain chunk of the requested size (size hint larger than the fixed chunk size, priority given to 
+	// an old pending chunk, etc).
+	//
+	while(next_req > 0 && locked_getChunk(info.peerId,next_req,req_offset,req_size))
+		if(req_size > 0)
 		{
 			info.state = PQIPEER_DOWNLOADING;
 			locked_requestData(info.peerId,req_offset,req_size);
@@ -1013,13 +1016,14 @@ bool ftTransferModule::locked_tickPeerTransfer(peerInfo &info)
 				info.rttActive = true;
 				info.rttOffset = req_offset + req_size;
 			}
+			next_req -= std::min(req_size,next_req) ;
 		}
 		else
 		{
 			std::cerr << "transfermodule::Waiting for available data";
 			std::cerr << std::endl;
+			break ;
 		}
-	}
 
 	return true;
 }
