@@ -126,6 +126,7 @@ cp linkscloud-plugin/plugins.pro $workdir/src/plugins/plugins.pro
 ./linkscloud-plugin/cleanProFile.sh $workdir/src/plugins/LinksCloud/LinksCloud.pro
 
 echo Calling debuild...
+cp linkscloud-plugin/debian_dirs $workdir/debian/dirs
 cp linkscloud-plugin/debian_rules $workdir/debian/rules
 cat linkscloud-plugin/debian_control | sed -e s/XXXXXX/"$version"/g > $workdir/debian/control.tmp
 mv -f $workdir/debian/control.tmp $workdir/debian/control
