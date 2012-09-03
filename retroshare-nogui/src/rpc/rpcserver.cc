@@ -27,6 +27,16 @@
 
 #include <iostream>
 
+
+
+bool operator<(const RpcUniqueId &a, const RpcUniqueId &b)
+{
+	if (a.mChanId == b.mChanId)
+		return (a.mReqId < b.mReqId);
+	return (a.mChanId < b.mChanId);
+}
+
+
 RpcServer::RpcServer(RpcMediator *med)
  :mMediator(med), mRpcMtx("RpcMtx")
 {
@@ -91,12 +101,13 @@ int RpcServer::processMsg(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, co
 	return 0;
 }
 
-int RpcServer::queueRequest_locked(uint32_t /* chan_id */, uint32_t /* msgId */, uint32_t req_id, RpcService *service)
+int RpcServer::queueRequest_locked(uint32_t chan_id, uint32_t /* msgId */, uint32_t req_id, RpcService *service)
 {
 	std::cerr << "RpcServer::queueRequest_locked() req_id: " << req_id;
 	std::cerr << std::endl;
 
 	RpcQueuedObj obj;
+	obj.mChanId = chan_id;
 	obj.mReqId = req_id;
 	obj.mService = service;
 
@@ -118,7 +129,7 @@ bool RpcServer::checkPending()
 		std::list<RpcQueuedObj>::iterator it;
 		for(it = mRpcQueue.begin(); it != mRpcQueue.end();)
 		{
-			uint32_t out_chan_id = 0;
+			uint32_t out_chan_id = it->mChanId;
 			uint32_t out_msg_id = 0;
 			uint32_t out_req_id = it->mReqId;
 			std::string out_msg;
@@ -216,10 +227,10 @@ void RpcQueueService::reset(uint32_t chan_id)
 
 	RsStackMutex stack(mQueueMtx); /********** LOCKED MUTEX ***************/
 
-	std::list<uint32_t> toRemove;
+	std::list<RpcUniqueId> toRemove;
 
 	// iterate through and remove only chan_id items.
-        std::map<uint32_t, RpcQueuedMsg>::iterator mit;
+        std::map<RpcUniqueId, RpcQueuedMsg>::iterator mit;
 	for(mit = mResponses.begin(); mit != mResponses.end(); mit++)
 	{
 		if (mit->second.mChanId == chan_id)
@@ -227,7 +238,7 @@ void RpcQueueService::reset(uint32_t chan_id)
 	}
 
 	/* remove items */
-	std::list<uint32_t>::iterator rit;
+	std::list<RpcUniqueId>::iterator rit;
 	for(rit = toRemove.begin(); rit != toRemove.end(); rit++)
 	{
 		mit = mResponses.find(*rit);
@@ -242,15 +253,16 @@ int RpcQueueService::getResponse(uint32_t &chan_id, uint32_t &msg_id, uint32_t &
 {
 	RsStackMutex stack(mQueueMtx); /********** LOCKED MUTEX ***************/
 
-        std::map<uint32_t, RpcQueuedMsg>::iterator it;
+        std::map<RpcUniqueId, RpcQueuedMsg>::iterator it;
 
-	it = mResponses.find(req_id);
+	RpcUniqueId uid(chan_id, req_id);
+	it = mResponses.find(uid);
 	if (it == mResponses.end())
 	{
 		return 0;
 	}
 
-	chan_id = it->second.mChanId;
+	// chan_id & req_id are already set.
 	msg_id = it->second.mMsgId;
 	msg = it->second.mMsg;
 
@@ -269,7 +281,8 @@ int RpcQueueService::queueResponse(uint32_t chan_id, uint32_t msg_id, uint32_t r
 	qmsg.mReqId = req_id;
 	qmsg.mMsg = msg;
 
-	mResponses[req_id] = qmsg;
+	RpcUniqueId uid(chan_id, req_id);
+	mResponses[uid] = qmsg;
 
 	return 1;
 }
@@ -297,7 +310,7 @@ int RpcQueueService::getEvents(std::list<RpcQueuedMsg> &events)
 	return 1;
 }
 
-int RpcQueueService::locked_checkForEvents(uint32_t event, const std::list<RpcEventRegister> &registered, std::list<RpcQueuedMsg> &events)
+int RpcQueueService::locked_checkForEvents(uint32_t event, const std::list<RpcEventRegister> &registered, std::list<RpcQueuedMsg> & /* events */)
 {
 	std::cerr << "RpcQueueService::locked_checkForEvents() NOT IMPLEMENTED";
 	std::cerr << std::endl;

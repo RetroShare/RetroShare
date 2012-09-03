@@ -186,18 +186,22 @@ protorpc {
 	# Proto Services
 	HEADERS += rpc/proto/rpcprotopeers.h \
 		rpc/proto/rpcprotosystem.h \
+		rpc/proto/rpcprotochat.h \
 
 	SOURCES += rpc/proto/rpcprotopeers.cc \
 		rpc/proto/rpcprotosystem.cc \
+		rpc/proto/rpcprotochat.cc \
 
 	# Generated ProtoBuf Code the RPC System
 	HEADERS += rpc/proto/gencc/core.pb.h \
 		rpc/proto/gencc/peers.pb.h \
 		rpc/proto/gencc/system.pb.h \
+		rpc/proto/gencc/chat.pb.h \
 
 	SOURCES += rpc/proto/gencc/core.pb.cc \
 		rpc/proto/gencc/peers.pb.cc \
 		rpc/proto/gencc/system.pb.cc \
+		rpc/proto/gencc/chat.pb.cc \
 
         QMAKE_CFLAGS += -pthread
         QMAKE_CXXFLAGS += -pthread

@@ -26,6 +26,7 @@
 
 #include "rpc/proto/rpcprotopeers.h"
 #include "rpc/proto/rpcprotosystem.h"
+#include "rpc/proto/rpcprotochat.h"
 
 #include "rpc/rpcecho.h"
 
@@ -40,6 +41,9 @@ RpcMediator *CreateRpcSystem(RpcComms *comms)
 
 	RpcProtoSystem *system = new RpcProtoSystem(1);
 	server->addService(system);
+
+	RpcProtoChat *chat = new RpcProtoChat(1);
+	server->addService(chat);
 
 	/* Finally an Echo Service - which will echo back any unprocesses commands. */
 	RpcEcho *echo = new RpcEcho(1);

@@ -153,8 +153,7 @@ inline bool ExtensionId_Parse(
 enum PackageId {
   PEERS = 1,
   SYSTEM = 2,
-  FILES = 3,
-  MSGS = 4,
+  CHAT = 3,
   GXS = 1000
 };
 bool PackageId_IsValid(int value);

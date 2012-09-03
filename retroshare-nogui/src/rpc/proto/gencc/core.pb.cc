@@ -313,9 +313,9 @@ void protobuf_AddDesc_core_2eproto() {
     "RWARD\020\010\"3\n\tBandwidth\022\n\n\002up\030\001 \002(\002\022\014\n\004down"
     "\030\002 \002(\002\022\014\n\004name\030\003 \001(\t\":\n\014BandwidthSet\022*\n\n"
     "bandwidths\030\001 \003(\0132\026.rsctrl.core.Bandwidth"
-    "*\027\n\013ExtensionId\022\010\n\004CORE\020\000*A\n\tPackageId\022\t"
-    "\n\005PEERS\020\001\022\n\n\006SYSTEM\020\002\022\t\n\005FILES\020\003\022\010\n\004MSGS"
-    "\020\004\022\010\n\003GXS\020\350\007", 1292);
+    "*\027\n\013ExtensionId\022\010\n\004CORE\020\000*6\n\tPackageId\022\t"
+    "\n\005PEERS\020\001\022\n\n\006SYSTEM\020\002\022\010\n\004CHAT\020\003\022\010\n\003GXS\020\350"
+    "\007", 1281);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "core.proto", &protobuf_RegisterTypes);
   Status::default_instance_ = new Status();
@@ -368,7 +368,6 @@ bool PackageId_IsValid(int value) {
     case 1:
     case 2:
     case 3:
-    case 4:
     case 1000:
       return true;
     default:

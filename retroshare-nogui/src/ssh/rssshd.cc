@@ -500,6 +500,8 @@ int RsSshd::doRpcSystem()
 		}
 	}
 
+	mRpcSystem->reset(dummy_chan_id); // cleanup old channel items.
+
 	std::cerr << "RsSshd::doRpcSystem() Finished";
 	std::cerr << std::endl;
 

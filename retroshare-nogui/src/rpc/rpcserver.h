@@ -45,6 +45,19 @@ uint32_t constructMsgId(uint8_t ext, uint16_t service, uint8_t submsg, bool is_r
  * Also allows a natural seperation of the full interface into sections.
  */
 
+// The Combination of ChanId & ReqId must be unique for each RPC call.
+// This is used as an map index, so failure to make it unique, will lead to lost entries.
+class RpcUniqueId
+{
+	public:
+	RpcUniqueId():mChanId(0), mReqId(0) {return;}
+	RpcUniqueId(uint32_t chan_id, uint32_t req_id):mChanId(chan_id), mReqId(req_id) {return;}
+	uint32_t mChanId;
+	uint32_t mReqId;
+};
+
+bool operator<(const RpcUniqueId &a, const RpcUniqueId &b);
+
 class RpcQueuedMsg
 {
 public:
@@ -66,6 +79,7 @@ public:
 
 	virtual int getEvents(std::list<RpcQueuedMsg> & /* events */) { return 0; } /* 0 = none, optional feature */
 };
+
 
 class RpcEventRegister
 {
@@ -98,7 +112,7 @@ virtual int locked_checkForEvents(uint32_t event, const std::list<RpcEventRegist
 private:
         RsMutex mQueueMtx;
 
-	std::map<uint32_t, RpcQueuedMsg> mResponses;
+	std::map<RpcUniqueId, RpcQueuedMsg> mResponses;
 	std::map<uint32_t, std::list<RpcEventRegister> > mEventRegister;
 };
 
@@ -107,6 +121,7 @@ private:
 class RpcQueuedObj
 {
 public:
+	uint32_t mChanId;
 	uint32_t mReqId;
 	RpcService *mService;
 };
