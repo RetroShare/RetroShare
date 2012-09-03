@@ -22,7 +22,7 @@
     <height>100</height>
    </size>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QHBoxLayout">
    <property name="spacing">
     <number>0</number>
    </property>
@@ -39,32 +39,72 @@
      </property>
      <layout class="QGridLayout">
       <property name="margin">
-       <number>0</number>
+       <number>2</number>
       </property>
       <property name="spacing">
-       <number>0</number>
+       <number>2</number>
       </property>
       <item row="0" column="0">
-       <layout class="QGridLayout" name="_2">
-        <property name="leftMargin">
+       <layout class="QHBoxLayout">
+        <property name="spacing">
          <number>6</number>
         </property>
-        <property name="topMargin">
+        <property name="leftMargin">
          <number>0</number>
         </property>
         <property name="rightMargin">
-         <number>6</number>
-        </property>
-        <property name="bottomMargin">
          <number>0</number>
         </property>
-        <property name="horizontalSpacing">
-         <number>6</number>
-        </property>
-        <property name="verticalSpacing">
-         <number>0</number>
-        </property>
-        <item row="0" column="3">
+        <item>
+         <widget class="QLabel" name="toasterImage">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="../images.qrc">:/images/rstray3.png</pixmap>
+          </property>
+          <property name="scaledContents">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="toasterLabel">
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string notr="true">Name</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>10</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
          <widget class="QPushButton" name="closeButton">
           <property name="minimumSize">
            <size>
@@ -87,90 +127,26 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="nameLabel">
-          <property name="font">
-           <font>
-            <pointsize>9</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string notr="true">Name</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_2">
-          <property name="minimumSize">
-           <size>
-            <width>16</width>
-            <height>16</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>16</width>
-            <height>16</height>
-           </size>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="pixmap">
-           <pixmap resource="../images.qrc">:/images/rstray3.png</pixmap>
-          </property>
-          <property name="scaledContents">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
        </layout>
       </item>
       <item row="1" column="0">
-       <layout class="QGridLayout" name="_3">
-        <property name="leftMargin">
-         <number>4</number>
-        </property>
-        <property name="rightMargin">
-         <number>4</number>
-        </property>
-        <property name="bottomMargin">
-         <number>4</number>
-        </property>
+       <layout class="QGridLayout">
         <property name="spacing">
          <number>2</number>
         </property>
         <item row="0" column="1">
-         <widget class="QPushButton" name="chatButton">
-          <property name="font">
-           <font/>
-          </property>
+         <widget class="QPushButton" name="toasterButton">
           <property name="text">
            <string>Show Chat Lobby</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="1" rowspan="2">
-         <widget class="QLabel" name="messageLabel">
+        <item row="1" column="1">
+         <widget class="QLabel" name="textLabel">
           <property name="maximumSize">
            <size>
             <width>218</width>
-            <height>45</height>
+            <height>43</height>
            </size>
           </property>
           <property name="wordWrap">
@@ -178,8 +154,8 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="0" rowspan="3">
-         <widget class="AvatarWidget" name="avatarWidget" native="true">
+        <item row="0" column="0" rowspan="2">
+         <widget class="AvatarWidget" name="avatarWidget">
           <property name="minimumSize">
            <size>
             <width>70</width>

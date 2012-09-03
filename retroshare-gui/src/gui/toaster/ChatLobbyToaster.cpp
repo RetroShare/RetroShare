@@ -32,11 +32,11 @@ ChatLobbyToaster::ChatLobbyToaster(const std::string &peerId, const QString &nam
 
 	this->peerId = peerId;
 
-	connect(ui.chatButton, SIGNAL(clicked()), SLOT(chatButtonSlot()));
+	connect(ui.toasterButton, SIGNAL(clicked()), SLOT(chatButtonSlot()));
 	connect(ui.closeButton, SIGNAL(clicked()), SLOT(hide()));
 
 	/* set informations */
-	ui.messageLabel->setText(RsHtml().formatText(NULL, message, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_CLEANSTYLE));
+	ui.textLabel->setText(RsHtml().formatText(NULL, message, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_CLEANSTYLE));
 	ui.avatarWidget->setFrameType(AvatarWidget::NORMAL_FRAME);
 	ui.avatarWidget->setDefaultAvatar(":images/user/agt_forum64.png");
 
@@ -54,7 +54,7 @@ ChatLobbyToaster::ChatLobbyToaster(const std::string &peerId, const QString &nam
 			}
 		}
 	}
-	ui.nameLabel->setText(lobbyName);
+	ui.toasterLabel->setText(lobbyName);
 }
 
 void ChatLobbyToaster::chatButtonSlot()

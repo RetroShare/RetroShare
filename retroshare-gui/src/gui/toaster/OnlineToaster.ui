@@ -10,13 +10,19 @@
     <height>100</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>300</width>
+    <height>100</height>
+   </size>
+  </property>
   <property name="maximumSize">
    <size>
     <width>300</width>
     <height>100</height>
    </size>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QHBoxLayout">
    <property name="spacing">
     <number>0</number>
    </property>
@@ -33,32 +39,72 @@
      </property>
      <layout class="QGridLayout">
       <property name="margin">
-       <number>0</number>
+       <number>2</number>
       </property>
       <property name="spacing">
-       <number>0</number>
+       <number>2</number>
       </property>
       <item row="0" column="0">
-       <layout class="QGridLayout">
-        <property name="leftMargin">
+       <layout class="QHBoxLayout">
+        <property name="spacing">
          <number>6</number>
         </property>
-        <property name="topMargin">
-         <number>2</number>
+        <property name="leftMargin">
+         <number>0</number>
         </property>
         <property name="rightMargin">
-         <number>6</number>
-        </property>
-        <property name="bottomMargin">
          <number>0</number>
         </property>
-        <property name="horizontalSpacing">
-         <number>6</number>
-        </property>
-        <property name="verticalSpacing">
-         <number>0</number>
-        </property>
-        <item row="0" column="3">
+        <item>
+         <widget class="QLabel" name="toasterImage">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="../images.qrc">:/images/rstray3.png</pixmap>
+          </property>
+          <property name="scaledContents">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="toasterLabel">
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string notr="true">RetroShare</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>10</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
          <widget class="QPushButton" name="closeButton">
           <property name="minimumSize">
            <size>
@@ -76,60 +122,8 @@
            <iconset resource="../images.qrc">
             <normaloff>:/images/closenormal.png</normaloff>:/images/closenormal.png</iconset>
           </property>
-          <property name="iconSize">
-           <size>
-            <width>16</width>
-            <height>16</height>
-           </size>
-          </property>
           <property name="flat">
            <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <spacer>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </spacer>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label">
-          <property name="minimumSize">
-           <size>
-            <width>16</width>
-            <height>16</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>16</width>
-            <height>16</height>
-           </size>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="pixmap">
-           <pixmap resource="../images.qrc">:/images/rstray3.png</pixmap>
-          </property>
-          <property name="scaledContents">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="label_2">
-          <property name="font">
-           <font>
-            <pointsize>9</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string notr="true">RetroShare</string>
           </property>
          </widget>
         </item>
@@ -137,62 +131,31 @@
       </item>
       <item row="1" column="0">
        <layout class="QGridLayout">
-        <property name="leftMargin">
-         <number>6</number>
-        </property>
-        <property name="topMargin">
+        <property name="spacing">
          <number>2</number>
         </property>
-        <property name="rightMargin">
-         <number>6</number>
-        </property>
-        <property name="bottomMargin">
-         <number>0</number>
-        </property>
-        <property name="horizontalSpacing">
-         <number>9</number>
-        </property>
-        <property name="verticalSpacing">
-         <number>0</number>
-        </property>
-        <item row="1" column="1" rowspan="2">
-         <widget class="QLabel" name="messageLabel">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="1">
-         <widget class="QPushButton" name="messageButton">
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">color: #238;</string>
-          </property>
+         <widget class="QPushButton" name="toasterButton">
           <property name="text">
            <string>Friend Online</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="1">
-         <spacer>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
+        <item row="1" column="1">
+         <widget class="QLabel" name="textLabel">
+          <property name="maximumSize">
            <size>
-            <width>20</width>
-            <height>10</height>
+            <width>213</width>
+            <height>43</height>
            </size>
           </property>
-         </spacer>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
         </item>
-        <item row="0" column="0" rowspan="4">
-         <widget class="AvatarWidget" name="avatarWidget" native="true">
+        <item row="0" column="0" rowspan="2">
+         <widget class="AvatarWidget" name="avatarWidget">
           <property name="minimumSize">
            <size>
             <width>70</width>
@@ -222,9 +185,6 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <tabstops>
-  <tabstop>closeButton</tabstop>
- </tabstops>
  <resources>
   <include location="../images.qrc"/>
  </resources>

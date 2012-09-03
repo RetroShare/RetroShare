@@ -20,7 +20,6 @@
 #include "FriendRequestToaster.h"
 #include "gui/FriendsDialog.h"
 #include "gui/connect/ConnectFriendWizard.h"
-#include "util/WidgetBackgroundImage.h"
 
 #include <retroshare/rspeers.h>
 
@@ -37,9 +36,9 @@ FriendRequestToaster::FriendRequestToaster(const std::string &gpgId, const QStri
 	}
 
 	if (knownPeer) {
-		connect(ui.friendrequestButton, SIGNAL(clicked()), SLOT(friendrequestButtonSlot()));
+		connect(ui.toasterButton, SIGNAL(clicked()), SLOT(friendrequestButtonSlot()));
 	} else {
-		ui.friendrequestButton->setEnabled(false);
+		ui.toasterButton->setEnabled(false);
 	}
 	connect(ui.closeButton, SIGNAL(clicked()), SLOT(hide()));
 	
@@ -48,15 +47,12 @@ FriendRequestToaster::FriendRequestToaster(const std::string &gpgId, const QStri
 	/* set informations */
 	ui.avatarWidget->setFrameType(AvatarWidget::NORMAL_FRAME);
 	if (knownPeer) {
-		ui.messageLabel->setText( peerName + " " + tr("wants to be friend with you on RetroShare"));
+		ui.textLabel->setText( peerName + " " + tr("wants to be friend with you on RetroShare"));
 		ui.avatarWidget->setDefaultAvatar(":/images/avatar_request.png");
 	} else {
-		ui.messageLabel->setText( sslName + " " + tr("Unknown (Incoming) Connect Attempt"));
+		ui.textLabel->setText( sslName + " " + tr("Unknown (Incoming) Connect Attempt"));
 		ui.avatarWidget->setDefaultAvatar(":/images/avatar_request_unknown.png");
 	}
-	
-		WidgetBackgroundImage::setBackgroundImage(ui.windowFrame, ":images/toaster/backgroundtoaster.png", WidgetBackgroundImage::AdjustNone);
-
 }
 
 void FriendRequestToaster::friendrequestButtonSlot()

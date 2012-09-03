@@ -190,3 +190,15 @@ ConnectFriendWizard QWizardPage#FriendRequestPage > QFrame#frame {
 	border-radius:6px;
 	background: white;
 }
+
+/* Toaster */
+
+ChatToaster > QFrame#windowFrame,
+ChatLobbyToaster > QFrame#windowFrame,
+DownloadToaster > QFrame#windowFrame,
+FriendRequestToaster > QFrame#windowFrame,
+GroupChatToaster > QFrame#windowFrame,
+MessageToaster >QFrame#windowFrame,
+OnlineToaster > QFrame#windowFrame {
+	background-image: url(:/images/toaster/backgroundtoaster.png);
+}

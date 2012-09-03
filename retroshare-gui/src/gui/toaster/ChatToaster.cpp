@@ -32,12 +32,12 @@ ChatToaster::ChatToaster(const std::string &peerId, const QString &message) : QW
 
 	this->peerId = peerId;
 
-	connect(ui.chatButton, SIGNAL(clicked()), SLOT(chatButtonSlot()));
+	connect(ui.toasterButton, SIGNAL(clicked()), SLOT(chatButtonSlot()));
 	connect(ui.closeButton, SIGNAL(clicked()), SLOT(hide()));
 
 	/* set informations */
-	ui.messageLabel->setText(RsHtml().formatText(NULL, message, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_CLEANSTYLE));
-	ui.nameLabel->setText(QString::fromUtf8(rsPeers->getPeerName(peerId).c_str()));
+	ui.textLabel->setText(RsHtml().formatText(NULL, message, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_CLEANSTYLE));
+	ui.toasterLabel->setText(QString::fromUtf8(rsPeers->getPeerName(peerId).c_str()));
 	ui.avatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
 	ui.avatarWidget->setId(peerId, false);
 }

@@ -19,7 +19,6 @@
 
 #include "OnlineToaster.h"
 #include "gui/chat/ChatDialog.h"
-#include "util/WidgetBackgroundImage.h"
 
 #include <retroshare/rspeers.h>
 
@@ -31,15 +30,13 @@ OnlineToaster::OnlineToaster(const std::string &peerId) : QWidget(NULL)
 	this->peerId = peerId;
 
 	/* connect buttons */
-	connect(ui.messageButton, SIGNAL(clicked()), SLOT(chatButtonSlot()));
+	connect(ui.toasterButton, SIGNAL(clicked()), SLOT(chatButtonSlot()));
 	connect(ui.closeButton, SIGNAL(clicked()), SLOT(hide()));
 
 	/* set informations */
-	ui.messageLabel->setText(QString::fromUtf8(rsPeers->getPeerName(peerId).c_str()));
+	ui.textLabel->setText(QString::fromUtf8(rsPeers->getPeerName(peerId).c_str()));
 	ui.avatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
 	ui.avatarWidget->setId(peerId, false);
-
-	WidgetBackgroundImage::setBackgroundImage(ui.windowFrame, ":images/toaster/backgroundtoaster.png", WidgetBackgroundImage::AdjustNone);
 }
 
 void OnlineToaster::chatButtonSlot()

@@ -28,16 +28,16 @@ MessageToaster::MessageToaster(const std::string &peerId, const QString &title, 
 	ui.setupUi(this);
 
 	/* connect buttons */
-	connect(ui.closebtn, SIGNAL(clicked()), this, SLOT(hide()));
+	connect(ui.closeButton, SIGNAL(clicked()), this, SLOT(hide()));
 	//connect(ui.openmessagebtn, SIGNAL(clicked()), this, SLOT(openmessageClicked()));
-	connect(ui.openmessagetoolButton, SIGNAL(clicked()), this, SLOT(openmessageClicked()));
+	connect(ui.toasterButton, SIGNAL(clicked()), this, SLOT(openmessageClicked()));
 
 	/* set informations */
-	ui.subjectline->setText(tr("Sub:") + " " + title);
-	ui.subjectline->setToolTip(title);
-	ui.contentBrowser->setText(message);
-	ui.contentBrowser->setToolTip(message);
-	ui.lblTitle->setText(ui.lblTitle->text() + " " + QString::fromUtf8(rsPeers->getPeerName(peerId).c_str()));
+	ui.subjectLabel->setText(tr("Sub:") + " " + title);
+	ui.subjectLabel->setToolTip(title);
+	ui.textLabel->setText(message);
+	ui.textLabel->setToolTip(message);
+	ui.toasterLabel->setText(ui.toasterLabel->text() + " " + QString::fromUtf8(rsPeers->getPeerName(peerId).c_str()));
 }
 
 void MessageToaster::openmessageClicked()

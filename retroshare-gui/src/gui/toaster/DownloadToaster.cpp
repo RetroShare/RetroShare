@@ -36,11 +36,11 @@ DownloadToaster::DownloadToaster(const std::string &hash, const QString &name) :
 	fileHash = hash;
 
 	/* connect buttons */
-	connect(ui.spbClose, SIGNAL(clicked()), this, SLOT(hide()));
-	connect(ui.startButton, SIGNAL(clicked()), this, SLOT(play()));
+	connect(ui.closeButton, SIGNAL(clicked()), this, SLOT(hide()));
+	connect(ui.toasterButton, SIGNAL(clicked()), this, SLOT(play()));
 
 	/* set informations */
-	ui.labelTitle->setText(name);
+	ui.textLabel->setText(name);
 }
 
 void DownloadToaster::play()
