@@ -59,22 +59,36 @@ public:
 	PreviewFeedDialog(RsFeedReader *feedReader, FeedReaderNotify *notify, const FeedInfo &feedInfo, QWidget *parent = 0);
 	~PreviewFeedDialog();
 
+	void getXPaths(std::list<std::string> &xpathsToUse, std::list<std::string> &xpathsToRemove);
+
+protected:
+	bool eventFilter(QObject *obj, QEvent *ev);
+
 private slots:
 	void previousMsg();
 	void nextMsg();
-	void showDocumentFrame(bool show);
+	void showStructureFrame(bool show = false);
+	void showXPathFrame(bool show);
+	void xpathListCustomPopupMenu(QPoint point);
+	void xpathCloseEditor(QWidget *editor, QAbstractItemDelegate::EndEditHint hint);
+	void addXPath();
+	void editXPath();
+	void removeXPath();
+	void fillStructureTree();
 
 	/* FeedReaderNotify */
 	void feedChanged(const QString &feedId, int type);
 	void msgChanged(const QString &feedId, const QString &msgId, int type);
 
 private:
+	void processSettings(bool load);
 	int getMsgPos();
-	void setInfo(const QString &info);
+	void setFeedInfo(const QString &info);
+	void setXPathInfo(const QString &info);
 	void fillFeedInfo(const FeedInfo &feedInfo);
 	void updateMsgCount();
 	void updateMsg();
-	void fillDocumentTree();
+	void processXPath();
 
 	RsFeedReader *mFeedReader;
 	FeedReaderNotify *mNotify;
@@ -82,6 +96,7 @@ private:
 	std::string mMsgId;
 	std::list<std::string> mMsgIds;
 	std::string mDescription;
+	std::string mDescriptionXPath;
 
 	Ui::PreviewFeedDialog *ui;
 };

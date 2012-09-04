@@ -27,22 +27,27 @@
 #include <list>
 
 enum RsFeedReaderErrorState {
-	RS_FEED_ERRORSTATE_OK                            = 0,
+	RS_FEED_ERRORSTATE_OK                             = 0,
 
 	/* download */
-	RS_FEED_ERRORSTATE_DOWNLOAD_INTERNAL_ERROR       = 1,
-	RS_FEED_ERRORSTATE_DOWNLOAD_ERROR                = 2,
-	RS_FEED_ERRORSTATE_DOWNLOAD_UNKNOWN_CONTENT_TYPE = 3,
-	RS_FEED_ERRORSTATE_DOWNLOAD_NOT_FOUND            = 4,
-	RS_FEED_ERRORSTATE_DOWNLOAD_UNKOWN_RESPONSE_CODE = 5,
+	RS_FEED_ERRORSTATE_DOWNLOAD_INTERNAL_ERROR        = 1,
+	RS_FEED_ERRORSTATE_DOWNLOAD_ERROR                 = 2,
+	RS_FEED_ERRORSTATE_DOWNLOAD_UNKNOWN_CONTENT_TYPE  = 3,
+	RS_FEED_ERRORSTATE_DOWNLOAD_NOT_FOUND             = 4,
+	RS_FEED_ERRORSTATE_DOWNLOAD_UNKOWN_RESPONSE_CODE  = 5,
 
 	/* process */
-	RS_FEED_ERRORSTATE_PROCESS_INTERNAL_ERROR        = 50,
-	RS_FEED_ERRORSTATE_PROCESS_UNKNOWN_FORMAT        = 51,
-	RS_FEED_ERRORSTATE_PROCESS_FORUM_CREATE          = 100,
-	RS_FEED_ERRORSTATE_PROCESS_FORUM_NOT_FOUND       = 101,
-	RS_FEED_ERRORSTATE_PROCESS_FORUM_NO_ADMIN        = 102,
-	RS_FEED_ERRORSTATE_PROCESS_FORUM_NOT_ANONYMOUS   = 103
+	RS_FEED_ERRORSTATE_PROCESS_INTERNAL_ERROR         = 50,
+	RS_FEED_ERRORSTATE_PROCESS_UNKNOWN_FORMAT         = 51,
+	RS_FEED_ERRORSTATE_PROCESS_FORUM_CREATE           = 100,
+	RS_FEED_ERRORSTATE_PROCESS_FORUM_NOT_FOUND        = 101,
+	RS_FEED_ERRORSTATE_PROCESS_FORUM_NO_ADMIN         = 102,
+	RS_FEED_ERRORSTATE_PROCESS_FORUM_NOT_ANONYMOUS    = 103,
+
+	RS_FEED_ERRORSTATE_PROCESS_HTML_ERROR             = 150,
+	RS_FEED_ERRORSTATE_PROCESS_XPATH_INTERNAL_ERROR   = 151,
+	RS_FEED_ERRORSTATE_PROCESS_XPATH_WRONG_EXPRESSION = 152,
+	RS_FEED_ERRORSTATE_PROCESS_XPATH_NO_RESULT        = 153
 };
 
 
@@ -110,6 +115,9 @@ public:
 	WorkState              workstate;
 	RsFeedReaderErrorState errorState;
 	std::string            errorString;
+
+	std::list<std::string> xpathsToUse;
+	std::list<std::string> xpathsToRemove;
 
 	struct {
 		bool folder : 1;
@@ -192,6 +200,8 @@ public:
 	virtual bool            getFeedMsgIdList(const std::string &feedId, std::list<std::string> &msgIds) = 0;
 	virtual bool            processFeed(const std::string &feedId) = 0;
 	virtual bool            setMessageRead(const std::string &feedId, const std::string &msgId, bool read) = 0;
+
+	virtual RsFeedReaderErrorState processXPath(const std::list<std::string> &xpathsToUse, const std::list<std::string> &xpathsToRemove, std::string &description, std::string &errorString) = 0;
 };
 
 #endif

@@ -55,12 +55,16 @@ private slots:
 	void preview();
 
 private:
+	void processSettings(bool load);
 	void getFeedInfo(FeedInfo &feedInfo);
 
 	RsFeedReader *mFeedReader;
 	FeedReaderNotify *mNotify;
 	std::string mFeedId;
 	std::string mParentId;
+
+	std::list<std::string> mXPathsToUse;
+	std::list<std::string> mXPathsToRemove;
 
 	Ui::AddFeedDialog *ui;
 };

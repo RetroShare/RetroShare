@@ -19,57 +19,33 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <string.h>
+#ifndef XPATHWRAPPER
+#define XPATHWRAPPER
 
-#include "HTMLWrapper.h"
-#include <libxml/HTMLtree.h>
+#include <libxml/xpath.h>
 
-HTMLWrapper::HTMLWrapper() : XMLWrapper()
+class XMLWrapper;
+
+class XPathWrapper
 {
-}
+	friend class XMLWrapper;
 
-bool HTMLWrapper::readHTML(const char *html, const char *url)
-{
-	cleanup();
+public:
+	~XPathWrapper();
 
-	mDocument = htmlReadMemory(html, strlen(html), url, "", HTML_PARSE_NOERROR | HTML_PARSE_NOWARNING | HTML_PARSE_COMPACT | HTML_PARSE_NONET | HTML_PARSE_NOBLANKS);
-	if (mDocument) {
-		return true;
-	}
+	void cleanup();
 
-	return false;
-}
+	bool compile(const char *expression);
 
-bool HTMLWrapper::saveHTML(std::string &html)
-{
-	if (!mDocument) {
-		return false;
-	}
+	unsigned int count();
+	xmlNodePtr node(unsigned int index);
 
-	xmlChar *newHtml = NULL;
-	int newHtmlSize = 0;
-	htmlDocDumpMemoryFormat(mDocument, &newHtml, &newHtmlSize, 0);
-	if (newHtml) {
-		convertToString(newHtml, html);
-		xmlFree(newHtml);
+protected:
+	XPathWrapper(XMLWrapper &xmlWrapper);
 
-		return true;
-	}
+	XMLWrapper &mXMLWrapper;
+	xmlXPathContextPtr mContext;
+	xmlXPathObjectPtr mResult;
+};
 
-	return false;
-}
-
-bool HTMLWrapper::createHTML()
-{
-	/* easy way */
-	return readHTML("<html><body></body></html>", "");
-}
-
-xmlNodePtr HTMLWrapper::getBody()
-{
-	xmlNodePtr root = getRootElement();
-	if (!root) {
-		return NULL;
-	}
-	return findNode(root->children, "body", false);
-}
+#endif 

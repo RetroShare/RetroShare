@@ -25,7 +25,9 @@
 
 /*************************************************************************/
 
-RsFeedReaderFeed::RsFeedReaderFeed() : RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_FEEDREADER_CONFIG, RS_PKT_SUBTYPE_FEEDREADER_FEED)
+RsFeedReaderFeed::RsFeedReaderFeed()
+	: RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_PLUGIN_FEEDREADER, RS_PKT_SUBTYPE_FEEDREADER_FEED),
+	  xpathsToUse(TLV_TYPE_STRINGSET), xpathsToRemove(TLV_TYPE_STRINGSET)
 {
 	clear();
 }
@@ -49,6 +51,8 @@ void RsFeedReaderFeed::clear()
 	icon.clear();
 	errorState = RS_FEED_ERRORSTATE_OK;
 	errorString.clear();
+	xpathsToUse.ids.clear();
+	xpathsToRemove.ids.clear();
 
 	preview = false;
 	workstate = WAITING;
@@ -63,6 +67,7 @@ std::ostream &RsFeedReaderFeed::print(std::ostream &out, uint16_t /*indent*/)
 uint32_t RsFeedReaderSerialiser::sizeFeed(RsFeedReaderFeed *item)
 {
 	uint32_t s = 8; /* header */
+	s += 2; /* version */
 	s += GetTlvStringSize(item->feedId);
 	s += GetTlvStringSize(item->parentId);
 	s += GetTlvStringSize(item->url);
@@ -80,6 +85,8 @@ uint32_t RsFeedReaderSerialiser::sizeFeed(RsFeedReaderFeed *item)
 	s += GetTlvStringSize(item->forumId);
 	s += sizeof(uint32_t); /* errorstate */
 	s += GetTlvStringSize(item->errorString);
+	s += item->xpathsToUse.TlvSize();
+	s += item->xpathsToRemove.TlvSize();
 
 	return s;
 }
@@ -103,6 +110,7 @@ bool RsFeedReaderSerialiser::serialiseFeed(RsFeedReaderFeed *item, void *data, u
 	offset += 8;
 
 	/* add values */
+	ok &= setRawUInt16(data, tlvsize, &offset, 0); /* version */
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GENID, item->feedId);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, item->parentId);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_LINK, item->url);
@@ -120,6 +128,8 @@ bool RsFeedReaderSerialiser::serialiseFeed(RsFeedReaderFeed *item, void *data, u
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, item->forumId);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->errorState);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, item->errorString);
+	ok &= item->xpathsToUse.SetTlv(data, tlvsize, &offset);
+	ok &= item->xpathsToRemove.SetTlv(data, tlvsize, &offset);
 
 	if (offset != tlvsize)
 	{
@@ -138,9 +148,8 @@ RsFeedReaderFeed *RsFeedReaderSerialiser::deserialiseFeed(void *data, uint32_t *
 
 	uint32_t offset = 0;
 
-	if ((RS_PKT_VERSION1 != getRsItemVersion(rstype)) ||
-		(RS_PKT_CLASS_CONFIG != getRsItemClass(rstype)) ||
-		(RS_PKT_TYPE_FEEDREADER_CONFIG != getRsItemType(rstype)) ||
+	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+		(RS_SERVICE_TYPE_PLUGIN_FEEDREADER != getRsItemService(rstype)) ||
 		(RS_PKT_SUBTYPE_FEEDREADER_FEED != getRsItemSubType(rstype)))
 	{
 		return NULL; /* wrong type */
@@ -162,6 +171,8 @@ RsFeedReaderFeed *RsFeedReaderSerialiser::deserialiseFeed(void *data, uint32_t *
 	offset += 8;
 
 	/* get values */
+	uint16_t version = 0;
+	ok &= getRawUInt16(data, rssize, &offset, &version);
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_GENID, item->feedId);
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_VALUE, item->parentId);
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_LINK, item->url);
@@ -181,6 +192,8 @@ RsFeedReaderFeed *RsFeedReaderSerialiser::deserialiseFeed(void *data, uint32_t *
 	ok &= getRawUInt32(data, rssize, &offset, &errorState);
 	item->errorState = (RsFeedReaderErrorState) errorState;
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_VALUE, item->errorString);
+	ok &= item->xpathsToUse.GetTlv(data, rssize, &offset);
+	ok &= item->xpathsToRemove.GetTlv(data, rssize, &offset);
 
 	if (offset != rssize)
 	{
@@ -200,7 +213,7 @@ RsFeedReaderFeed *RsFeedReaderSerialiser::deserialiseFeed(void *data, uint32_t *
 
 /*************************************************************************/
 
-RsFeedReaderMsg::RsFeedReaderMsg() : RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_FEEDREADER_CONFIG, RS_PKT_SUBTYPE_FEEDREADER_MSG)
+RsFeedReaderMsg::RsFeedReaderMsg() : RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_PLUGIN_FEEDREADER, RS_PKT_SUBTYPE_FEEDREADER_MSG)
 {
 	clear();
 }
@@ -225,6 +238,7 @@ std::ostream &RsFeedReaderMsg::print(std::ostream &out, uint16_t /*indent*/)
 uint32_t RsFeedReaderSerialiser::sizeMsg(RsFeedReaderMsg *item)
 {
 	uint32_t s = 8; /* header */
+	s += 2; /* version */
 	s += GetTlvStringSize(item->msgId);
 	s += GetTlvStringSize(item->feedId);
 	s += GetTlvStringSize(item->title);
@@ -256,6 +270,7 @@ bool RsFeedReaderSerialiser::serialiseMsg(RsFeedReaderMsg *item, void *data, uin
 	offset += 8;
 
 	/* add values */
+	ok &= setRawUInt16(data, tlvsize, &offset, 0); /* version */
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GENID, item->msgId);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, item->feedId);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, item->title);
@@ -282,9 +297,8 @@ RsFeedReaderMsg *RsFeedReaderSerialiser::deserialiseMsg(void *data, uint32_t *pk
 
 	uint32_t offset = 0;
 
-	if ((RS_PKT_VERSION1 != getRsItemVersion(rstype)) ||
-		(RS_PKT_CLASS_CONFIG != getRsItemClass(rstype)) ||
-		(RS_PKT_TYPE_FEEDREADER_CONFIG != getRsItemType(rstype)) ||
+	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+		(RS_SERVICE_TYPE_PLUGIN_FEEDREADER != getRsItemService(rstype)) ||
 		(RS_PKT_SUBTYPE_FEEDREADER_MSG != getRsItemSubType(rstype)))
 	{
 		return NULL; /* wrong type */
@@ -306,6 +320,8 @@ RsFeedReaderMsg *RsFeedReaderSerialiser::deserialiseMsg(void *data, uint32_t *pk
 	offset += 8;
 
 	/* get values */
+	uint16_t version = 0;
+	ok &= getRawUInt16(data, rssize, &offset, &version);
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_GENID, item->msgId);
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_VALUE, item->feedId);
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, item->title);
@@ -372,9 +388,8 @@ RsItem *RsFeedReaderSerialiser::deserialise(void *data, uint32_t *pktsize)
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
 
-	if ((RS_PKT_VERSION1 != getRsItemVersion(rstype)) ||
-		(RS_PKT_CLASS_CONFIG != getRsItemClass(rstype)) ||
-		(RS_PKT_TYPE_FEEDREADER_CONFIG != getRsItemType(rstype)))
+	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+		(RS_SERVICE_TYPE_PLUGIN_FEEDREADER != getRsItemService(rstype)))
 	{
 		return NULL; /* wrong type */
 	}

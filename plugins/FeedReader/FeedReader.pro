@@ -14,7 +14,8 @@ SOURCES =	FeedReaderPlugin.cpp \
 			gui/FeedReaderStringDefs.cpp \
 			util/CURLWrapper.cpp \
 			util/XMLWrapper.cpp \
-			util/HTMLWrapper.cpp
+			util/HTMLWrapper.cpp \
+			util/XPathWrapper.cpp
 
 HEADERS =	FeedReaderPlugin.h \
 			interface/rsFeedReader.h \
@@ -29,7 +30,8 @@ HEADERS =	FeedReaderPlugin.h \
 			gui/FeedReaderStringDefs.h \
 			util/CURLWrapper.h \
 			util/XMLWrapper.h \
-			util/HTMLWrapper.h
+			util/HTMLWrapper.h \
+			util/XPathWrapper.h
 
 FORMS =		gui/FeedReaderDialog.ui \
 			gui/AddFeedDialog.ui \

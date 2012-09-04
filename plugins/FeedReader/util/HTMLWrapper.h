@@ -31,6 +31,10 @@ public:
 
 	bool readHTML(const char *html, const char *url);
 	bool saveHTML(std::string &html);
+
+	bool createHTML();
+
+	xmlNodePtr getBody();
 };
 
 #endif 

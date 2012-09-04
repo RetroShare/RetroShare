@@ -25,15 +25,22 @@
 #include <string>
 #include <libxml/parser.h>
 
+class XPathWrapper;
+
 class XMLWrapper
 {
 public:
 	XMLWrapper();
 	~XMLWrapper();
 
+	XMLWrapper &operator=(const XMLWrapper &xml);
+
 	void cleanup();
 
 	bool readXML(const char *xml);
+
+	xmlDocPtr getDocument() const;
+	xmlNodePtr getRootElement() const;
 
 	std::string nodeName(xmlNodePtr node);
 	std::string attrName(xmlAttrPtr attr);
@@ -42,19 +49,20 @@ public:
 	bool getChildText(xmlNodePtr node, const char *childName, std::string &text);
 
 	bool getContent(xmlNodePtr node, std::string &content);
+	bool setContent(xmlNodePtr node, const char *content);
 
 	std::string getAttr(xmlNodePtr node, xmlAttrPtr attr);
 	std::string getAttr(xmlNodePtr node, const char *name);
 	bool setAttr(xmlNodePtr node, const char *name, const char *value);
 
-	xmlNodePtr getRootElement();
+	XPathWrapper *createXPath();
+
+	bool convertToString(const xmlChar *xmlText, std::string &text);
+	bool convertFromString(const char *text, xmlChar *&xmlText);
 
 protected:
 	xmlDocPtr mDocument;
 	xmlCharEncodingHandlerPtr mCharEncodingHandler;
-
-	bool convertToString(const xmlChar *xmlText, std::string &text);
-	bool convertFromString(const char *text, xmlChar *&xmlText);
 };
 
 #endif 

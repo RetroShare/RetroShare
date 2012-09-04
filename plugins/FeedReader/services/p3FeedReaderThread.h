@@ -22,12 +22,16 @@
 #ifndef P3_FEEDREADERTHREAD
 #define P3_FEEDREADERTHREAD
 
+#include "interface/rsFeedReader.h"
+
 #include "util/rsthreads.h"
 #include <list>
 
 class p3FeedReader;
 class RsFeedReaderFeed;
 class RsFeedReaderMsg;
+class HTMLWrapper;
+class RsFeedReaderXPath;
 
 class p3FeedReaderThread : public RsThread
 {
@@ -37,20 +41,6 @@ public:
 		DOWNLOAD,
 		PROCESS
 	};
-	enum DownloadResult
-	{
-		DOWNLOAD_SUCCESS,
-		DOWNLOAD_ERROR,
-		DOWNLOAD_UNKNOWN_CONTENT_TYPE,
-		DOWNLOAD_NOT_FOUND,
-		DOWNLOAD_UNKOWN_RESPONSE_CODE
-	};
-	enum ProcessResult
-	{
-		PROCESS_SUCCESS,
-		PROCESS_ERROR_INIT,
-		PROCESS_UNKNOWN_FORMAT
-	};
 
 public:
 	p3FeedReaderThread(p3FeedReader *feedReader, Type type, const std::string &feedId);
@@ -58,14 +48,17 @@ public:
 
 	std::string getFeedId() { return mFeedId; }
 
+	static RsFeedReaderErrorState processXPath(const std::list<std::string> &xpathsToUse, const std::list<std::string> &xpathsToRemove, std::string &description, std::string &errorString);
+	static RsFeedReaderErrorState processXPath(const std::list<std::string> &xpathsToUse, const std::list<std::string> &xpathsToRemove, HTMLWrapper &html, std::string &errorString);
+
 private:
 	virtual void run();
 
-	DownloadResult download(const RsFeedReaderFeed &feed, std::string &content, std::string &icon, std::string &error);
-	ProcessResult process(const RsFeedReaderFeed &feed, std::list<RsFeedReaderMsg*> &entries, std::string &error);
+	RsFeedReaderErrorState download(const RsFeedReaderFeed &feed, std::string &content, std::string &icon, std::string &error);
+	RsFeedReaderErrorState process(const RsFeedReaderFeed &feed, std::list<RsFeedReaderMsg*> &entries, std::string &error);
 
 	std::string getProxyForFeed(const RsFeedReaderFeed &feed);
-	bool processMsg(const RsFeedReaderFeed &feed, RsFeedReaderMsg *msg);
+	RsFeedReaderErrorState processMsg(const RsFeedReaderFeed &feed, RsFeedReaderMsg *msg, std::string &errorString);
 
 	p3FeedReader *mFeedReader;
 	Type mType;

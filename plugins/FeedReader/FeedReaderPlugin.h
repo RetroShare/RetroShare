@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include <serialiser/rsserviceids.h>
 #include <retroshare/rsplugin.h>
 #include <retroshare-gui/mainpage.h>
 #include "services/p3FeedReader.h"
@@ -33,7 +34,7 @@ class FeedReaderPlugin: public RsPlugin
 public:
 	FeedReaderPlugin();
 
-	virtual uint16_t rs_service_id() const { return RS_PKT_TYPE_FEEDREADER_CONFIG; }
+	virtual uint16_t rs_service_id() const { return RS_SERVICE_TYPE_PLUGIN_FEEDREADER; }
 	virtual RsPQIService *rs_pqi_service() const;
 	virtual void stop();
 

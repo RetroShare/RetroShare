@@ -76,55 +76,73 @@ QString FeedReaderStringDefs::workState(FeedInfo::WorkState state)
 
 QString FeedReaderStringDefs::errorString(const FeedInfo &feedInfo)
 {
-	QString errorState;
-	switch (feedInfo.errorState) {
+	return errorString(feedInfo.errorState, feedInfo.errorString);
+}
+
+QString FeedReaderStringDefs::errorString(RsFeedReaderErrorState errorState, const std::string &errorString)
+{
+	QString errorText;
+	switch (errorState) {
 	case RS_FEED_ERRORSTATE_OK:
 		break;
 
 	/* download */
 	case RS_FEED_ERRORSTATE_DOWNLOAD_INTERNAL_ERROR:
-		errorState = QApplication::translate("FeedReaderStringDefs", "Internal download error");
+		errorText = QApplication::translate("FeedReaderStringDefs", "Internal download error");
 		break;
 	case RS_FEED_ERRORSTATE_DOWNLOAD_ERROR:
-		errorState = QApplication::translate("FeedReaderStringDefs", "Download error");
+		errorText = QApplication::translate("FeedReaderStringDefs", "Download error");
 		break;
 	case RS_FEED_ERRORSTATE_DOWNLOAD_UNKNOWN_CONTENT_TYPE:
-		errorState = QApplication::translate("FeedReaderStringDefs", "Unknown content type");
+		errorText = QApplication::translate("FeedReaderStringDefs", "Unknown content type");
 		break;
 	case RS_FEED_ERRORSTATE_DOWNLOAD_NOT_FOUND:
-		errorState = QApplication::translate("FeedReaderStringDefs", "Download not found");
+		errorText = QApplication::translate("FeedReaderStringDefs", "Download not found");
 		break;
 	case RS_FEED_ERRORSTATE_DOWNLOAD_UNKOWN_RESPONSE_CODE:
-		errorState = QApplication::translate("FeedReaderStringDefs", "Unknown response code");
+		errorText = QApplication::translate("FeedReaderStringDefs", "Unknown response code");
 		break;
 
 	/* process */
 	case RS_FEED_ERRORSTATE_PROCESS_INTERNAL_ERROR:
-		errorState = QApplication::translate("FeedReaderStringDefs", "Internal process error");
+		errorText = QApplication::translate("FeedReaderStringDefs", "Internal process error");
 		break;
 	case RS_FEED_ERRORSTATE_PROCESS_UNKNOWN_FORMAT:
-		errorState = QApplication::translate("FeedReaderStringDefs", "Unknown XML format");
+		errorText = QApplication::translate("FeedReaderStringDefs", "Unknown XML format");
 		break;
 	case RS_FEED_ERRORSTATE_PROCESS_FORUM_CREATE:
-		errorState = QApplication::translate("FeedReaderStringDefs", "Can't create forum");
+		errorText = QApplication::translate("FeedReaderStringDefs", "Can't create forum");
 		break;
 	case RS_FEED_ERRORSTATE_PROCESS_FORUM_NOT_FOUND:
-		errorState = QApplication::translate("FeedReaderStringDefs", "Forum not found");
+		errorText = QApplication::translate("FeedReaderStringDefs", "Forum not found");
 		break;
 	case RS_FEED_ERRORSTATE_PROCESS_FORUM_NO_ADMIN:
-		errorState = QApplication::translate("FeedReaderStringDefs", "You are not admin of the forum");
+		errorText = QApplication::translate("FeedReaderStringDefs", "You are not admin of the forum");
 		break;
 	case RS_FEED_ERRORSTATE_PROCESS_FORUM_NOT_ANONYMOUS:
-		errorState = QApplication::translate("FeedReaderStringDefs", "The forum is no anonymous forum");
+		errorText = QApplication::translate("FeedReaderStringDefs", "The forum is no anonymous forum");
+		break;
+
+	case RS_FEED_ERRORSTATE_PROCESS_HTML_ERROR:
+		errorText = QApplication::translate("FeedReaderStringDefs", "Can't read html");
+		break;
+	case RS_FEED_ERRORSTATE_PROCESS_XPATH_INTERNAL_ERROR:
+		errorText = QApplication::translate("FeedReaderStringDefs", "Internal XPath error");
+		break;
+	case RS_FEED_ERRORSTATE_PROCESS_XPATH_WRONG_EXPRESSION:
+		errorText = QApplication::translate("FeedReaderStringDefs", "Wrong XPath expression");
+		break;
+	case RS_FEED_ERRORSTATE_PROCESS_XPATH_NO_RESULT:
+		errorText = QApplication::translate("FeedReaderStringDefs", "Empty XPath result");
 		break;
 
 	default:
-		errorState = QApplication::translate("FeedReaderStringDefs", "Unknown error");
+		errorText = QApplication::translate("FeedReaderStringDefs", "Unknown error");
 	}
 
-	if (!feedInfo.errorString.empty()) {
-		errorState += QString(" (%1)").arg(QString::fromUtf8(feedInfo.errorString.c_str()));
+	if (!errorString.empty()) {
+		errorText += QString(" (%1)").arg(QString::fromUtf8(errorString.c_str()));
 	}
 
-	return errorState;
+	return errorText;
 }

@@ -25,13 +25,10 @@
 #include "retroshare/rsplugin.h"
 #include "plugins/rspqiservice.h"
 #include "interface/rsFeedReader.h"
-#include "p3FeedReaderThread.h"
 
 class RsFeedReaderFeed;
-
-//TODO: get new id's
-const uint8_t RS_PKT_TYPE_FEEDREADER_CONFIG = 0xf0;
-const uint32_t CONFIG_TYPE_FEEDREADER = 0x0001;
+class RsFeedReaderMsg;
+class p3FeedReaderThread;
 
 class p3FeedReader : public RsPQIService, public RsFeedReader
 {
@@ -66,16 +63,18 @@ public:
 	virtual bool            processFeed(const std::string &feedId);
 	virtual bool            setMessageRead(const std::string &feedId, const std::string &msgId, bool read);
 
+	virtual RsFeedReaderErrorState processXPath(const std::list<std::string> &xpathsToUse, const std::list<std::string> &xpathsToRemove, std::string &description, std::string &errorString);
+
 	/****************** p3Service STUFF ******************/
 	virtual int tick();
 
 	/****************** internal STUFF *******************/
 	bool getFeedToDownload(RsFeedReaderFeed &feed, const std::string &neededFeedId);
 	void onDownloadSuccess(const std::string &feedId, const std::string &content, std::string &icon);
-	void onDownloadError(const std::string &feedId, p3FeedReaderThread::DownloadResult result, const std::string &errorString);
-	bool onProcessSuccess_filterMsg(const std::string &feedId, std::list<RsFeedReaderMsg*> &msgs);
-	void onProcessSuccess_addMsgs(const std::string &feedId, bool result, std::list<RsFeedReaderMsg*> &msgs, bool single);
-	void onProcessError(const std::string &feedId, p3FeedReaderThread::ProcessResult result, const std::string &errorString);
+	void onDownloadError(const std::string &feedId, RsFeedReaderErrorState result, const std::string &errorString);
+	void onProcessSuccess_filterMsg(const std::string &feedId, std::list<RsFeedReaderMsg*> &msgs);
+	void onProcessSuccess_addMsgs(const std::string &feedId, std::list<RsFeedReaderMsg*> &msgs, bool single);
+	void onProcessError(const std::string &feedId, RsFeedReaderErrorState result, const std::string &errorString);
 
 	bool getFeedToProcess(RsFeedReaderFeed &feed, const std::string &neededFeedId);
 

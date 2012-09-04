@@ -23,6 +23,7 @@
 #include <string.h>
 
 #include "XMLWrapper.h"
+#include "XPathWrapper.h"
 
 XMLWrapper::XMLWrapper()
 {
@@ -39,6 +40,18 @@ XMLWrapper::~XMLWrapper()
 {
 	cleanup();
 	xmlCharEncCloseFunc(mCharEncodingHandler);
+}
+
+XMLWrapper &XMLWrapper::operator=(const XMLWrapper &xml)
+{
+	cleanup();
+
+	const xmlDocPtr document = xml.getDocument();
+	if (document) {
+		mDocument = xmlCopyDoc(document, 1);
+	}
+
+	return *this;
 }
 
 void XMLWrapper::cleanup()
@@ -73,7 +86,7 @@ bool XMLWrapper::convertFromString(const char *text, xmlChar *&xmlText)
 
 	xmlBufferPtr in = xmlBufferCreateStatic((void*) text, strlen(text));
 	xmlBufferPtr out = xmlBufferCreate();
-	int ret = xmlCharEncOutFunc(mCharEncodingHandler, out, in);
+	int ret = xmlCharEncInFunc(mCharEncodingHandler, out, in);
 	if (ret >= 0) {
 		result = true;
 		xmlText = xmlBufferDetach(out);
@@ -85,7 +98,12 @@ bool XMLWrapper::convertFromString(const char *text, xmlChar *&xmlText)
 	return result;
 }
 
-xmlNodePtr XMLWrapper::getRootElement()
+xmlDocPtr XMLWrapper::getDocument() const
+{
+	return mDocument;
+}
+
+xmlNodePtr XMLWrapper::getRootElement() const
 {
 	if (mDocument) {
 		return xmlDocGetRootElement(mDocument);
@@ -98,7 +116,7 @@ bool XMLWrapper::readXML(const char *xml)
 {
 	cleanup();
 
-	mDocument = xmlReadDoc((const xmlChar*) xml, "", NULL, XML_PARSE_NOERROR | XML_PARSE_NOWARNING/* | XML_PARSE_COMPACT | XML_PARSE_NOCDATA*/);
+	mDocument = xmlReadDoc(BAD_CAST xml, "", NULL, XML_PARSE_NOERROR | XML_PARSE_NOWARNING | XML_PARSE_COMPACT | XML_PARSE_NOENT | XML_PARSE_NOCDATA);
 	if (mDocument) {
 		return true;
 	}
@@ -114,7 +132,7 @@ bool XMLWrapper::getContent(xmlNodePtr node, std::string &content)
 		return false;
 	}
 
-	xmlChar *xmlContent = xmlNodeListGetString(mDocument, node, 1);
+	xmlChar *xmlContent = xmlNodeGetContent(node);
 	if (!xmlContent) {
 		return true;
 	}
@@ -123,6 +141,23 @@ bool XMLWrapper::getContent(xmlNodePtr node, std::string &content)
 	xmlFree(xmlContent);
 
 	return result;
+}
+
+bool XMLWrapper::setContent(xmlNodePtr node, const char *content)
+{
+	if (!node) {
+		return false;
+	}
+
+	xmlChar *xmlContent;
+	if (!convertFromString(content, xmlContent)) {
+		return false;
+	}
+
+	xmlNodeSetContent(node, xmlContent);
+	xmlFree(xmlContent);
+
+	return true;
 }
 
 std::string XMLWrapper::nodeName(xmlNodePtr node)
@@ -150,7 +185,7 @@ std::string XMLWrapper::attrName(xmlAttrPtr attr)
 xmlNodePtr XMLWrapper::findNode(xmlNodePtr node, const char *name, bool children)
 {
 	if (node->name) {
-		if (xmlStrcasecmp(node->name, (xmlChar*) name) == 0) {
+		if (xmlStrEqual(node->name, BAD_CAST name)) {
 			return node;
 		}
 	}
@@ -218,7 +253,7 @@ std::string XMLWrapper::getAttr(xmlNodePtr node, const char *name)
 
 	std::string value;
 
-	xmlChar *xmlValue = xmlGetProp(node, (const xmlChar*) name);
+	xmlChar *xmlValue = xmlGetProp(node, BAD_CAST name);
 	if (xmlValue) {
 		convertToString(xmlValue, value);
 		xmlFree(xmlValue);
@@ -238,8 +273,17 @@ bool XMLWrapper::setAttr(xmlNodePtr node, const char *name, const char *value)
 		return false;
 	}
 
-	xmlAttrPtr xmlAttr = xmlSetProp (node, (const xmlChar*) name, xmlValue);
+	xmlAttrPtr xmlAttr = xmlSetProp (node, BAD_CAST name, xmlValue);
 	xmlFree(xmlValue);
 
 	return xmlAttr != NULL;
+}
+
+XPathWrapper *XMLWrapper::createXPath()
+{
+	if (mDocument) {
+		return new XPathWrapper(*this);
+	}
+
+	return NULL;
 }

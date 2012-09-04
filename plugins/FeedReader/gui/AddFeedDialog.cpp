@@ -27,6 +27,7 @@
 #include "ui_AddFeedDialog.h"
 #include "PreviewFeedDialog.h"
 #include "FeedReaderStringDefs.h"
+#include "gui/settings/rsharesettings.h"
 
 #include "retroshare/rsforums.h"
 
@@ -36,7 +37,7 @@ bool sortForumInfo(const ForumInfo& info1, const ForumInfo& info2)
 }
 
 AddFeedDialog::AddFeedDialog(RsFeedReader *feedReader, FeedReaderNotify *notify, QWidget *parent)
-	: QDialog(parent), mFeedReader(feedReader), mNotify(notify), ui(new Ui::AddFeedDialog)
+	: QDialog(parent, Qt::Window), mFeedReader(feedReader), mNotify(notify), ui(new Ui::AddFeedDialog)
 {
 	ui->setupUi(this);
 
@@ -93,11 +94,35 @@ AddFeedDialog::AddFeedDialog(RsFeedReader *feedReader, FeedReaderNotify *notify,
 	validate();
 
 	ui->urlLineEdit->setFocus();
+
+	/* load settings */
+	processSettings(true);
 }
 
 AddFeedDialog::~AddFeedDialog()
 {
+	/* save settings */
+	processSettings(false);
+
 	delete ui;
+}
+
+void AddFeedDialog::processSettings(bool load)
+{
+	Settings->beginGroup(QString("AddFeedDialog"));
+
+	if (load) {
+		// load settings
+		QByteArray geometry = Settings->value("Geometry").toByteArray();
+		if (!geometry.isEmpty()) {
+			restoreGeometry(geometry);
+		}
+	} else {
+		// save settings
+		Settings->setValue("Geometry", saveGeometry());
+	}
+
+	Settings->endGroup();
 }
 
 void AddFeedDialog::authenticationToggled()
@@ -234,6 +259,9 @@ bool AddFeedDialog::fillFeed(const std::string &feedId)
 
 		ui->useStandardStorageTimeCheckBox->setChecked(feedInfo.flag.standardStorageTime);
 		ui->storageTimeSpinBox->setValue(feedInfo.storageTime / (60 * 60 *24));
+
+		mXPathsToUse = feedInfo.xpathsToUse;
+		mXPathsToRemove = feedInfo.xpathsToRemove;
 	}
 
 	return true;
@@ -274,6 +302,9 @@ void AddFeedDialog::getFeedInfo(FeedInfo &feedInfo)
 
 	feedInfo.flag.standardStorageTime = ui->useStandardStorageTimeCheckBox->isChecked();
 	feedInfo.storageTime = ui->storageTimeSpinBox->value() * 60 *60 * 24;
+
+	feedInfo.xpathsToUse = mXPathsToUse;
+	feedInfo.xpathsToRemove = mXPathsToRemove;
 }
 
 void AddFeedDialog::createFeed()
@@ -310,5 +341,7 @@ void AddFeedDialog::preview()
 	getFeedInfo(feedInfo);
 
 	PreviewFeedDialog dialog(mFeedReader, mNotify, feedInfo, this);
-	dialog.exec();
+	if (dialog.exec() == QDialog::Accepted) {
+		dialog.getXPaths(mXPathsToUse, mXPathsToRemove);
+	}
 }

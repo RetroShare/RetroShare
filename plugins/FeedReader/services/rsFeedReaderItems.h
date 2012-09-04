@@ -22,10 +22,13 @@
 #ifndef RS_FEEDREADER_ITEMS_H
 #define RS_FEEDREADER_ITEMS_H
 
+#include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvtypes.h"
 
 #include "p3FeedReader.h"
+
+const uint32_t CONFIG_TYPE_FEEDREADER = 0x0001; // is this correct?
 
 const uint8_t RS_PKT_SUBTYPE_FEEDREADER_FEED  = 0x02;
 const uint8_t RS_PKT_SUBTYPE_FEEDREADER_MSG   = 0x03;
@@ -80,12 +83,15 @@ public:
 	RsFeedReaderErrorState errorState;
 	std::string            errorString;
 
+	RsTlvStringSet         xpathsToUse;
+	RsTlvStringSet         xpathsToRemove;
+
 	/* Not Serialised */
 	bool        preview;
 	WorkState   workstate;
 	std::string content;
 
-	std::map<std::string, RsFeedReaderMsg*> mMsgs;
+	std::map<std::string, RsFeedReaderMsg*> msgs;
 };
 
 #define RS_FEEDMSG_FLAG_DELETED                   1
@@ -114,7 +120,7 @@ public:
 class RsFeedReaderSerialiser: public RsSerialType
 {
 public:
-	RsFeedReaderSerialiser()	: RsSerialType(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_FEEDREADER_CONFIG) {}
+	RsFeedReaderSerialiser()	: RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_PLUGIN_FEEDREADER) {}
 	virtual ~RsFeedReaderSerialiser() {}
 	
 	virtual	uint32_t size(RsItem *item);
