@@ -17,6 +17,7 @@ class PluginInfo
 		std::string info_string ;
 		std::string file_hash ;
 		std::string file_name ;
+		uint32_t svn_revision ;
 		uint32_t status ;
 };
 
@@ -31,7 +32,7 @@ class RsPluginManager: public RsPluginHandler, public p3Config
 		virtual int nbPlugins() const { return _plugins.size() ; }
 		virtual RsPlugin *plugin(int i) { return _plugins[i].plugin ; }
 		virtual const std::vector<std::string>& getPluginDirectories() const { return _plugin_directories ; }
-		virtual void getPluginStatus(int i, uint32_t& status,std::string& file_name, std::string& hash,std::string& error_string) const ;
+		virtual void getPluginStatus(int i, uint32_t& status,std::string& file_name, std::string& hash,uint32_t& svn_revision,std::string& error_string) const ;
 		virtual void enablePlugin(const std::string& hash) ;
 		virtual void disablePlugin(const std::string& hash) ;
 
@@ -91,6 +92,7 @@ class RsPluginManager: public RsPluginHandler, public p3Config
 		bool _allow_all_plugins ;
 
 		static std::string _plugin_entry_symbol ;
+		static std::string _plugin_revision_symbol ;
 		static std::string _remote_cache_dir ;
 		static std::string _local_cache_dir ;
 		static ftServer *_ftserver ;

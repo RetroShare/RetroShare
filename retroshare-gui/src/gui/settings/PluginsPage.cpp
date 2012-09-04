@@ -21,6 +21,8 @@
 
 #include <iostream>
 
+#include <QDialog>
+
 #include "PluginsPage.h"
 #include "PluginItem.h"
 #include "rshare.h"
@@ -47,14 +49,15 @@ PluginsPage::PluginsPage(QWidget * parent, Qt::WFlags flags)
 
 			 std::string file_name, file_hash, error_string ;
 			 uint32_t status ;
+			 uint32_t svn_revision ;
 
-			 rsPlugins->getPluginStatus(i,status,file_name,file_hash,error_string) ;
+			 rsPlugins->getPluginStatus(i,status,file_name,file_hash,svn_revision,error_string) ;
 
 			 QString status_string ;
 
 			 switch(status)
 			 {
-				 case PLUGIN_STATUS_UNKNOWN_HASH: status_string = tr("Hash rejected. Add to white list.") ;
+				 case PLUGIN_STATUS_UNKNOWN_HASH: status_string = tr("SVN revision number ")+QString::number(svn_revision)+tr(" does not match current. Please manually enable the plugin at your own risk.") ;
 															 break ;
 				 case PLUGIN_STATUS_DLOPEN_ERROR: status_string = tr("Loading error.") ;
 															 break ;
@@ -107,6 +110,7 @@ PluginsPage::PluginsPage(QWidget * parent, Qt::WFlags flags)
 
 			 QObject::connect(item,SIGNAL(pluginEnabled(bool,const QString&)),this,SLOT(togglePlugin(bool,const QString&))) ;
 			 QObject::connect(item,SIGNAL(pluginConfigure(int)),this,SLOT(configurePlugin(int))) ;
+			 QObject::connect(item,SIGNAL(pluginAbout(int)),this,SLOT(aboutPlugin(int))) ;
 		 }
 	 ui._pluginsLayout->update() ;
 
@@ -128,6 +132,13 @@ PluginsPage::PluginsPage(QWidget * parent, Qt::WFlags flags)
 void PluginsPage::toggleEnableAll(bool b)
 {
 	rsPlugins->allowAllPlugins(b) ;
+}
+void PluginsPage::aboutPlugin(int i)
+{
+	std::cerr << "Launching about window for plugin " << i << std::endl;
+
+	if(rsPlugins->plugin(i) != NULL && rsPlugins->plugin(i)->qt_about_page() != NULL)
+		rsPlugins->plugin(i)->qt_about_page()->exec() ;
 }
 void PluginsPage::configurePlugin(int i)
 {

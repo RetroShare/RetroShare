@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>416</width>
-    <height>157</height>
+    <width>788</width>
+    <height>174</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -160,6 +160,13 @@ p, li { white-space: pre-wrap; }
               </property>
               <property name="text">
                <string>Configure</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="_about_PB">
+              <property name="text">
+               <string>About</string>
               </property>
              </widget>
             </item>

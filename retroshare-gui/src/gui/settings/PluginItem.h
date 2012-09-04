@@ -33,10 +33,12 @@ class PluginItem: public QWidget, public Ui::PluginItem
 	protected slots:
 		void togglePlugin(bool) ;
 		void configurePlugin() ;
+		void aboutPlugin() ;
 
 	signals:
 		void pluginEnabled(bool,const QString&) ;
 		void pluginConfigure(int) ;
+		void pluginAbout(int) ;
 
   private slots:
 		void on_moreinfo_label_linkActivated(QString link);

@@ -37,6 +37,7 @@ PluginItem::PluginItem(const QString& pluginVersion, int id, const QString& plug
 
 	QObject::connect(_enabled_CB,SIGNAL(toggled(bool)),this,SLOT(togglePlugin(bool))) ;
 	QObject::connect(_configure_PB,SIGNAL(clicked()),this,SLOT(configurePlugin())) ;
+	QObject::connect(_about_PB,SIGNAL(clicked()),this,SLOT(aboutPlugin())) ;
 	
 	expandFrame->hide();
 }
@@ -44,6 +45,11 @@ PluginItem::PluginItem(const QString& pluginVersion, int id, const QString& plug
 void PluginItem::togglePlugin(bool b)
 {
 	emit( pluginEnabled(b,_hashLabel->text()) ) ;
+}
+
+void PluginItem::aboutPlugin()
+{
+	emit( pluginAbout(_id) ) ;
 }
 
 void PluginItem::configurePlugin()

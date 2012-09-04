@@ -24,6 +24,7 @@
 #endif
 
 std::string RsPluginManager::_plugin_entry_symbol ;
+std::string RsPluginManager::_plugin_revision_symbol ;
 std::string RsPluginManager::_local_cache_dir ;
 std::string RsPluginManager::_remote_cache_dir ;
 std::vector<std::string> RsPluginManager::_plugin_directories ;
@@ -102,6 +103,7 @@ void RsPluginManager::loadPlugins(const std::vector<std::string>& plugin_directo
 {
 	_plugin_directories = plugin_directories ;
 	_plugin_entry_symbol = "RETROSHARE_PLUGIN_provide" ;
+	_plugin_revision_symbol = "RETROSHARE_PLUGIN_revision" ;
 
 	// 0 - get the list of files to read
 
@@ -134,7 +136,7 @@ void RsPluginManager::loadPlugins(const std::vector<std::string>& plugin_directo
 	std::cerr << "Loaded a total of " << _plugins.size() << " plugins." << std::endl;
 }
 
-void RsPluginManager::getPluginStatus(int i,uint32_t& status,std::string& file_name,std::string& hash,std::string& error_string) const
+void RsPluginManager::getPluginStatus(int i,uint32_t& status,std::string& file_name,std::string& hash,uint32_t& svn_revision,std::string& error_string) const
 {
 	if((uint32_t)i >= _plugins.size())
 		return ;
@@ -143,6 +145,7 @@ void RsPluginManager::getPluginStatus(int i,uint32_t& status,std::string& file_n
 	error_string = _plugins[i].info_string ;
 	hash = _plugins[i].file_hash ;
 	file_name = _plugins[i].file_name ;
+	svn_revision = _plugins[i].svn_revision ;
 }
 
 bool RsPluginManager::getAllowAllPlugins() const
@@ -214,15 +217,7 @@ bool RsPluginManager::loadPlugin(const std::string& plugin_name)
 
 	std::cerr << "    -> hash = " << pinfo.file_hash << std::endl;
 
-	if((!_allow_all_plugins) && _accepted_hashes.find(pinfo.file_hash) == _accepted_hashes.end())
-	{
-		std::cerr  << "    -> hash is not in white list. Plugin is rejected. Go to config->plugins to authorise this plugin." << std::endl;
-		pinfo.status = PLUGIN_STATUS_UNKNOWN_HASH ;
-		pinfo.info_string = "" ;
-		return false ;
-	}
-	else
-	{
+
 		// The following choice is conservative by forcing RS to resolve all dependencies at
 		// the time of loading the plugin. 
 
@@ -239,9 +234,25 @@ bool RsPluginManager::loadPlugin(const std::string& plugin_name)
 			return false ;
 		}
 
-		void *pf = dlsym(handle,_plugin_entry_symbol.c_str()) ;
+		void *prev = dlsym(handle,_plugin_revision_symbol.c_str()) ;
+		pinfo.svn_revision = (prev == NULL) ? 0 : (*(uint32_t *)prev) ;
 
-		if(pf == NULL) 
+		std::cerr << "    -> plugin revision number: " << pinfo.svn_revision << std::endl;
+		std::cerr << "    -> retroshare svn  number: " << SVN_REVISION_NUMBER << std::endl;
+
+		if( (pinfo.svn_revision == 0 || pinfo.svn_revision != SVN_REVISION_NUMBER) && (!_allow_all_plugins) && _accepted_hashes.find(pinfo.file_hash) == _accepted_hashes.end())
+		{
+			std::cerr  << "    -> revision numbers do not match, and hash is not in white list. Plugin is rejected. Go to config->plugins to authorise this plugin." << std::endl;
+			pinfo.status = PLUGIN_STATUS_UNKNOWN_HASH ;
+			pinfo.info_string = "" ;
+			return false ;
+		}
+
+		// Now look for the plugin class symbol.
+		//
+		void *pfe = dlsym(handle,_plugin_entry_symbol.c_str()) ;
+
+		if(pfe == NULL) 
 		{
 			std::cerr << dlerror() << std::endl ;
 			pinfo.status = PLUGIN_STATUS_MISSING_SYMBOL ;
@@ -250,7 +261,7 @@ bool RsPluginManager::loadPlugin(const std::string& plugin_name)
 		}
 		std::cerr << "  Added function entry for symbol " << _plugin_entry_symbol << std::endl ;
 
-		RsPlugin *p = ( (*(RetroSharePluginEntry)pf)() ) ;
+		RsPlugin *p = ( (*(RetroSharePluginEntry)pfe)() ) ;
 
 		if(p == NULL)
 		{
@@ -266,7 +277,6 @@ bool RsPluginManager::loadPlugin(const std::string& plugin_name)
 		pinfo.info_string = "" ;
 
 		return true;
-	}
 }
 
 p3LinkMgr *RsPluginManager::getLinkMgr() const

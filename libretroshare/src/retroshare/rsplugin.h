@@ -31,6 +31,7 @@
 #include <vector>
 #include "retroshare/rspeers.h"
 #include "retroshare/rsfiles.h"
+#include "../../libretroshare/src/util/rsversion.h"
 
 class RsPluginHandler ;
 extern RsPluginHandler *rsPlugins ;
@@ -40,6 +41,7 @@ class p3LinkMgr ;
 class MainPage ;
 class QIcon ;
 class QString ;
+class QDialog ;
 class QWidget ;
 class QTranslator;
 class QApplication;
@@ -111,6 +113,7 @@ class RsPlugin
 		virtual QIcon          		*qt_icon()       		const	{ return NULL ; } // the page icon. Todo: put icon as virtual in MainPage
 
 		virtual QWidget        		*qt_config_panel()	const	{ return NULL ; } // Config panel, to appear config->plugins->[]->
+		virtual QDialog        		*qt_about_page()	   const	{ return NULL ; } // About/Help button in plugin entry will show this up
 		virtual ConfigPage     		*qt_config_page()  	const	{ return NULL ; } // Config tab to add in config panel.
 		virtual RsAutoUpdatePage 	*qt_transfers_tab()	const	{ return NULL ; } // Tab to add in transfers, after turtle statistics.
 		virtual std::string   		 qt_transfers_tab_name()const	{ return "Tab" ; } // Tab name
@@ -126,6 +129,8 @@ class RsPlugin
 		// 
 		//  All these items appear in the config->plugins tab, as a description of the plugin.
 		//
+		uint32_t getSvnRevision() const { return SVN_REVISION_NUMBER ; }	// This is read from libretroshare/util/rsversion.h
+
 		virtual std::string getShortPluginDescription() const = 0 ;
 		virtual std::string getPluginName() const = 0 ;
 		virtual void getPluginVersion(int& major,int& minor,int& svn_rev) const = 0 ;
@@ -147,7 +152,7 @@ class RsPluginHandler
 		virtual int nbPlugins() const = 0 ;
 		virtual RsPlugin *plugin(int i) = 0 ;
 		virtual const std::vector<std::string>& getPluginDirectories() const = 0;
-		virtual void getPluginStatus(int i,uint32_t& status,std::string& file_name,std::string& file_hash,std::string& error_string) const = 0 ;
+		virtual void getPluginStatus(int i,uint32_t& status,std::string& file_name,std::string& file_hash,uint32_t& svn_revision,std::string& error_string) const = 0 ;
 		virtual void enablePlugin(const std::string& hash) = 0;
 		virtual void disablePlugin(const std::string& hash) = 0;
 
