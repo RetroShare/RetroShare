@@ -15,6 +15,7 @@ class VOIPPlugin: public RsPlugin
 		virtual RsPQIService   *rs_pqi_service() 			const	;
 		virtual uint16_t        rs_service_id()         const { return RS_SERVICE_TYPE_VOIP_PLUGIN ; }
 		virtual ConfigPage     *qt_config_page()        const ;
+		virtual QDialog        *qt_about_page()         const ;
 		virtual RsAutoUpdatePage *qt_transfers_tab()    const ;
 		virtual std::string qt_transfers_tab_name()    const ;
 		virtual PopupChatDialog *qt_allocate_new_popup_chat_dialog() const ;

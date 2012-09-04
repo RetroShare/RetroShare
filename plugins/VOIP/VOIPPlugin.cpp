@@ -1,4 +1,5 @@
 #include <retroshare/rsplugin.h>
+#include <util/rsversion.h>
 #include <retroshare-gui/RsAutoUpdatePage.h>
 #include <QTranslator>
 #include <QApplication>
@@ -20,7 +21,7 @@ static void *inited = new VOIPPlugin() ;
 
 extern "C" {
 
-	// This is *the* function required by RS plugin system to give RS access to the plugin.
+	// This is *the* functions required by RS plugin system to give RS access to the plugin.
 	// Be careful to:
 	// - always respect the C linkage convention
 	// - always return an object of type RsPlugin*
@@ -31,13 +32,19 @@ extern "C" {
 
 		return (void*)p ;
 	}
+
+	// This symbol contains the svn revision number grabbed from the executable. 
+	// It will be tested by RS to load the plugin automatically, since it is safe to load plugins
+	// with same revision numbers, assuming that the revision numbers are up-to-date.
+	//
+	uint32_t RETROSHARE_PLUGIN_revision = SVN_REVISION_NUMBER ;
 }
 
 void VOIPPlugin::getPluginVersion(int& major,int& minor,int& svn_rev) const
 {
 	major = 5 ;
-	minor = 1 ;
-	svn_rev = 4350 ;
+	minor = 3 ;
+	svn_rev = SVN_REVISION_NUMBER ;
 }
 
 VOIPPlugin::VOIPPlugin()
@@ -65,6 +72,30 @@ void VOIPPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
 ConfigPage *VOIPPlugin::qt_config_page() const
 {
 	return new AudioInputConfig() ;
+}
+
+QDialog *VOIPPlugin::qt_about_page() const
+{
+	static QMessageBox *about_dialog = NULL ;
+	
+	if(about_dialog == NULL)
+	{
+		about_dialog = new QMessageBox() ;
+
+		QString text ;
+		text += QObject::tr("<h3>RetroShare VOIP plugin</h3><br/>   * Contributors: Cyril Soler, Josselin Jacquard<br/>") ;
+		text += QObject::tr("<br/>The VOIP plugin adds VOIP to the private chat window of RetroShare. to use it, proceed as follows:<UL>") ;
+		text += QObject::tr("<li> setup microphone levels using the configuration panel</li>") ;
+		text += QObject::tr("<li> check your microphone by looking at the VU-metters</li>") ;
+		text += QObject::tr("<li> in the private chat, enable sound input/output by clicking on the two VOIP icons</li></ul>") ;
+		text += QObject::tr("Your friend needs to run the plugin to talk/listen to you, or course.") ;
+		text += QObject::tr("<br/><br/>This is an experimental feature. Don't hesitate to send comments and suggestion to the RS dev team.") ;
+
+		about_dialog->setText(text) ;
+		about_dialog->setStandardButtons(QMessageBox::Ok) ;
+	}
+
+	return about_dialog ;
 }
 
 PopupChatDialog *VOIPPlugin::qt_allocate_new_popup_chat_dialog() const
