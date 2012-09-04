@@ -32,6 +32,7 @@
 #include "rsgenexchange.h"
 #include "gxssecurity.h"
 #include "util/contentvalue.h"
+#include "rsgxsflags.h"
 
 RsGenExchange::RsGenExchange(RsGeneralDataService *gds,
                              RsNetworkExchangeService *ns, RsSerialType *serviceSerialiser, uint16_t servType)

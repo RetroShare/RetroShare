@@ -2,6 +2,7 @@
 #include "support.h"
 #include "data_support.h"
 #include "rsdataservice_test.h"
+#include "gxs/rsgds.h"
 #include "gxs/rsdataservice.h"
 
 #define DATA_BASE_NAME "msg_grp_Store"
@@ -57,9 +58,9 @@ void test_groupStoreAndRetrieve(){
 
     dStore->storeGroup(grps);
 
-    std::map<std::string, RsNxsGrp*> gR;
-    std::map<std::string, RsGxsGrpMetaData*> grpMetaR;
-    dStore->retrieveNxsGrps(gR, false);
+    std::map<RsGxsGroupId, RsNxsGrp*> gR;
+    std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMetaR;
+    dStore->retrieveNxsGrps(gR, false, false);
     dStore->retrieveGxsGrpMetaData(grpMetaR);
 
     std::map<RsNxsGrp*, RsGxsGrpMetaData*>::iterator mit = grps.begin();
@@ -164,7 +165,7 @@ void test_messageStoresAndRetrieve()
         const std::string& grpId = grpV[chosen];
 
         if(chosen)
-            req[grpId].insert(msg->msgId);
+            req[grpId].push_back(msg->msgId);
 
         msgMeta->mMsgId = msg->msgId;
         msgMeta->mGroupId = msg->grpId = grpId;
@@ -189,7 +190,7 @@ void test_messageStoresAndRetrieve()
         msgs.insert(p);
     }
 
-    req[grpV[0]] = std::set<std::string>(); // assign empty list for other
+    req[grpV[0]] = std::vector<RsGxsMessageId>(); // assign empty list for other
 
     dStore->storeMessage(msgs);
 
@@ -199,7 +200,8 @@ void test_messageStoresAndRetrieve()
     GxsMsgResult msgResult;
     GxsMsgMetaResult msgMetaResult;
     dStore->retrieveNxsMsgs(req, msgResult, false);
-    dStore->retrieveGxsMsgMetaData(grpV, msgMetaResult);
+
+    dStore->retrieveGxsMsgMetaData(req, msgMetaResult);
 
     // now look at result for grpId 1
     std::vector<RsNxsMsg*>& result0 = msgResult[grpId0];

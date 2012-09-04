@@ -290,44 +290,44 @@ private:
      * of msgs received from peer stored in passed transaction
      * @param tr transaction responsible for generating msg request
      */
-	void locked_genReqMsgTransaction(NxsTransaction* tr);
+    void locked_genReqMsgTransaction(NxsTransaction* tr);
 
     /*!
      * Generates new transaction to send grp requests based on list
      * of grps received from peer stored in passed transaction
      * @param tr transaction responsible for generating grp request
      */
-	void locked_genReqGrpTransaction(NxsTransaction* tr);
+    void locked_genReqGrpTransaction(NxsTransaction* tr);
 
-	/*!
-	 * Generates new transaction to send msg data based on list
-	 * of grpids received from peer stored in passed transaction
-	 * @param tr transaction responsible for generating grp request
-	 */
-	void locked_genSendMsgsTransaction(NxsTransaction* tr);
+    /*!
+     * Generates new transaction to send msg data based on list
+     * of grpids received from peer stored in passed transaction
+     * @param tr transaction responsible for generating grp request
+     */
+    void locked_genSendMsgsTransaction(NxsTransaction* tr);
 
-	/*!
-	 * Generates new transaction to send grp data based on list
-	 * of grps received from peer stored in passed transaction
-	 * @param tr transaction responsible for generating grp request
-	 */
-	void locked_genSendGrpsTransaction(NxsTransaction* tr);
+    /*!
+     * Generates new transaction to send grp data based on list
+     * of grps received from peer stored in passed transaction
+     * @param tr transaction responsible for generating grp request
+     */
+    void locked_genSendGrpsTransaction(NxsTransaction* tr);
 
-	/*!
-	 * convenience function to add a transaction to list
-	 * @param tr transaction to add
-	 */
-	bool locked_addTransaction(NxsTransaction* tr);
+    /*!
+     * convenience function to add a transaction to list
+     * @param tr transaction to add
+     */
+    bool locked_addTransaction(NxsTransaction* tr);
 
-	void cleanTransactionItems(NxsTransaction* tr) const;
+    void cleanTransactionItems(NxsTransaction* tr) const;
 
-	/*!
-	 *  @param tr the transaction to check for timeout
-	 *  @return false if transaction has timed out, true otherwise
-	 */
-	bool locked_checkTransacTimedOut(NxsTransaction* tr);
+    /*!
+     *  @param tr the transaction to check for timeout
+     *  @return false if transaction has timed out, true otherwise
+     */
+    bool locked_checkTransacTimedOut(NxsTransaction* tr);
 
-	/** E: Transaction processing **/
+    /** E: Transaction processing **/
 
     /** S: item handlers **/
 
@@ -395,9 +395,7 @@ private:
     RsMutex mNxsMutex;
 
     uint32_t mSyncTs;
-    // TODO: remove, temp, for testing.
-    // subscription handled outside netservice
-    std::set<std::string> mGroupSubscribedTo;
+
     const uint32_t mSYNC_PERIOD;
 
 };

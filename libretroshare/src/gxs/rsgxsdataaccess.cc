@@ -65,43 +65,88 @@ RsGxsDataAccess::RsGxsDataAccess(RsGeneralDataService* ds)
 bool RsGxsDataAccess::requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts,
 		const std::list<std::string> &groupIds)
 {
-	GxsRequest* req = NULL;
-	uint32_t reqType = opts.mReqType;
+    if(groupIds.empty())
+    {
+    	std::cerr << "Group Id list is empty" << std::endl;
+        return false;
+    }
 
-	if(reqType & GXS_REQUEST_TYPE_GROUP_META)
-	{
-		GroupMetaReq* gmr = new GroupMetaReq();
-		gmr->mGroupIds = groupIds;
-		req = gmr;
-	}
-	else if(reqType & GXS_REQUEST_TYPE_GROUP_DATA)
-	{
-		GroupDataReq* gdr = new GroupDataReq();
-		gdr->mGroupIds = groupIds;
-		req = gdr;
-	}
-	else if(reqType & GXS_REQUEST_TYPE_GROUP_IDS)
-	{
-		GroupIdReq* gir = new GroupIdReq();
-		gir->mGroupIds = groupIds;
-		req = gir;
-	}
+    GxsRequest* req = NULL;
+    uint32_t reqType = opts.mReqType;
 
-	if(req == NULL)
-	{
-		std::cerr << "RsGxsDataAccess::requestMsgInfo() request type not recognised, type "
-				  << reqType << std::endl;
-		return false;
-	}else
-	{
-		generateToken(token);
-		std::cerr << "RsGxsDataAccess::requestMsgInfo() gets Token: " << token << std::endl;
-	}
+    if(reqType & GXS_REQUEST_TYPE_GROUP_META)
+    {
+            GroupMetaReq* gmr = new GroupMetaReq();
+            gmr->mGroupIds = groupIds;
+            req = gmr;
+    }
+    else if(reqType & GXS_REQUEST_TYPE_GROUP_DATA)
+    {
+            GroupDataReq* gdr = new GroupDataReq();
+            gdr->mGroupIds = groupIds;
+            req = gdr;
+    }
+    else if(reqType & GXS_REQUEST_TYPE_GROUP_IDS)
+    {
+            GroupIdReq* gir = new GroupIdReq();
+            gir->mGroupIds = groupIds;
+            req = gir;
+    }
 
-	setReq(req, token, ansType, opts);
-	storeRequest(req);
+    if(req == NULL)
+    {
+            std::cerr << "RsGxsDataAccess::requestMsgInfo() request type not recognised, type "
+                              << reqType << std::endl;
+            return false;
+    }else
+    {
+            generateToken(token);
+            std::cerr << "RsGxsDataAccess::requestMsgInfo() gets Token: " << token << std::endl;
+    }
 
-	return true;
+    setReq(req, token, ansType, opts);
+    storeRequest(req);
+
+    return true;
+}
+
+bool RsGxsDataAccess::requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts)
+{
+
+    GxsRequest* req = NULL;
+    uint32_t reqType = opts.mReqType;
+
+    if(reqType & GXS_REQUEST_TYPE_GROUP_META)
+    {
+            GroupMetaReq* gmr = new GroupMetaReq();
+            req = gmr;
+    }
+    else if(reqType & GXS_REQUEST_TYPE_GROUP_DATA)
+    {
+            GroupDataReq* gdr = new GroupDataReq();
+            req = gdr;
+    }
+    else if(reqType & GXS_REQUEST_TYPE_GROUP_IDS)
+    {
+            GroupIdReq* gir = new GroupIdReq();
+            req = gir;
+    }
+
+    if(req == NULL)
+    {
+            std::cerr << "RsGxsDataAccess::requestMsgInfo() request type not recognised, type "
+                              << reqType << std::endl;
+            return false;
+    }else
+    {
+            generateToken(token);
+            std::cerr << "RsGxsDataAccess::requestMsgInfo() gets Token: " << token << std::endl;
+    }
+
+    setReq(req, token, ansType, opts);
+    storeRequest(req);
+
+    return true;
 }
 
 void RsGxsDataAccess::generateToken(uint32_t &token)
@@ -121,21 +166,41 @@ bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
 	GxsRequest* req = NULL;
 	uint32_t reqType = opts.mReqType;
 
+        // remove all empty grpId entries
+        GxsMsgReq::const_iterator mit = msgIds.begin();
+        std::vector<RsGxsGroupId> toRemove;
+
+        for(; mit != msgIds.end(); mit++)
+        {
+            if(mit->second.empty())
+                toRemove.push_back(mit->first);
+        }
+
+        std::vector<RsGxsGroupId>::const_iterator vit = toRemove.begin();
+
+        GxsMsgReq filteredMsgIds = msgIds;
+
+        for(; vit != toRemove.end(); vit++)
+            filteredMsgIds.erase(*vit);
+
 	if(reqType & GXS_REQUEST_TYPE_MSG_META)
 	{
 		MsgMetaReq* mmr = new MsgMetaReq();
-		mmr->mMsgIds = msgIds;
+		mmr->mMsgIds = filteredMsgIds;
 		req = mmr;
+
 	}else if(reqType & GXS_REQUEST_TYPE_MSG_DATA)
 	{
 		MsgDataReq* mdr = new MsgDataReq();
-		mdr->mMsgIds = msgIds;
+		mdr->mMsgIds = filteredMsgIds;
 		req = mdr;
+
 	}else if(reqType & GXS_REQUEST_TYPE_MSG_IDS)
 	{
 		MsgIdReq* mir = new MsgIdReq();
-                mir->mMsgIds = msgIds;
+		mir->mMsgIds = filteredMsgIds;
 		req = mir;
+
 	}
 
 	if(req == NULL)
@@ -154,8 +219,58 @@ bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
 	return true;
 }
 
+bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
+                   const RsTokReqOptionsV2 &opts, const std::list<RsGxsGroupId>& grpIds)
+{
+        GxsRequest* req = NULL;
+        uint32_t reqType = opts.mReqType;
 
-bool RsGxsDataAccess::requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts, const GxsMsgReq& msgIds)
+        std::list<RsGxsGroupId>::const_iterator lit = grpIds.begin();
+
+        if(reqType & GXS_REQUEST_TYPE_MSG_META)
+        {
+                MsgMetaReq* mmr = new MsgMetaReq();
+
+                for(; lit != grpIds.end(); lit++)
+                    mmr->mMsgIds[*lit] = std::vector<RsGxsMessageId>();
+
+                req = mmr;
+        }else if(reqType & GXS_REQUEST_TYPE_MSG_DATA)
+        {
+                MsgDataReq* mdr = new MsgDataReq();
+
+                for(; lit != grpIds.end(); lit++)
+                    mdr->mMsgIds[*lit] = std::vector<RsGxsMessageId>();
+
+                req = mdr;
+        }else if(reqType & GXS_REQUEST_TYPE_MSG_IDS)
+        {
+                MsgIdReq* mir = new MsgIdReq();
+
+                for(; lit != grpIds.end(); lit++)
+                    mir->mMsgIds[*lit] = std::vector<RsGxsMessageId>();
+
+                req = mir;
+        }
+
+        if(req == NULL)
+        {
+                std::cerr << "RsGxsDataAccess::requestMsgInfo() request type not recognised, type "
+                                  << reqType << std::endl;
+                return false;
+        }else
+        {
+                generateToken(token);
+                std::cerr << "RsGxsDataAccess::requestMsgInfo() gets Token: " << token << std::endl;
+        }
+
+        setReq(req, token, ansType, opts);
+        storeRequest(req);
+        return true;
+}
+
+bool RsGxsDataAccess::requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts,
+                                            const GxsMsgReq& msgIds)
 {
 
     MsgRelatedInfoReq* req = new MsgRelatedInfoReq();
@@ -165,7 +280,6 @@ bool RsGxsDataAccess::requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, c
 
     setReq(req, token, ansType, opts);
     storeRequest(req);
-
 
     return true;
 }

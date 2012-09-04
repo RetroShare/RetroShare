@@ -25,6 +25,7 @@
  */
 
 #include "rsgxsnetservice.h"
+#include "rsgxsflags.h"
 
 #define NXS_NET_DEBUG
 
@@ -85,24 +86,40 @@ void RsGxsNetService::syncWithPeers()
                 sendItem(grp);
         }
 
+        std::map<RsGxsGroupId, RsGxsGrpMetaData* > grpMeta;
+        mDataStore->retrieveGxsGrpMetaData(grpMeta);
+
+        std::map<RsGxsGroupId, RsGxsGrpMetaData* >::iterator
+                mit = grpMeta.begin();
+
+        std::vector<RsGxsGroupId> grpIds;
+
+        for(; mit != grpMeta.end(); mit++)
+        {
+            RsGxsGrpMetaData* meta = mit->second;
+
+            if(meta->mSubscribeFlags & GXS_SERV::RSGXS_GROUP_SUBSCRIBE_MASK)
+                grpIds.push_back(mit->first);
+        }
+
         sit = peers.begin();
+
 	// TODO msgs
         for(; sit != peers.end(); sit++)
         {
         	RsStackMutex stack(mNxsMutex);
 
-        	std::set<std::string>::iterator sit_grp = mGroupSubscribedTo.begin();
+                std::vector<RsGxsGroupId>::iterator vit = grpIds.begin();
 
-        	for(; sit_grp != mGroupSubscribedTo.end(); sit_grp++)
+                for(; vit != grpIds.end(); vit++)
         	{
         		RsNxsSyncMsg* msg = new RsNxsSyncMsg(mServType);
         		msg->clear();
-        		msg->PeerId(*sit);
-        		msg->grpId = *sit_grp;
+                        msg->PeerId(*sit);
+                        msg->grpId = *vit;
         		sendItem(msg);
         	}
         }
-
 }
 
 bool RsGxsNetService::loadList(std::list<RsItem*>& load)
@@ -600,10 +617,6 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
 						{
 							tr->mItems.pop_front();
 							grps.push_back(grp);
-
-							//TODO: remove subscription should be handled
-							// outside netservice
-							mGroupSubscribedTo.insert(grp->grpId);
 						}
 						else
 						{

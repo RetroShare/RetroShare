@@ -32,6 +32,7 @@
 #include <list>
 #include <set>
 #include <map>
+#include <vector>
 
 /* data types used throughout Gxs from netservice to genexchange */
 

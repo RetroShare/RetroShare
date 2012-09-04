@@ -114,17 +114,26 @@ public:
     RsTokenServiceV2()  { return; }
     virtual ~RsTokenServiceV2() { return; }
 
-        /* Data Requests */
+    /* Data Requests */
 
     /*!
      * Use this to request group related information
      * @param token The token returned for the request, store this value to pool for request completion
      * @param ansType The type of result (e.g. group data, meta, ids)
      * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
-     * @param groupIds group id to request info for. Leave empty to get info on all groups,
+     * @param groupIds group id to request info for
      * @return
      */
     virtual bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts, const std::list<RsGxsGroupId> &groupIds) = 0;
+
+    /*!
+     * Use this to request all group related info
+     * @param token The token returned for the request, store this value to pool for request completion
+     * @param ansType The type of result (e.g. group data, meta, ids)
+     * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
+     * @return
+     */
+    virtual bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts) = 0;
 
     /*!
      * Use this to get msg related information, store this value to pole for request completion
@@ -137,6 +146,16 @@ public:
     virtual bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts, const GxsMsgReq& msgIds) = 0;
 
     /*!
+     * Use this to get msg related information, store this value to pole for request completion
+     * @param token The token returned for the request
+     * @param ansType The type of result wanted
+     * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
+     * @param groupIds The ids of the groups to get, this retrieve all the msgs info for each grpId in list
+     * @return true if request successful false otherwise
+     */
+    virtual bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts, const std::list<RsGxsGroupId>& msgIds) = 0;
+
+    /*!
      * For requesting msgs related to a given msg id within a group
      * @param token The token returned for the request
      * @param ansType The type of result wanted
@@ -147,7 +166,7 @@ public:
     virtual bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts, const GxsMsgReq& msgIds) = 0;
 
 
-        /* Poll */
+    /* Poll */
 
     /*!
      * Request the status of ongoing request.

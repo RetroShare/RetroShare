@@ -2274,6 +2274,8 @@ int RsServer::StartupRetroShare()
 	RsGeneralDataService* photo_ds = new RsDataService("./", "photoV2_db",
 			RS_SERVICE_TYPE_PHOTO, NULL);
 
+        photo_ds->resetDataStore();
+
 	// TODO need net manager
 	//RsGxsNetService* photo_ns = new RsGxsNetService(
 	//		RS_SERVICE_TYPE_PHOTO, photo_ds, NULL, mPhotoV2);

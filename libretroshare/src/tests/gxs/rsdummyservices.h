@@ -69,7 +69,7 @@ public:
 
 
     RsDummySerialiser()
-    :RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DUMMY)
+    : RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DUMMY)
     { return; }
     virtual     ~RsDummySerialiser() { return; }
 

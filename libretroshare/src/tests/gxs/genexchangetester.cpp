@@ -175,7 +175,7 @@ bool GenExchangeTester::testGrpSubmissionRetrieval()
    opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 
    std::list<RsGxsGroupId> grpIds;
-   mTokenService->requestGroupInfo(token, 0, opts, grpIds);
+   mTokenService->requestGroupInfo(token, 0, opts);
 
    pollForToken(token, opts);
 
@@ -272,7 +272,7 @@ bool GenExchangeTester::testGrpMetaRetrieval()
    opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
 
    std::list<RsGxsGroupId> grpIds;
-   mTokenService->requestGroupInfo(token, 0, opts, grpIds);
+   mTokenService->requestGroupInfo(token, 0, opts);
 
    pollForToken(token, opts);
 
@@ -319,7 +319,7 @@ bool GenExchangeTester::testGrpIdRetrieval()
     opts.mReqType = GXS_REQUEST_TYPE_GROUP_IDS;
     uint32_t token;
     std::list<RsGxsGroupId> grpIds;
-    mTokenService->requestGroupInfo(token, 0, opts, grpIds);
+    mTokenService->requestGroupInfo(token, 0, opts);
 
     pollForToken(token, opts);
 
@@ -676,13 +676,13 @@ bool GenExchangeTester::testMsgIdRetrieval()
 
     // now do ask of all msg ids
 
-    GxsMsgReq req;
+    std::list<RsGxsGroupId> req;
     opts.mReqType = GXS_REQUEST_TYPE_MSG_IDS;
 
     // use empty grp ids request types, non specific msgs ids
     for(int i=0; i < mRandGrpIds.size(); i++)
     {
-        req[mRandGrpIds[i]] = std::vector<RsGxsMessageId>();
+        req.push_back(mRandGrpIds[i]);
     }
 
     mTokenService->requestMsgInfo(token, 0, opts, req);

@@ -151,7 +151,7 @@ public:
      * @param cache whether to store retrieval in mem for faster later retrieval
      * @return error code
      */
-    virtual int retrieveGxsMsgMetaData(GxsMsgReq& grpIds, GxsMsgMetaResult& msgMeta) = 0;
+    virtual int retrieveGxsMsgMetaData(GxsMsgReq& msgIds, GxsMsgMetaResult& msgMeta) = 0;
 
     /*!
      * remove msgs in data store listed in msgIds param

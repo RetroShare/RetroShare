@@ -29,6 +29,7 @@
 #include "gxs/rsgds.h"
 #include "util/retrodb.h"
 
+
 class RsDataService : public RsGeneralDataService
 {
 public:
