@@ -20,10 +20,13 @@ fi
 if ( svn info &> /dev/null); then
 	version=$(svn info | grep '^Revision:')
 fi
+
 if [[ $version != '' ]]; then
+	version_number=`echo $version | cut -d: -f2`
 	version="$version  date : $(date +'%T %m.%d.%y')"
 	echo "Writing version to util/rsversion.h : $version "
 	sed -i "s/SVN_REVISION .*/SVN_REVISION \"$version\"/g" util/rsversion.h
+	sed -i "s/SVN_REVISION_NUMBER .*/SVN_REVISION_NUMBER $version_number/g" util/rsversion.h
 fi
 echo "script version_detail.sh finished normally"
 exit 0
