@@ -40,10 +40,13 @@ public:
   /** Default Constructor */
   NewsFeed(QWidget *parent = 0);
   /** Default Destructor */
+  virtual ~NewsFeed();
 
 	/* FeedHolder Functions (for FeedItem functionality) */
   virtual void deleteFeedItem(QWidget *item, uint32_t type);
   virtual void openChat(std::string peerId);
+
+  static void testFeeds(uint notifyFlags);
 
 signals:
   void newsFeedChanged(int count);
@@ -78,7 +81,7 @@ private:
   void	addFeedItemForumMsg(RsFeedItem &fi);
   void  addFeedItemBlogNew(RsFeedItem &fi);
   void	addFeedItemBlogMsg(RsFeedItem &fi);
-  void	addFeedItemChatNew(RsFeedItem &fi);
+  void	addFeedItemChatNew(RsFeedItem &fi, bool addWithoutCheck);
   void	addFeedItemMessage(RsFeedItem &fi);
   void	addFeedItemFilesNew(RsFeedItem &fi);
 

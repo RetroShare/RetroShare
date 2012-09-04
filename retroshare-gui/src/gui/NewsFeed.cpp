@@ -25,6 +25,9 @@
 
 #include <retroshare/rsnotify.h>
 #include <retroshare/rspeers.h>
+#include <retroshare/rschannels.h>
+#include <retroshare/rsforums.h>
+#include <retroshare/rsmsgs.h>
 
 #include "feeds/ChanNewItem.h"
 #include "feeds/ChanMsgItem.h"
@@ -62,6 +65,8 @@ const uint32_t NEWSFEED_SECLIST = 	0x000a;
  * #define NEWS_DEBUG  1
  ****/
 
+static NewsFeed *instance = NULL;
+
 /** Constructor */
 NewsFeed::NewsFeed(QWidget *parent)
 : MainPage (parent)
@@ -69,13 +74,23 @@ NewsFeed::NewsFeed(QWidget *parent)
   	/* Invoke the Qt Designer generated object setup routine */
   	setupUi(this);
 
+	if (!instance) {
+		instance = this;
+	}
+
 	connect(removeAllButton, SIGNAL(clicked()), this, SLOT(removeAll()));
 	connect(feedOptionsButton, SIGNAL(clicked()), this, SLOT(feedoptions()));
-	
 
 	QTimer *timer = new QTimer(this);
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateFeed()));
 	timer->start(1000);
+}
+
+NewsFeed::~NewsFeed()
+{
+	if (instance == this) {
+		instance = NULL;
+	}
 }
 
 void NewsFeed::updateFeed()
@@ -162,20 +177,216 @@ void NewsFeed::updateFeed()
 				if (flags & RS_FEED_TYPE_BLOG)
 					addFeedItemBlogMsg(fi);
 				break;
+
 			case RS_FEED_ITEM_CHAT_NEW:
 				if (flags & RS_FEED_TYPE_CHAT)
-					addFeedItemChatNew(fi);
+					addFeedItemChatNew(fi, false);
 				break;
+
 			case RS_FEED_ITEM_MESSAGE:
 				if (flags & RS_FEED_TYPE_MSG)
 					addFeedItemMessage(fi);
 				break;
+
 			case RS_FEED_ITEM_FILES_NEW:
 				if (flags & RS_FEED_TYPE_FILES)
 					addFeedItemFilesNew(fi);
 				break;
 			default:
 				break;
+		}
+	}
+}
+
+void NewsFeed::testFeeds(uint notifyFlags)
+{
+	if (!instance) {
+		return;
+	}
+
+	uint pos = 0;
+
+	while (notifyFlags) {
+		uint type = notifyFlags & (1 << pos);
+		notifyFlags &= ~(1 << pos);
+		++pos;
+
+		RsFeedItem fi;
+
+		switch(type) {
+		case RS_FEED_TYPE_PEER:
+			fi.mId1 = rsPeers->getOwnId();
+
+			instance->addFeedItemPeerConnect(fi);
+			instance->addFeedItemPeerDisconnect(fi);
+			instance->addFeedItemPeerNew(fi);
+			instance->addFeedItemPeerHello(fi);
+			break;
+
+		case RS_FEED_TYPE_SECURITY:
+			fi.mId1 = rsPeers->getGPGOwnId();
+			fi.mId2 = rsPeers->getOwnId();
+
+			instance->addFeedItemSecurityConnectAttempt(fi);
+			instance->addFeedItemSecurityAuthDenied(fi);
+			instance->addFeedItemSecurityUnknownIn(fi);
+			instance->addFeedItemSecurityUnknownOut(fi);
+			break;
+
+		case RS_FEED_TYPE_CHAN:
+		{
+			std::list<ChannelInfo> channelList;
+			rsChannels->getChannelList(channelList);
+
+			std::list<ChannelInfo>::iterator channelIt;
+			for (channelIt = channelList.begin(); channelIt != channelList.end(); ++channelIt) {
+				if (fi.mId1.empty()) {
+					/* store first channel */
+					fi.mId1 = channelIt->channelId;
+				}
+
+				if (!channelIt->channelDesc.empty()) {
+					/* take channel with description */
+					fi.mId1 = channelIt->channelId;
+					break;
+				}
+			}
+
+			instance->addFeedItemChanNew(fi);
+			instance->addFeedItemChanUpdate(fi);
+
+			RsFeedItem fiMsg;
+			bool bFound = false;
+
+			for (channelIt = channelList.begin(); channelIt != channelList.end(); ++channelIt) {
+				std::list<ChannelMsgSummary> channelMsgs;
+				rsChannels->getChannelMsgList(channelIt->channelId, channelMsgs);
+
+				std::list<ChannelMsgSummary>::iterator msgIt;
+				for (msgIt = channelMsgs.begin(); msgIt != channelMsgs.end(); ++msgIt) {
+					if (fiMsg.mId2.empty()) {
+						/* store first channel message */
+						fiMsg.mId1 = msgIt->channelId;
+						fiMsg.mId2 = msgIt->msgId;
+					}
+
+					if (!msgIt->msg.empty()) {
+						/* take channel message with description */
+						fiMsg.mId1 = msgIt->channelId;
+						fiMsg.mId2 = msgIt->msgId;
+						bFound = true;
+						break;
+					}
+				}
+
+				if (bFound) {
+					break;
+				}
+			}
+
+			instance->addFeedItemChanMsg(fiMsg);
+			break;
+		}
+
+		case RS_FEED_TYPE_FORUM:
+		{
+			std::list<ForumInfo> forumList;
+			rsForums->getForumList(forumList);
+
+			std::list<ForumInfo>::iterator forumIt;
+			for (forumIt = forumList.begin(); forumIt != forumList.end(); ++forumIt) {
+				if (fi.mId1.empty()) {
+					/* store first forum */
+					fi.mId1 = forumIt->forumId;
+				}
+
+				if (!forumIt->forumDesc.empty()) {
+					/* take forum with description */
+					fi.mId1 = forumIt->forumId;
+					break;
+				}
+			}
+
+			instance->addFeedItemForumNew(fi);
+			instance->addFeedItemForumUpdate(fi);
+
+			RsFeedItem fiMsg;
+			bool bFound = false;
+
+			for (forumIt = forumList.begin(); forumIt != forumList.end(); ++forumIt) {
+				std::list<ThreadInfoSummary> forumMsgs;
+				rsForums->getForumThreadList(forumIt->forumId, forumMsgs);
+
+				std::list<ThreadInfoSummary>::iterator msgIt;
+				for (msgIt = forumMsgs.begin(); msgIt != forumMsgs.end(); ++msgIt) {
+					if (fiMsg.mId2.empty()) {
+						/* store first forum message */
+						fiMsg.mId1 = msgIt->forumId;
+						fiMsg.mId2 = msgIt->msgId;
+					}
+
+					if (!msgIt->msg.empty()) {
+						/* take channel message with description */
+						fiMsg.mId1 = msgIt->forumId;
+						fiMsg.mId2 = msgIt->msgId;
+						bFound = true;
+						break;
+					}
+				}
+
+				if (bFound) {
+					break;
+				}
+			}
+
+			instance->addFeedItemForumMsg(fiMsg);
+			break;
+		}
+
+		case RS_FEED_TYPE_BLOG:
+// not used
+//			instance->addFeedItemBlogNew(fi);
+//			instance->addFeedItemBlogMsg(fi);
+			break;
+
+		case RS_FEED_TYPE_CHAT:
+			fi.mId1 = rsPeers->getOwnId();
+			fi.mId2 = tr("This is a test.").toUtf8().constData();
+
+			instance->addFeedItemChatNew(fi, true);
+			break;
+
+		case RS_FEED_TYPE_MSG:
+		{
+			std::list<MsgInfoSummary> msgList;
+			rsMsgs->getMessageSummaries(msgList);
+
+			std::list<MsgInfoSummary>::const_iterator msgIt;
+			for (msgIt = msgList.begin(); msgIt != msgList.end(); ++msgIt) {
+				if (fi.mId1.empty()) {
+					/* store first message */
+					fi.mId1 = msgIt->msgId;
+				}
+
+				if (msgIt->msgflags & RS_MSG_TRASH) {
+					continue;
+				}
+
+				if ((msgIt->msgflags & RS_MSG_BOXMASK) == RS_MSG_INBOX) {
+					/* take message from inbox */
+					fi.mId1 = msgIt->msgId;
+					break;
+				}
+			}
+
+			instance->addFeedItemMessage(fi);
+			break;
+		}
+
+		case RS_FEED_TYPE_FILES:
+// not used
+//			instance->addFeedItemFilesNew(fi);
+			break;
 		}
 	}
 }
@@ -485,14 +696,14 @@ void	NewsFeed::addFeedItemBlogMsg(RsFeedItem &fi)
 #endif
 }
 
-void	NewsFeed::addFeedItemChatNew(RsFeedItem &fi)
+void	NewsFeed::addFeedItemChatNew(RsFeedItem &fi, bool addWithoutCheck)
 {
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemChatNew()";
 	std::cerr << std::endl;
 #endif
 
-	if (fi.mId1 == rsPeers->getOwnId()) {
+	if (!addWithoutCheck && fi.mId1 == rsPeers->getOwnId()) {
 		/* chat message from myself */
 		return;
 	}

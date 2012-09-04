@@ -28,6 +28,8 @@
 
 #include "gui/MainWindow.h"
 #include "gui/common/UserNotify.h"
+#include "gui/notifyqt.h"
+#include "gui/NewsFeed.h"
 
 /** Constructor */
 NotifyPage::NotifyPage(QWidget * parent, Qt::WFlags flags)
@@ -35,6 +37,9 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WFlags flags)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
+
+  connect(ui.notifyButton, SIGNAL(clicked()), this, SLOT(testNotify()));
+  connect(ui.toasterButton, SIGNAL(clicked()), this, SLOT(testToaster()));
 
   /* add user notify */
   QFont font = ui.notify_Peers->font(); // use font from existing checkbox
@@ -71,48 +76,58 @@ NotifyPage::~NotifyPage()
 {
 }
 
+uint NotifyPage::getNewsFlags()
+{
+    uint newsFlags = 0;
+
+    if (ui.notify_Peers->isChecked())
+        newsFlags |= RS_FEED_TYPE_PEER;
+    if (ui.notify_Channels->isChecked())
+        newsFlags |= RS_FEED_TYPE_CHAN;
+    if (ui.notify_Forums->isChecked())
+        newsFlags |= RS_FEED_TYPE_FORUM;
+    if (ui.notify_Blogs->isChecked())
+        newsFlags |= RS_FEED_TYPE_BLOG;
+    if (ui.notify_Messages->isChecked())
+        newsFlags |= RS_FEED_TYPE_MSG;
+    if (ui.notify_Chat->isChecked())
+        newsFlags |= RS_FEED_TYPE_CHAT;
+    if (ui.notify_Security->isChecked())
+        newsFlags |= RS_FEED_TYPE_SECURITY;
+
+    return newsFlags;
+}
+
+uint NotifyPage::getNotifyFlags()
+{
+    uint notifyFlags = 0;
+
+    if (ui.popup_Connect->isChecked())
+        notifyFlags |= RS_POPUP_CONNECT;
+    if (ui.popup_NewMsg->isChecked())
+        notifyFlags |= RS_POPUP_MSG;
+    if (ui.popup_DownloadFinished->isChecked())
+        notifyFlags |= RS_POPUP_DOWNLOAD;
+    if (ui.popup_PrivateChat->isChecked())
+        notifyFlags |= RS_POPUP_CHAT;
+    if (ui.popup_GroupChat->isChecked())
+        notifyFlags |= RS_POPUP_GROUPCHAT;
+    if (ui.popup_ChatLobby->isChecked())
+        notifyFlags |= RS_POPUP_CHATLOBBY;
+    if (ui.popup_ConnectAttempt->isChecked())
+        notifyFlags |= RS_POPUP_CONNECT_ATTEMPT;
+
+    return notifyFlags;
+}
+
 /** Saves the changes on this page */
 bool
 NotifyPage::save(QString &/*errmsg*/)
 {
     /* extract from rsNotify the flags */
 
-    uint notifyflags = 0;
-    uint newsflags   = 0;
     uint chatflags   = 0;
     uint messageflags = 0;
-
-    if (ui.popup_Connect->isChecked())
-        notifyflags |= RS_POPUP_CONNECT;
-    if (ui.popup_NewMsg->isChecked())
-        notifyflags |= RS_POPUP_MSG;
-    if (ui.popup_DownloadFinished->isChecked())
-        notifyflags |= RS_POPUP_DOWNLOAD;
-    if (ui.popup_PrivateChat->isChecked())
-        notifyflags |= RS_POPUP_CHAT;
-    if (ui.popup_GroupChat->isChecked())
-        notifyflags |= RS_POPUP_GROUPCHAT;
-    if (ui.popup_ChatLobby->isChecked())
-        notifyflags |= RS_POPUP_CHATLOBBY;
-    if (ui.popup_ConnectAttempt->isChecked())
-        notifyflags |= RS_POPUP_CONNECT_ATTEMPT;
-
-    if (ui.notify_Peers->isChecked())
-        newsflags |= RS_FEED_TYPE_PEER;
-    if (ui.notify_Channels->isChecked())
-        newsflags |= RS_FEED_TYPE_CHAN;
-    if (ui.notify_Forums->isChecked())
-        newsflags |= RS_FEED_TYPE_FORUM;
-    if (ui.notify_Blogs->isChecked())
-        newsflags |= RS_FEED_TYPE_BLOG;
-    if (ui.notify_Chat->isChecked())
-        newsflags |= RS_FEED_TYPE_CHAT;
-    if (ui.notify_Messages->isChecked())
-        newsflags |= RS_FEED_TYPE_MSG;
-    if (ui.notify_Chat->isChecked())
-        newsflags |= RS_FEED_TYPE_CHAT;
-    if (ui.notify_Security->isChecked())
-        newsflags |= RS_FEED_TYPE_SECURITY;
 
     if (ui.chat_NewWindow->isChecked())
         chatflags |= RS_CHAT_OPEN;
@@ -130,8 +145,8 @@ NotifyPage::save(QString &/*errmsg*/)
         notifyIt->mUserNotify->setNotifyEnabled(notifyIt->mEnabledCheckBox->isChecked(), notifyIt->mCombinedCheckBox->isChecked());
     }
 
-    Settings->setNotifyFlags(notifyflags);
-    Settings->setNewsFeedFlags(newsflags);
+    Settings->setNotifyFlags(getNotifyFlags());
+    Settings->setNewsFeedFlags(getNewsFlags());
     Settings->setChatFlags(chatflags);
     Settings->setMessageFlags(messageflags);
 
@@ -234,4 +249,14 @@ void NotifyPage::notifyToggled()
             notifyIt->mCombinedCheckBox->setEnabled(false);
         }
     }
+}
+
+void NotifyPage::testNotify()
+{
+    NewsFeed::testFeeds(getNewsFlags());
+}
+
+void NotifyPage::testToaster()
+{
+    NotifyQt::getInstance()->testToaster(getNotifyFlags(), (RshareSettings::enumToasterPosition) ui.comboBoxToasterPosition->itemData(ui.comboBoxToasterPosition->currentIndex()).toInt(), QPoint(ui.spinBoxToasterXMargin->value(), ui.spinBoxToasterYMargin->value()));
 }

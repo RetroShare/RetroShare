@@ -59,8 +59,13 @@ public:
 
 private slots:
 	void notifyToggled();
+	void testToaster();
+	void testNotify();
 
 private:
+	uint getNewsFlags();
+	uint getNotifyFlags();
+
     QList<UserNotifySetting> mUserNotifySettingList;
 
     /** Qt Designer generated object */

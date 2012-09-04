@@ -18,7 +18,7 @@
        <property name="title">
         <string>News Feed</string>
        </property>
-       <layout class="QVBoxLayout">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
         <property name="spacing">
          <number>0</number>
         </property>
@@ -26,67 +26,95 @@
          <number>6</number>
         </property>
         <item>
-         <widget class="QCheckBox" name="notify_Peers">
-          <property name="text">
-           <string>Peers</string>
-          </property>
-         </widget>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <widget class="QCheckBox" name="notify_Peers">
+            <property name="text">
+             <string>Peers</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="notify_Channels">
+            <property name="text">
+             <string>Channels</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="notify_Forums">
+            <property name="text">
+             <string>Forums</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="notify_Blogs">
+            <property name="text">
+             <string>Blogs</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="notify_Messages">
+            <property name="text">
+             <string>Messages</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="notify_Chat">
+            <property name="text">
+             <string>Chat</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="notify_Security">
+            <property name="text">
+             <string>Security</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="Line" name="line">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="addFeedsAtEnd">
+            <property name="text">
+             <string>Add feeds at end</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
-         <widget class="QCheckBox" name="notify_Channels">
-          <property name="text">
-           <string>Channels</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="notify_Forums">
-          <property name="text">
-           <string>Forums</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="notify_Blogs">
-          <property name="text">
-           <string>Blogs</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="notify_Messages">
-          <property name="text">
-           <string>Messages</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="notify_Chat">
-          <property name="text">
-           <string>Chat</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="notify_Security">
-          <property name="text">
-           <string>Security</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="Line" name="line">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="addFeedsAtEnd">
-          <property name="text">
-           <string>Add feeds at end</string>
-          </property>
-         </widget>
+         <layout class="QVBoxLayout" name="verticalLayout_7">
+          <item>
+           <widget class="QPushButton" name="notifyButton">
+            <property name="text">
+             <string>Test</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
@@ -149,53 +177,85 @@
          <number>9</number>
         </property>
         <item>
-         <widget class="QCheckBox" name="popup_Connect">
-          <property name="text">
-           <string>Friend Connect</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="popup_NewMsg">
-          <property name="text">
-           <string>New Message</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="popup_DownloadFinished">
-          <property name="text">
-           <string>Download completed</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="popup_PrivateChat">
-          <property name="text">
-           <string>Private Chat</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="popup_GroupChat">
-          <property name="text">
-           <string>Group Chat</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="popup_ChatLobby">
-          <property name="text">
-           <string>Chat Lobby</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="popup_ConnectAttempt">
-          <property name="text">
-           <string>Connect attempt</string>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_8">
+            <item>
+             <widget class="QCheckBox" name="popup_Connect">
+              <property name="text">
+               <string>Friend Connect</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="popup_NewMsg">
+              <property name="text">
+               <string>New Message</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="popup_DownloadFinished">
+              <property name="text">
+               <string>Download completed</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="popup_PrivateChat">
+              <property name="text">
+               <string>Private Chat</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="popup_GroupChat">
+              <property name="text">
+               <string>Group Chat</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="popup_ChatLobby">
+              <property name="text">
+               <string>Chat Lobby</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="popup_ConnectAttempt">
+              <property name="text">
+               <string>Connect attempt</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_9">
+            <item>
+             <widget class="QPushButton" name="toasterButton">
+              <property name="text">
+               <string>Test</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
         </item>
         <item>
          <layout class="QGridLayout" name="gridLayout">

@@ -5,6 +5,7 @@
 #include <retroshare/rsturtle.h>
 #include <QObject>
 #include <QMutex>
+#include <QPoint>
 //#include <QMutex>
 
 #include <string>
@@ -61,6 +62,8 @@ class NotifyQt: public QObject, public NotifyBase
 
 		/* Notify from GUI */
 		void notifyChatStyleChanged(int /*ChatStyle::enumStyleType*/ styleType);
+
+		void testToaster(uint notifyFlags, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin);
 
 	signals:
 		// It's beneficial to send info to the GUI using signals, because signals are thread-safe

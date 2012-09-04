@@ -27,6 +27,7 @@
 
 #include "notifyqt.h"
 #include <retroshare/rsnotify.h>
+#include <retroshare/rspeers.h>
 
 #include "RsAutoUpdatePage.h"
 
@@ -56,6 +57,11 @@ public:
 	{
 		this->widget = widget;
 
+		/* Values from settings */
+		position = Settings->getToasterPosition();
+		Settings->getToasterMargin();
+
+
 		/* Standard values */
 		timeToShow = 500;
 		timeToLive = 3000;
@@ -69,6 +75,10 @@ public:
 
 public:
 	QWidget *widget;
+
+	/* Values from settings */
+	RshareSettings::enumToasterPosition position;
+	QPoint margin;
 
 	/* Standard values */
 	int timeToShow;
@@ -662,7 +672,7 @@ void NotifyQt::UpdateGUI()
 						toaster = new Toaster(new ChatLobbyToaster(id, QString::fromUtf8(title.c_str()), QString::fromUtf8(msg.c_str())));
 					}
 					break;
-			case RS_POPUP_CONNECT_ATTEMPT:
+				case RS_POPUP_CONNECT_ATTEMPT:
 					if (popupflags & RS_POPUP_CONNECT_ATTEMPT)
 					{
 						// id = gpgid
@@ -724,7 +734,61 @@ void NotifyQt::UpdateGUI()
 	/* Now start the waiting toasters */
 	startWaitingToasters();
 }
-		
+
+void NotifyQt::testToaster(uint notifyFlags, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin)
+{
+	QString title = tr("Test");
+	QString message = tr("This is a test.");
+
+	std::string id = rsPeers->getOwnId();
+
+	uint pos = 0;
+
+	while (notifyFlags) {
+		uint type = notifyFlags & (1 << pos);
+		notifyFlags &= ~(1 << pos);
+		++pos;
+
+		Toaster *toaster = NULL;
+
+		switch(type)
+		{
+			case RS_POPUP_MSG:
+				toaster = new Toaster(new MessageToaster(id, title, message));
+				break;
+			case RS_POPUP_CONNECT:
+				toaster = new Toaster(new OnlineToaster(id));
+				break;
+			case RS_POPUP_DOWNLOAD:
+				toaster = new Toaster(new DownloadToaster(id, title));
+				break;
+			case RS_POPUP_CHAT:
+				toaster = new Toaster(new ChatToaster(id, message));
+				break;
+			case RS_POPUP_GROUPCHAT:
+				toaster = new Toaster(new GroupChatToaster(id, message));
+				break;
+			case RS_POPUP_CHATLOBBY:
+				toaster = new Toaster(new ChatLobbyToaster(id, title, message));
+				break;
+			case RS_POPUP_CONNECT_ATTEMPT:
+				toaster = new Toaster(new FriendRequestToaster(id, title, id));
+				break;
+		}
+
+		if (toaster) {
+			/* init attributes */
+			toaster->widget->setWindowFlags(Qt::ToolTip | Qt::WindowStaysOnTopHint);
+			toaster->position = (RshareSettings::enumToasterPosition) position;
+			toaster->margin = margin;
+
+			/* add toaster to waiting list */
+//			QMutexLocker lock(&waitingToasterMutex);
+			waitingToasterList.push_back(toaster);
+		}
+	}
+}
+
 void NotifyQt::notifyChatStyleChanged(int /*ChatStyle::enumStyleType*/ styleType)
 {
 	{
@@ -777,26 +841,23 @@ void NotifyQt::startWaitingToasters()
 		QDesktopWidget *desktop = QApplication::desktop();
 		QRect desktopGeometry = desktop->availableGeometry(desktop->primaryScreen());
 
-		RshareSettings::enumToasterPosition position = Settings->getToasterPosition();
-		QPoint margin = Settings->getToasterMargin();
-
-		switch (position) {
+		switch (toaster->position) {
 		case RshareSettings::TOASTERPOS_TOPLEFT:
-			toaster->startPos = QPoint(desktopGeometry.left() + margin.x(), desktopGeometry.top() - size.height());
-			toaster->endPos = QPoint(toaster->startPos.x(), desktopGeometry.top() + margin.y());
+			toaster->startPos = QPoint(desktopGeometry.left() + toaster->margin.x(), desktopGeometry.top() - size.height());
+			toaster->endPos = QPoint(toaster->startPos.x(), desktopGeometry.top() + toaster->margin.y());
 			break;
 		case RshareSettings::TOASTERPOS_TOPRIGHT:
-			toaster->startPos = QPoint(desktopGeometry.right() - size.width() - margin.x(), desktopGeometry.top() - size.height());
-			toaster->endPos = QPoint(toaster->startPos.x(), desktopGeometry.top() + margin.y());
+			toaster->startPos = QPoint(desktopGeometry.right() - size.width() - toaster->margin.x(), desktopGeometry.top() - size.height());
+			toaster->endPos = QPoint(toaster->startPos.x(), desktopGeometry.top() + toaster->margin.y());
 			break;
 		case RshareSettings::TOASTERPOS_BOTTOMLEFT:
-			toaster->startPos = QPoint(desktopGeometry.left() + margin.x(), desktopGeometry.bottom());
-			toaster->endPos = QPoint(toaster->startPos.x(), desktopGeometry.bottom() - size.height() - margin.y());
+			toaster->startPos = QPoint(desktopGeometry.left() + toaster->margin.x(), desktopGeometry.bottom());
+			toaster->endPos = QPoint(toaster->startPos.x(), desktopGeometry.bottom() - size.height() - toaster->margin.y());
 			break;
 		case RshareSettings::TOASTERPOS_BOTTOMRIGHT: // default
 		default:
-			toaster->startPos = QPoint(desktopGeometry.right() - size.width() - margin.x(), desktopGeometry.bottom());
-			toaster->endPos = QPoint(toaster->startPos.x(), desktopGeometry.bottom() - size.height() - margin.y());
+			toaster->startPos = QPoint(desktopGeometry.right() - size.width() - toaster->margin.x(), desktopGeometry.bottom());
+			toaster->endPos = QPoint(toaster->startPos.x(), desktopGeometry.bottom() - size.height() - toaster->margin.y());
 			break;
 		}
 
