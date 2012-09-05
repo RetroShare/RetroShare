@@ -9,6 +9,7 @@
 
 #define LIB_VERSION "0.5.3c"
 #define SVN_REVISION "Revision $WCREV$"
+#define SVN_REVISION_NUMBER  "$WCREV$"
 
 namespace RsUtil {
 
