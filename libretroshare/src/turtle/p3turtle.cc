@@ -23,7 +23,7 @@
  *
  */
 
-//#define P3TURTLE_DEBUG 
+#define P3TURTLE_DEBUG 
 
 #include <unistd.h>
 #include <stdexcept>
@@ -592,9 +592,6 @@ bool p3turtle::loadList(std::list<RsItem*>& load)
 #endif
 	for(std::list<RsItem*>::const_iterator it(load.begin());it!=load.end();++it)
 	{
-#ifdef P3TURTLE_DEBUG
-		assert(item!=NULL) ;
-#endif
 		RsConfigKeyValueSet *vitem = dynamic_cast<RsConfigKeyValueSet*>(*it) ;
 
 		if(vitem != NULL)
@@ -1361,9 +1358,6 @@ void p3turtle::sendDataRequest(const std::string& peerId, const std::string& , u
 	TurtleTunnelId tunnel_id = it->second ;
 	TurtleTunnel& tunnel(_local_tunnels[tunnel_id]) ;
 
-#ifdef P3TURTLE_DEBUG
-	assert(hash == tunnel.hash) ;
-#endif
 	RsTurtleFileRequestItem *item = new RsTurtleFileRequestItem ;
 	item->tunnel_id = tunnel_id ;	// we should randomly select a tunnel, or something more clever.
 	item->chunk_offset = offset ;
@@ -1371,7 +1365,7 @@ void p3turtle::sendDataRequest(const std::string& peerId, const std::string& , u
 	item->PeerId(tunnel.local_dst) ;
 
 #ifdef P3TURTLE_DEBUG
-	std::cerr << "p3turtle: sending file req (chunksize=" << item->chunk_size << ", offset=" << item->chunk_offset << ", hash=0x" << hash << ") through tunnel " << (void*)item->tunnel_id << ", next peer=" << tunnel.local_dst << std::endl ;
+	std::cerr << "p3turtle: sending file req (chunksize=" << item->chunk_size << ", offset=" << item->chunk_offset << ", hash=0x" << tunnel.hash << ") through tunnel " << (void*)item->tunnel_id << ", next peer=" << tunnel.local_dst << std::endl ;
 #endif
 	sendItem(item) ;
 }
@@ -1395,9 +1389,7 @@ void p3turtle::sendFileData(const std::string& peerId, const std::string& , uint
 	TurtleTunnel& tunnel(_local_tunnels[tunnel_id]) ;
 
 	tunnel.time_stamp = time(NULL) ;
-#ifdef P3TURTLE_DEBUG
-	assert(hash == tunnel.hash) ;
-#endif
+
 	RsTurtleFileDataItem *item = new RsTurtleFileDataItem ;
 	item->tunnel_id = tunnel_id ;
 	item->chunk_offset = offset ;
@@ -1416,7 +1408,7 @@ void p3turtle::sendFileData(const std::string& peerId, const std::string& , uint
 	item->PeerId(tunnel.local_src) ;
 
 #ifdef P3TURTLE_DEBUG
-	std::cerr << "p3turtle: sending file data (chunksize=" << item->chunk_size << ", offset=" << item->chunk_offset << ", hash=0x" << hash << ") through tunnel " << (void*)item->tunnel_id << ", next peer=" << tunnel.local_src << std::endl ;
+	std::cerr << "p3turtle: sending file data (chunksize=" << item->chunk_size << ", offset=" << item->chunk_offset << ", hash=0x" << tunnel.hash << ") through tunnel " << (void*)item->tunnel_id << ", next peer=" << tunnel.local_src << std::endl ;
 #endif
 	_traffic_info_buffer.data_up_Bps += static_cast<RsTurtleItem*>(item)->serial_size() ;
 
@@ -1440,9 +1432,6 @@ void p3turtle::sendChunkMapRequest(const std::string& peerId,const std::string& 
 	TurtleTunnelId tunnel_id = it->second ;
 	TurtleTunnel& tunnel(_local_tunnels[tunnel_id]) ;
 
-#ifdef P3TURTLE_DEBUG
-	assert(hash == tunnel.hash) ;
-#endif
 	RsTurtleFileMapRequestItem *item = new RsTurtleFileMapRequestItem ;
 	item->tunnel_id = tunnel_id ;	
 
@@ -1464,7 +1453,7 @@ void p3turtle::sendChunkMapRequest(const std::string& peerId,const std::string& 
 		std::cerr << "p3turtle::sendChunkMapRequest: consistency error!" << std::endl ;
 
 #ifdef P3TURTLE_DEBUG
-	std::cerr << "p3turtle: sending chunk map req to peer " << peerId << ", hash=0x" << hash << ") through tunnel " << (void*)item->tunnel_id << ", next peer=" << item->PeerId() << std::endl ;
+	std::cerr << "p3turtle: sending chunk map req to peer " << peerId << ", hash=0x" << tunnel.hash << ") through tunnel " << (void*)item->tunnel_id << ", next peer=" << item->PeerId() << std::endl ;
 #endif
 	sendItem(item) ;
 }
@@ -1486,9 +1475,6 @@ void p3turtle::sendChunkMap(const std::string& peerId,const std::string& ,const 
 	TurtleTunnelId tunnel_id = it->second ;
 	TurtleTunnel& tunnel(_local_tunnels[tunnel_id]) ;
 
-#ifdef P3TURTLE_DEBUG
-	assert(hash == tunnel.hash) ;
-#endif
 	RsTurtleFileMapItem *item = new RsTurtleFileMapItem ;
 	item->tunnel_id = tunnel_id ;	
 	item->compressed_map = cmap ;
@@ -1511,7 +1497,7 @@ void p3turtle::sendChunkMap(const std::string& peerId,const std::string& ,const 
 		std::cerr << "p3turtle::sendChunkMap: consistency error!" << std::endl ;
 
 #ifdef P3TURTLE_DEBUG
-	std::cerr << "p3turtle: sending chunk map to peer " << peerId << ", hash=0x" << hash << ") through tunnel " << (void*)item->tunnel_id << ", next peer=" << item->PeerId() << std::endl ;
+	std::cerr << "p3turtle: sending chunk map to peer " << peerId << ", hash=0x" << tunnel.hash << ") through tunnel " << (void*)item->tunnel_id << ", next peer=" << item->PeerId() << std::endl ;
 #endif
 	sendItem(item) ;
 }
@@ -1532,9 +1518,6 @@ void p3turtle::sendSingleChunkCRC(const std::string& peerId,const std::string&,u
 	TurtleTunnelId tunnel_id = it->second ;
 	TurtleTunnel& tunnel(_local_tunnels[tunnel_id]) ;
 
-#ifdef P3TURTLE_DEBUG
-	assert(hash == tunnel.hash) ;
-#endif
 	RsTurtleChunkCrcItem *item = new RsTurtleChunkCrcItem;
 	item->tunnel_id = tunnel_id ;	
 	item->chunk_number = chunk_number ;
@@ -1542,7 +1525,7 @@ void p3turtle::sendSingleChunkCRC(const std::string& peerId,const std::string&,u
 	item->PeerId(tunnel.local_dst) ;
 
 #ifdef P3TURTLE_DEBUG
-	std::cerr << "p3turtle: sending CRC32 map request to peer " << peerId << ", hash=0x" << hash << ") through tunnel " << (void*)item->tunnel_id << ", next peer=" << item->PeerId() << std::endl ;
+	std::cerr << "p3turtle: sending CRC32 map request to peer " << peerId << ", hash=0x" << tunnel.hash << ") through tunnel " << (void*)item->tunnel_id << ", next peer=" << item->PeerId() << std::endl ;
 #endif
 	sendItem(item) ;
 }
@@ -1563,16 +1546,13 @@ void p3turtle::sendSingleChunkCRCRequest(const std::string& peerId,const std::st
 	TurtleTunnelId tunnel_id = it->second ;
 	TurtleTunnel& tunnel(_local_tunnels[tunnel_id]) ;
 
-#ifdef P3TURTLE_DEBUG
-	assert(hash == tunnel.hash) ;
-#endif
 	RsTurtleChunkCrcRequestItem *item = new RsTurtleChunkCrcRequestItem;
 	item->tunnel_id = tunnel_id ;	
 	item->chunk_number = chunk_number ;
 	item->PeerId(tunnel.local_dst) ;
 
 #ifdef P3TURTLE_DEBUG
-	std::cerr << "p3turtle: sending CRC32 map request to peer " << peerId << ", hash=0x" << hash << ") through tunnel " << (void*)item->tunnel_id << ", next peer=" << item->PeerId() << std::endl ;
+	std::cerr << "p3turtle: sending CRC32 map request to peer " << peerId << ", hash=0x" << tunnel.hash << ") through tunnel " << (void*)item->tunnel_id << ", next peer=" << item->PeerId() << std::endl ;
 #endif
 	sendItem(item) ;
 }
@@ -1593,16 +1573,13 @@ void p3turtle::sendCRC32MapRequest(const std::string& peerId,const std::string& 
 	TurtleTunnelId tunnel_id = it->second ;
 	TurtleTunnel& tunnel(_local_tunnels[tunnel_id]) ;
 
-#ifdef P3TURTLE_DEBUG
-	assert(hash == tunnel.hash) ;
-#endif
 	RsTurtleFileCrcRequestItem *item = new RsTurtleFileCrcRequestItem;
 	item->tunnel_id = tunnel_id ;	
 //	item->crc_map = cmap ;
 	item->PeerId(tunnel.local_dst) ;
 
 #ifdef P3TURTLE_DEBUG
-	std::cerr << "p3turtle: sending CRC32 map request to peer " << peerId << ", hash=0x" << hash << ") through tunnel " << (void*)item->tunnel_id << ", next peer=" << item->PeerId() << std::endl ;
+	std::cerr << "p3turtle: sending CRC32 map request to peer " << peerId << ", hash=0x" << tunnel.hash << ") through tunnel " << (void*)item->tunnel_id << ", next peer=" << item->PeerId() << std::endl ;
 #endif
 	sendItem(item) ;
 }
@@ -1623,16 +1600,13 @@ void p3turtle::sendCRC32Map(const std::string& peerId,const std::string& ,const 
 	TurtleTunnelId tunnel_id = it->second ;
 	TurtleTunnel& tunnel(_local_tunnels[tunnel_id]) ;
 
-#ifdef P3TURTLE_DEBUG
-	assert(hash == tunnel.hash) ;
-#endif
 	RsTurtleFileCrcItem *item = new RsTurtleFileCrcItem ;
 	item->tunnel_id = tunnel_id ;	
 	item->crc_map = cmap ;
 	item->PeerId(tunnel.local_src) ;
 
 #ifdef P3TURTLE_DEBUG
-	std::cerr << "p3turtle: sending CRC32 map to peer " << peerId << ", hash=0x" << hash << ") through tunnel " << (void*)item->tunnel_id << ", next peer=" << item->PeerId() << std::endl ;
+	std::cerr << "p3turtle: sending CRC32 map to peer " << peerId << ", hash=0x" << tunnel.hash << ") through tunnel " << (void*)item->tunnel_id << ", next peer=" << item->PeerId() << std::endl ;
 #endif
 	sendItem(item) ;
 }
@@ -2436,7 +2410,7 @@ void p3turtle::dumpState()
 		std::cerr << "    hash=0x" << it->first << ", name=" << it->second.name << ", size=" << it->second.size << ", tunnel ids =" ;
 		for(std::vector<TurtleTunnelId>::const_iterator it2(it->second.tunnels.begin());it2!=it->second.tunnels.end();++it2)
 			std::cerr << " " << (void*)*it2 ;
-		std::cerr << ", last_req=" << (void*)it->second.last_request << ", time_stamp = " << it->second.time_stamp << "(" << now-it->second.time_stamp << " secs ago)" << std::endl ;
+		//std::cerr << ", last_req=" << (void*)it->second.last_request << ", time_stamp = " << it->second.time_stamp << "(" << now-it->second.time_stamp << " secs ago)" << std::endl ;
 	}
 	std::cerr << "  Active outgoing file hashes: " << _outgoing_file_hashes.size() << std::endl ;
 	for(std::map<TurtleFileHash,FileInfo>::const_iterator it(_outgoing_file_hashes.begin());it!=_outgoing_file_hashes.end();++it)
