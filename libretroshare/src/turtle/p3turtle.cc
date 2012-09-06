@@ -23,7 +23,7 @@
  *
  */
 
-#define P3TURTLE_DEBUG 
+//#define P3TURTLE_DEBUG 
 
 #include <unistd.h>
 #include <stdexcept>
