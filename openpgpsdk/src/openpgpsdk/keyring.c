@@ -1058,8 +1058,7 @@ ops_boolean_t ops_write_keyring_to_file(const ops_keyring_t *keyring,ops_boolean
 //			fprintf(stdout, "\n") ;
 //		}
 
-	ops_writer_close(info);
-	ops_create_info_delete(info);
+	ops_teardown_file_write(info, fd);
 
 	return ops_true ;
 }
