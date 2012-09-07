@@ -377,11 +377,11 @@ void ChatWidget::pasteOwnCertificateLink()
 	}
 }
 
-void ChatWidget::contextMenu(QPoint /*point*/)
+void ChatWidget::contextMenu(QPoint point)
 {
 	std::cerr << "In context menu" << std::endl;
 
-	QMenu *contextMnu = ui->chatTextEdit->createStandardContextMenu();
+	QMenu *contextMnu = ui->chatTextEdit->createStandardContextMenu(point);
 
 	contextMnu->addSeparator();
 	QAction *action = contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
@@ -392,9 +392,9 @@ void ChatWidget::contextMenu(QPoint /*point*/)
 	delete(contextMnu);
 }
 
-void ChatWidget::contextMenuTextBrowser(QPoint)
+void ChatWidget::contextMenuTextBrowser(QPoint point)
 {
-	QMenu *contextMnu = ui->textBrowser->createStandardContextMenu();
+	QMenu *contextMnu = ui->textBrowser->createStandardContextMenu(point);
 
 	contextMnu->addSeparator();
 	contextMnu->addAction(ui->actionClearChatHistory);

@@ -277,9 +277,9 @@ void FriendsDialog::pasteLink()
     ui.lineEdit->insertHtml(RSLinkClipboard::toHtml()) ;
 }
 
-void FriendsDialog::contextMenuMsgText(QPoint)
+void FriendsDialog::contextMenuMsgText(QPoint point)
 {
-    QMenu *contextMnu = ui.msgText->createStandardContextMenu();
+    QMenu *contextMnu = ui.msgText->createStandardContextMenu(point);
 
     contextMnu->addSeparator();
     contextMnu->addAction(ui.actionClear_Chat_History);
@@ -288,9 +288,9 @@ void FriendsDialog::contextMenuMsgText(QPoint)
     delete(contextMnu);
 }
 
-void FriendsDialog::contextMenu(QPoint /*point*/)
+void FriendsDialog::contextMenu(QPoint point)
 {
-    QMenu *contextMnu = ui.lineEdit->createStandardContextMenu();
+    QMenu *contextMnu = ui.lineEdit->createStandardContextMenu(point);
 
     contextMnu->addSeparator();
     QAction *action = contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));

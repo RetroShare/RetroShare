@@ -69,9 +69,9 @@ CreateForumMsg::CreateForumMsg(std::string fId, std::string pId)
 }
 
 /** context menu searchTablewidget2 **/
-void CreateForumMsg::forumMessageCostumPopupMenu( QPoint /*point*/ )
+void CreateForumMsg::forumMessageCostumPopupMenu(QPoint point)
 {
-    QMenu *contextMnu = ui.forumMessage->createStandardContextMenu();
+    QMenu *contextMnu = ui.forumMessage->createStandardContextMenu(point);
 
     contextMnu->addSeparator();
     QAction *pasteLinkAct = contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
