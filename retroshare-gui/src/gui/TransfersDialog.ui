@@ -88,10 +88,10 @@
           </size>
          </property>
          <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+          <enum>QFrame::Box</enum>
          </property>
          <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
+          <enum>QFrame::Sunken</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <property name="margin">
@@ -231,8 +231,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>596</width>
-             <height>102</height>
+             <width>100</width>
+             <height>30</height>
             </rect>
            </property>
           </widget>

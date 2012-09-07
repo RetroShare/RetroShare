@@ -37,7 +37,6 @@ public:
 	ChanMsgItem(FeedHolder *parent, uint32_t feedId, const std::string &chanId, const std::string &msgId, bool isHome);
 
 	void updateItemStatic();
-	void small();
 	void setFileCleanUpWarning(uint32_t time_left);
 
 	const std::string &msgId() { return mMsgId; }

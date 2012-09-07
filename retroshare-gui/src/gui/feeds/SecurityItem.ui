@@ -22,17 +22,51 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="styleSheet">
-      <string notr="true">QFrame#frame{border: 2px solid red;
-         background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                     stop: 0 #FDBF7D, stop: 1 #643C35);
-border-radius: 10px}</string>
+     <property name="palette">
+      <palette>
+       <active>
+        <colorrole role="Window">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>255</red>
+           <green>170</green>
+           <blue>127</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </active>
+       <inactive>
+        <colorrole role="Window">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>255</red>
+           <green>170</green>
+           <blue>127</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </inactive>
+       <disabled>
+        <colorrole role="Window">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>255</red>
+           <green>170</green>
+           <blue>127</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </disabled>
+      </palette>
+     </property>
+     <property name="autoFillBackground">
+      <bool>true</bool>
      </property>
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::Box</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+      <enum>QFrame::Sunken</enum>
      </property>
      <layout class="QGridLayout">
       <property name="verticalSpacing">
@@ -40,15 +74,6 @@ border-radius: 10px}</string>
       </property>
       <item row="0" column="0">
        <widget class="QFrame" name="frame_2">
-        <property name="styleSheet">
-         <string notr="true">QFrame#frame_2{border: transparent}</string>
-        </property>
-        <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
         <layout class="QGridLayout">
          <property name="leftMargin">
           <number>0</number>
@@ -60,7 +85,7 @@ border-radius: 10px}</string>
           <number>0</number>
          </property>
          <item row="0" column="0" rowspan="2">
-          <widget class="AvatarWidget" name="avatar" native="true">
+          <widget class="AvatarWidget" name="avatar">
            <property name="minimumSize">
             <size>
              <width>70</width>
@@ -73,17 +98,16 @@ border-radius: 10px}</string>
              <height>70</height>
             </size>
            </property>
-           <property name="styleSheet">
-            <string notr="true"/>
-           </property>
           </widget>
          </item>
          <item row="0" column="1">
           <layout class="QGridLayout">
            <item row="0" column="0">
-            <widget class="QLabel" name="peernameLabel">
-             <property name="styleSheet">
-              <string notr="true"/>
+            <widget class="QLabel" name="peerNameLabel">
+             <property name="font">
+              <font>
+               <pointsize>14</pointsize>
+              </font>
              </property>
              <property name="text">
               <string notr="true">Peer Name</string>
@@ -117,7 +141,12 @@ border-radius: 10px}</string>
             </widget>
            </item>
            <item row="0" column="1">
-            <widget class="QLabel" name="request_label">
+            <widget class="QLabel" name="requestLabel">
+             <property name="font">
+              <font>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
              <property name="text">
               <string notr="true">TextLabel</string>
              </property>
@@ -355,10 +384,10 @@ border-radius: 10px}</string>
          </size>
         </property>
         <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
+         <enum>QFrame::Box</enum>
         </property>
         <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
+         <enum>QFrame::Sunken</enum>
         </property>
         <layout class="QGridLayout">
          <property name="verticalSpacing">
@@ -408,12 +437,6 @@ border-radius: 10px}</string>
       </item>
       <item row="2" column="0">
        <widget class="QFrame" name="expandFrame">
-        <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
         <layout class="QGridLayout">
          <item row="0" column="0">
           <layout class="QHBoxLayout" name="horizontalLayout">

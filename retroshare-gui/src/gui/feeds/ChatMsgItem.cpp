@@ -46,7 +46,7 @@ ChatMsgItem::ChatMsgItem(FeedHolder *parent, uint32_t feedId, const std::string 
     /* Invoke the Qt Designer generated object setup routine */
     setupUi(this);
     
-    messageframe->setVisible(false);
+    messageFrame->setVisible(false);
     sendButton->hide();
     cancelButton->hide();
     sendButton->setEnabled(false);
@@ -78,14 +78,8 @@ void ChatMsgItem::updateItemStatic()
     RsPeerDetails details;
     if (rsPeers->getPeerDetails(mPeerId, details))
     {
-
-        /* set textcolor for peername  */
-        QString nameStr("<span style=\"font-size:14pt; font-weight:500;"
-                        "color:#990033;\">%1</span>");
-	
         /* set Peer name */
-        QString peername =  QString::fromUtf8(details.name.c_str());
-        peernameLabel->setText(nameStr.arg(peername));
+        peerNameLabel->setText(QString::fromUtf8(details.name.c_str()));
     }
     else
     {
@@ -222,15 +216,15 @@ void ChatMsgItem::openChat()
 
 void ChatMsgItem::togglequickmessage()
 {
-	if (messageframe->isHidden())
+	if (messageFrame->isHidden())
 	{
-        messageframe->setVisible(true);
+		messageFrame->setVisible(true);
         sendButton->show();
         cancelButton->show();
     }
 	else
 	{
-        messageframe->setVisible(false);
+		messageFrame->setVisible(false);
         sendButton->hide();
         cancelButton->hide();
     }	
@@ -249,7 +243,7 @@ void ChatMsgItem::sendMessage()
     rsMsgs->MessageSend(mi);
 
     quickmsgText->clear();
-    messageframe->setVisible(false);
+    messageFrame->setVisible(false);
     sendButton->hide();
     cancelButton->hide();
 }

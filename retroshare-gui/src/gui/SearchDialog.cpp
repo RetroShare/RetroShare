@@ -24,6 +24,7 @@
 #include <QTimer>
 #include <QShortcut>
 
+#include "rshare.h"
 #include "SearchDialog.h"
 #include "RetroShareLink.h"
 #include "msgs/MessageComposer.h"
@@ -114,7 +115,7 @@ SearchDialog::SearchDialog(QWidget *parent)
 
     connect( ui.lineEdit, SIGNAL( returnPressed ( void ) ), this, SLOT( searchKeywords( void ) ) );
     connect( ui.lineEdit, SIGNAL( textChanged ( const QString& ) ), this, SLOT( checkText( const QString& ) ) );
-    connect( ui.pushButtonsearch, SIGNAL( released ( void ) ), this, SLOT( searchKeywords( void ) ) );
+    connect( ui.pushButtonSearch, SIGNAL( released ( void ) ), this, SLOT( searchKeywords( void ) ) );
     connect( ui.pushButtonDownload, SIGNAL( released ( void ) ), this, SLOT( download( void ) ) );
     connect( ui.cloaseallsearchresultsButton, SIGNAL(clicked()), this, SLOT(searchRemoveAll()));
 
@@ -199,6 +200,8 @@ SearchDialog::SearchDialog(QWidget *parent)
     QShortcut *Shortcut = new QShortcut(QKeySequence (Qt::Key_Delete), ui.searchSummaryWidget, 0, 0, Qt::WidgetShortcut);
     connect(Shortcut, SIGNAL(activated()), this, SLOT(searchRemove()));
 
+    checkText(ui.lineEdit->text());
+
 /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
@@ -251,16 +254,31 @@ void SearchDialog::processSettings(bool bLoad)
 
 void SearchDialog::checkText(const QString& txt)
 {
+	bool valid;
+	QColor color;
+
 	if(txt.length() < 3)
 	{
 		std::cout << "setting palette 1" << std::endl ;
-		ui.searchlineframe->setStyleSheet("QFrame#searchlineframe{ border: 2px solid #079E00; background-color: #DBDBDB; }");
+		valid = false;
+		color = QApplication::palette().color(QPalette::Disabled, QPalette::Base);
 	}
 	else
 	{
-		ui.searchlineframe->setStyleSheet("QFrame#searchlineframe{ border: 2px solid #079E00; background-color: white; }");
 		std::cout << "setting palette 2" << std::endl ;
+		valid = true;
+		color = QApplication::palette().color(QPalette::Active, QPalette::Base);
 	}
+
+	/* unpolish widget to clear the stylesheet's palette cache */
+	ui.searchLineFrame->style()->unpolish(ui.searchLineFrame);
+
+	QPalette palette = ui.lineEdit->palette();
+	palette.setColor(ui.lineEdit->backgroundRole(), color);
+	ui.lineEdit->setPalette(palette);
+
+	ui.searchLineFrame->setProperty("valid", valid);
+	Rshare::refreshStyleSheet(ui.searchLineFrame, false);
 }
 
 void SearchDialog::initialiseFileTypeMappings()

@@ -10,9 +10,6 @@
     <height>155</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string notr="true"/>
-  </property>
   <layout class="QGridLayout">
    <property name="margin">
     <number>0</number>
@@ -25,23 +22,57 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="styleSheet">
-      <string notr="true">QFrame#frame{border: 2px solid #D3D3D3; 
-background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
-stop:0 #FFFFFF, stop:1 #F2F2F2);;
-border-radius: 10px;}</string>
+     <property name="palette">
+      <palette>
+       <active>
+        <colorrole role="Window">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>248</red>
+           <green>248</green>
+           <blue>248</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </active>
+       <inactive>
+        <colorrole role="Window">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>248</red>
+           <green>248</green>
+           <blue>248</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </inactive>
+       <disabled>
+        <colorrole role="Window">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>248</red>
+           <green>248</green>
+           <blue>248</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </disabled>
+      </palette>
+     </property>
+     <property name="autoFillBackground">
+      <bool>true</bool>
      </property>
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::Box</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+      <enum>QFrame::Sunken</enum>
      </property>
      <layout class="QGridLayout">
       <item row="0" column="0" rowspan="2">
        <layout class="QGridLayout">
         <item row="0" column="0" rowspan="2">
-         <widget class="QLabel" name="logo_label">
+         <widget class="QLabel" name="logoLabel">
           <property name="minimumSize">
            <size>
             <width>64</width>
@@ -53,14 +84,6 @@ border-radius: 10px;}</string>
             <width>64</width>
             <height>64</height>
            </size>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">QLabel{border: 2px solid #D3D3D3; 
-
-border-radius: 2px;}</string>
-          </property>
-          <property name="text">
-           <string notr="true">Logo</string>
           </property>
           <property name="scaledContents">
            <bool>true</bool>
@@ -197,12 +220,6 @@ border-radius: 2px;}</string>
       </item>
       <item row="2" column="0" colspan="2">
        <widget class="QFrame" name="expandFrame">
-        <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
         <layout class="QVBoxLayout">
          <property name="spacing">
           <number>0</number>

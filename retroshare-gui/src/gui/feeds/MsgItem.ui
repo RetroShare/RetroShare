@@ -10,9 +10,6 @@
     <height>146</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string/>
-  </property>
   <layout class="QGridLayout">
    <property name="margin">
     <number>0</number>
@@ -25,27 +22,55 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="styleSheet">
-      <string notr="true">QFrame#frame{border: 2px solid blue; 
-background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-stop: 0 #2291E0, stop: 1 #3EB3FF);
-border-radius: 10px}</string>
+     <property name="palette">
+      <palette>
+       <active>
+        <colorrole role="Window">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>62</red>
+           <green>179</green>
+           <blue>254</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </active>
+       <inactive>
+        <colorrole role="Window">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>62</red>
+           <green>179</green>
+           <blue>254</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </inactive>
+       <disabled>
+        <colorrole role="Window">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>62</red>
+           <green>179</green>
+           <blue>254</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </disabled>
+      </palette>
+     </property>
+     <property name="autoFillBackground">
+      <bool>true</bool>
      </property>
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::Box</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+      <enum>QFrame::Sunken</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
        <widget class="QFrame" name="frame_2">
-        <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
         <layout class="QGridLayout" name="gridLayout_3">
          <property name="verticalSpacing">
           <number>0</number>
@@ -54,7 +79,7 @@ border-radius: 10px}</string>
           <number>0</number>
          </property>
          <item row="0" column="0" rowspan="3">
-          <widget class="AvatarWidget" name="avatar" native="true">
+          <widget class="AvatarWidget" name="avatar">
            <property name="minimumSize">
             <size>
              <width>70</width>
@@ -66,11 +91,6 @@ border-radius: 10px}</string>
              <width>70</width>
              <height>70</height>
             </size>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QWidget#avatar{border: 2px solid blue; 
-background-color: #2291E0;
-}</string>
            </property>
           </widget>
          </item>
@@ -260,12 +280,6 @@ background-color: #2291E0;
       </item>
       <item row="1" column="0">
        <widget class="QFrame" name="expandFrame">
-        <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
         <layout class="QVBoxLayout">
          <item>
           <widget class="QLabel" name="msgLabel">

@@ -148,11 +148,11 @@ void ForumMsgItem::updateItemStatic()
 			{
 				RetroShareLink linkMessage;
 				linkMessage.createMessage(msg.srcId, "");
-				namelabel->setText(linkMessage.toHtml());
+				nameLabel->setText(linkMessage.toHtml());
 			}
 			else
 			{
-				namelabel->setText(tr("Anonymous"));
+				nameLabel->setText(tr("Anonymous"));
 			}
 
 			prevSubLabel->setText(link.toHtml());
@@ -167,17 +167,17 @@ void ForumMsgItem::updateItemStatic()
 		}
 		else
 		{
-			nextavatar->setId(msg.srcId, true);
+			nextAvatar->setId(msg.srcId, true);
 
 			if (rsPeers->getPeerName(msg.srcId) !="")
 			{
 				RetroShareLink linkMessage;
 				linkMessage.createMessage(msg.srcId, "");
-				nextnamelabel->setText(linkMessage.toHtml());
+				nextNameLabel->setText(linkMessage.toHtml());
 			}
 			else
 			{
-				nextnamelabel->setText(tr("Anonymous"));
+				nextNameLabel->setText(tr("Anonymous"));
 			}
 
 			nextSubLabel->setText(link.toHtml());
@@ -204,11 +204,11 @@ void ForumMsgItem::updateItemStatic()
 				{
 					RetroShareLink linkMessage;
 					linkMessage.createMessage(msgParent.srcId, "");
-					namelabel->setText(linkMessage.toHtml());
+					nameLabel->setText(linkMessage.toHtml());
 				}
 				else
 				{
-					namelabel->setText(tr("Anonymous"));
+					nameLabel->setText(tr("Anonymous"));
 				}
 			}
 			else

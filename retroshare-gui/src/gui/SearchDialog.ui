@@ -32,10 +32,10 @@
       </size>
      </property>
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::Box</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+      <enum>QFrame::Sunken</enum>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_4">
       <property name="margin">
@@ -43,48 +43,6 @@
       </property>
       <item>
        <widget class="QComboBox" name="FileTypeComboBox">
-        <property name="styleSheet">
-         <string notr="true">QToolButton, QPushButton, QComboBox { 
-border-image: url(:/images/btn_26.png) 4;
-border-width: 4;
-padding: 0px 6px;
-font-size: 12px;
-}
-
-*{
-color: black;
-}
-
-QComboBox QAbstractItemView {
-background-color:white;
-}
-
-QComboBox::down-arrow {
-image: url(:/images/combobox_arrow.png);
-}
-
-QComboBox:drop-down
-{
-subcontrol-origin: padding;
-subcontrol-position: top right;
-border-left-style: none; 
-border-top-right-radius: 1px;
-border-bottom-right-radius: 1px;
-}
-
-QToolButton:hover, QPushButton:hover, QComboBox:hover {
-border-image: url(:/images/btn_26_hover.png) 4;
-}
-
-QToolButton:disabled, QPushButton:disabled, QComboBox::disabled {
-color:gray;
-}
-
-QToolButton:pressed, QPushButton:pressed{
-border-image: url(:/images/btn_26_pressed.png) 4;
-}
-</string>
-        </property>
         <item>
          <property name="text">
           <string>Any</string>
@@ -190,7 +148,7 @@ border-image: url(:/images/btn_26_pressed.png) 4;
          <number>0</number>
         </property>
         <item>
-         <widget class="QFrame" name="searchlineframe">
+         <widget class="QFrame" name="searchLineFrame">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -203,16 +161,6 @@ border-image: url(:/images/btn_26_pressed.png) 4;
             <height>22</height>
            </size>
           </property>
-          <property name="styleSheet">
-           <string notr="true">QFrame#searchlineframe{border: 2px solid #079E00;
-background: white;}</string>
-          </property>
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
-          </property>
           <layout class="QGridLayout" name="gridLayout">
            <property name="horizontalSpacing">
             <number>0</number>
@@ -224,7 +172,7 @@ background: white;}</string>
             <number>0</number>
            </property>
            <item row="0" column="0">
-            <widget class="QPushButton" name="pushButton">
+            <widget class="QLabel" name="searchLabel">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -243,22 +191,8 @@ background: white;}</string>
                <height>16</height>
               </size>
              </property>
-             <property name="styleSheet">
-              <string notr="true">QPushButton#pushButton{background: transparent;
-border: none;}</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="images.qrc">
-               <normaloff>:/images/find-16.png</normaloff>:/images/find-16.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>16</width>
-               <height>16</height>
-              </size>
+             <property name="pixmap">
+              <pixmap resource="images.qrc">:/images/find-16.png</pixmap>
              </property>
             </widget>
            </item>
@@ -279,43 +213,18 @@ border: none;}</string>
              <property name="toolTip">
               <string>Enter a keyword here (at least 3 char long)</string>
              </property>
-             <property name="styleSheet">
-              <string notr="true">QLineEdit#lineEdit{background: transparent;
-border: none;}
-</string>
-             </property>
             </widget>
            </item>
           </layout>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButtonsearch">
+         <widget class="QPushButton" name="pushButtonSearch">
           <property name="focusPolicy">
            <enum>Qt::NoFocus</enum>
           </property>
           <property name="toolTip">
            <string>Start Search</string>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">QPushButton { 
-border-image: url(:/images/btn1.png) 4;
-border-width: 4;
-padding: 0px 6px;
-font-size: 12px;
-}
-
-*{
-color: black;
-}
-
-QPushButton:hover {
-border-image: url(:/images/btn2.png) 4;
-}
-
-QPushButton:pressed{
-border-image: url(:/images/btn3.png) 4;
-}</string>
           </property>
           <property name="text">
            <string>Search</string>
@@ -344,48 +253,6 @@ border-image: url(:/images/btn3.png) 4;
        <widget class="QPushButton" name="toggleAdvancedSearchBtn">
         <property name="toolTip">
          <string>Advanced Search</string>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">QToolButton, QPushButton, QComboBox { 
-border-image: url(:/images/btn_26.png) 4;
-border-width: 4;
-padding: 0px 6px;
-font-size: 12px;
-}
-
-*{
-color: black;
-}
-
-QComboBox QAbstractItemView {
-background-color:white;
-}
-
-QComboBox::down-arrow {
-image: url(:/images/combobox_arrow.png);
-}
-
-QComboBox:drop-down
-{
-subcontrol-origin: padding;
-subcontrol-position: top right;
-border-left-style: none; 
-border-top-right-radius: 1px;
-border-bottom-right-radius: 1px;
-}
-
-QToolButton:hover, QPushButton:hover, QComboBox:hover {
-border-image: url(:/images/btn_26_hover.png) 4;
-}
-
-QToolButton:disabled, QPushButton:disabled, QComboBox::disabled {
-color:gray;
-}
-
-QToolButton:pressed, QPushButton:pressed{
-border-image: url(:/images/btn_26_pressed.png) 4;
-}
-</string>
         </property>
         <property name="text">
          <string>Advanced</string>
@@ -457,7 +324,7 @@ border-image: url(:/images/btn_26_pressed.png) 4;
           <number>6</number>
          </property>
          <property name="topMargin">
-          <number>6</number>
+          <number>2</number>
          </property>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -466,9 +333,6 @@ border-image: url(:/images/btn_26_pressed.png) 4;
            </property>
            <item>
             <widget class="QLabel" name="label_3">
-             <property name="text">
-              <string/>
-             </property>
              <property name="pixmap">
               <pixmap resource="images.qrc">:/images/find-16.png</pixmap>
              </property>
@@ -476,12 +340,6 @@ border-image: url(:/images/btn_26_pressed.png) 4;
            </item>
            <item>
             <widget class="LineEditClear" name="filterLineEdit">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
              <property name="toolTip">
               <string>Filter Search Result</string>
              </property>
@@ -493,23 +351,6 @@ border-image: url(:/images/btn_26_pressed.png) 4;
           <widget class="QComboBox" name="filterColumnComboBox">
            <property name="enabled">
             <bool>false</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>MS Shell Dlg 2</family>
-            </font>
            </property>
            <property name="currentIndex">
             <number>0</number>
@@ -594,48 +435,6 @@ border-image: url(:/images/btn_26_pressed.png) 4;
      <property name="toolTip">
       <string>Close all Search Resullts</string>
      </property>
-     <property name="styleSheet">
-      <string notr="true">QToolButton, QPushButton, QComboBox { 
-border-image: url(:/images/btn_26.png) 4;
-border-width: 4;
-padding: 0px 6px;
-font-size: 12px;
-}
-
-*{
-color: black;
-}
-
-QComboBox QAbstractItemView {
-background-color:white;
-}
-
-QComboBox::down-arrow {
-image: url(:/images/combobox_arrow.png);
-}
-
-QComboBox:drop-down
-{
-subcontrol-origin: padding;
-subcontrol-position: top right;
-border-left-style: none; 
-border-top-right-radius: 1px;
-border-bottom-right-radius: 1px;
-}
-
-QToolButton:hover, QPushButton:hover, QComboBox:hover {
-border-image: url(:/images/btn_26_hover.png) 4;
-}
-
-QToolButton:disabled, QPushButton:disabled, QComboBox::disabled {
-color:gray;
-}
-
-QToolButton:pressed, QPushButton:pressed{
-border-image: url(:/images/btn_26_pressed.png) 4;
-}
-</string>
-     </property>
      <property name="text">
       <string>Close All Search Results</string>
      </property>
@@ -671,48 +470,6 @@ border-image: url(:/images/btn_26_pressed.png) 4;
      <property name="toolTip">
       <string>Download Selected</string>
      </property>
-     <property name="styleSheet">
-      <string notr="true">QToolButton, QPushButton, QComboBox { 
-border-image: url(:/images/btn_26.png) 4;
-border-width: 4;
-padding: 0px 6px;
-font-size: 12px;
-}
-
-*{
-color: black;
-}
-
-QComboBox QAbstractItemView {
-background-color:white;
-}
-
-QComboBox::down-arrow {
-image: url(:/images/combobox_arrow.png);
-}
-
-QComboBox:drop-down
-{
-subcontrol-origin: padding;
-subcontrol-position: top right;
-border-left-style: none; 
-border-top-right-radius: 1px;
-border-bottom-right-radius: 1px;
-}
-
-QToolButton:hover, QPushButton:hover, QComboBox:hover {
-border-image: url(:/images/btn_26_hover.png) 4;
-}
-
-QToolButton:disabled, QPushButton:disabled, QComboBox::disabled {
-color:gray;
-}
-
-QToolButton:pressed, QPushButton:pressed{
-border-image: url(:/images/btn_26_pressed.png) 4;
-}
-</string>
-     </property>
      <property name="text">
       <string>Download</string>
      </property>
@@ -731,10 +488,10 @@ border-image: url(:/images/btn_26_pressed.png) 4;
       </size>
      </property>
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::Box</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+      <enum>QFrame::Sunken</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <property name="horizontalSpacing">

@@ -22,6 +22,7 @@
 #include <QDateTime>
 #include <QTimer>
 
+#include "rshare.h"
 #include "ChanMsgItem.h"
 
 #include "FeedHolder.h"
@@ -36,6 +37,9 @@
 /****
  * #define DEBUG_ITEM 1
  ****/
+
+#define COLOR_NORMAL QColor(248, 248, 248)
+#define COLOR_NEW    QColor(220, 236, 253)
 
 /** Constructor */
 ChanMsgItem::ChanMsgItem(FeedHolder *parent, uint32_t feedId, const std::string &chanId, const std::string &msgId, bool isHome)
@@ -72,7 +76,12 @@ ChanMsgItem::ChanMsgItem(FeedHolder *parent, uint32_t feedId, const std::string 
 	subjectLabel->setMinimumWidth(100);
 	warning_label->setMinimumWidth(100);
 
-	small();
+	frame->setProperty("state", "");
+	QPalette palette = frame->palette();
+	palette.setColor(frame->backgroundRole(), COLOR_NORMAL);
+	frame->setPalette(palette);
+
+	expandFrame->hide();
 	updateItemStatic();
 	updateItem();
 }
@@ -148,14 +157,27 @@ void ChanMsgItem::updateItemStatic()
 				readButton->setIcon(QIcon(":/images/message-state-read.png"));
 			}
 
+			bool newState;
+			QColor color;
 			if (status & CHANNEL_MSG_STATUS_READ) {
 				newLabel->setVisible(false);
-				frame->setStyleSheet("QFrame#frame {border: 3px solid #D3D3D3;background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFFF, stop:1 #F2F2F2);border-radius: 10px;}");
-
+				newState = false;
+				color = COLOR_NORMAL;
 			} else {
 				newLabel->setVisible(true);
-				frame->setStyleSheet("QFrame#frame {border: 3px solid #82B9F4;background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #F0F8FD, stop:0.8 #E6F2FD, stop: 0.81 #E6F2FD, stop: 1 #D2E7FD);border-radius: 10px;}");
+				newState = true;
+				color = COLOR_NEW;
 			}
+
+			/* unpolish widget to clear the stylesheet's palette cache */
+			frame->style()->unpolish(frame);
+
+			QPalette palette = frame->palette();
+			palette.setColor(frame->backgroundRole(), color);
+			frame->setPalette(palette);
+
+			frame->setProperty("new", newState);
+			Rshare::refreshStyleSheet(frame, false);
 		} else {
 			readButton->setVisible(false);
 			newLabel->setVisible(false);
@@ -163,7 +185,7 @@ void ChanMsgItem::updateItemStatic()
 	}
 
 	msgLabel->setText(RsHtml().formatText(NULL, QString::fromStdWString(cmi.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
-	msgWidget->setVisible(!cmi.msg.empty());
+	msgFrame->setVisible(!cmi.msg.empty());
 
 	QDateTime qtime;
 	qtime.setTime_t(cmi.ts);
@@ -196,11 +218,9 @@ void ChanMsgItem::updateItemStatic()
 	if(cmi.thumbnail.image_thumbnail != NULL)
 	{
 		QPixmap thumbnail;
-		thumbnail.loadFromData(cmi.thumbnail.image_thumbnail, cmi.thumbnail.im_thumbnail_size,
-				"PNG");
+		thumbnail.loadFromData(cmi.thumbnail.image_thumbnail, cmi.thumbnail.im_thumbnail_size, "PNG");
 
-		label->setPixmap(thumbnail);
-		label->setStyleSheet("QLabel#label{border: 2px solid #D3D3D3;border-radius: 3px;}");
+		logoLabel->setPixmap(thumbnail);
 	}
 
 	m_inUpdateItemStatic = false;
@@ -293,11 +313,6 @@ void ChanMsgItem::updateItem()
 	if (loopAgain) {
 		QTimer::singleShot( msec_rate, this, SLOT(updateItem( void ) ));
 	}
-}
-
-void ChanMsgItem::small()
-{
-	expandFrame->hide();
 }
 
 void ChanMsgItem::toggle()

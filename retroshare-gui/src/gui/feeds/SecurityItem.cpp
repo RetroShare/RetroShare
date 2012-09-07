@@ -57,7 +57,7 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const std::strin
     removeFriendButton->hide();
     peerDetailsButton->setEnabled(false);
     friendRequesttoolButton->hide();
-    request_label->hide();
+    requestLabel->hide();
 
     /* general ones */
     connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
@@ -111,34 +111,32 @@ void SecurityItem::updateItemStatic()
 	std::cerr << std::endl;
 #endif
 	QString title;
-	QString requesttext("<span style=\"font-size:14pt; font-weight:500;color:#990033;\">%1</span>");
-;
 
 	switch(mType)
 	{
 		case SEC_TYPE_CONNECT_ATTEMPT:
 			title = tr("Connect Attempt");
-		request_label->show();
-			request_label->setText(requesttext.arg(tr("wants to be friend with you on RetroShare")));
+			requestLabel->show();
+			requestLabel->setText(tr("wants to be friend with you on RetroShare"));
 			avatar->setDefaultAvatar(":images/avatar_request.png");
 			break;
 		case SEC_TYPE_AUTH_DENIED:
 			title = tr("Not Yet Friends");
-			request_label->hide();
-	  avatar->setDefaultAvatar(":images/avatar_request.png");
+			requestLabel->hide();
+			avatar->setDefaultAvatar(":images/avatar_request.png");
 			break;
 		case SEC_TYPE_UNKNOWN_IN:
 			title = tr("Unknown (Incoming) Connect Attempt");
-			request_label->hide();
+			requestLabel->hide();
 			avatar->setDefaultAvatar(":images/avatar_request_unknown.png");
 			break;
 		case SEC_TYPE_UNKNOWN_OUT:
 			title = tr("Unknown (Outgoing) Connect Attempt");
-			request_label->hide();
+			requestLabel->hide();
 			break;
 		default:
 			title = tr("Unknown Security Issue");
-			request_label->hide();
+			requestLabel->hide();
 			break;
 	}
 
@@ -169,9 +167,6 @@ void SecurityItem::updateItem()
 #endif
 
 	if(!RsAutoUpdatePage::eventsLocked()) {
-		/* set textcolor for peer name  */
-		QString nameStr("<span style=\"font-size:14pt; font-weight:500;color:#990033;\">%1</span>");
-
 		RsPeerDetails details;
 		/* first try sslid */
 		if (!rsPeers->getPeerDetails(mSslId, details))
@@ -184,7 +179,7 @@ void SecurityItem::updateItem()
 				 */
 
 				/* set peer name */
-				peernameLabel->setText(nameStr.arg(tr("Unknown Peer")));
+				peerNameLabel->setText(tr("Unknown Peer"));
 
 				nameLabel->setText(QString::fromStdString(mGpgId));
 				idLabel->setText(QString::fromStdString(mSslId));
@@ -207,8 +202,7 @@ void SecurityItem::updateItem()
 		}
 
 		/* set peer name */
-		QString peername =  QString::fromUtf8(details.name.c_str());
-		peernameLabel->setText(nameStr.arg(peername));
+		peerNameLabel->setText(QString::fromUtf8(details.name.c_str()));
 
 		/* expanded Info */
 		nameLabel->setText(QString::fromUtf8(details.name.c_str()));

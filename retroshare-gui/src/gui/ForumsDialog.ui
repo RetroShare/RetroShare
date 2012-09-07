@@ -42,10 +42,10 @@
        <item row="0" column="0">
         <widget class="QFrame" name="titleBarFrame">
          <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+          <enum>QFrame::Box</enum>
          </property>
          <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
+          <enum>QFrame::Sunken</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <property name="margin">
@@ -478,10 +478,10 @@
            </size>
           </property>
           <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
+           <enum>QFrame::Box</enum>
           </property>
           <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
+           <enum>QFrame::Sunken</enum>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_3">
            <property name="margin">
@@ -679,6 +679,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>LinkTextBrowser</class>
+   <extends>QTextBrowser</extends>
+   <header>gui/common/LinkTextBrowser.h</header>
+  </customwidget>
+  <customwidget>
    <class>GroupTreeWidget</class>
    <extends>QWidget</extends>
    <header>gui/common/GroupTreeWidget.h</header>
@@ -688,11 +693,6 @@
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
    <header>gui/common/LineEditClear.h</header>
-  </customwidget>
-  <customwidget>
-   <class>LinkTextBrowser</class>
-   <extends>QTextBrowser</extends>
-   <header>gui/common/LinkTextBrowser.h</header>
   </customwidget>
  </customwidgets>
  <resources>

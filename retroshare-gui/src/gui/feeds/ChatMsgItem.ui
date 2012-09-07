@@ -10,9 +10,6 @@
     <height>201</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string/>
-  </property>
   <layout class="QGridLayout" name="gridLayout_1">
    <property name="margin">
     <number>0</number>
@@ -25,16 +22,51 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="styleSheet">
-      <string notr="true">QFrame#frame{border: 2px solid black;
-         background-color:  #FEF6DE;
-border-radius: 10px}</string>
+     <property name="palette">
+      <palette>
+       <active>
+        <colorrole role="Window">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>254</red>
+           <green>246</green>
+           <blue>222</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </active>
+       <inactive>
+        <colorrole role="Window">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>254</red>
+           <green>246</green>
+           <blue>222</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </inactive>
+       <disabled>
+        <colorrole role="Window">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>254</red>
+           <green>246</green>
+           <blue>222</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </disabled>
+      </palette>
+     </property>
+     <property name="autoFillBackground">
+      <bool>true</bool>
      </property>
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::Box</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+      <enum>QFrame::Sunken</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <property name="spacing">
@@ -43,7 +75,7 @@ border-radius: 10px}</string>
       <item row="0" column="0" rowspan="2">
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="0">
-         <widget class="AvatarWidget" name="avatar" native="true">
+         <widget class="AvatarWidget" name="avatar">
           <property name="minimumSize">
            <size>
             <width>70</width>
@@ -55,11 +87,6 @@ border-radius: 10px}</string>
             <width>70</width>
             <height>70</height>
            </size>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">QWidget#avatar{border: 2px solid black;
-
-}</string>
           </property>
          </widget>
         </item>
@@ -79,9 +106,11 @@ border-radius: 10px}</string>
        </layout>
       </item>
       <item row="0" column="1">
-       <widget class="QLabel" name="peernameLabel">
-        <property name="styleSheet">
-         <string notr="true"/>
+       <widget class="QLabel" name="peerNameLabel">
+        <property name="font">
+         <font>
+          <pointsize>14</pointsize>
+         </font>
         </property>
         <property name="text">
          <string notr="true">Peer Name</string>
@@ -177,24 +206,12 @@ border-radius: 10px}</string>
       </item>
       <item row="2" column="0" colspan="5">
        <widget class="QFrame" name="frame_2">
-        <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
         <layout class="QGridLayout" name="gridLayout_4">
          <property name="margin">
           <number>0</number>
          </property>
          <item row="0" column="0" colspan="6">
-          <widget class="QFrame" name="messageframe">
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
+          <widget class="QFrame" name="messageFrame">
            <layout class="QGridLayout" name="gridLayout_3">
             <property name="margin">
              <number>0</number>

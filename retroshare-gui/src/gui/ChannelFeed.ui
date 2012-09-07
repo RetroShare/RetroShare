@@ -33,10 +33,10 @@
        <item row="0" column="0">
         <widget class="QFrame" name="titleBarFrame">
          <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+          <enum>QFrame::Box</enum>
          </property>
          <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
+          <enum>QFrame::Sunken</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <property name="margin">
@@ -159,7 +159,13 @@
      <widget class="QWidget" name="layoutWidget">
       <layout class="QGridLayout" name="channelLayout">
        <item row="0" column="0">
-        <widget class="QFrame" name="headerFrame">
+        <widget class="QFrame" name="headFrame">
+         <property name="frameShape">
+          <enum>QFrame::Box</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Sunken</enum>
+         </property>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <property name="margin">
            <number>4</number>
@@ -177,12 +183,6 @@
               <width>64</width>
               <height>64</height>
              </size>
-            </property>
-            <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
             </property>
             <property name="text">
              <string/>
@@ -223,7 +223,7 @@
          </layout>
         </widget>
        </item>
-       <item row="4" column="0">
+       <item row="3" column="0">
         <widget class="QScrollArea" name="scrollArea">
          <property name="widgetResizable">
           <bool>true</bool>
@@ -254,7 +254,7 @@
          </widget>
         </widget>
        </item>
-       <item row="3" column="0">
+       <item row="2" column="0">
         <layout class="QHBoxLayout" name="progressLayout">
          <item>
           <widget class="QLabel" name="progressLabel">
@@ -275,13 +275,13 @@
          </item>
         </layout>
        </item>
-       <item row="2" column="0">
+       <item row="1" column="0">
         <widget class="QFrame" name="toolBarFrame">
          <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+          <enum>QFrame::Box</enum>
          </property>
          <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
+          <enum>QFrame::Sunken</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <property name="margin">
@@ -324,13 +324,6 @@
            </spacer>
           </item>
          </layout>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="Line" name="line">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
         </widget>
        </item>
       </layout>

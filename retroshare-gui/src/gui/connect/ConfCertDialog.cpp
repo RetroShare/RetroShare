@@ -82,6 +82,8 @@ ConfCertDialog::ConfCertDialog(const std::string& id, QWidget *parent, Qt::WFlag
     connect(ui._shouldAddSignatures_CB, SIGNAL(toggled(bool)), this, SLOT(loadInvitePage()));
     connect(ui._useOldFormat_CB, SIGNAL(toggled(bool)), this, SLOT(loadInvitePage()));
 
+    ui.avatar->setFrameType(AvatarWidget::NORMAL_FRAME);
+
     MainWindow *w = MainWindow::getInstance();
     if (w) {
         connect(this, SIGNAL(configChanged()), w->getPage(MainWindow::Network), SLOT(insertConnect()));

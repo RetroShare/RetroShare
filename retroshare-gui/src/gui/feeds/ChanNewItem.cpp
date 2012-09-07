@@ -76,14 +76,13 @@ void ChanNewItem::updateItemStatic()
 		descLabel->setText(QString::fromStdWString(ci.channelDesc));
 		
 		if(ci.pngImageLen != 0){
-
-    QPixmap chanImage;
-    chanImage.loadFromData(ci.pngChanImage, ci.pngImageLen, "PNG");
-    logo_label->setPixmap(QPixmap(chanImage));
-    }else{
-    QPixmap defaulImage(CHAN_DEFAULT_IMAGE);
-    logo_label->setPixmap(QPixmap(defaulImage));
-    }
+			QPixmap chanImage;
+			chanImage.loadFromData(ci.pngChanImage, ci.pngImageLen, "PNG");
+			logoLabel->setPixmap(QPixmap(chanImage));
+		} else {
+			QPixmap defaulImage(CHAN_DEFAULT_IMAGE);
+			logoLabel->setPixmap(QPixmap(defaulImage));
+		}
 
 		if (ci.channelFlags & RS_DISTRIB_SUBSCRIBED)
 		{

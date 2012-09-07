@@ -16,12 +16,6 @@
     <height>35</height>
    </size>
   </property>
-  <property name="windowTitle">
-   <string>Form</string>
-  </property>
-  <property name="styleSheet">
-   <string notr="true">QWidget#SubFileItem{border: none;}</string>
-  </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <property name="verticalSpacing">
     <number>0</number>
@@ -37,22 +31,11 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QFrame#frame{border: 2px solid black;
-background: white;}
-</string>
-     </property>
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::Box</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+      <enum>QFrame::Sunken</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="topMargin">
@@ -104,9 +87,6 @@ background: white;}
           <height>0</height>
          </size>
         </property>
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
         <property name="value">
          <number>24</number>
         </property>
@@ -130,7 +110,7 @@ background: white;}
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../../../plugins/qdiagram_plugin/qdiagram.qrc">
+         <iconset resource="../images.qrc">
           <normaloff>:/images/delete.png</normaloff>:/images/delete.png</iconset>
         </property>
        </widget>
@@ -154,7 +134,7 @@ background: white;}
   </layout>
  </widget>
  <resources>
-  <include location="../../../../plugins/qdiagram_plugin/qdiagram.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -10,9 +10,6 @@
     <height>117</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>Form</string>
-  </property>
   <layout class="QGridLayout">
    <property name="margin">
     <number>0</number>
@@ -25,17 +22,78 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="styleSheet">
-      <string notr="true">QFrame#frame{border: 2px solid #CCCCCC; 
-background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-stop: 0 #EEEEEE, stop: 1 #CCCCCC);
-border-radius: 10px}</string>
+     <property name="palette">
+      <palette>
+       <active>
+        <colorrole role="Base">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>255</red>
+           <green>255</green>
+           <blue>255</blue>
+          </color>
+         </brush>
+        </colorrole>
+        <colorrole role="Window">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>215</red>
+           <green>215</green>
+           <blue>215</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </active>
+       <inactive>
+        <colorrole role="Base">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>255</red>
+           <green>255</green>
+           <blue>255</blue>
+          </color>
+         </brush>
+        </colorrole>
+        <colorrole role="Window">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>215</red>
+           <green>215</green>
+           <blue>215</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </inactive>
+       <disabled>
+        <colorrole role="Base">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>215</red>
+           <green>215</green>
+           <blue>215</blue>
+          </color>
+         </brush>
+        </colorrole>
+        <colorrole role="Window">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>215</red>
+           <green>215</green>
+           <blue>215</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </disabled>
+      </palette>
+     </property>
+     <property name="autoFillBackground">
+      <bool>true</bool>
      </property>
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::Box</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+      <enum>QFrame::Sunken</enum>
      </property>
      <layout class="QVBoxLayout">
       <property name="leftMargin">
@@ -74,9 +132,6 @@ border-radius: 10px}</string>
             <bold>true</bold>
            </font>
           </property>
-          <property name="styleSheet">
-           <string notr="true"/>
-          </property>
           <property name="text">
            <string notr="true">Forum</string>
           </property>
@@ -100,9 +155,6 @@ border-radius: 10px}</string>
         </item>
         <item>
          <widget class="QLabel" name="nameLabel">
-          <property name="styleSheet">
-           <string notr="true"/>
-          </property>
           <property name="text">
            <string notr="true">name</string>
           </property>
@@ -205,9 +257,6 @@ border-radius: 10px}</string>
           <property name="toolTip">
            <string>Remove Item</string>
           </property>
-          <property name="styleSheet">
-           <string notr="true"/>
-          </property>
           <property name="text">
            <string/>
           </property>
@@ -221,12 +270,6 @@ border-radius: 10px}</string>
       </item>
       <item>
        <widget class="QFrame" name="expandFrame">
-        <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
         <layout class="QVBoxLayout">
          <property name="spacing">
           <number>0</number>
@@ -242,9 +285,6 @@ border-radius: 10px}</string>
            <layout class="QHBoxLayout">
             <item>
              <widget class="QLabel" name="iconLabel">
-              <property name="styleSheet">
-               <string notr="true"/>
-              </property>
               <property name="text">
                <string/>
               </property>
@@ -260,9 +300,6 @@ border-radius: 10px}</string>
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="styleSheet">
-               <string notr="true"/>
               </property>
               <property name="text">
                <string notr="true">Description 
@@ -282,7 +319,6 @@ border-radius: 10px}</string>
   </layout>
  </widget>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

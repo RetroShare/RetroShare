@@ -407,7 +407,6 @@ HEADERS +=  rshare.h \
             gui/feeds/ChanNewItem.h \
             gui/feeds/ChanMsgItem.h \
             gui/feeds/SubFileItem.h \
-            gui/feeds/SubDestItem.h \
             gui/feeds/AttachFileItem.h \
             gui/feeds/SecurityItem.h \
             gui/connect/ConnectFriendWizard.h \
@@ -501,7 +500,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/feeds/ChanNewItem.ui \
             gui/feeds/ChanMsgItem.ui \
             gui/feeds/SubFileItem.ui \
-            gui/feeds/SubDestItem.ui \
             gui/feeds/AttachFileItem.ui \
             gui/feeds/SecurityItem.ui \
             gui/im_history/ImHistoryBrowser.ui \
@@ -695,7 +693,6 @@ SOURCES +=  main.cpp \
             gui/feeds/ChanNewItem.cpp \
             gui/feeds/ChanMsgItem.cpp \
             gui/feeds/SubFileItem.cpp \
-            gui/feeds/SubDestItem.cpp \
             gui/feeds/AttachFileItem.cpp \
             gui/feeds/SecurityItem.cpp \
             gui/connect/ConnectFriendWizard.cpp \

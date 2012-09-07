@@ -111,15 +111,11 @@ void PeerItem::updateItemStatic()
 
 	titleLabel->setText(title);
 
-	/* set textcolor for peer name  */
-	QString nameStr("<span style=\"font-size:14pt; font-weight:500;color:#990033;\">%1</span>");
-
 	RsPeerDetails details;
 	if (rsPeers->getPeerDetails(mPeerId, details))
 	{
 		/* set peer name */
-		QString peername =  QString::fromUtf8(details.name.c_str());
-		peernameLabel->setText(nameStr.arg(peername));
+		peerNameLabel->setText(QString::fromUtf8(details.name.c_str()));
 
 		QDateTime date = QDateTime::fromTime_t(details.lastConnect);
 		QString stime = date.toString("dd.MMMM yyyy hh:mm");
@@ -166,9 +162,6 @@ void PeerItem::updateItem()
 	std::cerr << std::endl;
 #endif
 	if(!RsAutoUpdatePage::eventsLocked()) {
-		/* set textcolor for peer name  */
-		QString nameStr("<span style=\"font-size:14pt; font-weight:500;color:#990033;\">%1</span>");
-
 		RsPeerDetails details;
 		if (!rsPeers->getPeerDetails(mPeerId, details))
 		{

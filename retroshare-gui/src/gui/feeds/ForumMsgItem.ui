@@ -10,38 +10,69 @@
     <height>387</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string notr="true"/>
-  </property>
   <layout class="QGridLayout">
    <property name="margin">
     <number>0</number>
    </property>
    <item row="2" column="0">
-    <widget class="QFrame" name="frame_3">
+    <widget class="QFrame" name="frame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="styleSheet">
-      <string notr="true">QFrame#frame_3{border: 2px solid #CCCCCC;
-background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                     stop: 0 #EEEEEE, stop: 1 #CCCCCC);
-border-radius: 10px}</string>
+     <property name="palette">
+      <palette>
+       <active>
+        <colorrole role="Window">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>215</red>
+           <green>215</green>
+           <blue>215</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </active>
+       <inactive>
+        <colorrole role="Window">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>215</red>
+           <green>215</green>
+           <blue>215</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </inactive>
+       <disabled>
+        <colorrole role="Window">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>215</red>
+           <green>215</green>
+           <blue>215</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </disabled>
+      </palette>
+     </property>
+     <property name="autoFillBackground">
+      <bool>true</bool>
      </property>
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::Box</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+      <enum>QFrame::Sunken</enum>
      </property>
      <layout class="QGridLayout">
       <item row="0" column="0">
        <layout class="QGridLayout">
         <item row="0" column="0">
-         <widget class="QLabel" name="label">
+         <widget class="QLabel" name="iconLabel">
           <property name="minimumSize">
            <size>
             <width>48</width>
@@ -53,15 +84,6 @@ border-radius: 10px}</string>
             <width>48</width>
             <height>48</height>
            </size>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">QLabel#label{border: 2px solid black;
-background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                     stop: 0 #EEEEEE, stop: 1 #CCCCCC);
-border-radius: 10px}</string>
-          </property>
-          <property name="text">
-           <string/>
           </property>
           <property name="pixmap">
            <pixmap resource="../images.qrc">:/images/konversation.png</pixmap>
@@ -298,15 +320,11 @@ border-radius: 10px}</string>
       </item>
       <item row="2" column="0" colspan="2">
        <widget class="QFrame" name="prevFrame">
-        <property name="styleSheet">
-         <string notr="true">QFrame#prevFrame{border: 2px solid black;
-border-radius: 10px}</string>
-        </property>
         <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
+         <enum>QFrame::Box</enum>
         </property>
         <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
+         <enum>QFrame::Sunken</enum>
         </property>
         <layout class="QGridLayout">
          <item row="0" column="0" rowspan="2">
@@ -326,15 +344,12 @@ border-radius: 10px}</string>
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QLabel" name="namelabel">
+          <widget class="QLabel" name="nameLabel">
            <property name="font">
             <font>
              <weight>75</weight>
              <bold>true</bold>
             </font>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">color: rgb(59, 89, 152);</string>
            </property>
            <property name="text">
             <string notr="true">Friend Name</string>
@@ -462,19 +477,15 @@ border-radius: 10px}</string>
       </item>
       <item row="3" column="0" colspan="2">
        <widget class="QFrame" name="nextFrame">
-        <property name="styleSheet">
-         <string notr="true">QFrame#nextFrame{border: 2px solid black;
-border-radius: 10px}</string>
-        </property>
         <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
+         <enum>QFrame::Box</enum>
         </property>
         <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
+         <enum>QFrame::Sunken</enum>
         </property>
         <layout class="QGridLayout">
          <item row="0" column="0" rowspan="3">
-          <widget class="AvatarWidget" name="nextavatar">
+          <widget class="AvatarWidget" name="nextAvatar">
            <property name="minimumSize">
             <size>
              <width>32</width>
@@ -490,15 +501,12 @@ border-radius: 10px}</string>
           </widget>
          </item>
          <item row="0" column="2">
-          <widget class="QLabel" name="nextnamelabel">
+          <widget class="QLabel" name="nextNameLabel">
            <property name="font">
             <font>
              <weight>75</weight>
              <bold>true</bold>
             </font>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">color: rgb(59, 89, 152);</string>
            </property>
            <property name="text">
             <string notr="true">Next Name</string>
