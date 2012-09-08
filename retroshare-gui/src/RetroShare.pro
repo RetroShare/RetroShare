@@ -10,6 +10,7 @@ CONFIG += posted
 CONFIG += unfinished 
 CONFIG += gxsgui 
 
+#CONFIG += pluginmgr 
 
 # Other Disabled Bits.
 #CONFIG += framecatcher
@@ -53,6 +54,7 @@ linux-* {
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
 	LIBS += -lssl -lupnp -lixml -lXss -lgnome-keyring
+	LIBS += -lsqlite3
 	LIBS *= -rdynamic
 	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions
 	DEFINES *= UBUNTU
@@ -858,6 +860,7 @@ photoshare {
 		gui/PhotoShare/PhotoDetailsDialog.h \
 		gui/PhotoShare/PhotoDrop.h \
 		gui/PhotoShare/PhotoSlideShow.h \
+		util/TokenQueueV2.h \
 
 	FORMS += gui/PhotoShare/PhotoItem.ui \
 		gui/PhotoShare/PhotoDialog.ui \
@@ -871,6 +874,7 @@ photoshare {
 		gui/PhotoShare/PhotoDetailsDialog.cpp \
 		gui/PhotoShare/PhotoDrop.cpp \
 		gui/PhotoShare/PhotoSlideShow.cpp \
+		util/TokenQueueV2.cpp \
 
 }
 
