@@ -1111,6 +1111,7 @@ int p3BitDht::minuteTick()
 		
 		double denom = deltaT;
 
+#ifdef SHOW_RATES
 		std::cerr << "p3BitDht::minuteTick() ";
 		std::cerr << "DhtRead: " << dhtRead / denom << " kB/s ";
 		std::cerr << "DhtWrite: " << dhtWrite / denom << " kB/s ";
@@ -1121,6 +1122,7 @@ int p3BitDht::minuteTick()
 		std::cerr << "RelayWrite: " << relayWrite / denom << " kB/s ";
 		std::cerr << "RelayRelayed: " << relayRelayed / denom << " kB/s ";
 		std::cerr << std::endl;
+#endif // SHOW_RATES
 
 
 		RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/
