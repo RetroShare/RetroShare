@@ -73,8 +73,8 @@ p3PostedService::p3PostedService(uint16_t type)
 
 int	p3PostedService::tick()
 {
-	std::cerr << "p3PostedService::tick()";
-	std::cerr << std::endl;
+	//std::cerr << "p3PostedService::tick()";
+	//std::cerr << std::endl;
 
 	fakeprocessrequests();
 

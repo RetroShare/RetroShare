@@ -50,8 +50,8 @@ p3WikiService::p3WikiService(uint16_t type)
 
 int	p3WikiService::tick()
 {
-	std::cerr << "p3WikiService::tick()";
-	std::cerr << std::endl;
+	//std::cerr << "p3WikiService::tick()";
+	//std::cerr << std::endl;
 
 	fakeprocessrequests();
 	

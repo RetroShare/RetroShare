@@ -57,8 +57,8 @@ p3ForumsV2::p3ForumsV2(uint16_t type)
 
 int	p3ForumsV2::tick()
 {
-	std::cerr << "p3ForumsV2::tick()";
-	std::cerr << std::endl;
+	//std::cerr << "p3ForumsV2::tick()";
+	//std::cerr << std::endl;
 
 	fakeprocessrequests();
 	

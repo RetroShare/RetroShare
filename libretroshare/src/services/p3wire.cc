@@ -50,8 +50,8 @@ p3Wire::p3Wire(uint16_t type)
 
 int	p3Wire::tick()
 {
-	std::cerr << "p3Wire::tick()";
-	std::cerr << std::endl;
+	//std::cerr << "p3Wire::tick()";
+	//std::cerr << std::endl;
 
 	fakeprocessrequests();
 	
@@ -596,3 +596,344 @@ bool WireDataProxy::convertMsgToMetaData(void *msgData, RsMsgMetaData &meta)
 
 	return true;
 }
+
+
+
+/***********************************************************************/
+/***********************************************************************/
+/***********************************************************************/
+/***********************************************************************/
+
+
+#if 0
+
+bool p3Wire::generateDummyData()
+{
+#define MAX_GROUPS 100
+#define MAX_POSTS  1000
+
+#define MAX_BASE_COMMENTS 1000 //10000
+#define MAX_COMMENTS 4000 //10000
+
+#define MAX_VOTES 10000 //10000
+
+	std::list<RsWireGroup> mGroups;
+	std::list<RsWireGroup>::iterator git;
+
+	std::list<RsWirePulse> mPosts;
+	std::list<RsWirePulse>::iterator pit;
+
+	std::list<RsPostedVote> mVotes;
+	std::list<RsPostedVote>::iterator vit;
+
+	std::list<RsPostedComment> mComments;
+	std::list<RsPostedComment>::iterator cit;
+
+#define DUMMY_NAME_MAX_LEN		10000
+	char name[DUMMY_NAME_MAX_LEN];
+	int i, j;
+	time_t now = time(NULL);
+
+	for(i = 0; i < MAX_GROUPS; i++)
+	{
+		/* generate a new forum */
+		RsPostedGroup group;
+
+		snprintf(name, DUMMY_NAME_MAX_LEN, "TestTopic_%d", i+1);
+
+		group.mMeta.mGroupId = genRandomId();
+		group.mMeta.mGroupName = name;
+
+		group.mMeta.mPublishTs = now - (RSRandom::random_f32() * 100000);
+		/* key fields to fill in:
+		 * GroupId.
+		 * Name.
+		 * Flags.
+		 * Pop.
+		 */
+
+
+
+		/* use probability to decide which are subscribed / own / popularity.
+		 */
+
+		float rnd = RSRandom::random_f32();
+		if (rnd < 0.1)
+		{
+			group.mMeta.mSubscribeFlags = RSGXS_GROUP_SUBSCRIBE_ADMIN | RSGXS_GROUP_SUBSCRIBE_SUBSCRIBED;
+
+		}
+		else if (rnd < 0.3)
+		{
+			group.mMeta.mSubscribeFlags = RSGXS_GROUP_SUBSCRIBE_SUBSCRIBED;
+		}
+		else
+		{
+			group.mMeta.mSubscribeFlags = 0;
+		}
+
+		group.mMeta.mPop = (int) (RSRandom::random_f32() * 10.0);
+		mGroups.push_back(group);
+
+	}
+
+	for(i = 0; i < MAX_POSTS; i++)
+	{
+		/* generate a base thread */
+
+		/* rotate the Forum Groups Around, then pick one.
+		 */
+
+		int rnd = (int) (RSRandom::random_f32() * 10.0);
+
+		for(j = 0; j < rnd; j++)
+		{
+			RsPostedGroup head = mGroups.front();
+			mGroups.pop_front();
+			mGroups.push_back(head);
+		}
+
+		RsPostedGroup group = mGroups.front();
+
+		/* now create a new thread */
+
+		RsPostedPost post;
+
+		snprintf(name, DUMMY_NAME_MAX_LEN, "%s => Post_%d", group.mMeta.mGroupName.c_str(), i+1);
+		post.mMeta.mMsgName = name;
+
+		post.mMeta.mGroupId = group.mMeta.mGroupId;
+		post.mMeta.mMsgId = genRandomId();
+		post.mMeta.mOrigMsgId = post.mMeta.mMsgId;
+		post.mMeta.mThreadId = post.mMeta.mMsgId;
+		post.mMeta.mParentId = "";
+
+		post.mMeta.mPublishTs = group.mMeta.mPublishTs + (RSRandom::random_f32() * 10000);
+		if (post.mMeta.mPublishTs > now)
+			post.mMeta.mPublishTs = now - 1;
+
+		mPosts.push_back(post);
+		
+	}
+
+	for(i = 0; i < MAX_BASE_COMMENTS; i++)
+	{
+		/* generate a base thread */
+
+		/* rotate the Forum Groups Around, then pick one.
+		 */
+
+		int rnd = (int) (RSRandom::random_f32() * 10.0);
+
+		for(j = 0; j < rnd; j++)
+		{
+			RsPostedPost head = mPosts.front();
+			mPosts.pop_front();
+			mPosts.push_back(head);
+		}
+
+		RsPostedPost parent = mPosts.front();
+
+		/* now create a new child msg */
+
+		RsPostedComment comment;
+
+		/* fill in key data 
+		 * GroupId
+		 * MsgId
+		 * OrigMsgId
+		 * ThreadId
+		 * ParentId
+		 * PublishTS (take Forum TS + a bit ).
+		 *
+		 * ChildTS ????
+		 */
+		snprintf(name, DUMMY_NAME_MAX_LEN, "%s => Comment_%d", parent.mMeta.mMsgName.c_str(), i+1);
+		comment.mMeta.mMsgName = name;
+		//comment.mMsg = name;
+
+		comment.mMeta.mGroupId = parent.mMeta.mGroupId;
+		comment.mMeta.mMsgId = genRandomId();
+		comment.mMeta.mOrigMsgId = comment.mMeta.mMsgId;
+		comment.mMeta.mThreadId = parent.mMeta.mThreadId;
+		comment.mMeta.mParentId = parent.mMeta.mOrigMsgId;
+
+		comment.mMeta.mPublishTs = parent.mMeta.mPublishTs + (RSRandom::random_f32() * 10000);
+		if (comment.mMeta.mPublishTs > now)
+			comment.mMeta.mPublishTs = now - 1;
+
+		mComments.push_back(comment);
+	}
+
+
+	for(i = 0; i < MAX_COMMENTS; i++)
+	{
+		/* generate a base thread */
+
+		/* rotate the Forum Groups Around, then pick one.
+		 */
+
+		int rnd = (int) (RSRandom::random_f32() * 10.0);
+
+		for(j = 0; j < rnd; j++)
+		{
+			RsPostedComment head = mComments.front();
+			mComments.pop_front();
+			mComments.push_back(head);
+		}
+
+		RsPostedComment parent = mComments.front();
+
+		/* now create a new child msg */
+
+		RsPostedComment comment;
+
+		/* fill in key data 
+		 * GroupId
+		 * MsgId
+		 * OrigMsgId
+		 * ThreadId
+		 * ParentId
+		 * PublishTS (take Forum TS + a bit ).
+		 *
+		 * ChildTS ????
+		 */
+		snprintf(name, DUMMY_NAME_MAX_LEN, "%s => Comment_%d", parent.mMeta.mMsgName.c_str(), i+1);
+		comment.mMeta.mMsgName = name;
+		//comment.mMsg = name;
+
+		comment.mMeta.mGroupId = parent.mMeta.mGroupId;
+		comment.mMeta.mMsgId = genRandomId();
+		comment.mMeta.mOrigMsgId = comment.mMeta.mMsgId;
+		comment.mMeta.mThreadId = parent.mMeta.mThreadId;
+		comment.mMeta.mParentId = parent.mMeta.mOrigMsgId;
+
+		comment.mMeta.mPublishTs = parent.mMeta.mPublishTs + (RSRandom::random_f32() * 10000);
+		if (comment.mMeta.mPublishTs > now)
+			comment.mMeta.mPublishTs = now - 1;
+
+		mComments.push_back(comment);
+	}
+
+
+	for(i = 0; i < MAX_VOTES; i++)
+	{
+		/* generate a base thread */
+
+		/* rotate the Forum Groups Around, then pick one.
+		 */
+
+		int rnd = (int) (RSRandom::random_f32() * 10.0);
+
+		for(j = 0; j < rnd; j++)
+		{
+			RsPostedPost head = mPosts.front();
+			mPosts.pop_front();
+			mPosts.push_back(head);
+		}
+
+		RsPostedPost parent = mPosts.front();
+
+		/* now create a new child msg */
+
+		RsPostedVote vote;
+
+		snprintf(name, DUMMY_NAME_MAX_LEN, "%s => Vote_%d", parent.mMeta.mMsgName.c_str(), i+1);
+		vote.mMeta.mMsgName = name;
+		//vote.mMsg = name;
+
+		vote.mMeta.mGroupId = parent.mMeta.mGroupId;
+		vote.mMeta.mMsgId = genRandomId();
+		vote.mMeta.mOrigMsgId = vote.mMeta.mMsgId;
+		vote.mMeta.mThreadId = parent.mMeta.mThreadId;
+		vote.mMeta.mParentId = parent.mMeta.mOrigMsgId;
+
+		vote.mMeta.mPublishTs = parent.mMeta.mPublishTs + (RSRandom::random_f32() * 10000);
+		if (vote.mMeta.mPublishTs > now)
+			vote.mMeta.mPublishTs = now - 1;
+
+		mVotes.push_back(vote);
+	}
+
+
+	mUpdated = true;
+
+	/* Then - at the end, we push them all into the Proxy */
+	for(git = mGroups.begin(); git != mGroups.end(); git++)
+	{
+		/* pushback */
+		mPostedProxy->addGroup(*git);
+
+	}
+
+	for(pit = mPosts.begin(); pit != mPosts.end(); pit++)
+	{
+		/* pushback */
+		mPostedProxy->addPost(*pit);
+	}
+
+	for(cit = mComments.begin(); cit != mComments.end(); cit++)
+	{
+		/* pushback */
+#define COMMENT_FRAC_FOR_LATER	(0.70)
+		if (RSRandom::random_f32() > COMMENT_FRAC_FOR_LATER)
+		{
+			mPostedProxy->addComment(*cit);
+		}
+		else
+		{
+			mDummyLaterComments.push_back(*cit);
+		}
+	}
+
+
+	for(vit = mVotes.begin(); vit != mVotes.end(); vit++)
+	{
+		/* pushback */
+
+#define VOTE_FRAC_FOR_LATER	(0.70)
+		if (RSRandom::random_f32() > VOTE_FRAC_FOR_LATER)
+		{
+			mPostedProxy->addVote(*vit);
+		}
+		else
+		{
+			mDummyLaterVotes.push_back(*vit);
+		}
+	}
+
+	return true;
+}
+
+#define EXTRA_COMMENT_ADD	(20)
+#define EXTRA_VOTE_ADD		(50)
+
+bool p3PostedService::addExtraDummyData()
+{
+	std::cerr << "p3PostedService::addExtraDummyData()";
+	std::cerr << std::endl;
+
+	int i = 0;
+
+	std::list<RsPostedVote>::iterator vit;
+	std::list<RsPostedComment>::iterator cit;
+
+	for(cit = mDummyLaterComments.begin(); (cit != mDummyLaterComments.end()) && (i < EXTRA_COMMENT_ADD); i++)
+	{
+		mPostedProxy->addComment(*cit);
+		cit = mDummyLaterComments.erase(cit);
+	}
+
+	i = 0;
+	for(vit = mDummyLaterVotes.begin(); (vit != mDummyLaterVotes.end()) && (i < EXTRA_VOTE_ADD); i++)
+	{
+		mPostedProxy->addVote(*vit);
+		vit = mDummyLaterVotes.erase(vit);
+	}
+
+	return true;
+}
+
+#endif
+
+
