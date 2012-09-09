@@ -152,6 +152,7 @@ virtual bool 	ValidateCertificate(X509 *x509, std::string &peerId) = 0; /* valid
 virtual SSL_CTX *getCTX() = 0;
 
 /* Restored these functions: */
+virtual void   registerConnexionAttempt_ids(const std::string& gpg_id,const std::string& ssl_id,const std::string& ssl_cn) = 0 ;
 virtual bool    FailedCertificate(X509 *x509, const struct sockaddr_in &addr, bool incoming) = 0; /* store for discovery */
 virtual bool 	CheckCertificate(std::string peerId, X509 *x509) = 0; /* check that they are exact match */
 };
@@ -226,6 +227,7 @@ virtual bool 	ValidateCertificate(X509 *x509, std::string &peerId); /* validate 
 virtual SSL_CTX *getCTX();
 
 /* Restored these functions: */
+virtual void   registerConnexionAttempt_ids(const std::string& gpg_id,const std::string& ssl_id,const std::string& ssl_cn) ;
 virtual bool    FailedCertificate(X509 *x509, const struct sockaddr_in &addr, bool incoming); /* store for discovery */
 virtual bool 	CheckCertificate(std::string peerId, X509 *x509); /* check that they are exact match */
 
@@ -257,6 +259,9 @@ bool 	locked_FindCert(std::string id, sslcert **cert);
 
         std::map<std::string, sslcert *> mCerts;
 
+		  std::string _last_gpgid_to_connect ;
+		  std::string _last_sslcn_to_connect ;
+		  std::string _last_sslid_to_connect ;
 };
 
 #endif // MRK_AUTH_SSL_HEADER

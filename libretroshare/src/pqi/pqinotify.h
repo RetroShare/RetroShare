@@ -44,6 +44,7 @@ virtual bool AddPopupMessage(uint32_t ptype, const std::string& name, const std:
 virtual bool AddSysMessage(uint32_t sysid, uint32_t type, const std::string& title, const std::string& msg) = 0;
 virtual bool AddLogMessage(uint32_t sysid, uint32_t type, const std::string& title, const std::string& msg) = 0;
 virtual bool AddFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3) = 0;
+virtual bool AddFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3, const std::string& id4) = 0;
 virtual bool ClearFeedItems(uint32_t type) = 0;
 };
 

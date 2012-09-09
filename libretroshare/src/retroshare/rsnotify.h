@@ -98,16 +98,19 @@ const uint32_t RS_MESSAGE_CONNECT_ATTEMPT    = 0x0001;
 class RsFeedItem
 {
 public:
-	RsFeedItem(uint32_t type, std::string id1, std::string id2, std::string id3)
+	RsFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3)
 	:mType(type), mId1(id1), mId2(id2), mId3(id3)
 	{
 		return;
 	}
 
+	RsFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3,const std::string& id4)
+	:mType(type), mId1(id1), mId2(id2), mId3(id3), mId4(id4) {}
+
 	RsFeedItem() :mType(0) { return; }
 
 	uint32_t mType;
-	std::string mId1, mId2, mId3;
+	std::string mId1, mId2, mId3, mId4;
 };
 
 

@@ -42,9 +42,9 @@
  ****/
 
 /** Constructor */
-SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const std::string &gpgId, const std::string &sslId, uint32_t type, bool isHome)
+SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const std::string &gpgId, const std::string &sslId, const std::string& ip_address,uint32_t type, bool isHome)
 :QWidget(NULL), mParent(parent), mFeedId(feedId),
-	mSslId(sslId), mGpgId(gpgId), mType(type), mIsHome(isHome)
+	mSslId(sslId), mGpgId(gpgId), mType(type), mIsHome(isHome), mIP(ip_address)
 {
     /* Invoke the Qt Designer generated object setup routine */
     setupUi(this);
@@ -187,7 +187,7 @@ void SecurityItem::updateItem()
 				statusLabel->setText(tr("Unknown Peer"));
 				trustLabel->setText(tr("Unknown Peer"));
 				locLabel->setText(tr("Unknown Peer"));
-				ipLabel->setText(tr("Unknown Peer"));
+				ipLabel->setText(QString::fromStdString(mIP)) ; //tr("Unknown Peer"));
 				connLabel->setText(tr("Unknown Peer"));
 
 				chatButton->hide();
@@ -205,8 +205,9 @@ void SecurityItem::updateItem()
 		peerNameLabel->setText(QString::fromUtf8(details.name.c_str()));
 
 		/* expanded Info */
-		nameLabel->setText(QString::fromUtf8(details.name.c_str()));
-		idLabel->setText(QString::fromStdString(details.id));
+		nameLabel->setText(QString::fromUtf8(details.name.c_str()) + " (" + QString::fromStdString(mGpgId) + ")");
+		//idLabel->setText(QString::fromStdString(details.id));
+		idLabel->setText(QString::fromStdString(mSslId));
 		locLabel->setText(QString::fromUtf8(details.location.c_str()));
 
 		/* top Level info */
@@ -223,7 +224,7 @@ void SecurityItem::updateItem()
 		statusLabel->setText(status);
 		trustLabel->setText(QString::fromStdString(RsPeerTrustString(details.trustLvl)));
 
-		ipLabel->setText(QString("%1:%2/%3:%4").arg(QString::fromStdString(details.localAddr)).arg(details.localPort).arg(QString::fromStdString(details.extAddr)).arg(details.extPort));
+		ipLabel->setText(QString::fromStdString(mIP)) ; //QString("%1:%2/%3:%4").arg(QString::fromStdString(details.localAddr)).arg(details.localPort).arg(QString::fromStdString(details.extAddr)).arg(details.extPort));
 
 		connLabel->setText(StatusDefs::connectStateString(details));
 

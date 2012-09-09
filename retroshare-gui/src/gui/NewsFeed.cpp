@@ -497,7 +497,7 @@ void	NewsFeed::addFeedItemPeerNew(RsFeedItem &fi)
 void	NewsFeed::addFeedItemSecurityConnectAttempt(RsFeedItem &fi)
 {
 	/* make new widget */
-	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, fi.mId1, fi.mId2, SEC_TYPE_CONNECT_ATTEMPT, false);
+	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, fi.mId1, fi.mId2, fi.mId4, SEC_TYPE_CONNECT_ATTEMPT, false);
 
 	/* store */
 
@@ -513,7 +513,7 @@ void	NewsFeed::addFeedItemSecurityConnectAttempt(RsFeedItem &fi)
 void	NewsFeed::addFeedItemSecurityAuthDenied(RsFeedItem &fi)
 {
 	/* make new widget */
-	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, fi.mId1, fi.mId2, SEC_TYPE_AUTH_DENIED, false);
+	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, fi.mId1, fi.mId2, fi.mId4, SEC_TYPE_AUTH_DENIED, false);
 
 	/* store */
 
@@ -529,7 +529,7 @@ void	NewsFeed::addFeedItemSecurityAuthDenied(RsFeedItem &fi)
 void	NewsFeed::addFeedItemSecurityUnknownIn(RsFeedItem &fi)
 {
 	/* make new widget */
-	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, fi.mId1, fi.mId2, SEC_TYPE_UNKNOWN_IN, false);
+	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, fi.mId1, fi.mId2, fi.mId4, SEC_TYPE_UNKNOWN_IN, false);
 
 	/* store */
 
@@ -545,7 +545,7 @@ void	NewsFeed::addFeedItemSecurityUnknownIn(RsFeedItem &fi)
 void	NewsFeed::addFeedItemSecurityUnknownOut(RsFeedItem &fi)
 {
 	/* make new widget */
-	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, fi.mId1, fi.mId2, SEC_TYPE_UNKNOWN_OUT, false);
+	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, fi.mId1, fi.mId2, fi.mId4, SEC_TYPE_UNKNOWN_OUT, false);
 	
 	/* store */
 	

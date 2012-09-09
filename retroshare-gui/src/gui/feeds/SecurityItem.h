@@ -38,7 +38,7 @@ class SecurityItem : public QWidget, private Ui::SecurityItem
 
 public:
 	/** Default Constructor */
-	SecurityItem(FeedHolder *parent, uint32_t feedId, const std::string &gpgId, const std::string &sslId, uint32_t type, bool isHome);
+	SecurityItem(FeedHolder *parent, uint32_t feedId, const std::string &gpgId, const std::string &sslId, const std::string& ip_addr,uint32_t type, bool isHome);
 
 	void updateItemStatic();
 	void small();
@@ -69,6 +69,7 @@ private:
 
 	std::string mSslId;
 	std::string mGpgId;
+	std::string mIP;
 	uint32_t mType;
 	bool mIsHome;
 };

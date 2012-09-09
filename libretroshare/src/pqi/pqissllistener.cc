@@ -477,6 +477,7 @@ int 	pqissllistenbase::Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_
 		std::string out;
 		rs_sprintf(out, "pqissllistenbase::Extract_Failed_SSL_Certificate() from: %s:%u ERROR Peer didn't give Cert!", rs_inet_ntoa(addr->sin_addr).c_str(), ntohs(addr->sin_port));
 		std::cerr << out << std::endl;
+        AuthSSL::getAuthSSL()->FailedCertificate(peercert, *addr, true);
 
 		pqioutput(PQL_WARNING, pqissllistenzone, out);
 		return -1;
@@ -491,11 +492,12 @@ int 	pqissllistenbase::Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_
 		std::cerr << out << std::endl;
 
 		pqioutput(PQL_WARNING, pqissllistenzone, out);
+		std::cerr << out << std::endl;
 	}
 
 	// save certificate... (and ip locations)
 	// false for outgoing....
-        AuthSSL::getAuthSSL()->FailedCertificate(peercert, *addr, true);
+	AuthSSL::getAuthSSL()->FailedCertificate(peercert, *addr, true);
 
 	return 1;
 }

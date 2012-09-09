@@ -964,21 +964,24 @@ bool    AuthSSLimpl::ValidateCertificate(X509 *x509, std::string &peerId)
 static int verify_x509_callback(int preverify_ok, X509_STORE_CTX *ctx)
 {
 #ifdef AUTHSSL_DEBUG
-        std::cerr << "static verify_x509_callback called.";
-        std::cerr << std::endl;
+	std::cerr << "static verify_x509_callback called.";
+	std::cerr << std::endl;
 #endif
-        int verify = AuthSSL::getAuthSSL()->VerifyX509Callback(preverify_ok, ctx);
-	if (!verify)
-	{
-		/* Process as FAILED Certificate */
-		/* Start as INCOMING, as outgoing is already captured */
-		struct sockaddr_in addr;
-		sockaddr_clear(&addr);
-		
-		AuthSSL::getAuthSSL()->FailedCertificate(X509_STORE_CTX_get_current_cert(ctx), addr, true); 
-	}
+	int verify = AuthSSL::getAuthSSL()->VerifyX509Callback(preverify_ok, ctx);
 
-        return verify;
+	X509 *x509 = X509_STORE_CTX_get_current_cert(ctx) ;
+
+	if(x509 != NULL)
+	{
+		std::string gpgid = getX509CNString(x509->cert_info->issuer);
+		std::string sslcn = getX509CNString(x509->cert_info->subject);
+		std::string sslid ;
+		getX509id(x509,sslid);
+
+		AuthSSL::getAuthSSL()->registerConnexionAttempt_ids(gpgid,sslid,sslcn) ;
+	} 
+
+	return verify;
 }
 
 int AuthSSLimpl::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
@@ -1286,18 +1289,41 @@ bool    AuthSSLimpl::decrypt(void *&out, int &outlen, const void *in, int inlen)
 /********************************************************************************/
 /********************************************************************************/
 
-/* store for discovery */
-bool    AuthSSLimpl::FailedCertificate(X509 *x509, const struct sockaddr_in &/*addr*/, bool incoming)
+void AuthSSLimpl::registerConnexionAttempt_ids(const std::string& gpg_id,const std::string& ssl_id,const std::string& ssl_cn)
 {
-        std::string peerId = "UnknownSSLID";
-	if(!getX509id(x509, peerId)) 
-	{
-		std::cerr << "AuthSSLimpl::FailedCertificate() ERROR cannot extract X509id from certificate";
-		std::cerr << std::endl;
-	}
+	std::cerr << "AuthSSL: registering connexion attempt from:" << std::endl;
+	std::cerr << "    GPG id: " << gpg_id << std::endl;
+	std::cerr << "    SSL id: " << ssl_id << std::endl;
+	std::cerr << "    SSL cn: " << ssl_cn << std::endl;
+	_last_gpgid_to_connect = gpg_id ;
+	_last_sslid_to_connect = ssl_id ;
+	_last_sslcn_to_connect = ssl_cn ;
+}
 
-        std::string gpgid = getX509CNString(x509->cert_info->issuer);
-        std::string sslcn = getX509CNString(x509->cert_info->subject);
+/* store for discovery */
+bool    AuthSSLimpl::FailedCertificate(X509 *x509, const struct sockaddr_in& addr, bool incoming)
+{
+	std::string gpgid = "Unknown GPG Id" ;
+	std::string sslcn = "Unknown SSL location" ;
+	std::string sslid = "Unknown SSL Id" ;
+
+	if(x509 != NULL)
+	{
+		if(!getX509id(x509, sslid)) 
+		{
+			std::cerr << "AuthSSLimpl::FailedCertificate() ERROR cannot extract X509id from certificate";
+			std::cerr << std::endl;
+		}
+
+		gpgid = getX509CNString(x509->cert_info->issuer);
+		sslcn = getX509CNString(x509->cert_info->subject);
+	}
+	else if(incoming)
+	{
+		gpgid = _last_gpgid_to_connect ;
+		sslcn = _last_sslcn_to_connect ;
+		sslid = _last_sslid_to_connect ;
+	}
 
 	std::cerr << "AuthSSLimpl::FailedCertificate() ";
 	if (incoming)
@@ -1309,16 +1335,18 @@ bool    AuthSSLimpl::FailedCertificate(X509 *x509, const struct sockaddr_in &/*a
 		std::cerr << " Outgoing to: ";
 	}
 
-	std::cerr << "GpgId: " << gpgid << " SSLcn: " << sslcn << " peerId: " << peerId;
-	std::cerr << std::endl;
-
 	// Hacky - adding IpAddress to SSLId.
-//	rs_sprintf_append(peerId, "/%s:%u", rs_inet_ntoa(addr.sin_addr).c_str(), ntohs(addr.sin_port));
+	
+	std::string ip_address ;
+	rs_sprintf_append(ip_address, "%s:%u", rs_inet_ntoa(addr.sin_addr).c_str(), ntohs(addr.sin_port));
+
+	std::cerr << "GpgId: " << gpgid << " SSLcn: " << sslcn << " peerId: " << sslid << ", ip address: " << ip_address;
+	std::cerr << std::endl;
 
 	uint32_t notifyType = 0;
 
 	/* if auths -> store */
-	if (AuthX509WithGPG(x509))
+	if(x509 != NULL && AuthX509WithGPG(x509))
 	{
 		std::cerr << "AuthSSLimpl::FailedCertificate() Cert Checked Out, so passing to Notify";
 		std::cerr << std::endl;
@@ -1326,14 +1354,14 @@ bool    AuthSSLimpl::FailedCertificate(X509 *x509, const struct sockaddr_in &/*a
 		if (incoming)
 		{
 			notifyType = RS_FEED_ITEM_SEC_CONNECT_ATTEMPT;
-			getPqiNotify()->AddPopupMessage(RS_POPUP_CONNECT_ATTEMPT, gpgid, sslcn, peerId);
+			getPqiNotify()->AddPopupMessage(RS_POPUP_CONNECT_ATTEMPT, gpgid, sslcn, sslid);
 		}
 		else
 		{
 			notifyType = RS_FEED_ITEM_SEC_AUTH_DENIED;
 		}
 
-		getPqiNotify()->AddFeedItem(notifyType, gpgid, peerId, sslcn);
+		getPqiNotify()->AddFeedItem(notifyType, gpgid, sslid, sslcn, ip_address);
 
 		LocalStoreCert(x509);
 		return true;
@@ -1343,15 +1371,15 @@ bool    AuthSSLimpl::FailedCertificate(X509 *x509, const struct sockaddr_in &/*a
 		/* unknown peer! */
 		if (incoming)
 		{
-			notifyType = RS_FEED_ITEM_SEC_UNKNOWN_IN;
-			getPqiNotify()->AddPopupMessage(RS_POPUP_CONNECT_ATTEMPT, gpgid, sslcn, peerId);
+			notifyType = RS_FEED_ITEM_SEC_CONNECT_ATTEMPT;
+			getPqiNotify()->AddPopupMessage(RS_POPUP_CONNECT_ATTEMPT, gpgid, sslcn, sslid);
 		}
 		else
 		{
 			notifyType = RS_FEED_ITEM_SEC_UNKNOWN_OUT;
 		}
 
-		getPqiNotify()->AddFeedItem(notifyType, gpgid, peerId, sslcn);
+		getPqiNotify()->AddFeedItem(notifyType, gpgid, sslid, sslcn, ip_address);
 
 	}
 
