@@ -1,0 +1,120 @@
+package rsctrl.search;
+
+import "core.proto";
+
+///////////////////////////////////////////////////////////////
+// Searches
+///////////////////////////////////////////////////////////////
+
+enum RequestMsgIds {
+    MsgId_RequestBasicSearch   = 1;
+    //MsgId_RequestAdvSearch   = 2; // NOT IMPLEMENTED YET.		
+    MsgId_RequestCloseSearch   = 3;
+    MsgId_RequestListSearches  = 4;
+    MsgId_RequestSearchResults = 5;
+}
+
+enum ResponseMsgIds {
+    MsgId_ResponseSearchIds = 1;
+    MsgId_ResponseSearchResults = 5;
+}
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+// Building Block
+message SearchHit {
+
+  enum LocFlag {
+    LOCAL 	= 1; 	// We Have it.
+    FRIEND 	= 2; 	// Browsable
+    NETWORK 	= 4; 	// Network.
+  }
+
+  required rsctrl.core.File file 	= 1;
+  required uint32 loc 			= 2; // OR of LocFlag so uint field
+  required uint32 no_hits 		= 3; // NOT USED YET.
+
+}
+
+message SearchSet {
+
+  required uint32     search_id			= 1;
+  repeated SearchHit  hits			= 2;
+
+}
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+// SEARCH (start).
+
+// REQUEST: RequestBasicSearch
+message RequestBasicSearch {
+
+  repeated string terms = 1;
+}
+
+// REQUEST: RequestAdvSearch
+message RequestAdvSearch {
+
+  repeated string terms = 1;
+}
+
+
+// RESPONSE: ResponseSearchIds
+message ResponseSearchIds {
+
+  required rsctrl.core.Status status = 1;
+  repeated uint32 search_id = 2;
+}
+
+
+///////////////////////////////////////////////////////////////
+// SEARCH (cancel)
+
+// REQUEST: RequestCloseSearch
+message RequestCloseSearch {
+
+  required uint32 search_id = 1;
+}
+
+
+// RESPONSE: ResponseSearchIds
+// As before.
+
+///////////////////////////////////////////////////////////////
+// SEARCH (list)
+
+// REQUEST: RequestListSearches
+message RequestListSearches {
+   // Nothing here.
+}
+
+// RESPONSE: ResponseSearchIds
+// As before.
+
+///////////////////////////////////////////////////////////////
+// SEARCH (list)
+
+
+// REQUEST: RequestSearchResults
+// Empty search_ids => all results.
+message RequestSearchResults {
+
+  repeated uint32 search_ids = 2;
+
+}
+
+// RESPONSE: ResponseSearchResults
+message ResponseSearchResults {
+
+  required rsctrl.core.Status status = 1;
+  repeated SearchSet searches = 2;
+}
+
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+

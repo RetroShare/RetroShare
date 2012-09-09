@@ -8,12 +8,12 @@ import "core.proto";
 
 enum RequestMsgIds {
     MsgId_RequestSystemStatus = 1;
-    //MsgId_RequestNetConfig = 2;
+    MsgId_RequestSystemQuit   = 2;
 }
 
 enum ResponseMsgIds {
     MsgId_ResponseSystemStatus = 1;
-    //MsgId_ResponseNetConfig = 2;
+    MsgId_ResponseSystemQuit   = 2;
 }
 
 ///////////////////////////////////////////////////////////////
@@ -49,6 +49,28 @@ message ResponseSystemStatus {
   required NetCode net_status = 4;
 
   required rsctrl.core.Bandwidth bw_total = 5;
+}
+
+///////////////////////////////////////////////////////////////
+
+// REQUEST: RequestSystemQuit
+message RequestSystemQuit {
+
+  enum QuitCode {
+    CLOSE_CHANNEL       = 1;
+    SHUTDOWN_RS         = 2;  // NOT RECOMMENDED (but some people might like it)
+  }
+
+  required QuitCode quit_code = 1;
+}
+
+// RESPONSE: ResponseSystemQuit
+// Effect potentially immediate (with loss of connection) - only expect a response error.
+// Shutdown takes longer - so you should get a response.
+message ResponseSystemQuit {
+
+  // Status of response.
+  required rsctrl.core.Status status = 1;
 }
 
 ///////////////////////////////////////////////////////////////

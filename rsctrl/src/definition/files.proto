@@ -3,197 +3,115 @@ package rsctrl.files;
 import "core.proto";
 
 ///////////////////////////////////////////////////////////////
-// Mirror most of rsFiles functionality.
-//
-// Share Directories.
-// Searches
 // List Transfers.
 // Control Transfers.
+//
+// TODO:
+// Share Directories.
 ///////////////////////////////////////////////////////////////
 
 enum RequestMsgIds {
-    MsgId_RequestPeers = 1;
-    MsgId_RequestAddPeer = 2;
-    MsgId_RequestModifyPeer = 3;
+    MsgId_RequestTransferList 		= 1;
+    MsgId_RequestControlDownload   	= 2;
 }
 
 enum ResponseMsgIds {
-    MsgId_ResponsePeerList = 1;
-    MsgId_ResponseAddPeer = 2;
-    MsgId_ResponseModifyPeer = 3;
+    MsgId_ResponseTransferList  	= 1;
+    MsgId_ResponseControlDownload  	= 2;
 }
 
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
-// SEARCH (start).
 
-// REQUEST: RequestBasicSearch
-message RequestBasicSearch {
+// Building Blocks
 
-  repeated string terms = 1;
+enum Direction {
+    DIRECTION_UPLOAD    = 1;
+    DIRECTION_DOWNLOAD  = 2;
 }
 
-// REQUEST: RequestAdvSearch
-message RequestAdvSearch {
+message FileTransfer {
 
-  repeated string terms = 1;
+  required rsctrl.core.File file 	= 1;
+  required Direction direction		= 2;
+  required float fraction		= 3;
+  required float rate_kBs		= 4;
 }
 
+///////////////////////////////////////////////////////////////
+// Transfer List.
 
-// RESPONSE: ResponseSearchId
-message ResponseSearchId {
+// REQUEST: RequestTransferList
+message RequestTransferList {
+  required Direction direction = 1;
+}
+
+// RESPONSE: ResponseTransferList
+message ResponseTransferList {
 
   required rsctrl.core.Status status = 1;
-  required string search_id = 2;
+  repeated FileTransfer transfers = 2;
+
 }
 
 ///////////////////////////////////////////////////////////////
-// SEARCH (list)
+// Download.
 
+// REQUEST: RequestControlDownload
+// START requires name, hash & size.
+// other actions only require file hash.
+message RequestControlDownload {
 
-// REQUEST: RequestSearchResults
-message RequestSearchResults {
-
-  enum SetCmd {
-    ALLIDS = 1; 	// All 
-    LISTED = 2; 	// Only Search Ids in the Vector.
-  }
-
-  required SetCmd set = 1;
-  repeated string search_ids = 2;
-}
-
-// Building Block
-message SearchHit {
-
-  enum LocFlag {
-    LOCAL 	= 1; 	// We Have it.
-    FRIEND 	= 2; 	// Browsable
-    NETWORK 	= 4; 	// Network.
+  enum Action {
+    ACTION_START    = 1; 	// start download.
+    ACTION_CONTINUE = 2; 	// move to top of queue.
+    ACTION_WAIT     = 3;	// send to bottom of queue.
+    ACTION_PAUSE    = 4; 	// hold indefinitely. 
+    ACTION_RESTART  = 5; 	// end pause, restart download.
+    ACTION_CHECK    = 6; 	// force check.
+    ACTION_CANCEL   = 7; 	// remove permenantly.
   }
 
   required rsctrl.core.File file 	= 1;
-  required uint32 no_hits 		= 2;
-  required LocFlag loc 			= 3;
+  required Action action 		= 2;
 
 }
 
-message SearchSet {
-
-  required string search_id			= 1;
-
-  enum SearchType {
-    BASIC 	= 1; 	// Stuff.
-    ADVANCED 	= 2; 	// Stuff.
-  }
-
-  // One of these will be filled in depending on flag.
-
-  required SearchType         search_type	= 2;
-  optional RequestBasicSearch basic_req		= 3;
-  optional RequestAdvSearch   adv_req		= 4;
-
-  repeated SearchHit	      hits		= 5;
-
-}
-
-// RESPONSE: ResponseSearchResults
-message ResponseSearchResults {
-
+// RESPONSE: ResponseControlDownload
+message ResponseControlDownload {
   required rsctrl.core.Status status = 1;
-  repeated SearchSet searches = 2;
 }
-
-
-///////////////////////////////////////////////////////////////
-// SEARCH (cancel)
-
-// REQUEST: RequestCloseSearch
-message RequestCloseSearch {
-
-  required string search_id = 2;
-}
-
-
-// RESPONSE: ResponseSearchId
-// As before.
 
 
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
 // SHARED FILES
+// THIS STUFF IS NOT FINISHED YET!
+//
+//// REQUEST: RequestListShares
+//message RequestListShares {
+//
+//  required uint32 depth = 1;		// HOW Many Directories to drill down.
+//  repeated string ShareLocation = 2;
+//}
+//
+//message ShareLocation {
+//  required string ssl_id = 1;
+//  required string path = 2;
+//}
+//
+//
+//
+//// REQUEST: RequestChangeShares
+//
+//// REQUEST: RequestLiCloseSearch
+//// REQUEST: RequestCloseSearch
+//
 
 
-
-// REQUEST: RequestListShares
-message RequestListShares {
-
-  required uint32 depth = 1;		// HOW Many Directories to drill down.
-  repeated string ShareLocation = 2;
-}
-
-message ShareLocation {
-  required string ssl_id = 1;
-  required string path = 2;
-}
-
-
-
-// REQUEST: RequestChangeShares
-
-// REQUEST: RequestLiCloseSearch
-// REQUEST: RequestCloseSearch
-
-
-
-
-// REQUEST: RequestAddPeer
-message RequestAddPeer {
-
-  enum AddCmd {
-    NOOP = 0; 		// No op.
-    ADD = 1; 		// Add existing from gpg_id.
-    REMOVE = 2; 	// Remove existing from gpg_id.
-    IMPORT = 3; 	// Import from cert, with gpg_id.
-    EXAMINE = 4; 	// Examine cert, but no action.
-  }
-
-  required string gpg_id = 1;
-  required AddCmd cmd = 2;
-  optional string cert = 3;
-}
-
-// RESPONSE: ResponseAddPeer
-message ResponseAddPeer {
-  required rsctrl.core.Status status = 1;
-  repeated rsctrl.core.Person peers = 2;
-}
 
 ///////////////////////////////////////////////////////////////
-
-// REQUEST: RequestModifyPeer
-message RequestModifyPeer {
-
-  enum ModCmd {
-    NOOP    		= 0; 	
-    ADDRESS 		= 1;
-    DYNDNS  		= 2;
-    //SOMETHING_ELSE  	= 0x0000010; 
-    //SOMETHING_ELSE  	= 0x0000020; 
-    //SOMETHING_ELSE  	= 0x0000040; 
-    //SOMETHING_ELSE  	= 0x0000080; 
-  }
-
-  required ModCmd cmd = 1; 
-  //required int64 cmd = 1; // Could we OR the Cmds together?
-  repeated rsctrl.core.Person peers = 2;
-}
-
-// RESPONSE: ResponseModifyPeer
-message ResponseModifyPeer {
-  required rsctrl.core.Status status = 1;
-  repeated rsctrl.core.Person peers = 2;
-}
-
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
 

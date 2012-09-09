@@ -15,9 +15,11 @@ enum PackageId {
   PEERS = 1; 
   SYSTEM = 2;
   CHAT = 3;
+  SEARCH = 4;
+  FILES = 5;
   // BELOW HERE IS STILL BEING DESIGNED.
-  //FILES = 4;
   //MSGS = 5;
+  //TRANSFER = 6;
 
   // THEORETICAL ONES.
   GXS = 1000; 
@@ -32,9 +34,11 @@ message Status {
     FAILED        	= 0;
     NO_IMPL_YET		= 1;
     INVALID_QUERY 	= 2;
-    SUCCESS       	= 3;
-    READMSG       	= 4;
+    PARTIAL_SUCCESS   	= 3;
+    SUCCESS       	= 4;
+    READMSG       	= 5;
   }
+
   required StatusCode code = 1;
   optional string msg = 2;
 }
@@ -89,11 +93,12 @@ message Person {
 message File {
   required string name = 1;
   required string hash = 2;
-  required int64  size = 3;
+  required uint64 size = 3;
 
-  optional string path = 4;
-  optional string avail = 5;
-
+  // THINK WE DONT WANT THESE HERE...
+  // BETTER TO KEEP File simple.
+  //optional string path = 4;
+  //optional string avail = 5;
 }
 
 message Dir {
