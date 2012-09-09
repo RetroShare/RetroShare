@@ -36,6 +36,8 @@ void protobuf_ShutdownFile_system_2eproto();
 
 class RequestSystemStatus;
 class ResponseSystemStatus;
+class RequestSystemQuit;
+class ResponseSystemQuit;
 
 enum ResponseSystemStatus_NetCode {
   ResponseSystemStatus_NetCode_BAD_UNKNOWN = 0,
@@ -63,12 +65,32 @@ inline bool ResponseSystemStatus_NetCode_Parse(
   return ::google::protobuf::internal::ParseNamedEnum<ResponseSystemStatus_NetCode>(
     ResponseSystemStatus_NetCode_descriptor(), name, value);
 }
+enum RequestSystemQuit_QuitCode {
+  RequestSystemQuit_QuitCode_CLOSE_CHANNEL = 1,
+  RequestSystemQuit_QuitCode_SHUTDOWN_RS = 2
+};
+bool RequestSystemQuit_QuitCode_IsValid(int value);
+const RequestSystemQuit_QuitCode RequestSystemQuit_QuitCode_QuitCode_MIN = RequestSystemQuit_QuitCode_CLOSE_CHANNEL;
+const RequestSystemQuit_QuitCode RequestSystemQuit_QuitCode_QuitCode_MAX = RequestSystemQuit_QuitCode_SHUTDOWN_RS;
+const int RequestSystemQuit_QuitCode_QuitCode_ARRAYSIZE = RequestSystemQuit_QuitCode_QuitCode_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* RequestSystemQuit_QuitCode_descriptor();
+inline const ::std::string& RequestSystemQuit_QuitCode_Name(RequestSystemQuit_QuitCode value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    RequestSystemQuit_QuitCode_descriptor(), value);
+}
+inline bool RequestSystemQuit_QuitCode_Parse(
+    const ::std::string& name, RequestSystemQuit_QuitCode* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<RequestSystemQuit_QuitCode>(
+    RequestSystemQuit_QuitCode_descriptor(), name, value);
+}
 enum RequestMsgIds {
-  MsgId_RequestSystemStatus = 1
+  MsgId_RequestSystemStatus = 1,
+  MsgId_RequestSystemQuit = 2
 };
 bool RequestMsgIds_IsValid(int value);
 const RequestMsgIds RequestMsgIds_MIN = MsgId_RequestSystemStatus;
-const RequestMsgIds RequestMsgIds_MAX = MsgId_RequestSystemStatus;
+const RequestMsgIds RequestMsgIds_MAX = MsgId_RequestSystemQuit;
 const int RequestMsgIds_ARRAYSIZE = RequestMsgIds_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* RequestMsgIds_descriptor();
@@ -82,11 +104,12 @@ inline bool RequestMsgIds_Parse(
     RequestMsgIds_descriptor(), name, value);
 }
 enum ResponseMsgIds {
-  MsgId_ResponseSystemStatus = 1
+  MsgId_ResponseSystemStatus = 1,
+  MsgId_ResponseSystemQuit = 2
 };
 bool ResponseMsgIds_IsValid(int value);
 const ResponseMsgIds ResponseMsgIds_MIN = MsgId_ResponseSystemStatus;
-const ResponseMsgIds ResponseMsgIds_MAX = MsgId_ResponseSystemStatus;
+const ResponseMsgIds ResponseMsgIds_MAX = MsgId_ResponseSystemQuit;
 const int ResponseMsgIds_ARRAYSIZE = ResponseMsgIds_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* ResponseMsgIds_descriptor();
@@ -326,6 +349,195 @@ class ResponseSystemStatus : public ::google::protobuf::Message {
   void InitAsDefaultInstance();
   static ResponseSystemStatus* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class RequestSystemQuit : public ::google::protobuf::Message {
+ public:
+  RequestSystemQuit();
+  virtual ~RequestSystemQuit();
+  
+  RequestSystemQuit(const RequestSystemQuit& from);
+  
+  inline RequestSystemQuit& operator=(const RequestSystemQuit& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const RequestSystemQuit& default_instance();
+  
+  void Swap(RequestSystemQuit* other);
+  
+  // implements Message ----------------------------------------------
+  
+  RequestSystemQuit* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const RequestSystemQuit& from);
+  void MergeFrom(const RequestSystemQuit& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  typedef RequestSystemQuit_QuitCode QuitCode;
+  static const QuitCode CLOSE_CHANNEL = RequestSystemQuit_QuitCode_CLOSE_CHANNEL;
+  static const QuitCode SHUTDOWN_RS = RequestSystemQuit_QuitCode_SHUTDOWN_RS;
+  static inline bool QuitCode_IsValid(int value) {
+    return RequestSystemQuit_QuitCode_IsValid(value);
+  }
+  static const QuitCode QuitCode_MIN =
+    RequestSystemQuit_QuitCode_QuitCode_MIN;
+  static const QuitCode QuitCode_MAX =
+    RequestSystemQuit_QuitCode_QuitCode_MAX;
+  static const int QuitCode_ARRAYSIZE =
+    RequestSystemQuit_QuitCode_QuitCode_ARRAYSIZE;
+  static inline const ::google::protobuf::EnumDescriptor*
+  QuitCode_descriptor() {
+    return RequestSystemQuit_QuitCode_descriptor();
+  }
+  static inline const ::std::string& QuitCode_Name(QuitCode value) {
+    return RequestSystemQuit_QuitCode_Name(value);
+  }
+  static inline bool QuitCode_Parse(const ::std::string& name,
+      QuitCode* value) {
+    return RequestSystemQuit_QuitCode_Parse(name, value);
+  }
+  
+  // accessors -------------------------------------------------------
+  
+  // required .rsctrl.system.RequestSystemQuit.QuitCode quit_code = 1;
+  inline bool has_quit_code() const;
+  inline void clear_quit_code();
+  static const int kQuitCodeFieldNumber = 1;
+  inline ::rsctrl::system::RequestSystemQuit_QuitCode quit_code() const;
+  inline void set_quit_code(::rsctrl::system::RequestSystemQuit_QuitCode value);
+  
+  // @@protoc_insertion_point(class_scope:rsctrl.system.RequestSystemQuit)
+ private:
+  inline void set_has_quit_code();
+  inline void clear_has_quit_code();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  int quit_code_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_system_2eproto();
+  friend void protobuf_AssignDesc_system_2eproto();
+  friend void protobuf_ShutdownFile_system_2eproto();
+  
+  void InitAsDefaultInstance();
+  static RequestSystemQuit* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class ResponseSystemQuit : public ::google::protobuf::Message {
+ public:
+  ResponseSystemQuit();
+  virtual ~ResponseSystemQuit();
+  
+  ResponseSystemQuit(const ResponseSystemQuit& from);
+  
+  inline ResponseSystemQuit& operator=(const ResponseSystemQuit& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const ResponseSystemQuit& default_instance();
+  
+  void Swap(ResponseSystemQuit* other);
+  
+  // implements Message ----------------------------------------------
+  
+  ResponseSystemQuit* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const ResponseSystemQuit& from);
+  void MergeFrom(const ResponseSystemQuit& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required .rsctrl.core.Status status = 1;
+  inline bool has_status() const;
+  inline void clear_status();
+  static const int kStatusFieldNumber = 1;
+  inline const ::rsctrl::core::Status& status() const;
+  inline ::rsctrl::core::Status* mutable_status();
+  inline ::rsctrl::core::Status* release_status();
+  
+  // @@protoc_insertion_point(class_scope:rsctrl.system.ResponseSystemQuit)
+ private:
+  inline void set_has_status();
+  inline void clear_has_status();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::rsctrl::core::Status* status_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_system_2eproto();
+  friend void protobuf_AssignDesc_system_2eproto();
+  friend void protobuf_ShutdownFile_system_2eproto();
+  
+  void InitAsDefaultInstance();
+  static ResponseSystemQuit* default_instance_;
+};
 // ===================================================================
 
 
@@ -462,6 +674,66 @@ inline ::rsctrl::core::Bandwidth* ResponseSystemStatus::release_bw_total() {
   return temp;
 }
 
+// -------------------------------------------------------------------
+
+// RequestSystemQuit
+
+// required .rsctrl.system.RequestSystemQuit.QuitCode quit_code = 1;
+inline bool RequestSystemQuit::has_quit_code() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void RequestSystemQuit::set_has_quit_code() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void RequestSystemQuit::clear_has_quit_code() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void RequestSystemQuit::clear_quit_code() {
+  quit_code_ = 1;
+  clear_has_quit_code();
+}
+inline ::rsctrl::system::RequestSystemQuit_QuitCode RequestSystemQuit::quit_code() const {
+  return static_cast< ::rsctrl::system::RequestSystemQuit_QuitCode >(quit_code_);
+}
+inline void RequestSystemQuit::set_quit_code(::rsctrl::system::RequestSystemQuit_QuitCode value) {
+  GOOGLE_DCHECK(::rsctrl::system::RequestSystemQuit_QuitCode_IsValid(value));
+  set_has_quit_code();
+  quit_code_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// ResponseSystemQuit
+
+// required .rsctrl.core.Status status = 1;
+inline bool ResponseSystemQuit::has_status() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void ResponseSystemQuit::set_has_status() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void ResponseSystemQuit::clear_has_status() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void ResponseSystemQuit::clear_status() {
+  if (status_ != NULL) status_->::rsctrl::core::Status::Clear();
+  clear_has_status();
+}
+inline const ::rsctrl::core::Status& ResponseSystemQuit::status() const {
+  return status_ != NULL ? *status_ : *default_instance_->status_;
+}
+inline ::rsctrl::core::Status* ResponseSystemQuit::mutable_status() {
+  set_has_status();
+  if (status_ == NULL) status_ = new ::rsctrl::core::Status;
+  return status_;
+}
+inline ::rsctrl::core::Status* ResponseSystemQuit::release_status() {
+  clear_has_status();
+  ::rsctrl::core::Status* temp = status_;
+  status_ = NULL;
+  return temp;
+}
+
 
 // @@protoc_insertion_point(namespace_scope)
 
@@ -475,6 +747,10 @@ namespace protobuf {
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::rsctrl::system::ResponseSystemStatus_NetCode>() {
   return ::rsctrl::system::ResponseSystemStatus_NetCode_descriptor();
+}
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::rsctrl::system::RequestSystemQuit_QuitCode>() {
+  return ::rsctrl::system::RequestSystemQuit_QuitCode_descriptor();
 }
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< rsctrl::system::RequestMsgIds>() {

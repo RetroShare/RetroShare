@@ -50,6 +50,7 @@ virtual int tick();
 	int recv_msg(uint32_t chan_id);
 	int send(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg);
 
+        int error(uint32_t chan_id, std::string msg); // pass an error up to comms level.
 private:
 	RpcComms *mComms;
 	RpcServer *mServer;

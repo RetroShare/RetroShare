@@ -230,8 +230,15 @@ void NotifyTxt::notifyTurtleSearchResult(uint32_t search_id,const std::list<Turt
 	it = mSearchResults.find(search_id);
 	if (it == mSearchResults.end())
 	{
+		std::cerr << "NotifyTxt::notifyTurtleSearchResult() " << found_files.size();
+		std::cerr << "ERROR: new results for Id: " << search_id;
+		std::cerr << std::endl;
+		std::cerr << "But list not installed...";
+		std::cerr << " DROPPING SEARCH RESULTS";
+		std::cerr << std::endl;
+
 		/* new entry */
-		mSearchResults[search_id] = found_files;
+		//mSearchResults[search_id] = found_files;
 		return;
 	}
 
@@ -288,15 +295,42 @@ int NotifyTxt::getSearchResultCount(uint32_t id)
 	return it->second.size();
 }
 
-
-int NotifyTxt::clearSearchId(uint32_t searchId)
+                // only collect results for selected searches.
+                // will drop others.
+int NotifyTxt::collectSearchResults(uint32_t searchId)
 {
+	std::cerr << "NotifyTxt::collectSearchResult(" << searchId << ")";
+	std::cerr << std::endl;
+
 	RsStackMutex stack(mNotifyMtx); /****** LOCKED *****/
 
         std::map<uint32_t, std::list<TurtleFileInfo> >::iterator it;
 	it = mSearchResults.find(searchId);
 	if (it == mSearchResults.end())
 	{
+        	std::list<TurtleFileInfo> emptyList;
+		mSearchResults[searchId] = emptyList;
+		return 1;
+	}
+
+	std::cerr << "NotifyTxt::collectSearchResult() ERROR Id exists";
+	std::cerr << std::endl;
+	return 1;
+}
+
+int NotifyTxt::clearSearchId(uint32_t searchId)
+{
+	std::cerr << "NotifyTxt::clearSearchId(" << searchId << ")";
+	std::cerr << std::endl;
+
+	RsStackMutex stack(mNotifyMtx); /****** LOCKED *****/
+
+        std::map<uint32_t, std::list<TurtleFileInfo> >::iterator it;
+	it = mSearchResults.find(searchId);
+	if (it == mSearchResults.end())
+	{
+		std::cerr << "NotifyTxt::clearSearchId() ERROR Id not there";
+		std::cerr << std::endl;
 		return 0;
 	}
 

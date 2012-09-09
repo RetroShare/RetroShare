@@ -35,6 +35,7 @@ public:
 	virtual int processMsg(uint32_t chan_id, uint32_t msgId, uint32_t req_id, const std::string &msg);
 
 	virtual int processSystemStatus(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg);
+	virtual int processSystemQuit(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg);
 };
 
 

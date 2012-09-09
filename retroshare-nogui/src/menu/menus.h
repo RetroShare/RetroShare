@@ -159,11 +159,13 @@ class MenuOpSearchNew: public MenuOpLineInput
 {
 	public:
 
-	MenuOpSearchNew() :MenuOpLineInput("New") { return; }
+	MenuOpSearchNew(NotifyTxt *notify) 
+	:MenuOpLineInput("New"), mNotify(notify) { return; }
 	virtual uint32_t process_lines(std::string input);
 	virtual uint32_t drawPage(uint32_t drawFlags, std::string &buffer);
 
-
+private:
+	NotifyTxt *mNotify;
 };
 
 

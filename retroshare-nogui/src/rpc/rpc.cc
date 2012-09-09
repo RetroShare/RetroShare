@@ -43,6 +43,11 @@ void RpcMediator::reset(uint32_t chan_id)
 	mServer->reset(chan_id);
 }
 
+int RpcMediator::error(uint32_t chan_id, std::string msg)
+{
+	return mComms->error(chan_id, msg);
+}
+
 
 int RpcMediator::tick()
 {

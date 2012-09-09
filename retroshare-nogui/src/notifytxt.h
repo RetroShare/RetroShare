@@ -48,9 +48,14 @@ class NotifyTxt: public NotifyBase
 
 		/* interface for handling SearchResults */
 		void getSearchIds(std::list<uint32_t> &searchIds);
-		int getSearchResults(uint32_t id, std::list<TurtleFileInfo> &searchResults);
-		int clearSearchId(uint32_t searchId);
+
 		int getSearchResultCount(uint32_t id);
+		int getSearchResults(uint32_t id, std::list<TurtleFileInfo> &searchResults);
+
+		// only collect results for selected searches.
+		// will drop others.
+		int collectSearchResults(uint32_t searchId);
+		int clearSearchId(uint32_t searchId);
 
 
 	private:

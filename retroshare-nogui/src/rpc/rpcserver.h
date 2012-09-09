@@ -67,17 +67,23 @@ public:
 	std::string mMsg;
 };
 
+class RpcServer;
 
 class RpcService
 {
 public:
-	RpcService(uint32_t /* serviceId */ ) { return; }
+	RpcService(uint32_t /* serviceId */ ):mRpcServer(NULL) { return; }
 	virtual void reset(uint32_t /* chan_id */) { return; } 
 	virtual int msgsAccepted(std::list<uint32_t> & /* msgIds */) { return 0; } /* not used at the moment */
 	virtual int processMsg(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg) = 0;     /* returns 0 - not handled, > 0, accepted */
 	virtual int getResponse(uint32_t &chan_id, uint32_t &msgId, uint32_t &req_id, std::string &msg) = 0;  /* 0 - not ready, > 0 heres the response */
 
 	virtual int getEvents(std::list<RpcQueuedMsg> & /* events */) { return 0; } /* 0 = none, optional feature */
+	
+	void setRpcServer(RpcServer *server) {mRpcServer = server; }
+	RpcServer *getRpcServer() { return mRpcServer; }
+private:
+	RpcServer *mRpcServer;
 };
 
 
@@ -140,6 +146,7 @@ public:
 	bool checkEvents();
 
 	void reset(uint32_t chan_id);
+        int error(uint32_t chan_id, std::string msg); // pass an error to mediator.
 
 private:
 	bool sendQueuedMsgs(std::list<RpcQueuedMsg> &msgs);

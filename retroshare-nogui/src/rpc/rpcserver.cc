@@ -63,11 +63,16 @@ void RpcServer::reset(uint32_t chan_id)
 	return;
 }
 
+int RpcServer::error(uint32_t chan_id, std::string msg)
+{
+	return mMediator->error(chan_id, msg);
+}
 
 int RpcServer::addService(RpcService *service)
 {
 	RsStackMutex stack(mRpcMtx); /********** LOCKED MUTEX ***************/
 
+	service->setRpcServer(this);
 	mAllServices.push_back(service);
 
 	return 1;

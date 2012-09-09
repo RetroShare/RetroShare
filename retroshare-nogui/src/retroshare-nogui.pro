@@ -187,21 +187,29 @@ protorpc {
 	HEADERS += rpc/proto/rpcprotopeers.h \
 		rpc/proto/rpcprotosystem.h \
 		rpc/proto/rpcprotochat.h \
+		rpc/proto/rpcprotosearch.h \
+		rpc/proto/rpcprotofiles.h \
 
 	SOURCES += rpc/proto/rpcprotopeers.cc \
 		rpc/proto/rpcprotosystem.cc \
 		rpc/proto/rpcprotochat.cc \
+		rpc/proto/rpcprotosearch.cc \
+		rpc/proto/rpcprotofiles.cc \
 
 	# Generated ProtoBuf Code the RPC System
 	HEADERS += rpc/proto/gencc/core.pb.h \
 		rpc/proto/gencc/peers.pb.h \
 		rpc/proto/gencc/system.pb.h \
 		rpc/proto/gencc/chat.pb.h \
+		rpc/proto/gencc/search.pb.h \
+		rpc/proto/gencc/files.pb.h \
 
 	SOURCES += rpc/proto/gencc/core.pb.cc \
 		rpc/proto/gencc/peers.pb.cc \
 		rpc/proto/gencc/system.pb.cc \
 		rpc/proto/gencc/chat.pb.cc \
+		rpc/proto/gencc/search.pb.cc \
+		rpc/proto/gencc/files.pb.cc \
 
         QMAKE_CFLAGS += -pthread
         QMAKE_CXXFLAGS += -pthread

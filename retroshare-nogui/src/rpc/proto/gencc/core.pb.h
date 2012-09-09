@@ -47,8 +47,9 @@ enum Status_StatusCode {
   Status_StatusCode_FAILED = 0,
   Status_StatusCode_NO_IMPL_YET = 1,
   Status_StatusCode_INVALID_QUERY = 2,
-  Status_StatusCode_SUCCESS = 3,
-  Status_StatusCode_READMSG = 4
+  Status_StatusCode_PARTIAL_SUCCESS = 3,
+  Status_StatusCode_SUCCESS = 4,
+  Status_StatusCode_READMSG = 5
 };
 bool Status_StatusCode_IsValid(int value);
 const Status_StatusCode Status_StatusCode_StatusCode_MIN = Status_StatusCode_FAILED;
@@ -154,6 +155,8 @@ enum PackageId {
   PEERS = 1,
   SYSTEM = 2,
   CHAT = 3,
+  SEARCH = 4,
+  FILES = 5,
   GXS = 1000
 };
 bool PackageId_IsValid(int value);
@@ -229,6 +232,7 @@ class Status : public ::google::protobuf::Message {
   static const StatusCode FAILED = Status_StatusCode_FAILED;
   static const StatusCode NO_IMPL_YET = Status_StatusCode_NO_IMPL_YET;
   static const StatusCode INVALID_QUERY = Status_StatusCode_INVALID_QUERY;
+  static const StatusCode PARTIAL_SUCCESS = Status_StatusCode_PARTIAL_SUCCESS;
   static const StatusCode SUCCESS = Status_StatusCode_SUCCESS;
   static const StatusCode READMSG = Status_StatusCode_READMSG;
   static inline bool StatusCode_IsValid(int value) {
@@ -774,34 +778,12 @@ class File : public ::google::protobuf::Message {
   inline ::std::string* mutable_hash();
   inline ::std::string* release_hash();
   
-  // required int64 size = 3;
+  // required uint64 size = 3;
   inline bool has_size() const;
   inline void clear_size();
   static const int kSizeFieldNumber = 3;
-  inline ::google::protobuf::int64 size() const;
-  inline void set_size(::google::protobuf::int64 value);
-  
-  // optional string path = 4;
-  inline bool has_path() const;
-  inline void clear_path();
-  static const int kPathFieldNumber = 4;
-  inline const ::std::string& path() const;
-  inline void set_path(const ::std::string& value);
-  inline void set_path(const char* value);
-  inline void set_path(const char* value, size_t size);
-  inline ::std::string* mutable_path();
-  inline ::std::string* release_path();
-  
-  // optional string avail = 5;
-  inline bool has_avail() const;
-  inline void clear_avail();
-  static const int kAvailFieldNumber = 5;
-  inline const ::std::string& avail() const;
-  inline void set_avail(const ::std::string& value);
-  inline void set_avail(const char* value);
-  inline void set_avail(const char* value, size_t size);
-  inline ::std::string* mutable_avail();
-  inline ::std::string* release_avail();
+  inline ::google::protobuf::uint64 size() const;
+  inline void set_size(::google::protobuf::uint64 value);
   
   // @@protoc_insertion_point(class_scope:rsctrl.core.File)
  private:
@@ -811,21 +793,15 @@ class File : public ::google::protobuf::Message {
   inline void clear_has_hash();
   inline void set_has_size();
   inline void clear_has_size();
-  inline void set_has_path();
-  inline void clear_has_path();
-  inline void set_has_avail();
-  inline void clear_has_avail();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   ::std::string* name_;
   ::std::string* hash_;
-  ::google::protobuf::int64 size_;
-  ::std::string* path_;
-  ::std::string* avail_;
+  ::google::protobuf::uint64 size_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
   
   friend void  protobuf_AddDesc_core_2eproto();
   friend void protobuf_AssignDesc_core_2eproto();
@@ -1938,7 +1914,7 @@ inline ::std::string* File::release_hash() {
   }
 }
 
-// required int64 size = 3;
+// required uint64 size = 3;
 inline bool File::has_size() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
@@ -1949,131 +1925,15 @@ inline void File::clear_has_size() {
   _has_bits_[0] &= ~0x00000004u;
 }
 inline void File::clear_size() {
-  size_ = GOOGLE_LONGLONG(0);
+  size_ = GOOGLE_ULONGLONG(0);
   clear_has_size();
 }
-inline ::google::protobuf::int64 File::size() const {
+inline ::google::protobuf::uint64 File::size() const {
   return size_;
 }
-inline void File::set_size(::google::protobuf::int64 value) {
+inline void File::set_size(::google::protobuf::uint64 value) {
   set_has_size();
   size_ = value;
-}
-
-// optional string path = 4;
-inline bool File::has_path() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
-}
-inline void File::set_has_path() {
-  _has_bits_[0] |= 0x00000008u;
-}
-inline void File::clear_has_path() {
-  _has_bits_[0] &= ~0x00000008u;
-}
-inline void File::clear_path() {
-  if (path_ != &::google::protobuf::internal::kEmptyString) {
-    path_->clear();
-  }
-  clear_has_path();
-}
-inline const ::std::string& File::path() const {
-  return *path_;
-}
-inline void File::set_path(const ::std::string& value) {
-  set_has_path();
-  if (path_ == &::google::protobuf::internal::kEmptyString) {
-    path_ = new ::std::string;
-  }
-  path_->assign(value);
-}
-inline void File::set_path(const char* value) {
-  set_has_path();
-  if (path_ == &::google::protobuf::internal::kEmptyString) {
-    path_ = new ::std::string;
-  }
-  path_->assign(value);
-}
-inline void File::set_path(const char* value, size_t size) {
-  set_has_path();
-  if (path_ == &::google::protobuf::internal::kEmptyString) {
-    path_ = new ::std::string;
-  }
-  path_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* File::mutable_path() {
-  set_has_path();
-  if (path_ == &::google::protobuf::internal::kEmptyString) {
-    path_ = new ::std::string;
-  }
-  return path_;
-}
-inline ::std::string* File::release_path() {
-  clear_has_path();
-  if (path_ == &::google::protobuf::internal::kEmptyString) {
-    return NULL;
-  } else {
-    ::std::string* temp = path_;
-    path_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-    return temp;
-  }
-}
-
-// optional string avail = 5;
-inline bool File::has_avail() const {
-  return (_has_bits_[0] & 0x00000010u) != 0;
-}
-inline void File::set_has_avail() {
-  _has_bits_[0] |= 0x00000010u;
-}
-inline void File::clear_has_avail() {
-  _has_bits_[0] &= ~0x00000010u;
-}
-inline void File::clear_avail() {
-  if (avail_ != &::google::protobuf::internal::kEmptyString) {
-    avail_->clear();
-  }
-  clear_has_avail();
-}
-inline const ::std::string& File::avail() const {
-  return *avail_;
-}
-inline void File::set_avail(const ::std::string& value) {
-  set_has_avail();
-  if (avail_ == &::google::protobuf::internal::kEmptyString) {
-    avail_ = new ::std::string;
-  }
-  avail_->assign(value);
-}
-inline void File::set_avail(const char* value) {
-  set_has_avail();
-  if (avail_ == &::google::protobuf::internal::kEmptyString) {
-    avail_ = new ::std::string;
-  }
-  avail_->assign(value);
-}
-inline void File::set_avail(const char* value, size_t size) {
-  set_has_avail();
-  if (avail_ == &::google::protobuf::internal::kEmptyString) {
-    avail_ = new ::std::string;
-  }
-  avail_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* File::mutable_avail() {
-  set_has_avail();
-  if (avail_ == &::google::protobuf::internal::kEmptyString) {
-    avail_ = new ::std::string;
-  }
-  return avail_;
-}
-inline ::std::string* File::release_avail() {
-  clear_has_avail();
-  if (avail_ == &::google::protobuf::internal::kEmptyString) {
-    return NULL;
-  } else {
-    ::std::string* temp = avail_;
-    avail_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-    return temp;
-  }
 }
 
 // -------------------------------------------------------------------

@@ -84,7 +84,7 @@ Menu *CreateMenuStructure(NotifyTxt *notify)
 
 	MenuList *search = new MenuListSearch(notify);
 	MenuList *searchlist = new MenuListSearchList(notify);
-	search->addMenuItem(MENU_SEARCH_KEY_ADD, new MenuOpSearchNew());
+	search->addMenuItem(MENU_SEARCH_KEY_ADD, new MenuOpSearchNew(notify));
 	//search->addMenuItem(MENU_SEARCH_KEY_REMOVE, new MenuOpSearchDelete());
 	search->addMenuItem(MENU_SEARCH_KEY_VIEW, searchlist);
 	searchlist->addMenuItem(MENU_SEARCH_KEY_DOWNLOAD, new MenuOpSearchListDownload());
@@ -362,11 +362,17 @@ int MenuListSearch::removeSearch(std::string strSearchId)
 	it = mSearchIds.find(strSearchId);
 	if (it != mSearchIds.end())
 	{
-		/* cleanup local maps */
 
 		/* cancel search */
+		// CAN'T DO!!!
 
 		/* clear results from Notify Collector */
+		mNotify->clearSearchId(it->second);
+
+		/* cleanup local maps */
+		mSearchIds.erase(it);
+
+		/* cleanup terms maps (TODO) */
 	}
 
 	return 1;
@@ -392,6 +398,7 @@ uint32_t MenuOpSearchNew::process_lines(std::string input)
 
 	std::string search = input.substr(0, input.size() - 1); // remove \n.
 	uint32_t searchId = (uint32_t) rsTurtle->turtleSearch(search);
+	mNotify->collectSearchResults(searchId);
 
 	/* store request in parent */
 	MenuListSearch *ms = dynamic_cast<MenuListSearch *>(parent());
@@ -645,7 +652,7 @@ int MenuListShared::getEntryDesc(int idx, std::string &desc)
 	rsFiles->getSharedDirectories(dirs);
 	std::list<SharedDirInfo>::iterator it;
 	std::string shareflag;
-	unsigned int i=0;
+	int i=0;
 	for (it = dirs.begin(); (i < idx) && (it != dirs.end()); it++, i++);
     if (it != dirs.end())
     {
@@ -675,7 +682,7 @@ int MenuListShared::unshareSelected()
 	std::list<SharedDirInfo> dirs;
 	rsFiles->getSharedDirectories(dirs);
 	std::list<SharedDirInfo>::iterator it;
-	unsigned int i=0;
+	int i=0;
 	for (it = dirs.begin(); (i < mSelectIdx) && (it != dirs.end()); it++, i++);
     if (it != dirs.end())
     {
@@ -696,7 +703,7 @@ int MenuListShared::toggleFlagSelected(uint32_t shareflags)
 	std::list<SharedDirInfo> dirs;
 	rsFiles->getSharedDirectories(dirs);
 	std::list<SharedDirInfo>::iterator it;
-	unsigned int i=0;
+	int i=0;
 	for (it = dirs.begin(); (i < mSelectIdx) && (it != dirs.end()); it++, i++);
     if (it != dirs.end())
     {
