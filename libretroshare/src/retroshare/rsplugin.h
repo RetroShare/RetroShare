@@ -52,14 +52,22 @@ class RsPQIService ;
 class RsAutoUpdatePage ;
 class PopupChatDialog ;
 
+// Plugin API version. Not used yet, but will be in the future the
+// main value that decides for compatibility.
+//
+#define RS_PLUGIN_API_VERSION        0x000101
+
 // Used for the status of plugins.
 //
 #define PLUGIN_STATUS_NO_STATUS      0x0000
-#define PLUGIN_STATUS_UNKNOWN_HASH   0x0001
+#define PLUGIN_STATUS_REJECTED_HASH  0x0001
 #define PLUGIN_STATUS_DLOPEN_ERROR   0x0002
 #define PLUGIN_STATUS_MISSING_SYMBOL 0x0003
 #define PLUGIN_STATUS_NULL_PLUGIN    0x0004
 #define PLUGIN_STATUS_LOADED         0x0005
+#define PLUGIN_STATUS_WRONG_API      0x0006
+#define PLUGIN_STATUS_MISSING_API    0x0007
+#define PLUGIN_STATUS_MISSING_SVN    0x0008
 
 class RsPluginHandler;
 

@@ -13,18 +13,32 @@ class p3LinkMgr ;
 class PluginInfo
 {
 	public:
+		// Main object provided by the plugin. NULL is the plugin could not be loaded.
+		//
 		RsPlugin *plugin ;
-		std::string info_string ;
+
+		// Information related to the file. Do not require the plugin to be loaded nor the DSO to be openned.
+		//
 		std::string file_hash ;
 		std::string file_name ;
-		uint32_t svn_revision ;
-		uint32_t status ;
+
+		// Information coming from directly loaded symbols. The plugin is responsible for providing them.
+		//
+		std::string creator ;		// creator of the plugin
+		std::string name ;			// name of the plugin
+		uint32_t API_version ;		// API version. 
+		uint32_t svn_revision ;		// Coming from scripts. Same svn version but changing hash could be a security issue.
+
+		// This info is filled when accessing the .so, and loading the plugin.
+		//
+		uint32_t status ;					// See the flags in retroshare/rsplugin.h
+		std::string info_string ;
 };
 
 class RsPluginManager: public RsPluginHandler, public p3Config
 {
 	public:
-		RsPluginManager() ;
+		RsPluginManager(const std::string& current_executable_sha1_hash) ;
 		virtual ~RsPluginManager() {}
 		
 		// ------------ Derived from RsPluginHandler ----------------//
@@ -60,8 +74,8 @@ class RsPluginManager: public RsPluginHandler, public p3Config
                  * sets interfaces for all loaded plugins
                  * @param interfaces
                  */
-                void setInterfaces(RsPlugInInterfaces& interfaces);
-		static void setPluginEntrySymbol(const std::string& s) { _plugin_entry_symbol = s ; }
+		void setInterfaces(RsPlugInInterfaces& interfaces);
+
 		static bool acceptablePluginName(const std::string& s) ;
 		static void setCacheDirectories(const std::string& local,const std::string& remote) ;
 		static void setFileServer(ftServer *ft) { _ftserver = ft ; }
@@ -88,11 +102,24 @@ class RsPluginManager: public RsPluginHandler, public p3Config
 		std::string hashPlugin(const std::string& shared_library_name) ;
 
 		std::vector<PluginInfo> _plugins ;
-		std::set<std::string> _accepted_hashes ;
+
+		// Should allow
+		// 	- searching 
+		// 	- saving all hash
+		//
+		// At start
+		// 	* load reference executable hash. Compare with current executable. 
+		// 		- if different => flush all plugin hashes from cache
+		// 		- if equal, 
+		//
+		std::set<std::string> _accepted_hashes ; // accepted hash values for reference executable hash.
+		std::set<std::string> _rejected_hashes ; // rejected hash values for reference executable hash.
+		std::string _current_executable_hash ;		// At all times, the list of accepted plugins should be related to the current hash of the executable. 
 		bool _allow_all_plugins ;
 
 		static std::string _plugin_entry_symbol ;
 		static std::string _plugin_revision_symbol ;
+		static std::string _plugin_API_symbol ;
 		static std::string _remote_cache_dir ;
 		static std::string _local_cache_dir ;
 		static ftServer *_ftserver ;

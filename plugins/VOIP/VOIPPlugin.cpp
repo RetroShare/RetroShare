@@ -38,6 +38,12 @@ extern "C" {
 	// with same revision numbers, assuming that the revision numbers are up-to-date.
 	//
 	uint32_t RETROSHARE_PLUGIN_revision = SVN_REVISION_NUMBER ;
+
+	// This symbol contains the svn revision number grabbed from the executable. 
+	// It will be tested by RS to load the plugin automatically, since it is safe to load plugins
+	// with same revision numbers, assuming that the revision numbers are up-to-date.
+	//
+	uint32_t RETROSHARE_PLUGIN_api = RS_PLUGIN_API_VERSION ;
 }
 
 void VOIPPlugin::getPluginVersion(int& major,int& minor,int& svn_rev) const

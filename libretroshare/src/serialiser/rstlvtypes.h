@@ -213,6 +213,7 @@ class RsTlvKeyValue: public RsTlvItem
 {
 	public:
 	 RsTlvKeyValue() { return; }
+	 RsTlvKeyValue(const std::string& k,const std::string& v): key(k),value(v) {}
 virtual ~RsTlvKeyValue() { return; }
 virtual uint32_t TlvSize();
 virtual void	 TlvClear();

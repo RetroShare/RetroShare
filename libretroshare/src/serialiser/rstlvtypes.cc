@@ -77,7 +77,7 @@ RsTlvBinaryData::RsTlvBinaryData(uint16_t t)
 }
 
 RsTlvBinaryData::RsTlvBinaryData(const RsTlvBinaryData &b)
-    : tlvtype(b.tlvtype), bin_data(NULL), bin_len(0) {
+    : tlvtype(b.tlvtype), bin_len(0) , bin_data(NULL) {
 
     setBinData(b.bin_data, b.bin_len);
 }

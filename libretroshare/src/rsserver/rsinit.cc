@@ -86,6 +86,7 @@ class RsInitConfig
                 /* Directories (SetupBaseDir) */
                 static std::string basedir;
                 static std::string homePath;
+                static std::string main_executable_hash;
 #ifdef WINDOWS_SYS
                 static bool portable;
                 static bool isWindowsXP;
@@ -151,6 +152,7 @@ static const int SSLPWD_LEN = 64;
 
 std::list<accountId> RsInitConfig::accountIds;
 std::string RsInitConfig::preferedId;
+std::string RsInitConfig::main_executable_hash;
 
 rs_lock_handle_t RsInitConfig::lockHandle;
 
@@ -599,6 +601,15 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 #endif
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
+	// Hash the main executable.
+	
+	uint64_t tmp_size ;
+	std::string tmp_name ;
+
+	if(!RsDirUtil::getFileHash(argv[0],RsInitConfig::main_executable_hash,tmp_size,NULL))
+		std::cerr << "Cannot hash executable! Plugins will not be loaded correctly." << std::endl;
+	else
+		std::cerr << "Hashed main executable: " << RsInitConfig::main_executable_hash << std::endl;
 
 	/* At this point we want to.
 	 * 1) Load up Dase Directory.
@@ -1888,7 +1899,7 @@ int RsServer::StartupRetroShare()
 	/* (1) Load up own certificate (DONE ALREADY) - just CHECK */
 	/**************************************************************************/
 
-        if (1 != AuthSSL::getAuthSSL() -> InitAuth(NULL, NULL, NULL))
+	if (1 != AuthSSL::getAuthSSL() -> InitAuth(NULL, NULL, NULL))
 	{
 		std::cerr << "main() - Fatal Error....." << std::endl;
 		std::cerr << "Invalid Certificate configuration!" << std::endl;
@@ -1896,15 +1907,15 @@ int RsServer::StartupRetroShare()
 		return false ;
 	}
 
-        std::string ownId = AuthSSL::getAuthSSL()->OwnId();
+	std::string ownId = AuthSSL::getAuthSSL()->OwnId();
 
 	/**************************************************************************/
 	/* Any Initial Configuration (Commandline Options)  */
 	/**************************************************************************/
 
 	/* set the debugging to crashMode */
-        std::cerr << "set the debugging to crashMode." << std::endl;
-        if ((!RsInitConfig::haveLogFile) && (!RsInitConfig::outStderr))
+	std::cerr << "set the debugging to crashMode." << std::endl;
+	if ((!RsInitConfig::haveLogFile) && (!RsInitConfig::outStderr))
 	{
 		std::string crashfile = RsInitConfig::basedir + "/";
 		crashfile += ownId + "/" + configLogFileName;
@@ -1919,7 +1930,7 @@ int RsServer::StartupRetroShare()
 
 	/**************************************************************************/
 	// Load up Certificates, and Old Configuration (if present)
-        std::cerr << "Load up Certificates, and Old Configuration (if present)." << std::endl;
+	std::cerr << "Load up Certificates, and Old Configuration (if present)." << std::endl;
 
 	std::string emergencySaveDir = RsInitConfig::configDir.c_str();
 	std::string emergencyPartialsDir = RsInitConfig::configDir.c_str();
@@ -1934,7 +1945,7 @@ int RsServer::StartupRetroShare()
 	/**************************************************************************/
 	/* setup classes / structures */
 	/**************************************************************************/
-        std::cerr << "setup classes / structures" << std::endl;
+	std::cerr << "setup classes / structures" << std::endl;
 
 
 
@@ -1944,21 +1955,21 @@ int RsServer::StartupRetroShare()
 	mNetMgr = new p3NetMgrIMPL();
 	mLinkMgr = new p3LinkMgrIMPL(mPeerMgr, mNetMgr);
 
-        /* Setup Notify Early - So we can use it. */
-        rsNotify = new p3Notify();
-        rsPeers = new p3Peers(mLinkMgr, mPeerMgr, mNetMgr);
+	/* Setup Notify Early - So we can use it. */
+	rsNotify = new p3Notify();
+	rsPeers = new p3Peers(mLinkMgr, mPeerMgr, mNetMgr);
 
 	mPeerMgr->setManagers(mLinkMgr, mNetMgr);
 	mNetMgr->setManagers(mPeerMgr, mLinkMgr);
-	
-        //load all the SSL certs as friends
-//        std::list<std::string> sslIds;
-//        AuthSSL::getAuthSSL()->getAuthenticatedList(sslIds);
-//        for (std::list<std::string>::iterator sslIdsIt = sslIds.begin(); sslIdsIt != sslIds.end(); sslIdsIt++) {
-//            mConnMgr->addFriend(*sslIdsIt);
-//        }
-        //p3DhtMgr  *mDhtMgr  = new OpenDHTMgr(ownId, mConnMgr, RsInitConfig::configDir);
-/**************************** BITDHT ***********************************/
+
+	//load all the SSL certs as friends
+	//        std::list<std::string> sslIds;
+	//        AuthSSL::getAuthSSL()->getAuthenticatedList(sslIds);
+	//        for (std::list<std::string>::iterator sslIdsIt = sslIds.begin(); sslIdsIt != sslIds.end(); sslIdsIt++) {
+	//            mConnMgr->addFriend(*sslIdsIt);
+	//        }
+	//p3DhtMgr  *mDhtMgr  = new OpenDHTMgr(ownId, mConnMgr, RsInitConfig::configDir);
+	/**************************** BITDHT ***********************************/
 
 	// Make up an address. XXX
 
@@ -2058,13 +2069,13 @@ int RsServer::StartupRetroShare()
 	p3BitDht *mBitDht = new p3BitDht(ownId, mLinkMgr, mNetMgr, mDhtStack, bootstrapfile);
 	/* install external Pointer for Interface */
 	rsDht = mBitDht;
-	
+
 	// NEXT THE RELAY (NEED to keep a reference for installing RELAYS)
 	UdpRelayReceiver *mRelay = new UdpRelayReceiver(mDhtStack); 
 	udpReceivers[RSUDP_TOU_RECVER_RELAY_IDX] = mRelay; /* RELAY Connections (DHT Port) */
 	udpTypes[RSUDP_TOU_RECVER_RELAY_IDX] = TOU_RECEIVER_TYPE_UDPRELAY;
 	mDhtStack->addReceiver(udpReceivers[RSUDP_TOU_RECVER_RELAY_IDX]);
-	
+
 	// LAST ON THIS STACK IS STANDARD DIRECT TOU
 	udpReceivers[RSUDP_TOU_RECVER_DIRECT_IDX] = new UdpPeerReceiver(mDhtStack);  /* standard DIRECT Connections (DHT Port) */
 	udpTypes[RSUDP_TOU_RECVER_DIRECT_IDX] = TOU_RECEIVER_TYPE_UDPPEER;
@@ -2073,19 +2084,19 @@ int RsServer::StartupRetroShare()
 	// NOW WE BUILD THE SECOND STACK.
 	// Create the Second UdpStack... Port should be random (but openable!).
 
-//#define MIN_RANDOM_PORT 30000
-//#define MAX_RANDOM_PORT 50000
-	
+	//#define MIN_RANDOM_PORT 30000
+	//#define MAX_RANDOM_PORT 50000
+
 	struct sockaddr_in sndladdr;
 	sockaddr_clear(&sndladdr);
 
-// #ifdef LOCALNET_TESTING
-// 	// HACK Proxy Port near Dht Port - For Relay Testing.
-// 	uint16_t rndport = RsInitConfig::port + 3;
-// 	sndladdr.sin_port = htons(rndport);
-// #else
-// 	uint16_t rndport = MIN_RANDOM_PORT + RSRandom::random_u32() % (MAX_RANDOM_PORT - MIN_RANDOM_PORT);
-// #endif
+	// #ifdef LOCALNET_TESTING
+	// 	// HACK Proxy Port near Dht Port - For Relay Testing.
+	// 	uint16_t rndport = RsInitConfig::port + 3;
+	// 	sndladdr.sin_port = htons(rndport);
+	// #else
+	// 	uint16_t rndport = MIN_RANDOM_PORT + RSRandom::random_u32() % (MAX_RANDOM_PORT - MIN_RANDOM_PORT);
+	// #endif
 
 #ifdef LOCALNET_TESTING
 
@@ -2104,23 +2115,23 @@ int RsServer::StartupRetroShare()
 	// FIRSTLY THE PROXY STUNNER.
 	UdpStunner *mProxyStunner = new UdpStunner(mProxyStack);
 	mProxyStunner->setTargetStunPeriod(300); /* slow (5mins) */
-        mProxyStack->addReceiver(mProxyStunner);
+	mProxyStack->addReceiver(mProxyStunner);
 
 #ifdef LOCALNET_TESTING
 	mProxyStunner->SetAcceptLocalNet();
 #endif
 
-	
+
 	// FINALLY THE PROXY UDP CONNECTIONS
 	udpReceivers[RSUDP_TOU_RECVER_PROXY_IDX] = new UdpPeerReceiver(mProxyStack); /* PROXY Connections (Alt UDP Port) */	
 	udpTypes[RSUDP_TOU_RECVER_PROXY_IDX] = TOU_RECEIVER_TYPE_UDPPEER;	
 	mProxyStack->addReceiver(udpReceivers[RSUDP_TOU_RECVER_PROXY_IDX]);
-	
+
 	// REAL INITIALISATION - WITH THREE MODES
 	tou_init((void **) udpReceivers, udpTypes, RSUDP_NUM_TOU_RECVERS);
 
 	mBitDht->setupConnectBits(mDhtStunner, mProxyStunner, mRelay);
-	
+
 	mNetMgr->setAddrAssist(new stunAddrAssist(mDhtStunner), new stunAddrAssist(mProxyStunner));
 #else
 	/* install NULL Pointer for rsDht Interface */
@@ -2128,7 +2139,7 @@ int RsServer::StartupRetroShare()
 #endif
 
 
-/**************************** BITDHT ***********************************/
+	/**************************** BITDHT ***********************************/
 
 
 	SecurityPolicy *none = secpolicy_create();
@@ -2150,7 +2161,7 @@ int RsServer::StartupRetroShare()
 
 	/* This should be set by config ... there is no default */
 	//ftserver->setSharedDirectories(fileList);
-	
+
 	rsFiles = ftserver;
 
 
@@ -2173,10 +2184,10 @@ int RsServer::StartupRetroShare()
 	plugins_directories.push_back(RsInitConfig::basedir + "/extensions/") ;
 #ifdef DEBUG_PLUGIN_SYSTEM
 	plugins_directories.push_back(".") ;	// this list should be saved/set to some correct value.
-														// possible entries include: /usr/lib/retroshare, ~/.retroshare/extensions/, etc.
+	// possible entries include: /usr/lib/retroshare, ~/.retroshare/extensions/, etc.
 #endif
 
-	RsPluginManager *mPluginsManager = new RsPluginManager ;
+	RsPluginManager *mPluginsManager = new RsPluginManager(RsInitConfig::main_executable_hash) ;
 	rsPlugins  = mPluginsManager ;
 	mConfigMgr->addConfiguration("plugins.cfg", mPluginsManager);
 
@@ -2197,7 +2208,7 @@ int RsServer::StartupRetroShare()
 	// - developping plugins 
 	//
 	std::vector<RsPlugin *> programatically_inserted_plugins ;		
-	
+
 	// Push your own plugins into this list, before the call:
 	//
 	// 	programatically_inserted_plugins.push_back(myCoolPlugin) ;
@@ -2217,7 +2228,7 @@ int RsServer::StartupRetroShare()
 	mStatusSrv = new p3StatusService(mLinkMgr);
 
 #ifndef PQI_DISABLE_TUNNEL
-        p3tunnel *tn = new p3tunnel(mConnMgr, pqih);
+	p3tunnel *tn = new p3tunnel(mConnMgr, pqih);
 	pqih -> addService(tn);
 	mConnMgr->setP3tunnel(tn);
 #endif
@@ -2259,23 +2270,23 @@ int RsServer::StartupRetroShare()
 	// Testing New Cache Services.
 	p3PhotoService *mPhotos = new p3PhotoService(RS_SERVICE_TYPE_PHOTO);
 	pqih -> addService(mPhotos);
-	
+
 	// Testing New Cache Services.
 	p3WikiService *mWikis = new p3WikiService(RS_SERVICE_TYPE_WIKI);
 	pqih -> addService(mWikis);
-	
+
 	// Testing New Cache Services.
 	p3Wire *mWire = new p3Wire(RS_SERVICE_TYPE_WIRE);
 	pqih -> addService(mWire);
-	
+
 	// Testing New Cache Services.
 	p3IdService *mIdentity = new p3IdService(RS_SERVICE_TYPE_IDENTITY);
 	pqih -> addService(mIdentity);
-	
+
 	// Testing New Cache Services.
 	p3ForumsV2 *mForumsV2 = new p3ForumsV2(RS_SERVICE_TYPE_FORUMSV2);
 	pqih -> addService(mForumsV2);
-	
+
 	// Testing New Cache Services.
 	p3PostedService *mPosted = new p3PostedService(RS_SERVICE_TYPE_POSTED);
 	pqih -> addService(mPosted);
@@ -2319,8 +2330,8 @@ int RsServer::StartupRetroShare()
 
 #ifdef RS_ENABLE_ZEROCONF
 	p3ZeroConf *mZeroConf = new p3ZeroConf(
-					AuthGPG::getAuthGPG()->getGPGOwnId(), ownId, 
-					mLinkMgr, mNetMgr, mPeerMgr);
+			AuthGPG::getAuthGPG()->getGPGOwnId(), ownId, 
+			mLinkMgr, mNetMgr, mPeerMgr);
 	mNetMgr->addNetAssistConnect(2, mZeroConf);
 	mNetMgr->addNetListener(mZeroConf); 
 #endif
@@ -2384,7 +2395,7 @@ int RsServer::StartupRetroShare()
 	/**************************************************************************/
 	/* (2) Load configuration files */
 	/**************************************************************************/
-        std::cerr << "(2) Load configuration files" << std::endl;
+	std::cerr << "(2) Load configuration files" << std::endl;
 
 	mConfigMgr->loadConfiguration();
 
@@ -2398,12 +2409,12 @@ int RsServer::StartupRetroShare()
 	/**************************************************************************/
 	pqih->setConfig(mGeneralConfig);
 
-        pqih->load_config();
+	pqih->load_config();
 
 	/**************************************************************************/
 	/* Force Any Configuration before Startup (After Load) */
 	/**************************************************************************/
-        std::cerr << "Force Any Configuration before Startup (After Load)" << std::endl;
+	std::cerr << "Force Any Configuration before Startup (After Load)" << std::endl;
 
 	if (RsInitConfig::forceLocalAddr)
 	{
@@ -2411,7 +2422,7 @@ int RsServer::StartupRetroShare()
 
 		/* clean sockaddr before setting values (MaxOSX) */
 		sockaddr_clear(&laddr);
-		
+
 		laddr.sin_family = AF_INET;
 		laddr.sin_port = htons(RsInitConfig::port);
 
@@ -2436,7 +2447,7 @@ int RsServer::StartupRetroShare()
 		if (load_trustedpeer)
 		{
 			/* sslroot does further checks */
-        		sslr -> loadInitialTrustedPeer(load_trustedpeer_file);
+			sslr -> loadInitialTrustedPeer(load_trustedpeer_file);
 		}
 	}
 #endif
@@ -2480,7 +2491,7 @@ int RsServer::StartupRetroShare()
 	/* flag that the basic Caches are now in the pending Queues */
 	mForums->HistoricalCachesDone();
 	mChannels->HistoricalCachesDone();
-	
+
 #ifdef RS_USE_BLOGS	
 	mBlogs->HistoricalCachesDone();
 #endif
@@ -2502,9 +2513,9 @@ int RsServer::StartupRetroShare()
 	ftserver->StartupThreads();
 	ftserver->ResumeTransfers();
 
-        //mDhtMgr->start();
+	//mDhtMgr->start();
 #ifdef RS_USE_BITDHT
-        mBitDht->start();
+	mBitDht->start();
 #endif
 
 	// startup the p3distrib threads (for cache loading).

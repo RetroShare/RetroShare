@@ -167,6 +167,33 @@ bool NotifyQt::askForPassword(const std::string& key_details, bool prev_is_bad, 
 
 	return false;
 }
+bool NotifyQt::askForPluginConfirmation(const std::string& plugin_file_name, const std::string& plugin_file_hash)
+{
+	RsAutoUpdatePage::lockAllEvents() ;
+
+	QMessageBox dialog;
+	dialog.setWindowTitle(tr("Unregistered plugin/executable"));
+
+	QString text ;
+	text += tr( "RetroShare has detected an unregistered plugin. This happens in two cases:<UL><LI>Your RetroShare executable has changed.</LI><LI>The plugin has changed</LI></UL>Click on Yes to authorize this plugin, or No to deny it. You can change your mind later in Options -> Plugins, then restart." ) ;
+	text += "<UL>" ;
+	text += "<LI>Hash:\t" + QString::fromStdString(plugin_file_hash) + "</LI>" ;
+	text += "<LI>File:\t" + QString::fromStdString(plugin_file_name) + "</LI>";
+	text += "</UL>" ;
+
+	dialog.setText(text) ;
+	dialog.setWindowIcon(QIcon(":/images/rstray3.png"));
+	dialog.setStandardButtons(QMessageBox::Yes | QMessageBox::No) ;
+
+	int ret = dialog.exec();
+
+	RsAutoUpdatePage::unlockAllEvents() ;
+
+	if (ret == QMessageBox::Yes) 
+		return true ;
+	else
+		return false;
+}
 
 void NotifyQt::notifyDiscInfoChanged()
 {

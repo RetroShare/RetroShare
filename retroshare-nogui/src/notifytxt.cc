@@ -23,7 +23,7 @@
  *
  */
 
-
+#include <stdio.h>
 #include "notifytxt.h"
 #include <retroshare/rspeers.h>
 #include <string.h>
@@ -82,6 +82,23 @@ void NotifyTxt::notifyErrorMsg(int list, int type, std::string msg)
 void NotifyTxt::notifyChat()
 {
 	return;
+}
+
+bool NotifyTxt::askForPluginConfirmation(const std::string& plugin_file_name, const std::string& plugin_file_hash)
+{
+	std::cerr << "The following plugin is not registered as accepted or denied. You probably upgraded the main executable or the plugin itself." << std::endl;
+	std::cerr << "   Hash: " << plugin_file_hash << std::endl;
+	std::cerr << "   File: " << plugin_file_name << std::endl;
+
+	char a = 0 ;
+	while(a != 'y' && a != 'n')
+	{
+		std::cerr << "Enable this plugin ? (y/n) :" ;
+		std::cerr.flush() ;
+
+		a = fgetc(stdin) ;
+	}
+	return a == 'y' ;
 }
 
 bool NotifyTxt::askForPassword(const std::string& key_details, bool prev_is_bad, std::string& password)

@@ -57,16 +57,26 @@ PluginsPage::PluginsPage(QWidget * parent, Qt::WFlags flags)
 
 			 switch(status)
 			 {
-				 case PLUGIN_STATUS_UNKNOWN_HASH: status_string = tr("SVN revision number ")+QString::number(svn_revision)+tr(" does not match current. Please manually enable the plugin at your own risk.") ;
-															 break ;
-				 case PLUGIN_STATUS_DLOPEN_ERROR: status_string = tr("Loading error.") ;
-															 break ;
-				 case PLUGIN_STATUS_MISSING_SYMBOL: status_string = tr("Missing symbol. Wrong version?") ;
-																break ;
-				 case PLUGIN_STATUS_NULL_PLUGIN:		status_string = tr("No plugin object") ;
-																break ;
-				 case PLUGIN_STATUS_LOADED:		status_string = tr("Plugins is loaded.") ;
-															break ;
+				 case PLUGIN_STATUS_REJECTED_HASH: status_string = tr("Hash rejected. Enable it manually and restart, if you need.") ;
+															  break ;
+
+				 case PLUGIN_STATUS_MISSING_API:   status_string = tr("No API number supplied. Please read plugin development manual.") ;
+															  break ;
+
+				 case PLUGIN_STATUS_MISSING_SVN:   status_string = tr("No SVN number supplied. Please read plugin development manual.") ;
+															  break ;
+
+				 case PLUGIN_STATUS_DLOPEN_ERROR:  status_string = tr("Loading error.") ;
+															  break ;
+
+				 case PLUGIN_STATUS_MISSING_SYMBOL:status_string = tr("Missing symbol. Wrong version?") ;
+															  break ;
+
+				 case PLUGIN_STATUS_NULL_PLUGIN:	  status_string = tr("No plugin object") ;
+															  break ;
+
+				 case PLUGIN_STATUS_LOADED:		  status_string = tr("Plugins is loaded.") ;
+															  break ;
 				 default:
 															status_string = tr("Unknown status.") ;
 			 }

@@ -6,6 +6,7 @@
 #include <serialiser/rstlvbase.h>
 #include <serialiser/rstlvtypes.h>
 #include <serialiser/rspluginitems.h>
+#include <retroshare/rsiface.h>
 #include <util/rsdir.h>
 #include <util/folderiterator.h>
 #include <ft/ftserver.h>
@@ -23,8 +24,10 @@
 #include <dlfcn.h>
 #endif
 
-std::string RsPluginManager::_plugin_entry_symbol ;
-std::string RsPluginManager::_plugin_revision_symbol ;
+std::string RsPluginManager::_plugin_entry_symbol              = "RETROSHARE_PLUGIN_provide" ;
+std::string RsPluginManager::_plugin_revision_symbol           = "RETROSHARE_PLUGIN_revision" ;
+std::string RsPluginManager::_plugin_API_symbol           		= "RETROSHARE_PLUGIN_api" ;
+
 std::string RsPluginManager::_local_cache_dir ;
 std::string RsPluginManager::_remote_cache_dir ;
 std::vector<std::string> RsPluginManager::_plugin_directories ;
@@ -35,7 +38,8 @@ p3LinkMgr   *RsPluginManager::_linkmgr							= NULL ;
 typedef RsPlugin *(*RetroSharePluginEntry)(void) ;
 RsPluginHandler *rsPlugins ;
 
-RsPluginManager::RsPluginManager() : p3Config(CONFIG_TYPE_PLUGINS)
+RsPluginManager::RsPluginManager(const std::string& hash) 
+	: p3Config(CONFIG_TYPE_PLUGINS),_current_executable_hash(hash)
 {
 	_allow_all_plugins = false ;
 }
@@ -133,7 +137,14 @@ void RsPluginManager::loadPlugins(const std::vector<std::string>& plugin_directo
 		dirIt.closedir();
 	}
 
-	std::cerr << "Loaded a total of " << _plugins.size() << " plugins." << std::endl;
+	std::cerr << "Examined a total of " << _plugins.size() << " plugins." << std::endl;
+
+	// Save list of accepted hashes and reference value
+	
+	// Calling IndicateConfigChanged() at this point is not sufficient because the config flags are cleared
+	// at start of the p3config thread, and this thread has not yet started.
+	//
+	saveConfiguration();
 }
 
 void RsPluginManager::getPluginStatus(int i,uint32_t& status,std::string& file_name,std::string& hash,uint32_t& svn_revision,std::string& error_string) const
@@ -204,79 +215,110 @@ bool RsPluginManager::loadPlugin(const std::string& plugin_name)
 	std::cerr << "    -> hashing." << std::endl;
 	uint64_t size ;
 
+	// Stage 1 - get information related to file (hash, name, ...)
+	//
 	if(!RsDirUtil::getFileHash(plugin_name,pf.file_hash,size))
 	{
 		std::cerr << "    -> cannot hash file. Plugin read canceled." << std::endl;
 		return false;
 	}
 
-	// This file can be loaded. Insert an entry into the list of detected plugins.
-	//
 	_plugins.push_back(pf) ;
 	PluginInfo& pinfo(_plugins.back()) ;
 
 	std::cerr << "    -> hash = " << pinfo.file_hash << std::endl;
 
+	if(!_allow_all_plugins)
+	{
+		if(_accepted_hashes.find(pinfo.file_hash) == _accepted_hashes.end() && _rejected_hashes.find(pinfo.file_hash) == _rejected_hashes.end() )
+			if(!rsicontrol->getNotify().askForPluginConfirmation(pinfo.file_name,pinfo.file_hash))
+				_rejected_hashes.insert(pinfo.file_hash) ;		// accepted hashes are treated at the end, for security.
 
-		// The following choice is conservative by forcing RS to resolve all dependencies at
-		// the time of loading the plugin. 
-
-		int link_mode = RTLD_NOW | RTLD_GLOBAL ; 
-
-		void *handle = dlopen(plugin_name.c_str(),link_mode) ;
-
-		if(handle == NULL)
+		if(_rejected_hashes.find(pinfo.file_hash) != _rejected_hashes.end() )
 		{
-			const char *val = dlerror() ;
-			std::cerr << "  Cannot open plugin: " << val << std::endl ;
-			pinfo.status = PLUGIN_STATUS_DLOPEN_ERROR ;
-			pinfo.info_string = val ;
+			pinfo.status = PLUGIN_STATUS_REJECTED_HASH ;
+			std::cerr << "    -> hash rejected. Giving up plugin. " << std::endl;
 			return false ;
 		}
+	}
+	else
+		std::cerr << "   -> ALLOW_ALL_PLUGINS Enabled => plugin loaded by default." << std::endl;
 
-		void *prev = dlsym(handle,_plugin_revision_symbol.c_str()) ;
-		pinfo.svn_revision = (prev == NULL) ? 0 : (*(uint32_t *)prev) ;
+	std::cerr << "    -> hash authorized. Loading plugin. " << std::endl;
 
-		std::cerr << "    -> plugin revision number: " << pinfo.svn_revision << std::endl;
-		std::cerr << "    -> retroshare svn  number: " << SVN_REVISION_NUMBER << std::endl;
+	// Stage 2 - open with dlopen, and get some basic info.
+	//
 
-		if( (pinfo.svn_revision == 0 || pinfo.svn_revision != SVN_REVISION_NUMBER) && (!_allow_all_plugins) && _accepted_hashes.find(pinfo.file_hash) == _accepted_hashes.end())
-		{
-			std::cerr  << "    -> revision numbers do not match, and hash is not in white list. Plugin is rejected. Go to config->plugins to authorise this plugin." << std::endl;
-			pinfo.status = PLUGIN_STATUS_UNKNOWN_HASH ;
-			pinfo.info_string = "" ;
-			return false ;
-		}
+	// The following choice is conservative by forcing RS to resolve all dependencies at
+	// the time of loading the plugin. 
 
-		// Now look for the plugin class symbol.
-		//
-		void *pfe = dlsym(handle,_plugin_entry_symbol.c_str()) ;
+	int link_mode = RTLD_NOW | RTLD_GLOBAL ; 
 
-		if(pfe == NULL) 
-		{
-			std::cerr << dlerror() << std::endl ;
-			pinfo.status = PLUGIN_STATUS_MISSING_SYMBOL ;
-			pinfo.info_string = "Symbol " + _plugin_entry_symbol + " is missing." ;
-			return false ;
-		}
-		std::cerr << "  Added function entry for symbol " << _plugin_entry_symbol << std::endl ;
+	void *handle = dlopen(plugin_name.c_str(),link_mode) ;
 
-		RsPlugin *p = ( (*(RetroSharePluginEntry)pfe)() ) ;
+	if(handle == NULL)
+	{
+		const char *val = dlerror() ;
+		std::cerr << "  Cannot open plugin: " << val << std::endl ;
+		pinfo.status = PLUGIN_STATUS_DLOPEN_ERROR ;
+		pinfo.info_string = val ;
+		return false ;
+	}
 
-		if(p == NULL)
-		{
-			std::cerr << "  Plugin entry function " << _plugin_entry_symbol << " returns NULL ! It should return an object of type RsPlugin* " << std::endl;
-			pinfo.status = PLUGIN_STATUS_NULL_PLUGIN ;
-			pinfo.info_string = "Plugin entry " + _plugin_entry_symbol + "() return NULL" ;
-			return false ;
-		}
+	void *prev = dlsym(handle,_plugin_revision_symbol.c_str()) ; pinfo.svn_revision = (prev == NULL) ? 0 : (*(uint32_t *)prev) ;
+	void *papi = dlsym(handle,_plugin_API_symbol.c_str()) ; pinfo.API_version = (papi == NULL) ? 0 : (*(uint32_t *)papi) ;
 
-		pinfo.status = PLUGIN_STATUS_LOADED ;
-		pinfo.plugin = p ;
-		p->setPlugInHandler(this); // WIN fix, cannot share global space with shared libraries
+	std::cerr << "    -> plugin revision number: " << pinfo.svn_revision << std::endl;
+	std::cerr << "       plugin API number     : " << (void*)pinfo.API_version << std::endl;
+	std::cerr << "       retroshare svn  number: " << SVN_REVISION_NUMBER << std::endl;
+
+	// Check that the plugin provides a svn revision number and a API number
+	//
+	if(pinfo.API_version == 0) 
+	{
+		std::cerr  << "    -> No API version number." << std::endl;
+		pinfo.status = PLUGIN_STATUS_MISSING_API ;
 		pinfo.info_string = "" ;
+		return false ;
+	} 
+	if(pinfo.svn_revision == 0)
+	{
+		std::cerr  << "    -> No svn revision number." << std::endl;
+		pinfo.status = PLUGIN_STATUS_MISSING_SVN ;
+		pinfo.info_string = "" ;
+		return false ;
+	} 
 
-		return true;
+	// Now look for the plugin class symbol.
+	//
+	void *pfe = dlsym(handle,_plugin_entry_symbol.c_str()) ;
+
+	if(pfe == NULL) 
+	{
+		std::cerr << dlerror() << std::endl ;
+		pinfo.status = PLUGIN_STATUS_MISSING_SYMBOL ;
+		pinfo.info_string = _plugin_entry_symbol ;
+		return false ;
+	}
+	std::cerr << "   -> Added function entry for symbol " << _plugin_entry_symbol << std::endl ;
+
+	RsPlugin *p = ( (*(RetroSharePluginEntry)pfe)() ) ;
+
+	if(p == NULL)
+	{
+		std::cerr << "  Plugin entry function " << _plugin_entry_symbol << " returns NULL ! It should return an object of type RsPlugin* " << std::endl;
+		pinfo.status = PLUGIN_STATUS_NULL_PLUGIN ;
+		pinfo.info_string = "Plugin entry " + _plugin_entry_symbol + "() return NULL" ;
+		return false ;
+	}
+
+	pinfo.status = PLUGIN_STATUS_LOADED ;
+	pinfo.plugin = p ;
+	p->setPlugInHandler(this); // WIN fix, cannot share global space with shared libraries
+	pinfo.info_string = "" ;
+
+	_accepted_hashes.insert(pinfo.file_hash) ;	// do it now, to avoid putting in list a plugin that might have crashed during the load.
+	return true;
 }
 
 p3LinkMgr *RsPluginManager::getLinkMgr() const
@@ -355,55 +397,90 @@ void RsPluginManager::addConfigurations(p3ConfigMgr *ConfigMgr)
 
 bool RsPluginManager::loadList(std::list<RsItem*>& list)
 {
-	_accepted_hashes.clear() ;
+	std::set<std::string> accepted_hash_candidates ;
+	std::set<std::string> rejected_hash_candidates ;
 
 	std::cerr << "RsPluginManager::loadList(): " << std::endl;
+	std::string reference_executable_hash = "" ;
 
 	std::list<RsItem *>::iterator it;
 	for(it = list.begin(); it != list.end(); it++) 
 	{
-		RsPluginHashSetItem *vitem = dynamic_cast<RsPluginHashSetItem*>(*it);
-
-		if(vitem) 
-			for(std::list<std::string>::const_iterator it(vitem->hashes.ids.begin());it!=vitem->hashes.ids.end();++it)
-			{
-				_accepted_hashes.insert(*it) ;
-				std::cerr << "  loaded hash " << *it << std::endl;
-			}
-
 		RsConfigKeyValueSet *witem = dynamic_cast<RsConfigKeyValueSet *>(*it) ;
 
 		if(witem)
-		{
 			for(std::list<RsTlvKeyValue>::const_iterator kit = witem->tlvkvs.pairs.begin(); kit != witem->tlvkvs.pairs.end(); ++kit) 
+			{
 				if((*kit).key == "ALLOW_ALL_PLUGINS")
 				{
-					std::cerr << "WARNING: Allowing all plugins. No hash will be checked. Be careful! " << std::endl ;
 					_allow_all_plugins = (kit->value == "YES");
+
+					if(_allow_all_plugins)
+						std::cerr << "WARNING: Allowing all plugins. No hash will be checked. Be careful! " << std::endl ;
 				}
-		}
+				else if((*kit).key == "REFERENCE_EXECUTABLE_HASH")
+				{
+					reference_executable_hash = kit->value ;
+					std::cerr << "   Reference executable hash: " << kit->value << std::endl;
+				}
+				else if((*kit).key == "ACCEPTED")
+				{
+					accepted_hash_candidates.insert((*kit).value) ;
+					std::cerr << "   Accepted hash: " << (*kit).value << std::endl;
+				}
+				else if((*kit).key == "REJECTED")
+				{
+					rejected_hash_candidates.insert((*kit).value) ;
+					std::cerr << "   Rejected hash: " << (*kit).value << std::endl;
+				}
+			}
 
 		delete (*it);
 	}
+
+	if(reference_executable_hash == _current_executable_hash)
+	{
+		std::cerr << "(II) Executable hash matches. Updating the list of accepted/rejected plugins." << std::endl;
+
+		_accepted_hashes = accepted_hash_candidates ;
+		_rejected_hashes = rejected_hash_candidates ;
+	}
+	else
+		std::cerr << "(WW) Executable hashes do not match. Executable hash has changed. Discarding the list of accepted/rejected plugins." << std::endl;
+
 	return true;
 }
 
 bool RsPluginManager::saveList(bool& cleanup, std::list<RsItem*>& list)
 {
+	std::cerr << "PluginManager: saving list." << std::endl;
 	cleanup = true ;
-
-	RsPluginHashSetItem *vitem = new RsPluginHashSetItem() ;
-
-	for(std::set<std::string>::const_iterator it(_accepted_hashes.begin());it!=_accepted_hashes.end();++it)
-		vitem->hashes.ids.push_back(*it) ;
-
-	list.push_back(vitem) ;
 
 	RsConfigKeyValueSet *witem = new RsConfigKeyValueSet ;
 	RsTlvKeyValue kv;
 	kv.key = "ALLOW_ALL_PLUGINS" ;
 	kv.value = _allow_all_plugins?"YES":"NO" ;
 	witem->tlvkvs.pairs.push_back(kv) ;
+
+	kv.key = "REFERENCE_EXECUTABLE_HASH" ;
+	kv.value = _current_executable_hash ;
+	witem->tlvkvs.pairs.push_back(kv) ;
+
+	std::cerr << "  Saving current executable hash: " << kv.value << std::endl;
+
+	// now push accepted and rejected hashes.
+	
+	for(std::set<std::string>::const_iterator it(_accepted_hashes.begin());it!=_accepted_hashes.end();++it)
+	{
+		witem->tlvkvs.pairs.push_back( RsTlvKeyValue( "ACCEPTED", *it ) ) ;
+		std::cerr << "  " << *it << " : " << "ACCEPTED" << std::endl;
+	}
+
+	for(std::set<std::string>::const_iterator it(_rejected_hashes.begin());it!=_rejected_hashes.end();++it)
+	{
+		witem->tlvkvs.pairs.push_back( RsTlvKeyValue( "REJECTED", *it ) ) ;
+		std::cerr << "  " << *it << " : " << "REJECTED" << std::endl;
+	}
 
 	list.push_back(witem) ;
 

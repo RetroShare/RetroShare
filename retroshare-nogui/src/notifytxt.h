@@ -41,6 +41,7 @@ class NotifyTxt: public NotifyBase
 		virtual void notifyErrorMsg(int list, int sev, std::string msg);
 		virtual void notifyChat();
 		virtual bool askForPassword(const std::string& key_details, bool prev_is_bad, std::string& password);
+		virtual bool askForPluginConfirmation(const std::string& plugin_file, const std::string& plugin_hash);
 
 	private:
 
