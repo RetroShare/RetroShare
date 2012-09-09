@@ -86,9 +86,11 @@ int RpcProtoSystem::processMsg(uint32_t chan_id, uint32_t msg_id, uint32_t req_i
 		case rsctrl::system::MsgId_RequestSystemStatus:
 			processSystemStatus(chan_id, msg_id, req_id, msg);
 			break;
+#if 0 
 		case rsctrl::system::MsgId_RequestSystemQuit:
 			processSystemQuit(chan_id, msg_id, req_id, msg);
 			break;
+#endif
 		default:
 			std::cerr << "RpcProtoSystem::processMsg() ERROR should never get here";
 			std::cerr << std::endl;
