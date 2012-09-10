@@ -50,7 +50,10 @@ ops_parse_cb_return_t cb_get_passphrase(const ops_parser_content_t *content_,ops
 		case OPS_PARSER_CMD_GET_SK_PASSPHRASE:
 																				{
 																					std::string passwd;
-																					std::string uid_hint = std::string((const char *)cbinfo->cryptinfo.keydata->uids[0].user_id) ;
+																					std::string uid_hint ;
+																					
+																					if(cbinfo->cryptinfo.keydata->nuids > 0)
+																						uid_hint = std::string((const char *)cbinfo->cryptinfo.keydata->uids[0].user_id) ;
 																					uid_hint += "(" + PGPIdType(cbinfo->cryptinfo.keydata->key_id).toStdString()+")" ;
 
 																					passwd = PGPHandler::passphraseCallback()(NULL,uid_hint.c_str(),NULL,prev_was_bad) ;
