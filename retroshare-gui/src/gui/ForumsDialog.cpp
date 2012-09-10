@@ -859,9 +859,10 @@ void ForumsDialog::insertThreads()
         std::cerr << "ForumsDialog::insertThreads() stop current fill thread" << std::endl;
 #endif
         // stop current fill thread
-        fillThread->stop();
-        delete(fillThread);
+        ForumsFillThread *thread = fillThread;
         fillThread = NULL;
+        thread->stop();
+        delete(thread);
 
         ui.progressBar->hide();
         ui.progLayOutTxt->hide();

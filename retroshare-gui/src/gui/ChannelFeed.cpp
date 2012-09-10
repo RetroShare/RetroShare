@@ -462,9 +462,10 @@ void ChannelFeed::updateChannelMsgs()
         std::cerr << "ChannelFeed::updateChannelMsgs() stop current fill thread" << std::endl;
 #endif
         // stop current fill thread
-        fillThread->stop();
-        delete(fillThread);
+        ChannelFillThread *thread = fillThread;
         fillThread = NULL;
+        thread->stop();
+        delete(thread);
 
         progressLabel->hide();
         progressBar->hide();
