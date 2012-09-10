@@ -10,6 +10,9 @@ linux-g++-64 {
 }
 
 win32 {
+	# from Qt 4.7.4 and 4.8+ the mkspecs has changed making dyn libs unusable anymore on windows : QMAKE_LFLAGS =
+	QMAKE_LFLAGS = -enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc
+
 	# Switch on extra warnings
 	QMAKE_CFLAGS += -Wextra
 	QMAKE_CXXFLAGS += -Wextra
