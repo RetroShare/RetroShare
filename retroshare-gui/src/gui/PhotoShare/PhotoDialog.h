@@ -26,33 +26,29 @@
 
 #include "retroshare-gui/mainpage.h"
 #include "ui_PhotoDialog.h"
+#include "AlbumCreateDialog.h"
+#include "AlbumDialog.h"
+#include "AlbumItem.h"
+#include "PhotoItem.h"
+#include "PhotoSlideShow.h"
 
 #include <retroshare/rsphotoV2.h>
 
 #include <map>
 
-#include "gui/PhotoShare/PhotoItem.h"
-#include "gui/PhotoShare/PhotoAddDialog.h"
-#include "gui/PhotoShare/PhotoSlideShow.h"
 #include "util/TokenQueueV2.h"
 
-class PhotoDialog : public MainPage, public PhotoHolder, public TokenResponseV2
+class PhotoDialog : public MainPage, public TokenResponseV2
 {
   Q_OBJECT
 
 public:
-	PhotoDialog(QWidget *parent = 0);
-
-virtual void deletePhotoItem(PhotoItem *, uint32_t type);
-virtual void notifySelection(PhotoItem *item, int ptype);
-
-	void notifyAlbumSelection(PhotoItem *item);
-	void notifyPhotoSelection(PhotoItem *item);
+        PhotoDialog(QWidget *parent = 0);
 
 private slots:
 
 	void checkUpdate();
-	void OpenOrShowPhotoAddDialog();
+        void createAlbum();
 	void OpenPhotoEditDialog();
 	void OpenSlideShow();
 private:
@@ -84,11 +80,6 @@ private:
 
 	/* Grunt work of setting up the GUI */
 
-	//bool FilterNSortAlbums(const std::list<std::string> &albumIds, std::list<std::string> &filteredAlbumIds, int count);
-	//bool FilterNSortPhotos(const std::list<std::string> &photoIds, std::list<std::string> &filteredPhotoIds, int count);
-	//void insertAlbums();
-	//void insertPhotosForAlbum(const std::list<std::string> &albumIds);
-
 	void insertPhotosForSelectedAlbum();
 
 	void addAlbum(const RsPhotoAlbum &album);
@@ -97,11 +88,12 @@ private:
 	void clearAlbums();
 	void clearPhotos();
 
-	PhotoAddDialog *mAddDialog;
-	PhotoSlideShow *mSlideShow;
+private:
 
-	PhotoItem *mAlbumSelected;
-	PhotoItem *mPhotoSelected;
+
+        AlbumItem* mAlbumSelected;
+        PhotoItem* mPhotoSelected;
+        PhotoSlideShow* mSlideShow;
 
         TokenQueueV2 *mPhotoQueue;
 

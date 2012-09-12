@@ -43,7 +43,7 @@ QT_END_NAMESPACE
 #define PHOTO_SHIFT_BOTH		3
 
 
-class PhotoDrop : public QWidget, public PhotoHolder
+class PhotoDrop : public QWidget
 {
     Q_OBJECT
 
@@ -51,9 +51,6 @@ public:
     PhotoDrop(QWidget *parent = 0);
     void clear();
 	void setSingleImage();
-
-virtual void deletePhotoItem(PhotoItem *, uint32_t type);
-virtual void notifySelection(PhotoItem *item, int ptype);
 
 PhotoItem *getSelectedPhotoItem();
 int	getPhotoCount();

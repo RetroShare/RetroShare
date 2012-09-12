@@ -64,23 +64,6 @@ PhotoDrop::PhotoDrop(QWidget *parent)
 	reorderPhotos();
 }
 
-void PhotoDrop::notifySelection(PhotoItem *item, int ptype)
-{
-	std::cerr << "PhotoDrop::notifySelection() from : " << ptype << " " << item;
-	std::cerr << std::endl;
-
-	if (mSelected)
-	{
-		std::cerr << "PhotoDrop::notifySelection() unselecting old one : " << mSelected;
-		std::cerr << std::endl;
-
-		mSelected->setSelected(false);
-	}
-
-	mSelected = item;
-	checkMoveButtons();
-}
-
 
 void PhotoDrop::clear()
 {
@@ -97,11 +80,6 @@ PhotoItem *PhotoDrop::getSelectedPhotoItem()
 	return mSelected;
 }
 
-
-void PhotoDrop::deletePhotoItem(PhotoItem *, uint32_t type)
-{
-	return;
-}
 
 
 void PhotoDrop::resizeEvent ( QResizeEvent * event ) 
@@ -637,9 +615,7 @@ void PhotoDrop::dropEvent(QDropEvent *event)
 			std::cerr << "Whole URL: " << uit->toString().toStdString() << std::endl;
 			std::cerr << "or As Local File: " << localpath.toStdString() << std::endl;
 
-			PhotoItem *item = new PhotoItem(this, localpath.toStdString());
 
-			addPhotoItem(item);
 			//mPhotos.push_back(item);
 			//layout()->addWidget(item);
 		}
@@ -683,7 +659,6 @@ void PhotoDrop::addPhotoItem(PhotoItem *item)
 		clearPhotos();
 	}
 
-	item->updateParent(this);
 	layout()->addWidget(item);
 	
         //checkMoveButtons();
