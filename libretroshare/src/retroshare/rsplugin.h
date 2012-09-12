@@ -31,7 +31,7 @@
 #include <vector>
 #include "retroshare/rspeers.h"
 #include "retroshare/rsfiles.h"
-#include "../../libretroshare/src/util/rsversion.h"
+#include "util/rsversion.h"
 
 class RsPluginHandler ;
 extern RsPluginHandler *rsPlugins ;
