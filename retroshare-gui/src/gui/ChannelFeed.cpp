@@ -180,36 +180,27 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint /*point*/ )
     QAction *shareKeyAct = new QAction(QIcon(":/images/gpgp_key_generate.png"), tr("Share Channel"), &contextMnu);
     connect( shareKeyAct, SIGNAL( triggered() ), this, SLOT( shareKey() ) );
 
-    if ((ci.channelFlags & RS_DISTRIB_PUBLISH) && (ci.channelFlags & RS_DISTRIB_ADMIN)) {
-        contextMnu.addAction( postchannelAct );
-        contextMnu.addSeparator();
+	 if((ci.channelFlags & RS_DISTRIB_ADMIN) && (ci.channelFlags & RS_DISTRIB_SUBSCRIBED))
         contextMnu.addAction( editChannelDetailAct);
-        contextMnu.addAction( shareKeyAct );
+	 else
         contextMnu.addAction( channeldetailsAct );
-    }
-    else if ((ci.channelFlags & RS_DISTRIB_PUBLISH) && (ci.channelFlags & RS_DISTRIB_SUBSCRIBED)) {
-        contextMnu.addAction( postchannelAct );
-        contextMnu.addSeparator();
-        contextMnu.addAction( channeldetailsAct );
-        contextMnu.addAction( shareKeyAct );
-        contextMnu.addAction( restoreKeysAct );
-        contextMnu.addSeparator();
-        contextMnu.addAction( autochannelAct );
-        contextMnu.addAction( setallasreadchannelAct );
-    } else if (ci.channelFlags & RS_DISTRIB_SUBSCRIBED) {
-        contextMnu.addAction( unsubscribechannelAct );
-        contextMnu.addSeparator();
-        contextMnu.addAction( channeldetailsAct );
-        contextMnu.addAction( restoreKeysAct );
-        contextMnu.addSeparator();
-        contextMnu.addAction( autochannelAct );
-        contextMnu.addAction( setallasreadchannelAct );
-    } else {
+
+    if((ci.channelFlags & RS_DISTRIB_PUBLISH) && (ci.channelFlags & RS_DISTRIB_SUBSCRIBED)) 
+	 {
+      contextMnu.addAction( postchannelAct );
+      contextMnu.addAction( shareKeyAct );
+	 }
+
+	 if(ci.channelFlags & RS_DISTRIB_SUBSCRIBED)
+	 {
+		 contextMnu.addAction( unsubscribechannelAct );
+		 contextMnu.addAction( restoreKeysAct );
+		 contextMnu.addSeparator();
+		 contextMnu.addAction( autochannelAct );
+		 contextMnu.addAction( setallasreadchannelAct );
+	 }
+	 else
         contextMnu.addAction( subscribechannelAct );
-        contextMnu.addSeparator();
-        contextMnu.addAction( channeldetailsAct );
-        contextMnu.addAction( restoreKeysAct );
-    }
 
 	 contextMnu.addSeparator();
     QAction *action = contextMnu.addAction(QIcon(":/images/copyrslink.png"), tr("Copy RetroShare Link"), this, SLOT(copyChannelLink()));
@@ -285,7 +276,10 @@ void ChannelFeed::createMsg()
 
 void ChannelFeed::restoreChannelKeys()
 {
-    rsChannels->channelRestoreKeys(mChannelId);
+	if(rsChannels->channelRestoreKeys(mChannelId))
+		QMessageBox::information(NULL,tr("Publish rights restored."),tr("Publish rights have been restored for this channel.")) ;
+	else
+		QMessageBox::warning(NULL,tr("Publish not restored."),tr("Publish rights can't be restored for this channel.<br/>You're not the creator of this channel.")) ;
 }
 
 void ChannelFeed::selectChannel(const QString &id)
