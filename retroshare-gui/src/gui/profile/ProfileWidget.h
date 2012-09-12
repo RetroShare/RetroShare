@@ -29,32 +29,21 @@
 
 class ProfileWidget : public QWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 
-	public:
+public:
     /** Default constructor */
     ProfileWidget(QWidget *parent = 0, Qt::WFlags flags = 0);
-    /** Default destructor */
-    ~ProfileWidget();
 
-
-protected:
-    void closeEvent (QCloseEvent * event);
-  
 private slots:
-
     void showEvent ( QShowEvent * event );
     void statusmessagedlg();
     void copyCert();
     void profilemanager();
 
- 
 private:
-
-
     /** Qt Designer generated object */
     Ui::ProfileWidget ui;
-
 };
 
 #endif

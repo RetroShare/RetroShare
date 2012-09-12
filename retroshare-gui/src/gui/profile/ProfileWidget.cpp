@@ -50,18 +50,6 @@ ProfileWidget::ProfileWidget(QWidget *parent, Qt::WFlags flags)
     connect(ui.profile_Button,SIGNAL(clicked()), this, SLOT(profilemanager()));
 
     ui.onlinesince->setText(QDateTime::currentDateTime().toString(DATETIME_FMT));
-
-}
-
-/** Destructor. */
-ProfileWidget::~ProfileWidget()
-{
-
-}
-
-void ProfileWidget::closeEvent (QCloseEvent * event)
-{
-    QWidget::closeEvent(event);
 }
 
 void ProfileWidget::showEvent ( QShowEvent * /*event*/ )
@@ -69,7 +57,6 @@ void ProfileWidget::showEvent ( QShowEvent * /*event*/ )
     RsPeerDetails detail;
     if (rsPeers->getPeerDetails(rsPeers->getOwnId(),detail))
     {
-
         ui.name->setText(QString::fromUtf8(detail.name.c_str()));
         ui.country->setText(QString::fromUtf8(detail.location.c_str()));
 
@@ -92,7 +79,6 @@ void ProfileWidget::showEvent ( QShowEvent * /*event*/ )
         for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
             ui.ipAddressList->addItem(QString::fromStdString(*it));
 
-
         /* set local address */
         ui.localAddress->setText(QString::fromStdString(detail.localAddr));
         ui.localPort -> setText(QString::number(detail.localPort));
@@ -114,8 +100,8 @@ void ProfileWidget::showEvent ( QShowEvent * /*event*/ )
 
 void ProfileWidget::statusmessagedlg()
 {
-    static StatusMessage *statusmsgdialog = new StatusMessage();
-    statusmsgdialog->show();
+    StatusMessage statusMsgDialog;
+    statusMsgDialog.exec();
 }
 
 void ProfileWidget::copyCert()
@@ -140,6 +126,6 @@ void ProfileWidget::copyCert()
 
 void ProfileWidget::profilemanager()
 {
-    static ProfileManager *profilemanager = new ProfileManager();
-    profilemanager->show();
+    ProfileManager profilemanager;
+    profilemanager.exec();
 }

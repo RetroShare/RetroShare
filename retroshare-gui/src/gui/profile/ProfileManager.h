@@ -27,19 +27,18 @@
 
 #include "ui_ProfileManager.h"
 
-
-
 class ProfileManager : public QDialog
 {
-  Q_OBJECT
+	Q_OBJECT
 
 public:
-  /** Default constructor */
-  ProfileManager(QWidget *parent = 0, Qt::WFlags flags = 0);
-  /** Default destructor */
+	/** Default constructor */
+	ProfileManager(QWidget *parent = 0, Qt::WFlags flags = 0);
+	/** Default destructor */
 
 private slots:
 	void identityTreeWidgetCostumPopupMenu( QPoint point );
+	void identityItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
 
 	void selectFriend();
 	void importIdentity();
@@ -50,16 +49,12 @@ private slots:
 private:
 	QTreeWidgetItem *getCurrentIdentity();
 
-	void init() ;
+	void fillIdentities();
 
-	/** Loads the saved connectidialog settings */
-	//  void loadSettings();
-	void loadCertificates();
+	/** Qt Designer generated object */
+	Ui::ProfileManager ui;
 
-  /** Qt Designer generated object */
-  Ui::ProfileManager ui;
-
-  bool genNewGPGKey;
+	bool genNewGPGKey;
 };
 
 #endif

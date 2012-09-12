@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -37,98 +37,109 @@
 
 #define IMAGE_EXPORT         ":/images/exportpeers_16x16.png"
 
-
-
-/** Default constructor */
-ProfileManager::ProfileManager(QWidget *parent, Qt::WFlags flags)
-  : QDialog(parent, flags)
-{
-  /* Invoke Qt Designer generated QObject setup routine */
-  ui.setupUi(this);
-
-  ui.headerFrame->setHeaderImage(QPixmap(":/images/contact_new128.png"));
-  ui.headerFrame->setHeaderText(tr("Profile Manager"));
-
-  connect(ui.identityTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( identityTreeWidgetCostumPopupMenu( QPoint ) ) );
-  connect(ui.newIdentity_PB, SIGNAL(clicked()), this, SLOT(newIdentity()));
-  connect(ui.importIdentity_PB, SIGNAL(clicked()), this, SLOT(importIdentity()));
-  connect(ui.exportIdentity_PB, SIGNAL(clicked()), this, SLOT(exportIdentity()));
-
-  ui.identityTreeWidget -> setColumnCount(3);
-
-  init() ;
-}
-
-void ProfileManager::identityTreeWidgetCostumPopupMenu( QPoint )
-{
-  QTreeWidgetItem *wi = getCurrentIdentity();
-  if (!wi)
-    return;
-
-	QMenu contextMnu( this );
-
-	//QAction* exportidentityAct = new QAction(QIcon(IMAGE_EXPORT), tr( "Export Identity" ), &contextMnu );
-	//connect( exportidentityAct , SIGNAL( triggered() ), this, SLOT( exportIdentity() ) );
-	//contextMnu.addAction( exportidentityAct);
-
-	contextMnu.exec(QCursor::pos());
-}
-
-void ProfileManager::init()
-{
-    std::cerr << "Finding PGPUsers" << std::endl;
-    
-    QTreeWidget *identityTreeWidget = ui.identityTreeWidget;
-
 #define COLUMN_NAME			0
 #define COLUMN_EMAIL		1
 #define COLUMN_GID			2
 
-		QTreeWidgetItem *item;
- 
-    std::list<std::string> pgpIds;
-    std::list<std::string>::iterator it;
-    bool foundGPGKeys = false;
-    
-    if (RsInit::GetPGPLogins(pgpIds)) {
-            for(it = pgpIds.begin(); it != pgpIds.end(); it++)
-            {
-                    QVariant userData(QString::fromStdString(*it));
-                    std::string name, email;
-                    RsInit::GetPGPLoginDetails(*it, name, email);
-                    std::cerr << "Adding PGPUser: " << name << " id: " << *it << std::endl;
-                    QString gid = QString::fromStdString(*it).right(8) ;
-                    ui.genPGPuser->addItem(QString::fromUtf8(name.c_str()) + " <" + QString::fromUtf8(email.c_str()) + "> (" + gid + ")", userData);
-                    
-                    item = new RSTreeWidgetItem(NULL, 0);
-                    item -> setText(COLUMN_NAME, QString::fromUtf8(name.c_str()));
-                    item -> setText(COLUMN_EMAIL, QString::fromUtf8(email.c_str()));
-                    item -> setText(COLUMN_GID, gid);
-                    identityTreeWidget->addTopLevelItem(item);
+/** Default constructor */
+ProfileManager::ProfileManager(QWidget *parent, Qt::WFlags flags)
+	: QDialog(parent, flags)
+{
+	/* Invoke Qt Designer generated QObject setup routine */
+	ui.setupUi(this);
 
-                    foundGPGKeys = true;
-            }
-    }
-    
-    identityTreeWidget->update(); /* update display */
+//	setAttribute ( Qt::WA_DeleteOnClose, true );
 
+	ui.headerFrame->setHeaderImage(QPixmap(":/images/contact_new128.png"));
+	ui.headerFrame->setHeaderText(tr("Profile Manager"));
+
+	connect(ui.identityTreeWidget, SIGNAL( customContextMenuRequested(QPoint)), this, SLOT( identityTreeWidgetCostumPopupMenu(QPoint)));
+	connect(ui.identityTreeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(identityItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
+	connect(ui.newIdentity_PB, SIGNAL(clicked()), this, SLOT(newIdentity()));
+	connect(ui.importIdentity_PB, SIGNAL(clicked()), this, SLOT(importIdentity()));
+	connect(ui.exportIdentity_PB, SIGNAL(clicked()), this, SLOT(exportIdentity()));
+
+	ui.exportIdentity_PB->setEnabled(false);
+
+	fillIdentities();
+}
+
+void ProfileManager::identityTreeWidgetCostumPopupMenu(QPoint)
+{
+	QTreeWidgetItem *item = getCurrentIdentity();
+
+	QMenu contextMnu(this);
+
+	QAction *action = contextMnu.addAction(QIcon(IMAGE_EXPORT), tr("Export Identity"), this, SLOT(exportIdentity()));
+	action->setEnabled(item != NULL);
+
+	contextMnu.exec(QCursor::pos());
+}
+
+void ProfileManager::identityItemChanged(QTreeWidgetItem *current, QTreeWidgetItem */*previous*/)
+{
+	ui.exportIdentity_PB->setEnabled(current != NULL);
+}
+
+void ProfileManager::fillIdentities()
+{
+	ui.identityTreeWidget->clear();
+
+	ui.identityTreeWidget->setColumnWidth(COLUMN_NAME, 200);
+	ui.identityTreeWidget->setColumnWidth(COLUMN_EMAIL, 200);
+
+	std::cerr << "Finding PGPUsers" << std::endl;
+
+	QTreeWidget *identityTreeWidget = ui.identityTreeWidget;
+
+	QTreeWidgetItem *item;
+
+	std::list<std::string> pgpIds;
+	std::list<std::string>::iterator it;
+
+	if (RsInit::GetPGPLogins(pgpIds)) {
+		for (it = pgpIds.begin(); it != pgpIds.end(); it++) {
+			std::string name, email;
+			RsInit::GetPGPLoginDetails(*it, name, email);
+			std::cerr << "Adding PGPUser: " << name << " id: " << *it << std::endl;
+			QString gid = QString::fromStdString(*it);
+
+			item = new RSTreeWidgetItem(NULL, 0);
+			item -> setText(COLUMN_NAME, QString::fromUtf8(name.c_str()));
+			item -> setText(COLUMN_EMAIL, QString::fromUtf8(email.c_str()));
+			item -> setText(COLUMN_GID, gid);
+			identityTreeWidget->addTopLevelItem(item);
+		}
+	}
+
+//	for (int i = 0; i < ui.identityTreeWidget->columnCount(); ++i) {
+//		ui.identityTreeWidget->resizeColumnToContents(i);
+//	}
 }
 
 void ProfileManager::exportIdentity()
 {
-	QString fname = QFileDialog::getSaveFileName(this,tr("Export Identity"), "",tr("RetroShare Identity files (*.asc)")) ;
+	QTreeWidgetItem *item = getCurrentIdentity();
+	if (!item)
+		return;
 
-	if(fname.isNull())
-		return ;
+	std::string gpgId = item->text(COLUMN_GID).toStdString();
+	if (gpgId.empty())
+		return;
 
-	QVariant data = ui.genPGPuser->itemData(ui.genPGPuser->currentIndex());
-	
-	std::string gpg_id = data.toString().toStdString() ;
+	QString fname = QFileDialog::getSaveFileName(this, tr("Export Identity"), "", tr("RetroShare Identity files (*.asc)"));
 
-	if(RsInit::exportIdentity(fname.toStdString(),gpg_id))
-		QMessageBox::information(this,tr("Identity saved"),tr("Your identity was successfully saved\nIt is encrypted\n\nYou can now copy it to another computer\nand use the import button to load it")) ;
+	if (fname.isNull())
+		return;
+
+	if (QFileInfo(fname).suffix().isEmpty()) {
+		fname += ".asc";
+	}
+
+	if (RsInit::exportIdentity(fname.toUtf8().constData(), gpgId))
+		QMessageBox::information(this, tr("Identity saved"), tr("Your identity was successfully saved\nIt is encrypted\n\nYou can now copy it to another computer\nand use the import button to load it"));
 	else
-		QMessageBox::information(this,tr("Identity not saved"),tr("Your identity was not saved. An error occured.")) ;
+		QMessageBox::information(this, tr("Identity not saved"), tr("Your identity was not saved. An error occured."));
 }
 
 void ProfileManager::importIdentity()
@@ -141,7 +152,7 @@ void ProfileManager::importIdentity()
 	std::string gpg_id ;
 	std::string err_string ;
 
-	if(!RsInit::importIdentity(fname.toStdString(),gpg_id,err_string))
+	if(!RsInit::importIdentity(fname.toUtf8().constData(),gpg_id,err_string))
 	{
 		QMessageBox::information(this,tr("Identity not loaded"),tr("Your identity was not loaded properly:")+" \n    "+QString::fromStdString(err_string)) ;
 		return ;
@@ -156,8 +167,7 @@ void ProfileManager::importIdentity()
 		QMessageBox::information(this,tr("New identity imported"),tr("Your identity was imported successfuly:")+" \n"+"\nName :"+QString::fromStdString(name)+"\nemail: " + QString::fromStdString(email)+"\nKey ID: "+QString::fromStdString(gpg_id)+"\n\n"+tr("You can use it now to create a new location.")) ;
 	}
 
-	init() ;
-
+	fillIdentities();
 }
 
 void ProfileManager::selectFriend()
@@ -166,7 +176,7 @@ void ProfileManager::selectFriend()
 	/* still need to find home (first) */
 
 	QString fileName = QFileDialog::getOpenFileName(this, tr("Select Trusted Friend"), "",
-                                             tr("Certificates (*.pqi *.pem)"));
+													tr("Certificates (*.pqi *.pem)"));
 
 	std::string fname, userName;
 	fname = fileName.toStdString();
@@ -199,45 +209,19 @@ void ProfileManager::checkChanged(int /*i*/)
 #endif
 }
 
-void ProfileManager::loadCertificates()
-{
-    std::string lockFile;
-    int retVal = RsInit::LockAndLoadCertificates(false, lockFile);
-	switch(retVal)
-	{
-		case 0: close();
-				break;
-		case 1:	QMessageBox::warning(	this,
-										tr("Multiple instances"),
-										tr("Another RetroShare using the same profile is "
-											"already running on your system. Please close "
-											"that instance first") );
-				break;
-		case 2:	QMessageBox::warning(	this,
-										tr("Multiple instances"),
-										tr("An unexpected error occurred when Retroshare"
-											"tried to acquire the single instance lock") );
-				break;
-		case 3:	QMessageBox::warning(	this,
-										tr("Generate ID Failure"),
-										tr("Failed to Load your new Certificate!") );
-				break;
-		default: std::cerr << "StartDialog::loadCertificates() unexpected switch value " << retVal << std::endl;
-	}
-}
-
 void ProfileManager::newIdentity()
 {
-				GenCertDialog gd;
-				gd.hideButtons() ;
-				gd.exec ();
+	GenCertDialog gd;
+	gd.hideButtons();
+	gd.exec();
+	fillIdentities();
 }
 
 QTreeWidgetItem *ProfileManager::getCurrentIdentity()
 { 
-        if (ui.identityTreeWidget->selectedItems().size() != 0)  {
-            return ui.identityTreeWidget -> currentItem();
-        } 
+	if (ui.identityTreeWidget->selectedItems().size() != 0) {
+		return ui.identityTreeWidget->currentItem();
+	}
 
-        return NULL;
+	return NULL;
 } 
