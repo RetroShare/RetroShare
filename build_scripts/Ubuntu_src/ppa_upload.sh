@@ -1,2 +1,2 @@
 #!/bin/sh
-dput ppa:csoler-users/ppa retroshare_0.5-1_source.changes
+Apply dput ppa:csoler-users/retroshare-snapshots retroshare_0.5.3#.changes

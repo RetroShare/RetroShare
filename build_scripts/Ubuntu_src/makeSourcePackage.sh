@@ -66,12 +66,14 @@ cp retroshare-0.5/src/libbitdht/bitdht/bdboot.txt
 echo Setting version numbers...
 
 # setup version numbers
-cat retroshare-0.5/src/libretroshare/util/rsversion.h | grep -v SVN_REVISION > /tmp/toto2342
+cat retroshare-0.5/src/libretroshare/util/rsversion.h | grep -v SVN_REVISION | grep -v SVN_REVISION_NUMBER > /tmp/toto2342
 echo \#define SVN_REVISION \"Revision: "$version"  date : `date`\" >> /tmp/toto2342
+echo \#define SVN_REVISION_NUMBER $svn >> /tmp/toto2342
 cp /tmp/toto2342 retroshare-0.5/src/libretroshare/util/rsversion.h
 
-cat retroshare-0.5/src/retroshare-gui/util/rsversion.h | grep -v GUI_REVISION > /tmp/toto4463
+cat retroshare-0.5/src/retroshare-gui/util/rsversion.h | grep -v GUI_REVISION | grep -v SVN_REVISION_NUMBER > /tmp/toto4463
 echo \#define GUI_REVISION \"Revision: "$version"  date : `date`\" >> /tmp/toto4463
+echo \#define SVN_REVISION_NUMBER $svn >> /tmp/toto4463
 cp /tmp/toto4463 retroshare-0.5/src/retroshare-gui/util/rsversion.h
 
 # Various cleaning
@@ -111,8 +113,8 @@ mv -f retroshare-0.5/debian/control.tmp retroshare-0.5/debian/control
 
 cd retroshare-0.5
 
-#for i in sid; do
-for i in precise squeeze oneiric karmic lucid maverick natty; do
+for i in natty; do
+#for i in precise squeeze oneiric karmic lucid maverick natty; do
 	echo copying changelog for $i
 	cat ../changelog | sed -e s/XXXXXX/"$svn"/g | sed -e s/YYYYYY/"$i"/g > debian/changelog
 
