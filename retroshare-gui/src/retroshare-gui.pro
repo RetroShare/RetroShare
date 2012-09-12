@@ -283,7 +283,7 @@ HEADERS +=  rshare.h \
             util/EventFilter.h \
             util/EventReceiver.h \
             util/Widget.h \
-            util/rsversion.h \
+            util/rsguiversion.h \
             util/RsAction.h \
             util/printpreview.h \
             util/log.h \
@@ -576,7 +576,7 @@ SOURCES +=  main.cpp \
             util/EventReceiver.cpp \
             util/Widget.cpp \
             util/RsAction.cpp \
-            util/rsversion.cpp \
+            util/rsguiversion.cpp \
             util/printpreview.cpp \
             util/log.cpp \
             util/misc.cpp \

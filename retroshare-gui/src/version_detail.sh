@@ -27,7 +27,7 @@ if (ls &> /dev/null); then
 	echo "" >> gui/help/version.html
 fi
 
-#write the rsversion.h file
+#write the rsguiversion.h file
 if ( git log -n 1 &> /dev/null); then
 	#retrieve git information
 	version="git : $(git status | grep branch | cut -c 6-) $(git log -n 1 | grep commit)"
@@ -46,8 +46,8 @@ if ( svn info &> /dev/null); then
 fi
 if [[ $version != '' ]]; then
 	version="$version  date : $(date +'%T %m.%d.%y')"
-	echo "Writing version to util/rsversion.h : $version "
-	sed -i "s/GUI_REVISION .*/GUI_REVISION \"$version\"/g" util/rsversion.h
+	echo "Writing version to util/rsguiversion.h : $version "
+	sed -i "s/GUI_REVISION .*/GUI_REVISION \"$version\"/g" util/rsguiversion.h
 fi
 echo "version_detail.sh scripts finished"
 exit 0

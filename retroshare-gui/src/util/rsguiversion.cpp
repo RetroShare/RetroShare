@@ -19,7 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include "rsversion.h"
+#include "rsguiversion.h"
 
 QString retroshareVersion() {
 	return QString(GUI_VERSION);

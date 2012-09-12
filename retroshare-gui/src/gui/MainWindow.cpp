@@ -89,7 +89,7 @@
 #include <retroshare/rsnotify.h>
 
 #include "gui/connect/ConnectFriendWizard.h"
-#include "util/rsversion.h"
+#include "util/rsguiversion.h"
 #include "settings/rsettingswin.h"
 #include "settings/rsharesettings.h"
 #include "common/StatusDefs.h"
