@@ -39,7 +39,7 @@ public:
 public:
 
     /*!
-     * @return
+     * @return true if a change has occured
      */
     bool updated();
 
@@ -78,8 +78,29 @@ public:
 
     /** Modifications **/
 
+    /*!
+     * submits album, which returns a token that needs
+     * to be acknowledge to get album grp id
+     * @param token token to redeem for acknowledgement
+     * @param album album to be submitted
+     */
     bool submitAlbumDetails(uint32_t& token, RsPhotoAlbum &album);
+
+    /*!
+     * submits photo, which returns a token that needs
+     * to be acknowledge to get photo msg-grp id pair
+     * @param token token to redeem for acknowledgement
+     * @param photo photo to be submitted
+     */
     bool submitPhoto(uint32_t& token, RsPhotoPhoto &photo);
+
+    /*!
+     * subscribes to group, and returns token which can be used
+     * to be acknowledged to get group Id
+     * @param token token to redeem for acknowledgement
+     * @param grpId the id of the group to subscribe to
+     */
+    bool subscribeToAlbum(uint32_t& token, const RsGxsGroupId& grpId);
 
     /*!
      * This allows the client service to acknowledge that their msgs has

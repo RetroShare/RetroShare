@@ -54,11 +54,11 @@ namespace GXS_SERV {
 
     // Subscription Flags. (LOCAL)
 
-    static const uint32_t RSGXS_GROUP_SUBSCRIBE_ADMIN = 0x00000001;
-    static const uint32_t RSGXS_GROUP_SUBSCRIBE_PUBLISH = 0x00000002;
-    static const uint32_t RSGXS_GROUP_SUBSCRIBE_SUBSCRIBED = 0x00000004;
-    static const uint32_t RSGXS_GROUP_SUBSCRIBE_MONITOR = 0x00000008;
-    static const uint32_t RSGXS_GROUP_SUBSCRIBE_MASK = 0x0000000f;
+    static const uint32_t GROUP_SUBSCRIBE_ADMIN = 0x00000001;
+    static const uint32_t GROUP_SUBSCRIBE_PUBLISH = 0x00000002;
+    static const uint32_t GROUP_SUBSCRIBE_SUBSCRIBED = 0x00000004;
+    static const uint32_t GROUP_SUBSCRIBE_MONITOR = 0x00000008;
+    static const uint32_t GROUP_SUBSCRIBE_MASK = 0x0000000f;
 
 }
 

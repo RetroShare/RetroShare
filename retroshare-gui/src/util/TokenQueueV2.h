@@ -63,6 +63,11 @@ class TokenResponseV2
 };
 
 
+/*!
+ *
+ *
+ *
+ */
 class TokenQueueV2: public QWidget
 {
   Q_OBJECT
@@ -71,10 +76,23 @@ public:
         TokenQueueV2(RsTokenServiceV2 *service, TokenResponseV2 *resp);
 
 	/* generic handling of token / response update behaviour */
+
+        /*!
+         *
+         * @token the token to be redeem is assigned here
+         *
+         */
 	bool requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptionsV2 &opts,
                                                         std::list<RsGxsGroupId>& ids, uint32_t usertype);
+
+        bool requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptionsV2 &opts, uint32_t usertype);
+
 	bool requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptionsV2 &opts,
-							const GxsMsgReq& ids, uint32_t usertype);
+                            const std::list<RsGxsGroupId>& grpIds, uint32_t usertype);
+
+        bool requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptionsV2 &opts,
+                            const GxsMsgReq& grpIds, uint32_t usertype);
+
 
 	bool cancelRequest(const uint32_t token);
 

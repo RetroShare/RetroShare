@@ -25,6 +25,7 @@
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsphotoV2.h>
+#include <gxs/rsgxsflags.h>
 
 #include <iostream>
 #include <sstream>
@@ -34,6 +35,7 @@
 
 #include "AlbumCreateDialog.h"
 #include "AlbumItem.h"
+#include "PhotoItem.h"
 
 /******
  * #define PHOTO_DEBUG 1
@@ -58,7 +60,8 @@
  *   Will introduce a FullScreen SlideShow later... first get basics happening.
  */
 
-
+#define IS_ALBUM_ADMIN(subscribeFlags) (subscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
+#define IS_ALBUM_SUBSCRIBED(subscribeFlags) (subscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
 
 
 /** Constructor */
@@ -70,10 +73,17 @@ PhotoDialog::PhotoDialog(QWidget *parent)
         mAlbumSelected = NULL;
         mPhotoSelected = NULL;
         mSlideShow = NULL;
+        mAlbumDialog = NULL;
 
-	connect( ui.toolButton_NewAlbum, SIGNAL(clicked()), this, SLOT(OpenOrShowPhotoAddDialog()));
-        connect( ui.toolButton_ViewAlbum, SIGNAL(clicked()), this, SLOT(OpenPhotoEditDialog()));
+        connect( ui.toolButton_NewAlbum, SIGNAL(clicked()), this, SLOT(createAlbum()));
+        connect( ui.toolButton_ViewAlbum, SIGNAL(clicked()), this, SLOT(OpenAlbumDialog()));
 	connect( ui.toolButton_SlideShow, SIGNAL(clicked()), this, SLOT(OpenSlideShow()));
+
+        connect( ui.pushButton_YourAlbums, SIGNAL(clicked()), this, SLOT(updateAlbums()));
+        connect( ui.pushButton_SharedAlbums, SIGNAL(clicked()), this, SLOT(updateAlbums()));
+        connect( ui.pushButton_SubscribedAlbums, SIGNAL(clicked()), this, SLOT(updateAlbums()));
+
+        ui.pushButton_YourAlbums->setChecked(true); // default to your albums view
 
 	QTimer *timer = new QTimer(this);
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
@@ -82,9 +92,73 @@ PhotoDialog::PhotoDialog(QWidget *parent)
 
 	/* setup TokenQueue */
         mPhotoQueue = new TokenQueueV2(rsPhotoV2->getTokenService(), this);
-
+        requestAlbumData();
+        updateAlbums();
 }
 
+void PhotoDialog::notifySelection(PhotoShareItem *selection)
+{
+
+    AlbumItem* aItem;
+    PhotoItem* pItem;
+
+    if((aItem = dynamic_cast<AlbumItem*>(selection)) != NULL)
+    {
+
+        if(mPhotoSelected)
+            mPhotoSelected->setSelected(false);
+
+        clearPhotos();
+
+        if(mAlbumSelected == aItem)
+        {
+            mAlbumSelected->setSelected(true);
+        }
+        else
+        {
+            if(mAlbumSelected  == NULL)
+            {
+                mAlbumSelected = aItem;
+            }
+            else
+            {
+                mAlbumSelected->setSelected(false);
+                mAlbumSelected = aItem;
+            }
+
+            mAlbumSelected->setSelected(true);
+
+        }
+
+        updatePhotos();
+    }
+    else if((pItem = dynamic_cast<PhotoItem*>(selection)) != NULL)
+    {
+        if(mPhotoSelected == pItem)
+        {
+            mPhotoSelected->setSelected(true);
+        }
+        else
+        {
+            if(mPhotoSelected  == NULL)
+            {
+                mPhotoSelected = pItem;
+            }
+            else
+            {
+                mPhotoSelected->setSelected(false);
+                mPhotoSelected = pItem;
+            }
+
+            mPhotoSelected->setSelected(true);
+        }
+    }
+    else
+    {
+
+    }
+
+}
 
 
 void PhotoDialog::checkUpdate()
@@ -151,92 +225,176 @@ void PhotoDialog::createAlbum()
     albumCreate.exec();
 }
 
-void PhotoDialog::OpenPhotoEditDialog()
+void PhotoDialog::OpenAlbumDialog()
 {
+    if(mAlbumSelected){
 
+        if(mAlbumDialog == NULL)
+        {
+            mAlbumDialog = new AlbumDialog(mAlbumSelected->getAlbum(), mPhotoQueue, rsPhotoV2);
+            connect(mAlbumDialog, SIGNAL(destroyed()), this, SLOT(SetDialogClosed()));
+            mAlbumDialog->show();
+        }else{
+            // bring dialog to front
+            mAlbumDialog->raise();
+        }
+    }
+    return;
+}
+
+void PhotoDialog::SetDialogClosed()
+{
+    mAlbumDialog = NULL;
 }
 
 /*************** Edit Photo Dialog ***************/
 
-
-bool PhotoDialog::matchesAlbumFilter(const RsPhotoAlbum &album)
-{
-
-	return true;
-}
-
-double PhotoDialog::AlbumScore(const RsPhotoAlbum &album)
-{
-	return 1;
-}
-
-
-bool PhotoDialog::matchesPhotoFilter(const RsPhotoPhoto &photo)
-{
-
-	return true;
-}
-
-double PhotoDialog::PhotoScore(const RsPhotoPhoto &photo)
-{
-	return 1;
-}
-
-void PhotoDialog::insertPhotosForSelectedAlbum()
-{
-	std::cerr << "PhotoDialog::insertPhotosForSelectedAlbum()";
-	std::cerr << std::endl;
-
-	clearPhotos();
-
-	//std::list<std::string> albumIds;
-	if (mAlbumSelected)
-	{
-                std::string albumId = mAlbumSelected->getAlbum().mMeta.mGroupId;
-		//albumIds.push_back(albumId);
-
-		std::cerr << "PhotoDialog::insertPhotosForSelectedAlbum() AlbumId: " << albumId;
-		std::cerr << std::endl;
-		requestPhotoList(albumId);
-	}
-	//requestPhotoList(albumIds);
-}
-
-
 void PhotoDialog::clearAlbums()
 {
-
     std::cerr << "PhotoDialog::clearAlbums()" << std::endl;
+    QLayout *alayout = ui.scrollAreaWidgetContents->layout();
 
+    QSetIterator<AlbumItem*> sit(mAlbumItems);
 
+    while(sit.hasNext())
+    {
+        AlbumItem* item = sit.next();
+        alayout->removeWidget(item);
+        item->setParent(NULL);
+    }
+
+    clearPhotos();
 }
 
 void PhotoDialog::clearPhotos()
 {
-	std::cerr << "PhotoDialog::clearPhotos()" << std::endl;
+    std::cerr << "PhotoDialog::clearPhotos()" << std::endl;
+    mPhotoSelected = NULL;
 
+    QLayout *layout = ui.scrollAreaWidgetContents_2->layout();
 
-	mPhotoSelected = NULL;
-	
-	
+    if(mAlbumSelected)
+    {
+        const RsGxsGroupId& id = mAlbumSelected->getAlbum().mMeta.mGroupId;
+
+        QSetIterator<PhotoItem*> sit(mPhotoItems[id]);
+
+        while(sit.hasNext())
+        {
+            PhotoItem* item  = sit.next();
+            layout->removeWidget(item);
+            item->setParent(NULL);
+        }
+    }
+}
+
+void PhotoDialog::updateAlbums()
+{
+
+    clearAlbums();
+
+    QLayout *alayout = ui.scrollAreaWidgetContents->layout();
+    QSetIterator<AlbumItem*> sit(mAlbumItems);
+
+    if(ui.pushButton_YourAlbums->isChecked())
+    {
+
+        ui.toolButton_subscribe->setEnabled(false);
+        ui.toolButton_NewAlbum->setEnabled(true);
+        ui.toolButton_SlideShow->setEnabled(true);
+
+        while(sit.hasNext()){
+
+            AlbumItem* item = sit.next();
+            uint32_t flags = item->getAlbum().mMeta.mSubscribeFlags;
+
+            if(IS_ALBUM_ADMIN(flags))
+                alayout->addWidget(item);
+        }
+    }else if(ui.pushButton_SubscribedAlbums->isChecked())
+    {
+
+        ui.toolButton_subscribe->setEnabled(false);
+        ui.toolButton_NewAlbum->setEnabled(false);
+        ui.toolButton_SlideShow->setEnabled(true);
+
+        while(sit.hasNext()){
+
+            AlbumItem* item = sit.next();
+            uint32_t flags = item->getAlbum().mMeta.mSubscribeFlags;
+
+            if(IS_ALBUM_SUBSCRIBED(flags))
+                alayout->addWidget(item);
+        }
+
+    }else if(ui.pushButton_SharedAlbums->isChecked())
+    {
+
+        ui.toolButton_subscribe->setEnabled(true);
+        ui.toolButton_NewAlbum->setEnabled(false);
+        ui.toolButton_SlideShow->setEnabled(false);
+
+        while(sit.hasNext()){
+
+            AlbumItem* item = sit.next();
+            uint32_t flags = item->getAlbum().mMeta.mSubscribeFlags;
+
+            if(flags == 0)
+                alayout->addWidget(item);
+
+        }
+    }
 }
 
 void PhotoDialog::addAlbum(const RsPhotoAlbum &album)
 {
-	std::cerr << " PhotoDialog::addAlbum() AlbumId: " << album.mMeta.mGroupId << std::endl;
+    std::cerr << " PhotoDialog::addAlbum() AlbumId: " << album.mMeta.mGroupId << std::endl;
 
-        AlbumItem *item = new AlbumItem(album, this);
-	QLayout *alayout = ui.scrollAreaWidgetContents->layout();
-	alayout->addWidget(item);
+    AlbumItem *item = new AlbumItem(album, this, this);
+    mAlbumItems.insert(item);
+    clearAlbums();
+    updateAlbums();
 }
 
 
 void PhotoDialog::addPhoto(const RsPhotoPhoto &photo)
 {
-	std::cerr << "PhotoDialog::addPhoto() AlbumId: " << photo.mMeta.mGroupId;
-	std::cerr << " PhotoId: " << photo.mMeta.mMsgId;
-	std::cerr << std::endl;
+    std::cerr << "PhotoDialog::addPhoto() AlbumId: " << photo.mMeta.mGroupId;
+    std::cerr << " PhotoId: " << photo.mMeta.mMsgId;
+    std::cerr << std::endl;
 
+    PhotoItem* item = new PhotoItem(this, photo, this);
+    const RsGxsGroupId id = photo.mMeta.mGroupId;
+
+    mPhotoItems[id].insert(item);
+}
+
+void PhotoDialog::subscribeToAlbum()
+{
+    if(mAlbumSelected){
+        RsGxsGroupId id = mAlbumSelected->getAlbum().mMeta.mGroupId;
+        uint32_t token;
+        rsPhotoV2->subscribeToAlbum(token, id);
+        mPhotoQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_ACK, 0);
+    }
+}
+
+void PhotoDialog::updatePhotos()
+{
+    clearPhotos();
+
+    if(mAlbumSelected)
+    {
+        const RsGxsGroupId& grpId = mAlbumSelected->getAlbum().mMeta.mGroupId;
+
+        QSetIterator<PhotoItem*> sit(mPhotoItems[grpId]);
+
+        while(sit.hasNext())
+        {
+            QLayout *layout = ui.scrollAreaWidgetContents_2->layout();
+            layout->addWidget(sit.next());
+        }
+    }
 }
 
 /**************************** Request / Response Filling of Data ************************/
@@ -280,7 +438,7 @@ void PhotoDialog::loadAlbumList(const uint32_t &token)
 }
 
 
-void PhotoDialog::requestAlbumData(std::list<std::string> &ids)
+void PhotoDialog::requestAlbumData(std::list<RsGxsGroupId> &ids)
 {
 	RsTokReqOptionsV2 opts;
 	uint32_t token;
@@ -288,6 +446,13 @@ void PhotoDialog::requestAlbumData(std::list<std::string> &ids)
         mPhotoQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, ids, 0);
 }
 
+void PhotoDialog::requestAlbumData()
+{
+        RsTokReqOptionsV2 opts;
+        uint32_t token;
+        opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+        mPhotoQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, 0);
+}
 
 bool PhotoDialog::loadAlbumData(const uint32_t &token)
 {
@@ -305,10 +470,9 @@ bool PhotoDialog::loadAlbumData(const uint32_t &token)
 
         std::cerr << " PhotoDialog::addAlbum() AlbumId: " << album.mMeta.mGroupId << std::endl;
 
-        AlbumItem *item = new AlbumItem(album, this);
-        QLayout *alayout = ui.scrollAreaWidgetContents->layout();
-        alayout->addWidget(item);
+        addAlbum(album);
     }
+    updateAlbums();
     return true;
 }
 
@@ -407,6 +571,7 @@ void PhotoDialog::loadPhotoData(const uint32_t &token)
                 std::cerr << std::endl;
             }
         }
+        updatePhotos();
 }
 
 

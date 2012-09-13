@@ -254,24 +254,29 @@ public:
 
 	/* details are updated in album - to choose Album ID, and storage path */
 
-	/*!
-	 * This RsGenExchange service will be alerted to this album as \n
-	 * a new album. Do not keep the submitted album as representative, wait for
-	 * notification telling of successful submission
-	 * @param album The album to be submitted
-	 * @return false if submission failed
-	 */
-	virtual bool submitAlbumDetails(uint32_t& token, RsPhotoAlbum &album) = 0;
+        /*!
+         * submits album, which returns a token that needs
+         * to be acknowledge to get album grp id
+         * @param token token to redeem for acknowledgement
+         * @param album album to be submitted
+         */
+        virtual bool submitAlbumDetails(uint32_t& token, RsPhotoAlbum &album) = 0;
 
-	/*!
-	 * This RsGenExchange service will be alerted to this photo as \n
-	 * a new photo. Do not keep the submitted photo as representative, wait for new photo
-	 * returned
-	 * @param photo photo to submit
-	 * @return
-	 */
-	virtual bool submitPhoto(uint32_t& token, RsPhotoPhoto &photo) = 0;
+        /*!
+         * submits photo, which returns a token that needs
+         * to be acknowledge to get photo msg-grp id pair
+         * @param token token to redeem for acknowledgement
+         * @param photo photo to be submitted
+         */
+        virtual bool submitPhoto(uint32_t& token, RsPhotoPhoto &photo) = 0;
 
+        /*!
+         * subscribes to group, and returns token which can be used
+         * to be acknowledged to get group Id
+         * @param token token to redeem for acknowledgement
+         * @param grpId the id of the group to subscribe to
+         */
+        virtual bool subscribeToAlbum(uint32_t& token, const RsGxsGroupId& grpId) = 0;
 
 	/*!
 	 * This allows the client service to acknowledge that their msgs has
@@ -281,6 +286,8 @@ public:
 	 * @return true if token exists false otherwise
 	 */
 	virtual bool acknowledgeMsg(const uint32_t& token, std::pair<RsGxsGroupId, RsGxsMessageId>& msgId) = 0;
+
+
 
 	/*!
 	 * This allows the client service to acknowledge that their grps has

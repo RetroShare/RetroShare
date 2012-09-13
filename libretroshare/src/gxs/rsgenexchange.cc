@@ -632,6 +632,9 @@ void RsGenExchange::publishGrps()
                     size = grp->metaData->serial_size();
                     char mData[size];
                     grp->metaData->mGroupId = grp->grpId;
+
+                    // indicate user is admin through local subscribe flag
+                    grp->metaData->mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_ADMIN;
                     ok = grp->metaData->serialise(mData, size);
                     grp->meta.setBinData(mData, size);
 

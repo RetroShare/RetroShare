@@ -37,25 +37,37 @@
 #include <map>
 
 #include "util/TokenQueueV2.h"
+#include "PhotoShareItemHolder.h"
 
-class PhotoDialog : public MainPage, public TokenResponseV2
+
+class PhotoDialog : public MainPage, public TokenResponseV2, public PhotoShareItemHolder
 {
   Q_OBJECT
 
 public:
         PhotoDialog(QWidget *parent = 0);
 
+        void notifySelection(PhotoShareItem* selection);
+
 private slots:
 
 	void checkUpdate();
         void createAlbum();
-	void OpenPhotoEditDialog();
+        void OpenAlbumDialog();
 	void OpenSlideShow();
+        void SetDialogClosed();
+        void updateAlbums();
+        void subscribeToAlbum();
 private:
 
 	/* Request Response Functions for loading data */
         void requestAlbumList(std::list<std::string>& ids);
-        void requestAlbumData(std::list<std::string> &ids);
+        void requestAlbumData(std::list<RsGxsGroupId> &ids);
+
+        /*!
+         * request data for all groups
+         */
+        void requestAlbumData();
         void requestPhotoList(GxsMsgReq &albumIds);
 	void requestPhotoList(const std::string &albumId);
         void requestPhotoData(GxsMsgReq &photoIds);
@@ -69,24 +81,15 @@ private:
 
         void acknowledgeGroup(const uint32_t &token);
         void acknowledgeMessage(const uint32_t &token);
-	/* TODO: These functions must be filled in for proper filtering to work 
-	 * and tied to the GUI input
-	 */
-
-	bool matchesAlbumFilter(const RsPhotoAlbum &album);
-	double AlbumScore(const RsPhotoAlbum &album);
-	bool matchesPhotoFilter(const RsPhotoPhoto &photo);
-	double PhotoScore(const RsPhotoPhoto &photo);
 
 	/* Grunt work of setting up the GUI */
 
-	void insertPhotosForSelectedAlbum();
-
 	void addAlbum(const RsPhotoAlbum &album);
-	void addPhoto(const RsPhotoPhoto &photo);
+        void addPhoto(const RsPhotoPhoto &photo);
 
 	void clearAlbums();
 	void clearPhotos();
+        void updatePhotos();
 
 private:
 
@@ -94,11 +97,15 @@ private:
         AlbumItem* mAlbumSelected;
         PhotoItem* mPhotoSelected;
         PhotoSlideShow* mSlideShow;
+        AlbumDialog* mAlbumDialog;
 
         TokenQueueV2 *mPhotoQueue;
 
 	/* UI - from Designer */
 	Ui::PhotoDialog ui;
+
+        QSet<AlbumItem*> mAlbumItems;
+        QMap<RsGxsGroupId, QSet<PhotoItem*> > mPhotoItems;
 
 };
 

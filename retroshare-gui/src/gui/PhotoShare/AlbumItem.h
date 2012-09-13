@@ -4,26 +4,35 @@
 #include <QWidget>
 #include "string.h"
 #include "retroshare/rsphotoV2.h"
+#include "PhotoShareItemHolder.h"
 
 namespace Ui {
     class AlbumItem;
 }
 
-class AlbumItem : public QWidget
+class AlbumItem : public QWidget, public PhotoShareItem
 {
     Q_OBJECT
 
 public:
-    explicit AlbumItem(const RsPhotoAlbum& album, QWidget *parent = 0);
+    explicit AlbumItem(const RsPhotoAlbum& album, PhotoShareItemHolder* albumHolder, QWidget *parent = 0);
     ~AlbumItem();
 
     RsPhotoAlbum getAlbum();
+
+    bool isSelected() {  return mSelected ;}
+    void setSelected(bool selected);
+
+protected:
+    void mousePressEvent(QMouseEvent *event);
 
 private:
     void setUp();
 private:
     Ui::AlbumItem *ui;
     RsPhotoAlbum mAlbum;
+    PhotoShareItemHolder* mAlbumHolder;
+    bool mSelected;
 };
 
 #endif // ALBUMITEM_H

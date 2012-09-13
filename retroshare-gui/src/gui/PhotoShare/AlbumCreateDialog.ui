@@ -123,6 +123,13 @@ border-radius: 10px;
     </layout>
    </item>
    <item>
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
     <layout class="QGridLayout" name="gridLayout_6">
      <item row="0" column="0">
       <widget class="QLabel" name="captionLabel">
@@ -165,6 +172,13 @@ border-radius: 10px;
       <widget class="QLineEdit" name="lineEdit_Where"/>
      </item>
     </layout>
+   </item>
+   <item>
+    <widget class="Line" name="line_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">

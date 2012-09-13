@@ -1,11 +1,13 @@
 #include "p3photoserviceV2.h"
 #include "serialiser/rsphotov2items.h"
+#include "gxs/rsgxsflags.h"
 
 RsPhotoV2 *rsPhotoV2 = NULL;
 
 p3PhotoServiceV2::p3PhotoServiceV2(RsGeneralDataService* gds, RsNetworkExchangeService* nes)
 	: RsGenExchange(gds, nes, new RsGxsPhotoSerialiser(), RS_SERVICE_TYPE_PHOTO)
 {
+
 
 }
 
@@ -144,6 +146,13 @@ bool p3PhotoServiceV2::submitAlbumDetails(uint32_t& token, RsPhotoAlbum& album)
 	albumItem->meta = album.mMeta;
         RsGenExchange::publishGroup(token, albumItem);
         return true;
+}
+
+bool p3PhotoServiceV2::subscribeToAlbum(uint32_t &token, const RsGxsGroupId &grpId)
+{
+
+    RsGenExchange::setGroupSubscribeFlag(token, grpId, GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED);
+    return true;
 }
 
 

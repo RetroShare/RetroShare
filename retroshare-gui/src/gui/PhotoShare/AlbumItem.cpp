@@ -1,9 +1,12 @@
 #include "AlbumItem.h"
 #include "ui_AlbumItem.h"
+#include <iostream>
 
-AlbumItem::AlbumItem(const RsPhotoAlbum& album, QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::AlbumItem), mAlbum(album)
+#include <QMouseEvent>
+
+AlbumItem::AlbumItem(const RsPhotoAlbum &album, PhotoShareItemHolder *albumHolder, QWidget *parent) :
+    QWidget(NULL),
+    ui(new Ui::AlbumItem), mAlbum(album), mAlbumHolder(albumHolder)
 {
     ui->setupUi(this);
     setUp();
@@ -21,6 +24,35 @@ void AlbumItem::setUp()
     QPixmap qtn;
     qtn.loadFromData(mAlbum.mThumbnail.data, mAlbum.mThumbnail.size, mAlbum.mThumbnail.type.c_str());
     ui->label_Thumbnail->setPixmap(qtn);
+}
+
+void AlbumItem::mousePressEvent(QMouseEvent *event)
+{
+    QPoint pos = event->pos();
+
+    std::cerr << "AlbumItem::mousePressEvent(" << pos.x() << ", " << pos.y() << ")";
+    std::cerr << std::endl;
+
+    if(mAlbumHolder)
+        mAlbumHolder->notifySelection(this);
+    else
+        setSelected(true);
+
+    QWidget::mousePressEvent(event);
+}
+
+void AlbumItem::setSelected(bool on)
+{
+    mSelected = on;
+    if (mSelected)
+    {
+            ui->albumFrame->setStyleSheet("QFrame#albumFrame{border: 2px solid #55CC55;\nbackground: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #55EE55, stop: 1 #CCCCCC);\nborder-radius: 10px}");
+    }
+    else
+    {
+            ui->albumFrame->setStyleSheet("QFrame#albumFrame{border: 2px solid #CCCCCC;\nbackground: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #EEEEEE, stop: 1 #CCCCCC);\nborder-radius: 10px}");
+    }
+    update();
 }
 
 RsPhotoAlbum AlbumItem::getAlbum()

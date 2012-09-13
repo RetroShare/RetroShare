@@ -2295,6 +2295,10 @@ int RsServer::StartupRetroShare()
 	// start up gxs core server
 	createThread(*mGxsCore);
 
+
+        // create some dummy items
+
+
 #endif
 
 #ifdef ENABLE_GXS_SERVICES

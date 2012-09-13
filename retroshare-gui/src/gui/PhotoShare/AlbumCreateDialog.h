@@ -23,6 +23,9 @@ private slots:
     void addAlbumThumbnail();
 
 private:
+
+    bool getAlbumThumbnail(RsPhotoThumbnail &nail);
+private:
     Ui::AlbumCreateDialog *ui;
 
     TokenQueueV2* mPhotoQueue;

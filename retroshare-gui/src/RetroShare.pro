@@ -27,7 +27,7 @@ RCC_DIR = temp/qrc
 UI_DIR  = temp/ui
 MOC_DIR = temp/moc
 
-#CONFIG += debug
+CONFIG += debug
 debug {
 	QMAKE_CFLAGS += -g
 	QMAKE_CXXFLAGS -= -O2
@@ -108,45 +108,46 @@ win32-x-g++ {
 #################################### Windows #####################################
 
 win32 {
-	# Switch on extra warnings
-	QMAKE_CFLAGS += -Wextra
-	QMAKE_CXXFLAGS += -Wextra
 
-	# Switch off optimization for release version
-	QMAKE_CXXFLAGS_RELEASE -= -O2
-	QMAKE_CXXFLAGS_RELEASE += -O0
-	QMAKE_CFLAGS_RELEASE -= -O2
-	QMAKE_CFLAGS_RELEASE += -O0
+        # Switch on extra warnings
+        QMAKE_CFLAGS += -Wextra
+        QMAKE_CXXFLAGS += -Wextra
 
-	# Switch on optimization for debug version
-	#QMAKE_CXXFLAGS_DEBUG += -O2
-	#QMAKE_CFLAGS_DEBUG += -O2
+        # Switch off optimization for release version
+        QMAKE_CXXFLAGS_RELEASE -= -O2
+        QMAKE_CXXFLAGS_RELEASE += -O0
+        QMAKE_CFLAGS_RELEASE -= -O2
+        QMAKE_CFLAGS_RELEASE += -O0
 
-	OBJECTS_DIR = temp/obj
-	#LIBS += -L"D/Qt/2009.03/qt/plugins/imageformats"
-	#QTPLUGIN += qjpeg
+        # Switch on optimization for debug version
+        #QMAKE_CXXFLAGS_DEBUG += -O2
+        #QMAKE_CFLAGS_DEBUG += -O2
 
-	PRE_TARGETDEPS += ../../libretroshare/src/lib/libretroshare.a
+#    PRE_TARGETDEPS += ../../libretroshare/src/lib/libretroshare.a
+    PRE_TARGETDEPS += ../../libretroshare/libretroshare-build-desktop/lib/libretroshare.a
 
-	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
-	LIBS += -L"../../../lib"
-	LIBS += -lssl -lcrypto -lpthreadGC2d -lminiupnpc -lz
+    LIBS += ../../libretroshare/libretroshare-build-desktop/lib/libretroshare.a
+    LIBS += C:\Development\Rs\v0.5-gxs-b1\openpgpsdk\openpgpsdk-build-desktop\lib\libops.a
+    LIBS += C:\Development\Libraries\sqlite\sqlite-autoconf-3070900\lib\libsqlite3.a
+    LIBS += -L"../../../lib"
+    LIBS += -lssl -lcrypto -lgpgme -lpthreadGC2d -lminiupnpc -lz -lbz2
 # added after bitdht
-#	LIBS += -lws2_32
-	LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
-	LIBS += -lole32 -lwinmm
-	RC_FILE = gui/images/retroshare_win.rc
+#    LIBS += -lws2_32
+        LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
+        LIBS += -lole32 -lwinmm
+        RC_FILE = gui/images/retroshare_win.rc
 
-	# export symbols for the plugins
-	LIBS += -Wl,--export-all-symbols,--out-implib,lib/libretroshare-gui.a
+        # export symbols for the plugins
+        #LIBS += -Wl,--export-all-symbols,--out-implib,lib/libretroshare-gui.a
 
-	# create lib directory
-	QMAKE_PRE_LINK = $(CHK_DIR_EXISTS) lib $(MKDIR) lib
+    GPG_ERROR_DIR = ../../../../libgpg-error-1.7
+    GPGME_DIR  = ../../../../gpgme-1.1.8
+    GPG_ERROR_DIR = ../../../../lib/libgpg-error-1.7
+    GPGME_DIR  = ../../../../lib/gpgme-1.1.8
+    INCLUDEPATH += . $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
 
-	DEFINES += WINDOWS_SYS
 
-	INCLUDEPATH += .
+
 }
 
 ##################################### MacOS ######################################
@@ -192,8 +193,8 @@ freebsd-* {
 # ###########################################
 
 bitdht {
-	LIBS += ../../libbitdht/src/lib/libbitdht.a
-	PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
+        LIBS += ../../libbitdht/libbitdht-build-desktop/lib/libbitdht.a
+        PRE_TARGETDEPS *= ../../libbitdht/libbitdht-build-desktop/lib/libbitdht.a
 }
 
 win32 {
@@ -414,6 +415,7 @@ HEADERS +=  rshare.h \
             gui/GetStartedDialog.h
 
 
+
 FORMS +=    gui/StartDialog.ui \
             gui/GenCertDialog.ui \
             gui/AboutDialog.ui \
@@ -513,7 +515,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/style/StyleDialog.ui \
             gui/dht/DhtWindow.ui \
             gui/bwctrl/BwCtrlWindow.ui \
-            gui/GetStartedDialog.ui
+            gui/GetStartedDialog.ui \
 
 SOURCES +=  main.cpp \
             rshare.cpp \
@@ -695,6 +697,7 @@ SOURCES +=  main.cpp \
             gui/bwctrl/BwCtrlWindow.cpp \
             gui/GetStartedDialog.cpp
 
+
 RESOURCES += gui/images.qrc lang/lang.qrc gui/help/content/content.qrc
 
 TRANSLATIONS +=  \
@@ -854,28 +857,43 @@ SOURCES += gui/unfinished/ApplicationWindow.cpp \
 
 photoshare {
 
-	HEADERS += gui/PhotoShare/PhotoItem.h \
-		gui/PhotoShare/PhotoDialog.h \
-		gui/PhotoShare/PhotoAddDialog.h \
-		gui/PhotoShare/PhotoDetailsDialog.h \
+	HEADERS += \
+                gui/PhotoShare/PhotoDialog.h \
 		gui/PhotoShare/PhotoDrop.h \
 		gui/PhotoShare/PhotoSlideShow.h \
-		util/TokenQueueV2.h \
+                util/TokenQueueV2.h \
+                gui/PhotoShare/AlbumDialog.h \
+                gui/PhotoShare/AlbumItem.h \
+                gui/PhotoShare/PhotoItem.h \
+                gui/PhotoShare/AlbumCreateDialog.h \
+                gui/PhotoShare/PhotoShareItemHolder.h \
+                gui/PhotoShare/PhotoShare.h
 
-	FORMS += gui/PhotoShare/PhotoItem.ui \
-		gui/PhotoShare/PhotoDialog.ui \
-		gui/PhotoShare/PhotoAddDialog.ui \
-		gui/PhotoShare/PhotoDetailsDialog.ui \
-		gui/PhotoShare/PhotoSlideShow.ui \
-
-	SOURCES += gui/PhotoShare/PhotoItem.cpp \
-		gui/PhotoShare/PhotoDialog.cpp \
-		gui/PhotoShare/PhotoAddDialog.cpp \
-		gui/PhotoShare/PhotoDetailsDialog.cpp \
+#gui/PhotoShare/PhotoDetailsDialog.h \
+# gui/PhotoShare/PhotoAddDialog.h \
+	FORMS += \
+                gui/PhotoShare/PhotoDialog.ui \
+                gui/PhotoShare/PhotoSlideShow.ui \
+                gui/PhotoShare/AlbumItem.ui \
+                gui/PhotoShare/AlbumDialog.ui \
+                gui/PhotoShare/PhotoItem.ui \
+                gui/PhotoShare/AlbumCreateDialog.ui \
+                gui/PhotoShare/PhotoShare.ui
+# gui/PhotoShare/PhotoAddDialog.ui \1
+# gui/PhotoShare/PhotoDetailsDialog.ui \
+	SOURCES += \
+                gui/PhotoShare/PhotoDialog.cpp \
 		gui/PhotoShare/PhotoDrop.cpp \
 		gui/PhotoShare/PhotoSlideShow.cpp \
-		util/TokenQueueV2.cpp \
-
+                gui/PhotoShare/AlbumDialog.cpp \
+                util/TokenQueueV2.cpp \
+                gui/PhotoShare/AlbumItem.cpp \
+                gui/PhotoShare/PhotoItem.cpp \
+                gui/PhotoShare/AlbumCreateDialog.cpp \
+                gui/PhotoShare/PhotoShareItemHolder.cpp \
+                gui/PhotoShare/PhotoShare.cpp
+# gui/PhotoShare/PhotoAddDialog.cpp \
+# gui/PhotoShare/PhotoDetailsDialog.cpp \
 }
 
 
@@ -922,7 +940,7 @@ identities {
 	FORMS += gui/Identity/IdDialog.ui \
 		gui/Identity/IdEditDialog.ui \
 
-	SOURCES += util/TokenQueue.cpp \
+        SOURCES += util/TokenQueue.cpp \
 		gui/Identity/IdDialog.cpp \
 		gui/Identity/IdEditDialog.cpp \
 

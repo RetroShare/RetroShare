@@ -28,6 +28,7 @@
 #include <QPoint>
 #include <QPixmap>
 #include <QWidget>
+#include <QSet>
 
 QT_BEGIN_NAMESPACE
 class QDragEnterEvent;
@@ -36,6 +37,7 @@ class QMouseEvent;
 QT_END_NAMESPACE
 
 #include "gui/PhotoShare/PhotoItem.h"
+#include "PhotoShareItemHolder.h"
 
 #define PHOTO_SHIFT_NO_BUTTONS		0
 #define PHOTO_SHIFT_LEFT_ONLY		1
@@ -48,14 +50,23 @@ class PhotoDrop : public QWidget
     Q_OBJECT
 
 public:
+
     PhotoDrop(QWidget *parent = 0);
     void clear();
-	void setSingleImage();
+    PhotoItem *getSelectedPhotoItem();
+    int	getPhotoCount();
+    PhotoItem *getPhotoIdx(int idx);
+    void getPhotos(QSet<PhotoItem*>& photos);
 
-PhotoItem *getSelectedPhotoItem();
-int	getPhotoCount();
-PhotoItem *getPhotoIdx(int idx);
-void 	addPhotoItem(PhotoItem *item);
+    void 	addPhotoItem(PhotoItem *item);
+    void setPhotoItemHolder(PhotoShareItemHolder* holder);
+
+    /*!
+     * delete photo item held by photo drop
+     * @param item photo item to delete
+     * @return false if item could not be found
+     */
+    bool deletePhoto(PhotoItem* item);
 
 public slots:
 	void moveLeft();
@@ -83,7 +94,8 @@ private:
 
 	PhotoItem *mSelected;
 	int mColumns;
-        bool mIsSingleImageDrop; 
+        PhotoShareItemHolder* mHolder;
+        QSet<PhotoItem*> mPhotos;
 };
 
 #endif
