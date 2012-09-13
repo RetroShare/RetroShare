@@ -90,6 +90,13 @@ void RsPluginManager::disablePlugin(const std::string& hash)
 		_accepted_hashes.erase(it) ;
 		IndicateConfigChanged() ;
 	}
+	if(_rejected_hashes.find(hash) == _rejected_hashes.end())
+	{
+		std::cerr << "RsPluginManager::enablePlugin(): inserting hash " << hash << " in black list" << std::endl;
+
+		_rejected_hashes.insert(hash) ;
+		IndicateConfigChanged() ;
+	}
 }
 
 void RsPluginManager::enablePlugin(const std::string& hash)
@@ -99,6 +106,15 @@ void RsPluginManager::enablePlugin(const std::string& hash)
 		std::cerr << "RsPluginManager::enablePlugin(): inserting hash " << hash << " in white list" << std::endl;
 
 		_accepted_hashes.insert(hash) ;
+		IndicateConfigChanged() ;
+	}
+	std::set<std::string>::const_iterator it(_rejected_hashes.find(hash)) ;
+	
+	if(it != _rejected_hashes.end())
+	{
+		std::cerr << "RsPluginManager::enablePlugin(): removing hash " << hash << " from black list" << std::endl;
+
+		_rejected_hashes.erase(it) ;
 		IndicateConfigChanged() ;
 	}
 }
