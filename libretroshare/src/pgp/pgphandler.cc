@@ -991,7 +991,12 @@ bool PGPHandler::SignDataBin(const PGPIdType& id,const void *data, const uint32_
 		return false ;
 	}
 
-	std::string passphrase = _passphrase_callback(NULL,PGPIdType(key->key_id).toStdString().c_str(),"Please enter passwd for encrypting your key : ",false) ;
+	std::string uid_hint ;
+	if(key->nuids > 0)
+		uid_hint = std::string((const char *)key->uids[0].user_id) ;
+	uid_hint += "(" + PGPIdType(key->key_id).toStdString()+")" ;
+
+	std::string passphrase = _passphrase_callback(NULL,uid_hint.c_str(),"Please enter passwd for encrypting your key : ",false) ;
 
 	ops_secret_key_t *secret_key = ops_decrypt_secret_key_from_data(key,passphrase.c_str()) ;
 
