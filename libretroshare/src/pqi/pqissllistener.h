@@ -85,11 +85,21 @@ int	acceptconnection();
 int	continueaccepts();
 int	finaliseAccepts();
 
-int	continueSSL(SSL *ssl, struct sockaddr_in remote_addr, bool);
+	struct IncomingSSLInfo
+	{
+		SSL *ssl ;
+		sockaddr_in addr ;
+		std::string gpgid ;
+		std::string sslid ;
+		std::string sslcn ;
+	};
+
+	// fn to get cert, anyway
+int	continueSSL(IncomingSSLInfo&, bool);
 int 	closeConnection(int fd, SSL *ssl);
 int 	isSSLActive(int fd, SSL *ssl);
 
-virtual int completeConnection(int sockfd, SSL *in_connection, struct sockaddr_in &raddr) = 0;
+virtual int completeConnection(int sockfd, IncomingSSLInfo&) = 0;
 virtual int finaliseConnection(int fd, SSL *ssl, std::string peerId, struct sockaddr_in &raddr) = 0;
 	protected:
 
@@ -98,13 +108,12 @@ virtual int finaliseConnection(int fd, SSL *ssl, std::string peerId, struct sock
 
 	private:
 
-	// fn to get cert, anyway
-int     Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_in *inaddr);
+	int Extract_Failed_SSL_Certificate(const IncomingSSLInfo&);
 
 	bool active;
 	int lsock;
 
-	std::map<SSL *, struct sockaddr_in> incoming_ssl;
+	std::list<IncomingSSLInfo> incoming_ssl ;
 
 	protected:
 
@@ -126,7 +135,7 @@ int	removeListenPort(std::string id);
 //virtual int 	tick();
 virtual int 	status();
 
-virtual int completeConnection(int sockfd, SSL *in_connection, struct sockaddr_in &raddr);
+virtual int completeConnection(int sockfd, IncomingSSLInfo&);
 virtual int finaliseConnection(int fd, SSL *ssl, std::string peerId, struct sockaddr_in &raddr);
 
 	private:

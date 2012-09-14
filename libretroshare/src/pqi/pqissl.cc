@@ -1143,7 +1143,14 @@ int 	pqissl::Extract_Failed_SSL_Certificate()
 	// we actually connected to remote_addr, 
 	// 	which could be 
 	//      (pqissl's case) sslcert->serveraddr or sslcert->localaddr.
-        AuthSSL::getAuthSSL()->FailedCertificate(peercert, remote_addr, false);
+
+	std::string sslid ;
+	getX509id(peercert, sslid) ;
+
+	std::string gpgid = getX509CNString(peercert->cert_info->issuer);
+	std::string sslcn = getX509CNString(peercert->cert_info->subject);
+
+	AuthSSL::getAuthSSL()->FailedCertificate(peercert, gpgid,sslid,sslcn,remote_addr, false);
 
 	return 1;
 }

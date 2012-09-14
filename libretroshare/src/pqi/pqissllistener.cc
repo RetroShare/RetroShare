@@ -363,26 +363,43 @@ int	pqissllistenbase::acceptconnection()
 	// Negotiate certificates. SSL stylee.
 	// Allow negotiations for secure transaction.
 	
-	SSL *ssl = SSL_new(AuthSSL::getAuthSSL() -> getCTX());
-	SSL_set_fd(ssl, fd);
+	IncomingSSLInfo incoming_connexion_info ;
 
-	return continueSSL(ssl, remote_addr, true); // continue and save if incomplete.
+	incoming_connexion_info.ssl   = SSL_new(AuthSSL::getAuthSSL() -> getCTX());
+	incoming_connexion_info.addr  = remote_addr ;
+	incoming_connexion_info.gpgid = "" ;
+	incoming_connexion_info.sslid = "" ;
+	incoming_connexion_info.sslcn = "" ;
+
+	SSL_set_fd(incoming_connexion_info.ssl, fd);
+
+	return continueSSL(incoming_connexion_info, true); // continue and save if incomplete.
 }
 
-int	pqissllistenbase::continueSSL(SSL *ssl, struct sockaddr_in remote_addr, bool addin)
+int	pqissllistenbase::continueSSL(IncomingSSLInfo& incoming_connexion_info, bool addin)
 {
 	// attempt the accept again.
-	int fd =  SSL_get_fd(ssl);
-	int err = SSL_accept(ssl);
+	int fd =  SSL_get_fd(incoming_connexion_info.ssl);
+
+	// clear the connexion info that will be filled in by the callback.
+	//
+	AuthSSL::getAuthSSL()->setCurrentConnectionAttemptInfo(std::string(),std::string(),std::string()) ;
+
+	int err = SSL_accept(incoming_connexion_info.ssl);
+
+	// No grab the connexion info that was filled in by the callback.
+	//
+	AuthSSL::getAuthSSL()->getCurrentConnectionAttemptInfo(incoming_connexion_info.gpgid,incoming_connexion_info.sslid,incoming_connexion_info.sslcn) ;
+
 	if (err <= 0)
 	{
-		int ssl_err = SSL_get_error(ssl, err);
+		int ssl_err = SSL_get_error(incoming_connexion_info.ssl, err);
 		int err_err = ERR_get_error();
 
 		{
 			std::string out;
 			rs_sprintf(out, "pqissllistenbase::continueSSL() Issues with SSL Accept(%d)!\n", err);
-			printSSLError(ssl, err, ssl_err, err_err, out);
+			printSSLError(incoming_connexion_info.ssl, err, ssl_err, err_err, out);
 			pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out);
 		}
 
@@ -396,7 +413,7 @@ int	pqissllistenbase::continueSSL(SSL *ssl, struct sockaddr_in remote_addr, bool
 				out += "pqissllistenbase::continueSSL() Adding SSL to incoming!";
 
 				// add to incomingqueue.
-				incoming_ssl[ssl] = remote_addr;
+				incoming_ssl.push_back(incoming_connexion_info) ;
 			}
 
 			pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out);
@@ -406,9 +423,9 @@ int	pqissllistenbase::continueSSL(SSL *ssl, struct sockaddr_in remote_addr, bool
 		}
 
 		/* we have failed -> get certificate if possible */
-		Extract_Failed_SSL_Certificate(ssl, &remote_addr);
+		Extract_Failed_SSL_Certificate(incoming_connexion_info);
 
-		closeConnection(fd, ssl);
+		closeConnection(fd, incoming_connexion_info.ssl) ;
 
 		pqioutput(PQL_WARNING, pqissllistenzone, "Read Error on the SSL Socket\nShutting it down!");
 
@@ -417,7 +434,7 @@ int	pqissllistenbase::continueSSL(SSL *ssl, struct sockaddr_in remote_addr, bool
 	}
 	
 	// if it succeeds
-	if (0 < completeConnection(fd, ssl, remote_addr))
+	if (0 < completeConnection(fd, incoming_connexion_info))
 	{
 		return 1;
 	}
@@ -426,7 +443,7 @@ int	pqissllistenbase::continueSSL(SSL *ssl, struct sockaddr_in remote_addr, bool
   	pqioutput(PQL_WARNING, pqissllistenzone, 
 	 	"pqissllistenbase::completeConnection() Failed!");
 
-	closeConnection(fd, ssl);
+	closeConnection(fd, incoming_connexion_info.ssl) ;
 
 	pqioutput(PQL_WARNING, pqissllistenzone, "Shutting it down!");
 
@@ -461,23 +478,29 @@ int pqissllistenbase::closeConnection(int fd, SSL *ssl)
 
 
 
-int 	pqissllistenbase::Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_in *addr)
+int 	pqissllistenbase::Extract_Failed_SSL_Certificate(const IncomingSSLInfo& info)
 {
-  	pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, 
-	  "pqissllistenbase::Extract_Failed_SSL_Certificate()");
+  	pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, "pqissllistenbase::Extract_Failed_SSL_Certificate()");
 
 	std::cerr << "pqissllistenbase::Extract_Failed_SSL_Certificate() FAILED CONNECTION due to security!";
 	std::cerr << std::endl;
 
 	// Get the Peer Certificate....
-	X509 *peercert = SSL_get_peer_certificate(ssl);
+	X509 *peercert = SSL_get_peer_certificate(info.ssl);
+
+	std::cerr << "Extract_Failed_SSL_Certificate: " << std::endl;
+	std::cerr << "   SSL    = " << (void*)info.ssl << std::endl;
+	std::cerr << "   GPG id = " << info.gpgid << std::endl;
+	std::cerr << "   SSL id = " << info.sslid << std::endl;
+	std::cerr << "   SSL cn = " << info.sslcn << std::endl;
+	std::cerr << "   addr+p = " << rs_inet_ntoa(info.addr.sin_addr) << ":" <<  ntohs(info.addr.sin_port) << std::endl;
 
 	if (peercert == NULL)
 	{
 		std::string out;
-		rs_sprintf(out, "pqissllistenbase::Extract_Failed_SSL_Certificate() from: %s:%u ERROR Peer didn't give Cert!", rs_inet_ntoa(addr->sin_addr).c_str(), ntohs(addr->sin_port));
+		rs_sprintf(out, "pqissllistenbase::Extract_Failed_SSL_Certificate() from: %s:%u ERROR Peer didn't give Cert!", rs_inet_ntoa(info.addr.sin_addr).c_str(), ntohs(info.addr.sin_port));
 		std::cerr << out << std::endl;
-        AuthSSL::getAuthSSL()->FailedCertificate(peercert, *addr, true);
+        AuthSSL::getAuthSSL()->FailedCertificate(peercert, info.gpgid,info.sslid,info.sslcn,info.addr, true);
 
 		pqioutput(PQL_WARNING, pqissllistenzone, out);
 		return -1;
@@ -488,7 +511,7 @@ int 	pqissllistenbase::Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_
 
 	{
 		std::string out;
-		rs_sprintf(out, "pqissllistenbase::Extract_Failed_SSL_Certificate() from: %s:%u Passing Cert to AuthSSL() for analysis", rs_inet_ntoa(addr->sin_addr).c_str(), ntohs(addr->sin_port));
+		rs_sprintf(out, "pqissllistenbase::Extract_Failed_SSL_Certificate() from: %s:%u Passing Cert to AuthSSL() for analysis", rs_inet_ntoa(info.addr.sin_addr).c_str(), ntohs(info.addr.sin_port));
 		std::cerr << out << std::endl;
 
 		pqioutput(PQL_WARNING, pqissllistenzone, out);
@@ -497,7 +520,7 @@ int 	pqissllistenbase::Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_
 
 	// save certificate... (and ip locations)
 	// false for outgoing....
-	AuthSSL::getAuthSSL()->FailedCertificate(peercert, *addr, true);
+	AuthSSL::getAuthSSL()->FailedCertificate(peercert, info.gpgid,info.sslid,info.sslcn,info.addr, true);
 
 	return 1;
 }
@@ -507,25 +530,22 @@ int	pqissllistenbase::continueaccepts()
 {
 
 	// for each of the incoming sockets.... call continue.
-	std::map<SSL *, struct sockaddr_in>::iterator it, itd;
 
-	for(it = incoming_ssl.begin(); it != incoming_ssl.end();)
+	for(std::list<IncomingSSLInfo>::iterator it = incoming_ssl.begin(); it != incoming_ssl.end();)
 	{
-  	        pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, 
-		  "pqissllistenbase::continueaccepts() Continuing SSL");
-		if (0 != continueSSL(it->first, it->second, false))
+		pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, "pqissllistenbase::continueaccepts() Continuing SSL");
+
+		if (0 != continueSSL( *it, false))
 		{
-  	        	pqioutput(PQL_DEBUG_ALERT, pqissllistenzone, 
-			  "pqissllistenbase::continueaccepts() SSL Complete/Dead!");
+			pqioutput(PQL_DEBUG_ALERT, pqissllistenzone, 
+					"pqissllistenbase::continueaccepts() SSL Complete/Dead!");
 
 			/* save and increment -> so we can delete */
-			itd = it++;
+			std::list<IncomingSSLInfo>::iterator itd = it++;
 			incoming_ssl.erase(itd);
 		}
 		else
-		{
 			it++;
-		}
 	}
 	return 1;
 }
@@ -720,11 +740,11 @@ int 	pqissllistener::status()
 	return 1;
 }
 
-int pqissllistener::completeConnection(int fd, SSL *ssl, struct sockaddr_in &remote_addr)
+int pqissllistener::completeConnection(int fd, IncomingSSLInfo& info)
 { 
 
 	// Get the Peer Certificate....
-	X509 *peercert = SSL_get_peer_certificate(ssl);
+	X509 *peercert = SSL_get_peer_certificate(info.ssl);
 
 	if (peercert == NULL)
 	{
@@ -786,7 +806,7 @@ int pqissllistener::completeConnection(int fd, SSL *ssl, struct sockaddr_in &rem
 	
 	if (found == false)
 	{
-		std::string out = "No Matching Certificate for Connection:" + rs_inet_ntoa(remote_addr.sin_addr) +"\npqissllistenbase: Will shut it down!";
+		std::string out = "No Matching Certificate for Connection:" + rs_inet_ntoa(info.addr.sin_addr) +"\npqissllistenbase: Will shut it down!";
 		pqioutput(PQL_WARNING, pqissllistenzone, out);
 
 		// but as it passed the authentication step, 
@@ -808,15 +828,15 @@ int pqissllistener::completeConnection(int fd, SSL *ssl, struct sockaddr_in &rem
 	// Pushback into Accepted List.
 	AcceptedSSL as;
 	as.mFd = fd;
-	as.mSSL = ssl;
+	as.mSSL = info.ssl;
 	as.mPeerId = newPeerId;
-	as.mAddr = remote_addr;
+	as.mAddr = info.addr;
 	as.mAcceptTS = time(NULL);
 
 	accepted_ssl.push_back(as);
 
 	std::string out = "pqissllistener::completeConnection() Successful Connection with: " + newPeerId;
-	out += " for Connection:" + rs_inet_ntoa(remote_addr.sin_addr) + " Adding to WAIT-ACCEPT Queue";
+	out += " for Connection:" + rs_inet_ntoa(info.addr.sin_addr) + " Adding to WAIT-ACCEPT Queue";
 	pqioutput(PQL_WARNING, pqissllistenzone, out);
 
 	return 1;

@@ -978,7 +978,7 @@ static int verify_x509_callback(int preverify_ok, X509_STORE_CTX *ctx)
 		std::string sslid ;
 		getX509id(x509,sslid);
 
-		AuthSSL::getAuthSSL()->registerConnexionAttempt_ids(gpgid,sslid,sslcn) ;
+		AuthSSL::getAuthSSL()->setCurrentConnectionAttemptInfo(gpgid,sslid,sslcn) ;
 	} 
 
 	return verify;
@@ -1289,99 +1289,60 @@ bool    AuthSSLimpl::decrypt(void *&out, int &outlen, const void *in, int inlen)
 /********************************************************************************/
 /********************************************************************************/
 
-void AuthSSLimpl::registerConnexionAttempt_ids(const std::string& gpg_id,const std::string& ssl_id,const std::string& ssl_cn)
+void AuthSSLimpl::setCurrentConnectionAttemptInfo(const std::string& gpg_id,const std::string& ssl_id,const std::string& ssl_cn)
 {
+#ifdef AUTHSSL_DEBUG
 	std::cerr << "AuthSSL: registering connexion attempt from:" << std::endl;
 	std::cerr << "    GPG id: " << gpg_id << std::endl;
 	std::cerr << "    SSL id: " << ssl_id << std::endl;
 	std::cerr << "    SSL cn: " << ssl_cn << std::endl;
+#endif
 	_last_gpgid_to_connect = gpg_id ;
 	_last_sslid_to_connect = ssl_id ;
 	_last_sslcn_to_connect = ssl_cn ;
 }
+void AuthSSLimpl::getCurrentConnectionAttemptInfo(std::string& gpg_id,std::string& ssl_id,std::string& ssl_cn)
+{
+	gpg_id = _last_gpgid_to_connect ;
+	ssl_id = _last_sslid_to_connect ;
+	ssl_cn = _last_sslcn_to_connect ;
+}
 
 /* store for discovery */
-bool    AuthSSLimpl::FailedCertificate(X509 *x509, const struct sockaddr_in& addr, bool incoming)
+bool    AuthSSLimpl::FailedCertificate(X509 *x509, const std::string& gpgid,
+													const std::string& sslid,
+													const std::string& sslcn,
+													const struct sockaddr_in& addr, 
+													bool incoming)
 {
-	std::string gpgid = "Unknown GPG Id" ;
-	std::string sslcn = "Unknown SSL location" ;
-	std::string sslid = "Unknown SSL Id" ;
+	std::string ip_address ;
+	rs_sprintf_append(ip_address, "%s:%u", rs_inet_ntoa(addr.sin_addr).c_str(), ntohs(addr.sin_port));
 
-	if(x509 != NULL)
-	{
-		if(!getX509id(x509, sslid)) 
-		{
-			std::cerr << "AuthSSLimpl::FailedCertificate() ERROR cannot extract X509id from certificate";
-			std::cerr << std::endl;
-		}
+	bool authed = (x509 != NULL && AuthX509WithGPG(x509)) ;
 
-		gpgid = getX509CNString(x509->cert_info->issuer);
-		sslcn = getX509CNString(x509->cert_info->subject);
-	}
-	else if(incoming)
-	{
-		gpgid = _last_gpgid_to_connect ;
-		sslcn = _last_sslcn_to_connect ;
-		sslid = _last_sslid_to_connect ;
-	}
+	if(authed)
+		LocalStoreCert(x509);
 
 	std::cerr << "AuthSSLimpl::FailedCertificate() ";
 	if (incoming)
 	{
+			getPqiNotify()->AddPopupMessage(RS_POPUP_CONNECT_ATTEMPT, gpgid, sslcn, sslid);
+		getPqiNotify()->AddFeedItem(RS_FEED_ITEM_SEC_CONNECT_ATTEMPT, gpgid, sslid, sslcn, ip_address);
+
 		std::cerr << " Incoming from: ";
 	}
-	else
+	else 
 	{
+		if(authed)
+			getPqiNotify()->AddFeedItem(RS_FEED_ITEM_SEC_AUTH_DENIED, gpgid, sslid, sslcn, ip_address);
+		else
+			getPqiNotify()->AddFeedItem(RS_FEED_ITEM_SEC_UNKNOWN_OUT, gpgid, sslid, sslcn, ip_address);
+
 		std::cerr << " Outgoing to: ";
 	}
-
-	// Hacky - adding IpAddress to SSLId.
 	
-	std::string ip_address ;
-	rs_sprintf_append(ip_address, "%s:%u", rs_inet_ntoa(addr.sin_addr).c_str(), ntohs(addr.sin_port));
-
 	std::cerr << "GpgId: " << gpgid << " SSLcn: " << sslcn << " peerId: " << sslid << ", ip address: " << ip_address;
 	std::cerr << std::endl;
-
-	uint32_t notifyType = 0;
-
-	/* if auths -> store */
-	if(x509 != NULL && AuthX509WithGPG(x509))
-	{
-		std::cerr << "AuthSSLimpl::FailedCertificate() Cert Checked Out, so passing to Notify";
-		std::cerr << std::endl;
-
-		if (incoming)
-		{
-			notifyType = RS_FEED_ITEM_SEC_CONNECT_ATTEMPT;
-			getPqiNotify()->AddPopupMessage(RS_POPUP_CONNECT_ATTEMPT, gpgid, sslcn, sslid);
-		}
-		else
-		{
-			notifyType = RS_FEED_ITEM_SEC_AUTH_DENIED;
-		}
-
-		getPqiNotify()->AddFeedItem(notifyType, gpgid, sslid, sslcn, ip_address);
-
-		LocalStoreCert(x509);
-		return true;
-	}
-	else
-	{
-		/* unknown peer! */
-		if (incoming)
-		{
-			notifyType = RS_FEED_ITEM_SEC_CONNECT_ATTEMPT;
-			getPqiNotify()->AddPopupMessage(RS_POPUP_CONNECT_ATTEMPT, gpgid, sslcn, sslid);
-		}
-		else
-		{
-			notifyType = RS_FEED_ITEM_SEC_UNKNOWN_OUT;
-		}
-
-		getPqiNotify()->AddFeedItem(notifyType, gpgid, sslid, sslcn, ip_address);
-
-	}
 
 	return false;
 }
