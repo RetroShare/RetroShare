@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 
-APPNAME := retroshare-linkscloud-plugin-0.5.3
+APPNAME := retroshare-linkscloud-plugin-0.5.4
 builddir:
 	mkdir -p builddir
 

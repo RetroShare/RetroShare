@@ -2,7 +2,7 @@
 
 echo This script is going to build the debian source package for RetroShare LinksCloud plugin, from the svn.
 #nosvn=true
-workdir=retroshare-linkscloud-plugin-0.5.3
+workdir=retroshare-linkscloud-plugin-0.5.4
 
 if test -d "$workdir" ;  then
 	echo Please remove the $workdir directory first.
@@ -17,7 +17,7 @@ fi
 svn update
 
 ###################### PARAMETERS ####################
-version="0.5.3"
+version="0.5.4"
 ######################################################
 
 if test "$1" = "" ; then

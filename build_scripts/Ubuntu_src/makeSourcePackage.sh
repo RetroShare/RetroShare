@@ -10,7 +10,7 @@ fi
 svn update
 
 ###################### PARAMETERS ####################
-version="0.5.3"
+version="0.5.4"
 ######################################################
 
 if test "$1" = "" ; then
@@ -113,8 +113,9 @@ mv -f retroshare-0.5/debian/control.tmp retroshare-0.5/debian/control
 
 cd retroshare-0.5
 
-for i in natty; do
-#for i in precise squeeze oneiric karmic lucid maverick natty; do
+#for i in sid; do
+#for i in natty; do
+for i in precise oneiric karmic lucid maverick natty; do
 	echo copying changelog for $i
 	cat ../changelog | sed -e s/XXXXXX/"$svn"/g | sed -e s/YYYYYY/"$i"/g > debian/changelog
 

@@ -1,4 +1,44 @@
-retroshare (0.5.3-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
+retroshare (0.5.4-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
+
+  * Improvements
+     - improved plugin system 
+        * now using two lists of rejected/accepted plugins. RS asks at start to load unknown plugins 
+          when plugins or main executable have changed.
+        * added API and SVN numbers into required external plugin symbols
+        * added help dialog to plugins
+        * improved version number scripts to add the missing revision number as a int
+     - Added window icon for the application. All windows without a parent are now showing this icon.
+     - Moved some internal stylesheets to the file Standard.qss.
+     - Tweaked standard style of the feed items.
+     - moved file rsversion.h to rsguiversion.h, since it caused a conflict with libretroshare/src/util/rsversion.h 
+       when included as util/rsversion.h. Updated version detail script.
+     - reworked context channel menu to allow unsubscribing from own channels. Removed some irrelevant items. 
+       Added warning when publish rights can/cannot be restored.
+     - Improved ProfileManager
+        * removed combobox and added export to the list of identities
+        * add extension to the filename when the user enters a name without extension
+        * refill list after generating a new identity
+     - Fixed height of the search input field when using no stylesheet.
+     - Changed the colors of the feed items. It was too bright.
+     - Enabled the menu item in the context menu again to copy the link when right clicking on a link.
+     - Reworked some elements in the standard gui.
+     - Added VOIP Plugin to windows installer
+     - Added new finish translation from Beluga
+     - Added two buttons to the NotifyPage to show examples of the activated news feeds and toasters.
+       Can also be used to test the stylesheets.
+     - Reworked design of the toaster and moved internal stylesheets to the file Standard.qss.
+
+  * Bugs
+     - Fixed report of failing connexion attempts/recepts. Cleaned the code a little bit
+     - Fixed message in pgphandler when signing a post
+     - Fixed small display issue causing the availability map to become black when more than 6 sources are present
+     - Added missing close of the temporary keyring file. Now the keyring is saved properly and the newly 
+       added keys are not lost after shutdown of RetroShare.
+     - Patch from AsamK to avoid crash when no uids are present in the key. How can this happen anyway?
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 15 Sept 2012 14:30:00 +0100
+
+retroshare (0.5.3-0.5503~natty) natty; urgency=low
 
   * Improvements
      - Big cleaning of style sheets
