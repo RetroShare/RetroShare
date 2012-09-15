@@ -2,13 +2,13 @@ CONFIG += qt gui uic qrc resources uitools idle bitdht
 
 # Below is for GXS services.
 CONFIG += photoshare 
-CONFIG += wikipoos 
-CONFIG += thewire 
-CONFIG += identities
-CONFIG += forumsv2 
-CONFIG += posted 
+#CONFIG += wikipoos 
+#CONFIG += thewire 
+#CONFIG += identities
+#CONFIG += forumsv2 
+#CONFIG += posted 
 CONFIG += unfinished 
-CONFIG += gxsgui 
+#CONFIG += gxsgui 
 
 #CONFIG += pluginmgr 
 
@@ -193,8 +193,12 @@ freebsd-* {
 # ###########################################
 
 bitdht {
-        LIBS += ../../libbitdht/libbitdht-build-desktop/lib/libbitdht.a
-        PRE_TARGETDEPS *= ../../libbitdht/libbitdht-build-desktop/lib/libbitdht.a
+        LIBS += ../../libbitdht/src/lib/libbitdht.a
+        PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
+
+        # Chris version.
+        #LIBS += ../../libbitdht/libbitdht-build-desktop/lib/libbitdht.a
+        #PRE_TARGETDEPS *= ../../libbitdht/libbitdht-build-desktop/lib/libbitdht.a
 }
 
 win32 {
@@ -860,40 +864,36 @@ photoshare {
 	HEADERS += \
                 gui/PhotoShare/PhotoDialog.h \
 		gui/PhotoShare/PhotoDrop.h \
-		gui/PhotoShare/PhotoSlideShow.h \
+		gui/PhotoShare/AlbumItem.h \
+		gui/PhotoShare/AlbumDialog.h \
+		gui/PhotoShare/AlbumCreateDialog.h \
                 util/TokenQueueV2.h \
-                gui/PhotoShare/AlbumDialog.h \
-                gui/PhotoShare/AlbumItem.h \
                 gui/PhotoShare/PhotoItem.h \
-                gui/PhotoShare/AlbumCreateDialog.h \
                 gui/PhotoShare/PhotoShareItemHolder.h \
-                gui/PhotoShare/PhotoShare.h
+                gui/PhotoShare/PhotoShare.h \
+		gui/PhotoShare/PhotoSlideShow.h \
 
-#gui/PhotoShare/PhotoDetailsDialog.h \
-# gui/PhotoShare/PhotoAddDialog.h \
 	FORMS += \
+                gui/PhotoShare/PhotoItem.ui \
                 gui/PhotoShare/PhotoDialog.ui \
-                gui/PhotoShare/PhotoSlideShow.ui \
                 gui/PhotoShare/AlbumItem.ui \
                 gui/PhotoShare/AlbumDialog.ui \
-                gui/PhotoShare/PhotoItem.ui \
                 gui/PhotoShare/AlbumCreateDialog.ui \
-                gui/PhotoShare/PhotoShare.ui
-# gui/PhotoShare/PhotoAddDialog.ui \1
-# gui/PhotoShare/PhotoDetailsDialog.ui \
+                gui/PhotoShare/PhotoShare.ui \
+                gui/PhotoShare/PhotoSlideShow.ui \
+
 	SOURCES += \
+                gui/PhotoShare/PhotoItem.cpp \
                 gui/PhotoShare/PhotoDialog.cpp \
 		gui/PhotoShare/PhotoDrop.cpp \
-		gui/PhotoShare/PhotoSlideShow.cpp \
-                gui/PhotoShare/AlbumDialog.cpp \
+		gui/PhotoShare/AlbumItem.cpp \
+		gui/PhotoShare/AlbumDialog.cpp \
+		gui/PhotoShare/AlbumCreateDialog.cpp \
                 util/TokenQueueV2.cpp \
-                gui/PhotoShare/AlbumItem.cpp \
-                gui/PhotoShare/PhotoItem.cpp \
-                gui/PhotoShare/AlbumCreateDialog.cpp \
                 gui/PhotoShare/PhotoShareItemHolder.cpp \
-                gui/PhotoShare/PhotoShare.cpp
-# gui/PhotoShare/PhotoAddDialog.cpp \
-# gui/PhotoShare/PhotoDetailsDialog.cpp \
+                gui/PhotoShare/PhotoShare.cpp \
+		gui/PhotoShare/PhotoSlideShow.cpp \
+
 }
 
 

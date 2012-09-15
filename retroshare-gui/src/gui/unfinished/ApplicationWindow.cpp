@@ -33,11 +33,15 @@
 #include <retroshare/rsiface.h>
 
 #include "gui/PhotoShare/PhotoDialog.h"
+
+// THESE HAVE TO BE CONVERTED TO VEG FORMAT
+#if USE_VEG_SERVICE
 #include "gui/WikiPoos/WikiDialog.h"
 #include "gui/TheWire/WireDialog.h"
 #include "gui/Identity/IdDialog.h"
 #include "gui/ForumsV2Dialog.h"
 #include "gui/Posted/PostedDialog.h"
+#endif
 
 //#include "GamesDialog.h"
 //#include "CalDialog.h"
@@ -93,14 +97,19 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     //ui.stackPages->add(calDialog = new CalDialog(ui.stackPages),
     //                  createPageAction(QIcon(IMAGE_CALENDAR), tr("Shared Calendars"), grp));
 
+// THESE HAVE TO BE CONVERTED TO VEG FORMAT
+#if USE_VEG_SERVICE
     IdDialog *idDialog = NULL;
     ui.stackPages->add(idDialog = new IdDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_LIBRARY), tr("Identities"), grp));
+#endif
 
     PhotoDialog *photoDialog = NULL;
     ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
                      createPageAction(QIcon(IMAGE_PHOTO), tr("Photo View"), grp));
 
+// THESE HAVE TO BE CONVERTED TO VEG FORMAT
+#if USE_VEG_SERVICE
     WikiDialog *wikiDialog = NULL;
     ui.stackPages->add(wikiDialog = new WikiDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_LIBRARY), tr("Wiki Pages"), grp));
@@ -116,6 +125,7 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     PostedDialog *postedDialog = NULL;
     ui.stackPages->add(postedDialog = new PostedDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_LIBRARY), tr("Posted Links"), grp));
+#endif
 
 
    /* Create the toolbar */

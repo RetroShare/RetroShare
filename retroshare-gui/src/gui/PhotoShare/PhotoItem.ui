@@ -76,16 +76,10 @@ p, li { white-space: pre-wrap; }
               <property name="text">
                <string/>
               </property>
-              <property name="placeholderText">
-               <string>Enter Title Here</string>
-              </property>
              </widget>
             </item>
             <item>
              <widget class="QLineEdit" name="lineEdit_PhotoGrapher">
-              <property name="placeholderText">
-               <string>Enter Photographer</string>
-              </property>
              </widget>
             </item>
            </layout>
