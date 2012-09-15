@@ -933,14 +933,14 @@ thewire {
 
 identities {
 
-	HEADERS += util/TokenQueue.h \
+	HEADERS += util/TokenQueueVEG.h \
 		gui/Identity/IdDialog.h \
 		gui/Identity/IdEditDialog.h \
 
 	FORMS += gui/Identity/IdDialog.ui \
 		gui/Identity/IdEditDialog.ui \
 
-        SOURCES += util/TokenQueue.cpp \
+        SOURCES += util/TokenQueueVEG.cpp \
 		gui/Identity/IdDialog.cpp \
 		gui/Identity/IdEditDialog.cpp \
 

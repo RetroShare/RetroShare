@@ -21,7 +21,7 @@
  *
  */
 
-#include "util/TokenQueue.h"
+#include "util/TokenQueueVEG.h"
 #include <iostream>
 
 #include <QTimer>
@@ -31,13 +31,13 @@
  *****/
 
 /** Constructor */
-TokenQueue::TokenQueue(RsTokenService *service, TokenResponse *resp)
+TokenQueueVEG::TokenQueueVEG(RsTokenServiceVEG *service, TokenResponseVEG *resp)
 :QWidget(NULL), mService(service), mResponder(resp)
 {
 	return;
 }
 
-bool TokenQueue::requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, std::list<std::string> ids, uint32_t usertype)
+bool TokenQueueVEG::requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptionsVEG &opts, std::list<std::string> ids, uint32_t usertype)
 {
 	uint32_t basictype = TOKENREQ_GROUPINFO;
 	mService->requestGroupInfo(token, anstype, opts, ids);
@@ -47,7 +47,7 @@ bool TokenQueue::requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTok
 }
 
 
-bool TokenQueue::requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, std::list<std::string> ids, uint32_t usertype)
+bool TokenQueueVEG::requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptionsVEG &opts, std::list<std::string> ids, uint32_t usertype)
 {
 	uint32_t basictype = TOKENREQ_MSGINFO;
 	mService->requestMsgInfo(token, anstype, opts, ids);
@@ -57,7 +57,7 @@ bool TokenQueue::requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokRe
 }
 
 
-bool TokenQueue::requestMsgRelatedInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, std::list<std::string> ids, uint32_t usertype)
+bool TokenQueueVEG::requestMsgRelatedInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptionsVEG &opts, std::list<std::string> ids, uint32_t usertype)
 {
 	uint32_t basictype = TOKENREQ_MSGRELATEDINFO;
 	mService->requestMsgRelatedInfo(token, anstype, opts, ids);
@@ -67,13 +67,13 @@ bool TokenQueue::requestMsgRelatedInfo(uint32_t &token, uint32_t anstype, const 
 }
 
 
-void TokenQueue::queueRequest(uint32_t token, uint32_t basictype, uint32_t anstype, uint32_t usertype)
+void TokenQueueVEG::queueRequest(uint32_t token, uint32_t basictype, uint32_t anstype, uint32_t usertype)
 {
-	std::cerr << "TokenQueue::queueRequest() Token: " << token << " Type: " << basictype;
+	std::cerr << "TokenQueueVEG::queueRequest() Token: " << token << " Type: " << basictype;
 	std::cerr << " AnsType: " << anstype << " UserType: " << usertype;
 	std::cerr << std::endl;
 
-	TokenRequest req;
+	TokenRequestVEG req;
 	req.mToken = token;
 	req.mType = basictype;
 	req.mAnsType = anstype;
@@ -91,7 +91,7 @@ void TokenQueue::queueRequest(uint32_t token, uint32_t basictype, uint32_t ansty
 	}
 }
 
-void TokenQueue::doPoll(float dt)
+void TokenQueueVEG::doPoll(float dt)
 {
 	/* single shot poll */
 	//mTrigger->singlesshot(dt * 1000);
@@ -99,9 +99,9 @@ void TokenQueue::doPoll(float dt)
 }
 
 
-void TokenQueue::pollRequests()
+void TokenQueueVEG::pollRequests()
 {
-	std::list<TokenRequest>::iterator it;
+	std::list<TokenRequestVEG>::iterator it;
 
 	double pollPeriod = 1.0; // max poll period.
 	for(it = mRequests.begin(); it != mRequests.end();)
@@ -129,16 +129,16 @@ void TokenQueue::pollRequests()
 }
 
 
-bool TokenQueue::checkForRequest(uint32_t token)
+bool TokenQueueVEG::checkForRequest(uint32_t token)
 {
 	/* check token */
 	return (COMPLETED_REQUEST == mService->requestStatus(token));
 }
 
 
-void TokenQueue::loadRequest(const TokenRequest &req)
+void TokenQueueVEG::loadRequest(const TokenRequestVEG &req)
 {
-	std::cerr << "TokenQueue::loadRequest(): ";
+	std::cerr << "TokenQueueVEG::loadRequest(): ";
 	std::cerr << "Token: " << req.mToken << " Type: " << req.mType;
 	std::cerr << " AnsType: " << req.mAnsType << " UserType: " << req.mUserType;
 	std::cerr << std::endl;
@@ -149,12 +149,12 @@ void TokenQueue::loadRequest(const TokenRequest &req)
 }
 
 
-bool TokenQueue::cancelRequest(const uint32_t token)
+bool TokenQueueVEG::cancelRequest(const uint32_t token)
 {
 	/* cancel at lower level first */
 	mService->cancelRequest(token);
 
-	std::list<TokenRequest>::iterator it;
+	std::list<TokenRequestVEG>::iterator it;
 
 	for(it = mRequests.begin(); it != mRequests.end(); it++)
 	{
@@ -162,14 +162,14 @@ bool TokenQueue::cancelRequest(const uint32_t token)
 		{
 			mRequests.erase(it);
 
-			std::cerr << "TokenQueue::cancelRequest() Cleared Request: " << token;
+			std::cerr << "TokenQueueVEG::cancelRequest() Cleared Request: " << token;
 			std::cerr << std::endl;
 
 			return true;
 		}
 	}
 
-	std::cerr << "TokenQueue::cancelRequest() Failed to Find Request: " << token;
+	std::cerr << "TokenQueueVEG::cancelRequest() Failed to Find Request: " << token;
 	std::cerr << std::endl;
 
 	return false;

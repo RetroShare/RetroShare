@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef MRK_TOKEN_QUEUE_H
-#define MRK_TOKEN_QUEUE_H
+#ifndef MRK_VEG_TOKEN_QUEUE_H
+#define MRK_VEG_TOKEN_QUEUE_H
 
 #include <QWidget>
 #include <QTimer>
@@ -30,7 +30,7 @@
 #include <string>
 #include <sys/time.h>
 #include <inttypes.h>
-#include <retroshare/rsidentity.h>
+#include <retroshare/rsidentityVEG.h>
 
 #define COMPLETED_REQUEST	4
 
@@ -38,9 +38,9 @@
 #define TOKENREQ_MSGINFO	2
 #define TOKENREQ_MSGRELATEDINFO	3
 
-class TokenQueue;
+class TokenQueueVEG;
 
-class TokenRequest
+class TokenRequestVEG
 {
 	public:
 	uint32_t mToken;
@@ -51,7 +51,7 @@ class TokenRequest
 	struct timeval mPollTs;
 };
 
-class TokenResponse
+class TokenResponseVEG
 {
 	public:
 	//virtual ~TokenResponse() { return; }
@@ -60,25 +60,25 @@ class TokenResponse
 };
 
 
-class TokenQueue: public QWidget
+class TokenQueueVEG: public QWidget
 {
   Q_OBJECT
 
 public:
-	TokenQueue(RsTokenService *service, TokenResponse *resp);
+	TokenQueueVEG(RsTokenServiceVEG *service, TokenResponseVEG *resp);
 
 	/* generic handling of token / response update behaviour */
-	bool requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, 
+	bool requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptionsVEG &opts, 
 							std::list<std::string> ids, uint32_t usertype);
-	bool requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, 
+	bool requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptionsVEG &opts, 
 							std::list<std::string> ids, uint32_t usertype);
-	bool requestMsgRelatedInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, 
+	bool requestMsgRelatedInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptionsVEG &opts, 
 							std::list<std::string> ids, uint32_t usertype);
 	bool cancelRequest(const uint32_t token);
 
 	void queueRequest(uint32_t token, uint32_t basictype, uint32_t anstype, uint32_t usertype);
 	bool checkForRequest(uint32_t token);
-	void loadRequest(const TokenRequest &req);
+	void loadRequest(const TokenRequestVEG &req);
 
 protected:
 	void doPoll(float dt);
@@ -88,10 +88,10 @@ private slots:
 
 private:
 	/* Info for Data Requests */
-	std::list<TokenRequest> mRequests;
+	std::list<TokenRequestVEG> mRequests;
 
-	RsTokenService *mService;
-	TokenResponse *mResponder;
+	RsTokenServiceVEG *mService;
+	TokenResponseVEG *mResponder;
 
 	QTimer *mTrigger;
 };
