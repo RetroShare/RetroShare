@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/lang">
+    <file>retroshare_cs.qm</file>
     <file>retroshare_en.qm</file>
     <file>retroshare_es.qm</file>
     <file>retroshare_da.qm</file>
@@ -8,9 +9,10 @@
     <file>retroshare_fr.qm</file>
     <file>retroshare_ja_JP.qm</file>
     <file>retroshare_ko.qm</file>
+    <file>retroshare_pl.qm</file>
     <file>retroshare_ru.qm</file>
-    <file>retroshare_tr.qm</file>
     <file>retroshare_sv.qm</file>
+    <file>retroshare_tr.qm</file>
     <file>retroshare_zh_CN.qm</file>
   </qresource>
 </RCC>

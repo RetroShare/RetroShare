@@ -166,10 +166,6 @@
 <context>
     <name>AttachFileItem</name>
     <message>
-        <source>Form</source>
-        <translation>Lomake</translation>
-    </message>
-    <message>
         <source>%p Kb</source>
         <translation>%p Kb</translation>
     </message>
@@ -293,10 +289,6 @@
 </context>
 <context>
     <name>BlogMsgItem</name>
-    <message>
-        <source>Form</source>
-        <translation>Lomake</translation>
-    </message>
     <message>
         <source>Remove Item</source>
         <translation>Poista kohde</translation>
@@ -892,6 +884,22 @@ p, li { white-space: pre-wrap; }
         <source>Channels</source>
         <translation>Kanavat</translation>
     </message>
+    <message>
+        <source>Publish rights restored.</source>
+        <translation>Julkaisuoikeudet palautettu.</translation>
+    </message>
+    <message>
+        <source>Publish rights have been restored for this channel.</source>
+        <translation>Julkaisuoikeudet kanavalle palautettu.</translation>
+    </message>
+    <message>
+        <source>Publish not restored.</source>
+        <translation>Julkaisuoikeuksia ei palautettu.</translation>
+    </message>
+    <message>
+        <source>Publish rights can&apos;t be restored for this channel.&lt;br/&gt;You&apos;re not the creator of this channel.</source>
+        <translation>Julkaisuoikeuksia kanavalle ei voitu palauttaa.&lt;br/&gt;Et ole kanavan luoja.</translation>
+    </message>
 </context>
 <context>
     <name>ChatDialog</name>
@@ -980,7 +988,7 @@ Ole hyvä ja valitse niistä yksi keskustellaksesi.</translation>
     </message>
     <message>
         <source>Count</source>
-        <translation>Lukumäärä</translation>
+        <translation>Lkm</translation>
     </message>
     <message>
         <source>Private Lobbies</source>
@@ -1090,7 +1098,7 @@ Ole hyvä ja valitse niistä yksi keskustellaksesi.</translation>
     </message>
     <message>
         <source>Change Chat Font</source>
-        <translation>Vaihda keskustelun kirjasinta</translation>
+        <translation>Vaihda keskustelun kirjasin</translation>
     </message>
     <message>
         <source>Chat Font:</source>
@@ -3043,7 +3051,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Number of Chunks</source>
-        <translation>Palasten lukumäärä</translation>
+        <translation>Palasten lkm</translation>
     </message>
     <message>
         <source>Chunks:</source>
@@ -3275,7 +3283,7 @@ tiedostoille uudelleen, kun kytket sen kiiinni.</translation>
     </message>
     <message>
         <source> days</source>
-        <translation>päivä</translation>
+        <translation> päivää</translation>
     </message>
     <message>
         <source>Forget any hashed file that is not anymore shared.</source>
@@ -3291,7 +3299,7 @@ tiedostoille uudelleen, kun kytket sen kiiinni.</translation>
     </message>
     <message>
         <source> minute(s)</source>
-        <translation>minuutti(a)</translation>
+        <translation>. minuutti</translation>
     </message>
     <message>
         <source>Set Incoming Directory</source>
@@ -3623,7 +3631,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Number of chunks</source>
-        <translation>Palasten lukumäärä</translation>
+        <translation>Palasten lkm</translation>
     </message>
     <message>
         <source>Transfered</source>
@@ -3635,7 +3643,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Number of sources</source>
-        <translation>Lähteiden lukumäärä</translation>
+        <translation>Lähteiden lkm</translation>
     </message>
     <message>
         <source>Chunk strategy</source>
@@ -3848,10 +3856,6 @@ p, li { white-space: pre-wrap; }
 </context>
 <context>
     <name>ForumNewItem</name>
-    <message>
-        <source>Form</source>
-        <translation>Lomake</translation>
-    </message>
     <message>
         <source>Subscribe to Forum</source>
         <translation>Tilaa foorumi</translation>
@@ -5414,7 +5418,7 @@ ja käyttää &quot;Tuo&quot;-painiketta ladataksesi sen</translation>
     </message>
     <message>
         <source> seconds</source>
-        <translation>sekuntia</translation>
+        <translation> sekuntia</translation>
     </message>
     <message>
         <source>Error</source>
@@ -7048,11 +7052,11 @@ Haluatko tallentaa viestin?</translation>
     </message>
     <message>
         <source>A new tab</source>
-        <translation>Uusi välilehti</translation>
+        <translation>Uudessa välilehdessä</translation>
     </message>
     <message>
         <source>A new window</source>
-        <translation>Uusi ikkuna</translation>
+        <translation>Uudessa ikkunassa</translation>
     </message>
     <message>
         <source>Edit Tag</source>
@@ -7957,7 +7961,7 @@ Paina hiiren oikeaa nappia ja valitse &quot;ystävysty&quot; saadaksesi yhteyden
     </message>
     <message>
         <source>Toasters</source>
-        <translation>Paahtimet</translation>
+        <translation>Ponnahdusviestit</translation>
     </message>
     <message>
         <source>Friend Connect</source>
@@ -8055,10 +8059,6 @@ Paina hiiren oikeaa nappia ja valitse &quot;ystävysty&quot; saadaksesi yhteyden
         <translation>Väärä salasana!</translation>
     </message>
     <message>
-        <source>Please enter the password to unlock the following GPG key:</source>
-        <translation>Ole hyvä ja anna salasana avataksesi seuraavan GPG-avaimen lukituksen:</translation>
-    </message>
-    <message>
         <source>Examining shared files...</source>
         <translation>Tarkastellaan jaettuja tiedostoja...</translation>
     </message>
@@ -8069,6 +8069,18 @@ Paina hiiren oikeaa nappia ja valitse &quot;ystävysty&quot; saadaksesi yhteyden
     <message>
         <source>Saving file index...</source>
         <translation>Tallennetaan tiedostoluetteloa...</translation>
+    </message>
+    <message>
+        <source>To sign, please enter the password that unlocks your PGP key:</source>
+        <translation>Ole hyvä ja anna PGP:n lukon avaava salasanasi allekirjoittaaksesi:</translation>
+    </message>
+    <message>
+        <source>Unregistered plugin/executable</source>
+        <translation>Rekisteröimätön lisäosa/suoritettava tiedosto</translation>
+    </message>
+    <message>
+        <source>RetroShare has detected an unregistered plugin. This happens in two cases:&lt;UL&gt;&lt;LI&gt;Your RetroShare executable has changed.&lt;/LI&gt;&lt;LI&gt;The plugin has changed&lt;/LI&gt;&lt;/UL&gt;Click on Yes to authorize this plugin, or No to deny it. You can change your mind later in Options -&gt; Plugins, then restart.</source>
+        <translation>RetroShare on havainnut rekisteröimättömän lisäosan. Tämä voi tapahtua kahdesta syystä:&lt;UL&gt;&lt;LI&gt;RetroSharen käynnistystiedosto on muuttunut.&lt;/LI&gt;&lt;LI&gt;Lisäosa on muuttunut&lt;/LI&gt;&lt;/UL&gt;Paina Kyllä hyväksyäksesi lisäosan tai Ei estääksesi sen. Voit muuttaa asetuksen myöhemmin menemällä Asetukset -&gt; Lisäosat, ja käynnistämällä RS:n uudelleen.</translation>
     </message>
     <message>
         <source>Test</source>
@@ -8668,16 +8680,20 @@ vahingoittamistarkoituksessa tehdyiltä lisäosilta.</translation>
         <translation>Lisäosat</translation>
     </message>
     <message>
+        <source>Hash rejected. Enable it manually and restart, if you need.</source>
+        <translation>Tiiviste hylätty. Ota se käyttöön manuaalisesti ja käynnistä uudelleen, jos on tarve.</translation>
+    </message>
+    <message>
+        <source>No API number supplied. Please read plugin development manual.</source>
+        <translation>API-numeroa ei annettu. Ole hyvä ja lue ohje lisäosien kehittämisestä.</translation>
+    </message>
+    <message>
+        <source>No SVN number supplied. Please read plugin development manual.</source>
+        <translation>SVN-numeroa ei annettu. Ole hyvä ja lue ohje lisäosien kehittämisestä.</translation>
+    </message>
+    <message>
         <source>Unknown version</source>
         <translation>Tuntematon versio</translation>
-    </message>
-    <message>
-        <source>SVN revision number </source>
-        <translation>SVN-version numero</translation>
-    </message>
-    <message>
-        <source> does not match current. Please manually enable the plugin at your own risk.</source>
-        <translation>ei vastaa nykyistä. Ole hyvä ja ota lisäosa manuaalisesti käyttöön omalla vastuulla.</translation>
     </message>
 </context>
 <context>
@@ -9366,11 +9382,11 @@ Virhe: %2</translation>
     </message>
     <message>
         <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although GPG keys are mentionned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
-        <translation>Tämä RetroSharen versio käyttää OpenPGP-SDK:ta. Tämän takia se ei käytä järjestelmäjaettua PGP-avainketjua, vaan sillä on oma avainketjunsa jaettuna kaikkien käynnissä olevien RetroSharejen kanssa.&lt;br&gt;&lt;br&gt;Sinulla ei näytä olevan tällaista avainketjua, vaikka olemassaolevissa RetroShare-tileissä mainitaan GPG-avaimet. Tämä johtuu todennäköisesti siitä, että siirryit juuri ohjelman uudempaan versioon.</translation>
+        <translation>Tämä RetroSharen versio käyttää OpenPGP-SDK:ta. Tämän takia se ei käytä järjestelmäjaettua PGP-avainnippua, vaan sillä on oma avainketjunsa jaettuna kaikkien käynnissä olevien RetroSharejen kanssa.&lt;br&gt;&lt;br&gt;Sinulla ei näytä olevan tällaista avainnippua, vaikka olemassaolevissa RetroShare-tileissä mainitaan GPG-avaimet. Tämä johtuu todennäköisesti siitä, että siirryit juuri ohjelman uudempaan versioon.</translation>
     </message>
     <message>
         <source>Choose between:&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;Ok&lt;/b&gt; to copy the existing keyring from gnupg (safest bet), or &lt;/li&gt;&lt;li&gt;&lt;b&gt;Close without saving&lt;/b&gt; to start fresh with an empty keyring (you will be asked to create a new PGP key to work with RetroShare, or import a previously saved pgp keypair). &lt;/li&gt;&lt;li&gt;&lt;b&gt;Cancel&lt;/b&gt; to quit and forge a keyring by yourself (needs some PGP skills)&lt;/li&gt;&lt;/ul&gt;</source>
-        <translation>Valitse:&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;Ok&lt;/b&gt; kopioidaksesi olemassaolevan avainketjun gnupg:stä (varmin tapa) &lt;/li&gt;&lt;li&gt;&lt;b&gt;Sulje tallentamatta&lt;/b&gt; aloittaaksesi tyhjästä uudella avainketjulla (ohjelma pyytää sinua luomaan uuden PGP-avaimen tai tuomaan aiemmin tallennetun PGP-avainparin). &lt;/li&gt;&lt;li&gt;&lt;b&gt;Peruuta&lt;/b&gt; lopettaaksesi ja takoaksesi avainketjun itse (tarvitset PGP-taitoja)&lt;/li&gt;&lt;/ul&gt;</translation>
+        <translation>Valitse:&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;Ok&lt;/b&gt; kopioidaksesi olemassaolevan avainnipun gnupg:stä (varmin tapa) &lt;/li&gt;&lt;li&gt;&lt;b&gt;Sulje tallentamatta&lt;/b&gt; aloittaaksesi tyhjästä uudella avainnipulla (ohjelma pyytää sinua luomaan uuden PGP-avaimen tai tuomaan aiemmin tallennetun PGP-avainparin). &lt;/li&gt;&lt;li&gt;&lt;b&gt;Peruuta&lt;/b&gt; lopettaaksesi ja takoaksesi avainnipun itse (tarvitset PGP-taitoja)&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
 </context>
 <context>
@@ -9429,15 +9445,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Choose your download speed limit: </source>
-        <translation>Valitse latausnopeutesi yläraja:</translation>
+        <translation>Valitse latausnopeutesi yläraja: </translation>
     </message>
     <message>
         <source> KB/s</source>
-        <translation>kB/s</translation>
+        <translation> kB/s</translation>
     </message>
     <message>
         <source>Choose your upload speed limit: </source>
-        <translation>Valitse lähetysnopeutesi yläraja:</translation>
+        <translation>Valitse lähetysnopeutesi yläraja: </translation>
     </message>
     <message>
         <source>Connection :</source>
@@ -9492,7 +9508,7 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Tämä on luettelo jaetuista tiedostoista. Voit lisätä ja poistaa hakemistoja käyttämällä vasemmalla sijaitsevaa painiketta. Lisätessäsi uusia hakemistoja kaikki tiedostot tulevat alussa jaetuksi .&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Tämä on luettelo jaetuista tiedostoista. Voit lisätä ja poistaa hakemistoja käyttämällä vasemmalla sijaitsevaa painiketta. Lisätessäsi uusia hakemistoja kaikki tiedostot tulevat alussa jaetuiksi.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;Voit määrittää erikseen jakoilmaisimia jokaiselle jaetulle hakemistolle:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Ystävien selattavissa&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: suorat ystäväsi voivat selata tiedostoja.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Nimettömästi jaetut&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: ketkä tahansa voivat ladata tiedostoja nimettömien tunneleiden kautta.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
@@ -9607,11 +9623,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Down</source>
-        <translation>Alas</translation>
+        <translation>Sisään</translation>
     </message>
     <message>
         <source>Up</source>
-        <translation>Ylös</translation>
+        <translation>Ulos</translation>
     </message>
 </context>
 <context>
@@ -9990,7 +10006,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Limit number of results to :</source>
-        <translation>Rajoita tulosten lukumäärä:</translation>
+        <translation>Rajoita tulosten lkm:</translation>
     </message>
     <message>
         <source>Enter a keyword here (at least 3 char long)</source>
@@ -10705,7 +10721,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>go Online</source>
-        <translation>mene linjoille</translation>
+        <translation>tulee linjoille</translation>
     </message>
     <message>
         <source>Chatmessage</source>
@@ -11202,7 +11218,7 @@ On kuitenkin suositeltavaa jättää ainakin muutama paikka välimuistitiedostoj
     </message>
     <message>
         <source> MB</source>
-        <translation>MB</translation>
+        <translation> MB</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -11386,11 +11402,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Down</source>
-        <translation>Alas</translation>
+        <translation>Sisään</translation>
     </message>
     <message>
         <source>Up</source>
-        <translation>Ylös</translation>
+        <translation>Ulos</translation>
     </message>
     <message>
         <source>Top</source>
@@ -11746,11 +11762,11 @@ Kärsivällisyyttä!</translation>
     </message>
     <message>
         <source>Tunnel requests Up</source>
-        <translation>Tunnelointipyynnöt ylös</translation>
+        <translation>Tunnelointipyynnöt ulos</translation>
     </message>
     <message>
         <source>Tunnel requests Dn</source>
-        <translation>Tunnelointipyynnöt alas</translation>
+        <translation>Tunnelointipyynnöt sisään</translation>
     </message>
     <message>
         <source>Incoming file data</source>
@@ -12192,7 +12208,7 @@ Kärsivällisyyttä!</translation>
     <message>
         <source> MB</source>
         <comment>megabytes (1024 kilobytes)</comment>
-        <translation>MB</translation>
+        <translation> MB</translation>
     </message>
     <message>
         <source> GB</source>

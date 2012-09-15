@@ -1,52 +1,52 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="de" version="2.0">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="cs" version="2.0">
 <context>
     <name>AboutDialog</name>
     <message>
         <source>About RetroShare</source>
-        <translation>Über RetroShare</translation>
+        <translation>O RetroShare</translation>
     </message>
     <message>
         <source>About</source>
-        <translation>Über</translation>
+        <translation>O programu</translation>
     </message>
     <message>
         <source>close</source>
-        <translation>Schließen</translation>
+        <translation>zavřít</translation>
     </message>
     <message>
         <source>About RetroShare %1</source>
-        <translation>Über RetroShare %1</translation>
+        <translation>O RetroShare %1</translation>
     </message>
     <message>
         <source>Max score: %1</source>
-        <translation>Maximaler Score: %1</translation>
+        <translation>Nejvyšší skóre: %1</translation>
     </message>
     <message>
         <source>Score: %1</source>
-        <translation>Score: %1</translation>
+        <translation>Skóre: %1</translation>
     </message>
     <message>
         <source>Level: %1</source>
-        <translation>Level: %1</translation>
+        <translation>Úroveň: %1</translation>
     </message>
     <message>
         <source>Have fun ;-)</source>
-        <translation>Viel Spaß ;-)</translation>
+        <translation>Bavte se ;-)</translation>
     </message>
 </context>
 <context>
     <name>AddFileAssociationDialog</name>
     <message>
         <source>File type(extension):</source>
-        <translation>Dateityp (Erweiterung):</translation>
+        <translation>Typ souboru (přípona):</translation>
     </message>
     <message>
         <source>Use default command</source>
-        <translation>Standardprogramm nutzen</translation>
+        <translation>Použít výchozí program/příkaz</translation>
     </message>
     <message>
         <source>Command</source>
-        <translation>Programm</translation>
+        <translation>Program/příkaz</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -55,74 +55,73 @@
     <message>
         <source>Sorry, can't determine system default command for this file
 </source>
-        <translation>Entschuldigung. Es konnte kein Standardprogramm zum Öffnen gefunden werden
-</translation>
+        <translation>Promiňte nemohu určit výchozí systémový program či přikaz asociovaný s tímto typem souboru⏎</translation>
     </message>
 </context>
 <context>
     <name>AdvancedSearchDialog</name>
     <message>
         <source>RetroShare: Advanced Search</source>
-        <translation>RetroShare: Erweiterte Suche</translation>
+        <translation>RetroShare:  rozšířené hledání</translation>
     </message>
     <message>
         <source>Search Criteria</source>
-        <translation>Suchkriterien</translation>
+        <translation>Kritéria pro vyhledávání</translation>
     </message>
     <message>
         <source>Add a further search criterion.</source>
-        <translation>Ein weiteres Suchkriterium hinzufügen.</translation>
+        <translation>Přidat další kriterium pro vyhledávání</translation>
     </message>
     <message>
         <source>Reset the search criteria.</source>
-        <translation>Suchkriterien zurücksetzen.</translation>
+        <translation>Vymazat kritéria pro vyhledávání</translation>
     </message>
     <message>
         <source>Cancels the search.</source>
-        <translation>Bricht die Suche ab.</translation>
+        <translation>Zrušit hledání.</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Perform the advanced search.</source>
-        <translation>Die erweiterte Suche durchführen.</translation>
+        <translation>Započít rozšířené vyhledávání.</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation>Suchen</translation>
+        <translation>Hledat</translation>
     </message>
 </context>
 <context>
     <name>AppearancePage</name>
     <message>
         <source>Language</source>
-        <translation>Sprache</translation>
+        <translation>Jazyk</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation>Stil</translation>
+        <translation>Styl</translation>
     </message>
     <message>
         <source>Style Sheet</source>
-        <translation>Style-Sheet</translation>
+        <translation>Téma vzhledu</translation>
     </message>
     <message>
         <source>Appearance</source>
-        <translation>Aussehen</translation>
+        <translation>Vzhled</translation>
     </message>
     <message>
         <source>Changes to language will only take effect after restarting RetroShare!</source>
-        <translation>Eine Änderung der Sprache wirkt sich erst nach einem Neustart von RetroShare aus!</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Choose the language used in RetroShare</source>
-        <translation>Wähle die Sprache, die RetroShare verwendet</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Choose RetroShare&apos;s interface style</source>
-        <translation>Wähle den Oberflächenstil von RetroShare</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -133,92 +132,92 @@
     </message>
     <message>
         <source>Photo View</source>
-        <translation>Fotoansicht</translation>
+        <translation>Náhled fotografií</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Verbergen</translation>
+        <translation>Skrýt</translation>
     </message>
     <message>
         <source>Show</source>
-        <translation>Anzeigen</translation>
+        <translation>Zobrazit</translation>
     </message>
     <message>
         <source>Identities</source>
-        <translation>Identitäten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Wiki Pages</source>
-        <translation>Wiki-Seiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>The Wire</source>
-        <translation>The Wire</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>ForumsV2</source>
-        <translation>ForumsV2</translation>
+        <translation>FóraV2</translation>
     </message>
     <message>
         <source>Posted Links</source>
-        <translation>Veröffentlichte Links</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>AttachFileItem</name>
     <message>
         <source>%p Kb</source>
-        <translation>%p KiB</translation>
+        <translation>%p Kb</translation>
     </message>
     <message>
         <source>Cancel Download</source>
-        <translation>Download abbrechen</translation>
+        <translation>Zrušit stahování</translation>
     </message>
     <message>
         <source>[ERROR])</source>
-        <translation>[Fehler])</translation>
+        <translation>[ERROR])</translation>
     </message>
 </context>
 <context>
     <name>AvatarWidget</name>
     <message>
         <source>Click to change your avatar</source>
-        <translation>Klick zum Ändern deines Avatars</translation>
+        <translation>Klikněte pro změnu svého avatara</translation>
     </message>
 </context>
 <context>
     <name>BandwidthGraph</name>
     <message>
         <source>RetroShare Bandwidth Usage</source>
-        <translation>RetroShare Bandbreitennutzung</translation>
+        <translation>Využití přenosové rychlosti</translation>
     </message>
     <message>
         <source>Show Settings</source>
-        <translation>Einstellungen anzeigen</translation>
+        <translation>Zobrazit nastavení</translation>
     </message>
     <message>
         <source>Reset</source>
-        <translation>Zurücksetzen</translation>
+        <translation>Reset</translation>
     </message>
     <message>
         <source>Receive Rate</source>
-        <translation>Empfangsrate</translation>
+        <translation>Rychlost stahování</translation>
     </message>
     <message>
         <source>Send Rate</source>
-        <translation>Senderate</translation>
+        <translation>Rychlost odesílání</translation>
     </message>
     <message>
         <source>Always on Top</source>
-        <translation>Immer im Vordergrund</translation>
+        <translation>Okno vždy nad ostatními</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation>Stil</translation>
+        <translation>Styl</translation>
     </message>
     <message>
         <source>Changes the transparency of the Bandwidth Graph</source>
-        <translation>Ändert die Transparenz des Bandbreiten-Graphen</translation>
+        <translation>Změní průhlednost grafu rychlosti připojení</translation>
     </message>
     <message>
         <source>100</source>
@@ -226,58 +225,58 @@
     </message>
     <message>
         <source>% Opaque</source>
-        <translation>% undurchsichtig</translation>
+        <translation>% Opaque</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation>Speichern</translation>
+        <translation>Uložit</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Since:</source>
-        <translation>Seit:</translation>
+        <translation>Od:</translation>
     </message>
     <message>
         <source>Hide Settings</source>
-        <translation>Einstellungen verbergen</translation>
+        <translation>Skrýt nastavení</translation>
     </message>
 </context>
 <context>
     <name>BlogDetails</name>
     <message>
         <source>Blog Details</source>
-        <translation>Blogdetails</translation>
+        <translation>Detaily blogu</translation>
     </message>
     <message>
         <source>Blog Info</source>
-        <translation>Bloginfo</translation>
+        <translation>Informace o blogu</translation>
     </message>
     <message>
         <source>Blog Name</source>
-        <translation>Blogname</translation>
+        <translation>Jméno blogu</translation>
     </message>
     <message>
         <source>Popularity</source>
-        <translation>Beliebtheit</translation>
+        <translation>Popularita</translation>
     </message>
     <message>
         <source>Last Post</source>
-        <translation>Letzter Beitrag</translation>
+        <translation>Poslední příspěvek</translation>
     </message>
     <message>
         <source>Blog ID</source>
-        <translation>Blog-ID</translation>
+        <translation>ID blogu</translation>
     </message>
     <message>
         <source>Blog Description</source>
-        <translation>Blogbeschreibung</translation>
+        <translation>Popis blogu</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>OK</source>
@@ -285,72 +284,72 @@
     </message>
     <message>
         <source>Close</source>
-        <translation>Schließen</translation>
+        <translation>Zavřít</translation>
     </message>
 </context>
 <context>
     <name>BlogMsgItem</name>
     <message>
         <source>Remove Item</source>
-        <translation>Eintrag entfernen</translation>
+        <translation>Odstranit položku</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation>Erweitern</translation>
+        <translation>Rozbalit</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation>Betreff</translation>
+        <translation>Předmět</translation>
     </message>
     <message>
         <source>Play Media</source>
-        <translation>Medium abspielen</translation>
+        <translation>Přehrát</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Verbergen</translation>
+        <translation>Skrýt</translation>
     </message>
 </context>
 <context>
     <name>BlogNewItem</name>
     <message>
         <source>Remove Item</source>
-        <translation>Eintrag entfernen</translation>
+        <translation>Odstranit položku</translation>
     </message>
     <message>
         <source>Subscribe to Blog</source>
-        <translation>Blog abonnieren</translation>
+        <translation>Přihlásit se k odebírání blogu</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation>Erweitern</translation>
+        <translation>Rozbalit</translation>
     </message>
     <message>
         <source>Blog Decscription</source>
-        <translation>Blogbeschreibung</translation>
+        <translation>Popis blogu</translation>
     </message>
     <message>
         <source>Unknown Blog</source>
-        <translation>Unbekanntes Blog</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New Blog</source>
-        <translation>Neues Blog</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Updated Blog</source>
-        <translation>Geändertes Blog</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Verbergen</translation>
+        <translation>Skrýt</translation>
     </message>
 </context>
 <context>
     <name>BlogsDialog</name>
     <message>
         <source>Form</source>
-        <translation>Formular</translation>
+        <translation>Formulář</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -366,7 +365,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add</source>
-        <translation>Hinzufügen</translation>
+        <translation>Přidat</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -378,7 +377,7 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Auf Blog ver&amp;ouml;ffentlichen&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Post To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -390,7 +389,7 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:14pt; color:#ffffff;&quot;&gt;Blog-Name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:14pt; color:#ffffff;&quot;&gt;Blog Name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -402,11 +401,11 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Blog abbestellen&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Unsubcribe To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Unsubscribe</source>
-        <translation>Abbestellen</translation>
+        <translation>Neodebírat</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -418,19 +417,19 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Blog abonnieren&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Subscribe To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Subscribe</source>
-        <translation>Abonnieren</translation>
+        <translation>Odebírat</translation>
     </message>
     <message>
         <source>Create New Blog</source>
-        <translation>Neues Blog erstellen</translation>
+        <translation>Vytvořit nový blog</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation>Jméno</translation>
     </message>
     <message>
         <source>ID</source>
@@ -438,54 +437,54 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Own Blogs</source>
-        <translation>Eigene Blogs</translation>
+        <translation>Vlastní blogy</translation>
     </message>
     <message>
         <source>Subscribed Blogs</source>
-        <translation>Abonnierte Blogs</translation>
+        <translation>Odebírané blogy</translation>
     </message>
     <message>
         <source>Popular Blogs</source>
-        <translation>Beliebte Blogs</translation>
+        <translation>Populární blogy</translation>
     </message>
     <message>
         <source>Other Blogs</source>
-        <translation>Andere Blogs</translation>
+        <translation>Ostatní blogy</translation>
     </message>
     <message>
         <source>Post to Blog</source>
-        <translation>Blogbeitrag erstellen</translation>
+        <translation>Přidat příspěvek do blogu</translation>
     </message>
     <message>
         <source>Subscribe to Blog</source>
-        <translation>Blog abonnieren</translation>
+        <translation>Sledovat změny na blogu</translation>
     </message>
     <message>
         <source>Unsubscribe to Blog</source>
-        <translation>Blog abbestellen</translation>
+        <translation>Neodebírat blog</translation>
     </message>
     <message>
         <source>Show Blog Details</source>
-        <translation>Blogdetails anzeigen</translation>
+        <translation>Zobrazit detaily blogu</translation>
     </message>
     <message>
         <source>Create a new Blog</source>
-        <translation>Neues Blog erstellen</translation>
+        <translation>Vytvořit nový blog</translation>
     </message>
     <message>
         <source>Popularity: %1
 Fetches: %2
 Available: %3</source>
-        <translation>Beliebtheit: %1
-Abrufe: %2
-Verfügbar: %3</translation>
+        <translation>Popularita: %1
+Stáhnutí: %2
+Dostupné: %3</translation>
     </message>
 </context>
 <context>
     <name>BlogsMsgItem</name>
     <message>
         <source>Form</source>
-        <translation>Formular</translation>
+        <translation>Formulář</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -497,7 +496,7 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:11pt; font-weight:600; font-style:italic;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#656565;&quot;&gt;Blog-Betreff&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#656565;&quot;&gt;Blog Subject&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -509,42 +508,42 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Datum/Zeit&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;DateTime&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation>Erweitern</translation>
+        <translation>Rozbalit</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation>Beitrag löschen</translation>
+        <translation>Odstranit položku</translation>
     </message>
     <message>
         <source>Unsubscribe From Channel</source>
-        <translation>Kanal abbestellen</translation>
+        <translation>Zrušit odebírání kanálu</translation>
     </message>
     <message>
         <source>Comments here</source>
-        <translation>Kommentare hier</translation>
+        <translation>Komentovat zde</translation>
     </message>
     <message>
         <source>Comment</source>
-        <translation>Kommentar</translation>
+        <translation>Komentáře</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Verbergen</translation>
+        <translation>Skrýt</translation>
     </message>
 </context>
 <context>
     <name>BwCtrlWindow</name>
     <message>
         <source>Bandwidth Control WIndow</source>
-        <translation>Bandbreiten-Kontrollfenster</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>BandWidth Measurements</source>
-        <translation>Bandbreiten-Messungen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>ID</source>
@@ -552,74 +551,74 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation>Jméno</translation>
     </message>
     <message>
         <source>In (KB/s)</source>
-        <translation>Eingehend (KiB/s)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>InMax (KB/s)</source>
-        <translation>Max. eingehend (KiB/s)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>InQueue</source>
-        <translation>InQueue</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>InAllocated (KB/s)</source>
-        <translation>InAllocated (KiB/s)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Allocated Sent</source>
-        <translation>Reservierte gesendet</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Out (KB/s)</source>
-        <translation>Ausgehend (KiB/s)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>OutMax (KB/s)</source>
-        <translation>Max. ausgehend (KiB/s)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>OutQueue</source>
-        <translation>OutQueue</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>OutAllowed (KB/s)</source>
-        <translation>Erlaubt ausgehend (KiB/s)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Allowed Recvd</source>
-        <translation>Erlaubt Empfang</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>CalDialog</name>
     <message>
         <source>Form</source>
-        <translation>Formular</translation>
+        <translation>Formulář</translation>
     </message>
     <message>
         <source>Local Calendars</source>
-        <translation>Lokale Kalender</translation>
+        <translation>Lokální kalendáře</translation>
     </message>
     <message>
         <source>Shared Calendar List</source>
-        <translation>Liste der gemeinsamen Kalender</translation>
+        <translation>Seznam sdílených kalendářů</translation>
     </message>
     <message>
         <source>Share Details</source>
-        <translation>Details verteilen</translation>
+        <translation>Sdílet detaily</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation>Name:</translation>
+        <translation>Jméno:</translation>
     </message>
     <message>
         <source>Location:</source>
-        <translation>Ort:</translation>
+        <translation>Umístění:</translation>
     </message>
     <message>
         <source>...</source>
@@ -631,152 +630,152 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Private</source>
-        <translation>Privat</translation>
+        <translation>Soukromé</translation>
     </message>
     <message>
         <source>Public</source>
-        <translation>Öffentlich</translation>
+        <translation>Veřejné</translation>
     </message>
     <message>
         <source>Allow List:</source>
-        <translation>Liste &quot;erlaubt&quot;:</translation>
+        <translation>Seznam povolených:</translation>
     </message>
     <message>
         <source>&lt;Disabled&gt;</source>
-        <translation>&lt;abgeschaltet&gt;</translation>
+        <translation>&lt;vypnuto&gt;</translation>
     </message>
     <message>
         <source>Add</source>
-        <translation>Hinzufügen</translation>
+        <translation>Přidat</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation>Entfernen</translation>
+        <translation>Odebrat</translation>
     </message>
     <message>
         <source>Peer Calendars</source>
-        <translation>Nachbarn-Kalender</translation>
+        <translation>Kalendáře vašich protějšků</translation>
     </message>
 </context>
 <context>
     <name>ChanMsgItem</name>
     <message>
         <source>Toggle Message Read Status</source>
-        <translation>Den Beitrag als gelesen markieren</translation>
+        <translation>Označit zprávu za přečtenou</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Neu</translation>
+        <translation>Nový</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation>Herunterladen</translation>
+        <translation>Stáhnout</translation>
     </message>
     <message>
         <source>Play</source>
-        <translation>Abspielen</translation>
+        <translation>Přehrát</translation>
     </message>
     <message>
         <source>Unsubscribe From Channel</source>
-        <translation>Kanal abbestellen</translation>
+        <translation>Zrušit odebírání kanálu</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation>Eintrag entfernen</translation>
+        <translation>Odstranit položku</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation>Erweitern</translation>
+        <translation>Rozbalit</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation>RetroShare-Link kopieren</translation>
+        <translation>Kopírovat RetroShare odkaz</translation>
     </message>
     <message>
         <source>Channel Feed</source>
-        <translation>Kanal</translation>
+        <translation>Přehled kanálů</translation>
     </message>
     <message>
         <source>Warning! You have less than %1 hours and %2 minute before this file is delted Consider saving it.</source>
-        <translation>Warnung! Du hast weniger als %1 Stunden und %2 Minuten bevor die Datei gelöscht wird. Denke daran, sie zu speichern.</translation>
+        <translation>Pozor! Zbývá méně než %1 hodin a %2 minut než tento soubor bude smazán. Proto zvažte zdali ho nechcete uložit.</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Verbergen</translation>
+        <translation>Skrýt</translation>
     </message>
     <message>
         <source>Files</source>
-        <translation>Dateien</translation>
+        <translation>Soubory</translation>
     </message>
     <message>
         <source>Set as read and remove item</source>
-        <translation>Als gelesen markieren und Eintrag entfernen</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ChanNewItem</name>
     <message>
         <source>Subscribe to Channel</source>
-        <translation>Kanal abonnieren</translation>
+        <translation>Odebírat kanál</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation>Erweitern</translation>
+        <translation>Rozbalit</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation>Eintrag entfernen</translation>
+        <translation>Odstranit položku</translation>
     </message>
     <message>
         <source>Channel Decscription</source>
-        <translation>Kanalbeschreibung</translation>
+        <translation>Popis kanálu</translation>
     </message>
     <message>
         <source>Unknown Channel</source>
-        <translation>Unbekannter Kanal</translation>
+        <translation>Neznámý kanál</translation>
     </message>
     <message>
         <source>New Channel</source>
-        <translation>Neuer Kanal</translation>
+        <translation>Nový kanál</translation>
     </message>
     <message>
         <source>Updated Channel</source>
-        <translation>Geänderter Kanal</translation>
+        <translation>Změněný kanál</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Verbergen</translation>
+        <translation>Skrýt</translation>
     </message>
 </context>
 <context>
     <name>ChannelDetails</name>
     <message>
         <source>Channel Details</source>
-        <translation>Kanaldetails</translation>
+        <translation>Detaily kanálu</translation>
     </message>
     <message>
         <source>Channel Info</source>
-        <translation>Kanalinfo</translation>
+        <translation>Informace o kanálu</translation>
     </message>
     <message>
         <source>Channel Name</source>
-        <translation>Kanalname</translation>
+        <translation>Jméno kanálu</translation>
     </message>
     <message>
         <source>Popularity</source>
-        <translation>Beliebtheit</translation>
+        <translation>Popularita</translation>
     </message>
     <message>
         <source>Last Post</source>
-        <translation>Letzter Beitrag</translation>
+        <translation>Poslední příspěvek</translation>
     </message>
     <message>
         <source>Channel ID</source>
-        <translation>Kanal-ID</translation>
+        <translation>ID kanálu</translation>
     </message>
     <message>
         <source>Channel Description</source>
-        <translation>Kanalbeschreibung</translation>
+        <translation>Popis kanálu</translation>
     </message>
     <message>
         <source>Type</source>
@@ -784,15 +783,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation>Beschränkt - Jeder kann lesen, aber nicht jeder schreiben (Privater Veröffentlichungsschlüssel)</translation>
+        <translation>Omezené - kdokoliv může prohlížet, ale nemůže publikovat (potřebujete Private Publish Key)</translation>
     </message>
     <message>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation>Privat - (Privater Veröffentlichungsschlüssel erforderlich, um Nachrichten zu lesen)</translation>
+        <translation>Soukromé - (pro prohlížení příspěvků potřebujete Private Publish Key)</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>OK</source>
@@ -800,106 +799,106 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Close</source>
-        <translation>Schließen</translation>
+        <translation>Zavřít</translation>
     </message>
 </context>
 <context>
     <name>ChannelFeed</name>
     <message>
         <source>Display</source>
-        <translation>Anzeigen</translation>
+        <translation>Zobrazit</translation>
     </message>
     <message>
         <source>Create Channel</source>
-        <translation>Kanal erstellen</translation>
+        <translation>Vytvořit kanál</translation>
     </message>
     <message>
         <source>Post to Channel</source>
-        <translation>Kanalbeitrag erstellen</translation>
+        <translation>Přidat příspěvek do kanálu</translation>
     </message>
     <message>
         <source>Set all as read</source>
-        <translation>Alle als gelesen markieren</translation>
+        <translation>Označit vše jako přečtené</translation>
     </message>
     <message>
         <source>Enable Auto-Download</source>
-        <translation>Auto-Download aktivieren</translation>
+        <translation>Zapnout automatické stahování</translation>
     </message>
     <message>
         <source>Own Channels</source>
-        <translation>Meine Kanäle</translation>
+        <translation>Vlastní kanály</translation>
     </message>
     <message>
         <source>Subscribed Channels</source>
-        <translation>Abonnierte Kanäle</translation>
+        <translation>Kanály přihlášené k odebírání</translation>
     </message>
     <message>
         <source>Popular Channels</source>
-        <translation>Beliebte Kanäle</translation>
+        <translation>Populární kanály</translation>
     </message>
     <message>
         <source>Other Channels</source>
-        <translation>Andere Kanäle</translation>
+        <translation>Ostatní kanály</translation>
     </message>
     <message>
         <source>Subscribe to Channel</source>
-        <translation>Kanal abonnieren</translation>
+        <translation>Odebírat kanál</translation>
     </message>
     <message>
         <source>Unsubscribe to Channel</source>
-        <translation>Kanal abbestellen</translation>
+        <translation>Zrušit odebírání kanálu</translation>
     </message>
     <message>
         <source>Show Channel Details</source>
-        <translation>Kanaldetails anzeigen</translation>
+        <translation>Zobrazit detaily kanálu</translation>
     </message>
     <message>
         <source>Restore Publish Rights for Channel</source>
-        <translation>Veröffentlichungsrechte für den Kanal wiederherstellen</translation>
+        <translation>Obnovit publikovací práva kanálu</translation>
     </message>
     <message>
         <source>Edit Channel Details</source>
-        <translation>Kanaldetails bearbeiten</translation>
+        <translation>Změnit detaily kanálu</translation>
     </message>
     <message>
         <source>Share Channel</source>
-        <translation>Veröffentlichungsschlüssel verteilen</translation>
+        <translation>Sdílet kanál</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation>RetroShare-Link kopieren</translation>
+        <translation>Kopírovat RetroShare odkaz</translation>
     </message>
     <message>
         <source>No Channel Selected</source>
-        <translation>Keinen Kanal gewählt</translation>
+        <translation>Není vybrán žádný kanál</translation>
     </message>
     <message>
         <source>Disable Auto-Download</source>
-        <translation>Auto-Download deaktivieren</translation>
+        <translation>Vypnout automatické stahování</translation>
     </message>
     <message>
         <source>Loading</source>
-        <translation>Lade</translation>
+        <translation>Nahrávám</translation>
     </message>
     <message>
         <source>Channels</source>
-        <translation>Kanäle</translation>
+        <translation>Kanály</translation>
     </message>
     <message>
         <source>Publish rights restored.</source>
-        <translation>Veröffentlichungsrechte wiederhergestellt.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Publish rights have been restored for this channel.</source>
-        <translation>Veröffentlichungsrechte wurden für diesen Kanal wiederhergestellt.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Publish not restored.</source>
-        <translation>Veröffentlichungsrechte nicht wiederhergestellt.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Publish rights can&apos;t be restored for this channel.&lt;br/&gt;You&apos;re not the creator of this channel.</source>
-        <translation>Veröffentlichungsrechte für diesen Kanal können nicht wiederhergestellt werden.&lt;br/&gt;Du bist nicht der Ersteller dieses Kanals.</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -907,239 +906,239 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Your friend has more than one locations.
 Please choose one of it to chat with.</source>
-        <translation>Dein Freund verwendet mehrere Orte.
-Bitte wähle einen zum Chatten aus.</translation>
+        <translation>Váš kontakt je současně připojený z více umístění.
+Prosím zvolte, kterém z nich chcete použít ke konverzaci.</translation>
     </message>
 </context>
 <context>
     <name>ChatLobbyDialog</name>
     <message>
         <source>Change nick name</source>
-        <translation>Spitzname ändern</translation>
+        <translation>Změnit přezdívku</translation>
     </message>
     <message>
         <source>Please enter your new nick name</source>
-        <translation>Bitte gib deinen neuen Spitznamen ein</translation>
+        <translation>Prosím zadejte vaši novou přezdívku</translation>
     </message>
     <message>
         <source>Lobby management</source>
-        <translation>Lobbyverwaltung</translation>
+        <translation>Správa místnosti</translation>
     </message>
     <message>
         <source>%1 has left the lobby.</source>
-        <translation>%1 hat die Lobby verlassen.</translation>
+        <translation>%1 opustil místnost.</translation>
     </message>
     <message>
         <source>%1 joined the lobby.</source>
-        <translation>%1 hat die Lobby betreten.</translation>
+        <translation>%1 opustil místnost</translation>
     </message>
     <message>
         <source>Unsubscribe to lobby</source>
-        <translation>Lobby abbestellen</translation>
+        <translation>Neodebírat místnost</translation>
     </message>
     <message>
         <source>Do you want to unsubscribe to this chat lobby?</source>
-        <translation>Möchtest du diese Lobby abbestellen?</translation>
+        <translation>Chcete přestat odebírát změny z této konverzační místnosti?</translation>
     </message>
     <message>
         <source>Hide Participants</source>
-        <translation>Teilnehmer ausblenden</translation>
+        <translation>Skrýt účastníky</translation>
     </message>
     <message>
         <source>Show Participants</source>
-        <translation>Teilnehmer anzeigen</translation>
+        <translation>Zobrazit účastníky</translation>
     </message>
     <message>
         <source>Welcome to lobby %1</source>
-        <translation>Willkommen in der Lobby %1</translation>
+        <translation>Vítejte v místnosti %1</translation>
     </message>
     <message>
         <source>Topic: %1</source>
-        <translation>Thema: %1</translation>
+        <translation>Téma: %1</translation>
     </message>
     <message>
         <source>Uncheck to mute participant</source>
-        <translation>Haken entfernen, um Teilnehmer stumm zu schalten</translation>
+        <translation>Odškrtni pro umlčení účastníka</translation>
     </message>
     <message>
         <source>%1 changed his name to: %2</source>
-        <translation>%1 ändert seinen Namen zu: %2</translation>
+        <translation>%1 změnil své jméno na %2</translation>
     </message>
     <message>
         <source>Lobby chat</source>
-        <translation>Lobbychat</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ChatLobbyToaster</name>
     <message>
         <source>Show Chat Lobby</source>
-        <translation>Chatlobby anzeigen</translation>
+        <translation>Ukázat konverzační místnost</translation>
     </message>
 </context>
 <context>
     <name>ChatLobbyWidget</name>
     <message>
         <source>Create new chat lobby</source>
-        <translation>Neue Chatlobby erstellen</translation>
+        <translation>Vytvořit novou konverzační místnost</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation>Jméno</translation>
     </message>
     <message>
         <source>Count</source>
-        <translation>Anzahl</translation>
+        <translation>Počet</translation>
     </message>
     <message>
         <source>Private Lobbies</source>
-        <translation>Private Lobbys</translation>
+        <translation>Soukromé místnosti</translation>
     </message>
     <message>
         <source>Public Lobbies</source>
-        <translation>Öffentliche Lobbys</translation>
+        <translation>Veřejné místnosti</translation>
     </message>
     <message>
         <source>Create chat lobby</source>
-        <translation>Chatlobby erstellen</translation>
+        <translation>Vytvořit konverzační místnost</translation>
     </message>
     <message>
         <source>Unsubscribe</source>
-        <translation>Abbestellen</translation>
+        <translation>Neodebírat</translation>
     </message>
     <message>
         <source>Subscribe</source>
-        <translation>Abonnieren</translation>
+        <translation>Odebírat</translation>
     </message>
     <message>
         <source>Invitation to chat lobby</source>
-        <translation>Einladung zur Chatlobby</translation>
+        <translation>Pozvat do konverzační místnosti</translation>
     </message>
     <message>
         <source>%1  invites you to chat lobby named %2</source>
-        <translation>%1 lädt dich in die Lobby %2 ein</translation>
+        <translation>%1  vás zve do konverzační místnosti %2</translation>
     </message>
     <message>
         <source>Topic</source>
-        <translation>Thema</translation>
+        <translation>Téma</translation>
     </message>
     <message>
         <source>[No topic provided]</source>
-        <translation>[Kein Thema angegeben]</translation>
+        <translation>[nebylo poskytnuto žádné téma]</translation>
     </message>
     <message>
         <source>Chat lobbies</source>
-        <translation>Chatlobbys</translation>
+        <translation>Konverzační místnosti</translation>
     </message>
 </context>
 <context>
     <name>ChatMsgItem</name>
     <message>
         <source>Remove Item</source>
-        <translation>Eintrag entfernen</translation>
+        <translation>Odstranit předmět</translation>
     </message>
     <message>
         <source>Write a quick Message</source>
-        <translation>Kurznachricht schreiben</translation>
+        <translation>Napsat rychlou zprávu</translation>
     </message>
     <message>
         <source>Send Mail</source>
-        <translation>Nachricht senden</translation>
+        <translation>Poslat email</translation>
     </message>
     <message>
         <source>Write Message</source>
-        <translation>Nachricht schreiben</translation>
+        <translation>Napsat zprávu</translation>
     </message>
     <message>
         <source>Start Chat</source>
-        <translation>Chat starten</translation>
+        <translation>Začít chatovat</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation>Senden</translation>
+        <translation>Odeslat</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Quick Message</source>
-        <translation>Kurznachricht</translation>
+        <translation>Rychlá zpráva</translation>
     </message>
 </context>
 <context>
     <name>ChatPage</name>
     <message>
         <source>General</source>
-        <translation>Allgemein</translation>
+        <translation>Obecné</translation>
     </message>
     <message>
         <source>Chat Settings</source>
-        <translation>Chat-Einstellungen</translation>
+        <translation>Nastavení chatu</translation>
     </message>
     <message>
         <source>Enable Emoticons Privat Chat</source>
-        <translation>Emoticons für privaten Chat</translation>
+        <translation>Používat smajlíky v soukromém chatu</translation>
     </message>
     <message>
         <source>Enable Emoticons Group Chat</source>
-        <translation>Emoticons für Gruppenchat</translation>
+        <translation>Používat smajlíky ve skupinovém chatu</translation>
     </message>
     <message>
         <source>Send message with Ctrl+Return</source>
-        <translation>Nachricht mit Strg+Enter senden</translation>
+        <translation>Odeslat zprávu pomocí Ctrl+Enter</translation>
     </message>
     <message>
         <source>Default nickname for chat lobbies:</source>
-        <translation>Standard-Spitzname für Chatlobbys:</translation>
+        <translation>Výchozí přezdívka pro konverzační místnosti</translation>
     </message>
     <message>
         <source>Chat Font</source>
-        <translation>Chat-Schriftart</translation>
+        <translation>Font chatu</translation>
     </message>
     <message>
         <source>Change Chat Font</source>
-        <translation>Chat-Schriftart wählen</translation>
+        <translation>Změnit font chatu</translation>
     </message>
     <message>
         <source>Chat Font:</source>
-        <translation>Chat-Schriftart:</translation>
+        <translation>Font chatu:</translation>
     </message>
     <message>
         <source>History</source>
-        <translation>Verlauf</translation>
+        <translation>Historie</translation>
     </message>
     <message>
         <source>Group Chat</source>
-        <translation>Gruppenchat</translation>
+        <translation>Skupinový chat</translation>
     </message>
     <message>
         <source>Enable</source>
-        <translation>Aktivieren</translation>
+        <translation>Zapnout</translation>
     </message>
     <message>
         <source>Number of saved messages (0 = unlimited)</source>
-        <translation>Anzahl der gespeicherten Nachrichten (0 = unbegrenzt)</translation>
+        <translation>Počet uložených zpráv (0 = neomezeně)</translation>
     </message>
     <message>
         <source>Load number of messages (0 = off)</source>
-        <translation>Lade Anzahl von Nachrichten (0 = aus)</translation>
+        <translation>Kolik zpráv načíst (0 = vypnuto)</translation>
     </message>
     <message>
         <source>Private Chat</source>
-        <translation>Privater Chat</translation>
+        <translation>Soukromý chat</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation>Stil</translation>
+        <translation>Styl</translation>
     </message>
     <message>
         <source>Group chat</source>
-        <translation>Gruppenchat</translation>
+        <translation>Skupinový chat</translation>
     </message>
     <message>
         <source>Variant</source>
-        <translation>Variante</translation>
+        <translation>Varianta</translation>
     </message>
     <message>
         <source>Author:</source>
@@ -1147,39 +1146,39 @@ Bitte wähle einen zum Chatten aus.</translation>
     </message>
     <message>
         <source>Description:</source>
-        <translation>Beschreibung:</translation>
+        <translation>Popis:</translation>
     </message>
     <message>
         <source>Private chat</source>
-        <translation>Privater Chat</translation>
+        <translation>Soukromý chat</translation>
     </message>
     <message>
         <source>Incoming</source>
-        <translation>Eingehend</translation>
+        <translation>Příchozí</translation>
     </message>
     <message>
         <source>Outgoing</source>
-        <translation>Ausgehend</translation>
+        <translation>Odchozí</translation>
     </message>
     <message>
         <source>Incoming message in history</source>
-        <translation>Eingehende Nachricht aus dem Verlauf</translation>
+        <translation>Historie příchozích zpráv</translation>
     </message>
     <message>
         <source>Outgoing message in history</source>
-        <translation>Ausgehende Nachricht aus dem Verlauf</translation>
+        <translation>Historie odchozích zpráv</translation>
     </message>
     <message>
         <source>Incoming message</source>
-        <translation>Eingehende Nachricht</translation>
+        <translation>Příchozí zpráva</translation>
     </message>
     <message>
         <source>Outgoing message</source>
-        <translation>Ausgehende Nachricht</translation>
+        <translation>Odchozí zpráva</translation>
     </message>
     <message>
         <source>Outgoing offline message</source>
-        <translation>Ausgehende Offline-Nachricht</translation>
+        <translation>Odchozí zpráva offline</translation>
     </message>
     <message>
         <source>Chat</source>
@@ -1187,215 +1186,215 @@ Bitte wähle einen zum Chatten aus.</translation>
     </message>
     <message>
         <source>System</source>
-        <translation>System</translation>
+        <translation>Systém</translation>
     </message>
     <message>
         <source>System message</source>
-        <translation>Systemnachricht</translation>
+        <translation>Systémové hlášení</translation>
     </message>
 </context>
 <context>
     <name>ChatStyle</name>
     <message>
         <source>Standard style for group chat</source>
-        <translation>Standardstil für den Gruppenchat</translation>
+        <translation>Standardní styl pro skupinový chat</translation>
     </message>
     <message>
         <source>Compact style for group chat</source>
-        <translation>Kompakter Stil für den Gruppenchat</translation>
+        <translation>Zjednodušený styl pro skupinový chat</translation>
     </message>
     <message>
         <source>Standard style for private chat</source>
-        <translation>Standardstil für den privaten Chat</translation>
+        <translation>Standardní styl pro soukromý chat</translation>
     </message>
     <message>
         <source>Compact style for private chat</source>
-        <translation>Kompakter Stil für den privaten Chat</translation>
+        <translation>Zjednodušený styl pro soukromý chat</translation>
     </message>
     <message>
         <source>Standard style for history</source>
-        <translation>Standardstil für den Verlauf</translation>
+        <translation>Standardní styl pro historii</translation>
     </message>
     <message>
         <source>Compact style for history</source>
-        <translation>Kompakter Stil für den Verlauf</translation>
+        <translation>Zjednodušený styl pro historii</translation>
     </message>
 </context>
 <context>
     <name>ChatToaster</name>
     <message>
         <source>Show Chat</source>
-        <translation>Chat anzeigen</translation>
+        <translation>Zobrazit chat</translation>
     </message>
 </context>
 <context>
     <name>ChatWidget</name>
     <message>
         <source>Close</source>
-        <translation>Schließen</translation>
+        <translation>Zavřít</translation>
     </message>
     <message>
         <source>Bold</source>
-        <translation>Fett</translation>
+        <translation>Tučné</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation>Unterstrichen</translation>
+        <translation>Podtržené</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation>Kursiv</translation>
+        <translation>Kurzíva</translation>
     </message>
     <message>
         <source>Font</source>
-        <translation>Schriftart</translation>
+        <translation>Font</translation>
     </message>
     <message>
         <source>Text Color</source>
-        <translation>Textfarbe</translation>
+        <translation>Barva písma</translation>
     </message>
     <message>
         <source>Attach a Picture</source>
-        <translation>Bild anhängen</translation>
+        <translation>Přidat obrázek</translation>
     </message>
     <message>
         <source>Add a File for your Friend</source>
-        <translation>Füge eine Datei für deinen Freund hinzu</translation>
+        <translation>Poslat soubor vašemu kontaktu</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation>Senden</translation>
+        <translation>Odeslat</translation>
     </message>
     <message>
         <source>Strike</source>
-        <translation>Durchgestrichen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Clear Chat History</source>
-        <translation>Nachrichtenverlauf leeren</translation>
+        <translation>Vymazat historii chatu</translation>
     </message>
     <message>
         <source>Disable Emoticons</source>
-        <translation>Emoticons deaktivieren</translation>
+        <translation>Vypnout emotikony</translation>
     </message>
     <message>
         <source>Save Chat History</source>
-        <translation>Nachrichtenverlauf speichern</translation>
+        <translation>Uložit historii chatování</translation>
     </message>
     <message>
         <source>Browse Message History</source>
-        <translation>Nachrichtenverlauf anzeigen</translation>
+        <translation>Prohlížet historii chatování</translation>
     </message>
     <message>
         <source>Browse History</source>
-        <translation>Nachrichtenverlauf</translation>
+        <translation>Prohlížet historii</translation>
     </message>
     <message>
         <source>Delete Chat History</source>
-        <translation>Nachrichtenverlauf löschen</translation>
+        <translation>Vymazat historii chatování</translation>
     </message>
     <message>
         <source>Deletes all stored and displayed chat history</source>
-        <translation>Löscht den gespeicherten und angezeigten Chat Verlauf</translation>
+        <translation>Vymaže veškerou uloženou i zobrazenou historii konverzace</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation>RetroShare-Link einfügen</translation>
+        <translation>Vložit RetroShare odkaz</translation>
     </message>
     <message>
         <source>is typing...</source>
-        <translation>tippt...</translation>
+        <translation>píše...</translation>
     </message>
     <message>
         <source>Do you really want to physically delete the history?</source>
-        <translation>Möchtest du wirklich den Nachrichtenverlauf löschen?</translation>
+        <translation>Chcete opravdu vymazati historii z počítače?</translation>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation>Zusätzliche Datei hinzufügen</translation>
+        <translation>Přidat další soubor</translation>
     </message>
     <message>
         <source>Load Picture File</source>
-        <translation>Bilddatei laden</translation>
+        <translation>Nahrát soubor s obrázkem</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation>Speichern unter...</translation>
+        <translation>Uložit jako...</translation>
     </message>
     <message>
         <source>Text File (*.txt );;All Files (*)</source>
-        <translation>Text Datei (*.txt );;Alle Dateien (*)</translation>
+        <translation>textový soubor (*.txt );;všechny typy souborů (*)</translation>
     </message>
     <message>
         <source>apears to be Offline.</source>
-        <translation>scheint offline zu sein.</translation>
+        <translation>nejspíše není připojen (tj. je offline).</translation>
     </message>
     <message>
         <source>Messages you send will be delivered after Friend is again Online</source>
-        <translation>Versendete Nachrichten gehen bei diesem Freund erst wieder ein wenn er Online ist</translation>
+        <translation>Odeslaná zpráva bude doručena až kontakt bude opět připojený k síti.</translation>
     </message>
     <message>
         <source>is Idle and may not reply</source>
-        <translation>antwortet möglicherweise nicht, da der Status auf &quot;Untätig&quot; gesetzt wurde</translation>
+        <translation>je nečinný a může se stát, že neodpoví</translation>
     </message>
     <message>
         <source>is Away and may not reply</source>
-        <translation>antwortet möglicherweise nicht, da der Status auf &quot;Abwesend&quot; gesetzt wurde</translation>
+        <translation>je pryč a nejspíše neodpoví</translation>
     </message>
     <message>
         <source>is Busy and may not reply</source>
-        <translation>antwortet möglicherweise nicht, da der Status auf &quot;Beschäftigt&quot; gesetzt wurde</translation>
+        <translation>je zaneprázdněn a může se stát, že neodpoví</translation>
     </message>
     <message>
         <source>Choose font</source>
-        <translation>Schriftart wählen</translation>
+        <translation>Zvolit font</translation>
     </message>
     <message>
         <source>Reset font to default</source>
-        <translation>Schriftart auf den Standard zurücksetzen</translation>
+        <translation>Nastavit výchozí font</translation>
     </message>
     <message>
         <source>Paste own certificate link</source>
-        <translation>Eigenen Zertifikat-Link einfügen</translation>
+        <translation>Vložit odkaz na svůj certifikát</translation>
     </message>
 </context>
 <context>
     <name>ConfCertDialog</name>
     <message>
         <source>Friend Details</source>
-        <translation>Freunddetails</translation>
+        <translation>Podrobnosti o kontaktu</translation>
     </message>
     <message>
         <source>Details</source>
-        <translation>Details</translation>
+        <translation>Detaily</translation>
     </message>
     <message>
         <source>Peer Info</source>
-        <translation>Nachbar-Info</translation>
+        <translation>Informace o protějšku</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation>Jméno</translation>
     </message>
     <message>
         <source>Peer ID</source>
-        <translation>Nachbar-ID</translation>
+        <translation>ID protějšku</translation>
     </message>
     <message>
         <source>Last Contact</source>
-        <translation>Letzter Kontakt</translation>
+        <translation>Poslední kontakt</translation>
     </message>
     <message>
         <source>Version</source>
-        <translation>Version</translation>
+        <translation>Verze</translation>
     </message>
     <message>
         <source>Loc</source>
-        <translation>Ort</translation>
+        <translation>Loc</translation>
     </message>
     <message>
         <source>RetroShare ID</source>
-        <translation>RetroShare-ID</translation>
+        <translation>RetroShare ID</translation>
     </message>
     <message>
         <source>Status</source>
@@ -1403,19 +1402,19 @@ Bitte wähle einen zum Chatten aus.</translation>
     </message>
     <message>
         <source>Peer Address</source>
-        <translation>Adresse des Nachbarn</translation>
+        <translation>Adresa protějšku</translation>
     </message>
     <message>
         <source>Local Address</source>
-        <translation>Lokale Adresse</translation>
+        <translation>Lokální adresa</translation>
     </message>
     <message>
         <source>External Address</source>
-        <translation>Externe Adresse</translation>
+        <translation>Externí adresa</translation>
     </message>
     <message>
         <source>Dynamic DNS</source>
-        <translation>Dynamisches DNS</translation>
+        <translation>Dynamické DNS</translation>
     </message>
     <message>
         <source>Port</source>
@@ -1423,43 +1422,43 @@ Bitte wähle einen zum Chatten aus.</translation>
     </message>
     <message>
         <source>Addresses list</source>
-        <translation>Adressliste</translation>
+        <translation>Seznam adres</translation>
     </message>
     <message>
         <source>Trust </source>
-        <translation>Vertrauen </translation>
+        <translation>Důvěra</translation>
     </message>
     <message>
         <source>Your trust in this peer is:</source>
-        <translation>Dein Vertrauen zu diesem Nachbarn ist:</translation>
+        <translation>Důvěra k tomuto protějšku je:</translation>
     </message>
     <message>
         <source>None </source>
-        <translation>Nicht </translation>
+        <translation>Žádná</translation>
     </message>
     <message>
         <source>Marginal </source>
-        <translation>Geringfügig </translation>
+        <translation>Nízká</translation>
     </message>
     <message>
         <source>Full </source>
-        <translation>Voll </translation>
+        <translation>Úplná</translation>
     </message>
     <message>
         <source>GPG Key</source>
-        <translation>PGP-Schlüssel</translation>
+        <translation>Klíč GPG</translation>
     </message>
     <message>
         <source>Peer has signed my GPG key</source>
-        <translation>Nachbar hat meinen PGP-Schlüssel unterzeichnet</translation>
+        <translation>Protějšek podepsal můj GPG klíč</translation>
     </message>
     <message>
         <source>Show Help for Trust Settings and Signing</source>
-        <translation>Hilfe anzeigen</translation>
+        <translation>Zobrazit nápovědu pro &quot;Nastavení důvěry a podepisování&quot;</translation>
     </message>
     <message>
         <source>Peer key is signed by :</source>
-        <translation>Schlüssel des Nachbarn wurde unterzeichnet von:</translation>
+        <translation>Klíč protějšku je podepsán (kým):</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -1473,29 +1472,29 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Einen Schlüssel eines Freundes zu unterzeichnen, zeigt deinen anderen Freunden, dass du ihm vertraust. Nur Freunde, deren Schlüssel du unterzeichnest, erhalten Informationen über die Freunde, denen du vertraust.&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Podepsání klíče nějakého vašeho kontaktu je způsob, jak ukázat vaším ostatním kontaktům, že tomuto kontaktu opravdu důvěřeujete. Pouze podepsané kontakty mohou získat informace o vašich ostatních důvěrných kontaktech.&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Das Unterzeichnen eines Schlüssels kann nicht rückgängig gemacht werden, deshalb nutze es weise.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Sign GPG key</source>
-        <translation>Unterzeichne PGP-Schlüssel</translation>
+        <translation>Podepsat GPG klíč</translation>
     </message>
     <message>
         <source>Deny Friend</source>
-        <translation>Blockiere Freund</translation>
+        <translation>Odmítnout kontakt</translation>
     </message>
     <message>
         <source>Make Friend</source>
-        <translation>Als Freund wählen</translation>
+        <translation>Přidat kontakt</translation>
     </message>
     <message>
         <source>Certificate</source>
-        <translation>Zertifikat</translation>
+        <translation>Certifikát</translation>
     </message>
     <message>
         <source>Apply and Close</source>
-        <translation>Übernehmen und Schließen</translation>
+        <translation>Aplikovat změny a zavřít</translation>
     </message>
     <message>
         <source>OK</source>
@@ -1503,7 +1502,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -1511,450 +1510,447 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Error : cannot get peer details.</source>
-        <translation>Fehler: Kann Nachbardetails nicht ermitteln.</translation>
+        <translation>Chyba : nemohu získat údaje kontaktu</translation>
     </message>
     <message>
         <source>Your key is signed by : </source>
-        <translation>Dein Schlüssel wurde unterzeichnet von: </translation>
+        <translation>Váš klíč je podepsán:</translation>
     </message>
     <message>
         <source>Peer key is signed by : </source>
-        <translation>Schlüssel des Nachbarn wurde unterzeichnet von: </translation>
+        <translation>Klíč kontaktu je podepsán (kým):</translation>
     </message>
     <message>
         <source>Your trust in this peer is ultimate, it&apos;s probably a key you own.</source>
-        <translation>Du hast das höchste Vertrauen in diesen Nachbarn. Es ist wahrscheinlich ein Schlüssel von dir.</translation>
+        <translation>Vaše důvěra v tento protějšek je absolutní, pravděpodobně se jedná o jeden z vašich klíčů.</translation>
     </message>
     <message>
         <source>Your trust in this peer is full.</source>
-        <translation>Du vertraust diesem Nachbarn voll.</translation>
+        <translation>Tomuto protějšku plně důvěřujete.</translation>
     </message>
     <message>
         <source>Your trust in this peer is marginal.</source>
-        <translation>Du vertraust diesem Nachbarn geringfügig.</translation>
+        <translation>Tomuto protějšku přiliš nedůvěřujete.</translation>
     </message>
     <message>
         <source>Your trust in this peer is none.</source>
-        <translation>Du vertraust diesem Nachbarn nicht.</translation>
+        <translation>Tomuto protějšku nedůvěřujete vůbec.</translation>
     </message>
     <message>
         <source>Your trust in this peer is not set.</source>
-        <translation>Dein Vertrauen in diesen Nachbarn ist nicht festgelegt.</translation>
+        <translation>Vaše důvěra v tento protějšek není nastavena.</translation>
     </message>
     <message>
         <source>Peer has authenticated me as a friend and did sign my GPG key</source>
-        <translation>Nachbar hat mich als Freund authentifiziert und meinen PGP-Schlüssel unterzeichnet</translation>
+        <translation>Protějšek mě autentizoval jako svůj kontakt a podepsal můj GPG klíč.</translation>
     </message>
     <message>
         <source>Peer has not authenticated me as a friend and did not sign my GPG key</source>
-        <translation>Nachbar hat mich nicht als Freund authentifiziert und meinen PGP-Schlüssel nicht unterzeichnet</translation>
+        <translation>Protějšek mě zatím neautentizoval jako svůj kontakt a tedy ani nepodepsal můj GPG klíč.</translation>
     </message>
     <message>
         <source>Signature Failure</source>
-        <translation>Fehler beim Signieren</translation>
+        <translation>Podepisování selhalo</translation>
     </message>
     <message>
         <source>Maybe password is wrong</source>
-        <translation>Vielleicht ist das Passwort falsch</translation>
+        <translation>Možná že bylo špatně zadané heslo</translation>
     </message>
     <message>
         <source>Include signatures</source>
-        <translation>Signaturen einschließen</translation>
+        <translation>Zahrnout podpisy</translation>
     </message>
     <message>
         <source>The supplied key algorithm is not supported by RetroShare
 (Only RSA keys are supported at the moment)</source>
-        <translation>Der angegebene Schlüsselalgorithmus wird von RetroShare nicht unterstützt.
-(Im Moment werden nur RSA-Schlüssel unterstützt)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Other infos</source>
-        <translation>Andere Informationen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Use old key format</source>
-        <translation>Altes Schlüsselformat benutzen</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ConnectFriendWizard</name>
     <message>
         <source>Certificate Load Failed</source>
-        <translation>Das Zertifikat konnte nicht geladen werden</translation>
+        <translation>Načtení certifikátu selhalo</translation>
     </message>
     <message>
         <source>Connect Friend Wizard</source>
-        <translation>Assistent um sich zu einem Freund zu verbinden</translation>
+        <translation>Průvodce přidáním kontaktu</translation>
     </message>
     <message>
         <source>Add a new Friend</source>
-        <translation>Einen neuen Freund hinzufügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This wizard will help you to connect to your friend(s) to RetroShare network.&lt;br&gt;These ways are possible to do this:</source>
-        <translation>Dieser Assistent hilft dir, dich mit einem Freund im RetroShare-Netzwerk zu verbinden.
-Die folgenden Wege sind möglich:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;Enter the certificate manually</source>
-        <translation>Gib das Zertifikat &amp;manuell ein</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;You get a certificate file from your friend</source>
-        <translation>&amp;Du hast eine Datei mit einem Zertifikat deines Freund bekommen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;Make friend with selected friends of my friends</source>
-        <translation>Ausgewählte Freunde von Freunden hinzu&amp;fügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;Enter RetroShare ID manually</source>
-        <translation>Gib die RetroShare &amp;ID manuell ein</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;Send a Invitation by Email 
  (She/He receives a email with instructions howto to download RetroShare)</source>
-        <translation>&amp;Sende eine Einladung per E-Mail
-(er/sie erhält eine E-Mail mit der Anleitung zum Herunterladen von RetroShare)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Text certificate</source>
-        <translation>Text-Zertifikat</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Use text representation of the PGP certificates.</source>
-        <translation>Verwende diesen Text als PGP Zertifikat.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>The text below is your PGP certificate. You have to provide it to your friend</source>
-        <translation>Der folgende Text ist dein PGP-Zertifikat. Du kannst es deinem Freund geben </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Include signatures</source>
-        <translation>Signaturen einschließen</translation>
+        <translation>Zahrnout podpisy</translation>
     </message>
     <message>
         <source>Copy your Cert to Clipboard</source>
-        <translation>Dein Zertifikat in die Zwischenablage kopieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Save your Cert into a File</source>
-        <translation>Zertifikat als Datei speichern</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Run Email program</source>
-        <translation>Das Standard-E-Mailprogramm starten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Please, paste your friends PGP certificate into the box below</source>
-        <translation>Bitte füge das PGP-Zertifikat deines Freundes in das Feld unten ein</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Certificate files</source>
-        <translation>Zertifikat-Dateien</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Use PGP certificates saved in files.</source>
-        <translation>In Dateien gespeicherte PGP Zertifikate benutzen.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Import friend&apos;s certificate...</source>
-        <translation>Zertifikat eines Freundes importieren...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>You have to generate a file with your certificate and give it to your friend. Also, you can use a file generated before.</source>
-        <translation>Du musst eine Datei mit deinem Zertifikat erstellen und deinem Freund zukommen lassen. Alternativ kannst Du auch eine Datei verwenden, die Du zuvor erstellt hast.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Export my certificate...</source>
-        <translation>Mein Zertifikat exportieren...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Drag and Drop your friends&apos;s certificate in this Window or specify path in the box below</source>
-        <translation>Gib die Datei mit dem Zertifikat ein oder ziehe sie per Drag&apos;n&apos;Drop in das Fenster</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Browse</source>
-        <translation>Durchsuchen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends of friends</source>
-        <translation>Freunde von Freunden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Select now who you want to make friends with.</source>
-        <translation>Wähle nun aus, wen du als Freund hinzufügen möchtest.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Show me:</source>
-        <translation>Zeige mir: </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Make friend with these peers</source>
-        <translation>Diese Nachbarn zu deinen Freunden hinzufügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare ID</source>
-        <translation>RetroShare-ID</translation>
+        <translation>RetroShare ID</translation>
     </message>
     <message>
         <source>Use RetroShare ID for adding a Friend which is available in your network.</source>
-        <translation>Benutze die RetroShare-ID, um Freunde aus deinem Netzwerk hinzuzufügen.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add Friends RetroShare ID...</source>
-        <translation>Füge die RetroShare-ID des Freundes ein...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Paste Friends RetroShare ID in the box below</source>
-        <translation>Füge die RetroShare-ID eines Freunde in das Feld ein</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Enter the RetroShare ID of your Friend, e.g. Peer@BDE8D16A46D938CF</source>
-        <translation>Füge die RetroShare-ID eines Freundes ein, Beispiel Nachbar@BDE8D16A46D938CF </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Invite Friends by Email</source>
-        <translation>Freunde per E-Mail einladen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Enter your friends&apos; email addresses (seperate each on with a semicolon)</source>
-        <translation>Gib die E-Mail-Adressen deines Freundes an (mehrere Adressen müssen mit Semikolon getrennt werden)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Your friends&apos; email addresses:</source>
-        <translation>E-Mail-Adresse deines Freundes:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Enter Friends Email addresses</source>
-        <translation>Gib die E-Mail-Adresse deines Freundes ein</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Subject:</source>
-        <translation>Betreff:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sorry, some error appeared</source>
-        <translation>Entschuldigung, es trat ein Fehler auf</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Here is the error message:</source>
-        <translation>Dies ist die Fehlermeldung: </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Make Friend</source>
-        <translation>Als Freund wählen</translation>
+        <translation>Přidat kontakt</translation>
     </message>
     <message>
         <source>Details about your friend:</source>
-        <translation>Details über deinen Freund:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Peer details</source>
-        <translation>Nachbardetails</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Key validity:</source>
-        <translation>Schlüssel-Gültigkeit:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Name:</source>
-        <translation>Name:</translation>
+        <translation>Jméno:</translation>
     </message>
     <message>
         <source>Email:</source>
-        <translation>E-Mail:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Location:</source>
-        <translation>Ort:</translation>
+        <translation>Umístění:</translation>
     </message>
     <message>
         <source>Signers</source>
-        <translation>Unterzeichner</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>It seems your friend is already registered. Adding it might just set it&apos;s ip address.</source>
-        <translation>Dein Freund ist bereits registriert. Das nochmalige Hinzufügen ändert nur seine IP.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Options</source>
-        <translation>Optionen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add friend to group:</source>
-        <translation>Freund zur Gruppe hinzufügen:</translation>
+        <translation>Přidat kontakt do skupiny:</translation>
     </message>
     <message>
         <source>Authenticate friend (Sign GPG Key)</source>
-        <translation>Freund authentifizieren (PGP-Schlüssel unterzeichnen)</translation>
+        <translation>Autentizovat kontakt (podepsat GPG klíč)</translation>
     </message>
     <message>
         <source>Add as friend to connect with</source>
-        <translation>Als Freund hinzufügen, zu dem verbunden wird</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Any peer I&apos;ve not signed</source>
-        <translation>Jeden Nachbarn, den ich nicht unterzeichnet habe</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends of my friends who already trust me</source>
-        <translation>Freunde meiner Freunde, welche mir schon vertrauen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Signed peers showing as denied</source>
-        <translation>Unterzeichnete Nachbarn, die geblockt sind</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Peer name</source>
-        <translation>Nachbar Name</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Also signed by</source>
-        <translation>Auch unterzeichnet von</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Peer id</source>
-        <translation>Nachbar-ID</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare Invitation</source>
-        <translation>RetroShare-Einladung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Ultimate</source>
-        <translation>Ultimativ</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Full</source>
-        <translation>Voll</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Marginal</source>
-        <translation>Geringfügig </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>None</source>
-        <translation>Kein</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>No Trust</source>
-        <translation>Kein Vertrauen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Certificate Load Failed:can&apos;t read from file %1 </source>
-        <translation>Fehler beim Laden des Zertifikats: Datei %1 konnte nicht gelesen werden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Certificate Load Failed:something is wrong with %1 </source>
-        <translation>Fehler beim Laden des Zertifikats: Etwas stimmt nicht mit %1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Certificate Load Failed:file %1 not found</source>
-        <translation>Fehler beim Laden des Zertifikats: Datei %1 nicht gefunden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This Peer %1 is not available in your Network</source>
-        <translation>Der Nutzer %1 ist nicht in deinem Netzwerk verfügbar</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Remove signatures</source>
-        <translation>Signaturen entfernen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare Invite</source>
-        <translation>RetroShare-Einladung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>No or misspelled BEGIN tag found</source>
-        <translation>Keinen oder fehlerhaften BEGIN Tag gefunden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>No or misspelled END tag found</source>
-        <translation>Keinen oder fehlerhaften END Tag gefunden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>No checksum found (the last 5 chars should be separated by a &apos;=&apos; char), or no newline after tag line (e.g. line beginning with Version:)</source>
-        <translation>Keine Prüfsumme (die letzten 5 Zeichen sollten durch das Zeichen &apos;=&apos; getrennt sein) oder keinen Zeilenumbruch nach der Tag Zeile gefunden (z.B. die Zeile die mit &quot;Version:&quot; beginnt)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unknown error. Your cert is probably not even a certificate.</source>
-        <translation>Unbekannter Fehler. Dein Zertifikat ist vermutlich kein Zertifikat.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Connect Friend Help</source>
-        <translation>Verbindungshilfe</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>You can copy this text and send it to your friend via email or some other way</source>
-        <translation>Du kannst diesen Text kopieren und an deinen Freund per E-Mail senden oder über einen anderen Weg zukommen lassen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Your Cert is copied to Clipboard, paste and send it to your riend via email or some other way</source>
-        <translation>Dein Zertifikat ist in die Zwischenablage kopiert worden. Du kannst es per E-Mail oder auf andere Weise an deinen Freund senden.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Save as...</source>
-        <translation>Speichern unter...</translation>
+        <translation>Uložit jako...</translation>
     </message>
     <message>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
-        <translation>RetroShare-Zertifikat (*.rsc );;Alle Dateien (*)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Select Certificate</source>
-        <translation>Zertifikat auswählen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sorry, create certificate failed</source>
-        <translation>Zertifikat-Datei konnte nicht erstellt werden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Please choose a filename</source>
-        <translation>Bitte wähle einen Dateinamen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Certificate file successfully created</source>
-        <translation>Zertifikat-Datei erfolgreich erstellt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sorry, certificate file creation failed</source>
-        <translation>Zertifikat-Datei konnte nicht erstellt werden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>*** None ***</source>
-        <translation>*** Keine ***</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend request</source>
-        <translation>Freundschaftsanfrage</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Details about the request</source>
-        <translation>Details der Anfrage</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cannot get peer details of gpg key %1</source>
-        <translation>Kann Nachbardetails von PGP-Schlüssel %1 nicht abrufen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>You have a friend request from</source>
-        <translation>Du hast eine Freundschaftsanfrage von</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Use new certificate format (safer, more robust)</source>
-        <translation>Neues Zertifikatsformat benutzen (sicherer und robuster)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Use old (backward compatible) certificate format</source>
-        <translation>Altes (rückwärtskompatibles) Zertifikatsformat benutzen</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>CreateBlog</name>
     <message>
         <source>Create new Blog</source>
-        <translation>Neues Blog erstellen</translation>
+        <translation>Vytvořit nový blog</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -1966,15 +1962,15 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;Neues Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;New Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation>Jméno</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation>Beschreibung</translation>
+        <translation>Popis</translation>
     </message>
     <message>
         <source>Type:</source>
@@ -1982,43 +1978,43 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Public - Anyone can read and publish (Shared Publish Key)</source>
-        <translation>Öffentlich - Jeder kann lesen und schreiben (gemeinsamer Veröffentlichungsschlüssel)</translation>
+        <translation>Veřejné - kdokoliv může číst a publikovat (Shared Publish Key)</translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation>Beschränkt - Jeder kann lesen, aber nicht jeder schreiben (Privater Veröffentlichungsschlüssel)</translation>
+        <translation>Omezené - kdokoliv může číst, publikování je omezeno (Shared Publish Key)</translation>
     </message>
     <message>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation>Privat - (Privater Veröffentlichungsschlüssel erforderlich, um Nachrichten zu lesen)</translation>
+        <translation>Soukromé - (je potřeba mít &apos;Private Publish Key&apos; pro prohlížení příspěvků)</translation>
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation>Erlaubte Nachrichten</translation>
+        <translation>Povolené zprávy</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation>Authentifizierte Nachrichten</translation>
+        <translation>Autentizované zprávy</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation>Anonyme Nachrichten</translation>
+        <translation>Anonymní zprávy</translation>
     </message>
     <message>
         <source>Blog Logo</source>
-        <translation>Bloglogo</translation>
+        <translation>Logo blogu</translation>
     </message>
     <message>
         <source>Add Blog Logo</source>
-        <translation>Bloglogo hinzufügen</translation>
+        <translation>Přidat logo blogu</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Create</source>
-        <translation>Erstellen</translation>
+        <translation>Vytvořit</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -2026,110 +2022,110 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please add a Name</source>
-        <translation>Bitte Name hinzufügen</translation>
+        <translation>Detaily</translation>
     </message>
     <message>
         <source>Load File</source>
-        <translation>Datei laden</translation>
+        <translation>Nahrát soubor</translation>
     </message>
     <message>
         <source>Pictures (*.png *.xpm *.jpg)</source>
-        <translation>Bilder (*.png *.xpm *.jpg)</translation>
+        <translation>Obrázky (*.png *.xpm *.jpg)</translation>
     </message>
 </context>
 <context>
     <name>CreateBlogMsg</name>
     <message>
         <source>New Blog Post</source>
-        <translation>Neuer Blogbeitrag</translation>
+        <translation>Nový příspěvek na blogu</translation>
     </message>
     <message>
         <source>Blog Post</source>
-        <translation>Blogbeitrag</translation>
+        <translation>Příspěvek na blogu</translation>
     </message>
     <message>
         <source>Blog Post to:</source>
-        <translation>Blogbeitrag an:</translation>
+        <translation>Přidat příspěvek do blogu:</translation>
     </message>
     <message>
         <source>Visual Editor</source>
-        <translation>Visueller Editor</translation>
+        <translation>Vizuální editor</translation>
     </message>
     <message>
         <source>Blog Message</source>
-        <translation>Blogeintrag</translation>
+        <translation>Přidat zprávu do blogu</translation>
     </message>
     <message>
         <source>Subject :</source>
-        <translation>Betreff:</translation>
+        <translation>Předmět:</translation>
     </message>
     <message>
         <source>Html Editor</source>
-        <translation>HTML-Editor</translation>
+        <translation>Html editor</translation>
     </message>
     <message>
         <source>toolBar</source>
-        <translation>toolBar</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>toolBar_2</source>
-        <translation>toolBar_2</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>blockquoute</source>
-        <translation>blockquote</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Increase font Size</source>
-        <translation>Schrift vergrößern</translation>
+        <translation>Zvětšit velikost fontu</translation>
     </message>
     <message>
         <source>Decrease font size</source>
-        <translation>Schrift verkleinern</translation>
+        <translation>Zmenšit velikost fontu</translation>
     </message>
     <message>
         <source>Bold</source>
-        <translation>Fett</translation>
+        <translation>Tučné</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation>Unterstrichen</translation>
+        <translation>Podtržené</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation>Kursiv</translation>
+        <translation>Kurzíva</translation>
     </message>
     <message>
         <source>Publish</source>
-        <translation>Veröffentlichen</translation>
+        <translation>Publikovat</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Neu</translation>
+        <translation>Nový</translation>
     </message>
     <message>
         <source>Code</source>
-        <translation>Code</translation>
+        <translation>Kód</translation>
     </message>
     <message>
         <source>splitPost</source>
-        <translation>Beitrag teilen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Ordered List</source>
-        <translation>Geordnete Liste</translation>
+        <translation>Seřazený seznam</translation>
     </message>
     <message>
         <source>Unordered List</source>
-        <translation>Ungeordnete Liste</translation>
+        <translation>Neseřazený seznam</translation>
     </message>
     <message>
         <source>Clipboard</source>
-        <translation>Zwischenablage</translation>
+        <translation>Schránka</translation>
     </message>
     <message>
         <source>Undo</source>
-        <translation>Rückgängig</translation>
+        <translation>Zpět</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -2137,180 +2133,180 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please add a Subject</source>
-        <translation>Bitte den Betreff nicht vergessen</translation>
+        <translation>Prosím přidejte předmět</translation>
     </message>
     <message>
         <source>&amp;File</source>
-        <translation>&amp;Datei</translation>
+        <translation>&amp;Soubor</translation>
     </message>
     <message>
         <source>&amp;New</source>
-        <translation>&amp;Neu</translation>
+        <translation>&amp;Nový</translation>
     </message>
     <message>
         <source>&amp;Open...</source>
-        <translation>Ö&amp;ffnen...</translation>
+        <translation>&amp;Otevřít</translation>
     </message>
     <message>
         <source>&amp;Save</source>
-        <translation>S&amp;peichern</translation>
+        <translation>&amp;Uložit</translation>
     </message>
     <message>
         <source>Save &amp;As...</source>
-        <translation>Speichern &amp;als...</translation>
+        <translation>Uložit j&amp;ako</translation>
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation>&amp;Drucken...</translation>
+        <translation>Tisknout...</translation>
     </message>
     <message>
         <source>Print Preview...</source>
-        <translation>Druckvorschau...</translation>
+        <translation>Náhled tisku...</translation>
     </message>
     <message>
         <source>&amp;Export PDF...</source>
-        <translation>PDF &amp;exportieren...</translation>
+        <translation>&amp;Exportovat do PDF...</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation>&amp;Schließen</translation>
+        <translation>&amp;Ukončit</translation>
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation>&amp;Bearbeiten</translation>
+        <translation>&amp;Úpravy</translation>
     </message>
     <message>
         <source>&amp;Undo</source>
-        <translation>Rü&amp;ckgängig</translation>
+        <translation>&amp;Zpět</translation>
     </message>
     <message>
         <source>&amp;Redo</source>
-        <translation>&amp;Wiederholen</translation>
+        <translation>Znovu</translation>
     </message>
     <message>
         <source>Cu&amp;t</source>
-        <translation>Auss&amp;chneiden</translation>
+        <translation>Vyjmout</translation>
     </message>
     <message>
         <source>&amp;Copy</source>
-        <translation>Ko&amp;pieren</translation>
+        <translation>&amp;Kopírovat</translation>
     </message>
     <message>
         <source>&amp;Paste</source>
-        <translation>Einfü&amp;gen</translation>
+        <translation>Vložit</translation>
     </message>
     <message>
         <source>&amp;View</source>
-        <translation>Anse&amp;hen</translation>
+        <translation>Pohled</translation>
     </message>
     <message>
         <source>&amp;Insert</source>
-        <translation>Ein&amp;fügen</translation>
+        <translation>&amp;Vložit</translation>
     </message>
     <message>
         <source>&amp;Image</source>
-        <translation>&amp;Bild</translation>
+        <translation>&amp;Obrázek</translation>
     </message>
     <message>
         <source>F&amp;ormat</source>
-        <translation>F&amp;ormat</translation>
+        <translation>Fo&amp;rmátovat</translation>
     </message>
     <message>
         <source>&amp;Bold</source>
-        <translation>&amp;Fett</translation>
+        <translation>&amp;Tučné</translation>
     </message>
     <message>
         <source>&amp;Italic</source>
-        <translation>&amp;Kursiv</translation>
+        <translation>&amp;Kurzíva</translation>
     </message>
     <message>
         <source>&amp;Underline</source>
-        <translation>&amp;Unterstrichen</translation>
+        <translation>&amp;Podtržené</translation>
     </message>
     <message>
         <source>&amp;Left</source>
-        <translation>&amp;Links</translation>
+        <translation>Zarovnat vlevo</translation>
     </message>
     <message>
         <source>C&amp;enter</source>
-        <translation>&amp;Zentriert</translation>
+        <translation>Na střed</translation>
     </message>
     <message>
         <source>&amp;Right</source>
-        <translation>&amp;Rechts</translation>
+        <translation>Zarovnat vpravo</translation>
     </message>
     <message>
         <source>&amp;Justify</source>
-        <translation>&amp;Blocksatz</translation>
+        <translation>Do bloku</translation>
     </message>
     <message>
         <source>&amp;Text Color...</source>
-        <translation>&amp;Textfarbe...</translation>
+        <translation>Barva &amp;textu</translation>
     </message>
     <message>
         <source>Application</source>
-        <translation>Anwendung</translation>
+        <translation>Aplikace</translation>
     </message>
     <message>
         <source>The document has been modified.
 Do you want to save your changes?</source>
-        <translation>Das Dokument wurde verändert.
-Möchtest du die Änderungen speichern?</translation>
+        <translation>Soubor byl změněn.
+Chcete uložit změny?</translation>
     </message>
     <message>
         <source>Open File...</source>
-        <translation>Datei öffnen...</translation>
+        <translation>Otevřít soubor...</translation>
     </message>
     <message>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation>HTML-Dateien (*.htm *.html);;Alle Dateien (*)</translation>
+        <translation>HTML soubory (*.htm *.html);;Všechny soubory (*)</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation>Speichern unter...</translation>
+        <translation>Uložit jako...</translation>
     </message>
     <message>
         <source>ODF files (*.odt);;HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation>ODF-Dateien (*.odt);;HTML-Dateien (*.htm *.html);;Alle Dateien (*)</translation>
+        <translation>ODF soubory (*.odt);;HTML-soubory (*.htm *.html);;Všechny soubory (*)</translation>
     </message>
     <message>
         <source>Print Document</source>
-        <translation>Dokument drucken</translation>
+        <translation>Vytisknout dokument</translation>
     </message>
     <message>
         <source>Export PDF</source>
-        <translation>PDF exportieren</translation>
+        <translation>Exportovat do PDF</translation>
     </message>
     <message>
         <source>Choose Image</source>
-        <translation>Bild wählen</translation>
+        <translation>Zvolit obrázek</translation>
     </message>
     <message>
         <source>Image Files supported (*.png *.jpeg *.jpg *.gif)</source>
-        <translation>Unterstützte Bilddateien (*.png *.jpeg *.jpg *.gif)</translation>
+        <translation>Podporované typy obrázků (*.png *.jpeg *.jpg *.gif)</translation>
     </message>
 </context>
 <context>
     <name>CreateChannel</name>
     <message>
         <source>Create a new Channel</source>
-        <translation>Einen neuen Kanal erstellen</translation>
+        <translation>Vytvořit nový kanál</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation>Jméno</translation>
     </message>
     <message>
         <source>check peers you would like to share private publish key with</source>
-        <translation>Wähle die Nachbarn, an die du den privaten Veröffentlichungsschlüssel verteilen möchtest</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Share Key With</source>
-        <translation>Schlüssel verteilen an</translation>
+        <translation>Sdílet klíč s</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation>Beschreibung</translation>
+        <translation>Popis</translation>
     </message>
     <message>
         <source>Type:</source>
@@ -2318,82 +2314,82 @@ Möchtest du die Änderungen speichern?</translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation>Beschränkt - Jeder kann lesen, aber nicht jeder schreiben (Privater Veröffentlichungsschlüssel)</translation>
+        <translation>Omezené - kdokoliv může číst, publikování je omezeno (Shared Publish Key)</translation>
     </message>
     <message>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation>Privat - (Privater Veröffentlichungsschlüssel erforderlich, um Nachrichten zu lesen)</translation>
+        <translation>Soukromé - (je potřeba mít &apos;Private Publish Key&apos; pro prohlížení příspěvků)</translation>
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation>Erlaubte Nachrichten</translation>
+        <translation>Povolené zprávy</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation>Anonyme Nachrichten</translation>
+        <translation>Anonymní zprávy</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation>Authentifizierte Nachrichten</translation>
+        <translation>Autentizované zprávy</translation>
     </message>
     <message>
         <source>Key Sharing</source>
-        <translation>Schlüsselverteilung</translation>
+        <translation>Sdílení klíčů</translation>
     </message>
     <message>
         <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
-        <translation>Schlüsselempfänger können eingeschränkte Kanäle anschauen und neue Nachrichten veröffentlichen</translation>
+        <translation>Držitelé klíče mohou vkládat příspěvky do omezených kanálů a také mohou vkládat příspěvky do soukromých kanálu a rovněž do nich přispívat</translation>
     </message>
     <message>
         <source>Share Private Publish Key</source>
-        <translation>Privaten Veröffentlichungsschlüssel verteilen</translation>
+        <translation>Sdílet soukromý klíč pro publikování příspěvků (Private Publish Key)</translation>
     </message>
     <message>
         <source>Channel Logo</source>
-        <translation>Kanallogo</translation>
+        <translation>Změnit logo</translation>
     </message>
     <message>
         <source>Add Channel Logo</source>
-        <translation>Kanallogo hinzufügen</translation>
+        <translation>Přidat logo kanálu</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Create</source>
-        <translation>Erstellen</translation>
+        <translation>Vytvořit</translation>
     </message>
     <message>
         <source>Contacts:</source>
-        <translation>Kontakte:</translation>
+        <translation>Kontakty:</translation>
     </message>
     <message>
         <source>Please add a Name</source>
-        <translation>Bitte einen Name hinzufügen</translation>
+        <translation>Prosím zadejte jméno</translation>
     </message>
     <message>
         <source>Load channel logo</source>
-        <translation>Kanallogo laden</translation>
+        <translation>Načíst logo kanálu</translation>
     </message>
     <message>
         <source>New Channel</source>
-        <translation>Neuer Kanal</translation>
+        <translation>Nový kanál</translation>
     </message>
 </context>
 <context>
     <name>CreateChannelMsg</name>
     <message>
         <source>New Channel Post</source>
-        <translation>Neuer Kanalbeitrag</translation>
+        <translation>Přidat příspěvek</translation>
     </message>
     <message>
         <source>Channel Post</source>
-        <translation>Kanalbeitrag</translation>
+        <translation>Příspěvek kanálu</translation>
     </message>
     <message>
         <source>Channel Post to:</source>
-        <translation>Kanal:</translation>
+        <translation>Příspěvek kanálu k:</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -2404,78 +2400,71 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; You can use Drap and Drop to Attach Files.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Set your Subject and Description for your Channel Post.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; You can View your Attached Files on Attachments Tab.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Du kannst dein Miniaturbild für deinen Kanalbeitrag setzen.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Du kannst Dateien mit Drag&apos;n&apos;Drop einfügen.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Schreibe deinen Betreff und die Beschreibung deines Beitrages.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Du kannst die angehängten Dateien im Reiter &quot;Anhang&quot; anschauen.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add File to Attach</source>
-        <translation>Datei hinzufügen</translation>
+        <translation>Přidat soubor k přílohám</translation>
     </message>
     <message>
         <source>Add Channel Thumbnail</source>
-        <translation>Miniaturbild hinzufügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Message</source>
-        <translation>Beitrag</translation>
+        <translation>Zpráva</translation>
     </message>
     <message>
         <source>Subject :</source>
-        <translation>Betreff:</translation>
+        <translation>Předmět:</translation>
     </message>
     <message>
         <source>Attachments</source>
-        <translation>Anhänge</translation>
+        <translation>Přílohy</translation>
     </message>
     <message>
         <source>Allow channels to get frame for message thumbnail from movie media attachments or not</source>
-        <translation>Erlaubt dem Kanal das Erstellen eines Miniaturbildes aus den Videoanhängen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Auto Thumbnail</source>
-        <translation>Auto-Miniaturbild</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Drag and Drop Files from Search Results</source>
-        <translation>Drag&apos;n&apos;Drop Dateien aus den Suchergebnissen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Paste RetroShare Links</source>
-        <translation>RetroShare-Links einfügen</translation>
+        <translation>Vložit RetroShare odkazy</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation>RetroShare-Link einfügen</translation>
+        <translation>Vložit RetroShare odkaz</translation>
     </message>
     <message>
         <source>Channel security policy prevents you from posting files that you don&apos;t have. If you have these files, you need to share them before, or attach them explicitly:</source>
-        <translation>Die Sicherheitsrichtlinie des Kanals verhindert das Veröffentlichen von Dateien, die du nicht besitzt. Wenn du diese Dateien besitzt, müssen sie vorher freigegeben oder eigens hinzugefügt werden:</translation>
+        <translation>Bezpečnostní nastavení kanálu vám neumožňuje vložit soubory, které sami také nesdílíte. Pokud tyto soubory někde máte, musíte je nejdříve nasdílet, a nebo je přímo připojit k Vašemu příspěvku.</translation>
     </message>
     <message>
         <source>You can only post files that you do have</source>
-        <translation>Du kannst nur Dateien anfügen, die du besitzt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Drop file error.</source>
-        <translation>Dateifehler bei Drag&apos;n&apos;Drop.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation>Ordner können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File not found or file name not accepted.</source>
-        <translation>Datei nicht gefunden oder Dateiname nicht akzeptiert.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation>Zusätzlich eine Datei hinzufügen</translation>
+        <translation>Přidat další soubor</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -2483,38 +2472,38 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File already Added and Hashed</source>
-        <translation>Datei wurde schon hinzugefügt und gehasht</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Please add a Subject</source>
-        <translation>Bitte Betreff nicht vergessen</translation>
+        <translation>Prosím zadejte předmět</translation>
     </message>
     <message>
         <source>Load thumbnail picture</source>
-        <translation>Miniaturbild laden</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>CreateForum</name>
     <message>
         <source>Create new Forum</source>
-        <translation>Neues Forum erstellen</translation>
+        <translation>Vytvořit nové fórum</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation>Jméno</translation>
     </message>
     <message>
         <source>check peers you would like to share private publish key with</source>
-        <translation>Wähle die Nachbarn, an die du den privaten Veröffentlichungsschlüssel verteilen möchtest</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Share Key With</source>
-        <translation>Schlüssel verteilen an</translation>
+        <translation>Sdílet klíč s</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation>Beschreibung</translation>
+        <translation>Popis</translation>
     </message>
     <message>
         <source>Type:</source>
@@ -2522,114 +2511,114 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Public - Anyone can read and publish (Shared Publish Key)</source>
-        <translation>Öffentlich - Jeder kann lesen und schreiben (gemeinsamer Veröffentlichungsschlüssel)</translation>
+        <translation>Veřejné - kdokoliv může číst a publikovat (Shared Publish Key)</translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation>Beschränkt - Jeder kann lesen, aber nicht jeder schreiben (Privater Veröffentlichungsschlüssel)</translation>
+        <translation>Omezené - kdokoliv může číst, publikování je omezeno (Shared Publish Key)</translation>
     </message>
     <message>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation>Privat - (Privater Veröffentlichungsschlüssel erforderlich, um Nachrichten zu lesen)</translation>
+        <translation>Soukromé - (je potřeba mít &apos;Private Publish Key&apos; pro prohlížení příspěvků)</translation>
     </message>
     <message>
         <source>Key Sharing</source>
-        <translation>Schlüsselverteilung</translation>
+        <translation>Sdílení klíče</translation>
     </message>
     <message>
         <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
-        <translation>Schlüsselempfänger können eingeschränkte Kanäle anschauen und neue Beiträge veröffentlichen</translation>
+        <translation>Držitelé klíče mohou vkládat příspěvky do omezených kanálů a také mohou vkládat příspěvky do soukromých kanálu a rovněž do nich přispívat</translation>
     </message>
     <message>
         <source>Share Private Publish Key</source>
-        <translation>Privaten Veröffentlichungsschlüssel verteilen</translation>
+        <translation>Sdílet soukromý klíč pro publikování příspěvků (Private Publish Key)</translation>
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation>Erlaubte Nachrichten</translation>
+        <translation>Povolené zprávy</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation>Authentifizierte Nachrichten</translation>
+        <translation>Autentizované zprávy</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation>Anonyme Nachrichten</translation>
+        <translation>Anonymní zprávy</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Create</source>
-        <translation>Erstellen</translation>
+        <translation>Vytvořit</translation>
     </message>
     <message>
         <source>Contacts:</source>
-        <translation>Kontakte:</translation>
+        <translation>Kontakty:</translation>
     </message>
     <message>
         <source>Please add a Name</source>
-        <translation>Bitte Name hinzüfügen</translation>
+        <translation>Prosím zadejte jméno</translation>
     </message>
     <message>
         <source>New Forum</source>
-        <translation>Neues Forum</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>CreateForumMsg</name>
     <message>
         <source>Post Forum Message</source>
-        <translation>Beitrag erstellen</translation>
+        <translation>Odeslat příspěvek na fórum</translation>
     </message>
     <message>
         <source>Forum</source>
-        <translation>Forum</translation>
+        <translation>Fórum</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation>Betreff</translation>
+        <translation>Předmět</translation>
     </message>
     <message>
         <source>Attach File</source>
-        <translation>Datei anhängen</translation>
+        <translation>Přiložit soubor</translation>
     </message>
     <message>
         <source>Sign Message</source>
-        <translation>Beitrag unterschreiben</translation>
+        <translation>Podepsat zprávu</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation>RetroShare-Link einfügen</translation>
+        <translation>Vložit RetroShare odkaz</translation>
     </message>
     <message>
         <source>Forum Post</source>
-        <translation>Beitrag</translation>
+        <translation>Příspěvek fóra</translation>
     </message>
     <message>
         <source>Attach files via drag and drop</source>
-        <translation>Dateien mit Drag&apos;n&apos;Drop anhängen</translation>
+        <translation>Přetáhnutím přiložíte soubory</translation>
     </message>
     <message>
         <source>You can attach files via drag and drop here in this window</source>
-        <translation>Du kannst Dateien mit Drag&apos;n&apos;Drop anhängen</translation>
+        <translation>Přetáhnutím do tohoto okna můžete přiložit soubory </translation>
     </message>
     <message>
         <source>Post Forum Msg</source>
-        <translation>Beitrag erstellen</translation>
+        <translation>Vložit příspěvek na fórum</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation>Schließen</translation>
+        <translation>Zavřít</translation>
     </message>
     <message>
         <source>Paste full RetroShare Link</source>
-        <translation>Vollständigen RetroShare-Link einfügen</translation>
+        <translation>Vložit úplný RetroShare odkaz</translation>
     </message>
     <message>
         <source>In Reply to</source>
-        <translation>Als Antwort auf</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare</source>
@@ -2637,38 +2626,38 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please set a Forum Subject and Forum Message</source>
-        <translation>Bitte einen Betreff und einen Beitrag eingeben</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation>Zusätzliche Datei hinzufügen</translation>
+        <translation>Přidat další soubor</translation>
     </message>
     <message>
         <source>Paste own certificate link</source>
-        <translation>Eigenen Zertifikat-Link einfügen</translation>
+        <translation>Vložit odkaz na svůj certifikát</translation>
     </message>
 </context>
 <context>
     <name>CreateForumV2</name>
     <message>
         <source>Create new Forum</source>
-        <translation>Neues Forum erstellen</translation>
+        <translation>Vytvořit nové fórum</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation>Jméno</translation>
     </message>
     <message>
         <source>check peers you would like to share private publish key with</source>
-        <translation>Wähle die Nachbarn, an die du den privaten Veröffentlichungsschlüssel verteilen möchtest</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Share Key With</source>
-        <translation>Schlüssel verteilen an</translation>
+        <translation>Sdílet klíč s</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation>Beschreibung</translation>
+        <translation>Popis</translation>
     </message>
     <message>
         <source>Type:</source>
@@ -2676,118 +2665,118 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Public - Anyone can read and publish (Shared Publish Key)</source>
-        <translation>Öffentlich - Jeder kann lesen und schreiben (gemeinsamer Veröffentlichungsschlüssel)</translation>
+        <translation>Veřejné - kdokoliv může číst a publikovat (Shared Publish Key)</translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation>Beschränkt - Jeder kann lesen, aber nicht jeder schreiben (Privater Veröffentlichungsschlüssel)</translation>
+        <translation>Omezené - kdokoliv může číst, publikování je omezeno (Shared Publish Key)</translation>
     </message>
     <message>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation>Privat - (Privater Veröffentlichungsschlüssel erforderlich, um Nachrichten zu lesen)</translation>
+        <translation>Soukromé - (je potřeba mít &apos;Private Publish Key&apos; pro prohlížení příspěvků)</translation>
     </message>
     <message>
         <source>Key Sharing</source>
-        <translation>Schlüsselverteilung</translation>
+        <translation>Sdílení klíče</translation>
     </message>
     <message>
         <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
-        <translation>Schlüsselempfänger können eingeschränkte Kanäle anschauen und neue Beiträge veröffentlichen</translation>
+        <translation>Držitelé klíče mohou vkládat příspěvky do omezených kanálů a také mohou vkládat příspěvky do soukromých kanálu a rovněž do nich přispívat</translation>
     </message>
     <message>
         <source>Share Private Publish Key</source>
-        <translation>Privaten Veröffentlichungsschlüssel verteilen</translation>
+        <translation>Sdílet soukromý klíč pro publikování příspěvků (Private Publish Key)</translation>
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation>Erlaubte Nachrichten</translation>
+        <translation>Povolené zprávy</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation>Authentifizierte Nachrichten</translation>
+        <translation>Autentizované zprávy</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation>Anonyme Nachrichten</translation>
+        <translation>Anonymní zprávy</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Create</source>
-        <translation>Erstellen</translation>
+        <translation>Vytvořit</translation>
     </message>
     <message>
         <source>Contacts:</source>
-        <translation>Kontakte:</translation>
+        <translation>Kontakty:</translation>
     </message>
     <message>
         <source>Please add a Name</source>
-        <translation>Bitte Name hinzufügen</translation>
+        <translation>Detaily</translation>
     </message>
     <message>
         <source>New Forum</source>
-        <translation>Neues Forum</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>CreateForumV2Msg</name>
     <message>
         <source>Post Forum Message</source>
-        <translation>Beitrag erstellen</translation>
+        <translation>Odeslat příspěvek na fórum</translation>
     </message>
     <message>
         <source>Forum</source>
-        <translation>Forum</translation>
+        <translation>Fórum</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation>Betreff</translation>
+        <translation>Předmět</translation>
     </message>
     <message>
         <source>Attach File</source>
-        <translation>Datei anhängen</translation>
+        <translation>Přiložit soubor</translation>
     </message>
     <message>
         <source>Sign Message</source>
-        <translation>Beitrag unterschreiben</translation>
+        <translation>Podepsat zprávu</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation>RetroShare-Link einfügen</translation>
+        <translation>Vložit RetroShare odkaz</translation>
     </message>
     <message>
         <source>Forum Post</source>
-        <translation>Beitrag</translation>
+        <translation>Příspěvek fóra</translation>
     </message>
     <message>
         <source>Attach files via drag and drop</source>
-        <translation>Dateien mit Drag&apos;n&apos;Drop anhängen</translation>
+        <translation>Přetáhnutím přiložíte soubory</translation>
     </message>
     <message>
         <source>You can attach files via drag and drop here in this window</source>
-        <translation>Du kannst Dateien mit Drag&apos;n&apos;Drop anhängen</translation>
+        <translation>Přetáhnutím do tohoto okna můžete přiložit soubory </translation>
     </message>
     <message>
         <source>Post Forum Msg</source>
-        <translation>Beitrag erstellen</translation>
+        <translation>Vložit příspěvek na fórum</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation>Schließen</translation>
+        <translation>Zavřít</translation>
     </message>
     <message>
         <source>Paste full RetroShare Link</source>
-        <translation>Vollen RetroShare-Link einfügen</translation>
+        <translation>Vložit úplný RetroShare odkaz</translation>
     </message>
     <message>
         <source>Paste own certificate link</source>
-        <translation>Eigenen Zertifikat-Link einfügen</translation>
+        <translation>Vložit odkaz na svůj certifikát</translation>
     </message>
     <message>
         <source>In Reply to</source>
-        <translation>Als Antwort auf</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare</source>
@@ -2795,128 +2784,128 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please set a Forum Subject and Forum Message</source>
-        <translation>Bitte einen Betreff und eine Beitrag eingeben</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation>Zusätzliche Datei hinzufügen</translation>
+        <translation>Přidat další soubor</translation>
     </message>
 </context>
 <context>
     <name>CreateGroup</name>
     <message>
         <source>Create a Group</source>
-        <translation>Gruppe erstellen</translation>
+        <translation>Vytvořit skupinu</translation>
     </message>
     <message>
         <source>Group Name</source>
-        <translation>Name</translation>
+        <translation>Jméno skupiny</translation>
     </message>
     <message>
         <source>Enter a name for your group</source>
-        <translation>Gib einen Namen für deine Gruppe ein</translation>
+        <translation>Zadejte jméno vaší skupiny:</translation>
     </message>
     <message>
         <source>Edit Group</source>
-        <translation>Gruppe ändern</translation>
+        <translation>Editovat skupinu</translation>
     </message>
 </context>
 <context>
     <name>CreateLobbyDialog</name>
     <message>
         <source>Create Chat Lobby</source>
-        <translation>Chatlobby erstellen</translation>
+        <translation>Vytvořit konverzační místnost</translation>
     </message>
     <message>
         <source>Lobby name:</source>
-        <translation>Lobbyname:</translation>
+        <translation>Jméno místnosti:</translation>
     </message>
     <message>
         <source>Your nick name:</source>
-        <translation>Dein Spitzname:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Security policy:</source>
-        <translation>Sicherheitsrichtlinie:</translation>
+        <translation>Nastavení bezpečnosti:</translation>
     </message>
     <message>
         <source>Public (Visible by friends)</source>
-        <translation>Öffentlich (für Freunde sichtbar)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Private (Works on invitation only)</source>
-        <translation>Privat (nur private Einladung)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Select the Friends with which you want to group chat.</source>
-        <translation>Wähle die Freunde mit denen du chatten möchtest.</translation>
+        <translation>Zvolte kontakty, s nimiž chcete uskutečnit skupinovou konverzaci</translation>
     </message>
     <message>
         <source>Invited friends</source>
-        <translation>Freunde einladen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Create</source>
-        <translation>Erstellen</translation>
+        <translation>Vytvořit</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Put a sensible lobby name here</source>
-        <translation>Gib einen Lobbynamen ein</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Your nickname for this lobby (Change default name in options-&gt;chat)</source>
-        <translation>Dein Spitzname für diese Lobby (Ändere den Defaultnamen in den Optionen-&gt;Chat)</translation>
+        <translation>Vaše přezdívka pro tuto konverzační místnost (překryje tu z Nastavení-&gt;Konverzace)</translation>
     </message>
     <message>
         <source>Contacts:</source>
-        <translation>Kontakte:</translation>
+        <translation>Kontakty:</translation>
     </message>
     <message>
         <source>Lobby topic:</source>
-        <translation>Thema:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>A chat lobby is a decentralized and anonymous chat group. All participants receive all messages. Once the lobby is created you can invite other friends from the Friends tab.</source>
-        <translation>Eine Chatlobby ist eine dezentralisierte und anonyme Chatgruppe. Alle Teilnehmer sehen alle Nachrichten. Wenn die Lobby erstellt wurde, kannst du Freunde über den &quot;Freunde&quot;-Reiter einladen.</translation>
+        <translation>Konverzační místnosti jsou decentralizované a anonymní konverzační skupiny (chat). Všichni účastníci obdrží vždy všechny zprávy. Jakmile je skupina vytvořena, můžete pozvat další kontakty (v záložce Kontakty).</translation>
     </message>
 </context>
 <context>
     <name>CryptoPage</name>
     <message>
         <source>Public Key</source>
-        <translation>Öffentlicher Schlüssel</translation>
+        <translation>Veřejný klíč</translation>
     </message>
     <message>
         <source>Copy Key</source>
-        <translation>Schlüssel kopieren</translation>
+        <translation>Kopírovat klíč</translation>
     </message>
     <message>
         <source>Save Key</source>
-        <translation>Schlüssel speichern</translation>
+        <translation>Uložit klíč</translation>
     </message>
     <message>
         <source>Include signatures</source>
-        <translation>Signaturen einschließen</translation>
+        <translation>Zahrnout podpisy</translation>
     </message>
     <message>
         <source>Copy RetroShare link to clipboard</source>
-        <translation>RetroShare-Link in die Zwischenablage kopieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>A RetroShare link with your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation>Der RetroShare-Link mit deinem öffentlichen Schlüssel wurde in die Zwischenablage kopiert. Sende ihn per Mail oder auf anderem Wege an deinen Freund</translation>
+        <translation>RetroShare odkaz s vaším veřejným klíčem byl zkopírován do schránky, nyní ho můžete vložit například do textu emailu a někomu ho poslat, aby si vás mohl přidat mezi své kontakty. Kromě emailu můžete použít samořejmě i jiné programy na zasílání textových zpráv.</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation>Fehler</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Your certificate could not be parsed correctly. Please contact the developpers.</source>
-        <translation>Dein Zertifikat konnte nicht richtig eingelesen werden. Bitte kontaktiere die Entwickler.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare</source>
@@ -2924,31 +2913,31 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation>Dein öffentlicher Schlüssel ist in die Zwischenablage kopiert worden. Sende ihn per Mail oder auf anderem Wege zu deinem Freund</translation>
+        <translation>Váš veřejn klíč byl zkopírován do schránky, nyní ho můžete vložit například do textu emailu a někomu ho poslat, aby si vás mohl přidat mezi své kontakty. Kromě emailu můžete použít samořejmě i jiné programy na zasílání textových zpráv.</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation>Speichern unter...</translation>
+        <translation>Uložit jako...</translation>
     </message>
     <message>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
-        <translation>RetroShare-Zertifikat (*.rsc );;Alle Dateien (*)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Security</source>
-        <translation>Sicherheit</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Copy my Key to Clipboard</source>
-        <translation>Schlüssel in Zwischenablage kopieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Save Key into a file</source>
-        <translation>Schlüssel in Datei sichern</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Use old key format</source>
-        <translation>Altes Schlüsselformat benutzen</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2959,65 +2948,65 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>DHT Off</source>
-        <translation>DHT aus</translation>
+        <translation>DHT vypnuto</translation>
     </message>
     <message>
         <source>DHT Searching for RetroShare Peers</source>
-        <translation>DHT sucht nach RetroShare-Nachbarn</translation>
+        <translation>Hledám protějšky v DHT síti</translation>
     </message>
     <message>
         <source>RetroShare users in DHT (Total DHT users)</source>
-        <translation>RetroShare-Nutzer in DHT (DHT-Nutzer gesamt)</translation>
+        <translation>Celkový počet uživatelů RetroShare v DHT</translation>
     </message>
     <message>
         <source>DHT Good</source>
-        <translation>DHT-Zustand ist gut</translation>
+        <translation>DHT funguje</translation>
     </message>
     <message>
         <source>DHT Error</source>
-        <translation>DHT-Fehler</translation>
+        <translation>DHT nefunguje (chyba)</translation>
     </message>
 </context>
 <context>
     <name>DLListDelegate</name>
     <message>
         <source>B</source>
-        <translation>B</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>KB</source>
-        <translation>KiB</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>MB</source>
-        <translation>MiB</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>GB</source>
-        <translation>GiB</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>DetailsDialog</name>
     <message>
         <source>Details</source>
-        <translation>Details</translation>
+        <translation>Detaily</translation>
     </message>
     <message>
         <source>General</source>
-        <translation>Allgemein</translation>
+        <translation>Obecné</translation>
     </message>
     <message>
         <source>File Name:</source>
-        <translation>Dateiname:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hash:</source>
-        <translation>Prüfsumme:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Size:</source>
-        <translation>Größe:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Status:</source>
@@ -3025,7 +3014,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Priority:</source>
-        <translation>Priorität:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Type:</source>
@@ -3033,55 +3022,55 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Transfer</source>
-        <translation>Transfer</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sources:</source>
-        <translation>Quellen:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Datarate:</source>
-        <translation>Übertragungsrate:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Completed:</source>
-        <translation>Vervollständigt:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Chunk size:</source>
-        <translation>Blockgröße:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Number of Chunks</source>
-        <translation>Anzahl der Blöcke</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Chunks:</source>
-        <translation>Blöcke:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Remaining:</source>
-        <translation>Verbleibend:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Date</source>
-        <translation>Datum</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Download time:</source>
-        <translation>Restzeit:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Comments</source>
-        <translation>Kommentare</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>retroshare link(s)</source>
-        <translation>RetroShare-Link(s)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Copy</source>
-        <translation>Kopieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>OK</source>
@@ -3089,266 +3078,265 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Rating</source>
-        <translation>Bewertung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File Name</source>
-        <translation>Dateiname</translation>
+        <translation>Jméno souboru</translation>
     </message>
     <message>
         <source>Not Rated</source>
-        <translation>Nicht bewertet</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>No Comments</source>
-        <translation>Keine Kommentare</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>DhtWindow</name>
     <message>
         <source>DHT Details</source>
-        <translation>DHT-Details</translation>
+        <translation>Detaily DHT</translation>
     </message>
     <message>
         <source>Peer Details</source>
-        <translation>Nachbardetails</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Net Status</source>
-        <translation>Netzstatus</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Connect Options</source>
-        <translation>Verbindungsoptionen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Network Mode</source>
-        <translation>Netzwerkmodus</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Nat Type</source>
-        <translation>NAT-Typ</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Nat Hole</source>
-        <translation>NAT-Hole</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Peer Address</source>
-        <translation>Adresse des Nachbarn</translation>
+        <translation>Adresa protějšku</translation>
     </message>
     <message>
         <source>Extra Label</source>
-        <translation>Zusätzliche Beschriftung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>TextLabel</source>
-        <translation>TextLabel</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation>Jméno</translation>
     </message>
     <message>
         <source>PeerId</source>
-        <translation>Nachbar-ID</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>DHT Status</source>
-        <translation>DHT-Status</translation>
+        <translation>Status DHT</translation>
     </message>
     <message>
         <source>ConnectLogic</source>
-        <translation>ConnectLogic</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Connect Status</source>
-        <translation>Verbindungsstatus</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Connect Mode</source>
-        <translation>Verbindungsmodus</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Request Status</source>
-        <translation>Anfragestatus</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cb Status</source>
-        <translation>Cb-Status</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RsId</source>
-        <translation>RsId</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Bucket</source>
-        <translation>Paket</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>IP:Port</source>
-        <translation>IP:Port</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Key</source>
-        <translation>Schlüssel</translation>
+        <translation>Klíč</translation>
     </message>
     <message>
         <source>Status Flags</source>
-        <translation>Status Flags</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Found</source>
-        <translation>Gefunden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Last Sent</source>
-        <translation>Zuletzt gesendet</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Last Recv</source>
-        <translation>Zuletzt empfangen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Relay Mode</source>
-        <translation>Relay-Modus</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Source</source>
-        <translation>Quelle</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Proxy</source>
-        <translation>Proxy</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Destination</source>
-        <translation>Ziel</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Class</source>
-        <translation>Klasse</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Age</source>
-        <translation>Alter</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Bandwidth</source>
-        <translation>Bandbreite</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>DirectoriesPage</name>
     <message>
         <source>Incoming Directory</source>
-        <translation>Eingehende Dateien</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Browse</source>
-        <translation>Durchsuchen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Partials Directory</source>
-        <translation>Unvollständige Dateien</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Shared Directories</source>
-        <translation>Freigegebene Ordner</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Automatically share incoming directory (Recommended)</source>
-        <translation>Eingehende Dateien automatisch freigeben (Empfohlen)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Edit Share</source>
-        <translation>Freigaben bearbeiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Remember file hashes even if not shared. 
 This might be useful if you're sharing an 
 external HD, to avoid re-hashing files when 
 you plug it in.</source>
-        <translation>Prüfsummen von Dateien merken, auch wenn sie nicht mehr freigegeben sind.
-Das ist nützlich, wenn du eine externe Festplatte freigibst und die Dateien nicht neu eingelesen werden sollen, wenn du sie anschließt.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Remember hashed files for </source>
-        <translation>Prüfsummen merken für</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> days</source>
-        <translation> Tage</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forget any hashed file that is not anymore shared.</source>
-        <translation>Prüfsummen von nicht mehr freigegebenen Dateien vergessen.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Clean Hash Cache</source>
-        <translation>Prüfsummen-Cache bereinigen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Auto-check shared directories every </source>
-        <translation>Automatische Überprüfung der Freigaben alle </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> minute(s)</source>
-        <translation> Minute(n)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Set Incoming Directory</source>
-        <translation>Ordner für eingehende Dateien</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Set Partials Directory</source>
-        <translation>Ordner für unvollständige Dateien</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Directories</source>
-        <translation>Ordner</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cache cleaning confirmation</source>
-        <translation>Bestätigung der Cache-Bereinigung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This will forget any former hash of non shared files. Do you confirm ?</source>
-        <translation>Du verlierst die Prüfsummen deiner freigegebenen Dateien. Möchtest du fortfahren?</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>DiscStatus</name>
     <message>
         <source>Waiting outgoing discovery operations</source>
-        <translation>Wartende ausgehende Discovery-Operationen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Waiting incoming discovery operations</source>
-        <translation>Wartende eingehende Discovery-Operationen</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>DownloadToaster</name>
     <message>
         <source>Start file</source>
-        <translation>Datei ausführen</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>EditChanDetails</name>
     <message>
         <source>Channel Details</source>
-        <translation>Kanaldetails</translation>
+        <translation>Detaily kanálu</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>OK</source>
@@ -3356,38 +3344,38 @@ Das ist nützlich, wenn du eine externe Festplatte freigibst und die Dateien nic
     </message>
     <message>
         <source>Edit Channel Details</source>
-        <translation>Kanaldetails bearbeiten</translation>
+        <translation>Změnit detaily kanálu</translation>
     </message>
     <message>
         <source>Channel Info</source>
-        <translation>Kanalinfo</translation>
+        <translation>Informace o kanálu</translation>
     </message>
     <message>
         <source>Channel Name</source>
-        <translation>Kanalname</translation>
+        <translation>Jméno kanálu</translation>
     </message>
     <message>
         <source>Channel Description</source>
-        <translation>Kanalbeschreibung</translation>
+        <translation>Popis kanálu</translation>
     </message>
     <message>
         <source>Add Channel Logo</source>
-        <translation>Kanallogo hinzufügen</translation>
+        <translation>Přidat logo kanálu</translation>
     </message>
     <message>
         <source>Load channel logo</source>
-        <translation>Kanallogo laden</translation>
+        <translation>Načíst logo kanálu</translation>
     </message>
 </context>
 <context>
     <name>EditForumDetails</name>
     <message>
         <source>Forum Details</source>
-        <translation>Forendetails</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>OK</source>
@@ -3395,30 +3383,30 @@ Das ist nützlich, wenn du eine externe Festplatte freigibst und die Dateien nic
     </message>
     <message>
         <source>Edit Forum Details</source>
-        <translation>Forendetails bearbeiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forum Info</source>
-        <translation>Foreninfo</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forum Name</source>
-        <translation>Forenname</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forum Description</source>
-        <translation>Forenbeschreibung</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>EditForumV2Details</name>
     <message>
         <source>Forum Details</source>
-        <translation>Forendetails</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>OK</source>
@@ -3426,19 +3414,19 @@ Das ist nützlich, wenn du eine externe Festplatte freigibst und die Dateien nic
     </message>
     <message>
         <source>Edit Forum Details</source>
-        <translation>Forendetails bearbeiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forum Info</source>
-        <translation>Foreninfo</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forum Name</source>
-        <translation>Forenname</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forum Description</source>
-        <translation>Forenbeschreibung</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3448,14 +3436,11 @@ Das ist nützlich, wenn du eine externe Festplatte freigibst und die Dateien nic
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Friends&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
- &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Freunde&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>#</source>
-        <translation>#</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Status</source>
@@ -3463,328 +3448,328 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Person</source>
-        <translation>Person</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Auto Connect</source>
-        <translation>Automatisch verbinden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Trust Level</source>
-        <translation>Höhe des Vertrauens</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Peer Address</source>
-        <translation>Adresse des Nachbarn</translation>
+        <translation>Adresa protějšku</translation>
     </message>
     <message>
         <source>Last Contact</source>
-        <translation>Letzter Kontakt</translation>
+        <translation>Poslední kontakt</translation>
     </message>
     <message>
         <source>Organisation</source>
-        <translation>Organisation</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Location</source>
-        <translation>Ort</translation>
+        <translation>Umístění</translation>
     </message>
     <message>
         <source>Country</source>
-        <translation>Land</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Person Id</source>
-        <translation>Persönliche ID</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Auth Code</source>
-        <translation>Authentifizierungscode</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Vote Up</source>
-        <translation>Daumen hoch</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Vote Down</source>
-        <translation>Daumen herunter</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ExprParamElement</name>
     <message>
         <source>to</source>
-        <translation>bis</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>ignore case</source>
-        <translation>groß/klein ignorieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>dd.MM.yyyy</source>
-        <translation>TT.MM.JJJJ</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>KB</source>
-        <translation>KiB</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>MB</source>
-        <translation>MiB</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>GB</source>
-        <translation>GiB</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ExpressionWidget</name>
     <message>
         <source>Expression Widget</source>
-        <translation>Ausdruck Oberfläche</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Delete this expression</source>
-        <translation>Den Ausdruck löschen</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>FileAssociationsPage</name>
     <message>
         <source>&amp;New</source>
-        <translation>&amp;Neu</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add new Association</source>
-        <translation>Neue Verknüpfung hinzufügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation>&amp;Bearbeiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Edit this Association</source>
-        <translation>Diese Verknüpfung bearbeiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;Remove</source>
-        <translation>&amp;Entfernen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Remove this Association</source>
-        <translation>Diese Verknüpfung entfernen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File type</source>
-        <translation>Dateityp</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> Friend Help</source>
-        <translation>Freunde-Hilfe</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>You  this</source>
-        <translation>Du dies</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Associations</source>
-        <translation>Verknüpfungen</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>FileTransferInfoWidget</name>
     <message>
         <source>Chunk map</source>
-        <translation>Block map</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Active chunks</source>
-        <translation>Aktive Blöcke</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Availability map (%1 active source)</source>
-        <translation>Verfügbarkeitskarte (%1 aktive Quelle)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Availability map (%1 active sources)</source>
-        <translation>Verfügbarkeitskarte (%1 aktive Quellen)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File info</source>
-        <translation>Datei-Info</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File hash</source>
-        <translation>Prüfsumme</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File size</source>
-        <translation>Dateigröße</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>bytes</source>
-        <translation>Bytes</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Chunk size</source>
-        <translation>Blockgröße</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Number of chunks</source>
-        <translation>Anzahl der Blöcke</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Transfered</source>
-        <translation>Übertragen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Remaining</source>
-        <translation>Verbleibend</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Number of sources</source>
-        <translation>Anzahl der Quellen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Chunk strategy</source>
-        <translation>Blockstrategie</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Transfer type</source>
-        <translation>Transfertyp</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Anonymous F2F</source>
-        <translation>Anonym F2F</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Direct friend transfer / Availability assumed</source>
-        <translation>Direkte Freund-zu-Freund-Übertragung / Verfügbarkeit angenommen</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>FilesDefs</name>
     <message>
         <source>Picture</source>
-        <translation>Bild</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Video</source>
-        <translation>Video</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Audio</source>
-        <translation>Audio</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Archive</source>
-        <translation>Archiv</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Program</source>
-        <translation>Programm</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>CD/DVD-Image</source>
-        <translation>CD/DVD-Abbild</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Document</source>
-        <translation>Dokument</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare collection file</source>
-        <translation>Kollektions-Datei</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Subtitles</source>
-        <translation>Untertitel</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Nintendo DS Rom</source>
-        <translation>Nintendo DS ROM</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>FlatStyle_RDM</name>
     <message>
         <source>Friends Directories</source>
-        <translation>Dateien von Freunden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>My Directories</source>
-        <translation>Meine Ordner</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Size</source>
-        <translation>Größe</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Age</source>
-        <translation>Alter</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend</source>
-        <translation>Freund</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Share Type</source>
-        <translation>Freigabetyp</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Directory</source>
-        <translation>Ordner</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ForumDetails</name>
     <message>
         <source>Forum Details</source>
-        <translation>Forendetails</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forum Info</source>
-        <translation>Foreninfo</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forum Name</source>
-        <translation>Forenname</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Popularity</source>
-        <translation>Beliebtheit</translation>
+        <translation>Popularita</translation>
     </message>
     <message>
         <source>Last Post</source>
-        <translation>Letzter Beitrag</translation>
+        <translation>Poslední příspěvek</translation>
     </message>
     <message>
         <source>Forum ID</source>
-        <translation>Foren-ID</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forum Description</source>
-        <translation>Forenbeschreibung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Security</source>
-        <translation>Sicherheit</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation>Erlaubte Nachrichten</translation>
+        <translation>Povolené zprávy</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation>Authentifizierte Nachrichten</translation>
+        <translation>Autentizované zprávy</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation>Anonyme Nachrichten</translation>
+        <translation>Anonymní zprávy</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>OK</source>
@@ -3792,171 +3777,171 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Apply and Close</source>
-        <translation>Annehmen und Schließen</translation>
+        <translation>Aplikovat změny a zavřít</translation>
     </message>
 </context>
 <context>
     <name>ForumMsgItem</name>
     <message>
         <source>Subject: </source>
-        <translation>Betreff:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unsubscribe To Forum</source>
-        <translation>Forum abbestellen</translation>
+        <translation>Neodebírat fórum</translation>
     </message>
     <message>
         <source>Reply</source>
-        <translation>Antwort</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Expand</source>
-        <translation>Erweitern</translation>
+        <translation>Rozbalit</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation>Eintrag entfernen</translation>
+        <translation>Odstranit položku</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation>Senden</translation>
+        <translation>Odeslat</translation>
     </message>
     <message>
         <source>Signed</source>
-        <translation>Unterzeichnen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forum Post</source>
-        <translation>Beitrag</translation>
+        <translation>Příspěvek fóra</translation>
     </message>
     <message>
         <source>Unknown Forum Post</source>
-        <translation>Unbekannter Beitrag</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Anonymous</source>
-        <translation>Anonym</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>In Reply to</source>
-        <translation>Als Antwort auf</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Please give a Text Message</source>
-        <translation>Bitte Nachricht eingeben</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Set as read and remove item</source>
-        <translation>Als gelesen markieren und Eintrag entfernen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Verbergen</translation>
+        <translation>Skrýt</translation>
     </message>
 </context>
 <context>
     <name>ForumNewItem</name>
     <message>
         <source>Subscribe to Forum</source>
-        <translation>Forum abonnieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Expand</source>
-        <translation>Erweitern</translation>
+        <translation>Rozbalit</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation>Eintrag entfernen</translation>
+        <translation>Odstranit položku</translation>
     </message>
     <message>
         <source>Forum Description</source>
-        <translation>Forenbeschreibung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unknown Forum</source>
-        <translation>Unbekanntes Forum</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New Forum</source>
-        <translation>Neues Forum</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Updated Forum</source>
-        <translation>Geändertes Forum</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Verbergen</translation>
+        <translation>Skrýt</translation>
     </message>
 </context>
 <context>
     <name>ForumPage</name>
     <message>
         <source>Misc</source>
-        <translation>Verschiedenes</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Set message to read on activate</source>
-        <translation>Beitrag beim Aktivieren als gelesen markieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Expand new messages</source>
-        <translation>Neue Beiträge erweitern</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forum</source>
-        <translation>Forum</translation>
+        <translation>Fórum</translation>
     </message>
 </context>
 <context>
     <name>ForumV2Details</name>
     <message>
         <source>Forum Details</source>
-        <translation>Forendetails</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forum Info</source>
-        <translation>Foreninfo</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forum Name</source>
-        <translation>Forenname</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Popularity</source>
-        <translation>Beliebtheit</translation>
+        <translation>Popularita</translation>
     </message>
     <message>
         <source>Last Post</source>
-        <translation>Letzter Beitrag</translation>
+        <translation>Poslední příspěvek</translation>
     </message>
     <message>
         <source>Forum ID</source>
-        <translation>Foren-ID</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forum Description</source>
-        <translation>Forenbeschreibung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Security</source>
-        <translation>Sicherheit</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation>Erlaubte Nachrichten</translation>
+        <translation>Povolené zprávy</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation>Authentifizierte Nachrichten</translation>
+        <translation>Autentizované zprávy</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation>Anonyme Nachrichten</translation>
+        <translation>Anonymní zprávy</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>OK</source>
@@ -3964,194 +3949,194 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Apply and Close</source>
-        <translation>Annehmen und Schließen</translation>
+        <translation>Aplikovat změny a zavřít</translation>
     </message>
 </context>
 <context>
     <name>ForumsDialog</name>
     <message>
         <source>Display</source>
-        <translation>Anzeigen</translation>
+        <translation>Zobrazit</translation>
     </message>
     <message>
         <source>Create Forum</source>
-        <translation>Forum erstellen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forum:</source>
-        <translation>Forum:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Last Post</source>
-        <translation>Letzter Beitrag</translation>
+        <translation>Poslední příspěvek</translation>
     </message>
     <message>
         <source>Threaded View</source>
-        <translation>Hierarchische Ansicht</translation>
+        <translation>podle vláken</translation>
     </message>
     <message>
         <source>Flat View</source>
-        <translation>Ebene Ansicht</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Title</source>
-        <translation>Titel</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Date</source>
-        <translation>Datum</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Author</source>
-        <translation>Autor</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Signed</source>
-        <translation>Unterzeichnet</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Thread:</source>
-        <translation>Thema:</translation>
+        <translation>Vlákno:</translation>
     </message>
     <message>
         <source>Previous Thread</source>
-        <translation>Vorheriger Beitrag</translation>
+        <translation>Předchozí vlákno</translation>
     </message>
     <message>
         <source>Next Thread</source>
-        <translation>Nächster Beitrag</translation>
+        <translation>Následující vlákno</translation>
     </message>
     <message>
         <source>Download all files</source>
-        <translation>Alle Dateien herunterladen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Next unread</source>
-        <translation>Nächste ungelesene</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Content</source>
-        <translation>Inhalt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Reply Message</source>
-        <translation>Auf Beitrag antworten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Start new Thread for Selected Forum</source>
-        <translation>Ein neues Thema im ausgewählten Forum starten</translation>
+        <translation>Založit nové vlákno ve vybraném fóru</translation>
     </message>
     <message>
         <source>Loading</source>
-        <translation>Lade</translation>
+        <translation>Nahrávám</translation>
     </message>
     <message>
         <source>Print</source>
-        <translation>Drucken</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>PrintPreview</source>
-        <translation>Druckvorschau</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Your Forums</source>
-        <translation>Deine Foren</translation>
+        <translation>Vaše fóra</translation>
     </message>
     <message>
         <source>Subscribed Forums</source>
-        <translation>Abonnierte Foren</translation>
+        <translation>Odebíraná fóra</translation>
     </message>
     <message>
         <source>Popular Forums</source>
-        <translation>Beliebte Foren</translation>
+        <translation>Oblíbená fóra</translation>
     </message>
     <message>
         <source>Other Forums</source>
-        <translation>Andere Foren</translation>
+        <translation>Ostatní fóra</translation>
     </message>
     <message>
         <source>Subscribe to Forum</source>
-        <translation>Forum abonnieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unsubscribe to Forum</source>
-        <translation>Forum abbestellen</translation>
+        <translation>Neodebírat fórum</translation>
     </message>
     <message>
         <source>New Forum</source>
-        <translation>Neues Forum</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Show Forum Details</source>
-        <translation>Forendetails anzeigen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Edit Forum Details</source>
-        <translation>Forendetails bearbeiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Share Forum</source>
-        <translation>Privaten Veröffentlichungsschlüssel verteilen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Restore Publish Rights for Forum</source>
-        <translation>Veröffentlichungsrechte für das Forum wiederherstellen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation>RetroShare-Link kopieren</translation>
+        <translation>Kopírovat RetroShare odkaz</translation>
     </message>
     <message>
         <source>Mark all as read</source>
-        <translation>Alle als gelesen markieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Mark all as unread</source>
-        <translation>Alle als ungelesen markieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Reply</source>
-        <translation>Antwort</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Start New Thread</source>
-        <translation>Neues Thema erstellen</translation>
+        <translation>Založit nové vlákno</translation>
     </message>
     <message>
         <source>Reply to Author</source>
-        <translation>Dem Autor antworten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Expand all</source>
-        <translation>Alle erweitern</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Collapse all</source>
-        <translation>Alle reduzieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Mark as read</source>
-        <translation>Als gelesen markieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>with children</source>
-        <translation>inklusive aller Antworten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Mark as unread</source>
-        <translation>Als ungelesen markieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Verbergen</translation>
+        <translation>Skrýt</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation>Erweitern</translation>
+        <translation>Rozbalit</translation>
     </message>
     <message>
         <source>AUTHD</source>
-        <translation>AUTHD</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare</source>
@@ -4159,261 +4144,261 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>No Forum Selected!</source>
-        <translation>Kein Forum ausgewählt!</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>You cant reply a Anonymous Author</source>
-        <translation>Du kannst einem anonymen Autor nicht antworten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>[ ... Missing Message ... ]</source>
-        <translation>[ ... Fehlender Beitrag ... ]</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Placeholder for missing Message</source>
-        <translation>Platzhalter für fehlenden Beitrag</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Search forums</source>
-        <translation>Forum durchsuchen</translation>
+        <translation>Hledat ve fórech</translation>
     </message>
     <message>
         <source>Original Message</source>
-        <translation>Ursprüngliche Nachricht</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>From</source>
-        <translation>Von</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sent</source>
-        <translation>Gesendet</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Subject</source>
-        <translation>Betreff</translation>
+        <translation>Předmět</translation>
     </message>
     <message>
         <source>On %1, %2 wrote:</source>
-        <translation>Am %1, schrieb %2:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forums</source>
-        <translation>Foren</translation>
+        <translation>Fóra</translation>
     </message>
 </context>
 <context>
     <name>ForumsFillThread</name>
     <message>
         <source>Anonymous</source>
-        <translation>Anonym</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>signed</source>
-        <translation>unterzeichnet</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>none</source>
-        <translation>keine</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ForumsV2Dialog</name>
     <message>
         <source>Display</source>
-        <translation>Anzeigen</translation>
+        <translation>Zobrazit</translation>
     </message>
     <message>
         <source>Create Forum</source>
-        <translation>Forum erstellen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forum:</source>
-        <translation>Forum:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Last Post</source>
-        <translation>Letzter Beitrag</translation>
+        <translation>Poslední příspěvek</translation>
     </message>
     <message>
         <source>Threaded View</source>
-        <translation>Hierarchische Ansicht</translation>
+        <translation>podle vláken</translation>
     </message>
     <message>
         <source>Flat View</source>
-        <translation>Ebene Ansicht</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Title</source>
-        <translation>Titel</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Date</source>
-        <translation>Datum</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Author</source>
-        <translation>Autor</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Signed</source>
-        <translation>Unterzeichnet</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Thread:</source>
-        <translation>Thema:</translation>
+        <translation>Vlákno:</translation>
     </message>
     <message>
         <source>Previous Thread</source>
-        <translation>Vorheriges Thema</translation>
+        <translation>Předchozí vlákno</translation>
     </message>
     <message>
         <source>Next Thread</source>
-        <translation>Nächstes Thema</translation>
+        <translation>Následující vlákno</translation>
     </message>
     <message>
         <source>Download all files</source>
-        <translation>Alle Dateien herunterladen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Next unread</source>
-        <translation>Nächste ungelesene</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Search forums</source>
-        <translation>Forum durchsuchen</translation>
+        <translation>Hledat ve fórech</translation>
     </message>
     <message>
         <source>Content</source>
-        <translation>Inhalt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Reply Message</source>
-        <translation>Auf Beitrag antworten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Start new Thread for Selected Forum</source>
-        <translation>Ein neues Thema im ausgewählten Forum starten</translation>
+        <translation>Založit nové vlákno ve vybraném fóru</translation>
     </message>
     <message>
         <source>Loading</source>
-        <translation>Lade</translation>
+        <translation>Nahrávám</translation>
     </message>
     <message>
         <source>Print</source>
-        <translation>Drucken</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>PrintPreview</source>
-        <translation>Druckvorschau</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Your Forums</source>
-        <translation>Deine Foren</translation>
+        <translation>Vaše fóra</translation>
     </message>
     <message>
         <source>Subscribed Forums</source>
-        <translation>Abonnierte Foren</translation>
+        <translation>Odebíraná fóra</translation>
     </message>
     <message>
         <source>Popular Forums</source>
-        <translation>Beliebte Foren</translation>
+        <translation>Oblíbená fóra</translation>
     </message>
     <message>
         <source>Other Forums</source>
-        <translation>Andere Foren</translation>
+        <translation>Ostatní fóra</translation>
     </message>
     <message>
         <source>Subscribe to Forum</source>
-        <translation>Forum abonnieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unsubscribe to Forum</source>
-        <translation>Forum abbestellen</translation>
+        <translation>Neodebírat fórum</translation>
     </message>
     <message>
         <source>New Forum</source>
-        <translation>Neues Forum</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Show Forum Details</source>
-        <translation>Forendetails anzeigen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Edit Forum Details</source>
-        <translation>Forendetails bearbeiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Share Forum</source>
-        <translation>Veröffentlichungsschlüssel verteilen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Restore Publish Rights for Forum</source>
-        <translation>Veröffentlichungsrechte für das Forum wiederherstellen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation>RetroShare-Link kopieren</translation>
+        <translation>Kopírovat RetroShare odkaz</translation>
     </message>
     <message>
         <source>Mark all as read</source>
-        <translation>Alle als gelesen markieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Mark all as unread</source>
-        <translation>Alle als ungelesen markieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Reply</source>
-        <translation>Antwort</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Start New Thread</source>
-        <translation>Neues Thema erstellen</translation>
+        <translation>Založit nové vlákno</translation>
     </message>
     <message>
         <source>Reply to Author</source>
-        <translation>Dem Autor antworten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Expand all</source>
-        <translation>Alle erweitern</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Collapse all</source>
-        <translation>Alle reduzieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Mark as read</source>
-        <translation>Als gelesen markieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>with children</source>
-        <translation>inklusive aller Antworten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Mark as unread</source>
-        <translation>Als ungelesen markieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Verbergen</translation>
+        <translation>Skrýt</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation>Erweitern</translation>
+        <translation>Rozbalit</translation>
     </message>
     <message>
         <source>AUTHD</source>
-        <translation>AUTHD</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>[ ... Missing Message ... ]</source>
-        <translation>[ ... Fehlender Beitrag ... ]</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Placeholder for missing Message</source>
-        <translation>Platzhalter für fehlenden Beitrag</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare</source>
@@ -4421,58 +4406,58 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>No Forum Selected!</source>
-        <translation>Kein Forum ausgewählt!</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Original Message</source>
-        <translation>Ursprüngliche Nachricht</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>From</source>
-        <translation>Von</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sent</source>
-        <translation>Gesendet</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Subject</source>
-        <translation>Betreff</translation>
+        <translation>Předmět</translation>
     </message>
     <message>
         <source>On %1, %2 wrote:</source>
-        <translation>Am %1, schrieb %2:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>You cant reply to a non-existant Message</source>
-        <translation>Du kannst nicht auf eine nicht existierende Nachricht antworten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>You cant reply to an Anonymous Author</source>
-        <translation>Du kannst keinem anonymen Autoren antworten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Anonymous</source>
-        <translation>Anonym</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>signed</source>
-        <translation>unterzeichnet</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>none</source>
-        <translation>keine</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forums</source>
-        <translation>Foren</translation>
+        <translation>Fóra</translation>
     </message>
 </context>
 <context>
     <name>FriendList</name>
     <message>
         <source>Friends</source>
-        <translation>Freunde</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Status</source>
@@ -4480,249 +4465,249 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Last Contact</source>
-        <translation>Letzter Kontakt</translation>
+        <translation>Poslední kontakt</translation>
     </message>
     <message>
         <source>Avatar</source>
-        <translation>Avatar</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hide Offline Friends</source>
-        <translation>Offline Freunde verstecken</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>State</source>
-        <translation>Status</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sort by State</source>
-        <translation>Sortiere nach Status</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hide State</source>
-        <translation>Status ausblenden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sort Descending Order</source>
-        <translation>Absteigend sortieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sort Ascending Order</source>
-        <translation>Aufsteigend sortieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Show Avatar Column</source>
-        <translation>Avatar-Spalte anzeigen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation>Jméno</translation>
     </message>
     <message>
         <source>Sort by Name</source>
-        <translation>Sortiere nach Name</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sort by last contact</source>
-        <translation>Sortiere nach letztem Kontakt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Show Last Contact Column</source>
-        <translation>Letzten Kontakt anzeigen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Set root is Decorated</source>
-        <translation>Zeige Baumstruktur</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Set Root Decorated</source>
-        <translation>Zeige Baumstruktur</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Show Groups</source>
-        <translation>Gruppen anzeigen</translation>
+        <translation>Zobrazit skupiny</translation>
     </message>
     <message>
         <source>Group</source>
-        <translation>Gruppe</translation>
+        <translation>Skupina</translation>
     </message>
     <message>
         <source>Friend</source>
-        <translation>Freund</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Location</source>
-        <translation>Ort</translation>
+        <translation>Umístění</translation>
     </message>
     <message>
         <source>Message Group</source>
-        <translation>Gruppe anschreiben</translation>
+        <translation>Psát skupině</translation>
     </message>
     <message>
         <source>Add Friend</source>
-        <translation>Freund hinzufügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Edit Group</source>
-        <translation>Gruppe ändern</translation>
+        <translation>Editovat skupinu</translation>
     </message>
     <message>
         <source>Remove Group</source>
-        <translation>Gruppe entfernen</translation>
+        <translation>Odebrat skupinu</translation>
     </message>
     <message>
         <source>Chat lobbies</source>
-        <translation>Chatlobbys</translation>
+        <translation>Konverzační místnosti</translation>
     </message>
     <message>
         <source>Chat</source>
-        <translation>Chat</translation>
+        <translation>Konverzace</translation>
     </message>
     <message>
         <source>Message Friend</source>
-        <translation>Freund anschreiben</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend Details</source>
-        <translation>Freunddetails</translation>
+        <translation>Podrobnosti o kontaktu</translation>
     </message>
     <message>
         <source>Recommend this Friend to...</source>
-        <translation>Freund weiterempfehlen...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Connect To Friend</source>
-        <translation>Zum Freund verbinden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Copy certificate link</source>
-        <translation>Zertifikat-Link kopieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation>RetroShare-Link kopieren</translation>
+        <translation>Kopírovat RetroShare odkaz</translation>
     </message>
     <message>
         <source>Paste Friend Link</source>
-        <translation>RetroShare-Link einfügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Deny Friend</source>
-        <translation>Freund blockieren</translation>
+        <translation>Odmítnout kontakt</translation>
     </message>
     <message>
         <source>Remove Friend Location</source>
-        <translation>Freund entfernen</translation>
+        <translation>Odstranit umístění kontaktu</translation>
     </message>
     <message>
         <source>Add to group</source>
-        <translation>Zu Gruppe hinzufügen</translation>
+        <translation>Přidat do skupiny</translation>
     </message>
     <message>
         <source>Move to group</source>
-        <translation>In Gruppe verschieben</translation>
+        <translation>Přesunout do skupiny</translation>
     </message>
     <message>
         <source>Groups</source>
-        <translation>Gruppen</translation>
+        <translation>Skupiny</translation>
     </message>
     <message>
         <source>Remove from group</source>
-        <translation>Aus Gruppe entfernen</translation>
+        <translation>Odebrat ze skupiny</translation>
     </message>
     <message>
         <source>Remove from all groups</source>
-        <translation>Aus allen Gruppen entfernen</translation>
+        <translation>Odebrat ze všech skupin</translation>
     </message>
     <message>
         <source>Create new</source>
-        <translation>Erstellen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Invite this group</source>
-        <translation>Diese Gruppe einladen</translation>
+        <translation>Pozvat tuto skupinu</translation>
     </message>
     <message>
         <source>Invite this friend</source>
-        <translation>Diesen Freund einladen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Show</source>
-        <translation>Anzeigen</translation>
+        <translation>Zobrazit</translation>
     </message>
     <message>
         <source>Unsubscribe</source>
-        <translation>Abbestellen</translation>
+        <translation>Neodebírat</translation>
     </message>
     <message>
         <source>Expand all</source>
-        <translation>Alle erweitern</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Collapse all</source>
-        <translation>Alle reduzieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Available</source>
-        <translation>Verfügbar</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Do you want to remove this Friend?</source>
-        <translation>Möchtest du diesen Freund entfernen?</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unsubscribe to lobby</source>
-        <translation>Lobby abbestellen</translation>
+        <translation>Neodebírat místnost</translation>
     </message>
     <message>
         <source>You are about to unsubscribe a chat lobby&lt;br&gt;You can only re-enter if your friends invite you again.</source>
-        <translation>Du bestellst die Lobby ab.&lt;br&gt;Du kannst erst wieder teilnehmen, wenn deine Freunde dich wieder einladen.</translation>
+        <translation>Chystáte se zrušit členství v diskuzní místnosti&lt;br&gt;Znovu do ní budete moci vstoupit až po opětovném pozvání vašimi kontakty.</translation>
     </message>
     <message>
         <source>Columns</source>
-        <translation>Spalten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sort by</source>
-        <translation>Sortiere nach</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>FriendRecommendDialog</name>
     <message>
         <source>Friend Recommendations</source>
-        <translation>Freundempfehlungen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Message:</source>
-        <translation>Nachricht:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Recommend friends</source>
-        <translation>Freunde empfehlen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>To</source>
-        <translation>An</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Please select at least one friend for recommendation.</source>
-        <translation>Bitte mindestens einen Freund als Empfehlung wählen.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Please select at least one friend as recipient.</source>
-        <translation>Bitte mindestens einen Empfänger wählen.</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>FriendRequest</name>
     <message>
         <source>Friend Request</source>
-        <translation>Freundschaftsanfrage</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -4730,31 +4715,27 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Accept Request and Close&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Bestätigen und Schliesen&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Confirm</source>
-        <translation>Bestätigen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Peer Info</source>
-        <translation>Nachbar-Info</translation>
+        <translation>Informace o protějšku</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation>Jméno</translation>
     </message>
     <message>
         <source>Peer ID</source>
-        <translation>Nachbar-ID</translation>
+        <translation>ID protějšku</translation>
     </message>
     <message>
         <source>Sign GPG Key</source>
-        <translation>PGP-Schlüssel unterzeichnen</translation>
+        <translation>Podepsat GPG klíč</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -4762,281 +4743,278 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Error : cannot get peer details.</source>
-        <translation>Fehler: Kann Details des Freundes nicht ermitteln.</translation>
+        <translation>Chyba : nemohu získat údaje kontaktu</translation>
     </message>
     <message>
         <source>Signature Failure</source>
-        <translation>Signaturfehler</translation>
+        <translation>Podepisování selhalo</translation>
     </message>
     <message>
         <source>Maybe password is wrong</source>
-        <translation>Vielleicht ist das Passwort falsch</translation>
+        <translation>Možná že bylo špatně zadané heslo</translation>
     </message>
     <message>
         <source>You have a friend request.</source>
-        <translation>Du hast eine Freundschaftsanfrage.</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>FriendRequestToaster</name>
     <message>
         <source>Confirm Friend Request</source>
-        <translation>Freundschaftsanfrage bestätigen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>wants to be friend with you on RetroShare</source>
-        <translation>möchte mit dir in RetroShare befreundet sein</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unknown (Incoming) Connect Attempt</source>
-        <translation>Unbekannter (eingehender) Verbindungsversuch</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>FriendSelectionWidget</name>
     <message>
         <source>Search for Name:</source>
-        <translation>Name suchen:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Search Friends</source>
-        <translation>Freunde suchen</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>FriendsDialog</name>
     <message>
         <source>Add</source>
-        <translation>Hinzufügen</translation>
+        <translation>Přidat</translation>
     </message>
     <message>
         <source>Display</source>
-        <translation>Anzeigen</translation>
+        <translation>Zobrazit</translation>
     </message>
     <message>
         <source>Edit Personal message</source>
-        <translation>Statusnachricht ändern</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Group Chat</source>
-        <translation>Gruppenchat</translation>
+        <translation>Skupinová konverzace</translation>
     </message>
     <message>
         <source>Bold</source>
-        <translation>Fett</translation>
+        <translation>Tučné</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation>Unterstrichen</translation>
+        <translation>Podtržené</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation>Kursiv</translation>
+        <translation>Kurzíva</translation>
     </message>
     <message>
         <source>Font</source>
-        <translation>Schriftart</translation>
+        <translation>Font</translation>
     </message>
     <message>
         <source>Text Color</source>
-        <translation>Textfarbe</translation>
+        <translation>Barva textu</translation>
     </message>
     <message>
         <source>Attach File</source>
-        <translation>Datei anhängen</translation>
+        <translation>Přiložit soubor</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation>Senden</translation>
+        <translation>Odeslat</translation>
     </message>
     <message>
         <source>Messages entered here are sent to all connected friends</source>
-        <translation>Nachrichten, die du hier eingibst, werden an alle verbundenen Freunde versendet</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Clear Chat History</source>
-        <translation>Nachrichtenverlauf leeren</translation>
+        <translation>Vymazat historii chatu</translation>
     </message>
     <message>
         <source>Add Friend</source>
-        <translation>Freund hinzufügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Create new Profile</source>
-        <translation>Neues Profil erstellen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Create new Forum</source>
-        <translation>Neues Forum erstellen</translation>
+        <translation>Vytvořit nové fórum</translation>
     </message>
     <message>
         <source>F</source>
-        <translation>F</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Create new Channel</source>
-        <translation>Neuen Kanal erstellen</translation>
+        <translation>Vytvořit nový kanál</translation>
     </message>
     <message>
         <source>C</source>
-        <translation>C</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add your Avatar Picture</source>
-        <translation>Wähle deinen Avatar</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>A</source>
-        <translation>A</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Set your Personal Message</source>
-        <translation>Statusnachricht ändern</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Edit your status Message</source>
-        <translation>Statusnachricht ändern</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Browse Message History</source>
-        <translation>Nachrichtenverlauf anzeigen</translation>
+        <translation>Prohlížet historii chatování</translation>
     </message>
     <message>
         <source>Browse History</source>
-        <translation>Nachrichtenverlauf</translation>
+        <translation>Prohlížet historii</translation>
     </message>
     <message>
         <source>Save Chat History</source>
-        <translation>Nachrichtenverlauf speichern</translation>
+        <translation>Uložit historii konverzace</translation>
     </message>
     <message>
         <source>Add a new Group</source>
-        <translation>Neue Gruppe hinzufügen</translation>
+        <translation>Přidat novou skupinu</translation>
     </message>
     <message>
         <source>Delete Chat History</source>
-        <translation>Nachrichtenverlauf löschen</translation>
+        <translation>Vymazat historii konverzace</translation>
     </message>
     <message>
         <source>Deletes all stored and displayed chat history</source>
-        <translation>Löscht den gespeicherten und angezeigten Chat Verlauf</translation>
+        <translation>Vymaže veškerou uloženou i zobrazenou historii konverzace</translation>
     </message>
     <message>
         <source>Create new Chat lobby</source>
-        <translation>Neue Chat Lobby erstellen</translation>
+        <translation>Vytvořit novou konverzační místnost</translation>
     </message>
     <message>
         <source>Chat lobbies</source>
-        <translation>Chatlobbys</translation>
+        <translation>Konverzační místnosti</translation>
     </message>
     <message>
         <source>Profile</source>
-        <translation>Profil</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>News Feed</source>
-        <translation>Neuigkeiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Welcome to RetroShare&apos;s group chat.</source>
-        <translation>Willkommen im RetroShare-Gruppenchat.</translation>
+        <translation>Vítejte ve skupinové konverzaci RetroShare.</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation>RetroShare-Link einfügen</translation>
+        <translation>Vložit RetroShare odkaz</translation>
     </message>
     <message>
         <source>is typing...</source>
-        <translation>tippt...</translation>
+        <translation>píše...</translation>
     </message>
     <message>
         <source>New group chat</source>
-        <translation>Neuer Gruppenchat</translation>
+        <translation>Nová skupinová konverzace</translation>
     </message>
     <message>
         <source>Do you really want to physically delete the history?</source>
-        <translation>Möchtest du wirklich den Nachrichtenverlauf löschen?</translation>
+        <translation>Chcete opravdu vymazati historii z počítače?</translation>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation>Zusätzliche Datei hinzufügen</translation>
+        <translation>Přidat další soubor</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation>Speichern unter...</translation>
+        <translation>Uložit jako...</translation>
     </message>
     <message>
         <source>Text File (*.txt );;All Files (*)</source>
-        <translation>Text Datei (*.txt );;Alle Dateien (*)</translation>
+        <translation>textový soubor (*.txt );;všechny typy souborů (*)</translation>
     </message>
     <message>
         <source>Friend Recommendations</source>
-        <translation>Freundempfehlungen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Choose Font</source>
-        <translation>Schriftart wählen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Reset font to default</source>
-        <translation>Schriftart auf den Standard setzen</translation>
+        <translation>Nastavit výchozí font</translation>
     </message>
     <message>
         <source>Friends</source>
-        <translation>Freunde</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>GamesDialog</name>
     <message>
         <source>Form</source>
-        <translation>Formular</translation>
+        <translation>Formulář</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Games Launcher&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Spiele-Starter&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Game:</source>
-        <translation>Spiel:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>GameType: 0. Want to Add your Game here?</source>
-        <translation>Spieltyp: 0. Willst du dein Spiel hier einfügen?</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>GameType: 1. Get In Touch with the developers</source>
-        <translation>Spieltyp: 1. Kontaktiere die Entwickler</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>GameType: 2.</source>
-        <translation>Spieltyp: 2.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Title / Comment</source>
-        <translation>Titel/Kommentar</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Create New Game</source>
-        <translation>Neues Spiel anlegen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Invite All Friends</source>
-        <translation>Alle Freunde einladen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Game Type</source>
-        <translation>Spieltyp</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Server</source>
-        <translation>Server</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Status</source>
@@ -5044,233 +5022,230 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Comment</source>
-        <translation>Kommentar</translation>
+        <translation>Komentáře</translation>
     </message>
     <message>
         <source>GameID</source>
-        <translation>Spiel-ID</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Player</source>
-        <translation>Spieler</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Invite</source>
-        <translation>Einladen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Interested</source>
-        <translation>Interessiert</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Accept</source>
-        <translation>Bestätigen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Delete</source>
-        <translation>Löschen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Move Player</source>
-        <translation>Spieler bewegen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Play Game</source>
-        <translation>Spielen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cancel Game</source>
-        <translation>Spiel abbrechen</translation>
+        <translation>Ukončit hraní</translation>
     </message>
     <message>
         <source>Add to Invite List</source>
-        <translation>Zur Einladungsliste hinzufügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Remove from Invite List</source>
-        <translation>Von Einladungsliste entfernen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Interested in Playing</source>
-        <translation>An Spielen interessiert</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Not Interested in Game</source>
-        <translation>Nicht an Spielen interessiert</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Not Interested</source>
-        <translation>Nicht interessiert</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Confirm Peer in Game</source>
-        <translation>Nachbar im Spiel bestätigen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Remove Peer from Game</source>
-        <translation>Nachbar vom Spiel entfernen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Interested in Game</source>
-        <translation>An Spiel interessiert</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Quit Game</source>
-        <translation>Spiel verlassen</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>GenCertDialog</name>
     <message>
         <source>Create new Profile</source>
-        <translation>Neues Profil erstellen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Your profile is associated to a GPG key</source>
-        <translation>Dein Profil ist mit einem PGP-Schlüssel verknüpft</translation>
+        <translation>Váš profil je asociován s GPG klíčem</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation>Jméno</translation>
     </message>
     <message>
         <source>Enter here your nickname</source>
-        <translation>Gib deinen Spitznamen ein</translation>
+        <translation>Zadejte vaši přezdívku</translation>
     </message>
     <message>
         <source>Email</source>
-        <translation>E-Mail</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Be careful: this email will be visible to your friends and friends 
 of your friends. This information is required by GPG, but to stay 
 anonymous, you can use a fake email.</source>
-        <translation>Sei vorsichtig: Diese E-Mail-Adresse ist für deine Freunde und deren Freunde sichtbar.
-Diese Information ist für PGP erforderlich, aber du kannst durch Eingabe einer falschen E-Mail-Adresse anonym bleiben.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This Password is for GPG</source>
-        <translation>Dieses Passwort ist für PGP</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Password</source>
-        <translation>Passwort</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Put a strong password here. This password protects your GPG key.</source>
-        <translation>Gib ein schwieriges Passwort ein. Dieses Passwort schützt deinen PGP-Schlüssel.</translation>
+        <translation>Sem vložte silné heslo, které bude chránit váš GPG klíč. Silné heslo může být třeba nějaká věta s přeházaným slovosledem a nějakým číslem a něčím neobvyklým navíc. Příklad: Opilý pes pozvracel ves 16. září. =&gt; pes Opily ves. 16.=32/2=4*4=2*8=2^4 pozvracel zari</translation>
     </message>
     <message>
         <source>Location</source>
-        <translation>Ort</translation>
+        <translation>Umístění</translation>
     </message>
     <message>
         <source>Create new Location</source>
-        <translation>Neuen Ort erstellen</translation>
+        <translation>Vytvořit nové umístění</translation>
     </message>
     <message>
         <source>Generate new Location</source>
-        <translation>Neuen Ort erstellen</translation>
+        <translation>Vygenerovat nové umístění</translation>
     </message>
     <message>
         <source>Create a new Location</source>
-        <translation>Einen neuen Ort erstellen</translation>
+        <translation>Vytvořit nové umístění</translation>
     </message>
     <message>
         <source>Generate GPG key Failure</source>
-        <translation>Fehler beim Generieren des PGP-Schlüssels</translation>
+        <translation>Generování klíče GPG selhalo</translation>
     </message>
     <message>
         <source>Location field is required with a minimum of 3 characters</source>
-        <translation>Das Feld Ort ist mit min. 3 Zeichen zu versehen</translation>
+        <translation>Popis umístění musí obsahovat alespoň tři písmena</translation>
     </message>
     <message>
         <source>All fields are required with a minimum of 3 characters</source>
-        <translation>Alle Felder sind mit min. 3 Zeichen zu versehen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Generating new GPG key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
 
 Fill in your GPG password when asked, to sign your new key.</source>
-        <translation>Erstelle einen neuen PGP-Schlüssel. Bitte habe etwas Geduld. Dieser Prozess generiert große Primzahlen und kann auf langsamen Rechnern einige Minuten dauern.
-
-Gib, wenn du gefragt wirst, dein PGP Passwort ein, um deinen neuen Schlüssel zu unterzeichnen.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Select Trusted Friend</source>
-        <translation>Wähle vertrauten Freund</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Certificates (*.pqi *.pem)</source>
-        <translation>Zertifikate (*.pqi *.pem)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Multiple instances</source>
-        <translation>Mehrere Instanzen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Another RetroShare using the same profile is already running on your system. Please close that instance first</source>
-        <translation>Ein laufendes RetroShare benutzt das gleiche Profil. Bitte schließe diese Instanz</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>An unexpected error occurred when Retrosharetried to acquire the single instance lock</source>
-        <translation>Ein unerwarteter Fehler während des &quot;Single instance lock&quot; ist aufgetreten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Generate ID Failure</source>
-        <translation>Fehler beim Generieren der ID</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Failed to Load your new Certificate!</source>
-        <translation>Fehler beim Laden deines neuen Zertifikates!</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>[Optional] Visible to your friends, and friends of friends.</source>
-        <translation>[Optional] Sichtbar für deine Freunde und Freunde von Freunden.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>[Required] Examples: Home, Laptop,...</source>
-        <translation>[Benötigt] Beispiel: Home, Laptop, ...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>[Required] Visible to your friends, and friends of friends.</source>
-        <translation>[Benötigt] Sichtbar für deine Freunde und Freunde von Freunden.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>[Required] This password protects your PGP key.</source>
-        <translation>[Benötigt] Dieses Passwort schützt deinem PGP Schlüssel.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>It looks like you don&apos;t own any Profile (GPG keys). Please fill in the form below to generate one, or import an existing profile.</source>
-        <translation>Es sieht so aus, als ob du kein Profil (PGP-Schlüssel) besitzt. Bitte fülle die Felder aus und generiere dir ein Profil oder importiere ein bestehendes Profil.</translation>
+        <translation>Zdá se že nemáte vytvořený žádný profil (sada GPG klíčů), ten můžete vytvořit vyplněním následujícího formuláře. Mužete také importovat již existující profil.</translation>
     </message>
     <message>
         <source>Generate a new identity</source>
-        <translation>Eine neue Identität erstellen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Import new identity</source>
-        <translation>Eine Identität importieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Export selected identity</source>
-        <translation>Ausgewählte Identität exportieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Use identity</source>
-        <translation>Identität benutzen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Your profile is associated to a GPG key. RetroShare currently ignores DSA keys.</source>
-        <translation>Dein Profil ist mit einem PGP-Schlüssel verknüpft. RetroShare ignoriert im Moment DSA-Schlüssel.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Put a meaningfull location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same identity (gpg key).</source>
-        <translation>Nutze einen aussagekräftigen Ort (z.B. home, laptop). Dieses Feld wird genutzt, um verschiedene Installationen mit derselben Identität auseinander zu halten.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Generate New Identity</source>
-        <translation>Neue Identität generieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -5282,39 +5257,31 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt;You can use an existing identity (i.e. a gpg key pair), from the list below, or create a new one with this form.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;You can install retroshare on different locations using the same identity. For this, just export the selected identity, and import it on the new computer, then create a new location with it.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;RetroShare benutzt PGP-Schlüssel für die Identität.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Du kannst eine vorhandene Identität (PGP-Schlüssel) aus der Liste benutzen oder ein neue mit diesem Dialog erstellen.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Du kannst RetroShare an mehreren Orten mit der selben Identität installieren. Dafür kannst du die ausgewählte Identität exportieren und auf einem anderen Computer importieren und eine neue Identität erstellen.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Create new Identity</source>
-        <translation>Neue Identität erstellen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Generate new Identity</source>
-        <translation>Neue Identität generieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Create a new Identity</source>
-        <translation>Neue Identität erstellen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Export Identity</source>
-        <translation>Identität exportieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare Identity files (*.asc)</source>
-        <translation>RetroShare-Identitätsdateien (*.asc)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Identity saved</source>
-        <translation>Identität gespeichert</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Your identity was successfully saved
@@ -5322,133 +5289,129 @@ It is encrypted
 
 You can now copy it to another computer
 and use the import button to load it</source>
-        <translation>Deine Identität wurde erfolgreich gespeichert
-Sie ist verschlüsselt
-
-Du kannst die Identität nun auf einen anderen Computer kopieren
-und den Import zum Laden verwenden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Identity not saved</source>
-        <translation>Identität nicht gespeichert</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Your identity was not saved. An error occured.</source>
-        <translation>Deine Identität wurde nicht gespeichert. Ein Fehler ist aufgetreten.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Identity not loaded</source>
-        <translation>Identität nicht geladen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Your identity was not loaded properly:</source>
-        <translation>Deine Identität wurde nicht korrekt geladen:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New identity imported</source>
-        <translation>Neue Identität importiert</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Your identity was imported successfuly:</source>
-        <translation>Deine Identität wurde erfolgreich importiert:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>You can use it now to create a new location.</source>
-        <translation>Du kannst sie jetzt benutzen, um einen neuen Ort anzulegen.</translation>
+        <translation>Nyní můžete vytvořit nové umístění</translation>
     </message>
 </context>
 <context>
     <name>GeneralPage</name>
     <message>
         <source>Startup</source>
-        <translation>Programmstart</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Start RetroShare when my system starts</source>
-        <translation>RetroShare mit dem System starten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Start minimized</source>
-        <translation>Minimiert starten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Start minimized on system start</source>
-        <translation>Beim Starten mit dem System minimieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>For Advanced Users </source>
-        <translation>Für erfahrene Anwender</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Enable Advanced Mode (Restart Required)</source>
-        <translation>Erweiterter Modus</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Misc</source>
-        <translation>Verschiedenes</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Do not show the Quit RetroShare MessageBox</source>
-        <translation>Nachfrage beim Schließen nicht anzeigen </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Do not Minimize to Tray Icon</source>
-        <translation>Nicht in den Systemabschnitt minimieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Auto Login</source>
-        <translation>Automatische Anmeldung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Register retroshare:// as url protocol (Restart required)</source>
-        <translation>retroshare:// als Protokoll registrieren (Neustart erforderlich)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>You need administrator rights to change this option.</source>
-        <translation>Du benötigst Administratorrechte zum Ändern dieser Einstellung.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Idle</source>
-        <translation>Untätig</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Idle Time</source>
-        <translation>Zeit bis zur Untätigkeit</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> seconds</source>
-        <translation>Sekunden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Error</source>
-        <translation>Fehler</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Could not add retroshare:// as protocol.</source>
-        <translation>Konnte retroshare:// nicht als Protokoll hinzufügen.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Could not remove retroshare:// protocol.</source>
-        <translation>Konnte retroshare:// nicht als Protokoll entfernen.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>General</source>
-        <translation>Allgemein</translation>
+        <translation>Obecné</translation>
     </message>
     <message>
         <source>Enable Experimental Features (Restart Required)</source>
-        <translation>Experimentelle Funktionen aktivieren (Neustart nötig)</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>GetStartedDialog</name>
     <message>
         <source>Getting Started</source>
-        <translation>Erste Schritte</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Invite Friends</source>
-        <translation>Freunde einladen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -5461,25 +5424,15 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;Be sure to get their invitation back as well... &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;You can only connect with friends if you have both added each other.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;RetroShare ist nichts ohne deine Freunde. Klicke auf &quot;Freunde einladen&quot; um den Prozess zu starten.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Schicke eine Einladungsmail mit deinem &amp;quot;Zertifikat&amp;quot; an deine Freunde.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Versichere dich ihre Einladung zurück zu bekommen... &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Du kannst dich nur zu deinen Freunden verbinden, wenn ihr euch gegenseitig hinzugefügt habt.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add Your Friends to RetroShare</source>
-        <translation>Füge deine Freunde zu RetroShare hinzu</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> Add Friends </source>
-        <translation>Freunde hinzufügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -5489,18 +5442,11 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;When your friends send you a their invitations, Click to open the Add Friends window.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Cut and Paste your Friend&apos;s &amp;quot;ID Certificates&amp;quot; into the window and add them as friends.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Wenn dein Freund dir eine Einladung schickt, klicke auf &quot;Freunde hinzufügen&quot; um den Assistent zu öffnen.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Kopiere das &amp;quot;Zertifikat&amp;quot; deines Freundes und füge es in den Assistent ein und akzeptiere ihn als Freund.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Connect To Friends</source>
-        <translation>Zu Freunden verbinden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -5518,25 +5464,11 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;If it remains Red, then you have a Nasty Firewall, that RetroShare struggles to connect through.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Look in the Further Help section for more advice about connecting.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Seid zur selben Zeit online und RetroShare wird sich automatisch verbinden!&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Bevor sich RetroShare verbinden kann, muss es das Netzwerk finden.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Das kann 5-30 Minuten beim ersten Start von RetroShare dauern.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Die DHT-Anzeige (in der Statuszeile) wechselt zu grün, wenn Verbindungen hergestellt werden können.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Nach einigen Mitnuten wechselt auch die NAT-Anzeige (auch in der Statuszeile) zu gelb oder grün.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Wenn sie rot bleibt, hast du eine Firewall, die RetroShare am Verbinden hindert.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Schaue in die Sektion &quot;Weitere Hilfe&quot; um mehr Informationen über das Verbinden zu bekommen.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Advanced: Open Firewall Port</source>
-        <translation>Erweitert: Öffne Firewall Port</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -5552,23 +5484,11 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;If none of this makes sense, don't worry about it Retroshare will still work.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Du kannst die Verbindungen von RetroShare verbessern, indem du den externen Port an deiner Firewall öffnest.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Das erlaubt deinen Freunden sich mit dir zu verbinden.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Der einfachste Weg ist das aktivieren von UPnP an deinem Router.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Schaue in die Anleitung deines Routers um die passende Einstellung zu finden.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Auch wenn nichts davon hilft wird RetroShare trotzdem funktionieren.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Further Help and Support</source>
-        <translation>Weitere Hilfe und Support</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -5587,433 +5507,418 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;4) If you are still stuck. Email us.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Enjoy Retrosharing&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Hast du Schwierigkeiten bei den ersten Schritten mit RetroShare?&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;1) schaue in die FAQ auf dem Wiki. Diese sind etwas alt, aber wir versuchen, sie auf den neuesten Stand zu bekommen.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;2) schaue in das Online-Forum. Frage und diskutiere mit.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;3) versuche es in den internen RetroShare-Foren &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;	- Diese werden geladen, wenn du mit deinen Freunden verbunden bist.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;4) Wenn du immer noch nicht weiterkommst, schreibe eine Mail an uns.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Viel Spaß beim Retrosharing&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Open RS Website</source>
-        <translation>RS-Website öffnen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Open FAQ Wiki</source>
-        <translation>Öffne FAQ (auf Wiki)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Open Online Forums</source>
-        <translation>Onlineforum öffnen</translation>
+        <translation>Otevřít fóra online</translation>
     </message>
     <message>
         <source>Email Support</source>
-        <translation>E-Mail-Support</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Email Feedback</source>
-        <translation>E-Mail-Feedback</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare Invitation</source>
-        <translation>RetroShare-Einladung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Your friend has installed RetroShare, and would like you to try it out.</source>
-        <translation>Dein Freund hat RetroShare installiert und möchte, dass du es auch versuchst.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>You can get RetroShare here: %1</source>
-        <translation>Du kannst RetroShare hier herunterladen: %1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare is a private Friend-2-Friend sharing network.</source>
-        <translation>RetroShare ist ein privates Friend-2-Friend Netzwerk.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>It has many features, including built-in chat, messaging, </source>
-        <translation>Es hat viele Funktionen wie Chat, Nachrichten, </translation>
+        <translation>Má mnoho funkcí, včetně podpory konverzací (chatu) a posílání zpráv,</translation>
     </message>
     <message>
         <source>forums and channels, all of which are as secure as the file-sharing.</source>
-        <translation>Foren, Kanäle, von denen alle ebenso sicher sind wie das Tauschen von Dateien.</translation>
+        <translation>fóra a kanály které jsou stejně bezpečné jako sdílení souborů</translation>
     </message>
     <message>
         <source>Here is your friends ID Certificate.</source>
-        <translation>Hier ist das Zertifikat deines Freundes.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cut and paste the text below into your RetroShare client</source>
-        <translation>Kopiere den unteren Text und füge ihn in deinem RetroShare ein</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>and send them your ID Certificate to get securely connected.</source>
-        <translation>und sende deinem Freund dein Zertifikat zum sicheren Verbinden.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cut Below Here</source>
-        <translation>Hier ausschneiden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare Feedback</source>
-        <translation>RetroShare Feedback</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare Support</source>
-        <translation>RetroShare Support</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>GraphFrame</name>
     <message>
         <source>Recv: </source>
-        <translation>Empfangen: </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>%1 KB/s</source>
-        <translation>%1 KiB/s</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sent: </source>
-        <translation>Gesendet: </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>%1 KB</source>
-        <translation>%1 KiB</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>%1 MB</source>
-        <translation>%1 MiB</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>%1 GB</source>
-        <translation>%1 GiB</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>GraphWidget</name>
     <message>
         <source>Click and drag the nodes around, and zoom with the mouse wheel or the &apos;+&apos; and &apos;-&apos; keys</source>
-        <translation>Klicke und ziehe die Knoten umher, Zoome mit dem Mausrad oder den Tasten &apos;+&apos; und &apos;-&apos;</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>GroupChatToaster</name>
     <message>
         <source>Show Group Chat</source>
-        <translation>Gruppenchat anzeigen</translation>
+        <translation>Zobrazit skupinovou konverzaci</translation>
     </message>
 </context>
 <context>
     <name>GroupDefs</name>
     <message>
         <source>Friends</source>
-        <translation>Freunde</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Family</source>
-        <translation>Familie</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Co-Workers</source>
-        <translation>Mitarbeiter</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Other Contacts</source>
-        <translation>Andere Kontakte</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Favorites</source>
-        <translation>Favoriten</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>GroupTreeWidget</name>
     <message>
         <source>Enter a Keyword here</source>
-        <translation>Gib einen Suchbegriff ein</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Title</source>
-        <translation>Titel</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Description</source>
-        <translation>Beschreibung</translation>
+        <translation>Popis</translation>
     </message>
     <message>
         <source>Sort by Name</source>
-        <translation>Nach Name sortieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sort by Popularity</source>
-        <translation>Nach Beliebtheit sortieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sort by Last Post</source>
-        <translation>Nach letztem Beitrag sortieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Private Key Available</source>
-        <translation>Privater Schlüssel verfügbar</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>GuiExprElement</name>
     <message>
         <source>and</source>
-        <translation>und</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>and / or</source>
-        <translation>und/oder</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>or</source>
-        <translation>oder</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation>Jméno</translation>
     </message>
     <message>
         <source>Path</source>
-        <translation>Pfad</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Extension</source>
-        <translation>Erweiterung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hash</source>
-        <translation>Prüfsumme</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Date</source>
-        <translation>Datum</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Size</source>
-        <translation>Größe</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Popularity</source>
-        <translation>Beliebtheit</translation>
+        <translation>Popularita</translation>
     </message>
     <message>
         <source>contains</source>
-        <translation>enthält</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>contains all</source>
-        <translation>enthält alles</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>is</source>
-        <translation>ist</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>less than</source>
-        <translation>kleiner als</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>less than or equal</source>
-        <translation>kleiner als oder gleich</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>equals</source>
-        <translation>gleich</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>greater than or equal</source>
-        <translation>größer als oder gleich</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>greater than</source>
-        <translation>größer als</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>is in range</source>
-        <translation>im Bereich</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>HashBox</name>
     <message>
         <source>Drop file error.</source>
-        <translation>Dateifehler bei Drag&apos;n&apos;Drop.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation>Ordner können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File not found or file name not accepted.</source>
-        <translation>Datei nicht gefunden oder Dateiname nicht akzeptiert.</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>HelpBrowser</name>
     <message>
         <source>RetroShare Help</source>
-        <translation>RetroShare Hilfe</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Find:</source>
-        <translation>Suche:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Find Previous</source>
-        <translation>Vorheriges suchen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Find Next</source>
-        <translation>Nächstes suchen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Case sensitive</source>
-        <translation>unterscheide Groß/Klein</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Whole words only</source>
-        <translation>Nur ganze Wörter</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Contents</source>
-        <translation>Inhalt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Help Topics</source>
-        <translation>Hilfe-Kapitel</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Search</source>
-        <translation>Suchen</translation>
+        <translation>Hledat</translation>
     </message>
     <message>
         <source>Searching for:</source>
-        <translation>Suche nach:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Found Documents</source>
-        <translation>gefundene Dokumente</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Back</source>
-        <translation>Zurück</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Move to previous page (Backspace)</source>
-        <translation>zur vorherigen Seite zurück (Rücktaste)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Backspace</source>
-        <translation>Rücktaste</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forward</source>
-        <translation>Vorwärts</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Move to next page (Shift+Backspace)</source>
-        <translation>Zur nächsten Seite (Umschalt+Rücktaste)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Shift+Backspace</source>
-        <translation>Umschalt+Rücktaste</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Home</source>
-        <translation>Home</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Move to the Home page (Ctrl+H)</source>
-        <translation>Zur Startseite (Strg+H)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Ctrl+H</source>
-        <translation>Strg+H</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Find</source>
-        <translation>Suche</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Search for a word or phrase on current page (Ctrl+F)</source>
-        <translation>Einen Begriff auf der aktuellen Seite suchen (Strg+F)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Ctrl+F</source>
-        <translation>Strg+F</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Close</source>
-        <translation>Schließen</translation>
+        <translation>Zavřít</translation>
     </message>
     <message>
         <source>Close Vidalia Help</source>
-        <translation>Vidalia-Hilfe schließen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Esc</source>
-        <translation>Esc</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Error Loading Help Contents: </source>
-        <translation>Fehler beim Laden des Hilfe-Inhalts:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Supplied XML file is not a valid Contents document.</source>
-        <translation>Diese XML-Datei ist kein gültiges Inhaltsdokument.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Search reached end of document</source>
-        <translation>Suche am Ende des Dokuments angekommen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Search reached start of document</source>
-        <translation>Suche am Anfang des Dokuments angekommen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Text not found in document</source>
-        <translation>Text im Dokument nicht gefunden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Found %1 results</source>
-        <translation>%1 Ergebnis(se) gefunden</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>HelpDialog</name>
     <message>
         <source>About</source>
-        <translation>Über</translation>
+        <translation>O programu</translation>
     </message>
     <message>
         <source>Authors</source>
-        <translation>Autoren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Thanks to</source>
-        <translation>Dank an</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Translation</source>
-        <translation>Übersetzung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>License Agreement</source>
-        <translation>Lizenzvereinbarung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -6021,7 +5926,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;About RetroShare&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Über RetroShare&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -6044,17 +5949,17 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;RetroShare ist eine private, sichere, plattformunabhängige, &lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;dezentralisierte Open-Source-Kommunikationsplattform.	&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;Du kannst auf sichere Weise Daten mit deinen Freunden teilen. &lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;Dazu wird ein &quot;Web of Trust&quot; verwendet, um Gegenstellen zu authentifizieren. Die gesamte Kommunikation ist Open-SSL-verschlüsselt &lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;Mit RetroShare kann man auf Filesharing-, Chat-, Nachrichten- und Kanal-Funktionen zugreifen. &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;RetroShare is a Open Source cross-platform, &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;private and secure decentralised commmunication platform.	&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;It lets you share securely your friends, &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;using a web-of-trust to authenticate peers and OpenSSL to encrypt all communication. &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;RetroShare provides filesharing, chat, messages and channels&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Nützliche externe Links für mehr Information:&lt;/span&gt;&lt;/p&gt;
-&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;RetroShare-Homepage&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/wiki/index.php/Main_Page&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;RetroShare-Wiki&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/forum/&quot;&gt;RetroShare-Forum&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://sourceforge.net/projects/retroshare/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;RetroShare Projektseite&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Usefull External Links to more information:&lt;/span&gt;&lt;/p&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Webpage&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/wiki/index.php/Main_Page&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Wiki&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/forum/&quot;&gt;RetroShare&apos;s Forum&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://sourceforge.net/projects/retroshare/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Project Page&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
 &lt;li style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://www.lunamutt.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Lunamutt Homepage.&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
@@ -6074,88 +5979,73 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt;Swedish: &lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt;&quot;&gt; Daniel Wester&lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt;&quot;&gt;wester@speedmail.se&lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt;German: &lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt;&quot;&gt;Keller&lt;/span&gt;&lt;span style=&quot; font-family:'Arial';&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&lt;span style=&quot; font-family:'Arial';&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;;&quot;&gt;Maciej Mrug&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;RetroShare -Übersetzer:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Französisch&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;:Temet&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Polnisch: &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;Jarek&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Serbisch&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;: Kunalagon Umuhanik &amp;lt;kunalagon@gmail.com&amp;gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Schwedisch:&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt; dnylander&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Webseiten-Übersetzer:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Swedish: &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt; Daniel Wester&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;wester@speedmail.se&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;German: &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;Keller&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;;&quot;&gt;Maciej Mrug&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>HelpTextBrowser</name>
     <message>
         <source>Error opening help file: </source>
-        <translation>Fehler beim Öffnen der Hilfedatei:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Opening External Link</source>
-        <translation>Öffne externe Verknüpfung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare can open the link you selected in your default Web browser. If your browser is not currently configured to use Tor then the request will not be anonymous.</source>
-        <translation>Retroshare kann den Link in deinem Browser öffnen. Falls dieser nicht z.B. mit TOR konfiguriert ist, wird der Aufruf der Seite nicht anonym sein.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Do you want Retroshare to open the link in your Web browser?</source>
-        <translation>Soll RetroShare den Link im Browser öffnen?</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unable to Open Link</source>
-        <translation>Die Verknüpfung konnte nicht geöffnet werden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare was unable to open the selected link in your Web browser. You can still copy the URL and paste it into your browser.</source>
-        <translation>RetroShare konnte den Link nicht mit deinem Browser öffnen. Du kannst ihn aber kopieren und im Browser per Hand einfügen.</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>IdDialog</name>
     <message>
         <source>Showing:</source>
-        <translation>Zeige:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Yourself</source>
-        <translation>Du</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends / Friends of Friends</source>
-        <translation>Freunde/Freunde von Freunden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Others</source>
-        <translation>Andere</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Pseudonyms</source>
-        <translation>Pseudonyme</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>All</source>
-        <translation>Alle</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>filter</source>
-        <translation>filtern</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Nickname</source>
-        <translation>Spitzname</translation>
+        <translation>Přezdívka</translation>
     </message>
     <message>
         <source>KeyId</source>
-        <translation>Schlüssel-ID</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Type</source>
@@ -6163,156 +6053,156 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Delete ID</source>
-        <translation>ID löschen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Edit Reputation</source>
-        <translation>Reputation bearbeiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Edit ID</source>
-        <translation>ID bearbeiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New ID</source>
-        <translation>Neue ID</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Identity Type</source>
-        <translation>Identitätstyp</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend</source>
-        <translation>Freund</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend of Friend</source>
-        <translation>Freund eines Freundes</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Other</source>
-        <translation>Andere</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Pseudonym</source>
-        <translation>Pseudonym</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Key ID</source>
-        <translation>Schlüssel-ID</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>GPG Name</source>
-        <translation>PGP-Name</translation>
+        <translation>Jméno GPG</translation>
     </message>
     <message>
         <source>GPG Email</source>
-        <translation>PGP-E-Mail</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>GPG Id</source>
-        <translation>PGP-ID</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>GPG Hash</source>
-        <translation>PGP-Hash</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Reputation</source>
-        <translation>Reputation</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Your Rating</source>
-        <translation>Deine Bewertung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Overall Rating</source>
-        <translation>Gesamtbewertung</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>IdEditDialog</name>
     <message>
         <source>Nickname</source>
-        <translation>Spitzname</translation>
+        <translation>Přezdívka</translation>
     </message>
     <message>
         <source>Key ID</source>
-        <translation>Schlüssel-ID</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>GPG Name</source>
-        <translation>PGP-Name</translation>
+        <translation>Jméno GPG</translation>
     </message>
     <message>
         <source>GPG Email</source>
-        <translation>PGP-E-Mail</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>GPG Hash</source>
-        <translation>PGP-Hash</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>GPG Id</source>
-        <translation>PGP-ID</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New Identity</source>
-        <translation>Neue Identität</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Gpg Assocated ID</source>
-        <translation>Mit PGP verknüpfte ID</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Pseudonym</source>
-        <translation>Pseudonym</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Create/Update ID</source>
-        <translation>ID erstellen/verändern</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ImHistoryBrowser</name>
     <message>
         <source>Message History</source>
-        <translation>Nachrichtenverlauf</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Copy</source>
-        <translation>Kopieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Remove</source>
-        <translation>Entfernen</translation>
+        <translation>Odebrat</translation>
     </message>
     <message>
         <source>Mark all</source>
-        <translation>Alle markieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Delete</source>
-        <translation>Löschen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Clear history</source>
-        <translation>Verlauf löschen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Send</source>
-        <translation>Senden</translation>
+        <translation>Odeslat</translation>
     </message>
 </context>
 <context>
     <name>InfoDialog</name>
     <message>
         <source>Info</source>
-        <translation>Info</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -6336,134 +6226,114 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://winpt.gnupt.de/winpt.zip&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;http://winpt.gnupt.de/winpt.zip&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;RetroShare benutzt PGP-Schlüssel. Das ist für die Erstellung eines RetroShare-Profils erforderlich.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Du musst deinen PGP-Schlüssel mit deinen Freunden über E-Mail oder andere Wege tauschen.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Wenn du einen PGP-Schlüssel von einem Freund erhältst, kannst du ihn mit dem Assistenten hinzufügen.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:9pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;1. Unter Linux musst du GPA installieren:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#0000ff;&quot;&gt;sudo apt-get install gpa&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; color:#0000ff;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;2. Unter Windows musst du gpg4win für die Erstellung der PGP-Schlüssel installieren:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://ftp.gpg4win.org/gpg4win-1.1.4.exe&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;http://ftp.gpg4win.org/gpg4win-1.1.4.exe&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600; color:#000000;&quot;&gt;3. Wenn du möchtest, kannst du deinen PGP-Schlüssel mit GPA oder mit WinPT erstellen:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; color:#0000ff;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://winpt.gnupt.de/winpt.zip&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;http://winpt.gnupt.de/winpt.zip&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
     <message>
         <source>MainWindow</source>
-        <translation>Hauptfenster</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add Friend</source>
-        <translation>Freund hinzufügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add a Friend Wizard</source>
-        <translation>Assistent zum Hinzufügen von Freunden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add Share</source>
-        <translation>Dateien freigeben</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Options</source>
-        <translation>Optionen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Messenger</source>
-        <translation>Messenger</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>About</source>
-        <translation>Über</translation>
+        <translation>O programu</translation>
     </message>
     <message>
         <source>SMPlayer</source>
-        <translation>SMPlayer</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Quit</source>
-        <translation>Schließen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Quick Start Wizard</source>
-        <translation>Schnellstart-Assistent</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare %1 a secure decentralised communication platform</source>
-        <translation>RetroShare %1 - eine sichere und dezentralisierte Kommunikationsplattform</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Network</source>
-        <translation>Netzwerk</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends</source>
-        <translation>Freunde</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Search</source>
-        <translation>Suchen</translation>
+        <translation>Hledat</translation>
     </message>
     <message>
         <source>Transfers</source>
-        <translation>Übertragungen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Files</source>
-        <translation>Dateien</translation>
+        <translation>Soubory</translation>
     </message>
     <message>
         <source>Messages</source>
-        <translation>Nachrichten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Channels</source>
-        <translation>Kanäle</translation>
+        <translation>Kanály</translation>
     </message>
     <message>
         <source>Blogs</source>
-        <translation>Blogs</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forums</source>
-        <translation>Foren</translation>
+        <translation>Fóra</translation>
     </message>
     <message>
         <source>Plugins</source>
-        <translation>Plug-Ins</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Getting Started</source>
-        <translation>Erste Schritte</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unfinished</source>
-        <translation>unfertig</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Low disk space warning</source>
-        <translation>Wenig Festplattenspeicher</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>The disk space in your </source>
-        <translation>Der Festplattenspeicher im </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> directory is running low (current limit is </source>
-        <translation> Verzeichnis ist sehr gering (Die aktuelle Grenze ist </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>MB). 
@@ -6471,15 +6341,11 @@ p, li { white-space: pre-wrap; }
  RetroShare will now safely suspend any disk access to this directory. 
 
  Please make some free space and click Ok.</source>
-        <translation>MiB).
-
-Normalerweise stoppt RetroShare jetzt sicher alle Festplattenzugriffe auf das Verzeichnis.
-
-Bitte gib etwas Speicher frei und drücke OK.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Show/Hide</source>
-        <translation>Anzeigen/Verbergen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Status</source>
@@ -6487,43 +6353,43 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
     </message>
     <message>
         <source>Notify</source>
-        <translation>Meldungen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Open Messenger</source>
-        <translation>Messenger öffnen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Open Messages</source>
-        <translation>Nachrichten öffnen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Bandwidth Graph</source>
-        <translation>Bandbreiten-Graph</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>DHT Details</source>
-        <translation>DHT-Details</translation>
+        <translation>Detaily DHT</translation>
     </message>
     <message>
         <source>Applications</source>
-        <translation>Anwendungen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Help</source>
-        <translation>Hilfe</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Minimize</source>
-        <translation>Minimieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Maximize</source>
-        <translation>Maximieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation>&amp;Schließen</translation>
+        <translation>&amp;Ukončit</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -6531,284 +6397,283 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
     </message>
     <message>
         <source>%1 new messages</source>
-        <translation>%1 neue Nachrichten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>%1 new message</source>
-        <translation>%1 neue Nachricht</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Down: %1 (kB/s)</source>
-        <translation>Herunter: %1 KiB/s</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Up: %1 (kB/s)</source>
-        <translation>Hoch: %1 KiB/s</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>%1 friend connected</source>
-        <translation>%1 Freund verbunden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>%1 friends connected</source>
-        <translation>%1 Freunde verbunden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Do you really want to exit RetroShare ?</source>
-        <translation>Möchtest du RetroShare wirklich beenden?</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Really quit ? </source>
-        <translation>Wirklich beenden?</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Internal Error</source>
-        <translation>Interner Fehler</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Verbergen</translation>
+        <translation>Skrýt</translation>
     </message>
     <message>
         <source>Show</source>
-        <translation>Anzeigen</translation>
+        <translation>Zobrazit</translation>
     </message>
     <message>
         <source>It seems to be an old RetroShare link. Please use copy instead.</source>
-        <translation>Es scheint ein alter RetroShare Link zu sein. Bitte kopiere den Link stattdessen.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>The file link is malformed.</source>
-        <translation>Link ist fehlerhaft.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Bandwidth Details</source>
-        <translation>Bandbreitendetails</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>MessageComposer</name>
     <message>
         <source>Compose</source>
-        <translation>Verfassen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Contacts</source>
-        <translation>Kontakte</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&gt;&gt; To</source>
-        <translation>&gt;&gt; An</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&gt;&gt; Cc</source>
-        <translation>&gt;&gt; Cc</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&gt;&gt; Bcc</source>
-        <translation>&gt;&gt; Bcc</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&gt;&gt; Recommend</source>
-        <translation>&gt;&gt; Empfehlen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Paragraph</source>
-        <translation>Absatz</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Heading 1</source>
-        <translation>Überschrift 1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Heading 2</source>
-        <translation>Überschrift 2</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Heading 3</source>
-        <translation>Überschrift 3</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Heading 4</source>
-        <translation>Überschrift 4</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Heading 5</source>
-        <translation>Überschrift 5</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Heading 6</source>
-        <translation>Überschrift 6</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Font size</source>
-        <translation>Schriftgröße</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Increase font size</source>
-        <translation>Schrift vergrößern</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Decrease font size</source>
-        <translation>Schrift verkleinern</translation>
+        <translation>Zmenšit velikost fontu</translation>
     </message>
     <message>
         <source>Bold</source>
-        <translation>Fett</translation>
+        <translation>Tučné</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation>Kursiv</translation>
+        <translation>Kurzíva</translation>
     </message>
     <message>
         <source>Select Color</source>
-        <translation>Textfarbe auswählen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Alignment</source>
-        <translation>Ausrichtung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add a Image</source>
-        <translation>Ein Bild hinzufügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sets text font to code style</source>
-        <translation>Setzt Schriftart auf Codestil</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Underline</source>
-        <translation>Unterstrichen</translation>
+        <translation>Podtržené</translation>
     </message>
     <message>
         <source>Subject:</source>
-        <translation>Betreff:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Tags:</source>
-        <translation>Schlagwörter:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Tags</source>
-        <translation>Schlagwörter</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Recommended Files</source>
-        <translation>Empfohlene Dateien</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File Name</source>
-        <translation>Dateiname</translation>
+        <translation>Jméno souboru</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation>Größe</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hash</source>
-        <translation>Prüfsumme</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Send</source>
-        <translation>Senden</translation>
+        <translation>Odeslat</translation>
     </message>
     <message>
         <source>Send this message now</source>
-        <translation>Diese Nachricht jetzt senden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Reply</source>
-        <translation>Antwort</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Toggle Contacts View</source>
-        <translation>Kontakt-Ansicht umschalten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Save</source>
-        <translation>Speichern</translation>
+        <translation>Uložit</translation>
     </message>
     <message>
         <source>Save this message</source>
-        <translation>Diese Nachricht speichern</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Attach</source>
-        <translation>Anhängen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Attach File</source>
-        <translation>Datei anhängen</translation>
+        <translation>Přiložit soubor</translation>
     </message>
     <message>
         <source>Quote</source>
-        <translation>Blockquote</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add Blockquote</source>
-        <translation>Blockquote hinzufügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Send To:</source>
-        <translation>Senden an:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;Left</source>
-        <translation>&amp;Links</translation>
+        <translation>Zarovnat vlevo</translation>
     </message>
     <message>
         <source>C&amp;enter</source>
-        <translation>&amp;Zentriert</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;Right</source>
-        <translation>&amp;Rechts</translation>
+        <translation>Zarovnat vpravo</translation>
     </message>
     <message>
         <source>&amp;Justify</source>
-        <translation>&amp;Blocksatz</translation>
+        <translation>Do bloku</translation>
     </message>
     <message>
         <source>Save Message</source>
-        <translation>Nachricht speichern</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Message has not been Sent.
 Do you want to save message to draft box?</source>
-        <translation>Nachricht wurde noch nicht gesendet.
-Möchtest du die Nachricht in den Entwürfen speichern?</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation>RetroShare Link einfügen</translation>
+        <translation>Vložit RetroShare odkaz</translation>
     </message>
     <message>
         <source>Add to &quot;To&quot;</source>
-        <translation>Zu &quot;An&quot; hinzufügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add to &quot;CC&quot;</source>
-        <translation>Zu &quot;Cc&quot; hinzufügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add to &quot;BCC&quot;</source>
-        <translation>Zu &quot;Bcc&quot; hinzufügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add as Recommend</source>
-        <translation>Als empfohlen hinzufügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend Details</source>
-        <translation>Freunddetails</translation>
+        <translation>Podrobnosti o kontaktu</translation>
     </message>
     <message>
         <source>Re:</source>
-        <translation>Re:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Fwd:</source>
-        <translation>Fwd:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare</source>
@@ -6816,1063 +6681,1061 @@ Möchtest du die Nachricht in den Entwürfen speichern?</translation>
     </message>
     <message>
         <source>Do you want to send the message without a subject ?</source>
-        <translation>Möchtest du die Nachricht ohne Betreff senden ?</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Please insert at least one recipient.</source>
-        <translation>Bitte gib mindestens einen Empfänger ein.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>To</source>
-        <translation>An</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cc</source>
-        <translation>Cc</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Bcc</source>
-        <translation>Bcc</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unknown</source>
-        <translation>Unbekannt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unknown friend</source>
-        <translation>Unbekannter Freund</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;File</source>
-        <translation>&amp;Datei</translation>
+        <translation>&amp;Soubor</translation>
     </message>
     <message>
         <source>&amp;New</source>
-        <translation>&amp;Neu</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;Open...</source>
-        <translation>Ö&amp;ffnen...</translation>
+        <translation>&amp;Otevřít</translation>
     </message>
     <message>
         <source>&amp;Save</source>
-        <translation>S&amp;peichern</translation>
+        <translation>&amp;Uložit</translation>
     </message>
     <message>
         <source>Save &amp;As File</source>
-        <translation>Speichern &amp;unter</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Save &amp;As Draft</source>
-        <translation>Als &amp;Entwurf speichern</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation>&amp;Drucken...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;Export PDF...</source>
-        <translation>PDF &amp;exportieren...</translation>
+        <translation>&amp;Exportovat do PDF...</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation>&amp;Schließen</translation>
+        <translation>&amp;Ukončit</translation>
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation>&amp;Bearbeiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;Undo</source>
-        <translation>Rü&amp;ckgängig</translation>
+        <translation>&amp;Zpět</translation>
     </message>
     <message>
         <source>&amp;Redo</source>
-        <translation>&amp;Wiederholen</translation>
+        <translation>Znovu</translation>
     </message>
     <message>
         <source>Cu&amp;t</source>
-        <translation>Auss&amp;chneiden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;Copy</source>
-        <translation>Ko&amp;pieren</translation>
+        <translation>&amp;Kopírovat</translation>
     </message>
     <message>
         <source>&amp;Paste</source>
-        <translation>Einfü&amp;gen</translation>
+        <translation>Vložit</translation>
     </message>
     <message>
         <source>&amp;View</source>
-        <translation>&amp;Ansicht</translation>
+        <translation>Pohled</translation>
     </message>
     <message>
         <source>&amp;Contacts Sidebar</source>
-        <translation>&amp;Kontakt-Sidebar</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;Insert</source>
-        <translation>Ein&amp;fügen</translation>
+        <translation>&amp;Vložit</translation>
     </message>
     <message>
         <source>&amp;Image</source>
-        <translation>&amp;Bild</translation>
+        <translation>&amp;Obrázek</translation>
     </message>
     <message>
         <source>&amp;Horizontal Line</source>
-        <translation>&amp;Horizontale Linie</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;Format</source>
-        <translation>&amp;Format</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Open File...</source>
-        <translation>Datei öffnen...</translation>
+        <translation>Otevřít soubor...</translation>
     </message>
     <message>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation>HTML-Dateien (*.htm *.html);;Alle Dateien (*)</translation>
+        <translation>HTML soubory (*.htm *.html);;Všechny soubory (*)</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation>Speichern unter...</translation>
+        <translation>Uložit jako...</translation>
     </message>
     <message>
         <source>Print Document</source>
-        <translation>Dokument drucken</translation>
+        <translation>Vytisknout dokument</translation>
     </message>
     <message>
         <source>Export PDF</source>
-        <translation>PDF exportieren</translation>
+        <translation>Exportovat do PDF</translation>
     </message>
     <message>
         <source>Message has not been Sent.
 Do you want to save message ?</source>
-        <translation>Nachricht noch nicht versandt.
-Möchtest du die Nachricht speichern ?</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Choose Image</source>
-        <translation>Bild wählen</translation>
+        <translation>Zvolit obrázek</translation>
     </message>
     <message>
         <source>Image Files supported (*.png *.jpeg *.jpg *.gif)</source>
-        <translation>Unterstützte Bilddateien (*.png *.jpeg *.jpg *.gif)</translation>
+        <translation>Podporované typy obrázků (*.png *.jpeg *.jpg *.gif)</translation>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation>Zusätzliche Datei hinzufügen</translation>
+        <translation>Přidat další soubor</translation>
     </message>
     <message>
         <source>You have a friend recommendation</source>
-        <translation>Du hast eine Freundempfehlung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Original Message</source>
-        <translation>Ursprüngliche Nachricht</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>From</source>
-        <translation>Von</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sent</source>
-        <translation>Gesendet</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Subject</source>
-        <translation>Betreff</translation>
+        <translation>Předmět</translation>
     </message>
     <message>
         <source>On %1, %2 wrote:</source>
-        <translation>Am %1, schrieb %2:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>wants to be friends with you on RetroShare</source>
-        <translation>möchte mit dir in RetroShare befreundet sein</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hi %1,&lt;br&gt;&lt;br&gt;%2 wants to be friends with you on RetroShare.&lt;br&gt;&lt;br&gt;Respond now:&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Thanks,&lt;br&gt;The RetroShare Team</source>
-        <translation>Hallo %1,&lt;br&gt;&lt;br&gt;%2 möchte mit dir in RetroShare befreundet sein.&lt;br&gt;&lt;br&gt;Jetzt antworten:&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Grüße,&lt;br&gt;Das RetroShare Team</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hello,&lt;br&gt;I recommend a good friend of me, you can trust him too when you trust me. &lt;br&gt;</source>
-        <translation>Hallo, &lt;br&gt; ich empfehle dir einen guten Freund von mir. Du kannst ihm vertrauen, wenn du mir vertraust. &lt;br&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This friend is suggested by</source>
-        <translation>Dieser Freund wurde vorgeschlagen von</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Thanks, &lt;br&gt;The RetroShare Team</source>
-        <translation>Grüße, &lt;br&gt;Das RetroShare Team</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>MessagePage</name>
     <message>
         <source>Reading</source>
-        <translation>Lesen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Set message to read on activate</source>
-        <translation>Setze Nachricht beim Aktivieren als gelesen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Open messages in</source>
-        <translation>Nachricht durch Doppelklick öffnen in</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Tags</source>
-        <translation>Schlagwörter</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Tags can be used to categorize and prioritize your messages</source>
-        <translation>Schlagwörter können beim Sortieren und Erkennen von Nachrichten helfen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add</source>
-        <translation>Hinzufügen</translation>
+        <translation>Přidat</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation>Bearbeiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Delete</source>
-        <translation>Löschen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Default</source>
-        <translation>Standard</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>A new tab</source>
-        <translation>Neuem Tab</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>A new window</source>
-        <translation>Neuem Fenster</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Edit Tag</source>
-        <translation>Schlagwort bearbeiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Message</source>
-        <translation>Nachricht</translation>
+        <translation>Zpráva</translation>
     </message>
 </context>
 <context>
     <name>MessageToaster</name>
     <message>
         <source>Sub:</source>
-        <translation>Betreff:</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>MessageWidget</name>
     <message>
         <source>Download all Recommended Files</source>
-        <translation>Alle Dateien herunterladen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Subject:</source>
-        <translation>Betreff:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>From:</source>
-        <translation>Von:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>To:</source>
-        <translation>An:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cc:</source>
-        <translation>Cc:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Bcc:</source>
-        <translation>Bcc:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Tags:</source>
-        <translation>Schlagwörter:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File Name</source>
-        <translation>Dateiname</translation>
+        <translation>Jméno souboru</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation>Größe</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hash</source>
-        <translation>Prüfsumme</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Print</source>
-        <translation>Drucken</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Print Preview</source>
-        <translation>Druckvorschau</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>No subject</source>
-        <translation>Kein Betreff</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Download</source>
-        <translation>Herunterladen</translation>
+        <translation>Stáhnout</translation>
     </message>
     <message>
         <source>Download all</source>
-        <translation>Alle herunterladen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Verbergen</translation>
+        <translation>Skrýt</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation>Erweitern</translation>
+        <translation>Rozbalit</translation>
     </message>
     <message>
         <source>File</source>
-        <translation>Datei</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Files</source>
-        <translation>Dateien</translation>
+        <translation>Soubory</translation>
     </message>
     <message>
         <source>Print Document</source>
-        <translation>Dokument drucken</translation>
+        <translation>Vytisknout dokument</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation>Speichern unter...</translation>
+        <translation>Uložit jako...</translation>
     </message>
     <message>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation>HTML-Dateien (*.htm *.html);;Alle Dateien (*)</translation>
+        <translation>HTML soubory (*.htm *.html);;Všechny soubory (*)</translation>
     </message>
     <message>
         <source>Confirm %1 as friend</source>
-        <translation>%1 als Freund bestätigen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add %1 as friend</source>
-        <translation>%1 als Freund hinzufügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Recommended Files</source>
-        <translation>Empfohlene Dateien</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>MessageWindow</name>
     <message>
         <source>New Message</source>
-        <translation>Neue Nachricht</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Compose</source>
-        <translation>Verfassen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Reply to selected message</source>
-        <translation>Auf gewählte Nachricht antworten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Reply</source>
-        <translation>Antwort</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Reply all to selected message</source>
-        <translation>Auf gewählte Nachricht an alle Empfänger antworten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Reply all</source>
-        <translation>Allen antworten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forward selected message</source>
-        <translation>Gewählte Nachricht weiterleiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Foward</source>
-        <translation>Weiterleiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Remove selected message</source>
-        <translation>Gewählte Nachricht entfernen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Delete</source>
-        <translation>Löschen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Print selected message</source>
-        <translation>Gewählte Nachricht drucken</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Print</source>
-        <translation>Drucken</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Display</source>
-        <translation>Anzeigen</translation>
+        <translation>Zobrazit</translation>
     </message>
     <message>
         <source>Tags</source>
-        <translation>Schlagwörter</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Print Preview</source>
-        <translation>Druckvorschau</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Buttons Icon Only</source>
-        <translation>Buttons nur mit Icon</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Buttons Text Beside Icon</source>
-        <translation>Button Text neben Icon</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Buttons with Text</source>
-        <translation>Buttons mit Text</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Buttons Text Under Icon</source>
-        <translation>Buttons Text unter dem Icon</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Set Text Under Icon</source>
-        <translation>Text unter dem Icon</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;File</source>
-        <translation>&amp;Datei</translation>
+        <translation>&amp;Soubor</translation>
     </message>
     <message>
         <source>Save &amp;As File</source>
-        <translation>Speichern &amp;unter</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation>&amp;Drucken...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Print Preview...</source>
-        <translation>Druckvorschau...</translation>
+        <translation>Náhled tisku...</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation>&amp;Schließen</translation>
+        <translation>&amp;Ukončit</translation>
     </message>
 </context>
 <context>
     <name>MessagesDialog</name>
     <message>
         <source>New Message</source>
-        <translation>Neue Nachricht</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Compose</source>
-        <translation>Verfassen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Reply to selected message</source>
-        <translation>Auf gewählte Nachricht antworten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Reply</source>
-        <translation>Antworten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Reply all to selected message</source>
-        <translation>Auf gewählte Nachricht an alle Empfänger antworten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Reply all</source>
-        <translation>Allen antworten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forward selected message</source>
-        <translation>Gewählte Nachricht weiterleiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Foward</source>
-        <translation>Weiterleiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Remove selected message</source>
-        <translation>Gewählte Nachricht entfernen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Delete</source>
-        <translation>Löschen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Print selected message</source>
-        <translation>Gewählte Nachricht drucken</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Print</source>
-        <translation>Drucken</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Display</source>
-        <translation>Anzeigen</translation>
+        <translation>Zobrazit</translation>
     </message>
     <message>
         <source>Attachments</source>
-        <translation>Anhänge</translation>
+        <translation>Přílohy</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation>Betreff</translation>
+        <translation>Předmět</translation>
     </message>
     <message>
         <source>From</source>
-        <translation>Von</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Date</source>
-        <translation>Datum</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Content</source>
-        <translation>Inhalt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Tags</source>
-        <translation>Schlagwörter</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Inbox</source>
-        <translation>Posteingang</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Outbox</source>
-        <translation>Postausgang</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Draft</source>
-        <translation>Entwürfe</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sent</source>
-        <translation>Gesendet</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Trash</source>
-        <translation>Papierkorb</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Quick View</source>
-        <translation>Schnellansicht</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Total Inbox:</source>
-        <translation>Posteingang gesamt:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Folders</source>
-        <translation>Ordner</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Print...</source>
-        <translation>Drucken...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Print Preview</source>
-        <translation>Druckvorschau</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Buttons Icon Only</source>
-        <translation>Buttons nur mit Icon</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Buttons Text Beside Icon</source>
-        <translation>Button Text neben Icon</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Buttons with Text</source>
-        <translation>Buttons mit Text</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Buttons Text Under Icon</source>
-        <translation>Buttons Text unter dem Icon</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Set Text Under Icon</source>
-        <translation>Text unter dem Icon</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Save As...</source>
-        <translation>Speichern unter...</translation>
+        <translation>Uložit jako...</translation>
     </message>
     <message>
         <source>Reply to Message</source>
-        <translation>Absender antworten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Reply to All</source>
-        <translation>Allen antworten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forward Message</source>
-        <translation>Weiterleiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Click to sort by attachments</source>
-        <translation>Klicken, um nach Anhang zu sortieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Click to sort by subject</source>
-        <translation>Klicken, um nach Betreff zu sortieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Click to sort by read</source>
-        <translation>Klicken, um nach Gelesen / Ungelesen zu sortieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Click to sort by from</source>
-        <translation>Klicken, um nach Von zu sortieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Click to sort by date</source>
-        <translation>Klicken, um nach Datum zu sortieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Click to sort by tags</source>
-        <translation>Klicken, um nach Schlagwörter zu sortieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Click to sort by star</source>
-        <translation>Klicken, um nach Kennzeichnung zu sortieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forward selected Message</source>
-        <translation>Gewählte Nachricht weiterleiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Starred</source>
-        <translation>Gekennzeichnet</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Open in a new window</source>
-        <translation>In neuem Fenster öffnen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Open in a new tab</source>
-        <translation>In neuem Tab öffnen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Mark as read</source>
-        <translation>Als gelesen markieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Mark as unread</source>
-        <translation>Als ungelesen markieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add Star</source>
-        <translation>Kennzeichnen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Edit</source>
-        <translation>Bearbeiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Edit as new</source>
-        <translation>Als neu bearbeiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Remove Messages</source>
-        <translation>Nachrichten entfernen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Remove Message</source>
-        <translation>Nachricht entfernen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Undelete</source>
-        <translation>Wiederherstellen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Empty trash</source>
-        <translation>Papierkorb leeren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Drafts</source>
-        <translation>Entwürfe</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>No starred messages available. Stars let you give messages a special status to make them easier to find. To star a message, click on the light grey star beside any message.</source>
-        <translation>Es sind keine gekennzeichneten Nachrichten vorhanden. Durch die Kennzeichnung kannst du Nachrichten mit einem speziellen Status versehen, sodass sie leichter zu finden sind. Klicke zum Kennzeichnen einer Nachricht auf den hellgrauen Stern neben der jeweiligen Nachricht.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>To</source>
-        <translation>An</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Click to sort by to</source>
-        <translation>Klicken, um nach Empfänger zu sortieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Total:</source>
-        <translation>Gesamt:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>System</source>
-        <translation>System</translation>
+        <translation>Systém</translation>
     </message>
     <message>
         <source>No system messages available.</source>
-        <translation>Keine Systemnachrichten vorhanden.</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>MessengerWindow</name>
     <message>
         <source>RetroShare Messenger</source>
-        <translation>RetroShare-Messenger</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add a Friend</source>
-        <translation>Einen Freund hinzufügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Share Files for your Friends</source>
-        <translation>Ordner für deine Freunde freigeben</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Search Friends</source>
-        <translation>Freunde suchen</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>MsgItem</name>
     <message>
         <source>Expand</source>
-        <translation>Erweitern</translation>
+        <translation>Rozbalit</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation>Element entfernen</translation>
+        <translation>Odstranit položku</translation>
     </message>
     <message>
         <source>Reply to Message</source>
-        <translation>Auf die Nachricht antworten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Reply Message</source>
-        <translation>Auf Nachricht antworten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Delete Message</source>
-        <translation>Nachricht löschen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Play Media</source>
-        <translation>Medium abspielen</translation>
+        <translation>Přehrát</translation>
     </message>
     <message>
         <source>Message From</source>
-        <translation>Nachricht von</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sent Msg</source>
-        <translation>Gesendet</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Draft Msg</source>
-        <translation>Entwurf</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Pending Msg</source>
-        <translation>Wartend</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Verbergen</translation>
+        <translation>Skrýt</translation>
     </message>
 </context>
 <context>
     <name>NATStatus</name>
     <message>
         <source>&lt;strong&gt;NAT:&lt;/strong&gt;</source>
-        <translation>&lt;strong&gt;NAT:&lt;/strong&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Network Status Unknown</source>
-        <translation>Netzwerkstatus unbekannt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Offline</source>
-        <translation>Offline</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Nasty Firewall</source>
-        <translation>Firewall</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>DHT Disabled and Firewalled</source>
-        <translation>DHT ausgeschaltet und durch Firewall geschützt</translation>
+        <translation>DHT je vypnuto a za firewallem</translation>
     </message>
     <message>
         <source>Network Restarting</source>
-        <translation>Netzwerkneustart</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Behind Firewall</source>
-        <translation>Hinter Firewall</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>DHT Disabled</source>
-        <translation>DHT ausgeschaltet</translation>
+        <translation>DHT je vypnuto</translation>
     </message>
     <message>
         <source>RetroShare Server</source>
-        <translation>RetroShare Server</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forwarded Port</source>
-        <translation>Weitergeleiteter Port</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>OK | RetroShare Server</source>
-        <translation>OK | RetroShare-Server</translation>
+        <translation>OK | RetroShare server</translation>
     </message>
     <message>
         <source>Internet connection</source>
-        <translation>Internetverbindung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>No internet connection</source>
-        <translation>Keine Internetverbindung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>No local network</source>
-        <translation>Kein lokales Netzwerk</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>NetworkDialog</name>
     <message>
         <source>Network</source>
-        <translation>Netzwerk</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation>Jméno</translation>
     </message>
     <message>
         <source>Did I authenticated peer</source>
-        <translation>Habe ich den Nachbarn authentifiziert</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Did I sign his gpg key</source>
-        <translation>Habe ich den PGP-Schlüssel unterzeichnet</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Did peer authenticated me</source>
-        <translation>Hat mich der Nachbar authentifiziert</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cert Id</source>
-        <translation>ID des Zertifikates</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Search Network</source>
-        <translation>Netzwerksuche</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Peer ID</source>
-        <translation>Nachbar-ID</translation>
+        <translation>ID protějšku</translation>
     </message>
     <message>
         <source>Show keys that are not validated by the GPG web of trust</source>
-        <translation>Nicht vom &quot;Web of Trust&quot; bestätigte Schlüssel anzeigen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Network Status</source>
-        <translation>Netzwerkstatus</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Local network</source>
-        <translation>Lokales Netzwerk</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>UPnP</source>
-        <translation>UPnP</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>External ip address finder</source>
-        <translation>Externer IP Adressen Finder</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Clear</source>
-        <translation>Leeren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Set Tabs Right</source>
-        <translation>Tabs nach Rechts setzen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Set Tabs North</source>
-        <translation>Tabs nach Oben setzen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Set Tabs South</source>
-        <translation>Tabs nach Unten setzen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Set Tabs Left</source>
-        <translation>Tabs nach Links setzen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Set Tabs Rounded</source>
-        <translation>Tabs Form Rund setzen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Set Tabs Triangular</source>
-        <translation>Tabs Form Dreieck setzen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add Friend</source>
-        <translation>Freund hinzufügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Copy My Key to Clipboard</source>
-        <translation>Mein Zertifikat in die Zwischenablage kopieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Export My Key</source>
-        <translation>Mein Zertifikat exportieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Create New Profile</source>
-        <translation>Neues Profil erstellen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Create a new Profile</source>
-        <translation>Ein neues Profil erstellen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Network View</source>
-        <translation>Netzwerkansicht</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Deny friend</source>
-        <translation>Freund blockieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Make friend</source>
-        <translation>Freund hinzufügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Delete certificate</source>
-        <translation>Zertifikat löschen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Export my Cert</source>
-        <translation>Mein Zertifikat exportieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Peer details...</source>
-        <translation>Nachbardetails...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation>RetroShare-Link kopieren</translation>
+        <translation>Kopírovat RetroShare odkaz</translation>
     </message>
     <message>
         <source>Personal signature</source>
-        <translation>Persönliche Unterschrift</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>GPG key signed by you</source>
-        <translation>PGP-Schlüssel von dir unterzeichnet</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Marginally trusted peer</source>
-        <translation>Geringfügig vertrauter Nachbar</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Fully trusted peer</source>
-        <translation>Voll vertrauter Nachbar</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Untrusted peer</source>
-        <translation>Nicht vertrauter Nachbar</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unknown</source>
-        <translation>Unbekannt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Has authenticated me</source>
-        <translation>Hat mich authentifiziert</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> has authenticated you. 
 Right-click and select &apos;make friend&apos; to be able to connect.</source>
-        <translation> hat mich authentifiziert. 
-Rechtsklick und als Freund hinzufügen um zu verbinden.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>yourself</source>
-        <translation>selbst</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Display</source>
-        <translation>Anzeigen</translation>
+        <translation>Zobrazit</translation>
     </message>
 </context>
 <context>
     <name>NetworkPage</name>
     <message>
         <source>Network</source>
-        <translation>Netzwerk</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>NetworkView</name>
     <message>
         <source>Redraw</source>
-        <translation>Neu zeichnen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friendship level:</source>
-        <translation>Freundschaftslevel:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Edge length:</source>
-        <translation>Kantenlänge:</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>NewTag</name>
     <message>
         <source>New Tag</source>
-        <translation>Neues Schlagwort</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Name:</source>
-        <translation>Name:</translation>
+        <translation>Jméno:</translation>
     </message>
     <message>
         <source>Choose color</source>
-        <translation>Farbe wählen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>OK</source>
@@ -7880,281 +7743,281 @@ Rechtsklick und als Freund hinzufügen um zu verbinden.</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
 </context>
 <context>
     <name>NewsFeed</name>
     <message>
         <source>Remove All</source>
-        <translation>Alle entfernen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Options</source>
-        <translation>Optionen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>News Feed</source>
-        <translation>Neuigkeiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This is a test.</source>
-        <translation>Dies ist ein Test.</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>NotifyPage</name>
     <message>
         <source>News Feed</source>
-        <translation>News Feed</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Peers</source>
-        <translation>Nachbarn</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Channels</source>
-        <translation>Kanäle</translation>
+        <translation>Kanály</translation>
     </message>
     <message>
         <source>Forums</source>
-        <translation>Foren</translation>
+        <translation>Fóra</translation>
     </message>
     <message>
         <source>Blogs</source>
-        <translation>Blogs</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Messages</source>
-        <translation>Nachrichten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Chat</source>
-        <translation>Chat</translation>
+        <translation>Konverzace</translation>
     </message>
     <message>
         <source>Security</source>
-        <translation>Sicherheit</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add feeds at end</source>
-        <translation>Neuigkeiten am Ende anfügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Systray Icon</source>
-        <translation>Systray Icon</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Message</source>
-        <translation>Nachricht</translation>
+        <translation>Zpráva</translation>
     </message>
     <message>
         <source>Download completed</source>
-        <translation>Download fertig</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Combined</source>
-        <translation>Kombiniert</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Toasters</source>
-        <translation>Hinweise</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend Connect</source>
-        <translation>Verbindung zu Freund</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New Message</source>
-        <translation>Neue Nachricht</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Position</source>
-        <translation>Position</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>X Margin</source>
-        <translation>Abstand X</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Y Margin</source>
-        <translation>Abstand Y</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Private Chat</source>
-        <translation>Privater Chat</translation>
+        <translation>Soukromá konverzace</translation>
     </message>
     <message>
         <source>Open Window for new chat</source>
-        <translation>Fenster für neuen Chat öffnen</translation>
+        <translation>Otevřít okno pro novou konverzaci</translation>
     </message>
     <message>
         <source>Grab Focus when chat arrives</source>
-        <translation>Fokus auf neues Chatfenster legen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Use a single tabbed window</source>
-        <translation>Ein Fenster mit Tabs verwenden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Group chat</source>
-        <translation>Gruppenchat</translation>
+        <translation>Skupinová konverzace</translation>
     </message>
     <message>
         <source>Top Left</source>
-        <translation>Oben Links</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Top Right</source>
-        <translation>Oben Rechts</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Bottom Left</source>
-        <translation>Unten Links</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Bottom Right</source>
-        <translation>Unten Rechts</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Notify</source>
-        <translation>Meldungen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Group Chat</source>
-        <translation>Gruppenchat</translation>
+        <translation>Skupinová konverzace</translation>
     </message>
     <message>
         <source>Chat Lobby</source>
-        <translation>Chatlobby</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Connect attempt</source>
-        <translation>Verbindungsversuch</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Systray message</source>
-        <translation>Nachricht im Systemabschnitt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Chat lobbies</source>
-        <translation>Chatlobbys</translation>
+        <translation>Konverzační místnosti</translation>
     </message>
     <message>
         <source>Test</source>
-        <translation>Test</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>NotifyQt</name>
     <message>
         <source>GPG key passphrase</source>
-        <translation>PGP-Schlüssel-Passwort</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Wrong password !</source>
-        <translation>Falsches Passwort!</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Examining shared files...</source>
-        <translation>Prüfe freigegebene Dateien...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hashing file</source>
-        <translation>Erstelle Prüfsumme</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Saving file index...</source>
-        <translation>Speichere Dateiindex...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>To sign, please enter the password that unlocks your PGP key:</source>
-        <translation>Zum unterschreiben bitte dein PGP-Passwort eingeben:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unregistered plugin/executable</source>
-        <translation>Nicht registriertes Plug-in/Programm</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare has detected an unregistered plugin. This happens in two cases:&lt;UL&gt;&lt;LI&gt;Your RetroShare executable has changed.&lt;/LI&gt;&lt;LI&gt;The plugin has changed&lt;/LI&gt;&lt;/UL&gt;Click on Yes to authorize this plugin, or No to deny it. You can change your mind later in Options -&gt; Plugins, then restart.</source>
-        <translation>RetroShare hat ein nicht registriertes Plug-in entdeckt. Dies kommt in zwei Fällen vor: &lt;ul&gt;&lt;li&gt;Deine RetroShare-Installation wurde geändert&lt;/li&gt;&lt;li&gt;Das Plug-in wurde verändert&lt;/li&gt;&lt;/ul&gt;Wähle &quot;Ja&quot;, um dieses Plug-in zu autorisieren, oder &quot;Nein&quot;, um die Autorisierung zu verweigern. Du kannst diese Entscheidung später unter Optionen -&gt; Plug-ins ändern. Dann wird ein Neustart erforderlich sein.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Test</source>
-        <translation>Test</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This is a test.</source>
-        <translation>Dies ist ein Test.</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>OnlineToaster</name>
     <message>
         <source>Friend Online</source>
-        <translation>Freund Online</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>PeerDefs</name>
     <message>
         <source>Unknown</source>
-        <translation>Unbekannt</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>PeerItem</name>
     <message>
         <source>Expand</source>
-        <translation>Erweitern</translation>
+        <translation>Rozbalit</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation>Element entfernen</translation>
+        <translation>Odstranit položku</translation>
     </message>
     <message>
         <source>Write a quick Message</source>
-        <translation>Kurznachricht schreiben</translation>
+        <translation>Napsat rychlou zprávu</translation>
     </message>
     <message>
         <source>Chat</source>
-        <translation>Chat</translation>
+        <translation>Konverzace</translation>
     </message>
     <message>
         <source>Start Chat</source>
-        <translation>Chat starten</translation>
+        <translation>Začít konverzaci</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation>Senden</translation>
+        <translation>Odeslat</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation>Name:</translation>
+        <translation>Jméno:</translation>
     </message>
     <message>
         <source>Peer ID:</source>
-        <translation>Nachbar-ID:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Trust: </source>
-        <translation>Vertrauen:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Location:</source>
-        <translation>Ort:</translation>
+        <translation>Umístění:</translation>
     </message>
     <message>
         <source>IP Address:</source>
-        <translation>IP-Adresse:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Connection Method:</source>
-        <translation>Verbindungsmethode:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Status:</source>
@@ -8162,240 +8025,240 @@ Rechtsklick und als Freund hinzufügen um zu verbinden.</translation>
     </message>
     <message>
         <source>Write Message</source>
-        <translation>Nachricht schreiben</translation>
+        <translation>Napsat zprávu</translation>
     </message>
     <message>
         <source>Friend</source>
-        <translation>Freund</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend Connected</source>
-        <translation>Freund verbunden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Connect Attempt</source>
-        <translation>Verbindungsversuch</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend of Friend</source>
-        <translation>Freund eines Freundes</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Peer</source>
-        <translation>Nachbar</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unknown Peer</source>
-        <translation>Unbekannter Nachbar</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Verbergen</translation>
+        <translation>Skrýt</translation>
     </message>
     <message>
         <source>Quick Message</source>
-        <translation>Kurznachricht</translation>
+        <translation>Rychlá zpráva</translation>
     </message>
 </context>
 <context>
     <name>PeerStatus</name>
     <message>
         <source>Friends: 0/0</source>
-        <translation>Freunde: 0/0</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Online Friends/Total Friends</source>
-        <translation>Freunde online/Freunde gesamt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends</source>
-        <translation>Freunde</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>PhotoAddDialog</name>
     <message>
         <source>Share Options</source>
-        <translation>Freigabeoptionen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Public</source>
-        <translation>Öffentlich</translation>
+        <translation>Veřejné</translation>
     </message>
     <message>
         <source>All Friends</source>
-        <translation>Alle Freunde</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Restricted</source>
-        <translation>Beschränkt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>N/A</source>
-        <translation>N/A</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>University Friends</source>
-        <translation>Universitätsfreunde</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Family</source>
-        <translation>Familie</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This List Contains</source>
-        <translation>Diese Liste enthält</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>All your Groups</source>
-        <translation>Alle deine Gruppen</translation>
+        <translation>Všechny vaše skupiny</translation>
     </message>
     <message>
         <source>Resize Images (&lt; 1Mb)</source>
-        <translation>Bildergröße anpassen (&lt;1 MiB)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Resize Images (&lt; 10Mb)</source>
-        <translation>Bildergröße anpassen (&lt;10 MiB)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Send Original Images</source>
-        <translation>Originalbilder senden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>No Comments Allowed</source>
-        <translation>Keine Kommentare erlaubt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Authenticated Comments</source>
-        <translation>Authentifizierte Kommentare</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Any Comments Allowed</source>
-        <translation>Beliebige Kommentare erlaubt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Publish with XXX Key</source>
-        <translation>Mit XXX-Schlüssel veröffentlichen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Album Thumbnail</source>
-        <translation>Album-Vorschau</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Summary</source>
-        <translation>Zusammenfassung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Category:</source>
-        <translation>Kategorie:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Travel</source>
-        <translation>Reise</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Holiday</source>
-        <translation>Urlaub</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends</source>
-        <translation>Freunde</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Work</source>
-        <translation>Arbeit</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Random</source>
-        <translation>Zufall</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Caption</source>
-        <translation>Überschrift</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Where:</source>
-        <translation>Wo:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Album Title:</source>
-        <translation>Albumtitel:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>When</source>
-        <translation>Wann</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Delete Album</source>
-        <translation>Album löschen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Edit Album Details</source>
-        <translation>Albumdetails bearbeiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>HELP:   Drag &amp; Drop to insert, and re-order pictures. Click on a picture to edit details below.</source>
-        <translation>HILFE: Ziehen &amp; Loslassen, um einzufügen und Bilder neu zu ordnen. Auf Bild klicken, um Details unten zu bearbeiten.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Delete Photo</source>
-        <translation>Bild löschen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Edit Photo Details</source>
-        <translation>Fotodetails bearbeiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;&lt;</source>
-        <translation>&lt;&lt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&gt;&gt;</source>
-        <translation>&gt;&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Publish Album</source>
-        <translation>Album veröffentlichen</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>PhotoDetailsDialog</name>
     <message>
         <source>Album Description</source>
-        <translation>Albumsbeschreibung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Album Name:</source>
-        <translation>Albumname:</translation>
+        <translation>Jméno alba:</translation>
     </message>
     <message>
         <source>Category:</source>
-        <translation>Kategorie:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Travel</source>
-        <translation>Reise</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Holiday</source>
-        <translation>Urlaub</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends</source>
-        <translation>Freunde</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Family</source>
-        <translation>Familie</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Work</source>
-        <translation>Arbeit</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Random</source>
-        <translation>Zufall</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Thumbnail
@@ -8406,110 +8269,102 @@ Text
 2
 3
 ...................................</source>
-        <translation>Vorschau
-Hier
-Dummy
-Text
-1
-2
-3
-...................................</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Caption:</source>
-        <translation>Überschrift:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Photographer:</source>
-        <translation>Fotograf:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Description</source>
-        <translation>Beschreibung</translation>
+        <translation>Popis</translation>
     </message>
     <message>
         <source>Where:</source>
-        <translation>Wo:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>When</source>
-        <translation>Wann</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Other 1:</source>
-        <translation>Andere 1:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>HashTags:</source>
-        <translation>HashTags:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Update Details</source>
-        <translation>Details aktualisieren</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>PhotoDialog</name>
     <message>
         <source>Rating</source>
-        <translation>Bewertung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Filter</source>
-        <translation>Filter</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Source</source>
-        <translation>Quelle</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Category</source>
-        <translation>Kategorie</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>[ - ]</source>
-        <translation>[ - ]</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>[ + ]</source>
-        <translation>[ + ]</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Slide Show</source>
-        <translation>Diaschau</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Edit Album</source>
-        <translation>Album bearbeiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New Album</source>
-        <translation>Neues Album</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>PhotoShare</source>
-        <translation>PhotoShare</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Please select an album before
 requesting to edit it!</source>
-        <translation>Bitte Album vor dem
-Bearbeiten auswählen!</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cannot Edit Someone Else&apos;s Album</source>
-        <translation>Du kannst nicht das Album einer anderen Person bearbeiten</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>PhotoItem</name>
     <message>
         <source>Album:</source>
-        <translation>Album:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>From</source>
-        <translation>Von</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Status</source>
@@ -8517,45 +8372,45 @@ Bearbeiten auswählen!</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation>Datum</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>PhotoSlideShow</name>
     <message>
         <source>Album Name</source>
-        <translation>Albumname</translation>
+        <translation>Jméno alba:</translation>
     </message>
     <message>
         <source>Image</source>
-        <translation>Bild</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Show/Hide Details</source>
-        <translation>Details anzeigen/verstecken</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;&lt;</source>
-        <translation>&lt;&lt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Stop/Run</source>
-        <translation>Start/Stopp</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&gt;&gt;</source>
-        <translation>&gt;&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Close</source>
-        <translation>Schließen</translation>
+        <translation>Zavřít</translation>
     </message>
 </context>
 <context>
     <name>PluginFrame</name>
     <message>
         <source>Remove</source>
-        <translation>Entfernen</translation>
+        <translation>Odebrat</translation>
     </message>
 </context>
 <context>
@@ -8566,438 +8421,432 @@ Bearbeiten auswählen!</translation>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;more&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;more...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;more&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;mehr...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add the plugin into the white list of accepted plugins. This will be effective after you restart RetroShare, since plugins need to be loaded at startup.</source>
-        <translation>Fügt das Plug-in als vertrauenswürdig hinzu. Das wirkt sich nach dem Neustart von RetroShare aus, da die Plug-ins beim Start geladen werden.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Enabled</source>
-        <translation>Aktivieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Launch configuration panel, if provided by the plugin</source>
-        <translation>Einstellungen öffnen, wenn vom Plug-in unterstützt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Configure</source>
-        <translation>Einstellung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File name: </source>
-        <translation>Dateiname:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File hash:</source>
-        <translation>Prüfsumme:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Status: </source>
-        <translation>Status:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>About</source>
-        <translation>Über</translation>
+        <translation>O programu</translation>
     </message>
 </context>
 <context>
     <name>PluginManagerWidget</name>
     <message>
         <source>Install New Plugin...</source>
-        <translation>Neues Plug-in installieren...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Open Plugin to install</source>
-        <translation>Plug-in zum Installieren öffnen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Plugins (*.so *.dll)</source>
-        <translation>Plug-ins (*.so *.dll)</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>PluginsPage</name>
     <message>
         <source>Loaded plugins</source>
-        <translation>Geladene Plug-ins</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Authorize all plugins</source>
-        <translation>Alle Plug-ins erlauben</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Plugin look-up directories</source>
-        <translation>Plug-in Verzeichnis</translation>
+        <translation>Adresář se zásuvnými moduly</translation>
     </message>
     <message>
         <source>Loading error.</source>
-        <translation>Fehler beim Laden.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Missing symbol. Wrong version?</source>
-        <translation>Fehlendes Symbol. Falsche Version?</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>No plugin object</source>
-        <translation>Kein Plug-in Objekt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Plugins is loaded.</source>
-        <translation>Plug-in ist geladen.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unknown status.</source>
-        <translation>Unbekannter Status.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Title unavailable</source>
-        <translation>Titel nicht verfügbar</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Description unavailable</source>
-        <translation>Beschreibung nicht verfügbar</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Check this for developing plugins. They will not
 be checked for the hash. However, in normal
 times, checking the hash protects you from
 malicious behavior of crafted plugins.</source>
-        <translation>Lies dies, um über die Plug-in-Entwicklung zu erfahren. Ihre Prüfsumme wird nicht überprüft, normalerweise
-schützt dich aber eine Überprüfung des Prüfsumme vor
-schädlichem Verhalten von Plug-ins.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Plugins</source>
-        <translation>Plug-ins</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hash rejected. Enable it manually and restart, if you need.</source>
-        <translation>Hash zurückgewiesen. Bitte manuell anwählen und, falls nötig, neu starten.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>No API number supplied. Please read plugin development manual.</source>
-        <translation>Keine API-Nummer angegeben. Bitte konsultiere das Handbuch für die Entwicklung von Plug-ins.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>No SVN number supplied. Please read plugin development manual.</source>
-        <translation>Keine SVN-Nummer angegeben. Bitte konsultiere das Handbuch für die Entwicklung von Plug-ins.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unknown version</source>
-        <translation>Unbekannte Version</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>PopularityDefs</name>
     <message>
         <source>Popularity</source>
-        <translation>Beliebtheit</translation>
+        <translation>Popularita</translation>
     </message>
 </context>
 <context>
     <name>PopupChatDialog</name>
     <message>
         <source>Clear offline messages</source>
-        <translation>Offline-Nachrichten entfernen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hide Avatar</source>
-        <translation>Avatar verstecken</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Show Avatar</source>
-        <translation>Avatar anzeigen</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>PopupChatWindow</name>
     <message>
         <source>Avatar</source>
-        <translation>Avatar</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Set your Avatar Picture</source>
-        <translation>Wähle dein Avatar Bild</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Dock tab</source>
-        <translation>Tab andocken</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Undock tab</source>
-        <translation>Tab abdocken</translation>
+        <translation>Uvolnit záložku</translation>
     </message>
     <message>
         <source>Set Chat Window Color</source>
-        <translation>Farbe des Chatfensters setzen</translation>
+        <translation>Nastavit barvu okna konverzace</translation>
     </message>
     <message>
         <source>Set window on top</source>
-        <translation>Immer im Vordergrund</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>PostedComments</name>
     <message>
         <source>Form</source>
-        <translation>Formular</translation>
+        <translation>Formulář</translation>
     </message>
     <message>
         <source>Hot</source>
-        <translation>Hot</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New</source>
-        <translation>Neu</translation>
+        <translation>Nový</translation>
     </message>
     <message>
         <source>Top</source>
-        <translation>Anfang</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Today</source>
-        <translation>Heute</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Yesterday</source>
-        <translation>Gestern</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This Week</source>
-        <translation>diese Woche</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This Month</source>
-        <translation>diesen Monat</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This Year</source>
-        <translation>dieses Jahr</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Refresh</source>
-        <translation>Aktualisieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Showing 1-100</source>
-        <translation>Zeige 1–100</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Prev</source>
-        <translation>Vorheriges</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Next</source>
-        <translation>Nächstes</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>PostedItem</name>
     <message>
         <source>1</source>
-        <translation>1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>/\</source>
-        <translation>/\</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>score</source>
-        <translation>Punktzahl</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>\/</source>
-        <translation>V</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Title this is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title dont you think? yes it is and should wrap around I hope</source>
-        <translation>Titel. Das ist ein sehr sehr sehr laaaaaaaaaaaaaaaaaannnnnnnnnnger Titel, nicht wahr? Ja, und er sollte umgebrochen werden.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Date</source>
-        <translation>Datum</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>From</source>
-        <translation>Von</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Site</source>
-        <translation>Site</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>View Comments</source>
-        <translation>Kommentare anzeigen</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>PostedListDialog</name>
     <message>
         <source>Form</source>
-        <translation>Formular</translation>
+        <translation>Formulář</translation>
     </message>
     <message>
         <source>Hot</source>
-        <translation>Hot</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New</source>
-        <translation>Neu</translation>
+        <translation>Nový</translation>
     </message>
     <message>
         <source>Top</source>
-        <translation>Anfang</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Today</source>
-        <translation>Heute</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Yesterday</source>
-        <translation>Gestern</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This Week</source>
-        <translation>diese Woche</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This Month</source>
-        <translation>diesen Monat</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This Year</source>
-        <translation>dieses Jahr</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New Link Group</source>
-        <translation>Neue Linkgruppe</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Submit Post</source>
-        <translation>Beitrag absenden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Refresh</source>
-        <translation>Aktualisieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Showing 1-100</source>
-        <translation>Zeige 1–100</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Prev</source>
-        <translation>Vorheriges</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Next</source>
-        <translation>Nächstes</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Your Topics</source>
-        <translation>Deine Themen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Subscribed Topics</source>
-        <translation>Abonnierte Themen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Popular Topics</source>
-        <translation>Beliebte Themen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Other Topics</source>
-        <translation>Andere Themen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Subscribe to Forum</source>
-        <translation>Forum abonnieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unsubscribe to Forum</source>
-        <translation>Forum abbestellen</translation>
+        <translation>Neodebírat fórum</translation>
     </message>
     <message>
         <source>New Forum</source>
-        <translation>Neues Forum</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Show Forum Details</source>
-        <translation>Forendetails anzeigen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Edit Forum Details</source>
-        <translation>Forendetails bearbeiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Share Forum</source>
-        <translation>Veröffentlichungsschlüssel verteilen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Restore Publish Rights for Forum</source>
-        <translation>Veröffentlichungsrechte für das Forum wiederherstellen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation>RetroShare-Link kopieren</translation>
+        <translation>Kopírovat RetroShare odkaz</translation>
     </message>
     <message>
         <source>Mark all as read</source>
-        <translation>Alle als gelesen markieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Mark all as unread</source>
-        <translation>Alle als ungelesen markieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>AUTHD</source>
-        <translation>AUTHD</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>PrintPreview</name>
     <message>
         <source>RetroShare Message - Print Preview</source>
-        <translation>RetroShare-Nachricht - Druckvorschau</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Print</source>
-        <translation>Drucken</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation>&amp;Drucken...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Page Setup...</source>
-        <translation>Seiteneinstellung...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Zoom In</source>
-        <translation>Hereinzoomen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Zoom Out</source>
-        <translation>Herauszoomen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;Close</source>
-        <translation>S&amp;chliessen</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ProfileWidget</name>
     <message>
         <source>Edit Personal message</source>
-        <translation>Statusnachricht ändern</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Copy Certificate</source>
-        <translation>Zertifikat kopieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare</source>
@@ -9005,129 +8854,129 @@ schädlichem Verhalten von Plug-ins.</translation>
     </message>
     <message>
         <source>Sorry, create certificate failed</source>
-        <translation>Zertifikat-Datei konnte nicht erstellt werden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation>Dein Zertifikat ist in die Zwischenablage kopiert worden. Du kannst es per E-Mail oder auf andere Weise an deinen Freund senden.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Profile Manager</source>
-        <translation>Profil-Manager</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Public Information</source>
-        <translation>Öffentliche Information</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Name:</source>
-        <translation>Name:</translation>
+        <translation>Jméno:</translation>
     </message>
     <message>
         <source>Location:</source>
-        <translation>Ort:</translation>
+        <translation>Umístění:</translation>
     </message>
     <message>
         <source>Peer ID:</source>
-        <translation>Nachbar-ID:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Other Information</source>
-        <translation>Andere Informationen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Number of Friends:</source>
-        <translation>Zahl der Freunde:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Version:</source>
-        <translation>Version:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Online since:</source>
-        <translation>Online seit:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>My Address</source>
-        <translation>Meine Adresse</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Local Address:</source>
-        <translation>Lokale Adresse:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>External Address:</source>
-        <translation>Externe Adresse:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Dynamic DNS:</source>
-        <translation>Dynamisches DNS:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Addresses list</source>
-        <translation>Adressliste</translation>
+        <translation>Seznam adres</translation>
     </message>
 </context>
 <context>
     <name>PulseAddDialog</name>
     <message>
         <source>Post From:</source>
-        <translation>Beitrag von:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Account 1</source>
-        <translation>Konto 1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Account 2</source>
-        <translation>Konto 2</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Account 3</source>
-        <translation>Konto 3</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add to Pulse</source>
-        <translation>Zu Puls hinzufügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>filter</source>
-        <translation>filtern</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>URL Adder</source>
-        <translation>URL-Hinzufüger</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Display As</source>
-        <translation>Anzeigen als</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>URL</source>
-        <translation>URL</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Post Pulse to Wire</source>
-        <translation>Puls an Wire senden</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>PulseItem</name>
     <message>
         <source>From</source>
-        <translation>Von</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Date</source>
-        <translation>Datum</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>...</source>
-        <translation>…</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9138,257 +8987,250 @@ schädlichem Verhalten von Plug-ins.</translation>
     </message>
     <message>
         <source>Inititialize failed. Wrong or missing installation of gpg.</source>
-        <translation>Initialisierung fehlgeschlagen. GPG fehlt oder es ist eine falsche Version installiert.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>An unexpected error occured. Please report &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</source>
-        <translation>Ein unerwarteter Fehler ist aufgetreten. Bitte melde &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Multiple instances</source>
-        <translation>Mehrere Instanzen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Another RetroShare using the same profile is already running on your system. Please close that instance first
  Lock file:
 </source>
-        <translation>Ein laufendes RetroShare benutzt das gleiche Profil. Bitte schliesse diese Instanz
-Lockdatei:
-</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>An unexpected error occurred when Retrosharetried to acquire the single instance lock
  Lock file:
 </source>
-        <translation>Ein unerwarteter Fehler während des &quot;Single instance lock&quot; ist aufgetreten
-Lockdatei:
-</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Login Failure</source>
-        <translation>Loginfehler</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Maybe password is wrong</source>
-        <translation>Vielleicht ist das Passwort falsch</translation>
+        <translation>Možná že bylo špatně zadané heslo</translation>
     </message>
     <message>
         <source>Click to add this RetroShare cert to your GPG keyring
 and open the Make Friend Wizard.
 </source>
-        <translation>Klicke hier, um das RetroShare-Zertifikat in deinen PGP-Schlüsselbund einzufügen und den Assistent zum Hinzufügen von Freunden zu starten.
-</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add file</source>
-        <translation>Datei hinzufügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add files</source>
-        <translation>Dateien hinzufügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add friend</source>
-        <translation>Freund hinzufügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add friends</source>
-        <translation>Freunde hinzufügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Do you want to process the link ?</source>
-        <translation>Möchtest du den Link verarbeiten ?</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Do you want to process %1 links ?</source>
-        <translation>Möchtest du %1 Links verarbeiten ?</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Confirmation</source>
-        <translation>Bestätigung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>%1 of %2 RetroShare link processed.</source>
-        <translation>%1 von %2 RetroShare Link verarbeitet.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>%1 of %2 RetroShare links processed.</source>
-        <translation>%1 von %2 RetroShare Links verarbeitet.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File added</source>
-        <translation>Datei hinzugefügt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Files added</source>
-        <translation>Dateien hinzugefügt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File exist</source>
-        <translation>Datei vorhanden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Files exist</source>
-        <translation>Dateien vorhanden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend added</source>
-        <translation>Freund hinzugefügt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends added</source>
-        <translation>Freunde hinzugefügt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend exist</source>
-        <translation>Freund vorhanden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends exist</source>
-        <translation>Freunde vorhanden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend not added</source>
-        <translation>Freund nicht hinzugefügt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends not added</source>
-        <translation>Freunde nicht hinzugefügt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend not found</source>
-        <translation>Freund nicht gefunden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends not found</source>
-        <translation>Freunde nicht gefunden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forum not found</source>
-        <translation>Forum nicht gefunden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forums not found</source>
-        <translation>Foren nicht gefunden</translation>
+        <translation>Žádná fóra nebyla nalezena</translation>
     </message>
     <message>
         <source>Forum message not found</source>
-        <translation>Beitrag nicht gefunden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forum messages not found</source>
-        <translation>Beiträge nicht gefunden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Channel not found</source>
-        <translation>Kanal nicht gefunden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Channels not found</source>
-        <translation>Kanäle nicht gefunden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Channel message not found</source>
-        <translation>Kanalbeitrag nicht gefunden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Channel messages not found</source>
-        <translation>Kanalbeiträge nicht gefunden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Receipient not accepted</source>
-        <translation>Empfänger nicht akzeptiert</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Receipients not accepted</source>
-        <translation>Empfänger nicht akzeptiert</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unkown receipient</source>
-        <translation>Unbekannter Empfänger</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unkown receipients</source>
-        <translation>Unbekannte Empfänger</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Malformed links</source>
-        <translation>Unbekannte Links</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Invalid links</source>
-        <translation>Ungültige Links</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Result</source>
-        <translation>Ergebnis</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unable to make path</source>
-        <translation>Konnte Verzeichnis nicht erstellen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unable to make path:</source>
-        <translation>Konnte Verzeichnis nicht erstellen:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Treatment of collection file has failed</source>
-        <translation>Die Kollektion konnte nicht verarbeitet werden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>The collection file %1 could not be openned.
 Reported error is: %2</source>
-        <translation>Die Kollektion %1 konnte nicht geöffnet werden.
-Fehlermeldung: %2</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Deny friend</source>
-        <translation>Freund blockieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Make friend</source>
-        <translation>Freund hinzufügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Peer details</source>
-        <translation>Nachbardetails</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File Request canceled</source>
-        <translation>Dateianforderung abgebrochen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>The following has not been added to your download list, because you already have it:
     </source>
-        <translation>Die folgende Datei wurde nicht zur Downloadliste hinzugefügt, da du diese schon hast:
-</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Start with a RetroShare link is only supported for Windows.</source>
-        <translation>Der Start mit einem RetroShare-Link wird nur unter Windows unterstützt.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>You appear to have locations associated to DSA keys:</source>
-        <translation>Du scheinst Orte zu besitzen, die mit DSA-Schlüsseln verknüpft sind:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>DSA keys are not yet supported by this version of RetroShare. All these locations will be unusable. We&apos;re very sorry for that.</source>
-        <translation>DSA-Schlüssel werden von dieser Version von RetroShare noch nicht unterstützt. Alle diese Orte können nicht benutzt werden. Das tut uns sehr leid.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although GPG keys are mentionned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
-        <translation>Diese Version von RetroShare benutzt das OpenPGP-SDK. Der Schlüsselring von GPG4Win wird nicht mehr verwendet, sondern ein eigener Schlüsselring für alle laufenden Instanzen. &lt;br&gt;&lt;br&gt;Du scheinst keinen solchen Schlüsselring zu besitzen, obwohl Schlüssel von existierenden RetroShare-Accounts benötigt werden. Vielleicht hast du auch gerade zu dieser Version gewechselt.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Choose between:&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;Ok&lt;/b&gt; to copy the existing keyring from gnupg (safest bet), or &lt;/li&gt;&lt;li&gt;&lt;b&gt;Close without saving&lt;/b&gt; to start fresh with an empty keyring (you will be asked to create a new PGP key to work with RetroShare, or import a previously saved pgp keypair). &lt;/li&gt;&lt;li&gt;&lt;b&gt;Cancel&lt;/b&gt; to quit and forge a keyring by yourself (needs some PGP skills)&lt;/li&gt;&lt;/ul&gt;</source>
-        <translation>Wähle zwischen:&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;Ok&lt;/b&gt; um den existierenden Schlüsselring von GnuPG zu kopieren (sicherste Wahl), oder&lt;/li&gt;&lt;li&gt;&lt;b&gt;Verwerfen&lt;/b&gt; um mit einem neuen Schlüsselring zu starten (RetroShare legt dir einen neuen Schlüssel an oder du kannst einen vorher gespeicherten Schlüssel verwenden).&lt;/li&gt;&lt;li&gt;&lt;b&gt;Abbrechen&lt;/b&gt; um zu beenden und den Schlüsselring selbst zu kopieren (Du benötigst einige PGP-Kenntnisse&lt;/li&gt;&lt;/ul&gt;</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>QuickStartWizard</name>
     <message>
         <source>Quick Start Wizard</source>
-        <translation>Schnellstart-Assistent</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -9408,87 +9250,71 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  Choose which files you share.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  Get started using RetroShare.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Willkommen bei RetroShare!&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Dieser Schnellstart Assistent hilft dir RetroShare in ein paar Schritten zu konfigurieren.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Wenn du ein erfahrener Benutzer bist, kannst du die kompletten Einstellungen über Optionen im Toolbar erreichen. Du kannst den Assistent jederzeit beenden.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Diese Assistent hilft dir bei:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  der Einrichtung der Internetverbindung.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  der Freigabe von Verzeichnissen.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  beim Start von RetroShare.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Next &gt;</source>
-        <translation>Weiter &gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Exit</source>
-        <translation>Beenden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>For best performance, RetroShare needs to know a little about your connection to the internet.</source>
-        <translation>Zur Leistungsoptimierung muss RetroShare ein wenig über deine Internetverbindung wissen.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Choose your download speed limit: </source>
-        <translation>Wähle deine maximale Downloadgeschwindigkeit: </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> KB/s</source>
-        <translation> KiB/s</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Choose your upload speed limit: </source>
-        <translation>Wähle deine maximale Uploadgeschwindigkeit: </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Connection :</source>
-        <translation>Verbindung:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Automatic (UPnP)</source>
-        <translation>Automatisch (UPnP)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Firewalled</source>
-        <translation>Firewall</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Manually forwarded port</source>
-        <translation>Manuell weitergeleiteter Port</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Discovery :</source>
-        <translation>Entdeckung:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Public: DHT &amp; Discovery</source>
-        <translation>Öffentlich: DHT &amp; Discovery</translation>
+        <translation>Veřejné: DHT &amp; Discovery</translation>
     </message>
     <message>
         <source>Private: Discovery Only</source>
-        <translation>Privat: nur Discovery</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Inverted: DHT Only</source>
-        <translation>Umgekehrt: nur DHT</translation>
+        <translation>Invertováno: pouze DHT</translation>
     </message>
     <message>
         <source>Dark Net: None</source>
-        <translation>Darknet: keins</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt; Back</source>
-        <translation>&lt; Zurück</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -9499,39 +9325,31 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt; font-weight:600;&quot;&gt;Browsable by friends&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;: files are browsable from your direct friends.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Anonymously shared&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files can be downloaded by anybody through anonymous tunnels.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Das ist die Liste der freigegebenen Ordner. Mit den unteren Knöpfen kannst du neue Ordner hinzufügen oder vorhandene Ordner entfernen.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Wenn du einen neuen Ordner hinzufügst, werden alle Dateien aus dem Ordner und Unterordnern freigegeben.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;Du kannst für jeden freigegebenen Ordner die Art der Freigabe einstellen:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Durchsuchbar&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: Dateien sind von deinen direkten Freunden durchsuchbar.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Netzwerkweit&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: Dateien können von jedem über anonyme Tunnel heruntergeladen werden.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Directory</source>
-        <translation>Ordner</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Network Wide</source>
-        <translation>Netzwerkweit</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Browseable</source>
-        <translation>Durchsuchbar</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add</source>
-        <translation>Hinzufügen</translation>
+        <translation>Přidat</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation>Entfernen</translation>
+        <translation>Odebrat</translation>
     </message>
     <message>
         <source>Automatically share incoming directory (Recommended)</source>
-        <translation>Eingehende Ordner automatisch freigeben (Empfohlen)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -9541,13 +9359,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Enjoy using RetroShare!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Viel Spaß beim Benutzen von RetroShare!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -9558,393 +9370,386 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;These settings configure how and when RetroShare starts .&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Nur noch einen Schritt! Du hast es fast geschafft.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Diese Einstellungen konfigurieren den Start von RetroShare.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Do not show a message when Closing RetroShare</source>
-        <translation>Keine Nachricht beim Beenden von RetroShare anzeigen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Start Minimized</source>
-        <translation>Minimiert starten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Start RetroShare when my System Starts.</source>
-        <translation>RetroShare mit dem System starten.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Start minimized on system start</source>
-        <translation>Beim Starten mit dem System minimieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Finish</source>
-        <translation>Fertigstellen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Select A Folder To Share</source>
-        <translation>Wähle einen Ordner zum Freigeben</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Shared Directory Added!</source>
-        <translation>Ordner wurde hinzugefügt!</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Do you really want to stop sharing this directory ? </source>
-        <translation>Möchtest du die Freigabe dieses Ordners wirklich aufheben ?</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Warning!</source>
-        <translation>Warnung!</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>RSettingsWin</name>
     <message>
         <source>Error Saving Configuration on page </source>
-        <translation>Fehler beim Speichern der Konfiguration auf der Seite </translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>RatesStatus</name>
     <message>
         <source>&lt;strong&gt;Down:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Up:&lt;/strong&gt; 0.00 (kB/s) </source>
-        <translation>&lt;strong&gt;Herunter:&lt;/strong&gt; 0.00 KiB/s | &lt;strong&gt;Hoch:&lt;/strong&gt; 0.00 KiB/s</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Down</source>
-        <translation>Herunter</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Up</source>
-        <translation>Hoch</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>RelayPage</name>
     <message>
         <source>Enable Relay Connections</source>
-        <translation>Relay-Verbindungen aktivieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Use Relay Servers</source>
-        <translation>Relay-Server benutzen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Relay options</source>
-        <translation>Relay-Optionen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Number</source>
-        <translation>Anzahl</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Bandwidth per link</source>
-        <translation>Bandbreite pro Verbindung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Total Bandwidth</source>
-        <translation>Bandbreite gesamt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends</source>
-        <translation>Freunde</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>kB/s</source>
-        <translation>KiB/s</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends of Friends</source>
-        <translation>Freunde von Freunden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>General</source>
-        <translation>Allgemein</translation>
+        <translation>Obecné</translation>
     </message>
     <message>
         <source>Total:</source>
-        <translation>Gesamt:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Relay Server Setup</source>
-        <translation>Relay-Server Einstellung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add Server</source>
-        <translation>Server hinzufügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Server DHT Key</source>
-        <translation>Server-DHT-Schlüssel</translation>
+        <translation>DHT klíč serveru</translation>
     </message>
     <message>
         <source>Remove Server</source>
-        <translation>Server entfernen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Relay</source>
-        <translation>Relay</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>RetroshareDirModel</name>
     <message>
         <source>Anonymous</source>
-        <translation>Anonym</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Anonymous and browsable by friends</source>
-        <translation>Anonym und Durchsuchbar von Freunden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Only browsable by friends</source>
-        <translation>Nur Durchsuchbar von Freunden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>NEW</source>
-        <translation>NEU</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>RsCollectionDialog</name>
     <message>
         <source>Collection</source>
-        <translation>Kollektion</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File name :</source>
-        <translation>Dateiname:</translation>
+        <translation>Jméno souboru:</translation>
     </message>
     <message>
         <source>Total size :</source>
-        <translation>Größe:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Selected files:</source>
-        <translation>Ausgewählt:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Select all</source>
-        <translation>Alle auswählen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Deselect all</source>
-        <translation>Keine auswählen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Download!</source>
-        <translation>Herunterladen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File</source>
-        <translation>Datei</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Size</source>
-        <translation>Größe</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hash</source>
-        <translation>Prüfsumme</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>RsCollectionFile</name>
     <message>
         <source>Cannot open file %1</source>
-        <translation>Kann Datei %1 nicht öffnen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Error parsing xml file</source>
-        <translation>Fehler beim Parsen des XML</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Open collection file</source>
-        <translation>Kollektion öffnen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Collection files</source>
-        <translation>Kollektion</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Create collection file</source>
-        <translation>Kollektion erstellen</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>Rshare</name>
     <message>
         <source>Resets ALL stored RetroShare settings.</source>
-        <translation>Setzt alle RetroShare Einstellungen zurück.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sets the directory RetroShare uses for data files.</source>
-        <translation>Setzt das Verzeichnis, welches RetroShare für Daten benutzt.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sets the name and location of RetroShare&apos;s logfile.</source>
-        <translation>Setzt den Ort und Namen der Logdatei.</translation>
+        <translation>Nastaví jméno a cestu .log souboru programu RetroShare.</translation>
     </message>
     <message>
         <source>Sets the verbosity of RetroShare&apos;s logging.</source>
-        <translation>Setzt die Ausgaben der RetroShare Logdatei.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sets RetroShare&apos;s interface style.</source>
-        <translation>Setzt den RetroShare Interface Stil.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sets RetroShare&apos;s interface stylesheets.</source>
-        <translation>Setzt das RetroShare Stylesheet.</translation>
+        <translation>Nastaví téma vzhledu rozhraní programu RetroShare</translation>
     </message>
     <message>
         <source>Sets RetroShare&apos;s language.</source>
-        <translation>Setzt die Sprache.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare Usage Information</source>
-        <translation>RetroShare-Nutzungsinformationen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Invalid language code specified: </source>
-        <translation>Ungültige Sprach-Codierung ausgewählt: </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Invalid GUI style specified: </source>
-        <translation>Ungültigen Stil der Benutzeroberfläche ausgewählt:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Invalid log level specified: </source>
-        <translation>Ungültiges Loglevel spezifiziert: </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unable to open log file &apos;%1&apos;: %2</source>
-        <translation>Kann Logdatei nicht öffnen &apos;%1&apos;: %2</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>built-in</source>
-        <translation>eingebaut</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>SFListDelegate</name>
     <message>
         <source>B</source>
-        <translation>B</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>KB</source>
-        <translation>KiB</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>MB</source>
-        <translation>MiB</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>GB</source>
-        <translation>GiB</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>SearchDialog</name>
     <message>
         <source>Any</source>
-        <translation>Alle</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Archive</source>
-        <translation>Archiv</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Audio</source>
-        <translation>Audio</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>CD-Image</source>
-        <translation>CD-Abbild</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Document</source>
-        <translation>Dokument</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Picture</source>
-        <translation>Bilder</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Program</source>
-        <translation>Programme</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Video</source>
-        <translation>Video</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Directory</source>
-        <translation>Ordner</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Start Search</source>
-        <translation>Suche starten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Search</source>
-        <translation>Suchen</translation>
+        <translation>Hledat</translation>
     </message>
     <message>
         <source>Advanced Search</source>
-        <translation>Erweiterte Suche</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Advanced</source>
-        <translation>Erweitert</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>KeyWords</source>
-        <translation>Schlüsselwörter</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Results</source>
-        <translation>Ergebnisse</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Search Id</source>
-        <translation>Such-ID</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Filter Search Result</source>
-        <translation>Suchergebnis filtern</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File Name</source>
-        <translation>Dateiname</translation>
+        <translation>Jméno souboru</translation>
     </message>
     <message>
         <source>File Size</source>
-        <translation>Dateigröße</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Filename</source>
-        <translation>Dateiname</translation>
+        <translation>Jméno souboru</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation>Größe</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sources</source>
-        <translation>Quellen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Type</source>
@@ -9952,168 +9757,167 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Age</source>
-        <translation>Alter</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hash</source>
-        <translation>Prüfsumme</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Close all Search Resullts</source>
-        <translation>Alle Suchergebnisse schließen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Close All Search Results</source>
-        <translation>Alle Suchergebnisse schließen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Download Selected</source>
-        <translation>Auswahl herunterladen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Download</source>
-        <translation>Herunterladen</translation>
+        <translation>Stáhnout</translation>
     </message>
     <message>
         <source>Include files from your own file list in the search result</source>
-        <translation>Eigene Dateien in die Suchergebnisse einschließen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Include own files</source>
-        <translation>Eigene Dateien einschließen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Search inside &quot;browsable&quot; files of your friends</source>
-        <translation>Freigegebene Dateien von Freunden durchsuchen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Search in friends lists</source>
-        <translation>In der Freundesliste suchen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Multi-hop search at distance 6 in the network 
 (always reports available files)</source>
-        <translation>Multi-hop Suche mit einer Distanz von 6,
-(gibt immer verfügbare Dateien zurück)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>F2F search</source>
-        <translation>F2F-Suche</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Limit number of results to :</source>
-        <translation>Anzahl der Resultate begrenzen auf:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Enter a keyword here (at least 3 char long)</source>
-        <translation>Gib einen Suchbegriff ein (min. 3 Zeichen)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation>RetroShare-Link kopieren</translation>
+        <translation>Kopírovat RetroShare odkaz</translation>
     </message>
     <message>
         <source>Send RetroShare Link</source>
-        <translation>RetroShare-Link senden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Download Notice</source>
-        <translation>Download</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Skipping Local Files</source>
-        <translation>Überspringe lokale Dateien</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sorry</source>
-        <translation>Entschuldigung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This function is not yet implemented.</source>
-        <translation>Diese Funktion ist noch nicht eingebaut.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Search again</source>
-        <translation>Erneut suchen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Remove</source>
-        <translation>Entfernen</translation>
+        <translation>Odebrat</translation>
     </message>
     <message>
         <source>Remove All</source>
-        <translation>Alle entfernen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Folder</source>
-        <translation>Ordner</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New RetroShare Link(s)</source>
-        <translation>Neu(e) RetroShare-Link(s)</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>SecurityItem</name>
     <message>
         <source>Expand</source>
-        <translation>Erweitern</translation>
+        <translation>Rozbalit</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation>Element entfernen</translation>
+        <translation>Odstranit položku</translation>
     </message>
     <message>
         <source>Peer details</source>
-        <translation>Nachbardetails</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Deny friend</source>
-        <translation>Freund blockieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Write a quick Message</source>
-        <translation>Kurznachricht schreiben</translation>
+        <translation>Napsat rychlou zprávu</translation>
     </message>
     <message>
         <source>Chat</source>
-        <translation>Chat</translation>
+        <translation>Konverzace</translation>
     </message>
     <message>
         <source>Start Chat</source>
-        <translation>Chat starten</translation>
+        <translation>Začít chatovat</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation>Senden</translation>
+        <translation>Odeslat</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation>Name:</translation>
+        <translation>Jméno:</translation>
     </message>
     <message>
         <source>Peer ID:</source>
-        <translation>Nachbar-ID:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Trust: </source>
-        <translation>Vertrauen:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Location:</source>
-        <translation>Ort:</translation>
+        <translation>Umístění:</translation>
     </message>
     <message>
         <source>IP Address:</source>
-        <translation>IP-Adresse:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Connection Method:</source>
-        <translation>Verbindungsmethode:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Status:</source>
@@ -10121,70 +9925,70 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Write Message</source>
-        <translation>Nachricht schreiben</translation>
+        <translation>Napsat zprávu</translation>
     </message>
     <message>
         <source>Connect Attempt</source>
-        <translation>Verbindungsversuch</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Not Yet Friends</source>
-        <translation>Noch keine Freunde</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unknown (Incoming) Connect Attempt</source>
-        <translation>Unbekannter (eingehender) Verbindungsversuch</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unknown (Outgoing) Connect Attempt</source>
-        <translation>Unbekannter (ausgehender) Verbindungsversuch</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unknown Security Issue</source>
-        <translation>Unbekanntes Sicherheitsproblem</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unknown Peer</source>
-        <translation>Unbekannter Nachbar</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Verbergen</translation>
+        <translation>Skrýt</translation>
     </message>
     <message>
         <source>Do you want to remove this Friend?</source>
-        <translation>Möchtest du diesen Freund entfernen?</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Quick Message</source>
-        <translation>Kurznachricht</translation>
+        <translation>Rychlá zpráva</translation>
     </message>
     <message>
         <source>Accept Friend Request</source>
-        <translation>Freundschaftsanfrage bestätigen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>wants to be friend with you on RetroShare</source>
-        <translation>möchte mit dir in RetroShare befreundet sein</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ServerPage</name>
     <message>
         <source>Network Configuration</source>
-        <translation>Netzwerkkonfiguration</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Automatic (Upnp)</source>
-        <translation>Automatisch (UPnP)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Firewalled</source>
-        <translation>Mit Firewall</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Manual Forwarded Port</source>
-        <translation>Portweiterleitung von Hand</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>The DHT allows you to answer connection 
@@ -10196,97 +10000,92 @@ identities of your trusted contacts to connected
 peers, to help them choose new friends. 
 The friendship is never automatic however, and both 
 peers still need to trust each other to allow connection. </source>
-        <translation>DHT erlaubt dir das Verbinden mit Freunden, die das BitTorrent-DHT benutzen.
-Das verbessert den Verbindungsaufbau.
+        <translation>DHT (dynamická hašovací tabulka) umožňuje, aby vaše kontakty zjistily  vašich aktuální umístění, k čemuž využívá DHT BitTorrentu. Toto významně zvyšuje šanci, že se jim podaří navázat s vámi spojení.
 
-Der Discovery-Dienst sendet die Orte und PGP-Schlüssel deiner vertrauenswürdigen Kontakte zu deinen verbundenen Freunden, um bei der Suche nach neuen Freunden zu helfen.
-Die Freundschaft wird nicht automatisch erstellt. Beide Freunde müssen sich vertrauen um eine Verbindung zu erstellen.</translation>
+Služba Discovery pošle umístění a GPG identity vašich důverýhodných kontaktů ostatním protějškům, kteří si je potom mohou přidat mezi své kontakty. Toto spojení ale neproběhne automaticky, oba protějšky musí nastavit že si důvěřují, aby mezi sebou mohli navázat spojení.</translation>
     </message>
     <message>
         <source>Public: DHT &amp; Discovery</source>
-        <translation>Öffentlich: DHT &amp; Discovery</translation>
+        <translation>Veřejné: DHT &amp; Discovery</translation>
     </message>
     <message>
         <source>Private: Discovery Only</source>
-        <translation>Privat: nur Discovery</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Inverted: DHT Only</source>
-        <translation>Umgekehrt: nur DHT</translation>
+        <translation>Invertováno: pouze DHT</translation>
     </message>
     <message>
         <source>Dark Net: None</source>
-        <translation>Darknet: keine</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Transfer Rates</source>
-        <translation>Übertragungsgeschwindigkeiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Download (KB/s) </source>
-        <translation>Download (KiB/s) </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>kB/s</source>
-        <translation>KiB/s</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Upload (KB/s) </source>
-        <translation>Upload (KiB/s) </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>If you unckeck this, RetroShare will not use tunnel connection between peers that are firewalled and cannot connect directly. This is independant from F2F routing (turtle router).</source>
-        <translation>Wenn du dies abwählst, wird RetroShare keinen Tunnel zwischen Nachbarn aufbauen, die sich aufgrund einer Firewall nicht direkt miteinander verbinden können. Dies ist unabhängig vom &quot;Turtle router&quot; F2F-Routing-Prinzip.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Allow Tunnel Connection</source>
-        <translation>Erlaube Tunnelverbindungen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Local Address</source>
-        <translation>Lokale Adresse</translation>
+        <translation>Lokální adresa</translation>
     </message>
     <message>
         <source>External Address</source>
-        <translation>Externe Adresse</translation>
+        <translation>Externí adresa</translation>
     </message>
     <message>
         <source>Dynamic DNS</source>
-        <translation>Dynamisches DNS</translation>
+        <translation>Dynamické DNS</translation>
     </message>
     <message>
         <source>Port:</source>
-        <translation>Port:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Acceptable ports range from 1024 to 65535. Ports below 1024 are reserved by your system.</source>
-        <translation>Verwendbare Ports liegen zwischen 1024 und 65535. Ports unter 1024 sind für das System reserviert.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Show Discovery information in statusbar</source>
-        <translation>Discovery-Informationen in der Statuszeile anzeigen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>IP Service</source>
-        <translation>IP-Dienst</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>If you unckeck this, RetroShare can only determine your IP 
 when you connect to somebody. Leaving this checked helps 
 connecting when you have few friends. It also helps if you're 
 behind a firewall or a VPN.</source>
-        <translation>Wenn du dies abwählst, kann RetroShare nur deine IP herausfinden,
-wenn du mit jemandem verbunden bist. Wenn du dies anwählst,
-wird es helfen Verbindungen aufzubauen, trotz geringer Anzahl von Freunden.
-Es hilft auch, wenn du dich hinter einer Firewall/VPN befindest.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Allow RetroShare to ask my ip to these websites:</source>
-        <translation>Erlaube RetroShare folgende Webseiten nach deiner IP zu fragen:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Turtle router</source>
-        <translation>Turtle-Router</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -10296,17 +10095,11 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;Warning&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;This tab contains hard-core  parameters which are unlikely to need modification. Dont change them unless you really know what you&apos;re doing. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt;Warnung&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;Es ist sehr unwahrscheinlich, dass die in diesem Tab enthaltenen Parameter angepasst werden müssen. Bitte nicht ändern, außer du weißt wirklich was du tust. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Max average tunnel request forwarded per second:</source>
-        <translation>Maximale durchschnittliche Weiterleitung von Tunnelanfragen pro Sekunde:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This value controls how many tunnel request your peer can forward per second. 
@@ -10316,28 +10109,22 @@ statisticlly longuer tunnels to pass. Be very careful though, since this generat
 many small packets that can significantly slow down your own file transfer. 
 
 The default value is 20.</source>
-        <translation>Dieser Wert kontrolliert, wie viele Tunnel-Anfragen dein Nachbar pro Sekunde weiterleiten darf.
-
-Wenn du eine große Internet-Bandbreite hast, kannst du diesen auf 30–40 erhöhen,
-um statistisch längere Tunnel zu ermöglichen. Vorsicht! Dies erzeugt
-viele kleine Pakete die deine eigenen Dateitransfers merklich verlangsamen können.
-
-Voreinstellung ist 20.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Server</source>
-        <translation>Server</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>Settings</name>
     <message>
         <source>Options</source>
-        <translation>Optionen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>OK</source>
@@ -10348,43 +10135,43 @@ Voreinstellung ist 20.</translation>
     <name>ShareDialog</name>
     <message>
         <source>RetroShare Share Folder</source>
-        <translation>RetroShare Ordner freigeben</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Share Folder</source>
-        <translation>Ordner</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Local Path</source>
-        <translation>Lokaler Pfad</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Browse</source>
-        <translation>Durchsuchen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Virtual Folder</source>
-        <translation>Virtueller Ordner</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Share Flags</source>
-        <translation>Freigabe</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Browseable by Friends</source>
-        <translation>Durchsuchbar von Freunden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Browsable</source>
-        <translation>Durchsuchbar</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Anonymous shared Network Wide</source>
-        <translation>Anonym im ganzen Netzwerk freigeben</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Network Wide</source>
-        <translation>Netzwerkweit</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>OK</source>
@@ -10392,57 +10179,57 @@ Voreinstellung ist 20.</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Select A Folder To Share</source>
-        <translation>Wähle einen Ordner zum Freigeben aus</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ShareKey</name>
     <message>
         <source>Share Channel</source>
-        <translation>Veröffentlichungsschlüssel verteilen</translation>
+        <translation>Sdílet kanál</translation>
     </message>
     <message>
         <source>check peers you would like to share private publish key with</source>
-        <translation>Wähle die Nachbarn, an die du den privaten Schlüssel verteilen möchtest</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Share for Friend</source>
-        <translation>Für Freund verteilen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Share</source>
-        <translation>Verteilen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Contacts:</source>
-        <translation>Kontakte:</translation>
+        <translation>Kontakty:</translation>
     </message>
     <message>
         <source>Please select at least one peer</source>
-        <translation>Bitte wähle mindestens einen Nachbarn</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Select the Friends with which you want to Share your Channel.</source>
-        <translation>Wähle die Freunde, mit denen du deinen Kanal teilen möchtest.</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ShareManager</name>
     <message>
         <source>RetroShare Share Manager</source>
-        <translation>RetroShare-Freigabemanager</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Shared Folder Manager</source>
-        <translation>Ordnerfreigabe-Manager</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -10454,307 +10241,299 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt; font-weight:600;&quot;&gt;Browsable&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;: files are browsable from your direct friends.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Network Wide&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files can be downloaded by anybody through anonymous tunnels.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Das ist die Liste der freigegebenen Ordner. Mit den unteren Knöpfen kannst du neue Ordner hinzufügen oder vorhandene Ordner entfernen.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Wenn du einen neuen Ordner hinzufügst, werden alle Dateien aus dem Ordner und Unterordnern freigegeben.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;Du kannst für jeden freigegebenen Ordner die Art der Freigabe einstellen:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Durchsuchbar&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: Dateien sind von deinen direkten Freunden durchsuchbar.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Netzwerkweit&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: Dateien können von jedem über anonyme Tunnel heruntergeladen werden.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Directory</source>
-        <translation>Ordner</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Virtual Folder</source>
-        <translation>Virtueller Ordner</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Network Wide</source>
-        <translation>Netzwerkweit</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Browsable</source>
-        <translation>Durchsuchbar</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add a Share Directory</source>
-        <translation>Freigabe hinzufügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add</source>
-        <translation>Hinzufügen</translation>
+        <translation>Přidat</translation>
     </message>
     <message>
         <source>Stop sharing selected Directory</source>
-        <translation>Freigabe entfernen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Remove</source>
-        <translation>Entfernen</translation>
+        <translation>Odebrat</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation>Schließen</translation>
+        <translation>Zavřít</translation>
     </message>
     <message>
         <source>Edit selected Shared Directory</source>
-        <translation>Freigabe bearbeiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Edit</source>
-        <translation>Bearbeiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>If checked, the share is anonymously shared to anybody.</source>
-        <translation>Wenn aktiviert, dann ist dieser Ordner anonym freigegeben.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>If checked, the share is browsable by your friends.</source>
-        <translation>Wenn aktiviert, dann ist dieser Ordner von deinen Freunden durchsuchbar.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Warning!</source>
-        <translation>Warnung!</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Do you really want to stop sharing this directory ?</source>
-        <translation>Möchtest du die Freigabe dieses Ordners wirklich aufheben ?</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Drop file error.</source>
-        <translation>Dateifehler bei Drag&apos;n&apos;Drop.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File can&apos;t be dropped, only directories are accepted.</source>
-        <translation>Dateien können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Ordner werden akzeptiert.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Directory not found or directory name not accepted.</source>
-        <translation>Ordner nicht gefunden oder Ordnername nicht akzeptiert.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Share Manager</source>
-        <translation>Freigabemanager</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>SharedFilesDialog</name>
     <message>
         <source>Splitted View</source>
-        <translation>Geteiltes Fenster</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends Folders</source>
-        <translation>Ordner der Freunde</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>My Folders</source>
-        <translation>Meine Ordner</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>All</source>
-        <translation>Alle</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>One day old</source>
-        <translation>Einen Tag alt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>One Week old</source>
-        <translation>Eine Woche alt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>One month old</source>
-        <translation>Einen Monat alt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Search files</source>
-        <translation>Dateien suchen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Start Search</source>
-        <translation>Suche starten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Reset</source>
-        <translation>Zurücksetzen</translation>
+        <translation>Reset</translation>
     </message>
     <message>
         <source>Tree view</source>
-        <translation>Baumansicht</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Flat view</source>
-        <translation>Listenansicht</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Download selected</source>
-        <translation>Auswahl herunterladen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Download</source>
-        <translation>Herunterladen</translation>
+        <translation>Stáhnout</translation>
     </message>
     <message>
         <source>check files</source>
-        <translation>Prüfe Dateien</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Copy retroshare Links to Clipboard</source>
-        <translation>RetroShare-Links in die Zwischenablage kopieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Copy retroshare Links to Clipboard (HTML)</source>
-        <translation>RetroShare Links in die Zwischenablage kopieren (HTML)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Send retroshare Links</source>
-        <translation>RetroShare-Links senden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Send retroshare Links to Cloud</source>
-        <translation>RetroShare-Links an die Verknüpfungs-Wolke senden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add Links to Cloud</source>
-        <translation>Die Links zur Verknüpfungs-Wolke hinzufügen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Create collection file</source>
-        <translation>Kollektion erstellen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Open File</source>
-        <translation>Datei öffnen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Open Folder</source>
-        <translation>Ordner öffnen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Checking...</source>
-        <translation>Überprüfe...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Check files</source>
-        <translation>Dateien überprüfen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Copy retroshare Link</source>
-        <translation>RetroShare-Link kopieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Send retroshare Link</source>
-        <translation>RetroShare-Link senden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Recommend in a message to</source>
-        <translation>Empfehle in einer Nachricht an</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare Link</source>
-        <translation>RetroShare-Link</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Recommendation(s)</source>
-        <translation>Empfehlung(en)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Set command for opening this file</source>
-        <translation>Setze eine Regel zum Öffnen dieser Datei</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;strong&gt;My Shared Files&lt;/strong&gt;</source>
-        <translation>&lt;strong&gt;Meine Dateien&lt;/strong&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;strong&gt;Friends Files&lt;/strong&gt;</source>
-        <translation>&lt;strong&gt;Dateien von Freunden&lt;/strong&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;strong&gt;Files&lt;/strong&gt;</source>
-        <translation>&lt;strong&gt;Dateien&lt;/strong&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Files</source>
-        <translation>Dateien</translation>
+        <translation>Soubory</translation>
     </message>
 </context>
 <context>
     <name>SoundPage</name>
     <message>
         <source>Event:</source>
-        <translation>Ereignis:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Filename:</source>
-        <translation>Dateiname:</translation>
+        <translation>Jméno souboru:</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation>Durchsuchen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Event</source>
-        <translation>Ereignis</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Filename</source>
-        <translation>Dateiname</translation>
+        <translation>Jméno souboru</translation>
     </message>
     <message>
         <source>Friend</source>
-        <translation>Freund</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>go Online</source>
-        <translation>Online</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Chatmessage</source>
-        <translation>Chatnachricht</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New Msg</source>
-        <translation>Neue Nachricht</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Open File</source>
-        <translation>Datei öffnen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sound</source>
-        <translation>Ton</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>SoundStatus</name>
     <message>
         <source>Sound on</source>
-        <translation>Ton an</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sound off</source>
-        <translation>Ton aus</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>SplashScreen</name>
     <message>
         <source>Load profile</source>
-        <translation>Profil laden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Load configuration</source>
-        <translation>Konfiguration laden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Create interface</source>
-        <translation>Oberfläche erstellen</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -10767,9 +10546,7 @@ p, li { white-space: pre-wrap; }
         <source>Opens a dialog for creating a new profile or 
 adding locations to an existing profile. 
 The current identities/locations will not be affected.</source>
-        <translation>Öffnet ein Fenster zum Erstellen eines neuen Profiles oder 
-zum Hinzufügen von Orten zu deinem vorhandenen Profil.
-Die aktuellen Identitäten/Orte werden nicht geändert.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -10777,39 +10554,35 @@ Die aktuellen Identitäten/Orte werden nicht geändert.</translation>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Manage profiles and locations...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Verwalte Profile und Orte...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Log In</source>
-        <translation>Anmelden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Name (GPG Id) - location:</source>
-        <translation>Name (PGP-ID) - Ort:</translation>
+        <translation>Jméno (GPG Id) - umístění:</translation>
     </message>
     <message>
         <source>Remember Password</source>
-        <translation>Passwort speichern</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Multiple instances</source>
-        <translation>Mehrere Instanzen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Login Failure</source>
-        <translation>Anmeldefehler</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Maybe password is wrong</source>
-        <translation>Vielleicht ist das Passwort falsch</translation>
+        <translation>Možná že bylo špatně zadané heslo</translation>
     </message>
     <message>
         <source>Warning</source>
-        <translation>Warnung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>The passwd to your SSL certificate (your location) will be stored encrypted in your Gnome Keyring. 
@@ -10817,11 +10590,7 @@ p, li { white-space: pre-wrap; }
  Your PGP passwd will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation>Das Passwort deines SSL-Zertifikates (deines Ortes) wird verschlüsselt in deinem Gnome-Keyring gespeichert.
-
-Dein PGP-Passwort wird nicht gespeichert.
-
-Du kannst die Auswahl in den Optionen zurücksetzen.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>The passwd to your SSL certificate (your location) will be stored encrypted in the keys/help.dta file. This is not secure. 
@@ -10829,11 +10598,7 @@ Du kannst die Auswahl in den Optionen zurücksetzen.</translation>
  Your PGP passwd will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation>Das Passwort deines SSL-Zertifikates (deines Ortes) wird verschlüsselt in der Datei keys/help.dta gespeichert - das ist nicht sicher.
-
-Dein PGP-Passwort wird nicht gespeichert.
-
-Du kannst die Auswahl in den Optionen zurücksetzen.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>The passwd to your SSL certificate (your location) will be stored encrypted in your Keychain. 
@@ -10841,126 +10606,118 @@ Du kannst die Auswahl in den Optionen zurücksetzen.</translation>
  Your PGP passwd will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation>Das Passwort deines SSL-Zertifikates (deines Ortes) wird verschlüsselt in deinem Schlüsselbund gespeichert.
-
-Dein PGP-Passwort wird nicht gespeichert.
-
-Du kannst die Auswahl in den Optionen zurücksetzen.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Another RetroShare using the same profile is already running on your system. Please close that instance first, or choose another profile
 lock file:
 </source>
-        <translation>Ein laufendes RetroShare benutzt das gleiche Profil. Bitte schließe diese Instanz oder wähle ein anderes Profil
-Lockdatei:
-</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>An unexpected error occurred when Retroshare tried to acquire the single instance lock
 lock file:
 </source>
-        <translation>Ein unerwarteter Fehler während des &quot;Single instance lock&quot; ist aufgetreten
-Lockdatei:
-</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Login</source>
-        <translation>Login</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Load Person Failure</source>
-        <translation>Personen-Ladefehler</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Missing PGP Certificate</source>
-        <translation>Fehlendes PGP-Zertifikat</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>StatusDefs</name>
     <message>
         <source>Offline</source>
-        <translation>Offline</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Away</source>
-        <translation>Abwesend</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Busy</source>
-        <translation>Beschäftigt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Online</source>
-        <translation>Online</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Idle</source>
-        <translation>Untätig</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend is offline</source>
-        <translation>Freund ist offline</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend is away</source>
-        <translation>Freund ist abwesend</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend is busy</source>
-        <translation>Freund ist beschäftigt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend is online</source>
-        <translation>Freund ist online</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend is idle</source>
-        <translation>Freund ist untätig</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Connected</source>
-        <translation>Verbunden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unreachable</source>
-        <translation>Unerreichbar</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Available</source>
-        <translation>Verfügbar</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Neighbour</source>
-        <translation>Nachbar</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Trying tunnel connection</source>
-        <translation>Versuche Tunnelverbindung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Trying TCP</source>
-        <translation>Versuche TCP</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Trying UDP</source>
-        <translation>Versuche UDP</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Connected: TCP</source>
-        <translation>Verbunden: TCP</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Connected: UDP</source>
-        <translation>Verbunden: UDP</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Connected: Tunnel</source>
-        <translation>Verbunden: Tunnel</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Connected: Unknown</source>
-        <translation>Verbunden: Unbekannt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>DHT: Contact</source>
@@ -10971,11 +10728,11 @@ Lockdatei:
     <name>StatusMessage</name>
     <message>
         <source>Personal message</source>
-        <translation>Persönliche Nachricht </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Status message</source>
-        <translation>Statusnachricht</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -10983,11 +10740,7 @@ Lockdatei:
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Personal message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Statusnachricht &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -10995,11 +10748,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Enter your Status message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Bitte gib deine Statusnachricht ein&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>OK</source>
@@ -11007,184 +10756,184 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
 </context>
 <context>
     <name>StyleDialog</name>
     <message>
         <source>Define Style</source>
-        <translation>Stil definieren</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Choose color</source>
-        <translation>Farbe wählen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Color 2</source>
-        <translation>Farbe 2</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Color 1</source>
-        <translation>Farbe 1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Style</source>
-        <translation>Stil</translation>
+        <translation>Styl</translation>
     </message>
     <message>
         <source>None</source>
-        <translation>Kein</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Solid</source>
-        <translation>Farbe</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Gradient</source>
-        <translation>Farbverlauf</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>SubDestItem</name>
     <message>
         <source>Delete FeedItem</source>
-        <translation>Nachricht löschen</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>SubFileItem</name>
     <message>
         <source>%p Kb</source>
-        <translation>%p KiB</translation>
+        <translation>%p Kb</translation>
     </message>
     <message>
         <source>Cancel Download</source>
-        <translation>Download abbrechen</translation>
+        <translation>Zrušit stahování</translation>
     </message>
     <message>
         <source>Download File</source>
-        <translation>Datei herunterladen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Download</source>
-        <translation>Herunterladen</translation>
+        <translation>Stáhnout</translation>
     </message>
     <message>
         <source>Play File</source>
-        <translation>Datei abspielen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Play</source>
-        <translation>Abspielen</translation>
+        <translation>Přehrát</translation>
     </message>
     <message>
         <source>Save File</source>
-        <translation>Datei speichern</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>ERROR</source>
-        <translation>FEHLER</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>EXTRA</source>
-        <translation>EXTRA</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>REMOTE</source>
-        <translation>VERFÜGBAR</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>DOWNLOAD</source>
-        <translation>DOWNLOAD</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>LOCAL</source>
-        <translation>LOKAL</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>UPLOAD</source>
-        <translation>UPLOAD</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Remove Attachment</source>
-        <translation>Anhang entfernen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File %1 does not exist at location.</source>
-        <translation>Datei %1 existiert nicht.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File %1 is not completed.</source>
-        <translation>Datei %1 ist nicht komplett.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Save Channel File</source>
-        <translation>Datei speichern</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>TBoard</name>
     <message>
         <source>Pause</source>
-        <translation>Pause</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>TagDefs</name>
     <message>
         <source>Important</source>
-        <translation>Wichtig</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Work</source>
-        <translation>Arbeit</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Personal</source>
-        <translation>Persönlich</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Todo</source>
-        <translation>Zu erledigen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Later</source>
-        <translation>Später</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>TagsMenu</name>
     <message>
         <source>Remove All Tags</source>
-        <translation>Alle Schlagwörter entfernen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New tag ...</source>
-        <translation>Neues Schlagwort...</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>TransferPage</name>
     <message>
         <source>Transfer options</source>
-        <translation>Übertragungsoptionen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Maximum simultaneous downloads:</source>
-        <translation>Maximale gleichzeitige Downloads:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Slots reserved for non-cache transfers:</source>
-        <translation>Reservierte Slots für nicht Cache-Übertragung:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Default chunk strategy:</source>
-        <translation>Standard Blockstrategie:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Safety disk space limit :</source>
-        <translation>Sicherheitsgrenze Festplattenspeicher:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>You can use this to force RetroShare to download your files rather 
@@ -11193,22 +10942,19 @@ to be equal to the queue size above will always prioritize your files
 over cache. 
 
 It is however recommended to leave at least a few slots for cache files.</source>
-        <translation>Diese Einstellung du kannst verwenden, um RetroShare dazu zu zwingen, deine Dateien eher herunterzuladen
-als Cache-Dateien. Deine Dateien werden immer bevorzugt, wenn die Zahl gleich der Warteschlagengröße oben ist.
-
-Es wird jedoch empfohlen, mindestens einige Slots für Cache-Dateien freizulassen.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Streaming</source>
-        <translation>Streaming</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Random</source>
-        <translation>Zufall</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> MB</source>
-        <translation>MiB</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -11220,80 +10966,71 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory in the shared files dialog to be:&lt;/span&gt;&lt;/p&gt;
 &lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:'Sans'; font-size:8pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Browsable by friends&lt;/span&gt;: files are seen by your friends.&lt;/li&gt;
 &lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anonymously shared&lt;/span&gt;: files are anonymously reachable through distant F2F tunnels.&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;RetroShare&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt; kann Dateien und Suchanfragen zwischen Nachbarn übertragen die keine Freunde sind. Diese Daten werden über die verbundenen Freunde anonym weitergeleitet.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;Deine Freunde können nicht nachweisen, ob du eine Datei anfordert oder diese weiterleitest.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;Für jede deiner Freigaben kannst du folgende Arten einstellen:&lt;/span&gt;&lt;/p&gt;
-&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Durchsuchbar von Freunden&lt;/span&gt;: Dateien sind von deinen direkten Freunden durchsuchbar.&lt;/li&gt;
-&lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anonym freigegeben&lt;/span&gt;: Dateien sind anonym durch F2F Tunnel erreichbar.&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Transfer</source>
-        <translation>Übertragung</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>TransfersDialog</name>
     <message>
         <source>Open Collection</source>
-        <translation>Kollektion öffnen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Show cache transfers</source>
-        <translation>Cache-Übertragungen anzeigen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Uploads</source>
-        <translation>Uploads</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Selected transfer</source>
-        <translation>Transfer</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Done</source>
-        <translation>Fertig</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Active</source>
-        <translation>Aktiv</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Outstanding</source>
-        <translation>Ausstehend</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Name</source>
         <comment>i.e: file name</comment>
-        <translation>Name</translation>
+        <translation>Jméno</translation>
     </message>
     <message>
         <source>Size</source>
         <comment>i.e: file size</comment>
-        <translation>Größe</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Completed</source>
-        <translation>Fertiggestellt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Speed</source>
         <comment>i.e: Download speed</comment>
-        <translation>Geschwindigkeit</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Progress / Availability</source>
         <comment>i.e: % downloaded</comment>
-        <translation>Fortschritt/Verfügbarkeit</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sources</source>
         <comment>i.e: Sources</comment>
-        <translation>Quellen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Status</source>
@@ -11301,199 +11038,199 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Speed / Queue position</source>
-        <translation>Geschwindigkeit/Warteschlangenposition</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Remaining</source>
-        <translation>Verbleibend</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Download time</source>
         <comment>i.e: Estimated Time of Arrival / Time left</comment>
-        <translation>Restzeit</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Core-ID</source>
-        <translation>Kern-ID</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Peer</source>
         <comment>i.e: user name</comment>
-        <translation>Nachbar</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Progress</source>
         <comment>i.e: % uploaded</comment>
-        <translation>Fortschritt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Speed</source>
         <comment>i.e: upload speed</comment>
-        <translation>Geschwindigkeit</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Transferred</source>
-        <translation>Übertragen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hash</source>
-        <translation>Prüfsumme</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Router Statistics</source>
-        <translation>Routerstatistiken</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Router Requests</source>
-        <translation>Routeranfragen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Pause</source>
-        <translation>Pause</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Resume</source>
-        <translation>Fortsetzen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Force Check</source>
-        <translation>Überprüfung erzwingen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Open Folder</source>
-        <translation>Ordner öffnen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Open File</source>
-        <translation>Datei öffnen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Preview File</source>
-        <translation>Vorschau</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Details...</source>
-        <translation>Details...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Clear Completed</source>
-        <translation>Fertige ausblenden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation>RetroShare-Link kopieren</translation>
+        <translation>Kopírovat RetroShare odkaz</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation>RetroShare-Link einfügen</translation>
+        <translation>Vložit RetroShare odkaz</translation>
     </message>
     <message>
         <source>Down</source>
-        <translation>Herunter</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Up</source>
-        <translation>Hoch</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Top</source>
-        <translation>Anfang</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Bottom</source>
-        <translation>Ende</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Streaming</source>
-        <translation>Streaming</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Slower</source>
-        <translation>Langsamer</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Average</source>
-        <translation>Durchschnitt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Faster</source>
-        <translation>Schneller</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Random</source>
-        <translation>Zufall</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Play</source>
-        <translation>Abspielen</translation>
+        <translation>Přehrát</translation>
     </message>
     <message>
         <source>Move in Queue...</source>
-        <translation>In Warteschlange verschieben...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Priority (Speed)...</source>
-        <translation>Priorität (Geschwindigkeit)...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Chunk strategy</source>
-        <translation>Blockstrategie</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Failed</source>
-        <translation>Gescheitert</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Okay</source>
-        <translation>OK</translation>
+        <translation>Oukej</translation>
     </message>
     <message>
         <source>Transferring</source>
-        <translation>Übertrage</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Complete</source>
-        <translation>Vollständig</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Waiting</source>
-        <translation>Warte</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Downloading</source>
-        <translation>Ladend</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Queued</source>
-        <translation>In Warteschleife</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Paused</source>
-        <translation>Pausiert</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Checking...</source>
-        <translation>Überprüfe...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unknown</source>
-        <translation>Unbekannt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>version: </source>
-        <translation>Version: </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Uploading</source>
-        <translation>Hochladend</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Are you sure that you want to cancel and delete these files?</source>
-        <translation>Soll dieser Download wirklich abgebrochen und gelöscht werden?</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare</source>
@@ -11501,23 +11238,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Details:</source>
-        <translation>Details:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File preview</source>
-        <translation>Dateivorschau</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File %1 preview failed.</source>
-        <translation>Datei %1 Vorschau fehlgeschlagen.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Open Transfer</source>
-        <translation>Übertragung öffnen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File %1 is not completed. If it is a media file, try to preview it.</source>
-        <translation>Datei %1 ist nicht komplett. Wenn es eine Mediadatei ist dann versuche &quot;Vorschau&quot;.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>If the hash of the downloaded data does
@@ -11530,268 +11267,260 @@ map of the data; it will compare and invalidate
 bad blocks, and download them again
 
 Try to be patient!</source>
-        <translation>Wenn der Hash der heruntergeladenen Daten
-nicht zum Hash der Quelle passt, sind die Daten
-wahrscheinlich fehlerhaft.
-
-RetroShare wird die Quelle nach detaillierten
-Informationen fragen, die vorhandenen Daten
-vergleichen und fehlerhafte Blöcke erneut herunterladen.
-
-Bitte habe etwas Geduld!</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Needs checking</source>
-        <translation>Überprüfung erforderlich</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Can&apos;t create link for file %1.</source>
-        <translation>Konnte Verknüpfung für Datei %1 nicht erstellen.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Click OK when program terminates!</source>
-        <translation>Drücke OK sobald das Programm beendet ist!</translation>
+        <translation>Při ukončení programu klikněte na OK!</translation>
     </message>
     <message>
         <source>Downloads</source>
-        <translation>Downloads</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>TreeStyle_RDM</name>
     <message>
         <source>My files</source>
-        <translation>Meine Dateien</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>FILE</source>
-        <translation>DATEI</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Files</source>
-        <translation>Dateien</translation>
+        <translation>Soubory</translation>
     </message>
     <message>
         <source>File</source>
-        <translation>Datei</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>DIR</source>
-        <translation>ORDNER</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends Directories</source>
-        <translation>Dateien von Freunden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>My Directories</source>
-        <translation>Meine Ordner</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Size</source>
-        <translation>Größe</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Age</source>
-        <translation>Alter</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend</source>
-        <translation>Freund</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Share Type</source>
-        <translation>Freigabetyp</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>What&apos;s new</source>
-        <translation>Was ist neu</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>TrustView</name>
     <message>
         <source>Zoom :</source>
-        <translation>Zoom:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Update</source>
-        <translation>Update</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Showing: whole network</source>
-        <translation>Zeige: Ganzes Netzwerk</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This table normaly auto-updates every 10 seconds.</source>
-        <translation>Diese Tabelle wird normalerweise alle 10 Sekunden neu geladen.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Self</source>
-        <translation>Selbst</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Trust</source>
-        <translation>Vertrauen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> is authenticated (one way) by </source>
-        <translation> ist (einseitig) authentifiziert von </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Half</source>
-        <translation>Halb</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> authenticated himself</source>
-        <translation> authentifizierte sich selbst</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> authenticated each other</source>
-        <translation> authentifizierten sich einander</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Full</source>
-        <translation>Voll</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> is authenticated by </source>
-        <translation> ist authentifiziert von </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> peers, including him(her)self.</source>
-        <translation> Nachbarn, sich selbst eingeschlossen.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> authenticated </source>
-        <translation> authentifiziert </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Showing: peers connected to </source>
-        <translation>Zeige: Verbundene Nachbarn</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>TurtleRouterDialog</name>
     <message>
         <source>Search requests</source>
-        <translation>Suchanfragen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Tunnel requests</source>
-        <translation>Tunnelanfragen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unknown hashes</source>
-        <translation>Unbekannte Hashs</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Tunnel id</source>
-        <translation>Tunnel ID</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>last transfer</source>
-        <translation>letzte Übertragung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Speed</source>
-        <translation>Geschwindigkeit</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Request id: %1	 from [%2]	 %3 secs ago</source>
-        <translation>Anfrage ID: %1	 von [%2]	 vor %3 Sekunden</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>TurtleRouterDialogForm</name>
     <message>
         <source>Router Statistics</source>
-        <translation>Routerstatistiken</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>F2F router information</source>
-        <translation>F2F-Routerinformationen</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>TurtleRouterStatistics</name>
     <message>
         <source>Router Statistics</source>
-        <translation>Routerstatistiken</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Age in seconds</source>
-        <translation>Alter in Sekunden</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Depth</source>
-        <translation>Tiefe</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>total</source>
-        <translation>gesamt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unknown Peer</source>
-        <translation>Unbekannter Nachbar</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>TurtleRouterStatisticsWidget</name>
     <message>
         <source>Search requests repartition</source>
-        <translation>Aufteilung der Suchanfragen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Tunnel requests repartition</source>
-        <translation>Aufteilung der Tunnelanfragen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Turtle router traffic</source>
-        <translation>Turtle-Router-Verkehr</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Tunnel requests Up</source>
-        <translation>Ausgehende Tunnelanfragen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Tunnel requests Dn</source>
-        <translation>Eingehende Tunnelanfragen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Incoming file data</source>
-        <translation>Eingehende Dateidaten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Outgoing file data</source>
-        <translation>Ausgehende Dateidaten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forwarded data    </source>
-        <translation>Weitergeleitete Daten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>TR Forward probabilities</source>
-        <translation>TA-Weiterleitungswahrscheinlichkeiten</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ULListDelegate</name>
     <message>
         <source>B</source>
-        <translation>B</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>KB</source>
-        <translation>KiB</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>MB</source>
-        <translation>MiB</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>GB</source>
-        <translation>GiB</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -11802,323 +11531,323 @@ Bitte habe etwas Geduld!</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation>Ja</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>No</source>
-        <translation>Nein</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Help</source>
-        <translation>Hilfe</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Retry</source>
-        <translation>Erneut versuchen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Show Log</source>
-        <translation>Log anzeigen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Show Settings</source>
-        <translation>Einstellungen anzeigen</translation>
+        <translation>Zobrazit nastavení</translation>
     </message>
     <message>
         <source>Continue</source>
-        <translation>Fortsetzen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Quit</source>
-        <translation>Schließen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Browse</source>
-        <translation>Durchsuchen</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>WikiAddDialog</name>
     <message>
         <source>Basic Details</source>
-        <translation>Grundlegende Details</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Group Name:</source>
-        <translation>Gruppenname</translation>
+        <translation>Jméno skupiny:</translation>
     </message>
     <message>
         <source>Category:</source>
-        <translation>Kategorie:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Travel</source>
-        <translation>Reise</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Holiday</source>
-        <translation>Urlaub</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends</source>
-        <translation>Freunde</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Family</source>
-        <translation>Familie</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Work</source>
-        <translation>Arbeit</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Random</source>
-        <translation>Zufall</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Description:</source>
-        <translation>Beschreibung:</translation>
+        <translation>Popis:</translation>
     </message>
     <message>
         <source>Share Options</source>
-        <translation>Freigabeoptionen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Public</source>
-        <translation>Öffentlich</translation>
+        <translation>Veřejné</translation>
     </message>
     <message>
         <source>All Friends</source>
-        <translation>Alle Freunde</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Restricted</source>
-        <translation>Beschränkt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>N/A</source>
-        <translation>N/A</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>University Friends</source>
-        <translation>Universitäts-Freunde</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This List Contains</source>
-        <translation>Diese Liste enthält</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>All your Groups</source>
-        <translation>Alle deine Gruppen</translation>
+        <translation>Všechny vaše skupiny</translation>
     </message>
     <message>
         <source>No Comments Allowed</source>
-        <translation>Keine Kommentare erlaubt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Authenticated Comments</source>
-        <translation>Authentifizierte Kommentare</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Any Comments Allowed</source>
-        <translation>Beliebige Kommentare erlaubt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Publish with XXX Key</source>
-        <translation>Mit XXX-Schlüssel veröffentlichen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cancel </source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Create Group</source>
-        <translation>Gruppe erstellen</translation>
+        <translation>Vytvořit skupinu</translation>
     </message>
 </context>
 <context>
     <name>WikiDialog</name>
     <message>
         <source>Wiki Group</source>
-        <translation>Wiki-Gruppe</translation>
+        <translation>skupina Wiki</translation>
     </message>
     <message>
         <source>Page</source>
-        <translation>Seite</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Id</source>
-        <translation>ID</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Page Modification</source>
-        <translation>Seitenänderung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>By</source>
-        <translation>durch</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;&lt;</source>
-        <translation>&lt;&lt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&gt;&gt;</source>
-        <translation>&gt;&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;&lt; Mod</source>
-        <translation>&lt;&lt; Änderung</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Edit</source>
-        <translation>Bearbeiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Mod &gt;&gt;</source>
-        <translation>Änderung &gt;&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New Group</source>
-        <translation>Neue Gruppe</translation>
+        <translation>Nová skupina</translation>
     </message>
     <message>
         <source>New Page</source>
-        <translation>Neue Seite</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Delete</source>
-        <translation>Löschen</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>WikiEditDialog</name>
     <message>
         <source>Wiki Page</source>
-        <translation>Wiki-Seite</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Wiki Group:</source>
-        <translation>Wiki-Gruppe:</translation>
+        <translation>skupina Wiki</translation>
     </message>
     <message>
         <source>Page Name:</source>
-        <translation>Seitenname:</translation>
+        <translation>Jméno stránky:</translation>
     </message>
     <message>
         <source>Edit ID</source>
-        <translation>ID bearbeiten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Previous Version</source>
-        <translation>Vorhergehende Version</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Prev ID</source>
-        <translation>Vorhergehende ID</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Revert</source>
-        <translation>Rückgängig machen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Submit</source>
-        <translation>Absenden</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>WireDialog</name>
     <message>
         <source>TimeRange</source>
-        <translation>TimeRange</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>All</source>
-        <translation>Alle</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Last Month</source>
-        <translation>Letzter Monat</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Last Week</source>
-        <translation>Letzte Woche</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Today</source>
-        <translation>Heute</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New</source>
-        <translation>Neu</translation>
+        <translation>Nový</translation>
     </message>
     <message>
         <source>from</source>
-        <translation>von</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>until</source>
-        <translation>bis</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Search/Filter</source>
-        <translation>Suchen/Filtern</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Network Wide</source>
-        <translation>Netzwerkweit</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Manage Accounts</source>
-        <translation>Konten verwalten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Showing:</source>
-        <translation>Zeige:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Yourself</source>
-        <translation>Du</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends</source>
-        <translation>Freunde</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Following</source>
-        <translation>Folgend</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Custom</source>
-        <translation>Benutzerdefiniert</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Account 1</source>
-        <translation>Konto 1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Account 2</source>
-        <translation>Konto 2</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Account 3</source>
-        <translation>Konto 3</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>CheckBox</source>
-        <translation>CheckBox</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Post Pulse to Wire</source>
-        <translation>Puls an Wire senden</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -12126,94 +11855,94 @@ Bitte habe etwas Geduld!</translation>
     <message>
         <source>Unknown</source>
         <comment>Unknown (size)</comment>
-        <translation>Unbekannt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> B</source>
         <comment>bytes</comment>
-        <translation>B</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unknown</source>
-        <translation>Unbekannt</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt; 1m</source>
         <comment>&lt; 1 minute</comment>
-        <translation>&lt; 1min</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>%1 minutes</source>
         <comment>e.g: 10minutes</comment>
-        <translation>%1 Minuten</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>%1h %2m</source>
         <comment>e.g: 3hours 5minutes</comment>
-        <translation>%1h %2m</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>%1d %2h</source>
         <comment>e.g: 2days 10hours</comment>
-        <translation>%1T %2h</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>%1y %2d</source>
         <comment>e.g: 2 years 2days </comment>
-        <translation>%1J %2T</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>k</source>
         <comment>e.g: 3.1 k</comment>
-        <translation>Ki</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>M</source>
         <comment>e.g: 3.1 M</comment>
-        <translation>Mi</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>G</source>
         <comment>e.g: 3.1 G</comment>
-        <translation>Gi</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>T</source>
         <comment>e.g: 3.1 T</comment>
-        <translation>Ti</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Load avatar image</source>
-        <translation>Lade Avatar Bild</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Pictures (*.png *.xpm *.jpg *.tiff *.gif)</source>
-        <translation>Bilder (*.png *.xpm *.jpg *.tiff *.gif)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> KB</source>
         <comment>kilobytes (1024 bytes)</comment>
-        <translation>KiB</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> MB</source>
         <comment>megabytes (1024 kilobytes)</comment>
-        <translation>MiB</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> GB</source>
         <comment>gigabytes (1024 megabytes)</comment>
-        <translation>GiB</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> TB,</source>
         <comment>terabytes (1024 gigabytes)</comment>
-        <translation>TiB,</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> TB</source>
         <comment>terabytes (1024 gigabytes)</comment>
-        <translation>TiB</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>

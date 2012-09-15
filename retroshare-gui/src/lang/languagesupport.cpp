@@ -39,6 +39,7 @@ LanguageSupport::languages()
     //languages.insert("af",    "Afrikaans");
     //languages.insert("bg",    "Bulgarien");
     //languages.insert("cy",    "Welsh");
+    languages.insert("cs",    "Czech");
     languages.insert("de",    "Deutsch");
     languages.insert("da",    "Danish");
     languages.insert("en",    "English");
@@ -49,7 +50,7 @@ LanguageSupport::languages()
     //languages.insert("it",    "Italiano");
     languages.insert("ja_JP",    QString::fromUtf8("\346\227\245\346\234\254\350\252\236"));
     languages.insert("ko",    "Korean");
-    //languages.insert("pl",    "Polish");
+    languages.insert("pl",    "Polska");
     //languages.insert("pt",    "Portuguese");
     languages.insert("ru",    QString::fromUtf8("\320\240\321\203\321\201\321\201\320\272\320\270\320\271"));
     //languages.insert("sl",    "slovenian");

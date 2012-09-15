@@ -1,1855 +1,1371 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.0">
-<context>
-    <name></name>
-    <message>
-        <source>Arial</source>
-        <translation type="obsolete">Arial</translation>
-    </message>
-</context>
-<context>
-    <name>@default</name>
-    <message>
-        <source>Arial</source>
-        <translation type="obsolete">Arial</translation>
-    </message>
-</context>
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="ru" version="2.0">
 <context>
     <name>AboutDialog</name>
     <message>
+        <source>About RetroShare</source>
+        <translation>О RetroShare</translation>
+    </message>
+    <message>
         <source>About</source>
-        <translation type="unfinished">О программе</translation>
+        <translation>О программе</translation>
     </message>
     <message>
         <source>close</source>
-        <translation type="unfinished">закрыть </translation>
-    </message>
-    <message>
-        <source>About RetroShare</source>
-        <translation type="unfinished"></translation>
+        <translation>закрыть</translation>
     </message>
     <message>
         <source>About RetroShare %1</source>
-        <translation type="unfinished"></translation>
+        <translation>О RetroShare %1</translation>
     </message>
     <message>
         <source>Max score: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Макс. очков: %1</translation>
     </message>
     <message>
         <source>Score: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Очки: %1</translation>
     </message>
     <message>
         <source>Level: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Уровень: %1</translation>
     </message>
     <message>
         <source>Have fun ;-)</source>
-        <translation type="unfinished"></translation>
+        <translation>Приятной игры ;-)</translation>
     </message>
 </context>
 <context>
     <name>AddFileAssociationDialog</name>
     <message>
         <source>File type(extension):</source>
-        <translation type="unfinished"></translation>
+        <translation>Тип файла (расширение):</translation>
     </message>
     <message>
         <source>Use default command</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать программу по умолчанию</translation>
     </message>
     <message>
         <source>Command</source>
-        <translation type="unfinished"></translation>
+        <translation>Программа</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"></translation>
+        <translation>RetroShare</translation>
     </message>
     <message>
-        <source>Sorry, can&apos;t determine system default command for this file
+        <source>Sorry, can't determine system default command for this file
 </source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>AddFriendDialog</name>
-    <message>
-        <source>Cancel</source>
-        <translation type="obsolete">Отмена</translation>
-    </message>
-    <message>
-        <source>Done</source>
-        <translation type="obsolete">Готово</translation>
-    </message>
-    <message>
-        <source>Load From File</source>
-        <translation type="obsolete">Загрузка из файла </translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation type="obsolete">Retroshare </translation>
-    </message>
-    <message>
-        <source>Certificate Load Failed</source>
-        <translation type="obsolete">Сертификат не загружен</translation>
-    </message>
-    <message>
-        <source> Add a new Friend
-To add a new Friend, cut and paste their email 
-invitation into the box below, and click done.
-      </source>
-        <translation type="obsolete">Добавить новый контакт
-Чтобы добавить новый контакт, скопируйте приглашение
-в буфер обмена и вставьте сюда.
+        <translation>К сожалению, для этого типа файла не удалось определить программу по умолчанию
 </translation>
-    </message>
-</context>
-<context>
-    <name>AddFriendWizard</name>
-    <message>
-        <source>&lt; Back</source>
-        <translation type="obsolete">&lt; Назад</translation>
-    </message>
-    <message>
-        <source>Next &gt;</source>
-        <translation type="obsolete">Вперед &gt;</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="obsolete">Отмена</translation>
-    </message>
-    <message>
-        <source>I have a .pqi/.pem file received from a Friend</source>
-        <translation type="obsolete">У меня есть файл с расширением .pqi/.pem, полученный от друга</translation>
-    </message>
-    <message>
-        <source>I have Key received from a Friend</source>
-        <translation type="obsolete">У меня есть ключ, полученный от друга</translation>
-    </message>
-    <message>
-        <source>I want to invite a friend to my RetroShare network</source>
-        <translation type="obsolete">Я хочу пригласить друга в мою сеть RetroShare</translation>
-    </message>
-    <message>
-        <source>Browse</source>
-        <translation type="obsolete">Выбор файла</translation>
-    </message>
-    <message>
-        <source>Add Friend to my netowork Wizard</source>
-        <translation type="obsolete">Мастер добавления контакта в мою сеть</translation>
-    </message>
-    <message>
-        <source>Certificate Load Failed</source>
-        <translation type="obsolete">Ошибка при загрузке сертификата</translation>
-    </message>
-    <message>
-        <source>This Wizard helps to Connect to your Friends</source>
-        <translation type="obsolete">Этот мастер помогает Вам подключиться к друзьям</translation>
-    </message>
-    <message>
-        <source> Cut and paste the text below into an email.  and send it to all your friends!  When you press next, RetroShare will attempt to launch a Email client </source>
-        <translation type="obsolete">Скопируйте текст внизу в e-mail, и пошлите его Вашим друзьям. Когда Вы нажмете Далее, RetroShare попробует открыть программу e-mail</translation>
-    </message>
-    <message>
-        <source>Invite your Friends to join with RetroShare</source>
-        <translation type="obsolete">Пригласить Ваших друзей соединиться с RetroShare</translation>
-    </message>
-    <message>
-        <source>Enter the Key code you got from your friend:</source>
-        <translation type="obsolete">Введите код, полученный от друга:</translation>
-    </message>
-    <message>
-        <source>When you press next RetroShare will attempt to connect using the key.</source>
-        <translation type="obsolete">Когда Вы нажмете Далее, RetroShare попытается соединиться с помощью этого ключа.</translation>
     </message>
 </context>
 <context>
     <name>AdvancedSearchDialog</name>
     <message>
         <source>RetroShare: Advanced Search</source>
-        <translation type="unfinished">RetroShare: Расширенный поиск</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="unfinished">Отмена</translation>
-    </message>
-    <message>
-        <source>Search</source>
-        <translation type="unfinished">Поиск </translation>
-    </message>
-    <message>
-        <source>Add a further search criterion.</source>
-        <translation type="unfinished">Добавить дополнительный критерий поиска.</translation>
-    </message>
-    <message>
-        <source>Reset the search criteria.</source>
-        <translation type="unfinished">Сбросить критерии поиска.</translation>
-    </message>
-    <message>
-        <source>Cancels the search.</source>
-        <translation type="unfinished">Отмена поиска.</translation>
-    </message>
-    <message>
-        <source>Perform the advanced search.</source>
-        <translation type="unfinished">Выполните расширенный поиск.</translation>
+        <translation>RetroShare: Расширенный поиск</translation>
     </message>
     <message>
         <source>Search Criteria</source>
-        <translation type="unfinished">Критерии</translation>
-    </message>
-</context>
-<context>
-    <name>AppearanceDialog</name>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Choose the language used in RetroShare&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">Выберите язык, используемый в Retroshare </translation>
+        <translation>Критерии поиска</translation>
     </message>
     <message>
-        <source>Style</source>
-        <translation type="obsolete">Style</translation>
+        <source>Add a further search criterion.</source>
+        <translation>Добавить критерий поиска.</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Choose RetroShare&apos;s interface style&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Выберите стиль интерфейса Retroshare &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>Reset the search criteria.</source>
+        <translation>Сбросить критерии поиска.</translation>
     </message>
     <message>
-        <source>Style Sheet</source>
-        <translation type="obsolete">Стиль Спецификация </translation>
+        <source>Cancels the search.</source>
+        <translation>Отменить поиск.</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+    <message>
+        <source>Perform the advanced search.</source>
+        <translation>Выполнить расширенный поиск.</translation>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation>Поиск</translation>
     </message>
 </context>
 <context>
     <name>AppearancePage</name>
     <message>
         <source>Language</source>
-        <translation type="unfinished">языка </translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Choose the language used in RetroShare&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">Выберите язык, используемый в Retroshare </translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Arial; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Changes to language will only take effect after restarting RetroShare!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Arial; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Изменения языка вступят в силу только после перезапуска RetroShare!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>Язык</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation type="unfinished">Стиль</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Choose RetroShare&apos;s interface style&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Выберите стиль интерфейса Retroshare &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>Стиль</translation>
     </message>
     <message>
         <source>Style Sheet</source>
-        <translation type="unfinished">Стиль Спецификация </translation>
+        <translation>Спецификация стиля</translation>
     </message>
     <message>
         <source>Appearance</source>
-        <translation type="unfinished">Внешний вид</translation>
+        <translation>Внешний вид</translation>
+    </message>
+    <message>
+        <source>Changes to language will only take effect after restarting RetroShare!</source>
+        <translation>Изменения настроек языка вступят в силу только после рестарта программы.</translation>
+    </message>
+    <message>
+        <source>Choose the language used in RetroShare</source>
+        <translation>Выберите язык интерфейса программы</translation>
+    </message>
+    <message>
+        <source>Choose RetroShare&apos;s interface style</source>
+        <translation>Выберите стиль интерфейса программы</translation>
     </message>
 </context>
 <context>
     <name>ApplicationWindow</name>
     <message>
-        <source>Hide</source>
-        <translation type="unfinished">Скрыт </translation>
-    </message>
-    <message>
-        <source>Show</source>
-        <translation type="unfinished">Показать </translation>
-    </message>
-    <message>
-        <source>Transfers</source>
-        <translation type="obsolete">Передача файлов</translation>
-    </message>
-    <message>
-        <source>Messages</source>
-        <translation type="obsolete">E-Mail-Сообщения </translation>
-    </message>
-    <message>
-        <source>Statistics</source>
-        <translation type="obsolete">Statistics (статистика)</translation>
-    </message>
-    <message>
         <source>RetroShare</source>
-        <translation type="unfinished"></translation>
+        <translation>RetroShare</translation>
     </message>
     <message>
         <source>Photo View</source>
-        <translation type="unfinished"></translation>
+        <translation>Просмотр фото</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Скрыть</translation>
+    </message>
+    <message>
+        <source>Show</source>
+        <translation>Показать</translation>
     </message>
     <message>
         <source>Identities</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Wiki Pages</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>The Wire</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>ForumsV2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Posted Links</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>AttachFileItem</name>
     <message>
-        <source>File Name</source>
-        <translation type="obsolete">Имя файла</translation>
-    </message>
-    <message>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>%p Kb</source>
-        <translation type="unfinished"></translation>
+        <translation>%p Кб</translation>
     </message>
     <message>
         <source>Cancel Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Отменить загрузку</translation>
     </message>
     <message>
         <source>[ERROR])</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>AuthorizationDialog</name>
-    <message>
-        <source>Authenticate</source>
-        <translation type="obsolete">Авторизовать / аутентификации</translation>
-    </message>
-    <message>
-        <source>Authenticate Friend By Entering Their Code</source>
-        <translation type="obsolete">Авторизовать/ аутентификации друг, введя код </translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation type="obsolete">OK (нууу)</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="obsolete">Вернуться/Отмена</translation>
+        <translation>[ОШИБКА])</translation>
     </message>
 </context>
 <context>
     <name>AvatarWidget</name>
     <message>
         <source>Click to change your avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>Кликнуть для изменения аватара </translation>
     </message>
 </context>
 <context>
     <name>BandwidthGraph</name>
     <message>
+        <source>RetroShare Bandwidth Usage</source>
+        <translation>Использование интернет-канала</translation>
+    </message>
+    <message>
         <source>Show Settings</source>
-        <translation type="unfinished">Показать параметры</translation>
+        <translation>Показать параметры</translation>
     </message>
     <message>
         <source>Reset</source>
-        <translation type="unfinished">Сбросить</translation>
+        <translation>Сброс</translation>
     </message>
     <message>
         <source>Receive Rate</source>
-        <translation type="unfinished">Получите Оценить</translation>
+        <translation>Скорость приема</translation>
     </message>
     <message>
         <source>Send Rate</source>
-        <translation type="unfinished">Отправить Оценить</translation>
-    </message>
-    <message>
-        <source>Style</source>
-        <translation type="unfinished">Стиль</translation>
-    </message>
-    <message>
-        <source>Changes the transparency of the Bandwidth Graph</source>
-        <translation type="unfinished">Изменения прозрачности Bandwidth Graph</translation>
-    </message>
-    <message>
-        <source>100</source>
-        <translation type="unfinished">100</translation>
-    </message>
-    <message>
-        <source>% Opaque</source>
-        <translation type="unfinished">% Непрозрачные</translation>
-    </message>
-    <message>
-        <source>Save</source>
-        <translation type="unfinished">Сохранить </translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="unfinished">Отмена</translation>
-    </message>
-    <message>
-        <source>Since:</source>
-        <translation type="unfinished">С тех пор, как:</translation>
-    </message>
-    <message>
-        <source>Hide Settings</source>
-        <translation type="unfinished">Скрыть настройки </translation>
-    </message>
-    <message>
-        <source>RetroShare Bandwidth Usage</source>
-        <translation type="unfinished">RetroShare использования пропускной способности</translation>
+        <translation>Скорость передачи</translation>
     </message>
     <message>
         <source>Always on Top</source>
-        <translation type="unfinished">Всегда поверх других окон</translation>
-    </message>
-</context>
-<context>
-    <name>BgWindow</name>
-    <message>
-        <source>Quit</source>
-        <translation type="obsolete">Выход</translation>
+        <translation>Поверх всех окон</translation>
     </message>
     <message>
-        <source>About</source>
-        <translation type="obsolete">О программе</translation>
+        <source>Style</source>
+        <translation>Стиль</translation>
+    </message>
+    <message>
+        <source>Changes the transparency of the Bandwidth Graph</source>
+        <translation>Изменить прозрачность графика пропускной способности</translation>
+    </message>
+    <message>
+        <source>100</source>
+        <translation>100</translation>
+    </message>
+    <message>
+        <source>% Opaque</source>
+        <translation>% Непрозрачности</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation>Сохранить</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+    <message>
+        <source>Since:</source>
+        <translation>С:</translation>
+    </message>
+    <message>
+        <source>Hide Settings</source>
+        <translation>Скрыть настройки</translation>
     </message>
 </context>
 <context>
     <name>BlogDetails</name>
     <message>
-        <source>Last Post</source>
-        <translation type="unfinished">Последнее сообщение</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="unfinished">закрыть </translation>
-    </message>
-    <message>
         <source>Blog Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Детали блога</translation>
     </message>
     <message>
         <source>Blog Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Информация о блоге</translation>
     </message>
     <message>
         <source>Blog Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя блога</translation>
     </message>
     <message>
         <source>Popularity</source>
-        <translation type="unfinished"></translation>
+        <translation>Популярность</translation>
+    </message>
+    <message>
+        <source>Last Post</source>
+        <translation>Последний пост</translation>
     </message>
     <message>
         <source>Blog ID</source>
-        <translation type="unfinished"></translation>
+        <translation>ID блога</translation>
     </message>
     <message>
         <source>Blog Description</source>
-        <translation type="unfinished"></translation>
+        <translation>Описание блога</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Отмена</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK (Хорошо)</translation>
     </message>
-</context>
-<context>
-    <name>BlogDialog</name>
     <message>
-        <source>Blogs</source>
-        <translation type="obsolete">Блоги</translation>
+        <source>Close</source>
+        <translation>Закрыть</translation>
     </message>
 </context>
 <context>
     <name>BlogMsgItem</name>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished">Удалить элемент</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation type="obsolete">связано</translation>
+        <translation>Удалить пункт</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished">Развернуть</translation>
+        <translation>Развернуть</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation type="unfinished">Тема</translation>
-    </message>
-    <message>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Тема</translation>
     </message>
     <message>
         <source>Play Media</source>
-        <translation type="unfinished"></translation>
+        <translation>Проиграть медиа-файл</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished">Скрыт </translation>
+        <translation>Спрятать</translation>
     </message>
 </context>
 <context>
     <name>BlogNewItem</name>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished">Удалить элемент</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation type="unfinished">Развернуть</translation>
+        <translation>Удалить пункт</translation>
     </message>
     <message>
         <source>Subscribe to Blog</source>
-        <translation type="unfinished"></translation>
+        <translation>Подписаться на блог</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Развернуть</translation>
     </message>
     <message>
         <source>Blog Decscription</source>
-        <translation type="unfinished"></translation>
+        <translation>Описание блога</translation>
     </message>
     <message>
         <source>Unknown Blog</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New Blog</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Updated Blog</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished">Скрыт </translation>
+        <translation>Спрятать</translation>
     </message>
 </context>
 <context>
     <name>BlogsDialog</name>
     <message>
-        <source>Add</source>
-        <translation type="unfinished">Добавить</translation>
-    </message>
-    <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Форма</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:600;&quot;&gt;Blogs&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:600;&quot;&gt;Блоги&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Добавить</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Post To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Написать в блог&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:14pt; color:#ffffff;&quot;&gt;Blog Name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:14pt; color:#ffffff;&quot;&gt;Blog Name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:14pt; color:#ffffff;&quot;&gt;Название блога&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Unsubcribe To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Отписаться от блога&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Unsubscribe</source>
-        <translation type="unfinished"></translation>
+        <translation>Отменить подписку</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Subscribe To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Подписаться на блог&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Subscribe</source>
-        <translation type="unfinished"></translation>
+        <translation>Подписаться</translation>
     </message>
     <message>
         <source>Create New Blog</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать новый блог</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя</translation>
     </message>
     <message>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation>ID</translation>
     </message>
     <message>
         <source>Own Blogs</source>
-        <translation type="unfinished"></translation>
+        <translation>Мои блоги</translation>
     </message>
     <message>
         <source>Subscribed Blogs</source>
-        <translation type="unfinished"></translation>
+        <translation>Подписка на блоги</translation>
     </message>
     <message>
         <source>Popular Blogs</source>
-        <translation type="unfinished"></translation>
+        <translation>Популярные блоги</translation>
     </message>
     <message>
         <source>Other Blogs</source>
-        <translation type="unfinished"></translation>
+        <translation>Другие блоги</translation>
     </message>
     <message>
         <source>Post to Blog</source>
-        <translation type="unfinished"></translation>
+        <translation>Написать в блог</translation>
     </message>
     <message>
         <source>Subscribe to Blog</source>
-        <translation type="unfinished"></translation>
+        <translation>Подписаться на блог</translation>
     </message>
     <message>
         <source>Unsubscribe to Blog</source>
-        <translation type="unfinished"></translation>
+        <translation>Отменить подписку на блог</translation>
     </message>
     <message>
         <source>Show Blog Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать подробности о блоге</translation>
     </message>
     <message>
         <source>Create a new Blog</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать новый блог</translation>
     </message>
     <message>
         <source>Popularity: %1
 Fetches: %2
 Available: %3</source>
-        <translation type="unfinished"></translation>
+        <translation>Популярность: %1⏎ Fetches: %2⏎ Доступность: %3</translation>
     </message>
 </context>
 <context>
     <name>BlogsMsgItem</name>
     <message>
-        <source>Remove Item</source>
-        <translation type="unfinished">Удалить элемент</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation type="unfinished">Развернуть</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation type="unfinished">Скрыт </translation>
-    </message>
-    <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Форма</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:11pt; font-weight:600; font-style:italic;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#656565;&quot;&gt;Blog Subject&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:11pt; font-weight:600; font-style:italic;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#656565;&quot;&gt;Blog Subject&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#656565;&quot;&gt;Тема блога&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;DateTime&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Дата&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Развернуть</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Удалить пункт</translation>
     </message>
     <message>
         <source>Unsubscribe From Channel</source>
-        <translation type="unfinished"></translation>
+        <translation>Отменить подписку на канал</translation>
     </message>
     <message>
         <source>Comments here</source>
-        <translation type="unfinished"></translation>
+        <translation>Комментарии</translation>
     </message>
     <message>
         <source>Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>Комментарий</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Скрыть</translation>
     </message>
 </context>
 <context>
     <name>BwCtrlWindow</name>
     <message>
         <source>Bandwidth Control WIndow</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>BandWidth Measurements</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation>ID</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя</translation>
     </message>
     <message>
         <source>In (KB/s)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>InMax (KB/s)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>InQueue</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>InAllocated (KB/s)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Allocated Sent</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Out (KB/s)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>OutMax (KB/s)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>OutQueue</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>OutAllowed (KB/s)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Allowed Recvd</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>CalDialog</name>
     <message>
-        <source>Name:</source>
-        <translation type="unfinished">Имя:</translation>
-    </message>
-    <message>
-        <source>Remove</source>
-        <translation type="unfinished">Удалить </translation>
-    </message>
-    <message>
-        <source>Status:</source>
-        <translation type="unfinished">Состояние:</translation>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation type="unfinished">Добавить</translation>
-    </message>
-    <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Форма</translation>
     </message>
     <message>
         <source>Local Calendars</source>
-        <translation type="unfinished"></translation>
+        <translation>Локальный календарь</translation>
     </message>
     <message>
         <source>Shared Calendar List</source>
-        <translation type="unfinished"></translation>
+        <translation>Список общих календарей</translation>
     </message>
     <message>
         <source>Share Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Подробности совместного доступа</translation>
+    </message>
+    <message>
+        <source>Name:</source>
+        <translation>Имя:</translation>
     </message>
     <message>
         <source>Location:</source>
-        <translation type="unfinished"></translation>
+        <translation>Расположение:</translation>
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
+    </message>
+    <message>
+        <source>Status:</source>
+        <translation>Статус:</translation>
     </message>
     <message>
         <source>Private</source>
-        <translation type="unfinished"></translation>
+        <translation>Частный</translation>
     </message>
     <message>
         <source>Public</source>
-        <translation type="unfinished"></translation>
+        <translation>Публичный</translation>
     </message>
     <message>
         <source>Allow List:</source>
-        <translation type="unfinished"></translation>
+        <translation>Список разрешенных</translation>
     </message>
     <message>
         <source>&lt;Disabled&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;Отключено&gt;</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Добавить</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Удалить</translation>
     </message>
     <message>
         <source>Peer Calendars</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>CertificatePage</name>
-    <message>
-        <source>Browse</source>
-        <translation type="obsolete">Выбор файла</translation>
-    </message>
-    <message>
-        <source>Select Certificate</source>
-        <translation type="obsolete">Выберите сертификат</translation>
-    </message>
-    <message>
-        <source>Certificates (*.pqi *.pem)</source>
-        <translation type="obsolete">Сертификаты (*.pqi /*.pem) </translation>
-    </message>
-</context>
-<context>
-    <name>ChanCreateDialog</name>
-    <message>
-        <source>Create a  new Broadcast Channel</source>
-        <translation type="obsolete">Создайте новый канал вещания </translation>
-    </message>
-    <message>
-        <source>Create A New Broadcast Channel</source>
-        <translation type="obsolete">Создать новый канал вещания </translation>
-    </message>
-    <message>
-        <source>Channel Name:</source>
-        <translation type="obsolete">Имя канала:</translation>
-    </message>
-    <message>
-        <source>Type:</source>
-        <translation type="obsolete">Тип:</translation>
-    </message>
-    <message>
-        <source>Public Channel  (Signed)</source>
-        <translation type="obsolete">Общественной Channel (Подпись) </translation>
-    </message>
-    <message>
-        <source>Private Channel (Encrypted)</source>
-        <translation type="obsolete">Частные Channel (Шифрование)</translation>
-    </message>
-    <message>
-        <source>Cancel Channel</source>
-        <translation type="obsolete">Отмена Channel </translation>
-    </message>
-    <message>
-        <source>Create Channel</source>
-        <translation type="obsolete">Создать Channel </translation>
-    </message>
-</context>
-<context>
-    <name>ChanMsgDialog</name>
-    <message>
-        <source>Compose</source>
-        <translation type="obsolete">Написать</translation>
-    </message>
-    <message>
-        <source>Recommended Files</source>
-        <translation type="obsolete">Рекомендуемые Файлы </translation>
-    </message>
-    <message>
-        <source>Send To:</source>
-        <translation type="obsolete">Отправить: </translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation type="obsolete">Отправить</translation>
-    </message>
-    <message>
-        <source>Delete Channel</source>
-        <translation type="obsolete">Удалить канал </translation>
-    </message>
-    <message>
-        <source>Create Channel MSG</source>
-        <translation type="obsolete">Создать канал сообщение </translation>
-    </message>
-    <message>
-        <source>Compose: </source>
-        <translation type="obsolete">Написать: </translation>
-    </message>
-    <message>
-        <source>&amp;Quit</source>
-        <translation type="obsolete">Выход</translation>
-    </message>
-    <message>
-        <source>HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation type="obsolete">HTML-файлы (*. HTM *. HTML), все файлы (*)</translation>
-    </message>
-    <message>
-        <source>Save as...</source>
-        <translation type="obsolete">Сохранить как ...</translation>
-    </message>
-    <message>
-        <source>Print Document</source>
-        <translation type="obsolete">Распечатать документ</translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation type="obsolete">Дополнительные файлы</translation>
-    </message>
-    <message>
-        <source>Bold</source>
-        <translation type="obsolete">Жирным</translation>
-    </message>
-    <message>
-        <source>Underline</source>
-        <translation type="obsolete">Подчеркнуть</translation>
-    </message>
-    <message>
-        <source>Italic</source>
-        <translation type="obsolete">Курсив</translation>
-    </message>
-    <message>
-        <source>Size</source>
-        <translation type="obsolete">Size</translation>
-    </message>
-    <message>
-        <source>Sources</source>
-        <translation type="obsolete">Источники</translation>
-    </message>
-    <message>
-        <source>Save</source>
-        <translation type="obsolete">Сохранить </translation>
-    </message>
-    <message>
-        <source>Subject:</source>
-        <translation type="obsolete">Тема:</translation>
-    </message>
-    <message>
-        <source>File Name</source>
-        <translation type="obsolete">Имя файла</translation>
-    </message>
-    <message>
-        <source>Hash</source>
-        <translation type="obsolete">Хэш</translation>
-    </message>
-    <message>
-        <source>Reply</source>
-        <translation type="obsolete">Ответ</translation>
+        <translation>Календари пиров</translation>
     </message>
 </context>
 <context>
     <name>ChanMsgItem</name>
     <message>
-        <source>Play</source>
-        <translation type="unfinished">Играть</translation>
-    </message>
-    <message>
-        <source>Remove Item</source>
-        <translation type="unfinished">Удалить элемент</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation type="unfinished">Развернуть</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation type="unfinished">Скрыт </translation>
-    </message>
-    <message>
         <source>Toggle Message Read Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменить статус прочитанного сообщения</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>Новый</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Скачать</translation>
+    </message>
+    <message>
+        <source>Play</source>
+        <translation>Воспроизвести</translation>
     </message>
     <message>
         <source>Unsubscribe From Channel</source>
-        <translation type="unfinished"></translation>
+        <translation>Отменить подписку на канал</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Удалить пункт</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Развернуть</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Копировать RetroShare-ссылку</translation>
     </message>
     <message>
         <source>Channel Feed</source>
-        <translation type="unfinished"></translation>
+        <translation>Лента каналов</translation>
     </message>
     <message>
         <source>Warning! You have less than %1 hours and %2 minute before this file is delted Consider saving it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Внимание! У вас есть менее %1 часа (часов) and %2 минуты (минут) прежде чем файл будет удален. Рассмотрите возможность его сохранения.</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Скрыть</translation>
     </message>
     <message>
         <source>Files</source>
-        <translation type="unfinished">Файлы </translation>
+        <translation>Файлы</translation>
     </message>
     <message>
         <source>Set as read and remove item</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ChanNewItem</name>
     <message>
-        <source>Remove Item</source>
-        <translation type="unfinished">Удалить элемент</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation type="obsolete">связано</translation>
-    </message>
-    <message>
-        <source>New Channel</source>
-        <translation type="unfinished">Новый Канал</translation>
+        <source>Subscribe to Channel</source>
+        <translation>Подписаться на канал</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished">Развернуть</translation>
+        <translation>Развернуть</translation>
     </message>
     <message>
-        <source>Subscribe to Channel</source>
-        <translation type="unfinished"></translation>
+        <source>Remove Item</source>
+        <translation>Удалить пункт</translation>
     </message>
     <message>
         <source>Channel Decscription</source>
-        <translation type="unfinished"></translation>
+        <translation>Описание канала</translation>
     </message>
     <message>
         <source>Unknown Channel</source>
-        <translation type="unfinished"></translation>
+        <translation>Неизвестный канал</translation>
+    </message>
+    <message>
+        <source>New Channel</source>
+        <translation>Новый канал</translation>
     </message>
     <message>
         <source>Updated Channel</source>
-        <translation type="unfinished"></translation>
+        <translation>Обновленный канал</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished">Скрыт </translation>
-    </message>
-</context>
-<context>
-    <name>ChannelBrowserDialog</name>
-    <message>
-        <source>Channels</source>
-        <translation type="obsolete">Каналы</translation>
-    </message>
-    <message>
-        <source>Video</source>
-        <translation type="obsolete">Video</translation>
+        <translation>Спрятать</translation>
     </message>
 </context>
 <context>
     <name>ChannelDetails</name>
     <message>
-        <source>Last Post</source>
-        <translation type="unfinished">Последнее сообщение</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="unfinished">закрыть </translation>
-    </message>
-    <message>
         <source>Channel Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Подробности о канале</translation>
     </message>
     <message>
         <source>Channel Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Информация о канале</translation>
     </message>
     <message>
         <source>Channel Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя канала</translation>
     </message>
     <message>
         <source>Popularity</source>
-        <translation type="unfinished"></translation>
+        <translation>Популярность</translation>
+    </message>
+    <message>
+        <source>Last Post</source>
+        <translation>Последнее сообщение</translation>
     </message>
     <message>
         <source>Channel ID</source>
-        <translation type="unfinished"></translation>
+        <translation>ID канала</translation>
     </message>
     <message>
         <source>Channel Description</source>
-        <translation type="unfinished"></translation>
+        <translation>Описание канала</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Тип</translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ограниченный - Все могут читать, публикация ограничена (Private Publish Key)</translation>
     </message>
     <message>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation type="unfinished"></translation>
+        <translation>Приватный - Для чтения сообщений необходим Private Publish Key</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Отмена</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK (Хорошо)</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Закрыть</translation>
     </message>
 </context>
 <context>
     <name>ChannelFeed</name>
     <message>
-        <source>Create Channel</source>
-        <translation type="unfinished">Создать Channel </translation>
-    </message>
-    <message>
-        <source>Subscribe To Channel</source>
-        <translation type="obsolete">Подписка на канал </translation>
-    </message>
-    <message>
-        <source>Title</source>
-        <translation type="obsolete">Название</translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation type="obsolete">Описание</translation>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation type="obsolete">Добавить</translation>
-    </message>
-    <message>
         <source>Display</source>
-        <translation type="unfinished">Отображать</translation>
+        <translation>Показать</translation>
     </message>
     <message>
-        <source>Create a new Channel</source>
-        <translation type="obsolete">Создать новый канал</translation>
-    </message>
-    <message>
-        <source>New Channel</source>
-        <translation type="obsolete">Новый Канал</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:600;&quot;&gt;Channels&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>Create Channel</source>
+        <translation>Создать канал</translation>
     </message>
     <message>
         <source>Post to Channel</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать сообщение в канале</translation>
     </message>
     <message>
         <source>Set all as read</source>
-        <translation type="unfinished"></translation>
+        <translation>Отметить как прочтенное</translation>
     </message>
     <message>
         <source>Enable Auto-Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Включить автоматическое скачивание</translation>
     </message>
     <message>
         <source>Own Channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Мои каналы</translation>
     </message>
     <message>
         <source>Subscribed Channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Подписка на каналы</translation>
     </message>
     <message>
         <source>Popular Channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Популярные каналы</translation>
     </message>
     <message>
         <source>Other Channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Другие каналы</translation>
     </message>
     <message>
         <source>Subscribe to Channel</source>
-        <translation type="unfinished"></translation>
+        <translation>Подписаться на канал</translation>
     </message>
     <message>
         <source>Unsubscribe to Channel</source>
-        <translation type="unfinished"></translation>
+        <translation>Отменить подписку на канал</translation>
     </message>
     <message>
         <source>Show Channel Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать подробности о канале</translation>
     </message>
     <message>
         <source>Restore Publish Rights for Channel</source>
-        <translation type="unfinished"></translation>
+        <translation>Восстановить права доступа к каналу</translation>
     </message>
     <message>
         <source>Edit Channel Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактировать детали канала</translation>
     </message>
     <message>
         <source>Share Channel</source>
-        <translation type="unfinished"></translation>
+        <translation>Сделать канал общим</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Копировать RetroShare-ссылку</translation>
     </message>
     <message>
         <source>No Channel Selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Не выбраны каналы</translation>
     </message>
     <message>
         <source>Disable Auto-Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Отменить автоматическое скачивание</translation>
     </message>
     <message>
         <source>Loading</source>
-        <translation type="unfinished"></translation>
+        <translation>Загрузка</translation>
     </message>
-</context>
-<context>
-    <name>ChannelUserNotify</name>
     <message>
-        <source>Channel Post</source>
-        <translation type="unfinished"></translation>
+        <source>Channels</source>
+        <translation>Каналы</translation>
+    </message>
+    <message>
+        <source>Publish rights restored.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Publish rights have been restored for this channel.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Publish not restored.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Publish rights can&apos;t be restored for this channel.&lt;br/&gt;You&apos;re not the creator of this channel.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ChatDialog</name>
     <message>
-        <source>Chat</source>
-        <translation type="obsolete">Чат</translation>
-    </message>
-    <message>
-        <source>Welcome to RetroShare&apos;s group chat.</source>
-        <translation type="obsolete">Добро пожаловать в групповой чат RetroShare</translation>
-    </message>
-    <message>
-        <source>Live Group Chat:</source>
-        <translation type="obsolete">Чат в группе:</translation>
-    </message>
-    <message>
-        <source>Underline</source>
-        <translation type="obsolete">Подчеркнуть</translation>
-    </message>
-    <message>
-        <source>Italic</source>
-        <translation type="obsolete">Курсив</translation>
-    </message>
-    <message>
-        <source>Bold</source>
-        <translation type="obsolete">Жирным</translation>
-    </message>
-    <message>
-        <source>Text Color</source>
-        <translation type="obsolete">Цвет текста</translation>
-    </message>
-    <message>
-        <source>Font</source>
-        <translation type="obsolete">Шрифт</translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation type="obsolete">Отправить</translation>
-    </message>
-    <message>
-        <source>Clear Chat History</source>
-        <translation type="obsolete">Очистить историю</translation>
-    </message>
-    <message>
-        <source>Your Friend is offline 
-Do you want to send them a Message instead</source>
-        <translation type="obsolete">Ваш друг форума
-Вы хотите, чтобы отправить им сообщение, а не</translation>
-    </message>
-    <message>
         <source>Your friend has more than one locations.
 Please choose one of it to chat with.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ваш друг указал несколько расположений.
+Чтобы начать чат выберите одно из них.</translation>
     </message>
 </context>
 <context>
     <name>ChatLobbyDialog</name>
     <message>
         <source>Change nick name</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменить никнейм</translation>
     </message>
     <message>
         <source>Please enter your new nick name</source>
-        <translation type="unfinished"></translation>
+        <translation>Пожалуйста, укажите свой никнейм</translation>
     </message>
     <message>
         <source>Lobby management</source>
-        <translation type="unfinished"></translation>
+        <translation>Управление лобби чата</translation>
     </message>
     <message>
         <source>%1 has left the lobby.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 вышел из лобби.</translation>
     </message>
     <message>
         <source>%1 joined the lobby.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 вошел в лобби.</translation>
     </message>
     <message>
         <source>Unsubscribe to lobby</source>
-        <translation type="unfinished"></translation>
+        <translation>Отменить подписку на лобби</translation>
     </message>
     <message>
         <source>Do you want to unsubscribe to this chat lobby?</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы хотите отменить подписку на это лобби чата?</translation>
     </message>
     <message>
         <source>Hide Participants</source>
-        <translation type="unfinished"></translation>
+        <translation>Скрыть участников</translation>
     </message>
     <message>
         <source>Show Participants</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать участников</translation>
     </message>
     <message>
         <source>Welcome to lobby %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Добро пожаловать в лобби %1</translation>
     </message>
     <message>
         <source>Topic: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Тема: %1</translation>
     </message>
     <message>
         <source>Uncheck to mute participant</source>
-        <translation type="unfinished"></translation>
+        <translation>Снимите &quot;галочку&quot; чтобы не видеть сообщения от пользователя</translation>
     </message>
     <message>
         <source>%1 changed his name to: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 изменил имя на: %2</translation>
     </message>
     <message>
         <source>Lobby chat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ChatLobbyToaster</name>
     <message>
         <source>Show Chat Lobby</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать лобби чата</translation>
     </message>
 </context>
 <context>
     <name>ChatLobbyWidget</name>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Chat lobbies&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Create new chat lobby</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать новое лобби чата</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя</translation>
     </message>
     <message>
         <source>Count</source>
-        <translation type="unfinished"></translation>
+        <translation>Человек</translation>
     </message>
     <message>
         <source>Private Lobbies</source>
-        <translation type="unfinished"></translation>
+        <translation>Приватные лобби</translation>
     </message>
     <message>
         <source>Public Lobbies</source>
-        <translation type="unfinished"></translation>
+        <translation>Публичные лобби</translation>
     </message>
     <message>
         <source>Create chat lobby</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать лобби чата</translation>
     </message>
     <message>
         <source>Unsubscribe</source>
-        <translation type="unfinished"></translation>
+        <translation>Отменить подписку</translation>
     </message>
     <message>
         <source>Subscribe</source>
-        <translation type="unfinished"></translation>
+        <translation>Подписаться</translation>
     </message>
     <message>
         <source>Invitation to chat lobby</source>
-        <translation type="unfinished"></translation>
+        <translation>Приглашение в лобби чата</translation>
     </message>
     <message>
         <source>%1  invites you to chat lobby named %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 пригласил вас в лобби %2</translation>
     </message>
     <message>
         <source>Topic</source>
-        <translation type="unfinished"></translation>
+        <translation>Тема</translation>
     </message>
     <message>
         <source>[No topic provided]</source>
-        <translation type="unfinished"></translation>
+        <translation>[без темы]</translation>
+    </message>
+    <message>
+        <source>Chat lobbies</source>
+        <translation>Лобби чата</translation>
     </message>
 </context>
 <context>
     <name>ChatMsgItem</name>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished">Удалить элемент</translation>
-    </message>
-    <message>
-        <source>Send Mail</source>
-        <translation type="unfinished">Написать письмо</translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation type="unfinished">Отправить</translation>
+        <translation>Удалить пункт</translation>
     </message>
     <message>
         <source>Write a quick Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Написать быстрое сообщение</translation>
+    </message>
+    <message>
+        <source>Send Mail</source>
+        <translation>Отправить почту</translation>
     </message>
     <message>
         <source>Write Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Написать сообщение</translation>
     </message>
     <message>
         <source>Start Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Начать чат</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>Отправить</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Отмена</translation>
     </message>
     <message>
         <source>Quick Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Быстрое сообщение</translation>
     </message>
 </context>
 <context>
     <name>ChatPage</name>
     <message>
-        <source>Private Chat</source>
-        <translation type="unfinished">Частные чат</translation>
-    </message>
-    <message>
-        <source>Group chat</source>
-        <translation type="unfinished">Групповой чат</translation>
-    </message>
-    <message>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Главное</translation>
     </message>
     <message>
         <source>Chat Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройки чата</translation>
     </message>
     <message>
         <source>Enable Emoticons Privat Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Разрешить смайлики в чате</translation>
     </message>
     <message>
         <source>Enable Emoticons Group Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Разрешить смайлики в чате</translation>
     </message>
     <message>
         <source>Send message with Ctrl+Return</source>
-        <translation type="unfinished"></translation>
+        <translation>Посылать по Ctrl+Enter</translation>
     </message>
     <message>
         <source>Default nickname for chat lobbies:</source>
-        <translation type="unfinished"></translation>
+        <translation>Никнейм по умолчанию для лобби чата:</translation>
     </message>
     <message>
         <source>Chat Font</source>
-        <translation type="unfinished"></translation>
+        <translation>Шрифт чата</translation>
     </message>
     <message>
         <source>Change Chat Font</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменить шрифт чата</translation>
     </message>
     <message>
         <source>Chat Font:</source>
-        <translation type="unfinished"></translation>
+        <translation>Шрифт чата:</translation>
     </message>
     <message>
         <source>History</source>
-        <translation type="unfinished"></translation>
+        <translation>История</translation>
     </message>
     <message>
         <source>Group Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Групповой чат</translation>
     </message>
     <message>
         <source>Enable</source>
-        <translation type="unfinished"></translation>
+        <translation>Включить</translation>
     </message>
     <message>
         <source>Number of saved messages (0 = unlimited)</source>
-        <translation type="unfinished"></translation>
+        <translation>Число сохраненных сообщений (0 = бесконечно)</translation>
     </message>
     <message>
         <source>Load number of messages (0 = off)</source>
-        <translation type="unfinished"></translation>
+        <translation>Число загружаемых сообщений (0 = отключить)</translation>
+    </message>
+    <message>
+        <source>Private Chat</source>
+        <translation>Приватный чат</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation type="unfinished"></translation>
+        <translation>Стиль</translation>
+    </message>
+    <message>
+        <source>Group chat</source>
+        <translation>Групповой чат</translation>
     </message>
     <message>
         <source>Variant</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Author:</source>
-        <translation type="unfinished"></translation>
+        <translation>Автор:</translation>
     </message>
     <message>
         <source>Description:</source>
-        <translation type="unfinished"></translation>
+        <translation>Описание:</translation>
     </message>
     <message>
         <source>Private chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Приватный чат</translation>
     </message>
     <message>
         <source>Incoming</source>
-        <translation type="unfinished"></translation>
+        <translation>Входящие</translation>
     </message>
     <message>
         <source>Outgoing</source>
-        <translation type="unfinished"></translation>
+        <translation>Исходящие</translation>
     </message>
     <message>
         <source>Incoming message in history</source>
-        <translation type="unfinished"></translation>
+        <translation>История входящих сообщений</translation>
     </message>
     <message>
         <source>Outgoing message in history</source>
-        <translation type="unfinished"></translation>
+        <translation>История исходящих сообщений</translation>
     </message>
     <message>
         <source>Incoming message</source>
-        <translation type="unfinished"></translation>
+        <translation>Входящее сообщение</translation>
     </message>
     <message>
         <source>Outgoing message</source>
-        <translation type="unfinished"></translation>
+        <translation>Исходящее сообщение</translation>
     </message>
     <message>
         <source>Outgoing offline message</source>
-        <translation type="unfinished"></translation>
+        <translation>Исходящее оффлайн-сообщение</translation>
     </message>
     <message>
         <source>Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Чат</translation>
     </message>
     <message>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation>Система</translation>
     </message>
     <message>
         <source>System message</source>
-        <translation type="unfinished"></translation>
+        <translation>Системное сообщение</translation>
     </message>
 </context>
 <context>
     <name>ChatStyle</name>
     <message>
         <source>Standard style for group chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Стандартный стиль для группового чата</translation>
     </message>
     <message>
         <source>Compact style for group chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Компактный стиль для группового чата</translation>
     </message>
     <message>
         <source>Standard style for private chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Стандартный стиль для приватного чата</translation>
     </message>
     <message>
         <source>Compact style for private chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Компактный стиль для приватного чата</translation>
     </message>
     <message>
         <source>Standard style for history</source>
-        <translation type="unfinished"></translation>
+        <translation>Стандартный стиль для истории</translation>
     </message>
     <message>
         <source>Compact style for history</source>
-        <translation type="unfinished"></translation>
+        <translation>Компактный стиль для истории</translation>
     </message>
 </context>
 <context>
     <name>ChatToaster</name>
     <message>
         <source>Show Chat</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ChatUserNotify</name>
-    <message>
-        <source>Private Chat</source>
-        <translation type="unfinished">Частные чат</translation>
+        <translation>Показать чат</translation>
     </message>
 </context>
 <context>
     <name>ChatWidget</name>
     <message>
         <source>Close</source>
-        <translation type="unfinished">закрыть </translation>
+        <translation>Закрыть</translation>
     </message>
     <message>
         <source>Bold</source>
-        <translation type="unfinished">Жирным</translation>
+        <translation>Жирный</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation type="unfinished">Подчеркнуть</translation>
+        <translation>Подчеркнутый</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation type="unfinished">Курсив</translation>
+        <translation>Курсив</translation>
     </message>
     <message>
         <source>Font</source>
-        <translation type="unfinished">Шрифт</translation>
+        <translation>Шрифт</translation>
     </message>
     <message>
         <source>Text Color</source>
-        <translation type="unfinished">Цвет текста</translation>
+        <translation>Цвет текста</translation>
     </message>
     <message>
         <source>Attach a Picture</source>
-        <translation type="unfinished"></translation>
+        <translation>Прикрепить изображения</translation>
     </message>
     <message>
         <source>Add a File for your Friend</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить файл для друга</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished">Отправить</translation>
+        <translation>Послать</translation>
     </message>
     <message>
         <source>Strike</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Clear Chat History</source>
-        <translation type="unfinished">Очистить историю</translation>
+        <translation>Очистить историю чата</translation>
     </message>
     <message>
         <source>Disable Emoticons</source>
-        <translation type="unfinished">Отключить смайлики</translation>
+        <translation>Отключить смайлики</translation>
     </message>
     <message>
         <source>Save Chat History</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить историю чата</translation>
     </message>
     <message>
         <source>Browse Message History</source>
-        <translation type="unfinished"></translation>
+        <translation>Листать историю сообщений</translation>
     </message>
     <message>
         <source>Browse History</source>
-        <translation type="unfinished"></translation>
+        <translation>Листать историю</translation>
     </message>
     <message>
         <source>Delete Chat History</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить историю чата</translation>
     </message>
     <message>
         <source>Deletes all stored and displayed chat history</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить всю сохраненную и показываемую историю чата</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить RetroShare-ссылку</translation>
     </message>
     <message>
         <source>is typing...</source>
-        <translation type="unfinished"></translation>
+        <translation>печатает...</translation>
     </message>
     <message>
         <source>Do you really want to physically delete the history?</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы действительно хотите удалить историю сообщений с диска?</translation>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation type="unfinished">Дополнительные файлы</translation>
+        <translation>Добавить файл</translation>
     </message>
     <message>
         <source>Load Picture File</source>
-        <translation type="unfinished"></translation>
+        <translation>Загрузить файл изображение</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="unfinished">Сохранить как ...</translation>
+        <translation>Сохранить как...</translation>
     </message>
     <message>
         <source>Text File (*.txt );;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Текстовый файл (*.txt );;Все файлы (*)</translation>
     </message>
     <message>
         <source>apears to be Offline.</source>
-        <translation type="unfinished"></translation>
+        <translation>кажется в оффлайн.</translation>
     </message>
     <message>
         <source>Messages you send will be delivered after Friend is again Online</source>
-        <translation type="unfinished"></translation>
+        <translation>Сообщения которые вы отправите другу будут доставлены когда он появится онлайн</translation>
     </message>
     <message>
         <source>is Idle and may not reply</source>
-        <translation type="unfinished"></translation>
+        <translation>сейчас неактивен и может вам не ответить</translation>
     </message>
     <message>
         <source>is Away and may not reply</source>
-        <translation type="unfinished"></translation>
+        <translation>сейчас отошел и может вам не ответить</translation>
     </message>
     <message>
         <source>is Busy and may not reply</source>
-        <translation type="unfinished"></translation>
+        <translation>сейчас занят и может вам не ответить</translation>
     </message>
     <message>
         <source>Choose font</source>
-        <translation type="unfinished"></translation>
+        <translation>Выберите шрифт</translation>
     </message>
     <message>
         <source>Reset font to default</source>
-        <translation type="unfinished"></translation>
+        <translation>Сбросить настройки шрифта</translation>
     </message>
     <message>
         <source>Paste own certificate link</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ComboStatus</name>
-    <message>
-        <source>Online</source>
-        <translation type="obsolete">Онлайн</translation>
-    </message>
-    <message>
-        <source>Away</source>
-        <translation type="obsolete">Далеко</translation>
-    </message>
-    <message>
-        <source>Busy</source>
-        <translation type="obsolete">Занятый</translation>
-    </message>
-</context>
-<context>
-    <name>ConclusionPage</name>
-    <message>
-        <source>Make Friend</source>
-        <translation type="obsolete">Объявить другом</translation>
-    </message>
-    <message>
-        <source>Trust:</source>
-        <translation type="obsolete">Доверие:</translation>
-    </message>
-    <message>
-        <source>Name:</source>
-        <translation type="obsolete">Имя:</translation>
-    </message>
-    <message>
-        <source>Org:</source>
-        <translation type="obsolete">Огр.:</translation>
-    </message>
-    <message>
-        <source>Loc:</source>
-        <translation type="obsolete">Место:</translation>
-    </message>
-    <message>
-        <source>Country:</source>
-        <translation type="obsolete">Страна:</translation>
+        <translation>Вставить ссылку на ваш сертификат</translation>
     </message>
 </context>
 <context>
     <name>ConfCertDialog</name>
     <message>
-        <source>Cancel</source>
-        <translation>Отмена</translation>
-    </message>
-    <message>
-        <source>Port:</source>
-        <translation type="obsolete">Порт: </translation>
-    </message>
-    <message>
-        <source>Trust Settings</source>
-        <translation type="obsolete">Целевой Настройки </translation>
-    </message>
-    <message>
-        <source>Trust Level</source>
-        <translation type="obsolete">Целевой уровень</translation>
-    </message>
-    <message>
-        <source>Trust Their Signature</source>
-        <translation type="obsolete">Целевой подпись </translation>
-    </message>
-    <message>
-        <source>Sign The Certificate</source>
-        <translation type="obsolete">Знак сертификата </translation>
+        <source>Friend Details</source>
+        <translation>Детали о друге</translation>
     </message>
     <message>
         <source>Details</source>
         <translation>Подробности</translation>
-    </message>
-    <message>
-        <source>Loc</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Peer Address</source>
-        <translation>Адрес узла</translation>
-    </message>
-    <message>
-        <source>Name:</source>
-        <translation type="obsolete">Имя:</translation>
-    </message>
-    <message>
-        <source>Peer Details</source>
-        <translation type="obsolete">Настройки контакта</translation>
     </message>
     <message>
         <source>Peer Info</source>
@@ -1861,7 +1377,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Peer ID</source>
-        <translation></translation>
+        <translation>ID пира</translation>
     </message>
     <message>
         <source>Last Contact</source>
@@ -1872,20 +1388,124 @@ p, li { white-space: pre-wrap; }
         <translation>Версия</translation>
     </message>
     <message>
-        <source>Loc:</source>
-        <translation type="obsolete">Место:</translation>
+        <source>Loc</source>
+        <translation>Лок.</translation>
+    </message>
+    <message>
+        <source>RetroShare ID</source>
+        <translation>RetroShare ID</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>Статус</translation>
+    </message>
+    <message>
+        <source>Peer Address</source>
+        <translation>Адрес узла</translation>
+    </message>
+    <message>
+        <source>Local Address</source>
+        <translation>Локальный адрес</translation>
+    </message>
+    <message>
+        <source>External Address</source>
+        <translation>Внешний адрес</translation>
+    </message>
+    <message>
+        <source>Dynamic DNS</source>
+        <translation>Динамический DNS</translation>
+    </message>
+    <message>
+        <source>Port</source>
+        <translation>Порт</translation>
     </message>
     <message>
         <source>Addresses list</source>
         <translation>Список адресов</translation>
     </message>
     <message>
+        <source>Trust </source>
+        <translation>Доверие</translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is:</source>
+        <translation>Ваше доверие к этой совокупности является:</translation>
+    </message>
+    <message>
+        <source>None </source>
+        <translation>Нет</translation>
+    </message>
+    <message>
+        <source>Marginal </source>
+        <translation>Частичное</translation>
+    </message>
+    <message>
+        <source>Full </source>
+        <translation>Полное</translation>
+    </message>
+    <message>
+        <source>GPG Key</source>
+        <translation>Ключа GPG</translation>
+    </message>
+    <message>
+        <source>Peer has signed my GPG key</source>
+        <translation>Peer подписал мой ключа GPG</translation>
+    </message>
+    <message>
+        <source>Show Help for Trust Settings and Signing</source>
+        <translation>Помощь по Доверию и Подписанию</translation>
+    </message>
+    <message>
+        <source>Peer key is signed by :</source>
+        <translation>Peer ключевые подписан :</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a friend's key is a way to express your trust into this friend, to your other friends. Besides, only signed peers will receive information about your other trusted friends.&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a friend&apos;s key is a way to express your trust into this friend, to your other friends. Besides, only signed peers will receive information about your other trusted friends.&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Sign GPG key</source>
+        <translation>Войти ключа GPG</translation>
+    </message>
+    <message>
+        <source>Deny Friend</source>
+        <translation>Запретить другу</translation>
+    </message>
+    <message>
+        <source>Make Friend</source>
+        <translation>Подружиться</translation>
+    </message>
+    <message>
+        <source>Certificate</source>
+        <translation>Сертификат</translation>
+    </message>
+    <message>
         <source>Apply and Close</source>
         <translation>Применить и закрыть</translation>
     </message>
     <message>
+        <source>OK</source>
+        <translation>OK (Хорошо)</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+    <message>
         <source>RetroShare</source>
-        <translation></translation>
+        <translation>RetroShare</translation>
     </message>
     <message>
         <source>Error : cannot get peer details.</source>
@@ -1936,2276 +1556,1886 @@ p, li { white-space: pre-wrap; }
         <translation>Может быть, неправильный пароль</translation>
     </message>
     <message>
-        <source>Trust </source>
-        <translation>Доверие</translation>
+        <source>Include signatures</source>
+        <translation>Включая подписи</translation>
     </message>
     <message>
-        <source>None </source>
-        <translation type="unfinished"></translation>
+        <source>The supplied key algorithm is not supported by RetroShare
+(Only RSA keys are supported at the moment)</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Marginal </source>
-        <translation type="unfinished"></translation>
+        <source>Other infos</source>
+        <translation>Другая информация</translation>
     </message>
     <message>
-        <source>Full </source>
-        <translation type="unfinished"></translation>
+        <source>Use old key format</source>
+        <translation>Использовать старый формат ключа</translation>
+    </message>
+</context>
+<context>
+    <name>ConnectFriendWizard</name>
+    <message>
+        <source>Certificate Load Failed</source>
+        <translation>Ошибка загрузки сертификата</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a friend&apos;s key is a way to express your trust into this friend, to your other friends. Besides, only signed peers will receive information about your other trusted friends.&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>Connect Friend Wizard</source>
+        <translation>Помощник Подключения к другу</translation>
     </message>
     <message>
-        <source>Deny Friend</source>
-        <translation>Запретить другу</translation>
+        <source>Add a new Friend</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Sign GPG key</source>
-        <translation>Войти ключа GPG</translation>
+        <source>This wizard will help you to connect to your friend(s) to RetroShare network.&lt;br&gt;These ways are possible to do this:</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Friend Details</source>
-        <translation type="unfinished"></translation>
+        <source>&amp;Enter the certificate manually</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&amp;You get a certificate file from your friend</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&amp;Make friend with selected friends of my friends</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&amp;Enter RetroShare ID manually</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&amp;Send a Invitation by Email 
+ (She/He receives a email with instructions howto to download RetroShare)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Text certificate</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Use text representation of the PGP certificates.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The text below is your PGP certificate. You have to provide it to your friend</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Include signatures</source>
+        <translation>Вставить подписи</translation>
+    </message>
+    <message>
+        <source>Copy your Cert to Clipboard</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Save your Cert into a File</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Run Email program</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please, paste your friends PGP certificate into the box below</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Certificate files</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Use PGP certificates saved in files.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Import friend&apos;s certificate...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You have to generate a file with your certificate and give it to your friend. Also, you can use a file generated before.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export my certificate...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Drag and Drop your friends&apos;s certificate in this Window or specify path in the box below</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>Выбор файла</translation>
+    </message>
+    <message>
+        <source>Friends of friends</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Select now who you want to make friends with.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show me:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Make friend with these peers</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare ID</source>
-        <translation type="unfinished"></translation>
+        <translation>RetroShare ID</translation>
     </message>
     <message>
-        <source>Status</source>
-        <translation type="unfinished"></translation>
+        <source>Use RetroShare ID for adding a Friend which is available in your network.</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Local Address</source>
-        <translation>Локальный адрес</translation>
+        <source>Add Friends RetroShare ID...</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>External Address</source>
-        <translation>Внешний адрес</translation>
+        <source>Paste Friends RetroShare ID in the box below</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Dynamic DNS</source>
-        <translation type="unfinished"></translation>
+        <source>Enter the RetroShare ID of your Friend, e.g. Peer@BDE8D16A46D938CF</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Port</source>
-        <translation>Порт</translation>
+        <source>Invite Friends by Email</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Your trust in this peer is:</source>
-        <translation>Ваше доверие к этой совокупности является:</translation>
+        <source>Enter your friends&apos; email addresses (seperate each on with a semicolon)</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>None</source>
-        <translation type="obsolete">никакой</translation>
+        <source>Your friends&apos; email addresses:</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Marginal</source>
-        <translation type="obsolete">Маргинальные</translation>
+        <source>Enter Friends Email addresses</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Full</source>
-        <translation type="obsolete">Полный</translation>
+        <source>Subject:</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>GPG Key</source>
-        <translation>Ключа GPG</translation>
+        <source>Sorry, some error appeared</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Peer has signed my GPG key</source>
-        <translation>Peer подписал мой ключа GPG</translation>
-    </message>
-    <message>
-        <source>Show Help for Trust Settings and Signing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Peer key is signed by :</source>
-        <translation>Peer ключевые подписан :</translation>
-    </message>
-    <message>
-        <source>SignGPG Key</source>
-        <translation type="obsolete">Войти ключа GPG</translation>
+        <source>Here is the error message:</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Make Friend</source>
         <translation>Подружиться</translation>
     </message>
     <message>
-        <source>Certificate</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Include signatures</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The supplied key algorithm is not supported by RetroShare
-(Only RSA keys are supported at the moment)</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ConfirmQuitDialog</name>
-    <message>
-        <source>Exit RetroShare</source>
-        <translation type="obsolete">Завершение RetroShare</translation>
-    </message>
-    <message>
-        <source>You are about to exit the RetroShare application and therefore stop all transfers. &lt;br&gt;&lt;br&gt;Are you sure you want to stop and exit RetroShare?</source>
-        <translation type="obsolete">Вы хотите завершить RetroShare. Все передачи файлов будут остановлены. &lt;br&gt;&lt;br&gt;Действительно завершить ?</translation>
-    </message>
-    <message>
-        <source>Do not show this message again.</source>
-        <translation type="obsolete">Больше не показывать это сообщение</translation>
-    </message>
-</context>
-<context>
-    <name>ConnectDialog</name>
-    <message>
-        <source>Peer Details</source>
-        <translation type="obsolete">Свойства узла</translation>
-    </message>
-    <message>
-        <source>Make Friend</source>
-        <translation type="obsolete">Объявить другом</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="obsolete">Отмена</translation>
-    </message>
-    <message>
-        <source>Trust:</source>
-        <translation type="obsolete">Доверие:</translation>
-    </message>
-    <message>
-        <source>Name:</source>
-        <translation type="obsolete">Имя:</translation>
-    </message>
-    <message>
-        <source>Org:</source>
-        <translation type="obsolete">Огр.:</translation>
-    </message>
-    <message>
-        <source>Loc:</source>
-        <translation type="obsolete">Место:</translation>
-    </message>
-    <message>
-        <source>Country:</source>
-        <translation type="obsolete">Страна:</translation>
-    </message>
-    <message>
-        <source>signers:</source>
-        <translation type="obsolete">подписи:</translation>
-    </message>
-    <message>
-        <source>AUTH CODE:</source>
-        <translation type="obsolete">Код доступа:</translation>
-    </message>
-</context>
-<context>
-    <name>ConnectFriendWizard</name>
-    <message>
-        <source>Connect Friend Wizard</source>
-        <translation type="unfinished">Подключите другой мастер</translation>
-    </message>
-    <message>
-        <source>Certificate Load Failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add a new Friend</source>
-        <translation type="unfinished">Добавить нового друга</translation>
-    </message>
-    <message>
-        <source>This wizard will help you to connect to your friend(s) to RetroShare network.&lt;br&gt;These ways are possible to do this:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Enter the certificate manually</source>
-        <translation type="unfinished">&amp;Введите сертификат вручную</translation>
-    </message>
-    <message>
-        <source>&amp;You get a certificate file from your friend</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Make friend with selected friends of my friends</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Enter RetroShare ID manually</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Send a Invitation by Email 
- (She/He receives a email with instructions howto to download RetroShare)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Text certificate</source>
-        <translation type="unfinished">Текст сертификата</translation>
-    </message>
-    <message>
-        <source>Use text representation of the PGP certificates.</source>
-        <translation type="unfinished">Использовать текст представления сертификатов PGP.</translation>
-    </message>
-    <message>
-        <source>The text below is your PGP certificate. You have to provide it to your friend</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Include signatures</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Copy your Cert to Clipboard</source>
-        <translation type="unfinished">Скопируйте в буфер обмена Cert</translation>
-    </message>
-    <message>
-        <source>Save your Cert into a File</source>
-        <translation type="unfinished">Cert Сохранить в файл</translation>
-    </message>
-    <message>
-        <source>Run Email program</source>
-        <translation type="unfinished">Запустите почтовую программу</translation>
-    </message>
-    <message>
-        <source>Please, paste your friends PGP certificate into the box below</source>
-        <translation type="unfinished">Пожалуйста, вставьте друзья PGP сертификата в окне, расположенном ниже</translation>
-    </message>
-    <message>
-        <source>Clean certificate</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Certificate files</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use PGP certificates saved in files.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Import friend&apos;s certificate...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You have to generate a file with your certificate and give it to your friend. Also, you can use a file generated before.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export my certificate...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Drag and Drop your friends&apos;s certificate in this Window or specify path in the box below</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Browse</source>
-        <translation type="unfinished">Выбор файла</translation>
-    </message>
-    <message>
-        <source>Friends of friends</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select now who you want to make friends with.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show me:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Make friend with these peers</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>RetroShare ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use RetroShare ID for adding a Friend which is available in your network.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add Friends RetroShare ID...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Paste Friends RetroShare ID in the box below</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enter the RetroShare ID of your Friend, e.g. Peer@BDE8D16A46D938CF</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Invite Friends by Email</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enter your friends&apos; email addresses (seperate each on with a semicolon)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Your friends&apos; email addresses:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enter Friends Email addresses</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Subject:</source>
-        <translation type="unfinished">Тема:</translation>
-    </message>
-    <message>
-        <source>Sorry, some error appeared</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Here is the error message:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Make Friend</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Details about your friend:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Peer details</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Key validity:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished">Имя:</translation>
+        <translation>Имя:</translation>
     </message>
     <message>
         <source>Email:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Location:</source>
-        <translation type="unfinished"></translation>
+        <translation>Расположение:</translation>
     </message>
     <message>
         <source>Signers</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>It seems your friend is already registered. Adding it might just set it&apos;s ip address.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add friend to group:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Authenticate friend (Sign GPG Key)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add as friend to connect with</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Any peer I&apos;ve not signed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends of my friends who already trust me</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Signed peers showing as denied</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Peer name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Also signed by</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Peer id</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare Invitation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Ultimate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Full</source>
-        <translation type="unfinished">Полный</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Marginal</source>
-        <translation type="unfinished">Маргинальные</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished">никакой</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>No Trust</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Certificate Load Failed:can&apos;t read from file %1 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Certificate Load Failed:something is wrong with %1 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Certificate Load Failed:file %1 not found</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This Peer %1 is not available in your Network</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Remove signatures</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare Invite</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>No or misspelled BEGIN tag found</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>No or misspelled END tag found</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>No checksum found (the last 5 chars should be separated by a &apos;=&apos; char), or no newline after tag line (e.g. line beginning with Version:)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unknown error. Your cert is probably not even a certificate.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Certificate cleaning error</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Connect Friend Help</source>
-        <translation type="unfinished">Связь Помощь другу</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>You can copy this text and send it to your friend via email or some other way</source>
-        <translation type="unfinished">Вы можете скопировать этот текст и отправить его другу по электронной почте или другим способом</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Your Cert is copied to Clipboard, paste and send it to your riend via email or some other way</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="unfinished">Сохранить как ...</translation>
+        <translation>Сохранить как...</translation>
     </message>
     <message>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Сертификат RetroShare (*.rsc ); Все файлы (*)</translation>
     </message>
     <message>
         <source>Select Certificate</source>
-        <translation type="unfinished">Выберите сертификат</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sorry, create certificate failed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Please choose a filename</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Certificate file successfully created</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sorry, certificate file creation failed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>*** None ***</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Friend request</source>
+        <translation>Запросы на дружбу</translation>
+    </message>
+    <message>
+        <source>Details about the request</source>
+        <translation>Подробности запроса</translation>
+    </message>
+    <message>
+        <source>Cannot get peer details of gpg key %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You have a friend request from</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Use new certificate format (safer, more robust)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Use old (backward compatible) certificate format</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>CreateBlog</name>
     <message>
-        <source>Description</source>
-        <translation type="unfinished">Описание</translation>
-    </message>
-    <message>
-        <source>Type:</source>
-        <translation type="unfinished">Тип:</translation>
-    </message>
-    <message>
-        <source>Allowed Messages</source>
-        <translation type="unfinished">Номер сообщения</translation>
-    </message>
-    <message>
-        <source>Authenticated Messages</source>
-        <translation type="unfinished">Прошедшие проверку сообщений</translation>
-    </message>
-    <message>
-        <source>Anonymous Messages</source>
-        <translation type="unfinished">Анонимные сообщения</translation>
-    </message>
-    <message>
-        <source>Create</source>
-        <translation type="unfinished">Создать</translation>
-    </message>
-    <message>
-        <source>Please add a Name</source>
-        <translation type="unfinished">Просьба добавить имя</translation>
-    </message>
-    <message>
         <source>Create new Blog</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать новый блог</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;New Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;Новый блог&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя</translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation>Описание</translation>
+    </message>
+    <message>
+        <source>Type:</source>
+        <translation>Тип:</translation>
     </message>
     <message>
         <source>Public - Anyone can read and publish (Shared Publish Key)</source>
-        <translation type="unfinished"></translation>
+        <translation>Публичный - Все могут читать и публиковать (Shared Publish Key)</translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ограниченный - Все могут читать, ограниченная публикация (Private Publish Key)</translation>
     </message>
     <message>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation type="unfinished"></translation>
+        <translation>Приватный - Для чтения необходим Private Publish Key</translation>
+    </message>
+    <message>
+        <source>Allowed Messages</source>
+        <translation>Разрешенные сообщения</translation>
+    </message>
+    <message>
+        <source>Authenticated Messages</source>
+        <translation>Сообщения прошедшие проверку</translation>
+    </message>
+    <message>
+        <source>Anonymous Messages</source>
+        <translation>Анонимные сообщзения</translation>
     </message>
     <message>
         <source>Blog Logo</source>
-        <translation type="unfinished"></translation>
+        <translation>Логотип блога</translation>
     </message>
     <message>
         <source>Add Blog Logo</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить логотип блога</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Отмена</translation>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation>Создать</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"></translation>
+        <translation>RetroShare</translation>
+    </message>
+    <message>
+        <source>Please add a Name</source>
+        <translation>Добавьте имя</translation>
     </message>
     <message>
         <source>Load File</source>
-        <translation type="unfinished"></translation>
+        <translation>Загрузить файл</translation>
     </message>
     <message>
         <source>Pictures (*.png *.xpm *.jpg)</source>
-        <translation type="unfinished"></translation>
+        <translation>Изображения (*.png *.xpm *.jpg)</translation>
     </message>
 </context>
 <context>
     <name>CreateBlogMsg</name>
     <message>
-        <source>Attachments</source>
-        <translation type="obsolete">Вложения</translation>
-    </message>
-    <message>
-        <source>Bold</source>
-        <translation type="unfinished">Жирным</translation>
-    </message>
-    <message>
-        <source>Underline</source>
-        <translation type="unfinished">Подчеркнуть</translation>
-    </message>
-    <message>
-        <source>Italic</source>
-        <translation type="unfinished">Курсив</translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation type="obsolete">Дополнительные файлы</translation>
-    </message>
-    <message>
-        <source>&amp;Quit</source>
-        <translation type="unfinished">Выход</translation>
-    </message>
-    <message>
-        <source>HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation type="unfinished">HTML-файлы (*. HTM *. HTML), все файлы (*)</translation>
-    </message>
-    <message>
-        <source>Save as...</source>
-        <translation type="unfinished">Сохранить как ...</translation>
-    </message>
-    <message>
-        <source>Print Document</source>
-        <translation type="unfinished">Распечатать документ</translation>
-    </message>
-    <message>
         <source>New Blog Post</source>
-        <translation type="unfinished"></translation>
+        <translation>Новая запись в блоге</translation>
     </message>
     <message>
         <source>Blog Post</source>
-        <translation type="unfinished"></translation>
+        <translation>Запись в блоге</translation>
     </message>
     <message>
         <source>Blog Post to:</source>
-        <translation type="unfinished"></translation>
+        <translation>Запись в блог:</translation>
     </message>
     <message>
         <source>Visual Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Визуальный редактор</translation>
     </message>
     <message>
         <source>Blog Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Сообщение блога</translation>
     </message>
     <message>
         <source>Subject :</source>
-        <translation type="unfinished"></translation>
+        <translation>Тема:</translation>
     </message>
     <message>
         <source>Html Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>HTML-редактор</translation>
     </message>
     <message>
         <source>toolBar</source>
-        <translation type="unfinished"></translation>
+        <translation>Панель инструментов</translation>
     </message>
     <message>
         <source>toolBar_2</source>
-        <translation type="unfinished"></translation>
+        <translation>Панель инструментов</translation>
     </message>
     <message>
         <source>blockquoute</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Increase font Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Увеличить размер шрифта</translation>
     </message>
     <message>
         <source>Decrease font size</source>
-        <translation type="unfinished"></translation>
+        <translation>Уменьшить размер шрифта</translation>
+    </message>
+    <message>
+        <source>Bold</source>
+        <translation>Жирный</translation>
+    </message>
+    <message>
+        <source>Underline</source>
+        <translation>Подчеркнутый</translation>
+    </message>
+    <message>
+        <source>Italic</source>
+        <translation>Курсив</translation>
     </message>
     <message>
         <source>Publish</source>
-        <translation type="unfinished"></translation>
+        <translation>Обупликовать</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>Новый</translation>
     </message>
     <message>
         <source>Code</source>
-        <translation type="unfinished"></translation>
+        <translation>Код</translation>
     </message>
     <message>
         <source>splitPost</source>
-        <translation type="unfinished"></translation>
+        <translation>Разделить запись</translation>
     </message>
     <message>
         <source>Ordered List</source>
-        <translation type="unfinished"></translation>
+        <translation>Отсортированный список</translation>
     </message>
     <message>
         <source>Unordered List</source>
-        <translation type="unfinished"></translation>
+        <translation>Не отсортированный список</translation>
     </message>
     <message>
         <source>Clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Буфер обмена</translation>
     </message>
     <message>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>Undo</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"></translation>
+        <translation>RetroShare</translation>
     </message>
     <message>
         <source>Please add a Subject</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавьте тему</translation>
     </message>
     <message>
         <source>&amp;File</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл</translation>
     </message>
     <message>
         <source>&amp;New</source>
-        <translation type="unfinished"></translation>
+        <translation>Новый</translation>
     </message>
     <message>
         <source>&amp;Open...</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть...</translation>
     </message>
     <message>
         <source>&amp;Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить</translation>
     </message>
     <message>
         <source>Save &amp;As...</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить как...</translation>
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation type="unfinished"></translation>
+        <translation>Печать...</translation>
     </message>
     <message>
         <source>Print Preview...</source>
-        <translation type="unfinished"></translation>
+        <translation>Предварительный просмотр</translation>
     </message>
     <message>
         <source>&amp;Export PDF...</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт в PDF...</translation>
+    </message>
+    <message>
+        <source>&amp;Quit</source>
+        <translation>Выход</translation>
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Правка</translation>
     </message>
     <message>
         <source>&amp;Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>Отмена</translation>
     </message>
     <message>
         <source>&amp;Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>Повтор</translation>
     </message>
     <message>
         <source>Cu&amp;t</source>
-        <translation type="unfinished"></translation>
+        <translation>Вырезать</translation>
     </message>
     <message>
         <source>&amp;Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Копировать</translation>
     </message>
     <message>
         <source>&amp;Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить</translation>
     </message>
     <message>
         <source>&amp;View</source>
-        <translation type="unfinished"></translation>
+        <translation>Просмотр</translation>
     </message>
     <message>
         <source>&amp;Insert</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставка</translation>
     </message>
     <message>
         <source>&amp;Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Изображение</translation>
     </message>
     <message>
         <source>F&amp;ormat</source>
-        <translation type="unfinished"></translation>
+        <translation>Формат</translation>
     </message>
     <message>
         <source>&amp;Bold</source>
-        <translation type="unfinished"></translation>
+        <translation>Полужирный</translation>
     </message>
     <message>
         <source>&amp;Italic</source>
-        <translation type="unfinished"></translation>
+        <translation>Курсив</translation>
     </message>
     <message>
         <source>&amp;Underline</source>
-        <translation type="unfinished"></translation>
+        <translation>Подчеркивание</translation>
     </message>
     <message>
         <source>&amp;Left</source>
-        <translation type="unfinished"></translation>
+        <translation>По левому краю</translation>
     </message>
     <message>
         <source>C&amp;enter</source>
-        <translation type="unfinished"></translation>
+        <translation>По центру</translation>
     </message>
     <message>
         <source>&amp;Right</source>
-        <translation type="unfinished"></translation>
+        <translation>По правому краю</translation>
     </message>
     <message>
         <source>&amp;Justify</source>
-        <translation type="unfinished"></translation>
+        <translation>По ширине</translation>
     </message>
     <message>
         <source>&amp;Text Color...</source>
-        <translation type="unfinished"></translation>
+        <translation>Цвет текста...</translation>
     </message>
     <message>
         <source>Application</source>
-        <translation type="unfinished"></translation>
+        <translation>Приложение</translation>
     </message>
     <message>
         <source>The document has been modified.
 Do you want to save your changes?</source>
-        <translation type="unfinished"></translation>
+        <translation>Документ был изменен.
+Хотите сохранить изменения?</translation>
     </message>
     <message>
         <source>Open File...</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть файл...</translation>
+    </message>
+    <message>
+        <source>HTML-Files (*.htm *.html);;All Files (*)</source>
+        <translation>HTML-файлы(*.htm *.html);;Все файлы (*)</translation>
+    </message>
+    <message>
+        <source>Save as...</source>
+        <translation>Сохранить как...</translation>
     </message>
     <message>
         <source>ODF files (*.odt);;HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>ODF-файлы (*.odt);;HTML-файлы(*.htm *.html);;Все файлы (*)</translation>
+    </message>
+    <message>
+        <source>Print Document</source>
+        <translation>Распечатать документ</translation>
     </message>
     <message>
         <source>Export PDF</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт PDF</translation>
     </message>
     <message>
         <source>Choose Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать изображение</translation>
     </message>
     <message>
         <source>Image Files supported (*.png *.jpeg *.jpg *.gif)</source>
-        <translation type="unfinished"></translation>
+        <translation>Поддерживаются типы файлов (*.png *.jpeg *.jpg *.gif)</translation>
     </message>
 </context>
 <context>
     <name>CreateChannel</name>
     <message>
         <source>Create a new Channel</source>
-        <translation type="unfinished">Создать новый канал</translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation type="unfinished">Описание</translation>
-    </message>
-    <message>
-        <source>Type:</source>
-        <translation type="unfinished">Тип:</translation>
-    </message>
-    <message>
-        <source>Allowed Messages</source>
-        <translation type="unfinished">Номер сообщения</translation>
-    </message>
-    <message>
-        <source>Anonymous Messages</source>
-        <translation type="unfinished">Анонимные сообщения</translation>
-    </message>
-    <message>
-        <source>Authenticated Messages</source>
-        <translation type="unfinished">Прошедшие проверку сообщений</translation>
-    </message>
-    <message>
-        <source>Channel Logo</source>
-        <translation type="unfinished">Логотип канала</translation>
-    </message>
-    <message>
-        <source>Add Channel Logo</source>
-        <translation type="unfinished">Добавить логотип канала</translation>
-    </message>
-    <message>
-        <source>Create</source>
-        <translation type="unfinished">Создать</translation>
-    </message>
-    <message>
-        <source>Please add a Name</source>
-        <translation type="unfinished">Просьба добавить имя</translation>
+        <translation>Создать новый канал</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя</translation>
     </message>
     <message>
         <source>check peers you would like to share private publish key with</source>
-        <translation type="unfinished"></translation>
+        <translation>проверить пиры с которыми вы хотите поделиться приватным ключом</translation>
     </message>
     <message>
         <source>Share Key With</source>
-        <translation type="unfinished"></translation>
+        <translation>Поделиться ключом с</translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation>Описание</translation>
+    </message>
+    <message>
+        <source>Type:</source>
+        <translation>Тип:</translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ограничено - Все могут читать, ограничена публикация (Private Publish Key)</translation>
     </message>
     <message>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation type="unfinished"></translation>
+        <translation>Приватное - Чтобы читать необходим Private Publish Key</translation>
+    </message>
+    <message>
+        <source>Allowed Messages</source>
+        <translation>Разрешенные сообщения</translation>
+    </message>
+    <message>
+        <source>Anonymous Messages</source>
+        <translation>Анонимные сообщения</translation>
+    </message>
+    <message>
+        <source>Authenticated Messages</source>
+        <translation>Сообщения прошедшие проверку</translation>
     </message>
     <message>
         <source>Key Sharing</source>
-        <translation type="unfinished"></translation>
+        <translation>Общий доступ ключа</translation>
     </message>
     <message>
         <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Получатели ключа смогут публиковать сообщения в каналы с ограниченным доступом, просматривать и публиковать сообщения в приватных каналах</translation>
     </message>
     <message>
         <source>Share Private Publish Key</source>
-        <translation type="unfinished"></translation>
+        <translation>Поделиться Private Publish ключом</translation>
+    </message>
+    <message>
+        <source>Channel Logo</source>
+        <translation>Логотип канала</translation>
+    </message>
+    <message>
+        <source>Add Channel Logo</source>
+        <translation>Добавить логотип канала</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Отмена</translation>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation>Создать</translation>
     </message>
     <message>
         <source>Contacts:</source>
-        <translation type="unfinished"></translation>
+        <translation>Контакты:</translation>
+    </message>
+    <message>
+        <source>Please add a Name</source>
+        <translation>Пожалуйста, добавьте имя</translation>
     </message>
     <message>
         <source>Load channel logo</source>
-        <translation type="unfinished"></translation>
+        <translation>Загрузить логотип канала</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;New Channel&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>New Channel</source>
+        <translation>Новый канал</translation>
     </message>
 </context>
 <context>
     <name>CreateChannelMsg</name>
     <message>
-        <source>Attachments</source>
-        <translation type="unfinished">Вложения</translation>
-    </message>
-    <message>
-        <source>Drop file error.</source>
-        <translation type="unfinished">Оставьте файл ошибок.</translation>
-    </message>
-    <message>
-        <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation type="unfinished">Каталог не может быть удален, принимаются только файлы.</translation>
-    </message>
-    <message>
-        <source>File not found or file name not accepted.</source>
-        <translation type="unfinished">Файл не найден или имя файла, не принимаются.</translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation type="unfinished">Дополнительные файлы</translation>
-    </message>
-    <message>
         <source>New Channel Post</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:26pt; color:#ffffff;&quot;&gt;New Channel Post&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Новое сообщение канала</translation>
     </message>
     <message>
         <source>Channel Post</source>
-        <translation type="unfinished"></translation>
+        <translation>Сообщение канала</translation>
     </message>
     <message>
         <source>Channel Post to:</source>
-        <translation type="unfinished"></translation>
+        <translation>Сообщение канала:</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; You can set your Thumbnail Image for your Channel Post.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; You can use Drap and Drop to Attach Files.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Set your Subject and Description for your Channel Post.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; You can View your Attached Files on Attachments Tab.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Вы можете установить картинку для Вашего сообщения в канале.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Вы можете использовать перетаскивание для присоединения файлов.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Укажите тему и описание для Вашей записи в канале.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Вы можете просмотреть присоединенные файлы на закладке вложений.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Add File to Attach</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить файл во вложение</translation>
     </message>
     <message>
         <source>Add Channel Thumbnail</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить изображение-миниатюру для канала</translation>
     </message>
     <message>
         <source>Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Сообщение</translation>
     </message>
     <message>
         <source>Subject :</source>
-        <translation type="unfinished"></translation>
+        <translation>Тема:</translation>
+    </message>
+    <message>
+        <source>Attachments</source>
+        <translation>Вложения</translation>
     </message>
     <message>
         <source>Allow channels to get frame for message thumbnail from movie media attachments or not</source>
-        <translation type="unfinished"></translation>
+        <translation>Разрешить создание миниатюр из кадра фильма во вложении или нет</translation>
     </message>
     <message>
         <source>Auto Thumbnail</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматическое создание миниатюр</translation>
     </message>
     <message>
         <source>Drag and Drop Files from Search Results</source>
-        <translation type="unfinished"></translation>
+        <translation>Перетащить файлы из результатов поиска</translation>
     </message>
     <message>
         <source>Paste RetroShare Links</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить RetroShare-ссылки</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить RetroShare-ссылку</translation>
     </message>
     <message>
         <source>Channel security policy prevents you from posting files that you don&apos;t have. If you have these files, you need to share them before, or attach them explicitly:</source>
-        <translation type="unfinished"></translation>
+        <translation>Политика безопасности канала не позволяет размещать файлы, которых у вас нет. Если у вас есть эти файлы, вам необходимо сначала их расшарить или вкладывать их в явном виде:</translation>
     </message>
     <message>
         <source>You can only post files that you do have</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы можете размещать только те файлы которые у вас есть</translation>
+    </message>
+    <message>
+        <source>Drop file error.</source>
+        <translation>Ошибка прикрепления файла.</translation>
+    </message>
+    <message>
+        <source>Directory can&apos;t be dropped, only files are accepted.</source>
+        <translation>Директория не может быть прикреплена таким образом, только файлы допустимы.</translation>
+    </message>
+    <message>
+        <source>File not found or file name not accepted.</source>
+        <translation>Файл не найден или недопустимое имя файла</translation>
+    </message>
+    <message>
+        <source>Add Extra File</source>
+        <translation>Добавить файл</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"></translation>
+        <translation>RetroShare</translation>
     </message>
     <message>
         <source>File already Added and Hashed</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл уже добавлен и хеширован</translation>
     </message>
     <message>
         <source>Please add a Subject</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавьте тему сообщения</translation>
     </message>
     <message>
         <source>Load thumbnail picture</source>
-        <translation type="unfinished"></translation>
+        <translation>Загрузить изображение-миниатюру</translation>
     </message>
 </context>
 <context>
     <name>CreateForum</name>
     <message>
-        <source>Name</source>
-        <translation type="unfinished">Название форума </translation>
-    </message>
-    <message>
-        <source>Type:</source>
-        <translation type="unfinished">Тип:</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="unfinished">Отмена</translation>
-    </message>
-    <message>
-        <source>Please add a Name</source>
-        <translation type="unfinished">Просьба добавить имя</translation>
-    </message>
-    <message>
         <source>Create new Forum</source>
-        <translation type="unfinished">Создать форум</translation>
+        <translation>Создать новый форум</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;New Forum&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;Новый форум&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation type="unfinished">Описание</translation>
-    </message>
-    <message>
-        <source>Allowed Messages</source>
-        <translation type="unfinished">Номер сообщения</translation>
-    </message>
-    <message>
-        <source>Authenticated Messages</source>
-        <translation type="unfinished">Прошедшие проверку сообщений</translation>
-    </message>
-    <message>
-        <source>Anonymous Messages</source>
-        <translation type="unfinished">Анонимные сообщения</translation>
-    </message>
-    <message>
-        <source>Channel Logo</source>
-        <translation type="obsolete">Логотип канала</translation>
-    </message>
-    <message>
-        <source>Add Channel Logo</source>
-        <translation type="obsolete">Добавить логотип канала</translation>
-    </message>
-    <message>
-        <source>Create</source>
-        <translation type="unfinished">Создать</translation>
+        <source>Name</source>
+        <translation>Имя</translation>
     </message>
     <message>
         <source>check peers you would like to share private publish key with</source>
-        <translation type="unfinished"></translation>
+        <translation>проверьте пиров с которыми вы делитесь приватным ключом</translation>
     </message>
     <message>
         <source>Share Key With</source>
-        <translation type="unfinished"></translation>
+        <translation>Поделиться ключом с</translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation>Описание</translation>
+    </message>
+    <message>
+        <source>Type:</source>
+        <translation>Тип:</translation>
     </message>
     <message>
         <source>Public - Anyone can read and publish (Shared Publish Key)</source>
-        <translation type="unfinished"></translation>
+        <translation>Публичный - Все могут читать и публиковать (Shared Publish Key)</translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ограниченный - Все могут читать, ограниченная публикация (Privat Publish Key)</translation>
     </message>
     <message>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation type="unfinished"></translation>
+        <translation>Приватный - Чтобы читать сообщения нужен приватный ключ</translation>
     </message>
     <message>
         <source>Key Sharing</source>
-        <translation type="unfinished"></translation>
+        <translation>Поделиться ключом</translation>
     </message>
     <message>
         <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Получатели ключа смогут публиковать в ограниченных каналах, просматривать и публиковать в приватных каналах</translation>
     </message>
     <message>
         <source>Share Private Publish Key</source>
-        <translation type="unfinished"></translation>
+        <translation>Поделиться приватным ключом</translation>
+    </message>
+    <message>
+        <source>Allowed Messages</source>
+        <translation>Разрешенные сообщения</translation>
+    </message>
+    <message>
+        <source>Authenticated Messages</source>
+        <translation>Сообщения прошедшие проверку</translation>
+    </message>
+    <message>
+        <source>Anonymous Messages</source>
+        <translation>Анонимные сообщения</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation>Создать</translation>
     </message>
     <message>
         <source>Contacts:</source>
-        <translation type="unfinished"></translation>
+        <translation>Контакты:</translation>
+    </message>
+    <message>
+        <source>Please add a Name</source>
+        <translation>Добавьте имя</translation>
+    </message>
+    <message>
+        <source>New Forum</source>
+        <translation>Новый форум</translation>
     </message>
 </context>
 <context>
     <name>CreateForumMsg</name>
     <message>
-        <source>Close</source>
-        <translation type="unfinished">закрыть </translation>
-    </message>
-    <message>
         <source>Post Forum Message</source>
-        <translation type="unfinished">Почтовые сообщения форума</translation>
+        <translation>Создать сообщение на форуме</translation>
     </message>
     <message>
         <source>Forum</source>
-        <translation type="unfinished">Форум</translation>
-    </message>
-    <message>
-        <source>Forum Post Subject</source>
-        <translation type="obsolete">Тема форума</translation>
-    </message>
-    <message>
-        <source>Paste retroshare link</source>
-        <translation type="obsolete">Вставить ссылку RetroShare</translation>
-    </message>
-    <message>
-        <source>Forum Post</source>
-        <translation type="unfinished">Форум</translation>
-    </message>
-    <message>
-        <source>Sign Message</source>
-        <translation type="unfinished">Вывеска</translation>
+        <translation>Форум</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation type="unfinished">Тема</translation>
-    </message>
-    <message>
-        <source>Post Forum Msg</source>
-        <translation type="unfinished">Почтовые сообщения форума</translation>
-    </message>
-    <message>
-        <source>Paste retroshare Link</source>
-        <translation type="obsolete">Вставить ссылку RetroShare</translation>
-    </message>
-    <message>
-        <source>Please set a Forum Subject and Forum Message</source>
-        <translation type="unfinished">Пожалуйста, установите форум темы и сообщения форума</translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation type="unfinished">Дополнительные файлы</translation>
-    </message>
-    <message>
-        <source>Drop file error.</source>
-        <translation type="obsolete">Оставьте файл ошибок.</translation>
-    </message>
-    <message>
-        <source>File not found or file name not accepted.</source>
-        <translation type="obsolete">Файл не найден или имя файла, не принимаются.</translation>
-    </message>
-    <message>
-        <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation type="obsolete">Каталог не может быть удален, принимаются только файлы.</translation>
+        <translation>Тема</translation>
     </message>
     <message>
         <source>Attach File</source>
-        <translation type="unfinished"></translation>
+        <translation>Присоединить файл</translation>
+    </message>
+    <message>
+        <source>Sign Message</source>
+        <translation>Подписать сообщение</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить RetroShare-ссылку</translation>
+    </message>
+    <message>
+        <source>Forum Post</source>
+        <translation>Сообщение форума</translation>
     </message>
     <message>
         <source>Attach files via drag and drop</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавьте файлы перетаскиванием</translation>
     </message>
     <message>
         <source>You can attach files via drag and drop here in this window</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы можете добавить файлы перетаскиванием</translation>
+    </message>
+    <message>
+        <source>Post Forum Msg</source>
+        <translation>Написать сообщение на форум</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Закрыть</translation>
     </message>
     <message>
         <source>Paste full RetroShare Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить полную RetroShare-ссылку</translation>
     </message>
     <message>
         <source>In Reply to</source>
-        <translation type="unfinished"></translation>
+        <translation>В ответ на</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"></translation>
+        <translation>RetroShare</translation>
+    </message>
+    <message>
+        <source>Please set a Forum Subject and Forum Message</source>
+        <translation>Укажите тему форума и сообщение</translation>
+    </message>
+    <message>
+        <source>Add Extra File</source>
+        <translation>Добавить файл</translation>
     </message>
     <message>
         <source>Paste own certificate link</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставьте ссылку на Ваш сертификат</translation>
     </message>
 </context>
 <context>
     <name>CreateForumV2</name>
     <message>
         <source>Create new Forum</source>
-        <translation type="unfinished">Создать форум</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;New Forum&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;Новый форум&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>Создать новый форум</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя</translation>
     </message>
     <message>
         <source>check peers you would like to share private publish key with</source>
-        <translation type="unfinished"></translation>
+        <translation>проверить пиры с которыми вы хотите поделиться приватным ключом</translation>
     </message>
     <message>
         <source>Share Key With</source>
-        <translation type="unfinished"></translation>
+        <translation>Поделиться ключом с</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished">Описание</translation>
+        <translation>Описание</translation>
     </message>
     <message>
         <source>Type:</source>
-        <translation type="unfinished">Тип:</translation>
+        <translation>Тип:</translation>
     </message>
     <message>
         <source>Public - Anyone can read and publish (Shared Publish Key)</source>
-        <translation type="unfinished"></translation>
+        <translation>Публичный - Все могут читать и публиковать (Shared Publish Key)</translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ограниченный - Все могут читать, ограниченная публикация (Private Publish Key)</translation>
     </message>
     <message>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation type="unfinished"></translation>
+        <translation>Приватный - Для чтения необходим Private Publish Key</translation>
     </message>
     <message>
         <source>Key Sharing</source>
-        <translation type="unfinished"></translation>
+        <translation>Общий доступ ключа</translation>
     </message>
     <message>
         <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Получатели ключа смогут публиковать сообщения в каналы с ограниченным доступом, просматривать и публиковать сообщения в приватных каналах</translation>
     </message>
     <message>
         <source>Share Private Publish Key</source>
-        <translation type="unfinished"></translation>
+        <translation>Поделиться Private Publish ключом</translation>
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation type="unfinished">Номер сообщения</translation>
+        <translation>Разрешенные сообщения</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation type="unfinished">Прошедшие проверку сообщений</translation>
+        <translation>Сообщения прошедшие проверку</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation type="unfinished">Анонимные сообщения</translation>
+        <translation>Анонимные сообщзения</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Create</source>
-        <translation type="unfinished">Создать</translation>
+        <translation>Создать</translation>
     </message>
     <message>
         <source>Contacts:</source>
-        <translation type="unfinished"></translation>
+        <translation>Контакты:</translation>
     </message>
     <message>
         <source>Please add a Name</source>
-        <translation type="unfinished">Просьба добавить имя</translation>
+        <translation>Добавьте имя</translation>
+    </message>
+    <message>
+        <source>New Forum</source>
+        <translation>Новый форум</translation>
     </message>
 </context>
 <context>
     <name>CreateForumV2Msg</name>
     <message>
         <source>Post Forum Message</source>
-        <translation type="unfinished">Почтовые сообщения форума</translation>
+        <translation>Создать сообщение на форуме</translation>
     </message>
     <message>
         <source>Forum</source>
-        <translation type="unfinished">Форум</translation>
+        <translation>Форум</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation type="unfinished">Тема</translation>
+        <translation>Тема</translation>
     </message>
     <message>
         <source>Attach File</source>
-        <translation type="unfinished"></translation>
+        <translation>Присоединить файл</translation>
     </message>
     <message>
         <source>Sign Message</source>
-        <translation type="unfinished">Вывеска</translation>
+        <translation>Подписать сообщение</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить ссылку RetroShare</translation>
     </message>
     <message>
         <source>Forum Post</source>
-        <translation type="unfinished">Форум</translation>
+        <translation>Сообщение форума</translation>
     </message>
     <message>
         <source>Attach files via drag and drop</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавьте файлы перетаскиванием</translation>
     </message>
     <message>
         <source>You can attach files via drag and drop here in this window</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы можете добавить файлы перетаскиванием</translation>
     </message>
     <message>
         <source>Post Forum Msg</source>
-        <translation type="unfinished">Почтовые сообщения форума</translation>
+        <translation>Написать сообщение на форум</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished">закрыть </translation>
+        <translation>Закрыть</translation>
     </message>
     <message>
         <source>Paste full RetroShare Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить полную RetroShare-ссылку</translation>
     </message>
     <message>
         <source>Paste own certificate link</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить ссылку на ваш сертификат</translation>
     </message>
     <message>
         <source>In Reply to</source>
-        <translation type="unfinished"></translation>
+        <translation>В ответ на</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"></translation>
+        <translation>RetroShare</translation>
     </message>
     <message>
         <source>Please set a Forum Subject and Forum Message</source>
-        <translation type="unfinished">Пожалуйста, установите форум темы и сообщения форума</translation>
+        <translation>Укажите тему форума и сообщение</translation>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation type="unfinished">Дополнительные файлы</translation>
+        <translation>Добавить файл</translation>
     </message>
 </context>
 <context>
     <name>CreateGroup</name>
     <message>
         <source>Create a Group</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:18pt; font-weight:600; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:400; color:#ffffff;&quot;&gt;Create a Group&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать группу</translation>
     </message>
     <message>
         <source>Group Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя группы</translation>
     </message>
     <message>
         <source>Enter a name for your group</source>
-        <translation type="unfinished"></translation>
+        <translation>Введите имя для группы</translation>
     </message>
     <message>
         <source>Edit Group</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:18pt; font-weight:600; font-style:normal;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:400; color:#ffffff;&quot;&gt;Edit Group&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактировать группу</translation>
     </message>
 </context>
 <context>
     <name>CreateLobbyDialog</name>
     <message>
         <source>Create Chat Lobby</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt;Create Chat Lobby&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать лобби чата</translation>
     </message>
     <message>
         <source>Lobby name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя лобби:</translation>
     </message>
     <message>
         <source>Your nick name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ваш никнейм:</translation>
     </message>
     <message>
         <source>Security policy:</source>
-        <translation type="unfinished"></translation>
+        <translation>Политика безопасности:</translation>
     </message>
     <message>
         <source>Public (Visible by friends)</source>
-        <translation type="unfinished"></translation>
+        <translation>Публичная (открыто для друзей)</translation>
     </message>
     <message>
         <source>Private (Works on invitation only)</source>
-        <translation type="unfinished"></translation>
+        <translation>Приватная (только по приглашениям)</translation>
     </message>
     <message>
         <source>Select the Friends with which you want to group chat.</source>
-        <translation type="unfinished"></translation>
+        <translation>Отметьте друзей с которыми хотите начать чат</translation>
     </message>
     <message>
         <source>Invited friends</source>
-        <translation type="unfinished"></translation>
+        <translation>Пригласить друзей</translation>
     </message>
     <message>
         <source>Create</source>
-        <translation type="unfinished">Создать</translation>
+        <translation>Создать</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;A chat lobby is a decentralized and anonymous chat group. All participants receive all messages. Once the lobby is created you can invite other friends from the Friends tab.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Отмена</translation>
     </message>
     <message>
         <source>Put a sensible lobby name here</source>
-        <translation type="unfinished"></translation>
+        <translation>Введите имя лобби</translation>
     </message>
     <message>
         <source>Your nickname for this lobby (Change default name in options-&gt;chat)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ваш никнейм в этом лобби (изменить - Опции -&gt; Чат)</translation>
     </message>
     <message>
         <source>Contacts:</source>
-        <translation type="unfinished"></translation>
+        <translation>Контакты:</translation>
     </message>
     <message>
         <source>Lobby topic:</source>
-        <translation type="unfinished"></translation>
+        <translation>Тема:</translation>
+    </message>
+    <message>
+        <source>A chat lobby is a decentralized and anonymous chat group. All participants receive all messages. Once the lobby is created you can invite other friends from the Friends tab.</source>
+        <translation>Лобби чата - децентрализованная и анонимная чат-группа. Все участники принимают все сообщения. После создания лобби вы можете пригласить своих друзей из Панели &quot;Друзья&quot;</translation>
     </message>
 </context>
 <context>
     <name>CryptoPage</name>
     <message>
-        <source>Your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation type="unfinished">Ваш Cert копируется в буфер обмена, вставить и отправить его yourfriend по электронной почте или другим способом</translation>
-    </message>
-    <message>
-        <source>Save as...</source>
-        <translation type="unfinished">Сохранить как ...</translation>
-    </message>
-    <message>
-        <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
-        <translation type="unfinished">RetroShare сертификата (*.rsc );; все файлы (*)</translation>
-    </message>
-    <message>
         <source>Public Key</source>
-        <translation type="unfinished">Открытых ключей</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Copy my Key to Clipboard&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Скопируйте мой ключ в буфер обмена&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>Публичный ключ</translation>
     </message>
     <message>
         <source>Copy Key</source>
-        <translation type="unfinished">Копировать</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Save Key into a file&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Сохраните ключ в файле&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>Копировать ключ</translation>
     </message>
     <message>
         <source>Save Key</source>
-        <translation type="unfinished">Сохранить раздел</translation>
+        <translation>Сохранить ключ</translation>
     </message>
     <message>
         <source>Include signatures</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить подписи</translation>
     </message>
     <message>
         <source>Copy RetroShare link to clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Копировать RetroShare-ссылку в буфер обмена</translation>
     </message>
     <message>
         <source>A RetroShare link with your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation type="unfinished"></translation>
+        <translation>Ссылка RetroShare с Вашим открытым ключом скопирована в буфер обмена, теперь Вы можете вставить её в письмо и отправить её Вашему другу по электронной почте или каким-нибудь другим путём.</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка</translation>
     </message>
     <message>
         <source>Your certificate could not be parsed correctly. Please contact the developpers.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ваш сертификат не может быть правильно проанализирован. Пожалуйста, обратитесь к разработчикам.</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"></translation>
+        <translation>RetroShare</translation>
+    </message>
+    <message>
+        <source>Your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
+        <translation>Ваш открытый ключ скопирован в буфер обмена, теперь Вы можете вставить его в письмо и отправить его Вашему другу по электронной почте или каким-нибудь другим путём.</translation>
+    </message>
+    <message>
+        <source>Save as...</source>
+        <translation>Сохранить как...</translation>
+    </message>
+    <message>
+        <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
+        <translation>Сертификат RetroShare (*.rsc ); Все файлы (*)</translation>
     </message>
     <message>
         <source>Security</source>
-        <translation type="unfinished">Безопасность</translation>
-    </message>
-</context>
-<context>
-    <name>CryptographyDialog</name>
-    <message>
-        <source>RSA Key Size</source>
-        <translation type="obsolete">RSA Key Size</translation>
+        <translation>Безопасность</translation>
     </message>
     <message>
-        <source>Rijndael Block size</source>
-        <translation type="obsolete">Rijndael Block size</translation>
+        <source>Copy my Key to Clipboard</source>
+        <translation>Копировать мой ключ в буфер обмена</translation>
     </message>
     <message>
-        <source>128 Bits</source>
-        <translation type="obsolete">128 Bits</translation>
+        <source>Save Key into a file</source>
+        <translation>Сохранить ключ в файл</translation>
     </message>
     <message>
-        <source>192 Bits</source>
-        <translation type="obsolete">192 Bits</translation>
-    </message>
-    <message>
-        <source>256 Bits</source>
-        <translation type="obsolete">256 Bits</translation>
-    </message>
-    <message>
-        <source>Rijndael Key Size</source>
-        <translation type="obsolete">Rijndael Key Size</translation>
-    </message>
-    <message>
-        <source>Rijndael Mode</source>
-        <translation type="obsolete">Rijndael Mode</translation>
-    </message>
-    <message>
-        <source>CBC</source>
-        <translation type="obsolete">CBC</translation>
-    </message>
-    <message>
-        <source>ECB</source>
-        <translation type="obsolete">ECB</translation>
-    </message>
-    <message>
-        <source>CFB</source>
-        <translation type="obsolete">CFB</translation>
-    </message>
-    <message>
-        <source>Rijndael Padding</source>
-        <translation type="obsolete">Rijndael Padding</translation>
-    </message>
-    <message>
-        <source>PKCS7</source>
-        <translation type="obsolete">PKCS7</translation>
-    </message>
-    <message>
-        <source>Zeros</source>
-        <translation type="obsolete">Zeros</translation>
-    </message>
-    <message>
-        <source>ANSIX923</source>
-        <translation type="obsolete">ANSIX923</translation>
-    </message>
-    <message>
-        <source>ISO10126</source>
-        <translation type="obsolete">ISO10126</translation>
-    </message>
-    <message>
-        <source>Rijndael Feedback Size</source>
-        <translation type="obsolete">Rijndael Feedback Size</translation>
-    </message>
-    <message>
-        <source>Key Size:</source>
-        <translation type="obsolete">Key Size:</translation>
-    </message>
-    <message>
-        <source>Block Size:</source>
-        <translation type="obsolete">Block Size:</translation>
-    </message>
-    <message>
-        <source>Feedback Size:</source>
-        <translation type="obsolete">Feedback Size:</translation>
-    </message>
-    <message>
-        <source>Mode:</source>
-        <translation type="obsolete">Mode:</translation>
-    </message>
-    <message>
-        <source>Padding:</source>
-        <translation type="obsolete">Padding:</translation>
+        <source>Use old key format</source>
+        <translation>Использовать старый формат ключа</translation>
     </message>
 </context>
 <context>
     <name>DHTStatus</name>
     <message>
         <source>DHT</source>
-        <translation type="unfinished"></translation>
+        <translation>DHT</translation>
     </message>
     <message>
         <source>DHT Off</source>
-        <translation type="unfinished"></translation>
+        <translation>Выключить DHT</translation>
     </message>
     <message>
         <source>DHT Searching for RetroShare Peers</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск пиров RetroShare с помощью DHT</translation>
     </message>
     <message>
         <source>RetroShare users in DHT (Total DHT users)</source>
-        <translation type="unfinished"></translation>
+        <translation>Пользователи RetroShare в DHT (Всего пользователей DHT)</translation>
     </message>
     <message>
         <source>DHT Good</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>DHT Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка DHT</translation>
     </message>
 </context>
 <context>
     <name>DLListDelegate</name>
     <message>
         <source>B</source>
-        <translation type="unfinished"></translation>
+        <translation>Б</translation>
     </message>
     <message>
         <source>KB</source>
-        <translation type="unfinished"></translation>
+        <translation>КБ</translation>
     </message>
     <message>
         <source>MB</source>
-        <translation type="unfinished"></translation>
+        <translation>МБ</translation>
     </message>
     <message>
         <source>GB</source>
-        <translation type="unfinished"></translation>
+        <translation>ГБ</translation>
     </message>
 </context>
 <context>
     <name>DetailsDialog</name>
     <message>
         <source>Details</source>
-        <translation type="unfinished">Подробности</translation>
+        <translation>Подробности</translation>
     </message>
     <message>
         <source>General</source>
-        <translation type="unfinished">Общий</translation>
+        <translation>Главное</translation>
     </message>
     <message>
         <source>File Name:</source>
-        <translation type="unfinished">Имя файла:</translation>
+        <translation>Имя файла:</translation>
     </message>
     <message>
         <source>Hash:</source>
-        <translation type="unfinished">Хэш:</translation>
+        <translation>Хэш:</translation>
     </message>
     <message>
         <source>Size:</source>
-        <translation type="unfinished">Размер:</translation>
+        <translation>Размер:</translation>
     </message>
     <message>
         <source>Status:</source>
-        <translation type="unfinished">Состояние:</translation>
-    </message>
-    <message>
-        <source>Priority</source>
-        <translation type="obsolete">Приоритет</translation>
-    </message>
-    <message>
-        <source>Type:</source>
-        <translation type="unfinished">Тип:</translation>
-    </message>
-    <message>
-        <source>Transfer</source>
-        <translation type="unfinished">Передача</translation>
-    </message>
-    <message>
-        <source>Sources:</source>
-        <translation type="unfinished">Источники:</translation>
-    </message>
-    <message>
-        <source>Datarate:</source>
-        <translation type="unfinished">Скорость</translation>
-    </message>
-    <message>
-        <source>Completed:</source>
-        <translation type="unfinished">Завершено:</translation>
-    </message>
-    <message>
-        <source>Chunk size:</source>
-        <translation type="unfinished">Размер куска:</translation>
-    </message>
-    <message>
-        <source>Number of Chunks</source>
-        <translation type="unfinished">Номер кусков</translation>
-    </message>
-    <message>
-        <source>Chunks:</source>
-        <translation type="unfinished">блоки:</translation>
-    </message>
-    <message>
-        <source>Remaining:</source>
-        <translation type="unfinished">Осталось:</translation>
-    </message>
-    <message>
-        <source>Date</source>
-        <translation type="unfinished">часы </translation>
-    </message>
-    <message>
-        <source>Download time:</source>
-        <translation type="unfinished">Время загрузки</translation>
-    </message>
-    <message>
-        <source>Comments</source>
-        <translation type="unfinished">Комментариев</translation>
-    </message>
-    <message>
-        <source>retroshare link(s)</source>
-        <translation type="unfinished">RetroShare ссылками</translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation type="unfinished">Копировать</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="unfinished">Отмена</translation>
-    </message>
-    <message>
-        <source>Rating</source>
-        <translation type="unfinished">Рейтинг</translation>
-    </message>
-    <message>
-        <source>File Name</source>
-        <translation type="unfinished">Имя файла</translation>
-    </message>
-    <message>
-        <source>Not Rated</source>
-        <translation type="unfinished">Нет оценки</translation>
-    </message>
-    <message>
-        <source>No Comments</source>
-        <translation type="unfinished">Нет комментариев</translation>
+        <translation>Статус:</translation>
     </message>
     <message>
         <source>Priority:</source>
-        <translation type="unfinished"></translation>
+        <translation>Приоритет:</translation>
+    </message>
+    <message>
+        <source>Type:</source>
+        <translation>Тип:</translation>
+    </message>
+    <message>
+        <source>Transfer</source>
+        <translation>Передача</translation>
+    </message>
+    <message>
+        <source>Sources:</source>
+        <translation>Источники:</translation>
+    </message>
+    <message>
+        <source>Datarate:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Completed:</source>
+        <translation>Завершено:</translation>
+    </message>
+    <message>
+        <source>Chunk size:</source>
+        <translation>Размер части:</translation>
+    </message>
+    <message>
+        <source>Number of Chunks</source>
+        <translation>Количество частей</translation>
+    </message>
+    <message>
+        <source>Chunks:</source>
+        <translation>Части:</translation>
+    </message>
+    <message>
+        <source>Remaining:</source>
+        <translation>Осталось:</translation>
+    </message>
+    <message>
+        <source>Date</source>
+        <translation>Дата</translation>
+    </message>
+    <message>
+        <source>Download time:</source>
+        <translation>Время загрузки:</translation>
+    </message>
+    <message>
+        <source>Comments</source>
+        <translation>Комментарии</translation>
+    </message>
+    <message>
+        <source>retroshare link(s)</source>
+        <translation>ссылки RetroShare</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>Копировать</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK (Хорошо)</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+    <message>
+        <source>Rating</source>
+        <translation>Рейтинг</translation>
+    </message>
+    <message>
+        <source>File Name</source>
+        <translation>Имя файла</translation>
+    </message>
+    <message>
+        <source>Not Rated</source>
+        <translation>Нет оценки</translation>
+    </message>
+    <message>
+        <source>No Comments</source>
+        <translation>Комментариев нет</translation>
     </message>
 </context>
 <context>
     <name>DhtWindow</name>
     <message>
         <source>DHT Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Детали DHT</translation>
     </message>
     <message>
         <source>Peer Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Детали пира</translation>
     </message>
     <message>
         <source>Net Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Сетевой статус</translation>
     </message>
     <message>
         <source>Connect Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройки соединения</translation>
     </message>
     <message>
         <source>Network Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим сети</translation>
     </message>
     <message>
         <source>Nat Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Тип NAT</translation>
     </message>
     <message>
         <source>Nat Hole</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Peer Address</source>
-        <translation type="unfinished">Адрес узла</translation>
+        <translation>Адрес узла</translation>
     </message>
     <message>
         <source>Extra Label</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>TextLabel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя</translation>
     </message>
     <message>
         <source>PeerId</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>DHT Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Статус DHT</translation>
     </message>
     <message>
         <source>ConnectLogic</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Connect Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Статус соединения</translation>
     </message>
     <message>
         <source>Connect Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим соединения</translation>
     </message>
     <message>
         <source>Request Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Статус запроса</translation>
     </message>
     <message>
         <source>Cb Status</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RsId</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Bucket</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>IP:Port</source>
-        <translation type="unfinished"></translation>
+        <translation>IP:порт</translation>
     </message>
     <message>
         <source>Key</source>
-        <translation type="unfinished"></translation>
+        <translation>Ключ</translation>
     </message>
     <message>
         <source>Status Flags</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Found</source>
-        <translation type="unfinished"></translation>
+        <translation>Найдено</translation>
     </message>
     <message>
         <source>Last Sent</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Last Recv</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Relay Mode</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Источник</translation>
     </message>
     <message>
         <source>Proxy</source>
-        <translation type="unfinished"></translation>
+        <translation>Прокси</translation>
     </message>
     <message>
         <source>Destination</source>
-        <translation type="unfinished"></translation>
+        <translation>Назначение</translation>
     </message>
     <message>
         <source>Class</source>
-        <translation type="unfinished"></translation>
+        <translation>Класс</translation>
     </message>
     <message>
         <source>Age</source>
-        <translation type="unfinished">Возраст</translation>
+        <translation>Возраст</translation>
     </message>
     <message>
         <source>Bandwidth</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>DirectoriesDialog</name>
-    <message>
-        <source>Shared Directories</source>
-        <translation type="obsolete">Разделяемые папки</translation>
-    </message>
-    <message>
-        <source>Other Directories</source>
-        <translation type="obsolete">Другие папки</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Arial; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Incoming Files&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Arial; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Входящие файлы&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Add Shared Directory</source>
-        <translation type="obsolete">Добавить разделяемую папку</translation>
-    </message>
-    <message>
-        <source>Add a Share Directory</source>
-        <translation type="obsolete">Добавить Открыть каталог</translation>
-    </message>
-    <message>
-        <source>Browse</source>
-        <translation type="obsolete">Выбор файла</translation>
+        <translation>Ширина канала</translation>
     </message>
 </context>
 <context>
     <name>DirectoriesPage</name>
     <message>
         <source>Incoming Directory</source>
-        <translation type="unfinished">Входящий каталог</translation>
-    </message>
-    <message>
-        <source>Partials Direcrtory</source>
-        <translation type="obsolete">частичных каталога</translation>
-    </message>
-    <message>
-        <source>Shared Directories</source>
-        <translation type="unfinished">Общие справочники </translation>
-    </message>
-    <message>
-        <source>Automatically share incoming directory (Recommanded)</source>
-        <translation type="obsolete">Автоматическое долю входящих каталога (рекомендовано)</translation>
-    </message>
-    <message>
-        <source>Edit Share</source>
-        <translation type="unfinished">Изменить Share</translation>
-    </message>
-    <message>
-        <source>Incoming files</source>
-        <translation type="obsolete">Входящие файлы</translation>
-    </message>
-    <message>
-        <source>Add a Share Directory</source>
-        <translation type="obsolete">Добавить Открыть каталог</translation>
-    </message>
-    <message>
-        <source>Remove Shared Directory</source>
-        <translation type="obsolete">Удалить общий каталог</translation>
+        <translation>Входящая папка</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation type="unfinished">Выбор файла</translation>
-    </message>
-    <message>
-        <source>Add Shared Directory</source>
-        <translation type="obsolete">Добавить разделяемую папку</translation>
-    </message>
-    <message>
-        <source>Set Incoming Directory</source>
-        <translation type="unfinished">Задать входящий каталог</translation>
-    </message>
-    <message>
-        <source>Set Partials Directory</source>
-        <translation type="unfinished">Задать частичных каталога</translation>
+        <translation>Выбор файла</translation>
     </message>
     <message>
         <source>Partials Directory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Shared Directories</source>
+        <translation>Общие папки</translation>
     </message>
     <message>
         <source>Automatically share incoming directory (Recommended)</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматически расшаривать входящую папку (рекомендуется)</translation>
+    </message>
+    <message>
+        <source>Edit Share</source>
+        <translation>Правка общих папок</translation>
     </message>
     <message>
         <source>Remember file hashes even if not shared. 
-This might be useful if you&apos;re sharing an 
+This might be useful if you're sharing an 
 external HD, to avoid re-hashing files when 
 you plug it in.</source>
-        <translation type="unfinished"></translation>
+        <translation>Помнить хэш файлов, даже если они не расшарены.
+Это может быть полезно, когда Вы расшариваете 
+внешний жесткий диск, чтобы избегать пересчета хэша, когда
+Вы его подключаете.</translation>
     </message>
     <message>
         <source>Remember hashed files for </source>
-        <translation type="unfinished"></translation>
+        <translation>Помнить хэш файлов</translation>
     </message>
     <message>
         <source> days</source>
-        <translation type="unfinished"></translation>
+        <translation>дней</translation>
     </message>
     <message>
         <source>Forget any hashed file that is not anymore shared.</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалять хэш файлов, которые больше не расшарены.</translation>
     </message>
     <message>
         <source>Clean Hash Cache</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистить кэш хэша</translation>
     </message>
     <message>
         <source>Auto-check shared directories every </source>
-        <translation type="unfinished"></translation>
+        <translation>Автопроверка общих папок каждые</translation>
     </message>
     <message>
         <source> minute(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>минут(ы)</translation>
+    </message>
+    <message>
+        <source>Set Incoming Directory</source>
+        <translation>Выбрать входящую папку</translation>
+    </message>
+    <message>
+        <source>Set Partials Directory</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Directories</source>
-        <translation type="unfinished"></translation>
+        <translation>Папки</translation>
     </message>
     <message>
         <source>Cache cleaning confirmation</source>
-        <translation type="unfinished"></translation>
+        <translation>Подтверждение очистки кэша</translation>
     </message>
     <message>
         <source>This will forget any former hash of non shared files. Do you confirm ?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>DiscStatus</name>
     <message>
         <source>Waiting outgoing discovery operations</source>
-        <translation type="unfinished"></translation>
+        <translation>Ожидание завершения операций с исходящей папкой</translation>
     </message>
     <message>
         <source>Waiting incoming discovery operations</source>
-        <translation type="unfinished"></translation>
+        <translation>Ожидание завершения операций с входящей папкой</translation>
     </message>
 </context>
 <context>
     <name>DownloadToaster</name>
     <message>
-        <source>Close</source>
-        <translation type="unfinished">закрыть </translation>
-    </message>
-    <message>
         <source>Start file</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;Download completed&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>EditChanDetails</name>
     <message>
-        <source>Add Channel Logo</source>
-        <translation type="unfinished">Добавить логотип канала</translation>
-    </message>
-    <message>
         <source>Channel Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Подробности канала</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Отмена</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK (Хорошо)</translation>
     </message>
     <message>
         <source>Edit Channel Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактировать подробности канала</translation>
     </message>
     <message>
         <source>Channel Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Информация канала</translation>
     </message>
     <message>
         <source>Channel Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Название канала</translation>
     </message>
     <message>
         <source>Channel Description</source>
-        <translation type="unfinished"></translation>
+        <translation>Описание канала</translation>
+    </message>
+    <message>
+        <source>Add Channel Logo</source>
+        <translation>Добавить логотип канала</translation>
     </message>
     <message>
         <source>Load channel logo</source>
-        <translation type="unfinished"></translation>
+        <translation>Загрузить логотип канала</translation>
     </message>
 </context>
 <context>
     <name>EditForumDetails</name>
     <message>
         <source>Forum Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Подробности форума</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Отмена</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK (Хорошо)</translation>
     </message>
     <message>
         <source>Edit Forum Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактировать подробности форума</translation>
     </message>
     <message>
         <source>Forum Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Информация форума</translation>
     </message>
     <message>
         <source>Forum Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Название форума</translation>
     </message>
     <message>
         <source>Forum Description</source>
-        <translation type="unfinished"></translation>
+        <translation>Описание форума</translation>
     </message>
 </context>
 <context>
     <name>EditForumV2Details</name>
     <message>
         <source>Forum Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Подробности форума</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK (Хорошо)</translation>
     </message>
     <message>
         <source>Edit Forum Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактировать подробности форума</translation>
     </message>
     <message>
         <source>Forum Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Информация форума</translation>
     </message>
     <message>
         <source>Forum Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Название форума</translation>
     </message>
     <message>
         <source>Forum Description</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>EmailPage</name>
-    <message>
-        <source>Subject:</source>
-        <translation type="obsolete">Тема:</translation>
+        <translation>Описание форума</translation>
     </message>
 </context>
 <context>
@@ -4213,2184 +3443,1861 @@ you plug it in.</source>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Friends&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Друзья&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Person</source>
-        <translation type="unfinished">Имя</translation>
-    </message>
-    <message>
-        <source>Auto Connect</source>
-        <translation type="unfinished">Авто Подключите </translation>
-    </message>
-    <message>
-        <source>Trust Level</source>
-        <translation type="unfinished">Trust Level</translation>
-    </message>
-    <message>
-        <source>Peer Address</source>
-        <translation type="unfinished">Адрес узла</translation>
-    </message>
-    <message>
-        <source>Last Contact</source>
-        <translation type="unfinished">Последний контакт</translation>
-    </message>
-    <message>
-        <source>Organisation</source>
-        <translation type="unfinished">Организация</translation>
-    </message>
-    <message>
-        <source>Location</source>
-        <translation type="unfinished">Место</translation>
-    </message>
-    <message>
-        <source>Country</source>
-        <translation type="unfinished">Страна</translation>
-    </message>
-    <message>
-        <source>Person Id</source>
-        <translation type="unfinished">Person ID</translation>
-    </message>
-    <message>
-        <source>Auth Code</source>
-        <translation type="unfinished">Авторизовать/ аутентификации код </translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Друзья&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>#</source>
-        <translation type="unfinished"></translation>
+        <translation>#</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Статус</translation>
+    </message>
+    <message>
+        <source>Person</source>
+        <translation>Персона</translation>
+    </message>
+    <message>
+        <source>Auto Connect</source>
+        <translation>Автоподключение</translation>
+    </message>
+    <message>
+        <source>Trust Level</source>
+        <translation>Уровень доверия</translation>
+    </message>
+    <message>
+        <source>Peer Address</source>
+        <translation>Адрес узла</translation>
+    </message>
+    <message>
+        <source>Last Contact</source>
+        <translation>Посл. контакт</translation>
+    </message>
+    <message>
+        <source>Organisation</source>
+        <translation>Организация</translation>
+    </message>
+    <message>
+        <source>Location</source>
+        <translation>Местоположение</translation>
+    </message>
+    <message>
+        <source>Country</source>
+        <translation>Страна</translation>
+    </message>
+    <message>
+        <source>Person Id</source>
+        <translation>ID персоны</translation>
+    </message>
+    <message>
+        <source>Auth Code</source>
+        <translation>Авторизационный код</translation>
     </message>
     <message>
         <source>Vote Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Голосовать за</translation>
     </message>
     <message>
         <source>Vote Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Голосовать против</translation>
     </message>
 </context>
 <context>
     <name>ExprParamElement</name>
     <message>
         <source>to</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>ignore case</source>
-        <translation type="unfinished"></translation>
+        <translation>без учета регистра</translation>
     </message>
     <message>
         <source>dd.MM.yyyy</source>
-        <translation type="unfinished"></translation>
+        <translation>dd.MM.yyyy</translation>
     </message>
     <message>
         <source>KB</source>
-        <translation type="unfinished"></translation>
+        <translation>КБ</translation>
     </message>
     <message>
         <source>MB</source>
-        <translation type="unfinished"></translation>
+        <translation>МБ</translation>
     </message>
     <message>
         <source>GB</source>
-        <translation type="unfinished"></translation>
+        <translation>ГБ</translation>
     </message>
 </context>
 <context>
     <name>ExpressionWidget</name>
     <message>
         <source>Expression Widget</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Delete this expression</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>FileAssociationsPage</name>
     <message>
         <source>&amp;New</source>
-        <translation type="unfinished"></translation>
+        <translation>Новый</translation>
     </message>
     <message>
         <source>Add new Association</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить новую ассоциацию</translation>
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Правка</translation>
     </message>
     <message>
         <source>Edit this Association</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактировать эту ассоциацию</translation>
     </message>
     <message>
         <source>&amp;Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить</translation>
     </message>
     <message>
         <source>Remove this Association</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить эту ассоциацию</translation>
     </message>
     <message>
         <source>File type</source>
-        <translation type="unfinished"></translation>
+        <translation>Тип файла</translation>
     </message>
     <message>
         <source> Friend Help</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>You  this</source>
-        <translation type="unfinished"></translation>
+        <translation>You  this</translation>
     </message>
     <message>
         <source>Associations</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>FileHashDialog</name>
-    <message>
-        <source>Download</source>
-        <translation type="obsolete">Скачать (Download)</translation>
+        <translation>Ассоциации</translation>
     </message>
 </context>
 <context>
     <name>FileTransferInfoWidget</name>
     <message>
-        <source>Remaining</source>
-        <translation type="unfinished">Осталось</translation>
-    </message>
-    <message>
-        <source>Chunk strategy</source>
-        <translation type="unfinished">кусок стратегия</translation>
-    </message>
-    <message>
         <source>Chunk map</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Active chunks</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Availability map (%1 active source)</source>
-        <translation type="unfinished"></translation>
+        <translation>Карта доступности (%1 активный источник)</translation>
     </message>
     <message>
         <source>Availability map (%1 active sources)</source>
-        <translation type="unfinished"></translation>
+        <translation>Карта доступности (%1 активных источника)</translation>
     </message>
     <message>
         <source>File info</source>
-        <translation type="unfinished"></translation>
+        <translation>Информация о файле</translation>
     </message>
     <message>
         <source>File hash</source>
-        <translation type="unfinished"></translation>
+        <translation>Хэш файла</translation>
     </message>
     <message>
         <source>File size</source>
-        <translation type="unfinished"></translation>
+        <translation>Размер файла</translation>
     </message>
     <message>
         <source>bytes</source>
-        <translation type="unfinished"></translation>
+        <translation>байт</translation>
     </message>
     <message>
         <source>Chunk size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Number of chunks</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Transfered</source>
-        <translation type="unfinished"></translation>
+        <translation>Передано</translation>
+    </message>
+    <message>
+        <source>Remaining</source>
+        <translation>Осталось</translation>
     </message>
     <message>
         <source>Number of sources</source>
-        <translation type="unfinished"></translation>
+        <translation>Число источников</translation>
+    </message>
+    <message>
+        <source>Chunk strategy</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Transfer type</source>
-        <translation type="unfinished"></translation>
+        <translation>Тип передачи</translation>
     </message>
     <message>
         <source>Anonymous F2F</source>
-        <translation type="unfinished"></translation>
+        <translation>Анонимный F2F</translation>
     </message>
     <message>
         <source>Direct friend transfer / Availability assumed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>FilesDefs</name>
     <message>
         <source>Picture</source>
-        <translation type="unfinished">Изображение </translation>
+        <translation>Изображение</translation>
     </message>
     <message>
         <source>Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Видео</translation>
     </message>
     <message>
         <source>Audio</source>
-        <translation type="unfinished">Аудио</translation>
+        <translation>Аудио</translation>
     </message>
     <message>
         <source>Archive</source>
-        <translation type="unfinished">Архив</translation>
+        <translation>Архив</translation>
     </message>
     <message>
         <source>Program</source>
-        <translation type="unfinished">Программа</translation>
+        <translation>Программа</translation>
     </message>
     <message>
         <source>CD/DVD-Image</source>
-        <translation type="unfinished"></translation>
+        <translation>CD/DVD-образ</translation>
     </message>
     <message>
         <source>Document</source>
-        <translation type="unfinished">документ </translation>
+        <translation>Документ</translation>
     </message>
     <message>
         <source>RetroShare collection file</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл коллекции RetroShare</translation>
     </message>
     <message>
         <source>Subtitles</source>
-        <translation type="unfinished"></translation>
+        <translation>Субтитры</translation>
     </message>
     <message>
         <source>Nintendo DS Rom</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>FindWindow</name>
-    <message>
-        <source>%1 KB</source>
-        <translation type="obsolete">%1 KB</translation>
+        <translation>Образ Nintendo DS</translation>
     </message>
 </context>
 <context>
     <name>FlatStyle_RDM</name>
     <message>
         <source>Friends Directories</source>
-        <translation type="unfinished">Друзья Каталоги</translation>
+        <translation>Папки друзей</translation>
     </message>
     <message>
         <source>My Directories</source>
-        <translation type="unfinished">Моя Каталоги</translation>
-    </message>
-    <message>
-        <source>Age</source>
-        <translation type="unfinished">Возраст</translation>
-    </message>
-    <message>
-        <source>Share Type</source>
-        <translation type="unfinished">Тип акции</translation>
-    </message>
-    <message>
-        <source>Directory</source>
-        <translation type="unfinished">Каталог</translation>
+        <translation>Мои папки</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Размер</translation>
+    </message>
+    <message>
+        <source>Age</source>
+        <translation>Возраст</translation>
     </message>
     <message>
         <source>Friend</source>
-        <translation type="unfinished"></translation>
+        <translation>Друг</translation>
+    </message>
+    <message>
+        <source>Share Type</source>
+        <translation>Тип расшаривания</translation>
+    </message>
+    <message>
+        <source>Directory</source>
+        <translation>Папка</translation>
     </message>
 </context>
 <context>
     <name>ForumDetails</name>
     <message>
-        <source>Last Post</source>
-        <translation type="unfinished">Последнее сообщение</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation type="unfinished">Безопасность</translation>
-    </message>
-    <message>
-        <source>Allowed Messages</source>
-        <translation type="unfinished">Номер сообщения</translation>
-    </message>
-    <message>
-        <source>Authenticated Messages</source>
-        <translation type="unfinished">Прошедшие проверку сообщений</translation>
-    </message>
-    <message>
-        <source>Anonymous Messages</source>
-        <translation type="unfinished">Анонимные сообщения</translation>
-    </message>
-    <message>
-        <source>Apply and Close</source>
-        <translation type="unfinished">Применить и закрыть</translation>
-    </message>
-    <message>
         <source>Forum Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Подробности форума</translation>
     </message>
     <message>
         <source>Forum Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Информация о форуме</translation>
     </message>
     <message>
         <source>Forum Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Название форума</translation>
     </message>
     <message>
         <source>Popularity</source>
-        <translation type="unfinished"></translation>
+        <translation>Популярность</translation>
+    </message>
+    <message>
+        <source>Last Post</source>
+        <translation>Последнее сообщение</translation>
     </message>
     <message>
         <source>Forum ID</source>
-        <translation type="unfinished"></translation>
+        <translation>ID форума</translation>
     </message>
     <message>
         <source>Forum Description</source>
-        <translation type="unfinished"></translation>
+        <translation>Описание форума</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation>Безопасность</translation>
+    </message>
+    <message>
+        <source>Allowed Messages</source>
+        <translation>Допущенные сообщения</translation>
+    </message>
+    <message>
+        <source>Authenticated Messages</source>
+        <translation>Авторизированные сообщения</translation>
+    </message>
+    <message>
+        <source>Anonymous Messages</source>
+        <translation>Анонимные сообщения</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Отмена</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK (Хорошо)</translation>
+    </message>
+    <message>
+        <source>Apply and Close</source>
+        <translation>Применить и закрыть</translation>
     </message>
 </context>
 <context>
     <name>ForumMsgItem</name>
     <message>
-        <source>Remove Item</source>
-        <translation type="unfinished">Удалить элемент</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation type="unfinished">Развернуть</translation>
-    </message>
-    <message>
-        <source>Reply</source>
-        <translation type="unfinished">Ответ</translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation type="unfinished">Отправить</translation>
-    </message>
-    <message>
-        <source>Signed</source>
-        <translation type="unfinished">Подпись</translation>
-    </message>
-    <message>
-        <source>Forum Post</source>
-        <translation type="unfinished">Форум</translation>
-    </message>
-    <message>
-        <source>Anonymous</source>
-        <translation type="unfinished">Аноним</translation>
-    </message>
-    <message>
         <source>Subject: </source>
-        <translation type="unfinished"></translation>
+        <translation>Тема:</translation>
     </message>
     <message>
         <source>Unsubscribe To Forum</source>
-        <translation type="unfinished"></translation>
+        <translation>Отписаться от форума</translation>
+    </message>
+    <message>
+        <source>Reply</source>
+        <translation>Ответ</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Раскрыть</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Удалить объект</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>Послать</translation>
+    </message>
+    <message>
+        <source>Signed</source>
+        <translation>Подписано</translation>
+    </message>
+    <message>
+        <source>Forum Post</source>
+        <translation>Сообщение форума</translation>
     </message>
     <message>
         <source>Unknown Forum Post</source>
-        <translation type="unfinished"></translation>
+        <translation>Неизвестное сообщение форума</translation>
+    </message>
+    <message>
+        <source>Anonymous</source>
+        <translation>Аноним</translation>
     </message>
     <message>
         <source>In Reply to</source>
-        <translation type="unfinished"></translation>
+        <translation>В ответ на</translation>
     </message>
     <message>
         <source>Please give a Text Message</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Set as read and remove item</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished">Скрыт </translation>
+        <translation>Спрятать</translation>
     </message>
 </context>
 <context>
     <name>ForumNewItem</name>
     <message>
-        <source>Remove Item</source>
-        <translation type="unfinished">Удалить элемент</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation type="obsolete">связано</translation>
-    </message>
-    <message>
         <source>Subscribe to Forum</source>
-        <translation type="unfinished">Подписаться на форум</translation>
+        <translation>Подписаться на форум</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished">Развернуть</translation>
+        <translation>Развернуть</translation>
     </message>
     <message>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
+        <source>Remove Item</source>
+        <translation>Удалить объект</translation>
     </message>
     <message>
         <source>Forum Description</source>
-        <translation type="unfinished"></translation>
+        <translation>Описание форума</translation>
     </message>
     <message>
         <source>Unknown Forum</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New Forum</source>
-        <translation type="unfinished">Новый форум</translation>
+        <translation>Новый форум</translation>
     </message>
     <message>
         <source>Updated Forum</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished">Скрыт </translation>
+        <translation>Спрятать</translation>
     </message>
 </context>
 <context>
     <name>ForumPage</name>
     <message>
         <source>Misc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Set message to read on activate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Expand new messages</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forum</source>
-        <translation type="unfinished">Форум</translation>
-    </message>
-</context>
-<context>
-    <name>ForumUserNotify</name>
-    <message>
-        <source>Forum Post</source>
-        <translation type="unfinished">Форум</translation>
+        <translation>Форум</translation>
     </message>
 </context>
 <context>
     <name>ForumV2Details</name>
     <message>
         <source>Forum Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Подробности форума</translation>
     </message>
     <message>
         <source>Forum Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Информация форума</translation>
     </message>
     <message>
         <source>Forum Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Название форума</translation>
     </message>
     <message>
         <source>Popularity</source>
-        <translation type="unfinished"></translation>
+        <translation>Популярность</translation>
     </message>
     <message>
         <source>Last Post</source>
-        <translation type="unfinished">Последнее сообщение</translation>
+        <translation>Последнее сообщение</translation>
     </message>
     <message>
         <source>Forum ID</source>
-        <translation type="unfinished"></translation>
+        <translation>ID форума</translation>
     </message>
     <message>
         <source>Forum Description</source>
-        <translation type="unfinished"></translation>
+        <translation>Описание форума</translation>
     </message>
     <message>
         <source>Security</source>
-        <translation type="unfinished">Безопасность</translation>
+        <translation>Безопасность</translation>
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation type="unfinished">Номер сообщения</translation>
+        <translation>Разрешенные сообщения</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation type="unfinished">Прошедшие проверку сообщений</translation>
+        <translation>Сообщения прошедшие проверку</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation type="unfinished">Анонимные сообщения</translation>
+        <translation>Анонимные сообщзения</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK (Хорошо)</translation>
     </message>
     <message>
         <source>Apply and Close</source>
-        <translation type="unfinished">Применить и закрыть</translation>
+        <translation>Применить и закрыть</translation>
     </message>
 </context>
 <context>
     <name>ForumsDialog</name>
     <message>
-        <source>Subscribe to Forum</source>
-        <translation type="unfinished">Подписаться на форум</translation>
-    </message>
-    <message>
-        <source>Unsubscribe to Forum</source>
-        <translation type="unfinished">Отказ от подписки на форум</translation>
-    </message>
-    <message>
-        <source>New Forum</source>
-        <translation type="unfinished">Новый форум</translation>
-    </message>
-    <message>
-        <source>Show Forum Details</source>
-        <translation type="unfinished">Показать форума Подробности</translation>
-    </message>
-    <message>
-        <source>Reply</source>
-        <translation type="unfinished">Ответ</translation>
-    </message>
-    <message>
-        <source>Reply to Author</source>
-        <translation type="unfinished">Ответить автору</translation>
-    </message>
-    <message>
-        <source>Expand all</source>
-        <translation type="unfinished">Развернуть все</translation>
-    </message>
-    <message>
-        <source>Collapse all</source>
-        <translation type="unfinished">Свернуть все</translation>
-    </message>
-    <message>
-        <source>Popularity: </source>
-        <translation type="obsolete">Популярность:</translation>
-    </message>
-    <message>
-        <source>Your Forums</source>
-        <translation type="unfinished">Ваши форумы</translation>
-    </message>
-    <message>
-        <source>Subscribed Forums</source>
-        <translation type="unfinished">Подписка Форум</translation>
-    </message>
-    <message>
-        <source>Popular Forums</source>
-        <translation type="unfinished">Популярные форумы</translation>
-    </message>
-    <message>
-        <source>Other Forums</source>
-        <translation type="unfinished">Другие форумы</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation type="unfinished">Скрыт </translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation type="unfinished">Развернуть</translation>
-    </message>
-    <message>
-        <source>Anonymous</source>
-        <translation type="obsolete">Аноним</translation>
-    </message>
-    <message>
-        <source>signed</source>
-        <translation type="obsolete">подписано</translation>
-    </message>
-    <message>
-        <source>none</source>
-        <translation type="obsolete">никакой</translation>
-    </message>
-    <message>
-        <source>No Forum Selected!</source>
-        <translation type="unfinished">Нет Форума Закладки!</translation>
-    </message>
-    <message>
-        <source>You cant reply a Anonymous Author</source>
-        <translation type="unfinished">Вы наклоняю ответ анонимного автора</translation>
-    </message>
-    <message>
-        <source>File Request Confirmation</source>
-        <translation type="obsolete">Введите запрос файла</translation>
-    </message>
-    <message>
-        <source>The file has been added to your download list.</source>
-        <translation type="obsolete">Файл был добавлен в корзину.</translation>
-    </message>
-    <message>
-        <source>File Request canceled</source>
-        <translation type="obsolete">Запрос файла отменена</translation>
-    </message>
-    <message>
-        <source>The file has not been added to your download list, because you already have it.</source>
-        <translation type="obsolete">Файл не был добавлен в ваш список загрузки, потому что вы уже получили его.</translation>
-    </message>
-    <message>
-        <source>File Request Error</source>
-        <translation type="obsolete">Запрос файла ошибке</translation>
-    </message>
-    <message>
-        <source>The file link is malformed.</source>
-        <translation type="obsolete">Неверный ссылки на файл.</translation>
-    </message>
-    <message>
-        <source>Date</source>
-        <translation type="unfinished">часы </translation>
-    </message>
-    <message>
-        <source>Start New Thread</source>
-        <translation type="unfinished">Начать новое обсуждение</translation>
-    </message>
-    <message>
-        <source>New Message</source>
-        <translation type="obsolete">Новое сообщение </translation>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation type="obsolete">Добавить</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Start new Thread for Selected Forum&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Начать новое обсуждение в форуме Закладки&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Reply Message&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ответ сообщение&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>RetroShare Forums</source>
-        <translation type="obsolete">RetroShare форумы</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:600; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Forum:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:600; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Форум:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Last Post</source>
-        <translation type="unfinished">Последнее сообщение</translation>
-    </message>
-    <message>
-        <source>Title</source>
-        <translation type="unfinished">Название</translation>
-    </message>
-    <message>
-        <source>Author</source>
-        <translation type="unfinished">Автор</translation>
-    </message>
-    <message>
-        <source>Signed</source>
-        <translation type="unfinished">Подпись</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Thread:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;тема:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>Display</source>
+        <translation>Показать</translation>
     </message>
     <message>
         <source>Create Forum</source>
-        <translation type="unfinished">Создать форум</translation>
-    </message>
-    <message>
-        <source>Print</source>
-        <translation type="unfinished">Распечатать</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;Forums&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;Форум&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Display</source>
-        <translation type="unfinished">Отображать</translation>
-    </message>
-    <message>
-        <source>PrintPreview</source>
-        <translation type="unfinished">Предварительный просмотр</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forum:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Last Post</source>
+        <translation>Последнее сообщение</translation>
     </message>
     <message>
         <source>Threaded View</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Flat View</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Title</source>
+        <translation>Название</translation>
+    </message>
+    <message>
+        <source>Date</source>
+        <translation>Дата</translation>
+    </message>
+    <message>
+        <source>Author</source>
+        <translation>Автор</translation>
+    </message>
+    <message>
+        <source>Signed</source>
+        <translation>Подписано</translation>
     </message>
     <message>
         <source>Thread:</source>
-        <translation type="unfinished"></translation>
+        <translation>Тема:</translation>
     </message>
     <message>
         <source>Previous Thread</source>
-        <translation type="unfinished"></translation>
+        <translation>Предыдущая тема</translation>
     </message>
     <message>
         <source>Next Thread</source>
-        <translation type="unfinished"></translation>
+        <translation>Следующая тема</translation>
     </message>
     <message>
         <source>Download all files</source>
-        <translation type="unfinished"></translation>
+        <translation>Скачать все файлы</translation>
     </message>
     <message>
         <source>Next unread</source>
-        <translation type="unfinished"></translation>
+        <translation>Следующее непрочитанное</translation>
     </message>
     <message>
         <source>Content</source>
-        <translation type="unfinished"></translation>
+        <translation>Содержимое</translation>
     </message>
     <message>
         <source>Reply Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Ответить на сообщение</translation>
     </message>
     <message>
         <source>Start new Thread for Selected Forum</source>
-        <translation type="unfinished"></translation>
+        <translation>Начать новую тему в выбранном форуме</translation>
     </message>
     <message>
         <source>Loading</source>
-        <translation type="unfinished"></translation>
+        <translation>Загрузка</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>Печать</translation>
+    </message>
+    <message>
+        <source>PrintPreview</source>
+        <translation>Предварительный просмотр</translation>
+    </message>
+    <message>
+        <source>Your Forums</source>
+        <translation>Ваши форумы</translation>
+    </message>
+    <message>
+        <source>Subscribed Forums</source>
+        <translation>Форумы в подписке</translation>
+    </message>
+    <message>
+        <source>Popular Forums</source>
+        <translation>Популярные форумы</translation>
+    </message>
+    <message>
+        <source>Other Forums</source>
+        <translation>Другие форумы</translation>
+    </message>
+    <message>
+        <source>Subscribe to Forum</source>
+        <translation>Подписаться на форум</translation>
+    </message>
+    <message>
+        <source>Unsubscribe to Forum</source>
+        <translation>Отписаться от форума</translation>
+    </message>
+    <message>
+        <source>New Forum</source>
+        <translation>Новый форум</translation>
+    </message>
+    <message>
+        <source>Show Forum Details</source>
+        <translation>Показать подробности форума</translation>
     </message>
     <message>
         <source>Edit Forum Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактировать подробности форума</translation>
     </message>
     <message>
         <source>Share Forum</source>
-        <translation type="unfinished"></translation>
+        <translation>Расшарить форум</translation>
     </message>
     <message>
         <source>Restore Publish Rights for Forum</source>
-        <translation type="unfinished"></translation>
+        <translation>Восстановить публичные права для форума</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Скопировать ссылку RetroShare</translation>
     </message>
     <message>
         <source>Mark all as read</source>
-        <translation type="unfinished"></translation>
+        <translation>Отметить все как прочитанные</translation>
     </message>
     <message>
         <source>Mark all as unread</source>
-        <translation type="unfinished"></translation>
+        <translation>Отметить все как непрочитанные</translation>
+    </message>
+    <message>
+        <source>Reply</source>
+        <translation>Ответ</translation>
+    </message>
+    <message>
+        <source>Start New Thread</source>
+        <translation>Новая тема</translation>
+    </message>
+    <message>
+        <source>Reply to Author</source>
+        <translation>Ответить автору</translation>
+    </message>
+    <message>
+        <source>Expand all</source>
+        <translation>Раскрыть всё</translation>
+    </message>
+    <message>
+        <source>Collapse all</source>
+        <translation>Свернуть всё</translation>
     </message>
     <message>
         <source>Mark as read</source>
-        <translation type="unfinished"></translation>
+        <translation>Отметить как прочитанное</translation>
     </message>
     <message>
         <source>with children</source>
-        <translation type="unfinished"></translation>
+        <translation>с потомками</translation>
     </message>
     <message>
         <source>Mark as unread</source>
-        <translation type="unfinished"></translation>
+        <translation>Отметить как непрочитанное</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Спрятать</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Развернуть</translation>
     </message>
     <message>
         <source>AUTHD</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"></translation>
+        <translation>RetroShare</translation>
+    </message>
+    <message>
+        <source>No Forum Selected!</source>
+        <translation>Не выбрано ни одного форума!</translation>
+    </message>
+    <message>
+        <source>You cant reply a Anonymous Author</source>
+        <translation>Вы не можете ответить анонимному автору</translation>
     </message>
     <message>
         <source>[ ... Missing Message ... ]</source>
-        <translation type="unfinished"></translation>
+        <translation>[ ... Пропущенное сообщение ... ]</translation>
     </message>
     <message>
         <source>Placeholder for missing Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Метка для пропущенного сообщения</translation>
     </message>
     <message>
         <source>Search forums</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск по форумам</translation>
     </message>
     <message>
         <source>Original Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Оригинал сообщения</translation>
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished">разослан</translation>
+        <translation>От</translation>
     </message>
     <message>
         <source>Sent</source>
-        <translation type="unfinished"></translation>
+        <translation>Отправлено</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation type="unfinished">Тема</translation>
+        <translation>Тема</translation>
     </message>
     <message>
         <source>On %1, %2 wrote:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forums</source>
+        <translation>Форумы</translation>
     </message>
 </context>
 <context>
     <name>ForumsFillThread</name>
     <message>
         <source>Anonymous</source>
-        <translation type="unfinished">Аноним</translation>
+        <translation>Аноним</translation>
     </message>
     <message>
         <source>signed</source>
-        <translation type="unfinished">подписано</translation>
+        <translation>подписано</translation>
     </message>
     <message>
         <source>none</source>
-        <translation type="unfinished">никакой</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ForumsV2Dialog</name>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;Forums&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;Форум&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Display</source>
-        <translation type="unfinished">Отображать</translation>
+        <translation>Показать</translation>
     </message>
     <message>
         <source>Create Forum</source>
-        <translation type="unfinished">Создать форум</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forum:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Last Post</source>
-        <translation type="unfinished">Последнее сообщение</translation>
+        <translation>Последнее сообщение</translation>
     </message>
     <message>
         <source>Threaded View</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Flat View</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Title</source>
-        <translation type="unfinished">Название</translation>
+        <translation>Название</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished">часы </translation>
+        <translation>Дата</translation>
     </message>
     <message>
         <source>Author</source>
-        <translation type="unfinished">Автор</translation>
+        <translation>Автор</translation>
     </message>
     <message>
         <source>Signed</source>
-        <translation type="unfinished">Подпись</translation>
+        <translation>Подписано</translation>
     </message>
     <message>
         <source>Thread:</source>
-        <translation type="unfinished"></translation>
+        <translation>Тема:</translation>
     </message>
     <message>
         <source>Previous Thread</source>
-        <translation type="unfinished"></translation>
+        <translation>Предыдущая тема</translation>
     </message>
     <message>
         <source>Next Thread</source>
-        <translation type="unfinished"></translation>
+        <translation>Следующая тема</translation>
     </message>
     <message>
         <source>Download all files</source>
-        <translation type="unfinished"></translation>
+        <translation>Скачать все файлы</translation>
     </message>
     <message>
         <source>Next unread</source>
-        <translation type="unfinished"></translation>
+        <translation>Следующее непрочитанное</translation>
     </message>
     <message>
         <source>Search forums</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск по форумам</translation>
     </message>
     <message>
         <source>Content</source>
-        <translation type="unfinished"></translation>
+        <translation>Содержимое</translation>
     </message>
     <message>
         <source>Reply Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Ответить на сообщение</translation>
     </message>
     <message>
         <source>Start new Thread for Selected Forum</source>
-        <translation type="unfinished"></translation>
+        <translation>Начать новую тему в выбранном форуме</translation>
     </message>
     <message>
         <source>Loading</source>
-        <translation type="unfinished"></translation>
+        <translation>Загрузка</translation>
     </message>
     <message>
         <source>Print</source>
-        <translation type="unfinished">Распечатать</translation>
+        <translation>Печать</translation>
     </message>
     <message>
         <source>PrintPreview</source>
-        <translation type="unfinished">Предварительный просмотр</translation>
+        <translation>Предварительный просмотр</translation>
     </message>
     <message>
         <source>Your Forums</source>
-        <translation type="unfinished">Ваши форумы</translation>
+        <translation>Ваши форумы</translation>
     </message>
     <message>
         <source>Subscribed Forums</source>
-        <translation type="unfinished">Подписка Форум</translation>
+        <translation>Форумы в подписке</translation>
     </message>
     <message>
         <source>Popular Forums</source>
-        <translation type="unfinished">Популярные форумы</translation>
+        <translation>Популярные форумы</translation>
     </message>
     <message>
         <source>Other Forums</source>
-        <translation type="unfinished">Другие форумы</translation>
+        <translation>Другие форумы</translation>
     </message>
     <message>
         <source>Subscribe to Forum</source>
-        <translation type="unfinished">Подписаться на форум</translation>
+        <translation>Подписаться на форум</translation>
     </message>
     <message>
         <source>Unsubscribe to Forum</source>
-        <translation type="unfinished">Отказ от подписки на форум</translation>
+        <translation>Отписаться от форума</translation>
     </message>
     <message>
         <source>New Forum</source>
-        <translation type="unfinished">Новый форум</translation>
+        <translation>Новый форум</translation>
     </message>
     <message>
         <source>Show Forum Details</source>
-        <translation type="unfinished">Показать форума Подробности</translation>
+        <translation>Показать подробности форума</translation>
     </message>
     <message>
         <source>Edit Forum Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактировать подробности форума</translation>
     </message>
     <message>
         <source>Share Forum</source>
-        <translation type="unfinished"></translation>
+        <translation>Расшарить форум</translation>
     </message>
     <message>
         <source>Restore Publish Rights for Forum</source>
-        <translation type="unfinished"></translation>
+        <translation>Восстановить публичные права для форума</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Скопировать ссылку RetroShare</translation>
     </message>
     <message>
         <source>Mark all as read</source>
-        <translation type="unfinished"></translation>
+        <translation>Отметить все как прочитанные</translation>
     </message>
     <message>
         <source>Mark all as unread</source>
-        <translation type="unfinished"></translation>
+        <translation>Отметить все как непрочитанные</translation>
     </message>
     <message>
         <source>Reply</source>
-        <translation type="unfinished">Ответ</translation>
+        <translation>Ответ</translation>
     </message>
     <message>
         <source>Start New Thread</source>
-        <translation type="unfinished">Начать новое обсуждение</translation>
+        <translation>Новая тема</translation>
     </message>
     <message>
         <source>Reply to Author</source>
-        <translation type="unfinished">Ответить автору</translation>
+        <translation>Ответить автору</translation>
     </message>
     <message>
         <source>Expand all</source>
-        <translation type="unfinished">Развернуть все</translation>
+        <translation>Раскрыть всё</translation>
     </message>
     <message>
         <source>Collapse all</source>
-        <translation type="unfinished">Свернуть все</translation>
+        <translation>Свернуть всё</translation>
     </message>
     <message>
         <source>Mark as read</source>
-        <translation type="unfinished"></translation>
+        <translation>Отметить как прочитанное</translation>
     </message>
     <message>
         <source>with children</source>
-        <translation type="unfinished"></translation>
+        <translation>с потомками</translation>
     </message>
     <message>
         <source>Mark as unread</source>
-        <translation type="unfinished"></translation>
+        <translation>Отметить как непрочитанное</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished">Скрыт </translation>
+        <translation>Спрятать</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished">Развернуть</translation>
+        <translation>Развернуть</translation>
     </message>
     <message>
         <source>AUTHD</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>[ ... Missing Message ... ]</source>
-        <translation type="unfinished"></translation>
+        <translation>[ ... Пропущенное сообщение ... ]</translation>
     </message>
     <message>
         <source>Placeholder for missing Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Метка для пропущенного сообщения</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"></translation>
+        <translation>RetroShare</translation>
     </message>
     <message>
         <source>No Forum Selected!</source>
-        <translation type="unfinished">Нет Форума Закладки!</translation>
+        <translation>Не выбрано ни одного форума!</translation>
     </message>
     <message>
         <source>Original Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Оригинал сообщения</translation>
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished">разослан</translation>
+        <translation>От</translation>
     </message>
     <message>
         <source>Sent</source>
-        <translation type="unfinished"></translation>
+        <translation>Отправлено</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation type="unfinished">Тема</translation>
+        <translation>Тема</translation>
     </message>
     <message>
         <source>On %1, %2 wrote:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>You cant reply to a non-existant Message</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>You cant reply to an Anonymous Author</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Anonymous</source>
-        <translation type="unfinished">Аноним</translation>
+        <translation>Аноним</translation>
     </message>
     <message>
         <source>signed</source>
-        <translation type="unfinished">подписано</translation>
+        <translation>подписано</translation>
     </message>
     <message>
         <source>none</source>
-        <translation type="unfinished">никакой</translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forums</source>
+        <translation>Форумы</translation>
     </message>
 </context>
 <context>
     <name>FriendList</name>
     <message>
         <source>Friends</source>
-        <translation type="unfinished">Друзья</translation>
+        <translation>Друзья</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Статус</translation>
     </message>
     <message>
         <source>Last Contact</source>
-        <translation type="unfinished"></translation>
+        <translation>Посл. контакт</translation>
     </message>
     <message>
         <source>Avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>Аватар</translation>
     </message>
     <message>
         <source>Hide Offline Friends</source>
-        <translation type="unfinished">Скрыть знакомых</translation>
+        <translation>Скрыть друзей не в сети</translation>
     </message>
     <message>
         <source>State</source>
-        <translation type="unfinished"></translation>
+        <translation>Состояние</translation>
     </message>
     <message>
         <source>Sort by State</source>
-        <translation type="unfinished"></translation>
+        <translation>Сортировать по состоянию</translation>
     </message>
     <message>
         <source>Hide State</source>
-        <translation type="unfinished"></translation>
+        <translation>Спрятать состояние</translation>
     </message>
     <message>
         <source>Sort Descending Order</source>
-        <translation type="unfinished">Сортировать убыванию</translation>
+        <translation>Сортировать по убыванию</translation>
     </message>
     <message>
         <source>Sort Ascending Order</source>
-        <translation type="unfinished">Сортировка по возрастанию заказа</translation>
+        <translation>Сортировать по возрастанию</translation>
     </message>
     <message>
         <source>Show Avatar Column</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать аватар</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя</translation>
     </message>
     <message>
         <source>Sort by Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Сортировать по имени</translation>
     </message>
     <message>
         <source>Sort by last contact</source>
-        <translation type="unfinished"></translation>
+        <translation>Сортировать по последнему контакту</translation>
     </message>
     <message>
         <source>Show Last Contact Column</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать последний контакт</translation>
     </message>
     <message>
         <source>Set root is Decorated</source>
-        <translation type="unfinished">Оформлен Задать корневую</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Set Root Decorated</source>
-        <translation type="unfinished">Установить корневой Награжден</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Show Groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать группы</translation>
     </message>
     <message>
         <source>Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Группа</translation>
     </message>
     <message>
         <source>Friend</source>
-        <translation type="unfinished"></translation>
+        <translation>Друг</translation>
     </message>
     <message>
         <source>Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Местоположение</translation>
     </message>
     <message>
         <source>Message Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Группа сообщений</translation>
     </message>
     <message>
         <source>Add Friend</source>
-        <translation type="unfinished">Добавить друга </translation>
+        <translation>Добавить друга</translation>
     </message>
     <message>
         <source>Edit Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактировать группу</translation>
     </message>
     <message>
         <source>Remove Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить группу</translation>
     </message>
     <message>
         <source>Chat lobbies</source>
-        <translation type="unfinished"></translation>
+        <translation>Комнаты чата</translation>
     </message>
     <message>
         <source>Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Чат</translation>
     </message>
     <message>
         <source>Message Friend</source>
-        <translation type="unfinished">Сообщение другу</translation>
+        <translation>Написать другу</translation>
     </message>
     <message>
         <source>Friend Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Подробности о друге</translation>
     </message>
     <message>
         <source>Recommend this Friend to...</source>
-        <translation type="unfinished"></translation>
+        <translation>Рекомендовать друга...</translation>
     </message>
     <message>
         <source>Connect To Friend</source>
-        <translation type="unfinished">Подключиться к другу </translation>
+        <translation>Соединиться с другом</translation>
     </message>
     <message>
         <source>Copy certificate link</source>
-        <translation type="unfinished"></translation>
+        <translation>Скопировать ссылку сертификата</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Скопировать ссылку RetroShare</translation>
     </message>
     <message>
         <source>Paste Friend Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить ссылку на друга</translation>
     </message>
     <message>
         <source>Deny Friend</source>
-        <translation type="unfinished"></translation>
+        <translation>Запретить другу</translation>
     </message>
     <message>
         <source>Remove Friend Location</source>
-        <translation type="unfinished">Удалить друга Местоположение</translation>
+        <translation>Удалить местоположение друга</translation>
     </message>
     <message>
         <source>Add to group</source>
-        <translation type="unfinished"></translation>
+        <translation>добавить в группу</translation>
     </message>
     <message>
         <source>Move to group</source>
-        <translation type="unfinished"></translation>
+        <translation>Переместить в группу</translation>
     </message>
     <message>
         <source>Groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Группы</translation>
     </message>
     <message>
         <source>Remove from group</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить из группы</translation>
     </message>
     <message>
         <source>Remove from all groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить из всех групп</translation>
     </message>
     <message>
         <source>Create new</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать новый</translation>
     </message>
     <message>
         <source>Invite this group</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Invite this friend</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Show</source>
-        <translation type="unfinished">Показать </translation>
+        <translation>Показать</translation>
     </message>
     <message>
         <source>Unsubscribe</source>
-        <translation type="unfinished"></translation>
+        <translation>Отменить подписку</translation>
     </message>
     <message>
         <source>Expand all</source>
-        <translation type="unfinished">Развернуть все</translation>
+        <translation>Раскрыть всё</translation>
     </message>
     <message>
         <source>Collapse all</source>
-        <translation type="unfinished">Свернуть все</translation>
+        <translation>Свернуть всё</translation>
     </message>
     <message>
         <source>Available</source>
-        <translation type="unfinished">Доступный</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Do you want to remove this Friend?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unsubscribe to lobby</source>
-        <translation type="unfinished"></translation>
+        <translation>Отменить подписку на лобби</translation>
     </message>
     <message>
         <source>You are about to unsubscribe a chat lobby&lt;br&gt;You can only re-enter if your friends invite you again.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Columns</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sort by</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>FriendRecommendDialog</name>
     <message>
         <source>Friend Recommendations</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Message:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Recommend friends</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>To</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Please select at least one friend for recommendation.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Please select at least one friend as recipient.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>FriendRequest</name>
     <message>
         <source>Friend Request</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt; color:#ffffff;&quot;&gt;Friend Request&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Accept Request and Close&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Confirm</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Peer Info</source>
-        <translation type="unfinished">Peer информация</translation>
+        <translation>Peer информация</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя</translation>
     </message>
     <message>
         <source>Peer ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is:</source>
-        <translation type="obsolete">Ваше доверие к этой совокупности является:</translation>
+        <translation>ID пира</translation>
     </message>
     <message>
         <source>Sign GPG Key</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"></translation>
+        <translation>RetroShare</translation>
     </message>
     <message>
         <source>Error : cannot get peer details.</source>
-        <translation type="unfinished">Ошибка: не могу получить совокупность деталей.</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is ultimate, it&apos;s probably a key you own.</source>
-        <translation type="obsolete">Ваше доверие к этой конечной совокупности, вероятно, это ключевой Вы владеете.</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is full.</source>
-        <translation type="obsolete">Ваше доверие к этой совокупности является полным.</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is marginal.</source>
-        <translation type="obsolete">Ваше доверие к этой совокупности является маргинальной.</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is none.</source>
-        <translation type="obsolete">Ваше доверие к этой совокупности нет.</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is not set.</source>
-        <translation type="obsolete">Ваше доверие в эту совокупность не установлена.</translation>
+        <translation>Ошибка: не могу получить совокупность деталей.</translation>
     </message>
     <message>
         <source>Signature Failure</source>
-        <translation type="unfinished">Ошибка в подписи</translation>
+        <translation>Ошибка в подписи</translation>
     </message>
     <message>
         <source>Maybe password is wrong</source>
-        <translation type="unfinished">Может быть, неправильный пароль</translation>
+        <translation>Может быть, неправильный пароль</translation>
     </message>
     <message>
         <source>You have a friend request.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>FriendRequestToaster</name>
     <message>
-        <source>Friend Request</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Confirm Friend Request</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>wants to be friend with you on RetroShare</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unknown (Incoming) Connect Attempt</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>FriendSelectionWidget</name>
     <message>
         <source>Search for Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск по имени:</translation>
     </message>
     <message>
         <source>Search Friends</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск друзей</translation>
     </message>
 </context>
 <context>
     <name>FriendsDialog</name>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Friends&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Друзья&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Add</source>
-        <translation type="unfinished">Добавить</translation>
+        <translation>Добавить</translation>
     </message>
     <message>
         <source>Display</source>
-        <translation type="unfinished">Отображать</translation>
-    </message>
-    <message>
-        <source>Friends</source>
-        <translation type="obsolete">Друзья</translation>
-    </message>
-    <message>
-        <source>Add or Change your Avatar</source>
-        <translation type="obsolete">Добавить или изменить Avatar</translation>
+        <translation>Показать</translation>
     </message>
     <message>
         <source>Edit Personal message</source>
-        <translation type="unfinished">Править Личные сообщения</translation>
-    </message>
-    <message>
-        <source>Bold</source>
-        <translation type="unfinished">Жирным</translation>
-    </message>
-    <message>
-        <source>Underline</source>
-        <translation type="unfinished">Подчеркнуть</translation>
-    </message>
-    <message>
-        <source>Italic</source>
-        <translation type="unfinished">Курсив</translation>
-    </message>
-    <message>
-        <source>Font</source>
-        <translation type="unfinished">Шрифт</translation>
-    </message>
-    <message>
-        <source>Text Color</source>
-        <translation type="unfinished">Цвет текста</translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation type="unfinished">Отправить</translation>
-    </message>
-    <message>
-        <source>Clear Chat History</source>
-        <translation type="unfinished">Очистить историю</translation>
-    </message>
-    <message>
-        <source>Add Friend</source>
-        <translation type="unfinished">Добавить друга </translation>
-    </message>
-    <message>
-        <source>Create new Profile</source>
-        <translation type="unfinished">Создание нового профиля</translation>
-    </message>
-    <message>
-        <source>Create new Forum</source>
-        <translation type="unfinished">Создать форум</translation>
-    </message>
-    <message>
-        <source>Create new Channel</source>
-        <translation type="unfinished">Создать новый канал</translation>
-    </message>
-    <message>
-        <source>Add your Avatar Picture</source>
-        <translation type="unfinished">Добавить Аватар Фото</translation>
-    </message>
-    <message>
-        <source>Set your Personal Message</source>
-        <translation type="unfinished">Задать Ваше личное сообщение</translation>
-    </message>
-    <message>
-        <source>Edit your status Message</source>
-        <translation type="unfinished">Изменить свой статус</translation>
-    </message>
-    <message>
-        <source>Hide Offline Friends</source>
-        <translation type="obsolete">Скрыть знакомых</translation>
-    </message>
-    <message>
-        <source>Sort Descending Order</source>
-        <translation type="obsolete">Сортировать убыванию</translation>
-    </message>
-    <message>
-        <source>Sort Ascending Order</source>
-        <translation type="obsolete">Сортировка по возрастанию заказа</translation>
-    </message>
-    <message>
-        <source>Profile</source>
-        <translation type="unfinished">Профиль</translation>
-    </message>
-    <message>
-        <source>News Feed</source>
-        <translation type="unfinished">Новости кормить</translation>
-    </message>
-    <message>
-        <source>Welcome to RetroShare&apos;s group chat.</source>
-        <translation type="unfinished">Добро пожаловать в групповой чат RetroShare</translation>
-    </message>
-    <message>
-        <source>me</source>
-        <translation type="obsolete">меня</translation>
-    </message>
-    <message>
-        <source>Message Friend</source>
-        <translation type="obsolete">Сообщение другу</translation>
-    </message>
-    <message>
-        <source>Connect To Friend</source>
-        <translation type="obsolete">Подключиться к другу </translation>
-    </message>
-    <message>
-        <source>Remove Friend Location</source>
-        <translation type="obsolete">Удалить друга Местоположение</translation>
-    </message>
-    <message>
-        <source>Expand all</source>
-        <translation type="obsolete">Развернуть все</translation>
-    </message>
-    <message>
-        <source>Collapse all</source>
-        <translation type="obsolete">Свернуть все</translation>
-    </message>
-    <message>
-        <source>Available</source>
-        <translation type="obsolete">Доступный</translation>
-    </message>
-    <message>
-        <source>Save Certificate</source>
-        <translation type="obsolete">Сохранить сертификат </translation>
-    </message>
-    <message>
-        <source>Certificates (*.pqi)</source>
-        <translation type="obsolete">Сертификаты (*. pqi) </translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation type="unfinished">Дополнительные файлы</translation>
-    </message>
-    <message>
-        <source>Drop file error.</source>
-        <translation type="obsolete">Оставьте файл ошибок.</translation>
-    </message>
-    <message>
-        <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation type="obsolete">Каталог не может быть удален, принимаются только файлы.</translation>
-    </message>
-    <message>
-        <source>File not found or file name not accepted.</source>
-        <translation type="obsolete">Файл не найден или имя файла, не принимаются.</translation>
-    </message>
-    <message>
-        <source>Save as...</source>
-        <translation type="unfinished">Сохранить как ...</translation>
+        <translation>Редактировать личное сообщение</translation>
     </message>
     <message>
         <source>Group Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Групповой чат</translation>
+    </message>
+    <message>
+        <source>Bold</source>
+        <translation>Полужирный</translation>
+    </message>
+    <message>
+        <source>Underline</source>
+        <translation>Подчеркнутый</translation>
+    </message>
+    <message>
+        <source>Italic</source>
+        <translation>Курсив</translation>
+    </message>
+    <message>
+        <source>Font</source>
+        <translation>Шрифт</translation>
+    </message>
+    <message>
+        <source>Text Color</source>
+        <translation>Цвет текста</translation>
     </message>
     <message>
         <source>Attach File</source>
-        <translation type="unfinished"></translation>
+        <translation>Присоединить файл</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>Отправить</translation>
     </message>
     <message>
         <source>Messages entered here are sent to all connected friends</source>
-        <translation type="unfinished"></translation>
+        <translation>Сообщение, введенные тут, отправятся всем друзьям онлайн</translation>
+    </message>
+    <message>
+        <source>Clear Chat History</source>
+        <translation>Очистить историю чата</translation>
+    </message>
+    <message>
+        <source>Add Friend</source>
+        <translation>Добавить друга</translation>
+    </message>
+    <message>
+        <source>Create new Profile</source>
+        <translation>Создать новый профиль</translation>
+    </message>
+    <message>
+        <source>Create new Forum</source>
+        <translation>Создать новый форум</translation>
     </message>
     <message>
         <source>F</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create new Channel</source>
+        <translation>Создать новый канал</translation>
     </message>
     <message>
         <source>C</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add your Avatar Picture</source>
+        <translation>Добавить аватар к профилю</translation>
     </message>
     <message>
         <source>A</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Set your Personal Message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit your status Message</source>
+        <translation>Редактировать статус</translation>
     </message>
     <message>
         <source>Browse Message History</source>
-        <translation type="unfinished"></translation>
+        <translation>Просмотреть историю сообщений</translation>
     </message>
     <message>
         <source>Browse History</source>
-        <translation type="unfinished"></translation>
+        <translation>Просмотреть историю</translation>
     </message>
     <message>
         <source>Save Chat History</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить историю чата</translation>
     </message>
     <message>
         <source>Add a new Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить новую группу</translation>
     </message>
     <message>
         <source>Delete Chat History</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистить историю чата</translation>
     </message>
     <message>
         <source>Deletes all stored and displayed chat history</source>
-        <translation type="unfinished"></translation>
+        <translation>Удаляет всю сохраненную и отображаемую историю чата</translation>
     </message>
     <message>
         <source>Create new Chat lobby</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать новую комнату чата</translation>
     </message>
     <message>
         <source>Chat lobbies</source>
-        <translation type="unfinished"></translation>
+        <translation>Комнаты чатов</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>Профиль</translation>
+    </message>
+    <message>
+        <source>News Feed</source>
+        <translation>Новостная лента</translation>
+    </message>
+    <message>
+        <source>Welcome to RetroShare&apos;s group chat.</source>
+        <translation>добро пожаловать в групповой чат RetroShare</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить ссылку RetroShare</translation>
     </message>
     <message>
         <source>is typing...</source>
-        <translation type="unfinished"></translation>
+        <translation>печатает...</translation>
     </message>
     <message>
         <source>New group chat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Do you really want to physically delete the history?</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы действительно хотите удалить историю сообщений с диска?</translation>
+    </message>
+    <message>
+        <source>Add Extra File</source>
+        <translation>Добавить файл</translation>
+    </message>
+    <message>
+        <source>Save as...</source>
+        <translation>Сохранить как...</translation>
     </message>
     <message>
         <source>Text File (*.txt );;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Текстовый файл (*.txt );;Все файлы (*)</translation>
     </message>
     <message>
         <source>Friend Recommendations</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Choose Font</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Reset font to default</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>GSettingsWin</name>
-    <message>
-        <source>General</source>
-        <translation type="obsolete">Общий</translation>
+        <translation>Сбросить настройки шрифта</translation>
     </message>
     <message>
-        <source>Network</source>
-        <translation type="obsolete">Network</translation>
-    </message>
-    <message>
-        <source>Directories</source>
-        <translation type="obsolete">Справочники</translation>
-    </message>
-    <message>
-        <source>Server</source>
-        <translation type="obsolete">Peer</translation>
-    </message>
-    <message>
-        <source>%1</source>
-        <translation type="obsolete">%1</translation>
-    </message>
-    <message>
-        <source>File assotiations</source>
-        <translation type="obsolete">Файл assoziation</translation>
+        <source>Friends</source>
+        <translation>Друзья</translation>
     </message>
 </context>
 <context>
     <name>GamesDialog</name>
     <message>
-        <source>Accept</source>
-        <translation type="unfinished">Принять </translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <translation type="unfinished">Удалить</translation>
-    </message>
-    <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Форма</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Games Launcher&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Game:</source>
-        <translation type="unfinished"></translation>
+        <translation>Игра:</translation>
     </message>
     <message>
         <source>GameType: 0. Want to Add your Game here?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>GameType: 1. Get In Touch with the developers</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>GameType: 2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Title / Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>Название / комментарий</translation>
     </message>
     <message>
         <source>Create New Game</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать новую игру</translation>
     </message>
     <message>
         <source>Invite All Friends</source>
-        <translation type="unfinished"></translation>
+        <translation>Пригласить всех друзей</translation>
     </message>
     <message>
         <source>Game Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Тип игры</translation>
     </message>
     <message>
         <source>Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Сервер</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Статус</translation>
     </message>
     <message>
         <source>Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>Комментарий</translation>
     </message>
     <message>
         <source>GameID</source>
-        <translation type="unfinished"></translation>
+        <translation>ID игры</translation>
     </message>
     <message>
         <source>Player</source>
-        <translation type="unfinished"></translation>
+        <translation>Игрок</translation>
     </message>
     <message>
         <source>Invite</source>
-        <translation type="unfinished"></translation>
+        <translation>Пригласить</translation>
     </message>
     <message>
         <source>Interested</source>
-        <translation type="unfinished"></translation>
+        <translation>Интересно</translation>
+    </message>
+    <message>
+        <source>Accept</source>
+        <translation>Подтвердить</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Удалить</translation>
     </message>
     <message>
         <source>Move Player</source>
-        <translation type="unfinished"></translation>
+        <translation>Переместить игрока</translation>
     </message>
     <message>
         <source>Play Game</source>
-        <translation type="unfinished"></translation>
+        <translation>Играть в игру</translation>
     </message>
     <message>
         <source>Cancel Game</source>
-        <translation type="unfinished"></translation>
+        <translation>Отменить игру</translation>
     </message>
     <message>
         <source>Add to Invite List</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить в список приглашений</translation>
     </message>
     <message>
         <source>Remove from Invite List</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить из списка приглашений</translation>
     </message>
     <message>
         <source>Interested in Playing</source>
-        <translation type="unfinished"></translation>
+        <translation>Интересно поиграть</translation>
     </message>
     <message>
         <source>Not Interested in Game</source>
-        <translation type="unfinished"></translation>
+        <translation>Незаинтересован в игре</translation>
     </message>
     <message>
         <source>Not Interested</source>
-        <translation type="unfinished"></translation>
+        <translation>Не интересно</translation>
     </message>
     <message>
         <source>Confirm Peer in Game</source>
-        <translation type="unfinished"></translation>
+        <translation>Подтвердить пир в игре</translation>
     </message>
     <message>
         <source>Remove Peer from Game</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить пир из игры</translation>
     </message>
     <message>
         <source>Interested in Game</source>
-        <translation type="unfinished"></translation>
+        <translation>Заинтересован в игре</translation>
     </message>
     <message>
         <source>Quit Game</source>
-        <translation type="unfinished"></translation>
+        <translation>Выйти из игры</translation>
     </message>
 </context>
 <context>
     <name>GenCertDialog</name>
     <message>
-        <source>RetroShare setup</source>
-        <translation type="obsolete">Retroshare настройки</translation>
-    </message>
-    <message>
-        <source>Load Trusted Certificate (Optional)</source>
-        <translation type="obsolete">Загрузка доверенный сертификат (опционально)</translation>
-    </message>
-    <message>
         <source>Create new Profile</source>
-        <translation type="unfinished">Создание нового профиля</translation>
+        <translation>Создать новый профиль</translation>
+    </message>
+    <message>
+        <source>Your profile is associated to a GPG key</source>
+        <translation>Ваш профиль ассоциирован с GPG-ключом</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя</translation>
     </message>
     <message>
         <source>Enter here your nickname</source>
-        <translation type="unfinished"></translation>
+        <translation>Введите Ваш ник</translation>
     </message>
     <message>
         <source>Email</source>
-        <translation type="unfinished"></translation>
+        <translation>Email</translation>
     </message>
     <message>
         <source>Be careful: this email will be visible to your friends and friends 
 of your friends. This information is required by GPG, but to stay 
 anonymous, you can use a fake email.</source>
-        <translation type="unfinished"></translation>
+        <translation>Будьте осторожны: эта почта будет видима Вашим друзьям и друзьям
+Ваших друзей. Эта информация требуется для GPG, но, чтобы сохранить
+анонимность, можно использовать фальшивый email.</translation>
     </message>
     <message>
         <source>This Password is for GPG</source>
-        <translation type="unfinished"></translation>
+        <translation>Этот пароль нужен для GPG</translation>
     </message>
     <message>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Пароль</translation>
     </message>
     <message>
         <source>Put a strong password here. This password protects your GPG key.</source>
-        <translation type="unfinished"></translation>
+        <translation>Используйте сложный пароль. Этот пароль защищает Ваш GPG-ключ.</translation>
     </message>
     <message>
         <source>Location</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Your profile is associated to a GPG key</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Friend&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Другу&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Select File</source>
-        <translation type="obsolete">выберите Файл</translation>
-    </message>
-    <message>
-        <source>Country:</source>
-        <translation type="obsolete">Страна:</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Name:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Имя:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Generate New Certificate</source>
-        <translation type="obsolete">Создать новый сертификат </translation>
+        <translation>Местоположение</translation>
     </message>
     <message>
         <source>Create new Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать новое местоположение</translation>
     </message>
     <message>
         <source>Generate new Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Сгенерировать новое местоположение</translation>
     </message>
     <message>
         <source>Create a new Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать новое местоположение</translation>
     </message>
     <message>
         <source>Generate GPG key Failure</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка генерации GPG-ключа</translation>
     </message>
     <message>
         <source>Location field is required with a minimum of 3 characters</source>
-        <translation type="unfinished"></translation>
+        <translation>Поле для местоположения должно быть длиной минимум 3 символа</translation>
     </message>
     <message>
         <source>All fields are required with a minimum of 3 characters</source>
-        <translation type="unfinished"></translation>
+        <translation>Все обязательный поля должны быть длиной минимум 3 символа</translation>
     </message>
     <message>
         <source>Generating new GPG key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
 
 Fill in your GPG password when asked, to sign your new key.</source>
-        <translation type="unfinished"></translation>
+        <translation>Генерация нового GPG-ключа, потерпите, пожалуйста: этот процесс требует генерации больших простых чисел и может длиться несколько минут на медленных компьютерах. 
+
+Введите Ваш GPG пароль, когда потребуется, чтобы подписать Ваш новый ключ.</translation>
     </message>
     <message>
         <source>Select Trusted Friend</source>
-        <translation type="unfinished">Выбор верного друга</translation>
+        <translation>Выбрать доверенного друга</translation>
     </message>
     <message>
         <source>Certificates (*.pqi *.pem)</source>
-        <translation type="unfinished">Сертификаты (*.pqi /*.pem) </translation>
+        <translation>Сертификаты (*.pqi *.pem)</translation>
     </message>
     <message>
         <source>Multiple instances</source>
-        <translation type="unfinished"></translation>
+        <translation>Множественные копии</translation>
     </message>
     <message>
         <source>Another RetroShare using the same profile is already running on your system. Please close that instance first</source>
-        <translation type="unfinished"></translation>
+        <translation>Другая RetroShare, использующая тот же профиль, уже запущена в системе. Пожалуйста, сначала закройте ту копию.</translation>
     </message>
     <message>
         <source>An unexpected error occurred when Retrosharetried to acquire the single instance lock</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Generate ID Failure</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Failed to Load your new Certificate!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Name:</source>
-        <translation type="obsolete">Имя:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>[Optional] Visible to your friends, and friends of friends.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>[Required] Examples: Home, Laptop,...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>[Required] Visible to your friends, and friends of friends.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>[Required] This password protects your PGP key.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>It looks like you don&apos;t own any Profile (GPG keys). Please fill in the form below to generate one, or import an existing profile.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Generate a new identity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Import new identity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Export selected identity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Use identity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Your profile is associated to a GPG key. RetroShare currently ignores DSA keys.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Put a meaningfull location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same identity (gpg key).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Generate New Identity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:16pt; color:#ffffff;&quot;&gt;Create a new Identity&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;RetroShare uses gpg keys for identity management. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;You can use an existing identity (i.e. a gpg key pair), from the list below, or create a new one with this form.&lt;/span&gt;&lt;/p&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt;RetroShare uses gpg keys for identity management. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt;You can use an existing identity (i.e. a gpg key pair), from the list below, or create a new one with this form.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;You can install retroshare on different locations using the same identity. For this, just export the selected identity, and import it on the new computer, then create a new location with it.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Create new Identity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Generate new Identity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Create a new Identity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Export Identity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare Identity files (*.asc)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Identity saved</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Your identity was successfully saved
@@ -6398,1006 +5305,914 @@ It is encrypted
 
 You can now copy it to another computer
 and use the import button to load it</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Identity not saved</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Your identity was not saved. An error occured.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Identity not loaded</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Your identity was not loaded properly:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New identity imported</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Your identity was imported successfuly:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>You can use it now to create a new location.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>GeneralDialog</name>
-    <message>
-        <source>Style</source>
-        <translation type="obsolete">Style</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Choose RetroShare&apos;s interface style&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Выберите стиль интерфейса Retroshare &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Language</source>
-        <translation type="obsolete">языка / Language</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Choose the language used in RetroShare&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">Выберите язык, используемый в Retroshare </translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Arial; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Changes to language will only take effect after restarting RetroShare!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Arial; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Changes to language will only take effect after restarting Retroshare!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Style Sheet</source>
-        <translation type="obsolete">Стиль Спецификация </translation>
-    </message>
-    <message>
-        <source>Login</source>
-        <translation type="obsolete">Login (логин)</translation>
-    </message>
-    <message>
-        <source>Misc</source>
-        <translation type="obsolete">Misc/Разное </translation>
-    </message>
-</context>
-<context>
-    <name>GeneralMsgDialog</name>
-    <message>
-        <source>Forum</source>
-        <translation type="obsolete">Форум</translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation type="obsolete">Дополнительные файлы</translation>
-    </message>
-    <message>
-        <source>Attachments</source>
-        <translation type="obsolete">Вложения</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>GeneralPage</name>
     <message>
-        <source>Keys manager</source>
-        <translation type="obsolete">Клавиши менеджер </translation>
-    </message>
-    <message>
-        <source>Style</source>
-        <translation type="obsolete">Style</translation>
-    </message>
-    <message>
-        <source>Choose RetroShare&apos;s interface style</source>
-        <translation type="obsolete">Выберите стиль интерфейса Retroshare</translation>
-    </message>
-    <message>
-        <source>Language</source>
-        <translation type="obsolete">языка </translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Arial; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Changes to language will only take effect after restarting RetroShare!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Arial; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Изменения языка вступят в силу только после перезапуска Retroshare!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Choose the language used in RetroShare</source>
-        <translation type="obsolete">Выберите язык, используемый в Retroshare </translation>
-    </message>
-    <message>
-        <source>Login</source>
-        <translation type="obsolete">Login (логин)</translation>
-    </message>
-    <message>
-        <source>Misc</source>
-        <translation type="unfinished">Misc/Разное </translation>
-    </message>
-    <message>
         <source>Startup</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Start RetroShare when my system starts</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Start minimized</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Start minimized on system start</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>For Advanced Users </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Enable Advanced Mode (Restart Required)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Misc</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Do not show the Quit RetroShare MessageBox</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Do not Minimize to Tray Icon</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Auto Login</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Register retroshare:// as url protocol (Restart required)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>You need administrator rights to change this option.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Idle</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Idle Time</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> seconds</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка</translation>
     </message>
     <message>
         <source>Could not add retroshare:// as protocol.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Could not remove retroshare:// protocol.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Главное</translation>
     </message>
     <message>
         <source>Enable Experimental Features (Restart Required)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>GetStartedDialog</name>
     <message>
         <source>Getting Started</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Invite Friends</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;RetroShare is nothing without your Friends. Click on the Button to start the process.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Email an Invitation with your &amp;quot;ID Certificate&amp;quot; to your friends.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Be sure to get their invitation back as well... &lt;/span&gt;&lt;/p&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;RetroShare is nothing without your Friends. Click on the Button to start the process.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;Email an Invitation with your &amp;quot;ID Certificate&amp;quot; to your friends.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;Be sure to get their invitation back as well... &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;You can only connect with friends if you have both added each other.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add Your Friends to RetroShare</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> Add Friends </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;When your friends send you a their invitations, Click to open the Add Friends window.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;When your friends send you a their invitations, Click to open the Add Friends window.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Cut and Paste your Friend&apos;s &amp;quot;ID Certificates&amp;quot; into the window and add them as friends.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Connect To Friends</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Be Online at the same time, and RetroShare will automatically connect you!&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Your client needs to find the RetroShare Network before it can make connections.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;This takes 5-30 minutes the first time you startup RetroShare&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;The DHT indicator (in the Status Bar) turns Green when it can make connections.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;After a couple of minutes, the NAT indicator (also in the Status Bar) switch to Yellow or Green.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;If it remains Red, then you have a Nasty Firewall, that RetroShare struggles to connect through.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;Be Online at the same time, and RetroShare will automatically connect you!&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;Your client needs to find the RetroShare Network before it can make connections.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;This takes 5-30 minutes the first time you startup RetroShare&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;The DHT indicator (in the Status Bar) turns Green when it can make connections.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;After a couple of minutes, the NAT indicator (also in the Status Bar) switch to Yellow or Green.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;If it remains Red, then you have a Nasty Firewall, that RetroShare struggles to connect through.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Look in the Further Help section for more advice about connecting.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Advanced: Open Firewall Port</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;You can improve your Retroshare performance by opening an External Port. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;This will speed up connections and allow more people to connect with you &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;The easiest way to do this is by enabling UPnP on your Wireless Box or Router.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;As each router is different, you need to find out your Router Model and Google for instructions.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;If none of this makes sense, don&apos;t worry about it Retroshare will still work.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;You can improve your Retroshare performance by opening an External Port. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;This will speed up connections and allow more people to connect with you &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;The easiest way to do this is by enabling UPnP on your Wireless Box or Router.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;As each router is different, you need to find out your Router Model and Google for instructions.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;If none of this makes sense, don't worry about it Retroshare will still work.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Further Help and Support</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Having trouble getting started with RetroShare?&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;1) look at the FAQ Wiki. This is a bit old, we trying to bring it up to date.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;2) check out the Online Forums. Ask questions and discuss features.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;3) try the Internal RetroShare Forums &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;	- These come online once you are connected to friends.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;4) If you are still stuck. Email us.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;Having trouble getting started with RetroShare?&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;1) look at the FAQ Wiki. This is a bit old, we trying to bring it up to date.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;2) check out the Online Forums. Ask questions and discuss features.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;3) try the Internal RetroShare Forums &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;	- These come online once you are connected to friends.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;4) If you are still stuck. Email us.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Enjoy Retrosharing&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Open RS Website</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Open FAQ Wiki</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Open Online Forums</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Email Support</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Email Feedback</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare Invitation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Your friend has installed RetroShare, and would like you to try it out.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>You can get RetroShare here: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare is a private Friend-2-Friend sharing network.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>It has many features, including built-in chat, messaging, </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>forums and channels, all of which are as secure as the file-sharing.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Here is your friends ID Certificate.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cut and paste the text below into your RetroShare client</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>and send them your ID Certificate to get securely connected.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cut Below Here</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare Feedback</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare Support</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>GraphFrame</name>
     <message>
         <source>Recv: </source>
-        <translation type="unfinished">Recv: </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>%1 KB/s</source>
-        <translation type="unfinished">%1 KB/s</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sent: </source>
-        <translation type="unfinished">Отправлено: </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>%1 KB</source>
-        <translation type="unfinished">%1 KB</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>%1 MB</source>
-        <translation type="unfinished">%1 MB</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>%1 GB</source>
-        <translation type="unfinished">%1 GB</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>GraphWidget</name>
     <message>
         <source>Click and drag the nodes around, and zoom with the mouse wheel or the &apos;+&apos; and &apos;-&apos; keys</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>GroupChatToaster</name>
     <message>
         <source>Show Group Chat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>GroupDefs</name>
     <message>
         <source>Friends</source>
-        <translation type="unfinished">Друзья</translation>
+        <translation>Друзья</translation>
     </message>
     <message>
         <source>Family</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Co-Workers</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Other Contacts</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Favorites</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>GroupTreeWidget</name>
     <message>
+        <source>Enter a Keyword here</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <source>Title</source>
-        <translation type="unfinished">Название</translation>
+        <translation>Название</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished">Описание</translation>
-    </message>
-    <message>
-        <source>Enter a Keyword here</source>
-        <translation type="unfinished"></translation>
+        <translation>Описание</translation>
     </message>
     <message>
         <source>Sort by Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Сортировать по имени</translation>
     </message>
     <message>
         <source>Sort by Popularity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sort by Last Post</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Private Key Available</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>GuiExprElement</name>
     <message>
-        <source>Hash</source>
-        <translation type="unfinished">Хэш</translation>
-    </message>
-    <message>
-        <source>Date</source>
-        <translation type="unfinished">часы </translation>
-    </message>
-    <message>
         <source>and</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>and / or</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>or</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя</translation>
     </message>
     <message>
         <source>Path</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Extension</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Hash</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Date</source>
+        <translation>Дата</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Размер</translation>
     </message>
     <message>
         <source>Popularity</source>
-        <translation type="unfinished"></translation>
+        <translation>Популярность</translation>
     </message>
     <message>
         <source>contains</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>contains all</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>is</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>less than</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>less than or equal</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>equals</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>greater than or equal</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>greater than</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>is in range</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>HashBox</name>
     <message>
         <source>Drop file error.</source>
-        <translation type="unfinished">Оставьте файл ошибок.</translation>
+        <translation>Ошибка прикрепления файла.</translation>
     </message>
     <message>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation type="unfinished">Каталог не может быть удален, принимаются только файлы.</translation>
+        <translation>Директория не может быть прикреплена таким образом, только файлы допустимы.</translation>
     </message>
     <message>
         <source>File not found or file name not accepted.</source>
-        <translation type="unfinished">Файл не найден или имя файла, не принимаются.</translation>
+        <translation>Файл не найден или недопустимое имя файла</translation>
     </message>
 </context>
 <context>
     <name>HelpBrowser</name>
     <message>
-        <source>Error Loading Help Contents: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Supplied XML file is not a valid Contents document.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Search reached end of document</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Search reached start of document</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Text not found in document</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Found %1 results</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Search</source>
-        <translation type="unfinished">Поиск </translation>
-    </message>
-    <message>
-        <source>Home</source>
-        <translation type="unfinished">Home</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="unfinished">закрыть </translation>
-    </message>
-    <message>
         <source>RetroShare Help</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Find:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Find Previous</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Find Next</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Case sensitive</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Whole words only</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Contents</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Help Topics</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation>Поиск</translation>
     </message>
     <message>
         <source>Searching for:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Found Documents</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Move to previous page (Backspace)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Backspace</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forward</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Move to next page (Shift+Backspace)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Shift+Backspace</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Home</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Move to the Home page (Ctrl+H)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Ctrl+H</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Find</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Search for a word or phrase on current page (Ctrl+F)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Ctrl+F</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Закрыть</translation>
     </message>
     <message>
         <source>Close Vidalia Help</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Esc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Error Loading Help Contents: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Supplied XML file is not a valid Contents document.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Search reached end of document</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Search reached start of document</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Text not found in document</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Found %1 results</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>HelpDialog</name>
     <message>
         <source>About</source>
-        <translation type="unfinished">О программе</translation>
+        <translation>О программе</translation>
     </message>
     <message>
         <source>Authors</source>
-        <translation type="unfinished">Авторы</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Thanks to</source>
-        <translation type="unfinished">Благодарности</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Translation</source>
-        <translation type="unfinished">Перевод</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>License Agreement</source>
-        <translation type="unfinished">Лицензионное соглашение</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare is a Open Source cross-platform, &lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;private and secure decentralised commmunication platform.	&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;It lets you share securely your friends, &lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;using a web-of-trust to authenticate peers and OpenSSL to encrypt all communication. &lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare provides filesharing, chat, messages and channels&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Usefull External Links to more information:&lt;/span&gt;&lt;/p&gt;
-&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Webpage&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/wiki/index.php/Main_Page&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Wiki&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/forum/&quot;&gt;RetroShare&apos;s Forum&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://sourceforge.net/projects/retroshare/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Project Page&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://www.lunamutt.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Lunamutt Homepage.&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Translators:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;French&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;:Temet&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jarek&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Serbian&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;: Kunalagon Umuhanik &amp;lt;kunalagon@gmail.com&amp;gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Swedish:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; dnylander&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Website Translators:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Swedish: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Daniel Wester&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;wester@speedmail.se&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;German: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Keller&lt;/span&gt; &amp;lt;&lt;span style=&quot; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&amp;gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;Maciej Mrug&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;About RetroShare&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-weight:600;&quot;&gt;RetroShare is a Open Source cross-platform, &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-weight:600;&quot;&gt;private and secure decentralised commmunication platform.	&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-weight:600;&quot;&gt;It lets you share securely your friends, &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-weight:600;&quot;&gt;using a web-of-trust to authenticate peers and OpenSSL to encrypt all communication. &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-weight:600;&quot;&gt;RetroShare provides filesharing, chat, messages and channels&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt;Usefull External Links to more information:&lt;/span&gt;&lt;/p&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:'Arial'; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Webpage&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-family:'Arial'; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/wiki/index.php/Main_Page&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Wiki&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-family:'Arial'; font-size:8pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/forum/&quot;&gt;RetroShare's Forum&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-family:'Arial'; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://sourceforge.net/projects/retroshare/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Project Page&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://www.lunamutt.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Lunamutt Homepage.&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Translators:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt;French&lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt;&quot;&gt;:Temet&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt;&quot;&gt;Jarek&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt;Serbian&lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt;&quot;&gt;: Kunalagon Umuhanik &amp;lt;kunalagon@gmail.com&amp;gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt;Swedish:&lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt;&quot;&gt; dnylander&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Website Translators:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt;Swedish: &lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt;&quot;&gt; Daniel Wester&lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt;&quot;&gt;wester@speedmail.se&lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt;German: &lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt;&quot;&gt;Keller&lt;/span&gt;&lt;span style=&quot; font-family:'Arial';&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&lt;span style=&quot; font-family:'Arial';&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;;&quot;&gt;Maciej Mrug&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>HelpTextBrowser</name>
     <message>
         <source>Error opening help file: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Opening External Link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unable to Open Link</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare can open the link you selected in your default Web browser. If your browser is not currently configured to use Tor then the request will not be anonymous.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Do you want Retroshare to open the link in your Web browser?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unable to Open Link</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare was unable to open the selected link in your Web browser. You can still copy the URL and paste it into your browser.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>IdDialog</name>
     <message>
         <source>Showing:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Yourself</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends / Friends of Friends</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Others</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Pseudonyms</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>All</source>
-        <translation type="unfinished">Все</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>filter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Nickname</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>KeyId</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Тип</translation>
     </message>
     <message>
         <source>Delete ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Edit Reputation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Edit ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Identity Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend</source>
-        <translation type="unfinished"></translation>
+        <translation>Друг</translation>
     </message>
     <message>
         <source>Friend of Friend</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Pseudonym</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Key ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>GPG Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>GPG Email</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>GPG Id</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>GPG Hash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Reputation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Your Rating</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Overall Rating</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>IdEditDialog</name>
     <message>
         <source>Nickname</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Key ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>GPG Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>GPG Email</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>GPG Hash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>GPG Id</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New Identity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Gpg Assocated ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Pseudonym</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Create/Update ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ImHistoryBrowser</name>
     <message>
+        <source>Message History</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <source>Copy</source>
-        <translation type="unfinished">Копировать</translation>
+        <translation>Копировать</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished">Удалить </translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <translation type="unfinished">Удалить</translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation type="unfinished">Отправить</translation>
-    </message>
-    <message>
-        <source>Message History</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt; color:#ffffff;&quot;&gt;Message History&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить</translation>
     </message>
     <message>
         <source>Mark all</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Удалить</translation>
     </message>
     <message>
         <source>Clear history</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>Отправить</translation>
     </message>
 </context>
 <context>
     <name>InfoDialog</name>
     <message>
         <source>Info</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;RetroShare uses GPG keys, this is required for creating a RetroShare Profile.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;You must exchange your gpg keys with you friends, by emailing it or any way you want.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;When you recieve a friend&apos;s gpg key, add it within RS on the add friend wizard.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;When you recieve a friend's gpg key, add it within RS on the add friend wizard.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:9pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;1. On Linux you must install GPA :&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
@@ -7412,347 +6227,114 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://winpt.gnupt.de/winpt.zip&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;http://winpt.gnupt.de/winpt.zip&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>IntroPage</name>
-    <message>
-        <source>Add a new Friend</source>
-        <translation type="obsolete">Добавить нового друга</translation>
-    </message>
-    <message>
-        <source>This wizard will help you to connect your friend to RetroShare network. There are  two possible ways to do this:</source>
-        <translation type="obsolete">Этот мастер поможет вам подключить друга к сети RetroShare. Есть два возможных пути для этого:</translation>
-    </message>
-    <message>
-        <source>&amp;Enter the certificate manually</source>
-        <translation type="obsolete">&amp;Введите сертификат вручную</translation>
-    </message>
-    <message>
-        <source>&amp;Use *.pqi files with certificates</source>
-        <translation type="obsolete">&amp;используйте *.pqi файлы с сертификатами</translation>
-    </message>
-</context>
-<context>
-    <name>InviteDialog</name>
-    <message>
-        <source>Done</source>
-        <translation type="obsolete">Готово </translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="obsolete">Отмена</translation>
-    </message>
-    <message>
-        <source>Launch Email</source>
-        <translation type="obsolete">Открыть email</translation>
-    </message>
-    <message>
-        <source>Invite a Friend</source>
-        <translation type="obsolete">Пригласить друга</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;Invite a Friend&lt;/span&gt;&lt;br /&gt;&lt;br /&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;To Invite your friends to join you with Retroshare: &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:10pt;&quot;&gt;Cut and paste the text below into an email.&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:10pt;&quot;&gt;and send it to all your friends!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;Пригласить друга&lt;/span&gt;&lt;br /&gt;&lt;br /&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Чтобы пригласить кого-либо в Вашу сеть RetroShare: &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:10pt;&quot;&gt;Скопируйте текст внизу в письмо электронной почты&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:10pt;&quot;&gt;и отправьте его Вашим друзьям!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Please Choose Directory to Save Certificate</source>
-        <translation type="obsolete">Выберите папку для сохранения сертификата</translation>
-    </message>
-    <message>
-        <source>Save Cert To File</source>
-        <translation type="obsolete">Сохранить сертификат в файл</translation>
-    </message>
-</context>
-<context>
-    <name>LinksDialog</name>
-    <message>
-        <source>Share Link Anonymously</source>
-        <translation type="obsolete">Отправить ссылку анонимно</translation>
-    </message>
-    <message>
-        <source>Vote on Link</source>
-        <translation type="obsolete">Голосовать на ссылку</translation>
-    </message>
-    <message>
-        <source>Download</source>
-        <translation type="obsolete">Скачать</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation type="obsolete">Развернуть</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation type="obsolete">Скрыт </translation>
-    </message>
-    <message>
-        <source>File Request Confirmation</source>
-        <translation type="obsolete">Введите запрос файла</translation>
-    </message>
-    <message>
-        <source>The file has been added to your download list.</source>
-        <translation type="obsolete">Файл был добавлен в корзину.</translation>
-    </message>
-    <message>
-        <source>File Request canceled</source>
-        <translation type="obsolete">Запрос файла отменена</translation>
-    </message>
-    <message>
-        <source>The file has not been added to your download list, because you already have it.</source>
-        <translation type="obsolete">Файл не был добавлен в ваш список загрузки, потому что вы уже получили его.</translation>
-    </message>
-    <message>
-        <source>File Request Error</source>
-        <translation type="obsolete">Запрос файла ошибке</translation>
-    </message>
-    <message>
-        <source>The file link is malformed.</source>
-        <translation type="obsolete">Неверный ссылки на файл.</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Links Cloud&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Облако ссылок&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Score</source>
-        <translation type="obsolete">Оценка</translation>
-    </message>
-    <message>
-        <source>Peer / Link</source>
-        <translation type="obsolete">Кто / ссылка</translation>
-    </message>
-    <message>
-        <source>From</source>
-        <translation type="obsolete">разослан</translation>
-    </message>
-    <message>
-        <source>Show</source>
-        <translation type="obsolete">Показать </translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
     <message>
-        <source>Network</source>
-        <translation type="unfinished">Сеть</translation>
-    </message>
-    <message>
-        <source>Friends</source>
-        <translation type="unfinished">Друзья</translation>
-    </message>
-    <message>
-        <source>Transfers</source>
-        <translation type="unfinished">Передача</translation>
-    </message>
-    <message>
-        <source>Messages</source>
-        <translation type="unfinished">Сообщения </translation>
-    </message>
-    <message>
-        <source>Channels</source>
-        <translation type="unfinished">Каналы</translation>
-    </message>
-    <message>
-        <source>Blogs</source>
-        <translation type="unfinished">Блоги</translation>
-    </message>
-    <message>
-        <source>You has a new message</source>
-        <translation type="obsolete">Вы есть новые сообщения</translation>
-    </message>
-    <message>
-        <source>Options</source>
-        <translation type="unfinished">Опции</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation type="unfinished">Скрыт </translation>
-    </message>
-    <message>
-        <source>Show</source>
-        <translation type="unfinished">Показать </translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation type="unfinished">Retroshare</translation>
-    </message>
-    <message>
-        <source>Invite Friend</source>
-        <translation type="obsolete">Пригласить друга </translation>
+        <source>MainWindow</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add Friend</source>
-        <translation type="unfinished">Добавить друга </translation>
+        <translation>Добавить друга</translation>
     </message>
     <message>
         <source>Add a Friend Wizard</source>
-        <translation type="unfinished">Добавить друга мастера</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add Share</source>
-        <translation type="unfinished">Добавить разделяемый каталог</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Quick Start Wizard</source>
-        <translation type="unfinished">Master bystr</translation>
-    </message>
-    <message>
-        <source>Search</source>
-        <translation type="unfinished">Поиск </translation>
-    </message>
-    <message>
-        <source>Files</source>
-        <translation type="unfinished">Файлы </translation>
-    </message>
-    <message>
-        <source>Add Shared Directory</source>
-        <translation type="obsolete">Добавить разделяемую директорию</translation>
+        <source>Options</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Messenger</source>
-        <translation type="unfinished">Мессенджер</translation>
-    </message>
-    <message>
-        <source>Show/Hide</source>
-        <translation type="unfinished">Показать / Скрыть</translation>
-    </message>
-    <message>
-        <source>&amp;Quit</source>
-        <translation type="unfinished">&amp;Выход</translation>
-    </message>
-    <message>
-        <source>Bandwidth Graph</source>
-        <translation type="unfinished">пропускная способность графа</translation>
-    </message>
-    <message>
-        <source>Open Messenger</source>
-        <translation type="unfinished">Открыто Мессенджер</translation>
-    </message>
-    <message>
-        <source>Minimize</source>
-        <translation type="unfinished">Минимизировать</translation>
-    </message>
-    <message>
-        <source>Maximize</source>
-        <translation type="unfinished">Развернуть</translation>
-    </message>
-    <message>
-        <source>Links Cloud</source>
-        <translation type="obsolete">Облако ссылок</translation>
-    </message>
-    <message>
-        <source>Unfinished</source>
-        <translation type="unfinished">Еще не готово</translation>
-    </message>
-    <message>
-        <source>Down: 0.0 | Up: 0.0 </source>
-        <translation type="obsolete">Скачка: 0.0 | Закачка: 0.0 </translation>
-    </message>
-    <message>
-        <source>SMPlayer</source>
-        <translation type="unfinished">SMPlayer</translation>
-    </message>
-    <message>
-        <source>Help</source>
-        <translation type="unfinished">Помощь</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>About</source>
-        <translation type="unfinished">О программе</translation>
+        <translation>О программе</translation>
     </message>
     <message>
-        <source>News Feed</source>
-        <translation type="obsolete">Новости кормить</translation>
-    </message>
-    <message>
-        <source>Forums</source>
-        <translation type="unfinished">Форум</translation>
-    </message>
-    <message>
-        <source>Open Messages</source>
-        <translation type="unfinished">Открыто Сообщений</translation>
-    </message>
-    <message>
-        <source>Applications</source>
-        <translation type="unfinished">Применения</translation>
-    </message>
-    <message>
-        <source>The file link is malformed.</source>
-        <translation type="unfinished">Неверный ссылки на файл.</translation>
-    </message>
-    <message>
-        <source>Online</source>
-        <translation type="obsolete">Онлайн</translation>
-    </message>
-    <message>
-        <source>Busy</source>
-        <translation type="obsolete">Занятый</translation>
-    </message>
-    <message>
-        <source>Away</source>
-        <translation type="obsolete">Далеко</translation>
-    </message>
-    <message>
-        <source>Settings</source>
-        <translation type="obsolete">Настройки </translation>
-    </message>
-    <message>
-        <source>Plugins</source>
-        <translation type="unfinished">Плагины</translation>
-    </message>
-    <message>
-        <source>Really quit ? </source>
-        <translation type="unfinished">Не ушел?</translation>
-    </message>
-    <message>
-        <source>Do you really want to exit RetroShare ?</source>
-        <translation type="unfinished">Вы действительно хотите выйти RetroShare?</translation>
+        <source>SMPlayer</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Quit</source>
-        <translation type="unfinished">Выход</translation>
+        <translation>Выход</translation>
     </message>
     <message>
-        <source>MainWindow</source>
-        <translation type="unfinished"></translation>
+        <source>Quick Start Wizard</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare %1 a secure decentralised communication platform</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Network</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Friends</source>
+        <translation>Друзья</translation>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation>Поиск</translation>
+    </message>
+    <message>
+        <source>Transfers</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Files</source>
+        <translation>Файлы</translation>
+    </message>
+    <message>
+        <source>Messages</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Channels</source>
+        <translation>Каналы</translation>
+    </message>
+    <message>
+        <source>Blogs</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forums</source>
+        <translation>Форумы</translation>
+    </message>
+    <message>
+        <source>Plugins</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Getting Started</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unfinished</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Low disk space warning</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>The disk space in your </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> directory is running low (current limit is </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>MB). 
@@ -7760,2295 +6342,1571 @@ p, li { white-space: pre-wrap; }
  RetroShare will now safely suspend any disk access to this directory. 
 
  Please make some free space and click Ok.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show/Hide</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Статус</translation>
     </message>
     <message>
         <source>Notify</source>
-        <translation type="unfinished">Уведомить</translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Open Messenger</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Open Messages</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Bandwidth Graph</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>DHT Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Детали DHT</translation>
+    </message>
+    <message>
+        <source>Applications</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Help</source>
+        <translation>Help</translation>
+    </message>
+    <message>
+        <source>Minimize</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Maximize</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&amp;Quit</source>
+        <translation>Выход</translation>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation>RetroShare</translation>
     </message>
     <message>
         <source>%1 new messages</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>%1 new message</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Down: %1 (kB/s)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Up: %1 (kB/s)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>%1 friend connected</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>%1 friends connected</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Do you really want to exit RetroShare ?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Really quit ? </source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Internal Error</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Спрятать</translation>
+    </message>
+    <message>
+        <source>Show</source>
+        <translation>Показать</translation>
     </message>
     <message>
         <source>It seems to be an old RetroShare link. Please use copy instead.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The file link is malformed.</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Bandwidth Details</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>MessageComposer</name>
     <message>
         <source>Compose</source>
-        <translation type="unfinished">Написать</translation>
-    </message>
-    <message>
-        <source>Send To:</source>
-        <translation type="unfinished">Отправить: </translation>
-    </message>
-    <message>
-        <source>Subject:</source>
-        <translation type="unfinished">Тема:</translation>
-    </message>
-    <message>
-        <source>Bold</source>
-        <translation type="unfinished">Жирным</translation>
-    </message>
-    <message>
-        <source>Underline</source>
-        <translation type="unfinished">Подчеркнуть</translation>
-    </message>
-    <message>
-        <source>Italic</source>
-        <translation type="unfinished">Курсив</translation>
-    </message>
-    <message>
-        <source>Recommended Files</source>
-        <translation type="unfinished">Рекомендуемые Файлы </translation>
-    </message>
-    <message>
-        <source>File Name</source>
-        <translation type="unfinished">Имя файла</translation>
-    </message>
-    <message>
-        <source>Sources</source>
-        <translation type="obsolete">Источники</translation>
-    </message>
-    <message>
-        <source>Hash</source>
-        <translation type="unfinished">Хэш</translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation type="unfinished">Отправить</translation>
-    </message>
-    <message>
-        <source>Reply</source>
-        <translation type="unfinished">Ответ</translation>
-    </message>
-    <message>
-        <source>Save</source>
-        <translation type="unfinished">Сохранить </translation>
-    </message>
-    <message>
-        <source>Compose: </source>
-        <translation type="obsolete">Написать: </translation>
-    </message>
-    <message>
-        <source>Unknown</source>
-        <translation type="unfinished">Неизвестно</translation>
-    </message>
-    <message>
-        <source>HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation type="unfinished">HTML-файлы (*. HTM *. HTML), все файлы (*)</translation>
-    </message>
-    <message>
-        <source>Save as...</source>
-        <translation type="unfinished">Сохранить как ...</translation>
-    </message>
-    <message>
-        <source>Print Document</source>
-        <translation type="unfinished">Распечатать документ</translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation type="unfinished">Дополнительные файлы</translation>
-    </message>
-    <message>
-        <source>Drop file error.</source>
-        <translation type="obsolete">Оставьте файл ошибок.</translation>
-    </message>
-    <message>
-        <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation type="obsolete">Каталог не может быть удален, принимаются только файлы.</translation>
-    </message>
-    <message>
-        <source>File not found or file name not accepted.</source>
-        <translation type="obsolete">Файл не найден или имя файла, не принимаются.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Contacts</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&gt;&gt; To</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&gt;&gt; Cc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&gt;&gt; Bcc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&gt;&gt; Recommend</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Paragraph</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Heading 1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Heading 2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Heading 3</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Heading 4</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Heading 5</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Heading 6</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Font size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Increase font size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Decrease font size</source>
-        <translation type="unfinished"></translation>
+        <translation>Уменьшить размер шрифта</translation>
+    </message>
+    <message>
+        <source>Bold</source>
+        <translation>Полужирный</translation>
+    </message>
+    <message>
+        <source>Italic</source>
+        <translation>Курсив</translation>
     </message>
     <message>
         <source>Select Color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Alignment</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add a Image</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sets text font to code style</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Underline</source>
+        <translation>Подчеркнутый</translation>
+    </message>
+    <message>
+        <source>Subject:</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Tags:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Tags</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Recommended Files</source>
+        <translation>Рекомендованные файлы</translation>
+    </message>
+    <message>
+        <source>File Name</source>
+        <translation>Имя файла</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Размер</translation>
+    </message>
+    <message>
+        <source>Hash</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>Отправить</translation>
     </message>
     <message>
         <source>Send this message now</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reply</source>
+        <translation>Ответ</translation>
     </message>
     <message>
         <source>Toggle Contacts View</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation>Сохранить</translation>
     </message>
     <message>
         <source>Save this message</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Attach</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Attach File</source>
-        <translation type="unfinished"></translation>
+        <translation>Присоединить файл</translation>
     </message>
     <message>
         <source>Quote</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add Blockquote</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Send To:</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;Left</source>
-        <translation type="unfinished"></translation>
+        <translation>По левому краю</translation>
     </message>
     <message>
         <source>C&amp;enter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;Right</source>
-        <translation type="unfinished"></translation>
+        <translation>По правому краю</translation>
     </message>
     <message>
         <source>&amp;Justify</source>
-        <translation type="unfinished"></translation>
+        <translation>По ширине</translation>
     </message>
     <message>
         <source>Save Message</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Message has not been Sent.
 Do you want to save message to draft box?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить ссылку RetroShare</translation>
     </message>
     <message>
         <source>Add to &quot;To&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add to &quot;CC&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add to &quot;BCC&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add as Recommend</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Подробности о друге</translation>
     </message>
     <message>
         <source>Re:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Fwd:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"></translation>
+        <translation>RetroShare</translation>
     </message>
     <message>
         <source>Do you want to send the message without a subject ?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Please insert at least one recipient.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>To</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Bcc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unknown friend</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;File</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;New</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;Open...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;Save</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Save &amp;As File</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Save &amp;As Draft</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;Export PDF...</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт в PDF...</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>Выход</translation>
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Правка</translation>
     </message>
     <message>
         <source>&amp;Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>Отмена</translation>
     </message>
     <message>
         <source>&amp;Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>Повтор</translation>
     </message>
     <message>
         <source>Cu&amp;t</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Копировать</translation>
     </message>
     <message>
         <source>&amp;Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить</translation>
     </message>
     <message>
         <source>&amp;View</source>
-        <translation type="unfinished"></translation>
+        <translation>Просмотр</translation>
     </message>
     <message>
         <source>&amp;Contacts Sidebar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;Insert</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставка</translation>
     </message>
     <message>
         <source>&amp;Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Изображение</translation>
     </message>
     <message>
         <source>&amp;Horizontal Line</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;Format</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Open File...</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть файл...</translation>
+    </message>
+    <message>
+        <source>HTML-Files (*.htm *.html);;All Files (*)</source>
+        <translation>HTML-файлы(*.htm *.html);;Все файлы (*)</translation>
+    </message>
+    <message>
+        <source>Save as...</source>
+        <translation>Сохранить как...</translation>
+    </message>
+    <message>
+        <source>Print Document</source>
+        <translation>Распечатать документ</translation>
     </message>
     <message>
         <source>Export PDF</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт PDF</translation>
     </message>
     <message>
         <source>Message has not been Sent.
 Do you want to save message ?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Choose Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать изображение</translation>
     </message>
     <message>
         <source>Image Files supported (*.png *.jpeg *.jpg *.gif)</source>
-        <translation type="unfinished"></translation>
+        <translation>Поддерживаются типы файлов (*.png *.jpeg *.jpg *.gif)</translation>
+    </message>
+    <message>
+        <source>Add Extra File</source>
+        <translation>Добавить файл</translation>
     </message>
     <message>
         <source>You have a friend recommendation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Original Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Оригинал сообщения</translation>
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished">разослан</translation>
+        <translation>От</translation>
     </message>
     <message>
         <source>Sent</source>
-        <translation type="unfinished"></translation>
+        <translation>Отправлено</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation type="unfinished">Тема</translation>
+        <translation>Тема</translation>
     </message>
     <message>
         <source>On %1, %2 wrote:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>wants to be friends with you on RetroShare</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hi %1,&lt;br&gt;&lt;br&gt;%2 wants to be friends with you on RetroShare.&lt;br&gt;&lt;br&gt;Respond now:&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Thanks,&lt;br&gt;The RetroShare Team</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hello,&lt;br&gt;I recommend a good friend of me, you can trust him too when you trust me. &lt;br&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This friend is suggested by</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Thanks, &lt;br&gt;The RetroShare Team</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>MessagePage</name>
     <message>
-        <source>Add</source>
-        <translation type="unfinished">Добавить</translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <translation type="unfinished">Удалить</translation>
-    </message>
-    <message>
         <source>Reading</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Set message to read on activate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Open messages in</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Tags</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Tags can be used to categorize and prioritize your messages</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Добавить</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Удалить</translation>
     </message>
     <message>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>A new tab</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>A new window</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Edit Tag</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Сообщение</translation>
     </message>
 </context>
 <context>
     <name>MessageToaster</name>
     <message>
-        <source>message</source>
-        <translation type="obsolete">новости / Текст сообщения </translation>
-    </message>
-    <message>
-        <source>New Message</source>
-        <translation type="obsolete">Новое сообщение </translation>
-    </message>
-    <message>
-        <source>Subject</source>
-        <translation type="unfinished">Тема</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="unfinished">закрыть </translation>
-    </message>
-    <message>
-        <source>1 new Message from</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Sub:</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>MessageUserNotify</name>
-    <message>
-        <source>Message</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>MessageWidget</name>
     <message>
+        <source>Download all Recommended Files</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <source>Subject:</source>
-        <translation type="unfinished">Тема:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>From:</source>
-        <translation type="unfinished">от:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>To:</source>
-        <translation type="unfinished">Кому:</translation>
-    </message>
-    <message>
-        <source>File Name</source>
-        <translation type="unfinished">Имя файла</translation>
-    </message>
-    <message>
-        <source>Hash</source>
-        <translation type="unfinished">Хэш</translation>
-    </message>
-    <message>
-        <source>Print</source>
-        <translation type="unfinished">Распечатать</translation>
-    </message>
-    <message>
-        <source>Print Preview</source>
-        <translation type="unfinished">Предварительный просмотр</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation type="unfinished">Скрыт </translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation type="unfinished">Развернуть</translation>
-    </message>
-    <message>
-        <source>Files</source>
-        <translation type="unfinished">Файлы </translation>
-    </message>
-    <message>
-        <source>Print Document</source>
-        <translation type="unfinished">Распечатать документ</translation>
-    </message>
-    <message>
-        <source>Save as...</source>
-        <translation type="unfinished">Сохранить как ...</translation>
-    </message>
-    <message>
-        <source>HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation type="unfinished">HTML-файлы (*. HTM *. HTML), все файлы (*)</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Recommended Files&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Download all Recommended Files</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cc:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Bcc:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Tags:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>File Name</source>
+        <translation>Имя файла</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Размер</translation>
+    </message>
+    <message>
+        <source>Hash</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>Печать</translation>
+    </message>
+    <message>
+        <source>Print Preview</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>No subject</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Скачать</translation>
     </message>
     <message>
         <source>Download all</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Спрятать</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Развернуть</translation>
     </message>
     <message>
         <source>File</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Files</source>
+        <translation>Файлы</translation>
+    </message>
+    <message>
+        <source>Print Document</source>
+        <translation>Распечатать документ</translation>
+    </message>
+    <message>
+        <source>Save as...</source>
+        <translation>Сохранить как...</translation>
+    </message>
+    <message>
+        <source>HTML-Files (*.htm *.html);;All Files (*)</source>
+        <translation>HTML-файлы(*.htm *.html);;Все файлы (*)</translation>
     </message>
     <message>
         <source>Confirm %1 as friend</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add %1 as friend</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Recommended Files</source>
+        <translation>Рекомендованные файлы</translation>
     </message>
 </context>
 <context>
     <name>MessageWindow</name>
     <message>
         <source>New Message</source>
-        <translation type="unfinished">Новое сообщение </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Compose</source>
-        <translation type="unfinished">Написать</translation>
-    </message>
-    <message>
-        <source>Reply</source>
-        <translation type="unfinished">Ответ</translation>
-    </message>
-    <message>
-        <source>Reply all</source>
-        <translation type="unfinished">Ответить всем</translation>
-    </message>
-    <message>
-        <source>Foward</source>
-        <translation type="unfinished">Вперед</translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <translation type="unfinished">Удалить</translation>
-    </message>
-    <message>
-        <source>Print</source>
-        <translation type="unfinished">Распечатать</translation>
-    </message>
-    <message>
-        <source>Display</source>
-        <translation type="unfinished">Отображать</translation>
-    </message>
-    <message>
-        <source>Print Preview</source>
-        <translation type="unfinished">Предварительный просмотр</translation>
-    </message>
-    <message>
-        <source>Buttons Icon Only</source>
-        <translation type="unfinished">Кнопки только значок</translation>
-    </message>
-    <message>
-        <source>Buttons Text Beside Icon</source>
-        <translation type="unfinished">Кнопки Текст Кроме Icon</translation>
-    </message>
-    <message>
-        <source>Buttons with Text</source>
-        <translation type="unfinished">Кнопки с текстом</translation>
-    </message>
-    <message>
-        <source>Buttons Text Under Icon</source>
-        <translation type="unfinished">Кнопки текст под иконы</translation>
-    </message>
-    <message>
-        <source>Set Text Under Icon</source>
-        <translation type="unfinished">Установить текст под иконы</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Reply to selected message</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reply</source>
+        <translation>Ответ</translation>
     </message>
     <message>
         <source>Reply all to selected message</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reply all</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forward selected message</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Foward</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Remove selected message</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Удалить</translation>
     </message>
     <message>
         <source>Print selected message</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>Печать</translation>
+    </message>
+    <message>
+        <source>Display</source>
+        <translation>Показать</translation>
     </message>
     <message>
         <source>Tags</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Print Preview</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Buttons Icon Only</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Buttons Text Beside Icon</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Buttons with Text</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Buttons Text Under Icon</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Set Text Under Icon</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;File</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Save &amp;As File</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Print Preview...</source>
-        <translation type="unfinished"></translation>
+        <translation>Предварительный просмотр</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>Выход</translation>
     </message>
 </context>
 <context>
     <name>MessagesDialog</name>
     <message>
         <source>New Message</source>
-        <translation type="unfinished">Новое сообщение </translation>
-    </message>
-    <message>
-        <source>Reply to Message</source>
-        <translation type="unfinished">Ответить на сообщение </translation>
-    </message>
-    <message>
-        <source>Remove Message</source>
-        <translation type="unfinished">Удалить сообщение </translation>
-    </message>
-    <message>
-        <source>Date</source>
-        <translation type="unfinished">часы </translation>
-    </message>
-    <message>
-        <source>From</source>
-        <translation type="unfinished">разослан</translation>
-    </message>
-    <message>
-        <source>Size</source>
-        <translation type="obsolete">Size</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Recommended Files&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Рекомендуем Файлы&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Reply</source>
-        <translation type="unfinished">Ответ</translation>
-    </message>
-    <message>
-        <source>Reply all</source>
-        <translation type="unfinished">Ответить всем</translation>
-    </message>
-    <message>
-        <source>Foward</source>
-        <translation type="unfinished">Вперед</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;remove selected message&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;удалить выбранные сообщения&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <translation type="unfinished">Удалить</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Compose</source>
-        <translation type="unfinished">Написать</translation>
-    </message>
-    <message>
-        <source>Display</source>
-        <translation type="unfinished">Отображать</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation type="obsolete">Сбросить</translation>
-    </message>
-    <message>
-        <source>Attachments</source>
-        <translation type="unfinished">Вложения</translation>
-    </message>
-    <message>
-        <source>Inbox</source>
-        <translation type="unfinished">Входящие</translation>
-    </message>
-    <message>
-        <source>Outbox</source>
-        <translation type="unfinished">Исходящие </translation>
-    </message>
-    <message>
-        <source>Draft</source>
-        <translation type="unfinished">Дизайн неотправленных (draft)</translation>
-    </message>
-    <message>
-        <source>Sent</source>
-        <translation type="unfinished">Отправлено </translation>
-    </message>
-    <message>
-        <source>Print...</source>
-        <translation type="unfinished">Печать ...</translation>
-    </message>
-    <message>
-        <source>Print Preview</source>
-        <translation type="unfinished">Предварительный просмотр</translation>
-    </message>
-    <message>
-        <source>Buttons Icon Only</source>
-        <translation type="unfinished">Кнопки только значок</translation>
-    </message>
-    <message>
-        <source>Buttons Text Beside Icon</source>
-        <translation type="unfinished">Кнопки Текст Кроме Icon</translation>
-    </message>
-    <message>
-        <source>Buttons with Text</source>
-        <translation type="unfinished">Кнопки с текстом</translation>
-    </message>
-    <message>
-        <source>Buttons Text Under Icon</source>
-        <translation type="unfinished">Кнопки текст под иконы</translation>
-    </message>
-    <message>
-        <source>Set Text Under Icon</source>
-        <translation type="unfinished">Установить текст под иконы</translation>
-    </message>
-    <message>
-        <source>Save As...</source>
-        <translation type="unfinished">Сохранить как ...</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;reply to selected message&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Отвечая на выбранные сообщения&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;New Message&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Новое сообщение&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Download All</source>
-        <translation type="obsolete">Скачать Все</translation>
-    </message>
-    <message>
-        <source>Print Document</source>
-        <translation type="obsolete">Распечатать документ</translation>
-    </message>
-    <message>
-        <source>Sources</source>
-        <translation type="obsolete">Источники</translation>
-    </message>
-    <message>
-        <source>Forward selected Message</source>
-        <translation type="unfinished">Переслать выбранное сообщение</translation>
-    </message>
-    <message>
-        <source>Remove Messages</source>
-        <translation type="unfinished">Удалить сообщение </translation>
-    </message>
-    <message>
-        <source>Forward Message</source>
-        <translation type="unfinished">Переслать сообщение</translation>
-    </message>
-    <message>
-        <source>Download</source>
-        <translation type="obsolete">Скачать</translation>
-    </message>
-    <message>
-        <source>Files</source>
-        <translation type="obsolete">Файлы </translation>
-    </message>
-    <message>
-        <source>Compose: </source>
-        <translation type="obsolete">Написать: </translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation type="obsolete">Скрыт </translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation type="obsolete">Развернуть</translation>
-    </message>
-    <message>
-        <source>Anonymous</source>
-        <translation type="obsolete">Аноним</translation>
-    </message>
-    <message>
-        <source>File Request Confirmation</source>
-        <translation type="obsolete">Введите запрос файла</translation>
-    </message>
-    <message>
-        <source>The file has been added to your download list.</source>
-        <translation type="obsolete">Файл был добавлен в корзину.</translation>
-    </message>
-    <message>
-        <source>File Request canceled</source>
-        <translation type="obsolete">Запрос файла отменена</translation>
-    </message>
-    <message>
-        <source>The file has not been added to your download list, because you already have it.</source>
-        <translation type="obsolete">Файл не был добавлен в ваш список загрузки, потому что вы уже получили его.</translation>
-    </message>
-    <message>
-        <source>File Request Error</source>
-        <translation type="obsolete">Запрос файла ошибке</translation>
-    </message>
-    <message>
-        <source>The file link is malformed.</source>
-        <translation type="obsolete">Неверный ссылки на файл.</translation>
-    </message>
-    <message>
-        <source>Save as...</source>
-        <translation type="obsolete">Сохранить как ...</translation>
-    </message>
-    <message>
-        <source>HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation type="obsolete">HTML-файлы (*. HTM *. HTML), все файлы (*)</translation>
-    </message>
-    <message>
-        <source>Reply to All</source>
-        <translation type="unfinished">Ответить всем</translation>
-    </message>
-    <message>
-        <source>Subject</source>
-        <translation type="unfinished">Тема</translation>
-    </message>
-    <message>
-        <source>Subject:</source>
-        <translation type="obsolete">Тема:</translation>
-    </message>
-    <message>
-        <source>From:</source>
-        <translation type="obsolete">от:</translation>
-    </message>
-    <message>
-        <source>Date:</source>
-        <translation type="obsolete">Свидание:</translation>
-    </message>
-    <message>
-        <source>To:</source>
-        <translation type="obsolete">Кому:</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Download all Recommended Files&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Скачать все рекомендованные Файлы&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>File Name</source>
-        <translation type="obsolete">Имя файла</translation>
-    </message>
-    <message>
-        <source>Hash</source>
-        <translation type="obsolete">Хэш</translation>
-    </message>
-    <message>
-        <source>Print</source>
-        <translation type="unfinished">Распечатать</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Reply to selected message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Reply all to selected message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Forward selected message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove selected message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Print selected message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Content</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tags</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Trash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Quick View</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Total Inbox:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Folders</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Click to sort by attachments</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Click to sort by subject</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Click to sort by read</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Click to sort by from</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Click to sort by date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Click to sort by tags</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Click to sort by star</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Starred</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open in a new window</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open in a new tab</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mark as read</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mark as unread</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add Star</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit as new</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Undelete</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Empty trash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Drafts</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No starred messages available. Stars let you give messages a special status to make them easier to find. To star a message, click on the light grey star beside any message.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>To</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Click to sort by to</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Total:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>System</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No system messages available.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>MessagesPopupDialog</name>
-    <message>
-        <source>New Message</source>
-        <translation type="obsolete">Новое сообщение </translation>
-    </message>
-    <message>
-        <source>Reply to Message</source>
-        <translation type="obsolete">Ответить на сообщение </translation>
-    </message>
-    <message>
-        <source>Remove Message</source>
-        <translation type="obsolete">Удалить сообщение </translation>
-    </message>
-    <message>
-        <source>Messages</source>
-        <translation type="obsolete">E-Mail-Сообщения </translation>
-    </message>
-    <message>
-        <source>Inbox</source>
-        <translation type="obsolete">Email-Входящие</translation>
-    </message>
-    <message>
-        <source>Outbox</source>
-        <translation type="obsolete">Email-Исходящие </translation>
-    </message>
-    <message>
-        <source>Draft</source>
-        <translation type="obsolete">Дизайн неотправленных (draft)</translation>
-    </message>
-    <message>
-        <source>Sent</source>
-        <translation type="obsolete">Email-Отправлено </translation>
-    </message>
-    <message>
-        <source>From</source>
-        <translation type="obsolete">разослан</translation>
-    </message>
-    <message>
-        <source>Date</source>
-        <translation type="obsolete">часы </translation>
-    </message>
-    <message>
-        <source>Sources</source>
-        <translation type="obsolete">Источники</translation>
-    </message>
-    <message>
-        <source>Compose</source>
-        <translation type="obsolete">Написать</translation>
-    </message>
-    <message>
-        <source>Remove</source>
-        <translation type="obsolete">Удалить </translation>
-    </message>
-    <message>
-        <source>Hash</source>
-        <translation type="obsolete">Хэш</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Reply</source>
-        <translation type="obsolete">Ответ</translation>
+        <translation>Ответ</translation>
+    </message>
+    <message>
+        <source>Reply all to selected message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reply all</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forward selected message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Foward</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove selected message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Удалить</translation>
+    </message>
+    <message>
+        <source>Print selected message</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Print</source>
-        <translation type="obsolete">Распечатать</translation>
+        <translation>Печать</translation>
     </message>
     <message>
-        <source>PrintPreview</source>
-        <translation type="obsolete">Предварительный просмотр</translation>
-    </message>
-</context>
-<context>
-    <name>MessengerDirModel</name>
-    <message>
-        <source>FILE</source>
-        <translation type="obsolete">ФАЙЛОВ</translation>
+        <source>Display</source>
+        <translation>Показать</translation>
     </message>
     <message>
-        <source>Friends Directories</source>
-        <translation type="obsolete">Друзья Каталоги</translation>
+        <source>Attachments</source>
+        <translation>Вложения</translation>
     </message>
     <message>
-        <source>My Directories</source>
-        <translation type="obsolete">Моя Каталоги</translation>
+        <source>Subject</source>
+        <translation>Тема</translation>
     </message>
     <message>
-        <source>Rank</source>
-        <translation type="obsolete">Ранг </translation>
+        <source>From</source>
+        <translation>От</translation>
     </message>
     <message>
-        <source>Age</source>
-        <translation type="obsolete">Возраст</translation>
+        <source>Date</source>
+        <translation>Дата</translation>
+    </message>
+    <message>
+        <source>Content</source>
+        <translation>Содержимое</translation>
+    </message>
+    <message>
+        <source>Tags</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Inbox</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Outbox</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Draft</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Sent</source>
+        <translation>Отправлено</translation>
+    </message>
+    <message>
+        <source>Trash</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Quick View</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Total Inbox:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Folders</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Print...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Print Preview</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Buttons Icon Only</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Buttons Text Beside Icon</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Buttons with Text</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Buttons Text Under Icon</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Set Text Under Icon</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Save As...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reply to Message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reply to All</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forward Message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Click to sort by attachments</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Click to sort by subject</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Click to sort by read</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Click to sort by from</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Click to sort by date</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Click to sort by tags</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Click to sort by star</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forward selected Message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Starred</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Open in a new window</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Open in a new tab</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Mark as read</source>
+        <translation>Отметить как прочитанное</translation>
+    </message>
+    <message>
+        <source>Mark as unread</source>
+        <translation>Отметить как непрочитанное</translation>
+    </message>
+    <message>
+        <source>Add Star</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit as new</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove Messages</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove Message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Undelete</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Empty trash</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Drafts</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No starred messages available. Stars let you give messages a special status to make them easier to find. To star a message, click on the light grey star beside any message.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>To</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Click to sort by to</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Total:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>System</source>
+        <translation>Система</translation>
+    </message>
+    <message>
+        <source>No system messages available.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>MessengerWindow</name>
     <message>
-        <source>Expand all</source>
-        <translation type="obsolete">Развернуть все</translation>
-    </message>
-    <message>
-        <source>Collapse all</source>
-        <translation type="obsolete">Свернуть все</translation>
-    </message>
-    <message>
-        <source>Chat</source>
-        <translation type="obsolete">Группы Чат </translation>
-    </message>
-    <message>
-        <source>Message Friend</source>
-        <translation type="obsolete">Сообщение другу</translation>
-    </message>
-    <message>
-        <source>Connect To Friend</source>
-        <translation type="obsolete">Подключиться к другу </translation>
-    </message>
-    <message>
-        <source>Peer Details</source>
-        <translation type="obsolete">Настройки контакта</translation>
-    </message>
-    <message>
-        <source>Paste retroshare Link</source>
-        <translation type="obsolete">Вставить ссылку RetroShare</translation>
-    </message>
-    <message>
-        <source>Export Friend</source>
-        <translation type="obsolete">Экспорт контакта</translation>
-    </message>
-    <message>
-        <source>Deny Friend</source>
-        <translation type="obsolete">Запретить другу</translation>
-    </message>
-    <message>
-        <source>Remove Friend Location</source>
-        <translation type="obsolete">Удалить друга Местоположение</translation>
-    </message>
-    <message>
-        <source>&lt;strong&gt;GPG Key&lt;/strong&gt;</source>
-        <translation type="obsolete">&lt;strong&gt;GPG Ключ&lt;/strong&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;strong&gt;RetroShare instance&lt;/strong&gt;</source>
-        <translation type="obsolete">&lt;strong&gt;RetroShare Например&lt;/strong&gt;</translation>
-    </message>
-    <message>
-        <source>location : </source>
-        <translation type="obsolete">Место: </translation>
-    </message>
-    <message>
-        <source>Peer Online</source>
-        <translation type="obsolete">Peer Интернет</translation>
-    </message>
-    <message>
-        <source>Available</source>
-        <translation type="obsolete">Доступный</translation>
-    </message>
-    <message>
-        <source>Offline</source>
-        <translation type="obsolete">Оффлайн</translation>
-    </message>
-    <message>
-        <source>Save Certificate</source>
-        <translation type="obsolete">Сохранить сертификат </translation>
-    </message>
-    <message>
-        <source>Certificates (*.pqi)</source>
-        <translation type="obsolete">Сертификаты (*. pqi) </translation>
-    </message>
-    <message>
-        <source>Friend Not Online</source>
-        <translation type="obsolete">Друг не Онлайн</translation>
-    </message>
-    <message>
-        <source>Your Friend is offline 
-Do you want to send them a Message instead</source>
-        <translation type="obsolete">Ваш друг форума
-Вы хотите, чтобы отправить им сообщение, а не</translation>
-    </message>
-    <message>
-        <source>View</source>
-        <translation type="obsolete">Просмотр</translation>
-    </message>
-    <message>
-        <source>Remove Friend</source>
-        <translation type="obsolete">Удалить контакт</translation>
-    </message>
-    <message>
-        <source>Click to Change your Avatar</source>
-        <translation type="obsolete">Нажмите кнопку изменить Avatar</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Change your Status and your display&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;picture here.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Изменить статус и ваш дисплей&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;фотографии здесь.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Online</source>
-        <translation type="obsolete">Онлайн</translation>
-    </message>
-    <message>
-        <source>Busy</source>
-        <translation type="obsolete">Занятый</translation>
-    </message>
-    <message>
-        <source>Change your Personal Status here...</source>
-        <translation type="obsolete">Изменить личную статус здесь ...</translation>
-    </message>
-    <message>
         <source>RetroShare Messenger</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add a Friend</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Search Friends</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sort Descending Order</source>
-        <translation type="obsolete">Сортировать убыванию</translation>
-    </message>
-    <message>
-        <source>Sort Ascending Order</source>
-        <translation type="obsolete">Сортировка по возрастанию заказа</translation>
-    </message>
-    <message>
-        <source>Set root is Decorated</source>
-        <translation type="obsolete">Оформлен Задать корневую</translation>
-    </message>
-    <message>
-        <source>Set Root Decorated</source>
-        <translation type="obsolete">Установить корневой Награжден</translation>
-    </message>
-    <message>
-        <source>Set Root is not Decorated</source>
-        <translation type="obsolete">Установить корневой не украшено</translation>
-    </message>
-    <message>
-        <source>Hide Offline Friends</source>
-        <translation type="obsolete">Скрыть знакомых</translation>
-    </message>
-    <message>
-        <source>Away</source>
-        <translation type="obsolete">Далеко</translation>
-    </message>
-    <message>
-        <source>Apear Offline</source>
-        <translation type="obsolete">Появляться, Оффлайн</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Share Files for your Friends</source>
         <translation>Общие файлы для Ваших друзей</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Add a Friend&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Добавить друга&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-</context>
-<context>
-    <name>MsgFeed</name>
-    <message>
-        <source>Inbox</source>
-        <translation type="obsolete">Email-Входящие</translation>
-    </message>
-    <message>
-        <source>Outbox</source>
-        <translation type="obsolete">Email-Исходящие </translation>
-    </message>
-    <message>
-        <source>Sent</source>
-        <translation type="obsolete">Email-Отправлено </translation>
-    </message>
-    <message>
-        <source>Date</source>
-        <translation type="obsolete">часы </translation>
-    </message>
-    <message>
-        <source>All</source>
-        <translation type="obsolete">Все</translation>
-    </message>
-    <message>
-        <source>Subject</source>
-        <translation type="obsolete">Тема</translation>
+        <source>Search Friends</source>
+        <translation>Поиск друзей</translation>
     </message>
 </context>
 <context>
     <name>MsgItem</name>
     <message>
-        <source>Reply to Message</source>
-        <translation type="unfinished">Ответить на сообщение </translation>
+        <source>Expand</source>
+        <translation>Развернуть</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished">Удалить элемент</translation>
+        <translation>Удалить объект</translation>
     </message>
     <message>
-        <source>Connected</source>
-        <translation type="obsolete">связано</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation type="unfinished">Развернуть</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation type="unfinished">Скрыт </translation>
+        <source>Reply to Message</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Reply Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Ответить на сообщение</translation>
     </message>
     <message>
         <source>Delete Message</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Play Media</source>
-        <translation type="unfinished"></translation>
+        <translation>Проиграть медиа-файл</translation>
     </message>
     <message>
         <source>Message From</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sent Msg</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Draft Msg</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Pending Msg</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>MyChannelsDialog</name>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Messages&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Сообщения&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Date</source>
-        <translation type="obsolete">часы </translation>
-    </message>
-    <message>
-        <source>Rank</source>
-        <translation type="obsolete">Ранг </translation>
-    </message>
-    <message>
-        <source>From</source>
-        <translation type="obsolete">разослан</translation>
-    </message>
-    <message>
-        <source>Size</source>
-        <translation type="obsolete">Size</translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation type="obsolete">Type</translation>
-    </message>
-    <message>
-        <source>Rs[Cert/Chan]IdSize</source>
-        <translation type="obsolete">Rs[Cert/Chan]IdSize</translation>
-    </message>
-    <message>
-        <source>RsMsgId</source>
-        <translation type="obsolete">RsMsgID/ новости-Идентификация</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Message Text&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Текст сообщения&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Recommended Files&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Рекомендуемые Файлы&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Delete Channel</source>
-        <translation type="obsolete">Удалить канал </translation>
-    </message>
-</context>
-<context>
-    <name>MySubscriptionsDialog</name>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Messages&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Сообщения&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Date</source>
-        <translation type="obsolete">часы </translation>
-    </message>
-    <message>
-        <source>Rank</source>
-        <translation type="obsolete">Ранг </translation>
-    </message>
-    <message>
-        <source>From</source>
-        <translation type="obsolete">разослан</translation>
-    </message>
-    <message>
-        <source>Size</source>
-        <translation type="obsolete">Size</translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation type="obsolete">Type</translation>
-    </message>
-    <message>
-        <source>Rs[Cert/Chan]IdSize</source>
-        <translation type="obsolete">Rs[Cert/Chan]IdSize</translation>
-    </message>
-    <message>
-        <source>RsMsgId</source>
-        <translation type="obsolete">RsMsgID/ новости-Идентификация</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Message Text&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Текст сообщения&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Recommended Files&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Рекомендуемые Файлы&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>Hide</source>
+        <translation>Спрятать</translation>
     </message>
 </context>
 <context>
     <name>NATStatus</name>
     <message>
-        <source>Internet connection</source>
-        <translation type="unfinished">Подключение к Интернету</translation>
-    </message>
-    <message>
-        <source>No internet connection</source>
-        <translation type="unfinished">Отсутствует соединение с интернетом</translation>
-    </message>
-    <message>
-        <source>No local network</source>
-        <translation type="unfinished">Нет локальной сети</translation>
-    </message>
-    <message>
-        <source>OK | RetroShare Server</source>
-        <translation type="unfinished">ОК | RetroShare Server</translation>
-    </message>
-    <message>
         <source>&lt;strong&gt;NAT:&lt;/strong&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Network Status Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Offline</source>
-        <translation type="unfinished">Оффлайн</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Nasty Firewall</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>DHT Disabled and Firewalled</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Network Restarting</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Behind Firewall</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>DHT Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare Server</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forwarded Port</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>OK | RetroShare Server</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Internet connection</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No internet connection</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No local network</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>NetworkDialog</name>
     <message>
-        <source>Load Certificate</source>
-        <translation type="obsolete">Загрузить сертификат </translation>
+        <source>Network</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Select a pem/pqi File</source>
-        <translation type="obsolete">Выберите PEM / PQI Файл </translation>
+        <source>Name</source>
+        <translation>Имя</translation>
     </message>
     <message>
-        <source>File Not Found</source>
-        <translation type="obsolete">Файл не найден </translation>
+        <source>Did I authenticated peer</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>%1 does not exist. Would you like to create it?</source>
-        <translation type="obsolete">%1 нет. Хотите создать его? </translation>
+        <source>Did I sign his gpg key</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Failed to Create File</source>
-        <translation type="obsolete">Не удалось создать файл </translation>
+        <source>Did peer authenticated me</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Unable to create %1 [%2]</source>
-        <translation type="obsolete">Не удается создать  %1 [%2]</translation>
+        <source>Cert Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Search Network</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer ID</source>
+        <translation>ID пира</translation>
+    </message>
+    <message>
+        <source>Show keys that are not validated by the GPG web of trust</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Network Status</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Local network</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>UPnP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>External ip address finder</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Set Tabs Right</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Set Tabs North</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Set Tabs South</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Set Tabs Left</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Set Tabs Rounded</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Set Tabs Triangular</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add Friend</source>
+        <translation>Добавить друга</translation>
+    </message>
+    <message>
+        <source>Copy My Key to Clipboard</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export My Key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create New Profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create a new Profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Network View</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Deny friend</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Make friend</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Delete certificate</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export my Cert</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer details...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Copy RetroShare Link</source>
+        <translation>Скопировать ссылку RetroShare</translation>
+    </message>
+    <message>
+        <source>Personal signature</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>GPG key signed by you</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Marginally trusted peer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Fully trusted peer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Untrusted peer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Has authenticated me</source>
-        <translation type="unfinished">Аутентифицирован мне</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> has authenticated you. 
 Right-click and select &apos;make friend&apos; to be able to connect.</source>
-        <translation type="unfinished"> аутентифицирован вас.
-Щелкните правой кнопкой мыши и выберите &quot;Сделать другом&quot; чтобы иметь возможность подключиться.</translation>
-    </message>
-    <message>
-        <source>Select Certificate</source>
-        <translation type="obsolete">Выберите сертификат</translation>
-    </message>
-    <message>
-        <source>Certificates (*.pqi *.pem)</source>
-        <translation type="obsolete">Сертификаты (*.pqi /*.pem) </translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Network:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Network:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Accept</source>
-        <translation type="obsolete">Доступ</translation>
-    </message>
-    <message>
-        <source>Trust</source>
-        <translation type="obsolete">Доверие</translation>
-    </message>
-    <message>
-        <source>Last Contact</source>
-        <translation type="obsolete">Посл. контакт</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation type="unfinished">Имя</translation>
-    </message>
-    <message>
-        <source>Peer Address</source>
-        <translation type="obsolete">Адрес узла</translation>
-    </message>
-    <message>
-        <source>Organisation</source>
-        <translation type="obsolete">Организация</translation>
-    </message>
-    <message>
-        <source>Location</source>
-        <translation type="obsolete">Место</translation>
-    </message>
-    <message>
-        <source>Country</source>
-        <translation type="obsolete">Страна</translation>
-    </message>
-    <message>
-        <source>Cert Id</source>
-        <translation type="unfinished">Серт ID</translation>
-    </message>
-    <message>
-        <source>RetroShare %1 started.</source>
-        <comment>e.g: RetroShare v0.x started.</comment>
-        <translation type="obsolete">RetroShare %1 запущен.</translation>
-    </message>
-    <message>
-        <source>Welcome to RetroShare.</source>
-        <translation type="obsolete">Добро пожаловать в RetroShare</translation>
-    </message>
-    <message>
-        <source>Make Friend / Peer Details</source>
-        <translation type="obsolete">Объявить другом / настройки контакта</translation>
-    </message>
-    <message>
-        <source>Deny</source>
-        <translation type="obsolete">Запрещен</translation>
-    </message>
-    <message>
-        <source>Network</source>
-        <translation type="unfinished">Сеть</translation>
-    </message>
-    <message>
-        <source>Did peer authenticated me</source>
-        <translation type="unfinished">Разве совокупность Authenticated мне</translation>
-    </message>
-    <message>
-        <source>Show keys that are not validated by the GPG web of trust</source>
-        <translation type="unfinished">Показать ключей, которые не проверяются на веб GPG доверия</translation>
-    </message>
-    <message>
-        <source>Log</source>
-        <translation type="obsolete">Протокол</translation>
-    </message>
-    <message>
-        <source>Network View</source>
-        <translation type="unfinished">Карта сети</translation>
-    </message>
-    <message>
-        <source>Clear</source>
-        <translation type="unfinished">Очистить</translation>
-    </message>
-    <message>
-        <source>Trust matrix</source>
-        <translation type="obsolete">Целевые матрица</translation>
-    </message>
-    <message>
-        <source>View</source>
-        <translation type="obsolete">Просмотр</translation>
-    </message>
-    <message>
-        <source>RetroShare %1 started.</source>
-        <translation type="obsolete">RetroShare %1 запущен.</translation>
-    </message>
-    <message>
-        <source>Menu</source>
-        <translation type="obsolete">Меню</translation>
-    </message>
-    <message>
-        <source>Deny friend</source>
-        <translation type="unfinished">Запретить другу</translation>
-    </message>
-    <message>
-        <source>Accept friend</source>
-        <translation type="obsolete">Согласен другу</translation>
-    </message>
-    <message>
-        <source>Make friend</source>
-        <translation type="unfinished">Сделать другом</translation>
-    </message>
-    <message>
-        <source>Delete certificate</source>
-        <translation type="unfinished">Удалить сертификат</translation>
-    </message>
-    <message>
-        <source>Peer details...</source>
-        <translation type="unfinished">Экспертный подробнее ...</translation>
-    </message>
-    <message>
-        <source>Trusted</source>
-        <translation type="obsolete">Доверенные</translation>
-    </message>
-    <message>
-        <source>Denied</source>
-        <translation type="obsolete">Отвергнутые</translation>
-    </message>
-    <message>
-        <source>Is trusting me</source>
-        <translation type="obsolete">Является ли доверять мне</translation>
-    </message>
-    <message>
-        <source>Unknown</source>
-        <translation type="unfinished">Неизвестно</translation>
-    </message>
-    <message>
-        <source>Never seen</source>
-        <translation type="obsolete">Никогда не видел</translation>
-    </message>
-    <message>
-        <source>Add Friend</source>
-        <translation type="unfinished">Добавить друга </translation>
-    </message>
-    <message>
-        <source>Did I authenticated peer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Did I sign his gpg key</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Network&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Search Network</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Peer ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Display&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Network Status</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Local network</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>UPnP</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>External ip address finder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set Tabs Right</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set Tabs North</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set Tabs South</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set Tabs Left</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set Tabs Rounded</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set Tabs Triangular</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Copy My Key to Clipboard</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export My Key</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create New Profile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create a new Profile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export my Cert</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Personal signature</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>GPG key signed by you</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Marginally trusted peer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fully trusted peer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Untrusted peer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>yourself</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Display</source>
+        <translation>Показать</translation>
     </message>
 </context>
 <context>
     <name>NetworkPage</name>
     <message>
-        <source>Rate Options</source>
-        <translation type="obsolete">Скорость Опции </translation>
-    </message>
-    <message>
-        <source>Max Total Data Rate (KB/S):</source>
-        <translation type="obsolete">Максимальная скорость загрузки (KB/S):</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Rate per Person (KB/S):&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Скорость на личности (KB/S):&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Network</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>NetworkView</name>
     <message>
-        <source>Hide Settings</source>
-        <translation type="obsolete">Скрыть настройки </translation>
-    </message>
-    <message>
-        <source>Show Settings</source>
-        <translation type="obsolete">Показать параметры</translation>
-    </message>
-    <message>
-        <source>Settings</source>
-        <translation type="obsolete">Настройки </translation>
-    </message>
-    <message>
-        <source>Friends</source>
-        <translation type="obsolete">Друзья</translation>
-    </message>
-    <message>
-        <source>background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 lightgray, stop:1 darkgray);</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Redraw</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friendship level:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Edge length:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>NewTag</name>
     <message>
-        <source>Name:</source>
-        <translation type="unfinished">Имя:</translation>
+        <source>New Tag</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>New Tag</source>
-        <translation type="unfinished"></translation>
+        <source>Name:</source>
+        <translation>Имя:</translation>
     </message>
     <message>
         <source>Choose color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK (Хорошо)</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Вернуться/Отмена</translation>
     </message>
 </context>
 <context>
     <name>NewsFeed</name>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;News Feed&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Remove All</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>NotifyDialog</name>
-    <message>
-        <source>Channels</source>
-        <translation type="obsolete">Каналы</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Messages</source>
-        <translation type="obsolete">E-Mail-Сообщения </translation>
+        <source>News Feed</source>
+        <translation>Лента новостей</translation>
     </message>
     <message>
-        <source>New Message</source>
-        <translation type="obsolete">Новое сообщение </translation>
+        <source>This is a test.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>NotifyPage</name>
     <message>
         <source>News Feed</source>
-        <translation type="unfinished">Новости кормить</translation>
-    </message>
-    <message>
-        <source>Channels</source>
-        <translation type="unfinished">Каналы</translation>
-    </message>
-    <message>
-        <source>Forums</source>
-        <translation type="unfinished">Форум</translation>
-    </message>
-    <message>
-        <source>Chat</source>
-        <translation type="unfinished">Чат</translation>
-    </message>
-    <message>
-        <source>Blogs</source>
-        <translation type="unfinished">Блоги</translation>
-    </message>
-    <message>
-        <source>Messages</source>
-        <translation type="unfinished">E-Mail-Сообщения </translation>
-    </message>
-    <message>
-        <source>Downloads</source>
-        <translation type="obsolete">Загрузки</translation>
-    </message>
-    <message>
-        <source>Forum Post</source>
-        <translation type="obsolete">Форум</translation>
-    </message>
-    <message>
-        <source>Toasters</source>
-        <translation type="unfinished">Тостеры</translation>
-    </message>
-    <message>
-        <source>New Message</source>
-        <translation type="unfinished">Новое сообщение </translation>
-    </message>
-    <message>
-        <source>Private Chat</source>
-        <translation type="unfinished">Частные чат</translation>
-    </message>
-    <message>
-        <source>Open Window for new Peer Chat</source>
-        <translation type="obsolete">Открыто новое окно для чата Peer</translation>
-    </message>
-    <message>
-        <source>Reopen if closed by user:</source>
-        <translation type="obsolete">Reopen если она закрыта пользователем:</translation>
-    </message>
-    <message>
-        <source>Grab Focus when chat arrives</source>
-        <translation type="unfinished">Grab фокус, когда приходит чате</translation>
-    </message>
-    <message>
-        <source>Group chat</source>
-        <translation type="unfinished">Групповой чат</translation>
-    </message>
-    <message>
-        <source>Display systray message</source>
-        <translation type="obsolete">Дисплей Systray сообщения</translation>
+        <translation>Новостная лента</translation>
     </message>
     <message>
         <source>Peers</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Channels</source>
+        <translation>Каналы</translation>
+    </message>
+    <message>
+        <source>Forums</source>
+        <translation>Форумы</translation>
+    </message>
+    <message>
+        <source>Blogs</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Messages</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation>Чат</translation>
     </message>
     <message>
         <source>Security</source>
-        <translation type="unfinished">Безопасность</translation>
+        <translation>Безопасность</translation>
     </message>
     <message>
         <source>Add feeds at end</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Systray Icon</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Сообщение</translation>
     </message>
     <message>
         <source>Download completed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Combined</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Toasters</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend Connect</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>New Message</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Position</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>X Margin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Y Margin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Private Chat</source>
+        <translation>Приватный чат</translation>
     </message>
     <message>
         <source>Open Window for new chat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Grab Focus when chat arrives</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Use a single tabbed window</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Group chat</source>
+        <translation>Групповой чат</translation>
     </message>
     <message>
         <source>Top Left</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Top Right</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Bottom Left</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Bottom Right</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Notify</source>
-        <translation type="unfinished">Уведомить</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Group Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Групповой чат</translation>
     </message>
     <message>
         <source>Chat Lobby</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Connect attempt</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Systray message</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Chat lobbies</source>
-        <translation type="unfinished"></translation>
+        <translation>Лобби чата</translation>
+    </message>
+    <message>
+        <source>Test</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -10059,768 +7917,349 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Wrong password !</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Please enter the password to unlock the following GPG key:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Examining shared files...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hashing file</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Saving file index...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Please enter the password to unlock the following GPG key:
-</source>
-        <translation type="obsolete">Пожалуйста, введите пароль для разблокировки следующие ключевые GPG:</translation>
+        <source>To sign, please enter the password that unlocks your PGP key:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unregistered plugin/executable</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RetroShare has detected an unregistered plugin. This happens in two cases:&lt;UL&gt;&lt;LI&gt;Your RetroShare executable has changed.&lt;/LI&gt;&lt;LI&gt;The plugin has changed&lt;/LI&gt;&lt;/UL&gt;Click on Yes to authorize this plugin, or No to deny it. You can change your mind later in Options -&gt; Plugins, then restart.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Test</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This is a test.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>OnlineToaster</name>
     <message>
-        <source>Peer Online</source>
-        <translation type="obsolete">Peer Интернет</translation>
-    </message>
-    <message>
         <source>Friend Online</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>OptionsDlg</name>
-    <message>
-        <source>Cancel</source>
-        <translation type="obsolete">Вернуться/Отмена</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>PeerDefs</name>
     <message>
-        <source>Anonymous</source>
-        <translation type="obsolete">Аноним</translation>
-    </message>
-    <message>
         <source>Unknown</source>
-        <translation type="unfinished">Неизвестно</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>PeerItem</name>
     <message>
-        <source>Make Friend</source>
-        <translation type="obsolete">Объявить другом</translation>
-    </message>
-    <message>
-        <source>Remove Friend</source>
-        <translation type="obsolete">Удалить контакт</translation>
-    </message>
-    <message>
-        <source>Chat</source>
-        <translation type="unfinished">Чат</translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation type="unfinished">Отправить</translation>
-    </message>
-    <message>
-        <source>Name:</source>
-        <translation type="unfinished">Имя:</translation>
-    </message>
-    <message>
-        <source>Organisation</source>
-        <translation type="obsolete">Организация</translation>
-    </message>
-    <message>
-        <source>Location</source>
-        <translation type="obsolete">Местонахождение </translation>
-    </message>
-    <message>
-        <source>Country</source>
-        <translation type="obsolete">Страна</translation>
+        <source>Expand</source>
+        <translation>Развернуть</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished">Удалить элемент</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation type="obsolete">связано</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation type="unfinished">Развернуть</translation>
-    </message>
-    <message>
-        <source>Status:</source>
-        <translation type="unfinished">Состояние:</translation>
-    </message>
-    <message>
-        <source>Trust: </source>
-        <translation type="unfinished">Доверие:</translation>
-    </message>
-    <message>
-        <source>Good</source>
-        <translation type="obsolete">хороший:</translation>
-    </message>
-    <message>
-        <source>Send Mail</source>
-        <translation type="obsolete">Написать письмо</translation>
-    </message>
-    <message>
-        <source>IP Address</source>
-        <translation type="obsolete">IP-адрес</translation>
-    </message>
-    <message>
-        <source>Connection Method</source>
-        <translation type="obsolete">Метод подключения</translation>
-    </message>
-    <message>
-        <source>Last Contact:</source>
-        <translation type="obsolete">Последний контакт:</translation>
-    </message>
-    <message>
-        <source>Peer</source>
-        <translation type="unfinished">совокупность</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation type="unfinished">Скрыт </translation>
+        <translation>Удалить пункт</translation>
     </message>
     <message>
         <source>Write a quick Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Написать быстрое сообщение</translation>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation>Чат</translation>
     </message>
     <message>
         <source>Start Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Начать чат</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Вернуться/Отмена</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>Отправить</translation>
+    </message>
+    <message>
+        <source>Name:</source>
+        <translation>Имя:</translation>
     </message>
     <message>
         <source>Peer ID:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Trust: </source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Location:</source>
-        <translation type="unfinished"></translation>
+        <translation>Расположение:</translation>
     </message>
     <message>
         <source>IP Address:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Connection Method:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Status:</source>
+        <translation>Статус:</translation>
     </message>
     <message>
         <source>Write Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Написать сообщение</translation>
     </message>
     <message>
         <source>Friend</source>
-        <translation type="unfinished"></translation>
+        <translation>Друг</translation>
     </message>
     <message>
         <source>Friend Connected</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Connect Attempt</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend of Friend</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unknown Peer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Спрятать</translation>
     </message>
     <message>
         <source>Quick Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Быстрое сообщение</translation>
     </message>
 </context>
 <context>
     <name>PeerStatus</name>
     <message>
-        <source>Online: 0 |Friends: 0|Network: 0</source>
-        <translation type="obsolete">Oнлайн: 0 |Друзей: 0|Сетей: 0</translation>
-    </message>
-    <message>
-        <source>Online: 0  | Friends: 0  | Network: 0 </source>
-        <translation type="obsolete">Oнлайн: 0 | Друзей: 0 | Сетей: 0</translation>
-    </message>
-    <message>
-        <source>Friends</source>
-        <translation type="unfinished">Друзья</translation>
-    </message>
-    <message>
-        <source>Online</source>
-        <translation type="obsolete">Онлайн</translation>
-    </message>
-    <message>
-        <source>&lt;span style=&quot;color:#000000&quot;&gt;&lt;strong&gt;Friends:&lt;/strong&gt;&lt;/span&gt;</source>
-        <translation type="obsolete">&lt;span style=&quot;color:#000000&quot;&gt;&lt;strong&gt;Друзей:&lt;/strong&gt;&lt;/span&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;span style=&quot;color:#0000FF&quot;&gt;&lt;strong&gt;Online:&lt;/strong&gt;&lt;/span&gt;</source>
-        <translation type="obsolete">&lt;span style=&quot;color:#0000FF&quot;&gt;&lt;strong&gt;Oнлайн:&lt;/strong&gt;&lt;/span&gt;</translation>
-    </message>
-    <message>
-        <source>Online:</source>
-        <translation type="obsolete">Oнлайн:</translation>
-    </message>
-    <message>
-        <source>Friends:</source>
-        <translation type="obsolete">Друзей:</translation>
-    </message>
-    <message>
-        <source>Network:</source>
-        <translation type="obsolete">Сетей:</translation>
-    </message>
-    <message>
         <source>Friends: 0/0</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Online Friends/Total Friends</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>PeersDialog</name>
-    <message>
-        <source>Chat</source>
-        <translation type="obsolete">Чат</translation>
-    </message>
-    <message>
-        <source>Export Friend</source>
-        <translation type="obsolete">Экспорт контакта</translation>
-    </message>
-    <message>
-        <source>Remove Friend</source>
-        <translation type="obsolete">Удалить контакт</translation>
-    </message>
-    <message>
-        <source>Save Certificate</source>
-        <translation type="obsolete">Сохранить сертификат </translation>
-    </message>
-    <message>
-        <source>Certificates (*.pqi)</source>
-        <translation type="obsolete">Сертификаты (*. pqi) </translation>
-    </message>
-    <message>
-        <source>Status</source>
-        <translation type="obsolete">Состояние</translation>
-    </message>
-    <message>
-        <source>Person</source>
-        <translation type="obsolete">Имя</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Friends&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Друзья&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Connect To Friend</source>
-        <translation type="obsolete">Подключиться к другу </translation>
-    </message>
-    <message>
-        <source>Welcome to RetroShare&apos;s group chat.</source>
-        <translation type="obsolete">Добро пожаловать в групповой чат RetroShare</translation>
-    </message>
-    <message>
-        <source>Profile</source>
-        <translation type="obsolete">Профиль</translation>
-    </message>
-    <message>
-        <source>Paste retroshare Link</source>
-        <translation type="obsolete">Вставить ссылку RetroShare</translation>
-    </message>
-    <message>
-        <source>Expand all</source>
-        <translation type="obsolete">Развернуть все</translation>
-    </message>
-    <message>
-        <source>Collapse all</source>
-        <translation type="obsolete">Свернуть все</translation>
-    </message>
-    <message>
-        <source>Message Friend</source>
-        <translation type="obsolete">Сообщение другу</translation>
-    </message>
-    <message>
-        <source>Peer Details</source>
-        <translation type="obsolete">Настройки контакта</translation>
-    </message>
-    <message>
-        <source>Deny Friend</source>
-        <translation type="obsolete">Запрет другу</translation>
-    </message>
-    <message>
-        <source>Remove Friend Location</source>
-        <translation type="obsolete">Удалить друга Местоположение</translation>
-    </message>
-    <message>
-        <source>&lt;strong&gt;GPG Key&lt;/strong&gt;</source>
-        <translation type="obsolete">&lt;strong&gt;GPG Ключ&lt;/strong&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;strong&gt;RetroShare instance&lt;/strong&gt;</source>
-        <translation type="obsolete">&lt;strong&gt;RetroShare Например&lt;/strong&gt;</translation>
-    </message>
-    <message>
-        <source>location : </source>
-        <translation type="obsolete">Место: </translation>
-    </message>
-    <message>
-        <source>Online</source>
-        <translation type="obsolete">Онлайн</translation>
-    </message>
-    <message>
-        <source>Peer Online</source>
-        <translation type="obsolete">Peer Интернет</translation>
-    </message>
-    <message>
-        <source>Away</source>
-        <translation type="obsolete">Далеко</translation>
-    </message>
-    <message>
-        <source>Busy</source>
-        <translation type="obsolete">Занятый</translation>
-    </message>
-    <message>
-        <source>Available</source>
-        <translation type="obsolete">Доступный</translation>
-    </message>
-    <message>
-        <source>Offline</source>
-        <translation type="obsolete">Оффлайн</translation>
-    </message>
-    <message>
-        <source>Friend Not Online</source>
-        <translation type="obsolete">Друг не Онлайн</translation>
-    </message>
-    <message>
-        <source>Your Friend is offline 
-Do you want to send them a Message instead</source>
-        <translation type="obsolete">Ваш друг форума
-Вы хотите, чтобы отправить им сообщение, а не</translation>
-    </message>
-    <message>
-        <source>Create a new Channel</source>
-        <translation type="obsolete">Создать новый канал</translation>
-    </message>
-    <message>
-        <source>New Channel</source>
-        <translation type="obsolete">Новый Канал</translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation type="obsolete">Дополнительные файлы</translation>
-    </message>
-    <message>
-        <source>File Request Confirmation</source>
-        <translation type="obsolete">Введите запрос файла</translation>
-    </message>
-    <message>
-        <source>The file has been added to your download list.</source>
-        <translation type="obsolete">Файл был добавлен в корзину.</translation>
-    </message>
-    <message>
-        <source>File Request canceled</source>
-        <translation type="obsolete">Запрос файла отменена</translation>
-    </message>
-    <message>
-        <source>The file has not been added to your download list, because you already have it.</source>
-        <translation type="obsolete">Файл не был добавлен в ваш список загрузки, потому что вы уже получили его.</translation>
-    </message>
-    <message>
-        <source>File Request Error</source>
-        <translation type="obsolete">Запрос файла ошибке</translation>
-    </message>
-    <message>
-        <source>The file link is malformed.</source>
-        <translation type="obsolete">Неверный ссылки на файл.</translation>
-    </message>
-    <message>
-        <source>Drop file error.</source>
-        <translation type="obsolete">Оставьте файл ошибок.</translation>
-    </message>
-    <message>
-        <source>File not found or file name not accepted.</source>
-        <translation type="obsolete">Файл не найден или имя файла, не принимаются.</translation>
-    </message>
-    <message>
-        <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation type="obsolete">Каталог не может быть удален, принимаются только файлы.</translation>
-    </message>
-    <message>
-        <source>News Feed</source>
-        <translation type="obsolete">Новости кормить</translation>
-    </message>
-    <message>
-        <source>Save as...</source>
-        <translation type="obsolete">Сохранить как ...</translation>
-    </message>
-    <message>
-        <source>me</source>
-        <translation type="obsolete">меня</translation>
-    </message>
-    <message>
-        <source>Live Group Chat:</source>
-        <translation type="obsolete">Чат в группе:</translation>
-    </message>
-    <message>
-        <source>Italic</source>
-        <translation type="obsolete">Курсив</translation>
-    </message>
-    <message>
-        <source>Underline</source>
-        <translation type="obsolete">Подчеркнуть</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Friends&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Друзья&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation type="obsolete">Добавить</translation>
-    </message>
-    <message>
-        <source>hide unconnected</source>
-        <translation type="obsolete">прятать связанным</translation>
-    </message>
-    <message>
-        <source>Add or Change your Avatar</source>
-        <translation type="obsolete">Добавить или изменить Avatar</translation>
-    </message>
-    <message>
-        <source>Edit Personal message</source>
-        <translation type="obsolete">Править Личные сообщения</translation>
-    </message>
-    <message>
-        <source>Live Chat</source>
-        <translation type="obsolete">Live чат</translation>
-    </message>
-    <message>
-        <source>Bold</source>
-        <translation type="obsolete">Жирным</translation>
-    </message>
-    <message>
-        <source>Create New Forum</source>
-        <translation type="obsolete">Создать форум</translation>
-    </message>
-    <message>
-        <source>Create new Forum</source>
-        <translation type="obsolete">Создать форум</translation>
-    </message>
-    <message>
-        <source>Create New Channel</source>
-        <translation type="obsolete">Создать новый канал</translation>
-    </message>
-    <message>
-        <source>Display</source>
-        <translation type="obsolete">Отображать</translation>
-    </message>
-    <message>
-        <source>Create new Channel</source>
-        <translation type="obsolete">Создать новый канал</translation>
-    </message>
-    <message>
-        <source>Add your Avatar Picture</source>
-        <translation type="obsolete">Добавить Аватар Фото</translation>
-    </message>
-    <message>
-        <source>Set your Personal Message</source>
-        <translation type="obsolete">Задать Ваше личное сообщение</translation>
-    </message>
-    <message>
-        <source>Edit your status Message</source>
-        <translation type="obsolete">Изменить свой статус</translation>
-    </message>
-    <message>
-        <source>Sort Descending Order</source>
-        <translation type="obsolete">Сортировать убыванию</translation>
-    </message>
-    <message>
-        <source>Sort Ascending Order</source>
-        <translation type="obsolete">Сортировка по возрастанию заказа</translation>
-    </message>
-    <message>
-        <source>Disable Emoticons</source>
-        <translation type="obsolete">Отключить смайлики</translation>
-    </message>
-    <message>
-        <source>Hide Offline Friends</source>
-        <translation type="obsolete">Скрыть знакомых</translation>
-    </message>
-    <message>
-        <source>Text Color</source>
-        <translation type="obsolete">Цвет текста</translation>
-    </message>
-    <message>
-        <source>Add Friend</source>
-        <translation type="obsolete">Добавить друга </translation>
-    </message>
-    <message>
-        <source>Create new Profile</source>
-        <translation type="obsolete">Создание нового профиля</translation>
-    </message>
-    <message>
-        <source>Font</source>
-        <translation type="obsolete">Шрифт</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends</source>
-        <translation type="obsolete">Друзья</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;set Text Color&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;установить цвет текста&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation type="obsolete">Отправить</translation>
-    </message>
-    <message>
-        <source>Clear Chat History</source>
-        <translation type="obsolete">Очистить историю</translation>
-    </message>
-    <message>
-        <source>Profile View</source>
-        <translation type="obsolete">Посмотреть профиль</translation>
-    </message>
-</context>
-<context>
-    <name>PeersFeed</name>
-    <message>
-        <source>Save Certificate</source>
-        <translation type="obsolete">Сохранить сертификат </translation>
-    </message>
-    <message>
-        <source>Certificates (*.pqi)</source>
-        <translation type="obsolete">Сертификаты (*. pqi) </translation>
-    </message>
-    <message>
-        <source>Friends</source>
-        <translation type="obsolete">Друзья</translation>
+        <translation>Друзья</translation>
     </message>
 </context>
 <context>
     <name>PhotoAddDialog</name>
     <message>
         <source>Share Options</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Public</source>
-        <translation type="unfinished"></translation>
+        <translation>Публичный</translation>
     </message>
     <message>
         <source>All Friends</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Restricted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>N/A</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>University Friends</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Family</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This List Contains</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>All your Groups</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Resize Images (&lt; 1Mb)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Resize Images (&lt; 10Mb)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Send Original Images</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>No Comments Allowed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Authenticated Comments</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Any Comments Allowed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Publish with XXX Key</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Album Thumbnail</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Summary</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Category:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Travel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Holiday</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends</source>
-        <translation type="unfinished">Друзья</translation>
+        <translation>Друзья</translation>
     </message>
     <message>
         <source>Work</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Random</source>
-        <translation type="unfinished">Случайные</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Caption</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Where:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Album Title:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>When</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Delete Album</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Edit Album Details</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>HELP:   Drag &amp; Drop to insert, and re-order pictures. Click on a picture to edit details below.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Delete Photo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Edit Photo Details</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;&lt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&gt;&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Publish Album</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>PhotoDetailsDialog</name>
     <message>
         <source>Album Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Album Name:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Category:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Travel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Holiday</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends</source>
-        <translation type="unfinished">Друзья</translation>
+        <translation>Друзья</translation>
     </message>
     <message>
         <source>Family</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Work</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Random</source>
-        <translation type="unfinished">Случайные</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Thumbnail
@@ -10831,191 +8270,148 @@ Text
 2
 3
 ...................................</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Caption:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Photographer:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished">Описание</translation>
+        <translation>Описание</translation>
     </message>
     <message>
         <source>Where:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>When</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Other 1:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>HashTags:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Update Details</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>PhotoDialog</name>
     <message>
-        <source>Remove</source>
-        <translation type="obsolete">Удалить </translation>
-    </message>
-    <message>
-        <source>Good</source>
-        <translation type="obsolete">хороший:</translation>
-    </message>
-    <message>
-        <source>Average</source>
-        <translation type="obsolete">Среднее</translation>
-    </message>
-    <message>
         <source>Rating</source>
-        <translation type="unfinished">Рейтинг</translation>
-    </message>
-    <message>
-        <source>Date</source>
-        <translation type="obsolete">часы </translation>
-    </message>
-    <message>
-        <source>Location</source>
-        <translation type="obsolete">Местонахождение </translation>
-    </message>
-    <message>
-        <source>Size</source>
-        <translation type="obsolete">Size</translation>
-    </message>
-    <message>
-        <source>Peer</source>
-        <translation type="obsolete">совокупность</translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation type="obsolete">Описание</translation>
+        <translation>Рейтинг</translation>
     </message>
     <message>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Источник</translation>
     </message>
     <message>
         <source>Category</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>[ - ]</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>[ + ]</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Slide Show</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Edit Album</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New Album</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>PhotoShare</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Please select an album before
 requesting to edit it!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cannot Edit Someone Else&apos;s Album</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>PhotoItem</name>
     <message>
         <source>Album:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished">разослан</translation>
+        <translation>От</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Статус</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished">часы </translation>
-    </message>
-</context>
-<context>
-    <name>PhotoShow</name>
-    <message>
-        <source>Date:</source>
-        <translation type="obsolete">Свидание:</translation>
-    </message>
-    <message>
-        <source>Pause</source>
-        <translation type="obsolete">Пауза</translation>
+        <translation>Дата</translation>
     </message>
 </context>
 <context>
     <name>PhotoSlideShow</name>
     <message>
         <source>Album Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Image</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Show/Hide Details</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;&lt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Stop/Run</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&gt;&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished">закрыть </translation>
+        <translation>Закрыть</translation>
     </message>
 </context>
 <context>
     <name>PluginFrame</name>
     <message>
         <source>Remove</source>
-        <translation type="unfinished">Удалить </translation>
+        <translation>Удалить</translation>
     </message>
 </context>
 <context>
@@ -11024,1492 +8420,829 @@ requesting to edit it!</source>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;more&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;more...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add the plugin into the white list of accepted plugins. This will be effective after you restart RetroShare, since plugins need to be loaded at startup.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Launch configuration panel, if provided by the plugin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Configure</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File name: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File hash:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Status: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>About</source>
+        <translation>О программе</translation>
     </message>
 </context>
 <context>
     <name>PluginManagerWidget</name>
     <message>
         <source>Install New Plugin...</source>
-        <translation type="unfinished">Установить новый плагин ...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Open Plugin to install</source>
-        <translation type="unfinished">Открыть плагин для установки</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Plugins (*.so *.dll)</source>
-        <translation type="unfinished">Плагины (*. so *. dll)</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>PluginsPage</name>
     <message>
         <source>Loaded plugins</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Authorize all plugins</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Plugin look-up directories</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hash rejected. Add to white list.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Loading error.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Missing symbol. Wrong version?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>No plugin object</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Plugins is loaded.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unknown status.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Title unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Description unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Check this for developing plugins. They will not
 be checked for the hash. However, in normal
 times, checking the hash protects you from
 malicious behavior of crafted plugins.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Plugins</source>
-        <translation type="unfinished">Плагины</translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Hash rejected. Enable it manually and restart, if you need.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No API number supplied. Please read plugin development manual.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No SVN number supplied. Please read plugin development manual.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown version</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>PopularityDefs</name>
     <message>
         <source>Popularity</source>
-        <translation type="unfinished"></translation>
+        <translation>Популярность</translation>
     </message>
 </context>
 <context>
     <name>PopupChatDialog</name>
     <message>
-        <source>Paste retroshare Link</source>
-        <translation type="obsolete">Вставить ссылку RetroShare</translation>
-    </message>
-    <message>
-        <source>Friend Not Online</source>
-        <translation type="obsolete">Друг не Онлайн</translation>
-    </message>
-    <message>
-        <source>Your Friend is offline 
-Do you want to send them a Message instead</source>
-        <translation type="obsolete">Ваш друг форума
-Вы хотите, чтобы отправить им сообщение, а не</translation>
+        <source>Clear offline messages</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hide Avatar</source>
-        <translation type="unfinished">Скрыть Аватара</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Show Avatar</source>
-        <translation type="unfinished">Показать Аватара</translation>
-    </message>
-    <message>
-        <source>Save as...</source>
-        <translation type="obsolete">Сохранить как ...</translation>
-    </message>
-    <message>
-        <source>Bold</source>
-        <translation type="obsolete">Жирным</translation>
-    </message>
-    <message>
-        <source>Underline</source>
-        <translation type="obsolete">Подчеркнуть</translation>
-    </message>
-    <message>
-        <source>Italic</source>
-        <translation type="obsolete">Курсив</translation>
-    </message>
-    <message>
-        <source>Font</source>
-        <translation type="obsolete">Шрифт</translation>
-    </message>
-    <message>
-        <source>Text Color</source>
-        <translation type="obsolete">Цвет текста</translation>
-    </message>
-    <message>
-        <source>Clear Chat History</source>
-        <translation type="obsolete">Очистить историю</translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation type="obsolete">Отправить</translation>
-    </message>
-    <message>
-        <source> RetroShare - Encrypted Chat</source>
-        <translation type="obsolete">RetroShare - Кодированные Чат</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="obsolete">закрыть </translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Disable Emoticons</source>
-        <translation type="obsolete">Отключить смайлики</translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation type="obsolete">Дополнительные файлы</translation>
-    </message>
-    <message>
-        <source>File Request Confirmation</source>
-        <translation type="obsolete">Введите запрос файла</translation>
-    </message>
-    <message>
-        <source>The file has been added to your download list.</source>
-        <translation type="obsolete">Файл был добавлен в корзину.</translation>
-    </message>
-    <message>
-        <source>File Request canceled</source>
-        <translation type="obsolete">Запрос файла отменена</translation>
-    </message>
-    <message>
-        <source>File Request Error</source>
-        <translation type="obsolete">Запрос файла ошибке</translation>
-    </message>
-    <message>
-        <source>The file link is malformed.</source>
-        <translation type="obsolete">Неверный ссылки на файл.</translation>
-    </message>
-    <message>
-        <source>Drop file error.</source>
-        <translation type="obsolete">Оставьте файл ошибок.</translation>
-    </message>
-    <message>
-        <source>File not found or file name not accepted.</source>
-        <translation type="obsolete">Файл не найден или имя файла, не принимаются.</translation>
-    </message>
-    <message>
-        <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation type="obsolete">Каталог не может быть удален, принимаются только файлы.</translation>
-    </message>
-    <message>
-        <source>Clear offline messages</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>PopupChatWindow</name>
     <message>
         <source>Avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>Аватар</translation>
     </message>
     <message>
         <source>Set your Avatar Picture</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Dock tab</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Undock tab</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Set Chat Window Color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Set window on top</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>PostedComments</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Форма</translation>
     </message>
     <message>
         <source>Hot</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>Новый</translation>
     </message>
     <message>
         <source>Top</source>
-        <translation type="unfinished">Верх</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Today</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Yesterday</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This Week</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This Month</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This Year</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Showing 1-100</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Prev</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>PostedItem</name>
     <message>
         <source>1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>/\</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>score</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>\/</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Title this is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title dont you think? yes it is and should wrap around I hope</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished">часы </translation>
+        <translation>Дата</translation>
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished">разослан</translation>
+        <translation>От</translation>
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>View Comments</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>PostedListDialog</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Форма</translation>
     </message>
     <message>
         <source>Hot</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>Новый</translation>
     </message>
     <message>
         <source>Top</source>
-        <translation type="unfinished">Верх</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Today</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Yesterday</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This Week</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This Month</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This Year</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New Link Group</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Submit Post</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Showing 1-100</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Prev</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Your Topics</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Subscribed Topics</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Popular Topics</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Other Topics</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Subscribe to Forum</source>
-        <translation type="unfinished">Подписаться на форум</translation>
+        <translation>Подписаться на форум</translation>
     </message>
     <message>
         <source>Unsubscribe to Forum</source>
-        <translation type="unfinished">Отказ от подписки на форум</translation>
+        <translation>Отписаться от форума</translation>
     </message>
     <message>
         <source>New Forum</source>
-        <translation type="unfinished">Новый форум</translation>
+        <translation>Новый форум</translation>
     </message>
     <message>
         <source>Show Forum Details</source>
-        <translation type="unfinished">Показать форума Подробности</translation>
+        <translation>Показать подробности форума</translation>
     </message>
     <message>
         <source>Edit Forum Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактировать подробности форума</translation>
     </message>
     <message>
         <source>Share Forum</source>
-        <translation type="unfinished"></translation>
+        <translation>Расшарить форум</translation>
     </message>
     <message>
         <source>Restore Publish Rights for Forum</source>
-        <translation type="unfinished"></translation>
+        <translation>Восстановить публичные права для форума</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Скопировать ссылку RetroShare</translation>
     </message>
     <message>
         <source>Mark all as read</source>
-        <translation type="unfinished"></translation>
+        <translation>Отметить все как прочитанные</translation>
     </message>
     <message>
         <source>Mark all as unread</source>
-        <translation type="unfinished"></translation>
+        <translation>Отметить все как непрочитанные</translation>
     </message>
     <message>
         <source>AUTHD</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>PreferencesWindow</name>
-    <message>
-        <source>Directories</source>
-        <translation type="obsolete">Папки</translation>
-    </message>
-    <message>
-        <source>Error Saving Configuration</source>
-        <translation type="obsolete">Ошибка при сохранении конфигурации </translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation type="obsolete">Общие настройки</translation>
-    </message>
-    <message>
-        <source>Server</source>
-        <translation type="obsolete">Настройки сервера</translation>
-    </message>
-    <message>
-        <source>Options</source>
-        <translation type="obsolete">Опции </translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="obsolete">Отмена</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation type="obsolete">Готово</translation>
-    </message>
-    <message>
-        <source>Appearance</source>
-        <translation type="obsolete">Внешний вид</translation>
-    </message>
-    <message>
-        <source>Notify</source>
-        <translation type="obsolete">Уведомить</translation>
-    </message>
-    <message>
-        <source>Help</source>
-        <translation type="obsolete">Помощь</translation>
-    </message>
-    <message>
-        <source>File assotiations</source>
-        <translation type="obsolete">Файл assoziation</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>PrintPreview</name>
     <message>
-        <source>Print</source>
-        <translation type="unfinished">Распечатать</translation>
+        <source>RetroShare Message - Print Preview</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>RetroShare Message - Print Preview</source>
-        <translation type="unfinished"></translation>
+        <source>Print</source>
+        <translation>Печать</translation>
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Page Setup...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Zoom In</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Zoom Out</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&amp;Close</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ProfileEdit</name>
-    <message>
-        <source>Profile</source>
-        <translation type="obsolete">Профиль</translation>
-    </message>
-</context>
-<context>
-    <name>ProfileManager</name>
-    <message>
-        <source>Profile Manager</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Generate New Identity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Import new identity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export selected identity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use identity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Your profile is associated to a GPG key. RetroShare currently ignores DSA keys.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Identities</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:24pt; color:#ffffff;&quot;&gt;Profile Manager&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export Identity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>RetroShare Identity files (*.asc)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Identity saved</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Your identity was successfully saved
-It is encrypted
-
-You can now copy it to another computer
-and use the import button to load it</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Identity not saved</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Your identity was not saved. An error occured.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Identity not loaded</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Your identity was not loaded properly:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New identity imported</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Your identity was imported successfuly:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You can use it now to create a new location.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select Trusted Friend</source>
-        <translation type="unfinished">Выбор верного друга</translation>
-    </message>
-    <message>
-        <source>Certificates (*.pqi *.pem)</source>
-        <translation type="unfinished">Сертификаты (*.pqi /*.pem) </translation>
-    </message>
-    <message>
-        <source>Multiple instances</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Another RetroShare using the same profile is already running on your system. Please close that instance first</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>An unexpected error occurred when Retrosharetried to acquire the single instance lock</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Generate ID Failure</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Failed to Load your new Certificate!</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ProfileView</name>
-    <message>
-        <source>Download All</source>
-        <translation type="obsolete">Загрузить все (Download All)</translation>
-    </message>
-    <message>
-        <source>Error : cannot get peer details.</source>
-        <translation type="obsolete">Ошибка: не могу получить совокупность деталей.</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation type="obsolete">Name/сетевой карты</translation>
-    </message>
-    <message>
-        <source>Size</source>
-        <translation type="obsolete">Size</translation>
-    </message>
-    <message>
-        <source>Profile View</source>
-        <translation type="obsolete">Посмотреть профиль</translation>
-    </message>
-    <message>
-        <source>Hash</source>
-        <translation type="obsolete">Хэш</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ProfileWidget</name>
     <message>
         <source>Edit Personal message</source>
-        <translation type="unfinished">Править Личные сообщения</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/info16.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Public Information&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/info16.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Общественной информации&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:600; color:#808080;&quot;&gt;Public Information&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:600; color:#808080;&quot;&gt;Общественной информации&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Name:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Имя:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; color:#76746c;&quot;&gt;Location:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; color:#76746c;&quot;&gt;Местонахождение:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Peer ID&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Peer ID&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:600; color:#808080;&quot;&gt;Other Information&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:600; color:#808080;&quot;&gt;Другая информация&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Number of Friends:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Количество друзей:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Version&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Версии&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:600; color:#808080;&quot;&gt;My Address&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:600; color:#808080;&quot;&gt;Мой адрес&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; color:#76746c;&quot;&gt;Local Address:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; color:#76746c;&quot;&gt;Местный адрес:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;External Address:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Внешний адрес:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Addresses list</source>
-        <translation type="obsolete">Список адресов</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Peer ID:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Version:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Online since:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Dynamic DNS:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Addresses list&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактировать личное сообщение</translation>
     </message>
     <message>
         <source>Copy Certificate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"></translation>
+        <translation>RetroShare</translation>
     </message>
     <message>
         <source>Sorry, create certificate failed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Profile Manager</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Public Information</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Name:</source>
+        <translation>Имя:</translation>
+    </message>
+    <message>
+        <source>Location:</source>
+        <translation>Расположение:</translation>
+    </message>
+    <message>
+        <source>Peer ID:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Other Information</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Number of Friends:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Version:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Online since:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>My Address</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Local Address:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>External Address:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Dynamic DNS:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Addresses list</source>
+        <translation>Список адресов</translation>
     </message>
 </context>
 <context>
     <name>PulseAddDialog</name>
     <message>
         <source>Post From:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Account 1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Account 2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Account 3</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add to Pulse</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>filter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>URL Adder</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Display As</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>URL</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Post Pulse to Wire</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>PulseItem</name>
     <message>
         <source>From</source>
-        <translation type="unfinished">разослан</translation>
+        <translation>От</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished">часы </translation>
+        <translation>Дата</translation>
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <source>Name</source>
-        <translation type="obsolete">Name/сетевой карты</translation>
-    </message>
-    <message>
-        <source>Date</source>
-        <translation type="obsolete">часы </translation>
-    </message>
-    <message>
-        <source>Size</source>
-        <translation type="obsolete">Size</translation>
-    </message>
-    <message>
-        <source>Hash</source>
-        <translation type="obsolete">Хэш</translation>
-    </message>
-    <message>
         <source>RetroShare</source>
-        <translation type="unfinished"></translation>
+        <translation>RetroShare</translation>
     </message>
     <message>
         <source>Inititialize failed. Wrong or missing installation of gpg.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>An unexpected error occured. Please report &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Multiple instances</source>
-        <translation type="unfinished"></translation>
+        <translation>Множественные копии</translation>
     </message>
     <message>
         <source>Another RetroShare using the same profile is already running on your system. Please close that instance first
  Lock file:
 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>An unexpected error occurred when Retrosharetried to acquire the single instance lock
  Lock file:
 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Login Failure</source>
-        <translation type="unfinished">Войти провал</translation>
+        <translation>Войти провал</translation>
     </message>
     <message>
         <source>Maybe password is wrong</source>
-        <translation type="unfinished">Может быть, неправильный пароль</translation>
-    </message>
-    <message>
-        <source>File Request Confirmation</source>
-        <translation type="obsolete">Введите запрос файла</translation>
-    </message>
-    <message>
-        <source>The file has been added to your download list.</source>
-        <translation type="obsolete">Файл был добавлен в корзину.</translation>
-    </message>
-    <message>
-        <source>File Request canceled</source>
-        <translation type="unfinished">Запрос файла отменена</translation>
-    </message>
-    <message>
-        <source>The file has not been added to your download list, because you already have it.</source>
-        <translation type="obsolete">Файл не был добавлен в ваш список загрузки, потому что вы уже получили его.</translation>
-    </message>
-    <message>
-        <source>File Request Error</source>
-        <translation type="obsolete">Запрос файла ошибке</translation>
-    </message>
-    <message>
-        <source>The file link is malformed.</source>
-        <translation type="obsolete">Неверный ссылки на файл.</translation>
-    </message>
-    <message>
-        <source>Deny friend</source>
-        <translation type="unfinished">Запретить другу</translation>
-    </message>
-    <message>
-        <source>Make friend</source>
-        <translation type="unfinished">Сделать другом</translation>
+        <translation>Может быть, неправильный пароль</translation>
     </message>
     <message>
         <source>Click to add this RetroShare cert to your GPG keyring
 and open the Make Friend Wizard.
 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add file</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add files</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add friend</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add friends</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Do you want to process the link ?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Do you want to process %1 links ?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Confirmation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>%1 of %2 RetroShare link processed.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>%1 of %2 RetroShare links processed.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File added</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Files added</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File exist</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Files exist</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend added</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends added</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend exist</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends exist</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend not added</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends not added</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend not found</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends not found</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forum not found</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forums not found</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forum message not found</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forum messages not found</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Channel not found</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Channels not found</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Channel message not found</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Channel messages not found</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Receipient not accepted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Receipients not accepted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unkown receipient</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unkown receipients</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Malformed links</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Invalid links</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Result</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unable to make path</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unable to make path:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Treatment of collection file has failed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>The collection file %1 could not be openned.
 Reported error is: %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Deny friend</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Make friend</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Peer details</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>File Request canceled</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>The following has not been added to your download list, because you already have it:
     </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Start with a RetroShare link is only supported for Windows.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>You appear to have locations associated to DSA keys:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>DSA keys are not yet supported by this version of RetroShare. All these locations will be unusable. We&apos;re very sorry for that.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although GPG keys are mentionned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Choose between:&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;Ok&lt;/b&gt; to copy the existing keyring from gnupg (safest bet), or &lt;/li&gt;&lt;li&gt;&lt;b&gt;Close without saving&lt;/b&gt; to start fresh with an empty keyring (you will be asked to create a new PGP key to work with RetroShare, or import a previously saved pgp keypair). &lt;/li&gt;&lt;li&gt;&lt;b&gt;Cancel&lt;/b&gt; to quit and forge a keyring by yourself (needs some PGP skills)&lt;/li&gt;&lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>QuickStartWizard</name>
     <message>
         <source>Quick Start Wizard</source>
-        <translation type="unfinished">Мастер быстрого запуска</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:26pt;&quot;&gt;RetroShare!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:26pt;&quot;&gt;RetroShare!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Welcome to RetroShare!&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;This QuickStart wizard can help you configure your RetroShare in a few simple steps.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;If you&apos;re a more advanced user, you can access the full range of RetroShare&apos;s options via the ToolBar. Click Exit to close the wizard at any time.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;This wizard will assist you to:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;  Tell RetroShare about your internet connection.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;  Choos which files you share.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;  Get started using RetroShare.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Добро пожаловать на RetroShare!&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Это быстрого запуска мастера могут помочь вам настроить ваши RetroShare в несколько простых шагов.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Если вы более продвинутый пользователь, вы можете получить полный спектр возможностей RetroShare&apos;s через панель инструментов. Нажмите кнопку Выход, чтобы закрыть мастер в любое время.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Этот мастер поможет Вам:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;  RetroShare Расскажите о вашем интернет-соединения.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;  Выберите, какие файлы вы разделяете..&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;  Начать использование RetroShare.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html</translation>
-    </message>
-    <message>
-        <source>Next &gt;</source>
-        <translation type="unfinished">Вперед &gt;</translation>
-    </message>
-    <message>
-        <source>Exit</source>
-        <translation type="unfinished">Выйти</translation>
-    </message>
-    <message>
-        <source>For best performance, RetroShare needs to know a little about your connection to the internet.</source>
-        <translation type="unfinished">Для наилучшей производительности RetroShare необходимо знать немного о Вашем подключении к Интернету.</translation>
-    </message>
-    <message>
-        <source>Choose your upload speed limit: </source>
-        <translation type="unfinished">Выберите Добавить предел скорости:</translation>
-    </message>
-    <message>
-        <source>Choose your download speed limit: </source>
-        <translation type="unfinished">Выбери скачать предел скорости:</translation>
-    </message>
-    <message>
-        <source>Connection :</source>
-        <translation type="unfinished">Соединение:</translation>
-    </message>
-    <message>
-        <source>Automatic (UPnP)</source>
-        <translation type="unfinished">Автоматический (UPnP)</translation>
-    </message>
-    <message>
-        <source>Firewalled</source>
-        <translation type="unfinished">Файрвол</translation>
-    </message>
-    <message>
-        <source>Manually forwarded port</source>
-        <translation type="unfinished">Переадресованные руководство порта</translation>
-    </message>
-    <message>
-        <source>Dicovery :</source>
-        <translation type="obsolete">открытие:</translation>
-    </message>
-    <message>
-        <source>Share Ip and information with your friend (Disc On)</source>
-        <translation type="obsolete">Доля Ип и информацию с вашего друга (диска)</translation>
-    </message>
-    <message>
-        <source>Don&apos;t share any information (Disc Off)</source>
-        <translation type="obsolete">Не сообщайте любую информацию (Disc Off)</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt; Back</source>
-        <translation type="unfinished">&lt; Назад</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;This is a list of shared folders . You can add and remove folders using the button on the left. When you add a new folder, intially all file in that folder are shared.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Browsable by friends&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files are browsable from your direct friends.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Anonymously shared&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files can be downloaded by anybody through anonymous tunnels.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Это список общих папок. Вы можете добавить или удалить папки с помощью кнопки на левой. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Когда вы добавляете новую папку, являются общими первоначально все файлы в этой папке.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;Вы можете отдельно долю установка флагов для каждого разделяемого каталога:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Просматриваться &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: просмотр файлов с вашего прямого друзей.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;широкая сеть&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: файлы могут быть загружены любым путем анонимных tunnels.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Directory</source>
-        <translation type="unfinished">Каталог</translation>
-    </message>
-    <message>
-        <source>Network Wide</source>
-        <translation type="unfinished">широкая сеть</translation>
-    </message>
-    <message>
-        <source>Browseable</source>
-        <translation type="unfinished">Просматриваться</translation>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation type="unfinished">Добавить</translation>
-    </message>
-    <message>
-        <source>Remove</source>
-        <translation type="unfinished">Удалить </translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Enjoy using RetroShare!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Наслаждайтесь помощью RetroShare!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Just one more step! You&apos;re almost done configuring RetroShare to work with your computer.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;These settings configure how and when RetroShare starts .&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Еще один шаг! Ты почти готов RetroShare настройки для работы с компьютером.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Эти настройки параметров, как и когда RetroShare начинается.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Do not show a message when Closing RetroShare</source>
-        <translation type="unfinished">Не показывать сообщения при закрытии RetroShare</translation>
-    </message>
-    <message>
-        <source>Start Minimized</source>
-        <translation type="unfinished">Начало свернутое</translation>
-    </message>
-    <message>
-        <source>Start RetroShare when my System Starts.</source>
-        <translation type="unfinished">Начало RetroShare когда моя запуске системы.</translation>
-    </message>
-    <message>
-        <source>Finish</source>
-        <translation type="unfinished">Готово</translation>
-    </message>
-    <message>
-        <source>Select A Folder To Share</source>
-        <translation type="unfinished">Выберите папку для доли</translation>
-    </message>
-    <message>
-        <source>Shared Directory Added!</source>
-        <translation type="unfinished">Общий каталог добавлено!</translation>
-    </message>
-    <message>
-        <source>Do you really want to stop sharing this directory ? </source>
-        <translation type="unfinished">Вы действительно хотите отменить совместный доступ к этой папке?</translation>
-    </message>
-    <message>
-        <source>Warning!</source>
-        <translation type="unfinished">Внимание!</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Welcome to RetroShare!&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;This QuickStart wizard can help you configure your RetroShare in a few simple steps.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;If you&apos;re a more advanced user, you can access the full range of RetroShare&apos;s options via the ToolBar. Click Exit to close the wizard at any time.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;If you're a more advanced user, you can access the full range of RetroShare's options via the ToolBar. Click Exit to close the wizard at any time.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;This wizard will assist you to:&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
@@ -12518,969 +9251,749 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  Choose which files you share.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  Get started using RetroShare.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Next &gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Exit</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>For best performance, RetroShare needs to know a little about your connection to the internet.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Choose your download speed limit: </source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> KB/s</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Choose your upload speed limit: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Connection :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Automatic (UPnP)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Firewalled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Manually forwarded port</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Discovery :</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Public: DHT &amp; Discovery</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Private: Discovery Only</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Inverted: DHT Only</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Dark Net: None</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt; Back</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;This is a list of shared folders . You can add and remove folders using the button on the left. When you add a new folder, intially all file in that folder are shared.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt; font-weight:600;&quot;&gt;Browsable by friends&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;: files are browsable from your direct friends.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Anonymously shared&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files can be downloaded by anybody through anonymous tunnels.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Directory</source>
+        <translation>Папка</translation>
+    </message>
+    <message>
+        <source>Network Wide</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Browseable</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Добавить</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Удалить</translation>
     </message>
     <message>
         <source>Automatically share incoming directory (Recommended)</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматически расшаривать входящую папку (рекомендуется)</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'DejaVu Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Enjoy using RetroShare!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Just one more step! You're almost done configuring RetroShare to work with your computer.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;These settings configure how and when RetroShare starts .&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Do not show a message when Closing RetroShare</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Start Minimized</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Start RetroShare when my System Starts.</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Start minimized on system start</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Finish</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Select A Folder To Share</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Shared Directory Added!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Do you really want to stop sharing this directory ? </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Warning!</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>RSettingsWin</name>
     <message>
-        <source>General</source>
-        <translation type="obsolete">Общий</translation>
-    </message>
-    <message>
-        <source>Directories</source>
-        <translation type="obsolete">Справочники</translation>
-    </message>
-    <message>
-        <source>Server</source>
-        <translation type="obsolete">Сервер</translation>
-    </message>
-    <message>
-        <source>Transfer</source>
-        <translation type="obsolete">Передача</translation>
-    </message>
-    <message>
-        <source>Notify</source>
-        <translation type="obsolete">Уведомить</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation type="obsolete">Безопасность</translation>
-    </message>
-    <message>
-        <source>Forum</source>
-        <translation type="obsolete">Форум</translation>
-    </message>
-    <message>
-        <source>Appearance</source>
-        <translation type="obsolete">Внешний вид</translation>
-    </message>
-    <message>
-        <source>Sound</source>
-        <translation type="obsolete">звук</translation>
-    </message>
-    <message>
-        <source>Error Saving Configuration</source>
-        <translation type="obsolete">Ошибка при сохранении конфигурации </translation>
-    </message>
-    <message>
-        <source>Plugins</source>
-        <translation type="obsolete">Плагины</translation>
-    </message>
-    <message>
         <source>Error Saving Configuration on page </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>RatesStatus</name>
     <message>
         <source>&lt;strong&gt;Down:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Up:&lt;/strong&gt; 0.00 (kB/s) </source>
-        <translation type="unfinished">&lt;strong&gt;Приём::&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Отдача:&lt;/strong&gt; 0.00 (kB/s) </translation>
-    </message>
-    <message>
-        <source>&lt;strong&gt;Down:&lt;/strong&gt;</source>
-        <translation type="obsolete">&lt;strong&gt;Приём:&lt;/strong&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;strong&gt;Up:&lt;/strong&gt;</source>
-        <translation type="obsolete">&lt;strong&gt;Отдача:&lt;/strong&gt;</translation>
-    </message>
-    <message>
-        <source>Down:</source>
-        <translation type="obsolete">Приём:</translation>
-    </message>
-    <message>
-        <source>Up:</source>
-        <translation type="obsolete">Отдача:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Down</source>
-        <translation type="unfinished">Вниз</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Up</source>
-        <translation type="unfinished">Вверх</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>RelayPage</name>
     <message>
         <source>Enable Relay Connections</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Use Relay Servers</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Relay options</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Bandwidth per link</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Total Bandwidth</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends</source>
-        <translation type="unfinished">Друзья</translation>
+        <translation>Друзья</translation>
     </message>
     <message>
         <source>kB/s</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends of Friends</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Главное</translation>
     </message>
     <message>
         <source>Total:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Relay Server Setup</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add Server</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Server DHT Key</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Remove Server</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Relay</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>RemoteDirModel</name>
-    <message>
-        <source>Friends Directories</source>
-        <translation type="obsolete">Друзья Каталоги</translation>
-    </message>
-    <message>
-        <source>My Directories</source>
-        <translation type="obsolete">Моя Каталоги</translation>
-    </message>
-    <message>
-        <source>Size</source>
-        <translation type="obsolete">размер</translation>
-    </message>
-    <message>
-        <source>Share Type</source>
-        <translation type="obsolete">Тип акции</translation>
-    </message>
-    <message>
-        <source>What&apos;s new</source>
-        <translation type="obsolete">Что нового</translation>
-    </message>
-    <message>
-        <source>Rank</source>
-        <translation type="obsolete">Ранг </translation>
-    </message>
-    <message>
-        <source>Age</source>
-        <translation type="obsolete">Возраст</translation>
-    </message>
-    <message>
-        <source>FILE</source>
-        <translation type="obsolete">ФАЙЛОВ</translation>
-    </message>
-    <message>
-        <source>Anonymous</source>
-        <translation type="obsolete">Аноним</translation>
-    </message>
-    <message>
-        <source>Files</source>
-        <translation type="obsolete">Файлы </translation>
-    </message>
-    <message>
-        <source>DIR</source>
-        <translation type="obsolete">Папка</translation>
-    </message>
-    <message>
-        <source>Hash</source>
-        <translation type="obsolete">Хэш</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>RetroshareDirModel</name>
     <message>
         <source>Anonymous</source>
-        <translation type="unfinished">Аноним</translation>
+        <translation>Аноним</translation>
     </message>
     <message>
         <source>Anonymous and browsable by friends</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Only browsable by friends</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>NEW</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>RsCollectionDialog</name>
     <message>
         <source>Collection</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File name :</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Total size :</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Selected files:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Select all</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Deselect all</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Вернуться/Отмена</translation>
     </message>
     <message>
         <source>Download!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Размер</translation>
     </message>
     <message>
         <source>Hash</source>
-        <translation type="unfinished">Хэш</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>RsCollectionFile</name>
     <message>
         <source>Cannot open file %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Error parsing xml file</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Open collection file</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Collection files</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Create collection file</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>Rshare</name>
     <message>
-        <source>Invalid language code specified: </source>
-        <translation type="unfinished">Неправильный код языка указывается: </translation>
-    </message>
-    <message>
-        <source>Invalid GUI style specified: </source>
-        <translation type="unfinished">Неправильный стиль GUI указывается:</translation>
-    </message>
-    <message>
         <source>Resets ALL stored RetroShare settings.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sets the directory RetroShare uses for data files.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sets the name and location of RetroShare&apos;s logfile.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sets the verbosity of RetroShare&apos;s logging.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sets RetroShare&apos;s interface style.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sets RetroShare&apos;s interface stylesheets.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sets RetroShare&apos;s language.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare Usage Information</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid language code specified: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid GUI style specified: </source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Invalid log level specified: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unable to open log file &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>built-in</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>SFListDelegate</name>
     <message>
         <source>B</source>
-        <translation type="unfinished"></translation>
+        <translation>Б</translation>
     </message>
     <message>
         <source>KB</source>
-        <translation type="unfinished"></translation>
+        <translation>КБ</translation>
     </message>
     <message>
         <source>MB</source>
-        <translation type="unfinished"></translation>
+        <translation>МБ</translation>
     </message>
     <message>
         <source>GB</source>
-        <translation type="unfinished"></translation>
+        <translation>ГБ</translation>
     </message>
 </context>
 <context>
     <name>SearchDialog</name>
     <message>
-        <source>Sources</source>
-        <translation type="unfinished">Источники</translation>
-    </message>
-    <message>
-        <source>Results</source>
-        <translation type="unfinished">Результаты </translation>
-    </message>
-    <message>
-        <source>Download</source>
-        <translation type="unfinished">Скачки</translation>
-    </message>
-    <message>
-        <source>Enter a keyword here (at least 3 char long)</source>
-        <translation type="unfinished">Введите ключевое слово здесь (по крайней мере 3-значным)</translation>
-    </message>
-    <message>
-        <source>Copy retroshare Link</source>
-        <translation type="obsolete">Скопировать ссылку RetroShare</translation>
-    </message>
-    <message>
-        <source>Send retroshare Link</source>
-        <translation type="obsolete">Отправить ссылку RetroShare</translation>
-    </message>
-    <message>
-        <source>Broadcast on Channel</source>
-        <translation type="obsolete">Вещания на канале</translation>
-    </message>
-    <message>
-        <source>Recommend to Friends</source>
-        <translation type="obsolete">Рекомендовать Друзья</translation>
-    </message>
-    <message>
-        <source>Remove</source>
-        <translation type="unfinished">Удалить </translation>
-    </message>
-    <message>
-        <source>Remove All</source>
-        <translation type="unfinished">Remove All</translation>
-    </message>
-    <message>
-        <source>Folder</source>
-        <translation type="unfinished">Папка</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Format&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Формат&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Any</source>
-        <translation type="unfinished">Любой </translation>
-    </message>
-    <message>
-        <source>Audio</source>
-        <translation type="unfinished">Аудио</translation>
-    </message>
-    <message>
-        <source>Video</source>
-        <translation type="unfinished">Видео</translation>
-    </message>
-    <message>
-        <source>Images</source>
-        <translation type="obsolete">Фотогалерея </translation>
-    </message>
-    <message>
-        <source>Programs</source>
-        <translation type="obsolete">Программы</translation>
-    </message>
-    <message>
-        <source>Archives</source>
-        <translation type="obsolete">Archives</translation>
-    </message>
-    <message>
-        <source>Documents</source>
-        <translation type="obsolete">Документы</translation>
-    </message>
-    <message>
-        <source>Download Notice</source>
-        <translation type="unfinished">Скачать Уведомление</translation>
-    </message>
-    <message>
-        <source>Skipping Local Files</source>
-        <translation type="unfinished">Пропуск локальные файлы</translation>
-    </message>
-    <message>
-        <source>Sorry</source>
-        <translation type="unfinished">Извините</translation>
-    </message>
-    <message>
-        <source>This function is not yet implemented.</source>
-        <translation type="unfinished">Эта функция еще не реализована.</translation>
-    </message>
-    <message>
-        <source>Size</source>
-        <translation type="unfinished">Размер</translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation type="unfinished">Тип</translation>
-    </message>
-    <message>
-        <source>Toggle advanced searching on and off.</source>
-        <translation type="obsolete">Toggle поиск и выключается.</translation>
-    </message>
-    <message>
-        <source>&lt;h3&gt;Simple Search:&lt;/h3&gt;</source>
-        <translation type="obsolete">&lt;h3&gt;Простой поиск:&lt;/ h3&gt;</translation>
-    </message>
-    <message>
-        <source>Keywords </source>
-        <translation type="obsolete">Ключевые слова</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Archive</source>
-        <translation type="unfinished">Архив</translation>
+        <translation>Архив</translation>
+    </message>
+    <message>
+        <source>Audio</source>
+        <translation>Аудио</translation>
     </message>
     <message>
         <source>CD-Image</source>
-        <translation type="unfinished">образ CD</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Document</source>
-        <translation type="unfinished">документ </translation>
+        <translation>Документ</translation>
     </message>
     <message>
         <source>Picture</source>
-        <translation type="unfinished">Изображение </translation>
+        <translation>Изображение</translation>
     </message>
     <message>
         <source>Program</source>
-        <translation type="unfinished">Программа</translation>
+        <translation>Программа</translation>
+    </message>
+    <message>
+        <source>Video</source>
+        <translation>Видео</translation>
     </message>
     <message>
         <source>Directory</source>
-        <translation type="unfinished">Каталог</translation>
+        <translation>Папка</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Enter a Keyword here&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Введите ключевое слово здесь&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>Start Search</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Close all Search Resullts&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Закрыть все Результаты поиска&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>Search</source>
+        <translation>Поиск</translation>
     </message>
     <message>
-        <source>Clear all Search Results</source>
-        <translation type="obsolete">Закрыть все Результаты поиска</translation>
+        <source>Advanced Search</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Download Selected&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Загрузить выбранные&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>Advanced</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>KeyWords</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Results</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Search Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Filter Search Result</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>File Name</source>
+        <translation>Имя файла</translation>
+    </message>
+    <message>
+        <source>File Size</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Filename</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Размер</translation>
+    </message>
+    <message>
+        <source>Sources</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation>Тип</translation>
+    </message>
+    <message>
+        <source>Age</source>
+        <translation>Возраст</translation>
+    </message>
+    <message>
+        <source>Hash</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Close all Search Resullts</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Close All Search Results</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Download Selected</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>Скачать</translation>
     </message>
     <message>
         <source>Include files from your own file list in the search result</source>
-        <translation type="unfinished">Включать файлы из собственного списка файлов в результатах поиска</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Include own files</source>
-        <translation type="unfinished">Включите собственные файлы</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Search inside &quot;browsable&quot; files of your friends</source>
-        <translation type="unfinished">Поиск внутри &quot;просмотр&quot; файлы из ваших друзей</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Search in friends lists</source>
-        <translation type="unfinished">Поиск в списки друзей</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Multi-hop search at distance 6 in the network 
 (always reports available files)</source>
-        <translation type="unfinished">Multi-хоп поиск на расстоянии 6 в сети
-(всегда докладов доступны файлы)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>F2F search</source>
-        <translation type="unfinished">F2F поиск</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Limit number of results to :</source>
-        <translation type="unfinished">Ограничить число результатов:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Filename</source>
-        <translation type="unfinished">Имя файла</translation>
-    </message>
-    <message>
-        <source>Start Search</source>
-        <translation type="unfinished">Начать поиск</translation>
-    </message>
-    <message>
-        <source>Search</source>
-        <translation type="unfinished">Поиск </translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation type="obsolete">Сбросить</translation>
-    </message>
-    <message>
-        <source>Advanced Search</source>
-        <translation type="unfinished">Расширенный поиск</translation>
-    </message>
-    <message>
-        <source>Advanced</source>
-        <translation type="unfinished">Расширенный</translation>
-    </message>
-    <message>
-        <source>File Name</source>
-        <translation type="unfinished">Имя файла</translation>
-    </message>
-    <message>
-        <source>Age</source>
-        <translation type="unfinished">Возраст</translation>
-    </message>
-    <message>
-        <source>Hash</source>
-        <translation type="unfinished">Хэш</translation>
-    </message>
-    <message>
-        <source>KeyWords</source>
-        <translation type="unfinished">Ключевые слова</translation>
-    </message>
-    <message>
-        <source>Search Id</source>
-        <translation type="unfinished">Поиск ID</translation>
-    </message>
-    <message>
-        <source>Filter Search Result</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>File Size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Close all Search Resullts</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Close All Search Results</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Download Selected</source>
-        <translation type="unfinished"></translation>
+        <source>Enter a keyword here (at least 3 char long)</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Скопировать ссылку RetroShare</translation>
     </message>
     <message>
         <source>Send RetroShare Link</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Download Notice</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Skipping Local Files</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Sorry</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This function is not yet implemented.</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Search again</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Удалить</translation>
+    </message>
+    <message>
+        <source>Remove All</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New RetroShare Link(s)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>SecurityItem</name>
     <message>
         <source>Expand</source>
-        <translation type="unfinished">Развернуть</translation>
+        <translation>Развернуть</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished">Удалить элемент</translation>
+        <translation>Удалить объект</translation>
     </message>
     <message>
         <source>Peer details</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Deny friend</source>
-        <translation type="unfinished">Запретить другу</translation>
-    </message>
-    <message>
-        <source>Make friend</source>
-        <translation type="obsolete">Сделать другом</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Write a quick Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Написать быстрое сообщение</translation>
     </message>
     <message>
         <source>Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Чат</translation>
     </message>
     <message>
         <source>Start Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Начать чат</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Вернуться/Отмена</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished">Отправить</translation>
+        <translation>Отправить</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished">Имя:</translation>
+        <translation>Имя:</translation>
     </message>
     <message>
         <source>Peer ID:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Trust: </source>
-        <translation type="unfinished">Доверие:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Location:</source>
-        <translation type="unfinished"></translation>
+        <translation>Расположение:</translation>
     </message>
     <message>
         <source>IP Address:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Connection Method:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Status:</source>
-        <translation type="unfinished">Состояние:</translation>
+        <translation>Статус:</translation>
     </message>
     <message>
         <source>Write Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Написать сообщение</translation>
     </message>
     <message>
         <source>Connect Attempt</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Not Yet Friends</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unknown (Incoming) Connect Attempt</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unknown (Outgoing) Connect Attempt</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unknown Security Issue</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unknown Peer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished">Скрыт </translation>
+        <translation>Спрятать</translation>
     </message>
     <message>
         <source>Do you want to remove this Friend?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Quick Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Быстрое сообщение</translation>
     </message>
     <message>
         <source>Accept Friend Request</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>wants to be friend with you on RetroShare</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>SendLinkDialog</name>
-    <message>
-        <source>Send RetroShare link</source>
-        <translation type="obsolete">Отправить ссылку RetroShare</translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation type="obsolete">Отправить</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:22pt; color:#ffffff;&quot;&gt;Send RetroShare Link&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:22pt; color:#ffffff;&quot;&gt;Отправить ссылку RetroShare&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-</context>
-<context>
-    <name>ServerDialog</name>
-    <message>
-        <source>Transfer Rates</source>
-        <translation type="obsolete">Скорость передачи </translation>
-    </message>
-    <message>
-        <source>Port:</source>
-        <translation type="obsolete">Порт: </translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ServerPage</name>
     <message>
-        <source>Change + Restart Server</source>
-        <translation type="obsolete">Изменить + Перезагрузить</translation>
-    </message>
-    <message>
-        <source>Server Settings</source>
-        <translation type="obsolete">Экспертный Настройки Peer</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;External Adress:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Внешние Адрес:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Lokal Adress:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Локал Адрес :&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Port:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Порт:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>Network Configuration</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Automatic (Upnp)</source>
-        <translation type="unfinished">Автоматический (UPnP)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Firewalled</source>
-        <translation type="unfinished">Файрвол</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Manual Forwarded Port</source>
-        <translation type="unfinished">Переадресованные руководство порта</translation>
-    </message>
-    <message>
-        <source>Should be disabled if you don&apos;t want to share connection information between peers.</source>
-        <translation type="obsolete">Должна быть отключена, если вы не хотите поделиться связи информацией между сверстниками.</translation>
-    </message>
-    <message>
-        <source>Discovery Enabled</source>
-        <translation type="obsolete">Включено открытия</translation>
-    </message>
-    <message>
-        <source>Discovery Disabled</source>
-        <translation type="obsolete">открытая для инвалидов</translation>
-    </message>
-    <message>
-        <source>Download (KB/s) </source>
-        <translation type="unfinished">Скачать (KB/s) </translation>
-    </message>
-    <message>
-        <source>Upload (KB/s) </source>
-        <translation type="unfinished">Закачать (KB/s) </translation>
-    </message>
-    <message>
-        <source>Network Configuration</source>
-        <translation type="unfinished">Настройка сети</translation>
-    </message>
-    <message>
-        <source>If you unckeck this, RetroShare will not use tunnel connection between peers that are firewalled and cannot connect directly. This is independant from F2F routing (turtle router).</source>
-        <translation type="unfinished">Если вы unckeck этом RetroShare не будет использовать туннель связи между сверстниками, которые файрволом и не может напрямую подключаться. Это не зависит от F2F маршрутизации (черепахи маршрутизатора).</translation>
-    </message>
-    <message>
-        <source>Allow Tunnel Connection</source>
-        <translation type="unfinished">Разрешить подключение тоннеля</translation>
-    </message>
-    <message>
-        <source>Local Address</source>
-        <translation type="unfinished">Локальный адрес</translation>
-    </message>
-    <message>
-        <source>External Address</source>
-        <translation type="unfinished">Внешний адрес</translation>
-    </message>
-    <message>
-        <source>Port:</source>
-        <translation type="unfinished">Порт: </translation>
-    </message>
-    <message>
-        <source>IP Service</source>
-        <translation type="unfinished">Служба IP</translation>
-    </message>
-    <message>
-        <source>If you unckeck this, RetroShare can only determine your IP 
-when you connect to somebody. Leaving this checked helps 
-connecting when you have few friends. It also helps if you&apos;re 
-behind a firewall or a VPN.</source>
-        <translation type="unfinished">Если вы unckeck этом RetroShare может лишь определить Ваш IP
-При подключении по почте. Оставляя это проверил помогает
-подключении, когда у вас есть несколько друзей. Она также помогает, если вы
-брандмауэр или VPN.</translation>
-    </message>
-    <message>
-        <source>Allow RetroShare to ask my ip to these websites:</source>
-        <translation type="unfinished">Позвольте спросить RetroShare мой IP на этих сайтах:</translation>
-    </message>
-    <message>
-        <source>Misc</source>
-        <translation type="obsolete">Misc/Разное </translation>
-    </message>
-    <message>
-        <source>behinde Firewall</source>
-        <translation type="obsolete">За брандмауэр (Firewall)</translation>
-    </message>
-    <message>
-        <source>Forwarded External Port</source>
-        <translation type="obsolete">Разрешены внешний порт </translation>
-    </message>
-    <message>
-        <source>Transfer Rates</source>
-        <translation type="unfinished">Скорость передачи </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>The DHT allows you to answer connection 
-requests from your friends using BitTorrent&apos;s DHT. 
+requests from your friends using BitTorrent's DHT. 
 It greatly improves the connectivity. 
 
 The Discovery service sends locations and GPG 
@@ -13488,57 +10001,104 @@ identities of your trusted contacts to connected
 peers, to help them choose new friends. 
 The friendship is never automatic however, and both 
 peers still need to trust each other to allow connection. </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Public: DHT &amp; Discovery</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Private: Discovery Only</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Inverted: DHT Only</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Dark Net: None</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Transfer Rates</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Download (KB/s) </source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>kB/s</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Upload (KB/s) </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>If you unckeck this, RetroShare will not use tunnel connection between peers that are firewalled and cannot connect directly. This is independant from F2F routing (turtle router).</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Allow Tunnel Connection</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Local Address</source>
+        <translation>Локальный адрес</translation>
+    </message>
+    <message>
+        <source>External Address</source>
+        <translation>Внешний адрес</translation>
     </message>
     <message>
         <source>Dynamic DNS</source>
-        <translation type="unfinished"></translation>
+        <translation>Динамический DNS</translation>
+    </message>
+    <message>
+        <source>Port:</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Acceptable ports range from 1024 to 65535. Ports below 1024 are reserved by your system.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Show Discovery information in statusbar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP Service</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>If you unckeck this, RetroShare can only determine your IP 
+when you connect to somebody. Leaving this checked helps 
+connecting when you have few friends. It also helps if you're 
+behind a firewall or a VPN.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Allow RetroShare to ask my ip to these websites:</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Turtle router</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt;Warning&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;Warning&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;This tab contains hard-core  parameters which are unlikely to need modification. Dont change them unless you really know what you&apos;re doing. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Max average tunnel request forwarded per second:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This value controls how many tunnel request your peer can forward per second. 
@@ -13548,673 +10108,468 @@ statisticlly longuer tunnels to pass. Be very careful though, since this generat
 many small packets that can significantly slow down your own file transfer. 
 
 The default value is 20.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Сервер</translation>
     </message>
 </context>
 <context>
     <name>Settings</name>
     <message>
-        <source>Settings</source>
-        <translation type="obsolete">Настройки </translation>
-    </message>
-    <message>
         <source>Options</source>
-        <translation type="unfinished">Опции </translation>
-    </message>
-    <message>
-        <source>Transfer</source>
-        <translation type="obsolete">Передача</translation>
-    </message>
-    <message>
-        <source>Notify</source>
-        <translation type="obsolete">Уведомить</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation type="obsolete">Безопасность</translation>
-    </message>
-    <message>
-        <source>Forum</source>
-        <translation type="obsolete">Форум</translation>
-    </message>
-    <message>
-        <source>Appearance</source>
-        <translation type="obsolete">Внешний вид</translation>
-    </message>
-    <message>
-        <source>Sound</source>
-        <translation type="obsolete">звук</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Отмена</translation>
-    </message>
-    <message>
-        <source>Apply</source>
-        <translation type="obsolete">подтвердить </translation>
+        <translation>Вернуться/Отмена</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished">OK (Хорошо)</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation type="obsolete">Общее</translation>
-    </message>
-    <message>
-        <source>Network</source>
-        <translation type="obsolete">Network</translation>
-    </message>
-    <message>
-        <source>Server</source>
-        <translation type="obsolete">Сервер</translation>
-    </message>
-    <message>
-        <source>Directories</source>
-        <translation type="obsolete">Справочники</translation>
-    </message>
-    <message>
-        <source>Plugins</source>
-        <translation type="obsolete">Плагины</translation>
+        <translation>OK (Хорошо)</translation>
     </message>
 </context>
 <context>
     <name>ShareDialog</name>
     <message>
-        <source>Browse</source>
-        <translation type="unfinished">Выбор файла</translation>
-    </message>
-    <message>
-        <source>Browsable</source>
-        <translation type="unfinished">Просматриваться</translation>
-    </message>
-    <message>
-        <source>Network Wide</source>
-        <translation type="unfinished">широкая сеть</translation>
-    </message>
-    <message>
-        <source>Anonymous</source>
-        <translation type="obsolete">Аноним</translation>
-    </message>
-    <message>
-        <source>Friends</source>
-        <translation type="obsolete">Друзья</translation>
-    </message>
-    <message>
-        <source>Select A Folder To Share</source>
-        <translation type="unfinished">Выберите папку для доли</translation>
-    </message>
-    <message>
         <source>RetroShare Share Folder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:26pt; font-weight:600; color:#ffffff;&quot;&gt;Share Folder&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Share Folder</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Local Path</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>Выбор файла</translation>
     </message>
     <message>
         <source>Virtual Folder</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Share Flags</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Browseable by Friends</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Browsable</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Anonymous shared Network Wide</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Network Wide</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK (Хорошо)</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Вернуться/Отмена</translation>
+    </message>
+    <message>
+        <source>Select A Folder To Share</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ShareKey</name>
     <message>
         <source>Share Channel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt;Share Channel&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Сделать канал общим</translation>
     </message>
     <message>
         <source>check peers you would like to share private publish key with</source>
-        <translation type="unfinished"></translation>
+        <translation>проверить пиры с которыми вы хотите поделиться приватным ключом</translation>
     </message>
     <message>
         <source>Share for Friend</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Share</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Select the Friends with which you want to Share your Channel.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Вернуться/Отмена</translation>
     </message>
     <message>
         <source>Contacts:</source>
-        <translation type="unfinished"></translation>
+        <translation>Контакты:</translation>
     </message>
     <message>
         <source>Please select at least one peer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Select the Friends with which you want to Share your Channel.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ShareManager</name>
     <message>
-        <source>Add a Share Directory</source>
-        <translation type="unfinished">Добавить Открыть каталог</translation>
-    </message>
-    <message>
-        <source>Stop sharing selected Directory</source>
-        <translation type="unfinished">Остановка обмена выбранной директории</translation>
-    </message>
-    <message>
-        <source>Select A Folder To Share</source>
-        <translation type="obsolete">Выберите папку для доли</translation>
-    </message>
-    <message>
-        <source>Do you really want to stop sharing this directory ? </source>
-        <translation type="obsolete">Вы действительно хотите отменить совместный доступ к этой папке?</translation>
-    </message>
-    <message>
-        <source>Remove selected Shared Directory</source>
-        <translation type="obsolete">Удалить выбранный каталог Общие</translation>
-    </message>
-    <message>
-        <source>Remove</source>
-        <translation type="unfinished">Удалить </translation>
-    </message>
-    <message>
-        <source>Add Shared Directory</source>
-        <translation type="obsolete">Добавить общий каталог</translation>
-    </message>
-    <message>
-        <source>Warning!</source>
-        <translation type="unfinished">Внимание!</translation>
-    </message>
-    <message>
-        <source>Drop file error.</source>
-        <translation type="unfinished">Оставьте файл ошибок.</translation>
-    </message>
-    <message>
-        <source>Shared Directory Added!</source>
-        <translation type="obsolete">Общий каталог добавлено!</translation>
-    </message>
-    <message>
-        <source>Do You Want to Remove ? </source>
-        <translation type="obsolete">Вы хотите удалить?</translation>
-    </message>
-    <message>
         <source>RetroShare Share Manager</source>
-        <translation type="unfinished">RetroShare Доля менеджера</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:26pt; font-weight:600; color:#ffffff;&quot;&gt;Share Manager&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:26pt; font-weight:600; color:#ffffff;&quot;&gt;Доля менеджера&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Shared Folder Manager</source>
-        <translation type="unfinished">Общие менеджер папок</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;This is a list of shared folders . You can add and remove folders using the button on the left. &lt;/span&gt;&lt;/p&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;This is a list of shared folders. You can add and remove folders using the buttons at the bottom.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;When you add a new folder, intially all files in that folder are shared.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Browsable &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files are browsable from your direct friends.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt; font-weight:600;&quot;&gt;Browsable&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;: files are browsable from your direct friends.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Network Wide&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files can be downloaded by anybody through anonymous tunnels.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Это список общих папок. Вы можете добавить или удалить папки с помощью кнопки на левой. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Когда вы добавляете новую папку, являются общими первоначально все файлы в этой папке.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;Вы можете отдельно долю установка флагов для каждого разделяемого каталога:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Просматриваться &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: просмотр файлов с вашего прямого друзей.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;широкая сеть&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: файлы могут быть загружены любым путем анонимных tunnels.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Directory</source>
-        <translation type="unfinished">Каталог</translation>
-    </message>
-    <message>
-        <source>Network Wide</source>
-        <translation type="unfinished">широкая сеть</translation>
-    </message>
-    <message>
-        <source>Browsable</source>
-        <translation type="unfinished">Просматриваться</translation>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation type="unfinished">Добавить</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="unfinished">закрыть </translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;This is a list of shared folders. You can add and remove folders using the buttons at the bottom.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;When you add a new folder, intially all files in that folder are shared.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Browsable&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files are browsable from your direct friends.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Network Wide&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files can be downloaded by anybody through anonymous tunnels.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Папка</translation>
     </message>
     <message>
         <source>Virtual Folder</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Network Wide</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Browsable</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add a Share Directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Добавить</translation>
+    </message>
+    <message>
+        <source>Stop sharing selected Directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Удалить</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Закрыть</translation>
     </message>
     <message>
         <source>Edit selected Shared Directory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>If checked, the share is anonymously shared to anybody.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>If checked, the share is browsable by your friends.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Warning!</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Do you really want to stop sharing this directory ?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Drop file error.</source>
+        <translation>Ошибка прикрепления файла.</translation>
     </message>
     <message>
         <source>File can&apos;t be dropped, only directories are accepted.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Directory not found or directory name not accepted.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Share Manager</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>SharedFilesDialog</name>
     <message>
-        <source>Download</source>
-        <translation type="unfinished">Скачать (Download)</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Files&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Files&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Checking...</source>
-        <translation type="unfinished">Проверка ...</translation>
-    </message>
-    <message>
-        <source>Check files</source>
-        <translation type="unfinished">Проверять файлы</translation>
-    </message>
-    <message>
-        <source>Copy retroshare Link</source>
-        <translation type="unfinished">Скопировать ссылку RetroShare</translation>
-    </message>
-    <message>
-        <source>Send retroshare Link</source>
-        <translation type="unfinished">Отправить ссылку RetroShare</translation>
-    </message>
-    <message>
-        <source>Recommend (Automated message) To </source>
-        <translation type="obsolete">Рекомендовать (автоматическое сообщение) до</translation>
-    </message>
-    <message>
-        <source>Recommend in a message to </source>
-        <translation type="obsolete">Рекомендовать в послании</translation>
-    </message>
-    <message>
-        <source>Copy retroshare Links to Clipboard</source>
-        <translation type="unfinished">RetroShare Скопировать ссылку в буфер обмена</translation>
-    </message>
-    <message>
-        <source>Send retroshare Links</source>
-        <translation type="unfinished">Отправить ссылку RetroShare</translation>
-    </message>
-    <message>
-        <source>Send retroshare Links to Chat</source>
-        <translation type="obsolete">Отправить RetroShare ссылки на чат</translation>
-    </message>
-    <message>
-        <source>Open File</source>
-        <translation type="unfinished">Открыть файл</translation>
-    </message>
-    <message>
-        <source>Open Folder</source>
-        <translation type="unfinished">Открыть папку</translation>
-    </message>
-    <message>
-        <source>&lt;strong&gt;My Shared Files&lt;/strong&gt;</source>
-        <translation type="unfinished">&lt;strong&gt;Моя Общие файлы&lt;/strong&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;strong&gt;Friends Files&lt;/strong&gt;</source>
-        <translation type="unfinished">&lt;strong&gt;друзей файлы&lt;/strong&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;strong&gt;Files&lt;/strong&gt;</source>
-        <translation type="unfinished">&lt;strong&gt;Файлы&lt;/strong&gt;</translation>
-    </message>
-    <message>
         <source>Splitted View</source>
-        <translation type="unfinished">Открыть разделилась</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends Folders</source>
-        <translation type="unfinished">Файлы друзей</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>My Folders</source>
-        <translation type="unfinished">Мои Папки</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;Files&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;Файлы&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>All</source>
-        <translation type="unfinished">Все</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>One day old</source>
-        <translation type="unfinished">Один день</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>One Week old</source>
-        <translation type="unfinished">Одна неделя</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>One month old</source>
-        <translation type="unfinished">Один месяц</translation>
-    </message>
-    <message>
-        <source>Start Search</source>
-        <translation type="unfinished">Начать поиск</translation>
-    </message>
-    <message>
-        <source>Download selected</source>
-        <translation type="unfinished">Скачать выбранные</translation>
-    </message>
-    <message>
-        <source>check files</source>
-        <translation type="unfinished">проверку файлов</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Search files</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Start Search</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Сброс</translation>
     </message>
     <message>
         <source>Tree view</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Flat view</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Download selected</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>Скачать</translation>
+    </message>
+    <message>
+        <source>check files</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Copy retroshare Links to Clipboard</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Copy retroshare Links to Clipboard (HTML)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Send retroshare Links</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Send retroshare Links to Cloud</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add Links to Cloud</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Create collection file</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Checking...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Check files</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Copy retroshare Link</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Send retroshare Link</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Recommend in a message to</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare Link</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Recommendation(s)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Set command for opening this file</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;strong&gt;My Shared Files&lt;/strong&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;strong&gt;Friends Files&lt;/strong&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;strong&gt;Files&lt;/strong&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Files</source>
+        <translation>Файлы</translation>
     </message>
 </context>
 <context>
     <name>SoundPage</name>
     <message>
-        <source>Browse</source>
-        <translation type="unfinished">Выбор файла</translation>
-    </message>
-    <message>
         <source>Event:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Filename:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>Выбор файла</translation>
     </message>
     <message>
         <source>Event</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Filename</source>
-        <translation type="unfinished">Имя файла</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend</source>
-        <translation type="unfinished"></translation>
+        <translation>Друг</translation>
     </message>
     <message>
         <source>go Online</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Chatmessage</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New Msg</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Open File</source>
-        <translation type="unfinished">Открыть файл</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sound</source>
-        <translation type="unfinished">звук</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>SoundStatus</name>
     <message>
         <source>Sound on</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sound off</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>SplashScreen</name>
     <message>
         <source>Load profile</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Load configuration</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Create interface</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>StartDialog</name>
     <message>
-        <source>Name:</source>
-        <translation type="obsolete">Имя:</translation>
-    </message>
-    <message>
         <source>RetroShare</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;span style=&quot; font-size:18pt; color:#55aaff;&quot;&gt;Login&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:18pt; color:#55aaff;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;span style=&quot; font-size:18pt; color:#55aaff;&quot;&gt;Войти&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:18pt; color:#55aaff;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>RetroShare</translation>
     </message>
     <message>
         <source>Opens a dialog for creating a new profile or 
 adding locations to an existing profile. 
 The current identities/locations will not be affected.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Manage profiles and locations...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Log In</source>
         <translation>Войти</translation>
     </message>
     <message>
-        <source>Remember Password</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Create new Profile...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Создать новый профиль ...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Info&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Info...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Info&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Информация...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Name (GPG Id) - location:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Name - location:</source>
-        <translation type="obsolete">Имя - Место проведения:</translation>
+        <source>Remember Password</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Multiple instances</source>
-        <translation type="unfinished"></translation>
+        <translation>Множественные копии</translation>
     </message>
     <message>
         <source>Login Failure</source>
@@ -14226,7 +10581,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>The passwd to your SSL certificate (your location) will be stored encrypted in your Gnome Keyring. 
@@ -14234,7 +10589,7 @@ p, li { white-space: pre-wrap; }
  Your PGP passwd will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>The passwd to your SSL certificate (your location) will be stored encrypted in the keys/help.dta file. This is not secure. 
@@ -14242,17 +10597,7 @@ This choice can be reverted in settings.</source>
  Your PGP passwd will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create a New Profil</source>
-        <translation type="obsolete">Создание нового профиля</translation>
-    </message>
-    <message>
-        <source>This will generate a new Profile
- Are you sure you want to continue</source>
-        <translation type="obsolete">Это позволит создать новый профиль
- Вы уверены, что хотите продолжать</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>The passwd to your SSL certificate (your location) will be stored encrypted in your Keychain. 
@@ -14260,583 +10605,334 @@ This choice can be reverted in settings.</source>
  Your PGP passwd will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Another RetroShare using the same profile is already running on your system. Please close that instance first, or choose another profile
 lock file:
 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>An unexpected error occurred when Retroshare tried to acquire the single instance lock
 lock file:
 </source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>StatisticDialog</name>
-    <message>
-        <source>Statistics</source>
-        <translation type="obsolete">Statistics (статистика)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Download</source>
-        <translation type="obsolete">Download</translation>
+        <source>Login</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Session:</source>
-        <translation type="obsolete">Session:</translation>
+        <source>Load Person Failure</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Downloaded:</source>
-        <translation type="obsolete">Downloaded:</translation>
-    </message>
-    <message>
-        <source>Average Downloadspeed:</source>
-        <translation type="obsolete">Average Downloadspeed:</translation>
-    </message>
-    <message>
-        <source>Count of Downloads:</source>
-        <translation type="obsolete">Count of Downloads:</translation>
-    </message>
-    <message>
-        <source>Overall</source>
-        <translation type="obsolete">Overall</translation>
-    </message>
-    <message>
-        <source>Upload</source>
-        <translation type="obsolete">Upload</translation>
-    </message>
-    <message>
-        <source>Session</source>
-        <translation type="obsolete">Session</translation>
-    </message>
-    <message>
-        <source>Uploaded:</source>
-        <translation type="obsolete">Uploaded:</translation>
-    </message>
-    <message>
-        <source>Average Uploadspeed:</source>
-        <translation type="obsolete">Average Uploadspeed:</translation>
-    </message>
-    <message>
-        <source>Count of Uploads:</source>
-        <translation type="obsolete">Count of Uploads:</translation>
-    </message>
-    <message>
-        <source>Uploaded</source>
-        <translation type="obsolete">Uploaded</translation>
-    </message>
-    <message>
-        <source>Connections:</source>
-        <translation type="obsolete">Connections:</translation>
-    </message>
-    <message>
-        <source>Peers:</source>
-        <translation type="obsolete">Peers:</translation>
-    </message>
-    <message>
-        <source>Misc</source>
-        <translation type="obsolete">Misc</translation>
-    </message>
-    <message>
-        <source>Uptime:</source>
-        <translation type="obsolete">Uptime:</translation>
-    </message>
-    <message>
-        <source>Overall:</source>
-        <translation type="obsolete">Overall:</translation>
-    </message>
-    <message>
-        <source>Uptime</source>
-        <translation type="obsolete">Uptime</translation>
-    </message>
-    <message>
-        <source>Records</source>
-        <translation type="obsolete">Records</translation>
-    </message>
-    <message>
-        <source>Uploadspeed:</source>
-        <translation type="obsolete">Uploadspeed:</translation>
-    </message>
-    <message>
-        <source>Downloadspeed:</source>
-        <translation type="obsolete">Downloadspeed:</translation>
-    </message>
-    <message>
-        <source>Show Settings</source>
-        <translation type="obsolete">Показать параметры</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation type="obsolete">Reset</translation>
-    </message>
-    <message>
-        <source>Receive Rate</source>
-        <translation type="obsolete">Receive Rate</translation>
-    </message>
-    <message>
-        <source>Send Rate</source>
-        <translation type="obsolete">Send Rate</translation>
-    </message>
-    <message>
-        <source>Always On Top</source>
-        <translation type="obsolete">Always On Top</translation>
-    </message>
-    <message>
-        <source>100</source>
-        <translation type="obsolete">100</translation>
-    </message>
-    <message>
-        <source>% Opaque</source>
-        <translation type="obsolete">% Opaque</translation>
-    </message>
-    <message>
-        <source>Changes the transparency of the Bandwidth Graph</source>
-        <translation type="obsolete">Изменения прозрачности Bandwidth Graph</translation>
-    </message>
-    <message>
-        <source>Save</source>
-        <translation type="obsolete">Сохранить </translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="obsolete">Вернуться/Отмена</translation>
-    </message>
-    <message>
-        <source>Hide Settings</source>
-        <translation type="obsolete">Скрыть настройки </translation>
-    </message>
-    <message>
-        <source>Transfer</source>
-        <translation type="obsolete">Передача</translation>
-    </message>
-    <message>
-        <source>Since:</source>
-        <translation type="obsolete">С тех пор, как:</translation>
+        <source>Missing PGP Certificate</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>StatusDefs</name>
     <message>
         <source>Offline</source>
-        <translation type="unfinished">Оффлайн</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Away</source>
-        <translation type="unfinished">Далеко</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Busy</source>
-        <translation type="unfinished">Занятый</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Online</source>
-        <translation type="unfinished">Онлайн</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Idle</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend is offline</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend is away</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend is busy</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend is online</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friend is idle</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Connected</source>
-        <translation type="unfinished">связано</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unreachable</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Available</source>
-        <translation type="unfinished">Доступный</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Neighbour</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Trying tunnel connection</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Trying TCP</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Trying UDP</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Connected: TCP</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Connected: UDP</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Connected: Tunnel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Connected: Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>DHT: Contact</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>StatusMessage</name>
     <message>
         <source>Personal message</source>
-        <translation type="unfinished">Личные сообщения</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Status message</source>
-        <translation type="unfinished">Статус сообщения</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Personal message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Личные сообщения&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Enter your Status message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Введите свой статус&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="unfinished">Отмена</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK (Хорошо)</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Вернуться/Отмена</translation>
     </message>
 </context>
 <context>
     <name>StyleDialog</name>
     <message>
-        <source>None</source>
-        <translation type="unfinished">никакой</translation>
-    </message>
-    <message>
         <source>Define Style</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:18pt; color:#ffffff;&quot;&gt;Define Style&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Choose color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Color 2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Color 1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Style</source>
-        <translation type="unfinished"></translation>
+        <translation>Стиль</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Solid</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Gradient</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>SubDestItem</name>
     <message>
-        <source>Type</source>
-        <translation type="obsolete">Type</translation>
-    </message>
-    <message>
         <source>Delete FeedItem</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>SubFileItem</name>
     <message>
-        <source>Save Channel File</source>
-        <translation type="unfinished">Сохранить канал Файл</translation>
-    </message>
-    <message>
-        <source>File Name</source>
-        <translation type="obsolete">Имя файла</translation>
-    </message>
-    <message>
-        <source>Play</source>
-        <translation type="unfinished">Играть</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation type="obsolete">Развернуть</translation>
-    </message>
-    <message>
         <source>%p Kb</source>
-        <translation type="unfinished"></translation>
+        <translation>%p Кб</translation>
     </message>
     <message>
         <source>Cancel Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Отменить загрузку</translation>
     </message>
     <message>
         <source>Download File</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Скачать</translation>
     </message>
     <message>
         <source>Play File</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Play</source>
+        <translation>Воспроизвести</translation>
     </message>
     <message>
         <source>Save File</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>ERROR</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>EXTRA</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>REMOTE</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>DOWNLOAD</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>LOCAL</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>UPLOAD</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Remove Attachment</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File %1 does not exist at location.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File %1 is not completed.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Save Channel File</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>TBoard</name>
     <message>
         <source>Pause</source>
-        <translation type="unfinished">Пауза</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>TagDefs</name>
     <message>
         <source>Important</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Work</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Personal</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Todo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Later</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>TagsMenu</name>
     <message>
         <source>Remove All Tags</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New tag ...</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TextPage</name>
-    <message>
-        <source>Use text representation of the PGP certificates.</source>
-        <translation type="obsolete">Использовать текст представления сертификатов PGP.</translation>
-    </message>
-    <message>
-        <source>The text below is your PGP certificate. You have to provide it to your friend </source>
-        <translation type="obsolete">Приводимый ниже текст PGP вашем сертификате. Вы должны предоставить его в другом</translation>
-    </message>
-    <message>
-        <source>Save your Cert into a File</source>
-        <translation type="obsolete">Cert Сохранить в файл</translation>
-    </message>
-    <message>
-        <source>Please, paste your friends PGP certificate into the box below</source>
-        <translation type="obsolete">Пожалуйста, вставьте друзья PGP сертификата в окне, расположенном ниже</translation>
-    </message>
-    <message>
-        <source>Your Cert is copied to Clipboard, paste and send it to yourfriend via email or some other way</source>
-        <translation type="obsolete">Ваш Cert копируется в буфер обмена, вставить и отправить его yourfriend по электронной почте или другим способом</translation>
-    </message>
-    <message>
-        <source>Save as...</source>
-        <translation type="obsolete">Сохранить как ...</translation>
-    </message>
-    <message>
-        <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
-        <translation type="obsolete">RetroShare сертификата (*. rsc), все файлы (*)</translation>
-    </message>
-    <message>
-        <source>You can copy this text and send it to your friend via email or some other way</source>
-        <translation type="obsolete">Вы можете скопировать этот текст и отправить его другу по электронной почте или другим способом</translation>
-    </message>
-    <message>
-        <source>Text certificate</source>
-        <translation type="obsolete">Текст сертификата</translation>
-    </message>
-    <message>
-        <source>Use text representation of the XPGP certificates.</source>
-        <translation type="obsolete">Использование текстовых представление о XPGP сертификатов.</translation>
-    </message>
-    <message>
-        <source>The text below is your XPGP certificate. You have to provide it to your friend </source>
-        <translation type="obsolete">В тексте ниже вы XPGP сертификат. Вы должны представить вашему другу</translation>
-    </message>
-    <message>
-        <source>Copy your Cert to Clipboard</source>
-        <translation type="obsolete">Скопируйте в буфер обмена Cert</translation>
-    </message>
-    <message>
-        <source>Run Email program</source>
-        <translation type="obsolete">Запустите почтовую программу</translation>
-    </message>
-    <message>
-        <source>Please, paste your friends XPGP certificate into the box below</source>
-        <translation type="obsolete">Пожалуйста, вставьте друзья XPGP сертификата в поле ниже</translation>
-    </message>
-    <message>
-        <source>Connect Friend Help</source>
-        <translation type="obsolete">Связь Помощь другу</translation>
-    </message>
-    <message>
-        <source>You can copy this text and send it to your friend via email, ICQ or some other way</source>
-        <translation type="obsolete">Вы можете скопировать этот текст и отправить его к своему другу по электронной почте, ICQ или каким-либо другим способо</translation>
-    </message>
-    <message>
-        <source>Certificate Load Failed</source>
-        <translation type="obsolete">Нагрузка Ошибка сертификата</translation>
-    </message>
-</context>
-<context>
-    <name>TransferFeed</name>
-    <message>
-        <source>None</source>
-        <translation type="obsolete">никакой</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>TransferPage</name>
     <message>
-        <source>Transfer</source>
-        <translation type="unfinished">Передача</translation>
-    </message>
-    <message>
-        <source>Streaming</source>
-        <translation type="unfinished">потоковое</translation>
-    </message>
-    <message>
-        <source>Random</source>
-        <translation type="unfinished">Случайные</translation>
-    </message>
-    <message>
         <source>Transfer options</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Maximum simultaneous downloads:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Slots reserved for non-cache transfers:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Default chunk strategy:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Safety disk space limit :</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>You can use this to force RetroShare to download your files rather 
@@ -14845,387 +10941,319 @@ to be equal to the queue size above will always prioritize your files
 over cache. 
 
 It is however recommended to leave at least a few slots for cache files.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Streaming</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Random</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> MB</source>
-        <translation type="unfinished"></translation>
+        <translation>Мб</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;RetroShare&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt; is capable of transfering data and search requests between peers that are not necessarily friends. This traffic however only transits through a connected list of friends and is anonymous.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory in the shared files dialog to be:&lt;/span&gt;&lt;/p&gt;
-&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Browsable by friends&lt;/span&gt;: files are seen by your friends.&lt;/li&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt; font-weight:600;&quot;&gt;RetroShare&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt; is capable of transfering data and search requests between peers that are not necessarily friends. This traffic however only transits through a connected list of friends and is anonymous.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans'; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory in the shared files dialog to be:&lt;/span&gt;&lt;/p&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:'Sans'; font-size:8pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Browsable by friends&lt;/span&gt;: files are seen by your friends.&lt;/li&gt;
 &lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anonymously shared&lt;/span&gt;: files are anonymously reachable through distant F2F tunnels.&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TransferUserNotify</name>
-    <message>
-        <source>Download completed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>You have %1 completed downloads</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You have %1 completed download</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 completed downloads</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 completed download</source>
-        <translation type="unfinished"></translation>
+        <source>Transfer</source>
+        <translation>Передача</translation>
     </message>
 </context>
 <context>
     <name>TransfersDialog</name>
     <message>
-        <source>Cancel</source>
-        <translation type="unfinished">Вернуться/Отмена</translation>
+        <source>Open Collection</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Clear Completed</source>
-        <translation type="unfinished">Очистка завершена </translation>
-    </message>
-    <message>
-        <source>Status</source>
-        <translation type="unfinished">Status</translation>
-    </message>
-    <message>
-        <source>Completed</source>
-        <translation type="unfinished">Завершено</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Downloads:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Скачивается:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Downloads:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Приём:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>Show cache transfers</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Uploads</source>
-        <translation type="unfinished">Отдача</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Selected transfer</source>
-        <translation type="unfinished">Выбранный transfe</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Done</source>
-        <translation type="unfinished">Готово</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Active</source>
-        <translation type="unfinished">Активная</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Outstanding</source>
-        <translation type="unfinished">Шт</translation>
-    </message>
-    <message>
-        <source>Tunneling</source>
-        <translation type="obsolete">Туннельный</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Uploads:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Закачивается:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Name</source>
         <comment>i.e: file name</comment>
-        <translation type="unfinished">Имя файла</translation>
+        <translation>Имя</translation>
     </message>
     <message>
         <source>Size</source>
         <comment>i.e: file size</comment>
-        <translation type="unfinished">Размер</translation>
+        <translation>Размер</translation>
     </message>
     <message>
-        <source>Progress</source>
-        <comment>i.e: % downloaded</comment>
-        <translation type="obsolete">Передано %</translation>
+        <source>Completed</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Speed</source>
         <comment>i.e: Download speed</comment>
-        <translation type="unfinished">Скорость</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Progress / Availability</source>
         <comment>i.e: % downloaded</comment>
-        <translation type="unfinished">Прогресс</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Sources</source>
         <comment>i.e: Sources</comment>
-        <translation type="unfinished">Источники</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Remaining</source>
-        <comment>i.e: Estimated Time of Arrival / Time left</comment>
-        <translation type="obsolete">Осталось</translation>
-    </message>
-    <message>
-        <source>User Name</source>
-        <comment>i.e: user name</comment>
-        <translation type="obsolete">Имя пользователя</translation>
-    </message>
-    <message>
-        <source>Progress</source>
-        <comment>i.e: % uploaded</comment>
-        <translation type="unfinished">Progress</translation>
-    </message>
-    <message>
-        <source>Speed</source>
-        <comment>i.e: upload speed</comment>
-        <translation type="unfinished">Скорость</translation>
-    </message>
-    <message>
-        <source>Transferred</source>
-        <translation type="unfinished">Передано</translation>
-    </message>
-    <message>
-        <source>Play</source>
-        <translation type="unfinished">Играть</translation>
-    </message>
-    <message>
-        <source>Pause</source>
-        <translation type="unfinished">Пауза</translation>
-    </message>
-    <message>
-        <source>Resume</source>
-        <translation type="unfinished">Продолжить</translation>
-    </message>
-    <message>
-        <source>Open Folder</source>
-        <translation type="unfinished">Открыть папку</translation>
-    </message>
-    <message>
-        <source>Open File</source>
-        <translation type="unfinished">Открыть файл</translation>
-    </message>
-    <message>
-        <source>Preview File</source>
-        <translation type="unfinished">Предварительный просмотр файла</translation>
-    </message>
-    <message>
-        <source>Details...</source>
-        <translation type="unfinished">Подробности ...</translation>
-    </message>
-    <message>
-        <source>Copy retroshare Link</source>
-        <translation type="obsolete">Скопировать ссылку RetroShare</translation>
-    </message>
-    <message>
-        <source>Paste retroshare Link</source>
-        <translation type="obsolete">Вставить ссылку RetroShare</translation>
-    </message>
-    <message>
-        <source>View</source>
-        <translation type="obsolete">Просмотр</translation>
-    </message>
-    <message>
-        <source>Down</source>
-        <translation type="unfinished">Вниз</translation>
-    </message>
-    <message>
-        <source>Up</source>
-        <translation type="unfinished">Вверх</translation>
-    </message>
-    <message>
-        <source>Top</source>
-        <translation type="unfinished">Верх</translation>
-    </message>
-    <message>
-        <source>Bottom</source>
-        <translation type="unfinished">Дно</translation>
-    </message>
-    <message>
-        <source>Priority (Speed)...</source>
-        <translation type="unfinished">Приоритета (скорость) ...</translation>
-    </message>
-    <message>
-        <source>Streaming</source>
-        <translation type="unfinished">потоковое</translation>
-    </message>
-    <message>
-        <source>Random</source>
-        <translation type="unfinished">Случайные</translation>
-    </message>
-    <message>
-        <source>Chunk strategy</source>
-        <translation type="unfinished">кусок стратегия</translation>
-    </message>
-    <message>
-        <source>Queued</source>
-        <translation type="unfinished">В очереди</translation>
-    </message>
-    <message>
-        <source>Paused</source>
-        <translation type="unfinished">Приостановлена</translation>
-    </message>
-    <message>
-        <source>Transferring</source>
-        <translation type="unfinished">Перенос</translation>
-    </message>
-    <message>
-        <source>Checking...</source>
-        <translation type="unfinished">Проверка ...</translation>
-    </message>
-    <message>
-        <source>Details:</source>
-        <translation type="unfinished">Подробности: </translation>
-    </message>
-    <message>
-        <source>Open Transfer</source>
-        <translation type="unfinished">Открытой передачи</translation>
-    </message>
-    <message>
-        <source>File %1 is not completed. If it is a media file, try to preview it.</source>
-        <translation type="unfinished">Файл %1 не завершена. Если это мультимедийный файл, попробуйте просмотреть его.</translation>
-    </message>
-    <message>
-        <source>Are you sure that you want to cancel and delete these files?</source>
-        <translation type="unfinished">Вы уверены, что вы хотите отменить, и удалить эти файлы?</translation>
+        <source>Status</source>
+        <translation>Статус</translation>
     </message>
     <message>
         <source>Speed / Queue position</source>
-        <translation type="unfinished">Скорость / Очередь позиции</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Remaining</source>
-        <translation type="unfinished">Осталось</translation>
+        <translation>Осталось</translation>
     </message>
     <message>
         <source>Download time</source>
         <comment>i.e: Estimated Time of Arrival / Time left</comment>
-        <translation type="unfinished">Время загрузки</translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Core-ID</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Peer</source>
         <comment>i.e: user name</comment>
-        <translation type="unfinished">совокупность</translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Progress</source>
+        <comment>i.e: % uploaded</comment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Speed</source>
+        <comment>i.e: upload speed</comment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Transferred</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Hash</source>
-        <translation type="unfinished">Хэш</translation>
-    </message>
-    <message>
-        <source>Slower</source>
-        <translation type="unfinished">Медленнее</translation>
-    </message>
-    <message>
-        <source>Average</source>
-        <translation type="unfinished">Среднее</translation>
-    </message>
-    <message>
-        <source>Faster</source>
-        <translation type="unfinished">Быстрее</translation>
-    </message>
-    <message>
-        <source>Move in Queue...</source>
-        <translation type="unfinished">Переместить в очереди ...</translation>
-    </message>
-    <message>
-        <source>Failed</source>
-        <translation type="unfinished">Ошибка</translation>
-    </message>
-    <message>
-        <source>Okay</source>
-        <translation type="unfinished">Хорошо</translation>
-    </message>
-    <message>
-        <source>Waiting</source>
-        <translation type="unfinished">ожидание</translation>
-    </message>
-    <message>
-        <source>Downloading</source>
-        <translation type="unfinished">Загрузка</translation>
-    </message>
-    <message>
-        <source>Complete</source>
-        <translation type="unfinished">Полная</translation>
-    </message>
-    <message>
-        <source>Unknown</source>
-        <translation type="unfinished">Неизвестно</translation>
-    </message>
-    <message>
-        <source>version: </source>
-        <translation type="unfinished">Версия:</translation>
-    </message>
-    <message>
-        <source>Uploading</source>
-        <translation type="unfinished">Загружаю</translation>
-    </message>
-    <message>
-        <source>Open Collection</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show cache transfers</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Core-ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Router Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Router Requests</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Pause</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Resume</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Force Check</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Вернуться/Отмена</translation>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Preview File</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Details...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Clear Completed</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Скопировать ссылку RetroShare</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить ссылку RetroShare</translation>
+    </message>
+    <message>
+        <source>Down</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Up</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Top</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Bottom</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Streaming</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Slower</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Average</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Faster</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Random</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Play</source>
+        <translation>Воспроизвести</translation>
+    </message>
+    <message>
+        <source>Move in Queue...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Priority (Speed)...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chunk strategy</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Okay</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Transferring</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Complete</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Waiting</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Downloading</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Queued</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Paused</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Checking...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>version: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Uploading</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Are you sure that you want to cancel and delete these files?</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"></translation>
+        <translation>RetroShare</translation>
+    </message>
+    <message>
+        <source>Details:</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File preview</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>File %1 preview failed.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Open Transfer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>File %1 is not completed. If it is a media file, try to preview it.</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>If the hash of the downloaded data does
@@ -15238,373 +11266,260 @@ map of the data; it will compare and invalidate
 bad blocks, and download them again
 
 Try to be patient!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Needs checking</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Can&apos;t create link for file %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Click OK when program terminates!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Downloads</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>TreeStyle_RDM</name>
     <message>
+        <source>My files</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <source>FILE</source>
-        <translation type="unfinished">ФАЙЛОВ</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Files</source>
-        <translation type="unfinished">Файлы </translation>
-    </message>
-    <message>
-        <source>DIR</source>
-        <translation type="unfinished">Папка</translation>
-    </message>
-    <message>
-        <source>Friends Directories</source>
-        <translation type="unfinished">Друзья Каталоги</translation>
-    </message>
-    <message>
-        <source>My Directories</source>
-        <translation type="unfinished">Моя Каталоги</translation>
-    </message>
-    <message>
-        <source>Age</source>
-        <translation type="unfinished">Возраст</translation>
-    </message>
-    <message>
-        <source>Share Type</source>
-        <translation type="unfinished">Тип акции</translation>
-    </message>
-    <message>
-        <source>What&apos;s new</source>
-        <translation type="unfinished">Что нового</translation>
-    </message>
-    <message>
-        <source>My files</source>
-        <translation type="unfinished"></translation>
+        <translation>Файлы</translation>
     </message>
     <message>
         <source>File</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>DIR</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Friends Directories</source>
+        <translation>Папки друзей</translation>
+    </message>
+    <message>
+        <source>My Directories</source>
+        <translation>Мои папки</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Размер</translation>
+    </message>
+    <message>
+        <source>Age</source>
+        <translation>Возраст</translation>
     </message>
     <message>
         <source>Friend</source>
-        <translation type="unfinished"></translation>
+        <translation>Друг</translation>
+    </message>
+    <message>
+        <source>Share Type</source>
+        <translation>Тип расшаривания</translation>
+    </message>
+    <message>
+        <source>What&apos;s new</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>TrustView</name>
     <message>
-        <source>Trust</source>
-        <translation type="unfinished">Доверие</translation>
-    </message>
-    <message>
-        <source>Full</source>
-        <translation type="unfinished">Полный</translation>
-    </message>
-    <message>
         <source>Zoom :</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Update</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Showing: whole network</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This table normaly auto-updates every 10 seconds.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Self</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Trust</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> is authenticated (one way) by </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Half</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> authenticated himself</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> authenticated each other</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> is authenticated by </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> peers, including him(her)self.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> authenticated </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Showing: peers connected to </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>TurtleRouterDialog</name>
     <message>
         <source>Search requests</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Tunnel requests</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unknown hashes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Tunnel id</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>last transfer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Speed</source>
-        <translation type="unfinished">Скорость</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Request id: %1	 from [%2]	 %3 secs ago</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>TurtleRouterDialogForm</name>
     <message>
-        <source>Hash</source>
-        <translation type="obsolete">Хэш</translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation type="obsolete">Type</translation>
-    </message>
-    <message>
-        <source>Age</source>
-        <translation type="obsolete">Возраст</translation>
-    </message>
-    <message>
         <source>Router Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>F2F router information</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>TurtleRouterStatistics</name>
     <message>
         <source>Router Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Age in seconds</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Depth</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>total</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unknown Peer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>TurtleRouterStatisticsWidget</name>
     <message>
         <source>Search requests repartition</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Tunnel requests repartition</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Turtle router traffic</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Tunnel requests Up</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Tunnel requests Dn</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Incoming file data</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Outgoing file data</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Forwarded data    </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>TR Forward probabilities</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TurtleSearchDialog</name>
-    <message>
-        <source>Download</source>
-        <translation type="obsolete">Скачать (Download)</translation>
-    </message>
-    <message>
-        <source>Broadcast on Channel</source>
-        <translation type="obsolete">Вещания на канале</translation>
-    </message>
-    <message>
-        <source>Recommend to Friends</source>
-        <translation type="obsolete">Рекомендовать Друзья</translation>
-    </message>
-    <message>
-        <source>Remove</source>
-        <translation type="obsolete">Удалить </translation>
-    </message>
-    <message>
-        <source>Remove All</source>
-        <translation type="obsolete">Удалить все</translation>
-    </message>
-    <message>
-        <source>Toggle advanced searching on and off.</source>
-        <translation type="obsolete">Toggle поиск и выключается.</translation>
-    </message>
-    <message>
-        <source>&lt;h3&gt;Simple Search:&lt;/h3&gt;</source>
-        <translation type="obsolete">&lt;h3&gt;Простой поиск:&lt;/ h3&gt;</translation>
-    </message>
-    <message>
-        <source>Keywords </source>
-        <translation type="obsolete">Ключевые слова</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Format&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Формат&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Any</source>
-        <translation type="obsolete">Любой </translation>
-    </message>
-    <message>
-        <source>Audio</source>
-        <translation type="obsolete">Аудио</translation>
-    </message>
-    <message>
-        <source>Video</source>
-        <translation type="obsolete">Video</translation>
-    </message>
-    <message>
-        <source>Filename</source>
-        <translation type="obsolete">Имя файла</translation>
-    </message>
-    <message>
-        <source>Size</source>
-        <translation type="obsolete">размер</translation>
-    </message>
-    <message>
-        <source>Sources</source>
-        <translation type="obsolete">Источники</translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation type="obsolete">Type</translation>
-    </message>
-    <message>
-        <source>Hash</source>
-        <translation type="obsolete">Хэш</translation>
-    </message>
-    <message>
-        <source>KeyWords</source>
-        <translation type="obsolete">Ключевые слова</translation>
-    </message>
-    <message>
-        <source>Results</source>
-        <translation type="obsolete">Результаты </translation>
-    </message>
-    <message>
-        <source>Search Id</source>
-        <translation type="obsolete">Поиск ID</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ULListDelegate</name>
     <message>
         <source>B</source>
-        <translation type="unfinished"></translation>
+        <translation>Б</translation>
     </message>
     <message>
         <source>KB</source>
-        <translation type="unfinished"></translation>
+        <translation>КБ</translation>
     </message>
     <message>
         <source>MB</source>
-        <translation type="unfinished"></translation>
+        <translation>МБ</translation>
     </message>
     <message>
         <source>GB</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>UserNotify</name>
-    <message>
-        <source>You have %1 new messages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You have %1 new message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 new messages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 new message</source>
-        <translation type="unfinished"></translation>
+        <translation>ГБ</translation>
     </message>
 </context>
 <context>
@@ -15658,280 +11573,280 @@ p, li { white-space: pre-wrap; }
     <name>WikiAddDialog</name>
     <message>
         <source>Basic Details</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Group Name:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Category:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Travel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Holiday</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends</source>
-        <translation type="unfinished">Друзья</translation>
+        <translation>Друзья</translation>
     </message>
     <message>
         <source>Family</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Work</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Random</source>
-        <translation type="unfinished">Случайные</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Description:</source>
-        <translation type="unfinished"></translation>
+        <translation>Описание:</translation>
     </message>
     <message>
         <source>Share Options</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Public</source>
-        <translation type="unfinished"></translation>
+        <translation>Публичный</translation>
     </message>
     <message>
         <source>All Friends</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Restricted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>N/A</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>University Friends</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This List Contains</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>All your Groups</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>No Comments Allowed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Authenticated Comments</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Any Comments Allowed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Publish with XXX Key</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cancel </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Create Group</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>WikiDialog</name>
     <message>
         <source>Wiki Group</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Page</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Id</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Page Modification</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>By</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;&lt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&gt;&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt;&lt; Mod</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Mod &gt;&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New Group</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New Page</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished">Удалить</translation>
+        <translation>Удалить</translation>
     </message>
 </context>
 <context>
     <name>WikiEditDialog</name>
     <message>
         <source>Wiki Page</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Wiki Group:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Page Name:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Edit ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Previous Version</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Prev ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Revert</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Submit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>WireDialog</name>
     <message>
         <source>TimeRange</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>All</source>
-        <translation type="unfinished">Все</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Last Month</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Last Week</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Today</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>Новый</translation>
     </message>
     <message>
         <source>from</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>until</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Search/Filter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Network Wide</source>
-        <translation type="unfinished">широкая сеть</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Manage Accounts</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Showing:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Yourself</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Friends</source>
-        <translation type="unfinished">Друзья</translation>
+        <translation>Друзья</translation>
     </message>
     <message>
         <source>Following</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Custom</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Account 1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Account 2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Account 3</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>CheckBox</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Post Pulse to Wire</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -15939,113 +11854,94 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Unknown</source>
         <comment>Unknown (size)</comment>
-        <translation type="unfinished">Неизвестно</translation>
-    </message>
-    <message>
-        <source>Unknown</source>
-        <translation type="unfinished">Неизвестно</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> B</source>
         <comment>bytes</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>&lt; 1m</source>
         <comment>&lt; 1 minute</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>%1 minutes</source>
         <comment>e.g: 10minutes</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>%1h %2m</source>
         <comment>e.g: 3hours 5minutes</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>%1d %2h</source>
         <comment>e.g: 2days 10hours</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>%1y %2d</source>
         <comment>e.g: 2 years 2days </comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>k</source>
         <comment>e.g: 3.1 k</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>M</source>
         <comment>e.g: 3.1 M</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>G</source>
         <comment>e.g: 3.1 G</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>T</source>
         <comment>e.g: 3.1 T</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Load avatar image</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Pictures (*.png *.xpm *.jpg *.tiff *.gif)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> KB</source>
         <comment>kilobytes (1024 bytes)</comment>
-        <translation type="unfinished"></translation>
+        <translation>КБ</translation>
     </message>
     <message>
         <source> MB</source>
         <comment>megabytes (1024 kilobytes)</comment>
-        <translation type="unfinished"></translation>
+        <translation>Мб</translation>
     </message>
     <message>
         <source> GB</source>
         <comment>gigabytes (1024 megabytes)</comment>
-        <translation type="unfinished"></translation>
+        <translation>Гб</translation>
     </message>
     <message>
         <source> TB,</source>
         <comment>terabytes (1024 gigabytes)</comment>
-        <translation type="unfinished"></translation>
+        <translation>Тб,</translation>
     </message>
     <message>
         <source> TB</source>
         <comment>terabytes (1024 gigabytes)</comment>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>moreinfo</name>
-    <message>
-        <source>Details</source>
-        <translation type="obsolete">Details</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation type="obsolete">OK (Хорошо)</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation type="obsolete">Name/сетевой карты</translation>
-    </message>
-    <message>
-        <source>Value</source>
-        <translation type="obsolete">Value</translation>
+        <translation>Тб</translation>
     </message>
 </context>
 </TS>
