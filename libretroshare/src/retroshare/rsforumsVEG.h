@@ -30,11 +30,11 @@
 #include <string>
 #include <list>
 
-#include <retroshare/rsidentity.h>
+#include <retroshare/rsidentityVEG.h>
 
 /* The Main Interface Class - for information about your Peers */
-class RsForumsV2;
-extern RsForumsV2 *rsForumsV2;
+class RsForumsVEG;
+extern RsForumsVEG *rsForumsVEG;
 
 class RsForumV2Group
 {
@@ -75,12 +75,12 @@ class RsForumV2Msg
 	//std::string mHashTags;
 };
 
-class RsForumsV2: public RsTokenService
+class RsForumsVEG: public RsTokenServiceVEG
 {
 	public:
 
-	RsForumsV2()  { return; }
-virtual ~RsForumsV2() { return; }
+	RsForumsVEG()  { return; }
+virtual ~RsForumsVEG() { return; }
 
 	/* Specific Service Data */
 virtual bool getGroupData(const uint32_t &token, RsForumV2Group &group) = 0;

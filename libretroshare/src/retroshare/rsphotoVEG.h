@@ -29,11 +29,11 @@
 #include <inttypes.h>
 #include <string>
 #include <list>
-#include <retroshare/rsidentity.h>
+#include <retroshare/rsidentityVEG.h>
 
 /* The Main Interface Class - for information about your Peers */
-class RsPhoto;
-extern RsPhoto *rsPhoto;
+class RsPhotoVEG;
+extern RsPhotoVEG *rsPhotoVEG;
 
 /******************* NEW STUFF FOR NEW CACHE SYSTEM *********/
 
@@ -159,12 +159,12 @@ std::ostream &operator<<(std::ostream &out, const RsPhotoPhoto &photo);
 std::ostream &operator<<(std::ostream &out, const RsPhotoAlbum &album);
 
 
-class RsPhoto: public RsTokenService
+class RsPhotoVEG: public RsTokenServiceVEG
 {
 	public:
 
-	RsPhoto()  { return; }
-virtual ~RsPhoto() { return; }
+	RsPhotoVEG()  { return; }
+virtual ~RsPhotoVEG() { return; }
 
 	/* Specific Service Data */
 virtual bool getAlbum(const uint32_t &token, RsPhotoAlbum &album) = 0;

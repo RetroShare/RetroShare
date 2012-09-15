@@ -23,7 +23,7 @@
  *
  */
 
-#include "services/p3posted.h"
+#include "services/p3postedVEG.h"
 #include "util/rsrandom.h"
 #include <iostream>
 #include <stdio.h>
@@ -33,15 +33,15 @@
  * #define POSTED_DEBUG 1
  ****/
 
-RsPosted *rsPosted = NULL;
+RsPostedVEG *rsPostedVEG = NULL;
 
 
 /********************************************************************************/
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
 
-p3PostedService::p3PostedService(uint16_t type)
-	:p3GxsDataService(type, new PostedDataProxy()), mPostedMtx("p3PostedService"), mUpdated(true)
+p3PostedServiceVEG::p3PostedServiceVEG(uint16_t type)
+	:p3GxsDataServiceVEG(type, new PostedDataProxy()), mPostedMtx("p3PostedService"), mUpdated(true)
 {
 	{
      		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
@@ -71,9 +71,9 @@ p3PostedService::p3PostedService(uint16_t type)
 
 #define POSTED_BACKGROUND_PERIOD	60
 
-int	p3PostedService::tick()
+int	p3PostedServiceVEG::tick()
 {
-	//std::cerr << "p3PostedService::tick()";
+	//std::cerr << "p3PostedServiceVEG::tick()";
 	//std::cerr << std::endl;
 
 	fakeprocessrequests();
@@ -109,7 +109,7 @@ int	p3PostedService::tick()
 	return 0;
 }
 
-bool p3PostedService::updated()
+bool p3PostedServiceVEG::updated()
 {
 	RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
 
@@ -124,35 +124,35 @@ bool p3PostedService::updated()
 
 
        /* Data Requests */
-bool p3PostedService::requestGroupInfo(     uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds)
+bool p3PostedServiceVEG::requestGroupInfo(     uint32_t &token, uint32_t ansType, const RsTokReqOptionsVEG &opts, const std::list<std::string> &groupIds)
 {
 	generateToken(token);
-	std::cerr << "p3PostedService::requestGroupInfo() gets Token: " << token << std::endl;
+	std::cerr << "p3PostedServiceVEG::requestGroupInfo() gets Token: " << token << std::endl;
 	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_GROUPS, groupIds);
 
 	return true;
 }
 
-bool p3PostedService::requestMsgInfo(       uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds)
+bool p3PostedServiceVEG::requestMsgInfo(       uint32_t &token, uint32_t ansType, const RsTokReqOptionsVEG &opts, const std::list<std::string> &groupIds)
 {
 	generateToken(token);
-	std::cerr << "p3PostedService::requestMsgInfo() gets Token: " << token << std::endl;
+	std::cerr << "p3PostedServiceVEG::requestMsgInfo() gets Token: " << token << std::endl;
 	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_MSGS, groupIds);
 
 	return true;
 }
 
-bool p3PostedService::requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &msgIds)
+bool p3PostedServiceVEG::requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsVEG &opts, const std::list<std::string> &msgIds)
 {
 	generateToken(token);
-	std::cerr << "p3PostedService::requestMsgRelatedInfo() gets Token: " << token << std::endl;
+	std::cerr << "p3PostedServiceVEG::requestMsgRelatedInfo() gets Token: " << token << std::endl;
 	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_MSGRELATED, msgIds);
 
 	return true;
 }
 
         /* Generic Lists */
-bool p3PostedService::getGroupList(         const uint32_t &token, std::list<std::string> &groupIds)
+bool p3PostedServiceVEG::getGroupList(         const uint32_t &token, std::list<std::string> &groupIds)
 {
 	uint32_t status;
 	uint32_t reqtype;
@@ -162,19 +162,19 @@ bool p3PostedService::getGroupList(         const uint32_t &token, std::list<std
 
 	if (anstype != RS_TOKREQ_ANSTYPE_LIST)
 	{
-		std::cerr << "p3PostedService::getGroupList() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3PostedServiceVEG::getGroupList() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (reqtype != GXS_REQUEST_TYPE_GROUPS)
 	{
-		std::cerr << "p3PostedService::getGroupList() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3PostedServiceVEG::getGroupList() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3PostedService::getGroupList() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3PostedServiceVEG::getGroupList() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 
@@ -187,7 +187,7 @@ bool p3PostedService::getGroupList(         const uint32_t &token, std::list<std
 
 
 
-bool p3PostedService::getMsgList(           const uint32_t &token, std::list<std::string> &msgIds)
+bool p3PostedServiceVEG::getMsgList(           const uint32_t &token, std::list<std::string> &msgIds)
 {
 	uint32_t status;
 	uint32_t reqtype;
@@ -197,19 +197,19 @@ bool p3PostedService::getMsgList(           const uint32_t &token, std::list<std
 
 	if (anstype != RS_TOKREQ_ANSTYPE_LIST)
 	{
-		std::cerr << "p3PostedService::getMsgList() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3PostedServiceVEG::getMsgList() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if ((reqtype != GXS_REQUEST_TYPE_MSGS) && (reqtype != GXS_REQUEST_TYPE_MSGRELATED))
 	{
-		std::cerr << "p3PostedService::getMsgList() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3PostedServiceVEG::getMsgList() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3PostedService::getMsgList() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3PostedServiceVEG::getMsgList() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 
@@ -221,7 +221,7 @@ bool p3PostedService::getMsgList(           const uint32_t &token, std::list<std
 
 
         /* Generic Summary */
-bool p3PostedService::getGroupSummary(      const uint32_t &token, std::list<RsGroupMetaData> &groupInfo)
+bool p3PostedServiceVEG::getGroupSummary(      const uint32_t &token, std::list<RsGroupMetaData> &groupInfo)
 {
 	uint32_t status;
 	uint32_t reqtype;
@@ -231,19 +231,19 @@ bool p3PostedService::getGroupSummary(      const uint32_t &token, std::list<RsG
 
 	if (anstype != RS_TOKREQ_ANSTYPE_SUMMARY)
 	{
-		std::cerr << "p3PostedService::getGroupSummary() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3PostedServiceVEG::getGroupSummary() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (reqtype != GXS_REQUEST_TYPE_GROUPS)
 	{
-		std::cerr << "p3PostedService::getGroupSummary() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3PostedServiceVEG::getGroupSummary() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3PostedService::getGroupSummary() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3PostedServiceVEG::getGroupSummary() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 
@@ -257,7 +257,7 @@ bool p3PostedService::getGroupSummary(      const uint32_t &token, std::list<RsG
 	return ans;
 }
 
-bool p3PostedService::getMsgSummary(        const uint32_t &token, std::list<RsMsgMetaData> &msgInfo)
+bool p3PostedServiceVEG::getMsgSummary(        const uint32_t &token, std::list<RsMsgMetaData> &msgInfo)
 {
 	uint32_t status;
 	uint32_t reqtype;
@@ -267,19 +267,19 @@ bool p3PostedService::getMsgSummary(        const uint32_t &token, std::list<RsM
 
 	if (anstype != RS_TOKREQ_ANSTYPE_SUMMARY)
 	{
-		std::cerr << "p3PostedService::getMsgSummary() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3PostedServiceVEG::getMsgSummary() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if ((reqtype != GXS_REQUEST_TYPE_MSGS) && (reqtype != GXS_REQUEST_TYPE_MSGRELATED))
 	{
-		std::cerr << "p3PostedService::getMsgSummary() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3PostedServiceVEG::getMsgSummary() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3PostedService::getMsgSummary() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3PostedServiceVEG::getMsgSummary() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 
@@ -295,9 +295,9 @@ bool p3PostedService::getMsgSummary(        const uint32_t &token, std::list<RsM
 
 
         /* Specific Service Data */
-bool p3PostedService::getGroup(const uint32_t &token, RsPostedGroup &group)
+bool p3PostedServiceVEG::getGroup(const uint32_t &token, RsPostedGroup &group)
 {
-	std::cerr << "p3PostedService::getGroup() Token: " << token;
+	std::cerr << "p3PostedServiceVEG::getGroup() Token: " << token;
 	std::cerr << std::endl;
 
 	uint32_t status;
@@ -309,19 +309,19 @@ bool p3PostedService::getGroup(const uint32_t &token, RsPostedGroup &group)
 
 	if (anstype != RS_TOKREQ_ANSTYPE_DATA)
 	{
-		std::cerr << "p3PostedService::getGroup() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3PostedServiceVEG::getGroup() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (reqtype != GXS_REQUEST_TYPE_GROUPS)
 	{
-		std::cerr << "p3PostedService::getGroup() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3PostedServiceVEG::getGroup() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3PostedService::getGroup() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3PostedServiceVEG::getGroup() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 	
@@ -339,9 +339,9 @@ bool p3PostedService::getGroup(const uint32_t &token, RsPostedGroup &group)
 }
 
 
-bool p3PostedService::getPost(const uint32_t &token, RsPostedPost &post)
+bool p3PostedServiceVEG::getPost(const uint32_t &token, RsPostedPost &post)
 {
-	std::cerr << "p3PostedService::getPost() Token: " << token;
+	std::cerr << "p3PostedServiceVEG::getPost() Token: " << token;
 	std::cerr << std::endl;
 
 	uint32_t status;
@@ -353,19 +353,19 @@ bool p3PostedService::getPost(const uint32_t &token, RsPostedPost &post)
 
 	if (anstype != RS_TOKREQ_ANSTYPE_DATA)
 	{
-		std::cerr << "p3PostedService::getPost() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3PostedServiceVEG::getPost() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if ((reqtype != GXS_REQUEST_TYPE_MSGS) && (reqtype != GXS_REQUEST_TYPE_MSGRELATED))
 	{
-		std::cerr << "p3PostedService::getPost() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3PostedServiceVEG::getPost() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3PostedService::getPost() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3PostedServiceVEG::getPost() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 	
@@ -383,9 +383,9 @@ bool p3PostedService::getPost(const uint32_t &token, RsPostedPost &post)
 }
 
 
-bool p3PostedService::getComment(const uint32_t &token, RsPostedComment &comment)
+bool p3PostedServiceVEG::getComment(const uint32_t &token, RsPostedComment &comment)
 {
-	std::cerr << "p3PostedService::getComment() Token: " << token;
+	std::cerr << "p3PostedServiceVEG::getComment() Token: " << token;
 	std::cerr << std::endl;
 
 	uint32_t status;
@@ -397,19 +397,19 @@ bool p3PostedService::getComment(const uint32_t &token, RsPostedComment &comment
 
 	if (anstype != RS_TOKREQ_ANSTYPE_DATA)
 	{
-		std::cerr << "p3PostedService::getComment() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3PostedServiceVEG::getComment() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if ((reqtype != GXS_REQUEST_TYPE_MSGS) && (reqtype != GXS_REQUEST_TYPE_MSGRELATED))
 	{
-		std::cerr << "p3PostedService::getComment() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3PostedServiceVEG::getComment() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3PostedService::getComment() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3PostedServiceVEG::getComment() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 	
@@ -427,7 +427,7 @@ bool p3PostedService::getComment(const uint32_t &token, RsPostedComment &comment
 }
 
         /* Cancel Request */
-bool p3PostedService::cancelRequest(const uint32_t &token)
+bool p3PostedServiceVEG::cancelRequest(const uint32_t &token)
 {
 	return clearRequest(token);
 }
@@ -436,44 +436,44 @@ bool p3PostedService::cancelRequest(const uint32_t &token)
 
 
 
-bool p3PostedService::setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask)
+bool p3PostedServiceVEG::setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask)
 {
         return mPostedProxy->setMessageStatus(msgId, status, statusMask);
 }
 
-bool p3PostedService::setGroupStatus(const std::string &groupId, const uint32_t status, const uint32_t statusMask)
+bool p3PostedServiceVEG::setGroupStatus(const std::string &groupId, const uint32_t status, const uint32_t statusMask)
 {
         return mPostedProxy->setGroupStatus(groupId, status, statusMask);
 }
 
-bool p3PostedService::setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask)
+bool p3PostedServiceVEG::setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask)
 {
         return mPostedProxy->setGroupSubscribeFlags(groupId, subscribeFlags, subscribeMask);
 }
 
-bool p3PostedService::setMessageServiceString(const std::string &msgId, const std::string &str)
+bool p3PostedServiceVEG::setMessageServiceString(const std::string &msgId, const std::string &str)
 {
         return mPostedProxy->setMessageServiceString(msgId, str);
 }
 
-bool p3PostedService::setGroupServiceString(const std::string &grpId, const std::string &str)
+bool p3PostedServiceVEG::setGroupServiceString(const std::string &grpId, const std::string &str)
 {
         return mPostedProxy->setGroupServiceString(grpId, str);
 }
 
 
-bool p3PostedService::groupRestoreKeys(const std::string &groupId)
+bool p3PostedServiceVEG::groupRestoreKeys(const std::string &groupId)
 {
 	return false;
 }
 
-bool p3PostedService::groupShareKeys(const std::string &groupId, std::list<std::string>& peers)
+bool p3PostedServiceVEG::groupShareKeys(const std::string &groupId, std::list<std::string>& peers)
 {
 	return false;
 }
 
 
-bool p3PostedService::submitGroup(uint32_t &token, RsPostedGroup &group, bool isNew)
+bool p3PostedServiceVEG::submitGroup(uint32_t &token, RsPostedGroup &group, bool isNew)
 {
 	/* check if its a modification or a new album */
 
@@ -488,7 +488,7 @@ bool p3PostedService::submitGroup(uint32_t &token, RsPostedGroup &group, bool is
 		group.mMeta.mGroupId = genRandomId();
 		group.mMeta.mPublishTs = time(NULL);
 
-		std::cerr << "p3PostedService::submitGroup() Generated New GroupID: " << group.mMeta.mGroupId;
+		std::cerr << "p3PostedServiceVEG::submitGroup() Generated New GroupID: " << group.mMeta.mGroupId;
 		std::cerr << std::endl;
 	}
 
@@ -504,23 +504,23 @@ bool p3PostedService::submitGroup(uint32_t &token, RsPostedGroup &group, bool is
 	// Fake a request to return the GroupMetaData.
 	generateToken(token);
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
-	RsTokReqOptions opts; // NULL is good.
+	RsTokReqOptionsVEG opts; // NULL is good.
 	std::list<std::string> groupIds;
 	groupIds.push_back(group.mMeta.mGroupId); // It will just return this one.
 	
-	std::cerr << "p3PostedService::submitGroup() Generating Request Token: " << token << std::endl;
+	std::cerr << "p3PostedServiceVEG::submitGroup() Generating Request Token: " << token << std::endl;
 	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_GROUPS, groupIds);
 
 	return true;
 }
 
 
-bool p3PostedService::submitPost(uint32_t &token, RsPostedPost &post, bool isNew)
+bool p3PostedServiceVEG::submitPost(uint32_t &token, RsPostedPost &post, bool isNew)
 {
 	if (post.mMeta.mGroupId.empty())
 	{
 		/* new photo */
-		std::cerr << "p3PostedService::submitPost() Missing GroupID: ERROR";
+		std::cerr << "p3PostedServiceVEG::submitPost() Missing GroupID: ERROR";
 		std::cerr << std::endl;
 		return false;
 	}
@@ -533,18 +533,18 @@ bool p3PostedService::submitPost(uint32_t &token, RsPostedPost &post, bool isNew
 	{
 		/* new (Original Msg) photo */
 		post.mMeta.mOrigMsgId = post.mMeta.mMsgId; 
-		std::cerr << "p3PostedService::submitPost() New Msg";
+		std::cerr << "p3PostedServiceVEG::submitPost() New Msg";
 		std::cerr << std::endl;
 	}
 	else
 	{
-		std::cerr << "p3PostedService::submitPost() Updated Msg";
+		std::cerr << "p3PostedServiceVEG::submitPost() Updated Msg";
 		std::cerr << std::endl;
 	}
 
 	//post.mModFlags = 0; // These are always cleared.
 
-	std::cerr << "p3PostedService::submitPost() OrigMsgId: " << post.mMeta.mOrigMsgId;
+	std::cerr << "p3PostedServiceVEG::submitPost() OrigMsgId: " << post.mMeta.mOrigMsgId;
 	std::cerr << " MsgId: " << post.mMeta.mMsgId;
 	std::cerr << std::endl;
 
@@ -558,11 +558,11 @@ bool p3PostedService::submitPost(uint32_t &token, RsPostedPost &post, bool isNew
 	// Fake a request to return the MsgMetaData.
 	generateToken(token);
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
-	RsTokReqOptions opts; // NULL is good.
+	RsTokReqOptionsVEG opts; // NULL is good.
 	std::list<std::string> msgIds;
 	msgIds.push_back(post.mMeta.mMsgId); // It will just return this one.
 	
-	std::cerr << "p3PostedService::submitPost() Generating Request Token: " << token << std::endl;
+	std::cerr << "p3PostedServiceVEG::submitPost() Generating Request Token: " << token << std::endl;
 	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_MSGRELATED, msgIds);
 
 	return true;
@@ -570,12 +570,12 @@ bool p3PostedService::submitPost(uint32_t &token, RsPostedPost &post, bool isNew
 
 
 
-bool p3PostedService::submitVote(uint32_t &token, RsPostedVote &vote, bool isNew)
+bool p3PostedServiceVEG::submitVote(uint32_t &token, RsPostedVote &vote, bool isNew)
 {
 	if (vote.mMeta.mGroupId.empty())
 	{
 		/* new photo */
-		std::cerr << "p3PostedService::submitVote() Missing GroupID: ERROR";
+		std::cerr << "p3PostedServiceVEG::submitVote() Missing GroupID: ERROR";
 		std::cerr << std::endl;
 		return false;
 	}
@@ -588,18 +588,18 @@ bool p3PostedService::submitVote(uint32_t &token, RsPostedVote &vote, bool isNew
 	{
 		/* new (Original Msg) photo */
 		vote.mMeta.mOrigMsgId = vote.mMeta.mMsgId; 
-		std::cerr << "p3PostedService::submitVote() New Msg";
+		std::cerr << "p3PostedServiceVEG::submitVote() New Msg";
 		std::cerr << std::endl;
 	}
 	else
 	{
-		std::cerr << "p3PostedService::submitVote() Updated Msg";
+		std::cerr << "p3PostedServiceVEG::submitVote() Updated Msg";
 		std::cerr << std::endl;
 	}
 
 	//vote.mModFlags = 0; // These are always cleared.
 
-	std::cerr << "p3PostedService::submitVote() OrigMsgId: " << vote.mMeta.mOrigMsgId;
+	std::cerr << "p3PostedServiceVEG::submitVote() OrigMsgId: " << vote.mMeta.mOrigMsgId;
 	std::cerr << " MsgId: " << vote.mMeta.mMsgId;
 	std::cerr << std::endl;
 
@@ -613,11 +613,11 @@ bool p3PostedService::submitVote(uint32_t &token, RsPostedVote &vote, bool isNew
 	// Fake a request to return the MsgMetaData.
 	generateToken(token);
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
-	RsTokReqOptions opts; // NULL is good.
+	RsTokReqOptionsVEG opts; // NULL is good.
 	std::list<std::string> msgIds;
 	msgIds.push_back(vote.mMeta.mMsgId); // It will just return this one.
 	
-	std::cerr << "p3PostedService::submitVote() Generating Request Token: " << token << std::endl;
+	std::cerr << "p3PostedServiceVEG::submitVote() Generating Request Token: " << token << std::endl;
 	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_MSGRELATED, msgIds);
 
 
@@ -625,12 +625,12 @@ bool p3PostedService::submitVote(uint32_t &token, RsPostedVote &vote, bool isNew
 }
 
 
-bool p3PostedService::submitComment(uint32_t &token, RsPostedComment &comment, bool isNew)
+bool p3PostedServiceVEG::submitComment(uint32_t &token, RsPostedComment &comment, bool isNew)
 {
 	if (comment.mMeta.mGroupId.empty())
 	{
 		/* new photo */
-		std::cerr << "p3PostedService::submitPost() Missing GroupID: ERROR";
+		std::cerr << "p3PostedServiceVEG::submitPost() Missing GroupID: ERROR";
 		std::cerr << std::endl;
 		return false;
 	}
@@ -643,18 +643,18 @@ bool p3PostedService::submitComment(uint32_t &token, RsPostedComment &comment, b
 	{
 		/* new (Original Msg) photo */
 		comment.mMeta.mOrigMsgId = comment.mMeta.mMsgId; 
-		std::cerr << "p3PostedService::submitComment() New Msg";
+		std::cerr << "p3PostedServiceVEG::submitComment() New Msg";
 		std::cerr << std::endl;
 	}
 	else
 	{
-		std::cerr << "p3PostedService::submitComment() Updated Msg";
+		std::cerr << "p3PostedServiceVEG::submitComment() Updated Msg";
 		std::cerr << std::endl;
 	}
 
 	//comment.mModFlags = 0; // These are always cleared.
 
-	std::cerr << "p3PostedService::submitComment() OrigMsgId: " << comment.mMeta.mOrigMsgId;
+	std::cerr << "p3PostedServiceVEG::submitComment() OrigMsgId: " << comment.mMeta.mOrigMsgId;
 	std::cerr << " MsgId: " << comment.mMeta.mMsgId;
 	std::cerr << std::endl;
 
@@ -668,11 +668,11 @@ bool p3PostedService::submitComment(uint32_t &token, RsPostedComment &comment, b
 	// Fake a request to return the MsgMetaData.
 	generateToken(token);
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
-	RsTokReqOptions opts; // NULL is good.
+	RsTokReqOptionsVEG opts; // NULL is good.
 	std::list<std::string> msgIds;
 	msgIds.push_back(comment.mMeta.mMsgId); // It will just return this one.
 	
-	std::cerr << "p3PostedService::submitComment() Generating Request Token: " << token << std::endl;
+	std::cerr << "p3PostedServiceVEG::submitComment() Generating Request Token: " << token << std::endl;
 	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_MSGRELATED, msgIds);
 
 	return true;
@@ -900,7 +900,7 @@ bool PostedDataProxy::convertMsgToMetaData(void *msgData, RsMsgMetaData &meta)
 
 /********************************************************************************************/
 
-std::string p3PostedService::genRandomId()
+std::string p3PostedServiceVEG::genRandomId()
 {
 	std::string randomId;
 	for(int i = 0; i < 20; i++)
@@ -950,7 +950,7 @@ std::ostream &operator<<(std::ostream &out, const RsPostedGroup &group)
 /********************************************************************************************/
 /********************************************************************************************/
 
-bool p3PostedService::generateDummyData()
+bool p3PostedServiceVEG::generateDummyData()
 {
 #define MAX_GROUPS 10 //100
 #define MAX_POSTS  50 //1000
@@ -1251,9 +1251,9 @@ bool p3PostedService::generateDummyData()
 #define EXTRA_COMMENT_ADD	(20)
 #define EXTRA_VOTE_ADD		(50)
 
-bool p3PostedService::addExtraDummyData()
+bool p3PostedServiceVEG::addExtraDummyData()
 {
-	std::cerr << "p3PostedService::addExtraDummyData()";
+	std::cerr << "p3PostedServiceVEG::addExtraDummyData()";
 	std::cerr << std::endl;
 
 	int i = 0;
@@ -1295,9 +1295,9 @@ bool p3PostedService::addExtraDummyData()
 
 
 
-bool p3PostedService::setViewMode(uint32_t mode)
+bool p3PostedServiceVEG::setViewMode(uint32_t mode)
 {
-	std::cerr << "p3PostedService::setViewMode() : " << mode;
+	std::cerr << "p3PostedServiceVEG::setViewMode() : " << mode;
 	std::cerr << std::endl;
 
      	RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
@@ -1307,9 +1307,9 @@ bool p3PostedService::setViewMode(uint32_t mode)
 	return true;
 }
 
-bool p3PostedService::setViewPeriod(uint32_t period)
+bool p3PostedServiceVEG::setViewPeriod(uint32_t period)
 {
-	std::cerr << "p3PostedService::setViewPeriod() : " << period;
+	std::cerr << "p3PostedServiceVEG::setViewPeriod() : " << period;
 	std::cerr << std::endl;
 
      	RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
@@ -1319,9 +1319,9 @@ bool p3PostedService::setViewPeriod(uint32_t period)
 	return true;
 }
 
-bool p3PostedService::setViewRange(uint32_t first, uint32_t count)
+bool p3PostedServiceVEG::setViewRange(uint32_t first, uint32_t count)
 {
-	std::cerr << "p3PostedService::setViewRange() : " << first << " +" << count;
+	std::cerr << "p3PostedServiceVEG::setViewRange() : " << first << " +" << count;
 	std::cerr << std::endl;
 
      	RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
@@ -1332,7 +1332,7 @@ bool p3PostedService::setViewRange(uint32_t first, uint32_t count)
 	return true;
 }
 
-float p3PostedService::calcPostScore(const RsMsgMetaData &meta)
+float p3PostedServiceVEG::calcPostScore(const RsMsgMetaData &meta)
 {
      	RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
 
@@ -1415,9 +1415,9 @@ static uint32_t convertPeriodFlagToSeconds(uint32_t periodMode)
 #define POSTED_RANKINGS_DATA_DONE	4
 
         /* Poll */
-uint32_t p3PostedService::requestStatus(const uint32_t token)
+uint32_t p3PostedServiceVEG::requestStatus(const uint32_t token)
 {
-	std::cerr << "p3PostedService::requestStatus() Token: " << token;
+	std::cerr << "p3PostedServiceVEG::requestStatus() Token: " << token;
 	std::cerr << std::endl;
 
 	uint32_t status;
@@ -1431,7 +1431,7 @@ uint32_t p3PostedService::requestStatus(const uint32_t token)
 		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
 		if ((mProcessingRanking) && (token == mRankingExternalToken))
 		{
-			std::cerr << "p3PostedService::requestStatus() is RankingToken";
+			std::cerr << "p3PostedServiceVEG::requestStatus() is RankingToken";
 			std::cerr << std::endl;
 
 			{
@@ -1439,20 +1439,20 @@ uint32_t p3PostedService::requestStatus(const uint32_t token)
 				{
 					case POSTED_RANKINGS_INITIAL_CHECK:
 						status = GXS_REQUEST_STATUS_PENDING;
-						std::cerr << "p3PostedService::requestStatus() RANKING PENDING";
+						std::cerr << "p3PostedServiceVEG::requestStatus() RANKING PENDING";
 						std::cerr << std::endl;
 						return status;
 						break;
 					case POSTED_RANKINGS_NODATA:
 						status = GXS_REQUEST_STATUS_COMPLETE;
-						std::cerr << "p3PostedService::requestStatus() RANKING RETURNED NO DATA";
+						std::cerr << "p3PostedServiceVEG::requestStatus() RANKING RETURNED NO DATA";
 						std::cerr << std::endl;
 						return status;
 						break;
 					case POSTED_RANKINGS_DATA_REQUEST:
 						// Switch to real token.
 						int_token = mRankingInternalToken;
-						std::cerr << "p3PostedService::requestStatus() Flipping to Int Token: " << int_token;
+						std::cerr << "p3PostedServiceVEG::requestStatus() Flipping to Int Token: " << int_token;
 						std::cerr << std::endl;
 						break;
 					
@@ -1466,20 +1466,20 @@ uint32_t p3PostedService::requestStatus(const uint32_t token)
 	return status;
 }
 
-bool p3PostedService::getRankedPost(const uint32_t &token, RsPostedPost &post)
+bool p3PostedServiceVEG::getRankedPost(const uint32_t &token, RsPostedPost &post)
 {
 	RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
 	if (!mProcessingRanking)
 	{
 
-		std::cerr << "p3PostedService::getRankedPost() ERROR not processing";
+		std::cerr << "p3PostedServiceVEG::getRankedPost() ERROR not processing";
 		std::cerr << std::endl;
 		return false;
 	}
 
 	if (token != mRankingExternalToken)
 	{
-		std::cerr << "p3PostedService::getRankedPost() ERROR wrong token";
+		std::cerr << "p3PostedServiceVEG::getRankedPost() ERROR wrong token";
 		std::cerr << std::endl;
 
 		return false;
@@ -1487,7 +1487,7 @@ bool p3PostedService::getRankedPost(const uint32_t &token, RsPostedPost &post)
 
 	if (mRankingState == POSTED_RANKINGS_NODATA)
 	{
-		std::cerr << "p3PostedService::getRankedPost() No Data for this request - sorry";
+		std::cerr << "p3PostedServiceVEG::getRankedPost() No Data for this request - sorry";
 		std::cerr << std::endl;
 
 		/* clean up */
@@ -1502,7 +1502,7 @@ bool p3PostedService::getRankedPost(const uint32_t &token, RsPostedPost &post)
 	if (mRankingState != POSTED_RANKINGS_DATA_REQUEST)
 	{
 
-		std::cerr << "p3PostedService::getRankedPost() ERROR wrong state";
+		std::cerr << "p3PostedServiceVEG::getRankedPost() ERROR wrong state";
 		std::cerr << std::endl;
 
 		return false;
@@ -1512,7 +1512,7 @@ bool p3PostedService::getRankedPost(const uint32_t &token, RsPostedPost &post)
 	
 	if (!getPost(mRankingInternalToken, post))
 	{
-		std::cerr << "p3PostedService::getRankedPost() End of Posts for this token";
+		std::cerr << "p3PostedServiceVEG::getRankedPost() End of Posts for this token";
 		std::cerr << std::endl;
 
 		/* clean up */
@@ -1524,22 +1524,22 @@ bool p3PostedService::getRankedPost(const uint32_t &token, RsPostedPost &post)
 		return false;
 	}
 
-	std::cerr << "p3PostedService::getRankedPost() Got Post";
+	std::cerr << "p3PostedServiceVEG::getRankedPost() Got Post";
 	std::cerr << std::endl;
 
 	return true;
 }
 
 
-bool p3PostedService::requestRanking(uint32_t &token, std::string groupId)
+bool p3PostedServiceVEG::requestRanking(uint32_t &token, std::string groupId)
 {
-	std::cerr << "p3PostedService::requestRanking()";
+	std::cerr << "p3PostedServiceVEG::requestRanking()";
 	std::cerr << std::endl;
 	{
 		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
 		if (mProcessingRanking)
 		{
-			std::cerr << "p3PostedService::requestRanking() ERROR Request already running - ignoring";
+			std::cerr << "p3PostedServiceVEG::requestRanking() ERROR Request already running - ignoring";
 			std::cerr << std::endl;
 
 			return false;
@@ -1559,7 +1559,7 @@ bool p3PostedService::requestRanking(uint32_t &token, std::string groupId)
 
 	uint32_t posttoken; 
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
-	RsTokReqOptions opts; 
+	RsTokReqOptionsVEG opts; 
 
 	opts.mOptions = RS_TOKREQOPT_MSG_THREAD | RS_TOKREQOPT_MSG_LATEST;
 	//uint32_t age = convertPeriodFlagToSeconds(mViewPeriod);
@@ -1571,28 +1571,28 @@ bool p3PostedService::requestRanking(uint32_t &token, std::string groupId)
 
 	{
 		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
-		std::cerr << "p3PostedService::requestRanking() Saved Internal Token: " << posttoken;
+		std::cerr << "p3PostedServiceVEG::requestRanking() Saved Internal Token: " << posttoken;
 		std::cerr << std::endl;
 		mRankingInternalToken = posttoken;
 	}
 	return true;
 }
 
-bool p3PostedService::checkRankingRequest()
+bool p3PostedServiceVEG::checkRankingRequest()
 {
 	uint32_t token = 0;
 	{
 		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
 		if (!mProcessingRanking)
 		{
-			//std::cerr << "p3PostedService::checkRankingRequest() Not Processing";
+			//std::cerr << "p3PostedServiceVEG::checkRankingRequest() Not Processing";
 			//std::cerr << std::endl;
 			return false;
 		}
 
 		if (mRankingState != POSTED_RANKINGS_INITIAL_CHECK)
 		{
-			std::cerr << "p3PostedService::checkRankingRequest() Not in Initial Check";
+			std::cerr << "p3PostedServiceVEG::checkRankingRequest() Not in Initial Check";
 			std::cerr << std::endl;
 			return false;
 		}
@@ -1600,7 +1600,7 @@ bool p3PostedService::checkRankingRequest()
 		/* here it actually running! */
 		token = mRankingInternalToken;
 
-		std::cerr << "p3PostedService::checkRankingRequest() Running with token: " << token;
+		std::cerr << "p3PostedServiceVEG::checkRankingRequest() Running with token: " << token;
 		std::cerr << std::endl;
 	}
 
@@ -1611,19 +1611,19 @@ bool p3PostedService::checkRankingRequest()
 	time_t ts;
 	if (checkRequestStatus(token, status, reqtype, anstype, ts))
 	{
-		std::cerr << "p3PostedService::checkRankingRequest() checkRequestStatus => OK";
+		std::cerr << "p3PostedServiceVEG::checkRankingRequest() checkRequestStatus => OK";
 		std::cerr << std::endl;
 	}
 	else
 	{
-		std::cerr << "p3PostedService::checkRankingRequest() checkRequestStatus => ERROR";
+		std::cerr << "p3PostedServiceVEG::checkRankingRequest() checkRequestStatus => ERROR";
 		std::cerr << std::endl;
 		return false;
 	}
 	
 	if (status == GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3PostedService::checkRankingRequest() Init Complete => processPosts";
+		std::cerr << "p3PostedServiceVEG::checkRankingRequest() Init Complete => processPosts";
 		std::cerr << std::endl;
 
 		processPosts();
@@ -1632,9 +1632,9 @@ bool p3PostedService::checkRankingRequest()
 }
 
 
-bool p3PostedService::processPosts()
+bool p3PostedServiceVEG::processPosts()
 {
-	std::cerr << "p3PostedService::processPosts()";
+	std::cerr << "p3PostedServiceVEG::processPosts()";
 	std::cerr << std::endl;
 
 	uint32_t token = 0;
@@ -1642,7 +1642,7 @@ bool p3PostedService::processPosts()
 		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
 		if (!mProcessingRanking)
 		{
-			std::cerr << "p3PostedService::processPosts() ERROR Ranking Request not running";
+			std::cerr << "p3PostedServiceVEG::processPosts() ERROR Ranking Request not running";
 			std::cerr << std::endl;
 
 			return false;
@@ -1650,7 +1650,7 @@ bool p3PostedService::processPosts()
 
 		if (mRankingState != POSTED_RANKINGS_INITIAL_CHECK)
 		{
-			std::cerr << "p3PostedService::processPosts() ERROR Ranking Request not running";
+			std::cerr << "p3PostedServiceVEG::processPosts() ERROR Ranking Request not running";
 			std::cerr << std::endl;
 
 			return false;
@@ -1664,7 +1664,7 @@ bool p3PostedService::processPosts()
 
 	if (!getMsgSummary(token, postList))
 	{
-		std::cerr << "p3PostedService::processPosts() No Data for Request";
+		std::cerr << "p3PostedServiceVEG::processPosts() No Data for Request";
 		std::cerr << std::endl;
 
 		/* put it into a state, where the GUI will get to read an empty Queue */
@@ -1695,7 +1695,7 @@ bool p3PostedService::processPosts()
 		unsigned int i = 0;
 		for(mit = postMap.rbegin(); (mit != postMap.rend()) && (i < mViewStart); mit++, i++)
 		{
-			std::cerr << "p3PostedService::processPosts() Skipping PostId: " << mit->second;
+			std::cerr << "p3PostedServiceVEG::processPosts() Skipping PostId: " << mit->second;
 			std::cerr << " with score: " << mit->first;
 			std::cerr << std::endl;
 		}
@@ -1703,7 +1703,7 @@ bool p3PostedService::processPosts()
 	
 		for(i = 0; (mit != postMap.rend()) && (i < mViewCount); mit++, i++)
 		{
-			std::cerr << "p3PostedService::processPosts() Adding PostId: " << mit->second;
+			std::cerr << "p3PostedServiceVEG::processPosts() Adding PostId: " << mit->second;
 			std::cerr << " with score: " << mit->first;
 			std::cerr << std::endl;
 			msgList.push_back(mit->second);
@@ -1712,7 +1712,7 @@ bool p3PostedService::processPosts()
 
 	token = 0; 
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_DATA;
-	RsTokReqOptions opts; 
+	RsTokReqOptionsVEG opts; 
 
 	requestMsgRelatedInfo(token, ansType, opts, msgList);
 
@@ -1721,7 +1721,7 @@ bool p3PostedService::processPosts()
 		mRankingState = POSTED_RANKINGS_DATA_REQUEST;
 		mRankingInternalToken = token;
 
-		std::cerr << "p3PostedService::processPosts() Second Stage: token: " << token;
+		std::cerr << "p3PostedServiceVEG::processPosts() Second Stage: token: " << token;
 		std::cerr << std::endl;
 	}
 	return true;
@@ -1747,7 +1747,7 @@ bool p3PostedService::processPosts()
 #define POSTED_BG_REQUEST_PARENTS		3
 #define POSTED_BG_PROCESS_VOTES			4
 
-bool p3PostedService::background_checkTokenRequest()
+bool p3PostedServiceVEG::background_checkTokenRequest()
 {
 	uint32_t token = 0;
 	uint32_t phase = 0;
@@ -1790,9 +1790,9 @@ bool p3PostedService::background_checkTokenRequest()
 }
 
 
-bool p3PostedService::background_requestGroups()
+bool p3PostedServiceVEG::background_requestGroups()
 {
-	std::cerr << "p3PostedService::background_requestGroups()";
+	std::cerr << "p3PostedServiceVEG::background_requestGroups()";
 	std::cerr << std::endl;
 
 	// grab all the subscribed groups.
@@ -1807,7 +1807,7 @@ bool p3PostedService::background_requestGroups()
 	}
 
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_LIST;
-	RsTokReqOptions opts; 
+	RsTokReqOptionsVEG opts; 
 	std::list<std::string> groupIds;
 
 	opts.mSubscribeFilter = RSGXS_GROUP_SUBSCRIBE_SUBSCRIBED;
@@ -1822,9 +1822,9 @@ bool p3PostedService::background_requestGroups()
 }
 
 
-bool p3PostedService::background_requestNewMessages()
+bool p3PostedServiceVEG::background_requestNewMessages()
 {
-	std::cerr << "p3PostedService::background_requestNewMessages()";
+	std::cerr << "p3PostedServiceVEG::background_requestNewMessages()";
 	std::cerr << std::endl;
 
 	std::list<std::string> groupIds;
@@ -1837,7 +1837,7 @@ bool p3PostedService::background_requestNewMessages()
 
 	if (!getGroupList(token, groupIds))
 	{
-		std::cerr << "p3PostedService::background_requestNewMessages() ERROR No Group List";
+		std::cerr << "p3PostedServiceVEG::background_requestNewMessages() ERROR No Group List";
 		std::cerr << std::endl;
 		background_cleanup();
 		return false;
@@ -1850,7 +1850,7 @@ bool p3PostedService::background_requestNewMessages()
 	}
 
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY; 
-	RsTokReqOptions opts; 
+	RsTokReqOptionsVEG opts; 
 	token = 0;
 
 	opts.mStatusFilter = RSGXS_MSG_STATUS_UNPROCESSED;
@@ -1866,9 +1866,9 @@ bool p3PostedService::background_requestNewMessages()
 }
 
 
-bool p3PostedService::background_processNewMessages()
+bool p3PostedServiceVEG::background_processNewMessages()
 {
-	std::cerr << "p3PostedService::background_processNewMessages()";
+	std::cerr << "p3PostedServiceVEG::background_processNewMessages()";
 	std::cerr << std::endl;
 
 	std::list<RsMsgMetaData> newMsgList;
@@ -1882,7 +1882,7 @@ bool p3PostedService::background_processNewMessages()
 
 	if (!getMsgSummary(token, newMsgList))
 	{
-		std::cerr << "p3PostedService::background_processNewMessages() ERROR No New Msgs";
+		std::cerr << "p3PostedServiceVEG::background_processNewMessages() ERROR No New Msgs";
 		std::cerr << std::endl;
 		background_cleanup();
 		return false;
@@ -1978,7 +1978,7 @@ bool p3PostedService::background_processNewMessages()
 		else
 		{
 			/* unknown! */
-			std::cerr << "p3PostedService::background_processNewMessages() ERROR Strange NEW Message:";
+			std::cerr << "p3PostedServiceVEG::background_processNewMessages() ERROR Strange NEW Message:";
 			std::cerr << std::endl;
 			std::cerr << "\t" << *it;
 			std::cerr << std::endl;
@@ -1993,7 +1993,7 @@ bool p3PostedService::background_processNewMessages()
 	/* request the summary info from the parents */
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY; 
 	token = 0;
-	RsTokReqOptions opts; 
+	RsTokReqOptionsVEG opts; 
 	requestMsgRelatedInfo(token, ansType, opts, parentList);
 
 	{
@@ -2004,7 +2004,7 @@ bool p3PostedService::background_processNewMessages()
 }
 
 
-bool p3PostedService::encodePostedCache(std::string &str, uint32_t votes, uint32_t comments)
+bool p3PostedServiceVEG::encodePostedCache(std::string &str, uint32_t votes, uint32_t comments)
 {
 	char line[RSGXS_MAX_SERVICE_STRING];
 
@@ -2014,7 +2014,7 @@ bool p3PostedService::encodePostedCache(std::string &str, uint32_t votes, uint32
 	return true;
 }
 
-bool p3PostedService::extractPostedCache(const std::string &str, uint32_t &votes, uint32_t &comments)
+bool p3PostedServiceVEG::extractPostedCache(const std::string &str, uint32_t &votes, uint32_t &comments)
 {
 
 	uint32_t ivotes, icomments;
@@ -2029,9 +2029,9 @@ bool p3PostedService::extractPostedCache(const std::string &str, uint32_t &votes
 }
 
 
-bool p3PostedService::background_updateVoteCounts()
+bool p3PostedServiceVEG::background_updateVoteCounts()
 {
-	std::cerr << "p3PostedService::background_updateVoteCounts()";
+	std::cerr << "p3PostedServiceVEG::background_updateVoteCounts()";
 	std::cerr << std::endl;
 
 	std::list<RsMsgMetaData> parentMsgList;
@@ -2039,7 +2039,7 @@ bool p3PostedService::background_updateVoteCounts()
 
 	if (!getMsgSummary(mBgToken, parentMsgList))
 	{
-		std::cerr << "p3PostedService::background_updateVoteCounts() ERROR";
+		std::cerr << "p3PostedServiceVEG::background_updateVoteCounts() ERROR";
 		std::cerr << std::endl;
 		background_cleanup();
 		return false;
@@ -2061,7 +2061,7 @@ bool p3PostedService::background_updateVoteCounts()
 		{
 			if (!(it->mServiceString.empty()))
 			{
-				std::cerr << "p3PostedService::background_updateVoteCounts() Failed to extract Votes";
+				std::cerr << "p3PostedServiceVEG::background_updateVoteCounts() Failed to extract Votes";
 				std::cerr << std::endl;
 				std::cerr << "\tFrom String: " << it->mServiceString;
 				std::cerr << std::endl;
@@ -2081,7 +2081,7 @@ bool p3PostedService::background_updateVoteCounts()
 			else
 			{
 				// warning.
-				std::cerr << "p3PostedService::background_updateVoteCounts() Warning No New Votes found.";
+				std::cerr << "p3PostedServiceVEG::background_updateVoteCounts() Warning No New Votes found.";
 				std::cerr << " For MsgId: " << it->mMsgId;
 				std::cerr << std::endl;
 			}
@@ -2100,7 +2100,7 @@ bool p3PostedService::background_updateVoteCounts()
 			else
 			{
 				// warning.
-				std::cerr << "p3PostedService::background_updateVoteCounts() Warning No New Comments found.";
+				std::cerr << "p3PostedServiceVEG::background_updateVoteCounts() Warning No New Comments found.";
 				std::cerr << " For MsgId: " << it->mMsgId;
 				std::cerr << std::endl;
 			}
@@ -2110,12 +2110,12 @@ bool p3PostedService::background_updateVoteCounts()
 		std::string str;
 		if (!encodePostedCache(str, votes, comments))
 		{
-			std::cerr << "p3PostedService::background_updateVoteCounts() Failed to encode Votes";
+			std::cerr << "p3PostedServiceVEG::background_updateVoteCounts() Failed to encode Votes";
 			std::cerr << std::endl;
 		}
 		else
 		{
-			std::cerr << "p3PostedService::background_updateVoteCounts() Encoded String: " << str;
+			std::cerr << "p3PostedServiceVEG::background_updateVoteCounts() Encoded String: " << str;
 			std::cerr << std::endl;
 			/* store new result */
 			setMessageServiceString(it->mMsgId, str);
@@ -2129,9 +2129,9 @@ bool p3PostedService::background_updateVoteCounts()
 }
 
 
-bool p3PostedService::background_cleanup()
+bool p3PostedServiceVEG::background_cleanup()
 {
-	std::cerr << "p3PostedService::background_cleanup()";
+	std::cerr << "p3PostedServiceVEG::background_cleanup()";
 	std::cerr << std::endl;
 
 	RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/

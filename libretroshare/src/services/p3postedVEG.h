@@ -23,11 +23,11 @@
  *
  */
 
-#ifndef P3_POSTED_SERVICE_HEADER
-#define P3_POSTED_SERVICE_HEADER
+#ifndef P3_POSTED_SERVICE_VEG_HEADER
+#define P3_POSTED_SERVICE_VEG_HEADER
 
-#include "services/p3gxsservice.h"
-#include "retroshare/rsposted.h"
+#include "services/p3gxsserviceVEG.h"
+#include "retroshare/rspostedVEG.h"
 
 #include <map>
 #include <string>
@@ -38,7 +38,7 @@
  */
 
 
-class PostedDataProxy: public GxsDataProxy
+class PostedDataProxy: public GxsDataProxyVEG
 {
 	public:
 
@@ -60,11 +60,11 @@ virtual bool convertMsgToMetaData(void *groupData, RsMsgMetaData &meta);
 
 
 
-class p3PostedService: public p3GxsDataService, public RsPosted
+class p3PostedServiceVEG: public p3GxsDataServiceVEG, public RsPostedVEG
 {
 	public:
 
-	p3PostedService(uint16_t type);
+	p3PostedServiceVEG(uint16_t type);
 
 virtual int	tick();
 
@@ -76,9 +76,9 @@ virtual int	tick();
 virtual bool updated();
 
        /* Data Requests */
-virtual bool requestGroupInfo(     uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds);
-virtual bool requestMsgInfo(       uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds);
-virtual bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &msgIds);
+virtual bool requestGroupInfo(     uint32_t &token, uint32_t ansType, const RsTokReqOptionsVEG &opts, const std::list<std::string> &groupIds);
+virtual bool requestMsgInfo(       uint32_t &token, uint32_t ansType, const RsTokReqOptionsVEG &opts, const std::list<std::string> &groupIds);
+virtual bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsVEG &opts, const std::list<std::string> &msgIds);
 
         /* Generic Lists */
 virtual bool getGroupList(         const uint32_t &token, std::list<std::string> &groupIds);

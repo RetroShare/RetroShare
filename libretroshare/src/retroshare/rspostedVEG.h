@@ -29,11 +29,11 @@
 #include <inttypes.h>
 #include <string>
 #include <list>
-#include <retroshare/rsidentity.h>
+#include <retroshare/rsidentityVEG.h>
 
 /* The Main Interface Class - for information about your Peers */
-class RsPosted;
-extern RsPosted *rsPosted;
+class RsPostedVEG;
+extern RsPostedVEG *rsPostedVEG;
 
 
 class RsPostedGroup
@@ -113,12 +113,12 @@ std::ostream &operator<<(std::ostream &out, const RsPostedVote &vote);
 std::ostream &operator<<(std::ostream &out, const RsPostedComment &comment);
 
 
-class RsPosted: public RsTokenService
+class RsPostedVEG: public RsTokenServiceVEG
 {
 	public:
 
-	RsPosted()  { return; }
-virtual ~RsPosted() { return; }
+	RsPostedVEG()  { return; }
+virtual ~RsPostedVEG() { return; }
 
 	/* Specific Service Data */
 virtual bool getGroup(const uint32_t &token, RsPostedGroup &group) = 0;

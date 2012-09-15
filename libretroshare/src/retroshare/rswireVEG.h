@@ -30,11 +30,11 @@
 #include <string>
 #include <list>
 
-#include <retroshare/rsidentity.h>
+#include <retroshare/rsidentityVEG.h>
 
 /* The Main Interface Class - for information about your Peers */
-class RsWire;
-extern RsWire *rsWire;
+class RsWireVEG;
+extern RsWireVEG *rsWireVEG;
 
 class RsWireGroupShare
 {
@@ -64,6 +64,38 @@ class RsWireGroup
 	RsWireGroupShare mShareOptions;
 };
 
+
+
+/***********************************************************************
+ * So pulses operate in the following modes.
+ *
+ * => Standard, a post to your own group.
+ * => @User, gets duplicated on each user's group.
+ * => RT, duplicated as child of original post.
+ *
+ * From Twitter: 
+ *  twitter can be: embedded, replied to, favourited, unfavourited, 
+ *    retweeted, unretweeted and deleted
+ *
+ * See: https://dev.twitter.com/docs/platform-objects
+ *
+ * Format of message: .... 
+ *
+ *  #HashTags.
+ *  @68769381495134  => ID of Sender. 
+ *  <http>
+ *
+ ***********************************************************************/
+
+class RsWirePlace
+{
+	public:
+
+	
+
+};
+
+
 class RsWirePulse
 {
 	public:
@@ -78,15 +110,27 @@ class RsWirePulse
 
 	std::string mPulse; // all the text is stored here.
 
-	std::string mHashTags;
+	std::string mInReplyPulse;
+
+	uint32_t mPulseFlags;
+
+	std::list<std::string> mMentions;
+	std::list<std::string> mHashTags;
+	std::list<std::string> mUrls;
+
+	RsWirePlace mPlace;
 };
 
-class RsWire: public RsTokenService
+
+
+
+
+class RsWireVEG: public RsTokenServiceVEG
 {
 	public:
 
-	RsWire()  { return; }
-virtual ~RsWire() { return; }
+	RsWireVEG()  { return; }
+virtual ~RsWireVEG() { return; }
 
 	/* Specific Service Data */
 virtual bool getGroupData(const uint32_t &token, RsWireGroup &group) = 0;

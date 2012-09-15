@@ -1,7 +1,7 @@
 /*
- * libretroshare/src/services: p3wikiservice.h
+ * libretroshare/src/services: p3photoservice.h
  *
- * Wiki interface for RetroShare.
+ * 3P/PQI network interface for RetroShare.
  *
  * Copyright 2012-2012 by Robert Fernie.
  *
@@ -23,17 +23,17 @@
  *
  */
 
-#ifndef P3_WIKI_SERVICE_HEADER
-#define P3_WIKI_SERVICE_HEADER
+#ifndef P3_PHOTO_SERVICE_VEG_HEADER
+#define P3_PHOTO_SERVICE_VEG_HEADER
 
-#include "services/p3gxsservice.h"
-#include "retroshare/rswiki.h"
+#include "services/p3gxsserviceVEG.h"
+#include "retroshare/rsphotoVEG.h"
 
 #include <map>
 #include <string>
 
 /* 
- * Wiki Service
+ * Photo Service
  *
  * This is an example service for the new cache system.
  * For the moment, it will only hold data passed to it from the GUI.
@@ -47,39 +47,45 @@
  *
  */
 
-class WikiDataProxy: public GxsDataProxy
+
+class PhotoDataProxy: public GxsDataProxyVEG
 {
 	public:
 
-	bool getGroup(const std::string &id, RsWikiGroup &group);
-	bool getPage(const std::string &id, RsWikiPage &wiki);
+	bool addAlbum(const RsPhotoAlbum &album);
+	bool addPhoto(const RsPhotoPhoto &photo);
 
-	bool addGroup(const RsWikiGroup &group);
-	bool addPage(const RsWikiPage &page);
+	bool getAlbum(const std::string &id, RsPhotoAlbum &album);
+	bool getPhoto(const std::string &id, RsPhotoPhoto &photo);
 
         /* These Functions must be overloaded to complete the service */
 virtual bool convertGroupToMetaData(void *groupData, RsGroupMetaData &meta);
-virtual bool convertMsgToMetaData(void *msgData, RsMsgMetaData &meta);
+virtual bool convertMsgToMetaData(void *groupData, RsMsgMetaData &meta);
+
 };
 
 
-class p3WikiService: public p3GxsDataService, public RsWiki
+
+class p3PhotoServiceVEG: public p3GxsDataServiceVEG, public RsPhotoVEG
 {
 	public:
 
-	p3WikiService(uint16_t type);
+	p3PhotoServiceVEG(uint16_t type);
 
 virtual int	tick();
 
 	public:
 
+// NEW INTERFACE.
+/************* Extern Interface *******/
 
+        /* changed? */
 virtual bool updated();
 
        /* Data Requests */
-virtual bool requestGroupInfo(     uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds);
-virtual bool requestMsgInfo(       uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds);
-virtual bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &msgIds);
+virtual bool requestGroupInfo(     uint32_t &token, uint32_t ansType, const RsTokReqOptionsVEG &opts, const std::list<std::string> &groupIds);
+virtual bool requestMsgInfo(       uint32_t &token, uint32_t ansType, const RsTokReqOptionsVEG &opts, const std::list<std::string> &groupIds);
+virtual bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsVEG &opts, const std::list<std::string> &msgIds);
 
         /* Generic Lists */
 virtual bool getGroupList(         const uint32_t &token, std::list<std::string> &groupIds);
@@ -91,8 +97,8 @@ virtual bool getMsgSummary(        const uint32_t &token, std::list<RsMsgMetaDat
 
         /* Actual Data -> specific to Interface */
         /* Specific Service Data */
-virtual bool getGroupData(const uint32_t &token, RsWikiGroup &group);
-virtual bool getMsgData(const uint32_t &token, RsWikiPage &page);
+virtual bool getAlbum(const uint32_t &token, RsPhotoAlbum &album);
+virtual bool getPhoto(const uint32_t &token, RsPhotoPhoto &photo);
 
         /* Poll */
 virtual uint32_t requestStatus(const uint32_t token);
@@ -110,17 +116,20 @@ virtual bool setGroupServiceString(const std::string &grpId, const std::string &
 virtual bool groupRestoreKeys(const std::string &groupId);
 virtual bool groupShareKeys(const std::string &groupId, std::list<std::string>& peers);
 
-virtual bool createGroup(uint32_t &token, RsWikiGroup &group, bool isNew);
-virtual bool createPage(uint32_t &token, RsWikiPage &page, bool isNew);
+
+/* details are updated in album - to choose Album ID, and storage path */
+virtual bool submitAlbumDetails(uint32_t &token, RsPhotoAlbum &album, bool isNew);
+virtual bool submitPhoto(uint32_t &token, RsPhotoPhoto &photo, bool isNew);
+
+
 
 	private:
 
 std::string genRandomId();
 
-	WikiDataProxy *mWikiProxy;
+	PhotoDataProxy *mPhotoProxy;
 
-	RsMutex mWikiMtx;
-
+	RsMutex mPhotoMtx;
 	bool mUpdated;
 
 

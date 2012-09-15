@@ -1,7 +1,7 @@
 /*
- * libretroshare/src/services: p3wire.h
+ * libretroshare/src/services: p3forumsv2.h
  *
- * Wire interface for RetroShare.
+ * Wiki interface for RetroShare.
  *
  * Copyright 2012-2012 by Robert Fernie.
  *
@@ -23,41 +23,45 @@
  *
  */
 
-#ifndef P3_WIRE_SERVICE_HEADER
-#define P3_WIRE_SERVICE_HEADER
+#ifndef P3_FORUMSV2_SERVICE_HEADER
+#define P3_FORUMSV2_SERVICE_HEADER
 
-#include "services/p3gxsservice.h"
+#include "services/p3gxsserviceVEG.h"
 
-#include "retroshare/rswire.h"
+#include "retroshare/rsforumsVEG.h"
 
 #include <map>
 #include <string>
 
 /* 
- * Wire Service
  *
  */
-class WireDataProxy: public GxsDataProxy
+
+class ForumDataProxy: public GxsDataProxyVEG
 {
         public:
 
-        bool getGroup(const std::string &id, RsWireGroup &group);
-        bool getPulse(const std::string &id, RsWirePulse &pulse);
+        bool getForumGroup(const std::string &id, RsForumV2Group &group);
+        bool getForumMsg(const std::string &id, RsForumV2Msg &msg);
 
-        bool addGroup(const RsWireGroup &group);
-        bool addPulse(const RsWirePulse &pulse);
+        bool addForumGroup(const RsForumV2Group &group);
+        bool addForumMsg(const RsForumV2Msg &msg);
 
         /* These Functions must be overloaded to complete the service */
 virtual bool convertGroupToMetaData(void *groupData, RsGroupMetaData &meta);
 virtual bool convertMsgToMetaData(void *msgData, RsMsgMetaData &meta);
+
 };
 
 
-class p3Wire: public p3GxsDataService, public RsWire
+
+
+
+class p3ForumsVEG: public p3GxsDataServiceVEG, public RsForumsVEG
 {
 	public:
 
-	p3Wire(uint16_t type);
+	p3ForumsVEG(uint16_t type);
 
 virtual int	tick();
 
@@ -66,10 +70,11 @@ virtual int	tick();
 
 virtual bool updated();
 
+
        /* Data Requests */
-virtual bool requestGroupInfo(     uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds);
-virtual bool requestMsgInfo(       uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds);
-virtual bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &msgIds);
+virtual bool requestGroupInfo(     uint32_t &token, uint32_t ansType, const RsTokReqOptionsVEG &opts, const std::list<std::string> &groupIds);
+virtual bool requestMsgInfo(       uint32_t &token, uint32_t ansType, const RsTokReqOptionsVEG &opts, const std::list<std::string> &groupIds);
+virtual bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsVEG &opts, const std::list<std::string> &msgIds);
 
         /* Generic Lists */
 virtual bool getGroupList(         const uint32_t &token, std::list<std::string> &groupIds);
@@ -81,8 +86,8 @@ virtual bool getMsgSummary(        const uint32_t &token, std::list<RsMsgMetaDat
 
         /* Actual Data -> specific to Interface */
         /* Specific Service Data */
-virtual bool getGroupData(const uint32_t &token, RsWireGroup &group);
-virtual bool getMsgData(const uint32_t &token, RsWirePulse &page);
+virtual bool getGroupData(const uint32_t &token, RsForumV2Group &group);
+virtual bool getMsgData(const uint32_t &token, RsForumV2Msg &msg);
 
         /* Poll */
 virtual uint32_t requestStatus(const uint32_t token);
@@ -100,16 +105,17 @@ virtual bool setGroupServiceString(const std::string &grpId, const std::string &
 virtual bool groupRestoreKeys(const std::string &groupId);
 virtual bool groupShareKeys(const std::string &groupId, std::list<std::string>& peers);
 
-virtual bool createGroup(uint32_t &token, RsWireGroup &group, bool isNew);
-virtual bool createPulse(uint32_t &token, RsWirePulse &pulse, bool isNew);
+virtual bool createGroup(uint32_t &token, RsForumV2Group &group, bool isNew);
+virtual bool createMsg(uint32_t &token, RsForumV2Msg &msg, bool isNew);
 
 	private:
 
 std::string genRandomId();
+bool 	generateDummyData();
 
-	WireDataProxy *mWireProxy;
+	ForumDataProxy *mForumProxy;
 
-	RsMutex mWireMtx;
+	RsMutex mForumMtx;
 
 	/***** below here is locked *****/
 

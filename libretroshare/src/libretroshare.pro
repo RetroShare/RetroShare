@@ -645,31 +645,35 @@ linux-*:isEmpty(PREFIX) {
         }
 
         newservices { 
-            HEADERS += services/p3photoservice.h \
-                serialiser/rsphotoitems.h \
-                retroshare/rsphoto.h \
-                services/p3gxsservice.h \
-                retroshare/rsidentity.h \
-                services/p3wikiservice.h \
-                retroshare/rswiki.h \
-                retroshare/rswire.h \
-                services/p3wire.h \
-                services/p3idservice.h \
-                retroshare/rsforumsv2.h \
-                services/p3forumsv2.h \
-                retroshare/rsposted.h \
-                services/p3posted.h \
-                services/p3photoserviceV2.h \
-                retroshare/rsphotoV2.h
+            HEADERS += services/p3photoserviceVEG.h \
+                retroshare/rsphotoVEG.h \
+                services/p3gxsserviceVEG.h \
+                retroshare/rsidentityVEG.h \
+                services/p3wikiserviceVEG.h \
+                retroshare/rswikiVEG.h \
+                retroshare/rswireVEG.h \
+                services/p3wireVEG.h \
+                services/p3idserviceVEG.h \
+                retroshare/rsforumsVEG.h \
+                services/p3forumsVEG.h \
+                retroshare/rspostedVEG.h \
+                services/p3postedVEG.h \
+                services/p3photoserviceV2VEG.h \
+                retroshare/rsphotoVEG.h
 
-            SOURCES += services/p3photoservice.cc \
-                serialiser/rsphotoitems.cc \
-                services/p3gxsservice.cc \
-                services/p3wikiservice.cc \
-                services/p3wire.cc \
-                services/p3idservice.cc \
-                services/p3forumsv2.cc \
-                services/p3posted.cc
+		# Do I need this?
+                #serialiser/rsphotoitemsVEG.h \
+
+            SOURCES += services/p3photoserviceVEG.cc \
+                services/p3gxsserviceVEG.cc \
+                services/p3wikiserviceVEG.cc \
+                services/p3wireVEG.cc \
+                services/p3idserviceVEG.cc \
+                services/p3forumsVEG.cc \
+                services/p3postedVEG.cc
+
+		# Do I need this?
+                # serialiser/rsphotoitemsVEG.cc \
         }
 
 

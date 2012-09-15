@@ -30,11 +30,11 @@
 #include <string>
 #include <list>
 
-#include <retroshare/rsidentity.h>
+#include <retroshare/rsidentityVEG.h>
 
 /* The Main Interface Class - for information about your Peers */
-class RsWiki;
-extern RsWiki *rsWiki;
+class RsWikiVEG;
+extern RsWikiVEG *rsWikiVEG;
 
 class RsWikiGroupShare
 {
@@ -84,12 +84,12 @@ class RsWikiPage
 	std::string mHashTags;
 };
 
-class RsWiki: public RsTokenService
+class RsWikiVEG: public RsTokenServiceVEG
 {
 	public:
 
-	RsWiki()  { return; }
-virtual ~RsWiki() { return; }
+	RsWikiVEG()  { return; }
+virtual ~RsWikiVEG() { return; }
 
 	/* Specific Service Data */
 virtual bool getGroupData(const uint32_t &token, RsWikiGroup &group) = 0;

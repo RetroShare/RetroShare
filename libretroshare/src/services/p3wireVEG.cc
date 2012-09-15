@@ -23,7 +23,7 @@
  *
  */
 
-#include "services/p3wire.h"
+#include "services/p3wireVEG.h"
 
 #include "util/rsrandom.h"
 
@@ -31,15 +31,15 @@
  * #define WIKI_DEBUG 1
  ****/
 
-RsWire *rsWire = NULL;
+RsWireVEG *rsWireVEG = NULL;
 
 
 /********************************************************************************/
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
 
-p3Wire::p3Wire(uint16_t type)
-	:p3GxsDataService(type, new WireDataProxy()), mWireMtx("p3Wire"), mUpdated(true)
+p3WireVEG::p3WireVEG(uint16_t type)
+	:p3GxsDataServiceVEG(type, new WireDataProxy()), mWireMtx("p3Wire"), mUpdated(true)
 {
      	RsStackMutex stack(mWireMtx); /********** STACK LOCKED MTX ******/
 
@@ -48,9 +48,9 @@ p3Wire::p3Wire(uint16_t type)
 }
 
 
-int	p3Wire::tick()
+int	p3WireVEG::tick()
 {
-	//std::cerr << "p3Wire::tick()";
+	//std::cerr << "p3WireVEG::tick()";
 	//std::cerr << std::endl;
 
 	fakeprocessrequests();
@@ -58,7 +58,7 @@ int	p3Wire::tick()
 	return 0;
 }
 
-bool p3Wire::updated()
+bool p3WireVEG::updated()
 {
 	RsStackMutex stack(mWireMtx); /********** STACK LOCKED MTX ******/
 
@@ -73,35 +73,35 @@ bool p3Wire::updated()
 
 
        /* Data Requests */
-bool p3Wire::requestGroupInfo(     uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds)
+bool p3WireVEG::requestGroupInfo(     uint32_t &token, uint32_t ansType, const RsTokReqOptionsVEG &opts, const std::list<std::string> &groupIds)
 {
 	generateToken(token);
-	std::cerr << "p3Wire::requestGroupInfo() gets Token: " << token << std::endl;
+	std::cerr << "p3WireVEG::requestGroupInfo() gets Token: " << token << std::endl;
 	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_GROUPS, groupIds);
 
 	return true;
 }
 
-bool p3Wire::requestMsgInfo(       uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds)
+bool p3WireVEG::requestMsgInfo(       uint32_t &token, uint32_t ansType, const RsTokReqOptionsVEG &opts, const std::list<std::string> &groupIds)
 {
 	generateToken(token);
-	std::cerr << "p3Wire::requestMsgInfo() gets Token: " << token << std::endl;
+	std::cerr << "p3WireVEG::requestMsgInfo() gets Token: " << token << std::endl;
 	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_MSGS, groupIds);
 
 	return true;
 }
 
-bool p3Wire::requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &msgIds)
+bool p3WireVEG::requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsVEG &opts, const std::list<std::string> &msgIds)
 {
 	generateToken(token);
-	std::cerr << "p3Wire::requestMsgRelatedInfo() gets Token: " << token << std::endl;
+	std::cerr << "p3WireVEG::requestMsgRelatedInfo() gets Token: " << token << std::endl;
 	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_MSGRELATED, msgIds);
 
 	return true;
 }
 
         /* Generic Lists */
-bool p3Wire::getGroupList(         const uint32_t &token, std::list<std::string> &groupIds)
+bool p3WireVEG::getGroupList(         const uint32_t &token, std::list<std::string> &groupIds)
 {
 	uint32_t status;
 	uint32_t reqtype;
@@ -111,19 +111,19 @@ bool p3Wire::getGroupList(         const uint32_t &token, std::list<std::string>
 
 	if (anstype != RS_TOKREQ_ANSTYPE_LIST)
 	{
-		std::cerr << "p3Wire::getGroupList() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3WireVEG::getGroupList() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (reqtype != GXS_REQUEST_TYPE_GROUPS)
 	{
-		std::cerr << "p3Wire::getGroupList() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3WireVEG::getGroupList() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3Wire::getGroupList() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3WireVEG::getGroupList() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 
@@ -136,7 +136,7 @@ bool p3Wire::getGroupList(         const uint32_t &token, std::list<std::string>
 
 
 
-bool p3Wire::getMsgList(           const uint32_t &token, std::list<std::string> &msgIds)
+bool p3WireVEG::getMsgList(           const uint32_t &token, std::list<std::string> &msgIds)
 {
 	uint32_t status;
 	uint32_t reqtype;
@@ -146,19 +146,19 @@ bool p3Wire::getMsgList(           const uint32_t &token, std::list<std::string>
 
 	if (anstype != RS_TOKREQ_ANSTYPE_LIST)
 	{
-		std::cerr << "p3Wire::getMsgList() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3WireVEG::getMsgList() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if ((reqtype != GXS_REQUEST_TYPE_MSGS) && (reqtype != GXS_REQUEST_TYPE_MSGRELATED))
 	{
-		std::cerr << "p3Wire::getMsgList() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3WireVEG::getMsgList() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3Wire::getMsgList() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3WireVEG::getMsgList() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 
@@ -170,7 +170,7 @@ bool p3Wire::getMsgList(           const uint32_t &token, std::list<std::string>
 
 
         /* Generic Summary */
-bool p3Wire::getGroupSummary(      const uint32_t &token, std::list<RsGroupMetaData> &groupInfo)
+bool p3WireVEG::getGroupSummary(      const uint32_t &token, std::list<RsGroupMetaData> &groupInfo)
 {
 	uint32_t status;
 	uint32_t reqtype;
@@ -180,19 +180,19 @@ bool p3Wire::getGroupSummary(      const uint32_t &token, std::list<RsGroupMetaD
 
 	if (anstype != RS_TOKREQ_ANSTYPE_SUMMARY)
 	{
-		std::cerr << "p3Wire::getGroupSummary() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3WireVEG::getGroupSummary() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (reqtype != GXS_REQUEST_TYPE_GROUPS)
 	{
-		std::cerr << "p3Wire::getGroupSummary() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3WireVEG::getGroupSummary() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3Wire::getGroupSummary() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3WireVEG::getGroupSummary() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 
@@ -206,7 +206,7 @@ bool p3Wire::getGroupSummary(      const uint32_t &token, std::list<RsGroupMetaD
 	return ans;
 }
 
-bool p3Wire::getMsgSummary(        const uint32_t &token, std::list<RsMsgMetaData> &msgInfo)
+bool p3WireVEG::getMsgSummary(        const uint32_t &token, std::list<RsMsgMetaData> &msgInfo)
 {
 	uint32_t status;
 	uint32_t reqtype;
@@ -216,19 +216,19 @@ bool p3Wire::getMsgSummary(        const uint32_t &token, std::list<RsMsgMetaDat
 
 	if (anstype != RS_TOKREQ_ANSTYPE_SUMMARY)
 	{
-		std::cerr << "p3Wire::getMsgSummary() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3WireVEG::getMsgSummary() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if ((reqtype != GXS_REQUEST_TYPE_MSGS) && (reqtype != GXS_REQUEST_TYPE_MSGRELATED))
 	{
-		std::cerr << "p3Wire::getMsgSummary() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3WireVEG::getMsgSummary() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3Wire::getMsgSummary() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3WireVEG::getMsgSummary() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 
@@ -244,7 +244,7 @@ bool p3Wire::getMsgSummary(        const uint32_t &token, std::list<RsMsgMetaDat
 
 
         /* Specific Service Data */
-bool p3Wire::getGroupData(const uint32_t &token, RsWireGroup &group)
+bool p3WireVEG::getGroupData(const uint32_t &token, RsWireGroup &group)
 {
 	uint32_t status;
 	uint32_t reqtype;
@@ -255,19 +255,19 @@ bool p3Wire::getGroupData(const uint32_t &token, RsWireGroup &group)
 
 	if (anstype != RS_TOKREQ_ANSTYPE_DATA)
 	{
-		std::cerr << "p3Wire::getGroupData() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3WireVEG::getGroupData() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (reqtype != GXS_REQUEST_TYPE_GROUPS)
 	{
-		std::cerr << "p3Wire::getGroupData() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3WireVEG::getGroupData() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3Wire::getGroupData() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3WireVEG::getGroupData() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 	
@@ -285,7 +285,7 @@ bool p3Wire::getGroupData(const uint32_t &token, RsWireGroup &group)
 }
 
 
-bool p3Wire::getMsgData(const uint32_t &token, RsWirePulse &pulse)
+bool p3WireVEG::getMsgData(const uint32_t &token, RsWirePulse &pulse)
 {
 	uint32_t status;
 	uint32_t reqtype;
@@ -296,19 +296,19 @@ bool p3Wire::getMsgData(const uint32_t &token, RsWirePulse &pulse)
 
 	if (anstype != RS_TOKREQ_ANSTYPE_DATA)
 	{
-		std::cerr << "p3Wire::getMsgData() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3WireVEG::getMsgData() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if ((reqtype != GXS_REQUEST_TYPE_MSGS) && (reqtype != GXS_REQUEST_TYPE_MSGRELATED))
 	{
-		std::cerr << "p3Wire::getMsgData() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3WireVEG::getMsgData() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3Wire::getMsgData() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3WireVEG::getMsgData() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 	
@@ -328,7 +328,7 @@ bool p3Wire::getMsgData(const uint32_t &token, RsWirePulse &pulse)
 
 
         /* Poll */
-uint32_t p3Wire::requestStatus(const uint32_t token)
+uint32_t p3WireVEG::requestStatus(const uint32_t token)
 {
 	uint32_t status;
 	uint32_t reqtype;
@@ -341,46 +341,46 @@ uint32_t p3Wire::requestStatus(const uint32_t token)
 
 
         /* Cancel Request */
-bool p3Wire::cancelRequest(const uint32_t &token)
+bool p3WireVEG::cancelRequest(const uint32_t &token)
 {
 	return clearRequest(token);
 }
 
         //////////////////////////////////////////////////////////////////////////////
 
-bool p3Wire::setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask)
+bool p3WireVEG::setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask)
 {
         return mWireProxy->setMessageStatus(msgId, status, statusMask);
 }
 
 
-bool p3Wire::setGroupStatus(const std::string &groupId, const uint32_t status, const uint32_t statusMask)
+bool p3WireVEG::setGroupStatus(const std::string &groupId, const uint32_t status, const uint32_t statusMask)
 {
         return mWireProxy->setGroupStatus(groupId, status, statusMask);
 }
 
-bool p3Wire::setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask)
+bool p3WireVEG::setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask)
 {
 	return mWireProxy->setGroupSubscribeFlags(groupId, subscribeFlags, subscribeMask);
 }
 
-bool p3Wire::setMessageServiceString(const std::string &msgId, const std::string &str)
+bool p3WireVEG::setMessageServiceString(const std::string &msgId, const std::string &str)
 {
         return mWireProxy->setMessageServiceString(msgId, str);
 }
 
-bool p3Wire::setGroupServiceString(const std::string &grpId, const std::string &str)
+bool p3WireVEG::setGroupServiceString(const std::string &grpId, const std::string &str)
 {
         return mWireProxy->setGroupServiceString(grpId, str);
 }
 
 
-bool p3Wire::groupRestoreKeys(const std::string &groupId)
+bool p3WireVEG::groupRestoreKeys(const std::string &groupId)
 {
 	return false;
 }
 
-bool p3Wire::groupShareKeys(const std::string &groupId, std::list<std::string>& peers)
+bool p3WireVEG::groupShareKeys(const std::string &groupId, std::list<std::string>& peers)
 {
 	return false;
 }
@@ -389,7 +389,7 @@ bool p3Wire::groupShareKeys(const std::string &groupId, std::list<std::string>& 
 /********************************************************************************************/
 
 	
-std::string p3Wire::genRandomId()
+std::string p3WireVEG::genRandomId()
 {
 	std::string randomId;
 	for(int i = 0; i < 20; i++)
@@ -401,7 +401,7 @@ std::string p3Wire::genRandomId()
 }
 	
 
-bool p3Wire::createGroup(uint32_t &token, RsWireGroup &group, bool isNew)
+bool p3WireVEG::createGroup(uint32_t &token, RsWireGroup &group, bool isNew)
 {
 	if (group.mMeta.mGroupId.empty())
 	{
@@ -412,7 +412,7 @@ bool p3Wire::createGroup(uint32_t &token, RsWireGroup &group, bool isNew)
 	}
 	else
 	{
-		std::cerr << "p3Wire::createGroup() Group with existing Id... dropping";
+		std::cerr << "p3WireVEG::createGroup() Group with existing Id... dropping";
 		std::cerr << std::endl;
 		return false;
 	}
@@ -427,7 +427,7 @@ bool p3Wire::createGroup(uint32_t &token, RsWireGroup &group, bool isNew)
 	// Fake a request to return the GroupMetaData.
 	generateToken(token);
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
-	RsTokReqOptions opts; // NULL is good.
+	RsTokReqOptionsVEG opts; // NULL is good.
 	std::list<std::string> groupIds;
 	groupIds.push_back(group.mMeta.mGroupId); // It will just return this one.
 	
@@ -440,12 +440,12 @@ bool p3Wire::createGroup(uint32_t &token, RsWireGroup &group, bool isNew)
 
 
 
-bool p3Wire::createPulse(uint32_t &token, RsWirePulse &pulse, bool isNew)
+bool p3WireVEG::createPulse(uint32_t &token, RsWirePulse &pulse, bool isNew)
 {
 	if (pulse.mMeta.mGroupId.empty())
 	{
 		/* new photo */
-		std::cerr << "p3Wire::createPulse() Missing PulseID";
+		std::cerr << "p3WireVEG::createPulse() Missing PulseID";
 		std::cerr << std::endl;
 		return false;
 	}
@@ -453,7 +453,7 @@ bool p3Wire::createPulse(uint32_t &token, RsWirePulse &pulse, bool isNew)
 	/* check if its a mod or new pulse */
 	if (pulse.mMeta.mOrigMsgId.empty())
 	{
-		std::cerr << "p3Wire::createPulse() New Pulse";
+		std::cerr << "p3WireVEG::createPulse() New Pulse";
 		std::cerr << std::endl;
 
 		/* new pulse, generate a new OrigPulseId */
@@ -462,18 +462,18 @@ bool p3Wire::createPulse(uint32_t &token, RsWirePulse &pulse, bool isNew)
 	}
 	else
 	{
-		std::cerr << "p3Wire::createPulse() Modified Pulse";
+		std::cerr << "p3WireVEG::createPulse() Modified Pulse";
 		std::cerr << std::endl;
 
 		/* mod pulse, keep orig pulse id, generate a new PulseId */
 		pulse.mMeta.mMsgId = genRandomId();
 	}
 
-	std::cerr << "p3Wire::createPulse() GroupId: " << pulse.mMeta.mGroupId;
+	std::cerr << "p3WireVEG::createPulse() GroupId: " << pulse.mMeta.mGroupId;
 	std::cerr << std::endl;
-	std::cerr << "p3Wire::createPulse() PulseId: " << pulse.mMeta.mMsgId;
+	std::cerr << "p3WireVEG::createPulse() PulseId: " << pulse.mMeta.mMsgId;
 	std::cerr << std::endl;
-	std::cerr << "p3Wire::createPulse() OrigPulseId: " << pulse.mMeta.mOrigMsgId;
+	std::cerr << "p3WireVEG::createPulse() OrigPulseId: " << pulse.mMeta.mOrigMsgId;
 	std::cerr << std::endl;
 
 	{
@@ -486,11 +486,11 @@ bool p3Wire::createPulse(uint32_t &token, RsWirePulse &pulse, bool isNew)
 	// Fake a request to return the MsgMetaData.
 	generateToken(token);
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
-	RsTokReqOptions opts; // NULL is good.
+	RsTokReqOptionsVEG opts; // NULL is good.
 	std::list<std::string> msgIds;
 	msgIds.push_back(pulse.mMeta.mMsgId); // It will just return this one.
 	
-	std::cerr << "p3Wire::createPulse() Generating Request Token: " << token << std::endl;
+	std::cerr << "p3WireVEG::createPulse() Generating Request Token: " << token << std::endl;
 	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_MSGRELATED, msgIds);
 
 	return true;
@@ -607,7 +607,7 @@ bool WireDataProxy::convertMsgToMetaData(void *msgData, RsMsgMetaData &meta)
 
 #if 0
 
-bool p3Wire::generateDummyData()
+bool p3WireVEG::generateDummyData()
 {
 #define MAX_GROUPS 100
 #define MAX_POSTS  1000

@@ -5,7 +5,7 @@
 RsPhotoV2 *rsPhotoV2 = NULL;
 
 p3PhotoServiceV2::p3PhotoServiceV2(RsGeneralDataService* gds, RsNetworkExchangeService* nes)
-	: RsGenExchange(gds, nes, new RsGxsPhotoSerialiser(), RS_SERVICE_TYPE_PHOTO)
+	: RsGenExchange(gds, nes, new RsGxsPhotoSerialiser(), RS_SERVICE_GXSV1_TYPE_PHOTO)
 {
 
 

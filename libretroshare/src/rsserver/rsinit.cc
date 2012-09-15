@@ -1806,7 +1806,7 @@ RsTurtle *rsTurtle = NULL ;
 #include "services/p3blogs.h"
 #include "turtle/p3turtle.h"
 
-#define ENABLE_GXS_SERVICES	1
+#define ENABLE_GXS_VEG_SERVICES	1
 #define ENABLE_GXS_CORE 1
 
 #ifdef ENABLE_GXS_CORE
@@ -1816,13 +1816,13 @@ RsTurtle *rsTurtle = NULL ;
 #include "gxs/rsgxsnetservice.h"
 #endif
 
-#ifdef ENABLE_GXS_SERVICES
-#include "services/p3photoservice.h"
-#include "services/p3wikiservice.h"
-#include "services/p3wire.h"
-#include "services/p3idservice.h"
-#include "services/p3forumsv2.h"
-#include "services/p3posted.h"
+#ifdef ENABLE_GXS_VEG_SERVICES
+#include "services/p3photoserviceVEG.h"
+#include "services/p3wikiserviceVEG.h"
+#include "services/p3wireVEG.h"
+#include "services/p3idserviceVEG.h"
+#include "services/p3forumsVEG.h"
+#include "services/p3postedVEG.h"
 #endif
 
 #ifndef PQI_DISABLE_TUNNEL
@@ -2272,7 +2272,7 @@ int RsServer::StartupRetroShare()
 	// first prep the core
 
 	RsGeneralDataService* photo_ds = new RsDataService("./", "photoV2_db",
-			RS_SERVICE_TYPE_PHOTO, NULL);
+			RS_SERVICE_GXSV1_TYPE_PHOTO, NULL);
 
         photo_ds->resetDataStore();
 
@@ -2301,31 +2301,31 @@ int RsServer::StartupRetroShare()
 
 #endif
 
-#ifdef ENABLE_GXS_SERVICES
+#ifdef ENABLE_GXS_VEG_SERVICES
 	// Testing New Cache Services.
-	p3PhotoService *mPhotos = new p3PhotoService(RS_SERVICE_TYPE_PHOTO);
-	pqih -> addService(mPhotos);
+	p3PhotoServiceVEG *mPhotosVEG = new p3PhotoServiceVEG(RS_SERVICE_VEG_TYPE_PHOTO);
+	pqih -> addService(mPhotosVEG);
 	
 	// Testing New Cache Services.
-	p3WikiService *mWikis = new p3WikiService(RS_SERVICE_TYPE_WIKI);
-	pqih -> addService(mWikis);
+	p3WikiServiceVEG *mWikisVEG = new p3WikiServiceVEG(RS_SERVICE_VEG_TYPE_WIKI);
+	pqih -> addService(mWikisVEG);
 	
 	// Testing New Cache Services.
-	p3Wire *mWire = new p3Wire(RS_SERVICE_TYPE_WIRE);
-	pqih -> addService(mWire);
+	p3WireVEG *mWireVEG = new p3WireVEG(RS_SERVICE_VEG_TYPE_WIRE);
+	pqih -> addService(mWireVEG);
 	
 	// Testing New Cache Services.
-	p3IdService *mIdentity = new p3IdService(RS_SERVICE_TYPE_IDENTITY);
-	pqih -> addService(mIdentity);
+	p3IdServiceVEG *mIdentityVEG = new p3IdServiceVEG(RS_SERVICE_VEG_TYPE_IDENTITY);
+	pqih -> addService(mIdentityVEG);
 	
 	// Testing New Cache Services.
-	p3ForumsV2 *mForumsV2 = new p3ForumsV2(RS_SERVICE_TYPE_FORUMSV2);
-	pqih -> addService(mForumsV2);
+	p3ForumsVEG *mForumsVEG = new p3ForumsVEG(RS_SERVICE_VEG_TYPE_FORUMS);
+	pqih -> addService(mForumsVEG);
 	
 	// Testing New Cache Services.
-	p3PostedService *mPosted = new p3PostedService(RS_SERVICE_TYPE_POSTED);
-	pqih -> addService(mPosted);
-#endif // ENABLE_GXS_SERVICES
+	p3PostedServiceVEG *mPostedVEG = new p3PostedServiceVEG(RS_SERVICE_VEG_TYPE_POSTED);
+	pqih -> addService(mPostedVEG);
+#endif // ENABLE_GXS_VEG_SERVICES
 
 
 #ifndef RS_RELEASE
@@ -2586,15 +2586,18 @@ int RsServer::StartupRetroShare()
 
 #ifdef ENABLE_GXS_SERVICES
 	// Testing of new cache system interfaces.
-	rsIdentity = mIdentity;
-	rsPhoto = mPhotos;
-        rsPhotoV2 = mPhotoV2;
-	rsWiki = mWikis;
-	rsWire = mWire;
-	rsForumsV2 = mForumsV2;
-	rsPosted = mPosted;
+	rsIdentityVEG = mIdentityVEG;
+	rsPhotoVEG = mPhotosVEG;
+	rsWikiVEG = mWikisVEG;
+	rsWireVEG = mWireVEG;
+	rsForumsVEG = mForumsVEG;
+	rsPostedVEG = mPostedVEG;
+
 #endif // ENABLE_GXS_SERVICES
 
+#ifdef ENABLE_GXS_CORE
+        rsPhotoV2 = mPhotoV2;
+#endif // ENABLE_GXS_CORE
 
 #ifdef RS_USE_BLOGS	
 	rsBlogs = mBlogs;

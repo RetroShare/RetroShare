@@ -23,7 +23,7 @@
  *
  */
 
-#include "services/p3forumsv2.h"
+#include "services/p3forumsVEG.h"
 
 #include "util/rsrandom.h"
 #include <stdio.h>
@@ -32,7 +32,7 @@
  * #define FORUMV2_DEBUG 1
  ****/
 
-RsForumsV2 *rsForumsV2 = NULL;
+RsForumsVEG *rsForumsVEG = NULL;
 
 
 
@@ -40,8 +40,8 @@ RsForumsV2 *rsForumsV2 = NULL;
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
 
-p3ForumsV2::p3ForumsV2(uint16_t type)
-	:p3GxsDataService(type, new ForumDataProxy()), mForumMtx("p3ForumsV2"), mUpdated(true)
+p3ForumsVEG::p3ForumsVEG(uint16_t type)
+	:p3GxsDataServiceVEG(type, new ForumDataProxy()), mForumMtx("p3ForumsV2"), mUpdated(true)
 {
 	{
      		RsStackMutex stack(mForumMtx); /********** STACK LOCKED MTX ******/
@@ -55,9 +55,9 @@ p3ForumsV2::p3ForumsV2(uint16_t type)
 }
 
 
-int	p3ForumsV2::tick()
+int	p3ForumsVEG::tick()
 {
-	//std::cerr << "p3ForumsV2::tick()";
+	//std::cerr << "p3ForumsVEG::tick()";
 	//std::cerr << std::endl;
 
 	fakeprocessrequests();
@@ -65,7 +65,7 @@ int	p3ForumsV2::tick()
 	return 0;
 }
 
-bool p3ForumsV2::updated()
+bool p3ForumsVEG::updated()
 {
 	RsStackMutex stack(mForumMtx); /********** STACK LOCKED MTX ******/
 
@@ -80,35 +80,35 @@ bool p3ForumsV2::updated()
 
 
        /* Data Requests */
-bool p3ForumsV2::requestGroupInfo(     uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds)
+bool p3ForumsVEG::requestGroupInfo(     uint32_t &token, uint32_t ansType, const RsTokReqOptionsVEG &opts, const std::list<std::string> &groupIds)
 {
 	generateToken(token);
-	std::cerr << "p3ForumsV2::requestGroupInfo() gets Token: " << token << std::endl;
+	std::cerr << "p3ForumsVEG::requestGroupInfo() gets Token: " << token << std::endl;
 	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_GROUPS, groupIds);
 
 	return true;
 }
 
-bool p3ForumsV2::requestMsgInfo(       uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds)
+bool p3ForumsVEG::requestMsgInfo(       uint32_t &token, uint32_t ansType, const RsTokReqOptionsVEG &opts, const std::list<std::string> &groupIds)
 {
 	generateToken(token);
-	std::cerr << "p3ForumsV2::requestMsgInfo() gets Token: " << token << std::endl;
+	std::cerr << "p3ForumsVEG::requestMsgInfo() gets Token: " << token << std::endl;
 	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_MSGS, groupIds);
 
 	return true;
 }
 
-bool p3ForumsV2::requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &msgIds)
+bool p3ForumsVEG::requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsVEG &opts, const std::list<std::string> &msgIds)
 {
 	generateToken(token);
-	std::cerr << "p3ForumsV2::requestMsgRelatedInfo() gets Token: " << token << std::endl;
+	std::cerr << "p3ForumsVEG::requestMsgRelatedInfo() gets Token: " << token << std::endl;
 	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_MSGRELATED, msgIds);
 
 	return true;
 }
 
         /* Generic Lists */
-bool p3ForumsV2::getGroupList(         const uint32_t &token, std::list<std::string> &groupIds)
+bool p3ForumsVEG::getGroupList(         const uint32_t &token, std::list<std::string> &groupIds)
 {
 	uint32_t status;
 	uint32_t reqtype;
@@ -118,19 +118,19 @@ bool p3ForumsV2::getGroupList(         const uint32_t &token, std::list<std::str
 
 	if (anstype != RS_TOKREQ_ANSTYPE_LIST)
 	{
-		std::cerr << "p3ForumsV2::getGroupList() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3ForumsVEG::getGroupList() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (reqtype != GXS_REQUEST_TYPE_GROUPS)
 	{
-		std::cerr << "p3ForumsV2::getGroupList() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3ForumsVEG::getGroupList() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3ForumsV2::getGroupList() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3ForumsVEG::getGroupList() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 
@@ -143,7 +143,7 @@ bool p3ForumsV2::getGroupList(         const uint32_t &token, std::list<std::str
 
 
 
-bool p3ForumsV2::getMsgList(           const uint32_t &token, std::list<std::string> &msgIds)
+bool p3ForumsVEG::getMsgList(           const uint32_t &token, std::list<std::string> &msgIds)
 {
 	uint32_t status;
 	uint32_t reqtype;
@@ -153,19 +153,19 @@ bool p3ForumsV2::getMsgList(           const uint32_t &token, std::list<std::str
 
 	if (anstype != RS_TOKREQ_ANSTYPE_LIST)
 	{
-		std::cerr << "p3ForumsV2::getMsgList() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3ForumsVEG::getMsgList() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if ((reqtype != GXS_REQUEST_TYPE_MSGS) && (reqtype != GXS_REQUEST_TYPE_MSGRELATED))
 	{
-		std::cerr << "p3ForumsV2::getMsgList() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3ForumsVEG::getMsgList() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3ForumsV2::getMsgList() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3ForumsVEG::getMsgList() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 
@@ -177,7 +177,7 @@ bool p3ForumsV2::getMsgList(           const uint32_t &token, std::list<std::str
 
 
         /* Generic Summary */
-bool p3ForumsV2::getGroupSummary(      const uint32_t &token, std::list<RsGroupMetaData> &groupInfo)
+bool p3ForumsVEG::getGroupSummary(      const uint32_t &token, std::list<RsGroupMetaData> &groupInfo)
 {
 	uint32_t status;
 	uint32_t reqtype;
@@ -187,19 +187,19 @@ bool p3ForumsV2::getGroupSummary(      const uint32_t &token, std::list<RsGroupM
 
 	if (anstype != RS_TOKREQ_ANSTYPE_SUMMARY)
 	{
-		std::cerr << "p3ForumsV2::getGroupSummary() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3ForumsVEG::getGroupSummary() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (reqtype != GXS_REQUEST_TYPE_GROUPS)
 	{
-		std::cerr << "p3ForumsV2::getGroupSummary() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3ForumsVEG::getGroupSummary() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3ForumsV2::getGroupSummary() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3ForumsVEG::getGroupSummary() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 
@@ -213,7 +213,7 @@ bool p3ForumsV2::getGroupSummary(      const uint32_t &token, std::list<RsGroupM
 	return ans;
 }
 
-bool p3ForumsV2::getMsgSummary(        const uint32_t &token, std::list<RsMsgMetaData> &msgInfo)
+bool p3ForumsVEG::getMsgSummary(        const uint32_t &token, std::list<RsMsgMetaData> &msgInfo)
 {
 	uint32_t status;
 	uint32_t reqtype;
@@ -223,19 +223,19 @@ bool p3ForumsV2::getMsgSummary(        const uint32_t &token, std::list<RsMsgMet
 
 	if (anstype != RS_TOKREQ_ANSTYPE_SUMMARY)
 	{
-		std::cerr << "p3ForumsV2::getMsgSummary() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3ForumsVEG::getMsgSummary() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if ((reqtype != GXS_REQUEST_TYPE_MSGS) && (reqtype != GXS_REQUEST_TYPE_MSGRELATED))
 	{
-		std::cerr << "p3ForumsV2::getMsgSummary() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3ForumsVEG::getMsgSummary() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3ForumsV2::getMsgSummary() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3ForumsVEG::getMsgSummary() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 
@@ -251,7 +251,7 @@ bool p3ForumsV2::getMsgSummary(        const uint32_t &token, std::list<RsMsgMet
 
 
         /* Specific Service Data */
-bool p3ForumsV2::getGroupData(const uint32_t &token, RsForumV2Group &group)
+bool p3ForumsVEG::getGroupData(const uint32_t &token, RsForumV2Group &group)
 {
 	uint32_t status;
 	uint32_t reqtype;
@@ -262,19 +262,19 @@ bool p3ForumsV2::getGroupData(const uint32_t &token, RsForumV2Group &group)
 
 	if (anstype != RS_TOKREQ_ANSTYPE_DATA)
 	{
-		std::cerr << "p3ForumsV2::getGroupData() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3ForumsVEG::getGroupData() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (reqtype != GXS_REQUEST_TYPE_GROUPS)
 	{
-		std::cerr << "p3ForumsV2::getGroupData() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3ForumsVEG::getGroupData() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3ForumsV2::getGroupData() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3ForumsVEG::getGroupData() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 	
@@ -292,7 +292,7 @@ bool p3ForumsV2::getGroupData(const uint32_t &token, RsForumV2Group &group)
 }
 
 
-bool p3ForumsV2::getMsgData(const uint32_t &token, RsForumV2Msg &msg)
+bool p3ForumsVEG::getMsgData(const uint32_t &token, RsForumV2Msg &msg)
 {
 	uint32_t status;
 	uint32_t reqtype;
@@ -303,19 +303,19 @@ bool p3ForumsV2::getMsgData(const uint32_t &token, RsForumV2Msg &msg)
 
 	if (anstype != RS_TOKREQ_ANSTYPE_DATA)
 	{
-		std::cerr << "p3ForumsV2::getMsgData() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3ForumsVEG::getMsgData() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if ((reqtype != GXS_REQUEST_TYPE_MSGS) && (reqtype != GXS_REQUEST_TYPE_MSGRELATED))
 	{
-		std::cerr << "p3ForumsV2::getMsgData() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3ForumsVEG::getMsgData() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3ForumsV2::getMsgData() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3ForumsVEG::getMsgData() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 	
@@ -335,7 +335,7 @@ bool p3ForumsV2::getMsgData(const uint32_t &token, RsForumV2Msg &msg)
 
 
         /* Poll */
-uint32_t p3ForumsV2::requestStatus(const uint32_t token)
+uint32_t p3ForumsVEG::requestStatus(const uint32_t token)
 {
 	uint32_t status;
 	uint32_t reqtype;
@@ -348,46 +348,46 @@ uint32_t p3ForumsV2::requestStatus(const uint32_t token)
 
 
         /* Cancel Request */
-bool p3ForumsV2::cancelRequest(const uint32_t &token)
+bool p3ForumsVEG::cancelRequest(const uint32_t &token)
 {
 	return clearRequest(token);
 }
 
         //////////////////////////////////////////////////////////////////////////////
 
-bool p3ForumsV2::setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask)
+bool p3ForumsVEG::setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask)
 {
 	return mForumProxy->setMessageStatus(msgId, status, statusMask);
 }
 
-bool p3ForumsV2::setGroupStatus(const std::string &groupId, const uint32_t status, const uint32_t statusMask)
+bool p3ForumsVEG::setGroupStatus(const std::string &groupId, const uint32_t status, const uint32_t statusMask)
 {
 	return mForumProxy->setGroupStatus(groupId, status, statusMask);
 }
 
-bool p3ForumsV2::setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask)
+bool p3ForumsVEG::setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask)
 {
 	return mForumProxy->setGroupSubscribeFlags(groupId, subscribeFlags, subscribeMask);
 }
 
-bool p3ForumsV2::setMessageServiceString(const std::string &msgId, const std::string &str)
+bool p3ForumsVEG::setMessageServiceString(const std::string &msgId, const std::string &str)
 {
 	return mForumProxy->setMessageServiceString(msgId, str);
 }
 
-bool p3ForumsV2::setGroupServiceString(const std::string &grpId, const std::string &str)
+bool p3ForumsVEG::setGroupServiceString(const std::string &grpId, const std::string &str)
 {
 	return mForumProxy->setGroupServiceString(grpId, str);
 }
 
 
 
-bool p3ForumsV2::groupRestoreKeys(const std::string &groupId)
+bool p3ForumsVEG::groupRestoreKeys(const std::string &groupId)
 {
 	return false;
 }
 
-bool p3ForumsV2::groupShareKeys(const std::string &groupId, std::list<std::string>& peers)
+bool p3ForumsVEG::groupShareKeys(const std::string &groupId, std::list<std::string>& peers)
 {
 	return false;
 }
@@ -398,7 +398,7 @@ bool p3ForumsV2::groupShareKeys(const std::string &groupId, std::list<std::strin
 /********************************************************************************************/
 
 	
-std::string p3ForumsV2::genRandomId()
+std::string p3ForumsVEG::genRandomId()
 {
 	std::string randomId;
 	for(int i = 0; i < 20; i++)
@@ -409,7 +409,7 @@ std::string p3ForumsV2::genRandomId()
 	return randomId;
 }
 	
-bool p3ForumsV2::createGroup(uint32_t &token, RsForumV2Group &group, bool isNew)
+bool p3ForumsVEG::createGroup(uint32_t &token, RsForumV2Group &group, bool isNew)
 {
 	if (group.mMeta.mGroupId.empty())
 	{
@@ -420,7 +420,7 @@ bool p3ForumsV2::createGroup(uint32_t &token, RsForumV2Group &group, bool isNew)
 	}
 	else
 	{
-		std::cerr << "p3ForumsV2::createGroup() Group with existing Id... dropping";
+		std::cerr << "p3ForumsVEG::createGroup() Group with existing Id... dropping";
 		std::cerr << std::endl;
 		return false;
 	}
@@ -435,11 +435,11 @@ bool p3ForumsV2::createGroup(uint32_t &token, RsForumV2Group &group, bool isNew)
 	// Fake a request to return the GroupMetaData.
 	generateToken(token);
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
-	RsTokReqOptions opts; // NULL is good.
+	RsTokReqOptionsVEG opts; // NULL is good.
 	std::list<std::string> groupIds;
 	groupIds.push_back(group.mMeta.mGroupId); // It will just return this one.
 	
-	std::cerr << "p3ForumsV2::createGroup() Generating Request Token: " << token << std::endl;
+	std::cerr << "p3ForumsVEG::createGroup() Generating Request Token: " << token << std::endl;
 	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_GROUPS, groupIds);
 	
 	return true;
@@ -448,12 +448,12 @@ bool p3ForumsV2::createGroup(uint32_t &token, RsForumV2Group &group, bool isNew)
 
 
 
-bool p3ForumsV2::createMsg(uint32_t &token, RsForumV2Msg &msg, bool isNew)
+bool p3ForumsVEG::createMsg(uint32_t &token, RsForumV2Msg &msg, bool isNew)
 {
 	if (msg.mMeta.mGroupId.empty())
 	{
 		/* new photo */
-		std::cerr << "p3ForumsV2::createForumMsg() Missing MsgID";
+		std::cerr << "p3ForumsVEG::createForumMsg() Missing MsgID";
 		std::cerr << std::endl;
 		return false;
 	}
@@ -461,7 +461,7 @@ bool p3ForumsV2::createMsg(uint32_t &token, RsForumV2Msg &msg, bool isNew)
 	/* check if its a mod or new msg */
 	if (msg.mMeta.mOrigMsgId.empty())
 	{
-		std::cerr << "p3ForumsV2::createForumMsg() New Msg";
+		std::cerr << "p3ForumsVEG::createForumMsg() New Msg";
 		std::cerr << std::endl;
 
 		/* new msg, generate a new OrigMsgId */
@@ -470,18 +470,18 @@ bool p3ForumsV2::createMsg(uint32_t &token, RsForumV2Msg &msg, bool isNew)
 	}
 	else
 	{
-		std::cerr << "p3ForumsV2::createForumMsg() Modified Msg";
+		std::cerr << "p3ForumsVEG::createForumMsg() Modified Msg";
 		std::cerr << std::endl;
 
 		/* mod msg, keep orig msg id, generate a new MsgId */
 		msg.mMeta.mMsgId = genRandomId();
 	}
 
-	std::cerr << "p3ForumsV2::createForumMsg() GroupId: " << msg.mMeta.mGroupId;
+	std::cerr << "p3ForumsVEG::createForumMsg() GroupId: " << msg.mMeta.mGroupId;
 	std::cerr << std::endl;
-	std::cerr << "p3ForumsV2::createForumMsg() MsgId: " << msg.mMeta.mMsgId;
+	std::cerr << "p3ForumsVEG::createForumMsg() MsgId: " << msg.mMeta.mMsgId;
 	std::cerr << std::endl;
-	std::cerr << "p3ForumsV2::createForumMsg() OrigMsgId: " << msg.mMeta.mOrigMsgId;
+	std::cerr << "p3ForumsVEG::createForumMsg() OrigMsgId: " << msg.mMeta.mOrigMsgId;
 	std::cerr << std::endl;
 
 	{
@@ -494,11 +494,11 @@ bool p3ForumsV2::createMsg(uint32_t &token, RsForumV2Msg &msg, bool isNew)
 	// Fake a request to return the MsgMetaData.
 	generateToken(token);
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
-	RsTokReqOptions opts; // NULL is good.
+	RsTokReqOptionsVEG opts; // NULL is good.
 	std::list<std::string> msgIds;
 	msgIds.push_back(msg.mMeta.mMsgId); // It will just return this one.
 	
-	std::cerr << "p3ForumsV2::createMsg() Generating Request Token: " << token << std::endl;
+	std::cerr << "p3ForumsVEG::createMsg() Generating Request Token: " << token << std::endl;
 	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_MSGRELATED, msgIds);
 
 	return true;
@@ -609,7 +609,7 @@ bool ForumDataProxy::convertMsgToMetaData(void *msgData, RsMsgMetaData &meta)
 
 
 
-bool p3ForumsV2::generateDummyData()
+bool p3ForumsVEG::generateDummyData()
 {
 	/* so we want to generate 100's of forums */
 #define MAX_FORUMS 10 //100
@@ -673,7 +673,7 @@ bool p3ForumsV2::generateDummyData()
 		mGroups.push_back(forum);
 
 
-		//std::cerr << "p3ForumsV2::generateDummyData() Generated Forum: " << forum.mMeta;
+		//std::cerr << "p3ForumsVEG::generateDummyData() Generated Forum: " << forum.mMeta;
 		//std::cerr << std::endl;
 	}
 
@@ -725,7 +725,7 @@ bool p3ForumsV2::generateDummyData()
 
 		mMsgs.push_back(msg);
 
-		//std::cerr << "p3ForumsV2::generateDummyData() Generated Thread: " << msg.mMeta;
+		//std::cerr << "p3ForumsVEG::generateDummyData() Generated Thread: " << msg.mMeta;
 		//std::cerr << std::endl;
 		
 	}
@@ -778,7 +778,7 @@ bool p3ForumsV2::generateDummyData()
 
 		mMsgs.push_back(msg);
 
-		//std::cerr << "p3ForumsV2::generateDummyData() Generated Child Msg: " << msg.mMeta;
+		//std::cerr << "p3ForumsVEG::generateDummyData() Generated Child Msg: " << msg.mMeta;
 		//std::cerr << std::endl;
 
 	}

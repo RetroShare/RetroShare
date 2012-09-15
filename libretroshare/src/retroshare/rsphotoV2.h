@@ -30,7 +30,7 @@
 #include <string>
 #include <list>
 #include "rsgxsservice.h"
-#include "rsphoto.h"
+#include "rsphotoVEG.h"
 
 /* The Main Interface Class - for information about your Peers */
 class RsPhotoV2;

@@ -23,22 +23,22 @@
  *
  */
 
-#include "services/p3photoservice.h"
+#include "services/p3photoserviceVEG.h"
 #include "util/rsrandom.h"
 
 /****
  * #define PHOTO_DEBUG 1
  ****/
 
-RsPhoto *rsPhoto = NULL;
+RsPhotoVEG *rsPhotoVEG = NULL;
 
 
 /********************************************************************************/
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
 
-p3PhotoService::p3PhotoService(uint16_t type)
-	:p3GxsDataService(type, new PhotoDataProxy()), mPhotoMtx("p3PhotoService"), mUpdated(true)
+p3PhotoServiceVEG::p3PhotoServiceVEG(uint16_t type)
+	:p3GxsDataServiceVEG(type, new PhotoDataProxy()), mPhotoMtx("p3PhotoService"), mUpdated(true)
 {
      	RsStackMutex stack(mPhotoMtx); /********** STACK LOCKED MTX ******/
 
@@ -47,9 +47,9 @@ p3PhotoService::p3PhotoService(uint16_t type)
 }
 
 
-int	p3PhotoService::tick()
+int	p3PhotoServiceVEG::tick()
 {
-	//std::cerr << "p3PhotoService::tick()";
+	//std::cerr << "p3PhotoServiceVEG::tick()";
 	//std::cerr << std::endl;
 
 	fakeprocessrequests();
@@ -57,7 +57,7 @@ int	p3PhotoService::tick()
 	return 0;
 }
 
-bool 	p3PhotoService::updated()
+bool 	p3PhotoServiceVEG::updated()
 {
 	RsStackMutex stack(mPhotoMtx); /********** STACK LOCKED MTX ******/
 	
@@ -71,35 +71,35 @@ bool 	p3PhotoService::updated()
 
 
        /* Data Requests */
-bool p3PhotoService::requestGroupInfo(     uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds)
+bool p3PhotoServiceVEG::requestGroupInfo(     uint32_t &token, uint32_t ansType, const RsTokReqOptionsVEG &opts, const std::list<std::string> &groupIds)
 {
 	generateToken(token);
-	std::cerr << "p3PhotoService::requestGroupInfo() gets Token: " << token << std::endl;
+	std::cerr << "p3PhotoServiceVEG::requestGroupInfo() gets Token: " << token << std::endl;
 	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_GROUPS, groupIds);
 
 	return true;
 }
 
-bool p3PhotoService::requestMsgInfo(       uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds)
+bool p3PhotoServiceVEG::requestMsgInfo(       uint32_t &token, uint32_t ansType, const RsTokReqOptionsVEG &opts, const std::list<std::string> &groupIds)
 {
 	generateToken(token);
-	std::cerr << "p3PhotoService::requestMsgInfo() gets Token: " << token << std::endl;
+	std::cerr << "p3PhotoServiceVEG::requestMsgInfo() gets Token: " << token << std::endl;
 	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_MSGS, groupIds);
 
 	return true;
 }
 
-bool p3PhotoService::requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &msgIds)
+bool p3PhotoServiceVEG::requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsVEG &opts, const std::list<std::string> &msgIds)
 {
 	generateToken(token);
-	std::cerr << "p3PhotoService::requestMsgRelatedInfo() gets Token: " << token << std::endl;
+	std::cerr << "p3PhotoServiceVEG::requestMsgRelatedInfo() gets Token: " << token << std::endl;
 	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_MSGRELATED, msgIds);
 
 	return true;
 }
 
         /* Generic Lists */
-bool p3PhotoService::getGroupList(         const uint32_t &token, std::list<std::string> &groupIds)
+bool p3PhotoServiceVEG::getGroupList(         const uint32_t &token, std::list<std::string> &groupIds)
 {
 	uint32_t status;
 	uint32_t reqtype;
@@ -109,19 +109,19 @@ bool p3PhotoService::getGroupList(         const uint32_t &token, std::list<std:
 
 	if (anstype != RS_TOKREQ_ANSTYPE_LIST)
 	{
-		std::cerr << "p3PhotoService::getGroupList() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3PhotoServiceVEG::getGroupList() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (reqtype != GXS_REQUEST_TYPE_GROUPS)
 	{
-		std::cerr << "p3PhotoService::getGroupList() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3PhotoServiceVEG::getGroupList() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3PhotoService::getGroupList() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3PhotoServiceVEG::getGroupList() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 
@@ -134,7 +134,7 @@ bool p3PhotoService::getGroupList(         const uint32_t &token, std::list<std:
 
 
 
-bool p3PhotoService::getMsgList(           const uint32_t &token, std::list<std::string> &msgIds)
+bool p3PhotoServiceVEG::getMsgList(           const uint32_t &token, std::list<std::string> &msgIds)
 {
 	uint32_t status;
 	uint32_t reqtype;
@@ -144,19 +144,19 @@ bool p3PhotoService::getMsgList(           const uint32_t &token, std::list<std:
 
 	if (anstype != RS_TOKREQ_ANSTYPE_LIST)
 	{
-		std::cerr << "p3PhotoService::getMsgList() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3PhotoServiceVEG::getMsgList() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if ((reqtype != GXS_REQUEST_TYPE_MSGS) && (reqtype != GXS_REQUEST_TYPE_MSGRELATED))
 	{
-		std::cerr << "p3PhotoService::getMsgList() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3PhotoServiceVEG::getMsgList() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3PhotoService::getMsgList() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3PhotoServiceVEG::getMsgList() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 
@@ -168,7 +168,7 @@ bool p3PhotoService::getMsgList(           const uint32_t &token, std::list<std:
 
 
         /* Generic Summary */
-bool p3PhotoService::getGroupSummary(      const uint32_t &token, std::list<RsGroupMetaData> &groupInfo)
+bool p3PhotoServiceVEG::getGroupSummary(      const uint32_t &token, std::list<RsGroupMetaData> &groupInfo)
 {
 	uint32_t status;
 	uint32_t reqtype;
@@ -178,19 +178,19 @@ bool p3PhotoService::getGroupSummary(      const uint32_t &token, std::list<RsGr
 
 	if (anstype != RS_TOKREQ_ANSTYPE_SUMMARY)
 	{
-		std::cerr << "p3PhotoService::getGroupSummary() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3PhotoServiceVEG::getGroupSummary() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (reqtype != GXS_REQUEST_TYPE_GROUPS)
 	{
-		std::cerr << "p3PhotoService::getGroupSummary() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3PhotoServiceVEG::getGroupSummary() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3PhotoService::getGroupSummary() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3PhotoServiceVEG::getGroupSummary() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 
@@ -204,7 +204,7 @@ bool p3PhotoService::getGroupSummary(      const uint32_t &token, std::list<RsGr
 	return ans;
 }
 
-bool p3PhotoService::getMsgSummary(        const uint32_t &token, std::list<RsMsgMetaData> &msgInfo)
+bool p3PhotoServiceVEG::getMsgSummary(        const uint32_t &token, std::list<RsMsgMetaData> &msgInfo)
 {
 	uint32_t status;
 	uint32_t reqtype;
@@ -214,19 +214,19 @@ bool p3PhotoService::getMsgSummary(        const uint32_t &token, std::list<RsMs
 
 	if (anstype != RS_TOKREQ_ANSTYPE_SUMMARY)
 	{
-		std::cerr << "p3PhotoService::getMsgSummary() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3PhotoServiceVEG::getMsgSummary() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if ((reqtype != GXS_REQUEST_TYPE_MSGS) && (reqtype != GXS_REQUEST_TYPE_MSGRELATED))
 	{
-		std::cerr << "p3PhotoService::getMsgSummary() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3PhotoServiceVEG::getMsgSummary() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3PhotoService::getMsgSummary() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3PhotoServiceVEG::getMsgSummary() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 
@@ -242,9 +242,9 @@ bool p3PhotoService::getMsgSummary(        const uint32_t &token, std::list<RsMs
 
 
         /* Specific Service Data */
-bool p3PhotoService::getAlbum(const uint32_t &token, RsPhotoAlbum &album)
+bool p3PhotoServiceVEG::getAlbum(const uint32_t &token, RsPhotoAlbum &album)
 {
-	std::cerr << "p3PhotoService::getAlbum() Token: " << token;
+	std::cerr << "p3PhotoServiceVEG::getAlbum() Token: " << token;
 	std::cerr << std::endl;
 
 	uint32_t status;
@@ -256,19 +256,19 @@ bool p3PhotoService::getAlbum(const uint32_t &token, RsPhotoAlbum &album)
 
 	if (anstype != RS_TOKREQ_ANSTYPE_DATA)
 	{
-		std::cerr << "p3PhotoService::getAlbum() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3PhotoServiceVEG::getAlbum() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (reqtype != GXS_REQUEST_TYPE_GROUPS)
 	{
-		std::cerr << "p3PhotoService::getAlbum() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3PhotoServiceVEG::getAlbum() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3PhotoService::getAlbum() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3PhotoServiceVEG::getAlbum() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 	
@@ -286,9 +286,9 @@ bool p3PhotoService::getAlbum(const uint32_t &token, RsPhotoAlbum &album)
 }
 
 
-bool p3PhotoService::getPhoto(const uint32_t &token, RsPhotoPhoto &photo)
+bool p3PhotoServiceVEG::getPhoto(const uint32_t &token, RsPhotoPhoto &photo)
 {
-	std::cerr << "p3PhotoService::getPhoto() Token: " << token;
+	std::cerr << "p3PhotoServiceVEG::getPhoto() Token: " << token;
 	std::cerr << std::endl;
 
 	uint32_t status;
@@ -300,19 +300,19 @@ bool p3PhotoService::getPhoto(const uint32_t &token, RsPhotoPhoto &photo)
 
 	if (anstype != RS_TOKREQ_ANSTYPE_DATA)
 	{
-		std::cerr << "p3PhotoService::getPhoto() ERROR AnsType Wrong" << std::endl;
+		std::cerr << "p3PhotoServiceVEG::getPhoto() ERROR AnsType Wrong" << std::endl;
 		return false;
 	}
 	
 	if ((reqtype != GXS_REQUEST_TYPE_MSGS) && (reqtype != GXS_REQUEST_TYPE_MSGRELATED))
 	{
-		std::cerr << "p3PhotoService::getPhoto() ERROR ReqType Wrong" << std::endl;
+		std::cerr << "p3PhotoServiceVEG::getPhoto() ERROR ReqType Wrong" << std::endl;
 		return false;
 	}
 	
 	if (status != GXS_REQUEST_STATUS_COMPLETE)
 	{
-		std::cerr << "p3PhotoService::getPhoto() ERROR Status Incomplete" << std::endl;
+		std::cerr << "p3PhotoServiceVEG::getPhoto() ERROR Status Incomplete" << std::endl;
 		return false;
 	}
 	
@@ -332,7 +332,7 @@ bool p3PhotoService::getPhoto(const uint32_t &token, RsPhotoPhoto &photo)
 
 
         /* Poll */
-uint32_t p3PhotoService::requestStatus(const uint32_t token)
+uint32_t p3PhotoServiceVEG::requestStatus(const uint32_t token)
 {
 	uint32_t status;
 	uint32_t reqtype;
@@ -345,44 +345,44 @@ uint32_t p3PhotoService::requestStatus(const uint32_t token)
 
 
         /* Cancel Request */
-bool p3PhotoService::cancelRequest(const uint32_t &token)
+bool p3PhotoServiceVEG::cancelRequest(const uint32_t &token)
 {
 	return clearRequest(token);
 }
 
 
-bool p3PhotoService::setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask)
+bool p3PhotoServiceVEG::setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask)
 {
 	return mPhotoProxy->setMessageStatus(msgId, status, statusMask);
 }
 
-bool p3PhotoService::setGroupStatus(const std::string &groupId, const uint32_t status, const uint32_t statusMask)
+bool p3PhotoServiceVEG::setGroupStatus(const std::string &groupId, const uint32_t status, const uint32_t statusMask)
 {
 	return mPhotoProxy->setGroupStatus(groupId, status, statusMask);
 }
 
-bool p3PhotoService::setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask)
+bool p3PhotoServiceVEG::setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask)
 {
         return mPhotoProxy->setGroupSubscribeFlags(groupId, subscribeFlags, subscribeMask);
 }
 
-bool p3PhotoService::setMessageServiceString(const std::string &msgId, const std::string &str)
+bool p3PhotoServiceVEG::setMessageServiceString(const std::string &msgId, const std::string &str)
 {
 	return mPhotoProxy->setMessageServiceString(msgId, str);
 }
 
-bool p3PhotoService::setGroupServiceString(const std::string &grpId, const std::string &str)
+bool p3PhotoServiceVEG::setGroupServiceString(const std::string &grpId, const std::string &str)
 {
 	return mPhotoProxy->setGroupServiceString(grpId, str);
 }
 
 
-bool p3PhotoService::groupRestoreKeys(const std::string &groupId)
+bool p3PhotoServiceVEG::groupRestoreKeys(const std::string &groupId)
 {
 	return false;
 }
 
-bool p3PhotoService::groupShareKeys(const std::string &groupId, std::list<std::string>& peers)
+bool p3PhotoServiceVEG::groupShareKeys(const std::string &groupId, std::list<std::string>& peers)
 {
 	return false;
 }
@@ -390,7 +390,7 @@ bool p3PhotoService::groupShareKeys(const std::string &groupId, std::list<std::s
 
 /* details are updated in album - to choose Album ID, and storage path */
 
-bool p3PhotoService::submitAlbumDetails(uint32_t &token, RsPhotoAlbum &album, bool isNew)
+bool p3PhotoServiceVEG::submitAlbumDetails(uint32_t &token, RsPhotoAlbum &album, bool isNew)
 {
 	/* check if its a modification or a new album */
 
@@ -406,7 +406,7 @@ bool p3PhotoService::submitAlbumDetails(uint32_t &token, RsPhotoAlbum &album, bo
 		// TODO.
 		//album.mMeta.mPublishTs = time(NULL);
 
-		std::cerr << "p3PhotoService::submitAlbumDetails() Generated New GroupID: " << album.mMeta.mGroupId;
+		std::cerr << "p3PhotoServiceVEG::submitAlbumDetails() Generated New GroupID: " << album.mMeta.mGroupId;
 		std::cerr << std::endl;
 	}
 
@@ -424,22 +424,22 @@ bool p3PhotoService::submitAlbumDetails(uint32_t &token, RsPhotoAlbum &album, bo
 	// Fake a request to return the GroupMetaData.
 	generateToken(token);
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
-	RsTokReqOptions opts; // NULL is good.
+	RsTokReqOptionsVEG opts; // NULL is good.
 	std::list<std::string> groupIds;  
 	groupIds.push_back(album.mMeta.mGroupId); // It will just return this one.
 
-	std::cerr << "p3PhotoService::submitAlbumDetails() Generating Request Token: " << token << std::endl;
+	std::cerr << "p3PhotoServiceVEG::submitAlbumDetails() Generating Request Token: " << token << std::endl;
 	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_GROUPS, groupIds);
 
 	return true;
 }
 
-bool p3PhotoService::submitPhoto(uint32_t &token, RsPhotoPhoto &photo, bool isNew)
+bool p3PhotoServiceVEG::submitPhoto(uint32_t &token, RsPhotoPhoto &photo, bool isNew)
 {
 	if (photo.mMeta.mGroupId.empty())
 	{
 		/* new photo */
-		std::cerr << "p3PhotoService::submitPhoto() Missing GroupID: ERROR";
+		std::cerr << "p3PhotoServiceVEG::submitPhoto() Missing GroupID: ERROR";
 		std::cerr << std::endl;
 		return false;
 	}
@@ -452,18 +452,18 @@ bool p3PhotoService::submitPhoto(uint32_t &token, RsPhotoPhoto &photo, bool isNe
 	{
 		/* new (Original Msg) photo */
 		photo.mMeta.mOrigMsgId = photo.mMeta.mMsgId; 
-		std::cerr << "p3PhotoService::submitPhoto() New Msg";
+		std::cerr << "p3PhotoServiceVEG::submitPhoto() New Msg";
 		std::cerr << std::endl;
 	}
 	else
 	{
-		std::cerr << "p3PhotoService::submitPhoto() Updated Msg";
+		std::cerr << "p3PhotoServiceVEG::submitPhoto() Updated Msg";
 		std::cerr << std::endl;
 	}
 
 	photo.mModFlags = 0; // These are always cleared.
 
-	std::cerr << "p3PhotoService::submitPhoto() OrigMsgId: " << photo.mMeta.mOrigMsgId;
+	std::cerr << "p3PhotoServiceVEG::submitPhoto() OrigMsgId: " << photo.mMeta.mOrigMsgId;
 	std::cerr << " MsgId: " << photo.mMeta.mMsgId;
 	std::cerr << std::endl;
 
@@ -477,11 +477,11 @@ bool p3PhotoService::submitPhoto(uint32_t &token, RsPhotoPhoto &photo, bool isNe
 	// Fake a request to return the MsgMetaData.
 	generateToken(token);
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
-	RsTokReqOptions opts; // NULL is good.
+	RsTokReqOptionsVEG opts; // NULL is good.
 	std::list<std::string> msgIds;  
 	msgIds.push_back(photo.mMeta.mMsgId); // It will just return this one.
 
-	std::cerr << "p3PhotoService::submitPhoto() Generating Request Token: " << token << std::endl;
+	std::cerr << "p3PhotoServiceVEG::submitPhoto() Generating Request Token: " << token << std::endl;
 	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_MSGRELATED, msgIds);
 
 	return true;
@@ -600,7 +600,7 @@ bool PhotoDataProxy::convertMsgToMetaData(void *msgData, RsMsgMetaData &meta)
 
 /********************************************************************************************/
 
-std::string p3PhotoService::genRandomId()
+std::string p3PhotoServiceVEG::genRandomId()
 {
 	std::string randomId;
 	for(int i = 0; i < 20; i++)

@@ -23,16 +23,16 @@
  *
  */
 
-#include "services/p3gxsservice.h"
+#include "services/p3gxsserviceVEG.h"
 
-p3GxsService::p3GxsService(uint16_t type) 
+p3GxsServiceVEG::p3GxsServiceVEG(uint16_t type) 
 	:p3Service(type),  mReqMtx("p3GxsService")
 {
 	mNextToken = 0;
 	return; 
 }
 
-bool	p3GxsService::generateToken(uint32_t &token)
+bool	p3GxsServiceVEG::generateToken(uint32_t &token)
 {
 	RsStackMutex stack(mReqMtx); /****** LOCKED *****/
 
@@ -41,7 +41,7 @@ bool	p3GxsService::generateToken(uint32_t &token)
 	return true;
 }
 
-bool    p3GxsService::storeRequest(const uint32_t &token, const uint32_t &ansType, const RsTokReqOptions &opts, const uint32_t &type, const std::list<std::string> &ids)
+bool    p3GxsServiceVEG::storeRequest(const uint32_t &token, const uint32_t &ansType, const RsTokReqOptionsVEG &opts, const uint32_t &type, const std::list<std::string> &ids)
 {
 	RsStackMutex stack(mReqMtx); /****** LOCKED *****/
 
@@ -60,7 +60,7 @@ bool    p3GxsService::storeRequest(const uint32_t &token, const uint32_t &ansTyp
 }
 
 
-bool	p3GxsService::clearRequest(const uint32_t &token)
+bool	p3GxsServiceVEG::clearRequest(const uint32_t &token)
 {
 	RsStackMutex stack(mReqMtx); /****** LOCKED *****/
 
@@ -77,7 +77,7 @@ bool	p3GxsService::clearRequest(const uint32_t &token)
 	return true;
 }
 
-bool	p3GxsService::updateRequestStatus(const uint32_t &token, const uint32_t &status)
+bool	p3GxsServiceVEG::updateRequestStatus(const uint32_t &token, const uint32_t &status)
 {
 	RsStackMutex stack(mReqMtx); /****** LOCKED *****/
 
@@ -94,7 +94,7 @@ bool	p3GxsService::updateRequestStatus(const uint32_t &token, const uint32_t &st
 	return true;
 }
 
-bool	p3GxsService::updateRequestInList(const uint32_t &token, std::list<std::string> ids)
+bool	p3GxsServiceVEG::updateRequestInList(const uint32_t &token, std::list<std::string> ids)
 {
 	RsStackMutex stack(mReqMtx); /****** LOCKED *****/
 
@@ -116,7 +116,7 @@ bool	p3GxsService::updateRequestInList(const uint32_t &token, std::list<std::str
 }
 
 
-bool	p3GxsService::updateRequestOutList(const uint32_t &token, std::list<std::string> ids)
+bool	p3GxsServiceVEG::updateRequestOutList(const uint32_t &token, std::list<std::string> ids)
 {
 	RsStackMutex stack(mReqMtx); /****** LOCKED *****/
 
@@ -138,7 +138,7 @@ bool	p3GxsService::updateRequestOutList(const uint32_t &token, std::list<std::st
 }
 
 #if 0
-bool	p3GxsService::updateRequestData(const uint32_t &token, std::map<std::string, void *> data)
+bool	p3GxsServiceVEG::updateRequestData(const uint32_t &token, std::map<std::string, void *> data)
 {
 	RsStackMutex stack(mReqMtx); /****** LOCKED *****/
 
@@ -160,7 +160,7 @@ bool	p3GxsService::updateRequestData(const uint32_t &token, std::map<std::string
 }
 #endif
 
-bool    p3GxsService::checkRequestStatus(const uint32_t &token, uint32_t &status, uint32_t &reqtype, uint32_t &anstype, time_t &ts)
+bool    p3GxsServiceVEG::checkRequestStatus(const uint32_t &token, uint32_t &status, uint32_t &reqtype, uint32_t &anstype, time_t &ts)
 {
 	RsStackMutex stack(mReqMtx); /****** LOCKED *****/
 
@@ -182,7 +182,7 @@ bool    p3GxsService::checkRequestStatus(const uint32_t &token, uint32_t &status
 
 
 	// special ones for testing (not in final design)
-bool    p3GxsService::tokenList(std::list<uint32_t> &tokens)
+bool    p3GxsServiceVEG::tokenList(std::list<uint32_t> &tokens)
 {
 	RsStackMutex stack(mReqMtx); /****** LOCKED *****/
 
@@ -196,7 +196,7 @@ bool    p3GxsService::tokenList(std::list<uint32_t> &tokens)
 	return true;
 }
 
-bool    p3GxsService::popRequestInList(const uint32_t &token, std::string &id)
+bool    p3GxsServiceVEG::popRequestInList(const uint32_t &token, std::string &id)
 {
 	RsStackMutex stack(mReqMtx); /****** LOCKED *****/
 
@@ -220,7 +220,7 @@ bool    p3GxsService::popRequestInList(const uint32_t &token, std::string &id)
 }
 
 
-bool    p3GxsService::popRequestOutList(const uint32_t &token, std::string &id)
+bool    p3GxsServiceVEG::popRequestOutList(const uint32_t &token, std::string &id)
 {
 	RsStackMutex stack(mReqMtx); /****** LOCKED *****/
 
@@ -244,7 +244,7 @@ bool    p3GxsService::popRequestOutList(const uint32_t &token, std::string &id)
 }
 
 
-bool    p3GxsService::loadRequestOutList(const uint32_t &token, std::list<std::string> &ids)
+bool    p3GxsServiceVEG::loadRequestOutList(const uint32_t &token, std::list<std::string> &ids)
 {
 	RsStackMutex stack(mReqMtx); /****** LOCKED *****/
 
@@ -270,7 +270,7 @@ bool    p3GxsService::loadRequestOutList(const uint32_t &token, std::list<std::s
 
 #define MAX_REQUEST_AGE 10
 
-bool 	p3GxsService::fakeprocessrequests()
+bool 	p3GxsServiceVEG::fakeprocessrequests()
         {
         std::list<uint32_t>::iterator it;
         std::list<uint32_t> tokens;
@@ -287,7 +287,7 @@ bool 	p3GxsService::fakeprocessrequests()
                 time_t   ts;
                 checkRequestStatus(token, status, reqtype, anstype, ts);
 
-                std::cerr << "p3GxsService::fakeprocessrequests() Token: " << token << " Status: " << status << " ReqType: " << reqtype << "Age: " << now - ts << std::endl;
+                std::cerr << "p3GxsServiceVEG::fakeprocessrequests() Token: " << token << " Status: " << status << " ReqType: " << reqtype << "Age: " << now - ts << std::endl;
 
                 if (status == GXS_REQUEST_STATUS_PENDING)
                 {
@@ -299,13 +299,13 @@ bool 	p3GxsService::fakeprocessrequests()
                 }
                 else if (status == GXS_REQUEST_STATUS_DONE)
                 {
-                        std::cerr << "p3GxsService::fakeprocessrequests() Clearing Done Request Token: " << token;
+                        std::cerr << "p3GxsServiceVEG::fakeprocessrequests() Clearing Done Request Token: " << token;
                         std::cerr << std::endl;
                         clearRequest(token);
                 }
                 else if (now - ts > MAX_REQUEST_AGE)
                 {
-                        std::cerr << "p3GxsService::fakeprocessrequests() Clearing Old Request Token: " << token;
+                        std::cerr << "p3GxsServiceVEG::fakeprocessrequests() Clearing Old Request Token: " << token;
                         std::cerr << std::endl;
                         clearRequest(token);
                 }
@@ -334,14 +334,14 @@ bool 	p3GxsService::fakeprocessrequests()
  *
  ****/
 
-GxsDataProxy::GxsDataProxy()
+GxsDataProxyVEG::GxsDataProxyVEG()
 	:mDataMtx("GxsDataProxyMtx")
 {
 	return;
 }
 
 
-static bool checkGroupFilter(const RsTokReqOptions &opts, const RsGroupMetaData &group)
+static bool checkGroupFilter(const RsTokReqOptionsVEG &opts, const RsGroupMetaData &group)
 {
 	bool statusMatch = false;
 	if (opts.mStatusMask)
@@ -428,7 +428,7 @@ static bool checkGroupFilter(const RsTokReqOptions &opts, const RsGroupMetaData 
 }
 
 
-static bool checkMsgFilter(const RsTokReqOptions &opts, const RsMsgMetaData &msg)
+static bool checkMsgFilter(const RsTokReqOptionsVEG &opts, const RsMsgMetaData &msg)
 {
 	bool statusMatch = false;
 	if (opts.mStatusMask)
@@ -488,7 +488,7 @@ static bool checkMsgFilter(const RsTokReqOptions &opts, const RsMsgMetaData &msg
 }
 
 
-bool GxsDataProxy::filterGroupList(const RsTokReqOptions &opts, std::list<std::string> &groupIds)
+bool GxsDataProxyVEG::filterGroupList(const RsTokReqOptionsVEG &opts, std::list<std::string> &groupIds)
 {
 	std::list<std::string>::iterator it;
 	for(it = groupIds.begin(); it != groupIds.end(); )
@@ -517,7 +517,7 @@ bool GxsDataProxy::filterGroupList(const RsTokReqOptions &opts, std::list<std::s
 }
 
 
-bool GxsDataProxy::filterMsgList(const RsTokReqOptions &opts, std::list<std::string> &msgIds)
+bool GxsDataProxyVEG::filterMsgList(const RsTokReqOptionsVEG &opts, std::list<std::string> &msgIds)
 {
 	std::list<std::string>::iterator it;
 	for(it = msgIds.begin(); it != msgIds.end(); )
@@ -547,14 +547,14 @@ bool GxsDataProxy::filterMsgList(const RsTokReqOptions &opts, std::list<std::str
 
 
 
-bool GxsDataProxy::getGroupList(     uint32_t &token, const RsTokReqOptions &opts, const std::list<std::string> &groupIds, std::list<std::string> &outGroupIds)
+bool GxsDataProxyVEG::getGroupList(     uint32_t &token, const RsTokReqOptionsVEG &opts, const std::list<std::string> &groupIds, std::list<std::string> &outGroupIds)
 {
 	/* CASEs that this handles ... 
 	 * 1) if groupIds is Empty... return all groupIds.
 	 * 2) else copy list.
 	 *
 	 */
-	std::cerr << "GxsDataProxy::getGroupList()";
+	std::cerr << "GxsDataProxyVEG::getGroupList()";
 	std::cerr << std::endl;
 
 	if (groupIds.size() == 0)
@@ -579,14 +579,14 @@ bool GxsDataProxy::getGroupList(     uint32_t &token, const RsTokReqOptions &opt
 }
 
 
-bool GxsDataProxy::getMsgList(       uint32_t &token, const RsTokReqOptions &opts, const std::list<std::string> &groupIds, std::list<std::string> &outMsgIds)
+bool GxsDataProxyVEG::getMsgList(       uint32_t &token, const RsTokReqOptionsVEG &opts, const std::list<std::string> &groupIds, std::list<std::string> &outMsgIds)
 {
 	/* CASEs this handles.
 	 * Input is groupList + Flags.
 	 * 1) No Flags => All Messages in those Groups.
 	 *
 	 */
-	std::cerr << "GxsDataProxy::getMsgList()";
+	std::cerr << "GxsDataProxyVEG::getMsgList()";
 	std::cerr << std::endl;
 
 
@@ -597,20 +597,20 @@ bool GxsDataProxy::getMsgList(       uint32_t &token, const RsTokReqOptions &opt
 	// Can only choose one of these two.
 	if (opts.mOptions & RS_TOKREQOPT_MSG_ORIGMSG)
 	{
-		std::cerr << "GxsDataProxy::getMsgList() MSG_ORIGMSG";
+		std::cerr << "GxsDataProxyVEG::getMsgList() MSG_ORIGMSG";
 		std::cerr << std::endl;
 		onlyOrigMsgs = true;
 	}
 	else if (opts.mOptions & RS_TOKREQOPT_MSG_LATEST)
 	{
-		std::cerr << "GxsDataProxy::getMsgList() MSG_LATEST";
+		std::cerr << "GxsDataProxyVEG::getMsgList() MSG_LATEST";
 		std::cerr << std::endl;
 		onlyLatestMsgs = true;
 	}
 
 	if (opts.mOptions & RS_TOKREQOPT_MSG_THREAD)
 	{
-		std::cerr << "GxsDataProxy::getMsgList() MSG_THREAD";
+		std::cerr << "GxsDataProxyVEG::getMsgList() MSG_THREAD";
 		std::cerr << std::endl;
 		onlyThreadHeadMsgs = true;
 	}
@@ -648,7 +648,7 @@ bool GxsDataProxy::getMsgList(       uint32_t &token, const RsTokReqOptions &opt
 				bool addMsg = false;
 				if (oit == origMsgTs.end())
 				{
-					std::cerr << "GxsDataProxy::getMsgList() Found New OrigMsgId: ";
+					std::cerr << "GxsDataProxyVEG::getMsgList() Found New OrigMsgId: ";
 					std::cerr << mit->second.mOrigMsgId;
 					std::cerr << " MsgId: " << mit->second.mMsgId;
 					std::cerr << " TS: " << mit->second.mPublishTs;
@@ -659,7 +659,7 @@ bool GxsDataProxy::getMsgList(       uint32_t &token, const RsTokReqOptions &opt
 				// check timestamps.
 				else if (oit->second.second < mit->second.mPublishTs)
 				{
-					std::cerr << "GxsDataProxy::getMsgList() Found Later Msg. OrigMsgId: ";
+					std::cerr << "GxsDataProxyVEG::getMsgList() Found Later Msg. OrigMsgId: ";
 					std::cerr << mit->second.mOrigMsgId;
 					std::cerr << " MsgId: " << mit->second.mMsgId;
 					std::cerr << " TS: " << mit->second.mPublishTs;
@@ -728,7 +728,7 @@ bool GxsDataProxy::getMsgList(       uint32_t &token, const RsTokReqOptions &opt
 }
 
 
-bool GxsDataProxy::getMsgRelatedList(uint32_t &token, const RsTokReqOptions &opts, const std::list<std::string> &msgIds, std::list<std::string> &outMsgIds)
+bool GxsDataProxyVEG::getMsgRelatedList(uint32_t &token, const RsTokReqOptionsVEG &opts, const std::list<std::string> &msgIds, std::list<std::string> &outMsgIds)
 {
 	/* CASEs this handles.
 	 * Input is msgList + Flags.
@@ -736,7 +736,7 @@ bool GxsDataProxy::getMsgRelatedList(uint32_t &token, const RsTokReqOptions &opt
 	 *
 	 */
 
-	std::cerr << "GxsDataProxy::getMsgRelatedList()";
+	std::cerr << "GxsDataProxyVEG::getMsgRelatedList()";
 	std::cerr << std::endl;
 
 	bool onlyLatestMsgs = false;
@@ -746,34 +746,34 @@ bool GxsDataProxy::getMsgRelatedList(uint32_t &token, const RsTokReqOptions &opt
 
 	if (opts.mOptions & RS_TOKREQOPT_MSG_LATEST)
 	{
-		std::cerr << "GxsDataProxy::getMsgRelatedList() MSG_LATEST";
+		std::cerr << "GxsDataProxyVEG::getMsgRelatedList() MSG_LATEST";
 		std::cerr << std::endl;
 		onlyLatestMsgs = true;
 	}
 	else if (opts.mOptions & RS_TOKREQOPT_MSG_VERSIONS)
 	{
-		std::cerr << "GxsDataProxy::getMsgRelatedList() MSG_VERSIONS";
+		std::cerr << "GxsDataProxyVEG::getMsgRelatedList() MSG_VERSIONS";
 		std::cerr << std::endl;
 		onlyAllVersions = true;
 	}
 
 	if (opts.mOptions & RS_TOKREQOPT_MSG_PARENT)
 	{
-		std::cerr << "GxsDataProxy::getMsgRelatedList() MSG_PARENTS";
+		std::cerr << "GxsDataProxyVEG::getMsgRelatedList() MSG_PARENTS";
 		std::cerr << std::endl;
 		onlyChildMsgs = true;
 	}
 
 	if (opts.mOptions & RS_TOKREQOPT_MSG_THREAD)
 	{
-		std::cerr << "GxsDataProxy::getMsgRelatedList() MSG_THREAD";
+		std::cerr << "GxsDataProxyVEG::getMsgRelatedList() MSG_THREAD";
 		std::cerr << std::endl;
 		onlyThreadMsgs = true;
 	}
 
 	if (onlyAllVersions && onlyChildMsgs)
 	{
-		std::cerr << "GxsDataProxy::getMsgRelatedList() ERROR Incompatible FLAGS (VERSIONS & PARENT)";
+		std::cerr << "GxsDataProxyVEG::getMsgRelatedList() ERROR Incompatible FLAGS (VERSIONS & PARENT)";
 		std::cerr << std::endl;
 
 		return false;
@@ -781,7 +781,7 @@ bool GxsDataProxy::getMsgRelatedList(uint32_t &token, const RsTokReqOptions &opt
 
 	if (onlyAllVersions && onlyThreadMsgs)
 	{
-		std::cerr << "GxsDataProxy::getMsgRelatedList() ERROR Incompatible FLAGS (VERSIONS & THREAD)";
+		std::cerr << "GxsDataProxyVEG::getMsgRelatedList() ERROR Incompatible FLAGS (VERSIONS & THREAD)";
 		std::cerr << std::endl;
 
 		return false;
@@ -789,7 +789,7 @@ bool GxsDataProxy::getMsgRelatedList(uint32_t &token, const RsTokReqOptions &opt
 
 	if ((!onlyLatestMsgs) && onlyChildMsgs)
 	{
-		std::cerr << "GxsDataProxy::getMsgRelatedList() ERROR Incompatible FLAGS (!LATEST & PARENT)";
+		std::cerr << "GxsDataProxyVEG::getMsgRelatedList() ERROR Incompatible FLAGS (!LATEST & PARENT)";
 		std::cerr << std::endl;
 
 		return false;
@@ -797,7 +797,7 @@ bool GxsDataProxy::getMsgRelatedList(uint32_t &token, const RsTokReqOptions &opt
 
 	if ((!onlyLatestMsgs) && onlyThreadMsgs)
 	{
-		std::cerr << "GxsDataProxy::getMsgRelatedList() ERROR Incompatible FLAGS (!LATEST & THREAD)";
+		std::cerr << "GxsDataProxyVEG::getMsgRelatedList() ERROR Incompatible FLAGS (!LATEST & THREAD)";
 		std::cerr << std::endl;
 
 		return false;
@@ -805,7 +805,7 @@ bool GxsDataProxy::getMsgRelatedList(uint32_t &token, const RsTokReqOptions &opt
 
 	if (onlyChildMsgs && onlyThreadMsgs)
 	{
-		std::cerr << "GxsDataProxy::getMsgRelatedList() ERROR Incompatible FLAGS (PARENT & THREAD)";
+		std::cerr << "GxsDataProxyVEG::getMsgRelatedList() ERROR Incompatible FLAGS (PARENT & THREAD)";
 		std::cerr << std::endl;
 
 		return false;
@@ -815,7 +815,7 @@ bool GxsDataProxy::getMsgRelatedList(uint32_t &token, const RsTokReqOptions &opt
 	/* FALL BACK OPTION */
 	if ((!onlyLatestMsgs) && (!onlyAllVersions) && (!onlyChildMsgs) && (!onlyThreadMsgs))
 	{
-		std::cerr << "GxsDataProxy::getMsgRelatedList() FALLBACK -> NO FLAGS -> JUST COPY";
+		std::cerr << "GxsDataProxyVEG::getMsgRelatedList() FALLBACK -> NO FLAGS -> JUST COPY";
 		std::cerr << std::endl;
 		/* just copy */
 		outMsgIds = msgIds;
@@ -870,7 +870,7 @@ bool GxsDataProxy::getMsgRelatedList(uint32_t &token, const RsTokReqOptions &opt
 					bool addMsg = false;
 					if (oit == origMsgTs.end())
 					{
-						std::cerr << "GxsDataProxy::getMsgRelatedList() Found New OrigMsgId: ";
+						std::cerr << "GxsDataProxyVEG::getMsgRelatedList() Found New OrigMsgId: ";
 						std::cerr << mit->second.mOrigMsgId;
 						std::cerr << " MsgId: " << mit->second.mMsgId;
 						std::cerr << " TS: " << mit->second.mPublishTs;
@@ -881,7 +881,7 @@ bool GxsDataProxy::getMsgRelatedList(uint32_t &token, const RsTokReqOptions &opt
 					// check timestamps.
 					else if (oit->second.second < mit->second.mPublishTs)
 					{
-						std::cerr << "GxsDataProxy::getMsgRelatedList() Found Later Msg. OrigMsgId: ";
+						std::cerr << "GxsDataProxyVEG::getMsgRelatedList() Found Later Msg. OrigMsgId: ";
 						std::cerr << mit->second.mOrigMsgId;
 						std::cerr << " MsgId: " << mit->second.mMsgId;
 						std::cerr << " TS: " << mit->second.mPublishTs;
@@ -941,14 +941,14 @@ bool GxsDataProxy::getMsgRelatedList(uint32_t &token, const RsTokReqOptions &opt
 }
 
 
-bool GxsDataProxy::createGroup(void *groupData)
+bool GxsDataProxyVEG::createGroup(void *groupData)
 {
 	RsGroupMetaData meta;
 	if (convertGroupToMetaData(groupData, meta))
 	{
 		if (!isUniqueGroup(meta.mGroupId))
 		{
-			std::cerr << "GxsDataProxy::createGroup() ERROR GroupId Clashes, discarding";
+			std::cerr << "GxsDataProxyVEG::createGroup() ERROR GroupId Clashes, discarding";
 			std::cerr << std::endl;
 			return false;
 		}
@@ -967,20 +967,20 @@ bool GxsDataProxy::createGroup(void *groupData)
 		return true;
 	}
 
-	std::cerr << "GxsDataProxy::createGroup() ERROR Failed to convert Data";
+	std::cerr << "GxsDataProxyVEG::createGroup() ERROR Failed to convert Data";
 	std::cerr << std::endl;
 	return false;
 }
 
 
-bool GxsDataProxy::createMsg(void *msgData)
+bool GxsDataProxyVEG::createMsg(void *msgData)
 {
 	RsMsgMetaData meta;
 	if (convertMsgToMetaData(msgData, meta))
 	{
 		if (!isUniqueMsg(meta.mMsgId))
 		{
-			std::cerr << "GxsDataProxy::createMsg() ERROR MsgId Clashes, discarding";
+			std::cerr << "GxsDataProxyVEG::createMsg() ERROR MsgId Clashes, discarding";
 			std::cerr << std::endl;
 			return false;
 		}
@@ -993,7 +993,7 @@ bool GxsDataProxy::createMsg(void *msgData)
 		git = mGroupMetaData.find(meta.mGroupId);
 		if (git == mGroupMetaData.end())
 		{
-			std::cerr << "GxsDataProxy::createMsg() ERROR GroupId Doesn't exist, discarding";
+			std::cerr << "GxsDataProxyVEG::createMsg() ERROR GroupId Doesn't exist, discarding";
 			std::cerr << std::endl;
 			return false;
 		}
@@ -1013,14 +1013,14 @@ bool GxsDataProxy::createMsg(void *msgData)
 		return true;
 	}
 
-	std::cerr << "GxsDataProxy::createMsg() ERROR Failed to convert Data";
+	std::cerr << "GxsDataProxyVEG::createMsg() ERROR Failed to convert Data";
 	std::cerr << std::endl;
 	return false;
 }
 
 
         // Get Message Status - is retrived via MessageSummary.
-bool GxsDataProxy::setMessageStatus(const std::string &msgId,const uint32_t status, const uint32_t statusMask)
+bool GxsDataProxyVEG::setMessageStatus(const std::string &msgId,const uint32_t status, const uint32_t statusMask)
 {
 	RsStackMutex stack(mDataMtx); /***** LOCKED *****/
 
@@ -1030,7 +1030,7 @@ bool GxsDataProxy::setMessageStatus(const std::string &msgId,const uint32_t stat
 	if (mit == mMsgMetaData.end())
 	{
 		// error.
-		std::cerr << "GxsDataProxy::getMsgSummary() Error Finding MsgId: " << msgId;
+		std::cerr << "GxsDataProxyVEG::getMsgSummary() Error Finding MsgId: " << msgId;
 		std::cerr << std::endl;
 	}
 	else
@@ -1044,7 +1044,7 @@ bool GxsDataProxy::setMessageStatus(const std::string &msgId,const uint32_t stat
 	return true;
 }
 
-bool GxsDataProxy::setGroupStatus(const std::string &groupId, const uint32_t status, const uint32_t statusMask)
+bool GxsDataProxyVEG::setGroupStatus(const std::string &groupId, const uint32_t status, const uint32_t statusMask)
 {
 	RsStackMutex stack(mDataMtx); /***** LOCKED *****/
 
@@ -1054,7 +1054,7 @@ bool GxsDataProxy::setGroupStatus(const std::string &groupId, const uint32_t sta
 	if (git == mGroupMetaData.end())
 	{
 		// error.
-		std::cerr << "GxsDataProxy::setGroupStatus() Error Finding GroupId: " << groupId;
+		std::cerr << "GxsDataProxyVEG::setGroupStatus() Error Finding GroupId: " << groupId;
 		std::cerr << std::endl;
 	}
 	else
@@ -1069,7 +1069,7 @@ bool GxsDataProxy::setGroupStatus(const std::string &groupId, const uint32_t sta
 }
 
 
-bool GxsDataProxy::setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask)
+bool GxsDataProxyVEG::setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask)
 {
 	RsStackMutex stack(mDataMtx); /***** LOCKED *****/
 
@@ -1079,7 +1079,7 @@ bool GxsDataProxy::setGroupSubscribeFlags(const std::string &groupId, uint32_t s
 	if (git == mGroupMetaData.end())
 	{
 		// error.
-		std::cerr << "GxsDataProxy::setGroupSubscribeFlags() Error Finding GroupId: " << groupId;
+		std::cerr << "GxsDataProxyVEG::setGroupSubscribeFlags() Error Finding GroupId: " << groupId;
 		std::cerr << std::endl;
 	}
 	else
@@ -1093,7 +1093,7 @@ bool GxsDataProxy::setGroupSubscribeFlags(const std::string &groupId, uint32_t s
 	return true;
 }
 
-bool GxsDataProxy::setMessageServiceString(const std::string &msgId, const std::string &str)
+bool GxsDataProxyVEG::setMessageServiceString(const std::string &msgId, const std::string &str)
 {
 	RsStackMutex stack(mDataMtx); /***** LOCKED *****/
 
@@ -1103,7 +1103,7 @@ bool GxsDataProxy::setMessageServiceString(const std::string &msgId, const std::
 	if (mit == mMsgMetaData.end())
 	{
 		// error.
-		std::cerr << "GxsDataProxy::setMessageServiceString() Error Finding MsgId: " << msgId;
+		std::cerr << "GxsDataProxyVEG::setMessageServiceString() Error Finding MsgId: " << msgId;
 		std::cerr << std::endl;
 	}
 	else
@@ -1115,7 +1115,7 @@ bool GxsDataProxy::setMessageServiceString(const std::string &msgId, const std::
 	return true;
 }
 
-bool GxsDataProxy::setGroupServiceString(const std::string &groupId, const std::string &str)
+bool GxsDataProxyVEG::setGroupServiceString(const std::string &groupId, const std::string &str)
 {
 	RsStackMutex stack(mDataMtx); /***** LOCKED *****/
 
@@ -1125,7 +1125,7 @@ bool GxsDataProxy::setGroupServiceString(const std::string &groupId, const std::
 	if (git == mGroupMetaData.end())
 	{
 		// error.
-		std::cerr << "GxsDataProxy::setGroupServiceString() Error Finding GroupId: " << groupId;
+		std::cerr << "GxsDataProxyVEG::setGroupServiceString() Error Finding GroupId: " << groupId;
 		std::cerr << std::endl;
 	}
 	else
@@ -1139,22 +1139,22 @@ bool GxsDataProxy::setGroupServiceString(const std::string &groupId, const std::
 
 
         /* These Functions must be overloaded to complete the service */
-bool GxsDataProxy::convertGroupToMetaData(void *groupData, RsGroupMetaData &meta)
+bool GxsDataProxyVEG::convertGroupToMetaData(void *groupData, RsGroupMetaData &meta)
 {
-	std::cerr << "GxsDataProxy::convert fn ... please implement!";
+	std::cerr << "GxsDataProxyVEG::convert fn ... please implement!";
 	std::cerr << std::endl;
 	return false;
 }
 
-bool GxsDataProxy::convertMsgToMetaData(void *groupData, RsMsgMetaData &meta)
+bool GxsDataProxyVEG::convertMsgToMetaData(void *groupData, RsMsgMetaData &meta)
 {
-	std::cerr << "GxsDataProxy::convert fn ... please implement!";
+	std::cerr << "GxsDataProxyVEG::convert fn ... please implement!";
 	std::cerr << std::endl;
 	return false;
 }
 
         /* extract Data */
-bool GxsDataProxy::getGroupSummary(const std::string &groupId, RsGroupMetaData &groupSummary)
+bool GxsDataProxyVEG::getGroupSummary(const std::string &groupId, RsGroupMetaData &groupSummary)
 {
 	RsStackMutex stack(mDataMtx); /***** LOCKED *****/
 
@@ -1164,7 +1164,7 @@ bool GxsDataProxy::getGroupSummary(const std::string &groupId, RsGroupMetaData &
 	if (mit == mGroupMetaData.end())
 	{
 		// error.
-		std::cerr << "GxsDataProxy::getGroupMetaData() Error Finding GroupId: " << groupId;
+		std::cerr << "GxsDataProxyVEG::getGroupMetaData() Error Finding GroupId: " << groupId;
 		std::cerr << std::endl;
 		return false;
 	}
@@ -1176,7 +1176,7 @@ bool GxsDataProxy::getGroupSummary(const std::string &groupId, RsGroupMetaData &
 }
 
 
-bool GxsDataProxy::getMsgSummary(const std::string &msgId, RsMsgMetaData &msgSummary)
+bool GxsDataProxyVEG::getMsgSummary(const std::string &msgId, RsMsgMetaData &msgSummary)
 {
 	RsStackMutex stack(mDataMtx); /***** LOCKED *****/
 
@@ -1186,7 +1186,7 @@ bool GxsDataProxy::getMsgSummary(const std::string &msgId, RsMsgMetaData &msgSum
 	if (mit == mMsgMetaData.end())
 	{
 		// error.
-		std::cerr << "GxsDataProxy::getMsgSummary() Error Finding MsgId: " << msgId;
+		std::cerr << "GxsDataProxyVEG::getMsgSummary() Error Finding MsgId: " << msgId;
 		std::cerr << std::endl;
 	}
 	else
@@ -1198,7 +1198,7 @@ bool GxsDataProxy::getMsgSummary(const std::string &msgId, RsMsgMetaData &msgSum
 
 
         /* extract Data */
-bool GxsDataProxy::getGroupSummary(const std::list<std::string> &groupIds, std::list<RsGroupMetaData> &groupSummary)
+bool GxsDataProxyVEG::getGroupSummary(const std::list<std::string> &groupIds, std::list<RsGroupMetaData> &groupSummary)
 {
 	std::list<std::string>::const_iterator it;
 	for(it = groupIds.begin(); it != groupIds.end(); it++)
@@ -1211,7 +1211,7 @@ bool GxsDataProxy::getGroupSummary(const std::list<std::string> &groupIds, std::
 		if (mit == mGroupMetaData.end())
 		{
 			// error.
-			std::cerr << "GxsDataProxy::getGroupMetaData() Error Finding GroupId: " << *it;
+			std::cerr << "GxsDataProxyVEG::getGroupMetaData() Error Finding GroupId: " << *it;
 			std::cerr << std::endl;
 		}
 		else
@@ -1223,7 +1223,7 @@ bool GxsDataProxy::getGroupSummary(const std::list<std::string> &groupIds, std::
 }
 
 
-bool GxsDataProxy::getMsgSummary(const std::list<std::string> &msgIds, std::list<RsMsgMetaData> &msgSummary)
+bool GxsDataProxyVEG::getMsgSummary(const std::list<std::string> &msgIds, std::list<RsMsgMetaData> &msgSummary)
 {
 	std::list<std::string>::const_iterator it;
 	for(it = msgIds.begin(); it != msgIds.end(); it++)
@@ -1236,7 +1236,7 @@ bool GxsDataProxy::getMsgSummary(const std::list<std::string> &msgIds, std::list
 		if (mit == mMsgMetaData.end())
 		{
 			// error.
-			std::cerr << "GxsDataProxy::getMsgSummary() Error Finding MsgId: " << *it;
+			std::cerr << "GxsDataProxyVEG::getMsgSummary() Error Finding MsgId: " << *it;
 			std::cerr << std::endl;
 		}
 		else
@@ -1248,7 +1248,7 @@ bool GxsDataProxy::getMsgSummary(const std::list<std::string> &msgIds, std::list
 }
 
 
-bool GxsDataProxy::getGroupData(const std::string &groupId, void * &groupData)
+bool GxsDataProxyVEG::getGroupData(const std::string &groupId, void * &groupData)
 {
 	RsStackMutex stack(mDataMtx); /***** LOCKED *****/
 
@@ -1258,7 +1258,7 @@ bool GxsDataProxy::getGroupData(const std::string &groupId, void * &groupData)
 	if (mit == mGroupData.end())
 	{
 		// error.
-		std::cerr << "GxsDataProxy::getGroupData() Error Finding GroupId: " << groupId;
+		std::cerr << "GxsDataProxyVEG::getGroupData() Error Finding GroupId: " << groupId;
 		std::cerr << std::endl;
 		return false;
 	}
@@ -1269,7 +1269,7 @@ bool GxsDataProxy::getGroupData(const std::string &groupId, void * &groupData)
 	return true;
 }
 		
-bool GxsDataProxy::getMsgData(const std::string &msgId, void * &msgData)
+bool GxsDataProxyVEG::getMsgData(const std::string &msgId, void * &msgData)
 {
 	RsStackMutex stack(mDataMtx); /***** LOCKED *****/
 
@@ -1279,7 +1279,7 @@ bool GxsDataProxy::getMsgData(const std::string &msgId, void * &msgData)
 	if (mit == mMsgData.end())
 	{
 		// error.
-		std::cerr << "GxsDataProxy::getMsgData() Error Finding MsgId: " << msgId;
+		std::cerr << "GxsDataProxyVEG::getMsgData() Error Finding MsgId: " << msgId;
 		std::cerr << std::endl;
 		return false;
 	}
@@ -1291,7 +1291,7 @@ bool GxsDataProxy::getMsgData(const std::string &msgId, void * &msgData)
 }
 
 #if 0
-bool GxsDataProxy::getGroupData(const std::list<std::string> &groupIds, std::list<void *> &groupData)
+bool GxsDataProxyVEG::getGroupData(const std::list<std::string> &groupIds, std::list<void *> &groupData)
 {
 	std::list<std::string>::const_iterator it;
 	for(it = groupIds.begin(); it != groupIds.end(); it++)
@@ -1304,7 +1304,7 @@ bool GxsDataProxy::getGroupData(const std::list<std::string> &groupIds, std::lis
 		if (mit == mGroupData.end())
 		{
 			// error.
-			std::cerr << "GxsDataProxy::getGroupData() Error Finding GroupId: " << *it;
+			std::cerr << "GxsDataProxyVEG::getGroupData() Error Finding GroupId: " << *it;
 			std::cerr << std::endl;
 		}
 		else
@@ -1315,7 +1315,7 @@ bool GxsDataProxy::getGroupData(const std::list<std::string> &groupIds, std::lis
 	return true;
 }
 		
-bool GxsDataProxy::getMsgData(const std::list<std::string> &msgIds, std::list<void *> &msgData)
+bool GxsDataProxyVEG::getMsgData(const std::list<std::string> &msgIds, std::list<void *> &msgData)
 {
 	std::list<std::string>::const_iterator it;
 	for(it = msgIds.begin(); it != msgIds.end(); it++)
@@ -1328,7 +1328,7 @@ bool GxsDataProxy::getMsgData(const std::list<std::string> &msgIds, std::list<vo
 		if (mit == mMsgData.end())
 		{
 			// error.
-			std::cerr << "GxsDataProxy::getMsgData() Error Finding MsgId: " << *it;
+			std::cerr << "GxsDataProxyVEG::getMsgData() Error Finding MsgId: " << *it;
 			std::cerr << std::endl;
 		}
 		else
@@ -1340,7 +1340,7 @@ bool GxsDataProxy::getMsgData(const std::list<std::string> &msgIds, std::list<vo
 }
 #endif
 
-bool GxsDataProxy::isUniqueMsg(const std::string &msgId)
+bool GxsDataProxyVEG::isUniqueMsg(const std::string &msgId)
 {
 	RsStackMutex stack(mDataMtx); /***** LOCKED *****/
 
@@ -1351,7 +1351,7 @@ bool GxsDataProxy::isUniqueMsg(const std::string &msgId)
 }
 
 		
-bool GxsDataProxy::isUniqueGroup(const std::string &groupId)
+bool GxsDataProxyVEG::isUniqueGroup(const std::string &groupId)
 {
 	RsStackMutex stack(mDataMtx); /***** LOCKED *****/
 
@@ -1370,8 +1370,8 @@ bool GxsDataProxy::isUniqueGroup(const std::string &groupId)
 /*********************************************************************************************************/
 
 
-p3GxsDataService::p3GxsDataService(uint16_t type, GxsDataProxy *proxy)
-	:p3GxsService(type), mProxy(proxy)
+p3GxsDataServiceVEG::p3GxsDataServiceVEG(uint16_t type, GxsDataProxyVEG *proxy)
+	:p3GxsServiceVEG(type), mProxy(proxy)
 {
 	return;
 }
@@ -1380,7 +1380,7 @@ p3GxsDataService::p3GxsDataService(uint16_t type, GxsDataProxy *proxy)
 
 
 
-bool 	p3GxsDataService::fakeprocessrequests()
+bool 	p3GxsDataServiceVEG::fakeprocessrequests()
 {
 	std::list<uint32_t> toClear;
 	std::list<uint32_t>::iterator cit;
@@ -1392,11 +1392,11 @@ bool 	p3GxsDataService::fakeprocessrequests()
 	
 	for(it = mRequests.begin(); it != mRequests.end(); it++)
 	{
-                //std::cerr << "p3GxsDataService::fakeprocessrequests() Token: " << it->second.token << " Status: " << it->second.status << " ReqType: " << it->second.reqType << " Age: " << now - it->second.reqTime << std::endl;
+                //std::cerr << "p3GxsDataServiceVEG::fakeprocessrequests() Token: " << it->second.token << " Status: " << it->second.status << " ReqType: " << it->second.reqType << " Age: " << now - it->second.reqTime << std::endl;
 
                 if (it->second.status == GXS_REQUEST_STATUS_PENDING)
                 {
-                	std::cerr << "p3GxsDataService::fakeprocessrequests() Processing Token: " << it->second.token << " Status: " << it->second.status << " ReqType: " << it->second.reqType << " Age: " << now - it->second.reqTime << std::endl;
+                	std::cerr << "p3GxsDataServiceVEG::fakeprocessrequests() Processing Token: " << it->second.token << " Status: " << it->second.status << " ReqType: " << it->second.reqType << " Age: " << now - it->second.reqTime << std::endl;
                         it->second.status = GXS_REQUEST_STATUS_PARTIAL;
 			/* PROCESS REQUEST! */
 			switch(it->second.reqType)
@@ -1421,13 +1421,13 @@ bool 	p3GxsDataService::fakeprocessrequests()
                 }
                 else if (it->second.status == GXS_REQUEST_STATUS_DONE)
                 {
-                        std::cerr << "p3GxsDataService::fakeprocessrequests() Clearing Done Request Token: " << it->second.token;
+                        std::cerr << "p3GxsDataServiceVEG::fakeprocessrequests() Clearing Done Request Token: " << it->second.token;
                         std::cerr << std::endl;
 			toClear.push_back(it->second.token);
                 }
                 else if (now - it->second.reqTime > MAX_REQUEST_AGE)
                 {
-                        std::cerr << "p3GxsDataService::fakeprocessrequests() Clearing Old Request Token: " << it->second.token;
+                        std::cerr << "p3GxsDataServiceVEG::fakeprocessrequests() Clearing Old Request Token: " << it->second.token;
                         std::cerr << std::endl;
 			toClear.push_back(it->second.token);
                 }

@@ -27,7 +27,7 @@
 #define P3_GXS_SERVICE_HEADER
 
 #include "services/p3service.h"
-#include "retroshare/rsidentity.h"
+#include "retroshare/rsidentityVEG.h"
 
 /* 
  * This class provides useful generic support for GXS style services.
@@ -54,7 +54,7 @@ class gxsRequest
 
 	uint32_t ansType; 
 	uint32_t reqType; 
-	RsTokReqOptions Options;
+	RsTokReqOptionsVEG Options;
 	
 	uint32_t status;
 
@@ -64,18 +64,18 @@ class gxsRequest
 };
 
 
-class p3GxsService: public p3Service
+class p3GxsServiceVEG: public p3Service
 {
 	protected:
 
-	p3GxsService(uint16_t type);
+	p3GxsServiceVEG(uint16_t type);
 
 	public:
 
 //virtual ~p3Service() { p3Service::~p3Service(); return; }
 
 bool	generateToken(uint32_t &token);
-bool	storeRequest(const uint32_t &token, const uint32_t &ansType, const RsTokReqOptions &opts, const uint32_t &type, const std::list<std::string> &ids);
+bool	storeRequest(const uint32_t &token, const uint32_t &ansType, const RsTokReqOptionsVEG &opts, const uint32_t &type, const std::list<std::string> &ids);
 bool	clearRequest(const uint32_t &token);
 
 bool	updateRequestStatus(const uint32_t &token, const uint32_t &status);
@@ -103,15 +103,15 @@ virtual bool    fakeprocessrequests();
 };
 
 
-class GxsDataProxy
+class GxsDataProxyVEG
 {
 	public:
 
-	GxsDataProxy();
+	GxsDataProxyVEG();
 
-virtual bool getGroupList(     uint32_t &token, const RsTokReqOptions &opts, const std::list<std::string> &groupIds, std::list<std::string> &outGroupIds);
-virtual bool getMsgList(       uint32_t &token, const RsTokReqOptions &opts, const std::list<std::string> &groupIds, std::list<std::string> &outMsgIds);
-virtual bool getMsgRelatedList(uint32_t &token, const RsTokReqOptions &opts, const std::list<std::string> &msgIds, std::list<std::string> &outMsgIds);
+virtual bool getGroupList(     uint32_t &token, const RsTokReqOptionsVEG &opts, const std::list<std::string> &groupIds, std::list<std::string> &outGroupIds);
+virtual bool getMsgList(       uint32_t &token, const RsTokReqOptionsVEG &opts, const std::list<std::string> &groupIds, std::list<std::string> &outMsgIds);
+virtual bool getMsgRelatedList(uint32_t &token, const RsTokReqOptionsVEG &opts, const std::list<std::string> &msgIds, std::list<std::string> &outMsgIds);
 
 
 	/* This functions return a token - which can be used to retrieve the RsGroupMetaData, later
@@ -157,8 +157,8 @@ virtual bool setGroupServiceString(const std::string &grpId, const std::string &
 
 	protected:
 
-	bool filterGroupList(const RsTokReqOptions &opts, std::list<std::string> &groupIds);
-	bool filterMsgList(const RsTokReqOptions &opts, std::list<std::string> &msgIds);
+	bool filterGroupList(const RsTokReqOptionsVEG &opts, std::list<std::string> &groupIds);
+	bool filterMsgList(const RsTokReqOptionsVEG &opts, std::list<std::string> &msgIds);
 
 
 	RsMutex mDataMtx;
@@ -172,17 +172,17 @@ virtual bool setGroupServiceString(const std::string &grpId, const std::string &
 };
 
 
-class p3GxsDataService: public p3GxsService
+class p3GxsDataServiceVEG: public p3GxsServiceVEG
 {
 	public:
 
-	p3GxsDataService(uint16_t type, GxsDataProxy *proxy);
+	p3GxsDataServiceVEG(uint16_t type, GxsDataProxyVEG *proxy);
 virtual bool    fakeprocessrequests();
 
 
 	protected:
 
-	GxsDataProxy *mProxy;
+	GxsDataProxyVEG *mProxy;
 };
 
 

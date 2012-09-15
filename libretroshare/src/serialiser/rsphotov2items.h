@@ -33,16 +33,19 @@
 #include "serialiser/rstlvtypes.h"
 
 #include "rsgxsitems.h"
-#include "rsphotoitems.h"
+//#include "rsphotoitems.h"
 #include "retroshare/rsphotoV2.h"
 
+const uint8_t RS_PKT_SUBTYPE_PHOTO_ITEM = 0x02;
+const uint8_t RS_PKT_SUBTYPE_PHOTO_SHOW_ITEM = 0x03;
+const uint8_t RS_PKT_SUBTYPE_PHOTO_COMMENT_ITEM = 0x04;
 
 class RsGxsPhotoAlbumItem : public RsGxsGrpItem
 {
 
 public:
 
-	RsGxsPhotoAlbumItem():  RsGxsGrpItem(RS_SERVICE_TYPE_PHOTO,
+	RsGxsPhotoAlbumItem():  RsGxsGrpItem(RS_SERVICE_GXSV1_TYPE_PHOTO,
 			RS_PKT_SUBTYPE_PHOTO_ITEM) { return;}
         virtual ~RsGxsPhotoAlbumItem() { return;}
 
@@ -57,7 +60,7 @@ class RsGxsPhotoPhotoItem : public RsGxsMsgItem
 {
 public:
 
-	RsGxsPhotoPhotoItem(): RsGxsMsgItem(RS_SERVICE_TYPE_PHOTO,
+	RsGxsPhotoPhotoItem(): RsGxsMsgItem(RS_SERVICE_GXSV1_TYPE_PHOTO,
 			RS_PKT_SUBTYPE_PHOTO_SHOW_ITEM) {return; }
         virtual ~RsGxsPhotoPhotoItem() { return;}
         void clear();
@@ -70,7 +73,7 @@ class RsGxsPhotoSerialiser : public RsSerialType
 public:
 
 	RsGxsPhotoSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_PHOTO)
+	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXSV1_TYPE_PHOTO)
 	{ return; }
 	virtual     ~RsGxsPhotoSerialiser() { return; }
 
