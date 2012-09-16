@@ -441,12 +441,23 @@ bool    p3PeerMgrIMPL::haveOnceConnected()
 /*******************************************************************/
 /*******************************************************************/
 
-bool p3PeerMgrIMPL::addFriend(const std::string &id, const std::string &gpg_id, uint32_t netMode, uint32_t visState, time_t lastContact)
+bool p3PeerMgrIMPL::addFriend(const std::string& input_id, const std::string& input_gpg_id, uint32_t netMode, uint32_t visState, time_t lastContact)
 {
 	bool notifyLinkMgr = false;
+	std::string id = input_id ;
+	std::string gpg_id = input_gpg_id ;
 
-        rslog(RSL_WARNING, p3peermgrzone, "p3PeerMgr::addFriend() id: " + id);
+	rslog(RSL_WARNING, p3peermgrzone, "p3PeerMgr::addFriend() id: " + id);
 
+	// For safety, make sure ssl_id is lower case and GPG id is upper case.
+	//
+	for(uint32_t i=0;i<id.length();++i)
+		if(id[i] >= 'A' && id[i] <= 'F')
+			id[i] += 'a' - 'A' ;
+
+	for(uint32_t i=0;i<gpg_id.length();++i)
+		if(gpg_id[i] >= 'a' && gpg_id[i] <= 'f')
+			gpg_id[i] += 'A' - 'a' ;
 
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
