@@ -7,7 +7,7 @@
 
 #include <string>
 
-#define LIB_VERSION "0.5.3c"
+#define LIB_VERSION "0.5.4"
 #define SVN_REVISION "Revision $WCREV$"
 #define SVN_REVISION_NUMBER  $WCREV$
 
