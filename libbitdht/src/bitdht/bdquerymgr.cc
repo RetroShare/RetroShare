@@ -189,9 +189,11 @@ void bdQueryManager::addQuery(const bdNodeId *id, uint32_t qflags)
 
 	mNodeSpace->find_nearest_nodes(id, BITDHT_QUERY_START_PEERS, nearest);
 
+#ifdef DEBUG_NODE_ACTIONS 
 	fprintf(stderr, "bdQueryManager::addQuery(");
 	mFns->bdPrintNodeId(std::cerr, id);
 	fprintf(stderr, ")\n");
+#endif
 
 	for(it = nearest.begin(); it != nearest.end(); it++)
 	{

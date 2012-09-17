@@ -324,8 +324,10 @@ void bdNode::iteration()
 	/* Disable Queries if our Ping Queue is too long */
 	if (mPotentialPeers.size() > mMaxAllowedMsgs * BDNODE_MAX_POTENTIAL_PEERS_MULTIPLIER)
 	{
+#ifdef DEBUG_NODE_MULTIPEER 
 		std::cerr << "bdNode::iteration() Disabling Queries until PotentialPeer Queue reduced";
 		std::cerr << std::endl;
+#endif
 		allowedPings = mMaxAllowedMsgs;
 	}
 	
@@ -1694,12 +1696,14 @@ void bdNode::msgin_pong(bdId *id, bdToken *transId, bdToken *versionId)
 		if ((sameDhtVersion) && (!sameDhtEngine))
 		{
 			sameDhtVersion = false;
+#ifdef DEBUG_NODE_MSGIN
 			std::cerr << "bdNode::msgin_pong() STRANGE Peer Version: ";
 			for(uint32_t i = 0; i < versionId->len; i++)
 			{
 				std::cerr << versionId->data[i];
 			}
 			std::cerr << std::endl;
+#endif
 		}
 	
 		/* check two bytes */
