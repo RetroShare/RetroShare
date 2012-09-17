@@ -59,6 +59,8 @@
 #define RS_TOKREQ_ANSTYPE_LIST		0x0001
 #define RS_TOKREQ_ANSTYPE_SUMMARY	0x0002
 #define RS_TOKREQ_ANSTYPE_DATA		0x0003
+#define RS_TOKREQ_ANSTYPE_ACK           0x0004
+
 
 
 
@@ -72,7 +74,8 @@ public:
 RsTokReqOptionsV2()
 {
 	mOptions = 0;
-	mStatusFilter = 0; mStatusMask = 0; mSubscribeFilter = 0;
+        mStatusFilter = 0; mStatusMask = 0; mSubscribeFilter = 0;
+        mMsgFlagMask = 0; mMsgFlagFilter = 0;
 	mBefore = 0; mAfter = 0; mReqType = 0;
 }
 
@@ -82,6 +85,8 @@ uint32_t mOptions;
 // Should be usable with any Options... applied afterwards.
 uint32_t mStatusFilter;
 uint32_t mStatusMask;
+
+uint32_t mMsgFlagMask, mMsgFlagFilter;
 
 uint32_t mReqType;
 

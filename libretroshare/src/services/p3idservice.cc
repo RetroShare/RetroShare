@@ -58,8 +58,8 @@ p3IdService::p3IdService(uint16_t type)
 
 int	p3IdService::tick()
 {
-	//std::cerr << "p3IdService::tick()";
-	//std::cerr << std::endl;
+	std::cerr << "p3IdService::tick()";
+	std::cerr << std::endl;
 
 	fakeprocessrequests();
 	// Disable for now.

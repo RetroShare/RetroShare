@@ -32,7 +32,7 @@
 
 #include <retroshare/rsiface.h>
 
-#include "gui/PhotoShare/PhotoDialog.h"
+#include "gui/PhotoShare/PhotoShare.h"
 
 // THESE HAVE TO BE CONVERTED TO VEG FORMAT
 #if USE_VEG_SERVICE
@@ -104,9 +104,9 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
                       createPageAction(QIcon(IMAGE_LIBRARY), tr("Identities"), grp));
 #endif
 
-    PhotoDialog *photoDialog = NULL;
-    ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
-                     createPageAction(QIcon(IMAGE_PHOTO), tr("Photo View"), grp));
+    PhotoShare *photoShare = NULL;
+    ui.stackPages->add(photoShare = new PhotoShare(ui.stackPages),
+                     createPageAction(QIcon(IMAGE_PHOTO), tr("Photo Share"), grp));
 
 // THESE HAVE TO BE CONVERTED TO VEG FORMAT
 #if USE_VEG_SERVICE

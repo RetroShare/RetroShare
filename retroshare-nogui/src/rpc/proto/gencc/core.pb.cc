@@ -134,10 +134,12 @@ void protobuf_AssignDesc_core_2eproto() {
       sizeof(Person));
   Person_Relationship_descriptor_ = Person_descriptor_->enum_type(0);
   File_descriptor_ = file->message_type(4);
-  static const int File_offsets_[3] = {
+  static const int File_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(File, name_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(File, hash_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(File, size_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(File, path_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(File, avail_),
   };
   File_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -281,39 +283,39 @@ void protobuf_AddDesc_core_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\ncore.proto\022\013rsctrl.core\"\260\001\n\006Status\022,\n\004"
+    "\n\ncore.proto\022\013rsctrl.core\"\233\001\n\006Status\022,\n\004"
     "code\030\001 \002(\0162\036.rsctrl.core.Status.StatusCo"
-    "de\022\013\n\003msg\030\002 \001(\t\"k\n\nStatusCode\022\n\n\006FAILED\020"
-    "\000\022\017\n\013NO_IMPL_YET\020\001\022\021\n\rINVALID_QUERY\020\002\022\023\n"
-    "\017PARTIAL_SUCCESS\020\003\022\013\n\007SUCCESS\020\004\022\013\n\007READM"
-    "SG\020\005\")\n\006IpAddr\022\016\n\004addr\030\001 \002(\t:\000\022\017\n\004port\030\002"
-    " \002(\r:\0010\"\303\001\n\010Location\022\016\n\006ssl_id\030\001 \002(\t\022\020\n\010"
-    "location\030\002 \002(\t\022&\n\tlocaladdr\030\003 \002(\0132\023.rsct"
-    "rl.core.IpAddr\022$\n\007extaddr\030\004 \002(\0132\023.rsctrl"
-    ".core.IpAddr\022\r\n\005state\030\005 \002(\r\"8\n\nStateFlag"
-    "s\022\n\n\006ONLINE\020\001\022\r\n\tCONNECTED\020\002\022\017\n\013UNREACHA"
-    "BLE\020\004\"\340\001\n\006Person\022\016\n\006gpg_id\030\001 \002(\t\022\014\n\004name"
-    "\030\002 \002(\t\0222\n\010relation\030\003 \002(\0162 .rsctrl.core.P"
-    "erson.Relationship\022(\n\tlocations\030\004 \003(\0132\025."
-    "rsctrl.core.Location\"Z\n\014Relationship\022\n\n\006"
-    "FRIEND\020\001\022\032\n\026FRIEND_OF_MANY_FRIENDS\020\002\022\025\n\021"
-    "FRIEND_OF_FRIENDS\020\003\022\013\n\007UNKNOWN\020\004\"0\n\004File"
-    "\022\014\n\004name\030\001 \002(\t\022\014\n\004hash\030\002 \002(\t\022\014\n\004size\030\003 \002"
-    "(\004\"f\n\003Dir\022\014\n\004name\030\001 \002(\t\022\014\n\004path\030\002 \002(\t\022!\n"
-    "\007subdirs\030\003 \003(\0132\020.rsctrl.core.Dir\022 \n\005file"
-    "s\030\004 \003(\0132\021.rsctrl.core.File\"\372\001\n\014SystemSta"
-    "tus\0225\n\nnet_status\030\001 \002(\0162!.rsctrl.core.Sy"
-    "stemStatus.NetCode\022\013\n\003msg\030\002 \001(\t\"\245\001\n\007NetC"
-    "ode\022\017\n\013BAD_UNKNOWN\020\000\022\017\n\013BAD_OFFLINE\020\001\022\016\n"
-    "\nBAD_NATSYM\020\002\022\021\n\rBAD_NODHT_NAT\020\003\022\023\n\017WARN"
-    "ING_RESTART\020\004\022\022\n\016WARNING_NATTED\020\005\022\021\n\rWAR"
-    "NING_NODHT\020\006\022\010\n\004GOOD\020\007\022\017\n\013ADV_FORWARD\020\010\""
-    "3\n\tBandwidth\022\n\n\002up\030\001 \002(\002\022\014\n\004down\030\002 \002(\002\022\014"
-    "\n\004name\030\003 \001(\t\":\n\014BandwidthSet\022*\n\nbandwidt"
-    "hs\030\001 \003(\0132\026.rsctrl.core.Bandwidth*\027\n\013Exte"
-    "nsionId\022\010\n\004CORE\020\000*M\n\tPackageId\022\t\n\005PEERS\020"
-    "\001\022\n\n\006SYSTEM\020\002\022\010\n\004CHAT\020\003\022\n\n\006SEARCH\020\004\022\t\n\005F"
-    "ILES\020\005\022\010\n\003GXS\020\350\007", 1296);
+    "de\022\013\n\003msg\030\002 \001(\t\"V\n\nStatusCode\022\n\n\006FAILED\020"
+    "\000\022\017\n\013NO_IMPL_YET\020\001\022\021\n\rINVALID_QUERY\020\002\022\013\n"
+    "\007SUCCESS\020\003\022\013\n\007READMSG\020\004\")\n\006IpAddr\022\016\n\004add"
+    "r\030\001 \002(\t:\000\022\017\n\004port\030\002 \002(\r:\0010\"\303\001\n\010Location\022"
+    "\016\n\006ssl_id\030\001 \002(\t\022\020\n\010location\030\002 \002(\t\022&\n\tloc"
+    "aladdr\030\003 \002(\0132\023.rsctrl.core.IpAddr\022$\n\007ext"
+    "addr\030\004 \002(\0132\023.rsctrl.core.IpAddr\022\r\n\005state"
+    "\030\005 \002(\r\"8\n\nStateFlags\022\n\n\006ONLINE\020\001\022\r\n\tCONN"
+    "ECTED\020\002\022\017\n\013UNREACHABLE\020\004\"\340\001\n\006Person\022\016\n\006g"
+    "pg_id\030\001 \002(\t\022\014\n\004name\030\002 \002(\t\0222\n\010relation\030\003 "
+    "\002(\0162 .rsctrl.core.Person.Relationship\022(\n"
+    "\tlocations\030\004 \003(\0132\025.rsctrl.core.Location\""
+    "Z\n\014Relationship\022\n\n\006FRIEND\020\001\022\032\n\026FRIEND_OF"
+    "_MANY_FRIENDS\020\002\022\025\n\021FRIEND_OF_FRIENDS\020\003\022\013"
+    "\n\007UNKNOWN\020\004\"M\n\004File\022\014\n\004name\030\001 \002(\t\022\014\n\004has"
+    "h\030\002 \002(\t\022\014\n\004size\030\003 \002(\003\022\014\n\004path\030\004 \001(\t\022\r\n\005a"
+    "vail\030\005 \001(\t\"f\n\003Dir\022\014\n\004name\030\001 \002(\t\022\014\n\004path\030"
+    "\002 \002(\t\022!\n\007subdirs\030\003 \003(\0132\020.rsctrl.core.Dir"
+    "\022 \n\005files\030\004 \003(\0132\021.rsctrl.core.File\"\372\001\n\014S"
+    "ystemStatus\0225\n\nnet_status\030\001 \002(\0162!.rsctrl"
+    ".core.SystemStatus.NetCode\022\013\n\003msg\030\002 \001(\t\""
+    "\245\001\n\007NetCode\022\017\n\013BAD_UNKNOWN\020\000\022\017\n\013BAD_OFFL"
+    "INE\020\001\022\016\n\nBAD_NATSYM\020\002\022\021\n\rBAD_NODHT_NAT\020\003"
+    "\022\023\n\017WARNING_RESTART\020\004\022\022\n\016WARNING_NATTED\020"
+    "\005\022\021\n\rWARNING_NODHT\020\006\022\010\n\004GOOD\020\007\022\017\n\013ADV_FO"
+    "RWARD\020\010\"3\n\tBandwidth\022\n\n\002up\030\001 \002(\002\022\014\n\004down"
+    "\030\002 \002(\002\022\014\n\004name\030\003 \001(\t\":\n\014BandwidthSet\022*\n\n"
+    "bandwidths\030\001 \003(\0132\026.rsctrl.core.Bandwidth"
+    "*\027\n\013ExtensionId\022\010\n\004CORE\020\000*6\n\tPackageId\022\t"
+    "\n\005PEERS\020\001\022\n\n\006SYSTEM\020\002\022\010\n\004CHAT\020\003\022\010\n\003GXS\020\350"
+    "\007", 1281);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "core.proto", &protobuf_RegisterTypes);
   Status::default_instance_ = new Status();
@@ -366,8 +368,6 @@ bool PackageId_IsValid(int value) {
     case 1:
     case 2:
     case 3:
-    case 4:
-    case 5:
     case 1000:
       return true;
     default:
@@ -389,7 +389,6 @@ bool Status_StatusCode_IsValid(int value) {
     case 2:
     case 3:
     case 4:
-    case 5:
       return true;
     default:
       return false;
@@ -400,7 +399,6 @@ bool Status_StatusCode_IsValid(int value) {
 const Status_StatusCode Status::FAILED;
 const Status_StatusCode Status::NO_IMPL_YET;
 const Status_StatusCode Status::INVALID_QUERY;
-const Status_StatusCode Status::PARTIAL_SUCCESS;
 const Status_StatusCode Status::SUCCESS;
 const Status_StatusCode Status::READMSG;
 const Status_StatusCode Status::StatusCode_MIN;
@@ -1784,6 +1782,8 @@ void Person::Swap(Person* other) {
 const int File::kNameFieldNumber;
 const int File::kHashFieldNumber;
 const int File::kSizeFieldNumber;
+const int File::kPathFieldNumber;
+const int File::kAvailFieldNumber;
 #endif  // !_MSC_VER
 
 File::File()
@@ -1804,7 +1804,9 @@ void File::SharedCtor() {
   _cached_size_ = 0;
   name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   hash_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-  size_ = GOOGLE_ULONGLONG(0);
+  size_ = GOOGLE_LONGLONG(0);
+  path_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  avail_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -1818,6 +1820,12 @@ void File::SharedDtor() {
   }
   if (hash_ != &::google::protobuf::internal::kEmptyString) {
     delete hash_;
+  }
+  if (path_ != &::google::protobuf::internal::kEmptyString) {
+    delete path_;
+  }
+  if (avail_ != &::google::protobuf::internal::kEmptyString) {
+    delete avail_;
   }
   if (this != default_instance_) {
   }
@@ -1855,7 +1863,17 @@ void File::Clear() {
         hash_->clear();
       }
     }
-    size_ = GOOGLE_ULONGLONG(0);
+    size_ = GOOGLE_LONGLONG(0);
+    if (has_path()) {
+      if (path_ != &::google::protobuf::internal::kEmptyString) {
+        path_->clear();
+      }
+    }
+    if (has_avail()) {
+      if (avail_ != &::google::protobuf::internal::kEmptyString) {
+        avail_->clear();
+      }
+    }
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -1900,15 +1918,49 @@ bool File::MergePartialFromCodedStream(
         break;
       }
       
-      // required uint64 size = 3;
+      // required int64 size = 3;
       case 3: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_size:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
                  input, &size_)));
           set_has_size();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(34)) goto parse_path;
+        break;
+      }
+      
+      // optional string path = 4;
+      case 4: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_path:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_path()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->path().data(), this->path().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(42)) goto parse_avail;
+        break;
+      }
+      
+      // optional string avail = 5;
+      case 5: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_avail:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_avail()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->avail().data(), this->avail().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
         } else {
           goto handle_uninterpreted;
         }
@@ -1952,9 +2004,27 @@ void File::SerializeWithCachedSizes(
       2, this->hash(), output);
   }
   
-  // required uint64 size = 3;
+  // required int64 size = 3;
   if (has_size()) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt64(3, this->size(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->size(), output);
+  }
+  
+  // optional string path = 4;
+  if (has_path()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->path().data(), this->path().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      4, this->path(), output);
+  }
+  
+  // optional string avail = 5;
+  if (has_avail()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->avail().data(), this->avail().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      5, this->avail(), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -1985,9 +2055,29 @@ void File::SerializeWithCachedSizes(
         2, this->hash(), target);
   }
   
-  // required uint64 size = 3;
+  // required int64 size = 3;
   if (has_size()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(3, this->size(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(3, this->size(), target);
+  }
+  
+  // optional string path = 4;
+  if (has_path()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->path().data(), this->path().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        4, this->path(), target);
+  }
+  
+  // optional string avail = 5;
+  if (has_avail()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->avail().data(), this->avail().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        5, this->avail(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -2015,11 +2105,25 @@ int File::ByteSize() const {
           this->hash());
     }
     
-    // required uint64 size = 3;
+    // required int64 size = 3;
     if (has_size()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::UInt64Size(
+        ::google::protobuf::internal::WireFormatLite::Int64Size(
           this->size());
+    }
+    
+    // optional string path = 4;
+    if (has_path()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->path());
+    }
+    
+    // optional string avail = 5;
+    if (has_avail()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->avail());
     }
     
   }
@@ -2058,6 +2162,12 @@ void File::MergeFrom(const File& from) {
     if (from.has_size()) {
       set_size(from.size());
     }
+    if (from.has_path()) {
+      set_path(from.path());
+    }
+    if (from.has_avail()) {
+      set_avail(from.avail());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -2085,6 +2195,8 @@ void File::Swap(File* other) {
     std::swap(name_, other->name_);
     std::swap(hash_, other->hash_);
     std::swap(size_, other->size_);
+    std::swap(path_, other->path_);
+    std::swap(avail_, other->avail_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

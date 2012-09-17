@@ -66,6 +66,16 @@ bool TokenQueueV2::requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTok
 	return true;
 }
 
+bool TokenQueueV2::requestMsgRelatedInfo(uint32_t &token, const RsTokReqOptionsV2 &opts, const std::list<RsGxsGroupId> &grpIds, uint32_t usertype)
+{
+    uint32_t basictype = TOKENREQ_MSGINFO;
+    uint32_t anstype = RS_TOKREQ_ANSTYPE_LIST; // always a list answer
+    mService->requestMsgRelatedInfo(token, anstype, opts, ids);
+    queueRequest(token, basictype, anstype, usertype);
+
+    return true;
+}
+
 
 bool TokenQueueV2::requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptionsV2 &opts,
                                   const std::list<RsGxsGroupId> &grpIds, uint32_t usertype)
@@ -143,7 +153,9 @@ void TokenQueueV2::pollRequests()
 bool TokenQueueV2::checkForRequest(uint32_t token)
 {
 	/* check token */
-    return (RsTokenServiceV2::GXS_REQUEST_STATUS_COMPLETE == mService->requestStatus(token));
+    uint32_t status =  mService->requestStatus(token);
+    return ( (RsTokenServiceV2::GXS_REQUEST_STATUS_FAILED == status) ||
+            (RsTokenServiceV2::GXS_REQUEST_STATUS_COMPLETE == status) );
 }
 
 

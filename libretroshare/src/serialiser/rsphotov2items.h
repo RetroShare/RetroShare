@@ -68,6 +68,20 @@ public:
 	RsPhotoPhoto photo;
 };
 
+class RsGxsPhotoCommentItem : public RsGxsMsgItem
+{
+public:
+
+    RsGxsPhotoCommentItem(): RsGxsMsgItem(RS_SERVICE_GXSV1_TYPE_PHOTO,
+                                          RS_PKT_SUBTYPE_PHOTO_COMMENT_ITEM) { return; }
+    virtual ~RsGxsPhotoCommentItem() { return; }
+    void clear();
+    std::ostream &print(std::ostream &out, uint16_t indent = 0);
+    RsPhotoComment comment;
+
+
+};
+
 class RsGxsPhotoSerialiser : public RsSerialType
 {
 public:
@@ -91,6 +105,9 @@ public:
 	bool        serialiseGxsPhotoPhotoItem  (RsGxsPhotoPhotoItem *item, void *data, uint32_t *size);
 	RsGxsPhotoPhotoItem *    deserialiseGxsPhotoPhotoItem(void *data, uint32_t *size);
 
+        uint32_t    sizeGxsPhotoCommentItem(RsGxsPhotoCommentItem *item);
+        bool        serialiseGxsPhotoCommentItem  (RsGxsPhotoCommentItem *item, void *data, uint32_t *size);
+        RsGxsPhotoCommentItem *    deserialiseGxsPhotoCommentItem(void *data, uint32_t *size);
 
 };
 

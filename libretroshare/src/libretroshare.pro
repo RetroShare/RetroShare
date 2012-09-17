@@ -10,7 +10,7 @@ CONFIG += test_voip
 
 # GXS Stuff.
 CONFIG += newcache
-CONFIG += newservices
+#CONFIG += newservices
 
 # Beware: All data of the stripped services are lost
 DEFINES *= PQI_DISABLE_TUNNEL
@@ -137,7 +137,8 @@ PUBLIC_HEADERS = retroshare/rsblogs.h \
     retroshare/rstypes.h \
     retroshare/rsdht.h \
     retroshare/rsdsdv.h \
-    retroshare/rsconfig.h
+    retroshare/rsconfig.h \
+    retroshare/rsphotoV2.h
 HEADERS += plugins/pluginmanager.h \
     plugins/dlfcn_win32.h \
     serialiser/rspluginitems.h
@@ -148,65 +149,7 @@ HEADERS += retroshare/rsgame.h \
     retroshare/rsphoto.h
 
 # ################################ Linux ##########################################
-linux-*:isEmpty(PREFIX) { 
-    PREFIX = /usr \
-        }
-    isEmpty(INC_DIR) { 
-        INC_DIR = $${PREFIX}/include/retroshare/ \
-            }
-        isEmpty(LIB_DIR) { 
-            LIB_DIR = $${PREFIX}/lib/ \
-                }
-            
-            # These two lines fixe compilation on ubuntu natty. Probably a ubuntu packaging error.
-            INCLUDEPATH *= /usr/lib/x86_64-linux-gnu/glib-2.0/include/
-            INCLUDEPATH *= /usr/lib/i386-linux-gnu/glib-2.0/include/
-            OPENPGPSDK_DIR = ../../openpgpsdk/src
-            INCLUDEPATH *= $${OPENPGPSDK_DIR} \
-                ../openpgpsdk
-            DESTDIR = lib
-            QMAKE_CXXFLAGS *= -Wall \
-                -D_FILE_OFFSET_BITS=64
-            QMAKE_CC = g++
-            SSL_DIR = /usr/include/openssl
-            UPNP_DIR = /usr/include/upnp
-            INCLUDEPATH += . \
-                $${SSL_DIR} \
-                $${UPNP_DIR}
-            
-            # gpg files
-            system(which gpg-error-config >/dev/null 2>&1):INCLUDEPATH += $$system(gpg-error-config --cflags | sed -e "s/-I//g")
-            else:message(Could not find gpg-error-config on your system, assuming gpg-error.h is in /usr/include)
-            system(which gpgme-config >/dev/null 2>&1):INCLUDEPATH += $$system(gpgme-config --cflags | sed -e "s/-I//g")
-            else:message(Could not find gpgme-config on your system, assuming gpgme.h is in /usr/include)
-            
-            # libupnp implementation files
-            HEADERS += upnp/UPnPBase.h
-            SOURCES += upnp/UPnPBase.cpp
-            
-            # where to put the shared library itself
-            target.path = $$LIB_DIR
-            INSTALLS *= target
-            
-            # where to put the library's interface
-            include_rsiface.path = $${INC_DIR}
-            include_rsiface.files = $$PUBLIC_HEADERS
-            INSTALLS += include_rsiface
-            
-            # CONFIG += version_detail_bash_script
-            DEFINES *= UBUNTU
-            INCLUDEPATH += /usr/include/glib-2.0/ \
-                /usr/lib/glib-2.0/include
-            LIBS *= -lgnome-keyring
 
-        linux-g++:OBJECTS_DIR = temp/linux-g++/obj
-        linux-g++-64:OBJECTS_DIR = temp/linux-g++-64/obj
-        version_detail_bash_script { 
-            QMAKE_EXTRA_TARGETS += write_version_detail
-            PRE_TARGETDEPS = write_version_detail
-            write_version_detail.commands = ./version_detail.sh
-        }
-        
         # ################### Cross compilation for windows under Linux ####################
         win32-x-g++ { 
             OBJECTS_DIR = temp/win32xgcc/obj
@@ -262,10 +205,10 @@ linux-*:isEmpty(PREFIX) {
             # miniupnp implementation files
             HEADERS += upnp/upnputil.h
             SOURCES += upnp/upnputil.c
-            UPNPC_DIR = ../../../miniupnpc-1.3
-            PTHREADS_DIR = ../../../pthreads-w32-2-8-0-release
-            ZLIB_DIR = ../../../zlib-1.2.3
-            SSL_DIR = ../../../openssl-1.0.1c
+            UPNPC_DIR = ../../../lib/miniupnpc-1.3
+            PTHREADS_DIR = ../../../lib/pthreads-w32-2-8-0-release
+            ZLIB_DIR = ../../../lib/zlib-1.2.3
+            SSL_DIR = ../../../OpenSSL
             OPENPGPSDK_DIR = ../../openpgpsdk/src
             INCLUDEPATH += . \
                 $${SSL_DIR}/include \
@@ -274,7 +217,7 @@ linux-*:isEmpty(PREFIX) {
                 $${ZLIB_DIR} \
                 $${OPENPGPSDK_DIR}
             newcache { 
-                SQLITE_DIR = ../../../sqlite-autoconf-3071300
+                SQLITE_DIR = ../../../../Libraries/sqlite/sqlite-autoconf-3070900
                 INCLUDEPATH += . \
                     $${SQLITE_DIR}
             }

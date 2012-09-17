@@ -86,11 +86,6 @@ int RpcProtoSystem::processMsg(uint32_t chan_id, uint32_t msg_id, uint32_t req_i
 		case rsctrl::system::MsgId_RequestSystemStatus:
 			processSystemStatus(chan_id, msg_id, req_id, msg);
 			break;
-#if 0 
-		case rsctrl::system::MsgId_RequestSystemQuit:
-			processSystemQuit(chan_id, msg_id, req_id, msg);
-			break;
-#endif
 		default:
 			std::cerr << "RpcProtoSystem::processMsg() ERROR should never get here";
 			std::cerr << std::endl;
@@ -208,74 +203,6 @@ int RpcProtoSystem::processSystemStatus(uint32_t chan_id, uint32_t msg_id, uint3
 	// Correctly Name Message.
 	uint32_t out_msg_id = constructMsgId(rsctrl::core::CORE, rsctrl::core::SYSTEM, 
 				rsctrl::system::MsgId_ResponseSystemStatus, true);
-
-	// queue it.
-	queueResponse(chan_id, out_msg_id, req_id, outmsg);
-
-	return 1;
-}
-
-
-
-int RpcProtoSystem::processSystemQuit(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg)
-{
-	std::cerr << "RpcProtoSystem::processSystemQuit()";
-	std::cerr << std::endl;
-
-	// parse msg.
-	rsctrl::system::RequestSystemQuit req;
-	if (!req.ParseFromString(msg))
-	{
-		std::cerr << "RpcProtoSystem::processSystemQuit() ERROR ParseFromString()";
-		std::cerr << std::endl;
-		return 0;
-	}
-
-	// NO Options... so go straight to answer.
-	// response.
-	rsctrl::system::ResponseSystemQuit resp;
-	bool success = true;
-
-	switch(req.quit_code())
-	{
-		default:
-		case rsctrl::system::RequestSystemQuit::CLOSE_CHANNEL:
-		{
-				RpcServer *server = getRpcServer();
-				server->error(chan_id, "CLOSE_CHANNEL");
-
-			break;
-		}
-		case rsctrl::system::RequestSystemQuit::SHUTDOWN_RS:
-		{
-				rsicontrol->rsGlobalShutDown();
-			break;
-		}
-	}
-
-        if (success)
-	{
-		rsctrl::core::Status *status = resp.mutable_status();
-		status->set_code(rsctrl::core::Status::SUCCESS);
-	}
-	else
-	{
-		rsctrl::core::Status *status = resp.mutable_status();
-		status->set_code(rsctrl::core::Status::FAILED);
-		status->set_msg("Unknown ERROR");
-	}
-
-	std::string outmsg;
-	if (!resp.SerializeToString(&outmsg))
-	{
-		std::cerr << "RpcProtoSystem::processSystemQuit() ERROR SerialiseToString()";
-		std::cerr << std::endl;
-		return 0;
-	}
-	
-	// Correctly Name Message.
-	uint32_t out_msg_id = constructMsgId(rsctrl::core::CORE, rsctrl::core::SYSTEM, 
-				rsctrl::system::MsgId_ResponseSystemQuit, true);
 
 	// queue it.
 	queueResponse(chan_id, out_msg_id, req_id, outmsg);

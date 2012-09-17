@@ -95,12 +95,22 @@ public:
     bool submitPhoto(uint32_t& token, RsPhotoPhoto &photo);
 
     /*!
+     * submits photo comment, which returns a token that needs
+     * to be acknowledged to get photo msg-grp id pair
+     * The mParentId needs to be set to an existing msg for which
+     * commenting is enabled
+     * @param token token to redeem for acknowledgement
+     * @param comment comment to be submitted
+     */
+    bool submitComment(uint32_t& token, RsPhotoComment &photo);
+
+    /*!
      * subscribes to group, and returns token which can be used
      * to be acknowledged to get group Id
      * @param token token to redeem for acknowledgement
      * @param grpId the id of the group to subscribe to
      */
-    bool subscribeToAlbum(uint32_t& token, const RsGxsGroupId& grpId);
+    bool subscribeToAlbum(uint32_t& token, const RsGxsGroupId& grpId, bool subscribe);
 
     /*!
      * This allows the client service to acknowledge that their msgs has

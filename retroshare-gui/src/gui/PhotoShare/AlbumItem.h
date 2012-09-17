@@ -16,9 +16,9 @@ class AlbumItem : public QWidget, public PhotoShareItem
 
 public:
     explicit AlbumItem(const RsPhotoAlbum& album, PhotoShareItemHolder* albumHolder, QWidget *parent = 0);
-    ~AlbumItem();
+    virtual ~AlbumItem();
 
-    RsPhotoAlbum getAlbum();
+    const RsPhotoAlbum& getAlbum();
 
     bool isSelected() {  return mSelected ;}
     void setSelected(bool selected);

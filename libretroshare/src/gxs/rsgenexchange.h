@@ -153,6 +153,13 @@ protected:
      */
     bool getMsgData(const uint32_t &token, GxsMsgDataMap& msgItems);
 
+
+    /*!
+     * @param grpItem
+     * @deprecated only here to temporarily to testing
+     */
+    void createDummyGroup(RsGxsGrpItem* grpItem);
+
 public:
 
     /*!
@@ -258,6 +265,13 @@ private:
 
     void createGroup(RsNxsGrp* grp);
     bool createMessage(RsNxsMsg* msg);
+
+
+    /*!
+     * check meta change is legal
+     * @return false if meta change is not legal
+     */
+    bool locked_validateGrpMetaChange(GrpLocMetaData&);
 
 private:
 

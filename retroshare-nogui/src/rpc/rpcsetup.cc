@@ -27,12 +27,10 @@
 #include "rpc/proto/rpcprotopeers.h"
 #include "rpc/proto/rpcprotosystem.h"
 #include "rpc/proto/rpcprotochat.h"
-#include "rpc/proto/rpcprotosearch.h"
-#include "rpc/proto/rpcprotofiles.h"
 
 #include "rpc/rpcecho.h"
 
-RpcMediator *CreateRpcSystem(RpcComms *comms, NotifyTxt *notify)
+RpcMediator *CreateRpcSystem(RpcComms *comms)
 {
 	RpcMediator *med = new RpcMediator(comms);
 	RpcServer *server = new RpcServer(med);
@@ -46,12 +44,6 @@ RpcMediator *CreateRpcSystem(RpcComms *comms, NotifyTxt *notify)
 
 	RpcProtoChat *chat = new RpcProtoChat(1);
 	server->addService(chat);
-
-	RpcProtoSearch *search = new RpcProtoSearch(1, notify);
-	server->addService(search);
-
-	RpcProtoFiles *files = new RpcProtoFiles(1);
-	server->addService(files);
 
 	/* Finally an Echo Service - which will echo back any unprocesses commands. */
 	RpcEcho *echo = new RpcEcho(1);

@@ -30,6 +30,7 @@
 #include <string>
 #include <list>
 #include <retroshare/rsidentityVEG.h>
+#include "rsphotoV2.h"
 
 /* The Main Interface Class - for information about your Peers */
 class RsPhotoVEG;
@@ -40,22 +41,6 @@ extern RsPhotoVEG *rsPhotoVEG;
 #define RSPHOTO_MODE_NEW	1
 #define RSPHOTO_MODE_OWN	2
 #define RSPHOTO_MODE_REMOTE	3
-
-class RsPhotoThumbnail
-{
-	public:
-		RsPhotoThumbnail()
-		:data(NULL), size(0), type("N/A") { return; }
-
-	bool deleteImage();
-	bool copyFrom(const RsPhotoThumbnail &nail);
-
-	// Holds Thumbnail image.
-	uint8_t *data;
-	int size;
-	std::string type;
-};
-
 
 /* If these flags are no set - the Photo inherits values from the Album
  */
@@ -75,85 +60,6 @@ class RsPhotoThumbnail
 #define RSPHOTO_FLAGS_ATTRIB_AUTHOR		0x1000 // PUSH UP ORDER
 #define RSPHOTO_FLAGS_ATTRIB_PHOTO		0x2000 // PUSH UP ORDER.
 
-
-class RsPhotoPhoto
-{
-	public:
-
-	RsMsgMetaData mMeta;
-
-	RsPhotoPhoto();
-
-	// THESE ARE IN THE META DATA.
-	//std::string mAlbumId;
-	//std::string mId;
-	//std::string mTitle; // only used by Album.
-	std::string mCaption;
-	std::string mDescription;
-	std::string mPhotographer;
-	std::string mWhere;
-	std::string mWhen;
-	std::string mOther;
-	std::string mCategory;
-
-	std::string mHashTags;
-
-	uint32_t mSetFlags;
-
-	int mOrder;
-
-	RsPhotoThumbnail mThumbnail;
-
-	int mMode;
-
-	// These are not saved.
-	std::string path; // if in Mode NEW.
-	uint32_t mModFlags;
-};
-
-class RsPhotoAlbumShare
-{
-	public:
-
-	uint32_t mShareType;
-	std::string mShareGroupId;
-	std::string mPublishKey;
-	uint32_t mCommentMode;
-	uint32_t mResizeMode;
-};
-
-class RsPhotoAlbum
-{
-	public:
-	RsPhotoAlbum();
-
-	RsGroupMetaData mMeta;
-
-	// THESE ARE IN THE META DATA.
-	//std::string mAlbumId;
-	//std::string mTitle; // only used by Album.
-
-	std::string mCaption;
-	std::string mDescription;
-	std::string mPhotographer;
-	std::string mWhere;
-	std::string mWhen;
-	std::string mOther;
-	std::string mCategory;
-
-	std::string mHashTags;
-
-	RsPhotoThumbnail mThumbnail;
-
-	int mMode;
-
-	std::string mPhotoPath;
-	RsPhotoAlbumShare mShareOptions;
-
-	// These aren't saved.
-	uint32_t mSetFlags;
-	uint32_t mModFlags;
-};
 
 std::ostream &operator<<(std::ostream &out, const RsPhotoPhoto &photo);
 std::ostream &operator<<(std::ostream &out, const RsPhotoAlbum &album);

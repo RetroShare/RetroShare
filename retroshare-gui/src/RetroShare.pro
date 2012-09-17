@@ -193,8 +193,8 @@ freebsd-* {
 # ###########################################
 
 bitdht {
-        LIBS += ../../libbitdht/src/lib/libbitdht.a
-        PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
+        LIBS += C:\Development\Rs\v0.5-gxs-b1\libbitdht\libbitdht-build-desktop\lib\libbitdht.a
+        PRE_TARGETDEPS *= C:\Development\Rs\v0.5-gxs-b1\libbitdht\libbitdht-build-desktop\lib\libbitdht.a
 
         # Chris version.
         #LIBS += ../../libbitdht/libbitdht-build-desktop/lib/libbitdht.a
@@ -416,7 +416,8 @@ HEADERS +=  rshare.h \
             gui/groups/CreateGroup.h \
             gui/dht/DhtWindow.h \
             gui/bwctrl/BwCtrlWindow.h \
-            gui/GetStartedDialog.h
+            gui/GetStartedDialog.h \
+    gui/PhotoShare/PhotoCommentItem.h
 
 
 
@@ -520,7 +521,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/dht/DhtWindow.ui \
             gui/bwctrl/BwCtrlWindow.ui \
             gui/GetStartedDialog.ui \
-
+    gui/PhotoShare/PhotoCommentItem.ui
 SOURCES +=  main.cpp \
             rshare.cpp \
             gui/notifyqt.cpp \
@@ -699,7 +700,8 @@ SOURCES +=  main.cpp \
             gui/groups/CreateGroup.cpp \
             gui/dht/DhtWindow.cpp \
             gui/bwctrl/BwCtrlWindow.cpp \
-            gui/GetStartedDialog.cpp
+            gui/GetStartedDialog.cpp \
+    gui/PhotoShare/PhotoCommentItem.cpp
 
 
 RESOURCES += gui/images.qrc lang/lang.qrc gui/help/content/content.qrc
@@ -862,7 +864,6 @@ SOURCES += gui/unfinished/ApplicationWindow.cpp \
 photoshare {
 
 	HEADERS += \
-                gui/PhotoShare/PhotoDialog.h \
 		gui/PhotoShare/PhotoDrop.h \
 		gui/PhotoShare/AlbumItem.h \
 		gui/PhotoShare/AlbumDialog.h \
@@ -872,6 +873,7 @@ photoshare {
                 gui/PhotoShare/PhotoShareItemHolder.h \
                 gui/PhotoShare/PhotoShare.h \
 		gui/PhotoShare/PhotoSlideShow.h \
+                gui/PhotoShare/PhotoDialog.h
 
 	FORMS += \
                 gui/PhotoShare/PhotoItem.ui \
@@ -880,7 +882,7 @@ photoshare {
                 gui/PhotoShare/AlbumDialog.ui \
                 gui/PhotoShare/AlbumCreateDialog.ui \
                 gui/PhotoShare/PhotoShare.ui \
-                gui/PhotoShare/PhotoSlideShow.ui \
+                gui/PhotoShare/PhotoSlideShow.ui
 
 	SOURCES += \
                 gui/PhotoShare/PhotoItem.cpp \
@@ -892,7 +894,7 @@ photoshare {
                 util/TokenQueueV2.cpp \
                 gui/PhotoShare/PhotoShareItemHolder.cpp \
                 gui/PhotoShare/PhotoShare.cpp \
-		gui/PhotoShare/PhotoSlideShow.cpp \
+                gui/PhotoShare/PhotoSlideShow.cpp
 
 }
 

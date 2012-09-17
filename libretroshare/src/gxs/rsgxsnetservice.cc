@@ -98,7 +98,7 @@ void RsGxsNetService::syncWithPeers()
         {
             RsGxsGrpMetaData* meta = mit->second;
 
-            if(meta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_MASK)
+            if(meta->mSubscribeFlags & GXS_SERV::RSGXS_GROUP_SUBSCRIBE_MASK)
                 grpIds.push_back(mit->first);
         }
 

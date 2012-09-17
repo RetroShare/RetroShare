@@ -55,7 +55,7 @@ void AlbumItem::setSelected(bool on)
     update();
 }
 
-RsPhotoAlbum AlbumItem::getAlbum()
+const RsPhotoAlbum& AlbumItem::getAlbum()
 {
     return mAlbum;
 }
