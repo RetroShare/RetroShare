@@ -1323,13 +1323,17 @@ bool    AuthSSLimpl::FailedCertificate(X509 *x509, const std::string& gpgid,
 	if(authed)
 		LocalStoreCert(x509);
 
+#ifdef AUTHSSL_DEBUG
 	std::cerr << "AuthSSLimpl::FailedCertificate() ";
+#endif
 	if (incoming)
 	{
 			getPqiNotify()->AddPopupMessage(RS_POPUP_CONNECT_ATTEMPT, gpgid, sslcn, sslid);
 		getPqiNotify()->AddFeedItem(RS_FEED_ITEM_SEC_CONNECT_ATTEMPT, gpgid, sslid, sslcn, ip_address);
 
+#ifdef AUTHSSL_DEBUG
 		std::cerr << " Incoming from: ";
+#endif
 	}
 	else 
 	{
@@ -1338,11 +1342,15 @@ bool    AuthSSLimpl::FailedCertificate(X509 *x509, const std::string& gpgid,
 		else
 			getPqiNotify()->AddFeedItem(RS_FEED_ITEM_SEC_UNKNOWN_OUT, gpgid, sslid, sslcn, ip_address);
 
+#ifdef AUTHSSL_DEBUG
 		std::cerr << " Outgoing to: ";
+#endif
 	}
 	
+#ifdef AUTHSSL_DEBUG
 	std::cerr << "GpgId: " << gpgid << " SSLcn: " << sslcn << " peerId: " << sslid << ", ip address: " << ip_address;
 	std::cerr << std::endl;
+#endif
 
 	return false;
 }
