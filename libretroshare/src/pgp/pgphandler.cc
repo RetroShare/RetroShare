@@ -220,7 +220,14 @@ bool PGPHandler::validateAndUpdateSignatures(PGPCertificateInfo& cert,const ops_
 	ops_boolean_t res = ops_validate_key_signatures(result,keydata,_pubring,cb_get_passphrase) ;
 
 	if(res == ops_false)
-		std::cerr << "(WW) Error in PGPHandler::validateAndUpdateSignatures(). Validation failed for at least some signatures." << std::endl;
+	{
+		static ops_boolean_t already = 0 ;
+		if(!already)
+		{
+			std::cerr << "(WW) Error in PGPHandler::validateAndUpdateSignatures(). Validation failed for at least some signatures." << std::endl;
+			already = 1 ;
+		}
+	}
 
 	bool ret = false ;
 

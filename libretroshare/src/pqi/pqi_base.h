@@ -196,7 +196,13 @@ class PQInterface: public RateInterface
 		virtual int	SendItem(RsItem *item,uint32_t& size) 
 		{
 			size = 0 ;
-			std::cerr << "Warning: PQInterface::SendItem(RsItem*,uint32_t&) calledbut not overloaded! Serialized size will not be returned." << std::endl;
+
+			static bool already=false ;
+			if(!already)
+			{
+				std::cerr << "Warning: PQInterface::SendItem(RsItem*,uint32_t&) calledbut not overloaded! Serialized size will not be returned." << std::endl;
+				already=true ;
+			}
 			return SendItem(item) ;
 		}
 
