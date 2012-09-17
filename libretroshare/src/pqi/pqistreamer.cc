@@ -149,7 +149,10 @@ int	pqistreamer::SendItem(RsItem *si,uint32_t& out_size)
 
 RsItem *pqistreamer::GetItem()
 {
+#ifdef DEBUG_PQISTREAMER
 	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::GetItem()");
+#endif
+
 
 	if(incoming.empty())
 		return NULL; 
@@ -227,6 +230,7 @@ int	pqistreamer::tick()
 
 int	pqistreamer::status()
 {
+#ifdef DEBUG_PQISTREAMER
 	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::status()");
 
 	if (bio->isactive())
@@ -235,6 +239,7 @@ int	pqistreamer::status()
 		rs_sprintf(out, "Data in:%d out:%d", totalRead, totalSent);
 		pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out);
 	}
+#endif
 
 	return 0;
 }
@@ -396,10 +401,12 @@ int	pqistreamer::handleoutgoing()
 
 			if (len != (ss = bio->senddata(pkt_wpending, len)))
 			{
+#ifdef DEBUG_PQISTREAMER
 				std::string out;
 				rs_sprintf(out, "Problems with Send Data! (only %d bytes sent, total pkt size=%d)", ss, len);
 //				std::cerr << out << std::endl ;
 				pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out);
+#endif
 
 				outSentBytes(sentbytes);
 				// pkt_wpending will kept til next time.
@@ -478,9 +485,9 @@ start_packet_read:
 			// error.... (either blocked or failure)
 			if (tmplen == 0)
 			{
+#ifdef DEBUG_PQISTREAMER
 				// most likely blocked!
 				pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, "pqistreamer::handleincoming() read blocked");
-#ifdef DEBUG_PQISTREAMER
 				std::cerr << "[" << (void*)pthread_self() << "] " << "given up 1" << std::endl ;
 #endif
 				return 0;
@@ -499,10 +506,11 @@ start_packet_read:
 			else // tmplen > 0
 			{
 				// strange case....This should never happen as partial reads are handled by pqissl below.
+#ifdef DEBUG_PQISTREAMER
 				std::string out = "pqistreamer::handleincoming() Incomplete ";
 				rs_sprintf_append(out, "(Strange) read of %d bytes", tmplen);
 				pqioutput(PQL_ALERT, pqistreamerzone, out);
-#ifdef DEBUG_PQISTREAMER
+
 				std::cerr << "[" << (void*)pthread_self() << "] " << "given up 3" << std::endl ;
 #endif
 				return -1;
@@ -674,12 +682,14 @@ continue_packet:
 		}
 
 		// create packet, based on header.
+#ifdef DEBUG_PQISTREAMER
 		{
 			std::string out;
 			rs_sprintf(out, "Read Data Block -> Incoming Pkt(%d)", blen + extralen);
 			//std::cerr << out ;
 			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out);
 		}
+#endif
 
                 //		std::cerr << "Deserializing packet of size " << pktlen <<std::endl ;
 
@@ -698,9 +708,17 @@ continue_packet:
 		RsItem *pkt = rsSerialiser->deserialise(block, &pktlen);
 
 		if ((pkt != NULL) && (0  < handleincomingitem(pkt)))
+		{
+#ifdef DEBUG_PQISTREAMER
 			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, "Successfully Read a Packet!");
+#endif
+		}
 		else
+		{
+#ifdef DEBUG_PQISTREAMER
 			pqioutput(PQL_ALERT, pqistreamerzone, "Failed to handle Packet!");
+#endif
+		}
 
 		reading_state = reading_state_initial ;	// restart at state 1.
 		failed_read_attempts = 0 ;						// reset failed read, as the packet has been totally read.
@@ -726,7 +744,9 @@ continue_packet:
 
 float   pqistreamer::outTimeSlice()
 {
+#ifdef DEBUG_PQISTREAMER
 	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::outTimeSlice()");
+#endif
 
 	//fixme("pqistreamer::outTimeSlice()", 1);
 	return 1;
@@ -759,11 +779,13 @@ int     pqistreamer::outAllowedBytes()
 
 	currSentTS = t;
 
+#ifdef DEBUG_PQISTREAMER
 	{
 		std::string out;
 		rs_sprintf(out, "pqistreamer::outAllowedBytes() is %d/%d", maxout - currSent, maxout);
 		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out);
 	}
+#endif
 
 
 	return maxout - currSent;
@@ -795,11 +817,13 @@ int     pqistreamer::inAllowedBytes()
 
 	currReadTS = t;
 
+#ifdef DEBUG_PQISTREAMER
 	{
 		std::string out;
 		rs_sprintf(out, "pqistreamer::inAllowedBytes() is %d/%d", maxin - currRead, maxin);
 		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out);
 	}
+#endif
 
 
 	return maxin - currRead;
@@ -811,11 +835,13 @@ static const float AVG_FRAC = 0.8; // for low pass filter.
 
 void    pqistreamer::outSentBytes(int outb)
 {
+#ifdef DEBUG_PQISTREAMER
 	{
 		std::string out;
 		rs_sprintf(out, "pqistreamer::outSentBytes(): %d@%gkB/s", outb, getRate(false));
 		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out);
 	}
+#endif
 
 	/*** One theory for the massive delays - is that the queue here is filling up ****/
 //#define DEBUG_LAG	1
@@ -879,11 +905,13 @@ void    pqistreamer::outSentBytes(int outb)
 
 void    pqistreamer::inReadBytes(int inb)
 {
+#ifdef DEBUG_PQISTREAMER
 	{
 		std::string out;
 		rs_sprintf(out, "pqistreamer::inReadBytes(): %d@%gkB/s", inb, getRate(true));
 		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out);
 	}
+#endif
 
 	totalRead += inb;
 	currRead += inb;

@@ -39,6 +39,7 @@ const int p3dhtzone = 3892;
 
 /*****
  * #define DHT_DEBUG 1
+ * #define DHT_LOG 1		// FOR LOGGING DHT STUFF.
  * #define P3DHTMGR_USE_LOCAL_UDP_CONN 1  // For Testing only 
  ****/
 
@@ -214,6 +215,7 @@ bool p3DhtMgr::setExternalInterface(
 	std::cerr << std::endl;
 #endif
 
+#ifdef DHT_LOGS
 	/* Log External Interface too */
 	std::string out = "p3DhtMgr::setExternalInterface()";
 	out += " laddr: " + rs_inet_ntoa(ownEntry.laddr.sin_addr);
@@ -224,6 +226,7 @@ bool p3DhtMgr::setExternalInterface(
 	rs_sprintf_append(out, " state: %lu", ownEntry.state);
 
 	rslog(RSL_WARNING, p3dhtzone, out);
+#endif
 
 	dhtMtx.unlock(); /* UNLOCK MUTEX */
 
@@ -326,10 +329,13 @@ bool p3DhtMgr::notifyPeer(std::string id)
 #ifdef DHT_DEBUG
 		std::cerr << "p3DhtMgr::notifyPeer() TO SOON - DROPPING" << std::endl;
 #endif
+#ifdef DHT_LOGS
 		{
 			/* Log */
 			rslog(RSL_WARNING, p3dhtzone, "p3DhtMgr::notifyPeer() Id: " + id + " TO SOON - DROPPING");
+
 		}
+#endif
 		return false;
 	}
 
@@ -342,10 +348,12 @@ bool p3DhtMgr::notifyPeer(std::string id)
 #ifdef DHT_DEBUG
 		std::cerr << "p3DhtMgr::notifyPeer() PEER NOT FOUND - Trigger search" << std::endl;
 #endif
+#ifdef DHT_LOGS
 		{
 			/* Log */
 			rslog(RSL_WARNING, p3dhtzone, "p3DhtMgr::notifyPeer() Id: " + id + " PEER NOT FOUND - Trigger Search");
 		}
+#endif
 		it->second.lastTS = 0;
 	}
 
@@ -611,6 +619,7 @@ int p3DhtMgr::checkOwnDHTKeys()
 			std::cerr << std::endl;
 #endif
 		
+#ifdef DHT_LOGS
 			{
 				/* Log */
 				std::string out = "p3DhtMgr::checkOwnDHTKeys() PUBLISH OWN ADDR:";
@@ -623,6 +632,7 @@ int p3DhtMgr::checkOwnDHTKeys()
 			
 				rslog(RSL_WARNING, p3dhtzone, out);
 			}
+#endif
 			
 			/* publish own key */
 			if (dhtPublish(peer.hash1, peer.laddr, peer.raddr, peer.type, ""))
@@ -683,10 +693,12 @@ int p3DhtMgr::checkOwnDHTKeys()
 				std::cerr << "p3DhtMgr::checkOwnDHTKeys() check for Notify (rep=0)";
 				std::cerr << std::endl;
 #endif
+#ifdef DHT_LOGS
 				{
 					/* Log */
 					rslog(RSL_WARNING, p3dhtzone, "p3DhtMgr::checkOwnDHTKeys() Checking for NOTIFY");
 				}
+#endif
 
 				if (dhtSearch(peer.hash1, DHT_MODE_NOTIFY))
 				{
@@ -895,10 +907,12 @@ int p3DhtMgr::checkNotifyDHT()
 	std::cerr << "p3DhtMgr::checkNotifyDHT() Notify From: ";
 	std::cerr << it->first << std::endl;
 #endif
+#ifdef DHT_LOGS
 	{
 		/* Log */
 		rslog(RSL_WARNING, p3dhtzone, "p3DhtMgr::checkNotifyDHT() Notify Request for Known Peer: " + it->first);
 	}
+#endif
 
 	/* update timestamp */
 	it->second.notifyTS = now;
@@ -919,10 +933,12 @@ int p3DhtMgr::checkNotifyDHT()
 		std::cerr << "p3DhtMgr::checkNotifyDHT() Posting Active Notify";
 		std::cerr << std::endl;
 #endif
+#ifdef DHT_LOGS
 		{
 			/* Log */
 			rslog(RSL_WARNING, p3dhtzone, "p3DhtMgr::checkNotifyDHT() POST DHT (Active Notify) for Peer: " + peer.id);
 		}
+#endif
 
 		dhtNotify(peer.hash1, own.hash2, "");
 	}
@@ -1620,10 +1636,12 @@ bool p3DhtMgr::dhtResultNotify(std::string idhash)
 #ifdef DHT_DEBUG
 		std::cerr << "p3DhtMgr::dhtResult() NOTIFY for id: " << it->first << std::endl;
 #endif
+#ifdef DHT_LOGS
 		{
 			/* Log */
 			rslog(RSL_WARNING, p3dhtzone, "p3DhtMgr::dhtResultNotify() NOTIFY from Id: " + it->first);
 		}
+#endif
 
 		/* delay callback -> if they are not found */
 		it->second.notifyTS      = now;
@@ -1678,6 +1696,7 @@ bool p3DhtMgr::dhtResultSearch(std::string idhash,
 #endif
 		it->second.lastTS = now;
 
+#ifdef DHT_LOGS
 		{
 			/* Log */
 			std::string out ="p3DhtMgr::dhtSearchResult() for Id: " + it->first;
@@ -1687,6 +1706,7 @@ bool p3DhtMgr::dhtResultSearch(std::string idhash,
 		
 			rslog(RSL_WARNING, p3dhtzone, out);
 		}
+#endif
 
 		/* update info .... always */
 		it->second.state = DHT_PEER_FOUND;
