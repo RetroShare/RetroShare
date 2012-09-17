@@ -957,12 +957,16 @@ RsStackFileLock::RsStackFileLock(const std::string& file_path)
 		sleep(1) ;
 #endif
 	}
+#ifdef RSDIR_DEBUG 
 	std::cerr << "Acquired file handle " << _file_handle << ", lock file:" << file_path << std::endl;
+#endif
 }
 RsStackFileLock::~RsStackFileLock()
 {
 	RsDirUtil::releaseLockFile(_file_handle) ;
+#ifdef RSDIR_DEBUG 
 	std::cerr << "Released file lock with handle " << _file_handle << std::endl;
+#endif
 }
 
 #if 0 // NOT ENABLED YET!

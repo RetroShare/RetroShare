@@ -381,6 +381,8 @@ void ops_hash_sha224(ops_hash_t *hash)
     *hash=sha224;
     }
 
+ops_boolean_t already_said = ops_false ;
+
 ops_boolean_t ops_dsa_verify(const unsigned char *hash,size_t hash_length,
 			     const ops_dsa_signature_t *sig,
 			     const ops_dsa_public_key_t *dsa)
@@ -395,7 +397,11 @@ ops_boolean_t ops_dsa_verify(const unsigned char *hash,size_t hash_length,
 
 	 if(BN_num_bits(dsa->q) != 160)
 	 {
-		 fprintf(stderr,"(WW) ops_dsa_verify: openssl does only supports 'q' of 160 bits. Current is %d bits.\n",BN_num_bits(dsa->q)) ;
+		 if(!already_said)
+		 {
+			 fprintf(stderr,"(WW) ops_dsa_verify: openssl does only supports 'q' of 160 bits. Current is %d bits.\n",BN_num_bits(dsa->q)) ;
+			 already_said=ops_true ;
+		 }
 		 osig->r=osig->s=NULL;
 		 DSA_SIG_free(osig);
 		 return ops_false ;

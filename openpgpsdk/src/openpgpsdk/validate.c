@@ -806,7 +806,8 @@ ops_boolean_t ops_validate_detached_signature(const void *literal_data, unsigned
 
    ops_parse(pinfo);
 
-   printf("valid=%d, invalid=%d, unknown=%d\n", result->valid_count, result->invalid_count, result->unknown_signer_count);
+	if(debug)
+		printf("valid=%d, invalid=%d, unknown=%d\n", result->valid_count, result->invalid_count, result->unknown_signer_count);
 
    // Tidy up
    //if (armoured)
