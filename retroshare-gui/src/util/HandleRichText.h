@@ -64,6 +64,9 @@ public:
 	static void    optimizeHtml(QString &text, unsigned int flag = 0);
 	static QString toHtml(QString text, bool realHtml = true);
 
+	static bool    makeEmbeddedImage(const QString &fileName, QString &embeddedImage, const int maxPixels);
+	static bool    makeEmbeddedImage(const QImage &originalImage, QString &embeddedImage, const int maxPixels);
+
 protected:
 	void embedHtml(QTextDocument *textDocument, QDomDocument &doc, QDomElement &currentElement, EmbedInHtml& embedInfos, ulong flag);
 	void replaceAnchorWithImg(QDomDocument& doc, QDomElement &element, QTextDocument *textDocument, const RetroShareLink &link);

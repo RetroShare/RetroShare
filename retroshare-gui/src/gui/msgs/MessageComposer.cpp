@@ -307,8 +307,8 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     ui.hashBox->setDropWidget(this);
     ui.hashBox->setAutoHide(true);
 
-#ifdef RS_RELEASE_VERSION
-    ui.imagebtn->setVisible(false);
+#if QT_VERSION < 0x040700
+	// embedded images are not supported before QT 4.7.0
     ui.imagebtn->setVisible(false);
 #endif
 
@@ -1693,7 +1693,8 @@ void MessageComposer::setupInsertActions()
 
     QAction *a;
 
-#ifndef RS_RELEASE_VERSION
+#if QT_VERSION >= 0x040700
+	// embedded images are not supported before QT 4.7.0
     a = new QAction(QIcon(""), tr("&Image"), this);
     connect(a, SIGNAL(triggered()), this, SLOT(addImage()));
     menu->addAction(a);
@@ -2094,26 +2095,14 @@ void MessageComposer::on_contactsdockWidget_visibilityChanged(bool visible)
 
 void  MessageComposer::addImage()
 {
-    QString fileimg;
-    if (misc::getOpenFileName(this, RshareSettings::LASTDIR_IMAGES, tr("Choose Image"), tr("Image Files supported (*.png *.jpeg *.jpg *.gif)"), fileimg)) {
-        QImage base(fileimg);
-
-        QString pathimage = fileimg.left(fileimg.lastIndexOf("/"))+"/";
-        Settings->setValueToGroup("MessageComposer", "LastDir", pathimage);
-
-        Create_New_Image_Tag(fileimg);
+	QString file;
+	if (misc::getOpenFileName(this, RshareSettings::LASTDIR_IMAGES, tr("Choose Image"), tr("Image Files supported (*.png *.jpeg *.jpg *.gif)"), file)) {
+		QString encodedImage;
+		if (RsHtml::makeEmbeddedImage(file, encodedImage, 640*480)) {
+			QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(encodedImage);
+			ui.msgText->textCursor().insertFragment(fragment);
+		}
     }
-}
-
-void  MessageComposer::Create_New_Image_Tag( const QString urlremoteorlocal )
-{
-   /*if (image_extension(urlremoteorlocal)) {*/
-       QString subtext = QString("<p><img src=\"%1\">").arg(urlremoteorlocal);
-               ///////////subtext.append("<br><br>Description on image.</p>");
-       QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(subtext);
-       ui.msgText->textCursor().insertFragment(fragment);
-       //emit statusMessage(QString("Image new :").arg(urlremoteorlocal));
-   //}
 }
 
 void MessageComposer::fontSizeIncrease()

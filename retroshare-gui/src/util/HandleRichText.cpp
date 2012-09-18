@@ -19,8 +19,12 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QApplication>
 #include <QTextBrowser>
 #include <QtXml>
+#include <QBuffer>
+#include <QMessageBox>
+#include <qmath.h>
 
 #include "HandleRichText.h"
 #include "gui/RetroShareLink.h"
@@ -624,4 +628,63 @@ QString RsHtml::toHtml(QString text, bool realHtml)
 	QTextDocument doc;
 	doc.setHtml(text);
 	return doc.toHtml();
+}
+
+/** Loads image and converts image to embedded image HTML fragment **/
+bool RsHtml::makeEmbeddedImage(const QString &fileName, QString &embeddedImage, const int maxPixels)
+{
+	QImage image;
+
+	if (image.load (fileName) == false) {
+		fprintf (stderr, "RsHtml::makeEmbeddedImage() - image \"%s\" can't be load", fileName.toAscii().constData());
+		return false;
+	}
+	return RsHtml::makeEmbeddedImage(image, embeddedImage, maxPixels);
+}
+
+/** Converts image to embedded image HTML fragment **/
+bool RsHtml::makeEmbeddedImage(const QImage &originalImage, QString &embeddedImage, const int maxPixels)
+{
+	QByteArray bytearray;
+	QBuffer buffer(&bytearray);
+	QImage resizedImage;
+	const QImage *image = &originalImage;
+
+	if (maxPixels > 0) {
+		QSize imgSize = originalImage.size();
+		if ((imgSize.height() * imgSize.width()) > maxPixels) {
+			// image is too large - resize keeping aspect ratio
+			QSize newSize;
+			newSize.setWidth(int(qSqrt((maxPixels * imgSize.width()) / imgSize.height())));
+			newSize.setHeight(int((imgSize.height() * newSize.width()) / imgSize.width()));
+
+			// ask user
+			QMessageBox msgBox;
+			msgBox.setText(QString(QApplication::translate("RsHtml", "Image is oversized for transmission.\nReducing image to %1x%2 pixels?", 0, QApplication::UnicodeUTF8)).arg(newSize.width()).arg(newSize.height()));
+			msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+			msgBox.setDefaultButton(QMessageBox::Ok);
+			if (msgBox.exec() != QMessageBox::Ok) {
+				return false;
+			}
+			resizedImage = originalImage.scaled(newSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+			image = &resizedImage;
+		}
+	}
+
+	if (buffer.open(QIODevice::WriteOnly)) {
+		if (image->save(&buffer, "PNG")) {
+			QByteArray encodedByteArray = bytearray.toBase64();
+
+			embeddedImage = "<img src=\"data:image/png;base64,";
+			embeddedImage.append(encodedByteArray);
+			embeddedImage.append("\">");
+		} else {
+			fprintf (stderr, "RsHtml::makeEmbeddedImage() - image can't be saved to buffer");
+			return false;
+		}
+	} else {
+		fprintf (stderr, "RsHtml::makeEmbeddedImage() - buffer can't be opened");
+		return false;
+	}
+	return true;
 }

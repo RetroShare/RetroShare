@@ -30,6 +30,7 @@
 #include <QTextStream>
 #include <QTextCodec>
 #include <QTimer>
+#include <QTextDocumentFragment>
 
 #include "ChatWidget.h"
 #include "ui_ChatWidget.h"
@@ -117,7 +118,8 @@ ChatWidget::ChatWidget(QWidget *parent) :
 
 	ui->chatTextEdit->installEventFilter(this);
 
-#ifdef RS_RELEASE_VERSION
+#if QT_VERSION < 0x040700
+	// embedded images are not supported before QT 4.7.0
 	ui->attachPictureButton->setVisible(false);
 #endif
 
@@ -585,7 +587,11 @@ void ChatWidget::addExtraPicture()
 	// select a picture file
 	QString file;
 	if (misc::getOpenFileName(window(), RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg)", file)) {
-		ui->hashBox->addAttachments(QStringList(file), HashedFile::Picture);
+		QString encodedImage;
+		if (RsHtml::makeEmbeddedImage(file, encodedImage, 640*480)) {
+			QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(encodedImage);
+			ui->chatTextEdit->textCursor().insertFragment(fragment);
+		}
 	}
 }
 

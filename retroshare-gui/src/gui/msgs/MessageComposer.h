@@ -176,8 +176,6 @@ private:
     void clearTagLabels();
     void showTagLabels();
 
-    void Create_New_Image_Tag(const QString urlremoteorlocal);
-
     QAction *actionSave,
     *actionAlignLeft,
     *actionAlignCenter,
