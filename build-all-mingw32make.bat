@@ -1,4 +1,4 @@
-set QTDIR=h:\qt\2010.01
+set QTDIR=d:\qt\2010.01
 set MINGW=%QTDIR%\mingw
 
 set PATH=%QTDIR%\qt\bin;%QTDIR%\bin;%MINGW%\bin;%PATH%
@@ -71,19 +71,11 @@ qmake libretroshare.pro
 
 mingw32-make %%a
 
-cd ..\..\plugins
+cd ..\..\retroshare-nogui\src
 
 if not %clean%x==x mingw32-make clean 
 
-qmake plugins.pro
-
-mingw32-make %%a
-
-rem cd ..\..\retroshare-nogui\src
-
-rem if not %clean%x==x mingw32-make clean 
-
-rem qmake retroshare-nogui.pro
+qmake retroshare-nogui.pro
 
 mingw32-make %%a
 
