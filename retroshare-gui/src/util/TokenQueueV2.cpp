@@ -66,11 +66,11 @@ bool TokenQueueV2::requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTok
 	return true;
 }
 
-bool TokenQueueV2::requestMsgRelatedInfo(uint32_t &token, const RsTokReqOptionsV2 &opts, const std::list<RsGxsGroupId> &grpIds, uint32_t usertype)
+bool TokenQueueV2::requestMsgRelatedInfo(uint32_t &token, const RsTokReqOptionsV2 &opts,  const GxsMsgReq& msgIds, uint32_t usertype)
 {
     uint32_t basictype = TOKENREQ_MSGINFO;
     uint32_t anstype = RS_TOKREQ_ANSTYPE_LIST; // always a list answer
-    mService->requestMsgRelatedInfo(token, anstype, opts, ids);
+    mService->requestMsgRelatedInfo(token, anstype, opts, msgIds);
     queueRequest(token, basictype, anstype, usertype);
 
     return true;

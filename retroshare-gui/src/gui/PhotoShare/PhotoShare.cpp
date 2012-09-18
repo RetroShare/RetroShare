@@ -95,7 +95,6 @@ PhotoShare::PhotoShare(QWidget *parent)
         timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
         timer->start(1000);
 
-
         /* setup TokenQueue */
         mPhotoQueue = new TokenQueueV2(rsPhotoV2->getTokenService(), this);
         requestAlbumData();

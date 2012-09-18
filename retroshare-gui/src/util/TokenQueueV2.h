@@ -85,6 +85,7 @@ public:
 	bool requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptionsV2 &opts,
                                                         std::list<RsGxsGroupId>& ids, uint32_t usertype);
 
+
         bool requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptionsV2 &opts, uint32_t usertype);
 
 	bool requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptionsV2 &opts,
@@ -93,7 +94,7 @@ public:
         bool requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptionsV2 &opts,
                             const GxsMsgReq& grpIds, uint32_t usertype);
 
-        bool requestMsgRelatedInfo(uint32_t &token, const RsTokReqOptionsV2 &opts, const std::list<RsGxsGroupId>& grpIds, uint32_t usertype);
+        bool requestMsgRelatedInfo(uint32_t &token, const RsTokReqOptionsV2 &opts, const GxsMsgReq& msgIds, uint32_t usertype);
 
 	bool cancelRequest(const uint32_t token);
 

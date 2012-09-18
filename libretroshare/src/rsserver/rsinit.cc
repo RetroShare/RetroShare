@@ -1806,7 +1806,7 @@ RsTurtle *rsTurtle = NULL ;
 #include "services/p3blogs.h"
 #include "turtle/p3turtle.h"
 
-#define ENABLE_GXS_SERVICES	1
+//#define ENABLE_GXS_SERVICES	1
 #define ENABLE_GXS_CORE 1
 
 #ifdef ENABLE_GXS_CORE
@@ -2272,7 +2272,7 @@ int RsServer::StartupRetroShare()
 	// first prep the core
 
 	RsGeneralDataService* photo_ds = new RsDataService("./", "photoV2_db",
-			RS_SERVICE_TYPE_PHOTO, NULL);
+                        RS_SERVICE_GXSV1_TYPE_PHOTO, NULL);
 
         photo_ds->resetDataStore();
 
@@ -2580,11 +2580,11 @@ int RsServer::StartupRetroShare()
 	rsForums = mForums;
 	rsChannels = mChannels;
 
+       rsPhotoV2 = mPhotoV2;
 #ifdef ENABLE_GXS_SERVICES
 	// Testing of new cache system interfaces.
 	rsIdentity = mIdentity;
 	rsPhoto = mPhotos;
-        rsPhotoV2 = mPhotoV2;
 	rsWiki = mWikis;
 	rsWire = mWire;
 	rsForumsV2 = mForumsV2;

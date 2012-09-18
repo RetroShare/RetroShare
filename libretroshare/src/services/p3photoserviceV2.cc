@@ -1,10 +1,81 @@
 #include "p3photoserviceV2.h"
 #include "serialiser/rsphotov2items.h"
+#include "gxs/rsgxsflags.h"
 
 RsPhotoV2 *rsPhotoV2 = NULL;
 
+
+
+
+bool RsPhotoThumbnail::copyFrom(const RsPhotoThumbnail &nail)
+{
+        if (data)
+        {
+                deleteImage();
+        }
+
+        if ((!nail.data) || (nail.size == 0))
+        {
+                return false;
+        }
+
+        size = nail.size;
+        type = nail.type;
+        data = (uint8_t *) malloc(size);
+        memcpy(data, nail.data, size);
+
+        return true;
+}
+
+bool RsPhotoThumbnail::deleteImage()
+{
+        if (data)
+        {
+                free(data);
+                data = NULL;
+                size = 0;
+                type.clear();
+        }
+        return true;
+}
+
+
+RsPhotoPhoto::RsPhotoPhoto()
+        :mSetFlags(0), mOrder(0), mMode(0), mModFlags(0)
+{
+        return;
+}
+
+RsPhotoAlbum::RsPhotoAlbum()
+        :mMode(0), mSetFlags(0), mModFlags(0)
+{
+        return;
+}
+
+RsPhotoComment::RsPhotoComment()
+    : mComment(""), mCommentFlag(0) {
+
+}
+
+std::ostream &operator<<(std::ostream &out, const RsPhotoPhoto &photo)
+{
+        out << "RsPhotoPhoto [ ";
+        out << "Title: " << photo.mMeta.mMsgName;
+        out << "]";
+        return out;
+}
+
+
+std::ostream &operator<<(std::ostream &out, const RsPhotoAlbum &album)
+{
+        out << "RsPhotoAlbum [ ";
+        out << "Title: " << album.mMeta.mGroupName;
+        out << "]";
+        return out;
+}
+
 p3PhotoServiceV2::p3PhotoServiceV2(RsGeneralDataService* gds, RsNetworkExchangeService* nes)
-	: RsGenExchange(gds, nes, new RsGxsPhotoSerialiser(), RS_SERVICE_TYPE_PHOTO)
+        : RsGenExchange(gds, nes, new RsGxsPhotoSerialiser(), RS_SERVICE_GXSV1_TYPE_PHOTO)
 {
 
 }
@@ -182,6 +253,16 @@ bool p3PhotoServiceV2::submitPhoto(uint32_t& token, RsPhotoPhoto& photo)
         return true;
 }
 
+bool p3PhotoServiceV2::submitComment(uint32_t &token, RsPhotoComment &comment)
+{
+    RsGxsPhotoCommentItem* commentItem = new RsGxsPhotoCommentItem();
+    commentItem->comment = comment;
+    commentItem->meta = comment.mMeta;
+
+    RsGenExchange::publishMsg(token, commentItem);
+    return true;
+}
+
 bool p3PhotoServiceV2::acknowledgeMsg(const uint32_t& token,
 		std::pair<RsGxsGroupId, RsGxsMessageId>& msgId)
 {
@@ -195,5 +276,14 @@ bool p3PhotoServiceV2::acknowledgeGrp(const uint32_t& token,
 	return RsGenExchange::acknowledgeTokenGrp(token, grpId);
 }
 
+bool p3PhotoServiceV2::subscribeToAlbum(uint32_t &token, const RsGxsGroupId &grpId, bool subscribe)
+{
+    if(subscribe)
+        RsGenExchange::setGroupSubscribeFlag(token, grpId, GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED);
+    else
+        RsGenExchange::setGroupSubscribeFlag(token, grpId, ~GXS_SERV::GROUP_SUBSCRIBE_MASK);
+
+    return true;
+}
 
 

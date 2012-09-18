@@ -31,3 +31,8 @@ void PhotoDialog::loadRequest(const TokenQueueV2 *queue, const TokenRequestV2 &r
 {
 
 }
+
+void PhotoDialog::addComment()
+{
+
+}
