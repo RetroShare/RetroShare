@@ -140,7 +140,10 @@ void RsPluginManager::loadPlugins(const std::vector<std::string>& plugin_directo
 		{
 			std::string fname;
 			dirIt.d_name(fname);
-			std::string fullname = plugin_directories[i] + "/" + fname;
+
+			char lc = plugin_directories[i][plugin_directories[i].length()-1] ; // length cannot be 0 here.
+
+			std::string fullname = (lc == '/' || lc == '\\')? (plugin_directories[i] + fname) : (plugin_directories[i] + "/" + fname) ;
 
 			if(!acceptablePluginName(fullname))
 				continue ;
