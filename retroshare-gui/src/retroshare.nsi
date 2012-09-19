@@ -3,7 +3,7 @@
 ; Define your application name
 !define APPNAME "RetroShare"
 !define VERSION "0.5.4"
-!define REVISION "5566"
+!define REVISION "5564"
 !define APPNAMEANDVERSION "${APPNAME} ${VERSION} ${REVISION}"
 !define QTBASE "d:\qt\2010.01"
 
@@ -142,15 +142,15 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
     
     LangString sec_main ${LANG_GERMAN} "Programme"
     LangString sec_data ${LANG_GERMAN} "Programm Skins"
-    LangString sec_plugins ${LANG_GERMAN} "Erweiterungen"
-    LangString sec_shortcuts ${LANG_GERMAN} "Verknüpfungen"
-    LangString sec_link ${LANG_GERMAN} "Dateiverknüpfungen"
+    LangString sec_plugins ${LANG_GERMAN} "Plug-ins"
+    LangString sec_shortcuts ${LANG_GERMAN} "Verknuepfungen"
+    LangString sec_link ${LANG_GERMAN} "Dateiverknuepfungen"
     LangString sec_autostart ${LANG_GERMAN} "Autostart"
     LangString DESC_sec_main ${LANG_GERMAN} "Installiert die RetroShare Programmdateien."
     LangString DESC_sec_data ${LANG_GERMAN} "Installiert RetroShare Skins"
     LangString DESC_sec_plugins ${LANG_GERMAN} "Installiert die RetroShare Erweiterungen."
-    LangString DESC_sec_shortcuts ${LANG_GERMAN} "RetroShare Verknüpfung im Startmenü, Desktop oder im Schnellstarter erstellen."
-    LangString DESC_sec_link ${LANG_GERMAN} "RetroShare mit .rsc Dateiendung verknüpfen"
+    LangString DESC_sec_shortcuts ${LANG_GERMAN} "RetroShare Verknuepfung im Startmenue, Desktop oder im Schnellstarter erstellen."
+    LangString DESC_sec_link ${LANG_GERMAN} "RetroShare mit .rsc Dateiendung verknuepfen"
     LangString LANGUAGEID ${LANG_GERMAN} "1031"
             
     LangString sec_main ${LANG_TURKISH} "Program Dosyalar?"
@@ -337,7 +337,7 @@ Section $(sec_main) sec_main
   File /r "${QTBASE}\qt\plugins\imageformats"
   File /r  ${QTBASE}\qt\qt_*.qm
   File /r "release\pthreadGC2d.dll"
-  File /r "H:\Development\lib\libminiupnpc-1.3\miniupnpc.dll"
+  File /r "d:\Development\lib\libminiupnpc-1.3\miniupnpc.dll"
   File /r "changelog.txt"
   File /r /x Data "release\bdboot.txt" 
 

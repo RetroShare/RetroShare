@@ -10787,27 +10787,67 @@ Bearbeiten auswählen!</translation>
 <context>
     <name>PluginItem</name>
     <message>
-        <location filename="../gui/settings/PluginItem.ui" line="+125"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;more&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;more...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;more&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;mehr...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+24"/>
         <source>Add the plugin into the white list of accepted plugins. This will be effective after you restart RetroShare, since plugins need to be loaded at startup.</source>
-        <translation>Fügt das Plug-in als vertrauenswürdig hinzu. Das wirkt sich nach dem Neustart von RetroShare aus, da die Plug-ins beim Start geladen werden.</translation>
+        <translation type="obsolete">Fügt das Plug-in als vertrauenswürdig hinzu. Das wirkt sich nach dem Neustart von RetroShare aus, da die Plug-ins beim Start geladen werden.</translation>
+    </message>
+    <message>
+        <source>Enabled</source>
+        <translation type="obsolete">Aktivieren</translation>
+    </message>
+    <message>
+        <location filename="../gui/settings/PluginItem.ui" line="+85"/>
+        <source>TextLabel</source>
+        <translation>TextLabel</translation>
+    </message>
+    <message>
+        <location line="+52"/>
+        <source>Show more details about this plugin</source>
+        <translation>Mehr Details über dieses Plug-in anzeigen</translation>
     </message>
     <message>
         <location line="+3"/>
-        <source>Enabled</source>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;more&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;More&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;more&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Mehr&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Enable this plugin (restart required)</source>
+        <translation>Dieses Plug-in aktivieren (Neustart notwendig)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Enable</source>
         <translation>Aktivieren</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Disable this plugin (restart required)</source>
+        <translation>Dieses Plug-in deaktivieren (Neustart notwendig)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Disable</source>
+        <translation>Deaktivieren</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -10838,6 +10878,11 @@ p, li { white-space: pre-wrap; }
         <location line="-70"/>
         <source>About</source>
         <translation>Über</translation>
+    </message>
+    <message>
+        <location filename="../gui/settings/PluginItem.cpp" line="+37"/>
+        <source>will be enabled after your restart RetroShare.</source>
+        <translation>wird aktiviert, sobald sie RetroShare neu starten.</translation>
     </message>
 </context>
 <context>
@@ -10911,7 +10956,7 @@ p, li { white-space: pre-wrap; }
         <translation>Beschreibung nicht verfügbar</translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="+58"/>
         <source>Check this for developing plugins. They will not
 be checked for the hash. However, in normal
 times, checking the hash protects you from
@@ -10926,7 +10971,7 @@ schädlichem Verhalten von Plug-ins.</translation>
         <translation>Plug-ins</translation>
     </message>
     <message>
-        <location filename="../gui/settings/PluginsPage.cpp" line="-77"/>
+        <location filename="../gui/settings/PluginsPage.cpp" line="-85"/>
         <source>Hash rejected. Enable it manually and restart, if you need.</source>
         <translation>Hash zurückgewiesen. Bitte manuell anwählen und, falls nötig, neu starten.</translation>
     </message>
@@ -11322,37 +11367,37 @@ schädlichem Verhalten von Plug-ins.</translation>
         <location filename="../gui/profile/ProfileManager.ui" line="+23"/>
         <location filename="../gui/profile/ProfileManager.cpp" line="+54"/>
         <source>Profile Manager</source>
-        <translation type="unfinished">Profil-Manager</translation>
+        <translation>Profil-Manager</translation>
     </message>
     <message>
         <location line="+57"/>
         <source>Generate New Identity</source>
-        <translation type="unfinished">Neue Identität generieren</translation>
+        <translation>Neue Identität generieren</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Import new identity</source>
-        <translation type="unfinished">Eine Identität importieren</translation>
+        <translation>Eine Identität importieren</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Export selected identity</source>
-        <translation type="unfinished">Ausgewählte Identität exportieren</translation>
+        <translation>Ausgewählte Identität exportieren</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Identities</source>
-        <translation type="unfinished">Identitäten</translation>
+        <translation>Identitäten</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Name</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Email</source>
-        <translation type="unfinished">E-Mail</translation>
+        <translation>E-Mail</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -11369,7 +11414,7 @@ schädlichem Verhalten von Plug-ins.</translation>
         <location line="+57"/>
         <location line="+17"/>
         <source>Export Identity</source>
-        <translation type="unfinished">Identität exportieren</translation>
+        <translation>Identität exportieren</translation>
     </message>
     <message>
         <location line="-17"/>
@@ -12427,7 +12472,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RsHtml</name>
     <message>
-        <location filename="../util/HandleRichText.cpp" line="+662"/>
+        <location filename="../util/HandleRichText.cpp" line="+663"/>
         <source>Image is oversized for transmission.
 Reducing image to %1x%2 pixels?</source>
         <translation>Bild ist zu groß zum Übertragen.

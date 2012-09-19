@@ -31,12 +31,14 @@ class PluginItem: public QWidget, public Ui::PluginItem
 		PluginItem(const QString& pluginVersion, int id,const QString& pluginTitle,const QString& pluginDescription,const QString& status, const QString& file_name, const QString& file_hash, const QString& error_string, const QIcon& icon) ;
 
 	protected slots:
-		void togglePlugin(bool) ;
 		void configurePlugin() ;
 		void aboutPlugin() ;
+		void enablePlugin();
+		void disablePlugin();
 
 	signals:
-		void pluginEnabled(bool,const QString&) ;
+		void pluginEnabled(const QString&) ;
+		void pluginDisabled(const QString&) ;
 		void pluginConfigure(int) ;
 		void pluginAbout(int) ;
 

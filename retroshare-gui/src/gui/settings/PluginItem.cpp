@@ -34,17 +34,32 @@ PluginItem::PluginItem(const QString& pluginVersion, int id, const QString& plug
 	_pluginIcon->setText(QString()) ;
 	msgLabel->setText(pluginDescription) ;
 	subjectLabel->setText(pluginTitle + "  "+ pluginVersion) ;
+	infoLabel->setText(pluginTitle + " " + tr("will be enabled after your restart RetroShare.")) ;
+	infoLabel->hide();
 
-	QObject::connect(_enabled_CB,SIGNAL(toggled(bool)),this,SLOT(togglePlugin(bool))) ;
 	QObject::connect(_configure_PB,SIGNAL(clicked()),this,SLOT(configurePlugin())) ;
 	QObject::connect(_about_PB,SIGNAL(clicked()),this,SLOT(aboutPlugin())) ;
+	
+	QObject::connect(enableButton,SIGNAL(clicked()),this,SLOT(enablePlugin())) ;
+	QObject::connect(disableButton,SIGNAL(clicked()),this,SLOT(disablePlugin())) ;
 	
 	expandFrame->hide();
 }
 
-void PluginItem::togglePlugin(bool b)
+void PluginItem::enablePlugin()
 {
-	emit( pluginEnabled(b,_hashLabel->text()) ) ;
+	emit( pluginEnabled(_hashLabel->text()) ) ;
+	infoLabel->show();
+	disableButton->show();	
+	enableButton->hide();
+}
+
+void PluginItem::disablePlugin()
+{
+	emit( pluginDisabled(_hashLabel->text()) ) ;
+	infoLabel->hide();
+	enableButton->show();
+	disableButton->hide();	
 }
 
 void PluginItem::aboutPlugin()

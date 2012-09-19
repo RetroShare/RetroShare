@@ -109,16 +109,24 @@ PluginsPage::PluginsPage(QWidget * parent, Qt::WFlags flags)
 
 			 ui._pluginsLayout->insertWidget(0,item) ;
 
+
 			 if(plugin == NULL || plugin->qt_config_panel() == NULL)
 				 item->_configure_PB->setEnabled(false) ;
+				 
 
-			 if(plugin != NULL)
-				 item->_enabled_CB->setChecked(true) ;
+			 if(plugin != NULL){
+				 item->enableButton->hide();
+				 item->disableButton->show();
+				 }else{
+				 item->enableButton->show();
+				 item->disableButton->hide();
+				 }
 
-			 if(rsPlugins->getAllowAllPlugins())
-				 item->_enabled_CB->setEnabled(false) ;
+			 //if(rsPlugins->getAllowAllPlugins())
 
-			 QObject::connect(item,SIGNAL(pluginEnabled(bool,const QString&)),this,SLOT(togglePlugin(bool,const QString&))) ;
+			 QObject::connect(item,SIGNAL(pluginEnabled(const QString&)),this,SLOT(enablePlugin(const QString&))) ;
+			 QObject::connect(item,SIGNAL(pluginDisabled(const QString&)),this,SLOT(disablePlugin(const QString&))) ;
+
 			 QObject::connect(item,SIGNAL(pluginConfigure(int)),this,SLOT(configurePlugin(int))) ;
 			 QObject::connect(item,SIGNAL(pluginAbout(int)),this,SLOT(aboutPlugin(int))) ;
 		 }
@@ -157,15 +165,21 @@ void PluginsPage::configurePlugin(int i)
 	if(rsPlugins->plugin(i) != NULL && rsPlugins->plugin(i)->qt_config_panel() != NULL)
 		rsPlugins->plugin(i)->qt_config_panel()->show() ;
 }
-void PluginsPage::togglePlugin(bool b,const QString& hash)
-{
-	std::cerr << "Switching status of plugin " << hash.toStdString() << " to " << b << std::endl;
 
-	if(b)
+void PluginsPage::enablePlugin(const QString& hash)
+{
+	std::cerr << "Switching status of plugin " << hash.toStdString() << " to  enable" << std::endl;
+
 		rsPlugins->enablePlugin(hash.toStdString()) ;
-	else
+}
+
+void PluginsPage::disablePlugin(const QString& hash)
+{
+	std::cerr << "Switching status of plugin " << hash.toStdString() << " to disable " << std::endl;
+
 		rsPlugins->disablePlugin(hash.toStdString()) ;
 }
+
 
 PluginsPage::~PluginsPage()
 {

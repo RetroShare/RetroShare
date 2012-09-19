@@ -42,7 +42,9 @@ class PluginsPage : public ConfigPage
 
 
 	public slots:
-		void togglePlugin(bool b,const QString&) ;
+		void enablePlugin(const QString&) ;
+		void disablePlugin(const QString&) ;
+
 		void configurePlugin(int i) ;
 		void aboutPlugin(int i) ;
 		void toggleEnableAll(bool) ;
