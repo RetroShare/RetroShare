@@ -725,6 +725,118 @@ bool GenExchangeTester::testMsgIdRetrieval()
     return true;
 }
 
+bool GenExchangeTester::testMsgChildRetrieval()
+{
+    // start up
+    setUp();
+    setUpGrps();
+
+    /********************/
+
+
+    // create msgs
+    // then make all requests immediately then poll afterwards for each and run outbound test
+    // we want only latest for now
+    int nMsgs = (rand()%50)+2; // test a large number of msgs
+    std::vector<RsDummyMsg*> msgs;
+    createMsgs(msgs, nMsgs);
+    RsTokReqOptionsV2 opts;
+    opts.mReqType = 4000;
+    uint32_t token;
+
+   bool first = true;
+   RsGxsGrpMsgIdPair firstMsgId;
+
+   // everyone is parent of first msg
+
+    for(int i=0; i < nMsgs; i++)
+    {
+        RsDummyMsg* msg = msgs[i];
+
+        int j = rand()%5;
+
+
+        if(first){
+            msg->meta.mParentId = "";
+            msg->meta.mOrigMsgId = "";
+        }
+        else
+        {
+            msg->meta.mParentId = firstMsgId.second;
+            msg->meta.mGroupId = firstMsgId.first;
+            msg->meta.mOrigMsgId = "";
+        }
+
+        mTestService->publishDummyMsg(token, msg);
+        pollForToken(token, opts);
+        RsGxsGrpMsgIdPair msgId;
+        mTestService->acknowledgeTokenMsg(token, msgId);
+
+        // less than half have no parents
+        if(first){
+            firstMsgId.second = msgId.second;
+            firstMsgId.first = msgId.first;
+
+        }
+
+        if(msgId.first.empty() || msgId.second.empty())
+        {
+            breakDown();
+            std::cerr << "serious error: Acknowledgement failed! " << std::endl;
+            return false;
+        }
+
+        if(!first)
+        {
+            mMsgIdsOut[msgId.first].push_back(msgId.second);
+            first = false;
+        }
+
+    }
+
+
+    opts.mReqType = GXS_REQUEST_TYPE_MSG_IDS;
+    opts.mOptions = RS_TOKREQOPT_MSG_PARENT | RS_TOKREQOPT_MSG_LATEST;
+    mTokenService->requestMsgRelatedInfo(token, 0, opts, firstMsgId);
+
+    pollForToken(token, opts);
+
+    GxsMsgIdResult::iterator mit = mMsgIdsOut.begin();
+    for(; mit != mMsgIdsOut.end(); mit++)
+    {
+        std::vector<RsGxsMessageId> msgIdsOut, msgIdsIn;
+        msgIdsOut = mit->second;
+
+        std::vector<RsGxsMessageId>::iterator vit_out = msgIdsOut.begin(), vit_in;
+
+        for(; vit_out != msgIdsOut.end(); vit_out++)
+        {
+            bool found = false;
+            msgIdsIn = mMsgIdsIn[mit->first];
+            vit_in = msgIdsIn.begin();
+
+            for(; vit_in != msgIdsIn.end(); vit_in++)
+            {
+                if(*vit_in == *vit_out)
+                    found = true;
+            }
+
+            if(!found){
+                breakDown();
+                return false;
+            }
+
+        }
+    }
+
+    /********************/
+
+    // complete
+    breakDown();
+
+    return true;
+}
+
 bool GenExchangeTester::testSpecificMsgMetaRetrieval()
 {
 
@@ -874,12 +986,12 @@ bool GenExchangeTester::testMsgIdRetrieval_OptParents()
 
     }
 
-    GxsMsgReq req;
+    std::list<RsGxsGroupId> req;
 
     // use empty grp ids request types, non specific msgs ids
     for(int i=0; i < mRandGrpIds.size(); i++)
     {
-        req[mRandGrpIds[i]] = std::vector<RsGxsMessageId>();
+        req.push_back(mRandGrpIds[i]);
     }
 
     opts.mReqType = GXS_REQUEST_TYPE_MSG_IDS;
@@ -971,12 +1083,12 @@ bool GenExchangeTester::testMsgIdRetrieval_OptOrigMsgId()
 
     }
 
-    GxsMsgReq req;
+    std::list<RsGxsGroupId> req;
 
     // use empty grp ids request types, non specific msgs ids
     for(int i=0; i < mRandGrpIds.size(); i++)
     {
-        req[mRandGrpIds[i]] = std::vector<RsGxsMessageId>();
+        req.push_back(mRandGrpIds[i]);
     }
 
     opts.mReqType = GXS_REQUEST_TYPE_MSG_IDS;
@@ -1181,10 +1293,10 @@ bool GenExchangeTester::testMsgIdRetrieval_OptLatest()
 
 
     // use empty grp ids request types, non specific msgs ids
-    GxsMsgReq req;
+    std::list<RsGxsGroupId> req;
     for(int i=0; i < mRandGrpIds.size(); i++)
     {
-        req[mRandGrpIds[i]] = std::vector<RsGxsMessageId>();
+        req.push_back(mRandGrpIds[i]);
     }
 
     opts.mReqType = GXS_REQUEST_TYPE_MSG_IDS;

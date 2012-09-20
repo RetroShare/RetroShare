@@ -32,6 +32,9 @@ public:
     bool testMsgIdRetrieval_OptLatest();
     bool testSpecificMsgMetaRetrieval();
 
+    bool testMsgChildRetrieval();
+
+
     bool testGrpSubmissionRetrieval();
     bool testSpecificGrpRetrieval();
     bool testGrpIdRetrieval();

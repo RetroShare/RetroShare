@@ -350,7 +350,7 @@ private:
      * @param opts the options used to parameterise the id filter
      * @param msgIdsOut the left overs ids after filter is applied to msgIds
      */
-    bool getMsgList(const GxsMsgReq& msgIds, const RsTokReqOptionsV2& opts, GxsMsgReq msgIdsOut);
+    bool getMsgList(const GxsMsgReq& msgIds, const RsTokReqOptionsV2& opts, GxsMsgReq& msgIdsOut);
 
 private:
 

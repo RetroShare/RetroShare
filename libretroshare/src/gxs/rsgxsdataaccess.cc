@@ -752,7 +752,7 @@ bool RsGxsDataAccess::getMsgSummary(MsgMetaReq* req)
 }
 
 
-bool RsGxsDataAccess::getMsgList(const GxsMsgReq& msgIds, const RsTokReqOptionsV2& opts, GxsMsgReq msgIdsOut)
+bool RsGxsDataAccess::getMsgList(const GxsMsgReq& msgIds, const RsTokReqOptionsV2& opts, GxsMsgReq& msgIdsOut)
 {
     GxsMsgMetaResult result;
 
@@ -1008,8 +1008,6 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
     }
 
     MsgMetaFilter filterMap;
-
-    RsStackMutex stack(mDataMutex); /***** LOCKED *****/
 
     // get meta data for all in group
     GxsMsgMetaResult result;
