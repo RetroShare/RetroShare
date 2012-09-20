@@ -380,3 +380,10 @@ SubFileItem QProgressBar#progressBar::chunk {
 	border-bottom-left-radius: 7px;
 	border: 1px solid black;
 }
+
+PluginItem QLabel#infoLabel {
+
+	color: #054A02;
+	font: bold;
+
+}
