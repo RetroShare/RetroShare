@@ -48,12 +48,6 @@
        <height>38</height>
       </size>
      </property>
-     <property name="frameShape">
-      <enum>QFrame::Box</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Sunken</enum>
-     </property>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <property name="margin">
        <number>2</number>

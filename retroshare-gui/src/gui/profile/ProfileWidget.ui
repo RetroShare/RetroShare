@@ -31,6 +31,9 @@
       </property>
       <item>
        <widget class="QToolButton" name="editstatustoolButton">
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
         <property name="toolTip">
          <string>Edit Personal message</string>
         </property>
@@ -51,6 +54,9 @@
       </item>
       <item>
        <widget class="QToolButton" name="CopyCertButton">
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
         <property name="text">
          <string>Copy Certificate</string>
         </property>
@@ -68,6 +74,9 @@
       </item>
       <item>
        <widget class="QToolButton" name="profile_Button">
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
         <property name="text">
          <string>Profile Manager</string>
         </property>
