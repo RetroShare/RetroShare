@@ -99,7 +99,7 @@ class MsgRelatedInfoReq : public GxsRequest
 {
 
 public:
-        GxsMsgReq mMsgIds;
+        RsGxsGrpMsgIdPair mMsgId;
         GxsMsgIdResult mMsgIdResult;
 };
 

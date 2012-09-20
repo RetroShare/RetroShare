@@ -90,7 +90,7 @@ public:
      * @param groupIds The ids of the groups to get, second entry of map empty to query for all msgs
      * @return true if request successful false otherwise
      */
-    bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts, const GxsMsgReq& msgIds);
+    bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts, const RsGxsGrpMsgIdPair &msgIds);
 
     /* Poll */
     uint32_t requestStatus(const uint32_t token);
@@ -342,6 +342,15 @@ private:
      * @return true if msg meta passes all options
      */
     bool checkMsgFilter(const RsTokReqOptionsV2& opts, const RsGxsMsgMetaData* meta) const;
+
+    /*!
+     * This is a filter method which applies the request options to the list of ids
+     * requested
+     * @param msgIds the msg ids for filter to be applied to
+     * @param opts the options used to parameterise the id filter
+     * @param msgIdsOut the left overs ids after filter is applied to msgIds
+     */
+    bool getMsgList(const GxsMsgReq& msgIds, const RsTokReqOptionsV2& opts, GxsMsgReq msgIdsOut);
 
 private:
 

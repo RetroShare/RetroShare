@@ -270,11 +270,11 @@ bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
 }
 
 bool RsGxsDataAccess::requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts,
-                                            const GxsMsgReq& msgIds)
+                                            const RsGxsGrpMsgIdPair &msgIds)
 {
 
     MsgRelatedInfoReq* req = new MsgRelatedInfoReq();
-    req->mMsgIds = msgIds;
+    req->mMsgId = msgIds;
 
     generateToken(token);
 
@@ -723,7 +723,13 @@ bool RsGxsDataAccess::getGroupList(GroupIdReq* req)
 bool RsGxsDataAccess::getMsgData(MsgDataReq* req)
 {
 	GxsMsgResult result;
-        mDataStore->retrieveNxsMsgs(req->mMsgIds, result, true, true);
+
+	GxsMsgReq msgIdOut;
+
+	// filter based on options
+	getMsgList(req->mMsgIds, req->Options, msgIdOut);
+
+	mDataStore->retrieveNxsMsgs(msgIdOut, result, true, true);
 
 	req->mMsgData = result;
 	return true;
@@ -733,22 +739,24 @@ bool RsGxsDataAccess::getMsgData(MsgDataReq* req)
 bool RsGxsDataAccess::getMsgSummary(MsgMetaReq* req)
 {
         GxsMsgMetaResult result;
-        mDataStore->retrieveGxsMsgMetaData(req->mMsgIds, result);
+
+        GxsMsgReq msgIdOut;
+
+        // filter based on options
+        getMsgList(req->mMsgIds, req->Options, msgIdOut);
+
+        mDataStore->retrieveGxsMsgMetaData(msgIdOut, result);
 	req->mMsgMetaData = result;
 
 	return true;
 }
 
 
-bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq* req)
+bool RsGxsDataAccess::getMsgList(const GxsMsgReq& msgIds, const RsTokReqOptionsV2& opts, GxsMsgReq msgIdsOut)
 {
     GxsMsgMetaResult result;
 
-    const RsTokReqOptionsV2& opts = req->Options;
-
-    mDataStore->retrieveGxsMsgMetaData(req->mMsgIds, result);
-
-
+    mDataStore->retrieveGxsMsgMetaData(msgIds, result);
 
     /* CASEs this handles.
      * Input is groupList + Flags.
@@ -798,105 +806,104 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq* req)
             {
                     std::vector<RsGxsMsgMetaData*>::const_iterator vit = metaV.begin();
 
-
                     // RUN THROUGH ALL MSGS... in map origId -> TS.
                     std::map<RsGxsGroupId, std::pair<RsGxsMessageId, time_t> > origMsgTs;
                     std::map<RsGxsGroupId, std::pair<RsGxsMessageId, time_t> >::iterator oit;
 
                     for(; vit != metaV.end(); vit++)
                     {
-                            RsGxsMsgMetaData* msgMeta = *vit;
+                        RsGxsMsgMetaData* msgMeta = *vit;
 
-                            /* if we are grabbing thread Head... then parentId == empty. */
-                            if (onlyThreadHeadMsgs)
+                        /* if we are grabbing thread Head... then parentId == empty. */
+                        if (onlyThreadHeadMsgs)
+                        {
+                            if (!(msgMeta->mParentId.empty()))
                             {
-                                    if (!(msgMeta->mParentId.empty()))
-                                    {
-                                            continue;
-                                    }
+                                    continue;
                             }
+                        }
 
 
-                            oit = origMsgTs.find(msgMeta->mOrigMsgId);
-                            bool addMsg = false;
-                            if (oit == origMsgTs.end())
-                            {
-                                    std::cerr << "RsGxsDataAccess::getMsgList() Found New OrigMsgId: ";
-                                    std::cerr << msgMeta->mOrigMsgId;
-                                    std::cerr << " MsgId: " << msgMeta->mMsgId;
-                                    std::cerr << " TS: " << msgMeta->mPublishTs;
-                                    std::cerr << std::endl;
+                        oit = origMsgTs.find(msgMeta->mOrigMsgId);
+                        bool addMsg = false;
+                        if (oit == origMsgTs.end())
+                        {
+                            std::cerr << "RsGxsDataAccess::getMsgList() Found New OrigMsgId: ";
+                            std::cerr << msgMeta->mOrigMsgId;
+                            std::cerr << " MsgId: " << msgMeta->mMsgId;
+                            std::cerr << " TS: " << msgMeta->mPublishTs;
+                            std::cerr << std::endl;
 
-                                    addMsg = true;
-                            }
-                            // check timestamps.
-                            else if (oit->second.second < msgMeta->mPublishTs)
-                            {
-                                    std::cerr << "RsGxsDataAccess::getMsgList() Found Later Msg. OrigMsgId: ";
-                                    std::cerr << msgMeta->mOrigMsgId;
-                                    std::cerr << " MsgId: " << msgMeta->mMsgId;
-                                    std::cerr << " TS: " << msgMeta->mPublishTs;
+                            addMsg = true;
+                        }
+                        // check timestamps.
+                        else if (oit->second.second < msgMeta->mPublishTs)
+                        {
+                            std::cerr << "RsGxsDataAccess::getMsgList() Found Later Msg. OrigMsgId: ";
+                            std::cerr << msgMeta->mOrigMsgId;
+                            std::cerr << " MsgId: " << msgMeta->mMsgId;
+                            std::cerr << " TS: " << msgMeta->mPublishTs;
 
-                                    addMsg = true;
-                            }
+                            addMsg = true;
+                        }
 
-                            if (addMsg)
-                            {
-                                    // add as latest. (overwriting if necessary)
-                                    origMsgTs[msgMeta->mOrigMsgId] = std::make_pair(msgMeta->mMsgId, msgMeta->mPublishTs);
-                                    metaFilter[grpId].insert(std::make_pair(msgMeta->mMsgId, msgMeta));
-                            }
+                        if (addMsg)
+                        {
+                            // add as latest. (overwriting if necessary)
+                            origMsgTs[msgMeta->mOrigMsgId] = std::make_pair(msgMeta->mMsgId, msgMeta->mPublishTs);
+                            metaFilter[grpId].insert(std::make_pair(msgMeta->mMsgId, msgMeta));
+                        }
                     }
 
                     // Add the discovered Latest Msgs.
                     for(oit = origMsgTs.begin(); oit != origMsgTs.end(); oit++)
                     {
-                            req->mMsgIdResult[grpId].push_back(oit->second.first);
+                            msgIdsOut[grpId].push_back(oit->second.first);
                     }
 
             }
             else	// ALL OTHER CASES.
             {
-                    std::vector<RsGxsMsgMetaData*>::const_iterator vit = metaV.begin();
+                std::vector<RsGxsMsgMetaData*>::const_iterator vit = metaV.begin();
 
-                    for(; vit != metaV.end(); vit++)
+                for(; vit != metaV.end(); vit++)
+                {
+                    RsGxsMsgMetaData* msgMeta = *vit;
+                    bool add = false;
+
+                    /* if we are grabbing thread Head... then parentId == empty. */
+                    if (onlyThreadHeadMsgs)
                     {
-                            RsGxsMsgMetaData* msgMeta = *vit;
-                            bool add = false;
-
-                            /* if we are grabbing thread Head... then parentId == empty. */
-                            if (onlyThreadHeadMsgs)
+                            if (!(msgMeta->mParentId.empty()))
                             {
-                                    if (!(msgMeta->mParentId.empty()))
-                                    {
-                                            continue;
-                                    }
+                                    continue;
                             }
-
-
-                            if (onlyOrigMsgs)
-                            {
-                                    if (msgMeta->mMsgId == msgMeta->mOrigMsgId)
-                                    {
-                                            add = true;
-                                    }
-                            }
-                            else
-                            {
-                                    add = true;
-                            }
-
-                            if (add)
-                            {
-                                    req->mMsgIdResult[grpId].push_back(msgMeta->mMsgId);
-                                    metaFilter[grpId].insert(std::make_pair(msgMeta->mMsgId, msgMeta));
-                            }
-
                     }
+
+
+                    if (onlyOrigMsgs)
+                    {
+                            if (msgMeta->mMsgId == msgMeta->mOrigMsgId)
+                            {
+                                add = true;
+                            }
+                    }
+                    else
+                    {
+                        add = true;
+                    }
+
+                    if (add)
+                    {
+                        msgIdsOut[grpId].push_back(msgMeta->mMsgId);
+                        metaFilter[grpId].insert(std::make_pair(msgMeta->mMsgId, msgMeta));
+                    }
+
+                }
             }
     }
 
-    filterMsgList(req->mMsgIdResult, opts, metaFilter);
+    filterMsgList(msgIdsOut, opts, metaFilter);
 
     metaFilter.clear();
 
@@ -906,11 +913,262 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq* req)
     return true;
 }
 
+bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
+{
+    /* CASEs this handles.
+     * Input is msgList + Flags.
+     * 1) No Flags => return nothing
+     */
+
+    std::cerr << "RsGxsDataAccess::getMsgRelatedList()";
+    std::cerr << std::endl;
+
+    const RsTokReqOptionsV2& opts = req->Options;
+
+    bool onlyLatestMsgs = false;
+    bool onlyAllVersions = false;
+    bool onlyChildMsgs = false;
+    bool onlyThreadMsgs = false;
+
+    if (opts.mOptions & RS_TOKREQOPT_MSG_LATEST)
+    {
+            std::cerr << "RsGxsDataAccess::getMsgRelatedList() MSG_LATEST";
+            std::cerr << std::endl;
+            onlyLatestMsgs = true;
+    }
+    else if (opts.mOptions & RS_TOKREQOPT_MSG_VERSIONS)
+    {
+            std::cerr << "RsGxsDataAccess::getMsgRelatedList() MSG_VERSIONS";
+            std::cerr << std::endl;
+            onlyAllVersions = true;
+    }
+
+    if (opts.mOptions & RS_TOKREQOPT_MSG_PARENT)
+    {
+            std::cerr << "RsGxsDataAccess::getMsgRelatedList() MSG_PARENTS";
+            std::cerr << std::endl;
+            onlyChildMsgs = true;
+    }
+
+    if (opts.mOptions & RS_TOKREQOPT_MSG_THREAD)
+    {
+            std::cerr << "RsGxsDataAccess::getMsgRelatedList() MSG_THREAD";
+            std::cerr << std::endl;
+            onlyThreadMsgs = true;
+    }
+
+    if (onlyAllVersions && onlyChildMsgs)
+    {
+            std::cerr << "RsGxsDataAccess::getMsgRelatedList() ERROR Incompatible FLAGS (VERSIONS & PARENT)";
+            std::cerr << std::endl;
+
+            return false;
+    }
+
+    if (onlyAllVersions && onlyThreadMsgs)
+    {
+            std::cerr << "RsGxsDataAccess::getMsgRelatedList() ERROR Incompatible FLAGS (VERSIONS & THREAD)";
+            std::cerr << std::endl;
+
+            return false;
+    }
+
+    if ((!onlyLatestMsgs) && onlyChildMsgs)
+    {
+            std::cerr << "RsGxsDataAccess::getMsgRelatedList() ERROR Incompatible FLAGS (!LATEST & PARENT)";
+            std::cerr << std::endl;
+
+            return false;
+    }
+
+    if ((!onlyLatestMsgs) && onlyThreadMsgs)
+    {
+            std::cerr << "RsGxsDataAccess::getMsgRelatedList() ERROR Incompatible FLAGS (!LATEST & THREAD)";
+            std::cerr << std::endl;
+
+            return false;
+    }
+
+    if (onlyChildMsgs && onlyThreadMsgs)
+    {
+            std::cerr << "RsGxsDataAccess::getMsgRelatedList() ERROR Incompatible FLAGS (PARENT & THREAD)";
+            std::cerr << std::endl;
+
+            return false;
+    }
+
+
+    /* FALL BACK OPTION */
+    if ((!onlyLatestMsgs) && (!onlyAllVersions) && (!onlyChildMsgs) && (!onlyThreadMsgs))
+    {
+            std::cerr << "RsGxsDataAccess::getMsgRelatedList() FALLBACK -> NO FLAGS -> SIMPLY RETURN nothing";
+            std::cerr << std::endl;
+
+            return true;
+    }
+
+    MsgMetaFilter filterMap;
+
+    RsStackMutex stack(mDataMutex); /***** LOCKED *****/
+
+    // get meta data for all in group
+    GxsMsgMetaResult result;
+    GxsMsgReq msgIds;
+    msgIds.insert(std::make_pair(req->mMsgId.first, std::vector<RsGxsMessageId>()));
+    mDataStore->retrieveGxsMsgMetaData(msgIds, result);
+    std::vector<RsGxsMsgMetaData*>& metaV = result[req->mMsgId.first];
+    std::vector<RsGxsMsgMetaData*>::iterator vit_meta;
+
+    // msg id to relate to
+    const RsGxsMessageId& msgId = req->mMsgId.second;
+    const RsGxsGroupId& grpId = req->mMsgId.first;
+
+    std::vector<RsGxsMessageId> outMsgIds;
+
+
+
+    RsGxsMsgMetaData* origMeta = NULL;
+    for(vit_meta = metaV.begin(); vit_meta != metaV.end(); vit_meta++)
+    {
+        RsGxsMsgMetaData* meta = *vit_meta;
+
+        if(msgId == meta->mMsgId)
+        {
+            origMeta = meta;
+            break;
+        }
+    }
+
+    if(!origMeta)
+    {
+        std::cerr << "RsGxsDataAccess::getMsgRelatedInfo(): Cannot find meta of msgId (to relate to)!"
+                  << std::endl;
+        cleanseMsgMetaMap(result);
+        return false;
+    }
+
+    const RsGxsMessageId& origMsgId = origMeta->mOrigMsgId;
+    std::map<RsGxsMessageId, RsGxsMsgMetaData*>& metaMap = filterMap[grpId];
+
+    if (onlyLatestMsgs)
+    {
+        if (onlyChildMsgs || onlyThreadMsgs)
+        {
+            // RUN THROUGH ALL MSGS... in map origId -> TS.
+            std::map<std::string, std::pair<std::string, time_t> > origMsgTs;
+            std::map<std::string, std::pair<std::string, time_t> >::iterator oit;
+            for(vit_meta = metaV.begin(); vit_meta != metaV.end(); vit_meta++)
+            {
+
+                RsGxsMsgMetaData* meta = *vit_meta;
+
+                // skip msgs that aren't children.
+                if (onlyChildMsgs)
+                {
+                    if (meta->mParentId != origMsgId)
+                    {
+                        continue;
+                    }
+                }
+                else /* onlyThreadMsgs */
+                {
+                    if (meta->mThreadId != msgId)
+                    {
+                        continue;
+                    }
+                }
+
+
+                oit = origMsgTs.find(meta->mOrigMsgId);
+
+                bool addMsg = false;
+                if (oit == origMsgTs.end())
+                {
+                        std::cerr << "RsGxsDataAccess::getMsgRelatedList() Found New OrigMsgId: ";
+                        std::cerr << meta->mOrigMsgId;
+                        std::cerr << " MsgId: " << meta->mMsgId;
+                        std::cerr << " TS: " << meta->mPublishTs;
+                        std::cerr << std::endl;
+
+                        addMsg = true;
+                }
+                // check timestamps.
+                else if (oit->second.second < meta->mPublishTs)
+                {
+                        std::cerr << "RsGxsDataAccess::getMsgRelatedList() Found Later Msg. OrigMsgId: ";
+                        std::cerr << meta->mOrigMsgId;
+                        std::cerr << " MsgId: " << meta->mMsgId;
+                        std::cerr << " TS: " << meta->mPublishTs;
+
+                        addMsg = true;
+                }
+
+                if (addMsg)
+                {
+                    // add as latest. (overwriting if necessary)
+                    origMsgTs[meta->mOrigMsgId] = std::make_pair(meta->mMsgId, meta->mPublishTs);
+                    metaMap.insert(std::make_pair(meta->mOrigMsgId, meta));
+                }
+            }
+
+            // Add the discovered Latest Msgs.
+            for(oit = origMsgTs.begin(); oit != origMsgTs.end(); oit++)
+            {
+                outMsgIds.push_back(oit->second.first);
+            }
+        }
+        else
+        {
+
+            /* first guess is potentially better than Orig (can't be worse!) */
+            time_t latestTs = 0;
+            RsGxsMessageId latestMsgId;
+            RsGxsMsgMetaData* latestMeta;
+
+            for(vit_meta = metaV.begin(); vit_meta != metaV.end(); vit_meta++)
+            {
+                RsGxsMsgMetaData* meta = *vit_meta;
+
+                if (meta->mOrigMsgId == origMsgId)
+                {
+                    if (meta->mPublishTs > latestTs)
+                    {
+                        latestTs = meta->mPublishTs;
+                        latestMsgId = meta->mMsgId;
+                        latestMeta = meta;
+                    }
+                }
+            }
+            outMsgIds.push_back(latestMsgId);
+            metaMap.insert(std::make_pair(latestMsgId, latestMeta));
+        }
+    }
+    else if (onlyAllVersions)
+    {
+        for(vit_meta = metaV.begin(); vit_meta != metaV.end(); vit_meta++)
+        {
+            RsGxsMsgMetaData* meta = *vit_meta;
+
+            if (meta->mOrigMsgId == origMsgId)
+            {
+                outMsgIds.push_back(meta->mMsgId);
+                metaMap.insert(std::make_pair(meta->mOrigMsgId, meta));
+            }
+        }
+    }
+
+    req->mMsgIdResult[grpId] = outMsgIds;
+    filterMsgList(req->mMsgIdResult, opts, filterMap);
+
+    cleanseMsgMetaMap(result);
+
+    return true;
+}
+
 bool RsGxsDataAccess::getMsgList(MsgIdReq* req)
 {
 
     GxsMsgMetaResult result;
-
 
     mDataStore->retrieveGxsMsgMetaData(req->mMsgIds, result);
 
@@ -931,6 +1189,13 @@ bool RsGxsDataAccess::getMsgList(MsgIdReq* req)
             delete meta; // discard meta data mem
         }
     }
+
+    GxsMsgReq msgIdOut;
+
+    // filter based on options
+    getMsgList(req->mMsgIdResult, req->Options, msgIdOut);
+    req->mMsgIdResult = msgIdOut;
+
     return true;
 }
 
@@ -1116,7 +1381,7 @@ bool RsGxsDataAccess::disposeOfPublicToken(const uint32_t& token)
 bool RsGxsDataAccess::checkMsgFilter(const RsTokReqOptionsV2& opts, const RsGxsMsgMetaData* meta) const
 {
 	bool statusMatch = false;
-	if (opts.mStatusMask)
+        if (opts.mStatusMask)
 	{
 		// Exact Flags match required.
  		if ((opts.mStatusMask & opts.mStatusFilter) == (opts.mStatusMask & meta->mMsgStatus))
@@ -1141,5 +1406,33 @@ bool RsGxsDataAccess::checkMsgFilter(const RsTokReqOptionsV2& opts, const RsGxsM
 		// no status comparision,
 		statusMatch = true;
 	}
-	return statusMatch;
+
+        bool flagMatch = false;
+
+        if(opts.mMsgFlagMask)
+        {
+            // Exact Flags match required.
+            if ((opts.mMsgFlagMask & opts.mMsgFlagFilter) == (opts.mMsgFlagMask & meta->mMsgFlags))
+            {
+                    std::cerr << "checkMsgFilter() Accepting Msg as FlagMatches: ";
+                    std::cerr << " Mask: " << opts.mMsgFlagMask << " FlagFilter: " << opts.mMsgFlagFilter;
+                    std::cerr << " MsgFlag: " << meta->mMsgFlags << " MsgId: " << meta->mMsgId;
+                    std::cerr << std::endl;
+
+                    flagMatch = true;
+            }
+            else
+            {
+                    std::cerr << "checkMsgFilter() Dropping Msg due to !FlagMatch ";
+                    std::cerr << " Mask: " << opts.mMsgFlagMask << " FlagFilter: " << opts.mMsgFlagFilter;
+                    std::cerr << " MsgFlag: " << meta->mMsgFlags << " MsgId: " << meta->mMsgId;
+                    std::cerr << std::endl;
+
+                    flagMatch = false;
+            }
+        }else{
+            flagMatch = true;
+        }
+
+        return statusMatch && flagMatch;
 }

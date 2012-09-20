@@ -827,7 +827,7 @@ bool GenExchangeTester::testSpecificMsgMetaRetrieval()
     return ok;
 }
 
-bool GenExchangeTester::testRelatedMsgIdRetrieval_Parents()
+bool GenExchangeTester::testMsgIdRetrieval_OptParents()
 {
     // start up
     setUp();
@@ -884,7 +884,7 @@ bool GenExchangeTester::testRelatedMsgIdRetrieval_Parents()
 
     opts.mReqType = GXS_REQUEST_TYPE_MSG_IDS;
     opts.mOptions = RS_TOKREQOPT_MSG_THREAD;
-    mTokenService->requestMsgRelatedInfo(token, 0, opts, req);
+    mTokenService->requestMsgInfo(token, 0, opts, req);
 
     pollForToken(token, opts);
 
@@ -925,7 +925,7 @@ bool GenExchangeTester::testRelatedMsgIdRetrieval_Parents()
 
 }
 
-bool GenExchangeTester::testRelatedMsgIdRetrieval_OrigMsgId()
+bool GenExchangeTester::testMsgIdRetrieval_OptOrigMsgId()
 {
     // start up
     setUp();
@@ -981,7 +981,7 @@ bool GenExchangeTester::testRelatedMsgIdRetrieval_OrigMsgId()
 
     opts.mReqType = GXS_REQUEST_TYPE_MSG_IDS;
     opts.mOptions = RS_TOKREQOPT_MSG_ORIGMSG;
-    mTokenService->requestMsgRelatedInfo(token, 0, opts, req);
+    mTokenService->requestMsgInfo(token, 0, opts, req);
 
     pollForToken(token, opts);
 
@@ -1022,7 +1022,7 @@ bool GenExchangeTester::testRelatedMsgIdRetrieval_OrigMsgId()
 }
 
 
-bool GenExchangeTester::testRelatedMsgIdRetrieval_Latest()
+bool GenExchangeTester::testMsgIdRetrieval_OptLatest()
 {
 
     // testing for latest, create msg which are origMsgIds then
@@ -1189,7 +1189,7 @@ bool GenExchangeTester::testRelatedMsgIdRetrieval_Latest()
 
     opts.mReqType = GXS_REQUEST_TYPE_MSG_IDS;
     opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
-    mTokenService->requestMsgRelatedInfo(token, 0, opts, req);
+    mTokenService->requestMsgInfo(token, 0, opts, req);
 
     pollForToken(token, opts);
 

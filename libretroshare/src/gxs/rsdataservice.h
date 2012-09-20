@@ -70,7 +70,7 @@ public:
      * @param cache whether to store retrieval in mem for faster later retrieval
      * @return error code
      */
-    int retrieveGxsMsgMetaData(GxsMsgReq& reqIds, GxsMsgMetaResult& msgMeta);
+    int retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaResult& msgMeta);
 
     /*!
      * remove msgs in data store

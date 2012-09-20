@@ -27,9 +27,9 @@ public:
 
     bool testMsgSubmissionRetrieval();
     bool testMsgIdRetrieval();
-    bool testRelatedMsgIdRetrieval_Parents();
-    bool testRelatedMsgIdRetrieval_OrigMsgId();
-    bool testRelatedMsgIdRetrieval_Latest();
+    bool testMsgIdRetrieval_OptParents();
+    bool testMsgIdRetrieval_OptOrigMsgId();
+    bool testMsgIdRetrieval_OptLatest();
     bool testSpecificMsgMetaRetrieval();
 
     bool testGrpSubmissionRetrieval();

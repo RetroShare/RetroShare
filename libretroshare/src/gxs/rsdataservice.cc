@@ -807,9 +807,9 @@ void RsDataService::retrieveMessages(RetroCursor *c, std::vector<RsNxsMsg *> &ms
     return;
 }
 
-int RsDataService::retrieveGxsMsgMetaData(GxsMsgReq& reqIds, GxsMsgMetaResult &msgMeta)
+int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaResult &msgMeta)
 {
-    GxsMsgReq::iterator mit = reqIds.begin();
+    GxsMsgReq::const_iterator mit = reqIds.begin();
 
     for(; mit != reqIds.end(); mit++)
     {
