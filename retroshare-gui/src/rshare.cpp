@@ -92,8 +92,13 @@ Rshare::Rshare(QStringList args, int &argc, char **argv, const QString &dir)
 {
   qInstallMsgHandler(qt_msg_handler);
 
+#ifndef __APPLE__
+
   /* set default window icon */
   setWindowIcon(QIcon(":/images/rstray3.png"));
+
+#endif
+
 
   /* Read in all our command-line arguments. */
   parseArguments(args);
