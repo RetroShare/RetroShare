@@ -388,7 +388,7 @@ int main(int argc, char **argv)
 		if (enableRpc)
 		{
 			/* Build RPC Server */
-			RpcMediator *med = CreateRpcSystem(ssh);
+			RpcMediator *med = CreateRpcSystem(ssh, notify);
 			ssh->setRpcSystem(med);
 			ssh->setSleepPeriods(0.01, 0.1);
 		}

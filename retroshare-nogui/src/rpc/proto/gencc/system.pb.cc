@@ -25,6 +25,13 @@ const ::google::protobuf::Descriptor* ResponseSystemStatus_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   ResponseSystemStatus_reflection_ = NULL;
 const ::google::protobuf::EnumDescriptor* ResponseSystemStatus_NetCode_descriptor_ = NULL;
+const ::google::protobuf::Descriptor* RequestSystemQuit_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  RequestSystemQuit_reflection_ = NULL;
+const ::google::protobuf::EnumDescriptor* RequestSystemQuit_QuitCode_descriptor_ = NULL;
+const ::google::protobuf::Descriptor* ResponseSystemQuit_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  ResponseSystemQuit_reflection_ = NULL;
 const ::google::protobuf::EnumDescriptor* RequestMsgIds_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* ResponseMsgIds_descriptor_ = NULL;
 
@@ -71,6 +78,37 @@ void protobuf_AssignDesc_system_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(ResponseSystemStatus));
   ResponseSystemStatus_NetCode_descriptor_ = ResponseSystemStatus_descriptor_->enum_type(0);
+  RequestSystemQuit_descriptor_ = file->message_type(2);
+  static const int RequestSystemQuit_offsets_[1] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestSystemQuit, quit_code_),
+  };
+  RequestSystemQuit_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      RequestSystemQuit_descriptor_,
+      RequestSystemQuit::default_instance_,
+      RequestSystemQuit_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestSystemQuit, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestSystemQuit, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(RequestSystemQuit));
+  RequestSystemQuit_QuitCode_descriptor_ = RequestSystemQuit_descriptor_->enum_type(0);
+  ResponseSystemQuit_descriptor_ = file->message_type(3);
+  static const int ResponseSystemQuit_offsets_[1] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseSystemQuit, status_),
+  };
+  ResponseSystemQuit_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      ResponseSystemQuit_descriptor_,
+      ResponseSystemQuit::default_instance_,
+      ResponseSystemQuit_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseSystemQuit, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseSystemQuit, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(ResponseSystemQuit));
   RequestMsgIds_descriptor_ = file->enum_type(0);
   ResponseMsgIds_descriptor_ = file->enum_type(1);
 }
@@ -89,6 +127,10 @@ void protobuf_RegisterTypes(const ::std::string&) {
     RequestSystemStatus_descriptor_, &RequestSystemStatus::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     ResponseSystemStatus_descriptor_, &ResponseSystemStatus::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    RequestSystemQuit_descriptor_, &RequestSystemQuit::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    ResponseSystemQuit_descriptor_, &ResponseSystemQuit::default_instance());
 }
 
 }  // namespace
@@ -98,6 +140,10 @@ void protobuf_ShutdownFile_system_2eproto() {
   delete RequestSystemStatus_reflection_;
   delete ResponseSystemStatus::default_instance_;
   delete ResponseSystemStatus_reflection_;
+  delete RequestSystemQuit::default_instance_;
+  delete RequestSystemQuit_reflection_;
+  delete ResponseSystemQuit::default_instance_;
+  delete ResponseSystemQuit_reflection_;
 }
 
 void protobuf_AddDesc_system_2eproto() {
@@ -119,15 +165,25 @@ void protobuf_AddDesc_system_2eproto() {
     "\016\n\nBAD_NATSYM\020\002\022\021\n\rBAD_NODHT_NAT\020\003\022\023\n\017WA"
     "RNING_RESTART\020\004\022\022\n\016WARNING_NATTED\020\005\022\021\n\rW"
     "ARNING_NODHT\020\006\022\010\n\004GOOD\020\007\022\017\n\013ADV_FORWARD\020"
-    "\010*.\n\rRequestMsgIds\022\035\n\031MsgId_RequestSyste"
-    "mStatus\020\001*0\n\016ResponseMsgIds\022\036\n\032MsgId_Res"
-    "ponseSystemStatus\020\001", 539);
+    "\010\"\201\001\n\021RequestSystemQuit\022<\n\tquit_code\030\001 \002"
+    "(\0162).rsctrl.system.RequestSystemQuit.Qui"
+    "tCode\".\n\010QuitCode\022\021\n\rCLOSE_CHANNEL\020\001\022\017\n\013"
+    "SHUTDOWN_RS\020\002\"9\n\022ResponseSystemQuit\022#\n\006s"
+    "tatus\030\001 \002(\0132\023.rsctrl.core.Status*K\n\rRequ"
+    "estMsgIds\022\035\n\031MsgId_RequestSystemStatus\020\001"
+    "\022\033\n\027MsgId_RequestSystemQuit\020\002*N\n\016Respons"
+    "eMsgIds\022\036\n\032MsgId_ResponseSystemStatus\020\001\022"
+    "\034\n\030MsgId_ResponseSystemQuit\020\002", 789);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "system.proto", &protobuf_RegisterTypes);
   RequestSystemStatus::default_instance_ = new RequestSystemStatus();
   ResponseSystemStatus::default_instance_ = new ResponseSystemStatus();
+  RequestSystemQuit::default_instance_ = new RequestSystemQuit();
+  ResponseSystemQuit::default_instance_ = new ResponseSystemQuit();
   RequestSystemStatus::default_instance_->InitAsDefaultInstance();
   ResponseSystemStatus::default_instance_->InitAsDefaultInstance();
+  RequestSystemQuit::default_instance_->InitAsDefaultInstance();
+  ResponseSystemQuit::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_system_2eproto);
 }
 
@@ -145,6 +201,7 @@ const ::google::protobuf::EnumDescriptor* RequestMsgIds_descriptor() {
 bool RequestMsgIds_IsValid(int value) {
   switch(value) {
     case 1:
+    case 2:
       return true;
     default:
       return false;
@@ -158,6 +215,7 @@ const ::google::protobuf::EnumDescriptor* ResponseMsgIds_descriptor() {
 bool ResponseMsgIds_IsValid(int value) {
   switch(value) {
     case 1:
+    case 2:
       return true;
     default:
       return false;
@@ -741,6 +799,457 @@ void ResponseSystemStatus::Swap(ResponseSystemStatus* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = ResponseSystemStatus_descriptor_;
   metadata.reflection = ResponseSystemStatus_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+const ::google::protobuf::EnumDescriptor* RequestSystemQuit_QuitCode_descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return RequestSystemQuit_QuitCode_descriptor_;
+}
+bool RequestSystemQuit_QuitCode_IsValid(int value) {
+  switch(value) {
+    case 1:
+    case 2:
+      return true;
+    default:
+      return false;
+  }
+}
+
+#ifndef _MSC_VER
+const RequestSystemQuit_QuitCode RequestSystemQuit::CLOSE_CHANNEL;
+const RequestSystemQuit_QuitCode RequestSystemQuit::SHUTDOWN_RS;
+const RequestSystemQuit_QuitCode RequestSystemQuit::QuitCode_MIN;
+const RequestSystemQuit_QuitCode RequestSystemQuit::QuitCode_MAX;
+const int RequestSystemQuit::QuitCode_ARRAYSIZE;
+#endif  // _MSC_VER
+#ifndef _MSC_VER
+const int RequestSystemQuit::kQuitCodeFieldNumber;
+#endif  // !_MSC_VER
+
+RequestSystemQuit::RequestSystemQuit()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void RequestSystemQuit::InitAsDefaultInstance() {
+}
+
+RequestSystemQuit::RequestSystemQuit(const RequestSystemQuit& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void RequestSystemQuit::SharedCtor() {
+  _cached_size_ = 0;
+  quit_code_ = 1;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+RequestSystemQuit::~RequestSystemQuit() {
+  SharedDtor();
+}
+
+void RequestSystemQuit::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void RequestSystemQuit::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* RequestSystemQuit::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return RequestSystemQuit_descriptor_;
+}
+
+const RequestSystemQuit& RequestSystemQuit::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_system_2eproto();  return *default_instance_;
+}
+
+RequestSystemQuit* RequestSystemQuit::default_instance_ = NULL;
+
+RequestSystemQuit* RequestSystemQuit::New() const {
+  return new RequestSystemQuit;
+}
+
+void RequestSystemQuit::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    quit_code_ = 1;
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool RequestSystemQuit::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required .rsctrl.system.RequestSystemQuit.QuitCode quit_code = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+          int value;
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          if (::rsctrl::system::RequestSystemQuit_QuitCode_IsValid(value)) {
+            set_quit_code(static_cast< ::rsctrl::system::RequestSystemQuit_QuitCode >(value));
+          } else {
+            mutable_unknown_fields()->AddVarint(1, value);
+          }
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void RequestSystemQuit::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required .rsctrl.system.RequestSystemQuit.QuitCode quit_code = 1;
+  if (has_quit_code()) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      1, this->quit_code(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* RequestSystemQuit::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required .rsctrl.system.RequestSystemQuit.QuitCode quit_code = 1;
+  if (has_quit_code()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      1, this->quit_code(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int RequestSystemQuit::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required .rsctrl.system.RequestSystemQuit.QuitCode quit_code = 1;
+    if (has_quit_code()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::EnumSize(this->quit_code());
+    }
+    
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void RequestSystemQuit::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const RequestSystemQuit* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const RequestSystemQuit*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void RequestSystemQuit::MergeFrom(const RequestSystemQuit& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_quit_code()) {
+      set_quit_code(from.quit_code());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void RequestSystemQuit::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void RequestSystemQuit::CopyFrom(const RequestSystemQuit& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool RequestSystemQuit::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
+  
+  return true;
+}
+
+void RequestSystemQuit::Swap(RequestSystemQuit* other) {
+  if (other != this) {
+    std::swap(quit_code_, other->quit_code_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata RequestSystemQuit::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = RequestSystemQuit_descriptor_;
+  metadata.reflection = RequestSystemQuit_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int ResponseSystemQuit::kStatusFieldNumber;
+#endif  // !_MSC_VER
+
+ResponseSystemQuit::ResponseSystemQuit()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void ResponseSystemQuit::InitAsDefaultInstance() {
+  status_ = const_cast< ::rsctrl::core::Status*>(&::rsctrl::core::Status::default_instance());
+}
+
+ResponseSystemQuit::ResponseSystemQuit(const ResponseSystemQuit& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void ResponseSystemQuit::SharedCtor() {
+  _cached_size_ = 0;
+  status_ = NULL;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+ResponseSystemQuit::~ResponseSystemQuit() {
+  SharedDtor();
+}
+
+void ResponseSystemQuit::SharedDtor() {
+  if (this != default_instance_) {
+    delete status_;
+  }
+}
+
+void ResponseSystemQuit::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* ResponseSystemQuit::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return ResponseSystemQuit_descriptor_;
+}
+
+const ResponseSystemQuit& ResponseSystemQuit::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_system_2eproto();  return *default_instance_;
+}
+
+ResponseSystemQuit* ResponseSystemQuit::default_instance_ = NULL;
+
+ResponseSystemQuit* ResponseSystemQuit::New() const {
+  return new ResponseSystemQuit;
+}
+
+void ResponseSystemQuit::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (has_status()) {
+      if (status_ != NULL) status_->::rsctrl::core::Status::Clear();
+    }
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool ResponseSystemQuit::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required .rsctrl.core.Status status = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_status()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void ResponseSystemQuit::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required .rsctrl.core.Status status = 1;
+  if (has_status()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, this->status(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* ResponseSystemQuit::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required .rsctrl.core.Status status = 1;
+  if (has_status()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        1, this->status(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int ResponseSystemQuit::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required .rsctrl.core.Status status = 1;
+    if (has_status()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+          this->status());
+    }
+    
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void ResponseSystemQuit::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const ResponseSystemQuit* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const ResponseSystemQuit*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void ResponseSystemQuit::MergeFrom(const ResponseSystemQuit& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_status()) {
+      mutable_status()->::rsctrl::core::Status::MergeFrom(from.status());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void ResponseSystemQuit::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void ResponseSystemQuit::CopyFrom(const ResponseSystemQuit& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool ResponseSystemQuit::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
+  
+  if (has_status()) {
+    if (!this->status().IsInitialized()) return false;
+  }
+  return true;
+}
+
+void ResponseSystemQuit::Swap(ResponseSystemQuit* other) {
+  if (other != this) {
+    std::swap(status_, other->status_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata ResponseSystemQuit::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = ResponseSystemQuit_descriptor_;
+  metadata.reflection = ResponseSystemQuit_reflection_;
   return metadata;
 }
 
