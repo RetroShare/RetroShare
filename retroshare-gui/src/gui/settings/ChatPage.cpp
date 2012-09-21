@@ -99,8 +99,13 @@ bool
 ChatPage::save(QString &/*errmsg*/)
 {
     Settings->beginGroup(QString("Chat"));
-    Settings->setValue(QString::fromUtf8("Emoteicons_PrivatChat"), ui.checkBox_emoteprivchat->isChecked());
-    Settings->setValue(QString::fromUtf8("Emoteicons_GroupChat"), ui.checkBox_emotegroupchat->isChecked());
+    Settings->setValue("Emoteicons_PrivatChat", ui.checkBox_emoteprivchat->isChecked());
+    Settings->setValue("Emoteicons_GroupChat", ui.checkBox_emotegroupchat->isChecked());
+    Settings->setValue("EnableCustomFonts", ui.checkBox_enableCustomFonts->isChecked());
+    Settings->setValue("EnableCustomFontSize", ui.checkBox_enableCustomFontSize->isChecked());
+    Settings->setValue("EnableBold", ui.checkBox_enableBold->isChecked());
+    Settings->setValue("EnableItalics", ui.checkBox_enableItalics->isChecked());
+    Settings->setValue("MinimumContrast", ui.minimumContrast->value());
     Settings->endGroup();
 
     Settings->setChatScreenFont(fontTempChat.toString());
@@ -154,8 +159,13 @@ void
 ChatPage::load()
 {
     Settings->beginGroup(QString("Chat"));
-    ui.checkBox_emoteprivchat->setChecked(Settings->value(QString::fromUtf8("Emoteicons_PrivatChat"), true).toBool());
-    ui.checkBox_emotegroupchat->setChecked(Settings->value(QString::fromUtf8("Emoteicons_GroupChat"), true).toBool());
+    ui.checkBox_emoteprivchat->setChecked(Settings->value("Emoteicons_PrivatChat", true).toBool());
+    ui.checkBox_emotegroupchat->setChecked(Settings->value("Emoteicons_GroupChat", true).toBool());
+    ui.checkBox_enableCustomFonts->setChecked(Settings->value("EnableCustomFonts", true).toBool());
+    ui.checkBox_enableCustomFontSize->setChecked(Settings->value("EnableCustomFontSize", true).toBool());
+    ui.checkBox_enableBold->setChecked(Settings->value("EnableBold", true).toBool());
+    ui.checkBox_enableItalics->setChecked(Settings->value("EnableItalics", true).toBool());
+    ui.minimumContrast->setValue(Settings->value("MinimumContrast", 4.5).toDouble());
     Settings->endGroup();
 
     fontTempChat.fromString(Settings->getChatScreenFont());

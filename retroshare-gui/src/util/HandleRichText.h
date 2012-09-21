@@ -31,17 +31,21 @@
 #include <QRegExp>
 
 /* Flags for RsHtml::formatText */
-#define RSHTML_FORMATTEXT_EMBED_SMILEYS  1
-#define RSHTML_FORMATTEXT_EMBED_LINKS    2
-#define RSHTML_FORMATTEXT_REMOVE_FONT    4
-#define RSHTML_FORMATTEXT_REMOVE_COLOR   8
-#define RSHTML_FORMATTEXT_CLEANSTYLE     (RSHTML_FORMATTEXT_REMOVE_FONT | RSHTML_FORMATTEXT_REMOVE_COLOR)
-#define RSHTML_FORMATTEXT_OPTIMIZE      16
-#define RSHTML_FORMATTEXT_REPLACE_LINKS 32
+#define RSHTML_FORMATTEXT_EMBED_SMILEYS       1
+#define RSHTML_FORMATTEXT_EMBED_LINKS         2
+#define RSHTML_FORMATTEXT_OPTIMIZE            4
+#define RSHTML_FORMATTEXT_REPLACE_LINKS       8
+#define RSHTML_FORMATTEXT_REMOVE_COLOR        16
+#define RSHTML_FORMATTEXT_FIX_COLORS          32	/* Make text readable */
+#define RSHTML_FORMATTEXT_REMOVE_FONT_WEIGHT  64	/* Remove bold */
+#define RSHTML_FORMATTEXT_REMOVE_FONT_STYLE   128	/* Remove italics */
+#define RSHTML_FORMATTEXT_REMOVE_FONT_FAMILY  256
+#define RSHTML_FORMATTEXT_REMOVE_FONT_SIZE    512
+#define RSHTML_FORMATTEXT_REMOVE_FONT         (RSHTML_FORMATTEXT_REMOVE_FONT_WEIGHT | RSHTML_FORMATTEXT_REMOVE_FONT_STYLE | RSHTML_FORMATTEXT_REMOVE_FONT_FAMILY | RSHTML_FORMATTEXT_REMOVE_FONT_SIZE)
+#define RSHTML_FORMATTEXT_CLEANSTYLE          (RSHTML_FORMATTEXT_REMOVE_FONT | RSHTML_FORMATTEXT_REMOVE_COLOR)
 
-/* Flags for RsHtml::formatText */
-#define RSHTML_OPTIMIZEHTML_REMOVE_FONT    2
-#define RSHTML_OPTIMIZEHTML_REMOVE_COLOR   1
+/* Flags for RsHtml::optimizeHtml */
+#define RSHTML_OPTIMIZEHTML_MASK              (RSHTML_FORMATTEXT_CLEANSTYLE | RSHTML_FORMATTEXT_FIX_COLORS)
 
 class QTextEdit;
 class QTextDocument;
@@ -57,11 +61,11 @@ public:
 
 	static void    initEmoticons(const QHash< QString, QString >& hash);
 
-	QString formatText(QTextDocument *textDocument, const QString &text, ulong flag);
+	QString formatText(QTextDocument *textDocument, const QString &text, ulong flag, const QColor &backgroundColor = Qt::white, qreal desiredContrast = 1.0);
 	static bool    findAnchors(const QString &text, QStringList& urls);
 
 	static void    optimizeHtml(QTextEdit *textEdit, QString &text, unsigned int flag = 0);
-	static void    optimizeHtml(QString &text, unsigned int flag = 0);
+	static void    optimizeHtml(QString &text, unsigned int flag = 0, const QColor &backgroundColor = Qt::white, qreal desiredContrast = 1.0);
 	static QString toHtml(QString text, bool realHtml = true);
 
 	static bool    makeEmbeddedImage(const QString &fileName, QString &embeddedImage, const int maxPixels);

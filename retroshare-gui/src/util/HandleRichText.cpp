@@ -327,7 +327,7 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
 	}
 }
 
-QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulong flag)
+QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulong flag, const QColor &backgroundColor, qreal desiredContrast)
 {
 	if (flag == 0 || text.isEmpty()) {
 		// nothing to do
@@ -353,15 +353,8 @@ QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulo
 
 	QString formattedText = doc.toString(-1);  // -1 removes any annoying carriage return misinterpreted by QTextEdit
 
-	unsigned int optimizeFlag = 0;
-	if (flag & RSHTML_FORMATTEXT_REMOVE_FONT) {
-		optimizeFlag |= RSHTML_OPTIMIZEHTML_REMOVE_FONT;
-	}
-	if (flag & RSHTML_FORMATTEXT_REMOVE_COLOR) {
-		optimizeFlag |= RSHTML_OPTIMIZEHTML_REMOVE_COLOR;
-	}
-	if (optimizeFlag || (flag & RSHTML_FORMATTEXT_OPTIMIZE)) {
-		optimizeHtml(formattedText, optimizeFlag);
+	if (flag & RSHTML_OPTIMIZEHTML_MASK) {
+		optimizeHtml(formattedText, flag & RSHTML_OPTIMIZEHTML_MASK, backgroundColor, desiredContrast);
 	}
 
 	return formattedText;
@@ -421,7 +414,80 @@ static void removeElement(QDomElement& parentElement, QDomElement& element)
 	parentElement.removeChild(element);
 }
 
-static void optimizeHtml(QDomDocument& doc, QDomElement& currentElement, unsigned int flag)
+static qreal linearizeColorComponent(qreal v)
+{
+	if (v <= 0.03928) return v/12.92;
+	else return pow((v+0.055)/1.055, 2.4);
+}
+
+static qreal getRelativeLuminance(const QColor &c)
+{
+	qreal r = linearizeColorComponent(c.redF()) * 0.2126;
+	qreal g = linearizeColorComponent(c.greenF()) * 0.7152;
+	qreal b = linearizeColorComponent(c.blueF()) * 0.0722;
+	return r+g+b;
+}
+
+/**
+ * @brief Compute the contrast between two relative luminances.
+ *        See: http://www.w3.org/TR/2012/NOTE-WCAG20-TECHS-20120103/G18
+ * @param lum1, lum2 Relative luminances returned by getRelativeLuminance().
+ * @return Contrast between 1 and 21.
+ */
+static qreal getContrastRatio(qreal lum1, qreal lum2)
+{
+	if (lum2 > lum1) {
+		qreal t = lum1;
+		lum1 = lum2;
+		lum2 = t;
+	}
+	return (lum1+0.05)/(lum2+0.05);
+}
+
+/**
+ * @brief Find a color with the same hue that provides the desired contrast with bglum.
+ * @param[in,out] val Name of the original color. Will be modified.
+ * @param bglum Background's relative luminance as returned by getRelativeLuminance().
+ */
+static void findBestColor(QString &val, qreal bglum, qreal desiredContrast)
+{
+	// Change text color to get a good contrast with the background
+	QColor c(val);
+	qreal lum = ::getRelativeLuminance(c);
+
+	// Keep text color darker/brighter than the bg if possible
+	qreal lowContrast = ::getContrastRatio(bglum, 0.0);
+	qreal highContrast = ::getContrastRatio(bglum, 1.0);
+	bool searchDown = (lum <= bglum && lowContrast >= desiredContrast)
+		|| (lum > bglum && highContrast < desiredContrast && lowContrast >= highContrast);
+
+	// There's no such thing as too much contrast on a bright background,
+	// but on a dark background it creates haloing which makes text hard to read.
+	// So we enforce desired contrast when the bg is dark.
+
+	if (!searchDown || ::getContrastRatio(lum, bglum) < desiredContrast) {
+
+		// Bisection search of the correct "lightness" to get the desired contrast
+		qreal minl = searchDown ? 0.0 : bglum;
+		qreal maxl = searchDown ? bglum : 1.0;
+		do {
+			QColor d = c;
+			qreal midl = (minl+maxl)/2.0;
+			d.setHslF(c.hslHueF(), c.hslSaturationF(), midl);
+			qreal lum = ::getRelativeLuminance(d);
+			if ((::getContrastRatio(lum, bglum) < desiredContrast) ^ searchDown ) {
+				minl = midl;
+			}
+			else {
+				maxl = midl;
+			}
+		} while (maxl - minl > 0.01);
+		c.setHslF(c.hslHueF(), c.hslSaturationF(), minl);
+		val = c.name();
+	}
+}
+
+static void optimizeHtml(QDomDocument& doc, QDomElement& currentElement, unsigned int flag, qreal bglum, qreal desiredContrast)
 {
 	if (currentElement.tagName().toLower() == "html") {
 		// change <html> to <span>
@@ -443,7 +509,7 @@ static void optimizeHtml(QDomDocument& doc, QDomElement& currentElement, unsigne
 			style.replace("margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;", "margin:0px 0px 0px 0px;");
 			style.replace("; ", ";");
 
-			if (flag & (RSHTML_OPTIMIZEHTML_REMOVE_FONT | RSHTML_OPTIMIZEHTML_REMOVE_COLOR)) {
+			if (flag) {
 				QStringList styles = style.split(';');
 				style.clear();
 				foreach (QString pair, styles) {
@@ -451,21 +517,35 @@ static void optimizeHtml(QDomDocument& doc, QDomElement& currentElement, unsigne
 						QStringList keyvalue = pair.split(':');
 						if (keyvalue.length() == 2) {
 							QString key = keyvalue.at(0).trimmed();
+							QString val = keyvalue.at(1).trimmed();
 
-							if (flag & RSHTML_OPTIMIZEHTML_REMOVE_FONT) {
-								if (key == "font-family" ||
-									key == "font-size" ||
-									key == "font-weight" ||
-									key == "font-style") {
-									continue;
-								}
+							if ((flag & RSHTML_FORMATTEXT_REMOVE_FONT_FAMILY && key == "font-family") ||
+								(flag & RSHTML_FORMATTEXT_REMOVE_FONT_SIZE && key == "font-size") ||
+								(flag & RSHTML_FORMATTEXT_REMOVE_FONT_WEIGHT && key == "font-weight") ||
+								(flag & RSHTML_FORMATTEXT_REMOVE_FONT_STYLE && key == "font-style")) {
+								continue;
 							}
-							if (flag & RSHTML_OPTIMIZEHTML_REMOVE_COLOR) {
+							if (flag & RSHTML_FORMATTEXT_REMOVE_COLOR) {
 								if (key == "color") {
 									continue;
 								}
 							}
-							style += key + ":" + keyvalue.at(1).trimmed() + ";";
+							else if (flag & RSHTML_FORMATTEXT_FIX_COLORS) {
+								if (key == "color") {
+									findBestColor(val, bglum, desiredContrast);
+								}
+							}
+							if (flag & (RSHTML_FORMATTEXT_REMOVE_COLOR | RSHTML_FORMATTEXT_FIX_COLORS)) {
+								if (key == "background" || key == "background-color") {
+									// Remove background color because if we change the text color,
+									// it can become unreadable on the original background.
+									// Also, FIX_COLORS is intended to display text on the default
+									// background color of the operating system.
+									continue;
+								}
+							}
+
+							style += key + ":" + val + ";";
 						} else {
 							style += pair + ";";
 						}
@@ -513,7 +593,7 @@ static void optimizeHtml(QDomDocument& doc, QDomElement& currentElement, unsigne
 			}
 
 			// iterate children
-			optimizeHtml(doc, element, flag);
+			optimizeHtml(doc, element, flag, bglum, desiredContrast);
 
 			// <p>
 			if (element.tagName().toLower() == "p") {
@@ -598,7 +678,19 @@ void RsHtml::optimizeHtml(QTextEdit *textEdit, QString &text, unsigned int flag)
 	optimizeHtml(text, flag);
 }
 
-void RsHtml::optimizeHtml(QString &text, unsigned int flag)
+/**
+ * @brief Make an HTML document smaller by removing useless stuff.
+ *        Can also change the text color to make it more readable.
+ * @param[in,out] text HTML document.
+ * @param flag Bitfield of RSHTML_FORMATTEXT_* constants (they must be part of
+ *             RSHTML_OPTIMIZEHTML_MASK).
+ * @param backgroundColor Background color of the widget where the text will be
+ *                        displayed. Needed only if RSHTML_FORMATTEXT_FIX_COLORS
+ *                        is passed inside flag.
+ * @param desiredContrast Minimum contrast between text and background color,
+ *                        between 1 and 21.
+ */
+void RsHtml::optimizeHtml(QString &text, unsigned int flag, const QColor &backgroundColor, qreal desiredContrast)
 {
 	int originalLength = text.length();
 
@@ -611,7 +703,7 @@ void RsHtml::optimizeHtml(QString &text, unsigned int flag)
 	}
 
 	QDomElement body = doc.documentElement();
-	::optimizeHtml(doc, body, flag);
+	::optimizeHtml(doc, body, flag, ::getRelativeLuminance(backgroundColor), desiredContrast);
 	text = doc.toString(-1);
 
 	std::cerr << "Optimized text to " << text.length() << " bytes , instead of " << originalLength << std::endl;

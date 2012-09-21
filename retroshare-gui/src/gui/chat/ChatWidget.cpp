@@ -320,6 +320,25 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime 
 		formatTextFlag |= RSHTML_FORMATTEXT_EMBED_SMILEYS;
 	}
 
+	// Always fix colors
+	formatTextFlag |= RSHTML_FORMATTEXT_FIX_COLORS;
+	qreal desiredContrast = Settings->valueFromGroup("Chat", "MinimumContrast", 4.5).toDouble();
+	QColor backgroundColor = ui->textBrowser->palette().base().color();
+
+	// Remove font name, size, bold, italics?
+	if (!Settings->valueFromGroup("Chat", "EnableCustomFonts", true).toBool()) {
+		formatTextFlag |= RSHTML_FORMATTEXT_REMOVE_FONT_FAMILY;
+	}
+	if (!Settings->valueFromGroup("Chat", "EnableCustomFontSize", true).toBool()) {
+		formatTextFlag |= RSHTML_FORMATTEXT_REMOVE_FONT_SIZE;
+	}
+	if (!Settings->valueFromGroup("Chat", "EnableBold", true).toBool()) {
+		formatTextFlag |= RSHTML_FORMATTEXT_REMOVE_FONT_WEIGHT;
+	}
+	if (!Settings->valueFromGroup("Chat", "EnableItalics", true).toBool()) {
+		formatTextFlag |= RSHTML_FORMATTEXT_REMOVE_FONT_STYLE;
+	}
+
 	ChatStyle::enumFormatMessage type;
 	if (chatType == TYPE_OFFLINE) {
 		type = ChatStyle::FORMATMSG_OOUTGOING;
@@ -335,7 +354,7 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime 
 		formatFlag |= CHAT_FORMATMSG_SYSTEM;
 	}
 
-	QString formattedMessage = RsHtml().formatText(ui->textBrowser->document(), message, formatTextFlag);
+	QString formattedMessage = RsHtml().formatText(ui->textBrowser->document(), message, formatTextFlag, backgroundColor, desiredContrast);
 	QString formatMsg = chatStyle.formatMessage(type, name, incoming ? sendTime : recvTime, formattedMessage, formatFlag);
 
 	ui->textBrowser->append(formatMsg);

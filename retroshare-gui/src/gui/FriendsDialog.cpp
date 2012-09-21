@@ -401,6 +401,25 @@ void FriendsDialog::addChatMsg(bool incoming, bool history, const QString &name,
         formatTextFlag |= RSHTML_FORMATTEXT_EMBED_SMILEYS;
     }
 
+	// Always fix colors
+	formatTextFlag |= RSHTML_FORMATTEXT_FIX_COLORS;
+	qreal desiredContrast = Settings->valueFromGroup("Chat", "MinimumContrast", 4.5).toDouble();
+	QColor backgroundColor = ui.groupChatTab->palette().base().color();
+
+	// Remove font name, size, bold, italics?
+	if (!Settings->valueFromGroup("Chat", "EnableCustomFonts", true).toBool()) {
+		formatTextFlag |= RSHTML_FORMATTEXT_REMOVE_FONT_FAMILY;
+	}
+	if (!Settings->valueFromGroup("Chat", "EnableCustomFontSize", true).toBool()) {
+		formatTextFlag |= RSHTML_FORMATTEXT_REMOVE_FONT_SIZE;
+	}
+	if (!Settings->valueFromGroup("Chat", "EnableBold", true).toBool()) {
+		formatTextFlag |= RSHTML_FORMATTEXT_REMOVE_FONT_WEIGHT;
+	}
+	if (!Settings->valueFromGroup("Chat", "EnableItalics", true).toBool()) {
+		formatTextFlag |= RSHTML_FORMATTEXT_REMOVE_FONT_STYLE;
+	}
+
     ChatStyle::enumFormatMessage type;
     if (incoming) {
         if (history) {
@@ -416,7 +435,7 @@ void FriendsDialog::addChatMsg(bool incoming, bool history, const QString &name,
         }
     }
 
-    QString formattedMessage = RsHtml().formatText(ui.msgText->document(), message, formatTextFlag);
+    QString formattedMessage = RsHtml().formatText(ui.msgText->document(), message, formatTextFlag, backgroundColor, desiredContrast);
     QString formatMsg = style.formatMessage(type, name, incoming ? recvTime : sendTime, formattedMessage);
 
     ui.msgText->append(formatMsg);
