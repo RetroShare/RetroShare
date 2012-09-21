@@ -885,39 +885,39 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Popularity</source>
-        <translation type="unfinished">Popülerlik</translation>
+        <translation>Popülerlik</translation>
     </message>
     <message>
         <source>Last Post</source>
-        <translation type="unfinished">Son Mesaj</translation>
+        <translation>Son Mesaj</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished">bağlantılı</translation>
+        <translation>Kapat</translation>
     </message>
     <message>
         <source>Channel Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanal Ayrintilari</translation>
     </message>
     <message>
         <source>Channel Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanal bilgisi</translation>
     </message>
     <message>
         <source>Channel Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanal Ismi</translation>
     </message>
     <message>
         <source>Channel ID</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanal ID</translation>
     </message>
     <message>
         <source>Channel Description</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanal Açıklama</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Tip</translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
@@ -929,11 +929,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Iptal</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamam</translation>
     </message>
 </context>
 <context>
@@ -3490,7 +3490,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Isim</translation>
     </message>
     <message>
         <source>PeerId</source>
@@ -3498,7 +3498,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>DHT Status</source>
-        <translation type="unfinished"></translation>
+        <translation>DHT Durum</translation>
     </message>
     <message>
         <source>ConnectLogic</source>
@@ -4564,8 +4564,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Signed</source>
-        <translation type="unfinished">imzalı
-</translation>
+        <translation>imzalı</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -4601,7 +4600,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Display</source>
-        <translation type="unfinished">Görüntü</translation>
+        <translation>Görüntü</translation>
     </message>
     <message>
         <source>PrintPreview</source>
@@ -4609,7 +4608,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Content</source>
-        <translation type="unfinished">Içindekiler</translation>
+        <translation>Içindekiler</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
@@ -4693,7 +4692,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished"></translation>
+        <translation>Kimden</translation>
     </message>
     <message>
         <source>Sent</source>
@@ -4701,7 +4700,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subject</source>
-        <translation type="unfinished">Konu</translation>
+        <translation>Konu</translation>
     </message>
     <message>
         <source>On %1, %2 wrote:</source>
@@ -4709,7 +4708,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Forums</source>
-        <translation type="unfinished">Forumlar</translation>
+        <translation>Forumlar</translation>
     </message>
 </context>
 <context>
@@ -9101,15 +9100,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remove All</source>
-        <translation type="unfinished">Hepsini Kaldır</translation>
+        <translation>Hepsini Kaldır</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished">Seçenekler</translation>
+        <translation>Seçenekler</translation>
     </message>
     <message>
         <source>News Feed</source>
-        <translation type="unfinished">Haber Kaynağı</translation>
+        <translation>Haber Kaynağı</translation>
     </message>
     <message>
         <source>This is a test.</source>
@@ -10262,35 +10261,39 @@ requesting to edit it!</source>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;more&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;More&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;more&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Daha fazla bilgi&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Enable this plugin (restart required)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu eklentiyi etkinleştir (baştan başlatmak gerekir)</translation>
     </message>
     <message>
         <source>Enable</source>
-        <translation type="unfinished"></translation>
+        <translation>Etkinleştir</translation>
     </message>
     <message>
         <source>Disable this plugin (restart required)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu eklentiyi etkisizleştir (baştan başlatmak gerekir)</translation>
     </message>
     <message>
         <source>Disable</source>
-        <translation type="unfinished"></translation>
+        <translation>Etkisizleştir</translation>
     </message>
     <message>
         <source>About</source>
-        <translation type="unfinished"></translation>
+        <translation>Üzeri</translation>
     </message>
     <message>
         <source>will be enabled after your restart RetroShare.</source>
-        <translation type="unfinished"></translation>
+        <translation>RetroShare baştan başlatıldığında kurulacak</translation>
     </message>
     <message>
         <source>Show more details about this plugin</source>
-        <translation type="unfinished"></translation>
+        <translation>But eklentiyle ilgili daha fazla bilgi ver</translation>
     </message>
 </context>
 <context>
@@ -10922,11 +10925,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished">Isim:</translation>
+        <translation>Isim:</translation>
     </message>
     <message>
         <source>Location:</source>
-        <translation type="unfinished"></translation>
+        <translation>Yer:</translation>
     </message>
     <message>
         <source>Peer ID:</source>
@@ -11016,11 +11019,11 @@ p, li { white-space: pre-wrap; }
     <name>PulseItem</name>
     <message>
         <source>From</source>
-        <translation type="unfinished"></translation>
+        <translation>Kimden</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Tarih</translation>
     </message>
     <message>
         <source>...</source>
@@ -12145,19 +12148,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Start Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Sohbet</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Iptal</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished"></translation>
+        <translation>Gönder</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished">Isim:</translation>
+        <translation>Isim:</translation>
     </message>
     <message>
         <source>Peer ID:</source>
@@ -12165,11 +12168,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Trust: </source>
-        <translation type="unfinished"></translation>
+        <translation>Güven:</translation>
     </message>
     <message>
         <source>Location:</source>
-        <translation type="unfinished"></translation>
+        <translation>Yer:</translation>
     </message>
     <message>
         <source>IP Address:</source>
@@ -12181,11 +12184,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Status:</source>
-        <translation type="unfinished">Durum:</translation>
+        <translation>Durum:</translation>
     </message>
     <message>
         <source>Write Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Mesaji yaz</translation>
     </message>
     <message>
         <source>Connect Attempt</source>
@@ -12213,7 +12216,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"></translation>
+        <translation>Gizle</translation>
     </message>
     <message>
         <source>Do you want to remove this Friend?</source>
@@ -12233,7 +12236,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>wants to be friend with you on RetroShare</source>
-        <translation type="unfinished">RetroShare&apos;ta sizinle arkadaş olmak istiyor</translation>
+        <translation>RetroShare&apos;ta sizinle arkadaş olmak istiyor</translation>
     </message>
 </context>
 <context>
