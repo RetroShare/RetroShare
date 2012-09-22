@@ -1,6 +1,25 @@
 retroshare (0.5.4-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
   * Improvements
+     - updated to v0.5.4a
+     - improved chat readability (Patch from AC)
+     - Added patch from braindead for embedded images in private chat and 
+       messages (only for QT version 4.7.0 and higher) (Not enabled on 0.5.4a release)
+     - removed debug info outputs
+     - changed priority of search request items to 6 instead of 5, to make it 
+       consistent with tunnel request priority
+     - added missing libs to compile on arch linux (Patch by AC)
+
+  * Bugs
+     - ensure that ssl id is always converted to lower case before being used 
+       to add a new friend. This fixes the bug allowing to add multiple times 
+       the same friend by changing the case is the SSL id
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 22 Sept 2012 14:30:00 +0100
+ 
+retroshare (0.5.4-0.5555~natty) natty; urgency=low
+
+  * Improvements
      - improved plugin system 
         * now using two lists of rejected/accepted plugins. RS asks at start to load unknown plugins 
           when plugins or main executable have changed.
