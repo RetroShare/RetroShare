@@ -3,7 +3,7 @@
 ; Define your application name
 !define APPNAME "RetroShare"
 !define VERSION "0.5.4"
-!define REVISION "5564"
+!define REVISION "5582"
 !define APPNAMEANDVERSION "${APPNAME} ${VERSION} ${REVISION}"
 !define QTBASE "d:\qt\2010.01"
 
@@ -337,7 +337,8 @@ Section $(sec_main) sec_main
   File /r "${QTBASE}\qt\plugins\imageformats"
   File /r  ${QTBASE}\qt\qt_*.qm
   File /r "release\pthreadGC2d.dll"
-  File /r "d:\Development\lib\libminiupnpc-1.3\miniupnpc.dll"
+  File /r "H:\Development\lib\libminiupnpc-1.3\miniupnpc.dll"
+  File /r "H:\Development\speex-1.2rc1\libspeex\.libs\libspeex-1.dll"
   File /r "changelog.txt"
   File /r /x Data "release\bdboot.txt" 
 

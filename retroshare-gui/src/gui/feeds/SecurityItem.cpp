@@ -243,12 +243,14 @@ void SecurityItem::updateItem()
 		if (details.accept_connection)
 		{
 			friendRequesttoolButton->hide();
+			requestLabel->hide();
 			removeFriendButton->setEnabled(true);
 			removeFriendButton->show();
 		}
 		else
 		{
 			friendRequesttoolButton->show();
+			requestLabel->show();
 			removeFriendButton->setEnabled(false);
 			removeFriendButton->hide();
 		}

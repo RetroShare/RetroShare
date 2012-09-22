@@ -1,7 +1,20 @@
-Changes for 0.5.4
+Changes for 0.5.4a
 
   * Improvements
-     - improved plugin system 
+	 - Fixed commit 5579 - readable chat
+		- Added RSHTML_FORMATTEXT_OPTIMIZE to RSHTML_OPTIMIZEHTML_MASK.
+	 - Added patch from Anonymous Coward - readable chat
+	 - Added new options to the Chat settings window:
+		- Enable custom fonts
+		- Enable custom font size
+		- Enable bold
+		- Enable italics
+		- Minimum text contrast
+	 - Added Enable/Disable buttons to PluginItem and a Info Label, instead of a Checkbox.
+	 - Disabled embedded images for the next stable release.
+	 - Added patch from braindead
+		- Embedded images in private chat and messages (only for QT version 4.7.0 and higher)
+     - Improved plugin system 
         * now using two lists of rejected/accepted plugins. RS asks at start to load unknown plugins 
           when plugins or main executable have changed.
         * added API and SVN numbers into required external plugin symbols
@@ -185,6 +198,7 @@ Changes for 0.5.4
      - Optimized the fill of the up- and downloads in TransfersDialog
 
   * Bugs
+	 - Fixed double / in path that would cause plugin loading issue on windows
      - Fixed report of failing connexion attempts/recepts. Cleaned the code a little bit
      - Fixed message in pgphandler when signing a post
      - Fixed small display issue causing the availability map to become black when more than 6 sources are present
