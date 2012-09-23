@@ -144,6 +144,8 @@
 #include "pqi/pqinetwork.h"
 #include "pqi/pqi.h"
 #include "pqi/pqimonitor.h"
+#include "ft/ftcontroller.h"
+#include "pqi/p3cfgmgr.h"
 #include "services/p3service.h"
 #include "ft/ftsearch.h"
 #include "retroshare/rsturtle.h"

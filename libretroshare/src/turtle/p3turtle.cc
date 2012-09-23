@@ -80,8 +80,8 @@ void TS_dumpState() ;
 //    - The total number of TR per second emmited from self will be MAX_TUNNEL_REQS_PER_SECOND / TIME_BETWEEN_TUNNEL_MANAGEMENT_CALLS = 0.5
 //    - I updated forward probabilities to higher values, and min them to 1/nb_connected_friends to prevent blocking tunnels.
 //
-static const time_t TUNNEL_REQUESTS_LIFE_TIME 	         =  60 ;		/// life time for tunnel requests in the cache.
-static const time_t SEARCH_REQUESTS_LIFE_TIME 	         =  60 ;		/// life time for search requests in the cache
+static const time_t TUNNEL_REQUESTS_LIFE_TIME 	         = 120 ;		/// life time for tunnel requests in the cache.
+static const time_t SEARCH_REQUESTS_LIFE_TIME 	         = 240 ;		/// life time for search requests in the cache
 static const time_t REGULAR_TUNNEL_DIGGING_TIME          = 300 ;		/// maximum interval between two tunnel digging campaigns.
 static const time_t MAXIMUM_TUNNEL_IDLE_TIME 	         =  60 ;		/// maximum life time of an unused tunnel.
 static const time_t EMPTY_TUNNELS_DIGGING_TIME 	         =  50 ;		/// look into tunnels regularly every 50 sec.
@@ -309,13 +309,29 @@ void p3turtle::manageTunnels()
 		// digg new tunnels if no tunnels are available and force digg new tunnels at regular (large) interval
 		//
 		for(std::map<TurtleFileHash,TurtleFileHashInfo>::const_iterator it(_incoming_file_hashes.begin());it!=_incoming_file_hashes.end();++it)
-			if( (it->second.tunnels.empty() && now >= it->second.last_digg_time+EMPTY_TUNNELS_DIGGING_TIME) || now >= it->second.last_digg_time + REGULAR_TUNNEL_DIGGING_TIME)	
+		{
+			// get total tunnel speed.
+			//
+			uint32_t total_speed = 0 ;
+			for(uint32_t i=0;i<it->second.tunnels.size();++i)
+				total_speed += _local_tunnels[it->second.tunnels[i]].speed_Bps ;
+
+			static const float grow_speed = 1.0f ;	// speed at which the time increases.
+
+			float tunnel_keeping_factor = (std::max(1.0f,(float)total_speed/(float)(50*1024)) - 1.0f)*grow_speed + 1.0f ;
+
+#ifdef P3TURTLE_DEBUG
+			std::cerr << "Total speed = " << total_speed << ", tunel factor = " << tunnel_keeping_factor << " new time = " << time_t(REGULAR_TUNNEL_DIGGING_TIME*tunnel_keeping_factor) << std::endl;
+#endif
+
+			if( (it->second.tunnels.empty() && now >= it->second.last_digg_time+EMPTY_TUNNELS_DIGGING_TIME) || now >= it->second.last_digg_time + time_t(REGULAR_TUNNEL_DIGGING_TIME*tunnel_keeping_factor))	
 			{
 #ifdef P3TURTLE_DEBUG
 				std::cerr << "pushed hash " << it->first << ", for digging. Old = " << now - it->second.last_digg_time << std::endl;
 #endif
 				hashes_to_digg.push_back(std::pair<TurtleFileHash,time_t>(it->first,it->second.last_digg_time)) ;
 			}
+		}
 	}
 #ifdef TUNNEL_STATISTICS
 	std::cerr << hashes_to_digg.size() << " hashes candidate for tunnel digging." << std::endl;
@@ -1755,6 +1771,7 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 #ifdef P3TURTLE_DEBUG
 			std::cerr << "  This is a bouncing request. Ignoring and deleting item." << std::endl ;
 #endif
+#ifdef SUSPENDED
 			// This trick allows to shorten tunnels, favoring tunnels of smallest length, with a bias that
 			// depends on a mix between a session-based constant and the tunnel partial id. This means
 			// that for a given couple of (source,hash), the optimisation always performs the same.
@@ -1770,6 +1787,7 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 			//
 			//  The lower the probability, the higher the anonymity level.
 			//
+
 			if(it->second.depth > item->depth && ((item->partial_tunnel_id ^ _random_bias)&0x7)>0)
 			{
 #ifdef P3TURTLE_DEBUG
@@ -1780,7 +1798,17 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 #endif
 				it->second.origin = item->PeerId() ;
 				it->second.depth = item->depth ;
+
+				// also update local_tunnels is this is an ending tunnel.
+				//
+				std::map<std::string,FileInfo>::const_iterator it = _outgoing_file_hashes.find(item->file_hash) ;
+
+				if(it != _outgoing_file_hashes.end())
+					for(std::map<TurtleTunnelId,TurtleTunnel>::iterator it2(_local_tunnels.begin());it2!=_local_tunnels.end();++it2)
+						if(it2->second.hash == item->file_hash)
+							it2->second.local_src = item->PeerId() ;
 			}
+#endif
 			return ;
 		}
 		// This is a new request. Let's add it to the request map, and forward
