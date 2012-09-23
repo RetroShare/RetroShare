@@ -90,7 +90,7 @@ BandwidthGraph::BandwidthGraph(QWidget *parent, Qt::WFlags flags)
 
     QTimer *timer = new QTimer(this);
     timer->connect(timer, SIGNAL(timeout()), this, SLOT(updategraphstatus()));
-    timer->start(5113);
+    timer->start(BWGRAPH_REFRESH_RATE);
 }
 
 /** Custom event handler. Checks if the event is a bandwidth update event. If it

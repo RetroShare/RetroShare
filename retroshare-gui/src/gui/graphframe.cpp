@@ -25,6 +25,7 @@
 #include <QtGlobal>
 
 #include "graphframe.h"
+#include "gui/bwgraph/bwgraph.h"
 
 
 /** Default contructor */
@@ -79,9 +80,10 @@ GraphFrame::addPoints(qreal recv, qreal send)
   _recvData->prepend(recv);
 
   /* Add to the total counters */
-  _totalSend += send;
-  _totalRecv += recv;
-  
+  /* These are not the real total values, but should be close enough. */
+  _totalSend += BWGRAPH_REFRESH_RATE * send / 1000;
+  _totalRecv += BWGRAPH_REFRESH_RATE * recv / 1000;
+
   /* Check for a new maximum value */
   if (send > _maxValue) _maxValue = send;
   if (recv > _maxValue) _maxValue = recv;

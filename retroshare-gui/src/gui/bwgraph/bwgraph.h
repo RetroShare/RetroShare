@@ -32,8 +32,8 @@
 
 #include "ui_bwgraph.h"
 
-/** Redraw graph every 1000ms **/
-#define REFRESH_RATE    1000
+/** Redraw graph every BWGRAPH_REFRESH_RATE ms **/
+#define BWGRAPH_REFRESH_RATE    5113
 
 
 class BandwidthGraph : public RWindow
