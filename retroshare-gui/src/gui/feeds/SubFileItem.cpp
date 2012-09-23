@@ -595,26 +595,24 @@ void SubFileItem::download()
 	std::cerr << std::endl;
 #endif
 
-	if (mType == SFI_TYPE_CHANNEL)
-	{
-		/* send request via rsChannels -> as it knows how to do it properly */
-		//std::string grpId = mSrcId;
-		//rsChannels->FileRequest(mFileName, mFileHash, mFileSize, grpId);
-	}
-	else
-	{
-		//rsFile->FileRequest(mFileName, mFileHash, mFileSize, "", 0, mSrcId);
-	}
+	std::list<std::string> sources ;
+
+	// Add possible direct sources.
+	//
+	FileInfo finfo ;
+	rsFiles->FileDetails(mFileHash,RS_FILE_HINTS_REMOTE,finfo) ;
+
+	for(std::list<TransferInfo>::const_iterator it(finfo.peers.begin());it!=finfo.peers.end();++it)
+		sources.push_back((*it).peerId) ;
 
 	// TEMP
 	std::cerr << "SubFileItem::download() Calling File Request";
 	std::cerr << std::endl;
-	std::list<std::string> srcIds;
+
 	if (mSrcId != "")
-	{
-		srcIds.push_back(mSrcId);
-	}
-	rsFiles->FileRequest(mFileName, mFileHash, mFileSize, "", RS_FILE_HINTS_NETWORK_WIDE, srcIds);
+		sources.push_back(mSrcId);
+	
+	rsFiles->FileRequest(mFileName, mFileHash, mFileSize, "", RS_FILE_HINTS_NETWORK_WIDE, sources);
 
 	downloadButton->setEnabled(false);
 
