@@ -3,7 +3,7 @@
 # @author Cyril Soler, Thomas Eimers
 
 ###################### PARAMETERS ####################
-version="0.5.1b"
+version="0.5.4"
 arch=`dpkg --print-architecture`
 packager="Thomas Eimers <retroshare@notdefine.de>"
 ######################################################
