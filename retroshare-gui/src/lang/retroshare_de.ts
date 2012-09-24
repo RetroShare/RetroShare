@@ -1361,6 +1361,31 @@ Bitte wähle einen zum Chatten aus.</translation>
     </message>
     <message>
         <location line="+10"/>
+        <source>Enable custom fonts</source>
+        <translation>Angepasste Schriftarten aktivieren</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Enable custom font size</source>
+        <translation>Angepasste Schriftgröße aktivieren</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Enable bold</source>
+        <translation>Fettschrift aktivieren</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Enable italics</source>
+        <translation>Kursivschrift aktivieren</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Minimum text contrast</source>
+        <translation>Minimaler Text-Kontrast</translation>
+    </message>
+    <message>
+        <location line="+35"/>
         <source>Send message with Ctrl+Return</source>
         <translation>Nachricht mit Strg+Enter senden</translation>
     </message>
@@ -1455,7 +1480,7 @@ Bitte wähle einen zum Chatten aus.</translation>
         <translation>Privater Chat</translation>
     </message>
     <message>
-        <location filename="../gui/settings/ChatPage.cpp" line="+205"/>
+        <location filename="../gui/settings/ChatPage.cpp" line="+215"/>
         <source>Incoming</source>
         <translation>Eingehend</translation>
     </message>
@@ -1646,7 +1671,7 @@ Bitte wähle einen zum Chatten aus.</translation>
         <translation>Löscht den gespeicherten und angezeigten Chat Verlauf</translation>
     </message>
     <message>
-        <location filename="../gui/chat/ChatWidget.cpp" line="+389"/>
+        <location filename="../gui/chat/ChatWidget.cpp" line="+408"/>
         <source>Paste RetroShare Link</source>
         <translation>RetroShare-Link einfügen</translation>
     </message>
@@ -6256,7 +6281,7 @@ p, li { white-space: pre-wrap; }
         <translation>tippt...</translation>
     </message>
     <message>
-        <location line="+117"/>
+        <location line="+136"/>
         <location line="+2"/>
         <source>New group chat</source>
         <translation>Neuer Gruppenchat</translation>
@@ -7886,7 +7911,7 @@ p, li { white-space: pre-wrap; }
         <translation>Nachrichtenverlauf</translation>
     </message>
     <message>
-        <location line="+75"/>
+        <location line="+69"/>
         <location filename="../gui/im_history/ImHistoryBrowser.cpp" line="+267"/>
         <source>Copy</source>
         <translation>Kopieren</translation>
@@ -11489,13 +11514,13 @@ und den Import zum Laden verwenden</translation>
 <context>
     <name>ProfileWidget</name>
     <message>
-        <location filename="../gui/profile/ProfileWidget.ui" line="+35"/>
+        <location filename="../gui/profile/ProfileWidget.ui" line="+38"/>
         <location line="+3"/>
         <source>Edit Personal message</source>
         <translation>Statusnachricht ändern</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+20"/>
         <source>Copy Certificate</source>
         <translation>Zertifikat kopieren</translation>
     </message>
@@ -11516,7 +11541,7 @@ und den Import zum Laden verwenden</translation>
         <translation>Dein Zertifikat ist in die Zwischenablage kopiert worden. Du kannst es per E-Mail oder auf andere Weise an deinen Freund senden.</translation>
     </message>
     <message>
-        <location filename="../gui/profile/ProfileWidget.ui" line="+17"/>
+        <location filename="../gui/profile/ProfileWidget.ui" line="+20"/>
         <source>Profile Manager</source>
         <translation>Profil-Manager</translation>
     </message>
@@ -11526,64 +11551,68 @@ und den Import zum Laden verwenden</translation>
         <translation>Öffentliche Information</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+52"/>
         <source>Name:</source>
         <translation>Name:</translation>
     </message>
     <message>
-        <location line="+70"/>
+        <location line="+76"/>
         <source>Location:</source>
         <translation>Ort:</translation>
     </message>
     <message>
-        <location line="+70"/>
+        <location line="+76"/>
         <source>Peer ID:</source>
         <translation>Nachbar-ID:</translation>
     </message>
     <message>
-        <location line="+107"/>
+        <location line="+335"/>
         <source>Other Information</source>
         <translation>Andere Informationen</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="-247"/>
         <source>Number of Friends:</source>
         <translation>Zahl der Freunde:</translation>
     </message>
     <message>
-        <location line="+70"/>
+        <location line="+63"/>
         <source>Version:</source>
         <translation>Version:</translation>
     </message>
     <message>
-        <location line="+70"/>
+        <location line="+50"/>
         <source>Online since:</source>
         <translation>Online seit:</translation>
     </message>
     <message>
-        <location line="+107"/>
+        <location line="+217"/>
         <source>My Address</source>
         <translation>Meine Adresse</translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="+64"/>
         <source>Local Address:</source>
         <translation>Lokale Adresse:</translation>
     </message>
     <message>
-        <location line="+108"/>
+        <location line="+103"/>
         <source>External Address:</source>
         <translation>Externe Adresse:</translation>
     </message>
     <message>
-        <location line="+108"/>
+        <location line="+142"/>
         <source>Dynamic DNS:</source>
         <translation>Dynamisches DNS:</translation>
     </message>
     <message>
-        <location line="+74"/>
+        <location line="+66"/>
+        <source>Addresses list:</source>
+        <translation>Adressliste:</translation>
+    </message>
+    <message>
         <source>Addresses list</source>
-        <translation>Adressliste</translation>
+        <translation type="obsolete">Adressliste:</translation>
     </message>
 </context>
 <context>
@@ -12472,7 +12501,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RsHtml</name>
     <message>
-        <location filename="../util/HandleRichText.cpp" line="+663"/>
+        <location filename="../util/HandleRichText.cpp" line="+755"/>
         <source>Image is oversized for transmission.
 Reducing image to %1x%2 pixels?</source>
         <translation>Bild ist zu groß zum Übertragen.
@@ -12482,7 +12511,7 @@ Bild auf %1x%2 Pixel reduzieren?</translation>
 <context>
     <name>Rshare</name>
     <message>
-        <location filename="../rshare.cpp" line="+210"/>
+        <location filename="../rshare.cpp" line="+215"/>
         <source>Resets ALL stored RetroShare settings.</source>
         <translation>Setzt alle RetroShare Einstellungen zurück.</translation>
     </message>
@@ -12824,7 +12853,7 @@ Bild auf %1x%2 Pixel reduzieren?</translation>
     <name>SecurityItem</name>
     <message>
         <location filename="../gui/feeds/SecurityItem.ui" line="+342"/>
-        <location filename="../gui/feeds/SecurityItem.cpp" line="+290"/>
+        <location filename="../gui/feeds/SecurityItem.cpp" line="+292"/>
         <source>Expand</source>
         <translation>Erweitern</translation>
     </message>
@@ -12909,7 +12938,7 @@ Bild auf %1x%2 Pixel reduzieren?</translation>
         <translation>Nachricht schreiben</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/SecurityItem.cpp" line="-172"/>
+        <location filename="../gui/feeds/SecurityItem.cpp" line="-174"/>
         <source>Connect Attempt</source>
         <translation>Verbindungsversuch</translation>
     </message>
@@ -12943,7 +12972,7 @@ Bild auf %1x%2 Pixel reduzieren?</translation>
         <translation>Unbekannter Nachbar</translation>
     </message>
     <message>
-        <location line="+93"/>
+        <location line="+95"/>
         <source>Hide</source>
         <translation>Verbergen</translation>
     </message>
@@ -12963,7 +12992,7 @@ Bild auf %1x%2 Pixel reduzieren?</translation>
         <translation>Freundschaftsanfrage bestätigen</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/SecurityItem.cpp" line="-285"/>
+        <location filename="../gui/feeds/SecurityItem.cpp" line="-287"/>
         <source>wants to be friend with you on RetroShare</source>
         <translation>möchte mit dir in RetroShare befreundet sein</translation>
     </message>
@@ -14288,22 +14317,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+51"/>
         <source>You have %1 completed downloads</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie haben %1 fertige Downloads</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>You have %1 completed download</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie haben %1 fertigen Download</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 completed downloads</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 fertige Downloads</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>%1 completed download</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 fertiger Download</translation>
     </message>
 </context>
 <context>
@@ -15110,7 +15139,7 @@ Bitte habe etwas Geduld!</translation>
     <message>
         <location line="+6"/>
         <source>Group Name:</source>
-        <translation>Gruppenname</translation>
+        <translation>Gruppenname:</translation>
     </message>
     <message>
         <location line="+17"/>
