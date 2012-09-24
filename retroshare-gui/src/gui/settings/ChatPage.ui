@@ -98,7 +98,7 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_40">
               <item>
-               <widget class="QLabel" name="label40">
+               <widget class="QLabel" name="minimumContrastLabel">
                 <property name="text">
                  <string>Minimum text contrast</string>
                 </property>

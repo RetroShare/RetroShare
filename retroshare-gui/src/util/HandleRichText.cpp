@@ -451,6 +451,12 @@ static qreal getContrastRatio(qreal lum1, qreal lum2)
  */
 static void findBestColor(QString &val, qreal bglum, qreal desiredContrast)
 {
+#if QT_VERSION < 0x040600
+	// missing methods on class QColor
+	Q_UNUSED(val);
+	Q_UNUSED(bglum);
+	Q_UNUSED(desiredContrast);
+#else
 	// Change text color to get a good contrast with the background
 	QColor c(val);
 	qreal lum = ::getRelativeLuminance(c);
@@ -466,7 +472,6 @@ static void findBestColor(QString &val, qreal bglum, qreal desiredContrast)
 	// So we enforce desired contrast when the bg is dark.
 
 	if (!searchDown || ::getContrastRatio(lum, bglum) < desiredContrast) {
-
 		// Bisection search of the correct "lightness" to get the desired contrast
 		qreal minl = searchDown ? 0.0 : bglum;
 		qreal maxl = searchDown ? bglum : 1.0;
@@ -485,6 +490,7 @@ static void findBestColor(QString &val, qreal bglum, qreal desiredContrast)
 		c.setHslF(c.hslHueF(), c.hslSaturationF(), minl);
 		val = c.name();
 	}
+#endif // QT_VERSION < 0x040600
 }
 
 static void optimizeHtml(QDomDocument& doc, QDomElement& currentElement, unsigned int flag, qreal bglum, qreal desiredContrast)

@@ -88,6 +88,11 @@ ChatPage::ChatPage(QWidget * parent, Qt::WFlags flags)
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
 
+#if QT_VERSION < 0x040600
+    ui.minimumContrastLabel->hide();
+    ui.minimumContrast->hide();
+#endif
+
     /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
