@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>757</width>
-    <height>823</height>
+    <height>640</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,7 @@
     <string>Introduction</string>
    </property>
    <property name="subTitle">
-    <string>Welcome to the Mumble Audio Wizard</string>
+    <string>Welcome to the RetroShare Audio Wizard</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
@@ -27,8 +27,8 @@
        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Cantarell'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This is the audio tuning wizard for Mumble. This will help you correctly set the input levels of your sound card, and also set the correct parameters for sound processing in Retroshare. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Cantarell'; font-size:11pt;&quot;&gt;This is the audio tuning wizard for RetroShare. This will help you correctly set the input levels of your sound card, and also set the correct parameters for sound processing in Retroshare. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="wordWrap">
        <bool>true</bool>
@@ -156,7 +156,7 @@ p, li { white-space: pre-wrap; }
     <string>Voice Activity Detection</string>
    </property>
    <property name="subTitle">
-    <string>Letting Mumble figure out when you're talking and when you're silent.</string>
+    <string>Letting RetroShare figure out when you're talking and when you're silent.</string>
    </property>
    <layout class="QGridLayout" name="gridLayout_4">
     <item row="0" column="0" colspan="2">
@@ -291,7 +291,7 @@ p, li { white-space: pre-wrap; }
     <string>Finished</string>
    </property>
    <property name="subTitle">
-    <string>Enjoy using Mumble</string>
+    <string>Enjoy using RetroShare</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_4">
     <item>
