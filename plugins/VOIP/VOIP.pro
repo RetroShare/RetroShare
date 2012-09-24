@@ -57,6 +57,10 @@ FORMS   = gui/AudioInputConfig.ui \
 
 TARGET = VOIP
 
-RESOURCES = gui/VOIP_images.qrc 
+RESOURCES = gui/VOIP_images.qrc lang/lang.qrc
+
+TRANSLATIONS +=  \
+            lang/VOIP_de.ts \
+            lang/VOIP_fr.ts \
 
 LIBS += -lspeex -lspeexdsp
