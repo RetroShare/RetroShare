@@ -21,15 +21,15 @@
 using namespace QtSpeex;
 
 SpeexInputProcessor::SpeexInputProcessor(QObject *parent) : QIODevice(parent),
-    preprocessor(0),
+    iMaxBitRate(16800),
+    lastEchoFrame(NULL),
     enc_state(0),
     enc_bits(),
     send_timestamp(0),
-    echo_state(0),
-    inputBuffer(),
-    iMaxBitRate(16800),
     bResetProcessor(true),
-    lastEchoFrame(NULL)
+    preprocessor(0),
+    echo_state(0),
+    inputBuffer()
 {
         enc_bits = new SpeexBits;
         speex_bits_init(enc_bits);
@@ -105,8 +105,7 @@ SpeexInputProcessor::~SpeexInputProcessor() {
 
         speex_bits_destroy(enc_bits);
         delete enc_bits;
-
-        free(psClean);
+        delete[] psClean;
 }
 
 QByteArray SpeexInputProcessor::getNetworkPacket() {
@@ -125,7 +124,7 @@ qint64 SpeexInputProcessor::writeData(const char *data, qint64 maxSize) {
 
         inputBuffer += QByteArray(data, maxSize);
 
-        while(inputBuffer.size() > FRAME_SIZE * sizeof(qint16)) {
+        while((size_t)inputBuffer.size() > FRAME_SIZE * sizeof(qint16)) {
 
                 QByteArray source_frame = inputBuffer.left(FRAME_SIZE * sizeof(qint16));
                 short* psMic = (short *)source_frame.data();
@@ -398,7 +397,7 @@ qint64 SpeexOutputProcessor::readData(char *data, qint64 maxSize) {
             intermediate_frame.resize(FRAME_SIZE * sizeof(qint16));
             if (jitter->firsttimecalling_get)
             {
-                int ts = jitter->mostUpdatedTSatPut;
+                //int ts = jitter->mostUpdatedTSatPut;
                 jitter->firsttimecalling_get = false;
             }
             speex_jitter_get(*jitter, (spx_int16_t*)intermediate_frame.data(), &ts);
@@ -467,7 +466,7 @@ void SpeexOutputProcessor::speex_jitter_get(SpeexJitter jitter, spx_int16_t *out
    int i;
    int ret;
    spx_int32_t activity;
-   int bufferCount = 0;
+   //int bufferCount = 0;
    JitterBufferPacket packet;
    char data[FRAME_SIZE * ECHOTAILSIZE * 10];
    packet.data = data;

@@ -67,7 +67,15 @@ AudioInputConfig::~AudioInputConfig()
 {
     if (inputDevice) {
         inputDevice->stop();
+		  delete inputDevice ;
+		  inputDevice = NULL ;
     }
+
+	 if(inputProcessor)
+	 {
+		 delete inputProcessor ;
+		 inputProcessor = NULL ;
+	 }
 }
 
 /** Loads the settings for this page */

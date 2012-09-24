@@ -5,7 +5,8 @@ AudioDeviceHelper::AudioDeviceHelper()
 {
 }
 
-QAudioInput* AudioDeviceHelper::getDefaultInputDevice() {
+QAudioInput* AudioDeviceHelper::getDefaultInputDevice() 
+{
     QAudioFormat fmt;
     fmt.setFrequency(16000);
     fmt.setChannels(1);
@@ -15,10 +16,11 @@ QAudioInput* AudioDeviceHelper::getDefaultInputDevice() {
     fmt.setCodec("audio/pcm");
 
     QAudioDeviceInfo it, dev;
+	 QList<QAudioDeviceInfo> input_list = QAudioDeviceInfo::availableDevices(QAudio::AudioInput) ;
 
     dev = QAudioDeviceInfo::defaultInputDevice();
     if (dev.deviceName() != "pulse") {
-        foreach(it, QAudioDeviceInfo::availableDevices(QAudio::AudioInput)) {
+        foreach(it, input_list) {
             if(it.deviceName() == "pulse") {
                     dev = it;
                     qDebug("Ok.");
@@ -27,7 +29,7 @@ QAudioInput* AudioDeviceHelper::getDefaultInputDevice() {
         }
     }
     if (dev.deviceName() == "null") {
-        foreach(it, QAudioDeviceInfo::availableDevices(QAudio::AudioInput)) {
+        foreach(it, input_list) {
             if(it.deviceName() != "null") {
                     dev = it;
                     break;
@@ -50,10 +52,13 @@ QAudioOutput* AudioDeviceHelper::getDefaultOutputDevice() {
     fmt.setByteOrder(QAudioFormat::LittleEndian);
     fmt.setCodec("audio/pcm");
 
+	 QList<QAudioDeviceInfo> list_output = QAudioDeviceInfo::availableDevices(QAudio::AudioOutput) ;
+
     QAudioDeviceInfo it, dev;
     dev = QAudioDeviceInfo::defaultOutputDevice();
+
     if (dev.deviceName() != "pulse") {
-        foreach(it, QAudioDeviceInfo::availableDevices(QAudio::AudioOutput)) {
+        foreach(it, list_output) {
                 if(it.deviceName() == "pulse") {
                         dev = it;
                         break;
@@ -61,7 +66,7 @@ QAudioOutput* AudioDeviceHelper::getDefaultOutputDevice() {
         }
     }
     if (dev.deviceName() == "null") {
-        foreach(it, QAudioDeviceInfo::availableDevices(QAudio::AudioOutput)) {
+        foreach(it, list_output) {
                 if(it.deviceName() != "null") {
                         dev = it;
                         break;
