@@ -366,120 +366,102 @@
         <translation>Willkommen zum RetroShare Audio-Assistenten</translation>
     </message>
     <message>
-        <location filename="../gui/AudioWizard.ui" line="27"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Cantarell&apos;; font-size:11pt;&quot;&gt;This is the audio tuning wizard for RetroShare. This will help you correctly set the input levels of your sound card, and also set the correct parameters for sound processing in Retroshare. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;p&gt;
-Dies ist RetroShare Assistent zum konfigurieren Ihrer Audio-Einstellungen. Er wird Ihnen helfen die korrekte Eingangslautstärke Ihrer Soundkarte und die korrekten Parameter für die Tonverarbeitung in RetroShare zu wählen.
-&lt;/p&gt;</translation>
-    </message>
-    <message>
-        <location filename="../gui/AudioWizard.ui" line="55"/>
+        <location filename="../gui/AudioWizard.ui" line="56"/>
         <source>Volume tuning</source>
         <translation>Lautstärken-Einstellung</translation>
     </message>
     <message>
-        <location filename="../gui/AudioWizard.ui" line="58"/>
+        <location filename="../gui/AudioWizard.ui" line="59"/>
         <source>Tuning microphone hardware volume to optimal settings.</source>
         <translation>Mikrofonhardware-Lautstärke auf optimalen Wert einstellen.</translation>
     </message>
     <message>
-        <location filename="../gui/AudioWizard.ui" line="64"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Cantarell&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Open your sound control panel and go to the recording settings. Make sure the microphone is selected as active input with maximum recording volume. If there&apos;s an option to enable a &amp;quot;Microphone boost&amp;quot; make sure it&apos;s checked. &lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Speak loudly, as when you are annoyed or excited. Decrease the volume in the sound control panel until the bar below stays as high as possible in the green and orange but &lt;span style=&quot; font-weight:600;&quot;&gt;not&lt;/span&gt; the red zone while you speak. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <location filename="../gui/AudioWizard.ui" line="32"/>
+        <source>This is the audio tuning wizard for RetroShare. This will help you correctly set the input levels of your sound card, and also set the correct parameters for sound processing in Retroshare. </source>
+        <translation>Dies ist RetroShare Assistent zum konfigurieren Ihrer Audio-Einstellungen. Er wird Ihnen helfen die korrekte Eingangslautstärke Ihrer Soundkarte und die korrekten Parameter für die Tonverarbeitung in RetroShare zu wählen.</translation>
+    </message>
+    <message>
+        <location filename="../gui/AudioWizard.ui" line="70"/>
+        <source>&lt;p &gt;Open your sound control panel and go to the recording settings. Make sure the microphone is selected as active input with maximum recording volume. If there&apos;s an option to enable a &amp;quot;Microphone boost&amp;quot; make sure it&apos;s checked. &lt;/p&gt;
+&lt;p&gt;Speak loudly, as when you are annoyed or excited. Decrease the volume in the sound control panel until the bar below stays as high as possible in the green and orange but not the red zone while you speak. &lt;/p&gt;</source>
         <translation>Öffnen Sie die Lautstärkeeinstellungen und gehen Sie zu den Aufnahmeeinstellungen. Versichern Sie sich, dass das Mikrofon als aktives Eingabegerät mit maximaler Aufnahmelautstärke ausgewählt ist. Falls es eine Option &quot;Mikrofon Boost&quot; gibt, sollte diese aktiviert sein.
 
 Sprechen Sie so laut, als wären Sie verärgert oder aufgeregt. Verringern Sie die Lautstärke in den Lautstärkeeinstellungen bis der Balken so weit wie möglich oben im blauen und grünen, aber nicht im roten Bereich ist, während Sie sprechen.</translation>
     </message>
     <message>
-        <location filename="../gui/AudioWizard.ui" line="79"/>
+        <location filename="../gui/AudioWizard.ui" line="86"/>
         <source>Talk normally, and adjust the slider below so that the bar moves into green when you talk, and doesn&apos;t go into the orange zone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/AudioWizard.ui" line="123"/>
+        <location filename="../gui/AudioWizard.ui" line="130"/>
         <source>Stop looping echo for this wizard</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/AudioWizard.ui" line="143"/>
+        <location filename="../gui/AudioWizard.ui" line="150"/>
         <source>Apply some high contrast optimizations for visually impaired users</source>
         <translation>Auf hohen Kontrast optimierte Darstellung für sehbehinderte Benutzer verwenden</translation>
     </message>
     <message>
-        <location filename="../gui/AudioWizard.ui" line="146"/>
+        <location filename="../gui/AudioWizard.ui" line="153"/>
         <source>Use high contrast graphics</source>
         <translation>Anzeigen mit hohem Kontrast verwenden</translation>
     </message>
     <message>
-        <location filename="../gui/AudioWizard.ui" line="156"/>
+        <location filename="../gui/AudioWizard.ui" line="163"/>
         <source>Voice Activity Detection</source>
         <translation>Sprachaktivitätserkennung</translation>
     </message>
     <message>
-        <location filename="../gui/AudioWizard.ui" line="159"/>
+        <location filename="../gui/AudioWizard.ui" line="166"/>
         <source>Letting RetroShare figure out when you&apos;re talking and when you&apos;re silent.</source>
         <translation>Lassen Sie RetroShare herausfinden wann Sie sprechen und wann nicht.</translation>
     </message>
     <message>
-        <location filename="../gui/AudioWizard.ui" line="165"/>
+        <location filename="../gui/AudioWizard.ui" line="172"/>
         <source>This will help Retroshare figure out when you are talking. The first step is selecting which data value to use.</source>
         <translation>Dies wird RetroShare helfen herauszufinden, wann Sie sprechen. Der erste Schritt ist den zu benutzenden Datenwert auszuwählen.</translation>
     </message>
     <message>
-        <location filename="../gui/AudioWizard.ui" line="177"/>
+        <location filename="../gui/AudioWizard.ui" line="184"/>
         <source>Push To Talk:</source>
         <translation>Push-To-Talk:</translation>
     </message>
     <message>
-        <location filename="../gui/AudioWizard.ui" line="184"/>
+        <location filename="../gui/AudioWizard.ui" line="191"/>
         <source>todo shortcut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/AudioWizard.ui" line="206"/>
+        <location filename="../gui/AudioWizard.ui" line="213"/>
         <source>Voice Detection</source>
         <translation>Voice-Erkennung</translation>
     </message>
     <message>
-        <location filename="../gui/AudioWizard.ui" line="219"/>
+        <location filename="../gui/AudioWizard.ui" line="226"/>
         <source>Next you need to adjust the following slider. The first few utterances you say should end up in the green area (definitive speech). While talking, you should stay inside the yellow (might be speech) and when you&apos;re not talking, everything should be in the red (definitively not speech).</source>
         <translation>Als nächstes müssen Sie den folgenden Schieber anpassen. Die ersten paar Geräusche die Sie beim Sprechen machen sollten im grünen Bereich (definitv Sprache) landen. Während Sie sprechen sollten Sie im gelben Bereich (könnte Sprache sein) bleiben und wenn Sie nicht sprechen, sollte alles im roten Bereich (definitiv keine Sprache) bleiben.</translation>
     </message>
     <message>
-        <location filename="../gui/AudioWizard.ui" line="283"/>
+        <location filename="../gui/AudioWizard.ui" line="290"/>
         <source>Continuous transmission</source>
         <translation>Kontinuierliche Übertragung</translation>
     </message>
     <message>
-        <location filename="../gui/AudioWizard.ui" line="291"/>
+        <location filename="../gui/AudioWizard.ui" line="298"/>
         <source>Finished</source>
         <translation>Fertig</translation>
     </message>
     <message>
-        <location filename="../gui/AudioWizard.ui" line="294"/>
+        <location filename="../gui/AudioWizard.ui" line="301"/>
         <source>Enjoy using RetroShare</source>
         <translation>Viel Spaß mit RetroShare</translation>
     </message>
     <message>
-        <location filename="../gui/AudioWizard.ui" line="300"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Cantarell&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Congratulations. You should now be ready to enjoy a richer sound experience with Retroshare. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Cantarell&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Herzlichen Glückwunsch. Sie sollten nun eine reichere Sounderfahrung mit Retroshare machen. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <location filename="../gui/AudioWizard.ui" line="312"/>
+        <source>Congratulations. You should now be ready to enjoy a richer sound experience with Retroshare.</source>
+        <translation>Herzlichen Glückwunsch. Sie sollten nun eine reichere Sounderfahrung mit Retroshare machen.</translation>
     </message>
 </context>
 <context>
