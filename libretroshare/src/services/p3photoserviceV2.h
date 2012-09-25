@@ -73,6 +73,7 @@ public:
     /* Specific Service Data */
     bool getAlbum(const uint32_t &token, std::vector<RsPhotoAlbum> &albums);
     bool getPhoto(const uint32_t &token, PhotoResult &photos);
+    bool getPhotoComment(const uint32_t &token, PhotoCommentResult &comments);
 
 public:
 
@@ -134,6 +135,8 @@ private:
 
     std::vector<RsGxsGroupChange*> mGroupChange;
     std::vector<RsGxsMsgChange*> mMsgChange;
+
+    RsMutex mPhotoMutex;
 };
 
 #endif // P3PHOTOSERVICEV2_H

@@ -69,8 +69,13 @@ void RsGenExchange::tick()
 
         processMsgMetaChanges();
 
-	notifyChanges(mNotifications);
-	mNotifications.clear();
+        processRecvdData();
+
+        if(!mNotifications.empty())
+        {
+            notifyChanges(mNotifications);
+            mNotifications.clear();
+        }
 
 }
 
@@ -493,10 +498,10 @@ void RsGenExchange::processMsgMetaChanges()
 
         if(ok)
         {
-            mDataAccess->updatePublicRequestStatus(token, RsTokenServiceV2::GXS_REQUEST_STATUS_COMPLETE);
+            mDataAccess->updatePublicRequestStatus(token, RsTokenServiceV2::GXS_REQUEST_V2_STATUS_COMPLETE);
         }else
         {
-            mDataAccess->updatePublicRequestStatus(token, RsTokenServiceV2::GXS_REQUEST_STATUS_FAILED);
+            mDataAccess->updatePublicRequestStatus(token, RsTokenServiceV2::GXS_REQUEST_V2_STATUS_FAILED);
         }
         mMsgNotify.insert(std::make_pair(token, m.msgId));
     }
@@ -519,10 +524,10 @@ void RsGenExchange::processGrpMetaChanges()
 
         if(ok)
         {
-            mDataAccess->updatePublicRequestStatus(token, RsTokenServiceV2::GXS_REQUEST_STATUS_COMPLETE);
+            mDataAccess->updatePublicRequestStatus(token, RsTokenServiceV2::GXS_REQUEST_V2_STATUS_COMPLETE);
         }else
         {
-            mDataAccess->updatePublicRequestStatus(token, RsTokenServiceV2::GXS_REQUEST_STATUS_FAILED);
+            mDataAccess->updatePublicRequestStatus(token, RsTokenServiceV2::GXS_REQUEST_V2_STATUS_FAILED);
         }
         mGrpNotify.insert(std::make_pair(token, g.grpId));
     }
@@ -582,7 +587,7 @@ void RsGenExchange::publishMsgs()
 
                         // add to published to allow acknowledgement
                         mMsgNotify.insert(std::make_pair(mit->first, std::make_pair(msg->grpId, msg->msgId)));
-                        mDataAccess->updatePublicRequestStatus(mit->first, RsTokenServiceV2::GXS_REQUEST_STATUS_COMPLETE);
+                        mDataAccess->updatePublicRequestStatus(mit->first, RsTokenServiceV2::GXS_REQUEST_V2_STATUS_COMPLETE);
 		}
 
 		// if addition failed then delete nxs message
@@ -628,6 +633,7 @@ void RsGenExchange::publishGrps()
                     grp->metaData = new RsGxsGrpMetaData();
                     grpItem->meta.mPublishTs = time(NULL);
                     *(grp->metaData) = grpItem->meta;
+                    grp->metaData->mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_ADMIN;
                     createGroup(grp);
                     size = grp->metaData->serial_size();
                     char mData[size];
@@ -639,7 +645,7 @@ void RsGenExchange::publishGrps()
 
                     // add to published to allow acknowledgement
                     mGrpNotify.insert(std::make_pair(mit->first, grp->grpId));
-                    mDataAccess->updatePublicRequestStatus(mit->first, RsTokenServiceV2::GXS_REQUEST_STATUS_COMPLETE);
+                    mDataAccess->updatePublicRequestStatus(mit->first, RsTokenServiceV2::GXS_REQUEST_V2_STATUS_COMPLETE);
 		}
 
 		if(!ok)
@@ -652,7 +658,7 @@ void RsGenExchange::publishGrps()
 
 			// add to published to allow acknowledgement, grpid is empty as grp creation failed
                         mGrpNotify.insert(std::make_pair(mit->first, RsGxsGroupId("")));
-			mDataAccess->updatePublicRequestStatus(mit->first, RsTokenServiceV2::GXS_REQUEST_STATUS_FAILED);
+                        mDataAccess->updatePublicRequestStatus(mit->first, RsTokenServiceV2::GXS_REQUEST_V2_STATUS_FAILED);
 			continue;
 		}
 
@@ -664,9 +670,50 @@ void RsGenExchange::publishGrps()
 	mGrpsToPublish.clear();
 }
 
+void RsGenExchange::createDummyGroup(RsGxsGrpItem *grpItem)
+{
+
+    RsStackMutex stack(mGenMtx);
+
+
+    RsNxsGrp* grp = new RsNxsGrp(mServType);
+    uint32_t size = mSerialiser->size(grpItem);
+    char gData[size];
+    bool ok = mSerialiser->serialise(grpItem, gData, &size);
+    grp->grp.setBinData(gData, size);
+
+    if(ok)
+    {
+        grp->metaData = new RsGxsGrpMetaData();
+        grpItem->meta.mPublishTs = time(NULL);
+        *(grp->metaData) = grpItem->meta;
+        grp->metaData->mSubscribeFlags = ~GXS_SERV::GROUP_SUBSCRIBE_MASK;
+        createGroup(grp);
+        size = grp->metaData->serial_size();
+        char mData[size];
+        grp->metaData->mGroupId = grp->grpId;
+        ok = grp->metaData->serialise(mData, size);
+        grp->meta.setBinData(mData, size);
+
+        ok = mDataAccess->addGroupData(grp);
+    }
+
+    if(!ok)
+    {
+
+#ifdef GEN_EXCH_DEBUG
+            std::cerr << "RsGenExchange::createDummyGroup(); failed to publish grp " << std::endl;
+#endif
+        delete grp;
+    }
+
+    delete grpItem;
+}
+
 
 void RsGenExchange::processRecvdData()
 {
+    processRecvdGroups();
 }
 
 
@@ -677,5 +724,33 @@ void RsGenExchange::processRecvdMessages()
 
 void RsGenExchange::processRecvdGroups()
 {
+    RsStackMutex stack(mGenMtx);
+
+    std::vector<RsNxsGrp*>::iterator vit = mReceivedGrps.begin();
+    std::map<RsNxsGrp*, RsGxsGrpMetaData*> grps;
+
+    std::list<RsGxsGroupId> grpIds;
+
+    for(; vit != mReceivedGrps.end(); vit++)
+    {
+        RsNxsGrp* grp = *vit;
+        RsGxsGrpMetaData* meta = new RsGxsGrpMetaData();
+        meta->deserialise(grp->meta.bin_data, grp->meta.bin_len);
+        grps.insert(std::make_pair(grp, meta));
+
+        grpIds.push_back(grp->grpId);
+
+    }
+
+    if(!grpIds.empty())
+    {
+        RsGxsGroupChange* c = new RsGxsGroupChange();
+        c->grpIdList = grpIds;
+        mNotifications.push_back(c);
+        mDataStore->storeGroup(grps);
+    }
+
+    mReceivedGrps.clear();
+
 }
 

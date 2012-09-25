@@ -90,17 +90,21 @@ public:
 
 };
 
-//class RsNxsNetMgrImpl : public RsNxsNetMgrImpl
-//{
+class RsNxsNetMgrImpl : public RsNxsNetMgr
+{
 
-//public:
+public:
 
-//    RsNxsNetMgrImpl(p3LinkMgr* lMgr);
+    RsNxsNetMgrImpl(p3LinkMgr* lMgr);
 
-//    std::string getOwnId();
-//    void getOnlineList(std::set<std::string>& ssl_peers);
+    std::string getOwnId();
+    void getOnlineList(std::set<std::string>& ssl_peers);
 
-//};
+private:
+
+    p3LinkMgr* mLinkMgr;
+
+};
 
 
 /// keep track of transaction number

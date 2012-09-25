@@ -107,12 +107,12 @@ class RsTokenServiceV2
 
 public:
 
-	static const uint8_t GXS_REQUEST_STATUS_FAILED;
-	static const uint8_t GXS_REQUEST_STATUS_PENDING;
-	static const uint8_t GXS_REQUEST_STATUS_PARTIAL;
-	static const uint8_t GXS_REQUEST_STATUS_FINISHED_INCOMPLETE;
-	static const uint8_t GXS_REQUEST_STATUS_COMPLETE;
-	static const uint8_t GXS_REQUEST_STATUS_DONE;			 // ONCE ALL DATA RETRIEVED.
+        static const uint8_t GXS_REQUEST_V2_STATUS_FAILED;
+        static const uint8_t GXS_REQUEST_V2_STATUS_PENDING;
+        static const uint8_t GXS_REQUEST_V2_STATUS_PARTIAL;
+        static const uint8_t GXS_REQUEST_V2_STATUS_FINISHED_INCOMPLETE;
+        static const uint8_t GXS_REQUEST_V2_STATUS_COMPLETE;
+        static const uint8_t GXS_REQUEST_V2_STATUS_DONE;			 // ONCE ALL DATA RETRIEVED.
 
 public:
 

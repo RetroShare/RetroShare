@@ -5,6 +5,11 @@
 RsPhotoV2 *rsPhotoV2 = NULL;
 
 
+const uint32_t RsPhotoV2::FLAG_MSG_TYPE_MASK = 0x000f;
+const uint32_t RsPhotoV2::FLAG_MSG_TYPE_PHOTO_POST = 0x0001;
+const uint32_t RsPhotoV2::FLAG_MSG_TYPE_PHOTO_COMMENT = 0x0002;
+
+
 
 
 bool RsPhotoThumbnail::copyFrom(const RsPhotoThumbnail &nail)
@@ -75,33 +80,46 @@ std::ostream &operator<<(std::ostream &out, const RsPhotoAlbum &album)
 }
 
 p3PhotoServiceV2::p3PhotoServiceV2(RsGeneralDataService* gds, RsNetworkExchangeService* nes)
-        : RsGenExchange(gds, nes, new RsGxsPhotoSerialiser(), RS_SERVICE_GXSV1_TYPE_PHOTO)
+    : RsGenExchange(gds, nes, new RsGxsPhotoSerialiser(), RS_SERVICE_GXSV1_TYPE_PHOTO), mPhotoMutex(std::string("Photo Mutex"))
 {
 
+    // create dummy grps
+
+    RsGxsPhotoAlbumItem* item1 = new RsGxsPhotoAlbumItem(), *item2 = new RsGxsPhotoAlbumItem();
+
+    item1->meta.mGroupName = "Dummy Album 1";
+    item2->meta.mGroupName = "Dummy Album 2";
+
+    createDummyGroup(item1);
+    createDummyGroup(item2);
 }
 
 bool p3PhotoServiceV2::updated()
 {
-        bool changed =  (!mGroupChange.empty() || !mMsgChange.empty());
+    RsStackMutex stack(mPhotoMutex);
 
-        return changed;
+    bool changed =  (!mGroupChange.empty() || !mMsgChange.empty());
+
+    return changed;
 }
 
 
 
 void p3PhotoServiceV2::groupsChanged(std::list<RsGxsGroupId>& grpIds)
 {
-	while(!mGroupChange.empty())
-	{
-		RsGxsGroupChange* gc = mGroupChange.back();
-		std::list<RsGxsGroupId>& gList = gc->grpIdList;
-		std::list<RsGxsGroupId>::iterator lit = gList.begin();
-		for(; lit != gList.end(); lit++)
-			grpIds.push_back(*lit);
+    RsStackMutex stack(mPhotoMutex);
 
-		mGroupChange.pop_back();
-		delete gc;
-	}
+    while(!mGroupChange.empty())
+    {
+            RsGxsGroupChange* gc = mGroupChange.back();
+            std::list<RsGxsGroupId>& gList = gc->grpIdList;
+            std::list<RsGxsGroupId>::iterator lit = gList.begin();
+            for(; lit != gList.end(); lit++)
+                    grpIds.push_back(*lit);
+
+            mGroupChange.pop_back();
+            delete gc;
+    }
 }
 
 
@@ -192,13 +210,14 @@ bool p3PhotoServiceV2::getPhoto(const uint32_t& token, PhotoResult& photos)
 
 				if(item)
 				{
-					RsPhotoPhoto photo = item->photo;
+                                        RsPhotoPhoto photo = item->photo;
 					photo.mMeta = item->meta;
 					photos[grpId].push_back(photo);
 					delete item;
 				}else
 				{
-					delete *vit;
+                                    std::cerr << "Not a photo Item, deleting!" << std::endl;
+                                    delete *vit;
 				}
 			}
 		}
@@ -207,40 +226,79 @@ bool p3PhotoServiceV2::getPhoto(const uint32_t& token, PhotoResult& photos)
 	return ok;
 }
 
+bool p3PhotoServiceV2::getPhotoComment(const uint32_t &token, PhotoCommentResult &comments)
+{
+        GxsMsgDataMap msgData;
+        bool ok = RsGenExchange::getMsgData(token, msgData);
+
+        if(ok)
+        {
+                GxsMsgDataMap::iterator mit = msgData.begin();
+
+                for(; mit != msgData.end();  mit++)
+                {
+                        RsGxsGroupId grpId = mit->first;
+                        std::vector<RsGxsMsgItem*>& msgItems = mit->second;
+                        std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
+
+                        for(; vit != msgItems.end(); vit++)
+                        {
+                                RsGxsPhotoCommentItem* item = dynamic_cast<RsGxsPhotoCommentItem*>(*vit);
+
+                                if(item)
+                                {
+                                        RsPhotoComment comment = item->comment;
+                                        comment.mMeta = item->meta;
+                                        comments[grpId].push_back(comment);
+                                        delete item;
+                                }else
+                                {
+                                    std::cerr << "Not a comment Item, deleting!" << std::endl;
+                                    delete *vit;
+                                }
+                        }
+                }
+        }
+
+        return ok;
+}
 
 bool p3PhotoServiceV2::submitAlbumDetails(uint32_t& token, RsPhotoAlbum& album)
 {
-	RsGxsPhotoAlbumItem* albumItem = new RsGxsPhotoAlbumItem();
-	albumItem->album = album;
-	albumItem->meta = album.mMeta;
-        RsGenExchange::publishGroup(token, albumItem);
-        return true;
+    RsGxsPhotoAlbumItem* albumItem = new RsGxsPhotoAlbumItem();
+    albumItem->album = album;
+    albumItem->meta = album.mMeta;
+    RsGenExchange::publishGroup(token, albumItem);
+    return true;
 }
 
 
 
 void p3PhotoServiceV2::notifyChanges(std::vector<RsGxsNotify*>& changes)
 {
-	std::vector<RsGxsNotify*>::iterator vit = changes.begin();
 
-	for(; vit != changes.end(); vit++)
-	{
-		RsGxsNotify* n = *vit;
-		RsGxsGroupChange* gc;
-		RsGxsMsgChange* mc;
-		if((mc = dynamic_cast<RsGxsMsgChange*>(n)) != NULL)
-		{
-			mMsgChange.push_back(mc);
-		}
-		else if((gc = dynamic_cast<RsGxsGroupChange*>(n)) != NULL)
-		{
-			mGroupChange.push_back(gc);
-		}
-		else
-		{
-			delete n;
-		}
-	}
+    RsStackMutex stack(mPhotoMutex);
+
+    std::vector<RsGxsNotify*>::iterator vit = changes.begin();
+
+    for(; vit != changes.end(); vit++)
+    {
+        RsGxsNotify* n = *vit;
+        RsGxsGroupChange* gc;
+        RsGxsMsgChange* mc;
+        if((mc = dynamic_cast<RsGxsMsgChange*>(n)) != NULL)
+        {
+                mMsgChange.push_back(mc);
+        }
+        else if((gc = dynamic_cast<RsGxsGroupChange*>(n)) != NULL)
+        {
+                mGroupChange.push_back(gc);
+        }
+        else
+        {
+                delete n;
+        }
+    }
 }
 
 bool p3PhotoServiceV2::submitPhoto(uint32_t& token, RsPhotoPhoto& photo)
@@ -248,6 +306,7 @@ bool p3PhotoServiceV2::submitPhoto(uint32_t& token, RsPhotoPhoto& photo)
 	RsGxsPhotoPhotoItem* photoItem = new RsGxsPhotoPhotoItem();
 	photoItem->photo = photo;
 	photoItem->meta = photo.mMeta;
+        photoItem->meta.mMsgFlags = FLAG_MSG_TYPE_PHOTO_POST;
 
         RsGenExchange::publishMsg(token, photoItem);
         return true;
@@ -258,6 +317,7 @@ bool p3PhotoServiceV2::submitComment(uint32_t &token, RsPhotoComment &comment)
     RsGxsPhotoCommentItem* commentItem = new RsGxsPhotoCommentItem();
     commentItem->comment = comment;
     commentItem->meta = comment.mMeta;
+    commentItem->meta.mMsgFlags = FLAG_MSG_TYPE_PHOTO_COMMENT;
 
     RsGenExchange::publishMsg(token, commentItem);
     return true;

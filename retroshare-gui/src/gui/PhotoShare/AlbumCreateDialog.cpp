@@ -69,7 +69,7 @@ bool AlbumCreateDialog::getAlbumThumbnail(RsPhotoThumbnail &nail)
 
 void AlbumCreateDialog::addAlbumThumbnail()
 {
-    QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load Album Thumbnail"), 64, 64);
+    QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load Album Thumbnail"), 128, 128);
 
     if (img.isNull())
             return;

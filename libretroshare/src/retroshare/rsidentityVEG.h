@@ -61,7 +61,8 @@
 #define RS_TOKREQOPT_UNREAD		0x0002
 
 #define RS_TOKREQ_ANSTYPE_LIST		0x0001		
-#define RS_TOKREQ_ANSTYPE_SUMMARY	0x0002		
+#define RS_TOKREQ_ANSTYPE_SUMMARY	0x0002
+#define RS_TOKREQ_ANSTYPE_DATA		0x0003
 
 
 
@@ -358,8 +359,8 @@ virtual bool groupShareKeys(const std::string &groupId, std::list<std::string>& 
 
 
 /* The Main Interface Class - for information about your Peers */
-class RsIdentity;
-extern RsIdentity *rsIdentity;
+class RsIdentityVEG;
+extern RsIdentityVEG *rsIdentityVEG;
 
 #define RSID_TYPE_MASK		0xff00
 #define RSID_RELATION_MASK	0x00ff

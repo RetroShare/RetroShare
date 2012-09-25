@@ -1,15 +1,22 @@
+#include <iostream>
+#include <QVBoxLayout>
 #include "PhotoDialog.h"
 #include "ui_PhotoDialog.h"
+
+
 
 PhotoDialog::PhotoDialog(RsPhotoV2 *rs_photo, const RsPhotoPhoto &photo, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::PhotoDialog), mRsPhoto(rs_photo), mPhotoQueue(new TokenQueueV2(mRsPhoto->getTokenService(), this)),
-    mPhotoDetails(photo)
+    mPhotoDetails(photo), mCommentDialog(NULL)
 
 {
     ui->setupUi(this);
     setAttribute ( Qt::WA_DeleteOnClose, true );
     setUp();
+    connect(ui->toolButton_AddComment, SIGNAL(clicked()), this, SLOT(addComment()));
+
+
 }
 
 PhotoDialog::~PhotoDialog()
@@ -24,15 +31,155 @@ void PhotoDialog::setUp()
     qtn.loadFromData(mPhotoDetails.mThumbnail.data, mPhotoDetails.mThumbnail.size, mPhotoDetails.mThumbnail.type.c_str());
     ui->label_Photo->setPixmap(qtn);
     ui->lineEdit_Title->setText(QString::fromStdString(mPhotoDetails.mMeta.mMsgName));
+
+    ui->scrollAreaWidgetContents->setLayout(new QVBoxLayout());
 }
 
 
-void PhotoDialog::loadRequest(const TokenQueueV2 *queue, const TokenRequestV2 &req)
-{
 
-}
 
 void PhotoDialog::addComment()
 {
+    mCommentDialog = new AddCommentDialog(this);
+    connect(mCommentDialog, SIGNAL(accepted()), this, SLOT(createComment()));
+    connect(mCommentDialog, SIGNAL(rejected()), mCommentDialog, SLOT(deleteLater()));
+    mCommentDialog->exec();
+}
+
+void PhotoDialog::clearComments()
+{
+    QLayout* l = ui->scrollAreaWidgetContents->layout();
+    QSetIterator<PhotoCommentItem*> sit(mComments);
+    while(sit.hasNext())
+    {
+        PhotoCommentItem* item = sit.next();
+        l->removeWidget(item);
+        item->setParent(NULL);
+    }
+}
+
+void PhotoDialog::resetComments()
+{
+    clearComments();
+
+    QSetIterator<PhotoCommentItem*> sit(mComments);
+    QLayout* l = ui->scrollAreaWidgetContents->layout();
+    while(sit.hasNext())
+    {
+        PhotoCommentItem* item = sit.next();
+        l->addWidget(item);
+    }
+}
+
+void PhotoDialog::createComment()
+{
+    if(mCommentDialog)
+    {
+        RsPhotoComment comment;
+        QString commentString = mCommentDialog->getComment();
+
+        comment.mComment = commentString.toStdString();
+
+        uint32_t token;
+        comment.mMeta.mGroupId = mPhotoDetails.mMeta.mGroupId;
+        mRsPhoto->submitComment(token, comment);
+        mPhotoQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, 0);
+
+        mCommentDialog->close();
+        delete mCommentDialog;
+        mCommentDialog = NULL;
+    }
+}
+
+
+/*************** message loading **********************/
+
+void PhotoDialog::loadRequest(const TokenQueueV2 *queue, const TokenRequestV2 &req)
+{
+    std::cerr << "PhotoShare::loadRequest()";
+    std::cerr << std::endl;
+
+    if (queue == mPhotoQueue)
+    {
+        /* now switch on req */
+        switch(req.mType)
+        {
+            case TOKENREQ_MSGINFO:
+            {
+                switch(req.mAnsType)
+                {
+                    case RS_TOKREQ_ANSTYPE_DATA:
+                        loadComment(req.mToken);
+                        break;
+                    case RS_TOKREQ_ANSTYPE_ACK:
+                        acknowledgeComment(req.mToken);
+                        break;
+                    default:
+                        std::cerr << "PhotoShare::loadRequest() ERROR: MSG INVALID TYPE";
+                        std::cerr << std::endl;
+                        break;
+                }
+                break;
+            }
+
+            default:
+            {
+                std::cerr << "PhotoShare::loadRequest() ERROR: INVALID TYPE";
+                std::cerr << std::endl;
+                break;
+            }
+        }
+    }
 
 }
+
+void PhotoDialog::loadComment(uint32_t token)
+{
+
+    PhotoCommentResult results;
+    mRsPhoto->getPhotoComment(token, results);
+
+    PhotoCommentResult::iterator mit = results.begin();
+
+    for(; mit != results.end(); mit++)
+    {
+        const std::vector<RsPhotoComment>& commentV = mit->second;
+        std::vector<RsPhotoComment>::const_iterator vit = commentV.begin();
+
+        for(; vit != commentV.end(); vit++)
+        {
+            addComment(*vit);
+        }
+    }
+
+    resetComments();
+}
+
+void PhotoDialog::addComment(const RsPhotoComment &comment)
+{
+    PhotoCommentItem* item = new PhotoCommentItem(comment);
+    mComments.insert(item);
+}
+
+void PhotoDialog::acknowledgeComment(uint32_t token)
+{
+    RsGxsGrpMsgIdPair msgId;
+    mRsPhoto->acknowledgeMsg(token, msgId);
+
+    if(msgId.first.empty() || msgId.second.empty()){
+
+    }else
+    {
+        uint32_t reqToken;
+        RsTokReqOptionsV2 opts;
+        opts.mMsgFlagMask = RsPhotoV2::FLAG_MSG_TYPE_MASK;
+        opts.mMsgFlagFilter = RsPhotoV2::FLAG_MSG_TYPE_PHOTO_COMMENT;
+        opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+        GxsMsgReq req;
+        std::vector<RsGxsMessageId> msgIdsV;
+        msgIdsV.push_back(msgId.second);
+        req.insert(std::make_pair(msgId.first, msgIdsV));
+        mPhotoQueue->requestMsgInfo(reqToken, RS_TOKREQ_ANSTYPE_DATA, opts, req, 0);
+    }
+}
+

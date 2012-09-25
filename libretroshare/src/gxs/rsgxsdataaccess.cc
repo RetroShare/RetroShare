@@ -49,12 +49,12 @@
 #define RS_TOKREQ_ANSTYPE_SUMMARY	0x0002
 #define RS_TOKREQ_ANSTYPE_DATA		0x0003
 
-	const uint8_t RsTokenServiceV2::GXS_REQUEST_STATUS_FAILED = 0;
-	const uint8_t RsTokenServiceV2::GXS_REQUEST_STATUS_PENDING = 1;
-	const uint8_t RsTokenServiceV2::GXS_REQUEST_STATUS_PARTIAL = 2;
-	const uint8_t RsTokenServiceV2::GXS_REQUEST_STATUS_FINISHED_INCOMPLETE = 3;
-	const uint8_t RsTokenServiceV2::GXS_REQUEST_STATUS_COMPLETE = 4;
-	const uint8_t RsTokenServiceV2::GXS_REQUEST_STATUS_DONE = 5;			 // ONCE ALL DATA RETRIEVED.
+        const uint8_t RsTokenServiceV2::GXS_REQUEST_V2_STATUS_FAILED = 0;
+        const uint8_t RsTokenServiceV2::GXS_REQUEST_V2_STATUS_PENDING = 1;
+        const uint8_t RsTokenServiceV2::GXS_REQUEST_V2_STATUS_PARTIAL = 2;
+        const uint8_t RsTokenServiceV2::GXS_REQUEST_V2_STATUS_FINISHED_INCOMPLETE = 3;
+        const uint8_t RsTokenServiceV2::GXS_REQUEST_V2_STATUS_COMPLETE = 4;
+        const uint8_t RsTokenServiceV2::GXS_REQUEST_V2_STATUS_DONE = 5;			 // ONCE ALL DATA RETRIEVED.
 
 RsGxsDataAccess::RsGxsDataAccess(RsGeneralDataService* ds)
  : mDataStore(ds), mDataMutex("RsGxsDataAccess"), mNextToken(0)
@@ -183,19 +183,19 @@ bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
         for(; vit != toRemove.end(); vit++)
             filteredMsgIds.erase(*vit);
 
-	if(reqType & GXS_REQUEST_TYPE_MSG_META)
+        if(reqType & GXS_REQUEST_TYPE_MSG_META)
 	{
 		MsgMetaReq* mmr = new MsgMetaReq();
 		mmr->mMsgIds = filteredMsgIds;
 		req = mmr;
 
-	}else if(reqType & GXS_REQUEST_TYPE_MSG_DATA)
+        }else if(reqType & GXS_REQUEST_TYPE_MSG_DATA)
 	{
 		MsgDataReq* mdr = new MsgDataReq();
 		mdr->mMsgIds = filteredMsgIds;
 		req = mdr;
 
-	}else if(reqType & GXS_REQUEST_TYPE_MSG_IDS)
+        }else if(reqType & GXS_REQUEST_TYPE_MSG_IDS)
 	{
 		MsgIdReq* mir = new MsgIdReq();
 		mir->mMsgIds = filteredMsgIds;
@@ -296,7 +296,7 @@ void    RsGxsDataAccess::storeRequest(GxsRequest* req)
 {
 	RsStackMutex stack(mDataMutex); /****** LOCKED *****/
 
-        req->status = GXS_REQUEST_STATUS_PENDING;
+        req->status = GXS_REQUEST_V2_STATUS_PENDING;
 	mRequests[req->token] = req;
 
 	return;
@@ -359,14 +359,14 @@ bool RsGxsDataAccess::getGroupSummary(const uint32_t& token, std::list<RsGxsGrpM
 
 		std::cerr << "RsGxsDataAccess::getGroupSummary() Unable to retrieve group summary" << std::endl;
 		return false;
-        }else  if(req->status == GXS_REQUEST_STATUS_COMPLETE){
+        }else  if(req->status == GXS_REQUEST_V2_STATUS_COMPLETE){
 
 		GroupMetaReq* gmreq = dynamic_cast<GroupMetaReq*>(req);
 
 		if(gmreq)
 		{
 			groupInfo = gmreq->mGroupMetaData;
-			locked_updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
+                        locked_updateRequestStatus(token, GXS_REQUEST_V2_STATUS_DONE);
 		}else{
 			std::cerr << "RsGxsDataAccess::getGroupSummary() Req found, failed caste" << std::endl;
 			return false;
@@ -389,14 +389,14 @@ bool RsGxsDataAccess::getGroupData(const uint32_t& token, std::list<RsNxsGrp*>& 
 
 		std::cerr << "RsGxsDataAccess::getGroupData() Unable to retrieve group data" << std::endl;
 		return false;
-        }else  if(req->status == GXS_REQUEST_STATUS_COMPLETE){
+        }else  if(req->status == GXS_REQUEST_V2_STATUS_COMPLETE){
 
 		GroupDataReq* gmreq = dynamic_cast<GroupDataReq*>(req);
 
 		if(gmreq)
 		{
 			grpData = gmreq->mGroupData;
-			locked_updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
+                        locked_updateRequestStatus(token, GXS_REQUEST_V2_STATUS_DONE);
 		}else{
 			std::cerr << "RsGxsDataAccess::getGroupData() Req found, failed caste" << std::endl;
 			return false;
@@ -420,14 +420,14 @@ bool RsGxsDataAccess::getMsgData(const uint32_t& token, NxsMsgDataResult& msgDat
 
 		std::cerr << "RsGxsDataAccess::getMsgData() Unable to retrieve group data" << std::endl;
 		return false;
-        }else if(req->status == GXS_REQUEST_STATUS_COMPLETE){
+        }else if(req->status == GXS_REQUEST_V2_STATUS_COMPLETE){
 
 		MsgDataReq* mdreq = dynamic_cast<MsgDataReq*>(req);
 
 		if(mdreq)
 		{
 		 msgData = mdreq->mMsgData;
-		 locked_updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
+                 locked_updateRequestStatus(token, GXS_REQUEST_V2_STATUS_DONE);
 		}else{
 			std::cerr << "RsGxsDataAccess::getMsgData() Req found, failed caste" << std::endl;
 			return false;
@@ -451,14 +451,14 @@ bool RsGxsDataAccess::getMsgSummary(const uint32_t& token, GxsMsgMetaResult& msg
 
 		std::cerr << "RsGxsDataAccess::getMsgSummary() Unable to retrieve group data" << std::endl;
 		return false;
-        }else  if(req->status == GXS_REQUEST_STATUS_COMPLETE){
+        }else  if(req->status == GXS_REQUEST_V2_STATUS_COMPLETE){
 
                 MsgMetaReq* mmreq = dynamic_cast<MsgMetaReq*>(req);
 
 		if(mmreq)
 		{
                  msgInfo = mmreq->mMsgMetaData;
-                 locked_updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
+                 locked_updateRequestStatus(token, GXS_REQUEST_V2_STATUS_DONE);
 
 		}else{
 			std::cerr << "RsGxsDataAccess::getMsgSummary() Req found, failed caste" << std::endl;
@@ -482,7 +482,7 @@ bool RsGxsDataAccess::getMsgList(const uint32_t& token, GxsMsgIdResult& msgIds)
 
 		std::cerr << "RsGxsDataAccess::getMsgList() Unable to retrieve group data" << std::endl;
 		return false;
-        }else  if(req->status == GXS_REQUEST_STATUS_COMPLETE){
+        }else  if(req->status == GXS_REQUEST_V2_STATUS_COMPLETE){
 
 		MsgIdReq* mireq = dynamic_cast<MsgIdReq*>(req);
                 MsgRelatedInfoReq* mrireq = dynamic_cast<MsgRelatedInfoReq*>(req);
@@ -490,12 +490,12 @@ bool RsGxsDataAccess::getMsgList(const uint32_t& token, GxsMsgIdResult& msgIds)
 		if(mireq)
                 {
                     msgIds = mireq->mMsgIdResult;
-                    locked_updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
+                    locked_updateRequestStatus(token, GXS_REQUEST_V2_STATUS_DONE);
                 }
                 else if(mrireq)
                 {
                     msgIds = mrireq->mMsgIdResult;
-                    locked_updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
+                    locked_updateRequestStatus(token, GXS_REQUEST_V2_STATUS_DONE);
                 }
                 else{
 			std::cerr << "RsGxsDataAccess::getMsgList() Req found, failed caste" << std::endl;
@@ -520,14 +520,14 @@ bool RsGxsDataAccess::getGroupList(const uint32_t& token, std::list<RsGxsGroupId
 		std::cerr << "RsGxsDataAccess::getGroupList() Unable to retrieve group data,"
 				"\nRequest does not exist" << std::endl;
 		return false;
-        }else if(req->status == GXS_REQUEST_STATUS_COMPLETE){
+        }else if(req->status == GXS_REQUEST_V2_STATUS_COMPLETE){
 
 		GroupIdReq* gireq = dynamic_cast<GroupIdReq*>(req);
 
 		if(gireq)
 		{
 		 groupIds = gireq->mGroupIdResult;
-		 locked_updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
+                 locked_updateRequestStatus(token, GXS_REQUEST_V2_STATUS_DONE);
 
 		}else{
 			std::cerr << "RsGxsDataAccess::getGroupList() Req found, failed caste" << std::endl;
@@ -579,13 +579,13 @@ void RsGxsDataAccess::processRequests()
 		{
 
 			GxsRequest* req = it->second;
-			if (req->status == GXS_REQUEST_STATUS_PENDING)
+                        if (req->status == GXS_REQUEST_V2_STATUS_PENDING)
 			{
 				std::cerr << "RsGxsDataAccess::processRequests() Processing Token: " << req->token << " Status: "
 						<< req->status << " ReqType: " << req->reqType << " Age: "
 						<< now - req->reqTime << std::endl;
 
-				req->status = GXS_REQUEST_STATUS_PARTIAL;
+                                req->status = GXS_REQUEST_V2_STATUS_PARTIAL;
 
 				/* PROCESS REQUEST! */
 
@@ -624,14 +624,14 @@ void RsGxsDataAccess::processRequests()
 							  << req->token << std::endl;
 	#endif
 
-					req->status = GXS_REQUEST_STATUS_FAILED;
+                                        req->status = GXS_REQUEST_V2_STATUS_FAILED;
 				}
 			}
-			else if (req->status == GXS_REQUEST_STATUS_PARTIAL)
+                        else if (req->status == GXS_REQUEST_V2_STATUS_PARTIAL)
 			{
-					req->status = GXS_REQUEST_STATUS_COMPLETE;
+                                        req->status = GXS_REQUEST_V2_STATUS_COMPLETE;
 			}
-			else if (req->status == GXS_REQUEST_STATUS_DONE)
+                        else if (req->status == GXS_REQUEST_V2_STATUS_DONE)
 			{
 				std::cerr << "RsGxsDataAccess::processrequests() Clearing Done Request Token: "
 						  << req->token;
@@ -1331,7 +1331,7 @@ uint32_t RsGxsDataAccess::generatePublicToken()
 
         {
             RsStackMutex stack(mDataMutex);
-            mPublicToken[token] = RsTokenServiceV2::GXS_REQUEST_STATUS_PENDING;
+            mPublicToken[token] = RsTokenServiceV2::GXS_REQUEST_V2_STATUS_PENDING;
         }
 
 	return token;

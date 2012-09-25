@@ -168,6 +168,7 @@ std::ostream &operator<<(std::ostream &out, const RsPhotoPhoto &photo);
 std::ostream &operator<<(std::ostream &out, const RsPhotoAlbum &album);
 
 typedef std::map<RsGxsGroupId, std::vector<RsPhotoPhoto> > PhotoResult;
+typedef std::map<RsGxsGroupId, std::vector<RsPhotoComment> > PhotoCommentResult;
 typedef std::map<RsGxsGroupId, std::vector<RsMsgMetaData> > MsgMetaResult;
 
 class RsPhotoV2
@@ -265,6 +266,14 @@ public:
                                               PhotoResult &photo) = 0;
 
     /* details are updated in album - to choose Album ID, and storage path */
+
+    /*!
+     * @param token token to be redeemed for photo request
+     * @param photo the photo returned for given request token
+     * @return false if request token is invalid, check token status for error report
+     */
+    virtual bool getPhotoComment(const uint32_t &token,
+                                              PhotoCommentResult& comments) = 0;
 
     /*!
      * submits album, which returns a token that needs

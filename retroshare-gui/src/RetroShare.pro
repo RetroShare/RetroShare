@@ -2,12 +2,12 @@ CONFIG += qt gui uic qrc resources uitools idle bitdht
 
 # Below is for GXS services.
 CONFIG += photoshare 
-#CONFIG += wikipoos 
-#CONFIG += thewire 
+#CONFIG += wikipoos
+#CONFIG += thewire
 #CONFIG += identities
-#CONFIG += forumsv2 
-#CONFIG += posted 
-CONFIG += unfinished 
+#CONFIG += forumsv2
+#CONFIG += posted
+CONFIG += unfinished
 #CONFIG += gxsgui 
 
 #CONFIG += pluginmgr 
@@ -417,7 +417,7 @@ HEADERS +=  rshare.h \
             gui/dht/DhtWindow.h \
             gui/bwctrl/BwCtrlWindow.h \
             gui/GetStartedDialog.h \
-    gui/PhotoShare/PhotoCommentItem.h
+
 
 
 
@@ -520,8 +520,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/style/StyleDialog.ui \
             gui/dht/DhtWindow.ui \
             gui/bwctrl/BwCtrlWindow.ui \
-            gui/GetStartedDialog.ui \
-    gui/PhotoShare/PhotoCommentItem.ui
+            gui/GetStartedDialog.ui
 SOURCES +=  main.cpp \
             rshare.cpp \
             gui/notifyqt.cpp \
@@ -700,8 +699,8 @@ SOURCES +=  main.cpp \
             gui/groups/CreateGroup.cpp \
             gui/dht/DhtWindow.cpp \
             gui/bwctrl/BwCtrlWindow.cpp \
-            gui/GetStartedDialog.cpp \
-    gui/PhotoShare/PhotoCommentItem.cpp
+            gui/GetStartedDialog.cpp
+
 
 
 RESOURCES += gui/images.qrc lang/lang.qrc gui/help/content/content.qrc
@@ -873,7 +872,9 @@ photoshare {
                 gui/PhotoShare/PhotoShareItemHolder.h \
                 gui/PhotoShare/PhotoShare.h \
 		gui/PhotoShare/PhotoSlideShow.h \
-                gui/PhotoShare/PhotoDialog.h
+                gui/PhotoShare/PhotoDialog.h \
+                gui/PhotoShare/PhotoCommentItem.h \
+                gui/PhotoShare/AddCommentDialog.h
 
 	FORMS += \
                 gui/PhotoShare/PhotoItem.ui \
@@ -882,7 +883,9 @@ photoshare {
                 gui/PhotoShare/AlbumDialog.ui \
                 gui/PhotoShare/AlbumCreateDialog.ui \
                 gui/PhotoShare/PhotoShare.ui \
-                gui/PhotoShare/PhotoSlideShow.ui
+                gui/PhotoShare/PhotoSlideShow.ui \
+                gui/PhotoShare/PhotoCommentItem.ui \
+                gui/PhotoShare/AddCommentDialog.ui
 
 	SOURCES += \
                 gui/PhotoShare/PhotoItem.cpp \
@@ -894,7 +897,9 @@ photoshare {
                 util/TokenQueueV2.cpp \
                 gui/PhotoShare/PhotoShareItemHolder.cpp \
                 gui/PhotoShare/PhotoShare.cpp \
-                gui/PhotoShare/PhotoSlideShow.cpp
+                gui/PhotoShare/PhotoSlideShow.cpp \
+                gui/PhotoShare/PhotoCommentItem.cpp \
+                gui/PhotoShare/AddCommentDialog.cpp
 
 }
 

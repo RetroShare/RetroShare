@@ -178,7 +178,12 @@ void PhotoShare::checkUpdate()
             std::list<std::string> grpIds;
             rsPhotoV2->groupsChanged(grpIds);
             if(!grpIds.empty())
-                requestAlbumList(grpIds);
+            {
+                RsTokReqOptionsV2 opts;
+                uint32_t token;
+                opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+                mPhotoQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds, 0);
+            }
 
             GxsMsgIdResult res;
             rsPhotoV2->msgsChanged(res);

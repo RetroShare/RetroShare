@@ -56,7 +56,7 @@ class TokenResponseVEG
 	public:
 	//virtual ~TokenResponse() { return; }
 	// These Functions are overloaded to get results out.
-	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req) = 0;
+        virtual void loadRequest(const TokenQueueVEG *queue, const TokenRequestVEG &req) = 0;
 };
 
 

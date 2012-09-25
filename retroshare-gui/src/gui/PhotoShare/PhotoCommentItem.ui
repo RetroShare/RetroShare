@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>484</width>
-    <height>110</height>
+    <width>479</width>
+    <height>89</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,7 +30,7 @@ border-radius: 10px;}</string>
      </property>
      <layout class="QVBoxLayout">
       <item>
-       <widget class="QWidget" name="msgWidget" native="true">
+       <widget class="QWidget" name="commentWidget" native="true">
         <property name="styleSheet">
          <string notr="true">QWidget#msgWidget{border: 2px solid #238;
 border-radius: 10px;}</string>
@@ -40,7 +40,7 @@ border-radius: 10px;}</string>
           <number>5</number>
          </property>
          <item>
-          <widget class="QLabel" name="msgLabel">
+          <widget class="QLabel" name="labelComment">
            <property name="sizePolicy">
             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
              <horstretch>0</horstretch>

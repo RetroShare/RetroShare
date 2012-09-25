@@ -562,7 +562,7 @@ RsGxsPhotoCommentItem *    RsGxsPhotoSerialiser::deserialiseGxsPhotoCommentItem(
     /* skip the header */
     offset += 8;
 
-    ok &= GetTlvString(data, rssize, &offset, 1, item->comment.mComment);
+    ok &= GetTlvString(data, rssize, &offset, 0, item->comment.mComment);
     ok &= getRawUInt32(data, rssize, &offset, &(item->comment.mCommentFlag));
 
     if (offset != rssize)

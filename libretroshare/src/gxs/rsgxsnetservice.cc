@@ -98,7 +98,7 @@ void RsGxsNetService::syncWithPeers()
         {
             RsGxsGrpMetaData* meta = mit->second;
 
-            if(meta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_MASK)
+            if(meta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
                 grpIds.push_back(mit->first);
         }
 
@@ -655,8 +655,6 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
 						}
 					}
 
-					int nitems = msgs.size();
-
 					// notify listener of msgs
 					mObserver->notifyNewMessages(msgs);
 
@@ -761,6 +759,8 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 		}
 	}
 
+        if(msgItemL.empty())
+            return;
 
 	// get grp id for this transaction
 	RsNxsSyncMsgItem* item = msgItemL.front();
@@ -1258,3 +1258,36 @@ NxsTransaction::~NxsTransaction(){
 	delete mTransaction;
 	mTransaction = NULL;
 }
+
+
+/* Net Manager */
+
+RsNxsNetMgrImpl::RsNxsNetMgrImpl(p3LinkMgr *lMgr)
+    : mLinkMgr(lMgr)
+{
+
+}
+
+
+std::string RsNxsNetMgrImpl::getOwnId()
+{
+    return mLinkMgr->getOwnId();
+}
+
+void RsNxsNetMgrImpl::getOnlineList(std::set<std::string> &ssl_peers)
+{
+    ssl_peers.clear();
+
+    std::list<std::string> pList;
+    mLinkMgr->getOnlineList(pList);
+
+    std::list<std::string>::const_iterator lit = pList.begin();
+
+    for(; lit != pList.end(); lit++)
+        ssl_peers.insert(*lit);
+}
+
+
+
+
+
