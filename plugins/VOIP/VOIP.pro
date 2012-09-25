@@ -62,5 +62,7 @@ RESOURCES = gui/VOIP_images.qrc lang/lang.qrc
 TRANSLATIONS +=  \
             lang/VOIP_de.ts \
             lang/VOIP_fr.ts \
+            lang/VOIP_es.ts \
+
 
 LIBS += -lspeex -lspeexdsp
