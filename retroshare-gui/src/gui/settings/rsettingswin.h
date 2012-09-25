@@ -20,43 +20,44 @@
  ****************************************************************/
 
 #ifndef RSETTINGSWIN_HPP_
-# define RSETTINGSWIN_HPP_
+#define RSETTINGSWIN_HPP_
 
-# include <QtGui/QDialog>
-# include <retroshare-gui/configpage.h>
-# include "ui_settings.h"
-
+#include <QtGui/QDialog>
+#include <retroshare-gui/configpage.h>
+#include "ui_settings.h"
 
 class RSettingsWin: public QDialog, private Ui::Settings
 {
-    Q_OBJECT
+	Q_OBJECT
 
-    public:
-        enum PageType { LastPage = -1, General = 0, Server, Transfer,Relay,
-                        Directories, Plugins, Notify, Security, Message, Forum, Chat, Appearance, Sound, Fileassociations };
+public:
+	enum PageType { LastPage = -1, General = 0, Server, Transfer,Relay,
+					Directories, Plugins, Notify, Security, Message, Forum, Chat, Appearance, Sound, Fileassociations };
 
-        static void showYourself(QWidget *parent, PageType page = LastPage);
-        static void postModDirectories(bool update_local);
+	static void showYourself(QWidget *parent, PageType page = LastPage);
+	static void postModDirectories(bool update_local);
 
-    protected:
-        RSettingsWin(QWidget * parent = 0, Qt::WFlags flags = 0);
-        ~RSettingsWin();
+protected:
+	RSettingsWin(QWidget * parent = 0, Qt::WFlags flags = 0);
+	~RSettingsWin();
 
-		  void addPage(ConfigPage*) ;
-    public slots:
-        //! Go to a specific part of the control panel.
-        void setNewPage(int page);
+	void addPage(ConfigPage*) ;
 
-    private slots:
-		/** Called when user clicks "Save Settings" */
-        void saveChanges();
+public slots:
+	//! Go to a specific part of the control panel.
+	void setNewPage(int page);
 
-    private:
-        void initStackedWidget();
+private slots:
+	/** Called when user clicks "Save Settings" */
+	void saveChanges();
+	void dialogFinished(int result);
 
-    private:
-        static RSettingsWin *_instance;
-        static int lastPage;
+private:
+	void initStackedWidget();
+
+private:
+	static RSettingsWin *_instance;
+	static int lastPage;
 };
 
 #endif // !RSETTINGSWIN_HPP_

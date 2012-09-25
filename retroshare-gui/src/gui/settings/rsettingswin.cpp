@@ -22,6 +22,7 @@
 #include <QMessageBox>
 
 #include <retroshare/rsplugin.h>
+#include <rshare.h>
 #include "GeneralPage.h"
 #include "DirectoriesPage.h"
 #include "ServerPage.h"
@@ -37,6 +38,7 @@
 #include "MessagePage.h"
 #include "ForumPage.h"
 #include "PluginsPage.h"
+#include "rsharesettings.h"
 
 #define IMAGE_GENERAL       ":/images/kcmsystem24.png"
 
@@ -57,12 +59,21 @@ RSettingsWin::RSettingsWin(QWidget * parent, Qt::WFlags flags)
 
     connect(listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(setNewPage(int)));
     connect(applyButton, SIGNAL(clicked( bool )), this, SLOT( saveChanges()) );
+    connect(this, SIGNAL(finished(int)), this, SLOT(dialogFinished(int)));
 }
 
 RSettingsWin::~RSettingsWin()
 {
     lastPage = stackedWidget->currentIndex ();
     _instance = NULL;
+}
+
+void RSettingsWin::dialogFinished(int result)
+{
+	if (result == Rejected) {
+		/* reaload style sheet */
+		Rshare::loadStyleSheet(::Settings->getSheetName());
+	}
 }
 
 /*static*/ void RSettingsWin::showYourself(QWidget *parent, PageType page /* = LastPage*/)
