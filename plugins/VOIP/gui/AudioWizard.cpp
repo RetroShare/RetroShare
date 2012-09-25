@@ -41,11 +41,28 @@
 
 AudioWizard::~AudioWizard()
 {
+    if (ticker) {
+        ticker->stop();
+    }
     if (inputDevice) {
         inputDevice->stop();
+        delete(inputDevice);
+        inputDevice = NULL;
+    }
+    if (inputProcessor) {
+        inputProcessor->close();
+        delete(inputProcessor);
+        inputProcessor = NULL;
     }
     if (outputDevice) {
         outputDevice->stop();
+        delete(outputDevice);
+        outputDevice = NULL;
+    }
+    if (outputProcessor) {
+        outputProcessor->close();
+        delete(outputProcessor);
+        outputProcessor = NULL;
     }
 }
 

@@ -95,7 +95,9 @@ SpeexInputProcessor::SpeexInputProcessor(QObject *parent) : QIODevice(parent),
     }
 
 SpeexInputProcessor::~SpeexInputProcessor() {
+    if (preprocessor) {
         speex_preprocess_state_destroy(preprocessor);
+    }
         if (echo_state) {
            speex_echo_state_destroy(echo_state);
         }

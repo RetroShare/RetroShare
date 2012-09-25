@@ -62,8 +62,10 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WFlags flags)
 
 AppearancePage::~AppearancePage()
 {
-	/* reaload style sheet */
-	Rshare::loadStyleSheet(Settings->getSheetName());
+	if (wasLoaded()) {
+		/* reaload style sheet */
+		Rshare::loadStyleSheet(Settings->getSheetName());
+	}
 }
 
 /** Saves the changes on this page */

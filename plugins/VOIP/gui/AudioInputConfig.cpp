@@ -276,8 +276,7 @@ void AudioInputConfig::emptyBuffer() {
 }
 
 void AudioInputConfig::on_qpbAudioWizard_clicked() {
-    AudioWizard *aw = new AudioWizard(this);
-    aw->exec();
-    delete aw;
+    AudioWizard aw(this);
+    aw.exec();
     loadSettings();
 }
