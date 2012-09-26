@@ -378,6 +378,7 @@ HEADERS +=  rshare.h \
             gui/common/LinkTextBrowser.h \
             gui/common/UserNotify.h \
             gui/common/HeaderFrame.h \
+            gui/common/MimeTextEdit.h \
             gui/style/RSStyle.h \
             gui/style/StyleDialog.h \
             gui/MessagesDialog.h \
@@ -639,6 +640,7 @@ SOURCES +=  main.cpp \
             gui/common/LinkTextBrowser.cpp \
             gui/common/UserNotify.cpp \
             gui/common/HeaderFrame.cpp \
+            gui/common/MimeTextEdit.cpp \
             gui/style/RSStyle.cpp \
             gui/style/StyleDialog.cpp \
             gui/settings/rsharesettings.cpp \
