@@ -547,7 +547,9 @@ bool ftDataMultiplex::dispatchReceivedChunkCheckSum()
 
 		if(itc == mClients.end())
 		{
+#ifdef MPLEX_DEBUG
 			std::cerr << "ftDataMultiplex::dispatchReceivedChunkCheckSum() ERROR: No matching Client for hash. This is probably a late answer. Dropping the hash. Hash=" << it->first << std::endl;
+#endif
 
 			std::map<std::string,Sha1CacheEntry>::iterator tmp(it) ;
 			++tmp ;
@@ -943,7 +945,9 @@ bool ftDataMultiplex::handleRecvChunkCrcRequest(const std::string& peerId, const
 
 		sha1cache._map.set(chunk_number,crc) ;
 	}
+#ifdef MPLEX_DEBUG
 	std::cerr << "Sending CRC of chunk " << chunk_number<< " of file " << filename << ", hash=" << hash << ", size=" << filesize << ", crc=" << crc.toStdString() << std::endl;
+#endif
 
 	mDataSend->sendSingleChunkCRC(peerId,hash,chunk_number,crc);
 	return true ;
