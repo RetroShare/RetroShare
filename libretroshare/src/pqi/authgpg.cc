@@ -344,7 +344,12 @@ std::string AuthGPG::getGPGName(const std::string &id,bool *success)
 {
 	if(id.length() != 16)
 	{
-		std::cerr << "Wrong string passed to getGPGDetails: \"" << id << "\"" << std::endl;
+		static int already = 0 ;
+		if(already < 10)
+		{
+			std::cerr << "Wrong string passed to getGPGDetails: \"" << id << "\"" << std::endl;
+			already++ ;
+		}
 		return std::string() ;
 	}
 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
