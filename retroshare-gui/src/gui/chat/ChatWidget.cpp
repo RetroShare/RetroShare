@@ -415,12 +415,15 @@ void ChatWidget::contextMenu(QPoint point)
 
 void ChatWidget::contextMenuTextBrowser(QPoint point)
 {
-	QMenu *contextMnu = ui->textBrowser->createStandardContextMenu(point);
+	QMatrix matrix;
+	matrix.translate(ui->textBrowser->horizontalScrollBar()->value(), ui->textBrowser->verticalScrollBar()->value());
+
+	QMenu *contextMnu = ui->textBrowser->createStandardContextMenu(matrix.map(point));
 
 	contextMnu->addSeparator();
 	contextMnu->addAction(ui->actionClearChatHistory);
 
-	contextMnu->exec(QCursor::pos());
+	contextMnu->exec(ui->textBrowser->viewport()->mapToGlobal(point));
 	delete(contextMnu);
 }
 

@@ -279,12 +279,15 @@ void FriendsDialog::pasteLink()
 
 void FriendsDialog::contextMenuMsgText(QPoint point)
 {
-    QMenu *contextMnu = ui.msgText->createStandardContextMenu(point);
+    QMatrix matrix;
+    matrix.translate(ui.msgText->horizontalScrollBar()->value(), ui.msgText->verticalScrollBar()->value());
+
+    QMenu *contextMnu = ui.msgText->createStandardContextMenu(matrix.map(point));
 
     contextMnu->addSeparator();
     contextMnu->addAction(ui.actionClear_Chat_History);
 
-    contextMnu->exec(QCursor::pos());
+    contextMnu->exec(ui.msgText->viewport()->mapToGlobal(point));
     delete(contextMnu);
 }
 
