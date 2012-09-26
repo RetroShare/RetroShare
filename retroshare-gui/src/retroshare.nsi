@@ -2,10 +2,10 @@
 
 ; Define your application name
 !define APPNAME "RetroShare"
-!define VERSION "0.5.4a"
-!define REVISION "5582"
+!define VERSION "0.5.4b"
+!define REVISION "5605"
 !define APPNAMEANDVERSION "${APPNAME} ${VERSION} ${REVISION}"
-!define QTBASE "d:\qt\2010.01"
+!define QTBASE "d:\qt\2010.05"
 
 ; Main Install settings
 Name "${APPNAMEANDVERSION}"
@@ -63,7 +63,7 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
  
   LicenseLangString myLicenseData 1030 "license\license.txt"
   LicenseLangString myLicenseData 1031 "license\license-GER.txt"
-  LicenseLangString myLicenseData 1032 "license\license-GR.txt"
+  LicenseLangString myLicenseData 1032 "license\license.txt"
   LicenseLangString myLicenseData 1033 "license\license.txt"
   LicenseLangString myLicenseData 1034 "license\license-SP.txt"
   LicenseLangString myLicenseData 1036 "license\license-FR.txt"

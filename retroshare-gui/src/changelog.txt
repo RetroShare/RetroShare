@@ -1,3 +1,28 @@
+Changes for 0.5.4b
+
+	* Bugs
+		- Fixed crash when closing the settings dialog.
+		- Fixed crash and memory leak in the AudioWizard of the VOIP plugin.
+			Please use at least Qt 4.6.4 when compiling RetrosShare with the VOIP plugin because of the fix of the bug QTBUG-11883.
+
+	* Improvements
+	
+		- Added Spanish translation file for the VOIP plugin
+		- Removed html code on some QLabels	
+		- Enable Translations for Voip plugin
+		- Fixed some spelling errors
+		- Changed font color in ProfileWidget to standard.
+		- Fixed german language.
+		- Disabled fix color of chat messages for Qt 4.5 and lower because of missing methods on QColor.
+		- add direct public sources for files shared in channels, when available
+		- patch, to make the bandwidth graph refresh rate smoother
+
+	* Improvements to turtle router:
+		- made faster tunnels stay longer by increasing tunnel campain time. Should favor fast tunnels. 
+		- desactivated tunnel shortenning since it cannot produce consistent tunnels every time
+		- increase cache TTL for search requests to 240 secs and tunnel requests to 120 secs.
+			Will remove some zombie tunnels and search requests.
+
 Changes for 0.5.4a
 
   * Improvements
