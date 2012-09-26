@@ -1,4 +1,20 @@
-retroshare-voip-plugin (0.5.3-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
+retroshare-voip-plugin (0.5.4-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
+
+  * Improvements
+     - Added Spanish translation file for the VOIP plugin
+     - Removed html code on some QLabels
+     - Update french translation
+     - Enable Translations for Voip plugin
+     - Fixed small code issues
+
+  * Bugs
+     - Fixed crash and memory leak in the AudioWizard of the VOIP plugin.
+     - Please use at least Qt 4.6.4 when compiling RetrosShare with the VOIP plugin because of the fix 
+       of the bug QTBUG-11883.
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Wed, 26 sept 2012 22:30:00 +0100
+ 
+retroshare-voip-plugin (0.5.4-0.5584~natty) natty; urgency=low
 
   * Improvements
      - Functional version of VOIP plugin.
@@ -6,4 +22,4 @@ retroshare-voip-plugin (0.5.3-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
      - Fixed linking of the VOIP plugin on Windows (Exports all symbols from RetroShare.exe and import it in the plugins.
         Removed the direct linking of the libretroshare and libbitdht from the plugins.)
      
- -- Cyril Soler <csoler@users.sourceforge.net>  Fri, 24 aug 2012 12:00:00 +0100
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 15 sept 2012 14:30:00 +0100
