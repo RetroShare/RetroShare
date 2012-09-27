@@ -3,6 +3,7 @@
     <file>VOIP_de.qm</file>
     <file>VOIP_fr.qm</file>
     <file>VOIP_es.qm</file>
+    <file>VOIP_pt_BR.qm</file>
   </qresource>
 </RCC>
 

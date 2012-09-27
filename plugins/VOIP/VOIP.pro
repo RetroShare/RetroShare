@@ -60,9 +60,12 @@ TARGET = VOIP
 RESOURCES = gui/VOIP_images.qrc lang/lang.qrc
 
 TRANSLATIONS +=  \
+			lang/VOIP_en.ts \
             lang/VOIP_de.ts \
             lang/VOIP_fr.ts \
             lang/VOIP_es.ts \
+            lang/VOIP_pt_BR.ts \
+
 
 
 LIBS += -lspeex -lspeexdsp
