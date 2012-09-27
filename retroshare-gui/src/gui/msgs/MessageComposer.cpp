@@ -970,7 +970,7 @@ void MessageComposer::setQuotedMsg(const QString &msg, const QString &header)
 {
     ui.msgText->setUndoRedoEnabled(false);
 
-    ui.msgText->setHtml(msg);
+    ui.msgText->setText(msg);
 
     QTextBlock block = ui.msgText->document()->firstBlock();
     while (block.isValid()) {
