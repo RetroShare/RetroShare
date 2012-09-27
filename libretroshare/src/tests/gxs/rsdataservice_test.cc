@@ -38,7 +38,7 @@ void test_groupStoreAndRetrieve(){
     setUp();
 
     int nGrp = rand()%32;
-    std::map<RsNxsGrp*, RsGxsGrpMetaData*> grps;
+    std::map<RsNxsGrp*, RsGxsGrpMetaData*> grps, grps_copy;
     RsNxsGrp* grp;
     RsGxsGrpMetaData* grpMeta;
     for(int i = 0; i < nGrp; i++){
@@ -51,12 +51,20 @@ void test_groupStoreAndRetrieve(){
        init_item(grpMeta);
        grpMeta->mGroupId = grp->grpId;
        grps.insert(p);
-
+       RsNxsGrp* grp_copy = new RsNxsGrp(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
+       *grp_copy = *grp;
+       RsGxsGrpMetaData* grpMeta_copy = new RsGxsGrpMetaData();
+       *grpMeta_copy = *grpMeta;
+       grps_copy.insert(std::make_pair(grp_copy, grpMeta_copy ));
        grpMeta = NULL;
        grp = NULL;
    }
 
     dStore->storeGroup(grps);
+
+    //use copy, a grps are deleted in store
+    grps.clear();
+    grps = grps_copy;
 
     std::map<RsGxsGroupId, RsNxsGrp*> gR;
     std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMetaR;
@@ -141,6 +149,7 @@ void test_messageStoresAndRetrieve()
     grpV.push_back(grpId1);
 
     std::map<RsNxsMsg*, RsGxsMsgMetaData*> msgs;
+    std::map<RsNxsMsg*, RsGxsMsgMetaData*> msgs_copy;
     RsNxsMsg* msg = NULL;
     RsGxsMsgMetaData* msgMeta = NULL;
     int nMsgs = rand()%120;
@@ -170,9 +179,15 @@ void test_messageStoresAndRetrieve()
         msgMeta->mMsgId = msg->msgId;
         msgMeta->mGroupId = msg->grpId = grpId;
 
+        RsNxsMsg* msg_copy = new RsNxsMsg(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
+        RsGxsMsgMetaData* msgMeta_copy = new RsGxsMsgMetaData();
+
+        *msg_copy = *msg;
+        *msgMeta_copy = *msgMeta;
+
         // store msgs in map to use for verification
-        std::pair<std::string, RsNxsMsg*> vP(msg->msgId, msg);
-        std::pair<std::string, RsGxsMsgMetaData*> vPmeta(msg->msgId, msgMeta);
+        std::pair<std::string, RsNxsMsg*> vP(msg->msgId, msg_copy);
+        std::pair<std::string, RsGxsMsgMetaData*> vPmeta(msg->msgId, msgMeta_copy);
 
         if(!chosen)
         {
@@ -184,15 +199,21 @@ void test_messageStoresAndRetrieve()
             VergrpId1.insert(vP);
             VerMetagrpId0.insert(vPmeta);
         }
+
+
+
         msg = NULL;
         msgMeta = NULL;
 
         msgs.insert(p);
+        msgs_copy.insert(std::make_pair(msg_copy, msgMeta_copy));
     }
 
     req[grpV[0]] = std::vector<RsGxsMessageId>(); // assign empty list for other
 
     dStore->storeMessage(msgs);
+    msgs.clear();
+    msgs = msgs_copy;
 
     // now retrieve msgs for comparison
     // first selective retrieval

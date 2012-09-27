@@ -100,6 +100,8 @@ void RsGxsNetService::syncWithPeers()
 
             if(meta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
                 grpIds.push_back(mit->first);
+
+            delete meta;
         }
 
         sit = peers.begin();
@@ -1131,6 +1133,7 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrp* item)
 		gItem->PeerId(peer);
 		gItem->transactionNumber = transN;
 		itemL.push_back(gItem);
+		delete mit->second; // release resource
 	}
 
 	tr->mFlag = NxsTransaction::FLAG_STATE_WAITING_CONFIRM;

@@ -82,16 +82,6 @@ void NxsMessageTest::populateStore(RsGeneralDataService* dStore)
 
 	dStore->storeGroup(grps);
 
-
-	std::map<RsNxsGrp*, RsGxsGrpMetaData*>::iterator grp_it
-	= grps.begin();
-    for(; grp_it != grps.end(); grp_it++)
-	{
-		delete grp_it->first;
-		delete grp_it->second;
-	}
-
-
 	int nMsgs = rand()%23;
 	std::map<RsNxsMsg*, RsGxsMsgMetaData*> msgs;
 	RsNxsMsg* msg = NULL;
@@ -118,16 +108,6 @@ void NxsMessageTest::populateStore(RsGeneralDataService* dStore)
 
 
     dStore->storeMessage(msgs);
-
-    // clean up
-    std::map<RsNxsMsg*, RsGxsMsgMetaData*>::iterator msg_it
-    = msgs.begin();
-
-    for(; msg_it != msgs.end(); msg_it++)
-    {
-    	delete msg_it->first;
-    	delete msg_it->second;
-    }
 
     return;
 }

@@ -10,7 +10,7 @@ QT       += core network
 
 QT       -= gui
 
-CONFIG   += gen_exchange_target #dstore_target 
+CONFIG   += dstore_target #gen_exchange_target # #nxs_net_test  
 
 dstore_target {
 
@@ -21,6 +21,12 @@ TARGET = rs_dstore_test
 gen_exchange_target {
 
 TARGET = gen_exchange_test
+
+}
+
+nxs_net_test {
+
+TARGET = nxs_net_test
 
 }
 
@@ -185,6 +191,23 @@ gen_exchange_target {
 	    data_support.h
 
 
+}
+
+nxs_net_test {
+
+	SOURCES += \
+	    support.cc \
+	    nxstesthub.cc \
+	    rsgxsnetservice_test.cc \
+	    nxstestscenario.cc \
+	    data_support.cc 
+	      
+	
+	HEADERS += support.h \
+	    nxstesthub.h \
+	    rsgxsnetservice_test.h \
+	    nxstestscenario.h \
+		data_support.h
 }
 
 INCLUDEPATH += ../../

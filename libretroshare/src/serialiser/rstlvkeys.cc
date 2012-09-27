@@ -322,7 +322,7 @@ bool  RsTlvSecurityKeySet::GetTlv(void *data, uint32_t size, uint32_t *offset) /
 				if (ok)
 				{
 					keys[key.keyId] = key;
-					key.ShallowClear(); /* so that the Map can get control - should be ref counted*/
+					key.TlvClear(); /* so that the Map can get control - should be ref counted*/
 				}
 			}
 				break;

@@ -564,8 +564,9 @@ void RsGenExchange::publishMsgs()
                         msg->metaData->serialise(metaDataBuff, &size);
                         msg->meta.setBinData(metaDataBuff, size);
 
-			ok = createMessage(msg);
-
+                        ok = createMessage(msg);
+                        RsGxsMessageId msgId;
+						RsGxsGroupId grpId;
                         if(ok)
                         {
                             msg->metaData->mPublishTs = time(NULL);
@@ -581,12 +582,13 @@ void RsGenExchange::publishMsgs()
                             {
                                 msg->metaData->mOrigMsgId = msg->metaData->mMsgId;
                             }
-
+                            msgId = msg->msgId;
+                            grpId = msg->grpId;
                             ok = mDataAccess->addMsgData(msg);
                         }
 
                         // add to published to allow acknowledgement
-                        mMsgNotify.insert(std::make_pair(mit->first, std::make_pair(msg->grpId, msg->msgId)));
+                        mMsgNotify.insert(std::make_pair(mit->first, std::make_pair(grpId, msgId)));
                         mDataAccess->updatePublicRequestStatus(mit->first, RsTokenServiceV2::GXS_REQUEST_V2_STATUS_COMPLETE);
 		}
 
@@ -597,7 +599,7 @@ void RsGenExchange::publishMsgs()
 			std::cerr << "RsGenExchange::publishMsgs() failed to publish msg " << std::endl;
 #endif
                         mMsgNotify.insert(std::make_pair(mit->first, std::make_pair(RsGxsGroupId(""), RsGxsMessageId(""))));
-			delete msg;
+
 			continue;
 
 		}
@@ -640,11 +642,11 @@ void RsGenExchange::publishGrps()
                     grp->metaData->mGroupId = grp->grpId;
                     ok = grp->metaData->serialise(mData, size);
                     grp->meta.setBinData(mData, size);
-
-                    ok = mDataAccess->addGroupData(grp);
+                    RsGxsGroupId grpId = grp->grpId;
+                    mDataAccess->addGroupData(grp);
 
                     // add to published to allow acknowledgement
-                    mGrpNotify.insert(std::make_pair(mit->first, grp->grpId));
+                    mGrpNotify.insert(std::make_pair(mit->first, grpId));
                     mDataAccess->updatePublicRequestStatus(mit->first, RsTokenServiceV2::GXS_REQUEST_V2_STATUS_COMPLETE);
 		}
 
@@ -695,7 +697,7 @@ void RsGenExchange::createDummyGroup(RsGxsGrpItem *grpItem)
         ok = grp->metaData->serialise(mData, size);
         grp->meta.setBinData(mData, size);
 
-        ok = mDataAccess->addGroupData(grp);
+        mDataAccess->addGroupData(grp);
     }
 
     if(!ok)

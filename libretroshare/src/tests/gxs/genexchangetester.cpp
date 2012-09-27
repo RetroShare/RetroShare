@@ -1,6 +1,7 @@
 #include "genexchangetester.h"
 #include "support.h"
 #include "gxs/rsdataservice.h"
+#include "gxs/rsgxsflags.h"
 
 
 GenExchangeTester::GenExchangeTester()
@@ -1404,7 +1405,7 @@ void GenExchangeTester::init(RsGroupMetaData &grpMeta) const
     grpMeta.mPop = randNum();
     grpMeta.mSignFlags = randNum();
     grpMeta.mPublishTs = randNum();
-    grpMeta.mSubscribeFlags = randNum();
+    grpMeta.mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_ADMIN;
 
 }
 
@@ -1510,7 +1511,7 @@ void GenExchangeTester::pollForToken(uint32_t token, const RsTokReqOptionsV2 &op
     Sleep((int) (timeDelta * 1000));
 #endif
 
-        if(RsTokenServiceV2::GXS_REQUEST_STATUS_COMPLETE ==
+        if(RsTokenServiceV2::GXS_REQUEST_V2_STATUS_COMPLETE ==
            mTokenService->requestStatus(token))
         {
             switch(opts.mReqType)

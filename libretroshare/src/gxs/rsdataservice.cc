@@ -508,7 +508,19 @@ int RsDataService::storeMessage(std::map<RsNxsMsg *, RsGxsMsgMetaData *> &msg)
     }
 
     // finish transaction
-    return mDb->execSQL("COMMIT;");
+    bool ret = mDb->execSQL("COMMIT;");
+
+    for(mit = msg.begin(); mit != msg.end(); mit++)
+    {
+    	//TODO: API encourages aliasing, remove this abomination
+    	if(mit->second != mit->first->metaData)
+    		delete mit->second;
+
+    	delete mit->first;
+    	;
+    }
+
+    return ret;
 }
 
 
@@ -519,7 +531,8 @@ int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
     // begin transaction
     mDb->execSQL("BEGIN;");
 
-    for(; sit != grp.end(); sit++){
+    for(; sit != grp.end(); sit++)
+    {
 
         RsNxsGrp* grpPtr = sit->first;
         RsGxsGrpMetaData* grpMetaPtr = sit->second;
@@ -589,7 +602,18 @@ int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
         mDb->sqlInsert(GRP_TABLE_NAME, "", cv);
     }
     // finish transaction
-    return mDb->execSQL("COMMIT;");
+    bool ret = mDb->execSQL("COMMIT;");
+
+    for(sit = grp.begin(); sit != grp.end(); sit++)
+    {
+	//TODO: API encourages aliasing, remove this abomination
+			if(sit->second != sit->first->metaData)
+				delete sit->second;
+    	delete sit->first;
+
+    }
+
+    return ret;
 }
 
 int RsDataService::retrieveNxsGrps(std::map<std::string, RsNxsGrp *> &grp, bool withMeta, bool cache){
