@@ -5,7 +5,7 @@
     <name>AboutDialog</name>
     <message>
         <source>About</source>
-        <translation type="unfinished">About</translation>
+        <translation>Ile ilgili</translation>
     </message>
     <message>
         <source>About RetroShare</source>
@@ -13,7 +13,7 @@
     </message>
     <message>
         <source>close</source>
-        <translation type="unfinished"></translation>
+        <translation>Kapat</translation>
     </message>
     <message>
         <source>About RetroShare %1</source>
@@ -25,7 +25,7 @@
     </message>
     <message>
         <source>Score: %1</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Level: %1</source>
@@ -99,7 +99,7 @@
     <name>AppearancePage</name>
     <message>
         <source>Language</source>
-        <translation type="unfinished">Dil</translation>
+        <translation>Dil</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -114,7 +114,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Style</source>
-        <translation type="unfinished">Style</translation>
+        <translation>Stil</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -129,7 +129,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Appearance</source>
-        <translation type="unfinished">Görünüm</translation>
+        <translation>Görünüm</translation>
     </message>
     <message>
         <source>Changes to language will only take effect after restarting RetroShare!</source>
@@ -137,26 +137,26 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Choose the language used in RetroShare</source>
-        <translation type="unfinished">Choose the language used in RetroShare</translation>
+        <translation>RetroShare kullanılan dili seçin</translation>
     </message>
     <message>
         <source>Choose RetroShare&apos;s interface style</source>
-        <translation type="unfinished">Choose Retroshare&apos;s interface style</translation>
+        <translation>Retroshare arayüz stili seçin</translation>
     </message>
 </context>
 <context>
     <name>ApplicationWindow</name>
     <message>
         <source>Hide</source>
-        <translation type="unfinished">Hide</translation>
+        <translation>Gizle</translation>
     </message>
     <message>
         <source>Show</source>
-        <translation type="unfinished">Show</translation>
+        <translation>Göster</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished">Retroshare</translation>
+        <translation>Retroshare</translation>
     </message>
     <message>
         <source>Transfers</source>
@@ -172,11 +172,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Photo View</source>
-        <translation type="unfinished"></translation>
+        <translation>Fotoğraf</translation>
     </message>
     <message>
         <source>Identities</source>
-        <translation type="unfinished"></translation>
+        <translation>Kimlikler</translation>
     </message>
     <message>
         <source>Wiki Pages</source>
@@ -203,29 +203,29 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cancel Download</source>
-        <translation type="unfinished">Iptal</translation>
+        <translation>Iptal</translation>
     </message>
     <message>
         <source>%p Kb</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>[ERROR])</source>
-        <translation type="unfinished"></translation>
+        <translation>[HATA])</translation>
     </message>
 </context>
 <context>
     <name>AvatarWidget</name>
     <message>
         <source>Click to change your avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>Avatarını Değiştirin</translation>
     </message>
 </context>
 <context>
     <name>BandwidthGraph</name>
     <message>
         <source>Show Settings</source>
-        <translation type="unfinished">Show Settings</translation>
+        <translation>Ayarları göster</translation>
     </message>
     <message>
         <source>Reset</source>
@@ -233,15 +233,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Receive Rate</source>
-        <translation type="unfinished">Receive Rate</translation>
+        <translation>Alma oranı</translation>
     </message>
     <message>
         <source>Send Rate</source>
-        <translation type="unfinished">Send Rate</translation>
+        <translation>Gönderme Oranı</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation type="unfinished">Style</translation>
+        <translation>Stil</translation>
     </message>
     <message>
         <source>Changes the transparency of the Bandwidth Graph</source>
@@ -257,19 +257,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Save</source>
-        <translation type="unfinished">Save</translation>
+        <translation>Kaydet</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">geçersiz kılmak</translation>
+        <translation>Iptal</translation>
     </message>
     <message>
         <source>Hide Settings</source>
-        <translation type="unfinished">Hide Settings</translation>
+        <translation>Gizle Ayarları</translation>
     </message>
     <message>
         <source>RetroShare Bandwidth Usage</source>
-        <translation type="unfinished"></translation>
+        <translation>RetroShare Bant Genişliği Kullanımı</translation>
     </message>
     <message>
         <source>Always on Top</source>
@@ -277,7 +277,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Since:</source>
-        <translation type="unfinished"></translation>
+        <translation>Beri</translation>
     </message>
 </context>
 <context>
@@ -560,11 +560,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Isim</translation>
     </message>
     <message>
         <source>In (KB/s)</source>
@@ -807,7 +807,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished">Kopyala retroshare Link</translation>
+        <translation>Kopyala retroshare Link</translation>
     </message>
     <message>
         <source>Toggle Message Read Status</source>
@@ -823,7 +823,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Kaldir</translation>
     </message>
     <message>
         <source>Channel Feed</source>
@@ -839,7 +839,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Set as read and remove item</source>
-        <translation type="unfinished"></translation>
+        <translation>Okumuş Olarak İşaretle ve Kaldır</translation>
     </message>
 </context>
 <context>
@@ -858,7 +858,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Kaldir</translation>
     </message>
     <message>
         <source>Channel Decscription</source>
@@ -921,11 +921,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation type="unfinished"></translation>
+        <translation>Kısıtlı - Herkes okuyabilir, sınırlı yayınlama (Özel Yayınla Key)</translation>
     </message>
     <message>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation type="unfinished"></translation>
+        <translation>Özel - (Mesajlari görüntülemek içini özel Yayınla Anahtarı  gerekl)</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -940,7 +940,7 @@ p, li { white-space: pre-wrap; }
     <name>ChannelFeed</name>
     <message>
         <source>Create Channel</source>
-        <translation type="unfinished">Kanal oluştur</translation>
+        <translation>Kanal oluştur</translation>
     </message>
     <message>
         <source>Subscribe To Channel</source>
@@ -976,7 +976,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Display</source>
-        <translation type="unfinished">Görüntü</translation>
+        <translation>Görüntü</translation>
     </message>
     <message>
         <source>Unsubcribe To Channel</source>
@@ -1004,23 +1004,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Own Channels</source>
-        <translation type="unfinished">Senin Kanallar</translation>
+        <translation>Kendi Kanalların</translation>
     </message>
     <message>
         <source>Subscribed Channels</source>
-        <translation type="unfinished">Abone Kanallar</translation>
+        <translation>Abone Kanallar</translation>
     </message>
     <message>
         <source>Popular Channels</source>
-        <translation type="unfinished">Popüler Kanallar</translation>
+        <translation>Popüler Kanallar</translation>
     </message>
     <message>
         <source>Other Channels</source>
-        <translation type="unfinished">Diğer Kanallar</translation>
+        <translation>Diğer Kanallar</translation>
     </message>
     <message>
         <source>Share Channel</source>
-        <translation type="unfinished">Paylaş Kanalı </translation>
+        <translation>Paylaş Kanalı </translation>
     </message>
     <message>
         <source>Popularity: %1</source>
@@ -1028,27 +1028,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>No Channel Selected</source>
-        <translation type="unfinished">Kanal seçmediniz</translation>
+        <translation>Kanal seçmediniz</translation>
     </message>
     <message>
         <source>Post to Channel</source>
-        <translation type="unfinished">Kanala yaz</translation>
+        <translation>Kanala yaz</translation>
     </message>
     <message>
         <source>Subscribe to Channel</source>
-        <translation type="unfinished">Kanala Abone Ol</translation>
+        <translation>Kanala Abone Ol</translation>
     </message>
     <message>
         <source>Unsubscribe to Channel</source>
-        <translation type="unfinished">Kanaldan Iptal Ol</translation>
+        <translation>Kanaldan Iptal Ol</translation>
     </message>
     <message>
         <source>Show Channel Details</source>
-        <translation type="unfinished">Kanal Detaylari göster</translation>
+        <translation>Kanal Detaylari göster</translation>
     </message>
     <message>
         <source>Edit Channel Details</source>
-        <translation type="unfinished">Kanal Detayları düzenle</translation>
+        <translation>Kanal Detayları düzenle</translation>
     </message>
     <message>
         <source>Create a new Channel</source>
@@ -1060,54 +1060,54 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished">Kopyala retroshare Link</translation>
+        <translation>Kopyala retroshare Link</translation>
     </message>
     <message>
         <source>Set all as read</source>
-        <translation type="unfinished"></translation>
+        <translation>Hepsini Işaretle Okunmuş olarak</translation>
     </message>
     <message>
         <source>Enable Auto-Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Otomatik İndirmeyi Etkinleştirin</translation>
     </message>
     <message>
         <source>Restore Publish Rights for Channel</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanal yayin haklarini onar</translation>
     </message>
     <message>
         <source>Disable Auto-Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Otomatik İndirme etkisizleştir</translation>
     </message>
     <message>
         <source>Loading</source>
-        <translation type="unfinished"></translation>
+        <translation>Yükleniyor</translation>
     </message>
     <message>
         <source>Channels</source>
-        <translation type="unfinished">Kanallar</translation>
+        <translation>Kanallar</translation>
     </message>
     <message>
         <source>Publish rights restored.</source>
-        <translation type="unfinished"></translation>
+        <translation>Yayınla hakları onarılmış.</translation>
     </message>
     <message>
         <source>Publish rights have been restored for this channel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Yayınla hakları bu kanal için onarılmış.</translation>
     </message>
     <message>
         <source>Publish not restored.</source>
-        <translation type="unfinished"></translation>
+        <translation>Yayınla hakları oonarılmamış.</translation>
     </message>
     <message>
         <source>Publish rights can&apos;t be restored for this channel.&lt;br/&gt;You&apos;re not the creator of this channel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Yayın hakları bu kanal için geri alınamaz.&lt;br/&gt; Bu kanalın yaratıcısı değilsiniz.</translation>
     </message>
 </context>
 <context>
     <name>ChannelUserNotify</name>
     <message>
         <source>Channel Post</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanal Mesaj</translation>
     </message>
 </context>
 <context>
@@ -1121,7 +1121,8 @@ Bunun yerine Mesaj göndermek istiyor musunuz?</translation>
     <message>
         <source>Your friend has more than one locations.
 Please choose one of it to chat with.</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaşınız birden fazla yerleri bulunmaktadır.
+Sohbet için birini seçin.</translation>
     </message>
 </context>
 <context>
@@ -1177,7 +1178,7 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>%1 changed his name to: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 ismini değiştirdi: %2</translation>
     </message>
     <message>
         <source>Lobby chat</source>
@@ -1188,7 +1189,7 @@ Please choose one of it to chat with.</source>
     <name>ChatLobbyToaster</name>
     <message>
         <source>Show Chat Lobby</source>
-        <translation type="unfinished"></translation>
+        <translation>Lobi Sohbet göster</translation>
     </message>
 </context>
 <context>
@@ -1215,7 +1216,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Count</source>
-        <translation type="unfinished"></translation>
+        <translation>Kullanıcı</translation>
     </message>
     <message>
         <source>Private Lobbies</source>
@@ -1247,177 +1248,177 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Topic</source>
-        <translation type="unfinished"></translation>
+        <translation>Konu</translation>
     </message>
     <message>
         <source>[No topic provided]</source>
-        <translation type="unfinished"></translation>
+        <translation>[Konu yoktur]</translation>
     </message>
     <message>
         <source>Chat lobbies</source>
-        <translation type="unfinished"></translation>
+        <translation>Sohbet lobileri</translation>
     </message>
 </context>
 <context>
     <name>ChatMsgItem</name>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Kaldir</translation>
     </message>
     <message>
         <source>Write a quick Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Hızlı Mesaj Yaz</translation>
     </message>
     <message>
         <source>Send Mail</source>
-        <translation type="unfinished"></translation>
+        <translation>Posta Gönder</translation>
     </message>
     <message>
         <source>Write Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Mesaji yaz</translation>
     </message>
     <message>
         <source>Start Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Sohbet</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished"></translation>
+        <translation>Gönder</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Iptal</translation>
     </message>
     <message>
         <source>Quick Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Hızlı Mesaj</translation>
     </message>
 </context>
 <context>
     <name>ChatPage</name>
     <message>
         <source>General</source>
-        <translation type="unfinished">Genel</translation>
+        <translation>Genel</translation>
     </message>
     <message>
         <source>Group Chat</source>
-        <translation type="unfinished">Canli Sohbet</translation>
+        <translation>Canli Sohbet</translation>
     </message>
     <message>
         <source>Private Chat</source>
-        <translation type="unfinished">Özel Sohbet</translation>
+        <translation>Özel Sohbet</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation type="unfinished">Style</translation>
+        <translation>Stil</translation>
     </message>
     <message>
         <source>Chat Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Sohbet Ayarları</translation>
     </message>
     <message>
         <source>Enable Emoticons Privat Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Emoticons özel Sohbet icin etkinle</translation>
     </message>
     <message>
         <source>Enable Emoticons Group Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Emoticons grup Sohbeti icin etkinle</translation>
     </message>
     <message>
         <source>Send message with Ctrl+Return</source>
-        <translation type="unfinished"></translation>
+        <translation>Mesaj gönder Ctrl+Return</translation>
     </message>
     <message>
         <source>Default nickname for chat lobbies:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sohbet lobiler için varsayılan kullanıcı adı:</translation>
     </message>
     <message>
         <source>Chat Font</source>
-        <translation type="unfinished"></translation>
+        <translation>Yazı Sohbet</translation>
     </message>
     <message>
         <source>Change Chat Font</source>
-        <translation type="unfinished"></translation>
+        <translation>Sohbet Yazı Tipini Değiştir</translation>
     </message>
     <message>
         <source>Chat Font:</source>
-        <translation type="unfinished"></translation>
+        <translation>Yazı Sohbet:</translation>
     </message>
     <message>
         <source>History</source>
-        <translation type="unfinished"></translation>
+        <translation>Geçmiş</translation>
     </message>
     <message>
         <source>Enable</source>
-        <translation type="unfinished"></translation>
+        <translation>Etkinleştir</translation>
     </message>
     <message>
         <source>Number of saved messages (0 = unlimited)</source>
-        <translation type="unfinished"></translation>
+        <translation>Kaydedilen mesajların sayısı (0 = sınırsız)</translation>
     </message>
     <message>
         <source>Load number of messages (0 = off)</source>
-        <translation type="unfinished"></translation>
+        <translation>Mesaj Yük sayısı (0 = kapalı)</translation>
     </message>
     <message>
         <source>Group chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Canli Sohbet</translation>
     </message>
     <message>
         <source>Variant</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Author:</source>
-        <translation type="unfinished"></translation>
+        <translation>Yazar:</translation>
     </message>
     <message>
         <source>Description:</source>
-        <translation type="unfinished"></translation>
+        <translation>Açıklamalar:</translation>
     </message>
     <message>
         <source>Private chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Özel Sohbet</translation>
     </message>
     <message>
         <source>Incoming</source>
-        <translation type="unfinished"></translation>
+        <translation>Gelen</translation>
     </message>
     <message>
         <source>Outgoing</source>
-        <translation type="unfinished"></translation>
+        <translation>Giden</translation>
     </message>
     <message>
         <source>Incoming message in history</source>
-        <translation type="unfinished"></translation>
+        <translation>Tarihte Gelen mesaj</translation>
     </message>
     <message>
         <source>Outgoing message in history</source>
-        <translation type="unfinished"></translation>
+        <translation>Tarihte Giden mesaj</translation>
     </message>
     <message>
         <source>Incoming message</source>
-        <translation type="unfinished"></translation>
+        <translation>Gelen mesaj</translation>
     </message>
     <message>
         <source>Outgoing message</source>
-        <translation type="unfinished"></translation>
+        <translation>Giden mesaj</translation>
     </message>
     <message>
         <source>Outgoing offline message</source>
-        <translation type="unfinished"></translation>
+        <translation>Giden çevrimdışı mesaj</translation>
     </message>
     <message>
         <source>Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Sohbet</translation>
     </message>
     <message>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation>Sistem</translation>
     </message>
     <message>
         <source>System message</source>
-        <translation type="unfinished"></translation>
+        <translation>Sistem mesajı</translation>
     </message>
 </context>
 <context>
@@ -1458,138 +1459,138 @@ p, li { white-space: pre-wrap; }
     <name>ChatUserNotify</name>
     <message>
         <source>Private Chat</source>
-        <translation type="unfinished">Özel Sohbet</translation>
+        <translation>Özel Sohbet</translation>
     </message>
 </context>
 <context>
     <name>ChatWidget</name>
     <message>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation>Kapat</translation>
     </message>
     <message>
         <source>Bold</source>
-        <translation type="unfinished"></translation>
+        <translation>Kalın</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation type="unfinished"></translation>
+        <translation>Altı çizgili</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation type="unfinished">Italik</translation>
+        <translation>Italik</translation>
     </message>
     <message>
         <source>Font</source>
-        <translation type="unfinished"></translation>
+        <translation>Yazı</translation>
     </message>
     <message>
         <source>Text Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Metin Rengi</translation>
     </message>
     <message>
         <source>Attach a Picture</source>
-        <translation type="unfinished"></translation>
+        <translation>Resim ekle</translation>
     </message>
     <message>
         <source>Add a File for your Friend</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaş için dosya ekle</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished"></translation>
+        <translation>Gönder</translation>
     </message>
     <message>
         <source>Strike</source>
-        <translation type="unfinished"></translation>
+        <translation>Üstü çizili</translation>
     </message>
     <message>
         <source>Clear Chat History</source>
-        <translation type="unfinished">Chat Sohbeti temizle</translation>
+        <translation>Chat Sohbeti temizle</translation>
     </message>
     <message>
         <source>Disable Emoticons</source>
-        <translation type="unfinished"></translation>
+        <translation>Etkisizleştir Emoticons</translation>
     </message>
     <message>
         <source>Save Chat History</source>
-        <translation type="unfinished"></translation>
+        <translation>Chat Sohbeti kaydet</translation>
     </message>
     <message>
         <source>Browse Message History</source>
-        <translation type="unfinished"></translation>
+        <translation>Mesaj Geçmişi gözat</translation>
     </message>
     <message>
         <source>Browse History</source>
-        <translation type="unfinished"></translation>
+        <translation>Geçmişi gözat</translation>
     </message>
     <message>
         <source>Delete Chat History</source>
-        <translation type="unfinished"></translation>
+        <translation>Geçmiş Sohbeti sil</translation>
     </message>
     <message>
         <source>Deletes all stored and displayed chat history</source>
-        <translation type="unfinished"></translation>
+        <translation>Tüm depolanan ve görüntülenen geçmiş sohbetleri siler</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished">Yapıştır retroshare Link</translation>
+        <translation>Yapıştır retroshare Link</translation>
     </message>
     <message>
         <source>is typing...</source>
-        <translation type="unfinished">yazıyor ...</translation>
+        <translation>yazıyor...</translation>
     </message>
     <message>
         <source>Do you really want to physically delete the history?</source>
-        <translation type="unfinished"></translation>
+        <translation>Gerçekten emin misiniz fiziksel geçmişi silmek istediğinizden ?</translation>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation type="unfinished">Ekstra Dosya Ekle</translation>
+        <translation>Ekstra Dosya Ekle</translation>
     </message>
     <message>
         <source>Load Picture File</source>
-        <translation type="unfinished"></translation>
+        <translation>Resim Dosyasi yükleyin</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="unfinished">Farklı kaydet...</translation>
+        <translation>Farklı kaydet...</translation>
     </message>
     <message>
         <source>Text File (*.txt );;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Metin Dosyası (* txt.);; Tüm Dosyalar (*)</translation>
     </message>
     <message>
         <source>apears to be Offline.</source>
-        <translation type="unfinished"></translation>
+        <translation>Çevrimdışı görünüyor.</translation>
     </message>
     <message>
         <source>Messages you send will be delivered after Friend is again Online</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaş yine Çevrimiçi olduktan sonra Gönderdiğiniz iletiler teslim edilecektir</translation>
     </message>
     <message>
         <source>is Idle and may not reply</source>
-        <translation type="unfinished"></translation>
+        <translation>Boşta ve cevap vermeyebilir</translation>
     </message>
     <message>
         <source>is Away and may not reply</source>
-        <translation type="unfinished"></translation>
+        <translation>yok ve cevap vermeyebilir</translation>
     </message>
     <message>
         <source>is Busy and may not reply</source>
-        <translation type="unfinished"></translation>
+        <translation>meşgul ve cevap vermeyebilir</translation>
     </message>
     <message>
         <source>Choose font</source>
-        <translation type="unfinished"></translation>
+        <translation>yazı tipi seç</translation>
     </message>
     <message>
         <source>Reset font to default</source>
-        <translation type="unfinished"></translation>
+        <translation>Varsayılan yazı tipi sıfırlayın</translation>
     </message>
     <message>
         <source>Paste own certificate link</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -1679,7 +1680,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Error : cannot get peer details.</source>
-        <translation type="unfinished"></translation>
+        <translation>Hata: peer ayrıntılarını alamadik.</translation>
     </message>
     <message>
         <source>Your key is signed by : </source>
@@ -1711,15 +1712,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Peer has authenticated me as a friend and did sign my GPG key</source>
-        <translation type="unfinished"></translation>
+        <translation>Peer beni arkadaş olarak doğrulamış ve benim GPG anahtarı imza atmis</translation>
     </message>
     <message>
         <source>Peer has not authenticated me as a friend and did not sign my GPG key</source>
-        <translation type="unfinished"></translation>
+        <translation>Peer beni arkadaş olarak doğrulamış ve benim GPG anahtarı işaret vermememiş</translation>
     </message>
     <message>
         <source>Signature Failure</source>
-        <translation type="unfinished"></translation>
+        <translation>İmza Arızası</translation>
     </message>
     <message>
         <source>Maybe password is wrong</source>
@@ -1731,15 +1732,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>None </source>
-        <translation type="unfinished">yok</translation>
+        <translation>Yok</translation>
     </message>
     <message>
         <source>Marginal </source>
-        <translation type="unfinished"></translation>
+        <translation>Marjinal</translation>
     </message>
     <message>
         <source>Full </source>
-        <translation type="unfinished"></translation>
+        <translation>Tam</translation>
     </message>
     <message>
         <source>Deny Friend</source>
@@ -1747,7 +1748,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Sign GPG key</source>
-        <translation type="unfinished"></translation>
+        <translation>GPG anahtarı imzala</translation>
     </message>
     <message>
         <source>Friend Details</source>
@@ -1755,47 +1756,47 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare ID</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Durum</translation>
     </message>
     <message>
         <source>Local Address</source>
-        <translation type="unfinished"></translation>
+        <translation>Yerel Adres</translation>
     </message>
     <message>
         <source>External Address</source>
-        <translation type="unfinished"></translation>
+        <translation>Harici Adres</translation>
     </message>
     <message>
         <source>Dynamic DNS</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Port</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Your trust in this peer is:</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu Peer sizin için güveniniz:</translation>
     </message>
     <message>
         <source>GPG Key</source>
-        <translation type="unfinished"></translation>
+        <translation>GPG anahtarı</translation>
     </message>
     <message>
         <source>Peer has signed my GPG key</source>
-        <translation type="unfinished"></translation>
+        <translation>Peer benim GPG anahtarı imzaladı</translation>
     </message>
     <message>
         <source>Show Help for Trust Settings and Signing</source>
-        <translation type="unfinished"></translation>
+        <translation>Güven Ayarları ve İmza için Yardım Göster </translation>
     </message>
     <message>
         <source>Peer key is signed by :</source>
-        <translation type="unfinished"></translation>
+        <translation>Peer anahtar tarafından imzalanmış :</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -1813,7 +1814,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Sertifika</translation>
     </message>
     <message>
         <source>OK</source>
@@ -1821,20 +1822,21 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Include signatures</source>
-        <translation type="unfinished"></translation>
+        <translation>Imzalar dahil</translation>
     </message>
     <message>
         <source>The supplied key algorithm is not supported by RetroShare
 (Only RSA keys are supported at the moment)</source>
-        <translation type="unfinished"></translation>
+        <translation>Verilen anahtar algoritması RetroShare tarafından desteklenmiyor
+(Sadece RSA anahtarları su anda desteklenir)</translation>
     </message>
     <message>
         <source>Other infos</source>
-        <translation type="unfinished"></translation>
+        <translation>Diger Bilgiler</translation>
     </message>
     <message>
         <source>Use old key format</source>
-        <translation type="unfinished"></translation>
+        <translation>Eski anahtar biçimini kullanın</translation>
     </message>
 </context>
 <context>
@@ -1856,7 +1858,7 @@ p, li { white-space: pre-wrap; }
     <name>ConnectFriendWizard</name>
     <message>
         <source>Certificate Load Failed</source>
-        <translation type="unfinished">sertifika yüklemek başaramamak</translation>
+        <translation>Sertifika yüklemeye başaramadik</translation>
     </message>
     <message>
         <source>Connect Friend Wizard</source>
@@ -1864,19 +1866,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add a new Friend</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni Arkadaş ekle</translation>
     </message>
     <message>
         <source>This wizard will help you to connect to your friend(s) to RetroShare network.&lt;br&gt;These ways are possible to do this:</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu sihirbaz RetroShare ağınıza arkadaş (lar) bağlanmak için yardımcı olacaktır &lt;br&gt; Bu yollardan bunu yapmak mümkündür.:</translation>
     </message>
     <message>
         <source>&amp;Enter the certificate manually</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Sertifikayı el ile girin</translation>
     </message>
     <message>
         <source>&amp;You get a certificate file from your friend</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Siz arkadaştan bir Sertifika dosyasi aldiniz</translation>
     </message>
     <message>
         <source>&amp;Make friend with selected friends of my friends</source>
@@ -1889,71 +1891,72 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>&amp;Send a Invitation by Email 
  (She/He receives a email with instructions howto to download RetroShare)</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;E-posta ile Davet Gönder
+ (O RetroShare indirmek için talimatları e-posta ile alır)</translation>
     </message>
     <message>
         <source>Text certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Metin Sertifika</translation>
     </message>
     <message>
         <source>Use text representation of the PGP certificates.</source>
-        <translation type="unfinished">PGP sertifikaların Metin temsili.</translation>
+        <translation>PGP sertifikaların metin gösterimi kullanın.</translation>
     </message>
     <message>
         <source>The text below is your PGP certificate. You have to provide it to your friend</source>
-        <translation type="unfinished"></translation>
+        <translation>Aşağıdaki metni PGP sertifikasidir. Arkadaşınıza bunu iletmeniz zorundasiniz</translation>
     </message>
     <message>
         <source>Include signatures</source>
-        <translation type="unfinished"></translation>
+        <translation>Imzalar dahil</translation>
     </message>
     <message>
         <source>Copy your Cert to Clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Pano&apos;ya Cert kopyala</translation>
     </message>
     <message>
         <source>Save your Cert into a File</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosya içine Cert kaydet</translation>
     </message>
     <message>
         <source>Run Email program</source>
-        <translation type="unfinished"></translation>
+        <translation>E-posta programını çalıştırın</translation>
     </message>
     <message>
         <source>Please, paste your friends PGP certificate into the box below</source>
-        <translation type="unfinished"></translation>
+        <translation>Lütfen, aşağıdaki kutuya Arkadaşlarınızın PGP Sertifikasini yapıştırın </translation>
     </message>
     <message>
         <source>Certificate files</source>
-        <translation type="unfinished"></translation>
+        <translation>Sertifika dosyaları</translation>
     </message>
     <message>
         <source>Use PGP certificates saved in files.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosyalarda kaydedilen PGP sertifikalar kullanın.</translation>
     </message>
     <message>
         <source>Import friend&apos;s certificate...</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaşının sertifikasini ithal et...</translation>
     </message>
     <message>
         <source>You have to generate a file with your certificate and give it to your friend. Also, you can use a file generated before.</source>
-        <translation type="unfinished"></translation>
+        <translation>Siz sertifika ile bir dosya oluşturmanız gerek ve arkadaşınıza vermek zorundasiniz. Ayrıca, daha önce oluşturulan bir dosyayı kullanabilirsiniz.</translation>
     </message>
     <message>
         <source>Export my certificate...</source>
-        <translation type="unfinished"></translation>
+        <translation>Benim sertifika ihracat et...</translation>
     </message>
     <message>
         <source>Drag and Drop your friends&apos;s certificate in this Window or specify path in the box below</source>
-        <translation type="unfinished"></translation>
+        <translation>Sürükle ve bu Pencerede arkadaşlarınızin sertifikasını bırak veya aşağıdaki kutuya yolunu belirtin</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation type="unfinished">Gözalt</translation>
+        <translation>Gözalt</translation>
     </message>
     <message>
         <source>Friends of friends</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Select now who you want to make friends with.</source>
@@ -1989,27 +1992,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Invite Friends by Email</source>
-        <translation type="unfinished"></translation>
+        <translation>E-posta Yoluyla Arkadaşlarını Davet</translation>
     </message>
     <message>
         <source>Enter your friends&apos; email addresses (seperate each on with a semicolon)</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaşlarınızın e-posta adreslerini verin (noktalı virgül ile onu ayırınız)</translation>
     </message>
     <message>
         <source>Your friends&apos; email addresses:</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaşlarınızın e-posta adresleri:</translation>
     </message>
     <message>
         <source>Enter Friends Email addresses</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaşınızın e-posta adreslerini verin</translation>
     </message>
     <message>
         <source>Subject:</source>
-        <translation type="unfinished">Konu:</translation>
+        <translation>Konu:</translation>
     </message>
     <message>
         <source>Sorry, some error appeared</source>
-        <translation type="unfinished"></translation>
+        <translation>Maalesef, bazı hata ortaya çıktı</translation>
     </message>
     <message>
         <source>Here is the error message:</source>
@@ -2017,55 +2020,55 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Make Friend</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaş Yap</translation>
     </message>
     <message>
         <source>Details about your friend:</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaşınız hakkında bilgi:</translation>
     </message>
     <message>
         <source>Peer details</source>
-        <translation type="unfinished"></translation>
+        <translation>Peer Detayları</translation>
     </message>
     <message>
         <source>Key validity:</source>
-        <translation type="unfinished"></translation>
+        <translation>Anahtar geçerliliği:</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished">Isim:</translation>
+        <translation>Isim:</translation>
     </message>
     <message>
         <source>Email:</source>
-        <translation type="unfinished"></translation>
+        <translation>E-Posta:</translation>
     </message>
     <message>
         <source>Location:</source>
-        <translation type="unfinished"></translation>
+        <translation>Yer:</translation>
     </message>
     <message>
         <source>Signers</source>
-        <translation type="unfinished"></translation>
+        <translation>Imzalayanlar</translation>
     </message>
     <message>
         <source>It seems your friend is already registered. Adding it might just set it&apos;s ip address.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu arkadaşın zaten kayıtlı görünüyor. Eklem ebu sadece ip adresi ayarlayabilirsiniz.</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished">Seçenekler</translation>
+        <translation>Seçenekler</translation>
     </message>
     <message>
         <source>Add friend to group:</source>
-        <translation type="unfinished"></translation>
+        <translation>Gruba arkadaş ekle:</translation>
     </message>
     <message>
         <source>Authenticate friend (Sign GPG Key)</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaşınız doğruluğunu kanıtla (Sign GPG Key)</translation>
     </message>
     <message>
         <source>Add as friend to connect with</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaşınızla bağlantı olarak ekle</translation>
     </message>
     <message>
         <source>Any peer I&apos;ve not signed</source>
@@ -2081,11 +2084,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Peer name</source>
-        <translation type="unfinished"></translation>
+        <translation>Peer isim</translation>
     </message>
     <message>
         <source>Also signed by</source>
-        <translation type="unfinished"></translation>
+        <translation>Ayrıca tarafından imzalanmış</translation>
     </message>
     <message>
         <source>Peer id</source>
@@ -2093,27 +2096,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare Invitation</source>
-        <translation type="unfinished"></translation>
+        <translation>RetroShare Davet</translation>
     </message>
     <message>
         <source>Ultimate</source>
-        <translation type="unfinished"></translation>
+        <translation>Nihai</translation>
     </message>
     <message>
         <source>Full</source>
-        <translation type="unfinished"></translation>
+        <translation>Tam</translation>
     </message>
     <message>
         <source>Marginal</source>
-        <translation type="unfinished"></translation>
+        <translation>Marjinal</translation>
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Yok</translation>
     </message>
     <message>
         <source>No Trust</source>
-        <translation type="unfinished"></translation>
+        <translation>Güven Yok</translation>
     </message>
     <message>
         <source>Certificate Load Failed:can&apos;t read from file %1 </source>
@@ -2137,7 +2140,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare Invite</source>
-        <translation type="unfinished"></translation>
+        <translation>RetroShare Davet</translation>
     </message>
     <message>
         <source>No or misspelled BEGIN tag found</source>
@@ -2165,19 +2168,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Your Cert is copied to Clipboard, paste and send it to your riend via email or some other way</source>
-        <translation type="unfinished"></translation>
+        <translation>Sizin Cert panoya kopyalandı, yapıştırın ve e-posta veya başka bir yolla yoluyla arkadaşınıza gönderiniz</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="unfinished">Farklı kaydet...</translation>
+        <translation>Farklı kaydet...</translation>
     </message>
     <message>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>RetroShare Belgesi (* rsc.);; Tüm Dosyalar (*)</translation>
     </message>
     <message>
         <source>Select Certificate</source>
-        <translation type="unfinished">Select Certificate</translation>
+        <translation>Sertifika seç</translation>
     </message>
     <message>
         <source>Sorry, create certificate failed</source>
@@ -2185,15 +2188,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please choose a filename</source>
-        <translation type="unfinished"></translation>
+        <translation>Bir dosya adı seçiniz</translation>
     </message>
     <message>
         <source>Certificate file successfully created</source>
-        <translation type="unfinished">Sertifika dosyası başarıyla oluşturuldu</translation>
+        <translation>Sertifika dosyası başarıyla oluşturuldu</translation>
     </message>
     <message>
         <source>Sorry, certificate file creation failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Üzgünüm, sertifika dosyası oluşturması başarısız oldu</translation>
     </message>
     <message>
         <source>*** None ***</source>
@@ -2201,11 +2204,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Friend request</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaşlık İsteği</translation>
     </message>
     <message>
         <source>Details about the request</source>
-        <translation type="unfinished"></translation>
+        <translation>Istek hakkında Detaylar</translation>
     </message>
     <message>
         <source>Cannot get peer details of gpg key %1</source>
@@ -2213,15 +2216,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>You have a friend request from</source>
-        <translation type="unfinished"></translation>
+        <translation>Bir arkadaşlık isteği var</translation>
     </message>
     <message>
         <source>Use new certificate format (safer, more robust)</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni sertifika biçimini kullanın (güvenli, daha sağlam)</translation>
     </message>
     <message>
         <source>Use old (backward compatible) certificate format</source>
-        <translation type="unfinished"></translation>
+        <translation>Eski (geriye dönük uyumlu) sertifika biçimini kullanın</translation>
     </message>
 </context>
 <context>
@@ -2347,7 +2350,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Print Preview...</source>
-        <translation type="unfinished">&amp;Yazdırma önizleme</translation>
+        <translation>Yazdırma önizleme...</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -2571,31 +2574,31 @@ Do you want to save your changes?</source>
     <name>CreateChannel</name>
     <message>
         <source>Create a new Channel</source>
-        <translation type="unfinished">Yeni bir kanal oluştur</translation>
+        <translation>Yeni bir kanal oluştur</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished">Açıklamalar</translation>
+        <translation>Açıklamalar</translation>
     </message>
     <message>
         <source>Type:</source>
-        <translation type="unfinished">Tip:</translation>
+        <translation>Tip:</translation>
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation type="unfinished">Izin Mesajlar</translation>
+        <translation>Izin Mesajlar</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation type="unfinished">Anonim Mesajlar</translation>
+        <translation>Anonim Mesajlar</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation type="unfinished">Doğrulanmış Mesajlar</translation>
+        <translation>Doğrulanmış Mesajlar</translation>
     </message>
     <message>
         <source>Create</source>
-        <translation type="unfinished">Oluştur</translation>
+        <translation>Oluştur</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -2603,7 +2606,7 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Isim</translation>
     </message>
     <message>
         <source>check peers you would like to share private publish key with</source>
@@ -2611,19 +2614,19 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Share Key With</source>
-        <translation type="unfinished"></translation>
+        <translation>Anahtari Paylaş</translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation type="unfinished"></translation>
+        <translation>Kısıtlı - Herkes okuyabilir, sınırlı yayınlama (Özel Yayınla Key)</translation>
     </message>
     <message>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation type="unfinished"></translation>
+        <translation>Özel - (Mesajlari görüntülemek içini özel Yayınla Anahtarı  gerekli)</translation>
     </message>
     <message>
         <source>Key Sharing</source>
-        <translation type="unfinished"></translation>
+        <translation>Anahtar Paylaşımı</translation>
     </message>
     <message>
         <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
@@ -2631,66 +2634,66 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Share Private Publish Key</source>
-        <translation type="unfinished"></translation>
+        <translation>Özel Yayın Anahtarı paylaş</translation>
     </message>
     <message>
         <source>Channel Logo</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanal Logosu</translation>
     </message>
     <message>
         <source>Add Channel Logo</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanal logosunu ekle</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Iptal</translation>
     </message>
     <message>
         <source>Contacts:</source>
-        <translation type="unfinished">Rehber:</translation>
+        <translation>Rehber:</translation>
     </message>
     <message>
         <source>Please add a Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Ad ekleyin</translation>
     </message>
     <message>
         <source>Load channel logo</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanal logosu yükle</translation>
     </message>
     <message>
         <source>New Channel</source>
-        <translation type="unfinished">Yeni Kanal</translation>
+        <translation>Yeni Kanal</translation>
     </message>
 </context>
 <context>
     <name>CreateChannelMsg</name>
     <message>
         <source>Message</source>
-        <translation type="unfinished">Mesaj</translation>
+        <translation>Mesaj</translation>
     </message>
     <message>
         <source>Attachments</source>
-        <translation type="unfinished">Ek</translation>
+        <translation>Ek</translation>
     </message>
     <message>
         <source>File not found or file name not accepted.</source>
-        <translation type="unfinished">Dosya bulunamadı veya isim kabul edilmedi .</translation>
+        <translation>Dosya bulunamadı veya isim kabul edilmedi .</translation>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation type="unfinished">Ekstra Dosya Ekle</translation>
+        <translation>Ekstra Dosya Ekle</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished">Retroshare</translation>
+        <translation>Retroshare</translation>
     </message>
     <message>
         <source>New Channel Post</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni Kanal Mesaj</translation>
     </message>
     <message>
         <source>Channel Post</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanal Mesaj</translation>
     </message>
     <message>
         <source>Channel Post to:</source>
@@ -2709,15 +2712,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add File to Attach</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosya Ekle</translation>
     </message>
     <message>
         <source>Add Channel Thumbnail</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanal Thumbnail ekle</translation>
     </message>
     <message>
         <source>Subject :</source>
-        <translation type="unfinished"></translation>
+        <translation>Konu:</translation>
     </message>
     <message>
         <source>Allow channels to get frame for message thumbnail from movie media attachments or not</source>
@@ -2725,7 +2728,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Auto Thumbnail</source>
-        <translation type="unfinished"></translation>
+        <translation>Otomatik Resim</translation>
     </message>
     <message>
         <source>Drag and Drop Files from Search Results</source>
@@ -2733,11 +2736,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Paste RetroShare Links</source>
-        <translation type="unfinished"></translation>
+        <translation>Yapıştır retroshare Link</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished">Yapıştır retroshare Link</translation>
+        <translation>Yapıştır retroshare Link</translation>
     </message>
     <message>
         <source>Channel security policy prevents you from posting files that you don&apos;t have. If you have these files, you need to share them before, or attach them explicitly:</source>
@@ -2745,11 +2748,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>You can only post files that you do have</source>
-        <translation type="unfinished"></translation>
+        <translation>Yalnızca var dosyaları gönderebilir</translation>
     </message>
     <message>
         <source>Drop file error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosya hatası.</translation>
     </message>
     <message>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
@@ -2761,7 +2764,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please add a Subject</source>
-        <translation type="unfinished"></translation>
+        <translation>Bir Konu Ekle</translation>
     </message>
     <message>
         <source>Load thumbnail picture</source>
@@ -2772,15 +2775,15 @@ p, li { white-space: pre-wrap; }
     <name>CreateForum</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Isim</translation>
+        <translation>Isim</translation>
     </message>
     <message>
         <source>Type:</source>
-        <translation type="unfinished">Tip:</translation>
+        <translation>Tip:</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Iptal</translation>
+        <translation>Iptal</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -2788,7 +2791,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Create new Forum</source>
-        <translation type="unfinished">Yeni Forum yarat</translation>
+        <translation>Yeni Forum oluştur</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -2804,23 +2807,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished">Açıklamalar</translation>
+        <translation>Açıklamalar</translation>
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation type="unfinished">Izin Mesajlar</translation>
+        <translation>Izin Mesajlar</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation type="unfinished">Doğrulanmış Mesajlar</translation>
+        <translation>Doğrulanmış Mesajlar</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation type="unfinished">Anonim Mesajlar</translation>
+        <translation>Anonim Mesajlar</translation>
     </message>
     <message>
         <source>Create</source>
-        <translation type="unfinished">Oluştur</translation>
+        <translation>Oluştur</translation>
     </message>
     <message>
         <source>check peers you would like to share private publish key with</source>
@@ -2828,23 +2831,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Share Key With</source>
-        <translation type="unfinished"></translation>
+        <translation>Anahtari Paylaş</translation>
     </message>
     <message>
         <source>Public - Anyone can read and publish (Shared Publish Key)</source>
-        <translation type="unfinished"></translation>
+        <translation>Genel - Herkes okuyabilir ve yayınlayabilirsiniz (Shared Yayınla Key) </translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation type="unfinished"></translation>
+        <translation>Kısıtlı - Herkes okuyabilir, sınırlı yayınlama (Özel Yayınla Key)</translation>
     </message>
     <message>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation type="unfinished"></translation>
+        <translation>Özel - (Mesajlari görüntülemek içini özel Yayınla Anahtarı gerekli)</translation>
     </message>
     <message>
         <source>Key Sharing</source>
-        <translation type="unfinished"></translation>
+        <translation>Anahtar Paylaşımı</translation>
     </message>
     <message>
         <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
@@ -2852,26 +2855,26 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Share Private Publish Key</source>
-        <translation type="unfinished"></translation>
+        <translation>Özel Yayın Anahtarı paylaş</translation>
     </message>
     <message>
         <source>Contacts:</source>
-        <translation type="unfinished">Rehber:</translation>
+        <translation>Rehber:</translation>
     </message>
     <message>
         <source>Please add a Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Ad ekleyin</translation>
     </message>
     <message>
         <source>New Forum</source>
-        <translation type="unfinished">Yeni Forum</translation>
+        <translation>Yeni Forum</translation>
     </message>
 </context>
 <context>
     <name>CreateForumMsg</name>
     <message>
         <source>Close</source>
-        <translation type="unfinished">Kapat</translation>
+        <translation>Kapat</translation>
     </message>
     <message>
         <source>Forum Post Subject</source>
@@ -2879,7 +2882,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Attach File</source>
-        <translation type="unfinished">Dosya ekle</translation>
+        <translation>Dosya ekle</translation>
     </message>
     <message>
         <source>Paste retroshare link</source>
@@ -2887,7 +2890,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subject</source>
-        <translation type="unfinished">Konu</translation>
+        <translation>Konu</translation>
     </message>
     <message>
         <source>Paste retroshare Link</source>
@@ -2895,11 +2898,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished">Retroshare</translation>
+        <translation>Retroshare</translation>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation type="unfinished">Ekstra Dosya Ekle</translation>
+        <translation>Ekstra Dosya Ekle</translation>
     </message>
     <message>
         <source>File not found or file name not accepted.</source>
@@ -2907,19 +2910,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Post Forum Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Forum Mesaj Gönder</translation>
     </message>
     <message>
         <source>Forum</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Sign Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Mesaj imzala</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished">Yapıştır retroshare Link</translation>
+        <translation>Yapıştır retroshare Link</translation>
     </message>
     <message>
         <source>Forum Post</source>
@@ -2927,23 +2930,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Attach files via drag and drop</source>
-        <translation type="unfinished"></translation>
+        <translation>Sürükle Bırak Ile dosya ekle</translation>
     </message>
     <message>
         <source>You can attach files via drag and drop here in this window</source>
-        <translation type="unfinished"></translation>
+        <translation>Sürükle yoluyla dosya ekleyebilirsiniz ve bu pencerede bırakabilirsiniz</translation>
     </message>
     <message>
         <source>Post Forum Msg</source>
-        <translation type="unfinished"></translation>
+        <translation>Forum Mesaj Gönder</translation>
     </message>
     <message>
         <source>Paste full RetroShare Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Tam RetroShare Linkı Yapıştır</translation>
     </message>
     <message>
         <source>In Reply to</source>
-        <translation type="unfinished"></translation>
+        <translation>Cevap olarak</translation>
     </message>
     <message>
         <source>Please set a Forum Subject and Forum Message</source>
@@ -2951,7 +2954,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Paste own certificate link</source>
-        <translation type="unfinished"></translation>
+        <translation>Kendi sertifikasının linki yapıştırın</translation>
     </message>
 </context>
 <context>
@@ -3124,19 +3127,19 @@ p, li { white-space: pre-wrap; }
     <name>CreateGroup</name>
     <message>
         <source>Edit Group</source>
-        <translation type="unfinished">Grubu düzenle</translation>
+        <translation>Grubu düzenle</translation>
     </message>
     <message>
         <source>Create a Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Grup oluştur</translation>
     </message>
     <message>
         <source>Group Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Grup ismi</translation>
     </message>
     <message>
         <source>Enter a name for your group</source>
-        <translation type="unfinished"></translation>
+        <translation>Grup için bir isim verin</translation>
     </message>
 </context>
 <context>
@@ -3211,105 +3214,105 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Lobby topic:</source>
-        <translation type="unfinished"></translation>
+        <translation>Lobi konu:</translation>
     </message>
     <message>
         <source>A chat lobby is a decentralized and anonymous chat group. All participants receive all messages. Once the lobby is created you can invite other friends from the Friends tab.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bir sohbet lobisinde bir decentralized ve anonim sohbet grubudur. Tüm katılımcılar, tüm iletileri alabilirsiniz.Lobi oluşturulduktan sonra Arkadaşlar sekmesinden diğer arkadaşlarınızı davet edebilirsiniz.</translation>
     </message>
 </context>
 <context>
     <name>CryptoPage</name>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished">Retroshare</translation>
+        <translation>Retroshare</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="unfinished">Farklı kaydet...</translation>
+        <translation>Farklı kaydet...</translation>
     </message>
     <message>
         <source>Public Key</source>
-        <translation type="unfinished"></translation>
+        <translation>Açık Anahtar</translation>
     </message>
     <message>
         <source>Copy Key</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopyala Anahtarı</translation>
     </message>
     <message>
         <source>Save Key</source>
-        <translation type="unfinished"></translation>
+        <translation>Kaydet Anahtarı</translation>
     </message>
     <message>
         <source>Include signatures</source>
-        <translation type="unfinished"></translation>
+        <translation>Imzalar dahil</translation>
     </message>
     <message>
         <source>Copy RetroShare link to clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Pano&apos;ya RetroShare link kopyala</translation>
     </message>
     <message>
         <source>A RetroShare link with your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation type="unfinished"></translation>
+        <translation>Sizin Açık Anahtar RetroShare linki ile panoya kopyalandı, yapıştır ve e-posta veya başka bir yolla aracılığıyla arkadaşınıza gönderin</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Hata</translation>
     </message>
     <message>
         <source>Your certificate could not be parsed correctly. Please contact the developpers.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sertifikanız doğru ayrıştırılamadı.Geliştiricilerin irtibata geçiniz.</translation>
     </message>
     <message>
         <source>Your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation type="unfinished"></translation>
+        <translation>Sizin Açık Anahtar panoya kopyalandı, yapıştırın ve e-posta veya başka bir yolla yoluyla arkadaşınıza gönderiniz</translation>
     </message>
     <message>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>RetroShare Belgesi (* rsc.);; Tüm Dosyalar (*)</translation>
     </message>
     <message>
         <source>Security</source>
-        <translation type="unfinished">Güvenlik</translation>
+        <translation>Güvenlik</translation>
     </message>
     <message>
         <source>Copy my Key to Clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Benim Anahtarı Pano&apos;ya kopyala</translation>
     </message>
     <message>
         <source>Save Key into a file</source>
-        <translation type="unfinished"></translation>
+        <translation>Anahtarı Dosya içine kaydet</translation>
     </message>
     <message>
         <source>Use old key format</source>
-        <translation type="unfinished"></translation>
+        <translation>Eski anahtar biçimini kullanın</translation>
     </message>
 </context>
 <context>
     <name>DHTStatus</name>
     <message>
         <source>DHT</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>DHT Off</source>
-        <translation type="unfinished"></translation>
+        <translation>DHT kapalı</translation>
     </message>
     <message>
         <source>DHT Searching for RetroShare Peers</source>
-        <translation type="unfinished"></translation>
+        <translation>RetroShare Akranlar için DHT Arama</translation>
     </message>
     <message>
         <source>RetroShare users in DHT (Total DHT users)</source>
-        <translation type="unfinished"></translation>
+        <translation>DHT RetroShare kullanıcılar (Toplam DHT kullanıcılar)</translation>
     </message>
     <message>
         <source>DHT Good</source>
-        <translation type="unfinished"></translation>
+        <translation>DHT Iyi</translation>
     </message>
     <message>
         <source>DHT Error</source>
-        <translation type="unfinished"></translation>
+        <translation>DHT Hata</translation>
     </message>
 </context>
 <context>
@@ -3419,7 +3422,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hash:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Priority:</source>
@@ -3427,62 +3430,62 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Number of Chunks</source>
-        <translation type="unfinished"></translation>
+        <translation>Chunks sayısı</translation>
     </message>
     <message>
         <source>Chunks:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>retroshare link(s)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Not Rated</source>
-        <translation type="unfinished"></translation>
+        <translation>Oylanmadı</translation>
     </message>
     <message>
         <source>No Comments</source>
-        <translation type="unfinished"></translation>
+        <translation>Yorum Yok</translation>
     </message>
 </context>
 <context>
     <name>DhtWindow</name>
     <message>
         <source>DHT Details</source>
-        <translation type="unfinished"></translation>
+        <translation>DHT Detayları</translation>
     </message>
     <message>
         <source>Peer Details</source>
-        <translation type="unfinished">Peer ayrıntılar</translation>
+        <translation>Peer Detayları</translation>
     </message>
     <message>
         <source>Net Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Ağ Durumu</translation>
     </message>
     <message>
         <source>Connect Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Bağlan seçenekleri</translation>
     </message>
     <message>
         <source>Network Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Ağ Modu</translation>
     </message>
     <message>
         <source>Nat Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Nat Tipi</translation>
     </message>
     <message>
         <source>Nat Hole</source>
-        <translation type="unfinished"></translation>
+        <translation>Nat deliği</translation>
     </message>
     <message>
         <source>Peer Address</source>
-        <translation type="unfinished"></translation>
+        <translation>Peer Adres</translation>
     </message>
     <message>
         <source>Extra Label</source>
-        <translation type="unfinished"></translation>
+        <translation>Ekstra Etiket</translation>
     </message>
     <message>
         <source>TextLabel</source>
@@ -3494,7 +3497,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>PeerId</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>DHT Status</source>
@@ -3502,23 +3505,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>ConnectLogic</source>
-        <translation type="unfinished"></translation>
+        <translation>Bağlan Mantık</translation>
     </message>
     <message>
         <source>Connect Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Bağlantı Durumu</translation>
     </message>
     <message>
         <source>Connect Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Bağlantı Modu</translation>
     </message>
     <message>
         <source>Request Status</source>
-        <translation type="unfinished"></translation>
+        <translation>İstek Durumu</translation>
     </message>
     <message>
         <source>Cb Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Cb Durumu</translation>
     </message>
     <message>
         <source>RsId</source>
@@ -3534,31 +3537,31 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Key</source>
-        <translation type="unfinished"></translation>
+        <translation>Anahtar</translation>
     </message>
     <message>
         <source>Status Flags</source>
-        <translation type="unfinished"></translation>
+        <translation>İşaretle Durumu</translation>
     </message>
     <message>
         <source>Found</source>
-        <translation type="unfinished"></translation>
+        <translation>bulundu</translation>
     </message>
     <message>
         <source>Last Sent</source>
-        <translation type="unfinished"></translation>
+        <translation>Son Gönderildi</translation>
     </message>
     <message>
         <source>Last Recv</source>
-        <translation type="unfinished"></translation>
+        <translation>Son Alınan</translation>
     </message>
     <message>
         <source>Relay Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Röle Modu</translation>
     </message>
     <message>
         <source>Source</source>
-        <translation type="unfinished">Kaynak</translation>
+        <translation>Kaynak</translation>
     </message>
     <message>
         <source>Proxy</source>
@@ -3566,7 +3569,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Destination</source>
-        <translation type="unfinished"></translation>
+        <translation>Hedef</translation>
     </message>
     <message>
         <source>Class</source>
@@ -3574,18 +3577,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Age</source>
-        <translation type="unfinished">Yaş </translation>
+        <translation>Yaş</translation>
     </message>
     <message>
         <source>Bandwidth</source>
-        <translation type="unfinished"></translation>
+        <translation>Bant Genişliği</translation>
     </message>
 </context>
 <context>
     <name>DirectoriesPage</name>
     <message>
         <source>Incoming Directory</source>
-        <translation type="unfinished">Gelen Dizin</translation>
+        <translation>Gelen Dizin</translation>
     </message>
     <message>
         <source>Partials Direcrtory</source>
@@ -3593,7 +3596,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Shared Directories</source>
-        <translation type="unfinished">Paylaşılan Dizinler</translation>
+        <translation>Paylaşılan Dizinler</translation>
     </message>
     <message>
         <source>Automatically share incoming directory (Recommanded)</source>
@@ -3601,7 +3604,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edit Share</source>
-        <translation type="unfinished">Değiştir Paylaş</translation>
+        <translation>Değiştir Paylaş</translation>
     </message>
     <message>
         <source>Incoming files</source>
@@ -3617,7 +3620,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Browse</source>
-        <translation type="unfinished">Gözalt</translation>
+        <translation>Gözalt</translation>
     </message>
     <message>
         <source>Add Shared Directory</source>
@@ -3625,19 +3628,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Set Incoming Directory</source>
-        <translation type="unfinished">Gelen Dizin</translation>
+        <translation>Gelen Dizini belirle</translation>
     </message>
     <message>
         <source>Set Partials Directory</source>
-        <translation type="unfinished">Geçici Dizin</translation>
+        <translation>Geçici Dizini belirle</translation>
     </message>
     <message>
         <source>Partials Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Partials Dizini</translation>
     </message>
     <message>
         <source>Automatically share incoming directory (Recommended)</source>
-        <translation type="unfinished"></translation>
+        <translation>Otomatik olarak Paylaş gelen dizini (Tavsiye)</translation>
     </message>
     <message>
         <source>Remember file hashes even if not shared. 
@@ -3648,96 +3651,96 @@ you plug it in.</source>
     </message>
     <message>
         <source>Remember hashed files for </source>
-        <translation type="unfinished"></translation>
+        <translation>hashed dosyaları hatırla</translation>
     </message>
     <message>
         <source> days</source>
-        <translation type="unfinished"></translation>
+        <translation> günler</translation>
     </message>
     <message>
         <source>Forget any hashed file that is not anymore shared.</source>
-        <translation type="unfinished"></translation>
+        <translation>Artık paylaşılmaz herhangi hashed dosyayı unutun.</translation>
     </message>
     <message>
         <source>Clean Hash Cache</source>
-        <translation type="unfinished"></translation>
+        <translation>Temilezle Hash Önbellek</translation>
     </message>
     <message>
         <source>Auto-check shared directories every </source>
-        <translation type="unfinished"></translation>
+        <translation>Her paylaşılan dizinleri Oto-kontrol</translation>
     </message>
     <message>
         <source> minute(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>dakika (lar)</translation>
     </message>
     <message>
         <source>Directories</source>
-        <translation type="unfinished">Dizinler</translation>
+        <translation>Dizinler</translation>
     </message>
     <message>
         <source>Cache cleaning confirmation</source>
-        <translation type="unfinished"></translation>
+        <translation>Önbellek temizleme onayı</translation>
     </message>
     <message>
         <source>This will forget any former hash of non shared files. Do you confirm ?</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu olmayan paylaşılan dosyaları herhangi bir eski karma unutacak. Siz onayliyor musunuz?</translation>
     </message>
 </context>
 <context>
     <name>DiscStatus</name>
     <message>
         <source>Waiting outgoing discovery operations</source>
-        <translation type="unfinished"></translation>
+        <translation>Giden keşif operasyonları bekliyorum</translation>
     </message>
     <message>
         <source>Waiting incoming discovery operations</source>
-        <translation type="unfinished"></translation>
+        <translation>Gelen keşif operasyonları bekliyorum</translation>
     </message>
 </context>
 <context>
     <name>DownloadToaster</name>
     <message>
         <source>Start file</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosyayı başlatın</translation>
     </message>
 </context>
 <context>
     <name>EditChanDetails</name>
     <message>
         <source>Edit Channel Details</source>
-        <translation type="unfinished">Kanal Detayları düzenle</translation>
+        <translation>Kanal Detayları düzenle</translation>
     </message>
     <message>
         <source>Channel Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanal Detaylari</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Iptal</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamam</translation>
     </message>
     <message>
         <source>Channel Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanal bilgisi</translation>
     </message>
     <message>
         <source>Channel Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanal Ismi</translation>
     </message>
     <message>
         <source>Channel Description</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanal Açıklama</translation>
     </message>
     <message>
         <source>Add Channel Logo</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanal logosunu ekle</translation>
     </message>
     <message>
         <source>Load channel logo</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanal logosu yükle</translation>
     </message>
 </context>
 <context>
@@ -3768,38 +3771,38 @@ you plug it in.</source>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamam</translation>
     </message>
 </context>
 <context>
     <name>EditForumV2Details</name>
     <message>
         <source>Forum Details</source>
-        <translation type="unfinished">Forum Detayları</translation>
+        <translation>Forum Detayları</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Iptal</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamam</translation>
     </message>
     <message>
         <source>Edit Forum Details</source>
-        <translation type="unfinished">Forum Detayları düzenle</translation>
+        <translation>Forum Detayları düzenle</translation>
     </message>
     <message>
         <source>Forum Info</source>
-        <translation type="unfinished">Forum Bilgileri</translation>
+        <translation>Forum Bilgileri</translation>
     </message>
     <message>
         <source>Forum Name</source>
-        <translation type="unfinished">Forum İsmi</translation>
+        <translation>Forum İsmi</translation>
     </message>
     <message>
         <source>Forum Description</source>
-        <translation type="unfinished">Forum Açıklama</translation>
+        <translation>Forum Açıklama</translation>
     </message>
 </context>
 <context>
@@ -3980,11 +3983,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remaining</source>
-        <translation type="unfinished">Kalan</translation>
+        <translation>Kalan</translation>
     </message>
     <message>
         <source>Chunk strategy</source>
-        <translation type="unfinished">Chunk stratejisi</translation>
+        <translation>Chunk stratejisi</translation>
     </message>
     <message>
         <source>Chunk size: </source>
@@ -4008,63 +4011,63 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Chunk map</source>
-        <translation type="unfinished"></translation>
+        <translation>Parça haritası</translation>
     </message>
     <message>
         <source>Active chunks</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktif parçalar</translation>
     </message>
     <message>
         <source>Availability map (%1 active source)</source>
-        <translation type="unfinished"></translation>
+        <translation>Müsaitlik haritası (%1 aktif kaynak)</translation>
     </message>
     <message>
         <source>Availability map (%1 active sources)</source>
-        <translation type="unfinished"></translation>
+        <translation>Müsaitlik haritası (%1 aktif kaynaklar)</translation>
     </message>
     <message>
         <source>File info</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosya bilgi</translation>
     </message>
     <message>
         <source>File hash</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosya hash</translation>
     </message>
     <message>
         <source>File size</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosa Boyutu</translation>
     </message>
     <message>
         <source>bytes</source>
-        <translation type="unfinished"></translation>
+        <translation>bayt</translation>
     </message>
     <message>
         <source>Chunk size</source>
-        <translation type="unfinished"></translation>
+        <translation>Parça boyutu</translation>
     </message>
     <message>
         <source>Number of chunks</source>
-        <translation type="unfinished"></translation>
+        <translation>Parça sayısı</translation>
     </message>
     <message>
         <source>Transfered</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktarılan</translation>
     </message>
     <message>
         <source>Number of sources</source>
-        <translation type="unfinished"></translation>
+        <translation>Kaynak sayısı</translation>
     </message>
     <message>
         <source>Transfer type</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktarım türü</translation>
     </message>
     <message>
         <source>Anonymous F2F</source>
-        <translation type="unfinished"></translation>
+        <translation>Anonim F2F</translation>
     </message>
     <message>
         <source>Direct friend transfer / Availability assumed</source>
-        <translation type="unfinished"></translation>
+        <translation>Doğrudan arkadaşına transferi / Müsaitlik varsayılır</translation>
     </message>
 </context>
 <context>
@@ -4091,7 +4094,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>CD/DVD-Image</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Document</source>
@@ -4099,7 +4102,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare collection file</source>
-        <translation type="unfinished"></translation>
+        <translation>RetroShare toplama dosyası</translation>
     </message>
     <message>
         <source>Subtitles</source>
@@ -4107,97 +4110,97 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Nintendo DS Rom</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>FlatStyle_RDM</name>
     <message>
         <source>Friends Directories</source>
-        <translation type="unfinished">Arkadaş Dizinleri</translation>
+        <translation>Arkadaş Dizinleri</translation>
     </message>
     <message>
         <source>My Directories</source>
-        <translation type="unfinished">Dosyalarım</translation>
+        <translation>Dosyalarım</translation>
     </message>
     <message>
         <source>Age</source>
-        <translation type="unfinished">Yaş </translation>
+        <translation>Yaş</translation>
     </message>
     <message>
         <source>Friend</source>
-        <translation type="unfinished">Arkadaş</translation>
+        <translation>Arkadaş</translation>
     </message>
     <message>
         <source>Share Type</source>
-        <translation type="unfinished">Paylaş Tipi</translation>
+        <translation>Paylaş Tipi</translation>
     </message>
     <message>
         <source>Directory</source>
-        <translation type="unfinished">Klasör</translation>
+        <translation>Klasör</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Boyut</translation>
     </message>
 </context>
 <context>
     <name>ForumDetails</name>
     <message>
         <source>Forum Details</source>
-        <translation type="unfinished">Forum Detayları</translation>
+        <translation>Forum Detayları</translation>
     </message>
     <message>
         <source>Forum Info</source>
-        <translation type="unfinished">Forum Bilgileri</translation>
+        <translation>Forum Bilgileri</translation>
     </message>
     <message>
         <source>Forum Name</source>
-        <translation type="unfinished">Forum İsmi</translation>
+        <translation>Forum İsmi</translation>
     </message>
     <message>
         <source>Popularity</source>
-        <translation type="unfinished">Popülerlik:</translation>
+        <translation>Popülerlik</translation>
     </message>
     <message>
         <source>Last Post</source>
-        <translation type="unfinished">Son Mesaj</translation>
+        <translation>Son Mesaj</translation>
     </message>
     <message>
         <source>Forum Description</source>
-        <translation type="unfinished">Forum Açıklama</translation>
+        <translation>Forum Açıklama</translation>
     </message>
     <message>
         <source>Security</source>
-        <translation type="unfinished">Güvenlik</translation>
+        <translation>Güvenlik</translation>
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation type="unfinished">Izin Mesajlar</translation>
+        <translation>Izin Mesajlar</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation type="unfinished">Doğrulanmış Mesajlar</translation>
+        <translation>Doğrulanmış Mesajlar</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation type="unfinished">Anonim Mesajlar</translation>
+        <translation>Anonim Mesajlar</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Iptal</translation>
+        <translation>Iptal</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished">Tamam</translation>
+        <translation>Tamam</translation>
     </message>
     <message>
         <source>Apply and Close</source>
-        <translation type="unfinished">Kapat</translation>
+        <translation>Kapat</translation>
     </message>
     <message>
         <source>Forum ID</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -4208,102 +4211,101 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished">Genişlet</translation>
+        <translation>Genişlet</translation>
     </message>
     <message>
         <source>Reply</source>
-        <translation type="unfinished">Yanıtla</translation>
+        <translation>Yanıtla</translation>
     </message>
     <message>
         <source>Signed</source>
-        <translation type="unfinished">imzalı
-</translation>
+        <translation>imzalı</translation>
     </message>
     <message>
         <source>Anonymous</source>
-        <translation type="unfinished">Anonim</translation>
+        <translation>Anonim</translation>
     </message>
     <message>
         <source>Subject: </source>
-        <translation type="unfinished"></translation>
+        <translation>Konu:</translation>
     </message>
     <message>
         <source>Unsubscribe To Forum</source>
-        <translation type="unfinished"></translation>
+        <translation>Forumdann Iptal Ol</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Kaldir</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished"></translation>
+        <translation>Gönder</translation>
     </message>
     <message>
         <source>Forum Post</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Unknown Forum Post</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilinmeyen Forum Post</translation>
     </message>
     <message>
         <source>In Reply to</source>
-        <translation type="unfinished"></translation>
+        <translation>Cevap olarak</translation>
     </message>
     <message>
         <source>Please give a Text Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Metin Mesajı veriniz</translation>
     </message>
     <message>
         <source>Set as read and remove item</source>
-        <translation type="unfinished"></translation>
+        <translation>Okumuş Olarak İşaretle ve Kaldır</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"></translation>
+        <translation>Gizle</translation>
     </message>
 </context>
 <context>
     <name>ForumNewItem</name>
     <message>
         <source>Subscribe to Forum</source>
-        <translation type="unfinished">Foruma abone ol</translation>
+        <translation>Foruma abone ol</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished">Genişlet</translation>
+        <translation>Genişlet</translation>
     </message>
     <message>
         <source>Forum Description</source>
-        <translation type="unfinished">Forum Açıklama</translation>
+        <translation>Forum Açıklama</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Kaldir</translation>
     </message>
     <message>
         <source>Unknown Forum</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilinmeyen Forum</translation>
     </message>
     <message>
         <source>New Forum</source>
-        <translation type="unfinished">Yeni Forum</translation>
+        <translation>Yeni Forum</translation>
     </message>
     <message>
         <source>Updated Forum</source>
-        <translation type="unfinished"></translation>
+        <translation>Forum Güncellenmiş</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"></translation>
+        <translation>Gizle</translation>
     </message>
 </context>
 <context>
     <name>ForumPage</name>
     <message>
         <source>Misc</source>
-        <translation type="unfinished">Misc</translation>
+        <translation>Misc</translation>
     </message>
     <message>
         <source>Set message to read on activate</source>
@@ -4311,116 +4313,116 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Expand new messages</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni mesajları aç</translation>
     </message>
     <message>
         <source>Forum</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>ForumUserNotify</name>
     <message>
         <source>Forum Post</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>ForumV2Details</name>
     <message>
         <source>Forum Details</source>
-        <translation type="unfinished">Forum Detayları</translation>
+        <translation>Forum Detayları</translation>
     </message>
     <message>
         <source>Forum Info</source>
-        <translation type="unfinished">Forum Bilgileri</translation>
+        <translation>Forum Bilgileri</translation>
     </message>
     <message>
         <source>Forum Name</source>
-        <translation type="unfinished">Forum İsmi</translation>
+        <translation>Forum İsmi</translation>
     </message>
     <message>
         <source>Popularity</source>
-        <translation type="unfinished"></translation>
+        <translation>Popülerlik</translation>
     </message>
     <message>
         <source>Last Post</source>
-        <translation type="unfinished">Son Mesaj</translation>
+        <translation>Son Mesaj</translation>
     </message>
     <message>
         <source>Forum ID</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Forum Description</source>
-        <translation type="unfinished">Forum Açıklama</translation>
+        <translation>Forum Açıklama</translation>
     </message>
     <message>
         <source>Security</source>
-        <translation type="unfinished">Güvenlik</translation>
+        <translation>Güvenlik</translation>
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation type="unfinished">Izin Mesajlar</translation>
+        <translation>Izin Mesajlar</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation type="unfinished">Doğrulanmış Mesajlar</translation>
+        <translation>Doğrulanmış Mesajlar</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation type="unfinished">Anonim Mesajlar</translation>
+        <translation>Anonim Mesajlar</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Iptal</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamam</translation>
     </message>
     <message>
         <source>Apply and Close</source>
-        <translation type="unfinished">Kapat</translation>
+        <translation>Kapat</translation>
     </message>
 </context>
 <context>
     <name>ForumsDialog</name>
     <message>
         <source>Subscribe to Forum</source>
-        <translation type="unfinished">Foruma abone ol</translation>
+        <translation>Foruma abone ol</translation>
     </message>
     <message>
         <source>Unsubscribe to Forum</source>
-        <translation type="unfinished">Foruma iptal ol</translation>
+        <translation>Foruma iptal ol</translation>
     </message>
     <message>
         <source>New Forum</source>
-        <translation type="unfinished">Yeni Forum</translation>
+        <translation>Yeni Forum</translation>
     </message>
     <message>
         <source>Show Forum Details</source>
-        <translation type="unfinished">Forum bilgilerini göster</translation>
+        <translation>Forum bilgilerini göster</translation>
     </message>
     <message>
         <source>Edit Forum Details</source>
-        <translation type="unfinished">Forum Detayları düzenle</translation>
+        <translation>Forum Detayları düzenle</translation>
     </message>
     <message>
         <source>Reply</source>
-        <translation type="unfinished">Yanıtla</translation>
+        <translation>Yanıtla</translation>
     </message>
     <message>
         <source>Reply to Author</source>
-        <translation type="unfinished">Yazarı yanıtla</translation>
+        <translation>Yazara yanıtla</translation>
     </message>
     <message>
         <source>Expand all</source>
-        <translation type="unfinished">Tüm genişletin</translation>
+        <translation>Tümünü genişlet</translation>
     </message>
     <message>
         <source>Collapse all</source>
-        <translation type="unfinished">Tümünü daralt</translation>
+        <translation>Tümünü daralt</translation>
     </message>
     <message>
         <source>Popularity: </source>
@@ -4428,43 +4430,43 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Your Forums</source>
-        <translation type="unfinished">Senin Forumlar</translation>
+        <translation>Senin Forumlar</translation>
     </message>
     <message>
         <source>Subscribed Forums</source>
-        <translation type="unfinished">Abone Forumlar</translation>
+        <translation>Abone Forumlar</translation>
     </message>
     <message>
         <source>Popular Forums</source>
-        <translation type="unfinished">Popüler Forumlar</translation>
+        <translation>Popüler Forumlar</translation>
     </message>
     <message>
         <source>Other Forums</source>
-        <translation type="unfinished">Diğer Forumlar</translation>
+        <translation>Diğer Forumlar</translation>
     </message>
     <message>
         <source>Mark as read</source>
-        <translation type="unfinished">Işaretle Okunmuş olarak</translation>
+        <translation>Işaretle Okunmuş olarak</translation>
     </message>
     <message>
         <source>Mark as unread</source>
-        <translation type="unfinished">Işaretle Okunmamuş olarak</translation>
+        <translation>Işaretle Okunmamuş olarak</translation>
     </message>
     <message>
         <source>Mark all as read</source>
-        <translation type="unfinished">Hepsini Işaretle Okunmuş olarak</translation>
+        <translation>Hepsini Işaretle Okunmuş olarak</translation>
     </message>
     <message>
         <source>Mark all as unread</source>
-        <translation type="unfinished">Hepsini Işaretle Okunmamuş olarak</translation>
+        <translation>Hepsini Işaretle Okunmamuş olarak</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished">Gizle</translation>
+        <translation>Gizle</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished">Genişlet</translation>
+        <translation>Genişlet</translation>
     </message>
     <message>
         <source>Popularity:</source>
@@ -4484,27 +4486,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished">Retroshare</translation>
+        <translation>Retroshare</translation>
     </message>
     <message>
         <source>No Forum Selected!</source>
-        <translation type="unfinished">Forum seçmediniz!</translation>
+        <translation>Forum seçmediniz!</translation>
     </message>
     <message>
         <source>You cant reply a Anonymous Author</source>
-        <translation type="unfinished">Bir Anonim Yazara yanıt veremiyoruz</translation>
+        <translation>Bir Anonim Yazara yanıt veremiyoruz</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished">Tarih</translation>
+        <translation>Tarih</translation>
     </message>
     <message>
         <source>Title</source>
-        <translation type="unfinished">Başlık</translation>
+        <translation>Başlık</translation>
     </message>
     <message>
         <source>Start New Thread</source>
-        <translation type="unfinished">Yeni konu başlat</translation>
+        <translation>Yeni konu başlat</translation>
     </message>
     <message>
         <source>New Message</source>
@@ -4556,11 +4558,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Last Post</source>
-        <translation type="unfinished">Son Mesaj</translation>
+        <translation>Son Mesaj</translation>
     </message>
     <message>
         <source>Author</source>
-        <translation type="unfinished">Yazar</translation>
+        <translation>Yazar</translation>
     </message>
     <message>
         <source>Signed</source>
@@ -4580,11 +4582,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Create Forum</source>
-        <translation type="unfinished">Forum yarat</translation>
+        <translation>Forum oluştur</translation>
     </message>
     <message>
         <source>Print</source>
-        <translation type="unfinished">Yazdır</translation>
+        <translation>Yazdır</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -4604,7 +4606,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>PrintPreview</source>
-        <translation type="unfinished">Baskı Önizleme</translation>
+        <translation>Baskı Önizleme</translation>
     </message>
     <message>
         <source>Content</source>
@@ -4612,63 +4614,63 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished">Kopyala retroshare Link</translation>
+        <translation>Kopyala retroshare Link</translation>
     </message>
     <message>
         <source>Forum:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Threaded View</source>
-        <translation type="unfinished"></translation>
+        <translation>Zincirleme Görünüm</translation>
     </message>
     <message>
         <source>Flat View</source>
-        <translation type="unfinished"></translation>
+        <translation>Düz Görünüm</translation>
     </message>
     <message>
         <source>Thread:</source>
-        <translation type="unfinished"></translation>
+        <translation>Konu:</translation>
     </message>
     <message>
         <source>Previous Thread</source>
-        <translation type="unfinished"></translation>
+        <translation>Önceki Konu</translation>
     </message>
     <message>
         <source>Next Thread</source>
-        <translation type="unfinished"></translation>
+        <translation>Sonraki Konu</translation>
     </message>
     <message>
         <source>Download all files</source>
-        <translation type="unfinished"></translation>
+        <translation>Tüm dosyaları indir</translation>
     </message>
     <message>
         <source>Next unread</source>
-        <translation type="unfinished"></translation>
+        <translation>Sonraki okunmamış </translation>
     </message>
     <message>
         <source>Reply Message</source>
-        <translation type="unfinished">Mesaji yanitla</translation>
+        <translation>Mesaji yanitla</translation>
     </message>
     <message>
         <source>Start new Thread for Selected Forum</source>
-        <translation type="unfinished"></translation>
+        <translation>Seçilmiş Forum için yeni Konu Başlat</translation>
     </message>
     <message>
         <source>Loading</source>
-        <translation type="unfinished"></translation>
+        <translation>Yükleniyor</translation>
     </message>
     <message>
         <source>Share Forum</source>
-        <translation type="unfinished"></translation>
+        <translation>Forumu Paylaş</translation>
     </message>
     <message>
         <source>Restore Publish Rights for Forum</source>
-        <translation type="unfinished"></translation>
+        <translation>Forum yayin haklarini onar</translation>
     </message>
     <message>
         <source>with children</source>
-        <translation type="unfinished"></translation>
+        <translation>çocuklu</translation>
     </message>
     <message>
         <source>AUTHD</source>
@@ -4676,19 +4678,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>[ ... Missing Message ... ]</source>
-        <translation type="unfinished"></translation>
+        <translation>[... Mesaj Eksik ... ]</translation>
     </message>
     <message>
         <source>Placeholder for missing Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Mesaj eksik tutucu</translation>
     </message>
     <message>
         <source>Search forums</source>
-        <translation type="unfinished"></translation>
+        <translation>Forumları Ara</translation>
     </message>
     <message>
         <source>Original Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Orijinal Mesaj</translation>
     </message>
     <message>
         <source>From</source>
@@ -4696,7 +4698,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Sent</source>
-        <translation type="unfinished"></translation>
+        <translation>Gönderdi</translation>
     </message>
     <message>
         <source>Subject</source>
@@ -4704,7 +4706,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>On %1, %2 wrote:</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 üzerinde,%2 yazdı:</translation>
     </message>
     <message>
         <source>Forums</source>
@@ -4715,15 +4717,15 @@ p, li { white-space: pre-wrap; }
     <name>ForumsFillThread</name>
     <message>
         <source>Anonymous</source>
-        <translation type="unfinished">Anonim</translation>
+        <translation>Anonim</translation>
     </message>
     <message>
         <source>signed</source>
-        <translation type="unfinished">Imzalı</translation>
+        <translation>Imzalı</translation>
     </message>
     <message>
         <source>none</source>
-        <translation type="unfinished">yok</translation>
+        <translation>yok</translation>
     </message>
 </context>
 <context>
@@ -4742,267 +4744,266 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Display</source>
-        <translation type="unfinished">Görüntü</translation>
+        <translation>Görüntü</translation>
     </message>
     <message>
         <source>Create Forum</source>
-        <translation type="unfinished">Forum yarat</translation>
+        <translation>Forum oluştur</translation>
     </message>
     <message>
         <source>Forum:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Last Post</source>
-        <translation type="unfinished">Son Mesaj</translation>
+        <translation>Son Mesaj</translation>
     </message>
     <message>
         <source>Threaded View</source>
-        <translation type="unfinished"></translation>
+        <translation>Zincirleme Görünüm</translation>
     </message>
     <message>
         <source>Flat View</source>
-        <translation type="unfinished"></translation>
+        <translation>Düz Görünüm</translation>
     </message>
     <message>
         <source>Title</source>
-        <translation type="unfinished">Başlık</translation>
+        <translation>Başlık</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Tarih</translation>
     </message>
     <message>
         <source>Author</source>
-        <translation type="unfinished">Yazar</translation>
+        <translation>Yazar</translation>
     </message>
     <message>
         <source>Signed</source>
-        <translation type="unfinished">imzalı
-</translation>
+        <translation>Imzalı</translation>
     </message>
     <message>
         <source>Thread:</source>
-        <translation type="unfinished"></translation>
+        <translation>Konu:</translation>
     </message>
     <message>
         <source>Previous Thread</source>
-        <translation type="unfinished"></translation>
+        <translation>Önceki Konu</translation>
     </message>
     <message>
         <source>Next Thread</source>
-        <translation type="unfinished"></translation>
+        <translation>Sonraki Konu</translation>
     </message>
     <message>
         <source>Download all files</source>
-        <translation type="unfinished"></translation>
+        <translation>Tüm dosyaları indir</translation>
     </message>
     <message>
         <source>Next unread</source>
-        <translation type="unfinished"></translation>
+        <translation>Sonraki okunmamış </translation>
     </message>
     <message>
         <source>Search forums</source>
-        <translation type="unfinished"></translation>
+        <translation>Forumları Ara</translation>
     </message>
     <message>
         <source>Content</source>
-        <translation type="unfinished">Içindekiler</translation>
+        <translation>Içindekiler</translation>
     </message>
     <message>
         <source>Reply Message</source>
-        <translation type="unfinished">Mesaji yanitla</translation>
+        <translation>Mesaji yanitla</translation>
     </message>
     <message>
         <source>Start new Thread for Selected Forum</source>
-        <translation type="unfinished"></translation>
+        <translation>Seçilmiş Forum için yeni Konu Başlat</translation>
     </message>
     <message>
         <source>Loading</source>
-        <translation type="unfinished"></translation>
+        <translation>Yükleniyor</translation>
     </message>
     <message>
         <source>Print</source>
-        <translation type="unfinished">Yazdır</translation>
+        <translation>Yazdır</translation>
     </message>
     <message>
         <source>PrintPreview</source>
-        <translation type="unfinished">Baskı Önizleme</translation>
+        <translation>Baskı Önizleme</translation>
     </message>
     <message>
         <source>Your Forums</source>
-        <translation type="unfinished">Senin Forumlar</translation>
+        <translation>Benim Forumlar</translation>
     </message>
     <message>
         <source>Subscribed Forums</source>
-        <translation type="unfinished">Abone Forumlar</translation>
+        <translation>Abone Forumlar</translation>
     </message>
     <message>
         <source>Popular Forums</source>
-        <translation type="unfinished">Popüler Forumlar</translation>
+        <translation>Popüler Forumlar</translation>
     </message>
     <message>
         <source>Other Forums</source>
-        <translation type="unfinished">Diğer Forumlar</translation>
+        <translation>Diğer Forumlar</translation>
     </message>
     <message>
         <source>Subscribe to Forum</source>
-        <translation type="unfinished">Foruma abone ol</translation>
+        <translation>Foruma abone ol</translation>
     </message>
     <message>
         <source>Unsubscribe to Forum</source>
-        <translation type="unfinished">Foruma iptal ol</translation>
+        <translation>Foruma iptal ol</translation>
     </message>
     <message>
         <source>New Forum</source>
-        <translation type="unfinished">Yeni Forum</translation>
+        <translation>Yeni Forum</translation>
     </message>
     <message>
         <source>Show Forum Details</source>
-        <translation type="unfinished">Forum bilgilerini göster</translation>
+        <translation>Forum bilgilerini göster</translation>
     </message>
     <message>
         <source>Edit Forum Details</source>
-        <translation type="unfinished">Forum Detayları düzenle</translation>
+        <translation>Forum Detayları düzenle</translation>
     </message>
     <message>
         <source>Share Forum</source>
-        <translation type="unfinished"></translation>
+        <translation>Forumu Paylaş</translation>
     </message>
     <message>
         <source>Restore Publish Rights for Forum</source>
-        <translation type="unfinished"></translation>
+        <translation>Forum yayin haklarini onar</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished">Kopyala retroshare Link</translation>
+        <translation>Kopyala retroshare Link</translation>
     </message>
     <message>
         <source>Mark all as read</source>
-        <translation type="unfinished">Hepsini Işaretle Okunmuş olarak</translation>
+        <translation>Hepsini Işaretle Okunmuş olarak</translation>
     </message>
     <message>
         <source>Mark all as unread</source>
-        <translation type="unfinished">Hepsini Işaretle Okunmamuş olarak</translation>
+        <translation>Hepsini Işaretle Okunmamuş olarak</translation>
     </message>
     <message>
         <source>Reply</source>
-        <translation type="unfinished">Yanıtla</translation>
+        <translation>Yanıtla</translation>
     </message>
     <message>
         <source>Start New Thread</source>
-        <translation type="unfinished">Yeni konu başlat</translation>
+        <translation>Yeni konu başlat</translation>
     </message>
     <message>
         <source>Reply to Author</source>
-        <translation type="unfinished">Yazarı yanıtla</translation>
+        <translation>Yazara yanıtla</translation>
     </message>
     <message>
         <source>Expand all</source>
-        <translation type="unfinished">Tüm genişletin</translation>
+        <translation>Tüm genişletin</translation>
     </message>
     <message>
         <source>Collapse all</source>
-        <translation type="unfinished">Tümünü daralt</translation>
+        <translation>Tümünü daralt</translation>
     </message>
     <message>
         <source>Mark as read</source>
-        <translation type="unfinished">Işaretle Okunmuş olarak</translation>
+        <translation>Işaretle Okunmuş olarak</translation>
     </message>
     <message>
         <source>with children</source>
-        <translation type="unfinished"></translation>
+        <translation>çocuklu</translation>
     </message>
     <message>
         <source>Mark as unread</source>
-        <translation type="unfinished">Işaretle Okunmamuş olarak</translation>
+        <translation>Işaretle Okunmamuş olarak</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"></translation>
+        <translation>Gizle</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished">Genişlet</translation>
+        <translation>Genişlet</translation>
     </message>
     <message>
         <source>AUTHD</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>[ ... Missing Message ... ]</source>
-        <translation type="unfinished"></translation>
+        <translation>[... Mesaj Eksik ... ]</translation>
     </message>
     <message>
         <source>Placeholder for missing Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Mesaj eksik tutucu</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished">Retroshare</translation>
+        <translation>Retroshare</translation>
     </message>
     <message>
         <source>No Forum Selected!</source>
-        <translation type="unfinished">Forum seçmediniz!</translation>
+        <translation>Forum seçmediniz!</translation>
     </message>
     <message>
         <source>Original Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Orijinal Mesaj</translation>
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished"></translation>
+        <translation>Kimden</translation>
     </message>
     <message>
         <source>Sent</source>
-        <translation type="unfinished"></translation>
+        <translation>Gönderdi</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation type="unfinished">Konu</translation>
+        <translation>Konu</translation>
     </message>
     <message>
         <source>On %1, %2 wrote:</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 üzerinde,%2 yazdı:</translation>
     </message>
     <message>
         <source>You cant reply to a non-existant Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Sen var olmayan Mesaja cevap veremesin</translation>
     </message>
     <message>
         <source>You cant reply to an Anonymous Author</source>
-        <translation type="unfinished"></translation>
+        <translation>Bir Anonim Yazara yanıt veremiyoruz</translation>
     </message>
     <message>
         <source>Anonymous</source>
-        <translation type="unfinished">Anonim</translation>
+        <translation>Anonim</translation>
     </message>
     <message>
         <source>signed</source>
-        <translation type="unfinished">Imzalı</translation>
+        <translation>Imzalı</translation>
     </message>
     <message>
         <source>none</source>
-        <translation type="unfinished">yok</translation>
+        <translation>yok</translation>
     </message>
     <message>
         <source>Forums</source>
-        <translation type="unfinished">Forumlar</translation>
+        <translation>Forumlar</translation>
     </message>
 </context>
 <context>
     <name>FriendList</name>
     <message>
         <source>Friends</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaşlar</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Durum</translation>
     </message>
     <message>
         <source>Last Contact</source>
-        <translation type="unfinished"></translation>
+        <translation>Son İletişim</translation>
     </message>
     <message>
         <source>Avatar</source>
@@ -5010,47 +5011,47 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hide Offline Friends</source>
-        <translation type="unfinished"></translation>
+        <translation>Çevrimdışı Arkadaşları gizle</translation>
     </message>
     <message>
         <source>State</source>
-        <translation type="unfinished"></translation>
+        <translation>Durum</translation>
     </message>
     <message>
         <source>Sort by State</source>
-        <translation type="unfinished"></translation>
+        <translation>Duruma göre sırala</translation>
     </message>
     <message>
         <source>Hide State</source>
-        <translation type="unfinished"></translation>
+        <translation>Durumu gizle</translation>
     </message>
     <message>
         <source>Sort Descending Order</source>
-        <translation type="unfinished"></translation>
+        <translation>Sırala Azalan Düzende</translation>
     </message>
     <message>
         <source>Sort Ascending Order</source>
-        <translation type="unfinished"></translation>
+        <translation>Sırala artan düzende</translation>
     </message>
     <message>
         <source>Show Avatar Column</source>
-        <translation type="unfinished"></translation>
+        <translation>Avatar Sütun Göster</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Isim</translation>
     </message>
     <message>
         <source>Sort by Name</source>
-        <translation type="unfinished"></translation>
+        <translation>İsme Göre Sırala</translation>
     </message>
     <message>
         <source>Sort by last contact</source>
-        <translation type="unfinished"></translation>
+        <translation>Son temas göre sırala</translation>
     </message>
     <message>
         <source>Show Last Contact Column</source>
-        <translation type="unfinished"></translation>
+        <translation>Son İletişim Sütun göster</translation>
     </message>
     <message>
         <source>Set root is Decorated</source>
@@ -5062,151 +5063,151 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Show Groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Grupları Göster</translation>
     </message>
     <message>
         <source>Group</source>
-        <translation type="unfinished">Grub</translation>
+        <translation>Grub</translation>
     </message>
     <message>
         <source>Friend</source>
-        <translation type="unfinished">Arkadaş</translation>
+        <translation>Arkadaş</translation>
     </message>
     <message>
         <source>Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Yer</translation>
     </message>
     <message>
         <source>Message Group</source>
-        <translation type="unfinished">Gruba Mesaj yaz</translation>
+        <translation>Gruba Mesaj yaz</translation>
     </message>
     <message>
         <source>Add Friend</source>
-        <translation type="unfinished">Arkadaş ekle</translation>
+        <translation>Arkadaş ekle</translation>
     </message>
     <message>
         <source>Edit Group</source>
-        <translation type="unfinished">Grubu düzenle</translation>
+        <translation>Grubu düzenle</translation>
     </message>
     <message>
         <source>Remove Group</source>
-        <translation type="unfinished">Grubu Kaldır</translation>
+        <translation>Grubu Kaldır</translation>
     </message>
     <message>
         <source>Chat lobbies</source>
-        <translation type="unfinished"></translation>
+        <translation>Sohbet lobileri</translation>
     </message>
     <message>
         <source>Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Sohbet</translation>
     </message>
     <message>
         <source>Message Friend</source>
-        <translation type="unfinished">Arkadaş&apos;a Mesaj yaz</translation>
+        <translation>Arkadaş&apos;a Mesaj yaz</translation>
     </message>
     <message>
         <source>Friend Details</source>
-        <translation type="unfinished">Arkadaş Detayları</translation>
+        <translation>Arkadaş Detayları</translation>
     </message>
     <message>
         <source>Recommend this Friend to...</source>
-        <translation type="unfinished">Bu Arkadaşı Tavsiye Et ...</translation>
+        <translation>Bu Arkadaşı Tavsiye Et...</translation>
     </message>
     <message>
         <source>Connect To Friend</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaş&apos;a Bağlan</translation>
     </message>
     <message>
         <source>Copy certificate link</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopyala Sertifika link</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished">Kopyala retroshare Link</translation>
+        <translation>Kopyala retroshare Link</translation>
     </message>
     <message>
         <source>Paste Friend Link</source>
-        <translation type="unfinished">Yapıştır Arkadaş Link</translation>
+        <translation>Yapıştır Arkadaş Link</translation>
     </message>
     <message>
         <source>Deny Friend</source>
-        <translation type="unfinished">Arkadaş reddet</translation>
+        <translation>Arkadaşı reddet</translation>
     </message>
     <message>
         <source>Remove Friend Location</source>
-        <translation type="unfinished">Kaldır Arkadaş Yeri</translation>
+        <translation>Kaldır Arkadaş Yeri</translation>
     </message>
     <message>
         <source>Add to group</source>
-        <translation type="unfinished">Gruba ekle</translation>
+        <translation>Gruba ekle</translation>
     </message>
     <message>
         <source>Move to group</source>
-        <translation type="unfinished">Gruba taşı</translation>
+        <translation>Gruba taşı</translation>
     </message>
     <message>
         <source>Groups</source>
-        <translation type="unfinished">Grublar</translation>
+        <translation>Grublar</translation>
     </message>
     <message>
         <source>Remove from group</source>
-        <translation type="unfinished">Grubtan kaldır</translation>
+        <translation>Grubtan kaldır</translation>
     </message>
     <message>
         <source>Remove from all groups</source>
-        <translation type="unfinished">Tüm grublardan Kaldır</translation>
+        <translation>Tüm grublardan Kaldır</translation>
     </message>
     <message>
         <source>Create new</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni oluştur</translation>
     </message>
     <message>
         <source>Invite this group</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu grupa davet et</translation>
     </message>
     <message>
         <source>Invite this friend</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu arkadaşını davet et</translation>
     </message>
     <message>
         <source>Show</source>
-        <translation type="unfinished"></translation>
+        <translation>Göster</translation>
     </message>
     <message>
         <source>Unsubscribe</source>
-        <translation type="unfinished">Iptal</translation>
+        <translation>Iptal</translation>
     </message>
     <message>
         <source>Expand all</source>
-        <translation type="unfinished">Tüm genişletin</translation>
+        <translation>Tüm genişletin</translation>
     </message>
     <message>
         <source>Collapse all</source>
-        <translation type="unfinished">Tümünü daralt</translation>
+        <translation>Tümünü daralt</translation>
     </message>
     <message>
         <source>Available</source>
-        <translation type="unfinished">Mevcut</translation>
+        <translation>Mevcut</translation>
     </message>
     <message>
         <source>Do you want to remove this Friend?</source>
-        <translation type="unfinished">Bu Arkadaşı kaldırmak istiyor musunuz?</translation>
+        <translation>Bu Arkadaşı kaldırmak istiyor musunuz?</translation>
     </message>
     <message>
         <source>Unsubscribe to lobby</source>
-        <translation type="unfinished">Lobiy&apos;den çık</translation>
+        <translation>Lobiy&apos;den çık</translation>
     </message>
     <message>
         <source>You are about to unsubscribe a chat lobby&lt;br&gt;You can only re-enter if your friends invite you again.</source>
-        <translation type="unfinished"></translation>
+        <translation>Siz sohbet lobisinden çıkmak üzeresiniz. Arkadaşlarınız sizi tekrar davet etmesi gerek, yeniden girebilmeniz icin.</translation>
     </message>
     <message>
         <source>Columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Sütunlar</translation>
     </message>
     <message>
         <source>Sort by</source>
-        <translation type="unfinished"></translation>
+        <translation>Sıralama</translation>
     </message>
 </context>
 <context>
@@ -6155,31 +6156,31 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Idle</source>
-        <translation type="unfinished">Boşta</translation>
+        <translation>Boşta</translation>
     </message>
     <message>
         <source>Startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Başlangıç</translation>
     </message>
     <message>
         <source>Start RetroShare when my system starts</source>
-        <translation type="unfinished"></translation>
+        <translation>Benim sistem başladığında RetroShare başlatın</translation>
     </message>
     <message>
         <source>Start minimized</source>
-        <translation type="unfinished"></translation>
+        <translation>minimize başlayın</translation>
     </message>
     <message>
         <source>Start minimized on system start</source>
-        <translation type="unfinished"></translation>
+        <translation>S​istem başlangıçta, küçülmüş başlat</translation>
     </message>
     <message>
         <source>For Advanced Users </source>
-        <translation type="unfinished"></translation>
+        <translation>İleri Seviye Kullanıcılar için </translation>
     </message>
     <message>
         <source>Enable Advanced Mode (Restart Required)</source>
-        <translation type="unfinished"></translation>
+        <translation>Gelişmiş Modu etkinleştir (baştan başlatmak gerek)</translation>
     </message>
     <message>
         <source>Do not show the Quit RetroShare MessageBox</source>
@@ -6187,35 +6188,35 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Do not Minimize to Tray Icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Tepsi Simgesnie küçült etmeyin</translation>
     </message>
     <message>
         <source>Auto Login</source>
-        <translation type="unfinished"></translation>
+        <translation>Otomatik Giriş</translation>
     </message>
     <message>
         <source>Register retroshare:// as url protocol (Restart required)</source>
-        <translation type="unfinished"></translation>
+        <translation>retroshare:// url protokolü Kayıt et (baştan başlatmak gerek) </translation>
     </message>
     <message>
         <source>You need administrator rights to change this option.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu seçeneği değiştirmek için yönetici haklarına sahip olmanız gerekir.</translation>
     </message>
     <message>
         <source>Idle Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Boş Zaman</translation>
     </message>
     <message>
         <source> seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>saniye</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Hata</translation>
     </message>
     <message>
         <source>Could not add retroshare:// as protocol.</source>
-        <translation type="unfinished"></translation>
+        <translation> Protokol olarak retroshare:// eklenemedi.</translation>
     </message>
     <message>
         <source>Could not remove retroshare:// protocol.</source>
@@ -6223,11 +6224,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>General</source>
-        <translation type="unfinished">Genel</translation>
+        <translation>Genel</translation>
     </message>
     <message>
         <source>Enable Experimental Features (Restart Required)</source>
-        <translation type="unfinished"></translation>
+        <translation>Deneysel özellikleri etkinleştir (baştan başlatmak gerek)</translation>
     </message>
 </context>
 <context>
@@ -6409,7 +6410,7 @@ p, li { white-space: pre-wrap; }
     <name>GraphFrame</name>
     <message>
         <source>Recv: </source>
-        <translation type="unfinished">Recv: </translation>
+        <translation>Alınan: </translation>
     </message>
     <message>
         <source>%1 KB/s</source>
@@ -6417,7 +6418,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Sent: </source>
-        <translation type="unfinished">Sent: </translation>
+        <translation>Gönderildi: </translation>
     </message>
     <message>
         <source>%1 KB</source>
@@ -6436,68 +6437,68 @@ p, li { white-space: pre-wrap; }
     <name>GraphWidget</name>
     <message>
         <source>Click and drag the nodes around, and zoom with the mouse wheel or the &apos;+&apos; and &apos;-&apos; keys</source>
-        <translation type="unfinished"></translation>
+        <translation>Tıklayın ve çevresinde düğümleri sürükleyin ve fare tekerleği ile yakınlaştırma veya &apos;+&apos; ve &apos;-&apos; tuşları</translation>
     </message>
 </context>
 <context>
     <name>GroupChatToaster</name>
     <message>
         <source>Show Group Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Göster Grup Sohbetini</translation>
     </message>
 </context>
 <context>
     <name>GroupDefs</name>
     <message>
         <source>Friends</source>
-        <translation type="unfinished">Arkadaşlar</translation>
+        <translation>Arkadaşlar</translation>
     </message>
     <message>
         <source>Family</source>
-        <translation type="unfinished">Aile</translation>
+        <translation>Aile</translation>
     </message>
     <message>
         <source>Co-Workers</source>
-        <translation type="unfinished">Personel</translation>
+        <translation>İş arkadaşlar</translation>
     </message>
     <message>
         <source>Other Contacts</source>
-        <translation type="unfinished">Diğer Kişiler</translation>
+        <translation>Diğer Kişiler</translation>
     </message>
     <message>
         <source>Favorites</source>
-        <translation type="unfinished">Favori</translation>
+        <translation>Favori</translation>
     </message>
 </context>
 <context>
     <name>GroupTreeWidget</name>
     <message>
         <source>Title</source>
-        <translation type="unfinished">Başlık</translation>
+        <translation>Başlık</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished">Açıklamalar</translation>
+        <translation>Açıklamalar</translation>
     </message>
     <message>
         <source>Enter a Keyword here</source>
-        <translation type="unfinished"></translation>
+        <translation>Bir Kelime buraya verin</translation>
     </message>
     <message>
         <source>Sort by Name</source>
-        <translation type="unfinished"></translation>
+        <translation>İsme Göre Sırala</translation>
     </message>
     <message>
         <source>Sort by Popularity</source>
-        <translation type="unfinished"></translation>
+        <translation>Popülerlike Göre Sırala</translation>
     </message>
     <message>
         <source>Sort by Last Post</source>
-        <translation type="unfinished"></translation>
+        <translation>Son Mesaja göre sırala</translation>
     </message>
     <message>
         <source>Private Key Available</source>
-        <translation type="unfinished"></translation>
+        <translation> Özel Anahtar mevcuttur</translation>
     </message>
 </context>
 <context>
@@ -6622,7 +6623,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Search</source>
-        <translation type="unfinished">araştırmak</translation>
+        <translation>aA</translation>
     </message>
     <message>
         <source>Home</source>
@@ -6936,31 +6937,31 @@ p, li { white-space: pre-wrap; }
     <name>IdEditDialog</name>
     <message>
         <source>Nickname</source>
-        <translation type="unfinished"></translation>
+        <translation>Takma ad</translation>
     </message>
     <message>
         <source>Key ID</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>GPG Name</source>
-        <translation type="unfinished"></translation>
+        <translation>GP ismi</translation>
     </message>
     <message>
         <source>GPG Email</source>
-        <translation type="unfinished"></translation>
+        <translation>GPP E-Posta</translation>
     </message>
     <message>
         <source>GPG Hash</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>GPG Id</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>New Identity</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni Kimlik</translation>
     </message>
     <message>
         <source>Gpg Assocated ID</source>
@@ -6972,42 +6973,42 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Iptal</translation>
     </message>
     <message>
         <source>Create/Update ID</source>
-        <translation type="unfinished"></translation>
+        <translation>Kimliği Oluştur / Güncelle</translation>
     </message>
 </context>
 <context>
     <name>ImHistoryBrowser</name>
     <message>
         <source>Copy</source>
-        <translation type="unfinished">Kopyala</translation>
+        <translation>Kopyala</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished">Sil</translation>
+        <translation>Sil</translation>
     </message>
     <message>
         <source>Message History</source>
-        <translation type="unfinished"></translation>
+        <translation>Mesaj Geçmişi</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Kaldır</translation>
     </message>
     <message>
         <source>Mark all</source>
-        <translation type="unfinished"></translation>
+        <translation>Hepsini Işaretle</translation>
     </message>
     <message>
         <source>Clear history</source>
-        <translation type="unfinished"></translation>
+        <translation>Geçmişi temizle</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished"></translation>
+        <translation>Gönder</translation>
     </message>
 </context>
 <context>
@@ -7040,31 +7041,31 @@ p, li { white-space: pre-wrap; }
     <name>MainWindow</name>
     <message>
         <source>Network</source>
-        <translation type="unfinished">Ağ</translation>
+        <translation>Ağ</translation>
     </message>
     <message>
         <source>Friends</source>
-        <translation type="unfinished">Arkadaşlar</translation>
+        <translation>Arkadaşlar</translation>
     </message>
     <message>
         <source>Transfers</source>
-        <translation type="unfinished">Aktarımlar</translation>
+        <translation>Aktarımlar</translation>
     </message>
     <message>
         <source>Messages</source>
-        <translation type="unfinished">Mesajlar</translation>
+        <translation>Mesajlar</translation>
     </message>
     <message>
         <source>Channels</source>
-        <translation type="unfinished">Kanallar</translation>
+        <translation>Kanallar</translation>
     </message>
     <message>
         <source>Blogs</source>
-        <translation type="unfinished">Bloglar</translation>
+        <translation>Bloglar</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished">Durum</translation>
+        <translation>Durum</translation>
     </message>
     <message>
         <source>You have %1 new messages</source>
@@ -7088,19 +7089,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished">Seçenekler</translation>
+        <translation>Seçenekler</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished">Gizle</translation>
+        <translation>Gizle</translation>
     </message>
     <message>
         <source>Show</source>
-        <translation type="unfinished">Göster</translation>
+        <translation>Göster</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished">Retroshare</translation>
+        <translation>Retroshare</translation>
     </message>
     <message>
         <source>Invite Friend</source>
@@ -7108,27 +7109,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add Friend</source>
-        <translation type="unfinished">Arkadaş ekle</translation>
+        <translation>Arkadaş ekle</translation>
     </message>
     <message>
         <source>Add a Friend Wizard</source>
-        <translation type="unfinished">Arkadaş Ekleme Sihirbazı</translation>
+        <translation>Arkadaş Ekleme Sihirbazı</translation>
     </message>
     <message>
         <source>Add Share</source>
-        <translation type="unfinished">Paylaş ekle</translation>
+        <translation>Paylaş ekle</translation>
     </message>
     <message>
         <source>Quick Start Wizard</source>
-        <translation type="unfinished">Hızlı Başlangıç Sihirbazı</translation>
+        <translation>Hızlı Başlangıç Sihirbazı</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation type="unfinished">Ara</translation>
+        <translation>Ara</translation>
     </message>
     <message>
         <source>Files</source>
-        <translation type="unfinished">Dosya</translation>
+        <translation>Dosya</translation>
     </message>
     <message>
         <source>Add Shared Directory</source>
@@ -7136,7 +7137,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Show/Hide</source>
-        <translation type="unfinished">Göster/Gizle</translation>
+        <translation>Göster/Gizle</translation>
     </message>
     <message>
         <source>You have %1 new message</source>
@@ -7144,27 +7145,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Bandwidth Graph</source>
-        <translation type="unfinished">Bant genişliği Grafik</translation>
+        <translation>Bant genişliği Grafik</translation>
     </message>
     <message>
         <source>Open Messenger</source>
-        <translation type="unfinished">Aç Messenger</translation>
+        <translation>Aç Messenger</translation>
     </message>
     <message>
         <source>Help</source>
-        <translation type="unfinished">Yardım</translation>
+        <translation>Yardım</translation>
     </message>
     <message>
         <source>About</source>
-        <translation type="unfinished">Ile ilgili</translation>
+        <translation>Ile ilgili</translation>
     </message>
     <message>
         <source>Forums</source>
-        <translation type="unfinished">Forumlar</translation>
+        <translation>Forumlar</translation>
     </message>
     <message>
         <source>Open Messages</source>
-        <translation type="unfinished">Aç Mesajlar</translation>
+        <translation>Aç Mesajları</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -7176,19 +7177,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Really quit ? </source>
-        <translation type="unfinished">Gerçekten çıkmak istiyorsunuz?</translation>
+        <translation>Gerçekten çıkmak istiyorsunuz?</translation>
     </message>
     <message>
         <source>Do you really want to exit RetroShare ?</source>
-        <translation type="unfinished">RetroShare&apos;dan çıkmak istiyor musunuz?</translation>
+        <translation>RetroShare&apos;dan çıkmak istiyor musunuz?</translation>
     </message>
     <message>
         <source>Quit</source>
-        <translation type="unfinished">Çıkış</translation>
+        <translation>Çıkış</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation type="unfinished">&amp;Çıkış</translation>
+        <translation>&amp;Çıkış</translation>
     </message>
     <message>
         <source>MainWindow</source>
@@ -7196,7 +7197,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Messenger</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>SMPlayer</source>
@@ -7204,11 +7205,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare %1 a secure decentralised communication platform</source>
-        <translation type="unfinished"></translation>
+        <translation>RetroShare%1 güvenli ve  merkezsiz iletişim platformu</translation>
     </message>
     <message>
         <source>Plugins</source>
-        <translation type="unfinished"></translation>
+        <translation>Eklentiler</translation>
     </message>
     <message>
         <source>Getting Started</source>
@@ -7220,7 +7221,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Low disk space warning</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Düşük disk uyarısı</translation>
     </message>
     <message>
         <source>The disk space in your </source>
@@ -7240,11 +7241,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Notify</source>
-        <translation type="unfinished">Bildirimler</translation>
+        <translation>Bildirimler</translation>
     </message>
     <message>
         <source>DHT Details</source>
-        <translation type="unfinished"></translation>
+        <translation>DHT Detayları</translation>
     </message>
     <message>
         <source>Applications</source>
@@ -7260,15 +7261,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>%1 new messages</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 yeni mesajlar</translation>
     </message>
     <message>
         <source>%1 new message</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 yeni mesaj</translation>
     </message>
     <message>
         <source>Internal Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Dahili Hata</translation>
     </message>
     <message>
         <source>It seems to be an old RetroShare link. Please use copy instead.</source>
@@ -7276,86 +7277,86 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>The file link is malformed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosya bağlantısı hatalı.</translation>
     </message>
     <message>
         <source>Bandwidth Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Bant Genişliği Detayları</translation>
     </message>
 </context>
 <context>
     <name>MessageComposer</name>
     <message>
         <source>Compose</source>
-        <translation type="unfinished">Yeni ileti</translation>
+        <translation>Yeni ileti</translation>
     </message>
     <message>
         <source>Contacts</source>
-        <translation type="unfinished">Rehber</translation>
+        <translation>Rehber</translation>
     </message>
     <message>
         <source>Send To:</source>
-        <translation type="unfinished">Gönde Kime:</translation>
+        <translation>Gönde Kime:</translation>
     </message>
     <message>
         <source>Subject:</source>
-        <translation type="unfinished">Konu:</translation>
+        <translation>Konu:</translation>
     </message>
     <message>
         <source>&gt;&gt; To</source>
-        <translation type="unfinished">Kime: bölümüne ekle</translation>
+        <translation>Kime: bölümüne ekle</translation>
     </message>
     <message>
         <source>&gt;&gt; Cc</source>
-        <translation type="unfinished">Ilgili adrese ekle</translation>
+        <translation>Ilgili adrese ekle</translation>
     </message>
     <message>
         <source>&gt;&gt; Bcc</source>
-        <translation type="unfinished">Gizli adrese ekle</translation>
+        <translation>Gizli adrese ekle</translation>
     </message>
     <message>
         <source>&gt;&gt; Recommend</source>
-        <translation type="unfinished">Tavsiye</translation>
+        <translation>Tavsiye</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation type="unfinished">Italik</translation>
+        <translation>Italik</translation>
     </message>
     <message>
         <source>Tags</source>
-        <translation type="unfinished">Etiket</translation>
+        <translation>Etiketler</translation>
     </message>
     <message>
         <source>Recommended Files</source>
-        <translation type="unfinished">Tavsiye edilen dosya</translation>
+        <translation>Tavsiye edilen dosya</translation>
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished">Dosya Adı</translation>
+        <translation>Dosya Adı</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished">Boyut</translation>
+        <translation>Boyut</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished">Gönder</translation>
+        <translation>Gönder</translation>
     </message>
     <message>
         <source>Reply</source>
-        <translation type="unfinished">Yanıtla</translation>
+        <translation>Yanıtla</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="unfinished">Kaydet</translation>
+        <translation>Kaydet</translation>
     </message>
     <message>
         <source>Attach</source>
-        <translation type="unfinished">Ekle</translation>
+        <translation>Ekle</translation>
     </message>
     <message>
         <source>Attach File</source>
-        <translation type="unfinished">Dosya ekle</translation>
+        <translation>Dosya ekle</translation>
     </message>
     <message>
         <source>Compose: </source>
@@ -7367,59 +7368,59 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add to &quot;To&quot;</source>
-        <translation type="unfinished">Kime: bölümüne ekle</translation>
+        <translation>Kime: bölümüne ekle</translation>
     </message>
     <message>
         <source>Add to &quot;CC&quot;</source>
-        <translation type="unfinished">Ilgili adrese ekle</translation>
+        <translation>Ilgili adrese ekle</translation>
     </message>
     <message>
         <source>Add to &quot;BCC&quot;</source>
-        <translation type="unfinished">Gizli adrese ekle</translation>
+        <translation>Gizli adrese ekle</translation>
     </message>
     <message>
         <source>Add as Recommend</source>
-        <translation type="unfinished">Tavsiye</translation>
+        <translation>Tavsiye</translation>
     </message>
     <message>
         <source>Friend Details</source>
-        <translation type="unfinished">Arkadaş Detayları</translation>
+        <translation>Arkadaş Detayları</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished">Retroshare</translation>
+        <translation>Retroshare</translation>
     </message>
     <message>
         <source>To</source>
-        <translation type="unfinished">Kime</translation>
+        <translation>Kime</translation>
     </message>
     <message>
         <source>Cc</source>
-        <translation type="unfinished">Ilgili kopyasi</translation>
+        <translation>Ilgili kopyasi</translation>
     </message>
     <message>
         <source>Bcc</source>
-        <translation type="unfinished">Gizli kopya</translation>
+        <translation>Gizli kopya</translation>
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished">Bilinmeyen</translation>
+        <translation>Bilinmeyen</translation>
     </message>
     <message>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation type="unfinished">HTML-Dosya (*.htm *.html);;Tüm Dosyalar (*)</translation>
+        <translation>HTML-Dosya (*.htm *.html);;Tüm Dosyalar (*)</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="unfinished">Farklı kaydet...</translation>
+        <translation>Farklı kaydet...</translation>
     </message>
     <message>
         <source>Print Document</source>
-        <translation type="unfinished">Belge yazdır</translation>
+        <translation>Belge yazdır</translation>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation type="unfinished">Ekstra Dosya Ekle</translation>
+        <translation>Ekstra Dosya Ekle</translation>
     </message>
     <message>
         <source>File not found or file name not accepted.</source>
@@ -7427,19 +7428,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>&amp;File</source>
-        <translation type="unfinished">&amp;Dosya</translation>
+        <translation>&amp;Dosya</translation>
     </message>
     <message>
         <source>Save &amp;As File</source>
-        <translation type="unfinished">Farklı kaydet</translation>
+        <translation>Farklı kaydet</translation>
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation type="unfinished">&amp;Yazdır...</translation>
+        <translation>&amp;Yazdır...</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation type="unfinished">&amp;Çıkış</translation>
+        <translation>&amp;Çıkış</translation>
     </message>
     <message>
         <source>Paragraph</source>
@@ -7447,55 +7448,56 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Heading 1</source>
-        <translation type="unfinished"></translation>
+        <translation>Başlık 1</translation>
     </message>
     <message>
         <source>Heading 2</source>
-        <translation type="unfinished"></translation>
+        <translation>Başlık 2</translation>
     </message>
     <message>
         <source>Heading 3</source>
-        <translation type="unfinished"></translation>
+        <translation>Başlık 2</translation>
     </message>
     <message>
         <source>Heading 4</source>
-        <translation type="unfinished"></translation>
+        <translation>Başlık 4</translation>
     </message>
     <message>
         <source>Heading 5</source>
-        <translation type="unfinished"></translation>
+        <translation>Başlık 5</translation>
     </message>
     <message>
         <source>Heading 6</source>
-        <translation type="unfinished"></translation>
+        <translation>Başlık 6</translation>
     </message>
     <message>
         <source>Font size</source>
-        <translation type="unfinished"></translation>
+        <translation>Yazı Boyutu</translation>
     </message>
     <message>
         <source>Increase font size</source>
-        <translation type="unfinished"></translation>
+        <translation>Yazıtipi boyutunu arttır</translation>
     </message>
     <message>
         <source>Decrease font size</source>
-        <translation type="unfinished"></translation>
+        <translation>Yazıtipi boyutunu azaltır</translation>
     </message>
     <message>
         <source>Bold</source>
-        <translation type="unfinished"></translation>
+        <translation>Kalın</translation>
     </message>
     <message>
         <source>Select Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Reng seçiniz</translation>
     </message>
     <message>
         <source>Alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>Hizalanma</translation>
     </message>
     <message>
         <source>Add a Image</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Bir Resim Ekle</translatorcomment>
+        <translation></translation>
     </message>
     <message>
         <source>Sets text font to code style</source>
@@ -7503,19 +7505,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Underline</source>
-        <translation type="unfinished"></translation>
+        <translation>Altı çizgili</translation>
     </message>
     <message>
         <source>Tags:</source>
-        <translation type="unfinished"></translation>
+        <translation>Etiketler:</translation>
     </message>
     <message>
         <source>Hash</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Send this message now</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu mesajı şimdi gönder</translation>
     </message>
     <message>
         <source>Toggle Contacts View</source>
@@ -7523,11 +7525,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Save this message</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu mesajı kaydet</translation>
     </message>
     <message>
         <source>Quote</source>
-        <translation type="unfinished"></translation>
+        <translation>Alıntı yap</translation>
     </message>
     <message>
         <source>Add Blockquote</source>
@@ -7535,15 +7537,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>&amp;Left</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Sol</translation>
     </message>
     <message>
         <source>C&amp;enter</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Merkez</translation>
     </message>
     <message>
         <source>&amp;Right</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Sag</translation>
     </message>
     <message>
         <source>&amp;Justify</source>
@@ -7551,149 +7553,151 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Save Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Mesaj kaydet</translation>
     </message>
     <message>
         <source>Message has not been Sent.
 Do you want to save message to draft box?</source>
-        <translation type="unfinished"></translation>
+        <translation>Mesaj Gönderilemedi
+mesajı taslaka kaydetmek istiyor musunuz?</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished">Yapıştır retroshare Link</translation>
+        <translation>Yapıştır retroshare Link</translation>
     </message>
     <message>
         <source>Re:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Fwd:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Do you want to send the message without a subject ?</source>
-        <translation type="unfinished"></translation>
+        <translation>Bir konu olmadan mesaj göndermek ister misiniz?</translation>
     </message>
     <message>
         <source>Please insert at least one recipient.</source>
-        <translation type="unfinished"></translation>
+        <translation>En az bir alıcı ekleyin lütfen.</translation>
     </message>
     <message>
         <source>Unknown friend</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilinmeyen arkadaş</translation>
     </message>
     <message>
         <source>&amp;New</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Yeni</translation>
     </message>
     <message>
         <source>&amp;Open...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Aç...</translation>
     </message>
     <message>
         <source>&amp;Save</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Kaydet</translation>
     </message>
     <message>
         <source>Save &amp;As Draft</source>
-        <translation type="unfinished"></translation>
+        <translation>Kaydet  &amp;Taslak olarak</translation>
     </message>
     <message>
         <source>&amp;Export PDF...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;ihraç PDF...</translation>
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Düzenle</translation>
     </message>
     <message>
         <source>&amp;Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Geri al</translation>
     </message>
     <message>
         <source>&amp;Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Yinele</translation>
     </message>
     <message>
         <source>Cu&amp;t</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Kes</translation>
     </message>
     <message>
         <source>&amp;Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Kopyala</translation>
     </message>
     <message>
         <source>&amp;Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Yapıştır</translation>
     </message>
     <message>
         <source>&amp;View</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Görüntü</translation>
     </message>
     <message>
         <source>&amp;Contacts Sidebar</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Rehber Sidebar</translation>
     </message>
     <message>
         <source>&amp;Insert</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ekle</translation>
     </message>
     <message>
         <source>&amp;Image</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Resim</translation>
     </message>
     <message>
         <source>&amp;Horizontal Line</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Yatay Çizgi</translation>
     </message>
     <message>
         <source>&amp;Format</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Biçim</translation>
     </message>
     <message>
         <source>Open File...</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosya Aç...</translation>
     </message>
     <message>
         <source>Export PDF</source>
-        <translation type="unfinished"></translation>
+        <translation>İhracat PDF</translation>
     </message>
     <message>
         <source>Message has not been Sent.
 Do you want to save message ?</source>
-        <translation type="unfinished"></translation>
+        <translation>Mesaj Gönderilemedi
+mesajı kaydetmek istiyor musunuz?</translation>
     </message>
     <message>
         <source>Choose Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Resim seç</translation>
     </message>
     <message>
         <source>Image Files supported (*.png *.jpeg *.jpg *.gif)</source>
-        <translation type="unfinished"></translation>
+        <translation>Resim Dosyaları (*. png *. jpeg *. jpg *. gif) desteklenir</translation>
     </message>
     <message>
         <source>You have a friend recommendation</source>
-        <translation type="unfinished"></translation>
+        <translation>Bir arkadaş tavsiyesi var</translation>
     </message>
     <message>
         <source>Original Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Orijinal Mesaj</translation>
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished"></translation>
+        <translation>Kimden</translation>
     </message>
     <message>
         <source>Sent</source>
-        <translation type="unfinished"></translation>
+        <translation>Gönderdi</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation type="unfinished">Konu</translation>
+        <translation>Konu</translation>
     </message>
     <message>
         <source>On %1, %2 wrote:</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 üzerinde,%2 yazdı:</translation>
     </message>
     <message>
         <source>wants to be friends with you on RetroShare</source>
@@ -7705,15 +7709,15 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Hello,&lt;br&gt;I recommend a good friend of me, you can trust him too when you trust me. &lt;br&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Merhaba, &lt;br&gt; ben sana iyi bir arkadaş tavsiye ediyorum, sen bana güveniyorsan, onada güvenebilirsin. &lt;br&gt;</translation>
     </message>
     <message>
         <source>This friend is suggested by</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu arkadaş kimden önerilmiştir</translation>
     </message>
     <message>
         <source>Thanks, &lt;br&gt;The RetroShare Team</source>
-        <translation type="unfinished"></translation>
+        <translation>Teşekkürler, &lt;br&gt; RetroShare Ekibi</translation>
     </message>
 </context>
 <context>
@@ -7724,35 +7728,35 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Tags</source>
-        <translation type="unfinished">Etiket</translation>
+        <translation>Etiketler</translation>
     </message>
     <message>
         <source>Tags can be used to categorize and prioritize your messages</source>
-        <translation type="unfinished">Etiketler, iletilerde kategori oluşturmaya veya önemlilik derecesine göre sıralamanıza yarar.</translation>
+        <translation>Etiketler, iletilerde kategori oluşturmaya veya önemlilik derecesine göre sıralamanıza yarar</translation>
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished">Ekle</translation>
+        <translation>Ekle</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished">Düzenle</translation>
+        <translation>Düzenle</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished">Sil</translation>
+        <translation>Sil</translation>
     </message>
     <message>
         <source>Default</source>
-        <translation type="unfinished">Varsayılan</translation>
+        <translation>Varsayılan</translation>
     </message>
     <message>
         <source>Edit Tag</source>
-        <translation type="unfinished">Düzenle Etiketi</translation>
+        <translation>Düzenle Etiketi</translation>
     </message>
     <message>
         <source>Reading</source>
-        <translation type="unfinished"></translation>
+        <translation>Okuma</translation>
     </message>
     <message>
         <source>Set message to read on activate</source>
@@ -7760,19 +7764,19 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Open messages in</source>
-        <translation type="unfinished"></translation>
+        <translation>aç mesajları</translation>
     </message>
     <message>
         <source>A new tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni sekme</translation>
     </message>
     <message>
         <source>A new window</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni bir pencere</translation>
     </message>
     <message>
         <source>Message</source>
-        <translation type="unfinished">Mesaj</translation>
+        <translation>Mesaj</translation>
     </message>
 </context>
 <context>
@@ -7795,204 +7799,204 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Sub:</source>
-        <translation type="unfinished"></translation>
+        <translation>Konu:</translation>
     </message>
 </context>
 <context>
     <name>MessageUserNotify</name>
     <message>
         <source>Message</source>
-        <translation type="unfinished">Mesaj</translation>
+        <translation>Mesaj</translation>
     </message>
 </context>
 <context>
     <name>MessageWidget</name>
     <message>
         <source>Subject:</source>
-        <translation type="unfinished">Konu:</translation>
+        <translation>Konu:</translation>
     </message>
     <message>
         <source>From:</source>
-        <translation type="unfinished">Kimden:</translation>
+        <translation>Kimden:</translation>
     </message>
     <message>
         <source>To:</source>
-        <translation type="unfinished">Kime:</translation>
+        <translation>Kime:</translation>
     </message>
     <message>
         <source>Print</source>
-        <translation type="unfinished">Yazdır</translation>
+        <translation>Yazdır</translation>
     </message>
     <message>
         <source>Print Preview</source>
-        <translation type="unfinished">Yazdırma önizleme</translation>
+        <translation>Baskı Önizleme</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished">Genişlet</translation>
+        <translation>Genişlet</translation>
     </message>
     <message>
         <source>Files</source>
-        <translation type="unfinished">Dosya</translation>
+        <translation>Dosyalar</translation>
     </message>
     <message>
         <source>Print Document</source>
-        <translation type="unfinished">Belge yazdır</translation>
+        <translation>Belge yazdır</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="unfinished">Farklı kaydet...</translation>
+        <translation>Farklı kaydet...</translation>
     </message>
     <message>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation type="unfinished">HTML-Dosya (*.htm *.html);;Tüm Dosyalar (*)</translation>
+        <translation>HTML-Dosya (*.htm *.html);;Tüm Dosyalar (*)</translation>
     </message>
     <message>
         <source>Download all Recommended Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Tüm Önerilen Dosyaları indir</translation>
     </message>
     <message>
         <source>Cc:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Bcc:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Tags:</source>
-        <translation type="unfinished"></translation>
+        <translation>Etiketler:</translation>
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosya Adı</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Boyut</translation>
     </message>
     <message>
         <source>Hash</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>No subject</source>
-        <translation type="unfinished"></translation>
+        <translation>Konu yok</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Indir</translation>
     </message>
     <message>
         <source>Download all</source>
-        <translation type="unfinished"></translation>
+        <translation>Tümünü indir</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"></translation>
+        <translation>Gizle</translation>
     </message>
     <message>
         <source>File</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosya</translation>
     </message>
     <message>
         <source>Confirm %1 as friend</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Arkadaş olarak onayla</translation>
     </message>
     <message>
         <source>Add %1 as friend</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Arkadaş olarak Ekle</translation>
     </message>
     <message>
         <source>Recommended Files</source>
-        <translation type="unfinished">Tavsiye edilen dosya</translation>
+        <translation>Tavsiye edilen dosyalar</translation>
     </message>
 </context>
 <context>
     <name>MessageWindow</name>
     <message>
         <source>New Message</source>
-        <translation type="unfinished">Yeni ileti</translation>
+        <translation>Yeni Mesaj</translation>
     </message>
     <message>
         <source>Compose</source>
-        <translation type="unfinished">Yeni ileti</translation>
+        <translation>Yeni ileti</translation>
     </message>
     <message>
         <source>Reply to selected message</source>
-        <translation type="unfinished">Iletiyi yanıtla</translation>
+        <translation>Iletiyi yanıtla</translation>
     </message>
     <message>
         <source>Reply</source>
-        <translation type="unfinished">Yanıtla</translation>
+        <translation>Yanıtla</translation>
     </message>
     <message>
         <source>Reply all to selected message</source>
-        <translation type="unfinished">Tüm alicilara yanıtla</translation>
+        <translation>Tüm alicilara yanıtla</translation>
     </message>
     <message>
         <source>Reply all</source>
-        <translation type="unfinished">Hepsini yanıtla</translation>
+        <translation>Hepsini yanıtla</translation>
     </message>
     <message>
         <source>Forward selected message</source>
-        <translation type="unfinished">Seçilmiş postaları ilet</translation>
+        <translation>Seçilmiş postaları ilet</translation>
     </message>
     <message>
         <source>Foward</source>
-        <translation type="unfinished">Ilet</translation>
+        <translation>Ilet</translation>
     </message>
     <message>
         <source>Remove selected message</source>
-        <translation type="unfinished">Iletiyi sil</translation>
+        <translation>Iletiyi sil</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished">Sil</translation>
+        <translation>Sil</translation>
     </message>
     <message>
         <source>Print selected message</source>
-        <translation type="unfinished">Iletiyi yazdıır</translation>
+        <translation>Iletiyi yazdıır</translation>
     </message>
     <message>
         <source>Print</source>
-        <translation type="unfinished">Yazdır</translation>
+        <translation>Yazdır</translation>
     </message>
     <message>
         <source>Display</source>
-        <translation type="unfinished">Görüntü</translation>
+        <translation>Görüntü</translation>
     </message>
     <message>
         <source>Tags</source>
-        <translation type="unfinished">Etiket</translation>
+        <translation>Etiketler</translation>
     </message>
     <message>
         <source>Print Preview</source>
-        <translation type="unfinished">Yazdırma önizleme</translation>
+        <translation>Yazdırma önizleme</translation>
     </message>
     <message>
         <source>&amp;File</source>
-        <translation type="unfinished">&amp;Dosya</translation>
+        <translation>&amp;Dosya</translation>
     </message>
     <message>
         <source>Save &amp;As File</source>
-        <translation type="unfinished">Farklı kaydet</translation>
+        <translation>Kaydet &amp;Dosya olarak</translation>
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation type="unfinished">&amp;Yazdır...</translation>
+        <translation>&amp;Yazdır...</translation>
     </message>
     <message>
         <source>Print Preview...</source>
-        <translation type="unfinished">&amp;Yazdırma önizleme</translation>
+        <translation>&amp;Yazdırma önizleme...</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation type="unfinished">&amp;Çıkış</translation>
+        <translation>&amp;Çıkış</translation>
     </message>
     <message>
         <source>Buttons Icon Only</source>
-        <translation type="unfinished"></translation>
+        <translation>Düğmeler sadece simgeli</translation>
     </message>
     <message>
         <source>Buttons Text Beside Icon</source>
@@ -8015,23 +8019,23 @@ Do you want to save message ?</source>
     <name>MessagesDialog</name>
     <message>
         <source>New Message</source>
-        <translation type="unfinished">Yeni Posta</translation>
+        <translation>Yeni Posta</translation>
     </message>
     <message>
         <source>Reply to Message</source>
-        <translation type="unfinished">Yanıtla</translation>
+        <translation>Yanıtla</translation>
     </message>
     <message>
         <source>Remove Message</source>
-        <translation type="unfinished">Sil</translation>
+        <translation>Sil</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished">Tarih</translation>
+        <translation>Tarih</translation>
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished">Kimden</translation>
+        <translation>Kimden</translation>
     </message>
     <message>
         <source>Size</source>
@@ -8046,15 +8050,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Reply</source>
-        <translation type="unfinished">Yanıtla</translation>
+        <translation>Yanıtla</translation>
     </message>
     <message>
         <source>Reply all</source>
-        <translation type="unfinished">Hepsini yanıtla</translation>
+        <translation>Hepsini yanıtla</translation>
     </message>
     <message>
         <source>Foward</source>
-        <translation type="unfinished">Ilet</translation>
+        <translation>Ilet</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -8065,35 +8069,35 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished">Sil</translation>
+        <translation>Sil</translation>
     </message>
     <message>
         <source>Compose</source>
-        <translation type="unfinished">Yeni ileti</translation>
+        <translation>Yeni ileti</translation>
     </message>
     <message>
         <source>Reply to selected message</source>
-        <translation type="unfinished">Iletiyi yanıtla</translation>
+        <translation>Iletiyi yanıtla</translation>
     </message>
     <message>
         <source>Reply all to selected message</source>
-        <translation type="unfinished">Tüm alicilara yanıtla</translation>
+        <translation>Tüm alicilara yanıtla</translation>
     </message>
     <message>
         <source>Forward selected message</source>
-        <translation type="unfinished">Seçilmiş postaları ilet</translation>
+        <translation>Seçilmiş postaları ilet</translation>
     </message>
     <message>
         <source>Remove selected message</source>
-        <translation type="unfinished">Iletiyi sil</translation>
+        <translation>Seçilmiş Iletiyi sil</translation>
     </message>
     <message>
         <source>Print selected message</source>
-        <translation type="unfinished">Iletiyi yazdıır</translation>
+        <translation>Seçilmiş Iletiyi yazdıır</translation>
     </message>
     <message>
         <source>Display</source>
-        <translation type="unfinished">Görüntü</translation>
+        <translation>Görüntü</translation>
     </message>
     <message>
         <source>Reset</source>
@@ -8101,19 +8105,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Attachments</source>
-        <translation type="unfinished">Ek</translation>
+        <translation>Eklentiler</translation>
     </message>
     <message>
         <source>Content</source>
-        <translation type="unfinished">Içindekiler</translation>
+        <translation>Içindekiler</translation>
     </message>
     <message>
         <source>Tags</source>
-        <translation type="unfinished">Etiket</translation>
+        <translation>Etiketler</translation>
     </message>
     <message>
         <source>Quick View</source>
-        <translation type="unfinished">Hızlı görünümler</translation>
+        <translation>Hızlı görünümler</translation>
     </message>
     <message>
         <source>Tag</source>
@@ -8121,23 +8125,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Inbox</source>
-        <translation type="unfinished">Gelen</translation>
+        <translation>Gelen</translation>
     </message>
     <message>
         <source>Outbox</source>
-        <translation type="unfinished">Giden</translation>
+        <translation>Giden</translation>
     </message>
     <message>
         <source>Draft</source>
-        <translation type="unfinished">Taslak</translation>
+        <translation>Taslak</translation>
     </message>
     <message>
         <source>Sent</source>
-        <translation type="unfinished">Gönderildi</translation>
+        <translation>Gönderildi</translation>
     </message>
     <message>
         <source>Trash</source>
-        <translation type="unfinished">Çöp</translation>
+        <translation>Çöp</translation>
     </message>
     <message>
         <source>Favorite Tags</source>
@@ -8145,19 +8149,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Folders</source>
-        <translation type="unfinished">Dosyalar</translation>
+        <translation>Dosyalar</translation>
     </message>
     <message>
         <source>Print...</source>
-        <translation type="unfinished">Yazdır...</translation>
+        <translation>Yazdır...</translation>
     </message>
     <message>
         <source>Print Preview</source>
-        <translation type="unfinished">Yazdırma önizleme</translation>
+        <translation>Yazdırma önizleme</translation>
     </message>
     <message>
         <source>Save As...</source>
-        <translation type="unfinished">Farklı kaydet...</translation>
+        <translation>Farklı kaydet...</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -8191,67 +8195,67 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Forward selected Message</source>
-        <translation type="unfinished">Ilet</translation>
+        <translation>Ilet seçilmiş mesajlari</translation>
     </message>
     <message>
         <source>Starred</source>
-        <translation type="unfinished">Yildizli</translation>
+        <translation>Yildizli</translation>
     </message>
     <message>
         <source>Open in a new window</source>
-        <translation type="unfinished">Yeni pencerede aç</translation>
+        <translation>Yeni pencerede aç</translation>
     </message>
     <message>
         <source>Open in a new tab</source>
-        <translation type="unfinished">İletiyi yeni sekmede aç</translation>
+        <translation>Yeni sekmede aç</translation>
     </message>
     <message>
         <source>Add Star</source>
-        <translation type="unfinished">Yıldız ekle</translation>
+        <translation>Yıldız ekle</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished">Düzenle</translation>
+        <translation>Düzenle</translation>
     </message>
     <message>
         <source>Edit as new</source>
-        <translation type="unfinished">Yeni olarak düzenle...</translation>
+        <translation>Yeni olarak düzenle</translation>
     </message>
     <message>
         <source>Remove Messages</source>
-        <translation type="unfinished">Iletiyi sil</translation>
+        <translation>Mesajlarii sil</translation>
     </message>
     <message>
         <source>Forward Message</source>
-        <translation type="unfinished">Ilet</translation>
+        <translation>Mesaji Ilet</translation>
     </message>
     <message>
         <source>Click to sort by attachments</source>
-        <translation type="unfinished">Eklere göre siralamak için tiklayin</translation>
+        <translation>Eklere göre siralamak için tiklayin</translation>
     </message>
     <message>
         <source>Click to sort by subject</source>
-        <translation type="unfinished">Konuya göre siralamak için tiklayin</translation>
+        <translation>Konuya göre siralamak için tiklayin</translation>
     </message>
     <message>
         <source>Click to sort by read</source>
-        <translation type="unfinished">Okunanlara göre siralamak için tiklayin</translation>
+        <translation>Okunanlara göre siralamak için tiklayin</translation>
     </message>
     <message>
         <source>Click to sort by from</source>
-        <translation type="unfinished">Gönderene göre siralamak için tiklayin</translation>
+        <translation>Gönderene göre siralamak için tiklayin</translation>
     </message>
     <message>
         <source>Click to sort by date</source>
-        <translation type="unfinished">Tarihe göre siralamak için tiklayin</translation>
+        <translation>Tarihe göre siralamak için tiklayin</translation>
     </message>
     <message>
         <source>Click to sort by tags</source>
-        <translation type="unfinished">Etikete göre siralamak için tiklayin</translation>
+        <translation>Etikete göre siralamak için tiklayin</translation>
     </message>
     <message>
         <source>Click to sort by star</source>
-        <translation type="unfinished">Yıldızlara göre siralamak için tiklayin</translation>
+        <translation>Yıldızlara göre siralamak için tiklayin</translation>
     </message>
     <message>
         <source>Remove All Tags</source>
@@ -8267,11 +8271,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Mark as read</source>
-        <translation type="unfinished">Işaretle Okunmuş olarak</translation>
+        <translation>Işaretle Okunmuş olarak</translation>
     </message>
     <message>
         <source>Mark as unread</source>
-        <translation type="unfinished">Işaretle Okunmamuş olarak</translation>
+        <translation>Işaretle Okunmamiş olarak</translation>
     </message>
     <message>
         <source>Download</source>
@@ -8279,11 +8283,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Empty trash</source>
-        <translation type="unfinished">Çöpi Boşalt</translation>
+        <translation>Çöpi Boşalt</translation>
     </message>
     <message>
         <source>Click to sort by to</source>
-        <translation type="unfinished">Alıcıya göre siralamak için tiklayin</translation>
+        <translation>Alıcıya göre siralamak için tiklayin</translation>
     </message>
     <message>
         <source>Files</source>
@@ -8303,11 +8307,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Drafts</source>
-        <translation type="unfinished">Taslak</translation>
+        <translation>Taslak</translation>
     </message>
     <message>
         <source>To</source>
-        <translation type="unfinished">Kime</translation>
+        <translation>Kime</translation>
     </message>
     <message>
         <source>Anonymous</source>
@@ -8323,15 +8327,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Total:</source>
-        <translation type="unfinished">Toplam:</translation>
+        <translation>Toplam:</translation>
     </message>
     <message>
         <source>Reply to All</source>
-        <translation type="unfinished">Hepsini yanıtla</translation>
+        <translation>Hepsini yanıtla</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation type="unfinished">Konu</translation>
+        <translation>Konu</translation>
     </message>
     <message>
         <source>Subject:</source>
@@ -8361,19 +8365,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Print</source>
-        <translation type="unfinished">Yazdır</translation>
+        <translation>Yazdır</translation>
     </message>
     <message>
         <source>No starred messages available. Stars let you give messages a special status to make them easier to find. To star a message, click on the light grey star beside any message.</source>
-        <translation type="unfinished">Yildizli posta yok. Yildiz eklediginiz e-postalari daha kolay bulabilirsiniz. Bir postaya yildiz eklemek için yanindaki açik mavi yildizi tiklayabilirsiniz.</translation>
+        <translation>Yildizli posta yok. Yildiz eklediginiz e-postalari daha kolay bulabilirsiniz. Bir postaya yildiz eklemek için yanindaki açik mavi yildizi tiklayabilirsiniz.</translation>
     </message>
     <message>
         <source>Total Inbox:</source>
-        <translation type="unfinished"></translation>
+        <translation>Toplam Gelen:</translation>
     </message>
     <message>
         <source>Buttons Icon Only</source>
-        <translation type="unfinished"></translation>
+        <translation>Düğmeler sadece simgeli</translation>
     </message>
     <message>
         <source>Buttons Text Beside Icon</source>
@@ -8393,15 +8397,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Undelete</source>
-        <translation type="unfinished"></translation>
+        <translation>geri yükle</translation>
     </message>
     <message>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation>Sistem</translation>
     </message>
     <message>
         <source>No system messages available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Hiçbir sistem mesajları mevcut degil.</translation>
     </message>
 </context>
 <context>
@@ -8572,19 +8576,19 @@ Bunun yerine Mesaj göndermek istiyor musunuz?</translation>
     </message>
     <message>
         <source>Search Friends</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaş Ara</translation>
     </message>
     <message>
         <source>RetroShare Messenger</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Add a Friend</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaş ekle</translation>
     </message>
     <message>
         <source>Share Files for your Friends</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaşlar için dosya paylaş</translation>
     </message>
 </context>
 <context>
@@ -8626,7 +8630,7 @@ Bunun yerine Mesaj göndermek istiyor musunuz?</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Kaldir</translation>
     </message>
     <message>
         <source>Reply Message</source>
@@ -8638,42 +8642,42 @@ Bunun yerine Mesaj göndermek istiyor musunuz?</translation>
     </message>
     <message>
         <source>Play Media</source>
-        <translation type="unfinished"></translation>
+        <translation>Başlat</translation>
     </message>
     <message>
         <source>Message From</source>
-        <translation type="unfinished"></translation>
+        <translation>Kimden mesaj</translation>
     </message>
     <message>
         <source>Sent Msg</source>
-        <translation type="unfinished"></translation>
+        <translation>Gönder Mesaji</translation>
     </message>
     <message>
         <source>Draft Msg</source>
-        <translation type="unfinished"></translation>
+        <translation>Taslak Msg</translation>
     </message>
     <message>
         <source>Pending Msg</source>
-        <translation type="unfinished"></translation>
+        <translation>Mesaj beklemede</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"></translation>
+        <translation>Gizle</translation>
     </message>
 </context>
 <context>
     <name>NATStatus</name>
     <message>
         <source>&lt;strong&gt;NAT:&lt;/strong&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Network Status Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>Ağ Durumu Bilinmiyor</translation>
     </message>
     <message>
         <source>Offline</source>
-        <translation type="unfinished">Çevrimdışı</translation>
+        <translation>Çevrimdışı</translation>
     </message>
     <message>
         <source>Nasty Firewall</source>
@@ -8681,19 +8685,19 @@ Bunun yerine Mesaj göndermek istiyor musunuz?</translation>
     </message>
     <message>
         <source>DHT Disabled and Firewalled</source>
-        <translation type="unfinished"></translation>
+        <translation>DHT etkisiz ve güvenlik duvarı</translation>
     </message>
     <message>
         <source>Network Restarting</source>
-        <translation type="unfinished"></translation>
+        <translation>Ağ yeniden başlatılıyor</translation>
     </message>
     <message>
         <source>Behind Firewall</source>
-        <translation type="unfinished"></translation>
+        <translation>Firewall arkasında</translation>
     </message>
     <message>
         <source>DHT Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>DHT etkisiz </translation>
     </message>
     <message>
         <source>RetroShare Server</source>
@@ -8701,7 +8705,7 @@ Bunun yerine Mesaj göndermek istiyor musunuz?</translation>
     </message>
     <message>
         <source>Forwarded Port</source>
-        <translation type="unfinished"></translation>
+        <translation>Yönlendirilen Port</translation>
     </message>
     <message>
         <source>OK | RetroShare Server</source>
@@ -8709,15 +8713,15 @@ Bunun yerine Mesaj göndermek istiyor musunuz?</translation>
     </message>
     <message>
         <source>Internet connection</source>
-        <translation type="unfinished"></translation>
+        <translation>İnternet bağlantısı</translation>
     </message>
     <message>
         <source>No internet connection</source>
-        <translation type="unfinished"></translation>
+        <translation>İnternet bağlantısı yok</translation>
     </message>
     <message>
         <source>No local network</source>
-        <translation type="unfinished"></translation>
+        <translation>Hiçbir yerel ağ yok</translation>
     </message>
 </context>
 <context>
@@ -8775,7 +8779,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Isim</translation>
+        <translation>Isim</translation>
     </message>
     <message>
         <source>Peer Address</source>
@@ -8803,15 +8807,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Deny friend</source>
-        <translation type="unfinished">Arkadaş reddet</translation>
+        <translation>Arkadaş reddet</translation>
     </message>
     <message>
         <source>Make friend</source>
-        <translation type="unfinished">Arkadaş yap</translation>
+        <translation>Arkadaş yap</translation>
     </message>
     <message>
         <source>Delete certificate</source>
-        <translation type="unfinished">Sil sertifika</translation>
+        <translation>Sil sertifika</translation>
     </message>
     <message>
         <source>Authenticated</source>
@@ -8831,7 +8835,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished">Bilinmeyen</translation>
+        <translation>Bilinmeyen</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -8843,11 +8847,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Network</source>
-        <translation type="unfinished">Ağ</translation>
+        <translation>Ağ</translation>
     </message>
     <message>
         <source>Did I authenticated peer</source>
-        <translation type="unfinished">Doğrulanmış Peer</translation>
+        <translation>Doğrulanmış Peer</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -8863,15 +8867,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Network Status</source>
-        <translation type="unfinished">Ağ Durumu</translation>
+        <translation>Ağ Durumu</translation>
     </message>
     <message>
         <source>Local network</source>
-        <translation type="unfinished">Yerel ağ</translation>
+        <translation>Yerel ağ</translation>
     </message>
     <message>
         <source>Did peer authenticated me</source>
-        <translation type="unfinished">Akran Beni doğrulanmış mı</translation>
+        <translation>Akran Beni doğrulanmış mı</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -8892,35 +8896,35 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>External ip address finder</source>
-        <translation type="unfinished">Dış IP adres bulucu</translation>
+        <translation>Dış IP adres bulucu</translation>
     </message>
     <message>
         <source>Clear</source>
-        <translation type="unfinished">Temizle</translation>
+        <translation>Temizle</translation>
     </message>
     <message>
         <source>Add Friend</source>
-        <translation type="unfinished">Arkadaş ekle</translation>
+        <translation>Arkadaş ekle</translation>
     </message>
     <message>
         <source>Create New Profile</source>
-        <translation type="unfinished">Yeni profil oluştur</translation>
+        <translation>Yeni profil oluştur</translation>
     </message>
     <message>
         <source>Create a new Profile</source>
-        <translation type="unfinished">Yeni profil oluştur</translation>
+        <translation>Yeni profil oluştur</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished">Kopyala retroshare Link</translation>
+        <translation>Kopyala retroshare Link</translation>
     </message>
     <message>
         <source>Did I sign his gpg key</source>
-        <translation type="unfinished"></translation>
+        <translation>Onun gpg anahtarı imzaladım mı</translation>
     </message>
     <message>
         <source>Search Network</source>
-        <translation type="unfinished"></translation>
+        <translation>Ağı Ara</translation>
     </message>
     <message>
         <source>Peer ID</source>
@@ -8956,60 +8960,60 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Copy My Key to Clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Benim Anahtarı Pano&apos;ya kopyala</translation>
     </message>
     <message>
         <source>Export My Key</source>
-        <translation type="unfinished"></translation>
+        <translation>Benim Anahtar İhracat et</translation>
     </message>
     <message>
         <source>Network View</source>
-        <translation type="unfinished"></translation>
+        <translation>Ağ Görünümü</translation>
     </message>
     <message>
         <source>Export my Cert</source>
-        <translation type="unfinished"></translation>
+        <translation>Benim sertifika ihracat et</translation>
     </message>
     <message>
         <source>Peer details...</source>
-        <translation type="unfinished"></translation>
+        <translation>Peer Detayları...</translation>
     </message>
     <message>
         <source>Personal signature</source>
-        <translation type="unfinished"></translation>
+        <translation>Kişisel imza</translation>
     </message>
     <message>
         <source>GPG key signed by you</source>
-        <translation type="unfinished"></translation>
+        <translation>GPG anahtar benim tarafından imzalanmışGPG anahtar benim tarafından imzalanmış</translation>
     </message>
     <message>
         <source>Marginally trusted peer</source>
-        <translation type="unfinished"></translation>
+        <translation>Marjinal güvenilen akran</translation>
     </message>
     <message>
         <source>Fully trusted peer</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamamen güvenilir akran</translation>
     </message>
     <message>
         <source>Untrusted peer</source>
-        <translation type="unfinished"></translation>
+        <translation>Güvenilmeyen akran</translation>
     </message>
     <message>
         <source>Has authenticated me</source>
-        <translation type="unfinished"></translation>
+        <translation>Beni doğrulanmış</translation>
     </message>
     <message>
         <source> has authenticated you. 
 Right-click and select &apos;make friend&apos; to be able to connect.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sağ tıklayın ve bağlantı kurabilmek için &apos;arkadaş olun&apos; seçeneğini seçin.</translation>
     </message>
     <message>
         <source>yourself</source>
-        <translation type="unfinished"></translation>
+        <translation>kendin</translation>
     </message>
     <message>
         <source>Display</source>
-        <translation type="unfinished">Görüntü</translation>
+        <translation>Görüntü</translation>
     </message>
 </context>
 <context>
@@ -9031,7 +9035,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Network</source>
-        <translation type="unfinished"></translation>
+        <translation>Ağ</translation>
     </message>
 </context>
 <context>
@@ -9050,22 +9054,22 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Redraw</source>
-        <translation type="unfinished"></translation>
+        <translation>yeniden kur</translation>
     </message>
     <message>
         <source>Friendship level:</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaşlık seviyesi:</translation>
     </message>
     <message>
         <source>Edge length:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kenar uzunluğu:</translation>
     </message>
 </context>
 <context>
     <name>NewTag</name>
     <message>
         <source>New Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni etiket</translation>
     </message>
     <message>
         <source>Name:</source>
@@ -9077,7 +9081,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamam</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -9119,23 +9123,23 @@ p, li { white-space: pre-wrap; }
     <name>NotifyPage</name>
     <message>
         <source>News Feed</source>
-        <translation type="unfinished">Haber Kaynağı</translation>
+        <translation>Haber Kaynağı</translation>
     </message>
     <message>
         <source>Channels</source>
-        <translation type="unfinished">Kanallar</translation>
+        <translation>Kanallar</translation>
     </message>
     <message>
         <source>Forums</source>
-        <translation type="unfinished">Forumlar</translation>
+        <translation>Forumlar</translation>
     </message>
     <message>
         <source>Blogs</source>
-        <translation type="unfinished">Bloglar</translation>
+        <translation>Bloglar</translation>
     </message>
     <message>
         <source>Messages</source>
-        <translation type="unfinished">Mesajlar</translation>
+        <translation>Mesajlar</translation>
     </message>
     <message>
         <source>Downloads</source>
@@ -9143,7 +9147,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Message</source>
-        <translation type="unfinished">Mesaj</translation>
+        <translation>Mesaj</translation>
     </message>
     <message>
         <source>Peer Connect</source>
@@ -9151,11 +9155,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>New Message</source>
-        <translation type="unfinished">Yeni Mesaj</translation>
+        <translation>Yeni Mesaj</translation>
     </message>
     <message>
         <source>Private Chat</source>
-        <translation type="unfinished">Özel Sohbet</translation>
+        <translation>Özel Sohbet</translation>
     </message>
     <message>
         <source>Open Window for new Peer Chat</source>
@@ -9175,39 +9179,39 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Sohbet</translation>
     </message>
     <message>
         <source>Security</source>
-        <translation type="unfinished">Güvenlik</translation>
+        <translation>Güvenlik</translation>
     </message>
     <message>
         <source>Add feeds at end</source>
-        <translation type="unfinished"></translation>
+        <translation>Haber Kaynaglari sona ekle</translation>
     </message>
     <message>
         <source>Systray Icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Systray Simge</translation>
     </message>
     <message>
         <source>Download completed</source>
-        <translation type="unfinished"></translation>
+        <translation>Indirmrtamamlanmış</translation>
     </message>
     <message>
         <source>Combined</source>
-        <translation type="unfinished"></translation>
+        <translation>Kombine</translation>
     </message>
     <message>
         <source>Toasters</source>
-        <translation type="unfinished"></translation>
+        <translation>Tosterler</translation>
     </message>
     <message>
         <source>Friend Connect</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaş bağlantisi</translation>
     </message>
     <message>
         <source>Position</source>
-        <translation type="unfinished"></translation>
+        <translation>Pozisyon</translation>
     </message>
     <message>
         <source>X Margin</source>
@@ -9219,7 +9223,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Open Window for new chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni Pencere aç Sohbet için</translation>
     </message>
     <message>
         <source>Grab Focus when chat arrives</source>
@@ -9231,47 +9235,47 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Group chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Grub Sohbet</translation>
     </message>
     <message>
         <source>Top Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Sol Üst</translation>
     </message>
     <message>
         <source>Top Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Üst sağ</translation>
     </message>
     <message>
         <source>Bottom Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Sol Alt</translation>
     </message>
     <message>
         <source>Bottom Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Sağ Alt</translation>
     </message>
     <message>
         <source>Notify</source>
-        <translation type="unfinished">Bildirimler</translation>
+        <translation>Bildirimler</translation>
     </message>
     <message>
         <source>Group Chat</source>
-        <translation type="unfinished">Canli Sohbet</translation>
+        <translation>Grub Sohbet</translation>
     </message>
     <message>
         <source>Chat Lobby</source>
-        <translation type="unfinished"></translation>
+        <translation>Lobby Sohbet</translation>
     </message>
     <message>
         <source>Connect attempt</source>
-        <translation type="unfinished"></translation>
+        <translation>Bağlantı girişimi</translation>
     </message>
     <message>
         <source>Systray message</source>
-        <translation type="unfinished"></translation>
+        <translation>Systray mesajı</translation>
     </message>
     <message>
         <source>Chat lobbies</source>
-        <translation type="unfinished"></translation>
+        <translation>Sohbet lobileri</translation>
     </message>
     <message>
         <source>Test</source>
@@ -9325,7 +9329,7 @@ p, li { white-space: pre-wrap; }
     <name>OnlineToaster</name>
     <message>
         <source>Friend Online</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaş Çevrimiçi</translation>
     </message>
 </context>
 <context>
@@ -9336,7 +9340,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished">Bilinmeyen</translation>
+        <translation>Bilinmeyen</translation>
     </message>
 </context>
 <context>
@@ -9351,7 +9355,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Chat</source>
-        <translation type="unfinished">GrupSohbet </translation>
+        <translation>Sohbet</translation>
     </message>
     <message>
         <source>Organisation</source>
@@ -9367,75 +9371,75 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished">Genişlet</translation>
+        <translation>Genişlet</translation>
     </message>
     <message>
         <source>Status:</source>
-        <translation type="unfinished">Durum:</translation>
+        <translation>Durum:</translation>
     </message>
     <message>
         <source>Friend</source>
-        <translation type="unfinished">Arkadaş</translation>
+        <translation>Arkadaş</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Kaldir</translation>
     </message>
     <message>
         <source>Write a quick Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Hızlı Mesaj Yaz</translation>
     </message>
     <message>
         <source>Start Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Sohbet</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Iptal</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished"></translation>
+        <translation>Gönder</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished">Isim:</translation>
+        <translation>Isim:</translation>
     </message>
     <message>
         <source>Peer ID:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Trust: </source>
-        <translation type="unfinished"></translation>
+        <translation>Güven:</translation>
     </message>
     <message>
         <source>Location:</source>
-        <translation type="unfinished"></translation>
+        <translation>Yer:</translation>
     </message>
     <message>
         <source>IP Address:</source>
-        <translation type="unfinished"></translation>
+        <translation>IP Adres:</translation>
     </message>
     <message>
         <source>Connection Method:</source>
-        <translation type="unfinished"></translation>
+        <translation>Bağlantı Yöntemi:</translation>
     </message>
     <message>
         <source>Write Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Mesaji yaz</translation>
     </message>
     <message>
         <source>Friend Connected</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaş Bağlandı</translation>
     </message>
     <message>
         <source>Connect Attempt</source>
-        <translation type="unfinished"></translation>
+        <translation>Bağlantı girişimi</translation>
     </message>
     <message>
         <source>Friend of Friend</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaşın arkadaş</translation>
     </message>
     <message>
         <source>Peer</source>
@@ -9443,22 +9447,22 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unknown Peer</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilinmeyen Peer</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"></translation>
+        <translation>Gizle</translation>
     </message>
     <message>
         <source>Quick Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Hızlı Mesaj</translation>
     </message>
 </context>
 <context>
     <name>PeerStatus</name>
     <message>
         <source>Friends</source>
-        <translation type="unfinished">Arkadaşlar</translation>
+        <translation>Arkadaşlar</translation>
     </message>
     <message>
         <source>Online</source>
@@ -9478,11 +9482,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Friends: 0/0</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaşlar: 0/0</translation>
     </message>
     <message>
         <source>Online Friends/Total Friends</source>
-        <translation type="unfinished"></translation>
+        <translation>Çevrimiçi Arkadaşlar / Toplam Arkadaşlar</translation>
     </message>
 </context>
 <context>
@@ -10315,23 +10319,23 @@ p, li { white-space: pre-wrap; }
     <name>PluginsPage</name>
     <message>
         <source>Loaded plugins</source>
-        <translation type="unfinished"></translation>
+        <translation>Yüklü eklentiler</translation>
     </message>
     <message>
         <source>Authorize all plugins</source>
-        <translation type="unfinished"></translation>
+        <translation>Tüm eklentileri yetkilendir</translation>
     </message>
     <message>
         <source>Plugin look-up directories</source>
-        <translation type="unfinished"></translation>
+        <translation>Plugin arama dizinleri</translation>
     </message>
     <message>
         <source>Loading error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Yüklenme hatasi.</translation>
     </message>
     <message>
         <source>Missing symbol. Wrong version?</source>
-        <translation type="unfinished"></translation>
+        <translation>Sembolü eksik. Sürümü Yanlış?</translation>
     </message>
     <message>
         <source>No plugin object</source>
@@ -10339,19 +10343,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Plugins is loaded.</source>
-        <translation type="unfinished"></translation>
+        <translation>Eklenti yüklendi.</translation>
     </message>
     <message>
         <source>Unknown status.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilinmeyen durum.</translation>
     </message>
     <message>
         <source>Title unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>Başlık Yok</translation>
     </message>
     <message>
         <source>Description unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>Açıklama yok</translation>
     </message>
     <message>
         <source>Check this for developing plugins. They will not
@@ -10362,7 +10366,7 @@ malicious behavior of crafted plugins.</source>
     </message>
     <message>
         <source>Plugins</source>
-        <translation type="unfinished"></translation>
+        <translation>Eklentiler</translation>
     </message>
     <message>
         <source>Hash rejected. Enable it manually and restart, if you need.</source>
@@ -10378,14 +10382,14 @@ malicious behavior of crafted plugins.</source>
     </message>
     <message>
         <source>Unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilinmeyen sürüm</translation>
     </message>
 </context>
 <context>
     <name>PopularityDefs</name>
     <message>
         <source>Popularity</source>
-        <translation type="unfinished"></translation>
+        <translation>Popülerlik</translation>
     </message>
 </context>
 <context>
@@ -10751,19 +10755,19 @@ Bunun yerine Mesaj göndermek istiyor musunuz?</translation>
     </message>
     <message>
         <source>Import new identity</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni kimlik ithalat et</translation>
     </message>
     <message>
         <source>Export selected identity</source>
-        <translation type="unfinished"></translation>
+        <translation>Seçilen kimliği ihracat et</translation>
     </message>
     <message>
         <source>Identities</source>
-        <translation type="unfinished"></translation>
+        <translation>Kimlikler</translation>
     </message>
     <message>
         <source>Export Identity</source>
-        <translation type="unfinished"></translation>
+        <translation>Kimligi ihrac et</translation>
     </message>
     <message>
         <source>RetroShare Identity files (*.asc)</source>
@@ -10771,7 +10775,7 @@ Bunun yerine Mesaj göndermek istiyor musunuz?</translation>
     </message>
     <message>
         <source>Identity saved</source>
-        <translation type="unfinished"></translation>
+        <translation>Kimlik kayit edildi</translation>
     </message>
     <message>
         <source>Your identity was successfully saved
@@ -10811,23 +10815,23 @@ and use the import button to load it</source>
     </message>
     <message>
         <source>Select Trusted Friend</source>
-        <translation type="unfinished">Select Trusted Friend</translation>
+        <translation>Güvenilen Arkadaş Seçin</translation>
     </message>
     <message>
         <source>Certificates (*.pqi *.pem)</source>
-        <translation type="unfinished">Certificates (*.pqi *.pem)</translation>
+        <translation>Sertifika (*.pqi *.pem)</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Isim</translation>
     </message>
     <message>
         <source>Email</source>
-        <translation type="unfinished"></translation>
+        <translation>E-Posta</translation>
     </message>
     <message>
         <source>GID</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>You can manage here your profiles, import, export your profiles or generate one .</source>
@@ -10897,7 +10901,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Addresses list</source>
-        <translation type="unfinished">Ads listesi</translation>
+        <translation>Adres listesi</translation>
     </message>
     <message>
         <source>Copy Certificate</source>
@@ -10905,7 +10909,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished">Retroshare</translation>
+        <translation>Retroshare</translation>
     </message>
     <message>
         <source>Sorry, create certificate failed</source>
@@ -10913,7 +10917,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation type="unfinished"></translation>
+        <translation>Sizin Cert panoya kopyalandı, yapıştırın ve e-posta veya başka bir yolla yoluyla arkadaşınıza gönderiniz</translation>
     </message>
     <message>
         <source>Profile Manager</source>
@@ -10921,7 +10925,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Public Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Genel Bilgi</translation>
     </message>
     <message>
         <source>Name:</source>
@@ -10933,35 +10937,35 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Peer ID:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Other Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Diğer Bilgiler</translation>
     </message>
     <message>
         <source>Number of Friends:</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaşlar sayısı:</translation>
     </message>
     <message>
         <source>Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sürüm:</translation>
     </message>
     <message>
         <source>Online since:</source>
-        <translation type="unfinished"></translation>
+        <translation>Beri online:</translation>
     </message>
     <message>
         <source>My Address</source>
-        <translation type="unfinished"></translation>
+        <translation>Benim Adres</translation>
     </message>
     <message>
         <source>Local Address:</source>
-        <translation type="unfinished"></translation>
+        <translation>Yerel Adres:</translation>
     </message>
     <message>
         <source>External Address:</source>
-        <translation type="unfinished"></translation>
+        <translation>Harici Adres:</translation>
     </message>
     <message>
         <source>Dynamic DNS:</source>
@@ -11078,7 +11082,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Login Failure</source>
-        <translation type="unfinished">Giriş Hatası</translation>
+        <translation>Giriş Hatası</translation>
     </message>
     <message>
         <source>Maybe password is wrong</source>
@@ -11086,11 +11090,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Deny friend</source>
-        <translation type="unfinished">Arkadaş reddet</translation>
+        <translation>Arkadaş reddet</translation>
     </message>
     <message>
         <source>Make friend</source>
-        <translation type="unfinished">Arkadaş yap</translation>
+        <translation>Arkadaş yap</translation>
     </message>
     <message>
         <source>Click to add this RetroShare cert to your GPG keyring
@@ -11540,7 +11544,7 @@ p, li { white-space: pre-wrap; }
     <name>RatesStatus</name>
     <message>
         <source>&lt;strong&gt;Down:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Up:&lt;/strong&gt; 0.00 (kB/s) </source>
-        <translation type="unfinished">&lt;strong&gt;Indirme:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Gönderme:&lt;/strong&gt; 0.00 (kB/s) </translation>
+        <translation>&lt;strong&gt;Indirme:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Gönderme:&lt;/strong&gt; 0.00 (kB/s) </translation>
     </message>
     <message>
         <source>&lt;strong&gt;Down:&lt;/strong&gt;</source>
@@ -11560,11 +11564,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Down</source>
-        <translation type="unfinished">Aşağı</translation>
+        <translation>Aşağı</translation>
     </message>
     <message>
         <source>Up</source>
-        <translation type="unfinished">Yukarı</translation>
+        <translation>Yukarı</translation>
     </message>
 </context>
 <context>
@@ -11747,7 +11751,7 @@ p, li { white-space: pre-wrap; }
     <name>RsCollectionFile</name>
     <message>
         <source>Cannot open file %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 dosyası açılamıyor</translation>
     </message>
     <message>
         <source>Error parsing xml file</source>
@@ -11755,15 +11759,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Open collection file</source>
-        <translation type="unfinished"></translation>
+        <translation>Aç Koleksiyonu</translation>
     </message>
     <message>
         <source>Collection files</source>
-        <translation type="unfinished"></translation>
+        <translation>Koleksiyon dosyalari</translation>
     </message>
     <message>
         <source>Create collection file</source>
-        <translation type="unfinished"></translation>
+        <translation>Koleksiyon dosyasi oluştur</translation>
     </message>
 </context>
 <context>
@@ -11778,11 +11782,11 @@ Reducing image to %1x%2 pixels?</source>
     <name>Rshare</name>
     <message>
         <source>Invalid language code specified: </source>
-        <translation type="unfinished">Invalid language code specified: </translation>
+        <translation>Geçersiz dil kodu  belirtilmiş:</translation>
     </message>
     <message>
         <source>Invalid GUI style specified: </source>
-        <translation type="unfinished">Invalid GUI style specified: </translation>
+        <translation>Geçersiz GUI tarzı belirtilmiş:</translation>
     </message>
     <message>
         <source>Resets ALL stored RetroShare settings.</source>
@@ -11802,7 +11806,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Sets RetroShare&apos;s interface style.</source>
-        <translation type="unfinished"></translation>
+        <translation>RetroShare arayüz stilini ayarlar.</translation>
     </message>
     <message>
         <source>Sets RetroShare&apos;s interface stylesheets.</source>
@@ -11810,7 +11814,8 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Sets RetroShare&apos;s language.</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>RetroShare dilini ayarlar.</translatorcomment>
+        <translation></translation>
     </message>
     <message>
         <source>RetroShare Usage Information</source>
@@ -11826,26 +11831,26 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>built-in</source>
-        <translation type="unfinished"></translation>
+        <translation>yerleşik</translation>
     </message>
 </context>
 <context>
     <name>SFListDelegate</name>
     <message>
         <source>B</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>KB</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>MB</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>GB</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -12120,19 +12125,19 @@ p, li { white-space: pre-wrap; }
     <name>SecurityItem</name>
     <message>
         <source>Expand</source>
-        <translation type="unfinished">Genişlet</translation>
+        <translation>Genişlet</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Kaldir</translation>
     </message>
     <message>
         <source>Peer details</source>
-        <translation type="unfinished"></translation>
+        <translation>Peer Detayları</translation>
     </message>
     <message>
         <source>Deny friend</source>
-        <translation type="unfinished">Arkadaş reddet</translation>
+        <translation>Arkadaş reddet</translation>
     </message>
     <message>
         <source>Make friend</source>
@@ -12140,11 +12145,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Write a quick Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Hızlı Mesaj Yaz</translation>
     </message>
     <message>
         <source>Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Sohbet</translation>
     </message>
     <message>
         <source>Start Chat</source>
@@ -12176,11 +12181,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>IP Address:</source>
-        <translation type="unfinished"></translation>
+        <translation>IP Adres:</translation>
     </message>
     <message>
         <source>Connection Method:</source>
-        <translation type="unfinished"></translation>
+        <translation>Bağlantı Yöntemi:</translation>
     </message>
     <message>
         <source>Status:</source>
@@ -12192,7 +12197,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Connect Attempt</source>
-        <translation type="unfinished"></translation>
+        <translation>Bağlantı girişimi</translation>
     </message>
     <message>
         <source>Not Yet Friends</source>
@@ -12224,11 +12229,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Quick Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Hızlı Mesaj</translation>
     </message>
     <message>
         <source>Accept Friend Request</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaşı onayla</translation>
     </message>
     <message>
         <source>wants to be friends with you on RetroShare</source>
@@ -12299,15 +12304,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Transfer Rates</source>
-        <translation type="unfinished">Transfer Rates</translation>
+        <translation>Aktarım Hızları</translation>
     </message>
     <message>
         <source>Network Configuration</source>
-        <translation type="unfinished"></translation>
+        <translation>Ağ Konfigürasyonu</translation>
     </message>
     <message>
         <source>Automatic (Upnp)</source>
-        <translation type="unfinished"></translation>
+        <translation>Otomatik (UPnP)</translation>
     </message>
     <message>
         <source>Manual Forwarded Port</source>
@@ -12343,7 +12348,7 @@ peers still need to trust each other to allow connection. </source>
     </message>
     <message>
         <source>Download (KB/s) </source>
-        <translation type="unfinished"></translation>
+        <translation>Indir (KB/s) </translation>
     </message>
     <message>
         <source>kB/s</source>
@@ -12359,15 +12364,15 @@ peers still need to trust each other to allow connection. </source>
     </message>
     <message>
         <source>Allow Tunnel Connection</source>
-        <translation type="unfinished"></translation>
+        <translation>Tünel Bağlantısina İzin ve</translation>
     </message>
     <message>
         <source>Local Address</source>
-        <translation type="unfinished"></translation>
+        <translation>Yerel Adres</translation>
     </message>
     <message>
         <source>External Address</source>
-        <translation type="unfinished"></translation>
+        <translation>Harici Adres</translation>
     </message>
     <message>
         <source>Dynamic DNS</source>
@@ -12437,7 +12442,7 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished">Seçenekler</translation>
+        <translation>Seçenekler</translation>
     </message>
     <message>
         <source>Transfer</source>
@@ -12465,7 +12470,7 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Iptal</translation>
+        <translation>Iptal</translation>
     </message>
     <message>
         <source>Apply</source>
@@ -12473,7 +12478,7 @@ The default value is 20.</source>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished">OK</translation>
+        <translation>Tamam</translation>
     </message>
     <message>
         <source>General</source>
@@ -12728,31 +12733,31 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Checking...</source>
-        <translation type="unfinished">Kontrol ediliyor ...</translation>
+        <translation>Kontrol ediliyor ...</translation>
     </message>
     <message>
         <source>Check files</source>
-        <translation type="unfinished">Onay dosyaları</translation>
+        <translation>Onayla dosyaları</translation>
     </message>
     <message>
         <source>Copy retroshare Link</source>
-        <translation type="unfinished">Kopyala retroshare Link</translation>
+        <translation>Kopyala retroshare Link</translation>
     </message>
     <message>
         <source>Send retroshare Link</source>
-        <translation type="unfinished">Gönder retroshare Link Mesajla</translation>
+        <translation>Gönder retroshare Link Mesajla</translation>
     </message>
     <message>
         <source>Copy retroshare Links to Clipboard</source>
-        <translation type="unfinished">retroshare Link Panoya Kopyala</translation>
+        <translation>retroshare Link Panoya Kopyala</translation>
     </message>
     <message>
         <source>Copy retroshare Links to Clipboard (HTML)</source>
-        <translation type="unfinished">reroshare Link Panoya Kopyala (HTML)</translation>
+        <translation>reroshare Link Panoya Kopyala (HTML)</translation>
     </message>
     <message>
         <source>Send retroshare Links</source>
-        <translation type="unfinished">Gönder retroshare link Mesajla</translation>
+        <translation>Gönder retroshare link Mesajla</translation>
     </message>
     <message>
         <source>Send retroshare Links (HTML)</source>
@@ -12764,35 +12769,35 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Open File</source>
-        <translation type="unfinished">Dosyayı Aç</translation>
+        <translation>Dosyayı Aç</translation>
     </message>
     <message>
         <source>Open Folder</source>
-        <translation type="unfinished">Klasör Aç</translation>
+        <translation>Klasör Aç</translation>
     </message>
     <message>
         <source>&lt;strong&gt;My Shared Files&lt;/strong&gt;</source>
-        <translation type="unfinished">&lt;strong&gt;Paylaşılan Dosyalar&lt;/strong&gt;</translation>
+        <translation>&lt;strong&gt;Paylaşılan Dosyalar&lt;/strong&gt;</translation>
     </message>
     <message>
         <source>&lt;strong&gt;Friends Files&lt;/strong&gt;</source>
-        <translation type="unfinished">&lt;strong&gt;Arkadaşların Dosyaları&lt;/strong&gt;</translation>
+        <translation>&lt;strong&gt;Arkadaşların Dosyaları&lt;/strong&gt;</translation>
     </message>
     <message>
         <source>&lt;strong&gt;Files&lt;/strong&gt;</source>
-        <translation type="unfinished">&lt;strong&gt;Dosyalar&lt;/strong&gt;</translation>
+        <translation>&lt;strong&gt;Dosyalar&lt;/strong&gt;</translation>
     </message>
     <message>
         <source>Splitted View</source>
-        <translation type="unfinished">Pencereyi Böl</translation>
+        <translation>Pencereyi Böl</translation>
     </message>
     <message>
         <source>Friends Folders</source>
-        <translation type="unfinished">Arkadaşların Dosyaları</translation>
+        <translation>Arkadaşların Dosyaları</translation>
     </message>
     <message>
         <source>My Folders</source>
-        <translation type="unfinished">Klasörlerim</translation>
+        <translation>Klasörlerim</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -12808,47 +12813,47 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>All</source>
-        <translation type="unfinished">Hepsi</translation>
+        <translation>Hepsi</translation>
     </message>
     <message>
         <source>One day old</source>
-        <translation type="unfinished">Bir gün olan</translation>
+        <translation>Bir gün olan</translation>
     </message>
     <message>
         <source>One Week old</source>
-        <translation type="unfinished">Bir Haft</translation>
+        <translation>Bir Haft</translation>
     </message>
     <message>
         <source>One month old</source>
-        <translation type="unfinished">Bir ay</translation>
+        <translation>Bir ay</translation>
     </message>
     <message>
         <source>Start Search</source>
-        <translation type="unfinished">Başlat</translation>
+        <translation>Başlat</translation>
     </message>
     <message>
         <source>Download selected</source>
-        <translation type="unfinished">Indir</translation>
+        <translation>Indir</translation>
     </message>
     <message>
         <source>check files</source>
-        <translation type="unfinished">Onay dosyaları</translation>
+        <translation>Onayla dosyaları</translation>
     </message>
     <message>
         <source>Search files</source>
-        <translation type="unfinished"></translation>
+        <translation>dosyaları ara</translation>
     </message>
     <message>
         <source>Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Iptal</translation>
     </message>
     <message>
         <source>Tree view</source>
-        <translation type="unfinished"></translation>
+        <translation>Zincirleme Görünüm</translation>
     </message>
     <message>
         <source>Flat view</source>
-        <translation type="unfinished"></translation>
+        <translation>Düz Görünüm</translation>
     </message>
     <message>
         <source>Send retroshare Links to Cloud</source>
@@ -12860,11 +12865,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Create collection file</source>
-        <translation type="unfinished"></translation>
+        <translation>Koleksiyon dosyasi oluştur</translation>
     </message>
     <message>
         <source>Recommend in a message to</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>RetroShare Link</source>
@@ -12880,65 +12885,65 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Files</source>
-        <translation type="unfinished">Dosya</translation>
+        <translation>Dosyalar</translation>
     </message>
 </context>
 <context>
     <name>SoundPage</name>
     <message>
         <source>Friend</source>
-        <translation type="unfinished">Arkadaş</translation>
+        <translation>Arkadaş</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation type="unfinished">Gözalt</translation>
+        <translation>Gözalt</translation>
     </message>
     <message>
         <source>Event:</source>
-        <translation type="unfinished"></translation>
+        <translation>Olay:</translation>
     </message>
     <message>
         <source>Filename:</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosya Adı</translation>
     </message>
     <message>
         <source>Event</source>
-        <translation type="unfinished"></translation>
+        <translation>Olay</translation>
     </message>
     <message>
         <source>Filename</source>
-        <translation type="unfinished">Dosya Adı</translation>
+        <translation>Dosya Adı</translation>
     </message>
     <message>
         <source>go Online</source>
-        <translation type="unfinished"></translation>
+        <translation>çevrimiçi</translation>
     </message>
     <message>
         <source>Chatmessage</source>
-        <translation type="unfinished"></translation>
+        <translation>Sohbet mesaj</translation>
     </message>
     <message>
         <source>New Msg</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni mesaj</translation>
     </message>
     <message>
         <source>Open File</source>
-        <translation type="unfinished">Dosyayı Aç</translation>
+        <translation>Dosyayı Aç</translation>
     </message>
     <message>
         <source>Sound</source>
-        <translation type="unfinished">Ses</translation>
+        <translation>Ses</translation>
     </message>
 </context>
 <context>
     <name>SoundStatus</name>
     <message>
         <source>Sound on</source>
-        <translation type="unfinished"></translation>
+        <translation>Ses açık</translation>
     </message>
     <message>
         <source>Sound off</source>
-        <translation type="unfinished"></translation>
+        <translation>Ses kapalı</translation>
     </message>
 </context>
 <context>
@@ -12996,7 +13001,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remember Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Şifreyi hatırla</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -13024,7 +13029,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name (GPG Id) - location:</source>
-        <translation type="unfinished"></translation>
+        <translation>İsim (GPG Id) - yer:</translation>
     </message>
     <message>
         <source>Name - location:</source>
@@ -13094,7 +13099,7 @@ lock file:
     </message>
     <message>
         <source>Login</source>
-        <translation type="unfinished">Login</translation>
+        <translation>Giriş</translation>
     </message>
     <message>
         <source>Load Person Failure</source>
@@ -13268,82 +13273,82 @@ lock file:
     </message>
     <message>
         <source>Friend is offline</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaş çevrimdışı</translation>
     </message>
     <message>
         <source>Friend is away</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaş Dışarıda</translation>
     </message>
     <message>
         <source>Friend is busy</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaş meşgul</translation>
     </message>
     <message>
         <source>Friend is online</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaş çevrimiçi</translation>
     </message>
     <message>
         <source>Friend is idle</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaş boşta</translation>
     </message>
     <message>
         <source>Connected</source>
-        <translation type="unfinished"></translation>
+        <translation>Bağlı</translation>
     </message>
     <message>
         <source>Unreachable</source>
-        <translation type="unfinished"></translation>
+        <translation>Ulaşılamıyor</translation>
     </message>
     <message>
         <source>Available</source>
-        <translation type="unfinished">Mevcut</translation>
+        <translation>Mevcut</translation>
     </message>
     <message>
         <source>Neighbour</source>
-        <translation type="unfinished"></translation>
+        <translation>Komşu</translation>
     </message>
     <message>
         <source>Trying tunnel connection</source>
-        <translation type="unfinished"></translation>
+        <translation>Tünel bağlantısı çalışılıyor</translation>
     </message>
     <message>
         <source>Trying TCP</source>
-        <translation type="unfinished"></translation>
+        <translation>TCP çalışılıyor</translation>
     </message>
     <message>
         <source>Trying UDP</source>
-        <translation type="unfinished"></translation>
+        <translation>UDP çalışılıyor</translation>
     </message>
     <message>
         <source>Connected: TCP</source>
-        <translation type="unfinished"></translation>
+        <translation>Bağlı: TCP</translation>
     </message>
     <message>
         <source>Connected: UDP</source>
-        <translation type="unfinished"></translation>
+        <translation>Bağlı: UDP</translation>
     </message>
     <message>
         <source>Connected: Tunnel</source>
-        <translation type="unfinished"></translation>
+        <translation>Bağlı: Tünel</translation>
     </message>
     <message>
         <source>Connected: Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>Bağlı: Bilinmiyor</translation>
     </message>
     <message>
         <source>DHT: Contact</source>
-        <translation type="unfinished"></translation>
+        <translation>DHT: İletişim</translation>
     </message>
 </context>
 <context>
     <name>StatusMessage</name>
     <message>
         <source>Personal message</source>
-        <translation type="unfinished">Kişisel ileti</translation>
+        <translation>Kişisel mesaj</translation>
     </message>
     <message>
         <source>Status message</source>
-        <translation type="unfinished">Durum mesajı</translation>
+        <translation>Durum mesajı</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -13351,11 +13356,11 @@ lock file:
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Personal message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Kişisel ileti&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Kişisel mesaj&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -13363,46 +13368,46 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Enter your Status message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Durum mesajı&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Durum mesajı veriniz&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished">Tamam</translation>
+        <translation>Tamam</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Iptal</translation>
+        <translation>Iptal</translation>
     </message>
 </context>
 <context>
     <name>StyleDialog</name>
     <message>
         <source>Style</source>
-        <translation type="unfinished">Style</translation>
+        <translation>Stil</translation>
     </message>
     <message>
         <source>Define Style</source>
-        <translation type="unfinished"></translation>
+        <translation>Stil tanımlayın</translation>
     </message>
     <message>
         <source>Choose color</source>
-        <translation type="unfinished">renk seçin</translation>
+        <translation>Renk seçiniz</translation>
     </message>
     <message>
         <source>Color 2</source>
-        <translation type="unfinished"></translation>
+        <translation>Renk 2</translation>
     </message>
     <message>
         <source>Color 1</source>
-        <translation type="unfinished"></translation>
+        <translation>Renk 1</translation>
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Yok</translation>
     </message>
     <message>
         <source>Solid</source>
@@ -13428,7 +13433,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Play</source>
-        <translation type="unfinished">Başlat</translation>
+        <translation>Başlat</translation>
     </message>
     <message>
         <source>Expand</source>
@@ -13436,7 +13441,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cancel Download</source>
-        <translation type="unfinished">Iptal</translation>
+        <translation>Iptal</translation>
     </message>
     <message>
         <source>%p Kb</source>
@@ -13444,100 +13449,100 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Download File</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosyayi indir</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Indir</translation>
     </message>
     <message>
         <source>Play File</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosyayi Başlat</translation>
     </message>
     <message>
         <source>Save File</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosya kaydet</translation>
     </message>
     <message>
         <source>ERROR</source>
-        <translation type="unfinished"></translation>
+        <translation>Hata</translation>
     </message>
     <message>
         <source>EXTRA</source>
-        <translation type="unfinished"></translation>
+        <translation>Ekstra</translation>
     </message>
     <message>
         <source>REMOTE</source>
-        <translation type="unfinished"></translation>
+        <translation>UZAKTAN</translation>
     </message>
     <message>
         <source>DOWNLOAD</source>
-        <translation type="unfinished"></translation>
+        <translation>INDIR</translation>
     </message>
     <message>
         <source>LOCAL</source>
-        <translation type="unfinished"></translation>
+        <translation>YEREL</translation>
     </message>
     <message>
         <source>UPLOAD</source>
-        <translation type="unfinished"></translation>
+        <translation>YÜKLE</translation>
     </message>
     <message>
         <source>Remove Attachment</source>
-        <translation type="unfinished"></translation>
+        <translation>Eklentiyi Kaldır</translation>
     </message>
     <message>
         <source>File %1 does not exist at location.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosya %1 bu yerde yok.</translation>
     </message>
     <message>
         <source>File %1 is not completed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosya %1 tamamlanmamış.</translation>
     </message>
     <message>
         <source>Save Channel File</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanal Dosyaysini kaydet</translation>
     </message>
 </context>
 <context>
     <name>TBoard</name>
     <message>
         <source>Pause</source>
-        <translation type="unfinished">Duraklat</translation>
+        <translation>Duraklat</translation>
     </message>
 </context>
 <context>
     <name>TagDefs</name>
     <message>
         <source>Important</source>
-        <translation type="unfinished">Önemli</translation>
+        <translation>Önemli</translation>
     </message>
     <message>
         <source>Work</source>
-        <translation type="unfinished">Iş</translation>
+        <translation>Iş</translation>
     </message>
     <message>
         <source>Personal</source>
-        <translation type="unfinished">Kişisel</translation>
+        <translation>Kişisel</translation>
     </message>
     <message>
         <source>Todo</source>
-        <translation type="unfinished">Yapılacak</translation>
+        <translation>Yapılacak</translation>
     </message>
     <message>
         <source>Later</source>
-        <translation type="unfinished">Sonra</translation>
+        <translation>Sonra</translation>
     </message>
 </context>
 <context>
     <name>TagsMenu</name>
     <message>
         <source>Remove All Tags</source>
-        <translation type="unfinished">Tüm etiketleri sil</translation>
+        <translation>Tüm etiketleri sil</translation>
     </message>
     <message>
         <source>New tag ...</source>
-        <translation type="unfinished">Yeni etiket...</translation>
+        <translation>Yeni etiket...</translation>
     </message>
 </context>
 <context>
@@ -13567,11 +13572,11 @@ p, li { white-space: pre-wrap; }
     <name>TransferPage</name>
     <message>
         <source>Transfer</source>
-        <translation type="unfinished">Aktarım</translation>
+        <translation>Aktarım</translation>
     </message>
     <message>
         <source>Transfer options</source>
-        <translation type="unfinished">Aktarım seçenekleri</translation>
+        <translation>Aktarım seçenekleri</translation>
     </message>
     <message>
         <source>Queue Size:</source>
@@ -13583,11 +13588,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Default chunk strategy:</source>
-        <translation type="unfinished">Varsayılan chunk stratejisi:</translation>
+        <translation>Varsayılan chunk stratejisi:</translation>
     </message>
     <message>
         <source>Random</source>
-        <translation type="unfinished">Rasgele</translation>
+        <translation>Rasgele</translation>
     </message>
     <message>
         <source>Show Cache Transfers</source>
@@ -13627,7 +13632,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Safety disk space limit :</source>
-        <translation type="unfinished"></translation>
+        <translation>Güvenlik disk alan sınırı:</translation>
     </message>
     <message>
         <source>You can use this to force RetroShare to download your files rather 
@@ -13663,42 +13668,42 @@ p, li { white-space: pre-wrap; }
     <name>TransferUserNotify</name>
     <message>
         <source>Download completed</source>
-        <translation type="unfinished"></translation>
+        <translation>Indirme tamamlanmış</translation>
     </message>
     <message>
         <source>You have %1 completed downloads</source>
-        <translation type="unfinished"></translation>
+        <translation>Sizin %1 Dosyalar tamamlamış</translation>
     </message>
     <message>
         <source>You have %1 completed download</source>
-        <translation type="unfinished"></translation>
+        <translation>Sizin %1 Dosya tamamlanmış</translation>
     </message>
     <message>
         <source>%1 completed downloads</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Dosyalar tamamlanmış</translation>
     </message>
     <message>
         <source>%1 completed download</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Dosya tamamlanmış</translation>
     </message>
 </context>
 <context>
     <name>TransfersDialog</name>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Iptal</translation>
+        <translation>Iptal</translation>
     </message>
     <message>
         <source>Clear Completed</source>
-        <translation type="unfinished">Tamanları Temizle</translation>
+        <translation>Tamanları Temizle</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished">Durum</translation>
+        <translation>Durum</translation>
     </message>
     <message>
         <source>Completed</source>
-        <translation type="unfinished">Tamanlandı</translation>
+        <translation>Tamanlandı</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -13721,23 +13726,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Uploads</source>
-        <translation type="unfinished">Gönderiliyor</translation>
+        <translation>Gönderiliyor</translation>
     </message>
     <message>
         <source>Selected transfer</source>
-        <translation type="unfinished">Dosya</translation>
+        <translation>Dosya</translation>
     </message>
     <message>
         <source>Done</source>
-        <translation type="unfinished">olmuş</translation>
+        <translation>Olmuş</translation>
     </message>
     <message>
         <source>Active</source>
-        <translation type="unfinished">Aktif</translation>
+        <translation>Aktif</translation>
     </message>
     <message>
         <source>Outstanding</source>
-        <translation type="unfinished">Tamamlanmamış</translation>
+        <translation>Tamamlanmamış</translation>
     </message>
     <message>
         <source>Tunneling</source>
@@ -13753,12 +13758,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Name</source>
         <comment>i.e: file name</comment>
-        <translation type="unfinished">Dosya Adı</translation>
+        <translation>Dosya Adı</translation>
     </message>
     <message>
         <source>Size</source>
         <comment>i.e: file size</comment>
-        <translation type="unfinished">Boyut</translation>
+        <translation>Boyut</translation>
     </message>
     <message>
         <source>Progress</source>
@@ -13768,59 +13773,59 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Speed</source>
         <comment>i.e: Download speed</comment>
-        <translation type="unfinished">Hız</translation>
+        <translation>Hız</translation>
     </message>
     <message>
         <source>Progress / Availability</source>
         <comment>i.e: % downloaded</comment>
-        <translation type="unfinished">Ilerleme</translation>
+        <translation>Ilerleme</translation>
     </message>
     <message>
         <source>Sources</source>
         <comment>i.e: Sources</comment>
-        <translation type="unfinished">Kaynak</translation>
+        <translation>Kaynak</translation>
     </message>
     <message>
         <source>Progress</source>
         <comment>i.e: % uploaded</comment>
-        <translation type="unfinished">Ilerleme</translation>
+        <translation>Ilerleme</translation>
     </message>
     <message>
         <source>Speed</source>
         <comment>i.e: upload speed</comment>
-        <translation type="unfinished">Hız</translation>
+        <translation>Hız</translation>
     </message>
     <message>
         <source>Transferred</source>
-        <translation type="unfinished">Aktarıldı</translation>
+        <translation>Aktarıldı</translation>
     </message>
     <message>
         <source>Play</source>
-        <translation type="unfinished">Başlat</translation>
+        <translation>Başlat</translation>
     </message>
     <message>
         <source>Pause</source>
-        <translation type="unfinished">Duraklat</translation>
+        <translation>Duraklat</translation>
     </message>
     <message>
         <source>Resume</source>
-        <translation type="unfinished">Devam</translation>
+        <translation>Devam</translation>
     </message>
     <message>
         <source>Open Folder</source>
-        <translation type="unfinished">Klasör Aç</translation>
+        <translation>Klasör Aç</translation>
     </message>
     <message>
         <source>Open File</source>
-        <translation type="unfinished">Dosyayı Aç</translation>
+        <translation>Dosyayı Aç</translation>
     </message>
     <message>
         <source>Preview File</source>
-        <translation type="unfinished">Önizleme</translation>
+        <translation>Önizleme</translation>
     </message>
     <message>
         <source>Details...</source>
-        <translation type="unfinished">Ayrıntılar</translation>
+        <translation>Ayrıntılar...</translation>
     </message>
     <message>
         <source>Copy retroshare Link</source>
@@ -13836,19 +13841,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Down</source>
-        <translation type="unfinished">Aşağı</translation>
+        <translation>Aşağı</translation>
     </message>
     <message>
         <source>Up</source>
-        <translation type="unfinished">Yukarı</translation>
+        <translation>Yukarı</translation>
     </message>
     <message>
         <source>Top</source>
-        <translation type="unfinished">Üst</translation>
+        <translation>Üst</translation>
     </message>
     <message>
         <source>Bottom</source>
-        <translation type="unfinished">Alt</translation>
+        <translation>Alt</translation>
     </message>
     <message>
         <source>Move in queue...</source>
@@ -13856,7 +13861,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Priority (Speed)...</source>
-        <translation type="unfinished">Öncelikl (Hız)</translation>
+        <translation>Öncelikl (Hız)...</translation>
     </message>
     <message>
         <source>Low</source>
@@ -13876,120 +13881,120 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Random</source>
-        <translation type="unfinished">Rasgele</translation>
+        <translation>Rasgele</translation>
     </message>
     <message>
         <source>Chunk strategy</source>
-        <translation type="unfinished">Chunk stratejisi</translation>
+        <translation>Chunk stratejisi</translation>
     </message>
     <message>
         <source>Queued</source>
-        <translation type="unfinished">Sırada</translation>
+        <translation>Sırada</translation>
     </message>
     <message>
         <source>Checking...</source>
-        <translation type="unfinished">Kontrol ediliyor ...</translation>
+        <translation>Kontrol ediliyor ...</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished">Retroshare</translation>
+        <translation>Retroshare</translation>
     </message>
     <message>
         <source>Details:</source>
-        <translation type="unfinished">Ayrıntılar</translation>
+        <translation>Ayrıntılar:</translation>
     </message>
     <message>
         <source>File %1 is not completed. If it is a media file, try to preview it.</source>
-        <translation type="unfinished">%1 Dosya Tamamlanmamış. Eğer bir medya sa, önizleme deneyin .</translation>
+        <translation>%1 Dosya Tamamlanmamış. Eğer bir medya sa, önizleme deneyin .</translation>
     </message>
     <message>
         <source>Are you sure that you want to cancel and delete these files?</source>
-        <translation type="unfinished">Bu dosyaları iptal et ve silmek istediğinizden emin misiniz?</translation>
+        <translation>Bu dosyaları iptal et ve silmek istediğinizden emin misiniz?</translation>
     </message>
     <message>
         <source>Speed / Queue position</source>
-        <translation type="unfinished">Hızı / Kuyruk konumu</translation>
+        <translation>Hızı / Kuyruk konumu</translation>
     </message>
     <message>
         <source>Remaining</source>
-        <translation type="unfinished">Kalan</translation>
+        <translation>Kalan</translation>
     </message>
     <message>
         <source>Download time</source>
         <comment>i.e: Estimated Time of Arrival / Time left</comment>
-        <translation type="unfinished">Indirme zamani</translation>
+        <translation>Indirme zamani</translation>
     </message>
     <message>
         <source>Slower</source>
-        <translation type="unfinished">Yavaş</translation>
+        <translation>Yavaş</translation>
     </message>
     <message>
         <source>Average</source>
-        <translation type="unfinished">Ortalama</translation>
+        <translation>Ortalama</translation>
     </message>
     <message>
         <source>Faster</source>
-        <translation type="unfinished">Daha hızlı</translation>
+        <translation>Daha hızlı</translation>
     </message>
     <message>
         <source>Failed</source>
-        <translation type="unfinished">Başarısız</translation>
+        <translation>Başarısız</translation>
     </message>
     <message>
         <source>Okay</source>
-        <translation type="unfinished">Tamam</translation>
+        <translation>Tamam</translation>
     </message>
     <message>
         <source>Waiting</source>
-        <translation type="unfinished">Bekliyor</translation>
+        <translation>Bekliyor</translation>
     </message>
     <message>
         <source>Downloading</source>
-        <translation type="unfinished">Indiriliyor</translation>
+        <translation>Indiriliyor</translation>
     </message>
     <message>
         <source>Complete</source>
-        <translation type="unfinished">Bitmış</translation>
+        <translation>Bitmış</translation>
     </message>
     <message>
         <source>Paused</source>
-        <translation type="unfinished">Durdurulmuş</translation>
+        <translation>Durdurulmuş</translation>
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished">Bilinmeyen</translation>
+        <translation>Bilinmeyen</translation>
     </message>
     <message>
         <source>Transferring</source>
-        <translation type="unfinished">Aktarılıyor</translation>
+        <translation>Aktarılıyor</translation>
     </message>
     <message>
         <source>Uploading</source>
-        <translation type="unfinished">Gönderiliyor</translation>
+        <translation>Gönderiliyor</translation>
     </message>
     <message>
         <source>Router Statistics</source>
-        <translation type="unfinished">Yönlendirici İstatistikleri</translation>
+        <translation>Yönlendirici İstatistikleri</translation>
     </message>
     <message>
         <source>Router Requests</source>
-        <translation type="unfinished">Rota İstek</translation>
+        <translation>Rota İstek</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished">Kopyala retroshare Link</translation>
+        <translation>Kopyala retroshare Link</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished">Yapıştır retroshare Link</translation>
+        <translation>Yapıştır retroshare Link</translation>
     </message>
     <message>
         <source>Open Collection</source>
-        <translation type="unfinished"></translation>
+        <translation>Aç Koleksiyonu</translation>
     </message>
     <message>
         <source>Show cache transfers</source>
-        <translation type="unfinished"></translation>
+        <translation>Göster Önbellek Transferleri</translation>
     </message>
     <message>
         <source>Core-ID</source>
@@ -14014,7 +14019,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Move in Queue...</source>
-        <translation type="unfinished"></translation>
+        <translation>Kuyruka Taşı ...</translation>
     </message>
     <message>
         <source>version: </source>
@@ -14022,7 +14027,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File preview</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosya önizleme</translation>
     </message>
     <message>
         <source>File %1 preview failed.</source>
@@ -14030,7 +14035,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Open Transfer</source>
-        <translation type="unfinished"></translation>
+        <translation>Transferi aç</translation>
     </message>
     <message>
         <source>If the hash of the downloaded data does
@@ -14059,69 +14064,69 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Downloads</source>
-        <translation type="unfinished">Indir</translation>
+        <translation>Indirmeler</translation>
     </message>
 </context>
 <context>
     <name>TreeStyle_RDM</name>
     <message>
         <source>FILE</source>
-        <translation type="unfinished">Dosya</translation>
+        <translation>Dosya</translation>
     </message>
     <message>
         <source>Files</source>
-        <translation type="unfinished">Dosya</translation>
+        <translation>Dosyalar</translation>
     </message>
     <message>
         <source>DIR</source>
-        <translation type="unfinished">Klasör</translation>
+        <translation>Klasör</translation>
     </message>
     <message>
         <source>Friends Directories</source>
-        <translation type="unfinished">Arkadaş Dizinleri</translation>
+        <translation>Arkadaş Dizinleri</translation>
     </message>
     <message>
         <source>My Directories</source>
-        <translation type="unfinished">Dosyalarım</translation>
+        <translation>Dosyalarım</translation>
     </message>
     <message>
         <source>Age</source>
-        <translation type="unfinished">Yaş </translation>
+        <translation>Yaş </translation>
     </message>
     <message>
         <source>Friend</source>
-        <translation type="unfinished">Arkadaş</translation>
+        <translation>Arkadaş</translation>
     </message>
     <message>
         <source>Share Type</source>
-        <translation type="unfinished">Paylaş Tipi</translation>
+        <translation>Paylaş Tipi</translation>
     </message>
     <message>
         <source>My files</source>
-        <translation type="unfinished"></translation>
+        <translation>Benim Dosyalar</translation>
     </message>
     <message>
         <source>File</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosya</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Boyut</translation>
     </message>
     <message>
         <source>What&apos;s new</source>
-        <translation type="unfinished"></translation>
+        <translation>Yenilikler</translation>
     </message>
 </context>
 <context>
     <name>TrustView</name>
     <message>
         <source>Trust</source>
-        <translation type="unfinished">Güven </translation>
+        <translation>Güven </translation>
     </message>
     <message>
         <source>Zoom :</source>
-        <translation type="unfinished"></translation>
+        <translation>Yakınlaştırma :</translation>
     </message>
     <message>
         <source>Update</source>
@@ -14145,7 +14150,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Half</source>
-        <translation type="unfinished"></translation>
+        <translation>Yarim</translation>
     </message>
     <message>
         <source> authenticated himself</source>
@@ -14157,7 +14162,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Full</source>
-        <translation type="unfinished"></translation>
+        <translation>Tam</translation>
     </message>
     <message>
         <source> is authenticated by </source>
@@ -14180,31 +14185,31 @@ Try to be patient!</source>
     <name>TurtleRouterDialog</name>
     <message>
         <source>Search requests</source>
-        <translation type="unfinished"></translation>
+        <translation>Arama istekleri</translation>
     </message>
     <message>
         <source>Tunnel requests</source>
-        <translation type="unfinished"></translation>
+        <translation>Tünel istekleri</translation>
     </message>
     <message>
         <source>Unknown hashes</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilinmeyen hashes</translation>
     </message>
     <message>
         <source>Tunnel id</source>
-        <translation type="unfinished"></translation>
+        <translation>Tünel id</translation>
     </message>
     <message>
         <source>last transfer</source>
-        <translation type="unfinished"></translation>
+        <translation>son aktarim</translation>
     </message>
     <message>
         <source>Speed</source>
-        <translation type="unfinished">Hız</translation>
+        <translation>Hız</translation>
     </message>
     <message>
         <source>Request id: %1	 from [%2]	 %3 secs ago</source>
-        <translation type="unfinished"></translation>
+        <translation>İstek kimliği:%1 kimden[%2] %3 saniye önce</translation>
     </message>
 </context>
 <context>
@@ -14219,158 +14224,158 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Router Statistics</source>
-        <translation type="unfinished">Yönlendirici İstatistikleri</translation>
+        <translation>Yönlendirici İstatistikleri</translation>
     </message>
     <message>
         <source>F2F router information</source>
-        <translation type="unfinished"></translation>
+        <translation>F2F yönlendirici bilgiler</translation>
     </message>
 </context>
 <context>
     <name>TurtleRouterStatistics</name>
     <message>
         <source>Router Statistics</source>
-        <translation type="unfinished">Yönlendirici İstatistikleri</translation>
+        <translation>Yönlendirici İstatistikleri</translation>
     </message>
     <message>
         <source>Age in seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Yaş saniye orani</translation>
     </message>
     <message>
         <source>Depth</source>
-        <translation type="unfinished"></translation>
+        <translation>Derinlik</translation>
     </message>
     <message>
         <source>total</source>
-        <translation type="unfinished"></translation>
+        <translation>Toplam</translation>
     </message>
     <message>
         <source>Unknown Peer</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilinmeyen Peer</translation>
     </message>
 </context>
 <context>
     <name>TurtleRouterStatisticsWidget</name>
     <message>
         <source>Search requests repartition</source>
-        <translation type="unfinished"></translation>
+        <translation>Arama istekleri yeniden bölümle</translation>
     </message>
     <message>
         <source>Tunnel requests repartition</source>
-        <translation type="unfinished"></translation>
+        <translation>Tünel isteklerini yeniden bölümle</translation>
     </message>
     <message>
         <source>Turtle router traffic</source>
-        <translation type="unfinished"></translation>
+        <translation>Turtle yönlendirici trafik</translation>
     </message>
     <message>
         <source>Tunnel requests Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Gelen Tünel istekleri</translation>
     </message>
     <message>
         <source>Tunnel requests Dn</source>
-        <translation type="unfinished"></translation>
+        <translation>Giden Tünel istekleri</translation>
     </message>
     <message>
         <source>Incoming file data</source>
-        <translation type="unfinished"></translation>
+        <translation>Gelen dosya veri</translation>
     </message>
     <message>
         <source>Outgoing file data</source>
-        <translation type="unfinished"></translation>
+        <translation>Giden dosya veri</translation>
     </message>
     <message>
         <source>Forwarded data    </source>
-        <translation type="unfinished"></translation>
+        <translation>Yönlendirilen veri</translation>
     </message>
     <message>
         <source>TR Forward probabilities</source>
-        <translation type="unfinished"></translation>
+        <translation>TR İleri olasılıkları</translation>
     </message>
 </context>
 <context>
     <name>ULListDelegate</name>
     <message>
         <source>B</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>KB</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>MB</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>GB</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>UserNotify</name>
     <message>
         <source>You have %1 new messages</source>
-        <translation type="unfinished">%1 yeni mesaj var</translation>
+        <translation>%1 yeni mesajlar var</translation>
     </message>
     <message>
         <source>You have %1 new message</source>
-        <translation type="unfinished">%1 yeni mesaj var</translation>
+        <translation>%1 yeni mesaj var</translation>
     </message>
     <message>
         <source>%1 new messages</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 yeni mesajlar</translation>
     </message>
     <message>
         <source>%1 new message</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 yeni mesaj</translation>
     </message>
 </context>
 <context>
     <name>VMessageBox</name>
     <message>
         <source>OK</source>
-        <translation type="unfinished">OK</translation>
+        <translation>Tamam</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Cancel</translation>
+        <translation>Iptal</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Yes</translation>
+        <translation>Evet</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">No</translation>
+        <translation>Hayir</translation>
     </message>
     <message>
         <source>Help</source>
-        <translation type="unfinished">Help</translation>
+        <translation>Yardım</translation>
     </message>
     <message>
         <source>Retry</source>
-        <translation type="unfinished">Retry</translation>
+        <translation>tekrarla</translation>
     </message>
     <message>
         <source>Show Log</source>
-        <translation type="unfinished">Show Log</translation>
+        <translation>Günlüğü Göster</translation>
     </message>
     <message>
         <source>Show Settings</source>
-        <translation type="unfinished">Show Settings</translation>
+        <translation>Ayarları göster</translation>
     </message>
     <message>
         <source>Continue</source>
-        <translation type="unfinished"></translation>
+        <translation>Devam et</translation>
     </message>
     <message>
         <source>Quit</source>
-        <translation type="unfinished">Çıkış</translation>
+        <translation>Çıkış</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation type="unfinished">Gözalt</translation>
+        <translation>Gözalt</translation>
     </message>
 </context>
 <context>
@@ -14480,7 +14485,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Page</source>
-        <translation type="unfinished"></translation>
+        <translation>Sayfa</translation>
     </message>
     <message>
         <source>Id</source>
@@ -14488,7 +14493,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Page Modification</source>
-        <translation type="unfinished"></translation>
+        <translation>Sayfa Modifikasyonu</translation>
     </message>
     <message>
         <source>By</source>
@@ -14508,7 +14513,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Düzenle</translation>
     </message>
     <message>
         <source>Mod &gt;&gt;</source>
@@ -14516,121 +14521,121 @@ Try to be patient!</source>
     </message>
     <message>
         <source>New Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni Grup</translation>
     </message>
     <message>
         <source>New Page</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni Sayfa</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished">Sil</translation>
+        <translation>Sil</translation>
     </message>
 </context>
 <context>
     <name>WikiEditDialog</name>
     <message>
         <source>Wiki Page</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiki Sayfa</translation>
     </message>
     <message>
         <source>Wiki Group:</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiki Grup:</translation>
     </message>
     <message>
         <source>Page Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sayfa Adı:</translation>
     </message>
     <message>
         <source>Edit ID</source>
-        <translation type="unfinished"></translation>
+        <translation>Düzenle ID</translation>
     </message>
     <message>
         <source>Previous Version</source>
-        <translation type="unfinished"></translation>
+        <translation>Önceki Sürüm</translation>
     </message>
     <message>
         <source>Prev ID</source>
-        <translation type="unfinished"></translation>
+        <translation>Önceki ID</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Iptal</translation>
     </message>
     <message>
         <source>Revert</source>
-        <translation type="unfinished"></translation>
+        <translation>Geri Al</translation>
     </message>
     <message>
         <source>Submit</source>
-        <translation type="unfinished"></translation>
+        <translation>Sun</translation>
     </message>
 </context>
 <context>
     <name>WireDialog</name>
     <message>
         <source>TimeRange</source>
-        <translation type="unfinished"></translation>
+        <translation>Zaman Aralığı</translation>
     </message>
     <message>
         <source>All</source>
-        <translation type="unfinished">Hepsi</translation>
+        <translation>Hepsi</translation>
     </message>
     <message>
         <source>Last Month</source>
-        <translation type="unfinished"></translation>
+        <translation>Geçen ay</translation>
     </message>
     <message>
         <source>Last Week</source>
-        <translation type="unfinished"></translation>
+        <translation>Geçen hafta</translation>
     </message>
     <message>
         <source>Today</source>
-        <translation type="unfinished"></translation>
+        <translation>Bügün</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished">Yeni</translation>
+        <translation>Yeni</translation>
     </message>
     <message>
         <source>from</source>
-        <translation type="unfinished"></translation>
+        <translation>Kimden</translation>
     </message>
     <message>
         <source>until</source>
-        <translation type="unfinished"></translation>
+        <translation>kadar</translation>
     </message>
     <message>
         <source>Search/Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Ara / Filtre</translation>
     </message>
     <message>
         <source>Network Wide</source>
-        <translation type="unfinished">Geniş ağı</translation>
+        <translation>Geniş ağı</translation>
     </message>
     <message>
         <source>Manage Accounts</source>
-        <translation type="unfinished"></translation>
+        <translation>Hesapları Yönet</translation>
     </message>
     <message>
         <source>Showing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Gösterilen:</translation>
     </message>
     <message>
         <source>Yourself</source>
-        <translation type="unfinished"></translation>
+        <translation>Kendin</translation>
     </message>
     <message>
         <source>Friends</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaşlar</translation>
     </message>
     <message>
         <source>Following</source>
-        <translation type="unfinished"></translation>
+        <translation>izleyen</translation>
     </message>
     <message>
         <source>Custom</source>
-        <translation type="unfinished"></translation>
+        <translation>Görenek</translation>
     </message>
     <message>
         <source>Account 1</source>
@@ -14658,11 +14663,11 @@ Try to be patient!</source>
     <message>
         <source>Unknown</source>
         <comment>Unknown (size)</comment>
-        <translation type="unfinished">Bilinmeyen</translation>
+        <translation>Bilinmeyen</translation>
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished">Bilinmeyen</translation>
+        <translation>Bilinmeyen</translation>
     </message>
     <message>
         <source> B</source>
@@ -14677,7 +14682,7 @@ Try to be patient!</source>
     <message>
         <source>%1 minutes</source>
         <comment>e.g: 10minutes</comment>
-        <translation type="unfinished"></translation>
+        <translation>%1 dikikalar</translation>
     </message>
     <message>
         <source>%1h %2m</source>
