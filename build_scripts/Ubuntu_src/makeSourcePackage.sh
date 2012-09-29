@@ -2,8 +2,9 @@
 
 echo This script is going to build the debian source package for RetroShare, from the svn.
 
-if test -d "RetroShare" ;  then
-	echo Please remove the RetroShare/ directory first.
+workdir=retroshare-0.5
+if test -d "$workdir" ;  then
+	echo Please remove the $workdir directory first.
 	exit
 fi
 
@@ -37,81 +38,93 @@ echo Extracting base archive...
 tar zxvf $packages/BaseRetroShareDirs.tgz 2> /dev/null
 
 echo Checking out latest snapshot in libbitdht...
-cd retroshare-0.5/src/libbitdht/
+cd $workdir/src/libbitdht/
 svn co -r$svn https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/libbitdht/src . 2> /dev/null
 cd ../../..
 #  
 echo Checking out latest snapshot in openpgpsdk...
-cd retroshare-0.5/src/openpgpsdk/
+cd $workdir/src/openpgpsdk/
 svn co -r$svn https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/openpgpsdk/src . 2> /dev/null
 cd ../../..
 #  
 echo Checking out latest snapshot in libretroshare...
-cd retroshare-0.5/src/libretroshare/
+cd $workdir/src/libretroshare/
 svn co -r$svn https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/libretroshare/src . 2> /dev/null
 cd ../../..
 #  
 echo Checking out latest snapshot in retroshare-gui...
-cd retroshare-0.5/src/retroshare-gui/
+cd $workdir/src/retroshare-gui/
 svn co -r$svn https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/retroshare-gui/src . 2> /dev/null
 cd ../../..
 #
 echo Checking out latest snapshot in retroshare-nogui...
-cd retroshare-0.5/src/retroshare-nogui/
+cd $workdir/src/retroshare-nogui/
 svn co -r$svn https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/retroshare-nogui/src . 2> /dev/null
 cd ../../..
+#
+echo Checking out latest snapshot in VOIP plugin
+mkdir -p $workdir/src/plugins/VOIP
+cd $workdir/src/plugins/VOIP
+svn co -r$svn https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/plugins/VOIP . 2> /dev/null
+cd ..
+mkdir -p Common
+cd Common
+svn co -r$svn https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/plugins/Common . 2> /dev/null
+cd ../../../..
+cp $workdir/src/retroshare-gui/gui/chat/PopupChatDialog.ui $workdir/src/plugins/VOIP/gui/PopupChatDialog.ui
 
 echo Copying bdboot.txt file at installation place
-cp retroshare-0.5/src/libbitdht/bitdht/bdboot.txt
+cp $workdir/src/libbitdht/bitdht/bdboot.txt
 echo Setting version numbers...
 
 # setup version numbers
-cat retroshare-0.5/src/libretroshare/util/rsversion.h | grep -v SVN_REVISION | grep -v SVN_REVISION_NUMBER > /tmp/toto2342
+cat $workdir/src/libretroshare/util/rsversion.h | grep -v SVN_REVISION | grep -v SVN_REVISION_NUMBER > /tmp/toto2342
 echo \#define SVN_REVISION \"Revision: "$version"  date : `date`\" >> /tmp/toto2342
 echo \#define SVN_REVISION_NUMBER $svn >> /tmp/toto2342
-cp /tmp/toto2342 retroshare-0.5/src/libretroshare/util/rsversion.h
+cp /tmp/toto2342 $workdir/src/libretroshare/util/rsversion.h
 
-cat retroshare-0.5/src/retroshare-gui/util/rsversion.h | grep -v GUI_REVISION | grep -v SVN_REVISION_NUMBER > /tmp/toto4463
+cat $workdir/src/retroshare-gui/util/rsversion.h | grep -v GUI_REVISION | grep -v SVN_REVISION_NUMBER > /tmp/toto4463
 echo \#define GUI_REVISION \"Revision: "$version"  date : `date`\" >> /tmp/toto4463
 echo \#define SVN_REVISION_NUMBER $svn >> /tmp/toto4463
-cp /tmp/toto4463 retroshare-0.5/src/retroshare-gui/util/rsversion.h
+cp /tmp/toto4463 $workdir/src/retroshare-gui/util/rsversion.h
 
 # Various cleaning
 
 echo Cleaning...
-find retroshare-0.5 -name ".svn" -exec rm -rf {} \;		# remove all svn repositories
+find $workdir -name ".svn" -exec rm -rf {} \;		# remove all svn repositories
 
 echo Preparing package
-mv retroshare-0.5/src/retroshare-gui/RetroShare.pro retroshare-0.5/src/retroshare-gui/retroshare-gui.pro
+mv $workdir/src/retroshare-gui/RetroShare.pro $workdir/src/retroshare-gui/retroshare-gui.pro
 
-./cleanProFile.sh retroshare-0.5/src/libretroshare/libretroshare.pro
-./cleanProFile.sh retroshare-0.5/src/retroshare-gui/retroshare-gui.pro
-./cleanProFile.sh retroshare-0.5/src/retroshare-nogui/retroshare-nogui.pro
+./cleanProFile.sh $workdir/src/libretroshare/libretroshare.pro
+./cleanProFile.sh $workdir/src/retroshare-gui/retroshare-gui.pro
+./cleanProFile.sh $workdir/src/retroshare-nogui/retroshare-nogui.pro
+./cleanProFile_voip.sh $workdir/src/plugins/VOIP/VOIP.pro
 
 echo "DESTDIR = ../../libretroshare/src/lib/" > /tmp/toto75299
-cat retroshare-0.5/src/libretroshare/libretroshare.pro /tmp/toto75299 > /tmp/toto752992
-cp /tmp/toto752992 retroshare-0.5/src/libretroshare/libretroshare.pro
+cat $workdir/src/libretroshare/libretroshare.pro /tmp/toto75299 > /tmp/toto752992
+cp /tmp/toto752992 $workdir/src/libretroshare/libretroshare.pro
 
 echo "DESTDIR = ../../libbitdht/src/lib/" > /tmp/toto75299
-cat retroshare-0.5/src/libbitdht/libbitdht.pro /tmp/toto75299 > /tmp/toto752992
-cp /tmp/toto752992 retroshare-0.5/src/libbitdht/libbitdht.pro
+cat $workdir/src/libbitdht/libbitdht.pro /tmp/toto75299 > /tmp/toto752992
+cp /tmp/toto752992 $workdir/src/libbitdht/libbitdht.pro
 
 echo "DESTDIR = ../../openpgpsdk/src/lib/" > /tmp/toto75299
-cat retroshare-0.5/src/openpgpsdk/openpgpsdk.pro /tmp/toto75299 > /tmp/toto752992
-cp /tmp/toto752992 retroshare-0.5/src/openpgpsdk/openpgpsdk.pro
-#cat retroshare-gui-ext.pro >> retroshare-0.5/src/retroshare-gui/retroshare-gui.pro 
+cat $workdir/src/openpgpsdk/openpgpsdk.pro /tmp/toto75299 > /tmp/toto752992
+cp /tmp/toto752992 $workdir/src/openpgpsdk/openpgpsdk.pro
+#cat retroshare-gui-ext.pro >> $workdir/src/retroshare-gui/retroshare-gui.pro 
 
 #echo Building orig directory...
-#mkdir retroshare-0.5.orig
-#cp -r retroshare-0.5/src retroshare-0.5.orig
+#mkdir $workdir.orig
+#cp -r $workdir/src $workdir.orig
 
 # Call debuild to make the source debian package
 
 echo Calling debuild...
-cat retroshare-0.5/debian/control | sed -e s/XXXXXX/"$version"/g > retroshare-0.5/debian/control.tmp
-mv -f retroshare-0.5/debian/control.tmp retroshare-0.5/debian/control
+cat $workdir/debian/control | sed -e s/XXXXXX/"$version"/g > $workdir/debian/control.tmp
+mv -f $workdir/debian/control.tmp $workdir/debian/control
 
-cd retroshare-0.5
+cd $workdir
 
 #for i in sid; do
 #for i in natty; do
