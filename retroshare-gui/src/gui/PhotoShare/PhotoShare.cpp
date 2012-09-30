@@ -98,7 +98,6 @@ PhotoShare::PhotoShare(QWidget *parent)
         /* setup TokenQueue */
         mPhotoQueue = new TokenQueueV2(rsPhotoV2->getTokenService(), this);
         requestAlbumData();
-        updateAlbums();
 }
 
 void PhotoShare::notifySelection(PhotoShareItem *selection)
@@ -112,8 +111,6 @@ void PhotoShare::notifySelection(PhotoShareItem *selection)
 
         if(mPhotoSelected)
             mPhotoSelected->setSelected(false);
-
-        clearPhotos();
 
         if(mAlbumSelected == aItem)
         {
@@ -133,9 +130,11 @@ void PhotoShare::notifySelection(PhotoShareItem *selection)
 
             mAlbumSelected->setSelected(true);
 
+            // get photo data
+            std::list<RsGxsGroupId> grpIds;
+            grpIds.push_back(mAlbumSelected->getAlbum().mMeta.mGroupId);
+            requestPhotoData(grpIds);
         }
-
-        updatePhotos();
     }
     else if((pItem = dynamic_cast<PhotoItem*>(selection)) != NULL)
     {
@@ -283,6 +282,8 @@ void PhotoShare::SetPhotoDialogClosed()
 
 void PhotoShare::clearAlbums()
 {
+    clearPhotos();
+
     std::cerr << "PhotoShare::clearAlbums()" << std::endl;
     QLayout *alayout = ui.scrollAreaWidgetContents->layout();
 
@@ -294,8 +295,6 @@ void PhotoShare::clearAlbums()
         alayout->removeWidget(item);
         item->setParent(NULL);
     }
-
-    clearPhotos();
 
     // set no albums to be selected
     if(mAlbumSelected)
@@ -328,23 +327,23 @@ void PhotoShare::deleteAlbums()
 void PhotoShare::clearPhotos()
 {
     std::cerr << "PhotoShare::clearPhotos()" << std::endl;
-    mPhotoSelected = NULL;
 
     QLayout *layout = ui.scrollAreaWidgetContents_2->layout();
 
     if(mAlbumSelected)
     {
-        const RsGxsGroupId& id = mAlbumSelected->getAlbum().mMeta.mGroupId;
-
-        QSetIterator<PhotoItem*> sit(mPhotoItems[id]);
+        QSetIterator<PhotoItem*> sit(mPhotoItems);
 
         while(sit.hasNext())
         {
             PhotoItem* item  = sit.next();
             layout->removeWidget(item);
             item->setParent(NULL);
+            delete item; // remove item
         }
+        mPhotoItems.clear();
     }
+    mPhotoSelected = NULL;
 }
 
 void PhotoShare::updateAlbums()
@@ -407,10 +406,38 @@ void PhotoShare::updateAlbums()
     }
 }
 
+void PhotoShare::deleteAlbum(const RsGxsGroupId &grpId)
+{
+
+    QSetIterator<AlbumItem*> sit(mAlbumItems);
+
+    while(sit.hasNext())
+    {
+        AlbumItem* item = sit.next();
+
+        if(item->getAlbum().mMeta.mGroupId == grpId){
+
+            if(mAlbumSelected == item)
+            {
+                item->setSelected(false);
+                mAlbumSelected = NULL;
+            }
+
+            QLayout *alayout = ui.scrollAreaWidgetContents->layout();
+            alayout->removeWidget(item);
+            mAlbumItems.remove(item);
+            item->setParent(NULL);
+            delete item;
+            return;
+        }
+    }
+}
+
 void PhotoShare::addAlbum(const RsPhotoAlbum &album)
 {
     std::cerr << " PhotoShare::addAlbum() AlbumId: " << album.mMeta.mGroupId << std::endl;
 
+    deleteAlbum(album.mMeta.mGroupId); // remove from ui
     AlbumItem *item = new AlbumItem(album, this, this);
     mAlbumItems.insert(item);
 }
@@ -423,9 +450,7 @@ void PhotoShare::addPhoto(const RsPhotoPhoto &photo)
     std::cerr << std::endl;
 
     PhotoItem* item = new PhotoItem(this, photo, this);
-    const RsGxsGroupId id = photo.mMeta.mGroupId;
-
-    mPhotoItems[id].insert(item);
+    mPhotoItems.insert(item);
 }
 
 void PhotoShare::subscribeToAlbum()
@@ -450,13 +475,10 @@ void PhotoShare::subscribeToAlbum()
 
 void PhotoShare::updatePhotos()
 {
-    clearPhotos();
 
     if(mAlbumSelected)
     {
-        const RsGxsGroupId& grpId = mAlbumSelected->getAlbum().mMeta.mGroupId;
-
-        QSetIterator<PhotoItem*> sit(mPhotoItems[grpId]);
+        QSetIterator<PhotoItem*> sit(mPhotoItems);
 
         while(sit.hasNext())
         {
@@ -497,8 +519,6 @@ void PhotoShare::loadAlbumList(const uint32_t &token)
 
         requestAlbumData(albumIds);
 
-        clearPhotos();
-
         std::list<std::string>::iterator it;
         for(it = albumIds.begin(); it != albumIds.end(); it++)
         {
@@ -525,9 +545,6 @@ void PhotoShare::requestAlbumData()
 
 bool PhotoShare::loadAlbumData(const uint32_t &token)
 {
-
-    deleteAlbums();
-
     std::cerr << "PhotoShare::loadAlbumData()";
     std::cerr << std::endl;
 
@@ -544,6 +561,7 @@ bool PhotoShare::loadAlbumData(const uint32_t &token)
 
         addAlbum(album);
     }
+
     updateAlbums();
     return true;
 }
@@ -575,7 +593,7 @@ void PhotoShare::acknowledgeGroup(const uint32_t &token)
         RsTokReqOptionsV2 opts;
         opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
         uint32_t reqToken;
-        mPhotoQueue->requestGroupInfo(reqToken, RS_TOKREQ_ANSTYPE_DATA, opts, 0);
+        mPhotoQueue->requestGroupInfo(reqToken, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds, 0);
     }
 }
 
@@ -584,18 +602,21 @@ void PhotoShare::acknowledgeMessage(const uint32_t &token)
     std::pair<RsGxsGroupId, RsGxsMessageId> p;
     rsPhotoV2->acknowledgeMsg(token, p);
 
-    if(!p.first.empty())
-    {
-        GxsMsgReq req;
-        std::vector<RsGxsMessageId> v;
-        v.push_back(p.second);
-        req[p.first] = v;
-        RsTokReqOptionsV2 opts;
-        opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
-        opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-        uint32_t reqToken;
-        mPhotoQueue->requestMsgInfo(reqToken, RS_TOKREQ_ANSTYPE_DATA, opts, req, 0);
-    }
+    // just acknowledge don't load it
+    // loading is only instigated by clicking an album (i.e. requesting photo data)
+    // but load it if the album is selected
+//    if(!p.first.empty())
+//    {
+//        if(mAlbumSelected)
+//        {
+//            if(mAlbumSelected->getAlbum().mMeta.mGroupId == p.first)
+//            {
+//                std::list<RsGxsGroupId> grpIds;
+//                grpIds.push_back(p.first);
+//                requestPhotoData(grpIds);
+//            }
+//        }
+//    }
 }
 
 void PhotoShare::loadPhotoList(const uint32_t &token)
@@ -618,11 +639,21 @@ void PhotoShare::requestPhotoData(GxsMsgReq &photoIds)
         mPhotoQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, photoIds, 0);
 }
 
+void PhotoShare::requestPhotoData(const std::list<RsGxsGroupId>& grpIds)
+{
+        RsTokReqOptionsV2 opts;
+        opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+        uint32_t token;
+        mPhotoQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds, 0);
+}
+
 
 void PhotoShare::loadPhotoData(const uint32_t &token)
 {
         std::cerr << "PhotoShare::loadPhotoData()";
         std::cerr << std::endl;
+
+        clearPhotos();
 
         PhotoResult res;
         rsPhotoV2->getPhoto(token, res);

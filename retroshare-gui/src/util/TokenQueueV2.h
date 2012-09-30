@@ -64,9 +64,8 @@ class TokenResponseV2
 
 
 /*!
- *
- *
- *
+ * An important thing to note is that all requests are stacked (so FIFO)
+ * This is to prevent overlapped loads on GXS UIs
  */
 class TokenQueueV2: public QWidget
 {
@@ -110,7 +109,7 @@ private slots:
 
 private:
 	/* Info for Data Requests */
-	std::list<TokenRequestV2> mRequests;
+        std::list<TokenRequestV2> mRequests;
 
 	RsTokenServiceV2 *mService;
         TokenResponseV2 *mResponder;

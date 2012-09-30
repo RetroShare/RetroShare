@@ -37,12 +37,18 @@ private:
     void resetComments();
 
     /*!
+     * Request comments
+     */
+    void requestComments();
+
+    /*!
      * Simply removes comments but doesn't place them back in dialog
      */
     void clearComments();
 
     void acknowledgeComment(uint32_t token);
     void loadComment(uint32_t token);
+    void loadList(uint32_t token);
     void addComment(const RsPhotoComment& comment);
 private:
     Ui::PhotoDialog *ui;

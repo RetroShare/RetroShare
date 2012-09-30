@@ -32,12 +32,12 @@ PhotoItem::PhotoItem(PhotoShareItemHolder *holder, const QString& path, QWidget 
 {
     ui->setupUi(this);
 
-    int width = 120;
-    int height = 120;
+    int width = 250;
+    int height = 250;
 
     QPixmap qtn = QPixmap(path).scaled(width, height, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    ui->label_Thumbnail->setPixmap(qtn);
     mThumbNail = qtn;
+    ui->label_Thumbnail->setPixmap(mThumbNail.scaled(120, 120, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     setSelected(false);
 
     getPhotoThumbnail(mPhotoDetails.mThumbnail);

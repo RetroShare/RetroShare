@@ -558,11 +558,6 @@ void RsGenExchange::publishMsgs()
 			msg->metaData = new RsGxsMsgMetaData();
                         msg->msg.setBinData(mData, size);
                         *(msg->metaData) = msgItem->meta;
-                        size = msg->metaData->serial_size();
-                        char metaDataBuff[size];
-
-                        msg->metaData->serialise(metaDataBuff, &size);
-                        msg->meta.setBinData(metaDataBuff, size);
 
                         ok = createMessage(msg);
                         RsGxsMessageId msgId;
@@ -582,6 +577,14 @@ void RsGenExchange::publishMsgs()
                             {
                                 msg->metaData->mOrigMsgId = msg->metaData->mMsgId;
                             }
+
+                            // now serialise meta data
+                            size = msg->metaData->serial_size();
+                            char metaDataBuff[size];
+                            msg->metaData->serialise(metaDataBuff, &size);
+                            msg->meta.setBinData(metaDataBuff, size);
+
+
                             msgId = msg->msgId;
                             grpId = msg->grpId;
                             ok = mDataAccess->addMsgData(msg);
@@ -716,11 +719,50 @@ void RsGenExchange::createDummyGroup(RsGxsGrpItem *grpItem)
 void RsGenExchange::processRecvdData()
 {
     processRecvdGroups();
+
+    processRecvdMessages();
 }
 
 
 void RsGenExchange::processRecvdMessages()
 {
+    RsStackMutex stack(mGenMtx);
+
+    std::vector<RsNxsMsg*>::iterator vit = mReceivedMsgs.begin();
+    GxsMsgReq msgIds;
+    std::map<RsNxsMsg*, RsGxsMsgMetaData*> msgs;
+
+    for(; vit != mReceivedMsgs.end(); vit++)
+    {
+        RsNxsMsg* msg = *vit;
+        RsGxsMsgMetaData* meta = new RsGxsMsgMetaData();
+        bool ok = meta->deserialise(msg->meta.bin_data, &(msg->meta.bin_len));
+
+        if(ok)
+        {
+            msgs.insert(std::make_pair(msg, meta));
+            msgIds[msg->grpId].push_back(msg->msgId);
+        }
+        else
+        {
+#ifdef GXS_GENX_DEBUG
+            std::cerr << "failed to deserialise incoming meta, grpId: "
+                    << msg->grpId << ", msgId: " << msg->msgId << std::endl;
+#endif
+            delete msg;
+            delete meta;
+        }
+    }
+
+    if(!msgIds.empty())
+    {
+        mDataStore->storeMessage(msgs);
+        RsGxsMsgChange* c = new RsGxsMsgChange();
+        c->msgChangeMap = msgIds;
+        mNotifications.push_back(c);
+    }
+
+    mReceivedMsgs.clear();
 }
 
 
@@ -737,11 +779,22 @@ void RsGenExchange::processRecvdGroups()
     {
         RsNxsGrp* grp = *vit;
         RsGxsGrpMetaData* meta = new RsGxsGrpMetaData();
-        meta->deserialise(grp->meta.bin_data, grp->meta.bin_len);
-        grps.insert(std::make_pair(grp, meta));
+        bool ok = meta->deserialise(grp->meta.bin_data, grp->meta.bin_len);
 
-        grpIds.push_back(grp->grpId);
-
+        if(ok)
+        {
+            grps.insert(std::make_pair(grp, meta));
+            grpIds.push_back(grp->grpId);
+        }
+        else
+        {
+#ifdef GXS_GENX_DEBUG
+            std::cerr << "failed to deserialise incoming meta, grpId: "
+                    << grp->grpId << std::endl;
+#endif
+            delete grp;
+            delete meta;
+        }
     }
 
     if(!grpIds.empty())

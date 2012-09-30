@@ -126,7 +126,15 @@ void p3PhotoServiceV2::groupsChanged(std::list<RsGxsGroupId>& grpIds)
 void p3PhotoServiceV2::msgsChanged(
 		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgs)
 {
+    RsStackMutex stack(mPhotoMutex);
 
+    while(!mMsgChange.empty())
+    {
+        RsGxsMsgChange* mc = mMsgChange.back();
+        msgs = mc->msgChangeMap;
+        mMsgChange.pop_back();
+        delete mc;
+    }
 }
 
 

@@ -30,7 +30,7 @@
 
 RsGxsGrpMetaData::RsGxsGrpMetaData()
 {
-
+    clear();
 }
 
 uint32_t RsGxsGrpMetaData::serial_size()

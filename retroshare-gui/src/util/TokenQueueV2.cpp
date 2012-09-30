@@ -104,7 +104,7 @@ void TokenQueueV2::queueRequest(uint32_t token, uint32_t basictype, uint32_t ans
 	gettimeofday(&req.mRequestTs, NULL);
 	req.mPollTs = req.mRequestTs;
 
-	mRequests.push_back(req);
+        mRequests.push_back(req);
 
 	if (mRequests.size() == 1)
 	{
@@ -123,26 +123,23 @@ void TokenQueueV2::doPoll(float dt)
 
 void TokenQueueV2::pollRequests()
 {
-	std::list<TokenRequestV2>::iterator it;
-
 	double pollPeriod = 1.0; // max poll period.
-	for(it = mRequests.begin(); it != mRequests.end();)
-	{
-		if (checkForRequest(it->mToken))
-		{
-			/* clean it up and handle */
-			loadRequest(*it);		
-			it = mRequests.erase(it);	
-		}
-		else
-		{
-			/* calculate desired poll period */
 
-			/* if less then current poll period, adjust */	
-			
-			it++;
-		}
-	}
+        TokenRequestV2 req;
+
+        if(mRequests.size() > 0){
+            req = mRequests.front();
+        }else
+        {
+            return;
+        }
+
+        if (checkForRequest(req.mToken))
+        {
+            /* clean it up and handle */
+            loadRequest(req);
+            mRequests.pop_front();
+        }
 
 	if (mRequests.size() > 0)
 	{
@@ -178,7 +175,7 @@ bool TokenQueueV2::cancelRequest(const uint32_t token)
 	/* cancel at lower level first */
 	mService->cancelRequest(token);
 
-	std::list<TokenRequestV2>::iterator it;
+        std::list<TokenRequestV2>::iterator it;
 
 	for(it = mRequests.begin(); it != mRequests.end(); it++)
 	{

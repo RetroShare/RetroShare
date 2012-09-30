@@ -98,7 +98,8 @@ void RsGxsNetService::syncWithPeers()
         {
             RsGxsGrpMetaData* meta = mit->second;
 
-            if(meta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
+            if(meta->mSubscribeFlags & (GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED |
+               GXS_SERV::GROUP_SUBSCRIBE_ADMIN) )
                 grpIds.push_back(mit->first);
 
             delete meta;
@@ -106,21 +107,21 @@ void RsGxsNetService::syncWithPeers()
 
         sit = peers.begin();
 
-	// TODO msgs
+        // synchronise group msg for groups which we're subscribed to
         for(; sit != peers.end(); sit++)
         {
-        	RsStackMutex stack(mNxsMutex);
+            RsStackMutex stack(mNxsMutex);
 
-                std::vector<RsGxsGroupId>::iterator vit = grpIds.begin();
+            std::vector<RsGxsGroupId>::iterator vit = grpIds.begin();
 
-                for(; vit != grpIds.end(); vit++)
-        	{
-        		RsNxsSyncMsg* msg = new RsNxsSyncMsg(mServType);
-        		msg->clear();
-                        msg->PeerId(*sit);
-                        msg->grpId = *vit;
-        		sendItem(msg);
-        	}
+            for(; vit != grpIds.end(); vit++)
+            {
+                    RsNxsSyncMsg* msg = new RsNxsSyncMsg(mServType);
+                    msg->clear();
+                    msg->PeerId(*sit);
+                    msg->grpId = *vit;
+                    sendItem(msg);
+            }
         }
 }
 

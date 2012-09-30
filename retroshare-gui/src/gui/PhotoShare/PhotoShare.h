@@ -43,6 +43,7 @@ private slots:
         void SetPhotoDialogClosed();
         void updateAlbums();
         void subscribeToAlbum();
+        void deleteAlbum(const RsGxsGroupId&);
 private:
 
         /* Request Response Functions for loading data */
@@ -56,6 +57,7 @@ private:
         void requestPhotoList(GxsMsgReq &albumIds);
         void requestPhotoList(const std::string &albumId);
         void requestPhotoData(GxsMsgReq &photoIds);
+        void requestPhotoData(const std::list<RsGxsGroupId> &grpIds);
 
         void loadAlbumList(const uint32_t &token);
         bool loadAlbumData(const uint32_t &token);
@@ -75,6 +77,9 @@ private:
         void clearAlbums();
         void clearPhotos();
         void deleteAlbums();
+        /*!
+         * Fills up photo ui with photos held in mPhotoItems (current groups photos)
+         */
         void updatePhotos();
 
 private:
@@ -92,7 +97,7 @@ private:
         Ui::PhotoShare ui;
 
         QSet<AlbumItem*> mAlbumItems;
-        QMap<RsGxsGroupId, QSet<PhotoItem*> > mPhotoItems;
+        QSet<PhotoItem*> mPhotoItems; // the current album selected
 
 };
 
