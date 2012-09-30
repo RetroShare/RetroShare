@@ -67,8 +67,6 @@ private slots:
 
   void checkUpdate();
   
-  void anchorClicked (const QUrl &);
-  
   void addNewLink();
 
 private:

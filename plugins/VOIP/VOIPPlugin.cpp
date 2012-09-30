@@ -157,7 +157,7 @@ std::string VOIPPlugin::getPluginName() const
 	return QApplication::translate("VOIPPlugin", "VOIP").toUtf8().constData();
 }
 
-QTranslator* VOIPPlugin::qt_translator(QApplication *app, const QString& languageCode) const
+QTranslator* VOIPPlugin::qt_translator(QApplication */*app*/, const QString& languageCode) const
 {
 	if (languageCode == "en") {
 		return NULL;

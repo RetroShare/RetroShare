@@ -76,9 +76,6 @@ LinksDialog::LinksDialog(RsPeers *peers, RsFiles *files, QWidget *parent)
 
   connect( ui.anonBox, SIGNAL( stateChanged ( int ) ), this, SLOT( checkAnon ( void  ) ) );
 
-  connect( ui.linklabel, SIGNAL(anchorClicked(const QUrl &)), SLOT(anchorClicked(const QUrl &)));
-
-
   mStart = 0;
 
 
@@ -168,7 +165,7 @@ void LinksDialog::linkTreeWidgetCostumPopupMenu( QPoint point )
       contextMnu.addSeparator();
       contextMnu.addAction(downloadAct);
 
-      contextMnu.exec(QCursor::pos());
+      contextMnu.exec(ui.linkTreeWidget->viewport()->mapToGlobal(point));
 }
 
 void LinksDialog::changedSortRank( int index )
@@ -657,7 +654,7 @@ void  LinksDialog::updateComments(std::string rid, std::string )
 	/* set Link details */
 	ui.titleLineEdit->setText(QString::fromStdWString(detail.title));
 	ui.linkLineEdit->setText(QString::fromStdWString(detail.link));
-  ui.linklabel->setHtml("<a href='" + QString::fromStdWString(detail.link) + "'> " + QString::fromStdWString(detail.link) +"</a>");
+  ui.linklabel->setText("<a href='" + QString::fromStdWString(detail.link) + "'> " + QString::fromStdWString(detail.link) +"</a>");
 
 
 	if (mLinkId == rid)
@@ -990,60 +987,6 @@ void LinksDialog::downloadSelected()
 //		srcIds.push_back(pit->peerId);
 
 //	rsFiles->FileRequest(rslink.name().toStdString(), rslink.hash().toStdString(), rslink.size(), "", 0, srcIds);
-}
-
-void LinksDialog::anchorClicked (const QUrl& link ) 
-{
-    #ifdef LINK_DEBUG
-		    std::cerr << "LinksDialog::anchorClicked link.scheme() : " << link.scheme().toStdString() << std::endl;
-    #endif
-    
-	if (link.scheme() == "retroshare")
-	{
-		QStringList L = link.toString().split("|") ;
-
-		std::string fileName = L.at(1).toStdString() ;
-		uint64_t fileSize = L.at(2).toULongLong();
-		std::string fileHash = L.at(3).toStdString() ;
-
-#ifdef LINK_DEBUG
-		std::cerr << "LinksDialog::anchorClicked FileRequest : fileName : " << fileName << ". fileHash : " << fileHash << ". fileSize : " << fileSize << std::endl;
-#endif
-
-		if (fileName != "" && fileHash != "")
-		{
-			std::list<std::string> srcIds;
-
-                        if(mFiles->FileRequest(fileName, fileHash, fileSize, "", RS_FILE_HINTS_NETWORK_WIDE, srcIds))
-			{
-				QMessageBox mb(tr("File Request Confirmation"), tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
-				mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
-				mb.exec();
-			}
-			else
-			{
-				QMessageBox mb(tr("File Request canceled"), tr("The file has not been added to your download list, because you already have it."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
-				mb.exec();
-			}
-		} 
-		else 
-		{
-			QMessageBox mb(tr("File Request Error"), tr("The file link is malformed."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
-			mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
-			mb.exec();
-		}
-	} 
-	else if (link.scheme() == "http") 
-	{
-		QDesktopServices::openUrl(link);
-	} 
-	else if (link.scheme() == "") 
-	{
-		//it's probably a web adress, let's add http:// at the beginning of the link
-		QString newAddress = link.toString();
-		newAddress.prepend("http://");
-		QDesktopServices::openUrl(QUrl(newAddress));
-	}
 }
 
 void LinksDialog::addNewLink()

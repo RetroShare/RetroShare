@@ -98,7 +98,7 @@ std::string LinksCloudPlugin::getPluginName() const
 	return QApplication::translate("LinksCloudPlugin", "LinksCloud").toUtf8().constData();
 }
 
-QTranslator* LinksCloudPlugin::qt_translator(QApplication *app, const QString& languageCode) const
+QTranslator* LinksCloudPlugin::qt_translator(QApplication */*app*/, const QString& languageCode) const
 {
 	if (languageCode == "en") {
 		return NULL;
