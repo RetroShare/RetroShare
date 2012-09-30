@@ -83,12 +83,12 @@ void Network::tick()
 
 		while( (item = node(i).outgoing()) != NULL)
 		{
+			std::cerr << "Tick: send item from " << item->PeerId() << " to " << Network::node(i).id() << std::endl;
+
 			PeerNode& node = node_by_id(item->PeerId()) ;
 			item->PeerId(Network::node(i).id()) ;
 
 			node.incoming(item) ;
-
-			std::cerr << "Tick: send item from " << item->PeerId() << " to " << Network::node(i).id() << std::endl;
 		}
 	}
 }
@@ -111,9 +111,9 @@ class FakeLinkMgr: public p3LinkMgrIMPL
 		{
 		}
 
-		virtual std::string getOwnId() const { return _own_id ; }
-		virtual void getOnlineList(std::list<std::string>& lst) const { lst = _friends ; }
-		virtual uint32_t getLinkType(const std::string&) const { return RS_NET_CONN_TCP_ALL | RS_NET_CONN_SPEED_NORMAL; }
+		virtual const std::string getOwnId() { return _own_id ; }
+		virtual void getOnlineList(std::list<std::string>& lst) { lst = _friends ; }
+		virtual uint32_t getLinkType(const std::string&) { return RS_NET_CONN_TCP_ALL | RS_NET_CONN_SPEED_NORMAL; }
 
 	private:
 		std::string _own_id ;
@@ -148,6 +148,7 @@ PeerNode::~PeerNode()
 
 void PeerNode::tick()
 {
+	std::cerr << "  ticking peer node " << _id << std::endl;
 	_service_server->tick() ;
 }
 
@@ -159,3 +160,9 @@ RsRawItem *PeerNode::outgoing()
 {
 	return _service_server->outgoing() ;
 }
+
+void PeerNode::manageFileHash(const std::string& hash)
+{
+	_turtle->monitorFileTunnels("file 1",hash,10000) ;
+}
+

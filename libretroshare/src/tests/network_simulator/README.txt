@@ -34,5 +34,6 @@ Implementation constraints
 
 Complilation
 ============
-	* needs QGLViewer-dev library (standard on ubuntu, package name is libqglviewer-qt4-dev)
+	* needs the QGLViewer-dev library (standard on ubuntu, package name is libqglviewer-qt4-dev)
+	* should compile on windows and MacOS as well. Use http://www.libqglviewer.com
 

@@ -2,6 +2,7 @@
 
 #include "Network.h"
 #include "NetworkSimulatorGUI.h"
+#include "MonitoredRsPeers.h"
 #include <QApplication>
 #include <argstream.h>
 
@@ -27,6 +28,8 @@ int main(int argc, char *argv[])
 		Network network ;
 
 		network.initRandom(20,0.2) ;
+
+		rsPeers = new MonitoredRsPeers(network) ;
 
 		if(show_gui)
 		{

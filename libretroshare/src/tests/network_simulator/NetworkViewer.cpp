@@ -1,4 +1,8 @@
 #include <QMouseEvent>
+#include <QMenu>
+#include <QAction>
+
+#include <util/rsid.h>
 
 #include "Network.h"
 #include "NetworkViewer.h"
@@ -21,6 +25,11 @@ NetworkViewer::NetworkViewer(QWidget *parent,Network&net)
 	}
 
 	timerId = startTimer(1000/25) ;
+
+	connect(this,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(contextMenu(QPoint)));
+
+	action_ManageHash = new QAction(QString("Manage hash"),this) ;
+	QObject::connect(action_ManageHash,SIGNAL(triggered()),this,SLOT(actionManageHash())) ;
 }
 
 void NetworkViewer::draw() 
@@ -258,9 +267,9 @@ void NetworkViewer::timerEvent(QTimerEvent *event)
 
     if (!itemsMoved) {
         killTimer(timerId);
-#ifdef DEBUG_ELASTIC
+//#ifdef DEBUG_ELASTIC
 		  std::cerr << "Killing timr" << std::endl ;
-#endif
+//#endif
         timerId = 0;
     }
 	 else
@@ -305,6 +314,10 @@ void NetworkViewer::mousePressEvent(QMouseEvent *e)
 			updateGL() ;
 
 			emit nodeSelected(i) ;
+
+			if(e->button() == Qt::RightButton)
+				emit customContextMenuRequested(QPoint(e->x(),e->y())) ;
+
 			return ;
 		}
 
@@ -407,4 +420,36 @@ void NetworkViewer::calculateForces(const Network::NodeId& node_id,const double 
 	new_x = std::min(std::max(new_x, 10.0f),  width() - 10.0f);
 	new_y = std::min(std::max(new_y, 10.0f), height() - 10.0f);
 }
+
+void NetworkViewer::contextMenu(QPoint p)
+{
+	std::cerr << "Context menu request at point " << p.x() << " " << p.y() << std::endl;
+
+	QMenu contextMnu ;//= ui.msgText->createStandardContextMenu(matrix.map(point));
+
+	contextMnu.addAction(action_ManageHash);
+	contextMnu.exec(mapToGlobal(p));
+}
+
+void NetworkViewer::actionManageHash()
+{
+	if(_current_selected_node < 0)
+		return ;
+
+	std::cerr << "Managing hash..." << std::endl;
+
+	unsigned char hash_bytes[20] ;
+	for(int i=0;i<20;++i)
+		hash_bytes[i] = lrand48() & 0xff ;
+
+	std::string hash = t_RsGenericIdType<20>(hash_bytes).toStdString(false) ;;
+
+	std::cerr << "   current node = " << _current_selected_node << std::endl ;
+	std::cerr << "   adding random hash = " << hash << std::endl;
+
+	_network.node(_current_selected_node).manageFileHash(hash) ;
+
+	updateGL() ;
+}
+
 

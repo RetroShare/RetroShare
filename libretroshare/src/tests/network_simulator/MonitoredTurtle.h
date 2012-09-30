@@ -12,4 +12,8 @@ class MonitoredTurtleRouter: public p3turtle
 
 		virtual bool loadConfiguration(std::string& loadHash) { return true ;}
 		virtual bool saveConfiguration() { return true ;}
+		virtual bool performLocalHashSearch(const TurtleFileHash& hash,FileInfo& info) ;
+
+	private:
+		std::map<std::string,FileInfo> _local_files ;
 };

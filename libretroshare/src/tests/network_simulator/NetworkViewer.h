@@ -1,3 +1,4 @@
+#include <QPoint>
 #include <QGLViewer/qglviewer.h>
 
 // The network simulator GUI has the following functionalities:
@@ -41,6 +42,8 @@ class NetworkViewer: public QGLViewer
 
 	public slots:
 		void timerEvent(QTimerEvent *) ;
+		void contextMenu(QPoint) ;
+		void actionManageHash() ;
 
 	private:
 		void calculateForces(const Network::NodeId& node_id,const double *map,int W,int H,float x,float y,float /*speedf*/,float& new_x, float& new_y) ;
@@ -65,4 +68,6 @@ class NetworkViewer: public QGLViewer
 
 		int _current_selected_node ;
 		bool _dragging ;
+
+		QAction *action_ManageHash ;
 };

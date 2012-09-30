@@ -26,6 +26,10 @@ class PeerNode
 		void tick() ;
 
 		const RsTurtle *turtle_service() const ;
+
+		// turtle methods
+		void manageFileHash(const std::string& hash) ;
+
 	private:
 		p3ServiceServer *_service_server ;
 		MonitoredTurtleRouter *_turtle ;
