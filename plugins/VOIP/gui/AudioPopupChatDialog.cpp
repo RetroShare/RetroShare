@@ -5,6 +5,7 @@
 #include "interface/rsvoip.h"
 
 AudioPopupChatDialog::AudioPopupChatDialog(QWidget *parent)
+	: PopupChatDialog(parent)
 {
 	audioListenToggleButton = new QPushButton ;
 	audioListenToggleButton->setMinimumSize(QSize(28,28)) ;

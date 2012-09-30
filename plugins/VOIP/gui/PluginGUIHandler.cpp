@@ -6,17 +6,17 @@
 #include <gui/chat/ChatDialog.h>
 #include <gui/AudioPopupChatDialog.h>
 
-void PluginGUIHandler::ReceivedInvitation(const QString& peer_id) 
+void PluginGUIHandler::ReceivedInvitation(const QString& /*peer_id*/)
 {
         std::cerr << "****** Plugin GUI handler: received Invitation!" << std::endl;
 }
 
-void PluginGUIHandler::ReceivedVoipHangUp(const QString& peer_id) 
+void PluginGUIHandler::ReceivedVoipHangUp(const QString& /*peer_id*/)
 {
 	std::cerr << "****** Plugin GUI handler: received HangUp!" << std::endl;
 }
 
-void PluginGUIHandler::ReceivedVoipAccept(const QString& peer_id) 
+void PluginGUIHandler::ReceivedVoipAccept(const QString& /*peer_id*/)
 {
 	std::cerr << "****** Plugin GUI handler: received VoipAccept!" << std::endl;
 }

@@ -431,7 +431,7 @@ bool SpeexOutputProcessor::isSequential() const {
         return true;
 }
 
-void SpeexOutputProcessor::speex_jitter_init(SpeexJitter *jit, void *decoder, int sampling_rate)
+void SpeexOutputProcessor::speex_jitter_init(SpeexJitter *jit, void *decoder, int /*sampling_rate*/)
 {
    jit->dec = decoder;
    speex_decoder_ctl(decoder, SPEEX_GET_FRAME_SIZE, &jit->frame_size);

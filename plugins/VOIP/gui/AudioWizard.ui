@@ -188,7 +188,7 @@
       <item>
        <widget class="QLabel" name="label_2">
         <property name="text">
-         <string>todo shortcut</string>
+         <string notr="true">todo shortcut</string>
         </property>
        </widget>
       </item>
