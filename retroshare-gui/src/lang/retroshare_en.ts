@@ -1170,6 +1170,26 @@ Please choose one of it to chat with.</source>
         <source>System message</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Enable custom fonts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable custom font size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable bold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable italics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Minimum text contrast</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ChatStyle</name>
@@ -8911,7 +8931,7 @@ and use the import button to load it</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Addresses list</source>
+        <source>Addresses list:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
