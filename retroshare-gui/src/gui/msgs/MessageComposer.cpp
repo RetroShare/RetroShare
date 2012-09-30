@@ -870,7 +870,7 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
         msgComposer->msgFlags = (msgInfo.msgflags & RS_MSG_SYSTEM);
 
         msgComposer->setTitleText(QString::fromStdWString(msgInfo.title));
-        msgComposer->setMsgText(QString::fromStdWString(msgInfo.msg), true);
+        msgComposer->setMsgText(QString::fromStdWString(msgInfo.msg));
         msgComposer->setFileList(msgInfo.files);
 
         // get existing groups
