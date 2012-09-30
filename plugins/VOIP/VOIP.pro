@@ -65,6 +65,7 @@ TRANSLATIONS +=  \
             lang/VOIP_fr.ts \
             lang/VOIP_es.ts \
             lang/VOIP_pt_BR.ts \
+            lang/VOIP_tr.ts \
 
 
 
