@@ -372,7 +372,7 @@ class p3turtle: public p3Service, /*public pqiMonitor,*/ public RsTurtle,/* publ
 		void returnSearchResult(RsTurtleSearchResultItem *item) ;
 
 		/// Returns true if the file with given hash is hosted locally.
-		bool performLocalHashSearch(const TurtleFileHash& hash,FileInfo& info) ;
+		virtual bool performLocalHashSearch(const TurtleFileHash& hash,FileInfo& info) ;
 
 		//--------------------------- Local variables --------------------------------//
 		
