@@ -48,7 +48,7 @@ RSA *GxsSecurity::extractPublicKey(RsTlvSecurityKey& key)
 }
 
 
-bool GxsSecurity::validateNxsMsg(RsNxsMsg *msg)
+bool GxsSecurity::validateNxsMsg(RsNxsMsg *msg, RsGxsGrpMetaData *grpMeta)
 {
 
         return false;

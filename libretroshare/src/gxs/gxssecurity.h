@@ -126,7 +126,7 @@ public:
          * @param msg
          * @return false if verfication of signature is not passed
          */
-        static bool validateNxsMsg(RsNxsMsg *msg);
+        static bool validateNxsMsg(RsNxsMsg *msg, RsGxsGrpMetaData* grpMeta);
 };
 
 #endif // GXSSECURITY_H

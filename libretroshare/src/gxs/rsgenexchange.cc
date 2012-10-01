@@ -29,6 +29,7 @@
 #include <openssl/evp.h>
 #include <openssl/rsa.h>
 
+#include "pqi/pqihash.h"
 #include "rsgenexchange.h"
 #include "gxssecurity.h"
 #include "util/contentvalue.h"
@@ -166,7 +167,11 @@ void RsGenExchange::createGroup(RsNxsGrp *grp)
     meta->keys.keys[pubKey.keyId] = pubKey;
     meta->keys.keys[privPubKey.keyId] = privPubKey;
 
-    meta->mGroupId = adminKey.keyId;
+    pqihash hash;
+
+    // get hash of msg data to create msg id
+    hash.addData(grp->grp.bin_data, grp->grp.bin_len);
+    hash.Complete(meta->mGroupId);
     grp->grpId = meta->mGroupId;
 
     adminKey.TlvClear();
@@ -235,11 +240,19 @@ bool RsGenExchange::createMessage(RsNxsMsg* msg)
 			unsigned char sigbuf[siglen];
 			ok = EVP_SignFinal(mdctx, sigbuf, &siglen, key_pub) == 1;
 
+                        //place signature in msg meta
 			RsGxsMsgMetaData &meta = *(msg->metaData);
-			meta.pubSign.signData.setBinData(sigbuf, siglen);
-			meta.pubSign.keyId = pubKey->keyId;
+                        RsTlvKeySignatureSet& signSet = meta.signSet;
+                        RsTlvKeySignature pubSign = signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_PUBLISH];
+                        pubSign.signData.setBinData(sigbuf, siglen);
+                        pubSign.keyId = pubKey->keyId;
 
-			msg->metaData->mMsgId = msg->msgId = GxsSecurity::getBinDataSign(sigbuf, siglen);
+                        // get hash of msg data to create msg id
+                        pqihash hash;
+                        hash.addData(msg->msg.bin_data, msg->msg.bin_len);
+                        hash.Complete(msg->msgId);
+
+                        msg->metaData->mMsgId = msg->msgId;
 
 			// clean up
 			EVP_MD_CTX_destroy(mdctx);

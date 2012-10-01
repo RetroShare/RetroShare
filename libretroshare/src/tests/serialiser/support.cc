@@ -81,6 +81,30 @@ bool operator==(const RsTlvKeySignature& ks1, const RsTlvKeySignature& ks2)
 	return true;
 }
 
+bool operator==(const RsTlvKeySignatureSet& kss1, const RsTlvKeySignatureSet& kss2)
+{
+    const std::map<SignType, RsTlvKeySignature>& set1 = kss1.keySignSet,
+    &set2  = kss2.keySignSet;
+
+    if(set1.size() != set2.size()) return false;
+
+    std::map<SignType, RsTlvKeySignature>::const_iterator it1 = set1.begin(), it2;
+
+    for(; it1 != set1.end(); it1++)
+    {
+        SignType st1 = it1->first;
+
+        if( (it2 =set2.find(st1)) == set2.end())
+            return false;
+
+        if(!(it1->second == it2->second))
+            return false;
+
+    }
+
+    return true;
+}
+
 bool operator==(const RsTlvPeerIdSet& pids1, const RsTlvPeerIdSet& pids2)
 {
 	std::list<std::string>::const_iterator it1 = pids1.ids.begin(),
@@ -152,6 +176,18 @@ void init_item(RsTlvKeySignature& ks)
 	ks.signData.setBinData(signData.c_str(), signData.size());
 
 	return;
+}
+void init_item(RsTlvKeySignatureSet &kss)
+{
+    int numSign = rand()%21;
+
+    for(int i=0; i < numSign; i++)
+    {
+        RsTlvKeySignature sign;
+        SignType sType = rand()%2452;
+        init_item(sign);
+        kss.keySignSet.insert(std::make_pair(sType, sign));
+    }
 }
 
 

@@ -8,56 +8,51 @@
 namespace GXS_SERV {
 
 
-    /*** GROUP FLAGS ***/
 
-    /* type of group */
+    /** privacy **/
 
-    static const uint32_t FLAG_GRP_TYPE_MASK = 0;
+    static const uint32_t FLAG_PRIVACY_MASK = 0x0000000f;
 
     // pub key encrypted
-    static const uint32_t FLAG_GRP_TYPE_PRIVATE = 0;
+    static const uint32_t FLAG_PRIVACY_PRIVATE = 0x00000001;
 
-    // single publisher, read only
-    static const uint32_t FLAG_GRP_TYPE_RESTRICTED = 0;
+    // publish private key needed to publish
+    static const uint32_t FLAG_PRIVACY_RESTRICTED = 0x00000002;
 
-    // anyone can publish
-    static const uint32_t FLAG_GRP_TYPE_PUBLIC = 0;
+    // anyone can publish, publish key pair not needed
+    static const uint32_t FLAG_PRIVACY_PUBLIC = 0x00000004;
 
+    /** privacy **/
 
-    /* type of msgs allowed */
+    /** authentication **/
 
-    static const uint32_t FLAG_MSG_TYPE_MASK = 0;
+    static const uint32_t FLAG_AUTHEN_MASK = 0x000000f0;
 
-    // only signee can edit, and sign required
-    static const uint32_t FLAG_MSG_TYPE_SIGNED = 0;
+    // identity
+    static const uint32_t FLAG_AUTHEN_IDENTITY = 0x000000010;
 
-    // no sign required, but signee can edit if signed
-    static const uint32_t FLAG_MSG_TYPE_ANON = 0;
+    // publish key
+    static const uint32_t FLAG_AUTHEN_PUBLISH = 0x000000020;
 
-    // anyone can mod but sign must be provided (needed for wikis)
-    static const uint32_t FLAG_MSG_TYPE_SIGNED_SHARED = 0;
+    // admin key
+    static const uint32_t FLAG_AUTHEN_ADMIN = 0x00000040;
 
-    /*** GROUP FLAGS ***/
+    // pgp sign identity
+    static const uint32_t FLAG_AUTHEN_PGP_IDENTITY = 0x00000080;
 
-
-
-    /*** MESSAGE FLAGS ***/
-
-    // indicates message edits an existing message
-    static const uint32_t FLAG_MSG_EDIT = 0;
-
-    // indicates msg is id signed
-    static const uint32_t FLAG_MSG_ID_SIGNED = 0;
-
-    /*** MESSAGE FLAGS ***/
+    /** authentication **/
 
 
     // Subscription Flags. (LOCAL)
 
     static const uint32_t GROUP_SUBSCRIBE_ADMIN = 0x00000001;
+
     static const uint32_t GROUP_SUBSCRIBE_PUBLISH = 0x00000002;
+
     static const uint32_t GROUP_SUBSCRIBE_SUBSCRIBED = 0x00000004;
-    static const uint32_t GROUP_SUBSCRIBE_MONITOR = 0x00000008;
+
+    static const uint32_t GROUP_SUBSCRIBE_NOT_SUBSCRIBED = 0x00000008;
+
     static const uint32_t GROUP_SUBSCRIBE_MASK = 0x0000000f;
 
 }

@@ -10,7 +10,7 @@ CONFIG += test_voip
 
 # GXS Stuff.
 CONFIG += newcache
-#CONFIG += newservices
+CONFIG += newservices
 
 # Beware: All data of the stripped services are lost
 DEFINES *= PQI_DISABLE_TUNNEL
@@ -588,7 +588,7 @@ HEADERS += retroshare/rsgame.h \
         }
 
         newservices { 
-            HEADERS += services/p3photoserviceVEG.h \
+            HEADERS += services/p3photoserviceV2.h \
                 retroshare/rsphotoVEG.h \
                 services/p3gxsserviceVEG.h \
                 retroshare/rsidentityVEG.h \
@@ -600,15 +600,12 @@ HEADERS += retroshare/rsgame.h \
                 retroshare/rsforumsVEG.h \
                 services/p3forumsVEG.h \
                 retroshare/rspostedVEG.h \
-                services/p3postedVEG.h \
-                services/p3photoserviceV2VEG.h \
-                retroshare/rsphotoVEG.h
+                services/p3postedVEG.h
 
 		# Do I need this?
                 #serialiser/rsphotoitemsVEG.h \
 
-            SOURCES += services/p3photoserviceVEG.cc \
-                services/p3gxsserviceVEG.cc \
+            SOURCES += services/p3gxsserviceVEG.cc \
                 services/p3wikiserviceVEG.cc \
                 services/p3wireVEG.cc \
                 services/p3idserviceVEG.cc \

@@ -56,6 +56,7 @@ void randString(const uint32_t, std::wstring&);
 
 void init_item(RsTlvSecurityKey&);
 void init_item(RsTlvKeySignature&);
+void init_item(RsTlvKeySignatureSet&);
 void init_item(RsTlvBinaryData&);
 void init_item(RsTlvFileItem&);
 void init_item(RsTlvFileSet&);
@@ -74,6 +75,7 @@ bool operator==(const RsTlvHashSet&, const RsTlvHashSet&);
 bool operator==(const RsTlvImage&, const RsTlvImage& );
 bool operator==(const RsTlvPeerIdSet& , const RsTlvPeerIdSet& );
 bool operator==(const RsTlvSecurityKeySet& , const RsTlvSecurityKeySet& );
+bool operator==(const RsTlvKeySignatureSet& , const RsTlvKeySignatureSet& );
 
 
 

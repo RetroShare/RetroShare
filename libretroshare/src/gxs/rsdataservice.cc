@@ -40,7 +40,7 @@
 #define KEY_NXS_IDENTITY std::string("identity")
 #define KEY_GRP_ID std::string("grpId")
 #define KEY_ORIG_GRP_ID std::string("origGrpId")
-#define KEY_IDENTITY_SIGN std::string("idSign")
+#define KEY_SIGN_SET std::string("signSet")
 #define KEY_TIME_STAMP std::string("timeStamp")
 #define KEY_NXS_FLAGS std::string("flags")
 #define KEY_NXS_META std::string("meta")
@@ -48,7 +48,6 @@
 
 
 // grp table columns
-#define KEY_ADMIN_SIGN std::string("adminSign")
 #define KEY_KEY_SET std::string("keySet")
 #define KEY_GRP_NAME std::string("grpName")
 #define KEY_GRP_SIGN_FLAGS std::string("signFlags")
@@ -62,7 +61,6 @@
 
 
 // msg table columns
-#define KEY_PUBLISH_SIGN std::string("publishSign")
 #define KEY_MSG_ID std::string("msgId")
 #define KEY_ORIG_MSG_ID std::string("origMsgId")
 #define KEY_MSG_PARENT_ID std::string("parentId")
@@ -90,34 +88,32 @@
 
 // grp col numbers
 
-#define COL_ADMIN_SIGN 5
-#define COL_KEY_SET 6
-#define COL_GRP_SUBCR_FLAG 7
-#define COL_GRP_POP 8
-#define COL_MSG_COUNT 9
-#define COL_GRP_STATUS 10
-#define COL_GRP_NAME 11
-#define COL_GRP_LAST_POST 12
-#define COL_ORIG_GRP_ID 13
-#define COL_GRP_SERV_STRING 14
-#define COL_GRP_SIGN_FLAGS 15
+#define COL_KEY_SET 5
+#define COL_GRP_SUBCR_FLAG 6
+#define COL_GRP_POP 7
+#define COL_MSG_COUNT 8
+#define COL_GRP_STATUS 9
+#define COL_GRP_NAME 10
+#define COL_GRP_LAST_POST 11
+#define COL_ORIG_GRP_ID 12
+#define COL_GRP_SERV_STRING 13
+#define COL_GRP_SIGN_FLAGS 14
 
 // msg col numbers
-#define COL_PUBLISH_SIGN 5
-#define COL_MSG_ID 6
-#define COL_ORIG_MSG_ID 7
-#define COL_MSG_STATUS 8
-#define COL_CHILD_TS 9
-#define COL_PARENT_ID 10
-#define COL_THREAD_ID 11
-#define COL_MSG_NAME 12
-#define COL_MSG_SERV_STRING 13
+#define COL_MSG_ID 5
+#define COL_ORIG_MSG_ID 6
+#define COL_MSG_STATUS 7
+#define COL_CHILD_TS 8
+#define COL_PARENT_ID 9
+#define COL_THREAD_ID 10
+#define COL_MSG_NAME 11
+#define COL_MSG_SERV_STRING 12
 
 // generic meta shared col numbers
 #define COL_GRP_ID 0
 #define COL_TIME_STAMP 1
 #define COL_NXS_FLAGS 2
-#define COL_IDENTITY_SIGN 3
+#define COL_SIGN_SET 3
 #define COL_IDENTITY 4
 
 #define RS_DATA_SERVICE_DEBUG
@@ -138,7 +134,7 @@ RsDataService::RsDataService(const std::string &serviceDir, const std::string &d
 
     // for retrieving msg meta
     msgMetaColumns.push_back(KEY_GRP_ID); msgMetaColumns.push_back(KEY_TIME_STAMP); msgMetaColumns.push_back(KEY_NXS_FLAGS);
-    msgMetaColumns.push_back(KEY_IDENTITY_SIGN); msgMetaColumns.push_back(KEY_NXS_IDENTITY); msgMetaColumns.push_back(KEY_PUBLISH_SIGN);
+    msgMetaColumns.push_back(KEY_SIGN_SET); msgMetaColumns.push_back(KEY_NXS_IDENTITY);
     msgMetaColumns.push_back(KEY_MSG_ID); msgMetaColumns.push_back(KEY_ORIG_MSG_ID); msgMetaColumns.push_back(KEY_MSG_STATUS);
     msgMetaColumns.push_back(KEY_CHILD_TS); msgMetaColumns.push_back(KEY_MSG_PARENT_ID); msgMetaColumns.push_back(KEY_MSG_THREAD_ID);
     msgMetaColumns.push_back(KEY_MSG_NAME); msgMetaColumns.push_back(KEY_NXS_SERV_STRING);
@@ -149,7 +145,7 @@ RsDataService::RsDataService(const std::string &serviceDir, const std::string &d
 
     // for retrieving grp meta data
     grpMetaColumns.push_back(KEY_GRP_ID);  grpMetaColumns.push_back(KEY_TIME_STAMP); grpMetaColumns.push_back(KEY_NXS_FLAGS);
-    grpMetaColumns.push_back(KEY_IDENTITY_SIGN); grpMetaColumns.push_back(KEY_NXS_IDENTITY); grpMetaColumns.push_back(KEY_ADMIN_SIGN);
+    grpMetaColumns.push_back(KEY_SIGN_SET); grpMetaColumns.push_back(KEY_NXS_IDENTITY);
     grpMetaColumns.push_back(KEY_KEY_SET); grpMetaColumns.push_back(KEY_GRP_SUBCR_FLAG); grpMetaColumns.push_back(KEY_GRP_POP);
     grpMetaColumns.push_back(KEY_MSG_COUNT); grpMetaColumns.push_back(KEY_GRP_STATUS); grpMetaColumns.push_back(KEY_GRP_NAME);
     grpMetaColumns.push_back(KEY_GRP_LAST_POST); grpMetaColumns.push_back(KEY_ORIG_GRP_ID); grpMetaColumns.push_back(KEY_NXS_SERV_STRING);
@@ -177,9 +173,8 @@ void RsDataService::initialise(){
                  KEY_NXS_FLAGS + " INT,"  +
                  KEY_ORIG_MSG_ID +  " TEXT," +
                  KEY_TIME_STAMP + " INT," +
-                 KEY_PUBLISH_SIGN + " BLOB," +
                  KEY_NXS_IDENTITY + " TEXT," +
-                 KEY_IDENTITY_SIGN + " BLOB," +
+                 KEY_SIGN_SET + " BLOB," +
                  KEY_NXS_FILE + " TEXT,"+
                  KEY_NXS_FILE_OFFSET + " INT," +
                  KEY_MSG_STATUS + " INT," +
@@ -195,7 +190,6 @@ void RsDataService::initialise(){
     mDb->execSQL("CREATE TABLE " + GRP_TABLE_NAME + "(" +
                  KEY_GRP_ID + " TEXT," +
                  KEY_TIME_STAMP + " INT," +
-                 KEY_ADMIN_SIGN + " BLOB," + " BLOB," +
                  KEY_NXS_FILE + " TEXT," +
                  KEY_NXS_FILE_OFFSET + " INT," +
                  KEY_KEY_SET + " BLOB," +
@@ -212,7 +206,7 @@ void RsDataService::initialise(){
                  KEY_NXS_SERV_STRING + " TEXT," +
                  KEY_NXS_FLAGS + " INT," +
                  KEY_GRP_SIGN_FLAGS + " INT," +
-                 KEY_IDENTITY_SIGN + " BLOB);");
+                 KEY_SIGN_SET + " BLOB);");
 
 }
 
@@ -243,18 +237,7 @@ RsGxsGrpMetaData* RsDataService::getGrpMeta(RetroCursor &c)
     grpMeta->mPublishTs = c.getInt32(COL_TIME_STAMP);
     grpMeta->mGroupFlags = c.getInt32(COL_NXS_FLAGS);
 
-    // identity if any
-    if(!grpMeta->mAuthorId.empty() && ok){
-        offset = 0;
-        data = (char*)c.getData(COL_IDENTITY_SIGN, data_len);
-        if(data)
-            grpMeta->idSign.GetTlv(data, data_len, &offset);
-    }
-
     offset = 0;
-    data = (char*)c.getData(COL_ADMIN_SIGN, data_len);
-    if(data)
-        grpMeta->adminSign.GetTlv(data, data_len, &offset);
 
 
     offset = 0; data = NULL; data_len = 0;
@@ -355,24 +338,15 @@ RsGxsMsgMetaData* RsDataService::getMsgMeta(RetroCursor &c)
     c.getString(COL_MSG_NAME, msgMeta->mMsgName);
     c.getString(COL_MSG_SERV_STRING, msgMeta->mServiceString);
 
-    if(!msgMeta->mAuthorId.empty()){
-        offset = 0;
-        data = (char*)c.getData(COL_IDENTITY_SIGN, data_len);
-        msgMeta->idSign.GetTlv(data, data_len, &offset);
-    }
+    offset = 0;
+    data = (char*)c.getData(COL_SIGN_SET, data_len);
+    msgMeta->signSet.GetTlv(data, data_len, &offset);
+
 
     msgMeta->mMsgFlags = c.getInt32(COL_NXS_FLAGS);
     msgMeta->mPublishTs = c.getInt32(COL_TIME_STAMP);
 
     offset = 0; data_len = 0;
-
-    if(ok){
-
-        data = (char*)c.getData(COL_PUBLISH_SIGN, data_len);
-        if(data)
-            msgMeta->pubSign.GetTlv(data, data_len, &offset);
-
-    }
 
     // thread and parent id
     c.getString(COL_THREAD_ID, msgMeta->mThreadId);
@@ -467,19 +441,14 @@ int RsDataService::storeMessage(std::map<RsNxsMsg *, RsGxsMsgMetaData *> &msg)
         cv.put(KEY_MSG_ID, msgMetaPtr->mMsgId);
         cv.put(KEY_GRP_ID, msgMetaPtr->mGroupId);
         cv.put(KEY_NXS_SERV_STRING, msgMetaPtr->mServiceString);
-        char pubSignData[msgMetaPtr->pubSign.TlvSize()];
+
+
+        char signSetData[msgMetaPtr->signSet.TlvSize()];
         offset = 0;
-        msgMetaPtr->pubSign.SetTlv(pubSignData, msgMetaPtr->pubSign.TlvSize(), &offset);
-        cv.put(KEY_PUBLISH_SIGN, msgMetaPtr->pubSign.TlvSize(), pubSignData);
+        msgMetaPtr->signSet.SetTlv(signSetData, msgMetaPtr->signSet.TlvSize(), &offset);
+        cv.put(KEY_SIGN_SET, msgMetaPtr->signSet.TlvSize(), signSetData);
+        cv.put(KEY_NXS_IDENTITY, msgMetaPtr->mAuthorId);
 
-
-        if(! (msgMetaPtr->mAuthorId.empty()) ){
-            char idSignData[msgMetaPtr->idSign.TlvSize()];
-            offset = 0;
-            msgMetaPtr->idSign.SetTlv(idSignData, msgMetaPtr->idSign.TlvSize(), &offset);
-            cv.put(KEY_IDENTITY_SIGN, msgMetaPtr->idSign.TlvSize(), idSignData);
-            cv.put(KEY_NXS_IDENTITY, msgMetaPtr->mAuthorId);
-        }
 
         cv.put(KEY_NXS_FLAGS, (int32_t) msgMetaPtr->mMsgFlags);
         cv.put(KEY_TIME_STAMP, (int32_t) msgMetaPtr->mPublishTs);
@@ -562,19 +531,7 @@ int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
 
         if(! (grpMetaPtr->mAuthorId.empty()) ){
             cv.put(KEY_NXS_IDENTITY, grpMetaPtr->mAuthorId);
-
-            char idSignData[grpMetaPtr->idSign.TlvSize()];
-            offset = 0;
-            grpMetaPtr->idSign.SetTlv(idSignData, grpMetaPtr->idSign.TlvSize(), &offset);
-            cv.put(KEY_IDENTITY_SIGN, grpMetaPtr->idSign.TlvSize(), idSignData);
-            std::string wat(idSignData, grpMetaPtr->idSign.TlvSize());
-            std::cerr << wat << std::endl;
         }
-
-        char adminSignData[grpMetaPtr->adminSign.TlvSize()];
-        offset = 0;
-        grpMetaPtr->adminSign.SetTlv(adminSignData, grpMetaPtr->adminSign.TlvSize(), &offset);
-        cv.put(KEY_ADMIN_SIGN, grpMetaPtr->adminSign.TlvSize(), adminSignData);
 
         offset = 0;
         char keySetData[grpMetaPtr->keys.TlvSize()];

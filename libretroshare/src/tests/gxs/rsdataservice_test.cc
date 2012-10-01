@@ -339,8 +339,7 @@ void tearDown(){
 
 bool operator ==(const RsGxsGrpMetaData& l, const RsGxsGrpMetaData& r)
 {
-    if(!(l.adminSign == r.adminSign)) return false;
-    if(!(l.idSign == r.idSign)) return false;
+    if(!(l.signSet == r.signSet)) return false;
     if(!(l.keys == r.keys)) return false;
     if(l.mGroupFlags != r.mGroupFlags) return false;
     if(l.mPublishTs != r.mPublishTs) return false;
@@ -358,8 +357,7 @@ bool operator ==(const RsGxsGrpMetaData& l, const RsGxsGrpMetaData& r)
 bool operator ==(const RsGxsMsgMetaData& l, const RsGxsMsgMetaData& r)
 {
 
-    if(!(l.idSign == r.idSign)) return false;
-    if(!(l.pubSign == r.pubSign)) return false;
+    if(!(l.signSet == r.signSet)) return false;
     if(l.mGroupId != r.mGroupId) return false;
     if(l.mAuthorId != r.mAuthorId) return false;
     if(l.mParentId != r.mParentId) return false;

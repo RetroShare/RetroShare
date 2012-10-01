@@ -60,9 +60,8 @@ public:
     std::string mAuthorId;
 
 
-    RsTlvKeySignature adminSign;
+    RsTlvKeySignatureSet signSet;
     RsTlvSecurityKeySet keys;
-    RsTlvKeySignature idSign;
 
     std::string mServiceString;
 
@@ -100,8 +99,7 @@ public:
     RsGxsMessageId mOrigMsgId;
     std::string mAuthorId;
 
-    RsTlvKeySignature pubSign;
-    RsTlvKeySignature idSign;
+    RsTlvKeySignatureSet signSet;
 
     std::string mServiceString;
 

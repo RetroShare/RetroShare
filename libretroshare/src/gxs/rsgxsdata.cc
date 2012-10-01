@@ -44,10 +44,9 @@ uint32_t RsGxsGrpMetaData::serial_size()
     s += 4;
     s += GetTlvStringSize(mAuthorId);
     s += GetTlvStringSize(mServiceString);
-
-    s += adminSign.TlvSize();
+    s += signSet.TlvSize();
     s += keys.TlvSize();
-    s += idSign.TlvSize();
+
 
     return s;
 }
@@ -66,10 +65,9 @@ void RsGxsGrpMetaData::clear(){
     mGroupStatus = 0;
     mLastPost = 0;
     mSubscribeFlags = 0;
-
-    adminSign.TlvClear();
+    signSet.TlvClear();
     keys.TlvClear();
-    idSign.TlvClear();
+
 }
 
 bool RsGxsGrpMetaData::serialise(void *data, uint32_t &pktsize)
@@ -103,10 +101,9 @@ bool RsGxsGrpMetaData::serialise(void *data, uint32_t &pktsize)
     ok &= setRawUInt32(data, tlvsize, &offset, mPublishTs);
     ok &= SetTlvString(data, tlvsize, &offset, 0, mAuthorId);
     ok &= SetTlvString(data, tlvsize, &offset, 0, mServiceString);
-
-    ok &= adminSign.SetTlv(data, tlvsize, &offset);
+    ok &= signSet.SetTlv(data, tlvsize, &offset);
     ok &= keys.SetTlv(data, tlvsize, &offset);
-    ok &= idSign.SetTlv(data, tlvsize, &offset);
+
 
     return ok;
 }
@@ -130,10 +127,9 @@ bool RsGxsGrpMetaData::deserialise(void *data, uint32_t &pktsize)
     ok &= getRawUInt32(data, pktsize, &offset, &mPublishTs);
     ok &= GetTlvString(data, pktsize, &offset, 0, mAuthorId);
     ok &= GetTlvString(data, pktsize, &offset, 0, mServiceString);
-
-    ok &= adminSign.GetTlv(data, pktsize, &offset);
+    ok &= signSet.GetTlv(data, pktsize, &offset);
     ok &= keys.GetTlv(data, pktsize, &offset);
-    ok &= idSign.GetTlv(data, pktsize, &offset);
+
 
     return ok;
 }
@@ -155,8 +151,7 @@ uint32_t RsGxsMsgMetaData::serial_size()
     s += GetTlvStringSize(mAuthorId);
     s += GetTlvStringSize(mServiceString);
 
-    s += pubSign.TlvSize();
-    s += idSign.TlvSize();
+    s += signSet.TlvSize();
     s += GetTlvStringSize(mMsgName);
     s += 4;
     s += 4;
@@ -175,9 +170,7 @@ void RsGxsMsgMetaData::clear()
     mMsgName.clear();
     mServiceString.clear();
 
-    pubSign.TlvClear();
-    idSign.TlvClear();
-
+    signSet.TlvClear();
     mPublishTs = 0;
     mMsgFlags = 0;
     mMsgStatus = 0;
@@ -215,8 +208,7 @@ bool RsGxsMsgMetaData::serialise(void *data, uint32_t *size)
     ok &= SetTlvString(data, *size, &offset, 0, mAuthorId);
     ok &= SetTlvString(data, *size, &offset, 0, mServiceString);
 
-    ok &= pubSign.SetTlv(data, *size, &offset);
-    ok &= idSign.SetTlv(data, *size, &offset);
+    ok &= signSet.SetTlv(data, *size, &offset);
     ok &= SetTlvString(data, *size, &offset, 0, mMsgName);
     ok &= setRawUInt32(data, *size, &offset, mPublishTs);
     ok &= setRawUInt32(data, *size, &offset, mMsgFlags);
@@ -244,8 +236,7 @@ bool RsGxsMsgMetaData::deserialise(void *data, uint32_t *size)
     ok &= GetTlvString(data, *size, &offset, 0, mAuthorId);
     ok &= GetTlvString(data, *size, &offset, 0, mServiceString);
 
-    ok &= pubSign.GetTlv(data, *size, &offset);
-    ok &= idSign.GetTlv(data, *size, &offset);
+    ok &= signSet.GetTlv(data, *size, &offset);
     ok &= GetTlvString(data, *size, &offset, 0, mMsgName);
     uint32_t t;
     ok &= getRawUInt32(data, *size, &offset, &t);

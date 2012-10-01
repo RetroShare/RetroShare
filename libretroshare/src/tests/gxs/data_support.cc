@@ -62,9 +62,8 @@ void init_item(RsGxsGrpMetaData* metaGrp)
     randString(SHORT_STR, metaGrp->mAuthorId);
     randString(SHORT_STR, metaGrp->mGroupName);
 
-    init_item(metaGrp->adminSign);
+    init_item(metaGrp->signSet);
     init_item(metaGrp->keys);
-    init_item(metaGrp->idSign);
 
     metaGrp->mPublishTs = rand()%3452;
     metaGrp->mGroupFlags = rand()%43;
@@ -87,8 +86,7 @@ void init_item(RsGxsMsgMetaData* metaMsg)
     randString(SHORT_STR, metaMsg->mOrigMsgId);
     randString(SHORT_STR, metaMsg->mMsgName);
 
-    init_item(metaMsg->pubSign);
-    init_item(metaMsg->idSign);
+    init_item(metaMsg->signSet);
 
     metaMsg->mPublishTs = rand()%313;
     metaMsg->mMsgFlags = rand()%224;

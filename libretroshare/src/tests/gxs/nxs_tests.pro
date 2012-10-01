@@ -10,13 +10,14 @@ QT       += core network
 
 QT       -= gui
 
-CONFIG   += dstore_target #gen_exchange_target # #nxs_net_test  
+CONFIG   += gen_exchange_target
+#CONFIG   += nxs_net_test
+#CONFIG   += dstore_target
+#CONFIG   += gxsdata_target
 
-dstore_target {
 
-TARGET = rs_dstore_test
 
-}
+
 
 gen_exchange_target {
 
@@ -27,6 +28,12 @@ TARGET = gen_exchange_test
 nxs_net_test {
 
 TARGET = nxs_net_test
+
+}
+
+gxsdata_target {
+
+TARGET = gxsdata_test
 
 }
 
@@ -161,53 +168,66 @@ install_rs {
 	binary_rs.files = ./RetroShare
 }
 
-dstore_target  {
-
-	SOURCES += \
-	    support.cc \
-	    rsdataservice_test.cc \
-	    data_support.cc
-	
-	HEADERS += support.h \
-	    rsdataservice_test.h \
-	    data_support.h
-	
-	
-}
-
 
 gen_exchange_target {
 
-	SOURCES += \
-	    support.cc \
-	    genexchangetester.cpp \
-	    genexchangetestservice.cpp \
-	    rsdummyservices.cc \ 
-	    rsgenexchange_test.cc 
-	
-	HEADERS += support.h \
-	    rsdataservice_test.h \
-	    rsdummyservices.h \
-	    data_support.h
+        SOURCES += \
+            support.cc \
+            genexchangetester.cpp \
+            genexchangetestservice.cpp \
+            rsdummyservices.cc \
+            rsgenexchange_test.cc
+
+        HEADERS += support.h \
+            rsdataservice_test.h \
+            rsdummyservices.h \
+            data_support.h
 
 
 }
 
 nxs_net_test {
 
-	SOURCES += \
-	    support.cc \
-	    nxstesthub.cc \
-	    rsgxsnetservice_test.cc \
-	    nxstestscenario.cc \
-	    data_support.cc 
-	      
-	
-	HEADERS += support.h \
-	    nxstesthub.h \
-	    rsgxsnetservice_test.h \
-	    nxstestscenario.h \
-		data_support.h
+        SOURCES += \
+            support.cc \
+            nxstesthub.cc \
+            rsgxsnetservice_test.cc \
+            nxstestscenario.cc \
+            data_support.cc
+
+
+        HEADERS += support.h \
+            nxstesthub.h \
+            rsgxsnetservice_test.h \
+            nxstestscenario.h \
+                data_support.h
+}
+
+
+dstore_target  {
+    TARGET = rs_dstore_test
+    SOURCES += \
+        support.cc \
+        rsdataservice_test.cc \
+        data_support.cc
+
+    HEADERS += support.h \
+        rsdataservice_test.h \
+        data_support.h
+
+
+}
+
+gxsdata_target {
+
+ SOURCES += \
+    support.cc \
+    data_support.cc \
+    rsgxsdata_test.cc
+
+HEADERS += \
+   support.h \
+  rsgxsdata_test.h
 }
 
 INCLUDEPATH += ../../
