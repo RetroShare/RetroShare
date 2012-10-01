@@ -8855,6 +8855,10 @@ and use the import button to load it</source>
         <source>You can manage here your profiles, import, export your profiles or generate one .</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Import Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ProfileWidget</name>

@@ -144,7 +144,7 @@ void ProfileManager::exportIdentity()
 
 void ProfileManager::importIdentity()
 {
-	QString fname = QFileDialog::getOpenFileName(this,tr("Export Identity"), "",tr("RetroShare Identity files (*.asc)")) ;
+	QString fname = QFileDialog::getOpenFileName(this,tr("Import Identity"), "",tr("RetroShare Identity files (*.asc)")) ;
 
 	if(fname.isNull())
 		return ;
