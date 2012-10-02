@@ -27,6 +27,7 @@
 #include <string>
 #include <iomanip>
 #include "util/rsstring.h"
+#include <inttypes.h>
 
 class pqihash
 {
