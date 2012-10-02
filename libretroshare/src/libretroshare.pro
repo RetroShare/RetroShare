@@ -9,8 +9,8 @@ TARGET = retroshare
 CONFIG += test_voip
 
 # GXS Stuff.
-CONFIG += newcache
-CONFIG += newservices
+#CONFIG += newcache
+#CONFIG += newservices
 
 # Beware: All data of the stripped services are lost
 DEFINES *= PQI_DISABLE_TUNNEL
@@ -149,7 +149,31 @@ HEADERS += retroshare/rsgame.h \
     retroshare/rsphoto.h
 
 # ################################ Linux ##########################################
+        linux-* { 
+            QMAKE_CC = g++
+            OBJECTS_DIR = temp/obj
+            MOC_DIR = temp/moc
+            DESTDIR = lib
+            
+            # miniupnp implementation files
+            #HEADERS += upnp/upnputil.h
+            #SOURCES += upnp/upnputil.c
+            
+            # zeroconf disabled at the end of libretroshare.pro (but need the code)
+            #CONFIG += zeroconf
+            #CONFIG += zcnatassist
+            
+            OPENPGPSDK_DIR = ../../openpgpsdk/src
+            INCLUDEPATH += $${OPENPGPSDK_DIR}
 
+				INCLUDEPATH *= /usr/lib/x86_64-linux-gnu/glib-2.0/include/
+				INCLUDEPATH *= /usr/lib/i386-linux-gnu/glib-2.0/include/
+				INCLUDEPATH *= /usr/include/glib-2.0/ /usr/lib/glib-2.0/include
+				INCLUDEPATH *= /usr/local/include/glib-2.0
+
+				DEFINES *= UBUNTU
+        }
+ 
         # ################### Cross compilation for windows under Linux ####################
         win32-x-g++ { 
             OBJECTS_DIR = temp/win32xgcc/obj
