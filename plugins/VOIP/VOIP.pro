@@ -57,7 +57,7 @@ FORMS   = gui/AudioInputConfig.ui \
 
 TARGET = VOIP
 
-RESOURCES = gui/VOIP_images.qrc lang/lang.qrc
+RESOURCES = gui/VOIP_images.qrc lang/VOIP_lang.qrc
 
 TRANSLATIONS +=  \
 			lang/VOIP_en.ts \

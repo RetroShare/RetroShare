@@ -80,7 +80,7 @@ QIcon *LinksCloudPlugin::qt_icon() const
 {
 	if(mIcon == NULL)
 	{
-		Q_INIT_RESOURCE(linksCloud_images) ;
+		Q_INIT_RESOURCE(LinksCloud_images) ;
 
 		mIcon = new QIcon(IMAGE_LINKS) ;
 	}
