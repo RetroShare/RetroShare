@@ -480,8 +480,9 @@ void p3turtle::autoWash()
 	// File hashes can only be removed by calling the 'stopMonitoringFileTunnels()' command.
 	
 	// All calls to _ft_controller are done off-mutex, to avoir cross-lock
-	for(uint32_t i=0;i<peers_to_remove.size();++i)
-		_ft_controller->removeFileSource(peers_to_remove[i].first,peers_to_remove[i].second) ;
+	if(_ft_controller != NULL)
+		for(uint32_t i=0;i<peers_to_remove.size();++i)
+			_ft_controller->removeFileSource(peers_to_remove[i].first,peers_to_remove[i].second) ;
 
 }
 
@@ -2067,7 +2068,7 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 	// notify the file transfer controller for the new file source. This should be done off-mutex
 	// so we deported this code here.
 	//
-	if(new_tunnel)
+	if(new_tunnel && _ft_controller != NULL)
 	{
 		_ft_controller->addFileSource(new_hash,new_vpid) ;
 		_ft_controller->statusChange(_online_peers) ;
