@@ -28,7 +28,7 @@ NetworkViewer::NetworkViewer(QWidget *parent,Network&net)
 
 	connect(this,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(contextMenu(QPoint)));
 
-	action_ManageHash = new QAction(QString("Manage hash"),this) ;
+	action_ManageHash = new QAction(QString("Manage new random hash"),this) ;
 	QObject::connect(action_ManageHash,SIGNAL(triggered()),this,SLOT(actionManageHash())) ;
 }
 
@@ -53,19 +53,28 @@ void NetworkViewer::draw()
 	// Now, draw all edges
 
 	glEnable(GL_LINE_SMOOTH) ;
-	glColor3f(0.4f,0.4f,0.4f) ;
 	glBegin(GL_LINES) ;
 
 	for(uint32_t i=0;i<_network.n_nodes();++i)
 	{
+		PeerNode::NodeTrafficInfo traffic_info ;
+		_network.node(i).getTrafficInfo(traffic_info) ;
+
 		const std::set<uint32_t>& neighs( _network.neighbors(i) ) ;
 
 		for(std::set<uint32_t>::const_iterator it(neighs.begin());it!=neighs.end();++it)
+		{
+			if(traffic_info.local_src.find(_network.node(*it).id())!=traffic_info.local_src.end() || traffic_info.local_dst.find(_network.node(*it).id())!=traffic_info.local_dst.end())
+				glColor3f(0.9f,0.4f,0.2f) ;
+			else
+				glColor3f(0.4f,0.4f,0.4f) ;
+
 			if( i < *it )
 			{
 				glVertex2f(_node_coords[  i].x, _node_coords[  i].y) ;
 				glVertex2f(_node_coords[*it].x, _node_coords[*it].y) ;
 			}
+		}
 	}
 
 	glEnd() ;
@@ -428,6 +437,26 @@ void NetworkViewer::contextMenu(QPoint p)
 	QMenu contextMnu ;//= ui.msgText->createStandardContextMenu(matrix.map(point));
 
 	contextMnu.addAction(action_ManageHash);
+
+	// make a list of hashes provided by all nodes except this one
+	std::set<TurtleFileHash> hashes ;
+	
+	for(uint32_t i=0;i<_network.n_nodes();++i)
+		if(i != _current_selected_node)
+			hashes.insert( _network.node(i).managedHashes().begin(), _network.node(i).managedHashes().end()) ;
+
+	if(!hashes.empty())
+	{
+		QMenu *Mnu2 = contextMnu.addMenu("Provide hash") ;
+
+		for(std::set<TurtleFileHash>::const_iterator it(hashes.begin());it!=hashes.end();++it)
+		{
+			QAction* provide_hash_action = new QAction(QString::fromStdString(*it), Mnu2);
+			connect(provide_hash_action, SIGNAL(triggered()), this, SLOT(actionProvideHash()));
+			Mnu2->addAction(provide_hash_action);
+		}
+	}
+
 	contextMnu.exec(mapToGlobal(p));
 }
 
@@ -448,6 +477,19 @@ void NetworkViewer::actionManageHash()
 	std::cerr << "   adding random hash = " << hash << std::endl;
 
 	_network.node(_current_selected_node).manageFileHash(hash) ;
+
+	updateGL() ;
+}
+
+void NetworkViewer::actionProvideHash()
+{
+	QString hash = qobject_cast<QAction*>(sender())->text() ;//data().toString().toStdString();
+
+	if(_current_selected_node < 0)
+		return ;
+
+	std::cerr << "Providing hash " << hash.toStdString() << std::endl;
+	_network.node(_current_selected_node).provideFileHash(hash.toStdString()) ;
 
 	updateGL() ;
 }

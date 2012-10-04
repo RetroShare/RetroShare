@@ -44,6 +44,7 @@ class NetworkViewer: public QGLViewer
 		void timerEvent(QTimerEvent *) ;
 		void contextMenu(QPoint) ;
 		void actionManageHash() ;
+		void actionProvideHash() ;
 
 	private:
 		void calculateForces(const Network::NodeId& node_id,const double *map,int W,int H,float x,float y,float /*speedf*/,float& new_x, float& new_y) ;
@@ -70,4 +71,5 @@ class NetworkViewer: public QGLViewer
 		bool _dragging ;
 
 		QAction *action_ManageHash ;
+		QAction *action_ProvideHash ;
 };

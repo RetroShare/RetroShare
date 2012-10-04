@@ -14,6 +14,10 @@ class MonitoredTurtleRouter: public p3turtle
 		virtual bool saveConfiguration() { return true ;}
 		virtual bool performLocalHashSearch(const TurtleFileHash& hash,FileInfo& info) ;
 
+		// new functions to replace somme internal functionalities
+
+		void provideFileHash(const std::string& hash) ;
+
 	private:
 		std::map<std::string,FileInfo> _local_files ;
 };

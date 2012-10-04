@@ -6,6 +6,7 @@
 #include <list>
 #include <vector>
 #include <stdint.h>
+#include <turtle/p3turtle.h>
 
 class MonitoredTurtleRouter ;
 class RsTurtle ;
@@ -15,6 +16,12 @@ class p3ServiceServer ;
 class PeerNode
 {
 	public:
+		struct NodeTrafficInfo
+		{
+			std::map<std::string,std::string> local_src ;	// peer id., tunnel id
+			std::map<std::string,std::string> local_dst ;
+		};
+
 		PeerNode(const std::string& id,const std::list<std::string>& friends) ;
 		~PeerNode() ;
 
@@ -27,13 +34,23 @@ class PeerNode
 
 		const RsTurtle *turtle_service() const ;
 
-		// turtle methods
+		// Turtle-related methods
+		//
 		void manageFileHash(const std::string& hash) ;
+		void provideFileHash(const std::string& hash) ;
+
+		const std::set<TurtleFileHash>& providedHashes() const { return _provided_hashes; }
+		const std::set<TurtleFileHash>& managedHashes() const { return _managed_hashes; }
+
+		void getTrafficInfo(NodeTrafficInfo& trinfo) ;	// 
 
 	private:
 		p3ServiceServer *_service_server ;
 		MonitoredTurtleRouter *_turtle ;
 		std::string _id ;
+
+		std::set<TurtleFileHash> _provided_hashes ;
+		std::set<TurtleFileHash> _managed_hashes ;
 };
 
 template<class NODE_TYPE> class Graph

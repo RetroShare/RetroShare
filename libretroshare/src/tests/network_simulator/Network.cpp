@@ -115,6 +115,8 @@ class FakeLinkMgr: public p3LinkMgrIMPL
 		virtual void getOnlineList(std::list<std::string>& lst) { lst = _friends ; }
 		virtual uint32_t getLinkType(const std::string&) { return RS_NET_CONN_TCP_ALL | RS_NET_CONN_SPEED_NORMAL; }
 
+		virtual bool getPeerName(const std::string &ssl_id, std::string &name) { name = ssl_id ; return true ;}
+
 	private:
 		std::string _own_id ;
 		std::list<std::string> _friends ;
@@ -161,8 +163,31 @@ RsRawItem *PeerNode::outgoing()
 	return _service_server->outgoing() ;
 }
 
+void PeerNode::provideFileHash(const std::string& hash)
+{
+	_provided_hashes.insert(hash) ;
+	_turtle->provideFileHash(hash) ;
+}
+
 void PeerNode::manageFileHash(const std::string& hash)
 {
+	_managed_hashes.insert(hash) ;
 	_turtle->monitorFileTunnels("file 1",hash,10000) ;
+}
+
+void PeerNode::getTrafficInfo(NodeTrafficInfo& info)
+{
+	std::vector<std::vector<std::string> > hashes_info ;
+	std::vector<std::vector<std::string> > tunnels_info ;
+	std::vector<TurtleRequestDisplayInfo > search_reqs_info ;
+	std::vector<TurtleRequestDisplayInfo > tunnel_reqs_info ;
+
+	_turtle->getInfo(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
+
+	for(uint32_t i=0;i<tunnels_info.size();++i)
+	{
+		info.local_src[tunnels_info[i][1]] = tunnels_info[i][0] ;
+		info.local_src[tunnels_info[i][2]] = tunnels_info[i][0] ;
+	}
 }
 
