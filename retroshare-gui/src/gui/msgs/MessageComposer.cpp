@@ -407,7 +407,7 @@ static QString buildRecommendHtml(const std::list<std::string> &sslIds, const st
 
 QString MessageComposer::recommendMessage()
 {
-    return tr("Hello,<br>I recommend a good friend of me, you can trust him too when you trust me. <br>");
+    return tr("Hello,<br>I recommend a good friend of mine; you can trust them too when you trust me. <br>");
 }
 
 void MessageComposer::recommendFriend(const std::list <std::string> &sslIds, const std::string &to, const QString &msg, bool autoSend)
