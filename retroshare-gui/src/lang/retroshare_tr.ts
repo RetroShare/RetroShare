@@ -277,7 +277,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Since:</source>
-        <translation>Beri</translation>
+        <translation>Beri:</translation>
     </message>
 </context>
 <context>
@@ -552,11 +552,11 @@ p, li { white-space: pre-wrap; }
     <name>BwCtrlWindow</name>
     <message>
         <source>Bandwidth Control WIndow</source>
-        <translation type="unfinished"></translation>
+        <translation>Bant Genişliği Denetimi penceresi</translation>
     </message>
     <message>
         <source>BandWidth Measurements</source>
-        <translation type="unfinished"></translation>
+        <translation>Bant Genişliği Ölçümü</translation>
     </message>
     <message>
         <source>ID</source>
@@ -2049,7 +2049,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remove signatures</source>
-        <translation type="unfinished"></translation>
+        <translation>Imzaları kaldır</translation>
     </message>
     <message>
         <source>RetroShare Invite</source>
@@ -2113,7 +2113,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>*** None ***</source>
-        <translation type="unfinished"></translation>
+        <translation>*** Yok ***</translation>
     </message>
     <message>
         <source>Friend request</source>
@@ -2523,7 +2523,7 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>check peers you would like to share private publish key with</source>
-        <translation type="unfinished"></translation>
+        <translation>özel yayınlama anahtarı kimnen paylaşmak kimen istersiniz</translation>
     </message>
     <message>
         <source>Share Key With</source>
@@ -2543,7 +2543,7 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Anahtar alıcılar kısıtlı-tipi kanal yayınlayabilir ve özel tip kanalları görüntüleyebilir ve yayınlayabilirsiniz</translation>
     </message>
     <message>
         <source>Share Private Publish Key</source>
@@ -2610,7 +2610,7 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Channel Post to:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanal post:</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -2740,7 +2740,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>check peers you would like to share private publish key with</source>
-        <translation type="unfinished"></translation>
+        <translation>özel yayınlama anahtarı kimnen paylaşmak kimen istersiniz</translation>
     </message>
     <message>
         <source>Share Key With</source>
@@ -2764,7 +2764,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Anahtar alıcılar kısıtlı-tipi kanal yayınlayabilir ve özel tip kanalları görüntüleyebilir ve yayınlayabilirsiniz</translation>
     </message>
     <message>
         <source>Share Private Publish Key</source>
@@ -2863,7 +2863,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please set a Forum Subject and Forum Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Bir Forum Konusu ve Forum Mesaji veriniz lütfen</translation>
     </message>
     <message>
         <source>Paste own certificate link</source>
@@ -3402,7 +3402,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>TextLabel</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Name</source>
@@ -3438,7 +3438,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RsId</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Bucket</source>
@@ -3446,7 +3446,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>IP:Port</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Key</source>
@@ -3478,7 +3478,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Proxy</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Destination</source>
@@ -3736,11 +3736,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished">Status</translation>
+        <translation>Durum</translation>
     </message>
     <message>
         <source>Person</source>
-        <translation type="unfinished">Person</translation>
+        <translation>Kisi</translation>
     </message>
     <message>
         <source>Auto Connect</source>
@@ -7320,7 +7320,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Paragraph</source>
-        <translation type="unfinished"></translation>
+        <translation>Paragraf</translation>
     </message>
     <message>
         <source>Heading 1</source>
@@ -7409,7 +7409,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add Blockquote</source>
-        <translation type="unfinished"></translation>
+        <translation>blockquote ekle</translation>
     </message>
     <message>
         <source>&amp;Left</source>
@@ -7425,7 +7425,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>&amp;Justify</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Yasla</translation>
     </message>
     <message>
         <source>Save Message</source>
@@ -8675,7 +8675,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cert Id</source>
-        <translation type="unfinished">Cert Id</translation>
+        <translation>Cert Id</translation>
     </message>
     <message>
         <source>Trust matrix</source>
@@ -10345,7 +10345,7 @@ Bunun yerine Mesaj göndermek istiyor musunuz?</translation>
     </message>
     <message>
         <source>Set your Avatar Picture</source>
-        <translation type="unfinished"></translation>
+        <translation>Avatar Resiminizi secin</translation>
     </message>
     <message>
         <source>Dock tab</source>
@@ -11455,67 +11455,67 @@ p, li { white-space: pre-wrap; }
     <name>RelayPage</name>
     <message>
         <source>Enable Relay Connections</source>
-        <translation type="unfinished"></translation>
+        <translation>Röle bağlantıları etkinleştirin</translation>
     </message>
     <message>
         <source>Use Relay Servers</source>
-        <translation type="unfinished"></translation>
+        <translation>Röle Sunucular kullanın</translation>
     </message>
     <message>
         <source>Relay options</source>
-        <translation type="unfinished"></translation>
+        <translation>Röle seçenekleri</translation>
     </message>
     <message>
         <source>Number</source>
-        <translation type="unfinished"></translation>
+        <translation>Numara</translation>
     </message>
     <message>
         <source>Bandwidth per link</source>
-        <translation type="unfinished"></translation>
+        <translation>Bağlantı başına Bant Genişliği</translation>
     </message>
     <message>
         <source>Total Bandwidth</source>
-        <translation type="unfinished"></translation>
+        <translation>Toplam Bant Genişliği</translation>
     </message>
     <message>
         <source>Friends</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaşlar</translation>
     </message>
     <message>
         <source>kB/s</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Friends of Friends</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaşlarımın Arkadaşları</translation>
     </message>
     <message>
         <source>General</source>
-        <translation type="unfinished">Genel</translation>
+        <translation>Genel</translation>
     </message>
     <message>
         <source>Total:</source>
-        <translation type="unfinished">Toplam:</translation>
+        <translation>Toplam:</translation>
     </message>
     <message>
         <source>Relay Server Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>Relay sunucu kurulumu</translation>
     </message>
     <message>
         <source>Add Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Sunucu ekle</translation>
     </message>
     <message>
         <source>Server DHT Key</source>
-        <translation type="unfinished"></translation>
+        <translation>Sunucu DHT Anahtarı</translation>
     </message>
     <message>
         <source>Remove Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Sunucuyu Kaldır</translation>
     </message>
     <message>
         <source>Relay</source>
-        <translation type="unfinished"></translation>
+        <translation>Röle</translation>
     </message>
 </context>
 <context>
@@ -13878,16 +13878,16 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Core-ID</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Peer</source>
         <comment>i.e: user name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Hash</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Force Check</source>
@@ -13911,7 +13911,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File %1 preview failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosya %1 önizleme başarısız oldu.</translation>
     </message>
     <message>
         <source>Open Transfer</source>
@@ -13932,15 +13932,15 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Needs checking</source>
-        <translation type="unfinished"></translation>
+        <translation>kontrol İhtiyaçı var</translation>
     </message>
     <message>
         <source>Can&apos;t create link for file %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 dosyası için bağlantı oluşturulamıyor.</translation>
     </message>
     <message>
         <source>Click OK when program terminates!</source>
-        <translation type="unfinished"></translation>
+        <translation>Program sona erince Tamam&apos;a tıklayın!</translation>
     </message>
     <message>
         <source>Downloads</source>
@@ -14361,7 +14361,7 @@ Try to be patient!</source>
     <name>WikiDialog</name>
     <message>
         <source>Wiki Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiki Grup</translation>
     </message>
     <message>
         <source>Page</source>
