@@ -72,7 +72,7 @@ class TokenQueueV2: public QWidget
   Q_OBJECT
 
 public:
-        TokenQueueV2(RsTokenServiceV2 *service, TokenResponseV2 *resp);
+        TokenQueueV2(RsTokenService *service, TokenResponseV2 *resp);
 
 	/* generic handling of token / response update behaviour */
 
@@ -111,7 +111,7 @@ private:
 	/* Info for Data Requests */
         std::list<TokenRequestV2> mRequests;
 
-	RsTokenServiceV2 *mService;
+        RsTokenService *mService;
         TokenResponseV2 *mResponder;
 
 	QTimer *mTrigger;

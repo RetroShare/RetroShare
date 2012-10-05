@@ -9,6 +9,8 @@ TARGET = retroshare
 CONFIG += test_voip
 
 # GXS Stuff.
+CONFIG += newcache
+CONFIG += newservices
 #CONFIG += newcache
 #CONFIG += newservices
 
@@ -594,7 +596,11 @@ HEADERS += retroshare/rsgame.h \
                 util/retrodb.h \
                 util/contentvalue.h \
                 gxs/gxscoreserver.h \
-                gxs/gxssecurity.h
+                gxs/gxssecurity.h \
+                gxs/gxssecurity.h \
+                gxs/rsgxsifaceimpl.h \
+                services/p3posted.h \
+                retroshare/rsposted.h
 
             SOURCES += serialiser/rsnxsitems.cc \
                 gxs/rsdataservice.cc \
@@ -608,7 +614,10 @@ HEADERS += retroshare/rsgame.h \
                 util/retrodb.cc \
                 util/contentvalue.cc \
                 gxs/gxscoreserver.cc \
-                gxs/gxssecurity.cc
+                gxs/gxssecurity.cc \
+                gxs/gxssecurity.cc \
+                gxs/rsgxsifaceimpl.cc \
+                services/p3posted.cc
         }
 
         newservices { 

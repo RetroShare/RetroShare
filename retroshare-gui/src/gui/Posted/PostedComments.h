@@ -27,16 +27,16 @@
 //#include "gui/mainpage.h"
 #include "ui_PostedComments.h"
 
-#include <retroshare/rsposted.h>
+#include <retroshare/rspostedVEG.h>
 
 #include <map>
 
 //#include "gui/Posted/PostedItem.h"
 //#include "gui/PhotoShare/PhotoAddDialog.h"
 //#include "gui/PhotoShare/PhotoSlideShow.h"
-#include "util/TokenQueue.h"
+#include "util/TokenQueueVEG.h"
 
-class PostedComments: public QWidget, public TokenResponse 
+class PostedComments: public QWidget, public TokenResponseVEG
 {
   Q_OBJECT
 
@@ -47,7 +47,7 @@ public slots:
         void loadComments( std::string );
 
 private:
-        void loadRequest(const TokenQueue *queue, const TokenRequest &req) { return; }
+        void loadRequest(const TokenQueueVEG *queue, const TokenRequestVEG &req) { return; }
 
 #if 0
 virtual void deletePhotoItem(PhotoItem *, uint32_t type);
@@ -112,7 +112,7 @@ private:
 
 #endif
 
-	TokenQueue *mPhotoQueue;
+        TokenQueueVEG *mPhotoQueue;
 
 	/* UI - from Designer */
 	Ui::PostedComments ui;

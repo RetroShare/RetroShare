@@ -21,11 +21,11 @@
 
 #include "PostedGroupDialog.h"
 
-#include <retroshare/rsposted.h>
+#include <retroshare/rspostedVEG.h>
 #include <iostream>
 
 PostedGroupDialog::PostedGroupDialog(QWidget *parent)
-	:GxsGroupDialog(rsPosted, parent)
+        :GxsGroupDialog(rsPostedVEG, parent)
 {
 
 	// To start with we only have open forums - with distribution controls.
@@ -66,11 +66,11 @@ PostedGroupDialog::PostedGroupDialog(QWidget *parent)
 bool PostedGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta)
 {
 	// Specific Function.
-	RsPostedGroup grp;
+        RsPostedGroup grp;
 	grp.mMeta = meta;
 	//grp.mDescription = std::string(desc.toUtf8());
 
-	rsPosted->submitGroup(token, grp, true);
+        rsPostedVEG->submitGroup(token, grp, true);
 	return true;
 }
 
@@ -80,7 +80,7 @@ void PostedGroupDialog::service_loadExistingGroup(const uint32_t &token)
         std::cerr << std::endl;
 
 	RsPostedGroup group;
-	if (!rsPosted->getGroup(token, group))
+        if (!rsPostedVEG->getGroup(token, group))
 	{
         	std::cerr << "PostedGroupDialog::service_loadExistingGroup() ERROR Getting Group";
         	std::cerr << std::endl;

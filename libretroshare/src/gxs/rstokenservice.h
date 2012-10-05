@@ -102,7 +102,7 @@ time_t   mAfter;
  * A proxy class for requesting generic service data for GXS
  * This seperates the request mechanism from the actual retrieval of data
  */
-class RsTokenServiceV2
+class RsTokenService
 {
 
 public:
@@ -116,8 +116,8 @@ public:
 
 public:
 
-    RsTokenServiceV2()  { return; }
-    virtual ~RsTokenServiceV2() { return; }
+    RsTokenService()  { return; }
+    virtual ~RsTokenService() { return; }
 
     /* Data Requests */
 

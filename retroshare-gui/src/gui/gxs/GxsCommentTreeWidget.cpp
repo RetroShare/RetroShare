@@ -36,7 +36,7 @@
 #define GXSCOMMENTS_LOADTHREAD		1
 
 // Temporarily make this specific.
-#include "retroshare/rsposted.h"
+#include "retroshare/rspostedVEG.h"
 
 
 GxsCommentTreeWidget::GxsCommentTreeWidget(QWidget *parent)
@@ -46,10 +46,10 @@ GxsCommentTreeWidget::GxsCommentTreeWidget(QWidget *parent)
    	return;
 }
 
-void GxsCommentTreeWidget::setup(RsTokenService *service)
+void GxsCommentTreeWidget::setup(RsTokenServiceVEG *service)
 {
 	mRsService = service;
-	mTokenQueue = new TokenQueue(service, this);
+        mTokenQueue = new TokenQueueVEG(service, this);
 
    	return;
 }
@@ -72,7 +72,7 @@ void GxsCommentTreeWidget::service_requestComments(std::string threadId)
 	std::cerr << "GxsCommentTreeWidget::service_requestComments(" << threadId << ")";
 	std::cerr << std::endl;
 	
-	RsTokReqOptions opts;
+        RsTokReqOptionsVEG opts;
 	
 	opts.mOptions = RS_TOKREQOPT_MSG_THREAD | RS_TOKREQOPT_MSG_LATEST;
 	opts.mFlagsFilter = RSPOSTED_MSGTYPE_COMMENT;
@@ -212,7 +212,7 @@ void GxsCommentTreeWidget::service_loadThread(const uint32_t &token)
 	std::cerr << std::endl;
 
 	RsPostedComment comment;
-	while(rsPosted->getComment(token, comment))
+        while(rsPostedVEG->getComment(token, comment))
 	{
 		/* convert to a QTreeWidgetItem */
 		std::cerr << "GxsCommentTreeWidget::service_loadThread() Got Comment: " << comment;
@@ -286,7 +286,7 @@ QTreeWidgetItem *GxsCommentTreeWidget::service_createMissingItem(std::string par
 }	
 
 
-void GxsCommentTreeWidget::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+void GxsCommentTreeWidget::loadRequest(const TokenQueueVEG *queue, const TokenRequestVEG &req)
 {
 	std::cerr << "GxsCommentTreeWidget::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;

@@ -169,7 +169,6 @@ std::ostream &operator<<(std::ostream &out, const RsPhotoAlbum &album);
 
 typedef std::map<RsGxsGroupId, std::vector<RsPhotoPhoto> > PhotoResult;
 typedef std::map<RsGxsGroupId, std::vector<RsPhotoComment> > PhotoCommentResult;
-typedef std::map<RsGxsGroupId, std::vector<RsMsgMetaData> > MsgMetaResult;
 
 class RsPhotoV2
 {
@@ -209,7 +208,7 @@ public:
      * needed to make requests to the service
      * @return handle to token service for this gxs service
      */
-    virtual RsTokenServiceV2* getTokenService() = 0;
+    virtual RsTokenService* getTokenService() = 0;
 
     /* Generic Lists */
 

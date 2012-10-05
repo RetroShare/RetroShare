@@ -140,7 +140,7 @@ void p3PhotoServiceV2::msgsChanged(
 }
 
 
-RsTokenServiceV2* p3PhotoServiceV2::getTokenService() {
+RsTokenService* p3PhotoServiceV2::getTokenService() {
 
 	return RsGenExchange::getTokenService();
 }

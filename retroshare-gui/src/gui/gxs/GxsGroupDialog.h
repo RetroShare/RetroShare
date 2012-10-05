@@ -25,7 +25,7 @@
 
 #include "ui_GxsGroupDialog.h"
 
-#include "util/TokenQueue.h"
+#include "util/TokenQueueVEG.h"
 
 
 /********
@@ -90,12 +90,12 @@ public:
 #define GXS_GROUP_DIALOG_SHOW_MODE		2
 #define GXS_GROUP_DIALOG_EDIT_MODE		3
 
-class GxsGroupDialog : public QDialog, public TokenResponse
+class GxsGroupDialog : public QDialog, public TokenResponseVEG
 {
 	Q_OBJECT
 
 public:
-	GxsGroupDialog(RsTokenService *service, QWidget *parent = 0);
+        GxsGroupDialog(RsTokenServiceVEG *service, QWidget *parent = 0);
 
 	void setFlags(uint32_t enabledFlags, uint32_t readonlyFlags, uint32_t defaultFlags);
 	void setMode(uint32_t mode);
@@ -105,7 +105,7 @@ public:
 	void existingGroup(std::string groupId, uint32_t mode);
 
         // Callback for all Loads.
-virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+virtual void loadRequest(const TokenQueueVEG *queue, const TokenRequestVEG &req);
 
 
 	// Functions that can be overloaded for specific stuff.
@@ -159,8 +159,8 @@ private:
 
 	QPixmap picture;
 
-	RsTokenService *mRsService;
-	TokenQueue *mTokenQueue;
+        RsTokenServiceVEG *mRsService;
+        TokenQueueVEG *mTokenQueue;
 
 	uint32_t mMode;
 

@@ -26,7 +26,7 @@
 #include "PostedListDialog.h"
 #include "PostedComments.h"
 
-#include <retroshare/rsposted.h>
+#include <retroshare/rspostedVEG.h>
 
 #include <iostream>
 #include <sstream>

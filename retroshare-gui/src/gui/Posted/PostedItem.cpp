@@ -30,7 +30,7 @@
 
 #include "PostedItem.h"
 
-#include <retroshare/rsposted.h>
+#include <retroshare/rspostedVEG.h>
 
 #include <algorithm>
 #include <iostream>
@@ -53,7 +53,7 @@ PostedItem::PostedItem(PostedHolder *parent, const RsPostedPost &post)
 	//scoreLabel->setText(QString("1140"));
 
         // exposed for testing...
-	float score = rsPosted->calcPostScore(post.mMeta);
+        float score = rsPostedVEG->calcPostScore(post.mMeta);
 	time_t now = time(NULL);
 
 	QString fromLabelTxt = QString(" Age: ") + QString::number(now - post.mMeta.mPublishTs);
@@ -62,7 +62,7 @@ PostedItem::PostedItem(PostedHolder *parent, const RsPostedPost &post)
 
 	uint32_t votes = 0;
 	uint32_t comments = 0;
-	rsPosted->extractPostedCache(post.mMeta.mServiceString, votes, comments);
+        rsPostedVEG->extractPostedCache(post.mMeta.mServiceString, votes, comments);
 	scoreLabel->setText(QString::number(votes));
 	QString commentLabel = QString("Comments: ") + QString::number(comments);
 	commentLabel += QString(" Votes: ") + QString::number(votes);

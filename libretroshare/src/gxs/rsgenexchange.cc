@@ -395,7 +395,7 @@ bool RsGenExchange::getMsgData(const uint32_t &token,
 }
 
 
-RsTokenServiceV2* RsGenExchange::getTokenService()
+RsTokenService* RsGenExchange::getTokenService()
 {
     return mDataAccess;
 }
@@ -511,10 +511,10 @@ void RsGenExchange::processMsgMetaChanges()
 
         if(ok)
         {
-            mDataAccess->updatePublicRequestStatus(token, RsTokenServiceV2::GXS_REQUEST_V2_STATUS_COMPLETE);
+            mDataAccess->updatePublicRequestStatus(token, RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE);
         }else
         {
-            mDataAccess->updatePublicRequestStatus(token, RsTokenServiceV2::GXS_REQUEST_V2_STATUS_FAILED);
+            mDataAccess->updatePublicRequestStatus(token, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
         }
         mMsgNotify.insert(std::make_pair(token, m.msgId));
     }
@@ -537,10 +537,10 @@ void RsGenExchange::processGrpMetaChanges()
 
         if(ok)
         {
-            mDataAccess->updatePublicRequestStatus(token, RsTokenServiceV2::GXS_REQUEST_V2_STATUS_COMPLETE);
+            mDataAccess->updatePublicRequestStatus(token, RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE);
         }else
         {
-            mDataAccess->updatePublicRequestStatus(token, RsTokenServiceV2::GXS_REQUEST_V2_STATUS_FAILED);
+            mDataAccess->updatePublicRequestStatus(token, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
         }
         mGrpNotify.insert(std::make_pair(token, g.grpId));
     }
@@ -605,7 +605,7 @@ void RsGenExchange::publishMsgs()
 
                         // add to published to allow acknowledgement
                         mMsgNotify.insert(std::make_pair(mit->first, std::make_pair(grpId, msgId)));
-                        mDataAccess->updatePublicRequestStatus(mit->first, RsTokenServiceV2::GXS_REQUEST_V2_STATUS_COMPLETE);
+                        mDataAccess->updatePublicRequestStatus(mit->first, RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE);
 		}
 
 		// if addition failed then delete nxs message
@@ -663,7 +663,7 @@ void RsGenExchange::publishGrps()
 
                     // add to published to allow acknowledgement
                     mGrpNotify.insert(std::make_pair(mit->first, grpId));
-                    mDataAccess->updatePublicRequestStatus(mit->first, RsTokenServiceV2::GXS_REQUEST_V2_STATUS_COMPLETE);
+                    mDataAccess->updatePublicRequestStatus(mit->first, RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE);
 		}
 
 		if(!ok)
@@ -676,7 +676,7 @@ void RsGenExchange::publishGrps()
 
 			// add to published to allow acknowledgement, grpid is empty as grp creation failed
                         mGrpNotify.insert(std::make_pair(mit->first, RsGxsGroupId("")));
-                        mDataAccess->updatePublicRequestStatus(mit->first, RsTokenServiceV2::GXS_REQUEST_V2_STATUS_FAILED);
+                        mDataAccess->updatePublicRequestStatus(mit->first, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
 			continue;
 		}
 

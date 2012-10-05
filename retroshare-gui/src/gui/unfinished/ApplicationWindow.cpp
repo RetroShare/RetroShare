@@ -33,6 +33,7 @@
 #include <retroshare/rsiface.h>
 
 #include "gui/PhotoShare/PhotoShare.h"
+#include "gui/Posted/PostedDialog.h"
 
 // THESE HAVE TO BE CONVERTED TO VEG FORMAT
 #if USE_VEG_SERVICE
@@ -40,7 +41,7 @@
 #include "gui/TheWire/WireDialog.h"
 #include "gui/Identity/IdDialog.h"
 #include "gui/ForumsV2Dialog.h"
-#include "gui/Posted/PostedDialog.h"
+
 #endif
 
 //#include "GamesDialog.h"
@@ -108,6 +109,9 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(photoShare = new PhotoShare(ui.stackPages),
                      createPageAction(QIcon(IMAGE_PHOTO), tr("Photo Share"), grp));
 
+    PostedDialog *postedDialog = NULL;
+    ui.stackPages->add(postedDialog = new PostedDialog(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_LIBRARY), tr("Posted Links"), grp));
 // THESE HAVE TO BE CONVERTED TO VEG FORMAT
 #if USE_VEG_SERVICE
     WikiDialog *wikiDialog = NULL;
@@ -122,9 +126,7 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(forumsV2Dialog = new ForumsV2Dialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_FORUMSV2), tr("ForumsV2"), grp));
 
-    PostedDialog *postedDialog = NULL;
-    ui.stackPages->add(postedDialog = new PostedDialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_LIBRARY), tr("Posted Links"), grp));
+
 #endif
 
 

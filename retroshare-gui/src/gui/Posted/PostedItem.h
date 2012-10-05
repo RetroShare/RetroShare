@@ -26,7 +26,7 @@
 
 #include "ui_PostedItem.h"
 
-#include <retroshare/rsposted.h>
+#include <retroshare/rspostedVEG.h>
 
 class RsPostedPost;
 class PostedItem;

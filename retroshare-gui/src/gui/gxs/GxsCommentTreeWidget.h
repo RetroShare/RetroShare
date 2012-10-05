@@ -24,7 +24,7 @@
 
 #include <QTreeWidget>
 
-#include "util/TokenQueue.h"
+#include "util/TokenQueueVEG.h"
 
 /* indicies for search results item columns SR_ = Search Result */
 #define SR_NAME_COL         0
@@ -39,17 +39,17 @@
 
 #define SR_ROLE_LOCAL       Qt::UserRole
 
-class GxsCommentTreeWidget : public QTreeWidget, public TokenResponse
+class GxsCommentTreeWidget : public QTreeWidget, public TokenResponseVEG
 {
     Q_OBJECT
         
 public:
 	GxsCommentTreeWidget(QWidget *parent = 0);
-	void setup(RsTokenService *service);
+        void setup(RsTokenServiceVEG *service);
 
 	void requestComments(std::string threadId);
 
-	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+        void loadRequest(const TokenQueueVEG *queue, const TokenRequestVEG &req);
 
 protected:
 
@@ -73,8 +73,8 @@ protected:
 	std::map<std::string, QTreeWidgetItem *> mLoadingMap;
 	std::multimap<std::string, QTreeWidgetItem *> mPendingInsertMap;
 
-	TokenQueue *mTokenQueue;
-	RsTokenService *mRsService;
+        TokenQueueVEG *mTokenQueue;
+        RsTokenServiceVEG *mRsService;
 
 	protected:
 //virtual QMimeData * mimeData ( const QList<QTreeWidgetItem *> items ) const;

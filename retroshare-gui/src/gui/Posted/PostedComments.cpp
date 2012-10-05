@@ -24,7 +24,7 @@
 #include "PostedComments.h"
 
 //#include <retroshare/rspeers.h>
-#include <retroshare/rsposted.h>
+#include <retroshare/rspostedVEG.h>
 
 #include <iostream>
 #include <sstream>
@@ -83,7 +83,7 @@ PostedComments::PostedComments(QWidget *parent)
 	/* setup TokenQueue */
 	//mPhotoQueue = new TokenQueue(rsPhoto, this);
 
-	ui.treeWidget->setup(rsPosted);
+        ui.treeWidget->setup(rsPostedVEG);
 
 }
 
@@ -573,7 +573,7 @@ void PhotoDialog::loadPhotoData(const uint32_t &token)
 
 /********************************/
 
-void PhotoDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+void PhotoDialog::loadRequest(const TokenQueue *queue, const TokenRequestVEG &req)
 {
 	std::cerr << "PhotoDialog::loadRequest()";
 	std::cerr << std::endl;

@@ -35,13 +35,13 @@
 #define GXSGROUP_LOADGROUP		2
 
 /** Constructor */
-GxsGroupDialog::GxsGroupDialog(RsTokenService *service, QWidget *parent)
+GxsGroupDialog::GxsGroupDialog(RsTokenServiceVEG *service, QWidget *parent)
 : QDialog(parent), mRsService(service)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
 
-	mTokenQueue = new TokenQueue(service, this);
+        mTokenQueue = new TokenQueueVEG(service, this);
 
 	// connect up the buttons.
 	connect( ui.cancelButton, SIGNAL( clicked ( bool ) ), this, SLOT( cancelDialog( ) ) );
@@ -289,7 +289,7 @@ void GxsGroupDialog::existingGroup(std::string groupId, uint32_t mode)
 
 	/* request data */
 	{
-		RsTokReqOptions opts;
+                RsTokReqOptionsVEG opts;
 		
 		std::list<std::string> grpIds;
 		grpIds.push_back(groupId);
@@ -605,7 +605,7 @@ void GxsGroupDialog::service_loadExistingGroup(const uint32_t &token)
 }
 
 
-void GxsGroupDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+void GxsGroupDialog::loadRequest(const TokenQueueVEG *queue, const TokenRequestVEG &req)
 {
 	std::cerr << "GxsGroupDialog::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;

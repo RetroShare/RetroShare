@@ -32,7 +32,7 @@
  *****/
 
 /** Constructor */
-TokenQueueV2::TokenQueueV2(RsTokenServiceV2 *service, TokenResponseV2 *resp)
+TokenQueueV2::TokenQueueV2(RsTokenService *service, TokenResponseV2 *resp)
 :QWidget(NULL), mService(service), mResponder(resp)
 {
 	return;
@@ -152,8 +152,8 @@ bool TokenQueueV2::checkForRequest(uint32_t token)
 {
 	/* check token */
     uint32_t status =  mService->requestStatus(token);
-    return ( (RsTokenServiceV2::GXS_REQUEST_V2_STATUS_FAILED == status) ||
-            (RsTokenServiceV2::GXS_REQUEST_V2_STATUS_COMPLETE == status) );
+    return ( (RsTokenService::GXS_REQUEST_V2_STATUS_FAILED == status) ||
+            (RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE == status) );
 }
 
 

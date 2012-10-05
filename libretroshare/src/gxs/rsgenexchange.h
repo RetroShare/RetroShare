@@ -103,7 +103,7 @@ public:
      * @return handle to token service handle for making
      * request to this gxs service
      */
-    RsTokenServiceV2* getTokenService();
+    RsTokenService* getTokenService();
 
 protected:
 

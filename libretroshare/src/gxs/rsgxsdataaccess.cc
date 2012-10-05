@@ -49,12 +49,12 @@
 #define RS_TOKREQ_ANSTYPE_SUMMARY	0x0002
 #define RS_TOKREQ_ANSTYPE_DATA		0x0003
 
-        const uint8_t RsTokenServiceV2::GXS_REQUEST_V2_STATUS_FAILED = 0;
-        const uint8_t RsTokenServiceV2::GXS_REQUEST_V2_STATUS_PENDING = 1;
-        const uint8_t RsTokenServiceV2::GXS_REQUEST_V2_STATUS_PARTIAL = 2;
-        const uint8_t RsTokenServiceV2::GXS_REQUEST_V2_STATUS_FINISHED_INCOMPLETE = 3;
-        const uint8_t RsTokenServiceV2::GXS_REQUEST_V2_STATUS_COMPLETE = 4;
-        const uint8_t RsTokenServiceV2::GXS_REQUEST_V2_STATUS_DONE = 5;			 // ONCE ALL DATA RETRIEVED.
+        const uint8_t RsTokenService::GXS_REQUEST_V2_STATUS_FAILED = 0;
+        const uint8_t RsTokenService::GXS_REQUEST_V2_STATUS_PENDING = 1;
+        const uint8_t RsTokenService::GXS_REQUEST_V2_STATUS_PARTIAL = 2;
+        const uint8_t RsTokenService::GXS_REQUEST_V2_STATUS_FINISHED_INCOMPLETE = 3;
+        const uint8_t RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE = 4;
+        const uint8_t RsTokenService::GXS_REQUEST_V2_STATUS_DONE = 5;			 // ONCE ALL DATA RETRIEVED.
 
 RsGxsDataAccess::RsGxsDataAccess(RsGeneralDataService* ds)
  : mDataStore(ds), mDataMutex("RsGxsDataAccess"), mNextToken(0)
@@ -1331,7 +1331,7 @@ uint32_t RsGxsDataAccess::generatePublicToken()
 
         {
             RsStackMutex stack(mDataMutex);
-            mPublicToken[token] = RsTokenServiceV2::GXS_REQUEST_V2_STATUS_PENDING;
+            mPublicToken[token] = RsTokenService::GXS_REQUEST_V2_STATUS_PENDING;
         }
 
 	return token;

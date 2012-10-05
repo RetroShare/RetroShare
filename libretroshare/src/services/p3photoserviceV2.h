@@ -56,7 +56,7 @@ public:
     void msgsChanged(std::map<RsGxsGroupId,
                              std::vector<RsGxsMessageId> >& msgs);
 
-    RsTokenServiceV2* getTokenService();
+    RsTokenService* getTokenService();
 
     bool getGroupList(const uint32_t &token,
                               std::list<RsGxsGroupId> &groupIds);

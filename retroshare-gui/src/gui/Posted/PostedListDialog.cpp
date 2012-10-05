@@ -26,7 +26,7 @@
 #include "gui/gxs/PostedGroupDialog.h"
 
 //#include <retroshare/rspeers.h>
-#include <retroshare/rsposted.h>
+#include <retroshare/rspostedVEG.h>
 
 #include <iostream>
 #include <sstream>
@@ -69,7 +69,7 @@ PostedListDialog::PostedListDialog(QWidget *parent)
     ui.setupUi(this);
 
 	/* Setup Queue */
-        mPostedQueue = new TokenQueue(rsPosted, this);
+        mPostedQueue = new TokenQueueVEG(rsPostedVEG, this);
 
     connect( ui.groupTreeWidget, SIGNAL( treeCustomContextMenuRequested( QPoint ) ), this, SLOT( groupListCustomPopupMenu( QPoint ) ) );
 
@@ -157,12 +157,12 @@ void PostedListDialog::updateDisplay()
 {
     std::list<std::string> groupIds;
     std::list<std::string>::iterator it;
-    if (!rsPosted)
+    if (!rsPostedVEG)
         return;
 
 	// TODO groupsChanged... HACK XXX.
 #if 0
-    if ((rsPosted->groupsChanged(groupIds)) || (rsPosted->updated()))
+    if ((rsPostedVEG->groupsChanged(groupIds)) || (rsPostedVEG->updated()))
     {
         /* update Forums List */
         insertGroups();
@@ -176,7 +176,7 @@ void PostedListDialog::updateDisplay()
     }
 #endif
 
-    if (rsPosted->updated())
+    if (rsPostedVEG->updated())
     {
         /* update Forums List */
         insertGroups();
@@ -235,47 +235,47 @@ void PostedListDialog::sortButtonClicked( QAbstractButton *button )
 	std::cerr << "PostedListDialog::sortButtonClicked( From Button Group! )";
 	std::cerr << std::endl;
 
-	uint32_t sortMode = RSPOSTED_VIEWMODE_HOT;
+        uint32_t sortMode = RSPOSTED_VIEWMODE_HOT;
 
 	if (button == ui.hotSortButton) {
-		sortMode = RSPOSTED_VIEWMODE_HOT;
+                sortMode = RSPOSTED_VIEWMODE_HOT;
 	} else if (button == ui.newSortButton) {
-		sortMode = RSPOSTED_VIEWMODE_LATEST;
+                sortMode = RSPOSTED_VIEWMODE_LATEST;
 	} else if (button == ui.topSortButton) {
-		sortMode = RSPOSTED_VIEWMODE_TOP;
+                sortMode = RSPOSTED_VIEWMODE_TOP;
 	}
 
-	rsPosted->setViewMode(sortMode);
+        rsPostedVEG->setViewMode(sortMode);
 }
 
 
 void PostedListDialog::periodChanged( int index )
 {
-	uint32_t periodMode = RSPOSTED_PERIOD_HOUR;
+        uint32_t periodMode = RSPOSTED_PERIOD_HOUR;
 	switch (index)
 	{
 		case 0:
-			periodMode = RSPOSTED_PERIOD_HOUR;
+                        periodMode = RSPOSTED_PERIOD_HOUR;
 			break;
 
 		case 1:
-			periodMode = RSPOSTED_PERIOD_DAY;
+                        periodMode = RSPOSTED_PERIOD_DAY;
 			break;
 
 		default:
 		case 2:
-			periodMode = RSPOSTED_PERIOD_WEEK;
+                        periodMode = RSPOSTED_PERIOD_WEEK;
 			break;
 
 		case 3:
-			periodMode = RSPOSTED_PERIOD_MONTH;
+                        periodMode = RSPOSTED_PERIOD_MONTH;
 			break;
 
 		case 4:
-			periodMode = RSPOSTED_PERIOD_YEAR;
+                        periodMode = RSPOSTED_PERIOD_YEAR;
 			break;
 	}
-	rsPosted->setViewPeriod(periodMode);
+        rsPostedVEG->setViewPeriod(periodMode);
 }
 
 
@@ -342,7 +342,7 @@ void PostedListDialog::requestGroupSummary()
         std::cerr << std::endl;
 
         std::list<std::string> ids;
-        RsTokReqOptions opts;
+        RsTokReqOptionsVEG opts;
 	uint32_t token;
         mPostedQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_SUMMARY, opts, ids, POSTEDDIALOG_LISTING);
 }
@@ -353,7 +353,7 @@ void PostedListDialog::loadGroupSummary(const uint32_t &token)
         std::cerr << std::endl;
 
         std::list<RsGroupMetaData> groupInfo;
-        rsPosted->getGroupSummary(token, groupInfo);
+        rsPostedVEG->getGroupSummary(token, groupInfo);
 
         if (groupInfo.size() > 0)
         {
@@ -373,7 +373,7 @@ void PostedListDialog::loadGroupSummary(const uint32_t &token)
 
 void PostedListDialog::requestGroupSummary_CurrentForum(const std::string &forumId)
 {
-	RsTokReqOptions opts;
+        RsTokReqOptionsVEG opts;
 	
 	std::list<std::string> grpIds;
 	grpIds.push_back(forumId);
@@ -391,7 +391,7 @@ void PostedListDialog::loadGroupSummary_CurrentForum(const uint32_t &token)
         std::cerr << std::endl;
 
         std::list<RsGroupMetaData> groupInfo;
-        rsPosted->getGroupSummary(token, groupInfo);
+        rsPostedVEG->getGroupSummary(token, groupInfo);
 
         if (groupInfo.size() == 1)
         {
@@ -452,7 +452,7 @@ void PostedListDialog::loadCurrentForumThreads(const std::string &forumId)
 
 void PostedListDialog::requestGroupThreadData_InsertThreads(const std::string &groupId)
 {
-	RsTokReqOptions opts;
+        RsTokReqOptionsVEG opts;
 
 	opts.mOptions = RS_TOKREQOPT_MSG_THREAD | RS_TOKREQOPT_MSG_LATEST;
 	
@@ -466,7 +466,7 @@ void PostedListDialog::requestGroupThreadData_InsertThreads(const std::string &g
 	//mPostedQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds, POSTEDDIALOG_INSERTTHREADS);
 
 	// Do specific Posted Request....
-	if (rsPosted->requestRanking(token, groupId))
+        if (rsPostedVEG->requestRanking(token, groupId))
 	{
 		// get the Queue to handle response.
         	mPostedQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_DATA, POSTEDDIALOG_INSERTTHREADS);
@@ -482,11 +482,11 @@ void PostedListDialog::loadGroupThreadData_InsertThreads(const uint32_t &token)
 	bool moreData = true;
 	while(moreData)
 	{
-		RsPostedPost post;
+                RsPostedPost post;
 		// Old Format.
-		//if (rsPosted->getPost(token, post))
+                //if (rsPostedVEG->getPost(token, post))
 
-		if (rsPosted->getRankedPost(token, post))
+                if (rsPostedVEG->getRankedPost(token, post))
 		{
 			std::cerr << "PostedListDialog::loadGroupThreadData_InsertThreads() MsgId: " << post.mMeta.mMsgId;
 			std::cerr << std::endl;
@@ -559,7 +559,7 @@ void PostedListDialog::clearPosts()
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
 	
-void PostedListDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+void PostedListDialog::loadRequest(const TokenQueueVEG *queue, const TokenRequestVEG &req)
 {
 	std::cerr << "PostedListDialog::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;
