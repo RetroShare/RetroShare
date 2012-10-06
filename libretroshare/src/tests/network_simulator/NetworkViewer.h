@@ -60,16 +60,19 @@ class NetworkViewer: public QGLViewer
 		std::vector<NodeCoord> _node_coords ;
 		std::vector<NodeCoord> _node_speeds ;
 
-		static const float MASS_FACTOR      = 7 ;
-		static const float FRICTION_FACTOR  = 9.8 ;
+		static const float MASS_FACTOR      = 10 ;
+		static const float FRICTION_FACTOR  = 15.8 ;
 		static const float REPULSION_FACTOR = 8  ;
 		static const float NODE_DISTANCE    = 30.0 ;
 
 		int timerId ;
 
 		int _current_selected_node ;
+		int _current_displayed_node ;
 		bool _dragging ;
+		bool _nodes_need_recomputing ;
 
 		QAction *action_ManageHash ;
 		QAction *action_ProvideHash ;
 };
+

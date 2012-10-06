@@ -17,8 +17,12 @@ int main(int argc, char *argv[])
 #endif
 		argstream as(argc,argv) ;
 		bool show_gui = false;
+		int nb_nodes = 20 ;
+		float connexion_probability = 0.2 ;
 
 		as >> option('i',"gui",show_gui,"show gui (vs. do the pipeline automatically)")
+			>> parameter('n',"nodes",nb_nodes,"number of nodes in the network")
+			>> parameter('p',"connexion probability",connexion_probability,"probability that two nodes are connected (exponential law)")
 			>> help() ;
 
 		as.defaultErrorHandling() ;
@@ -27,7 +31,7 @@ int main(int argc, char *argv[])
 
 		Network network ;
 
-		network.initRandom(20,0.2) ;
+		network.initRandom(nb_nodes,connexion_probability) ;
 
 		rsPeers = new MonitoredRsPeers(network) ;
 

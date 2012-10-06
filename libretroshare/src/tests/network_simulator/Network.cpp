@@ -40,7 +40,7 @@ bool Network::initRandom(uint32_t nb_nodes,float connexion_probability)
 	//
 	for(uint32_t i=0;i<nb_nodes;++i)
 	{
-		int nb_friends = (int)ceil(-log(1-drand48())) ;
+		int nb_friends = std::min((int)nb_nodes-1,(int)ceil(-log(1-drand48())/(1.00001-connexion_probability))) ;
 
 		for(uint32_t j=0;j<nb_friends;++j)
 		{

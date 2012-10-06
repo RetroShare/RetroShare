@@ -11,15 +11,17 @@ NetworkViewer::NetworkViewer(QWidget *parent,Network&net)
 	:  QGLViewer(parent),_network(net) , timerId(0)
 {
 	_current_selected_node = -1 ;
+	_current_displayed_node = -1 ;
 	_dragging = false ;
+	_nodes_need_recomputing = true ;
 
 	_node_coords.resize(net.n_nodes()) ;
 	_node_speeds.resize(net.n_nodes()) ;
 
 	for(int i=0;i<_node_coords.size();++i)
 	{
-		_node_coords[i].x = drand48()*width() ;
-		_node_coords[i].y = drand48()*height() ;
+		_node_coords[i].x = drand48()*width()*5;
+		_node_coords[i].y = drand48()*height()*5 ;
 		_node_speeds[i].x = 0 ;
 		_node_speeds[i].y = 0 ;
 	}
@@ -30,6 +32,8 @@ NetworkViewer::NetworkViewer(QWidget *parent,Network&net)
 
 	action_ManageHash = new QAction(QString("Manage new random hash"),this) ;
 	QObject::connect(action_ManageHash,SIGNAL(triggered()),this,SLOT(actionManageHash())) ;
+
+	setMouseTracking(true) ;
 }
 
 void NetworkViewer::draw() 
@@ -52,6 +56,8 @@ void NetworkViewer::draw()
 
 	// Now, draw all edges
 
+	std::set<int> tunnel_nodes ;
+
 	glEnable(GL_LINE_SMOOTH) ;
 	glBegin(GL_LINES) ;
 
@@ -65,7 +71,11 @@ void NetworkViewer::draw()
 		for(std::set<uint32_t>::const_iterator it(neighs.begin());it!=neighs.end();++it)
 		{
 			if(traffic_info.local_src.find(_network.node(*it).id())!=traffic_info.local_src.end() || traffic_info.local_dst.find(_network.node(*it).id())!=traffic_info.local_dst.end())
+			{
 				glColor3f(0.9f,0.4f,0.2f) ;
+				tunnel_nodes.insert(i) ;
+				tunnel_nodes.insert(*it) ;
+			}
 			else
 				glColor3f(0.4f,0.4f,0.4f) ;
 
@@ -82,21 +92,64 @@ void NetworkViewer::draw()
 	// Draw all nodes.
 	//
 	glEnable(GL_POINT_SMOOTH) ;
+	glPointSize(20.0f) ;
+	glBegin(GL_POINTS) ;
+
+	if(_current_selected_node > -1)
+	{
+		glColor4f(1.0f,0.2f,0.1f,0.7f) ;
+		glVertex2f(_node_coords[_current_selected_node].x, _node_coords[_current_selected_node].y) ;
+	}
+	glEnd() ;
+
 	glPointSize(10.0f) ;
 	glBegin(GL_POINTS) ;
 
 	for(uint32_t i=0;i<_network.n_nodes();++i)
 	{
-		if((int)i == _current_selected_node)
-			glColor3f(1.0f,0.2f,0.1f) ;
-		else
-			glColor3f(0.8f,0.8f,0.8f) ;
+		float r = 0.8 ;
+		float g = 0.8 ;
+		float b = 0.8 ;
+
+		if(!_network.node(i).providedHashes().empty())
+			r *= 2.0, g /= 2.0, b /= 2.0f ;
+
+		if(!_network.node(i).managedHashes().empty())
+			g *= 2.0, b /= 2.0, r /= 2.0f ;
+
+		if(tunnel_nodes.find(i) != tunnel_nodes.end() && r==0.8f && g==0.8f && b==0.8f)
+			r = 0.9f, g=0.4f,b=0.2f ;
+
+		glColor3f(r,g,b) ;
 
 		glVertex2f(_node_coords[i].x, _node_coords[i].y) ;
 	}
 
 	glEnd() ;
 
+	// Draw info about current node under mouse.
+	//
+	if(_current_displayed_node > -1)
+	{
+		const PeerNode& node(_network.node(_current_displayed_node)) ;
+		int offset = 0 ;
+		int text_height = 15 ;
+
+		drawText(10+_node_coords[_current_displayed_node].x,offset + height()-_node_coords[_current_displayed_node].y, "Node id = " + QString::fromStdString(node.id())) ;
+		offset += text_height ;
+
+		for(std::set<TurtleFileHash>::const_iterator it(node.providedHashes().begin());it!=node.providedHashes().end();++it)
+		{
+			drawText(10+_node_coords[_current_displayed_node].x,offset + height()-_node_coords[_current_displayed_node].y, "Server for hash " + QString::fromStdString(*it) );
+			offset += text_height ;
+		}
+
+		for(std::set<TurtleFileHash>::const_iterator it(node.managedHashes().begin());it!=node.managedHashes().end();++it)
+		{
+			drawText(10+_node_coords[_current_displayed_node].x,offset + height()-_node_coords[_current_displayed_node].y, "Client for hash " + QString::fromStdString(*it) ) ;
+			offset += text_height ;
+		}
+	}
 
 	glMatrixMode(GL_MODELVIEW) ;
 	glPopMatrix() ;
@@ -222,70 +275,77 @@ void NetworkViewer::timerEvent(QTimerEvent *event)
 	 if(!isVisible())
 		 return ;
 
-	 static const int S = 256 ;
-	 static double *forceMap = new double[2*S*S] ;
-
-	 memset(forceMap,0,2*S*S*sizeof(double)) ;
-
-	 for(uint32_t i=0;i<_network.n_nodes();++i)
+	 if(_nodes_need_recomputing)
 	 {
-		 float x = S*_node_coords[i].x/width() ;
-		 float y = S*_node_coords[i].y/height() ;
+		 std::cerr << "Updating forces..."<< std::endl;
+		 static const int S = 256 ;
+		 static double *forceMap = new double[2*S*S] ;
 
-		 int i=(int)floor(x) ;
-		 int j=(int)floor(y) ;
+		 memset(forceMap,0,2*S*S*sizeof(double)) ;
 
-		 float di = x-i ;
-		 float dj = y-j ;
-
-		 if( i>=0 && i<S-1 && j>=0 && j<S-1)
+		 for(uint32_t i=0;i<_network.n_nodes();++i)
 		 {
-			 forceMap[2*(i  +S*(j  ))] += (1-di)*(1-dj) ;
-			 forceMap[2*(i+1+S*(j  ))] +=    di *(1-dj) ;
-			 forceMap[2*(i  +S*(j+1))] += (1-di)*dj ;
-			 forceMap[2*(i+1+S*(j+1))] +=    di *dj ;
-		 }
-	 }
+			 float x = S*_node_coords[i].x/width() ;
+			 float y = S*_node_coords[i].y/height() ;
 
-	 // compute convolution with 1/omega kernel.
-	 //
-	 convolveWithGaussian(forceMap,S,20) ;
-	 
-	 static float speedf=1.0f;
+			 int i=(int)floor(x) ;
+			 int j=(int)floor(y) ;
 
-	 std::vector<NodeCoord> new_coords(_node_coords) ;
+			 float di = x-i ;
+			 float dj = y-j ;
 
-	 for(uint32_t i=0;i<_network.n_nodes();++i)
-		 if(i != _current_selected_node || !_dragging)
-		 {
-			 float x = _node_coords[i].x ;
-			 float y = _node_coords[i].y ;
-
-			 calculateForces(i,forceMap,S,S,x,y,speedf,new_coords[i].x,new_coords[i].y);
+			 if( i>=0 && i<S-1 && j>=0 && j<S-1)
+			 {
+				 forceMap[2*(i  +S*(j  ))] += (1-di)*(1-dj) ;
+				 forceMap[2*(i+1+S*(j  ))] +=    di *(1-dj) ;
+				 forceMap[2*(i  +S*(j+1))] += (1-di)*dj ;
+				 forceMap[2*(i+1+S*(j+1))] +=    di *dj ;
+			 }
 		 }
 
-    bool itemsMoved = false;
-	 for(uint32_t i=0;i<_node_coords.size();++i)
-	 {
-		 if( fabsf(_node_coords[i].x - new_coords[i].x) > 0.2 || fabsf(_node_coords[i].y - new_coords[i].y) > 0.2)
-            itemsMoved = true;
+		 // compute convolution with 1/omega kernel.
+		 //
+		 convolveWithGaussian(forceMap,S,20) ;
 
-		 //std::cerr << "Old i = " << _node_coords[i].x << ", new = " << new_coords[i].x << std::endl;
-		 _node_coords[i] = new_coords[i] ;
+		 static float speedf=1.0f;
+
+		 std::vector<NodeCoord> new_coords(_node_coords) ;
+
+		 for(uint32_t i=0;i<_network.n_nodes();++i)
+			 if(i != _current_selected_node || !_dragging)
+			 {
+				 float x = _node_coords[i].x ;
+				 float y = _node_coords[i].y ;
+
+				 calculateForces(i,forceMap,S,S,x,y,speedf,new_coords[i].x,new_coords[i].y);
+			 }
+
+		 bool itemsMoved = false;
+		 for(uint32_t i=0;i<_node_coords.size();++i)
+		 {
+			 if( fabsf(_node_coords[i].x - new_coords[i].x) > 1.0 || fabsf(_node_coords[i].y - new_coords[i].y) > 1.0)
+				 itemsMoved = true;
+
+			 //std::cerr << "Old i = " << _node_coords[i].x << ", new = " << new_coords[i].x << std::endl;
+			 _node_coords[i] = new_coords[i] ;
+		 }
+
+		 if (!itemsMoved) {
+	//		 killTimer(timerId);
+			 //#ifdef DEBUG_ELASTIC
+			 std::cerr << "Killing timr" << std::endl ;
+			 _nodes_need_recomputing = false ;
+			 //#endif
+			 timerId = 0;
+		 }
+		 else
+		 {
+			 updateGL() ;
+			 usleep(2000) ;
+		 }
 	 }
-
-    if (!itemsMoved) {
-        killTimer(timerId);
-//#ifdef DEBUG_ELASTIC
-		  std::cerr << "Killing timr" << std::endl ;
-//#endif
-        timerId = 0;
-    }
 	 else
-	 {
 		 updateGL() ;
-		 usleep(2000) ;
-	 }
 
 }
 
@@ -296,11 +356,22 @@ void NetworkViewer::mouseMoveEvent(QMouseEvent *e)
 		_node_coords[_current_selected_node].x = e->x() ;
 		_node_coords[_current_selected_node].y = height() - e->y() ;
 
-		if(timerId == 0)
-			timerId = startTimer(1000/25) ;
+		_nodes_need_recomputing = true ;
 
 		updateGL() ;
 	}
+
+	float x = e->x() ;
+	float y = height()-e->y() ;
+
+	_current_displayed_node = -1 ;
+
+	for(uint32_t i=0;i<_node_coords.size();++i)
+		if( pow(_node_coords[i].x-x,2)+pow(_node_coords[i].y-y,2) < 5*5)
+		{
+			_current_displayed_node = i;
+			break ;
+		}
 }
 
 void NetworkViewer::mouseReleaseEvent(QMouseEvent *e)
