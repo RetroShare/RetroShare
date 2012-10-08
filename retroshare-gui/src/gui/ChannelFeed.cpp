@@ -225,6 +225,11 @@ void ChannelFeed::createChannel()
 /*************************************************************************************/
 /*************************************************************************************/
 
+QScrollArea *ChannelFeed::getScrollArea()
+{
+	return scrollArea;
+}
+
 void ChannelFeed::deleteFeedItem(QWidget */*item*/, uint32_t /*type*/)
 {
 }
@@ -587,9 +592,14 @@ void ChannelFeed::fillThreadAddMsg(const QString &channelId, const QString &chan
             progressBar->setValue(current * progressBar->maximum() / count);
         }
 
+        lockLayout(NULL, true);
+
         ChanMsgItem *cmi = new ChanMsgItem(this, 0, channelId.toStdString(), channelMsgId.toStdString(), true);
         mChanMsgItems.push_back(cmi);
         verticalLayout->addWidget(cmi);
+        cmi->show();
+
+        lockLayout(cmi, false);
     }
 }
 

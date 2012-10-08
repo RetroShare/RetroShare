@@ -400,11 +400,16 @@ void NewsFeed::addFeedItem(QWidget *item)
 
 	sendNewsFeedChanged();
 
+	lockLayout(NULL, true);
+
 	if (Settings->getAddFeedsAtEnd()) {
 		verticalLayout->addWidget(item);
 	} else {
 		verticalLayout->insertWidget(0, item);
 	}
+	item->show();
+
+	lockLayout(item, false);
 }
 
 void NewsFeed::addFeedItemIfUnique(QWidget *item, int itemType, const std::string &sslId, bool replace)
@@ -742,6 +747,11 @@ void	NewsFeed::addFeedItemFilesNew(RsFeedItem &/*fi*/)
 }
 
 /* FeedHolder Functions (for FeedItem functionality) */
+QScrollArea *NewsFeed::getScrollArea()
+{
+	return scrollArea;
+}
+
 void NewsFeed::deleteFeedItem(QWidget *item, uint32_t /*type*/)
 {
 #ifdef NEWS_DEBUG

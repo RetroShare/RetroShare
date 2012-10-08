@@ -688,6 +688,7 @@ SOURCES +=  main.cpp \
             gui/elastic/node.cpp \
             gui/NewsFeed.cpp \
             gui/ChannelFeed.cpp \
+            gui/feeds/FeedHolder.cpp \
             gui/feeds/ForumNewItem.cpp \
             gui/feeds/ForumMsgItem.cpp \
             gui/feeds/PeerItem.cpp \

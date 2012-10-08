@@ -160,7 +160,11 @@ void ChatMsgItem::removeItem()
 	std::cerr << "ChatMsgItem::removeItem()";
 	std::cerr << std::endl;
 #endif
+
+	mParent->lockLayout(this, true);
 	hide();
+	mParent->lockLayout(this, false);
+
 	if (mParent)
 	{
 		mParent->deleteFeedItem(this, mFeedId);
@@ -216,6 +220,8 @@ void ChatMsgItem::openChat()
 
 void ChatMsgItem::togglequickmessage()
 {
+	mParent->lockLayout(this, true);
+
 	if (messageFrame->isHidden())
 	{
 		messageFrame->setVisible(true);
@@ -229,6 +235,7 @@ void ChatMsgItem::togglequickmessage()
         cancelButton->hide();
     }	
 
+    mParent->lockLayout(this, false);
 }
 
 void ChatMsgItem::sendMessage()

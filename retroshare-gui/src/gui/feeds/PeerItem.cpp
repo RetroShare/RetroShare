@@ -215,6 +215,8 @@ void PeerItem::small()
 
 void PeerItem::toggle()
 {
+	mParent->lockLayout(this, true);
+
 	if (expandFrame->isHidden())
 	{
 		expandFrame->show();
@@ -227,6 +229,8 @@ void PeerItem::toggle()
 		expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
 		expandButton->setToolTip(tr("Expand"));
 	}
+
+	mParent->lockLayout(this, false);
 }
 
 
@@ -236,7 +240,11 @@ void PeerItem::removeItem()
 	std::cerr << "PeerItem::removeItem()";
 	std::cerr << std::endl;
 #endif
+
+	mParent->lockLayout(this, true);
 	hide();
+	mParent->lockLayout(this, false);
+
 	if (mParent)
 	{
 		mParent->deleteFeedItem(this, mFeedId);

@@ -50,6 +50,8 @@ public:
 
     virtual UserNotify *getUserNotify(QObject *parent);
 
+    /* FeedHolder */
+    virtual QScrollArea *getScrollArea();
     virtual void deleteFeedItem(QWidget *item, uint32_t type);
     virtual void openChat(std::string peerId);
 

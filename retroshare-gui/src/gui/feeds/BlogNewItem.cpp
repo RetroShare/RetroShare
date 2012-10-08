@@ -140,6 +140,8 @@ void BlogNewItem::small()
 
 void BlogNewItem::toggle()
 {
+	mParent->lockLayout(this, true);
+
 	if (expandFrame->isHidden())
 	{
 		expandFrame->show();
@@ -152,6 +154,8 @@ void BlogNewItem::toggle()
 		expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
 	    expandButton->setToolTip(tr("Expand"));
 	}
+
+	mParent->lockLayout(this, false);
 }
 
 
@@ -161,7 +165,11 @@ void BlogNewItem::removeItem()
 	std::cerr << "BlogNewItem::removeItem()";
 	std::cerr << std::endl;
 #endif
+
+	mParent->lockLayout(this, true);
 	hide();
+	mParent->lockLayout(this, false);
+
 	if (mParent)
 	{
 		mParent->deleteFeedItem(this, mFeedId);

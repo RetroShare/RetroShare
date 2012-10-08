@@ -196,6 +196,8 @@ void MsgItem::small()
 
 void MsgItem::toggle()
 {
+	mParent->lockLayout(this, true);
+
 	if (expandFrame->isHidden())
 	{
 		expandFrame->show();
@@ -208,6 +210,8 @@ void MsgItem::toggle()
         expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
         expandButton->setToolTip(tr("Expand"));
 	}
+
+	mParent->lockLayout(this, false);
 }
 
 
@@ -217,7 +221,11 @@ void MsgItem::removeItem()
 	std::cerr << "MsgItem::removeItem()";
 	std::cerr << std::endl;
 #endif
+
+	mParent->lockLayout(this, true);
 	hide();
+	mParent->lockLayout(this, false);
+
 	if (mParent)
 	{
 		mParent->deleteFeedItem(this, mFeedId);
