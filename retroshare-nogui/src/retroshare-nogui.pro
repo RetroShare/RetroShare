@@ -74,6 +74,13 @@ win32 {
     RC_FILE = resources/retroshare_win.rc
     
     DEFINES *= WINDOWS_SYS
+    
+    SSH_DIR = ../../../libssh-0.5.2
+    SSL_DIR = ../../../openssl-1.0.1c
+
+    INCLUDEPATH += . $${SSH_DIR}/include $${SSL_DIR}/include
+    
+    
 }
 
 ##################################### MacOS ######################################
