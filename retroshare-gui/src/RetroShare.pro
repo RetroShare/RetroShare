@@ -193,8 +193,11 @@ freebsd-* {
 # ###########################################
 
 bitdht {
-        LIBS += C:\Development\Rs\v0.5-gxs-b1\libbitdht\libbitdht-build-desktop\lib\libbitdht.a
-        PRE_TARGETDEPS *= C:\Development\Rs\v0.5-gxs-b1\libbitdht\libbitdht-build-desktop\lib\libbitdht.a
+        LIBS += ../../libbitdht/src/lib/libbitdht.a
+        PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
+
+        #LIBS += C:\Development\Rs\v0.5-gxs-b1\libbitdht\libbitdht-build-desktop\lib\libbitdht.a
+        #PRE_TARGETDEPS *= C:\Development\Rs\v0.5-gxs-b1\libbitdht\libbitdht-build-desktop\lib\libbitdht.a
 
         # Chris version.
         #LIBS += ../../libbitdht/libbitdht-build-desktop/lib/libbitdht.a
