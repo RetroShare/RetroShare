@@ -160,6 +160,10 @@ HEADERS += retroshare/rsgame.h \
             # miniupnp implementation files
             #HEADERS += upnp/upnputil.h
             #SOURCES += upnp/upnputil.c
+
+            # libupnp implementation files
+            HEADERS += upnp/UPnPBase.h
+            SOURCES += upnp/UPnPBase.cpp
             
             # zeroconf disabled at the end of libretroshare.pro (but need the code)
             #CONFIG += zeroconf
