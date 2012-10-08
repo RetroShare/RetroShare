@@ -192,6 +192,8 @@ void SecurityItem::updateItem()
 
 				chatButton->hide();
 				quickmsgButton->hide();
+				requestLabel->hide();
+
 
                 removeFriendButton->setEnabled(false);
                 removeFriendButton->hide();
