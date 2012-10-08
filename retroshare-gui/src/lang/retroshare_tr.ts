@@ -7180,15 +7180,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>&gt;&gt; To</source>
-        <translation>Kime: bölümüne ekle</translation>
+        <translation>Kime: alanına ekle</translation>
     </message>
     <message>
         <source>&gt;&gt; Cc</source>
-        <translation>Ilgili adrese ekle</translation>
+        <translation>Cc&apos;ye ekle</translation>
     </message>
     <message>
         <source>&gt;&gt; Bcc</source>
-        <translation>Gizli adrese ekle</translation>
+        <translation>Bcc&apos;ye ekle</translation>
     </message>
     <message>
         <source>&gt;&gt; Recommend</source>
@@ -7248,11 +7248,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add to &quot;CC&quot;</source>
-        <translation>Ilgili adrese ekle</translation>
+        <translation>Cc&apos;ye ekle</translation>
     </message>
     <message>
         <source>Add to &quot;BCC&quot;</source>
-        <translation>Gizli adrese ekle</translation>
+        <translation>Bcc&apos;ye ekle</translation>
     </message>
     <message>
         <source>Add as Recommend</source>
@@ -7272,11 +7272,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cc</source>
-        <translation>Ilgili kopyasi</translation>
+        <translation>Cc</translation>
     </message>
     <message>
         <source>Bcc</source>
-        <translation>Gizli kopya</translation>
+        <translation>Bcc</translation>
     </message>
     <message>
         <source>Unknown</source>
@@ -12602,7 +12602,7 @@ p, li { white-space: pre-wrap; }
     <name>SharedFilesDialog</name>
     <message>
         <source>Download</source>
-        <translation type="unfinished">Indir</translation>
+        <translation>Indir</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -12757,7 +12757,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Recommendation(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tavsiye (ler)</translation>
     </message>
     <message>
         <source>Set command for opening this file</source>
@@ -12929,7 +12929,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Uyarı</translation>
     </message>
     <message>
         <source>The passwd to your SSL certificate (your location) will be stored encrypted in your Gnome Keyring. 
@@ -12983,11 +12983,11 @@ lock file:
     </message>
     <message>
         <source>Load Person Failure</source>
-        <translation type="unfinished"></translation>
+        <translation>Kişi yükleme arızası </translation>
     </message>
     <message>
         <source>Missing PGP Certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>PGP Sertifika Eksik</translation>
     </message>
 </context>
 <context>
@@ -13325,7 +13325,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>%p Kb</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Download File</source>
