@@ -164,11 +164,11 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
         <property name="toolTip">
          <string>Remove Item</string>
-        </property>
-        <property name="text">
-         <string/>
         </property>
         <property name="icon">
          <iconset resource="../images.qrc">
@@ -231,6 +231,9 @@
          </item>
          <item row="1" column="0">
           <widget class="QToolButton" name="quickmsgButton">
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="text">
             <string>Write a quick Message</string>
            </property>
@@ -257,6 +260,9 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="toolTip">
             <string>Send Mail</string>
            </property>
@@ -282,6 +288,9 @@
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="toolTip">
             <string>Start Chat</string>
@@ -319,6 +328,9 @@
          </item>
          <item row="1" column="5">
           <widget class="QPushButton" name="sendButton">
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="text">
             <string>Send</string>
            </property>
@@ -329,6 +341,9 @@
          </item>
          <item row="1" column="4">
           <widget class="QPushButton" name="cancelButton">
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="text">
             <string>Cancel</string>
            </property>

@@ -103,11 +103,11 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
         <property name="toolTip">
          <string>Cancel Download</string>
-        </property>
-        <property name="text">
-         <string/>
         </property>
         <property name="icon">
          <iconset resource="../images.qrc">

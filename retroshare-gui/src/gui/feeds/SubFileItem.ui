@@ -89,11 +89,11 @@
             <height>26</height>
            </size>
           </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
           <property name="toolTip">
            <string>Cancel Download</string>
-          </property>
-          <property name="text">
-           <string/>
           </property>
           <property name="icon">
            <iconset resource="../images.qrc">
@@ -114,6 +114,9 @@
             <width>0</width>
             <height>26</height>
            </size>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
           </property>
           <property name="toolTip">
            <string>Download File</string>
@@ -141,6 +144,9 @@
             <height>26</height>
            </size>
           </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
           <property name="toolTip">
            <string>Play File</string>
           </property>
@@ -167,11 +173,11 @@
             <height>26</height>
            </size>
           </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
           <property name="toolTip">
            <string>Save File</string>
-          </property>
-          <property name="text">
-           <string/>
           </property>
           <property name="icon">
            <iconset resource="../images.qrc">

@@ -164,6 +164,9 @@
          </item>
          <item row="2" column="1" colspan="2">
           <widget class="QToolButton" name="replyButton">
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="toolTip">
             <string>Reply to Message</string>
            </property>
@@ -203,11 +206,11 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="toolTip">
             <string>Delete Message</string>
-           </property>
-           <property name="text">
-            <string/>
            </property>
            <property name="icon">
             <iconset resource="../images.qrc">
@@ -223,11 +226,11 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="toolTip">
             <string>Play Media</string>
-           </property>
-           <property name="text">
-            <string/>
            </property>
            <property name="icon">
             <iconset resource="../images.qrc">
@@ -243,11 +246,11 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="toolTip">
             <string>Expand</string>
-           </property>
-           <property name="text">
-            <string/>
            </property>
            <property name="icon">
             <iconset resource="../images.qrc">
@@ -263,11 +266,11 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="toolTip">
             <string>Remove Item</string>
-           </property>
-           <property name="text">
-            <string/>
            </property>
            <property name="icon">
             <iconset resource="../images.qrc">
