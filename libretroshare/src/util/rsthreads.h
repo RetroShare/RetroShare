@@ -27,10 +27,6 @@
  */
 
 
-#ifdef WINDOWS_SYS
-#include "util/rswin.h"
-#endif
-
 #include <pthread.h>
 #include <inttypes.h>
 #include <string>

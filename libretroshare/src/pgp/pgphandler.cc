@@ -8,6 +8,7 @@
 
 #ifdef WINDOWS_SYS
 #include "util/rsstring.h"
+#include "util/rswin.h"
 #endif
 
 extern "C" {

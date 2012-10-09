@@ -6,7 +6,6 @@
 #include <cstdio>
 
 #ifdef WINDOWS_SYS
-    #include "util/rswin.h"
     #include <windows.h>
     #include <tchar.h>
     #include <stdio.h>

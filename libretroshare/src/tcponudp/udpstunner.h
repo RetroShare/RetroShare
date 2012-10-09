@@ -25,10 +25,6 @@
  *
  */
 
-#ifdef WINDOWS_SYS
-#include "util/rswin.h"
-#endif
-
 #ifndef WINDOWS_SYS
 #include <netinet/in.h>
 #endif

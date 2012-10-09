@@ -39,7 +39,6 @@
 #ifndef RS_GPG_AUTH_HEADER
 #define RS_GPG_AUTH_HEADER
 
-#include "util/rswin.h"
 #include <openssl/ssl.h>
 #include <openssl/evp.h>
 #include "util/rsthreads.h"

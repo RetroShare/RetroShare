@@ -23,8 +23,10 @@
  *
  */
 
-
-
+#ifdef WINDOWS_SYS
+#include "util/rswin.h"
+#include <ws2tcpip.h>
+#endif // WINDOWS_SYS
 
 #include "pqi/pqinetwork.h"
 #include "util/rsnet.h"

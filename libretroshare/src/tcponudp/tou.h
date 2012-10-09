@@ -40,10 +40,8 @@
 	#include <netinet/in.h>
 
 #else
-	#include "util/rswin.h"
 	#include <stdint.h>
 	#include <winsock2.h>
-	#include <ws2tcpip.h>
 	#include <stdio.h>
 //	#include <stdint.h>
 	typedef int socklen_t;

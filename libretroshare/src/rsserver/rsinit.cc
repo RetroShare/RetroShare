@@ -28,9 +28,11 @@
 
 #include <unistd.h>
 
-// for locking instances
 #ifndef WINDOWS_SYS
+// for locking instances
 #include <errno.h>
+#else
+#include "util/rswin.h"
 #endif
 
 #include "util/rsdebug.h"

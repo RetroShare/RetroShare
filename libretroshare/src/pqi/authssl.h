@@ -39,8 +39,6 @@
  * 
  */
 
-#include "util/rswin.h"
-
 #include <openssl/ssl.h>
 #include <openssl/evp.h>
 
