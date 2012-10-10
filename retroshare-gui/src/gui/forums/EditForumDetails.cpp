@@ -37,7 +37,8 @@ EditForumDetails::EditForumDetails(std::string forumId, QWidget *parent, Qt::WFl
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
 
-    connect(ui.applyButton, SIGNAL(clicked()), this, SLOT(applyDialog()));
+    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(applyDialog()));
+    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 
     loadForum();
 }

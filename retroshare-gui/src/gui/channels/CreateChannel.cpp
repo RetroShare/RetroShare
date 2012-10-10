@@ -44,8 +44,8 @@ CreateChannel::CreateChannel(QWidget *parent)
 	picture = NULL;
 
 	// connect up the buttons.
-	connect( ui.cancelButton, SIGNAL( clicked ( bool ) ), this, SLOT( cancelChannel( ) ) );
-	connect( ui.createButton, SIGNAL( clicked ( bool ) ), this, SLOT( createChannel( ) ) );
+	connect( ui.buttonBox, SIGNAL(accepted()), this, SLOT(createChannel()));
+	connect( ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 
 	connect( ui.logoButton, SIGNAL(clicked() ), this , SLOT(addChannelLogo()));
 	connect( ui.pubKeyShare_cb, SIGNAL( clicked() ), this, SLOT( setShareList( ) ));
@@ -131,11 +131,6 @@ void CreateChannel::createChannel()
 		}
 	}
 
-	close();
-}
-
-void CreateChannel::cancelChannel()
-{
 	close();
 }
 

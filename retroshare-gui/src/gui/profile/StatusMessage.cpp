@@ -39,8 +39,8 @@ StatusMessage::StatusMessage(QWidget *parent, Qt::WFlags flags)
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);
   
-  connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(close()));
-  connect(ui.okButton, SIGNAL(clicked()), this, SLOT(save()));
+  connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(save()));
+  connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
   
   load();
   

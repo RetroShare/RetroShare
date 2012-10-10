@@ -22,6 +22,7 @@
 #include "CreateLobbyDialog.h"
 
 #include <QMessageBox>
+#include <QPushButton>
 #include <algorithm>
 
 #include <retroshare/rsmsgs.h>
@@ -48,8 +49,8 @@ CreateLobbyDialog::CreateLobbyDialog(const std::list<std::string>& peer_list, in
 #endif
 	ui->nickName_LE->setText(QString::fromUtf8(default_nick.c_str())) ;
 
-	connect( ui->shareButton, SIGNAL( clicked ( bool ) ), this, SLOT( createLobby( ) ) );
-	connect( ui->cancelButton, SIGNAL( clicked ( bool ) ), this, SLOT( cancel( ) ) );
+	connect( ui->buttonBox, SIGNAL(accepted()), this, SLOT(createLobby()));
+	connect( ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 	connect( ui->lobbyName_LE, SIGNAL( textChanged ( QString ) ), this, SLOT( checkTextFields( ) ) );
 	connect( ui->lobbyTopic_LE, SIGNAL( textChanged ( QString ) ), this, SLOT( checkTextFields( ) ) );
 	connect( ui->nickName_LE, SIGNAL( textChanged ( QString ) ), this, SLOT( checkTextFields( ) ) );
@@ -89,9 +90,9 @@ void CreateLobbyDialog::changeEvent(QEvent *e)
 void CreateLobbyDialog::checkTextFields()
 {
 	if(ui->lobbyName_LE->text() == "" || ui->nickName_LE->text() == "")
-		ui->shareButton->setEnabled(false) ;
+		ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false) ;
 	else
-		ui->shareButton->setEnabled(true) ;
+		ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true) ;
 }
 
 void CreateLobbyDialog::createLobby()
@@ -126,10 +127,5 @@ void CreateLobbyDialog::createLobby()
 	if(rsMsgs->getVirtualPeerId(id,vpid))
 		ChatDialog::chatFriend(vpid) ; 
 
-	close();
-}
-
-void CreateLobbyDialog::cancel()
-{
 	close();
 }

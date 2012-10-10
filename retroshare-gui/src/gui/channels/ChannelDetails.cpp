@@ -43,11 +43,8 @@ ChannelDetails::ChannelDetails(QWidget *parent, Qt::WFlags flags)
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);
 
-  connect(ui.applyButton, SIGNAL(clicked()), this, SLOT(applyDialog()));
-  connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(closeinfodlg()));
+  connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 
-  ui.applyButton->setToolTip(tr("Close"));
-  
   ui.nameline ->setReadOnly(true);
   ui.popline ->setReadOnly(true);
   ui.postline ->setReadOnly(true);
@@ -77,11 +74,6 @@ ChannelDetails::show()
 void ChannelDetails::closeEvent (QCloseEvent * event)
 {
  QWidget::closeEvent(event);
-}
-
-void ChannelDetails::closeinfodlg()
-{
-	close();
 }
 
 void ChannelDetails::showDetails(std::string mChannelId)
@@ -137,17 +129,3 @@ void ChannelDetails::loadChannel()
 	}
 
 }
-
-void ChannelDetails::applyDialog()
-{
-
-	/* reload now */
-	loadChannel();
-
-	/* close the Dialog after the Changes applied */
-	closeinfodlg();
-
-}
-
-
-

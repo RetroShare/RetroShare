@@ -73,8 +73,8 @@ ConfCertDialog::ConfCertDialog(const std::string& id, QWidget *parent, Qt::WFlag
 
 	setAttribute(Qt::WA_DeleteOnClose, true);
 
-    connect(ui.applyButton, SIGNAL(clicked()), this, SLOT(applyDialog()));
-    connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(close()));
+    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(applyDialog()));
+    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
     connect(ui.make_friend_button, SIGNAL(clicked()), this, SLOT(makeFriend()));
     connect(ui.denyFriendButton, SIGNAL(clicked()), this, SLOT(denyFriend()));
     connect(ui.signKeyButton, SIGNAL(clicked()), this, SLOT(signGPGKey()));

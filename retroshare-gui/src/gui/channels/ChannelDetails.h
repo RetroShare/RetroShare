@@ -48,14 +48,7 @@ public slots:
 protected:
   void closeEvent (QCloseEvent * event);
   
-private slots:
-
-	void closeinfodlg();
-	void applyDialog();
-	
-  
 private:
-
   void 	loadChannel();
 
   std::string cId;

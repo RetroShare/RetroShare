@@ -41,8 +41,8 @@ CreateForum::CreateForum(QWidget *parent)
 	ui.headerFrame->setHeaderText(tr("New Forum"));
 
 	// connect up the buttons.
-	connect( ui.cancelButton, SIGNAL( clicked ( bool ) ), this, SLOT( cancelForum( ) ) );
-	connect( ui.createButton, SIGNAL( clicked ( bool ) ), this, SLOT( createForum( ) ) );
+	connect( ui.buttonBox, SIGNAL(accepted()), this, SLOT(createForum()));
+	connect( ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 	connect( ui.pubKeyShare_cb, SIGNAL( clicked() ), this, SLOT( setShareList( ) ));
 
 	if (!ui.pubKeyShare_cb->isChecked()) {
@@ -128,9 +128,4 @@ void CreateForum::setShareList()
 		ui.contactsdockWidget->hide();
 		this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
 	}
-}
-
-void CreateForum::cancelForum()
-{
-	close();
 }

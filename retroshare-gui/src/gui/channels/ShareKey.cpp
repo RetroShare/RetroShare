@@ -39,8 +39,8 @@ ShareKey::ShareKey(QWidget *parent, Qt::WFlags flags, std::string grpId, int grp
 	ui->headerFrame->setHeaderImage(QPixmap(":/images/user/agt_forum64.png"));
 	ui->headerFrame->setHeaderText(tr("Share Channel"));
 
-	connect( ui->shareButton, SIGNAL( clicked ( bool ) ), this, SLOT( shareKey( ) ) );
-	connect( ui->cancelButton, SIGNAL( clicked ( bool ) ), this, SLOT( cancel( ) ) );
+	connect( ui->buttonBox, SIGNAL(accepted()), this, SLOT(shareKey()));
+	connect( ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 
 	/* initialize key share list */
 	ui->keyShareList->setHeaderText(tr("Contacts:"));
@@ -97,10 +97,5 @@ void ShareKey::shareKey()
 		return;
 	}
 
-	close();
-}
-
-void ShareKey::cancel()
-{
 	close();
 }

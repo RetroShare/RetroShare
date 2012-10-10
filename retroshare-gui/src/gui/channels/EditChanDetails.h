@@ -39,7 +39,6 @@ signals:
     void configChanged();
 
 private slots:
-	void closeinfodlg();
 	void applyDialog();
     void addChannelLogo();
 

@@ -40,8 +40,8 @@ EditChanDetails::EditChanDetails(QWidget *parent, Qt::WFlags flags, std::string 
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
 
-    connect(ui.applyButton, SIGNAL(clicked()), this, SLOT(applyDialog()));
-    connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(closeinfodlg()));
+    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(applyDialog()));
+    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
   
     connect( ui.logoButton, SIGNAL(clicked() ), this , SLOT(addChannelLogo()));
     
@@ -49,11 +49,6 @@ EditChanDetails::EditChanDetails(QWidget *parent, Qt::WFlags flags, std::string 
     ui.logoLabel->setDisabled(true);
 
     loadChannel();
-}
-
-void EditChanDetails::closeinfodlg()
-{
-	close();
 }
 
 void EditChanDetails::loadChannel()
@@ -104,7 +99,7 @@ void EditChanDetails::applyDialog()
     rsChannels->channelEditInfo(mChannelId, ci);
 
     /* close the Dialog after the Changes applied */
-    closeinfodlg();
+    close();
 
     return;
 }

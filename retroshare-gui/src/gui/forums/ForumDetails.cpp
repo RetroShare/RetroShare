@@ -43,11 +43,8 @@ ForumDetails::ForumDetails(QWidget *parent, Qt::WFlags flags)
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);
 
-  connect(ui.applyButton, SIGNAL(clicked()), this, SLOT(applyDialog()));
-  connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(closeinfodlg()));
+  connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 
-  ui.applyButton->setToolTip(tr("Apply and Close"));
-  
   ui.nameline ->setReadOnly(true);
   ui.popline ->setReadOnly(true);
   ui.postline ->setReadOnly(true);
@@ -75,11 +72,6 @@ ForumDetails::show()
 void ForumDetails::closeEvent (QCloseEvent * event)
 {
  QWidget::closeEvent(event);
-}
-
-void ForumDetails::closeinfodlg()
-{
-	close();
 }
 
 void ForumDetails::showDetails(std::string mCurrForumId)
@@ -128,15 +120,4 @@ void ForumDetails::loadDialog()
 		ui.radioButton_authd->setChecked(false);
 		ui.radioButton_anonymous->setChecked(true);
 	}
-}
-
-void ForumDetails::applyDialog()
-{
-
-	/* reload now */
-	loadDialog();
-
-	/* close the Dialog after the Changes applied */
-	closeinfodlg();
-
 }

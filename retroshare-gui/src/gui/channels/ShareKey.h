@@ -24,7 +24,6 @@ protected:
 
 private slots:
 	void shareKey();
-	void cancel();
 
 private:
 	std::string mGrpId;

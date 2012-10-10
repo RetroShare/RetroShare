@@ -24,7 +24,6 @@ private:
 private slots:
 	void createLobby();
 	void checkTextFields();
-	void cancel();
 };
 
 #endif // CREATELOBBYDIALOG_H

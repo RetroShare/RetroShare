@@ -36,7 +36,6 @@ public:
 private slots:
 	/* actions to take.... */
 	void createChannel();
-	void cancelChannel();
 
 	void addChannelLogo();
 	void setShareList();

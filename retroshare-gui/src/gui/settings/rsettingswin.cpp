@@ -58,7 +58,8 @@ RSettingsWin::RSettingsWin(QWidget * parent, Qt::WFlags flags)
     initStackedWidget();
 
     connect(listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(setNewPage(int)));
-    connect(applyButton, SIGNAL(clicked( bool )), this, SLOT( saveChanges()) );
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(saveChanges()));
+    connect(buttonBox, SIGNAL(rejected()), this, SLOT(close()));
     connect(this, SIGNAL(finished(int)), this, SLOT(dialogFinished(int)));
 }
 

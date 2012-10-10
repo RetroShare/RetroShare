@@ -37,7 +37,6 @@ public:
 private slots:
 	/* actions to take.... */
 	void createForum();
-	void cancelForum();
 
 	// set private forum key share list
 	void setShareList();

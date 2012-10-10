@@ -23,7 +23,7 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tabgeneral">
+     <widget class="QWidget" name="tabGeneral">
       <attribute name="icon">
        <iconset resource="images.qrc">
         <normaloff>:/images/fileinfo.png</normaloff>:/images/fileinfo.png</iconset>
@@ -352,7 +352,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget">
+     <widget class="QWidget" name="tabComments">
       <attribute name="icon">
        <iconset resource="images.qrc">
         <normaloff>:/images/filecomments.png</normaloff>:/images/filecomments.png</iconset>
@@ -366,7 +366,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget">
+     <widget class="QWidget" name="tabLinks">
       <attribute name="title">
        <string>retroshare link(s)</string>
       </attribute>
@@ -407,33 +407,10 @@
      </widget>
     </widget>
    </item>
-   <item row="1" column="0">
-    <spacer>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>321</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
    <item row="1" column="1">
-    <widget class="QPushButton" name="ok_dButton">
-     <property name="text">
-      <string>OK</string>
-     </property>
-     <property name="default">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
-    <widget class="QPushButton" name="cancel_dButton">
-     <property name="text">
-      <string>Cancel</string>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Close</set>
      </property>
     </widget>
    </item>
@@ -442,5 +419,22 @@
  <resources>
   <include location="images.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>DetailsDialog</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>262</x>
+     <y>456</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>262</x>
+     <y>238</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
