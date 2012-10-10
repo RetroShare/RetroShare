@@ -13,7 +13,7 @@ PhotoDialog::PhotoDialog(RsPhotoV2 *rs_photo, const RsPhotoPhoto &photo, QWidget
 {
     ui->setupUi(this);
     setAttribute ( Qt::WA_DeleteOnClose, true );
-    connect(ui->toolButton_AddComment, SIGNAL(clicked()), this, SLOT(addComment()));
+    connect(ui->toolButton_AddComment, SIGNAL(clicked()), this, SLOT(createComment()));
     setUp();
 
 }
@@ -31,7 +31,7 @@ void PhotoDialog::setUp()
     ui->label_Photo->setPixmap(qtn);
     ui->lineEdit_Title->setText(QString::fromStdString(mPhotoDetails.mMeta.mMsgName));
 
-    ui->scrollAreaWidgetContents->setLayout(new QVBoxLayout());
+    //ui->scrollAreaWidgetContents->setLayout(new QVBoxLayout());
 
     requestComments();
 }
@@ -49,12 +49,12 @@ void PhotoDialog::addComment()
 
 void PhotoDialog::clearComments()
 {
-    QLayout* l = ui->scrollAreaWidgetContents->layout();
+    //QLayout* l = ui->scrollAreaWidgetContents->layout();
     QSetIterator<PhotoCommentItem*> sit(mComments);
     while(sit.hasNext())
     {
         PhotoCommentItem* item = sit.next();
-        l->removeWidget(item);
+        ui->verticalLayout->removeWidget(item);
         item->setParent(NULL);
         delete item;
     }
@@ -65,11 +65,11 @@ void PhotoDialog::clearComments()
 void PhotoDialog::resetComments()
 {
     QSetIterator<PhotoCommentItem*> sit(mComments);
-    QLayout* l = ui->scrollAreaWidgetContents->layout();
+    //QLayout* l = ui->scrollAreaWidgetContents->layout();
     while(sit.hasNext())
     {
         PhotoCommentItem* item = sit.next();
-        l->addWidget(item);
+        ui->verticalLayout->insertWidget(0,item);
     }
 }
 
@@ -90,10 +90,8 @@ void PhotoDialog::requestComments()
 
 void PhotoDialog::createComment()
 {
-    if(mCommentDialog)
-    {
         RsPhotoComment comment;
-        QString commentString = mCommentDialog->getComment();
+        QString commentString = ui->lineEdit->text();
 
         comment.mComment = commentString.toStdString();
 
@@ -102,11 +100,8 @@ void PhotoDialog::createComment()
         comment.mMeta.mParentId = mPhotoDetails.mMeta.mOrigMsgId;
         mRsPhoto->submitComment(token, comment);
         mPhotoQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, 0);
-
-        mCommentDialog->close();
-        delete mCommentDialog;
-        mCommentDialog = NULL;
-    }
+		
+		ui->lineEdit->clear();
 }
 
 
