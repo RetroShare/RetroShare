@@ -761,18 +761,6 @@ p, li { white-space: pre-wrap; }
         <source>Private - (Private Publish Key required to view Messages)</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>ChannelFeed</name>
@@ -1489,18 +1477,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Certificate</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Apply and Close</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2347,14 +2323,6 @@ Do you want to save your changes?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Contacts:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2540,14 +2508,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Contacts:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2599,14 +2559,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Post Forum Msg</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Paste full RetroShare Link</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2628,6 +2580,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Paste own certificate link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start New Thread</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2691,14 +2647,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2836,14 +2784,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Invited friends</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3064,14 +3004,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3329,14 +3261,6 @@ you plug it in.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Edit Channel Details</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3368,14 +3292,6 @@ you plug it in.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Edit Forum Details</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3396,14 +3312,6 @@ you plug it in.</source>
     <name>EditForumV2Details</name>
     <message>
         <source>Forum Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3761,18 +3669,6 @@ p, li { white-space: pre-wrap; }
         <source>Anonymous Messages</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Apply and Close</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>ForumMsgItem</name>
@@ -3938,18 +3834,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Apply and Close</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6757,15 +6641,15 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Hello,&lt;br&gt;I recommend a good friend of me, you can trust him too when you trust me. &lt;br&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>This friend is suggested by</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Thanks, &lt;br&gt;The RetroShare Team</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hello,&lt;br&gt;I recommend a good friend of mine; you can trust them too when you trust me. &lt;br&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10150,14 +10034,6 @@ The default value is 20.</source>
         <source>Options</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>ShareDialog</name>
@@ -10226,14 +10102,6 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Share for Friend</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Share</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10776,14 +10644,6 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Enter your Status message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
