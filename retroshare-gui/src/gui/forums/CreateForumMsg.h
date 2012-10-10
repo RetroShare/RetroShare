@@ -25,12 +25,12 @@
 
 #include "ui_CreateForumMsg.h"
 
-class CreateForumMsg : public QMainWindow
+class CreateForumMsg : public QDialog
 {
   Q_OBJECT
 
 public:
-    CreateForumMsg(std::string fId, std::string pId);
+    CreateForumMsg(const std::string &fId, const std::string &pId);
 
     void newMsg(); /* cleanup */
 
@@ -41,7 +41,6 @@ private slots:
     void fileHashingFinished(QList<HashedFile> hashedFiles);
     /* actions to take.... */
     void createMsg();
-    void cancelMsg();
     void pasteLink();
     void pasteLinkFull();
     void pasteOwnCertificateLink();

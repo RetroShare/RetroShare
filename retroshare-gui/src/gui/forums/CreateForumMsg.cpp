@@ -41,12 +41,18 @@
 
 
 /** Constructor */
-CreateForumMsg::CreateForumMsg(std::string fId, std::string pId)
-: QMainWindow(NULL), mForumId(fId), mParentId(pId)
+CreateForumMsg::CreateForumMsg(const std::string &fId, const std::string &pId)
+: QDialog(NULL), mForumId(fId), mParentId(pId)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose, true);
+
+    QString text = pId.empty() ? tr("Start New Thread") : tr("Post Forum Message");
+    setWindowTitle(text);
+
+    ui.headerFrame->setHeaderImage(QPixmap(":/images/konversation64.png"));
+    ui.headerFrame->setHeaderText(text);
 
     Settings->loadWidgetInformation(this);
 
@@ -55,8 +61,8 @@ CreateForumMsg::CreateForumMsg(std::string fId, std::string pId)
     connect(ui.hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
 
     // connect up the buttons.
-    connect( ui.postmessage_action, SIGNAL( triggered (bool) ), this, SLOT( createMsg( ) ) );
-    connect( ui.close_action, SIGNAL( triggered (bool) ), this, SLOT( cancelMsg( ) ) );
+    connect( ui.buttonBox, SIGNAL(accepted()), this, SLOT(createMsg()));
+    connect( ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
     connect( ui.emoticonButton, SIGNAL(clicked()), this, SLOT(smileyWidgetForums()));
     connect( ui.attachFileButton, SIGNAL(clicked() ), this , SLOT(addFile()));
     connect( ui.pastersButton, SIGNAL(clicked() ), this , SLOT(pasteLink()));
@@ -187,11 +193,6 @@ void  CreateForumMsg::createMsg()
 void CreateForumMsg::closeEvent (QCloseEvent * /*event*/)
 {
     Settings->saveWidgetInformation(this);
-}
-
-void CreateForumMsg::cancelMsg()
-{
-    close();
 }
 
 void CreateForumMsg::smileyWidgetForums()

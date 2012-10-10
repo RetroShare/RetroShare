@@ -1474,7 +1474,6 @@ void ForumsDialog::createthread()
     }
 
     CreateForumMsg *cfm = new CreateForumMsg(mCurrForumId, "");
-    cfm->setWindowTitle(tr("Start New Thread"));
     cfm->show();
 
     /* window will destroy itself! */
