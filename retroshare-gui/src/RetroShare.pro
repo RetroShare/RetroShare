@@ -123,30 +123,31 @@ win32 {
         #QMAKE_CXXFLAGS_DEBUG += -O2
         #QMAKE_CFLAGS_DEBUG += -O2
 
-#    PRE_TARGETDEPS += ../../libretroshare/src/lib/libretroshare.a
-    PRE_TARGETDEPS += ../../libretroshare/libretroshare-build-desktop/lib/libretroshare.a
+	OBJECTS_DIR = temp/obj
 
-    LIBS += ../../libretroshare/libretroshare-build-desktop/lib/libretroshare.a
-    LIBS += C:\Development\Rs\v0.5-gxs-b1\openpgpsdk\openpgpsdk-build-desktop\lib\libops.a
-    LIBS += C:\Development\Libraries\sqlite\sqlite-autoconf-3070900\lib\libsqlite3.a
-    LIBS += -L"../../../lib"
-    LIBS += -lssl -lcrypto -lgpgme -lpthreadGC2d -lminiupnpc -lz -lbz2
+	PRE_TARGETDEPS += ../../libretroshare/src/lib/libretroshare.a
+    #PRE_TARGETDEPS += ../../libretroshare/libretroshare-build-desktop/lib/libretroshare.a
+
+	LIBS += ../../libretroshare/src/lib/libretroshare.a
+	LIBS += ../../openpgpsdk/src/lib/libops.a
+	LIBS += ../../../sqlite-autoconf-3070900/.libs/libsqlite3.a
+	LIBS += -L"../../../lib"
+	LIBS += -lssl -lcrypto -lpthreadGC2d -lminiupnpc -lz -lbz2
 # added after bitdht
 #    LIBS += -lws2_32
-        LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
-        LIBS += -lole32 -lwinmm
-        RC_FILE = gui/images/retroshare_win.rc
+	LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
+	LIBS += -lole32 -lwinmm
+	RC_FILE = gui/images/retroshare_win.rc
 
-        # export symbols for the plugins
-        #LIBS += -Wl,--export-all-symbols,--out-implib,lib/libretroshare-gui.a
+	# export symbols for the plugins
+	LIBS += -Wl,--export-all-symbols,--out-implib,lib/libretroshare-gui.a
 
-    GPG_ERROR_DIR = ../../../../libgpg-error-1.7
-    GPGME_DIR  = ../../../../gpgme-1.1.8
-    GPG_ERROR_DIR = ../../../../lib/libgpg-error-1.7
-    GPGME_DIR  = ../../../../lib/gpgme-1.1.8
-    INCLUDEPATH += . $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
+	# create lib directory
+	QMAKE_PRE_LINK = $(CHK_DIR_EXISTS) lib $(MKDIR) lib
 
+	DEFINES += WINDOWS_SYS
 
+	INCLUDEPATH += .
 
 }
 
