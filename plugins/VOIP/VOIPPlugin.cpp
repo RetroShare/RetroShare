@@ -164,7 +164,10 @@ QTranslator* VOIPPlugin::qt_translator(QApplication */*app*/, const QString& lan
 	}
 
 	QTranslator* translator = new QTranslator();
-	if (translator->load(":/lang/VOIP_" + languageCode + ".qm")) {
+
+	if (translator->load(QCoreApplication::applicationDirPath() + "/translations/VOIP_" + languageCode + ".qm")) {
+		return translator;
+	} else if (translator->load(":/lang/VOIP_" + languageCode + ".qm")) {
 		return translator;
 	}
 

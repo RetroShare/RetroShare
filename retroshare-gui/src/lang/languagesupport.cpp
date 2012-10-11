@@ -153,8 +153,7 @@ LanguageSupport::translate(const QString &languageCode)
   if (languageCode == "en")
     return true;
 
-  /* Attempt to load the translations for Qt's internal widgets from their
-   * installed Qt directory. */
+  /* Attempt to load the translations for Qt's internal widgets from their installed Qt directory. */
   QString qtTranslation = QLibraryInfo::location(QLibraryInfo::TranslationsPath) + "/qt_" + languageCode + ".qm";
   QTranslator *systemQtTranslator = new QTranslator(rApp);
   Q_CHECK_PTR(systemQtTranslator);
@@ -176,7 +175,9 @@ LanguageSupport::translate(const QString &languageCode)
 
   bool result = true;
 
-  if (retroshareTranslator->load(":/lang/retroshare_" + languageCode + ".qm")) {
+  if (retroshareTranslator->load(QCoreApplication::applicationDirPath() + "/translations/retroshare_" + languageCode + ".qm")) {
+    QApplication::installTranslator(retroshareTranslator);
+  } else if (retroshareTranslator->load(":/lang/retroshare_" + languageCode + ".qm")) {
     QApplication::installTranslator(retroshareTranslator);
   } else {
     delete retroshareTranslator;
