@@ -421,7 +421,7 @@
    <item row="2" column="0">
     <widget class="QPushButton" name="cloaseallsearchresultsButton">
      <property name="toolTip">
-      <string>Close all Search Resullts</string>
+      <string>Close all Search Results</string>
      </property>
      <property name="text">
       <string>Close All Search Results</string>

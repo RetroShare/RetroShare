@@ -514,7 +514,7 @@
                  <enum>Qt::NoFocus</enum>
                 </property>
                 <property name="toolTip">
-                 <string>Add a Image</string>
+                 <string>Add an Image</string>
                 </property>
                 <property name="text">
                  <string/>

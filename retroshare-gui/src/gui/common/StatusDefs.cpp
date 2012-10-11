@@ -152,7 +152,7 @@ QString StatusDefs::peerStateString(int peerState)
 		return qApp->translate("StatusDefs", "Offline");
 	}
 
-	return qApp->translate("StatusDefs", "Neighbour");
+	return qApp->translate("StatusDefs", "Neighbor");
 }
 
 QString StatusDefs::connectStateString(RsPeerDetails &details)

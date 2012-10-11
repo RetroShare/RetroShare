@@ -28,7 +28,7 @@ TrustView::TrustView()
 	QObject::connect(trustTableTW->verticalHeader(),SIGNAL(sectionClicked(int)),this,SLOT(hideShowPeers(int))) ;
 	QObject::connect(trustTableTW->horizontalHeader(),SIGNAL(sectionClicked(int)),this,SLOT(hideShowPeers(int))) ;
 
-	updatePB->setToolTip(tr("This table normaly auto-updates every 10 seconds.")) ;
+	updatePB->setToolTip(tr("This table normally auto-updates every 10 seconds.")) ;
 }
 
 void TrustView::showEvent(QShowEvent *e)

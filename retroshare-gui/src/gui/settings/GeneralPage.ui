@@ -134,7 +134,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Register retroshare:// as url protocol (Restart required)</string>
+           <string>Register retroshare:// as URL protocol (Restart required)</string>
           </property>
          </widget>
         </item>

@@ -193,7 +193,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
         nameAndLocation = QString("%1 (%2)").arg(QString::fromUtf8(pd.name.c_str())).arg(QString::fromUtf8(pd.location.c_str()));
     }
 
-    setWindowTitle(tr("RetroShare %1 a secure decentralised communication platform").arg(retroshareVersion()) + " - " + nameAndLocation);
+    setWindowTitle(tr("RetroShare %1 a secure decentralized communication platform").arg(retroshareVersion()) + " - " + nameAndLocation);
 
     /* WORK OUT IF WE"RE IN ADVANCED MODE OR NOT */
     bool advancedMode = false;

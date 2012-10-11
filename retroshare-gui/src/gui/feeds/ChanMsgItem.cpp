@@ -231,7 +231,7 @@ void ChanMsgItem::setFileCleanUpWarning(uint32_t time_left)
 	int hours = (int)time_left/3600;
 	int minutes = (time_left - hours*3600)%60;
 
-	warning_label->setText(tr("Warning! You have less than %1 hours and %2 minute before this file is delted Consider saving it.").arg(
+	warning_label->setText(tr("Warning! You have less than %1 hours and %2 minute before this file is deleted Consider saving it.").arg(
 			QString::number(hours)).arg(QString::number(minutes)));
 
 	QFont warnFont = warning_label->font();

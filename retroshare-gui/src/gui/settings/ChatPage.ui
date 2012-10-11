@@ -38,7 +38,7 @@
             <item>
              <widget class="QCheckBox" name="checkBox_emoteprivchat">
               <property name="text">
-               <string>Enable Emoticons Privat Chat</string>
+               <string>Enable Emoticons Private Chat</string>
               </property>
               <property name="checked">
                <bool>true</bool>

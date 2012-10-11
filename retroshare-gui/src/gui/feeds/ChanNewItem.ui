@@ -230,7 +230,7 @@
          <item>
           <widget class="QGroupBox" name="groupBox">
            <property name="title">
-            <string>Channel Decscription</string>
+            <string>Channel Description</string>
            </property>
            <layout class="QGridLayout">
             <item row="0" column="0">

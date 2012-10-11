@@ -917,7 +917,7 @@ void MessagesDialog::insertMessages()
                 case QUICKVIEW_TYPE_STATIC:
                     switch (quickViewId) {
                     case QUICKVIEW_STATIC_ID_STARRED:
-                        placeholderText = tr("No starred messages available. Stars let you give messages a special status to make them easier to find. To star a message, click on the light grey star beside any message.");
+                        placeholderText = tr("No starred messages available. Stars let you give messages a special status to make them easier to find. To star a message, click on the light gray star beside any message.");
                         break;
                     case QUICKVIEW_STATIC_ID_SYSTEM:
                         placeholderText = tr("No system messages available.");

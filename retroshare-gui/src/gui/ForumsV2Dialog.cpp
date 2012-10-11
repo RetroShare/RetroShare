@@ -1601,7 +1601,7 @@ static QString buildReplyHeader(const RsMsgMetaData &meta)
 void ForumsV2Dialog::replytomessage()
 {
     if (mCurrForumId.empty() || mCurrThreadId.empty()) {
-        QMessageBox::information(this, tr("RetroShare"),tr("You cant reply to a non-existant Message"));
+        QMessageBox::information(this, tr("RetroShare"),tr("You can't reply to a non-existant Message"));
         return;
     }
 

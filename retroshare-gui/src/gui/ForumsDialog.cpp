@@ -1568,7 +1568,7 @@ void ForumsDialog::replytomessage()
     }
     else
     {
-        QMessageBox::information(this, tr("RetroShare"),tr("You cant reply a Anonymous Author"));
+        QMessageBox::information(this, tr("RetroShare"),tr("You can't reply an Anonymous Author"));
     }
 }
 

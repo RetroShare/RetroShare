@@ -98,7 +98,7 @@ border-radius: 10px}</string>
            </font>
           </property>
           <property name="text">
-           <string>Title this is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title dont you think? yes it is and should wrap around I hope</string>
+           <string>This is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title don't you think? Yes it is and should wrap around I hope</string>
           </property>
           <property name="wordWrap">
            <bool>true</bool>

@@ -1235,10 +1235,10 @@ static void processList(const QStringList &list, const QString &textSingular, co
 	// message
 	if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
 		if (messageReceipientNotAccepted.size()) {
-			processList(messageReceipientNotAccepted, QObject::tr("Receipient not accepted"), QObject::tr("Receipients not accepted"), result);
+			processList(messageReceipientNotAccepted, QObject::tr("Recipient not accepted"), QObject::tr("Recipients not accepted"), result);
 		}
 		if (messageReceipientUnknown.size()) {
-			processList(messageReceipientUnknown, QObject::tr("Unkown receipient"), QObject::tr("Unkown receipients"), result);
+			processList(messageReceipientUnknown, QObject::tr("Unkown recipient"), QObject::tr("Unkown recipients"), result);
 		}
 	}
 

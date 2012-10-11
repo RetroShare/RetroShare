@@ -213,7 +213,7 @@ border: 1px solid #CCCCCC;}</string>
      <normaloff>:/images/textedit/hi22-action-format-text-blockquote.png</normaloff>:/images/textedit/hi22-action-format-text-blockquote.png</iconset>
    </property>
    <property name="text">
-    <string>blockquoute</string>
+    <string>blockquote</string>
    </property>
   </action>
   <action name="actionIncreasefontsize">

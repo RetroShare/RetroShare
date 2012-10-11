@@ -669,7 +669,7 @@ void ConnectFriendWizard::copyCert()
 {
 	QClipboard *clipboard = QApplication::clipboard();
 	clipboard->setText(ui->userCertEdit->toPlainText());
-	QMessageBox::information(this, "RetroShare", tr("Your Cert is copied to Clipboard, paste and send it to your riend via email or some other way"));
+	QMessageBox::information(this, "RetroShare", tr("Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way"));
 }
 
 void ConnectFriendWizard::saveCert()

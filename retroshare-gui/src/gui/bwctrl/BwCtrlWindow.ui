@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Bandwidth Control WIndow</string>
+   <string>Bandwidth Control Window</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../images.qrc">
@@ -25,7 +25,7 @@
     <item>
      <widget class="QLabel" name="bwSummaryLabel">
       <property name="text">
-       <string>BandWidth Measurements</string>
+       <string>Bandwidth Measurements</string>
       </property>
      </widget>
     </item>

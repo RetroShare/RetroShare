@@ -252,7 +252,7 @@ void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info
 	 y += block_sep ;
 	 y += text_height ; painter->drawText(20,y,tr("Number of chunks") + ":") ; painter->drawText(tab_size,y,QString::number(info.chunks.size())) ;
 	 y += block_sep ;
-	 y += text_height ; painter->drawText(20,y,tr("Transfered") + ":") ; painter->drawText(tab_size,y,QString::number(nfo.transfered) + " " + tr("bytes") + " " + "(" + misc::friendlyUnit(nfo.transfered) + ")") ;
+	 y += text_height ; painter->drawText(20,y,tr("Transferred") + ":") ; painter->drawText(tab_size,y,QString::number(nfo.transfered) + " " + tr("bytes") + " " + "(" + misc::friendlyUnit(nfo.transfered) + ")") ;
 	 y += block_sep ;
 	 y += text_height ; painter->drawText(20,y,tr("Remaining") + ":") ; painter->drawText(tab_size,y,QString::number(info.file_size - nfo.transfered) + " " + tr("bytes") + " " + "(" + misc::friendlyUnit(info.file_size - nfo.transfered) + ")") ;
 	 y += block_sep ;

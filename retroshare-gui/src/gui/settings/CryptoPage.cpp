@@ -93,7 +93,7 @@ CryptoPage::copyRSLink()
 	else
 		QMessageBox::warning(this,
 				tr("Error"),
-				tr("Your certificate could not be parsed correctly. Please contact the developpers."));
+				tr("Your certificate could not be parsed correctly. Please contact the developers."));
 }
 void
 CryptoPage::copyPublicKey()

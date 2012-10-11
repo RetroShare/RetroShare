@@ -115,7 +115,7 @@
        <item>
         <widget class="QRadioButton" name="radioButton_GpgId">
          <property name="text">
-          <string>Gpg Assocated ID</string>
+          <string>Gpg Associated ID</string>
          </property>
         </widget>
        </item>

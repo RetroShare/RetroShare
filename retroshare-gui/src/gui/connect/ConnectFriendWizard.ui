@@ -59,8 +59,8 @@
     <item>
      <widget class="QRadioButton" name="emailRadioButton">
       <property name="text">
-       <string>&amp;Send a Invitation by Email 
- (She/He receives a email with instructions howto to download RetroShare)</string>
+       <string>&amp;Send an Invitation by Email 
+ (She/He receives an email with instructions how to to download RetroShare)</string>
       </property>
      </widget>
     </item>
@@ -469,7 +469,7 @@
     <string>Invite Friends by Email</string>
    </property>
    <property name="subTitle">
-    <string>Enter your friends' email addresses (seperate each on with a semicolon)</string>
+    <string>Enter your friends' email addresses (separate each one with a semicolon)</string>
    </property>
    <attribute name="pageId">
     <string notr="true">ConnectFriendWizard::Page_Email</string>

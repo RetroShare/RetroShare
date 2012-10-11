@@ -146,7 +146,7 @@
           <item row="1" column="0" colspan="3">
            <widget class="QGroupBox" name="groupBox_4">
             <property name="title">
-             <string>Other infos</string>
+             <string>Other info</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_3">
              <item row="0" column="0">

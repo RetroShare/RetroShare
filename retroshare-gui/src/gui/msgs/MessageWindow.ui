@@ -170,7 +170,7 @@
           <string>Forward selected message</string>
          </property>
          <property name="text">
-          <string>Foward</string>
+          <string>Forward</string>
          </property>
          <property name="icon">
           <iconset resource="../images.qrc">

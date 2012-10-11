@@ -430,7 +430,7 @@ border-image: url(:/images/closepressed.png)
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="toolTip">
-         <string>Splitted View</string>
+         <string>Split View</string>
         </property>
         <property name="icon">
          <iconset resource="images.qrc">

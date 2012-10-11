@@ -32,7 +32,7 @@
          <widget class="QComboBox" name="netModeComboBox">
           <item>
            <property name="text">
-            <string>Automatic (Upnp)</string>
+            <string>Automatic (UPnP)</string>
            </property>
           </item>
           <item>
@@ -42,7 +42,7 @@
           </item>
           <item>
            <property name="text">
-            <string>Manual Forwarded Port</string>
+            <string>Manually Forwarded Port</string>
            </property>
           </item>
          </widget>
@@ -197,7 +197,7 @@ peers still need to trust each other to allow connection. </string>
        <item row="2" column="0">
         <widget class="QCheckBox" name="allowTunnelConnectionCB">
          <property name="toolTip">
-          <string>If you unckeck this, RetroShare will not use tunnel connection between peers that are firewalled and cannot connect directly. This is independant from F2F routing (turtle router).</string>
+          <string>If you uncheck this, RetroShare will not use tunnel connection between peers that are firewalled and cannot connect directly. This is independent from F2F routing (turtle router).</string>
          </property>
          <property name="text">
           <string>Allow Tunnel Connection</string>
@@ -331,7 +331,7 @@ peers still need to trust each other to allow connection. </string>
        <item row="0" column="0">
         <widget class="QCheckBox" name="allowIpDeterminationCB">
          <property name="toolTip">
-          <string>If you unckeck this, RetroShare can only determine your IP 
+          <string>If you uncheck this, RetroShare can only determine your IP 
 when you connect to somebody. Leaving this checked helps 
 connecting when you have few friends. It also helps if you're 
 behind a firewall or a VPN.</string>
@@ -367,7 +367,7 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;Warning&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;This tab contains hard-core  parameters which are unlikely to need modification. Dont change them unless you really know what you're doing. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;This tab contains hard-core  parameters which are unlikely to need modification. Don't change them unless you really know what you're doing. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
        </item>
@@ -386,7 +386,7 @@ p, li { white-space: pre-wrap; }
             <string>This value controls how many tunnel request your peer can forward per second. 
 
 If you have a large internet bandwidth, you may raise this up to 30-40, to allow
-statisticlly longuer tunnels to pass. Be very careful though, since this generates 
+statistically longer tunnels to pass. Be very careful though, since this generates 
 many small packets that can significantly slow down your own file transfer. 
 
 The default value is 20.</string>
