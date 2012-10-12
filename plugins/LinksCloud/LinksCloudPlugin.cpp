@@ -98,7 +98,7 @@ std::string LinksCloudPlugin::getPluginName() const
 	return QApplication::translate("LinksCloudPlugin", "LinksCloud").toUtf8().constData();
 }
 
-QTranslator* LinksCloudPlugin::qt_translator(QApplication */*app*/, const QString& languageCode) const
+QTranslator* LinksCloudPlugin::qt_translator(QApplication */*app*/, const QString& languageCode, const QString& externalDir) const
 {
 	if (languageCode == "en") {
 		return NULL;
@@ -106,7 +106,7 @@ QTranslator* LinksCloudPlugin::qt_translator(QApplication */*app*/, const QStrin
 
 	QTranslator* translator = new QTranslator();
 
-	if (translator->load(QCoreApplication::applicationDirPath() + "/translations/LinksCloud_" + languageCode + ".qm")) {
+	if (translator->load(externalDir + "/LinksCloud_" + languageCode + ".qm")) {
 		return translator;
 	} else if (translator->load(":/lang/LinksCloud_" + languageCode + ".qm")) {
 		return translator;

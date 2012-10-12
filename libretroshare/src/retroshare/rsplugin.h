@@ -130,7 +130,7 @@ class RsPlugin
 		//
 		virtual PopupChatDialog    *qt_allocate_new_popup_chat_dialog() const { return NULL ; }	
 
-		virtual QTranslator    *qt_translator(QApplication * /* app */, const QString& /* languageCode */ ) const	{ return NULL ; }
+		virtual QTranslator    *qt_translator(QApplication * /* app */, const QString& /* languageCode */, const QString& /* externalDir */ ) const	{ return NULL ; }
 
 		// 
 		//========================== Plugin Description ==============================//

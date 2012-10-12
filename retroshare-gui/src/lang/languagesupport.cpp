@@ -25,10 +25,13 @@
 #include <QLibraryInfo>
 #include <rshare.h>
 #include <retroshare/rsplugin.h>
+#include <retroshare/rsinit.h>
 
 #include "languagesupport.h"
 
 static QMap<RsPlugin*, QTranslator*> translatorPlugins;
+
+#define EXTERNAL_TRANSLATION_DIR QString::fromUtf8(RsInit::getRetroshareDataDirectory().c_str())
 
 /** Initializes the list of available languages. */
 QMap<QString, QString>
@@ -175,7 +178,7 @@ LanguageSupport::translate(const QString &languageCode)
 
   bool result = true;
 
-  if (retroshareTranslator->load(QCoreApplication::applicationDirPath() + "/translations/retroshare_" + languageCode + ".qm")) {
+  if (retroshareTranslator->load(EXTERNAL_TRANSLATION_DIR + "/translations/retroshare_" + languageCode + ".qm")) {
     QApplication::installTranslator(retroshareTranslator);
   } else if (retroshareTranslator->load(":/lang/retroshare_" + languageCode + ".qm")) {
     QApplication::installTranslator(retroshareTranslator);
@@ -199,11 +202,13 @@ bool LanguageSupport::translatePlugins(const QString &languageCode)
 		return true;
 	}
 
+	QString externalDir = EXTERNAL_TRANSLATION_DIR + "/translations";
+
 	int count = rsPlugins->nbPlugins();
 	for (int i = 0; i < count; ++i) {
 		RsPlugin* plugin = rsPlugins->plugin(i);
 		if (plugin) {
-			QTranslator* translator = plugin->qt_translator(rApp, languageCode);
+			QTranslator* translator = plugin->qt_translator(rApp, languageCode, externalDir);
 			if (translator) {
 				QApplication::installTranslator(translator);
 				translatorPlugins[plugin] = translator;

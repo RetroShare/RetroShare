@@ -157,7 +157,7 @@ std::string VOIPPlugin::getPluginName() const
 	return QApplication::translate("VOIPPlugin", "VOIP").toUtf8().constData();
 }
 
-QTranslator* VOIPPlugin::qt_translator(QApplication */*app*/, const QString& languageCode) const
+QTranslator* VOIPPlugin::qt_translator(QApplication */*app*/, const QString& languageCode, const QString& externalDir) const
 {
 	if (languageCode == "en") {
 		return NULL;
@@ -165,7 +165,7 @@ QTranslator* VOIPPlugin::qt_translator(QApplication */*app*/, const QString& lan
 
 	QTranslator* translator = new QTranslator();
 
-	if (translator->load(QCoreApplication::applicationDirPath() + "/translations/VOIP_" + languageCode + ".qm")) {
+	if (translator->load(externalDir + "/VOIP_" + languageCode + ".qm")) {
 		return translator;
 	} else if (translator->load(":/lang/VOIP_" + languageCode + ".qm")) {
 		return translator;

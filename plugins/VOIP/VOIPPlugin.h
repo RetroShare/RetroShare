@@ -21,7 +21,7 @@ class VOIPPlugin: public RsPlugin
 		virtual PopupChatDialog *qt_allocate_new_popup_chat_dialog() const ;
 		
 		virtual QIcon *qt_icon() const;
-		virtual QTranslator    *qt_translator(QApplication *app, const QString& languageCode) const;
+		virtual QTranslator    *qt_translator(QApplication *app, const QString& languageCode, const QString& externalDir) const;
 
 		virtual void getPluginVersion(int& major,int& minor,int& svn_rev) const ;
 		virtual void setPlugInHandler(RsPluginHandler *pgHandler);
