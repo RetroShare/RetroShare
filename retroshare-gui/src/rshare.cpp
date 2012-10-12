@@ -33,6 +33,7 @@
 #include <util/stringutil.h>
 #include <stdlib.h>
 
+#include <retroshare/rsinit.h>
 #include <lang/languagesupport.h>
 #include "gui/settings/rsharesettings.h"
 
@@ -384,17 +385,16 @@ void Rshare::loadStyleSheet(const QString &sheetName)
     }
 
     if (!sheetName.isEmpty()) {
-        QString fileName;
-
         if (sheetName.left(1) == ":") {
             /* internal stylesheet */
-            fileName = ":/qss/stylesheet/" + sheetName.mid(1) + ".qss";
+            file.setFileName(":/qss/stylesheet/" + sheetName.mid(1) + ".qss");
         } else {
             /* external stylesheet */
-            fileName = QApplication::applicationDirPath() + "/qss/" + sheetName + ".qss";
+            file.setFileName(QString::fromUtf8(RsInit::RsConfigDirectory().c_str()) + "/qss/" + sheetName + ".qss");
+            if (!file.exists()) {
+                file.setFileName(QString::fromUtf8(RsInit::getRetroshareDataDirectory().c_str()) + "/qss/" + sheetName + ".qss");
+            }
         }
-
-        file.setFileName(fileName);
         if (file.open(QFile::ReadOnly)) {
             styleSheet += QLatin1String(file.readAll());
             file.close();
@@ -414,12 +414,20 @@ void Rshare::getAvailableStyleSheets(QMap<QString, QString> &styleSheets)
 			styleSheets.insert(QString("%1 (%2)").arg(name, tr("built-in")), ":" + name);
 		}
 	}
-
-	fileInfoList = QDir(applicationDirPath() + "/qss/").entryInfoList(QStringList("*.qss"));
+	fileInfoList = QDir(QString::fromUtf8(RsInit::RsConfigDirectory().c_str()) + "/qss/").entryInfoList(QStringList("*.qss"));
 	foreach (fileInfo, fileInfoList) {
 		if (fileInfo.isFile()) {
 			QString name = fileInfo.baseName();
 			styleSheets.insert(name, name);
+		}
+	}
+	fileInfoList = QDir(QString::fromUtf8(RsInit::getRetroshareDataDirectory().c_str()) + "/qss/").entryInfoList(QStringList("*.qss"));
+	foreach (fileInfo, fileInfoList) {
+		if (fileInfo.isFile()) {
+			QString name = fileInfo.baseName();
+			if (!styleSheets.contains(name)) {
+				styleSheets.insert(name, name);
+			}
 		}
 	}
 }
