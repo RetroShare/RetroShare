@@ -949,7 +949,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Share Channel</source>
-        <translation>Paylaş Kanali </translation>
+        <translation>Paylas Kanali </translation>
     </message>
     <message>
         <source>Popularity: %1</source>
@@ -1547,7 +1547,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>appears to be Offline.</source>
-        <translation type="unfinished"></translation>
+        <translation>Çevrimdisi görünüyor.</translation>
     </message>
 </context>
 <context>
@@ -1767,7 +1767,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Make Friend</source>
-        <translation>Arkadas yap </translation>
+        <translation>Arkadaş yap </translation>
     </message>
     <message>
         <source>Certificate</source>
@@ -1804,11 +1804,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Connect Friend Wizard</source>
-        <translation>Arkadas Sihirbazi iletisimi</translation>
+        <translation>Arkadaş Sihirbazi iletisimi</translation>
     </message>
     <message>
         <source>Add a new Friend</source>
-        <translation>Yeni Arkadas ekle</translation>
+        <translation>Yeni Arkadaş ekle</translation>
     </message>
     <message>
         <source>This wizard will help you to connect to your friend(s) to RetroShare network.&lt;br&gt;These ways are possible to do this:</source>
@@ -1846,7 +1846,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>The text below is your PGP certificate. You have to provide it to your friend</source>
-        <translation>Asagidaki metni PGP sertifikasidir. Arkadasiniza bunu iletmeniz zorundasiniz</translation>
+        <translation>Asagidaki metni PGP sertifikasidir. Arkadaşiniza bunu iletmeniz zorundasiniz</translation>
     </message>
     <message>
         <source>Include signatures</source>
@@ -1866,7 +1866,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please, paste your friends PGP certificate into the box below</source>
-        <translation>Lütfen, asagidaki kutuya Arkadaşlarinizin PGP Sertifikasini yapistirin </translation>
+        <translation>Lütfen, asagidaki kutuya Arkadaslarinizin PGP Sertifikasini yapistirin </translation>
     </message>
     <message>
         <source>Certificate files</source>
@@ -2565,11 +2565,11 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>check peers you would like to share private publish key with</source>
-        <translation>özel yayinlama anahtari kimnen paylaşmak kimen istersiniz</translation>
+        <translation>özel yayinlama anahtari kimnen paylasmak kimen istersiniz</translation>
     </message>
     <message>
         <source>Share Key With</source>
-        <translation>Anahtari Paylaş</translation>
+        <translation>Anahtari Paylas</translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
@@ -2581,7 +2581,7 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Key Sharing</source>
-        <translation>Anahtar Paylaşimi</translation>
+        <translation>Anahtar Paylasimi</translation>
     </message>
     <message>
         <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
@@ -2589,7 +2589,7 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Share Private Publish Key</source>
-        <translation>Özel Yayin Anahtari paylaş</translation>
+        <translation>Özel Yayin Anahtari paylas</translation>
     </message>
     <message>
         <source>Channel Logo</source>
@@ -2782,11 +2782,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>check peers you would like to share private publish key with</source>
-        <translation>özel yayinlama anahtari kimnen paylaşmak kimen istersiniz</translation>
+        <translation>özel yayinlama anahtari kimnen paylasmak kimen istersiniz</translation>
     </message>
     <message>
         <source>Share Key With</source>
-        <translation>Anahtari Paylaş</translation>
+        <translation>Anahtari Paylas</translation>
     </message>
     <message>
         <source>Public - Anyone can read and publish (Shared Publish Key)</source>
@@ -2802,7 +2802,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Key Sharing</source>
-        <translation>Anahtar Paylaşimi</translation>
+        <translation>Anahtar Paylasimi</translation>
     </message>
     <message>
         <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
@@ -2810,7 +2810,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Share Private Publish Key</source>
-        <translation>Özel Yayin Anahtari paylaş</translation>
+        <translation>Özel Yayin Anahtari paylas</translation>
     </message>
     <message>
         <source>Contacts:</source>
@@ -2940,11 +2940,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>check peers you would like to share private publish key with</source>
-        <translation type="unfinished">özel yayinlama anahtari kimnen paylaşmak kimen istersiniz</translation>
+        <translation type="unfinished">özel yayinlama anahtari kimnen paylasmak kimen istersiniz</translation>
     </message>
     <message>
         <source>Share Key With</source>
-        <translation type="unfinished">Anahtari Paylaş</translation>
+        <translation type="unfinished">Anahtari Paylas</translation>
     </message>
     <message>
         <source>Description</source>
@@ -2968,7 +2968,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Key Sharing</source>
-        <translation type="unfinished">Anahtar Paylaşimi</translation>
+        <translation type="unfinished">Anahtar Paylasimi</translation>
     </message>
     <message>
         <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
@@ -2976,7 +2976,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Share Private Publish Key</source>
-        <translation type="unfinished">Özel Yayin Anahtari paylaş</translation>
+        <translation type="unfinished">Özel Yayin Anahtari paylas</translation>
     </message>
     <message>
         <source>Allowed Messages</source>
@@ -3555,7 +3555,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Shared Directories</source>
-        <translation type="unfinished">Paylaşilan Dizinler</translation>
+        <translation type="unfinished">Paylasilan Dizinler</translation>
     </message>
     <message>
         <source>Automatically share incoming directory (Recommanded)</source>
@@ -3618,7 +3618,7 @@ you plug it in.</source>
     </message>
     <message>
         <source>Forget any hashed file that is not anymore shared.</source>
-        <translation>Artik paylaşilmaz herhangi hashed dosyayi unutun.</translation>
+        <translation>Artik paylasilmaz herhangi hashed dosyayi unutun.</translation>
     </message>
     <message>
         <source>Clean Hash Cache</source>
@@ -3626,7 +3626,7 @@ you plug it in.</source>
     </message>
     <message>
         <source>Auto-check shared directories every </source>
-        <translation>Her paylaşilan dizinleri Oto-kontrol</translation>
+        <translation>Her paylasilan dizinleri Oto-kontrol</translation>
     </message>
     <message>
         <source> minute(s)</source>
@@ -3642,7 +3642,7 @@ you plug it in.</source>
     </message>
     <message>
         <source>This will forget any former hash of non shared files. Do you confirm ?</source>
-        <translation>Bu olmayan paylaşilan dosyalari herhangi bir eski karma unutacak. Siz onayliyor musunuz?</translation>
+        <translation>Bu olmayan paylasilan dosyalari herhangi bir eski karma unutacak. Siz onayliyor musunuz?</translation>
     </message>
 </context>
 <context>
@@ -4096,11 +4096,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Friend</source>
-        <translation>Arkadas</translation>
+        <translation type="unfinished">Arkadaş</translation>
     </message>
     <message>
         <source>Share Type</source>
-        <translation>Paylaş Tipi</translation>
+        <translation>Paylas Tipi</translation>
     </message>
     <message>
         <source>Directory</source>
@@ -4629,7 +4629,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Share Forum</source>
-        <translation>Forumu Paylaş</translation>
+        <translation>Forumu Paylas</translation>
     </message>
     <message>
         <source>Restore Publish Rights for Forum</source>
@@ -4839,7 +4839,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Share Forum</source>
-        <translation>Forumu Paylaş</translation>
+        <translation>Forumu Paylas</translation>
     </message>
     <message>
         <source>Restore Publish Rights for Forum</source>
@@ -4970,7 +4970,7 @@ p, li { white-space: pre-wrap; }
     <name>FriendList</name>
     <message>
         <source>Friends</source>
-        <translation>Arkadaslar</translation>
+        <translation>Arkadaşlar</translation>
     </message>
     <message>
         <source>Status</source>
@@ -5361,7 +5361,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add Friend</source>
-        <translation>Arkadaş ekle</translation>
+        <translation>Arkadas ekle</translation>
     </message>
     <message>
         <source>Create new Profile</source>
@@ -5613,7 +5613,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Friend Recommendations</source>
-        <translation>Arkadas tavsiyesi</translation>
+        <translation>Arkadaş tavsiyesi</translation>
     </message>
     <message>
         <source>Choose Font</source>
@@ -5960,7 +5960,7 @@ Fill in your GPG password when asked, to sign your new key.</source>
     </message>
     <message>
         <source>Generate New Identity</source>
-        <translation type="unfinished">Yeni Profil Olustur</translation>
+        <translation>Yeni Profil Olustur</translation>
     </message>
     <message>
         <source>Create new Identity</source>
@@ -6032,7 +6032,7 @@ ve yüklemek için ithalat dügmesini kullanin</translation>
     </message>
     <message>
         <source>Put a meaningful location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same identity (gpg key).</source>
-        <translation type="unfinished"></translation>
+        <translation>Anlamli bir yer koyun. örnek: ev, laptop...</translation>
     </message>
     <message>
         <source>RetroShare uses gpg keys for identity management.
@@ -6041,11 +6041,11 @@ You can use an existing identity (i.e. a gpg key pair), from the list below, or 
     </message>
     <message>
         <source>Your identity was not saved. An error occurred.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kimliginiz kaydedilmedi. Bir hata olustu.</translation>
     </message>
     <message>
         <source>Your identity was imported successfully:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sizin kimlik basariyla ithal edilmistir:</translation>
     </message>
     <message>
         <source>An unexpected error occurred when Retroshare tried to acquire the single instance lock</source>
@@ -6398,7 +6398,7 @@ p, li { white-space: pre-wrap; }
     <name>GroupDefs</name>
     <message>
         <source>Friends</source>
-        <translation>Arkadaslar</translation>
+        <translation>Arkadaşlar</translation>
     </message>
     <message>
         <source>Family</source>
@@ -6833,7 +6833,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Friend</source>
-        <translation>Arkadas</translation>
+        <translation>Arkadaş</translation>
     </message>
     <message>
         <source>Friend of Friend</source>
@@ -6992,7 +6992,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Friends</source>
-        <translation>Arkadaslar</translation>
+        <translation>Arkadaşlar</translation>
     </message>
     <message>
         <source>Transfers</source>
@@ -7064,7 +7064,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add Share</source>
-        <translation>Paylaşım Ekle</translation>
+        <translation>Paylasim Ekle</translation>
     </message>
     <message>
         <source>Quick Start Wizard</source>
@@ -8550,7 +8550,7 @@ Bunun yerine Mesaj göndermek istiyor musunuz?</translation>
     </message>
     <message>
         <source>Share Files for your Friends</source>
-        <translation type="unfinished">Arkadaşlar için dosya Paylaş</translation>
+        <translation type="unfinished">Arkadaslar için dosya Paylas</translation>
     </message>
 </context>
 <context>
@@ -9341,7 +9341,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Friend</source>
-        <translation>Arkadas</translation>
+        <translation type="unfinished">Arkadaş</translation>
     </message>
     <message>
         <source>Remove Item</source>
@@ -9444,11 +9444,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Friends: 0/0</source>
-        <translation>Arkadaşlar: 0/0</translation>
+        <translation>Arkadaslar: 0/0</translation>
     </message>
     <message>
         <source>Online Friends/Total Friends</source>
-        <translation>Çevrimiçi Arkadaşlar / Toplam Arkadaşlar</translation>
+        <translation>Çevrimiçi Arkadaslar / Toplam Arkadaslar</translation>
     </message>
 </context>
 <context>
@@ -9470,7 +9470,7 @@ p, li { white-space: pre-wrap; }
     <name>PhotoAddDialog</name>
     <message>
         <source>Share Options</source>
-        <translation>Paylaş seçenekleri</translation>
+        <translation>Paylas seçenekleri</translation>
     </message>
     <message>
         <source>Public</source>
@@ -9478,7 +9478,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>All Friends</source>
-        <translation>Tüm Arkadaşlar</translation>
+        <translation>Tüm Arkadaslar</translation>
     </message>
     <message>
         <source>Restricted</source>
@@ -9490,7 +9490,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>University Friends</source>
-        <translation>Üniversite Arkadaşlari</translation>
+        <translation>Üniversite Arkadaslari</translation>
     </message>
     <message>
         <source>Family</source>
@@ -10292,7 +10292,7 @@ Bunun yerine Mesaj göndermek istiyor musunuz?</translation>
     </message>
     <message>
         <source>Share Forum</source>
-        <translation type="unfinished">Forumu Paylaş</translation>
+        <translation type="unfinished">Forumu Paylas</translation>
     </message>
     <message>
         <source>Restore Publish Rights for Forum</source>
@@ -10571,7 +10571,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Number of Friends:</source>
-        <translation>Arkadaşlar sayisi:</translation>
+        <translation>Arkadaslar sayisi:</translation>
     </message>
     <message>
         <source>Version:</source>
@@ -10736,7 +10736,7 @@ and open the Make Friend Wizard.
     </message>
     <message>
         <source>Add friends</source>
-        <translation>Arkadaşlar ekle</translation>
+        <translation>Arkadaslar ekle</translation>
     </message>
     <message>
         <source>Do you want to process the link ?</source>
@@ -10780,7 +10780,7 @@ and open the Make Friend Wizard.
     </message>
     <message>
         <source>Friends added</source>
-        <translation>Arkadaşlar eklendi</translation>
+        <translation>Arkadaslar eklendi</translation>
     </message>
     <message>
         <source>Friend exist</source>
@@ -10991,7 +10991,7 @@ Reported error is: %2</source>
     </message>
     <message>
         <source>Network Wide</source>
-        <translation>Geniş ağı</translation>
+        <translation>Genis agi</translation>
     </message>
     <message>
         <source>Browseable</source>
@@ -11011,11 +11011,11 @@ Reported error is: %2</source>
     </message>
     <message>
         <source>Start Minimized</source>
-        <translation>Küçültülmüş Başlat</translation>
+        <translation>Küçültülmüs Baslat</translation>
     </message>
     <message>
         <source>Start RetroShare when my System Starts.</source>
-        <translation>Windows ile Başlat.</translation>
+        <translation>Windows ile Baslat.</translation>
     </message>
     <message>
         <source>Finish</source>
@@ -11023,7 +11023,7 @@ Reported error is: %2</source>
     </message>
     <message>
         <source>Select A Folder To Share</source>
-        <translation>Bir klasör seçininiz Paylaşım için</translation>
+        <translation>Bir klasör seçininiz Paylasim için</translation>
     </message>
     <message>
         <source>Shared Directory Added!</source>
@@ -11241,7 +11241,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Friends of Friends</source>
-        <translation>Arkadaşlarimin Arkadaşlari</translation>
+        <translation>Arkadaslarimin Arkadaslari</translation>
     </message>
     <message>
         <source>General</source>
@@ -11323,11 +11323,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Anonymous and browsable by friends</source>
-        <translation>Arkadaşlarlariniz taranabilir ve Anonim</translation>
+        <translation>Arkadaslarlariniz taranabilir ve Anonim</translation>
     </message>
     <message>
         <source>Only browsable by friends</source>
-        <translation>Sadece Arkadaşlar tarafindan taranabilir</translation>
+        <translation>Sadece Arkadaslar tarafindan taranabilir</translation>
     </message>
     <message>
         <source>NEW</source>
@@ -11650,11 +11650,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Search inside &quot;browsable&quot; files of your friends</source>
-        <translation>Arama için &quot;Arkadaşlarinizin göz atilabilir&quot; dosyalari</translation>
+        <translation>Arama için &quot;Arkadaslarinizin göz atilabilir&quot; dosyalari</translation>
     </message>
     <message>
         <source>Search in friends lists</source>
-        <translation>Arkadaşlari ara</translation>
+        <translation>Arkadaslari ara</translation>
     </message>
     <message>
         <source>Multi-hop search at distance 6 in the network 
@@ -12183,7 +12183,7 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Browseable by Friends</source>
-        <translation>Arkadaşlar Gözatilabilir</translation>
+        <translation>Arkadaslar Gözatilabilir</translation>
     </message>
     <message>
         <source>Anonymous shared Network Wide</source>
@@ -12210,7 +12210,7 @@ The default value is 20.</source>
     </message>
     <message>
         <source>check peers you would like to share private publish key with</source>
-        <translation type="unfinished">özel yayinlama anahtari kimnen paylaşmak kimen istersiniz</translation>
+        <translation type="unfinished">özel yayinlama anahtari kimnen paylasmak kimen istersiniz</translation>
     </message>
     <message>
         <source>Share for Friend</source>
@@ -12329,7 +12329,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>If checked, the share is browsable by your friends.</source>
-        <translation>Eger isaretli ise, paylasim arkadaşlariniz tarafindan taranabilir durumda.</translation>
+        <translation>Eger isaretli ise, paylasim arkadaslariniz tarafindan taranabilir durumda.</translation>
     </message>
     <message>
         <source>Do you really want to stop sharing this directory ?</source>
@@ -12415,7 +12415,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>&lt;strong&gt;Friends Files&lt;/strong&gt;</source>
-        <translation>&lt;strong&gt;Arkadaşlarin Dosyalari&lt;/strong&gt;</translation>
+        <translation>&lt;strong&gt;Arkadaslarin Dosyalari&lt;/strong&gt;</translation>
     </message>
     <message>
         <source>&lt;strong&gt;Files&lt;/strong&gt;</source>
@@ -12427,7 +12427,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Friends Folders</source>
-        <translation>Arkadaşlarin Dosyalari</translation>
+        <translation>Arkadaslarin Dosyalari</translation>
     </message>
     <message>
         <source>My Folders</source>
@@ -12530,7 +12530,7 @@ p, li { white-space: pre-wrap; }
     <name>SoundPage</name>
     <message>
         <source>Friend</source>
-        <translation>Arkadas</translation>
+        <translation>Arkadaş</translation>
     </message>
     <message>
         <source>Browse</source>
@@ -13214,7 +13214,7 @@ p, li { white-space: pre-wrap; }
     <name>TransferPage</name>
     <message>
         <source>Transfer</source>
-        <translation>Aktarım</translation>
+        <translation>Aktarim</translation>
     </message>
     <message>
         <source>Transfer options</source>
@@ -13345,7 +13345,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Completed</source>
-        <translation>Tamamlandı</translation>
+        <translation>Tamamlandi</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -13376,7 +13376,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Done</source>
-        <translation>Olmuş</translation>
+        <translation>Olmus</translation>
     </message>
     <message>
         <source>Active</source>
@@ -13384,7 +13384,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Outstanding</source>
-        <translation>Tamamlanmamış</translation>
+        <translation>Tamamlanmamis</translation>
     </message>
     <message>
         <source>Tunneling</source>
@@ -13737,7 +13737,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Friend</source>
-        <translation>Arkadas</translation>
+        <translation type="unfinished">Arkadaş</translation>
     </message>
     <message>
         <source>Share Type</source>
@@ -14052,7 +14052,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Work</source>
-        <translation>Iş</translation>
+        <translation>Is</translation>
     </message>
     <message>
         <source>Random</source>
@@ -14064,7 +14064,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Share Options</source>
-        <translation>Paylaş seçenekleri</translation>
+        <translation>Paylas seçenekleri</translation>
     </message>
     <message>
         <source>Public</source>
@@ -14072,7 +14072,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>All Friends</source>
-        <translation>Tüm Arkadaşlar</translation>
+        <translation>Tüm Arkadaslar</translation>
     </message>
     <message>
         <source>Restricted</source>
@@ -14084,7 +14084,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>University Friends</source>
-        <translation>Üniversite Arkadaşlari</translation>
+        <translation>Üniversite Arkadaslari</translation>
     </message>
     <message>
         <source>This List Contains</source>
@@ -14100,7 +14100,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Authenticated Comments</source>
-        <translation>Doğrulanmış Yorumlar</translation>
+        <translation>Dogrulanmis Yorumlar</translation>
     </message>
     <message>
         <source>Any Comments Allowed</source>
@@ -14116,7 +14116,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Create Group</source>
-        <translation>Grup Oluştur</translation>
+        <translation>Grup Olustur</translation>
     </message>
 </context>
 <context>
