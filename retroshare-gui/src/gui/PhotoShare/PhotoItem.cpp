@@ -32,10 +32,8 @@ PhotoItem::PhotoItem(PhotoShareItemHolder *holder, const QString& path, QWidget 
 {
     ui->setupUi(this);
 
-    int width = 250;
-    int height = 250;
 
-    QPixmap qtn = QPixmap(path).scaled(width, height, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    QPixmap qtn = QPixmap(path);
     mThumbNail = qtn;
     ui->label_Thumbnail->setPixmap(mThumbNail.scaled(120, 120, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     setSelected(false);
@@ -133,7 +131,7 @@ void PhotoItem::updateImage(const RsPhotoThumbnail &thumbnail)
     {
             QPixmap qtn;
             qtn.loadFromData(thumbnail.data, thumbnail.size, thumbnail.type.c_str());
-            ui->label_Thumbnail->setPixmap(qtn);
+            ui->label_Thumbnail->setPixmap(qtn.scaled(120, 120, Qt::KeepAspectRatio, Qt::SmoothTransformation));
             mThumbNail = qtn;
     }
 }

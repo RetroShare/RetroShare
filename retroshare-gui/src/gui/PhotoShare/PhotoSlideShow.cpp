@@ -27,8 +27,8 @@
 #include <iostream>
 
 /** Constructor */
-PhotoSlideShow::PhotoSlideShow(QWidget *parent)
-: QWidget(parent)
+PhotoSlideShow::PhotoSlideShow(const RsPhotoAlbum& album, QWidget *parent)
+: QWidget(parent), mAlbum(album)
 {
 	ui.setupUi(this);
 
@@ -45,12 +45,19 @@ PhotoSlideShow::PhotoSlideShow(QWidget *parent)
 
 	mImageIdx = 0;
 
-	//loadImage();
+        requestPhotos();
+        loadImage();
         //QTimer::singleShot(5000, this, SLOT(timerEvent()));
 }
 
 PhotoSlideShow::~PhotoSlideShow(){
 
+    std::map<std::string, RsPhotoPhoto *>::iterator mit = mPhotos.begin();
+
+    for(; mit != mPhotos.end(); mit++)
+    {
+        delete mit->second;
+    }
 }
 
 void PhotoSlideShow::showPhotoDetails()
@@ -174,9 +181,7 @@ void PhotoSlideShow::loadImage()
                 	qtn.loadFromData(tn.data, tn.size, tn.type.c_str());
 			tn.data = 0;
 
-                	//ui.imgLabel->setPixmap(qtn);
-
-			QPixmap sqtn = qtn.scaled(ui.albumLabel->width(), ui.imgLabel->height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+                        QPixmap sqtn = qtn.scaled(800, 600, Qt::KeepAspectRatio, Qt::SmoothTransformation);
         		ui.imgLabel->setPixmap(sqtn);
 
         	}
@@ -238,23 +243,15 @@ void PhotoSlideShow::clearDialog()
 #endif
 }
 
-
-void PhotoSlideShow::loadAlbum(const std::string &albumId)
+void PhotoSlideShow::requestPhotos()
 {
-	/* much like main load fns */
-	clearDialog();
-
-	RsTokReqOptionsV2 opts;
-	uint32_t token;
-	std::list<std::string> albumIds;
-	albumIds.push_back(albumId);
-
-	// We need both Album and Photo Data.
-
-	mPhotoQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, albumIds, 0);
-
+    RsTokReqOptionsV2 opts;
+    opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+    uint32_t token;
+    std::list<RsGxsGroupId> grpIds;
+    grpIds.push_back(mAlbum.mMeta.mGroupId);
+    mPhotoQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds, 0);
 }
-
 
 bool PhotoSlideShow::loadPhotoData(const uint32_t &token)
 {
@@ -270,7 +267,7 @@ bool PhotoSlideShow::loadPhotoData(const uint32_t &token)
         {
             std::vector<RsPhotoPhoto>& photoV = mit->second;
             std::vector<RsPhotoPhoto>::iterator vit = photoV.begin();
-
+            int i = 0;
             for(; vit != photoV.end(); vit++)
             {
                 RsPhotoPhoto& photo = *vit;
@@ -278,7 +275,7 @@ bool PhotoSlideShow::loadPhotoData(const uint32_t &token)
                 *ptr = photo;
                 ptr->mThumbnail.data = 0;
                 ptr->mThumbnail.copyFrom(photo.mThumbnail);
-
+                ptr->mOrder = i++;
                 mPhotos[photo.mMeta.mMsgId] = ptr;
                 mPhotoOrder[ptr->mOrder] = photo.mMeta.mMsgId;
 
@@ -297,38 +294,6 @@ bool PhotoSlideShow::loadPhotoData(const uint32_t &token)
 	return true;
 }
 
-bool PhotoSlideShow::loadAlbumData(const uint32_t &token)
-{
-	std::cerr << "PhotoSlideShow::loadAlbumData()";
-	std::cerr << std::endl;
-			
-        std::vector<RsPhotoAlbum> albums;
-        rsPhotoV2->getAlbum(token, albums);
-
-        std::vector<RsPhotoAlbum>::iterator vit = albums.begin();
-
-        GxsMsgReq req;
-
-        for(; vit != albums.end(); vit++)
-        {
-            RsPhotoAlbum& album = *vit;
-
-            std::cerr << " PhotoSlideShow::loadAlbumData() AlbumId: " << album.mMeta.mGroupId << std::endl;
-            //updateAlbumDetails(album);
-            uint32_t token;
-            std::list<std::string> albumIds;
-            albumIds.push_back(album.mMeta.mGroupId);
-            req[album.mMeta.mGroupId] = std::vector<RsGxsMessageId>();
-
-        }
-
-        RsTokReqOptionsV2 opts;
-        opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
-        uint32_t t;
-        mPhotoQueue->requestMsgInfo(t, RS_TOKREQ_ANSTYPE_DATA, opts, req, 0);
-	return true;
-}
-
 void PhotoSlideShow::loadRequest(const TokenQueueV2 *queue, const TokenRequestV2 &req)
 {
 	std::cerr << "PhotoSlideShow::loadRequest()";
@@ -339,14 +304,11 @@ void PhotoSlideShow::loadRequest(const TokenQueueV2 *queue, const TokenRequestV2
 		/* now switch on req */
 		switch(req.mType)
 		{
-			case TOKENREQ_GROUPINFO:
-				loadAlbumData(req.mToken);
-				break;
 			case TOKENREQ_MSGINFO:
 				loadPhotoData(req.mToken);
 				break;
 			default:
-				std::cerr << "PhotoSlideShow::loadRequest() ERROR: GROUP: INVALID ANS TYPE";
+                                std::cerr << "PhotoSlideShow::loadRequest() ERROR: REQ: INVALID REQ TYPE";
 				std::cerr << std::endl;
 				break; 
 		}

@@ -210,18 +210,15 @@ void PhotoShare::OpenSlideShow()
                 return;
         }
 
-        std::string albumId = mAlbumSelected->getAlbum().mMeta.mGroupId;
-
         if (mSlideShow)
         {
                 mSlideShow->show();
         }
         else
         {
-                mSlideShow = new PhotoSlideShow(NULL);
+                mSlideShow = new PhotoSlideShow(mAlbumSelected->getAlbum(), NULL);
                 mSlideShow->show();
         }
-        mSlideShow->loadAlbum(albumId);
 
 }
 

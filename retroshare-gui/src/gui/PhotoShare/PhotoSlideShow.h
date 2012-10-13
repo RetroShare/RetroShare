@@ -28,17 +28,17 @@
 
 #include <retroshare/rsphotoV2.h>
 #include "util/TokenQueueV2.h"
+#include "AlbumItem.h"
 
 class PhotoSlideShow : public QWidget, public TokenResponseV2
 {
   Q_OBJECT
 
 public:
-	PhotoSlideShow(QWidget *parent = 0);
+        PhotoSlideShow(const RsPhotoAlbum& mAlbum, QWidget *parent = 0);
         virtual ~PhotoSlideShow();
 
-	void loadAlbum(const std::string &albumId);
-virtual	void loadRequest(const TokenQueueV2 *queue, const TokenRequestV2 &req);
+        void loadRequest(const TokenQueueV2 *queue, const TokenRequestV2 &req);
 
 	void clearDialog();
 
@@ -53,13 +53,13 @@ private slots:
 
 private:
 
+        void requestPhotos();
 	void loadImage();
 	void updateMoveButtons(uint32_t status);
 
-	bool loadPhotoData(const uint32_t &token);
-	bool loadAlbumData(const uint32_t &token);
+        bool loadPhotoData(const uint32_t &token);
 
-//protected:
+private:
 
 	std::map<std::string, RsPhotoPhoto *> mPhotos;
 	std::map<int, std::string> mPhotoOrder;
@@ -67,6 +67,8 @@ private:
 	bool mRunning;
 	int mImageIdx;
 	bool mShotActive;
+
+        RsPhotoAlbum mAlbum;
 
         TokenQueueV2 *mPhotoQueue;
 

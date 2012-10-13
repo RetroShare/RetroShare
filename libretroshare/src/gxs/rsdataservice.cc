@@ -468,10 +468,11 @@ int RsDataService::storeMessage(std::map<RsNxsMsg *, RsGxsMsgMetaData *> &msg)
         cv.put(KEY_CHILD_TS, (int32_t)msgMetaPtr->mChildTs);
 
         offset = 0;
-        char msgData[msgPtr->msg.TlvSize()];
+        char* msgData = new char[msgPtr->msg.TlvSize()];
         msgPtr->msg.SetTlv(msgData, msgPtr->msg.TlvSize(), &offset);
         ostrm.write(msgData, msgPtr->msg.TlvSize());
         ostrm.close();
+        delete[] msgData;
 
         mDb->sqlInsert(MSG_TABLE_NAME, "", cv);
     }

@@ -1,5 +1,8 @@
+#include <QDateTime>
+
 #include "PhotoCommentItem.h"
 #include "ui_PhotoCommentItem.h"
+
 
 PhotoCommentItem::PhotoCommentItem(const RsPhotoComment& comment, QWidget *parent):
     QWidget(parent),
@@ -22,4 +25,8 @@ const RsPhotoComment& PhotoCommentItem::getComment()
 void PhotoCommentItem::setUp()
 {
     ui->labelComment->setText(QString::fromStdString(mComment.mComment));
+    QDateTime qtime;
+    qtime.setTime_t(mComment.mMeta.mPublishTs);
+    QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
+    ui->datetimelabel->setText(timestamp);
 }
