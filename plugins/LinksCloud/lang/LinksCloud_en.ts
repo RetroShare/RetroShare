@@ -227,26 +227,31 @@
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="392"/>
+        <location filename="../LinksDialog.cpp" line="143"/>
         <source>+2 Great!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="401"/>
+        <location filename="../LinksDialog.cpp" line="146"/>
         <source>+1 Good</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="410"/>
+        <location filename="../LinksDialog.cpp" line="149"/>
         <source>0 Okay</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="419"/>
+        <location filename="../LinksDialog.cpp" line="152"/>
         <source>-1 Sux</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="428"/>
+        <location filename="../LinksDialog.cpp" line="155"/>
         <source>-2 Bad Link</source>
         <translation type="unfinished"></translation>
     </message>
@@ -281,12 +286,44 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="814"/>
+        <location filename="../LinksDialog.cpp" line="706"/>
+        <location filename="../LinksDialog.cpp" line="734"/>
+        <location filename="../LinksDialog.cpp" line="742"/>
+        <source>Add Link Failure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../LinksDialog.cpp" line="706"/>
+        <source>Missing Link and/or Title</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../LinksDialog.cpp" line="734"/>
+        <source>Missing Link Data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../LinksDialog.cpp" line="742"/>
+        <source>Missing Comment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../LinksDialog.cpp" line="757"/>
+        <source>Link Title Not Changed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../LinksDialog.cpp" line="757"/>
+        <source>Do you want to continue?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../LinksDialog.cpp" line="812"/>
         <source>Expand</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="821"/>
+        <location filename="../LinksDialog.cpp" line="819"/>
         <source>Hide</source>
         <translation type="unfinished"></translation>
     </message>

@@ -140,19 +140,19 @@ void LinksDialog::linkTreeWidgetCostumPopupMenu( QPoint point )
       	QMenu *voteMenu = new QMenu( tr("Vote on Link"), &contextMnu );
       	voteMenu->setIcon(QIcon(IMAGE_EXPORTFRIEND));
 
-      	QAction *vote_p2 = new QAction( QIcon(IMAGE_GREAT), "[+2] Great", &contextMnu );
+        QAction *vote_p2 = new QAction( QIcon(IMAGE_GREAT), tr("+2 Great!"), &contextMnu );
         connect( vote_p2 , SIGNAL( triggered() ), this, SLOT( voteup_p2() ) );
 	voteMenu->addAction(vote_p2);
-      	QAction *vote_p1 = new QAction( QIcon(IMAGE_GOOD), "[+1] Good", &contextMnu );
+		QAction *vote_p1 = new QAction( QIcon(IMAGE_GOOD), tr("+1 Good"), &contextMnu );
         connect( vote_p1 , SIGNAL( triggered() ), this, SLOT( voteup_p1() ) );
 	voteMenu->addAction(vote_p1);
-      	QAction *vote_p0 = new QAction( QIcon(IMAGE_OK), "[+0] Okay", &contextMnu );
+		QAction *vote_p0 = new QAction( QIcon(IMAGE_OK), tr("0 Okay"), &contextMnu );
         connect( vote_p0 , SIGNAL( triggered() ), this, SLOT( voteup_p0() ) );
 	voteMenu->addAction(vote_p0);
-      	QAction *vote_m1 = new QAction( QIcon(IMAGE_SUX), "[-1] Sux", &contextMnu );
+		QAction *vote_m1 = new QAction( QIcon(IMAGE_SUX), tr("-1 Sux"), &contextMnu );
         connect( vote_m1 , SIGNAL( triggered() ), this, SLOT( voteup_m1() ) );
 	voteMenu->addAction(vote_m1);
-      	QAction *vote_m2 = new QAction( QIcon(IMAGE_BADLINK), "[-2] BAD LINK", &contextMnu );
+		QAction *vote_m2 = new QAction( QIcon(IMAGE_BADLINK), tr("-2 Bad Link"), &contextMnu );
         connect( vote_m2 , SIGNAL( triggered() ), this, SLOT( voteup_m2() ) );
 	voteMenu->addAction(vote_m2);
 
@@ -703,7 +703,7 @@ void LinksDialog::addLinkComment( void )
 	{
 		if ((link == "") || (title == ""))
 		{
-			QMessageBox::warning ( NULL, "Add Link Failure", "Missing Link and/or Title", QMessageBox::Ok);
+			QMessageBox::warning ( NULL, tr("Add Link Failure"), tr("Missing Link and/or Title"), QMessageBox::Ok);
 			/* can't do anything */
 			return;
 		}
@@ -731,7 +731,7 @@ void LinksDialog::addLinkComment( void )
 	if (!rsRanks->getRankDetails(mLinkId, detail))
 	{
 		/* strange error! */
-               QMessageBox::warning ( NULL, "Add Link Failure", "Missing Link Data", QMessageBox::Ok);
+		QMessageBox::warning ( NULL, tr("Add Link Failure"), tr("Missing Link Data"), QMessageBox::Ok);
 		return;
 	}
 
@@ -739,7 +739,7 @@ void LinksDialog::addLinkComment( void )
 	{
 		if (comment == "") /* no comment! */
 		{
-                	QMessageBox::warning ( NULL, "Add Link Failure", "Missing Comment", QMessageBox::Ok);
+			QMessageBox::warning ( NULL, tr("Add Link Failure"), tr("Missing Comment"), QMessageBox::Ok);
 			return;
 		}
 
@@ -749,14 +749,12 @@ void LinksDialog::addLinkComment( void )
 	}
 	else
 	{
-        	QMessageBox::StandardButton sb = QMessageBox::Yes;
+		QMessageBox::StandardButton sb = QMessageBox::Yes;
 
 		if ((title.toStdWString() == detail.title) /* same title! - wrong */
 		     || (title == ""))
 		{
-        		sb = QMessageBox::question ( NULL, "Link Title Not Changed",
-				"Do you want to continue?",
-			        (QMessageBox::Yes | QMessageBox::No));
+			sb = QMessageBox::question ( NULL, tr("Link Title Not Changed"), tr("Do you want to continue?"), (QMessageBox::Yes | QMessageBox::No));
 		}
 
 		/* add Link! */
