@@ -60,6 +60,131 @@
  */
 
 
+/******
+ * More notes. The ideas above have been crystalised somewhat.
+ *
+ * The Identity service will now serve two roles:
+ * 1) validating msgs.
+ * 2) reputation of identity.
+ *
+ * The identity will be equivalent to a Group Definition.
+ * and the reputation contained in the group's messages.
+ *
+ * 
+ * Group
+ *   MetaData:
+ *     Public Key
+ *     Signatures. (Admin & optional GPG).
+ *   RealData:
+ *     Nickname.
+ *     GPGHash
+ *
+ * The GPGHash will allow people to identify the real gpg user behind the identity.
+ * We must make sure that the Hash input has enough entropy that it cannot be brute-forced (e.g. like password hashes).
+ *
+ * The Identity service only has to provide hooks to access the Keys for each group.
+ * All the key definitions are exactly the same as for GroupMetaData.
+ *
+ * The Interface is split into three parts.
+ * 1) Internal interface used by GXS to verify signatures.
+ * 2) Internal interface used by GXS to help decide if we get a message or not.
+ * 3) External interface to access nicknames, generate new identities etc.
+ *
+ * The actual implementation will cache frequently used keys and nicknames, 
+ * as these will be used very frequently.
+ *****/
+
+typedef std::string GxsId;
+typedef std::string PeerId;
+
+// External Interface - 
+class RsIdentityService
+{
+    enum IdentityType { Pseudonym, Signed, Anonymous };
+
+    virtual bool loadId(const GxsId &id) = 0;	
+
+    virtual bool getNickname(const GxsId &id, std::string &nickname) = 0;	
+
+    virtual bool createKey(RsGixsProfile& profile, uint32_t type) = 0; /* fills in mKeyId, and signature */
+
+    virtual RsGixsProfile* getProfile(const KeyRef& keyref) = 0;
+
+	// modify reputation.
+
+};
+
+
+/* Identity Interface for GXS Message Verification.
+ */
+
+class RsGixs
+{
+public:
+	// Key related interface - used for validating msgs and groups.
+    /*!
+     * Use to query a whether given key is available by its key reference
+     * @param keyref the keyref of key that is being checked for
+     * @return true if available, false otherwise
+     */
+    virtual bool haveKey(const GxsId &id) = 0;
+
+    /*!
+     * Use to query whether private key member of the given key reference is available
+     * @param keyref the KeyRef of the key being checked for
+     * @return true if private key is held here, false otherwise
+     */
+    virtual bool havePrivateKey(const GxsId &id) = 0;
+
+	// The fetchKey has an optional peerList.. this is people that had the msg with the signature.
+	// These same people should have the identity - so we ask them first.
+    /*!
+     * Use to request a given key reference
+     * @param keyref the KeyRef of the key being requested
+     * @return will
+     */
+    virtual bool requestKey(const GxsId &id, const std::list<PeerId> &peers) = 0;
+
+    /*!
+     * Retrieves a key identity
+     * @param keyref
+     * @return a pointer to a valid profile if successful, otherwise NULL
+     *
+     */
+    virtual int  getKey(const GxsId &id, TlvSecurityKey &key) = 0;
+    virtual int  getPrivateKey(const GxsId &id, TlvSecurityKey &key) = 0;	// For signing outgoing messages.
+
+
+};
+
+
+class RsGixsReputation 
+{
+public:
+	// get Reputation.
+    virtual bool getReputation(const GxsId &id, const GixsReputation &rep) = 0;
+};
+
+
+/*** This Class pulls all the GXS Interfaces together ****/
+
+class RsGxsIdExchange: public RsGenExchange, public RsGixsReputation, public RsGixs
+{
+public:
+	RsGxsIdExchange() { return; }
+virtual ~RsGxsIdExchange() { return; }
+
+};
+
+
+
+
+
+// BELOW IS OLD - WILL DELETE SHORTLY
+
+#if 0
+
+
 /*!
  * Storage class for private and public publish keys
  *
@@ -226,6 +351,8 @@ public:
                  unsigned char*& encryptedData, uint32_t& encryptDataLen) = 0;
 
 };
+
+#endif // END OF #if 0
 
 
 #endif // RSGIXS_H
