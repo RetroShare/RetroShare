@@ -1,0 +1,40 @@
+.name{
+	font-weight: bold;
+}
+
+.time {
+}
+
+.incomingHeader {
+	background-color:#dfedff;
+	border-color:#fafafa #d1dfef #d1dfef #fafafa;
+	color: #295b07;
+}
+
+.outgoingHeader {
+	background-color:#f5f5f5;
+	border-color:#fafafa #e3e3e3 #e3e3e3 #fafafa;
+	color: #244578;
+}
+
+.hincomingHeader {
+	background-color:#dfedff;
+	border-color:#fafafa #d1dfef #d1dfef #fafafa;
+	color: #88f042;
+}
+
+.houtgoingHeader {
+	background-color:#f5f5f5;
+	border-color:#fafafa #e3e3e3 #e3e3e3 #fafafa;
+	color: #6491d2;
+}
+
+.ooutgoingHeader {
+	background-color:#ffbebe;
+	border-color:#fafafa #e3e3e3 #e3e3e3 #fafafa;
+	color: #244578;
+}
+
+.messageBubbleCC{
+	background-color:#FF0000;
+}
