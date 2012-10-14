@@ -497,7 +497,6 @@
         <file>images/view_split_top_bottom.png</file>
         <file>images/window_fullscreen.png</file>
         <file>images/window_nofullscreen.png</file>
-        <file>layouts/default.ui</file>
         <file>qss/chat/standard/private/info.xml</file>
         <file>qss/chat/standard/private/incoming.htm</file>
         <file>qss/chat/standard/private/outgoing.htm</file>
