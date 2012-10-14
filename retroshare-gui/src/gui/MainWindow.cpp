@@ -114,7 +114,6 @@
 #include "bwctrl/BwCtrlWindow.h"
 #endif
 
-#define FONT        QFont("Arial", 9)
 
 /* Images for toolbar icons */
 #define IMAGE_NETWORK2          ":/images/rs1.png"
@@ -659,9 +658,12 @@ void MainWindow::postModDirectories(bool update_local)
 /** Creates a new action associated with a config page. */
 QAction *MainWindow::createPageAction(const QIcon &icon, const QString &text, QActionGroup *group)
 {
+    QFont font;
     QAction *action = new QAction(icon, text, group);
+    font = action->font();
+    font.setPointSize(9);
     action->setCheckable(true);
-    action->setFont(FONT);
+    action->setFont(font);
     return action;
 }
 
@@ -669,7 +671,10 @@ QAction *MainWindow::createPageAction(const QIcon &icon, const QString &text, QA
  * the specified slot (if given). */
 void MainWindow::addAction(QAction *action, const char *slot)
 {
-    action->setFont(FONT);
+    QFont font;
+    font = action->font();
+    font.setPointSize(9);
+    action->setFont(font);
     ui.toolBar->addAction(action);
     connect(action, SIGNAL(triggered()), this, slot);
 }

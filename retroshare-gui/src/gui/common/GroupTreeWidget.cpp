@@ -203,10 +203,11 @@ void GroupTreeWidget::currentItemChanged(QTreeWidgetItem *current, QTreeWidgetIt
 
 QTreeWidgetItem *GroupTreeWidget::addCategoryItem(const QString &name, const QIcon &icon, bool expand)
 {
-	QFont font = QFont("ARIAL", 10);
-	font.setBold(true);
-
+	QFont font;
 	QTreeWidgetItem *item = new QTreeWidgetItem();
+	font = item->font(COLUMN_NAME);
+	font.setBold(true);
+	font.setPointSize(10);
 	item->setText(COLUMN_NAME, name);
 	item->setData(COLUMN_DATA, ROLE_NAME, name);
 	item->setFont(COLUMN_NAME, font);

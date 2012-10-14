@@ -65,7 +65,6 @@
            <widget class="QLabel" name="titleBarLabel">
             <property name="font">
              <font>
-              <family>Arial</family>
               <pointsize>10</pointsize>
               <weight>75</weight>
               <bold>true</bold>
@@ -206,10 +205,7 @@
             </property>
             <property name="font">
              <font>
-              <family>Microsoft Sans Serif</family>
-              <pointsize>22</pointsize>
-              <weight>50</weight>
-              <bold>false</bold>
+              <pointsize>21</pointsize>
              </font>
             </property>
             <property name="text">

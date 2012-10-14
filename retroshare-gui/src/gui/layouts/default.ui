@@ -480,7 +480,6 @@
   </property>
   <property name="font" >
    <font>
-    <family>Arial</family>
     <pointsize>10</pointsize>
     <weight>50</weight>
     <italic>false</italic>

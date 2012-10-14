@@ -522,7 +522,6 @@ background: white;}</string>
        <widget class="QLabel" name="titleBarLabel">
         <property name="font">
          <font>
-          <family>Arial</family>
           <pointsize>10</pointsize>
           <weight>75</weight>
           <bold>true</bold>

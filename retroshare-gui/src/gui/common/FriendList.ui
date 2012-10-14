@@ -18,7 +18,6 @@
     <widget class="QTreeWidget" name="peerTreeWidget">
      <property name="font">
       <font>
-       <family>Arial</family>
        <pointsize>9</pointsize>
        <stylestrategy>PreferAntialias</stylestrategy>
        <kerning>true</kerning>

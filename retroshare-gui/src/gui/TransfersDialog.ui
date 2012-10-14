@@ -25,7 +25,6 @@
         <widget class="QTreeView" name="downloadList">
          <property name="font">
           <font>
-           <family>Arial</family>
            <pointsize>9</pointsize>
           </font>
          </property>
@@ -111,7 +110,6 @@
            <widget class="QLabel" name="titleBarLabel">
             <property name="font">
              <font>
-              <family>Arial</family>
               <pointsize>10</pointsize>
               <weight>75</weight>
               <bold>true</bold>
@@ -189,7 +187,6 @@
          <widget class="QTreeView" name="uploadsList">
           <property name="font">
            <font>
-            <family>Arial</family>
             <pointsize>9</pointsize>
            </font>
           </property>

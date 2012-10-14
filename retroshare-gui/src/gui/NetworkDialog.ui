@@ -160,7 +160,6 @@
            <widget class="QLabel" name="titleBarLabel">
             <property name="font">
              <font>
-              <family>Arial</family>
               <pointsize>10</pointsize>
               <weight>75</weight>
               <bold>true</bold>
@@ -205,7 +204,6 @@
             </property>
             <property name="font">
              <font>
-              <family>MS Shell Dlg 2</family>
              </font>
             </property>
             <property name="currentIndex">

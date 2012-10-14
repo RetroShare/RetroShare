@@ -38,11 +38,9 @@
       <widget class="QLabel" name="titleLabel">
        <property name="font">
         <font>
-         <family>Arial</family>
-         <pointsize>13</pointsize>
+         <pointsize>11</pointsize>
          <weight>75</weight>
          <bold>true</bold>
-         <kerning>true</kerning>
         </font>
        </property>
        <property name="text">
@@ -54,7 +52,6 @@
       <widget class="QLabel" name="statusMessageLabel">
        <property name="font">
         <font>
-         <family>Arial</family>
          <pointsize>9</pointsize>
         </font>
        </property>
