@@ -1821,7 +1821,7 @@ RsTurtle *rsTurtle = NULL ;
 #ifdef ENABLE_GXS_SERVICES
 #include "services/p3wikiserviceVEG.h"
 #include "services/p3wireVEG.h"
-#include "services/p3idserviceVEG.h".h"
+#include "services/p3idserviceVEG.h"
 #include "services/p3forumsVEG.h"
 #include "services/p3postedVEG.h"
 #endif
