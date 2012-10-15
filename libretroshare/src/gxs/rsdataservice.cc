@@ -128,7 +128,8 @@ const std::string RsGeneralDataService::MSG_META_STATUS = KEY_MSG_STATUS;
 
 RsDataService::RsDataService(const std::string &serviceDir, const std::string &dbName, uint16_t serviceType,
                              RsGxsSearchModule *mod)
-    : RsGeneralDataService(), mServiceDir(serviceDir), mDbName(mServiceDir + "/" + dbName), mServType(serviceType){
+    : RsGeneralDataService(), mServiceDir(serviceDir), mDbName(mServiceDir + "/" + dbName), mServType(serviceType),
+    mDbMutex("RsDataService"){
 
     initialise();
 
@@ -162,6 +163,8 @@ RsDataService::~RsDataService(){
 }
 
 void RsDataService::initialise(){
+
+    RsStackMutex stack(mDbMutex);
 
     // initialise database
     mDb = new RetroDb(mDbName, RetroDb::OPEN_READWRITE_CREATE);
@@ -417,6 +420,9 @@ RsNxsMsg* RsDataService::getMessage(RetroCursor &c)
 
 int RsDataService::storeMessage(std::map<RsNxsMsg *, RsGxsMsgMetaData *> &msg)
 {
+
+    RsStackMutex stack(mDbMutex);
+
     std::map<RsNxsMsg*, RsGxsMsgMetaData* >::iterator mit = msg.begin();
 
     // start a transaction
@@ -496,6 +502,9 @@ int RsDataService::storeMessage(std::map<RsNxsMsg *, RsGxsMsgMetaData *> &msg)
 
 int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
 {
+
+    RsStackMutex stack(mDbMutex);
+
     std::map<RsNxsGrp*, RsGxsGrpMetaData* >::iterator sit = grp.begin();
 
     // begin transaction
@@ -576,70 +585,72 @@ int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
 
 int RsDataService::retrieveNxsGrps(std::map<std::string, RsNxsGrp *> &grp, bool withMeta, bool cache){
 
-	if(grp.empty()){
+    if(grp.empty()){
 
-		RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, grpColumns, "", "");
+        RsStackMutex stack(mDbMutex);
+        RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, grpColumns, "", "");
 
-		if(c)
-		{
-			std::vector<RsNxsGrp*> grps;
-
-                        retrieveGroups(c, grps);
-			std::vector<RsNxsGrp*>::iterator vit = grps.begin();
-
-			for(; vit != grps.end(); vit++)
-			{
-				grp[(*vit)->grpId] = *vit;
-			}
-
-			delete c;
-		}
-
-	}else{
-
-		std::map<std::string, RsNxsGrp *>::iterator mit = grp.begin();
-
-		for(; mit != grp.end(); mit++)
-		{
-			const std::string& grpId = mit->first;
-			RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, grpColumns, "grpId='" + grpId + "'", "");
-
-			if(c)
-			{
-				std::vector<RsNxsGrp*> grps;
-				retrieveGroups(c, grps);
-
-				if(!grps.empty())
-				{
-					RsNxsGrp* ng = grps.front();
-					grp[ng->grpId] = ng;
-				}else{
-					grp.erase(grpId);
-				}
-
-				delete c;
-			}
-		}
-	}
-
-        if(withMeta)
+        if(c)
         {
-            std::map<RsGxsGroupId, RsGxsGrpMetaData*> metaMap;
-            std::map<std::string, RsNxsGrp *>::iterator mit = grp.begin();
-            for(; mit != grp.end(); mit++)
-                metaMap.insert(std::make_pair(mit->first, (RsGxsGrpMetaData*)(NULL)));
+                std::vector<RsNxsGrp*> grps;
 
-            retrieveGxsGrpMetaData(metaMap);
+                retrieveGroups(c, grps);
+                std::vector<RsNxsGrp*>::iterator vit = grps.begin();
 
-            mit = grp.begin();
-            for(; mit != grp.end(); mit++)
-            {
-                RsNxsGrp* grpPtr = grp[mit->first];
-                grpPtr->metaData = metaMap[mit->first];
-            }
+                for(; vit != grps.end(); vit++)
+                {
+                        grp[(*vit)->grpId] = *vit;
+                }
+
+                delete c;
         }
 
-	return 1;
+    }else{
+
+        RsStackMutex stack(mDbMutex);
+        std::map<std::string, RsNxsGrp *>::iterator mit = grp.begin();
+
+        for(; mit != grp.end(); mit++)
+        {
+            const std::string& grpId = mit->first;
+            RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, grpColumns, "grpId='" + grpId + "'", "");
+
+            if(c)
+            {
+                std::vector<RsNxsGrp*> grps;
+                retrieveGroups(c, grps);
+
+                if(!grps.empty())
+                {
+                        RsNxsGrp* ng = grps.front();
+                        grp[ng->grpId] = ng;
+                }else{
+                        grp.erase(grpId);
+                }
+
+                delete c;
+            }
+        }
+    }
+
+    if(withMeta)
+    {
+        std::map<RsGxsGroupId, RsGxsGrpMetaData*> metaMap;
+        std::map<std::string, RsNxsGrp *>::iterator mit = grp.begin();
+        for(; mit != grp.end(); mit++)
+            metaMap.insert(std::make_pair(mit->first, (RsGxsGrpMetaData*)(NULL)));
+
+        retrieveGxsGrpMetaData(metaMap);
+
+        mit = grp.begin();
+        for(; mit != grp.end(); mit++)
+        {
+            RsNxsGrp* grpPtr = grp[mit->first];
+            grpPtr->metaData = metaMap[mit->first];
+        }
+    }
+
+    return 1;
 }
 
 void RsDataService::retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>& grps){
@@ -677,6 +688,9 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
         std::vector<RsNxsMsg*> msgSet;
 
         if(msgIdV.empty()){
+
+            RsStackMutex stack(mDbMutex);
+
             RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, msgColumns, KEY_GRP_ID+ "='" + grpId + "'", "");
 
             if(c)
@@ -690,6 +704,9 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
 
             for(; sit!=msgIdV.end();sit++){
                 const std::string& msgId = *sit;
+
+                RsStackMutex stack(mDbMutex);
+
                 RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, msgColumns, KEY_GRP_ID+ "='" + grpId
                                                + "' AND " + KEY_MSG_ID + "='" + msgId + "'", "");
 
@@ -720,7 +737,6 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
     // tres expensive !?
     if(withMeta)
     {
-
 
         GxsMsgMetaResult metaResult;
 
@@ -791,6 +807,9 @@ void RsDataService::retrieveMessages(RetroCursor *c, std::vector<RsNxsMsg *> &ms
 
 int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaResult &msgMeta)
 {
+
+    RsStackMutex stack(mDbMutex);
+
     GxsMsgReq::const_iterator mit = reqIds.begin();
 
     for(; mit != reqIds.end(); mit++)
@@ -848,6 +867,7 @@ void RsDataService::retrieveMsgMeta(RetroCursor *c, std::vector<RsGxsMsgMetaData
 int RsDataService::retrieveGxsGrpMetaData(std::map<RsGxsGroupId, RsGxsGrpMetaData *>& grp)
 {
 
+    RsStackMutex stack(mDbMutex);
 
     if(grp.empty()){
 
@@ -918,6 +938,7 @@ int RsDataService::resetDataStore()
     std::map<std::string, RsNxsGrp*>::iterator mit
             = grps.begin();
 
+
     // remove all grp msgs files from service dir
     for(; mit != grps.end(); mit++){
         std::string file = mServiceDir + "/" + mit->first;
@@ -925,8 +946,11 @@ int RsDataService::resetDataStore()
         remove(file.c_str()); // remove group file
         remove(msgFile.c_str()); // and remove messages file
     }
+    {
+        RsStackMutex stack(mDbMutex);
+        mDb->closeDb();
+    }
 
-    mDb->closeDb();
     remove(mDbName.c_str()); // remove db file
 
     // recreate database

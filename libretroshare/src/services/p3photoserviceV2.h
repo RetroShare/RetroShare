@@ -43,6 +43,11 @@ public:
      */
     bool updated();
 
+    /*!
+     *
+     */
+    void service_tick();
+
 protected:
 
     void notifyChanges(std::vector<RsGxsNotify*>& changes);

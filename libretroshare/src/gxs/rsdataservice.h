@@ -190,6 +190,8 @@ private:
 
     RetroDb* mDb;
 
+    RsMutex mDbMutex;
+
     std::list<std::string> msgColumns;
     std::list<std::string> msgMetaColumns;
 

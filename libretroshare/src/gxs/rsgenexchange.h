@@ -36,6 +36,7 @@
 #include "rsnxsobserver.h"
 #include "retroshare/rsgxsservice.h"
 #include "serialiser/rsnxsitems.h"
+//#include "rsgixs.h"
 
 typedef std::map<RsGxsGroupId, std::vector<RsGxsMsgItem*> > GxsMsgDataMap;
 typedef std::map<RsGxsGroupId, RsGxsGrpItem*> GxsGroupDataMap;
@@ -99,6 +100,12 @@ public:
     void tick();
 
     /*!
+     * Any backgroup processing needed by
+     */
+    virtual void service_tick() = 0;
+
+
+    /*!
      *
      * @return handle to token service handle for making
      * request to this gxs service
@@ -159,6 +166,41 @@ protected:
      * @deprecated only here to temporarily to testing
      */
     void createDummyGroup(RsGxsGrpItem* grpItem);
+
+protected:
+
+    /*!
+     * Assigns a token value to passed integer
+     * The status of the token can still be queried from request status feature
+     * @warning the token space is shared with RsGenExchange backend, so do not
+     * modify tokens except does you have created by calling generatePublicToken()
+     * @return  token
+     */
+    uint32_t generatePublicToken();
+
+    /*!
+     * Updates the status of associate token
+     * @warning the token space is shared with RsGenExchange backend, so do not
+     * modify tokens except does you have created by calling generatePublicToken()
+     * @param token
+     * @param status
+     * @return false if token could not be found, true if token disposed of
+     */
+    bool updatePublicRequestStatus(const uint32_t &token, const uint32_t &status);
+
+    /*!
+     * This gets rid of a publicly issued token
+     * @param token
+     * @return false if token could not found, true if token is disposed of
+     */
+    bool disposeOfPublicToken(const uint32_t &token);
+
+    /*!
+     * This gives access to the data store which hold msgs and groups
+     * for the service
+     * @return Data store for retrieving msgs and groups
+     */
+    RsGeneralDataService* getDataStore();
 
 public:
 

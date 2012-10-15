@@ -688,6 +688,28 @@ void RsGenExchange::publishGrps()
 	mGrpsToPublish.clear();
 }
 
+
+
+uint32_t RsGenExchange::generatePublicToken()
+{
+    return mDataAccess->generatePublicToken();
+}
+
+bool RsGenExchange::updatePublicRequestStatus(const uint32_t &token, const uint32_t &status)
+{
+    return mDataAccess->updatePublicRequestStatus(token, status);
+}
+
+bool RsGenExchange::disposeOfPublicToken(const uint32_t &token)
+{
+    return mDataAccess->disposeOfPublicToken(token);
+}
+
+RsGeneralDataService* RsGenExchange::getDataStore()
+{
+    return mDataStore;
+}
+
 void RsGenExchange::createDummyGroup(RsGxsGrpItem *grpItem)
 {
 

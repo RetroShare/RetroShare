@@ -254,7 +254,7 @@ public:
     uint32_t generatePublicToken();
 
     /*!
-     * Update
+     * Updates the status of associate token
      * @param token
      * @param status
      * @return false if token could not be found, true if token disposed of

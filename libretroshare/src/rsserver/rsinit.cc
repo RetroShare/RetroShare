@@ -2311,11 +2311,7 @@ int RsServer::StartupRetroShare()
 	// Testing New Cache Services.
         p3WireVEG *mWire = new p3WireVEG(RS_SERVICE_GXSV1_TYPE_WIRE);
 	pqih -> addService(mWire);
-	
-	// Testing New Cache Services.
-        p3IdServiceVEG *mIdentity = new p3IdServiceVEG(RS_SERVICE_GXSV1_TYPE_IDENTITY);
-	pqih -> addService(mIdentity);
-	
+
 	// Testing New Cache Services.
         p3ForumsVEG *mForumsV2 = new p3ForumsVEG(RS_SERVICE_GXSV1_TYPE_FORUMS);
 	pqih -> addService(mForumsV2);
@@ -2584,8 +2580,8 @@ int RsServer::StartupRetroShare()
 
        rsPhotoV2 = mPhotoV2;
 #ifdef ENABLE_GXS_SERVICES
-	// Testing of new cache system interfaces.
-        rsIdentityVEG = mIdentity;
+        // Testing of new cache system interfaces.
+
         rsWikiVEG = mWikis;
         rsWireVEG = mWire;
         rsForumsVEG = mForumsV2;

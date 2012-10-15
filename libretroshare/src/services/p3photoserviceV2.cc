@@ -105,6 +105,11 @@ bool p3PhotoServiceV2::updated()
     return changed;
 }
 
+void p3PhotoServiceV2::service_tick()
+{
+
+}
+
 
 
 void p3PhotoServiceV2::groupsChanged(std::list<RsGxsGroupId>& grpIds)
