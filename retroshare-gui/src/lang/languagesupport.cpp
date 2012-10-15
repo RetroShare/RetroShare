@@ -42,23 +42,23 @@ LanguageSupport::languages()
     //languages.insert("af",    "Afrikaans");
     //languages.insert("bg",    "Bulgarien");
     //languages.insert("cy",    "Welsh");
-    languages.insert("cs",    "Czech");
+    languages.insert("cs",    QString::fromUtf8("\304\214esky"));
     languages.insert("de",    "Deutsch");
-    languages.insert("da",    "Danish");
+    languages.insert("da",    "Dansk");
     languages.insert("en",    "English");
-    languages.insert("es",    QString::fromUtf8("spanish"));
+    languages.insert("es",    QString::fromUtf8("Espa\303\261ol"));
     languages.insert("fr",    QString::fromUtf8("Fran\303\247ais"));
-    languages.insert("fi",    "suomi");
+    languages.insert("fi",    "Suomi");
     //languages.insert("gr",    "Greek");
     //languages.insert("it",    "Italiano");
     languages.insert("ja_JP",    QString::fromUtf8("\346\227\245\346\234\254\350\252\236"));
-    languages.insert("ko",    "Korean");
-    languages.insert("pl",    "Polska");
+    languages.insert("ko",    QString::fromUtf8("\355\225\234\352\265\255\354\226\264"));
+    languages.insert("pl",    "Polski");
     //languages.insert("pt",    "Portuguese");
     languages.insert("ru",    QString::fromUtf8("\320\240\321\203\321\201\321\201\320\272\320\270\320\271"));
     //languages.insert("sl",    "slovenian");
     //languages.insert("sr",    "Serbian");
-    languages.insert("sv",    "svenska");     
+    languages.insert("sv",    "Svenska");
     languages.insert("tr",    QString::fromUtf8("T\303\274rk\303\247e"));
     languages.insert("zh_CN", QString::fromUtf8("\347\256\200\344\275\223\345\255\227"));
     //languages.insert("zh_TW", QString::fromUtf8("\347\260\241\351\253\224\345\255\227"));
@@ -157,19 +157,23 @@ LanguageSupport::translate(const QString &languageCode)
     return true;
 
   /* Attempt to load the translations for Qt's internal widgets from their installed Qt directory. */
-  QString qtTranslation = QLibraryInfo::location(QLibraryInfo::TranslationsPath) + "/qt_" + languageCode + ".qm";
   QTranslator *systemQtTranslator = new QTranslator(rApp);
   Q_CHECK_PTR(systemQtTranslator);
 
-  if (QFile::exists(qtTranslation) && systemQtTranslator->load(qtTranslation))
+  if (systemQtTranslator->load(QLibraryInfo::location(QLibraryInfo::TranslationsPath) + "/qt_" + languageCode + ".qm")) {
     QApplication::installTranslator(systemQtTranslator);
-  else {
+  } else {
     /* Attempt to load the translations for Qt's internal widgets from the translations directory in the exe dir. */
-    qtTranslation = QCoreApplication::applicationDirPath() + "/translations/qt_" + languageCode + ".qm";
-    if (QFile::exists(qtTranslation) && systemQtTranslator->load(qtTranslation))
+    if (systemQtTranslator->load(QCoreApplication::applicationDirPath() + "/translations/qt_" + languageCode + ".qm")) {
       QApplication::installTranslator(systemQtTranslator);
-    else
-      delete systemQtTranslator;
+    } else {
+      /* Attempt to load the translations for Qt's internal widgets from the translations directory in the data dir. */
+      if (systemQtTranslator->load(EXTERNAL_TRANSLATION_DIR + "/translations/qt_" + languageCode + ".qm")) {
+        QApplication::installTranslator(systemQtTranslator);
+      } else {
+        delete systemQtTranslator;
+      }
+    }
   }
 
   /* Install a translator for RetroShare's UI widgets */
