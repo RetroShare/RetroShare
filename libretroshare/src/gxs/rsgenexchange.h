@@ -112,7 +112,7 @@ public:
      */
     RsTokenService* getTokenService();
 
-protected:
+public:
 
     /** data access functions **/
 
@@ -146,6 +146,17 @@ protected:
      */
     bool getMsgMeta(const uint32_t &token, GxsMsgMetaMap &msgInfo);
 
+
+
+
+protected:
+
+    /*!
+     * @param grpItem
+     * @deprecated only here to temporarily to testing
+     */
+    void createDummyGroup(RsGxsGrpItem* grpItem);
+
     /*!
      * retrieves group data associated to a request token
      * @param token token to be redeemed for grpitem retrieval
@@ -159,15 +170,6 @@ protected:
      * @param msgItems
      */
     bool getMsgData(const uint32_t &token, GxsMsgDataMap& msgItems);
-
-
-    /*!
-     * @param grpItem
-     * @deprecated only here to temporarily to testing
-     */
-    void createDummyGroup(RsGxsGrpItem* grpItem);
-
-protected:
 
     /*!
      * Assigns a token value to passed integer
@@ -247,6 +249,8 @@ protected:
      * @param msgItem
      */
     void publishMsg(uint32_t& token, RsGxsMsgItem* msgItem);
+
+public:
 
     /*!
      * sets the group subscribe flag

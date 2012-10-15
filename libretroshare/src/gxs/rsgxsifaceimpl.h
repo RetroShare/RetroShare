@@ -5,43 +5,68 @@
 
 /*!
  * The simple idea of this class is to implement the simple interface functions
- * of gen exchange
+ * of gen exchange.
+ * This class provides convenience implementations of:
+ * - Handle msg and group changes (client class must pass changes sent by RsGenExchange to it)
+ * - subscription to groups
+ * - retrieval of msgs and group ids and meta info
  */
 class RsGxsIfaceImpl
 {
 public:
 
+    /*!
+     *
+     * @param gxs handle to RsGenExchange instance of service (Usually the service class itself)
+     */
     RsGxsIfaceImpl(RsGenExchange* gxs);
 
+    /*!
+     * Gxs services should call this for automatic handling of
+     * changes, send
+     * @param changes
+     */
+    void receiveChanges(std::vector<RsGxsNotify*>& changes);
 
     /*!
-     * @return true if a change has occured
+     * Checks to see if a change has been received for
+     * for a message or group
+     * @return true if a change has occured for msg or group
      */
-    bool updated();
+    virtual bool updated();
 
 public:
 
-    /** Requests **/
-
     /*!
-     *
+     * The groups changed. \n
+     * class can reimplement to use to tailor
+     * the group actually set for ui notification.
+     * If receivedChanges is not passed RsGxsNotify changes
+     * this function does nothing
      * @param grpIds
      */
-    void groupsChanged(std::list<RsGxsGroupId>& grpIds);
+    virtual void groupsChanged(std::list<RsGxsGroupId>& grpIds);
 
     /*!
-     *
+     * The msg changed. \n
+     * class can reimplement to use to tailor
+     * the msg actually set for ui notification.
+     * If receivedChanges is not passed RsGxsNotify changes
+     * this function does nothing
      * @param msgs
      */
-    void msgsChanged(std::map<RsGxsGroupId,
+    virtual void msgsChanged(std::map<RsGxsGroupId,
                              std::vector<RsGxsMessageId> >& msgs);
 
+    /*!
+     * @return handle to token service for this GXS service
+     */
     RsTokenService* getTokenService();
 
     /* Generic Lists */
 
     /*!
-     *
+     * Retrieve list of group ids associated to a request token
      * @param token token to be redeemed for this request
      * @param groupIds the ids return for given request token
      * @return false if request token is invalid, check token status for error report
@@ -50,14 +75,13 @@ public:
                               std::list<RsGxsGroupId> &groupIds);
 
     /*!
+     * Retrieves list of msg ids associated to a request token
      * @param token token to be redeemed for this request
      * @param msgIds the ids return for given request token
      * @return false if request token is invalid, check token status for error report
      */
     bool getMsgList(const uint32_t &token,
                             GxsMsgIdResult& msgIds);
-
-    /* Generic Summary */
 
     /*!
      * @param token token to be redeemed for group summary request
@@ -81,7 +105,7 @@ public:
      * @param token token to redeem for acknowledgement
      * @param grpId the id of the group to subscribe to
      */
-    virtual bool subscribeToAlbum(uint32_t& token, const RsGxsGroupId& grpId, bool subscribe);
+    virtual bool subscribeToGroup(uint32_t& token, const RsGxsGroupId& grpId, bool subscribe);
 
     /*!
      * This allows the client service to acknowledge that their msgs has
@@ -102,10 +126,14 @@ public:
     bool acknowledgeGrp(const uint32_t& token, RsGxsGroupId& grpId);
 
 
-
 private:
 
     RsGenExchange* mGxs;
+
+    std::vector<RsGxsGroupChange*> mGroupChange;
+    std::vector<RsGxsMsgChange*> mMsgChange;
+
+    RsMutex mGxsIfaceMutex;
 };
 
 #endif // RSGXSIFACEIMPL_H

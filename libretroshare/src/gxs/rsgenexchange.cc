@@ -78,6 +78,8 @@ void RsGenExchange::tick()
             mNotifications.clear();
         }
 
+        // implemented service tick function
+        service_tick();
 }
 
 bool RsGenExchange::acknowledgeTokenMsg(const uint32_t& token,
