@@ -143,13 +143,13 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
     LangString sec_main ${LANG_GERMAN} "Programme"
     LangString sec_data ${LANG_GERMAN} "Programm Skins"
     LangString sec_plugins ${LANG_GERMAN} "Plug-ins"
-    LangString sec_shortcuts ${LANG_GERMAN} "Verknuepfungen"
-    LangString sec_link ${LANG_GERMAN} "Dateiverknuepfungen"
+    LangString sec_shortcuts ${LANG_GERMAN} "Verknüpfungen"
+    LangString sec_link ${LANG_GERMAN} "Dateiverknüpfungen"
     LangString sec_autostart ${LANG_GERMAN} "Autostart"
     LangString DESC_sec_main ${LANG_GERMAN} "Installiert die RetroShare Programmdateien."
     LangString DESC_sec_data ${LANG_GERMAN} "Installiert RetroShare Skins"
     LangString DESC_sec_plugins ${LANG_GERMAN} "Installiert die RetroShare Erweiterungen."
-    LangString DESC_sec_shortcuts ${LANG_GERMAN} "RetroShare Verknuepfung im Startmenue, Desktop oder im Schnellstarter erstellen."
+    LangString DESC_sec_shortcuts ${LANG_GERMAN} "RetroShare Verknüpfung im Startmenü, Desktop oder im Schnellstarter erstellen."
     LangString DESC_sec_link ${LANG_GERMAN} "RetroShare mit .rsc Dateiendung verknuepfen"
     LangString LANGUAGEID ${LANG_GERMAN} "1031"
             
@@ -341,7 +341,10 @@ Section $(sec_main) sec_main
   File /r "release\pthreadGC2d.dll"
   File /r "d:\Development\lib\libminiupnpc-1.3\miniupnpc.dll"
   File /r "changelog.txt"
-  File /r /x Data "release\bdboot.txt" 
+  File /r /x Data "release\bdboot.txt"
+  
+  SetOutPath "$INSTDIR\translations\"
+  File /r translations\qt_*.qm 
 
 
 SectionEnd
@@ -354,10 +357,6 @@ Section  $(sec_data) sec_data
   ; Set Section Files and Shortcuts
   SetOutPath "$APPDATA\RetroShare\"
   ;File /r "data\*"
-  
-  ; Set Section Plugins
-  SetOutPath "$APPDATA\RetroShare\plugins\"
-  ;File /r "plugins\"
   
   ; Set Section qss and exclude svn
   SetOutPath "$INSTDIR\qss\"
@@ -377,7 +376,8 @@ Section  $(sec_data) sec_data
 	
   ; Add Chat Style
   SetOutPath "$APPDATA\RetroShare\stylesheets\"
-  File /r gui\qss\chat\bubble
+  File /r gui\qss\chat\Bubble
+  File /r gui\qss\chat\Bubble_Compact
      
 	
 SectionEnd
