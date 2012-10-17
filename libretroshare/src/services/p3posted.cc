@@ -7,8 +7,7 @@ p3Posted::p3Posted(RsGeneralDataService *gds, RsNetworkExchangeService *nes)
 
 void p3Posted::notifyChanges(std::vector<RsGxsNotify *> &changes)
 {
-
-
+    receiveChanges(changes);
 }
 
 bool p3Posted::getGroup(const uint32_t &token, RsPostedGroup &group)
