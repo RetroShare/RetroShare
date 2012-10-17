@@ -4,133 +4,132 @@
 <context>
     <name>AudioInput</name>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="20"/>
+        <location filename="../gui/AudioInputConfig.ui" line="17"/>
         <source>Audio Wizard</source>
         <translation>Assistente de áudio</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="33"/>
+        <location filename="../gui/AudioInputConfig.ui" line="30"/>
         <source>Transmission</source>
         <translation>Transmissão</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="39"/>
+        <location filename="../gui/AudioInputConfig.ui" line="36"/>
         <source>&amp;Transmit</source>
         <translation>&amp;Transmitir</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="49"/>
+        <location filename="../gui/AudioInputConfig.ui" line="46"/>
         <source>When to transmit your speech</source>
         <translation>Quando transmitir sua fala</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="52"/>
+        <location filename="../gui/AudioInputConfig.ui" line="49"/>
         <source>&lt;b&gt;This sets when speech should be transmitted.&lt;/b&gt;&lt;br /&gt;&lt;i&gt;Continuous&lt;/i&gt; - All the time&lt;br /&gt;&lt;i&gt;Voice Activity&lt;/i&gt; - When you are speaking clearly.&lt;br /&gt;&lt;i&gt;Push To Talk&lt;/i&gt; - When you hold down the hotkey set under &lt;i&gt;Shortcuts&lt;/i&gt;.</source>
         <translation>&lt;b&gt;Define quando sua fala deve ser transmitida.&lt;/b&gt;&lt;br /&gt;&lt;i&gt;Contínua&lt;/i&gt; - Todo o tempo&lt;br /&gt;&lt;i&gt;Atividade vocal&lt;/i&gt; - Quando você fala claramente.&lt;br /&gt;&lt;i&gt;Pressionar Para Falar&lt;/i&gt; - Quando você pressionar a tecla de atalho escolhida em &lt;i&gt;Atalhos&lt;/i&gt;.</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="66"/>
+        <location filename="../gui/AudioInputConfig.ui" line="63"/>
         <source>DoublePush Time</source>
         <translation>Tempo para DuploClique</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="76"/>
+        <location filename="../gui/AudioInputConfig.ui" line="73"/>
         <source>If you press the PTT key twice in this time it will get locked.</source>
         <translation>Se pressionar a tecla PPF duas vezes neste tempo ela ficará travada.</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="79"/>
+        <location filename="../gui/AudioInputConfig.ui" line="76"/>
         <source>&lt;b&gt;DoublePush Time&lt;/b&gt;&lt;br /&gt;If you press the push-to-talk key twice during the configured interval of time it will be locked. Mumble will keep transmitting until you hit the key once more to unlock PTT again.</source>
         <translation>&lt;b&gt;Tempo para DuploClique&lt;/b&gt;&lt;br /&gt;Se você pressionar a tecla para falar duas vezes durante o intervalo de tempo configurado ela ficará travada. O Mumble ocnitnuará transmitindo até que você  pressione-a uma vez mais para destravar o PPF de novo.</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="122"/>
+        <location filename="../gui/AudioInputConfig.ui" line="119"/>
         <source>Voice &amp;Hold</source>
         <translation>&amp;Persistência de voz</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="132"/>
+        <location filename="../gui/AudioInputConfig.ui" line="129"/>
         <source>How long to keep transmitting after silence</source>
         <translation>Quanto tempo continuar a transmissão após silêncio</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="135"/>
+        <location filename="../gui/AudioInputConfig.ui" line="132"/>
         <source>&lt;b&gt;This selects how long after a perceived stop in speech transmission should continue.&lt;/b&gt;&lt;br /&gt;Set this higher if your voice breaks up when you speak (seen by a rapidly blinking voice icon next to your name).</source>
         <translation>&lt;b&gt;Seleciona quanto tempo após uma perceptível parada na fala a transmissão deve continuar.&lt;/b&gt;&lt;br /&gt;Configure isto mais alto se sua voz quebra durante sua fala (percebido pelo ícone de voz piscando ao lado de seu nome).</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="151"/>
+        <location filename="../gui/AudioInputConfig.ui" line="148"/>
         <source>Silence Below</source>
         <translation>Silêncio abaixo</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="158"/>
+        <location filename="../gui/AudioInputConfig.ui" line="155"/>
         <source>Signal values below this count as silence</source>
         <translation>Valores de sinal abaixo disto contam como silêncio</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="161"/>
-        <location filename="../gui/AudioInputConfig.ui" line="193"/>
+        <location filename="../gui/AudioInputConfig.ui" line="158"/>
+        <location filename="../gui/AudioInputConfig.ui" line="190"/>
         <source>&lt;b&gt;This sets the trigger values for voice detection.&lt;/b&gt;&lt;br /&gt;Use this together with the Audio Statistics window to manually tune the trigger values for detecting speech. Input values below &quot;Silence Below&quot; always count as silence. Values above &quot;Speech Above&quot; always count as voice. Values in between will count as voice if you&apos;re already talking, but will not trigger a new detection.</source>
         <translation>&lt;b&gt;Estabaelece os gatilhos para a detecção de voz.&lt;/b&gt;&lt;br /&gt;Use isto junto com a janela de Estatísticas de Áudio para afinar manualmente os valores para o gatilho de deteção de voz. Valores de entrada baixo de &quot;Silêncio abaixo&quot; sempre contam como silêncio. Valores acima de &quot;Fala acima&quot; sempre contam como voz. Valores entre ambos contam como voz se você já está falando, mas não levam a uma nova detação.</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="183"/>
+        <location filename="../gui/AudioInputConfig.ui" line="180"/>
         <source>Speech Above</source>
         <translation>Fala acima</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="190"/>
+        <location filename="../gui/AudioInputConfig.ui" line="187"/>
         <source>Signal values above this count as voice</source>
         <translation>Sinal acima disto conta como voz</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="228"/>
+        <location filename="../gui/AudioInputConfig.ui" line="225"/>
         <source>empty</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="243"/>
+        <location filename="../gui/AudioInputConfig.ui" line="240"/>
         <source>Audio Processing</source>
         <translation>Processamento de áudio</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="249"/>
+        <location filename="../gui/AudioInputConfig.ui" line="246"/>
         <source>Noise Suppression</source>
         <translation>Supressão de Ruídos</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="262"/>
+        <location filename="../gui/AudioInputConfig.ui" line="259"/>
         <source>Noise suppression</source>
         <translation>Supressão de ruídos</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="265"/>
+        <location filename="../gui/AudioInputConfig.ui" line="262"/>
         <source>&lt;b&gt;This sets the amount of noise suppression to apply.&lt;/b&gt;&lt;br /&gt;The higher this value, the more aggressively stationary noise will be suppressed.</source>
         <translation>&lt;b&gt;Configura a quantia de supressão de ruído aplicada.&lt;/b&gt;&lt;br /&gt;Quão maior este valor, mais agressivamente o ruído estacionário será suprimido.</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="297"/>
+        <location filename="../gui/AudioInputConfig.ui" line="294"/>
         <source>Amplification</source>
         <translation>Amplificação</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="307"/>
+        <location filename="../gui/AudioInputConfig.ui" line="304"/>
         <source>Maximum amplification of input sound</source>
         <translation>Amplificação máxima do som de entrada</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="310"/>
+        <location filename="../gui/AudioInputConfig.ui" line="307"/>
         <source>&lt;b&gt;Maximum amplification of input.&lt;/b&gt;&lt;br /&gt;Mumble normalizes the input volume before compressing, and this sets how much it&apos;s allowed to amplify.&lt;br /&gt;The actual level is continually updated based on your current speech pattern, but it will never go above the level specified here.&lt;br /&gt;If the &lt;i&gt;Microphone loudness&lt;/i&gt; level of the audio statistics hover around 100%, you probably want to set this to 2.0 or so, but if, like most people, you are unable to reach 100%, set this to something much higher.&lt;br /&gt;Ideally, set it so &lt;i&gt;Microphone Loudness * Amplification Factor &gt;= 100&lt;/i&gt;, even when you&apos;re speaking really soft.&lt;br /&gt;&lt;br /&gt;Note that there is no harm in setting this to maximum, but Mumble will start picking up other conversations if you leave it to auto-tune to that level.</source>
         <translation>&lt;b&gt;Amplificação máxima da entrada.&lt;/b&gt;&lt;br /&gt;O Mumble normaliza o volume de entrada antes da compressão, e isto configura quando ele pode amplificar.&lt;br /&gt;O nível real é continuamente atualizado baseado no seu padrão atual de fala, mas nunca passará do especificado aqui.&lt;br /&gt;Se a &lt;i&gt;Altura do microfone&lt;/i&gt; nível das estatísticas de áudio ficam sobre os 100%, você provavelmente quer configurar isto para 2.0 ou parecido, mas se , como a maioria das pessoas, você é incapaz de chegar aos 100%, configure isto muito mais alto.&lt;br /&gt;Idealmente, configure dem odo que a &lt;i&gt;Altura do microfone * Factor de Amplificação &gt;= 100&lt;/i&gt;, mesmo quando você está falando baixo.&lt;br /&gt;&lt;br /&gt;Note que não há dano em configurar isto no máximo, mas o Mumble começará a transmitir outras conversar se você deixá-lo auto-afinado para este nível.</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="342"/>
+        <location filename="../gui/AudioInputConfig.ui" line="339"/>
         <source>Echo Cancellation Processing</source>
         <translation type="unfinished"></translation>
     </message>
@@ -170,6 +169,19 @@
     <message>
         <location filename="../gui/AudioInputConfig.h" line="72"/>
         <source>VOIP</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AudioPopupChatDialog</name>
+    <message>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="14"/>
+        <source>Mute yourself</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="34"/>
+        <source>Deafen yourself</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -426,11 +438,6 @@
         <location filename="../gui/AudioWizard.ui" line="184"/>
         <source>Push To Talk:</source>
         <translation>Pressionar Para Falar:</translation>
-    </message>
-    <message>
-        <location filename="../gui/AudioWizard.ui" line="191"/>
-        <source>todo shortcut</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="213"/>

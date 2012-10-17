@@ -169,6 +169,19 @@
     </message>
 </context>
 <context>
+    <name>AudioPopupChatDialog</name>
+    <message>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="14"/>
+        <source>Mute yourself</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="34"/>
+        <source>Deafen yourself</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AudioStats</name>
     <message>
         <location filename="../gui/AudioStats.ui" line="14"/>

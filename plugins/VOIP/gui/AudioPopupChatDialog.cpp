@@ -11,6 +11,7 @@ AudioPopupChatDialog::AudioPopupChatDialog(QWidget *parent)
 	audioListenToggleButton->setMinimumSize(QSize(28,28)) ;
 	audioListenToggleButton->setMaximumSize(QSize(28,28)) ;
 	audioListenToggleButton->setText(QString()) ;
+	audioListenToggleButton->setToolTip(tr("Mute yourself"));
 
 	std::cerr << "****** VOIPLugin: Creating new AudioPopupChatDialog !!" << std::endl;
 
@@ -29,7 +30,8 @@ AudioPopupChatDialog::AudioPopupChatDialog(QWidget *parent)
 	audioMuteCaptureToggleButton = new QPushButton ;
 	audioMuteCaptureToggleButton->setMinimumSize(QSize(28,28)) ;
 	audioMuteCaptureToggleButton->setMaximumSize(QSize(28,28)) ;
-        audioMuteCaptureToggleButton->setText(QString()) ;
+	audioMuteCaptureToggleButton->setText(QString()) ;
+	audioMuteCaptureToggleButton->setToolTip(tr("Deafen yourself"));
 
 	QIcon icon2 ;
         icon2.addPixmap(QPixmap(":/images/muted_self.svg")) ;
