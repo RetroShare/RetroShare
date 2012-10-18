@@ -89,6 +89,20 @@ class p3IdService: public RsIdentity, public RsGxsIdExchange
 	/* TODO */
 
 
+	/**************** RsIdentity External Interface.
+	 * Notes:
+	 */
+
+
+virtual bool  getNickname(const RsId &id, std::string &nickname);
+virtual bool  getIdDetails(const RsId &id, RsIdentityDetails &details);
+virtual bool  getOwnIds(std::list<RsId> &ownIds);
+
+        // 
+virtual bool submitOpinion(uint32_t& token, RsIdOpinion &opinion);
+virtual bool createIdentity(uint32_t& token, RsIdentityParameters &params);
+
+
 	/**************** RsGixs Implementation 
 	 * Notes:
 	 *   Interface is only suggestion at the moment, will be changed as necessary.
