@@ -6,25 +6,22 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>764</width>
-    <height>428</height>
+    <width>755</width>
+    <height>491</height>
    </rect>
   </property>
-  <layout class="QGridLayout" name="gridLayout_6">
+  <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
      <widget class="QWidget" name="layoutWidget">
-      <layout class="QGridLayout" name="friendListLayout">
-       <property name="horizontalSpacing">
-        <number>6</number>
+      <layout class="QVBoxLayout" name="friendListLayout">
+       <property name="spacing">
+        <number>1</number>
        </property>
-       <property name="verticalSpacing">
-        <number>0</number>
-       </property>
-       <item row="0" column="0">
+       <item>
         <widget class="QFrame" name="titleBarFrame">
          <property name="frameShape">
           <enum>QFrame::Box</enum>
@@ -137,7 +134,10 @@
          </layout>
         </widget>
        </item>
-       <item row="3" column="0">
+       <item>
+        <widget class="LineEditClear" name="filter_lineEdit"/>
+       </item>
+       <item>
         <widget class="FriendList" name="friendList" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
@@ -149,6 +149,12 @@
           <size>
            <width>150</width>
            <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>16777215</height>
           </size>
          </property>
         </widget>
@@ -902,6 +908,11 @@
    <extends>QTabWidget</extends>
    <header location="global">gui/chat/ChatTabWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header location="global">gui/common/LineEditClear.h</header>
   </customwidget>
  </customwidgets>
  <resources>

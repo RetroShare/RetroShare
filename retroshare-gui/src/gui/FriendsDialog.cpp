@@ -95,6 +95,11 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     connect( ui.actionAdd_Friend, SIGNAL(triggered()), this, SLOT(addFriend()));
     connect( ui.actionCreate_new_Chat_lobby, SIGNAL(triggered()), this, SLOT(createChatLobby()));
     connect( ui.actionFriendRecommendations, SIGNAL(triggered()), this, SLOT(recommendFriends()));
+    connect( ui.filter_lineEdit, SIGNAL(textChanged(QString)), ui.friendList, SLOT(filterItems(QString)));
+
+#if QT_VERSION >= 0x040700
+	ui.filter_lineEdit->setPlaceholderText(tr("Search")) ;
+#endif
 
     ui.avatar->setFrameType(AvatarWidget::STATUS_FRAME);
     ui.avatar->setOwnId();
