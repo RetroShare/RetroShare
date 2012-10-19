@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef P3_WIKI_SERVICE_HEADER
-#define P3_WIKI_SERVICE_HEADER
+#ifndef P3_WIKI_SERVICE_VEG_HEADER
+#define P3_WIKI_SERVICE_VEG_HEADER
 
 #include "services/p3gxsserviceVEG.h"
 #include "retroshare/rswikiVEG.h"

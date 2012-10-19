@@ -602,7 +602,8 @@ HEADERS += retroshare/rsgame.h \
                 gxs/gxssecurity.h \
                 gxs/rsgxsifaceimpl.h \
                 services/p3posted.h \
-                retroshare/rsposted.h
+                retroshare/rsposted.h \
+
 
             SOURCES += serialiser/rsnxsitems.cc \
                 gxs/rsdataservice.cc \
@@ -619,7 +620,25 @@ HEADERS += retroshare/rsgame.h \
                 gxs/gxssecurity.cc \
                 gxs/gxssecurity.cc \
                 gxs/rsgxsifaceimpl.cc \
-                services/p3posted.cc
+                services/p3posted.cc \
+
+            # Identity Service
+            #HEADERS += retroshare/rsidentity.h \
+            #    gxs/rsgixs.h \
+            #    services/p3idservice.h \
+            #    serialiser/rsiditems.h \
+
+            #SOURCES += services/p3idservice.cc \
+            #    serialiser/rsiditems.cc \
+
+            # Wiki Service
+            HEADERS += retroshare/rswiki.h \
+                services/p3wiki.h \
+                serialiser/rswikiitems.h \
+
+            SOURCES += services/p3wiki.cc \
+            #    serialiser/rswikiitems.cc \
+
         }
 
         newservices { 

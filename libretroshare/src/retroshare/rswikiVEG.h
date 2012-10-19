@@ -1,5 +1,5 @@
-#ifndef RETROSHARE_WIKI_GUI_INTERFACE_H
-#define RETROSHARE_WIKI_GUI_INTERFACE_H
+#ifndef RETROSHARE_WIKI_VEG_GUI_INTERFACE_H
+#define RETROSHARE_WIKI_VEG_GUI_INTERFACE_H
 
 /*
  * libretroshare/src/retroshare: rswiki.h
