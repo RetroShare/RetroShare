@@ -71,7 +71,7 @@ class RsSshd: public RsThread, public RpcComms
 public:
 
 // NB: This must be called EARLY before all the threads are launched.
-static  RsSshd *InitRsSshd(std::string portstr, std::string rsakeyfile);
+static  RsSshd *InitRsSshd(const std::string &portstr, const std::string &rsakeyfile);
 
 
 	// Interface.
@@ -101,7 +101,7 @@ int 	adduserpwdhash(std::string username, std::string hash);
 private:
 	RsSshd(std::string portStr); /* private constructor => so can only create with */
 
-int 	init(std::string pathrsakey);
+int 	init(const std::string &pathrsakey);
 
 	// High level operations.
 int 	listenConnect();
@@ -122,8 +122,8 @@ int 	cleanupSession();
 int 	cleanupAll();
 
 	/* Password Checking */
-int 	auth_password(char *name, char *pwd);
-int 	auth_password_hashed(char *name, char *pwd);
+int 	auth_password(const char *name, const char *pwd);
+int 	auth_password_hashed(const char *name, const char *pwd);
 #ifdef ALLOW_CLEARPWDS
 int 	auth_password_basic(char *name, char *pwd);
 #endif // ALLOW_CLEARPWDS

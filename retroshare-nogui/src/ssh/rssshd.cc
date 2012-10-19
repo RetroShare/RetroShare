@@ -32,7 +32,7 @@ clients must be made or how a client should react.
 RsSshd *rsSshd = NULL; // External Reference Variable.
 
 // NB: This must be called EARLY before all the threads are launched.
-RsSshd *RsSshd::InitRsSshd(std::string portStr, std::string rsakeyfile)
+RsSshd *RsSshd::InitRsSshd(const std::string &portStr, const std::string &rsakeyfile)
 {
 #if LIBSSH_VERSION_INT >= SSH_VERSION_INT(0,5,0)
 	ssh_threads_set_callbacks(ssh_threads_get_pthread());
@@ -58,13 +58,15 @@ RsSshd::RsSshd(std::string portStr)
     	mBindState = 0;
         mRpcSystem = NULL;
 
+	mSession = NULL;
+
 	setSleepPeriods(0.01, 0.1);
 	return;
 }
 
 
 
-int RsSshd::init(std::string pathrsakey)
+int RsSshd::init(const std::string &pathrsakey)
 {
 
     mBind=ssh_bind_new();
@@ -117,7 +119,11 @@ void RsSshd::run()
 			}
 		}	
 		cleanupSession();
+#ifndef WINDOWS_SYS
 		sleep(5); // have a break;
+#else
+		Sleep(5000); // have a break;
+#endif
 	}
 }
 
@@ -628,7 +634,7 @@ int RsSshd::setSleepPeriods(float busy, float idle)
     /* PASSWORDS */
 /***********************************************************************************/
 
-int RsSshd::auth_password(char *name, char *pwd)
+int RsSshd::auth_password(const char *name, const char *pwd)
 {
 #ifdef ALLOW_CLEARPWDS
 	if (auth_password_basic(name, pwd))
@@ -726,7 +732,7 @@ int RsSshd::adduserpwdhash(std::string username, std::string hash)
 }
 
 
-int RsSshd::auth_password_hashed(char *name, char *pwd)
+int RsSshd::auth_password_hashed(const char *name, const char *pwd)
 {
 	std::string username(name);
 	std::string password(pwd);

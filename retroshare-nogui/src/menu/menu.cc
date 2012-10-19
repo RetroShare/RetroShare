@@ -27,6 +27,7 @@
 #include <retroshare/rsiface.h>
 
 #include <iostream>
+#include <time.h>
 
 #include "util/rsstring.h"
 
