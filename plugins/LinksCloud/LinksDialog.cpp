@@ -111,7 +111,6 @@ LinksDialog::LinksDialog(RsPeers *peers, RsFiles *files, QWidget *parent)
 
 void LinksDialog::checkUpdate()
 {
-	std::cerr << "In linksDialog::checkUpdate()" << std::endl;
 	/* update */
 	if (!rsRanks)
 	{
@@ -121,7 +120,9 @@ void LinksDialog::checkUpdate()
 
 	if (rsRanks->updated())
 	{
+#ifdef LINKS_DEBUG
 		std::cerr << "  rsRanks was updated -> redraw()" << std::endl;
+#endif
 		updateLinks();
 	}
 
