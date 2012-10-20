@@ -1,6 +1,45 @@
 retroshare (0.5.4-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
   * Improvements
+
+     - GUI 
+        * Added Search Filter for the FriendsList
+        * set a minimum spacing on ChatWidget
+        * Added to display tooltip's for the Voip button's
+        * Moved the Send Button to right side of the Chat LineEdit for better look.
+        * Changed some language strings in the GUI, removed hardcoded fonts (Patch from Henry)
+        * removed html strings from GenCertDialog
+        * moved some description text from the header, to look better
+        * update translation strings
+        * several improvements of the GUI layout.
+        * cleaned up many unnecessary files
+        * Improved (ungendered) English friend recommendation message (patch ID: 3536093 )
+        * Support for custom qss in data dir and config dir
+        * update win installer script, to install turkish Qt translation
+        * renamed Bubble Compact folder
+        * Added attempt to load the translations for the Qt's internal srings from datadir/translations
+
+     - VOIP plugin
+        * Added support for external translation files for the main application and the plugins LinksCloud and VOIP.
+          The following files are loaded from the directory <executable dir>/translations: retroshare_*.qm, LinksCloud_*.qm, VOIP_*.qm
+        * Added turkish voip translation
+        * Added Brazilian Portuguese VOIP translation
+
+  * Bugs
+     - Fixed "jumping" of the items in channels and news feed when items are changed (load, toggle and remove).
+     - Added workaround for QTBUG-3372.
+     - Hide request Label, when peer is unknown
+     - Fixed edit of a message with plaintext. The newlines remain unchanged (investigated by braindead)
+
+     - Plugin LinksCloud:
+         * Fixed crash when clicking on the link.
+         * Fixed process of https links.
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 20 Oct. 2012 14:30:00 +0100
+
+retroshare (0.5.4-0.5611~natty) natty; urgency=low
+
+  * Improvements
      - removed some warnings and debug info 
      - Fixed sensitivity of the action in the context menu to copy a link from the chat text 
        when scrollbars are visible.
