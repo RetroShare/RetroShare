@@ -32,8 +32,8 @@ extern "C" {
 void LinksCloudPlugin::getPluginVersion(int& major,int& minor,int& svn_rev) const
 {
 	major = 5 ;
-	minor = 1 ;
-	svn_rev = 4350 ;
+	minor = 4 ;
+	svn_rev = SVN_REVISION_NUMBER ;
 }
 
 LinksCloudPlugin::LinksCloudPlugin()
