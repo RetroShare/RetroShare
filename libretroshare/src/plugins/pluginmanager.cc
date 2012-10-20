@@ -24,6 +24,8 @@
 #include <dlfcn.h>
 #endif
 
+// #define DEBUG_PLUGIN_MANAGER 1
+
 std::string RsPluginManager::_plugin_entry_symbol              = "RETROSHARE_PLUGIN_provide" ;
 std::string RsPluginManager::_plugin_revision_symbol           = "RETROSHARE_PLUGIN_revision" ;
 std::string RsPluginManager::_plugin_API_symbol           		= "RETROSHARE_PLUGIN_api" ;
@@ -367,7 +369,9 @@ void RsPluginManager::slowTickPlugins(time_t seconds)
 	for(uint32_t i=0;i<_plugins.size();++i)
 		if(_plugins[i].plugin != NULL && _plugins[i].plugin->rs_cache_service() != NULL && (seconds % _plugins[i].plugin->rs_cache_service()->tickDelay() ))
 		{
+#ifdef DEBUG_PLUGIN_MANAGER
 			std::cerr << "  ticking plugin " << _plugins[i].plugin->getPluginName() << std::endl;
+#endif
 			_plugins[i].plugin->rs_cache_service()->tick() ;
 		}
 }
