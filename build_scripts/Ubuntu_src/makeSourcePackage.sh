@@ -61,20 +61,33 @@ echo Checking out latest snapshot in retroshare-nogui...
 cd $workdir/src/retroshare-nogui/
 svn co -r$svn https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/retroshare-nogui/src . 2> /dev/null
 cd ../../..
-#
+
+# LinksCloud plugin
+echo Checking out latest snapshot in LinksCloud plugin
+mkdir -p $workdir/src/plugins/LinksCloud
+cd $workdir/src/plugins/LinksCloud
+svn co -r$svn https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/plugins/LinksCloud . 2> /dev/null
+cd ../../../..
+
+# VOIP plugin
 echo Checking out latest snapshot in VOIP plugin
 mkdir -p $workdir/src/plugins/VOIP
 cd $workdir/src/plugins/VOIP
 svn co -r$svn https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/plugins/VOIP . 2> /dev/null
-cd ..
+cd ../../../..
+cp $workdir/src/retroshare-gui/gui/chat/PopupChatDialog.ui $workdir/src/plugins/VOIP/gui/PopupChatDialog.ui
+
+# common directory in Plugins
+cd $workdir/src/plugins
 mkdir -p Common
 cd Common
 svn co -r$svn https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/plugins/Common . 2> /dev/null
 cd ../../../..
-cp $workdir/src/retroshare-gui/gui/chat/PopupChatDialog.ui $workdir/src/plugins/VOIP/gui/PopupChatDialog.ui
 
-echo Copying bdboot.txt file at installation place
-cp $workdir/src/libbitdht/bitdht/bdboot.txt
+# bdboot.txt file
+#echo Copying bdboot.txt file at installation place
+#cp $workdir/src/libbitdht/bitdht/bdboot.txt
+
 echo Setting version numbers...
 
 # setup version numbers
@@ -94,12 +107,13 @@ echo Cleaning...
 find $workdir -name ".svn" -exec rm -rf {} \;		# remove all svn repositories
 
 echo Preparing package
-mv $workdir/src/retroshare-gui/RetroShare.pro $workdir/src/retroshare-gui/retroshare-gui.pro
+#mv $workdir/src/retroshare-gui/RetroShare.pro $workdir/src/retroshare-gui/retroshare-gui.pro
 
 ./cleanProFile.sh $workdir/src/libretroshare/libretroshare.pro
 ./cleanProFile.sh $workdir/src/retroshare-gui/retroshare-gui.pro
 ./cleanProFile.sh $workdir/src/retroshare-nogui/retroshare-nogui.pro
 ./cleanProFile_voip.sh $workdir/src/plugins/VOIP/VOIP.pro
+./cleanProFile_linkscloud.sh $workdir/src/plugins/LinksCloud/LinksCloud.pro
 
 echo "DESTDIR = ../../libretroshare/src/lib/" > /tmp/toto75299
 cat $workdir/src/libretroshare/libretroshare.pro /tmp/toto75299 > /tmp/toto752992
