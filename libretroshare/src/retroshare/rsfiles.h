@@ -73,8 +73,12 @@ const uint32_t RS_FILE_HINTS_DOWNLOAD		       = 0x00000010;
 const uint32_t RS_FILE_HINTS_UPLOAD	 		       = 0x00000020;
 
 const uint32_t RS_FILE_HINTS_NETWORK_WIDE        = 0x00000080;	// anonymously shared over network
-const uint32_t RS_FILE_HINTS_BROWSABLE 	       = 0x00000100;	// browsable by friends
+const uint32_t RS_FILE_HINTS_BROWSABLE           = 0x00000100;	// browsable by friends
+const uint32_t RS_FILE_HINTS_NETWORK_WIDE_OTHERS = 0x00000080;	// anonymously shared over network
+const uint32_t RS_FILE_HINTS_BROWSABLE_OTHERS    = 0x00000100;	// browsable by friends
 const uint32_t RS_FILE_HINTS_ASSUME_AVAILABILITY = 0x00000200; // Assume full source availability. Used for cache files.
+const uint32_t RS_FILE_HINTS_NETWORK_WIDE_GROUPS = 0x00000400;	// anonymously shared over network
+const uint32_t RS_FILE_HINTS_BROWSABLE_GROUPS    = 0x00000800;	// browsable by friends
 const uint32_t RS_FILE_HINTS_MEDIA	             = 0x00001000;
 const uint32_t RS_FILE_HINTS_BACKGROUND	       = 0x00002000; // To download slowly.
 

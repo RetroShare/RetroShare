@@ -1,5 +1,11 @@
 <RCC>
     <qresource prefix="/" >
+        <file>images/anonymous_128_green.png</file>
+        <file>images/anonymous_128_blue.png</file>
+        <file>images/browsable_128_green.png</file>
+        <file>images/browsable_128_blue.png</file>
+        <file>images/blank_128_green.png</file>
+        <file>images/blank_128_blue.png</file>
         <file>images/splash.png</file>
         <file>images/help/addafriend.png</file>
         <file>images/help/addfriendkey.png</file>

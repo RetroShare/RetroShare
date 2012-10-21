@@ -356,6 +356,7 @@ HEADERS +=  rshare.h \
             gui/common/rwindow.h \
             gui/common/html.h \
             gui/common/AvatarDefs.h \
+            gui/common/GroupFlagsWidget.h \
             gui/common/StatusDefs.h \
             gui/common/TagDefs.h \
             gui/common/GroupDefs.h \
@@ -618,6 +619,7 @@ SOURCES +=  main.cpp \
             gui/common/rwindow.cpp \
             gui/common/html.cpp \
             gui/common/AvatarDefs.cpp \
+            gui/common/GroupFlagsWidget.cpp \
             gui/common/StatusDefs.cpp \
             gui/common/TagDefs.cpp \
             gui/common/GroupDefs.cpp \

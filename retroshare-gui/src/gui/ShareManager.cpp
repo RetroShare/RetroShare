@@ -31,6 +31,7 @@
 #include "ShareManager.h"
 #include "ShareDialog.h"
 #include "settings/rsharesettings.h"
+#include <gui/common/GroupFlagsWidget.h>
 
 /* Images for context menu icons */
 #define IMAGE_CANCEL               ":/images/delete.png"
@@ -38,9 +39,8 @@
 
 #define COLUMN_PATH         0
 #define COLUMN_VIRTUALNAME  1
-#define COLUMN_NETWORKWIDE  2
-#define COLUMN_BROWSABLE    3
-#define COLUMN_COUNT        3
+#define COLUMN_SHARE_FLAGS  2
+#define COLUMN_GROUPS       3
 
 ShareManager *ShareManager::_instance = NULL ;
 
@@ -73,15 +73,12 @@ ShareManager::ShareManager(QWidget *parent, Qt::WFlags flags)
     QHeaderView* header = ui.shareddirList->horizontalHeader();
     header->setResizeMode( COLUMN_PATH, QHeaderView::Stretch);
 
-    header->setResizeMode(COLUMN_NETWORKWIDE, QHeaderView::Fixed);
-    header->setResizeMode(COLUMN_BROWSABLE, QHeaderView::Fixed);
+    //header->setResizeMode(COLUMN_NETWORKWIDE, QHeaderView::Fixed);
+    //header->setResizeMode(COLUMN_BROWSABLE, QHeaderView::Fixed);
 
     header->setHighlightSections(false);
 
-    ui.shareddirList->setRangeSelected(QTableWidgetSelectionRange(0, 0, 0, COLUMN_COUNT), true);
-
     setAcceptDrops(true);
-
     setAttribute(Qt::WA_DeleteOnClose, true);
 }
 
@@ -126,75 +123,16 @@ void ShareManager::load()
 
     connect(this,SIGNAL(itemClicked(QTableWidgetItem*)),this,SLOT(updateFlags(QTableWidgetItem*))) ;
 
-#ifndef USE_COMBOBOX
-    QString ToolTips [2] = { tr("If checked, the share is anonymously shared to anybody."),
-                             tr("If checked, the share is browsable by your friends.") };
-    int Flags [2] = { RS_FILE_HINTS_NETWORK_WIDE, RS_FILE_HINTS_BROWSABLE };
-#endif
-
     int row=0 ;
     for(it = dirs.begin(); it != dirs.end(); it++,++row)
     {
         listWidget->setItem(row, COLUMN_PATH, new QTableWidgetItem(QString::fromUtf8((*it).filename.c_str())));
         listWidget->setItem(row, COLUMN_VIRTUALNAME, new QTableWidgetItem(QString::fromUtf8((*it).virtualname.c_str())));
 
-#ifdef USE_COMBOBOX
-        QComboBox *cb = new QComboBox ;
-        cb->addItem(QString("Network Wide")) ;
-        cb->addItem(QString("Browsable")) ;
-        cb->addItem(QString("Universal")) ;
+		  QWidget* widget = new GroupFlagsWidget(NULL,(*it).shareflags);
 
-        cb->setToolTip(QString("Decide here whether this directory is\n* Network Wide: \tanonymously shared over the network (including your friends)\n* Browsable: \tbrowsable by your friends\n* Universal: \t\tboth")) ;
-
-        // TODO
-        //  - set combobox current value depending on what rsFiles reports.
-        //  - use a signal mapper to get the correct row that contains the combo box sending the signal:
-        //  		mapper = new SignalMapper(this) ;
-        //
-        //  		for(all cb)
-        //  		{
-        //  			signalMapper->setMapping(cb,...)
-        //  		}
-        //
-        int index = 0 ;
-        index += ((*it).shareflags & RS_FILE_HINTS_NETWORK_WIDE) > 0 ;
-        index += (((*it).shareflags & RS_FILE_HINTS_BROWSABLE) > 0) * 2 ;
-        listWidget->setCellWidget(row,1,cb);
-
-        if(index < 1 || index > 3)
-            std::cerr << "******* ERROR IN FILE SHARING FLAGS. Flags = " << (*it).shareflags << " ***********" << std::endl ;
-        else
-            index-- ;
-
-        cb->setCurrentIndex(index) ;
-#else
-        int col;
-        for (col = 0; col <= 1; col++) {
-            QModelIndex index = listWidget->model()->index(row, col + COLUMN_NETWORKWIDE, QModelIndex());
-            QWidget* widget = dynamic_cast<QWidget*>(listWidget->indexWidget(index));
-            QCheckBox* cb = NULL;
-            if (widget) {
-                cb = dynamic_cast<QCheckBox*>(widget->children().front());
-            }
-            if (cb == NULL) {
-                QWidget* widget = new QWidget;
-
-                cb = new QCheckBox(widget);
-                cb->setToolTip(ToolTips [col]);
-
-                QHBoxLayout* layout = new QHBoxLayout(widget);
-                layout->addWidget(cb, 0, Qt::AlignCenter);
-                layout->setSpacing(0);
-                layout->setContentsMargins(10, 0, 0, 0); // to be centered
-                widget->setLayout(layout);
-
-                listWidget->setCellWidget(row, col + COLUMN_NETWORKWIDE, widget);
-
-                QObject::connect(cb, SIGNAL(toggled(bool)), this, SLOT(updateFlags(bool))) ;
-            }
-            cb->setChecked((*it).shareflags & Flags [col]);
-        }
-#endif
+		  //listWidget->setRowHeight(row, 32);
+		  listWidget->setCellWidget(row, COLUMN_SHARE_FLAGS, widget);
     }
 
     //ui.incomingDir->setText(QString::fromStdString(rsFiles->getDownloadDirectory()));
@@ -240,16 +178,14 @@ void ShareManager::updateFlags(bool b)
     for(it = dirs.begin(); it != dirs.end(); it++,++row)
     {
         std::cerr << "Looking for row=" << row << ", file=" << (*it).filename << ", flags=" << (*it).shareflags << std::endl ;
-        uint32_t current_flags = 0 ;
-        current_flags |= (dynamic_cast<QCheckBox*>(ui.shareddirList->cellWidget(row,COLUMN_NETWORKWIDE)->children().front()))->isChecked()? RS_FILE_HINTS_NETWORK_WIDE:0 ;
-        current_flags |= (dynamic_cast<QCheckBox*>(ui.shareddirList->cellWidget(row,COLUMN_BROWSABLE)->children().front()))->isChecked()? RS_FILE_HINTS_BROWSABLE:0 ;
+        uint32_t current_flags = (dynamic_cast<GroupFlagsWidget*>(ui.shareddirList->cellWidget(row,COLUMN_SHARE_FLAGS)->children().front()))->flags() ;
 
         if( (*it).shareflags ^ current_flags )
         {
             (*it).shareflags = current_flags ;
             rsFiles->updateShareFlags(*it) ;	// modifies the flags
 
-            std::cout << "Updating share flags for directory " << (*it).filename << std::endl ;
+            std::cout << "Updating share flags for directory " << (*it).filename << " to " << current_flags << std::endl ;
         }
     }
 }
