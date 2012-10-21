@@ -51,7 +51,7 @@ public:
      * @param groupIds group id to request info for
      * @return
      */
-    bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts, const std::list<RsGxsGroupId> &groupIds);
+    bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<RsGxsGroupId> &groupIds);
 
     /*!
      * Use this to request all group related info
@@ -60,7 +60,7 @@ public:
      * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
      * @return
      */
-    bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts);
+    bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts);
 
     /*!
      * Use this to get msg related information, store this value to pole for request completion
@@ -70,7 +70,7 @@ public:
      * @param groupIds The ids of the groups to get, second entry of map empty to query for all msgs
      * @return true if request successful false otherwise
      */
-    bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts, const GxsMsgReq& msgIds);
+    bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const GxsMsgReq& msgIds);
 
     /*!
      * Use this to get msg related information, store this value to pole for request completion
@@ -80,7 +80,7 @@ public:
      * @param groupIds The ids of the groups to get, this retrieve all the msgs info for each grpId in list
      * @return true if request successful false otherwise
      */
-    bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts, const std::list<RsGxsGroupId>& grpIds);
+    bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<RsGxsGroupId>& grpIds);
 
     /*!
      * For requesting msgs related to a given msg id within a group
@@ -90,7 +90,7 @@ public:
      * @param groupIds The ids of the groups to get, second entry of map empty to query for all msgs
      * @return true if request successful false otherwise
      */
-    bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts, const RsGxsGrpMsgIdPair &msgIds);
+    bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const RsGxsGrpMsgIdPair &msgIds);
 
     /* Poll */
     uint32_t requestStatus(const uint32_t token);
@@ -202,7 +202,7 @@ private:
      * @param ansType
      * @param opts
      */
-    void setReq(GxsRequest* req,const uint32_t &token, const uint32_t& ansType, const RsTokReqOptionsV2 &opts) const;
+    void setReq(GxsRequest* req,const uint32_t &token, const uint32_t& ansType, const RsTokReqOptions &opts) const;
 
     /*!
      * Remove request for request queue
@@ -331,7 +331,7 @@ private:
      * @param opts the request options set by user
      * @param meta The accompanying meta information for msg, ids
      */
-    void filterMsgList(GxsMsgIdResult& msgIds, const RsTokReqOptionsV2& opts, const MsgMetaFilter& meta) const;
+    void filterMsgList(GxsMsgIdResult& msgIds, const RsTokReqOptions& opts, const MsgMetaFilter& meta) const;
 
 
     /*!
@@ -341,7 +341,7 @@ private:
      * @param meta meta containing currently defined options for msg
      * @return true if msg meta passes all options
      */
-    bool checkMsgFilter(const RsTokReqOptionsV2& opts, const RsGxsMsgMetaData* meta) const;
+    bool checkMsgFilter(const RsTokReqOptions& opts, const RsGxsMsgMetaData* meta) const;
 
     /*!
      * This is a filter method which applies the request options to the list of ids
@@ -350,7 +350,7 @@ private:
      * @param opts the options used to parameterise the id filter
      * @param msgIdsOut the left overs ids after filter is applied to msgIds
      */
-    bool getMsgList(const GxsMsgReq& msgIds, const RsTokReqOptionsV2& opts, GxsMsgReq& msgIdsOut);
+    bool getMsgList(const GxsMsgReq& msgIds, const RsTokReqOptions& opts, GxsMsgReq& msgIdsOut);
 
 private:
 

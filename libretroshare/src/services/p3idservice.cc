@@ -499,7 +499,7 @@ bool p3IdService::cache_start_load()
 	}
 
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_DATA; 
-	RsTokReqOptionsV2 opts; 
+        RsTokReqOptions opts;
 	uint32_t token = 0;
 
 	RsGenExchange::getTokenService()->requestGroupInfo(token, ansType, opts, groupIds);
@@ -971,7 +971,7 @@ bool p3IdService::background_requestGroups()
 	}
 
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
-	RsTokReqOptionsV2 opts; 
+        RsTokReqOptions opts;
 	std::list<std::string> groupIds;
 
 /**
@@ -1034,7 +1034,7 @@ bool p3IdService::background_requestNewMessages()
 	}
 
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY; 
-	RsTokReqOptionsV2 opts; 
+        RsTokReqOptions opts;
 	token = 0;
 
 	/* TODO 
@@ -1319,7 +1319,7 @@ bool p3IdService::background_FullCalcRequest()
 	/* request the summary info from the parents */
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_DATA; 
 	uint32_t token = 0;
-	RsTokReqOptionsV2 opts; 
+        RsTokReqOptions opts;
 	opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
 
 	RsGenExchange::getTokenService()->requestMsgInfo(token, ansType, opts, groupIds);

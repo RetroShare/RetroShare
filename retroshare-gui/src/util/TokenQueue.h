@@ -41,9 +41,9 @@
 #define TOKENREQ_MSGRELATEDINFO	3
 
 
-class TokenQueueV2;
+class TokenQueue;
 
-class TokenRequestV2
+class TokenRequest
 {
 	public:
 	uint32_t mToken;
@@ -54,12 +54,12 @@ class TokenRequestV2
 	struct timeval mPollTs;
 };
 
-class TokenResponseV2
+class TokenResponse
 {
 	public:
 	//virtual ~TokenResponse() { return; }
 	// These Functions are overloaded to get results out.
-        virtual void loadRequest(const TokenQueueV2 *queue, const TokenRequestV2 &req) = 0;
+        virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req) = 0;
 };
 
 
@@ -67,12 +67,12 @@ class TokenResponseV2
  * An important thing to note is that all requests are stacked (so FIFO)
  * This is to prevent overlapped loads on GXS UIs
  */
-class TokenQueueV2: public QWidget
+class TokenQueue: public QWidget
 {
   Q_OBJECT
 
 public:
-        TokenQueueV2(RsTokenService *service, TokenResponseV2 *resp);
+        TokenQueue(RsTokenService *service, TokenResponse *resp);
 
 	/* generic handling of token / response update behaviour */
 
@@ -81,25 +81,25 @@ public:
          * @token the token to be redeem is assigned here
          *
          */
-	bool requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptionsV2 &opts,
+        bool requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts,
                                                         std::list<RsGxsGroupId>& ids, uint32_t usertype);
 
 
-        bool requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptionsV2 &opts, uint32_t usertype);
+        bool requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, uint32_t usertype);
 
-	bool requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptionsV2 &opts,
+        bool requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts,
                             const std::list<RsGxsGroupId>& grpIds, uint32_t usertype);
 
-        bool requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptionsV2 &opts,
+        bool requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts,
                             const GxsMsgReq& grpIds, uint32_t usertype);
 
-        bool requestMsgRelatedInfo(uint32_t &token, const RsTokReqOptionsV2 &opts, const RsGxsGrpMsgIdPair& msgId, uint32_t usertype);
+        bool requestMsgRelatedInfo(uint32_t &token, const RsTokReqOptions &opts, const RsGxsGrpMsgIdPair& msgId, uint32_t usertype);
 
 	bool cancelRequest(const uint32_t token);
 
 	void queueRequest(uint32_t token, uint32_t basictype, uint32_t anstype, uint32_t usertype);
 	bool checkForRequest(uint32_t token);
-	void loadRequest(const TokenRequestV2 &req);
+        void loadRequest(const TokenRequest &req);
 
 protected:
 	void doPoll(float dt);
@@ -109,10 +109,10 @@ private slots:
 
 private:
 	/* Info for Data Requests */
-        std::list<TokenRequestV2> mRequests;
+        std::list<TokenRequest> mRequests;
 
         RsTokenService *mService;
-        TokenResponseV2 *mResponder;
+        TokenResponse *mResponder;
 
 	QTimer *mTrigger;
 };

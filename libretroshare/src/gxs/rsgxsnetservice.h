@@ -103,6 +103,7 @@ public:
 private:
 
     p3LinkMgr* mLinkMgr;
+    RsMutex mNxsNetMgrMtx;
 
 };
 

@@ -1445,23 +1445,23 @@ bool 	p3GxsDataServiceVEG::fakeprocessrequests()
 
 #if 0 // DISABLED AND MOVED TO GXS CODE.
 
-std::ostream &operator<<(std::ostream &out, const RsGroupMetaData &meta)
-{
-	out << "[ GroupId: " << meta.mGroupId << " Name: " << meta.mGroupName << " ]";
-	return out;
-}
+//std::ostream &operator<<(std::ostream &out, const RsGroupMetaData &meta)
+//{
+//	out << "[ GroupId: " << meta.mGroupId << " Name: " << meta.mGroupName << " ]";
+//	return out;
+//}
 
-std::ostream &operator<<(std::ostream &out, const RsMsgMetaData &meta)
-{
-	out << "[ GroupId: " << meta.mGroupId << " MsgId: " << meta.mMsgId;
-	out << " Name: " << meta.mMsgName;
-	out << " OrigMsgId: " << meta.mOrigMsgId;
-	out << " ThreadId: " << meta.mThreadId;
-	out << " ParentId: " << meta.mParentId;
-	out << " AuthorId: " << meta.mAuthorId;
-	out << " Name: " << meta.mMsgName << " ]";
-	return out;
-}
+//std::ostream &operator<<(std::ostream &out, const RsMsgMetaData &meta)
+//{
+//	out << "[ GroupId: " << meta.mGroupId << " MsgId: " << meta.mMsgId;
+//	out << " Name: " << meta.mMsgName;
+//	out << " OrigMsgId: " << meta.mOrigMsgId;
+//	out << " ThreadId: " << meta.mThreadId;
+//	out << " ParentId: " << meta.mParentId;
+//	out << " AuthorId: " << meta.mAuthorId;
+//	out << " Name: " << meta.mMsgName << " ]";
+//	return out;
+//}
 
 #endif
 

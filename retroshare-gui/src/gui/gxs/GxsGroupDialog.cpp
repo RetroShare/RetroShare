@@ -24,6 +24,7 @@
 #include "util/misc.h"
 #include "GxsGroupDialog.h"
 #include "gui/common/PeerDefs.h"
+#include "gxs/rsgxsflags.h"
 
 #include <algorithm>
 
@@ -31,17 +32,31 @@
 
 #include <iostream>
 
+// Control of Publish Signatures.
+#define RSGXS_GROUP_SIGN_PUBLISH_MASK  		0x000000ff
+#define RSGXS_GROUP_SIGN_PUBLISH_ENCRYPTED 	0x00000001
+#define RSGXS_GROUP_SIGN_PUBLISH_ALLSIGNED 	0x00000002
+#define RSGXS_GROUP_SIGN_PUBLISH_THREADHEAD	0x00000004
+#define RSGXS_GROUP_SIGN_PUBLISH_NONEREQ	0x00000008
+
+// Author Signature.
+#define RSGXS_GROUP_SIGN_AUTHOR_MASK  		0x0000ff00
+#define RSGXS_GROUP_SIGN_AUTHOR_GPG 		0x00000100
+#define RSGXS_GROUP_SIGN_AUTHOR_REQUIRED 	0x00000200
+#define RSGXS_GROUP_SIGN_AUTHOR_IFNOPUBSIGN	0x00000400
+#define RSGXS_GROUP_SIGN_AUTHOR_NONE		0x00000800
+
 #define GXSGROUP_NEWGROUPID		1
 #define GXSGROUP_LOADGROUP		2
 
 /** Constructor */
-GxsGroupDialog::GxsGroupDialog(RsTokenServiceVEG *service, QWidget *parent)
+GxsGroupDialog::GxsGroupDialog(RsTokenService *service, QWidget *parent)
 : QDialog(parent), mRsService(service)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
 
-        mTokenQueue = new TokenQueueVEG(service, this);
+        mTokenQueue = new TokenQueue(service, this);
 
 	// connect up the buttons.
 	connect( ui.cancelButton, SIGNAL( clicked ( bool ) ), this, SLOT( cancelDialog( ) ) );
@@ -289,7 +304,7 @@ void GxsGroupDialog::existingGroup(std::string groupId, uint32_t mode)
 
 	/* request data */
 	{
-                RsTokReqOptionsVEG opts;
+                RsTokReqOptions opts;
 		
 		std::list<std::string> grpIds;
 		grpIds.push_back(groupId);
@@ -391,7 +406,7 @@ void GxsGroupDialog::createGroup()
 		meta.mSignFlags = getGroupSignFlags();
 
 		// These ones shouldn't be needed here - but will be used, until we have fully functional backend.
-		meta.mSubscribeFlags = RSGXS_GROUP_SUBSCRIBE_ADMIN;	
+                meta.mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_ADMIN;
 		meta.mPublishTs = time(NULL);
 
 		if (service_CreateGroup(token, meta))
@@ -528,19 +543,7 @@ void GxsGroupDialog::addGroupLogo()
 
 void GxsGroupDialog::sendShareList(std::string groupId)
 {
-	if (!mRsService)
-	{
-		std::cerr << "GxsGroupDialog::sendShareList() GXS Service not active";
-		std::cerr << std::endl;
-		return;
-	}
-	
-	if (ui.pubKeyShare_cb->isChecked()) 
-	{
-		std::list<std::string> shareList;
-		ui.keyShareList->selectedSslIds(shareList, false);
-		mRsService->groupShareKeys(groupId, shareList);
-	}
+
 	close();
 }
 
@@ -566,7 +569,6 @@ void GxsGroupDialog::loadNewGroupId(const uint32_t &token)
 	std::cerr << std::endl;
 	
 	std::list<RsGroupMetaData> groupInfo;
-	mRsService->getGroupSummary(token, groupInfo);
 	
 	if (groupInfo.size() == 1)
 	{
@@ -605,7 +607,7 @@ void GxsGroupDialog::service_loadExistingGroup(const uint32_t &token)
 }
 
 
-void GxsGroupDialog::loadRequest(const TokenQueueVEG *queue, const TokenRequestVEG &req)
+void GxsGroupDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
 	std::cerr << "GxsGroupDialog::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;

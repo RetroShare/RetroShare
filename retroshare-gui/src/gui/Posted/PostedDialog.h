@@ -27,7 +27,7 @@
 #include "retroshare-gui/mainpage.h"
 #include "ui_PostedDialog.h"
 
-#include <retroshare/rspostedVEG.h>
+#include <retroshare/rsposted.h>
 
 #include <map>
 

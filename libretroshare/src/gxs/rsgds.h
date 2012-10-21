@@ -36,7 +36,7 @@
 #include "serialiser/rsnxsitems.h"
 #include "gxs/rsgxsdata.h"
 #include "rsgxs.h"
-#include "util/retrodb.h"
+#include "util/contentvalue.h"
 
 
 class RsGxsSearchModule  {

@@ -1813,17 +1813,18 @@ RsTurtle *rsTurtle = NULL ;
 
 #ifdef ENABLE_GXS_CORE
 #include "gxs/gxscoreserver.h"
-#include "services/p3photoserviceV2.h"
+
 #include "gxs/rsdataservice.h"
 #include "gxs/rsgxsnetservice.h"
 #endif
 
 #ifdef ENABLE_GXS_SERVICES
+#include "services/p3photoserviceV2.h"
+#include "services/p3posted.h"
 #include "services/p3wikiserviceVEG.h"
 #include "services/p3wireVEG.h"
 #include "services/p3idserviceVEG.h"
 #include "services/p3forumsVEG.h"
-#include "services/p3postedVEG.h"
 #endif
 
 #ifndef PQI_DISABLE_TUNNEL
@@ -2266,41 +2267,7 @@ int RsServer::StartupRetroShare()
 	mPluginsManager->registerClientServices(pqih) ;
 	mPluginsManager->registerCacheServices() ;
 
-#ifdef ENABLE_GXS_CORE
 
-	p3PhotoServiceV2 *mPhotoV2 = NULL;
-
-	// first prep the core
-
-
-        RsDirUtil::checkCreateDirectory(mLinkMgr->getOwnId());
-        RsGeneralDataService* photo_ds = new RsDataService("./" + mLinkMgr->getOwnId() + "/", "photoV2_db",
-                        RS_SERVICE_GXSV1_TYPE_PHOTO, NULL);
-
-        photo_ds->resetDataStore();
-
-        // init gxs services
-        mPhotoV2 = new p3PhotoServiceV2(photo_ds, NULL);
-
-	// TODO need net manager
-        RsGxsNetService* photo_ns = new RsGxsNetService(
-                        RS_SERVICE_GXSV1_TYPE_PHOTO, photo_ds, new RsNxsNetMgrImpl(mLinkMgr), mPhotoV2);
-
-
-	GxsCoreServer* mGxsCore = new GxsCoreServer();
-	mGxsCore->addService(mPhotoV2);
-
-	// cores read start up servers !
-
-	// start nxs core core server
-        createThread(*photo_ns);
-
-	// start up gxs core server
-	createThread(*mGxsCore);
-
-        pqih->addService(photo_ns);
-
-#endif
 
 #ifdef ENABLE_GXS_SERVICES
 
@@ -2315,11 +2282,68 @@ int RsServer::StartupRetroShare()
 	// Testing New Cache Services.
         p3ForumsVEG *mForumsV2 = new p3ForumsVEG(RS_SERVICE_GXSV1_TYPE_FORUMS);
 	pqih -> addService(mForumsV2);
-	
-	// Testing New Cache Services.
-        p3PostedServiceVEG *mPosted = new p3PostedServiceVEG(RS_SERVICE_GXSV1_TYPE_POSTED);
-	pqih -> addService(mPosted);
+
+
+        // TODO: temporary to store GXS service data, remove
+        RsDirUtil::checkCreateDirectory(mLinkMgr->getOwnId());
+
+        RsNxsNetMgr* nxsMgr =  new RsNxsNetMgrImpl(mLinkMgr);
+
+        /**** Photo service ****/
+
+        p3PhotoServiceV2 *mPhotoV2 = NULL;
+
+
+
+        RsGeneralDataService* photo_ds = new RsDataService("./" + mLinkMgr->getOwnId() + "/", "photoV2_db",
+                        RS_SERVICE_GXSV1_TYPE_PHOTO, NULL);
+
+        photo_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
+
+        // init gxs services
+        mPhotoV2 = new p3PhotoServiceV2(photo_ds, NULL);
+
+        // create GXS photo service
+        RsGxsNetService* photo_ns = new RsGxsNetService(
+                        RS_SERVICE_GXSV1_TYPE_PHOTO, photo_ds, nxsMgr, mPhotoV2);
+
+        /**** Posted GXS service ****/
+
+        p3Posted *mPosted = NULL;
+
+        RsGeneralDataService* posted_ds = new RsDataService("./" + mLinkMgr->getOwnId()+ "/", "posted_db",
+                                                            RS_SERVICE_GXSV1_TYPE_POSTED);
+
+        posted_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
+
+        mPosted = new p3Posted(posted_ds, NULL);
+
+        // create GXS photo service
+        RsGxsNetService* posted_ns = new RsGxsNetService(
+                        RS_SERVICE_GXSV1_TYPE_POSTED, posted_ds, nxsMgr, mPosted);
+
+
 #endif // ENABLE_GXS_SERVICES
+
+#ifdef ENABLE_GXS_CORE
+
+        /*** start up GXS core runner ***/
+
+        GxsCoreServer* mGxsCore = new GxsCoreServer();
+        mGxsCore->addService(mPhotoV2);
+        mGxsCore->addService(mPosted);
+
+        // cores ready start up GXS net servers
+        createThread(*photo_ns);
+        createThread(*posted_ns);
+
+        // now add to p3service
+        pqih->addService(photo_ns);
+        pqih->addService(posted_ns);
+
+        // start up gxs core server
+        createThread(*mGxsCore);
+#endif
 
 
 #ifndef RS_RELEASE
@@ -2578,14 +2602,15 @@ int RsServer::StartupRetroShare()
 	rsForums = mForums;
 	rsChannels = mChannels;
 
-       rsPhotoV2 = mPhotoV2;
 #ifdef ENABLE_GXS_SERVICES
         // Testing of new cache system interfaces.
 
         rsWikiVEG = mWikis;
         rsWireVEG = mWire;
         rsForumsVEG = mForumsV2;
-        rsPostedVEG = mPosted;
+        rsPosted = mPosted;
+        rsPhotoV2 = mPhotoV2;
+
 #endif // ENABLE_GXS_SERVICES
 
 

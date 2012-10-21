@@ -109,6 +109,7 @@ public:
 
     // BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
     // normally READ / UNREAD flags. LOCAL Data.
+
     uint32_t    mMsgStatus;
     time_t      mChildTs;
 

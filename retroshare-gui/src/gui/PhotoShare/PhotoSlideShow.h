@@ -27,10 +27,10 @@
 #include "ui_PhotoSlideShow.h"
 
 #include <retroshare/rsphotoV2.h>
-#include "util/TokenQueueV2.h"
+#include "util/TokenQueue.h"
 #include "AlbumItem.h"
 
-class PhotoSlideShow : public QWidget, public TokenResponseV2
+class PhotoSlideShow : public QWidget, public TokenResponse
 {
   Q_OBJECT
 
@@ -38,9 +38,7 @@ public:
         PhotoSlideShow(const RsPhotoAlbum& mAlbum, QWidget *parent = 0);
         virtual ~PhotoSlideShow();
 
-        void loadRequest(const TokenQueueV2 *queue, const TokenRequestV2 &req);
-
-	void clearDialog();
+        void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 private slots:
 	void showPhotoDetails();
@@ -70,7 +68,7 @@ private:
 
         RsPhotoAlbum mAlbum;
 
-        TokenQueueV2 *mPhotoQueue;
+        TokenQueue *mPhotoQueue;
 
 	Ui::PhotoSlideShow ui;
 };

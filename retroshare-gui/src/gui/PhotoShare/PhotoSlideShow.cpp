@@ -38,7 +38,7 @@ PhotoSlideShow::PhotoSlideShow(const RsPhotoAlbum& album, QWidget *parent)
 	connect(ui.pushButton_StartStop, SIGNAL( clicked( void ) ), this, SLOT( StartStop( void ) ) );
 	connect(ui.pushButton_Close, SIGNAL( clicked( void ) ), this, SLOT( closeShow( void ) ) );
 
-        mPhotoQueue = new TokenQueueV2(rsPhotoV2->getTokenService(), this);
+        mPhotoQueue = new TokenQueue(rsPhotoV2->getTokenService(), this);
 
 	mRunning = true;
 	mShotActive = true;
@@ -215,37 +215,9 @@ void PhotoSlideShow::updateMoveButtons(uint32_t status)
 	}
 }
 
-
-
-
-void PhotoSlideShow::clearDialog()
-{
-#if 0
-	ui.lineEdit_Title->setText(QString("title"));
-	ui.lineEdit_Caption->setText(QString("Caption"));
-	ui.lineEdit_Where->setText(QString("Where"));
-	ui.lineEdit_When->setText(QString("When"));
-
-	ui.scrollAreaWidgetContents->clearPhotos();
-	ui.AlbumDrop->clearPhotos();
-
-	/* clean up album image */
-	mAlbumData.mThumbnail.deleteImage();
-
-	RsPhotoAlbum emptyAlbum;
-	mAlbumData = emptyAlbum;
-
-	/* add empty image */
-	PhotoItem *item = new PhotoItem(NULL, mAlbumData);
-	ui.AlbumDrop->addPhotoItem(item);
-
-	mAlbumEdit = false;
-#endif
-}
-
 void PhotoSlideShow::requestPhotos()
 {
-    RsTokReqOptionsV2 opts;
+    RsTokReqOptions opts;
     opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
     uint32_t token;
     std::list<RsGxsGroupId> grpIds;
@@ -294,7 +266,7 @@ bool PhotoSlideShow::loadPhotoData(const uint32_t &token)
 	return true;
 }
 
-void PhotoSlideShow::loadRequest(const TokenQueueV2 *queue, const TokenRequestV2 &req)
+void PhotoSlideShow::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
 	std::cerr << "PhotoSlideShow::loadRequest()";
 	std::cerr << std::endl;

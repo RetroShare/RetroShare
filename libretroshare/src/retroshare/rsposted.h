@@ -7,7 +7,7 @@
  *
  * RetroShare C++ Interface.
  *
- * Copyright 2008-2012 by Robert Fernie.
+ * Copyright 2008-2012 by Robert Fernie, Christopher Evi-Parker
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,10 +33,10 @@
 #include "gxs/rstokenservice.h"
 #include "gxs/rsgxsifaceimpl.h"
 
-/* The Main Interface Class - for information about your Peers */
-class RsPostedVEG;
-extern RsPostedVEG *rsPostedVEG;
+class RsPosted;
+extern RsPosted *rsPosted;
 
+/* The Main Interface Class - for information about your Peers */
 
 class RsPostedGroup
 {
@@ -45,19 +45,9 @@ class RsPostedGroup
         RsPostedGroup() { return; }
 };
 
-class RsPostedMsg
-{
-        public:
-        RsPostedMsg(uint32_t t)
-        :postedType(t) { return; }
-
-        RsMsgMetaData mMeta;
-        uint32_t postedType;
-};
-
-#define RSPOSTED_MSGTYPE_POST		0x0001
-#define RSPOSTED_MSGTYPE_VOTE		0x0002
-#define RSPOSTED_MSGTYPE_COMMENT	0x0004
+//#define RSPOSTED_MSGTYPE_POST		0x0001
+//#define RSPOSTED_MSGTYPE_VOTE		0x0002
+//#define RSPOSTED_MSGTYPE_COMMENT	0x0004
 
 #define RSPOSTED_PERIOD_YEAR		1
 #define RSPOSTED_PERIOD_MONTH		2
@@ -70,44 +60,13 @@ class RsPostedMsg
 #define RSPOSTED_VIEWMODE_HOT		3
 #define RSPOSTED_VIEWMODE_COMMENTS	4
 
+class RsPostedPost;
+class RsPostedComment;
+class RsPostedVote;
 
-class RsPostedPost: public RsPostedMsg
-{
-        public:
-        RsPostedPost(): RsPostedMsg(RSPOSTED_MSGTYPE_POST)
-        {
-                mMeta.mMsgFlags = RSPOSTED_MSGTYPE_POST;
-                return;
-        }
-
-        std::string mLink;
-        std::string mNotes;
-};
-
-
-class RsPostedVote: public RsPostedMsg
-{
-        public:
-        RsPostedVote(): RsPostedMsg(RSPOSTED_MSGTYPE_VOTE)
-        {
-                mMeta.mMsgFlags = RSPOSTED_MSGTYPE_VOTE;
-                return;
-        }
-};
-
-
-class RsPostedComment: public RsPostedMsg
-{
-        public:
-        RsPostedComment(): RsPostedMsg(RSPOSTED_MSGTYPE_COMMENT)
-        {
-                mMeta.mMsgFlags = RSPOSTED_MSGTYPE_COMMENT;
-                return;
-        }
-
-        std::string mComment;
-};
-
+typedef std::map<RsGxsGroupId, std::vector<RsPostedPost> > PostedPostResult;
+typedef std::map<RsGxsGroupId, std::vector<RsPostedComment> > PostedCommentResult;
+typedef std::map<RsGxsGroupId, std::vector<RsPostedVote> > PostedVoteResult;
 
 std::ostream &operator<<(std::ostream &out, const RsPostedGroup &group);
 std::ostream &operator<<(std::ostream &out, const RsPostedPost &post);
@@ -119,15 +78,19 @@ class RsPosted : public RsGxsIfaceImpl
 {
         public:
 
+    static const uint32_t FLAG_MSGTYPE_POST;
+    static const uint32_t FLAG_MSGTYPE_VOTE;
+    static const uint32_t FLAG_MSGTYPE_COMMENT;
+
+
     RsPosted(RsGenExchange* gxs) : RsGxsIfaceImpl(gxs) { return; }
 virtual ~RsPosted() { return; }
 
         /* Specific Service Data */
 
-virtual RsTokenService* getToken() = 0;
-virtual bool getGroup(const uint32_t &token, RsPostedGroup &group) = 0;
-virtual bool getPost(const uint32_t &token, RsPostedPost &post) = 0;
-virtual bool getComment(const uint32_t &token, RsPostedComment &comment) = 0;
+virtual bool getGroup(const uint32_t &token, std::vector<RsPostedGroup> &group) = 0;
+virtual bool getPost(const uint32_t &token, PostedPostResult &post) = 0;
+virtual bool getComment(const uint32_t &token, PostedCommentResult &comment) = 0;
 
 virtual bool submitGroup(uint32_t &token, RsPostedGroup &group) = 0;
 virtual bool submitPost(uint32_t &token, RsPostedPost &post) = 0;
@@ -136,20 +99,48 @@ virtual bool submitComment(uint32_t &token, RsPostedComment &comment) = 0;
 
         // Special Ranking Request.
 virtual bool requestRanking(uint32_t &token, RsGxsGroupId groupId) = 0;
-virtual bool getRankedPost(const uint32_t &token, RsPostedPost &post) = 0;
-
-virtual bool extractPostedCache() = 0;
-
-
-        // Control Ranking Calculations.
-virtual bool setViewMode(uint32_t mode) = 0;
-virtual bool setViewPeriod(uint32_t period) = 0;
-virtual bool setViewRange(uint32_t first, uint32_t count) = 0;
-
-        // exposed for testing...
-virtual float calcPostScore(uint32_t& token, const RsGxsMessageId) = 0;
 
 };
 
+class RsPostedPost
+{
+        public:
+        RsPostedPost()
+        {
+            mMeta.mMsgFlags = RsPosted::FLAG_MSGTYPE_POST;
+            return;
+        }
+
+        RsMsgMetaData mMeta;
+        std::string mLink;
+        std::string mNotes;
+};
+
+
+class RsPostedVote
+{
+        public:
+        RsPostedVote()
+        {
+            mMeta.mMsgFlags = RsPosted::FLAG_MSGTYPE_VOTE;
+                return;
+        }
+
+        RsMsgMetaData mMeta;
+};
+
+
+class RsPostedComment
+{
+        public:
+        RsPostedComment()
+        {
+            mMeta.mMsgFlags = RsPosted::FLAG_MSGTYPE_COMMENT;
+                return;
+        }
+
+        std::string mComment;
+        RsMsgMetaData mMeta;
+};
 
 #endif // RSPOSTED_H

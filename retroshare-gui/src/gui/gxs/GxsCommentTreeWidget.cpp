@@ -36,7 +36,7 @@
 #define GXSCOMMENTS_LOADTHREAD		1
 
 // Temporarily make this specific.
-#include "retroshare/rspostedVEG.h"
+#include "retroshare/rsposted.h"
 
 
 GxsCommentTreeWidget::GxsCommentTreeWidget(QWidget *parent)
@@ -46,10 +46,10 @@ GxsCommentTreeWidget::GxsCommentTreeWidget(QWidget *parent)
    	return;
 }
 
-void GxsCommentTreeWidget::setup(RsTokenServiceVEG *service)
+void GxsCommentTreeWidget::setup(RsTokenService *service)
 {
 	mRsService = service;
-        mTokenQueue = new TokenQueueVEG(service, this);
+        mTokenQueue = new TokenQueue(service, this);
 
    	return;
 }
@@ -72,11 +72,11 @@ void GxsCommentTreeWidget::service_requestComments(std::string threadId)
 	std::cerr << "GxsCommentTreeWidget::service_requestComments(" << threadId << ")";
 	std::cerr << std::endl;
 	
-        RsTokReqOptionsVEG opts;
+        RsTokReqOptions opts;
 	
 	opts.mOptions = RS_TOKREQOPT_MSG_THREAD | RS_TOKREQOPT_MSG_LATEST;
-	opts.mFlagsFilter = RSPOSTED_MSGTYPE_COMMENT;
-	opts.mFlagsMask = RSPOSTED_MSGTYPE_COMMENT;
+//	opts.mFlagsFilter = RSPOSTED_MSGTYPE_COMMENT;
+//	opts.mFlagsMask = RSPOSTED_MSGTYPE_COMMENT;
 	
 	std::list<std::string> msgIds;
 	msgIds.push_back(threadId);
@@ -84,7 +84,7 @@ void GxsCommentTreeWidget::service_requestComments(std::string threadId)
         mThreadId = threadId;
 	
 	uint32_t token;
-	mTokenQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, GXSCOMMENTS_LOADTHREAD);
+//	mTokenQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, GXSCOMMENTS_LOADTHREAD);
 }
 
 
@@ -211,49 +211,49 @@ void GxsCommentTreeWidget::service_loadThread(const uint32_t &token)
 	std::cerr << "GxsCommentTreeWidget::service_loadThread() ERROR must be overloaded!";
 	std::cerr << std::endl;
 
-	RsPostedComment comment;
-        while(rsPostedVEG->getComment(token, comment))
-	{
-		/* convert to a QTreeWidgetItem */
-		std::cerr << "GxsCommentTreeWidget::service_loadThread() Got Comment: " << comment;
-		std::cerr << std::endl;
+//	RsPostedComment comment;
+//        while(rsPosted->getComment(token, comment))
+//	{
+//		/* convert to a QTreeWidgetItem */
+//		std::cerr << "GxsCommentTreeWidget::service_loadThread() Got Comment: " << comment;
+//		std::cerr << std::endl;
 		
-		QTreeWidgetItem *item = new QTreeWidgetItem();
-		QString text;
+//		QTreeWidgetItem *item = new QTreeWidgetItem();
+//		QString text;
 
-		{
-			QDateTime qtime;
-			qtime.setTime_t(comment.mMeta.mPublishTs);
+//		{
+//			QDateTime qtime;
+//			qtime.setTime_t(comment.mMeta.mPublishTs);
 		
-			text = qtime.toString("yyyy-MM-dd hh:mm:ss");
-			item->setText(PCITEM_COLUMN_DATE, text);
-		}
+//			text = qtime.toString("yyyy-MM-dd hh:mm:ss");
+//			item->setText(PCITEM_COLUMN_DATE, text);
+//		}
 		
-		text = QString::fromUtf8(comment.mComment.c_str());
-		item->setText(PCITEM_COLUMN_COMMENT, text);
+//		text = QString::fromUtf8(comment.mComment.c_str());
+//		item->setText(PCITEM_COLUMN_COMMENT, text);
 		
-		text = QString::fromUtf8(comment.mMeta.mAuthorId.c_str());
-		if (text.isEmpty())
-		{
-			item->setText(PCITEM_COLUMN_AUTHOR, tr("Anonymous"));
-		}
-		else
-		{
-			item->setText(PCITEM_COLUMN_AUTHOR, text);
-		}
+//		text = QString::fromUtf8(comment.mMeta.mAuthorId.c_str());
+//		if (text.isEmpty())
+//		{
+//			item->setText(PCITEM_COLUMN_AUTHOR, tr("Anonymous"));
+//		}
+//		else
+//		{
+//			item->setText(PCITEM_COLUMN_AUTHOR, text);
+//		}
 
 
-		text = QString::fromUtf8(comment.mMeta.mMsgId.c_str());
-		item->setText(PCITEM_COLUMN_MSGID, text);
+//		text = QString::fromUtf8(comment.mMeta.mMsgId.c_str());
+//		item->setText(PCITEM_COLUMN_MSGID, text);
 
-		text = QString::fromUtf8(comment.mMeta.mParentId.c_str());
-		item->setText(PCITEM_COLUMN_PARENTID, text);
+//		text = QString::fromUtf8(comment.mMeta.mParentId.c_str());
+//		item->setText(PCITEM_COLUMN_PARENTID, text);
 
-		text = QString::fromUtf8(comment.mMeta.mServiceString.c_str());
-		item->setText(PCITEM_COLUMN_SERVSTRING, text);
+//		text = QString::fromUtf8(comment.mMeta.mServiceString.c_str());
+//		item->setText(PCITEM_COLUMN_SERVSTRING, text);
 
-		addItem(comment.mMeta.mMsgId, comment.mMeta.mParentId, item);
-	}
+//		addItem(comment.mMeta.mMsgId, comment.mMeta.mParentId, item);
+//	}
 
 	return;
 }
@@ -286,7 +286,7 @@ QTreeWidgetItem *GxsCommentTreeWidget::service_createMissingItem(std::string par
 }	
 
 
-void GxsCommentTreeWidget::loadRequest(const TokenQueueVEG *queue, const TokenRequestVEG &req)
+void GxsCommentTreeWidget::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
 	std::cerr << "GxsCommentTreeWidget::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;

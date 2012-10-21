@@ -62,7 +62,7 @@ RsGxsDataAccess::RsGxsDataAccess(RsGeneralDataService* ds)
 }
 
 
-bool RsGxsDataAccess::requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts,
+bool RsGxsDataAccess::requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts,
 		const std::list<std::string> &groupIds)
 {
     if(groupIds.empty())
@@ -110,7 +110,7 @@ bool RsGxsDataAccess::requestGroupInfo(uint32_t &token, uint32_t ansType, const 
     return true;
 }
 
-bool RsGxsDataAccess::requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts)
+bool RsGxsDataAccess::requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts)
 {
 
     GxsRequest* req = NULL;
@@ -160,7 +160,7 @@ void RsGxsDataAccess::generateToken(uint32_t &token)
 
 
 bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
-		const RsTokReqOptionsV2 &opts, const GxsMsgReq &msgIds)
+		const RsTokReqOptions &opts, const GxsMsgReq &msgIds)
 {
 
 	GxsRequest* req = NULL;
@@ -220,7 +220,7 @@ bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
 }
 
 bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
-                   const RsTokReqOptionsV2 &opts, const std::list<RsGxsGroupId>& grpIds)
+                   const RsTokReqOptions &opts, const std::list<RsGxsGroupId>& grpIds)
 {
         GxsRequest* req = NULL;
         uint32_t reqType = opts.mReqType;
@@ -269,7 +269,7 @@ bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
         return true;
 }
 
-bool RsGxsDataAccess::requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts,
+bool RsGxsDataAccess::requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts,
                                             const RsGxsGrpMsgIdPair &msgIds)
 {
 
@@ -285,7 +285,7 @@ bool RsGxsDataAccess::requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, c
 }
 
 
-void RsGxsDataAccess::setReq(GxsRequest* req, const uint32_t& token, const uint32_t& ansType, const RsTokReqOptionsV2& opts) const
+void RsGxsDataAccess::setReq(GxsRequest* req, const uint32_t& token, const uint32_t& ansType, const RsTokReqOptions& opts) const
 {
 	req->token = token;
 	req->ansType = ansType;
@@ -752,7 +752,7 @@ bool RsGxsDataAccess::getMsgSummary(MsgMetaReq* req)
 }
 
 
-bool RsGxsDataAccess::getMsgList(const GxsMsgReq& msgIds, const RsTokReqOptionsV2& opts, GxsMsgReq& msgIdsOut)
+bool RsGxsDataAccess::getMsgList(const GxsMsgReq& msgIds, const RsTokReqOptions& opts, GxsMsgReq& msgIdsOut)
 {
     GxsMsgMetaResult result;
 
@@ -923,7 +923,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
     std::cerr << "RsGxsDataAccess::getMsgRelatedList()";
     std::cerr << std::endl;
 
-    const RsTokReqOptionsV2& opts = req->Options;
+    const RsTokReqOptions& opts = req->Options;
 
     bool onlyLatestMsgs = false;
     bool onlyAllVersions = false;
@@ -1216,7 +1216,7 @@ void RsGxsDataAccess::cleanseMsgMetaMap(GxsMsgMetaResult& result)
 	return;
 }
 
-void RsGxsDataAccess::filterMsgList(GxsMsgIdResult& msgIds, const RsTokReqOptionsV2& opts,
+void RsGxsDataAccess::filterMsgList(GxsMsgIdResult& msgIds, const RsTokReqOptions& opts,
 		const MsgMetaFilter& msgMetas) const
 {
 
@@ -1376,7 +1376,7 @@ bool RsGxsDataAccess::disposeOfPublicToken(const uint32_t& token)
 	return true;
 }
 
-bool RsGxsDataAccess::checkMsgFilter(const RsTokReqOptionsV2& opts, const RsGxsMsgMetaData* meta) const
+bool RsGxsDataAccess::checkMsgFilter(const RsTokReqOptions& opts, const RsGxsMsgMetaData* meta) const
 {
 	bool statusMatch = false;
         if (opts.mStatusMask)
@@ -1434,3 +1434,4 @@ bool RsGxsDataAccess::checkMsgFilter(const RsTokReqOptionsV2& opts, const RsGxsM
 
         return statusMatch && flagMatch;
 }
+

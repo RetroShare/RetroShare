@@ -25,8 +25,7 @@
 
 #include "gui/gxs/PostedGroupDialog.h"
 
-//#include <retroshare/rspeers.h>
-#include <retroshare/rspostedVEG.h>
+#include <retroshare/rsposted.h>
 
 #include <iostream>
 #include <sstream>
@@ -69,7 +68,7 @@ PostedListDialog::PostedListDialog(QWidget *parent)
     ui.setupUi(this);
 
 	/* Setup Queue */
-        mPostedQueue = new TokenQueueVEG(rsPostedVEG, this);
+        mPostedQueue = new TokenQueue(rsPosted->getTokenService(), this);
 
     connect( ui.groupTreeWidget, SIGNAL( treeCustomContextMenuRequested( QPoint ) ), this, SLOT( groupListCustomPopupMenu( QPoint ) ) );
 
@@ -144,12 +143,6 @@ void PostedListDialog::groupListCustomPopupMenu( QPoint /*point*/ )
     action = contextMnu.addAction(QIcon(":/images/message-mail.png"), tr("Mark all as unread"), this, SLOT(markMsgAsUnreadAll()));
     //action->setEnabled (!mCurrTopicId.empty () && IS_FORUM_SUBSCRIBED(subscribeFlags));
 
-#ifdef DEBUG_FORUMS
-    contextMnu.addSeparator();
-    action = contextMnu.addAction("Generate mass data", this, SLOT(generateMassData()));
-    action->setEnabled (!mCurrTopicId.empty() && IS_FORUM_SUBSCRIBED(subscribeFlags));
-#endif
-
     contextMnu.exec(QCursor::pos());
 }
 
@@ -157,12 +150,12 @@ void PostedListDialog::updateDisplay()
 {
     std::list<std::string> groupIds;
     std::list<std::string>::iterator it;
-    if (!rsPostedVEG)
+    if (!rsPosted)
         return;
 
 	// TODO groupsChanged... HACK XXX.
 #if 0
-    if ((rsPostedVEG->groupsChanged(groupIds)) || (rsPostedVEG->updated()))
+    if ((rsPosted->groupsChanged(groupIds)) || (rsPosted->updated()))
     {
         /* update Forums List */
         insertGroups();
@@ -176,7 +169,7 @@ void PostedListDialog::updateDisplay()
     }
 #endif
 
-    if (rsPostedVEG->updated())
+    if (rsPosted->updated())
     {
         /* update Forums List */
         insertGroups();
@@ -244,8 +237,6 @@ void PostedListDialog::sortButtonClicked( QAbstractButton *button )
 	} else if (button == ui.topSortButton) {
                 sortMode = RSPOSTED_VIEWMODE_TOP;
 	}
-
-        rsPostedVEG->setViewMode(sortMode);
 }
 
 
@@ -275,7 +266,6 @@ void PostedListDialog::periodChanged( int index )
                         periodMode = RSPOSTED_PERIOD_YEAR;
 			break;
 	}
-        rsPostedVEG->setViewPeriod(periodMode);
 }
 
 
@@ -342,7 +332,7 @@ void PostedListDialog::requestGroupSummary()
         std::cerr << std::endl;
 
         std::list<std::string> ids;
-        RsTokReqOptionsVEG opts;
+        RsTokReqOptions opts;
 	uint32_t token;
         mPostedQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_SUMMARY, opts, ids, POSTEDDIALOG_LISTING);
 }
@@ -353,7 +343,7 @@ void PostedListDialog::loadGroupSummary(const uint32_t &token)
         std::cerr << std::endl;
 
         std::list<RsGroupMetaData> groupInfo;
-        rsPostedVEG->getGroupSummary(token, groupInfo);
+        rsPosted->getGroupSummary(token, groupInfo);
 
         if (groupInfo.size() > 0)
         {
@@ -373,7 +363,7 @@ void PostedListDialog::loadGroupSummary(const uint32_t &token)
 
 void PostedListDialog::requestGroupSummary_CurrentForum(const std::string &forumId)
 {
-        RsTokReqOptionsVEG opts;
+        RsTokReqOptions opts;
 	
 	std::list<std::string> grpIds;
 	grpIds.push_back(forumId);
@@ -391,7 +381,7 @@ void PostedListDialog::loadGroupSummary_CurrentForum(const uint32_t &token)
         std::cerr << std::endl;
 
         std::list<RsGroupMetaData> groupInfo;
-        rsPostedVEG->getGroupSummary(token, groupInfo);
+        rsPosted->getGroupSummary(token, groupInfo);
 
         if (groupInfo.size() == 1)
         {
@@ -452,7 +442,7 @@ void PostedListDialog::loadCurrentForumThreads(const std::string &forumId)
 
 void PostedListDialog::requestGroupThreadData_InsertThreads(const std::string &groupId)
 {
-        RsTokReqOptionsVEG opts;
+        RsTokReqOptions opts;
 
 	opts.mOptions = RS_TOKREQOPT_MSG_THREAD | RS_TOKREQOPT_MSG_LATEST;
 	
@@ -466,7 +456,7 @@ void PostedListDialog::requestGroupThreadData_InsertThreads(const std::string &g
 	//mPostedQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds, POSTEDDIALOG_INSERTTHREADS);
 
 	// Do specific Posted Request....
-        if (rsPostedVEG->requestRanking(token, groupId))
+        if (rsPosted->requestRanking(token, groupId))
 	{
 		// get the Queue to handle response.
         	mPostedQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_DATA, POSTEDDIALOG_INSERTTHREADS);
@@ -484,9 +474,9 @@ void PostedListDialog::loadGroupThreadData_InsertThreads(const uint32_t &token)
 	{
                 RsPostedPost post;
 		// Old Format.
-                //if (rsPostedVEG->getPost(token, post))
+                //if ()
 
-                if (rsPostedVEG->getRankedPost(token, post))
+                if (/*rsPosted->getPost(token, post)*/false)
 		{
 			std::cerr << "PostedListDialog::loadGroupThreadData_InsertThreads() MsgId: " << post.mMeta.mMsgId;
 			std::cerr << std::endl;
@@ -559,7 +549,7 @@ void PostedListDialog::clearPosts()
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
 	
-void PostedListDialog::loadRequest(const TokenQueueVEG *queue, const TokenRequestVEG &req)
+void PostedListDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
 	std::cerr << "PostedListDialog::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;
@@ -600,78 +590,11 @@ void PostedListDialog::loadRequest(const TokenQueueVEG *queue, const TokenReques
 void PostedListDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo)
 {
 
-    groupItemInfo.id = QString::fromStdString(groupInfo.mGroupId);
-    groupItemInfo.name = QString::fromUtf8(groupInfo.mGroupName.c_str());
-    //groupItemInfo.description = QString::fromUtf8(groupInfo.forumDesc);
-    groupItemInfo.popularity = groupInfo.mPop;
-    groupItemInfo.lastpost = QDateTime::fromTime_t(groupInfo.mLastPost);
-
-    if (groupInfo.mGroupFlags & RS_DISTRIB_AUTHEN_REQ) {
-        groupItemInfo.name += " (" + tr("AUTHD") + ")";
-        groupItemInfo.icon = QIcon(IMAGE_FORUMAUTHD);
-    } else {
-        groupItemInfo.icon = QIcon(IMAGE_FORUM);
-    }
 }
 
 void PostedListDialog::insertGroupData(const std::list<RsGroupMetaData> &groupList)
 {
-	std::list<RsGroupMetaData>::const_iterator it;
 
-    QList<GroupItemInfo> adminList;
-    QList<GroupItemInfo> subList;
-    QList<GroupItemInfo> popList;
-    QList<GroupItemInfo> otherList;
-    std::multimap<uint32_t, GroupItemInfo> popMap;
-
-    for (it = groupList.begin(); it != groupList.end(); it++) {
-		/* sort it into Publish (Own), Subscribed, Popular and Other */
-		uint32_t flags = it->mSubscribeFlags;
-
-        GroupItemInfo groupItemInfo;
-        groupInfoToGroupItemInfo(*it, groupItemInfo);
-
-        if (flags & RSGXS_GROUP_SUBSCRIBE_ADMIN) {
-            adminList.push_back(groupItemInfo);
-        } else if (flags & RSGXS_GROUP_SUBSCRIBE_SUBSCRIBED) {
-			/* subscribed forum */
-            subList.push_back(groupItemInfo);
-        } else {
-			/* rate the others by popularity */
-            popMap.insert(std::make_pair(it->mPop, groupItemInfo));
-		}
-	}
-
-	/* iterate backwards through popMap - take the top 5 or 10% of list */
-	uint32_t popCount = 5;
-	if (popCount < popMap.size() / 10)
-	{
-		popCount = popMap.size() / 10;
-	}
-
-	uint32_t i = 0;
-	uint32_t popLimit = 0;
-    std::multimap<uint32_t, GroupItemInfo>::reverse_iterator rit;
-	for(rit = popMap.rbegin(); ((rit != popMap.rend()) && (i < popCount)); rit++, i++) ;
-    if (rit != popMap.rend()) {
-        popLimit = rit->first;
-    }
-
-    for (rit = popMap.rbegin(); rit != popMap.rend(); rit++) {
-		if (rit->second.popularity < (int) popLimit) {
-            otherList.append(rit->second);
-        } else {
-            popList.append(rit->second);
-        }
-	}
-
-	/* now we can add them in as a tree! */
-    ui.groupTreeWidget->fillGroupItems(yourTopics, adminList);
-    ui.groupTreeWidget->fillGroupItems(subscribedTopics, subList);
-    ui.groupTreeWidget->fillGroupItems(popularTopics, popList);
-    ui.groupTreeWidget->fillGroupItems(otherTopics, otherList);
-
-	//	updateMessageSummaryList("");
 }
 
 /**************************************************************************************/

@@ -5,7 +5,7 @@
 
 #include "util/misc.h"
 
-AlbumCreateDialog::AlbumCreateDialog(TokenQueueV2 *photoQueue, RsPhotoV2 *rs_photo, QWidget *parent):
+AlbumCreateDialog::AlbumCreateDialog(TokenQueue *photoQueue, RsPhotoV2 *rs_photo, QWidget *parent):
     QDialog(parent),
     ui(new Ui::AlbumCreateDialog), mPhotoQueue(photoQueue), mRsPhoto(rs_photo)
 {

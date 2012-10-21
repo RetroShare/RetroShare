@@ -27,18 +27,18 @@
 #include "retroshare-gui/mainpage.h"
 #include "ui_PostedListDialog.h"
 
-#include <retroshare/rspostedVEG.h>
+#include <retroshare/rsposted.h>
 
 #include <map>
 
 #include "gui/Posted/PostedItem.h"
 #include "gui/common/GroupTreeWidget.h"
 
-#include "util/TokenQueueVEG.h"
+#include "util/TokenQueue.h"
 
 #include "retroshare-gui/RsAutoUpdatePage.h"
 
-class PostedListDialog : public RsAutoUpdatePage, public PostedHolder, public TokenResponseVEG
+class PostedListDialog : public RsAutoUpdatePage, public PostedHolder, public TokenResponse
 {
   Q_OBJECT
 
@@ -90,7 +90,7 @@ void 	loadGroupThreadData_InsertThreads(const uint32_t &token);
 void 	insertGroupData(const std::list<RsGroupMetaData> &groupList);
 void 	groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo);
 
-        void loadRequest(const TokenQueueVEG *queue, const TokenRequestVEG &req);
+        void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 
 	QTreeWidgetItem *yourTopics;
@@ -103,7 +103,7 @@ void 	groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &
 	bool mThreadLoading;
 	std::string mCurrTopicId;
 
-        TokenQueueVEG *mPostedQueue;
+        TokenQueue *mPostedQueue;
 
 	/* UI - from Designer */
 	Ui::PostedListDialog ui;

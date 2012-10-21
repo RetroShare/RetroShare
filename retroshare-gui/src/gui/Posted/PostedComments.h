@@ -27,7 +27,7 @@
 //#include "gui/mainpage.h"
 #include "ui_PostedComments.h"
 
-#include <retroshare/rspostedVEG.h>
+#include <retroshare/rsposted.h>
 
 #include <map>
 

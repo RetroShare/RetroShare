@@ -125,12 +125,12 @@ win32 {
 
 	OBJECTS_DIR = temp/obj
 
-	PRE_TARGETDEPS += ../../libretroshare/src/lib/libretroshare.a
-    #PRE_TARGETDEPS += ../../libretroshare/libretroshare-build-desktop/lib/libretroshare.a
+        #PRE_TARGETDEPS += ../../libretroshare/src/lib/libretroshare.a
+        PRE_TARGETDEPS += ../../libretroshare/libretroshare-build-desktop/lib/libretroshare.a
+        LIBS += ../../libretroshare/libretroshare-build-desktop/lib/libretroshare.a
 
-	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS += ../../openpgpsdk/src/lib/libops.a
-	LIBS += ../../../sqlite-autoconf-3070900/.libs/libsqlite3.a
+        LIBS += C:\Development\Rs\v0.5-gxs-b1\openpgpsdk\openpgpsdk-build-desktop\lib\libops.a
+        LIBS += C:\Development\Libraries\sqlite\sqlite-autoconf-3070900\.libs\libsqlite3.a
 	LIBS += -L"../../../lib"
 	LIBS += -lssl -lcrypto -lpthreadGC2d -lminiupnpc -lz -lbz2
 # added after bitdht
@@ -194,15 +194,15 @@ freebsd-* {
 # ###########################################
 
 bitdht {
-        LIBS += ../../libbitdht/src/lib/libbitdht.a
-        PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
+        #LIBS += ../../libbitdht/src/lib/libbitdht.a
+        #PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
 
         #LIBS += C:\Development\Rs\v0.5-gxs-b1\libbitdht\libbitdht-build-desktop\lib\libbitdht.a
         #PRE_TARGETDEPS *= C:\Development\Rs\v0.5-gxs-b1\libbitdht\libbitdht-build-desktop\lib\libbitdht.a
 
         # Chris version.
-        #LIBS += ../../libbitdht/libbitdht-build-desktop/lib/libbitdht.a
-        #PRE_TARGETDEPS *= ../../libbitdht/libbitdht-build-desktop/lib/libbitdht.a
+        LIBS += ../../libbitdht/libbitdht-build-desktop/lib/libbitdht.a
+        PRE_TARGETDEPS *= ../../libbitdht/libbitdht-build-desktop/lib/libbitdht.a
 }
 
 win32 {
@@ -871,7 +871,7 @@ photoshare {
 		gui/PhotoShare/AlbumItem.h \
 		gui/PhotoShare/AlbumDialog.h \
 		gui/PhotoShare/AlbumCreateDialog.h \
-                util/TokenQueueV2.h \
+                util/TokenQueue.h \
                 gui/PhotoShare/PhotoItem.h \
                 gui/PhotoShare/PhotoShareItemHolder.h \
                 gui/PhotoShare/PhotoShare.h \
@@ -898,7 +898,7 @@ photoshare {
 		gui/PhotoShare/AlbumItem.cpp \
 		gui/PhotoShare/AlbumDialog.cpp \
 		gui/PhotoShare/AlbumCreateDialog.cpp \
-                util/TokenQueueV2.cpp \
+                util/TokenQueue.cpp \
                 gui/PhotoShare/PhotoShareItemHolder.cpp \
                 gui/PhotoShare/PhotoShare.cpp \
                 gui/PhotoShare/PhotoSlideShow.cpp \

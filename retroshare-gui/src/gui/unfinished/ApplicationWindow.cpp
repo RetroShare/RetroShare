@@ -86,10 +86,6 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     //ui.stackPages->add(statisticDialog = new StatisticDialog(ui.stackPages),
     //                   createPageAction(QIcon(IMAGE_STATISTIC), tr("Statistics"), grp));
 
-    //PhotoDialog *photoDialog = NULL;
-    //ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
-    //                  createPageAction(QIcon(IMAGE_PHOTO), tr("Photo View"), grp));
-
     //GamesDialog *gamesDialog = NULL;
     //ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),
     //                   createPageAction(QIcon(IMAGE_GAMES), tr("Games Launcher"), grp));

@@ -16,14 +16,14 @@
 #include "PhotoItem.h"
 #include "PhotoSlideShow.h"
 
-#include "util/TokenQueueV2.h"
+#include "util/TokenQueue.h"
 #include "PhotoShareItemHolder.h"
 
 namespace Ui {
     class PhotoShare;
 }
 
-class PhotoShare : public MainPage, public TokenResponseV2, public PhotoShareItemHolder
+class PhotoShare : public MainPage, public TokenResponse, public PhotoShareItemHolder
 {
   Q_OBJECT
 
@@ -64,7 +64,7 @@ private:
         void loadPhotoList(const uint32_t &token);
         void loadPhotoData(const uint32_t &token);
 
-        void loadRequest(const TokenQueueV2 *queue, const TokenRequestV2 &req);
+        void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
         void acknowledgeGroup(const uint32_t &token);
         void acknowledgeMessage(const uint32_t &token);
@@ -91,7 +91,7 @@ private:
         AlbumDialog* mAlbumDialog;
         PhotoDialog* mPhotoDialog;
 
-        TokenQueueV2 *mPhotoQueue;
+        TokenQueue *mPhotoQueue;
 
         /* UI - from Designer */
         Ui::PhotoShare ui;

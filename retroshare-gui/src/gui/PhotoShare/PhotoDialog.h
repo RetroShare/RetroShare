@@ -4,7 +4,7 @@
 #include <QDialog>
 #include <QSet>
 #include "retroshare/rsphotoV2.h"
-#include "util/TokenQueueV2.h"
+#include "util/TokenQueue.h"
 #include "PhotoCommentItem.h"
 #include "AddCommentDialog.h"
 
@@ -12,7 +12,7 @@ namespace Ui {
     class PhotoDialog;
 }
 
-class PhotoDialog : public QDialog, public TokenResponseV2
+class PhotoDialog : public QDialog, public TokenResponse
 {
     Q_OBJECT
 
@@ -26,7 +26,7 @@ private slots:
     void createComment();
 
 public:
-    void loadRequest(const TokenQueueV2 *queue, const TokenRequestV2 &req);
+    void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 private:
     void setUp();
 
@@ -54,7 +54,7 @@ private:
     Ui::PhotoDialog *ui;
 
     RsPhotoV2* mRsPhoto;
-    TokenQueueV2* mPhotoQueue;
+    TokenQueue* mPhotoQueue;
     RsPhotoPhoto mPhotoDetails;
     QSet<PhotoCommentItem*> mComments;
     AddCommentDialog* mCommentDialog;

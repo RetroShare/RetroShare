@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include "retroshare/rsphotoV2.h"
-#include "util/TokenQueueV2.h"
+#include "util/TokenQueue.h"
 #include "PhotoShareItemHolder.h"
 #include "PhotoItem.h"
 #include "PhotoDrop.h"
@@ -17,7 +17,7 @@ class AlbumDialog : public QWidget, public PhotoShareItemHolder
     Q_OBJECT
 
 public:
-    explicit AlbumDialog(const RsPhotoAlbum& album, TokenQueueV2* photoQueue, RsPhotoV2* rs_Photo, QWidget *parent = 0);
+    explicit AlbumDialog(const RsPhotoAlbum& album, TokenQueue* photoQueue, RsPhotoV2* rs_Photo, QWidget *parent = 0);
     ~AlbumDialog();
 
     void notifySelection(PhotoShareItem* selection);
@@ -34,7 +34,7 @@ private slots:
 private:
     Ui::AlbumDialog *ui;
     RsPhotoV2* mRsPhoto;
-    TokenQueueV2* mPhotoQueue;
+    TokenQueue* mPhotoQueue;
     RsPhotoAlbum mAlbum;
     PhotoDrop* mPhotoDrop;
     PhotoItem* mPhotoSelected;

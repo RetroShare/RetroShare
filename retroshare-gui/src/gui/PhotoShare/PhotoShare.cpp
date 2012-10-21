@@ -96,7 +96,7 @@ PhotoShare::PhotoShare(QWidget *parent)
         timer->start(1000);
 
         /* setup TokenQueue */
-        mPhotoQueue = new TokenQueueV2(rsPhotoV2->getTokenService(), this);
+        mPhotoQueue = new TokenQueue(rsPhotoV2->getTokenService(), this);
         requestAlbumData();
 }
 
@@ -178,7 +178,7 @@ void PhotoShare::checkUpdate()
             rsPhotoV2->groupsChanged(grpIds);
             if(!grpIds.empty())
             {
-                RsTokReqOptionsV2 opts;
+                RsTokReqOptions opts;
                 uint32_t token;
                 opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
                 mPhotoQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds, 0);
@@ -490,7 +490,7 @@ void PhotoShare::updatePhotos()
 
 void PhotoShare::requestAlbumList(std::list<std::string>& ids)
 {
-        RsTokReqOptionsV2 opts;
+        RsTokReqOptions opts;
         opts.mReqType = GXS_REQUEST_TYPE_GROUP_IDS;
         uint32_t token;
         mPhotoQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_LIST, opts, ids, 0);
@@ -498,7 +498,7 @@ void PhotoShare::requestAlbumList(std::list<std::string>& ids)
 
 void PhotoShare::requestPhotoList(GxsMsgReq& req)
 {
-    RsTokReqOptionsV2 opts;
+    RsTokReqOptions opts;
     opts.mReqType = GXS_REQUEST_TYPE_MSG_IDS;
     uint32_t token;
     mPhotoQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_LIST, opts, req, 0);
@@ -526,7 +526,7 @@ void PhotoShare::loadAlbumList(const uint32_t &token)
 
 void PhotoShare::requestAlbumData(std::list<RsGxsGroupId> &ids)
 {
-        RsTokReqOptionsV2 opts;
+        RsTokReqOptions opts;
         uint32_t token;
         opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
         mPhotoQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, ids, 0);
@@ -534,7 +534,7 @@ void PhotoShare::requestAlbumData(std::list<RsGxsGroupId> &ids)
 
 void PhotoShare::requestAlbumData()
 {
-        RsTokReqOptionsV2 opts;
+        RsTokReqOptions opts;
         uint32_t token;
         opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
         mPhotoQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, 0);
@@ -569,7 +569,7 @@ void PhotoShare::requestPhotoList(const std::string &albumId)
 
     std::list<RsGxsGroupId> grpIds;
     grpIds.push_back(albumId);
-    RsTokReqOptionsV2 opts;
+    RsTokReqOptions opts;
     opts.mReqType = GXS_REQUEST_TYPE_MSG_IDS;
     opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
     uint32_t token;
@@ -587,7 +587,7 @@ void PhotoShare::acknowledgeGroup(const uint32_t &token)
         std::list<RsGxsGroupId> grpIds;
         grpIds.push_back(grpId);
 
-        RsTokReqOptionsV2 opts;
+        RsTokReqOptions opts;
         opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
         uint32_t reqToken;
         mPhotoQueue->requestGroupInfo(reqToken, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds, 0);
@@ -630,7 +630,7 @@ void PhotoShare::loadPhotoList(const uint32_t &token)
 
 void PhotoShare::requestPhotoData(GxsMsgReq &photoIds)
 {
-        RsTokReqOptionsV2 opts;
+        RsTokReqOptions opts;
         opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
         uint32_t token;
         mPhotoQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, photoIds, 0);
@@ -638,7 +638,7 @@ void PhotoShare::requestPhotoData(GxsMsgReq &photoIds)
 
 void PhotoShare::requestPhotoData(const std::list<RsGxsGroupId>& grpIds)
 {
-        RsTokReqOptionsV2 opts;
+        RsTokReqOptions opts;
         opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
         uint32_t token;
         mPhotoQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds, 0);
@@ -677,7 +677,7 @@ void PhotoShare::loadPhotoData(const uint32_t &token)
 
 /**************************** Request / Response Filling of Data ************************/
 
-void PhotoShare::loadRequest(const TokenQueueV2 *queue, const TokenRequestV2 &req)
+void PhotoShare::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
         std::cerr << "PhotoShare::loadRequest()";
         std::cerr << std::endl;

@@ -1267,7 +1267,7 @@ NxsTransaction::~NxsTransaction(){
 /* Net Manager */
 
 RsNxsNetMgrImpl::RsNxsNetMgrImpl(p3LinkMgr *lMgr)
-    : mLinkMgr(lMgr)
+    : mLinkMgr(lMgr), mNxsNetMgrMtx("RsNxsNetMgrImpl")
 {
 
 }
@@ -1275,6 +1275,7 @@ RsNxsNetMgrImpl::RsNxsNetMgrImpl(p3LinkMgr *lMgr)
 
 std::string RsNxsNetMgrImpl::getOwnId()
 {
+    RsStackMutex stack(mNxsNetMgrMtx);
     return mLinkMgr->getOwnId();
 }
 
@@ -1283,7 +1284,10 @@ void RsNxsNetMgrImpl::getOnlineList(std::set<std::string> &ssl_peers)
     ssl_peers.clear();
 
     std::list<std::string> pList;
-    mLinkMgr->getOnlineList(pList);
+    {
+        RsStackMutex stack(mNxsNetMgrMtx);
+        mLinkMgr->getOnlineList(pList);
+    }
 
     std::list<std::string>::const_iterator lit = pList.begin();
 

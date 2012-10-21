@@ -68,10 +68,10 @@
  * This class provides useful generic support for GXS style services.
  * I expect much of this will be incorporated into the base GXS.
  */
-class RsTokReqOptionsV2
+class RsTokReqOptions
 {
 public:
-RsTokReqOptionsV2()
+RsTokReqOptions()
 {
 	mOptions = 0;
         mStatusFilter = 0; mStatusMask = 0; mSubscribeFilter = 0;
@@ -86,6 +86,7 @@ uint32_t mOptions;
 uint32_t mStatusFilter;
 uint32_t mStatusMask;
 
+// use
 uint32_t mMsgFlagMask, mMsgFlagFilter;
 
 uint32_t mReqType;
@@ -97,6 +98,8 @@ time_t   mBefore;
 time_t   mAfter;
 };
 
+std::ostream &operator<<(std::ostream &out, const RsGroupMetaData &meta);
+std::ostream &operator<<(std::ostream &out, const RsMsgMetaData &meta);
 
 /*!
  * A proxy class for requesting generic service data for GXS
@@ -129,7 +132,7 @@ public:
      * @param groupIds group id to request info for
      * @return
      */
-    virtual bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts, const std::list<RsGxsGroupId> &groupIds) = 0;
+    virtual bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<RsGxsGroupId> &groupIds) = 0;
 
     /*!
      * Use this to request all group related info
@@ -138,7 +141,7 @@ public:
      * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
      * @return
      */
-    virtual bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts) = 0;
+    virtual bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts) = 0;
 
     /*!
      * Use this to get msg related information, store this value to pole for request completion
@@ -148,7 +151,7 @@ public:
      * @param groupIds The ids of the groups to get, second entry of map empty to query for all msgs
      * @return true if request successful false otherwise
      */
-    virtual bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts, const GxsMsgReq& msgIds) = 0;
+    virtual bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const GxsMsgReq& msgIds) = 0;
 
     /*!
      * Use this to get msg related information, store this value to pole for request completion
@@ -158,7 +161,7 @@ public:
      * @param groupIds The ids of the groups to get, this retrieve all the msgs info for each grpId in list
      * @return true if request successful false otherwise
      */
-    virtual bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts, const std::list<RsGxsGroupId>& msgIds) = 0;
+    virtual bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<RsGxsGroupId>& msgIds) = 0;
 
     /*!
      * For requesting msgs related to a given msg id within a group
@@ -168,7 +171,7 @@ public:
      * @param groupIds The ids of the groups to get, second entry of map empty to query for all msgs
      * @return true if request successful false otherwise
      */
-    virtual bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptionsV2 &opts, const RsGxsGrpMsgIdPair& msgIds) = 0;
+    virtual bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const RsGxsGrpMsgIdPair& msgIds) = 0;
 
 
     /* Poll */

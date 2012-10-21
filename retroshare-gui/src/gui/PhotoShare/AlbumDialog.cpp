@@ -3,7 +3,7 @@
 #include "AlbumDialog.h"
 #include "ui_AlbumDialog.h"
 
-AlbumDialog::AlbumDialog(const RsPhotoAlbum& album, TokenQueueV2* photoQueue, RsPhotoV2* rs_Photo, QWidget *parent) :
+AlbumDialog::AlbumDialog(const RsPhotoAlbum& album, TokenQueue* photoQueue, RsPhotoV2* rs_Photo, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::AlbumDialog), mPhotoQueue(photoQueue), mRsPhoto(rs_Photo), mAlbum(album), mPhotoSelected(NULL)
 {

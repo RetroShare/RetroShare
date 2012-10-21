@@ -26,6 +26,7 @@
  *
  */
 
+#include "gxs/rstokenservice.h"
 #include "gxs/rsgds.h"
 
 class GxsRequest
@@ -40,7 +41,7 @@ public:
 
 	uint32_t ansType;
 	uint32_t reqType;
-	RsTokReqOptionsV2 Options;
+        RsTokReqOptions Options;
 
 	uint32_t status;
 };

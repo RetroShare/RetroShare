@@ -527,6 +527,7 @@ HEADERS += retroshare/rsgame.h \
             serialiser/rsbanlistitems.cc \
             serialiser/rsbwctrlitems.cc \
             serialiser/rstunnelitems.cc
+
         SOURCES += services/p3channels.cc \
             services/p3chatservice.cc \
             services/p3disc.cc \
@@ -580,7 +581,7 @@ HEADERS += retroshare/rsgame.h \
         }
         
         # new gxs cache system
-        newcache { 
+        newcache {
             HEADERS += serialiser/rsnxsitems.h \
                 gxs/rsgds.h \
                 gxs/rsgxs.h \
@@ -603,6 +604,7 @@ HEADERS += retroshare/rsgame.h \
                 gxs/rsgxsifaceimpl.h \
                 services/p3posted.h \
                 retroshare/rsposted.h \
+                serialiser/rsposteditems.h
 
 
             SOURCES += serialiser/rsnxsitems.cc \
@@ -621,22 +623,23 @@ HEADERS += retroshare/rsgame.h \
                 gxs/gxssecurity.cc \
                 gxs/rsgxsifaceimpl.cc \
                 services/p3posted.cc \
+                serialiser/rsposteditems.cc
 
             # Identity Service
             HEADERS += retroshare/rsidentity.h \
                 gxs/rsgixs.h \
                 services/p3idservice.h \
-                serialiser/rsgxsiditems.h \
+                serialiser/rsgxsiditems.h
 
-            SOURCES += services/p3idservice.cc \
+            SOURCES += services/p3idservice.cc
             #    serialiser/rsgxsiditems.cc \
 
             # Wiki Service
             HEADERS += retroshare/rswiki.h \
                 services/p3wiki.h \
-                serialiser/rswikiitems.h \
+                serialiser/rswikiitems.h
 
-            SOURCES += services/p3wiki.cc \
+            SOURCES += services/p3wiki.cc
             #    serialiser/rswikiitems.cc \
 
         }
@@ -645,30 +648,20 @@ HEADERS += retroshare/rsgame.h \
             HEADERS += services/p3photoserviceV2.h \
                 retroshare/rsphotoVEG.h \
                 services/p3gxsserviceVEG.h \
-                retroshare/rsidentityVEG.h \
                 services/p3wikiserviceVEG.h \
                 retroshare/rswikiVEG.h \
                 retroshare/rswireVEG.h \
                 services/p3wireVEG.h \
-                services/p3idserviceVEG.h \
                 retroshare/rsforumsVEG.h \
-                services/p3forumsVEG.h \
-                retroshare/rspostedVEG.h \
-                services/p3postedVEG.h
-
+                services/p3forumsVEG.h
 		# Do I need this?
                 #serialiser/rsphotoitemsVEG.h \
 
             SOURCES += services/p3gxsserviceVEG.cc \
                 services/p3wikiserviceVEG.cc \
                 services/p3wireVEG.cc \
-                services/p3idserviceVEG.cc \
-                services/p3forumsVEG.cc \
-                services/p3postedVEG.cc
-
+                services/p3forumsVEG.cc
 		# Do I need this?
                 # serialiser/rsphotoitemsVEG.cc \
         }
-
-
 

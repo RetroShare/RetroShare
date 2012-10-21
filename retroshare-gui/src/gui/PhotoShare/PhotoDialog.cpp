@@ -7,7 +7,7 @@
 
 PhotoDialog::PhotoDialog(RsPhotoV2 *rs_photo, const RsPhotoPhoto &photo, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::PhotoDialog), mRsPhoto(rs_photo), mPhotoQueue(new TokenQueueV2(mRsPhoto->getTokenService(), this)),
+    ui(new Ui::PhotoDialog), mRsPhoto(rs_photo), mPhotoQueue(new TokenQueue(mRsPhoto->getTokenService(), this)),
     mPhotoDetails(photo), mCommentDialog(NULL)
 
 {
@@ -75,7 +75,7 @@ void PhotoDialog::resetComments()
 
 void PhotoDialog::requestComments()
 {
-    RsTokReqOptionsV2 opts;
+    RsTokReqOptions opts;
     opts.mMsgFlagMask = RsPhotoV2::FLAG_MSG_TYPE_MASK;
     opts.mMsgFlagFilter = RsPhotoV2::FLAG_MSG_TYPE_PHOTO_COMMENT;
 
@@ -107,7 +107,7 @@ void PhotoDialog::createComment()
 
 /*************** message loading **********************/
 
-void PhotoDialog::loadRequest(const TokenQueueV2 *queue, const TokenRequestV2 &req)
+void PhotoDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
     std::cerr << "PhotoShare::loadRequest()";
     std::cerr << std::endl;
@@ -177,7 +177,7 @@ void PhotoDialog::loadList(uint32_t token)
 {
     GxsMsgReq msgIds;
     mRsPhoto->getMsgList(token, msgIds);
-    RsTokReqOptionsV2 opts;
+    RsTokReqOptions opts;
 
     // just use data as no need to worry about getting comments
     opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
