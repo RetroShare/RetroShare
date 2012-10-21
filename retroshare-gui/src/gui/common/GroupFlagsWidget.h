@@ -34,4 +34,7 @@ class GroupFlagsWidget: public QWidget
 		QLayout *_layout ;
 		QIcon *_icons[6] ;
 		uint32_t _flags[4] ;
+
+		static QString _tooltips_on[4] ;
+		static QString _tooltips_off[4] ;
 };

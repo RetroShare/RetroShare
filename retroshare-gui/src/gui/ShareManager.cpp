@@ -131,9 +131,14 @@ void ShareManager::load()
 
 		  QWidget* widget = new GroupFlagsWidget(NULL,(*it).shareflags);
 
-		  //listWidget->setRowHeight(row, 32);
+		  listWidget->setRowHeight(row, 32);
 		  listWidget->setCellWidget(row, COLUMN_SHARE_FLAGS, widget);
+
+		  listWidget->setItem(row, COLUMN_GROUPS, new QTableWidgetItem(QString(" - "))) ; // no groups!
+		  listWidget->item(row,COLUMN_GROUPS)->setBackgroundColor(QColor(183,236,181)) ;
     }
+
+	 listWidget->setColumnWidth(COLUMN_SHARE_FLAGS,132) ;
 
     //ui.incomingDir->setText(QString::fromStdString(rsFiles->getDownloadDirectory()));
 

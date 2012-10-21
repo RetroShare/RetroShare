@@ -204,14 +204,26 @@ int FlatStyle_RDM::columnCount(const QModelIndex &/*parent*/) const
 }
 QString RetroshareDirModel::getFlagsString(uint32_t flags)
 {
-	switch(flags & (DIR_FLAGS_NETWORK_WIDE|DIR_FLAGS_BROWSABLE))
+	char str[5] = "----" ;
+
+	if(flags & DIR_FLAGS_BROWSABLE_GROUPS) str[0] = 'B' ;
+	if(flags & DIR_FLAGS_NETWORK_WIDE_GROUPS) str[1] = 'N' ;
+	if(flags & DIR_FLAGS_BROWSABLE_OTHERS) str[2] = 'B' ;
+	if(flags & DIR_FLAGS_NETWORK_WIDE_OTHERS) str[3] = 'N' ;
+
+	return QString(str) ;
+}
+QString RetroshareDirModel::getGroupsString(const std::list<std::string>& groups)
+{
+	QString groups_str ;
+
+	for(std::list<std::string>::const_iterator it(groups.begin());it!=groups.end();)
 	{
-		case DIR_FLAGS_NETWORK_WIDE: return tr("Anonymous") ;
-		case DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE: return tr("Anonymous and browsable by friends") ;
-		case DIR_FLAGS_BROWSABLE: return tr("Only browsable by friends") ;
-		default:
-										  return QString() ;
+		groups_str += QString::fromStdString(*it) ;
+		if(++it != groups.end())
+			groups_str += ", " ;
 	}
+	return groups_str ;
 }
 
 QString RetroshareDirModel::getAgeIndicatorString(const DirDetails &details) const
@@ -320,13 +332,16 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 				return  misc::userFriendlyDuration(details.age);
 			case 3:
 				return getFlagsString(details.flags);
+//			case 4:
+//				{
+//					QString ind("");
+//					if (ageIndicator != IND_ALWAYS)
+//						ind = getAgeIndicatorString(details);
+//					return ind;
+//				}
 			case 4:
-				{
-					QString ind("");
-					if (ageIndicator != IND_ALWAYS)
-						ind = getAgeIndicatorString(details);
-					return ind;
-				}
+				return getGroupsString(details.groups) ;
+
 			default:
 				return tr("FILE");
 		}
@@ -348,6 +363,9 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 				return misc::userFriendlyDuration(details.min_age);
 			case 3:
 				return getFlagsString(details.flags);
+			case 4: 
+				return getGroupsString(details.groups) ;
+
 			default:
 				return tr("DIR");
 		}
@@ -612,7 +630,10 @@ QVariant TreeStyle_RDM::headerData(int section, Qt::Orientation orientation, int
 				else
 					return tr("Share Type");
 			case 4:
-				return tr("What's new");
+				if (RemoteMode)
+					return tr("What's new");
+				else
+					return tr("Groups");
 		}
 		return QString("Column %1").arg(section);
 	}

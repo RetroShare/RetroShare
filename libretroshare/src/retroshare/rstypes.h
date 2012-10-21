@@ -254,8 +254,10 @@ class SearchRequest
 #define DIR_FLAGS_PARENT        0x0001
 #define DIR_FLAGS_DETAILS       0x0002
 #define DIR_FLAGS_CHILDREN      0x0004
-#define DIR_FLAGS_NETWORK_WIDE  0x0008
-#define DIR_FLAGS_BROWSABLE     0x0010
+#define DIR_FLAGS_NETWORK_WIDE_OTHERS  0x0008
+#define DIR_FLAGS_BROWSABLE_OTHERS     0x0010
+#define DIR_FLAGS_NETWORK_WIDE_GROUPS  0x0020
+#define DIR_FLAGS_BROWSABLE_GROUPS     0x0040
 
 class DirStub
 {
@@ -283,18 +285,19 @@ class DirDetails
 	uint32_t min_age ;	// minimum age of files in this subtree
 
 	std::list<DirStub> children;
+	std::list<std::string> groups;	// parent groups for the shared directory
 };
 
 class FileDetail
 {
 	public:
-	std::string id;
-	std::string name;
-	std::string hash;
-	std::string path;
-	uint64_t size;
-	uint32_t age;
-	uint32_t rank;
+		std::string id;
+		std::string name;
+		std::string hash;
+		std::string path;
+		uint64_t size;
+		uint32_t age;
+		uint32_t rank;
 };
 
 class CompressedChunkMap ;

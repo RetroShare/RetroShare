@@ -17,10 +17,27 @@
 #define INDEX_GROUP_UNCHECKED     4
 #define INDEX_OTHER_UNCHECKED     5
 
+QString GroupFlagsWidget::_tooltips_on[4] = {
+	QObject::tr("Directory is browsable for friends from parent groups"),
+	QObject::tr("Directory is accessible by anonymous tunnels from friends from parent groups"),
+	QObject::tr("Directory is browsable for any friend"),
+	QObject::tr("Directory is accessible by anonymous tunnels from any friend") 
+};
+QString GroupFlagsWidget::_tooltips_off[4] = {
+	QObject::tr(""),
+	QObject::tr(""),
+	QObject::tr(""),
+	QObject::tr("") 
+};
+
 GroupFlagsWidget::GroupFlagsWidget(QWidget *parent,uint32_t flags)
 	: QWidget(parent)
 {
 	_layout = new QHBoxLayout(this) ;
+
+	setMinimumSize(128,32) ;
+	setMaximumSize(128,32) ;
+	setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
 
 	_icons[INDEX_GROUP_BROWSABLE] = new QIcon(FLAGS_GROUP_BROWSABLE_ICON) ;
 	_icons[INDEX_GROUP_NETWORK_W] = new QIcon(FLAGS_GROUP_NETWORK_WIDE_ICON) ;
@@ -41,8 +58,7 @@ GroupFlagsWidget::GroupFlagsWidget(QWidget *parent,uint32_t flags)
 		_buttons[i] = new QPushButton(this) ;
 		_buttons[i]->setCheckable(true) ;
 		_buttons[i]->setChecked(flags & _flags[i]) ;
-		//_buttons[i]->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
-		//_buttons[i]->setMinimumSize(32,32);
+		_buttons[i]->setIconSize(QSize(32,32));
 		update_button_state(_buttons[i]->isChecked(),i) ;
 		_layout->addWidget(_buttons[i]) ;
 	}
@@ -76,11 +92,20 @@ uint32_t GroupFlagsWidget::flags() const
 void GroupFlagsWidget::update_button_state(bool b,int button_id)
 {
 	if(b)
+	{
 		_buttons[button_id]->setIcon(*_icons[button_id]) ;
+		_buttons[button_id]->setToolTip(_tooltips_on[button_id]) ;
+	}
 	else if(button_id == INDEX_GROUP_NETWORK_W || button_id == INDEX_GROUP_BROWSABLE)
+	{
 		_buttons[button_id]->setIcon(*_icons[INDEX_GROUP_UNCHECKED]) ;
+		_buttons[button_id]->setToolTip(_tooltips_off[button_id]) ;
+	}
 	else
+	{
 		_buttons[button_id]->setIcon(*_icons[INDEX_OTHER_UNCHECKED]) ;
+		_buttons[button_id]->setToolTip(_tooltips_off[button_id]) ;
+	}
 }
 
 void GroupFlagsWidget::update_GN_button(bool b) { update_button_state(b,INDEX_GROUP_NETWORK_W) ; updated() ; }
