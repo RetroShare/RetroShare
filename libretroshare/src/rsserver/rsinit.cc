@@ -1808,7 +1808,7 @@ RsTurtle *rsTurtle = NULL ;
 #include "services/p3blogs.h"
 #include "turtle/p3turtle.h"
 
-#define ENABLE_GXS_SERVICES	1
+//#define ENABLE_GXS_SERVICES	1
 #define ENABLE_GXS_CORE 1
 
 #ifdef ENABLE_GXS_CORE

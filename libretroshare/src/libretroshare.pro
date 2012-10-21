@@ -10,7 +10,7 @@ CONFIG += test_voip
 
 # GXS Stuff.
 CONFIG += newcache
-CONFIG += newservices
+#CONFIG += newservices
 
 # Beware: All data of the stripped services are lost
 DEFINES *= PQI_DISABLE_TUNNEL
