@@ -71,6 +71,32 @@ public:
 
 
 
+#define MAX_CACHE_SIZE	100 // Small for testing..
+//#define MAX_CACHE_SIZE	10000 // More useful size
+
+class RsGxsIdCache
+{
+	public:
+	RsGxsIdCache();
+	RsGxsIdCache(const RsGxsIdGroup &group);
+
+	RsGxsId id;
+	std::string name;
+	RsTlvSecurityKey pubkey;
+	double reputation;
+	time_t lastUsedTs;
+
+};
+
+
+class LruData
+{
+	public:
+	RsGxsId key;
+};
+
+	
+
 // Not sure exactly what should be inherited here?
 // Chris - please correct as necessary.
 
@@ -128,6 +154,38 @@ virtual int  getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key);
 virtual bool getReputation(const RsGxsId &id, const GixsReputation &rep);
 
 	private:
+
+/************************************************************************
+ * This is the Cache for minimising calls to the DataStore.
+ *
+ */
+	int  cache_tick();
+
+	bool cache_is_loaded(const RsGxsId &id);
+	bool cache_fetch(const RsGxsId &key, RsGxsIdCache &data);
+	bool cache_store(const RsGxsIdGroup &group);
+	bool cache_resize();
+	bool cache_discard_LRU(int count_to_clear);
+
+	bool cache_request_load(const RsGxsId &id);
+	bool cache_start_load();
+	bool cache_check_loading();
+	bool cache_load_for_token(uint32_t token);
+	bool cache_check_consistency();
+
+	/* MUTEX PROTECTED DATA (mIdMtx - maybe should use a 2nd?) */
+
+	bool locked_cache_update_lrumap(const RsGxsId &key, time_t old_ts, time_t new_ts);
+
+	std::map<RsGxsId, RsGxsIdCache> mCacheDataMap;
+	std::multimap<time_t, LruData> mCacheLruMap;
+	uint32_t mCacheDataCount;
+
+	time_t mCacheLoad_LastCycle;
+	int mCacheLoad_Status;
+	std::list<RsGxsId> mCacheLoad_ToCache;
+	std::list<uint32_t> mCacheLoad_Tokens;
+
 
 /************************************************************************
  * Below is the background task for processing opinions => reputations 

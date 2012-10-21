@@ -1443,6 +1443,7 @@ bool 	p3GxsDataServiceVEG::fakeprocessrequests()
         return true;
 }
 
+#if 0 // DISABLED AND MOVED TO GXS CODE.
 
 std::ostream &operator<<(std::ostream &out, const RsGroupMetaData &meta)
 {
@@ -1462,4 +1463,5 @@ std::ostream &operator<<(std::ostream &out, const RsMsgMetaData &meta)
 	return out;
 }
 
+#endif
 
