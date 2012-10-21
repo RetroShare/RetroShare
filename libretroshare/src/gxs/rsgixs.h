@@ -27,9 +27,12 @@
  */
 
 #include "gxs/rsgxs.h"
+#include "gxs/rsgenexchange.h"
 
-#include <openssl/ssl.h>
-#include <set>
+#include "serialiser/rstlvkeys.h"
+
+//#include <openssl/ssl.h>
+//#include <set>
 
 /*!
  * GIXP: General Identity Exchange Service.
@@ -94,25 +97,27 @@
  * as these will be used very frequently.
  *****/
 
-typedef std::string GxsId;
+//typedef std::string GxsId;
+
 typedef std::string PeerId;
 
-// External Interface - 
-class RsIdentityService
-{
-    enum IdentityType { Pseudonym, Signed, Anonymous };
-
-    virtual bool loadId(const GxsId &id) = 0;	
-
-    virtual bool getNickname(const GxsId &id, std::string &nickname) = 0;	
-
-    virtual bool createKey(RsGixsProfile& profile, uint32_t type) = 0; /* fills in mKeyId, and signature */
-
-    virtual RsGixsProfile* getProfile(const KeyRef& keyref) = 0;
-
-	// modify reputation.
-
-};
+//
+//// External Interface - 
+//class RsIdentityService
+//{
+//    enum IdentityType { Pseudonym, Signed, Anonymous };
+//
+//    virtual bool loadId(const GxsId &id) = 0;	
+//
+//    virtual bool getNickname(const GxsId &id, std::string &nickname) = 0;	
+//
+//    virtual bool createKey(RsGixsProfile& profile, uint32_t type) = 0; /* fills in mKeyId, and signature */
+//
+//    virtual RsGixsProfile* getProfile(const KeyRef& keyref) = 0;
+//
+//	// modify reputation.
+//
+//};
 
 
 /* Identity Interface for GXS Message Verification.
@@ -127,14 +132,14 @@ public:
      * @param keyref the keyref of key that is being checked for
      * @return true if available, false otherwise
      */
-    virtual bool haveKey(const GxsId &id) = 0;
+    virtual bool haveKey(const RsGxsId &id) = 0;
 
     /*!
      * Use to query whether private key member of the given key reference is available
      * @param keyref the KeyRef of the key being checked for
      * @return true if private key is held here, false otherwise
      */
-    virtual bool havePrivateKey(const GxsId &id) = 0;
+    virtual bool havePrivateKey(const RsGxsId &id) = 0;
 
 	// The fetchKey has an optional peerList.. this is people that had the msg with the signature.
 	// These same people should have the identity - so we ask them first.
@@ -143,7 +148,7 @@ public:
      * @param keyref the KeyRef of the key being requested
      * @return will
      */
-    virtual bool requestKey(const GxsId &id, const std::list<PeerId> &peers) = 0;
+    virtual bool requestKey(const RsGxsId &id, const std::list<PeerId> &peers) = 0;
 
     /*!
      * Retrieves a key identity
@@ -151,10 +156,17 @@ public:
      * @return a pointer to a valid profile if successful, otherwise NULL
      *
      */
-    virtual int  getKey(const GxsId &id, TlvSecurityKey &key) = 0;
-    virtual int  getPrivateKey(const GxsId &id, TlvSecurityKey &key) = 0;	// For signing outgoing messages.
+    virtual int  getKey(const RsGxsId &id, RsTlvSecurityKey &key) = 0;
+    virtual int  getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key) = 0;	// For signing outgoing messages.
 
 
+};
+
+class GixsReputation
+{
+	public:
+		RsGxsId id;
+		int score;
 };
 
 
@@ -162,7 +174,7 @@ class RsGixsReputation
 {
 public:
 	// get Reputation.
-    virtual bool getReputation(const GxsId &id, const GixsReputation &rep) = 0;
+    virtual bool getReputation(const RsGxsId &id, const GixsReputation &rep) = 0;
 };
 
 
@@ -171,7 +183,8 @@ public:
 class RsGxsIdExchange: public RsGenExchange, public RsGixsReputation, public RsGixs
 {
 public:
-	RsGxsIdExchange() { return; }
+    RsGxsIdExchange(RsGeneralDataService* gds, RsNetworkExchangeService* ns, RsSerialType* serviceSerialiser, uint16_t mServType)
+    :RsGenExchange(gds,ns,serviceSerialiser,mServType) { return; }
 virtual ~RsGxsIdExchange() { return; }
 
 };

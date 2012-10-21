@@ -26,10 +26,10 @@
 #ifndef P3_IDENTITY_SERVICE_HEADER
 #define P3_IDENTITY_SERVICE_HEADER
 
-#include "services/p3service.h"
-#include "services/p3gxsservice.h"
 
-#include "retroshare/rsidentity.h"
+#include "retroshare/rsidentity.h"	// External Interfaces.
+#include "gxs/rsgenexchange.h"		// GXS service.
+#include "gxs/rsgixs.h"			// Internal Interfaces.
 
 #include <map>
 #include <string>
@@ -74,7 +74,7 @@ public:
 // Not sure exactly what should be inherited here?
 // Chris - please correct as necessary.
 
-class p3IdService: public RsIdentity, public RsGxsIdExchange
+class p3IdService: public RsGxsIdExchange, public RsIdentity
 {
 	public:
 	p3IdService(RsGeneralDataService* gds, RsNetworkExchangeService* nes);
@@ -86,17 +86,21 @@ class p3IdService: public RsIdentity, public RsGxsIdExchange
 
 	/* Data Specific Interface */
 
-	/* TODO */
+	// These are exposed via RsIdentity.
+virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> &groups);
 
+	// These are local - and not exposed via RsIdentity.
+virtual bool getMsgData(const uint32_t &token, std::vector<RsGxsIdOpinion> &opinions);
+virtual bool createGroup(uint32_t& token, RsGxsIdGroup &group);
+virtual bool createMsg(uint32_t& token, RsGxsIdOpinion &opinion);
 
 	/**************** RsIdentity External Interface.
 	 * Notes:
 	 */
 
-
-virtual bool  getNickname(const RsId &id, std::string &nickname);
-virtual bool  getIdDetails(const RsId &id, RsIdentityDetails &details);
-virtual bool  getOwnIds(std::list<RsId> &ownIds);
+virtual bool  getNickname(const RsGxsId &id, std::string &nickname);
+virtual bool  getIdDetails(const RsGxsId &id, RsIdentityDetails &details);
+virtual bool  getOwnIds(std::list<RsGxsId> &ownIds);
 
         // 
 virtual bool submitOpinion(uint32_t& token, RsIdOpinion &opinion);
@@ -109,11 +113,11 @@ virtual bool createIdentity(uint32_t& token, RsIdentityParameters &params);
 	 *   Results should be cached / preloaded for maximum speed.
 	 *
 	 */
-virtual bool haveKey(const GxsId &id);
-virtual bool havePrivateKey(const GxsId &id);
-virtual bool requestKey(const GxsId &id, const std::list<PeerId> &peers);
-virtual int  getKey(const GxsId &id, TlvSecurityKey &key);
-virtual int  getPrivateKey(const GxsId &id, TlvSecurityKey &key);  
+virtual bool haveKey(const RsGxsId &id);
+virtual bool havePrivateKey(const RsGxsId &id);
+virtual bool requestKey(const RsGxsId &id, const std::list<PeerId> &peers);
+virtual int  getKey(const RsGxsId &id, RsTlvSecurityKey &key);
+virtual int  getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key);  
 
 	/**************** RsGixsReputation Implementation 
 	 * Notes:
@@ -121,7 +125,7 @@ virtual int  getPrivateKey(const GxsId &id, TlvSecurityKey &key);
 	 */
 
         // get Reputation.
-virtual bool getReputation(const GxsId &id, const GixsReputation &rep);
+virtual bool getReputation(const RsGxsId &id, const GixsReputation &rep);
 
 	private:
 

@@ -257,13 +257,13 @@ public:
      * @param token this is set to token value associated to this request
      * @param
      */
-    void setGroupSubscribeFlag(uint32_t& token, const RsGxsGroupId& grpId, const uint32_t& status);
+    void setGroupSubscribeFlags(uint32_t& token, const RsGxsGroupId& grpId, const uint32_t& status, const uint32_t& mask);
 
-    void setGroupStatusFlag(uint32_t& token, const RsGxsGroupId& grpId, const uint32_t& status);
+    void setGroupStatusFlags(uint32_t& token, const RsGxsGroupId& grpId, const uint32_t& status, const uint32_t& mask);
 
     void setGroupServiceString(uint32_t& token, const RsGxsGroupId& grpId, const std::string& servString);
 
-    void setMsgStatusFlag(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, const uint32_t& status);
+    void setMsgStatusFlags(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, const uint32_t& status, const uint32_t& mask);
 
     void setMsgServiceString(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, const std::string& servString );
 

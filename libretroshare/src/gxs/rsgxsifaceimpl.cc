@@ -138,9 +138,9 @@ bool RsGxsIfaceImpl::getMsgSummary(const uint32_t &token,
 bool RsGxsIfaceImpl::subscribeToGroup(uint32_t& token, const RsGxsGroupId& grpId, bool subscribe)
 {
     if(subscribe)
-        mGxs->setGroupSubscribeFlag(token, grpId, GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED);
+        mGxs->setGroupSubscribeFlags(token, grpId, GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED,  GXS_SERV::GROUP_SUBSCRIBE_MASK);
     else
-        mGxs->setGroupSubscribeFlag(token, grpId, ~GXS_SERV::GROUP_SUBSCRIBE_MASK);
+        mGxs->setGroupSubscribeFlags(token, grpId, 0, GXS_SERV::GROUP_SUBSCRIBE_MASK);
 
     return true;
 }

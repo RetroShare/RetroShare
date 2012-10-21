@@ -354,9 +354,9 @@ bool p3PhotoServiceV2::acknowledgeGrp(const uint32_t& token,
 bool p3PhotoServiceV2::subscribeToAlbum(uint32_t &token, const RsGxsGroupId &grpId, bool subscribe)
 {
     if(subscribe)
-        RsGenExchange::setGroupSubscribeFlag(token, grpId, GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED);
+        RsGenExchange::setGroupSubscribeFlags(token, grpId, GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED, GXS_SERV::GROUP_SUBSCRIBE_MASK);
     else
-        RsGenExchange::setGroupSubscribeFlag(token, grpId, ~GXS_SERV::GROUP_SUBSCRIBE_MASK);
+        RsGenExchange::setGroupSubscribeFlags(token, grpId, 0, GXS_SERV::GROUP_SUBSCRIBE_MASK);
 
     return true;
 }

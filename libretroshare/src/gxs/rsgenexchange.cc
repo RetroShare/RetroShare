@@ -441,8 +441,9 @@ void RsGenExchange::publishMsg(uint32_t& token, RsGxsMsgItem *msgItem)
     mMsgsToPublish.insert(std::make_pair(token, msgItem));
 }
 
-void RsGenExchange::setGroupSubscribeFlag(uint32_t& token, const RsGxsGroupId& grpId, const uint32_t& flag)
+void RsGenExchange::setGroupSubscribeFlags(uint32_t& token, const RsGxsGroupId& grpId, const uint32_t& flag, const uint32_t& mask)
 {
+	/* TODO APPLY MASK TO FLAGS */
     RsStackMutex stack(mGenMtx);
     token = mDataAccess->generatePublicToken();
 
@@ -452,8 +453,9 @@ void RsGenExchange::setGroupSubscribeFlag(uint32_t& token, const RsGxsGroupId& g
     mGrpLocMetaMap.insert(std::make_pair(token, g));
 }
 
-void RsGenExchange::setGroupStatusFlag(uint32_t& token, const RsGxsGroupId& grpId, const uint32_t& status)
+void RsGenExchange::setGroupStatusFlags(uint32_t& token, const RsGxsGroupId& grpId, const uint32_t& status, const uint32_t& mask)
 {
+	/* TODO APPLY MASK TO FLAGS */
     RsStackMutex stack(mGenMtx);
     token = mDataAccess->generatePublicToken();
 
@@ -475,8 +477,9 @@ void RsGenExchange::setGroupServiceString(uint32_t& token, const RsGxsGroupId& g
     mGrpLocMetaMap.insert(std::make_pair(token, g));
 }
 
-void RsGenExchange::setMsgStatusFlag(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, const uint32_t& status)
+void RsGenExchange::setMsgStatusFlags(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, const uint32_t& status, const uint32_t& mask)
 {
+	/* TODO APPLY MASK TO FLAGS */
     RsStackMutex stack(mGenMtx);
     token = mDataAccess->generatePublicToken();
 

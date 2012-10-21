@@ -623,13 +623,13 @@ HEADERS += retroshare/rsgame.h \
                 services/p3posted.cc \
 
             # Identity Service
-            #HEADERS += retroshare/rsidentity.h \
-            #    gxs/rsgixs.h \
-            #    services/p3idservice.h \
-            #    serialiser/rsiditems.h \
+            HEADERS += retroshare/rsidentity.h \
+                gxs/rsgixs.h \
+                services/p3idservice.h \
+                serialiser/rsgxsiditems.h \
 
-            #SOURCES += services/p3idservice.cc \
-            #    serialiser/rsiditems.cc \
+            SOURCES += services/p3idservice.cc \
+            #    serialiser/rsgxsiditems.cc \
 
             # Wiki Service
             HEADERS += retroshare/rswiki.h \

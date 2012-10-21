@@ -8,6 +8,7 @@
 
 #include "rsgxsitems.h"
 #include "gxs/rsgxsdata.h"
+#include <iostream>
 
 	void RsMsgMetaData::operator =(const RsGxsMsgMetaData& rGxsMeta)
 	{
@@ -42,3 +43,18 @@
                 this->mServiceString = rGxsMeta.mServiceString;
                 this->mSignFlags = rGxsMeta.mSignFlags;
 	}
+
+
+std::ostream &operator<<(std::ostream &out, const RsGroupMetaData &meta)
+{
+        out << "RsGroupMetaData(TODO PRINT)";
+        return out;
+}
+
+std::ostream &operator<<(std::ostream &out, const RsMsgMetaData &meta)
+{
+        out << "RsMsgMetaData(TODO PRINT)";
+        return out;
+}
+
+

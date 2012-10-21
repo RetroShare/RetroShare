@@ -29,7 +29,9 @@
 #include <inttypes.h>
 #include <string>
 #include <list>
-#include "rsgxsservice.h"
+
+#include "gxs/rstokenservice.h"
+#include "gxs/rsgxsifaceimpl.h"
 
 /* The Main Interface Class - for information about your Peers */
 class RsIdentity;
@@ -49,7 +51,7 @@ extern RsIdentity *rsIdentity;
 
 std::string rsIdTypeToString(uint32_t idtype);
 
-class RsIdGroup
+class RsGxsIdGroup
 {
 	public:
 
@@ -80,7 +82,7 @@ class RsIdGroup
 
 
 
-class RsIdMsg
+class RsGxsIdOpinion
 {
 	public:
 
@@ -98,12 +100,18 @@ class RsIdMsg
 };
 
 
+// This will probably be dropped.
+class RsGxsIdComment
+{
+	public:
 
-std::ostream &operator<<(std::ostream &out, const RsIdGroup &meta);
-std::ostream &operator<<(std::ostream &out, const RsIdMsg &meta);
+	RsMsgMetaData mMeta;
+	std::string mComment;
+};
 
-typedef std::map<RsGxsGroupId, std::vector<RsIdMsg> > IdMsgResult;
 
+std::ostream &operator<<(std::ostream &out, const RsGxsIdGroup &group);
+std::ostream &operator<<(std::ostream &out, const RsGxsIdOpinion &msg);
 
 #if 0
 class RsIdReputation
@@ -132,6 +140,39 @@ class RsIdOpinion
 };
 
 #endif
+
+
+// DATA TYPE FOR EXTERNAL INTERFACE.
+
+typedef std::string RsGxsId; // TMP. => 
+
+class RsIdentityDetails
+{
+	public:
+
+	RsGxsId id;
+
+	// identity details.
+
+
+	// reputation details.
+};
+
+
+class RsIdOpinion
+{
+	public:
+	RsGxsId id;
+	int rating;
+};
+	
+
+class RsIdentityParameters
+{
+	public:
+
+	int IdType;
+};
 
 
 class RsIdentity: public RsGxsIfaceImpl
@@ -208,23 +249,19 @@ public:
 	// We cache all identities, and provide alternative (instantaneous) 
 	// functions to extract info, rather than the standard Token system.
 
-virtual bool  getNickname(const RsId &id, std::string &nickname) = 0;
-virtual bool  getIdDetails(const RsId &id, RsIdentityDetails &details) = 0;
-virtual bool  getOwnIds(std::list<RsId> &ownIds) = 0;
+virtual bool  getNickname(const RsGxsId &id, std::string &nickname) = 0;
+virtual bool  getIdDetails(const RsGxsId &id, RsIdentityDetails &details) = 0;
+virtual bool  getOwnIds(std::list<RsGxsId> &ownIds) = 0;
 
 	// 
 virtual bool submitOpinion(uint32_t& token, RsIdOpinion &opinion) = 0;
 virtual bool createIdentity(uint32_t& token, RsIdentityParameters &params) = 0;
 
-
-
 	// Specific RsIdentity Functions....
         /* Specific Service Data */
-//virtual bool    getGroupData(const uint32_t &token, RsIdGroup &group) = 0;
-//virtual bool    getMsgData(const uint32_t &token, RsIdMsg &msg) = 0;
-
-//virtual bool    createGroup(uint32_t &token, RsIdGroup &group, bool isNew) = 0;
-//virtual bool    createMsg(uint32_t &token, RsIdMsg &msg, bool isNew) = 0;
+	/* We expose these initially for testing / GUI purposes.
+         */
+virtual bool    getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> &groups) = 0;
 
 	/* In the Identity System - You don't access the Messages Directly.
 	 * as they represent idividuals opinions....

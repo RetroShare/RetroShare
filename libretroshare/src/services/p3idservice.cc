@@ -24,9 +24,11 @@
  */
 
 #include "services/p3idservice.h"
+#include "serialiser/rsgxsiditems.h"
 
 #include "util/rsrandom.h"
 #include <retroshare/rspeers.h>
+
 #include <sstream>
 #include <stdio.h>
 
@@ -41,25 +43,17 @@
 
 RsIdentity *rsIdentity = NULL;
 
+#define RSGXSID_MAX_SERVICE_STRING 1024
 
 /********************************************************************************/
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
 
 p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *nes)
-    : RsIdentity(this), RsGenExchange(gds, nes, NULL, RS_SERVICE_GXSV1_TYPE_IDENTITY), 
+	: RsGxsIdExchange(gds, nes, NULL, RS_SERVICE_GXSV1_TYPE_GXSID), RsIdentity(this), 
 	mIdMtx("p3IdService")
 {
 
-}
-
-p3IdService::p3IdService(uint16_t type)
-	:p3GxsDataService(type, new IdDataProxy()), mIdMtx("p3IdService"), mUpdated(true)
-{
-     	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-
-	mIdProxy = (IdDataProxy *) mProxy;
-	return;
 }
 
 int	p3IdService::internal_tick()
@@ -78,17 +72,17 @@ int	p3IdService::internal_tick()
 /******************* RsIdentity Interface ***************************************/
 /********************************************************************************/
 
-bool p3IdService:: getNickname(const RsId &id, std::string &nickname)
+bool p3IdService:: getNickname(const RsGxsId &id, std::string &nickname)
 {
 	return false;
 }
 
-bool p3IdService:: getIdDetails(const RsId &id, RsIdentityDetails &details)
+bool p3IdService:: getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
 {
 	return false;
 }
 
-bool p3IdService:: getOwnIds(std::list<RsId> &ownIds)
+bool p3IdService:: getOwnIds(std::list<RsGxsId> &ownIds)
 {
 	return false;
 }
@@ -110,27 +104,27 @@ bool p3IdService::createIdentity(uint32_t& token, RsIdentityParameters &params)
 /******************* RsGixs Interface     ***************************************/
 /********************************************************************************/
 
-bool p3IdService::haveKey(const GxsId &id)
+bool p3IdService::haveKey(const RsGxsId &id)
 {
 	return false;
 }
 
-bool p3IdService::havePrivateKey(const GxsId &id)
+bool p3IdService::havePrivateKey(const RsGxsId &id)
 {
 	return false;
 }
 
-bool p3IdService::requestKey(const GxsId &id, const std::list<PeerId> &peers)
+bool p3IdService::requestKey(const RsGxsId &id, const std::list<PeerId> &peers)
 {
 	return false;
 }
 
-int  p3IdService::getKey(const GxsId &id, TlvSecurityKey &key)
+int  p3IdService::getKey(const RsGxsId &id, RsTlvSecurityKey &key)
 {
 	return -1;
 }
 
-int  p3IdService::getPrivateKey(const GxsId &id, TlvSecurityKey &key)
+int  p3IdService::getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key)
 {
 	return -1;
 }
@@ -140,7 +134,7 @@ int  p3IdService::getPrivateKey(const GxsId &id, TlvSecurityKey &key)
 /******************* RsGixsReputation     ***************************************/
 /********************************************************************************/
 
-bool p3IdService::getReputation(const GxsId &id, const GixsReputation &rep)
+bool p3IdService::getReputation(const RsGxsId &id, const GixsReputation &rep)
 {
 	return false;
 }
@@ -150,11 +144,9 @@ bool p3IdService::getReputation(const GxsId &id, const GixsReputation &rep)
 /******************* Get/Set Data      ******************************************/
 /********************************************************************************/
 
-bool p3IdService::getGroupData(const uint32_t &token, RsIdGroup &group)
+bool p3IdService::getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> &groups)
 {
 
-// MISMATCH BETWEEN RsGenExchange (vector) and individual result here.
-#if 0 
         std::vector<RsGxsGrpItem*> grpData;
         bool ok = RsGenExchange::getGroupData(token, grpData);
 
@@ -165,23 +157,18 @@ bool p3IdService::getGroupData(const uint32_t &token, RsIdGroup &group)
                 for(; vit != grpData.end(); vit++)
                 {
                         RsGxsIdGroupItem* item = dynamic_cast<RsGxsIdGroupItem*>(*vit);
-                        RsIdGroup group = item->group;
-                        group.mMeta = item->meta
+                        RsGxsIdGroup group = item->group;
+                        group.mMeta = item->meta;
                         groups.push_back(group);
                 }
         }
 
         return ok;
-#endif
-	return false;
 }
 
 
-bool p3IdService::getMsgData(const uint32_t &token, RsIdMsg &msg)
+bool p3IdService::getMsgData(const uint32_t &token, std::vector<RsGxsIdOpinion> &opinions)
 {
-
-// MISMATCH BETWEEN RsGenExchange (vector) and individual result here.
-#if 0
 	GxsMsgDataMap msgData;
 	bool ok = RsGenExchange::getMsgData(token, msgData);
 	
@@ -197,33 +184,31 @@ bool p3IdService::getMsgData(const uint32_t &token, RsIdMsg &msg)
 			
 			for(; vit != msgItems.end(); vit++)
 			{
-				RsGxsIdMsgItem* item = dynamic_cast<RsGxsIdMsgItem*>(*vit);
+				RsGxsIdOpinionItem* item = dynamic_cast<RsGxsIdOpinionItem*>(*vit);
 				
-				if(item)
+				if (item)
 				{
-					RsIdMsg msg = item->msg;
-					msg.mMeta = item->meta;
-					msgs[grpId].push_back(msg);
+					RsGxsIdOpinion opinion = item->opinion;
+					opinion.mMeta = item->meta;
+					opinions.push_back(opinion);
 					delete item;
 				}
 				else
 				{
-					std::cerr << "Not a IdMsg Item, deleting!" << std::endl;
+					std::cerr << "Not a IdOpinion Item, deleting!" << std::endl;
 					delete *vit;
 				}
 			}
 		}
 	}
 	return ok;
-#endif
-	return false;
 }
 
 /********************************************************************************/
 /********************************************************************************/
 /********************************************************************************/
 
-bool 	p3IdService::createGroup(uint32_t& token, RsIdGroup &group)
+bool 	p3IdService::createGroup(uint32_t& token, RsGxsIdGroup &group)
 {
     RsGxsIdGroupItem* item = new RsGxsIdGroupItem();
     item->group = group;
@@ -232,11 +217,11 @@ bool 	p3IdService::createGroup(uint32_t& token, RsIdGroup &group)
     return true;
 }
 
-bool 	p3IdService::createMsg(uint32_t& token, RsIdMsg &msg)
+bool 	p3IdService::createMsg(uint32_t& token, RsGxsIdOpinion &opinion)
 {
-    RsGxsIdMsgItem* item = new RsGxsIdMsgItem();
-    item->msg = msg;
-    item->meta = msg.mMeta;
+    RsGxsIdOpinionItem* item = new RsGxsIdOpinionItem();
+    item->opinion = opinion;
+    item->meta = opinion.mMeta;
     RsGenExchange::publishMsg(token, item);
     return true;
 }
@@ -279,7 +264,7 @@ void p3IdService::generateDummyData()
 		int nIds = 1 + (RSRandom::random_u32() % 2);
 		for(i = 0; i < nIds; i++)
 		{
-			RsIdGroup id;
+			RsGxsIdGroup id;
 
                 	RsPeerDetails details;
 
@@ -328,7 +313,10 @@ void p3IdService::generateDummyData()
 			}
 
 			//mIds[id.mKeyId] = id;
-			mIdProxy->addGroup(id);
+			//mIdProxy->addGroup(id);
+			// STORE
+			uint32_t dummyToken = 0;
+			createGroup(dummyToken, id);
 		}
 	}
 
@@ -341,7 +329,7 @@ void p3IdService::generateDummyData()
 	/* make some fake gpg ids */
 	for(i = 0; i < nFakeGPGs; i++)
 	{
-		RsIdGroup id;
+		RsGxsIdGroup id;
 
                 RsPeerDetails details;
 
@@ -359,13 +347,16 @@ void p3IdService::generateDummyData()
 		id.mGpgEmail = "";
 
 		//mIds[id.mKeyId] = id;
-		mIdProxy->addGroup(id);
+		//mIdProxy->addGroup(id);
+		// STORE
+		uint32_t dummyToken = 0;
+		createGroup(dummyToken, id);
 	}
 
 	/* make lots of pseudo ids */
 	for(i = 0; i < nFakePseudoIds; i++)
 	{
-		RsIdGroup id;
+		RsGxsIdGroup id;
 
                 RsPeerDetails details;
 
@@ -382,10 +373,13 @@ void p3IdService::generateDummyData()
 		id.mGpgEmail = "";
 
 		//mIds[id.mKeyId] = id;
-		mIdProxy->addGroup(id);
+		//mIdProxy->addGroup(id);
+		// STORE
+		uint32_t dummyToken = 0;
+		createGroup(dummyToken, id);
 	}
 
-	mUpdated = true;
+	//mUpdated = true;
 
 	return;
 }
@@ -566,9 +560,12 @@ bool p3IdService::background_checkTokenRequest()
 	uint32_t reqtype;
 	uint32_t anstype;
 	time_t ts;
-	checkRequestStatus(token, status, reqtype, anstype, ts);
+
+        
+	status = RsGenExchange::getTokenService()->requestStatus(token);
+	//checkRequestStatus(token, status, reqtype, anstype, ts);
 	
-	if (status == GXS_REQUEST_STATUS_COMPLETE)
+	if (status == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
 	{
 		switch(phase)
 		{
@@ -613,13 +610,16 @@ bool p3IdService::background_requestGroups()
 	}
 
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
-	RsTokReqOptions opts; 
+	RsTokReqOptionsV2 opts; 
 	std::list<std::string> groupIds;
 
+/**
+	TODO
 	opts.mStatusFilter = RSGXS_GROUP_STATUS_NEWMSG;
 	opts.mStatusMask = RSGXS_GROUP_STATUS_NEWMSG;
+**/
 
-	requestGroupInfo(token, ansType, opts, groupIds);
+	RsGenExchange::getTokenService()->requestGroupInfo(token, ansType, opts, groupIds);
 	{
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 		mBgToken = token;
@@ -662,7 +662,10 @@ bool p3IdService::background_requestNewMessages()
 		/* now we process the modGroupList -> a map so we can use it easily later, and create id list too */
 		for(it = modGroupList.begin(); it != modGroupList.end(); it++)
 		{
-			setGroupStatus(it->mGroupId, 0, RSGXS_GROUP_STATUS_NEWMSG);
+			/*** TODO
+                        uint32_t dummyToken = 0;
+			setGroupStatusFlags(dummyToken, it->mGroupId, 0, RSGXS_GROUP_STATUS_NEWMSG);
+			***/
 
 			mBgGroupMap[it->mGroupId] = *it;
 			groupIds.push_back(it->mGroupId);
@@ -670,13 +673,15 @@ bool p3IdService::background_requestNewMessages()
 	}
 
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY; 
-	RsTokReqOptions opts; 
+	RsTokReqOptionsV2 opts; 
 	token = 0;
 
+	/* TODO 
 	opts.mStatusFilter = RSGXS_MSG_STATUS_UNPROCESSED;
 	opts.mStatusMask = RSGXS_MSG_STATUS_UNPROCESSED;
+	*/
 
-	requestMsgInfo(token, ansType, opts, groupIds);
+	RsGenExchange::getTokenService()->requestMsgInfo(token, ansType, opts, groupIds);
 
 	{
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
@@ -691,8 +696,8 @@ bool p3IdService::background_processNewMessages()
 	std::cerr << "p3IdService::background_processNewMessages()";
 	std::cerr << std::endl;
 
-	std::list<RsMsgMetaData> newMsgList;
-	std::list<RsMsgMetaData>::iterator it;
+	GxsMsgMetaMap newMsgMap;
+	GxsMsgMetaMap::iterator it;
 	uint32_t token = 0;
 
 	{
@@ -700,14 +705,13 @@ bool p3IdService::background_processNewMessages()
 		token = mBgToken;
 	}
 
-	if (!getMsgSummary(token, newMsgList))
+	if (!getMsgSummary(token, newMsgMap))
 	{
 		std::cerr << "p3IdService::background_processNewMessages() ERROR No New Msgs";
 		std::cerr << std::endl;
 		background_cleanup();
 		return false;
 	}
-
 
 	/* iterate through the msgs.. update the mBgGroupMap with new data, 
 	 * and flag these items as modified - so we rewrite them to the db later.
@@ -716,84 +720,93 @@ bool p3IdService::background_processNewMessages()
          */
 
 	std::map<std::string, RsGroupMetaData>::iterator mit;
-	for(it = newMsgList.begin(); it != newMsgList.end(); it++)
+
+	for (it = newMsgMap.begin(); it != newMsgMap.end(); it++)
 	{
-		std::cerr << "p3IdService::background_processNewMessages() new MsgId: " << it->mMsgId;
-		std::cerr << std::endl;
-
-		/* flag each new vote as processed */
-		setMessageStatus(it->mMsgId, 0, RSGXS_MSG_STATUS_UNPROCESSED);
-
-		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-
-		mit = mBgGroupMap.find(it->mGroupId);
-		if (mit == mBgGroupMap.end())
+		std::vector<RsMsgMetaData>::iterator vit;
+		for(vit = it->second.begin(); vit != it->second.end(); vit++)
 		{
-			std::cerr << "p3IdService::background_processNewMessages() ERROR missing GroupId: ";
-			std::cerr << it->mGroupId;
+			std::cerr << "p3IdService::background_processNewMessages() new MsgId: " << vit->mMsgId;
 			std::cerr << std::endl;
-
-			/* error */
-			continue;
-		}
-
-		if (mit->second.mGroupStatus & ID_LOCAL_STATUS_FULL_CALC_FLAG)
-		{
-			std::cerr << "p3IdService::background_processNewMessages() Group Already marked FULL_CALC";
-			std::cerr << std::endl;
-
-			/* already marked */
-			continue;
-		}
-
-		if (it->mMsgId != it->mOrigMsgId)
-		{
-			/*
-			 *  not original -> hard, redo calc (alt: could substract previous score)
-			 */
-
-			std::cerr << "p3IdService::background_processNewMessages() Update, mark for FULL_CALC";
-			std::cerr << std::endl;
-
-			mit->second.mGroupStatus |= ID_LOCAL_STATUS_FULL_CALC_FLAG;
-		}
-		else
-		{
-			/*
-			 * Try incremental calculation.
-			 * - extract parameters from group.
-			 * - increment, & save back.
-			 * - flag group as modified.
-			 */
-
-			std::cerr << "p3IdService::background_processNewMessages() NewOpt, Try Inc Calc";
-			std::cerr << std::endl;
-
-			mit->second.mGroupStatus |= ID_LOCAL_STATUS_INC_CALC_FLAG;
-
-			std::string serviceString;
-			IdGroupServiceStrData ssData;
-			
-			if (!extractIdGroupCache(serviceString, ssData))
+	
+			/* flag each new vote as processed */
+			/**
+				TODO
+			uint32_t dummyToken = 0;
+			setMsgStatusFlags(dummyToken, it->mMsgId, 0, RSGXS_MSG_STATUS_UNPROCESSED);
+			**/
+	
+			RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+	
+			mit = mBgGroupMap.find(it->first);
+			if (mit == mBgGroupMap.end())
 			{
-				/* error */
-				std::cerr << "p3IdService::background_processNewMessages() ERROR Extracting";
+				std::cerr << "p3IdService::background_processNewMessages() ERROR missing GroupId: ";
+				std::cerr << vit->mGroupId;
 				std::cerr << std::endl;
+	
+				/* error */
+				continue;
 			}
-
-			/* do calcs */
-			std::cerr << "p3IdService::background_processNewMessages() Extracted: ";
-			std::cerr << std::endl;
-
-			/* store it back in */
-			std::cerr << "p3IdService::background_processNewMessages() Stored: ";
-			std::cerr << std::endl;
-
-			if (!encodeIdGroupCache(serviceString, ssData))
+	
+			if (mit->second.mGroupStatus & ID_LOCAL_STATUS_FULL_CALC_FLAG)
 			{
-				/* error */
-				std::cerr << "p3IdService::background_processNewMessages() ERROR Storing";
+				std::cerr << "p3IdService::background_processNewMessages() Group Already marked FULL_CALC";
 				std::cerr << std::endl;
+	
+				/* already marked */
+				continue;
+			}
+	
+			if (vit->mMsgId != vit->mOrigMsgId)
+			{
+				/*
+				 *  not original -> hard, redo calc (alt: could substract previous score)
+				 */
+	
+				std::cerr << "p3IdService::background_processNewMessages() Update, mark for FULL_CALC";
+				std::cerr << std::endl;
+	
+				mit->second.mGroupStatus |= ID_LOCAL_STATUS_FULL_CALC_FLAG;
+			}
+			else
+			{
+				/*
+				 * Try incremental calculation.
+				 * - extract parameters from group.
+				 * - increment, & save back.
+				 * - flag group as modified.
+				 */
+	
+				std::cerr << "p3IdService::background_processNewMessages() NewOpt, Try Inc Calc";
+				std::cerr << std::endl;
+	
+				mit->second.mGroupStatus |= ID_LOCAL_STATUS_INC_CALC_FLAG;
+	
+				std::string serviceString;
+				IdGroupServiceStrData ssData;
+				
+				if (!extractIdGroupCache(serviceString, ssData))
+				{
+					/* error */
+					std::cerr << "p3IdService::background_processNewMessages() ERROR Extracting";
+					std::cerr << std::endl;
+				}
+	
+				/* do calcs */
+				std::cerr << "p3IdService::background_processNewMessages() Extracted: ";
+				std::cerr << std::endl;
+	
+				/* store it back in */
+				std::cerr << "p3IdService::background_processNewMessages() Stored: ";
+				std::cerr << std::endl;
+	
+				if (!encodeIdGroupCache(serviceString, ssData))
+				{
+					/* error */
+					std::cerr << "p3IdService::background_processNewMessages() ERROR Storing";
+					std::cerr << std::endl;
+				}
 			}
 		}
 	}
@@ -827,7 +840,8 @@ bool p3IdService::background_processNewMessages()
 				std::cerr << std::endl;
 
 				/* set Cache */
-				setGroupServiceString(mit->second.mGroupId, mit->second.mServiceString);
+                                uint32_t dummyToken = 0;
+				setGroupServiceString(dummyToken, mit->second.mGroupId, mit->second.mServiceString);
 			}
 			else
 			{
@@ -845,9 +859,9 @@ bool p3IdService::background_processNewMessages()
 
 bool p3IdService::encodeIdGroupCache(std::string &str, const IdGroupServiceStrData &data)
 {
-	char line[RSGXS_MAX_SERVICE_STRING];
+	char line[RSGXSID_MAX_SERVICE_STRING];
 
-	snprintf(line, RSGXS_MAX_SERVICE_STRING, "v1 {%s} {Y:%d O:%d %d %f %f R:%d %d %f %f}", 
+	snprintf(line, RSGXSID_MAX_SERVICE_STRING, "v1 {%s} {Y:%d O:%d %d %f %f R:%d %d %f %f}", 
 			 data.pgpId.c_str(), data.ownScore, 
 		data.opinion.count, data.opinion.nullcount, data.opinion.sum, data.opinion.sumsq,
 		data.reputation.count, data.reputation.nullcount, data.reputation.sum, data.reputation.sumsq);
@@ -859,8 +873,8 @@ bool p3IdService::encodeIdGroupCache(std::string &str, const IdGroupServiceStrDa
 
 bool p3IdService::extractIdGroupCache(std::string &str, IdGroupServiceStrData &data)
 {
-	char pgpline[RSGXS_MAX_SERVICE_STRING];
-	char scoreline[RSGXS_MAX_SERVICE_STRING];
+	char pgpline[RSGXSID_MAX_SERVICE_STRING];
+	char scoreline[RSGXSID_MAX_SERVICE_STRING];
 	
 	uint32_t iOwnScore;
 	IdRepCumulScore iOpin;
@@ -944,10 +958,10 @@ bool p3IdService::background_FullCalcRequest()
 	/* request the summary info from the parents */
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_DATA; 
 	uint32_t token = 0;
-	RsTokReqOptions opts; 
+	RsTokReqOptionsV2 opts; 
 	opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
 
-	requestMsgInfo(token, ansType, opts, groupIds);
+	RsGenExchange::getTokenService()->requestMsgInfo(token, ansType, opts, groupIds);
 
 	{
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
@@ -967,7 +981,6 @@ bool p3IdService::background_processFullCalc()
 	std::list<RsMsgMetaData> msgList;
 	std::list<RsMsgMetaData>::iterator it;
 
-	RsIdMsg msg;
 
 	bool validmsgs = false;
 
@@ -982,20 +995,40 @@ bool p3IdService::background_processFullCalc()
 	double   rep_sum = 0;
 	double   rep_sumsq = 0;
 
-	while(getMsgData(mBgToken, msg))
+        std::vector<RsGxsIdOpinion> opinions;
+        std::vector<RsGxsIdOpinion>::iterator vit;
+
+        if (!getMsgData(mBgToken, opinions))
 	{
+		std::cerr << "p3IdService::background_processFullCalc() ERROR Failed to get Opinions";
+		std::cerr << std::endl;
+
+		return false;
+	}
+
+	std::string groupId;
+        for(vit = opinions.begin(); vit != opinions.end(); vit++)
+	{
+		RsGxsIdOpinion &opinion = *vit;
+
+		/* These should all be same group - should check for sanity! */
+		if (groupId == "")
+		{
+			groupId = opinion.mMeta.mGroupId;
+		}
+
 		std::cerr << "p3IdService::background_processFullCalc() Msg:";
-		std::cerr << msg;
+		std::cerr << opinion;
 		std::cerr << std::endl;
 
 		validmsgs = true;
 
-		/* for each msg ... extract score, and reputation */
-		if (msg.mOpinion != 0)
+		/* for each opinion.... extract score, and reputation */
+		if (opinion.mOpinion != 0)
 		{
 			opinion_count++;
-			opinion_sum += msg.mOpinion;
-			opinion_sum += (msg.mOpinion * msg.mOpinion);
+			opinion_sum += opinion.mOpinion;
+			opinion_sum += (opinion.mOpinion * opinion.mOpinion);
 		}
 		else
 		{
@@ -1003,12 +1036,12 @@ bool p3IdService::background_processFullCalc()
 		}
 		
 
-		/* for each msg ... extract score, and reputation */
-		if (msg.mReputation != 0)
+		/* for each opinion.... extract score, and reputation */
+		if (opinion.mReputation != 0)
 		{
 			rep_nullcount++;
-			rep_sum += msg.mReputation;
-			rep_sum += (msg.mReputation * msg.mReputation);
+			rep_sum += opinion.mReputation;
+			rep_sum += (opinion.mReputation * opinion.mReputation);
 		}
 		else
 		{
@@ -1042,8 +1075,6 @@ bool p3IdService::background_processFullCalc()
 
 	if (validmsgs)
 	{
-		std::string groupId = msg.mMeta.mGroupId;
-
 		std::string serviceString;
 		IdGroupServiceStrData ssData;
 		
@@ -1058,7 +1089,8 @@ bool p3IdService::background_processFullCalc()
 			std::cerr << "p3IdService::background_updateVoteCounts() Encoded String: " << serviceString;
 			std::cerr << std::endl;
 			/* store new result */
-			setGroupServiceString(it->mMsgId, serviceString);
+			uint32_t dummyToken = 0;
+			setGroupServiceString(dummyToken, groupId, serviceString);
 		}
 	}
 
@@ -1090,9 +1122,9 @@ bool p3IdService::background_cleanup()
 }
 
 
-std::ostream &operator<<(std::ostream &out, const RsIdGroup &grp)
+std::ostream &operator<<(std::ostream &out, const RsGxsIdGroup &grp)
 {
-	out << "RsIdGroup: Meta: " << grp.mMeta;
+	out << "RsGxsIdGroup: Meta: " << grp.mMeta;
 	out << " IdType: " << grp.mIdType << " GpgIdHash: " << grp.mGpgIdHash;
 	out << "(((Unusable: ( GpgIdKnown: " << grp.mGpgIdKnown << " GpgId: " << grp.mGpgId;
 	out << " GpgName: " << grp.mGpgName << " GpgEmail: " << grp.mGpgEmail << ") )))";
@@ -1101,10 +1133,9 @@ std::ostream &operator<<(std::ostream &out, const RsIdGroup &grp)
 	return out;
 }
 
-std::ostream &operator<<(std::ostream &out, const RsIdMsg &msg)
+std::ostream &operator<<(std::ostream &out, const RsGxsIdOpinion &opinion)
 {
-	out << "RsIdMsg: Meta: " << msg.mMeta;
-	//out << " IdType: " << grp.mIdType << " GpgIdHash: " << grp.mGpgIdHash;
+	out << "RsGxsIdOpinion: Meta: " << opinion.mMeta;
 	out << std::endl;
 	
 	return out;
