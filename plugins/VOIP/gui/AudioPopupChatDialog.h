@@ -6,6 +6,8 @@
 
 class QPushButton;
 
+#define VOIP_SOUND_INCOMING_CALL "VOIP_incoming_call"
+
 class AudioPopupChatDialog: public PopupChatDialog
 {
 	Q_OBJECT

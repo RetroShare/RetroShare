@@ -24,15 +24,35 @@
 
 #include <QObject>
 
+#define SOUND_NEW_CHAT_MESSAGE "NewChatMessage"
+#define SOUND_USER_ONLINE      "User_go_Online"
+
+class SoundEvents
+{
+public:
+	class SoundEventInfo
+	{
+	public:
+		SoundEventInfo() {}
+
+	public:
+		QString mGroupName;
+		QString mEventName;
+		QString mEvent;
+	};
+
+public:
+	SoundEvents();
+
+	void addEvent(const QString &groupName, const QString &eventName, const QString &event);
+
+public:
+	QList<SoundEventInfo> mEventInfos;
+};
+
 class SoundManager : public QObject
 {
 	Q_OBJECT
-
-public:
-	enum Events {
-		NEW_CHAT_MESSAGE,
-		USER_ONLINE
-	};
 
 public slots:
 	void setMute(bool mute);
@@ -45,14 +65,14 @@ public:
 
 	bool isMute();
 
-	void play(Events event);
+	void play(const QString &event);
 	void playFile(const QString &filename);
 
-	bool eventEnabled(Events event);
-	void setEventEnabled(Events event, bool enabled);
+	bool eventEnabled(const QString &event);
+	void setEventEnabled(const QString &event, bool enabled);
 
-	QString eventFilename(Events event);
-	void setEventFilename(Events event, const QString &filename);
+	QString eventFilename(const QString &event);
+	void setEventFilename(const QString &event, const QString &filename);
 
 private:
 	SoundManager();

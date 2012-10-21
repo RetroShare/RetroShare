@@ -3,6 +3,7 @@
 #include <QIcon>
 #include "AudioPopupChatDialog.h"
 #include "interface/rsvoip.h"
+#include "gui/SoundManager.h"
 
 AudioPopupChatDialog::AudioPopupChatDialog(QWidget *parent)
 	: PopupChatDialog(parent)
@@ -117,6 +118,8 @@ void AudioPopupChatDialog::addAudioData(const QString name, QByteArray* array)
             anim->setDuration(400);
             anim->start();
         }
+
+//        soundManager->play(VOIP_SOUND_INCOMING_CALL);
 
         //TODO make a toaster and a sound for the incoming call
         return;

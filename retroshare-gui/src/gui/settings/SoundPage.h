@@ -54,7 +54,7 @@ private slots:
 
 private:
 	QTreeWidgetItem *addGroup(const QString &name);
-	QTreeWidgetItem *addItem(QTreeWidgetItem *groupItem, const QString &name, SoundManager::Events event);
+	QTreeWidgetItem *addItem(QTreeWidgetItem *groupItem, const QString &name, const QString &event);
 
 	/** Qt Designer generated object */
 	Ui::SoundPage ui;

@@ -646,7 +646,7 @@ void NotifyQt::UpdateGUI()
 					}
 					break;
 				case RS_POPUP_CONNECT:
-					soundManager->play(SoundManager::USER_ONLINE);
+					soundManager->play(SOUND_USER_ONLINE);
 
 					if (popupflags & RS_POPUP_CONNECT)
 					{

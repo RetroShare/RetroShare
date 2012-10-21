@@ -14,6 +14,7 @@
 #include "gui/AudioPopupChatDialog.h"
 #include "gui/PluginGUIHandler.h"
 #include "gui/PluginNotifier.h"
+#include "gui/SoundManager.h"
 
 #define IMAGE_VOIP ":/images/talking_on.svg"
 
@@ -175,4 +176,7 @@ QTranslator* VOIPPlugin::qt_translator(QApplication */*app*/, const QString& lan
 	return NULL;
 }
 
-
+void VOIPPlugin::qt_sound_events(SoundEvents &/*events*/) const
+{
+//	events.addEvent(QApplication::translate("VOIP", "VOIP"), QApplication::translate("VOIP", "Incoming call"), VOIP_SOUND_INCOMING_CALL);
+}

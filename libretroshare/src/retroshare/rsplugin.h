@@ -51,6 +51,7 @@ class ConfigPage ;
 class RsPQIService ;
 class RsAutoUpdatePage ;
 class PopupChatDialog ;
+class SoundEvents;
 
 // Plugin API version. Not used yet, but will be in the future the
 // main value that decides for compatibility.
@@ -125,6 +126,7 @@ class RsPlugin
 		virtual ConfigPage     		*qt_config_page()  	const	{ return NULL ; } // Config tab to add in config panel.
 		virtual RsAutoUpdatePage 	*qt_transfers_tab()	const	{ return NULL ; } // Tab to add in transfers, after turtle statistics.
 		virtual std::string   		 qt_transfers_tab_name()const	{ return "Tab" ; } // Tab name
+		virtual void         		 qt_sound_events(SoundEvents &/*events*/) const	{ } // Sound events
 
 		// Any derived class of PopupChatDialog to be used for chat.
 		//

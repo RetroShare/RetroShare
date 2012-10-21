@@ -30,16 +30,18 @@
 
 SoundManager *soundManager = NULL;
 
-static QString settingName(SoundManager::Events event)
+SoundEvents::SoundEvents()
 {
-	switch (event) {
-	case SoundManager::NEW_CHAT_MESSAGE:
-		return "NewChatMessage";
-	case SoundManager::USER_ONLINE:
-		return "User_go_Online";
-	}
+}
 
-	return "";
+void SoundEvents::addEvent(const QString &groupName, const QString &eventName, const QString &event)
+{
+	SoundEventInfo info;
+	info.mGroupName = groupName;
+	info.mEventName = eventName;
+	info.mEvent = event;
+
+	mEventInfos.push_back(info);
 }
 
 void SoundManager::create()
@@ -71,47 +73,47 @@ bool SoundManager::isMute()
 	return mute;
 }
 
-bool SoundManager::eventEnabled(Events event)
+bool SoundManager::eventEnabled(const QString &event)
 {
 	Settings->beginGroup(GROUP_MAIN);
 	Settings->beginGroup(GROUP_ENABLE);
-	bool enabled = Settings->value(settingName(event), false).toBool();
+	bool enabled = Settings->value(event, false).toBool();
 	Settings->endGroup();
 	Settings->endGroup();
 
 	return enabled;
 }
 
-void SoundManager::setEventEnabled(Events event, bool enabled)
+void SoundManager::setEventEnabled(const QString &event, bool enabled)
 {
 	Settings->beginGroup(GROUP_MAIN);
 	Settings->beginGroup(GROUP_ENABLE);
-	Settings->setValue(settingName(event), enabled);
+	Settings->setValue(event, enabled);
 	Settings->endGroup();
 	Settings->endGroup();
 }
 
-QString SoundManager::eventFilename(Events event)
+QString SoundManager::eventFilename(const QString &event)
 {
 	Settings->beginGroup(GROUP_MAIN);
 	Settings->beginGroup(GROUP_SOUNDFILE);
-	QString filename = Settings->value(settingName(event)).toString();
+	QString filename = Settings->value(event).toString();
 	Settings->endGroup();
 	Settings->endGroup();
 
 	return filename;
 }
 
-void SoundManager::setEventFilename(Events event, const QString &filename)
+void SoundManager::setEventFilename(const QString &event, const QString &filename)
 {
 	Settings->beginGroup(GROUP_MAIN);
 	Settings->beginGroup(GROUP_SOUNDFILE);
-	Settings->setValue(settingName(event), filename);
+	Settings->setValue(event, filename);
 	Settings->endGroup();
 	Settings->endGroup();
 }
 
-void SoundManager::play(Events event)
+void SoundManager::play(const QString &event)
 {
 	if (isMute() || !QSound::isAvailable() || !eventEnabled(event)) {
 		return;
@@ -120,7 +122,6 @@ void SoundManager::play(Events event)
 	QString filename = eventFilename(event);
 	playFile(filename);
 }
-
 
 void SoundManager::playFile(const QString &filename)
 {

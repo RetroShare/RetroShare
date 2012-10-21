@@ -23,6 +23,8 @@
 #include "rsharesettings.h"
 #include "util/misc.h"
 
+#include <retroshare/rsplugin.h>
+
 #define COLUMN_NAME     0
 #define COLUMN_FILENAME 1
 #define COLUMN_COUNT    2
@@ -66,7 +68,17 @@ SoundPage::~SoundPage()
 
 QTreeWidgetItem *SoundPage::addGroup(const QString &name)
 {
-	QTreeWidgetItem *item = new QTreeWidgetItem(TYPE_GROUP);
+	QTreeWidgetItem *item = NULL;
+
+	int count = ui.eventTreeWidget->topLevelItemCount();
+	for (int i = 0; i < count; ++i) {
+		item = ui.eventTreeWidget->topLevelItem(i);
+		if (item->text(COLUMN_NAME) == name) {
+			return item;
+		}
+	}
+
+	item = new QTreeWidgetItem(TYPE_GROUP);
 	item->setText(COLUMN_NAME, name);
 	ui.eventTreeWidget->insertTopLevelItem(ui.eventTreeWidget->topLevelItemCount(), item);
 	ui.eventTreeWidget->expandItem(item);
@@ -74,7 +86,7 @@ QTreeWidgetItem *SoundPage::addGroup(const QString &name)
 	return item;
 }
 
-QTreeWidgetItem *SoundPage::addItem(QTreeWidgetItem *groupItem, const QString &name, SoundManager::Events event)
+QTreeWidgetItem *SoundPage::addItem(QTreeWidgetItem *groupItem, const QString &name, const QString &event)
 {
 	QTreeWidgetItem *item = new QTreeWidgetItem(TYPE_ITEM);
 	item->setData(COLUMN_DATA, ROLE_EVENT, event);
@@ -96,7 +108,7 @@ bool SoundPage::save(QString &/*errmsg*/)
 		itemIterator++;
 
 		if (item->type() == TYPE_ITEM) {
-			SoundManager::Events event = (SoundManager::Events) item->data(COLUMN_DATA, ROLE_EVENT).toInt();
+			const QString event = item->data(COLUMN_DATA, ROLE_EVENT).toString();
 			soundManager->setEventEnabled(event, item->checkState(COLUMN_NAME) == Qt::Checked);
 			soundManager->setEventFilename(event, item->text(COLUMN_FILENAME));
 		}
@@ -110,11 +122,34 @@ void SoundPage::load()
 {
 	ui.eventTreeWidget->clear();
 
+	/* add standard events */
+
 	QTreeWidgetItem *groupItem = addGroup(tr("Friend"));
-	addItem(groupItem, tr("go Online"), SoundManager::USER_ONLINE);
+	addItem(groupItem, tr("go Online"), SOUND_USER_ONLINE);
 
 	groupItem = addGroup(tr("Chatmessage"));
-	addItem(groupItem, tr("New Msg"), SoundManager::NEW_CHAT_MESSAGE);
+	addItem(groupItem, tr("New Msg"), SOUND_NEW_CHAT_MESSAGE);
+
+	/* add plugin events */
+	int pluginCount = rsPlugins->nbPlugins();
+	for (int i = 0; i < pluginCount; ++i) {
+		RsPlugin *plugin = rsPlugins->plugin(i);
+
+		if (plugin) {
+			SoundEvents events;
+			plugin->qt_sound_events(events);
+
+			if (events.mEventInfos.empty()) {
+				continue;
+			}
+
+			QList<SoundEvents::SoundEventInfo>::iterator it;
+			for (it = events.mEventInfos.begin(); it != events.mEventInfos.end(); ++it) {
+				groupItem = addGroup(it->mGroupName);
+				addItem(groupItem, it->mEventName, it->mEvent);
+			}
+		}
+	}
 
 	ui.eventTreeWidget->resizeColumnToContents(COLUMN_NAME);
 
