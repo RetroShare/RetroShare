@@ -133,6 +133,8 @@ introserver {
 
 
 sshserver {
+	LIBSSH_DIR = ../../libssh-0.5.2
+
 	# This Requires libssh-0.5.* to compile.
 	# Modify path below to point at it.
 	# Probably will only work on Linux for the moment.
@@ -149,9 +151,9 @@ sshserver {
 	# ./retroshare-nogui -h  provides some more instructions.
 	#
 
-	INCLUDEPATH += ../../../lib/libssh-0.5.2/include/
-	LIBS += ../../../lib/libssh-0.5.2/build/src/libssh.a
-	LIBS += ../../../lib/libssh-0.5.2/build/src/threads/libssh_threads.a
+	INCLUDEPATH += $$LIBSSH_DIR/include/
+	LIBS += $$LIBSSH_DIR/build/src/libssh.a
+	LIBS += $$LIBSSH_DIR/build/src/threads/libssh_threads.a
 	#LIBS += -lssh
 	#LIBS += -lssh_threads
 	HEADERS += ssh/rssshd.h
@@ -204,19 +206,19 @@ protorpc {
 		rpc/proto/rpcprotofiles.cc \
 
 	# Generated ProtoBuf Code the RPC System
-	HEADERS += rpc/proto/gencc/core.pb.h \
-		rpc/proto/gencc/peers.pb.h \
-		rpc/proto/gencc/system.pb.h \
-		rpc/proto/gencc/chat.pb.h \
-		rpc/proto/gencc/search.pb.h \
-		rpc/proto/gencc/files.pb.h \
+	HEADERS += ../../rsctrl/src/gencc/core.pb.h \
+		        ../../rsctrl/src/gencc/peers.pb.h \
+		        ../../rsctrl/src/gencc/system.pb.h \
+		        ../../rsctrl/src/gencc/chat.pb.h \
+        		  ../../rsctrl/src/gencc/search.pb.h \
+		        ../../rsctrl/src/gencc/files.pb.h \
 
-	SOURCES += rpc/proto/gencc/core.pb.cc \
-		rpc/proto/gencc/peers.pb.cc \
-		rpc/proto/gencc/system.pb.cc \
-		rpc/proto/gencc/chat.pb.cc \
-		rpc/proto/gencc/search.pb.cc \
-		rpc/proto/gencc/files.pb.cc \
+	SOURCES += ../../rsctrl/src/gencc/core.pb.cc \
+		        ../../rsctrl/src/gencc/peers.pb.cc \
+		        ../../rsctrl/src/gencc/system.pb.cc \
+		        ../../rsctrl/src/gencc/chat.pb.cc \
+		        ../../rsctrl/src/gencc/search.pb.cc \
+		        ../../rsctrl/src/gencc/files.pb.cc \
 
         QMAKE_CFLAGS += -pthread
         QMAKE_CXXFLAGS += -pthread
