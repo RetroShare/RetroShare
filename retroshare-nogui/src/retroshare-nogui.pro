@@ -44,24 +44,27 @@ win32-x-g++ {
 #################################### Windows #####################################
 
 win32 {
-    CONFIG += console
-    OBJECTS_DIR = temp/obj
-    RCC_DIR = temp/qrc
+	CONFIG += console
+	OBJECTS_DIR = temp/obj
+	RCC_DIR = temp/qrc
 	UI_DIR  = temp/ui
 	MOC_DIR = temp/moc
 
-    LIBS += ../../libretroshare/src/lib/libretroshare.a
+	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
+	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
+
+	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
-    LIBS += -L"../../../lib" -lssl -lcrypto -lpthreadGC2d -lminiupnpc -lz
-    LIBS += -lssl -lcrypto -lpthreadGC2d -lminiupnpc -lz
+	LIBS += -L"../../../lib" -lssl -lcrypto -lpthreadGC2d -lminiupnpc -lz
+	LIBS += -lssl -lcrypto -lpthreadGC2d -lminiupnpc -lz
 # added after bitdht
-#    LIBS += -lws2_32
-    LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
-    LIBS += -lole32 -lwinmm
-    
-    RC_FILE = resources/retroshare_win.rc
-    
-    DEFINES *= WINDOWS_SYS
+#	LIBS += -lws2_32
+	LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
+	LIBS += -lole32 -lwinmm
+
+	RC_FILE = resources/retroshare_win.rc
+
+	DEFINES *= WINDOWS_SYS
 }
 
 ##################################### MacOS ######################################
