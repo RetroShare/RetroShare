@@ -6,8 +6,8 @@ PROTO = core.proto peers.proto system.proto chat.proto search.proto files.proto
 PROTOPATH = ./definition
 #CDESTPATH = ./gencc
 CDESTPATH = ../../retroshare-nogui/src/rpc/proto/gencc
-#PYDESTPATH = ./genpy
-PYDESTPATH = ../../../../github/pyrs/pyrs/proto
+PYDESTPATH = ./genpy
+#PYDESTPATH = ../../../../github/pyrs/pyrs/proto
 
 CLIST = $(PROTO:%.proto=%.cc)
 CCODE = $(patsubst %.proto,$(CDESTPATH)/%.pb.cc, $(PROTO))
@@ -16,10 +16,12 @@ PYCODE = $(patsubst %.proto,$(PYDESTPATH)/%_pb2.py, $(PROTO))
 
 
 all: allc
-	echo $(CCODE)
-	echo $(PYCODE)
 
-allc: $(CCODE) $(PYCODE)
+allc: $(CCODE) 
+	echo $(CCODE)
+
+python_proto: $(PYCODE)
+	echo $(PYCODE)
 
 $(CDESTPATH)/%.pb.cc : $(PROTOPATH)/%.proto
 	$(EXEC) --proto_path=$(PROTOPATH) --cpp_out=$(CDESTPATH) $<
