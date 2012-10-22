@@ -133,7 +133,7 @@ introserver {
 
 
 sshserver {
-	LIBSSH_DIR = ../../libssh-0.5.2
+	LIBSSH_DIR = ../../../lib/libssh-0.5.2
 
 	# This Requires libssh-0.5.* to compile.
 	# Modify path below to point at it.
@@ -205,20 +205,37 @@ protorpc {
 		rpc/proto/rpcprotosearch.cc \
 		rpc/proto/rpcprotofiles.cc \
 
-	# Generated ProtoBuf Code the RPC System
-	HEADERS += ../../rsctrl/src/gencc/core.pb.h \
-		        ../../rsctrl/src/gencc/peers.pb.h \
-		        ../../rsctrl/src/gencc/system.pb.h \
-		        ../../rsctrl/src/gencc/chat.pb.h \
-        		  ../../rsctrl/src/gencc/search.pb.h \
-		        ../../rsctrl/src/gencc/files.pb.h \
+	# Offical Generated Code (protobuf 2.4.1)
+	HEADERS += rpc/proto/gencc/core.pb.h \
+		        rpc/proto/gencc/peers.pb.h \
+		        rpc/proto/gencc/system.pb.h \
+		        rpc/proto/gencc/chat.pb.h \
+        		rpc/proto/gencc/search.pb.h \
+		        rpc/proto/gencc/files.pb.h \
 
-	SOURCES += ../../rsctrl/src/gencc/core.pb.cc \
-		        ../../rsctrl/src/gencc/peers.pb.cc \
-		        ../../rsctrl/src/gencc/system.pb.cc \
-		        ../../rsctrl/src/gencc/chat.pb.cc \
-		        ../../rsctrl/src/gencc/search.pb.cc \
-		        ../../rsctrl/src/gencc/files.pb.cc \
+	SOURCES += rpc/proto/gencc/core.pb.cc \
+		        rpc/proto/gencc/peers.pb.cc \
+		        rpc/proto/gencc/system.pb.cc \
+		        rpc/proto/gencc/chat.pb.cc \
+		        rpc/proto/gencc/search.pb.cc \
+		        rpc/proto/gencc/files.pb.cc \
+
+	# Generated ProtoBuf Code the RPC System
+        # If you are developing, or have a different version of protobuf
+        # you can use these ones (run make inside rsctrl/src/ to generate)
+	#HEADERS += ../../rsctrl/src/gencc/core.pb.h \
+	#	        ../../rsctrl/src/gencc/peers.pb.h \
+	#	        ../../rsctrl/src/gencc/system.pb.h \
+	#	        ../../rsctrl/src/gencc/chat.pb.h \
+        #		../../rsctrl/src/gencc/search.pb.h \
+	#	        ../../rsctrl/src/gencc/files.pb.h \
+
+	#SOURCES += ../../rsctrl/src/gencc/core.pb.cc \
+	#	        ../../rsctrl/src/gencc/peers.pb.cc \
+	#	        ../../rsctrl/src/gencc/system.pb.cc \
+	#	        ../../rsctrl/src/gencc/chat.pb.cc \
+	#	        ../../rsctrl/src/gencc/search.pb.cc \
+	#	        ../../rsctrl/src/gencc/files.pb.cc \
 
         QMAKE_CFLAGS += -pthread
         QMAKE_CXXFLAGS += -pthread
