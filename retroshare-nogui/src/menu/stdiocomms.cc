@@ -33,6 +33,8 @@
 StdioComms::StdioComms(int infd, int outfd)
 	:mIn(infd), mOut(outfd)
 {
+// fcntl not available on Windows, search alternative when needed
+#ifndef WINDOWS_SYS
 #if 1
 // THIS Code is strange...
 // It seems to mess up stderr.
@@ -57,6 +59,7 @@ StdioComms::StdioComms(int infd, int outfd)
 	std::cerr << "StdioComms() STDERR msg 1";
 	std::cerr << std::endl;
 #endif
+#endif // WINDOWS_SYS
 }
 
 
