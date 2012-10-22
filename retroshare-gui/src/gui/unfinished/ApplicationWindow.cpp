@@ -19,13 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <QtGui>
-#include <QMessageBox>
-#include <QSystemTrayIcon>
-#include <QString>
-#include <QtDebug>
-#include <QIcon>
-#include <QPixmap>
+#include <QCloseEvent>
 
 #include <rshare.h>
 #include "ApplicationWindow.h"
@@ -48,8 +42,6 @@
 //#include "CalDialog.h"
 //#include "PhotoDialog.h"
 //#include "StatisticDialog.h"
-
-#define FONT        QFont("Arial", 9)
 
 /* Images for toolbar icons */
 #define IMAGE_RETROSHARE        ":/images/RetroShare16.png"
@@ -77,7 +69,6 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
 
     // Setting icons
     this->setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
-    loadStyleSheet("Default");
 
     /* Create the config pages and actions */
     QActionGroup *grp = new QActionGroup(this);
@@ -125,21 +116,23 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
 
 #endif
 
-
    /* Create the toolbar */
    ui.toolBar->addActions(grp->actions());
    ui.toolBar->addSeparator();
    connect(grp, SIGNAL(triggered(QAction *)), ui.stackPages, SLOT(showPage(QAction *)));
 
-
+   ui.stackPages->setCurrentIndex(0);
 }
 
 /** Creates a new action associated with a config page. */
 QAction* ApplicationWindow::createPageAction(QIcon img, QString text, QActionGroup *group)
 {
+    QFont font;
     QAction *action = new QAction(img, text, group);
+    font = action->font();
+    font.setPointSize(9);
     action->setCheckable(true);
-    action->setFont(FONT);
+    action->setFont(font);
     return action;
 }
 
@@ -147,47 +140,18 @@ QAction* ApplicationWindow::createPageAction(QIcon img, QString text, QActionGro
  * the specified slot (if given). */
 void ApplicationWindow::addAction(QAction *action, const char *slot)
 {
-    action->setFont(FONT);
+    QFont font = action->font();
+    font.setPointSize(9);
+    action->setFont(font);
     ui.toolBar->addAction(action);
     connect(action, SIGNAL(triggered()), this, slot);
 }
-
-/** Overloads the default show so we can load settings */
-void ApplicationWindow::show()
-{
-
-    if (!this->isVisible()) {
-        QMainWindow::show();
-    } else {
-        QMainWindow::activateWindow();
-        setWindowState(windowState() & (~Qt::WindowMinimized | Qt::WindowActive));
-        QMainWindow::raise();
-    }
-}
-
-
-/** Shows the config dialog with focus set to the given page. */
-void ApplicationWindow::show(Page page)
-{
-    /* Show the dialog. */
-    show();
-
-    /* Set the focus to the specified page. */
-    ui.stackPages->setCurrentIndex((int)page);
-}
-
 
 /** Destructor. */
 ApplicationWindow::~ApplicationWindow()
 {
 // is this allocated anywhere ??
 //    delete exampleDialog;
-}
-
-/** Create and bind actions to events. Setup for initial
- * tray menu configuration. */
-void ApplicationWindow::createActions()
-{
 }
 
 void ApplicationWindow::closeEvent(QCloseEvent *e)
@@ -197,53 +161,3 @@ void ApplicationWindow::closeEvent(QCloseEvent *e)
     hide();
     e->ignore();
 }
-
-
-void ApplicationWindow::updateMenu()
-{
-    toggleVisibilityAction->setText(isVisible() ? tr("Hide") : tr("Show"));
-}
-
-void ApplicationWindow::toggleVisibility(QSystemTrayIcon::ActivationReason e)
-{
-    if(e == QSystemTrayIcon::Trigger || e == QSystemTrayIcon::DoubleClick){
-        if(isHidden()){
-            show();
-            if(isMinimized()){
-                if(isMaximized()){
-                    showMaximized();
-                }else{
-                    showNormal();
-                }
-            }
-            raise();
-            activateWindow();
-        }else{
-            hide();
-        }
-    }
-}
-
-void ApplicationWindow::toggleVisibilitycontextmenu()
-{
-    if (isVisible())
-        hide();
-    else
-        show();
-}
-
-
-
-void ApplicationWindow::loadStyleSheet(const QString &sheetName)
-{
-    QFile file(":/qss/" + sheetName.toLower() + ".qss");
-    file.open(QFile::ReadOnly);
-    QString styleSheet = QLatin1String(file.readAll());
-
-
-    qApp->setStyleSheet(styleSheet);
-
-}
-
-
-
