@@ -43,6 +43,7 @@
 
 RsIdentity *rsIdentity = NULL;
 
+
 #define RSGXSID_MAX_SERVICE_STRING 1024
 
 /********************************************************************************/
@@ -108,26 +109,41 @@ bool p3IdService::createIdentity(uint32_t& token, RsIdentityParameters &params)
 
 bool p3IdService::haveKey(const RsGxsId &id)
 {
-	return false;
+	/* is it in the cache? */
+	return cache_is_loaded(id);
 }
 
 bool p3IdService::havePrivateKey(const RsGxsId &id)
 {
+	/* TODO */
 	return false;
 }
 
 bool p3IdService::requestKey(const RsGxsId &id, const std::list<PeerId> &peers)
 {
-	return false;
+	/* basic version first --- don't have to worry about network load
+         * request it for the cache
+         */
+	if (cache_is_loaded(id))
+		return true;
+
+	return cache_request_load(id);
 }
 
 int  p3IdService::getKey(const RsGxsId &id, RsTlvSecurityKey &key)
 {
+	RsGxsIdCache data;
+	if (cache_fetch(id, data))
+	{
+		key = data.pubkey;
+		return 1;
+	}
 	return -1;
 }
 
 int  p3IdService::getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key)
 {
+	/* TODO */
 	return -1;
 }
 
@@ -248,6 +264,50 @@ bool 	p3IdService::createMsg(uint32_t& token, RsGxsIdOpinion &opinion)
  *
  */
 
+RsGxsIdCache::RsGxsIdCache() 
+	:reputation(0), lastUsedTs(0) 
+{ 
+	return; 
+}
+
+RsGxsIdCache::RsGxsIdCache(const RsGxsIdGroupItem *item)
+{
+	id = item->meta.mGroupId;
+	name = item->meta.mGroupName;
+
+        /* extract key from keys */
+	bool key_ok = false;
+
+	/**** OKAY, I can't do this ???? how do I access the keys? ****/
+#if 0
+	std::map<std::string, RsTlvSecurityKey>::iterator kit;
+
+        for (kit = item->meta.keys.keys.begin(); kit != item->meta.keys.keys.end(); kit++)
+        {
+		if (kit->second.keyFlags == RSTLV_KEY_DISTRIB_PUBLIC | RSTLV_KEY_TYPE_PUBLIC_ONLY)
+		{
+			std::cerr << "RsGxsIdCache::load() Found Public Key";
+			std::cerr << std::endl;
+
+			pubkey = kit->second;
+			key_ok = true;
+		}
+	}
+#endif
+
+	if (!key_ok)
+	{
+		std::cerr << "RsGxsIdCache::load() ERROR No Public Key Found";
+		std::cerr << std::endl;
+	}
+
+        reputation = 0; /* TODO: extract from string - This will need to be refreshed!!! */
+	lastUsedTs = 0;	
+
+};
+
+
+
 bool p3IdService::cache_is_loaded(const RsGxsId &id)
 {
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
@@ -285,12 +345,12 @@ bool p3IdService::cache_fetch(const RsGxsId &id, RsGxsIdCache &data)
 	return true;
 }
 
-bool p3IdService::cache_store(const RsGxsIdGroup &group)
+bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 {
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
 	// Create Cache Data.
-	RsGxsIdCache cache(group);
+	RsGxsIdCache cache(item);
 
 	// For consistency
 	std::map<RsGxsId, RsGxsIdCache>::iterator it;
@@ -549,10 +609,27 @@ bool p3IdService::cache_load_for_token(uint32_t token)
 	std::cerr << "p3IdService::cache_load_for_token() : " << token;
 	std::cerr << std::endl;
 
-        std::vector<RsGxsIdGroup> groups;
-        std::vector<RsGxsIdGroup>::iterator vit;
+        std::vector<RsGxsGrpItem*> grpData;
+        bool ok = RsGenExchange::getGroupData(token, grpData);
 
-        if (!getGroupData(token, groups))
+        if(ok)
+        {
+                std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
+
+                for(; vit != grpData.end(); vit++)
+                {
+                        RsGxsIdGroupItem* item = dynamic_cast<RsGxsIdGroupItem*>(*vit);
+
+			std::cerr << "p3IdService::cache_load_for_token() Loaded Id with Meta: ";
+			std::cerr << item->meta;
+			std::cerr << std::endl;
+
+			/* cache the data */
+			cache_store(item);
+			delete item;
+                }
+        }
+	else
 	{
 		std::cerr << "p3IdService::cache_load_for_token() ERROR no data";
 		std::cerr << std::endl;
@@ -560,17 +637,6 @@ bool p3IdService::cache_load_for_token(uint32_t token)
 		return false;
 	}
 
-        for(vit = groups.begin(); vit != groups.end(); vit++)
-	{
-		RsGxsIdGroup &group = *vit;
-
-		std::cerr << "p3IdService::cache_load_for_token() Loaded Id with Meta: ";
-		std::cerr << group.mMeta;
-		std::cerr << std::endl;
-
-		/* cache the data */
-		cache_store(group);
-	}
 
 	/* drop old entries */
 	cache_resize();

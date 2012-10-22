@@ -74,11 +74,13 @@ public:
 #define MAX_CACHE_SIZE	100 // Small for testing..
 //#define MAX_CACHE_SIZE	10000 // More useful size
 
+class RsGxsIdGroupItem;
+
 class RsGxsIdCache
 {
 	public:
 	RsGxsIdCache();
-	RsGxsIdCache(const RsGxsIdGroup &group);
+	RsGxsIdCache(const RsGxsIdGroupItem *item);
 
 	RsGxsId id;
 	std::string name;
@@ -163,6 +165,8 @@ virtual bool getReputation(const RsGxsId &id, const GixsReputation &rep);
 
 	bool cache_is_loaded(const RsGxsId &id);
 	bool cache_fetch(const RsGxsId &key, RsGxsIdCache &data);
+	bool cache_store(const RsGxsIdGroupItem *item);
+
 	bool cache_store(const RsGxsIdGroup &group);
 	bool cache_resize();
 	bool cache_discard_LRU(int count_to_clear);
