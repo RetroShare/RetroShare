@@ -10,14 +10,15 @@
     <height>566</height>
    </rect>
   </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
-  </property>
   <property name="windowTitle">
    <string>PhotoShare</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../images.qrc">
+    <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>true</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
@@ -54,7 +55,7 @@
      </layout>
     </widget>
    </item>
-   <item row="0" column="1" rowspan="2" colspan="2">
+   <item row="0" column="1" rowspan="2" colspan="4">
     <widget class="QScrollArea" name="scrollArea">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -76,7 +77,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>325</width>
+        <width>369</width>
         <height>18</height>
        </rect>
       </property>
@@ -194,8 +195,15 @@
    <item row="2" column="1">
     <widget class="QLineEdit" name="lineEdit"/>
    </item>
+   <item row="2" column="3">
+    <widget class="QPushButton" name="pushButton_AddCommentDlg">
+     <property name="text">
+      <string>Add Comment</string>
+     </property>
+    </widget>
+   </item>
    <item row="2" column="2">
-    <widget class="QToolButton" name="toolButton_AddComment">
+    <widget class="QPushButton" name="pushButton_AddComment">
      <property name="text">
       <string>Comment</string>
      </property>
@@ -203,6 +211,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../images.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -33,19 +33,16 @@ public:
         void notifySelection(PhotoShareItem* selection);
 
 private slots:
-
         void checkUpdate();
         void createAlbum();
         void OpenAlbumDialog();
         void OpenPhotoDialog();
         void OpenSlideShow();
-        void SetAlbumDialogClosed();
-        void SetPhotoDialogClosed();
         void updateAlbums();
         void subscribeToAlbum();
         void deleteAlbum(const RsGxsGroupId&);
-private:
 
+private:
         /* Request Response Functions for loading data */
         void requestAlbumList(std::list<std::string>& ids);
         void requestAlbumData(std::list<RsGxsGroupId> &ids);
@@ -83,13 +80,9 @@ private:
         void updatePhotos();
 
 private:
-
-
         AlbumItem* mAlbumSelected;
         PhotoItem* mPhotoSelected;
-        PhotoSlideShow* mSlideShow;
-        AlbumDialog* mAlbumDialog;
-        PhotoDialog* mPhotoDialog;
+
 
         TokenQueue *mPhotoQueue;
 

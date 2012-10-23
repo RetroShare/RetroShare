@@ -47,7 +47,7 @@
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
    <property name="contextMenuPolicy">
-    <enum>Qt::NoContextMenu</enum>
+    <enum>Qt::CustomContextMenu</enum>
    </property>
    <property name="movable">
     <bool>true</bool>

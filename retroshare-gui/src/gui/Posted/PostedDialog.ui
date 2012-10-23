@@ -10,24 +10,16 @@
     <height>557</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string/>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
       <number>-1</number>
      </property>
-     <property name="tabsClosable">
-      <bool>true</bool>
-     </property>
     </widget>
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../LinksCloud/images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

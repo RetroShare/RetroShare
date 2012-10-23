@@ -6,7 +6,6 @@
 #include "retroshare/rsphotoV2.h"
 #include "util/TokenQueue.h"
 #include "PhotoCommentItem.h"
-#include "AddCommentDialog.h"
 
 namespace Ui {
     class PhotoDialog;
@@ -57,8 +56,6 @@ private:
     TokenQueue* mPhotoQueue;
     RsPhotoPhoto mPhotoDetails;
     QSet<PhotoCommentItem*> mComments;
-    AddCommentDialog* mCommentDialog;
-
 };
 
 #endif // PHOTODIALOG_H

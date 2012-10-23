@@ -4,11 +4,10 @@
 #include "ui_AlbumDialog.h"
 
 AlbumDialog::AlbumDialog(const RsPhotoAlbum& album, TokenQueue* photoQueue, RsPhotoV2* rs_Photo, QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::AlbumDialog), mPhotoQueue(photoQueue), mRsPhoto(rs_Photo), mAlbum(album), mPhotoSelected(NULL)
+    QDialog(parent),
+    ui(new Ui::AlbumDialog), mRsPhoto(rs_Photo), mPhotoQueue(photoQueue), mAlbum(album), mPhotoSelected(NULL)
 {
     ui->setupUi(this);
-    setAttribute ( Qt::WA_DeleteOnClose, true );
 
     connect(ui->pushButton_PublishPhotos, SIGNAL(clicked()), this, SLOT(updateAlbumPhotos()));
     connect(ui->pushButton_DeletePhoto, SIGNAL(clicked()), this, SLOT(deletePhoto()));

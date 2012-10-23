@@ -75,9 +75,6 @@ PhotoShare::PhotoShare(QWidget *parent)
 
         mAlbumSelected = NULL;
         mPhotoSelected = NULL;
-        mSlideShow = NULL;
-        mAlbumDialog = NULL;
-        mPhotoDialog = NULL;
 
         connect( ui.toolButton_NewAlbum, SIGNAL(clicked()), this, SLOT(createAlbum()));
         connect( ui.toolButton_ViewAlbum, SIGNAL(clicked()), this, SLOT(OpenAlbumDialog()));
@@ -198,28 +195,18 @@ void PhotoShare::checkUpdate()
 
 void PhotoShare::OpenSlideShow()
 {
+    // TODO.
+    if (!mAlbumSelected) {
+        // ALERT.
+        int ret = QMessageBox::information(this, tr("PhotoShare"),
+                                           tr("Please select an album before\n"
+                                              "requesting to edit it!"),
+                                           QMessageBox::Ok);
+        return;
+    }
 
-        // TODO.
-        if (!mAlbumSelected)
-        {
-                // ALERT.
-                int ret = QMessageBox::information(this, tr("PhotoShare"),
-                                tr("Please select an album before\n"
-                                   "requesting to edit it!"),
-                                QMessageBox::Ok);
-                return;
-        }
-
-        if (mSlideShow)
-        {
-                mSlideShow->show();
-        }
-        else
-        {
-                mSlideShow = new PhotoSlideShow(mAlbumSelected->getAlbum(), NULL);
-                mSlideShow->show();
-        }
-
+    PhotoSlideShow *dlg = new PhotoSlideShow(mAlbumSelected->getAlbum(), NULL);
+    dlg->show();
 }
 
 
@@ -233,46 +220,18 @@ void PhotoShare::createAlbum()
 
 void PhotoShare::OpenAlbumDialog()
 {
-    if(mAlbumSelected){
-
-        if(mAlbumDialog == NULL)
-        {
-            mAlbumDialog = new AlbumDialog(mAlbumSelected->getAlbum(), mPhotoQueue, rsPhotoV2);
-            connect(mAlbumDialog, SIGNAL(destroyed()), this, SLOT(SetAlbumDialogClosed()));
-            mAlbumDialog->show();
-        }else{
-            // bring dialog to front
-            mAlbumDialog->raise();
-        }
+    if (mAlbumSelected) {
+        AlbumDialog dlg(mAlbumSelected->getAlbum(), mPhotoQueue, rsPhotoV2);
+        dlg.exec();
     }
-    return;
 }
 
 void PhotoShare::OpenPhotoDialog()
 {
-    if(mPhotoSelected)
-    {
-        if(mPhotoDialog == NULL)
-        {
-            mPhotoDialog = new PhotoDialog(rsPhotoV2, mPhotoSelected->getPhotoDetails());
-            connect(mPhotoDialog, SIGNAL(destroyed()), this, SLOT(SetPhotoDialogClosed()));
-            mPhotoDialog->show();
-        }
-        else
-        {
-            mPhotoDialog->raise();
-        }
+    if (mPhotoSelected) {
+        PhotoDialog *dlg = new PhotoDialog(rsPhotoV2, mPhotoSelected->getPhotoDetails());
+        dlg->show();
     }
-}
-
-void PhotoShare::SetAlbumDialogClosed()
-{
-    mAlbumDialog = NULL;
-}
-
-void PhotoShare::SetPhotoDialogClosed()
-{
-    mPhotoDialog = NULL;
 }
 
 /*************** Edit Photo Dialog ***************/

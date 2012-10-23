@@ -7,11 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>465</width>
-    <height>347</height>
+    <height>356</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Create Album</string>
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>true</bool>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>

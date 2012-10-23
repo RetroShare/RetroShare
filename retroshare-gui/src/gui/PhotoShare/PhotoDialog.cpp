@@ -3,19 +3,20 @@
 #include "PhotoDialog.h"
 #include "ui_PhotoDialog.h"
 
-
+#include "AddCommentDialog.h"
 
 PhotoDialog::PhotoDialog(RsPhotoV2 *rs_photo, const RsPhotoPhoto &photo, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::PhotoDialog), mRsPhoto(rs_photo), mPhotoQueue(new TokenQueue(mRsPhoto->getTokenService(), this)),
-    mPhotoDetails(photo), mCommentDialog(NULL)
-
+    mPhotoDetails(photo)
 {
     ui->setupUi(this);
     setAttribute ( Qt::WA_DeleteOnClose, true );
-    connect(ui->toolButton_AddComment, SIGNAL(clicked()), this, SLOT(createComment()));
-    setUp();
 
+    connect(ui->pushButton_AddComment, SIGNAL(clicked()), this, SLOT(createComment()));
+    connect(ui->pushButton_AddCommentDlg, SIGNAL(clicked()), this, SLOT(addComment()));
+
+    setUp();
 }
 
 PhotoDialog::~PhotoDialog()
@@ -36,15 +37,19 @@ void PhotoDialog::setUp()
     requestComments();
 }
 
-
-
-
 void PhotoDialog::addComment()
 {
-    mCommentDialog = new AddCommentDialog(this);
-    connect(mCommentDialog, SIGNAL(accepted()), this, SLOT(createComment()));
-    connect(mCommentDialog, SIGNAL(rejected()), mCommentDialog, SLOT(deleteLater()));
-    mCommentDialog->exec();
+    AddCommentDialog dlg(this);
+    if (dlg.exec() == QDialog::Accepted) {
+        RsPhotoComment comment;
+        comment.mComment = dlg.getComment().toUtf8().constData();
+
+        uint32_t token;
+        comment.mMeta.mGroupId = mPhotoDetails.mMeta.mGroupId;
+        comment.mMeta.mParentId = mPhotoDetails.mMeta.mOrigMsgId;
+        mRsPhoto->submitComment(token, comment);
+        mPhotoQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, 0);
+    }
 }
 
 void PhotoDialog::clearComments()
@@ -90,18 +95,18 @@ void PhotoDialog::requestComments()
 
 void PhotoDialog::createComment()
 {
-        RsPhotoComment comment;
-        QString commentString = ui->lineEdit->text();
+    RsPhotoComment comment;
+    QString commentString = ui->lineEdit->text();
 
-        comment.mComment = commentString.toStdString();
+    comment.mComment = commentString.toUtf8().constData();
 
-        uint32_t token;
-        comment.mMeta.mGroupId = mPhotoDetails.mMeta.mGroupId;
-        comment.mMeta.mParentId = mPhotoDetails.mMeta.mOrigMsgId;
-        mRsPhoto->submitComment(token, comment);
-        mPhotoQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, 0);
-		
-		ui->lineEdit->clear();
+    uint32_t token;
+    comment.mMeta.mGroupId = mPhotoDetails.mMeta.mGroupId;
+    comment.mMeta.mParentId = mPhotoDetails.mMeta.mOrigMsgId;
+    mRsPhoto->submitComment(token, comment);
+    mPhotoQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, 0);
+
+    ui->lineEdit->clear();
 }
 
 

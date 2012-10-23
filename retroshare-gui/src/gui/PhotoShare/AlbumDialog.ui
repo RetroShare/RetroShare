@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>AlbumDialog</class>
- <widget class="QWidget" name="AlbumDialog">
+ <widget class="QDialog" name="AlbumDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,14 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Album</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../images.qrc">
+    <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>true</bool>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
@@ -278,7 +285,7 @@ p, li { white-space: pre-wrap; }
             <x>0</x>
             <y>0</y>
             <width>627</width>
-            <height>116</height>
+            <height>107</height>
            </rect>
           </property>
           <property name="styleSheet">
@@ -353,6 +360,8 @@ p, li { white-space: pre-wrap; }
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../images.qrc"/>
+ </resources>
  <connections/>
 </ui>

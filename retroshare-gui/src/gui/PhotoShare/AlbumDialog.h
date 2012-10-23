@@ -1,7 +1,7 @@
 #ifndef ALBUMDIALOG_H
 #define ALBUMDIALOG_H
 
-#include <QWidget>
+#include <QDialog>
 #include "retroshare/rsphotoV2.h"
 #include "util/TokenQueue.h"
 #include "PhotoShareItemHolder.h"
@@ -12,7 +12,7 @@ namespace Ui {
     class AlbumDialog;
 }
 
-class AlbumDialog : public QWidget, public PhotoShareItemHolder
+class AlbumDialog : public QDialog, public PhotoShareItemHolder
 {
     Q_OBJECT
 

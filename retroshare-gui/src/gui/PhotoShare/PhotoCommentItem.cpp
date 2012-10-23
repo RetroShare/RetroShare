@@ -24,7 +24,7 @@ const RsPhotoComment& PhotoCommentItem::getComment()
 
 void PhotoCommentItem::setUp()
 {
-    ui->labelComment->setText(QString::fromStdString(mComment.mComment));
+    ui->labelComment->setText(QString::fromUtf8(mComment.mComment.c_str()));
     QDateTime qtime;
     qtime.setTime_t(mComment.mMeta.mPublishTs);
     QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
