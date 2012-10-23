@@ -32,6 +32,7 @@
 #include "rsgxs.h"
 #include "rsgds.h"
 #include "rsnxs.h"
+#include "rsgixs.h"
 #include "rsgxsdataaccess.h"
 #include "rsnxsobserver.h"
 #include "retroshare/rsgxsservice.h"
@@ -49,17 +50,17 @@ typedef std::map<RsGxsGroupId, std::vector<RsMsgMetaData> > GxsMsgMetaMap;
  * management/publishing/sync features
  *
  * Features: \n
- *         a. Data Access:
- *              Provided by handle to RsTokenService. This ensure consistency
- *              of requests and hiearchy of groups -> then messages which are
- *              sectioned by group ids.
- *              The one caveat is that redemption of tokens are done through
- *              the backend of this class
- *         b. Publishing:
- *              Methods are provided to publish msg and group items and also make
- *              changes to meta information of both item types
- *         c. Sync/Notification:
- *              Also notifications are made here on receipt of new data from
+ *         a. Data Access: \n
+ *              Provided by handle to RsTokenService. This ensure consistency \n
+ *              of requests and hiearchy of groups -> then messages which are \n
+ *              sectioned by group ids. \n
+ *              The one caveat is that redemption of tokens are done through \n
+ *              the backend of this class \n
+ *         b. Publishing: \n
+ *              Methods are provided to publish msg and group items and also make \n
+ *              changes to meta information of both item types \n
+ *         c. Sync/Notification: \n
+ *              Also notifications are made here on receipt of new data from \n
  *              connected peers
  */
 class RsGenExchange : public RsGxsService, public RsNxsObserver
@@ -67,14 +68,17 @@ class RsGenExchange : public RsGxsService, public RsNxsObserver
 public:
 
     /*!
-     * Constructs a RsGenExchange object, the owner ship of gds, ns, and serviceserialiser passes
+     * Constructs a RsGenExchange object, the owner ship of gds, ns, and serviceserialiser passes \n
      * onto the constructed object
      * @param gds Data service needed to act as store of message
      * @param ns Network service needed to synchronise data with rs peers
      * @param serviceSerialiser The users service needs this \n
      *        in order for gen exchange to deal with its data types
+     * @param mServType This should be service type used by the serialiser
+     * @param This is used for verification of msgs and groups received by Gen Exchange using identities, set to NULL if \n
+     *        identity verification is not wanted
      */
-    RsGenExchange(RsGeneralDataService* gds, RsNetworkExchangeService* ns, RsSerialType* serviceSerialiser, uint16_t mServType);
+    RsGenExchange(RsGeneralDataService* gds, RsNetworkExchangeService* ns, RsSerialType* serviceSerialiser, uint16_t mServType, RsGixs* gixs = NULL);
 
     virtual ~RsGenExchange();
 
@@ -204,6 +208,16 @@ protected:
      */
     RsGeneralDataService* getDataStore();
 
+    /*!
+     * Retrieve keys for a given group, \n
+     * call is blocking retrieval for underlying db
+     * @warning under normal circumstance a service should not need this
+     * @param grpId the id of the group to retrieve keys for
+     * @param keys this is set to the retrieved keys
+     * @return false if group does not exist or grpId is empty
+     */
+    bool getGroupKeys(const RsGxsGroupId& grpId, RsTlvSecurityKeySet& keySet);
+
 public:
 
     /*!
@@ -326,6 +340,7 @@ private:
     RsGeneralDataService* mDataStore;
     RsNetworkExchangeService *mNetService;
     RsSerialType *mSerialiser;
+    RsGixs* mGixs;
 
     std::vector<RsNxsMsg*> mReceivedMsgs;
     std::vector<RsNxsGrp*> mReceivedGrps;

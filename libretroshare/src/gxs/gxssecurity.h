@@ -2,12 +2,12 @@
 #define GXSSECURITY_H
 
 /*
- * libretroshare/src/gxs: gxssecurity
+ * libretroshare/src/gxs: gxssecurity.h
  *
  * Security functions for Gxs
  *
  * Copyright 2008-2010 by Robert Fernie
- *           2012 Christopher Evi-Parker
+ *           2011-2012 Christopher Evi-Parker
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -82,11 +82,11 @@ public:
         static std::string getRsaKeySign(RSA *pubkey);
 
         /*!
-         * extracts the signature and stores it in a string
+         * extracts the first CERTSIGNLEN bytes of signature and stores it in a string
          * in hex format
-         * @param data
-         * @param len
-         * @return
+         * @param data signature
+         * @param len the length of the signature data
+         * @return returns the first CERTSIGNLEN of the signature as a string
          */
         static std::string getBinDataSign(void *data, int len);
 
@@ -115,18 +115,21 @@ public:
         /*!
          * uses grp signature to check if group has been
          * tampered with
-         * @param newGrp
+         * @param newGrp the Nxs group to be validated
+         * @param sign the signature to validdate against
+         * @param key the public key to use to check signature
          * @return true if group valid false otherwise
          */
-        static bool validateNxsGrp(RsNxsGrp *newGrp);
+        static bool validateNxsGrp(RsNxsGrp *newGrp, RsTlvKeySignature& sign, RsTlvSecurityKey& key);
 
         /*!
-         * uses groupinfo public key to verify signature of signed message
-         * @param info groupinfo for which msg is meant for
-         * @param msg
+         * Validate a msg's signature using the given public key
+         * @param msg the Nxs message to be validated
+         * @param sign the signature to validdate against
+         * @param key the public key to use to check signature
          * @return false if verfication of signature is not passed
          */
-        static bool validateNxsMsg(RsNxsMsg *msg, RsGxsGrpMetaData* grpMeta);
+        static bool validateNxsMsg(RsNxsMsg *msg, RsTlvKeySignature& sign, RsTlvSecurityKeySet& key);
 };
 
 #endif // GXSSECURITY_H

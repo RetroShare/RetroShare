@@ -36,8 +36,8 @@
 #include "rsgxsflags.h"
 
 RsGenExchange::RsGenExchange(RsGeneralDataService *gds,
-                             RsNetworkExchangeService *ns, RsSerialType *serviceSerialiser, uint16_t servType)
-: mGenMtx("GenExchange"), mDataStore(gds), mNetService(ns), mSerialiser(serviceSerialiser), mServType(servType)
+                             RsNetworkExchangeService *ns, RsSerialType *serviceSerialiser, uint16_t servType, RsGixs* gixs)
+: mGenMtx("GenExchange"), mDataStore(gds), mNetService(ns), mSerialiser(serviceSerialiser), mServType(servType), mGixs(gixs)
 {
 
     mDataAccess = new RsGxsDataAccess(gds);
@@ -206,12 +206,11 @@ bool RsGenExchange::createMessage(RsNxsMsg* msg)
 	}
 	else
 	{
-
 		// get publish key
-		RsGxsGrpMetaData* meta = metaMap[id];
+                RsGxsGrpMetaData* grpMeta = metaMap[id];
 
 		// public and shared is publish key
-		RsTlvSecurityKeySet& keys = meta->keys;
+                RsTlvSecurityKeySet& keys = grpMeta->keys;
 		RsTlvSecurityKey* pubKey;
 
 		std::map<std::string, RsTlvSecurityKey>::iterator mit =
@@ -235,15 +234,28 @@ bool RsGenExchange::createMessage(RsNxsMsg* msg)
 			/* calc and check signature */
 			EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
 
+                        RsGxsMsgMetaData &meta = *(msg->metaData);
+
+                        uint32_t metaDataLen = meta.serial_size();
+                        uint32_t allMsgDataLen = metaDataLen + msg->msg.bin_len;
+                        char* metaData = new char[metaDataLen];
+                        char* allMsgData = new char[allMsgDataLen]; // msgData + metaData
+
+                        meta.serialise(metaData, &metaDataLen);
+
+                        // copy msg data and meta in allmsgData buffer
+                        memcpy(allMsgData, msg->msg.bin_data, msg->msg.bin_len);
+                        memcpy(allMsgData+(msg->msg.bin_len), metaData, metaDataLen);
+
 			ok = EVP_SignInit(mdctx, EVP_sha1()) == 1;
-			ok = EVP_SignUpdate(mdctx, msg->msg.bin_data, msg->msg.bin_len) == 1;
+                        ok = EVP_SignUpdate(mdctx, allMsgData, allMsgDataLen) == 1;
 
 			unsigned int siglen = EVP_PKEY_size(key_pub);
 			unsigned char sigbuf[siglen];
 			ok = EVP_SignFinal(mdctx, sigbuf, &siglen, key_pub) == 1;
 
                         //place signature in msg meta
-			RsGxsMsgMetaData &meta = *(msg->metaData);
+
                         RsTlvKeySignatureSet& signSet = meta.signSet;
                         RsTlvKeySignature pubSign = signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_PUBLISH];
                         pubSign.signData.setBinData(sigbuf, siglen);
@@ -251,7 +263,7 @@ bool RsGenExchange::createMessage(RsNxsMsg* msg)
 
                         // get hash of msg data to create msg id
                         pqihash hash;
-                        hash.addData(msg->msg.bin_data, msg->msg.bin_len);
+                        hash.addData(allMsgData, allMsgDataLen);
                         hash.Complete(msg->msgId);
 
                         msg->metaData->mMsgId = msg->msgId;
@@ -261,13 +273,16 @@ bool RsGenExchange::createMessage(RsNxsMsg* msg)
                         //RSA_free(rsa_pub);
 			EVP_PKEY_free(key_pub);
                         // no need to free rsa key as evp key is considered parent key by SSL
+
+                        delete[] metaData;
+                        delete[] allMsgData;
 		}
 		else
 		{
 			ok = false;
 		}
 
-		delete meta;
+                delete grpMeta;
 	}
 
 	return ok;
@@ -366,33 +381,35 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 bool RsGenExchange::getMsgData(const uint32_t &token,
                                GxsMsgDataMap &msgItems)
 {
-	NxsMsgDataResult msgResult;
-	bool ok = mDataAccess->getMsgData(token, msgResult);
-	NxsMsgDataResult::iterator mit = msgResult.begin();
 
-	if(ok)
-	{
-		for(; mit != msgResult.end(); mit++)
-		{
-			std::vector<RsGxsMsgItem*> gxsMsgItems;
-			const RsGxsGroupId& grpId = mit->first;
-			std::vector<RsNxsMsg*>& nxsMsgsV = mit->second;
-			std::vector<RsNxsMsg*>::iterator vit
-			= nxsMsgsV.begin();
-			for(; vit != nxsMsgsV.end(); vit++)
-			{
-				RsNxsMsg*& msg = *vit;
+    RsStackMutex stack(mGenMtx);
+    NxsMsgDataResult msgResult;
+    bool ok = mDataAccess->getMsgData(token, msgResult);
+    NxsMsgDataResult::iterator mit = msgResult.begin();
 
-				RsItem* item = mSerialiser->deserialise(msg->msg.bin_data,
-						&msg->msg.bin_len);
-				RsGxsMsgItem* mItem = dynamic_cast<RsGxsMsgItem*>(item);
-				mItem->meta = *((*vit)->metaData); // get meta info from nxs msg
-				gxsMsgItems.push_back(mItem);
-				delete msg;
-			}
-			msgItems[grpId] = gxsMsgItems;
-		}
-	}
+    if(ok)
+    {
+        for(; mit != msgResult.end(); mit++)
+        {
+            std::vector<RsGxsMsgItem*> gxsMsgItems;
+            const RsGxsGroupId& grpId = mit->first;
+            std::vector<RsNxsMsg*>& nxsMsgsV = mit->second;
+            std::vector<RsNxsMsg*>::iterator vit
+            = nxsMsgsV.begin();
+            for(; vit != nxsMsgsV.end(); vit++)
+            {
+                RsNxsMsg*& msg = *vit;
+
+                RsItem* item = mSerialiser->deserialise(msg->msg.bin_data,
+                                &msg->msg.bin_len);
+                RsGxsMsgItem* mItem = dynamic_cast<RsGxsMsgItem*>(item);
+                mItem->meta = *((*vit)->metaData); // get meta info from nxs msg
+                gxsMsgItems.push_back(mItem);
+                delete msg;
+            }
+            msgItems[grpId] = gxsMsgItems;
+        }
+    }
     return ok;
 }
 
@@ -562,70 +579,90 @@ void RsGenExchange::publishMsgs()
         for(; mit != mMsgsToPublish.end(); mit++)
 	{
 
-		RsNxsMsg* msg = new RsNxsMsg(mServType);
-		RsGxsMsgItem* msgItem = mit->second;
+            RsNxsMsg* msg = new RsNxsMsg(mServType);
+            RsGxsMsgItem* msgItem = mit->second;
 
-                msg->grpId = msgItem->meta.mGroupId;
+            msg->grpId = msgItem->meta.mGroupId;
 
-		uint32_t size = mSerialiser->size(msgItem);
-		char mData[size];
-		bool ok = mSerialiser->serialise(msgItem, mData, &size);
+            uint32_t size = mSerialiser->size(msgItem);
+            char* mData = new char[size];
+            bool serialOk = false;
+            bool createOk = false;
+            serialOk = mSerialiser->serialise(msgItem, mData, &size);
 
-		if(ok)
-		{
-			msg->metaData = new RsGxsMsgMetaData();
-                        msg->msg.setBinData(mData, size);
-                        *(msg->metaData) = msgItem->meta;
+            if(serialOk)
+            {
+                msg->msg.setBinData(mData, size);
 
-                        ok = createMessage(msg);
-                        RsGxsMessageId msgId;
-						RsGxsGroupId grpId;
-                        if(ok)
-                        {
-                            msg->metaData->mPublishTs = time(NULL);
+                // now create meta
+                msg->metaData = new RsGxsMsgMetaData();
+                *(msg->metaData) = msgItem->meta;
 
-                            // empty orig msg id means this is the original
-                            // msg
-                            // TODO: a non empty msgid means one should at least
-                            // have the msg on disk, after which this msg is signed
-                            // based on the security settings
-                            // public grp (sign by grp public pub key, private/id: signed by
-                            // id
-                            if(msg->metaData->mOrigMsgId.empty())
-                            {
-                                msg->metaData->mOrigMsgId = msg->metaData->mMsgId;
-                            }
+                // assign time stamp
+                msg->metaData->mPublishTs = time(NULL);
 
-                            // now serialise meta data
-                            size = msg->metaData->serial_size();
-                            char metaDataBuff[size];
-                            msg->metaData->serialise(metaDataBuff, &size);
-                            msg->meta.setBinData(metaDataBuff, size);
+                // now intialise msg (sign it)
+                createOk = createMessage(msg);
+                RsGxsMessageId msgId;
+                RsGxsGroupId grpId = msgItem->meta.mGroupId;
+
+                bool msgDoesnExist = false;
+
+                if(createOk)
+                {
+
+                    GxsMsgReq req;
+                    std::vector<RsGxsMessageId> msgV;
+                    msgV.push_back(msg->msgId);
+                    GxsMsgMetaResult res;
+                    req.insert(std::make_pair(msg->grpId, msgV));
+                    mDataStore->retrieveGxsMsgMetaData(req, res);
+                    msgDoesnExist = res[grpId].empty();
+                }
+
+                if(createOk && msgDoesnExist)
+                {
+                    // empty orig msg id means this is the original
+                    // msg
+                    // TODO: a non empty msgid means one should at least
+                    // have the msg on disk, after which this msg is signed
+                    // based on the security settings
+                    // public grp (sign by grp public pub key, private/id: signed by
+                    // id
+                    if(msg->metaData->mOrigMsgId.empty())
+                    {
+                        msg->metaData->mOrigMsgId = msg->metaData->mMsgId;
+                    }
+
+                    // now serialise meta data
+                    size = msg->metaData->serial_size();
+                    char metaDataBuff[size];
+                    msg->metaData->serialise(metaDataBuff, &size);
+                    msg->meta.setBinData(metaDataBuff, size);
+
+                    msgId = msg->msgId;
+                    grpId = msg->grpId;
+                    mDataAccess->addMsgData(msg);
 
 
-                            msgId = msg->msgId;
-                            grpId = msg->grpId;
-                            ok = mDataAccess->addMsgData(msg);
-                        }
+                    // add to published to allow acknowledgement
+                    mMsgNotify.insert(std::make_pair(mit->first, std::make_pair(grpId, msgId)));
+                    mDataAccess->updatePublicRequestStatus(mit->first, RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE);
+                }
+                else
+                {
+                    // delete msg if created wasn't ok
+                    delete msg;
+                    mDataAccess->updatePublicRequestStatus(mit->first, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
 
-                        // add to published to allow acknowledgement
-                        mMsgNotify.insert(std::make_pair(mit->first, std::make_pair(grpId, msgId)));
-                        mDataAccess->updatePublicRequestStatus(mit->first, RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE);
-		}
-
-		// if addition failed then delete nxs message
-		if(!ok)
-		{
 #ifdef GEN_EXCH_DEBUG
-			std::cerr << "RsGenExchange::publishMsgs() failed to publish msg " << std::endl;
+                    std::cerr << "RsGenExchange::publishMsgs() failed to publish msg " << std::endl;
 #endif
-                        mMsgNotify.insert(std::make_pair(mit->first, std::make_pair(RsGxsGroupId(""), RsGxsMessageId(""))));
+                }
+            }
 
-			continue;
-
-		}
-
-		delete msgItem; // delete msg item as we're done with it
+            delete[] mData;
+            delete msgItem;
 	}
 
 	// clear msg list as we're done publishing them and entries
@@ -713,6 +750,29 @@ bool RsGenExchange::disposeOfPublicToken(const uint32_t &token)
 RsGeneralDataService* RsGenExchange::getDataStore()
 {
     return mDataStore;
+}
+
+bool RsGenExchange::getGroupKeys(const RsGxsGroupId &grpId, RsTlvSecurityKeySet &keySet)
+{
+    if(grpId.empty())
+        return false;
+
+    RsStackMutex stack(mGenMtx);
+
+    std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMeta;
+    grpMeta[grpId] = NULL;
+    mDataStore->retrieveGxsGrpMetaData(grpMeta);
+
+    if(grpMeta.empty())
+        return false;
+
+    RsGxsGrpMetaData* meta = grpMeta[grpId];
+
+    if(meta == NULL)
+        return false;
+
+    keySet = meta->keys;
+    return true;
 }
 
 void RsGenExchange::createDummyGroup(RsGxsGrpItem *grpItem)

@@ -122,7 +122,7 @@ typedef std::string PeerId;
 
 /* Identity Interface for GXS Message Verification.
  */
-
+typedef std::string RsGxsId;
 class RsGixs
 {
 public:
@@ -180,14 +180,14 @@ public:
 
 /*** This Class pulls all the GXS Interfaces together ****/
 
-class RsGxsIdExchange: public RsGenExchange, public RsGixsReputation, public RsGixs
-{
-public:
-    RsGxsIdExchange(RsGeneralDataService* gds, RsNetworkExchangeService* ns, RsSerialType* serviceSerialiser, uint16_t mServType)
-    :RsGenExchange(gds,ns,serviceSerialiser,mServType) { return; }
-virtual ~RsGxsIdExchange() { return; }
+//class RsGxsIdExchange: public RsGenExchange, public RsGixsReputation, public RsGixs
+//{
+//public:
+//    RsGxsIdExchange(RsGeneralDataService* gds, RsNetworkExchangeService* ns, RsSerialType* serviceSerialiser, uint16_t mServType)
+//    :RsGenExchange(gds,ns,serviceSerialiser,mServType) { return; }
+//virtual ~RsGxsIdExchange() { return; }
 
-};
+//};
 
 
 

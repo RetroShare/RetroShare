@@ -28,6 +28,8 @@
 #include "pqi/authgpg.h"
 #include "retroshare/rspeers.h"
 
+#define GXS_SECURITY_DEBUG
+
 GxsSecurity::GxsSecurity()
 {
 }
@@ -48,10 +50,92 @@ RSA *GxsSecurity::extractPublicKey(RsTlvSecurityKey& key)
 }
 
 
-bool GxsSecurity::validateNxsMsg(RsNxsMsg *msg, RsGxsGrpMetaData *grpMeta)
+bool GxsSecurity::validateNxsMsg(RsNxsMsg *msg, RsTlvKeySignature& sign, RsTlvSecurityKeySet& key)
 {
+    //#ifdef GXS_SECURITY_DEBUG
+    //        std::cerr << "GxsSecurity::validateNxsMsg()";
+    //        std::cerr << std::endl;
+    //        std::cerr << "RsNxsMsg :";
+    //        std::cerr << std::endl;
+    //        msg->print(std::cerr, 10);
+    //        std::cerr << std::endl;
+    //#endif
 
-        return false;
+
+    //        /********************* check signature *******************/
+
+    //        /* check signature timeperiod */
+    //        if ((newMsg->timestamp < kit->second.startTS) ||
+    //                (newMsg->timestamp > kit->second.endTS))
+    //        {
+    //#ifdef DISTRIB_DEBUG
+    //                std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() TS out of range";
+    //                std::cerr << std::endl;
+    //#endif
+    //                return false;
+    //        }
+
+    //        /* decode key */
+    //        const unsigned char *keyptr = (const unsigned char *) kit->second.keyData.bin_data;
+    //        long keylen = kit->second.keyData.bin_len;
+    //        unsigned int siglen = newMsg->publishSignature.signData.bin_len;
+    //        unsigned char *sigbuf = (unsigned char *) newMsg->publishSignature.signData.bin_data;
+
+    //#ifdef DISTRIB_DEBUG
+    //        std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Decode Key";
+    //        std::cerr << " keylen: " << keylen << " siglen: " << siglen;
+    //        std::cerr << std::endl;
+    //#endif
+
+    //        /* extract admin key */
+    //        RSA *rsakey = d2i_RSAPublicKey(NULL, &(keyptr), keylen);
+
+    //        if (!rsakey)
+    //        {
+    //#ifdef DISTRIB_DEBUG
+    //                std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg()";
+    //                std::cerr << " Invalid RSA Key";
+    //                std::cerr << std::endl;
+
+    //                unsigned long err = ERR_get_error();
+    //                std::cerr << "RSA Load Failed .... CODE(" << err << ")" << std::endl;
+    //                std::cerr << ERR_error_string(err, NULL) << std::endl;
+
+    //                kit->second.print(std::cerr, 10);
+    //#endif
+    //        }
+
+
+    //        EVP_PKEY *signKey = EVP_PKEY_new();
+    //        EVP_PKEY_assign_RSA(signKey, rsakey);
+
+    //        /* calc and check signature */
+    //        EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
+
+    //        EVP_VerifyInit(mdctx, EVP_sha1());
+    //        EVP_VerifyUpdate(mdctx, newMsg->packet.bin_data, newMsg->packet.bin_len);
+    //        int signOk = EVP_VerifyFinal(mdctx, sigbuf, siglen, signKey);
+
+    //        /* clean up */
+    //        EVP_PKEY_free(signKey);
+    //        EVP_MD_CTX_destroy(mdctx);
+
+
+    //        if (signOk == 1)
+    //        {
+    //#ifdef GXS_SECURITY_DEBUG
+    //                std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Signature OK";
+    //                std::cerr << std::endl;
+    //#endif
+    //                return true;
+    //        }
+
+    //#ifdef DISTRIB_DEBUG
+    //        std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Signature invalid";
+    //        std::cerr << std::endl;
+    //#endif
+
+    //        return false;
 }
 
 
@@ -235,7 +319,7 @@ std::string GxsSecurity::getRsaKeySign(RSA *pubkey)
 }
 
 
-bool GxsSecurity::validateNxsGrp(RsNxsGrp *newGrp)
+bool GxsSecurity::validateNxsGrp(RsNxsGrp *newGrp, RsTlvKeySignature& sign, RsTlvSecurityKey& key)
 {
 
 }

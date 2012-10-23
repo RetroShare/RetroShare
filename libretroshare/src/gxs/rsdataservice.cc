@@ -400,7 +400,7 @@ RsNxsMsg* RsDataService::getMessage(RetroCursor &c)
 
     if(ok){
 
-        char msg_data[data_len];
+        char* msg_data = new char[data_len];
         std::ifstream istrm(msgFile.c_str(), std::ios::binary);
         istrm.seekg(offset, std::ios::beg);
         istrm.read(msg_data, data_len);
@@ -408,6 +408,7 @@ RsNxsMsg* RsDataService::getMessage(RetroCursor &c)
         istrm.close();
         offset = 0;
         ok &= msg->msg.GetTlv(msg_data, data_len, &offset);
+        delete[] msg_data;
     }
 
     if(ok)
