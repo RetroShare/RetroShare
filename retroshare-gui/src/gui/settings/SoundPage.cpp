@@ -130,6 +130,12 @@ void SoundPage::load()
 	groupItem = addGroup(tr("Chatmessage"));
 	addItem(groupItem, tr("New Msg"), SOUND_NEW_CHAT_MESSAGE);
 
+	groupItem = addGroup(tr("Message"));
+	addItem(groupItem, tr("Message arrived"), SOUND_MESSAGE_ARRIVED);
+
+	groupItem = addGroup(tr("Download"));
+	addItem(groupItem, tr("Download ready"), SOUND_DOWNLOAD_READY);
+
 	/* add plugin events */
 	int pluginCount = rsPlugins->nbPlugins();
 	for (int i = 0; i < pluginCount; ++i) {

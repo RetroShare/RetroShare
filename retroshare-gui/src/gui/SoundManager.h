@@ -26,6 +26,8 @@
 
 #define SOUND_NEW_CHAT_MESSAGE "NewChatMessage"
 #define SOUND_USER_ONLINE      "User_go_Online"
+#define SOUND_MESSAGE_ARRIVED  "MessageArrived"
+#define SOUND_DOWNLOAD_READY   "DownloadReady"
 
 class SoundEvents
 {

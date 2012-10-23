@@ -640,6 +640,8 @@ void NotifyQt::UpdateGUI()
 			switch(type)
 			{
 				case RS_POPUP_MSG:
+					soundManager->play(SOUND_MESSAGE_ARRIVED);
+
 					if (popupflags & RS_POPUP_MSG)
 					{
 						toaster = new Toaster(new MessageToaster(id, QString::fromUtf8(title.c_str()), QString::fromUtf8(msg.c_str())));
@@ -654,6 +656,8 @@ void NotifyQt::UpdateGUI()
 					}
 					break;
 				case RS_POPUP_DOWNLOAD:
+					soundManager->play(SOUND_DOWNLOAD_READY);
+
 					if (popupflags & RS_POPUP_DOWNLOAD)
 					{
 						/* id = file hash */
