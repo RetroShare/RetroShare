@@ -1226,23 +1226,34 @@ void ForumsDialog::downloadAllFiles()
 
 void ForumsDialog::nextUnreadMessage()
 {
-    QTreeWidgetItem* currentItem = ui.threadTreeWidget->currentItem();
-    if( !currentItem )
-    {
-        currentItem = ui.threadTreeWidget->topLevelItem(0);
-        if( !currentItem )
-            return;
-    }
+    QTreeWidgetItem *currentItem = ui.threadTreeWidget->currentItem();
 
-    do
-    {
-        uint32_t status = currentItem->data(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
-        if( IS_UNREAD(status) )
-        {
-            ui.threadTreeWidget->setCurrentItem(currentItem);
-            return;
+    while (TRUE) {
+        QTreeWidgetItemIterator itemIterator = currentItem ? QTreeWidgetItemIterator(currentItem, QTreeWidgetItemIterator::NotHidden) : QTreeWidgetItemIterator(ui.threadTreeWidget, QTreeWidgetItemIterator::NotHidden);
+
+        QTreeWidgetItem *item;
+        while ((item = *itemIterator) != NULL) {
+            itemIterator++;
+
+            if (item == currentItem) {
+                continue;
+            }
+
+            uint32_t status = item->data(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
+            if (IS_UNREAD(status)) {
+                ui.threadTreeWidget->setCurrentItem(item);
+                ui.threadTreeWidget->scrollToItem(item, QAbstractItemView::EnsureVisible);
+                return;
+            }
         }
-    } while( (currentItem = ui.threadTreeWidget->itemBelow(currentItem)) != NULL );
+
+        if (currentItem == NULL) {
+            break;
+        }
+
+        /* start from top */
+        currentItem = NULL;
+    }
 }
 
 // TODO
