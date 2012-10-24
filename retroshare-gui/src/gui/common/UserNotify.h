@@ -28,6 +28,7 @@
 class QToolBar;
 class QToolButton;
 class QAction;
+class QTimer;
 
 class UserNotify : public QObject
 {
@@ -52,11 +53,13 @@ public slots:
 
 private slots:
 	void trayIconClicked(QSystemTrayIcon::ActivationReason e = QSystemTrayIcon::Trigger);
+	void timer();
 
 private:
 	virtual QIcon getIcon() { return QIcon(); }
 	virtual QIcon getMainIcon(bool /*hasNew*/) { return QIcon(); }
 	virtual unsigned int getNewCount() { return 0; }
+	virtual bool isBlinking() { return false; }
 
 	virtual QString getTrayMessage(bool plural);
 	virtual QString getNotifyMessage(bool plural);
@@ -69,6 +72,8 @@ private:
 	QAction *mNotifyIcon;
 	unsigned int mNewCount;
 	QString mButtonText;
+	QTimer *mTimer;
+	bool mLastBlinking;
 };
 
 #endif // USERNOTIFY_H

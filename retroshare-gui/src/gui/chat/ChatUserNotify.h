@@ -43,6 +43,7 @@ private:
 	virtual QIcon getIcon();
 	virtual QIcon getMainIcon(bool hasNew);
 	virtual unsigned int getNewCount();
+	virtual bool isBlinking() { return true; }
 	virtual void iconClicked();
 };
 
