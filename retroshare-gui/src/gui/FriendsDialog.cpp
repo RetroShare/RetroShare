@@ -20,8 +20,6 @@
  ****************************************************************/
 
 #include <time.h>
-#include <sys/stat.h>
-#include <algorithm>
 
 #include <QColorDialog>
 #include <QDropEvent>
@@ -31,22 +29,19 @@
 #include <QTextStream>
 #include <QTextCodec>
 #include <QTimer>
+#include <QMessageBox>
 
-#include "retroshare/rsinit.h"
-#include "retroshare/rsnotify.h"
 #include "retroshare/rspeers.h"
 #include <retroshare/rshistory.h>
 
+#ifndef RS_RELEASE_VERSION
 #include "channels/CreateChannel.h"
+#endif
 #include "common/Emoticons.h"
-#include "common/vmessagebox.h"
 #include "common/PeerDefs.h"
-#include "chat/ChatDialog.h"
 #include "chat/ChatUserNotify.h"
-#include "connect/ConfCertDialog.h"
 #include "connect/ConnectFriendWizard.h"
 #include "forums/CreateForum.h"
-#include "gui/common/AvatarDefs.h"
 #include "groups/CreateGroup.h"
 #include "im_history/ImHistoryBrowser.h"
 #include "MainWindow.h"
