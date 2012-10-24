@@ -67,8 +67,8 @@ private:
 	QAction *mMainAction;
 	QSystemTrayIcon *mTrayIcon;
 	QAction *mNotifyIcon;
-	unsigned int newCount;
-	QString buttonText;
+	unsigned int mNewCount;
+	QString mButtonText;
 };
 
 #endif // USERNOTIFY_H

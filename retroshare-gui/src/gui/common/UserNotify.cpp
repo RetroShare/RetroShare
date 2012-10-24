@@ -32,14 +32,14 @@ UserNotify::UserNotify(QObject *parent) :
 	mMainAction = NULL;
 	mTrayIcon = NULL;
 	mNotifyIcon = NULL;
-	newCount = 0;
+	mNewCount = 0;
 }
 
 void UserNotify::initialize(QToolBar *mainToolBar, QAction *mainAction)
 {
 	mMainAction = mainAction;
 	if (mMainAction) {
-		buttonText = mMainAction->text();
+		mButtonText = mMainAction->text();
 		if (mainToolBar) {
 			mMainToolButton = dynamic_cast<QToolButton*>(mainToolBar->widgetForAction(mMainAction));
 		}
@@ -59,11 +59,15 @@ void UserNotify::createIcons(QMenu *notifyMenu)
 				mNotifyIcon = notifyMenu->addAction(getIcon(), "", this, SLOT(trayIconClicked()));
 				mNotifyIcon->setVisible(false);
 			}
-		} else if (mTrayIcon == NULL) {
-			/* Create the tray icon for messages */
-			mTrayIcon = new QSystemTrayIcon(this);
-			mTrayIcon->setIcon(getIcon());
-			connect(mTrayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayIconClicked(QSystemTrayIcon::ActivationReason)));
+		} else {
+			DELETE_OBJECT(mNotifyIcon);
+
+			if (mTrayIcon == NULL) {
+				/* Create the tray icon for messages */
+				mTrayIcon = new QSystemTrayIcon(this);
+				mTrayIcon->setIcon(getIcon());
+				connect(mTrayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayIconClicked(QSystemTrayIcon::ActivationReason)));
+			}
 		}
 	} else {
 		DELETE_OBJECT(mTrayIcon);
@@ -79,7 +83,7 @@ void UserNotify::updateIcon()
 
 	if (mMainAction) {
 		mMainAction->setIcon(getMainIcon(count > 0));
-		mMainAction->setText((count > 0) ? QString("%1 (%2)").arg(buttonText).arg(count) : buttonText);
+		mMainAction->setText((count > 0) ? QString("%1 (%2)").arg(mButtonText).arg(count) : mButtonText);
 
 		QFont font = mMainAction->font();
 		font.setBold(count > 0);
@@ -113,11 +117,11 @@ void UserNotify::updateIcon()
 		}
 	}
 
-	if (newCount != count) {
+	if (mNewCount != count) {
 		emit countChanged();
 	}
 
-	newCount = count;
+	mNewCount = count;
 }
 
 QString UserNotify::getTrayMessage(bool plural)
