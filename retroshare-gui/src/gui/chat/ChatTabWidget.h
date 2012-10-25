@@ -43,6 +43,7 @@ public:
 	void removeDialog(ChatDialog *dialog);
 
 	void getInfo(bool &isTyping, bool &hasNewMessage, QIcon *icon);
+	void setBlinking(int tab, bool blink);
 
 signals:
 	void tabChanged(ChatDialog *dialog);
@@ -54,8 +55,11 @@ private slots:
 	void tabChanged(int tab);
 	void tabInfoChanged(ChatDialog *dialog);
 	void dialogClose(ChatDialog *dialog);
+	void blink(bool on);
 
 private:
+	QIcon *mEmptyIcon;
+
 	Ui::ChatTabWidget *ui;
 };
 

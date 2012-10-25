@@ -100,6 +100,11 @@ Rshare::Rshare(QStringList args, int &argc, char **argv, const QString &dir)
 
 #endif
 
+  mBlink = true;
+  QTimer *timer = new QTimer(this);
+  timer->setInterval(500);
+  connect(timer, SIGNAL(timeout()), this, SLOT(blinkTimer()));
+  timer->start();
 
   /* Read in all our command-line arguments. */
   parseArguments(args);
@@ -526,4 +531,10 @@ Rshare::createShortcut(const QKeySequence &key, QWidget *sender,
 {
   QShortcut *s = new QShortcut(key, sender);
   connect(s, SIGNAL(activated()), receiver, slot);
+}
+
+void Rshare::blinkTimer()
+{
+    mBlink = !mBlink;
+    emit blink(mBlink);
 }

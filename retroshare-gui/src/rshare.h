@@ -130,6 +130,8 @@ signals:
   void running();
   /** Signals that the application needs to shutdown now. */
   void shutdown();
+  /** Global blink timer */
+  void blink(bool on);
 
 protected:
 #if defined(Q_OS_WIN)
@@ -142,7 +144,7 @@ private slots:
    * will emit the running() signal to indicate that the application's event
    * loop is running. */
   void onEventLoopStarted();
-  
+  void blinkTimer();
 
 private:
   /** Catches debugging messages from Qt and sends them to 
@@ -162,7 +164,7 @@ private:
 
   static bool    useConfigDir;
   static QString configDir;
-
+  bool mBlink;
 };
 
 #endif

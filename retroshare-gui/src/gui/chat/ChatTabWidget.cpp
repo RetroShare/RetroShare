@@ -24,6 +24,7 @@
 #include "ui_ChatTabWidget.h"
 #include "ChatDialog.h"
 #include "gui/common/StatusDefs.h"
+#include "rshare.h"
 
 #define IMAGE_WINDOW         ":/images/rstray3.png"
 #define IMAGE_TYPING         ":/images/typing.png"
@@ -35,12 +36,20 @@ ChatTabWidget::ChatTabWidget(QWidget *parent) :
 {
 	ui->setupUi(this);
 
-    connect(this, SIGNAL(tabCloseRequested(int)), this, SLOT(tabClose(int)));
-    connect(this, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
+	mEmptyIcon = NULL;
+
+	connect(this, SIGNAL(tabCloseRequested(int)), this, SLOT(tabClose(int)));
+	connect(this, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
+
+	connect(rApp, SIGNAL(blink(bool)), this, SLOT(blink(bool)));
 }
 
 ChatTabWidget::~ChatTabWidget()
 {
+	if (mEmptyIcon) {
+		delete(mEmptyIcon);
+	}
+
 	delete ui;
 }
 
@@ -91,12 +100,16 @@ void ChatTabWidget::tabInfoChanged(ChatDialog *dialog)
 	int tab = indexOf(dialog);
 	if (tab >= 0) {
 		if (dialog->isTyping()) {
+			setBlinking(tab, false);
 			setTabIcon(tab, QIcon(IMAGE_TYPING));
 		} else if (dialog->hasNewMessages()) {
 			setTabIcon(tab, QIcon(IMAGE_CHAT));
+			setBlinking(tab, true);
 		} else if (dialog->hasPeerStatus()) {
+			setBlinking(tab, false);
 			setTabIcon(tab, QIcon(StatusDefs::imageIM(dialog->getPeerStatus())));
 		} else {
+			setBlinking(tab, false);
 			setTabIcon(tab, QIcon());
 		}
 	}
@@ -140,6 +153,42 @@ void ChatTabWidget::getInfo(bool &isTyping, bool &hasNewMessage, QIcon *icon)
 			} else {
 				*icon = QIcon();
 			}
+		}
+	}
+}
+
+void ChatTabWidget::setBlinking(int tab, bool blink)
+{
+	QIcon icon = tabBar()->tabData(tab).value<QIcon>();
+
+	if (blink) {
+		/* save current icon */
+		tabBar()->setTabData(tab, tabIcon(tab));
+	} else {
+		if (!icon.isNull()) {
+			/* reset icon */
+			setTabIcon(tab, icon);
+
+			/* remove icon */
+			tabBar()->setTabData(tab, QVariant());
+		}
+	}
+}
+
+void ChatTabWidget::blink(bool on)
+{
+	int tabCount = tabBar()->count();
+	for (int tab = 0; tab < tabCount; ++tab) {
+		QIcon icon = tabBar()->tabData(tab).value<QIcon>();
+
+		if (!icon.isNull()) {
+			if (mEmptyIcon == NULL) {
+				/* create empty icon */
+				QPixmap pixmap(16, 16);
+				pixmap.fill(Qt::transparent);
+				mEmptyIcon = new QIcon(pixmap);
+			}
+			tabBar()->setTabIcon(tab, on ? icon : *mEmptyIcon);
 		}
 	}
 }

@@ -63,12 +63,15 @@ private slots:
 	void undockTab();
 	void setStyle();
 	void setOnTop();
+	void blink(bool on);
 
 private:
 	bool tabbedWindow;
 	bool firstShow;
 	std::string peerId;
 	ChatDialog *chatDialog;
+	QIcon mBlinkIcon;
+	QIcon *mEmptyIcon;
 
 	ChatDialog *getCurrentDialog();
 	void saveSettings();

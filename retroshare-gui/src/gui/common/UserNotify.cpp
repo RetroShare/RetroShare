@@ -22,9 +22,9 @@
 #include <QMenu>
 #include <QToolBar>
 #include <QToolButton>
-#include <QTimer>
 
 #include "UserNotify.h"
+#include "rshare.h"
 
 UserNotify::UserNotify(QObject *parent) :
 	QObject(parent)
@@ -36,10 +36,7 @@ UserNotify::UserNotify(QObject *parent) :
 	mNewCount = 0;
 	mLastBlinking = false;
 
-	mTimer = new QTimer(this);
-	mTimer->setInterval(500);
-
-	connect(mTimer, SIGNAL(timeout()), this, SLOT(timer()));
+	connect(rApp, SIGNAL(blink(bool)), this, SLOT(blink(bool)));
 }
 
 void UserNotify::initialize(QToolBar *mainToolBar, QAction *mainAction)
@@ -109,11 +106,7 @@ void UserNotify::updateIcon()
 		if (count) {
 			mTrayIcon->setToolTip("RetroShare\n" + getTrayMessage(count > 1).arg(count));
 			mTrayIcon->show();
-			if (!mTimer->isActive()) {
-				mTimer->start();
-			}
 		} else {
-			mTimer->stop();
 			mTrayIcon->hide();
 		}
 	}
@@ -152,18 +145,14 @@ void UserNotify::trayIconClicked(QSystemTrayIcon::ActivationReason e)
 	}
 }
 
-void UserNotify::timer()
+void UserNotify::blink(bool on)
 {
 	bool blinking = isBlinking();
 
 	if (mTrayIcon) {
 		if (blinking) {
 			/* blink icon */
-			if (mTrayIcon->icon().isNull()) {
-				mTrayIcon->setIcon(getIcon());
-			} else {
-				mTrayIcon->setIcon(QIcon());
-			}
+			mTrayIcon->setIcon(on ? getIcon() : QIcon());
 		} else {
 			if (mLastBlinking) {
 				/* reset icon */

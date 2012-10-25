@@ -29,7 +29,8 @@
 #include "gui/settings/RsharePeerSettings.h"
 #include "gui/common/StatusDefs.h"
 #include "gui/style/RSStyle.h"
-#include"util/misc.h"
+#include "util/misc.h"
+#include "rshare.h"
 
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rsnotify.h>
@@ -70,6 +71,7 @@ PopupChatWindow::PopupChatWindow(bool tabbed, QWidget *parent, Qt::WFlags flags)
 	tabbedWindow = tabbed;
 	firstShow = true;
 	chatDialog = NULL;
+	mEmptyIcon = NULL;
 
 	ui.tabWidget->setVisible(tabbedWindow);
 
@@ -92,6 +94,8 @@ PopupChatWindow::PopupChatWindow(bool tabbed, QWidget *parent, Qt::WFlags flags)
 	connect(ui.tabWidget, SIGNAL(tabChanged(ChatDialog*)), this, SLOT(tabChanged(ChatDialog*)));
 	connect(ui.tabWidget, SIGNAL(tabClosed(ChatDialog*)), this, SLOT(tabClosed(ChatDialog*)));
 
+	connect(rApp, SIGNAL(blink(bool)), this, SLOT(blink(bool)));
+
 	if (tabbedWindow) {
 		/* signal toggled is called */
 		ui.actionSetOnTop->setChecked(Settings->valueFromGroup("ChatWindow", "OnTop", false).toBool());
@@ -104,6 +108,10 @@ PopupChatWindow::PopupChatWindow(bool tabbed, QWidget *parent, Qt::WFlags flags)
 PopupChatWindow::~PopupChatWindow()
 {
 	saveSettings();
+
+	if (mEmptyIcon) {
+		delete(mEmptyIcon);
+	}
 
 	if (this == instance) {
 		instance = NULL;
@@ -263,10 +271,13 @@ void PopupChatWindow::calculateTitle(ChatDialog *dialog)
 
 	QIcon icon;
 	if (isTyping) {
+		mBlinkIcon = QIcon();
 		icon = QIcon(IMAGE_TYPING);
 	} else if (hasNewMessages) {
 		icon = QIcon(IMAGE_CHAT);
+		mBlinkIcon = icon;
 	} else {
+		mBlinkIcon = QIcon();
 		if (cd && cd->hasPeerStatus()) {
 			icon = QIcon(StatusDefs::imageIM(cd->getPeerStatus()));
 		} else {
@@ -404,4 +415,17 @@ void PopupChatWindow::calculateStyle(ChatDialog *dialog)
 	ui.chattoolBar->setStyleSheet(toolSheet);
 	ui.chatstatusbar->setStyleSheet(statusSheet);
 	ui.chatcentralwidget->setStyleSheet(widgetSheet);
+}
+
+void PopupChatWindow::blink(bool on)
+{
+	if (!mBlinkIcon.isNull()) {
+		if (mEmptyIcon == NULL) {
+			/* create empty icon */
+			QPixmap pixmap(16, 16);
+			pixmap.fill(Qt::transparent);
+			mEmptyIcon = new QIcon(pixmap);
+		}
+		setWindowIcon(on ? mBlinkIcon : *mEmptyIcon);
+	}
 }
