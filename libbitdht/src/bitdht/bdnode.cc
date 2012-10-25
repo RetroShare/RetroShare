@@ -66,9 +66,12 @@
 
 //#define DISABLE_BAD_PEER_FILTER		1
 
+//#define USE_HISTORY	1
+
+#define HISTORY_PERIOD  60
 
 bdNode::bdNode(bdNodeId *ownId, std::string dhtVersion, std::string bootfile, bdDhtFunctions *fns)
-	:mNodeSpace(ownId, fns), mQueryMgr(NULL), mConnMgr(NULL), mFilterPeers(NULL), mOwnId(*ownId), mDhtVersion(dhtVersion), mStore(bootfile, fns), mFns(fns), mFriendList(ownId)
+	:mNodeSpace(ownId, fns), mQueryMgr(NULL), mConnMgr(NULL), mFilterPeers(NULL), mOwnId(*ownId), mDhtVersion(dhtVersion), mStore(bootfile, fns), mFns(fns), mFriendList(ownId), mHistory(HISTORY_PERIOD)
 {
 
 	init(); /* (uses this pointers) stuff it - do it here! */
@@ -258,14 +261,16 @@ void bdNode::printState()
 	mQueryMgr->printQueries();
 	mConnMgr->printConnections();
 
-#ifdef USE_HISTORY
-	mHistory.printMsgs();
-#endif
 	std::cerr << "Outstanding Potential Peers: " << mPotentialPeers.size();
 	std::cerr << std::endl;
 	
 	std::cerr << "Outstanding Query Requests: " << mRemoteQueries.size();
 	std::cerr << std::endl;
+
+#ifdef USE_HISTORY
+	mHistory.cleanupOldMsgs();
+	mHistory.printMsgs();
+#endif
 
 	mAccount.printStats(std::cerr);
 }
@@ -344,6 +349,7 @@ void bdNode::iteration()
 
 		
 		/* don't send too many queries ... check history first */
+#if 0
 #ifdef USE_HISTORY
 		if (mHistory.validPeer(&pid))
 		{
@@ -356,6 +362,7 @@ void bdNode::iteration()
 #endif
 
 		}
+#endif
 #endif
 
 		/**** TEMP ****/
@@ -402,7 +409,7 @@ void bdNode::iteration()
 
 #ifdef DEBUG_NODE_MSGS 
 		std::cerr << "bdNode::iteration() Pinging Out-Of-Date Peer: ";
-		mFns->bdPrintId(std::cerr, *oit);
+		mFns->bdPrintId(std::cerr, &(*oit));
 		std::cerr << std::endl;
 #endif
 	}
@@ -423,7 +430,6 @@ void bdNode::send_ping(bdId *id)
 {
 	bdToken transId;
 	genNewTransId(&transId);
-	//registerOutgoingMsg(&id, &transId, BITDHT_MSG_TYPE_PING);
 
 	msgout_ping(id, &transId);
 }
@@ -434,7 +440,6 @@ void bdNode::send_query(bdId *id, bdNodeId *targetNodeId)
 	/* push out query */
 	bdToken transId;
 	genNewTransId(&transId);
-	//registerOutgoingMsg(&id, &transId, BITDHT_MSG_TYPE_FIND_NODE);
 
 	msgout_find_node(id, &transId, targetNodeId);
 
@@ -453,7 +458,6 @@ void bdNode::send_connect_msg(bdId *id, int msgtype, bdId *srcAddr, bdId *destAd
 	/* push out query */
 	bdToken transId;
 	genNewTransId(&transId);
-	//registerOutgoingMsg(&id, &transId, BITDHT_MSG_TYPE_FIND_NODE);
 
 	msgout_connect_genmsg(id, &transId, msgtype, srcAddr, destAddr, mode, param, status);
 
@@ -526,7 +530,7 @@ void bdNode::checkPotentialPeer(bdId *id, bdId *src)
 }
 
 
-void bdNode::addPotentialPeer(bdId *id, bdId */*src*/)
+void bdNode::addPotentialPeer(bdId *id, bdId * /*src*/)
 {
 	mPotentialPeers.push_back(*id);
 }
@@ -799,8 +803,13 @@ void bdNode::msgout_ping(bdId *id, bdToken *transId)
 	std::cerr << std::endl;
 #endif
 
-	registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_PING);
-	
+	// THIS IS CRASHING HISTORY.
+	// LIKELY ID is not always valid!
+	// Either PotentialPeers or Out-Of-Date Peers.
+	//registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_PING);
+
+	bdId dupId(*id);
+	registerOutgoingMsg(&dupId, transId, BITDHT_MSG_TYPE_PING);
 	
         /* create string */
         char msg[10240];
@@ -959,7 +968,7 @@ void bdNode::msgout_reply_hash(bdId *id, bdToken *transId, bdToken *token, std::
         char msg[10240];
         int avail = 10240;
 
-		registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_REPLY_HASH);
+	registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_REPLY_HASH);
 
         int blen = bitdht_peers_reply_hash_msg(transId, &(mOwnId), token, values, msg, avail-1);
 
@@ -1472,7 +1481,7 @@ void    bdNode::recvPkt(char *msg, int len, struct sockaddr_in addr)
 	/* Construct Source Id */
 	bdId srcId(id, addr);
 	
-	checkIncomingMsg(&srcId, &transId, beType);
+	registerIncomingMsg(&srcId, &transId, beType);
 	switch(beType)
 	{
 		case BITDHT_MSG_TYPE_PING:  /* a: id, transId */
@@ -2192,11 +2201,11 @@ void bdNode::registerOutgoingMsg(bdId *id, bdToken *transId, uint32_t msgType)
 
 
 
-uint32_t bdNode::checkIncomingMsg(bdId *id, bdToken *transId, uint32_t msgType)
+uint32_t bdNode::registerIncomingMsg(bdId *id, bdToken *transId, uint32_t msgType)
 {
 	
 #ifdef DEBUG_MSG_CHECKS
-	std::cerr << "bdNode::checkIncomingMsg(";
+	std::cerr << "bdNode::registerIncomingMsg(";
 	mFns->bdPrintId(std::cerr, id);
 	std::cerr << ", " << msgType << ")";
 	std::cerr << std::endl;

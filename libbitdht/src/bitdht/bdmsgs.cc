@@ -1015,3 +1015,62 @@ int bitdht_connect_genmsg(bdToken *tid, bdNodeId *id, int msgtype, bdId *src, bd
 }
 
 
+
+bool bitdht_msgtype(uint32_t msg_type, std::string &name)
+{
+	switch(msg_type)
+	{
+		case BITDHT_MSG_TYPE_PING:
+			name = "PING";
+			break;
+		case BITDHT_MSG_TYPE_PONG:
+			name = "PONG";
+			break;
+		case BITDHT_MSG_TYPE_FIND_NODE:
+			name = "FIND_NODE";
+			break;
+		case BITDHT_MSG_TYPE_REPLY_NODE:
+			name = "REPLY_NODE";
+			break;
+		case BITDHT_MSG_TYPE_GET_HASH:
+			name = "GET_HASH";
+			break;
+		case BITDHT_MSG_TYPE_REPLY_HASH:
+			name = "REPLY_HASH";
+			break;
+		case BITDHT_MSG_TYPE_REPLY_NEAR:
+			name = "REPLY_NEAR";
+			break;
+		case BITDHT_MSG_TYPE_POST_HASH:
+			name = "POST_HASH";
+			break;
+		case BITDHT_MSG_TYPE_REPLY_POST:
+			name = "REPLY_POST";
+			break;
+
+		case BITDHT_MSG_TYPE_CONNECT:
+			name = "CONNECT";
+			break;
+		case BITDHT_MSG_TYPE_CONNECT_REQUEST:
+			name = "CONNECT_REQUEST";
+			break;
+		case BITDHT_MSG_TYPE_CONNECT_REPLY:
+			name = "CONNECT_REPLY";
+			break;
+		case BITDHT_MSG_TYPE_CONNECT_START:
+			name = "CONNECT_START";
+			break;
+		case BITDHT_MSG_TYPE_CONNECT_ACK:
+			name = "CONNECT_ACK";
+			break;
+		default:
+			name = "UNKNOWN";
+			return false;
+			break;
+	}
+
+	return true;
+}
+
+
+

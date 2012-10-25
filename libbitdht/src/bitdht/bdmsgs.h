@@ -104,6 +104,8 @@ int beMsgMatchString(be_node *n, const char *str, int len);
 uint32_t beMsgGetY(be_node *n);
 uint32_t beMsgType(be_node *n);
 
+bool bitdht_msgtype(uint32_t msg_type, std::string &name);
+
 
 uint32_t convertBdVersionToVID(bdVersion *version);
 

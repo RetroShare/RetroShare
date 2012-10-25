@@ -12,13 +12,26 @@
 
 /**** DEBUGGING HISTORY ****/
 
+class MsgRegister
+{
+	public:
+	MsgRegister() { return; }
+	MsgRegister(const bdId *inId, uint32_t inMsgType, bool inIncoming)
+	  :id(*inId), msgType(inMsgType), incoming(inIncoming) { return; }
+
+	bdId id;
+	uint32_t msgType;
+	bool incoming;
+};
+
+
+
 class bdMsgHistoryList
 {
 	public:
-
 void	addMsg(time_t ts, uint32_t msgType, bool incoming);
 int	msgCount(time_t start_ts, time_t end_ts);
-void	msgClear();
+bool	msgClear(time_t before); // 0 => clear all.
 void	printHistory(std::ostream &out, int mode, time_t start_ts, time_t end_ts);
 
 bool    canSend();
@@ -32,8 +45,12 @@ bool    validPeer();
 class bdHistory
 {
 	public:
+        bdHistory(time_t store_period);
+
 void	addMsg(const bdId *id, bdToken *transId, uint32_t msgType, bool incoming);
 void	printMsgs();
+
+void 	cleanupOldMsgs();
 void    clearHistory();
 
 bool    canSend(const bdId *id);
@@ -42,6 +59,9 @@ bool    validPeer(const bdId *id);
 	/* recent history */
 	//std::list<bdId> lastMsgs;
 	std::map<bdId, bdMsgHistoryList> mHistory;
+        std::multimap<time_t, MsgRegister> mMsgTimeline;
+
+	int mStorePeriod;
 };
 
 

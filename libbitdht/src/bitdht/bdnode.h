@@ -219,7 +219,8 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 	/* transId handling */
 	void genNewTransId(bdToken *token);
 	void registerOutgoingMsg(bdId *id, bdToken *transId, uint32_t msgType);
-	uint32_t checkIncomingMsg(bdId *id, bdToken *transId, uint32_t msgType);
+	uint32_t registerIncomingMsg(bdId *id, bdToken *transId, uint32_t msgType);
+
 	void cleanupTransIdRegister();
 
 
@@ -250,6 +251,8 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 	bdFriendList mFriendList;
 	bdPeerQueue  mBadPeerQueue;
 
+	bdHistory mHistory; /* for understanding the DHT */
+
 	private:
 
 	uint32_t mNodeOptionFlags;	
@@ -258,7 +261,6 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 	uint32_t mMaxAllowedMsgs;
 	uint32_t mRelayMode;
 
-	bdHistory mHistory; /* for understanding the DHT */
 
 	std::list<bdRemoteQuery> mRemoteQueries;
 
