@@ -134,13 +134,13 @@ uint32_t bdNode::setNodeDhtMode(uint32_t dhtFlags)
 		{
 			default:
 			case BITDHT_MODE_TRAFFIC_LOW:
-				mMaxAllowedMsgs = BDNODE_HIGH_MSG_RATE;
-				break;
-			case BITDHT_MODE_TRAFFIC_HIGH:
 				mMaxAllowedMsgs = BDNODE_LOW_MSG_RATE;
 				break;
 			case BITDHT_MODE_TRAFFIC_MED:
 				mMaxAllowedMsgs = BDNODE_MED_MSG_RATE;
+				break;
+			case BITDHT_MODE_TRAFFIC_HIGH:
+				mMaxAllowedMsgs = BDNODE_HIGH_MSG_RATE;
 				break;
 			case BITDHT_MODE_TRAFFIC_TRICKLE:
 				mMaxAllowedMsgs = BDNODE_TRICKLE_MSG_RATE;
