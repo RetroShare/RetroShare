@@ -215,6 +215,10 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     insertThreads();
 
     ui.threadTreeWidget->installEventFilter(this);
+    
+#if QT_VERSION >= 0x040700
+	ui.filterLineEdit->setPlaceholderText(tr("Search this forum...")) ;
+#endif
 
     /* Hide platform specific features */
 #ifdef Q_WS_WIN
