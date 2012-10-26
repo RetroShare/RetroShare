@@ -42,6 +42,7 @@ private slots:
 
 private:
 	QToolButton *clearButton;
+	QToolButton *findButton;
 };
 
 #endif // LINEEDITCLEAR_H

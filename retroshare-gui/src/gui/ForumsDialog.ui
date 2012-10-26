@@ -538,7 +538,7 @@
               <enum>Qt::Horizontal</enum>
              </property>
              <property name="sizeType">
-              <enum>QSizePolicy::Fixed</enum>
+              <enum>QSizePolicy::Expanding</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -553,16 +553,6 @@
              <property name="spacing">
               <number>2</number>
              </property>
-             <item>
-              <widget class="QLabel" name="label_3">
-               <property name="text">
-                <string/>
-               </property>
-               <property name="pixmap">
-                <pixmap resource="images.qrc">:/images/find-16.png</pixmap>
-               </property>
-              </widget>
-             </item>
              <item>
               <widget class="LineEditClear" name="filterLineEdit">
                <property name="toolTip">
@@ -581,8 +571,7 @@
               </size>
              </property>
              <property name="font">
-              <font>
-              </font>
+              <font/>
              </property>
              <property name="currentIndex">
               <number>1</number>

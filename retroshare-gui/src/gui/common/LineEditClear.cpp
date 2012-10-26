@@ -28,6 +28,13 @@
 LineEditClear::LineEditClear(QWidget *parent)
 	: QLineEdit(parent)
 {
+	findButton = new QToolButton(this);
+	QPixmap findPixmap(":/images/find-16.png");
+	findButton->setIcon(QIcon(findPixmap));
+	findButton->setIconSize(findPixmap.size());
+	findButton->setCursor(Qt::ArrowCursor);
+	findButton->setStyleSheet("QToolButton { border: none; padding: 0px; }");
+
 	clearButton = new QToolButton(this);
 	clearButton->setFixedSize(16, 16);
 	clearButton->setIconSize(QSize(16, 16));
@@ -42,7 +49,9 @@ LineEditClear::LineEditClear(QWidget *parent)
 	connect(this, SIGNAL(textChanged(const QString&)), this, SLOT(updateCloseButton(const QString&)));
 
 	int frameWidth = style()->pixelMetric(QStyle::PM_DefaultFrameWidth);
-	setStyleSheet(QString("QLineEdit { padding-right: %1px; } ").arg(clearButton->sizeHint().width() + frameWidth + 1));
+	setStyleSheet(QString("QLineEdit { padding-right: %1px; padding-left: %2px; } ").
+			arg(clearButton->sizeHint().width() + frameWidth + 1).
+			arg(findButton->sizeHint().width() + frameWidth + 1));
 	QSize msz = minimumSizeHint();
 	setMinimumSize(qMax(msz.width(), clearButton->sizeHint().height() + frameWidth * 2), qMax(msz.height(), clearButton->sizeHint().height() + frameWidth * 2));
 }

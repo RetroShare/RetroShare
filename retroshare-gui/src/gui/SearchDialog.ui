@@ -172,31 +172,6 @@
             <number>0</number>
            </property>
            <item row="0" column="0">
-            <widget class="QLabel" name="searchLabel">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>16</width>
-               <height>16</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>16</width>
-               <height>16</height>
-              </size>
-             </property>
-             <property name="pixmap">
-              <pixmap resource="images.qrc">:/images/find-16.png</pixmap>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
             <widget class="LineEditClear" name="lineEdit">
              <property name="toolTip">
               <string>Enter a keyword here (at least 3 char long)</string>
@@ -319,13 +294,6 @@
            <property name="spacing">
             <number>2</number>
            </property>
-           <item>
-            <widget class="QLabel" name="label_3">
-             <property name="pixmap">
-              <pixmap resource="images.qrc">:/images/find-16.png</pixmap>
-             </property>
-            </widget>
-           </item>
            <item>
             <widget class="LineEditClear" name="filterLineEdit">
              <property name="toolTip">
