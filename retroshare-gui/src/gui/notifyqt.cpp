@@ -656,7 +656,7 @@ void NotifyQt::UpdateGUI()
 					}
 					break;
 				case RS_POPUP_DOWNLOAD:
-					soundManager->play(SOUND_DOWNLOAD_READY);
+					soundManager->play(SOUND_DOWNLOAD_COMPLETE);
 
 					if (popupflags & RS_POPUP_DOWNLOAD)
 					{

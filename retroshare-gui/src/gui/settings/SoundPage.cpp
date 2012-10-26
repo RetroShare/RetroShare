@@ -134,7 +134,7 @@ void SoundPage::load()
 	addItem(groupItem, tr("Message arrived"), SOUND_MESSAGE_ARRIVED);
 
 	groupItem = addGroup(tr("Download"));
-	addItem(groupItem, tr("Download ready"), SOUND_DOWNLOAD_READY);
+	addItem(groupItem, tr("Download complete"), SOUND_DOWNLOAD_COMPLETE);
 
 	/* add plugin events */
 	int pluginCount = rsPlugins->nbPlugins();

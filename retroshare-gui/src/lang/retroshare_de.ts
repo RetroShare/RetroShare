@@ -3453,6 +3453,13 @@ p, li { white-space: pre-wrap; }
         <source>Organization</source>
         <translation>Organisation</translation>
     </message>
+    <message>
+        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Friends&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ExprParamElement</name>
@@ -10674,7 +10681,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Herunterladen</translation>
     </message>
     <message>
-        <source>Download ready</source>
+        <source>Download complete</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
