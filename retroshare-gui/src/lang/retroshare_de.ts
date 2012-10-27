@@ -1210,6 +1210,22 @@ Bitte wähle einen zum Chatten aus.</translation>
         <source>Enable Emoticons Private Chat</source>
         <translation>Emoticons für privaten Chat</translation>
     </message>
+    <message>
+        <source>Open Window for new chat</source>
+        <translation type="unfinished">Fenster für neuen Chat öffnen</translation>
+    </message>
+    <message>
+        <source>Grab Focus when chat arrives</source>
+        <translation type="unfinished">Fokus auf neues Chatfenster legen</translation>
+    </message>
+    <message>
+        <source>Use a single tabbed window</source>
+        <translation type="unfinished">Ein Fenster mit Tabs verwenden</translation>
+    </message>
+    <message>
+        <source>Chat Lobby</source>
+        <translation type="unfinished">Chatlobby</translation>
+    </message>
 </context>
 <context>
     <name>ChatStyle</name>
@@ -4134,6 +4150,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>You can&apos;t reply an Anonymous Author</source>
         <translation>Du kannst einem anonymen Autor nicht antworten</translation>
+    </message>
+    <message>
+        <source>Search this forum...</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7806,15 +7826,15 @@ Rechtsklick und als Freund hinzufügen um zu verbinden.</translation>
     </message>
     <message>
         <source>Open Window for new chat</source>
-        <translation>Fenster für neuen Chat öffnen</translation>
+        <translation type="obsolete">Fenster für neuen Chat öffnen</translation>
     </message>
     <message>
         <source>Grab Focus when chat arrives</source>
-        <translation>Fokus auf neues Chatfenster legen</translation>
+        <translation type="obsolete">Fokus auf neues Chatfenster legen</translation>
     </message>
     <message>
         <source>Use a single tabbed window</source>
-        <translation>Ein Fenster mit Tabs verwenden</translation>
+        <translation type="obsolete">Ein Fenster mit Tabs verwenden</translation>
     </message>
     <message>
         <source>Group chat</source>

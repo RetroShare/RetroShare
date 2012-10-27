@@ -22,6 +22,7 @@
 #include <QFontDialog>
 #include <time.h>
 
+#include <retroshare/rsnotify.h>
 #include "ChatPage.h"
 #include "gui/chat/ChatStyle.h"
 #include "gui/notifyqt.h"
@@ -156,6 +157,17 @@ ChatPage::save(QString &/*errmsg*/)
         }
     }
 
+    uint chatflags   = 0;
+
+    if (ui.chat_NewWindow->isChecked())
+        chatflags |= RS_CHAT_OPEN;
+    if (ui.chat_Focus->isChecked())
+        chatflags |= RS_CHAT_FOCUS;
+    if (ui.chat_tabbedWindow->isChecked())
+        chatflags |= RS_CHAT_TABBED_WINDOW;
+
+    Settings->setChatFlags(chatflags);
+
     return true;
 }
 
@@ -197,6 +209,12 @@ ChatPage::load()
     std::string nick ;
     rsMsgs->getDefaultNickNameForChatLobby(nick) ;
     ui.chatLobbyNick_LE->setText(QString::fromUtf8(nick.c_str())) ;
+
+    uint chatflags = Settings->getChatFlags();
+
+    ui.chat_NewWindow->setChecked(chatflags & RS_CHAT_OPEN);
+    ui.chat_Focus->setChecked(chatflags & RS_CHAT_FOCUS);
+    ui.chat_tabbedWindow->setChecked(chatflags & RS_CHAT_TABBED_WINDOW);
 }
 
 void ChatPage::on_pushButtonChangeChatFont_clicked()

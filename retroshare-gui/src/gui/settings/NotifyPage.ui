@@ -144,21 +144,21 @@
           </property>
          </widget>
         </item>
-        <item>
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
        </layout>
       </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
      </item>
     </layout>
    </item>
@@ -363,34 +363,17 @@
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="groupBox_2">
-       <property name="title">
-        <string>Private Chat</string>
+      <spacer name="verticalSpacer_4">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
        </property>
-       <layout class="QVBoxLayout">
-        <item>
-         <widget class="QCheckBox" name="chat_NewWindow">
-          <property name="text">
-           <string>Open Window for new chat</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="chat_Focus">
-          <property name="text">
-           <string>Grab Focus when chat arrives</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="chat_tabbedWindow">
-          <property name="text">
-           <string>Use a single tabbed window</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
      </item>
     </layout>
    </item>

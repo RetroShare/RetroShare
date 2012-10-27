@@ -126,15 +126,7 @@ NotifyPage::save(QString &/*errmsg*/)
 {
     /* extract from rsNotify the flags */
 
-    uint chatflags   = 0;
     uint messageflags = 0;
-
-    if (ui.chat_NewWindow->isChecked())
-        chatflags |= RS_CHAT_OPEN;
-    if (ui.chat_Focus->isChecked())
-        chatflags |= RS_CHAT_FOCUS;
-    if (ui.chat_tabbedWindow->isChecked())
-        chatflags |= RS_CHAT_TABBED_WINDOW;
 
     if (ui.message_ConnectAttempt->isChecked())
         messageflags |= RS_MESSAGE_CONNECT_ATTEMPT;
@@ -147,7 +139,6 @@ NotifyPage::save(QString &/*errmsg*/)
 
     Settings->setNotifyFlags(getNotifyFlags());
     Settings->setNewsFeedFlags(getNewsFlags());
-    Settings->setChatFlags(chatflags);
     Settings->setMessageFlags(messageflags);
 
     Settings->setDisplayTrayChatLobby(ui.systray_ChatLobby->isChecked());
@@ -174,7 +165,6 @@ void NotifyPage::load()
     /* extract from rsNotify the flags */
     uint notifyflags = Settings->getNotifyFlags();
     uint newsflags = Settings->getNewsFeedFlags();
-    uint chatflags = Settings->getChatFlags();
     uint messageflags = Settings->getMessageFlags();
 
     ui.popup_Connect->setChecked(notifyflags & RS_POPUP_CONNECT);
@@ -193,10 +183,6 @@ void NotifyPage::load()
     ui.notify_Messages->setChecked(newsflags & RS_FEED_TYPE_MSG);
     ui.notify_Chat->setChecked(newsflags & RS_FEED_TYPE_CHAT);
     ui.notify_Security->setChecked(newsflags & RS_FEED_TYPE_SECURITY);
-
-    ui.chat_NewWindow->setChecked(chatflags & RS_CHAT_OPEN);
-    ui.chat_Focus->setChecked(chatflags & RS_CHAT_FOCUS);
-    ui.chat_tabbedWindow->setChecked(chatflags & RS_CHAT_TABBED_WINDOW);
 
     ui.message_ConnectAttempt->setChecked(messageflags & RS_MESSAGE_CONNECT_ATTEMPT);
 

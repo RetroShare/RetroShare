@@ -1178,6 +1178,22 @@ Please choose one of it to chat with.</source>
         <source>Enable Emoticons Private Chat</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Open Window for new chat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Grab Focus when chat arrives</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use a single tabbed window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chat Lobby</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ChatStyle</name>
@@ -4069,6 +4085,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>You can&apos;t reply an Anonymous Author</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search this forum...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7633,18 +7653,6 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Private Chat</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open Window for new chat</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Grab Focus when chat arrives</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use a single tabbed window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
