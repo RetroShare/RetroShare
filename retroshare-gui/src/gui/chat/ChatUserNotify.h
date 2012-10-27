@@ -34,7 +34,8 @@ public:
 	virtual bool hasSetting(QString &name);
 	virtual bool notifyEnabled();
 	virtual bool notifyCombined();
-	virtual void setNotifyEnabled(bool enabled, bool combined);
+	virtual bool notifyBlink();
+	virtual void setNotifyEnabled(bool enabled, bool combined, bool blink);
 
 private slots:
 	void privateChatChanged(int list, int type);
@@ -43,7 +44,6 @@ private:
 	virtual QIcon getIcon();
 	virtual QIcon getMainIcon(bool hasNew);
 	virtual unsigned int getNewCount();
-	virtual bool isBlinking() { return true; }
 	virtual void iconClicked();
 };
 

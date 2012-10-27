@@ -53,10 +53,11 @@ const uint32_t RS_POPUP_CONNECT_ATTEMPT = 0x0100;
 /* CHAT flags are here - so they are in the same place as 
  * other Notify flags... not used by libretroshare though
  */
-const uint32_t RS_CHAT_OPEN			= 0x0001;
-//const uint32_t free			= 0x0002;
-const uint32_t RS_CHAT_FOCUS		= 0x0004;
-const uint32_t RS_CHAT_TABBED_WINDOW	= 0x0008;
+const uint32_t RS_CHAT_OPEN          = 0x0001;
+//const uint32_t free                = 0x0002;
+const uint32_t RS_CHAT_FOCUS         = 0x0004;
+const uint32_t RS_CHAT_TABBED_WINDOW = 0x0008;
+const uint32_t RS_CHAT_BLINK         = 0x0010;
 
 const uint32_t RS_FEED_TYPE_PEER     = 0x0010;
 const uint32_t RS_FEED_TYPE_CHAN     = 0x0020;

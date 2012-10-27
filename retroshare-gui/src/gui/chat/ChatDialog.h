@@ -45,6 +45,7 @@ public:
 
 	virtual ChatWidget *getChatWidget() = 0;
 	virtual bool hasPeerStatus() = 0;
+	virtual bool notifyBlink() = 0;
 
 	void addToParent(QWidget *newParent);
 	void removeFromParent(QWidget *oldParent);

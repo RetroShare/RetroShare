@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>444</width>
-    <height>378</height>
+    <height>390</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
@@ -149,6 +149,13 @@
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_6">
             <item>
+             <widget class="QCheckBox" name="chatLobby_Blink">
+              <property name="text">
+               <string>Blink tab icon</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QLabel" name="label">
               <property name="text">
                <string>Default nickname for chat lobbies:</string>
@@ -229,6 +236,13 @@
              <widget class="QCheckBox" name="chat_tabbedWindow">
               <property name="text">
                <string>Use a single tabbed window</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="chat_Blink">
+              <property name="text">
+               <string>Blink window/tab icon</string>
               </property>
              </widget>
             </item>

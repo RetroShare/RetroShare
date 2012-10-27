@@ -42,7 +42,8 @@ public:
 	virtual bool hasSetting(QString &/*name*/) { return false; }
 	virtual bool notifyEnabled() { return false; }
 	virtual bool notifyCombined() { return false; }
-	virtual void setNotifyEnabled(bool /*enabled*/, bool /*combined*/) {}
+	virtual bool notifyBlink() { return false; }
+	virtual void setNotifyEnabled(bool /*enabled*/, bool /*combined*/, bool /*blink*/) {}
 
 signals:
 	void countChanged();
@@ -58,7 +59,6 @@ private:
 	virtual QIcon getIcon() { return QIcon(); }
 	virtual QIcon getMainIcon(bool /*hasNew*/) { return QIcon(); }
 	virtual unsigned int getNewCount() { return 0; }
-	virtual bool isBlinking() { return false; }
 
 	virtual QString getTrayMessage(bool plural);
 	virtual QString getNotifyMessage(bool plural);

@@ -29,6 +29,7 @@
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsiface.h>
+#include <retroshare/rsnotify.h>
 
 #include <algorithm>
 
@@ -90,6 +91,11 @@ PopupChatDialog::~PopupChatDialog()
 ChatWidget *PopupChatDialog::getChatWidget()
 {
 	return ui.chatWidget;
+}
+
+bool PopupChatDialog::notifyBlink()
+{
+	return (Settings->getChatFlags() & RS_CHAT_BLINK);
 }
 
 void PopupChatDialog::processSettings(bool load)

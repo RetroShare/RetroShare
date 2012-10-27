@@ -49,9 +49,15 @@ bool ChannelUserNotify::notifyCombined()
 	return (Settings->getTrayNotifyFlags() & TRAYNOTIFY_CHANNELS_COMBINED);
 }
 
-void ChannelUserNotify::setNotifyEnabled(bool enabled, bool combined)
+bool ChannelUserNotify::notifyBlink()
+{
+	return (Settings->getTrayNotifyBlinkFlags() & TRAYNOTIFY_BLINK_CHANNELS);
+}
+
+void ChannelUserNotify::setNotifyEnabled(bool enabled, bool combined, bool blink)
 {
 	uint notifyFlags = Settings->getTrayNotifyFlags();
+	uint blinkFlags = Settings->getTrayNotifyBlinkFlags();
 
 	if (enabled) {
 		notifyFlags |= TRAYNOTIFY_CHANNELS;
@@ -65,7 +71,14 @@ void ChannelUserNotify::setNotifyEnabled(bool enabled, bool combined)
 		notifyFlags &= ~TRAYNOTIFY_CHANNELS_COMBINED;
 	}
 
+	if (blink) {
+		blinkFlags |= TRAYNOTIFY_BLINK_CHANNELS;
+	} else {
+		blinkFlags &= ~TRAYNOTIFY_BLINK_CHANNELS;
+	}
+
 	Settings->setTrayNotifyFlags(notifyFlags);
+	Settings->setTrayNotifyBlinkFlags(blinkFlags);
 }
 
 QIcon ChannelUserNotify::getIcon()

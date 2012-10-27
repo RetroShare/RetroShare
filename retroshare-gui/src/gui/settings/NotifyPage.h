@@ -33,10 +33,11 @@ public:
     UserNotify *mUserNotify;
     QCheckBox *mEnabledCheckBox;
     QCheckBox *mCombinedCheckBox;
+    QCheckBox *mBlinkCheckBox;
 
 public:
-    UserNotifySetting(UserNotify *userNotify, QCheckBox *enabledCheckBox, QCheckBox *combinedCheckBox)
-        : mUserNotify(userNotify), mEnabledCheckBox(enabledCheckBox), mCombinedCheckBox(combinedCheckBox) {}
+    UserNotifySetting(UserNotify *userNotify, QCheckBox *enabledCheckBox, QCheckBox *combinedCheckBox, QCheckBox *blinkCheckBox)
+        : mUserNotify(userNotify), mEnabledCheckBox(enabledCheckBox), mCombinedCheckBox(combinedCheckBox), mBlinkCheckBox(blinkCheckBox) {}
 };
 
 class NotifyPage : public ConfigPage

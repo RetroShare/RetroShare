@@ -38,6 +38,7 @@ public:
 	virtual void showDialog(uint chatflags);
 	virtual ChatWidget *getChatWidget();
 	virtual bool hasPeerStatus() { return false; }
+	virtual bool notifyBlink();
 	void setNickname(const QString &nickname);
 
 private slots:

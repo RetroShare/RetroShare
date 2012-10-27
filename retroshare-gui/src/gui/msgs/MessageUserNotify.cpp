@@ -49,9 +49,15 @@ bool MessageUserNotify::notifyCombined()
 	return (Settings->getTrayNotifyFlags() & TRAYNOTIFY_MESSAGES_COMBINED);
 }
 
-void MessageUserNotify::setNotifyEnabled(bool enabled, bool combined)
+bool MessageUserNotify::notifyBlink()
+{
+	return (Settings->getTrayNotifyBlinkFlags() & TRAYNOTIFY_BLINK_MESSAGES);
+}
+
+void MessageUserNotify::setNotifyEnabled(bool enabled, bool combined, bool blink)
 {
 	uint notifyFlags = Settings->getTrayNotifyFlags();
+	uint blinkFlags = Settings->getTrayNotifyBlinkFlags();
 
 	if (enabled) {
 		notifyFlags |= TRAYNOTIFY_MESSAGES;
@@ -65,7 +71,14 @@ void MessageUserNotify::setNotifyEnabled(bool enabled, bool combined)
 		notifyFlags &= ~TRAYNOTIFY_MESSAGES_COMBINED;
 	}
 
+	if (blink) {
+		blinkFlags |= TRAYNOTIFY_BLINK_MESSAGES;
+	} else {
+		blinkFlags &= ~TRAYNOTIFY_BLINK_MESSAGES;
+	}
+
 	Settings->setTrayNotifyFlags(notifyFlags);
+	Settings->setTrayNotifyBlinkFlags(blinkFlags);
 }
 
 QIcon MessageUserNotify::getIcon()

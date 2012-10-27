@@ -51,9 +51,15 @@ bool ChatUserNotify::notifyCombined()
 	return (Settings->getTrayNotifyFlags() & TRAYNOTIFY_PRIVATECHAT_COMBINED);
 }
 
-void ChatUserNotify::setNotifyEnabled(bool enabled, bool combined)
+bool ChatUserNotify::notifyBlink()
+{
+	return (Settings->getTrayNotifyBlinkFlags() & TRAYNOTIFY_BLINK_PRIVATECHAT);
+}
+
+void ChatUserNotify::setNotifyEnabled(bool enabled, bool combined, bool blink)
 {
 	uint notifyFlags = Settings->getTrayNotifyFlags();
+	uint blinkFlags = Settings->getTrayNotifyBlinkFlags();
 
 	if (enabled) {
 		notifyFlags |= TRAYNOTIFY_PRIVATECHAT;
@@ -67,7 +73,14 @@ void ChatUserNotify::setNotifyEnabled(bool enabled, bool combined)
 		notifyFlags &= ~TRAYNOTIFY_PRIVATECHAT_COMBINED;
 	}
 
+	if (blink) {
+		blinkFlags |= TRAYNOTIFY_BLINK_PRIVATECHAT;
+	} else {
+		blinkFlags &= ~TRAYNOTIFY_BLINK_PRIVATECHAT;
+	}
+
 	Settings->setTrayNotifyFlags(notifyFlags);
+	Settings->setTrayNotifyBlinkFlags(blinkFlags);
 }
 
 QIcon ChatUserNotify::getIcon()

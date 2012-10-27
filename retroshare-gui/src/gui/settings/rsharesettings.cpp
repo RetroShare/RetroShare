@@ -295,6 +295,16 @@ void RshareSettings::setChatFlags(uint flags)
   setValue(SETTING_CHAT_FLAGS, flags);
 }
 
+uint RshareSettings::getChatLobbyFlags()
+{
+  return value("ChatLobbyFlags").toUInt();
+}
+
+void RshareSettings::setChatLobbyFlags(uint flags)
+{
+  setValue("ChatLobbyFlags", flags);
+}
+
 uint RshareSettings::getNotifyFlags()
 {
   return value(SETTING_NOTIFY_FLAGS).toUInt();
@@ -313,6 +323,16 @@ uint RshareSettings::getTrayNotifyFlags()
 void RshareSettings::setTrayNotifyFlags(uint flags)
 {
   setValue(SETTING_TRAYNOTIFY_FLAGS, flags);
+}
+
+uint RshareSettings::getTrayNotifyBlinkFlags()
+{
+  return value("TrayNotifyBlinkFlags", 0).toUInt();
+}
+
+void RshareSettings::setTrayNotifyBlinkFlags(uint flags)
+{
+  setValue("TrayNotifyBlinkFlags", flags);
 }
 
 uint RshareSettings::getMessageFlags()

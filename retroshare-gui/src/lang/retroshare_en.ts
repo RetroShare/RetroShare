@@ -1194,6 +1194,14 @@ Please choose one of it to chat with.</source>
         <source>Chat Lobby</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Blink tab icon</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Blink window/tab icon</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ChatStyle</name>
@@ -7701,6 +7709,10 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Test</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Blink</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

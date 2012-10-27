@@ -147,9 +147,9 @@ void UserNotify::trayIconClicked(QSystemTrayIcon::ActivationReason e)
 
 void UserNotify::blink(bool on)
 {
-	bool blinking = isBlinking();
-
 	if (mTrayIcon) {
+		bool blinking = notifyBlink();
+
 		if (blinking) {
 			/* blink icon */
 			mTrayIcon->setIcon(on ? getIcon() : QIcon());
@@ -159,7 +159,7 @@ void UserNotify::blink(bool on)
 				mTrayIcon->setIcon(getIcon());
 			}
 		}
-	}
 
-	mLastBlinking = blinking;
+		mLastBlinking = blinking;
+	}
 }

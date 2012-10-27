@@ -275,7 +275,11 @@ void PopupChatWindow::calculateTitle(ChatDialog *dialog)
 		icon = QIcon(IMAGE_TYPING);
 	} else if (hasNewMessages) {
 		icon = QIcon(IMAGE_CHAT);
-		mBlinkIcon = icon;
+		if (Settings->getChatFlags() & RS_CHAT_BLINK) {
+			mBlinkIcon = icon;
+		} else {
+			mBlinkIcon = QIcon();
+		}
 	} else {
 		mBlinkIcon = QIcon();
 		if (cd && cd->hasPeerStatus()) {

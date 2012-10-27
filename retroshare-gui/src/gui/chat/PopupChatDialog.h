@@ -50,6 +50,7 @@ protected:
 	virtual void showDialog(uint chatflags);
 	virtual ChatWidget *getChatWidget();
 	virtual bool hasPeerStatus() { return true; }
+	virtual bool notifyBlink();
 
 	virtual void updateStatus(int /*status*/) {}
 

@@ -165,8 +165,17 @@ ChatPage::save(QString &/*errmsg*/)
         chatflags |= RS_CHAT_FOCUS;
     if (ui.chat_tabbedWindow->isChecked())
         chatflags |= RS_CHAT_TABBED_WINDOW;
+    if (ui.chat_Blink->isChecked())
+        chatflags |= RS_CHAT_BLINK;
 
     Settings->setChatFlags(chatflags);
+
+    uint chatLobbyFlags = 0;
+
+    if (ui.chatLobby_Blink->isChecked())
+        chatLobbyFlags |= RS_CHATLOBBY_BLINK;
+
+    Settings->setChatLobbyFlags(chatLobbyFlags);
 
     return true;
 }
@@ -215,6 +224,11 @@ ChatPage::load()
     ui.chat_NewWindow->setChecked(chatflags & RS_CHAT_OPEN);
     ui.chat_Focus->setChecked(chatflags & RS_CHAT_FOCUS);
     ui.chat_tabbedWindow->setChecked(chatflags & RS_CHAT_TABBED_WINDOW);
+    ui.chat_Blink->setChecked(chatflags & RS_CHAT_BLINK);
+
+    uint chatLobbyFlags = Settings->getChatLobbyFlags();
+
+    ui.chatLobby_Blink->setChecked(chatLobbyFlags & RS_CHATLOBBY_BLINK);
 }
 
 void ChatPage::on_pushButtonChangeChatFont_clicked()

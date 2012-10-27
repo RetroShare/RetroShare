@@ -43,6 +43,14 @@
 #define TRAYNOTIFY_FORUMS_COMBINED      0x00000100
 #define TRAYNOTIFY_TRANSFERS_COMBINED   0x00000200
 
+#define TRAYNOTIFY_BLINK_PRIVATECHAT    0x00000001
+#define TRAYNOTIFY_BLINK_MESSAGES       0x00000002
+#define TRAYNOTIFY_BLINK_CHANNELS       0x00000004
+#define TRAYNOTIFY_BLINK_FORUMS         0x00000008
+#define TRAYNOTIFY_BLINK_TRANSFERS      0x00000010
+
+#define RS_CHATLOBBY_BLINK              0x00000001
+
 #define STATUSBAR_DISC  0x00000001
 
 //Forward declaration.
@@ -155,11 +163,17 @@ public:
   uint getChatFlags();
   void setChatFlags(uint flags);
 
+  uint getChatLobbyFlags();
+  void setChatLobbyFlags(uint flags);
+
   uint getNotifyFlags();
   void setNotifyFlags(uint flags);
 
   uint getTrayNotifyFlags();
   void setTrayNotifyFlags(uint flags);
+
+  uint getTrayNotifyBlinkFlags();
+  void setTrayNotifyBlinkFlags(uint flags);
 
   uint getMessageFlags();
   void setMessageFlags(uint flags);

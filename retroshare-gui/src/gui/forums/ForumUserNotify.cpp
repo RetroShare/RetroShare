@@ -49,9 +49,15 @@ bool ForumUserNotify::notifyCombined()
 	return (Settings->getTrayNotifyFlags() & TRAYNOTIFY_FORUMS_COMBINED);
 }
 
-void ForumUserNotify::setNotifyEnabled(bool enabled, bool combined)
+bool ForumUserNotify::notifyBlink()
+{
+	return (Settings->getTrayNotifyBlinkFlags() & TRAYNOTIFY_BLINK_FORUMS);
+}
+
+void ForumUserNotify::setNotifyEnabled(bool enabled, bool combined, bool blink)
 {
 	uint notifyFlags = Settings->getTrayNotifyFlags();
+	uint blinkFlags = Settings->getTrayNotifyBlinkFlags();
 
 	if (enabled) {
 		notifyFlags |= TRAYNOTIFY_FORUMS;
@@ -65,7 +71,14 @@ void ForumUserNotify::setNotifyEnabled(bool enabled, bool combined)
 		notifyFlags &= ~TRAYNOTIFY_FORUMS_COMBINED;
 	}
 
+	if (blink) {
+		blinkFlags |= TRAYNOTIFY_BLINK_FORUMS;
+	} else {
+		blinkFlags &= ~TRAYNOTIFY_BLINK_FORUMS;
+	}
+
 	Settings->setTrayNotifyFlags(notifyFlags);
+	Settings->setTrayNotifyBlinkFlags(blinkFlags);
 }
 
 QIcon ForumUserNotify::getIcon()

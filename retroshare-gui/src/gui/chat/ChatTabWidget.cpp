@@ -104,7 +104,11 @@ void ChatTabWidget::tabInfoChanged(ChatDialog *dialog)
 			setTabIcon(tab, QIcon(IMAGE_TYPING));
 		} else if (dialog->hasNewMessages()) {
 			setTabIcon(tab, QIcon(IMAGE_CHAT));
-			setBlinking(tab, true);
+			if (dialog->notifyBlink()) {
+				setBlinking(tab, true);
+			} else {
+				setBlinking(tab, false);
+			}
 		} else if (dialog->hasPeerStatus()) {
 			setBlinking(tab, false);
 			setTabIcon(tab, QIcon(StatusDefs::imageIM(dialog->getPeerStatus())));

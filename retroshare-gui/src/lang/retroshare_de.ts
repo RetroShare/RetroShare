@@ -1226,6 +1226,14 @@ Bitte wähle einen zum Chatten aus.</translation>
         <source>Chat Lobby</source>
         <translation type="unfinished">Chatlobby</translation>
     </message>
+    <message>
+        <source>Blink tab icon</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Blink window/tab icon</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ChatStyle</name>
@@ -7883,6 +7891,10 @@ Rechtsklick und als Freund hinzufügen um zu verbinden.</translation>
     <message>
         <source>Test</source>
         <translation>Test</translation>
+    </message>
+    <message>
+        <source>Blink</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

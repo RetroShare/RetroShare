@@ -61,9 +61,13 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WFlags flags)
 
       QCheckBox *combinedCheckBox = new QCheckBox(tr("Combined"), this);
       combinedCheckBox->setFont(font);
-      ui.notifyLayout->addWidget(combinedCheckBox, row++, 1);
+      ui.notifyLayout->addWidget(combinedCheckBox, row, 1);
 
-      mUserNotifySettingList.push_back(UserNotifySetting(userNotify, enabledCheckBox, combinedCheckBox));
+      QCheckBox *blinkCheckBox = new QCheckBox(tr("Blink"), this);
+      blinkCheckBox->setFont(font);
+      ui.notifyLayout->addWidget(blinkCheckBox, row++, 2);
+
+      mUserNotifySettingList.push_back(UserNotifySetting(userNotify, enabledCheckBox, combinedCheckBox, blinkCheckBox));
   }
 
   /* Hide platform specific features */
@@ -134,7 +138,7 @@ NotifyPage::save(QString &/*errmsg*/)
     /* save user notify */
     QList<UserNotifySetting>::iterator notifyIt;
     for (notifyIt = mUserNotifySettingList.begin(); notifyIt != mUserNotifySettingList.end(); ++notifyIt) {
-        notifyIt->mUserNotify->setNotifyEnabled(notifyIt->mEnabledCheckBox->isChecked(), notifyIt->mCombinedCheckBox->isChecked());
+        notifyIt->mUserNotify->setNotifyEnabled(notifyIt->mEnabledCheckBox->isChecked(), notifyIt->mCombinedCheckBox->isChecked(), notifyIt->mBlinkCheckBox->isChecked());
     }
 
     Settings->setNotifyFlags(getNotifyFlags());
@@ -219,6 +223,7 @@ void NotifyPage::load()
     for (notifyIt = mUserNotifySettingList.begin(); notifyIt != mUserNotifySettingList.end(); ++notifyIt) {
         notifyIt->mEnabledCheckBox->setChecked(notifyIt->mUserNotify->notifyEnabled());
         notifyIt->mCombinedCheckBox->setChecked(notifyIt->mUserNotify->notifyCombined());
+        notifyIt->mBlinkCheckBox->setChecked(notifyIt->mUserNotify->notifyBlink());
     }
 
     notifyToggled();
@@ -230,9 +235,13 @@ void NotifyPage::notifyToggled()
     for (notifyIt = mUserNotifySettingList.begin(); notifyIt != mUserNotifySettingList.end(); ++notifyIt) {
         if (notifyIt->mEnabledCheckBox->isChecked()) {
             notifyIt->mCombinedCheckBox->setEnabled(true);
+            notifyIt->mBlinkCheckBox->setEnabled(true);
         } else {
             notifyIt->mCombinedCheckBox->setChecked(false);
             notifyIt->mCombinedCheckBox->setEnabled(false);
+
+            notifyIt->mBlinkCheckBox->setChecked(false);
+            notifyIt->mBlinkCheckBox->setEnabled(false);
         }
     }
 }

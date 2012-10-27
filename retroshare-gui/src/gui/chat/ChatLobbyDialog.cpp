@@ -117,6 +117,11 @@ ChatWidget *ChatLobbyDialog::getChatWidget()
 	return ui.chatWidget;
 }
 
+bool ChatLobbyDialog::notifyBlink()
+{
+	return (Settings->getChatLobbyFlags() & RS_CHATLOBBY_BLINK);
+}
+
 void ChatLobbyDialog::processSettings(bool load)
 {
 	Settings->beginGroup(QString("ChatLobbyDialog"));

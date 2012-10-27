@@ -49,9 +49,15 @@ bool TransferUserNotify::notifyCombined()
 	return (Settings->getTrayNotifyFlags() & TRAYNOTIFY_TRANSFERS_COMBINED);
 }
 
-void TransferUserNotify::setNotifyEnabled(bool enabled, bool combined)
+bool TransferUserNotify::notifyBlink()
+{
+	return (Settings->getTrayNotifyBlinkFlags() & TRAYNOTIFY_BLINK_TRANSFERS);
+}
+
+void TransferUserNotify::setNotifyEnabled(bool enabled, bool combined, bool blink)
 {
 	uint notifyFlags = Settings->getTrayNotifyFlags();
+	uint blinkFlags = Settings->getTrayNotifyBlinkFlags();
 
 	if (enabled) {
 		notifyFlags |= TRAYNOTIFY_TRANSFERS;
@@ -65,7 +71,14 @@ void TransferUserNotify::setNotifyEnabled(bool enabled, bool combined)
 		notifyFlags &= ~TRAYNOTIFY_TRANSFERS_COMBINED;
 	}
 
+	if (blink) {
+		blinkFlags |= TRAYNOTIFY_BLINK_TRANSFERS;
+	} else {
+		blinkFlags &= ~TRAYNOTIFY_BLINK_TRANSFERS;
+	}
+
 	Settings->setTrayNotifyFlags(notifyFlags);
+	Settings->setTrayNotifyBlinkFlags(blinkFlags);
 }
 
 QIcon TransferUserNotify::getIcon()
