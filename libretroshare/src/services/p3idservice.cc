@@ -57,19 +57,23 @@ p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *ne
 
 }
 
-int	p3IdService::internal_tick()
+void	p3IdService::service_tick()
 {
-	std::cerr << "p3IdService::internal_tick()";
+	std::cerr << "p3IdService::service_tick()";
 	std::cerr << std::endl;
 
 	// Disable for now.
 	// background_tick();
 
-	cache_tick();
+	//cache_tick();
 
-	return 0;
+	return;
 }
 
+void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
+{
+	receiveChanges(changes);
+}
 
 /********************************************************************************/
 /******************* RsIdentity Interface ***************************************/

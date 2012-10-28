@@ -92,7 +92,11 @@ class RsGxsIdOpinion
 	//std::string mKeyId;  (mGroupId)
 	//std::string mPeerId; (mAuthorId) ???
 
-	int mOpinion;
+	uint32_t mOpinion;
+
+
+	// NOT SERIALISED YET!
+
 	double mReputation;
 	//int mRating;
 	//int mPeersRating;

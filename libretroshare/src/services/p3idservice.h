@@ -102,12 +102,14 @@ class LruData
 // Not sure exactly what should be inherited here?
 // Chris - please correct as necessary.
 
-class p3IdService: public RsGxsIdExchange, public RsIdentity
+class p3IdService: 
+	public RsGxsIdExchange, 
+	public RsIdentity
 {
 	public:
 	p3IdService(RsGeneralDataService* gds, RsNetworkExchangeService* nes);
 
-	virtual int	internal_tick(); // needed for background processing.
+	virtual void service_tick(); // needed for background processing.
 
 
 	/* General Interface is provided by RsIdentity / RsGxsIfaceImpl. */
@@ -154,6 +156,12 @@ virtual int  getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key);
 
         // get Reputation.
 virtual bool getReputation(const RsGxsId &id, const GixsReputation &rep);
+
+
+	protected:
+
+    /** Notifications **/
+    virtual void notifyChanges(std::vector<RsGxsNotify*>& changes);
 
 	private:
 

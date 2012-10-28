@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef P3_IDENTITY_SERVICE_HEADER
-#define P3_IDENTITY_SERVICE_HEADER
+#ifndef P3_IDENTITY_SERVICE_VEG_HEADER
+#define P3_IDENTITY_SERVICE_VEG_HEADER
 
 #include "services/p3service.h"
 #include "services/p3gxsserviceVEG.h"

@@ -1827,7 +1827,8 @@ RsTurtle *rsTurtle = NULL ;
 #include "services/p3posted.h"
 #include "services/p3wikiserviceVEG.h"
 #include "services/p3wireVEG.h"
-#include "services/p3idserviceVEG.h"
+//#include "services/p3idserviceVEG.h"
+#include "services/p3idservice.h"
 #include "services/p3forumsVEG.h"
 #endif
 
@@ -2293,10 +2294,27 @@ int RsServer::StartupRetroShare()
 
         RsNxsNetMgr* nxsMgr =  new RsNxsNetMgrImpl(mLinkMgr);
 
+        /**** Identity service ****/
+
+        p3IdService *mGxsIdService = NULL;
+
+        RsGeneralDataService* gxsid_ds = new RsDataService("./" + mLinkMgr->getOwnId() + "/", "gxsid_db",
+                        RS_SERVICE_GXSV1_TYPE_GXSID, NULL);
+
+        gxsid_ds->resetDataStore(); 
+
+        // init gxs services
+        mGxsIdService = new p3IdService(gxsid_ds, NULL);
+
+        // create GXS photo service
+        RsGxsNetService* gxsid_ns = new RsGxsNetService(
+                        RS_SERVICE_GXSV1_TYPE_GXSID, gxsid_ds, nxsMgr, mGxsIdService);
+
+
+
         /**** Photo service ****/
 
         p3PhotoServiceV2 *mPhotoV2 = NULL;
-
 
 
         RsGeneralDataService* photo_ds = new RsDataService("./" + mLinkMgr->getOwnId() + "/", "photoV2_db",
@@ -2334,15 +2352,18 @@ int RsServer::StartupRetroShare()
         /*** start up GXS core runner ***/
 
         GxsCoreServer* mGxsCore = new GxsCoreServer();
+        mGxsCore->addService(mGxsIdService);
         mGxsCore->addService(mPhotoV2);
         mGxsCore->addService(mPosted);
 
         // cores ready start up GXS net servers
         createThread(*photo_ns);
         createThread(*posted_ns);
+        createThread(*gxsid_ns);
 
         // now add to p3service
         pqih->addService(photo_ns);
+        pqih->addService(gxsid_ns);
         pqih->addService(posted_ns);
 
         // start up gxs core server
