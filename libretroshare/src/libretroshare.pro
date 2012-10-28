@@ -154,15 +154,11 @@ HEADERS += retroshare/rsgame.h \
             OBJECTS_DIR = temp/obj
             MOC_DIR = temp/moc
             DESTDIR = lib
-            
-            # miniupnp implementation files
-            #HEADERS += upnp/upnputil.h
-            #SOURCES += upnp/upnputil.c
+           
+	    # linux/bsd can use either - libupnp is more complete and packaged.
+            #CONFIG += upnp_miniupnpc 
+            CONFIG += upnp_libupnp
 
-            # libupnp implementation files
-            HEADERS += upnp/UPnPBase.h
-            SOURCES += upnp/UPnPBase.cpp
-            
             # zeroconf disabled at the end of libretroshare.pro (but need the code)
             #CONFIG += zeroconf
             #CONFIG += zcnatassist
@@ -192,9 +188,8 @@ HEADERS += retroshare/rsgame.h \
             DEFINES *= STATICLIB \
                 WIN32
             
-            # miniupnp implementation files
-            HEADERS += upnp/upnputil.h
-            SOURCES += upnp/upnputil.c
+            CONFIG += upnp_miniupnpc 
+
             SSL_DIR = ../../../../openssl
             UPNPC_DIR = ../../../../miniupnpc-1.3
             GPG_ERROR_DIR = ../../../../libgpg-error-1.7
@@ -230,9 +225,8 @@ HEADERS += retroshare/rsgame.h \
             # QMAKE_CFLAGS_DEBUG += -O2
             DEFINES += USE_CMD_ARGS
             
-            # miniupnp implementation files
-            HEADERS += upnp/upnputil.h
-            SOURCES += upnp/upnputil.c
+            CONFIG += upnp_libupnp
+
             UPNPC_DIR = ../../../lib/miniupnpc-1.3
             PTHREADS_DIR = ../../../lib/pthreads-w32-2-8-0-release
             ZLIB_DIR = ../../../lib/zlib-1.2.3
@@ -261,10 +255,8 @@ HEADERS += retroshare/rsgame.h \
             # DEFINES *= MINIUPNPC_VERSION=13
             DESTDIR = lib
             
-            # miniupnp implementation files
-            HEADERS += upnp/upnputil.h
-            SOURCES += upnp/upnputil.c
-            
+            CONFIG += upnp_miniupnpc 
+
             # zeroconf disabled at the end of libretroshare.pro (but need the code)
             CONFIG += zeroconf
             CONFIG += zcnatassist
@@ -296,9 +288,13 @@ HEADERS += retroshare/rsgame.h \
                 -Dstatvfs64=statvfs \
                 -Dfopen64=fopen
             
+	    # linux/bsd can use either - libupnp is more complete and packaged.
+            #CONFIG += upnp_miniupnpc 
+            CONFIG += upnp_libupnp
+
             # libupnp implementation files
-            HEADERS += upnp/UPnPBase.h
-            SOURCES += upnp/UPnPBase.cpp
+            HEADERS += upnp/UPnPBase.h  upnp/upnphandler_linux.h
+            SOURCES += upnp/UPnPBase.cpp upnp/upnphandler_linux.cc
             DESTDIR = lib
         }
         
@@ -417,7 +413,7 @@ HEADERS += retroshare/rsgame.h \
         HEADERS += turtle/p3turtle.h \
             turtle/rsturtleitem.h \
             turtle/turtletypes.h
-        HEADERS += upnp/upnphandler.h
+
         HEADERS += util/folderiterator.h \
             util/rsdebug.h \
             util/smallobject.h \
@@ -434,6 +430,7 @@ HEADERS += retroshare/rsgame.h \
             util/rsrandom.h \
             util/radix64.h \
             util/pugiconfig.h
+
         SOURCES += dbase/cachestrapper.cc \
             dbase/fimonitor.cc \
             dbase/findex.cc \
@@ -549,7 +546,7 @@ HEADERS += retroshare/rsgame.h \
         # turtle/turtlerouting.cc \
         # turtle/turtlesearch.cc \
         # turtle/turtletunnels.cc
-        SOURCES += upnp/upnphandler.cc
+
         SOURCES += util/folderiterator.cc \
             util/rsdebug.cc \
             util/smallobject.cc \
@@ -564,6 +561,18 @@ HEADERS += retroshare/rsgame.h \
             util/rsversion.cc \
             util/rswin.cc \
             util/rsrandom.cc
+
+        upnp_miniupnpc {
+            HEADERS += upnp/upnputil.h upnp/upnphandler_miniupnp.h
+            SOURCES += upnp/upnputil.c upnp/upnphandler_miniupnp.cc
+        }
+
+        upnp_libupnp {
+            HEADERS += upnp/UPnPBase.h  upnp/upnphandler_linux.h
+            SOURCES += upnp/UPnPBase.cpp upnp/upnphandler_linux.cc
+            DEFINES *= RS_USE_LIBUPNP
+	}
+
         zeroconf { 
             HEADERS += zeroconf/p3zeroconf.h
             SOURCES += zeroconf/p3zeroconf.cc
@@ -600,7 +609,6 @@ HEADERS += retroshare/rsgame.h \
                 util/contentvalue.h \
                 gxs/gxscoreserver.h \
                 gxs/gxssecurity.h \
-                gxs/gxssecurity.h \
                 gxs/rsgxsifaceimpl.h \
                 services/p3posted.h \
                 retroshare/rsposted.h \
@@ -620,7 +628,6 @@ HEADERS += retroshare/rsgame.h \
                 util/contentvalue.cc \
                 gxs/gxscoreserver.cc \
                 gxs/gxssecurity.cc \
-                gxs/gxssecurity.cc \
                 gxs/rsgxsifaceimpl.cc \
                 services/p3posted.cc \
                 serialiser/rsposteditems.cc
@@ -631,7 +638,7 @@ HEADERS += retroshare/rsgame.h \
                 services/p3idservice.h \
                 serialiser/rsgxsiditems.h
 
-            SOURCES += services/p3idservice.cc
+            #SOURCES += services/p3idservice.cc
             #    serialiser/rsgxsiditems.cc \
 
             # Wiki Service

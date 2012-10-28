@@ -1795,7 +1795,11 @@ RsTurtle *rsTurtle = NULL ;
 #ifdef RS_ENABLE_ZCNATASSIST
 	#include "zeroconf/p3zcnatassist.h"
 #else
-	#include "upnp/upnphandler.h"
+        #ifdef RS_USE_LIBUPNP
+		#include "upnp/upnphandler_linux.h"
+	#else
+		#include "upnp/upnphandler_miniupnp.h"
+        #endif
 #endif
 
 #include "services/p3disc.h"
