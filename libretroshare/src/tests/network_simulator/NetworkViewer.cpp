@@ -12,6 +12,8 @@ NetworkViewer::NetworkViewer(QWidget *parent,Network&net)
 {
 	_current_selected_node = -1 ;
 	_current_displayed_node = -1 ;
+	_current_acted_node = -1 ;
+
 	_dragging = false ;
 	_nodes_need_recomputing = true ;
 
@@ -389,16 +391,21 @@ void NetworkViewer::mousePressEvent(QMouseEvent *e)
 	for(uint32_t i=0;i<_node_coords.size();++i)
 		if( pow(_node_coords[i].x - x,2)+pow(_node_coords[i].y - y,2) < 10*10 )
 		{
-			_current_selected_node = i ;
-			_dragging = true ;
-			updateGL() ;
-
-			emit nodeSelected(i) ;
+			if(e->button() == Qt::LeftButton)
+			{
+				_current_selected_node = i ;
+				_dragging = true ;
+				updateGL() ;
+				emit nodeSelected(i) ;
+				return ;
+			}
 
 			if(e->button() == Qt::RightButton)
+			{
+				_current_acted_node = i ;
 				emit customContextMenuRequested(QPoint(e->x(),e->y())) ;
-
-			return ;
+				return ;
+			}
 		}
 
 	_dragging = false ;
@@ -509,45 +516,76 @@ void NetworkViewer::contextMenu(QPoint p)
 
 	contextMnu.addAction(action_ManageHash);
 
+	if(_current_acted_node == -1)
+		return ;
+
+	std::cerr << "acting on node " << _network.node(_current_acted_node).id() << std::endl;
+
 	// make a list of hashes provided by all nodes except this one
-	std::set<TurtleFileHash> hashes ;
+	std::set<TurtleFileHash> managed_hashes ;
+	std::set<TurtleFileHash> provided_hashes ;
 	
 	for(uint32_t i=0;i<_network.n_nodes();++i)
-		if(i != _current_selected_node)
-			hashes.insert( _network.node(i).managedHashes().begin(), _network.node(i).managedHashes().end()) ;
+		if(i != _current_acted_node)
+		{
+			managed_hashes.insert( _network.node(i).managedHashes().begin(), _network.node(i).managedHashes().end()) ;
+			provided_hashes.insert( _network.node(i).providedHashes().begin(), _network.node(i).providedHashes().end()) ;
+		}
 
-	if(!hashes.empty())
+	if(!managed_hashes.empty())
 	{
 		QMenu *Mnu2 = contextMnu.addMenu("Provide hash") ;
 
-		for(std::set<TurtleFileHash>::const_iterator it(hashes.begin());it!=hashes.end();++it)
+		for(std::set<TurtleFileHash>::const_iterator it(managed_hashes.begin());it!=managed_hashes.end();++it)
 		{
 			QAction* provide_hash_action = new QAction(QString::fromStdString(*it), Mnu2);
 			connect(provide_hash_action, SIGNAL(triggered()), this, SLOT(actionProvideHash()));
 			Mnu2->addAction(provide_hash_action);
 		}
 	}
+	if(!provided_hashes.empty())
+	{
+		QMenu *Mnu2 = contextMnu.addMenu("Manage hash") ;
 
+		for(std::set<TurtleFileHash>::const_iterator it(provided_hashes.begin());it!=provided_hashes.end();++it)
+		{
+			QAction* manage_hash_action = new QAction(QString::fromStdString(*it), Mnu2);
+			connect(manage_hash_action, SIGNAL(triggered()), this, SLOT(actionManageHash()));
+			Mnu2->addAction(manage_hash_action);
+		}
+	}
 	contextMnu.exec(mapToGlobal(p));
 }
 
 void NetworkViewer::actionManageHash()
 {
-	if(_current_selected_node < 0)
+	if(_current_acted_node < 0)
 		return ;
 
-	std::cerr << "Managing hash..." << std::endl;
+	std::string hash ;
 
-	unsigned char hash_bytes[20] ;
-	for(int i=0;i<20;++i)
-		hash_bytes[i] = lrand48() & 0xff ;
+	if(qobject_cast<QAction*>(sender())->text().length() == 20) //data().toString().toStdString();
+	{
+		hash = qobject_cast<QAction*>(sender())->text().toStdString() ;
 
-	std::string hash = t_RsGenericIdType<20>(hash_bytes).toStdString(false) ;;
+		std::cerr << "Managing existing hash " << hash << std::endl;
+	}
+	else
+	{
+		std::cerr << "Managing random hash..." << std::endl;
 
-	std::cerr << "   current node = " << _current_selected_node << std::endl ;
+		unsigned char hash_bytes[20] ;
+		for(int i=0;i<20;++i)
+			hash_bytes[i] = lrand48() & 0xff ;
+
+		hash = t_RsGenericIdType<20>(hash_bytes).toStdString(false) ;
+	}
+
+
+	std::cerr << "   current node = " << _current_acted_node << std::endl ;
 	std::cerr << "   adding random hash = " << hash << std::endl;
 
-	_network.node(_current_selected_node).manageFileHash(hash) ;
+	_network.node(_current_acted_node).manageFileHash(hash) ;
 
 	updateGL() ;
 }
@@ -556,11 +594,11 @@ void NetworkViewer::actionProvideHash()
 {
 	QString hash = qobject_cast<QAction*>(sender())->text() ;//data().toString().toStdString();
 
-	if(_current_selected_node < 0)
+	if(_current_acted_node < 0)
 		return ;
 
 	std::cerr << "Providing hash " << hash.toStdString() << std::endl;
-	_network.node(_current_selected_node).provideFileHash(hash.toStdString()) ;
+	_network.node(_current_acted_node).provideFileHash(hash.toStdString()) ;
 
 	updateGL() ;
 }

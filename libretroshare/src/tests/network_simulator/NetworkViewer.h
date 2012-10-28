@@ -69,6 +69,7 @@ class NetworkViewer: public QGLViewer
 
 		int _current_selected_node ;
 		int _current_displayed_node ;
+		int _current_acted_node ;
 		bool _dragging ;
 		bool _nodes_need_recomputing ;
 
