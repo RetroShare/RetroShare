@@ -64,6 +64,20 @@ virtual int	tick() { return 0; } /* for internal accounting */
 
 };
 
+
+#define PFP_TYPE_UDP	0x0001
+#define PFP_TYPE_TCP	0x0002
+
+class PortForwardParams
+{
+	public:
+	uint32_t fwdId;
+	uint32_t status;
+	uint32_t typeFlags;
+	struct sockaddr_in intAddr;
+	struct sockaddr_in extaddr;
+};
+
 class pqiNetAssistFirewall: public pqiNetAssist
 {
 	public:
@@ -77,6 +91,12 @@ virtual void    setExternalPort(unsigned short eport_in) = 0;
 	 	/* as determined by uPnP */
 virtual bool    getInternalAddress(struct sockaddr_in &addr) = 0;
 virtual bool    getExternalAddress(struct sockaddr_in &addr) = 0;
+
+
+		/* New Port Forward interface to support as many ports as necessary */
+virtual bool    requestPortForward(const PortForwardParams &params) = 0;
+virtual bool    statusPortForward(const uint32_t fwdId, PortForwardParams &params) = 0;
+
 
 };
 
