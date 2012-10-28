@@ -638,7 +638,7 @@ HEADERS += retroshare/rsgame.h \
                 services/p3idservice.h \
                 serialiser/rsgxsiditems.h
 
-            #SOURCES += services/p3idservice.cc
+            SOURCES += services/p3idservice.cc
             #    serialiser/rsgxsiditems.cc \
 
             # Wiki Service

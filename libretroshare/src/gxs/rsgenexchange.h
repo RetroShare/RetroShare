@@ -32,12 +32,10 @@
 #include "rsgxs.h"
 #include "rsgds.h"
 #include "rsnxs.h"
-#include "rsgixs.h"
 #include "rsgxsdataaccess.h"
 #include "rsnxsobserver.h"
 #include "retroshare/rsgxsservice.h"
 #include "serialiser/rsnxsitems.h"
-//#include "rsgixs.h"
 
 typedef std::map<RsGxsGroupId, std::vector<RsGxsMsgItem*> > GxsMsgDataMap;
 typedef std::map<RsGxsGroupId, RsGxsGrpItem*> GxsGroupDataMap;
@@ -63,6 +61,9 @@ typedef std::map<RsGxsGroupId, std::vector<RsMsgMetaData> > GxsMsgMetaMap;
  *              Also notifications are made here on receipt of new data from \n
  *              connected peers
  */
+
+class RsGixs;
+
 class RsGenExchange : public RsGxsService, public RsNxsObserver
 {
 public:
