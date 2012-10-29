@@ -8,7 +8,7 @@ const uint32_t RsPosted::FLAG_MSGTYPE_VOTE = 0x0004;
 RsPosted *rsPosted = NULL;
 
 p3Posted::p3Posted(RsGeneralDataService *gds, RsNetworkExchangeService *nes)
-    : RsGenExchange(gds, nes, NULL, RS_SERVICE_GXSV1_TYPE_POSTED), RsPosted(this)
+    : RsGenExchange(gds, nes, new RsGxsPostedSerialiser(), RS_SERVICE_GXSV1_TYPE_POSTED), RsPosted(this)
 {
 }
 

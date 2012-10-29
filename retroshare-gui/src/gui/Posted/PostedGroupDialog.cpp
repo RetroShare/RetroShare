@@ -20,12 +20,13 @@
  ****************************************************************/
 
 #include "PostedGroupDialog.h"
+#include "util/TokenQueue.h"
 
 #include <retroshare/rsposted.h>
 #include <iostream>
 
-PostedGroupDialog::PostedGroupDialog(QWidget *parent)
-        :GxsGroupDialog(rsPosted->getTokenService(), parent)
+PostedGroupDialog::PostedGroupDialog(TokenQueue* tokenQueue,  QWidget *parent)
+        :GxsGroupDialog(tokenQueue, parent, GXS_GROUP_DIALOG_CREATE_MODE)
 {
 
 	// To start with we only have open forums - with distribution controls.
@@ -41,24 +42,40 @@ PostedGroupDialog::PostedGroupDialog(QWidget *parent)
 
         uint32_t readonlyFlags = 0;
 
-        uint32_t defaultsFlags = ( //GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC    |
-                                //GXS_GROUP_DEFAULTS_DISTRIB_GROUP        |
-                                GXS_GROUP_DEFAULTS_DISTRIB_LOCAL        |
-
-                                //GXS_GROUP_DEFAULTS_PUBLISH_OPEN         |
-                                //GXS_GROUP_DEFAULTS_PUBLISH_THREADS      |
-                                GXS_GROUP_DEFAULTS_PUBLISH_REQUIRED     |
-                                //GXS_GROUP_DEFAULTS_PUBLISH_ENCRYPTED    |
-
-                                //GXS_GROUP_DEFAULTS_PERSONAL_GPG         |
-                                //GXS_GROUP_DEFAULTS_PERSONAL_REQUIRED    |
-                                GXS_GROUP_DEFAULTS_PERSONAL_IFNOPUB     |
-
-                                //GXS_GROUP_DEFAULTS_COMMENTS_YES         |
-                                GXS_GROUP_DEFAULTS_COMMENTS_NO          |
+        uint32_t defaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_LOCAL        |
+                                   GXS_GROUP_DEFAULTS_PUBLISH_REQUIRED     |
+                                   GXS_GROUP_DEFAULTS_PERSONAL_IFNOPUB     |
+                                   GXS_GROUP_DEFAULTS_COMMENTS_NO          |
                                 0);
 
-	setFlags(enabledFlags, readonlyFlags, defaultsFlags);
+        setFlags(enabledFlags, defaultsFlags);
+
+}
+
+PostedGroupDialog::PostedGroupDialog(const RsPostedGroup &grp, QWidget *parent)
+        :GxsGroupDialog(NULL, parent, GXS_GROUP_DIALOG_SHOW_MODE), mGrp(grp)
+{
+
+        // To start with we only have open forums - with distribution controls.
+
+        uint32_t enabledFlags = ( GXS_GROUP_FLAGS_ICON        |
+                                GXS_GROUP_FLAGS_DESCRIPTION   |
+                                GXS_GROUP_FLAGS_DISTRIBUTION  |
+                                GXS_GROUP_FLAGS_PUBLISHSIGN   |
+                                GXS_GROUP_FLAGS_SHAREKEYS     |
+                                GXS_GROUP_FLAGS_PERSONALSIGN  |
+                                GXS_GROUP_FLAGS_COMMENTS      |
+                                0);
+
+        uint32_t readonlyFlags = 0;
+
+        uint32_t defaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_LOCAL        |
+                                   GXS_GROUP_DEFAULTS_PUBLISH_REQUIRED     |
+                                   GXS_GROUP_DEFAULTS_PERSONAL_IFNOPUB     |
+                                   GXS_GROUP_DEFAULTS_COMMENTS_NO          |
+                                0);
+
+        setFlags(enabledFlags, defaultsFlags);
 
 }
 
@@ -68,31 +85,24 @@ bool PostedGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaDa
 	// Specific Function.
         RsPostedGroup grp;
 	grp.mMeta = meta;
-	//grp.mDescription = std::string(desc.toUtf8());
 
         rsPosted->submitGroup(token, grp);
 	return true;
 }
 
-void PostedGroupDialog::service_loadExistingGroup(const uint32_t &token)
+QPixmap PostedGroupDialog::service_getLogo()
 {
-        std::cerr << "PostedGroupDialog::service_loadExistingGroup()";
-        std::cerr << std::endl;
+    return QPixmap(); // null pixmap
+}
 
-	RsPostedGroup group;
-        if (!rsPosted->getGroup(token, group))
-	{
-        	std::cerr << "PostedGroupDialog::service_loadExistingGroup() ERROR Getting Group";
-        	std::cerr << std::endl;
+QString PostedGroupDialog::service_getDescription()
+{
+    return QString();
+}
 
-		return;
-	}
-
-	/* must call metadata loader */	
-	loadExistingGroupMetaData(group.mMeta);
-
-	/* now load any extra data we feel like */
-
+RsGroupMetaData PostedGroupDialog::service_getMeta()
+{
+    return mGrp.mMeta;
 }
 
 

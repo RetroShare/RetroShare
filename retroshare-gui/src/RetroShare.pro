@@ -987,7 +987,8 @@ posted {
             gui/Posted/PostedListDialog.h \
             gui/Posted/PostedItem.h \
             gui/Posted/PostedComments.h \
-            util/TokenQueueVEG.h
+            util/TokenQueueVEG.h \
+            gui/Posted/PostedGroupDialog.h \
 
 	FORMS += gui/Posted/PostedDialog.ui \
             gui/Posted/PostedListDialog.ui \
@@ -998,14 +999,14 @@ posted {
             gui/Posted/PostedListDialog.cpp \
             gui/Posted/PostedItem.cpp \
             gui/Posted/PostedComments.cpp \
-            util/TokenQueueVEG.cpp
+            util/TokenQueueVEG.cpp \
+            gui/Posted/PostedGroupDialog.cpp
 
 }
 
 gxsgui {
 
 	HEADERS += gui/gxs/GxsGroupDialog.h \
-            gui/gxs/PostedGroupDialog.h \
             gui/gxs/GxsCommentTreeWidget.h
      #       gui/gxs/ForumV2GroupDialog.h \
      #       gui/gxs/WikiGroupDialog.h \
@@ -1017,7 +1018,6 @@ gxsgui {
 #	    gui/gxs/GxsCommentTreeWidget.ui \
 
         SOURCES += gui/gxs/GxsGroupDialog.cpp \
-            gui/gxs/PostedGroupDialog.cpp \
             gui/gxs/GxsCommentTreeWidget.cpp
             #gui/gxs/ForumV2GroupDialog.cpp \
 #            gui/gxs/WikiGroupDialog.cpp \

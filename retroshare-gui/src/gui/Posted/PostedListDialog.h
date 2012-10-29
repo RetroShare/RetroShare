@@ -38,6 +38,17 @@
 
 #include "retroshare-gui/RsAutoUpdatePage.h"
 
+/*********************** **** **** **** ***********************/
+/** Request / Response of Data ********************************/
+/*********************** **** **** **** ***********************/
+
+#define 	POSTEDDIALOG_LISTING			1
+#define 	POSTEDDIALOG_CURRENTFORUM		2
+#define 	POSTEDDIALOG_INSERTTHREADS		3
+#define 	POSTEDDIALOG_INSERTCHILD		4
+#define 	POSTEDDIALOG_INSERT_POST		5
+#define 	POSTEDDIALOG_REPLY_MESSAGE		6
+
 class PostedListDialog : public RsAutoUpdatePage, public PostedHolder, public TokenResponse
 {
   Q_OBJECT
@@ -75,6 +86,7 @@ void 	loadPost(const RsPostedPost &post);
 
 void 	insertGroups();
 void 	requestGroupSummary();
+void    acknowledgeGroup(const uint32_t &token);
 void 	loadGroupSummary(const uint32_t &token);
 
 void	requestGroupSummary_CurrentForum(const std::string &forumId);
@@ -103,6 +115,7 @@ void 	groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &
 	bool mThreadLoading;
 	std::string mCurrTopicId;
 
+        QMap<RsGxsGroupId, RsPostedGroup> mGroups;
         TokenQueue *mPostedQueue;
 
 	/* UI - from Designer */

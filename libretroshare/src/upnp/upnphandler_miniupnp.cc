@@ -10,7 +10,7 @@ extern "C" {
 #endif
 /* This stuff is actually C */
 
-#include "upnp/upnphandler.h"
+#include "upnp/upnphandler_miniupnp.h"
 #include "upnp/upnputil.h"
 
 class uPnPConfigData
@@ -401,6 +401,7 @@ bool upnphandler::shutdown_upnp()
  *
  *
  */
+
 
 upnphandler::upnphandler()
 	: dataMtx("upnpState"), toEnable(false), toStart(false), toStop(false),

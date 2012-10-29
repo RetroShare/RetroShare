@@ -23,20 +23,52 @@
 #ifndef _POSTED_GROUP_DIALOG_H
 #define _POSTED_GROUP_DIALOG_H
 
-#include "GxsGroupDialog.h"
+#include "gui/gxs/GxsGroupDialog.h"
+#include "retroshare/rsposted.h"
 
 class PostedGroupDialog : public GxsGroupDialog
 {
 	Q_OBJECT
 
 public:
-	PostedGroupDialog(QWidget *parent);
+
+    /*!
+     * This constructs a create dialog
+     */
+    PostedGroupDialog(TokenQueue* tokenQueue, QWidget *parent = NULL);
+
+    /*!
+     * This constructs a show dialog which displays an already existing group
+     */
+    PostedGroupDialog(const RsPostedGroup& grp, QWidget *parent = NULL);
 
 protected:
-        virtual bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta);
-//        virtual bool service_CompleteCreateGroup(const RsGroupMetaData &meta);
 
-	virtual void service_loadExistingGroup(const uint32_t &token);
+    bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta);
+
+    /*!
+     * This should return a group logo \n
+     * Will be called when GxsGroupDialog is initialised in show mode
+     *
+     */
+    virtual QPixmap service_getLogo();
+
+    /*!
+     * This should return a group description string
+     * @return group description string
+     */
+    virtual QString service_getDescription();
+
+    /*!
+     * Used in show mode, returns a meta type
+     * @return the meta of existing grpMeta
+     */
+    virtual RsGroupMetaData service_getMeta();
+
+
+private:
+
+    RsPostedGroup mGrp;
 
 };
 

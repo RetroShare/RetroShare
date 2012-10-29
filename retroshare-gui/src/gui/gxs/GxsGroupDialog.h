@@ -90,47 +90,91 @@ public:
 #define GXS_GROUP_DIALOG_SHOW_MODE		2
 #define GXS_GROUP_DIALOG_EDIT_MODE		3
 
-class GxsGroupDialog : public QDialog, public TokenResponse
+/*!
+ * The aim of this dialog is to be convenient to encapsulate group
+ * creation code for several GXS services such forums, channels
+ * and posted
+ * The functionality provided are for group creation are:
+ * - Specifying the authentication type of the group
+ * - Specifying group image
+ * -
+ * The main limitation is that it will not deal with the actual service GXS Group
+ * data structure, but the meta structure which is the same across GXS services
+ * The long term plan is perhap logic structure (i.e. code) will be moved into each GXS \n
+ * service for better customisation of group creation, or perhaps not!
+ */
+class GxsGroupDialog : public QDialog
 {
 	Q_OBJECT
 
 public:
-        GxsGroupDialog(RsTokenService *service, QWidget *parent = 0);
 
-	void setFlags(uint32_t enabledFlags, uint32_t readonlyFlags, uint32_t defaultFlags);
-	void setMode(uint32_t mode);
+    /*!
+     *
+     * @param tokenQueue This should be the token service of the services Dialog \n
+     *        in order to receive acknowledgement of group creation, if set to NULL with create mode \n
+     *        creation will not happen
+     * @param parent The parent dialog
+     * @param mode
+     */
+    GxsGroupDialog(TokenQueue* tokenQueue, QWidget *parent = NULL, uint32_t mode = GXS_GROUP_DIALOG_SHOW_MODE);
 
-	/*** Open Window -> in Correct Mode */
-	void newGroup(); 
-	void existingGroup(std::string groupId, uint32_t mode);
+    /*!
+     *
+     * @param enabledFlags This determines what options are enabled
+     * @param readonlyFlags This determines what is modifiable is particularly relevant to what mode the
+     * @param defaultFlags
+     */
+    void setFlags(uint32_t enabledFlags, uint32_t defaultFlags);
 
-        // Callback for all Loads.
-virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+private:
+    void newGroup();
+    void setMode(uint32_t mode);
 
-
-	// Functions that can be overloaded for specific stuff.
+    // Functions that can be overloaded for specific stuff.
 
 protected slots:
-	void submitGroup();
-	void addGroupLogo(); 
+    void submitGroup();
+    void addGroupLogo();
 
 protected:
 
-	// Functions to be overloaded.
+        /*!
+         * Main purpose is to help tansfer meta data to service
+         * and also
+         * @param token This should be set to the token retrieved
+         * @param meta The deriving GXS service should set their grp meta to this value
+         */
+        virtual bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta) = 0;
 
-	// Group Creation.
-	virtual bool service_NewGroup();
-	virtual bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta);
-	virtual bool service_CompleteCreateGroup(const RsGroupMetaData &meta);
+        /*!
+         * This should return a group logo \n
+         * Will be called when GxsGroupDialog is initialised in show mode
+         *
+         */
+        virtual QPixmap service_getLogo() = 0;
 
-	// Group Edit / Display.
-	virtual bool service_ExistingGroup(); // Initial Setup.
-	virtual void service_loadExistingGroup(const uint32_t &token);
+        /*!
+         * This should return a group description string
+         * @return group description string
+         */
+        virtual QString service_getDescription() = 0;
 
-	bool loadExistingGroupMetaData(const RsGroupMetaData &meta);
+        /*!
+         * Used in show mode, returns a meta type
+         * @return the meta of existing grpMeta
+         */
+        virtual RsGroupMetaData service_getMeta() = 0;
+
+        /*!
+         * Loads meta data for group to GUI dialog
+         * @param meta the meta loaded fir group
+         */
+        void loadExistingGroupMetaData(const RsGroupMetaData &meta);
 
 	
 private slots:
+
 	/* actions to take.... */
 	void cancelDialog();
 
@@ -141,29 +185,19 @@ private:
 
 	void setGroupSignFlags(uint32_t signFlags);
 	uint32_t getGroupSignFlags();
-
 	void setupDefaults();
 	void setupVisibility();
 	void clearForm();
-
 	void createGroup();
-	
-	virtual void completeCreateGroup(const RsGroupMetaData &newForumMeta);
-
-
 	void sendShareList(std::string forumId);
-
 	void loadNewGroupId(const uint32_t &token);
 
+
 	std::list<std::string> mShareList;
-
 	QPixmap picture;
-
-        RsTokenService *mRsService;
         TokenQueue *mTokenQueue;
 
 	uint32_t mMode;
-
 	uint32_t mEnabledFlags;
 	uint32_t mReadonlyFlags;
 	uint32_t mDefaultsFlags;

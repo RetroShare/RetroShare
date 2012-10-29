@@ -68,6 +68,8 @@ public:
 class RsGxsPostedSerialiser : public RsSerialType
 {
 
+public:
+
     RsGxsPostedSerialiser()
         : RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXSV1_TYPE_PHOTO)
     { return; }

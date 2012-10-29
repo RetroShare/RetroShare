@@ -23,9 +23,10 @@
 
 #include "PostedListDialog.h"
 
-#include "gui/gxs/PostedGroupDialog.h"
+#include "gui/Posted/PostedGroupDialog.h"
 
 #include <retroshare/rsposted.h>
+#include <gxs/rsgxsflags.h>
 
 #include <iostream>
 #include <sstream>
@@ -276,9 +277,7 @@ void PostedListDialog::periodChanged( int index )
 
 void PostedListDialog::newGroup()
 {
-	PostedGroupDialog cf (this);
-	cf.newGroup();
-	
+        PostedGroupDialog cf (mPostedQueue, this);
 	cf.exec ();
 }
 	
@@ -289,36 +288,14 @@ void PostedListDialog::showGroupDetails()
 		return;
 	}
 	
-	PostedGroupDialog cf (this);
-	cf.existingGroup(mCurrTopicId,  GXS_GROUP_DIALOG_SHOW_MODE);
-	
+        PostedGroupDialog cf(mGroups[mCurrTopicId], this);
 	cf.exec ();
 }
 	
 void PostedListDialog::editGroupDetails()
 {
-	if (mCurrTopicId.empty()) 
-	{
-		return;
-	}
-	
-	PostedGroupDialog cf (this);
-	cf.existingGroup(mCurrTopicId,  GXS_GROUP_DIALOG_EDIT_MODE);
-	
-	cf.exec ();
+
 }
-
-
-/*********************** **** **** **** ***********************/
-/** Request / Response of Data ********************************/
-/*********************** **** **** **** ***********************/
-
-#define 	POSTEDDIALOG_LISTING			1
-#define 	POSTEDDIALOG_CURRENTFORUM		2
-#define 	POSTEDDIALOG_INSERTTHREADS		3
-#define 	POSTEDDIALOG_INSERTCHILD		4
-#define 	POSTEDDIALOG_INSERT_POST		5
-#define 	POSTEDDIALOG_REPLY_MESSAGE		6
 
 
 void PostedListDialog::insertGroups()
@@ -335,6 +312,23 @@ void PostedListDialog::requestGroupSummary()
         RsTokReqOptions opts;
 	uint32_t token;
         mPostedQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_SUMMARY, opts, ids, POSTEDDIALOG_LISTING);
+}
+
+void PostedListDialog::acknowledgeGroup(const uint32_t &token)
+{
+    RsGxsGroupId grpId;
+    rsPosted->acknowledgeGrp(token, grpId);
+
+    if(!grpId.empty())
+    {
+        std::list<RsGxsGroupId> grpIds;
+        grpIds.push_back(grpId);
+
+        RsTokReqOptions opts;
+        opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+        uint32_t reqToken;
+        mPostedQueue->requestGroupInfo(reqToken, RS_TOKREQ_ANSTYPE_SUMMARY, opts, grpIds, 0);
+    }
 }
 
 void PostedListDialog::loadGroupSummary(const uint32_t &token)
@@ -557,24 +551,26 @@ void PostedListDialog::loadRequest(const TokenQueue *queue, const TokenRequest &
 	if (queue == mPostedQueue)
 	{
 		/* now switch on req */
-		switch(req.mUserType)
+                switch(req.mType)
 		{
-			case POSTEDDIALOG_LISTING:
-				loadGroupSummary(req.mToken);
-				break;
+                    case TOKENREQ_GROUPINFO:
+                        switch(req.mAnsType)
+                        {
 
-			case POSTEDDIALOG_CURRENTFORUM:
-				loadGroupSummary_CurrentForum(req.mToken);
-				break;
-
-			case POSTEDDIALOG_INSERTTHREADS:
-				loadGroupThreadData_InsertThreads(req.mToken);
-				break;
-
-			default:
-				std::cerr << "PostedListDialog::loadRequest() ERROR: INVALID TYPE";
-				std::cerr << std::endl;
-				break;
+                            case RS_TOKREQ_ANSTYPE_ACK:
+                                acknowledgeGroup(req.mToken);
+                                break;
+                            case RS_TOKREQ_ANSTYPE_SUMMARY:
+                                loadGroupSummary(req.mToken);
+                            default:
+                                std::cerr << "Error, unexpected anstype:" << req.mAnsType << std::endl;
+                                break;
+                        }
+                    break;
+                    default:
+                            std::cerr << "PostedListDialog::loadRequest() ERROR: INVALID TYPE";
+                            std::cerr << std::endl;
+                            break;
 		}
 	}
 }
@@ -589,12 +585,72 @@ void PostedListDialog::loadRequest(const TokenQueue *queue, const TokenRequest &
 
 void PostedListDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo)
 {
+    groupItemInfo.id = QString::fromStdString(groupInfo.mGroupId);
+groupItemInfo.name = QString::fromUtf8(groupInfo.mGroupName.c_str());
+//groupItemInfo.description = QString::fromUtf8(groupInfo.forumDesc);
+groupItemInfo.popularity = groupInfo.mPop;
+groupItemInfo.lastpost = QDateTime::fromTime_t(groupInfo.mLastPost);
+
 
 }
 
 void PostedListDialog::insertGroupData(const std::list<RsGroupMetaData> &groupList)
 {
 
+    std::list<RsGroupMetaData>::const_iterator it;
+
+    QList<GroupItemInfo> adminList;
+    QList<GroupItemInfo> subList;
+    QList<GroupItemInfo> popList;
+    QList<GroupItemInfo> otherList;
+    std::multimap<uint32_t, GroupItemInfo> popMap;
+
+    for (it = groupList.begin(); it != groupList.end(); it++) {
+        /* sort it into Publish (Own), Subscribed, Popular and Other */
+        uint32_t flags = it->mSubscribeFlags;
+
+    GroupItemInfo groupItemInfo;
+    groupInfoToGroupItemInfo(*it, groupItemInfo);
+
+  //  if (flags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN) {
+    adminList.push_back(groupItemInfo);
+  //  } else if (flags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED) {
+                /* subscribed forum */
+ //   subList.push_back(groupItemInfo);
+ //   } else {
+                /* rate the others by popularity */
+//    popMap.insert(std::make_pair(it->mPop, groupItemInfo));
+        }
+//    }
+
+    /* iterate backwards through popMap - take the top 5 or 10% of list */
+    uint32_t popCount = 5;
+    if (popCount < popMap.size() / 10)
+    {
+        popCount = popMap.size() / 10;
+    }
+
+    uint32_t i = 0;
+    uint32_t popLimit = 0;
+    std::multimap<uint32_t, GroupItemInfo>::reverse_iterator rit;
+    for(rit = popMap.rbegin(); ((rit != popMap.rend()) && (i < popCount)); rit++, i++) ;
+    if (rit != popMap.rend()) {
+    popLimit = rit->first;
+    }
+
+    for (rit = popMap.rbegin(); rit != popMap.rend(); rit++) {
+        if (rit->second.popularity < (int) popLimit) {
+    otherList.append(rit->second);
+    } else {
+    popList.append(rit->second);
+    }
+    }
+
+    /* now we can add them in as a tree! */
+    ui.groupTreeWidget->fillGroupItems(yourTopics, adminList);
+    ui.groupTreeWidget->fillGroupItems(subscribedTopics, subList);
+    ui.groupTreeWidget->fillGroupItems(popularTopics, popList);
+    ui.groupTreeWidget->fillGroupItems(otherTopics, otherList);
 }
 
 /**************************************************************************************/
