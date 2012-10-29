@@ -211,8 +211,7 @@ void ProfileManager::checkChanged(int /*i*/)
 
 void ProfileManager::newIdentity()
 {
-	GenCertDialog gd;
-	gd.hideButtons();
+	GenCertDialog gd(true);
 	gd.exec();
 	fillIdentities();
 }

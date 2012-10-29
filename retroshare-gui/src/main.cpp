@@ -230,7 +230,7 @@ int main(int argc, char *argv[])
 
 			if (genCert)
 			{
-				GenCertDialog gd;
+				GenCertDialog gd(false);
 				gd.exec ();
 			}
 

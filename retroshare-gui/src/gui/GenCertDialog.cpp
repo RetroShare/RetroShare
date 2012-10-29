@@ -36,8 +36,8 @@
 
 
 /** Default constructor */
-GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
-  : QDialog(parent, flags)
+GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent, Qt::WFlags flags)
+    : QDialog(parent, flags), mOnlyGenerateIdentity(onlyGenerateIdentity)
 {
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);
@@ -74,17 +74,19 @@ void GenCertDialog::init()
     std::list<std::string> pgpIds;
     std::list<std::string>::iterator it;
     bool foundGPGKeys = false;
-    if (RsInit::GetPGPLogins(pgpIds)) {
+    if (!mOnlyGenerateIdentity) {
+        if (RsInit::GetPGPLogins(pgpIds)) {
             for(it = pgpIds.begin(); it != pgpIds.end(); it++)
             {
-                    QVariant userData(QString::fromStdString(*it));
-                    std::string name, email;
-                    RsInit::GetPGPLoginDetails(*it, name, email);
-                    std::cerr << "Adding PGPUser: " << name << " id: " << *it << std::endl;
-                    QString gid = QString::fromStdString(*it).right(8) ;
-                    ui.genPGPuser->addItem(QString::fromUtf8(name.c_str()) + " <" + QString::fromUtf8(email.c_str()) + "> (" + gid + ")", userData);
-                    foundGPGKeys = true;
+                QVariant userData(QString::fromStdString(*it));
+                std::string name, email;
+                RsInit::GetPGPLoginDetails(*it, name, email);
+                std::cerr << "Adding PGPUser: " << name << " id: " << *it << std::endl;
+                QString gid = QString::fromStdString(*it).right(8) ;
+                ui.genPGPuser->addItem(QString::fromUtf8(name.c_str()) + " <" + QString::fromUtf8(email.c_str()) + "> (" + gid + ")", userData);
+                foundGPGKeys = true;
             }
+        }
     }
 
     if (foundGPGKeys) {
@@ -95,7 +97,7 @@ void GenCertDialog::init()
         ui.headerLabel->setText(tr("Create a new Location"));
         genNewGPGKey = false;
     } else {
-        ui.no_gpg_key_label->show();
+        ui.no_gpg_key_label->setVisible(!mOnlyGenerateIdentity);
         ui.new_gpg_key_checkbox->setChecked(true);
         ui.new_gpg_key_checkbox->setEnabled(false);
         setWindowTitle(tr("Create new Identity"));
@@ -103,6 +105,19 @@ void GenCertDialog::init()
         ui.headerLabel->setText(tr("Create a new Identity"));
         genNewGPGKey = true;
     }
+
+    QString text = ui.headerLabel2->text() + "\n";
+
+    if (mOnlyGenerateIdentity) {
+        ui.new_gpg_key_checkbox->setChecked(true);
+        ui.new_gpg_key_checkbox->hide();
+        ui.label->hide();
+        text += tr("You can create a new identity with this form.");
+    } else {
+        text += tr("You can use an existing identity (i.e. a gpg key pair), from the list below, or create a new one with this form.");
+    }
+    ui.headerLabel2->setText(text);
+
     newGPGKeyGenUiSetup();
 }
 
@@ -118,11 +133,8 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
         ui.password_input->show();
         ui.genPGPuserlabel->hide();
         ui.genPGPuser->hide();
-
-		  if(ui.genPGPuser->count() == 0)
-			  ui.exportIdentity_PB->hide() ;
-
-//		  ui.importIdentity_PB->hide() ;
+        ui.importIdentity_PB->hide() ;
+        ui.exportIdentity_PB->hide();
         setWindowTitle(tr("Create new Identity"));
         ui.genButton->setText(tr("Generate new Identity"));
         ui.headerLabel->setText(tr("Create a new Identity"));
@@ -136,8 +148,9 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
         ui.password_input->hide();
         ui.genPGPuserlabel->show();
         ui.genPGPuser->show();
-        ui.exportIdentity_PB->show() ;
-        ui.importIdentity_PB->show() ;
+        ui.importIdentity_PB->setVisible(!mOnlyGenerateIdentity);
+        ui.exportIdentity_PB->setVisible(!mOnlyGenerateIdentity);
+        ui.exportIdentity_PB->setEnabled(ui.genPGPuser->count() != 0);
         setWindowTitle(tr("Create new Location"));
         ui.genButton->setText(tr("Generate new Location"));
         ui.headerLabel->setText(tr("Create a new Location"));
@@ -367,12 +380,4 @@ void GenCertDialog::loadCertificates()
 				break;
 		default: std::cerr << "StartDialog::loadCertificates() unexpected switch value " << retVal << std::endl;
 	}
-}
-
-void GenCertDialog::hideButtons()
-{
-    ui.exportIdentity_PB->hide() ;
-    ui.importIdentity_PB->hide() ;
-    ui.new_gpg_key_checkbox->setChecked(true);
-    newGPGKeyGenUiSetup();
 }

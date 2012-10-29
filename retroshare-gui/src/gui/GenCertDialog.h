@@ -35,11 +35,8 @@ class GenCertDialog : public QDialog
 
 public:
   /** Default constructor */
-  GenCertDialog(QWidget *parent = 0, Qt::WFlags flags = 0);
+  GenCertDialog(bool onlyGenerateIdentity, QWidget *parent = 0, Qt::WFlags flags = 0);
   /** Default destructor */
-
-  void hideButtons();
-
 
 private slots:
 	void genPerson();
@@ -65,6 +62,7 @@ private:
   Ui::GenCertDialog ui;
 
   bool genNewGPGKey;
+  bool mOnlyGenerateIdentity;
 };
 
 #endif
