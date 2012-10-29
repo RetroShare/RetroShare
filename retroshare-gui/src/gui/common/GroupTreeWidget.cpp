@@ -44,8 +44,8 @@
 #define ROLE_LASTPOST     Qt::UserRole + 4
 #define ROLE_SEARCH_SCORE Qt::UserRole + 5
 
-#define COMBO_NAME_INDEX  0
-#define COMBO_DESC_INDEX  1
+#define FILTER_NAME_INDEX  0
+#define FILTER_DESC_INDEX  1
 
 GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 		QWidget(parent), ui(new Ui::GroupTreeWidget)
@@ -64,7 +64,7 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 
 	/* Connect signals */
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged()));
-	connect(ui->filterCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(filterChanged()));
+	connect(ui->filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterChanged()));
 
 	connect(ui->treeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customContextMenuRequested(QPoint)));
 	connect(ui->treeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)), this, SLOT(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
@@ -83,6 +83,13 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	header->resizeSection(COLUMN_NAME, 170);
 	header->setResizeMode(COLUMN_POPULARITY, QHeaderView::Fixed);
 	header->resizeSection(COLUMN_POPULARITY, 25);
+
+	/* add filter actions */
+	ui->filterLineEdit->addFilter(QIcon(), tr("Title"), FILTER_NAME_INDEX);
+	ui->filterLineEdit->addFilter(QIcon(), tr("Description"), FILTER_DESC_INDEX);
+	ui->filterLineEdit->setCurrentFilter(FILTER_NAME_INDEX);
+	// can be removed when the actions of the filter line edit have own placeholder text
+	ui->filterLineEdit->setPlaceholderText(tr("Enter a Keyword here"));
 }
 
 GroupTreeWidget::~GroupTreeWidget()
@@ -388,11 +395,11 @@ void GroupTreeWidget::calculateScore(QTreeWidgetItem *item, const QString &filte
 		} else {
 			QString scoreString;
 
-			switch (ui->filterCombo->currentIndex()) {
-			case COMBO_NAME_INDEX:
+			switch (ui->filterLineEdit->currentFilter()) {
+			case FILTER_NAME_INDEX:
 				scoreString = item->data(COLUMN_DATA, ROLE_NAME).toString();
 				break;
-			case COMBO_DESC_INDEX:
+			case FILTER_DESC_INDEX:
 				scoreString = item->data(COLUMN_DATA, ROLE_DESCRIPTION).toString();
 				break;
 			}

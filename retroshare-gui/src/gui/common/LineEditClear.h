@@ -24,8 +24,13 @@
 #define LINEEDITCLEAR_H
 
 #include <QLineEdit>
+#include <QMap>
 
 class QToolButton;
+class QActionGroup;
+#if QT_VERSION < 0x040700
+class QLabel;
+#endif
 
 class LineEditClear : public QLineEdit
 {
@@ -34,15 +39,40 @@ class LineEditClear : public QLineEdit
 public:
 	LineEditClear(QWidget *parent = 0);
 
+	void addFilter(const QIcon &icon, const QString &text, int id, const QString &description = "");
+	void setCurrentFilter(int id);
+	int currentFilter();
+
+//#if QT_VERSION < 0x040700
+	// for Qt version with setPlaceholderText too to set the tooltip of the lineedit
+	void setPlaceholderText(const QString &text);
+//#endif
+
+signals:
+	void filterChanged(int id);
+
 protected:
 	void resizeEvent(QResizeEvent *);
+#if QT_VERSION < 0x040700
+	void focusInEvent(QFocusEvent *event);
+	void focusOutEvent(QFocusEvent *event);
+#endif
+	void reposButtons();
+	void activateAction(QAction *action);
 
 private slots:
-	void updateCloseButton(const QString &text);
+	void updateClearButton(const QString &text);
+	void filterTriggered(QAction *action);
 
 private:
-	QToolButton *clearButton;
-	QToolButton *findButton;
+	QToolButton *mClearButton;
+	QToolButton *mFilterButton;
+	QActionGroup *mActionGroup;
+	QMap<int, QString> mDescription;
+
+#if QT_VERSION < 0x040700
+	QLabel *mFilterLabel;
+#endif
 };
 
 #endif // LINEEDITCLEAR_H

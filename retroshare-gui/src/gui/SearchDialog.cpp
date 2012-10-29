@@ -75,18 +75,6 @@ const int SearchDialog::FILETYPE_IDX_DIRECTORY = 8;
 QMap<int, QString> * SearchDialog::FileTypeExtensionMap = new QMap<int, QString>();
 bool SearchDialog::initialised = false;
 
-static int FilterColumnFromComboBox(int nIndex)
-{
-    switch (nIndex) {
-    case 0:
-        return SR_NAME_COL;
-    case 1:
-        return SR_SIZE_COL;
-    }
-
-    return SR_NAME_COL;
-}
-
 /** Constructor */
 SearchDialog::SearchDialog(QWidget *parent)
 : MainPage(parent),
@@ -127,7 +115,7 @@ SearchDialog::SearchDialog(QWidget *parent)
     connect(ui.FileTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(selectFileType(int)));
     
     connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems()));
-    connect( ui.filterColumnComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterItems()));
+    connect(ui.filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterItems()));
 
     compareSummaryRole = new RSTreeWidgetItemCompareRole;
     compareSummaryRole->setRole(SS_COUNT_COL, ROLE_SORT);
@@ -186,6 +174,11 @@ SearchDialog::SearchDialog(QWidget *parent)
     QList<int> sizes;
     sizes << 250 << width(); // Qt calculates the right sizes
     ui.splitter->setSizes(sizes);
+
+    /* add filter actions */
+    ui.filterLineEdit->addFilter(QIcon(), tr("File Name"), SR_NAME_COL);
+//    ui.filterLineEdit->addFilter(QIcon(), tr("File Size"), SR_SIZE_COL);
+    ui.filterLineEdit->setCurrentFilter(SR_NAME_COL);
 
     // load settings
     processSettings(true);
@@ -1233,7 +1226,7 @@ void SearchDialog::hideOrShowSearchResult(QTreeWidgetItem* resultItem, QString c
 	if (ui.filterLineEdit->text().isEmpty()) {
 		resultItem->setHidden(false);
 	} else {
-		int filterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
+		int filterColumn = ui.filterLineEdit->currentFilter();
 		filterItem(resultItem, ui.filterLineEdit->text(), filterColumn);
 	}
 }

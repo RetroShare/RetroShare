@@ -98,7 +98,7 @@ private slots:
 
     void changedViewBox();
 
-    void filterColumnChanged();
+    void filterColumnChanged(int column);
     void filterItems(const QString &text);
 
     void generateMassData();

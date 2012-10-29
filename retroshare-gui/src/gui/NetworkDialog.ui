@@ -171,43 +171,10 @@
            </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout">
-            <property name="spacing">
-             <number>2</number>
+           <widget class="LineEditClear" name="filterLineEdit">
+            <property name="toolTip">
+             <string>Search Network</string>
             </property>
-            <item>
-             <widget class="LineEditClear" name="filterLineEdit">
-              <property name="toolTip">
-               <string>Search Network</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <widget class="QComboBox" name="filterColumnComboBox">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="font">
-             <font/>
-            </property>
-            <property name="currentIndex">
-             <number>0</number>
-            </property>
-            <item>
-             <property name="text">
-              <string>Name</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Peer ID</string>
-             </property>
-            </item>
            </widget>
           </item>
           <item>
@@ -504,7 +471,7 @@
   <customwidget>
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
-   <header>gui/common/LineEditClear.h</header>
+   <header location="global">gui/common/LineEditClear.h</header>
   </customwidget>
  </customwidgets>
  <resources>

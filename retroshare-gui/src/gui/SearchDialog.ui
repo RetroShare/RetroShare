@@ -281,50 +281,6 @@
      </widget>
      <widget class="QWidget" name="layoutWidget">
       <layout class="QGridLayout" name="gridLayout_4">
-       <item row="0" column="0">
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
-         <property name="spacing">
-          <number>6</number>
-         </property>
-         <property name="topMargin">
-          <number>2</number>
-         </property>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <property name="spacing">
-            <number>2</number>
-           </property>
-           <item>
-            <widget class="LineEditClear" name="filterLineEdit">
-             <property name="toolTip">
-              <string>Filter Search Result</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="QComboBox" name="filterColumnComboBox">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="currentIndex">
-            <number>0</number>
-           </property>
-           <item>
-            <property name="text">
-             <string>File Name</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>File Size</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-        </layout>
-       </item>
        <item row="1" column="0">
         <widget class="SearchTreeWidget" name="searchResultWidget">
          <property name="sizePolicy">
@@ -380,6 +336,13 @@
            <string>Hash</string>
           </property>
          </column>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="LineEditClear" name="filterLineEdit">
+         <property name="toolTip">
+          <string>Filter Search Result</string>
+         </property>
         </widget>
        </item>
       </layout>
@@ -550,7 +513,7 @@
   <customwidget>
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
-   <header>gui/common/LineEditClear.h</header>
+   <header location="global">gui/common/LineEditClear.h</header>
   </customwidget>
   <customwidget>
    <class>SearchTreeWidget</class>

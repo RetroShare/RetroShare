@@ -80,7 +80,7 @@ private slots:
   void buttonStyle();
   
   void filterChanged(const QString &text);
-  void filterColumnChanged();
+  void filterColumnChanged(int column);
   
   void tagAboutToShow();
   void tagSet(int tagId, bool set);

@@ -549,54 +549,7 @@
             </spacer>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout">
-             <property name="spacing">
-              <number>2</number>
-             </property>
-             <item>
-              <widget class="LineEditClear" name="filterLineEdit">
-               <property name="toolTip">
-                <string>Search forums</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <widget class="QComboBox" name="filterColumnComboBox">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="font">
-              <font/>
-             </property>
-             <property name="currentIndex">
-              <number>1</number>
-             </property>
-             <item>
-              <property name="text">
-               <string>Date</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Title</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Author</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Content</string>
-              </property>
-             </item>
-            </widget>
+            <widget class="LineEditClear" name="filterLineEdit"/>
            </item>
           </layout>
          </widget>
@@ -671,15 +624,15 @@
    <header>gui/common/LinkTextBrowser.h</header>
   </customwidget>
   <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header location="global">gui/common/LineEditClear.h</header>
+  </customwidget>
+  <customwidget>
    <class>GroupTreeWidget</class>
    <extends>QWidget</extends>
    <header>gui/common/GroupTreeWidget.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>LineEditClear</class>
-   <extends>QLineEdit</extends>
-   <header>gui/common/LineEditClear.h</header>
   </customwidget>
  </customwidgets>
  <resources>

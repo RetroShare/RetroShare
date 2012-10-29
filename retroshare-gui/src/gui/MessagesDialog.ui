@@ -367,53 +367,6 @@
         </property>
        </spacer>
       </item>
-      <item row="0" column="11">
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <property name="spacing">
-         <number>1</number>
-        </property>
-        <item>
-         <widget class="LineEditClear" name="filterLineEdit"/>
-        </item>
-       </layout>
-      </item>
-      <item row="0" column="12">
-       <widget class="QComboBox" name="filterColumnComboBox">
-        <property name="currentIndex">
-         <number>0</number>
-        </property>
-        <item>
-         <property name="text">
-          <string>Attachments</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Subject</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>From</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Date</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Content</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Tags</string>
-         </property>
-        </item>
-       </widget>
-      </item>
       <item row="0" column="6">
        <widget class="QToolButton" name="tagButton">
         <property name="focusPolicy">
@@ -442,6 +395,9 @@
          <bool>true</bool>
         </property>
        </widget>
+      </item>
+      <item row="0" column="11">
+       <widget class="LineEditClear" name="filterLineEdit"/>
       </item>
      </layout>
     </widget>
@@ -811,7 +767,7 @@
   <customwidget>
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
-   <header>gui/common/LineEditClear.h</header>
+   <header location="global">gui/common/LineEditClear.h</header>
   </customwidget>
   <customwidget>
    <class>RSTabWidget</class>

@@ -106,46 +106,6 @@ void MessagesDialog::LockUpdate::setUpdate(bool bUpdate)
     m_bUpdate = bUpdate;
 }
 
-static int FilterColumnFromComboBox(int nIndex)
-{
-    switch (nIndex) {
-    case 0:
-        return COLUMN_ATTACHEMENTS;
-    case 1:
-        return COLUMN_SUBJECT;
-    case 2:
-        return COLUMN_FROM;
-    case 3:
-        return COLUMN_DATE;
-    case 4:
-        return COLUMN_CONTENT;
-    case 5:
-        return COLUMN_TAGS;
-    }
-
-    return COLUMN_SUBJECT;
-}
-
-static int FilterColumnToComboBox(int nIndex)
-{
-    switch (nIndex) {
-    case COLUMN_ATTACHEMENTS:
-        return 0;
-    case COLUMN_SUBJECT:
-        return 1;
-    case COLUMN_FROM:
-        return 2;
-    case COLUMN_DATE:
-        return 3;
-    case COLUMN_CONTENT:
-        return 4;
-    case COLUMN_TAGS:
-        return 5;
-    }
-
-    return FilterColumnToComboBox(COLUMN_SUBJECT);
-}
-
 /** Constructor */
 MessagesDialog::MessagesDialog(QWidget *parent)
 : MainPage(parent)
@@ -176,8 +136,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     ui.actionTextUnderIcon->setData(Qt::ToolButtonTextUnderIcon);
 
     connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
-
-    connect(ui.filterColumnComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterColumnChanged()));
+    connect(ui.filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
 
     msgWidget = new MessageWidget(true, this);
 	ui.msgLayout->addWidget(msgWidget);
@@ -260,8 +219,17 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     //viewmenu->addAction(ui.actionTextUnderIcon);
     ui.viewtoolButton->setMenu(viewmenu);
 
+    /* add filter actions */
+    ui.filterLineEdit->addFilter(QIcon(), tr("Subject"), COLUMN_SUBJECT);
+    ui.filterLineEdit->addFilter(QIcon(), tr("From"), COLUMN_FROM);
+    ui.filterLineEdit->addFilter(QIcon(), tr("Date"), COLUMN_DATE);
+    ui.filterLineEdit->addFilter(QIcon(), tr("Content"), COLUMN_CONTENT);
+    ui.filterLineEdit->addFilter(QIcon(), tr("Tags"), COLUMN_TAGS);
+    ui.filterLineEdit->addFilter(QIcon(), tr("Attachments"), COLUMN_ATTACHEMENTS);
+
     //setting default filter by column as subject
-    proxyModel->setFilterKeyColumn(FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex()));
+    ui.filterLineEdit->setCurrentFilter(COLUMN_SUBJECT);
+    proxyModel->setFilterKeyColumn(COLUMN_SUBJECT);
 
     // load settings
     processSettings(true);
@@ -336,8 +304,7 @@ void MessagesDialog::processSettings(bool load)
         // load settings
 
         // filterColumn
-        int nValue = FilterColumnToComboBox(Settings->value("filterColumn", true).toInt());
-        ui.filterColumnComboBox->setCurrentIndex(nValue);
+        ui.filterLineEdit->setCurrentFilter(Settings->value("filterColumn", COLUMN_SUBJECT).toInt());
 
         // state of message tree
         if (Settings->value("MessageTreeVersion").toInt() == messageTreeVersion) {
@@ -847,7 +814,7 @@ void MessagesDialog::insertMessages()
 
     std::cerr << "MessagesDialog::insertMessages()" << std::endl;
 
-    int filterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
+    int filterColumn = ui.filterLineEdit->currentFilter();
 
     /* check the mode we are in */
     unsigned int msgbox = 0;
@@ -1597,21 +1564,20 @@ void MessagesDialog::filterChanged(const QString& text)
     proxyModel->setFilterRegExp(regExp);
 }
 
-void MessagesDialog::filterColumnChanged()
+void MessagesDialog::filterColumnChanged(int column)
 {
     if (inProcessSettings) {
         return;
     }
 
-    int nFilterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
-    if (nFilterColumn == COLUMN_CONTENT) {
+    if (column == COLUMN_CONTENT) {
         // need content ... refill
         insertMessages();
     }
-    proxyModel->setFilterKeyColumn(nFilterColumn);
+    proxyModel->setFilterKeyColumn(column);
 
     // save index
-    Settings->setValueToGroup("MessageDialog", "filterColumn", nFilterColumn);
+    Settings->setValueToGroup("MessageDialog", "filterColumn", column);
 }
 
 void MessagesDialog::updateMessageSummaryList()

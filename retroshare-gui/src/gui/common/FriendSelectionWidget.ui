@@ -33,11 +33,7 @@
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="LineEditClear" name="filterLineEdit">
-       <property name="toolTip">
-        <string>Search Friends</string>
-       </property>
-      </widget>
+      <widget class="LineEditClear" name="filterLineEdit"/>
      </item>
     </layout>
    </item>
@@ -77,7 +73,7 @@
   <customwidget>
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
-   <header>gui/common/LineEditClear.h</header>
+   <header location="global">gui/common/LineEditClear.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -18,38 +18,7 @@
     <number>0</number>
    </property>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <property name="spacing">
-      <number>2</number>
-     </property>
-     <item>
-      <widget class="LineEditClear" name="filterLineEdit">
-       <property name="toolTip">
-        <string>Enter a Keyword here</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="filterCombo">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <item>
-        <property name="text">
-         <string>Title</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Description</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-    </layout>
+    <widget class="LineEditClear" name="filterLineEdit"/>
    </item>
    <item>
     <widget class="QTreeWidget" name="treeWidget">
@@ -101,7 +70,7 @@
   <customwidget>
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
-   <header>gui/common/LineEditClear.h</header>
+   <header location="global">gui/common/LineEditClear.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

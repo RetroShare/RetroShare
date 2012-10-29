@@ -97,38 +97,6 @@
 #define IS_FORUM_ADMIN(subscribeFlags) (subscribeFlags & RS_DISTRIB_ADMIN)
 #define IS_FORUM_SUBSCRIBED(subscribeFlags) (subscribeFlags & (RS_DISTRIB_ADMIN | RS_DISTRIB_SUBSCRIBED))
 
-static int FilterColumnFromComboBox(int nIndex)
-{
-    switch (nIndex) {
-    case 0:
-        return COLUMN_THREAD_DATE;
-    case 1:
-        return COLUMN_THREAD_TITLE;
-    case 2:
-        return COLUMN_THREAD_AUTHOR;
-    case 3:
-        return COLUMN_THREAD_CONTENT;
-    }
-
-    return COLUMN_THREAD_TITLE;
-}
-
-static int FilterColumnToComboBox(int nIndex)
-{
-    switch (nIndex) {
-    case COLUMN_THREAD_DATE:
-        return 0;
-    case COLUMN_THREAD_TITLE:
-        return 1;
-    case COLUMN_THREAD_AUTHOR:
-        return 2;
-    case COLUMN_THREAD_CONTENT:
-        return 3;
-    }
-
-    return FilterColumnToComboBox(COLUMN_THREAD_TITLE);
-}
-
 /** Constructor */
 ForumsDialog::ForumsDialog(QWidget *parent)
 : RsAutoUpdatePage(1000,parent)
@@ -161,7 +129,7 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(downloadAllFiles()));
 
     connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
-    connect(ui.filterColumnComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterColumnChanged()));
+    connect(ui.filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
 
     connect(NotifyQt::getInstance(), SIGNAL(forumMsgReadSatusChanged(QString,QString,int)), this, SLOT(forumMsgReadSatusChanged(QString,QString,int)));
 
@@ -198,6 +166,15 @@ ForumsDialog::ForumsDialog(QWidget *parent)
 
     lastViewType = -1;
 
+    /* add filter actions */
+    ui.filterLineEdit->addFilter(QIcon(), tr("Title"), COLUMN_THREAD_TITLE);
+    ui.filterLineEdit->addFilter(QIcon(), tr("Date"), COLUMN_THREAD_DATE);
+    ui.filterLineEdit->addFilter(QIcon(), tr("Author"), COLUMN_THREAD_AUTHOR);
+    ui.filterLineEdit->addFilter(QIcon(), tr("Content"), COLUMN_THREAD_CONTENT);
+    ui.filterLineEdit->setCurrentFilter(COLUMN_THREAD_TITLE);
+    // can be removed when the actions of the filter line edit have own placeholder text
+    ui.filterLineEdit->setPlaceholderText(tr("Search this forum...")) ;
+
     // load settings
     processSettings(true);
 
@@ -216,10 +193,6 @@ ForumsDialog::ForumsDialog(QWidget *parent)
 
     ui.threadTreeWidget->installEventFilter(this);
     
-#if QT_VERSION >= 0x040700
-	ui.filterLineEdit->setPlaceholderText(tr("Search this forum...")) ;
-#endif
-
     /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
@@ -260,8 +233,7 @@ void ForumsDialog::processSettings(bool bLoad)
         togglethreadview_internal();
 
         // filterColumn
-        int nValue = FilterColumnToComboBox(Settings->value("filterColumn", COLUMN_THREAD_TITLE).toInt());
-        ui.filterColumnComboBox->setCurrentIndex(nValue);
+        ui.filterLineEdit->setCurrentFilter(Settings->value("filterColumn", COLUMN_THREAD_TITLE).toInt());
 
         // index of viewBox
         ui.viewBox->setCurrentIndex(Settings->value("viewBox", VIEW_THREADED).toInt());
@@ -916,7 +888,7 @@ void ForumsDialog::insertThreads()
 
     // set data
     fillThread->forumId = mCurrForumId;
-    fillThread->filterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
+    fillThread->filterColumn = ui.filterLineEdit->currentFilter();
     fillThread->subscribeFlags = subscribeFlags;
     fillThread->viewType = ui.viewBox->currentIndex();
     if (lastViewType != fillThread->viewType || lastForumID != mCurrForumId) {
@@ -1599,14 +1571,13 @@ void ForumsDialog::changedViewBox()
     insertThreads();
 }
 
-void ForumsDialog::filterColumnChanged()
+void ForumsDialog::filterColumnChanged(int column)
 {
     if (m_bProcessSettings) {
         return;
     }
 
-    int filterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
-    if (filterColumn == COLUMN_THREAD_CONTENT) {
+    if (column == COLUMN_THREAD_CONTENT) {
         // need content ... refill
         insertThreads();
     } else {
@@ -1614,12 +1585,12 @@ void ForumsDialog::filterColumnChanged()
     }
 
     // save index
-    Settings->setValueToGroup("ForumsDialog", "filterColumn", filterColumn);
+    Settings->setValueToGroup("ForumsDialog", "filterColumn", column);
 }
 
 void ForumsDialog::filterItems(const QString& text)
 {
-    int filterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
+    int filterColumn = ui.filterLineEdit->currentFilter();
 
     int nCount = ui.threadTreeWidget->topLevelItemCount ();
     for (int nIndex = 0; nIndex < nCount; nIndex++) {

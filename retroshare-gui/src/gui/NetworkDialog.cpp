@@ -57,18 +57,6 @@
 #define COLUMN_PEERNAME    1
 #define COLUMN_PEERID     4
 
-static int FilterColumnFromComboBox(int nIndex)
-{
-    switch (nIndex) {
-    case 0:
-        return COLUMN_PEERNAME;
-    case 1:
-        return COLUMN_PEERID;
-    }
-
-    return COLUMN_PEERNAME;
-}
-
 RsCertId getNeighRsCertId(QTreeWidgetItem *i);
 
 /******
@@ -90,7 +78,7 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     connect( ui.unvalidGPGkeyWidget, SIGNAL( itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT( peerdetails () ) );
 
     connect( ui.filterLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterItems(QString)));
-    connect( ui.filterColumnComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterColumnChanged()));
+    connect( ui.filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
 
     connect( ui.showUnvalidKeys, SIGNAL(clicked()), this, SLOT(insertConnect()));
 
@@ -177,6 +165,11 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     connect(timer2, SIGNAL(timeout()), this, SLOT(updateNetworkStatus()));
     timer2->start(1000);
     
+    /* add filter actions */
+    ui.filterLineEdit->addFilter(QIcon(), tr("Name"), COLUMN_PEERNAME);
+    ui.filterLineEdit->addFilter(QIcon(), tr("Peer ID"), COLUMN_PEERID);
+    ui.filterLineEdit->setCurrentFilter(COLUMN_PEERNAME);
+
     updateNetworkStatus();
     loadtabsettings();
     
@@ -793,14 +786,14 @@ void NetworkDialog::loadtabsettings()
   Settings->endGroup();
 }
 
-void NetworkDialog::filterColumnChanged()
+void NetworkDialog::filterColumnChanged(int)
 {
     filterItems(ui.filterLineEdit->text());
 }
 
 void NetworkDialog::filterItems(const QString &text)
 {
-    int filterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
+    int filterColumn = ui.filterLineEdit->currentFilter();
 
     int count = ui.connecttreeWidget->topLevelItemCount ();
     for (int index = 0; index < count; index++) {

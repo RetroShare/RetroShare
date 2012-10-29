@@ -79,7 +79,7 @@ private slots:
   void on_actionTabsRounded_activated();
   void on_actionTabsTriangular_activated();
   
-  void filterColumnChanged();
+  void filterColumnChanged(int);
   void filterItems(const QString &text);
 
 private:
