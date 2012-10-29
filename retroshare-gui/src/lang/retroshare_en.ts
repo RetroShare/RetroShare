@@ -4064,10 +4064,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Search forums</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Original Message</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5158,11 +5154,6 @@ and use the import button to load it</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>RetroShare uses gpg keys for identity management.
-You can use an existing identity (i.e. a gpg key pair), from the list below, or create a new one with this form.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Your identity was not saved. An error occurred.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5172,6 +5163,18 @@ You can use an existing identity (i.e. a gpg key pair), from the list below, or 
     </message>
     <message>
         <source>An unexpected error occurred when Retroshare tried to acquire the single instance lock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RetroShare uses gpg keys for identity management.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can create a new identity with this form.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can use an existing identity (i.e. a gpg key pair), from the list below, or create a new one with this form.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9672,10 +9675,6 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>File Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
