@@ -225,7 +225,7 @@ HEADERS += retroshare/rsgame.h \
             # QMAKE_CFLAGS_DEBUG += -O2
             DEFINES += USE_CMD_ARGS
             
-            CONFIG += upnp_libupnp
+            CONFIG += upnp_miniupnpc 
 
             UPNPC_DIR = ../../../lib/miniupnpc-1.3
             PTHREADS_DIR = ../../../lib/pthreads-w32-2-8-0-release
