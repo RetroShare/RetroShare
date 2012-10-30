@@ -37,6 +37,7 @@ PhotoSlideShow::PhotoSlideShow(const RsPhotoAlbum& album, QWidget *parent)
 	connect(ui.pushButton_ShowDetails, SIGNAL( clicked( void ) ), this, SLOT( showPhotoDetails( void ) ) );
 	connect(ui.pushButton_StartStop, SIGNAL( clicked( void ) ), this, SLOT( StartStop( void ) ) );
 	connect(ui.pushButton_Close, SIGNAL( clicked( void ) ), this, SLOT( closeShow( void ) ) );
+	connect(ui.fullscreenButton, SIGNAL(clicked()),this, SLOT(setFullScreen()));
 
         mPhotoQueue = new TokenQueue(rsPhotoV2->getTokenService(), this);
 
@@ -287,6 +288,25 @@ void PhotoSlideShow::loadRequest(const TokenQueue *queue, const TokenRequest &re
 	}
 }
 
+void PhotoSlideShow::setFullScreen()
+{
+  if (!isFullScreen()) {
+    // hide menu & toolbars
 
+#ifdef Q_WS_X11
+    show();
+    raise();
+    setWindowState( windowState() | Qt::WindowFullScreen );
+#else
+    setWindowState( windowState() | Qt::WindowFullScreen );
+    show();
+    raise();
+#endif
+  } else {
+
+    setWindowState( windowState() ^ Qt::WindowFullScreen );
+    show();
+  }
+}
 
 

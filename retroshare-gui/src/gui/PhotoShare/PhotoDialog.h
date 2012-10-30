@@ -23,6 +23,7 @@ private slots:
 
     void addComment();
     void createComment();
+	void setFullScreen();
 
 public:
     void loadRequest(const TokenQueue *queue, const TokenRequest &req);

@@ -15,6 +15,11 @@ PhotoDialog::PhotoDialog(RsPhotoV2 *rs_photo, const RsPhotoPhoto &photo, QWidget
 
     connect(ui->pushButton_AddComment, SIGNAL(clicked()), this, SLOT(createComment()));
     connect(ui->pushButton_AddCommentDlg, SIGNAL(clicked()), this, SLOT(addComment()));
+    connect(ui->fullscreenButton, SIGNAL(clicked()),this, SLOT(setFullScreen()));
+
+#if QT_VERSION >= 0x040700
+	ui.lineEdit->setPlaceholderText(tr("Write a comment...")) ;
+#endif
 
     setUp();
 }
@@ -209,3 +214,23 @@ void PhotoDialog::acknowledgeComment(uint32_t token)
     }
 }
 
+void PhotoDialog::setFullScreen()
+{
+  if (!isFullScreen()) {
+    // hide menu & toolbars
+
+#ifdef Q_WS_X11
+    show();
+    raise();
+    setWindowState( windowState() | Qt::WindowFullScreen );
+#else
+    setWindowState( windowState() | Qt::WindowFullScreen );
+    show();
+    raise();
+#endif
+  } else {
+
+    setWindowState( windowState() ^ Qt::WindowFullScreen );
+    show();
+  }
+}

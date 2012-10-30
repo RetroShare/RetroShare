@@ -90,6 +90,20 @@
       </spacer>
      </item>
      <item>
+      <widget class="QToolButton" name="fullscreenButton">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../images.qrc">
+         <normaloff>:/images/window_fullscreen.png</normaloff>:/images/window_fullscreen.png</iconset>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="pushButton_ShiftLeft">
        <property name="text">
         <string>&lt;&lt;</string>
@@ -134,6 +148,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="Photo_images.qrc"/>
+  <include location="../images.qrc"/>
+ </resources>
  <connections/>
 </ui>

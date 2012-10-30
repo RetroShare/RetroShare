@@ -6,18 +6,18 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>392</width>
-    <height>63</height>
+    <width>338</width>
+    <height>60</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QGridLayout" name="gridLayout_2">
    <property name="margin">
     <number>0</number>
    </property>
-   <item>
+   <item row="0" column="0">
     <widget class="QFrame" name="expandFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -31,11 +31,75 @@
        <height>71</height>
       </size>
      </property>
+     <property name="palette">
+      <palette>
+       <active>
+        <colorrole role="Base">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>255</red>
+           <green>255</green>
+           <blue>255</blue>
+          </color>
+         </brush>
+        </colorrole>
+        <colorrole role="Window">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>237</red>
+           <green>239</green>
+           <blue>244</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </active>
+       <inactive>
+        <colorrole role="Base">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>255</red>
+           <green>255</green>
+           <blue>255</blue>
+          </color>
+         </brush>
+        </colorrole>
+        <colorrole role="Window">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>237</red>
+           <green>239</green>
+           <blue>244</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </inactive>
+       <disabled>
+        <colorrole role="Base">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>237</red>
+           <green>239</green>
+           <blue>244</blue>
+          </color>
+         </brush>
+        </colorrole>
+        <colorrole role="Window">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>237</red>
+           <green>239</green>
+           <blue>244</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </disabled>
+      </palette>
+     </property>
+     <property name="autoFillBackground">
+      <bool>true</bool>
+     </property>
      <property name="styleSheet">
-      <string notr="true">QFrame#expandFrame{border: 2px solid #D3D3D3;
-background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
-stop:0 #FFFFFF, stop:1 #F2F2F2);;
-border-radius: 10px;}</string>
+      <string notr="true"/>
      </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -43,77 +107,91 @@ border-radius: 10px;}</string>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QLabel" name="datetimelabel">
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-            <stylestrategy>PreferAntialias</stylestrategy>
-           </font>
-          </property>
-          <property name="text">
-           <string notr="true">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+     <layout class="QGridLayout" name="gridLayout">
+      <property name="margin">
+       <number>2</number>
+      </property>
+      <property name="spacing">
+       <number>2</number>
+      </property>
+      <item row="0" column="0" rowspan="2">
+       <widget class="QLabel" name="label">
+        <property name="minimumSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="../images.qrc">:/images/no_avatar_70.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" rowspan="2" colspan="2">
+       <widget class="QLabel" name="labelComment">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <stylestrategy>PreferAntialias</stylestrategy>
+         </font>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+        <property name="openExternalLinks">
+         <bool>true</bool>
+        </property>
+        <property name="textInteractionFlags">
+         <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>29</width>
+          <height>13</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="2" column="1" colspan="2">
+       <widget class="QLabel" name="datetimelabel">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+          <stylestrategy>PreferAntialias</stylestrategy>
+         </font>
+        </property>
+        <property name="text">
+         <string notr="true">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;DateTime&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <widget class="QWidget" name="commentWidget" native="true">
-        <property name="styleSheet">
-         <string notr="true">QWidget#msgWidget{border: 2px solid #238;
-border-radius: 10px;}</string>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout">
-         <property name="margin">
-          <number>5</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="labelComment">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="font">
-            <font>
-             <stylestrategy>PreferAntialias</stylestrategy>
-            </font>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-           <property name="openExternalLinks">
-            <bool>true</bool>
-           </property>
-           <property name="textInteractionFlags">
-            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-           </property>
-          </widget>
-         </item>
-        </layout>
        </widget>
       </item>
      </layout>
@@ -121,6 +199,10 @@ border-radius: 10px;}</string>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
+ </resources>
  <connections/>
 </ui>

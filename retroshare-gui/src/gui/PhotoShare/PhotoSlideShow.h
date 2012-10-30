@@ -47,7 +47,7 @@ private slots:
 	void StartStop();
 	void timerEvent();
 	void closeShow();
-
+	void setFullScreen();
 
 private:
 
