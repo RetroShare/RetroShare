@@ -220,12 +220,14 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     ui.viewtoolButton->setMenu(viewmenu);
 
     /* add filter actions */
-    ui.filterLineEdit->addFilter(QIcon(), tr("Subject"), COLUMN_SUBJECT);
-    ui.filterLineEdit->addFilter(QIcon(), tr("From"), COLUMN_FROM);
-    ui.filterLineEdit->addFilter(QIcon(), tr("Date"), COLUMN_DATE);
-    ui.filterLineEdit->addFilter(QIcon(), tr("Content"), COLUMN_CONTENT);
-    ui.filterLineEdit->addFilter(QIcon(), tr("Tags"), COLUMN_TAGS);
-    ui.filterLineEdit->addFilter(QIcon(), tr("Attachments"), COLUMN_ATTACHEMENTS);
+    ui.filterLineEdit->addFilter(QIcon(), tr("Subject"), COLUMN_SUBJECT, tr("Search Subject"));
+    ui.filterLineEdit->addFilter(QIcon(), tr("From"), COLUMN_FROM, tr("Search From"));
+    ui.filterLineEdit->addFilter(QIcon(), tr("Date"), COLUMN_DATE, tr("Search Date"));
+    ui.filterLineEdit->addFilter(QIcon(), tr("Content"), COLUMN_CONTENT, tr("Search Content"));
+    ui.filterLineEdit->addFilter(QIcon(), tr("Tags"), COLUMN_TAGS, tr("Search Tags"));
+    ui.filterLineEdit->addFilter(QIcon(), tr("Attachments"), COLUMN_ATTACHEMENTS, tr("Search Attachments"));
+    // can be removed when the actions of the filter line edit have own placeholder text
+    ui.filterLineEdit->setPlaceholderText(tr("Search...")) ;
 
     //setting default filter by column as subject
     ui.filterLineEdit->setCurrentFilter(COLUMN_SUBJECT);
