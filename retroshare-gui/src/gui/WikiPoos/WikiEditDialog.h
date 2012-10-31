@@ -49,8 +49,8 @@ void 	submitEdit();
 
 private:
 
-void 	setGroup(RsWikiGroup &group);
-void 	setPreviousPage(RsWikiPage &page);
+void 	setGroup(RsWikiCollection &group);
+void 	setPreviousPage(RsWikiSnapshot &page);
 
 void 	requestPage(const std::string &msgId);
 void 	loadPage(const uint32_t &token);
@@ -58,8 +58,8 @@ void 	requestGroup(const std::string &groupId);
 void 	loadGroup(const uint32_t &token);
 
         bool mNewPage;
-	RsWikiGroup mWikiGroup;
-	RsWikiPage mWikiPage;
+	RsWikiCollection mWikiCollection;
+	RsWikiSnapshot mWikiSnapshot;
 
 	Ui::WikiEditDialog ui;
 

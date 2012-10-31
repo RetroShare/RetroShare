@@ -24,8 +24,8 @@
 #include <retroshare/rswiki.h>
 #include <iostream>
 
-WikiGroupDialog::WikiGroupDialog(QWidget *parent)
-	:GxsGroupDialog(rsWiki, parent)
+WikiGroupDialog::WikiGroupDialog(TokenQueue *tokenQueue, QWidget *parent)
+	:GxsGroupDialog(tokenQueue, parent, GXS_GROUP_DIALOG_CREATE_MODE)
 {
 
 	// To start with we only have open forums - with distribution controls.
@@ -58,7 +58,32 @@ WikiGroupDialog::WikiGroupDialog(QWidget *parent)
                                 GXS_GROUP_DEFAULTS_COMMENTS_NO          |
                                 0);
 
-	setFlags(enabledFlags, readonlyFlags, defaultsFlags);
+	//setFlags(enabledFlags, readonlyFlags, defaultsFlags);
+	setFlags(enabledFlags, defaultsFlags);
+
+}
+
+WikiGroupDialog::WikiGroupDialog(const RsWikiCollection &collection, QWidget *parent)
+	:GxsGroupDialog(NULL, parent, GXS_GROUP_DIALOG_SHOW_MODE)
+{
+
+	// To start with we only have open forums - with distribution controls.
+
+        uint32_t enabledFlags = ( GXS_GROUP_FLAGS_ICON        |
+                                GXS_GROUP_FLAGS_DESCRIPTION   |
+                                GXS_GROUP_FLAGS_DISTRIBUTION  |
+                                GXS_GROUP_FLAGS_SHAREKEYS     |
+                                0);
+
+        uint32_t readonlyFlags = 0;
+
+        uint32_t defaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC    |
+                                GXS_GROUP_DEFAULTS_PUBLISH_OPEN         |
+                                GXS_GROUP_DEFAULTS_PERSONAL_REQUIRED    |
+                                GXS_GROUP_DEFAULTS_COMMENTS_NO          |
+                                0);
+
+	setFlags(enabledFlags, defaultsFlags);
 
 }
 
@@ -66,20 +91,37 @@ WikiGroupDialog::WikiGroupDialog(QWidget *parent)
 bool WikiGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta)
 {
 	// Specific Function.
-	RsWikiGroup grp;
+	RsWikiCollection grp;
 	grp.mMeta = meta;
 	//grp.mDescription = std::string(desc.toUtf8());
 
-	rsWiki->createGroup(token, grp, true);
+	rsWiki->submitCollection(token, grp);
 	return true;
 }
 
+QPixmap WikiGroupDialog::service_getLogo()
+{
+    return QPixmap(); // null pixmap
+}
+
+QString WikiGroupDialog::service_getDescription()
+{
+    return QString();
+}
+
+RsGroupMetaData WikiGroupDialog::service_getMeta()
+{
+    return mGrp.mMeta;
+}
+
+
+#if 0
 void WikiGroupDialog::service_loadExistingGroup(const uint32_t &token)
 {
         std::cerr << "WikiGroupDialog::service_loadExistingGroup()";
         std::cerr << std::endl;
 
-	RsWikiGroup group;
+	RsWikiCollection group;
 	if (!rsWiki->getGroupData(token, group))
 	{
         	std::cerr << "WikiGroupDialog::service_loadExistingGroup() ERROR Getting Group";
@@ -94,7 +136,6 @@ void WikiGroupDialog::service_loadExistingGroup(const uint32_t &token)
 	/* now load any extra data we feel like */
 
 }
-
-
+#endif
 
 

@@ -79,8 +79,9 @@ IdDialog::IdDialog(QWidget *parent)
 	timer->start(1000);
 
 	rsIdentity->generateDummyData();
-
+#if 0
 	mIdQueue = new TokenQueue(rsIdentity, this);
+#endif
 
 }
 
@@ -145,8 +146,10 @@ void IdDialog::requestIdDetails(std::string &id)
 void IdDialog::insertIdDetails(uint32_t token)
 {
 	/* get details from libretroshare */
-	RsIdGroup data;
+	RsGxsIdGroup data;
+#if 0
 	if (!rsIdentity->getGroupData(token, data))
+#endif
 	{
 		ui.lineEdit_KeyId->setText("ERROR GETTING KEY!");
 		return;
@@ -287,8 +290,12 @@ void IdDialog::insertIdList(uint32_t token)
 
 	//for(it = ids.begin(); it != ids.end(); it++)
 	//{
-	RsIdGroup data;
+	RsGxsIdGroup data;
+#if 0
 	while(rsIdentity->getGroupData(token, data))
+#else
+	while(0)
+#endif
 	{
 
 		/* do filtering */

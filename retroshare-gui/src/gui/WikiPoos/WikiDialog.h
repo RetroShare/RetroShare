@@ -68,7 +68,7 @@ void    clearModsTree();
 void 	insertWikiGroups();
 void 	insertModsForPage(const std::string &origPageId);
 
-void 	updateWikiPage(const RsWikiPage &page);
+void 	updateWikiPage(const RsWikiSnapshot &page);
 
 bool 	getSelectedPage(std::string &pageId, std::string &origPageId);	
 std::string getSelectedPage();

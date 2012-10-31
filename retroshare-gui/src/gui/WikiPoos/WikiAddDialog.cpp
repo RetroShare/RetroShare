@@ -53,21 +53,26 @@ void WikiAddDialog::createGroup()
 	std::cerr << std::endl;
 
 
-	RsWikiGroup group;
+	RsWikiCollection group;
 
+#if 0
 	group.mShareOptions.mShareType = 0;
 	group.mShareOptions.mShareGroupId = "unknown";
 	group.mShareOptions.mPublishKey = "unknown";
 	group.mShareOptions.mCommentMode = 0;
 	group.mShareOptions.mResizeMode = 0;
+#endif
 
 	group.mMeta.mGroupName = ui.lineEdit_Name->text().toStdString();
 	group.mCategory = "Unknown";
 
 	uint32_t token;
 	bool isNew = true;
+
+#if 0
 	// Don't worry about getting the response?
 	rsWiki->createGroup(token, group, isNew);
+#endif
 
 
 	clearDialog();

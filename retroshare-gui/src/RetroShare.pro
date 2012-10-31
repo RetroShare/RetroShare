@@ -2,9 +2,9 @@ CONFIG += qt gui uic qrc resources uitools idle bitdht
 
 # Below is for GXS services.
 CONFIG += photoshare 
-#CONFIG += wikipoos
+CONFIG += wikipoos
 #CONFIG += thewire
-#CONFIG += identities
+CONFIG += identities
 #CONFIG += forumsv2
 CONFIG += posted
 CONFIG += unfinished
@@ -194,15 +194,15 @@ freebsd-* {
 # ###########################################
 
 bitdht {
-        #LIBS += ../../libbitdht/src/lib/libbitdht.a
-        #PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
+        LIBS += ../../libbitdht/src/lib/libbitdht.a
+        PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
 
         #LIBS += C:\Development\Rs\v0.5-gxs-b1\libbitdht\libbitdht-build-desktop\lib\libbitdht.a
         #PRE_TARGETDEPS *= C:\Development\Rs\v0.5-gxs-b1\libbitdht\libbitdht-build-desktop\lib\libbitdht.a
 
         # Chris version.
-        LIBS += ../../libbitdht/libbitdht-build-desktop/lib/libbitdht.a
-        PRE_TARGETDEPS *= ../../libbitdht/libbitdht-build-desktop/lib/libbitdht.a
+        #LIBS += ../../libbitdht/libbitdht-build-desktop/lib/libbitdht.a
+        #PRE_TARGETDEPS *= ../../libbitdht/libbitdht-build-desktop/lib/libbitdht.a
 }
 
 win32 {
@@ -1007,22 +1007,22 @@ posted {
 gxsgui {
 
 	HEADERS += gui/gxs/GxsGroupDialog.h \
-            gui/gxs/GxsCommentTreeWidget.h
-     #       gui/gxs/ForumV2GroupDialog.h \
-     #       gui/gxs/WikiGroupDialog.h \
+            gui/gxs/GxsCommentTreeWidget.h \
+            gui/gxs/WikiGroupDialog.h \
 
+#	     gui/gxs/ForumV2GroupDialog.h \
 #            gui/gxs/GxsMsgDialog.h \
 
 	FORMS += gui/gxs/GxsGroupDialog.ui \
+
 #	    gui/gxs/GxsMsgDialog.ui \
 #	    gui/gxs/GxsCommentTreeWidget.ui \
 
         SOURCES += gui/gxs/GxsGroupDialog.cpp \
-            gui/gxs/GxsCommentTreeWidget.cpp
-            #gui/gxs/ForumV2GroupDialog.cpp \
-#            gui/gxs/WikiGroupDialog.cpp \
-#
+            gui/gxs/GxsCommentTreeWidget.cpp \
+            gui/gxs/WikiGroupDialog.cpp \
 
+            #gui/gxs/ForumV2GroupDialog.cpp \
 #            gui/gxs/GxsMsgDialog.cpp \
 
 

@@ -24,19 +24,27 @@
 #define _WIKI_GROUP_DIALOG_H
 
 #include "GxsGroupDialog.h"
+#include "retroshare/rswiki.h"
 
 class WikiGroupDialog : public GxsGroupDialog
 {
 	Q_OBJECT
 
 public:
-	WikiGroupDialog(QWidget *parent);
+	WikiGroupDialog(TokenQueue *tokenQueue, QWidget *parent);
+	WikiGroupDialog(const RsWikiCollection &collection, QWidget *parent);
 
 protected:
         virtual bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta);
-//        virtual bool service_CompleteCreateGroup(const RsGroupMetaData &meta);
+	virtual QPixmap service_getLogo();
+	virtual QString service_getDescription();
+	virtual RsGroupMetaData service_getMeta();
 
-	virtual void service_loadExistingGroup(const uint32_t &token);
+	//virtual void service_loadExistingGroup(const uint32_t &token);
+
+private:
+
+    RsWikiCollection mGrp;
 
 };
 

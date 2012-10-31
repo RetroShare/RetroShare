@@ -36,25 +36,27 @@ WikiEditDialog::WikiEditDialog(QWidget *parent)
 	connect(ui.pushButton_Revert, SIGNAL( clicked( void ) ), this, SLOT( revertEdit( void ) ) );
 	connect(ui.pushButton_Submit, SIGNAL( clicked( void ) ), this, SLOT( submitEdit( void ) ) );
 
+#if 0
 	mWikiQueue = new TokenQueue(rsWiki, this);
+#endif
 }
 
-void WikiEditDialog::setGroup(RsWikiGroup &group)
+void WikiEditDialog::setGroup(RsWikiCollection &group)
 {
-	mWikiGroup = group;
+	mWikiCollection = group;
 
-	ui.lineEdit_Group->setText(QString::fromStdString(mWikiGroup.mMeta.mGroupName));
+	ui.lineEdit_Group->setText(QString::fromStdString(mWikiCollection.mMeta.mGroupName));
 }
 
 
-void WikiEditDialog::setPreviousPage(RsWikiPage &page)
+void WikiEditDialog::setPreviousPage(RsWikiSnapshot &page)
 {
 	mNewPage = false;
-	mWikiPage = page;
+	mWikiSnapshot = page;
 
-	ui.lineEdit_Page->setText(QString::fromStdString(mWikiPage.mMeta.mMsgName));
-	ui.lineEdit_PrevVersion->setText(QString::fromStdString(mWikiPage.mMeta.mMsgId));
-	ui.textEdit->setPlainText(QString::fromStdString(mWikiPage.mPage));
+	ui.lineEdit_Page->setText(QString::fromStdString(mWikiSnapshot.mMeta.mMsgName));
+	ui.lineEdit_PrevVersion->setText(QString::fromStdString(mWikiSnapshot.mMeta.mMsgId));
+	ui.textEdit->setPlainText(QString::fromStdString(mWikiSnapshot.mPage));
 }
 
 
@@ -81,7 +83,7 @@ void WikiEditDialog::revertEdit()
 	}
 	else
 	{
-		ui.textEdit->setPlainText(QString::fromStdString(mWikiPage.mPage));
+		ui.textEdit->setPlainText(QString::fromStdString(mWikiSnapshot.mPage));
 	}
 }
 
@@ -90,23 +92,29 @@ void WikiEditDialog::submitEdit()
 {
 	if (mNewPage)
 	{
-		mWikiPage.mMeta.mGroupId = mWikiGroup.mMeta.mGroupId;
-		mWikiPage.mMeta.mOrigMsgId = "";
-		mWikiPage.mMeta.mMsgId = "";
-		mWikiPage.mPrevId = "";
+		mWikiSnapshot.mMeta.mGroupId = mWikiCollection.mMeta.mGroupId;
+		mWikiSnapshot.mMeta.mOrigMsgId = "";
+		mWikiSnapshot.mMeta.mMsgId = "";
+#if 0
+		mWikiSnapshot.mPrevId = "";
+#endif
 	}
 	else
 	{
-		mWikiPage.mPrevId = mWikiPage.mMeta.mMsgId;
-		mWikiPage.mMeta.mMsgId = "";
+#if 0
+		mWikiSnapshot.mPrevId = mWikiSnapshot.mMeta.mMsgId;
+#endif
+		mWikiSnapshot.mMeta.mMsgId = "";
 	}
 
-	mWikiPage.mMeta.mMsgName = ui.lineEdit_Page->text().toStdString();
-	mWikiPage.mPage = ui.textEdit->toPlainText().toStdString();
+	mWikiSnapshot.mMeta.mMsgName = ui.lineEdit_Page->text().toStdString();
+	mWikiSnapshot.mPage = ui.textEdit->toPlainText().toStdString();
 
 	uint32_t token;
 	bool  isNew = mNewPage;
-	rsWiki->createPage(token, mWikiPage, isNew);
+#if 0
+	rsWiki->createPage(token, mWikiSnapshot, isNew);
+#endif
 	hide();
 }
 
@@ -144,8 +152,12 @@ void WikiEditDialog::loadGroup(const uint32_t &token)
         std::cerr << "WikiEditDialog::loadGroup()";
         std::cerr << std::endl;
 
-	RsWikiGroup group;
+	RsWikiCollection group;
+#if 0
 	if (rsWiki->getGroupData(token, group))
+#else
+	if (0)
+#endif
 	{
 		setGroup(group);
 	}
@@ -161,7 +173,9 @@ void WikiEditDialog::requestPage(const std::string &msgId)
         RsTokReqOptions opts;
 
 	uint32_t token;
+#if 0
         mWikiQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, ids, 0);
+#endif
 }
 
 void WikiEditDialog::loadPage(const uint32_t &token)
@@ -169,8 +183,12 @@ void WikiEditDialog::loadPage(const uint32_t &token)
         std::cerr << "WikiEditDialog::loadPage()";
         std::cerr << std::endl;
 
-	RsWikiPage page;
+	RsWikiSnapshot page;
+#if 0
 	if (rsWiki->getMsgData(token, page))
+#else
+	if (0)
+#endif
 	{
 		setPreviousPage(page);
 	}

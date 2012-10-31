@@ -41,8 +41,9 @@ IdEditDialog::IdEditDialog(QWidget *parent)
 	connect(ui.radioButton_Pseudo, SIGNAL( toggled( bool ) ), this, SLOT( IdTypeToggled( bool ) ) );
 	connect(ui.pushButton_Update, SIGNAL( clicked( void ) ), this, SLOT( updateId( void ) ) );
 	connect(ui.pushButton_Cancel, SIGNAL( clicked( void ) ), this, SLOT( cancelId( void ) ) );
-
+#if 0
 	mIdQueue = new TokenQueue(rsIdentity, this);
+#endif
 }
 
 void IdEditDialog::setupNewId(bool pseudo)
@@ -122,8 +123,10 @@ void IdEditDialog::loadExistingId(uint32_t token)
 	ui.radioButton_Pseudo->setEnabled(false);
 
         /* get details from libretroshare */
-        RsIdGroup data;
+        RsGxsIdGroup data;
+#if 0
         if (!rsIdentity->getGroupData(token, data))
+#endif
         {
 		ui.lineEdit_KeyId->setText("ERROR KEYID INVALID");
 		ui.lineEdit_Nickname->setText("");
@@ -184,7 +187,7 @@ void IdEditDialog::loadExistingId(uint32_t token)
 
 void IdEditDialog::updateId()
 {
-	RsIdGroup rid;
+	RsGxsIdGroup rid;
 	// Must set, Nickname, KeyId(if existing), mIdType, GpgId.
 
 	rid.mMeta.mGroupName = ui.lineEdit_Nickname->text().toStdString();
