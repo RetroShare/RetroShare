@@ -40,6 +40,12 @@ p3Wiki::p3Wiki(RsGeneralDataService* gds, RsNetworkExchangeService* nes)
 
 }
 
+void p3Wiki::service_tick()
+{
+	return;
+}
+
+
 void p3Wiki::notifyChanges(std::vector<RsGxsNotify*>& changes)
 {
 	receiveChanges(changes);

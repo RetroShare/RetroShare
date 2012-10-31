@@ -678,6 +678,9 @@ void p3IdService::generateDummyData()
 {
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
+	// Temporarily disable - until system is properly tested.
+	return;
+
 	/* grab all the gpg ids... and make some ids */
 
 	std::list<std::string> gpgids;

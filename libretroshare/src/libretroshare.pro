@@ -646,8 +646,8 @@ HEADERS += retroshare/rsgame.h \
                 services/p3wiki.h \
                 serialiser/rswikiitems.h
 
-            SOURCES += services/p3wiki.cc
-            #    serialiser/rswikiitems.cc \
+            SOURCES += services/p3wiki.cc \
+                serialiser/rswikiitems.cc \
 
         }
 

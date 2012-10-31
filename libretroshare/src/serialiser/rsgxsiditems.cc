@@ -65,8 +65,7 @@ bool RsGxsIdSerialiser::serialise(RsItem *item, void *data, uint32_t *size)
 	}
 	else if((op_item = dynamic_cast<RsGxsIdOpinionItem*>(item)) != NULL)
 	{
-		return serialiseGxsIdGroupItem(grp_item, data, size);
-		return sizeGxsIdOpinionItem(op_item);
+		return serialiseGxsIdOpinionItem(op_item, data, size);
 	}
 	else if((com_item = dynamic_cast<RsGxsIdCommentItem*>(item)) != NULL)
 	{
@@ -453,7 +452,6 @@ uint32_t RsGxsIdSerialiser::sizeGxsIdCommentItem(RsGxsIdCommentItem *item)
 	const RsGxsIdComment& comment = item->comment;
 	uint32_t s = 8; // header
 
-	s += 4; // mIdType.
 	s += GetTlvStringSize(comment.mComment);
 
 	return s;

@@ -49,6 +49,8 @@ virtual void notifyChanges(std::vector<RsGxsNotify*>& changes) ;
 
 public:
 
+virtual void service_tick();
+
         /* Specific Service Data */
 virtual bool getCollections(const uint32_t &token, std::vector<RsWikiCollection> &collections);
 virtual bool getSnapshots(const uint32_t &token, std::vector<RsWikiSnapshot> &snapshots);
