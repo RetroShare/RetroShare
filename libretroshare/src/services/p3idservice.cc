@@ -59,8 +59,8 @@ p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *ne
 
 void	p3IdService::service_tick()
 {
-	std::cerr << "p3IdService::service_tick()";
-	std::cerr << std::endl;
+	//std::cerr << "p3IdService::service_tick()";
+	//std::cerr << std::endl;
 
 	// Disable for now.
 	// background_tick();
