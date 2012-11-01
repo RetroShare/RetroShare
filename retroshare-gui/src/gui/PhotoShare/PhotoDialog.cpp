@@ -18,7 +18,7 @@ PhotoDialog::PhotoDialog(RsPhotoV2 *rs_photo, const RsPhotoPhoto &photo, QWidget
     connect(ui->fullscreenButton, SIGNAL(clicked()),this, SLOT(setFullScreen()));
 
 #if QT_VERSION >= 0x040700
-	ui.lineEdit->setPlaceholderText(tr("Write a comment...")) ;
+    ui->lineEdit->setPlaceholderText(tr("Write a comment...")) ;
 #endif
 
     setUp();
