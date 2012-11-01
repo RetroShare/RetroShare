@@ -614,7 +614,7 @@ void SearchDialog::advancedSearch(Expression* expression)
 	// The text "bool exp" should be replaced by an appropriate text describing the actual search.
 	initSearchResult("bool exp",req_id, ui.FileTypeComboBox->currentIndex(), true) ;
 
-	rsFiles -> SearchBoolExp(expression, results, DIR_FLAGS_REMOTE | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE);
+	rsFiles -> SearchBoolExp(expression, results, DIR_FLAGS_REMOTE);// | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE);
 
 	/* abstraction to allow reusee of tree rendering code */
 	resultsToTree(advSearchDialog->getSearchAsString(),req_id, results);
@@ -712,7 +712,7 @@ void SearchDialog::searchKeywords(const QString& keywords)
 		{
 			std::list<DirDetails> initialResults;
 
-			rsFiles->SearchBoolExp(&exprs, initialResults, DIR_FLAGS_LOCAL | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE) ;
+			rsFiles->SearchBoolExp(&exprs, initialResults, DIR_FLAGS_LOCAL);// | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE) ;
 
 			/* which extensions do we use? */
 			DirDetails dd;

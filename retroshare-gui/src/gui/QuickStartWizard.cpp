@@ -339,9 +339,9 @@ void QuickStartWizard::updateFlags(bool b)
 	for(it = dirs.begin(); it != dirs.end(); it++,++row)
 	{
 		std::cerr << "Looking for row=" << row << ", file=" << (*it).filename << ", flags=" << (*it).shareflags << std::endl ;
-		uint32_t current_flags = 0 ;
-		current_flags |= (dynamic_cast<QCheckBox*>(ui.shareddirList->cellWidget(row,1)))->isChecked()? RS_FILE_HINTS_NETWORK_WIDE:0 ;
-		current_flags |= (dynamic_cast<QCheckBox*>(ui.shareddirList->cellWidget(row,2)))->isChecked()? RS_FILE_HINTS_BROWSABLE:0 ;
+		TransferInfoFlags current_flags = 0u ;
+		current_flags |= (dynamic_cast<QCheckBox*>(ui.shareddirList->cellWidget(row,1)))->isChecked()? RS_FILE_HINTS_NETWORK_WIDE:(TransferInfoFlags)0u ;
+		current_flags |= (dynamic_cast<QCheckBox*>(ui.shareddirList->cellWidget(row,2)))->isChecked()? RS_FILE_HINTS_BROWSABLE:(TransferInfoFlags)0u ;
 
 		if( (*it).shareflags ^ current_flags )
 		{

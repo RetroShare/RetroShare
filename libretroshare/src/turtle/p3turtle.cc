@@ -1840,7 +1840,7 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 #ifdef P3TURTLE_DEBUG
 		std::cerr << "  Request not from us. Performing local search" << std::endl ;
 #endif
-		found = (_sharing_strategy != SHARE_FRIENDS_ONLY || item->depth < 2) && performLocalHashSearch(item->file_hash,info) ;
+		found = (_sharing_strategy != SHARE_FRIENDS_ONLY || item->depth < 2) && performLocalHashSearch(item->file_hash,item->PeerId(),info) ;
 	}
 
 	{
@@ -2092,7 +2092,7 @@ void RsTurtleStringSearchRequestItem::performLocalSearch(std::list<TurtleFileInf
 	std::cerr << "Performing rsFiles->search()" << std::endl ;
 #endif
 	// now, search!
-	rsFiles->SearchKeywords(words, initialResults,DIR_FLAGS_LOCAL | DIR_FLAGS_NETWORK_WIDE);
+	rsFiles->SearchKeywords(words, initialResults,RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_NETWORK_WIDE,PeerId());
 
 #ifdef P3TURTLE_DEBUG
 	std::cerr << initialResults.size() << " matches found." << std::endl ;
@@ -2130,12 +2130,20 @@ void RsTurtleRegExpSearchRequestItem::performLocalSearch(std::list<TurtleFileInf
 		return ;
 
 	// now, search!
-	rsFiles->SearchBoolExp(exp,initialResults,DIR_FLAGS_LOCAL | DIR_FLAGS_NETWORK_WIDE);
+	rsFiles->SearchBoolExp(exp,initialResults,RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_NETWORK_WIDE,PeerId());
 
 	result.clear() ;
 
 	for(std::list<DirDetails>::const_iterator it(initialResults.begin());it!=initialResults.end();++it)
 	{
+		// retain only file type
+		if (it->type == DIR_TYPE_DIR) 
+		{
+#ifdef P3TURTLE_DEBUG
+			std::cerr << "  Skipping directory " << it->name << std::endl ;
+#endif
+			continue;
+		}
 		TurtleFileInfo i ;
 		i.hash = it->hash ;
 		i.size = it->count ;
@@ -2276,9 +2284,25 @@ void p3turtle::returnSearchResult(RsTurtleSearchResultItem *item)
 /// Warning: this function should never be called while the turtle mutex is locked.
 /// Otherwize this is a possible source of cross-lock with the File mutex.
 //
-bool p3turtle::performLocalHashSearch(const TurtleFileHash& hash,FileInfo& info)
+bool p3turtle::performLocalHashSearch(const TurtleFileHash& hash,const std::string& peer_id,FileInfo& info)
 {
-	return rsFiles->FileDetails(hash, RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_SPEC_ONLY | RS_FILE_HINTS_DOWNLOAD, info);
+	bool res = rsFiles->FileDetails(hash, RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_SPEC_ONLY | RS_FILE_HINTS_DOWNLOAD, info);
+
+	// The call to computeHashPeerClearance() return a combination of RS_FILE_HINTS_NETWORK_WIDE and RS_FILE_HINTS_BROWSABLE
+	// This is an additional computation cost, but the way it's written here, it's only called when res is true.
+	//
+	res = res && (RS_FILE_HINTS_NETWORK_WIDE & rsPeers->computePeerPermissionFlags(peer_id,info.storage_permission_flags,info.parent_groups)) ;
+
+	std::cerr << "p3turtle: performing local hash search for hash " << hash << std::endl;
+
+	if(res)
+	{
+		std::cerr << "Found hash: " << std::endl;
+		std::cerr << "   peer  = " << peer_id << std::endl;
+		std::cerr << "   clear = " << rsPeers->computePeerPermissionFlags(peer_id,info.storage_permission_flags,info.parent_groups) << std::endl;
+	}
+
+	return res ;
 }
 
 static std::string printFloatNumber(float num,bool friendly=false)

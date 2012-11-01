@@ -945,7 +945,7 @@ void TransfersDialog::insertTransfers()
 			continue;
 		}
 
-		if ((fileInfo.flags & RS_FILE_HINTS_CACHE) && !showCacheTransfers) {
+		if ((fileInfo.transfer_info_flags & RS_FILE_HINTS_CACHE) && !showCacheTransfers) {
 			// if file transfer is a cache file index file, don't show it
 			DLListModel->removeRow(row);
 			rowCount = DLListModel->rowCount();
@@ -971,7 +971,7 @@ void TransfersDialog::insertTransfers()
 			continue;
 		}
 
-		if ((fileInfo.flags & RS_FILE_HINTS_CACHE) && !showCacheTransfers) {
+		if ((fileInfo.transfer_info_flags & RS_FILE_HINTS_CACHE) && !showCacheTransfers) {
 			//if file transfer is a cache file index file, don't show it
 			continue;
 		}
@@ -998,7 +998,7 @@ void TransfersDialog::insertTransfers()
 		if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_UPLOAD, info)) 
 			continue;
 		
-		if((info.flags & RS_FILE_HINTS_CACHE) && showCacheTransfers)
+		if((info.transfer_info_flags & RS_FILE_HINTS_CACHE) && showCacheTransfers)
 			continue ;
 
 		std::list<TransferInfo>::iterator pit;

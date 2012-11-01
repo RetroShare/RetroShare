@@ -129,7 +129,7 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 		/***************************************************************/
 
 		bool 	FileRequest(const std::string& fname, const std::string& hash,
-				uint64_t size, const std::string& dest, uint32_t flags,
+				uint64_t size, const std::string& dest, TransferInfoFlags flags,
 				const std::list<std::string> &sourceIds);
 
 		/// Do we already have this file, either in download or in file lists ?

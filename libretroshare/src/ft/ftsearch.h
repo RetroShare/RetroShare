@@ -40,10 +40,14 @@ class ftSearch
 {
 
 	public:
-
-	ftSearch() { return; }
-virtual ~ftSearch() { return; }
-virtual bool	search(const std::string &hash, uint32_t hintflags, FileInfo &info) const = 0;
+		ftSearch() { return; }
+		virtual ~ftSearch() { return; }
+		virtual bool	search(const std::string &hash, uint32_t hintflags,const std::string& peer_id, FileInfo &info) const 
+		{
+			std::cerr << "Non overloaded search method called!!!" << std::endl;
+			return false;
+		}
+		virtual bool	search(const std::string &hash, uint32_t hintflags, FileInfo &info) const = 0;
 
 };
 

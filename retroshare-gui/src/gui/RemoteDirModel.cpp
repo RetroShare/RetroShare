@@ -204,12 +204,12 @@ int FlatStyle_RDM::columnCount(const QModelIndex &/*parent*/) const
 }
 QString RetroshareDirModel::getFlagsString(uint32_t flags)
 {
-	char str[5] = "----" ;
+	char str[8] = "- - - -" ;
 
 	if(flags & DIR_FLAGS_BROWSABLE_GROUPS) str[0] = 'B' ;
-	if(flags & DIR_FLAGS_NETWORK_WIDE_GROUPS) str[1] = 'N' ;
-	if(flags & DIR_FLAGS_BROWSABLE_OTHERS) str[2] = 'B' ;
-	if(flags & DIR_FLAGS_NETWORK_WIDE_OTHERS) str[3] = 'N' ;
+	if(flags & DIR_FLAGS_NETWORK_WIDE_GROUPS) str[2] = 'N' ;
+	if(flags & DIR_FLAGS_BROWSABLE_OTHERS) str[4] = 'B' ;
+	if(flags & DIR_FLAGS_NETWORK_WIDE_OTHERS) str[6] = 'N' ;
 
 	return QString(str) ;
 }
@@ -340,7 +340,7 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 //					return ind;
 //				}
 			case 4:
-				return getGroupsString(details.groups) ;
+				return getGroupsString(details.parent_groups) ;
 
 			default:
 				return tr("FILE");
@@ -364,7 +364,7 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 			case 3:
 				return getFlagsString(details.flags);
 			case 4: 
-				return getGroupsString(details.groups) ;
+				return getGroupsString(details.parent_groups) ;
 
 			default:
 				return tr("DIR");

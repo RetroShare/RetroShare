@@ -48,10 +48,10 @@ GroupFlagsWidget::GroupFlagsWidget(QWidget *parent,uint32_t flags)
 
 	setLayout(_layout) ;
 
-	_flags[0] = RS_FILE_HINTS_BROWSABLE_GROUPS ;
-	_flags[1] = RS_FILE_HINTS_NETWORK_WIDE_GROUPS ;
-	_flags[2] = RS_FILE_HINTS_BROWSABLE_OTHERS ;
-	_flags[3] = RS_FILE_HINTS_NETWORK_WIDE_OTHERS ;
+	_flags[0] = DIR_FLAGS_BROWSABLE_GROUPS ;
+	_flags[1] = DIR_FLAGS_NETWORK_WIDE_GROUPS ;
+	_flags[2] = DIR_FLAGS_BROWSABLE_OTHERS ;
+	_flags[3] = DIR_FLAGS_NETWORK_WIDE_OTHERS ;
 
 	for(int i=0;i<4;++i)
 	{

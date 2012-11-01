@@ -63,27 +63,29 @@ const uint32_t RS_FILE_PEER_OFFLINE 	 = 0x00002000;
  *
  */
 
-const uint32_t RS_FILE_HINTS_MASK	             = 0x00ffffff;
+// Flags used when requesting info about transfers, mostly to filter out the result.
+//
+const TransferInfoFlags RS_FILE_HINTS_CACHE	 		       = 0x00000001;
+const TransferInfoFlags RS_FILE_HINTS_EXTRA	 		       = 0x00000002;
+const TransferInfoFlags RS_FILE_HINTS_LOCAL	 		       = 0x00000004;
+const TransferInfoFlags RS_FILE_HINTS_REMOTE	 		       = 0x00000008;
+const TransferInfoFlags RS_FILE_HINTS_DOWNLOAD		       = 0x00000010;
+const TransferInfoFlags RS_FILE_HINTS_UPLOAD	 		       = 0x00000020;
+const TransferInfoFlags RS_FILE_HINTS_NETWORK_WIDE        = 0x00000080;// anonymously shared over network
+const TransferInfoFlags RS_FILE_HINTS_BROWSABLE           = 0x00000100;// browsable by friends
+const TransferInfoFlags RS_FILE_HINTS_PERMISSION_MASK     = 0x00000180;// OR of the last two flags. Used to filter out.
 
-const uint32_t RS_FILE_HINTS_CACHE	 		       = 0x00000001;
-const uint32_t RS_FILE_HINTS_EXTRA	 		       = 0x00000002;
-const uint32_t RS_FILE_HINTS_LOCAL	 		       = 0x00000004;
-const uint32_t RS_FILE_HINTS_REMOTE	 		       = 0x00000008;
-const uint32_t RS_FILE_HINTS_DOWNLOAD		       = 0x00000010;
-const uint32_t RS_FILE_HINTS_UPLOAD	 		       = 0x00000020;
+// Flags used when requesting a transfer
+//
+const TransferInfoFlags RS_FILE_HINTS_ANONYMOUS_ROUTING   = 0x00000040; // Use to ask turtle router to download the file.
+const TransferInfoFlags RS_FILE_HINTS_ASSUME_AVAILABILITY = 0x00000200; // Assume full source availability. Used for cache files.
+const TransferInfoFlags RS_FILE_HINTS_MEDIA	             = 0x00001000;
+const TransferInfoFlags RS_FILE_HINTS_BACKGROUND	       = 0x00002000; // To download slowly.
+const TransferInfoFlags RS_FILE_HINTS_SPEC_ONLY	          = 0x01000000;
+const TransferInfoFlags RS_FILE_HINTS_NO_SEARCH           = 0x02000000;	// disable searching for potential direct sources.
 
-const uint32_t RS_FILE_HINTS_NETWORK_WIDE        = 0x00000080;	// anonymously shared over network
-const uint32_t RS_FILE_HINTS_BROWSABLE           = 0x00000100;	// browsable by friends
-const uint32_t RS_FILE_HINTS_NETWORK_WIDE_OTHERS = 0x00000080;	// anonymously shared over network
-const uint32_t RS_FILE_HINTS_BROWSABLE_OTHERS    = 0x00000100;	// browsable by friends
-const uint32_t RS_FILE_HINTS_ASSUME_AVAILABILITY = 0x00000200; // Assume full source availability. Used for cache files.
-const uint32_t RS_FILE_HINTS_NETWORK_WIDE_GROUPS = 0x00000400;	// anonymously shared over network
-const uint32_t RS_FILE_HINTS_BROWSABLE_GROUPS    = 0x00000800;	// browsable by friends
-const uint32_t RS_FILE_HINTS_MEDIA	             = 0x00001000;
-const uint32_t RS_FILE_HINTS_BACKGROUND	       = 0x00002000; // To download slowly.
-
-const uint32_t RS_FILE_HINTS_SPEC_ONLY	          = 0x01000000;
-const uint32_t RS_FILE_HINTS_NO_SEARCH           = 0x02000000;
+// const uint32_t RS_FILE_HINTS_SHARE_FLAGS_MASK	 = 	RS_FILE_HINTS_NETWORK_WIDE_OTHERS | RS_FILE_HINTS_BROWSABLE_OTHERS 
+// 																	 | RS_FILE_HINTS_NETWORK_WIDE_GROUPS | RS_FILE_HINTS_BROWSABLE_GROUPS ;
 
 /* Callback Codes */
 
@@ -94,6 +96,7 @@ struct SharedDirInfo
 	std::string filename ;
 	std::string virtualname ;
 	uint32_t shareflags ;		// RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_BROWSABLE
+	std::list<std::string> parent_groups ;
 };
 
 class RsFiles
@@ -113,7 +116,7 @@ class RsFiles
 
 		virtual bool alreadyHaveFile(const std::string& hash, FileInfo &info) = 0;
 		/// Returns false is we already have the file. Otherwise, initiates the dl and returns true.
-		virtual bool FileRequest(const std::string& fname, const std::string& hash, uint64_t size, const std::string& dest, uint32_t flags, const std::list<std::string>& srcIds) = 0;
+		virtual bool FileRequest(const std::string& fname, const std::string& hash, uint64_t size, const std::string& dest, TransferInfoFlags flags, const std::list<std::string>& srcIds) = 0;
 		virtual bool FileCancel(const std::string& hash) = 0;
 		virtual bool setChunkStrategy(const std::string& hash,FileChunksInfo::ChunkStrategy) = 0;
 		virtual void setDefaultChunkStrategy(FileChunksInfo::ChunkStrategy) = 0;
@@ -141,7 +144,7 @@ class RsFiles
 		 ***/
 		virtual bool FileDownloads(std::list<std::string> &hashs) = 0;
 		virtual bool FileUploads(std::list<std::string> &hashs) = 0;
-		virtual bool FileDetails(const std::string &hash, uint32_t hintflags, FileInfo &info) = 0;
+		virtual bool FileDetails(const std::string &hash, TransferInfoFlags hintflags, FileInfo &info) = 0;
 
 		/// Gives chunk details about the downloaded file with given hash.
 		virtual bool FileDownloadChunksDetails(const std::string& hash,FileChunksInfo& info) = 0 ;
@@ -152,11 +155,9 @@ class RsFiles
 		/***
 		 * Extra List Access
 		 ***/
-		virtual bool ExtraFileAdd(std::string fname, std::string hash, uint64_t size,
-				uint32_t period, uint32_t flags) = 0;
-		virtual bool ExtraFileRemove(std::string hash, uint32_t flags) = 0;
-		virtual bool ExtraFileHash(std::string localpath,
-				uint32_t period, uint32_t flags) = 0;
+		virtual bool ExtraFileAdd(std::string fname, std::string hash, uint64_t size, uint32_t period, TransferInfoFlags flags) = 0;
+		virtual bool ExtraFileRemove(std::string hash, TransferInfoFlags flags) = 0;
+		virtual bool ExtraFileHash(std::string localpath, uint32_t period, TransferInfoFlags flags) = 0;
 		virtual bool ExtraFileStatus(std::string localpath, FileInfo &info) = 0;
 		virtual bool ExtraFileMove(std::string fname, std::string hash, uint64_t size,
 				std::string destpath) = 0;
@@ -168,11 +169,13 @@ class RsFiles
 		 */
 		virtual int RequestDirDetails(const std::string& uid, const std::string& path, DirDetails &details) = 0;
 
-		virtual int RequestDirDetails(void *ref, DirDetails &details, uint32_t flags) = 0;
-		virtual uint32_t getType(void *ref,uint32_t flags) = 0;
+		virtual int RequestDirDetails(void *ref, DirDetails &details, FileStorageFlags flags) = 0;
+		virtual uint32_t getType(void *ref,TransferInfoFlags flags) = 0;
 
 		virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,uint32_t flags) = 0;
+		virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,uint32_t flags,const std::string& peer_id) = 0;
 		virtual int SearchBoolExp(Expression * exp, std::list<DirDetails> &results,uint32_t flags) = 0;
+		virtual int SearchBoolExp(Expression * exp, std::list<DirDetails> &results,uint32_t flags,const std::string& peer_id) = 0;
 
 		/***
 		 * Utility Functions.

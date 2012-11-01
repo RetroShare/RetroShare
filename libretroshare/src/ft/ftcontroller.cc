@@ -622,7 +622,7 @@ void ftController::locked_checkQueueElement(uint32_t pos)
 
 		_queue[pos]->mState = ftFileControl::DOWNLOADING ;
 
-		if(_queue[pos]->mFlags & RS_FILE_HINTS_NETWORK_WIDE)
+		if(_queue[pos]->mFlags & RS_FILE_HINTS_ANONYMOUS_ROUTING)
 			mTurtle->monitorFileTunnels(_queue[pos]->mName,_queue[pos]->mHash,_queue[pos]->mSize) ;
 	}
 
@@ -631,7 +631,7 @@ void ftController::locked_checkQueueElement(uint32_t pos)
 		_queue[pos]->mState = ftFileControl::QUEUED ;
 		_queue[pos]->mCreator->closeFile() ;
 
-		if(_queue[pos]->mFlags & RS_FILE_HINTS_NETWORK_WIDE)
+		if(_queue[pos]->mFlags & RS_FILE_HINTS_ANONYMOUS_ROUTING)
 			mTurtle->stopMonitoringFileTunnels(_queue[pos]->mHash) ;
 	}
 }
@@ -875,7 +875,7 @@ bool ftController::completeFile(std::string hash)
 
 		mDownloads.erase(it);
 
-		if(flags & RS_FILE_HINTS_NETWORK_WIDE)
+		if(flags & RS_FILE_HINTS_ANONYMOUS_ROUTING)
 			mTurtle->stopMonitoringFileTunnels(hash_to_suppress) ;
 
 	} /******* UNLOCKED ********/
@@ -1043,14 +1043,14 @@ bool ftController::alreadyHaveFile(const std::string& hash, FileInfo &info)
 		return true ;
 
 	// check for file lists
-	if (mSearch->search(hash, RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_SPEC_ONLY, info))
+	if (mSearch->search(hash, DIR_FLAGS_PERMISSIONS_MASK | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_SPEC_ONLY, info))
 		return true ;
 	
 	return false ;
 }
 
 bool 	ftController::FileRequest(const std::string& fname, const std::string& hash,
-			uint64_t size, const std::string& dest, uint32_t flags,
+			uint64_t size, const std::string& dest, TransferInfoFlags flags,
 			const std::list<std::string> &_srcIds)
 {
 	std::list<std::string> srcIds(_srcIds) ;
@@ -1196,7 +1196,7 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 		/* do a source search - for any extra sources */
 		// add sources only in direct mode
 		//
-		if((flags & RS_FILE_HINTS_BROWSABLE) && mSearch->search(hash, RS_FILE_HINTS_REMOTE | RS_FILE_HINTS_SPEC_ONLY, info))
+		if(/* (flags & RS_FILE_HINTS_BROWSABLE) && */ mSearch->search(hash, RS_FILE_HINTS_REMOTE | RS_FILE_HINTS_SPEC_ONLY, info))
 		{
 			/* do something with results */
 #ifdef CONTROL_DEBUG
@@ -1242,7 +1242,7 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 
   // We check that flags are consistent.  
   
-  	if(flags & RS_FILE_HINTS_NETWORK_WIDE)
+  	if(flags & RS_FILE_HINTS_ANONYMOUS_ROUTING)
 		mTurtle->monitorFileTunnels(fname,hash,size) ;
 
 	bool assume_availability = flags & RS_FILE_HINTS_CACHE ;	// assume availability for cache files
@@ -1623,7 +1623,7 @@ bool 	ftController::FileDetails(const std::string &hash, FileInfo &info)
 	/* extract details */
 	info.hash = hash;
 	info.fname = it->second->mName;
-	info.flags = it->second->mFlags;
+	info.transfer_info_flags = it->second->mFlags ;
 	info.priority = SPEED_NORMAL ;
 	RsDirUtil::removeTopDir(it->second->mDestination, info.path); /* remove fname */
 	info.queue_position = it->second->mQueuePosition ;

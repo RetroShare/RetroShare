@@ -142,7 +142,7 @@ bool    ftDataMultiplex::FileDownloads(std::list<std::string> &hashs)
 }
 
 
-bool    ftDataMultiplex::FileDetails(const std::string &hash, uint32_t hintsflag, FileInfo &info)
+bool    ftDataMultiplex::FileDetails(const std::string &hash, TransferInfoFlags hintsflag, FileInfo &info)
 {
 #ifdef MPLEX_DEBUG
 	std::cerr << "ftDataMultiplex::FileDetails(";
@@ -1316,11 +1316,11 @@ bool	ftDataMultiplex::handleSearchRequest(const std::string& peerId, const std::
 	uint32_t hintflags =   RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_SPEC_ONLY ;
 
 	if(rsTurtle->isTurtlePeer(peerId))
-		hintflags |= RS_FILE_HINTS_NETWORK_WIDE ;
+		hintflags |= RS_FILE_HINTS_ANONYMOUS_ROUTING ;
 	else
-		hintflags |= RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_CACHE ;
+		hintflags |= RS_FILE_HINTS_CACHE ;
 
-	if (mSearch->search(hash, hintflags, info))
+	if(mSearch->search(hash, hintflags,peerId, info))
 	{
 
 		/* setup a new provider */

@@ -130,6 +130,11 @@ ftFiMonitor::ftFiMonitor(CacheStrapper *cs,NotifyBase *cb_in, std::string cached
 
 bool ftFiMonitor::search(const std::string &hash, uint32_t hintflags, FileInfo &info) const
 {
+	std::cerr << "(EE) ********* ftFiMonitor expects a peer id in search()!" << std::endl;
+	return false ;
+}
+bool ftFiMonitor::search(const std::string &hash, uint32_t hintflags, const std::string& peer_id,FileInfo &info) const
+{
 	uint64_t fsize;
 	std::string path;
 
@@ -144,7 +149,7 @@ bool ftFiMonitor::search(const std::string &hash, uint32_t hintflags, FileInfo &
 	//
 	uint32_t flags = hintflags & (RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE);
 	
-	if(findLocalFile(hash, flags, path, fsize))
+	if(findLocalFile(hash, flags,peer_id,path, fsize))
 	{
 		/* fill in details */
 #ifdef DB_DEBUG
@@ -288,6 +293,7 @@ bool    ftFiMonitor::loadList(std::list<RsItem *>& load)
 	/* for each item, check it exists .... 
 	 * - remove any that are dead (or flag?) 
 	 */
+	static const uint32_t PERMISSION_MASK = DIR_FLAGS_BROWSABLE_OTHERS | DIR_FLAGS_NETWORK_WIDE_OTHERS | DIR_FLAGS_BROWSABLE_GROUPS | DIR_FLAGS_NETWORK_WIDE_GROUPS ;
 
 #ifdef  DEBUG_ELIST
 	std::cerr << "ftFiMonitor::loadList()";
@@ -341,7 +347,7 @@ bool    ftFiMonitor::loadList(std::list<RsItem *>& load)
 		SharedDirInfo info ;
 		info.filename = RsDirUtil::convertPathToUnix(fi->file.path);
 		info.virtualname = fi->file.name;
-		info.shareflags = fi->flags & (RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE) ;
+		info.shareflags = fi->flags & PERMISSION_MASK ;
 
 		dirList.push_back(info) ;
 	}

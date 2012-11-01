@@ -30,6 +30,7 @@
 #include "serialiser/rsserviceids.h"
 #include "retroshare/rsiface.h"
 #include "retroshare/rsnotify.h"
+#include "retroshare/rspeers.h"
 #include "util/folderiterator.h"
 #include <errno.h>
 
@@ -266,7 +267,7 @@ FileIndexMonitor::~FileIndexMonitor()
 	/* Data cleanup - TODO */
 }
 
-int FileIndexMonitor::SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,uint32_t flags)
+int FileIndexMonitor::SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,uint32_t flags,const std::string& peer_id)
 {
 	results.clear();
 	std::list<FileEntry *> firesults;
@@ -276,10 +277,10 @@ int FileIndexMonitor::SearchKeywords(std::list<std::string> keywords, std::list<
 		fi.searchTerms(keywords, firesults);
 	}
 
-	return filterResults(firesults,results,flags) ;
+	return filterResults(firesults,results,flags,peer_id) ;
 }
 
-int FileIndexMonitor::SearchBoolExp(Expression *exp, std::list<DirDetails>& results,uint32_t flags) const
+int FileIndexMonitor::SearchBoolExp(Expression *exp, std::list<DirDetails>& results,uint32_t flags,const std::string& peer_id) const
 {
 	results.clear();
 	std::list<FileEntry *> firesults;
@@ -289,11 +290,15 @@ int FileIndexMonitor::SearchBoolExp(Expression *exp, std::list<DirDetails>& resu
 		fi.searchBoolExp(exp, firesults);
 	}
 
-	return filterResults(firesults,results,flags) ;
+	return filterResults(firesults,results,flags,peer_id) ;
 }
 
-int FileIndexMonitor::filterResults(std::list<FileEntry*>& firesults,std::list<DirDetails>& results,uint32_t flags) const
+int FileIndexMonitor::filterResults(std::list<FileEntry*>& firesults,std::list<DirDetails>& results,TransferInfoFlags flags,const std::string& peer_id) const
 {
+#ifdef DEBUG
+	if((flags & ~RS_FILE_HINTS_PERMISSION_MASK) > 0)
+		std::cerr << "(EE) ***** FileIndexMonitor:: Flags ERROR in filterResults!!" << std::endl;
+#endif
 	/* translate/filter results */
 
 	for(std::list<FileEntry*>::const_iterator rit(firesults.begin()); rit != firesults.end(); ++rit)
@@ -304,7 +309,9 @@ int FileIndexMonitor::filterResults(std::list<FileEntry*>& firesults,std::list<D
 		std::cerr << "Filtering candidate " << (*rit)->name  << ", flags=" << cdetails.flags ;
 #endif
 
-		if (cdetails.type == DIR_TYPE_FILE && ( cdetails.flags & flags & (DIR_FLAGS_BROWSABLE | DIR_FLAGS_NETWORK_WIDE)) > 0) 
+		TransferInfoFlags permission_flags = rsPeers->computePeerPermissionFlags(peer_id,cdetails.flags,cdetails.parent_groups) ;
+
+		if (cdetails.type == DIR_TYPE_FILE && (( permission_flags & flags & RS_FILE_HINTS_PERMISSION_MASK) > 0 ))
 		{
 			cdetails.id = "Local";
 			results.push_back(cdetails);
@@ -320,7 +327,7 @@ int FileIndexMonitor::filterResults(std::list<FileEntry*>& firesults,std::list<D
 	return !results.empty() ;
 }
 
-bool FileIndexMonitor::findLocalFile(std::string hash,uint32_t hint_flags, std::string &fullpath, uint64_t &size) const
+bool FileIndexMonitor::findLocalFile(std::string hash,uint32_t hint_flags, const std::string& peer_id,std::string &fullpath, uint64_t &size) const
 {
 	std::list<FileEntry *> results;
 	bool ok = false;
@@ -340,12 +347,19 @@ bool FileIndexMonitor::findLocalFile(std::string hash,uint32_t hint_flags, std::
 			FileEntry *fe = results.front();
 			DirEntry  *de = fe->parent; /* all files must have a valid parent! */
 
-			uint32_t share_flags = locked_findShareFlags(fe) ;
+			std::list<std::string> parent_groups ;
+			FileStorageFlags share_flags ;
+			
+			locked_findShareFlagsAndParentGroups(fe,share_flags,parent_groups) ;
+
+			// turn share flags into hint flags
+
+			uint32_t shflh = rsPeers->computePeerPermissionFlags(peer_id,share_flags,parent_groups) ;
 #ifdef FIM_DEBUG
 			std::cerr << "FileIndexMonitor::findLocalFile: Filtering candidate " << fe->name  << ", flags=" << share_flags << ", hint_flags=" << hint_flags << std::endl ;
 #endif
 
-			if((share_flags & hint_flags & (RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE)) > 0) 
+			if(shflh & (hint_flags & RS_FILE_HINTS_PERMISSION_MASK))
 			{
 #ifdef FIM_DEBUG
 				std::cerr << "FileIndexMonitor::findLocalFile() Found Name: " << fe->name << std::endl;
@@ -423,7 +437,11 @@ bool FileIndexMonitor::loadLocalCache(const CacheData &data)  /* called with sto
 
 		/* More error checking needed here! */
 
-		std::string name = data.name ;	// this trick allows to load the complete file. Not the one being shared.
+		std::string name = data.name ;	
+
+		name[name.length()-4] = 'r' ;// this trick allows to load the complete file. Not the one being shared.
+		name[name.length()-3] = 's' ;
+		name[name.length()-2] = 'f' ;
 		name[name.length()-1] = 'c' ;
 
 		if ((ok = fi.loadIndex(data.path + '/' + name, "", data.size)))
@@ -445,17 +463,18 @@ bool FileIndexMonitor::loadLocalCache(const CacheData &data)  /* called with sto
 
 		fi.updateMaxModTime() ;
 	}
-
+#ifdef REMOVED
 	if (ok)
 	{
 		return updateCache(data);
 	}
+#endif
 	return false;
 }
 
-bool FileIndexMonitor::updateCache(const CacheData &data)  /* we call this one */
+bool FileIndexMonitor::updateCache(const CacheData &data,const std::list<std::string>& destination_peers)  /* we call this one */
 {
-	return refreshCache(data);
+	return refreshCache(data,destination_peers);
 }
 
 
@@ -986,67 +1005,103 @@ void FileIndexMonitor::locked_saveFileIndexes()
 
 	std::string path = getCacheDir();
 
-	// Two files are saved: one with only browsable dirs, which will be shared by the cache system,
-	// and one with the complete file collection.
+	// Multiple files are saved: for every kind of peers, the set of browsable files will be different. A specific file is
+	// prepared for all situations, and shared by all peers having the same situation.
 	//
-	std::string tmpname_browsable;
-	rs_sprintf(tmpname_browsable, "fc-own-%ld.rsfb", time(NULL));
-	std::string fname_browsable = path + "/" + tmpname_browsable;
-
-	std::string tmpname_total;
-	rs_sprintf(tmpname_total, "fc-own-%ld.rsfc", time(NULL));
-	std::string fname_total = path + "/" + tmpname_total;
-
+	// A complete file collection is also saved, and serves as memory for the FileIndexMonitor system.
+	//
 #ifdef FIM_DEBUG
-	std::cerr << "FileIndexMonitor::updateCycle() FileIndex modified ... updating";
-	std::cerr <<  std::endl;
-	std::cerr << "FileIndexMonitor::updateCycle() saving browsable file list to: " << fname_browsable << std::endl ;
+	std::cerr << "FileIndexMonitor::updateCycle() FileIndex modified ... updating" << std::endl;
 	std::cerr << "FileIndexMonitor::updateCycle() saving total file list to  to: " << fname_total << std::endl ;
+	std::cerr << "FileIndexMonitor::updateCycle() saving browsable file list to: " << fname_browsable << std::endl ;
 #endif
+	// Make for each peer the list of forbidden shared directories. Make a separate cache file for each different set.
+	// To figure out which sets are different, we index them by the set of forbidden indexes from the directory list.
+	// This is probably a bit costly, but we can't suppose that the number of shared directories is bounded.
+	//
+	std::list<std::string> online_ids ;
+	rsPeers->getOnlineList(online_ids);
 
-	std::string calchash;
-	uint64_t size;
+	std::map<std::set<std::string>, std::list<std::string> > peers_per_directory_combination ;
 
-	std::cerr << "About to save, with the following restrictions:" << std::endl ;
-	std::set<std::string> forbidden_dirs ;
-	for(std::map<std::string,SharedDirInfo>::const_iterator it(directoryMap.begin());it!=directoryMap.end();++it)
+	for(std::list<std::string>::const_iterator it(online_ids.begin());it!=online_ids.end();++it)
 	{
-		std::cerr << "   dir=" << it->first << " : " ;
-		if((it->second.shareflags & RS_FILE_HINTS_BROWSABLE) == 0)
+		std::cerr << "About to save, with the following restrictions:" << std::endl ;
+
+		std::set<std::string> forbidden_dirs ;
+		for(std::map<std::string,SharedDirInfo>::const_iterator dit(directoryMap.begin());dit!=directoryMap.end();++dit)
 		{
-			std::cerr << "forbidden" << std::endl;
-			forbidden_dirs.insert(it->first) ;
+			std::cerr << "   dir=" << dit->first << " : " ;
+
+			uint32_t permission_flags = rsPeers->computePeerPermissionFlags(*it,dit->second.shareflags,dit->second.parent_groups) ;
+
+			if(!(permission_flags & RS_FILE_HINTS_BROWSABLE))
+			{
+				std::cerr << "forbidden" << std::endl;
+				forbidden_dirs.insert(dit->first) ;
+			}
+			else
+				std::cerr << "autorized" << std::endl;
 		}
-		else
-			std::cerr << "autorized" << std::endl;
+
+		peers_per_directory_combination[forbidden_dirs].push_back(*it) ;
 	}
+	std::string ownId = rsPeers->getOwnId() ;
+	peers_per_directory_combination[std::set<std::string>()].push_back(ownId) ;	// add full configuration to self, i.e. no forbidden directories.
 
-	uint64_t sizetmp ;
+	int n=0 ;
+	time_t now = time(NULL) ;
 
-	fi.saveIndex(fname_total, calchash, sizetmp,std::set<std::string>());	// save all files
-	fi.saveIndex(fname_browsable, calchash, size,forbidden_dirs);		// save only browsable files
-
-	if(size > 0)
+	for(std::map<std::set<std::string>, std::list<std::string> >::const_iterator it(peers_per_directory_combination.begin());
+			it!=peers_per_directory_combination.end();++it,++n)
 	{
+		std::string tmpname_browsable;
+
+		if(it->first.empty())
+			rs_sprintf(tmpname_browsable, "fc-own-%ld.rsfc",now,n);
+		else
+			rs_sprintf(tmpname_browsable, "fc-own-%ld.%04d",now,n);
+
+		std::string fname_browsable = path + "/" + tmpname_browsable;
+
 #ifdef FIM_DEBUG
-		std::cerr << "FileIndexMonitor::updateCycle() saved with hash:" << calchash;
-		std::cerr <<  std::endl;
+		std::cerr << "Sending file list: " << std::endl;
+		std::cerr << "   filename	: " << tmpname_browsable << std::endl;
+		std::cerr << "   to peers  : " << std::endl;
+		for(std::list<std::string>::const_iterator itt(it->second.begin());itt!= it->second.end();++itt)
+			std::cerr << "       " << *itt << std::endl;
+		std::cerr << "   forbidden : " << std::endl;
+		for(std::set<std::string>::const_iterator itt(it->first.begin());itt!= it->first.end();++itt)
+			std::cerr << "       " << *itt << std::endl;
 #endif
 
-		/* should clean up the previous cache.... */
+		std::string hash ;
+		uint64_t size ;
 
-		/* flag as new info */
-		CacheData data;
-		data.pid = fi.root->id;
-		data.cid.type  = getCacheType();
-		data.cid.subid = 0;
-		data.path = path;
-		data.name = tmpname_browsable;
-		data.hash = calchash;
-		data.size = size;
-		data.recvd = time(NULL);
+		fi.saveIndex(fname_browsable, hash, size,it->first);		// save only browsable files
 
-		updateCache(data);
+		if(size > 0)
+		{
+#ifdef FIM_DEBUG
+			std::cerr << "FileIndexMonitor::updateCycle() saved with hash:" << calchash;
+			std::cerr <<  std::endl;
+#endif
+
+			/* should clean up the previous cache.... */
+
+			/* flag as new info */
+			CacheData data;
+			data.pid = fi.root->id;
+			data.cid.type  = getCacheType();
+			data.cid.subid = 0;
+			data.path = path;
+			data.name = tmpname_browsable;
+			data.hash = hash;
+			data.size = size;
+			data.recvd = time(NULL);
+
+			updateCache(data,it->second);
+		}
 	}
 
 #ifdef FIM_DEBUG
@@ -1353,18 +1408,15 @@ int FileIndexMonitor::RequestDirDetails(void *ref, DirDetails &details, uint32_t
 	if(ref != NULL)
 	{
 		FileEntry *file = (FileEntry *) ref;
-
-		uint32_t share_flags = locked_findShareFlags(file) ;
-
-		details.flags |= (( (share_flags & RS_FILE_HINTS_BROWSABLE   )>0)?DIR_FLAGS_BROWSABLE   :0) ;
-		details.flags |= (( (share_flags & RS_FILE_HINTS_NETWORK_WIDE)>0)?DIR_FLAGS_NETWORK_WIDE:0) ;
+		locked_findShareFlagsAndParentGroups(file,details.flags,details.parent_groups) ;
 	}
 	return true ;
 }
 
-uint32_t FileIndexMonitor::locked_findShareFlags(FileEntry *file) const
+void FileIndexMonitor::locked_findShareFlagsAndParentGroups(FileEntry *file,FileStorageFlags& flags,std::list<std::string>& parent_groups) const
 {
-	uint32_t flags = 0 ;
+	flags = 0 ;
+	static const FileStorageFlags PERMISSION_MASK = DIR_FLAGS_BROWSABLE_OTHERS | DIR_FLAGS_NETWORK_WIDE_OTHERS | DIR_FLAGS_BROWSABLE_GROUPS | DIR_FLAGS_NETWORK_WIDE_GROUPS ;
 
 	DirEntry *dir = dynamic_cast<DirEntry*>(file) ;
 	if(dir == NULL)
@@ -1384,13 +1436,14 @@ uint32_t FileIndexMonitor::locked_findShareFlags(FileEntry *file) const
 		if(it == directoryMap.end())
 			std::cerr << "*********** ERROR *********** In " << __PRETTY_FUNCTION__ << std::endl ;
 		else
-			flags = it->second.shareflags & (RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE) ;
+		{
+			flags = it->second.shareflags & PERMISSION_MASK ;
+			parent_groups = it->second.parent_groups ;
+		}
 #ifdef FIM_DEBUG2
 		std::cerr << "flags = " << flags << std::endl ;
 #endif
 	}
-
-	return flags ;
 }
 
 
