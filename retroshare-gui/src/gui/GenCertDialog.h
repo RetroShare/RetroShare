@@ -19,51 +19,33 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-
 #ifndef _GENCERTDIALOG_H
 #define _GENCERTDIALOG_H
 
-#include <retroshare/rstypes.h>
-
 #include "ui_GenCertDialog.h"
-
-
 
 class GenCertDialog : public QDialog
 {
-  Q_OBJECT
+	Q_OBJECT
 
 public:
-  /** Default constructor */
-  GenCertDialog(bool onlyGenerateIdentity, QWidget *parent = 0, Qt::WFlags flags = 0);
-  /** Default destructor */
+	/** Default constructor */
+	GenCertDialog(bool onlyGenerateIdentity, QWidget *parent = 0, Qt::WFlags flags = 0);
 
 private slots:
 	void genPerson();
-	//void loadPerson();
-	void selectFriend();
 	void importIdentity();
 	void exportIdentity();
-	void checkChanged(int i);
-  void newGPGKeyGenUiSetup();
+	void newGPGKeyGenUiSetup();
 
 private:
+	void init();
 
-  void init() ;
+	/** Qt Designer generated object */
+	Ui::GenCertDialog ui;
 
-  /** Loads the saved connectidialog settings */
-  //  void loadSettings();
-  void loadCertificates();
-
-  
-  QMovie *movie;
-
-  /** Qt Designer generated object */
-  Ui::GenCertDialog ui;
-
-  bool genNewGPGKey;
-  bool mOnlyGenerateIdentity;
+	bool genNewGPGKey;
+	bool mOnlyGenerateIdentity;
 };
 
 #endif
-

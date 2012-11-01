@@ -29,8 +29,8 @@
 #include <iostream>
 
 /** Default constructor */
-StartDialog::StartDialog(QWidget *parent, Qt::WFlags flags)
-  : QMainWindow(parent, flags), reqNewCert(false)
+StartDialog::StartDialog(QWidget *parent)
+  : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint), reqNewCert(false)
 {
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
@@ -97,43 +97,10 @@ void StartDialog::loadPerson()
 	QVariant data = ui.loadName->itemData(pgpidx);
 	accountId = (data.toString()).toStdString();
 
-	std::string gpgId, gpgName, gpgEmail, sslName;
-	if (RsInit::getAccountDetails(accountId, gpgId, gpgName, gpgEmail, sslName))
-	{
-		RsInit::SelectGPGAccount(gpgId);
-	}
-
 	RsInit::LoadPassword(accountId, "");
-	loadCertificates();
-}
 
-void StartDialog::loadCertificates()
-{
-	/* Final stage of loading */
-	std::string lockFile;
-	int retVal = RsInit::LockAndLoadCertificates(ui.autologin_checkbox->isChecked(), lockFile);
-	switch(retVal)
-	{
-	case 0: close();
-		break;
-	case 1:	QMessageBox::warning(this,
-								 tr("Multiple instances"),
-								 tr("Another RetroShare using the same profile is "
-									"already running on your system. Please close "
-									"that instance first, or choose another profile\n"
-									"lock file:\n")+ QString::fromStdString(lockFile));
-		break;
-	case 2:	QMessageBox::warning(this,
-								 tr("Multiple instances"),
-								 tr("An unexpected error occurred when Retroshare "
-									"tried to acquire the single instance lock\n"
-									"lock file:\n")+ QString::fromStdString(lockFile));
-		break;
-	case 3: QMessageBox::warning(this,
-								 tr("Login Failure"),
-								 tr("Maybe password is wrong") );
-		break;
-	default: std::cerr << "StartDialog::loadCertificates() unexpected switch value " << retVal << std::endl;
+	if (Rshare::loadCertificate(accountId, ui.autologin_checkbox->isChecked())) {
+		accept();
 	}
 }
 
@@ -142,7 +109,7 @@ void StartDialog::on_labelProfile_linkActivated(QString /*link*/)
 //	if ((QMessageBox::question(this, tr("Create a New Profile"),tr("This will generate a new Profile\n Are you sure you want to continue?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
 //	{
 		reqNewCert = true;
-		close();
+		accept();
 //	}
 }
 

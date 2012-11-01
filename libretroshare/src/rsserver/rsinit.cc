@@ -822,7 +822,7 @@ bool     RsInit::getAccountIds(std::list<std::string> &ids)
 }
 
 
-bool     RsInit::getAccountDetails(std::string id, 
+bool     RsInit::getAccountDetails(const std::string &id,
                                 std::string &gpgId, std::string &gpgName, 
                                 std::string &gpgEmail, std::string &location)
 {

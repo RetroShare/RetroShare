@@ -201,27 +201,17 @@ int main(int argc, char *argv[])
 		{
 			/* Login Dialog */
 			/* check for existing Certificate */
-			StartDialog *sd = NULL;
 			bool genCert = false;
 			std::list<std::string> accountIds;
 			if (RsInit::getAccountIds(accountIds) && (accountIds.size() > 0))
 			{
-				sd = new StartDialog();
-				sd->show();
-
-				while(sd -> isVisible())
-				{
-					rshare.processEvents();
-#ifdef WIN32
-					Sleep(10);
-#else // __LINUX__
-					usleep(10000);
-#endif
+				StartDialog sd;
+				if (sd.exec() == QDialog::Rejected) {
+					return 1;
 				}
 
 				/* if we're logged in */
-				genCert = sd->requestedNewCert();
-				delete (sd);
+				genCert = sd.requestedNewCert();
 			}
 			else
 			{
@@ -231,7 +221,9 @@ int main(int argc, char *argv[])
 			if (genCert)
 			{
 				GenCertDialog gd(false);
-				gd.exec ();
+				if (gd.exec () == QDialog::Rejected) {
+					return 1;
+				}
 			}
 
 			splashScreen.show();
@@ -242,39 +234,11 @@ int main(int argc, char *argv[])
 			splashScreen.show();
 			splashScreen.showMessage(rshare.translate("SplashScreen", "Load profile"), Qt::AlignHCenter | Qt::AlignBottom);
 
-			std::string preferredId, gpgId, gpgName, gpgEmail, sslName;
+			std::string preferredId;
 			RsInit::getPreferedAccountId(preferredId);
 
-			if (RsInit::getAccountDetails(preferredId, gpgId, gpgName, gpgEmail, sslName))
-			{
-				RsInit::SelectGPGAccount(gpgId);
-			}
-
 			// true: note auto-login is active
-			std::string lockFile;
-			int retVal = RsInit::LockAndLoadCertificates(true, lockFile);
-			switch(retVal)
-			{
-				case 0:	break;
-				case 1:	QMessageBox::warning(	0,
-												QObject::tr("Multiple instances"),
-												QObject::tr("Another RetroShare using the same profile is "
-												"already running on your system. Please close "
-												"that instance first\n Lock file:\n") +
-												QString::fromStdString(lockFile));
-						return 1;
-				case 2:	QMessageBox::critical(	0,
-												QObject::tr("Multiple instances"),
-												QObject::tr("An unexpected error occurred when Retroshare "
-												"tried to acquire the single instance lock\n Lock file:\n") +
-												QString::fromStdString(lockFile));
-						return 1;
-				case 3: QMessageBox::critical(	0,
-												QObject::tr("Login Failure"),
-												QObject::tr("Maybe password is wrong") );
-						return 1;
-				default: std::cerr << "StartDialog::loadCertificates() unexpected switch value " << retVal << std::endl;
-			}
+			Rshare::loadCertificate(preferredId, true);
 		}
 		break;
 	default:

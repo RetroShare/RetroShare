@@ -20,8 +20,6 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-
-
 #include <QDir>
 #include <QTimer>
 #include <QTextStream>
@@ -32,6 +30,7 @@
 #include <gui/common/html.h>
 #include <util/stringutil.h>
 #include <stdlib.h>
+#include <iostream>
 
 #include <retroshare/rsinit.h>
 #include <lang/languagesupport.h>
@@ -537,4 +536,44 @@ void Rshare::blinkTimer()
 {
     mBlink = !mBlink;
     emit blink(mBlink);
+}
+
+bool Rshare::loadCertificate(const std::string &accountId, bool autoLogin, std::string gpgId)
+{
+	if (gpgId.empty()) {
+		std::string gpgName, gpgEmail, sslName;
+		if (!RsInit::getAccountDetails(accountId, gpgId, gpgName, gpgEmail, sslName)) {
+			return false;
+		}
+	}
+	if (!RsInit::SelectGPGAccount(gpgId)) {
+		return false;
+	}
+
+	std::string lockFile;
+	int retVal = RsInit::LockAndLoadCertificates(autoLogin, lockFile);
+	switch (retVal) {
+		case 0:	break;
+		case 1:	QMessageBox::warning(	0,
+										QObject::tr("Multiple instances"),
+										QObject::tr("Another RetroShare using the same profile is "
+										"already running on your system. Please close "
+										"that instance first\n Lock file:\n") +
+										QString::fromUtf8(lockFile.c_str()));
+				return false;
+		case 2:	QMessageBox::critical(	0,
+										QObject::tr("Multiple instances"),
+										QObject::tr("An unexpected error occurred when Retroshare "
+										"tried to acquire the single instance lock\n Lock file:\n") +
+										QString::fromUtf8(lockFile.c_str()));
+				return false;
+		case 3: QMessageBox::critical(	0,
+										QObject::tr("Login Failure"),
+										QObject::tr("Maybe password is wrong") );
+				return false;
+		default: std::cerr << "Rshare::loadCertificate() unexpected switch value " << retVal << std::endl;
+				return false;
+	}
+
+	return true;
 }

@@ -5026,27 +5026,7 @@ Fill in your GPG password when asked, to sign your new key.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Select Trusted Friend</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Certificates (*.pqi *.pem)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Multiple instances</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Another RetroShare using the same profile is already running on your system. Please close that instance first</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Generate ID Failure</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Failed to Load your new Certificate!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5162,10 +5142,6 @@ and use the import button to load it</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>An unexpected error occurred when Retroshare tried to acquire the single instance lock</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>RetroShare uses gpg keys for identity management.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5175,6 +5151,10 @@ and use the import button to load it</source>
     </message>
     <message>
         <source>You can use an existing identity (i.e. a gpg key pair), from the list below, or create a new one with this form.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to Generate your new Certificate, maybe PGP password is wrong!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5528,6 +5508,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Private Key Available</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search Title</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search Description</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7220,6 +7208,34 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>No starred messages available. Stars let you give messages a special status to make them easier to find. To star a message, click on the light gray star beside any message.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search Subject</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search From</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search Content</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search Tags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search Attachments</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10505,31 +10521,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Multiple instances</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Login Failure</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Maybe password is wrong</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Another RetroShare using the same profile is already running on your system. Please close that instance first, or choose another profile
-lock file:
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>An unexpected error occurred when Retroshare tried to acquire the single instance lock
-lock file:
-</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

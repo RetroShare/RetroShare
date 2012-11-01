@@ -24,13 +24,13 @@
 
 #include "ui_StartDialog.h"
 
-class StartDialog : public QMainWindow
+class StartDialog : public QDialog
 {
 	Q_OBJECT
 
 public:
 	/** Default constructor */
-	StartDialog(QWidget *parent = 0, Qt::WFlags flags = 0);
+	StartDialog(QWidget *parent = 0);
 
 	bool requestedNewCert();
 
@@ -48,9 +48,6 @@ private slots:
 	void on_labelProfile_linkActivated(QString link);
 
 private:
-	/** Loads the saved connectidialog settings */
-	void loadCertificates();
-
 	/** Qt Designer generated object */
 	Ui::StartDialog ui;
 

@@ -78,7 +78,7 @@ class RsInit
 		static bool 	getPreferedAccountId(std::string &id);
 		static bool     getPGPEngineFileName(std::string &fileName);
 		static bool 	getAccountIds(std::list<std::string> &ids);
-		static bool 	getAccountDetails(std::string id, std::string &gpgId, std::string &gpgName, std::string &gpgEmail, std::string &sslName);
+		static bool 	getAccountDetails(const std::string &id, std::string &gpgId, std::string &gpgName, std::string &gpgEmail, std::string &sslName);
 
 		static bool	ValidateCertificate(std::string &userName) ;
 
