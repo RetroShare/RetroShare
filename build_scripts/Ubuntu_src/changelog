@@ -1,5 +1,55 @@
 retroshare (0.5.4-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  * Improvements 
+     - GUI
+        * Added icons for the Channel TreeWidget
+        * Added placeholder text for Search Filter items on Group TreeWidget
+        * Added placeholder text for Search Filter items in Messages Dialog
+        * update the authors on the help page
+        * Redesigned GenCertDialog for the usage in Profile Manager.
+        * Removed the filter comboboxes and replaced it with a menu in LineEditClear.
+        * Added settings for the blinking icons
+            - private chat window/tab
+            - chat lobby tab
+            - all tray notifier
+        * Added a find Icon Button for the class LineEditClear
+        * Removed all not needed find icons from the Dialogs.
+        * Enabled sorting for the Lobby Dialog
+        * Added a placeholder text for the Search Forum filter
+
+        * Added blinking of the chat icon for private chat window and chat lobby
+        * Added blinking of the systray icon for the notifier and enabled it 
+          for private chat.
+        * Cleaned includes in FriendsDialog.cpp
+        * Fixed switching between combined and not combined tray icon notify 
+          with available messages.
+        * Added sounds when message has arrived and download was finished.
+        * The next unread button in forums search for child items and start 
+          at the top when the end of the list is reached.
+        * Changed SoundManger to allow the plugins to play sounds.
+        * Added example to VOIP (commented out).
+        * Added more PRE_TARGETDEPS for Windows compile.
+
+     - DHT
+        * Improved the dht msg history storage.
+        * specify how long we store for.
+        * cleanup old msgs.
+        * improve printing of history.
+        * add timeline storage as well.
+        * disabled by default, enable USE_HISTORY in bdnode.c
+
+         There appears to be a bug related to copying bdId's around.
+         Some of the bootstrap ids are malformed, and this crashes rs.
+
+  * Bugs
+      * Fixed stupid bug inDHT. Labels are the wrong way around.
+        This meant limit is set to HIGH (50msg/sec) when it should be LOW 
+        (5msg/sec)
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 27 Oct 2012 14:30:00 +0100
+
+retroshare (0.5.4-0.5697~natty) natty; urgency=low
+
   * Improvements
 
      - GUI 
