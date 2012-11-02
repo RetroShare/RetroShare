@@ -95,13 +95,13 @@ bool RsGxsDataAccess::requestGroupInfo(uint32_t &token, uint32_t ansType, const 
 
     if(req == NULL)
     {
-            std::cerr << "RsGxsDataAccess::requestMsgInfo() request type not recognised, type "
+            std::cerr << "RsGxsDataAccess::requestGroupInfo() request type not recognised, type "
                               << reqType << std::endl;
             return false;
     }else
     {
             generateToken(token);
-            std::cerr << "RsGxsDataAccess::requestMsgInfo() gets Token: " << token << std::endl;
+            std::cerr << "RsGxsDataAccess::requestGroupInfo() gets Token: " << token << std::endl;
     }
 
     setReq(req, token, ansType, opts);
@@ -134,13 +134,13 @@ bool RsGxsDataAccess::requestGroupInfo(uint32_t &token, uint32_t ansType, const 
 
     if(req == NULL)
     {
-            std::cerr << "RsGxsDataAccess::requestMsgInfo() request type not recognised, type "
+            std::cerr << "RsGxsDataAccess::requestGroupInfo() request type not recognised, type "
                               << reqType << std::endl;
             return false;
     }else
     {
             generateToken(token);
-            std::cerr << "RsGxsDataAccess::requestMsgInfo() gets Token: " << token << std::endl;
+            std::cerr << "RsGxsDataAccess::requestGroupInfo() gets Token: " << token << std::endl;
     }
 
     setReq(req, token, ansType, opts);

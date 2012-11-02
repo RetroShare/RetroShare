@@ -51,7 +51,7 @@ RsIdentity *rsIdentity = NULL;
 /********************************************************************************/
 
 p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *nes)
-	: RsGxsIdExchange(gds, nes, NULL, RS_SERVICE_GXSV1_TYPE_GXSID), RsIdentity(this), 
+	: RsGxsIdExchange(gds, nes, new RsGxsIdSerialiser(), RS_SERVICE_GXSV1_TYPE_GXSID), RsIdentity(this), 
 	mIdMtx("p3IdService")
 {
 
@@ -65,13 +65,19 @@ void	p3IdService::service_tick()
 	// Disable for now.
 	// background_tick();
 
-	//cache_tick();
+	cache_tick();
+
+	// internal testing - request keys. (NOT FINISHED YET)
+	//cachetest_tick();
 
 	return;
 }
 
 void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
 {
+	std::cerr << "p3IdService::notifyChanges()";
+	std::cerr << std::endl;
+
 	receiveChanges(changes);
 }
 
@@ -279,6 +285,9 @@ RsGxsIdCache::RsGxsIdCache(const RsGxsIdGroupItem *item)
 	id = item->meta.mGroupId;
 	name = item->meta.mGroupName;
 
+	std::cerr << "RsGxsIdCache::RsGxsIdCache() for: " << id;
+	std::cerr << std::endl;
+
         /* extract key from keys */
 	bool key_ok = false;
 
@@ -320,8 +329,14 @@ bool p3IdService::cache_is_loaded(const RsGxsId &id)
 	it = mCacheDataMap.find(id);
 	if (it == mCacheDataMap.end())
 	{
+		std::cerr << "p3IdService::cache_is_loaded(" << id << ") false";
+		std::cerr << std::endl;
+
 		return false;
 	}
+	std::cerr << "p3IdService::cache_is_loaded(" << id << ") false";
+	std::cerr << std::endl;
+
 	return true;
 	
 }
@@ -334,9 +349,15 @@ bool p3IdService::cache_fetch(const RsGxsId &id, RsGxsIdCache &data)
 	it = mCacheDataMap.find(id);
 	if (it == mCacheDataMap.end())
 	{
+		std::cerr << "p3IdService::cache_fetch(" << id << ") false";
+		std::cerr << std::endl;
+
 		return false;
 	}
 	
+	std::cerr << "p3IdService::cache_fetch(" << id << ") OK";
+	std::cerr << std::endl;
+
 	data = it->second;
 
 	/* update ts on data */
@@ -351,6 +372,11 @@ bool p3IdService::cache_fetch(const RsGxsId &id, RsGxsIdCache &data)
 
 bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 {
+	std::cerr << "p3IdService::cache_store() Item: ";
+	std::cerr << std::endl;
+	//item->print(std::cerr, 0); NEEDS CONST!!!! TODO
+	std::cerr << std::endl;
+
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
 	// Create Cache Data.
@@ -362,6 +388,8 @@ bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 	if (it != mCacheDataMap.end())
 	{
 		// ERROR.
+		std::cerr << "p3IdService::cache_store() ERROR entry exists already";
+		std::cerr << std::endl;
 		return false;
 	}
 
@@ -383,6 +411,9 @@ bool p3IdService::locked_cache_update_lrumap(const RsGxsId &key, time_t old_ts, 
 {
 	if (old_ts == 0)
 	{
+		std::cerr << "p3IdService::locked_cache_update_lrumap(" << key << ") just insert!";
+		std::cerr << std::endl;
+
 		LruData data;
 		data.key = key;
 		/* new insertion */
@@ -401,20 +432,30 @@ bool p3IdService::locked_cache_update_lrumap(const RsGxsId &key, time_t old_ts, 
 		{
 			LruData data = mit->second;
 			mCacheLruMap.erase(mit);
+			std::cerr << "p3IdService::locked_cache_update_lrumap(" << key << ") rm old";
+			std::cerr << std::endl;
 
 			if (new_ts != 0) // == 0, means remove.
 			{	
+				std::cerr << "p3IdService::locked_cache_update_lrumap(" << key << ") added new_ts";
+				std::cerr << std::endl;
 				mCacheLruMap.insert(std::make_pair(new_ts, data));
 			}
 			return true;
 		}
 	}
+	std::cerr << "p3IdService::locked_cache_update_lrumap(" << key << ") ERROR";
+	std::cerr << std::endl;
+
 	return false;
 }
 
 
 bool p3IdService::cache_resize()
 {
+	std::cerr << "p3IdService::cache_resize()";
+	std::cerr << std::endl;
+
 	int count_to_clear = 0;
 	{
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
@@ -424,12 +465,15 @@ bool p3IdService::cache_resize()
 			(mCacheLruMap.size() != mCacheDataCount))
 		{
 			// ERROR.
-	
+			std::cerr << "p3IdService::cache_resize() CONSISTENCY ERROR";
+			std::cerr << std::endl;
 		}
 	
 		if (mCacheDataCount > MAX_CACHE_SIZE)
 		{
 			count_to_clear = mCacheDataCount - MAX_CACHE_SIZE;
+			std::cerr << "p3IdService::cache_resize() to_clear: " << count_to_clear;
+			std::cerr << std::endl;
 		}
 	}
 
@@ -466,6 +510,8 @@ bool p3IdService::cache_discard_LRU(int count_to_clear)
 			}
 			else
 			{
+				std::cerr << "p3IdService::cache_discard_LRU() removing: " << data.key;
+				std::cerr << std::endl;
 				mCacheDataMap.erase(it);
 				mCacheDataCount--;
 			}
@@ -491,11 +537,8 @@ bool p3IdService::cache_discard_LRU(int count_to_clear)
 
 int	p3IdService::cache_tick()
 {
-	std::cerr << "p3IdService::cache_tick()";
-	std::cerr << std::endl;
-
-	// Run Background Stuff.	
-	background_checkTokenRequest();
+	//std::cerr << "p3IdService::cache_tick()";
+	//std::cerr << std::endl;
 
 	/* every minute - run a background check */
 	time_t now = time(NULL);
@@ -522,6 +565,9 @@ int	p3IdService::cache_tick()
 
 bool p3IdService::cache_request_load(const RsGxsId &id)
 {
+	std::cerr << "p3IdService::cache_request_load(" << id << ")";
+	std::cerr << std::endl;
+
 	bool start = false;
 	{
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
@@ -548,10 +594,6 @@ bool p3IdService::cache_start_load()
 	{
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
-		mCacheLoad_LastCycle = time(NULL);
-
-		mCacheLoad_Status = 1;
-		
 		/* now we process the modGroupList -> a map so we can use it easily later, and create id list too */
 		std::list<RsGxsId>::iterator it;
 		for(it = mCacheLoad_ToCache.begin(); it != mCacheLoad_ToCache.end(); it++)
@@ -562,15 +604,25 @@ bool p3IdService::cache_start_load()
 		mCacheLoad_ToCache.clear();
 	}
 
-	uint32_t ansType = RS_TOKREQ_ANSTYPE_DATA; 
-        RsTokReqOptions opts;
-	uint32_t token = 0;
-
-	RsGenExchange::getTokenService()->requestGroupInfo(token, ansType, opts, groupIds);
-
+	if (groupIds.size() > 0)
 	{
-		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		mCacheLoad_Tokens.push_back(token);
+		std::cerr << "p3IdService::cache_start_load() #Groups: " << groupIds.size();
+		std::cerr << std::endl;
+
+		mCacheLoad_LastCycle = time(NULL);
+		mCacheLoad_Status = 1;
+
+		uint32_t ansType = RS_TOKREQ_ANSTYPE_DATA; 
+	        RsTokReqOptions opts;
+        	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+		uint32_t token = 0;
+	
+		RsGenExchange::getTokenService()->requestGroupInfo(token, ansType, opts, groupIds);
+	
+		{
+			RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+			mCacheLoad_Tokens.push_back(token);
+		}
 	}
 	return 1;
 }
@@ -584,6 +636,9 @@ bool p3IdService::cache_check_loading()
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 		for(it = mCacheLoad_Tokens.begin(); it != mCacheLoad_Tokens.end();)
 		{
+			std::cerr << "p3IdService::cache_check_loading() token: " << *it;
+			std::cerr << std::endl;
+
 			uint32_t token = *it;
 			uint32_t status = RsGenExchange::getTokenService()->requestStatus(token);
 			//checkRequestStatus(token, status, reqtype, anstype, ts);
@@ -656,6 +711,136 @@ bool p3IdService::cache_check_consistency()
 	return false;
 }
 
+/************************************************************************************/
+/************************************************************************************/
+
+#if 0
+bool p3IdService::cachetest_tick()
+{
+	/* every minute - run a background check */
+	time_t now = time(NULL);
+	bool doCycle = false;
+	{
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+		if (now -  mCacheTest_LastTs > TEST_PERIOD)
+		{
+			doTest = true;
+			mCacheTest_LastTs = now;
+		}
+	}
+
+	if (doCycle)
+	{
+		cachetest_getlist();
+	}
+
+	cachetest_request();
+	return true;
+}
+
+bool p3IdService::cachetest_getlist()
+{
+	{
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+		if (mCacheTest_Active)
+		{
+			return false;
+		}
+	}
+
+	uint32_t ansType = RS_TOKREQ_ANSTYPE_LIST; 
+        RsTokReqOptions opts;
+        opts.mReqType = GXS_REQUEST_TYPE_GROUP_LIST;
+	uint32_t token = 0;
+	
+	RsGenExchange::getTokenService()->requestGroupInfo(token, ansType, opts);
+	
+	{
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+		mCacheTest_Token = token;
+		mCacheTest_Active = true;
+	}
+	return true;
+}
+
+
+bool p3IdService::cachetest_request()
+{
+	uint32_t token = 0;
+	{
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+		if (!mCacheTest_Active)
+		{
+			return false;
+		}
+		token = mCacheTest_Token;
+	}
+
+	uint32_t status = RsGenExchange::getTokenService()->requestStatus(token);
+
+	if (status == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	{
+		std::cerr << "p3IdService::cache_load_for_token() : " << token;
+		std::cerr << std::endl;
+
+        	std::vector<RsGxsId> grpIds;
+        	bool ok = RsGenExchange::getGroupList(token, grpIds);
+
+	        if(ok)
+	        {
+	                std::vector<RsGxsId>::iterator vit = grpIds.begin();
+	                for(; vit != grpIds.end(); vit++)
+	                {
+				/* 5% chance of checking it! */
+				if (RsRandom::f32() < 0.05)
+				{
+					/* try the cache! */
+					if (!haveKey(*vit))
+					{
+						std::list<PeerId> nullpeers;
+						requestKey(*vit, nullpeers);
+					}
+					else
+					{
+						RsTlvSecurityKey seckey;
+						if (getKey(*vit, seckey))
+						{
+							// success!
+
+						}
+					}
+
+					/* try private key too! */
+					if (!havePrivateKey(*vit))
+					{
+						requestPrivateKey(*vit);
+					}
+					else
+					{
+						RsTlvSecurityKey seckey;
+						if (getPrivateKey(*vit, seckey))
+						{
+							// success!
+
+						}
+					}
+				}
+			}
+	        }
+		else
+		{
+			std::cerr << "p3IdService::cache_load_for_token() ERROR no data";
+			std::cerr << std::endl;
+	
+			return false;
+		}
+	}
+	return true;
+}
+
+#endif
+
+
 
 /************************************************************************************/
 /************************************************************************************/
@@ -677,9 +862,6 @@ std::string p3IdService::genRandomId()
 void p3IdService::generateDummyData()
 {
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-
-	// Temporarily disable - until system is properly tested.
-	return;
 
 	/* grab all the gpg ids... and make some ids */
 

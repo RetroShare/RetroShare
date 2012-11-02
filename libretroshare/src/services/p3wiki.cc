@@ -34,7 +34,7 @@ RsWiki *rsWiki = NULL;
 
 
 p3Wiki::p3Wiki(RsGeneralDataService* gds, RsNetworkExchangeService* nes)
-	:RsGenExchange(gds, nes, NULL, RS_SERVICE_GXSV1_TYPE_WIKI), RsWiki(this)
+	:RsGenExchange(gds, nes, new RsGxsWikiSerialiser(), RS_SERVICE_GXSV1_TYPE_WIKI), RsWiki(this)
 {
 
 

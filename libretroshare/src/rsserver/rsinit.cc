@@ -1814,6 +1814,7 @@ RsTurtle *rsTurtle = NULL ;
 
 #define ENABLE_GXS_SERVICES	1
 #define ENABLE_GXS_CORE 1
+#define ENABLE_OTHER_GXS_SERVICES 1 // DISABLE TO LEAVE ONLY GXSID (for testing)
 
 #ifdef ENABLE_GXS_CORE
 #include "gxs/gxscoreserver.h"
@@ -2314,7 +2315,7 @@ int RsServer::StartupRetroShare()
                         RS_SERVICE_GXSV1_TYPE_GXSID, gxsid_ds, nxsMgr, mGxsIdService);
 
 
-
+#if ENABLE_OTHER_GXS_SERVICES
         /**** Photo service ****/
 
         p3PhotoServiceV2 *mPhotoV2 = NULL;
@@ -2362,7 +2363,7 @@ int RsServer::StartupRetroShare()
         // create GXS photo service
         RsGxsNetService* wiki_ns = new RsGxsNetService(
                         RS_SERVICE_GXSV1_TYPE_WIKI, wiki_ds, nxsMgr, mWiki);
-
+#endif
 
 #endif // ENABLE_GXS_SERVICES
 
@@ -2372,21 +2373,27 @@ int RsServer::StartupRetroShare()
 
         GxsCoreServer* mGxsCore = new GxsCoreServer();
         mGxsCore->addService(mGxsIdService);
+#if ENABLE_OTHER_GXS_SERVICES
         mGxsCore->addService(mPhotoV2);
         mGxsCore->addService(mPosted);
         mGxsCore->addService(mWiki);
+#endif
 
         // cores ready start up GXS net servers
         createThread(*gxsid_ns);
+#if ENABLE_OTHER_GXS_SERVICES
         createThread(*photo_ns);
         createThread(*posted_ns);
         createThread(*wiki_ns);
+#endif
 
         // now add to p3service
         pqih->addService(gxsid_ns);
+#if ENABLE_OTHER_GXS_SERVICES
         pqih->addService(photo_ns);
         pqih->addService(posted_ns);
         pqih->addService(wiki_ns);
+#endif
 
         // start up gxs core server
         createThread(*mGxsCore);
@@ -2653,9 +2660,11 @@ int RsServer::StartupRetroShare()
         // Testing of new cache system interfaces.
 
 	rsIdentity = mGxsIdService;
+#if ENABLE_OTHER_GXS_SERVICES
         rsWiki = mWiki;
         rsPosted = mPosted;
         rsPhotoV2 = mPhotoV2;
+#endif
 
         rsWireVEG = mWire;
         rsForumsVEG = mForumsV2;
