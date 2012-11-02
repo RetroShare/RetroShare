@@ -30,7 +30,7 @@
 
 /** Default constructor */
 StartDialog::StartDialog(QWidget *parent)
-  : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint), reqNewCert(false)
+  : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinimizeButtonHint), reqNewCert(false)
 {
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
