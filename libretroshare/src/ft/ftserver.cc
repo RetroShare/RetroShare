@@ -542,7 +542,10 @@ uint32_t ftServer::getType(void *ref, FileSearchFlags flags)
 
 int ftServer::SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags)
 {
-	std::cerr << "(WW) ********* ftServer::SearchBoolExp:: called without peer id" << std::endl;
+	if(flags & RS_FILE_HINTS_LOCAL)
+		return mFiMon->SearchKeywords(keywords, results,flags,"");
+	else
+		return mFiStore->SearchKeywords(keywords, results,flags);
 	return 0 ;
 }
 int ftServer::SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags,const std::string& peer_id)
@@ -566,7 +569,10 @@ int ftServer::SearchKeywords(std::list<std::string> keywords, std::list<DirDetai
 
 int ftServer::SearchBoolExp(Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags)
 {
-	std::cerr << "(WW) ********* ftServer::SearchBoolExp:: called without peer id" << std::endl;
+	if(flags & RS_FILE_HINTS_LOCAL)
+		return mFiMon->SearchBoolExp(exp,results,flags,"") ;
+	else
+		return mFiStore->searchBoolExp(exp, results);
 	return 0 ;
 }
 int ftServer::SearchBoolExp(Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags,const std::string& peer_id)

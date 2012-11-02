@@ -306,24 +306,30 @@ int FileIndexMonitor::filterResults(std::list<FileEntry*>& firesults,std::list<D
 		DirDetails cdetails ;
 		RequestDirDetails (*rit,cdetails,FileSearchFlags(0u));
 #ifdef FIM_DEBUG
-		std::cerr << "Filtering candidate " << (*rit)->name  << ", flags=" << cdetails.flags ;
+		std::cerr << "Filtering candidate " << (*rit)->name  << ", flags=" << cdetails.flags << ", peer=" << peer_id ;
 #endif
 
-		FileSearchFlags permission_flags = rsPeers->computePeerPermissionFlags(peer_id,cdetails.flags,cdetails.parent_groups) ;
-
-		if (cdetails.type == DIR_TYPE_FILE && ( permission_flags & flags ))
+		if(!peer_id.empty())
 		{
-			cdetails.id = "Local";
-			results.push_back(cdetails);
+			FileSearchFlags permission_flags = rsPeers->computePeerPermissionFlags(peer_id,cdetails.flags,cdetails.parent_groups) ;
+
+			if (cdetails.type == DIR_TYPE_FILE && ( permission_flags & flags ))
+			{
+				cdetails.id = "Local";
+				results.push_back(cdetails);
 #ifdef FIM_DEBUG
-			std::cerr << ": kept" << std::endl ;
+				std::cerr << ": kept" << std::endl ;
+#endif
+			}
+#ifdef FIM_DEBUG
+			else
+				std::cerr << ": discarded" << std::endl ;
 #endif
 		}
-#ifdef FIM_DEBUG
 		else
-			std::cerr << ": discarded" << std::endl ;
-#endif
+			results.push_back(cdetails);
 	}
+
 	return !results.empty() ;
 }
 
@@ -356,10 +362,10 @@ bool FileIndexMonitor::findLocalFile(std::string hash,FileSearchFlags hint_flags
 
 			FileSearchFlags shflh = rsPeers->computePeerPermissionFlags(peer_id,share_flags,parent_groups) ;
 #ifdef FIM_DEBUG
-			std::cerr << "FileIndexMonitor::findLocalFile: Filtering candidate " << fe->name  << ", flags=" << share_flags << ", hint_flags=" << hint_flags << std::endl ;
+			std::cerr << "FileIndexMonitor::findLocalFile: Filtering candidate " << fe->name  << ", flags=" << share_flags << ", hint_flags=" << hint_flags << ", peer_id = " << peer_id << std::endl ;
 #endif
 
-			if(shflh & hint_flags)
+			if(peer_id.empty() || (shflh & hint_flags))
 			{
 #ifdef FIM_DEBUG
 				std::cerr << "FileIndexMonitor::findLocalFile() Found Name: " << fe->name << std::endl;

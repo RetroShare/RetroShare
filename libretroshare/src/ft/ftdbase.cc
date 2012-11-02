@@ -130,8 +130,7 @@ ftFiMonitor::ftFiMonitor(CacheStrapper *cs,NotifyBase *cb_in, std::string cached
 
 bool ftFiMonitor::search(const std::string &hash, FileSearchFlags hintflags, FileInfo &info) const
 {
-	std::cerr << "(EE) ********* ftFiMonitor expects a peer id in search()!" << std::endl;
-	return false ;
+	return search(hash,hintflags,"",info) ;
 }
 bool ftFiMonitor::search(const std::string &hash, FileSearchFlags hintflags, const std::string& peer_id,FileInfo &info) const
 {
