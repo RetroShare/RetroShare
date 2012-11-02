@@ -100,7 +100,7 @@ AttachFileItem::AttachFileItem(const QString& path)
 	mType = AFI_TYPE_ATTACH;
 
 	/* ask for Files to hash/prepare it for us */
-	if ((!rsFiles) || (!rsFiles->ExtraFileHash(path.toUtf8().constData(), AFI_DEFAULT_PERIOD, 0)))
+	if ((!rsFiles) || (!rsFiles->ExtraFileHash(path.toUtf8().constData(), AFI_DEFAULT_PERIOD, TransferRequestFlags(0u))))
 	{
 		mMode = AFI_STATE_ERROR;
 	}
@@ -123,7 +123,7 @@ void AttachFileItem::Setup()
   if (mMode == AFI_STATE_REMOTE)
   {
 	FileInfo fi;
-	uint32_t hintflags = RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_SPEC_ONLY;
+	FileSearchFlags hintflags = RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_SPEC_ONLY;
 
 	/* look up path */
 	if (rsFiles->FileDetails(mFileHash, hintflags, fi))
@@ -194,7 +194,7 @@ void AttachFileItem::updateItemStatic()
 		if (mPath == "")
 		{
 			FileInfo fi;
-			uint32_t hintflags = RS_FILE_HINTS_UPLOAD | RS_FILE_HINTS_LOCAL
+			FileSearchFlags hintflags = RS_FILE_HINTS_UPLOAD | RS_FILE_HINTS_LOCAL
 								| RS_FILE_HINTS_SPEC_ONLY;
 
 			/* look up path */
@@ -350,7 +350,7 @@ void AttachFileItem::updateItem()
 	}
 	else
 	{
-		uint32_t hintflags = 0;
+		FileSearchFlags hintflags(0u);
 		switch(mMode)
 		{
 			case AFI_STATE_REMOTE:

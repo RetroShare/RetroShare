@@ -21,6 +21,7 @@
 #include "ShareDialog.h"
 
 #include <retroshare/rsfiles.h>
+#include <retroshare/rstypes.h>
 
 #include <QContextMenuEvent>
 #include <QFileDialog>
@@ -61,8 +62,8 @@ ShareDialog::ShareDialog(std::string filename, QWidget *parent, Qt::WFlags flags
                 ui.browseButton->setDisabled(true);
                 ui.virtualpath_lineEdit->setText(QString::fromUtf8(it->virtualname.c_str()));
 
-                ui.browsableCheckBox->setChecked(it->shareflags & RS_FILE_HINTS_BROWSABLE);
-                ui.networkwideCheckBox->setChecked(it->shareflags & RS_FILE_HINTS_NETWORK_WIDE);
+                ui.browsableCheckBox->setChecked(it->shareflags & DIR_FLAGS_BROWSABLE_OTHERS);
+                ui.networkwideCheckBox->setChecked(it->shareflags & DIR_FLAGS_NETWORK_WIDE_OTHERS);
                 break;
             }
         }
@@ -89,13 +90,13 @@ void ShareDialog::addDirectory()
     sdi.filename = ui.localpath_lineEdit->text().toUtf8().constData();
     sdi.virtualname = ui.virtualpath_lineEdit->text().toUtf8().constData();
 
-    sdi.shareflags = 0;
+    sdi.shareflags.clear() ;
 
     if (ui.browsableCheckBox->isChecked()) {
-        sdi.shareflags |= RS_FILE_HINTS_BROWSABLE ;
+        sdi.shareflags |= DIR_FLAGS_BROWSABLE_OTHERS ;
     }
     if (ui.networkwideCheckBox->isChecked()) {
-        sdi.shareflags |= RS_FILE_HINTS_NETWORK_WIDE;
+        sdi.shareflags |= DIR_FLAGS_NETWORK_WIDE_OTHERS;
     }
 
     if (ui.localpath_lineEdit->isEnabled()) {
@@ -119,7 +120,7 @@ void ShareDialog::addDirectory()
                     rsFiles->addSharedDirectory(sdi);
                     break;
                 }
-                if (it->shareflags ^ sdi.shareflags) {
+                if (it->shareflags != sdi.shareflags) {
                     /* modifies the flags */
                     it->shareflags = sdi.shareflags;
                     rsFiles->updateShareFlags(*it);

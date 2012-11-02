@@ -475,8 +475,7 @@ bool p3Channels::channelExtraFileHash(const std::string &path, const std::string
 	// reverse string buff for correct file name
 	fname.append(fnameBuff.rbegin(), fnameBuff.rend());
 
-
-	uint32_t flags = RS_FILE_HINTS_NETWORK_WIDE;
+	TransferRequestFlags flags = RS_FILE_REQ_ANONYMOUS_ROUTING;
 
 	// then hash file and get file info too
 
@@ -490,14 +489,15 @@ bool p3Channels::channelExtraFileHash(const std::string &path, const std::string
 }
 
 
-bool p3Channels::channelExtraFileRemove(const std::string &hash, const std::string &chId){
-
-	uint32_t flags = RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_EXTRA;
+bool p3Channels::channelExtraFileRemove(const std::string &hash, const std::string &chId)
+{
+	TransferRequestFlags tflags = RS_FILE_REQ_ANONYMOUS_ROUTING | RS_FILE_REQ_EXTRA;
+	FileSearchFlags sflags = RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_EXTRA;
 
 	/* remove copy from channels directory */
 
 	FileInfo fInfo;
-	mRsFiles->FileDetails(hash, flags, fInfo);
+	mRsFiles->FileDetails(hash, sflags, fInfo);
 	std::string chPath = mChannelsDir + "/" + chId + "/" + fInfo.fname;
 
 	if(remove(chPath.c_str()) == 0){
@@ -509,8 +509,7 @@ bool p3Channels::channelExtraFileRemove(const std::string &hash, const std::stri
 				  << chPath.c_str() << std::endl;
 	}
 
-	return mRsFiles->ExtraFileRemove(hash, flags);
-
+	return mRsFiles->ExtraFileRemove(hash, tflags);
 }
 
 
@@ -835,7 +834,7 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, con
 		std::string channelname = grpId;
 
 		std::string localpath;
-		uint32_t flags;
+		TransferRequestFlags flags;
 
 		// send to download directory if file is private
 		// We also add explicit sources only if the channel is private. Otherwise we DL in network wide mode
@@ -846,14 +845,14 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, con
 		if(chanPrivate)
 		{
 			localpath = mChannelsDir;
-			flags = RS_FILE_HINTS_BACKGROUND | RS_FILE_HINTS_EXTRA;
+			flags = RS_FILE_REQ_BACKGROUND | RS_FILE_REQ_EXTRA;
 
 			srcIds.push_back(id);
 		}
 		else
 		{
 			localpath = ""; // forces dl to default directory
-			flags = RS_FILE_HINTS_BACKGROUND | RS_FILE_HINTS_NETWORK_WIDE;
+			flags = RS_FILE_REQ_BACKGROUND | RS_FILE_REQ_ANONYMOUS_ROUTING;
 		}
 
 		/* download it ... and flag for ExtraList 

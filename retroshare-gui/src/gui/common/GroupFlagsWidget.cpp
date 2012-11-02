@@ -30,7 +30,7 @@ QString GroupFlagsWidget::_tooltips_off[4] = {
 	QObject::tr("") 
 };
 
-GroupFlagsWidget::GroupFlagsWidget(QWidget *parent,uint32_t flags)
+GroupFlagsWidget::GroupFlagsWidget(QWidget *parent,FileStorageFlags flags)
 	: QWidget(parent)
 {
 	_layout = new QHBoxLayout(this) ;
@@ -79,9 +79,9 @@ void GroupFlagsWidget::updated()
 	emit flagsChanged(flags()) ;
 }
 
-uint32_t GroupFlagsWidget::flags() const 
+FileStorageFlags GroupFlagsWidget::flags() const 
 {
-	uint32_t flags = 0x0 ;
+	FileStorageFlags flags ;
 
 	for(int i=0;i<4;++i)
 		if(_buttons[i]->isChecked()) flags |= _flags[i] ;

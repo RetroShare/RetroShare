@@ -27,6 +27,7 @@
 #include <QUrl>
 
 #include <retroshare/rsfiles.h>
+#include <retroshare/rstypes.h>
 
 #include "ShareManager.h"
 #include "ShareDialog.h"
@@ -121,21 +122,21 @@ void ShareManager::load()
     /* set new row count */
     listWidget->setRowCount(dirs.size());
 
-    connect(this,SIGNAL(itemClicked(QTableWidgetItem*)),this,SLOT(updateFlags(QTableWidgetItem*))) ;
-
     int row=0 ;
     for(it = dirs.begin(); it != dirs.end(); it++,++row)
     {
         listWidget->setItem(row, COLUMN_PATH, new QTableWidgetItem(QString::fromUtf8((*it).filename.c_str())));
         listWidget->setItem(row, COLUMN_VIRTUALNAME, new QTableWidgetItem(QString::fromUtf8((*it).virtualname.c_str())));
 
-		  QWidget* widget = new GroupFlagsWidget(NULL,(*it).shareflags);
+		  GroupFlagsWidget *widget = new GroupFlagsWidget(NULL,(*it).shareflags);
 
 		  listWidget->setRowHeight(row, 32);
 		  listWidget->setCellWidget(row, COLUMN_SHARE_FLAGS, widget);
 
 		  listWidget->setItem(row, COLUMN_GROUPS, new QTableWidgetItem(QString(" - "))) ; // no groups!
 		  listWidget->item(row,COLUMN_GROUPS)->setBackgroundColor(QColor(183,236,181)) ;
+
+		  connect(widget,SIGNAL(flagsChanged(FileStorageFlags)),this,SLOT(updateFlags())) ;
     }
 
 	 listWidget->setColumnWidth(COLUMN_SHARE_FLAGS,132) ;
@@ -168,12 +169,12 @@ void ShareManager::showYourself()
    }
 }
 
-void ShareManager::updateFlags(bool b)
+void ShareManager::updateFlags()
 {
     if(isLoading)
         return ;
 
-    std::cerr << "Updating flags (b=" << b << ") !!!" << std::endl ;
+    std::cerr << "Updating flags" << std::endl;
 
     std::list<SharedDirInfo>::iterator it;
     std::list<SharedDirInfo> dirs;
@@ -182,10 +183,10 @@ void ShareManager::updateFlags(bool b)
     int row=0 ;
     for(it = dirs.begin(); it != dirs.end(); it++,++row)
     {
-        std::cerr << "Looking for row=" << row << ", file=" << (*it).filename << ", flags=" << (*it).shareflags << std::endl ;
-        uint32_t current_flags = (dynamic_cast<GroupFlagsWidget*>(ui.shareddirList->cellWidget(row,COLUMN_SHARE_FLAGS)->children().front()))->flags() ;
+        //std::cerr << "Looking for row=" << row << ", file=" << (*it).filename << ", flags=" << (*it).shareflags << std::endl ;
+        FileStorageFlags current_flags = (dynamic_cast<GroupFlagsWidget*>(ui.shareddirList->cellWidget(row,COLUMN_SHARE_FLAGS)))->flags() ;
 
-        if( (*it).shareflags ^ current_flags )
+        if( (*it).shareflags != current_flags )
         {
             (*it).shareflags = current_flags ;
             rsFiles->updateShareFlags(*it) ;	// modifies the flags
@@ -298,7 +299,7 @@ void ShareManager::dropEvent(QDropEvent *event)
 					sdi.filename = localpath.toUtf8().constData();
 					sdi.virtualname.clear();
 
-					sdi.shareflags = 0;
+					sdi.shareflags.clear() ;
 
 					/* add new share */
 					rsFiles->addSharedDirectory(sdi);

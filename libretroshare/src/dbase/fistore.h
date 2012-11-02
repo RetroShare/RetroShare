@@ -75,7 +75,7 @@ virtual int loadCache(const CacheData &data);	  /* actual load, once data availa
 	int SearchHash(std::string hash, std::list<FileDetail> &results) const;
 
 	/* Search Interface - For Search Interface */
-	int SearchKeywords(std::list<std::string> terms, std::list<DirDetails> &results,uint32_t flags) const;
+	int SearchKeywords(std::list<std::string> terms, std::list<DirDetails> &results,FileSearchFlags flags) const;
 
 	/* Search Interface - for Adv Search Interface */
 	int searchBoolExp(Expression * exp, std::list<DirDetails> &results) const;
@@ -83,7 +83,7 @@ virtual int loadCache(const CacheData &data);	  /* actual load, once data availa
 
 	/* Search Interface - For Directory Access */
 	int RequestDirDetails(const std::string& uid, const std::string& path, DirDetails &details) const;
-	int RequestDirDetails(void *ref, DirDetails &details, uint32_t flags) const;
+	int RequestDirDetails(void *ref, DirDetails &details, FileSearchFlags flags) const;
 	uint32_t getType(void *ref) const ;
 
 	private:

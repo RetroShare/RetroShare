@@ -1346,7 +1346,7 @@ bool FileIndex::extractData(void *ref,DirDetails& details)
 	details.ref = file;
 	details.hash = file->hash;
 	details.age = now - file->modtime;
-	details.flags = 0;//file->pop;
+	details.flags.clear() ;
 
 	/* find parent pointer, and row */
 	details.parent = file->parent ;

@@ -111,12 +111,12 @@ class FileIndexMonitor: public CacheSource, public RsThread
 		virtual ~FileIndexMonitor();
 
 		/* external interface for filetransfer */
-		bool findLocalFile(std::string hash,uint32_t flags,const std::string& peer_id, std::string &fullpath, uint64_t &size) const;
+		bool findLocalFile(std::string hash,FileSearchFlags flags,const std::string& peer_id, std::string &fullpath, uint64_t &size) const;
 
-		int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,uint32_t flags,const std::string& peer_id) ;
-		int SearchBoolExp(Expression *exp, std::list<DirDetails> &results,uint32_t flags,const std::string& peer_id) const ;
+		int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags,const std::string& peer_id) ;
+		int SearchBoolExp(Expression *exp, std::list<DirDetails> &results,FileSearchFlags flags,const std::string& peer_id) const ;
 
-		int filterResults(std::list<FileEntry*>& firesults,std::list<DirDetails>& results,TransferInfoFlags flags,const std::string& peer_id) const ;
+		int filterResults(std::list<FileEntry*>& firesults,std::list<DirDetails>& results,FileSearchFlags flags,const std::string& peer_id) const ;
 
 
 		/* external interface for local access to files */
@@ -136,7 +136,7 @@ class FileIndexMonitor: public CacheSource, public RsThread
 		void 	updateCycle();
 
 		// Interface for browsing dir hirarchy
-		int RequestDirDetails(void*, DirDetails&, uint32_t) const ;
+		int RequestDirDetails(void*, DirDetails&, FileSearchFlags) const ;
 		uint32_t getType(void*) const ;
 		int RequestDirDetails(const std::string& path, DirDetails &details) const ;
 

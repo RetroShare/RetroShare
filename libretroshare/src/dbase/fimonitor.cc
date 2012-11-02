@@ -46,7 +46,7 @@
 #include <fstream>
 
 //***********
-//#define FIM_DEBUG 1
+#define FIM_DEBUG 1
 // ***********/
 
 FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, NotifyBase *cb_in,std::string cachedir, std::string pid,const std::string& config_dir)
@@ -267,7 +267,7 @@ FileIndexMonitor::~FileIndexMonitor()
 	/* Data cleanup - TODO */
 }
 
-int FileIndexMonitor::SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,uint32_t flags,const std::string& peer_id)
+int FileIndexMonitor::SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags,const std::string& peer_id)
 {
 	results.clear();
 	std::list<FileEntry *> firesults;
@@ -280,7 +280,7 @@ int FileIndexMonitor::SearchKeywords(std::list<std::string> keywords, std::list<
 	return filterResults(firesults,results,flags,peer_id) ;
 }
 
-int FileIndexMonitor::SearchBoolExp(Expression *exp, std::list<DirDetails>& results,uint32_t flags,const std::string& peer_id) const
+int FileIndexMonitor::SearchBoolExp(Expression *exp, std::list<DirDetails>& results,FileSearchFlags flags,const std::string& peer_id) const
 {
 	results.clear();
 	std::list<FileEntry *> firesults;
@@ -293,7 +293,7 @@ int FileIndexMonitor::SearchBoolExp(Expression *exp, std::list<DirDetails>& resu
 	return filterResults(firesults,results,flags,peer_id) ;
 }
 
-int FileIndexMonitor::filterResults(std::list<FileEntry*>& firesults,std::list<DirDetails>& results,TransferInfoFlags flags,const std::string& peer_id) const
+int FileIndexMonitor::filterResults(std::list<FileEntry*>& firesults,std::list<DirDetails>& results,FileSearchFlags flags,const std::string& peer_id) const
 {
 #ifdef DEBUG
 	if((flags & ~RS_FILE_HINTS_PERMISSION_MASK) > 0)
@@ -304,14 +304,14 @@ int FileIndexMonitor::filterResults(std::list<FileEntry*>& firesults,std::list<D
 	for(std::list<FileEntry*>::const_iterator rit(firesults.begin()); rit != firesults.end(); ++rit)
 	{
 		DirDetails cdetails ;
-		RequestDirDetails (*rit,cdetails,0);
+		RequestDirDetails (*rit,cdetails,FileSearchFlags(0u));
 #ifdef FIM_DEBUG
 		std::cerr << "Filtering candidate " << (*rit)->name  << ", flags=" << cdetails.flags ;
 #endif
 
-		TransferInfoFlags permission_flags = rsPeers->computePeerPermissionFlags(peer_id,cdetails.flags,cdetails.parent_groups) ;
+		FileSearchFlags permission_flags = rsPeers->computePeerPermissionFlags(peer_id,cdetails.flags,cdetails.parent_groups) ;
 
-		if (cdetails.type == DIR_TYPE_FILE && (( permission_flags & flags & RS_FILE_HINTS_PERMISSION_MASK) > 0 ))
+		if (cdetails.type == DIR_TYPE_FILE && ( permission_flags & flags ))
 		{
 			cdetails.id = "Local";
 			results.push_back(cdetails);
@@ -327,7 +327,7 @@ int FileIndexMonitor::filterResults(std::list<FileEntry*>& firesults,std::list<D
 	return !results.empty() ;
 }
 
-bool FileIndexMonitor::findLocalFile(std::string hash,uint32_t hint_flags, const std::string& peer_id,std::string &fullpath, uint64_t &size) const
+bool FileIndexMonitor::findLocalFile(std::string hash,FileSearchFlags hint_flags, const std::string& peer_id,std::string &fullpath, uint64_t &size) const
 {
 	std::list<FileEntry *> results;
 	bool ok = false;
@@ -354,12 +354,12 @@ bool FileIndexMonitor::findLocalFile(std::string hash,uint32_t hint_flags, const
 
 			// turn share flags into hint flags
 
-			uint32_t shflh = rsPeers->computePeerPermissionFlags(peer_id,share_flags,parent_groups) ;
+			FileSearchFlags shflh = rsPeers->computePeerPermissionFlags(peer_id,share_flags,parent_groups) ;
 #ifdef FIM_DEBUG
 			std::cerr << "FileIndexMonitor::findLocalFile: Filtering candidate " << fe->name  << ", flags=" << share_flags << ", hint_flags=" << hint_flags << std::endl ;
 #endif
 
-			if(shflh & (hint_flags & RS_FILE_HINTS_PERMISSION_MASK))
+			if(shflh & hint_flags)
 			{
 #ifdef FIM_DEBUG
 				std::cerr << "FileIndexMonitor::findLocalFile() Found Name: " << fe->name << std::endl;
@@ -533,13 +533,13 @@ void 	FileIndexMonitor::run()
 			updateCycle();
 
 #ifdef FIM_DEBUG
-		{
-			RsStackMutex mtx(fiMutex) ;
-			std::cerr <<"*********** FileIndex **************" << std::endl ;
-			fi.printFileIndex(std::cerr) ;
-			std::cerr <<"************** END *****************" << std::endl ;
-			std::cerr << std::endl ;
-		}
+//		{
+//			RsStackMutex mtx(fiMutex) ;
+//			std::cerr <<"*********** FileIndex **************" << std::endl ;
+//			fi.printFileIndex(std::cerr) ;
+//			std::cerr <<"************** END *****************" << std::endl ;
+//			std::cerr << std::endl ;
+//		}
 #endif
 	}
 }
@@ -820,7 +820,7 @@ void 	FileIndexMonitor::updateCycle()
 
 #ifdef FIM_DEBUG
 		/* print out the new directory structure */
-		fi.printFileIndex(std::cerr);
+//		fi.printFileIndex(std::cerr);
 #endif
 		/* now if we have changed things -> restore file/hash it/and
 		 * tell the CacheSource
@@ -1012,8 +1012,6 @@ void FileIndexMonitor::locked_saveFileIndexes()
 	//
 #ifdef FIM_DEBUG
 	std::cerr << "FileIndexMonitor::updateCycle() FileIndex modified ... updating" << std::endl;
-	std::cerr << "FileIndexMonitor::updateCycle() saving total file list to  to: " << fname_total << std::endl ;
-	std::cerr << "FileIndexMonitor::updateCycle() saving browsable file list to: " << fname_browsable << std::endl ;
 #endif
 	// Make for each peer the list of forbidden shared directories. Make a separate cache file for each different set.
 	// To figure out which sets are different, we index them by the set of forbidden indexes from the directory list.
@@ -1027,13 +1025,14 @@ void FileIndexMonitor::locked_saveFileIndexes()
 	for(std::list<std::string>::const_iterator it(online_ids.begin());it!=online_ids.end();++it)
 	{
 		std::cerr << "About to save, with the following restrictions:" << std::endl ;
+		std::cerr << "Peer : " << *it << std::endl;
 
 		std::set<std::string> forbidden_dirs ;
 		for(std::map<std::string,SharedDirInfo>::const_iterator dit(directoryMap.begin());dit!=directoryMap.end();++dit)
 		{
 			std::cerr << "   dir=" << dit->first << " : " ;
 
-			uint32_t permission_flags = rsPeers->computePeerPermissionFlags(*it,dit->second.shareflags,dit->second.parent_groups) ;
+			FileSearchFlags permission_flags = rsPeers->computePeerPermissionFlags(*it,dit->second.shareflags,dit->second.parent_groups) ;
 
 			if(!(permission_flags & RS_FILE_HINTS_BROWSABLE))
 			{
@@ -1083,8 +1082,7 @@ void FileIndexMonitor::locked_saveFileIndexes()
 		if(size > 0)
 		{
 #ifdef FIM_DEBUG
-			std::cerr << "FileIndexMonitor::updateCycle() saved with hash:" << calchash;
-			std::cerr <<  std::endl;
+			std::cerr << "FileIndexMonitor::updateCycle() saved with hash:" << hash <<  std::endl;
 #endif
 
 			/* should clean up the previous cache.... */
@@ -1350,7 +1348,7 @@ uint32_t FileIndexMonitor::getType(void *ref) const
 
 	return fi.getType(ref) ;
 }
-int FileIndexMonitor::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags) const
+int FileIndexMonitor::RequestDirDetails(void *ref, DirDetails &details, FileSearchFlags flags) const
 {
 	/* remove unused parameter warnings */
 	(void) flags;
@@ -1390,7 +1388,7 @@ int FileIndexMonitor::RequestDirDetails(void *ref, DirDetails &details, uint32_t
 		details.hash = "";
 		details.path = "root";
 		details.age = 0;
-		details.flags = 0;
+		details.flags.clear() ;
 		details.min_age = 0 ;
 
 		return true ;
@@ -1415,7 +1413,7 @@ int FileIndexMonitor::RequestDirDetails(void *ref, DirDetails &details, uint32_t
 
 void FileIndexMonitor::locked_findShareFlagsAndParentGroups(FileEntry *file,FileStorageFlags& flags,std::list<std::string>& parent_groups) const
 {
-	flags = 0 ;
+	flags.clear() ;
 	static const FileStorageFlags PERMISSION_MASK = DIR_FLAGS_BROWSABLE_OTHERS | DIR_FLAGS_NETWORK_WIDE_OTHERS | DIR_FLAGS_BROWSABLE_GROUPS | DIR_FLAGS_NETWORK_WIDE_GROUPS ;
 
 	DirEntry *dir = dynamic_cast<DirEntry*>(file) ;
@@ -1437,7 +1435,8 @@ void FileIndexMonitor::locked_findShareFlagsAndParentGroups(FileEntry *file,File
 			std::cerr << "*********** ERROR *********** In " << __PRETTY_FUNCTION__ << std::endl ;
 		else
 		{
-			flags = it->second.shareflags & PERMISSION_MASK ;
+			flags = it->second.shareflags ;
+			flags &= PERMISSION_MASK ;
 			parent_groups = it->second.parent_groups ;
 		}
 #ifdef FIM_DEBUG2

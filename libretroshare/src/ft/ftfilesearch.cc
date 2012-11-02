@@ -39,9 +39,9 @@ ftFileSearch::ftFileSearch()
 	}
 }
 
-bool	ftFileSearch::addSearchMode(ftSearch *search, uint32_t hintflags)
+bool	ftFileSearch::addSearchMode(ftSearch *search, FileSearchFlags hintflags)
 {
-	hintflags &= 0x00ffffff;
+	hintflags &= FileSearchFlags(0x000000ff);
 
 #ifdef DEBUG_SEARCH
 	std::cerr << "ftFileSearch::addSearchMode() : " << hintflags;
@@ -51,7 +51,7 @@ bool	ftFileSearch::addSearchMode(ftSearch *search, uint32_t hintflags)
 	uint32_t i;
 	for  (i = 0; i < MAX_SEARCHS; i++)
 	{
-		uint32_t hints = hintflags >> i;
+		uint32_t hints = hintflags.toUInt32() >> i;
 		if (hints & 0x0001)
 		{
 			/* has the flag */
@@ -75,7 +75,7 @@ bool	ftFileSearch::addSearchMode(ftSearch *search, uint32_t hintflags)
 	return false;
 }
 
-bool	ftFileSearch::search(const std::string &hash, uint32_t hintflags, FileInfo &info) const
+bool	ftFileSearch::search(const std::string &hash, FileSearchFlags hintflags, FileInfo &info) const
 {
 	uint32_t hints, i;
 
@@ -87,7 +87,7 @@ bool	ftFileSearch::search(const std::string &hash, uint32_t hintflags, FileInfo 
 	
 	for  (i = 0; i < MAX_SEARCHS; i++)
 	{
-		hints = hintflags >> i;
+		hints = hintflags.toUInt32() >> i;
 		if (hints & 0x0001)
 		{
 			/* has the flag */
@@ -140,7 +140,7 @@ bool	ftFileSearch::search(const std::string &hash, uint32_t hintflags, FileInfo 
 	 */
 	for  (i = 0; i < MAX_SEARCHS; i++)
 	{
-		hints = hintflags >> i;
+		hints = hintflags.toUInt32() >> i;
 		if (hints & 0x0001)
 		{
 			continue;
@@ -180,7 +180,7 @@ bool	ftFileSearch::search(const std::string &hash, uint32_t hintflags, FileInfo 
 }
 
 
-bool 	ftSearchDummy::search(std::string /*hash*/, uint32_t hintflags, FileInfo &/*info*/) const
+bool 	ftSearchDummy::search(std::string /*hash*/, FileSearchFlags hintflags, FileInfo &/*info*/) const
 {
 	/* remove unused parameter warnings */
 	(void) hintflags;

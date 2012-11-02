@@ -323,7 +323,7 @@ void MessageWidget::getcurrentrecommended()
 		const FileInfo& fi(it->second) ;
 		std::cout << "Requesting file " << fi.fname << ", size=" << fi.size << ", hash=" << fi.hash << std::endl ;
 
-		if (rsFiles->FileRequest(fi.fname, fi.hash, fi.size, "", RS_FILE_HINTS_NETWORK_WIDE, srcIds) == false) {
+		if (rsFiles->FileRequest(fi.fname, fi.hash, fi.size, "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds) == false) {
 			QMessageBox mb(QObject::tr("File Request canceled"), QObject::tr("The following has not been added to your download list, because you already have it:\n    ") + QString::fromUtf8(fi.fname.c_str()), QMessageBox::Critical, QMessageBox::Ok, 0, 0);
 			mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
 			mb.exec();
@@ -347,7 +347,7 @@ void MessageWidget::getallrecommended()
 		std::cerr << "MessageWidget::getallrecommended() Calling File Request" << std::endl;
 		std::list<std::string> srcIds;
 		srcIds.push_back(msgInfo.srcId);
-		rsFiles->FileRequest(it->fname, it->hash, it->size, "", RS_FILE_HINTS_NETWORK_WIDE, srcIds);
+		rsFiles->FileRequest(it->fname, it->hash, it->size, "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds);
 	}
 }
 

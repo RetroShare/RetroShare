@@ -3,16 +3,17 @@
 #include <stdint.h>
 #include <QPushButton>
 #include <QWidget>
+#include <retroshare/rsflags.h>
 
 class GroupFlagsWidget: public QWidget
 {
 	Q_OBJECT
 
 	public:
-		GroupFlagsWidget(QWidget *parent,uint32_t flags) ;
+		GroupFlagsWidget(QWidget *parent,FileStorageFlags flags) ;
 		virtual ~GroupFlagsWidget() ;
 
-		uint32_t flags() const ;
+		FileStorageFlags flags() const ;
 
 	public slots:
 		void updated() ;
@@ -24,7 +25,7 @@ class GroupFlagsWidget: public QWidget
 		void update_OB_button(bool) ;
 
 	signals:
-		void flagsChanged(uint32_t) const ;
+		void flagsChanged(FileStorageFlags) const ;
 
 	private:
 		void update_button_state(bool b,int id) ;
@@ -33,7 +34,7 @@ class GroupFlagsWidget: public QWidget
 
 		QLayout *_layout ;
 		QIcon *_icons[6] ;
-		uint32_t _flags[4] ;
+		FileStorageFlags _flags[4] ;
 
 		static QString _tooltips_on[4] ;
 		static QString _tooltips_off[4] ;

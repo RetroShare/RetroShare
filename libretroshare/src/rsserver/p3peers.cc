@@ -1100,7 +1100,7 @@ bool p3Peers::assignPeersToGroup(const std::string &groupId, const std::list<std
 	return mPeerMgr->assignPeersToGroup(groupId, peerIds, assign);
 }
 
-TransferInfoFlags p3Peers::computePeerPermissionFlags(const std::string& peer_id,
+FileSearchFlags p3Peers::computePeerPermissionFlags(const std::string& peer_id,
 																		FileStorageFlags share_flags,
 																		const std::list<std::string>& directory_parent_groups)
 {
@@ -1110,7 +1110,6 @@ TransferInfoFlags p3Peers::computePeerPermissionFlags(const std::string& peer_id
 	// very simple algorithm.
 	//
 
-	TransferInfoFlags final_flags = 0 ;
 	bool found = false ;
 
 	for(std::list<std::string>::const_iterator it(directory_parent_groups.begin());it!=directory_parent_groups.end() && !found;++it)
@@ -1130,7 +1129,12 @@ TransferInfoFlags p3Peers::computePeerPermissionFlags(const std::string& peer_id
 	bool network_wide = (share_flags & DIR_FLAGS_NETWORK_WIDE_OTHERS) || ( (share_flags & DIR_FLAGS_NETWORK_WIDE_GROUPS) && found) ;
 	bool browsable    = (share_flags &    DIR_FLAGS_BROWSABLE_OTHERS) || ( (share_flags &    DIR_FLAGS_BROWSABLE_GROUPS) && found) ;
 
-	return network_wide * RS_FILE_HINTS_NETWORK_WIDE + browsable * RS_FILE_HINTS_BROWSABLE ;
+	FileSearchFlags final_flags ;
+
+	if(network_wide) final_flags |= RS_FILE_HINTS_NETWORK_WIDE ;
+	if(browsable   ) final_flags |= RS_FILE_HINTS_BROWSABLE ;
+
+	return final_flags ;
 }
 
 RsPeerDetails::RsPeerDetails()

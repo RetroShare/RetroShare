@@ -65,38 +65,38 @@
 class FileDetails
 {
 	public:
-	FileDetails()
-{
-	return;
-}
+		FileDetails()
+		{
+			return;
+		}
 
-	FileDetails(std::string path, uint32_t p, uint32_t f)
-{
-	info.path = path;
-	period = p;
-	flags = f;
-}
-	
-	FileDetails(FileInfo &i, uint32_t p, uint32_t f)
-{
-	info = i;
-	period = p;
-	flags = f;
-}
+		FileDetails(std::string path, uint32_t p, TransferRequestFlags f)
+		{
+			info.path = path;
+			period = p;
+			flags = f;
+		}
 
-	FileInfo info;
+		FileDetails(FileInfo &i, uint32_t p, TransferRequestFlags f)
+		{
+			info = i;
+			period = p;
+			flags = f;
+		}
+
+		FileInfo info;
 
 #if 0   /*** WHAT IS NEEDED ***/
-	std::list<std::string> sources;
-	std::string path;
-	std::string fname;
-	std::string hash;
-	uint64_t size;
+		std::list<std::string> sources;
+		std::string path;
+		std::string fname;
+		std::string hash;
+		uint64_t size;
 #endif
 
-	uint32_t start;
-	uint32_t period;
-	uint32_t flags;
+		uint32_t start;
+		uint32_t period;
+		TransferRequestFlags flags;
 };
 
 const uint32_t FT_DETAILS_CLEANUP	= 0x0100; 	/* remove when it expires */
@@ -118,9 +118,9 @@ class ftExtraList: public RsThread, public p3Config, public ftSearch
 		 **/
 
 bool		addExtraFile(std::string path, std::string hash, 
-				uint64_t size, uint32_t period, uint32_t flags);
+				uint64_t size, uint32_t period, TransferRequestFlags flags);
 
-bool		removeExtraFile(std::string hash, uint32_t flags);
+bool		removeExtraFile(std::string hash, TransferRequestFlags flags);
 bool 		moveExtraFile(std::string fname, std::string hash, uint64_t size,
                                 std::string destpath);
 
@@ -130,7 +130,7 @@ bool 		moveExtraFile(std::string fname, std::string hash, uint64_t size,
 		 * file is removed after period.
 		 **/
 
-bool 		hashExtraFile(std::string path, uint32_t period, uint32_t flags);
+bool 		hashExtraFile(std::string path, uint32_t period, TransferRequestFlags flags);
 bool	 	hashExtraFileDone(std::string path, FileInfo &info);
 
 		/***
@@ -138,7 +138,7 @@ bool	 	hashExtraFileDone(std::string path, FileInfo &info);
 		 * implementation of ftSearch.
 		 *
 		 **/
-virtual bool    search(const std::string &hash, uint32_t hintflags, FileInfo &info) const;
+virtual bool    search(const std::string &hash, FileSearchFlags hintflags, FileInfo &info) const;
 
 		/***
 		 * Thread Main Loop 
@@ -159,7 +159,7 @@ virtual bool    loadList(std::list<RsItem *>& load);
 		/* Worker Functions */
 void	hashAFile();
 bool	cleanupOldFiles();
-bool    cleanupEntry(std::string path, uint32_t flags);
+bool    cleanupEntry(std::string path, TransferRequestFlags flags);
 
 		mutable RsMutex extMutex;
 

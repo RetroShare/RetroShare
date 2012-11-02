@@ -463,11 +463,7 @@ void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
                 const DirStub& dirStub = *cit;
 
                 DirDetails details;
-                uint32_t flags = DIR_FLAGS_DETAILS;
-                if (remote)
-                    flags |= DIR_FLAGS_REMOTE;
-                else
-                    flags |= DIR_FLAGS_LOCAL;
+                FileSearchFlags flags = remote?RS_FILE_HINTS_REMOTE:RS_FILE_HINTS_LOCAL ;
 
                 // do not recursive copy sub dirs.
                 if (!rsFiles->RequestDirDetails(dirStub.ref, details, flags) || details.type != DIR_TYPE_FILE)

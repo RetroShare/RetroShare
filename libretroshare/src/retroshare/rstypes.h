@@ -202,19 +202,19 @@ class SearchRequest
  *     (TODO)
  */
 
-const FileStorageFlags DIR_FLAGS_PARENT                 	= 0x0001;
-const FileStorageFlags DIR_FLAGS_DETAILS                	= 0x0002;
-const FileStorageFlags DIR_FLAGS_CHILDREN               	= 0x0004;
+const FileStorageFlags DIR_FLAGS_PARENT                 	( 0x0001 );
+const FileStorageFlags DIR_FLAGS_DETAILS                	( 0x0002 );	// apparently unused
+const FileStorageFlags DIR_FLAGS_CHILDREN               	( 0x0004 );	// apparently unused
 
-const FileStorageFlags DIR_FLAGS_NETWORK_WIDE_OTHERS  	= 0x0080; // Flags for directory sharing permissions. The last
-const FileStorageFlags DIR_FLAGS_BROWSABLE_OTHERS     	= 0x0100; // one should be the OR of the all four flags.
-const FileStorageFlags DIR_FLAGS_NETWORK_WIDE_GROUPS  	= 0x0200;
-const FileStorageFlags DIR_FLAGS_BROWSABLE_GROUPS     	= 0x0400;
-const FileStorageFlags DIR_FLAGS_PERMISSIONS_MASK     	= DIR_FLAGS_NETWORK_WIDE_OTHERS | DIR_FLAGS_BROWSABLE_OTHERS 
-																			| DIR_FLAGS_NETWORK_WIDE_GROUPS | DIR_FLAGS_BROWSABLE_GROUPS ;
+const FileStorageFlags DIR_FLAGS_NETWORK_WIDE_OTHERS  	( 0x0080 ); // Flags for directory sharing permissions. The last
+const FileStorageFlags DIR_FLAGS_BROWSABLE_OTHERS     	( 0x0100 ); // one should be the OR of the all four flags.
+const FileStorageFlags DIR_FLAGS_NETWORK_WIDE_GROUPS  	( 0x0200 );
+const FileStorageFlags DIR_FLAGS_BROWSABLE_GROUPS     	( 0x0400 );
+const FileStorageFlags DIR_FLAGS_PERMISSIONS_MASK     	( DIR_FLAGS_NETWORK_WIDE_OTHERS | DIR_FLAGS_BROWSABLE_OTHERS 
+																			| DIR_FLAGS_NETWORK_WIDE_GROUPS | DIR_FLAGS_BROWSABLE_GROUPS );
 
-const FileStorageFlags DIR_FLAGS_LOCAL                  	= 0x1000;
-const FileStorageFlags DIR_FLAGS_REMOTE                 	= 0x2000;
+const FileStorageFlags DIR_FLAGS_LOCAL                  	( 0x1000 );
+const FileStorageFlags DIR_FLAGS_REMOTE                 	( 0x2000 );
 
 class FileInfo
 {
@@ -224,8 +224,8 @@ class FileInfo
 		FileInfo() : mId(0) { return; }
 		RsCertId id; /* key for matching everything */
 
-		FileStorageFlags storage_permission_flags; 	// Combination of the four RS_DIR_FLAGS_*. Updated when the file is a local stored file.
-		TransferInfoFlags transfer_info_flags ;					// various flags from RS_FILE_HINTS_*
+		FileStorageFlags  storage_permission_flags; 	// Combination of the four RS_DIR_FLAGS_*. Updated when the file is a local stored file.
+		TransferRequestFlags   transfer_info_flags ;		// various flags from RS_FILE_HINTS_*
 
 		/* allow this to be tweaked by the GUI Model */
 		mutable unsigned int mId; /* (GUI) Model Id -> unique number */
@@ -327,7 +327,6 @@ class FileChunksInfo
 
 		uint64_t file_size ;					// real size of the file
 		uint32_t chunk_size ;				// size of chunks
-		uint32_t flags ;
 		uint32_t strategy ;
 
 		// dl state of chunks. Only the last chunk may have size < chunk_size

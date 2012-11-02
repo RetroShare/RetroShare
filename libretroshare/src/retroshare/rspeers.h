@@ -307,7 +307,7 @@ class RsPeers
 		// ... computes the sharing file permission hint flags set for this peer, that is a combination of 
 		// 		RS_FILE_HINTS_NETWORK_WIDE and RS_FILE_HINTS_BROWSABLE.
 		//
-		virtual TransferInfoFlags computePeerPermissionFlags(const std::string& peer_id,FileStorageFlags file_sharing_flags,const std::list<std::string>& file_parent_groups) = 0;
+		virtual FileSearchFlags computePeerPermissionFlags(const std::string& peer_id,FileStorageFlags file_sharing_flags,const std::list<std::string>& file_parent_groups) = 0;
 
 };
 

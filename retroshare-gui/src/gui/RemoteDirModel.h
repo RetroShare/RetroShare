@@ -26,6 +26,7 @@
 #include <QIcon>
 #include <vector>
 #include <stdint.h>
+#include <retroshare/rstypes.h>
 
 class DirDetails;
 
@@ -65,7 +66,7 @@ class RetroshareDirModel : public QAbstractItemModel
 		void getFilePaths(const QModelIndexList &list, std::list<std::string> &fullpaths);
 		void changeAgeIndicator(uint32_t indicator) { ageIndicator = indicator; }
 
-		bool requestDirDetails(void *ref,DirDetails& details,uint32_t flags) const;
+		bool requestDirDetails(void *ref,DirDetails& details,FileSearchFlags flags) const;
 		void update() ;
 	public:
 
@@ -79,7 +80,7 @@ class RetroshareDirModel : public QAbstractItemModel
 
 		void treeStyle();
 		void downloadDirectory(const DirDetails & details, int prefixLen);
-		static QString getFlagsString(uint32_t) ;
+		static QString getFlagsString(FileStorageFlags f) ;
 		static QString getGroupsString(const std::list<std::string>&) ;
 		QString getAgeIndicatorString(const DirDetails &) const;
 		void getAgeIndicatorRec(DirDetails &details, QString &ret) const;
