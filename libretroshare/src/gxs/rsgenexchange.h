@@ -158,7 +158,7 @@ protected:
 
     /*!
      * @param grpItem
-     * @deprecated only here to temporarily to testing
+     * @deprecated only here temporarily for testing
      */
     void createDummyGroup(RsGxsGrpItem* grpItem);
 
@@ -231,7 +231,7 @@ public:
     bool acknowledgeTokenMsg(const uint32_t& token, RsGxsGrpMsgIdPair& msgId);
 
     /*!
-         * This allows the client service to acknowledge that their grps has \n
+	 * This allows the client service to acknowledge that their grps has \n
 	 * been created/modified and retrieve the create/modified grp ids
 	 * @param token the token related to modification/create request
 	 * @param msgIds vector of ids of groups created/modified
@@ -270,19 +270,45 @@ public:
     /*!
      * sets the group subscribe flag
      * @param token this is set to token value associated to this request
-     * @param
+     * @param grpId Id of group whose subscribe file will be changed
+     * @param status
+     * @param mask
      */
     void setGroupSubscribeFlags(uint32_t& token, const RsGxsGroupId& grpId, const uint32_t& status, const uint32_t& mask);
 
+    /*!
+	 * sets the group subscribe flag
+	 * @param token this is set to token value associated to this request
+	 * @param grpId Id of group whose subscribe file will be changed
+	 * @param status
+	 * @param mask
+	 */
     void setGroupStatusFlags(uint32_t& token, const RsGxsGroupId& grpId, const uint32_t& status, const uint32_t& mask);
 
+    /*!
+	 * sets the group service string
+	 * @param token this is set to token value associated to this request
+	 * @param grpId Id of group whose subscribe file will be changed
+	 * @param servString
+	 */
     void setGroupServiceString(uint32_t& token, const RsGxsGroupId& grpId, const std::string& servString);
 
+    /*!
+	 * sets the msg status flag
+	 * @param token this is set to token value associated to this request
+	 * @param grpId Id of group whose subscribe file will be changed
+	 * @param status
+	 * @param mask Mask to apply to status flag
+	 */
     void setMsgStatusFlags(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, const uint32_t& status, const uint32_t& mask);
 
+    /*!
+	 * sets the message service string
+	 * @param token this is set to token value associated to this request
+	 * @param msgId Id of message whose service string will be changed
+	 * @param servString The service string to set msg to
+	 */
     void setMsgServiceString(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, const std::string& servString );
-
-
 
 protected:
 
@@ -324,7 +350,20 @@ private:
      */
     void processGrpMetaChanges();
 
-    void createGroup(RsNxsGrp* grp);
+    /*!
+     * This completes the creation of an instance on RsNxsGrp
+     * by assigning it a groupId and signature via SHA1 and EVP_sign respectively
+     * @param grp Nxs group to create
+     */
+    bool createGroup(RsNxsGrp* grp);
+
+    /*!
+     * This completes the creation of an instance on RsNxsMsg
+     * by assigning it a groupId and signature via SHA1 and EVP_sign respectively
+     * What signatures are calculated are based on the authentication policy
+     * of the service
+     * @param msg the Nxs message to create
+     */
     bool createMessage(RsNxsMsg* msg);
 
 

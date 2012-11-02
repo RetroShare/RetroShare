@@ -130,6 +130,16 @@ public:
          * @return false if verfication of signature is not passed
          */
         static bool validateNxsMsg(RsNxsMsg *msg, RsTlvKeySignature& sign, RsTlvSecurityKeySet& key);
+
+
+        /*!
+         * @param data data to be signed
+         * @param data_len length of data to be signed
+         * @param privKey private key to used to make signature
+         * @param sign the signature is stored here
+         * @return false if signature creation failed, true is signature created
+         */
+        static bool getSignature(char* data, uint32_t data_len, RsTlvSecurityKey* privKey, RsTlvKeySignature& sign);
 };
 
 #endif // GXSSECURITY_H

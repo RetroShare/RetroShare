@@ -1,10 +1,10 @@
 
 /*
- * libretroshare/src/distrib: p3distribverify.cc
+ * libretroshare/src/gxs: gxssecurity.cc
  *
  *
  * Copyright 2008-2010 by Robert Fernie
- *           2011 Christopher Evi-Parker
+ *           2011-2012 Christopher Evi-Parker
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -49,6 +49,30 @@ RSA *GxsSecurity::extractPublicKey(RsTlvSecurityKey& key)
         return rsakey;
 }
 
+bool GxsSecurity::getSignature(char* data, uint32_t data_len, RsTlvSecurityKey* privKey, RsTlvKeySignature& sign)
+{
+	RSA* rsa_pub = extractPrivateKey(*privKey);
+	EVP_PKEY *key_pub = EVP_PKEY_new();
+	EVP_PKEY_assign_RSA(key_pub, rsa_pub);
+
+	/* calc and check signature */
+	EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
+	bool ok = EVP_SignInit(mdctx, EVP_sha1()) == 1;
+	ok &= EVP_SignUpdate(mdctx, data, data_len) == 1;
+
+	unsigned int siglen = EVP_PKEY_size(key_pub);
+	unsigned char sigbuf[siglen];
+	ok &= EVP_SignFinal(mdctx, sigbuf, &siglen, key_pub) == 1;
+
+	// clean up
+	EVP_MD_CTX_destroy(mdctx);
+	EVP_PKEY_free(key_pub);
+
+	sign.signData.setBinData(sigbuf, siglen);
+	sign.keyId = privKey->keyId;
+
+	return ok;
+}
 
 bool GxsSecurity::validateNxsMsg(RsNxsMsg *msg, RsTlvKeySignature& sign, RsTlvSecurityKeySet& key)
 {
@@ -135,7 +159,7 @@ bool GxsSecurity::validateNxsMsg(RsNxsMsg *msg, RsTlvKeySignature& sign, RsTlvSe
     //        std::cerr << std::endl;
     //#endif
 
-    //        return false;
+	return false;
 }
 
 
@@ -321,7 +345,7 @@ std::string GxsSecurity::getRsaKeySign(RSA *pubkey)
 
 bool GxsSecurity::validateNxsGrp(RsNxsGrp *newGrp, RsTlvKeySignature& sign, RsTlvSecurityKey& key)
 {
-
+	return false;
 }
 
 void GxsSecurity::setRSAPublicKey(RsTlvSecurityKey & key, RSA *rsa_pub)

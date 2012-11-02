@@ -125,7 +125,7 @@ bool RsGenExchange::acknowledgeTokenGrp(const uint32_t& token,
 	return true;
 }
 
-void RsGenExchange::createGroup(RsNxsGrp *grp)
+bool RsGenExchange::createGroup(RsNxsGrp *grp)
 {
     /* create Keys */
 
@@ -162,17 +162,40 @@ void RsGenExchange::createGroup(RsNxsGrp *grp)
     adminKey.endTS = 0; /* no end */
     RsGxsGrpMetaData* meta = grp->metaData;
 
-    /* add keys to grp */
+    /* add public keys to grp */
 
     meta->keys.keys[adminKey.keyId] = adminKey;
-    meta->keys.keys[privAdminKey.keyId] = privAdminKey;
     meta->keys.keys[pubKey.keyId] = pubKey;
+
+    // group is self signing
+    // for the creation of group signature
+    // only public admin and publish keys are present
+    // key set
+    uint32_t metaDataLen = meta->serial_size();
+	uint32_t allGrpDataLen = metaDataLen + grp->grp.bin_len;
+	char* metaData = new char[metaDataLen];
+	char* allGrpData = new char[allGrpDataLen]; // msgData + metaData
+
+	meta->serialise(metaData, metaDataLen);
+
+	// copy msg data and meta in allMsgData buffer
+	memcpy(allGrpData, grp->grp.bin_data, grp->grp.bin_len);
+	memcpy(allGrpData+(grp->grp.bin_len), metaData, metaDataLen);
+
+	RsTlvKeySignature adminSign;
+	bool ok = GxsSecurity::getSignature(allGrpData, allGrpDataLen, &privAdminKey, adminSign);
+
+    /* now add private keys to grp */
+    meta->keys.keys[privAdminKey.keyId] = privAdminKey;
     meta->keys.keys[privPubKey.keyId] = privPubKey;
+
+    // add admin sign to grpMeta
+    meta->signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_ADMIN] = adminSign;
 
     pqihash hash;
 
     // get hash of msg data to create msg id
-    hash.addData(grp->grp.bin_data, grp->grp.bin_len);
+    hash.addData(allGrpData, allGrpDataLen);
     hash.Complete(meta->mGroupId);
     grp->grpId = meta->mGroupId;
 
@@ -181,12 +204,17 @@ void RsGenExchange::createGroup(RsNxsGrp *grp)
     privPubKey.TlvClear();
     pubKey.TlvClear();
 
-    // free the private key for now, as it is not in use
+    // clean up
     RSA_free(rsa_admin);
     RSA_free(rsa_admin_pub);
 
     RSA_free(rsa_publish);
     RSA_free(rsa_publish_pub);
+
+    delete[] allGrpData;
+    delete[] metaData;
+
+    return ok;
 }
 
 bool RsGenExchange::createMessage(RsNxsMsg* msg)
@@ -198,7 +226,7 @@ bool RsGenExchange::createMessage(RsNxsMsg* msg)
 	metaMap.insert(std::make_pair(id, (RsGxsGrpMetaData*)(NULL)));
 	mDataStore->retrieveGxsGrpMetaData(metaMap);
 	bool ok = true;
-        RSA* rsa_pub = NULL;
+	RSA* rsa_pub = NULL;
 
 	if(!metaMap[id])
 	{
@@ -207,7 +235,7 @@ bool RsGenExchange::createMessage(RsNxsMsg* msg)
 	else
 	{
 		// get publish key
-                RsGxsGrpMetaData* grpMeta = metaMap[id];
+		RsGxsGrpMetaData* grpMeta = metaMap[id];
 
 		// public and shared is publish key
                 RsTlvSecurityKeySet& keys = grpMeta->keys;
@@ -219,70 +247,56 @@ bool RsGenExchange::createMessage(RsNxsMsg* msg)
 		for(; mit != mit_end; mit++)
 		{
 
-                        pub_key_found = mit->second.keyFlags & (RSTLV_KEY_DISTRIB_PRIVATE | RSTLV_KEY_TYPE_FULL);
+			pub_key_found = mit->second.keyFlags & (RSTLV_KEY_DISTRIB_PRIVATE | RSTLV_KEY_TYPE_FULL);
 			if(pub_key_found)
 				break;
 		}
 
 		if(pub_key_found)
 		{
+			RsGxsMsgMetaData &meta = *(msg->metaData);
+
+			uint32_t metaDataLen = meta.serial_size();
+			uint32_t allMsgDataLen = metaDataLen + msg->msg.bin_len;
+			char* metaData = new char[metaDataLen];
+			char* allMsgData = new char[allMsgDataLen]; // msgData + metaData
+
+			meta.serialise(metaData, &metaDataLen);
+
+			// copy msg data and meta in allmsgData buffer
+			memcpy(allMsgData, msg->msg.bin_data, msg->msg.bin_len);
+			memcpy(allMsgData+(msg->msg.bin_len), metaData, metaDataLen);
+
+			// private publish key
 			pubKey = &(mit->second);
-                        rsa_pub = GxsSecurity::extractPrivateKey(*pubKey);
-			EVP_PKEY *key_pub = EVP_PKEY_new();
-			EVP_PKEY_assign_RSA(key_pub, rsa_pub);
 
-			/* calc and check signature */
-			EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
+			RsTlvKeySignatureSet& signSet = meta.signSet;
+			RsTlvKeySignature pubSign = signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_PUBLISH];
 
-                        RsGxsMsgMetaData &meta = *(msg->metaData);
+			GxsSecurity::getSignature(allMsgData, allMsgDataLen, pubKey, pubSign);
 
-                        uint32_t metaDataLen = meta.serial_size();
-                        uint32_t allMsgDataLen = metaDataLen + msg->msg.bin_len;
-                        char* metaData = new char[metaDataLen];
-                        char* allMsgData = new char[allMsgDataLen]; // msgData + metaData
+			// get hash of msg data to create msg id
+			pqihash hash;
+			hash.addData(allMsgData, allMsgDataLen);
+			hash.Complete(msg->msgId);
 
-                        meta.serialise(metaData, &metaDataLen);
+			// assign msg id to msg meta
+			msg->metaData->mMsgId = msg->msgId;
 
-                        // copy msg data and meta in allmsgData buffer
-                        memcpy(allMsgData, msg->msg.bin_data, msg->msg.bin_len);
-                        memcpy(allMsgData+(msg->msg.bin_len), metaData, metaDataLen);
-
-			ok = EVP_SignInit(mdctx, EVP_sha1()) == 1;
-                        ok = EVP_SignUpdate(mdctx, allMsgData, allMsgDataLen) == 1;
-
-			unsigned int siglen = EVP_PKEY_size(key_pub);
-			unsigned char sigbuf[siglen];
-			ok = EVP_SignFinal(mdctx, sigbuf, &siglen, key_pub) == 1;
-
-                        //place signature in msg meta
-
-                        RsTlvKeySignatureSet& signSet = meta.signSet;
-                        RsTlvKeySignature pubSign = signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_PUBLISH];
-                        pubSign.signData.setBinData(sigbuf, siglen);
-                        pubSign.keyId = pubKey->keyId;
-
-                        // get hash of msg data to create msg id
-                        pqihash hash;
-                        hash.addData(allMsgData, allMsgDataLen);
-                        hash.Complete(msg->msgId);
-
-                        msg->metaData->mMsgId = msg->msgId;
+			//place signature in msg meta
+			signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_PUBLISH] = pubSign;
 
 			// clean up
-			EVP_MD_CTX_destroy(mdctx);
-                        //RSA_free(rsa_pub);
-			EVP_PKEY_free(key_pub);
-                        // no need to free rsa key as evp key is considered parent key by SSL
 
-                        delete[] metaData;
-                        delete[] allMsgData;
+			delete[] metaData;
+			delete[] allMsgData;
 		}
 		else
 		{
 			ok = false;
 		}
 
-                delete grpMeta;
+		delete grpMeta;
 	}
 
 	return ok;
@@ -694,11 +708,11 @@ void RsGenExchange::publishGrps()
                     grpItem->meta.mPublishTs = time(NULL);
                     *(grp->metaData) = grpItem->meta;
                     grp->metaData->mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_ADMIN;
-                    createGroup(grp);
+                    ok &= createGroup(grp);
                     size = grp->metaData->serial_size();
                     char mData[size];
                     grp->metaData->mGroupId = grp->grpId;
-                    ok = grp->metaData->serialise(mData, size);
+                    ok &= grp->metaData->serialise(mData, size);
                     grp->meta.setBinData(mData, size);
                     RsGxsGroupId grpId = grp->grpId;
                     mDataAccess->addGroupData(grp);
