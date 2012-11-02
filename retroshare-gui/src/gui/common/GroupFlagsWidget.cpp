@@ -89,6 +89,15 @@ FileStorageFlags GroupFlagsWidget::flags() const
 	return flags ;
 }
 
+void GroupFlagsWidget::setFlags(FileStorageFlags flags)
+{
+	for(int i=0;i<4;++i)
+	{
+		_buttons[i]->setChecked(flags & _flags[i]) ;
+		update_button_state(_buttons[i]->isChecked(),i) ;
+	}
+}
+
 void GroupFlagsWidget::update_button_state(bool b,int button_id)
 {
 	if(b)

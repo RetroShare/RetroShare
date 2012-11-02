@@ -10,10 +10,11 @@ class GroupFlagsWidget: public QWidget
 	Q_OBJECT
 
 	public:
-		GroupFlagsWidget(QWidget *parent,FileStorageFlags flags) ;
+		GroupFlagsWidget(QWidget *parent,FileStorageFlags flags = FileStorageFlags(0u)) ;
 		virtual ~GroupFlagsWidget() ;
 
 		FileStorageFlags flags() const ;
+		void setFlags(FileStorageFlags flags) ;
 
 	public slots:
 		void updated() ;

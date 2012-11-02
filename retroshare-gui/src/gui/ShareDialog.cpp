@@ -27,6 +27,10 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QComboBox>
+#include <QGroupBox>
+
+#include <gui/common/GroupSelectionBox.h>
+#include <gui/common/GroupFlagsWidget.h>
 
 /** Default constructor */
 ShareDialog::ShareDialog(std::string filename, QWidget *parent, Qt::WFlags flags)
@@ -44,16 +48,26 @@ ShareDialog::ShareDialog(std::string filename, QWidget *parent, Qt::WFlags flags
 
     ui.okButton->setEnabled(false);
 
-    if (filename.empty()) {
-        ui.networkwideCheckBox->setChecked(true);
-    } else {
-        /* edit exisiting share */
+	 QHBoxLayout *hbox = new QHBoxLayout ;
+	 ui.shareflags_GB->setLayout(hbox) ;
+
+	 groupselectionbox = new GroupSelectionBox(ui.shareflags_GB) ;
+	 groupflagsbox = new GroupFlagsWidget(ui.shareflags_GB) ;
+
+	 hbox->addWidget(groupselectionbox) ;
+	 hbox->addWidget(groupflagsbox) ;
+
+	 update() ;
+
+    if (!filename.empty()) 
+	 {
         std::list<SharedDirInfo> dirs;
         rsFiles->getSharedDirectories(dirs);
 
         std::list<SharedDirInfo>::const_iterator it;
         for (it = dirs.begin(); it != dirs.end(); it++) {
-            if (it->filename == filename) {
+            if (it->filename == filename) 
+				{
                 /* fill dialog */
                 ui.okButton->setEnabled(true);
 
@@ -62,8 +76,9 @@ ShareDialog::ShareDialog(std::string filename, QWidget *parent, Qt::WFlags flags
                 ui.browseButton->setDisabled(true);
                 ui.virtualpath_lineEdit->setText(QString::fromUtf8(it->virtualname.c_str()));
 
-                ui.browsableCheckBox->setChecked(it->shareflags & DIR_FLAGS_BROWSABLE_OTHERS);
-                ui.networkwideCheckBox->setChecked(it->shareflags & DIR_FLAGS_NETWORK_WIDE_OTHERS);
+                groupflagsbox->setFlags(it->shareflags) ;
+                groupselectionbox->setSelectedGroups(it->parent_groups) ;
+
                 break;
             }
         }
@@ -89,20 +104,16 @@ void ShareDialog::addDirectory()
     SharedDirInfo sdi ;
     sdi.filename = ui.localpath_lineEdit->text().toUtf8().constData();
     sdi.virtualname = ui.virtualpath_lineEdit->text().toUtf8().constData();
+    sdi.shareflags = groupflagsbox->flags() ;
+	 sdi.parent_groups = groupselectionbox->selectedGroups() ;
 
-    sdi.shareflags.clear() ;
-
-    if (ui.browsableCheckBox->isChecked()) {
-        sdi.shareflags |= DIR_FLAGS_BROWSABLE_OTHERS ;
-    }
-    if (ui.networkwideCheckBox->isChecked()) {
-        sdi.shareflags |= DIR_FLAGS_NETWORK_WIDE_OTHERS;
-    }
-
-    if (ui.localpath_lineEdit->isEnabled()) {
+    if (ui.localpath_lineEdit->isEnabled()) 
+	 {
         /* add new share */
         rsFiles->addSharedDirectory(sdi);
-    } else {
+    } 
+	 else 
+	 {
         /* edit exisiting share */
         bool found = false;
 
@@ -116,6 +127,7 @@ void ShareDialog::addDirectory()
 
                 if (it->virtualname != sdi.virtualname) {
                     /* virtual name changed, remove shared directory and add it again */
+
                     rsFiles->removeSharedDirectory(it->filename);
                     rsFiles->addSharedDirectory(sdi);
                     break;

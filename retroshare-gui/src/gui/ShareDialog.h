@@ -26,6 +26,9 @@
 
 #include "ui_ShareDialog.h"
 
+class GroupFlagsWidget ;
+class GroupSelectionBox ;
+
 class ShareDialog : public QDialog
 {
   Q_OBJECT
@@ -42,6 +45,9 @@ private slots:
 private:
   /** Qt Designer generated object */
   Ui::ShareDialog ui;
+
+  GroupSelectionBox *groupselectionbox ;
+  GroupFlagsWidget  *groupflagsbox ;
 };
 
 #endif
