@@ -79,9 +79,7 @@ IdDialog::IdDialog(QWidget *parent)
 	timer->start(1000);
 
 	rsIdentity->generateDummyData();
-#if 0
-	mIdQueue = new TokenQueue(rsIdentity, this);
-#endif
+	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 
 }
 
@@ -134,6 +132,7 @@ void IdDialog::blankSelection()
 void IdDialog::requestIdDetails(std::string &id)
 {
 	RsTokReqOptions opts;
+        opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 
 	uint32_t token;
 	std::list<std::string> groupIds;
@@ -147,13 +146,21 @@ void IdDialog::insertIdDetails(uint32_t token)
 {
 	/* get details from libretroshare */
 	RsGxsIdGroup data;
-#if 0
-	if (!rsIdentity->getGroupData(token, data))
-#endif
+	std::vector<RsGxsIdGroup> datavector;
+	if (!rsIdentity->getGroupData(token, datavector))
 	{
 		ui.lineEdit_KeyId->setText("ERROR GETTING KEY!");
 		return;
 	}
+
+	if (datavector.size() != 1)
+	{
+		std::cerr << "IdDialog::insertIdDetails() Invalid datavector size";
+		ui.lineEdit_KeyId->setText("INVALID DV SIZE");
+		return;
+	}
+
+	data = datavector[0];
 
 	/* get GPG Details from rsPeers */
 	std::string gpgid  = rsPeers->getGPGOwnId();
@@ -263,11 +270,13 @@ void IdDialog::OpenOrShowEditDialog()
 void IdDialog::requestIdList()
 {
 	RsTokReqOptions opts;
+        opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 
 	uint32_t token;
 	std::list<std::string> groupIds;
 
-        mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDDIALOG_IDLIST);
+        //mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDDIALOG_IDLIST);
+        mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, IDDIALOG_IDLIST);
 }
 
 
@@ -286,17 +295,19 @@ void IdDialog::insertIdList(uint32_t token)
 	bool acceptFriends = ui.radioButton_ListFriends->isChecked();
 	bool acceptOthers = ui.radioButton_ListOthers->isChecked();
 
-	//rsIdentity->getIdentityList(ids);
-
-	//for(it = ids.begin(); it != ids.end(); it++)
-	//{
 	RsGxsIdGroup data;
-#if 0
-	while(rsIdentity->getGroupData(token, data))
-#else
-	while(0)
-#endif
+	std::vector<RsGxsIdGroup> datavector;
+	std::vector<RsGxsIdGroup>::iterator vit;
+	if (!rsIdentity->getGroupData(token, datavector))
 	{
+		std::cerr << "IdDialog::insertIdList() Error getting GroupData";
+		std::cerr << std::endl;
+		return;
+	}
+
+	for(vit = datavector.begin(); vit != datavector.end(); vit++)
+	{
+		data = (*vit);
 
 		/* do filtering */
 		bool ok = false;

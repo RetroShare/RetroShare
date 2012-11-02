@@ -41,9 +41,7 @@ IdEditDialog::IdEditDialog(QWidget *parent)
 	connect(ui.radioButton_Pseudo, SIGNAL( toggled( bool ) ), this, SLOT( IdTypeToggled( bool ) ) );
 	connect(ui.pushButton_Update, SIGNAL( clicked( void ) ), this, SLOT( updateId( void ) ) );
 	connect(ui.pushButton_Cancel, SIGNAL( clicked( void ) ), this, SLOT( cancelId( void ) ) );
-#if 0
-	mIdQueue = new TokenQueue(rsIdentity, this);
-#endif
+	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 }
 
 void IdEditDialog::setupNewId(bool pseudo)
@@ -123,11 +121,19 @@ void IdEditDialog::loadExistingId(uint32_t token)
 	ui.radioButton_Pseudo->setEnabled(false);
 
         /* get details from libretroshare */
-        RsGxsIdGroup data;
-#if 0
-        if (!rsIdentity->getGroupData(token, data))
-#endif
-        {
+	RsGxsIdGroup data;
+	std::vector<RsGxsIdGroup> datavector;
+	if (!rsIdentity->getGroupData(token, datavector))
+	{
+		ui.lineEdit_KeyId->setText("ERROR GETTING KEY!");
+		return;
+	}
+	
+	if (datavector.size() != 1)
+	{
+		std::cerr << "IdDialog::insertIdDetails() Invalid datavector size";
+		std::cerr << std::endl;
+
 		ui.lineEdit_KeyId->setText("ERROR KEYID INVALID");
 		ui.lineEdit_Nickname->setText("");
 
@@ -137,6 +143,9 @@ void IdEditDialog::loadExistingId(uint32_t token)
 		ui.lineEdit_GpgEmail->setText("N/A");
 		return;
 	}
+
+	data = datavector[0];
+
 	bool pseudo = (data.mIdType & RSID_TYPE_PSEUDONYM);
 
 	if (pseudo)
