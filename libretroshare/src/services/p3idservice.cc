@@ -55,8 +55,12 @@ p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *ne
 	mIdMtx("p3IdService")
 {
 	mCacheTest_LastTs = 0;
-	mCacheLoad_LastCycle = 0;
 	mCacheTest_Active = false;
+
+	mCacheLoad_LastCycle = 0;
+	mCacheLoad_Status = 0;
+
+	mCacheDataCount = 0;
 
 }
 

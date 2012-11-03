@@ -22,11 +22,13 @@
  * Please report all bugs and problems to "retroshare@lunamutt.com".
  *
  */
-#ifndef RS_MEM_CACHE
-#define RS_MEM_CACHE
+#ifndef RS_UTIL_MEM_CACHE
+#define RS_UTIL_MEM_CACHE
 
 #include <map>
 #include <time.h>
+#include <iostream>
+#include <inttypes.h>
 
 /************************************************************************************/
 /************************************************************************************/
@@ -46,7 +48,7 @@
 template<class Key, class Value> class RsMemCache
 {
 	RsMemCache(uint32_t max_size = DEFAULT_MEM_CACHE_SIZE)
-	:mMaxSize(max_size) { return; }
+	:mMaxSize(max_size), mDataCount(0) { return; }
 
 	bool is_cached(const Key &key) const;
 	bool fetch(const Key &key, Value &data);
@@ -80,7 +82,7 @@ template<class Key, class Value> class RsMemCache
 
 template<class Key, class Value> bool RsMemCache<Key, Value>::is_cached(const Key &key) const
 {
-	std::map<Key,cache_data>::const_iterator it;
+	typename std::map<Key,cache_data>::const_iterator it;
 	it = mDataMap.find(key);
 	if (it == mDataMap.end())
 	{
@@ -98,8 +100,7 @@ template<class Key, class Value> bool RsMemCache<Key, Value>::is_cached(const Ke
 
 template<class Key, class Value> bool RsMemCache<Key, Value>::fetch(const Key &key, Value &data)
 {
-	std::map<Key, cache_data>::const_iterator it;
-	//std::map<Key, cache_data<Key, Value> >::iterator it;
+	typename std::map<Key, cache_data>::const_iterator it;
 	it = mDataMap.find(key);
 	if (it == mDataMap.end())
 	{
@@ -130,7 +131,7 @@ template<class Key, class Value> bool RsMemCache<Key, Value>::store(const Key &k
 	std::cerr << std::endl;
 
 	// For consistency
-	std::map<Key, cache_data>::const_iterator it;
+	typename std::map<Key, cache_data>::const_iterator it;
 	it = mDataMap.find(key);
 	if (it != mDataMap.end())
 	{
@@ -166,9 +167,9 @@ template<class Key, class Value> bool RsMemCache<Key, Value>::update_lrumap(cons
 	}
 
 	/* find old entry */
-	std::multimap<time_t, Key>::iterator mit;
-	std::multimap<time_t, Key>::iterator sit = mLruMap.lower_bound(old_ts);
-	std::multimap<time_t, Key>::iterator eit = mLruMap.upper_bound(old_ts);
+	typename std::multimap<time_t, Key>::iterator mit;
+	typename std::multimap<time_t, Key>::iterator sit = mLruMap.lower_bound(old_ts);
+	typename std::multimap<time_t, Key>::iterator eit = mLruMap.upper_bound(old_ts);
 
         for(mit = sit; mit != eit; mit++)
 	{
@@ -230,7 +231,7 @@ template<class Key, class Value> bool RsMemCache<Key, Value>::discard_LRU(int co
 {
 	while(count_to_clear > 0)
 	{
-		std::multimap<time_t, Key>::iterator mit = mLruMap.begin();
+		typename std::multimap<time_t, Key>::iterator mit = mLruMap.begin();
 		if (mit != mLruMap.end())
 		{
 			Key key = mit->second;
@@ -238,7 +239,7 @@ template<class Key, class Value> bool RsMemCache<Key, Value>::discard_LRU(int co
 
 			/* now clear from real cache */
 			//std::map<Key, cache_data<Key, Value> >::iterator it;
-			std::map<Key, cache_data>::iterator it;
+			typename std::map<Key, cache_data>::iterator it;
 			it = mDataMap.find(key);
 			if (it == mDataMap.end())
 			{
@@ -270,4 +271,4 @@ template<class Key, class Value> bool RsMemCache<Key, Value>::discard_LRU(int co
 
 
 
-#endif // RS_MEM_CACHE
+#endif // RS_UTIL_MEM_CACHE

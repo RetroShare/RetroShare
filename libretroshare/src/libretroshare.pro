@@ -429,7 +429,8 @@ HEADERS += retroshare/rsgame.h \
             util/rswin.h \
             util/rsrandom.h \
             util/radix64.h \
-            util/pugiconfig.h
+            util/pugiconfig.h \
+            util/rsmemcache.h
 
         SOURCES += dbase/cachestrapper.cc \
             dbase/fimonitor.cc \

@@ -34,6 +34,8 @@
 #include <map>
 #include <string>
 
+#include "util/rsmemcache.h"
+
 /* 
  * Identity Service
  *
