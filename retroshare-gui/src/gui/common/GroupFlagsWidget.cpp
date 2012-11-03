@@ -117,6 +117,36 @@ void GroupFlagsWidget::update_button_state(bool b,int button_id)
 	}
 }
 
+QString GroupFlagsWidget::groupInfoString(FileStorageFlags flags,const std::list<std::string>& groups)
+{
+	// makes a string that explains how files are shared / visible.
+	
+	QString res ;
+	QString groups_string ;
+
+	for(std::list<std::string>::const_iterator it(groups.begin());it!=groups.end();++it)
+	{
+		if(it != groups.begin())
+			groups_string += ", " ;
+		groups_string += QString::fromStdString(*it) ;
+	}
+	
+	if((flags & DIR_FLAGS_BROWSABLE_OTHERS) && !groups.empty())
+		res += tr("All your friends can browse this directory\n") ;
+	else if((flags & DIR_FLAGS_BROWSABLE_GROUPS) && !groups.empty())
+		res += tr("Friends in groups ") + groups_string + tr(" can browse this directory\n") ;
+
+	if(flags & DIR_FLAGS_NETWORK_WIDE_OTHERS)
+		res += tr("All your friends can relay anonymous tunnels to this directory") ;
+	else if(flags & DIR_FLAGS_NETWORK_WIDE_GROUPS)
+		res += tr("Friends in groups ") + groups_string + tr(" can relay anonymous tunnels to this directory") ;
+
+	if(flags.toUInt32() == 0)
+		res += tr("No friends can access nor see this directory.") ;
+
+	return res ;
+}
+
 void GroupFlagsWidget::update_GN_button(bool b) { update_button_state(b,INDEX_GROUP_NETWORK_W) ; updated() ; }
 void GroupFlagsWidget::update_GB_button(bool b) { update_button_state(b,INDEX_GROUP_BROWSABLE) ; updated() ; }
 void GroupFlagsWidget::update_ON_button(bool b) { update_button_state(b,INDEX_OTHER_NETWORK_W) ; updated() ; }

@@ -26,7 +26,10 @@
 #include <QContextMenuEvent>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QLayout>
+#include <QTextEdit>
 #include <QComboBox>
+#include <QSizePolicy>
 #include <QGroupBox>
 
 #include <gui/common/GroupSelectionBox.h>
@@ -48,15 +51,25 @@ ShareDialog::ShareDialog(std::string filename, QWidget *parent, Qt::WFlags flags
 
     ui.okButton->setEnabled(false);
 
-	 QHBoxLayout *hbox = new QHBoxLayout(ui.shareflags_GB) ;
+	 QVBoxLayout *vbox = new QVBoxLayout() ;
 
-	 groupselectionbox = new GroupSelectionBox(ui.shareflags_GB);
 	 groupflagsbox = new GroupFlagsWidget(ui.shareflags_GB) ;
+	 messageBox = new QTextEdit(ui.shareflags_GB) ;
+	 messageBox->setReadOnly(true) ;
+	 messageBox->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Preferred)) ;
 
-	 hbox->addWidget(groupflagsbox) ;
+	 vbox->addWidget(groupflagsbox) ;
+	 vbox->addWidget(messageBox) ;
+
+	 QHBoxLayout *hbox = new QHBoxLayout() ;
+	 groupselectionbox = new GroupSelectionBox(ui.shareflags_GB);
+	 hbox->addLayout(vbox) ;
 	 hbox->addWidget(groupselectionbox) ;
 
 	 ui.shareflags_GB->setLayout(hbox) ;
+
+	 connect(groupselectionbox,SIGNAL(itemSelectionChanged()),this,SLOT(updateInfoMessage())) ;
+	 connect(groupflagsbox,SIGNAL(flagsChanged(FileStorageFlags)),this,SLOT(updateInfoMessage())) ;
 
     if (!filename.empty()) 
 	 {
@@ -82,6 +95,11 @@ ShareDialog::ShareDialog(std::string filename, QWidget *parent, Qt::WFlags flags
             }
         }
     }
+}
+
+void ShareDialog::updateInfoMessage()
+{
+	messageBox->setText(GroupFlagsWidget::groupInfoString(groupflagsbox->flags(),groupselectionbox->selectedGroups())) ;
 }
 
 void ShareDialog::browseDirectory()

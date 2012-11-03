@@ -46,7 +46,7 @@
 #include <fstream>
 
 //***********
-#define FIM_DEBUG 1
+//#define FIM_DEBUG 1
 // ***********/
 
 FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, NotifyBase *cb_in,std::string cachedir, std::string pid,const std::string& config_dir)
