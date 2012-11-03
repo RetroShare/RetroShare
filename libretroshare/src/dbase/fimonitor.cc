@@ -1036,7 +1036,13 @@ void FileIndexMonitor::locked_saveFileIndexes()
 		std::set<std::string> forbidden_dirs ;
 		for(std::map<std::string,SharedDirInfo>::const_iterator dit(directoryMap.begin());dit!=directoryMap.end();++dit)
 		{
-			std::cerr << "   dir=" << dit->first << " : " ;
+#ifdef FIM_DEBUG
+			std::cerr << "   dir=" << dit->first << ", " ;
+			std::cerr << "parent groups: " ;
+			for(std::list<std::string>::const_iterator mit(dit->second.parent_groups.begin());mit!=dit->second.parent_groups.end();++mit)
+				std::cerr << (*mit) << ", " ;
+			std::cerr << std::endl;;
+#endif
 
 			FileSearchFlags permission_flags = rsPeers->computePeerPermissionFlags(*it,dit->second.shareflags,dit->second.parent_groups) ;
 
@@ -1132,6 +1138,7 @@ void    FileIndexMonitor::updateShareFlags(const SharedDirInfo& dir)
 			{
 				std::cerr  << "** Updating to " << (*it).shareflags << "!!" << std::endl ;
 				(*it).shareflags = dir.shareflags ;
+				(*it).parent_groups = dir.parent_groups ;
 				break ;
 			}
 		}
@@ -1143,6 +1150,7 @@ void    FileIndexMonitor::updateShareFlags(const SharedDirInfo& dir)
 			{
 				std::cerr  << "** Updating from " << it->second.shareflags << "!!" << std::endl ;
 				(*it).second.shareflags = dir.shareflags ;
+				(*it).second.parent_groups = dir.parent_groups ;
 				fimods = true ;
 				break ;
 			}

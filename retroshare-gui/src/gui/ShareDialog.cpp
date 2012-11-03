@@ -131,9 +131,10 @@ void ShareDialog::addDirectory()
                     rsFiles->addSharedDirectory(sdi);
                     break;
                 }
-                if (it->shareflags != sdi.shareflags) {
+                if (it->shareflags != sdi.shareflags || it->parent_groups != sdi.parent_groups) {
                     /* modifies the flags */
                     it->shareflags = sdi.shareflags;
+                    it->parent_groups = sdi.parent_groups;
                     rsFiles->updateShareFlags(*it);
                     break;
                 }

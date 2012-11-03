@@ -22,7 +22,10 @@ std::list<std::string> GroupSelectionBox::selectedGroups() const
 	std::list<std::string> out ;
 
 	for(QList<QListWidgetItem*>::const_iterator it(selected_items.begin());it!=selected_items.end();++it)
+	{
 		out.push_back((*it)->text().toStdString()) ;
+		std::cerr << "Addign selected item " << out.back() << std::endl;
+	}
 
 	return out ;
 }

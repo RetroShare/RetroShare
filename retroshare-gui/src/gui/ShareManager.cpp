@@ -133,7 +133,17 @@ void ShareManager::load()
 		  listWidget->setRowHeight(row, 32);
 		  listWidget->setCellWidget(row, COLUMN_SHARE_FLAGS, widget);
 
-		  listWidget->setItem(row, COLUMN_GROUPS, new QTableWidgetItem(QString(" - "))) ; // no groups!
+		  QString group_string ;
+		  int n=0;
+		  for(std::list<std::string>::const_iterator it2((*it).parent_groups.begin());it2!=(*it).parent_groups.end();++it2,++n)
+		  {
+			  if(n>0)
+				  group_string += ", " ;
+
+			  group_string += QString::fromStdString(*it2) ;
+		  }
+
+		  listWidget->setItem(row, COLUMN_GROUPS, new QTableWidgetItem(group_string)) ;
 		  listWidget->item(row,COLUMN_GROUPS)->setBackgroundColor(QColor(183,236,181)) ;
 
 		  connect(widget,SIGNAL(flagsChanged(FileStorageFlags)),this,SLOT(updateFlags())) ;

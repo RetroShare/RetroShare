@@ -247,6 +247,7 @@ bool ftFiMonitor::saveList(bool &cleanup, std::list<RsItem *>& sList)
 		fi->file.path = (*it).filename ;
 		fi->file.name = (*it).virtualname ;
 		fi->flags = (*it).shareflags.toUInt32() ;
+		fi->parent_groups = (*it).parent_groups ;
 
 		sList.push_back(fi);
 	}
@@ -347,6 +348,7 @@ bool    ftFiMonitor::loadList(std::list<RsItem *>& load)
 		SharedDirInfo info ;
 		info.filename = RsDirUtil::convertPathToUnix(fi->file.path);
 		info.virtualname = fi->file.name;
+		info.parent_groups = fi->parent_groups;
 		info.shareflags = FileStorageFlags(fi->flags) ;
 		info.shareflags &= PERMISSION_MASK ;
 
