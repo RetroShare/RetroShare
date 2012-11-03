@@ -175,32 +175,35 @@ virtual bool getReputation(const RsGxsId &id, const GixsReputation &rep);
  */
 	int  cache_tick();
 
-	bool cache_is_loaded(const RsGxsId &id);
-	bool cache_fetch(const RsGxsId &key, RsGxsIdCache &data);
-	bool cache_store(const RsGxsIdGroupItem *item);
 
-	bool cache_store(const RsGxsIdGroup &group);
-	bool cache_resize();
-	bool cache_discard_LRU(int count_to_clear);
+	//bool cache_is_loaded(const RsGxsId &id);
+	//bool cache_fetch(const RsGxsId &key, RsGxsIdCache &data);
+
+	//bool cache_store(const RsGxsIdGroup &group);
+	//bool cache_resize();
+	//bool cache_discard_LRU(int count_to_clear);
 
 	bool cache_request_load(const RsGxsId &id);
 	bool cache_start_load();
 	bool cache_check_loading();
 	bool cache_load_for_token(uint32_t token);
-	bool cache_check_consistency();
+
+	bool cache_store(const RsGxsIdGroupItem *item);
 
 	/* MUTEX PROTECTED DATA (mIdMtx - maybe should use a 2nd?) */
-
-	bool locked_cache_update_lrumap(const RsGxsId &key, time_t old_ts, time_t new_ts);
-
-	std::map<RsGxsId, RsGxsIdCache> mCacheDataMap;
-	std::multimap<time_t, LruData> mCacheLruMap;
-	uint32_t mCacheDataCount;
+	//bool locked_cache_update_lrumap(const RsGxsId &key, time_t old_ts, time_t new_ts);
+	//std::map<RsGxsId, RsGxsIdCache> mCacheDataMap;
+	//std::multimap<time_t, LruData> mCacheLruMap;
+	//uint32_t mCacheDataCount;
 
 	time_t mCacheLoad_LastCycle;
 	int mCacheLoad_Status;
 	std::list<RsGxsId> mCacheLoad_ToCache;
 	std::list<uint32_t> mCacheLoad_Tokens;
+
+	// Switching to RsMemCache for Key Caching.
+	RsMemCache<RsGxsId, RsGxsIdCache> mPublicKeyCache;
+	RsMemCache<RsGxsId, RsGxsIdCache> mPrivateKeyCache;
 
 
 /************************************************************************

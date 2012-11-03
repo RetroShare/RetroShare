@@ -43,22 +43,25 @@
  *   - mLruMap[AccessTS] => key (multimap)
  */
 
-#define DEFAULT_MEM_CACHE_SIZE 10
+#define DEFAULT_MEM_CACHE_SIZE 100
 
 template<class Key, class Value> class RsMemCache
 {
+	public:
+
 	RsMemCache(uint32_t max_size = DEFAULT_MEM_CACHE_SIZE)
-	:mMaxSize(max_size), mDataCount(0) { return; }
+	:mDataCount(0), mMaxSize(max_size) { return; }
 
 	bool is_cached(const Key &key) const;
 	bool fetch(const Key &key, Value &data);
 	bool store(const Key &key, const Value &data);
 
+	bool resize(); // should be called periodically to cleanup old entries.
+
 	private:
 
 	bool update_lrumap(const Key &key, time_t old_ts, time_t new_ts);
 	bool discard_LRU(int count_to_clear);
-	bool resize();
 
 	// internal class.
 	class cache_data
@@ -100,7 +103,7 @@ template<class Key, class Value> bool RsMemCache<Key, Value>::is_cached(const Ke
 
 template<class Key, class Value> bool RsMemCache<Key, Value>::fetch(const Key &key, Value &data)
 {
-	typename std::map<Key, cache_data>::const_iterator it;
+	typename std::map<Key, cache_data>::iterator it;
 	it = mDataMap.find(key);
 	if (it == mDataMap.end())
 	{

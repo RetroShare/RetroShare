@@ -59,9 +59,6 @@ p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *ne
 
 	mCacheLoad_LastCycle = 0;
 	mCacheLoad_Status = 0;
-
-	mCacheDataCount = 0;
-
 }
 
 void	p3IdService::service_tick()
@@ -126,31 +123,28 @@ bool p3IdService::createIdentity(uint32_t& token, RsIdentityParameters &params)
 
 bool p3IdService::haveKey(const RsGxsId &id)
 {
-	/* is it in the cache? */
-	return cache_is_loaded(id);
+	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+	return mPublicKeyCache.is_cached(id);
 }
 
 bool p3IdService::havePrivateKey(const RsGxsId &id)
 {
-	/* TODO */
-	return false;
+	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+	return mPrivateKeyCache.is_cached(id);
 }
 
 bool p3IdService::requestKey(const RsGxsId &id, const std::list<PeerId> &peers)
 {
-	/* basic version first --- don't have to worry about network load
-         * request it for the cache
-         */
-	if (cache_is_loaded(id))
+	if (haveKey(id))
 		return true;
-
 	return cache_request_load(id);
 }
 
 int  p3IdService::getKey(const RsGxsId &id, RsTlvSecurityKey &key)
 {
+	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 	RsGxsIdCache data;
-	if (cache_fetch(id, data))
+	if (mPublicKeyCache.fetch(id, data))
 	{
 		key = data.pubkey;
 		return 1;
@@ -160,12 +154,20 @@ int  p3IdService::getKey(const RsGxsId &id, RsTlvSecurityKey &key)
 
 bool p3IdService::requestPrivateKey(const RsGxsId &id)
 {
-	return false;
+	if (havePrivateKey(id))
+		return true;
+	return cache_request_load(id);
 }
 
 int  p3IdService::getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key)
 {
-	/* TODO */
+	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+	RsGxsIdCache data;
+	if (mPrivateKeyCache.fetch(id, data))
+	{
+		key = data.pubkey;
+		return 1;
+	}
 	return -1;
 }
 
@@ -306,56 +308,6 @@ RsGxsIdCache::RsGxsIdCache(const RsGxsIdGroupItem *item, const RsTlvSecurityKey 
 
 }
 
-
-bool p3IdService::cache_is_loaded(const RsGxsId &id)
-{
-	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-
-	std::map<RsGxsId, RsGxsIdCache>::iterator it;
-	it = mCacheDataMap.find(id);
-	if (it == mCacheDataMap.end())
-	{
-		std::cerr << "p3IdService::cache_is_loaded(" << id << ") false";
-		std::cerr << std::endl;
-
-		return false;
-	}
-	std::cerr << "p3IdService::cache_is_loaded(" << id << ") true";
-	std::cerr << std::endl;
-
-	return true;
-	
-}
-
-bool p3IdService::cache_fetch(const RsGxsId &id, RsGxsIdCache &data)
-{
-	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-
-	std::map<RsGxsId, RsGxsIdCache>::iterator it;
-	it = mCacheDataMap.find(id);
-	if (it == mCacheDataMap.end())
-	{
-		std::cerr << "p3IdService::cache_fetch(" << id << ") false";
-		std::cerr << std::endl;
-
-		return false;
-	}
-	
-	std::cerr << "p3IdService::cache_fetch(" << id << ") OK";
-	std::cerr << std::endl;
-
-	data = it->second;
-
-	/* update ts on data */
-        time_t old_ts = it->second.lastUsedTs;
-        time_t new_ts = time(NULL);
-        it->second.lastUsedTs = new_ts;
-
-        locked_cache_update_lrumap(id, old_ts, new_ts);
-
-	return true;
-}
-
 bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 {
 	std::cerr << "p3IdService::cache_store() Item: ";
@@ -366,9 +318,12 @@ bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
         /* extract key from keys */
     	RsTlvSecurityKeySet keySet;
     	RsTlvSecurityKey    pubkey;
-	bool key_ok = false;
+    	RsTlvSecurityKey    fullkey;
+	bool pub_key_ok = false;
+	bool full_key_ok = false;
 
-    	if (!getGroupKeys(item->meta.mGroupId, keySet))
+    	RsGxsId id = item->meta.mGroupId;
+    	if (!getGroupKeys(id, keySet))
 	{
 		std::cerr << "p3IdService::cache_store() ERROR getting GroupKeys for: ";
 		std::cerr << item->meta.mGroupId;
@@ -383,174 +338,45 @@ bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 
         for (kit = keySet.keys.begin(); kit != keySet.keys.end(); kit++)
         {
-		if (kit->second.keyFlags | RSTLV_KEY_DISTRIB_PRIVATE)
+		if (kit->second.keyFlags | RSTLV_KEY_DISTRIB_ADMIN)
 		{
-			std::cerr << "p3IdService::cache_store() Found Publish Key";
+			std::cerr << "p3IdService::cache_store() Found Admin Key";
 			std::cerr << std::endl;
 
+			/* save full key - if we have it */
+			if (kit->second.keyFlags | RSTLV_KEY_TYPE_FULL)
+			{
+				fullkey = kit->second;
+				full_key_ok = true;
+			}
+
+			/* cache public key always */
 			pubkey = kit->second;
-			key_ok = true;
+			pub_key_ok = true;
 		}
 	}
 
-	if (!key_ok)
+	if (!pub_key_ok)
 	{
 		std::cerr << "p3IdService::cache_store() ERROR No Public Key Found";
 		std::cerr << std::endl;
 		return false;
 	}
 
-
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
 	// Create Cache Data.
-	RsGxsIdCache cache(item, pubkey);
+	RsGxsIdCache pubcache(item, pubkey);
+	mPublicKeyCache.store(id, pubcache);
 
-	// For consistency
-	std::map<RsGxsId, RsGxsIdCache>::iterator it;
-	it = mCacheDataMap.find(cache.id);
-	if (it != mCacheDataMap.end())
+	if (full_key_ok)
 	{
-		// ERROR.
-		std::cerr << "p3IdService::cache_store() ERROR entry exists already";
-		std::cerr << std::endl;
-		return false;
+		RsGxsIdCache fullcache(item, fullkey);
+		mPrivateKeyCache.store(id, fullcache);
 	}
-
-	mCacheDataMap[cache.id] = cache;
-        mCacheDataCount++;
-
-	/* add new lrumap entry */
-        time_t old_ts = 0;
-        time_t new_ts = time(NULL);
-
-        locked_cache_update_lrumap(cache.id, old_ts, new_ts);
 
 	return true;
 }
-
-
-bool p3IdService::locked_cache_update_lrumap(const RsGxsId &key, time_t old_ts, time_t new_ts)
-{
-	if (old_ts == 0)
-	{
-		std::cerr << "p3IdService::locked_cache_update_lrumap(" << key << ") just insert!";
-		std::cerr << std::endl;
-
-		LruData data;
-		data.key = key;
-		/* new insertion */
-		mCacheLruMap.insert(std::make_pair(new_ts, data));
-		return true;
-	}
-
-	/* find old entry */
-	std::multimap<time_t, LruData>::iterator mit;
-	std::multimap<time_t, LruData>::iterator sit = mCacheLruMap.lower_bound(old_ts);
-	std::multimap<time_t, LruData>::iterator eit = mCacheLruMap.upper_bound(old_ts);
-
-        for(mit = sit; mit != eit; mit++)
-	{
-		if (mit->second.key == key)
-		{
-			LruData data = mit->second;
-			mCacheLruMap.erase(mit);
-			std::cerr << "p3IdService::locked_cache_update_lrumap(" << key << ") rm old";
-			std::cerr << std::endl;
-
-			if (new_ts != 0) // == 0, means remove.
-			{	
-				std::cerr << "p3IdService::locked_cache_update_lrumap(" << key << ") added new_ts";
-				std::cerr << std::endl;
-				mCacheLruMap.insert(std::make_pair(new_ts, data));
-			}
-			return true;
-		}
-	}
-	std::cerr << "p3IdService::locked_cache_update_lrumap(" << key << ") ERROR";
-	std::cerr << std::endl;
-
-	return false;
-}
-
-
-bool p3IdService::cache_resize()
-{
-	std::cerr << "p3IdService::cache_resize()";
-	std::cerr << std::endl;
-
-	int count_to_clear = 0;
-	{
-		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-	
-		// consistency check.
-		if ((mCacheDataMap.size() != mCacheDataCount) ||
-			(mCacheLruMap.size() != mCacheDataCount))
-		{
-			// ERROR.
-			std::cerr << "p3IdService::cache_resize() CONSISTENCY ERROR";
-			std::cerr << std::endl;
-		}
-	
-		if (mCacheDataCount > MAX_CACHE_SIZE)
-		{
-			count_to_clear = mCacheDataCount - MAX_CACHE_SIZE;
-			std::cerr << "p3IdService::cache_resize() to_clear: " << count_to_clear;
-			std::cerr << std::endl;
-		}
-	}
-
-	if (count_to_clear > 0)
-	{
-		cache_discard_LRU(count_to_clear);
-	}
-	return true;
-}
-
-
-
-bool p3IdService::cache_discard_LRU(int count_to_clear)
-{
-	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-
-	while(count_to_clear > 0)
-	{
-		std::multimap<time_t, LruData>::iterator mit = mCacheLruMap.begin();
-		if (mit != mCacheLruMap.end())
-		{
-			LruData data = mit->second;
-			mCacheLruMap.erase(mit);
-
-			/* now clear from real cache */
-			std::map<RsGxsId, RsGxsIdCache>::iterator it;
-			it = mCacheDataMap.find(data.key);
-			if (it == mCacheDataMap.end())
-			{
-				// ERROR
-				std::cerr << "p3IdService::cache_discard_LRU(): ERROR Missing key: " << data.key;
-				std::cerr << std::endl;
-				return false;
-			}
-			else
-			{
-				std::cerr << "p3IdService::cache_discard_LRU() removing: " << data.key;
-				std::cerr << std::endl;
-				mCacheDataMap.erase(it);
-				mCacheDataCount--;
-			}
-		}
-		else
-		{
-			// No More Data, ERROR.
-			std::cerr << "p3IdService::cache_discard_LRU(): INFO more more cache data";
-			std::cerr << std::endl;
-			return true;
-		}
-		count_to_clear--;
-	}
-	return true;
-}
-
 
 
 
@@ -655,6 +481,8 @@ bool p3IdService::cache_check_loading()
 	/* check the status of all active tokens */
 	std::list<uint32_t> toload;
 	std::list<uint32_t>::iterator it;
+
+	bool stuffToLoad = false;
 	{
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 		for(it = mCacheLoad_Tokens.begin(); it != mCacheLoad_Tokens.end();)
@@ -670,6 +498,7 @@ bool p3IdService::cache_check_loading()
 			{
 				it = mCacheLoad_Tokens.erase(it);
 				toload.push_back(token);
+				stuffToLoad = true;
 			}
 			else
 			{
@@ -678,9 +507,16 @@ bool p3IdService::cache_check_loading()
 		}
 	}
 
-	for(it = toload.begin(); it != toload.end(); it++)
+	if (stuffToLoad)
 	{
-		cache_load_for_token(*it);
+		for(it = toload.begin(); it != toload.end(); it++)
+		{
+			cache_load_for_token(*it);
+		}
+
+		// cleanup.
+		mPrivateKeyCache.resize();
+		mPublicKeyCache.resize();
 	}
 	return 1;
 
@@ -718,21 +554,9 @@ bool p3IdService::cache_load_for_token(uint32_t token)
 
 		return false;
 	}
-
-
-	/* drop old entries */
-	cache_resize();
-
 	return true;
 }
 
-
-
-bool p3IdService::cache_check_consistency()
-{
-
-	return false;
-}
 
 /************************************************************************************/
 /************************************************************************************/
@@ -832,7 +656,7 @@ bool p3IdService::cachetest_request()
 	                for(; vit != grpIds.end(); vit++)
 	                {
 				/* 5% chance of checking it! */
-				if (RSRandom::random_f32() < 0.05)
+				if (RSRandom::random_f32() < 0.25)
 				{
 					std::cerr << "p3IdService::cachetest_request() Testing Id: " << *vit;
 					std::cerr << std::endl;
@@ -995,13 +819,14 @@ void p3IdService::generateDummyData()
 			createGroup(dummyToken, id);
 
 // LIMIT - AS GENERATION IS BROKEN.
-#define MAX_TEST_GEN 25
+#define MAX_TEST_GEN 50
 			if (++genCount > MAX_TEST_GEN)
 			{
 				return;
 			}
 		}
 	}
+	return;
 
 #define MAX_RANDOM_GPGIDS	10 //1000
 #define MAX_RANDOM_PSEUDOIDS	50 //5000
