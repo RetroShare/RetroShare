@@ -80,7 +80,7 @@ class RsGxsIdCache
 {
 	public:
 	RsGxsIdCache();
-	RsGxsIdCache(const RsGxsIdGroupItem *item);
+	RsGxsIdCache(const RsGxsIdGroupItem *item, const RsTlvSecurityKey &in_pkey);
 
 	RsGxsId id;
 	std::string name;
@@ -144,9 +144,11 @@ virtual bool createIdentity(uint32_t& token, RsIdentityParameters &params);
 	 *
 	 */
 virtual bool haveKey(const RsGxsId &id);
-virtual bool havePrivateKey(const RsGxsId &id);
 virtual bool requestKey(const RsGxsId &id, const std::list<PeerId> &peers);
 virtual int  getKey(const RsGxsId &id, RsTlvSecurityKey &key);
+
+virtual bool havePrivateKey(const RsGxsId &id);
+virtual bool requestPrivateKey(const RsGxsId &id);
 virtual int  getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key);  
 
 	/**************** RsGixsReputation Implementation 
@@ -198,6 +200,20 @@ virtual bool getReputation(const RsGxsId &id, const GixsReputation &rep);
 	std::list<RsGxsId> mCacheLoad_ToCache;
 	std::list<uint32_t> mCacheLoad_Tokens;
 
+
+/************************************************************************
+ * Test fns for Caching.
+ *
+ */
+	bool cachetest_tick();
+	bool cachetest_getlist();
+	bool cachetest_request();
+
+	/* MUTEX PROTECTED DATA (mIdMtx - maybe should use a 2nd?) */
+
+	time_t mCacheTest_LastTs;
+	bool mCacheTest_Active;
+	uint32_t mCacheTest_Token;
 
 /************************************************************************
  * Below is the background task for processing opinions => reputations 

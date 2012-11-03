@@ -149,6 +149,8 @@ public:
      * @return will
      */
     virtual bool requestKey(const RsGxsId &id, const std::list<PeerId> &peers) = 0;
+    virtual bool requestPrivateKey(const RsGxsId &id) = 0;
+
 
     /*!
      * Retrieves a key identity

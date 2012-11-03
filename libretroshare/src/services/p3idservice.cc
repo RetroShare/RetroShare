@@ -54,6 +54,9 @@ p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *ne
 	: RsGxsIdExchange(gds, nes, new RsGxsIdSerialiser(), RS_SERVICE_GXSV1_TYPE_GXSID), RsIdentity(this), 
 	mIdMtx("p3IdService")
 {
+	mCacheTest_LastTs = 0;
+	mCacheLoad_LastCycle = 0;
+	mCacheTest_Active = false;
 
 }
 
@@ -68,7 +71,7 @@ void	p3IdService::service_tick()
 	cache_tick();
 
 	// internal testing - request keys. (NOT FINISHED YET)
-	//cachetest_tick();
+	cachetest_tick();
 
 	return;
 }
@@ -149,6 +152,11 @@ int  p3IdService::getKey(const RsGxsId &id, RsTlvSecurityKey &key)
 		return 1;
 	}
 	return -1;
+}
+
+bool p3IdService::requestPrivateKey(const RsGxsId &id)
+{
+	return false;
 }
 
 int  p3IdService::getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key)
@@ -280,45 +288,19 @@ RsGxsIdCache::RsGxsIdCache()
 	return; 
 }
 
-RsGxsIdCache::RsGxsIdCache(const RsGxsIdGroupItem *item)
+RsGxsIdCache::RsGxsIdCache(const RsGxsIdGroupItem *item, const RsTlvSecurityKey &in_pkey)
 {
 	id = item->meta.mGroupId;
 	name = item->meta.mGroupName;
+	pubkey = in_pkey;
 
 	std::cerr << "RsGxsIdCache::RsGxsIdCache() for: " << id;
 	std::cerr << std::endl;
 
-        /* extract key from keys */
-	bool key_ok = false;
-
-	/**** OKAY, I can't do this ???? how do I access the keys? ****/
-#if 0
-	std::map<std::string, RsTlvSecurityKey>::iterator kit;
-
-        for (kit = item->meta.keys.keys.begin(); kit != item->meta.keys.keys.end(); kit++)
-        {
-		if (kit->second.keyFlags == RSTLV_KEY_DISTRIB_PUBLIC | RSTLV_KEY_TYPE_PUBLIC_ONLY)
-		{
-			std::cerr << "RsGxsIdCache::load() Found Public Key";
-			std::cerr << std::endl;
-
-			pubkey = kit->second;
-			key_ok = true;
-		}
-	}
-#endif
-
-	if (!key_ok)
-	{
-		std::cerr << "RsGxsIdCache::load() ERROR No Public Key Found";
-		std::cerr << std::endl;
-	}
-
         reputation = 0; /* TODO: extract from string - This will need to be refreshed!!! */
 	lastUsedTs = 0;	
 
-};
-
+}
 
 
 bool p3IdService::cache_is_loaded(const RsGxsId &id)
@@ -334,7 +316,7 @@ bool p3IdService::cache_is_loaded(const RsGxsId &id)
 
 		return false;
 	}
-	std::cerr << "p3IdService::cache_is_loaded(" << id << ") false";
+	std::cerr << "p3IdService::cache_is_loaded(" << id << ") true";
 	std::cerr << std::endl;
 
 	return true;
@@ -377,10 +359,48 @@ bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 	//item->print(std::cerr, 0); NEEDS CONST!!!! TODO
 	std::cerr << std::endl;
 
+        /* extract key from keys */
+    	RsTlvSecurityKeySet keySet;
+    	RsTlvSecurityKey    pubkey;
+	bool key_ok = false;
+
+    	if (!getGroupKeys(item->meta.mGroupId, keySet))
+	{
+		std::cerr << "p3IdService::cache_store() ERROR getting GroupKeys for: ";
+		std::cerr << item->meta.mGroupId;
+		std::cerr << std::endl;
+		return false;
+	}
+
+	std::map<std::string, RsTlvSecurityKey>::iterator kit;
+
+	//std::cerr << "p3IdService::cache_store() KeySet is:";
+	//keySet.print(std::cerr, 10);
+
+        for (kit = keySet.keys.begin(); kit != keySet.keys.end(); kit++)
+        {
+		if (kit->second.keyFlags | RSTLV_KEY_DISTRIB_PRIVATE)
+		{
+			std::cerr << "p3IdService::cache_store() Found Publish Key";
+			std::cerr << std::endl;
+
+			pubkey = kit->second;
+			key_ok = true;
+		}
+	}
+
+	if (!key_ok)
+	{
+		std::cerr << "p3IdService::cache_store() ERROR No Public Key Found";
+		std::cerr << std::endl;
+		return false;
+	}
+
+
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
 	// Create Cache Data.
-	RsGxsIdCache cache(item);
+	RsGxsIdCache cache(item, pubkey);
 
 	// For consistency
 	std::map<RsGxsId, RsGxsIdCache>::iterator it;
@@ -399,7 +419,6 @@ bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 	/* add new lrumap entry */
         time_t old_ts = 0;
         time_t new_ts = time(NULL);
-        it->second.lastUsedTs = new_ts;
 
         locked_cache_update_lrumap(cache.id, old_ts, new_ts);
 
@@ -714,12 +733,13 @@ bool p3IdService::cache_check_consistency()
 /************************************************************************************/
 /************************************************************************************/
 
-#if 0
+#define TEST_PERIOD 60
+
 bool p3IdService::cachetest_tick()
 {
 	/* every minute - run a background check */
 	time_t now = time(NULL);
-	bool doCycle = false;
+	bool doTest = false;
 	{
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 		if (now -  mCacheTest_LastTs > TEST_PERIOD)
@@ -729,8 +749,10 @@ bool p3IdService::cachetest_tick()
 		}
 	}
 
-	if (doCycle)
+	if (doTest)
 	{
+		std::cerr << "p3IdService::cachetest_tick() starting";
+		std::cerr << std::endl;
 		cachetest_getlist();
 	}
 
@@ -740,17 +762,23 @@ bool p3IdService::cachetest_tick()
 
 bool p3IdService::cachetest_getlist()
 {
+
 	{
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 		if (mCacheTest_Active)
 		{
+			std::cerr << "p3IdService::cachetest_getlist() Already active";
+			std::cerr << std::endl;
 			return false;
 		}
 	}
 
+	std::cerr << "p3IdService::cachetest_getlist() making request";
+	std::cerr << std::endl;
+
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_LIST; 
         RsTokReqOptions opts;
-        opts.mReqType = GXS_REQUEST_TYPE_GROUP_LIST;
+        opts.mReqType = GXS_REQUEST_TYPE_GROUP_IDS;
 	uint32_t token = 0;
 	
 	RsGenExchange::getTokenService()->requestGroupInfo(token, ansType, opts);
@@ -776,37 +804,62 @@ bool p3IdService::cachetest_request()
 		token = mCacheTest_Token;
 	}
 
+	std::cerr << "p3IdService::cachetest_request() checking request";
+	std::cerr << std::endl;
+
 	uint32_t status = RsGenExchange::getTokenService()->requestStatus(token);
 
 	if (status == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
 	{
-		std::cerr << "p3IdService::cache_load_for_token() : " << token;
+		std::cerr << "p3IdService::cachetest_request() token ready: " << token;
 		std::cerr << std::endl;
 
-        	std::vector<RsGxsId> grpIds;
+        	std::list<RsGxsId> grpIds;
         	bool ok = RsGenExchange::getGroupList(token, grpIds);
+
+		{	
+			RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+			mCacheTest_Active = false;
+		}
 
 	        if(ok)
 	        {
-	                std::vector<RsGxsId>::iterator vit = grpIds.begin();
+	                std::list<RsGxsId>::iterator vit = grpIds.begin();
 	                for(; vit != grpIds.end(); vit++)
 	                {
 				/* 5% chance of checking it! */
-				if (RsRandom::f32() < 0.05)
+				if (RSRandom::random_f32() < 0.05)
 				{
+					std::cerr << "p3IdService::cachetest_request() Testing Id: " << *vit;
+					std::cerr << std::endl;
+
 					/* try the cache! */
 					if (!haveKey(*vit))
 					{
 						std::list<PeerId> nullpeers;
 						requestKey(*vit, nullpeers);
+
+						std::cerr << "p3IdService::cachetest_request() Requested Key Id: " << *vit;
+						std::cerr << std::endl;
 					}
 					else
 					{
 						RsTlvSecurityKey seckey;
 						if (getKey(*vit, seckey))
 						{
-							// success!
+							std::cerr << "p3IdService::cachetest_request() Got Key OK Id: " << *vit;
+							std::cerr << std::endl;
 
+							// success!
+        						seckey.print(std::cerr, 10);
+							std::cerr << std::endl;
+
+
+						}
+						else
+						{
+							std::cerr << "p3IdService::cachetest_request() ERROR no Key for Id: " << *vit;
+							std::cerr << std::endl;
 						}
 					}
 
@@ -814,6 +867,8 @@ bool p3IdService::cachetest_request()
 					if (!havePrivateKey(*vit))
 					{
 						requestPrivateKey(*vit);
+						std::cerr << "p3IdService::cachetest_request() Requested PrivateKey Id: " << *vit;
+						std::cerr << std::endl;
 					}
 					else
 					{
@@ -821,7 +876,13 @@ bool p3IdService::cachetest_request()
 						if (getPrivateKey(*vit, seckey))
 						{
 							// success!
-
+							std::cerr << "p3IdService::cachetest_request() Got PrivateKey OK Id: " << *vit;
+							std::cerr << std::endl;
+						}
+						else
+						{
+							std::cerr << "p3IdService::cachetest_request() ERROR no PrivateKey for Id: " << *vit;
+							std::cerr << std::endl;
 						}
 					}
 				}
@@ -837,9 +898,6 @@ bool p3IdService::cachetest_request()
 	}
 	return true;
 }
-
-#endif
-
 
 
 /************************************************************************************/
@@ -873,6 +931,7 @@ void p3IdService::generateDummyData()
 	std::string ownId = rsPeers->getGPGOwnId();
 	gpgids.push_back(ownId);
 
+	int genCount = 0;
 	int i;
 	for(it = gpgids.begin(); it != gpgids.end(); it++)
 	{
@@ -928,11 +987,15 @@ void p3IdService::generateDummyData()
 				id.mGpgIdKnown = false;
 			}
 
-			//mIds[id.mKeyId] = id;
-			//mIdProxy->addGroup(id);
-			// STORE
 			uint32_t dummyToken = 0;
 			createGroup(dummyToken, id);
+
+// LIMIT - AS GENERATION IS BROKEN.
+#define MAX_TEST_GEN 25
+			if (++genCount > MAX_TEST_GEN)
+			{
+				return;
+			}
 		}
 	}
 
