@@ -34,7 +34,6 @@
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rstlvtypes.h"
 #include "serialiser/rstlvkeys.h"
-
 #include "gxs/rsgxsdata.h"
 
 
@@ -69,7 +68,11 @@ class RsNxsItem : public RsItem
 
 public:
     RsNxsItem(uint16_t servtype, uint8_t subtype)
-        : RsItem(RS_PKT_VERSION_SERVICE, servtype, subtype), transactionNumber(0) { return; }
+        : RsItem(RS_PKT_VERSION_SERVICE, servtype, subtype), transactionNumber(0)
+    {
+    	setPriorityLevel(QOS_PRIORITY_RS_GXS_NET);
+        return;
+    }
 
     virtual void clear() = 0;
     virtual std::ostream &print(std::ostream &out, uint16_t indent = 0) = 0;
