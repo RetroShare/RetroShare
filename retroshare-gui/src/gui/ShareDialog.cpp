@@ -48,16 +48,15 @@ ShareDialog::ShareDialog(std::string filename, QWidget *parent, Qt::WFlags flags
 
     ui.okButton->setEnabled(false);
 
-	 QHBoxLayout *hbox = new QHBoxLayout ;
-	 ui.shareflags_GB->setLayout(hbox) ;
+	 QVBoxLayout *hbox = new QVBoxLayout(ui.shareflags_GB) ;
 
-	 groupselectionbox = new GroupSelectionBox(ui.shareflags_GB) ;
-	 groupflagsbox = new GroupFlagsWidget(ui.shareflags_GB) ;
+	 groupselectionbox = new GroupSelectionBox(ui.shareflags_GB);
+//	 groupflagsbox = new GroupFlagsWidget(ui.shareflags_GB) ;
 
+//	 hbox->addWidget(groupflagsbox) ;
 	 hbox->addWidget(groupselectionbox) ;
-	 hbox->addWidget(groupflagsbox) ;
 
-	 update() ;
+	 ui.shareflags_GB->setLayout(hbox) ;
 
     if (!filename.empty()) 
 	 {
@@ -76,7 +75,7 @@ ShareDialog::ShareDialog(std::string filename, QWidget *parent, Qt::WFlags flags
                 ui.browseButton->setDisabled(true);
                 ui.virtualpath_lineEdit->setText(QString::fromUtf8(it->virtualname.c_str()));
 
-                groupflagsbox->setFlags(it->shareflags) ;
+ //               groupflagsbox->setFlags(it->shareflags) ;
                 groupselectionbox->setSelectedGroups(it->parent_groups) ;
 
                 break;
@@ -104,7 +103,7 @@ void ShareDialog::addDirectory()
     SharedDirInfo sdi ;
     sdi.filename = ui.localpath_lineEdit->text().toUtf8().constData();
     sdi.virtualname = ui.virtualpath_lineEdit->text().toUtf8().constData();
-    sdi.shareflags = groupflagsbox->flags() ;
+//    sdi.shareflags = groupflagsbox->flags() ;
 	 sdi.parent_groups = groupselectionbox->selectedGroups() ;
 
     if (ui.localpath_lineEdit->isEnabled()) 

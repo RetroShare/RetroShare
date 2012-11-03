@@ -13,6 +13,7 @@ GroupSelectionBox::GroupSelectionBox(QWidget *parent)
 
 	for(std::list<RsGroupInfo>::const_iterator it(lst.begin());it!=lst.end();++it)
 		addItem(QString::fromStdString(it->id)) ;
+
 }
 
 std::list<std::string> GroupSelectionBox::selectedGroups() const

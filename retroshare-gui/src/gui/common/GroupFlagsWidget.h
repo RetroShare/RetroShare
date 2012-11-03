@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 #include <QPushButton>
-#include <QWidget>
+#include <QFrame>
 #include <retroshare/rsflags.h>
 
 class GroupFlagsWidget: public QWidget
