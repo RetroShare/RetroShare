@@ -111,7 +111,7 @@ class FileIndexMonitor: public CacheSource, public RsThread
 		virtual ~FileIndexMonitor();
 
 		/* external interface for filetransfer */
-		bool findLocalFile(std::string hash,FileSearchFlags flags,const std::string& peer_id, std::string &fullpath, uint64_t &size) const;
+		bool findLocalFile(std::string hash,FileSearchFlags flags,const std::string& peer_id, std::string &fullpath, uint64_t &size,FileStorageFlags& storage_flags,std::list<std::string>& parent_groups) const;
 
 		int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags,const std::string& peer_id) ;
 		int SearchBoolExp(Expression *exp, std::list<DirDetails> &results,FileSearchFlags flags,const std::string& peer_id) const ;

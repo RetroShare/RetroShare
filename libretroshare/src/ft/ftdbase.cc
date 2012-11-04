@@ -134,9 +134,6 @@ bool ftFiMonitor::search(const std::string &hash, FileSearchFlags hintflags, Fil
 }
 bool ftFiMonitor::search(const std::string &hash, FileSearchFlags hintflags, const std::string& peer_id,FileInfo &info) const
 {
-	uint64_t fsize;
-	std::string path;
-
 #ifdef DB_DEBUG
 	std::cerr << "ftFiMonitor::search(" << hash << "," << hintflags;
 	std::cerr << ")";
@@ -149,7 +146,7 @@ bool ftFiMonitor::search(const std::string &hash, FileSearchFlags hintflags, con
 	FileSearchFlags flags = hintflags ;
 	flags &= (RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE);
 	
-	if(findLocalFile(hash, flags,peer_id,path, fsize))
+	if(findLocalFile(hash, flags,peer_id,info.path, info.size,info.storage_permission_flags,info.parent_groups))
 	{
 		/* fill in details */
 #ifdef DB_DEBUG
@@ -158,10 +155,7 @@ bool ftFiMonitor::search(const std::string &hash, FileSearchFlags hintflags, con
 		std::cerr << " = " << hash << "," << fsize;
 		std::cerr << std::endl;
 #endif
-
-		info.size = fsize;
-		info.fname = RsDirUtil::getTopDir(path);
-		info.path = path;
+		info.fname = RsDirUtil::getTopDir(info.path);
 
 		return true;
 	}

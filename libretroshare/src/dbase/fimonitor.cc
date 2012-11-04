@@ -333,7 +333,7 @@ int FileIndexMonitor::filterResults(std::list<FileEntry*>& firesults,std::list<D
 	return !results.empty() ;
 }
 
-bool FileIndexMonitor::findLocalFile(std::string hash,FileSearchFlags hint_flags, const std::string& peer_id,std::string &fullpath, uint64_t &size) const
+bool FileIndexMonitor::findLocalFile(std::string hash,FileSearchFlags hint_flags, const std::string& peer_id,std::string &fullpath, uint64_t &size,FileStorageFlags& storage_flags,std::list<std::string>& parent_groups) const
 {
 	std::list<FileEntry *> results;
 	bool ok = false;
@@ -353,16 +353,13 @@ bool FileIndexMonitor::findLocalFile(std::string hash,FileSearchFlags hint_flags
 			FileEntry *fe = results.front();
 			DirEntry  *de = fe->parent; /* all files must have a valid parent! */
 
-			std::list<std::string> parent_groups ;
-			FileStorageFlags share_flags ;
-			
-			locked_findShareFlagsAndParentGroups(fe,share_flags,parent_groups) ;
+			locked_findShareFlagsAndParentGroups(fe,storage_flags,parent_groups) ;
 
 			// turn share flags into hint flags
 
-			FileSearchFlags shflh = rsPeers->computePeerPermissionFlags(peer_id,share_flags,parent_groups) ;
+			FileSearchFlags shflh = peer_id.empty()?(RS_FILE_HINTS_BROWSABLE|RS_FILE_HINTS_NETWORK_WIDE):rsPeers->computePeerPermissionFlags(peer_id,storage_flags,parent_groups) ;
 #ifdef FIM_DEBUG
-			std::cerr << "FileIndexMonitor::findLocalFile: Filtering candidate " << fe->name  << ", flags=" << share_flags << ", hint_flags=" << hint_flags << ", peer_id = " << peer_id << std::endl ;
+			std::cerr << "FileIndexMonitor::findLocalFile: Filtering candidate " << fe->name  << ", flags=" << storage_flags << ", hint_flags=" << hint_flags << ", peer_id = " << peer_id << std::endl ;
 #endif
 
 			if(peer_id.empty() || (shflh & hint_flags))
