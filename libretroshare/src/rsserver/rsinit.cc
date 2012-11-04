@@ -1830,7 +1830,7 @@ RsTurtle *rsTurtle = NULL ;
 #include "services/p3photoserviceV2.h"
 
 // Not too many to convert now!
-//#include "services/p3wikiserviceVEG.h"
+#include "services/p3wikiserviceVEG.h"
 #include "services/p3wireVEG.h"
 //#include "services/p3idserviceVEG.h"
 #include "services/p3forumsVEG.h"
@@ -2281,8 +2281,8 @@ int RsServer::StartupRetroShare()
 #ifdef ENABLE_GXS_SERVICES
 
 	// Testing New Cache Services.
-        //p3WikiServiceVEG *mWikis = new p3WikiServiceVEG(RS_SERVICE_GXSV1_TYPE_WIKI);
-	//pqih -> addService(mWikis);
+	p3WikiServiceVEG *mWikis = new p3WikiServiceVEG(RS_SERVICE_GXSV1_TYPE_WIKI);
+	pqih -> addService(mWikis);
 	
 	// Testing New Cache Services.
         p3WireVEG *mWire = new p3WireVEG(RS_SERVICE_GXSV1_TYPE_WIRE);
@@ -2371,12 +2371,17 @@ int RsServer::StartupRetroShare()
 
         /*** start up GXS core runner ***/
 
-        GxsCoreServer* mGxsCore = new GxsCoreServer();
-        mGxsCore->addService(mGxsIdService);
+//        GxsCoreServer* mGxsCore = new GxsCoreServer();
+        //mGxsCore->addService(mGxsIdService);
 #if ENABLE_OTHER_GXS_SERVICES
-        mGxsCore->addService(mPhotoV2);
-        mGxsCore->addService(mPosted);
-        mGxsCore->addService(mWiki);
+        createThread(*mGxsIdService);
+        createThread(*mPhotoV2);
+        createThread(*mPosted);
+        createThread(*mWiki);
+//
+//        mGxsCore->addService(mPhotoV2);
+//        mGxsCore->addService(mPosted);
+//        mGxsCore->addService(mWiki);
 #endif
 
         // cores ready start up GXS net servers
@@ -2396,7 +2401,7 @@ int RsServer::StartupRetroShare()
 #endif
 
         // start up gxs core server
-        createThread(*mGxsCore);
+        //createThread(*mGxsCore);
 #endif
 
 

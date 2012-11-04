@@ -64,7 +64,7 @@ typedef std::map<RsGxsGroupId, std::vector<RsMsgMetaData> > GxsMsgMetaMap;
 
 class RsGixs;
 
-class RsGenExchange : public RsGxsService, public RsNxsObserver
+class RsGenExchange : public RsGxsService, public RsNxsObserver, public RsThread
 {
 public:
 
@@ -116,6 +116,8 @@ public:
      * request to this gxs service
      */
     RsTokenService* getTokenService();
+
+    void run();
 
 public:
 
@@ -265,6 +267,20 @@ protected:
      */
     void publishMsg(uint32_t& token, RsGxsMsgItem* msgItem);
 
+    /*!
+     * This represents the group before its signature is calculated
+     * Reimplement this function if you need to access keys to further extend
+     * security of your group items using keyset properties
+     * @warning do not modify keySet!
+     * @param grp The group which is stored by GXS prior
+     *            service can make specific modifications need
+     *            in particular access to its keys and meta
+     * @param keySet this is the key set used to define the group
+     *               contains private and public admin and publish keys
+     *               (use key flags to distinguish)
+     */
+    virtual void service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet);
+
 public:
 
     /*!
@@ -355,7 +371,7 @@ private:
      * by assigning it a groupId and signature via SHA1 and EVP_sign respectively
      * @param grp Nxs group to create
      */
-    bool createGroup(RsNxsGrp* grp);
+    bool createGroup(RsNxsGrp* grp, RsTlvSecurityKeySet& keySet);
 
     /*!
      * This completes the creation of an instance on RsNxsMsg
@@ -372,6 +388,12 @@ private:
      * @return false if meta change is not legal
      */
     bool locked_validateGrpMetaChange(GrpLocMetaData&);
+
+    /*!
+     * Generate a set of keys that can define a GXS group
+     * @param keySet this is set generated keys
+     */
+    void generateGroupKeys(RsTlvSecurityKeySet& keySet);
 
 private:
 

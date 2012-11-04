@@ -57,6 +57,22 @@ RsGenExchange::~RsGenExchange()
 
 }
 
+void RsGenExchange::run()
+{
+
+    double timeDelta = 0.06; // slow tick
+
+    while(true)
+    {
+        tick();
+
+#ifndef WINDOWS_SYS
+        usleep((int) (timeDelta * 1000000));
+#else
+        Sleep((int) (timeDelta * 1000));
+#endif
+    }
+}
 
 void RsGenExchange::tick()
 {
@@ -125,7 +141,7 @@ bool RsGenExchange::acknowledgeTokenGrp(const uint32_t& token,
 	return true;
 }
 
-bool RsGenExchange::createGroup(RsNxsGrp *grp)
+void RsGenExchange::generateGroupKeys(RsTlvSecurityKeySet& keySet)
 {
     /* create Keys */
 
@@ -149,6 +165,17 @@ bool RsGenExchange::createGroup(RsNxsGrp *grp)
     GxsSecurity::setRSAPublicKey(pubKey, rsa_publish_pub);
     GxsSecurity::setRSAPrivateKey(privPubKey, rsa_publish);
 
+    adminKey.startTS = time(NULL);
+    adminKey.endTS = 0; /* no end */
+
+    privAdminKey.startTS = time(NULL);
+    privAdminKey.endTS = 0; /* no end */
+
+    pubKey.startTS = time(NULL);
+    pubKey.endTS = 0; /* no end */
+
+    privPubKey.startTS = time(NULL);
+    privPubKey.endTS = 0; /* no end */
 
     // for now all public
     adminKey.keyFlags = RSTLV_KEY_DISTRIB_ADMIN | RSTLV_KEY_TYPE_PUBLIC_ONLY;
@@ -158,51 +185,11 @@ bool RsGenExchange::createGroup(RsNxsGrp *grp)
     pubKey.keyFlags = RSTLV_KEY_DISTRIB_PUBLIC | RSTLV_KEY_TYPE_PUBLIC_ONLY;
     privPubKey.keyFlags = RSTLV_KEY_DISTRIB_PRIVATE | RSTLV_KEY_TYPE_FULL;
 
-    adminKey.startTS = time(NULL);
-    adminKey.endTS = 0; /* no end */
-    RsGxsGrpMetaData* meta = grp->metaData;
+    keySet.keys[adminKey.keyId] = adminKey;
+    keySet.keys[pubKey.keyId] = pubKey;
 
-    /* add public keys to grp */
-
-    meta->keys.keys[adminKey.keyId] = adminKey;
-    meta->keys.keys[pubKey.keyId] = pubKey;
-
-    // group is self signing
-    // for the creation of group signature
-    // only public admin and publish keys are present
-    // key set
-    uint32_t metaDataLen = meta->serial_size();
-	uint32_t allGrpDataLen = metaDataLen + grp->grp.bin_len;
-	char* metaData = new char[metaDataLen];
-	char* allGrpData = new char[allGrpDataLen]; // msgData + metaData
-
-	meta->serialise(metaData, metaDataLen);
-
-	// copy msg data and meta in allMsgData buffer
-	memcpy(allGrpData, grp->grp.bin_data, grp->grp.bin_len);
-	memcpy(allGrpData+(grp->grp.bin_len), metaData, metaDataLen);
-
-	RsTlvKeySignature adminSign;
-	bool ok = GxsSecurity::getSignature(allGrpData, allGrpDataLen, &privAdminKey, adminSign);
-
-    /* now add private keys to grp */
-    meta->keys.keys[privAdminKey.keyId] = privAdminKey;
-    meta->keys.keys[privPubKey.keyId] = privPubKey;
-
-    // add admin sign to grpMeta
-    meta->signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_ADMIN] = adminSign;
-
-    pqihash hash;
-
-    // get hash of msg data to create msg id
-    hash.addData(allGrpData, allGrpDataLen);
-    hash.Complete(meta->mGroupId);
-    grp->grpId = meta->mGroupId;
-
-    adminKey.TlvClear();
-    privAdminKey.TlvClear();
-    privPubKey.TlvClear();
-    pubKey.TlvClear();
+    keySet.keys[privAdminKey.keyId] = privAdminKey;
+    keySet.keys[privPubKey.keyId] = privPubKey;
 
     // clean up
     RSA_free(rsa_admin);
@@ -210,7 +197,59 @@ bool RsGenExchange::createGroup(RsNxsGrp *grp)
 
     RSA_free(rsa_publish);
     RSA_free(rsa_publish_pub);
+}
 
+bool RsGenExchange::createGroup(RsNxsGrp *grp, RsTlvSecurityKeySet& keySet)
+{
+
+
+    RsGxsGrpMetaData* meta = grp->metaData;
+
+    /* add keys to grp */
+    meta->keys = keySet;
+
+    // find private admin key
+    RsTlvSecurityKey privAdminKey;
+    std::map<std::string, RsTlvSecurityKey>::iterator mit = keySet.keys.begin();
+
+    for(; mit != keySet.keys.end(); mit++)
+    {
+    	RsTlvSecurityKey& pk = mit->second;
+
+        if(pk.keyFlags & (RSTLV_KEY_DISTRIB_ADMIN | RSTLV_KEY_TYPE_FULL))
+        {
+            privAdminKey = pk;
+            break;
+        }
+    }
+
+    if(mit == keySet.keys.end())
+    	return false;
+
+    // group is self signing
+    // for the creation of group signature
+    // only public admin and publish keys are present
+    // key set
+    uint32_t metaDataLen = meta->serial_size();
+    uint32_t allGrpDataLen = metaDataLen + grp->grp.bin_len;
+    char* metaData = new char[metaDataLen];
+    char* allGrpData = new char[allGrpDataLen]; // msgData + metaData
+
+    meta->serialise(metaData, metaDataLen);
+
+    // copy msg data and meta in allMsgData buffer
+    memcpy(allGrpData, grp->grp.bin_data, grp->grp.bin_len);
+    memcpy(allGrpData+(grp->grp.bin_len), metaData, metaDataLen);
+
+    RsTlvKeySignature adminSign;
+    bool ok = GxsSecurity::getSignature(allGrpData, allGrpDataLen, &privAdminKey, adminSign);
+
+    // add admin sign to grpMeta
+    meta->signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_ADMIN] = adminSign;
+
+    grp->grpId = meta->mGroupId = privAdminKey.keyId;
+
+    // clean up
     delete[] allGrpData;
     delete[] metaData;
 
@@ -684,64 +723,89 @@ void RsGenExchange::publishMsgs()
 	mMsgsToPublish.clear();
 }
 
+void RsGenExchange::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet)
+{
+#ifdef GEN_EXCH_DEBUG
+	std::cerr << "RsGenExchange::service_CreateGroup(): Does nothing"
+			  << std::endl;
+#endif
+	return;
+}
+
+
+#define GEN_EXCH_GRP_CHUNK 3
+
 void RsGenExchange::publishGrps()
 {
 
 	RsStackMutex stack(mGenMtx);
 
 	std::map<uint32_t, RsGxsGrpItem*>::iterator mit = mGrpsToPublish.begin();
-
+	std::vector<uint32_t> toRemove;
+	int i = 0;
         for(; mit != mGrpsToPublish.end(); mit++)
 	{
+            toRemove.push_back(mit->first);
+            i++;
+            if(i > GEN_EXCH_GRP_CHUNK) break;
 
-		RsNxsGrp* grp = new RsNxsGrp(mServType);
-		RsGxsGrpItem* grpItem = mit->second;
-		uint32_t size = mSerialiser->size(grpItem);
+            RsNxsGrp* grp = new RsNxsGrp(mServType);
+            RsGxsGrpItem* grpItem = mit->second;
+            uint32_t size = mSerialiser->size(grpItem);
 
-		char gData[size];
-		bool ok = mSerialiser->serialise(grpItem, gData, &size);
-                grp->grp.setBinData(gData, size);
+            RsTlvSecurityKeySet keySet;
+            generateGroupKeys(keySet);
 
-		if(ok)
-		{
-                    grp->metaData = new RsGxsGrpMetaData();
-                    grpItem->meta.mPublishTs = time(NULL);
-                    *(grp->metaData) = grpItem->meta;
-                    grp->metaData->mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_ADMIN;
-                    ok &= createGroup(grp);
-                    size = grp->metaData->serial_size();
-                    char mData[size];
-                    grp->metaData->mGroupId = grp->grpId;
-                    ok &= grp->metaData->serialise(mData, size);
-                    grp->meta.setBinData(mData, size);
-                    RsGxsGroupId grpId = grp->grpId;
-                    mDataAccess->addGroupData(grp);
+            service_CreateGroup(grpItem, keySet);
 
-                    // add to published to allow acknowledgement
-                    mGrpNotify.insert(std::make_pair(mit->first, grpId));
-                    mDataAccess->updatePublicRequestStatus(mit->first, RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE);
-		}
+            char gData[size];
+            bool ok = mSerialiser->serialise(grpItem, gData, &size);
+            grp->grp.setBinData(gData, size);
 
-		if(!ok)
-		{
+            if(ok)
+            {
+                grp->metaData = new RsGxsGrpMetaData();
+                grpItem->meta.mPublishTs = time(NULL);
+                *(grp->metaData) = grpItem->meta;
+                grp->metaData->mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_ADMIN;
+                ok &= createGroup(grp, keySet);
+                size = grp->metaData->serial_size();
+                char mData[size];
+                grp->metaData->mGroupId = grp->grpId;
+                ok &= grp->metaData->serialise(mData, size);
+                grp->meta.setBinData(mData, size);
+                RsGxsGroupId grpId = grp->grpId;
+                mDataAccess->addGroupData(grp);
+
+                // add to published to allow acknowledgement
+                mGrpNotify.insert(std::make_pair(mit->first, grpId));
+                mDataAccess->updatePublicRequestStatus(mit->first, RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE);
+            }
+
+            if(!ok)
+            {
 
 #ifdef GEN_EXCH_DEBUG
-			std::cerr << "RsGenExchange::publishGrps() failed to publish grp " << std::endl;
+                std::cerr << "RsGenExchange::publishGrps() failed to publish grp " << std::endl;
 #endif
-			delete grp;
+                delete grp;
 
-			// add to published to allow acknowledgement, grpid is empty as grp creation failed
-                        mGrpNotify.insert(std::make_pair(mit->first, RsGxsGroupId("")));
-                        mDataAccess->updatePublicRequestStatus(mit->first, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
-			continue;
-		}
+                // add to published to allow acknowledgement, grpid is empty as grp creation failed
+                mGrpNotify.insert(std::make_pair(mit->first, RsGxsGroupId("")));
+                mDataAccess->updatePublicRequestStatus(mit->first, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
+                continue;
+            }
 
-		delete grpItem;
+            delete grpItem;
+
 	}
 
 	// clear grp list as we're done publishing them and entries
 	// are invalid
-	mGrpsToPublish.clear();
+
+
+	for(int i = 0; i < toRemove.size(); i++)
+		mGrpsToPublish.erase(toRemove[i]);
 }
 
 
@@ -801,13 +865,18 @@ void RsGenExchange::createDummyGroup(RsGxsGrpItem *grpItem)
     bool ok = mSerialiser->serialise(grpItem, gData, &size);
     grp->grp.setBinData(gData, size);
 
+	RsTlvSecurityKeySet keySet;
+	generateGroupKeys(keySet);
+
+	service_CreateGroup(grpItem, keySet);
+
     if(ok)
     {
         grp->metaData = new RsGxsGrpMetaData();
         grpItem->meta.mPublishTs = time(NULL);
         *(grp->metaData) = grpItem->meta;
         grp->metaData->mSubscribeFlags = ~GXS_SERV::GROUP_SUBSCRIBE_MASK;
-        createGroup(grp);
+        createGroup(grp, keySet);
         size = grp->metaData->serial_size();
         char mData[size];
         grp->metaData->mGroupId = grp->grpId;
