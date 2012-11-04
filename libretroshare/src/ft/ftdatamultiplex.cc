@@ -1309,6 +1309,7 @@ bool	ftDataMultiplex::handleSearchRequest(const std::string& peerId, const std::
 	 * the network wide and browsable flags are needed, otherwise results get filtered.
 	 * For tunnel creation, the check of browsable/network wide flag is already done, so
 	 * if we get a file download packet here, the source is already allowed to download it.
+	 * That is why we don't call the search function with a peer id.
 	 *
 	 */
 
@@ -1320,7 +1321,7 @@ bool	ftDataMultiplex::handleSearchRequest(const std::string& peerId, const std::
 	else
 		hintflags |= RS_FILE_HINTS_CACHE ;
 
-	if(mSearch->search(hash, hintflags,peerId, info))
+	if(mSearch->search(hash, hintflags, info))
 	{
 
 		/* setup a new provider */
