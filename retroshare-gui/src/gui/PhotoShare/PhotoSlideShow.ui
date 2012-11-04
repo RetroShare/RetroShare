@@ -10,6 +10,9 @@
     <height>671</height>
    </rect>
   </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayout">
@@ -99,7 +102,7 @@
          <normaloff>:/images/window_fullscreen.png</normaloff>:/images/window_fullscreen.png</iconset>
        </property>
        <property name="autoRaise">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -112,8 +115,11 @@
      </item>
      <item>
       <widget class="QPushButton" name="pushButton_StartStop">
+       <property name="toolTip">
+        <string/>
+       </property>
        <property name="text">
-        <string>Stop/Run</string>
+        <string>Stop</string>
        </property>
       </widget>
      </item>

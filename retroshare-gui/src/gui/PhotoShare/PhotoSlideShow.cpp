@@ -106,10 +106,14 @@ void PhotoSlideShow::StartStop()
 	if (mRunning)
 	{
 		mRunning = false;
+		ui.pushButton_StartStop->setText(tr("Start"));
+		ui.pushButton_StartStop->setToolTip(tr("Start Slide Show"));
 	}
 	else
 	{
 		mRunning = true;
+		ui.pushButton_StartStop->setText(tr("Stop"));
+		ui.pushButton_StartStop->setToolTip(tr("Stop Slide Show"));
 		if (!mShotActive) // make sure only one timer running
 		{
 			mShotActive = true;
