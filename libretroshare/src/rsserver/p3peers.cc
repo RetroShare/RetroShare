@@ -1100,7 +1100,7 @@ bool p3Peers::assignPeersToGroup(const std::string &groupId, const std::list<std
 	return mPeerMgr->assignPeersToGroup(groupId, peerIds, assign);
 }
 
-FileSearchFlags p3Peers::computePeerPermissionFlags(const std::string& peer_id,
+FileSearchFlags p3Peers::computePeerPermissionFlags(const std::string& peer_ssl_id,
 																		FileStorageFlags share_flags,
 																		const std::list<std::string>& directory_parent_groups)
 {
@@ -1111,6 +1111,7 @@ FileSearchFlags p3Peers::computePeerPermissionFlags(const std::string& peer_id,
 	//
 
 	bool found = false ;
+	std::string pgp_id = getGPGId(peer_ssl_id) ;
 
 	for(std::list<std::string>::const_iterator it(directory_parent_groups.begin());it!=directory_parent_groups.end() && !found;++it)
 	{
@@ -1122,7 +1123,7 @@ FileSearchFlags p3Peers::computePeerPermissionFlags(const std::string& peer_id,
 		}
 
 		for(std::list<std::string>::const_iterator it2(info.peerIds.begin());it2!=info.peerIds.end() && !found;++it2)
-			if(*it2 == peer_id)
+			if(*it2 == pgp_id)
 				found = true ;
 	}
 
