@@ -146,7 +146,8 @@ void IdEditDialog::loadExistingId(uint32_t token)
 
 	data = datavector[0];
 
-	bool pseudo = (data.mIdType & RSID_TYPE_PSEUDONYM);
+
+	bool pseudo = false; //(data.mIdType & RSID_TYPE_PSEUDONYM);
 
 	if (pseudo)
 	{
@@ -175,13 +176,13 @@ void IdEditDialog::loadExistingId(uint32_t token)
 	}
 	else
 	{
-		ui.lineEdit_GpgHash->setText(QString::fromStdString(data.mGpgIdHash));
+		ui.lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash));
 
-		if (data.mGpgIdKnown)
+		if (0) //if (data.mGpgIdKnown)
 		{
-			ui.lineEdit_GpgId->setText(QString::fromStdString(data.mGpgId));
-			ui.lineEdit_GpgName->setText(QString::fromStdString(data.mGpgName));
-			ui.lineEdit_GpgEmail->setText(QString::fromStdString(data.mGpgEmail));
+			//ui.lineEdit_GpgId->setText(QString::fromStdString(data.mGpgId));
+			//ui.lineEdit_GpgName->setText(QString::fromStdString(data.mGpgName));
+			//ui.lineEdit_GpgEmail->setText(QString::fromStdString(data.mGpgEmail));
 		}
 		else
 		{
@@ -208,7 +209,7 @@ void IdEditDialog::updateId()
 		return;
 	}
 
-	rid.mIdType = RSID_RELATION_YOURSELF;
+	//rid.mIdType = RSID_RELATION_YOURSELF;
 	if (ui.checkBox_NewId->isChecked())
 	{
 		rid.mMeta.mGroupId = "";
@@ -220,21 +221,21 @@ void IdEditDialog::updateId()
 
 	if (ui.radioButton_GpgId->isChecked())
 	{
-		rid.mIdType |= RSID_TYPE_REALID;
+		//rid.mIdType |= RSID_TYPE_REALID;
 
-		rid.mGpgId = ui.lineEdit_GpgId->text().toStdString();
-		rid.mGpgIdHash = ui.lineEdit_GpgHash->text().toStdString();
-		rid.mGpgName = ui.lineEdit_GpgName->text().toStdString();
-		rid.mGpgEmail = ui.lineEdit_GpgEmail->text().toStdString();
+		//rid.mGpgId = ui.lineEdit_GpgId->text().toStdString();
+		rid.mPgpIdHash = ui.lineEdit_GpgHash->text().toStdString();
+		//rid.mGpgName = ui.lineEdit_GpgName->text().toStdString();
+		//rid.mGpgEmail = ui.lineEdit_GpgEmail->text().toStdString();
 	}
 	else
 	{
-		rid.mIdType |= RSID_TYPE_PSEUDONYM;
+		//rid.mIdType |= RSID_TYPE_PSEUDONYM;
 
-		rid.mGpgId = "";
-		rid.mGpgIdHash = "";
-		rid.mGpgName = "";
-		rid.mGpgEmail = "";
+		//rid.mGpgId = "";
+		rid.mPgpIdHash = "";
+		//rid.mGpgName = "";
+		//rid.mGpgEmail = "";
 	}
 
 	// TODO.

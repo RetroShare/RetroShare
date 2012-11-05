@@ -171,11 +171,12 @@ void IdDialog::insertIdDetails(uint32_t token)
 	ui.lineEdit_Nickname->setText(QString::fromStdString(data.mMeta.mGroupName));
 	//ui.lineEdit_KeyId->setText(QString::fromStdString(data.mKeyId));
 	ui.lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId));
-	ui.lineEdit_GpgHash->setText(QString::fromStdString(data.mGpgIdHash));
-	ui.lineEdit_GpgId->setText(QString::fromStdString(data.mGpgId));
-	ui.lineEdit_GpgName->setText(QString::fromStdString(data.mGpgName));
-	ui.lineEdit_GpgEmail->setText(QString::fromStdString(data.mGpgEmail));
-	
+	ui.lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash));
+	//ui.lineEdit_GpgId->setText(QString::fromStdString(data.mGpgId));
+	//ui.lineEdit_GpgName->setText(QString::fromStdString(data.mGpgName));
+	//ui.lineEdit_GpgEmail->setText(QString::fromStdString(data.mGpgEmail));
+
+#if 0	
 	if (data.mIdType & RSID_RELATION_YOURSELF)
 	{
 		ui.radioButton_IdYourself->setChecked(true);
@@ -210,6 +211,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 		ui.pushButton_Delete->setEnabled(false);
 		ui.pushButton_EditId->setEnabled(false);
 	}
+#endif
 }
 
 void IdDialog::checkUpdate()
@@ -315,6 +317,7 @@ void IdDialog::insertIdList(uint32_t token)
 		{
 			ok = true;
 		}
+#if 0
 		else if (data.mIdType & RSID_TYPE_PSEUDONYM)
 		{
  			if (acceptPseudo)
@@ -351,6 +354,7 @@ void IdDialog::insertIdList(uint32_t token)
 				}
 			}
 		}
+#endif
 
 		if (!ok)
 		{
@@ -363,7 +367,7 @@ void IdDialog::insertIdList(uint32_t token)
 		//item->setText(RSID_COL_KEYID, QString::fromStdString(data.mKeyId));
 		item->setText(RSID_COL_NICKNAME, QString::fromStdString(data.mMeta.mGroupName));
 		item->setText(RSID_COL_KEYID, QString::fromStdString(data.mMeta.mGroupId));
-		item->setText(RSID_COL_IDTYPE, QString::fromStdString(rsIdTypeToString(data.mIdType)));
+		//item->setText(RSID_COL_IDTYPE, QString::fromStdString(rsIdTypeToString(data.mIdType)));
 
                 tree->addTopLevelItem(item);
 	}
