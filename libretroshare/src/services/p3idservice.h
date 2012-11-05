@@ -36,6 +36,8 @@
 
 #include "util/rsmemcache.h"
 
+#include "pqi/authgpg.h"
+
 /* 
  * Identity Service
  *
@@ -43,9 +45,52 @@
 
 // INTERNAL DATA TYPES. 
 // Describes data stored in GroupServiceString.
-class IdRepCumulScore
+
+class SSBit
+{
+	public:
+virtual	bool load(const std::string &input) = 0;
+virtual	std::string save() const = 0;
+};
+
+
+
+class SSGxsIdPgp: public SSBit 
+{
+	public:
+	SSGxsIdPgp()
+	:idKnown(false), lastCheckTs(0), checkAttempts(0) { return; }
+
+virtual	bool load(const std::string &input);
+virtual	std::string save() const;
+
+	bool idKnown;
+	time_t lastCheckTs;
+	uint32_t checkAttempts;
+	std::string pgpId;
+};
+
+class SSGxsIdScore: public SSBit 
+{
+	public:
+	SSGxsIdScore()
+	:score(0) { return; }
+
+virtual	bool load(const std::string &input);
+virtual	std::string save() const;
+
+	int score;
+};
+
+class SSGxsIdCumulator: public SSBit
 {
 public:
+	SSGxsIdCumulator()
+	:count(0), nullcount(0), sum(0), sumsq(0) { return; }
+
+virtual	bool load(const std::string &input);
+virtual	std::string save() const;
+
 	uint32_t count;
 	uint32_t nullcount;
 	double   sum;
@@ -54,23 +99,26 @@ public:
 	// derived parameters:
 };
 
-
-class IdGroupServiceStrData
+class SSGxsIdGroup: public SSBit
 {
 public:
-	IdGroupServiceStrData() { pgpIdKnown = false; }
-	bool pgpIdKnown;
-	std::string pgpId;
-	
-	uint32_t ownScore;
-	IdRepCumulScore opinion;
-	IdRepCumulScore reputation;
+	SSGxsIdGroup() { return; }
+
+virtual	bool load(const std::string &input);
+virtual	std::string save() const;
+
+	// pgphash status
+	SSGxsIdPgp pgp;
+
+	// reputation score.	
+	SSGxsIdScore    score;
+	SSGxsIdCumulator opinion;
+	SSGxsIdCumulator reputation;
 	
 };
 
 #define ID_LOCAL_STATUS_FULL_CALC_FLAG	0x00010000
 #define ID_LOCAL_STATUS_INC_CALC_FLAG	0x00020000
-
 
 
 #define MAX_CACHE_SIZE	100 // Small for testing..
@@ -104,9 +152,7 @@ class LruData
 // Not sure exactly what should be inherited here?
 // Chris - please correct as necessary.
 
-class p3IdService: 
-	public RsGxsIdExchange, 
-	public RsIdentity
+class p3IdService: public RsGxsIdExchange, public RsIdentity
 {
 	public:
 	p3IdService(RsGeneralDataService* gds, RsNetworkExchangeService* nes);
@@ -164,8 +210,11 @@ virtual bool getReputation(const RsGxsId &id, const GixsReputation &rep);
 
 	protected:
 
-    /** Notifications **/
-    virtual void notifyChanges(std::vector<RsGxsNotify*>& changes);
+	/** Notifications **/
+virtual void notifyChanges(std::vector<RsGxsNotify*>& changes);
+
+	/** Overloaded to add PgpIdHash to Group Definition **/
+virtual void service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet);
 
 	private:
 
@@ -175,26 +224,12 @@ virtual bool getReputation(const RsGxsId &id, const GixsReputation &rep);
  */
 	int  cache_tick();
 
-
-	//bool cache_is_loaded(const RsGxsId &id);
-	//bool cache_fetch(const RsGxsId &key, RsGxsIdCache &data);
-
-	//bool cache_store(const RsGxsIdGroup &group);
-	//bool cache_resize();
-	//bool cache_discard_LRU(int count_to_clear);
-
 	bool cache_request_load(const RsGxsId &id);
 	bool cache_start_load();
 	bool cache_check_loading();
 	bool cache_load_for_token(uint32_t token);
 
 	bool cache_store(const RsGxsIdGroupItem *item);
-
-	/* MUTEX PROTECTED DATA (mIdMtx - maybe should use a 2nd?) */
-	//bool locked_cache_update_lrumap(const RsGxsId &key, time_t old_ts, time_t new_ts);
-	//std::map<RsGxsId, RsGxsIdCache> mCacheDataMap;
-	//std::multimap<time_t, LruData> mCacheLruMap;
-	//uint32_t mCacheDataCount;
 
 	time_t mCacheLoad_LastCycle;
 	int mCacheLoad_Status;
@@ -221,6 +256,26 @@ virtual bool getReputation(const RsGxsId &id, const GixsReputation &rep);
 	uint32_t mCacheTest_Token;
 
 /************************************************************************
+ * pgphash processing.
+ *
+ */
+	bool pgphash_tick();
+	bool pgphash_getlist();
+	bool pgphash_request();
+	bool pgphash_process();
+
+	bool checkId(const RsGxsIdGroup &grp, PGPIdType &pgp_id);
+	void getPgpIdList();
+	/* MUTEX PROTECTED DATA (mIdMtx - maybe should use a 2nd?) */
+
+	time_t mHashPgp_LastTs;
+	bool mHashPgp_Active;
+	uint32_t mHashPgp_Token;
+
+	std::map<PGPIdType, PGPFingerprintType> mPgpFingerprintMap;
+	std::list<RsGxsIdGroup> mGroupsToProcess;
+
+/************************************************************************
  * Below is the background task for processing opinions => reputations 
  *
  */
@@ -239,9 +294,6 @@ std::string genRandomId();
 	
 	bool background_cleanup();
 
-	bool encodeIdGroupCache(std::string &str, const IdGroupServiceStrData &data);
-	bool extractIdGroupCache(std::string &str, IdGroupServiceStrData &data);
-	
 	RsMutex mIdMtx;
 
 	/***** below here is locked *****/

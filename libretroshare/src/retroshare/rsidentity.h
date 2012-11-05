@@ -37,6 +37,12 @@
 class RsIdentity;
 extern RsIdentity *rsIdentity;
 
+
+// GroupFlags: Only one so far:
+#define RSGXSID_GROUPFLAG_REALID  0x0001
+
+
+// THESE ARE FLAGS FOR INTERFACE.
 #define RSID_TYPE_MASK		0xff00
 #define RSID_RELATION_MASK	0x00ff
 
@@ -61,8 +67,7 @@ class RsGxsIdGroup
 	// In GroupMetaData.
 	//std::string mNickname; (mGroupName)
 	//std::string mKeyId;    (mGroupId)
-
-	uint32_t mIdType;
+	//uint32_t mIdType;      (mGroupFlags)
 
 	// SHA(KeyId + Gpg Fingerprint) -> can only be IDed if GPG known.
 	// The length of the input must be long enough to make brute force search implausible.
@@ -70,14 +75,11 @@ class RsGxsIdGroup
 	// Easy to do 1e9 SHA-1 hash computations per second on a GPU.
 	// We will need a minimum of 256 bits, ideally 1024 bits or 2048 bits.
 
-	std::string mGpgIdHash; 
+	// Actually PgpIdHash is SHA1(.mMeta.mGroupId + PGPHandler->GpgFingerprint(ownId))
+	//                                 ???                 160 bits.
 
-	// NOTE: These cannot be transmitted as part of underlying messages....
-	// Must use ServiceString.
-	bool mGpgIdKnown; // if GpgIdHash has been identified.
-	std::string mGpgId;   	// if known.
-	std::string mGpgName; 	// if known.
-	std::string mGpgEmail; 	// if known.
+	std::string mPgpIdHash; 
+	std::string mPgpIdSign;   // Need a signature as proof - otherwise anyone could add others Hashes.
 };
 
 

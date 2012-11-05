@@ -120,14 +120,8 @@ RsItem* RsGxsIdSerialiser::deserialise(void* data, uint32_t* size)
 
 void RsGxsIdGroupItem::clear()
 {
-	group.mGpgIdHash.clear();
-	group.mIdType = 0;
-
-	// Others that aren't serialised. - but should be cleared anyway
-	group.mGpgIdKnown = false;
-	group.mGpgId.clear();
-	group.mGpgName.clear();
-	group.mGpgEmail.clear();
+	group.mPgpIdHash.clear();
+	group.mPgpIdSign.clear();
 }
 
 std::ostream& RsGxsIdGroupItem::print(std::ostream& out, uint16_t indent)
@@ -136,9 +130,9 @@ std::ostream& RsGxsIdGroupItem::print(std::ostream& out, uint16_t indent)
 	uint16_t int_Indent = indent + 2;
 
 	printIndent(out, int_Indent);
-	out << "IdType: " << group.mIdType << std::endl;
+	out << "PgpIdHash: " << group.mPgpIdHash << std::endl;
 	printIndent(out, int_Indent);
-	out << "GpgIdHash: " << group.mGpgIdHash << std::endl;
+	out << "PgpIdSign: " << group.mPgpIdSign << std::endl;
   
 	printRsItemEnd(out ,"RsGxsIdGroupItem", indent);
 	return out;
@@ -151,8 +145,8 @@ uint32_t RsGxsIdSerialiser::sizeGxsIdGroupItem(RsGxsIdGroupItem *item)
 	const RsGxsIdGroup& group = item->group;
 	uint32_t s = 8; // header
 
-	s += 4; // mIdType.
-	s += GetTlvStringSize(group.mGpgIdHash);
+	s += GetTlvStringSize(group.mPgpIdHash);
+	s += GetTlvStringSize(group.mPgpIdSign);
 
 	return s;
 }
@@ -185,8 +179,8 @@ bool RsGxsIdSerialiser::serialiseGxsIdGroupItem(RsGxsIdGroupItem *item, void *da
 	offset += 8;
 	
 	/* GxsIdGroupItem */
-	ok &= setRawUInt32(data, tlvsize, &offset, item->group.mIdType);
-	ok &= SetTlvString(data, tlvsize, &offset, 1, item->group.mGpgIdHash);
+	ok &= SetTlvString(data, tlvsize, &offset, 1, item->group.mPgpIdHash);
+	ok &= SetTlvString(data, tlvsize, &offset, 1, item->group.mPgpIdSign);
 	
 	if(offset != tlvsize)
 	{
@@ -246,8 +240,8 @@ RsGxsIdGroupItem* RsGxsIdSerialiser::deserialiseGxsIdGroupItem(void *data, uint3
 	/* skip the header */
 	offset += 8;
 	
-	ok &= getRawUInt32(data, rssize, &offset, &(item->group.mIdType));
-	ok &= GetTlvString(data, rssize, &offset, 1, item->group.mGpgIdHash);
+	ok &= GetTlvString(data, rssize, &offset, 1, item->group.mPgpIdHash);
+	ok &= GetTlvString(data, rssize, &offset, 1, item->group.mPgpIdSign);
 	
 	if (offset != rssize)
 	{

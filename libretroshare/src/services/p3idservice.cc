@@ -27,6 +27,10 @@
 #include "serialiser/rsgxsiditems.h"
 
 #include "util/rsrandom.h"
+#include "util/rsstring.h"
+
+#include "pqi/authgpg.h"
+
 #include <retroshare/rspeers.h>
 
 #include <sstream>
@@ -43,6 +47,24 @@
 
 RsIdentity *rsIdentity = NULL;
 
+
+/******
+ * Some notes:
+ * Identity tasks:
+ *   - Provide keys for signing / validating author signatures.
+ *   - Reputations
+ *   - Identify Known Friend's IDs.
+ *   - Provide details to other services (nicknames, reputations, gpg ids, etc)
+ *
+ * Background services:
+ *   - Lookup and cache keys / details of identities.
+ *   - Check GPGHashes.
+ *   - Calculate Reputations.
+ *
+ * We have a lot of information to store in Service Strings.
+ *   - GPGId or last check ts.
+ *   - Reputation stuff.
+ */
 
 #define RSGXSID_MAX_SERVICE_STRING 1024
 
@@ -266,6 +288,176 @@ bool 	p3IdService::createMsg(uint32_t& token, RsGxsIdOpinion &opinion)
     item->meta = opinion.mMeta;
     RsGenExchange::publishMsg(token, item);
     return true;
+}
+
+/************************************************************************************/
+/************************************************************************************/
+/************************************************************************************/
+
+/* Encoding / Decoding Group Service String stuff
+ *
+ * Pgp stuff.
+ *
+ * If flagged as pgp id....
+ *   then we need to know if its been matched, or when we last tried to match.
+ *
+ */
+
+bool SSGxsIdPgp::load(const std::string &input)
+{
+	char pgpline[RSGXSID_MAX_SERVICE_STRING];
+	int timestamp = 0;
+	if (1 == sscanf(input.c_str(), "K:1 I:%[^)]", pgpline))
+	{
+		idKnown = true;
+		pgpId = pgpline;
+	}
+	else if (1 == sscanf(input.c_str(), "K:0 T:%d", &timestamp))
+	{
+		lastCheckTs = timestamp;
+		idKnown = false;
+	}
+	else
+	{
+		return false;
+	}	
+	return true;
+}
+
+std::string SSGxsIdPgp::save() const
+{
+	std::string output;
+	if (idKnown)
+	{
+		output += "K:1 I:";
+		output += pgpId;
+	}
+	else
+	{
+		rs_sprintf(output, "K:0 T:%d", lastCheckTs);
+	}
+	return output;
+}
+
+bool SSGxsIdScore::load(const std::string &input)
+{
+	return (1 == sscanf(input.c_str(), "%d", &score));
+}
+
+std::string SSGxsIdScore::save() const
+{
+	std::string output;
+	rs_sprintf(output, "%d", score);
+	return output;
+}
+
+bool SSGxsIdCumulator::load(const std::string &input)
+{
+	return (4 == sscanf(input.c_str(), "%d %d %lf %lf", &count, &nullcount, &sum, &sumsq));
+}
+
+std::string SSGxsIdCumulator::save() const
+{
+	std::string output;
+	rs_sprintf(output, "%d %d %lf %lf", count, nullcount, sum, sumsq);
+	return output;
+}
+
+bool SSGxsIdGroup::load(const std::string &input)
+{
+	char pgpstr[RSGXSID_MAX_SERVICE_STRING];
+	char scorestr[RSGXSID_MAX_SERVICE_STRING];
+	char opinionstr[RSGXSID_MAX_SERVICE_STRING];
+	char repstr[RSGXSID_MAX_SERVICE_STRING];
+	
+	// split into two parts.
+	if (4 != sscanf(input.c_str(), "v1 {%[^}]} {%[^}]} {%[^}]} {%[^}]}", pgpstr, scorestr, opinionstr, repstr))
+	{
+		std::cerr << "SSGxsIdGroup::load() Failed to extract 4 Parts";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	bool ok = true;
+	if (0 == strncmp(pgpstr, "P:", 2))
+	{
+		std::cerr << "SSGxsIdGroup::load() pgpstr: " << pgpstr;
+		std::cerr << std::endl;
+		ok &= pgp.load(pgpstr);
+	}
+	else
+	{
+		std::cerr << "SSGxsIdGroup::load() Invalid pgpstr: " << pgpstr;
+		std::cerr << std::endl;
+		ok = false;
+	}
+
+	if (0 == strncmp(scorestr, "Y:", 2))
+	{
+		std::cerr << "SSGxsIdGroup::load() scorestr: " << scorestr;
+		std::cerr << std::endl;
+		ok &= score.load(scorestr);
+	}
+	else
+	{
+		std::cerr << "SSGxsIdGroup::load() Invalid scorestr: " << scorestr;
+		std::cerr << std::endl;
+		ok = false;
+	}
+
+	if (0 == strncmp(opinionstr, "O:", 2))
+	{
+		std::cerr << "SSGxsIdGroup::load() opinionstr: " << opinionstr;
+		std::cerr << std::endl;
+		ok &= opinion.load(opinionstr);
+	}
+	else
+	{
+		std::cerr << "SSGxsIdGroup::load() Invalid opinionstr: " << opinionstr;
+		std::cerr << std::endl;
+		ok = false;
+	}
+
+	if (0 == strncmp(repstr, "R:", 2))
+	{
+		std::cerr << "SSGxsIdGroup::load() repstr: " << repstr;
+		std::cerr << std::endl;
+		ok &= reputation.load(repstr);
+	}
+	else
+	{
+		std::cerr << "SSGxsIdGroup::load() Invalid repstr: " << repstr;
+		std::cerr << std::endl;
+		ok = false;
+	}
+
+	return ok;
+}
+
+std::string SSGxsIdGroup::save() const
+{
+	std::string output = "v1 ";
+
+	output += "{P:";
+	output += pgp.save();
+	output += "}";
+
+	output += "{Y:";
+	output += score.save();
+	output += "}";
+
+	output += "{O:";
+	output += opinion.save();
+	output += "}";
+
+	output += "{R:";
+	output += reputation.save();
+	output += "}";
+
+	std::cerr << "SSGxsIdGroup::save() output: " << output;
+	std::cerr << std::endl;
+
+	return output;
 }
 
 /************************************************************************************/
@@ -727,6 +919,403 @@ bool p3IdService::cachetest_request()
 	return true;
 }
 
+/************************************************************************************/
+/************************************************************************************/
+/************************************************************************************/
+
+/* Task to determine GPGHash matches
+ *
+ * Info to be stored in GroupServiceString + Cache.
+ *
+ * Actually - it must be a Signature here - otherwise, you could 
+ * put in a hash from someone else!
+ *
+ * Don't think that we need to match very often - maybe once a day?
+ * Actually - we should scale the matching based on number of keys we have.
+ *
+ * imagine - 10^6 rsa keys + 10^3 gpg keys  => 10^9 combinations.
+ *  -- far too many to check all quickly.
+ *
+ * Need to grab and cache data we need... then check over slowly.
+ *
+ * maybe grab a list of all gpgids - that we know of: store id list.
+ * then big GroupRequest, and iterate through these.
+ **/
+
+//const int SHA_DIGEST_LENGTH = 20;
+
+typedef t_RsGenericIdType<SHA_DIGEST_LENGTH> GxsIdPgpHash;
+
+static void calcPGPHash(const RsGxsId &id, const PGPFingerprintType &pgp, GxsIdPgpHash &hash);
+
+
+void p3IdService::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet)
+{
+	RsGxsIdGroupItem *item = dynamic_cast<RsGxsIdGroupItem *>(grpItem);
+	if (!item)
+	{
+		std::cerr << "p3IdService::service_CreateGroup() ERROR invalid cast";
+		std::cerr << std::endl;
+		return;
+	}
+
+	std::cerr << "p3IdService::service_CreateGroup() for : " << item->group.mMeta.mGroupId;
+	std::cerr << std::endl;
+
+	if (item->group.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
+	{
+		/* create the hash */
+		GxsIdPgpHash hash;
+
+		/* */
+		PGPFingerprintType ownFinger;
+		PGPIdType ownId(AuthGPG::getAuthGPG()->getGPGOwnId());
+
+		if (!AuthGPG::getAuthGPG()->getKeyFingerprint(ownId,ownFinger))
+		{
+			std::cerr << "p3IdService::service_CreateGroup() ERROR Own Finger is stuck";
+			std::cerr << std::endl;
+			return; // abandon attempt!
+		}
+
+		calcPGPHash(item->group.mMeta.mGroupId, ownFinger, hash);
+		item->group.mPgpIdHash = hash.toStdString();
+
+		/* do signature */
+
+#define MAX_SIGN_SIZE 2048
+		uint8_t signarray[MAX_SIGN_SIZE]; 
+		unsigned int sign_size = MAX_SIGN_SIZE;
+		if (!AuthGPG::getAuthGPG()->SignDataBin((void *) hash.toByteArray(), hash.SIZE_IN_BYTES, signarray, &sign_size))
+		{
+			/* error */
+			std::cerr << "p3IdService::service_CreateGroup() ERROR Signing stuff";
+			std::cerr << std::endl;
+		}
+		else
+		{
+			/* push binary into string -> really bad! */
+			item->group.mPgpIdSign = "";
+			for(unsigned int i = 0; i < sign_size; i++)
+			{
+				item->group.mPgpIdSign += signarray[i];
+			}
+		}
+		/* done! */
+	}
+}
+
+
+
+
+bool p3IdService::pgphash_tick()
+{
+	/* every minute - run a background check */
+	time_t now = time(NULL);
+	bool doHash = false;
+	{
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+		if (now -  mHashPgp_LastTs > TEST_PERIOD)
+		{
+			doHash = true;
+			mHashPgp_LastTs = now;
+		}
+	}
+
+	if (doHash)
+	{
+		std::cerr << "p3IdService::pgphash_tick() starting";
+		std::cerr << std::endl;
+		pgphash_getlist();
+	}
+
+	pgphash_request();
+	pgphash_process();
+
+	return true;
+}
+
+bool p3IdService::pgphash_getlist()
+{
+
+	{
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+		if (mHashPgp_Active)
+		{
+			std::cerr << "p3IdService::cachetest_getlist() Already active";
+			std::cerr << std::endl;
+			return false;
+		}
+	}
+
+	std::cerr << "p3IdService::cachetest_getlist() making request";
+	std::cerr << std::endl;
+
+	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
+        RsTokReqOptions opts;
+        opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+	uint32_t token = 0;
+	
+	RsGenExchange::getTokenService()->requestGroupInfo(token, ansType, opts);
+	
+	{
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+		mHashPgp_Token = token;
+		mHashPgp_Active = true;
+	}
+	return true;
+}
+
+
+bool p3IdService::pgphash_request()
+{
+	uint32_t token = 0;
+	{
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+		if (!mHashPgp_Active)
+		{
+			return false;
+		}
+		token = mHashPgp_Token;
+	}
+
+	std::cerr << "p3IdService::pgphash_request() checking request";
+	std::cerr << std::endl;
+
+	uint32_t status = RsGenExchange::getTokenService()->requestStatus(token);
+
+	if (status == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	{
+		std::cerr << "p3IdService::pgphash_request() token ready: " << token;
+		std::cerr << std::endl;
+
+		// We need full data - for access to Hash & Signature.
+		// Perhaps we will change this to an initial pass through Meta, 
+		// and use this to discard lots of things.
+
+		// Even better - we can set flags in the Meta Data, (IdType), 
+		// And use GXS to filter out all the AnonIds, and only have to process
+		// Proper Ids.
+
+		// We Will do this later!
+
+		std::vector<RsGxsIdGroup> groups;
+		std::vector<RsGxsIdGroup> groupsToProcess;
+		bool ok = getGroupData(token, groups);
+
+		{	
+			RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+			mHashPgp_Active = false;
+		}
+
+	        if(ok)
+	        {
+			std::vector<RsGxsIdGroup>::iterator vit;
+	                for(vit = groups.begin(); vit != groups.end(); vit++)
+	                {
+				/* Filter based on IdType */
+				if (!(vit->mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID))
+				{
+					std::cerr << "p3IdService::pgphash_request() discarding AnonID";
+					std::cerr << std::endl;
+					continue;
+				}
+
+				/* now we need to decode the Service String - see what is saved there */
+				SSGxsIdGroup ssdata;
+				if (ssdata.load(vit->mMeta.mServiceString))
+				{
+					if (ssdata.pgp.idKnown)
+					{
+						std::cerr << "p3IdService::pgphash_request() discarding Already Known";
+						std::cerr << std::endl;
+						continue;
+					}
+
+					/* Have a linear attempt policy -	
+					 * if zero checks - try now.
+					 * if 1 check, at least a day.
+					 * if 2 checks: 2days, etc.
+					 */
+
+#define SECS_PER_DAY (3600 * 24)
+					time_t age = time(NULL) - ssdata.pgp.lastCheckTs;
+					time_t wait_period = ssdata.pgp.checkAttempts * SECS_PER_DAY;
+					if (wait_period > 30 * SECS_PER_DAY)
+					{
+						wait_period = 30 * SECS_PER_DAY;
+					}
+
+					if (age < wait_period)
+					{
+						std::cerr << "p3IdService::pgphash_request() discarding Recently Check";
+						std::cerr << std::endl;
+						continue;
+					}
+				}
+
+				/* if we get here -> then its to be processed */
+				std::cerr << "p3IdService::cachetest_request() Requested Key Id: " << *vit;
+				std::cerr << std::endl;
+
+				mGroupsToProcess.push_back(*vit);
+			}
+		}
+	}
+	return true;
+}
+
+bool p3IdService::pgphash_process()
+{
+	/* each time this is called - process one Id from mGroupsToProcess */
+	if (mGroupsToProcess.empty())
+	{
+		return true;
+	}
+
+	RsGxsIdGroup pg = mGroupsToProcess.front();
+	mGroupsToProcess.pop_front();
+
+	SSGxsIdGroup ssdata;
+	ssdata.load(pg.mMeta.mServiceString); // attempt load - okay if fails.
+
+	PGPIdType pgpId;
+
+	if (checkId(pg, pgpId))	
+	{
+		/* found a match - update everything */
+		/* Consistency issues here - what if Reputation was recently updated? */
+
+
+		/* update */
+		ssdata.pgp.idKnown = true;
+		ssdata.pgp.pgpId = pgpId.toStdString();
+
+// SHOULD BE PUSHED TO CACHE!
+#if 0
+				id.mGpgIdKnown = true;
+			
+				id.mGpgId = *it;
+				id.mGpgName = details.name;
+				id.mGpgEmail = details.email;
+
+				if (*it == ownId)
+				{
+					id.mIdType |= RSID_RELATION_YOURSELF;
+				}
+				else if (rsPeers->isGPGAccepted(*it))
+				{
+					id.mIdType |= RSID_RELATION_FRIEND;
+				}
+				else
+				{
+					id.mIdType |= RSID_RELATION_OTHER;
+				}
+				
+#endif
+
+	}
+	else
+	{
+		ssdata.pgp.lastCheckTs = time(NULL);
+		ssdata.pgp.checkAttempts++;
+	}
+
+	/* set new Group ServiceString */
+	uint32_t dummyToken = 0;
+	std::string serviceString = ssdata.save();
+	setGroupServiceString(dummyToken, pg.mMeta.mGroupId, serviceString);
+
+	return true;
+
+}
+
+
+
+bool p3IdService::checkId(const RsGxsIdGroup &grp, PGPIdType &pgpId)
+{
+	std::cerr << "p3IdService::checkId() Starting Match Check for RsGxsId: ";
+	std::cerr << grp.mMeta.mGroupId;
+	std::cerr << std::endl;
+
+	/* iterate through and check hash */
+	GxsIdPgpHash ans(grp.mPgpIdHash);
+
+	std::map<PGPIdType, PGPFingerprintType>::iterator mit;
+	for(mit = mPgpFingerprintMap.begin(); mit != mPgpFingerprintMap.end(); mit++)
+	{
+		GxsIdPgpHash hash;
+		calcPGPHash(grp.mMeta.mGroupId, mit->second, hash);
+		if (ans == hash)
+		{
+			std::cerr << "p3IdService::checkId() HASH MATCH!";
+			std::cerr << std::endl;
+
+			/* miracle match! */
+			/* check signature too */
+			if (AuthGPG::getAuthGPG()->VerifySignBin((void *) hash.toByteArray(), hash.SIZE_IN_BYTES, 
+				(unsigned char *) grp.mPgpIdSign.c_str(), grp.mPgpIdSign.length(), 
+				mit->second.toStdString()))
+			{
+				std::cerr << "p3IdService::checkId() Signature Okay too!";
+				std::cerr << std::endl;
+
+				pgpId = mit->first;
+				return true;
+			}
+
+			/* error */
+			std::cerr << "p3IdService::checkId() ERROR Signature Failed";
+			std::cerr << std::endl;
+		}
+	}
+
+	std::cerr << "p3IdService::checkId() Checked " << mPgpFingerprintMap.size() << " Hashes without Match";
+	std::cerr << std::endl;
+
+	return false;
+}
+
+
+/* worker functions */
+void p3IdService::getPgpIdList()
+{
+	std::cerr << "p3IdService::getPgpIdList() Starting....";
+	std::cerr << std::endl;
+
+ 	std::list<std::string> list;
+	AuthGPG::getAuthGPG()->getGPGFilteredList(list);
+
+ 	std::list<std::string>::iterator it;
+	for(it = list.begin(); it != list.end(); it++)
+	{
+ 		PGPIdType pgpId(*it);
+		PGPFingerprintType fp;
+		AuthGPG::getAuthGPG()->getKeyFingerprint(pgpId, fp);
+
+		mPgpFingerprintMap[pgpId] = fp;
+	}
+
+	std::cerr << "p3IdService::getPgpIdList() Items: " << mPgpFingerprintMap.size();
+	std::cerr << std::endl;
+}
+
+
+void calcPGPHash(const RsGxsId &id, const PGPFingerprintType &pgp, GxsIdPgpHash &hash)
+{
+	unsigned char signature[SHA_DIGEST_LENGTH];
+	/* hash id + pubkey => pgphash */
+        SHA_CTX *sha_ctx = new SHA_CTX;
+        SHA1_Init(sha_ctx);
+
+        SHA1_Update(sha_ctx, id.c_str(), id.length()); // TO FIX ONE DAY.
+        SHA1_Update(sha_ctx, pgp.toByteArray(), pgp.SIZE_IN_BYTES);
+        SHA1_Final(signature, sha_ctx);
+        hash = GxsIdPgpHash(signature);
+
+        delete sha_ctx;
+}
+
 
 /************************************************************************************/
 /************************************************************************************/
@@ -773,8 +1362,9 @@ void p3IdService::generateDummyData()
 
 			//id.mKeyId = genRandomId();
 			id.mMeta.mGroupId = genRandomId();
-			id.mIdType = RSID_TYPE_REALID;
-			id.mGpgIdHash = genRandomId();
+			id.mMeta.mGroupFlags = RSGXSID_GROUPFLAG_REALID;
+			id.mPgpIdHash = genRandomId();
+			id.mPgpIdSign = genRandomId();
 
                 	if (rsPeers->getPeerDetails(*it, details))
 			{
@@ -783,36 +1373,16 @@ void p3IdService::generateDummyData()
 
 				//id.mNickname = out.str();
 				id.mMeta.mGroupName = out.str();
-				
-				id.mGpgIdKnown = true;
 			
-				id.mGpgId = *it;
-				id.mGpgName = details.name;
-				id.mGpgEmail = details.email;
-
-				if (*it == ownId)
-				{
-					id.mIdType |= RSID_RELATION_YOURSELF;
-				}
-				else if (rsPeers->isGPGAccepted(*it))
-				{
-					id.mIdType |= RSID_RELATION_FRIEND;
-				}
-				else
-				{
-					id.mIdType |= RSID_RELATION_OTHER;
-				}
-				
+	
 			}
 			else
 			{
 				std::cerr << "p3IdService::generateDummyData() missing" << std::endl;
 				std::cerr << std::endl;
 
-				id.mIdType |= RSID_RELATION_OTHER;
 				//id.mNickname = genRandomId();
 				id.mMeta.mGroupName = genRandomId();
-				id.mGpgIdKnown = false;
 			}
 
 			uint32_t dummyToken = 0;
@@ -841,22 +1411,13 @@ void p3IdService::generateDummyData()
 
                 RsPeerDetails details;
 
-		//id.mKeyId = genRandomId();
-		id.mMeta.mGroupId = genRandomId();
-		id.mIdType = RSID_TYPE_REALID;
-		id.mGpgIdHash = genRandomId();
-
-		id.mIdType |= RSID_RELATION_OTHER;
-		//id.mNickname = genRandomId();
 		id.mMeta.mGroupName = genRandomId();
-		id.mGpgIdKnown = false;
-		id.mGpgId = "";
-		id.mGpgName = "";
-		id.mGpgEmail = "";
 
-		//mIds[id.mKeyId] = id;
-		//mIdProxy->addGroup(id);
-		// STORE
+		id.mMeta.mGroupId = genRandomId();
+		id.mMeta.mGroupFlags = RSGXSID_GROUPFLAG_REALID;
+		id.mPgpIdHash = genRandomId();
+		id.mPgpIdSign = genRandomId();
+
 		uint32_t dummyToken = 0;
 		createGroup(dummyToken, id);
 	}
@@ -868,21 +1429,14 @@ void p3IdService::generateDummyData()
 
                 RsPeerDetails details;
 
-		//id.mKeyId = genRandomId();
-		id.mMeta.mGroupId = genRandomId();
-		id.mIdType = RSID_TYPE_PSEUDONYM;
-		id.mGpgIdHash = "";
-
-		//id.mNickname = genRandomId();
 		id.mMeta.mGroupName = genRandomId();
-		id.mGpgIdKnown = false;
-		id.mGpgId = "";
-		id.mGpgName = "";
-		id.mGpgEmail = "";
 
-		//mIds[id.mKeyId] = id;
-		//mIdProxy->addGroup(id);
-		// STORE
+		id.mMeta.mGroupId = genRandomId();
+		id.mMeta.mGroupFlags = 0;
+		id.mPgpIdHash = "";
+		id.mPgpIdSign = "";
+
+
 		uint32_t dummyToken = 0;
 		createGroup(dummyToken, id);
 	}
@@ -1291,10 +1845,8 @@ bool p3IdService::background_processNewMessages()
 	
 				mit->second.mGroupStatus |= ID_LOCAL_STATUS_INC_CALC_FLAG;
 	
-				std::string serviceString;
-				IdGroupServiceStrData ssData;
-				
-				if (!extractIdGroupCache(serviceString, ssData))
+				SSGxsIdGroup ssdata;
+				if (!ssdata.load(mit->second.mServiceString))
 				{
 					/* error */
 					std::cerr << "p3IdService::background_processNewMessages() ERROR Extracting";
@@ -1308,8 +1860,9 @@ bool p3IdService::background_processNewMessages()
 				/* store it back in */
 				std::cerr << "p3IdService::background_processNewMessages() Stored: ";
 				std::cerr << std::endl;
-	
-				if (!encodeIdGroupCache(serviceString, ssData))
+
+				std::string serviceString = ssdata.save();	
+				if (0)
 				{
 					/* error */
 					std::cerr << "p3IdService::background_processNewMessages() ERROR Storing";
@@ -1362,75 +1915,6 @@ bool p3IdService::background_processNewMessages()
 	}
 
 	return background_FullCalcRequest();
-}
-
-
-bool p3IdService::encodeIdGroupCache(std::string &str, const IdGroupServiceStrData &data)
-{
-	char line[RSGXSID_MAX_SERVICE_STRING];
-
-	snprintf(line, RSGXSID_MAX_SERVICE_STRING, "v1 {%s} {Y:%d O:%d %d %f %f R:%d %d %f %f}", 
-			 data.pgpId.c_str(), data.ownScore, 
-		data.opinion.count, data.opinion.nullcount, data.opinion.sum, data.opinion.sumsq,
-		data.reputation.count, data.reputation.nullcount, data.reputation.sum, data.reputation.sumsq);
-
-	str = line;
-	return true;
-}
-
-
-bool p3IdService::extractIdGroupCache(std::string &str, IdGroupServiceStrData &data)
-{
-	char pgpline[RSGXSID_MAX_SERVICE_STRING];
-	char scoreline[RSGXSID_MAX_SERVICE_STRING];
-	
-	uint32_t iOwnScore;
-	IdRepCumulScore iOpin;
-	IdRepCumulScore iRep;
-
-	// split into two parts.
-	if (2 != sscanf(str.c_str(), "v1 {%[^}]} {%[^}]", pgpline, scoreline))
-	{
-		std::cerr << "p3IdService::extractIdGroupCache() Failed to extract Two Parts";
-		std::cerr << std::endl;
-		return false;
-	}
-
-	std::cerr << "p3IdService::extractIdGroupCache() pgpline: " << pgpline;
-	std::cerr << std::endl;
-	std::cerr << "p3IdService::extractIdGroupCache() scoreline: " << scoreline;
-	std::cerr << std::endl;
-	
-	std::string pgptmp = pgpline;
-	if (pgptmp.length() > 5)
-	{
-		std::cerr << "p3IdService::extractIdGroupCache() Believe to have pgpId: " << pgptmp;
-		std::cerr << std::endl;
-		data.pgpIdKnown = true;
-		data.pgpId = pgptmp;
-	}
-	else
-	{
-		std::cerr << "p3IdService::extractIdGroupCache() Think pgpId Invalid";
-		std::cerr << std::endl;
-		data.pgpIdKnown = false;
-	}
-	
-	
-	if (9 == sscanf(scoreline, " Y:%d O:%d %d %lf %lf R:%d %d %lf %lf", &iOwnScore, 
-		&(iOpin.count), &(iOpin.nullcount), &(iOpin.sum), &(iOpin.sumsq),
-		&(iRep.count), &(iRep.nullcount), &(iRep.sum), &(iRep.sumsq)))
-	{
-		data.ownScore = iOwnScore;
-		data.opinion = iOpin;
-		data.reputation = iRep;
-		return true;
-	}
-
-	std::cerr << "p3IdService::extractIdGroupCache() Failed to extract scores";
-	std::cerr << std::endl;
-
-	return false;
 }
 
 
@@ -1583,23 +2067,14 @@ bool p3IdService::background_processFullCalc()
 
 	if (validmsgs)
 	{
-		std::string serviceString;
-		IdGroupServiceStrData ssData;
-		
-		
-		if (!encodeIdGroupCache(serviceString, ssData))
-		{
-			std::cerr << "p3IdService::background_updateVoteCounts() Failed to encode Votes";
-			std::cerr << std::endl;
-		}
-		else
-		{
-			std::cerr << "p3IdService::background_updateVoteCounts() Encoded String: " << serviceString;
-			std::cerr << std::endl;
-			/* store new result */
-			uint32_t dummyToken = 0;
-			setGroupServiceString(dummyToken, groupId, serviceString);
-		}
+		SSGxsIdGroup ssdata;
+		std::string serviceString = ssdata.save();
+
+		std::cerr << "p3IdService::background_updateVoteCounts() Encoded String: " << serviceString;
+		std::cerr << std::endl;
+		/* store new result */
+		uint32_t dummyToken = 0;
+		setGroupServiceString(dummyToken, groupId, serviceString);
 	}
 
 	{
@@ -1633,9 +2108,8 @@ bool p3IdService::background_cleanup()
 std::ostream &operator<<(std::ostream &out, const RsGxsIdGroup &grp)
 {
 	out << "RsGxsIdGroup: Meta: " << grp.mMeta;
-	out << " IdType: " << grp.mIdType << " GpgIdHash: " << grp.mGpgIdHash;
-	out << "(((Unusable: ( GpgIdKnown: " << grp.mGpgIdKnown << " GpgId: " << grp.mGpgId;
-	out << " GpgName: " << grp.mGpgName << " GpgEmail: " << grp.mGpgEmail << ") )))";
+	out << " PgpIdHash: " << grp.mPgpIdHash;
+	out << " PgpIdSign: [binary]"; // << grp.mPgpIdSign;
 	out << std::endl;
 	
 	return out;

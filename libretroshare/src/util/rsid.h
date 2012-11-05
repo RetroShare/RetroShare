@@ -25,6 +25,9 @@
 // Warning: never store references to a t_RsGenericIdType accross threads, since the 
 // 			cached string convertion is not thread safe.
 //
+
+#pragma once
+
 #include <stdexcept>
 #include <string>
 
@@ -58,6 +61,14 @@ template<uint32_t ID_SIZE_IN_BYTES> class t_RsGenericIdType
 		bool operator!=(const t_RsGenericIdType<ID_SIZE_IN_BYTES>& fp) const
 		{
 			return !operator==(fp) ;
+		}
+
+		bool operator<(const t_RsGenericIdType<ID_SIZE_IN_BYTES>& fp) const
+		{
+			for(uint32_t i=0;i<ID_SIZE_IN_BYTES;++i)
+				if(fp.bytes[i] != bytes[i])
+					return (bytes[i] < fp.bytes[i]);
+			return false;
 		}
 
 	private:
