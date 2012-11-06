@@ -76,6 +76,7 @@ public:
 public slots:
 	void download();
 	void play();
+	void mediatype();
 
 private slots:
 	void toggle();

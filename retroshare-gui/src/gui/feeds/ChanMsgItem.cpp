@@ -21,6 +21,7 @@
 
 #include <QDateTime>
 #include <QTimer>
+#include <QFileInfo>
 
 #include "rshare.h"
 #include "ChanMsgItem.h"
@@ -210,6 +211,11 @@ void ChanMsgItem::updateItemStatic()
 		SubFileItem *fi = new SubFileItem(it->hash, it->fname, it->path, it->size,
 				SFI_STATE_REMOTE | SFI_TYPE_CHANNEL, "");
 		mFileItems.push_back(fi);
+		
+		/* check if the file is a media file */
+		if (!misc::isPreviewable(QFileInfo(QString::fromUtf8(it->fname.c_str())).suffix())) 
+		  fi->mediatype();
+
 
 		QLayout *layout = expandFrame->layout();
 		layout->addWidget(fi);
