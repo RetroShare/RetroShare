@@ -14,6 +14,8 @@ GroupSelectionBox::GroupSelectionBox(QWidget *parent)
 	for(std::list<RsGroupInfo>::const_iterator it(lst.begin());it!=lst.end();++it)
 		addItem(QString::fromStdString(it->id)) ;
 
+	for(int i=0;i<count();++i)
+		item(i)->setBackgroundColor(QColor(183,236,181)) ;
 }
 
 std::list<std::string> GroupSelectionBox::selectedGroups() const

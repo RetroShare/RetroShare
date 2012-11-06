@@ -53,12 +53,19 @@ ShareDialog::ShareDialog(std::string filename, QWidget *parent, Qt::WFlags flags
 
 	 QVBoxLayout *vbox = new QVBoxLayout() ;
 
+	 QHBoxLayout *hb2 = new QHBoxLayout() ;
+	 hb2->addWidget(new QLabel(tr("Share flags and groups: "))) ;
+
 	 groupflagsbox = new GroupFlagsWidget(ui.shareflags_GB) ;
+	 groupflagsbox->setFlags(DIR_FLAGS_NETWORK_WIDE_OTHERS) ;	// default value
+	
 	 messageBox = new QTextEdit(ui.shareflags_GB) ;
 	 messageBox->setReadOnly(true) ;
 	 messageBox->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Preferred)) ;
 
-	 vbox->addWidget(groupflagsbox) ;
+	 hb2->addWidget(groupflagsbox) ;
+
+	 vbox->addLayout(hb2) ;
 	 vbox->addWidget(messageBox) ;
 
 	 QHBoxLayout *hbox = new QHBoxLayout() ;
@@ -67,6 +74,7 @@ ShareDialog::ShareDialog(std::string filename, QWidget *parent, Qt::WFlags flags
 	 hbox->addWidget(groupselectionbox) ;
 
 	 ui.shareflags_GB->setLayout(hbox) ;
+	 updateInfoMessage() ;
 
 	 connect(groupselectionbox,SIGNAL(itemSelectionChanged()),this,SLOT(updateInfoMessage())) ;
 	 connect(groupflagsbox,SIGNAL(flagsChanged(FileStorageFlags)),this,SLOT(updateInfoMessage())) ;

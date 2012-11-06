@@ -70,7 +70,7 @@ GroupFlagsWidget::GroupFlagsWidget(QWidget *parent,FileStorageFlags flags)
 	connect(_buttons[INDEX_OTHER_BROWSABLE],SIGNAL(toggled(bool)),this,SLOT(update_OB_button(bool))) ;
 
 	_layout->setSpacing(0);
-	_layout->setContentsMargins(10, 0, 0, 0);
+	_layout->setContentsMargins(0, 0, 0, 0);
 
 	_layout->update() ;
 }
@@ -133,18 +133,25 @@ QString GroupFlagsWidget::groupInfoString(FileStorageFlags flags,const std::list
 		groups_string += QString::fromStdString(*it) ;
 	}
 	
-	if((flags & DIR_FLAGS_BROWSABLE_OTHERS) && !groups.empty())
+	if(flags & DIR_FLAGS_BROWSABLE_OTHERS)
 		res += tr("All your friends can browse this directory\n") ;
-	else if((flags & DIR_FLAGS_BROWSABLE_GROUPS) && !groups.empty())
-		res += tr("Only friends in groups ") + groups_string + tr(" can browse this directory\n") ;
+	else if(flags & DIR_FLAGS_BROWSABLE_GROUPS) 
+		if(!groups.empty())
+			res += tr("Only friends in groups ") + groups_string + tr(" can browse this directory\n") ;
+		else
+			res += tr("No one can browse this directory\n") ;
+	else
+		res += tr("No one can browse this directory\n") ;
 
 	if(flags & DIR_FLAGS_NETWORK_WIDE_OTHERS)
 		res += tr("All your friends can relay anonymous tunnels to this directory") ;
 	else if(flags & DIR_FLAGS_NETWORK_WIDE_GROUPS)
-		res += tr("only friends in groups ") + groups_string + tr(" can relay anonymous tunnels to this directory") ;
+		res += tr("Only friends in groups ") + groups_string + tr(" can relay anonymous tunnels to this directory") ;
+	else
+		res += tr("No one can anonymously access this directory.") ;
 
-	if(flags.toUInt32() == 0)
-		res += tr("No friends can access nor see this directory.") ;
+	//if(flags.toUInt32() == 0)
+	//	res += tr("No friends can access nor see this directory.") ;
 
 	return res ;
 }
