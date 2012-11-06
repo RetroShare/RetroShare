@@ -35,17 +35,7 @@ LineEditClear::LineEditClear(QWidget *parent)
 	: QLineEdit(parent)
 {
 	mActionGroup = NULL;
-
-	mFilterButton = new QToolButton(this);
-	mFilterButton->setFixedSize(16, 16);
-	QPixmap filterPixmap(IMAGE_FILTER);
-	mFilterButton->setIcon(QIcon(filterPixmap));
-	mFilterButton->setIconSize(filterPixmap.size());
-	mFilterButton->setCursor(Qt::ArrowCursor);
-	mFilterButton->setStyleSheet("QToolButton { border: none; padding: 0px; }"
-								 "QToolButton[popupMode=\"2\"] { padding-right: 10px; }"
-								 "QToolButton::menu-indicator[popupMode=\"2\"] { subcontrol-origin: padding; subcontrol-position: bottom right; top: 5px; left: -3px; width: 7px; }");
-	mFilterButton->move(2, 2);
+	mFilterButton = NULL;
 
 	mClearButton = new QToolButton(this);
 	mClearButton->setFixedSize(16, 16);
@@ -70,7 +60,7 @@ LineEditClear::LineEditClear(QWidget *parent)
 	int frameWidth = style()->pixelMetric(QStyle::PM_DefaultFrameWidth);
 	QSize msz = minimumSizeHint();
 	setMinimumSize(
-		qMax(msz.width(), mClearButton->sizeHint().height() + mFilterButton->sizeHint().width() + frameWidth * 2),
+		qMax(msz.width(), mClearButton->sizeHint().height() + /*mFilterButton->sizeHint().width() + */frameWidth * 2),
 		qMax(msz.height(), mClearButton->sizeHint().height() + frameWidth * 2));
 }
 
@@ -82,7 +72,7 @@ void LineEditClear::resizeEvent(QResizeEvent *)
 
 #if QT_VERSION < 0x040700
 	sz = mFilterLabel->sizeHint();
-	mFilterLabel->move(frameWidth + mFilterButton->sizeHint().width() + 5, (rect().bottom() + 1 - sz.height())/2);
+	mFilterLabel->move(frameWidth + (mFilterButton ? mFilterButton->sizeHint().width() + 5 : 0), (rect().bottom() + 1 - sz.height())/2);
 #endif
 }
 
@@ -118,7 +108,27 @@ void LineEditClear::reposButtons()
 	int frameWidth = style()->pixelMetric(QStyle::PM_DefaultFrameWidth);
 	setStyleSheet(QString("QLineEdit { padding-right: %1px; padding-left: %2px; }")
 				  .arg(mClearButton->sizeHint().width() + frameWidth + 1)
-				  .arg(mFilterButton->sizeHint().width() + frameWidth + 1));
+				  .arg(mFilterButton ? mFilterButton->sizeHint().width() + frameWidth + 1 : 0));
+}
+
+void LineEditClear::showFilterIcon()
+{
+	if (mFilterButton) {
+		return;
+	}
+
+	mFilterButton = new QToolButton(this);
+	mFilterButton->setFixedSize(16, 16);
+	QPixmap filterPixmap(IMAGE_FILTER);
+	mFilterButton->setIcon(QIcon(filterPixmap));
+	mFilterButton->setIconSize(filterPixmap.size());
+	mFilterButton->setCursor(Qt::ArrowCursor);
+	mFilterButton->setStyleSheet("QToolButton { border: none; padding: 0px; }"
+								 "QToolButton[popupMode=\"2\"] { padding-right: 10px; }"
+								 "QToolButton::menu-indicator[popupMode=\"2\"] { subcontrol-origin: padding; subcontrol-position: bottom right; top: 5px; left: -3px; width: 7px; }");
+	mFilterButton->move(2, 2);
+
+	reposButtons();
 }
 
 void LineEditClear::updateClearButton(const QString& text)
@@ -132,6 +142,8 @@ void LineEditClear::addFilter(const QIcon &icon, const QString &text, int id, co
 	action->setData(id);
 	action->setCheckable(true);
 	mDescription[id] = description;
+
+	showFilterIcon();
 
 	if (mActionGroup == NULL) {
 		mFilterButton->setFixedSize(26, 16);
@@ -157,6 +169,10 @@ void LineEditClear::addFilter(const QIcon &icon, const QString &text, int id, co
 
 void LineEditClear::setCurrentFilter(int id)
 {
+	if (mFilterButton == NULL) {
+		return;
+	}
+
 	QMenu *menu = mFilterButton->menu();
 	if (menu) {
 		Q_FOREACH (QAction *action, menu->actions()) {

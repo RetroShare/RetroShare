@@ -88,8 +88,6 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	ui->filterLineEdit->addFilter(QIcon(), tr("Title"), FILTER_NAME_INDEX , tr("Search Title"));
 	ui->filterLineEdit->addFilter(QIcon(), tr("Description"), FILTER_DESC_INDEX , tr("Search Description"));
 	ui->filterLineEdit->setCurrentFilter(FILTER_NAME_INDEX);
-	// can be removed when the actions of the filter line edit have own placeholder text
-	ui->filterLineEdit->setPlaceholderText(tr("Enter a Keyword here"));
 }
 
 GroupTreeWidget::~GroupTreeWidget()

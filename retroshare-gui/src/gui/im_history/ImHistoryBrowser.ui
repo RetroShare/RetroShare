@@ -49,7 +49,10 @@
       </size>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
-      <property name="margin">
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
        <number>2</number>
       </property>
       <item>
@@ -57,16 +60,6 @@
         <property name="spacing">
          <number>1</number>
         </property>
-        <item>
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string/>
-          </property>
-          <property name="pixmap">
-           <pixmap resource="../images.qrc">:/images/find-16.png</pixmap>
-          </property>
-         </widget>
-        </item>
         <item>
          <widget class="LineEditClear" name="filterLineEdit"/>
         </item>

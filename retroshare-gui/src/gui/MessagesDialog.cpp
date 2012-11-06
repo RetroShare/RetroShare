@@ -226,8 +226,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     ui.filterLineEdit->addFilter(QIcon(), tr("Content"), COLUMN_CONTENT, tr("Search Content"));
     ui.filterLineEdit->addFilter(QIcon(), tr("Tags"), COLUMN_TAGS, tr("Search Tags"));
     ui.filterLineEdit->addFilter(QIcon(), tr("Attachments"), COLUMN_ATTACHEMENTS, tr("Search Attachments"));
-    // can be removed when the actions of the filter line edit have own placeholder text
-    ui.filterLineEdit->setPlaceholderText(tr("Search...")) ;
 
     //setting default filter by column as subject
     ui.filterLineEdit->setCurrentFilter(COLUMN_SUBJECT);

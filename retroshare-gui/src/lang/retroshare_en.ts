@@ -4092,7 +4092,19 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Search this forum...</source>
+        <source>Search Title</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search Author</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search Content</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5482,10 +5494,6 @@ p, li { white-space: pre-wrap; }
 </context>
 <context>
     <name>GroupTreeWidget</name>
-    <message>
-        <source>Enter a Keyword here</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Title</source>
         <translation type="unfinished"></translation>
@@ -7234,10 +7242,6 @@ Do you want to save message ?</source>
         <source>Search Attachments</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Search...</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>MessengerWindow</name>
@@ -7255,6 +7259,10 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Search Friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7533,6 +7541,14 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Display</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search Peer ID</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

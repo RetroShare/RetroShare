@@ -14,7 +14,7 @@
    <string>RetroShare Messenger</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="images.qrc">
+   <iconset>
     <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -118,28 +118,11 @@
         <number>2</number>
        </property>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <property name="spacing">
-          <number>2</number>
+        <widget class="LineEditClear" name="filterLineEdit">
+         <property name="toolTip">
+          <string>Search Friends</string>
          </property>
-         <item>
-          <widget class="QLabel" name="filterLineLabel">
-           <property name="text">
-            <string/>
-           </property>
-           <property name="pixmap">
-            <pixmap resource="images.qrc">:/images/find-16.png</pixmap>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="LineEditClear" name="filterLineEdit">
-           <property name="toolTip">
-            <string>Search Friends</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        </widget>
        </item>
        <item>
         <widget class="QToolButton" name="addIMAccountButton">
@@ -147,7 +130,7 @@
           <string>Add a Friend</string>
          </property>
          <property name="icon">
-          <iconset resource="images.qrc">
+          <iconset>
            <normaloff>:/images/user/add_user24.png</normaloff>:/images/user/add_user24.png</iconset>
          </property>
          <property name="iconSize">
@@ -167,7 +150,7 @@
           <string>Share Files for your Friends</string>
          </property>
          <property name="icon">
-          <iconset resource="images.qrc">
+          <iconset>
            <normaloff>:/images/friendsfolder24.png</normaloff>:/images/friendsfolder24.png</iconset>
          </property>
          <property name="iconSize">
@@ -184,7 +167,7 @@
        <item>
         <widget class="QToolButton" name="displaytoolButton">
          <property name="icon">
-          <iconset resource="images.qrc">
+          <iconset>
            <normaloff>:/images/looknfeel.png</normaloff>:/images/looknfeel.png</iconset>
          </property>
          <property name="iconSize">
@@ -254,6 +237,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header>gui/common/LineEditClear.h</header>
+  </customwidget>
+  <customwidget>
    <class>AvatarWidget</class>
    <extends>QLabel</extends>
    <header>gui/common/AvatarWidget.h</header>
@@ -266,19 +254,12 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>LineEditClear</class>
-   <extends>QLineEdit</extends>
-   <header>gui/common/LineEditClear.h</header>
-  </customwidget>
-  <customwidget>
    <class>LogoBar</class>
    <extends>QFrame</extends>
    <header>gui/LogoBar.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

@@ -166,8 +166,8 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     timer2->start(1000);
     
     /* add filter actions */
-    ui.filterLineEdit->addFilter(QIcon(), tr("Name"), COLUMN_PEERNAME);
-    ui.filterLineEdit->addFilter(QIcon(), tr("Peer ID"), COLUMN_PEERID);
+    ui.filterLineEdit->addFilter(QIcon(), tr("Name"), COLUMN_PEERNAME, tr("Search Name"));
+    ui.filterLineEdit->addFilter(QIcon(), tr("Peer ID"), COLUMN_PEERID, tr("Search Peer ID"));
     ui.filterLineEdit->setCurrentFilter(COLUMN_PEERNAME);
 
     updateNetworkStatus();

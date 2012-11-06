@@ -167,13 +167,11 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     lastViewType = -1;
 
     /* add filter actions */
-    ui.filterLineEdit->addFilter(QIcon(), tr("Title"), COLUMN_THREAD_TITLE);
-    ui.filterLineEdit->addFilter(QIcon(), tr("Date"), COLUMN_THREAD_DATE);
-    ui.filterLineEdit->addFilter(QIcon(), tr("Author"), COLUMN_THREAD_AUTHOR);
-    ui.filterLineEdit->addFilter(QIcon(), tr("Content"), COLUMN_THREAD_CONTENT);
+    ui.filterLineEdit->addFilter(QIcon(), tr("Title"), COLUMN_THREAD_TITLE, tr("Search Title"));
+    ui.filterLineEdit->addFilter(QIcon(), tr("Date"), COLUMN_THREAD_DATE, tr("Search Date"));
+    ui.filterLineEdit->addFilter(QIcon(), tr("Author"), COLUMN_THREAD_AUTHOR, tr("Search Author"));
+    ui.filterLineEdit->addFilter(QIcon(), tr("Content"), COLUMN_THREAD_CONTENT, tr("Search Content"));
     ui.filterLineEdit->setCurrentFilter(COLUMN_THREAD_TITLE);
-    // can be removed when the actions of the filter line edit have own placeholder text
-    ui.filterLineEdit->setPlaceholderText(tr("Search this forum...")) ;
 
     // load settings
     processSettings(true);

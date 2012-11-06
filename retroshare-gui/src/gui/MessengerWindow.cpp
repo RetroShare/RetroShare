@@ -133,6 +133,9 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
 
     ui.displaytoolButton->setMenu(ui.friendList->createDisplayMenu());
 
+    ui.filterLineEdit->setPlaceholderText(tr("Search")) ;
+    ui.filterLineEdit->showFilterIcon();
+
     // load settings
     RsAutoUpdatePage::lockAllEvents();
     ui.friendList->setShowStatusColumn(false);

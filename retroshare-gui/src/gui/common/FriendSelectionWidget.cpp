@@ -97,6 +97,7 @@ FriendSelectionWidget::FriendSelectionWidget(QWidget *parent) :
 	ui->friendList->sortItems(COLUMN_NAME, Qt::AscendingOrder);
 
 	ui->filterLineEdit->setPlaceholderText(tr("Search Friends"));
+	ui->filterLineEdit->showFilterIcon();
 }
 
 FriendSelectionWidget::~FriendSelectionWidget()

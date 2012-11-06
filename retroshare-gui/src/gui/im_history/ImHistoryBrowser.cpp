@@ -114,6 +114,8 @@ ImHistoryBrowser::ImHistoryBrowser(const std::string &peerId, QTextEdit *edit, Q
     connect(ui.listWidget, SIGNAL(itemSelectionChanged()), this, SLOT(itemSelectionChanged()));
     connect(ui.listWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customContextMenuRequested(QPoint)));
 
+    ui.filterLineEdit->showFilterIcon();
+
     // embed smileys ?
     if (m_isPrivateChat) {
         embedSmileys = Settings->valueFromGroup("Chat", "Emoteicons_PrivatChat", true).toBool();
