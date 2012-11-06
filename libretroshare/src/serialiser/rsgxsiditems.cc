@@ -122,6 +122,10 @@ void RsGxsIdGroupItem::clear()
 {
 	group.mPgpIdHash.clear();
 	group.mPgpIdSign.clear();
+
+        group.mPgpKnown = false;
+        group.mPgpId.clear();
+
 }
 
 std::ostream& RsGxsIdGroupItem::print(std::ostream& out, uint16_t indent)

@@ -255,11 +255,23 @@ virtual void service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& key
 	bool mCacheTest_Active;
 	uint32_t mCacheTest_Token;
 
+
+/************************************************************************
+ * for processing background tasks that use the serviceString.
+ * - must be mutually exclusive to avoid clashes.
+ */
+	int scheduling_tick();
+
+	bool mBgSchedule_Active;
+	uint32_t mBgSchedule_Mode;
+
 /************************************************************************
  * pgphash processing.
  *
  */
-	bool pgphash_tick();
+	bool pgphash_start();
+	bool pgphash_continue();
+
 	bool pgphash_getlist();
 	bool pgphash_request();
 	bool pgphash_process();
@@ -269,7 +281,7 @@ virtual void service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& key
 	/* MUTEX PROTECTED DATA (mIdMtx - maybe should use a 2nd?) */
 
 	time_t mHashPgp_LastTs;
-	bool mHashPgp_Active;
+	bool mHashPgp_SearchActive;
 	uint32_t mHashPgp_Token;
 
 	std::map<PGPIdType, PGPFingerprintType> mPgpFingerprintMap;
@@ -283,6 +295,9 @@ virtual void service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& key
 virtual void generateDummyData();
 
 std::string genRandomId();
+
+	bool reputation_start();
+	bool reputation_continue();
 
 	int	background_tick();
 	bool background_checkTokenRequest();

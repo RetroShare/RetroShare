@@ -60,6 +60,7 @@ std::string rsIdTypeToString(uint32_t idtype);
 class RsGxsIdGroup
 {
 	public:
+	RsGxsIdGroup():mPgpKnown(false) { return; }
 
 
 	RsGroupMetaData mMeta;
@@ -80,6 +81,10 @@ class RsGxsIdGroup
 
 	std::string mPgpIdHash; 
 	std::string mPgpIdSign;   // Need a signature as proof - otherwise anyone could add others Hashes.
+
+	// Serialised - for GUI's benefit.
+	bool mPgpKnown;
+	std::string mPgpId;
 };
 
 

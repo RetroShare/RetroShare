@@ -68,6 +68,9 @@ RsIdentity *rsIdentity = NULL;
 
 #define RSGXSID_MAX_SERVICE_STRING 1024
 
+#define BG_PGPHASH 	1
+#define BG_REPUTATION 	2
+
 /********************************************************************************/
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
@@ -81,6 +84,11 @@ p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *ne
 
 	mCacheLoad_LastCycle = 0;
 	mCacheLoad_Status = 0;
+
+	mHashPgp_SearchActive = false;
+
+	mBgSchedule_Mode = 0;
+	mBgSchedule_Active = false;
 }
 
 void	p3IdService::service_tick()
@@ -95,6 +103,9 @@ void	p3IdService::service_tick()
 
 	// internal testing - request keys. (NOT FINISHED YET)
 	cachetest_tick();
+
+	// background stuff.
+	//scheduling_tick();
 
 	return;
 }
@@ -223,6 +234,20 @@ bool p3IdService::getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> 
                         RsGxsIdGroupItem* item = dynamic_cast<RsGxsIdGroupItem*>(*vit);
                         RsGxsIdGroup group = item->group;
                         group.mMeta = item->meta;
+
+			// Decode information from serviceString.
+			SSGxsIdGroup ssdata;
+			if (ssdata.load(group.mMeta.mServiceString))
+			{
+				group.mPgpKnown = ssdata.pgp.idKnown;
+				group.mPgpId    = ssdata.pgp.pgpId;
+			}
+			else
+			{
+				group.mPgpKnown = false;
+				group.mPgpId    = "";
+			}
+
                         groups.push_back(group);
                 }
         }
@@ -923,6 +948,65 @@ bool p3IdService::cachetest_request()
 /************************************************************************************/
 /************************************************************************************/
 
+/*
+ * We have two background tasks that use the ServiceString: PGPHash & Reputation.
+ *
+ * Only one task can be run at a time - otherwise potential overwrite issues.
+ * So this part coordinates that part of the code.
+ *
+ * 
+ *
+ *
+ */
+
+#define ID_BACKGROUND_PERIOD	60
+
+int	p3IdService::scheduling_tick()
+{
+	std::cerr << "p3IdService::scheduling_tick()";
+	std::cerr << std::endl;
+
+	/*** MUTEX TODO ***/
+
+	if (mBgSchedule_Active)
+	{
+		bool done = false;
+		if (mBgSchedule_Mode == BG_PGPHASH)
+		{
+			done = pgphash_continue();
+		}
+		else
+		{
+			done = reputation_continue();
+		}
+
+		if (done)
+		{
+			mBgSchedule_Active = false;
+		}
+	}
+	else 
+	{
+		if (pgphash_start())
+		{
+			mBgSchedule_Mode = BG_PGPHASH;
+			mBgSchedule_Active = true;
+		}
+		else if (reputation_start())
+		{
+			mBgSchedule_Mode = BG_REPUTATION;
+			mBgSchedule_Active = true;
+		}
+	}
+
+	return 1;
+}
+
+
+/************************************************************************************/
+/************************************************************************************/
+/************************************************************************************/
+
 /* Task to determine GPGHash matches
  *
  * Info to be stored in GroupServiceString + Cache.
@@ -983,6 +1067,7 @@ void p3IdService::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet
 
 		/* do signature */
 
+#if ENABLE_PGP_SIGNATURES
 #define MAX_SIGN_SIZE 2048
 		uint8_t signarray[MAX_SIGN_SIZE]; 
 		unsigned int sign_size = MAX_SIGN_SIZE;
@@ -1002,20 +1087,25 @@ void p3IdService::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet
 			}
 		}
 		/* done! */
+#else
+		item->group.mPgpIdSign = "";
+#endif
+
 	}
 }
 
 
+#define HASHPGP_PERIOD		180
 
 
-bool p3IdService::pgphash_tick()
+bool p3IdService::pgphash_start()
 {
 	/* every minute - run a background check */
 	time_t now = time(NULL);
 	bool doHash = false;
 	{
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		if (now -  mHashPgp_LastTs > TEST_PERIOD)
+		if (now -  mHashPgp_LastTs > HASHPGP_PERIOD)
 		{
 			doHash = true;
 			mHashPgp_LastTs = now;
@@ -1027,20 +1117,33 @@ bool p3IdService::pgphash_tick()
 		std::cerr << "p3IdService::pgphash_tick() starting";
 		std::cerr << std::endl;
 		pgphash_getlist();
+		return true;
 	}
-
-	pgphash_request();
-	pgphash_process();
-
-	return true;
+	return false;
 }
+
+
+bool p3IdService::pgphash_continue()
+{
+	if (mHashPgp_SearchActive)
+	{
+		pgphash_request();
+	}
+	else
+	{
+		return pgphash_process();
+	}
+	return false;
+}
+
+
 
 bool p3IdService::pgphash_getlist()
 {
 
 	{
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		if (mHashPgp_Active)
+		if (mHashPgp_SearchActive)
 		{
 			std::cerr << "p3IdService::cachetest_getlist() Already active";
 			std::cerr << std::endl;
@@ -1061,7 +1164,7 @@ bool p3IdService::pgphash_getlist()
 	{
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 		mHashPgp_Token = token;
-		mHashPgp_Active = true;
+		mHashPgp_SearchActive = true;
 	}
 	return true;
 }
@@ -1072,7 +1175,7 @@ bool p3IdService::pgphash_request()
 	uint32_t token = 0;
 	{
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		if (!mHashPgp_Active)
+		if (!mHashPgp_SearchActive)
 		{
 			return false;
 		}
@@ -1105,7 +1208,7 @@ bool p3IdService::pgphash_request()
 
 		{	
 			RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-			mHashPgp_Active = false;
+			mHashPgp_SearchActive = false;
 		}
 
 	        if(ok)
@@ -1251,6 +1354,7 @@ bool p3IdService::checkId(const RsGxsIdGroup &grp, PGPIdType &pgpId)
 			std::cerr << "p3IdService::checkId() HASH MATCH!";
 			std::cerr << std::endl;
 
+#if ENABLE_PGP_SIGNATURES
 			/* miracle match! */
 			/* check signature too */
 			if (AuthGPG::getAuthGPG()->VerifySignBin((void *) hash.toByteArray(), hash.SIZE_IN_BYTES, 
@@ -1267,6 +1371,12 @@ bool p3IdService::checkId(const RsGxsIdGroup &grp, PGPIdType &pgpId)
 			/* error */
 			std::cerr << "p3IdService::checkId() ERROR Signature Failed";
 			std::cerr << std::endl;
+#else
+			std::cerr << "p3IdService::checkId() Skipping Signature check for now... Hash Okay";
+			std::cerr << std::endl;
+			return true;
+#endif
+
 		}
 	}
 
@@ -1551,6 +1661,17 @@ std::string rsIdTypeToString(uint32_t idtype)
  *
  * 
  */
+
+bool 	p3IdService::reputation_start()
+{
+	return false;
+}
+
+
+bool 	p3IdService::reputation_continue()
+{
+	return true;
+}
 
 
 #define ID_BACKGROUND_PERIOD	60
