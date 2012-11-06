@@ -196,12 +196,12 @@ int FlatStyle_RDM::columnCount(const QModelIndex &/*parent*/) const
 }
 QString RetroshareDirModel::getFlagsString(FileStorageFlags flags)
 {
-	char str[11] = "-  -  -  -" ;
+	char str[11] = "-  -  -" ;
 
 	if(flags & DIR_FLAGS_BROWSABLE_GROUPS) 	str[0] = 'B' ;
-	if(flags & DIR_FLAGS_NETWORK_WIDE_GROUPS) str[3] = 'N' ;
-	if(flags & DIR_FLAGS_BROWSABLE_OTHERS) 	str[6] = 'B' ;
-	if(flags & DIR_FLAGS_NETWORK_WIDE_OTHERS) str[9] = 'N' ;
+	//if(flags & DIR_FLAGS_NETWORK_WIDE_GROUPS) str[3] = 'N' ;
+	if(flags & DIR_FLAGS_BROWSABLE_OTHERS) 	str[3] = 'B' ;
+	if(flags & DIR_FLAGS_NETWORK_WIDE_OTHERS) str[6] = 'N' ;
 
 	return QString(str) ;
 }

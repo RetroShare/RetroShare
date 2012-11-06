@@ -1127,7 +1127,7 @@ FileSearchFlags p3Peers::computePeerPermissionFlags(const std::string& peer_ssl_
 				found = true ;
 	}
 
-	bool network_wide = (share_flags & DIR_FLAGS_NETWORK_WIDE_OTHERS) || ( (share_flags & DIR_FLAGS_NETWORK_WIDE_GROUPS) && found) ;
+	bool network_wide = (share_flags & DIR_FLAGS_NETWORK_WIDE_OTHERS) ;//|| ( (share_flags & DIR_FLAGS_NETWORK_WIDE_GROUPS) && found) ;
 	bool browsable    = (share_flags &    DIR_FLAGS_BROWSABLE_OTHERS) || ( (share_flags &    DIR_FLAGS_BROWSABLE_GROUPS) && found) ;
 
 	FileSearchFlags final_flags ;

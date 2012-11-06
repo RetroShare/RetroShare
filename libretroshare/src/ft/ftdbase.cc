@@ -345,6 +345,7 @@ bool    ftFiMonitor::loadList(std::list<RsItem *>& load)
 		info.parent_groups = fi->parent_groups;
 		info.shareflags = FileStorageFlags(fi->flags) ;
 		info.shareflags &= PERMISSION_MASK ;
+		info.shareflags &= ~DIR_FLAGS_NETWORK_WIDE_GROUPS ;	// disabling this flag for know, for consistency reasons
 
 		dirList.push_back(info) ;
 	}

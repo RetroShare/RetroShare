@@ -62,6 +62,7 @@ GroupFlagsWidget::GroupFlagsWidget(QWidget *parent,FileStorageFlags flags)
 		update_button_state(_buttons[i]->isChecked(),i) ;
 		_layout->addWidget(_buttons[i]) ;
 	}
+	_buttons[INDEX_GROUP_NETWORK_W]->setHidden(true);
 		
 	connect(_buttons[INDEX_GROUP_NETWORK_W],SIGNAL(toggled(bool)),this,SLOT(update_GN_button(bool))) ;
 	connect(_buttons[INDEX_OTHER_NETWORK_W],SIGNAL(toggled(bool)),this,SLOT(update_ON_button(bool))) ;
@@ -86,6 +87,7 @@ FileStorageFlags GroupFlagsWidget::flags() const
 	for(int i=0;i<4;++i)
 		if(_buttons[i]->isChecked()) flags |= _flags[i] ;
 
+	flags &= ~DIR_FLAGS_NETWORK_WIDE_GROUPS ; 
 	return flags ;
 }
 
@@ -134,12 +136,12 @@ QString GroupFlagsWidget::groupInfoString(FileStorageFlags flags,const std::list
 	if((flags & DIR_FLAGS_BROWSABLE_OTHERS) && !groups.empty())
 		res += tr("All your friends can browse this directory\n") ;
 	else if((flags & DIR_FLAGS_BROWSABLE_GROUPS) && !groups.empty())
-		res += tr("Friends in groups ") + groups_string + tr(" can browse this directory\n") ;
+		res += tr("Only friends in groups ") + groups_string + tr(" can browse this directory\n") ;
 
 	if(flags & DIR_FLAGS_NETWORK_WIDE_OTHERS)
 		res += tr("All your friends can relay anonymous tunnels to this directory") ;
 	else if(flags & DIR_FLAGS_NETWORK_WIDE_GROUPS)
-		res += tr("Friends in groups ") + groups_string + tr(" can relay anonymous tunnels to this directory") ;
+		res += tr("only friends in groups ") + groups_string + tr(" can relay anonymous tunnels to this directory") ;
 
 	if(flags.toUInt32() == 0)
 		res += tr("No friends can access nor see this directory.") ;

@@ -1448,6 +1448,7 @@ void FileIndexMonitor::locked_findShareFlagsAndParentGroups(FileEntry *file,File
 		{
 			flags = it->second.shareflags ;
 			flags &= PERMISSION_MASK ;
+			flags &= ~DIR_FLAGS_NETWORK_WIDE_GROUPS ; // Disabling this flag for now, because it has inconsistent effects.
 			parent_groups = it->second.parent_groups ;
 		}
 #ifdef FIM_DEBUG2
