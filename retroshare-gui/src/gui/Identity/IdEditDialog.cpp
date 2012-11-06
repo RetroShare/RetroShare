@@ -146,50 +146,50 @@ void IdEditDialog::loadExistingId(uint32_t token)
 
 	data = datavector[0];
 
+	bool realid = (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID);
 
-	bool pseudo = false; //(data.mIdType & RSID_TYPE_PSEUDONYM);
-
-	if (pseudo)
+	if (realid)
 	{
-		ui.radioButton_Pseudo->setChecked(true);
+		ui.radioButton_GpgId->setChecked(true);
 	}
 	else
 	{
-		ui.radioButton_GpgId->setChecked(true);
+		ui.radioButton_Pseudo->setChecked(true);
 	}
 
 	// DOES THIS TRIGGER ALREADY???
 	// force - incase it wasn't triggered.
 	IdTypeToggled(true);
 
-	//ui.lineEdit_Nickname->setText(QString::fromStdString(data.mNickname));
-        //ui.lineEdit_KeyId->setText(QString::fromStdString(data.mKeyId));
 	ui.lineEdit_Nickname->setText(QString::fromStdString(data.mMeta.mGroupName));
         ui.lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId));
 
-	if (pseudo)
+	if (realid)
+	{
+		ui.lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash));
+
+		if (data.mPgpKnown)
+		{
+			RsPeerDetails details;
+			rsPeers->getGPGDetails(data.mPgpId, details);
+			ui.lineEdit_GpgName->setText(QString::fromStdString(details.name));
+			ui.lineEdit_GpgEmail->setText(QString::fromStdString(details.email));
+
+			ui.lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId));
+		}
+		else
+		{
+			ui.lineEdit_GpgId->setText("Unknown PgpId");
+			ui.lineEdit_GpgName->setText("Unknown Real Name");
+			ui.lineEdit_GpgEmail->setText("Unknown Email");
+		}
+	}
+	else
 	{
 		ui.lineEdit_GpgHash->setText("N/A");
 		ui.lineEdit_GpgId->setText("N/A");
 		ui.lineEdit_GpgName->setText("N/A");
 		ui.lineEdit_GpgEmail->setText("N/A");
-	}
-	else
-	{
-		ui.lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash));
-
-		if (0) //if (data.mGpgIdKnown)
-		{
-			//ui.lineEdit_GpgId->setText(QString::fromStdString(data.mGpgId));
-			//ui.lineEdit_GpgName->setText(QString::fromStdString(data.mGpgName));
-			//ui.lineEdit_GpgEmail->setText(QString::fromStdString(data.mGpgEmail));
-		}
-		else
-		{
-			ui.lineEdit_GpgId->setText("EXIST Unknown");
-			ui.lineEdit_GpgName->setText("Unknown");
-			ui.lineEdit_GpgEmail->setText("Unknown");
-		}
 	}
 
 	return;
