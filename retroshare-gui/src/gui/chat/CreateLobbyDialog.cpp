@@ -31,8 +31,8 @@
 #include "gui/common/PeerDefs.h"
 #include "ChatDialog.h"
 
-CreateLobbyDialog::CreateLobbyDialog(const std::list<std::string>& peer_list, int privacyLevel, QWidget *parent, Qt::WFlags flags) :
-	QDialog(parent, flags)
+CreateLobbyDialog::CreateLobbyDialog(const std::list<std::string>& peer_list, int privacyLevel, QWidget *parent) :
+	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
 {
 	ui = new Ui::CreateLobbyDialog() ;
 	ui->setupUi(this);

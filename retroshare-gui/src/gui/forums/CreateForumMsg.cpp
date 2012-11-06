@@ -42,7 +42,7 @@
 
 /** Constructor */
 CreateForumMsg::CreateForumMsg(const std::string &fId, const std::string &pId)
-: QDialog(NULL), mForumId(fId), mParentId(pId)
+: QDialog(NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint), mForumId(fId), mParentId(pId)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);

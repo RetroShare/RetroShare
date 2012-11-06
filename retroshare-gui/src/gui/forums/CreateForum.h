@@ -30,7 +30,7 @@ class CreateForum : public QDialog
 	Q_OBJECT
 
 public:
-	CreateForum(QWidget *parent = 0);
+	CreateForum();
 
 	void newForum(); /* cleanup */
 

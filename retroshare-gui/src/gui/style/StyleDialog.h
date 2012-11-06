@@ -36,14 +36,13 @@ class StyleDialog : public QDialog
 
 public:
 	/** Default constructor */
-	StyleDialog(RSStyle &style, QWidget *parent = 0, Qt::WFlags flags = 0);
+	StyleDialog(RSStyle &style, QWidget *parent = 0);
 	/** Default destructor */
 	~StyleDialog();
 
 	void getStyle(RSStyle &style);
 
 private slots:
-	void onOK();
 	void chooseColor();
 	void showButtons();
 

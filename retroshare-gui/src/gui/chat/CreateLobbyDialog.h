@@ -12,7 +12,7 @@ public:
 	/*
 	 *@param chanId The channel id to send request for
 	 */
-	CreateLobbyDialog(const std::list<std::string>& friends_list, int privacyLevel = 0, QWidget *parent = 0, Qt::WFlags flags = 0);
+	CreateLobbyDialog(const std::list<std::string>& friends_list, int privacyLevel = 0, QWidget *parent = 0);
 	~CreateLobbyDialog();
 
 protected:

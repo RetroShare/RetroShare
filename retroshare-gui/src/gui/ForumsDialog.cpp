@@ -1435,8 +1435,10 @@ void ForumsDialog::copyMessageLink()
 
 void ForumsDialog::newforum()
 {
-    CreateForum cf (this);
-    cf.exec ();
+    CreateForum *cf = new CreateForum();
+    cf->show();
+
+    /* window will destroy itself! */
 }
 
 void ForumsDialog::createmessage()
@@ -1598,7 +1600,7 @@ void ForumsDialog::filterItems(const QString& text)
 
 void ForumsDialog::shareKey()
 {
-    ShareKey shareUi(this, 0, mCurrForumId, FORUM_KEY_SHARE);
+    ShareKey shareUi(this, mCurrForumId, FORUM_KEY_SHARE);
     shareUi.exec();
 }
 

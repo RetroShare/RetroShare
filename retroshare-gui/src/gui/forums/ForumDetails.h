@@ -33,8 +33,7 @@ class ForumDetails : public QDialog
 	public:  
 	
 	/** Default constructor */
-  ForumDetails(QWidget *parent = 0, Qt::WFlags flags = 0);
-  /** Default destructor */
+  ForumDetails(QWidget *parent = 0);
 	
 	void 	showDetails(std::string mCurrForumId);
 

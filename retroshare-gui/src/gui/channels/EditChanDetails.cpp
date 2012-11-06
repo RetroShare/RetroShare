@@ -34,8 +34,8 @@
 
 
 /** Default constructor */
-EditChanDetails::EditChanDetails(QWidget *parent, Qt::WFlags flags, std::string cId)
-  : QDialog(parent, flags), mChannelId(cId)
+EditChanDetails::EditChanDetails(QWidget *parent, std::string cId)
+  : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mChannelId(cId)
 {
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);

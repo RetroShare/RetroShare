@@ -34,14 +34,10 @@
 #include "retroshare/rspeers.h"
 #include <retroshare/rshistory.h>
 
-#ifndef RS_RELEASE_VERSION
-#include "channels/CreateChannel.h"
-#endif
 #include "common/Emoticons.h"
 #include "common/PeerDefs.h"
 #include "chat/ChatUserNotify.h"
 #include "connect/ConnectFriendWizard.h"
-#include "forums/CreateForum.h"
 #include "groups/CreateGroup.h"
 #include "im_history/ImHistoryBrowser.h"
 #include "MainWindow.h"
@@ -174,10 +170,6 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     menu->addAction(ui.actionFriendRecommendations);
 
     menu->addSeparator();
-    menu->addAction(ui.actionCreate_New_Forum);
-#ifndef RS_RELEASE_VERSION
-    menu->addAction(ui.actionCreate_New_Channel);
-#endif
     menu->addAction(ui.actionSet_your_Avatar);
     menu->addAction(ui.actionSet_your_Personal_Message);
 
@@ -752,26 +744,6 @@ void FriendsDialog::getAvatar()
 		rsMsgs->setOwnAvatarData((unsigned char *)(ba.data()), ba.size()) ;	// last char 0 included.
 	}
 }
-
-void FriendsDialog::on_actionCreate_New_Forum_activated()
-{
-    MainWindow::activatePage (MainWindow::Forums);
-
-    CreateForum cf (this);
-    cf.exec();
-    
-}
-
-void FriendsDialog::on_actionCreate_New_Channel_activated()
-{
-#ifndef RS_RELEASE_VERSION
-    MainWindow::activatePage (MainWindow::Channels);
-
-    CreateChannel cf (this);
-    cf.exec();
-#endif
-}
-
 
 /** Loads own personal status */
 void FriendsDialog::loadmypersonalstatus()

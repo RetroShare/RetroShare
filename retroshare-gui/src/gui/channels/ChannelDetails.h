@@ -33,8 +33,7 @@ class ChannelDetails : public QDialog
 	public:  
 	
 	/** Default constructor */
-  ChannelDetails(QWidget *parent = 0, Qt::WFlags flags = 0);
-  /** Default destructor */
+  ChannelDetails(QWidget *parent = 0);
 	
 	void 	showDetails(std::string mChannelId);
 

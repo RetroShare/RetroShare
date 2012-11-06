@@ -16,7 +16,7 @@ public:
 	/*
 	 *@param chanId The channel id to send request for
 	 */
-	ShareKey(QWidget *parent = 0, Qt::WFlags flags = 0, std::string grpId = "", int grpType = 0);
+	ShareKey(QWidget *parent = 0, std::string grpId = "", int grpType = 0);
 	~ShareKey();
 
 protected:

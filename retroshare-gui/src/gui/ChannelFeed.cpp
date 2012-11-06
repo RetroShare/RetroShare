@@ -223,8 +223,10 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint /*point*/ )
 
 void ChannelFeed::createChannel()
 {
-	CreateChannel cf (this);
-	cf.exec();
+	CreateChannel *cf = new CreateChannel();
+	cf->show();
+
+	/* window will destroy itself! */
 }
 
 /*************************************************************************************/
@@ -246,13 +248,13 @@ void ChannelFeed::openChat(std::string /*peerId*/)
 
 void ChannelFeed::editChannelDetail(){
     
-    EditChanDetails editUi(this, 0, mChannelId);
+    EditChanDetails editUi(this, mChannelId);
     editUi.exec();
 }
 
 void ChannelFeed::shareKey()
 {
-    ShareKey shareUi(this, 0, mChannelId, CHANNEL_KEY_SHARE);
+    ShareKey shareUi(this, mChannelId, CHANNEL_KEY_SHARE);
     shareUi.exec();
 }
 

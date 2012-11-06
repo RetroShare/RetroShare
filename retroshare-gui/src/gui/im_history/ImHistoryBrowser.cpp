@@ -91,8 +91,8 @@ void ImHistoryBrowserCreateItemsThread::run()
 }
 
 /** Default constructor */
-ImHistoryBrowser::ImHistoryBrowser(const std::string &peerId, QTextEdit *edit, QWidget *parent, Qt::WFlags flags)
-  : QDialog(parent, flags)
+ImHistoryBrowser::ImHistoryBrowser(const std::string &peerId, QTextEdit *edit, QWidget *parent)
+  : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
 {
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);

@@ -35,13 +35,13 @@ class FriendRecommendDialog : public QDialog
 public:
 	~FriendRecommendDialog();
 
-	static void showYourself(QWidget *parent = 0);
+	static void showYourself();
 
 private slots:
 	void sendMsg();
 
 private:
-	FriendRecommendDialog(QWidget *parent = 0);
+	FriendRecommendDialog();
 
 	Ui::FriendRecommendDialog *ui;
 };

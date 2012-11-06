@@ -42,8 +42,8 @@
 #define COLUMN_GID			2
 
 /** Default constructor */
-ProfileManager::ProfileManager(QWidget *parent, Qt::WFlags flags)
-	: QDialog(parent, flags)
+ProfileManager::ProfileManager(QWidget *parent)
+	: QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
 {
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);

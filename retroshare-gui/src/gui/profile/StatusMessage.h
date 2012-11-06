@@ -19,7 +19,6 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-
 #ifndef _STATUSMESSAGE_H
 #define _STATUSMESSAGE_H
 
@@ -33,21 +32,16 @@ class StatusMessage : public QDialog
 
 public:
   /** Default constructor */
-  StatusMessage(QWidget *parent = 0, Qt::WFlags flags = 0);
-  /** Default destructor */
-  ~StatusMessage();
+  StatusMessage(QWidget *parent = 0);
 
 private slots:
 
   /** Saves the changes on this page */
   void save();
-  /** Loads the settings for this page */
-  void load();
 
 private:
   /** Qt Designer generated object */
   Ui::StatusMessage ui;
-
 };
 
 #endif

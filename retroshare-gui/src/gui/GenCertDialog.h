@@ -30,7 +30,7 @@ class GenCertDialog : public QDialog
 
 public:
 	/** Default constructor */
-	GenCertDialog(bool onlyGenerateIdentity, QWidget *parent = 0, Qt::WFlags flags = 0);
+	GenCertDialog(bool onlyGenerateIdentity, QWidget *parent = 0);
 
 private slots:
 	void genPerson();

@@ -31,11 +31,13 @@
 #include <retroshare/rspeers.h>
 
 /** Constructor */
-CreateForum::CreateForum(QWidget *parent)
-: QDialog(parent)
+CreateForum::CreateForum()
+: QDialog(NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
+
+	setAttribute(Qt::WA_DeleteOnClose, true);
 
 	ui.headerFrame->setHeaderImage(QPixmap(":/images/konversation64.png"));
 	ui.headerFrame->setHeaderText(tr("New Forum"));

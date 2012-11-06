@@ -33,8 +33,7 @@ class ProfileManager : public QDialog
 
 public:
 	/** Default constructor */
-	ProfileManager(QWidget *parent = 0, Qt::WFlags flags = 0);
-	/** Default destructor */
+	ProfileManager(QWidget *parent = 0);
 
 private slots:
 	void identityTreeWidgetCostumPopupMenu( QPoint point );

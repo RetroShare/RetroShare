@@ -43,7 +43,7 @@ class ImHistoryBrowser : public QDialog
 
 public:
     /** Default constructor */
-    ImHistoryBrowser(const std::string &peerId, QTextEdit *edit, QWidget *parent = 0, Qt::WFlags flags = 0);
+    ImHistoryBrowser(const std::string &peerId, QTextEdit *edit, QWidget *parent = 0);
     /** Default destructor */
     virtual ~ImHistoryBrowser();
 

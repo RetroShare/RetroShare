@@ -29,8 +29,8 @@
 #include "gui/common/GroupDefs.h"
 
 /** Default constructor */
-CreateGroup::CreateGroup(const std::string groupId, QWidget *parent, Qt::WFlags flags)
-  : QDialog(parent, flags)
+CreateGroup::CreateGroup(const std::string groupId, QWidget *parent)
+  : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
 {
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);

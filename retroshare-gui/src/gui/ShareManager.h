@@ -38,7 +38,7 @@ public:
 
 private:
     /** Default constructor */
-    ShareManager( QWidget *parent = 0, Qt::WFlags flags = 0);
+    ShareManager();
     /** Default destructor */
     ~ShareManager();
 

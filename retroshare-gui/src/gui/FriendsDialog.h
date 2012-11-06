@@ -101,8 +101,6 @@ private slots:
     void getAvatar();
 
     void on_actionAdd_Group_activated();
-    void on_actionCreate_New_Forum_activated();
-    void on_actionCreate_New_Channel_activated();
 
     void loadmypersonalstatus();
 

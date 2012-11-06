@@ -18,23 +18,14 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
+
 #include "StatusMessage.h"
 
-#include <retroshare/rsiface.h>
-#include <retroshare/rspeers.h>
-#include <retroshare/rsdisc.h>
 #include <retroshare/rsmsgs.h>
-#include "gui/settings/rsharesettings.h"
-
-
-#include <QTime>
-
-#include <iomanip>
-
 
 /** Default constructor */
-StatusMessage::StatusMessage(QWidget *parent, Qt::WFlags flags)
-  : QDialog(parent, flags)
+StatusMessage::StatusMessage(QWidget *parent)
+  : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
 {
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);
@@ -42,13 +33,7 @@ StatusMessage::StatusMessage(QWidget *parent, Qt::WFlags flags)
   connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(save()));
   connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
   
-  load();
-  
-}
-
-/** Destructor. */
-StatusMessage::~StatusMessage()
-{
+  ui.txt_StatusMessage->setText(QString::fromUtf8(rsMsgs->getCustomStateString().c_str()));
 }
 
 /** Saves the changes on this page */
@@ -56,14 +41,5 @@ void StatusMessage::save()
 {
     rsMsgs->setCustomStateString(ui.txt_StatusMessage->text().toUtf8().constData());
 
-    close();
+    accept();
 }
-
-/** Loads the settings for this page */
-void StatusMessage::load()
-{	
-    ui.txt_StatusMessage->setText(QString::fromUtf8(rsMsgs->getCustomStateString().c_str()));
-}
-
-
-

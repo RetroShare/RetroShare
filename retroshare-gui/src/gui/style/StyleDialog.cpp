@@ -28,7 +28,8 @@
 #include "gui/style/RSStyle.h"
 
 /** Default constructor */
-StyleDialog::StyleDialog(RSStyle &style, QWidget *parent, Qt::WFlags flags) : QDialog(parent, flags)
+StyleDialog::StyleDialog(RSStyle &style, QWidget *parent)
+	: QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
 {
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
@@ -42,9 +43,7 @@ StyleDialog::StyleDialog(RSStyle &style, QWidget *parent, Qt::WFlags flags) : QD
 		restoreGeometry(geometry);
 	}
 
-//    setWindowIcon(QIcon(":/images/rstray3.png"));
-
-	connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(onOK()));
+	connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
 	connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
 	connect(ui.color1Button, SIGNAL(clicked()), this, SLOT(chooseColor()));
@@ -86,11 +85,6 @@ StyleDialog::~StyleDialog()
 {
 	/* Save window postion */
 	Settings->setValueToGroup("StyleDialog", "Geometry", saveGeometry());
-}
-
-void StyleDialog::onOK()
-{
-	accept();
 }
 
 int StyleDialog::neededColors()

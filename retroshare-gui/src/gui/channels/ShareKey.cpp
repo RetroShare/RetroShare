@@ -30,8 +30,8 @@
 
 #include "gui/common/PeerDefs.h"
 
-ShareKey::ShareKey(QWidget *parent, Qt::WFlags flags, std::string grpId, int grpType) :
-	QDialog(parent, flags), mGrpId(grpId), mGrpType(grpType)
+ShareKey::ShareKey(QWidget *parent, std::string grpId, int grpType) :
+	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mGrpId(grpId), mGrpType(grpType)
 {
 	ui = new Ui::ShareKey();
 	ui->setupUi(this);

@@ -32,7 +32,7 @@ class CreateGroup : public QDialog
 
 public:
     /** Default constructor */
-    CreateGroup(const std::string groupId, QWidget *parent = 0, Qt::WFlags flags = 0);
+    CreateGroup(const std::string groupId, QWidget *parent = 0);
     /** Default destructor */
     ~CreateGroup();
 

@@ -33,8 +33,8 @@
 #define DATETIME_FMT  "MMM dd hh:mm:ss"
 
 /** Default constructor */
-GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent, Qt::WFlags flags)
-	: QDialog(parent, flags), mOnlyGenerateIdentity(onlyGenerateIdentity)
+GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
+	: QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mOnlyGenerateIdentity(onlyGenerateIdentity)
 {
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);

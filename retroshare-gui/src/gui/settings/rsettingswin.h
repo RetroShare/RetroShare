@@ -38,7 +38,7 @@ public:
 	static void postModDirectories(bool update_local);
 
 protected:
-	RSettingsWin(QWidget * parent = 0, Qt::WFlags flags = 0);
+	RSettingsWin(QWidget *parent = 0);
 	~RSettingsWin();
 
 	void addPage(ConfigPage*) ;

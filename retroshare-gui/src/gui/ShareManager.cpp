@@ -45,8 +45,8 @@
 ShareManager *ShareManager::_instance = NULL ;
 
 /** Default constructor */
-ShareManager::ShareManager(QWidget *parent, Qt::WFlags flags)
-  : QDialog(parent, flags)
+ShareManager::ShareManager()
+  : QDialog(NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint)
 {
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
@@ -208,7 +208,7 @@ void ShareManager::load()
 void ShareManager::showYourself()
 {
     if(_instance == NULL)
-        _instance = new ShareManager(NULL,0) ;
+        _instance = new ShareManager() ;
 
     _instance->show() ;
     _instance->activateWindow();

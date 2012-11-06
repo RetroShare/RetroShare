@@ -26,14 +26,14 @@
 #include "msgs/MessageComposer.h"
 #include "settings/rsharesettings.h"
 
-void FriendRecommendDialog::showYourself(QWidget *parent)
+void FriendRecommendDialog::showYourself()
 {
-	FriendRecommendDialog *dlg = new FriendRecommendDialog(parent);
+	FriendRecommendDialog *dlg = new FriendRecommendDialog();
 	dlg->show();
 }
 
-FriendRecommendDialog::FriendRecommendDialog(QWidget *parent) :
-	QDialog(parent),
+FriendRecommendDialog::FriendRecommendDialog() :
+	QDialog(NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint),
 	ui(new Ui::FriendRecommendDialog)
 {
 	ui->setupUi(this);

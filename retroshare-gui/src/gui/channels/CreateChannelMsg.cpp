@@ -39,7 +39,7 @@
 
 /** Constructor */
 CreateChannelMsg::CreateChannelMsg(std::string cId)
-: QDialog (NULL), mChannelId(cId) ,mCheckAttachment(true), mAutoMediaThumbNail(false)
+: QDialog (NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint), mChannelId(cId) ,mCheckAttachment(true), mAutoMediaThumbNail(false)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	setupUi(this);

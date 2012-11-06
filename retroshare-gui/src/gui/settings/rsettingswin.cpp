@@ -42,14 +42,13 @@
 
 #define IMAGE_GENERAL       ":/images/kcmsystem24.png"
 
-
 #include "rsettingswin.h"
 
 RSettingsWin *RSettingsWin::_instance = NULL;
 int RSettingsWin::lastPage = 0;
 
-RSettingsWin::RSettingsWin(QWidget * parent, Qt::WFlags flags)
-                            : QDialog(parent, flags)
+RSettingsWin::RSettingsWin(QWidget *parent)
+    : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
 {
     setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose, true);

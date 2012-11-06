@@ -37,8 +37,8 @@
 #define DATETIME_FMT  "MMM dd hh:mm:ss"
 
 /** Default constructor */
-ChannelDetails::ChannelDetails(QWidget *parent, Qt::WFlags flags)
-  : QDialog(parent, flags)
+ChannelDetails::ChannelDetails(QWidget *parent)
+  : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
 {
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);

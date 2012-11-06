@@ -31,8 +31,8 @@
 
 
 /** Default constructor */
-EditForumDetails::EditForumDetails(std::string forumId, QWidget *parent, Qt::WFlags flags)
-  : QDialog(parent, flags), m_forumId(forumId)
+EditForumDetails::EditForumDetails(std::string forumId, QWidget *parent)
+  : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), m_forumId(forumId)
 {
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);

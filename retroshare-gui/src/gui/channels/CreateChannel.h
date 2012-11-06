@@ -29,7 +29,7 @@ class CreateChannel : public QDialog
 	Q_OBJECT
 
 public:
-	CreateChannel(QWidget *parent = 0);
+	CreateChannel();
 
 	void newChannel(); /* cleanup */
 

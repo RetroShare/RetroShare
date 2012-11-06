@@ -32,8 +32,7 @@ class EditChanDetails : public QDialog
 
 public:
     /** Default constructor */
-    EditChanDetails(QWidget *parent = 0, Qt::WFlags flags = 0, std::string cId = "");
-    /** Default destructor */
+    EditChanDetails(QWidget *parent = 0, std::string cId = 0);
 
 signals:
     void configChanged();

@@ -32,11 +32,13 @@
 #include <retroshare/rspeers.h>
 
 /** Constructor */
-CreateChannel::CreateChannel(QWidget *parent)
-: QDialog(parent)
+CreateChannel::CreateChannel()
+: QDialog(NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
+
+	setAttribute(Qt::WA_DeleteOnClose, true);
 
 	ui.headerFrame->setHeaderImage(QPixmap(":/images/add_channel64.png"));
 	ui.headerFrame->setHeaderText(tr("New Channel"));
