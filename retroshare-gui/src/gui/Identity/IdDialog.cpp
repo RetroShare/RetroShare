@@ -228,7 +228,8 @@ void IdDialog::insertIdDetails(uint32_t token)
 	{
 		ui.pushButton_Reputation->setEnabled(false);
 		ui.pushButton_Delete->setEnabled(true);
-		ui.pushButton_EditId->setEnabled(true);
+		// No Editing Ids yet!
+		//ui.pushButton_EditId->setEnabled(true);
 	}
 	else
 	{
@@ -393,7 +394,16 @@ void IdDialog::insertIdList(uint32_t token)
 		item->setText(RSID_COL_KEYID, QString::fromStdString(data.mMeta.mGroupId));
 		if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
 		{
-			item->setText(RSID_COL_IDTYPE, "PGP Linked Id");
+			if (data.mPgpKnown)
+			{
+				RsPeerDetails details;
+				rsPeers->getGPGDetails(data.mPgpId, details);
+				item->setText(RSID_COL_IDTYPE, QString::fromStdString(details.name));
+			}
+			else
+			{
+				item->setText(RSID_COL_IDTYPE, "PGP Linked Id");
+			}
 		}
 		else
 		{

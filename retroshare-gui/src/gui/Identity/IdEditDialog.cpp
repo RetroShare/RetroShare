@@ -200,6 +200,7 @@ void IdEditDialog::updateId()
 	RsGxsIdGroup rid;
 	// Must set, Nickname, KeyId(if existing), mIdType, GpgId.
 
+
 	rid.mMeta.mGroupName = ui.lineEdit_Nickname->text().toStdString();
 
 	if (rid.mMeta.mGroupName.size() < 2)
@@ -238,8 +239,14 @@ void IdEditDialog::updateId()
 		//rid.mGpgEmail = "";
 	}
 
-	// TODO.
-	//rsIdentity->updateIdentity(rid);
+	
+	// Can only create Identities for the moment!
+	RsIdentityParameters params;
+	params.nickname = rid.mMeta.mGroupName;
+	params.isPgpLinked = (ui.radioButton_GpgId->isChecked());
+
+	uint32_t dummyToken = 0;
+	rsIdentity->createIdentity(dummyToken, params);
 
 	hide();
 	return;
