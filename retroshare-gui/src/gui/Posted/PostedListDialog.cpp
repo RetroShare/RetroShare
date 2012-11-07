@@ -24,6 +24,7 @@
 #include "PostedListDialog.h"
 
 #include "gui/Posted/PostedGroupDialog.h"
+#include "gui/Posted/PostedCreatePostDialog.h"
 
 #include <retroshare/rsposted.h>
 #include <gxs/rsgxsflags.h>
@@ -107,44 +108,15 @@ void PostedListDialog::groupListCustomPopupMenu( QPoint /*point*/ )
 {
     QMenu contextMnu( this );
 
-    QAction *action = contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Subscribe to Forum"), this, SLOT(subscribeToForum()));
-    //action->setDisabled (mCurrTopicId.empty() || IS_FORUM_SUBSCRIBED(subscribeFlags));
-
-    action = contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Unsubscribe to Forum"), this, SLOT(unsubscribeToForum()));
-    //action->setEnabled (!mCurrTopicId.empty() && IS_FORUM_SUBSCRIBED(subscribeFlags));
-
-    contextMnu.addSeparator();
-
-    contextMnu.addAction(QIcon(IMAGE_NEWFORUM), tr("New Forum"), this, SLOT(newforum()));
-
-    action = contextMnu.addAction(QIcon(IMAGE_INFO), tr("Show Forum Details"), this, SLOT(showForumDetails()));
-    action->setEnabled (!mCurrTopicId.empty ());
-
-    action = contextMnu.addAction(QIcon(":/images/settings16.png"), tr("Edit Forum Details"), this, SLOT(editForumDetails()));
-    //action->setEnabled (!mCurrTopicId.empty () && IS_FORUM_ADMIN(subscribeFlags));
-
-    QAction *shareKeyAct = new QAction(QIcon(":/images/gpgp_key_generate.png"), tr("Share Forum"), &contextMnu);
-    connect( shareKeyAct, SIGNAL( triggered() ), this, SLOT( shareKey() ) );
-    //shareKeyAct->setEnabled(!mCurrTopicId.empty() && IS_FORUM_ADMIN(subscribeFlags));
-    contextMnu.addAction( shareKeyAct);
-
-    QAction *restoreKeysAct = new QAction(QIcon(":/images/settings16.png"), tr("Restore Publish Rights for Forum" ), &contextMnu);
-    connect( restoreKeysAct , SIGNAL( triggered() ), this, SLOT( restoreForumKeys() ) );
-    //restoreKeysAct->setEnabled(!mCurrTopicId.empty() && !IS_FORUM_ADMIN(subscribeFlags));
-    contextMnu.addAction( restoreKeysAct);
-
-    action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyForumLink()));
-    action->setEnabled(!mCurrTopicId.empty());
-
-    contextMnu.addSeparator();
-
-    action = contextMnu.addAction(QIcon(":/images/message-mail-read.png"), tr("Mark all as read"), this, SLOT(markMsgAsReadAll()));
-    //action->setEnabled (!mCurrTopicId.empty () && IS_FORUM_SUBSCRIBED(subscribeFlags));
-
-    action = contextMnu.addAction(QIcon(":/images/message-mail.png"), tr("Mark all as unread"), this, SLOT(markMsgAsUnreadAll()));
-    //action->setEnabled (!mCurrTopicId.empty () && IS_FORUM_SUBSCRIBED(subscribeFlags));
+    QAction *action = contextMnu.addAction(QIcon(IMAGE_MESSAGE), tr("Create Post"), this, SLOT(createPost()));
+    action->setDisabled (mCurrTopicId.empty());
 
     contextMnu.exec(QCursor::pos());
+}
+
+void PostedListDialog::createPost()
+{
+
 }
 
 void PostedListDialog::updateDisplay()
@@ -277,7 +249,7 @@ void PostedListDialog::periodChanged( int index )
 
 void PostedListDialog::newGroup()
 {
-        PostedGroupDialog cf (mPostedQueue, this);
+        PostedGroupDialog cf (mPostedQueue, rsPosted, this);
 	cf.exec ();
 }
 	
@@ -288,7 +260,7 @@ void PostedListDialog::showGroupDetails()
 		return;
 	}
 	
-        PostedGroupDialog cf(mGroups[mCurrTopicId], this);
+        PostedGroupDialog cf(mGroups[mCurrTopicId], GXS_GROUP_DIALOG_SHOW_MODE, this);
 	cf.exec ();
 }
 	

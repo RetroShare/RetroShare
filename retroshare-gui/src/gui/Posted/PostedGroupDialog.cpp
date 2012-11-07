@@ -25,58 +25,30 @@
 #include <retroshare/rsposted.h>
 #include <iostream>
 
-PostedGroupDialog::PostedGroupDialog(TokenQueue* tokenQueue,  QWidget *parent)
-        :GxsGroupDialog(tokenQueue, parent, GXS_GROUP_DIALOG_CREATE_MODE)
+#define POSTED_ENABLE_FLAG   ( GXS_GROUP_FLAGS_ICON          | \
+                            GXS_GROUP_FLAGS_DESCRIPTION   | \
+                            GXS_GROUP_FLAGS_DISTRIBUTION  | \
+                            GXS_GROUP_FLAGS_PUBLISHSIGN   | \
+                            GXS_GROUP_FLAGS_SHAREKEYS     | \
+                            GXS_GROUP_FLAGS_PERSONALSIGN  | \
+                            GXS_GROUP_FLAGS_COMMENTS      | \
+                            0)
+
+#define POSTED_CREATE_DEFAULT_FLAG ( GXS_GROUP_DEFAULTS_DISTRIB_LOCAL        | \
+                              GXS_GROUP_DEFAULTS_PUBLISH_REQUIRED     | \
+                              GXS_GROUP_DEFAULTS_PERSONAL_IFNOPUB     | \
+                              GXS_GROUP_DEFAULTS_COMMENTS_NO          | \
+                              0)
+
+PostedGroupDialog::PostedGroupDialog(TokenQueue* tokenQueue,  RsPosted* posted, QWidget *parent)
+        :GxsGroupDialog(tokenQueue, POSTED_ENABLE_FLAG, POSTED_CREATE_DEFAULT_FLAG, parent),
+        mPosted(posted)
 {
-
-	// To start with we only have open forums - with distribution controls.
-
-        uint32_t enabledFlags = ( GXS_GROUP_FLAGS_ICON        |
-                                GXS_GROUP_FLAGS_DESCRIPTION   |
-                                GXS_GROUP_FLAGS_DISTRIBUTION  |
-                                GXS_GROUP_FLAGS_PUBLISHSIGN   |
-                                GXS_GROUP_FLAGS_SHAREKEYS     |
-                                GXS_GROUP_FLAGS_PERSONALSIGN  |
-                                GXS_GROUP_FLAGS_COMMENTS      |
-                                0);
-
-        uint32_t readonlyFlags = 0;
-
-        uint32_t defaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_LOCAL        |
-                                   GXS_GROUP_DEFAULTS_PUBLISH_REQUIRED     |
-                                   GXS_GROUP_DEFAULTS_PERSONAL_IFNOPUB     |
-                                   GXS_GROUP_DEFAULTS_COMMENTS_NO          |
-                                0);
-
-        setFlags(enabledFlags, defaultsFlags);
-
 }
 
-PostedGroupDialog::PostedGroupDialog(const RsPostedGroup &grp, QWidget *parent)
-        :GxsGroupDialog(NULL, parent, GXS_GROUP_DIALOG_SHOW_MODE), mGrp(grp)
+PostedGroupDialog::PostedGroupDialog(const RsPostedGroup& grp, uint32_t mode, QWidget *parent)
+        :GxsGroupDialog(grp.mMeta, mode, parent), mGrp(grp)
 {
-
-        // To start with we only have open forums - with distribution controls.
-
-        uint32_t enabledFlags = ( GXS_GROUP_FLAGS_ICON        |
-                                GXS_GROUP_FLAGS_DESCRIPTION   |
-                                GXS_GROUP_FLAGS_DISTRIBUTION  |
-                                GXS_GROUP_FLAGS_PUBLISHSIGN   |
-                                GXS_GROUP_FLAGS_SHAREKEYS     |
-                                GXS_GROUP_FLAGS_PERSONALSIGN  |
-                                GXS_GROUP_FLAGS_COMMENTS      |
-                                0);
-
-        uint32_t readonlyFlags = 0;
-
-        uint32_t defaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_LOCAL        |
-                                   GXS_GROUP_DEFAULTS_PUBLISH_REQUIRED     |
-                                   GXS_GROUP_DEFAULTS_PERSONAL_IFNOPUB     |
-                                   GXS_GROUP_DEFAULTS_COMMENTS_NO          |
-                                0);
-
-        setFlags(enabledFlags, defaultsFlags);
-
 }
 
 
@@ -100,10 +72,6 @@ QString PostedGroupDialog::service_getDescription()
     return QString();
 }
 
-RsGroupMetaData PostedGroupDialog::service_getMeta()
-{
-    return mGrp.mMeta;
-}
 
 
 

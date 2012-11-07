@@ -35,12 +35,12 @@ public:
     /*!
      * This constructs a create dialog
      */
-    PostedGroupDialog(TokenQueue* tokenQueue, QWidget *parent = NULL);
+    PostedGroupDialog(TokenQueue* tokenQueue, RsPosted* posted, QWidget *parent = NULL);
 
     /*!
      * This constructs a show dialog which displays an already existing group
      */
-    PostedGroupDialog(const RsPostedGroup& grp, QWidget *parent = NULL);
+    PostedGroupDialog(const RsPostedGroup& grp, uint32_t mode, QWidget *parent = NULL);
 
 protected:
 
@@ -59,16 +59,10 @@ protected:
      */
     virtual QString service_getDescription();
 
-    /*!
-     * Used in show mode, returns a meta type
-     * @return the meta of existing grpMeta
-     */
-    virtual RsGroupMetaData service_getMeta();
-
-
 private:
 
     RsPostedGroup mGrp;
+    RsPosted* mPosted;
 
 };
 

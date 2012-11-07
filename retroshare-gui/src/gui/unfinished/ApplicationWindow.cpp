@@ -97,9 +97,9 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(postedDialog = new PostedDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_LIBRARY), tr("Posted Links"), grp));
 
-    WikiDialog *wikiDialog = NULL;
-    ui.stackPages->add(wikiDialog = new WikiDialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_LIBRARY), tr("Wiki Pages"), grp));
+//    WikiDialog *wikiDialog = NULL;
+//    ui.stackPages->add(wikiDialog = new WikiDialog(ui.stackPages),
+//                      createPageAction(QIcon(IMAGE_LIBRARY), tr("Wiki Pages"), grp));
 
 // THESE HAVE TO BE CONVERTED TO VEG FORMAT
 #if USE_VEG_SERVICE

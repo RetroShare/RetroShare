@@ -50,8 +50,8 @@
 #define GXSGROUP_LOADGROUP		2
 
 /** Constructor */
-GxsGroupDialog::GxsGroupDialog(TokenQueue* tokenQueue,  QWidget *parent, uint32_t mode)
-: QDialog(parent), mTokenQueue(tokenQueue), mMode(mode)
+GxsGroupDialog::GxsGroupDialog(TokenQueue *tokenQueue, uint32_t enableFlags, uint16_t defaultFlags, QWidget *parent)
+: QDialog(parent), mTokenQueue(tokenQueue), mMode(GXS_GROUP_DIALOG_CREATE_MODE), mEnabledFlags(enableFlags), mDefaultsFlags(defaultFlags), mReadonlyFlags(0)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
@@ -64,7 +64,8 @@ GxsGroupDialog::GxsGroupDialog(TokenQueue* tokenQueue,  QWidget *parent, uint32_
     connect( ui.groupLogo, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
     connect( ui.addLogoButton, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
 
-    if (!ui.pubKeyShare_cb->isChecked()) {
+    if (!ui.pubKeyShare_cb->isChecked())
+    {
             ui.contactsdockWidget->hide();
             this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
     }
@@ -74,32 +75,13 @@ GxsGroupDialog::GxsGroupDialog(TokenQueue* tokenQueue,  QWidget *parent, uint32_
     ui.keyShareList->setModus(FriendSelectionWidget::MODUS_CHECK);
     ui.keyShareList->start();
 
-
     /* Setup Reasonable Defaults */
 
-    uint32_t enabledFlags = ( GXS_GROUP_FLAGS_ICON        |
-                            GXS_GROUP_FLAGS_DESCRIPTION   |
-                            GXS_GROUP_FLAGS_DISTRIBUTION  |
-                            GXS_GROUP_FLAGS_PUBLISHSIGN   |
-                            GXS_GROUP_FLAGS_SHAREKEYS     |
-                            GXS_GROUP_FLAGS_PERSONALSIGN  |
-                            GXS_GROUP_FLAGS_COMMENTS      );
-
-
-    uint32_t defaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC    |
-                            GXS_GROUP_DEFAULTS_PUBLISH_THREADS      |
-                            GXS_GROUP_DEFAULTS_PERSONAL_IFNOPUB     |
-                            GXS_GROUP_DEFAULTS_COMMENTS_YES         |
-                            0);
-
-    setFlags(enabledFlags, defaultsFlags);
-    setMode(mode);
 }
 
-void GxsGroupDialog::setFlags(uint32_t enabledFlags, uint32_t defaultsFlags)
-{
-    mEnabledFlags = enabledFlags;
-    mDefaultsFlags = defaultsFlags;
+GxsGroupDialog::GxsGroupDialog(const RsGroupMetaData &grpMeta, uint32_t mode, QWidget *parent)
+    : QDialog(parent), mMode(mode), mGrpMeta(grpMeta) {
+
 }
 
 void GxsGroupDialog::setMode(uint32_t mode)
@@ -120,7 +102,7 @@ void GxsGroupDialog::setMode(uint32_t mode)
             ui.createButton->setText(tr("Close"));
         }
         break;
-
+//TODO
 //        case GXS_GROUP_DIALOG_EDIT_MODE:
 //        {
 //            ui.createButton->setText(tr("Submit Changes"));
@@ -268,17 +250,6 @@ void GxsGroupDialog::newGroup()
     clearForm();
 
 }
-
-
-void GxsGroupDialog::loadExistingGroupMetaData(const RsGroupMetaData &meta)
-{
-    /* should set stuff - according to parameters */
-    setGroupSignFlags(meta.mSignFlags);
-    ui.groupName->setText(QString::fromUtf8(meta.mGroupName.c_str()));
-
-    return;
-}
-
 
 void GxsGroupDialog::submitGroup()
 {

@@ -55,6 +55,8 @@ public:
 };
 
 
+/*** Group flags affect what is visually enabled that gets input into the grpMeta ***/
+
 #define GXS_GROUP_FLAGS_ICON			0x00000001
 #define GXS_GROUP_FLAGS_DESCRIPTION		0x00000002
 #define GXS_GROUP_FLAGS_DISTRIBUTION		0x00000004
@@ -64,6 +66,10 @@ public:
 #define GXS_GROUP_FLAGS_COMMENTS		0x00000040
 
 #define GXS_GROUP_FLAGS_EXTRA			0x00000100
+
+/*** Default flags are used to determine privacy of group, signatures required ***
+ *** whether publish or id and whether comments are allowed or not             ***/
+
 
 #define GXS_GROUP_DEFAULTS_DISTRIB_MASK		0x0000000f
 #define GXS_GROUP_DEFAULTS_PUBLISH_MASK		0x000000f0
@@ -105,27 +111,29 @@ public:
  */
 class GxsGroupDialog : public QDialog
 {
-	Q_OBJECT
+        Q_OBJECT
 
 public:
 
     /*!
-     *
-     * @param tokenQueue This should be the token service of the services Dialog \n
+     * Constructs a GxsGroupDialog for creating group
+     * @param tokenQueue This should be the TokenQueue of the (parent) service
      *        in order to receive acknowledgement of group creation, if set to NULL with create mode \n
      *        creation will not happen
+     * @param enableFlags This determines what options are enabled such as Icon, Description, publish type and key sharing
+     * @param defaultFlags This deter
      * @param parent The parent dialog
      * @param mode
      */
-    GxsGroupDialog(TokenQueue* tokenQueue, QWidget *parent = NULL, uint32_t mode = GXS_GROUP_DIALOG_SHOW_MODE);
+    GxsGroupDialog(TokenQueue* tokenQueue, uint32_t enableFlags, uint16_t defaultFlags, QWidget *parent = NULL);
 
     /*!
-     *
-     * @param enabledFlags This determines what options are enabled
-     * @param readonlyFlags This determines what is modifiable is particularly relevant to what mode the
-     * @param defaultFlags
+     * Contructs a GxsGroupDialog for display a group or editing
+     * @param grpMeta This is used to fill out the dialog
+     * @param mode This determines whether the dialog starts in show or edit mode (Edit not supported yet)
+     * @param parent
      */
-    void setFlags(uint32_t enabledFlags, uint32_t defaultFlags);
+    GxsGroupDialog(const RsGroupMetaData& grpMeta, uint32_t mode = GXS_GROUP_DIALOG_SHOW_MODE, QWidget *parent = NULL);
 
 private:
     void newGroup();
@@ -134,8 +142,8 @@ private:
     // Functions that can be overloaded for specific stuff.
 
 protected slots:
-    void submitGroup();
-    void addGroupLogo();
+        void submitGroup();
+        void addGroupLogo();
 
 protected:
 
@@ -150,7 +158,7 @@ protected:
         /*!
          * This should return a group logo \n
          * Will be called when GxsGroupDialog is initialised in show mode
-         *
+         * @return The logo for the service
          */
         virtual QPixmap service_getLogo() = 0;
 
@@ -159,18 +167,6 @@ protected:
          * @return group description string
          */
         virtual QString service_getDescription() = 0;
-
-        /*!
-         * Used in show mode, returns a meta type
-         * @return the meta of existing grpMeta
-         */
-        virtual RsGroupMetaData service_getMeta() = 0;
-
-        /*!
-         * Loads meta data for group to GUI dialog
-         * @param meta the meta loaded fir group
-         */
-        void loadExistingGroupMetaData(const RsGroupMetaData &meta);
 
 	
 private slots:
@@ -196,6 +192,7 @@ private:
 	std::list<std::string> mShareList;
 	QPixmap picture;
         TokenQueue *mTokenQueue;
+        RsGroupMetaData mGrpMeta;
 
 	uint32_t mMode;
 	uint32_t mEnabledFlags;

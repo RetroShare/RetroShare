@@ -76,6 +76,7 @@ void 	periodChanged( int index );
         void newGroup();
         void showGroupDetails();
         void editGroupDetails();
+        void createPost();
 
 private:
 

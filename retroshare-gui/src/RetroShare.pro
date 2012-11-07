@@ -2,7 +2,7 @@ CONFIG += qt gui uic qrc resources uitools idle bitdht
 
 # Below is for GXS services.
 CONFIG += photoshare 
-CONFIG += wikipoos
+#CONFIG += wikipoos
 #CONFIG += thewire
 CONFIG += identities
 #CONFIG += forumsv2
@@ -194,11 +194,11 @@ freebsd-* {
 # ###########################################
 
 bitdht {
-        LIBS += ../../libbitdht/src/lib/libbitdht.a
-        PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
+        #LIBS += ../../libbitdht/src/lib/libbitdht.a
+        #PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
 
-        #LIBS += C:\Development\Rs\v0.5-gxs-b1\libbitdht\libbitdht-build-desktop\lib\libbitdht.a
-        #PRE_TARGETDEPS *= C:\Development\Rs\v0.5-gxs-b1\libbitdht\libbitdht-build-desktop\lib\libbitdht.a
+        LIBS += C:\Development\Rs\v0.5-gxs-b1\libbitdht\libbitdht-build-desktop\lib\libbitdht.a
+        PRE_TARGETDEPS *= C:\Development\Rs\v0.5-gxs-b1\libbitdht\libbitdht-build-desktop\lib\libbitdht.a
 
         # Chris version.
         #LIBS += ../../libbitdht/libbitdht-build-desktop/lib/libbitdht.a
@@ -420,7 +420,7 @@ HEADERS +=  rshare.h \
             gui/groups/CreateGroup.h \
             gui/dht/DhtWindow.h \
             gui/bwctrl/BwCtrlWindow.h \
-            gui/GetStartedDialog.h \
+            gui/GetStartedDialog.h
 
 
 
@@ -703,7 +703,8 @@ SOURCES +=  main.cpp \
             gui/groups/CreateGroup.cpp \
             gui/dht/DhtWindow.cpp \
             gui/bwctrl/BwCtrlWindow.cpp \
-            gui/GetStartedDialog.cpp
+            gui/GetStartedDialog.cpp \
+
 
 
 
@@ -989,18 +990,24 @@ posted {
             gui/Posted/PostedComments.h \
             util/TokenQueueVEG.h \
             gui/Posted/PostedGroupDialog.h \
+    gui/Posted/PostedCreatePostDialog.h \
+    gui/Posted/PostedCreateCommentDialog.h
 
 	FORMS += gui/Posted/PostedDialog.ui \
             gui/Posted/PostedListDialog.ui \
             gui/Posted/PostedItem.ui \
             gui/Posted/PostedComments.ui \
+    gui/Posted/PostedCreatePostDialog.ui \
+    gui/Posted/PostedCreateCommentDialog.ui
 
 	SOURCES += gui/Posted/PostedDialog.cpp \
             gui/Posted/PostedListDialog.cpp \
             gui/Posted/PostedItem.cpp \
             gui/Posted/PostedComments.cpp \
             util/TokenQueueVEG.cpp \
-            gui/Posted/PostedGroupDialog.cpp
+            gui/Posted/PostedGroupDialog.cpp \
+    gui/Posted/PostedCreatePostDialog.cpp \
+    gui/Posted/PostedCreateCommentDialog.cpp
 
 }
 
@@ -1008,19 +1015,18 @@ gxsgui {
 
 	HEADERS += gui/gxs/GxsGroupDialog.h \
             gui/gxs/GxsCommentTreeWidget.h \
-            gui/gxs/WikiGroupDialog.h \
+      #      gui/gxs/WikiGroupDialog.h \
 
 #	     gui/gxs/ForumV2GroupDialog.h \
 #            gui/gxs/GxsMsgDialog.h \
 
-	FORMS += gui/gxs/GxsGroupDialog.ui \
-
+        FORMS += gui/gxs/GxsGroupDialog.ui \
 #	    gui/gxs/GxsMsgDialog.ui \
 #	    gui/gxs/GxsCommentTreeWidget.ui \
 
         SOURCES += gui/gxs/GxsGroupDialog.cpp \
             gui/gxs/GxsCommentTreeWidget.cpp \
-            gui/gxs/WikiGroupDialog.cpp \
+       #     gui/gxs/WikiGroupDialog.cpp \
 
             #gui/gxs/ForumV2GroupDialog.cpp \
 #            gui/gxs/GxsMsgDialog.cpp \
