@@ -1100,6 +1100,43 @@ bool p3Peers::assignPeersToGroup(const std::string &groupId, const std::list<std
 	return mPeerMgr->assignPeersToGroup(groupId, peerIds, assign);
 }
 
+FileSearchFlags p3Peers::computePeerPermissionFlags(const std::string& peer_ssl_id,
+																		FileStorageFlags share_flags,
+																		const std::list<std::string>& directory_parent_groups)
+{
+	// We should be able to do that in O(1), using groups based on packs of bits.
+	//
+	// But for now, because the implementation of groups is not totally decided yet, we revert to this
+	// very simple algorithm.
+	//
+
+	bool found = false ;
+	std::string pgp_id = getGPGId(peer_ssl_id) ;
+
+	for(std::list<std::string>::const_iterator it(directory_parent_groups.begin());it!=directory_parent_groups.end() && !found;++it)
+	{
+		RsGroupInfo info ;
+		if(!getGroupInfo(*it,info))
+		{
+			std::cerr << "(EE) p3Peers::computePeerPermissionFlags: no group named " << *it << ": cannot get info." << std::endl;
+			continue ;
+		}
+
+		for(std::list<std::string>::const_iterator it2(info.peerIds.begin());it2!=info.peerIds.end() && !found;++it2)
+			if(*it2 == pgp_id)
+				found = true ;
+	}
+
+	bool network_wide = (share_flags & DIR_FLAGS_NETWORK_WIDE_OTHERS) ;//|| ( (share_flags & DIR_FLAGS_NETWORK_WIDE_GROUPS) && found) ;
+	bool browsable    = (share_flags &    DIR_FLAGS_BROWSABLE_OTHERS) || ( (share_flags &    DIR_FLAGS_BROWSABLE_GROUPS) && found) ;
+
+	FileSearchFlags final_flags ;
+
+	if(network_wide) final_flags |= RS_FILE_HINTS_NETWORK_WIDE ;
+	if(browsable   ) final_flags |= RS_FILE_HINTS_BROWSABLE ;
+
+	return final_flags ;
+}
 
 RsPeerDetails::RsPeerDetails()
         :isOnlyGPGdetail(false),

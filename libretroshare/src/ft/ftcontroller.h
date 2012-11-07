@@ -73,7 +73,7 @@ class ftFileControl
 
 		ftFileControl();
 		ftFileControl(std::string fname, std::string tmppath, std::string dest,
-							uint64_t size, std::string hash, uint32_t flags,
+							uint64_t size, std::string hash, TransferRequestFlags flags,
 							ftFileCreator *fc, ftTransferModule *tm);
 
 		std::string	   mName;
@@ -84,7 +84,7 @@ class ftFileControl
 		uint32_t	   mState;
 		std::string	   mHash;
 		uint64_t	   mSize;
-		uint32_t	   mFlags;
+		TransferRequestFlags mFlags;
 		time_t		mCreateTime;
 		uint32_t		mQueuePriority ;
 		uint32_t		mQueuePosition ;
@@ -94,7 +94,7 @@ class ftPendingRequest
 {
         public:
         ftPendingRequest(const std::string& fname, const std::string& hash,
-                        uint64_t size, const std::string& dest, uint32_t flags,
+                        uint64_t size, const std::string& dest, TransferRequestFlags flags,
                         const std::list<std::string> &srcIds)
         : mName(fname), mHash(hash), mSize(size),
         mDest(dest), mFlags(flags),mSrcIds(srcIds) { return; }
@@ -105,7 +105,7 @@ class ftPendingRequest
         std::string mHash;
         uint64_t mSize;
         std::string mDest;
-        uint32_t mFlags;
+        TransferRequestFlags mFlags;
         std::list<std::string> mSrcIds;
 };
 
@@ -129,7 +129,7 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 		/***************************************************************/
 
 		bool 	FileRequest(const std::string& fname, const std::string& hash,
-				uint64_t size, const std::string& dest, uint32_t flags,
+				uint64_t size, const std::string& dest, TransferRequestFlags flags,
 				const std::list<std::string> &sourceIds);
 
 		/// Do we already have this file, either in download or in file lists ?

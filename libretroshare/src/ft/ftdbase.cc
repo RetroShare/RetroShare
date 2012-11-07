@@ -37,7 +37,7 @@ ftFiStore::ftFiStore(CacheStrapper *cs, CacheTransfer *cft, NotifyBase *cb_in,p3
 	return;
 }
 
-bool ftFiStore::search(const std::string &hash, uint32_t hintflags, FileInfo &info) const
+bool ftFiStore::search(const std::string &hash, FileSearchFlags hintflags, FileInfo &info) const
 {
 	/* could use hintflags to specify which bits of fileinfo to use additionally.
 	   eg. hintflags & FT_SEARCH_PEER_ID, then only return matching peers + hash.
@@ -128,11 +128,12 @@ ftFiMonitor::ftFiMonitor(CacheStrapper *cs,NotifyBase *cb_in, std::string cached
 	return;
 }
 
-bool ftFiMonitor::search(const std::string &hash, uint32_t hintflags, FileInfo &info) const
+bool ftFiMonitor::search(const std::string &hash, FileSearchFlags hintflags, FileInfo &info) const
 {
-	uint64_t fsize;
-	std::string path;
-
+	return search(hash,hintflags,"",info) ;
+}
+bool ftFiMonitor::search(const std::string &hash, FileSearchFlags hintflags, const std::string& peer_id,FileInfo &info) const
+{
 #ifdef DB_DEBUG
 	std::cerr << "ftFiMonitor::search(" << hash << "," << hintflags;
 	std::cerr << ")";
@@ -142,9 +143,10 @@ bool ftFiMonitor::search(const std::string &hash, uint32_t hintflags, FileInfo &
 	// Setup search flags according to hintflags. Originally flags was 0. I (cyril) don't know
 	// why we don't just pass hintflags there, so I tried to keep the idea.
 	//
-	uint32_t flags = hintflags & (RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE);
+	FileSearchFlags flags = hintflags ;
+	flags &= (RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE);
 	
-	if(findLocalFile(hash, flags, path, fsize))
+	if(findLocalFile(hash, flags,peer_id,info.path, info.size,info.storage_permission_flags,info.parent_groups))
 	{
 		/* fill in details */
 #ifdef DB_DEBUG
@@ -153,10 +155,7 @@ bool ftFiMonitor::search(const std::string &hash, uint32_t hintflags, FileInfo &
 		std::cerr << " = " << hash << "," << fsize;
 		std::cerr << std::endl;
 #endif
-
-		info.size = fsize;
-		info.fname = RsDirUtil::getTopDir(path);
-		info.path = path;
+		info.fname = RsDirUtil::getTopDir(info.path);
 
 		return true;
 	}
@@ -241,7 +240,8 @@ bool ftFiMonitor::saveList(bool &cleanup, std::list<RsItem *>& sList)
 		RsFileConfigItem *fi = new RsFileConfigItem();
 		fi->file.path = (*it).filename ;
 		fi->file.name = (*it).virtualname ;
-		fi->flags = (*it).shareflags ;
+		fi->flags = (*it).shareflags.toUInt32() ;
+		fi->parent_groups = (*it).parent_groups ;
 
 		sList.push_back(fi);
 	}
@@ -288,6 +288,7 @@ bool    ftFiMonitor::loadList(std::list<RsItem *>& load)
 	/* for each item, check it exists .... 
 	 * - remove any that are dead (or flag?) 
 	 */
+	static const FileStorageFlags PERMISSION_MASK = DIR_FLAGS_BROWSABLE_OTHERS | DIR_FLAGS_NETWORK_WIDE_OTHERS | DIR_FLAGS_BROWSABLE_GROUPS | DIR_FLAGS_NETWORK_WIDE_GROUPS ;
 
 #ifdef  DEBUG_ELIST
 	std::cerr << "ftFiMonitor::loadList()";
@@ -341,7 +342,10 @@ bool    ftFiMonitor::loadList(std::list<RsItem *>& load)
 		SharedDirInfo info ;
 		info.filename = RsDirUtil::convertPathToUnix(fi->file.path);
 		info.virtualname = fi->file.name;
-		info.shareflags = fi->flags & (RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE) ;
+		info.parent_groups = fi->parent_groups;
+		info.shareflags = FileStorageFlags(fi->flags) ;
+		info.shareflags &= PERMISSION_MASK ;
+		info.shareflags &= ~DIR_FLAGS_NETWORK_WIDE_GROUPS ;	// disabling this flag for know, for consistency reasons
 
 		dirList.push_back(info) ;
 	}
@@ -353,6 +357,11 @@ bool    ftFiMonitor::loadList(std::list<RsItem *>& load)
 
 void	ftFiMonitor::updateShareFlags(const SharedDirInfo& info)
 {
+	std::cerr << "Updating share flags:" << std::endl;
+	std::cerr << "  Directory : " << info.filename << std::endl;
+	std::cerr << "  Virtual   : " << info.virtualname << std::endl;
+	std::cerr << "  Flags     : " << info.shareflags << std::endl;
+
 	FileIndexMonitor::updateShareFlags(info);
 
 	/* flag for config */
@@ -376,7 +385,7 @@ ftCacheStrapper::ftCacheStrapper(p3LinkMgr *lm)
 }
 
 	/* overloaded search function */
-bool ftCacheStrapper::search(const std::string &hash, uint32_t hintflags, FileInfo &info) const
+bool ftCacheStrapper::search(const std::string &hash, FileSearchFlags hintflags, FileInfo &info) const
 {
 	/* remove unused parameter warnings */
 	(void) hintflags;

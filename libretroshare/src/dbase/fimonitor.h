@@ -111,10 +111,12 @@ class FileIndexMonitor: public CacheSource, public RsThread
 		virtual ~FileIndexMonitor();
 
 		/* external interface for filetransfer */
-		bool findLocalFile(std::string hash,uint32_t f, std::string &fullpath, uint64_t &size) const;
-		int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,uint32_t flags) ;
-		int SearchBoolExp(Expression *exp, std::list<DirDetails> &results,uint32_t flags) const ;
-		int filterResults(std::list<FileEntry*>& firesults,std::list<DirDetails>& results,uint32_t flags) const ;
+		bool findLocalFile(std::string hash,FileSearchFlags flags,const std::string& peer_id, std::string &fullpath, uint64_t &size,FileStorageFlags& storage_flags,std::list<std::string>& parent_groups) const;
+
+		int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags,const std::string& peer_id) ;
+		int SearchBoolExp(Expression *exp, std::list<DirDetails> &results,FileSearchFlags flags,const std::string& peer_id) const ;
+
+		int filterResults(std::list<FileEntry*>& firesults,std::list<DirDetails>& results,FileSearchFlags flags,const std::string& peer_id) const ;
 
 
 		/* external interface for local access to files */
@@ -124,7 +126,7 @@ class FileIndexMonitor: public CacheSource, public RsThread
 		/* Interacting with CacheSource */
 		/* overloaded from CacheSource */
 		virtual bool loadLocalCache(const CacheData &data);  /* called with stored data */
-		bool 	updateCache(const CacheData &data);     /* we call when we have a new cache for others */
+		bool 	updateCache(const CacheData &data,const std::list<std::string>& dest_peers);     /* we call when we have a new cache for others */
 
 
 		/* the FileIndexMonitor inner workings */
@@ -134,7 +136,7 @@ class FileIndexMonitor: public CacheSource, public RsThread
 		void 	updateCycle();
 
 		// Interface for browsing dir hirarchy
-		int RequestDirDetails(void*, DirDetails&, uint32_t) const ;
+		int RequestDirDetails(void*, DirDetails&, FileSearchFlags) const ;
 		uint32_t getType(void*) const ;
 		int RequestDirDetails(const std::string& path, DirDetails &details) const ;
 
@@ -169,7 +171,7 @@ class FileIndexMonitor: public CacheSource, public RsThread
 		void locked_saveFileIndexes() ;
 
 		// Finds the share flags associated with this file entry.
-		uint32_t locked_findShareFlags(FileEntry *fe) const ;
+		void locked_findShareFlagsAndParentGroups(FileEntry *fe,FileStorageFlags& shareflags,std::list<std::string>& parent_groups) const ;
 
 		std::string locked_findRealRoot(std::string base) const;
 

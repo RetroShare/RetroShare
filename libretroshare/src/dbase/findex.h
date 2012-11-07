@@ -101,6 +101,7 @@ virtual int print(std::string &out);
 	/* References for easy manipulation */
 	DirEntry *parent;
 	int       row;    
+	std::list<std::string> parent_groups ;
 };
 
 /******************************************************************************************

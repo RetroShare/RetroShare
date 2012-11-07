@@ -125,7 +125,7 @@ ftController *getController() const { return mFtController ; }
  * Control of Downloads
  ***/
 virtual bool alreadyHaveFile(const std::string& hash, FileInfo &info);
-virtual bool FileRequest(const std::string& fname, const std::string& hash, uint64_t size, const std::string& dest, uint32_t flags, const std::list<std::string>& srcIds);
+virtual bool FileRequest(const std::string& fname, const std::string& hash, uint64_t size, const std::string& dest, TransferRequestFlags flags, const std::list<std::string>& srcIds);
 virtual bool FileCancel(const std::string& hash);
 virtual bool FileControl(const std::string& hash, uint32_t flags);
 virtual bool FileClearCompleted();
@@ -154,7 +154,7 @@ virtual bool clearDownload(const std::string hash);
  ***/
 virtual bool FileDownloads(std::list<std::string> &hashs);
 virtual bool FileUploads(std::list<std::string> &hashs);
-virtual bool FileDetails(const std::string &hash, uint32_t hintflags, FileInfo &info);
+virtual bool FileDetails(const std::string &hash, FileSearchFlags hintflags, FileInfo &info);
 virtual bool FileDownloadChunksDetails(const std::string& hash,FileChunksInfo& info) ;
 virtual bool FileUploadChunksDetails(const std::string& hash,const std::string& peer_id,CompressedChunkMap& map) ;
 
@@ -162,25 +162,24 @@ virtual bool FileUploadChunksDetails(const std::string& hash,const std::string& 
 /***
  * Extra List Access
  ***/
-virtual bool ExtraFileAdd(std::string fname, std::string hash, uint64_t size,
-			uint32_t period, uint32_t flags);
-virtual bool ExtraFileRemove(std::string hash, uint32_t flags);
-virtual bool ExtraFileHash(std::string localpath,
-			uint32_t period, uint32_t flags);
+virtual bool ExtraFileAdd(std::string fname, std::string hash, uint64_t size, uint32_t period, TransferRequestFlags flags);
+virtual bool ExtraFileRemove(std::string hash, TransferRequestFlags flags);
+virtual bool ExtraFileHash(std::string localpath, uint32_t period, TransferRequestFlags flags);
 virtual bool ExtraFileStatus(std::string localpath, FileInfo &info);
-virtual bool ExtraFileMove(std::string fname, std::string hash, uint64_t size,
-                                std::string destpath);
+virtual bool ExtraFileMove(std::string fname, std::string hash, uint64_t size, std::string destpath);
 
 
 /***
  * Directory Listing / Search Interface
  ***/
 virtual int RequestDirDetails(const std::string& uid, const std::string& path, DirDetails &details);
-virtual int RequestDirDetails(void *ref, DirDetails &details, uint32_t flags);
-virtual uint32_t getType(void *ref,uint32_t flags) ;
+virtual int RequestDirDetails(void *ref, DirDetails &details, FileSearchFlags flags);
+virtual uint32_t getType(void *ref,FileSearchFlags flags) ;
 
-virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,uint32_t flags);
-virtual int SearchBoolExp(Expression * exp, std::list<DirDetails> &results,uint32_t flags);
+virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags);
+virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags,const std::string& peer_id);
+virtual int SearchBoolExp(Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags);
+virtual int SearchBoolExp(Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags,const std::string& peer_id);
 
 /***
  * Utility Functions

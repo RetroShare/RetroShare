@@ -182,7 +182,7 @@ void SubFileItem::updateItemStatic()
 		if (mPath == "")
 		{
 			FileInfo fi;
-			uint32_t hintflags = RS_FILE_HINTS_UPLOAD | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_SPEC_ONLY | RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_BROWSABLE;
+			FileSearchFlags hintflags = RS_FILE_HINTS_UPLOAD | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_SPEC_ONLY | RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_BROWSABLE;
 
 			/* look up path */
 			if (!rsFiles->FileDetails(mFileHash, hintflags, fi))
@@ -364,7 +364,7 @@ void SubFileItem::updateItem()
 	}
 	else
 	{
-		uint32_t hintflags = 0;
+		FileSearchFlags hintflags(0u) ;
 		switch(mMode)
 		{
 			case SFI_STATE_REMOTE:
@@ -544,7 +544,7 @@ void SubFileItem::cancel()
 	if (((mType == SFI_TYPE_ATTACH) || (mType == SFI_TYPE_CHANNEL)) && (mFlag & SFI_FLAG_CREATE))
 	{
 		hide();
-		rsFiles->ExtraFileRemove(FileHash(), RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_EXTRA);
+		rsFiles->ExtraFileRemove(FileHash(), RS_FILE_REQ_ANONYMOUS_ROUTING | RS_FILE_REQ_EXTRA);
 		mPath = "";
 	}
 	else
@@ -559,7 +559,7 @@ void SubFileItem::cancel()
 void SubFileItem::play()
 {
 	FileInfo info;
-	uint32_t flags = RS_FILE_HINTS_DOWNLOAD | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_NETWORK_WIDE;
+	FileSearchFlags flags = RS_FILE_HINTS_DOWNLOAD | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_NETWORK_WIDE;
 
 
 	if (!rsFiles->FileDetails( mFileHash, flags, info))
@@ -612,7 +612,7 @@ void SubFileItem::download()
 	if (mSrcId != "")
 		sources.push_back(mSrcId);
 	
-	rsFiles->FileRequest(mFileName, mFileHash, mFileSize, "", RS_FILE_HINTS_NETWORK_WIDE, sources);
+	rsFiles->FileRequest(mFileName, mFileHash, mFileSize, "", RS_FILE_REQ_ANONYMOUS_ROUTING, sources);
 
 	downloadButton->setEnabled(false);
 

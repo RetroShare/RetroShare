@@ -21,11 +21,19 @@
 #include "ShareDialog.h"
 
 #include <retroshare/rsfiles.h>
+#include <retroshare/rstypes.h>
 
 #include <QContextMenuEvent>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QLayout>
+#include <QTextEdit>
 #include <QComboBox>
+#include <QSizePolicy>
+#include <QGroupBox>
+
+#include <gui/common/GroupSelectionBox.h>
+#include <gui/common/GroupFlagsWidget.h>
 
 /** Default constructor */
 ShareDialog::ShareDialog(std::string filename, QWidget *parent, Qt::WFlags flags)
@@ -43,16 +51,43 @@ ShareDialog::ShareDialog(std::string filename, QWidget *parent, Qt::WFlags flags
 
     ui.okButton->setEnabled(false);
 
-    if (filename.empty()) {
-        ui.networkwideCheckBox->setChecked(true);
-    } else {
-        /* edit exisiting share */
+	 QVBoxLayout *vbox = new QVBoxLayout() ;
+
+	 QHBoxLayout *hb2 = new QHBoxLayout() ;
+	 hb2->addWidget(new QLabel(tr("Share flags and groups: "))) ;
+
+	 groupflagsbox = new GroupFlagsWidget(ui.shareflags_GB) ;
+	 groupflagsbox->setFlags(DIR_FLAGS_NETWORK_WIDE_OTHERS) ;	// default value
+	
+	 messageBox = new QTextEdit(ui.shareflags_GB) ;
+	 messageBox->setReadOnly(true) ;
+	 messageBox->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Preferred)) ;
+
+	 hb2->addWidget(groupflagsbox) ;
+
+	 vbox->addLayout(hb2) ;
+	 vbox->addWidget(messageBox) ;
+
+	 QHBoxLayout *hbox = new QHBoxLayout() ;
+	 groupselectionbox = new GroupSelectionBox(ui.shareflags_GB);
+	 hbox->addLayout(vbox) ;
+	 hbox->addWidget(groupselectionbox) ;
+
+	 ui.shareflags_GB->setLayout(hbox) ;
+	 updateInfoMessage() ;
+
+	 connect(groupselectionbox,SIGNAL(itemSelectionChanged()),this,SLOT(updateInfoMessage())) ;
+	 connect(groupflagsbox,SIGNAL(flagsChanged(FileStorageFlags)),this,SLOT(updateInfoMessage())) ;
+
+    if (!filename.empty()) 
+	 {
         std::list<SharedDirInfo> dirs;
         rsFiles->getSharedDirectories(dirs);
 
         std::list<SharedDirInfo>::const_iterator it;
         for (it = dirs.begin(); it != dirs.end(); it++) {
-            if (it->filename == filename) {
+            if (it->filename == filename) 
+				{
                 /* fill dialog */
                 ui.okButton->setEnabled(true);
 
@@ -61,12 +96,18 @@ ShareDialog::ShareDialog(std::string filename, QWidget *parent, Qt::WFlags flags
                 ui.browseButton->setDisabled(true);
                 ui.virtualpath_lineEdit->setText(QString::fromUtf8(it->virtualname.c_str()));
 
-                ui.browsableCheckBox->setChecked(it->shareflags & RS_FILE_HINTS_BROWSABLE);
-                ui.networkwideCheckBox->setChecked(it->shareflags & RS_FILE_HINTS_NETWORK_WIDE);
+					 groupflagsbox->setFlags(it->shareflags) ;
+                groupselectionbox->setSelectedGroups(it->parent_groups) ;
+
                 break;
             }
         }
     }
+}
+
+void ShareDialog::updateInfoMessage()
+{
+	messageBox->setText(GroupFlagsWidget::groupInfoString(groupflagsbox->flags(),groupselectionbox->selectedGroups())) ;
 }
 
 void ShareDialog::browseDirectory()
@@ -88,20 +129,16 @@ void ShareDialog::addDirectory()
     SharedDirInfo sdi ;
     sdi.filename = ui.localpath_lineEdit->text().toUtf8().constData();
     sdi.virtualname = ui.virtualpath_lineEdit->text().toUtf8().constData();
+    sdi.shareflags = groupflagsbox->flags() ;
+	 sdi.parent_groups = groupselectionbox->selectedGroups() ;
 
-    sdi.shareflags = 0;
-
-    if (ui.browsableCheckBox->isChecked()) {
-        sdi.shareflags |= RS_FILE_HINTS_BROWSABLE ;
-    }
-    if (ui.networkwideCheckBox->isChecked()) {
-        sdi.shareflags |= RS_FILE_HINTS_NETWORK_WIDE;
-    }
-
-    if (ui.localpath_lineEdit->isEnabled()) {
+    if (ui.localpath_lineEdit->isEnabled()) 
+	 {
         /* add new share */
         rsFiles->addSharedDirectory(sdi);
-    } else {
+    } 
+	 else 
+	 {
         /* edit exisiting share */
         bool found = false;
 
@@ -115,13 +152,15 @@ void ShareDialog::addDirectory()
 
                 if (it->virtualname != sdi.virtualname) {
                     /* virtual name changed, remove shared directory and add it again */
+
                     rsFiles->removeSharedDirectory(it->filename);
                     rsFiles->addSharedDirectory(sdi);
                     break;
                 }
-                if (it->shareflags ^ sdi.shareflags) {
+                if (it->shareflags != sdi.shareflags || it->parent_groups != sdi.parent_groups) {
                     /* modifies the flags */
                     it->shareflags = sdi.shareflags;
+                    it->parent_groups = sdi.parent_groups;
                     rsFiles->updateShareFlags(*it);
                     break;
                 }

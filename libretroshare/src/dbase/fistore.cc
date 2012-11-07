@@ -23,6 +23,7 @@
 
 #include "dbase/fistore.h"
 #include "retroshare/rsexpr.h"
+#include "retroshare/rsfiles.h"
 #include "serialiser/rsserviceids.h"
 #include "pqi/p3peermgr.h"
 
@@ -200,7 +201,7 @@ int FileIndexStore::RequestDirDetails(const std::string& uid, const std::string&
 #endif
 }
 
-int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags) const
+int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, FileSearchFlags flags) const
 {
 	/* remove unused parameter warnings */
 	(void) flags;
@@ -258,7 +259,7 @@ int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, uint32_t f
 		details.path = "";
 		details.count = indices.size();
 		details.age = 0;
-		details.flags = 0;
+		details.flags.clear() ;
 		details.min_age = 0;
 
 		unlockData();
@@ -329,7 +330,7 @@ int FileIndexStore::SearchHash(std::string hash, std::list<FileDetail> &results)
 }
 
 
-int FileIndexStore::SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,uint32_t flags) const
+int FileIndexStore::SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags) const
 {
 	lockData();
 	std::map<RsPeerId, FileIndex *>::const_iterator pit;
@@ -341,7 +342,7 @@ int FileIndexStore::SearchKeywords(std::list<std::string> keywords, std::list<Di
 #ifdef FIS_DEBUG
 	std::cerr << "FileIndexStore::SearchKeywords()" << std::endl;
 #endif
-	if(flags & DIR_FLAGS_REMOTE)
+	if(flags & RS_FILE_HINTS_REMOTE)
 		for(pit = indices.begin(); pit != indices.end(); pit++)
 		{
 			firesults.clear();
@@ -359,7 +360,7 @@ int FileIndexStore::SearchKeywords(std::list<std::string> keywords, std::list<Di
 			}
 		}
 
-	if(flags & DIR_FLAGS_LOCAL)
+	if(flags & RS_FILE_HINTS_LOCAL)
 		if (localindex)
 		{
 			firesults.clear();

@@ -353,7 +353,7 @@ void SearchDialog::download()
 			 std::string hash = item->text(SR_HASH_COL).toStdString();
 			 getSourceFriendsForHash(hash,srcIds) ;
 
-			 if(!rsFiles -> FileRequest((item->text(SR_NAME_COL)).toUtf8().constData(), hash, (item->text(SR_SIZE_COL)).toULongLong(), "", RS_FILE_HINTS_NETWORK_WIDE, srcIds))
+			 if(!rsFiles -> FileRequest((item->text(SR_NAME_COL)).toUtf8().constData(), hash, (item->text(SR_SIZE_COL)).toULongLong(), "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds))
 				 attemptDownloadLocal = true ;
 			 else
 			 {
@@ -384,7 +384,7 @@ void SearchDialog::downloadDirectory(const QTreeWidgetItem *item, const QString 
 		rsFiles->FileRequest(item->text(SR_NAME_COL).toUtf8().constData(),
 				hash,
 				item->text(SR_SIZE_COL).toULongLong(),
-				cleanPath.toUtf8().constData(),RS_FILE_HINTS_NETWORK_WIDE, srcIds);
+				cleanPath.toUtf8().constData(),RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds);
 
 		std::cout << "SearchDialog::downloadDirectory(): "\
 				"issuing file request from search dialog: -"
@@ -607,7 +607,7 @@ void SearchDialog::advancedSearch(Expression* expression)
 	// The text "bool exp" should be replaced by an appropriate text describing the actual search.
 	initSearchResult("bool exp",req_id, ui.FileTypeComboBox->currentIndex(), true) ;
 
-	rsFiles -> SearchBoolExp(expression, results, DIR_FLAGS_REMOTE | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE);
+	rsFiles -> SearchBoolExp(expression, results, RS_FILE_HINTS_REMOTE);// | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE);
 
 	/* abstraction to allow reusee of tree rendering code */
 	resultsToTree(advSearchDialog->getSearchAsString(),req_id, results);
@@ -689,7 +689,7 @@ void SearchDialog::searchKeywords(const QString& keywords)
 		{
 			std::list<DirDetails> initialResults;
 
-			rsFiles->SearchBoolExp(&exprs, initialResults, DIR_FLAGS_REMOTE) ;
+			rsFiles->SearchBoolExp(&exprs, initialResults, RS_FILE_HINTS_REMOTE) ;
 
 			/* which extensions do we use? */
 			DirDetails dd;
@@ -705,7 +705,7 @@ void SearchDialog::searchKeywords(const QString& keywords)
 		{
 			std::list<DirDetails> initialResults;
 
-			rsFiles->SearchBoolExp(&exprs, initialResults, DIR_FLAGS_LOCAL | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE) ;
+			rsFiles->SearchBoolExp(&exprs, initialResults, RS_FILE_HINTS_LOCAL);// | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE) ;
 
 			/* which extensions do we use? */
 			DirDetails dd;
@@ -859,7 +859,7 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
 		/* go through all children directories/files for a recursive call */
 		for (std::list<DirStub>::const_iterator it(dir.children.begin()); it != dir.children.end(); it ++) {
 			DirDetails details;
-			rsFiles->RequestDirDetails(it->ref, details, 0);
+			rsFiles->RequestDirDetails(it->ref, details, FileSearchFlags(0u));
 			insertDirectory(txt, searchId, details, child);
 		}
 	}

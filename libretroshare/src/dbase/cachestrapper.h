@@ -181,7 +181,8 @@ class CacheSource
 		virtual bool    loadLocalCache(const CacheData &data);
 
 			/* control Caches available */
-		bool    refreshCache(const CacheData &data);
+		bool  refreshCache(const CacheData &data,const std::list<std::string>& destination_peers);
+		bool  refreshCache(const CacheData &data);
 		bool 	clearCache(CacheId id);
 
 			/* get private data */
@@ -394,11 +395,12 @@ virtual void statusChange(const std::list<pqipeer> &plist);
 	/* Feedback from CacheSources */
 
 /*!
- * send data to peers online and selfe
+ * send data to peers online and self
  * @param data
  *
  */
 void 	refreshCache(const CacheData &data);
+void 	refreshCache(const CacheData &data,const std::list<std::string>& destination_peers);	// specify a particular list of destination peers (self not added!)
 
 /*!
  * forces config savelist

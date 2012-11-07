@@ -66,7 +66,7 @@
 
 //#define DISABLE_BAD_PEER_FILTER		1
 
-//#define USE_HISTORY	1
+#define USE_HISTORY	1
 
 #define HISTORY_PERIOD  60
 
@@ -806,10 +806,10 @@ void bdNode::msgout_ping(bdId *id, bdToken *transId)
 	// THIS IS CRASHING HISTORY.
 	// LIKELY ID is not always valid!
 	// Either PotentialPeers or Out-Of-Date Peers.
-	//registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_PING);
+	registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_PING);
 
-	bdId dupId(*id);
-	registerOutgoingMsg(&dupId, transId, BITDHT_MSG_TYPE_PING);
+	//bdId dupId(*id);
+	//registerOutgoingMsg(&dupId, transId, BITDHT_MSG_TYPE_PING);
 	
         /* create string */
         char msg[10240];

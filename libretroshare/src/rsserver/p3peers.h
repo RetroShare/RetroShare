@@ -121,6 +121,7 @@ virtual bool getGroupInfoList(std::list<RsGroupInfo> &groupInfoList);
 virtual bool assignPeerToGroup(const std::string &groupId, const std::string &peerId, bool assign);
 virtual bool assignPeersToGroup(const std::string &groupId, const std::list<std::string> &peerIds, bool assign);
 
+virtual FileSearchFlags computePeerPermissionFlags(const std::string& peer_id,FileStorageFlags share_flags,const std::list<std::string>& parent_groups) ;
 	private:
 
 	p3LinkMgr *mLinkMgr;

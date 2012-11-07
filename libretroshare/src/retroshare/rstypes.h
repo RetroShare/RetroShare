@@ -34,6 +34,8 @@
 #include <string>
 #include <stdint.h>
 
+#include <retroshare/rsflags.h>
+
 #define USE_NEW_CHUNK_CHECKING_CODE
 
 typedef std::string   RsCertId;
@@ -93,54 +95,6 @@ enum DwlSpeed 		{ 	SPEED_LOW 		= 0x00,
 };
 
 
-
-class FileInfo
-{
-	/* old BaseInfo Entries */
-	public:
-
-		FileInfo() :flags(0), mId(0) { return; }
-		RsCertId id; /* key for matching everything */
-		int flags; /* INFO_TAG above */
-
-		/* allow this to be tweaked by the GUI Model */
-		mutable unsigned int mId; /* (GUI) Model Id -> unique number */
-
-		/* Old FileInfo Entries */
-	public:
-
-		static const int kRsFiStatusNone = 0;
-		static const int kRsFiStatusStall = 1;
-		static const int kRsFiStatusProgress = 2;
-		static const int kRsFiStatusDone = 2;
-
-		/* FileInfo(); */
-
-		int searchId;      /* 0 if none */
-		std::string path;
-		std::string fname;
-		std::string hash;
-		std::string ext;
-
-		uint64_t size;
-		uint64_t avail; /* how much we have */
-		int status;
-
-		double rank;
-		int age;
-		uint32_t queue_position ;
-
-		/* Transfer Stuff */
-		uint64_t transfered;
-		double   tfRate; /* in kbytes */
-		uint32_t  downloadStatus; /* 0 = Err, 1 = Ok, 2 = Done */
-		std::list<TransferInfo> peers;
-
-		DwlSpeed priority ;
-		time_t lastTS;
-};
-
-std::ostream &operator<<(std::ostream &out, const FileInfo &info);
 
 
 /* matched to the uPnP states */
@@ -248,14 +202,72 @@ class SearchRequest
  *     (TODO)
  */
 
-#define DIR_FLAGS_LOCAL         0x1000
-#define DIR_FLAGS_REMOTE        0x2000
+const FileStorageFlags DIR_FLAGS_PARENT                 	( 0x0001 );
+const FileStorageFlags DIR_FLAGS_DETAILS                	( 0x0002 );	// apparently unused
+const FileStorageFlags DIR_FLAGS_CHILDREN               	( 0x0004 );	// apparently unused
 
-#define DIR_FLAGS_PARENT        0x0001
-#define DIR_FLAGS_DETAILS       0x0002
-#define DIR_FLAGS_CHILDREN      0x0004
-#define DIR_FLAGS_NETWORK_WIDE  0x0008
-#define DIR_FLAGS_BROWSABLE     0x0010
+const FileStorageFlags DIR_FLAGS_NETWORK_WIDE_OTHERS  	( 0x0080 ); // Flags for directory sharing permissions. The last
+const FileStorageFlags DIR_FLAGS_BROWSABLE_OTHERS     	( 0x0100 ); // one should be the OR of the all four flags.
+const FileStorageFlags DIR_FLAGS_NETWORK_WIDE_GROUPS  	( 0x0200 );
+const FileStorageFlags DIR_FLAGS_BROWSABLE_GROUPS     	( 0x0400 );
+const FileStorageFlags DIR_FLAGS_PERMISSIONS_MASK     	( DIR_FLAGS_NETWORK_WIDE_OTHERS | DIR_FLAGS_BROWSABLE_OTHERS 
+																			| DIR_FLAGS_NETWORK_WIDE_GROUPS | DIR_FLAGS_BROWSABLE_GROUPS );
+
+const FileStorageFlags DIR_FLAGS_LOCAL                  	( 0x1000 );
+const FileStorageFlags DIR_FLAGS_REMOTE                 	( 0x2000 );
+
+class FileInfo
+{
+	/* old BaseInfo Entries */
+	public:
+
+		FileInfo() : mId(0) { return; }
+		RsCertId id; /* key for matching everything */
+
+		FileStorageFlags  storage_permission_flags; 	// Combination of the four RS_DIR_FLAGS_*. Updated when the file is a local stored file.
+		TransferRequestFlags   transfer_info_flags ;		// various flags from RS_FILE_HINTS_*
+
+		/* allow this to be tweaked by the GUI Model */
+		mutable unsigned int mId; /* (GUI) Model Id -> unique number */
+
+		/* Old FileInfo Entries */
+	public:
+
+		static const int kRsFiStatusNone = 0;
+		static const int kRsFiStatusStall = 1;
+		static const int kRsFiStatusProgress = 2;
+		static const int kRsFiStatusDone = 2;
+
+		/* FileInfo(); */
+
+		int searchId;      /* 0 if none */
+		std::string path;
+		std::string fname;
+		std::string hash;
+		std::string ext;
+
+		uint64_t size;
+		uint64_t avail; /* how much we have */
+		int status;
+
+		double rank;
+		int age;
+		uint32_t queue_position ;
+
+		/* Transfer Stuff */
+		uint64_t transfered;
+		double   tfRate; /* in kbytes */
+		uint32_t  downloadStatus; /* 0 = Err, 1 = Ok, 2 = Done */
+		std::list<TransferInfo> peers;
+
+		DwlSpeed priority ;
+		time_t lastTS;
+		
+		std::list<std::string> parent_groups ;
+};
+
+std::ostream &operator<<(std::ostream &out, const FileInfo &info);
+
 
 class DirStub
 {
@@ -279,22 +291,23 @@ class DirDetails
 	std::string path;
 	uint64_t count;
 	uint32_t age;
-	uint32_t flags;
+	FileStorageFlags flags;
 	uint32_t min_age ;	// minimum age of files in this subtree
 
 	std::list<DirStub> children;
+	std::list<std::string> parent_groups;	// parent groups for the shared directory
 };
 
 class FileDetail
 {
 	public:
-	std::string id;
-	std::string name;
-	std::string hash;
-	std::string path;
-	uint64_t size;
-	uint32_t age;
-	uint32_t rank;
+		std::string id;
+		std::string name;
+		std::string hash;
+		std::string path;
+		uint64_t size;
+		uint32_t age;
+		uint32_t rank;
 };
 
 class CompressedChunkMap ;
@@ -314,7 +327,6 @@ class FileChunksInfo
 
 		uint64_t file_size ;					// real size of the file
 		uint32_t chunk_size ;				// size of chunks
-		uint32_t flags ;
 		uint32_t strategy ;
 
 		// dl state of chunks. Only the last chunk may have size < chunk_size

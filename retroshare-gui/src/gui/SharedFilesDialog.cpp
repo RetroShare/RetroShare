@@ -157,17 +157,12 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 
 	/* Set header resize modes and initial section sizes  */
 	QHeaderView * l_header = ui.localDirTreeView->header () ;
-//	l_header->setResizeMode (0, QHeaderView::Interactive);
-//	l_header->setResizeMode (1, QHeaderView::Fixed);
-//	l_header->setResizeMode (2, QHeaderView::Interactive);
-//	l_header->setResizeMode (3, QHeaderView::Interactive);
-//	l_header->setResizeMode (4, QHeaderView::Interactive);
 
 	l_header->resizeSection ( 0, 490 );
 	l_header->resizeSection ( 1, 70 );
 	l_header->resizeSection ( 2, 100 );
 	l_header->resizeSection ( 3, 100 );
-//	l_header->resizeSection ( 4, 100 );
+	l_header->resizeSection ( 4, 100 );
 
 	l_header->setStretchLastSection(false);
 //	l_header->setHighlightSections(false);
@@ -210,7 +205,7 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 	// Hide columns after loading the settings
 	ui.remoteDirTreeView->setColumnHidden(3,false) ;
 	ui.remoteDirTreeView->setColumnHidden(4,true) ;
-	ui.localDirTreeView->setColumnHidden(4,true) ;
+	ui.localDirTreeView->setColumnHidden(4,false) ;
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -468,11 +463,7 @@ void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
                 const DirStub& dirStub = *cit;
 
                 DirDetails details;
-                uint32_t flags = DIR_FLAGS_DETAILS;
-                if (remote)
-                    flags |= DIR_FLAGS_REMOTE;
-                else
-                    flags |= DIR_FLAGS_LOCAL;
+                FileSearchFlags flags = remote?RS_FILE_HINTS_REMOTE:RS_FILE_HINTS_LOCAL ;
 
                 // do not recursive copy sub dirs.
                 if (!rsFiles->RequestDirDetails(dirStub.ref, details, flags) || details.type != DIR_TYPE_FILE)

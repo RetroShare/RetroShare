@@ -300,6 +300,7 @@ std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 	RsTlvFileItem file;
 	uint32_t flags;
+	std::list<std::string> parent_groups ;
 };
 
 /**************************************************************************/

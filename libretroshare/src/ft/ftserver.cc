@@ -270,7 +270,7 @@ bool ftServer::alreadyHaveFile(const std::string& hash, FileInfo &info)
 	return mFtController->alreadyHaveFile(hash, info);
 }
 
-bool ftServer::FileRequest(const std::string& fname, const std::string& hash, uint64_t size, const std::string& dest, uint32_t flags, const std::list<std::string>& srcIds)
+bool ftServer::FileRequest(const std::string& fname, const std::string& hash, uint64_t size, const std::string& dest, TransferRequestFlags flags, const std::list<std::string>& srcIds)
 {
 	std::string error_string ;
 
@@ -415,7 +415,7 @@ bool ftServer::FileUploads(std::list<std::string> &hashs)
 	return mFtDataplex->FileUploads(hashs);
 }
 
-bool ftServer::FileDetails(const std::string &hash, uint32_t hintflags, FileInfo &info)
+bool ftServer::FileDetails(const std::string &hash, FileSearchFlags hintflags, FileInfo &info)
 {
 	if (hintflags & RS_FILE_HINTS_DOWNLOAD)
 		if(mFtController->FileDetails(hash, info))
@@ -429,7 +429,7 @@ bool ftServer::FileDetails(const std::string &hash, uint32_t hintflags, FileInfo
 			// file, we skip the call to fileDetails() for efficiency reasons.
 			//
 			FileInfo info2 ;
-			if( (!(info.flags & RS_FILE_HINTS_CACHE)) && mFtController->FileDetails(hash, info2))
+			if( (!(info.transfer_info_flags & RS_FILE_REQ_CACHE)) && mFtController->FileDetails(hash, info2))
 				info.fname = info2.fname ;
 
 			return true ;
@@ -447,17 +447,17 @@ bool ftServer::FileDetails(const std::string &hash, uint32_t hintflags, FileInfo
 	/***************************************************************/
 
 bool  ftServer::ExtraFileAdd(std::string fname, std::string hash, uint64_t size,
-						uint32_t period, uint32_t flags)
+						uint32_t period, TransferRequestFlags flags)
 {
 	return mFtExtra->addExtraFile(fname, hash, size, period, flags);
 }
 
-bool ftServer::ExtraFileRemove(std::string hash, uint32_t flags)
+bool ftServer::ExtraFileRemove(std::string hash, TransferRequestFlags flags)
 {
 	return mFtExtra->removeExtraFile(hash, flags);
 }
 
-bool ftServer::ExtraFileHash(std::string localpath, uint32_t period, uint32_t flags)
+bool ftServer::ExtraFileHash(std::string localpath, uint32_t period, TransferRequestFlags flags)
 {
 	return mFtExtra->hashExtraFile(localpath, period, flags);
 }
@@ -497,7 +497,7 @@ int ftServer::RequestDirDetails(const std::string& uid, const std::string& path,
 		return mFiStore->RequestDirDetails(uid, path, details);
 }
 
-int ftServer::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags)
+int ftServer::RequestDirDetails(void *ref, DirDetails &details, FileSearchFlags flags)
 {
 #ifdef SERVER_DEBUG
 	std::cerr << "ftServer::RequestDirDetails(ref:" << ref;
@@ -511,12 +511,12 @@ int ftServer::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags)
 	}
 
 #endif
-	if(flags & DIR_FLAGS_LOCAL)
+	if(flags & RS_FILE_HINTS_LOCAL)
 		return mFiMon->RequestDirDetails(ref, details, flags);
 	else
 		return mFiStore->RequestDirDetails(ref, details, flags);
 }
-uint32_t ftServer::getType(void *ref, uint32_t flags)
+uint32_t ftServer::getType(void *ref, FileSearchFlags flags)
 {
 #ifdef SERVER_DEBUG
 	std::cerr << "ftServer::RequestDirDetails(ref:" << ref;
@@ -530,7 +530,7 @@ uint32_t ftServer::getType(void *ref, uint32_t flags)
 	}
 
 #endif
-	if(flags & DIR_FLAGS_LOCAL)
+	if(flags & RS_FILE_HINTS_LOCAL)
 		return mFiMon->getType(ref);
 	else
 		return mFiStore->getType(ref);
@@ -540,7 +540,15 @@ uint32_t ftServer::getType(void *ref, uint32_t flags)
 	/***************************************************************/
 
 
-int ftServer::SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,uint32_t flags)
+int ftServer::SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags)
+{
+	if(flags & RS_FILE_HINTS_LOCAL)
+		return mFiMon->SearchKeywords(keywords, results,flags,"");
+	else
+		return mFiStore->SearchKeywords(keywords, results,flags);
+	return 0 ;
+}
+int ftServer::SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags,const std::string& peer_id)
 {
 #ifdef SERVER_DEBUG
 	std::cerr << "ftServer::SearchKeywords()";
@@ -553,16 +561,24 @@ int ftServer::SearchKeywords(std::list<std::string> keywords, std::list<DirDetai
 	}
 
 #endif
-	if(flags & DIR_FLAGS_LOCAL)
-		return mFiMon->SearchKeywords(keywords, results,flags);
+	if(flags & RS_FILE_HINTS_LOCAL)
+		return mFiMon->SearchKeywords(keywords, results,flags,peer_id);
 	else
 		return mFiStore->SearchKeywords(keywords, results,flags);
 }
 
-int ftServer::SearchBoolExp(Expression * exp, std::list<DirDetails> &results,uint32_t flags)
+int ftServer::SearchBoolExp(Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags)
 {
-	if(flags & DIR_FLAGS_LOCAL)
-		return mFiMon->SearchBoolExp(exp,results,flags) ;
+	if(flags & RS_FILE_HINTS_LOCAL)
+		return mFiMon->SearchBoolExp(exp,results,flags,"") ;
+	else
+		return mFiStore->searchBoolExp(exp, results);
+	return 0 ;
+}
+int ftServer::SearchBoolExp(Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags,const std::string& peer_id)
+{
+	if(flags & RS_FILE_HINTS_LOCAL)
+		return mFiMon->SearchBoolExp(exp,results,flags,peer_id) ;
 	else
 		return mFiStore->searchBoolExp(exp, results);
 }
@@ -731,7 +747,7 @@ bool ftServer::shareDownloadDirectory(bool share)
 		/* Share */
 		SharedDirInfo inf ;
 		inf.filename = mFtController->getDownloadDirectory();
-		inf.shareflags = RS_FILE_HINTS_NETWORK_WIDE ;
+		inf.shareflags = DIR_FLAGS_NETWORK_WIDE_OTHERS ;
 
 		return addSharedDirectory(inf);
 	}

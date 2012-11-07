@@ -26,22 +26,30 @@
 
 #include "ui_ShareDialog.h"
 
+class GroupFlagsWidget ;
+class GroupSelectionBox ;
+class QTextEdit ;
+
 class ShareDialog : public QDialog
 {
-  Q_OBJECT
+	Q_OBJECT
 
-public:
-  /** Default constructor */
-    ShareDialog( std::string filename, QWidget *parent = 0, Qt::WFlags flags = 0);
-  /** Default destructor */
+	public:
+		/** Default constructor */
+		ShareDialog( std::string filename, QWidget *parent = 0, Qt::WFlags flags = 0);
 
-private slots:
-  void browseDirectory();
-  void addDirectory();
+		private slots:
+			void browseDirectory();
+		void addDirectory();
+		void updateInfoMessage() ;
 
-private:
-  /** Qt Designer generated object */
-  Ui::ShareDialog ui;
+	private:
+		/** Qt Designer generated object */
+		Ui::ShareDialog ui;
+
+		GroupSelectionBox *groupselectionbox ;
+		GroupFlagsWidget  *groupflagsbox ;
+		QTextEdit      	*messageBox ;
 };
 
 #endif

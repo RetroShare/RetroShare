@@ -83,7 +83,7 @@ ftFileControl::ftFileControl()
 
 ftFileControl::ftFileControl(std::string fname,
 		std::string tmppath, std::string dest,
-		uint64_t size, std::string hash, uint32_t flags,
+		uint64_t size, std::string hash, TransferRequestFlags flags,
 		ftFileCreator *fc, ftTransferModule *tm)
 	:mName(fname), mCurrentPath(tmppath), mDestination(dest),
 	 mTransfer(tm), mCreator(fc), mState(DOWNLOADING), mHash(hash),
@@ -127,7 +127,7 @@ bool ftController::getFileDownloadChunksDetails(const std::string& hash,FileChun
 	if(it != mDownloads.end())
 	{
 		it->second->mCreator->getChunkMap(info) ;
-		info.flags = it->second->mFlags ;
+		//info.flags = it->second->mFlags ;
 
 		return true ;
 	}
@@ -143,7 +143,7 @@ bool ftController::getFileDownloadChunksDetails(const std::string& hash,FileChun
 		info.file_size = it->second->mSize ;
 		info.strategy = mDefaultChunkStrategy ;
 		info.chunk_size = ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE ;
-		info.flags = it->second->mFlags ;
+		//info.flags = it->second->mFlags ;
 		uint32_t nb_chunks = it->second->mSize/ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE ;
 		if(it->second->mSize % ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE != 0)
 			++nb_chunks ;
@@ -327,7 +327,7 @@ void ftController::cleanCacheDownloads()
 		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
 		for(std::map<std::string,ftFileControl*>::iterator it(mDownloads.begin());it!=mDownloads.end();++it)
-			if (((it->second)->mFlags & RS_FILE_HINTS_CACHE) && it->second->mState != ftFileControl::DOWNLOADING)
+			if (((it->second)->mFlags & RS_FILE_REQ_CACHE) && it->second->mState != ftFileControl::DOWNLOADING)
 				// check if a cache file is downloaded, if the case, timeout the transfer after TIMOUT_CACHE_FILE_TRANSFER
 			{
 #ifdef CONTROL_DEBUG
@@ -429,7 +429,7 @@ void ftController::checkDownloadQueue()
 	for(uint32_t p=0;p<_queue.size();++p)
 	{
 		if(p < _min_prioritized_transfers)
-			if(_queue[p]->mFlags & RS_FILE_HINTS_CACHE)		// cache file. add to potential move list
+			if(_queue[p]->mFlags & RS_FILE_REQ_CACHE)		// cache file. add to potential move list
 				to_move_before.push_back(p) ;
 			else
 				++user_transfers ;									// count one more user file in the prioritized range.
@@ -438,7 +438,7 @@ void ftController::checkDownloadQueue()
 			if(to_move_after.size() + user_transfers >= _min_prioritized_transfers)	// we caught enough transfers to move back to the top of the queue.
 				break ;
 
-			if(!(_queue[p]->mFlags & RS_FILE_HINTS_CACHE))	// non cache file. add to potential move list
+			if(!(_queue[p]->mFlags & RS_FILE_REQ_CACHE))	// non cache file. add to potential move list
 				to_move_after.push_back(p) ;
 		}
 	}
@@ -471,7 +471,7 @@ void ftController::locked_addToQueue(ftFileControl* ftfc,int add_strategy)
 																	 // This is costly, so only use this in case we really need it.
 																	 //
 																	 uint32_t pos =0;
-																	 while(pos < _queue.size() && (pos < _min_prioritized_transfers || (_queue[pos]->mFlags & RS_FILE_HINTS_CACHE)>0) )
+																	 while(pos < _queue.size() && (pos < _min_prioritized_transfers || (_queue[pos]->mFlags & RS_FILE_REQ_CACHE)>0) )
 																		 ++pos ;
 
 																	 _queue.push_back(NULL) ;
@@ -622,7 +622,7 @@ void ftController::locked_checkQueueElement(uint32_t pos)
 
 		_queue[pos]->mState = ftFileControl::DOWNLOADING ;
 
-		if(_queue[pos]->mFlags & RS_FILE_HINTS_NETWORK_WIDE)
+		if(_queue[pos]->mFlags & RS_FILE_REQ_ANONYMOUS_ROUTING)
 			mTurtle->monitorFileTunnels(_queue[pos]->mName,_queue[pos]->mHash,_queue[pos]->mSize) ;
 	}
 
@@ -631,7 +631,7 @@ void ftController::locked_checkQueueElement(uint32_t pos)
 		_queue[pos]->mState = ftFileControl::QUEUED ;
 		_queue[pos]->mCreator->closeFile() ;
 
-		if(_queue[pos]->mFlags & RS_FILE_HINTS_NETWORK_WIDE)
+		if(_queue[pos]->mFlags & RS_FILE_REQ_ANONYMOUS_ROUTING)
 			mTurtle->stopMonitoringFileTunnels(_queue[pos]->mHash) ;
 	}
 }
@@ -766,8 +766,8 @@ bool ftController::completeFile(std::string hash)
 	uint64_t    size = 0;
 	uint32_t    state = 0;
 	uint32_t    period = 0;
-	uint32_t    flags = 0;
-	uint32_t    extraflags = 0;
+	TransferRequestFlags flags ;
+	TransferRequestFlags extraflags ;
 	uint32_t    completeCount = 0;
 
 	{
@@ -855,7 +855,7 @@ bool ftController::completeFile(std::string hash)
 		size    = fc->mSize;
 		state   = fc->mState;
 		period  = 30 * 24 * 3600; /* 30 days */
-		extraflags   = 0;
+		extraflags.clear() ;
 
 #ifdef CONTROL_DEBUG
 		std::cerr << "CompleteFile(): size = " << size << std::endl ;
@@ -866,7 +866,7 @@ bool ftController::completeFile(std::string hash)
 		locked_queueRemove(it->second->mQueuePosition) ;
 
 		/* switch map */
-		if (!(fc->mFlags & RS_FILE_HINTS_CACHE)) /* clean up completed cache files automatically */
+		if (!(fc->mFlags & RS_FILE_REQ_CACHE)) /* clean up completed cache files automatically */
 		{
 			mCompleted[fc->mHash] = fc;
 			completeCount = mCompleted.size();
@@ -875,7 +875,7 @@ bool ftController::completeFile(std::string hash)
 
 		mDownloads.erase(it);
 
-		if(flags & RS_FILE_HINTS_NETWORK_WIDE)
+		if(flags & RS_FILE_REQ_ANONYMOUS_ROUTING)
 			mTurtle->stopMonitoringFileTunnels(hash_to_suppress) ;
 
 	} /******* UNLOCKED ********/
@@ -887,13 +887,13 @@ bool ftController::completeFile(std::string hash)
 
 	/* If it has a callback - do it now */
 
-	if(flags & ( RS_FILE_HINTS_CACHE | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_MEDIA))
+	if(flags & ( RS_FILE_REQ_CACHE | RS_FILE_REQ_EXTRA))// | RS_FILE_HINTS_MEDIA))
 	{
 #ifdef CONTROL_DEBUG
-	  std::cerr << "ftController::completeFile() doing Callback, callbackflags:" << (flags & ( RS_FILE_HINTS_CACHE | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_MEDIA)) ;
+	  std::cerr << "ftController::completeFile() doing Callback, callbackflags:" << (flags & ( RS_FILE_HINTS_CACHE | RS_FILE_HINTS_EXTRA ));//| RS_FILE_HINTS_MEDIA)) ;
 	  std::cerr << std::endl;
 #endif
-	  if(flags & RS_FILE_HINTS_CACHE)
+	  if(flags & RS_FILE_REQ_CACHE)
 	  {
 		  /* callback */
 		  if (state == ftFileControl::COMPLETED)
@@ -915,7 +915,7 @@ bool ftController::completeFile(std::string hash)
 		  }
 	  }
 
-	  if(flags & RS_FILE_HINTS_EXTRA)
+	  if(flags & RS_FILE_REQ_EXTRA)
 	  {
 #ifdef CONTROL_DEBUG
 		  std::cerr << "ftController::completeFile() adding to ExtraList";
@@ -925,13 +925,13 @@ bool ftController::completeFile(std::string hash)
 		  mExtraList->addExtraFile(path, hash, size, period, extraflags);
 	  }
 
-	  if(flags & RS_FILE_HINTS_MEDIA)
-	  {
-#ifdef CONTROL_DEBUG
-		std::cerr << "ftController::completeFile() NULL MEDIA callback";
-		std::cerr << std::endl;
-#endif
-	  }
+//	  if(flags & RS_FILE_HINTS_MEDIA)
+//	  {
+//#ifdef CONTROL_DEBUG
+//		std::cerr << "ftController::completeFile() NULL MEDIA callback";
+//		std::cerr << std::endl;
+//#endif
+//	  }
 	}
 	else
 	{
@@ -942,7 +942,7 @@ bool ftController::completeFile(std::string hash)
 	}
 
 	/* Notify GUI */
-	if ((flags & RS_FILE_HINTS_CACHE) == 0) {
+	if ((flags & RS_FILE_REQ_CACHE) == 0) {
 		pqiNotify *notify = getPqiNotify();
 		if (notify) {
 			notify->AddPopupMessage(RS_POPUP_DOWNLOAD, hash, name, "");
@@ -994,7 +994,7 @@ bool	ftController::handleAPendingRequest()
 	std::cerr << "Requesting pending hash " << req.mHash << std::endl ;
 #endif
 
-	FileRequest(req.mName, req.mHash, req.mSize, req.mDest, req.mFlags, req.mSrcIds);
+	FileRequest(req.mName, req.mHash, req.mSize, req.mDest, TransferRequestFlags(req.mFlags), req.mSrcIds);
 
 	{ 
 		// See whether there is a pendign chunk map recorded for this hash.
@@ -1043,14 +1043,14 @@ bool ftController::alreadyHaveFile(const std::string& hash, FileInfo &info)
 		return true ;
 
 	// check for file lists
-	if (mSearch->search(hash, RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_SPEC_ONLY, info))
+	if (mSearch->search(hash, RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_SPEC_ONLY, info))
 		return true ;
 	
 	return false ;
 }
 
 bool 	ftController::FileRequest(const std::string& fname, const std::string& hash,
-			uint64_t size, const std::string& dest, uint32_t flags,
+			uint64_t size, const std::string& dest, TransferRequestFlags flags,
 			const std::list<std::string> &_srcIds)
 {
 	std::list<std::string> srcIds(_srcIds) ;
@@ -1129,7 +1129,7 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 #endif
 
 	uint32_t rate = 0;
-	if (flags & RS_FILE_HINTS_BACKGROUND)
+	if (flags & RS_FILE_REQ_BACKGROUND)
 		rate = FT_CNTRL_SLOW_RATE;
 	else
 		rate = FT_CNTRL_STANDARD_RATE;
@@ -1191,12 +1191,12 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 		}
 	} /******* UNLOCKED ********/
 
-	if(!(flags & RS_FILE_HINTS_NO_SEARCH))
+	if(!(flags & RS_FILE_REQ_NO_SEARCH))
 	{
 		/* do a source search - for any extra sources */
 		// add sources only in direct mode
 		//
-		if((flags & RS_FILE_HINTS_BROWSABLE) && mSearch->search(hash, RS_FILE_HINTS_REMOTE | RS_FILE_HINTS_SPEC_ONLY, info))
+		if(/* (flags & RS_FILE_HINTS_BROWSABLE) && */ mSearch->search(hash, RS_FILE_HINTS_REMOTE | RS_FILE_HINTS_SPEC_ONLY, info))
 		{
 			/* do something with results */
 #ifdef CONTROL_DEBUG
@@ -1242,10 +1242,10 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 
   // We check that flags are consistent.  
   
-  	if(flags & RS_FILE_HINTS_NETWORK_WIDE)
+  	if(flags & RS_FILE_REQ_ANONYMOUS_ROUTING)
 		mTurtle->monitorFileTunnels(fname,hash,size) ;
 
-	bool assume_availability = flags & RS_FILE_HINTS_CACHE ;	// assume availability for cache files
+	bool assume_availability = flags & RS_FILE_REQ_CACHE ;	// assume availability for cache files
 
 	ftFileCreator *fc = new ftFileCreator(savepath, size, hash,assume_availability);
 	ftTransferModule *tm = new ftTransferModule(fc, mDataplex,this);
@@ -1623,7 +1623,7 @@ bool 	ftController::FileDetails(const std::string &hash, FileInfo &info)
 	/* extract details */
 	info.hash = hash;
 	info.fname = it->second->mName;
-	info.flags = it->second->mFlags;
+	info.transfer_info_flags = it->second->mFlags ;
 	info.priority = SPEED_NORMAL ;
 	RsDirUtil::removeTopDir(it->second->mDestination, info.path); /* remove fname */
 	info.queue_position = it->second->mQueuePosition ;
@@ -1859,7 +1859,7 @@ bool ftController::RequestCacheFile(RsPeerId id, std::string path, std::string h
 			return false ;
 	}
 
-	FileRequest(hash, hash, size, path, RS_FILE_HINTS_CACHE | RS_FILE_HINTS_NO_SEARCH, ids);
+	FileRequest(hash, hash, size, path, RS_FILE_REQ_CACHE | RS_FILE_REQ_NO_SEARCH, ids);
 
 	return true;
 }
@@ -1959,7 +1959,7 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 
 		/* ignore cache files. As this is small files, better download them again from scratch at restart.*/
 
-		if (fit->second->mFlags & RS_FILE_HINTS_CACHE)
+		if (fit->second->mFlags & RS_FILE_REQ_CACHE)
 		{
 #ifdef CONTROL_DEBUG
 			std::cerr << "ftcontroller::saveList(): Not saving (callback) file entry " << fit->second->mName << ", " << fit->second->mHash << ", " << fit->second->mSize << std::endl ;
@@ -1983,7 +1983,7 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 		rft->file.hash  = fit->second->mHash;
 		rft->file.filesize = fit->second->mSize;
 		RsDirUtil::removeTopDir(fit->second->mDestination, rft->file.path); /* remove fname */
-		rft->flags = fit->second->mFlags;
+		rft->flags = fit->second->mFlags.toUInt32();
 		rft->state = fit->second->mState;
 		fit->second->mTransfer->getFileSources(rft->allPeerIds.ids);
 
@@ -2032,7 +2032,7 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 				rft->file.hash  = pit->mHash;
 				rft->file.filesize = pit->mSize;
 				RsDirUtil::removeTopDir(pit->mDest, rft->file.path); /* remove fname */
-				rft->flags = pit->mFlags;
+				rft->flags = pit->mFlags.toUInt32();
 				rft->allPeerIds.ids = pit->mSrcIds;
 			}
 
@@ -2093,7 +2093,7 @@ bool ftController::loadList(std::list<RsItem *>& load)
 #ifdef CONTROL_DEBUG
 			std::cerr << "ftController::loadList(): requesting " << rsft->file.name << ", " << rsft->file.hash << ", " << rsft->file.filesize << std::endl ;
 #endif
-			FileRequest(rsft->file.name, rsft->file.hash, rsft->file.filesize, rsft->file.path, rsft->flags, rsft->allPeerIds.ids);
+			FileRequest(rsft->file.name, rsft->file.hash, rsft->file.filesize, rsft->file.path, TransferRequestFlags(rsft->flags), rsft->allPeerIds.ids);
 
 			{
 				RsStackMutex mtx(ctrlMutex) ;

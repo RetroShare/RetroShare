@@ -110,7 +110,7 @@ void RsCollectionFile::recursAddElements(QDomDocument& doc,const DirDetails& det
 				continue;
 
 			DirDetails subDirDetails;
-			uint32_t flags = DIR_FLAGS_CHILDREN | DIR_FLAGS_LOCAL;
+			FileSearchFlags flags = RS_FILE_HINTS_LOCAL;
 
 			if (!rsFiles->RequestDirDetails(it->ref, subDirDetails, flags)) 
 				continue;

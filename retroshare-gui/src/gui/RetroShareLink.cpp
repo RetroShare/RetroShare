@@ -973,7 +973,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 						srcIds.push_back((*it).peerId) ;
 					}
 
-					if (rsFiles->FileRequest(link.name().toUtf8().constData(), link.hash().toStdString(), link.size(), "", RS_FILE_HINTS_NETWORK_WIDE, srcIds)) {
+					if (rsFiles->FileRequest(link.name().toUtf8().constData(), link.hash().toStdString(), link.size(), "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds)) {
 						fileAdded.append(link.name());
 					} else {
 						fileExist.append(link.name());

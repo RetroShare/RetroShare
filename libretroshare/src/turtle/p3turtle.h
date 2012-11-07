@@ -213,7 +213,7 @@ class TurtleFileHashInfo
 // 	p3Config   | ConfigChanged()  | used to load/save .cfg file for turtle variales.
 // 	-----------+------------------+------------------------------------------------------
 //
-class p3turtle: public p3Service, /*public pqiMonitor,*/ public RsTurtle,/* public ftSearch */ public p3Config
+class p3turtle: public p3Service, public RsTurtle, public p3Config
 {
 	public:
 		p3turtle(p3LinkMgr *lm,ftServer *m);
@@ -371,8 +371,8 @@ class p3turtle: public p3Service, /*public pqiMonitor,*/ public RsTurtle,/* publ
 		/// Returns a search result upwards (possibly to the gui)
 		void returnSearchResult(RsTurtleSearchResultItem *item) ;
 
-		/// Returns true if the file with given hash is hosted locally.
-		virtual bool performLocalHashSearch(const TurtleFileHash& hash,FileInfo& info) ;
+		/// Returns true if the file with given hash is hosted locally, and accessible in anonymous mode the supplied peer.
+		virtual bool performLocalHashSearch(const TurtleFileHash& hash,const std::string& client_peer_id,FileInfo& info) ;
 
 		//--------------------------- Local variables --------------------------------//
 		

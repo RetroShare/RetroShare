@@ -31,6 +31,7 @@
 #include <retroshare/rsfiles.h>
 #include <retroshare/rsiface.h>
 #include <retroshare/rspeers.h>
+#include <retroshare/rstypes.h>
 #include "settings/rsharesettings.h"
 
 
@@ -211,7 +212,7 @@ void QuickStartWizard::on_pushButtonSharesAdd_clicked()
 	{
 		SharedDirInfo sdi ;
 		sdi.filename = dir ;
-		sdi.shareflags = RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_BROWSABLE ;
+		sdi.shareflags = DIR_FLAGS_BROWSABLE_OTHERS | DIR_FLAGS_NETWORK_WIDE_OTHERS ;
 
 		rsFiles->addSharedDirectory(sdi);
 
@@ -307,8 +308,8 @@ void QuickStartWizard::loadShare()
 		QCheckBox *cb1 = new QCheckBox ;
 		QCheckBox *cb2 = new QCheckBox ;
 
-		cb1->setChecked( (*it).shareflags & RS_FILE_HINTS_NETWORK_WIDE ) ;
-		cb2->setChecked( (*it).shareflags & RS_FILE_HINTS_BROWSABLE ) ;
+		cb1->setChecked( (*it).shareflags & DIR_FLAGS_NETWORK_WIDE_OTHERS ) ;
+		cb2->setChecked( (*it).shareflags & DIR_FLAGS_BROWSABLE_OTHERS ) ;
 
 		cb1->setToolTip(QString("If checked, the share is anonymously shared to anybody.")) ;
 		cb2->setToolTip(QString("If checked, the share is browsable by your friends.")) ;
@@ -339,11 +340,11 @@ void QuickStartWizard::updateFlags(bool b)
 	for(it = dirs.begin(); it != dirs.end(); it++,++row)
 	{
 		std::cerr << "Looking for row=" << row << ", file=" << (*it).filename << ", flags=" << (*it).shareflags << std::endl ;
-		uint32_t current_flags = 0 ;
-		current_flags |= (dynamic_cast<QCheckBox*>(ui.shareddirList->cellWidget(row,1)))->isChecked()? RS_FILE_HINTS_NETWORK_WIDE:0 ;
-		current_flags |= (dynamic_cast<QCheckBox*>(ui.shareddirList->cellWidget(row,2)))->isChecked()? RS_FILE_HINTS_BROWSABLE:0 ;
+		FileStorageFlags current_flags(0u) ;
+		current_flags |= (dynamic_cast<QCheckBox*>(ui.shareddirList->cellWidget(row,1)))->isChecked()? DIR_FLAGS_NETWORK_WIDE_OTHERS:(FileStorageFlags)0u ;
+		current_flags |= (dynamic_cast<QCheckBox*>(ui.shareddirList->cellWidget(row,2)))->isChecked()? DIR_FLAGS_BROWSABLE_OTHERS   :(FileStorageFlags)0u ;
 
-		if( (*it).shareflags ^ current_flags )
+		if( ((*it).shareflags ^ current_flags).toUInt32() )
 		{
 			(*it).shareflags = current_flags ;
 			rsFiles->updateShareFlags(*it) ;	// modifies the flags

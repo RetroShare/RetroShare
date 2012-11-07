@@ -81,14 +81,23 @@ p, li { white-space: pre-wrap; }
            <property name="editTriggers">
             <set>QAbstractItemView::NoEditTriggers</set>
            </property>
+           <property name="alternatingRowColors">
+            <bool>true</bool>
+           </property>
            <property name="selectionMode">
             <enum>QAbstractItemView::SingleSelection</enum>
            </property>
            <property name="selectionBehavior">
             <enum>QAbstractItemView::SelectRows</enum>
            </property>
+           <property name="showGrid">
+            <bool>false</bool>
+           </property>
+           <property name="sortingEnabled">
+            <bool>true</bool>
+           </property>
            <attribute name="horizontalHeaderMinimumSectionSize">
-            <number>100</number>
+            <number>128</number>
            </attribute>
            <attribute name="verticalHeaderVisible">
             <bool>false</bool>
@@ -108,7 +117,7 @@ p, li { white-space: pre-wrap; }
            </column>
            <column>
             <property name="text">
-             <string>Network Wide</string>
+             <string>Share flags</string>
             </property>
             <property name="toolTip">
              <string comment="If activated, the share is anonymously accessible to anybody"/>
@@ -116,7 +125,7 @@ p, li { white-space: pre-wrap; }
            </column>
            <column>
             <property name="text">
-             <string>Browsable</string>
+             <string>Parent groups</string>
             </property>
             <property name="toolTip">
              <string comment="If checked, the share is browsable by your friends"/>

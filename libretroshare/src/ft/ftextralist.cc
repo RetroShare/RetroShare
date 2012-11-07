@@ -146,7 +146,7 @@ void ftExtraList::hashAFile()
 		 **/
 
 bool	ftExtraList::addExtraFile(std::string path, std::string hash, 
-				uint64_t size, uint32_t period, uint32_t flags)
+				uint64_t size, uint32_t period, TransferRequestFlags flags)
 {
 #ifdef  DEBUG_ELIST
 	std::cerr << "ftExtraList::addExtraFile() path: " << path;
@@ -177,7 +177,7 @@ bool	ftExtraList::addExtraFile(std::string path, std::string hash,
 	return true;
 }
 
-bool ftExtraList::removeExtraFile(std::string hash, uint32_t flags)
+bool ftExtraList::removeExtraFile(std::string hash, TransferRequestFlags flags)
 {
 	/* remove unused parameter warnings */
 	(void) flags;
@@ -273,12 +273,12 @@ bool	ftExtraList::cleanupOldFiles()
 }
 
 
-bool	ftExtraList::cleanupEntry(std::string /*path*/, uint32_t flags)
+bool	ftExtraList::cleanupEntry(std::string /*path*/, TransferRequestFlags flags)
 {
-	if (flags & RS_FILE_CONFIG_CLEANUP_DELETE)
-	{
-		/* Delete the file? - not yet! */
-	}
+//	if (flags & RS_FILE_CONFIG_CLEANUP_DELETE)
+//	{
+//		/* Delete the file? - not yet! */
+//	}
 	return true;
 }
 
@@ -287,7 +287,7 @@ bool	ftExtraList::cleanupEntry(std::string /*path*/, uint32_t flags)
 		 * file is removed after period.
 		 **/
 
-bool 	ftExtraList::hashExtraFile(std::string path, uint32_t period, uint32_t flags)
+bool 	ftExtraList::hashExtraFile(std::string path, uint32_t period, TransferRequestFlags flags)
 {
 #ifdef  DEBUG_ELIST
 	std::cerr << "ftExtraList::hashExtraFile() path: " << path;
@@ -326,14 +326,14 @@ bool	ftExtraList::hashExtraFileDone(std::string path, FileInfo &info)
 		}
 		hash = it->second;
 	}
-	return search(hash, 0, info);
+	return search(hash, FileSearchFlags(0), info);
 }
 
 	/***
 	 * Search Function - used by File Transfer 
 	 *
 	 **/
-bool    ftExtraList::search(const std::string &hash, uint32_t /*hintflags*/, FileInfo &info) const
+bool    ftExtraList::search(const std::string &hash, FileSearchFlags /*hintflags*/, FileInfo &info) const
 {
 
 #ifdef  DEBUG_ELIST
@@ -396,7 +396,7 @@ bool ftExtraList::saveList(bool &cleanup, std::list<RsItem *>& sList)
 		fi->file.hash        = (it->second).info.hash;
 		fi->file.filesize    = (it->second).info.size;
 		fi->file.age         = (it->second).info.age;
-		fi->flags            = (it->second).flags;
+		fi->flags            = (it->second).flags.toUInt32();
 
 		sList.push_back(fi);
 	}
@@ -444,7 +444,7 @@ bool    ftExtraList::loadList(std::list<RsItem *>& load)
 		if (ts > (time_t)fi->file.age)
 		{
 			/* to old */
-			cleanupEntry(fi->file.path, fi->flags);
+			cleanupEntry(fi->file.path, TransferRequestFlags(fi->flags));
 			delete (*it);
 			continue ;
 		}
@@ -461,7 +461,7 @@ bool    ftExtraList::loadList(std::list<RsItem *>& load)
 		details.info.hash = fi->file.hash;
 		details.info.size = fi->file.filesize;
 		details.info.age = fi->file.age; /* time that we remove it. */
-		details.flags = fi->flags;
+		details.flags = TransferRequestFlags(fi->flags);
 	
 		/* stick it in the available queue */
 		mFiles[details.info.hash] = details;

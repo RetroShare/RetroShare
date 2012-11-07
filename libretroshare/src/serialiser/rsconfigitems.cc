@@ -170,20 +170,24 @@ void 	RsFileConfigItem::clear()
 
 	file.TlvClear();
 	flags = 0;
+	parent_groups.clear() ;
 }
 
 std::ostream &RsFileConfigItem::print(std::ostream &out, uint16_t indent)
 {
-        printRsItemBase(out, "RsFileConfigItem", indent);
+	printRsItemBase(out, "RsFileConfigItem", indent);
 	uint16_t int_Indent = indent + 2;
 	file.print(out, int_Indent);
 
-        printIndent(out, int_Indent);
-        out << "flags: " << flags << std::endl;
+	printIndent(out, int_Indent); out << "flags: " << flags << std::endl;
+	printIndent(out, int_Indent); out << "groups:" ;
 
-        printRsItemEnd(out, "RsFileConfigItem", indent);
-        return out;
+	for(std::list<std::string>::const_iterator it(parent_groups.begin());it!=parent_groups.end();++it)
+		out << (*it) << " " ;
+	out << std::endl;
 
+	printRsItemEnd(out, "RsFileConfigItem", indent);
+	return out;
 }
 
 /*************************************************************************/
@@ -348,7 +352,10 @@ uint32_t    RsFileConfigSerialiser::sizeFileItem(RsFileConfigItem *item)
 {
 	uint32_t s = 8; /* header */
 	s += item->file.TlvSize();
-	s += 4;
+	s += 4;	// flags
+
+	for(std::list<std::string>::const_iterator it(item->parent_groups.begin());it!=item->parent_groups.end();++it)	// parent groups
+		s += GetTlvStringSize(*it); 	
 
 	return s;
 }
@@ -377,8 +384,10 @@ bool     RsFileConfigSerialiser::serialiseFileItem(RsFileConfigItem *item, void 
 
 	/* add mandatory parts first */
 	ok &= item->file.SetTlv(data, tlvsize, &offset);
-
 	ok &= setRawUInt32(data, tlvsize, &offset, item->flags);
+
+	for(std::list<std::string>::const_iterator it(item->parent_groups.begin());ok && it!=item->parent_groups.end();++it)	// parent groups
+		ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GROUPID, *it);
 
 	if (offset != tlvsize)
 	{
@@ -426,6 +435,15 @@ RsFileConfigItem *RsFileConfigSerialiser::deserialiseFileItem(void *data, uint32
 	/* get mandatory parts first */
 	ok &= item->file.GetTlv(data, rssize, &offset);
 	ok &= getRawUInt32(data, rssize, &offset, &(item->flags));
+
+	while(offset < rssize)
+	{
+		std::string tmp ;
+		if(GetTlvString(data, rssize, &offset, TLV_TYPE_STR_GROUPID, tmp))
+			item->parent_groups.push_back(tmp) ;
+		else
+			break ;
+	}
 
 	if (offset != rssize)
 	{

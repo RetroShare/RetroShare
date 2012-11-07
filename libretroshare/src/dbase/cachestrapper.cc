@@ -92,38 +92,70 @@ bool    CacheSource::loadLocalCache(const CacheData &data)
 }
 	
         /* control Caches available */
-bool    CacheSource::refreshCache(const CacheData &data)
+bool    CacheSource::refreshCache(const CacheData &data,const std::list<std::string>& destination_peers)
 {
-	lockData(); /* LOCK MUTEX */
-
 	bool ret = false;
-	if (data.cid.type == getCacheType())
 	{
-		int subid = 0;
-		if (isMultiCache())
-		{
-			subid = data.cid.subid;
-		}
+		RsStackMutex mtx(cMutex); /* LOCK MUTEX */
 
-		/* Backup the old Caches */
-		CacheSet::const_iterator it;
-		if (caches.end() != (it = caches.find(subid)))
+		if (data.cid.type == getCacheType())
 		{
-			mOldCaches[it->second.hash] = it->second;
-		}
+			int subid = 0;
+			if (isMultiCache())
+			{
+				subid = data.cid.subid;
+			}
 
-		/* store new cache */
-		caches[subid] = data;
-		ret = true;
+			/* Backup the old Caches */
+			CacheSet::const_iterator it;
+			if (caches.end() != (it = caches.find(subid)))
+			{
+				mOldCaches[it->second.hash] = it->second;
+			}
+
+			/* store new cache */
+			caches[subid] = data;
+			ret = true;
+		}
 	}
 
-	unlockData(); /* UNLOCK MUTEX */
+	if (mStrapper) /* allow testing without full feedback */
+		mStrapper->refreshCache(data,destination_peers);
+
+	return ret;
+}
+bool    CacheSource::refreshCache(const CacheData &data)
+{
+	bool ret = false;
+	{
+		RsStackMutex mtx(cMutex); /* LOCK MUTEX */
+
+		if (data.cid.type == getCacheType())
+		{
+			int subid = 0;
+			if (isMultiCache())
+			{
+				subid = data.cid.subid;
+			}
+
+			/* Backup the old Caches */
+			CacheSet::const_iterator it;
+			if (caches.end() != (it = caches.find(subid)))
+			{
+				mOldCaches[it->second.hash] = it->second;
+			}
+
+			/* store new cache */
+			caches[subid] = data;
+			ret = true;
+		}
+	}
 
 	if (mStrapper) /* allow testing without full feedback */
 		mStrapper->refreshCache(data);
+
 	return ret;
-}
-		
+}	
 bool    CacheSource::clearCache(CacheId id)
 {
 	lockData(); /* LOCK MUTEX */
@@ -567,6 +599,26 @@ void    CacheStrapper::statusChange(const std::list<pqipeer> &plist)
 
         /**************** from pqimonclient ********************/
 
+void	CacheStrapper::refreshCache(const CacheData &data,const std::list<std::string>& destination_peers)
+{
+	/* we've received an update 
+	 * send to all online peers + self
+	 */
+#ifdef CS_DEBUG 
+	std::cerr << "CacheStrapper::refreshCache() : " << data << std::endl;
+#endif
+
+	RsStackMutex stack(csMtx); /******* LOCK STACK MUTEX *********/
+	for(std::list<std::string>::const_iterator it = destination_peers.begin(); it != destination_peers.end(); ++it)
+	{
+#ifdef CS_DEBUG 
+		std::cerr << "CacheStrapper::refreshCache() Send To: " << *it << std::endl;
+#endif
+		mCacheUpdates.push_back(std::make_pair(*it, data));
+	}
+
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+}
 
 void	CacheStrapper::refreshCache(const CacheData &data)
 {
@@ -578,25 +630,11 @@ void	CacheStrapper::refreshCache(const CacheData &data)
 #endif
 
 	std::list<std::string> ids;
-	std::list<std::string>::iterator it;
-
 	mLinkMgr->getOnlineList(ids);
+	ids.push_back(mLinkMgr->getOwnId()) ;
 
-	RsStackMutex stack(csMtx); /******* LOCK STACK MUTEX *********/
-	for(it = ids.begin(); it != ids.end(); it++)
-	{
-#ifdef CS_DEBUG 
-		std::cerr << "CacheStrapper::refreshCache() Send To: " << *it << std::endl;
-#endif
-
-		mCacheUpdates.push_back(std::make_pair(*it, data));
-	}
-
-	mCacheUpdates.push_back(std::make_pair(mLinkMgr->getOwnId(), data));
-
-	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+	refreshCache(data,ids) ;
 }
-
 
 void	CacheStrapper::refreshCacheStore(const CacheData & /* data */ )
 {
