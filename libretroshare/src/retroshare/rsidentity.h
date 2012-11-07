@@ -181,8 +181,9 @@ class RsIdOpinion
 class RsIdentityParameters
 {
 	public:
-
-	int IdType;
+	RsIdentityParameters(): isPgpLinked(false) { return; }
+	bool isPgpLinked;
+	std::string nickname;
 };
 
 
