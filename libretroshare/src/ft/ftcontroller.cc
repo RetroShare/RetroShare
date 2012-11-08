@@ -2090,6 +2090,15 @@ bool ftController::loadList(std::list<RsItem *>& load)
 			/* This will get stored on a waiting list - until the
 			 * config files are fully loaded
 			 */
+			
+			// Compatibility with previous versions. 
+			if(rsft->flags & RS_FILE_HINTS_NETWORK_WIDE.toUInt32())
+			{
+				std::cerr << "Ensuring compatibility, replacing RS_FILE_HINTS_NETWORK_WIDE with RS_FILE_REQ_ANONYMOUS_ROUTING" << std::endl;
+				rsft->flags &= ~RS_FILE_HINTS_NETWORK_WIDE.toUInt32() ;
+				rsft->flags |=  RS_FILE_REQ_ANONYMOUS_ROUTING.toUInt32() ;
+			}
+
 #ifdef CONTROL_DEBUG
 			std::cerr << "ftController::loadList(): requesting " << rsft->file.name << ", " << rsft->file.hash << ", " << rsft->file.filesize << std::endl ;
 #endif
@@ -2106,6 +2115,7 @@ bool ftController::loadList(std::list<RsItem *>& load)
 					std::cerr << "Storing the map in a wait list." << std::endl ;
 
 					mPendingChunkMaps[rsft->file.hash] = rsft ;
+
 					continue ;	// i.e. don't delete the item!
 				}
 				else
