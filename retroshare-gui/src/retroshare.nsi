@@ -3,7 +3,7 @@
 ; Define your application name
 !define APPNAME "RetroShare"
 !define VERSION "0.5.4b"
-!define REVISION "5605"
+!define REVISION "5792"
 !define APPNAMEANDVERSION "${APPNAME} ${VERSION} ${REVISION}"
 !define QTBASE "d:\qt\2010.05"
 
@@ -63,7 +63,7 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
  
   LicenseLangString myLicenseData 1030 "license\license.txt"
   LicenseLangString myLicenseData 1031 "license\license-GER.txt"
-  LicenseLangString myLicenseData 1032 "license\license.txt"
+  LicenseLangString myLicenseData 1032 "license\license-GR.txt"
   LicenseLangString myLicenseData 1033 "license\license.txt"
   LicenseLangString myLicenseData 1034 "license\license-SP.txt"
   LicenseLangString myLicenseData 1036 "license\license-FR.txt"
@@ -150,7 +150,7 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
     LangString DESC_sec_data ${LANG_GERMAN} "Installiert RetroShare Skins"
     LangString DESC_sec_plugins ${LANG_GERMAN} "Installiert die RetroShare Erweiterungen."
     LangString DESC_sec_shortcuts ${LANG_GERMAN} "RetroShare Verknüpfung im Startmenü, Desktop oder im Schnellstarter erstellen."
-    LangString DESC_sec_link ${LANG_GERMAN} "RetroShare mit .rsc Dateiendung verknuepfen"
+    LangString DESC_sec_link ${LANG_GERMAN} "RetroShare mit .rsc Dateiendung verknüpfen"
     LangString LANGUAGEID ${LANG_GERMAN} "1031"
             
     LangString sec_main ${LANG_TURKISH} "Program Dosyalar?"
@@ -338,13 +338,11 @@ Section $(sec_main) sec_main
   File /r "${QTBASE}\qt\bin\libgcc_s_dw2-1.dll"
   File /r "${QTBASE}\qt\plugins\imageformats"
   File /r  ${QTBASE}\qt\qt_*.qm
+  File /r  translations\qt_*.qm
   File /r "release\pthreadGC2d.dll"
-  File /r "d:\Development\lib\libminiupnpc-1.3\miniupnpc.dll"
+  File /r "D:\Development\lib\libminiupnpc-1.3\miniupnpc.dll"
   File /r "changelog.txt"
-  File /r /x Data "release\bdboot.txt"
-  
-  SetOutPath "$INSTDIR\translations\"
-  File /r translations\qt_*.qm 
+  File /r /x Data "release\bdboot.txt" 
 
 
 SectionEnd
@@ -356,7 +354,7 @@ Section  $(sec_data) sec_data
 
   ; Set Section Files and Shortcuts
   SetOutPath "$APPDATA\RetroShare\"
-  ;File /r "data\*"
+  ;File /r "data\*" 
   
   ; Set Section qss and exclude svn
   SetOutPath "$INSTDIR\qss\"
