@@ -36,8 +36,8 @@
 #include <gui/common/GroupFlagsWidget.h>
 
 /** Default constructor */
-ShareDialog::ShareDialog(std::string filename, QWidget *parent, Qt::WFlags flags)
-  : QDialog(parent, flags)
+ShareDialog::ShareDialog(std::string filename, QWidget *parent)
+  : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
 {
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
@@ -46,10 +46,10 @@ ShareDialog::ShareDialog(std::string filename, QWidget *parent, Qt::WFlags flags
     ui.headerFrame->setHeaderText(tr("Share Folder"));
 
     connect(ui.browseButton, SIGNAL(clicked( bool ) ), this , SLOT( browseDirectory() ) );
-    connect(ui.okButton, SIGNAL(clicked( bool ) ), this , SLOT( addDirectory() ) );
-    connect(ui.closeButton, SIGNAL(clicked()), this, SLOT(close()));
+    connect(ui.buttonBox, SIGNAL(accepted()), this , SLOT( addDirectory() ) );
+    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 
-    ui.okButton->setEnabled(false);
+    ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 
 	 QVBoxLayout *vbox = new QVBoxLayout() ;
 
@@ -89,7 +89,7 @@ ShareDialog::ShareDialog(std::string filename, QWidget *parent, Qt::WFlags flags
             if (it->filename == filename) 
 				{
                 /* fill dialog */
-                ui.okButton->setEnabled(true);
+                ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
 
                 ui.localpath_lineEdit->setText(QString::fromUtf8(it->filename.c_str()));
                 ui.localpath_lineEdit->setDisabled(true);
@@ -117,10 +117,10 @@ void ShareDialog::browseDirectory()
 
     /* add it to the server */
     if (qdir.isEmpty()) {
-        ui.okButton->setEnabled(false);
+        ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
         return;
     }
-    ui.okButton->setEnabled(true);
+    ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
     ui.localpath_lineEdit->setText(qdir);
 }
 

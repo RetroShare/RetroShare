@@ -36,7 +36,7 @@ class ShareDialog : public QDialog
 
 	public:
 		/** Default constructor */
-		ShareDialog( std::string filename, QWidget *parent = 0, Qt::WFlags flags = 0);
+		ShareDialog( std::string filename, QWidget *parent = 0);
 
 		private slots:
 			void browseDirectory();
