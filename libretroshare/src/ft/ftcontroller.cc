@@ -1623,10 +1623,14 @@ bool 	ftController::FileDetails(const std::string &hash, FileInfo &info)
 	/* extract details */
 	info.hash = hash;
 	info.fname = it->second->mName;
+	info.storage_permission_flags.clear() ;
 	info.transfer_info_flags = it->second->mFlags ;
 	info.priority = SPEED_NORMAL ;
 	RsDirUtil::removeTopDir(it->second->mDestination, info.path); /* remove fname */
 	info.queue_position = it->second->mQueuePosition ;
+
+	if(it->second->mFlags & RS_FILE_REQ_ANONYMOUS_ROUTING)
+		info.storage_permission_flags |= DIR_FLAGS_NETWORK_WIDE_OTHERS ;	// file being downloaded anonymously are always anonymously available.
 
 	/* get list of sources from transferModule */
 	std::list<std::string> peerIds;
