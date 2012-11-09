@@ -201,6 +201,8 @@ void RsGenExchange::generateGroupKeys(RsTlvSecurityKeySet& keySet)
 
 bool RsGenExchange::createGroup(RsNxsGrp *grp, RsTlvSecurityKeySet& keySet)
 {
+	std::cerr << "RsGenExchange::createGroup()";
+	std::cerr << std::endl;
 
 
     RsGxsGrpMetaData* meta = grp->metaData;
@@ -224,7 +226,12 @@ bool RsGenExchange::createGroup(RsNxsGrp *grp, RsTlvSecurityKeySet& keySet)
     }
 
     if(mit == keySet.keys.end())
+    {
+	std::cerr << "RsGenExchange::createGroup() Missing ADMIN Key";
+	std::cerr << std::endl;
+
     	return false;
+    }
 
     // group is self signing
     // for the creation of group signature
@@ -252,6 +259,12 @@ bool RsGenExchange::createGroup(RsNxsGrp *grp, RsTlvSecurityKeySet& keySet)
     // clean up
     delete[] allGrpData;
     delete[] metaData;
+
+    if (!ok)
+    {
+	std::cerr << "RsGenExchange::createGroup() ERROR !okay (getSignature error)";
+	std::cerr << std::endl;
+    }
 
     return ok;
 }
@@ -412,6 +425,9 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 
 	std::list<RsNxsGrp*>::iterator lit = nxsGrps.begin();
 
+	std::cerr << "RsGenExchange::getGroupData() RsNxsGrp::len: " << nxsGrps.size();
+	std::cerr << std::endl;
+
         if(ok)
 	{
 		for(; lit != nxsGrps.end(); lit++)
@@ -425,6 +441,11 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 				gItem->meta = *((*lit)->metaData);
 				grpItem.push_back(gItem);
 				delete *lit;
+			}
+			else
+			{
+				std::cerr << "RsGenExchange::getGroupData() ERROR deserialising item";
+				std::cerr << std::endl;
 			}
 		}
 	}
@@ -751,15 +772,20 @@ void RsGenExchange::publishGrps()
 
             RsNxsGrp* grp = new RsNxsGrp(mServType);
             RsGxsGrpItem* grpItem = mit->second;
-            uint32_t size = mSerialiser->size(grpItem);
 
             RsTlvSecurityKeySet keySet;
             generateGroupKeys(keySet);
 
             service_CreateGroup(grpItem, keySet);
 
+            uint32_t size = mSerialiser->size(grpItem);
             char gData[size];
             bool ok = mSerialiser->serialise(grpItem, gData, &size);
+	    if (!ok)
+	    {
+                std::cerr << "RsGenExchange::publishGrps() !ok ERROR After First Serialise" << std::endl;
+	    }
+
             grp->grp.setBinData(gData, size);
 
             if(ok)
@@ -769,13 +795,25 @@ void RsGenExchange::publishGrps()
                 *(grp->metaData) = grpItem->meta;
                 grp->metaData->mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_ADMIN;
                 ok &= createGroup(grp, keySet);
+		if (!ok)
+		{
+                	std::cerr << "RsGenExchange::publishGrps() !ok ERROR After createGroup" << std::endl;
+		}
+
                 size = grp->metaData->serial_size();
                 char mData[size];
                 grp->metaData->mGroupId = grp->grpId;
                 ok &= grp->metaData->serialise(mData, size);
+		if (!ok)
+		{
+                	std::cerr << "RsGenExchange::publishGrps() !ok ERROR After Meta Serialise" << std::endl;
+		}
+
                 grp->meta.setBinData(mData, size);
                 RsGxsGroupId grpId = grp->grpId;
                 mDataAccess->addGroupData(grp);
+
+                std::cerr << "RsGenExchange::publishGrps() ok -> pushing to notifies" << std::endl;
 
                 // add to published to allow acknowledgement
                 mGrpNotify.insert(std::make_pair(mit->first, grpId));
@@ -786,8 +824,8 @@ void RsGenExchange::publishGrps()
             {
 
 #ifdef GEN_EXCH_DEBUG
-                std::cerr << "RsGenExchange::publishGrps() failed to publish grp " << std::endl;
 #endif
+                std::cerr << "RsGenExchange::publishGrps() failed to publish grp " << std::endl;
                 delete grp;
 
                 // add to published to allow acknowledgement, grpid is empty as grp creation failed
@@ -890,8 +928,8 @@ void RsGenExchange::createDummyGroup(RsGxsGrpItem *grpItem)
     {
 
 #ifdef GEN_EXCH_DEBUG
-            std::cerr << "RsGenExchange::createDummyGroup(); failed to publish grp " << std::endl;
 #endif
+            std::cerr << "RsGenExchange::createDummyGroup(); failed to publish grp " << std::endl;
         delete grp;
     }
 

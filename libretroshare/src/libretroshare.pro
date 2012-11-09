@@ -642,6 +642,14 @@ HEADERS += retroshare/rsgame.h \
             SOURCES += services/p3idservice.cc \
                 serialiser/rsgxsiditems.cc \
 
+            # GxsForums Service
+            HEADERS += retroshare/rsgxsforums.h \
+                services/p3gxsforums.h \
+                serialiser/rsgxsforumitems.h
+
+            SOURCES += services/p3gxsforums.cc \
+                serialiser/rsgxsforumitems.cc \
+
             # Wiki Service
             HEADERS += retroshare/rswiki.h \
                 services/p3wiki.h \

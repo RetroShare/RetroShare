@@ -60,9 +60,11 @@ virtual bool submitCollection(uint32_t &token, RsWikiCollection &collection);
 virtual bool submitSnapshot(uint32_t &token, RsWikiSnapshot &snapshot);
 virtual bool submitComment(uint32_t &token, RsWikiComment &comment);
 
+virtual void generateDummyData();
+
 	private:
 
-//std::string genRandomId();
+std::string genRandomId();
 //	RsMutex mWikiMtx;
 
 

@@ -50,7 +50,8 @@ uint32_t RsGxsIdSerialiser::size(RsItem *item)
 	{
 		return sizeGxsIdCommentItem(com_item);
 	}
-	return NULL;
+	std::cerr << "RsGxsIdSerialiser::size() ERROR invalid item" << std::endl;
+	return 0;
 }
 
 bool RsGxsIdSerialiser::serialise(RsItem *item, void *data, uint32_t *size)
@@ -71,13 +72,14 @@ bool RsGxsIdSerialiser::serialise(RsItem *item, void *data, uint32_t *size)
 	{
 		return serialiseGxsIdCommentItem(com_item, data, size);
 	}
+	std::cerr << "RsGxsIdSerialiser::serialise() ERROR invalid item" << std::endl;
 	return false;
 }
 
 RsItem* RsGxsIdSerialiser::deserialise(void* data, uint32_t* size)
 {
 		
-#ifdef RSSERIAL_DEBUG
+#ifdef GXSID_DEBUG
 	std::cerr << "RsGxsIdSerialiser::deserialise()" << std::endl;
 #endif
 	/* get the type and size */
@@ -168,7 +170,7 @@ bool RsGxsIdSerialiser::serialiseGxsIdGroupItem(RsGxsIdGroupItem *item, void *da
 	if(*size < tlvsize)
 	{
 #ifdef GXSID_DEBUG
-		std::cerr << "RsGxsIdSerialiser::serialiseGxsIdGroupItem()" << std::endl;
+		std::cerr << "RsGxsIdSerialiser::serialiseGxsIdGroupItem() Size too small" << std::endl;
 #endif
 		return false;
 	}

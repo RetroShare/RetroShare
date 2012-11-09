@@ -1828,12 +1828,13 @@ RsTurtle *rsTurtle = NULL ;
 #include "services/p3wiki.h"
 #include "services/p3posted.h"
 #include "services/p3photoserviceV2.h"
+#include "services/p3gxsforums.h"
 
 // Not too many to convert now!
 #include "services/p3wikiserviceVEG.h"
 #include "services/p3wireVEG.h"
 //#include "services/p3idserviceVEG.h"
-#include "services/p3forumsVEG.h"
+//#include "services/p3forumsVEG.h"
 #endif
 
 #ifndef PQI_DISABLE_TUNNEL
@@ -2281,16 +2282,16 @@ int RsServer::StartupRetroShare()
 #ifdef ENABLE_GXS_SERVICES
 
 	// Testing New Cache Services.
-	p3WikiServiceVEG *mWikis = new p3WikiServiceVEG(RS_SERVICE_GXSV1_TYPE_WIKI);
-	pqih -> addService(mWikis);
+	//p3WikiServiceVEG *mWikis = new p3WikiServiceVEG(RS_SERVICE_GXSV1_TYPE_WIKI);
+	//pqih -> addService(mWikis);
 	
 	// Testing New Cache Services.
         p3WireVEG *mWire = new p3WireVEG(RS_SERVICE_GXSV1_TYPE_WIRE);
 	pqih -> addService(mWire);
 
 	// Testing New Cache Services.
-        p3ForumsVEG *mForumsV2 = new p3ForumsVEG(RS_SERVICE_GXSV1_TYPE_FORUMS);
-	pqih -> addService(mForumsV2);
+        //p3ForumsVEG *mForumsV2 = new p3ForumsVEG(RS_SERVICE_GXSV1_TYPE_FORUMS);
+	//pqih -> addService(mForumsV2);
 
 
         // TODO: temporary to store GXS service data, remove
@@ -2358,11 +2359,26 @@ int RsServer::StartupRetroShare()
 
         wiki_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
 
-        mWiki = new p3Wiki(posted_ds, NULL);
+        mWiki = new p3Wiki(wiki_ds, NULL);
 
         // create GXS photo service
         RsGxsNetService* wiki_ns = new RsGxsNetService(
                         RS_SERVICE_GXSV1_TYPE_WIKI, wiki_ds, nxsMgr, mWiki);
+
+        /**** Forum GXS service ****/
+
+        p3GxsForums *mGxsForums = NULL;
+
+        RsGeneralDataService* gxsforums_ds = new RsDataService("./" + mLinkMgr->getOwnId()+ "/", "gxsforums_db",
+                                                            RS_SERVICE_GXSV1_TYPE_FORUMS);
+
+        gxsforums_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
+
+        mGxsForums = new p3GxsForums(gxsforums_ds, NULL);
+
+        // create GXS photo service
+        RsGxsNetService* gxsforums_ns = new RsGxsNetService(
+                        RS_SERVICE_GXSV1_TYPE_FORUMS, gxsforums_ds, nxsMgr, mGxsForums);
 #endif
 
 #endif // ENABLE_GXS_SERVICES
@@ -2378,6 +2394,7 @@ int RsServer::StartupRetroShare()
         createThread(*mPhotoV2);
         createThread(*mPosted);
         createThread(*mWiki);
+        createThread(*mGxsForums);
 //
 //        mGxsCore->addService(mPhotoV2);
 //        mGxsCore->addService(mPosted);
@@ -2390,6 +2407,7 @@ int RsServer::StartupRetroShare()
         createThread(*photo_ns);
         createThread(*posted_ns);
         createThread(*wiki_ns);
+        createThread(*gxsforums_ns);
 #endif
 
         // now add to p3service
@@ -2398,6 +2416,7 @@ int RsServer::StartupRetroShare()
         pqih->addService(photo_ns);
         pqih->addService(posted_ns);
         pqih->addService(wiki_ns);
+        pqih->addService(gxsforums_ns);
 #endif
 
         // start up gxs core server
@@ -2669,10 +2688,11 @@ int RsServer::StartupRetroShare()
         rsWiki = mWiki;
         rsPosted = mPosted;
         rsPhotoV2 = mPhotoV2;
+        rsGxsForums = mGxsForums;
 #endif
 
         rsWireVEG = mWire;
-        rsForumsVEG = mForumsV2;
+        //rsForumsVEG = mForumsV2;
 
 #endif // ENABLE_GXS_SERVICES
 

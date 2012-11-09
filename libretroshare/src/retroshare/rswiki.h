@@ -108,6 +108,10 @@ class RsWikiComment
 	std::string mComment; 
 };
 
+std::ostream &operator<<(std::ostream &out, const RsWikiCollection &group);
+std::ostream &operator<<(std::ostream &out, const RsWikiSnapshot &shot);
+std::ostream &operator<<(std::ostream &out, const RsWikiComment &comment);
+
 
 class RsWiki: public RsGxsIfaceImpl
 {
@@ -125,6 +129,8 @@ virtual bool submitCollection(uint32_t &token, RsWikiCollection &collection) = 0
 virtual bool submitSnapshot(uint32_t &token, RsWikiSnapshot &snapshot) = 0;
 virtual bool submitComment(uint32_t &token, RsWikiComment &comment) = 0;
 
+	// for testing only.
+virtual void generateDummyData() = 0;
 
 };
 

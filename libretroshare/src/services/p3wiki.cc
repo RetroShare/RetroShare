@@ -26,6 +26,8 @@
 #include "services/p3wiki.h"
 #include "serialiser/rswikiitems.h"
 
+#include "util/rsrandom.h"
+
 /****
  * #define WIKI_DEBUG 1
  ****/
@@ -48,12 +50,18 @@ void p3Wiki::service_tick()
 
 void p3Wiki::notifyChanges(std::vector<RsGxsNotify*>& changes)
 {
+	std::cerr << "p3Wiki::notifyChanges() New stuff";
+	std::cerr << std::endl;
+
 	receiveChanges(changes);
 }
 
         /* Specific Service Data */
 bool p3Wiki::getCollections(const uint32_t &token, std::vector<RsWikiCollection> &collections)
 {
+	std::cerr << "p3Wiki::getCollections()";
+	std::cerr << std::endl;
+
 	std::vector<RsGxsGrpItem*> grpData;
 	bool ok = RsGenExchange::getGroupData(token, grpData);
 	
@@ -64,10 +72,25 @@ bool p3Wiki::getCollections(const uint32_t &token, std::vector<RsWikiCollection>
 		for(; vit != grpData.end(); vit++)
 		{
 			RsGxsWikiCollectionItem* item = dynamic_cast<RsGxsWikiCollectionItem*>(*vit);
-			RsWikiCollection collection = item->collection;
-			collection.mMeta = item->collection.mMeta;
-			delete item;
-			collections.push_back(collection);
+
+			if (item)
+			{
+				RsWikiCollection collection = item->collection;
+				collection.mMeta = item->meta;
+				delete item;
+				collections.push_back(collection);
+
+				std::cerr << "p3Wiki::getCollections() Adding Collection to Vector: ";
+				std::cerr << std::endl;
+				std::cerr << collection;
+				std::cerr << std::endl;
+			}
+			else
+			{
+				std::cerr << "Not a WikiCollectionItem, deleting!" << std::endl;
+				delete *vit;
+			}
+
 		}
 	}
 	return ok;
@@ -159,6 +182,15 @@ bool p3Wiki::submitCollection(uint32_t &token, RsWikiCollection &collection)
 	RsGxsWikiCollectionItem* collectionItem = new RsGxsWikiCollectionItem();
 	collectionItem->collection = collection;
 	collectionItem->meta = collection.mMeta;
+
+        std::cerr << "p3Wiki::submitCollection(): ";
+	std::cerr << std::endl;
+	std::cerr << collection;
+	std::cerr << std::endl;
+
+        std::cerr << "p3Wiki::submitCollection() pushing to RsGenExchange";
+	std::cerr << std::endl;
+
 	RsGenExchange::publishGroup(token, collectionItem);
 	return true;
 }
@@ -186,5 +218,66 @@ bool p3Wiki::submitComment(uint32_t &token, RsWikiComment &comment)
         RsGenExchange::publishMsg(token, commentItem);
 	return true;
 }
+
+
+
+std::ostream &operator<<(std::ostream &out, const RsWikiCollection &group)
+{
+        out << "RsWikiCollection [ ";
+        out << " Name: " << group.mMeta.mGroupName;
+        out << " Desc: " << group.mDescription;
+        out << " Category: " << group.mCategory;
+        out << " ]";
+        return out;
+}
+
+std::ostream &operator<<(std::ostream &out, const RsWikiSnapshot &shot)
+{
+        out << "RsWikiSnapshot [ ";
+        out << "Title: " << shot.mMeta.mMsgName;
+        out << "]";
+        return out;
+}
+
+std::ostream &operator<<(std::ostream &out, const RsWikiComment &comment)
+{
+        out << "RsWikiComment [ ";
+        out << "Title: " << comment.mMeta.mMsgName;
+        out << "]";
+        return out;
+}
+
+
+/***** FOR TESTING *****/
+
+std::string p3Wiki::genRandomId()
+{
+        std::string randomId;
+        for(int i = 0; i < 20; i++)
+        {
+                randomId += (char) ('a' + (RSRandom::random_u32() % 26));
+        }
+
+        return randomId;
+}
+
+void p3Wiki::generateDummyData()
+{
+
+#define GEN_COLLECTIONS		10
+
+        int i;
+        for(i = 0; i < GEN_COLLECTIONS; i++)
+        {
+		RsWikiCollection wiki;
+		wiki.mMeta.mGroupId = genRandomId();
+		wiki.mMeta.mGroupFlags = 0;
+		wiki.mMeta.mGroupName = genRandomId();
+
+		uint32_t dummyToken = 0;
+		submitCollection(dummyToken, wiki);
+	}
+}
+
 
 

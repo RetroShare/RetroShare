@@ -77,7 +77,7 @@ bool RsGxsWikiSerialiser::serialise(RsItem *item, void *data, uint32_t *size)
 RsItem* RsGxsWikiSerialiser::deserialise(void* data, uint32_t* size)
 {
 		
-#ifdef RSSERIAL_DEBUG
+#ifdef GXSID_DEBUG
 	std::cerr << "RsGxsWikiSerialiser::deserialise()" << std::endl;
 #endif
 	/* get the type and size */
