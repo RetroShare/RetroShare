@@ -16,7 +16,8 @@ class GroupFlagsWidget: public QWidget
 		FileStorageFlags flags() const ;
 		void setFlags(FileStorageFlags flags) ;
 
-		static QString groupInfoString(FileStorageFlags flags,const std::list<std::string>& groups) ;
+		static QString groupInfoString(FileStorageFlags flags, const QList<QString> &groupNames) ;
+
 	public slots:
 		void updated() ;
 

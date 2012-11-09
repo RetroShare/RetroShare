@@ -97,7 +97,7 @@ ShareDialog::ShareDialog(std::string filename, QWidget *parent)
                 ui.virtualpath_lineEdit->setText(QString::fromUtf8(it->virtualname.c_str()));
 
 					 groupflagsbox->setFlags(it->shareflags) ;
-                groupselectionbox->setSelectedGroups(it->parent_groups) ;
+				groupselectionbox->setSelectedGroupIds(it->parent_groups) ;
 
                 break;
             }
@@ -107,7 +107,9 @@ ShareDialog::ShareDialog(std::string filename, QWidget *parent)
 
 void ShareDialog::updateInfoMessage()
 {
-	messageBox->setText(GroupFlagsWidget::groupInfoString(groupflagsbox->flags(),groupselectionbox->selectedGroups())) ;
+	QList<QString> selectedGroupNames;
+	groupselectionbox->selectedGroupNames(selectedGroupNames);
+	messageBox->setText(GroupFlagsWidget::groupInfoString(groupflagsbox->flags(), selectedGroupNames)) ;
 }
 
 void ShareDialog::browseDirectory()
@@ -130,7 +132,7 @@ void ShareDialog::addDirectory()
     sdi.filename = ui.localpath_lineEdit->text().toUtf8().constData();
     sdi.virtualname = ui.virtualpath_lineEdit->text().toUtf8().constData();
     sdi.shareflags = groupflagsbox->flags() ;
-	 sdi.parent_groups = groupselectionbox->selectedGroups() ;
+    groupselectionbox->selectedGroupIds(sdi.parent_groups);
 
     if (ui.localpath_lineEdit->isEnabled()) 
 	 {

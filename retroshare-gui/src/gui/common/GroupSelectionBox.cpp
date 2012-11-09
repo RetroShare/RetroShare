@@ -1,43 +1,80 @@
 #include <retroshare/rspeers.h>
 #include "GroupSelectionBox.h"
+#include "GroupDefs.h"
+#include "gui/notifyqt.h"
+
+#include <algorithm>
+
+#define ROLE_ID Qt::UserRole
 
 GroupSelectionBox::GroupSelectionBox(QWidget *parent)
 	: QListWidget(parent)
 {
-	setSelectionMode(QAbstractItemView::ExtendedSelection) ;
+	setSelectionMode(QAbstractItemView::SingleSelection);
+
+	connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(fillGroups()));
 
 	// Fill with available groups
-	
-	std::list<RsGroupInfo> lst ;
-	rsPeers->getGroupInfoList(lst) ;
-
-	for(std::list<RsGroupInfo>::const_iterator it(lst.begin());it!=lst.end();++it)
-		addItem(QString::fromStdString(it->id)) ;
-
-	for(int i=0;i<count();++i)
-		item(i)->setBackgroundColor(QColor(183,236,181)) ;
+	fillGroups();
 }
 
-std::list<std::string> GroupSelectionBox::selectedGroups() const
+void GroupSelectionBox::fillGroups()
 {
-	QList<QListWidgetItem*> selected_items = selectedItems() ;
-	std::list<std::string> out ;
+	std::list<std::string> selectedIds;
+	selectedGroupIds(selectedIds);
 
-	for(QList<QListWidgetItem*>::const_iterator it(selected_items.begin());it!=selected_items.end();++it)
-	{
-		out.push_back((*it)->text().toStdString()) ;
-		std::cerr << "Addign selected item " << out.back() << std::endl;
+	clear();
+
+	std::list<RsGroupInfo> groupIds;
+	rsPeers->getGroupInfoList(groupIds);
+
+	for (std::list<RsGroupInfo>::const_iterator it(groupIds.begin()); it != groupIds.end(); ++it) {
+		QListWidgetItem *item = new QListWidgetItem(GroupDefs::name(*it));
+		item->setData(ROLE_ID, QString::fromStdString(it->id));
+		item->setBackgroundColor(QColor(183,236,181));
+		addItem(item);
 	}
 
-	return out ;
+	setSelectedGroupIds(selectedIds);
 }
 
-void GroupSelectionBox::setSelectedGroups(const std::list<std::string>& group_ids)
+void GroupSelectionBox::selectedGroupIds(std::list<std::string> &groupIds) const
 {
-	for(std::list<std::string>::const_iterator it(group_ids.begin());it!=group_ids.end();++it)
-	{
-		QList<QListWidgetItem*> lst = findItems(QString::fromStdString(*it),Qt::MatchExactly) ;
+	int itemCount = count();
 
-		setCurrentItem(*lst.begin(),QItemSelectionModel::Select) ;
+	for (int i = 0; i < itemCount; ++i) {
+		QListWidgetItem *listItem = item(i);
+		if (listItem->checkState() == Qt::Checked) {
+			groupIds.push_back(item(i)->data(ROLE_ID).toString().toStdString());
+			std::cerr << "Addign selected item " << groupIds.back() << std::endl;
+		}
+	}
+}
+
+void GroupSelectionBox::setSelectedGroupIds(const std::list<std::string>& groupIds)
+{
+	int itemCount = count();
+
+	for (int i = 0; i < itemCount; ++i) {
+		QListWidgetItem *listItem = item(i);
+
+		if (std::find(groupIds.begin(), groupIds.end(), listItem->data(ROLE_ID).toString().toStdString()) != groupIds.end()) {
+			listItem->setCheckState(Qt::Checked);
+		} else {
+			listItem->setCheckState(Qt::Unchecked);
+		}
+	}
+}
+
+void GroupSelectionBox::selectedGroupNames(QList<QString> &groupNames) const
+{
+	int itemCount = count();
+
+	for (int i = 0; i < itemCount; ++i) {
+		QListWidgetItem *listItem = item(i);
+		if (listItem->checkState() == Qt::Checked) {
+			groupNames.push_back(item(i)->text());
+			std::cerr << "Addign selected item " << groupNames.back().toUtf8().constData() << std::endl;
+		}
 	}
 }

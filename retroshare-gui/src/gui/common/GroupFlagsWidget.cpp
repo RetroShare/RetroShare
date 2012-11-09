@@ -119,24 +119,24 @@ void GroupFlagsWidget::update_button_state(bool b,int button_id)
 	}
 }
 
-QString GroupFlagsWidget::groupInfoString(FileStorageFlags flags,const std::list<std::string>& groups)
+QString GroupFlagsWidget::groupInfoString(FileStorageFlags flags, const QList<QString>& groupNames)
 {
 	// makes a string that explains how files are shared / visible.
 	
 	QString res ;
 	QString groups_string ;
 
-	for(std::list<std::string>::const_iterator it(groups.begin());it!=groups.end();++it)
+	for(QList<QString>::const_iterator it(groupNames.begin());it!=groupNames.end();++it)
 	{
-		if(it != groups.begin())
+		if(it != groupNames.begin())
 			groups_string += ", " ;
-		groups_string += QString::fromStdString(*it) ;
+		groups_string += *it ;
 	}
 	
 	if(flags & DIR_FLAGS_BROWSABLE_OTHERS)
 		res += tr("All your friends can browse this directory\n") ;
 	else if(flags & DIR_FLAGS_BROWSABLE_GROUPS) 
-		if(!groups.empty())
+		if(!groupNames.empty())
 			res += tr("Only friends in groups ") + groups_string + tr(" can browse this directory\n") ;
 		else
 			res += tr("No one can browse this directory\n") ;

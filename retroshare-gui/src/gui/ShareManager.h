@@ -60,6 +60,7 @@ private slots:
     void editShareDirectory();
     void removeShareDirectory();
     void updateFlags();
+    void updateGroups();
 
 private:
     static ShareManager *_instance;

@@ -28,11 +28,14 @@
 
 #include <retroshare/rsfiles.h>
 #include <retroshare/rstypes.h>
+#include <retroshare/rspeers.h>
 
 #include "ShareManager.h"
 #include "ShareDialog.h"
 #include "settings/rsharesettings.h"
 #include <gui/common/GroupFlagsWidget.h>
+#include "gui/common/GroupDefs.h"
+#include "gui/notifyqt.h"
 
 /* Images for context menu icons */
 #define IMAGE_CANCEL               ":/images/delete.png"
@@ -67,6 +70,8 @@ ShareManager::ShareManager()
 
     connect(ui.shareddirList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(shareddirListCostumPopupMenu(QPoint)));
     connect(ui.shareddirList, SIGNAL(currentCellChanged(int,int,int,int)), this, SLOT(shareddirListCurrentCellChanged(int,int,int,int)));
+
+    connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(updateGroups()));
 
     ui.editButton->setEnabled(false);
     ui.removeButton->setEnabled(false);
@@ -133,17 +138,7 @@ void ShareManager::load()
 		  listWidget->setRowHeight(row, 32);
 		  listWidget->setCellWidget(row, COLUMN_SHARE_FLAGS, widget);
 
-		  QString group_string ;
-		  int n=0;
-		  for(std::list<std::string>::const_iterator it2((*it).parent_groups.begin());it2!=(*it).parent_groups.end();++it2,++n)
-		  {
-			  if(n>0)
-				  group_string += ", " ;
-
-			  group_string += QString::fromStdString(*it2) ;
-		  }
-
-		  listWidget->setItem(row, COLUMN_GROUPS, new QTableWidgetItem(group_string)) ;
+		  listWidget->setItem(row, COLUMN_GROUPS, new QTableWidgetItem()) ;
 		  listWidget->item(row,COLUMN_GROUPS)->setBackgroundColor(QColor(183,236,181)) ;
 
 		  connect(widget,SIGNAL(flagsChanged(FileStorageFlags)),this,SLOT(updateFlags())) ;
@@ -157,6 +152,7 @@ void ShareManager::load()
     update();
 
     isLoading = false ;
+    updateGroups();
 }
 
 void ShareManager::showYourself()
@@ -203,6 +199,38 @@ void ShareManager::updateFlags()
 
             std::cout << "Updating share flags for directory " << (*it).filename << " to " << current_flags << std::endl ;
         }
+    }
+}
+
+void ShareManager::updateGroups()
+{
+    if(isLoading)
+        return ;
+
+    std::cerr << "Updating groups" << std::endl;
+
+    std::list<SharedDirInfo>::iterator it;
+    std::list<SharedDirInfo> dirs;
+    rsFiles->getSharedDirectories(dirs);
+
+    int row=0 ;
+    for(it = dirs.begin(); it != dirs.end(); it++,++row)
+    {
+        QTableWidgetItem *item = ui.shareddirList->item(row, COLUMN_GROUPS);
+
+        QString group_string;
+        int n = 0;
+        for (std::list<std::string>::const_iterator it2((*it).parent_groups.begin());it2!=(*it).parent_groups.end();++it2,++n)
+        {
+            if (n>0)
+                group_string += ", " ;
+
+            RsGroupInfo groupInfo;
+            rsPeers->getGroupInfo(*it2, groupInfo);
+            group_string += GroupDefs::name(groupInfo);
+        }
+
+        item->setText(group_string);
     }
 }
 
