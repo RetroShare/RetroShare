@@ -31,9 +31,6 @@
 
 #include "serialiser/rstlvkeys.h"
 
-//#include <openssl/ssl.h>
-//#include <set>
-
 /*!
  * GIXP: General Identity Exchange Service.
  *

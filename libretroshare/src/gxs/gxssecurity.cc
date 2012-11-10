@@ -74,90 +74,102 @@ bool GxsSecurity::getSignature(char* data, uint32_t data_len, RsTlvSecurityKey* 
 	return ok;
 }
 
-bool GxsSecurity::validateNxsMsg(RsNxsMsg *msg, RsTlvKeySignature& sign, RsTlvSecurityKeySet& key)
+bool GxsSecurity::validateNxsMsg(RsNxsMsg& msg, RsTlvKeySignature& sign, RsTlvSecurityKey& key)
 {
-    //#ifdef GXS_SECURITY_DEBUG
-    //        std::cerr << "GxsSecurity::validateNxsMsg()";
-    //        std::cerr << std::endl;
-    //        std::cerr << "RsNxsMsg :";
-    //        std::cerr << std::endl;
-    //        msg->print(std::cerr, 10);
-    //        std::cerr << std::endl;
-    //#endif
+    #ifdef GXS_SECURITY_DEBUG
+            std::cerr << "GxsSecurity::validateNxsMsg()";
+            std::cerr << std::endl;
+            std::cerr << "RsNxsMsg :";
+            std::cerr << std::endl;
+            msg.print(std::cerr, 10);
+            std::cerr << std::endl;
+    #endif
 
+            RsGxsMsgMetaData& msgMeta = *(msg.metaData);
 
     //        /********************* check signature *******************/
 
-    //        /* check signature timeperiod */
-    //        if ((newMsg->timestamp < kit->second.startTS) ||
-    //                (newMsg->timestamp > kit->second.endTS))
-    //        {
-    //#ifdef DISTRIB_DEBUG
-    //                std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() TS out of range";
-    //                std::cerr << std::endl;
-    //#endif
-    //                return false;
-    //        }
+            /* check signature timeperiod */
+            if ((msgMeta.mPublishTs < key.startTS) ||
+                    (msgMeta.mPublishTs > key.endTS))
+            {
+    #ifdef GXS_SECURITY_DEBUG
+                    std::cerr << " GxsSecurity::validateNxsMsg() TS out of range";
+                    std::cerr << std::endl;
+    #endif
+                    return false;
+            }
 
-    //        /* decode key */
-    //        const unsigned char *keyptr = (const unsigned char *) kit->second.keyData.bin_data;
-    //        long keylen = kit->second.keyData.bin_len;
-    //        unsigned int siglen = newMsg->publishSignature.signData.bin_len;
-    //        unsigned char *sigbuf = (unsigned char *) newMsg->publishSignature.signData.bin_data;
+            /* decode key */
+            const unsigned char *keyptr = (const unsigned char *) key.keyData.bin_data;
+            long keylen = key.keyData.bin_len;
+            unsigned int siglen = sign.signData.bin_len;
+            unsigned char *sigbuf = (unsigned char *) sign.signData.bin_data;
 
-    //#ifdef DISTRIB_DEBUG
-    //        std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Decode Key";
-    //        std::cerr << " keylen: " << keylen << " siglen: " << siglen;
-    //        std::cerr << std::endl;
-    //#endif
+    #ifdef DISTRIB_DEBUG
+            std::cerr << "GxsSecurity::validateNxsMsg() Decode Key";
+            std::cerr << " keylen: " << keylen << " siglen: " << siglen;
+            std::cerr << std::endl;
+    #endif
 
-    //        /* extract admin key */
-    //        RSA *rsakey = d2i_RSAPublicKey(NULL, &(keyptr), keylen);
+            /* extract admin key */
+            RSA *rsakey = d2i_RSAPublicKey(NULL, &(keyptr), keylen);
 
-    //        if (!rsakey)
-    //        {
-    //#ifdef DISTRIB_DEBUG
-    //                std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg()";
-    //                std::cerr << " Invalid RSA Key";
-    //                std::cerr << std::endl;
+            if (!rsakey)
+            {
+    #ifdef GXS_SECURITY_DEBUG
+                    std::cerr << "GxsSecurity::validateNxsMsg()";
+                    std::cerr << " Invalid RSA Key";
+                    std::cerr << std::endl;
 
-    //                unsigned long err = ERR_get_error();
-    //                std::cerr << "RSA Load Failed .... CODE(" << err << ")" << std::endl;
-    //                std::cerr << ERR_error_string(err, NULL) << std::endl;
-
-    //                kit->second.print(std::cerr, 10);
-    //#endif
-    //        }
+                    key.print(std::cerr, 10);
+    #endif
+            }
 
 
-    //        EVP_PKEY *signKey = EVP_PKEY_new();
-    //        EVP_PKEY_assign_RSA(signKey, rsakey);
+            RsTlvKeySignatureSet signSet = msgMeta.signSet;
+            msgMeta.signSet.TlvClear();
 
-    //        /* calc and check signature */
-    //        EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
+            uint32_t metaDataLen = msgMeta.serial_size();
+            uint32_t allMsgDataLen = metaDataLen + msg.msg.bin_len;
+            char* metaData = new char[metaDataLen];
+            char* allMsgData = new char[allMsgDataLen]; // msgData + metaData
 
-    //        EVP_VerifyInit(mdctx, EVP_sha1());
-    //        EVP_VerifyUpdate(mdctx, newMsg->packet.bin_data, newMsg->packet.bin_len);
-    //        int signOk = EVP_VerifyFinal(mdctx, sigbuf, siglen, signKey);
+            msgMeta.serialise(metaData, &metaDataLen);
 
-    //        /* clean up */
-    //        EVP_PKEY_free(signKey);
-    //        EVP_MD_CTX_destroy(mdctx);
+            // copy msg data and meta in allmsgData buffer
+            memcpy(allMsgData, msg.msg.bin_data, msg.msg.bin_len);
+            memcpy(allMsgData+(msg.msg.bin_len), metaData, metaDataLen);
 
 
-    //        if (signOk == 1)
-    //        {
-    //#ifdef GXS_SECURITY_DEBUG
-    //                std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Signature OK";
-    //                std::cerr << std::endl;
-    //#endif
-    //                return true;
-    //        }
+            EVP_PKEY *signKey = EVP_PKEY_new();
+            EVP_PKEY_assign_RSA(signKey, rsakey);
 
-    //#ifdef DISTRIB_DEBUG
-    //        std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Signature invalid";
-    //        std::cerr << std::endl;
-    //#endif
+            /* calc and check signature */
+            EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
+
+            EVP_VerifyInit(mdctx, EVP_sha1());
+            EVP_VerifyUpdate(mdctx, allMsgData, allMsgDataLen);
+            int signOk = EVP_VerifyFinal(mdctx, sigbuf, siglen, signKey);
+
+            /* clean up */
+            EVP_PKEY_free(signKey);
+            EVP_MD_CTX_destroy(mdctx);
+
+
+            if (signOk == 1)
+            {
+    #ifdef GXS_SECURITY_DEBUG
+                    std::cerr << "GxsSecurity::validateNxsMsg() Signature OK";
+                    std::cerr << std::endl;
+    #endif
+                    return true;
+            }
+
+    #ifdef GXS_SECURITY_DEBUG
+            std::cerr << "GxsSecurity::validateNxsMsg() Signature invalid";
+            std::cerr << std::endl;
+    #endif
 
 	return false;
 }

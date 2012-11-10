@@ -79,8 +79,10 @@ std::ostream &operator<<(std::ostream &out, const RsPhotoAlbum &album)
         return out;
 }
 
-p3PhotoServiceV2::p3PhotoServiceV2(RsGeneralDataService* gds, RsNetworkExchangeService* nes)
-    : RsGenExchange(gds, nes, new RsGxsPhotoSerialiser(), RS_SERVICE_GXSV1_TYPE_PHOTO), mPhotoMutex(std::string("Photo Mutex"))
+p3PhotoServiceV2::p3PhotoServiceV2(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs* gixs,
+                                   uint32_t authenPolicy)
+    : RsGenExchange(gds, nes, new RsGxsPhotoSerialiser(), RS_SERVICE_GXSV1_TYPE_PHOTO, gixs, authenPolicy),
+    mPhotoMutex(std::string("Photo Mutex"))
 {
 
     // create dummy grps

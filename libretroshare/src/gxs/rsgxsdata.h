@@ -112,6 +112,7 @@ public:
 
     uint32_t    mMsgStatus;
     time_t      mChildTs;
+    bool validated;
 
 };
 

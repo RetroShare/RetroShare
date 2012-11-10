@@ -363,8 +363,8 @@ void RsGxsNetService::run(){
 
 bool RsGxsNetService::locked_checkTransacTimedOut(NxsTransaction* tr)
 {
-    return tr->mTimeOut < ((uint32_t) time(NULL));
-    // return false;
+   // return tr->mTimeOut < ((uint32_t) time(NULL));
+     return false;
 }
 
 void RsGxsNetService::processTransactions(){

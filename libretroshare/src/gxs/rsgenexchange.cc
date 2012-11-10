@@ -34,10 +34,23 @@
 #include "gxssecurity.h"
 #include "util/contentvalue.h"
 #include "rsgxsflags.h"
+#include "rsgixs.h"
 
-RsGenExchange::RsGenExchange(RsGeneralDataService *gds,
-                             RsNetworkExchangeService *ns, RsSerialType *serviceSerialiser, uint16_t servType, RsGixs* gixs)
-: mGenMtx("GenExchange"), mDataStore(gds), mNetService(ns), mSerialiser(serviceSerialiser), mServType(servType), mGixs(gixs)
+
+#define PUB_GRP_MASK 0x000f
+#define RESTR_GRP_MASK 0x00f0
+#define PRIV_GRP_MASK 0x0f00
+#define GRP_OPTIONS_MASK 0xf000
+
+#define PUB_GRP_OFFSET 0
+#define RESTR_GRP_OFFSET 8
+#define PRIV_GRP_OFFSET 16
+#define GRP_OPTIONS_OFFSET 24
+
+RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService *ns,
+                             RsSerialType *serviceSerialiser, uint16_t servType, RsGixs* gixs, uint32_t authenPolicy)
+: mGenMtx("GenExchange"), mDataStore(gds), mNetService(ns), mSerialiser(serviceSerialiser),
+    mServType(servType), mGixs(gixs), mAuthenPolicy(authenPolicy)
 {
 
     mDataAccess = new RsGxsDataAccess(gds);
@@ -60,7 +73,7 @@ RsGenExchange::~RsGenExchange()
 void RsGenExchange::run()
 {
 
-    double timeDelta = 0.06; // slow tick
+    double timeDelta = 0.1; // slow tick
 
     while(true)
     {
@@ -145,7 +158,7 @@ void RsGenExchange::generateGroupKeys(RsTlvSecurityKeySet& keySet)
 {
     /* create Keys */
 
-	// admin keys
+    // admin keys
     RSA *rsa_admin = RSA_generate_key(2048, 65537, NULL, NULL);
     RSA *rsa_admin_pub = RSAPublicKey_dup(rsa_admin);
 
@@ -168,13 +181,13 @@ void RsGenExchange::generateGroupKeys(RsTlvSecurityKeySet& keySet)
     adminKey.startTS = time(NULL);
     adminKey.endTS = 0; /* no end */
 
-    privAdminKey.startTS = time(NULL);
+    privAdminKey.startTS = adminKey.startTS;
     privAdminKey.endTS = 0; /* no end */
 
-    pubKey.startTS = time(NULL);
-    pubKey.endTS = 0; /* no end */
+    pubKey.startTS = adminKey.startTS;
+    pubKey.endTS = pubKey.startTS + 60 * 60 * 24 * 365 * 5; /* approx 5 years */
 
-    privPubKey.startTS = time(NULL);
+    privPubKey.startTS = adminKey.startTS;
     privPubKey.endTS = 0; /* no end */
 
     // for now all public
@@ -354,6 +367,160 @@ bool RsGenExchange::createMessage(RsNxsMsg* msg)
 	return ok;
 }
 
+bool RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSecurityKeySet& grpKeySet)
+{
+    bool isParent = false;
+    bool checkPublishSign, checkIdentitySign;
+    bool valid = true;
+
+    // publish signature is determined by whether group is public or not
+    // for private group signature is not needed as it needs decrypting with
+    // the private publish key anyways
+
+    // restricted is a special case which heeds whether publish sign needs to be checked or not
+    // one may or may not want
+
+    if(msg->metaData->mParentId.empty())
+    {
+        isParent = false;
+    }
+    else
+    {
+        isParent = true;
+    }
+
+
+    if(isParent)
+    {
+        checkIdentitySign = false;
+        checkPublishSign = false;
+
+        if(grpFlag & GXS_SERV::FLAG_PRIVACY_PUBLIC)
+        {
+            checkPublishSign = false;
+
+            if(checkMsgAuthenFlag(PUBLIC_GRP_BITS, GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN))
+                checkIdentitySign = true;
+
+        }
+        else if(grpFlag & GXS_SERV::FLAG_PRIVACY_RESTRICTED)
+        {
+            checkPublishSign = true;
+
+            if(checkMsgAuthenFlag(RESTRICTED_GRP_BITS, GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN))
+                checkIdentitySign = true;
+        }
+        else if(grpFlag & GXS_SERV::FLAG_PRIVACY_PRIVATE)
+        {
+            checkPublishSign = false;
+
+            if(checkMsgAuthenFlag(PRIVATE_GRP_BITS, GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN))
+                checkIdentitySign = true;
+        }
+
+    }else
+    {
+        if(grpFlag & GXS_SERV::FLAG_PRIVACY_PUBLIC)
+        {
+            checkPublishSign = false;
+
+            if(checkMsgAuthenFlag(PUBLIC_GRP_BITS, GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN))
+                checkIdentitySign = true;
+
+        }
+        else if(grpFlag & GXS_SERV::FLAG_PRIVACY_RESTRICTED)
+        {
+            if(checkMsgAuthenFlag(RESTRICTED_GRP_BITS, GXS_SERV::MSG_AUTHEN_CHILD_PUBLISH_SIGN))
+                checkPublishSign = true;
+
+            if(checkMsgAuthenFlag(RESTRICTED_GRP_BITS, GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN))
+                checkIdentitySign = true;
+        }
+        else if(grpFlag & GXS_SERV::FLAG_PRIVACY_PRIVATE)
+        {
+            checkPublishSign = false;
+
+            if(checkMsgAuthenFlag(PRIVATE_GRP_BITS, GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN))
+                checkIdentitySign = true;
+        }
+    }
+
+    RsGxsMsgMetaData& metaData = *(msg->metaData);
+
+    if(checkPublishSign)
+    {
+        RsTlvKeySignature sign = metaData.signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_PUBLISH];
+
+        if(grpKeySet.keys.find(sign.keyId) != grpKeySet.keys.end())
+        {
+            RsTlvSecurityKey publishKey = grpKeySet.keys[sign.keyId];
+            valid &= GxsSecurity::validateNxsMsg(*msg, sign, publishKey);
+        }
+        else
+        {
+            valid = false;
+        }
+
+    }
+
+
+    if(checkIdentitySign)
+    {
+        bool haveKey = mGixs->haveKey(metaData.mAuthorId);
+
+        if(haveKey)
+        {
+            std::list<std::string> peers;
+            mGixs->requestKey(metaData.mAuthorId, peers);
+
+            RsTlvSecurityKey authorKey;
+
+            double timeDelta = 0.002; // fast polling
+            time_t now = time(NULL);
+            // poll immediately but, don't spend more than a second polling
+            while( (mGixs->getKey(metaData.mAuthorId, authorKey) == -1) &&
+                   ((now + 1) >> time(NULL))
+                )
+            {
+#ifndef WINDOWS_SYS
+        usleep((int) (timeDelta * 1000000));
+#else
+        Sleep((int) (timeDelta * 1000));
+#endif
+            }
+
+            RsTlvKeySignature sign = metaData.signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_PUBLISH];
+            valid &= GxsSecurity::validateNxsMsg(*msg, sign, authorKey);
+        }else
+        {
+            valid = false;
+        }
+    }
+
+    return valid;
+}
+
+bool RsGenExchange::checkMsgAuthenFlag(const PrivacyBitPos& pos, const uint8_t& flag) const
+{
+    switch(pos)
+    {
+        case PUBLIC_GRP_BITS:
+            return mAuthenPolicy & flag;
+            break;
+        case RESTRICTED_GRP_BITS:
+            return flag & (mAuthenPolicy >> RESTR_GRP_OFFSET);
+            break;
+        case PRIVATE_GRP_BITS:
+            return  flag & (mAuthenPolicy >> PRIV_GRP_OFFSET);
+            break;
+        case GRP_OPTION_BITS:
+            return  flag & (mAuthenPolicy >> GRP_OPTIONS_OFFSET);
+            break;
+        default:
+            std::cerr << "pos option not recognised";
+            return false;
+    }
+}
 
 bool RsGenExchange::getGroupList(const uint32_t &token, std::list<RsGxsGroupId> &groupIds)
 {
@@ -493,6 +660,36 @@ RsTokenService* RsGenExchange::getTokenService()
     return mDataAccess;
 }
 
+
+bool RsGenExchange::setAuthenPolicyFlag(const uint8_t &msgFlag, uint32_t& authenFlag, const PrivacyBitPos &pos)
+{
+    uint32_t temp = 0;
+    temp = msgFlag;
+
+    switch(pos)
+    {
+        case PUBLIC_GRP_BITS:
+            authenFlag &= ~PUB_GRP_MASK;
+            authenFlag |= temp;
+            break;
+        case RESTRICTED_GRP_BITS:
+            authenFlag &= ~RESTR_GRP_MASK;
+            authenFlag |= (temp << RESTR_GRP_OFFSET);
+            break;
+        case PRIVATE_GRP_BITS:
+            authenFlag &= ~PRIV_GRP_MASK;
+            authenFlag |= (temp << PRIV_GRP_OFFSET);
+            break;
+        case GRP_OPTION_BITS:
+            authenFlag &= ~GRP_OPTIONS_MASK;
+            authenFlag |= (temp << GRP_OPTIONS_OFFSET);
+            break;
+        default:
+            std::cerr << "pos option not recognised";
+            return false;
+    }
+    return true;
+}
 
 void RsGenExchange::notifyNewGroups(std::vector<RsNxsGrp *> &groups)
 {
@@ -953,7 +1150,18 @@ void RsGenExchange::processRecvdMessages()
     GxsMsgReq msgIds;
     std::map<RsNxsMsg*, RsGxsMsgMetaData*> msgs;
 
+    std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMetas;
+
+    // coalesce group meta retrieval for performance
     for(; vit != mReceivedMsgs.end(); vit++)
+    {
+        RsNxsMsg* msg = *vit;
+        grpMetas.insert(std::make_pair(msg->grpId, (RsGxsGrpMetaData*)NULL));
+    }
+
+    mDataStore->retrieveGxsGrpMetaData(grpMetas);
+
+    for(vit = mReceivedMsgs.begin(); vit != mReceivedMsgs.end(); vit++)
     {
         RsNxsMsg* msg = *vit;
         RsGxsMsgMetaData* meta = new RsGxsMsgMetaData();
@@ -961,10 +1169,25 @@ void RsGenExchange::processRecvdMessages()
 
         if(ok)
         {
-            msgs.insert(std::make_pair(msg, meta));
-            msgIds[msg->grpId].push_back(msg->msgId);
+            std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMetas.find(msg->grpId);
+
+            // validate msg
+            if(mit != grpMetas.end()){
+                RsGxsGrpMetaData* grpMeta = mit->second;
+                ok = true;
+                     //&= validateMsg(msg, grpMeta->mGroupFlags, grpMeta->keys);
+            }
+            else
+                ok = false;
+
+            if(ok)
+            {
+                msgs.insert(std::make_pair(msg, meta));
+                msgIds[msg->grpId].push_back(msg->msgId);
+            }
         }
-        else
+
+        if(!ok)
         {
 #ifdef GXS_GENX_DEBUG
             std::cerr << "failed to deserialise incoming meta, grpId: "
@@ -973,6 +1196,14 @@ void RsGenExchange::processRecvdMessages()
             delete msg;
             delete meta;
         }
+    }
+
+    std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMetas.begin();
+
+    // clean up resources
+    for(; mit != grpMetas.end(); mit++)
+    {
+        delete mit->second;
     }
 
     if(!msgIds.empty())

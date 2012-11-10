@@ -129,7 +129,7 @@ public:
          * @param key the public key to use to check signature
          * @return false if verfication of signature is not passed
          */
-        static bool validateNxsMsg(RsNxsMsg *msg, RsTlvKeySignature& sign, RsTlvSecurityKeySet& key);
+        static bool validateNxsMsg(RsNxsMsg& msg, RsTlvKeySignature& sign, RsTlvSecurityKey& key);
 
 
         /*!

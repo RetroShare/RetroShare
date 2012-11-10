@@ -41,7 +41,6 @@ typedef std::map<RsGxsGroupId, std::vector<RsGxsMsgItem*> > GxsMsgDataMap;
 typedef std::map<RsGxsGroupId, RsGxsGrpItem*> GxsGroupDataMap;
 typedef std::map<RsGxsGroupId, std::vector<RsMsgMetaData> > GxsMsgMetaMap;
 
-
 /*!
  * This should form the parent class to \n
  * all gxs services. This provides access to service's msg/grp data \n
@@ -76,10 +75,12 @@ public:
      * @param serviceSerialiser The users service needs this \n
      *        in order for gen exchange to deal with its data types
      * @param mServType This should be service type used by the serialiser
-     * @param This is used for verification of msgs and groups received by Gen Exchange using identities, set to NULL if \n
+     * @param gixs This is used for verification of msgs and groups received by Gen Exchange using identities, set to NULL if \n
      *        identity verification is not wanted
+     * @param authenPolicy This determines the authentication used for verfying authorship of msgs and groups
      */
-    RsGenExchange(RsGeneralDataService* gds, RsNetworkExchangeService* ns, RsSerialType* serviceSerialiser, uint16_t mServType, RsGixs* gixs = NULL);
+    RsGenExchange(RsGeneralDataService* gds, RsNetworkExchangeService* ns,
+                  RsSerialType* serviceSerialiser, uint16_t mServType, RsGixs* gixs = NULL, uint32_t authenPolicy = 0);
 
     virtual ~RsGenExchange();
 
@@ -118,6 +119,21 @@ public:
     RsTokenService* getTokenService();
 
     void run();
+
+    /*!
+     * Policy bit pattern portion
+     */
+    enum PrivacyBitPos { PUBLIC_GRP_BITS, RESTRICTED_GRP_BITS, PRIVATE_GRP_BITS, GRP_OPTION_BITS } ;
+
+    /*!
+     * Convenience function for setting bit patterns of the individual privacy level authentication
+     * policy and group options
+     * @param flag the bit pattern (and policy) set for the privacy policy
+     * @param authenFlag Only the policy portion chosen will be modified with 'flag'
+     * @param pos The policy portion to modify
+     * @see PrivacyBitPos
+     */
+    static bool setAuthenPolicyFlag(const uint8_t& flag, uint32_t& authenFlag, const PrivacyBitPos& pos);
 
 public:
 
@@ -382,7 +398,6 @@ private:
      */
     bool createMessage(RsNxsMsg* msg);
 
-
     /*!
      * check meta change is legal
      * @return false if meta change is not legal
@@ -394,6 +409,17 @@ private:
      * @param keySet this is set generated keys
      */
     void generateGroupKeys(RsTlvSecurityKeySet& keySet);
+
+    /*!
+     * Attempts to validate msg
+     * @param msg message to be validated
+     * @param grpFlag the flag for the group the message belongs to
+     * @param grpKeySet
+     * @return true if msg validates, false otherwise
+     */
+    bool validateMsg(RsNxsMsg* msg, const uint32_t& grpFlag, RsTlvSecurityKeySet& grpKeySet);
+
+    bool checkMsgAuthenFlag(const PrivacyBitPos& pos, const uint8_t& flag) const;
 
 private:
 
@@ -421,6 +447,9 @@ private:
 
     /// service type
     uint16_t mServType;
+
+    /// authentication policy
+    uint32_t mAuthenPolicy;
 
 
 private:

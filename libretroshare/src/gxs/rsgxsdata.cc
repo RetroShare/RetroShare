@@ -149,7 +149,6 @@ uint32_t RsGxsMsgMetaData::serial_size()
     s += GetTlvStringSize(mParentId);
     s += GetTlvStringSize(mOrigMsgId);
     s += GetTlvStringSize(mAuthorId);
-    s += GetTlvStringSize(mServiceString);
 
     s += signSet.TlvSize();
     s += GetTlvStringSize(mMsgName);
@@ -206,7 +205,6 @@ bool RsGxsMsgMetaData::serialise(void *data, uint32_t *size)
     ok &= SetTlvString(data, *size, &offset, 0, mParentId);
     ok &= SetTlvString(data, *size, &offset, 0, mOrigMsgId);
     ok &= SetTlvString(data, *size, &offset, 0, mAuthorId);
-    ok &= SetTlvString(data, *size, &offset, 0, mServiceString);
 
     ok &= signSet.SetTlv(data, *size, &offset);
     ok &= SetTlvString(data, *size, &offset, 0, mMsgName);
@@ -234,7 +232,6 @@ bool RsGxsMsgMetaData::deserialise(void *data, uint32_t *size)
     ok &= GetTlvString(data, *size, &offset, 0, mParentId);
     ok &= GetTlvString(data, *size, &offset, 0, mOrigMsgId);
     ok &= GetTlvString(data, *size, &offset, 0, mAuthorId);
-    ok &= GetTlvString(data, *size, &offset, 0, mServiceString);
 
     ok &= signSet.GetTlv(data, *size, &offset);
     ok &= GetTlvString(data, *size, &offset, 0, mMsgName);

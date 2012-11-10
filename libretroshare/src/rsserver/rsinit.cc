@@ -1818,9 +1818,9 @@ RsTurtle *rsTurtle = NULL ;
 
 #ifdef ENABLE_GXS_CORE
 #include "gxs/gxscoreserver.h"
-
 #include "gxs/rsdataservice.h"
 #include "gxs/rsgxsnetservice.h"
+#include "gxs/rsgxsflags.h"
 #endif
 
 #ifdef ENABLE_GXS_SERVICES
@@ -2319,6 +2319,20 @@ int RsServer::StartupRetroShare()
 #if ENABLE_OTHER_GXS_SERVICES
         /**** Photo service ****/
 
+        // create photo authentication policy
+
+        uint32_t photoAuthenPolicy = 0;
+
+        uint8_t flag = 0;
+
+        flag = GXS_SERV::MSG_AUTHEN_ROOT_PUBLISH_SIGN;
+        RsGenExchange::setAuthenPolicyFlag(flag, photoAuthenPolicy,
+                                           RsGenExchange::RESTRICTED_GRP_BITS);
+
+        flag = GXS_SERV::GRP_OPTION_AUTHEN_AUTHOR_SIGN;
+        RsGenExchange::setAuthenPolicyFlag(flag, photoAuthenPolicy,
+                                           RsGenExchange::GRP_OPTION_BITS);
+
         p3PhotoServiceV2 *mPhotoV2 = NULL;
 
 
@@ -2327,8 +2341,9 @@ int RsServer::StartupRetroShare()
 
         photo_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
 
+
         // init gxs services
-        mPhotoV2 = new p3PhotoServiceV2(photo_ds, NULL);
+        mPhotoV2 = new p3PhotoServiceV2(photo_ds, NULL, mGxsIdService, photoAuthenPolicy);
 
         // create GXS photo service
         RsGxsNetService* photo_ns = new RsGxsNetService(

@@ -4,6 +4,7 @@
 #include "ui_AlbumCreateDialog.h"
 
 #include "util/misc.h"
+#include "gxs/rsgxsflags.h"
 
 AlbumCreateDialog::AlbumCreateDialog(TokenQueue *photoQueue, RsPhotoV2 *rs_photo, QWidget *parent):
     QDialog(parent),
@@ -20,6 +21,10 @@ AlbumCreateDialog::~AlbumCreateDialog()
     delete ui;
 }
 
+#define PUBLIC_INDEX 0
+#define RESTRICTED_INDEX 1
+#define PRIVATE_INDEX 2
+
 void AlbumCreateDialog::publishAlbum()
 {
     // get fields for album to publish, publish and then exit dialog
@@ -32,6 +37,22 @@ void AlbumCreateDialog::publishAlbum()
     album.mWhere = ui->lineEdit_Where->text().toStdString();
     album.mPhotographer = ui->lineEdit_Photographer->text().toStdString();
     getAlbumThumbnail(album.mThumbnail);
+
+
+    int currIndex = ui->privacyComboBox->currentIndex();
+
+    switch(currIndex)
+    {
+        case PUBLIC_INDEX:
+            album.mMeta.mGroupFlags |= GXS_SERV::FLAG_PRIVACY_PUBLIC;
+            break;
+        case RESTRICTED_INDEX:
+            album.mMeta.mGroupFlags |= GXS_SERV::FLAG_PRIVACY_RESTRICTED;
+            break;
+        case PRIVATE_INDEX:
+            album.mMeta.mGroupFlags |= GXS_SERV::FLAG_PRIVACY_PRIVATE;
+            break;
+    }
 
     uint32_t token;
     mRsPhoto->submitAlbumDetails(token, album);

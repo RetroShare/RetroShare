@@ -51,16 +51,35 @@ namespace GXS_SERV {
 
     /** END authentication **/
 
+    /** START msg authentication flags **/
+
+    static const uint8_t MSG_AUTHEN_MASK = 0x0f;
+
+    static const uint8_t MSG_AUTHEN_ROOT_PUBLISH_SIGN = 0x01;
+
+    static const uint8_t MSG_AUTHEN_CHILD_PUBLISH_SIGN = 0x02;
+
+    static const uint8_t MSG_AUTHEN_ROOT_AUTHOR_SIGN = 0x04;
+
+    static const uint8_t MSG_AUTHEN_CHILD_AUTHOR_SIGN = 0x08;
+
+    /** END msg authentication flags **/
+
+    /** START group options flag **/
+
+    static const uint8_t GRP_OPTION_AUTHEN_AUTHOR_SIGN = 0x01;
+
+    /** END group options flag **/
 
     /** START Subscription Flags. (LOCAL) **/
 
-    static const uint32_t GROUP_SUBSCRIBE_ADMIN = 0x00000001;
+    static const uint32_t GROUP_SUBSCRIBE_ADMIN = 0x01;
 
-    static const uint32_t GROUP_SUBSCRIBE_PUBLISH = 0x00000002;
+    static const uint32_t GROUP_SUBSCRIBE_PUBLISH = 0x02;
 
-    static const uint32_t GROUP_SUBSCRIBE_SUBSCRIBED = 0x00000004;
+    static const uint32_t GROUP_SUBSCRIBE_SUBSCRIBED = 0x04;
 
-    static const uint32_t GROUP_SUBSCRIBE_NOT_SUBSCRIBED = 0x00000008;
+    static const uint32_t GROUP_SUBSCRIBE_NOT_SUBSCRIBED = 0x08;
 
     static const uint32_t GROUP_SUBSCRIBE_MASK = 0x0000000f;
 

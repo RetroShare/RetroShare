@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>465</width>
-    <height>356</height>
+    <height>365</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -198,7 +198,7 @@ border-radius: 10px;
        </property>
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="0">
-         <widget class="QComboBox" name="comboBox_3">
+         <widget class="QComboBox" name="privacyComboBox">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -208,11 +208,6 @@ border-radius: 10px;
           <item>
            <property name="text">
             <string>Public</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>All Friends</string>
            </property>
           </item>
           <item>
