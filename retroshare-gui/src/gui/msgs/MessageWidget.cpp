@@ -536,8 +536,7 @@ void MessageWidget::fill(const std::string &msgId)
 	{
 		QDateTime qtime;
 		qtime.setTime_t(msgInfo.ts);
-		QString timestamp = qtime.toString("dd.MM.yyyy hh:mm:ss");
-		ui.dateText->setText(timestamp);
+		ui.dateText->setText(qtime.toString(Qt::DefaultLocaleShortDate));
 	}
 
 	std::string ownId = rsPeers->getOwnId();

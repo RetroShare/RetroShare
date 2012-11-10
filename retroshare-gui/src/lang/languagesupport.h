@@ -42,6 +42,8 @@ public:
   static QStringList languageNames();
   /** Returns a list of all supported language codes and names. */
   static QMap<QString, QString> languages();
+  /** Returns a list of all supported language codes and locales. */
+  static QMap<QString, QLocale> locales();
   /** Returns true if we understand the given language code. */
   static bool isValidLanguageCode(const QString &languageCode);
   /** Returns true if <b>languageCode</b> requires a right-to-left layout. */
@@ -50,6 +52,8 @@ public:
   static bool translate(const QString &languageCode);
   /** Sets the application's translator to the specified language for the plugins. */
   static bool translatePlugins(const QString &languageCode);
+  /** Sets the application's locale according to the specified language. */
+  static bool localize(const QString &languageCode);
 };
 
 #endif

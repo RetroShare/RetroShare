@@ -37,7 +37,6 @@ public:
 	MsgItem(FeedHolder *parent, uint32_t feedId, const std::string &msgId, bool isHome);
 
 	void updateItemStatic();
-	void small();
 
 private slots:
 	/* default stuff */

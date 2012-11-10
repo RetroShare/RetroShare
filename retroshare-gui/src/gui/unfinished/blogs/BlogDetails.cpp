@@ -116,7 +116,7 @@ void BlogDetails::loadBlog()
     {
       QDateTime qtime;
       qtime.setTime_t(it->lastPost);
-      QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
+      QString timestamp = qtime.toString(Qt::DefaultLocaleShortDate);
       ui.postline -> setText(timestamp);
     }
 

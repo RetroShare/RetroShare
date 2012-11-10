@@ -41,7 +41,6 @@ public:
 	PeerItem(FeedHolder *parent, uint32_t feedId, const std::string &peerId, uint32_t type, bool isHome);
 
 	void updateItemStatic();
-	void small();
 
 private slots:
 	/* default stuff */

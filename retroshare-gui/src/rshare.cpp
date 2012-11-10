@@ -26,6 +26,10 @@
 #include <QShortcut>
 #include <QStyleFactory>
 #include <QStyle>
+#include <QString>
+#include <QLocale>
+#include <QRegExp>
+#include <QDateTime>
 #include <gui/common/vmessagebox.h>
 #include <gui/common/html.h>
 #include <util/stringutil.h>
@@ -53,6 +57,8 @@ QMap<QString, QString> Rshare::_args; /**< List of command-line arguments.  */
 QString Rshare::_style;               /**< The current GUI style.           */
 QString Rshare::_language;            /**< The current language.            */
 QString Rshare::_stylesheet;          /**< The current GUI stylesheet.      */
+QString Rshare::_datetimeformat;      /**< The format of dates in feed items etc.      */
+QLocale Rshare::_locale;              /**< The locale.      */
 Log Rshare::_log;
 bool Rshare::useConfigDir;           
 QString Rshare::configDir;           
@@ -330,6 +336,53 @@ Rshare::setLanguage(QString languageCode)
   return false;
 }
 
+/** Sets the locale RetroShare will use. If a language was specified on the
+ * command-line, we will use one according to that. Otherwise, we'll check to see if a language was
+ * saved previously. If not, we'll default to the system
+ * locale. */
+bool
+Rshare::setLocale(QString languageCode)
+{
+  bool retVal = false;
+  /* If the language code is empty, use the previously-saved setting */
+  if (languageCode.isEmpty()) {
+    languageCode = Settings->getLanguageCode();
+  }
+  /* Set desired locale as default locale */
+  if (LanguageSupport::localize(languageCode)) {
+	retVal=true;
+  }
+  customizeDateFormat();
+  return retVal;
+}
+
+/** return custom formatted date */
+QString Rshare::customLongDate(uint fromTime)
+{
+    return customLongDate(QDateTime::fromTime_t(fromTime));
+}
+
+QString Rshare::customLongDate(const QDateTime &fromTime)
+{
+    if (_datetimeformat.isEmpty()) {
+        return fromTime.toString(Qt::ISODate);
+    } else {
+        return _locale.toString(fromTime, _datetimeformat);
+    }
+}
+
+/** customize date format for feeds etc. */
+void Rshare::customizeDateFormat()
+{
+  _locale = QLocale(); // set to default locale
+  /* get long date format without weekday */
+  QString dateformat = _locale.dateFormat(QLocale::LongFormat);
+  dateformat.replace(QRegExp("^dddd,*[^ ]* *('[^']+' )*"), "");
+  dateformat.replace(QRegExp(",* *dddd"), "");
+  dateformat = dateformat.trimmed();
+  _datetimeformat = dateformat + " " + _locale.timeFormat(QLocale::ShortFormat);
+}
+
 /** Sets the GUI style RetroShare will use. If one was specified on the
  * command-line, we will use that. Otherwise, we'll check to see if one was
  * saved previously. If not, we'll default to one appropriate for the
@@ -370,7 +423,10 @@ void Rshare::resetLanguageAndStyle()
     /** Translate the GUI to the appropriate language. */
     setLanguage(_args.value(ARG_LANGUAGE));
 
-    /** Set the GUI style appropriately. */
+    /** Set the locale appropriately. */
+    setLocale(_args.value(ARG_LANGUAGE));
+
+   /** Set the GUI style appropriately. */
     setStyle(_args.value(ARG_GUISTYLE));
 
     /** Set the GUI stylesheet appropriately. */

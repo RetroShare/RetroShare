@@ -29,9 +29,6 @@
 #include <time.h>
 #include <iostream>
 
-/* Define the format used for displaying the date and time */
-#define DATETIME_FMT  "MMM dd hh:mm:ss"
-
 /** Default constructor */
 GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	: QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mOnlyGenerateIdentity(onlyGenerateIdentity)

@@ -28,6 +28,7 @@
 #include "gui/msgs/MessageComposer.h"
 #include "gui/common/StatusDefs.h"
 #include "gui/common/AvatarDefs.h"
+#include "rshare.h"
 
 #include "gui/notifyqt.h"
 
@@ -71,7 +72,8 @@ PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, const std::string &peerI
 
     avatar->setId(mPeerId, false);
 
-    small();
+    expandFrame->hide();
+
     updateItemStatic();
     updateItem();
 }
@@ -116,10 +118,7 @@ void PeerItem::updateItemStatic()
 	{
 		/* set peer name */
 		peerNameLabel->setText(QString::fromUtf8(details.name.c_str()));
-
-		QDateTime date = QDateTime::fromTime_t(details.lastConnect);
-		QString stime = date.toString("dd.MMMM yyyy hh:mm");
-		lastLabel-> setText(stime);
+		lastLabel-> setText(Rshare::customLongDate(details.lastConnect));
 
 		/* expanded Info */
 		nameLabel->setText(QString::fromUtf8(details.name.c_str()));
@@ -206,11 +205,6 @@ void PeerItem::updateItem()
 	
 	QTimer::singleShot( msec_rate, this, SLOT(updateItem( void ) ));
 	return;
-}
-
-void PeerItem::small()
-{
-	expandFrame->hide();
 }
 
 void PeerItem::toggle()

@@ -706,7 +706,7 @@ void FriendsDialog::setChatInfo(QString info, QColor color)
     ui.msgText->clear();
     nbLines = 1;
   }
-  ui.msgText->append(QString::fromUtf8("<font color='grey'>")+ QTime::currentTime().toString(QString::fromUtf8("hh:mm:ss")) + QString::fromUtf8("</font> - <font color='") + color.name() +QString::fromUtf8("'><i>") + info + QString::fromUtf8("</i></font>"));
+  ui.msgText->append("<font color='grey'>" + QTime::currentTime().toString(Qt::DefaultLocaleShortDate) + "</font> - <font color='" + color.name() + "'><i>" + info + "</i></font>");
 }
 
 void FriendsDialog::on_actionClear_Chat_History_triggered()

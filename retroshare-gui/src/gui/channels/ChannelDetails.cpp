@@ -19,6 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 #include "ChannelDetails.h"
+#include "rshare.h"
 
 #include <retroshare/rsiface.h>
 #include <retroshare/rspeers.h>
@@ -32,9 +33,6 @@
 #include <iostream>
 #include <string>
 
-
-/* Define the format used for displaying the date and time */
-#define DATETIME_FMT  "MMM dd hh:mm:ss"
 
 /** Default constructor */
 ChannelDetails::ChannelDetails(QWidget *parent)
@@ -53,8 +51,6 @@ ChannelDetails::ChannelDetails(QWidget *parent)
   
   ui.typeEncrypted->setEnabled(false);
   ui.typePrivate->setEnabled(false);
-  
-
 }
 
 
@@ -71,11 +67,6 @@ ChannelDetails::show()
   }
 }
 
-void ChannelDetails::closeEvent (QCloseEvent * event)
-{
- QWidget::closeEvent(event);
-}
-
 void ChannelDetails::showDetails(std::string mChannelId)
 {
 	cId = mChannelId;
@@ -84,7 +75,6 @@ void ChannelDetails::showDetails(std::string mChannelId)
 
 void ChannelDetails::loadChannel()
 {
-
 	if (!rsChannels)
 	{
 		return;
@@ -105,10 +95,7 @@ void ChannelDetails::loadChannel()
 	
     // Set Last Channel Post Date 
     if (ci.lastPost) {
-      QDateTime qtime;
-      qtime.setTime_t(ci.lastPost);
-      QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
-      ui.postline -> setText(timestamp);
+        ui.postline->setText(Rshare::customLongDate(ci.lastPost));
     }
 
     // Set Channel ID
@@ -127,5 +114,4 @@ void ChannelDetails::loadChannel()
 		ui.typeEncrypted->setChecked(true);
         ui.typePrivate->setChecked(false);
 	}
-
 }

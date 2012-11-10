@@ -41,7 +41,6 @@ public:
 	SecurityItem(FeedHolder *parent, uint32_t feedId, const std::string &gpgId, const std::string &sslId, const std::string& ip_addr,uint32_t type, bool isHome);
 
 	void updateItemStatic();
-	void small();
 
 	bool isSame(const std::string &sslId, uint32_t type);
 

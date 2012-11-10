@@ -188,10 +188,7 @@ void ChanMsgItem::updateItemStatic()
 	msgLabel->setText(RsHtml().formatText(NULL, QString::fromStdWString(cmi.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 	msgFrame->setVisible(!cmi.msg.empty());
 
-	QDateTime qtime;
-	qtime.setTime_t(cmi.ts);
-	QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
-	datetimelabel->setText(timestamp);
+	datetimelabel->setText(Rshare::customLongDate(cmi.ts));
 
 	filelabel->setText(QString("(%1 %2) %3").arg(cmi.count).arg(tr("Files")).arg(misc::friendlyUnit(cmi.size)));
 

@@ -35,6 +35,7 @@
 #include "gui/common/AvatarDefs.h"
 #include "gui/notifyqt.h"
 #include "gui/ForumsDialog.h"
+#include "rshare.h"
 //#include "gui/settings/rsharesettings.h"
 
 /****
@@ -64,7 +65,9 @@ ForumMsgItem::ForumMsgItem(FeedHolder *parent, uint32_t feedId, const std::strin
 
 	subjectLabel->setMinimumWidth(20);
 
-	small();
+	nextFrame->hide();
+	prevFrame->hide();
+
 	updateItemStatic();
 	updateItem();
 	textEdit->hide();
@@ -158,10 +161,7 @@ void ForumMsgItem::updateItemStatic()
 			prevSubLabel->setText(link.toHtml());
 			prevMsgLabel->setText(RsHtml().formatText(NULL, ForumsDialog::messageFromInfo(msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 
-			QDateTime qtime;
-			qtime.setTime_t(msg.ts);
-			QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
-			timestamplabel->setText(timestamp);
+			timestamplabel->setText(Rshare::customLongDate(msg.ts));
 
 			nextFrame->hide();
 		}
@@ -183,10 +183,7 @@ void ForumMsgItem::updateItemStatic()
 			nextSubLabel->setText(link.toHtml());
 			nextMsgLabel->setText(RsHtml().formatText(NULL, ForumsDialog::messageFromInfo(msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 			
-			QDateTime qtime;
-			qtime.setTime_t(msg.ts);
-			QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
-			timestamplabel->setText(timestamp);
+			timestamplabel->setText(Rshare::customLongDate(msg.ts));
 			
 			prevSHLabel->setText(tr("In Reply to") + ": ");
 
@@ -242,12 +239,6 @@ void ForumMsgItem::updateItem()
 	std::cerr << "ForumMsgItem::updateItem()";
 	std::cerr << std::endl;
 #endif
-}
-
-void ForumMsgItem::small()
-{
-	nextFrame->hide();
-	prevFrame->hide();
 }
 
 void ForumMsgItem::toggle()

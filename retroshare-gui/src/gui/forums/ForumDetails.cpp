@@ -19,6 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 #include "ForumDetails.h"
+#include "rshare.h"
 
 #include <retroshare/rsiface.h>
 #include <retroshare/rspeers.h>
@@ -31,10 +32,6 @@
 #include <list>
 #include <iostream>
 #include <string>
-
-
-/* Define the format used for displaying the date and time */
-#define DATETIME_FMT  "MMM dd hh:mm:ss"
 
 /** Default constructor */
 ForumDetails::ForumDetails(QWidget *parent)
@@ -69,11 +66,6 @@ ForumDetails::show()
   }
 }
 
-void ForumDetails::closeEvent (QCloseEvent * event)
-{
- QWidget::closeEvent(event);
-}
-
 void ForumDetails::showDetails(std::string mCurrForumId)
 {
 	fId = mCurrForumId;
@@ -98,10 +90,7 @@ void ForumDetails::loadDialog()
 
 	// Set Last Post Date
 	if (fi.lastPost) {
-		QDateTime qtime;
-		qtime.setTime_t(fi.lastPost);
-		QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
-		ui.postline->setText(timestamp);
+		ui.postline->setText(Rshare::customLongDate(fi.lastPost));
 	}
 
 	// Set Forum ID

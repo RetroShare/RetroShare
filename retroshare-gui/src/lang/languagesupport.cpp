@@ -65,6 +65,36 @@ LanguageSupport::languages()
   }
   return languages;
 }
+QMap<QString, QLocale>
+LanguageSupport::locales()
+{
+  static QMap<QString, QLocale> locales;
+  if (locales.isEmpty()) {
+    //locales.insert("af", QLocale(QLocale::Afrikaans, QLocale::SouthAfrica));
+    //locales.insert("bg", QLocale(QLocale::Bulgarian, QLocale::Bulgaria),);
+    //locales.insert("cy", QLocale(QLocale::Welsh, QLocale::UnitedKingdom));
+    locales.insert("cs", QLocale(QLocale::Czech, QLocale::CzechRepublic));
+    locales.insert("de", QLocale(QLocale::German, QLocale::Germany));
+    locales.insert("da", QLocale(QLocale::Danish, QLocale::Denmark));
+    locales.insert("en", QLocale(QLocale::English, QLocale::UnitedStates));
+    locales.insert("es", QLocale(QLocale::Spanish, QLocale::Spain));
+    locales.insert("fr", QLocale(QLocale::French, QLocale::France));
+    locales.insert("fi", QLocale(QLocale::Finnish, QLocale::Finland));
+    //locales.insert("gr", QLocale(QLocale::Greek, QLocale::Greece));
+    //locales.insert("it", QLocale(QLocale::Italian, QLocale::Italy));
+    locales.insert("ja", QLocale(QLocale::Japanese, QLocale::Japan));
+    locales.insert("ko", QLocale(QLocale::Korean, QLocale::RepublicOfKorea));
+    locales.insert("pl", QLocale(QLocale::Polish, QLocale::Poland));
+    //locales.insert("pt", QLocale(QLocale::Portuguese, QLocale::Brazil));
+    locales.insert("ru", QLocale(QLocale::Russian, QLocale::RussianFederation));
+    //locales.insert("sl", QLocale(QLocale::Slovenian, QLocale::Slovenia));
+    //locales.insert("sr", QLocale(QLocale::Serbian, QLocale::SerbiaAndMontenegro));
+    locales.insert("sv", QLocale(QLocale::Swedish, QLocale::Sweden));     
+    locales.insert("tr", QLocale(QLocale::Turkish, QLocale::Turkey));
+    locales.insert("zh", QLocale(QLocale::Chinese, QLocale::China));
+  }
+  return locales;
+}
 
 /** Returns the default language code for the system locale. */
 QString
@@ -220,4 +250,12 @@ bool LanguageSupport::translatePlugins(const QString &languageCode)
 		}
 	}
 	return true;
+}
+/** Sets the application's locale according to the specified language. */
+bool LanguageSupport::localize(const QString &languageCode)
+{
+  if (!isValidLanguageCode(languageCode))
+    return false;
+  QLocale::setDefault(locales().key(languageCode));
+  return true;
 }

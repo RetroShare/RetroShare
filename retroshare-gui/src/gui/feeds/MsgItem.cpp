@@ -32,7 +32,7 @@
 
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
-
+#include "rshare.h"
 /****
  * #define DEBUG_ITEM 1
  ****/
@@ -56,7 +56,8 @@ MsgItem::MsgItem(FeedHolder *parent, uint32_t feedId, const std::string &msgId, 
   connect( deleteButton, SIGNAL( clicked( void ) ), this, SLOT( deleteMsg ( void ) ) );
   connect( replyButton, SIGNAL( clicked( void ) ), this, SLOT( replyMsg ( void ) ) );
 
-  small();
+  expandFrame->hide();
+
   updateItemStatic();
   updateItem();
 }
@@ -92,9 +93,7 @@ void MsgItem::updateItemStatic()
 	}
 
 	{
-		QDateTime qtime;
-		qtime.setTime_t(mi.ts);
-		timestampLabel->setText(qtime.toString("dd.MMMM yyyy hh:mm:ss"));
+		timestampLabel->setText(Rshare::customLongDate(mi.ts));
 	}
 
 	if (!mIsHome)
@@ -186,12 +185,6 @@ void MsgItem::updateItem()
 	{
 		playButton->setEnabled(true);
 	}
-}
-
-
-void MsgItem::small()
-{
-	expandFrame->hide();
 }
 
 void MsgItem::toggle()

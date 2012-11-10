@@ -36,6 +36,7 @@
 
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
+#include "rshare.h"
 
 /*****
  * #define DEBUG_ITEM 1
@@ -84,7 +85,8 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const std::strin
 
     avatar->setId(mSslId, false);
 
-    small();
+    expandFrame->hide();
+
     updateItemStatic();
     updateItem();
 }
@@ -143,7 +145,7 @@ void SecurityItem::updateItemStatic()
 	titleLabel->setText(title);
 
 	QDateTime currentTime = QDateTime::currentDateTime();
-	timeLabel->setText(currentTime.toString("dd.MMMM yyyy hh:mm"));
+	timeLabel->setText(Rshare::customLongDate(currentTime.toTime_t()));
 
 	if (mIsHome)
 	{
@@ -272,11 +274,6 @@ void SecurityItem::updateItem()
 
 	QTimer::singleShot( msec_rate, this, SLOT(updateItem( void ) ));
 	return;
-}
-
-void SecurityItem::small()
-{
-	expandFrame->hide();
 }
 
 void SecurityItem::toggle()

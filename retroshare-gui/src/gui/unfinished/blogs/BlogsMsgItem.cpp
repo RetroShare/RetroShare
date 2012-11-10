@@ -25,7 +25,7 @@
 #include "gui/feeds/FeedHolder.h"
 
 #include <retroshare/rsblogs.h>
-
+#include "rshare.h"
 
 /****
  * #define DEBUG_ITEM 1
@@ -93,10 +93,7 @@ void BlogsMsgItem::updateItemStatic()
 	//msgLabel->setText(QString::fromStdWString(cmi.msg));
 	//msgcommentstextEdit->setHtml(QString::fromStdWString(cmi.msg));
 
-	QDateTime qtime;
-	qtime.setTime_t(cmi.ts);
-	QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm:ss");
-	datetimelabel->setText(timestamp);
+	datetimelabel->setText(Rshare::customDate(cmi.ts));
 	
 	//playButton->setEnabled(false);
 	

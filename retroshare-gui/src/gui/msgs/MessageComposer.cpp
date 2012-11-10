@@ -957,11 +957,11 @@ QString MessageComposer::buildReplyHeader(const MessageInfo &msgInfo)
         header += QString("<font size='3'><strong>%1: </strong>%2</font><br>").arg(tr("Cc"), cc);
     }
 
-    header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(tr("Sent"), qtime.toString(Qt::SystemLocaleLongDate));
+    header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(tr("Sent"), Rshare::customLongDate(qtime));
     header += QString("<font size='3'><strong>%1: </strong>%2</font></span><br>").arg(tr("Subject"), QString::fromStdWString(msgInfo.title));
     header += "<br>";
 
-    header += tr("On %1, %2 wrote:").arg(qtime.toString(Qt::SystemLocaleShortDate), from);
+    header += tr("On %1, %2 wrote:").arg(qtime.toString(Qt::DefaultLocaleShortDate), from);
 
     return header;
 }

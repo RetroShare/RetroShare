@@ -44,9 +44,6 @@ public slots:
   /** Overloaded QWidget.show */
   void show();
 
-protected:
-  void closeEvent (QCloseEvent * event);
-  
 private:
   void 	loadChannel();
 

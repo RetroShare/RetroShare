@@ -41,6 +41,7 @@
 #include "channels/ShareKey.h"
 #include "notifyqt.h"
 #include "util/HandleRichText.h"
+#include "rshare.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsforums.h>
@@ -1519,11 +1520,11 @@ static QString buildReplyHeader(const ForumMsgInfo &msgInfo)
     QString header = QString("<span>-----%1-----").arg(QApplication::translate("ForumsDialog", "Original Message"));
     header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(QApplication::translate("ForumsDialog", "From"), from);
 
-    header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(QApplication::translate("ForumsDialog", "Sent"), qtime.toString(Qt::SystemLocaleLongDate));
+    header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(QApplication::translate("ForumsDialog", "Sent"), Rshare::customLongDate(msgInfo.ts));
     header += QString("<font size='3'><strong>%1: </strong>%2</font></span><br>").arg(QApplication::translate("ForumsDialog", "Subject"), QString::fromStdWString(msgInfo.title));
     header += "<br>";
 
-    header += QApplication::translate("ForumsDialog", "On %1, %2 wrote:").arg(qtime.toString(Qt::SystemLocaleShortDate), from);
+    header += QApplication::translate("ForumsDialog", "On %1, %2 wrote:").arg(qtime.toString(Qt::DefaultLocaleShortDate), from);
 
     return header;
 }
@@ -1834,14 +1835,12 @@ void ForumsFillThread::run()
             else
                 qtime.setTime_t(tit->ts);
 
-            text = qtime.toString("yyyy-MM-dd hh:mm:ss");
+            text = qtime.toString(Qt::DefaultLocaleShortDate);
             if (useChildTS)
             {
-                QDateTime qtime2;
-                qtime2.setTime_t(tit->ts);
-                QString timestamp2 = qtime2.toString("yyyy-MM-dd hh:mm:ss");
+                qtime.setTime_t(tit->ts);
                 text += " / ";
-                text += timestamp2;
+                text += qtime.toString(Qt::DefaultLocaleShortDate);
             }
             item->setText(COLUMN_THREAD_DATE, text);
         }
@@ -1947,15 +1946,13 @@ void ForumsFillThread::run()
                         else
                             qtime.setTime_t(mit->ts);
 
-                        text = qtime.toString("yyyy-MM-dd hh:mm:ss");
+                        text = qtime.toString(Qt::DefaultLocaleShortDate);
 
                         if (useChildTS)
                         {
-                            QDateTime qtime2;
-                            qtime2.setTime_t(mit->ts);
-                            QString timestamp2 = qtime2.toString("yyyy-MM-dd hh:mm:ss");
+                            qtime.setTime_t(mit->ts);
                             text += " / ";
-                            text += timestamp2;
+                            text += qtime.toString(Qt::DefaultLocaleShortDate);
                         }
                         child->setText(COLUMN_THREAD_DATE, text);
                     }

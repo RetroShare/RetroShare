@@ -323,8 +323,8 @@ QString ChatStyle::formatMessage(enumFormatMessage type, const QString &name, co
 #endif
 
     QString formatMsg = style.replace("%name%", name)
-                             .replace("%date%", timestamp.date().toString("dd.MM.yyyy"))
-                             .replace("%time%", timestamp.time().toString("hh:mm:ss"))
+                             .replace("%date%", timestamp.date().toString(Qt::DefaultLocaleShortDate))
+                             .replace("%time%", timestamp.time().toString(Qt::DefaultLocaleShortDate))
 #ifdef COLORED_NICKNAMES
                              .replace("%color%", color.name())
 #endif

@@ -36,7 +36,6 @@ public:
 	ForumMsgItem(FeedHolder *parent, uint32_t feedId, const std::string &forumId, const std::string &postId, bool isHome);
 
 	void updateItemStatic();
-	void small();
 
 private slots:
 	/* default stuff */
