@@ -629,7 +629,7 @@ void ChatWidget::fileHashingFinished(QList<HashedFile> hashedFiles)
 		QString ext = QFileInfo(hashedFile.filename).suffix();
 
 		RetroShareLink link;
-		link.createFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash));
+		link.createExtraFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash),QString::fromStdString(rsPeers->getOwnId()));
 
 		if (hashedFile.flag & HashedFile::Picture) {
 			message += QString("<img src=\"file:///%1\" width=\"100\" height=\"100\">").arg(hashedFile.filepath);

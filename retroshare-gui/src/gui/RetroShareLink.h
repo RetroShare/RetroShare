@@ -46,11 +46,12 @@
 #define RSLINK_SCHEME 	"retroshare"
 
 #define RSLINK_SUBTYPE_CERTIFICATE_USER_REQUEST 1
+#define RSLINK_SUBTYPE_FILE_EXTRA               2
 
 class RetroShareLink
 {
 	public:
-		enum enumType { TYPE_UNKNOWN, TYPE_FILE, TYPE_PERSON, TYPE_FORUM, TYPE_CHANNEL, TYPE_SEARCH, TYPE_MESSAGE, TYPE_CERTIFICATE };
+		enum enumType { TYPE_UNKNOWN, TYPE_FILE, TYPE_PERSON, TYPE_FORUM, TYPE_CHANNEL, TYPE_SEARCH, TYPE_MESSAGE, TYPE_CERTIFICATE,TYPE_EXTRAFILE };
 
 	public:
 		RetroShareLink();
@@ -58,6 +59,7 @@ class RetroShareLink
 		RetroShareLink(const QString& url);
 
 		bool createFile(const QString& name, uint64_t size, const QString& hash);
+		bool createExtraFile(const QString& name, uint64_t size, const QString& hash, const QString& ssl_id);
 		bool createPerson(const std::string& id);
 		bool createForum(const std::string& id, const std::string& msgId);
 		bool createChannel(const std::string& id, const std::string& msgId);
@@ -116,6 +118,7 @@ class RetroShareLink
 		void check();
 		static bool checkHash(const QString& hash);
 		static bool checkName(const QString& name);
+		static bool checkSSLId(const QString& name);
 
 		bool     _valid;
 		enumType _type;

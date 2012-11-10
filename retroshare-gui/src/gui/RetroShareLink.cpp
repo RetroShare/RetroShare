@@ -48,6 +48,7 @@
 #define DEBUG_RSLINK 1
 
 #define HOST_FILE        "file"
+#define HOST_EXTRAFILE   "extra"
 #define HOST_PERSON      "person"
 #define HOST_FORUM       "forum"
 #define HOST_CHANNEL     "channel"
@@ -59,6 +60,7 @@
 #define FILE_NAME       "name"
 #define FILE_SIZE       "size"
 #define FILE_HASH       "hash"
+#define FILE_SOURCE     "src"
 
 #define PERSON_NAME     "name"
 #define PERSON_HASH     "hash"
@@ -179,6 +181,27 @@ void RetroShareLink::fromUrl(const QUrl& url)
         }
     }
 
+    if (url.host() == HOST_EXTRAFILE) {
+        bool ok ;
+
+        _type = TYPE_EXTRAFILE;
+        _name = url.queryItemValue(FILE_NAME);
+        _size = url.queryItemValue(FILE_SIZE).toULongLong(&ok);
+        _hash = url.queryItemValue(FILE_HASH).left(40);	// normally not necessary, but it's a security.
+		  _SSLid = url.queryItemValue(FILE_SOURCE);
+
+        if (ok) {
+#ifdef DEBUG_RSLINK
+            std::cerr << "New RetroShareLink forged:" << std::endl ;
+            std::cerr << "  name = \"" << _name.toStdString() << "\"" << std::endl ;
+            std::cerr << "  hash = \"" << _hash.toStdString() << "\"" << std::endl ;
+            std::cerr << "  size = " << _size << std::endl ;
+            std::cerr << "  src  = " << _SSLid.toStdString() << std::endl ;
+#endif
+            check();
+            return;
+        }
+    }
     if (url.host() == HOST_PERSON) {
         _type = TYPE_PERSON;
         _name = url.queryItemValue(PERSON_NAME);
@@ -246,6 +269,21 @@ RetroShareLink::RetroShareLink()
     clear();
 }
 
+bool RetroShareLink::createExtraFile(const QString& name, uint64_t size, const QString& hash,const QString& ssl_id)
+{
+    clear();
+
+    _name = name;
+    _size = size;
+    _hash = hash;
+    _SSLid = ssl_id;
+
+    _type = TYPE_EXTRAFILE;
+
+    check();
+
+    return valid();
+}
 bool RetroShareLink::createFile(const QString& name, uint64_t size, const QString& hash)
 {
     clear();
@@ -463,6 +501,9 @@ void RetroShareLink::check()
 	case TYPE_UNKNOWN:
 		_valid = false;
 		break;
+	case TYPE_EXTRAFILE:
+		if(!checkSSLId(_SSLid))
+			_valid = false;			// no break! We also test file stuff below.
 	case TYPE_FILE:
 		if(_size > (((uint64_t)1)<<40))	// 1TB. Who has such large files?
 			_valid = false;
@@ -538,6 +579,8 @@ QString RetroShareLink::title() const
 	switch (_type) {
 	case TYPE_UNKNOWN:
 		break;
+	case TYPE_EXTRAFILE:
+		return QString("%1 (%2, Extra - Source included)").arg(hash()).arg(misc::friendlyUnit(size()));
 	case TYPE_FILE:
 		return QString("%1 (%2)").arg(hash()).arg(misc::friendlyUnit(size()));
 	case TYPE_PERSON:
@@ -576,6 +619,19 @@ QString RetroShareLink::toString() const
 
             return url.toString();
         }
+	 case TYPE_EXTRAFILE:
+        {
+            QUrl url;
+            url.setScheme(RSLINK_SCHEME);
+            url.setHost(HOST_EXTRAFILE);
+            url.addQueryItem(FILE_NAME, encodeItem(_name));
+            url.addQueryItem(FILE_SIZE, QString::number(_size));
+            url.addQueryItem(FILE_HASH, _hash);
+            url.addQueryItem(FILE_SOURCE, _SSLid);
+
+            return url.toString();
+        }
+
     case TYPE_PERSON:
         {
             QUrl url;
@@ -699,6 +755,7 @@ QString RetroShareLink::toHtmlFull() const
 QString RetroShareLink::toHtmlSize() const
 {
 	QString size = QString("(%1)").arg(misc::friendlyUnit(_size));
+
 	if (type() == TYPE_FILE && RsCollectionFile::isCollectionFile(name())) {
 		FileInfo finfo;
 		if (rsFiles->FileDetails(hash().toStdString(), RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL, finfo)) {
@@ -740,6 +797,23 @@ QUrl RetroShareLink::toUrl() const
     return QUrl::fromEncoded(toString().toUtf8().constData());
 }
 
+bool RetroShareLink::checkSSLId(const QString& ssl_id)
+{
+    if(ssl_id.length() != 32)
+        return false ;
+
+    QByteArray qb(ssl_id.toAscii()) ;
+
+    for(int i=0;i<qb.length();++i)
+    {
+        unsigned char b(qb[i]) ;
+
+        if(!((b>47 && b<58) || (b>96 && b<103)))
+            return false ;
+    }
+
+    return true ;
+}
 bool RetroShareLink::checkHash(const QString& hash)
 {
     if(hash.length() != 40)
@@ -816,6 +890,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 				break;
 
 			case TYPE_FILE:
+			case TYPE_EXTRAFILE:
 				fileAdd.append(link.name());
 				break;
 
@@ -953,15 +1028,27 @@ static void processList(const QStringList &list, const QString &textSingular, co
 				break ;
 
 			case TYPE_FILE:
+			case TYPE_EXTRAFILE:
 				{
 #ifdef DEBUG_RSLINK
 					std::cerr << " RetroShareLink::process FileRequest : fileName : " << link.name().toUtf8().constData() << ". fileHash : " << link.hash().toStdString() << ". fileSize : " << link.size() << std::endl;
 #endif
 
 					needNotifySuccess = true;
+					std::list<std::string> srcIds;
+
+					// Add the link built-in source. This is needed for EXTRA files, where the source is specified in the link.
+
+					if(link.type() == TYPE_EXTRAFILE)
+					{
+#ifdef DEBUG_RSLINK
+						std::cerr << " RetroShareLink::process Adding built-in source " << link.SSLId().toStdString() << std::endl;
+#endif
+						srcIds.push_back(link.SSLId().toStdString()) ;
+					}
 
 					// Get a list of available direct sources, in case the file is browsable only.
-					std::list<std::string> srcIds;
+					//
 					FileInfo finfo ;
 					rsFiles->FileDetails(link.hash().toStdString(), RS_FILE_HINTS_REMOTE, finfo) ;
 
