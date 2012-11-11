@@ -43,6 +43,7 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rsstatus.h>
+#include <retroshare/rsfiles.h>
 
 #include "gui/notifyqt.h"
 #include "gui/common/RSTreeWidgetItem.h"
@@ -2196,7 +2197,7 @@ void MessageComposer::attachFile()
     // select a file
     QStringList files;
     if (misc::getOpenFileNames(this, RshareSettings::LASTDIR_EXTRAFILE, tr("Add Extra File"), "", files)) {
-        ui.hashBox->addAttachments(files);
+        ui.hashBox->addAttachments(files,TransferRequestFlags(0u));
     }
 }
 

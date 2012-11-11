@@ -22,6 +22,7 @@
 #ifndef _ATTACH_FILE_ITEM_DIALOG_H
 #define _ATTACH_FILE_ITEM_DIALOG_H
 
+#include <retroshare/rsfiles.h>
 #include "ui_AttachFileItem.h"
 #include <stdint.h>
 
@@ -45,8 +46,8 @@ class AttachFileItem : public QWidget, private Ui::AttachFileItem
 
 public:
 	/** Default Constructor */
-	AttachFileItem(const QString& localpath);
-	AttachFileItem(const std::string& hash, const QString& name, uint64_t size, uint32_t flags, const std::string& srcId);
+	AttachFileItem(const QString& localpath,TransferRequestFlags flags);
+	AttachFileItem(const std::string& hash, const QString& name, uint64_t size, uint32_t flags,TransferRequestFlags tflags, const std::string& srcId);
 
 	const std::string& FileHash() { return mFileHash; }
 	const QString& FileName() { return mFileName; }
@@ -75,6 +76,7 @@ private:
 	uint32_t    mMode;
 	uint32_t    mType;
 	uint64_t    mDivisor;
+	TransferRequestFlags mFlags ;
 
 	/* for display purposes */
 	float amountDone;

@@ -27,6 +27,8 @@
 #include "util/rswin.h"
 #endif
 
+#include <retroshare/rstypes.h>
+#include <retroshare/rsfiles.h>
 #include "ft/ftextralist.h"
 #include "serialiser/rsconfigitems.h"
 #include "util/rsdir.h"
@@ -167,7 +169,7 @@ bool	ftExtraList::addExtraFile(std::string path, std::string hash,
 	details.info.hash = hash;
 	details.info.size = size;
 	details.info.age = time(NULL) + period; /* if time > this... cleanup */
-	details.flags = flags;
+	details.info.transfer_info_flags = flags ;
 
 	/* stick it in the available queue */
 	mFiles[details.info.hash] = details;
@@ -263,7 +265,7 @@ bool	ftExtraList::cleanupOldFiles()
 		{
 			if (mFiles.end() != (it = mFiles.find(*rit)))
 			{
-				cleanupEntry(it->second.info.path, it->second.flags);
+				cleanupEntry(it->second.info.path, it->second.info.transfer_info_flags);
 				mFiles.erase(it);
 			}
 		}
@@ -349,6 +351,13 @@ bool    ftExtraList::search(const std::string &hash, FileSearchFlags /*hintflags
 	}
 
 	info = fit->second.info;
+
+	// Now setup the file storage flags so that the client can know how to handle permissions
+	//
+	info.storage_permission_flags = DIR_FLAGS_BROWSABLE_OTHERS ;
+
+	if(info.transfer_info_flags & RS_FILE_REQ_ANONYMOUS_ROUTING) info.storage_permission_flags |= DIR_FLAGS_NETWORK_WIDE_OTHERS ;
+
 	return true;
 }
 
@@ -396,7 +405,7 @@ bool ftExtraList::saveList(bool &cleanup, std::list<RsItem *>& sList)
 		fi->file.hash        = (it->second).info.hash;
 		fi->file.filesize    = (it->second).info.size;
 		fi->file.age         = (it->second).info.age;
-		fi->flags            = (it->second).flags.toUInt32();
+		fi->flags            = (it->second).info.transfer_info_flags.toUInt32();
 
 		sList.push_back(fi);
 	}
@@ -461,7 +470,7 @@ bool    ftExtraList::loadList(std::list<RsItem *>& load)
 		details.info.hash = fi->file.hash;
 		details.info.size = fi->file.filesize;
 		details.info.age = fi->file.age; /* time that we remove it. */
-		details.flags = TransferRequestFlags(fi->flags);
+		details.info.transfer_info_flags = TransferRequestFlags(fi->flags);
 	
 		/* stick it in the available queue */
 		mFiles[details.info.hash] = details;

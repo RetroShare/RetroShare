@@ -133,6 +133,12 @@ ChatWidget::~ChatWidget()
 	delete ui;
 }
 
+void ChatWidget::setDefaultExtraFileFlags(TransferRequestFlags fl)
+{
+	mDefaultExtraFileFlags = fl ;
+	ui->hashBox->setDefaultTransferRequestFlags(fl) ;
+}
+
 void ChatWidget::addChatButton(QPushButton *button)
 {
 	ui->toolBarFrame->layout()->addWidget(button) ;
@@ -600,7 +606,7 @@ void ChatWidget::addExtraFile()
 {
 	QStringList files;
 	if (misc::getOpenFileNames(this, RshareSettings::LASTDIR_EXTRAFILE, tr("Add Extra File"), "", files)) {
-		ui->hashBox->addAttachments(files/*, 0*/);
+		ui->hashBox->addAttachments(files,mDefaultExtraFileFlags /*, 0*/);
 	}
 }
 
@@ -629,7 +635,11 @@ void ChatWidget::fileHashingFinished(QList<HashedFile> hashedFiles)
 		QString ext = QFileInfo(hashedFile.filename).suffix();
 
 		RetroShareLink link;
-		link.createExtraFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash),QString::fromStdString(rsPeers->getOwnId()));
+
+		if(mDefaultExtraFileFlags & RS_FILE_REQ_ANONYMOUS_ROUTING)
+			link.createFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash));
+		else
+			link.createExtraFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash),QString::fromStdString(rsPeers->getOwnId()));
 
 		if (hashedFile.flag & HashedFile::Picture) {
 			message += QString("<img src=\"file:///%1\" width=\"100\" height=\"100\">").arg(hashedFile.filepath);

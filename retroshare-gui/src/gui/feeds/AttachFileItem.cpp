@@ -61,8 +61,8 @@
 const uint32_t AFI_DEFAULT_PERIOD 	= (30 * 3600 * 24); /* 30 Days */
 
 /** Constructor */
-AttachFileItem::AttachFileItem(const std::string& hash, const QString& name, uint64_t size, uint32_t flags, const std::string& srcId)
-:QWidget(NULL), mFileHash(hash), mFileName(name), mFileSize(size), mSrcId(srcId)
+AttachFileItem::AttachFileItem(const std::string& hash, const QString& name, uint64_t size, uint32_t flags,TransferRequestFlags tflags, const std::string& srcId)
+:QWidget(NULL), mFileHash(hash), mFileName(name), mFileSize(size), mSrcId(srcId),mFlags(tflags)
 {
   	/* Invoke the Qt Designer generated object setup routine */
   	setupUi(this);
@@ -90,8 +90,8 @@ AttachFileItem::AttachFileItem(const std::string& hash, const QString& name, uin
 }
 
 /** Constructor */
-AttachFileItem::AttachFileItem(const QString& path)
-:QWidget(NULL), mPath(path), mFileSize(0)
+AttachFileItem::AttachFileItem(const QString& path,TransferRequestFlags flags)
+:QWidget(NULL), mPath(path), mFileSize(0),mFlags(flags)
 {
   	/* Invoke the Qt Designer generated object setup routine */
   	setupUi(this);
@@ -100,7 +100,7 @@ AttachFileItem::AttachFileItem(const QString& path)
 	mType = AFI_TYPE_ATTACH;
 
 	/* ask for Files to hash/prepare it for us */
-	if ((!rsFiles) || (!rsFiles->ExtraFileHash(path.toUtf8().constData(), AFI_DEFAULT_PERIOD, TransferRequestFlags(0u))))
+	if ((!rsFiles) || (!rsFiles->ExtraFileHash(path.toUtf8().constData(), AFI_DEFAULT_PERIOD, flags)))
 	{
 		mMode = AFI_STATE_ERROR;
 	}

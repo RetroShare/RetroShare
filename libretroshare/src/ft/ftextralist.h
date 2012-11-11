@@ -74,14 +74,14 @@ class FileDetails
 		{
 			info.path = path;
 			period = p;
-			flags = f;
+			info.transfer_info_flags = f;
 		}
 
 		FileDetails(FileInfo &i, uint32_t p, TransferRequestFlags f)
 		{
 			info = i;
 			period = p;
-			flags = f;
+			info.transfer_info_flags = f;
 		}
 
 		FileInfo info;
@@ -96,7 +96,7 @@ class FileDetails
 
 		uint32_t start;
 		uint32_t period;
-		TransferRequestFlags flags;
+		//TransferRequestFlags flags;
 };
 
 const uint32_t FT_DETAILS_CLEANUP	= 0x0100; 	/* remove when it expires */

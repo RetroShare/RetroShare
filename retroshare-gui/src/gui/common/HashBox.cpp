@@ -45,6 +45,7 @@ HashBox::HashBox(QWidget *parent) :
 {
 	dropWidget = NULL;
 	mAutoHide = false;
+	mDefaultTransferFlags = TransferRequestFlags(0u) ;
 
 	ui->setupUi(this);
 }
@@ -136,7 +137,7 @@ bool HashBox::eventFilter(QObject* object, QEvent* event)
 						}
 					}
 
-					addAttachments(files);
+					addAttachments(files,mDefaultTransferFlags);
 
 					dropEvent->setDropAction(Qt::CopyAction);
 					dropEvent->accept();
@@ -150,7 +151,7 @@ bool HashBox::eventFilter(QObject* object, QEvent* event)
 	return QScrollArea::eventFilter(object, event);
 }
 
-void HashBox::addAttachments(const QStringList& files, HashedFile::Flags flag)
+void HashBox::addAttachments(const QStringList& files,TransferRequestFlags tfl, HashedFile::Flags flag)
 {
 	/* add a AttachFileItem to the attachment section */
 	std::cerr << "HashBox::addExtraFile() hashing file." << std::endl;
@@ -166,7 +167,7 @@ void HashBox::addAttachments(const QStringList& files, HashedFile::Flags flag)
 	QStringList::ConstIterator it;
 	for (it = files.constBegin(); it != files.constEnd(); ++it) {
 		/* add widget in for new destination */
-		AttachFileItem* file = new AttachFileItem(*it);
+		AttachFileItem* file = new AttachFileItem(*it,tfl);
 		QObject::connect(file, SIGNAL(fileFinished(AttachFileItem*)), this, SLOT(fileFinished(AttachFileItem*)));
 
 		HashingInfo hashingInfo;

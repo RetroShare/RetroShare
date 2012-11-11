@@ -761,7 +761,7 @@ void FriendsDialog::addExtraFile()
 {
     QStringList files;
     if (misc::getOpenFileNames(this, RshareSettings::LASTDIR_EXTRAFILE, tr("Add Extra File"), "", files)) {
-        ui.hashBox->addAttachments(files);
+        ui.hashBox->addAttachments(files,TransferRequestFlags(0u));	// no anonymous routing, because it is for friends only!
     }
 }
 
@@ -775,9 +775,10 @@ void FriendsDialog::fileHashingFinished(QList<HashedFile> hashedFiles)
     for (it = hashedFiles.begin(); it != hashedFiles.end(); ++it) {
         HashedFile& hashedFile = *it;
         RetroShareLink link;
-        if (!link.createFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash))) {
+
+        if (!link.createExtraFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash),QString::fromStdString(rsPeers->getOwnId()))) 
             continue;
-        }
+        
         mesgString += link.toHtmlSize();
         if (it!= hashedFiles.end()) {
             mesgString += "<BR>";

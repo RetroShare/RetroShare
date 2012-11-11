@@ -24,6 +24,7 @@
 
 #include <QScrollArea>
 #include <stdint.h>
+#include <retroshare/rsfiles.h>
 
 namespace Ui {
 	class HashBox;
@@ -60,9 +61,10 @@ public:
 	~HashBox();
 
 	void setAutoHide(bool autoHide);
-	void addAttachments(const QStringList& files, HashedFile::Flags flag = HashedFile::NoFlag);
+	void addAttachments(const QStringList& files,TransferRequestFlags tfl, HashedFile::Flags flag = HashedFile::NoFlag);
 
 	void setDropWidget(QWidget* widget);
+	void setDefaultTransferRequestFlags(TransferRequestFlags flags) { mDefaultTransferFlags = flags ; }
 
 protected:
 	bool eventFilter(QObject *object, QEvent *event);
@@ -87,6 +89,7 @@ private:
 	bool mAutoHide;
 	QWidget* dropWidget;
 	Ui::HashBox *ui;
+	TransferRequestFlags mDefaultTransferFlags ;
 };
 
 #endif // HASHBOX_H

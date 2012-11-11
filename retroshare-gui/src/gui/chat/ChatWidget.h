@@ -30,6 +30,7 @@
 #include "gui/style/RSStyle.h"
 
 #include <retroshare/rsmsgs.h>
+#include <retroshare/rsfiles.h>
 
 class QAction;
 class QTextEdit;
@@ -76,6 +77,7 @@ public:
 	void addChatButton(QPushButton *button) ;
 
 	bool isActive();
+	void setDefaultExtraFileFlags(TransferRequestFlags f) ;
 
 private slots:
 	void clearChatHistory();
@@ -153,6 +155,8 @@ private:
 
 	bool firstShow;
 	bool inChatCharFormatChanged;
+
+	TransferRequestFlags mDefaultExtraFileFlags ; // flags for extra files shared in this chat. Will be 0 by default, but might be ANONYMOUS for chat lobbies.
 
 	Ui::ChatWidget *ui;
 };

@@ -78,6 +78,7 @@ void ChatLobbyDialog::init(const std::string &peerId, const QString &title)
 	ui.chatWidget->setName(QString::fromUtf8(nickName.c_str()));
 
 	ui.chatWidget->addToolsAction(ui.actionChangeNickname);
+	ui.chatWidget->setDefaultExtraFileFlags(RS_FILE_REQ_ANONYMOUS_ROUTING);
 
 	lastUpdateListTime = 0;
 

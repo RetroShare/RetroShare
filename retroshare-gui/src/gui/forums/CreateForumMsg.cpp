@@ -209,7 +209,7 @@ void CreateForumMsg::addFile()
 {
     QStringList files;
     if (misc::getOpenFileNames(this, RshareSettings::LASTDIR_EXTRAFILE, tr("Add Extra File"), "", files)) {
-        ui.hashBox->addAttachments(files);
+        ui.hashBox->addAttachments(files,RS_FILE_REQ_ANONYMOUS_ROUTING);
     }
 }
 
