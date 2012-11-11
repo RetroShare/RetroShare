@@ -37,6 +37,7 @@
 #include "common/Emoticons.h"
 #include "common/RSItemDelegate.h"
 #include "common/PopularityDefs.h"
+#include "common/RSTreeWidgetItem.h"
 #include "RetroShareLink.h"
 #include "channels/ShareKey.h"
 #include "notifyqt.h"
@@ -91,6 +92,7 @@
 // no need to copy, don't count in ROLE_THREAD_COUNT
 #define ROLE_THREAD_READCHILDREN    Qt::UserRole + 3
 #define ROLE_THREAD_UNREADCHILDREN  Qt::UserRole + 4
+#define ROLE_THREAD_SORT            Qt::UserRole + 5
 
 #define ROLE_THREAD_COUNT           3
 
@@ -108,6 +110,9 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     m_bProcessSettings = false;
     subscribeFlags = 0;
     inMsgAsReadUnread = false;
+
+    threadCompareRole = new RSTreeWidgetItemCompareRole;
+    threadCompareRole->setRole(COLUMN_THREAD_DATE, ROLE_THREAD_SORT);
 
     connect( ui.forumTreeWidget, SIGNAL( treeCustomContextMenuRequested( QPoint ) ), this, SLOT( forumListCustomPopupMenu( QPoint ) ) );
     connect( ui.threadTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( threadListCustomPopupMenu( QPoint ) ) );
@@ -205,6 +210,8 @@ ForumsDialog::~ForumsDialog()
         delete(fillThread);
         fillThread = NULL;
     }
+
+    delete(threadCompareRole);
 
     // save settings
     processSettings(false);
@@ -886,6 +893,7 @@ void ForumsDialog::insertThreads()
     fillThread = new ForumsFillThread(this);
 
     // set data
+    fillThread->compareRole = threadCompareRole;
     fillThread->forumId = mCurrForumId;
     fillThread->filterColumn = ui.filterLineEdit->currentFilter();
     fillThread->subscribeFlags = subscribeFlags;
@@ -1745,6 +1753,7 @@ ForumsFillThread::ForumsFillThread(ForumsDialog *parent)
     : QThread(parent)
 {
     stopped = false;
+    compareRole = NULL;
 
     expandNewMessages = Settings->getExpandNewMessages();
     fillComplete = false;
@@ -1824,25 +1833,31 @@ void ForumsFillThread::run()
          *
          */
 
-        QTreeWidgetItem *item = new QTreeWidgetItem();
+        QTreeWidgetItem *item = new RSTreeWidgetItem(compareRole);
 
         QString text;
 
         {
             QDateTime qtime;
+            QString sort;
+
             if (useChildTS)
                 qtime.setTime_t(tit->childTS);
             else
                 qtime.setTime_t(tit->ts);
 
             text = qtime.toString(Qt::DefaultLocaleShortDate);
+            sort = qtime.toString("yyyyMMdd_hhmmss");
+
             if (useChildTS)
             {
                 qtime.setTime_t(tit->ts);
                 text += " / ";
                 text += qtime.toString(Qt::DefaultLocaleShortDate);
+                sort += "_" + qtime.toString("yyyyMMdd_hhmmss");
             }
             item->setText(COLUMN_THREAD_DATE, text);
+            item->setData(COLUMN_THREAD_DATE, ROLE_THREAD_SORT, sort);
         }
 
         item->setText(COLUMN_THREAD_TITLE, ForumsDialog::titleFromInfo(msginfo));
@@ -1932,29 +1947,34 @@ void ForumsFillThread::run()
                     QTreeWidgetItem *child = NULL;
                     if (flatView)
                     {
-                        child = new QTreeWidgetItem();
+                        child = new RSTreeWidgetItem(compareRole);
                     }
                     else
                     {
-                        child = new QTreeWidgetItem(parent);
+                        child = new RSTreeWidgetItem(compareRole, parent);
                     }
 
                     {
                         QDateTime qtime;
+                        QString sort;
+
                         if (useChildTS)
                             qtime.setTime_t(mit->childTS);
                         else
                             qtime.setTime_t(mit->ts);
 
                         text = qtime.toString(Qt::DefaultLocaleShortDate);
+                        sort = qtime.toString("yyyyMMdd_hhmmss");
 
                         if (useChildTS)
                         {
                             qtime.setTime_t(mit->ts);
                             text += " / ";
                             text += qtime.toString(Qt::DefaultLocaleShortDate);
+                            sort += "_" + qtime.toString("yyyyMMdd_hhmmss");
                         }
                         child->setText(COLUMN_THREAD_DATE, text);
+                        child->setData(COLUMN_THREAD_DATE, ROLE_THREAD_SORT, sort);
                     }
 
                     child->setText(COLUMN_THREAD_TITLE, ForumsDialog::titleFromInfo(msginfo));

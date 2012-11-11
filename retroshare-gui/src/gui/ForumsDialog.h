@@ -31,6 +31,7 @@
 class ForumInfo;
 class ForumsFillThread;
 class ForumMsgInfo;
+class RSTreeWidgetItemCompareRole;
 
 class ForumsDialog : public RsAutoUpdatePage 
 {
@@ -138,6 +139,7 @@ private:
     QTreeWidgetItem *popularForums;
     QTreeWidgetItem *otherForums;
 
+    RSTreeWidgetItemCompareRole *threadCompareRole;
     std::string mCurrForumId;
     std::string mCurrThreadId;
     int subscribeFlags;
@@ -174,6 +176,7 @@ public:
     int viewType;
     bool expandNewMessages;
     std::string focusMsgId;
+    RSTreeWidgetItemCompareRole *compareRole;
 
     QList<QTreeWidgetItem*> items;
     QList<QTreeWidgetItem*> itemToExpand;
