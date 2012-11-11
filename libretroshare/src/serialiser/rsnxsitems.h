@@ -70,7 +70,7 @@ public:
     RsNxsItem(uint16_t servtype, uint8_t subtype)
         : RsItem(RS_PKT_VERSION_SERVICE, servtype, subtype), transactionNumber(0)
     {
-    	setPriorityLevel(QOS_PRIORITY_RS_GXS_NET);
+        setPriorityLevel(QOS_PRIORITY_RS_VOIP_PING);
         return;
     }
 

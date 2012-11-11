@@ -149,24 +149,24 @@ protected:
 
         /*!
          * Main purpose is to help tansfer meta data to service
-         * and also
+         *
          * @param token This should be set to the token retrieved
          * @param meta The deriving GXS service should set their grp meta to this value
          */
         virtual bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta) = 0;
 
         /*!
-         * This should return a group logo \n
-         * Will be called when GxsGroupDialog is initialised in show mode
+         * This returns a group logo from the ui \n
+         * Should be calleld by deriving service
          * @return The logo for the service
          */
-        virtual QPixmap service_getLogo() = 0;
+        QPixmap getLogo();
 
         /*!
-         * This should return a group description string
+         * This returns a group description string from the ui
          * @return group description string
          */
-        virtual QString service_getDescription() = 0;
+        virtual QString getDescription();
 
 	
 private slots:

@@ -2329,6 +2329,11 @@ int RsServer::StartupRetroShare()
         RsGenExchange::setAuthenPolicyFlag(flag, photoAuthenPolicy,
                                            RsGenExchange::RESTRICTED_GRP_BITS);
 
+// Re-enable later, photo not using gixs yet
+//        flag = GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN;
+//        RsGenExchange::setAuthenPolicyFlag(flag, photoAuthenPolicy,
+//                                           RsGenExchange::RESTRICTED_GRP_BITS);
+
         flag = GXS_SERV::GRP_OPTION_AUTHEN_AUTHOR_SIGN;
         RsGenExchange::setAuthenPolicyFlag(flag, photoAuthenPolicy,
                                            RsGenExchange::GRP_OPTION_BITS);

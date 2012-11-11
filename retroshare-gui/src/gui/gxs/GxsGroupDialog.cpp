@@ -399,7 +399,15 @@ void GxsGroupDialog::addGroupLogo()
 	ui.groupLogo->setIcon(picture);
 }
 
+QPixmap GxsGroupDialog::getLogo()
+{
+    return picture;
+}
 
+QString GxsGroupDialog::getDescription()
+{
+    return ui.groupDesc->document()->toPlainText();
+}
 
 /***********************************************************************************
   Share Lists.

@@ -285,7 +285,7 @@ p, li { white-space: pre-wrap; }
             <x>0</x>
             <y>0</y>
             <width>627</width>
-            <height>107</height>
+            <height>116</height>
            </rect>
           </property>
           <property name="styleSheet">
@@ -344,7 +344,7 @@ p, li { white-space: pre-wrap; }
      <item>
       <widget class="QPushButton" name="pushButton_PublishPhotos">
        <property name="text">
-        <string>Publish Photos</string>
+        <string>Publish Photos / Close</string>
        </property>
       </widget>
      </item>

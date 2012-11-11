@@ -46,19 +46,6 @@ protected:
 
     bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta);
 
-    /*!
-     * This should return a group logo \n
-     * Will be called when GxsGroupDialog is initialised in show mode
-     *
-     */
-    virtual QPixmap service_getLogo();
-
-    /*!
-     * This should return a group description string
-     * @return group description string
-     */
-    virtual QString service_getDescription();
-
 private:
 
     RsPostedGroup mGrp;

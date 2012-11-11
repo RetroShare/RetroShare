@@ -23,6 +23,9 @@
  *
  */
 
+#ifndef PQI_HASH_
+#define PQI_HASH_
+
 #include <openssl/sha.h>
 #include <string>
 #include <iomanip>
@@ -86,4 +89,4 @@ void 	Complete(std::string &hash)
 	SHA_CTX *sha_ctx;
 };
 
-
+#endif

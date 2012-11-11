@@ -384,7 +384,8 @@ private:
 
     /*!
      * This completes the creation of an instance on RsNxsGrp
-     * by assigning it a groupId and signature via SHA1 and EVP_sign respectively
+     * by assigning it a groupId and signature via SHA1 and EVP_sign respectively \n
+     * Meta is serialised and stored in group at this point also
      * @param grp Nxs group to create
      */
     bool createGroup(RsNxsGrp* grp, RsTlvSecurityKeySet& keySet);
@@ -399,6 +400,16 @@ private:
     bool createMessage(RsNxsMsg* msg);
 
     /*!
+     * convenience function to create sign
+     * @param signSet signatures are stored here
+     * @param msgData message data to be signed
+     * @param grpMeta the meta data for group the message belongs to
+     * @return false if signature creation for any required signature fails, true otherwise
+     */
+    bool createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinaryData& msgData,
+                             const RsGxsMsgMetaData& msgMeta, RsGxsGrpMetaData& grpMeta);
+
+    /*!
      * check meta change is legal
      * @return false if meta change is not legal
      */
@@ -407,8 +418,9 @@ private:
     /*!
      * Generate a set of keys that can define a GXS group
      * @param keySet this is set generated keys
+     * @param genPublicKeys should public keys also be generated
      */
-    void generateGroupKeys(RsTlvSecurityKeySet& keySet);
+    void generateGroupKeys(RsTlvSecurityKeySet& keySet, bool genPublishKeys);
 
     /*!
      * Attempts to validate msg
@@ -419,7 +431,15 @@ private:
      */
     bool validateMsg(RsNxsMsg* msg, const uint32_t& grpFlag, RsTlvSecurityKeySet& grpKeySet);
 
+    /*!
+     * Checks flag against a given privacy bit block
+     * @param pos Determines 8 bit wide privacy block to check
+     * @param flag the flag to and(&) against
+     * @param the result of the (bit-block & flag)
+     */
     bool checkMsgAuthenFlag(const PrivacyBitPos& pos, const uint8_t& flag) const;
+
+    void  groupShareKeys(std::list<std::string> peers);
 
 private:
 

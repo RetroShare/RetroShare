@@ -6,7 +6,7 @@
  *
  * General Data service, interface for RetroShare.
  *
- * Copyright 2011-2011 by Evi-Parker Christopher
+ * Copyright 2011-2012 by Evi-Parker Christopher
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public

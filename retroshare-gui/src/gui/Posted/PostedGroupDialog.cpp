@@ -56,21 +56,13 @@ bool PostedGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaDa
 {
 	// Specific Function.
         RsPostedGroup grp;
+        grp.mDescription = getDescription().toStdString();
 	grp.mMeta = meta;
 
         rsPosted->submitGroup(token, grp);
 	return true;
 }
 
-QPixmap PostedGroupDialog::service_getLogo()
-{
-    return QPixmap(); // null pixmap
-}
-
-QString PostedGroupDialog::service_getDescription()
-{
-    return QString();
-}
 
 
 

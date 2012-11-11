@@ -2,6 +2,7 @@
 
 #include "AlbumDialog.h"
 #include "ui_AlbumDialog.h"
+#include "gxs/rsgxsflags.h"
 
 AlbumDialog::AlbumDialog(const RsPhotoAlbum& album, TokenQueue* photoQueue, RsPhotoV2* rs_Photo, QWidget *parent) :
     QDialog(parent),
@@ -13,6 +14,12 @@ AlbumDialog::AlbumDialog(const RsPhotoAlbum& album, TokenQueue* photoQueue, RsPh
     connect(ui->pushButton_DeletePhoto, SIGNAL(clicked()), this, SLOT(deletePhoto()));
 
     mPhotoDrop = ui->scrollAreaWidgetContents;
+
+    if(!(mAlbum.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN))
+    {
+        ui->scrollAreaPhotos->setEnabled(false);
+        ui->pushButton_DeletePhoto->setEnabled(false);
+    }
     mPhotoDrop->setPhotoItemHolder(this);
 
     setUp();
@@ -32,6 +39,7 @@ void AlbumDialog::setUp()
 }
 
 void AlbumDialog::updateAlbumPhotos(){
+
     QSet<PhotoItem*> photos;
 
     mPhotoDrop->getPhotos(photos);

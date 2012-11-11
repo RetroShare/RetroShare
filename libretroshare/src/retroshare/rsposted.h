@@ -42,6 +42,7 @@ class RsPostedGroup
 {
         public:
         RsGroupMetaData mMeta;
+        std::string mDescription;
         RsPostedGroup() { return; }
 };
 

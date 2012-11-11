@@ -2,7 +2,7 @@
 #include <QVBoxLayout>
 #include "PhotoDialog.h"
 #include "ui_PhotoDialog.h"
-
+#include "retroshare/rsidentity.h"
 #include "AddCommentDialog.h"
 
 PhotoDialog::PhotoDialog(RsPhotoV2 *rs_photo, const RsPhotoPhoto &photo, QWidget *parent) :
@@ -36,8 +36,6 @@ void PhotoDialog::setUp()
     qtn.loadFromData(mPhotoDetails.mThumbnail.data, mPhotoDetails.mThumbnail.size, mPhotoDetails.mThumbnail.type.c_str());
     ui->label_Photo->setPixmap(qtn);
     ui->lineEdit_Title->setText(QString::fromStdString(mPhotoDetails.mMeta.mMsgName));
-
-    //ui->scrollAreaWidgetContents->setLayout(new QVBoxLayout());
 
     requestComments();
 }

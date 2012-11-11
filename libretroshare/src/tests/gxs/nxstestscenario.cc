@@ -7,6 +7,7 @@
 
 #include "nxstestscenario.h"
 #include "gxs/rsdataservice.h"
+#include "gxs/rsgxsflags.h"
 #include "data_support.h"
 #include <stdio.h>
 
@@ -147,6 +148,8 @@ void NxsMessageTestObserver::notifyNewGroups(std::vector<RsNxsGrp *> &groups)
     {
         RsNxsGrp* grp = *vit;
         RsGxsGrpMetaData* meta = new RsGxsGrpMetaData();
+        meta->deserialise(grp->meta.bin_data, grp->meta.bin_len);
+        meta->mSubscribeFlags |= GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED;
         meta->mGroupId = grp->grpId;
         grps.insert(std::make_pair(grp, meta));
     }

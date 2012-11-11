@@ -363,8 +363,8 @@ void RsGxsNetService::run(){
 
 bool RsGxsNetService::locked_checkTransacTimedOut(NxsTransaction* tr)
 {
-   // return tr->mTimeOut < ((uint32_t) time(NULL));
-     return false;
+   return tr->mTimeOut < ((uint32_t) time(NULL));
+    // return false;
 }
 
 void RsGxsNetService::processTransactions(){
@@ -1022,7 +1022,7 @@ void RsGxsNetService::locked_genSendMsgsTransaction(NxsTransaction* tr)
 
 	uint32_t transN = locked_getTransactionId();
 
-	// store grp items to send in transaction
+        // store msg items to send in transaction
 	GxsMsgResult::iterator mit = msgs.begin();
 	std::string peerId = tr->mTransaction->PeerId();
 	uint32_t msgSize = 0;
