@@ -403,23 +403,35 @@ int	pqissllistenbase::continueSSL(IncomingSSLInfo& incoming_connexion_info, bool
 			pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out);
 		}
 
-		if ((ssl_err == SSL_ERROR_WANT_READ) || 
-		   (ssl_err == SSL_ERROR_WANT_WRITE))
-		{
-			std::string out = "pqissllistenbase::continueSSL() Connection Not Complete!\n";
-
-			if (addin)
+		switch (ssl_err) {
+			case SSL_ERROR_WANT_READ:
+			case SSL_ERROR_WANT_WRITE:
 			{
-				out += "pqissllistenbase::continueSSL() Adding SSL to incoming!";
+				std::string out = "pqissllistenbase::continueSSL() Connection Not Complete!\n";
 
-				// add to incomingqueue.
-				incoming_ssl.push_back(incoming_connexion_info) ;
+				if (addin)
+				{
+					out += "pqissllistenbase::continueSSL() Adding SSL to incoming!";
+
+					// add to incomingqueue.
+					incoming_ssl.push_back(incoming_connexion_info) ;
+				}
+
+				pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out);
+
+				// zero means still continuing....
+				return 0;
 			}
+			break;
+			case SSL_ERROR_SYSCALL:
+			{
+				std::string out = "pqissllistenbase::continueSSL() Connection failed!\n";
+				pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out);
 
-			pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out);
-
-			// zero means still continuing....
-			return 0;
+				// basic-error while connecting, no security message needed
+				return -1;
+			}
+			break;
 		}
 
 		/* we have failed -> get certificate if possible */
