@@ -33,6 +33,7 @@ ftFileProvider::ftFileProvider(const std::string& path, uint64_t size, const std
 
 ftFileProvider::~ftFileProvider()
 {
+	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 #ifdef DEBUG_FT_FILE_PROVIDER
 	std::cout << "ftFileProvider::~ftFileProvider(): Destroying file provider for " << hash << std::endl ;
 #endif
