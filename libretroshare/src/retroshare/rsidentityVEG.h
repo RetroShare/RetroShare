@@ -206,9 +206,10 @@ class RsTokReqOptionsVEG
 
 
 // Some MACROS for EASE OF USE. (USED BY FORUMSV2 At the moment.
-#define IS_MSG_UNREAD(status) 			((status & RSGXS_MSG_STATUS_READ) == 0 || (status & RSGXS_MSG_STATUS_UNREAD_BY_USER))
-#define IS_GROUP_ADMIN(subscribeFlags) 		(subscribeFlags & RSGXS_GROUP_SUBSCRIBE_ADMIN)
-#define IS_GROUP_SUBSCRIBED(subscribeFlags) 	(subscribeFlags & (RSGXS_GROUP_SUBSCRIBE_ADMIN | RSGXS_GROUP_SUBSCRIBE_SUBSCRIBED))
+// MOVED TO REAL GXS STUFF
+//#define IS_MSG_UNREAD(status) 			((status & RSGXS_MSG_STATUS_READ) == 0 || (status & RSGXS_MSG_STATUS_UNREAD_BY_USER))
+//#define IS_GROUP_ADMIN(subscribeFlags) 		(subscribeFlags & RSGXS_GROUP_SUBSCRIBE_ADMIN)
+//#define IS_GROUP_SUBSCRIBED(subscribeFlags) 	(subscribeFlags & (RSGXS_GROUP_SUBSCRIBE_ADMIN | RSGXS_GROUP_SUBSCRIBE_SUBSCRIBED))
 
 
 

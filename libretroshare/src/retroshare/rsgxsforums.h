@@ -33,6 +33,13 @@
 #include "gxs/rstokenservice.h"
 #include "gxs/rsgxsifaceimpl.h"
 
+
+#define IS_MSG_UNREAD(status)                   (status & GXS_SERV::GXS_MSG_STATUS_UNREAD)
+#define IS_GROUP_ADMIN(subscribeFlags)          (subscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
+#define IS_GROUP_SUBSCRIBED(subscribeFlags)     (subscribeFlags & (GXS_SERV::GROUP_SUBSCRIBE_ADMIN | GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED))
+
+
+
 /* The Main Interface Class - for information about your Peers */
 class RsGxsForums;
 extern RsGxsForums *rsGxsForums;
@@ -70,6 +77,8 @@ virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsForumGroup> &g
 virtual bool getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs) = 0;
 
         //////////////////////////////////////////////////////////////////////////////
+virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read) = 0;
+
 //virtual bool setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask);
 //virtual bool setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask);
 

@@ -262,7 +262,7 @@ class RsNxsMsg : public RsNxsItem
 {
 public:
 
-    RsNxsMsg(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_MSG), msg(servtype), meta(servtype),
+    RsNxsMsg(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_MSG), meta(servtype), msg(servtype),
     metaData(NULL) { clear(); return; }
     ~RsNxsMsg() { if(metaData) delete metaData; }
 
@@ -299,7 +299,7 @@ public:
     virtual ~RsNxsSearchReq() { return;}
 
     virtual void clear() { return;}
-    virtual std::ostream &print(std::ostream &out, uint16_t indent) { return out; }
+    virtual std::ostream &print(std::ostream &out, uint16_t /*indent*/) { return out; }
 
     uint8_t nHops; /// how many peers to jump to
     uint32_t token; // search token
@@ -337,7 +337,7 @@ public:
 
     RsNxsSearchResultMsg() : context(0) { return;}
     void clear() {}
-    std::ostream &print(std::ostream &out, uint16_t indent) { return out; }
+    std::ostream &print(std::ostream &out, uint16_t /*indent*/) { return out; }
 
     uint32_t token; // search token to be redeemed
     RsTlvBinaryData context; // used by client service
@@ -358,7 +358,7 @@ public:
 
     RsNxsSearchResultGrp();
     void clear() {}
-    std::ostream &print(std::ostream &out, uint16_t indent) { return out; }
+    std::ostream &print(std::ostream &out, uint16_t /*indent*/) { return out; }
 
     uint32_t token; // search token to be redeemed
 

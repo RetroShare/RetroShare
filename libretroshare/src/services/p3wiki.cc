@@ -198,6 +198,9 @@ bool p3Wiki::submitCollection(uint32_t &token, RsWikiCollection &collection)
 
 bool p3Wiki::submitSnapshot(uint32_t &token, RsWikiSnapshot &snapshot)
 {
+	std::cerr << "p3Wiki::submitSnapshot(): " << snapshot;
+	std::cerr << std::endl;
+
         RsGxsWikiSnapshotItem* snapshotItem = new RsGxsWikiSnapshotItem();
         snapshotItem->snapshot = snapshot;
         snapshotItem->meta = snapshot.mMeta;
