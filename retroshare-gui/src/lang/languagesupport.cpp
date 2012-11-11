@@ -50,6 +50,7 @@ LanguageSupport::languages()
     languages.insert("fr",    QString::fromUtf8("Fran\303\247ais"));
     languages.insert("fi",    "Suomi");
     //languages.insert("gr",    "Greek");
+    languages.insert("hu",    "Hungarian");
     //languages.insert("it",    "Italiano");
     languages.insert("ja_JP",    QString::fromUtf8("\346\227\245\346\234\254\350\252\236"));
     languages.insert("ko",    QString::fromUtf8("\355\225\234\352\265\255\354\226\264"));
@@ -81,6 +82,7 @@ LanguageSupport::locales()
     locales.insert("fr", QLocale(QLocale::French, QLocale::France));
     locales.insert("fi", QLocale(QLocale::Finnish, QLocale::Finland));
     //locales.insert("gr", QLocale(QLocale::Greek, QLocale::Greece));
+    locales.insert("hu", QLocale(QLocale::Hungarian, QLocale::Hungary));
     //locales.insert("it", QLocale(QLocale::Italian, QLocale::Italy));
     locales.insert("ja", QLocale(QLocale::Japanese, QLocale::Japan));
     locales.insert("ko", QLocale(QLocale::Korean, QLocale::RepublicOfKorea));

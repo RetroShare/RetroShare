@@ -1,10 +1,21 @@
 <RCC>
   <qresource prefix="/lang">
-    <file>VOIP_de.qm</file>
-    <file>VOIP_fr.qm</file>
+    <file>VOIP_cs.qm</file>
+    <file>VOIP_en.qm</file>
     <file>VOIP_es.qm</file>
+    <file>VOIP_da.qm</file>
+    <file>VOIP_de.qm</file>
+	<file>VOIP_fi.qm</file>
+    <file>VOIP_fr.qm</file>
+    <file>VOIP_hu.qm</file>
+    <file>VOIP_ja_JP.qm</file>
+    <file>VOIP_ko.qm</file>
+    <file>VOIP_pl.qm</file>
     <file>VOIP_pt_BR.qm</file>
+    <file>VOIP_ru.qm</file>
+    <file>VOIP_sv.qm</file>
     <file>VOIP_tr.qm</file>
+    <file>VOIP_zh_CN.qm</file>
   </qresource>
 </RCC>
 
