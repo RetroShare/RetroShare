@@ -36,12 +36,12 @@
       </property>
       <column>
        <property name="text">
-        <string>ID</string>
+        <string>Name</string>
        </property>
       </column>
       <column>
        <property name="text">
-        <string>Name</string>
+        <string>ID</string>
        </property>
       </column>
       <column>
@@ -104,7 +104,7 @@
      <x>0</x>
      <y>0</y>
      <width>525</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
