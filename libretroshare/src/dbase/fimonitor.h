@@ -126,7 +126,7 @@ class FileIndexMonitor: public CacheSource, public RsThread
 		/* Interacting with CacheSource */
 		/* overloaded from CacheSource */
 		virtual bool loadLocalCache(const CacheData &data);  /* called with stored data */
-		bool 	updateCache(const CacheData &data,const std::list<std::string>& dest_peers);     /* we call when we have a new cache for others */
+		bool 	updateCache(const CacheData &data,const std::set<std::string>& dest_peers);     /* we call when we have a new cache for others */
 
 
 		/* the FileIndexMonitor inner workings */
@@ -145,10 +145,14 @@ class FileIndexMonitor: public CacheSource, public RsThread
 		void    getSharedDirectories(std::list<SharedDirInfo>& dirs);
 		void	updateShareFlags(const SharedDirInfo& info) ;
 
-		void    forceDirectoryCheck();
+		void    forceDirectoryCheck();				// Force re-sweep the directories and see what's changed
+		void    forceDirListsRebuildAndSend() ; 	// Force re-build dir lists because groups have changed. Does not re-check files.
 		bool	inDirectoryCheck();
 
 		/* util fns */
+
+		// from CacheSource
+		virtual bool cachesAvailable(RsPeerId /* pid */, std::map<CacheId, CacheData> &ids) ;
 
 	protected:
 		// Sets/gets the duration period within which already hashed files are remembered.
@@ -168,7 +172,7 @@ class FileIndexMonitor: public CacheSource, public RsThread
 		/* the mutex should be locked before calling these 3. */
 
 		// saves file indexs and update the cache.
-		void locked_saveFileIndexes() ;
+		void locked_saveFileIndexes(bool update_cache) ;
 
 		// Finds the share flags associated with this file entry.
 		void locked_findShareFlagsAndParentGroups(FileEntry *fe,FileStorageFlags& shareflags,std::list<std::string>& parent_groups) const ;
@@ -202,6 +206,8 @@ class FileIndexMonitor: public CacheSource, public RsThread
 
 		HashCache hashCache ;
 		bool useHashCache ;
+
+		std::map<RsPeerId,CacheData> _cache_items_per_peer ;	// stored the cache items to be sent to each peer.
 };
 
 

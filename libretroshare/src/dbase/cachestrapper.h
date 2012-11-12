@@ -29,6 +29,7 @@
 #include "util/rsthreads.h"
 
 #include <list>
+#include <set>
 #include <map>
 #include <string>
 #include <iostream>
@@ -181,7 +182,7 @@ class CacheSource
 		virtual bool    loadLocalCache(const CacheData &data);
 
 			/* control Caches available */
-		bool  refreshCache(const CacheData &data,const std::list<std::string>& destination_peers);
+		bool  refreshCache(const CacheData &data,const std::set<std::string>& destination_peers);
 		bool  refreshCache(const CacheData &data);
 		bool 	clearCache(CacheId id);
 
@@ -400,7 +401,7 @@ virtual void statusChange(const std::list<pqipeer> &plist);
  *
  */
 void 	refreshCache(const CacheData &data);
-void 	refreshCache(const CacheData &data,const std::list<std::string>& destination_peers);	// specify a particular list of destination peers (self not added!)
+void 	refreshCache(const CacheData &data,const std::set<std::string>& destination_peers);	// specify a particular list of destination peers (self not added!)
 
 /*!
  * forces config savelist

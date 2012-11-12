@@ -593,6 +593,10 @@ bool    ftServer::ConvertSharedFilePath(std::string path, std::string &fullpath)
 	return mFiMon->convertSharedFilePath(path, fullpath);
 }
 
+void    ftServer::updateSinceGroupPermissionsChanged()
+{
+	mFiMon->forceDirListsRebuildAndSend();
+}
 void    ftServer::ForceDirectoryCheck()
 {
 	mFiMon->forceDirectoryCheck();

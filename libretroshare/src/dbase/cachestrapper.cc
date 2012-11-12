@@ -92,7 +92,7 @@ bool    CacheSource::loadLocalCache(const CacheData &data)
 }
 	
         /* control Caches available */
-bool    CacheSource::refreshCache(const CacheData &data,const std::list<std::string>& destination_peers)
+bool    CacheSource::refreshCache(const CacheData &data,const std::set<std::string>& destination_peers)
 {
 	bool ret = false;
 	{
@@ -599,23 +599,27 @@ void    CacheStrapper::statusChange(const std::list<pqipeer> &plist)
 
         /**************** from pqimonclient ********************/
 
-void	CacheStrapper::refreshCache(const CacheData &data,const std::list<std::string>& destination_peers)
+void	CacheStrapper::refreshCache(const CacheData &data,const std::set<std::string>& destination_peers)
 {
 	/* we've received an update 
-	 * send to all online peers + self
+	 * send to all online peers + self intersected with online peers.
 	 */
 #ifdef CS_DEBUG 
 	std::cerr << "CacheStrapper::refreshCache() : " << data << std::endl;
 #endif
+	std::list<std::string> ids;
+	mLinkMgr->getOnlineList(ids);
+	ids.push_back(mLinkMgr->getOwnId()) ;
 
 	RsStackMutex stack(csMtx); /******* LOCK STACK MUTEX *********/
-	for(std::list<std::string>::const_iterator it = destination_peers.begin(); it != destination_peers.end(); ++it)
-	{
+	for(std::list<std::string>::const_iterator it = ids.begin(); it != ids.end(); ++it)
+		if(destination_peers.find(*it) != destination_peers.end())
+		{
 #ifdef CS_DEBUG 
-		std::cerr << "CacheStrapper::refreshCache() Send To: " << *it << std::endl;
+			std::cerr << "CacheStrapper::refreshCache() Send To: " << *it << std::endl;
 #endif
-		mCacheUpdates.push_back(std::make_pair(*it, data));
-	}
+			mCacheUpdates.push_back(std::make_pair(*it, data));
+		}
 
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 }
@@ -633,7 +637,12 @@ void	CacheStrapper::refreshCache(const CacheData &data)
 	mLinkMgr->getOnlineList(ids);
 	ids.push_back(mLinkMgr->getOwnId()) ;
 
-	refreshCache(data,ids) ;
+	{
+		RsStackMutex stack(csMtx); /******* LOCK STACK MUTEX *********/
+		for(std::list<std::string>::const_iterator it = ids.begin(); it != ids.end(); ++it)
+			mCacheUpdates.push_back(std::make_pair(*it, data));
+	}
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 }
 
 void	CacheStrapper::refreshCacheStore(const CacheData & /* data */ )

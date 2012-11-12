@@ -36,6 +36,7 @@
 #include "pqi/authssl.h"
 #include "pqi/authgpg.h"
 #include "retroshare/rsinit.h"
+#include "retroshare/rsfiles.h"
 
 #include "pgp/rscertificate.h"
 
@@ -1044,7 +1045,9 @@ bool p3Peers::addGroup(RsGroupInfo &groupInfo)
         std::cerr << "p3Peers::addGroup()" << std::endl;
 #endif
 
-	return mPeerMgr->addGroup(groupInfo);
+		  bool res = mPeerMgr->addGroup(groupInfo);
+		  rsFiles->updateSinceGroupPermissionsChanged() ;
+		  return res ;
 }
 
 bool p3Peers::editGroup(const std::string &groupId, RsGroupInfo &groupInfo)
@@ -1053,7 +1056,10 @@ bool p3Peers::editGroup(const std::string &groupId, RsGroupInfo &groupInfo)
         std::cerr << "p3Peers::editGroup()" << std::endl;
 #endif
 
-	return mPeerMgr->editGroup(groupId, groupInfo);
+	bool res = mPeerMgr->editGroup(groupId, groupInfo);
+	rsFiles->updateSinceGroupPermissionsChanged() ;
+
+	return res ;
 }
 
 bool p3Peers::removeGroup(const std::string &groupId)
@@ -1062,7 +1068,9 @@ bool p3Peers::removeGroup(const std::string &groupId)
         std::cerr << "p3Peers::removeGroup()" << std::endl;
 #endif
 
-	return mPeerMgr->removeGroup(groupId);
+		  bool res = mPeerMgr->removeGroup(groupId);
+		  rsFiles->updateSinceGroupPermissionsChanged() ;
+		  return res ;
 }
 
 bool p3Peers::getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo)
@@ -1097,7 +1105,10 @@ bool p3Peers::assignPeersToGroup(const std::string &groupId, const std::list<std
         std::cerr << "p3Peers::assignPeersToGroup()" << std::endl;
 #endif
 
-	return mPeerMgr->assignPeersToGroup(groupId, peerIds, assign);
+	bool res = mPeerMgr->assignPeersToGroup(groupId, peerIds, assign);
+	rsFiles->updateSinceGroupPermissionsChanged() ;
+
+	return res ;
 }
 
 FileSearchFlags p3Peers::computePeerPermissionFlags(const std::string& peer_ssl_id,

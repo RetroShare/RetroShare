@@ -46,7 +46,7 @@
 #include <fstream>
 
 //***********
-//#define FIM_DEBUG 1
+#define FIM_DEBUG 1
 // ***********/
 
 FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, NotifyBase *cb_in,std::string cachedir, std::string pid,const std::string& config_dir)
@@ -342,7 +342,7 @@ bool FileIndexMonitor::findLocalFile(std::string hash,FileSearchFlags hint_flags
 		RsStackMutex stackM(fiMutex) ;/* LOCKED DIRS */
 
 #ifdef FIM_DEBUG
-		std::cerr << "FileIndexMonitor::findLocalFile() Hash: " << hash << std::endl;
+//		std::cerr << "FileIndexMonitor::findLocalFile() Hash: " << hash << std::endl;
 #endif
 		/* search through the fileIndex */
 		fi.searchHash(hash, results);
@@ -435,17 +435,15 @@ bool FileIndexMonitor::loadLocalCache(const CacheData &data)  /* called with sto
 {
 	bool ok = false;
 
-	{ 
+	std::cerr << "FileIndexMonitor::loadLocalCache(): subid = " << data.cid.subid << ", filename=" << data.name << ", peer id = " << data.pid << std::endl;
+
+	if(!strcmp(data.name.c_str()+data.name.size()-5,".rsfc"))// this trick allows to load the complete file. Not the one being shared.
+	{ 									// other files are discarded and re-created in case permissions have changed.
 		RsStackMutex mtx(fiMutex) ; /* LOCKED DIRS */
 
 		/* More error checking needed here! */
 
 		std::string name = data.name ;	
-
-		name[name.length()-4] = 'r' ;// this trick allows to load the complete file. Not the one being shared.
-		name[name.length()-3] = 's' ;
-		name[name.length()-2] = 'f' ;
-		name[name.length()-1] = 'c' ;
 
 		if ((ok = fi.loadIndex(data.path + '/' + name, "", data.size)))
 		{
@@ -465,17 +463,22 @@ bool FileIndexMonitor::loadLocalCache(const CacheData &data)  /* called with sto
 		}
 
 		fi.updateMaxModTime() ;
+
+		locked_saveFileIndexes(false) ;
 	}
+	else
+		std::cerr << "FileIndexMonitor:: not loading cache item " << data.name << std::endl;
 #ifdef REMOVED
 	if (ok)
 	{
 		return updateCache(data);
 	}
 #endif
+
 	return false;
 }
 
-bool FileIndexMonitor::updateCache(const CacheData &data,const std::list<std::string>& destination_peers)  /* we call this one */
+bool FileIndexMonitor::updateCache(const CacheData &data,const std::set<std::string>& destination_peers)  /* we call this one */
 {
 	return refreshCache(data,destination_peers);
 }
@@ -836,7 +839,7 @@ void 	FileIndexMonitor::updateCycle()
 		}
 
 		if (fiMods)
-			locked_saveFileIndexes() ;
+			locked_saveFileIndexes(true) ;
 
 		fi.updateMaxModTime() ;	// Update modification times for proper display.
 
@@ -987,7 +990,7 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 				sleep(1) ;
 #endif
 				RsStackMutex stack(fiMutex); /**** LOCKED DIRS ****/
-				FileIndexMonitor::locked_saveFileIndexes() ;
+				FileIndexMonitor::locked_saveFileIndexes(true) ;
 				last_save_size = hashed_size ;
 
 				if(useHashCache)
@@ -1002,7 +1005,7 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 }
 
 
-void FileIndexMonitor::locked_saveFileIndexes()
+void FileIndexMonitor::locked_saveFileIndexes(bool update_cache)
 {
 	/* store to the cacheDirectory */
 
@@ -1020,12 +1023,16 @@ void FileIndexMonitor::locked_saveFileIndexes()
 	// To figure out which sets are different, we index them by the set of forbidden indexes from the directory list.
 	// This is probably a bit costly, but we can't suppose that the number of shared directories is bounded.
 	//
-	std::list<std::string> online_ids ;
-	rsPeers->getOnlineList(online_ids);
+	std::list<std::string> all_friend_ids ;
+	rsPeers->getFriendList(all_friend_ids);
 
-	std::map<std::set<std::string>, std::list<std::string> > peers_per_directory_combination ;
+	std::cerr << "FileIndexMonitor::updateCycle(): got list of all friends." << std::endl ;
+	for(std::list<std::string>::const_iterator it(all_friend_ids.begin());it!=all_friend_ids.end();++it)
+		std::cerr << "  " << *it << std::endl;
 
-	for(std::list<std::string>::const_iterator it(online_ids.begin());it!=online_ids.end();++it)
+	std::map<std::set<std::string>, std::set<std::string> > peers_per_directory_combination ;
+
+	for(std::list<std::string>::const_iterator it(all_friend_ids.begin());it!=all_friend_ids.end();++it)
 	{
 		std::cerr << "About to save, with the following restrictions:" << std::endl ;
 		std::cerr << "Peer : " << *it << std::endl;
@@ -1052,15 +1059,15 @@ void FileIndexMonitor::locked_saveFileIndexes()
 				std::cerr << "autorized" << std::endl;
 		}
 
-		peers_per_directory_combination[forbidden_dirs].push_back(*it) ;
+		peers_per_directory_combination[forbidden_dirs].insert(*it) ;
 	}
 	std::string ownId = rsPeers->getOwnId() ;
-	peers_per_directory_combination[std::set<std::string>()].push_back(ownId) ;	// add full configuration to self, i.e. no forbidden directories.
+	peers_per_directory_combination[std::set<std::string>()].insert(ownId) ;	// add full configuration to self, i.e. no forbidden directories.
 
 	int n=0 ;
 	time_t now = time(NULL) ;
 
-	for(std::map<std::set<std::string>, std::list<std::string> >::const_iterator it(peers_per_directory_combination.begin());
+	for(std::map<std::set<std::string>, std::set<std::string> >::const_iterator it(peers_per_directory_combination.begin());
 			it!=peers_per_directory_combination.end();++it,++n)
 	{
 		std::string tmpname_browsable;
@@ -1076,7 +1083,7 @@ void FileIndexMonitor::locked_saveFileIndexes()
 		std::cerr << "Sending file list: " << std::endl;
 		std::cerr << "   filename	: " << tmpname_browsable << std::endl;
 		std::cerr << "   to peers  : " << std::endl;
-		for(std::list<std::string>::const_iterator itt(it->second.begin());itt!= it->second.end();++itt)
+		for(std::set<std::string>::const_iterator itt(it->second.begin());itt!= it->second.end();++itt)
 			std::cerr << "       " << *itt << std::endl;
 		std::cerr << "   forbidden : " << std::endl;
 		for(std::set<std::string>::const_iterator itt(it->first.begin());itt!= it->first.end();++itt)
@@ -1100,14 +1107,20 @@ void FileIndexMonitor::locked_saveFileIndexes()
 			CacheData data;
 			data.pid = fi.root->id;
 			data.cid.type  = getCacheType();
-			data.cid.subid = 0;
+			data.cid.subid = n;
 			data.path = path;
 			data.name = tmpname_browsable;
 			data.hash = hash;
 			data.size = size;
 			data.recvd = time(NULL);
 
-			updateCache(data,it->second);
+			for(std::set<std::string>::const_iterator ff(it->second.begin());ff!=it->second.end();++ff)
+				_cache_items_per_peer[*ff] = data ;
+
+			data.cid.subid = 0;
+
+			if(update_cache)
+				updateCache(data,it->second);
 		}
 	}
 
@@ -1115,6 +1128,37 @@ void FileIndexMonitor::locked_saveFileIndexes()
 	std::cerr << "FileIndexMonitor::updateCycle() called updateCache()";
 	std::cerr <<  std::endl;
 #endif
+}
+
+bool FileIndexMonitor::cachesAvailable(RsPeerId pid,std::map<CacheId, CacheData> &ids)
+{
+	lockData() ;
+
+	std::cerr << "In cachesAvailable..." << std::endl;
+
+	// Go through the list of saved cache items for that particular peer.
+	//
+	ids.clear() ;
+	std::map<RsPeerId,CacheData>::const_iterator it(_cache_items_per_peer.find(pid)) ;
+	std::string ownId = rsPeers->getOwnId() ;
+
+	if(it != _cache_items_per_peer.end())
+	{
+		ids[it->second.cid] = it->second ;
+
+		if(pid != ownId)
+		ids[it->second.cid].cid.subid = 0 ;	// Force subid to be 0, so that it's
+														// not going to be mixed up at the client with other files received if the
+														// subid changes for that peer.
+														//
+		std::cerr << "FileIndexMonitor: caches available for peer " << pid << ": " << it->second.name << std::endl ;
+	}
+	else
+		std::cerr << "No cache item for peer " << pid << std::endl;
+
+	unlockData() ;
+
+	return true ;
 }
 
 void    FileIndexMonitor::updateShareFlags(const SharedDirInfo& dir)
@@ -1156,7 +1200,7 @@ void    FileIndexMonitor::updateShareFlags(const SharedDirInfo& dir)
 	if(fimods)
 	{
 		RsStackMutex stack(fiMutex) ;	/* LOCKED DIRS */
-		locked_saveFileIndexes() ;
+		locked_saveFileIndexes(true) ;
 	}
 	cb->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 }
@@ -1241,6 +1285,12 @@ void    FileIndexMonitor::forceDirectoryCheck()
 }
 
 
+void    FileIndexMonitor::forceDirListsRebuildAndSend()
+{
+	RsStackMutex stack(fiMutex) ; /* LOCKED DIRS */
+	locked_saveFileIndexes(true) ;
+}
+
 	/* interface */
 bool    FileIndexMonitor::inDirectoryCheck()
 {
@@ -1321,7 +1371,7 @@ bool    FileIndexMonitor::internal_setSharedDirectories()
 
 	fi.setRootDirectories(topdirs, 0);
 
-	locked_saveFileIndexes() ;
+	locked_saveFileIndexes(true) ;
 
 	return true;
 }

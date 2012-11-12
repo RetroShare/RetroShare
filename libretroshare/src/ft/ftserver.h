@@ -186,6 +186,7 @@ virtual int SearchBoolExp(Expression * exp, std::list<DirDetails> &results,FileS
  ***/
 virtual bool ConvertSharedFilePath(std::string path, std::string &fullpath);
 virtual void ForceDirectoryCheck();
+virtual void updateSinceGroupPermissionsChanged() ;
 virtual bool InDirectoryCheck();
 virtual bool CopyFile(const std::string& source, const std::string& dest);
 

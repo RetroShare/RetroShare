@@ -42,6 +42,7 @@ class ShareDialog : public QDialog
 			void browseDirectory();
 		void addDirectory();
 		void updateInfoMessage() ;
+		void groupSelectionChanged();
 
 	private:
 		/** Qt Designer generated object */

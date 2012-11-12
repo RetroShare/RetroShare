@@ -158,7 +158,7 @@ class RsFiles
 		/***
 		 * Extra List Access
 		 ***/
-		virtual bool ExtraFileAdd(std::string fname, std::string hash, uint64_t size, uint32_t period, TransferRequestFlags flags) = 0;
+		//virtual bool ExtraFileAdd(std::string fname, std::string hash, uint64_t size, uint32_t period, TransferRequestFlags flags) = 0;
 		virtual bool ExtraFileRemove(std::string hash, TransferRequestFlags flags) = 0;
 		virtual bool ExtraFileHash(std::string localpath, uint32_t period, TransferRequestFlags flags) = 0;
 		virtual bool ExtraFileStatus(std::string localpath, FileInfo &info) = 0;
@@ -184,6 +184,7 @@ class RsFiles
 		 ***/
 		virtual bool ConvertSharedFilePath(std::string path, std::string &fullpath) = 0;
 		virtual void ForceDirectoryCheck() = 0;
+		virtual void updateSinceGroupPermissionsChanged() = 0;
 		virtual bool InDirectoryCheck() = 0;
 		virtual bool CopyFile(const std::string& source,const std::string& dest) = 0;
 
