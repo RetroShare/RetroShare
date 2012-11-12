@@ -50,7 +50,7 @@ LanguageSupport::languages()
     languages.insert("fr",    QString::fromUtf8("Fran\303\247ais"));
     languages.insert("fi",    "Suomi");
     //languages.insert("gr",    "Greek");
-    languages.insert("hu",    "Hungarian");
+    languages.insert("hu",    "Magyar");
     //languages.insert("it",    "Italiano");
     languages.insert("ja_JP",    QString::fromUtf8("\346\227\245\346\234\254\350\252\236"));
     languages.insert("ko",    QString::fromUtf8("\355\225\234\352\265\255\354\226\264"));
