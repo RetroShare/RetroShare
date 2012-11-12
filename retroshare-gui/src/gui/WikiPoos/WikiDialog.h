@@ -51,6 +51,7 @@ private slots:
 	void OpenOrShowAddPageDialog();
 	void OpenOrShowAddGroupDialog();
 	void OpenOrShowEditDialog();
+	void OpenOrShowRepublishDialog();
 
 	void groupTreeChanged();
 	void modTreeChanged();
@@ -59,18 +60,21 @@ private slots:
 	void showGroupDetails();
 	void editGroupDetails();
 
+	void insertWikiGroups();
+
 private:
 
 void 	clearWikiPage();
 void    clearGroupTree();
 void    clearModsTree();
 
-void 	insertWikiGroups();
 void 	insertModsForPage(const std::string &origPageId);
+
+void 	insertModsForPage(const RsGxsGrpMsgIdPair &origPageId);
 
 void 	updateWikiPage(const RsWikiSnapshot &page);
 
-bool 	getSelectedPage(std::string &pageId, std::string &origPageId);	
+bool 	getSelectedPage(std::string &groupId, std::string &pageId, std::string &origPageId);	
 std::string getSelectedPage();
 std::string getSelectedGroup();
 std::string getSelectedMod();
@@ -78,23 +82,26 @@ std::string getSelectedMod();
 
 
 void 	requestGroupList();
-void 	loadGroupList(const uint32_t &token);
-void 	requestGroupData(const std::list<std::string> &groupIds);
 void 	loadGroupData(const uint32_t &token);
-void 	requestOriginalPages(const std::list<std::string> &groupIds);
-void 	loadOriginalPages(const uint32_t &token);
-void 	requestLatestPages(const std::list<std::string> &msgIds);
-void 	loadLatestPages(const uint32_t &token);
-void 	requestPages(const std::list<std::string> &msgIds);
+
+//void 	requestOriginalPages(const std::list<std::string> &groupIds);
+//void 	loadOriginalPages(const uint32_t &token);
+//void 	requestLatestPages(const std::list<std::string> &msgIds);
+//void 	loadLatestPages(const uint32_t &token);
+void 	requestPages(const std::list<RsGxsGroupId> &groupIds);
+//void 	requestPages(const std::list<std::string> &msgIds);
 void 	loadPages(const uint32_t &token);
 
 
-void 	requestModPageList(const std::string &origMsgId);
+void 	requestModPageList(const RsGxsGrpMsgIdPair &origMsgId);
 void 	loadModPageList(const uint32_t &token);
-void 	requestModPages(const std::list<std::string> &msgIds);
+void 	requestModPages(const GxsMsgIdResult &msgIds);
 void 	loadModPages(const uint32_t &token);
 
-void 	requestWikiPage(const std::string &msgId);
+void 	requestEditTreeData();
+void 	loadEditTreeData(const uint32_t &token);
+
+void 	requestWikiPage(const  RsGxsGrpMsgIdPair &msgId);
 void 	loadWikiPage(const uint32_t &token);
 
 

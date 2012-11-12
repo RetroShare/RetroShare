@@ -24,12 +24,39 @@
 #include <retroshare/rswiki.h>
 #include <iostream>
 
+const uint32_t WikiCreateEnabledFlags = ( GXS_GROUP_FLAGS_ICON        |
+                          GXS_GROUP_FLAGS_DESCRIPTION   |
+                          GXS_GROUP_FLAGS_DISTRIBUTION  |
+                          // GXS_GROUP_FLAGS_PUBLISHSIGN   |
+                          GXS_GROUP_FLAGS_SHAREKEYS     |
+                          // GXS_GROUP_FLAGS_PERSONALSIGN  |
+                          // GXS_GROUP_FLAGS_COMMENTS      |
+                          0);
+
+uint32_t WikiCreateDefaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC    |
+                           //GXS_GROUP_DEFAULTS_DISTRIB_GROUP        |
+                           //GXS_GROUP_DEFAULTS_DISTRIB_LOCAL        |
+
+                           GXS_GROUP_DEFAULTS_PUBLISH_OPEN         |
+                           //GXS_GROUP_DEFAULTS_PUBLISH_THREADS      |
+                           //GXS_GROUP_DEFAULTS_PUBLISH_REQUIRED     |
+                           //GXS_GROUP_DEFAULTS_PUBLISH_ENCRYPTED    |
+
+                           //GXS_GROUP_DEFAULTS_PERSONAL_GPG         |
+                           GXS_GROUP_DEFAULTS_PERSONAL_REQUIRED    |
+                           //GXS_GROUP_DEFAULTS_PERSONAL_IFNOPUB     |
+
+                           //GXS_GROUP_DEFAULTS_COMMENTS_YES         |
+                           GXS_GROUP_DEFAULTS_COMMENTS_NO          |
+                           0);
+
+
 WikiGroupDialog::WikiGroupDialog(TokenQueue *tokenQueue, QWidget *parent)
-	:GxsGroupDialog(tokenQueue, parent, GXS_GROUP_DIALOG_CREATE_MODE)
+	:GxsGroupDialog(tokenQueue, WikiCreateEnabledFlags, WikiCreateDefaultsFlags, parent)
 {
 
 	// To start with we only have open forums - with distribution controls.
-
+#if 0
         uint32_t enabledFlags = ( GXS_GROUP_FLAGS_ICON        |
                                 GXS_GROUP_FLAGS_DESCRIPTION   |
                                 GXS_GROUP_FLAGS_DISTRIBUTION  |
@@ -60,12 +87,15 @@ WikiGroupDialog::WikiGroupDialog(TokenQueue *tokenQueue, QWidget *parent)
 
 	//setFlags(enabledFlags, readonlyFlags, defaultsFlags);
 	setFlags(enabledFlags, defaultsFlags);
+#endif
 
 }
 
 WikiGroupDialog::WikiGroupDialog(const RsWikiCollection &collection, QWidget *parent)
-	:GxsGroupDialog(NULL, parent, GXS_GROUP_DIALOG_SHOW_MODE)
+    	:GxsGroupDialog(collection.mMeta, GXS_GROUP_DIALOG_SHOW_MODE, parent)
+
 {
+#if 0
 
 	// To start with we only have open forums - with distribution controls.
 
@@ -84,6 +114,7 @@ WikiGroupDialog::WikiGroupDialog(const RsWikiCollection &collection, QWidget *pa
                                 0);
 
 	setFlags(enabledFlags, defaultsFlags);
+#endif
 
 }
 
@@ -94,48 +125,12 @@ bool WikiGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaData
 	RsWikiCollection grp;
 	grp.mMeta = meta;
 	//grp.mDescription = std::string(desc.toUtf8());
+	std::cerr << "WikiGroupDialog::service_CreateGroup() storing to Queue";
+	std::cerr << std::endl;
 
 	rsWiki->submitCollection(token, grp);
+
 	return true;
 }
-
-QPixmap WikiGroupDialog::service_getLogo()
-{
-    return QPixmap(); // null pixmap
-}
-
-QString WikiGroupDialog::service_getDescription()
-{
-    return QString();
-}
-
-RsGroupMetaData WikiGroupDialog::service_getMeta()
-{
-    return mGrp.mMeta;
-}
-
-
-#if 0
-void WikiGroupDialog::service_loadExistingGroup(const uint32_t &token)
-{
-        std::cerr << "WikiGroupDialog::service_loadExistingGroup()";
-        std::cerr << std::endl;
-
-	RsWikiCollection group;
-	if (!rsWiki->getGroupData(token, group))
-	{
-        	std::cerr << "WikiGroupDialog::service_loadExistingGroup() ERROR Getting Group";
-        	std::cerr << std::endl;
-
-		return;
-	}
-
-	/* must call metadata loader */	
-	loadExistingGroupMetaData(group.mMeta);
-
-	/* now load any extra data we feel like */
-
-}
-#endif
 
 

@@ -140,6 +140,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QToolButton" name="toolButton_Republish">
+            <property name="text">
+             <string>Republish</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QToolButton" name="toolButton_Edit">
             <property name="text">
              <string>Edit</string>
@@ -180,10 +187,10 @@
           <item>
            <widget class="QToolButton" name="toolButton_Delete">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="text">
-             <string>Delete</string>
+             <string>Refresh</string>
             </property>
            </widget>
           </item>

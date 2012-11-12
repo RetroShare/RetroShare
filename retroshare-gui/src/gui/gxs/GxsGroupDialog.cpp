@@ -285,6 +285,9 @@ void GxsGroupDialog::submitGroup()
 
 void GxsGroupDialog::createGroup()
 {
+    std::cerr << "GxsGroupDialog::createGroup()";
+    std::cerr << std::endl;
+
     QString name = misc::removeNewLine(ui.groupName->text());
     uint32_t flags = 0;
 

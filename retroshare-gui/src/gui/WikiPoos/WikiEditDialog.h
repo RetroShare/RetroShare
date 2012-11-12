@@ -41,6 +41,8 @@ void 	setNewPage();
 void 	setupData(const std::string &groupId, const std::string &pageId);
 void 	loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
+void 	setRepublishMode(RsGxsMessageId &origMsgId);
+
 private slots:
 
 void 	cancelEdit();
@@ -52,12 +54,16 @@ private:
 void 	setGroup(RsWikiCollection &group);
 void 	setPreviousPage(RsWikiSnapshot &page);
 
-void 	requestPage(const std::string &msgId);
+void 	requestPage(const RsGxsGrpMsgIdPair &msgId);
 void 	loadPage(const uint32_t &token);
 void 	requestGroup(const std::string &groupId);
 void 	loadGroup(const uint32_t &token);
 
         bool mNewPage;
+
+        bool mRepublishMode;
+	RsGxsMessageId mRepublishOrigId;
+
 	RsWikiCollection mWikiCollection;
 	RsWikiSnapshot mWikiSnapshot;
 

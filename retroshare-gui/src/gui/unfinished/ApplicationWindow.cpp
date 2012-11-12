@@ -30,12 +30,11 @@
 #include "gui/PhotoShare/PhotoShare.h"
 #include "gui/WikiPoos/WikiDialog.h"
 #include "gui/Posted/PostedDialog.h"
+#include "gui/GxsForumsDialog.h"
 
 // THESE HAVE TO BE CONVERTED TO VEG FORMAT
 #if USE_VEG_SERVICE
 #include "gui/TheWire/WireDialog.h"
-#include "gui/ForumsV2Dialog.h"
-
 #endif
 
 //#include "GamesDialog.h"
@@ -54,7 +53,7 @@
 #define IMAGE_CALENDAR          ":/images/calendar.png"
 #define IMAGE_LIBRARY           ":/images/library.png"
 #define IMAGE_PLUGINS           ":/images/extension_32.png"
-#define IMAGE_FORUMSV2            ":/images/konversation.png"
+#define IMAGE_GXSFORUMS         ":/images/konversation.png"
 
 /** Constructor */
 ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
@@ -97,20 +96,19 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(postedDialog = new PostedDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_LIBRARY), tr("Posted Links"), grp));
 
-//    WikiDialog *wikiDialog = NULL;
-//    ui.stackPages->add(wikiDialog = new WikiDialog(ui.stackPages),
-//                      createPageAction(QIcon(IMAGE_LIBRARY), tr("Wiki Pages"), grp));
+    WikiDialog *wikiDialog = NULL;
+    ui.stackPages->add(wikiDialog = new WikiDialog(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_LIBRARY), tr("Wiki Pages"), grp));
+
+    GxsForumsDialog *gxsforumsDialog = NULL;
+    ui.stackPages->add(gxsforumsDialog = new GxsForumsDialog(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_GXSFORUMS), tr("GxsForums"), grp));
 
 // THESE HAVE TO BE CONVERTED TO VEG FORMAT
 #if USE_VEG_SERVICE
     WireDialog *wireDialog = NULL;
     ui.stackPages->add(wireDialog = new WireDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_BWGRAPH), tr("The Wire"), grp));
-
-    ForumsV2Dialog *forumsV2Dialog = NULL;
-    ui.stackPages->add(forumsV2Dialog = new ForumsV2Dialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_FORUMSV2), tr("ForumsV2"), grp));
-
 
 #endif
 

@@ -93,7 +93,8 @@ void PhotoDialog::requestComments()
     uint32_t token;
     msgId.first = mPhotoDetails.mMeta.mGroupId;
     msgId.second = mPhotoDetails.mMeta.mMsgId;
-    mPhotoQueue->requestMsgRelatedInfo(token, opts, msgId, 0);
+    uint32_t anstype = RS_TOKREQ_ANSTYPE_LIST;
+    mPhotoQueue->requestMsgRelatedInfo(token, anstype, opts, msgId, 0);
 }
 
 void PhotoDialog::createComment()

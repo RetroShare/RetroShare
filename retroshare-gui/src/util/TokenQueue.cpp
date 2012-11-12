@@ -67,10 +67,9 @@ bool TokenQueue::requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokRe
 }
 
 
-bool TokenQueue::requestMsgRelatedInfo(uint32_t &token, const RsTokReqOptions &opts, const RsGxsGrpMsgIdPair &msgId, uint32_t usertype)
+bool TokenQueue::requestMsgRelatedInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, const RsGxsGrpMsgIdPair &msgId, uint32_t usertype)
 {
     uint32_t basictype = TOKENREQ_MSGINFO;
-    uint32_t anstype = RS_TOKREQ_ANSTYPE_LIST; // always a list answer
     mService->requestMsgRelatedInfo(token, anstype, opts, msgId);
     queueRequest(token, basictype, anstype, usertype);
 
@@ -125,21 +124,39 @@ void TokenQueue::pollRequests()
 {
 	double pollPeriod = 1.0; // max poll period.
 
-        TokenRequest req;
 
-        if(mRequests.size() > 0){
-            req = mRequests.front();
-        }else
-        {
-            return;
-        }
+	if (mRequests.empty())
+	{
+		return;
+	}
+
+        TokenRequest req;
+        req = mRequests.front();
+        mRequests.pop_front();
 
         if (checkForRequest(req.mToken))
         {
             /* clean it up and handle */
             loadRequest(req);
-            mRequests.pop_front();
         }
+	else
+	{
+
+#define MAX_REQUEST_AGE 30
+
+		/* drop old requests too */
+		if (time(NULL) - req.mRequestTs.tv_sec < MAX_REQUEST_AGE)
+		{
+        		mRequests.push_back(req);
+		}
+		else
+		{
+        		std::cerr << "TokenQueue::loadRequest(): ";
+			std::cerr << "Dropping old Token: " << req.mToken << " Type: " << req.mType;
+			std::cerr << std::endl;
+		}
+
+	}
 
 	if (mRequests.size() > 0)
 	{

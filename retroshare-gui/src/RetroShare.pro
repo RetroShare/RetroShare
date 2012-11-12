@@ -2,10 +2,10 @@ CONFIG += qt gui uic qrc resources uitools idle bitdht
 
 # Below is for GXS services.
 CONFIG += photoshare 
-#CONFIG += wikipoos
+CONFIG += wikipoos
 #CONFIG += thewire
 CONFIG += identities
-#CONFIG += forumsv2
+CONFIG += gxsforums 
 CONFIG += posted
 CONFIG += unfinished
 CONFIG += gxsgui
@@ -194,11 +194,11 @@ freebsd-* {
 # ###########################################
 
 bitdht {
-        #LIBS += ../../libbitdht/src/lib/libbitdht.a
-        #PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
+        LIBS += ../../libbitdht/src/lib/libbitdht.a
+        PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
 
-        LIBS += C:\Development\Rs\v0.5-gxs-b1\libbitdht\libbitdht-build-desktop\lib\libbitdht.a
-        PRE_TARGETDEPS *= C:\Development\Rs\v0.5-gxs-b1\libbitdht\libbitdht-build-desktop\lib\libbitdht.a
+        #LIBS += C:\Development\Rs\v0.5-gxs-b1\libbitdht\libbitdht-build-desktop\lib\libbitdht.a
+        #PRE_TARGETDEPS *= C:\Development\Rs\v0.5-gxs-b1\libbitdht\libbitdht-build-desktop\lib\libbitdht.a
 
         # Chris version.
         #LIBS += ../../libbitdht/libbitdht-build-desktop/lib/libbitdht.a
@@ -959,25 +959,25 @@ identities {
 }
 
 
-forumsv2 {
+gxsforums {
 
-	HEADERS += gui/ForumsV2Dialog.h \
-            gui/forumsv2/ForumV2Details.h \
-            gui/forumsv2/EditForumV2Details.h \
-            gui/forumsv2/CreateForumV2.h \
-            gui/forumsv2/CreateForumV2Msg.h \
+	HEADERS += gui/GxsForumsDialog.h \
+            gui/gxsforums/GxsForumDetails.h \
+            gui/gxsforums/EditGxsForumDetails.h \
+            gui/gxsforums/CreateGxsForum.h \
+            gui/gxsforums/CreateGxsForumMsg.h \
 
-	FORMS += gui/ForumsV2Dialog.ui \
-            gui/forumsv2/ForumV2Details.ui \
-            gui/forumsv2/EditForumV2Details.ui \
-            gui/forumsv2/CreateForumV2.ui \
-            gui/forumsv2/CreateForumV2Msg.ui \
+	FORMS += gui/GxsForumsDialog.ui \
+            gui/gxsforums/GxsForumDetails.ui \
+            gui/gxsforums/EditGxsForumDetails.ui \
+            gui/gxsforums/CreateGxsForum.ui \
+            gui/gxsforums/CreateGxsForumMsg.ui \
 
-	SOURCES += gui/ForumsV2Dialog.cpp \
-            gui/forumsv2/ForumV2Details.cpp \
-            gui/forumsv2/EditForumV2Details.cpp \
-            gui/forumsv2/CreateForumV2.cpp \
-            gui/forumsv2/CreateForumV2Msg.cpp \
+	SOURCES += gui/GxsForumsDialog.cpp \
+            gui/gxsforums/GxsForumDetails.cpp \
+            gui/gxsforums/EditGxsForumDetails.cpp \
+            gui/gxsforums/CreateGxsForum.cpp \
+            gui/gxsforums/CreateGxsForumMsg.cpp \
 
 }
 
@@ -1014,10 +1014,10 @@ posted {
 gxsgui {
 
 	HEADERS += gui/gxs/GxsGroupDialog.h \
-            gui/gxs/GxsCommentTreeWidget.h \
-      #      gui/gxs/WikiGroupDialog.h \
+		gui/gxs/GxsCommentTreeWidget.h \
+		gui/gxs/WikiGroupDialog.h \
+		gui/gxs/GxsForumGroupDialog.h \
 
-#	     gui/gxs/ForumV2GroupDialog.h \
 #            gui/gxs/GxsMsgDialog.h \
 
         FORMS += gui/gxs/GxsGroupDialog.ui \
@@ -1025,10 +1025,10 @@ gxsgui {
 #	    gui/gxs/GxsCommentTreeWidget.ui \
 
         SOURCES += gui/gxs/GxsGroupDialog.cpp \
-            gui/gxs/GxsCommentTreeWidget.cpp \
-       #     gui/gxs/WikiGroupDialog.cpp \
+		gui/gxs/GxsCommentTreeWidget.cpp \
+		gui/gxs/WikiGroupDialog.cpp \
+		gui/gxs/GxsForumGroupDialog.cpp \
 
-            #gui/gxs/ForumV2GroupDialog.cpp \
 #            gui/gxs/GxsMsgDialog.cpp \
 
 

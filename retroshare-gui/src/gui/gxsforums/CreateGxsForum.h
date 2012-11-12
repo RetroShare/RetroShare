@@ -20,27 +20,47 @@
  ****************************************************************/
 
 
-#ifndef _WIKI_GROUP_DIALOG_H
-#define _WIKI_GROUP_DIALOG_H
+#ifndef _CREATE_GXSFORUM_DIALOG_H
+#define _CREATE_GXSFORUM_DIALOG_H
 
-#include "GxsGroupDialog.h"
-#include "retroshare/rswiki.h"
+#include "ui_CreateGxsForum.h"
 
-class WikiGroupDialog : public GxsGroupDialog
+#include "util/TokenQueue.h"
+
+class CreateGxsForum : public QDialog, public TokenResponse
 {
 	Q_OBJECT
 
 public:
-	WikiGroupDialog(TokenQueue *tokenQueue, QWidget *parent);
-	WikiGroupDialog(const RsWikiCollection &collection, QWidget *parent);
+	CreateGxsForum(QWidget *parent = 0);
 
-protected:
-        virtual bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta);
+	void newForum(); /* cleanup */
+
+        // Callback for all Loads.
+virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+
+private slots:
+	/* actions to take.... */
+	void createForum();
+	void cancelForum();
+
+	// set private forum key share list
+	void setShareList();
 
 private:
+	void sendShareList(std::string forumId);
+	void completeCreateNewForum(const RsGroupMetaData &newForumMeta);
+	void loadNewForumId(const uint32_t &token);
 
-    RsWikiCollection mGrp;
 
+	std::list<std::string> mShareList;
+
+	QPixmap picture;
+
+	TokenQueue *mForumQueue;
+
+	/** Qt Designer generated object */
+	Ui::CreateGxsForum ui;
 };
 
 #endif

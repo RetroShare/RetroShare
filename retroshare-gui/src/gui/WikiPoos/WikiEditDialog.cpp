@@ -36,13 +36,15 @@ WikiEditDialog::WikiEditDialog(QWidget *parent)
 	connect(ui.pushButton_Revert, SIGNAL( clicked( void ) ), this, SLOT( revertEdit( void ) ) );
 	connect(ui.pushButton_Submit, SIGNAL( clicked( void ) ), this, SLOT( submitEdit( void ) ) );
 
-#if 0
-	mWikiQueue = new TokenQueue(rsWiki, this);
-#endif
+	mWikiQueue = new TokenQueue(rsWiki->getTokenService(), this);
+        mRepublishMode = false;
 }
 
 void WikiEditDialog::setGroup(RsWikiCollection &group)
 {
+	std::cerr << "WikiEditDialog::setGroup(): " << group;
+	std::cerr << std::endl;
+
 	mWikiCollection = group;
 
 	ui.lineEdit_Group->setText(QString::fromStdString(mWikiCollection.mMeta.mGroupName));
@@ -51,6 +53,9 @@ void WikiEditDialog::setGroup(RsWikiCollection &group)
 
 void WikiEditDialog::setPreviousPage(RsWikiSnapshot &page)
 {
+	std::cerr << "WikiEditDialog::setPreviousPage(): " << page;
+	std::cerr << std::endl;
+
 	mNewPage = false;
 	mWikiSnapshot = page;
 
@@ -63,10 +68,19 @@ void WikiEditDialog::setPreviousPage(RsWikiSnapshot &page)
 void WikiEditDialog::setNewPage()
 {
 	mNewPage = true;
+        mRepublishMode = false;
 	ui.lineEdit_Page->setText("");
 	ui.lineEdit_PrevVersion->setText("");
 	ui.textEdit->setPlainText("");
 }
+
+
+void WikiEditDialog::setRepublishMode(RsGxsMessageId &origMsgId)
+{
+        mRepublishMode = true;
+        mRepublishOrigId = origMsgId;
+}
+
 
 
 void WikiEditDialog::cancelEdit()
@@ -90,6 +104,9 @@ void WikiEditDialog::revertEdit()
 
 void WikiEditDialog::submitEdit()
 {
+	std::cerr << "WikiEditDialog::submitEdit()";
+	std::cerr << std::endl;
+
 	if (mNewPage)
 	{
 		mWikiSnapshot.mMeta.mGroupId = mWikiCollection.mMeta.mGroupId;
@@ -98,28 +115,78 @@ void WikiEditDialog::submitEdit()
 #if 0
 		mWikiSnapshot.mPrevId = "";
 #endif
+		std::cerr << "WikiEditDialog::submitEdit() Is New Page";
+		std::cerr << std::endl;
+	}
+	else if (mRepublishMode)
+	{
+		std::cerr << "WikiEditDialog::submitEdit() In Republish Mode";
+		std::cerr << std::endl;
+		// A New Version of the ThreadHead.
+		mWikiSnapshot.mMeta.mGroupId = mWikiCollection.mMeta.mGroupId;
+		mWikiSnapshot.mMeta.mOrigMsgId = mRepublishOrigId;
+		mWikiSnapshot.mMeta.mParentId = "";
+		mWikiSnapshot.mMeta.mThreadId = "";
+		mWikiSnapshot.mMeta.mMsgId = "";
 	}
 	else
 	{
-#if 0
-		mWikiSnapshot.mPrevId = mWikiSnapshot.mMeta.mMsgId;
-#endif
+		std::cerr << "WikiEditDialog::submitEdit() In Child Edit Mode";
+		std::cerr << std::endl;
+
+		// A Child of the current message.
+		bool isFirstChild = false;
+		if (mWikiSnapshot.mMeta.mParentId == "")
+		{
+			isFirstChild = true;
+		}
+
+		mWikiSnapshot.mMeta.mGroupId = mWikiCollection.mMeta.mGroupId;
+
+		if (isFirstChild)
+		{
+			mWikiSnapshot.mMeta.mThreadId = mWikiSnapshot.mMeta.mOrigMsgId;
+			// Special HACK here... parentId points to specific Msg, rather than OrigMsgId.
+			// This allows versioning to work well.
+			mWikiSnapshot.mMeta.mParentId = mWikiSnapshot.mMeta.mMsgId;
+		}
+		else
+		{
+			// ThreadId is the same.
+			mWikiSnapshot.mMeta.mParentId = mWikiSnapshot.mMeta.mOrigMsgId;
+		}
+
 		mWikiSnapshot.mMeta.mMsgId = "";
+		mWikiSnapshot.mMeta.mOrigMsgId = "";
 	}
+
 
 	mWikiSnapshot.mMeta.mMsgName = ui.lineEdit_Page->text().toStdString();
 	mWikiSnapshot.mPage = ui.textEdit->toPlainText().toStdString();
 
+	std::cerr << "WikiEditDialog::submitEdit() PageTitle: " << mWikiSnapshot.mMeta.mMsgName;
+	std::cerr << std::endl;
+	std::cerr << "WikiEditDialog::submitEdit() GroupId: " << mWikiSnapshot.mMeta.mGroupId;
+	std::cerr << std::endl;
+	std::cerr << "WikiEditDialog::submitEdit() OrigMsgId: " << mWikiSnapshot.mMeta.mOrigMsgId;
+	std::cerr << std::endl;
+	std::cerr << "WikiEditDialog::submitEdit() MsgId: " << mWikiSnapshot.mMeta.mMsgId;
+	std::cerr << std::endl;
+	std::cerr << "WikiEditDialog::submitEdit() ThreadId: " << mWikiSnapshot.mMeta.mThreadId;
+	std::cerr << std::endl;
+	std::cerr << "WikiEditDialog::submitEdit() ParentId: " << mWikiSnapshot.mMeta.mParentId;
+	std::cerr << std::endl;
+
 	uint32_t token;
-	bool  isNew = mNewPage;
-#if 0
-	rsWiki->createPage(token, mWikiSnapshot, isNew);
-#endif
+	//bool  isNew = mNewPage;
+	//rsWiki->createPage(token, mWikiSnapshot, isNew);
+	rsWiki->submitSnapshot(token, mWikiSnapshot);
 	hide();
 }
 
 void WikiEditDialog::setupData(const std::string &groupId, const std::string &pageId)
 {
+        mRepublishMode = false;
 	if (groupId != "")
 	{
 		requestGroup(groupId);
@@ -127,7 +194,8 @@ void WikiEditDialog::setupData(const std::string &groupId, const std::string &pa
 
 	if (pageId != "")
 	{
-		requestPage(pageId);
+        	RsGxsGrpMsgIdPair msgId = std::make_pair(groupId, pageId);
+		requestPage(msgId);
 	}
 }
 
@@ -143,6 +211,7 @@ void WikiEditDialog::requestGroup(const std::string &groupId)
 	ids.push_back(groupId);
 
         RsTokReqOptions opts;
+        opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 	uint32_t token;
         mWikiQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, ids, 0);
 }
@@ -152,30 +221,33 @@ void WikiEditDialog::loadGroup(const uint32_t &token)
         std::cerr << "WikiEditDialog::loadGroup()";
         std::cerr << std::endl;
 
-	RsWikiCollection group;
-#if 0
-	if (rsWiki->getGroupData(token, group))
-#else
-	if (0)
-#endif
+	std::vector<RsWikiCollection> groups;
+	if (rsWiki->getCollections(token, groups))
 	{
-		setGroup(group);
+		if (groups.size() != 1)
+		{
+        		std::cerr << "WikiEditDialog::loadGroup() ERROR No group data";
+        		std::cerr << std::endl;
+			return;
+		}
+		setGroup(groups[0]);
 	}
 }
 
-void WikiEditDialog::requestPage(const std::string &msgId)
+void WikiEditDialog::requestPage(const RsGxsGrpMsgIdPair &msgId)
 {
-        std::cerr << "WikiEditDialog::requestGroup()";
+        std::cerr << "WikiEditDialog::requestPage()";
         std::cerr << std::endl;
 
-        std::list<std::string> ids;
-	ids.push_back(msgId);
         RsTokReqOptions opts;
+        opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+
+        GxsMsgReq msgIds;
+        std::vector<RsGxsMessageId> &vect_msgIds = msgIds[msgId.first];
+        vect_msgIds.push_back(msgId.second);
 
 	uint32_t token;
-#if 0
-        mWikiQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, ids, 0);
-#endif
+        mWikiQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, 0);
 }
 
 void WikiEditDialog::loadPage(const uint32_t &token)
@@ -183,14 +255,17 @@ void WikiEditDialog::loadPage(const uint32_t &token)
         std::cerr << "WikiEditDialog::loadPage()";
         std::cerr << std::endl;
 
-	RsWikiSnapshot page;
-#if 0
-	if (rsWiki->getMsgData(token, page))
-#else
-	if (0)
-#endif
+	std::vector<RsWikiSnapshot> snapshots;
+
+	if (rsWiki->getSnapshots(token, snapshots))
 	{
-		setPreviousPage(page);
+		if (snapshots.size() != 1)
+		{
+        		std::cerr << "WikiEditDialog::loadGroup() ERROR No group data";
+        		std::cerr << std::endl;
+			return;
+		}
+		setPreviousPage(snapshots[0]);
 	}
 }
 
@@ -207,7 +282,7 @@ void WikiEditDialog::loadRequest(const TokenQueue *queue, const TokenRequest &re
 		case TOKENREQ_GROUPINFO:
 			loadGroup(req.mToken);
 			break;
-		case TOKENREQ_MSGRELATEDINFO:
+		case TOKENREQ_MSGINFO:
 			loadPage(req.mToken);
 			break;
 		default:

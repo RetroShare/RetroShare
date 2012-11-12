@@ -1,7 +1,7 @@
 /****************************************************************
  *  RetroShare is distributed under the following license:
  *
- *  Copyright (C) 2008 Robert Fernie
+ *  Copyright (C) 2010 RetroShare Team
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -19,28 +19,34 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#ifndef _EDITGXSFORUMDETAILS_H
+#define _EDITGXSFORUMDETAILS_H
 
-#ifndef _WIKI_GROUP_DIALOG_H
-#define _WIKI_GROUP_DIALOG_H
+#include <QDialog>
 
-#include "GxsGroupDialog.h"
-#include "retroshare/rswiki.h"
+#include "ui_EditGxsForumDetails.h"
 
-class WikiGroupDialog : public GxsGroupDialog
+class EditGxsForumDetails : public QDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	WikiGroupDialog(TokenQueue *tokenQueue, QWidget *parent);
-	WikiGroupDialog(const RsWikiCollection &collection, QWidget *parent);
+    /** Default constructor */
+    EditGxsForumDetails(std::string forumId = "", QWidget *parent = 0, Qt::WFlags flags = 0);
 
-protected:
-        virtual bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta);
+signals:
+    void configChanged();
+
+private slots:
+    void applyDialog();
 
 private:
+    void loadForum();
 
-    RsWikiCollection mGrp;
+    std::string m_forumId;
 
+    /** Qt Designer generated object */
+    Ui::EditGxsForumDetails ui;
 };
 
 #endif

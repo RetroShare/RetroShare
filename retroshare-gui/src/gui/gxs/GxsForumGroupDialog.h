@@ -20,27 +20,22 @@
  ****************************************************************/
 
 
-#ifndef _WIKI_GROUP_DIALOG_H
-#define _WIKI_GROUP_DIALOG_H
+#ifndef _GXSFORUM_GROUP_DIALOG_H
+#define _GXSFORUM_GROUP_DIALOG_H
 
 #include "GxsGroupDialog.h"
-#include "retroshare/rswiki.h"
+#include <retroshare/rsgxsforums.h>
 
-class WikiGroupDialog : public GxsGroupDialog
+class GxsForumGroupDialog : public GxsGroupDialog
 {
 	Q_OBJECT
 
 public:
-	WikiGroupDialog(TokenQueue *tokenQueue, QWidget *parent);
-	WikiGroupDialog(const RsWikiCollection &collection, QWidget *parent);
+	GxsForumGroupDialog(TokenQueue *tokenQueue, QWidget *parent);
+	GxsForumGroupDialog(const RsGxsForumGroup &group, QWidget *parent);
 
 protected:
         virtual bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta);
-
-private:
-
-    RsWikiCollection mGrp;
-
 };
 
 #endif
