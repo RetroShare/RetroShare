@@ -205,16 +205,19 @@ QString RetroshareDirModel::getFlagsString(FileStorageFlags flags)
 
 	return QString(str) ;
 }
-QString RetroshareDirModel::getGroupsString(const std::list<std::string>& groups)
+QString RetroshareDirModel::getGroupsString(const std::list<std::string>& group_ids)
 {
 	QString groups_str ;
+	RsGroupInfo group_info ;
 
-	for(std::list<std::string>::const_iterator it(groups.begin());it!=groups.end();)
-	{
-		groups_str += QString::fromStdString(*it) ;
-		if(++it != groups.end())
-			groups_str += ", " ;
-	}
+	for(std::list<std::string>::const_iterator it(group_ids.begin());it!=group_ids.end();)
+		if(rsPeers->getGroupInfo(*it,group_info)) 
+		{
+			groups_str += QString::fromStdString(group_info.name) ;
+
+			if(++it != group_ids.end())
+				groups_str += ", " ;
+		}
 	return groups_str ;
 }
 
