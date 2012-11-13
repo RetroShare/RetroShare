@@ -606,9 +606,10 @@ void WikiDialog::requestModPageList(const RsGxsGrpMsgIdPair &origMsgId)
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_IDS;
 	opts.mOptions = RS_TOKREQOPT_MSG_VERSIONS;
-
+        std::vector<RsGxsGrpMsgIdPair> msgIds;
+        msgIds.push_back(origMsgId);
 	uint32_t token;
-	mWikiQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_LIST, opts, origMsgId, WIKIDIALOG_MOD_LIST);
+        mWikiQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_LIST, opts, msgIds, WIKIDIALOG_MOD_LIST);
 }
 
 

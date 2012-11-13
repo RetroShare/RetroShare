@@ -1,7 +1,8 @@
 #include "genexchangetestservice.h"
 
-GenExchangeTestService::GenExchangeTestService(RsGeneralDataService *dataServ, RsNetworkExchangeService * netService)
-    : RsGenExchange(dataServ, netService, new RsDummySerialiser(), RS_SERVICE_TYPE_DUMMY)
+GenExchangeTestService::GenExchangeTestService(RsGeneralDataService *dataServ, RsNetworkExchangeService * netService,
+                                               RsGixs* gixs, uint32_t authenPolicy)
+    : RsGenExchange(dataServ, netService, new RsDummySerialiser(), RS_SERVICE_TYPE_DUMMY, gixs, authenPolicy)
 {
 
 }
@@ -51,6 +52,11 @@ bool GenExchangeTestService::getMsgListTS(const uint32_t &token, GxsMsgIdResult 
     return getMsgList(token, msgIds);
 }
 
+bool GenExchangeTestService::getMsgRelatedListTS(const uint32_t &token, MsgRelatedIdResult &msgIds)
+{
+    return getMsgRelatedList(token, msgIds);
+}
+
 void GenExchangeTestService::setGroupServiceStringTS(uint32_t &token, const RsGxsGroupId &grpId, const std::string &servString)
 {
         RsGenExchange::setGroupServiceString(token, grpId, servString);
@@ -58,12 +64,12 @@ void GenExchangeTestService::setGroupServiceStringTS(uint32_t &token, const RsGx
 
 void GenExchangeTestService::setGroupStatusFlagTS(uint32_t &token, const RsGxsGroupId &grpId, const uint32_t &status)
 {
-    RsGenExchange::setGroupStatusFlag(token, grpId, status);
+    RsGenExchange::setGroupStatusFlags(token, grpId, status, 0xff);
 }
 
 void GenExchangeTestService::setGroupSubscribeFlagTS(uint32_t &token, const RsGxsGroupId &grpId, const uint32_t &status)
 {
-    RsGenExchange::setGroupSubscribeFlag(token, grpId, status);
+    RsGenExchange::setGroupSubscribeFlags(token, grpId, status, 0xff);
 }
 
 void GenExchangeTestService::setMsgServiceStringTS(uint32_t &token, const RsGxsGrpMsgIdPair &msgId, const std::string &servString)
@@ -73,6 +79,10 @@ void GenExchangeTestService::setMsgServiceStringTS(uint32_t &token, const RsGxsG
 
 void GenExchangeTestService::setMsgStatusFlagTS(uint32_t &token, const RsGxsGrpMsgIdPair &msgId, const uint32_t &status)
 {
-    RsGenExchange::setMsgStatusFlag(token, msgId, status);
+    RsGenExchange::setMsgStatusFlags(token, msgId, status, 0xff);
 }
 
+void GenExchangeTestService::service_tick()
+{
+
+}

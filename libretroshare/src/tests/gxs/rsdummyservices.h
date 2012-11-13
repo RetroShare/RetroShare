@@ -5,6 +5,7 @@
 // dummy services to make
 
 #include "gxs/rsnxs.h"
+#include "gxs/rsgixs.h"
 #include "serialiser/rsgxsitems.h"
 
 class RsDummyNetService: public RsNetworkExchangeService
@@ -90,7 +91,75 @@ public:
 
 };
 
+/*!
+ * Dummy implementation of Gixs service for
+ * testing
+ * Limited to creating two ids upon construction which can be used
+ * for signing data
+ */
+class RsGixsDummy : public RsGixs
+{
 
+public:
+
+    /*!
+     * constructs keys for both incoming and outgoing id (no private keys for incoming id)
+     * @param
+     * @param dummyId This is is the only id thats exists in this dummy interface
+     */
+    RsGixsDummy(const RsGxsId& incomingId, const RsGxsId& outgoingId){}
+
+    /*!
+     *
+     * @return id used for signing incoming data (should have both public and private components)
+     */
+    const RsGxsId& getOutgoing(){ return mOutgoingId; }
+
+    /*!
+     *
+     * @return id used for signing outgoing data(only have public parts)
+     */
+    const RsGxsId& getIncoming(){ return mIncomingId; }
+
+    // Key related interface - used for validating msgs and groups.
+    /*!
+     * Use to query a whether given key is available by its key reference
+     * @param keyref the keyref of key that is being checked for
+     * @return true if available, false otherwise
+     */
+    bool haveKey(const RsGxsId &id){ return false;}
+
+    /*!
+     * Use to query whether private key member of the given key reference is available
+     * @param keyref the KeyRef of the key being checked for
+     * @return true if private key is held here, false otherwise
+     */
+    bool havePrivateKey(const RsGxsId &id){ return false; }
+
+    // The fetchKey has an optional peerList.. this is people that had the msg with the signature.
+    // These same people should have the identity - so we ask them first.
+    /*!
+     * Use to request a given key reference
+     * @param keyref the KeyRef of the key being requested
+     * @return will
+     */
+    bool requestKey(const RsGxsId &id, const std::list<PeerId> &peers){ return false ;}
+    bool requestPrivateKey(const RsGxsId &id){ return false;}
+
+
+    /*!
+     * Retrieves a key identity
+     * @param keyref
+     * @return a pointer to a valid profile if successful, otherwise NULL
+     *
+     */
+    int  getKey(const RsGxsId &id, RsTlvSecurityKey &key){ return false; }
+    int  getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key){ return false; }	// For signing outgoing messages.
+
+private:
+
+    RsGxsId mIncomingId, mOutgoingId;
+};
 
 
 #endif // RSDUMMYSERVICES_H

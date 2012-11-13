@@ -131,7 +131,7 @@ void  CreateForumV2Msg::newMsg()
 		std::cerr << std::endl;
 			
 		uint32_t token;
-		mForumQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, CREATEFORUMV2MSG_PARENTMSG);
+                //mForumQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, CREATEFORUMV2MSG_PARENTMSG);
 	}		
 }
 

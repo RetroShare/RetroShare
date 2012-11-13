@@ -21,10 +21,11 @@ class GenExchangeTester
 {
 public:
 
-    void pollForToken(uint32_t, const RsTokReqOptionsV2& opts);
+    void pollForToken(uint32_t, const RsTokReqOptions& opts);
 
     GenExchangeTester();
 
+    // message tests
     bool testMsgSubmissionRetrieval();
     bool testMsgIdRetrieval();
     bool testMsgIdRetrieval_OptParents();
@@ -32,9 +33,12 @@ public:
     bool testMsgIdRetrieval_OptLatest();
     bool testSpecificMsgMetaRetrieval();
 
+    // request msg related tests
     bool testMsgChildRetrieval();
+    bool testMsgAllVersions();
 
 
+    // group tests
     bool testGrpSubmissionRetrieval();
     bool testSpecificGrpRetrieval();
     bool testGrpIdRetrieval();
@@ -52,7 +56,7 @@ private:
     void breakDown();
 
 
-    void setUpGrps(); // to be called at start of msg tests
+    void setUpGrps(uint32_t grpFlag=0); // to be called at start of msg tests
 
     /*!
      * Can be called at start grpId or grpMeta test
@@ -92,17 +96,18 @@ private:
     GxsMsgMetaMap mMsgMetaDataOut, mMsgMetaDataIn;
     GxsMsgIdResult mMsgIdsOut, mMsgIdsIn;
 
+    MsgRelatedIdResult mMsgRelatedIdsOut, mMsgRelatedIdsIn;
+
     std::vector<RsGxsGroupId> mRandGrpIds; // ids that exist to help group testing
 
 private:
 
     GenExchangeTestService* mTestService;
-    RsTokenServiceV2* mTokenService;
+    RsTokenService* mTokenService;
 
     RsNetworkExchangeService* mNxs;
     RsGeneralDataService* mDataStore;
 
-    GxsCoreServer mGxsCore;
 
 };
 

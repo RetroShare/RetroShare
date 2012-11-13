@@ -14,19 +14,20 @@ int main()
 {
     GenExchangeTester tester;
 
-    CHECK(tester.testMsgSubmissionRetrieval()); REPORT("testMsgSubmissionRetrieval()");
+//    CHECK(tester.testMsgSubmissionRetrieval()); REPORT("testMsgSubmissionRetrieval()");
 //    CHECK(tester.testSpecificMsgMetaRetrieval()); REPORT("testSpecificMsgMetaRetrieval()");
-//   CHECK(tester.testMsgIdRetrieval()); REPORT("tester.testMsgIdRetrieval()");
+//    CHECK(tester.testMsgIdRetrieval()); REPORT("tester.testMsgIdRetrieval()");
 //    CHECK(tester.testMsgIdRetrieval_OptParents()); REPORT("tester.testRelatedMsgIdRetrieval_Parents()");
-//    CHECK(tester.testMsgIdRetrieval_OptOrigMsgId()); REPORT("tester.testRelatedMsgIdRetrieval_OrigMsgId()");
-//    CHECK(tester.testMsgIdRetrieval_OptLatest()); REPORT("tester.testRelatedMsgIdRetrieval_Latest()");
+    CHECK(tester.testMsgIdRetrieval_OptOrigMsgId()); REPORT("tester.testRelatedMsgIdRetrieval_OrigMsgId()");
+    CHECK(tester.testMsgIdRetrieval_OptLatest()); REPORT("tester.testRelatedMsgIdRetrieval_Latest()");
     CHECK(tester.testMsgMetaModRequest()); REPORT("tester.testMsgMetaModRequest()");
-    CHECK(tester.testMsgChildRetrieval()); REPORT("tester.testMsgMetaModRequest()");
+ //       CHECK(tester.testMsgChildRetrieval()); REPORT("tester.testMsgMetaModRequest()");
+    CHECK(tester.testMsgAllVersions()); REPORT("tester.testMsgAllVersions()");
 
-    CHECK(tester.testGrpSubmissionRetrieval()); REPORT("tester.testGrpSubmissionRetrieval()");
-    CHECK(tester.testGrpMetaRetrieval()); REPORT("tester.testGrpMetaRetrieval()");
-    CHECK(tester.testGrpIdRetrieval()); REPORT("tester.testGrpIdRetrieval()");
-    CHECK(tester.testGrpMetaModRequest()); REPORT("tester.testGrpMetaModRequest()");
+//    CHECK(tester.testGrpSubmissionRetrieval()); REPORT("tester.testGrpSubmissionRetrieval()");
+//    CHECK(tester.testGrpMetaRetrieval()); REPORT("tester.testGrpMetaRetrieval()");
+//    CHECK(tester.testGrpIdRetrieval()); REPORT("tester.testGrpIdRetrieval()");
+//    CHECK(tester.testGrpMetaModRequest()); REPORT("tester.testGrpMetaModRequest()");
 
     FINALREPORT("RsGenExchangeTest");
 

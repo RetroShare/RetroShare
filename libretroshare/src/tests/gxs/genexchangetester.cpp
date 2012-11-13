@@ -3,7 +3,6 @@
 #include "gxs/rsdataservice.h"
 #include "gxs/rsgxsflags.h"
 
-
 GenExchangeTester::GenExchangeTester()
     : mGenTestMutex("genTest")
 {
@@ -15,24 +14,28 @@ void GenExchangeTester::setUp()
 {
     mDataStore = new RsDataService("./", "testServiceDb", RS_SERVICE_TYPE_DUMMY, NULL);
     mNxs = new RsDummyNetService();
-    mTestService = new GenExchangeTestService(mDataStore, mNxs);
-    mGxsCore.addService(mTestService);
+
+    RsGixsDummy* gixsDummy = new RsGixsDummy("incoming", "outgoing");
+
+    mTestService = new GenExchangeTestService(mDataStore, mNxs, gixsDummy, 0);
     mTokenService = mTestService->getTokenService();
-    mGxsCore.start();
+    mTestService->start();
 }
 
-void GenExchangeTester::setUpGrps()
+void GenExchangeTester::setUpGrps(uint32_t grpFlags)
 {
  // create some random grps to allow msg testing
 
     RsDummyGrp* dgrp1 = new RsDummyGrp();
     RsDummyGrp* dgrp2 = new RsDummyGrp();
     RsDummyGrp* dgrp3 = new RsDummyGrp();
+
     init(dgrp1);
+    dgrp1->meta.mGroupFlags = grpFlags;
     uint32_t token;
     mTestService->publishDummyGrp(token, dgrp1);
 
-    RsTokReqOptionsV2 opts;
+    RsTokReqOptions opts;
     opts.mReqType = 45000;
     pollForToken(token, opts);
 
@@ -40,11 +43,15 @@ void GenExchangeTester::setUpGrps()
     mTestService->acknowledgeTokenGrp(token, grpId);
     mRandGrpIds.push_back(grpId);
 
+    init(dgrp2);
+    dgrp2->meta.mGroupFlags = grpFlags;
     mTestService->publishDummyGrp(token, dgrp2);
     pollForToken(token, opts);
     mTestService->acknowledgeTokenGrp(token, grpId);
     mRandGrpIds.push_back(grpId);
 
+    init(dgrp3);
+    dgrp3->meta.mGroupFlags = grpFlags;
     mTestService->publishDummyGrp(token, dgrp3);
     pollForToken(token, opts);
     mTestService->acknowledgeTokenGrp(token, grpId);
@@ -54,10 +61,8 @@ void GenExchangeTester::setUpGrps()
 
 void GenExchangeTester::breakDown()
 {
+    mTestService->join();
 
-    mGxsCore.join(); // indicate server to stop
-
-    mGxsCore.removeService(mTestService);
     delete mTestService;
 
     // a bit protracted, but start a new db and use to clear up junk
@@ -147,7 +152,7 @@ bool GenExchangeTester::testGrpSubmissionRetrieval()
    init(dgrp2);
    init(dgrp3);
 
-   RsTokReqOptionsV2 opts;
+   RsTokReqOptions opts;
    opts.mReqType = 45000;
    uint32_t token;
    RsGxsGroupId grpId;
@@ -240,7 +245,7 @@ bool GenExchangeTester::testGrpMetaRetrieval()
    init(dgrp2);
    init(dgrp3);
 
-   RsTokReqOptionsV2 opts;
+   RsTokReqOptions opts;
    opts.mReqType = 45000;
    uint32_t token;
    RsGxsGroupId grpId;
@@ -316,7 +321,7 @@ bool GenExchangeTester::testGrpIdRetrieval()
     setUpLargeGrps(30); // create a large amount of grps
 
 
-    RsTokReqOptionsV2 opts;
+    RsTokReqOptions opts;
     opts.mReqType = GXS_REQUEST_TYPE_GROUP_IDS;
     uint32_t token;
     std::list<RsGxsGroupId> grpIds;
@@ -369,7 +374,7 @@ bool GenExchangeTester::testGrpMetaModRequest()
    init(dgrp3);
 
    uint32_t token;
-   RsTokReqOptionsV2 opts;
+   RsTokReqOptions opts;
    opts.mReqType = 45000;
    std::vector<RsGxsGroupId> grpIds;
    RsGxsGroupId grpId;
@@ -449,7 +454,7 @@ void GenExchangeTester::setUpLargeGrps(uint32_t nGrps)
         RsGxsGroupId grpId;
         uint32_t token;
         init(dgrp);
-        RsTokReqOptionsV2 opts;
+        RsTokReqOptions opts;
         opts.mReqType = 4000;
         mTestService->publishDummyGrp(token, dgrp);
         pollForToken(token, opts);
@@ -473,7 +478,7 @@ bool GenExchangeTester::testMsgMetaModRequest()
     mTestService->publishDummyMsg(token, msg);
 
     // poll will block until found
-    RsTokReqOptionsV2 opts;
+    RsTokReqOptions opts;
     opts.mReqType = 4200;
     pollForToken(token, opts);
     RsGxsGrpMsgIdPair msgId;
@@ -554,7 +559,7 @@ bool GenExchangeTester::testMsgSubmissionRetrieval()
 
     // start up
     setUp();
-    setUpGrps();
+    setUpGrps(GXS_SERV::FLAG_PRIVACY_PUBLIC);
 
     /********************/
 
@@ -568,8 +573,8 @@ bool GenExchangeTester::testMsgSubmissionRetrieval()
     mTestService->publishDummyMsg(token, msg);
 
     // poll will block until found
-    RsTokReqOptionsV2 opts;
-    opts.mReqType = 4200;
+    RsTokReqOptions opts;
+    opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
     pollForToken(token, opts);
     RsGxsGrpMsgIdPair msgId;
 
@@ -644,7 +649,7 @@ bool GenExchangeTester::testMsgIdRetrieval()
 
     // start up
     setUp();
-    setUpGrps();
+    setUpGrps(GXS_SERV::FLAG_PRIVACY_PUBLIC);
 
     /********************/
 
@@ -656,7 +661,7 @@ bool GenExchangeTester::testMsgIdRetrieval()
     int nMsgs = (rand()%121)+2; // test a large number of msgs
     std::vector<RsDummyMsg*> msgs;
     createMsgs(msgs, nMsgs);
-    RsTokReqOptionsV2 opts;
+    RsTokReqOptions opts;
     opts.mReqType = 4000;
     uint32_t token;
 
@@ -725,14 +730,13 @@ bool GenExchangeTester::testMsgIdRetrieval()
 
     return true;
 }
-
-bool GenExchangeTester::testMsgChildRetrieval()
+bool GenExchangeTester::testMsgAllVersions()
 {
     // start up
     setUp();
-    setUpGrps();
+    setUpGrps(GXS_SERV::FLAG_PRIVACY_PUBLIC);
 
-    /********************/
+    // want to create several msgs of the same version (i.e. same origMsgId)
 
 
     // create msgs
@@ -741,44 +745,33 @@ bool GenExchangeTester::testMsgChildRetrieval()
     int nMsgs = (rand()%50)+2; // test a large number of msgs
     std::vector<RsDummyMsg*> msgs;
     createMsgs(msgs, nMsgs);
-    RsTokReqOptionsV2 opts;
+    RsTokReqOptions opts;
     opts.mReqType = 4000;
     uint32_t token;
 
    bool first = true;
    RsGxsGrpMsgIdPair firstMsgId;
 
-   // everyone is parent of first msg
-
+   // everyone is a version of first msg
     for(int i=0; i < nMsgs; i++)
     {
         RsDummyMsg* msg = msgs[i];
 
-        int j = rand()%5;
-
-
         if(first){
             msg->meta.mParentId = "";
-            msg->meta.mOrigMsgId = "";
+            msg->meta.mOrigMsgId = ""; // don't worry GXS sets origid to first
         }
         else
         {
-            msg->meta.mParentId = firstMsgId.second;
+            msg->meta.mParentId = "";
             msg->meta.mGroupId = firstMsgId.first;
-            msg->meta.mOrigMsgId = "";
+            msg->meta.mOrigMsgId = firstMsgId.second;
         }
 
         mTestService->publishDummyMsg(token, msg);
         pollForToken(token, opts);
         RsGxsGrpMsgIdPair msgId;
         mTestService->acknowledgeTokenMsg(token, msgId);
-
-        // less than half have no parents
-        if(first){
-            firstMsgId.second = msgId.second;
-            firstMsgId.first = msgId.first;
-
-        }
 
         if(msgId.first.empty() || msgId.second.empty())
         {
@@ -787,23 +780,30 @@ bool GenExchangeTester::testMsgChildRetrieval()
             return false;
         }
 
-        if(!first)
-        {
-            mMsgIdsOut[msgId.first].push_back(msgId.second);
+
+
+        // less than half have no parents
+        if(first){
+            firstMsgId.second = msgId.second;
+            firstMsgId.first = msgId.first;
             first = false;
+
         }
 
+         mMsgRelatedIdsOut[firstMsgId].push_back(msgId.second);
     }
 
 
-    opts.mReqType = GXS_REQUEST_TYPE_MSG_IDS;
-    opts.mOptions = RS_TOKREQOPT_MSG_PARENT | RS_TOKREQOPT_MSG_LATEST;
-    mTokenService->requestMsgRelatedInfo(token, 0, opts, firstMsgId);
+    opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_IDS;
+    opts.mOptions = RS_TOKREQOPT_MSG_VERSIONS;
+    std::vector<RsGxsGrpMsgIdPair> msgIdList;
+    msgIdList.push_back(firstMsgId);
+    mTokenService->requestMsgRelatedInfo(token, 0, opts, msgIdList);
 
     pollForToken(token, opts);
 
-    GxsMsgIdResult::iterator mit = mMsgIdsOut.begin();
-    for(; mit != mMsgIdsOut.end(); mit++)
+    MsgRelatedIdResult::iterator mit = mMsgRelatedIdsOut.begin();
+    for(; mit != mMsgRelatedIdsOut.end(); mit++)
     {
         std::vector<RsGxsMessageId> msgIdsOut, msgIdsIn;
         msgIdsOut = mit->second;
@@ -813,7 +813,7 @@ bool GenExchangeTester::testMsgChildRetrieval()
         for(; vit_out != msgIdsOut.end(); vit_out++)
         {
             bool found = false;
-            msgIdsIn = mMsgIdsIn[mit->first];
+            msgIdsIn = mMsgRelatedIdsIn[mit->first];
             vit_in = msgIdsIn.begin();
 
             for(; vit_in != msgIdsIn.end(); vit_in++)
@@ -830,12 +830,120 @@ bool GenExchangeTester::testMsgChildRetrieval()
         }
     }
 
-    /********************/
-
     // complete
     breakDown();
 
     return true;
+}
+
+bool GenExchangeTester::testMsgChildRetrieval()
+{
+//    // start up
+//    setUp();
+//    setUpGrps(GXS_SERV::FLAG_PRIVACY_PUBLIC);
+
+//    /********************/
+
+
+//    // create msgs
+//    // then make all requests immediately then poll afterwards for each and run outbound test
+//    // we want only latest for now
+//    int nMsgs = (rand()%50)+2; // test a large number of msgs
+//    std::vector<RsDummyMsg*> msgs;
+//    createMsgs(msgs, nMsgs);
+//    RsTokReqOptions opts;
+//    opts.mReqType = 4000;
+//    uint32_t token;
+
+//   bool first = true;
+//   RsGxsGrpMsgIdPair firstMsgId;
+
+//   // everyone is parent of first msg
+
+//    for(int i=0; i < nMsgs; i++)
+//    {
+//        RsDummyMsg* msg = msgs[i];
+
+//        if(first){
+//            msg->meta.mParentId = "";
+//            msg->meta.mOrigMsgId = "";
+//        }
+//        else
+//        {
+//            msg->meta.mParentId = firstMsgId.second;
+//            msg->meta.mGroupId = firstMsgId.first;
+//            msg->meta.mOrigMsgId = "";
+//        }
+
+//        mTestService->publishDummyMsg(token, msg);
+//        pollForToken(token, opts);
+//        RsGxsGrpMsgIdPair msgId;
+//        mTestService->acknowledgeTokenMsg(token, msgId);
+
+
+//        if(msgId.first.empty() || msgId.second.empty())
+//        {
+//            breakDown();
+//            std::cerr << "serious error: Acknowledgement failed! " << std::endl;
+//            return false;
+//        }
+
+//        if(!first)
+//        {
+//            mMsgIdsOut[msgId.first].push_back(msgId.second);
+//        }
+
+//        if(first){
+//            firstMsgId.second = msgId.second;
+//            firstMsgId.first = msgId.first;
+//            first = false;
+//        }
+
+//    }
+
+
+//    opts.mReqType = GXS_REQUEST_TYPE_MSG_IDS;
+//    opts.mOptions = RS_TOKREQOPT_MSG_PARENT | RS_TOKREQOPT_MSG_LATEST;
+//    std::vector<RsGxsGrpMsgIdPair> msgIdList;
+//    msgIdList.push_back(firstMsgId);
+//    mTokenService->requestMsgRelatedInfo(token, 0, opts, msgIdList);
+
+//    pollForToken(token, opts);
+
+//    GxsMsgIdResult::iterator mit = mMsgIdsOut.begin();
+//    for(; mit != mMsgIdsOut.end(); mit++)
+//    {
+//        std::vector<RsGxsMessageId> msgIdsOut, msgIdsIn;
+//        msgIdsOut = mit->second;
+
+//        std::vector<RsGxsMessageId>::iterator vit_out = msgIdsOut.begin(), vit_in;
+
+//        for(; vit_out != msgIdsOut.end(); vit_out++)
+//        {
+//            bool found = false;
+//            msgIdsIn = mMsgIdsIn[mit->first];
+//            vit_in = msgIdsIn.begin();
+
+//            for(; vit_in != msgIdsIn.end(); vit_in++)
+//            {
+//                if(*vit_in == *vit_out)
+//                    found = true;
+//            }
+
+//            if(!found){
+//                breakDown();
+//                return false;
+//            }
+
+//        }
+//    }
+
+//    /********************/
+
+//    // complete
+//    breakDown();
+
+//    return true;
 }
 
 bool GenExchangeTester::testSpecificMsgMetaRetrieval()
@@ -844,7 +952,7 @@ bool GenExchangeTester::testSpecificMsgMetaRetrieval()
 
     // start up
     setUp();
-    setUpGrps();
+    setUpGrps(GXS_SERV::FLAG_PRIVACY_PUBLIC);
 
     /********************/
 
@@ -858,7 +966,7 @@ bool GenExchangeTester::testSpecificMsgMetaRetrieval()
     mTestService->publishDummyMsg(token, msg);
 
     // poll will block until found
-    RsTokReqOptionsV2 opts;
+    RsTokReqOptions opts;
     opts.mReqType = 4200;
     pollForToken(token, opts);
     RsGxsGrpMsgIdPair msgId;
@@ -955,7 +1063,7 @@ bool GenExchangeTester::testMsgIdRetrieval_OptParents()
     int nMsgs = (rand()%50)+2; // test a large number of msgs
     std::vector<RsDummyMsg*> msgs;
     createMsgs(msgs, nMsgs);
-    RsTokReqOptionsV2 opts;
+    RsTokReqOptions opts;
     opts.mReqType = 4000;
     uint32_t token;
 
@@ -1053,7 +1161,7 @@ bool GenExchangeTester::testMsgIdRetrieval_OptOrigMsgId()
     int nMsgs = (rand()%50)+2; // test a large number of msgs
     std::vector<RsDummyMsg*> msgs;
     createMsgs(msgs, nMsgs);
-    RsTokReqOptionsV2 opts;
+    RsTokReqOptions opts;
     opts.mReqType = 4000;
     uint32_t token;
 
@@ -1153,7 +1261,7 @@ bool GenExchangeTester::testMsgIdRetrieval_OptLatest()
     int nMsgs = (rand()%50)+2; // test a large number of msgs
     std::vector<RsDummyMsg*> msgs;
     createMsgs(msgs, nMsgs);
-    RsTokReqOptionsV2 opts;
+    RsTokReqOptions opts;
     opts.mReqType = 4000;
     uint32_t token;
 
@@ -1499,7 +1607,7 @@ void GenExchangeTester::init(RsDummyMsg *msgItem) const
     init(msgItem->meta);
 }
 
-void GenExchangeTester::pollForToken(uint32_t token, const RsTokReqOptionsV2 &opts)
+void GenExchangeTester::pollForToken(uint32_t token, const RsTokReqOptions &opts)
 {
     double timeDelta = 0.2;
 
@@ -1511,8 +1619,8 @@ void GenExchangeTester::pollForToken(uint32_t token, const RsTokReqOptionsV2 &op
     Sleep((int) (timeDelta * 1000));
 #endif
 
-        if(RsTokenServiceV2::GXS_REQUEST_V2_STATUS_COMPLETE ==
-           mTokenService->requestStatus(token))
+        if((RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE == mTokenService->requestStatus(token))
+            || (RsTokenService::GXS_REQUEST_V2_STATUS_FAILED == mTokenService->requestStatus(token)))
         {
             switch(opts.mReqType)
             {
@@ -1533,6 +1641,9 @@ void GenExchangeTester::pollForToken(uint32_t token, const RsTokReqOptionsV2 &op
                 break;
             case GXS_REQUEST_TYPE_MSG_IDS:
                 mTestService->getMsgListTS(token, mMsgIdsIn);
+                break;
+            case GXS_REQUEST_TYPE_MSG_RELATED_IDS:
+                mTestService->getMsgRelatedListTS(token, mMsgRelatedIdsIn);
                 break;
             }
             break;

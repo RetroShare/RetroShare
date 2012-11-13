@@ -76,6 +76,7 @@ public:
 };
 
 typedef std::map<RsGxsGroupId, std::vector<RsNxsMsg*> > NxsMsgDataResult;
+typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsNxsMsg*> > NxsMsgRelatedDataResult;
 typedef std::map<RsGxsGroupId, std::vector<RsNxsMsg*> > GxsMsgResult; // <grpId, msgs>
 
 /*!

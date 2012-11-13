@@ -2148,7 +2148,7 @@ void ForumsV2Dialog::requestChildData_InsertThreads(uint32_t &token, const std::
         std::cerr << "ForumsV2Dialog::requestChildData_InsertThreads(" << parentId << ")";
         std::cerr << std::endl;
 
-	mForumQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, FORUMSV2DIALOG_INSERTCHILD);
+        //mForumQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, FORUMSV2DIALOG_INSERTCHILD);
 }
 
 
@@ -2264,7 +2264,7 @@ void ForumsV2Dialog::requestMsgData_InsertPost(const std::string &msgId)
 
 
 	uint32_t token;	
-	mForumQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, FORUMV2DIALOG_INSERT_POST);
+        //mForumQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, FORUMV2DIALOG_INSERT_POST);
 }
 
 

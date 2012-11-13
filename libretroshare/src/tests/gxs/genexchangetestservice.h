@@ -2,12 +2,13 @@
 #define GENEXCHANGETESTSERVICE_H
 
 #include "gxs/rsgenexchange.h"
+#include "gxs/rsgxsifaceimpl.h"
 #include "rsdummyservices.h"
 
 class GenExchangeTestService : public RsGenExchange
 {
 public:
-    GenExchangeTestService(RsGeneralDataService* dataServ, RsNetworkExchangeService*);
+    GenExchangeTestService(RsGeneralDataService* dataServ, RsNetworkExchangeService*, RsGixs* gixs, uint32_t authenPolicy);
 
     void notifyChanges(std::vector<RsGxsNotify*>& changes);
 
@@ -59,6 +60,13 @@ public:
      */
     bool getMsgDataTS(const uint32_t &token, GxsMsgDataMap& msgItems);
 
+    /*!
+     * Retrieve msg related list for a given token sectioned by group Ids
+     * @param token token to be redeemed
+     * @param msgIds a map of grpMsgIdPair -> msgList (vector)
+     */
+    bool getMsgRelatedListTS(const uint32_t &token, MsgRelatedIdResult &msgIds);
+
 
     void setGroupSubscribeFlagTS(uint32_t& token, const RsGxsGroupId& grpId, const uint32_t& status);
 
@@ -69,6 +77,8 @@ public:
     void setMsgStatusFlagTS(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, const uint32_t& status);
 
     void setMsgServiceStringTS(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, const std::string& servString );
+
+    void service_tick();
 
 };
 

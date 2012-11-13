@@ -40,6 +40,10 @@
 #define GXS_REQUEST_TYPE_MSG_META			0x00100000
 #define GXS_REQUEST_TYPE_MSG_IDS 			0x00200000
 
+#define GXS_REQUEST_TYPE_MSG_RELATED_DATA		0x00400000
+#define GXS_REQUEST_TYPE_MSG_RELATED_META		0x00800000
+#define GXS_REQUEST_TYPE_MSG_RELATED_IDS 		0x01000000
+
 
 
 // This bit will be filled out over time.
@@ -171,7 +175,7 @@ public:
      * @param groupIds The ids of the groups to get, second entry of map empty to query for all msgs
      * @return true if request successful false otherwise
      */
-    virtual bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const RsGxsGrpMsgIdPair& msgIds) = 0;
+    virtual bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::vector<RsGxsGrpMsgIdPair>& msgIds) = 0;
 
 
     /* Poll */

@@ -39,7 +39,9 @@
 
 typedef std::map<RsGxsGroupId, std::vector<RsGxsMsgItem*> > GxsMsgDataMap;
 typedef std::map<RsGxsGroupId, RsGxsGrpItem*> GxsGroupDataMap;
+typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsGxsMsgItem*> > GxsMsgRelatedDataMap;
 typedef std::map<RsGxsGroupId, std::vector<RsMsgMetaData> > GxsMsgMetaMap;
+typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsMsgMetaData> > GxsMsgRelatedMetaMap;
 
 /*!
  * This should form the parent class to \n
@@ -151,14 +153,24 @@ public:
      * Retrieve msg list for a given token sectioned by group Ids
      * @param token token to be redeemed
      * @param msgIds a map of grpId -> msgList (vector)
+     * @return false if could not redeem token
      */
     bool getMsgList(const uint32_t &token, GxsMsgIdResult &msgIds);
+
+    /*!
+     * Retrieve msg list for a given token for message related info
+     * @param token token to be redeemed
+     * @param msgIds a map of RsGxsGrpMsgIdPair -> msgList (vector)
+     * @return false if could not redeem token
+     */
+    bool getMsgRelatedList(const uint32_t &token, MsgRelatedIdResult& msgIds);
 
 
     /*!
      * retrieve group meta data associated to a request token
      * @param token
      * @param groupInfo
+     * @return false if could not redeem token
      */
     bool getGroupMeta(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo);
 
@@ -168,6 +180,14 @@ public:
      * @param msgInfo the meta data to be retrieved for token store here
      */
     bool getMsgMeta(const uint32_t &token, GxsMsgMetaMap &msgInfo);
+
+    /*!
+     * Retrieve msg meta for a given token for message related info
+     * @param token token to be redeemed
+     * @param msgIds a map of RsGxsGrpMsgIdPair -> msgList (vector)
+     * @return false if could not redeem token
+     */
+    bool getMsgRelatedMeta(const uint32_t &token, GxsMsgRelatedMetaMap& msgMeta);
 
 
 
@@ -193,6 +213,63 @@ protected:
      * @param msgItems
      */
     bool getMsgData(const uint32_t &token, GxsMsgDataMap& msgItems);
+
+    /*!
+     * retrieves message related data associated to a request token
+     * @param token token to be redeemed for message item retrieval
+     * @param msgItems
+     */
+    bool getMsgRelatedData(const uint32_t &token, GxsMsgRelatedDataMap& msgItems);
+
+    /*!
+     * Convenience template function for retrieve
+     * msg related data from
+     * @param GxsMsgType This represent derived msg class type of the service (i.e. msg type that derives from RsGxsMsgItem
+     * @param MsgType Represents the final type the core data is converted to
+     * @param token token to be redeemed
+     */
+    template <class GxsMsgType, class MsgType>
+    bool getMsgRelatedDataT(const uint32_t &token, std::map<RsGxsGrpMsgIdPair, std::vector<MsgType> > &msgItems)
+    {
+
+        RsStackMutex stack(mGenMtx);
+        NxsMsgRelatedDataResult msgResult;
+        bool ok = mDataAccess->getMsgRelatedData(token, msgResult);
+        NxsMsgRelatedDataResult::iterator mit = msgResult.begin();
+
+        if(ok)
+        {
+            for(; mit != msgResult.end(); mit++)
+            {
+                std::vector<MsgType> gxsMsgItems;
+                const RsGxsGrpMsgIdPair& msgId = mit->first;
+                std::vector<RsNxsMsg*>& nxsMsgsV = mit->second;
+                std::vector<RsNxsMsg*>::iterator vit
+                = nxsMsgsV.begin();
+                for(; vit != nxsMsgsV.end(); vit++)
+                {
+                    RsNxsMsg*& msg = *vit;
+
+                    RsItem* item = mSerialiser->deserialise(msg->msg.bin_data,
+                                    &msg->msg.bin_len);
+                    GxsMsgType* mItem = dynamic_cast<GxsMsgType*>(item);
+
+                    if(mItem == NULL){
+                        delete msg;
+                        continue;
+                    }
+
+                    mItem->meta = *((*vit)->metaData); // get meta info from nxs msg
+                  //  GxsMsgType m = (*mItem); // doesn't work! don't know why, even with overloading done.
+                    MsgType theServMsg = (MsgType)*mItem;
+                    gxsMsgItems.push_back(theServMsg);
+                    delete msg;
+                }
+                msgItems[msgId] = gxsMsgItems;
+            }
+        }
+        return ok;
+    }
 
     /*!
      * Assigns a token value to passed integer

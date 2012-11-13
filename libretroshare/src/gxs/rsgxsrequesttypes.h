@@ -100,8 +100,10 @@ class MsgRelatedInfoReq : public GxsRequest
 {
 
 public:
-        RsGxsGrpMsgIdPair mMsgId;
-        GxsMsgIdResult mMsgIdResult;
+        std::vector<RsGxsGrpMsgIdPair> mMsgIds;
+        MsgRelatedIdResult mMsgIdResult;
+        MsgRelatedMetaResult mMsgMetaResult;
+        NxsMsgRelatedDataResult mMsgDataResult;
 };
 
 class GroupSetFlagReq : public GxsRequest

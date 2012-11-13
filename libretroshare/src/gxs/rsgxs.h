@@ -40,6 +40,10 @@ typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > GxsMsgReq;
 typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > GxsMsgIdResult;
 typedef std::map<RsGxsGroupId, std::vector<RsGxsMsgMetaData*> > GxsMsgMetaResult;
 typedef std::map<RsGxsGroupId, std::vector<RsMsgMetaData> > MsgMetaResult;
+typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsGxsMsgMetaData*> > MsgRelatedMetaResult;
+typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsGxsMessageId> > MsgRelatedIdResult;
+
+
 
 class RsGxsService
 {

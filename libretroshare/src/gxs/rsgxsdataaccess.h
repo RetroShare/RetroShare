@@ -90,7 +90,7 @@ public:
      * @param groupIds The ids of the groups to get, second entry of map empty to query for all msgs
      * @return true if request successful false otherwise
      */
-    bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const RsGxsGrpMsgIdPair &msgIds);
+    bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::vector<RsGxsGrpMsgIdPair> &msgIds);
 
     /* Poll */
     uint32_t requestStatus(const uint32_t token);
@@ -143,6 +143,14 @@ public:
      */
     bool getMsgList(const uint32_t &token, GxsMsgIdResult &msgIds);
 
+    /*!
+     * Retrieve msg list for a given token for message related info
+     * @param token token to be redeemed
+     * @param msgIds a map of RsGxsGrpMsgIdPair -> msgList (vector)
+     * @return false if could not redeem token
+     */
+    bool getMsgRelatedList(const uint32_t &token, MsgRelatedIdResult& msgIds);
+
 
     /*!
      * @param token request token to be redeemed
@@ -156,6 +164,15 @@ public:
      * @param msgInfo
      */
     bool getMsgSummary(const uint32_t &token, GxsMsgMetaResult &msgInfo);
+
+
+    /*!
+     * Retrieve msg meta for a given token for message related info
+     * @param token token to be redeemed
+     * @param msgIds a map of RsGxsGrpMsgIdPair -> msgList (vector)
+     * @return false if could not redeem token
+     */
+    bool getMsgRelatedSummary(const uint32_t &token, MsgRelatedMetaResult& msgMeta);
 
     /*!
      *
@@ -171,6 +188,14 @@ public:
      * @return false if data cannot be found for token
      */
     bool getMsgData(const uint32_t &token, NxsMsgDataResult& msgData);
+
+    /*!
+     *
+     * @param token request token to be redeemed
+     * @param msgData
+     * @return false if data cannot be found for token
+     */
+    bool getMsgRelatedData(const uint32_t &token, NxsMsgRelatedDataResult& msgData);
 
 private:
 

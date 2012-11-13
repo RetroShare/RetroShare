@@ -109,6 +109,15 @@ public:
                             GxsMsgIdResult& msgIds);
 
     /*!
+     * Retrieves list of msg related ids associated to a request token
+     * @param token token to be redeemed for this request
+     * @param msgIds the ids return for given request token
+     * @return false if request token is invalid, check token status for error report
+     */
+    bool getMsgRelatedList(const uint32_t &token,
+                           MsgRelatedIdResult& msgIds);
+
+    /*!
      * @param token token to be redeemed for group summary request
      * @param groupInfo the ids returned for given request token
      * @return false if request token is invalid, check token status for error report
@@ -123,6 +132,14 @@ public:
      */
     bool getMsgSummary(const uint32_t &token,
                                GxsMsgMetaMap &msgInfo);
+
+    /*!
+     * @param token token to be redeemed for message related summary request
+     * @param msgInfo the message metadata returned for given request token
+     * @return false if request token is invalid, check token status for error report
+     */
+    bool getMsgrelatedSummary(const uint32_t &token,
+                               GxsMsgRelatedMetaMap &msgInfo);
 
     /*!
      * subscribes to group, and returns token which can be used

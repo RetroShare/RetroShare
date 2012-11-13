@@ -15,13 +15,13 @@ CONFIG   += gen_exchange_target
 #CONFIG   += dstore_target
 #CONFIG   += gxsdata_target
 
-
+CONFIG += bitdht
 
 
 
 gen_exchange_target {
 
-TARGET = gen_exchange_test
+#TARGET = gen_exchange_test
 
 }
 
@@ -33,7 +33,7 @@ TARGET = nxs_net_test
 
 gxsdata_target {
 
-TARGET = gxsdata_test
+#TARGET = gxsdata_test
 
 }
 
@@ -130,7 +130,10 @@ win32 {
     GPGME_DIR  = ../../../../gpgme-1.1.8
     GPG_ERROR_DIR = ../../../../lib/libgpg-error-1.7
     GPGME_DIR  = ../../../../lib/gpgme-1.1.8
-    INCLUDEPATH += . $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
+    SSL_DIR = ../../../../../OpenSSL
+    OPENPGPSDK_DIR = ../../../../openpgpsdk/src
+    INCLUDEPATH += . $${SSL_DIR}/include $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src \
+                $${OPENPGPSDK_DIR}
 
                 SQLITE_DIR = ../../../../../../Libraries/sqlite/sqlite-autoconf-3070900
                 INCLUDEPATH += . \
@@ -186,48 +189,6 @@ gen_exchange_target {
 
 }
 
-nxs_net_test {
 
-        SOURCES += \
-            support.cc \
-            nxstesthub.cc \
-            rsgxsnetservice_test.cc \
-            nxstestscenario.cc \
-            data_support.cc
-
-
-        HEADERS += support.h \
-            nxstesthub.h \
-            rsgxsnetservice_test.h \
-            nxstestscenario.h \
-                data_support.h
-}
-
-
-dstore_target  {
-    TARGET = rs_dstore_test
-    SOURCES += \
-        support.cc \
-        rsdataservice_test.cc \
-        data_support.cc
-
-    HEADERS += support.h \
-        rsdataservice_test.h \
-        data_support.h
-
-
-}
-
-gxsdata_target {
-
- SOURCES += \
-    support.cc \
-    data_support.cc \
-    rsgxsdata_test.cc
-
-HEADERS += \
-   support.h \
-  rsgxsdata_test.h
-}
 
 INCLUDEPATH += ../../

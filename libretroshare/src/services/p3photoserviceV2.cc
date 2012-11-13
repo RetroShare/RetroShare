@@ -62,6 +62,13 @@ RsPhotoComment::RsPhotoComment()
 
 }
 
+RsPhotoComment::RsPhotoComment(const RsGxsPhotoCommentItem &comment)
+    : mComment(""), mCommentFlag(0) {
+
+    *this = comment.comment;
+    (*this).mMeta = comment.meta;
+
+}
 std::ostream &operator<<(std::ostream &out, const RsPhotoPhoto &photo)
 {
         out << "RsPhotoPhoto [ ";
@@ -247,39 +254,52 @@ bool p3PhotoServiceV2::getPhoto(const uint32_t& token, PhotoResult& photos)
 
 bool p3PhotoServiceV2::getPhotoComment(const uint32_t &token, PhotoCommentResult &comments)
 {
-        GxsMsgDataMap msgData;
-        bool ok = RsGenExchange::getMsgData(token, msgData);
+    GxsMsgDataMap msgData;
+    bool ok = RsGenExchange::getMsgData(token, msgData);
 
-        if(ok)
+    if(ok)
+    {
+        GxsMsgDataMap::iterator mit = msgData.begin();
+
+        for(; mit != msgData.end();  mit++)
         {
-                GxsMsgDataMap::iterator mit = msgData.begin();
+            RsGxsGroupId grpId = mit->first;
+            std::vector<RsGxsMsgItem*>& msgItems = mit->second;
+            std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
 
-                for(; mit != msgData.end();  mit++)
+            for(; vit != msgItems.end(); vit++)
+            {
+                RsGxsPhotoCommentItem* item = dynamic_cast<RsGxsPhotoCommentItem*>(*vit);
+
+                if(item)
                 {
-                        RsGxsGroupId grpId = mit->first;
-                        std::vector<RsGxsMsgItem*>& msgItems = mit->second;
-                        std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
-
-                        for(; vit != msgItems.end(); vit++)
-                        {
-                                RsGxsPhotoCommentItem* item = dynamic_cast<RsGxsPhotoCommentItem*>(*vit);
-
-                                if(item)
-                                {
-                                        RsPhotoComment comment = item->comment;
-                                        comment.mMeta = item->meta;
-                                        comments[grpId].push_back(comment);
-                                        delete item;
-                                }else
-                                {
-                                    std::cerr << "Not a comment Item, deleting!" << std::endl;
-                                    delete *vit;
-                                }
-                        }
+                    RsPhotoComment comment = item->comment;
+                    comment.mMeta = item->meta;
+                    comments[grpId].push_back(comment);
+                    delete item;
+                }else
+                {
+                    std::cerr << "Not a comment Item, deleting!" << std::endl;
+                    delete *vit;
                 }
+            }
         }
+    }
 
-        return ok;
+    return ok;
+}
+
+RsPhotoComment& RsPhotoComment::operator=(const RsGxsPhotoCommentItem& comment)
+{
+    *this = comment.comment;
+    return *this;
+}
+
+bool p3PhotoServiceV2::getPhotoRelatedComment(const uint32_t &token, PhotoRelatedCommentResult &comments)
+{
+
+    return RsGenExchange::getMsgRelatedDataT<RsGxsPhotoCommentItem, RsPhotoComment>(token, comments);
+
 }
 
 bool p3PhotoServiceV2::submitAlbumDetails(uint32_t& token, RsPhotoAlbum& album)

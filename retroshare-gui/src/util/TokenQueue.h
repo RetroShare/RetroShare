@@ -93,7 +93,7 @@ public:
         bool requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts,
                             const GxsMsgReq& grpIds, uint32_t usertype);
 
-        bool requestMsgRelatedInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, const RsGxsGrpMsgIdPair& msgId, uint32_t usertype);
+        bool requestMsgRelatedInfo(uint32_t &token, uint32_t anstype,  const RsTokReqOptions &opts, const std::vector<RsGxsGrpMsgIdPair>& msgId, uint32_t usertype);
 
 	bool cancelRequest(const uint32_t token);
 

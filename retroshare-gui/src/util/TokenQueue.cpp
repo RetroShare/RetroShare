@@ -67,7 +67,7 @@ bool TokenQueue::requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokRe
 }
 
 
-bool TokenQueue::requestMsgRelatedInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, const RsGxsGrpMsgIdPair &msgId, uint32_t usertype)
+bool TokenQueue::requestMsgRelatedInfo(uint32_t &token, uint32_t anstype,  const RsTokReqOptions &opts, const std::vector<RsGxsGrpMsgIdPair> &msgId, uint32_t usertype)
 {
     uint32_t basictype = TOKENREQ_MSGINFO;
     mService->requestMsgRelatedInfo(token, anstype, opts, msgId);

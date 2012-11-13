@@ -2157,7 +2157,9 @@ void GxsForumsDialog::requestChildData_InsertThreads(uint32_t &token, const RsGx
         std::cerr << "GxsForumsDialog::requestChildData_InsertThreads(" << parentId.first << "," << parentId.second << ")";
         std::cerr << std::endl;
 
-	mForumQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, parentId, FORUMSV2DIALOG_INSERTCHILD);
+        std::vector<RsGxsGrpMsgIdPair> msgIds;
+        msgIds.push_back(parentId);
+        mForumQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, FORUMSV2DIALOG_INSERTCHILD);
 }
 
 
@@ -2270,9 +2272,10 @@ void GxsForumsDialog::requestMsgData_InsertPost(const RsGxsGrpMsgIdPair &msgId)
         std::cerr << "GxsForumsDialog::requestMsgData_InsertPost(" << msgId.first << "," << msgId.second << ")";
         std::cerr << std::endl;
 
-
+        std::vector<RsGxsGrpMsgIdPair> msgIds;
+        msgIds.push_back(msgId);
 	uint32_t token;	
-	mForumQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgId, FORUMV2DIALOG_INSERT_POST);
+        mForumQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, FORUMV2DIALOG_INSERT_POST);
 }
 
 
@@ -2310,8 +2313,10 @@ void GxsForumsDialog::requestMsgData_ReplyMessage(const RsGxsGrpMsgIdPair &msgId
         std::cerr << "GxsForumsDialog::requestMsgData_ReplyMessage(" << msgId.first << "," << msgId.second << ")";
         std::cerr << std::endl;
 
+        std::vector<RsGxsGrpMsgIdPair> msgIds;
+        msgIds.push_back(msgId);
 	uint32_t token;	
-	mForumQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgId, FORUMV2DIALOG_REPLY_MESSAGE);
+        mForumQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, FORUMV2DIALOG_REPLY_MESSAGE);
 }
 
 

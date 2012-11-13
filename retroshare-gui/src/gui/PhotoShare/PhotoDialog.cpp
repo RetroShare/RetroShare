@@ -88,13 +88,15 @@ void PhotoDialog::requestComments()
     opts.mMsgFlagFilter = RsPhotoV2::FLAG_MSG_TYPE_PHOTO_COMMENT;
 
     opts.mReqType = GXS_REQUEST_TYPE_MSG_IDS;
+    opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
     opts.mOptions = RS_TOKREQOPT_MSG_PARENT | RS_TOKREQOPT_MSG_LATEST;
     RsGxsGrpMsgIdPair msgId;
     uint32_t token;
     msgId.first = mPhotoDetails.mMeta.mGroupId;
     msgId.second = mPhotoDetails.mMeta.mMsgId;
-    uint32_t anstype = RS_TOKREQ_ANSTYPE_LIST;
-    mPhotoQueue->requestMsgRelatedInfo(token, anstype, opts, msgId, 0);
+    std::vector<RsGxsGrpMsgIdPair> msgIdV;
+    msgIdV.push_back(msgId);
+    mPhotoQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIdV, 0);
 }
 
 void PhotoDialog::createComment()
@@ -163,10 +165,10 @@ void PhotoDialog::loadComment(uint32_t token)
 
     clearComments();
 
-    PhotoCommentResult results;
-    mRsPhoto->getPhotoComment(token, results);
+    PhotoRelatedCommentResult results;
+    mRsPhoto->getPhotoRelatedComment(token, results);
 
-    PhotoCommentResult::iterator mit = results.begin();
+    PhotoRelatedCommentResult::iterator mit = results.begin();
 
     for(; mit != results.end(); mit++)
     {

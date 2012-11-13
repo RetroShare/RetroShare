@@ -29,7 +29,6 @@
 #include "gxs/rsgenexchange.h"
 #include "retroshare/rsphotoV2.h"
 
-
 class p3PhotoServiceV2 : public RsPhotoV2, public RsGenExchange
 {
 public:
@@ -80,6 +79,7 @@ public:
     bool getAlbum(const uint32_t &token, std::vector<RsPhotoAlbum> &albums);
     bool getPhoto(const uint32_t &token, PhotoResult &photos);
     bool getPhotoComment(const uint32_t &token, PhotoCommentResult &comments);
+    bool getPhotoRelatedComment(const uint32_t &token, PhotoRelatedCommentResult &comments);
 
 public:
 

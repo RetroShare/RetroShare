@@ -120,6 +120,11 @@ bool RsGxsIfaceImpl::getMsgList(const uint32_t &token,
         return mGxs->getMsgList(token, msgIds);
 }
 
+bool RsGxsIfaceImpl::getMsgRelatedList(const uint32_t &token, MsgRelatedIdResult &msgIds)
+{
+    return mGxs->getMsgRelatedList(token, msgIds);
+}
+
 /* Generic Summary */
 bool RsGxsIfaceImpl::getGroupSummary(const uint32_t &token,
                              std::list<RsGroupMetaData> &groupInfo)
@@ -134,6 +139,13 @@ bool RsGxsIfaceImpl::getMsgSummary(const uint32_t &token,
 
         return mGxs->getMsgMeta(token, msgInfo);
 }
+
+bool RsGxsIfaceImpl::getMsgrelatedSummary(const uint32_t &token, GxsMsgRelatedMetaMap &msgInfo)
+{
+    return mGxs->getMsgRelatedMeta(token, msgInfo);
+}
+
+
 
 bool RsGxsIfaceImpl::subscribeToGroup(uint32_t& token, const RsGxsGroupId& grpId, bool subscribe)
 {
