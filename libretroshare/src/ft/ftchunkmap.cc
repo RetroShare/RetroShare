@@ -94,6 +94,17 @@ ChunkMap::ChunkMap(uint64_t s,bool availability)
 
 void ChunkMap::setAvailabilityMap(const CompressedChunkMap& map)
 {
+	// do some sanity check
+	//
+	
+	if( (((int)_map.size()-1)>>5) >= map._map.size() )
+	{
+		std::cerr << "ChunkMap::setPeerAvailabilityMap: Compressed chunkmap received is too small or corrupted." << std::endl;
+		return ;
+	}
+
+	// copy the map
+	//
 	_file_is_complete = true ;
 	_total_downloaded = 0 ;
 
