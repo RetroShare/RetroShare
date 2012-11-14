@@ -84,18 +84,10 @@ std::string getSelectedMod();
 void 	requestGroupList();
 void 	loadGroupData(const uint32_t &token);
 
-//void 	requestOriginalPages(const std::list<std::string> &groupIds);
-//void 	loadOriginalPages(const uint32_t &token);
-//void 	requestLatestPages(const std::list<std::string> &msgIds);
-//void 	loadLatestPages(const uint32_t &token);
 void 	requestPages(const std::list<RsGxsGroupId> &groupIds);
-//void 	requestPages(const std::list<std::string> &msgIds);
 void 	loadPages(const uint32_t &token);
 
-
-void 	requestModPageList(const RsGxsGrpMsgIdPair &origMsgId);
-void 	loadModPageList(const uint32_t &token);
-void 	requestModPages(const GxsMsgIdResult &msgIds);
+void 	requestModPages(const RsGxsGrpMsgIdPair &origMsgId);
 void 	loadModPages(const uint32_t &token);
 
 void 	requestEditTreeData();
@@ -106,7 +98,6 @@ void 	loadWikiPage(const uint32_t &token);
 
 
 	TokenQueue *mWikiQueue;
-
 
 	WikiAddDialog *mAddPageDialog;
 	WikiAddDialog *mAddGroupDialog;

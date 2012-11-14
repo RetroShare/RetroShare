@@ -598,69 +598,19 @@ void WikiDialog::loadPages(const uint32_t &token)
 
 void WikiDialog::insertModsForPage(const RsGxsGrpMsgIdPair &origPageId)
 {
-	requestModPageList(origPageId);
+	requestModPages(origPageId);
 }
 
-void WikiDialog::requestModPageList(const RsGxsGrpMsgIdPair &origMsgId)
+void WikiDialog::requestModPages(const RsGxsGrpMsgIdPair &origMsgId)
 {
 	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_MSG_IDS;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
 	opts.mOptions = RS_TOKREQOPT_MSG_VERSIONS;
         std::vector<RsGxsGrpMsgIdPair> msgIds;
         msgIds.push_back(origMsgId);
 	uint32_t token;
-        mWikiQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_LIST, opts, msgIds, WIKIDIALOG_MOD_LIST);
+        mWikiQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, WIKIDIALOG_MOD_PAGES);
 }
-
-
-void WikiDialog::loadModPageList(const uint32_t &token)
-{
-	std::cerr << "WikiDialog::loadModPageList()";
-	std::cerr << std::endl;
-
-	/* translate into latest pages */
-	//std::list<std::string> msgIds;
-	GxsMsgIdResult msgIds;
-
-        if (rsWiki->getMsgList(token, msgIds))
-	{
-		GxsMsgIdResult::iterator git;
-		for(git = msgIds.begin(); git != msgIds.end(); git++)
-		{
-			std::cerr << "WikiDialog::loadModPageList() Loaded GroupId: " << git->first;
-			std::cerr << std::endl;
-			std::vector<RsGxsMessageId>::iterator vit;
-			for(vit = git->second.begin(); vit != git->second.end(); vit++)
-			{
-				std::cerr << "\tMsgId: " << *vit;
-				std::cerr << std::endl;
-			}
-		}
-	}
-	else
-	{
-		std::cerr << "WikiDialog::loadModPageList() ERROR No Data";
-		std::cerr << std::endl;
-		return;
-	}
-
-	requestModPages(msgIds);
-}
-
-void WikiDialog::requestModPages(const GxsMsgIdResult &msgIds)
-{
-	std::cerr << "WikiDialog::requestModPages()";
-	std::cerr << std::endl;
-
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-
-	uint32_t token;
-	mWikiQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, WIKIDIALOG_MOD_PAGES);
-
-	//mWikiQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, WIKIDIALOG_MOD_PAGES);
-}
-
 
 void WikiDialog::loadModPages(const uint32_t &token)
 {
@@ -670,7 +620,7 @@ void WikiDialog::loadModPages(const uint32_t &token)
 
 	std::vector<RsWikiSnapshot> snapshots;
 	std::vector<RsWikiSnapshot>::iterator vit;
-        if (!rsWiki->getSnapshots(token, snapshots))
+        if (!rsWiki->getRelatedSnapshots(token, snapshots))
 	{
 		// ERROR
 		std::cerr << "WikiDialog::loadModPages() ERROR";
@@ -682,16 +632,22 @@ void WikiDialog::loadModPages(const uint32_t &token)
 	{
                 RsWikiSnapshot &page = *vit;
 
-		std::cerr << "WikiDialog::loadModPages() PageId: " << page.mMeta.mMsgId;
-		std::cerr << " Page: " << page.mMeta.mMsgName;
-		std::cerr << std::endl;
+	        std::cerr << "WikiDialog::loadModPages() TopLevel Result: PageTitle: " << page.mMeta.mMsgName;
+	        std::cerr << " GroupId: " << page.mMeta.mGroupId;
+	        std::cerr << std::endl;
+	        std::cerr << "\tOrigMsgId: " << page.mMeta.mOrigMsgId;
+	        std::cerr << " MsgId: " << page.mMeta.mMsgId;
+	        std::cerr << std::endl;
+	        std::cerr << "\tThreadId: " << page.mMeta.mThreadId;
+	        std::cerr << " ParentId: " << page.mMeta.mParentId;
+	        std::cerr << std::endl;
 		
-		//QTreeWidgetItem *modItem = new QTreeWidgetItem();
-		//modItem->setText(WIKI_MODS_COL_ORIGPAGEID, QString::fromStdString(page.mMeta.mOrigMsgId));
-		//modItem->setText(WIKI_MODS_COL_PAGEID, QString::fromStdString(page.mMeta.mMsgId));
-		//ui.treeWidget_Mods->addTopLevelItem(modItem);
+		QTreeWidgetItem *modItem = new QTreeWidgetItem();
+		modItem->setText(WIKI_MODS_COL_ORIGPAGEID, QString::fromStdString(page.mMeta.mOrigMsgId));
+		modItem->setText(WIKI_MODS_COL_PAGEID, QString::fromStdString(page.mMeta.mMsgId));
+		modItem->setText(WIKI_MODS_COL_PARENTID, QString::fromStdString(page.mMeta.mParentId));
+		ui.treeWidget_Mods->addTopLevelItem(modItem);
         }
-
 
 	/* then we need to request all pages from this thread */
 	requestEditTreeData();
@@ -733,13 +689,42 @@ void WikiDialog::loadEditTreeData(const uint32_t &token)
 		return;
 	}
 
+	std::string groupId;
+	std::string pageId;
+	std::string origPageId;
+	if (!getSelectedPage(groupId, pageId, origPageId))
+	{
+		// ERROR
+		std::cerr << "WikiDialog::loadEditTreeData() ERROR 2";
+		std::cerr << std::endl;
+		return;
+	}
+
 	std::cerr << "WikiDialog::loadEditTreeData() Loaded " << snapshots.size();
 	std::cerr << std::endl;
+	std::cerr << "WikiDialog::loadEditTreeData() Using ThreadId: " << origPageId;
+	std::cerr << std::endl;
+
+
+
+
 
 	std::map<RsGxsMessageId, QTreeWidgetItem *> items;
 	std::map<RsGxsMessageId, QTreeWidgetItem *>::iterator iit;
 	std::list<QTreeWidgetItem *> unparented;
 	std::list<QTreeWidgetItem *>::iterator uit;
+
+	// Grab the existing TopLevelItems, and insert into map.
+       	int itemCount = ui.treeWidget_Mods->topLevelItemCount();
+       	for (int nIndex = 0; nIndex < itemCount; nIndex++) 
+       	{
+		QTreeWidgetItem *item = ui.treeWidget_Mods->topLevelItem(nIndex);
+
+		/* index by MsgId --> ONLY For Wiki Thread Head Items... SPECIAL HACK FOR HERE! */	
+		std::string msgId = item->text(WIKI_MODS_COL_PAGEID).toStdString();
+		items[msgId] = item;
+	}
+
 
 	for(vit = snapshots.begin(); vit != snapshots.end(); vit++)
 	{
@@ -755,12 +740,29 @@ void WikiDialog::loadEditTreeData(const uint32_t &token)
 	        std::cerr << " ParentId: " << snapshot.mMeta.mParentId;
 	        std::cerr << std::endl;
 
+		if (snapshot.mMeta.mParentId == "")
+		{
+			/* Ignore! */
+	        	std::cerr << "Ignoring ThreadHead Item";
+	        	std::cerr << std::endl;
+			continue;
+		}
+
+		if (snapshot.mMeta.mThreadId != origPageId)
+		{
+			/* Ignore! */
+	        	std::cerr << "Ignoring Different Thread Item";
+	        	std::cerr << std::endl;
+			continue;
+		}
+
 		/* create an Entry */
 		QTreeWidgetItem *modItem = new QTreeWidgetItem();
 		modItem->setText(WIKI_MODS_COL_ORIGPAGEID, QString::fromStdString(snapshot.mMeta.mOrigMsgId));
 		modItem->setText(WIKI_MODS_COL_PAGEID, QString::fromStdString(snapshot.mMeta.mMsgId));
 		modItem->setText(WIKI_MODS_COL_PARENTID, QString::fromStdString(snapshot.mMeta.mParentId));
 
+#if 0
 		/* if no parentId */
 		if (snapshot.mMeta.mParentId == "")
 		{
@@ -771,6 +773,7 @@ void WikiDialog::loadEditTreeData(const uint32_t &token)
 			items[snapshot.mMeta.mMsgId] = modItem;
 			continue;
 		}
+#endif
 
 		/* find the parent */
 		iit = items.find(snapshot.mMeta.mParentId);
@@ -880,10 +883,6 @@ void WikiDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 
 			case WIKIDIALOG_LISTING_PAGES:
 				loadPages(req.mToken);
-				break;
-
-			case WIKIDIALOG_MOD_LIST:
-				loadModPageList(req.mToken);
 				break;
 
 			case WIKIDIALOG_MOD_PAGES:
