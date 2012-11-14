@@ -22,6 +22,7 @@
 
 #include <QMessageBox>
 #include <QInputDialog>
+#include <QMenu>
 
 #include "ChatLobbyDialog.h"
 #include "ChatTabWidget.h"
@@ -30,7 +31,7 @@
 #include "gui/MainWindow.h"
 #include "gui/FriendsDialog.h"
 #include <gui/common/html.h>
-#include "gui/common/RSListWidgetItem.h"
+#include "gui/common/RSTreeWidgetItem.h"
 
 #include <retroshare/rsnotify.h>
 
@@ -45,9 +46,31 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WF
 
 	connect(ui.participantsFrameButton, SIGNAL(toggled(bool)), this, SLOT(showParticipantsFrame(bool)));
 	connect(ui.actionChangeNickname, SIGNAL(triggered()), this, SLOT(changeNickname()));
+	connect(ui.participantsList, SIGNAL( customContextMenuRequested(QPoint)), this, SLOT( participantsTreeWidgetCostumPopupMenu(QPoint)));
+
+	ui.participantsList->setRootIsDecorated(false);
 
 	// Mute a Participant
-	connect(ui.participantsList, SIGNAL(itemClicked(QListWidgetItem *)), SLOT(changePartipationState(QListWidgetItem *)));
+	muteAct = new QAction(QIcon(), tr("Mute participant"), this);
+	connect(muteAct, SIGNAL(triggered()), this, SLOT(changePartipationState()));
+}
+
+void ChatLobbyDialog::participantsTreeWidgetCostumPopupMenu(QPoint)
+{
+	QTreeWidgetItem *item = getCurrentParticipant();
+
+	QMenu contextMnu(this);
+
+	contextMnu.addAction(muteAct);
+	muteAct->setEnabled(item != NULL);
+	muteAct->setCheckable(true);
+	if (item) {
+		muteAct->setChecked(isParticipantMuted(item->text(0)));
+	} else {
+		muteAct->setChecked(false);
+	}
+
+	contextMnu.exec(QCursor::pos());
 }
 
 void ChatLobbyDialog::init(const std::string &peerId, const QString &title)
@@ -210,7 +233,7 @@ void ChatLobbyDialog::addIncomingChatMsg(const ChatInfo& info)
 }
 
 /**
- * Regenerate the QListWidget participant list of a Chat Lobby
+ * Regenerate the QTreeWidget participant list of a Chat Lobby
  * 
  * Show unchecked Checkbox for muted Participants
  */
@@ -232,40 +255,43 @@ void ChatLobbyDialog::updateParticipantsList()
 			QString participant = QString::fromUtf8( (it2->first).c_str() );
 
 			// TE: Add Wigdet to participantsList with Checkbox, to mute Participant
-			QListWidgetItem *widgetitem = new RSListWidgetItem;
+			QTreeWidgetItem *widgetitem = new RSTreeWidgetItem;
 
 			if (isParticipantMuted(participant)) {
-				widgetitem->setCheckState(Qt::Unchecked);
+				widgetitem->setIcon(0,(QIcon(":/images/yellowled.png")));
 			} else {
-				widgetitem->setCheckState(Qt::Checked);
+				widgetitem->setIcon(0,(QIcon(":/images/greenled.png")));
 			}
-			widgetitem->setText(participant);
- 			widgetitem->setToolTip(tr("Uncheck to mute participant"));
-			
-			ui.participantsList->addItem(widgetitem);
+			widgetitem->setText(0, participant);
+			widgetitem->setToolTip(0,(tr("right click,and check to mute participant")));
+
+			ui.participantsList->addTopLevelItem(widgetitem);
 		}
 	}
-
 	ui.participantsList->setSortingEnabled(true);
-	ui.participantsList->sortItems(Qt::AscendingOrder);
+	ui.participantsList->sortItems(0, Qt::AscendingOrder);
 }
 
 /**
- * Called when a Participant in QList get Clicked / Changed
+ * Called when a Participant in QTree get Clicked / Changed
  * 
  * Check if the Checkbox altered and Mute User
  * 
  * @todo auf rsid
  * 
- * @param QListWidgetItem Participant to check
+ * @param QTreeWidgetItem Participant to check
  */
-void ChatLobbyDialog::changePartipationState(QListWidgetItem *item)
+void ChatLobbyDialog::changePartipationState()
 {
-	QString nickname = item->text();
+	QTreeWidgetItem *item = getCurrentParticipant();
+	if (!item)
+		return;
+
+	QString nickname = item->text(0);
 	
 	std::cerr << "check Partipation status for '" << nickname.toStdString() << std::endl;
 
-	if (item->checkState() == Qt::Unchecked) {
+	if (muteAct->isChecked()) {
 		muteParticipant(nickname);
 	} else {
 		unMuteParticipant(nickname);
@@ -398,3 +424,13 @@ void ChatLobbyDialog::showParticipantsFrame(bool show)
 
 	PeerSettings->setShowParticipantsFrame(getPeerId(), show);
 }
+
+QTreeWidgetItem *ChatLobbyDialog::getCurrentParticipant()
+{ 
+	if (ui.participantsList->selectedItems().size() != 0) {
+		return ui.participantsList->currentItem();
+	}
+
+	return NULL;
+}
+

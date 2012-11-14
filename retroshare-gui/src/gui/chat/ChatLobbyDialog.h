@@ -43,6 +43,7 @@ public:
 
 private slots:
 	void showParticipantsFrame(bool show);
+	void participantsTreeWidgetCostumPopupMenu( QPoint point );
 
 protected:
 	/** Default constructor */
@@ -59,9 +60,11 @@ protected:
 
 protected slots:
 	void changeNickname();
-	void changePartipationState(QListWidgetItem *item);
-	
+	void changePartipationState();
+
 private:
+	QTreeWidgetItem *getCurrentParticipant();
+
 	void updateParticipantsList();
 
 	void muteParticipant(const QString &nickname);
@@ -79,7 +82,7 @@ private:
 	/** Ignored Users in Chatlobby by nickname until we had implemented Peer Ids in ver 0.6 */
 	QStringList *mutedParticipants;
 
-	
+	QAction *muteAct;
 };
 
 #endif
