@@ -218,6 +218,14 @@ linux-* {
 
 	#CONFIG += version_detail_bash_script
 
+	# Check if the system's libupnp has been Debian-patched
+	system(grep -E 'char[[:space:]]+PublisherUrl' $${UPNP_DIR}/upnp.h &>/dev/null) {
+		# Normal libupnp
+	} else {
+		# Patched libupnp or new unreleased version
+		DEFINES *= PATCHED_LIBUPNP
+	}
+
 	DEFINES *= UBUNTU
 	INCLUDEPATH += /usr/include/glib-2.0/ /usr/lib/glib-2.0/include
 	LIBS *= -lgnome-keyring
