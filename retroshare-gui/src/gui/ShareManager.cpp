@@ -66,7 +66,7 @@ ShareManager::ShareManager()
     connect(ui.addButton, SIGNAL(clicked( bool ) ), this , SLOT( showShareDialog() ) );
     connect(ui.editButton, SIGNAL(clicked( bool ) ), this , SLOT( editShareDirectory() ) );
     connect(ui.removeButton, SIGNAL(clicked( bool ) ), this , SLOT( removeShareDirectory() ) );
-    connect(ui.closeButton, SIGNAL(clicked()), this, SLOT(close()));
+    connect(ui.closeButton, SIGNAL(clicked()), this, SLOT(applyAndClose()));
 
     connect(ui.shareddirList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(shareddirListCostumPopupMenu(QPoint)));
     connect(ui.shareddirList, SIGNAL(currentCellChanged(int,int,int,int)), this, SLOT(shareddirListCurrentCellChanged(int,int,int,int)));
@@ -93,6 +93,14 @@ ShareManager::~ShareManager()
     _instance = NULL;
 
     Settings->saveWidgetInformation(this);
+}
+
+void ShareManager::applyAndClose()
+{
+	std::cerr << "ShareManager:::close(): updating!" << std::endl;
+
+	updateFlags() ;
+	close() ;
 }
 
 void ShareManager::shareddirListCostumPopupMenu( QPoint /*point*/ )
@@ -141,7 +149,7 @@ void ShareManager::load()
 		  listWidget->setItem(row, COLUMN_GROUPS, new QTableWidgetItem()) ;
 		  listWidget->item(row,COLUMN_GROUPS)->setBackgroundColor(QColor(183,236,181)) ;
 
-		  connect(widget,SIGNAL(flagsChanged(FileStorageFlags)),this,SLOT(updateFlags())) ;
+		  //connect(widget,SIGNAL(flagsChanged(FileStorageFlags)),this,SLOT(updateFlags())) ;
     }
 
 	 listWidget->setColumnWidth(COLUMN_SHARE_FLAGS,132) ;

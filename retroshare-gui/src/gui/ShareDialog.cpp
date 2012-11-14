@@ -77,7 +77,7 @@ ShareDialog::ShareDialog(std::string filename, QWidget *parent)
 	 updateInfoMessage() ;
 
 	 connect(groupselectionbox,SIGNAL(itemSelectionChanged()),this,SLOT(updateInfoMessage())) ;
-	 connect(groupselectionbox,SIGNAL(itemSelectionChanged()),this,SLOT(groupSelectionChanged())) ;
+//	 connect(groupselectionbox,SIGNAL(itemSelectionChanged()),this,SLOT(groupSelectionChanged())) ;
 	 connect(groupflagsbox,SIGNAL(flagsChanged(FileStorageFlags)),this,SLOT(updateInfoMessage())) ;
 
     if (!filename.empty()) 
