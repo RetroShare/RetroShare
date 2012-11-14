@@ -125,6 +125,8 @@ virtual bool getCollections(const uint32_t &token, std::vector<RsWikiCollection>
 virtual bool getSnapshots(const uint32_t &token, std::vector<RsWikiSnapshot> &snapshots) = 0;
 virtual bool getComments(const uint32_t &token, std::vector<RsWikiComment> &comments) = 0;
 
+virtual bool getRelatedSnapshots(const uint32_t &token, std::vector<RsWikiSnapshot> &snapshots) = 0;
+
 virtual bool submitCollection(uint32_t &token, RsWikiCollection &collection) = 0;
 virtual bool submitSnapshot(uint32_t &token, RsWikiSnapshot &snapshot) = 0;
 virtual bool submitComment(uint32_t &token, RsWikiComment &comment) = 0;

@@ -482,6 +482,7 @@ HEADERS += retroshare/rsgame.h \
             pqi/pqiqosstreamer.cc \
             pqi/sslfns.cc \
             pqi/pqinetstatebox.cc
+
         SOURCES += rsserver/p3discovery.cc \
             rsserver/p3face-config.cc \
             rsserver/p3face-msgs.cc \
@@ -495,9 +496,11 @@ HEADERS += retroshare/rsgame.h \
             rsserver/rsloginhandler.cc \
             rsserver/rstypes.cc \
             rsserver/p3serverconfig.cc
+
         SOURCES += plugins/pluginmanager.cc \
             plugins/dlfcn_win32.cc \
             serialiser/rspluginitems.cc
+
         SOURCES += serialiser/rsbaseitems.cc \
             serialiser/rsbaseserial.cc \
             serialiser/rsblogitems.cc \

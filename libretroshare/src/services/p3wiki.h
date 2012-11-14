@@ -56,6 +56,8 @@ virtual bool getCollections(const uint32_t &token, std::vector<RsWikiCollection>
 virtual bool getSnapshots(const uint32_t &token, std::vector<RsWikiSnapshot> &snapshots);
 virtual bool getComments(const uint32_t &token, std::vector<RsWikiComment> &comments);
 
+virtual bool getRelatedSnapshots(const uint32_t &token, std::vector<RsWikiSnapshot> &snapshots);
+
 virtual bool submitCollection(uint32_t &token, RsWikiCollection &collection);
 virtual bool submitSnapshot(uint32_t &token, RsWikiSnapshot &snapshot);
 virtual bool submitComment(uint32_t &token, RsWikiComment &comment);
@@ -68,6 +70,18 @@ std::string genRandomId();
 //	RsMutex mWikiMtx;
 
 
+	// Dummy Stuff.
+	void dummyTick();
+
+	bool mAboutActive;
+	uint32_t mAboutToken;
+	int  mAboutLines;
+	RsGxsMessageId mAboutThreadId;
+
+	bool mImprovActive;
+	uint32_t mImprovToken;
+	int  mImprovLines;
+	RsGxsMessageId mImprovThreadId;
 };
 
 #endif 
