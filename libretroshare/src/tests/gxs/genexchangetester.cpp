@@ -836,7 +836,7 @@ bool GenExchangeTester::testMsgAllVersions()
     return true;
 }
 
-bool GenExchangeTester::testMsgChildRetrieval()
+bool GenExchangeTester::testMsgRelatedChildIdRetrieval()
 {
 //    // start up
 //    setUp();
@@ -899,7 +899,6 @@ bool GenExchangeTester::testMsgChildRetrieval()
 //            first = false;
 //        }
 
-//    }
 
 
 //    opts.mReqType = GXS_REQUEST_TYPE_MSG_IDS;
@@ -945,6 +944,118 @@ bool GenExchangeTester::testMsgChildRetrieval()
 
 //    return true;
 }
+
+bool GenExchangeTester::testMsgRelatedChildDataRetrieval()
+{
+    // start up
+    setUp();
+    setUpGrps(GXS_SERV::FLAG_PRIVACY_PUBLIC);
+
+    /********************/
+
+
+    // create msgs
+    // then make all requests immediately then poll afterwards for each and run outbound test
+    // we want only latest for now
+    int nMsgs = (rand()%50)+2; // test a large number of msgs
+    std::vector<RsDummyMsg*> msgs;
+    createMsgs(msgs, nMsgs);
+    RsTokReqOptions opts;
+    opts.mReqType = 4000;
+    uint32_t token;
+
+   bool first = true;
+   RsGxsGrpMsgIdPair firstMsgId;
+
+   // everyone is parent of first msg
+
+    for(int i=0; i < nMsgs; i++)
+    {
+        RsDummyMsg* msg = msgs[i];
+
+        if(first){
+            msg->meta.mParentId = "";
+            msg->meta.mOrigMsgId = "";
+        }
+        else
+        {
+            msg->meta.mParentId = firstMsgId.second;
+            msg->meta.mGroupId = firstMsgId.first;
+            msg->meta.mOrigMsgId = "";
+        }
+
+        mTestService->publishDummyMsg(token, msg);
+        pollForToken(token, opts);
+        RsGxsGrpMsgIdPair msgId;
+        mTestService->acknowledgeTokenMsg(token, msgId);
+
+
+        if(msgId.first.empty() || msgId.second.empty())
+        {
+            breakDown();
+            std::cerr << "serious error: Acknowledgement failed! " << std::endl;
+            return false;
+        }
+
+        // don't add the id to be related
+        if(!first)
+        {
+            mMsgRelatedDataMapOut[firstMsgId].push_back(msg);
+        }
+
+        if(first){
+            firstMsgId.second = msgId.second;
+            firstMsgId.first = msgId.first;
+            first = false;
+        }
+    }
+
+
+
+    opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
+    opts.mOptions = RS_TOKREQOPT_MSG_PARENT | RS_TOKREQOPT_MSG_LATEST;
+    std::vector<RsGxsGrpMsgIdPair> msgIdList;
+    msgIdList.push_back(firstMsgId);
+    mTokenService->requestMsgRelatedInfo(token, 0, opts, msgIdList);
+
+    pollForToken(token, opts);
+
+    GxsMsgRelatedDataMap::iterator mit = mMsgRelatedDataMapOut.begin();
+    for(; mit != mMsgRelatedDataMapOut.end(); mit++)
+    {
+        std::vector<RsGxsMsgItem*>& msgDataOut = mit->second;
+
+        std::vector<RsGxsMsgItem*>::iterator vit_out = msgDataOut.begin(), vit_in;
+
+        for(; vit_out != msgDataOut.end(); vit_out++)
+        {
+            bool found = false;
+            std::vector<RsGxsMsgItem*>& msgDataIn = mMsgRelatedDataMapIn[mit->first];
+            vit_in = msgDataIn.begin();
+
+            for(; vit_in != msgDataIn.end(); vit_in++)
+            {
+                if(*vit_in == *vit_out)
+                    found = true;
+            }
+
+            if(!found){
+                breakDown();
+                return false;
+            }
+
+        }
+    }
+
+    /********************/
+
+    // complete
+    breakDown();
+
+    return true;
+}
+
+
 
 bool GenExchangeTester::testSpecificMsgMetaRetrieval()
 {
@@ -1644,6 +1755,9 @@ void GenExchangeTester::pollForToken(uint32_t token, const RsTokReqOptions &opts
                 break;
             case GXS_REQUEST_TYPE_MSG_RELATED_IDS:
                 mTestService->getMsgRelatedListTS(token, mMsgRelatedIdsIn);
+                break;
+            case GXS_REQUEST_TYPE_MSG_RELATED_DATA:
+                mTestService->getMsgRelatedDataTS(token, mMsgRelatedDataMapIn);
                 break;
             }
             break;

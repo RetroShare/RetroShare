@@ -34,7 +34,8 @@ public:
     bool testSpecificMsgMetaRetrieval();
 
     // request msg related tests
-    bool testMsgChildRetrieval();
+    bool testMsgRelatedChildIdRetrieval();
+    bool testMsgRelatedChildDataRetrieval();
     bool testMsgAllVersions();
 
 
@@ -97,6 +98,7 @@ private:
     GxsMsgIdResult mMsgIdsOut, mMsgIdsIn;
 
     MsgRelatedIdResult mMsgRelatedIdsOut, mMsgRelatedIdsIn;
+    GxsMsgRelatedDataMap mMsgRelatedDataMapOut, mMsgRelatedDataMapIn;
 
     std::vector<RsGxsGroupId> mRandGrpIds; // ids that exist to help group testing
 

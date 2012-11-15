@@ -1275,21 +1275,24 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
         filteredOutMsgIds[grpId] = outMsgIds;
         filterMsgList(filteredOutMsgIds, opts, filterMap);
 
-        if(req->Options.mReqType == GXS_REQUEST_TYPE_MSG_RELATED_IDS)
+        if(!outMsgIds.empty())
         {
-            req->mMsgIdResult[grpMsgIdPair] = filteredOutMsgIds[grpId];
-        }
-        else if(req->Options.mReqType == GXS_REQUEST_TYPE_MSG_RELATED_META)
-        {
-            GxsMsgMetaResult metaResult;
-            mDataStore->retrieveGxsMsgMetaData(filteredOutMsgIds, metaResult);
-            req->mMsgMetaResult[grpMsgIdPair] = metaResult[grpId];
-        }
-        else if(req->Options.mReqType == GXS_REQUEST_TYPE_MSG_RELATED_DATA)
-        {
-            GxsMsgResult msgResult;
-            mDataStore->retrieveNxsMsgs(filteredOutMsgIds, msgResult, false, true);
-            req->mMsgDataResult[grpMsgIdPair] = msgResult[grpId];
+            if(req->Options.mReqType == GXS_REQUEST_TYPE_MSG_RELATED_IDS)
+            {
+                req->mMsgIdResult[grpMsgIdPair] = filteredOutMsgIds[grpId];
+            }
+            else if(req->Options.mReqType == GXS_REQUEST_TYPE_MSG_RELATED_META)
+            {
+                GxsMsgMetaResult metaResult;
+                mDataStore->retrieveGxsMsgMetaData(filteredOutMsgIds, metaResult);
+                req->mMsgMetaResult[grpMsgIdPair] = metaResult[grpId];
+            }
+            else if(req->Options.mReqType == GXS_REQUEST_TYPE_MSG_RELATED_DATA)
+            {
+                GxsMsgResult msgResult;
+                mDataStore->retrieveNxsMsgs(filteredOutMsgIds, msgResult, false, true);
+                req->mMsgDataResult[grpMsgIdPair] = msgResult[grpId];
+            }
         }
 
         outMsgIds.clear();

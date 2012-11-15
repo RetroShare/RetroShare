@@ -67,6 +67,14 @@ public:
      */
     bool getMsgRelatedListTS(const uint32_t &token, MsgRelatedIdResult &msgIds);
 
+    /*!
+     * retrieves msg related data msgItems as a map of msg-grpID pair to vector
+     * of items
+     * @param token token to be redeemed
+     * @param msgItems map of msg items
+     */
+    bool getMsgRelatedDataTS(const uint32_t &token, GxsMsgRelatedDataMap& msgItems);
+
 
     void setGroupSubscribeFlagTS(uint32_t& token, const RsGxsGroupId& grpId, const uint32_t& status);
 
