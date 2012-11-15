@@ -52,6 +52,7 @@ virtual void service_tick();
 
 virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsForumGroup> &groups);
 virtual bool getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs);
+virtual bool getRelatedMessages(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs);
 
         //////////////////////////////////////////////////////////////////////////////
 virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read);
@@ -65,11 +66,35 @@ virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgI
 virtual bool createGroup(uint32_t &token, RsGxsForumGroup &group);
 virtual bool createMsg(uint32_t &token, RsGxsForumMsg &msg);
 
+virtual bool generateDummyData();
 	private:
 
 std::string genRandomId();
-bool 	generateDummyData();
 
+void 	dummy_tick();
+
+bool generateMessage(uint32_t &token, const RsGxsGroupId &grpId, 
+		const RsGxsMessageId &parentId, const RsGxsMessageId &threadId);
+bool generateGroup(uint32_t &token, std::string groupName);
+
+	class ForumDummyRef
+	{
+		public:
+		ForumDummyRef() { return; }
+		ForumDummyRef(const RsGxsGroupId &grpId, const RsGxsMessageId &threadId, const RsGxsMessageId &msgId)
+		:mGroupId(grpId), mThreadId(threadId), mMsgId(msgId) { return; }
+
+		RsGxsGroupId mGroupId;
+		RsGxsMessageId mThreadId;
+		RsGxsMessageId mMsgId;
+	};
+
+	uint32_t mGenToken;
+	bool mGenActive;
+	int mGenCount;
+	std::vector<ForumDummyRef> mGenRefs;
+	RsGxsMessageId mGenThreadId;
+	
 };
 
 #endif 

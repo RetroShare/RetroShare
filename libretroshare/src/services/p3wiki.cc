@@ -330,13 +330,13 @@ const std::string improvements_txt[] =
 		" - Diffs, lots of edits will lead to complex merges - a robust merge tool is essential\n",
 		" - Read Mode... hide all the Edits, and only show the most recently published versions\n",
 		" - Easy Duplication - to take over an Abandoned or badly moderated Wiki. Copies All base versions to a new group\n",
-		" - WikiLinks. A generic Wiki Cross Linking system. This should be combined with Easy Duplication option,\n",
-		" to allow easy replacement of groups if necessary... A good design here is critical to a successful Wiki ecosystem",
-		" the republished page becomes a new version of the Root Page, allowing more edits to be done\n",
+		" - WikiLinks. A generic Wiki Cross Linking system. This should be combined with Easy Duplication option,",
+		" to allow easy replacement of groups if necessary... A good design here is critical to a successful Wiki ecosystem\n",
 		" - work out how to include media (photos, audio, video, etc) without embedding in pages",
 		" this would leverage the turtle transfer system somehow - maybe like channels.\n",
 		" - Comments, reviews etc can be incorporated - ideas here are welcome.\n",
-		" - Any other suggestion???"
+		" - Any other suggestion???",
+		" - Come on more ideas!"
 	};
 
 

@@ -279,7 +279,7 @@ uint32_t RsGxsForumSerialiser::sizeGxsForumMsgItem(RsGxsForumMsgItem *item)
 	const RsGxsForumMsg& msg = item->mMsg;
 	uint32_t s = 8; // header
 
-	s += 4; // mMsg.
+	s += GetTlvStringSize(msg.mMsg); // mMsg.
 
 	return s;
 }

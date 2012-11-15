@@ -47,6 +47,8 @@
 #define PRIV_GRP_OFFSET 16
 #define GRP_OPTIONS_OFFSET 24
 
+#define GEN_EXCH_DEBUG	1
+
 RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService *ns,
                              RsSerialType *serviceSerialiser, uint16_t servType, RsGixs* gixs, uint32_t authenPolicy)
 : mGenMtx("GenExchange"), mDataStore(gds), mNetService(ns), mSerialiser(serviceSerialiser),
@@ -952,17 +954,27 @@ void RsGenExchange::publishGroup(uint32_t& token, RsGxsGrpItem *grpItem)
 {
 
     RsStackMutex stack(mGenMtx);
-
     token = mDataAccess->generatePublicToken();
     mGrpsToPublish.insert(std::make_pair(token, grpItem));
+
+#ifdef GEN_EXCH_DEBUG	
+    std::cerr << "RsGenExchange::publishGroup() token: " << token;
+    std::cerr << std::endl;
+#endif
+
 }
 
 void RsGenExchange::publishMsg(uint32_t& token, RsGxsMsgItem *msgItem)
 {
     RsStackMutex stack(mGenMtx);
-
     token = mDataAccess->generatePublicToken();
     mMsgsToPublish.insert(std::make_pair(token, msgItem));
+
+#ifdef GEN_EXCH_DEBUG	
+    std::cerr << "RsGenExchange::publishMsg() token: " << token;
+    std::cerr << std::endl;
+#endif
+
 }
 
 void RsGenExchange::setGroupSubscribeFlags(uint32_t& token, const RsGxsGroupId& grpId, const uint32_t& flag, const uint32_t& mask)
@@ -1125,6 +1137,13 @@ void RsGenExchange::publishMsgs()
                     req.insert(std::make_pair(msg->grpId, msgV));
                     mDataStore->retrieveGxsMsgMetaData(req, res);
                     msgDoesnExist = res[grpId].empty();
+
+#ifdef GEN_EXCH_DEBUG
+                    if (!msgDoesnExist)
+                    {
+                        std::cerr << "RsGenExchange::publishMsgs() msg exists already :( " << std::endl;
+                    }
+#endif
                 }
 
                 if(createOk && msgDoesnExist)
@@ -1166,6 +1185,12 @@ void RsGenExchange::publishMsgs()
                     std::cerr << "RsGenExchange::publishMsgs() failed to publish msg " << std::endl;
 #endif
                 }
+            }
+            else
+            {
+#ifdef GEN_EXCH_DEBUG
+                std::cerr << "RsGenExchange::publishMsgs() failed to serialise msg " << std::endl;
+#endif
             }
 
             delete[] mData;
