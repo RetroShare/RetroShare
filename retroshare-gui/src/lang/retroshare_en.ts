@@ -923,15 +923,23 @@ Please choose one of it to chat with.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Uncheck to mute participant</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>%1 changed his name to: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Lobby chat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Participants</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mute participant</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>right click,and check to mute participant</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4705,26 +4713,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Create new Profile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create new Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>F</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create new Channel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>C</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Add your Avatar Picture</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5489,6 +5477,40 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Favorites</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GroupFlagsWidget</name>
+    <message>
+        <source>All your friends can browse this directory
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Only friends in groups </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> can browse this directory
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No one can browse this directory
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All your friends can relay anonymous tunnels to this directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> can relay anonymous tunnels to this directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No one can anonymously access this directory.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9191,6 +9213,22 @@ Reported error is: %2</source>
 </source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Directory is browsable for friends from parent groups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory is accessible by anonymous tunnels from friends from parent groups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory is browsable for any friend</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory is accessible by anonymous tunnels from any friend</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QuickStartWizard</name>
@@ -9466,18 +9504,6 @@ p, li { white-space: pre-wrap; }
 </context>
 <context>
     <name>RetroshareDirModel</name>
-    <message>
-        <source>Anonymous</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Anonymous and browsable by friends</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Only browsable by friends</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>NEW</source>
         <translation type="unfinished"></translation>
@@ -10118,31 +10144,11 @@ The default value is 20.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Browseable by Friends</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Browsable</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Anonymous shared Network Wide</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Network Wide</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Select A Folder To Share</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Share flags and groups: </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10204,14 +10210,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Network Wide</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Browsable</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Add a Share Directory</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10228,23 +10226,11 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Close</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Edit selected Shared Directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>If checked, the share is anonymously shared to anybody.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>If checked, the share is browsable by your friends.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10269,6 +10255,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Share Manager</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Share flags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Parent groups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Apply and close</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10800,6 +10798,14 @@ p, li { white-space: pre-wrap; }
         <source>Save Channel File</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TBoard</name>
@@ -11286,6 +11292,10 @@ Try to be patient!</source>
     </message>
     <message>
         <source>What&apos;s new</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Groups</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
