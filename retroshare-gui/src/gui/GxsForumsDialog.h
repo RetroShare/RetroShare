@@ -87,6 +87,8 @@ protected:
     bool eventFilter(QObject *obj, QEvent *ev);
 
 private slots:
+    void forceUpdateDisplay(); // TEMP HACK FN.
+
     /** Create the context popup menu and it's submenus */
     void forumListCustomPopupMenu( QPoint point );
     void threadListCustomPopupMenu( QPoint point );

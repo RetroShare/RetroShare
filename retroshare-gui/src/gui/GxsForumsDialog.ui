@@ -1004,7 +1004,7 @@ background: white;}</string>
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Next unread</string>
+             <string>Force Refresh</string>
             </property>
            </widget>
           </item>

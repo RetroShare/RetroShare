@@ -174,7 +174,10 @@ GxsForumsDialog::GxsForumsDialog(QWidget *parent)
     connect(ui.expandButton, SIGNAL(clicked()), this, SLOT(togglethreadview()));
     connect(ui.previousButton, SIGNAL(clicked()), this, SLOT(previousMessage()));
     connect(ui.nextButton, SIGNAL(clicked()), this, SLOT(nextMessage()));
-	 connect(ui.nextUnreadButton, SIGNAL(clicked()), this, SLOT(nextUnreadMessage()));
+
+    // HACK - TEMPORARY HIJACKING THIS BUTTON FOR REFRESH.
+    //connect(ui.nextUnreadButton, SIGNAL(clicked()), this, SLOT(nextUnreadMessage()));
+    connect(ui.nextUnreadButton, SIGNAL(clicked()), this, SLOT(forceUpdateDisplay()));
 
     connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(downloadAllFiles()));
 
@@ -237,6 +240,10 @@ GxsForumsDialog::GxsForumsDialog(QWidget *parent)
     insertThreads();
 
     ui.threadTreeWidget->installEventFilter(this);
+
+
+
+    rsGxsForums->generateDummyData();
 
     /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -520,6 +527,19 @@ void GxsForumsDialog::updateDisplay()
         insertThreads();
     }
 }
+
+// HACK until update works.
+void GxsForumsDialog::forceUpdateDisplay()
+{
+	std::cerr << "GxsForumsDialog::forceUpdateDisplay()";
+	std::cerr << std::endl;
+
+        /* update Forums List */
+        insertForums();
+        /* update threads as well */
+        insertThreads();
+}
+
 
 static void CleanupItems (QList<QTreeWidgetItem *> &items)
 {
@@ -1858,10 +1878,11 @@ void GxsForumsDialog::requestGroupSummary()
         std::cerr << "GxsForumsDialog::requestGroupSummary()";
         std::cerr << std::endl;
 
-        std::list<std::string> ids;
         RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+
 	uint32_t token;
-        mForumQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_SUMMARY, opts, ids, FORUMSV2DIALOG_LISTING);
+        mForumQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_SUMMARY, opts, FORUMSV2DIALOG_LISTING);
 }
 
 void GxsForumsDialog::loadGroupSummary(const uint32_t &token)
@@ -1891,6 +1912,7 @@ void GxsForumsDialog::loadGroupSummary(const uint32_t &token)
 void GxsForumsDialog::requestGroupSummary_CurrentForum(const std::string &forumId)
 {
 	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
 	
 	std::list<std::string> grpIds;
 	grpIds.push_back(forumId);
@@ -2005,6 +2027,7 @@ void GxsForumsDialog::loadCurrentForumThreads(const std::string &forumId)
 void GxsForumsDialog::requestGroupThreadData_InsertThreads(const std::string &forumId)
 {
 	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
 	opts.mOptions = RS_TOKREQOPT_MSG_THREAD | RS_TOKREQOPT_MSG_LATEST;
 	
@@ -2151,7 +2174,7 @@ void GxsForumsDialog::loadForumBaseThread(const RsGxsForumMsg &msg)
 void GxsForumsDialog::requestChildData_InsertThreads(uint32_t &token, const RsGxsGrpMsgIdPair &parentId)
 {
 	RsTokReqOptions opts;
-
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
 	opts.mOptions = RS_TOKREQOPT_MSG_PARENT |  RS_TOKREQOPT_MSG_LATEST;
 	
         std::cerr << "GxsForumsDialog::requestChildData_InsertThreads(" << parentId.first << "," << parentId.second << ")";
@@ -2185,11 +2208,10 @@ void GxsForumsDialog::loadChildData_InsertThreads(const uint32_t &token)
 
 	std::cerr << "GxsForumsDialog::loadChildData_InsertThreads()";
 	std::cerr << std::endl;
-	
 
         std::vector<RsGxsForumMsg> msgs;
         std::vector<RsGxsForumMsg>::iterator vit;
-        if (rsGxsForums->getMsgData(token, msgs))
+        if (rsGxsForums->getRelatedMessages(token, msgs))
 	{
 		for(vit = msgs.begin(); vit != msgs.end(); vit++)
 		{
@@ -2267,7 +2289,9 @@ void GxsForumsDialog::loadForumChildMsg(const RsGxsForumMsg &msg, QTreeWidgetIte
 
 void GxsForumsDialog::requestMsgData_InsertPost(const RsGxsGrpMsgIdPair &msgId)
 {
+#if 0
 	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
 	
         std::cerr << "GxsForumsDialog::requestMsgData_InsertPost(" << msgId.first << "," << msgId.second << ")";
         std::cerr << std::endl;
@@ -2276,6 +2300,20 @@ void GxsForumsDialog::requestMsgData_InsertPost(const RsGxsGrpMsgIdPair &msgId)
         msgIds.push_back(msgId);
 	uint32_t token;	
         mForumQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, FORUMV2DIALOG_INSERT_POST);
+#else
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+	
+        std::cerr << "GxsForumsDialog::requestMsgData_InsertPost(" << msgId.first << "," << msgId.second << ")";
+        std::cerr << std::endl;
+
+	GxsMsgReq msgIds;
+        std::vector<RsGxsMessageId> &vect = msgIds[msgId.first];
+        vect.push_back(msgId.second);
+
+	uint32_t token;	
+        mForumQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, FORUMV2DIALOG_INSERT_POST);
+#endif
 }
 
 
@@ -2285,7 +2323,11 @@ void GxsForumsDialog::loadMsgData_InsertPost(const uint32_t &token)
         std::cerr << std::endl;
 
         std::vector<RsGxsForumMsg> msgs;
+#if 0
+        if (rsGxsForums->getRelatedMessages(token, msgs))
+#else
         if (rsGxsForums->getMsgData(token, msgs))
+#endif
 	{
 		if (msgs.size() != 1)
 		{
@@ -2308,7 +2350,9 @@ void GxsForumsDialog::loadMsgData_InsertPost(const uint32_t &token)
 
 void GxsForumsDialog::requestMsgData_ReplyMessage(const RsGxsGrpMsgIdPair &msgId)
 {
+#if 0
 	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
 	
         std::cerr << "GxsForumsDialog::requestMsgData_ReplyMessage(" << msgId.first << "," << msgId.second << ")";
         std::cerr << std::endl;
@@ -2317,6 +2361,22 @@ void GxsForumsDialog::requestMsgData_ReplyMessage(const RsGxsGrpMsgIdPair &msgId
         msgIds.push_back(msgId);
 	uint32_t token;	
         mForumQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, FORUMV2DIALOG_REPLY_MESSAGE);
+#else
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+	
+        std::cerr << "GxsForumsDialog::requestMsgData_ReplyMessage(" << msgId.first << "," << msgId.second << ")";
+        std::cerr << std::endl;
+
+	GxsMsgReq msgIds;
+        std::vector<RsGxsMessageId> &vect = msgIds[msgId.first];
+        vect.push_back(msgId.second);
+
+	uint32_t token;	
+        mForumQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, FORUMV2DIALOG_REPLY_MESSAGE);
+#endif
+
 }
 
 
@@ -2326,7 +2386,11 @@ void GxsForumsDialog::loadMsgData_ReplyMessage(const uint32_t &token)
         std::cerr << std::endl;
 
         std::vector<RsGxsForumMsg> msgs;
+#if 0
+        if (rsGxsForums->getRelatedMessages(token, msgs))
+#else
         if (rsGxsForums->getMsgData(token, msgs))
+#endif
 	{
 		if (msgs.size() != 1)
 		{
