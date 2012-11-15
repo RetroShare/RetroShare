@@ -27,12 +27,13 @@
 #include "SubFileItem.h"
 #include "gui/msgs/MessageComposer.h"
 #include "util/HandleRichText.h"
+#include "util/DateTime.h"
 #include "gui/common/AvatarDefs.h"
 #include "gui/notifyqt.h"
 
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
-#include "rshare.h"
+
 /****
  * #define DEBUG_ITEM 1
  ****/
@@ -92,9 +93,7 @@ void MsgItem::updateItemStatic()
 		srcName = QString::fromUtf8(rsPeers->getPeerName(mi.srcId).c_str());
 	}
 
-	{
-		timestampLabel->setText(Rshare::customLongDate(mi.ts));
-	}
+	timestampLabel->setText(DateTime::formatLongDateTime(mi.ts));
 
 	if (!mIsHome)
 	{

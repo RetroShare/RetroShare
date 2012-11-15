@@ -271,6 +271,7 @@ HEADERS +=  rshare.h \
             gui/im_history/IMHistoryItemPainter.h \
             lang/languagesupport.h \
             util/stringutil.h \
+            util/DateTime.h \
             util/win32.h \
             util/RetroStyleLabel.h \
             util/dllexport.h \
@@ -571,6 +572,7 @@ SOURCES +=  main.cpp \
             gui/xprogressbar.cpp \
             lang/languagesupport.cpp \
             util/stringutil.cpp \
+            util/DateTime.cpp \
             util/win32.cpp \
             util/RetroStyleLabel.cpp \
             util/WidgetBackgroundImage.cpp \

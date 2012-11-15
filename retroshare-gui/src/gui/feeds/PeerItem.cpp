@@ -28,7 +28,7 @@
 #include "gui/msgs/MessageComposer.h"
 #include "gui/common/StatusDefs.h"
 #include "gui/common/AvatarDefs.h"
-#include "rshare.h"
+#include "util/DateTime.h"
 
 #include "gui/notifyqt.h"
 
@@ -118,7 +118,7 @@ void PeerItem::updateItemStatic()
 	{
 		/* set peer name */
 		peerNameLabel->setText(QString::fromUtf8(details.name.c_str()));
-		lastLabel-> setText(Rshare::customLongDate(details.lastConnect));
+		lastLabel-> setText(DateTime::formatLongDateTime(details.lastConnect));
 
 		/* expanded Info */
 		nameLabel->setText(QString::fromUtf8(details.name.c_str()));

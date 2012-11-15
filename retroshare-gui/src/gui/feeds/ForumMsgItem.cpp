@@ -32,10 +32,10 @@
 
 #include "gui/forums/CreateForumMsg.h"
 #include "util/HandleRichText.h"
+#include "util/DateTime.h"
 #include "gui/common/AvatarDefs.h"
 #include "gui/notifyqt.h"
 #include "gui/ForumsDialog.h"
-#include "rshare.h"
 //#include "gui/settings/rsharesettings.h"
 
 /****
@@ -161,7 +161,7 @@ void ForumMsgItem::updateItemStatic()
 			prevSubLabel->setText(link.toHtml());
 			prevMsgLabel->setText(RsHtml().formatText(NULL, ForumsDialog::messageFromInfo(msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 
-			timestamplabel->setText(Rshare::customLongDate(msg.ts));
+			timestamplabel->setText(DateTime::formatLongDateTime(msg.ts));
 
 			nextFrame->hide();
 		}
@@ -183,7 +183,7 @@ void ForumMsgItem::updateItemStatic()
 			nextSubLabel->setText(link.toHtml());
 			nextMsgLabel->setText(RsHtml().formatText(NULL, ForumsDialog::messageFromInfo(msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 			
-			timestamplabel->setText(Rshare::customLongDate(msg.ts));
+			timestamplabel->setText(DateTime::formatLongDateTime(msg.ts));
 			
 			prevSHLabel->setText(tr("In Reply to") + ": ");
 

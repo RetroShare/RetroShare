@@ -33,10 +33,10 @@
 #include <QItemDelegate>
 #include <QDateTime>
 #include <QFileInfo>
+#include <QTextStream>
 
 #include <algorithm>
 
-#include "rshare.h"
 #include "MessageComposer.h"
 
 #include <retroshare/rsiface.h>
@@ -55,6 +55,7 @@
 #include "gui/common/Emoticons.h"
 #include "textformat.h"
 #include "util/misc.h"
+#include "util/DateTime.h"
 #include "TagsMenu.h"
 #include "gui/common/TagDefs.h"
 #include "gui/connect/ConfCertDialog.h"
@@ -947,9 +948,6 @@ QString MessageComposer::buildReplyHeader(const MessageInfo &msgInfo)
         }
     }
 
-    QDateTime qtime;
-    qtime.setTime_t(msgInfo.ts);
-
     QString header = QString("<span>-----%1-----").arg(tr("Original Message"));
     header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(tr("From"), from);
     header += QString("<font size='3'><strong>%1: </strong>%2</font><br>").arg(tr("To"), to);
@@ -958,11 +956,11 @@ QString MessageComposer::buildReplyHeader(const MessageInfo &msgInfo)
         header += QString("<font size='3'><strong>%1: </strong>%2</font><br>").arg(tr("Cc"), cc);
     }
 
-    header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(tr("Sent"), Rshare::customLongDate(qtime));
+    header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(tr("Sent"), DateTime::formatLongDateTime(msgInfo.ts));
     header += QString("<font size='3'><strong>%1: </strong>%2</font></span><br>").arg(tr("Subject"), QString::fromStdWString(msgInfo.title));
     header += "<br>";
 
-    header += tr("On %1, %2 wrote:").arg(qtime.toString(Qt::DefaultLocaleShortDate), from);
+    header += tr("On %1, %2 wrote:").arg(DateTime::formatDateTime(msgInfo.ts), from);
 
     return header;
 }

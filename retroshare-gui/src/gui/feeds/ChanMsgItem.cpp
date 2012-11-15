@@ -32,6 +32,7 @@
 #include "util/misc.h"
 #include "gui/RetroShareLink.h"
 #include "util/HandleRichText.h"
+#include "util/DateTime.h"
 
 #include <retroshare/rschannels.h>
 
@@ -188,7 +189,7 @@ void ChanMsgItem::updateItemStatic()
 	msgLabel->setText(RsHtml().formatText(NULL, QString::fromStdWString(cmi.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 	msgFrame->setVisible(!cmi.msg.empty());
 
-	datetimelabel->setText(Rshare::customLongDate(cmi.ts));
+	datetimelabel->setText(DateTime::formatLongDateTime(cmi.ts));
 
 	filelabel->setText(QString("(%1 %2) %3").arg(cmi.count).arg(tr("Files")).arg(misc::friendlyUnit(cmi.size)));
 

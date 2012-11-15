@@ -50,6 +50,7 @@
 #include "settings/rsharesettings.h"
 #include "util/misc.h"
 #include "util/HandleRichText.h"
+#include "util/DateTime.h"
 #include "chat/CreateLobbyDialog.h"
 #include "FriendRecommendDialog.h"
 
@@ -706,7 +707,7 @@ void FriendsDialog::setChatInfo(QString info, QColor color)
     ui.msgText->clear();
     nbLines = 1;
   }
-  ui.msgText->append("<font color='grey'>" + QTime::currentTime().toString(Qt::DefaultLocaleShortDate) + "</font> - <font color='" + color.name() + "'><i>" + info + "</i></font>");
+  ui.msgText->append("<font color='grey'>" + DateTime::formatTime(QTime::currentTime()) + "</font> - <font color='" + color.name() + "'><i>" + info + "</i></font>");
 }
 
 void FriendsDialog::on_actionClear_Chat_History_triggered()

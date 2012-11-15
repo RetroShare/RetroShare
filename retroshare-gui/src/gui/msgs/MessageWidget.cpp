@@ -41,6 +41,7 @@
 #include "util/misc.h"
 #include "util/printpreview.h"
 #include "util/HandleRichText.h"
+#include "util/DateTime.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsfiles.h>
@@ -533,11 +534,7 @@ void MessageWidget::fill(const std::string &msgId)
 		ui.bccText->clear();
 	}
 
-	{
-		QDateTime qtime;
-		qtime.setTime_t(msgInfo.ts);
-		ui.dateText->setText(qtime.toString(Qt::DefaultLocaleShortDate));
-	}
+	ui.dateText->setText(DateTime::formatDateTime(msgInfo.ts));
 
 	std::string ownId = rsPeers->getOwnId();
 

@@ -57,8 +57,7 @@ QMap<QString, QString> Rshare::_args; /**< List of command-line arguments.  */
 QString Rshare::_style;               /**< The current GUI style.           */
 QString Rshare::_language;            /**< The current language.            */
 QString Rshare::_stylesheet;          /**< The current GUI stylesheet.      */
-QString Rshare::_datetimeformat;      /**< The format of dates in feed items etc.      */
-QLocale Rshare::_locale;              /**< The locale.      */
+QString Rshare::_dateformat;          /**< The format of dates in feed items etc. */
 Log Rshare::_log;
 bool Rshare::useConfigDir;           
 QString Rshare::configDir;           
@@ -356,31 +355,21 @@ Rshare::setLocale(QString languageCode)
   return retVal;
 }
 
-/** return custom formatted date */
-QString Rshare::customLongDate(uint fromTime)
-{
-    return customLongDate(QDateTime::fromTime_t(fromTime));
-}
-
-QString Rshare::customLongDate(const QDateTime &fromTime)
-{
-    if (_datetimeformat.isEmpty()) {
-        return fromTime.toString(Qt::ISODate);
-    } else {
-        return _locale.toString(fromTime, _datetimeformat);
-    }
-}
-
 /** customize date format for feeds etc. */
 void Rshare::customizeDateFormat()
 {
-  _locale = QLocale(); // set to default locale
+  QLocale locale = QLocale(); // set to default locale
   /* get long date format without weekday */
-  QString dateformat = _locale.dateFormat(QLocale::LongFormat);
-  dateformat.replace(QRegExp("^dddd,*[^ ]* *('[^']+' )*"), "");
-  dateformat.replace(QRegExp(",* *dddd"), "");
-  dateformat = dateformat.trimmed();
-  _datetimeformat = dateformat + " " + _locale.timeFormat(QLocale::ShortFormat);
+  _dateformat = locale.dateFormat(QLocale::LongFormat);
+  _dateformat.replace(QRegExp("^dddd,*[^ ]* *('[^']+' )*"), "");
+  _dateformat.replace(QRegExp(",* *dddd"), "");
+  _dateformat = _dateformat.trimmed();
+}
+
+/** Get custom date format (defaultlongformat) */
+QString Rshare::customDateFormat()
+{
+    return _dateformat;
 }
 
 /** Sets the GUI style RetroShare will use. If one was specified on the

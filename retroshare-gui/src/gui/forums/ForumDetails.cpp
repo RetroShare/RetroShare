@@ -19,7 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 #include "ForumDetails.h"
-#include "rshare.h"
+#include "util/DateTime.h"
 
 #include <retroshare/rsiface.h>
 #include <retroshare/rspeers.h>
@@ -90,7 +90,7 @@ void ForumDetails::loadDialog()
 
 	// Set Last Post Date
 	if (fi.lastPost) {
-		ui.postline->setText(Rshare::customLongDate(fi.lastPost));
+		ui.postline->setText(DateTime::formatLongDateTime(fi.lastPost));
 	}
 
 	// Set Forum ID

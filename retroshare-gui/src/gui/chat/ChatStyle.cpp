@@ -105,6 +105,7 @@
 #include "ChatStyle.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/notifyqt.h"
+#include "util/DateTime.h"
 
 #include <retroshare/rsinit.h>
 
@@ -323,8 +324,8 @@ QString ChatStyle::formatMessage(enumFormatMessage type, const QString &name, co
 #endif
 
     QString formatMsg = style.replace("%name%", name)
-                             .replace("%date%", timestamp.date().toString(Qt::DefaultLocaleShortDate))
-                             .replace("%time%", timestamp.time().toString(Qt::DefaultLocaleShortDate))
+                             .replace("%date%", DateTime::formatDate(timestamp.date()))
+                             .replace("%time%", DateTime::formatTime(timestamp.time()))
 #ifdef COLORED_NICKNAMES
                              .replace("%color%", color.name())
 #endif

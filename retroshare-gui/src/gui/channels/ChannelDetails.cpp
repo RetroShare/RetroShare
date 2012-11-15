@@ -19,7 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 #include "ChannelDetails.h"
-#include "rshare.h"
+#include "util/DateTime.h"
 
 #include <retroshare/rsiface.h>
 #include <retroshare/rspeers.h>
@@ -95,7 +95,7 @@ void ChannelDetails::loadChannel()
 	
     // Set Last Channel Post Date 
     if (ci.lastPost) {
-        ui.postline->setText(Rshare::customLongDate(ci.lastPost));
+        ui.postline->setText(DateTime::formatLongDateTime(ci.lastPost));
     }
 
     // Set Channel ID

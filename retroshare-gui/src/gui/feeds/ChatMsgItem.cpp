@@ -27,9 +27,9 @@
 #include "retroshare-gui/RsAutoUpdatePage.h"
 #include "gui/msgs/MessageComposer.h"
 #include "util/HandleRichText.h"
+#include "util/DateTime.h"
 #include "gui/common/AvatarDefs.h"
 #include "gui/settings/rsharesettings.h"
-#include "rshare.h"
 
 #include "gui/notifyqt.h"
 
@@ -138,7 +138,7 @@ void ChatMsgItem::insertChat(const std::string &message)
     std::cerr << "ChatMsgItem::insertChat(): " << msg << std::endl;
 #endif
 
-    timestampLabel->setText(Rshare::customLongDate(QDateTime::currentDateTime()));
+    timestampLabel->setText(DateTime::formatLongDateTime(QDateTime::currentDateTime()));
 
     QString formatMsg = QString::fromUtf8(message.c_str());
 

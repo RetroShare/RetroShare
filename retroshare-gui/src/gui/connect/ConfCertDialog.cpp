@@ -40,7 +40,7 @@
 #include "gui/notifyqt.h"
 #include "gui/common/AvatarDefs.h"
 #include "gui/MainWindow.h"
-#include "rshare.h"
+#include "util/DateTime.h"
 
 static QMap<std::string, ConfCertDialog*> instances;
 
@@ -165,7 +165,7 @@ void ConfCertDialog::load()
 
         ui.loc->setText(QString::fromUtf8(detail.location.c_str()));
         // Dont Show a timestamp in RS calculate the day
-        ui.lastcontact->setText(Rshare::customLongDate(detail.lastConnect));
+        ui.lastcontact->setText(DateTime::formatLongDateTime(detail.lastConnect));
 
         /* set retroshare version */
         std::map<std::string, std::string>::iterator vit;

@@ -34,6 +34,7 @@
 #include "common/TagDefs.h"
 #include "common/PeerDefs.h"
 #include "common/RSItemDelegate.h"
+#include "util/DateTime.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsmsgs.h>
@@ -1051,14 +1052,11 @@ void MessagesDialog::insertMessages()
                 //if the mail is on same date show only time.
                 if (qdatetime.daysTo(QDateTime::currentDateTime()) == 0)
                 {
-                    QTime qtime = qdatetime.time();
-                    QVariant varTime(qtime);
-                    item[COLUMN_DATE]->setData(varTime, Qt::DisplayRole);
+                    item[COLUMN_DATE]->setData(DateTime::formatTime(qdatetime.time()), Qt::DisplayRole);
                 }
                 else
                 {
-                    QVariant varDateTime(qdatetime);
-                    item[COLUMN_DATE]->setData(varDateTime, Qt::DisplayRole);
+                    item[COLUMN_DATE]->setData(DateTime::formatDateTime(qdatetime), Qt::DisplayRole);
                 }
                 // for sorting
                 item[COLUMN_DATE]->setData(qdatetime, ROLE_SORT);

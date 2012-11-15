@@ -31,12 +31,12 @@
 #include "gui/connect/ConfCertDialog.h"
 #include "gui/connect/ConnectFriendWizard.h"
 #include "gui/common/AvatarDefs.h"
+#include "util/DateTime.h"
 
 #include "gui/notifyqt.h"
 
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
-#include "rshare.h"
 
 /*****
  * #define DEBUG_ITEM 1
@@ -145,7 +145,7 @@ void SecurityItem::updateItemStatic()
 	titleLabel->setText(title);
 
 	QDateTime currentTime = QDateTime::currentDateTime();
-	timeLabel->setText(Rshare::customLongDate(currentTime.toTime_t()));
+	timeLabel->setText(DateTime::formatLongDateTime(currentTime.toTime_t()));
 
 	if (mIsHome)
 	{

@@ -75,9 +75,9 @@ public:
   static bool setLanguage(QString languageCode = QString());
   /** Sets the current locale. */
   static bool setLocale(QString languageCode = QString());
-  /** Returns custom formatted date */
-  static QString customLongDate(uint fromTime);
-  static QString customLongDate(const QDateTime &fromTime);
+  /** Get custom date format (defaultlongformat) */
+  static QString customDateFormat();
+
   /** Sets the current GUI style. */
   static bool setStyle(QString styleKey = QString());
   /** Sets the current GUI stylesheet. */
@@ -169,8 +169,7 @@ private:
   static QString _style;               /**< The current GUI style.           */
   static QString _stylesheet;          /**< The current GUI stylesheet.      */
   static QString _language;            /**< The current language.            */
-  static QString _datetimeformat;      /**< The format for dates in feed items etc.            */
-  static QLocale _locale;              /**< The locale (object).            */
+  static QString _dateformat;          /**< The format for dates in feed items etc. */
   static Log _log; 					/**< Logs debugging messages to file or stdout. */
 
   static bool    useConfigDir;
