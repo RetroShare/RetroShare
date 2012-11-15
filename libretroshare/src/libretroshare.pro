@@ -12,7 +12,7 @@ CONFIG += test_voip
 #CONFIG += newservices
 
 # Beware: All data of the stripped services are lost
-DEFINES *= PQI_DISABLE_TUNNEL 
+DEFINES *= PQI_DISABLE_TUNNEL
 #ENABLE_CACHE_OPT
 
 profiling {
@@ -219,7 +219,7 @@ linux-* {
 	#CONFIG += version_detail_bash_script
 
 	# Check if the system's libupnp has been Debian-patched
-	system(grep -E 'char[[:space:]]+PublisherUrl' $${UPNP_DIR}/upnp.h &>/dev/null) {
+	system(grep -E 'char[[:space:]]+PublisherUrl' $${UPNP_DIR}/upnp.h >/dev/null 2>&1) {
 		# Normal libupnp
 	} else {
 		# Patched libupnp or new unreleased version
