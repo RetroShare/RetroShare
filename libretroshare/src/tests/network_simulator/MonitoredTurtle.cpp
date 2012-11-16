@@ -1,6 +1,6 @@
 #include "MonitoredTurtle.h"
 
-bool MonitoredTurtleRouter::performLocalHashSearch(const TurtleFileHash& hash,FileInfo& info)
+bool MonitoredTurtleRouter::performLocalHashSearch(const TurtleFileHash& hash,const std::string& peer_id,FileInfo& info)
 {
 	std::map<std::string,FileInfo>::const_iterator it( _local_files.find(hash) ) ;
 

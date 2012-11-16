@@ -12,7 +12,7 @@ class MonitoredTurtleRouter: public p3turtle
 
 		virtual bool loadConfiguration(std::string& loadHash) { return true ;}
 		virtual bool saveConfiguration() { return true ;}
-		virtual bool performLocalHashSearch(const TurtleFileHash& hash,FileInfo& info) ;
+		virtual bool performLocalHashSearch(const TurtleFileHash& hash,const std::string& peer_id,FileInfo& info) ;
 
 		// new functions to replace somme internal functionalities
 
