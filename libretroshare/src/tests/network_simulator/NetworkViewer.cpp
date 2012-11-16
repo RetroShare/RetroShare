@@ -285,10 +285,10 @@ void NetworkViewer::timerEvent(QTimerEvent *event)
 
 		 memset(forceMap,0,2*S*S*sizeof(double)) ;
 
-		 for(uint32_t i=0;i<_network.n_nodes();++i)
+		 for(uint32_t k=0;k<_network.n_nodes();++k)
 		 {
-			 float x = S*_node_coords[i].x/width() ;
-			 float y = S*_node_coords[i].y/height() ;
+			 float x = S*_node_coords[k].x/width() ;
+			 float y = S*_node_coords[k].y/height() ;
 
 			 int i=(int)floor(x) ;
 			 int j=(int)floor(y) ;
