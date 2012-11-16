@@ -708,7 +708,7 @@ SOURCES +=  main.cpp \
 
 
 
-RESOURCES += gui/images.qrc lang/lang.qrc gui/help/content/content.qrc
+RESOURCES += gui/images.qrc lang/lang.qrc gui/help/content/content.qrc gui/WikiPoos/Wiki_images.qrc
 
 TRANSLATIONS +=  \
             lang/retroshare_en.ts \

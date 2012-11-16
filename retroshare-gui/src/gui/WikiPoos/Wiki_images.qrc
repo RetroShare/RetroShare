@@ -1,5 +1,12 @@
 <RCC>
 	<qresource prefix="/" >
-		<file>images/dummy.png</file>
+		<file>images/arrow-left.png</file>
+		<file>images/arrow-right.png</file>
+		<file>images/resource-group-new.png</file>
+		<file>images/appointment-new.png</file>
+		<file>images/book2_32.png</file>
+		<file>images/story-editor.png</file>
+		<file>images/republish.png</file>
+		<file>images/resource-group-new_48.png</file>
 	</qresource>
 </RCC>

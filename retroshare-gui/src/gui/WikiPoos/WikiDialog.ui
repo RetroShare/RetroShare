@@ -6,93 +6,173 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>774</width>
-    <height>608</height>
+    <width>902</width>
+    <height>669</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string/>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_8">
-   <item>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
     <widget class="QSplitter" name="splitter_2">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QSplitter" name="splitter">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <widget class="QScrollArea" name="scrollArea_2">
-       <property name="widgetResizable">
-        <bool>true</bool>
+     <widget class="QWidget" name="layoutWidget">
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <property name="spacing">
+        <number>0</number>
        </property>
-       <widget class="QWidget" name="scrollAreaWidgetContents_2">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>205</width>
-          <height>285</height>
-         </rect>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout">
-         <item>
-          <widget class="QTreeWidget" name="treeWidget_Pages">
-           <column>
-            <property name="text">
-             <string>Wiki Group</string>
+       <item>
+        <widget class="QFrame" name="frame_2">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <property name="margin">
+           <number>3</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="maximumSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
             </property>
-           </column>
-           <column>
             <property name="text">
-             <string>Page</string>
+             <string/>
             </property>
-           </column>
-           <column>
+            <property name="pixmap">
+             <pixmap resource="Wiki_images.qrc">:/images/book2_32.png</pixmap>
+            </property>
+            <property name="scaledContents">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
-             <string>Id</string>
+             <string>Wiki Pages</string>
             </property>
-           </column>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="toolButton_NewGroup">
+            <property name="text">
+             <string>New Group</string>
+            </property>
+            <property name="icon">
+             <iconset resource="Wiki_images.qrc">
+              <normaloff>:/images/resource-group-new.png</normaloff>:/images/resource-group-new.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextBesideIcon</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSplitter" name="splitter">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <widget class="QScrollArea" name="scrollArea_2">
+          <property name="widgetResizable">
+           <bool>true</bool>
+          </property>
+          <widget class="QWidget" name="scrollAreaWidgetContents_2">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>255</width>
+             <height>301</height>
+            </rect>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+             <widget class="QTreeWidget" name="treeWidget_Pages">
+              <column>
+               <property name="text">
+                <string>Wiki Group</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Page</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Id</string>
+               </property>
+              </column>
+             </widget>
+            </item>
+           </layout>
           </widget>
-         </item>
-        </layout>
-       </widget>
-      </widget>
-      <widget class="QScrollArea" name="scrollArea_3">
-       <property name="widgetResizable">
-        <bool>true</bool>
-       </property>
-       <widget class="QWidget" name="scrollAreaWidgetContents_4">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>205</width>
-          <height>284</height>
-         </rect>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_4">
-         <item>
-          <widget class="QTreeWidget" name="treeWidget_Mods">
-           <column>
-            <property name="text">
-             <string>Page Modification</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>By</string>
-            </property>
-           </column>
+         </widget>
+         <widget class="QScrollArea" name="scrollArea_3">
+          <property name="widgetResizable">
+           <bool>true</bool>
+          </property>
+          <widget class="QWidget" name="scrollAreaWidgetContents_4">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>255</width>
+             <height>301</height>
+            </rect>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_4">
+            <item>
+             <widget class="QTreeWidget" name="treeWidget_Mods">
+              <column>
+               <property name="text">
+                <string>Page Modification</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>By</string>
+               </property>
+              </column>
+             </widget>
+            </item>
+           </layout>
           </widget>
-         </item>
-        </layout>
-       </widget>
-      </widget>
+         </widget>
+        </widget>
+       </item>
+      </layout>
      </widget>
      <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_5">
+       <property name="spacing">
+        <number>0</number>
+       </property>
        <item>
         <widget class="QFrame" name="frame">
          <property name="frameShape">
@@ -102,6 +182,9 @@
           <enum>QFrame::Raised</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout">
+          <property name="margin">
+           <number>2</number>
+          </property>
           <item>
            <widget class="QToolButton" name="toolButton_PrevPage">
             <property name="enabled">
@@ -109,6 +192,16 @@
             </property>
             <property name="text">
              <string>&lt;&lt;</string>
+            </property>
+            <property name="icon">
+             <iconset resource="Wiki_images.qrc">
+              <normaloff>:/images/arrow-left.png</normaloff>:/images/arrow-left.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
             </property>
            </widget>
           </item>
@@ -120,6 +213,16 @@
             <property name="text">
              <string>&gt;&gt;</string>
             </property>
+            <property name="icon">
+             <iconset resource="Wiki_images.qrc">
+              <normaloff>:/images/arrow-right.png</normaloff>:/images/arrow-right.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
            </widget>
           </item>
           <item>
@@ -130,12 +233,38 @@
            </widget>
           </item>
           <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
            <widget class="QToolButton" name="toolButton_PrevMod">
             <property name="enabled">
              <bool>false</bool>
             </property>
             <property name="text">
-             <string>&lt;&lt; Mod</string>
+             <string>Mod</string>
+            </property>
+            <property name="icon">
+             <iconset resource="Wiki_images.qrc">
+              <normaloff>:/images/arrow-left.png</normaloff>:/images/arrow-left.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextBesideIcon</enum>
             </property>
            </widget>
           </item>
@@ -144,12 +273,38 @@
             <property name="text">
              <string>Republish</string>
             </property>
+            <property name="icon">
+             <iconset resource="Wiki_images.qrc">
+              <normaloff>:/images/republish.png</normaloff>:/images/republish.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextBesideIcon</enum>
+            </property>
            </widget>
           </item>
           <item>
            <widget class="QToolButton" name="toolButton_Edit">
             <property name="text">
              <string>Edit</string>
+            </property>
+            <property name="icon">
+             <iconset resource="Wiki_images.qrc">
+              <normaloff>:/images/story-editor.png</normaloff>:/images/story-editor.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextBesideIcon</enum>
             </property>
            </widget>
           </item>
@@ -159,7 +314,20 @@
              <bool>false</bool>
             </property>
             <property name="text">
-             <string>Mod &gt;&gt;</string>
+             <string>Mod</string>
+            </property>
+            <property name="icon">
+             <iconset resource="Wiki_images.qrc">
+              <normaloff>:/images/arrow-right.png</normaloff>:/images/arrow-right.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextBesideIcon</enum>
             </property>
            </widget>
           </item>
@@ -171,16 +339,22 @@
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="toolButton_NewGroup">
-            <property name="text">
-             <string>New Group</string>
-            </property>
-           </widget>
-          </item>
-          <item>
            <widget class="QToolButton" name="toolButton_NewPage">
             <property name="text">
              <string>New Page</string>
+            </property>
+            <property name="icon">
+             <iconset resource="Wiki_images.qrc">
+              <normaloff>:/images/appointment-new.png</normaloff>:/images/appointment-new.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextBesideIcon</enum>
             </property>
            </widget>
           </item>
@@ -191,6 +365,19 @@
             </property>
             <property name="text">
              <string>Refresh</string>
+            </property>
+            <property name="icon">
+             <iconset resource="Wiki_images.qrc">
+              <normaloff>:/images/republish.png</normaloff>:/images/republish.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextBesideIcon</enum>
             </property>
            </widget>
           </item>
@@ -210,8 +397,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>528</width>
-            <height>511</height>
+            <width>616</width>
+            <height>611</height>
            </rect>
           </property>
           <property name="styleSheet">

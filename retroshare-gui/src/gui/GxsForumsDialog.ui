@@ -701,38 +701,6 @@ p, li { white-space: pre-wrap; }
         <item row="1" column="0">
          <layout class="QHBoxLayout">
           <item>
-           <widget class="QLabel" name="label_17">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>10</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Forum:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
            <widget class="QLabel" name="forumName">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -753,11 +721,7 @@ p, li { white-space: pre-wrap; }
              </size>
             </property>
             <property name="styleSheet">
-             <string notr="true">
-border: 2px solid #CCCCCC;
-border-radius:6px;
-background: white;
-</string>
+             <string notr="true"/>
             </property>
             <property name="text">
              <string/>
@@ -835,44 +799,8 @@ background: white;
           </column>
          </widget>
         </item>
-        <item row="5" column="0">
+        <item row="6" column="0">
          <layout class="QGridLayout">
-          <item row="0" column="1">
-           <widget class="QLabel" name="threadlabel">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>10</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Thread:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QLabel" name="threadTitle">
-            <property name="styleSheet">
-             <string notr="true">QLabel#threadTitle{
-border: 2px solid #CCCCCC;
-border-radius: 6px;
-background: white;}</string>
-            </property>
-            <property name="wordWrap">
-             <bool>true</bool>
-            </property>
-            <property name="textInteractionFlags">
-             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="3">
            <widget class="QPushButton" name="previousButton">
             <property name="enabled">
@@ -949,7 +877,7 @@ background: white;}</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="7">
+          <item row="0" column="8">
            <widget class="QPushButton" name="expandButton">
             <property name="maximumSize">
              <size>
@@ -975,7 +903,7 @@ background: white;}</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="6">
+          <item row="0" column="7">
            <widget class="QPushButton" name="downloadButton">
             <property name="maximumSize">
              <size>
@@ -995,7 +923,7 @@ background: white;}</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="5">
+          <item row="0" column="6">
            <widget class="QPushButton" name="nextUnreadButton">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
@@ -1007,6 +935,42 @@ background: white;}</string>
              <string>Force Refresh</string>
             </property>
            </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QToolButton" name="newmessageButton">
+            <property name="maximumSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
+            <property name="toolTip">
+             <string>Reply Message</string>
+            </property>
+            <property name="icon">
+             <iconset resource="images.qrc">
+              <normaloff>:/images/mail_reply.png</normaloff>:/images/mail_reply.png</iconset>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="5">
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </item>
@@ -1097,29 +1061,6 @@ border: 1px solid #CCCCCC;}</string>
              </item>
             </widget>
            </item>
-           <item row="0" column="1">
-            <widget class="QToolButton" name="newmessageButton">
-             <property name="maximumSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-             <property name="focusPolicy">
-              <enum>Qt::NoFocus</enum>
-             </property>
-             <property name="toolTip">
-              <string>Reply Message</string>
-             </property>
-             <property name="icon">
-              <iconset resource="images.qrc">
-               <normaloff>:/images/mail_reply.png</normaloff>:/images/mail_reply.png</iconset>
-             </property>
-             <property name="autoRaise">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
            <item row="0" column="2">
             <spacer name="horizontalSpacer">
              <property name="orientation">
@@ -1195,6 +1136,19 @@ border: 1px solid #CCCCCC;}</string>
            </widget>
           </item>
          </layout>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="threadTitle">
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>

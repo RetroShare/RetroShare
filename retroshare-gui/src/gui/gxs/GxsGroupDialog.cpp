@@ -63,6 +63,9 @@ GxsGroupDialog::GxsGroupDialog(TokenQueue *tokenQueue, uint32_t enableFlags, uin
 
     connect( ui.groupLogo, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
     connect( ui.addLogoButton, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
+    
+    //ui.headerFrame->setHeaderImage(QPixmap(":/WikiPoos/images/resource-group-new_48.png"));
+    //ui.headerFrame->setHeaderText(tr("Create Wiki Group"));
 
     if (!ui.pubKeyShare_cb->isChecked())
     {
