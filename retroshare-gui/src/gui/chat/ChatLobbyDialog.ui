@@ -119,11 +119,17 @@
           <property name="contextMenuPolicy">
            <enum>Qt::CustomContextMenu</enum>
           </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::ExtendedSelection</enum>
+          </property>
           <property name="iconSize">
            <size>
             <width>16</width>
             <height>16</height>
            </size>
+          </property>
+          <property name="rootIsDecorated">
+           <bool>false</bool>
           </property>
           <property name="animated">
            <bool>true</bool>
@@ -135,13 +141,10 @@
            <bool>false</bool>
           </property>
           <property name="headerHidden">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <attribute name="headerVisible">
-           <bool>true</bool>
-          </attribute>
-          <attribute name="headerVisible">
-           <bool>true</bool>
+           <bool>false</bool>
           </attribute>
           <column>
            <property name="text">

@@ -956,7 +956,7 @@ Bitte wähle einen zum Chatten aus.</translation>
     </message>
     <message>
         <source>Uncheck to mute participant</source>
-        <translation>Haken entfernen, um Teilnehmer stumm zu schalten</translation>
+        <translation type="obsolete">Haken entfernen, um Teilnehmer stumm zu schalten</translation>
     </message>
     <message>
         <source>%1 changed his name to: %2</source>
@@ -965,6 +965,22 @@ Bitte wähle einen zum Chatten aus.</translation>
     <message>
         <source>Lobby chat</source>
         <translation>Lobbychat</translation>
+    </message>
+    <message>
+        <source>Participants</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mute participant</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Double click to mute/unmute participant</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Right click to mute/unmute participants</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4129,7 +4145,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Search forums</source>
-        <translation>Forum durchsuchen</translation>
+        <translation type="obsolete">Forum durchsuchen</translation>
     </message>
     <message>
         <source>Original Message</source>
@@ -4160,7 +4176,19 @@ p, li { white-space: pre-wrap; }
         <translation>Du kannst einem anonymen Autor nicht antworten</translation>
     </message>
     <message>
-        <source>Search this forum...</source>
+        <source>Search Title</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search Author</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search Content</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4762,23 +4790,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Create new Profile</source>
-        <translation>Neues Profil erstellen</translation>
+        <translation type="obsolete">Neues Profil erstellen</translation>
     </message>
     <message>
         <source>Create new Forum</source>
-        <translation>Neues Forum erstellen</translation>
+        <translation type="obsolete">Neues Forum erstellen</translation>
     </message>
     <message>
         <source>F</source>
-        <translation>F</translation>
+        <translation type="obsolete">F</translation>
     </message>
     <message>
         <source>Create new Channel</source>
-        <translation>Neuen Kanal erstellen</translation>
+        <translation type="obsolete">Neuen Kanal erstellen</translation>
     </message>
     <message>
         <source>C</source>
-        <translation>C</translation>
+        <translation type="obsolete">C</translation>
     </message>
     <message>
         <source>Add your Avatar Picture</source>
@@ -5101,19 +5129,19 @@ Gib, wenn du gefragt wirst, dein PGP Passwort ein, um deinen neuen Schlüssel zu
     </message>
     <message>
         <source>Select Trusted Friend</source>
-        <translation>Wähle vertrauten Freund</translation>
+        <translation type="obsolete">Wähle vertrauten Freund</translation>
     </message>
     <message>
         <source>Certificates (*.pqi *.pem)</source>
-        <translation>Zertifikate (*.pqi *.pem)</translation>
+        <translation type="obsolete">Zertifikate (*.pqi *.pem)</translation>
     </message>
     <message>
         <source>Multiple instances</source>
-        <translation>Mehrere Instanzen</translation>
+        <translation type="obsolete">Mehrere Instanzen</translation>
     </message>
     <message>
         <source>Another RetroShare using the same profile is already running on your system. Please close that instance first</source>
-        <translation>Ein laufendes RetroShare benutzt das gleiche Profil. Bitte schließe diese Instanz</translation>
+        <translation type="obsolete">Ein laufendes RetroShare benutzt das gleiche Profil. Bitte schließe diese Instanz</translation>
     </message>
     <message>
         <source>Generate ID Failure</source>
@@ -5121,7 +5149,7 @@ Gib, wenn du gefragt wirst, dein PGP Passwort ein, um deinen neuen Schlüssel zu
     </message>
     <message>
         <source>Failed to Load your new Certificate!</source>
-        <translation>Fehler beim Laden deines neuen Zertifikates!</translation>
+        <translation type="obsolete">Fehler beim Laden deines neuen Zertifikates!</translation>
     </message>
     <message>
         <source>[Optional] Visible to your friends, and friends of friends.</source>
@@ -5234,7 +5262,7 @@ und den Import zum Laden verwenden</translation>
     <message>
         <source>RetroShare uses gpg keys for identity management.
 You can use an existing identity (i.e. a gpg key pair), from the list below, or create a new one with this form.</source>
-        <translation>Du kannst eine vorhandene Identität (PGP-Schlüssel) aus der Liste benutzen oder ein neue mit diesem Dialog erstellen.</translation>
+        <translation type="obsolete">Du kannst eine vorhandene Identität (PGP-Schlüssel) aus der Liste benutzen oder ein neue mit diesem Dialog erstellen.</translation>
     </message>
     <message>
         <source>Your identity was not saved. An error occurred.</source>
@@ -5246,7 +5274,23 @@ You can use an existing identity (i.e. a gpg key pair), from the list below, or 
     </message>
     <message>
         <source>An unexpected error occurred when Retroshare tried to acquire the single instance lock</source>
-        <translation>Ein unerwarteter Fehler während des &quot;Single instance lock&quot; ist aufgetreten</translation>
+        <translation type="obsolete">Ein unerwarteter Fehler während des &quot;Single instance lock&quot; ist aufgetreten</translation>
+    </message>
+    <message>
+        <source>RetroShare uses gpg keys for identity management.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can create a new identity with this form.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can use an existing identity (i.e. a gpg key pair), from the list below, or create a new one with this form.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to Generate your new Certificate, maybe PGP password is wrong!</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5630,10 +5674,44 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>GroupFlagsWidget</name>
+    <message>
+        <source>All your friends can browse this directory
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Only friends in groups </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> can browse this directory
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No one can browse this directory
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All your friends can relay anonymous tunnels to this directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> can relay anonymous tunnels to this directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No one can anonymously access this directory.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>GroupTreeWidget</name>
     <message>
         <source>Enter a Keyword here</source>
-        <translation>Gib einen Suchbegriff ein</translation>
+        <translation type="obsolete">Gib einen Suchbegriff ein</translation>
     </message>
     <message>
         <source>Title</source>
@@ -5658,6 +5736,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Private Key Available</source>
         <translation>Privater Schlüssel verfügbar</translation>
+    </message>
+    <message>
+        <source>Search Title</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search Description</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7387,6 +7473,30 @@ Möchtest du die Nachricht speichern ?</translation>
         <source>No starred messages available. Stars let you give messages a special status to make them easier to find. To star a message, click on the light gray star beside any message.</source>
         <translation>Es sind keine gekennzeichneten Nachrichten vorhanden. Durch die Kennzeichnung kannst du Nachrichten mit einem speziellen Status versehen, sodass sie leichter zu finden sind. Klicke zum Kennzeichnen einer Nachricht auf den hellgrauen Stern neben der jeweiligen Nachricht.</translation>
     </message>
+    <message>
+        <source>Search Subject</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search From</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search Content</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search Tags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search Attachments</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MessengerWindow</name>
@@ -7405,6 +7515,10 @@ Möchtest du die Nachricht speichern ?</translation>
     <message>
         <source>Search Friends</source>
         <translation>Freunde suchen</translation>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation type="unfinished">Suchen</translation>
     </message>
 </context>
 <context>
@@ -7684,6 +7798,14 @@ Rechtsklick und als Freund hinzufügen um zu verbinden.</translation>
     <message>
         <source>Display</source>
         <translation>Anzeigen</translation>
+    </message>
+    <message>
+        <source>Search Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search Peer ID</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -9360,6 +9482,22 @@ Fehlermeldung: %2</translation>
 </source>
         <translation>Ein unerwarteter Fehler während des &quot;Single instance lock&quot; ist aufgetreten</translation>
     </message>
+    <message>
+        <source>Directory is browsable for friends from parent groups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory is accessible by anonymous tunnels from friends from parent groups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory is browsable for any friend</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory is accessible by anonymous tunnels from any friend</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QuickStartWizard</name>
@@ -9674,15 +9812,15 @@ p, li { white-space: pre-wrap; }
     <name>RetroshareDirModel</name>
     <message>
         <source>Anonymous</source>
-        <translation>Anonym</translation>
+        <translation type="obsolete">Anonym</translation>
     </message>
     <message>
         <source>Anonymous and browsable by friends</source>
-        <translation>Anonym und Durchsuchbar von Freunden</translation>
+        <translation type="obsolete">Anonym und Durchsuchbar von Freunden</translation>
     </message>
     <message>
         <source>Only browsable by friends</source>
-        <translation>Nur Durchsuchbar von Freunden</translation>
+        <translation type="obsolete">Nur Durchsuchbar von Freunden</translation>
     </message>
     <message>
         <source>NEW</source>
@@ -9918,7 +10056,7 @@ Bild auf %1x%2 Pixel reduzieren?</translation>
     </message>
     <message>
         <source>File Size</source>
-        <translation>Dateigröße</translation>
+        <translation type="obsolete">Dateigröße</translation>
     </message>
     <message>
         <source>Filename</source>
@@ -10350,31 +10488,35 @@ Voreinstellung ist 20.</translation>
     </message>
     <message>
         <source>Browseable by Friends</source>
-        <translation>Durchsuchbar von Freunden</translation>
+        <translation type="obsolete">Durchsuchbar von Freunden</translation>
     </message>
     <message>
         <source>Browsable</source>
-        <translation>Durchsuchbar</translation>
+        <translation type="obsolete">Durchsuchbar</translation>
     </message>
     <message>
         <source>Anonymous shared Network Wide</source>
-        <translation>Anonym im ganzen Netzwerk freigeben</translation>
+        <translation type="obsolete">Anonym im ganzen Netzwerk freigeben</translation>
     </message>
     <message>
         <source>Network Wide</source>
-        <translation>Netzwerkweit</translation>
+        <translation type="obsolete">Netzwerkweit</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation type="obsolete">OK</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation type="obsolete">Abbrechen</translation>
     </message>
     <message>
         <source>Select A Folder To Share</source>
         <translation>Wähle einen Ordner zum Freigeben aus</translation>
+    </message>
+    <message>
+        <source>Share flags and groups: </source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10444,11 +10586,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Network Wide</source>
-        <translation>Netzwerkweit</translation>
+        <translation type="obsolete">Netzwerkweit</translation>
     </message>
     <message>
         <source>Browsable</source>
-        <translation>Durchsuchbar</translation>
+        <translation type="obsolete">Durchsuchbar</translation>
     </message>
     <message>
         <source>Add a Share Directory</source>
@@ -10468,7 +10610,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Close</source>
-        <translation>Schließen</translation>
+        <translation type="obsolete">Schließen</translation>
     </message>
     <message>
         <source>Edit selected Shared Directory</source>
@@ -10480,11 +10622,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>If checked, the share is anonymously shared to anybody.</source>
-        <translation>Wenn aktiviert, dann ist dieser Ordner anonym freigegeben.</translation>
+        <translation type="obsolete">Wenn aktiviert, dann ist dieser Ordner anonym freigegeben.</translation>
     </message>
     <message>
         <source>If checked, the share is browsable by your friends.</source>
-        <translation>Wenn aktiviert, dann ist dieser Ordner von deinen Freunden durchsuchbar.</translation>
+        <translation type="obsolete">Wenn aktiviert, dann ist dieser Ordner von deinen Freunden durchsuchbar.</translation>
     </message>
     <message>
         <source>Warning!</source>
@@ -10509,6 +10651,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Share Manager</source>
         <translation>Freigabemanager</translation>
+    </message>
+    <message>
+        <source>Share flags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Parent groups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Apply and close</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10783,15 +10937,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Multiple instances</source>
-        <translation>Mehrere Instanzen</translation>
+        <translation type="obsolete">Mehrere Instanzen</translation>
     </message>
     <message>
         <source>Login Failure</source>
-        <translation>Anmeldefehler</translation>
+        <translation type="obsolete">Anmeldefehler</translation>
     </message>
     <message>
         <source>Maybe password is wrong</source>
-        <translation>Vielleicht ist das Passwort falsch</translation>
+        <translation type="obsolete">Vielleicht ist das Passwort falsch</translation>
     </message>
     <message>
         <source>Warning</source>
@@ -10801,7 +10955,7 @@ p, li { white-space: pre-wrap; }
         <source>Another RetroShare using the same profile is already running on your system. Please close that instance first, or choose another profile
 lock file:
 </source>
-        <translation>Ein laufendes RetroShare benutzt das gleiche Profil. Bitte schließe diese Instanz oder wähle ein anderes Profil
+        <translation type="obsolete">Ein laufendes RetroShare benutzt das gleiche Profil. Bitte schließe diese Instanz oder wähle ein anderes Profil
 Lockdatei:
 </translation>
     </message>
@@ -10809,7 +10963,7 @@ Lockdatei:
         <source>An unexpected error occurred when Retroshare tried to acquire the single instance lock
 lock file:
 </source>
-        <translation>Ein unerwarteter Fehler während des &quot;Single instance lock&quot; ist aufgetreten
+        <translation type="obsolete">Ein unerwarteter Fehler während des &quot;Single instance lock&quot; ist aufgetreten
 Lockdatei:
 </translation>
     </message>
@@ -11092,6 +11246,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Save Channel File</source>
         <translation>Datei speichern</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation type="unfinished">Datei öffnen</translation>
     </message>
 </context>
 <context>
@@ -11600,6 +11762,10 @@ Bitte habe etwas Geduld!</translation>
     <message>
         <source>What&apos;s new</source>
         <translation>Was ist neu</translation>
+    </message>
+    <message>
+        <source>Groups</source>
+        <translation type="unfinished">Gruppen</translation>
     </message>
 </context>
 <context>

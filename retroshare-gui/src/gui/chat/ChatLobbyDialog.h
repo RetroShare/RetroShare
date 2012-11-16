@@ -61,10 +61,9 @@ protected:
 protected slots:
 	void changeNickname();
 	void changePartipationState();
+	void participantsTreeWidgetDoubleClicked(QTreeWidgetItem *item, int column);
 
 private:
-	QTreeWidgetItem *getCurrentParticipant();
-
 	void updateParticipantsList();
 
 	void muteParticipant(const QString &nickname);

@@ -37,6 +37,10 @@
 
 #include <time.h>
 
+#define COLUMN_ICON  0
+#define COLUMN_NAME  1
+#define COLUMN_COUNT 2
+
 /** Default constructor */
 ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WFlags flags)
 	: ChatDialog(parent, flags), lobbyId(lid)
@@ -46,9 +50,11 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WF
 
 	connect(ui.participantsFrameButton, SIGNAL(toggled(bool)), this, SLOT(showParticipantsFrame(bool)));
 	connect(ui.actionChangeNickname, SIGNAL(triggered()), this, SLOT(changeNickname()));
-	connect(ui.participantsList, SIGNAL( customContextMenuRequested(QPoint)), this, SLOT( participantsTreeWidgetCostumPopupMenu(QPoint)));
+	connect(ui.participantsList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(participantsTreeWidgetCostumPopupMenu(QPoint)));
+	connect(ui.participantsList, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(participantsTreeWidgetDoubleClicked(QTreeWidgetItem*,int)));
 
-	ui.participantsList->setRootIsDecorated(false);
+	ui.participantsList->setColumnCount(COLUMN_COUNT);
+	ui.participantsList->setColumnWidth(COLUMN_ICON, 20);
 
 	// Mute a Participant
 	muteAct = new QAction(QIcon(), tr("Mute participant"), this);
@@ -57,15 +63,23 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WF
 
 void ChatLobbyDialog::participantsTreeWidgetCostumPopupMenu(QPoint)
 {
-	QTreeWidgetItem *item = getCurrentParticipant();
+	QList<QTreeWidgetItem*> selectedItems = ui.participantsList->selectedItems();
 
 	QMenu contextMnu(this);
 
 	contextMnu.addAction(muteAct);
-	muteAct->setEnabled(item != NULL);
 	muteAct->setCheckable(true);
-	if (item) {
-		muteAct->setChecked(isParticipantMuted(item->text(0)));
+	muteAct->setEnabled(false);
+	if (selectedItems.size()) {
+		muteAct->setEnabled(true);
+
+		QList<QTreeWidgetItem*>::iterator item;
+		for (item = selectedItems.begin(); item != selectedItems.end(); ++item) {
+			if (isParticipantMuted((*item)->text(COLUMN_NAME))) {
+				muteAct->setChecked(true);
+				break;
+			}
+		}
 	} else {
 		muteAct->setChecked(false);
 	}
@@ -239,6 +253,15 @@ void ChatLobbyDialog::addIncomingChatMsg(const ChatInfo& info)
  */
 void ChatLobbyDialog::updateParticipantsList()
 {
+	/* Save selected items */
+	QStringList selectedParcipants;
+	QList<QTreeWidgetItem*> selectedItems = ui.participantsList->selectedItems();
+
+	QList<QTreeWidgetItem*>::iterator item;
+	for (item = selectedItems.begin(); item != selectedItems.end(); ++item) {
+		selectedParcipants.append((*item)->text(COLUMN_NAME));
+	}
+
 	ui.participantsList->clear();
 	ui.participantsList->setSortingEnabled(false);
 
@@ -258,18 +281,23 @@ void ChatLobbyDialog::updateParticipantsList()
 			QTreeWidgetItem *widgetitem = new RSTreeWidgetItem;
 
 			if (isParticipantMuted(participant)) {
-				widgetitem->setIcon(0,(QIcon(":/images/yellowled.png")));
+				widgetitem->setIcon(COLUMN_ICON, QIcon(":/images/yellowled.png"));
 			} else {
-				widgetitem->setIcon(0,(QIcon(":/images/greenled.png")));
+				widgetitem->setIcon(COLUMN_ICON, QIcon(":/images/greenled.png"));
 			}
-			widgetitem->setText(0, participant);
-			widgetitem->setToolTip(0,(tr("right click,and check to mute participant")));
+			widgetitem->setToolTip(COLUMN_ICON, tr("Double click to mute/unmute participant"));
+
+			widgetitem->setText(COLUMN_NAME, participant);
+			widgetitem->setToolTip(COLUMN_NAME, tr("Right click to mute/unmute participants"));
 
 			ui.participantsList->addTopLevelItem(widgetitem);
+			if (selectedParcipants.contains(participant)) {
+				widgetitem->setSelected(true);
+			}
 		}
 	}
 	ui.participantsList->setSortingEnabled(true);
-	ui.participantsList->sortItems(0, Qt::AscendingOrder);
+	ui.participantsList->sortItems(COLUMN_NAME, Qt::AscendingOrder);
 }
 
 /**
@@ -283,22 +311,48 @@ void ChatLobbyDialog::updateParticipantsList()
  */
 void ChatLobbyDialog::changePartipationState()
 {
-	QTreeWidgetItem *item = getCurrentParticipant();
-	if (!item)
+	QList<QTreeWidgetItem*> selectedItems = ui.participantsList->selectedItems();
+	if (selectedItems.size() == 0) {
 		return;
-
-	QString nickname = item->text(0);
-	
-	std::cerr << "check Partipation status for '" << nickname.toStdString() << std::endl;
-
-	if (muteAct->isChecked()) {
-		muteParticipant(nickname);
-	} else {
-		unMuteParticipant(nickname);
 	}
-	
+
+	QList<QTreeWidgetItem*>::iterator item;
+	for (item = selectedItems.begin(); item != selectedItems.end(); ++item) {
+		QString nickname = (*item)->text(COLUMN_NAME);
+
+		std::cerr << "check Partipation status for '" << nickname.toUtf8().constData() << std::endl;
+
+		if (muteAct->isChecked()) {
+			muteParticipant(nickname);
+		} else {
+			unMuteParticipant(nickname);
+		}
+	}
+
 	mutedParticipants->removeDuplicates();
-	
+
+	updateParticipantsList();
+}
+
+void ChatLobbyDialog::participantsTreeWidgetDoubleClicked(QTreeWidgetItem *item, int column)
+{
+	if (!item) {
+		return;
+	}
+
+	if (column != COLUMN_ICON) {
+		return;
+	}
+
+	QString nickname = item->text(COLUMN_NAME);
+	if (isParticipantMuted(nickname)) {
+		unMuteParticipant(nickname);
+	} else {
+		muteParticipant(nickname);
+	}
+
+	mutedParticipants->removeDuplicates();
+
 	updateParticipantsList();
 }
 
@@ -424,13 +478,3 @@ void ChatLobbyDialog::showParticipantsFrame(bool show)
 
 	PeerSettings->setShowParticipantsFrame(getPeerId(), show);
 }
-
-QTreeWidgetItem *ChatLobbyDialog::getCurrentParticipant()
-{ 
-	if (ui.participantsList->selectedItems().size() != 0) {
-		return ui.participantsList->currentItem();
-	}
-
-	return NULL;
-}
-
