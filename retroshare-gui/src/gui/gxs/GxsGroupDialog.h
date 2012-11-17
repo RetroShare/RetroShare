@@ -125,7 +125,7 @@ public:
      * @param parent The parent dialog
      * @param mode
      */
-    GxsGroupDialog(TokenQueue* tokenQueue, uint32_t enableFlags, uint16_t defaultFlags, QWidget *parent = NULL);
+    GxsGroupDialog(TokenQueue* tokenQueue, uint32_t enableFlags, uint16_t defaultFlags, QWidget *parent = NULL, const QString& serviceHeader = "");
 
     /*!
      * Contructs a GxsGroupDialog for display a group or editing

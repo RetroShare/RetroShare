@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Create new Wiki Group</string>
+   <string>Create New Group</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../images.qrc">
@@ -67,7 +67,7 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLabel" name="label_3">
+       <widget class="QLabel" name="mServiceHeader">
         <property name="text">
          <string>Create Wiki Group</string>
         </property>

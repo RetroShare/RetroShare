@@ -50,7 +50,7 @@
 #define GXSGROUP_LOADGROUP		2
 
 /** Constructor */
-GxsGroupDialog::GxsGroupDialog(TokenQueue *tokenQueue, uint32_t enableFlags, uint16_t defaultFlags, QWidget *parent)
+GxsGroupDialog::GxsGroupDialog(TokenQueue *tokenQueue, uint32_t enableFlags, uint16_t defaultFlags, QWidget *parent, const QString &serviceHeader)
 : QDialog(parent), mTokenQueue(tokenQueue), mMode(GXS_GROUP_DIALOG_CREATE_MODE), mEnabledFlags(enableFlags), mDefaultsFlags(defaultFlags), mReadonlyFlags(0)
 {
     /* Invoke the Qt Designer generated object setup routine */
@@ -63,6 +63,9 @@ GxsGroupDialog::GxsGroupDialog(TokenQueue *tokenQueue, uint32_t enableFlags, uin
 
     connect( ui.groupLogo, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
     connect( ui.addLogoButton, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
+
+    if(!serviceHeader.isEmpty())
+        ui.mServiceHeader->setText(serviceHeader);
     
     //ui.headerFrame->setHeaderImage(QPixmap(":/WikiPoos/images/resource-group-new_48.png"));
     //ui.headerFrame->setHeaderText(tr("Create Wiki Group"));

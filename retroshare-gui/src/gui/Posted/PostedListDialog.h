@@ -56,71 +56,69 @@ class PostedListDialog : public RsAutoUpdatePage, public PostedHolder, public To
 public:
 	PostedListDialog(QWidget *parent = 0);
 
-virtual void deletePostedItem(PostedItem *, uint32_t ptype) { return; }
-virtual void notifySelection(PostedItem *item, int ptype) { return; }
-virtual void requestComments(std::string threadId);
+    virtual void deletePostedItem(PostedItem *, uint32_t ptype) { return; }
+    virtual void notifySelection(PostedItem *item, int ptype) { return; }
+    virtual void requestComments(std::string threadId);
 
 signals:
-        void loadComments( std::string );
+    void loadComments( std::string );
 
 private slots:
 
-void 	groupListCustomPopupMenu( QPoint /*point*/ );
-void 	changedTopic(const QString &id);
+    void    groupListCustomPopupMenu( QPoint /*point*/ );
+    void    changedTopic(const QString &id);
 
-void 	sortButtonClicked( QAbstractButton *button );
-void 	sortButtonPressed();
-
-void 	periodChanged( int index );
-
-        void newGroup();
-        void showGroupDetails();
-        void editGroupDetails();
-        void createPost();
+    void newTopic();
+    void showGroupDetails();
+    void newPost();
 
 private:
 
-void 	clearPosts();
+    void 	clearPosts();
 
-void 	updateDisplay();
-void 	loadPost(const RsPostedPost &post);
+    void 	updateDisplay();
+    void 	loadPost(const RsPostedPost &post);
 
-void 	insertGroups();
-void 	requestGroupSummary();
-void    acknowledgeGroup(const uint32_t &token);
-void 	loadGroupSummary(const uint32_t &token);
+    void 	insertGroups();
+    void 	requestGroupSummary();
+    void        acknowledgeGroup(const uint32_t &token);
+    void 	loadGroupSummary(const uint32_t &token);
 
-void	requestGroupSummary_CurrentForum(const std::string &forumId);
-void 	loadGroupSummary_CurrentForum(const uint32_t &token);
-
-void 	insertThreads();
-void 	loadCurrentForumThreads(const std::string &forumId);
-
-void 	requestGroupThreadData_InsertThreads(const std::string &forumId);
-void 	loadGroupThreadData_InsertThreads(const uint32_t &token);
+    void	requestGroupSummary_CurrentForum(const std::string &forumId);
+    void 	loadGroupSummary_CurrentForum(const uint32_t &token);
 
 
-void 	insertGroupData(const std::list<RsGroupMetaData> &groupList);
-void 	groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo);
+    void        acknowledgeMsg(const uint32_t &token);
+    void        loadPostData(const uint32_t &token);
+    void 	insertThreads();
+    void 	loadCurrentTopicThreads(const std::string &forumId);
+    void 	requestGroupThreadData_InsertThreads(const std::string &forumId);
+    void 	loadGroupThreadData_InsertThreads(const uint32_t &token);
 
-        void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+
+    void 	insertGroupData(const std::list<RsGroupMetaData> &groupList);
+    void 	groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo);
+
+    void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 
-	QTreeWidgetItem *yourTopics;
-	QTreeWidgetItem *subscribedTopics;
-	QTreeWidgetItem *popularTopics;
-	QTreeWidgetItem *otherTopics;
+private:
 
-	QAbstractButton *mSortButton;
+    QTreeWidgetItem *yourTopics;
+    QTreeWidgetItem *subscribedTopics;
+    QTreeWidgetItem *popularTopics;
+    QTreeWidgetItem *otherTopics;
 
-	bool mThreadLoading;
-	std::string mCurrTopicId;
+    QAbstractButton *mSortButton;
 
-        QMap<RsGxsGroupId, RsPostedGroup> mGroups;
-        TokenQueue *mPostedQueue;
+    bool mThreadLoading;
+    RsGxsGroupId mCurrTopicId;
 
-	/* UI - from Designer */
-	Ui::PostedListDialog ui;
+    QMap<RsGxsGroupId, RsPostedGroup> mGroups;
+    TokenQueue *mPostedQueue;
+
+    /* UI - from Designer */
+    Ui::PostedListDialog ui;
 
 };
 

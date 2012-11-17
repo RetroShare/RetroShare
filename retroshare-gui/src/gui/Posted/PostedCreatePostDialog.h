@@ -19,10 +19,10 @@ public:
      * @param tokenQ parent callee token
      * @param posted
      */
-    explicit PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted* posted, QWidget *parent = 0);
+    explicit PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted* posted, const RsGxsGroupId& grpId, QWidget *parent = 0);
     ~PostedCreatePostDialog();
 
-private:
+private slots:
 
     void createPost();
 
@@ -32,6 +32,7 @@ private:
     QString mLink;
     QString mNotes;
     RsPosted* mPosted;
+    RsGxsGroupId mGrpId;
     TokenQueue* mTokenQueue;
 };
 

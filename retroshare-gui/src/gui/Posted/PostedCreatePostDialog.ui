@@ -28,7 +28,7 @@ p, li { white-space: pre-wrap; }
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEdit"/>
+      <widget class="QLineEdit" name="linkEdit"/>
      </item>
     </layout>
    </item>
@@ -42,7 +42,7 @@ p, li { white-space: pre-wrap; }
       </widget>
      </item>
      <item>
-      <widget class="QTextEdit" name="textEdit"/>
+      <widget class="QTextEdit" name="notesTextEdit"/>
      </item>
     </layout>
    </item>

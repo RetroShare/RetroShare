@@ -68,6 +68,7 @@ class RsPostedVote;
 typedef std::map<RsGxsGroupId, std::vector<RsPostedPost> > PostedPostResult;
 typedef std::map<RsGxsGroupId, std::vector<RsPostedComment> > PostedCommentResult;
 typedef std::map<RsGxsGroupId, std::vector<RsPostedVote> > PostedVoteResult;
+typedef std::pair<RsGxsGroupId, int32_t> GroupRank;
 
 std::ostream &operator<<(std::ostream &out, const RsPostedGroup &group);
 std::ostream &operator<<(std::ostream &out, const RsPostedPost &post);
@@ -92,6 +93,7 @@ virtual ~RsPosted() { return; }
 virtual bool getGroup(const uint32_t &token, std::vector<RsPostedGroup> &group) = 0;
 virtual bool getPost(const uint32_t &token, PostedPostResult &post) = 0;
 virtual bool getComment(const uint32_t &token, PostedCommentResult &comment) = 0;
+virtual bool getGroupRank(const uint32_t &token, GroupRank& grpRank) = 0;
 
 virtual bool submitGroup(uint32_t &token, RsPostedGroup &group) = 0;
 virtual bool submitPost(uint32_t &token, RsPostedPost &post) = 0;

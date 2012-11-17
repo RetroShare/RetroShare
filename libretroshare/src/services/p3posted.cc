@@ -118,6 +118,11 @@ bool p3Posted::getComment(const uint32_t &token, PostedCommentResult &comments)
     return ok;
 }
 
+bool p3Posted::getGroupRank(const uint32_t &token, GroupRank &grpRank)
+{
+
+}
+
 bool p3Posted::submitGroup(uint32_t &token, RsPostedGroup &group)
 {
     RsGxsPostedGroupItem* grpItem = new RsGxsPostedGroupItem();

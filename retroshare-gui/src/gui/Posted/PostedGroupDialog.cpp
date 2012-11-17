@@ -41,7 +41,7 @@
                               0)
 
 PostedGroupDialog::PostedGroupDialog(TokenQueue* tokenQueue,  RsPosted* posted, QWidget *parent)
-        :GxsGroupDialog(tokenQueue, POSTED_ENABLE_FLAG, POSTED_CREATE_DEFAULT_FLAG, parent),
+        :GxsGroupDialog(tokenQueue, POSTED_ENABLE_FLAG, POSTED_CREATE_DEFAULT_FLAG, parent, "Create New Posted Topic"),
         mPosted(posted)
 {
 }

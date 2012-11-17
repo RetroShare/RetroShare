@@ -40,6 +40,7 @@ virtual void notifySelection(PostedItem *item, int ptype) = 0;
 virtual void requestComments(std::string threadId) = 0;
 };
 
+
 class PostedItem : public QWidget, private Ui::PostedItem
 {
   Q_OBJECT
