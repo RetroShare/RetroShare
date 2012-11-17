@@ -54,6 +54,7 @@
 #define IMAGE_LIBRARY           ":/images/library.png"
 #define IMAGE_PLUGINS           ":/images/extension_32.png"
 #define IMAGE_GXSFORUMS         ":/images/konversation.png"
+#define IMAGE_WIKI				":/images/wikibook_32.png"
 
 /** Constructor */
 ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
@@ -98,7 +99,7 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
 
     WikiDialog *wikiDialog = NULL;
     ui.stackPages->add(wikiDialog = new WikiDialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_LIBRARY), tr("Wiki Pages"), grp));
+                      createPageAction(QIcon(IMAGE_WIKI), tr("Wiki Pages"), grp));
 
     GxsForumsDialog *gxsforumsDialog = NULL;
     ui.stackPages->add(gxsforumsDialog = new GxsForumsDialog(ui.stackPages),
