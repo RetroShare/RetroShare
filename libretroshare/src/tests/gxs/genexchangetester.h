@@ -36,6 +36,7 @@ public:
     // request msg related tests
     bool testMsgRelatedChildIdRetrieval();
     bool testMsgRelatedChildDataRetrieval();
+    bool testMsgRelatedChildDataRetrieval_Multi();
     bool testMsgAllVersions();
 
 

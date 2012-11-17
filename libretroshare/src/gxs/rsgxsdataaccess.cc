@@ -1221,7 +1221,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
                     {
                         // add as latest. (overwriting if necessary)
                         origMsgTs[meta->mOrigMsgId] = std::make_pair(meta->mMsgId, meta->mPublishTs);
-                        metaMap.insert(std::make_pair(meta->mOrigMsgId, meta));
+                        metaMap.insert(std::make_pair(meta->mMsgId, meta));
                     }
                 }
 
@@ -1275,7 +1275,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
         filteredOutMsgIds[grpId] = outMsgIds;
         filterMsgList(filteredOutMsgIds, opts, filterMap);
 
-        if(!outMsgIds.empty())
+        if(!filteredOutMsgIds[grpId].empty())
         {
             if(req->Options.mReqType == GXS_REQUEST_TYPE_MSG_RELATED_IDS)
             {

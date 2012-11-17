@@ -979,6 +979,7 @@ bool GenExchangeTester::testMsgRelatedChildDataRetrieval()
     for(int i=0; i < nMsgs; i++)
     {
         RsDummyMsg* msg = msgs[i];
+        RsDummyMsg* msgCopy = NULL;
 
         if(first){
             msg->meta.mParentId = "";
@@ -989,7 +990,13 @@ bool GenExchangeTester::testMsgRelatedChildDataRetrieval()
             msg->meta.mParentId = firstMsgId.second;
             msg->meta.mGroupId = firstMsgId.first;
             msg->meta.mOrigMsgId = "";
+            msgCopy = new RsDummyMsg();
         }
+
+
+        // make a copy of msg for store in data out
+        if(msgCopy)
+            *msgCopy = *msg;
 
         mTestService->publishDummyMsg(token, msg);
         pollForToken(token, opts);
@@ -1007,7 +1014,8 @@ bool GenExchangeTester::testMsgRelatedChildDataRetrieval()
         // don't add the id to be related
         if(!first)
         {
-            mMsgRelatedDataMapOut[firstMsgId].push_back(msg);
+            msgCopy->meta.mMsgId = msgId.second;
+            mMsgRelatedDataMapOut[firstMsgId].push_back(msgCopy);
         }
 
         if(first){
@@ -1040,12 +1048,22 @@ bool GenExchangeTester::testMsgRelatedChildDataRetrieval()
             std::vector<RsGxsMsgItem*>& msgDataIn = mMsgRelatedDataMapIn[mit->first];
             vit_in = msgDataIn.begin();
 
-            for(; vit_in != msgDataIn.end(); vit_in++)
-            {
-                if(*vit_in == *vit_out)
-                    found = true;
-            }
+            RsGxsMsgItem* mItem  = *vit_out;
+            RsDummyMsg* msgOut = dynamic_cast<RsDummyMsg*>(*vit_out);
 
+            if(msgOut)
+            {
+                for(; vit_in != msgDataIn.end(); vit_in++)
+                {
+                    RsDummyMsg* msgIn = dynamic_cast<RsDummyMsg*>(*vit_in);
+
+                    if(msgIn)
+                    {
+                        if(msgIn->meta.mMsgId == msgOut->meta.mMsgId)
+                            found = true;
+                    }
+                }
+            }
             if(!found){
                 breakDown();
                 return false;
@@ -1062,6 +1080,170 @@ bool GenExchangeTester::testMsgRelatedChildDataRetrieval()
     return true;
 }
 
+bool GenExchangeTester::testMsgRelatedChildDataRetrieval_Multi()
+{
+    // start up
+    setUp();
+    setUpGrps(GXS_SERV::FLAG_PRIVACY_PUBLIC);
+
+    /********************/
+
+
+    // create msgs
+    // then make all requests immediately then poll afterwards for each and run outbound test
+    // we want only latest for now
+    int nMsgs = 5; // test a large number of msgs
+    std::vector<RsDummyMsg*> msgs;
+    createMsgs(msgs, nMsgs);
+    RsTokReqOptions opts;
+    opts.mReqType = 4000;
+    uint32_t token;
+
+   bool first = true;
+   RsGxsGrpMsgIdPair firstMsgId;
+
+   // everyone is parent of first msg
+RsGxsMessageId msgIdVersion;
+    for(int i=0; i < nMsgs; i++)
+    {
+        RsDummyMsg* msg = msgs[i];
+        RsDummyMsg* msgCopy = NULL;
+
+        bool getMsgVersionId= false;
+
+
+        if(first){
+            msg->meta.mParentId = "";
+            msg->meta.mOrigMsgId = "";
+        }
+        else
+        {
+
+
+            // every even numbered msg is a version of the one before
+
+            msg->meta.mParentId = firstMsgId.second;
+            msg->meta.mGroupId = firstMsgId.first;
+            msg->meta.mOrigMsgId = "";
+
+            // every even numbered msg is version of the previous odd numbered msg
+            if((i%2))
+            {
+
+                getMsgVersionId = true;
+            }
+            else
+            {
+                /** just in case put it to sleep so publish time is sufficiently later **/
+
+                double timeDelta = 2.;
+
+            #ifndef WINDOWS_SYS
+                    usleep((int) (timeDelta * 1000000));
+            #else
+                    Sleep((int) (timeDelta * 1000));
+            #endif
+
+
+                msg->meta.mOrigMsgId = msgIdVersion;
+                msgCopy = new RsDummyMsg();
+
+            }
+        }
+
+
+        // make a copy of msg for store in data out
+        if(msgCopy)
+            *msgCopy = *msg;
+
+        mTestService->publishDummyMsg(token, msg);
+        pollForToken(token, opts);
+        RsGxsGrpMsgIdPair msgId;
+        mTestService->acknowledgeTokenMsg(token, msgId);
+
+
+        if(msgId.first.empty() || msgId.second.empty())
+        {
+            breakDown();
+            std::cerr << "serious error: Acknowledgement failed! " << std::endl;
+            return false;
+        }
+
+        // don't add the id to be related
+        if(!first)
+        {
+            if(getMsgVersionId)
+            {
+             msgIdVersion = msgId.second;
+         }else
+            {
+
+             msgCopy->meta.mMsgId = msgId.second;
+             mMsgRelatedDataMapOut[firstMsgId].push_back(msgCopy);
+         }
+        }
+
+        if(first){
+            firstMsgId.second = msgId.second;
+            firstMsgId.first = msgId.first;
+            first = false;
+        }
+    }
+
+
+
+    opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
+    opts.mOptions = RS_TOKREQOPT_MSG_PARENT | RS_TOKREQOPT_MSG_LATEST;
+    std::vector<RsGxsGrpMsgIdPair> msgIdList;
+    msgIdList.push_back(firstMsgId);
+    mTokenService->requestMsgRelatedInfo(token, 0, opts, msgIdList);
+
+    pollForToken(token, opts);
+
+    GxsMsgRelatedDataMap::iterator mit = mMsgRelatedDataMapOut.begin();
+    for(; mit != mMsgRelatedDataMapOut.end(); mit++)
+    {
+        std::vector<RsGxsMsgItem*>& msgDataOut = mit->second;
+
+        std::vector<RsGxsMsgItem*>::iterator vit_out = msgDataOut.begin(), vit_in;
+
+        for(; vit_out != msgDataOut.end(); vit_out++)
+        {
+            bool found = false;
+            std::vector<RsGxsMsgItem*>& msgDataIn = mMsgRelatedDataMapIn[mit->first];
+            vit_in = msgDataIn.begin();
+
+            RsGxsMsgItem* mItem  = *vit_out;
+            RsDummyMsg* msgOut = dynamic_cast<RsDummyMsg*>(*vit_out);
+
+            if(msgOut)
+            {
+                for(; vit_in != msgDataIn.end(); vit_in++)
+                {
+                    RsDummyMsg* msgIn = dynamic_cast<RsDummyMsg*>(*vit_in);
+
+                    if(msgIn)
+                    {
+                        if(msgIn->meta.mMsgId == msgOut->meta.mMsgId)
+                            found = true;
+                    }
+                }
+            }
+            if(!found){
+                breakDown();
+                return false;
+            }
+
+        }
+    }
+
+    /********************/
+
+    // complete
+    breakDown();
+
+    return true;
+}
 
 
 bool GenExchangeTester::testSpecificMsgMetaRetrieval()
