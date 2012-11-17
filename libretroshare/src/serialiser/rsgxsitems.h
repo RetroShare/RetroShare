@@ -46,6 +46,7 @@ public:
             mPop = 0;
             mMsgCount = 0;
             mLastPost = 0;
+
             mGroupStatus = 0;
 
             //mPublishTs = 0;
@@ -86,6 +87,7 @@ public:
     {
             mPublishTs = 0;
             mMsgFlags = 0;
+
             mMsgStatus = 0;
             mChildTs = 0;
     }

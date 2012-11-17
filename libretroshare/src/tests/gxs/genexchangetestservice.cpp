@@ -67,14 +67,14 @@ void GenExchangeTestService::setGroupServiceStringTS(uint32_t &token, const RsGx
         RsGenExchange::setGroupServiceString(token, grpId, servString);
 }
 
-void GenExchangeTestService::setGroupStatusFlagTS(uint32_t &token, const RsGxsGroupId &grpId, const uint32_t &status)
+void GenExchangeTestService::setGroupStatusFlagTS(uint32_t &token, const RsGxsGroupId &grpId, const uint32_t &status, const uint32_t& mask)
 {
-    RsGenExchange::setGroupStatusFlags(token, grpId, status, 0xff);
+    RsGenExchange::setGroupStatusFlags(token, grpId, status, mask);
 }
 
-void GenExchangeTestService::setGroupSubscribeFlagTS(uint32_t &token, const RsGxsGroupId &grpId, const uint32_t &status)
+void GenExchangeTestService::setGroupSubscribeFlagTS(uint32_t &token, const RsGxsGroupId &grpId, const uint32_t &status, const uint32_t& mask)
 {
-    RsGenExchange::setGroupSubscribeFlags(token, grpId, status, 0xff);
+    RsGenExchange::setGroupSubscribeFlags(token, grpId, status, mask);
 }
 
 void GenExchangeTestService::setMsgServiceStringTS(uint32_t &token, const RsGxsGrpMsgIdPair &msgId, const std::string &servString)
@@ -82,9 +82,9 @@ void GenExchangeTestService::setMsgServiceStringTS(uint32_t &token, const RsGxsG
     RsGenExchange::setMsgServiceString(token, msgId, servString);
 }
 
-void GenExchangeTestService::setMsgStatusFlagTS(uint32_t &token, const RsGxsGrpMsgIdPair &msgId, const uint32_t &status)
+void GenExchangeTestService::setMsgStatusFlagTS(uint32_t &token, const RsGxsGrpMsgIdPair &msgId, const uint32_t &status, const uint32_t& mask)
 {
-    RsGenExchange::setMsgStatusFlags(token, msgId, status, 0xff);
+    RsGenExchange::setMsgStatusFlags(token, msgId, status, mask);
 }
 
 void GenExchangeTestService::service_tick()

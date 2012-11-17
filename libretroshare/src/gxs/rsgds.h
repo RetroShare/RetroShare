@@ -105,7 +105,6 @@ class RsGeneralDataService
 
 public:
 
-
     static const std::string MSG_META_SERV_STRING;
     static const std::string MSG_META_STATUS;
 

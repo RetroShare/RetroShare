@@ -430,6 +430,8 @@ protected:
      * as it is called by the backend GXS system to \n
      * update client of changes which should \n
      * instigate client to retrieve new content from the system
+     * Note! For newly received message and groups, bit 0xf00 is set to
+     * GXS_SERV::GXS_MSG_STATUS_UNPROCESSED and GXS_SERV::GXS_MSG_STATUS_UNREAD
      * @param changes the changes that have occured to data held by this service
      */
     virtual void notifyChanges(std::vector<RsGxsNotify*>& changes) = 0;
@@ -458,6 +460,13 @@ private:
      * Processes group local meta changes
      */
     void processGrpMetaChanges();
+
+    /*!
+     * Convenience function for properly applying masks for status and subscribe flag
+     * of a group.
+     * @warning mask entry is removed from grpCv
+     */
+    bool processGrpMask(const RsGxsGroupId& grpId, ContentValue& grpCv);
 
     /*!
      * This completes the creation of an instance on RsNxsGrp

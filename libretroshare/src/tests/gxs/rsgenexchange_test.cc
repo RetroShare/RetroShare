@@ -21,13 +21,13 @@ int main()
 //    CHECK(tester.testMsgIdRetrieval_OptOrigMsgId()); REPORT("tester.testRelatedMsgIdRetrieval_OrigMsgId()");
 //    CHECK(tester.testMsgIdRetrieval_OptLatest()); REPORT("tester.testRelatedMsgIdRetrieval_Latest()");
 //    CHECK(tester.testMsgMetaModRequest()); REPORT("tester.testMsgMetaModRequest()");
-        CHECK(tester.testMsgRelatedChildDataRetrieval()); REPORT("tester.testMsgRelatedChildDataRetrieval()");
+        //CHECK(tester.testMsgRelatedChildDataRetrieval()); REPORT("tester.testMsgRelatedChildDataRetrieval()");
 //    CHECK(tester.testMsgAllVersions()); REPORT("tester.testMsgAllVersions()");
 
 //    CHECK(tester.testGrpSubmissionRetrieval()); REPORT("tester.testGrpSubmissionRetrieval()");
-//    CHECK(tester.testGrpMetaRetrieval()); REPORT("tester.testGrpMetaRetrieval()");
+ //   CHECK(tester.testGrpMetaRetrieval()); REPORT("tester.testGrpMetaRetrieval()");
 //    CHECK(tester.testGrpIdRetrieval()); REPORT("tester.testGrpIdRetrieval()");
-//    CHECK(tester.testGrpMetaModRequest()); REPORT("tester.testGrpMetaModRequest()");
+    CHECK(tester.testGrpMetaModRequest()); REPORT("tester.testGrpMetaModRequest()");
 
     FINALREPORT("RsGenExchangeTest");
 

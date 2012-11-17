@@ -76,13 +76,13 @@ public:
     bool getMsgRelatedDataTS(const uint32_t &token, GxsMsgRelatedDataMap& msgItems);
 
 
-    void setGroupSubscribeFlagTS(uint32_t& token, const RsGxsGroupId& grpId, const uint32_t& status);
+    void setGroupSubscribeFlagTS(uint32_t& token, const RsGxsGroupId& grpId, const uint32_t& status, const uint32_t& mask);
 
-    void setGroupStatusFlagTS(uint32_t& token, const RsGxsGroupId& grpId, const uint32_t& status);
+    void setGroupStatusFlagTS(uint32_t& token, const RsGxsGroupId& grpId, const uint32_t& status, const uint32_t& mask);
 
     void setGroupServiceStringTS(uint32_t& token, const RsGxsGroupId& grpId, const std::string& servString);
 
-    void setMsgStatusFlagTS(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, const uint32_t& status);
+    void setMsgStatusFlagTS(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, const uint32_t& status, const uint32_t& mask);
 
     void setMsgServiceStringTS(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, const std::string& servString );
 

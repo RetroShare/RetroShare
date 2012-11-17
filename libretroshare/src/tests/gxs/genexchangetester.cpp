@@ -3,6 +3,9 @@
 #include "gxs/rsdataservice.h"
 #include "gxs/rsgxsflags.h"
 
+#define TEST_FLAG 0x00004;
+#define TEST_MASK 0x0000f;
+
 GenExchangeTester::GenExchangeTester()
     : mGenTestMutex("genTest")
 {
@@ -277,7 +280,6 @@ bool GenExchangeTester::testGrpMetaRetrieval()
 
    opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
 
-   std::list<RsGxsGroupId> grpIds;
    mTokenService->requestGroupInfo(token, 0, opts);
 
    pollForToken(token, opts);
@@ -372,6 +374,8 @@ bool GenExchangeTester::testGrpMetaModRequest()
    init(dgrp1);
    init(dgrp2);
    init(dgrp3);
+   dgrp1->meta.mSubscribeFlags = 0;
+   dgrp1->meta.mGroupStatus = 0;
 
    uint32_t token;
    RsTokReqOptions opts;
@@ -397,8 +401,9 @@ bool GenExchangeTester::testGrpMetaModRequest()
    bool ok = true;
 
    std::string newServiceString;
-   uint32_t newGrpStatus = randNum();
-   uint32_t newSubscribeGrpFlag = randNum();
+   uint32_t newGrpStatus = TEST_FLAG;
+   uint32_t newSubscribeGrpFlag = TEST_FLAG;
+   uint32_t testMask = TEST_MASK;
    randString(SHORT_STR, newServiceString);
 
    // mod service flag for first grp
@@ -406,11 +411,11 @@ bool GenExchangeTester::testGrpMetaModRequest()
     pollForToken(token, opts);
     ok = mTestService->acknowledgeTokenGrp(token, grpId);
 
-    mTestService->setGroupStatusFlagTS(token, grpIds[0], newGrpStatus);
+    mTestService->setGroupStatusFlagTS(token, grpIds[0], newGrpStatus, testMask);
     pollForToken(token, opts);
     ok = mTestService->acknowledgeTokenGrp(token, grpId);
 
-    mTestService->setGroupSubscribeFlagTS(token, grpIds[0], newSubscribeGrpFlag);
+    mTestService->setGroupSubscribeFlagTS(token, grpIds[0], newSubscribeGrpFlag, testMask);
     pollForToken(token, opts);
     ok = mTestService->acknowledgeTokenGrp(token, grpId);
 
@@ -432,10 +437,10 @@ bool GenExchangeTester::testGrpMetaModRequest()
        if(meta.mServiceString != newServiceString)
            ok = false;
 
-       if(meta.mSubscribeFlags != newSubscribeGrpFlag)
+       if(!(meta.mSubscribeFlags & newSubscribeGrpFlag))
            ok = false;
 
-       if(meta.mGroupStatus != newGrpStatus)
+       if(!(meta.mGroupStatus & newGrpStatus))
            ok = false;
 
 
@@ -475,6 +480,7 @@ bool GenExchangeTester::testMsgMetaModRequest()
     uint32_t token;
     RsDummyMsg* msgOut = new RsDummyMsg();
     *msgOut = *msg;
+    msg->meta.mMsgStatus = 0;
     mTestService->publishDummyMsg(token, msg);
 
     // poll will block until found
@@ -499,9 +505,10 @@ bool GenExchangeTester::testMsgMetaModRequest()
 
     mTestService->acknowledgeTokenMsg(token, msgId);
 
-    uint32_t newStatus = 2;
+    uint32_t newStatus = TEST_FLAG;
+    uint32_t testMask =  TEST_MASK;
     // first modify service string
-    mTestService->setMsgStatusFlagTS(token, msgId, newStatus);
+    mTestService->setMsgStatusFlagTS(token, msgId, newStatus, testMask);
     pollForToken(token, opts);
 
     mTestService->acknowledgeTokenMsg(token, msgId);
@@ -539,7 +546,7 @@ bool GenExchangeTester::testMsgMetaModRequest()
         if(meta.mServiceString != newServiceString)
             ok &= false;
 
-        if(meta.mMsgStatus != newStatus)
+        if(!(meta.mMsgStatus & newStatus))
             ok &= false;
 
 

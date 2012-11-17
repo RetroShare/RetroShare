@@ -93,6 +93,14 @@ namespace GXS_SERV {
 
     /** END GXS Msg status flags **/
 
+    /** START GXS Grp status flags **/
+
+    static const uint32_t GXS_GRP_STATUS_UNPROCESSED = 0x000000100;
+
+    static const uint32_t GXS_GRP_STATUS_UNREAD = 0x00000200;
+
+    /** END GXS Grp status flags **/
+
 }
 
 

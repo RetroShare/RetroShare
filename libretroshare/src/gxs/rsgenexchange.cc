@@ -47,6 +47,8 @@
 #define PRIV_GRP_OFFSET 16
 #define GRP_OPTIONS_OFFSET 24
 
+#define GXS_MASK "GXS_MASK_HACK"
+
 #define GEN_EXCH_DEBUG	1
 
 RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService *ns,
@@ -986,6 +988,7 @@ void RsGenExchange::setGroupSubscribeFlags(uint32_t& token, const RsGxsGroupId& 
     GrpLocMetaData g;
     g.grpId = grpId;
     g.val.put(RsGeneralDataService::GRP_META_SUBSCRIBE_FLAG, (int32_t)flag);
+    g.val.put(RsGeneralDataService::GRP_META_SUBSCRIBE_FLAG+GXS_MASK, (int32_t)mask); // HACK, need to perform mask operation in a non-blocking location
     mGrpLocMetaMap.insert(std::make_pair(token, g));
 }
 
@@ -998,6 +1001,7 @@ void RsGenExchange::setGroupStatusFlags(uint32_t& token, const RsGxsGroupId& grp
     GrpLocMetaData g;
     g.grpId = grpId;
     g.val.put(RsGeneralDataService::GRP_META_STATUS, (int32_t)status);
+    g.val.put(RsGeneralDataService::GRP_META_STATUS+GXS_MASK, (int32_t)mask); // HACK, need to perform mask operation in a non-blocking location
     mGrpLocMetaMap.insert(std::make_pair(token, g));
 }
 
@@ -1021,6 +1025,7 @@ void RsGenExchange::setMsgStatusFlags(uint32_t& token, const RsGxsGrpMsgIdPair& 
 
     MsgLocMetaData m;
     m.val.put(RsGeneralDataService::MSG_META_STATUS, (int32_t)status);
+    m.val.put(RsGeneralDataService::MSG_META_STATUS+GXS_MASK, (int32_t)mask); // HACK, need to perform mask operation in a non-blocking location
     m.msgId = msgId;
     mMsgLocMetaMap.insert(std::make_pair(token, m));
 }
@@ -1047,7 +1052,43 @@ void RsGenExchange::processMsgMetaChanges()
     for(; mit != mit_end; mit++)
     {
         MsgLocMetaData& m = mit->second;
-        bool ok = mDataStore->updateMessageMetaData(m) == 1;
+
+        int32_t value, mask;
+        bool ok = true;
+
+        // for meta flag changes get flag to apply mask
+        if(m.val.getAsInt32(RsGeneralDataService::MSG_META_STATUS, value))
+        {
+            ok = false;
+            if(m.val.getAsInt32(RsGeneralDataService::MSG_META_STATUS+GXS_MASK, mask))
+            {
+                GxsMsgReq req;
+                std::vector<RsGxsMessageId> msgIdV;
+                msgIdV.push_back(m.msgId.second);
+                req.insert(std::make_pair(m.msgId.first, msgIdV));
+                GxsMsgMetaResult result;
+                mDataStore->retrieveGxsMsgMetaData(req, result);
+                GxsMsgMetaResult::iterator mit = result.find(m.msgId.first);
+
+                if(mit != result.end())
+                {
+                    std::vector<RsGxsMsgMetaData*>& msgMetaV = mit->second;
+
+                    if(!msgMetaV.empty())
+                    {
+                        RsGxsMsgMetaData* meta = *(msgMetaV.begin());
+                        value = (meta->mMsgStatus & ~mask) | (mask & value);
+                        m.val.put(RsGeneralDataService::MSG_META_STATUS, value);
+                        delete meta;
+                        ok = true;
+                    }
+                }
+                m.val.removeKeyValue(RsGeneralDataService::MSG_META_STATUS+GXS_MASK);
+            }
+        }
+
+
+        ok &= mDataStore->updateMessageMetaData(m) == 1;
         uint32_t token = mit->first;
 
         if(ok)
@@ -1074,7 +1115,11 @@ void RsGenExchange::processGrpMetaChanges()
     {
         GrpLocMetaData& g = mit->second;
         uint32_t token = mit->first;
-        bool ok = mDataStore->updateGroupMetaData(g) == 1;
+
+        // process mask
+        bool ok = processGrpMask(g.grpId, g.val);
+
+        ok &= mDataStore->updateGroupMetaData(g) == 1;
 
         if(ok)
         {
@@ -1087,6 +1132,59 @@ void RsGenExchange::processGrpMetaChanges()
     }
 
     mGrpLocMetaMap.clear();
+}
+
+bool RsGenExchange::processGrpMask(const RsGxsGroupId& grpId, ContentValue &grpCv)
+{
+    // first find out which mask is involved
+    int32_t value, mask, currValue;
+    std::string key;
+    RsGxsGrpMetaData* grpMeta = NULL;
+    bool ok = false;
+
+
+    std::map<RsGxsGroupId, RsGxsGrpMetaData* > grpMetaMap;
+    std::map<RsGxsGroupId, RsGxsGrpMetaData* >::iterator mit;
+    grpMetaMap.insert(std::make_pair(grpId, (RsGxsGrpMetaData*)(NULL)));
+
+    mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
+
+    if((mit = grpMetaMap.find(grpId)) != grpMetaMap.end())
+    {
+        grpMeta = mit->second;
+        ok = true;
+    }
+
+    if(grpCv.getAsInt32(RsGeneralDataService::GRP_META_STATUS, value))
+    {
+        key = RsGeneralDataService::GRP_META_STATUS;
+        currValue = grpMeta->mGroupStatus;
+    }
+    else if(grpCv.getAsInt32(RsGeneralDataService::GRP_META_SUBSCRIBE_FLAG, value))
+    {
+        key = RsGeneralDataService::GRP_META_SUBSCRIBE_FLAG;
+        currValue = grpMeta->mSubscribeFlags;
+    }else
+    {
+        if(grpMeta)
+            delete grpMeta;
+        return true;
+    }
+
+    ok &= grpCv.getAsInt32(key+GXS_MASK, mask);
+
+    // remove mask entry so it doesn't affect
+    grpCv.removeKeyValue(key+GXS_MASK);
+
+    // apply mask to current value
+    value = (currValue & ~mask) | (value & mask);
+
+    grpCv.put(key, value);
+
+    if(grpMeta)
+        delete grpMeta;
+
+    return ok;
 }
 
 void RsGenExchange::publishMsgs()
@@ -1487,6 +1585,7 @@ void RsGenExchange::processRecvdMessages()
 
             if(ok)
             {
+                meta->mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_UNREAD;
                 msgs.insert(std::make_pair(msg, meta));
                 msgIds[msg->grpId].push_back(msg->msgId);
             }
@@ -1540,6 +1639,7 @@ void RsGenExchange::processRecvdGroups()
 
         if(ok)
         {
+            meta->mGroupStatus = GXS_SERV::GXS_GRP_STATUS_UNPROCESSED | GXS_SERV::GXS_GRP_STATUS_UNREAD;
             grps.insert(std::make_pair(grp, meta));
             grpIds.push_back(grp->grpId);
         }
