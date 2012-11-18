@@ -182,7 +182,8 @@ bool RsVoipDataItem::serialise(void *data, uint32_t& pktsize)
 	ok &= setRawUInt32(data, tlvsize, &offset, flags);
 	ok &= setRawUInt32(data, tlvsize, &offset, data_size);
         std::cerr << "data_size : " << data_size << std::endl;
-        memcpy(data+offset,voip_data,data_size) ;
+        //memcpy(data+offset,voip_data,data_size) ;
+        memcpy( &((uint8_t*)data)[offset],voip_data,data_size) ;
 	offset += data_size ;
 
 	if (offset != tlvsize)
