@@ -1207,11 +1207,35 @@ void GxsForumsDialog::insertPostData(const RsGxsForumMsg &msg)
     {
             setMsgReadStatus(Row, true);
     }
+    
+	QString text;
+	{
+		QDateTime qtime;
+		qtime.setTime_t(msg.mMeta.mPublishTs);
+
+		text = qtime.toString("yyyy-MM-dd hh:mm:ss");
+            
+		ui.time_label->setText(text);
+	}
+	
+	std::string authorName = rsPeers->getPeerName(msg.mMeta.mAuthorId);
+	text = QString::fromUtf8(authorName.c_str());
+
+	if (text.isEmpty())
+	{
+		ui.by_label->setText( tr("By") + " " + tr("Anonymous"));
+	}
+	else
+	{
+        ui.by_label->setText( tr("By") + " " + text );
+	}    
 
     QString extraTxt = RsHtml().formatText(ui.postText->document(), messageFromInfo(msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
 
     ui.postText->setHtml(extraTxt);
     ui.threadTitle->setText(titleFromInfo(msg.mMeta));
+        
+
 }
 
 
