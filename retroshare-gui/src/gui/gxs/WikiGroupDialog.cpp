@@ -52,7 +52,7 @@ uint32_t WikiCreateDefaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC    |
 
 
 WikiGroupDialog::WikiGroupDialog(TokenQueue *tokenQueue, QWidget *parent)
-	:GxsGroupDialog(tokenQueue, WikiCreateEnabledFlags, WikiCreateDefaultsFlags, parent)
+	:GxsGroupDialog(tokenQueue, WikiCreateEnabledFlags, WikiCreateDefaultsFlags, parent, "Create New Wiki Group")
 {
 
 	// To start with we only have open forums - with distribution controls.

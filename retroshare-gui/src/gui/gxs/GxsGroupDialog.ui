@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Create New Group</string>
+   <string>Create New</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../images.qrc">
@@ -69,7 +69,7 @@
       <item row="0" column="1">
        <widget class="QLabel" name="mServiceHeader">
         <property name="text">
-         <string>Create Wiki Group</string>
+         <string>Create New</string>
         </property>
        </widget>
       </item>
@@ -99,7 +99,10 @@
          </property>
          <item>
           <layout class="QGridLayout" name="gridLayout_4">
-           <property name="spacing">
+           <property name="horizontalSpacing">
+            <number>6</number>
+           </property>
+           <property name="verticalSpacing">
             <number>0</number>
            </property>
            <item row="0" column="0" rowspan="2">
@@ -139,6 +142,12 @@ border-radius: 10px;
            </item>
            <item row="0" column="1">
             <layout class="QHBoxLayout" name="horizontalLayout">
+             <property name="spacing">
+              <number>6</number>
+             </property>
+             <property name="leftMargin">
+              <number>6</number>
+             </property>
              <item>
               <widget class="QLabel" name="label">
                <property name="text">
@@ -190,7 +199,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Key recipients can publish to restricted-type Wiki Group, and can view and publish  for private-type channels&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
-                <string>Add Wiki Moderators</string>
+                <string>Share Publish Key</string>
                </property>
               </widget>
              </item>
@@ -240,7 +249,7 @@ p, li { white-space: pre-wrap; }
          <set>QDockWidget::NoDockWidgetFeatures</set>
         </property>
         <property name="windowTitle">
-         <string>Select Wiki Moderators</string>
+         <string>Share Key With</string>
         </property>
         <widget class="QWidget" name="dockWidgetContents">
          <layout class="QGridLayout" name="_2">
@@ -551,6 +560,9 @@ p, li { white-space: pre-wrap; }
  </customwidgets>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../WikiPoos/Wiki_images.qrc"/>
+  <include location="../WikiPoos/Wiki_images.qrc"/>
+  <include location="../WikiPoos/Wiki_images.qrc"/>
   <include location="../WikiPoos/Wiki_images.qrc"/>
  </resources>
  <connections/>
