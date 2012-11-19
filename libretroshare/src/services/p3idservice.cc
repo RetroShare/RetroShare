@@ -25,7 +25,7 @@
 
 #include "services/p3idservice.h"
 #include "serialiser/rsgxsiditems.h"
-
+#include "gxs/rsgxsflags.h"
 #include "util/rsrandom.h"
 #include "util/rsstring.h"
 
@@ -71,43 +71,62 @@ RsIdentity *rsIdentity = NULL;
 #define BG_PGPHASH 	1
 #define BG_REPUTATION 	2
 
+
+#define GXSIDREQ_CACHELOAD	0x0001
+#define GXSIDREQ_CACHEOWNIDS	0x0002
+
+#define GXSIDREQ_PGPHASH 	0x0010
+#define GXSIDREQ_REPUTATION 	0x0020
+
+#define GXSIDREQ_CACHETEST 	0x1000
+
+// Events.
+#define GXSID_EVENT_CACHEOWNIDS		0x0001
+#define GXSID_EVENT_CACHELOAD 		0x0002
+
+#define GXSID_EVENT_PGPHASH 		0x0010
+#define GXSID_EVENT_PGPHASH_PROC 	0x0011
+
+#define GXSID_EVENT_REPUTATION 		0x0020
+
+#define GXSID_EVENT_CACHETEST 		0x1000
+
+#define CACHETEST_PERIOD	60
+
+#define OWNID_RELOAD_DELAY		10
+
+#define PGPHASH_PERIOD			60
+#define PGPHASH_RETRY_PERIOD		11
+#define PGPHASH_PROC_PERIOD		1
+
+#define REPUTATION_PERIOD		60
+#define REPUTATION_RETRY_PERIOD		13
+#define REPUTATION_PROC_PERIOD		1
+
 /********************************************************************************/
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
 
 p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *nes)
-	: RsGxsIdExchange(gds, nes, new RsGxsIdSerialiser(), RS_SERVICE_GXSV1_TYPE_GXSID), RsIdentity(this), 
-	mIdMtx("p3IdService")
+	: RsGxsIdExchange(gds, nes, new RsGxsIdSerialiser(), RS_SERVICE_GXSV1_TYPE_GXSID), 
+	RsIdentity(this), GxsTokenQueue(this), RsTickEvent(), mIdMtx("p3IdService")
 {
-	mCacheTest_LastTs = 0;
-	mCacheTest_Active = false;
-
-	mCacheLoad_LastCycle = 0;
-	mCacheLoad_Status = 0;
-
-	mHashPgp_SearchActive = false;
-	mHashPgp_LastTs = 0;
-
 	mBgSchedule_Mode = 0;
 	mBgSchedule_Active = false;
+
+	// Kick off Cache Testing, + Others.
+	RsTickEvent::schedule_in(GXSID_EVENT_CACHETEST, CACHETEST_PERIOD);
+	RsTickEvent::schedule_in(GXSID_EVENT_PGPHASH, PGPHASH_PERIOD);
+	RsTickEvent::schedule_in(GXSID_EVENT_REPUTATION, REPUTATION_PERIOD);
+	RsTickEvent::schedule_now(GXSID_EVENT_CACHEOWNIDS);
 }
+
+
 
 void	p3IdService::service_tick()
 {
-	//std::cerr << "p3IdService::service_tick()";
-	//std::cerr << std::endl;
-
-	// Disable for now.
-	// background_tick();
-
-	cache_tick();
-
-	// internal testing - request keys. (NOT FINISHED YET)
-	cachetest_tick();
-
-	// background stuff.
-	scheduling_tick();
-
+	RsTickEvent::tick_events();
+	GxsTokenQueue::checkRequests(); // GxsTokenQueue handles all requests.
 	return;
 }
 
@@ -123,19 +142,48 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
 /******************* RsIdentity Interface ***************************************/
 /********************************************************************************/
 
+#if 0
 bool p3IdService:: getNickname(const RsGxsId &id, std::string &nickname)
 {
 	return false;
 }
+#endif
 
 bool p3IdService:: getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
 {
+	std::cerr << "p3IdService::getIdDetails(" << id << ")";
+	std::cerr << std::endl;
+
+	{
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+		RsGxsIdCache data;
+		if (mPublicKeyCache.fetch(id, data))
+		{
+			details = data.details;
+			return true;
+		}
+	
+		/* try private cache too */
+		if (mPrivateKeyCache.fetch(id, data))
+		{
+			details = data.details;
+			return true;
+		}
+	}
+
+	/* it isn't there - add to public requests */
+	cache_request_load(id);
+
 	return false;
 }
 
+
 bool p3IdService:: getOwnIds(std::list<RsGxsId> &ownIds)
 {
-	return false;
+	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+	ownIds = mOwnIds;
+
+	return true;
 }
 
 
@@ -161,6 +209,7 @@ bool p3IdService::createIdentity(uint32_t& token, RsIdentityParameters &params)
 	}
 
 	createGroup(token, id);
+
 	return true;
 }
 
@@ -532,31 +581,73 @@ std::string SSGxsIdGroup::save() const
  */
 
 RsGxsIdCache::RsGxsIdCache() 
-	:reputation(0), lastUsedTs(0) 
 { 
 	return; 
 }
 
 RsGxsIdCache::RsGxsIdCache(const RsGxsIdGroupItem *item, const RsTlvSecurityKey &in_pkey)
 {
-	id = item->meta.mGroupId;
-	name = item->meta.mGroupName;
+	// Save Keys.
 	pubkey = in_pkey;
 
-	std::cerr << "RsGxsIdCache::RsGxsIdCache() for: " << id;
+	// Fill in Details.
+	details.mNickname = item->meta.mGroupName;
+	details.mId = item->meta.mGroupId;
+
+	std::cerr << "RsGxsIdCache::RsGxsIdCache() for: " << details.mId;
 	std::cerr << std::endl;
 
-        reputation = 0; /* TODO: extract from string - This will need to be refreshed!!! */
-	lastUsedTs = 0;	
+	details.mIsOwnId = (item->meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
 
+	details.mPgpLinked = (item->meta.mGroupFlags & RSGXSID_GROUPFLAG_REALID);
+
+	/* rest must be retrived from ServiceString */
+	updateServiceString(item->meta.mServiceString);
 }
+
+void RsGxsIdCache::updateServiceString(std::string serviceString)
+{
+	SSGxsIdGroup ssdata;
+	if (ssdata.load(serviceString))
+	{
+		if (details.mPgpLinked)
+		{
+			details.mPgpKnown = ssdata.pgp.idKnown;
+			if (details.mPgpKnown)
+			{
+				details.mPgpId = ssdata.pgp.pgpId;
+			}
+			else
+			{
+				details.mPgpId = "";
+			}
+		}
+
+		details.mOpinion    = 0;
+		details.mReputation = ssdata.score.score;
+	}
+	else
+	{
+		details.mPgpKnown = false;
+		details.mPgpId = ""; 
+
+		details.mOpinion = 0;
+		details.mReputation = 0;
+	}
+}
+
+
+
+
+
+
 
 bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 {
-	std::cerr << "p3IdService::cache_store() Item: ";
+	std::cerr << "p3IdService::cache_store() Item: " << item->meta.mGroupId;
 	std::cerr << std::endl;
 	//item->print(std::cerr, 0); NEEDS CONST!!!! TODO
-	std::cerr << std::endl;
+	//std::cerr << std::endl;
 
         /* extract key from keys */
     	RsTlvSecurityKeySet keySet;
@@ -627,54 +718,33 @@ bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 
 #define MIN_CYCLE_GAP	2
 
-int	p3IdService::cache_tick()
-{
-	//std::cerr << "p3IdService::cache_tick()";
-	//std::cerr << std::endl;
-
-	/* every minute - run a background check */
-	time_t now = time(NULL);
-	bool doCycle = false;
-	{
-		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		if (now -  mCacheLoad_LastCycle > MIN_CYCLE_GAP)
-		{
-			doCycle = true;
-			mCacheLoad_LastCycle = now;
-		}
-	}
-
-	if (doCycle)
-	{
-		cache_start_load();
-	}
-
-	cache_check_loading();
-
-		
-	return 0;
-}
-
 bool p3IdService::cache_request_load(const RsGxsId &id)
 {
 	std::cerr << "p3IdService::cache_request_load(" << id << ")";
 	std::cerr << std::endl;
 
-	bool start = false;
 	{
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-
 		mCacheLoad_ToCache.push_back(id);
+	}
 
-		if (time(NULL) - mCacheLoad_LastCycle > MIN_CYCLE_GAP)
+	if (RsTickEvent::event_count(GXSID_EVENT_CACHELOAD) > 0)
+	{
+		/* its already scheduled */
+		return true;
+	}
+
+	int32_t age = 0;
+	if (RsTickEvent::prev_event_ago(GXSID_EVENT_CACHELOAD, age))
+	{
+		if (age < MIN_CYCLE_GAP)
 		{
-			start = true;
+			RsTickEvent::schedule_in(GXSID_EVENT_CACHELOAD, MIN_CYCLE_GAP - age);
+			return true;
 		}
 	}
 
-	if (start)
-		cache_start_load();
-
+	RsTickEvent::schedule_now(GXSID_EVENT_CACHELOAD);
 	return true;
 }
 
@@ -690,6 +760,8 @@ bool p3IdService::cache_start_load()
 		std::list<RsGxsId>::iterator it;
 		for(it = mCacheLoad_ToCache.begin(); it != mCacheLoad_ToCache.end(); it++)
 		{
+			std::cerr << "p3IdService::cache_start_load() GroupId: " << *it;
+			std::cerr << std::endl;
 			groupIds.push_back(*it); // might need conversion?
 		}
 
@@ -701,69 +773,17 @@ bool p3IdService::cache_start_load()
 		std::cerr << "p3IdService::cache_start_load() #Groups: " << groupIds.size();
 		std::cerr << std::endl;
 
-		mCacheLoad_LastCycle = time(NULL);
-		mCacheLoad_Status = 1;
-
 		uint32_t ansType = RS_TOKREQ_ANSTYPE_DATA; 
 	        RsTokReqOptions opts;
         	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 		uint32_t token = 0;
 	
 		RsGenExchange::getTokenService()->requestGroupInfo(token, ansType, opts, groupIds);
-	
-		{
-			RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-			mCacheLoad_Tokens.push_back(token);
-		}
+		GxsTokenQueue::queueRequest(token, GXSIDREQ_CACHELOAD);	
 	}
 	return 1;
 }
 
-bool p3IdService::cache_check_loading()
-{
-	/* check the status of all active tokens */
-	std::list<uint32_t> toload;
-	std::list<uint32_t>::iterator it;
-
-	bool stuffToLoad = false;
-	{
-		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		for(it = mCacheLoad_Tokens.begin(); it != mCacheLoad_Tokens.end();)
-		{
-			std::cerr << "p3IdService::cache_check_loading() token: " << *it;
-			std::cerr << std::endl;
-
-			uint32_t token = *it;
-			uint32_t status = RsGenExchange::getTokenService()->requestStatus(token);
-			//checkRequestStatus(token, status, reqtype, anstype, ts);
-	
-			if (status == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
-			{
-				it = mCacheLoad_Tokens.erase(it);
-				toload.push_back(token);
-				stuffToLoad = true;
-			}
-			else
-			{
-				it++;
-			}
-		}
-	}
-
-	if (stuffToLoad)
-	{
-		for(it = toload.begin(); it != toload.end(); it++)
-		{
-			cache_load_for_token(*it);
-		}
-
-		// cleanup.
-		mPrivateKeyCache.resize();
-		mPublicKeyCache.resize();
-	}
-	return 1;
-
-}
 
 bool p3IdService::cache_load_for_token(uint32_t token)
 {
@@ -789,6 +809,10 @@ bool p3IdService::cache_load_for_token(uint32_t token)
 			cache_store(item);
 			delete item;
                 }
+
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+		mPrivateKeyCache.resize();
+		mPublicKeyCache.resize();
         }
 	else
 	{
@@ -801,49 +825,126 @@ bool p3IdService::cache_load_for_token(uint32_t token)
 }
 
 
-/************************************************************************************/
-/************************************************************************************/
 
-#define TEST_PERIOD 60
-
-bool p3IdService::cachetest_tick()
+bool p3IdService::cache_update_if_cached(const RsGxsId &id, std::string serviceString)
 {
-	/* every minute - run a background check */
-	time_t now = time(NULL);
-	bool doTest = false;
-	{
-		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		if (now -  mCacheTest_LastTs > TEST_PERIOD)
-		{
-			doTest = true;
-			mCacheTest_LastTs = now;
-		}
-	}
+	/* if these entries are cached - update with new info */
+	std::cerr << "p3IdService::cache_update_if_cached(" << id << ")";
+	std::cerr << std::endl;
 
-	if (doTest)
+	/* retrieve - update, save */
+	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+
+	RsGxsIdCache pub_data;
+	if (mPublicKeyCache.fetch(id, pub_data))
 	{
-		std::cerr << "p3IdService::cachetest_tick() starting";
+		std::cerr << "p3IdService::cache_update_if_cached() Updating Public Cache";
 		std::cerr << std::endl;
-		cachetest_getlist();
+
+		pub_data.updateServiceString(serviceString);
+		mPublicKeyCache.store(id, pub_data);
 	}
 
-	cachetest_request();
+
+	RsGxsIdCache priv_data;
+	if (mPrivateKeyCache.fetch(id, priv_data))
+	{
+		std::cerr << "p3IdService::cache_update_if_cached() Updating Private Cache";
+		std::cerr << std::endl;
+
+		priv_data.updateServiceString(serviceString);
+		mPrivateKeyCache.store(id, priv_data);
+	}
+
 	return true;
 }
 
+/************************************************************************************/
+/************************************************************************************/
+
+bool p3IdService::cache_request_ownids()
+{
+	/* trigger request to load missing ids into cache */
+	std::list<RsGxsGroupId> groupIds;
+	std::cerr << "p3IdService::cache_request_ownids()";
+	std::cerr << std::endl;
+
+	uint32_t ansType = RS_TOKREQ_ANSTYPE_DATA; 
+	RsTokReqOptions opts;
+        opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+        //opts.mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_ADMIN;
+
+	uint32_t token = 0;
+	
+	RsGenExchange::getTokenService()->requestGroupInfo(token, ansType, opts);
+	GxsTokenQueue::queueRequest(token, GXSIDREQ_CACHEOWNIDS);	
+	return 1;
+}
+
+
+bool p3IdService::cache_load_ownids(uint32_t token)
+{
+	std::cerr << "p3IdService::cache_load_ownids() : " << token;
+	std::cerr << std::endl;
+
+        std::vector<RsGxsGrpItem*> grpData;
+        bool ok = RsGenExchange::getGroupData(token, grpData);
+
+        if(ok)
+        {
+                std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
+
+		// Save List 
+		{
+			RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+
+			mOwnIds.clear();
+                	for(vit = grpData.begin(); vit != grpData.end(); vit++)
+	                {
+	                        RsGxsIdGroupItem* item = dynamic_cast<RsGxsIdGroupItem*>(*vit);
+
+
+				if (item->meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
+				{
+					mOwnIds.push_back(item->meta.mGroupId);	
+				}
+	                }
+		}
+
+		// Cache Items too.
+                for(vit = grpData.begin(); vit != grpData.end(); vit++)
+                {
+			RsGxsIdGroupItem* item = dynamic_cast<RsGxsIdGroupItem*>(*vit);
+			if (item->meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
+			{
+	
+				std::cerr << "p3IdService::cache_load_ownids() Loaded Id with Meta: ";
+				std::cerr << item->meta;
+				std::cerr << std::endl;
+	
+				/* cache the data */
+				cache_store(item);
+			}
+			delete item;
+                }
+
+        }
+	else
+	{
+		std::cerr << "p3IdService::cache_load_ownids() ERROR no data";
+		std::cerr << std::endl;
+
+		return false;
+	}
+	return true;
+}
+
+
+/************************************************************************************/
+/************************************************************************************/
+
 bool p3IdService::cachetest_getlist()
 {
-
-	{
-		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		if (mCacheTest_Active)
-		{
-			std::cerr << "p3IdService::cachetest_getlist() Already active";
-			std::cerr << std::endl;
-			return false;
-		}
-	}
-
 	std::cerr << "p3IdService::cachetest_getlist() making request";
 	std::cerr << std::endl;
 
@@ -853,119 +954,93 @@ bool p3IdService::cachetest_getlist()
 	uint32_t token = 0;
 	
 	RsGenExchange::getTokenService()->requestGroupInfo(token, ansType, opts);
-	
-	{
-		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		mCacheTest_Token = token;
-		mCacheTest_Active = true;
-	}
+	GxsTokenQueue::queueRequest(token, GXSIDREQ_CACHETEST);	
+
+	// Schedule Next Event.
+	RsTickEvent::schedule_in(GXSID_EVENT_CACHETEST, CACHETEST_PERIOD);
 	return true;
 }
 
-
-bool p3IdService::cachetest_request()
+bool p3IdService::cachetest_handlerequest(uint32_t token)
 {
-	uint32_t token = 0;
-	{
-		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		if (!mCacheTest_Active)
-		{
-			return false;
-		}
-		token = mCacheTest_Token;
-	}
-
-	std::cerr << "p3IdService::cachetest_request() checking request";
+	std::cerr << "p3IdService::cachetest_handlerequest() token: " << token;
 	std::cerr << std::endl;
-
-	uint32_t status = RsGenExchange::getTokenService()->requestStatus(token);
-
-	if (status == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
-	{
-		std::cerr << "p3IdService::cachetest_request() token ready: " << token;
-		std::cerr << std::endl;
 
         	std::list<RsGxsId> grpIds;
         	bool ok = RsGenExchange::getGroupList(token, grpIds);
 
-		{	
-			RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-			mCacheTest_Active = false;
-		}
+        if(ok)
+        {
+                std::list<RsGxsId>::iterator vit = grpIds.begin();
+                for(; vit != grpIds.end(); vit++)
+                {
+			/* 5% chance of checking it! */
+			if (RSRandom::random_f32() < 0.25)
+			{
+				std::cerr << "p3IdService::cachetest_request() Testing Id: " << *vit;
+				std::cerr << std::endl;
 
-	        if(ok)
-	        {
-	                std::list<RsGxsId>::iterator vit = grpIds.begin();
-	                for(; vit != grpIds.end(); vit++)
-	                {
-				/* 5% chance of checking it! */
-				if (RSRandom::random_f32() < 0.25)
+				/* try the cache! */
+				if (!haveKey(*vit))
 				{
-					std::cerr << "p3IdService::cachetest_request() Testing Id: " << *vit;
+					std::list<PeerId> nullpeers;
+					requestKey(*vit, nullpeers);
+
+					std::cerr << "p3IdService::cachetest_request() Requested Key Id: " << *vit;
 					std::cerr << std::endl;
-
-					/* try the cache! */
-					if (!haveKey(*vit))
+				}
+				else
+				{
+					RsTlvSecurityKey seckey;
+					if (getKey(*vit, seckey))
 					{
-						std::list<PeerId> nullpeers;
-						requestKey(*vit, nullpeers);
-
-						std::cerr << "p3IdService::cachetest_request() Requested Key Id: " << *vit;
+						std::cerr << "p3IdService::cachetest_request() Got Key OK Id: " << *vit;
 						std::cerr << std::endl;
-					}
-					else
-					{
-						RsTlvSecurityKey seckey;
-						if (getKey(*vit, seckey))
-						{
-							std::cerr << "p3IdService::cachetest_request() Got Key OK Id: " << *vit;
-							std::cerr << std::endl;
 
-							// success!
+						// success!
         						seckey.print(std::cerr, 10);
-							std::cerr << std::endl;
+						std::cerr << std::endl;
 
 
-						}
-						else
-						{
-							std::cerr << "p3IdService::cachetest_request() ERROR no Key for Id: " << *vit;
-							std::cerr << std::endl;
-						}
 					}
-
-					/* try private key too! */
-					if (!havePrivateKey(*vit))
+					else
 					{
-						requestPrivateKey(*vit);
-						std::cerr << "p3IdService::cachetest_request() Requested PrivateKey Id: " << *vit;
+						std::cerr << "p3IdService::cachetest_request() ERROR no Key for Id: " << *vit;
+						std::cerr << std::endl;
+					}
+				}
+
+				/* try private key too! */
+				if (!havePrivateKey(*vit))
+				{
+					requestPrivateKey(*vit);
+					std::cerr << "p3IdService::cachetest_request() Requested PrivateKey Id: " << *vit;
+					std::cerr << std::endl;
+				}
+				else
+				{
+					RsTlvSecurityKey seckey;
+					if (getPrivateKey(*vit, seckey))
+					{
+						// success!
+						std::cerr << "p3IdService::cachetest_request() Got PrivateKey OK Id: " << *vit;
 						std::cerr << std::endl;
 					}
 					else
 					{
-						RsTlvSecurityKey seckey;
-						if (getPrivateKey(*vit, seckey))
-						{
-							// success!
-							std::cerr << "p3IdService::cachetest_request() Got PrivateKey OK Id: " << *vit;
-							std::cerr << std::endl;
-						}
-						else
-						{
-							std::cerr << "p3IdService::cachetest_request() ERROR no PrivateKey for Id: " << *vit;
-							std::cerr << std::endl;
-						}
+						std::cerr << "p3IdService::cachetest_request() ERROR no PrivateKey for Id: " << *vit;
+						std::cerr << std::endl;
 					}
 				}
 			}
-	        }
-		else
-		{
-			std::cerr << "p3IdService::cache_load_for_token() ERROR no data";
-			std::cerr << std::endl;
-	
-			return false;
 		}
+        }
+	else
+	{
+		std::cerr << "p3IdService::cache_load_for_token() ERROR no data";
+		std::cerr << std::endl;
+
+		return false;
 	}
 	return true;
 }
@@ -985,59 +1060,44 @@ bool p3IdService::cachetest_request()
  *
  */
 
-#define ID_BACKGROUND_PERIOD	60
 
-int	p3IdService::scheduling_tick()
+bool	p3IdService::CacheArbitration(uint32_t mode)
 {
-	//std::cerr << "p3IdService::scheduling_tick()";
-	//std::cerr << std::endl;
+	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
-	/*** MUTEX TODO ***/
-	bool active;
-	uint32_t mode;
+	if (!mBgSchedule_Active)
 	{
-		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		active = mBgSchedule_Active;
-		mode = mBgSchedule_Mode;
+		std::cerr << "p3IdService::CacheArbitration() Okay";
+		std::cerr << std::endl;
+
+		mBgSchedule_Active = true;
+		mBgSchedule_Mode = mode;
+		return true;
 	}
 
-	if (active)
-	{
-		bool done = false;
-		if (mode == BG_PGPHASH)
-		{
-			done = pgphash_continue();
-		}
-		else
-		{
-			done = reputation_continue();
-		}
+	std::cerr << "p3IdService::CacheArbitration() Is busy...";
+	std::cerr << std::endl;
 
-		if (done)
-		{
-			RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-			mBgSchedule_Active = false;
-		}
-	}
-	else 
-	{
-		if (pgphash_start())
-		{
-			RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-			mBgSchedule_Mode = BG_PGPHASH;
-			mBgSchedule_Active = true;
-		}
-		else if (reputation_start())
-		{
-			RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-			mBgSchedule_Mode = BG_REPUTATION;
-			mBgSchedule_Active = true;
-		}
-	}
-
-	return 1;
+	return false;
 }
 
+void	p3IdService::CacheArbitrationDone(uint32_t mode)
+{
+	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+
+	if (mBgSchedule_Mode != mode)
+	{
+		/* issues */
+		std::cerr << "p3IdService::CacheArbitrationDone() ERROR Wrong Current Mode";
+		std::cerr << std::endl;
+		return;
+	}
+
+	std::cerr << "p3IdService::CacheArbitrationDone()";
+	std::cerr << std::endl;
+
+	mBgSchedule_Active = false;
+}
 
 /************************************************************************************/
 /************************************************************************************/
@@ -1079,7 +1139,6 @@ void p3IdService::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet
 		return;
 	}
 	
-
 	/********************* TEMP HACK UNTIL GXS FILLS IN GROUP_ID *****************/	
 	// find private admin key
 	std::map<std::string, RsTlvSecurityKey>::iterator mit = keySet.keys.begin();
@@ -1087,7 +1146,7 @@ void p3IdService::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet
 	{
 		RsTlvSecurityKey& pk = mit->second;
 	
-		if(pk.keyFlags & (RSTLV_KEY_DISTRIB_ADMIN | RSTLV_KEY_TYPE_FULL))
+		if(pk.keyFlags == (RSTLV_KEY_DISTRIB_ADMIN | RSTLV_KEY_TYPE_FULL))
 		{
 			item->group.mMeta.mGroupId = pk.keyId;
 			break;
@@ -1105,6 +1164,8 @@ void p3IdService::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet
 	/********************* TEMP HACK UNTIL GXS FILLS IN GROUP_ID *****************/	
 
 	std::cerr << "p3IdService::service_CreateGroup() for : " << item->group.mMeta.mGroupId;
+	std::cerr << std::endl;
+	std::cerr << "p3IdService::service_CreateGroup() Alt GroupId : " << item->meta.mGroupId;
 	std::cerr << std::endl;
 
 	if (item->group.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
@@ -1153,6 +1214,10 @@ void p3IdService::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet
 #endif
 
 	}
+
+	// Reload in a little bit.
+	// HACK to get it to work.
+	RsTickEvent::schedule_in(GXSID_EVENT_CACHEOWNIDS, OWNID_RELOAD_DELAY);
 }
 
 
@@ -1161,66 +1226,20 @@ void p3IdService::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet
 
 bool p3IdService::pgphash_start()
 {
-	/* every minute - run a background check */
-	time_t now = time(NULL);
-	bool doHash = false;
+	if (!CacheArbitration(BG_PGPHASH))
 	{
-		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		if (now -  mHashPgp_LastTs > HASHPGP_PERIOD)
-		{
-			doHash = true;
-			mHashPgp_LastTs = now;
-		}
-	}
-
-	if (doHash)
-	{
-		std::cerr << "p3IdService::pgphash_tick() starting";
+		std::cerr << "p3IdService::pgphash_start() Other Events running... Rescheduling";
 		std::cerr << std::endl;
-		pgphash_getlist();
-		return true;
-	}
-	return false;
-}
 
-
-bool p3IdService::pgphash_continue()
-{
-	std::cerr << "p3IdService::pgphash_continue()";
-	std::cerr << std::endl;
-	bool active;
-	{
-		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		active = mHashPgp_SearchActive;
+		/* reschedule in a bit */
+		RsTickEvent::schedule_in(GXSID_EVENT_PGPHASH, PGPHASH_RETRY_PERIOD);
+		return false;
 	}
 
-	if (active)
-	{
-		pgphash_request();
-	}
-	else
-	{
-		return pgphash_process();
-	}
-	return false;
-}
+	// SCHEDULE NEXT ONE.
+	RsTickEvent::schedule_in(GXSID_EVENT_PGPHASH, PGPHASH_PERIOD);
 
-
-
-bool p3IdService::pgphash_getlist()
-{
-
-	{
-		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		if (mHashPgp_SearchActive)
-		{
-			std::cerr << "p3IdService::pgphash_getlist() Already active";
-			std::cerr << std::endl;
-			return false;
-		}
-	}
-
-	std::cerr << "p3IdService::pgphash_getlist() making request";
+	std::cerr << "p3IdService::pgphash_start() making request";
 	std::cerr << std::endl;
 
 	getPgpIdList();
@@ -1237,127 +1256,98 @@ bool p3IdService::pgphash_getlist()
 	uint32_t token = 0;
 	
 	RsGenExchange::getTokenService()->requestGroupInfo(token, ansType, opts);
-	
-	{
-		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		mHashPgp_Token = token;
-		mHashPgp_SearchActive = true;
-	}
+	GxsTokenQueue::queueRequest(token, GXSIDREQ_PGPHASH);	
 	return true;
 }
 
 
-bool p3IdService::pgphash_request()
+bool p3IdService::pgphash_handlerequest(uint32_t token)
 {
-	uint32_t token = 0;
-	{
-		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		if (!mHashPgp_SearchActive)
-		{
-			std::cerr << "p3IdService::pgphash_request() Search Not Active returning false";
-			std::cerr << std::endl;
-
-			return false;
-		}
-		token = mHashPgp_Token;
-	}
-
-	std::cerr << "p3IdService::pgphash_request() checking request";
+	std::cerr << "p3IdService::pgphash_handlerequest(" << token << ")";
 	std::cerr << std::endl;
 
-	uint32_t status = RsGenExchange::getTokenService()->requestStatus(token);
+	// We need full data - for access to Hash & Signature.
+	// Perhaps we will change this to an initial pass through Meta, 
+	// and use this to discard lots of things.
 
-	if (status == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
-	{
-		std::cerr << "p3IdService::pgphash_request() token ready: " << token;
+	// Even better - we can set flags in the Meta Data, (IdType), 
+	// And use GXS to filter out all the AnonIds, and only have to process
+	// Proper Ids.
+
+	// We Will do this later!
+
+	std::vector<RsGxsIdGroup> groups;
+	std::vector<RsGxsIdGroup> groupsToProcess;
+	bool ok = getGroupData(token, groups);
+
+        if(ok)
+        {
+		std::cerr << "p3IdService::pgphash_request() Have " << groups.size() << " Groups";
 		std::cerr << std::endl;
 
-		// We need full data - for access to Hash & Signature.
-		// Perhaps we will change this to an initial pass through Meta, 
-		// and use this to discard lots of things.
-
-		// Even better - we can set flags in the Meta Data, (IdType), 
-		// And use GXS to filter out all the AnonIds, and only have to process
-		// Proper Ids.
-
-		// We Will do this later!
-
-		std::vector<RsGxsIdGroup> groups;
-		std::vector<RsGxsIdGroup> groupsToProcess;
-		bool ok = getGroupData(token, groups);
-
-		{	
-			RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-			mHashPgp_SearchActive = false;
-		}
-
-	        if(ok)
-	        {
-			std::cerr << "p3IdService::pgphash_request() Have " << groups.size() << " Groups";
+		std::vector<RsGxsIdGroup>::iterator vit;
+                for(vit = groups.begin(); vit != groups.end(); vit++)
+                {
+			std::cerr << "p3IdService::pgphash_request() Group Id: " << vit->mMeta.mGroupId;
 			std::cerr << std::endl;
 
-			std::vector<RsGxsIdGroup>::iterator vit;
-	                for(vit = groups.begin(); vit != groups.end(); vit++)
-	                {
-				std::cerr << "p3IdService::pgphash_request() Group Id: " << vit->mMeta.mGroupId;
+			/* Filter based on IdType */
+			if (!(vit->mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID))
+			{
+				std::cerr << "p3IdService::pgphash_request() discarding AnonID";
 				std::cerr << std::endl;
+				continue;
+			}
 
-				/* Filter based on IdType */
-				if (!(vit->mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID))
+			/* now we need to decode the Service String - see what is saved there */
+			SSGxsIdGroup ssdata;
+			if (ssdata.load(vit->mMeta.mServiceString))
+			{
+				if (ssdata.pgp.idKnown)
 				{
-					std::cerr << "p3IdService::pgphash_request() discarding AnonID";
+					std::cerr << "p3IdService::pgphash_request() discarding Already Known";
 					std::cerr << std::endl;
 					continue;
 				}
 
-				/* now we need to decode the Service String - see what is saved there */
-				SSGxsIdGroup ssdata;
-				if (ssdata.load(vit->mMeta.mServiceString))
-				{
-					if (ssdata.pgp.idKnown)
-					{
-						std::cerr << "p3IdService::pgphash_request() discarding Already Known";
-						std::cerr << std::endl;
-						continue;
-					}
-
-					/* Have a linear attempt policy -	
-					 * if zero checks - try now.
-					 * if 1 check, at least a day.
-					 * if 2 checks: 2days, etc.
-					 */
+				/* Have a linear attempt policy -	
+				 * if zero checks - try now.
+				 * if 1 check, at least a day.
+				 * if 2 checks: 2days, etc.
+				 */
 
 #define SECS_PER_DAY (3600 * 24)
-					time_t age = time(NULL) - ssdata.pgp.lastCheckTs;
-					time_t wait_period = ssdata.pgp.checkAttempts * SECS_PER_DAY;
-					if (wait_period > 30 * SECS_PER_DAY)
-					{
-						wait_period = 30 * SECS_PER_DAY;
-					}
-
-					if (age < wait_period)
-					{
-						std::cerr << "p3IdService::pgphash_request() discarding Recent Check";
-						std::cerr << std::endl;
-						continue;
-					}
+				time_t age = time(NULL) - ssdata.pgp.lastCheckTs;
+				time_t wait_period = ssdata.pgp.checkAttempts * SECS_PER_DAY;
+				if (wait_period > 30 * SECS_PER_DAY)
+				{
+					wait_period = 30 * SECS_PER_DAY;
 				}
 
-				/* if we get here -> then its to be processed */
-				std::cerr << "p3IdService::pgphash_request() ToProcess Group: " << vit->mMeta.mGroupId;
-				std::cerr << std::endl;
-
-				RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-				mGroupsToProcess.push_back(*vit);
+				if (age < wait_period)
+				{
+					std::cerr << "p3IdService::pgphash_request() discarding Recent Check";
+					std::cerr << std::endl;
+					continue;
+				}
 			}
-		}
-		else
-		{
-			std::cerr << "p3IdService::pgphash_request() getGroupData ERROR";
-			std::cerr << std::endl;
-		}
 
+			/* if we get here -> then its to be processed */
+			std::cerr << "p3IdService::pgphash_request() ToProcess Group: " << vit->mMeta.mGroupId;
+			std::cerr << std::endl;
+
+			RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+			mGroupsToProcess.push_back(*vit);
+		}
 	}
+	else
+	{
+		std::cerr << "p3IdService::pgphash_request() getGroupData ERROR";
+		std::cerr << std::endl;
+	}
+
+	// Schedule Processing.
+	RsTickEvent::schedule_in(GXSID_EVENT_PGPHASH_PROC, PGPHASH_PROC_PERIOD);
 	return true;
 }
 
@@ -1365,21 +1355,32 @@ bool p3IdService::pgphash_process()
 {
 	/* each time this is called - process one Id from mGroupsToProcess */
 	RsGxsIdGroup pg;
+	bool isDone = false;
 	{
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		if (mGroupsToProcess.empty())
+		if (!mGroupsToProcess.empty())
 		{
-			std::cerr << "p3IdService::pgphash_process() List Empty... Done";
+			pg = mGroupsToProcess.front();
+			mGroupsToProcess.pop_front();
+
+			std::cerr << "p3IdService::pgphash_process() Popped Group: " << pg.mMeta.mGroupId;
 			std::cerr << std::endl;
-			return true;
 		}
-
-		pg = mGroupsToProcess.front();
-		mGroupsToProcess.pop_front();
-
-		std::cerr << "p3IdService::pgphash_process() Popped Group: " << pg.mMeta.mGroupId;
-		std::cerr << std::endl;
+		else
+		{
+			isDone = true;
+		}
 	}
+
+	if (isDone)
+	{
+		std::cerr << "p3IdService::pgphash_process() List Empty... Done";
+		std::cerr << std::endl;
+		// FINISHED.
+		CacheArbitrationDone(BG_PGPHASH);
+		return true;
+	}
+	
 
 	SSGxsIdGroup ssdata;
 	ssdata.load(pg.mMeta.mServiceString); // attempt load - okay if fails.
@@ -1437,6 +1438,10 @@ bool p3IdService::pgphash_process()
 	std::string serviceString = ssdata.save();
 	setGroupServiceString(dummyToken, pg.mMeta.mGroupId, serviceString);
 
+	cache_update_if_cached(pg.mMeta.mGroupId, serviceString);
+
+	// Schedule Next Processing.
+	RsTickEvent::schedule_in(GXSID_EVENT_PGPHASH_PROC, PGPHASH_PROC_PERIOD);
 	return false; // as there are more items on the queue to process.
 }
 
@@ -1793,14 +1798,22 @@ std::string rsIdTypeToString(uint32_t idtype)
 
 bool 	p3IdService::reputation_start()
 {
-	return false;
-}
+	if (!CacheArbitration(BG_REPUTATION))
+	{
+		std::cerr << "p3IdService::reputation_start() Other Events running... Rescheduling";
+		std::cerr << std::endl;
 
+		/* reschedule in a bit */
+		RsTickEvent::schedule_in(GXSID_EVENT_REPUTATION, REPUTATION_RETRY_PERIOD);
+		return false;
+	}
 
-bool 	p3IdService::reputation_continue()
-{
+	CacheArbitrationDone(BG_REPUTATION);
+	// SCHEDULE NEXT ONE.
+	RsTickEvent::schedule_in(GXSID_EVENT_REPUTATION, REPUTATION_PERIOD);
 	return true;
 }
+
 
 
 #define ID_BACKGROUND_PERIOD	60
@@ -2372,4 +2385,90 @@ std::ostream &operator<<(std::ostream &out, const RsGxsIdOpinion &opinion)
 	
 	return out;
 }
+
+
+
+
+
+
+
+
+
+
+        // Overloaded from GxsTokenQueue for Request callbacks.
+void p3IdService::handleResponse(uint32_t token, uint32_t req_type)
+{
+	std::cerr << "p3IdService::handleResponse(" << token << "," << req_type << ")";
+	std::cerr << std::endl;
+
+	// stuff.
+	switch(req_type)
+	{
+		case GXSIDREQ_CACHEOWNIDS:
+			cache_load_ownids(token);
+			break;
+		case GXSIDREQ_CACHELOAD:
+			cache_load_for_token(token);
+			break;
+		case GXSIDREQ_PGPHASH:
+			pgphash_handlerequest(token);
+			break;
+		case GXSIDREQ_CACHETEST:
+			cachetest_handlerequest(token);
+			break;
+
+		case GXSIDREQ_REPUTATION:
+
+			break;
+		default:
+			/* error */
+			std::cerr << "p3IdService::handleResponse() Unknown Request Type: " << req_type;
+			std::cerr << std::endl;
+			break;
+	}
+}
+
+
+	// Overloaded from RsTickEvent for Event callbacks.
+void p3IdService::handle_event(uint32_t event_type)
+{
+	std::cerr << "p3IdService::handle_event(" << event_type << ")";
+	std::cerr << std::endl;
+
+	// stuff.
+	switch(event_type)
+	{
+		case GXSID_EVENT_CACHEOWNIDS:
+			cache_request_ownids();
+			break;
+
+		case GXSID_EVENT_CACHELOAD:
+			cache_start_load();
+			break;
+
+		case GXSID_EVENT_CACHETEST:
+			cachetest_getlist();
+			break;
+
+		case GXSID_EVENT_REPUTATION:
+			reputation_start();
+			break;
+
+		case GXSID_EVENT_PGPHASH:
+			pgphash_start();
+			break;
+
+		case GXSID_EVENT_PGPHASH_PROC:
+			pgphash_process();
+			break;
+
+		default:
+			/* error */
+			std::cerr << "p3IdService::handle_event() Unknown Event Type: " << event_type;
+			std::cerr << std::endl;
+			break;
+	}
+}
+
+
 

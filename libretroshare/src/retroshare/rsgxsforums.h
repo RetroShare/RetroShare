@@ -89,8 +89,6 @@ virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgI
 virtual bool createGroup(uint32_t &token, RsGxsForumGroup &group) = 0;
 virtual bool createMsg(uint32_t &token, RsGxsForumMsg &msg) = 0;
 
-virtual bool generateDummyData() = 0;
-
 };
 
 

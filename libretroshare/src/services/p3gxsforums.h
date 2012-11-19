@@ -30,6 +30,8 @@
 #include "retroshare/rsgxsforums.h"
 #include "gxs/rsgenexchange.h"
 
+#include "util/rstickevent.h"
+
 #include <map>
 #include <string>
 
@@ -37,7 +39,8 @@
  *
  */
 
-class p3GxsForums: public RsGenExchange, public RsGxsForums
+class p3GxsForums: public RsGenExchange, public RsGxsForums, 
+	public RsTickEvent	/* only needed for testing - remove after */
 {
 	public:
 
@@ -66,8 +69,13 @@ virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgI
 virtual bool createGroup(uint32_t &token, RsGxsForumGroup &group);
 virtual bool createMsg(uint32_t &token, RsGxsForumMsg &msg);
 
-virtual bool generateDummyData();
+
+        // Overloaded from RsTickEvent.
+virtual void handle_event(uint32_t event_type);
+
 	private:
+
+virtual bool generateDummyData();
 
 std::string genRandomId();
 

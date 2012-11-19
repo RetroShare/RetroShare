@@ -133,20 +133,22 @@ template<class Key, class Value> bool RsMemCache<Key, Value>::store(const Key &k
 	std::cerr << "RsMemCache::store()";
 	std::cerr << std::endl;
 
+	/* update lrumap entry */
+        time_t old_ts = 0;
+        time_t new_ts = time(NULL);
+
 	// For consistency
 	typename std::map<Key, cache_data>::const_iterator it;
 	it = mDataMap.find(key);
 	if (it != mDataMap.end())
 	{
 		// ERROR.
-		std::cerr << "RsMemCache::store() ERROR entry exists already";
+		std::cerr << "RsMemCache::store() WARNING overriding existing entry";
 		std::cerr << std::endl;
-		return false;
+
+		old_ts = it->second.ts;
 	}
 
-	/* add new lrumap entry */
-        time_t old_ts = 0;
-        time_t new_ts = time(NULL);
 
 	mDataMap[key] = cache_data(key, data, new_ts);
         mDataCount++;

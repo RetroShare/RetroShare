@@ -430,7 +430,8 @@ HEADERS += retroshare/rsgame.h \
             util/rsrandom.h \
             util/radix64.h \
             util/pugiconfig.h \
-            util/rsmemcache.h
+            util/rsmemcache.h \
+            util/rstickevent.h
 
         SOURCES += dbase/cachestrapper.cc \
             dbase/fimonitor.cc \
@@ -564,7 +565,8 @@ HEADERS += retroshare/rsgame.h \
             util/rsthreads.cc \
             util/rsversion.cc \
             util/rswin.cc \
-            util/rsrandom.cc
+            util/rsrandom.cc \
+            util/rstickevent.cc
 
         upnp_miniupnpc {
             HEADERS += upnp/upnputil.h upnp/upnphandler_miniupnp.h
@@ -614,6 +616,7 @@ HEADERS += retroshare/rsgame.h \
                 gxs/gxscoreserver.h \
                 gxs/gxssecurity.h \
                 gxs/rsgxsifaceimpl.h \
+                gxs/gxstokenqueue.h \
                 services/p3posted.h \
                 retroshare/rsposted.h \
                 serialiser/rsposteditems.h
@@ -633,6 +636,7 @@ HEADERS += retroshare/rsgame.h \
                 gxs/gxscoreserver.cc \
                 gxs/gxssecurity.cc \
                 gxs/rsgxsifaceimpl.cc \
+                gxs/gxstokenqueue.cc \
                 services/p3posted.cc \
                 serialiser/rsposteditems.cc
 

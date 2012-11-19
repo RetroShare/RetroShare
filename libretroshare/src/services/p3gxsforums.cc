@@ -26,6 +26,8 @@
 #include "services/p3gxsforums.h"
 #include "serialiser/rsgxsforumitems.h"
 
+#include <retroshare/rsidentity.h>
+
 
 #include "gxs/rsgxsflags.h"
 #include <stdio.h>
@@ -41,6 +43,8 @@
 RsGxsForums *rsGxsForums = NULL;
 
 
+#define FORUM_TESTEVENT_DUMMYDATA	0x0001
+#define DUMMYDATA_PERIOD		60	// long enough for some RsIdentities to be generated.
 
 /********************************************************************************/
 /******************* Startup / Tick    ******************************************/
@@ -51,6 +55,7 @@ p3GxsForums::p3GxsForums(RsGeneralDataService *gds, RsNetworkExchangeService *ne
 {
 	// For Dummy Msgs.
 	mGenActive = false;
+	RsTickEvent::schedule_in(FORUM_TESTEVENT_DUMMYDATA, DUMMYDATA_PERIOD);
 }
 
 void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
@@ -61,6 +66,7 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 void	p3GxsForums::service_tick()
 {
 	dummy_tick();
+	RsTickEvent::tick_events();
 	return;
 }
 
@@ -400,6 +406,28 @@ bool p3GxsForums::generateMessage(uint32_t &token, const RsGxsGroupId &grpId, co
 	msg.mMeta.mThreadId = threadId;
 	msg.mMeta.mParentId = parentId;
 
+	/* chose a random Id to sign with */
+	std::list<RsGxsId> ownIds;
+	std::list<RsGxsId>::iterator it;
+
+	rsIdentity->getOwnIds(ownIds);
+
+	uint32_t idx = (uint32_t) (ownIds.size() * RSRandom::random_f32());
+	int i = 0;
+	for(it = ownIds.begin(); (it != ownIds.end()) && (i < idx); it++, i++);
+
+	if (it != ownIds.end())
+	{
+		std::cerr << "p3GxsForums::generateMessage() Author: " << *it;
+		std::cerr << std::endl;
+		msg.mMeta.mAuthorId = *it;
+	} 
+	else
+	{
+		std::cerr << "p3GxsForums::generateMessage() No Author!";
+		std::cerr << std::endl;
+	} 
+
 	createMsg(token, msg);
 
 	return true;
@@ -415,5 +443,27 @@ bool p3GxsForums::generateGroup(uint32_t &token, std::string groupName)
 	createGroup(token, forum);
 
 	return true;
+}
+
+
+        // Overloaded from RsTickEvent for Event callbacks.
+void p3GxsForums::handle_event(uint32_t event_type)
+{
+	std::cerr << "p3GxsForums::handle_event(" << event_type << ")";
+	std::cerr << std::endl;
+
+	// stuff.
+	switch(event_type)
+	{
+		case FORUM_TESTEVENT_DUMMYDATA:
+			generateDummyData();
+			break;
+
+		default:
+			/* error */
+			std::cerr << "p3GxsForums::handle_event() Unknown Event Type: " << event_type;
+			std::cerr << std::endl;
+			break;
+	}
 }
 

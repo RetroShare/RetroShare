@@ -396,7 +396,7 @@ bool RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBina
         for(; mit != mit_end; mit++)
         {
 
-                pub_key_found = mit->second.keyFlags & (RSTLV_KEY_DISTRIB_PRIVATE | RSTLV_KEY_TYPE_FULL);
+                pub_key_found = mit->second.keyFlags == (RSTLV_KEY_DISTRIB_PRIVATE | RSTLV_KEY_TYPE_FULL);
                 if(pub_key_found)
                         break;
         }
@@ -1342,7 +1342,7 @@ void RsGenExchange::publishGrps()
         {
             RsTlvSecurityKey& key = mit_keys->second;
 
-            if(key.keyFlags & (RSTLV_KEY_DISTRIB_ADMIN | RSTLV_KEY_TYPE_FULL))
+            if(key.keyFlags == (RSTLV_KEY_DISTRIB_ADMIN | RSTLV_KEY_TYPE_FULL))
             {
                 privAdminKey = key;
                 privKeyFound = true;
@@ -1493,7 +1493,7 @@ void RsGenExchange::createDummyGroup(RsGxsGrpItem *grpItem)
     {
         RsTlvSecurityKey& key = mit_keys->second;
 
-        if(key.keyFlags & (RSTLV_KEY_DISTRIB_ADMIN | RSTLV_KEY_TYPE_FULL))
+        if(key.keyFlags == (RSTLV_KEY_DISTRIB_ADMIN | RSTLV_KEY_TYPE_FULL))
         {
             privAdminKey = key;
             privKeyFound = true;

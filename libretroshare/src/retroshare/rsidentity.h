@@ -160,13 +160,24 @@ typedef std::string RsGxsId; // TMP. =>
 class RsIdentityDetails
 {
 	public:
+	RsIdentityDetails()
+	:mIsOwnId(false), mPgpLinked(false), mPgpKnown(false),
+	mOpinion(0), mReputation(0) { return; }
 
-	RsGxsId id;
+	RsGxsId mId;
 
 	// identity details.
+	std::string mNickname;
+	bool mIsOwnId;
 
+	// PGP Stuff.
+	bool mPgpLinked;
+	bool mPgpKnown;
+	std::string mPgpId;
 
 	// reputation details.
+	double mOpinion;	
+	double mReputation;
 };
 
 
@@ -261,7 +272,7 @@ public:
 	// We cache all identities, and provide alternative (instantaneous) 
 	// functions to extract info, rather than the standard Token system.
 
-virtual bool  getNickname(const RsGxsId &id, std::string &nickname) = 0;
+//virtual bool  getNickname(const RsGxsId &id, std::string &nickname) = 0;
 virtual bool  getIdDetails(const RsGxsId &id, RsIdentityDetails &details) = 0;
 virtual bool  getOwnIds(std::list<RsGxsId> &ownIds) = 0;
 

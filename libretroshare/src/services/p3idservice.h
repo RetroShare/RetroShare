@@ -31,10 +31,13 @@
 #include "gxs/rsgenexchange.h"		// GXS service.
 #include "gxs/rsgixs.h"			// Internal Interfaces.
 
+#include "gxs/gxstokenqueue.h"		
+
 #include <map>
 #include <string>
 
 #include "util/rsmemcache.h"
+#include "util/rstickevent.h"
 
 #include "pqi/authgpg.h"
 
@@ -132,30 +135,32 @@ class RsGxsIdCache
 	RsGxsIdCache();
 	RsGxsIdCache(const RsGxsIdGroupItem *item, const RsTlvSecurityKey &in_pkey);
 
-	RsGxsId id;
-	std::string name;
-	RsTlvSecurityKey pubkey;
-	double reputation;
-	time_t lastUsedTs;
+void	updateServiceString(std::string serviceString);
 
+	RsIdentityDetails details;
+	RsTlvSecurityKey pubkey;
 };
 
 
+#if 0
 class LruData
 {
 	public:
 	RsGxsId key;
 };
+#endif
 
 	
 
 // Not sure exactly what should be inherited here?
 // Chris - please correct as necessary.
 
-class p3IdService: public RsGxsIdExchange, public RsIdentity
+class p3IdService: public RsGxsIdExchange, public RsIdentity, 
+		public GxsTokenQueue, public RsTickEvent
 {
 	public:
 	p3IdService(RsGeneralDataService* gds, RsNetworkExchangeService* nes);
+
 
 	virtual void service_tick(); // needed for background processing.
 
@@ -174,11 +179,19 @@ virtual bool createMsg(uint32_t& token, RsGxsIdOpinion &opinion);
 
 	/**************** RsIdentity External Interface.
 	 * Notes:
+	 * 
+	 * All the data is cached together for the moment - We should probably
+	 * seperate and sort this out.
+	 * 
+	 * Also need to handle Cache updates / invalidation from internal changes.
+	 * 
 	 */
 
-virtual bool  getNickname(const RsGxsId &id, std::string &nickname);
+//virtual bool  getNickname(const RsGxsId &id, std::string &nickname);
 virtual bool  getIdDetails(const RsGxsId &id, RsIdentityDetails &details);
 virtual bool  getOwnIds(std::list<RsGxsId> &ownIds);
+
+
 
         // 
 virtual bool submitOpinion(uint32_t& token, RsIdOpinion &opinion);
@@ -208,6 +221,13 @@ virtual int  getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key);
 virtual bool getReputation(const RsGxsId &id, const GixsReputation &rep);
 
 
+
+        // Overloaded from GxsTokenQueue for Request callbacks.
+virtual void handleResponse(uint32_t token, uint32_t req_type);
+
+        // Overloaded from RsTickEvent.
+virtual void handle_event(uint32_t event_type);
+
 	protected:
 
 	/** Notifications **/
@@ -226,20 +246,27 @@ virtual void service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& key
 
 	bool cache_request_load(const RsGxsId &id);
 	bool cache_start_load();
-	bool cache_check_loading();
 	bool cache_load_for_token(uint32_t token);
 
 	bool cache_store(const RsGxsIdGroupItem *item);
+	bool cache_update_if_cached(const RsGxsId &id, std::string serviceString);
 
-	time_t mCacheLoad_LastCycle;
-	int mCacheLoad_Status;
+	// Mutex protected.
+
 	std::list<RsGxsId> mCacheLoad_ToCache;
-	std::list<uint32_t> mCacheLoad_Tokens;
 
 	// Switching to RsMemCache for Key Caching.
 	RsMemCache<RsGxsId, RsGxsIdCache> mPublicKeyCache;
 	RsMemCache<RsGxsId, RsGxsIdCache> mPrivateKeyCache;
 
+/************************************************************************
+ * Refreshing own Ids.
+ *
+ */
+	bool cache_request_ownids();
+	bool cache_load_ownids(uint32_t token);
+
+	std::list<RsGxsId> mOwnIds;
 
 /************************************************************************
  * Test fns for Caching.
@@ -247,20 +274,14 @@ virtual void service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& key
  */
 	bool cachetest_tick();
 	bool cachetest_getlist();
-	bool cachetest_request();
-
-	/* MUTEX PROTECTED DATA (mIdMtx - maybe should use a 2nd?) */
-
-	time_t mCacheTest_LastTs;
-	bool mCacheTest_Active;
-	uint32_t mCacheTest_Token;
-
+	bool cachetest_handlerequest(uint32_t token);
 
 /************************************************************************
  * for processing background tasks that use the serviceString.
  * - must be mutually exclusive to avoid clashes.
  */
-	int scheduling_tick();
+	bool CacheArbitration(uint32_t mode);
+	void CacheArbitrationDone(uint32_t mode);
 
 	bool mBgSchedule_Active;
 	uint32_t mBgSchedule_Mode;
@@ -270,19 +291,13 @@ virtual void service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& key
  *
  */
 	bool pgphash_start();
-	bool pgphash_continue();
-
-	bool pgphash_getlist();
-	bool pgphash_request();
+	bool pgphash_handlerequest(uint32_t token);
 	bool pgphash_process();
 
 	bool checkId(const RsGxsIdGroup &grp, PGPIdType &pgp_id);
 	void getPgpIdList();
-	/* MUTEX PROTECTED DATA (mIdMtx - maybe should use a 2nd?) */
 
-	time_t mHashPgp_LastTs;
-	bool mHashPgp_SearchActive;
-	uint32_t mHashPgp_Token;
+	/* MUTEX PROTECTED DATA (mIdMtx - maybe should use a 2nd?) */
 
 	std::map<PGPIdType, PGPFingerprintType> mPgpFingerprintMap;
 	std::list<RsGxsIdGroup> mGroupsToProcess;
