@@ -35,6 +35,7 @@
 #include "gui/RetroShareLink.h"
 #include "gui/common/Emoticons.h"
 
+#include "util/HandleRichText.h"
 #include "util/misc.h"
 
 #include <sys/stat.h>
@@ -224,10 +225,9 @@ void  CreateForumV2Msg::loadFormInformation()
 void  CreateForumV2Msg::createMsg()
 {
     QString name = misc::removeNewLine(ui.forumSubject->text());
-    QString desc = ui.forumMessage->toHtml();
+    QString desc;
 
-	 if(desc == QTextDocument(ui.forumMessage->toPlainText()).toHtml())
-		 desc = ui.forumMessage->toPlainText() ;
+	RsHtml::optimizeHtml(ui.forumMessage, desc);
 
     if(name.isEmpty())
     {	/* error message */

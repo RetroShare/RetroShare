@@ -353,8 +353,6 @@ void ForumMsgItem::sendMsg()
 		return;
 	}
 
-	QString desc = textEdit->toHtml();
-
 	if(textEdit->toPlainText().isEmpty())
 	{	/* error message */
 		QMessageBox::warning(this, "RetroShare",tr("Please give a Text Message"),
@@ -381,6 +379,9 @@ void ForumMsgItem::sendMsg()
 		} else {
 			msgInfo.title = L"Re: " + msg.title;
 		}
+
+		QString desc;
+		RsHtml::optimizeHtml(textEdit, desc);
 
 		msgInfo.msg = desc.toStdWString();
 		msgInfo.msgflags = 0;
