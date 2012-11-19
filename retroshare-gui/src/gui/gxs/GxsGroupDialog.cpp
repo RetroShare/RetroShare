@@ -84,11 +84,13 @@ GxsGroupDialog::GxsGroupDialog(TokenQueue *tokenQueue, uint32_t enableFlags, uin
 
     /* Setup Reasonable Defaults */
 
+	ui.idChooser->loadIds(0,"");
 }
 
 GxsGroupDialog::GxsGroupDialog(const RsGroupMetaData &grpMeta, uint32_t mode, QWidget *parent)
     : QDialog(parent), mMode(mode), mGrpMeta(grpMeta) {
 
+	ui.idChooser->loadIds(0,"");
 }
 
 void GxsGroupDialog::setMode(uint32_t mode)

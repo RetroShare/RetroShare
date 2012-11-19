@@ -187,6 +187,9 @@ border-radius: 10px;
               </spacer>
              </item>
              <item>
+              <widget class="GxsIdChooser" name="idChooser"/>
+             </item>
+             <item>
               <widget class="QCheckBox" name="pubKeyShare_cb">
                <property name="toolTip">
                 <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -553,6 +556,11 @@ p, li { white-space: pre-wrap; }
    <extends>QWidget</extends>
    <header>gui/common/FriendSelectionWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GxsIdChooser</class>
+   <extends>QComboBox</extends>
+   <header>gui/gxs/GxsIdChooser.h</header>
   </customwidget>
  </customwidgets>
  <resources>

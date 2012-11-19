@@ -58,7 +58,6 @@ GxsForumGroupDialog::GxsForumGroupDialog(TokenQueue *tokenQueue, QWidget *parent
         :GxsGroupDialog(tokenQueue, ForumCreateEnabledFlags, ForumCreateDefaultsFlags, parent, "Create New Forum")
 {
 
-
 }
 
 GxsForumGroupDialog::GxsForumGroupDialog(const RsGxsForumGroup &group, QWidget *parent)

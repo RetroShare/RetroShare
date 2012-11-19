@@ -1017,10 +1017,14 @@ gxsgui {
 		gui/gxs/GxsCommentTreeWidget.h \
 		gui/gxs/WikiGroupDialog.h \
 		gui/gxs/GxsForumGroupDialog.h \
+		gui/gxs/GxsIdChooser.h \
+		gui/gxs/GxsIdLabel.h \
+		gui/gxs/GxsIdTreeWidgetItem.h \
 
 #            gui/gxs/GxsMsgDialog.h \
 
         FORMS += gui/gxs/GxsGroupDialog.ui \
+
 #	    gui/gxs/GxsMsgDialog.ui \
 #	    gui/gxs/GxsCommentTreeWidget.ui \
 
@@ -1028,6 +1032,9 @@ gxsgui {
 		gui/gxs/GxsCommentTreeWidget.cpp \
 		gui/gxs/WikiGroupDialog.cpp \
 		gui/gxs/GxsForumGroupDialog.cpp \
+		gui/gxs/GxsIdChooser.cpp \
+		gui/gxs/GxsIdLabel.cpp \
+		gui/gxs/GxsIdTreeWidgetItem.cpp \
 
 #            gui/gxs/GxsMsgDialog.cpp \
 

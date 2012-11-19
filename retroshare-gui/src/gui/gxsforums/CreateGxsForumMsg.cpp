@@ -104,6 +104,9 @@ void  CreateGxsForumMsg::newMsg()
 	mParentMsgLoaded = false;
 	mForumMetaLoaded = false;
 
+	/* fill in the available OwnIds for signing */
+	ui.idChooser->loadIds(IDCHOOSER_ID_REQUIRED, "");
+
 	/* request Data */
 	{
 		RsTokReqOptions opts;
@@ -259,8 +262,29 @@ void  CreateGxsForumMsg::createMsg()
 #endif
 	
 	if ((msg.mMsg == "") && (msg.mMeta.mMsgName == ""))
-        return; /* do nothing */
-	
+        	return; /* do nothing */
+
+	if (ui.signBox->isChecked())
+	{
+		RsGxsId authorId;
+		if (ui.idChooser->getChosenId(authorId))
+		{
+			msg.mMeta.mAuthorId = authorId;
+			std::cerr << "CreateGxsForumMsg::createMsg() AuthorId: " << authorId;
+			std::cerr << std::endl;
+		}
+		else
+		{
+			std::cerr << "CreateGxsForumMsg::createMsg() ERROR GETTING AuthorId!";
+			std::cerr << std::endl;
+		}
+	}
+	else
+	{
+		std::cerr << "CreateGxsForumMsg::createMsg() No Signature (for now :)";
+		std::cerr << std::endl;
+	}
+
 	uint32_t token;
 	rsGxsForums->createMsg(token, msg);
 	close();

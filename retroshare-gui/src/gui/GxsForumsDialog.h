@@ -34,6 +34,8 @@
 
 #include <retroshare/rsgxsforums.h>
 
+#include "gui/gxs/GxsIdTreeWidgetItem.h"
+
 class ForumInfo;
 
 
@@ -202,8 +204,10 @@ private:
 	void requestMsgData_ReplyMessage(const RsGxsGrpMsgIdPair &msgId);
 	void loadMsgData_ReplyMessage(const uint32_t &token);
 
-	bool convertMsgToThreadWidget(const RsGxsForumMsg &msgInfo, std::string authorName,
-                                        bool useChildTS, uint32_t filterColumn, QTreeWidgetItem *item);
+	bool convertMsgToThreadWidget(const RsGxsForumMsg &msgInfo,
+                                        bool useChildTS, uint32_t filterColumn, GxsIdTreeWidgetItem *item);
+	//bool convertMsgToThreadWidget(const RsGxsForumMsg &msgInfo, std::string authorName,
+         //                               bool useChildTS, uint32_t filterColumn, QTreeWidgetItem *item);
 
 	TokenQueue *mForumQueue;
 

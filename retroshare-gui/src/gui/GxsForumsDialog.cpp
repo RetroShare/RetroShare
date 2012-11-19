@@ -241,10 +241,6 @@ GxsForumsDialog::GxsForumsDialog(QWidget *parent)
 
     ui.threadTreeWidget->installEventFilter(this);
 
-
-
-    rsGxsForums->generateDummyData();
-
     /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
@@ -2094,8 +2090,8 @@ void GxsForumsDialog::loadGroupThreadData_InsertThreads(const uint32_t &token)
 	}
 }
 
-bool GxsForumsDialog::convertMsgToThreadWidget(const RsGxsForumMsg &msgInfo, std::string authorName, 
-					bool useChildTS, uint32_t filterColumn, QTreeWidgetItem *item)
+bool GxsForumsDialog::convertMsgToThreadWidget(const RsGxsForumMsg &msgInfo, 
+			bool useChildTS, uint32_t filterColumn, GxsIdTreeWidgetItem *item)
 {
         QString text;
 
@@ -2120,6 +2116,8 @@ bool GxsForumsDialog::convertMsgToThreadWidget(const RsGxsForumMsg &msgInfo, std
 
         item->setText(COLUMN_THREAD_TITLE, GxsForumsDialog::titleFromInfo(msgInfo.mMeta));
 
+	item->setId(msgInfo.mMeta.mAuthorId, COLUMN_THREAD_AUTHOR);
+#if 0
         text = QString::fromUtf8(authorName.c_str());
 
         if (text.isEmpty())
@@ -2130,6 +2128,7 @@ bool GxsForumsDialog::convertMsgToThreadWidget(const RsGxsForumMsg &msgInfo, std
         {
             item->setText(COLUMN_THREAD_AUTHOR, text);
         }
+#endif
 
 #ifdef TOGXS
         if (msgInfo.mMeta.mMsgFlags & RS_DISTRIB_AUTHEN_REQ)
@@ -2173,11 +2172,13 @@ bool GxsForumsDialog::convertMsgToThreadWidget(const RsGxsForumMsg &msgInfo, std
 
 void GxsForumsDialog::loadForumBaseThread(const RsGxsForumMsg &msg)
 {
-        std::string authorName = rsPeers->getPeerName(msg.mMeta.mAuthorId);
+        //std::string authorName = rsPeers->getPeerName(msg.mMeta.mAuthorId);
 	
-	QTreeWidgetItem *item = new QTreeWidgetItem(); // no Parent.	
+	//QTreeWidgetItem *item = new QTreeWidgetItem(); // no Parent.	
+	GxsIdTreeWidgetItem *item = new GxsIdTreeWidgetItem(); // no Parent.	
 	
-	convertMsgToThreadWidget(msg, authorName, mThreadLoad.UseChildTS, mThreadLoad.FilterColumn, item);
+	//convertMsgToThreadWidget(msg, authorName, mThreadLoad.UseChildTS, mThreadLoad.FilterColumn, item);
+	convertMsgToThreadWidget(msg, mThreadLoad.UseChildTS, mThreadLoad.FilterColumn, item);
 
 	/* request Children Data */
 	uint32_t token;
@@ -2262,21 +2263,23 @@ void GxsForumsDialog::loadChildData_InsertThreads(const uint32_t &token)
 
 void GxsForumsDialog::loadForumChildMsg(const RsGxsForumMsg &msg, QTreeWidgetItem *parent)
 {
-        std::string authorName = rsPeers->getPeerName(msg.mMeta.mAuthorId);
+        //std::string authorName = rsPeers->getPeerName(msg.mMeta.mAuthorId);
 
-	QTreeWidgetItem *child = NULL;
+	//QTreeWidgetItem *child = NULL;
+	GxsIdTreeWidgetItem *child = NULL;
 
 	if (mThreadLoad.FlatView)
 	{
-		child = new QTreeWidgetItem(); // no Parent.	
+		child = new GxsIdTreeWidgetItem(); // no Parent.	
 	}
 	else
 	{
-		child = new QTreeWidgetItem(parent); 
+		child = new GxsIdTreeWidgetItem(parent); 
 	}
 
 	
-	convertMsgToThreadWidget(msg, authorName, mThreadLoad.UseChildTS, mThreadLoad.FilterColumn, child);
+	convertMsgToThreadWidget(msg, mThreadLoad.UseChildTS, mThreadLoad.FilterColumn, child);
+	//convertMsgToThreadWidget(msg, authorName, mThreadLoad.UseChildTS, mThreadLoad.FilterColumn, child);
 
 	/* request Children Data */
 	uint32_t token;
