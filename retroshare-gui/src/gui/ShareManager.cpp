@@ -122,6 +122,9 @@ void ShareManager::shareddirListCostumPopupMenu( QPoint /*point*/ )
 /** Loads the settings for this page */
 void ShareManager::load()
 {
+    if(isLoading)
+        return ;
+
     isLoading = true;
     std::cerr << "ShareManager:: In load !!!!!" << std::endl ;
 
@@ -188,6 +191,8 @@ void ShareManager::updateFlags()
     if(isLoading)
         return ;
 
+	 isLoading = true ;	// stops GUI update
+
     std::cerr << "Updating flags" << std::endl;
 
     std::list<SharedDirInfo>::iterator it;
@@ -203,11 +208,14 @@ void ShareManager::updateFlags()
         if( (*it).shareflags != current_flags )
         {
             (*it).shareflags = current_flags ;
-            rsFiles->updateShareFlags(*it) ;	// modifies the flags
+				rsFiles->updateShareFlags(*it) ;	// modifies the flags
 
-            std::cout << "Updating share flags for directory " << (*it).filename << " to " << current_flags << std::endl ;
+				std::cerr << "Push into the list: flags " << current_flags << " for directory: " << (*it).filename << std::endl;
         }
     }
+
+    isLoading = false ;	// re-enable GUI load
+	 load() ;				// update the GUI.
 }
 
 void ShareManager::updateGroups()
