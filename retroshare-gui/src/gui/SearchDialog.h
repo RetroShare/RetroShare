@@ -36,13 +36,28 @@ class SearchDialog : public MainPage
 {
     Q_OBJECT
 
-        public:
+    Q_PROPERTY(QColor textColorLocal READ textColorLocal WRITE setTextColorLocal)
+    Q_PROPERTY(QColor textColorNoSources READ textColorNoSources WRITE setTextColorNoSources)
+    Q_PROPERTY(QColor textColorLowSources READ textColorLowSources WRITE setTextColorLowSources)
+    Q_PROPERTY(QColor textColorHighSources READ textColorHighSources WRITE setTextColorHighSources)
+
+public:
 /** Default Constructor */
     SearchDialog(QWidget *parent = 0);
 /** Default Destructor */
     ~SearchDialog();
 
     void searchKeywords(const QString& keywords);
+
+    QColor textColorLocal() const { return mTextColorLocal; }
+    QColor textColorNoSources() const { return mTextColorNoSources; }
+    QColor textColorLowSources() const { return mTextColorLowSources; }
+    QColor textColorHighSources() const { return mTextColorHighSources; }
+
+    void setTextColorLocal(QColor color) { mTextColorLocal = color; }
+    void setTextColorNoSources(QColor color) { mTextColorNoSources = color; }
+    void setTextColorLowSources(QColor color) { mTextColorLowSources = color; }
+    void setTextColorHighSources(QColor color) { mTextColorHighSources = color; }
 
 public slots:
 		void updateFiles(qulonglong request_id,FileDetail file) ;
@@ -129,6 +144,12 @@ private:
 
     RSTreeWidgetItemCompareRole *compareSummaryRole;
     RSTreeWidgetItemCompareRole *compareResultRole;
+
+	/* Color definitions (for standard see qss.default) */
+	QColor mTextColorLocal;
+	QColor mTextColorNoSources;
+	QColor mTextColorLowSources;
+	QColor mTextColorHighSources;
 
 /** Qt Designer generated object */
     Ui::SearchDialog ui;

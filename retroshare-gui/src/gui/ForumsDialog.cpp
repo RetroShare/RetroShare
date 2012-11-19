@@ -267,6 +267,19 @@ void ForumsDialog::processSettings(bool bLoad)
     m_bProcessSettings = false;
 }
 
+void ForumsDialog::changeEvent(QEvent *e)
+{
+    QWidget::changeEvent(e);
+    switch (e->type()) {
+    case QEvent::StyleChange:
+        CalculateIconsAndFonts();
+        break;
+    default:
+        // remove compiler warnings
+        break;
+    }
+}
+
 void ForumsDialog::forumListCustomPopupMenu( QPoint /*point*/ )
 {
     QMenu contextMnu( this );
@@ -684,20 +697,20 @@ void ForumsDialog::CalculateIconsAndFonts(QTreeWidgetItem *pItem, bool &bHasRead
 
         if (!IS_FORUM_SUBSCRIBED(subscribeFlags)) {
             qf.setBold(false);
-            pItem->setTextColor(i, Qt::black);
+            pItem->setTextColor(i, textColorNotSubscribed());
         } else if (bUnread) {
             qf.setBold(true);
-            pItem->setTextColor(i, Qt::black);
+            pItem->setTextColor(i, textColorUnread());
         } else if (bMyUnreadChilddren) {
             qf.setBold(true);
-            pItem->setTextColor(i, Qt::gray);
+            pItem->setTextColor(i, textColorUnreadChildren());
         } else {
             qf.setBold(false);
-            pItem->setTextColor(i, Qt::gray);
+            pItem->setTextColor(i, textColorRead());
         }
         if (missing) {
             /* Missing message */
-            pItem->setTextColor(i, Qt::darkRed);
+            pItem->setTextColor(i, textColorMissing());
         }
         pItem->setFont(i, qf);
     }

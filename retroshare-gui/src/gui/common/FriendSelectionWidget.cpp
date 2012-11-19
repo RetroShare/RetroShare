@@ -27,6 +27,7 @@
 #include "gui/common/StatusDefs.h"
 #include "gui/common/PeerDefs.h"
 #include "gui/common/GroupDefs.h"
+#include "rshare.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsstatus.h>
@@ -39,8 +40,6 @@
 
 #define ROLE_ID       Qt::UserRole
 #define ROLE_SORT     Qt::UserRole + 1
-
-#define COLOR_CONNECT Qt::blue
 
 #define IMAGE_GROUP16    ":/images/user/group16.png"
 #define IMAGE_FRIENDINFO ":/images/peerdetails_16x16.png"
@@ -98,11 +97,27 @@ FriendSelectionWidget::FriendSelectionWidget(QWidget *parent) :
 
 	ui->filterLineEdit->setPlaceholderText(tr("Search Friends"));
 	ui->filterLineEdit->showFilterIcon();
+
+	/* Refresh style to have the correct text color */
+	Rshare::refreshStyleSheet(this, false);
 }
 
 FriendSelectionWidget::~FriendSelectionWidget()
 {
 	delete ui;
+}
+
+void FriendSelectionWidget::changeEvent(QEvent *e)
+{
+	QWidget::changeEvent(e);
+	switch (e->type()) {
+	case QEvent::StyleChange:
+		fillList();
+		break;
+	default:
+		// remove compiler warnings
+		break;
+	}
 }
 
 void FriendSelectionWidget::setHeaderText(const QString &text)
@@ -253,7 +268,7 @@ void FriendSelectionWidget::fillList()
 			}
 
 			if (state != (int) RS_STATUS_OFFLINE) {
-				item->setTextColor(COLUMN_NAME, COLOR_CONNECT);
+				item->setTextColor(COLUMN_NAME, textColorOnline());
 			}
 
 			item->setIcon(COLUMN_NAME, QIcon(StatusDefs::imageUser(state)));
@@ -304,7 +319,7 @@ void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
 		if (item->data(COLUMN_DATA, ROLE_ID).toString() == peerId) {
 			QColor color;
 			if (status != (int) RS_STATUS_OFFLINE) {
-				color = COLOR_CONNECT;
+				color = textColorOnline();
 			}
 
 			item->setTextColor(COLUMN_NAME, color);

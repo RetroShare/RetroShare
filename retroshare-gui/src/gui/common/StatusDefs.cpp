@@ -101,25 +101,6 @@ QString StatusDefs::tooltip(unsigned int status)
 	return "";
 }
 
-QColor StatusDefs::textColor(unsigned int status)
-{
-	switch (status) {
-	case RS_STATUS_OFFLINE:
-		return Qt::black;
-	case RS_STATUS_AWAY:
-		return Qt::gray;
-	case RS_STATUS_BUSY:
-		return Qt::gray;
-	case RS_STATUS_ONLINE:
-		return Qt::darkBlue;
-	case RS_STATUS_INACTIVE:
-		return Qt::gray;
-	}
-
-	std::cerr << "StatusDefs::textColor: Unknown status requested " << status;
-	return Qt::black;
-}
-
 QFont StatusDefs::font(unsigned int status)
 {
 	QFont font;

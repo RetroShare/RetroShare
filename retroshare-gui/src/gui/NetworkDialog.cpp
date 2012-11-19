@@ -179,6 +179,19 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 #endif
 }
 
+void NetworkDialog::changeEvent(QEvent *e)
+{
+    QWidget::changeEvent(e);
+    switch (e->type()) {
+    case QEvent::StyleChange:
+        insertConnect();
+        break;
+    default:
+        // remove compiler warnings
+        break;
+    }
+}
+
 void NetworkDialog::updateNewDiscoveryInfo()
 {
 	//std::cerr << "Received new p3disc info. Updating networkview." << std::endl;
@@ -436,13 +449,13 @@ void NetworkDialog::insertConnect()
 			{
 				item -> setText(0, "0");
 				item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
-				backgrndcolor=QColor("#45ff45");//bright green
+				backgrndcolor = backgroundColorOwnSign();
 			} 
 			else 
 			{
 				item -> setText(0, "0");
 				item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
-				backgrndcolor=QColor("#43C043");//light green
+				backgrndcolor = backgroundColorAcceptConnection();
 			}
 		} 
 		else 
@@ -451,14 +464,14 @@ void NetworkDialog::insertConnect()
 
 			if (detail.hasSignedMe)
 			{
-				backgrndcolor=QColor("#B242B2"); //kind of purple
+				backgrndcolor = backgroundColorHasSignedMe();
 				item -> setIcon(0,(QIcon(IMAGE_DENIED)));
 				for(int k=0;k<8;++k)
 					item -> setToolTip(k, QString::fromUtf8(detail.name.c_str()) + tr(" has authenticated you. \nRight-click and select 'make friend' to be able to connect."));
 			}
 			else
 			{
-				backgrndcolor=Qt::lightGray;
+				backgrndcolor = backgroundColorDenied();
 				item -> setIcon(0,(QIcon(IMAGE_DENIED)));
 			}
 		}
@@ -502,7 +515,7 @@ void NetworkDialog::insertConnect()
 	// Color each Background column in the Network Tab except the first one => 1-9
 	for(int i=0;i<10;++i)
 	{
-		self_item->setBackground(i,Qt::yellow) ;//QBrush(QColor("#45ff45")));
+		self_item->setBackground(i,backgroundColorSelf()) ;
 	}
 	connectWidget->addTopLevelItem(self_item);
 

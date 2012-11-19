@@ -526,7 +526,7 @@ QVariant RetroshareDirModel::data(const QModelIndex &index, int role) const
 		if(details.min_age > ageIndicator)
 			return Qt::gray ;
 		else
-			return Qt::black ;
+			return QVariant() ; // standard
 	} /* end of TextColorRole */
 
 

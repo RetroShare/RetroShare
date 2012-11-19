@@ -10,3 +10,57 @@ AvatarWidget[frameState="INACTIVE"]{border-image:url(:/images/avatarstatus-bg-id
 AvatarWidget[frameState="ONLINE"]{border-image:url(:/images/avatarstatus-bg-online-116.png);}
 AvatarWidget[frameState="AWAY"]{border-image:url(:/images/avatarstatus-bg-away-116.png);}
 AvatarWidget[frameState="BUSY"]{border-image:url(:/images/avatarstatus-bg-busy-116.png);}
+
+/* Color definitions */
+
+ForumsDialog
+{
+	qproperty-textColorRead: gray;
+	qproperty-textColorUnread: black; 
+	qproperty-textColorUnreadChildren: gray;
+	qproperty-textColorNotSubscribed: black;
+	qproperty-textColorMissing: darkRed;
+}
+
+GroupTreeWidget
+{
+	qproperty-textColorCategory: rgb(79, 79, 79);
+	qproperty-textColorPrivateKey: blue;
+}
+
+FriendSelectionWidget
+{
+	qproperty-textColorOnline: blue;
+}
+
+MessagesDialog
+{
+	qproperty-textColorInbox: rgb(49, 106, 197);
+}
+
+FriendList
+{
+    qproperty-textColorStatusOffline: black;
+    qproperty-textColorStatusAway: gray;
+    qproperty-textColorStatusBusy: gray;
+    qproperty-textColorStatusOnline: darkBlue;
+    qproperty-textColorStatusInactive: gray;
+	qproperty-textColorGroup: rgb(123, 123, 123);
+}
+
+SearchDialog
+{
+	qproperty-textColorLocal: red;
+	qproperty-textColorNoSources: rgb(0, 0, 19);
+	qproperty-textColorLowSources: rgb(0, 0, 38);
+	qproperty-textColorHighSources: rgb(0, 0, 228);
+}
+
+NetworkDialog
+{
+	qproperty-backgroundColorSelf: yellow;
+	qproperty-backgroundColorOwnSign: rgb(69, 255, 69);
+	qproperty-backgroundColorAcceptConnection: rgb(67, 192, 67);
+	qproperty-backgroundColorHasSignedMe: rgb(178, 66, 178);
+	qproperty-backgroundColorDenied: lightGray;
+}

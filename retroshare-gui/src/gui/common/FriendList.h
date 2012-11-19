@@ -27,6 +27,7 @@
 #include <QWidget>
 
 #include "retroshare-gui/RsAutoUpdatePage.h"
+#include "retroshare/rsstatus.h"
 
 namespace Ui {
     class FriendList;
@@ -39,6 +40,13 @@ class QMenu;
 class FriendList : public RsAutoUpdatePage
 {
     Q_OBJECT
+
+    Q_PROPERTY(QColor textColorGroup READ textColorGroup WRITE setTextColorGroup)
+    Q_PROPERTY(QColor textColorStatusOffline READ textColorStatusOffline WRITE setTextColorStatusOffline)
+    Q_PROPERTY(QColor textColorStatusAway READ textColorStatusAway WRITE setTextColorStatusAway)
+    Q_PROPERTY(QColor textColorStatusBusy READ textColorStatusBusy WRITE setTextColorStatusBusy)
+    Q_PROPERTY(QColor textColorStatusOnline READ textColorStatusOnline WRITE setTextColorStatusOnline)
+    Q_PROPERTY(QColor textColorStatusInactive READ textColorStatusInactive WRITE setTextColorStatusInactive)
 
 public:
     explicit FriendList(QWidget *parent = 0);
@@ -54,6 +62,20 @@ public:
     std::string getSelectedGroupId() const;
 
     virtual void updateDisplay();
+
+    QColor textColorGroup() const { return mTextColorGroup; }
+    QColor textColorStatusOffline() const { return mTextColorStatus[RS_STATUS_OFFLINE]; }
+    QColor textColorStatusAway() const { return mTextColorStatus[RS_STATUS_AWAY]; }
+    QColor textColorStatusBusy() const { return mTextColorStatus[RS_STATUS_BUSY]; }
+    QColor textColorStatusOnline() const { return mTextColorStatus[RS_STATUS_ONLINE]; }
+    QColor textColorStatusInactive() const { return mTextColorStatus[RS_STATUS_INACTIVE]; }
+
+    void setTextColorGroup(QColor color) { mTextColorGroup = color; }
+    void setTextColorStatusOffline(QColor color) { mTextColorStatus[RS_STATUS_OFFLINE] = color; }
+    void setTextColorStatusAway(QColor color) { mTextColorStatus[RS_STATUS_AWAY] = color; }
+    void setTextColorStatusBusy(QColor color) { mTextColorStatus[RS_STATUS_BUSY] = color; }
+    void setTextColorStatusOnline(QColor color) { mTextColorStatus[RS_STATUS_ONLINE] = color; }
+    void setTextColorStatusInactive(QColor color) { mTextColorStatus[RS_STATUS_INACTIVE] = color; }
 
 public slots:
     void filterItems(const QString &text);
@@ -72,6 +94,9 @@ public slots:
     void sortPeersAscendingOrder();
     void sortPeersDescendingOrder();
 
+protected:
+    void changeEvent(QEvent *e);
+
 private:
     Ui::FriendList *ui;
     RSTreeWidgetItemCompareRole *m_compareRole;
@@ -87,6 +112,10 @@ private:
     bool groupsHasChanged;
     std::set<std::string> *openGroups;
     std::set<std::string> *openPeers;
+
+    /* Color definitions (for standard see qss.default) */
+    QColor mTextColorGroup;
+    QColor mTextColorStatus[RS_STATUS_COUNT];
 
     QTreeWidgetItem *getCurrentPeer() const;
     static bool filterItem(QTreeWidgetItem *item, const QString &text);

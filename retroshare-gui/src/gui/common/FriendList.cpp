@@ -28,7 +28,6 @@
 #include <QDateTime>
 
 #include "retroshare/rspeers.h"
-#include "retroshare/rsstatus.h"
 
 #include "GroupDefs.h"
 #include "gui/chat/ChatDialog.h"
@@ -232,6 +231,19 @@ void FriendList::processSettings(bool bLoad)
             Settings->setValue("open", QString::fromStdString(groupId));
         }
         Settings->endArray();
+    }
+}
+
+void FriendList::changeEvent(QEvent *e)
+{
+    QWidget::changeEvent(e);
+    switch (e->type()) {
+    case QEvent::StyleChange:
+        insertPeers();
+        break;
+    default:
+        // remove compiler warnings
+        break;
     }
 }
 
@@ -683,7 +695,7 @@ void  FriendList::insertPeers()
                 groupItem->setSizeHint(COLUMN_NAME, QSize(26, 26));
                 groupItem->setTextAlignment(COLUMN_NAME, Qt::AlignLeft | Qt::AlignVCenter);
                 groupItem->setIcon(COLUMN_NAME, QIcon(IMAGE_GROUP24));
-                groupItem->setForeground(COLUMN_NAME, QBrush(QColor(123, 123, 123)));
+                groupItem->setForeground(COLUMN_NAME, QBrush(textColorGroup()));
 
                 /* used to find back the item */
                 groupItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(groupInfo->id));
@@ -957,10 +969,10 @@ void  FriendList::insertPeers()
 
                     if (rsState == 0) {
                         sslFont.setBold(true);
-                        sslColor = Qt::darkBlue;
+                        sslColor = mTextColorStatus[RS_STATUS_ONLINE];
                     } else {
                         sslFont = StatusDefs::font(rsState);
-                        sslColor = StatusDefs::textColor(rsState);
+                        sslColor = mTextColorStatus[rsState];
                     }
                 } else if (sslDetail.state & RS_PEER_STATE_ONLINE) {
                     sslItem->setHidden(mHideUnconnected);
@@ -973,7 +985,7 @@ void  FriendList::insertPeers()
                     }
 
                     sslFont.setBold(true);
-                    sslColor = Qt::black;
+                    sslColor = mTextColorStatus[RS_STATUS_ONLINE];
                 } else {
                     sslItem->setHidden(mHideUnconnected);
                     if (sslDetail.connectState) {
@@ -983,7 +995,7 @@ void  FriendList::insertPeers()
                     }
 
                     sslFont.setBold(false);
-                    sslColor = Qt::black;
+                    sslColor = mTextColorStatus[RS_STATUS_OFFLINE];
                 }
 
                 if (std::find(privateChatIds.begin(), privateChatIds.end(), sslDetail.id) != privateChatIds.end()) {
@@ -1011,7 +1023,7 @@ void  FriendList::insertPeers()
                     bestRSState = RS_STATUS_ONLINE;
                 }
 
-                QColor textColor = StatusDefs::textColor(bestRSState);
+                QColor textColor = mTextColorStatus[bestRSState];
                 QFont font = StatusDefs::font(bestRSState);
                 for(int i = 0; i < COLUMN_COUNT; i++) {
                     gpgItem->setTextColor(i, textColor);
@@ -1047,8 +1059,9 @@ void  FriendList::insertPeers()
 
                 QFont font;
                 font.setBold(true);
+                QColor textColor = mTextColorStatus[RS_STATUS_ONLINE];
                 for(int i = 0; i < COLUMN_COUNT; i++) {
-                    gpgItem->setTextColor(i,(Qt::black));
+                    gpgItem->setTextColor(i, textColor);
                     gpgItem->setFont(i,font);
                 }
             } else {
@@ -1062,7 +1075,7 @@ void  FriendList::insertPeers()
                 gpgItem->setHidden(mHideUnconnected);
                 gpgIcon = QIcon(StatusDefs::imageUser(RS_STATUS_OFFLINE));
 
-                QColor textColor = StatusDefs::textColor(RS_STATUS_OFFLINE);
+                QColor textColor = mTextColorStatus[RS_STATUS_OFFLINE];
                 QFont font = StatusDefs::font(RS_STATUS_OFFLINE);
                 for(int i = 0; i < COLUMN_COUNT; i++) {
                     gpgItem->setTextColor(i, textColor);

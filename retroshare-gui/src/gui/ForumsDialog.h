@@ -35,7 +35,13 @@ class RSTreeWidgetItemCompareRole;
 
 class ForumsDialog : public RsAutoUpdatePage 
 {
-  Q_OBJECT
+    Q_OBJECT
+
+    Q_PROPERTY(QColor textColorRead READ textColorRead WRITE setTextColorRead)
+    Q_PROPERTY(QColor textColorUnread READ textColorUnread WRITE setTextColorUnread)
+    Q_PROPERTY(QColor textColorUnreadChildren READ textColorUnreadChildren WRITE setTextColorUnreadChildren)
+    Q_PROPERTY(QColor textColorNotSubscribed READ textColorNotSubscribed WRITE setTextColorNotSubscribed)
+    Q_PROPERTY(QColor textColorMissing READ textColorMissing WRITE setTextColorMissing)
 
 public:
     ForumsDialog(QWidget *parent = 0);
@@ -51,8 +57,21 @@ public:
     static QString titleFromInfo(ForumMsgInfo &msgInfo);
     static QString messageFromInfo(ForumMsgInfo &msgInfo);
 
+    QColor textColorRead() const { return mTextColorRead; }
+    QColor textColorUnread() const { return mTextColorUnread; }
+    QColor textColorUnreadChildren() const { return mTextColorUnreadChildren; }
+    QColor textColorNotSubscribed() const { return mTextColorNotSubscribed; }
+    QColor textColorMissing() const { return mTextColorMissing; }
+
+    void setTextColorRead(QColor color) { mTextColorRead = color; }
+    void setTextColorUnread(QColor color) { mTextColorUnread = color; }
+    void setTextColorUnreadChildren(QColor color) { mTextColorUnreadChildren = color; }
+    void setTextColorNotSubscribed(QColor color) { mTextColorNotSubscribed = color; }
+    void setTextColorMissing(QColor color) { mTextColorMissing = color; }
+
 protected:
     bool eventFilter(QObject *obj, QEvent *ev);
+    void changeEvent(QEvent *e);
 
 private slots:
     /** Create the context popup menu and it's submenus */
@@ -149,6 +168,13 @@ private:
 
     ForumsFillThread *fillThread;
 
+    /* Color definitions (for standard see qss.default) */
+    QColor mTextColorRead;
+    QColor mTextColorUnread;
+    QColor mTextColorUnreadChildren;
+    QColor mTextColorNotSubscribed;
+    QColor mTextColorMissing;
+
     /** Qt Designer generated object */
     Ui::ForumsDialog ui;
 };
@@ -186,4 +212,3 @@ private:
 };
 
 #endif
-

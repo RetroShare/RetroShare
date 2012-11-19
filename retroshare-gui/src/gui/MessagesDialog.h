@@ -33,6 +33,8 @@ class MessagesDialog : public MainPage
 {
   Q_OBJECT
 
+  Q_PROPERTY(QColor textColorInbox READ textColorInbox WRITE setTextColorInbox)
+
 public:
   /** Default Constructor */
   MessagesDialog(QWidget *parent = 0);
@@ -44,8 +46,13 @@ public:
 // replaced by shortcut
 //  virtual void keyPressEvent(QKeyEvent *) ;
 
+  QColor textColorInbox() const { return mTextColorInbox; }
+
+  void setTextColorInbox(QColor color) { mTextColorInbox = color; }
+
 protected:
   bool eventFilter(QObject *obj, QEvent *ev);
+  void changeEvent(QEvent *e);
 
 public slots:
   void insertMessages();
@@ -141,6 +148,9 @@ private:
   QModelIndex timerIndex;
 
   MessageWidget *msgWidget;
+
+  /* Color definitions (for standard see qss.default) */
+  QColor mTextColorInbox;
 
   /** Qt Designer generated object */
   Ui::MessagesDialog ui;

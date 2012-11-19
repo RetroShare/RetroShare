@@ -36,6 +36,8 @@ class FriendSelectionWidget : public QWidget
 {
 	Q_OBJECT
 
+	Q_PROPERTY(QColor textColorOnline READ textColorOnline WRITE setTextColorOnline)
+
 public:
 	enum IdType
 	{
@@ -68,6 +70,13 @@ public:
 	void setSelectedSslIds(const std::list<std::string> &sslIds, bool add) { setSelectedIds(IDTYPE_SSL, sslIds, add); }
 	void setSelectedGroupIds(const std::list<std::string> &groupIds, bool add) { setSelectedIds(IDTYPE_GROUP, groupIds, add); }
 
+	QColor textColorOnline() const { return mTextColorOnline; }
+
+	void setTextColorOnline(QColor color) { mTextColorOnline = color; }
+
+protected:
+	void changeEvent(QEvent *e);
+
 signals:
 	void contentChanged();
 	void customContextMenuRequested(const QPoint &pos);
@@ -92,6 +101,9 @@ private:
 	Modus listModus;
 	bool showGroups;
 	bool inItemChanged;
+
+	/* Color definitions (for standard see qss.default) */
+	QColor mTextColorOnline;
 
 	Ui::FriendSelectionWidget *ui;
 };

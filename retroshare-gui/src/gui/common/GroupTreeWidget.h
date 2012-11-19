@@ -31,6 +31,11 @@ class QToolButton;
 class RshareSettings;
 class RSTreeWidgetItemCompareRole;
 
+#define GROUPTREEWIDGET_COLOR_STANDARD   -1
+#define GROUPTREEWIDGET_COLOR_CATEGORY   0
+#define GROUPTREEWIDGET_COLOR_PRIVATEKEY 1
+#define GROUPTREEWIDGET_COLOR_COUNT      2
+
 namespace Ui {
 	class GroupTreeWidget;
 }
@@ -58,6 +63,9 @@ class GroupTreeWidget : public QWidget
 {
 	Q_OBJECT
 
+	Q_PROPERTY(QColor textColorCategory READ textColorCategory WRITE setTextColorCategory)
+	Q_PROPERTY(QColor textColorPrivateKey READ textColorPrivateKey WRITE setTextColorPrivateKey)
+
 public:
 	GroupTreeWidget(QWidget *parent = 0);
 	~GroupTreeWidget();
@@ -79,6 +87,12 @@ public:
 	QTreeWidgetItem *getItemFromId(const QString &id);
 	QTreeWidgetItem *activateId(const QString &id, bool focus);
 
+	QColor textColorCategory() const { return mTextColor[GROUPTREEWIDGET_COLOR_CATEGORY]; }
+	QColor textColorPrivateKey() const { return mTextColor[GROUPTREEWIDGET_COLOR_PRIVATEKEY]; }
+
+	void setTextColorCategory(QColor color) { mTextColor[GROUPTREEWIDGET_COLOR_CATEGORY] = color; }
+	void setTextColorPrivateKey(QColor color) { mTextColor[GROUPTREEWIDGET_COLOR_PRIVATEKEY] = color; }
+
 signals:
 	void treeCustomContextMenuRequested(const QPoint &pos);
 	void treeCurrentItemChanged(const QString &id);
@@ -96,6 +110,7 @@ private slots:
 private:
 	void calculateScore(QTreeWidgetItem *item, const QString &filterText);
 	void resort(QTreeWidgetItem *categoryItem);
+	void updateColors();
 
 private:
 	QMenu *displayMenu;
@@ -106,6 +121,9 @@ private:
 	QAction *actionSortByLastPost;
 
 	RSTreeWidgetItemCompareRole *compareRole;
+
+	/* Color definitions (for standard see qss.default) */
+	QColor mTextColor[GROUPTREEWIDGET_COLOR_COUNT];
 
 	Ui::GroupTreeWidget *ui;
 };

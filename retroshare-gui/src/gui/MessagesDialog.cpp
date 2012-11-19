@@ -363,6 +363,19 @@ bool MessagesDialog::eventFilter(QObject *obj, QEvent *event)
     return MainPage::eventFilter(obj, event);
 }
 
+void MessagesDialog::changeEvent(QEvent *e)
+{
+    QWidget::changeEvent(e);
+    switch (e->type()) {
+    case QEvent::StyleChange:
+        insertMessages();
+        break;
+    default:
+        // remove compiler warnings
+        break;
+    }
+}
+
 void MessagesDialog::fillQuickView()
 {
 	MsgTagType tags;
@@ -1136,18 +1149,22 @@ void MessagesDialog::insertMessages()
             item[COLUMN_TAGS]->setData(text, ROLE_SORT);
 
             // set color
-            QBrush Brush; // standard
+            QColor color;
             if (tagInfo.tagIds.size()) {
                 Tag = Tags.types.find(tagInfo.tagIds.front());
                 if (Tag != Tags.types.end()) {
-                    Brush = QBrush(Tag->second.second);
+                    color = Tag->second.second;
                 } else {
                     // clean tagId
                     rsMsgs->setMessageTag(it->msgId, tagInfo.tagIds.front(), false);
                 }
             }
+            if (!color.isValid()) {
+                color = ui.messagestreeView->palette().color(QPalette::Text);
+            }
+            QBrush brush = QBrush(color);
             for (int i = 0; i < COLUMN_COUNT; i++) {
-                item[i]->setForeground(Brush);
+                item[i]->setForeground(brush);
             }
 
             // No of Files.
@@ -1685,7 +1702,7 @@ void MessagesDialog::updateMessageSummaryList()
         qf.setBold(true);
         item->setFont(qf);
         item->setIcon(QIcon(":/images/folder-inbox-new.png"));
-        item->setForeground(QBrush(QColor(49, 106, 197)));
+        item->setForeground(QBrush(mTextColorInbox));
     }
     else
     {
@@ -1695,7 +1712,7 @@ void MessagesDialog::updateMessageSummaryList()
         qf.setBold(false);
         item->setFont(qf);
         item->setIcon(QIcon(":/images/folder-inbox.png"));
-        item->setForeground(QBrush(QColor(0, 0, 0)));
+        item->setForeground(QBrush(ui.messagestreeView->palette().color(QPalette::Text)));
     }
 
     //QList<QListWidgetItem *> QListWidget::findItems ( const QString & text, Qt::MatchFlags flags ) const

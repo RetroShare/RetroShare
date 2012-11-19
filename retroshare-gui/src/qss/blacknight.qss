@@ -3,6 +3,44 @@ HeaderFrame {
 	border: 0px;
 }
 
+ForumsDialog
+{
+	qproperty-textColorRead: gray;
+	qproperty-textColorUnread: white; 
+	qproperty-textColorUnreadChildren: gray;
+	qproperty-textColorNotSubscribed: white;
+	qproperty-textColorMissing: red;
+}
+
+GroupTreeWidget
+{
+	qproperty-textColorCategory: white;
+	qproperty-textColorPrivateKey: blue;
+}
+
+FriendSelectionWidget
+{
+	qproperty-textColorOnline: lightBlue;
+}
+
+FriendList
+{
+	qproperty-textColorStatusOffline: white;
+	qproperty-textColorStatusAway: gray;
+	qproperty-textColorStatusBusy: gray;
+	qproperty-textColorStatusOnline: lightBlue;
+	qproperty-textColorStatusInactive: gray;
+	qproperty-textColorGroup: rgb(123, 123, 123);
+}
+
+SearchDialog
+{
+	qproperty-textColorLocal: red;
+	qproperty-textColorNoSources: rgb(255, 255, 19);
+	qproperty-textColorLowSources: rgb(255, 255, 38);
+	qproperty-textColorHighSources: rgb(255, 255, 228);
+}
+
 QWidget{
 background: black;
 color: lightgray;
@@ -292,10 +330,3 @@ QTextEdit#lineEdit{
 QTextBrowser#postText{
     color: white;
 }
-
-QTreeWidget#treeWidget{
-    color: white;
-    background: white;
-
-}
-

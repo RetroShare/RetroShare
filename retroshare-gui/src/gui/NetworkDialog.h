@@ -30,6 +30,12 @@ class NetworkDialog : public RsAutoUpdatePage
 {
   Q_OBJECT
 
+  Q_PROPERTY(QColor backgroundColorSelf READ backgroundColorSelf WRITE setBackgroundColorSelf)
+  Q_PROPERTY(QColor backgroundColorOwnSign READ backgroundColorOwnSign WRITE setBackgroundColorOwnSign)
+  Q_PROPERTY(QColor backgroundColorAcceptConnection READ backgroundColorAcceptConnection WRITE setBackgroundColorAcceptConnection)
+  Q_PROPERTY(QColor backgroundColorHasSignedMe READ backgroundColorHasSignedMe WRITE setBackgroundColorHasSignedMe)
+  Q_PROPERTY(QColor backgroundColorDenied READ backgroundColorDenied WRITE setBackgroundColorDenied)
+
 public:
   /** Default Constructor */
   NetworkDialog(QWidget *parent = 0);
@@ -37,12 +43,26 @@ public:
   //void load();
   virtual void updateDisplay() ; // overloaded from RsAutoUpdatePage
   
+  QColor backgroundColorSelf() const { return mBackgroundColorSelf; }
+  QColor backgroundColorOwnSign() const { return mBackgroundColorOwnSign; }
+  QColor backgroundColorAcceptConnection() const { return mBackgroundColorAcceptConnection; }
+  QColor backgroundColorHasSignedMe() const { return mBackgroundColorHasSignedMe; }
+  QColor backgroundColorDenied() const { return mBackgroundColorDenied; }
+
+  void setBackgroundColorSelf(QColor color) { mBackgroundColorSelf = color; }
+  void setBackgroundColorOwnSign(QColor color) { mBackgroundColorOwnSign = color; }
+  void setBackgroundColorAcceptConnection(QColor color) { mBackgroundColorAcceptConnection = color; }
+  void setBackgroundColorHasSignedMe(QColor color) { mBackgroundColorHasSignedMe = color; }
+  void setBackgroundColorDenied(QColor color) { mBackgroundColorDenied = color; }
+
 public slots:
   void  insertConnect();
 //  std::string loadneighbour();
   /* void loadneighbour(); */
   void updateNewDiscoveryInfo() ;
 
+protected:
+  void changeEvent(QEvent *e);
 
 private slots:
 
@@ -90,6 +110,13 @@ private:
   class NetworkView *networkview;
   
   bool filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn);
+
+  /* Color definitions (for standard see qss.default) */
+  QColor mBackgroundColorSelf;
+  QColor mBackgroundColorOwnSign;
+  QColor mBackgroundColorAcceptConnection;
+  QColor mBackgroundColorHasSignedMe;
+  QColor mBackgroundColorDenied;
 
   /** Qt Designer generated object */
   Ui::NetworkDialog ui;

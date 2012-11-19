@@ -36,7 +36,6 @@ public:
 	static const char* imageUser(unsigned int status);
 	static QString     tooltip(unsigned int status);
 
-	static QColor      textColor(unsigned int status);
 	static QFont       font(unsigned int status);
 
 	static QString     peerStateString(int peerState);

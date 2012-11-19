@@ -43,6 +43,7 @@
 #define ROLE_POPULARITY   Qt::UserRole + 3
 #define ROLE_LASTPOST     Qt::UserRole + 4
 #define ROLE_SEARCH_SCORE Qt::UserRole + 5
+#define ROLE_COLOR        Qt::UserRole + 6
 
 #define FILTER_NAME_INDEX  0
 #define FILTER_DESC_INDEX  1
@@ -102,7 +103,11 @@ void GroupTreeWidget::changeEvent(QEvent *e)
 	case QEvent::LanguageChange:
 		ui->retranslateUi(this);
 		break;
+	case QEvent::StyleChange:
+		updateColors();
+		break;
 	default:
+		// remove compiler warnings
 		break;
 	}
 }
@@ -188,6 +193,27 @@ void GroupTreeWidget::initDisplayMenu(QToolButton *toolButton)
 	toolButton->setMenu(displayMenu);
 }
 
+void GroupTreeWidget::updateColors()
+{
+	QBrush brush;
+	QBrush standardBrush = ui->treeWidget->palette().color(QPalette::Text);
+
+	QTreeWidgetItemIterator itemIterator(ui->treeWidget);
+	QTreeWidgetItem *item;
+	while ((item = *itemIterator) != NULL) {
+		itemIterator++;
+
+		int color = item->data(COLUMN_DATA, ROLE_COLOR).toInt();
+		if (color >= 0) {
+			brush = QBrush(mTextColor[color]);
+		} else {
+			brush = standardBrush;
+		}
+
+		item->setForeground(COLUMN_NAME, brush);
+	}
+}
+
 void GroupTreeWidget::customContextMenuRequested(const QPoint &pos)
 {
 	emit treeCustomContextMenuRequested(pos);
@@ -218,7 +244,8 @@ QTreeWidgetItem *GroupTreeWidget::addCategoryItem(const QString &name, const QIc
 	item->setFont(COLUMN_NAME, font);
 	item->setIcon(COLUMN_NAME, icon);
 	item->setSizeHint(COLUMN_NAME, QSize(18, 18));
-	item->setForeground(COLUMN_NAME, QBrush(QColor(79, 79, 79)));
+	item->setForeground(COLUMN_NAME, QBrush(textColorCategory()));
+	item->setData(COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_CATEGORY);
 
 	ui->treeWidget->addTopLevelItem(item);
 
@@ -294,7 +321,11 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		/* Set color */
 		QBrush brush;
 		if (itemInfo.privatekey) {
-			brush = QBrush(Qt::blue);
+			brush = QBrush(textColorPrivateKey());
+			item->setData(COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_PRIVATEKEY);
+		} else {
+			brush = ui->treeWidget->palette().color(QPalette::Text);
+			item->setData(COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_STANDARD);
 		}
 		item->setForeground(COLUMN_NAME, brush);
 

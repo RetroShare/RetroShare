@@ -1003,53 +1003,27 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 				QColor foreground;
 
 				int sources = friendSource + anonymousSource ;
-				if (sources < 1)
+				if (sources <= 0)
 				{
-					foreground = QColor(0, 0, 19);
+					foreground = textColorNoSources();
 				}
-				else if (sources < 2)
+				else if (sources <= 10)
 				{
-					foreground = QColor(0, 0, 38);
-				}
-				else if (sources < 3)
-				{
-					foreground = QColor(0, 0, 57);
-				}
-				else if (sources < 4)
-				{
-					foreground = QColor(0, 0, 76);
-				}
-				else if (sources < 5)
-				{
-					foreground = QColor(0, 0, 96);
-				}
-				else if (sources < 6)
-				{
-					foreground = QColor(0, 0, 114);
-				}
-				else if (sources < 7)
-				{
-					foreground = QColor(0, 0, 133);
-				}
-				else if (sources < 8)
-				{
-					foreground = QColor(0, 0, 152);
-				}
-				else if (sources < 9)
-				{
-					foreground = QColor(0, 0, 171);
-				}
-				else if (sources < 10)
-				{
-					foreground = QColor(0, 0, 190);
-				}
-				else if (sources < 11)
-				{
-					foreground = QColor(0, 0, 209);
+					QColor colorLow = textColorLowSources();
+					QColor colorHigh = textColorHighSources();
+
+					float percent = (float) (sources - 1) / 10; // 100% not used here, see next else
+
+					int red = (int) (colorLow.red() + (float) (colorHigh.red() - colorLow.red()) * percent);
+					int green = (int) (colorLow.green() + (float)(colorHigh.green() - colorLow.green()) * percent);
+					int blue = (int) (colorLow.blue() + (float)(colorHigh.blue() - colorLow.blue()) * percent);
+
+					foreground = QColor(red, green, blue);
 				}
 				else
 				{
-					foreground = QColor(0, 0, 228);
+					// > 10
+					foreground = textColorHighSources();
 				}
 
 				QBrush brush(foreground);
@@ -1104,7 +1078,7 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 		FileInfo fi;
 		if (rsFiles->FileDetails(file.hash, RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_SPEC_ONLY, fi)) {
 			item->setData(SR_DATA_COL, SR_ROLE_LOCAL, true);
-			foreground = Qt::red;
+			foreground = textColorLocal();
 			setForeground = true;
 		} else {
 			item->setData(SR_DATA_COL, SR_ROLE_LOCAL, false);
@@ -1112,7 +1086,7 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 			sources = item->text(SR_ID_COL).toInt();
 			if (sources == 1)
 			{
-				foreground = QColor(0, 0, 0);
+				foreground = ui.searchResultWidget->palette().color(QPalette::Text);
 				setForeground = true;
 			}
 		}
