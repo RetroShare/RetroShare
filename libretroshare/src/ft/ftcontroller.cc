@@ -74,6 +74,9 @@ static const int32_t TIMOUT_CACHE_FILE_TRANSFER 	= 800 ; // time after which cac
 static const int32_t FT_FILECONTROL_QUEUE_ADD_END 			= 0 ;
 static const int32_t FT_FILECONTROL_QUEUE_ADD_AFTER_CACHE 	= 1 ;
 
+const uint32_t FT_CNTRL_STANDARD_RATE = 1024 * 1024;
+const uint32_t FT_CNTRL_SLOW_RATE     = 10   * 1024;
+
 ftFileControl::ftFileControl()
 	:mTransfer(NULL), mCreator(NULL),
 	 mState(DOWNLOADING), mSize(0), mFlags(0)
@@ -232,6 +235,7 @@ void ftController::run()
 		if(now > last_save_time + SAVE_TRANSFERS_DELAY)
 		{
 			cleanCacheDownloads() ;
+			searchForDirectSources() ;
 
 			IndicateConfigChanged() ;
 			last_save_time = now ;
@@ -275,6 +279,23 @@ void ftController::run()
 			checkDownloadQueue() ;
 	}
 
+}
+
+void ftController::searchForDirectSources()
+{
+	std::cerr << "Searching for potential new direct sources" << std::endl;
+
+	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+
+	FileInfo info ;
+
+	for(std::map<std::string,ftFileControl*>::iterator it(mDownloads.begin()); it != mDownloads.end(); it++)
+		if(it->second->mState != ftFileControl::QUEUED && it->second->mState != ftFileControl::PAUSED)
+			if(! (it->second->mFlags & RS_FILE_REQ_CACHE))
+				if(mSearch->search(it->first, RS_FILE_HINTS_REMOTE | RS_FILE_HINTS_SPEC_ONLY, info))
+					for(std::list<TransferInfo>::const_iterator pit = info.peers.begin(); pit != info.peers.end(); pit++)
+						if(it->second->mTransfer->addFileSource(pit->peerId)) /* if the sources don't exist already - add in */
+							setPeerState(it->second->mTransfer, pit->peerId, FT_CNTRL_STANDARD_RATE, mLinkMgr->isOnline( pit->peerId ));
 }
 
 void ftController::tickTransfers()
@@ -959,9 +980,6 @@ bool ftController::completeFile(std::string hash)
 	/***************************************************************/
 	/********************** Controller Access **********************/
 	/***************************************************************/
-
-const uint32_t FT_CNTRL_STANDARD_RATE = 1024 * 1024;
-const uint32_t FT_CNTRL_SLOW_RATE     = 10   * 1024;
 
 bool	ftController::activate()
 {

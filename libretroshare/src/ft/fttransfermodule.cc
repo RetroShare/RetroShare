@@ -149,34 +149,35 @@ bool ftTransferModule::getFileSources(std::list<std::string> &peerIds)
 
 bool ftTransferModule::addFileSource(const std::string& peerId)
 {
-  RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
-  std::map<std::string,peerInfo>::iterator mit;
-  mit = mFileSources.find(peerId);
-
-  if (mit == mFileSources.end())
-  {
-  	/* add in new source */
-  	peerInfo pInfo(peerId);
-    	mFileSources.insert(std::pair<std::string,peerInfo>(peerId,pInfo));
+	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
+	std::map<std::string,peerInfo>::iterator mit;
 	mit = mFileSources.find(peerId);
+
+	if (mit == mFileSources.end())
+	{
+		/* add in new source */
+		peerInfo pInfo(peerId);
+		mFileSources.insert(std::pair<std::string,peerInfo>(peerId,pInfo));
+		mit = mFileSources.find(peerId);
 
 		mMultiplexor->sendChunkMapRequest(peerId, mHash,false) ;
 #ifdef FT_DEBUG
-	std::cerr << "ftTransferModule::addFileSource()";
-	std::cerr << " adding peer: " << peerId << " to sourceList";
-	std::cerr << std::endl;
+		std::cerr << "ftTransferModule::addFileSource()";
+		std::cerr << " adding peer: " << peerId << " to sourceList";
+		std::cerr << std::endl;
 #endif
+		return true ;
 
-  }
-  else
-  {
+	}
+	else
+	{
 #ifdef FT_DEBUG
-	std::cerr << "ftTransferModule::addFileSource()";
-	std::cerr << " peer: " << peerId << " already there";
-	std::cerr << std::endl;
+		std::cerr << "ftTransferModule::addFileSource()";
+		std::cerr << " peer: " << peerId << " already there";
+		std::cerr << std::endl;
 #endif
-  }
-  return true;
+		return false;
+	}
 }
 
 bool ftTransferModule::removeFileSource(const std::string& peerId)

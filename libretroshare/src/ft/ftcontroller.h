@@ -192,6 +192,7 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 		virtual bool CancelCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size);
 
 		void cleanCacheDownloads() ;
+		void searchForDirectSources() ;
 		void tickTransfers() ;
 
 		/***************************************************************/
