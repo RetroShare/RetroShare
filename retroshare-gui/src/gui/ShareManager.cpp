@@ -97,7 +97,7 @@ ShareManager::~ShareManager()
 
 void ShareManager::applyAndClose()
 {
-	std::cerr << "ShareManager:::close(): updating!" << std::endl;
+//	std::cerr << "ShareManager:::close(): updating!" << std::endl;
 
 	updateFlags() ;
 	close() ;
@@ -126,7 +126,7 @@ void ShareManager::load()
         return ;
 
     isLoading = true;
-    std::cerr << "ShareManager:: In load !!!!!" << std::endl ;
+//    std::cerr << "ShareManager:: In load !!!!!" << std::endl ;
 
     std::list<SharedDirInfo>::const_iterator it;
     std::list<SharedDirInfo> dirs;
@@ -191,9 +191,10 @@ void ShareManager::updateFlags()
     if(isLoading)
         return ;
 
-	 isLoading = true ;	// stops GUI update
+	 isLoading = true ;	// stops GUI update. Otherwise each call to rsFiles->updateShareFlags() modifies the GUI that we count on to check
+	 							// what has changed => fail!
 
-    std::cerr << "Updating flags" << std::endl;
+   // std::cerr << "Updating flags" << std::endl;
 
     std::list<SharedDirInfo>::iterator it;
     std::list<SharedDirInfo> dirs;
@@ -210,7 +211,7 @@ void ShareManager::updateFlags()
             (*it).shareflags = current_flags ;
 				rsFiles->updateShareFlags(*it) ;	// modifies the flags
 
-				std::cerr << "Push into the list: flags " << current_flags << " for directory: " << (*it).filename << std::endl;
+//				std::cerr << "Push into the list: flags " << current_flags << " for directory: " << (*it).filename << std::endl;
         }
     }
 
@@ -223,7 +224,7 @@ void ShareManager::updateGroups()
     if(isLoading)
         return ;
 
-    std::cerr << "Updating groups" << std::endl;
+//    std::cerr << "Updating groups" << std::endl;
 
     std::list<SharedDirInfo>::iterator it;
     std::list<SharedDirInfo> dirs;

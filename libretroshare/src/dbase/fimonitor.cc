@@ -46,7 +46,7 @@
 #include <fstream>
 
 //***********
-#define FIM_DEBUG 1
+//#define FIM_DEBUG 1
 // ***********/
 
 FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, NotifyBase *cb_in,std::string cachedir, std::string pid,const std::string& config_dir)
@@ -435,7 +435,9 @@ bool FileIndexMonitor::loadLocalCache(const CacheData &data)  /* called with sto
 {
 	bool ok = false;
 
+#ifdef FIM_DEBUG
 	std::cerr << "FileIndexMonitor::loadLocalCache(): subid = " << data.cid.subid << ", filename=" << data.name << ", peer id = " << data.pid << std::endl;
+#endif
 
 	if(!strcmp(data.name.c_str()+data.name.size()-5,".rsfc"))// this trick allows to load the complete file. Not the one being shared.
 	{ 									// other files are discarded and re-created in case permissions have changed.
@@ -466,8 +468,10 @@ bool FileIndexMonitor::loadLocalCache(const CacheData &data)  /* called with sto
 
 		locked_saveFileIndexes(false) ;
 	}
+#ifdef FIM_DEBUG
 	else
 		std::cerr << "FileIndexMonitor:: not loading cache item " << data.name << std::endl;
+#endif
 #ifdef REMOVED
 	if (ok)
 	{
@@ -486,9 +490,9 @@ bool FileIndexMonitor::updateCache(const CacheData &data,const std::set<std::str
 
 int	FileIndexMonitor::getPeriod() const
 {
-//#ifdef FIM_DEBUG
-	std::cerr << "FileIndexMonitor::setPeriod() getting watch period" << std::endl;
-//#endif
+#ifdef FIM_DEBUG
+ std::cerr << "FileIndexMonitor::setPeriod() getting watch period" << std::endl;
+#endif
 	RsStackMutex mtx(fiMutex) ; /* LOCKED DIRS */
 	return updatePeriod ;
 }
@@ -497,9 +501,9 @@ void 	FileIndexMonitor::setPeriod(int period)
 {
 	RsStackMutex mtx(fiMutex) ; /* LOCKED DIRS */
 	updatePeriod = period;
-//#ifdef FIM_DEBUG
-	std::cerr << "FileIndexMonitor::setPeriod() Setting watch period to " << updatePeriod << std::endl;
-//#endif
+#ifdef FIM_DEBUG
+ std::cerr << "FileIndexMonitor::setPeriod() Setting watch period to " << updatePeriod << std::endl;
+#endif
 }
 
 void 	FileIndexMonitor::run()
@@ -919,7 +923,9 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 			//
 			if(pendingDirs)
 			{
+#ifdef FIM_DEBUG
 				std::cerr << "Pending dir list changed. Updating!" << std::endl;
+#endif
 				internal_setSharedDirectories() ;
 			}
 
@@ -1026,16 +1032,20 @@ void FileIndexMonitor::locked_saveFileIndexes(bool update_cache)
 	std::list<std::string> all_friend_ids ;
 	rsPeers->getFriendList(all_friend_ids);
 
+#ifdef FIM_DEBUG
 	std::cerr << "FileIndexMonitor::updateCycle(): got list of all friends." << std::endl ;
 	for(std::list<std::string>::const_iterator it(all_friend_ids.begin());it!=all_friend_ids.end();++it)
 		std::cerr << "  " << *it << std::endl;
+#endif
 
 	std::map<std::set<std::string>, std::set<std::string> > peers_per_directory_combination ;
 
 	for(std::list<std::string>::const_iterator it(all_friend_ids.begin());it!=all_friend_ids.end();++it)
 	{
+#ifdef FIM_DEBUG
 		std::cerr << "About to save, with the following restrictions:" << std::endl ;
 		std::cerr << "Peer : " << *it << std::endl;
+#endif
 
 		std::set<std::string> forbidden_dirs ;
 		for(std::map<std::string,SharedDirInfo>::const_iterator dit(directoryMap.begin());dit!=directoryMap.end();++dit)
@@ -1052,11 +1062,15 @@ void FileIndexMonitor::locked_saveFileIndexes(bool update_cache)
 
 			if(!(permission_flags & RS_FILE_HINTS_BROWSABLE))
 			{
+#ifdef FIM_DEBUG
 				std::cerr << "forbidden" << std::endl;
+#endif
 				forbidden_dirs.insert(dit->first) ;
 			}
+#ifdef FIM_DEBUG
 			else
 				std::cerr << "autorized" << std::endl;
+#endif
 		}
 
 		peers_per_directory_combination[forbidden_dirs].insert(*it) ;
@@ -1133,8 +1147,9 @@ void FileIndexMonitor::locked_saveFileIndexes(bool update_cache)
 bool FileIndexMonitor::cachesAvailable(RsPeerId pid,std::map<CacheId, CacheData> &ids)
 {
 	lockData() ;
-
+#ifdef FIM_DEBUG
 	std::cerr << "In cachesAvailable..." << std::endl;
+#endif
 
 	// Go through the list of saved cache items for that particular peer.
 	//
@@ -1151,10 +1166,14 @@ bool FileIndexMonitor::cachesAvailable(RsPeerId pid,std::map<CacheId, CacheData>
 														// not going to be mixed up at the client with other files received if the
 														// subid changes for that peer.
 														//
+#ifdef FIM_DEBUG
 		std::cerr << "FileIndexMonitor: caches available for peer " << pid << ": " << it->second.name << std::endl ;
+#endif
 	}
+#ifdef FIM_DEBUG
 	else
 		std::cerr << "No cache item for peer " << pid << std::endl;
+#endif
 
 	unlockData() ;
 
@@ -1174,10 +1193,14 @@ void    FileIndexMonitor::updateShareFlags(const SharedDirInfo& dir)
 
 		for(std::list<SharedDirInfo>::iterator it(pendingDirList.begin());it!=pendingDirList.end();++it)
 		{
+#ifdef FIM_DEBUG
 			std::cerr  << "** testing pending dir " << (*it).filename << std::endl ;
+#endif
 			if((*it).filename == dir.filename)
 			{
+#ifdef FIM_DEBUG
 				std::cerr  << "** Updating to " << (*it).shareflags << "!!" << std::endl ;
+#endif
 				(*it).shareflags = dir.shareflags ;
 				(*it).parent_groups = dir.parent_groups ;
 				break ;
@@ -1186,10 +1209,14 @@ void    FileIndexMonitor::updateShareFlags(const SharedDirInfo& dir)
 
 		for(std::map<std::string,SharedDirInfo>::iterator it(directoryMap.begin());it!=directoryMap.end();++it)
 		{
+#ifdef FIM_DEBUG
 			std::cerr  << "** testing " << (*it).second.filename << std::endl ;
+#endif
 			if((*it).second.filename == dir.filename)
 			{
+#ifdef FIM_DEBUG
 				std::cerr  << "** Updating from " << it->second.shareflags << "!!" << std::endl ;
+#endif
 				(*it).second.shareflags = dir.shareflags ;
 				(*it).second.parent_groups = dir.parent_groups ;
 				fimods = true ;
