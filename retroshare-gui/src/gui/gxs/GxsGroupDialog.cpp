@@ -438,4 +438,14 @@ void GxsGroupDialog::setShareList()
         this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
     }
 }
-		
+	
+void GxsGroupDialog::wikitype()
+{
+	// hide logo Button/Label
+	ui.groupLogo->hide();
+	ui.addLogoButton->hide();
+	
+	ui.headerImage->setPixmap(QPixmap(":/images/resource-group-new_48.png")) ;
+	ui.pubKeyShare_cb->setText(tr("Add Wiki Moderators"));
+	ui.contactsdockWidget->setWindowTitle(tr("Select Wiki Moderators"));
+}

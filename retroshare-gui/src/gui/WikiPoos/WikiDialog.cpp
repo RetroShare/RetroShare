@@ -161,6 +161,7 @@ void WikiDialog::newGroup()
 {
         WikiGroupDialog cf(mWikiQueue, this);
         //cf.newGroup();
+        cf.wikitype();
 
         cf.exec ();
 }

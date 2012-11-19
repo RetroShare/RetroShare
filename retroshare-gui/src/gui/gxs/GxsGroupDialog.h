@@ -134,6 +134,7 @@ public:
      * @param parent
      */
     GxsGroupDialog(const RsGroupMetaData& grpMeta, uint32_t mode = GXS_GROUP_DIALOG_SHOW_MODE, QWidget *parent = NULL);
+    void wikitype();
 
 private:
     void newGroup();
