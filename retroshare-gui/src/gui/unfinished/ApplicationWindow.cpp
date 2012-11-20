@@ -55,6 +55,8 @@
 #define IMAGE_PLUGINS           ":/images/extension_32.png"
 #define IMAGE_GXSFORUMS         ":/images/konversation.png"
 #define IMAGE_WIKI				":/images/wikibook_32.png"
+#define IMAGE_POSTED		    ":/images/posted_32.png"
+
 
 /** Constructor */
 ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
@@ -95,7 +97,7 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
 
     PostedDialog *postedDialog = NULL;
     ui.stackPages->add(postedDialog = new PostedDialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_LIBRARY), tr("Posted Links"), grp));
+                      createPageAction(QIcon(IMAGE_POSTED), tr("Posted Links"), grp));
 
     WikiDialog *wikiDialog = NULL;
     ui.stackPages->add(wikiDialog = new WikiDialog(ui.stackPages),
