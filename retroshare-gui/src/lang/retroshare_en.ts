@@ -939,7 +939,11 @@ Please choose one of it to chat with.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>right click,and check to mute participant</source>
+        <source>Double click to mute/unmute participant</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Right click to mute/unmute participants</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7796,10 +7800,6 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>To sign, please enter the password that unlocks your PGP key:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Unregistered plugin/executable</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7813,6 +7813,10 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>This is a test.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please enter the password to unlock your PGP key:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
