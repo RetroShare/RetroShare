@@ -287,15 +287,17 @@ void ftController::searchForDirectSources()
 
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-	FileInfo info ;
-
 	for(std::map<std::string,ftFileControl*>::iterator it(mDownloads.begin()); it != mDownloads.end(); it++)
 		if(it->second->mState != ftFileControl::QUEUED && it->second->mState != ftFileControl::PAUSED)
 			if(! (it->second->mFlags & RS_FILE_REQ_CACHE))
+			{
+				FileInfo info ;	// info needs to be re-allocated each time, to start with a clear list of peers (it's not cleared down there)
+
 				if(mSearch->search(it->first, RS_FILE_HINTS_REMOTE | RS_FILE_HINTS_SPEC_ONLY, info))
 					for(std::list<TransferInfo>::const_iterator pit = info.peers.begin(); pit != info.peers.end(); pit++)
 						if(it->second->mTransfer->addFileSource(pit->peerId)) /* if the sources don't exist already - add in */
 							setPeerState(it->second->mTransfer, pit->peerId, FT_CNTRL_STANDARD_RATE, mLinkMgr->isOnline( pit->peerId ));
+			}
 }
 
 void ftController::tickTransfers()
