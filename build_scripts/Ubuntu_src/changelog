@@ -1,4 +1,58 @@
 retroshare (0.5.4-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
+  * Improvements
+     - GUI
+        * patch from AC to perform html optimization of forum posts using the canonical function optimizeHtml()
+        * fixed bug preventing share manager to modify more than one directory at once
+        * Moved most of the hardcoded colors of lists and trees to the file qss.default (with help from braindead).
+          Now the stylesheet can redefine these colors.
+        * Added multiselective mute/unmute to chat lobby. Added mute/unmute with double click on icon.
+        * Added flag for hungarian language.
+        * Fixed sorting of date in forums
+        * redesigned the Chatlobby participants list
+            - used now QTreeWidget instead of a QListWidget
+            - added icons for display the muted participants
+            - added context menu for "Mute participant" ( context menu fix from thunder)
+
+        * Removed context help button from the dialogs (currently not used) and added 
+          minimize/maximize buttons to the "floating" dialogs.
+        * Added to identify for Channel Files if its a media file(s) or not, to change the Play Button text from "Play" to "Open"
+
+     - FT
+        * added dynamic adding of direct sources from file lists. Useful for channels. Is called once every 61 seconds.
+        * Added new link type: EXTRA_FILE, to allow sendign links with sources included so as to trigger direct transfer.
+          This makes possible to send files through chat without permitting tunnel access to the files. The client requests
+          the file as a direct transfer only, using the supplied source.
+
+     - Patch to allow compilation on BSD
+     - Fixed command to grab upnp patched version
+
+     - Merged branch that provide group-based file permissions.
+          Now users can sort peers into groups in the friend list, and attribute flags and parent groups 
+          to the directories in the share manager.
+          
+        Flags are B-B-N, meaning in order:
+           - browsable for peers in the parent groups
+           - browsable for everyone
+           - network wide for everyone
+           Backward compatibility makes previously BN flags been interpreted as -BN, meaning 
+           browsable/network wide for everyone.
+
+        The merge also includes a significant improvement of the naming of flags with incompatible types
+        which should sort out some existing bugs as well, since inconsistencies in flag usage have been
+        found during the process.
+
+  * Bugs
+     - added additional checking of incoming compressed chunk map, in case the data is 
+       currupted, which might happens with a corrupted ft_transfer.cfg file.
+     - fixed permission of drap+dropped files. all attached files get added to extra list, 
+       but with different permission flags depending on the client. From that, we compute 
+       sharing permissions : turtle, or direct transfer only 
+     - suppressed unitialized memory read in p3peers.cc
+     - added missing mutex in destructor of ftFileProvider. Probably responsible for some random crashes
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Tue, 20 Nov 2012 12:30:00 +0100
+
+retroshare (0.5.4-0.5755~natty) natty; urgency=low
 
   * Improvements 
      - GUI
