@@ -111,8 +111,8 @@
          <string>Subscribe To Album</string>
         </property>
         <property name="icon">
-         <iconset resource="../images.qrc">
-          <normaloff>:/images/konqsidebar_news24.png</normaloff>:/images/konqsidebar_news24.png</iconset>
+         <iconset resource="Photo_images.qrc">
+          <normaloff>:/images/album_subscribe.png</normaloff>:/images/album_subscribe.png</iconset>
         </property>
         <property name="iconSize">
          <size>
