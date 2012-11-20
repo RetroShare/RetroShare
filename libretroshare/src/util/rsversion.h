@@ -7,7 +7,7 @@
 
 #include <string>
 
-#define LIB_VERSION "0.5.4b"
+#define LIB_VERSION "0.5.4c"
 #define SVN_REVISION "Revision 5605"
 #define SVN_REVISION_NUMBER  5605
 
