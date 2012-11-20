@@ -52,8 +52,8 @@
          <string>View Album</string>
         </property>
         <property name="icon">
-         <iconset resource="../images.qrc">
-          <normaloff>:/images/lphoto.png</normaloff>:/images/lphoto.png</iconset>
+         <iconset resource="Photo_images.qrc">
+          <normaloff>:/images/kview_24.png</normaloff>:/images/kview_24.png</iconset>
         </property>
         <property name="iconSize">
          <size>

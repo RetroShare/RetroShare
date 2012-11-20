@@ -1,5 +1,6 @@
 <RCC>
 	<qresource prefix="/" >
 		<file>images/kuickshow.png</file>
+		<file>images/kview_24.png</file>
 	</qresource>
 </RCC>
