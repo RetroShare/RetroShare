@@ -8043,7 +8043,7 @@ Rechtsklick und als Freund hinzufügen um zu verbinden.</translation>
     </message>
     <message>
         <source>To sign, please enter the password that unlocks your PGP key:</source>
-        <translation>Zum unterschreiben bitte dein PGP-Passwort eingeben:</translation>
+        <translation type="obsolete">Zum unterschreiben bitte dein PGP-Passwort eingeben:</translation>
     </message>
     <message>
         <source>Unregistered plugin/executable</source>
@@ -8060,6 +8060,10 @@ Rechtsklick und als Freund hinzufügen um zu verbinden.</translation>
     <message>
         <source>This is a test.</source>
         <translation>Dies ist ein Test.</translation>
+    </message>
+    <message>
+        <source>Please enter the password to unlock your PGP key:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
