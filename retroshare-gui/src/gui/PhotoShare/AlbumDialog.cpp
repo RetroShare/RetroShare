@@ -9,6 +9,9 @@ AlbumDialog::AlbumDialog(const RsPhotoAlbum& album, TokenQueue* photoQueue, RsPh
     ui(new Ui::AlbumDialog), mRsPhoto(rs_Photo), mPhotoQueue(photoQueue), mAlbum(album), mPhotoSelected(NULL)
 {
     ui->setupUi(this);
+    
+    ui->headerFrame->setHeaderImage(QPixmap(":/images/kview_64.png"));
+    ui->headerFrame->setHeaderText(tr("Album"));
 
     connect(ui->pushButton_PublishPhotos, SIGNAL(clicked()), this, SLOT(updateAlbumPhotos()));
     connect(ui->pushButton_DeletePhoto, SIGNAL(clicked()), this, SLOT(deletePhoto()));

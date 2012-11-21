@@ -206,20 +206,13 @@
          <x>0</x>
          <y>0</y>
          <width>804</width>
-         <height>230</height>
+         <height>225</height>
         </rect>
        </property>
        <property name="styleSheet">
         <string notr="true">QWidget#scrollAreaWidgetContents{border: none;}</string>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QLabel" name="label_5">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
         <item>
          <spacer name="horizontalSpacer">
           <property name="orientation">
@@ -249,7 +242,7 @@
          <x>0</x>
          <y>0</y>
          <width>804</width>
-         <height>230</height>
+         <height>224</height>
         </rect>
        </property>
        <property name="styleSheet">
@@ -286,6 +279,19 @@
       <widget class="QToolButton" name="toolButton_ViewPhoto">
        <property name="text">
         <string>View Photo</string>
+       </property>
+       <property name="icon">
+        <iconset resource="Photo_images.qrc">
+         <normaloff>:/images/kview_24.png</normaloff>:/images/kview_24.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextBesideIcon</enum>
        </property>
       </widget>
      </item>

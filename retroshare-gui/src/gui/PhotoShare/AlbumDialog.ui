@@ -27,16 +27,6 @@
    <property name="spacing">
     <number>0</number>
    </property>
-   <item row="0" column="0">
-    <widget class="QFrame" name="headerFrame">
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="0">
     <widget class="QFrame" name="frame">
      <property name="frameShape">
@@ -310,7 +300,7 @@ p, li { white-space: pre-wrap; }
                <x>0</x>
                <y>0</y>
                <width>625</width>
-               <height>103</height>
+               <height>112</height>
               </rect>
              </property>
              <property name="styleSheet">
@@ -361,6 +351,13 @@ p, li { white-space: pre-wrap; }
          </spacer>
         </item>
         <item>
+         <widget class="QDialogButtonBox" name="buttonBox">
+          <property name="standardButtons">
+           <set>QDialogButtonBox::Cancel</set>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="pushButton_PublishPhotos">
           <property name="text">
            <string>Publish Photos</string>
@@ -372,9 +369,17 @@ p, li { white-space: pre-wrap; }
      </layout>
     </widget>
    </item>
+   <item row="0" column="0">
+    <widget class="HeaderFrame" name="headerFrame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
+   </item>
   </layout>
-  <zorder>frame</zorder>
-  <zorder>headerFrame</zorder>
  </widget>
  <customwidgets>
   <customwidget>
@@ -383,9 +388,32 @@ p, li { white-space: pre-wrap; }
    <header>gui/PhotoShare/PhotoDrop.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>HeaderFrame</class>
+   <extends>QFrame</extends>
+   <header>gui/common/headerframe.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources>
   <include location="../images.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>AlbumDialog</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>481</x>
+     <y>413</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>324</x>
+     <y>217</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

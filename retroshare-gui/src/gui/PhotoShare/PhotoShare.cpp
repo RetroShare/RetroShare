@@ -331,7 +331,7 @@ void PhotoShare::updateAlbums()
         ui.toolButton_subscribe->setEnabled(true);
         ui.toolButton_subscribe->setText("Unsubscribe From Album");
         ui.toolButton_subscribe->setIcon(QIcon(":/images/album_unsubscribe.png"));
-        ui.toolButton_NewAlbum->setEnabled(false);
+        //ui.toolButton_NewAlbum->setEnabled(false);
         ui.toolButton_SlideShow->setEnabled(true);
 
         while(sit.hasNext()){
@@ -349,7 +349,7 @@ void PhotoShare::updateAlbums()
         ui.toolButton_subscribe->setEnabled(true);
         ui.toolButton_subscribe->setText("Subscribe To Album");
         ui.toolButton_subscribe->setIcon(QIcon(":/images/album_subscribe.png"));
-        ui.toolButton_NewAlbum->setEnabled(false);
+        //ui.toolButton_NewAlbum->setEnabled(false);
         ui.toolButton_SlideShow->setEnabled(false);
 
         while(sit.hasNext()){
