@@ -341,7 +341,7 @@ Section $(sec_main) sec_main
   File /r  ${QTBASE}\qt\qt_*.qm
   File /r  ${RSBASE}\src\qt_*.qm
   File /r "release\pthreadGC2d.dll"
-  File /r "H:\Development\lib\libminiupnpc-1.3\miniupnpc.dll"
+  File /r "d:\Development\lib\libminiupnpc-1.3\miniupnpc.dll"
   File /r "changelog.txt"
   File /r /x Data "release\bdboot.txt" 
 

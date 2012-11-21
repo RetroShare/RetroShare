@@ -3,7 +3,7 @@
 ; Define your application name
 !define APPNAME "RetroShare"
 !define VERSION "0.5.4c"
-!define REVISION "5858"
+!define REVISION "5862"
 !define APPNAMEANDVERSION "${APPNAME} ${VERSION} ${REVISION}"
 !define QTBASE "d:\qt\2010.05"
 !define RSBASE "d:\Development\retroshare\retroshare-gui\"

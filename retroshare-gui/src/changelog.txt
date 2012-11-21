@@ -120,6 +120,7 @@ Changes for 0.5.4c
          Some of the bootstrap ids are malformed, and this crashes rs.        
 
   * Bugs
+     - suppressed bug due to not cleaning source lists. Would cause transfers to have inconsistent direct sources
      - added additional checking of incoming compressed chunk map, in case the data is 
        currupted, which might happens with a corrupted ft_transfer.cfg file.
      - fixed permission of drap+dropped files. all attached files get added to extra list, 
