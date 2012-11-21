@@ -967,19 +967,16 @@ gxsforums {
 	HEADERS += gui/GxsForumsDialog.h \
             gui/gxsforums/GxsForumDetails.h \
             gui/gxsforums/EditGxsForumDetails.h \
-            gui/gxsforums/CreateGxsForum.h \
             gui/gxsforums/CreateGxsForumMsg.h \
 
 	FORMS += gui/GxsForumsDialog.ui \
             gui/gxsforums/GxsForumDetails.ui \
             gui/gxsforums/EditGxsForumDetails.ui \
-            gui/gxsforums/CreateGxsForum.ui \
             gui/gxsforums/CreateGxsForumMsg.ui \
 
 	SOURCES += gui/GxsForumsDialog.cpp \
             gui/gxsforums/GxsForumDetails.cpp \
             gui/gxsforums/EditGxsForumDetails.cpp \
-            gui/gxsforums/CreateGxsForum.cpp \
             gui/gxsforums/CreateGxsForumMsg.cpp \
 
 }

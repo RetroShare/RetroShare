@@ -35,6 +35,7 @@
 #include "gui/RetroShareLink.h"
 #include "gui/common/Emoticons.h"
 
+#include "util/HandleRichText.h"
 #include "util/misc.h"
 
 #include <sys/stat.h>
@@ -46,8 +47,8 @@
 
 
 /** Constructor */
-CreateGxsForumMsg::CreateGxsForumMsg(std::string fId, std::string pId)
-: QMainWindow(NULL), mForumId(fId), mParentId(pId)
+CreateGxsForumMsg::CreateGxsForumMsg(const std::string &fId, const std::string &pId)
+: QDialog(NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint), mForumId(fId), mParentId(pId)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
@@ -56,6 +57,12 @@ CreateGxsForumMsg::CreateGxsForumMsg(std::string fId, std::string pId)
 	/* Setup Queue */
 	mForumQueue = new TokenQueue(rsGxsForums->getTokenService(), this);
 
+    QString text = pId.empty() ? tr("Start New Thread") : tr("Post Forum Message");
+    setWindowTitle(text);
+
+    ui.headerFrame->setHeaderImage(QPixmap(":/images/konversation64.png"));
+    ui.headerFrame->setHeaderText(text);
+
     Settings->loadWidgetInformation(this);
 
     connect( ui.forumMessage, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( forumMessageCostumPopupMenu( QPoint ) ) );
@@ -63,8 +70,8 @@ CreateGxsForumMsg::CreateGxsForumMsg(std::string fId, std::string pId)
     connect(ui.hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
 
     // connect up the buttons.
-    connect( ui.postmessage_action, SIGNAL( triggered (bool) ), this, SLOT( createMsg( ) ) );
-    connect( ui.close_action, SIGNAL( triggered (bool) ), this, SLOT( cancelMsg( ) ) );
+    connect( ui.buttonBox, SIGNAL(accepted()), this, SLOT(createMsg()));
+    connect( ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
     connect( ui.emoticonButton, SIGNAL(clicked()), this, SLOT(smileyWidgetForums()));
     connect( ui.attachFileButton, SIGNAL(clicked() ), this , SLOT(addFile()));
     connect( ui.pastersButton, SIGNAL(clicked() ), this , SLOT(pasteLink()));
@@ -80,9 +87,9 @@ CreateGxsForumMsg::CreateGxsForumMsg(std::string fId, std::string pId)
 }
 
 /** context menu searchTablewidget2 **/
-void CreateGxsForumMsg::forumMessageCostumPopupMenu( QPoint /*point*/ )
+void CreateGxsForumMsg::forumMessageCostumPopupMenu(QPoint point)
 {
-    QMenu *contextMnu = ui.forumMessage->createStandardContextMenu();
+    QMenu *contextMnu = ui.forumMessage->createStandardContextMenu(point);
 
     contextMnu->addSeparator();
     QAction *pasteLinkAct = contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
@@ -233,10 +240,9 @@ void  CreateGxsForumMsg::loadFormInformation()
 void  CreateGxsForumMsg::createMsg()
 {
     QString name = misc::removeNewLine(ui.forumSubject->text());
-    QString desc = ui.forumMessage->toHtml();
+    QString desc;
 
-	 if(desc == QTextDocument(ui.forumMessage->toPlainText()).toHtml())
-		 desc = ui.forumMessage->toPlainText() ;
+	RsHtml::optimizeHtml(ui.forumMessage, desc);
 
     if(name.isEmpty())
     {	/* error message */
@@ -322,11 +328,6 @@ void  CreateGxsForumMsg::createMsg()
 void CreateGxsForumMsg::closeEvent (QCloseEvent * /*event*/)
 {
     Settings->saveWidgetInformation(this);
-}
-
-void CreateGxsForumMsg::cancelMsg()
-{
-    close();
 }
 
 void CreateGxsForumMsg::smileyWidgetForums()

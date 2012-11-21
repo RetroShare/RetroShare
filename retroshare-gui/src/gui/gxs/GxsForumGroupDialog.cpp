@@ -55,18 +55,26 @@ const uint32_t ForumCreateDefaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC   
 
 
 GxsForumGroupDialog::GxsForumGroupDialog(TokenQueue *tokenQueue, QWidget *parent)
-        :GxsGroupDialog(tokenQueue, ForumCreateEnabledFlags, ForumCreateDefaultsFlags, parent, "Create New Forum")
+	:GxsGroupDialog(tokenQueue, ForumCreateEnabledFlags, ForumCreateDefaultsFlags, parent)
 {
 
 }
 
 GxsForumGroupDialog::GxsForumGroupDialog(const RsGxsForumGroup &group, QWidget *parent)
-        :GxsGroupDialog(group.mMeta, GXS_GROUP_DIALOG_SHOW_MODE, parent)
+	:GxsGroupDialog(group.mMeta, GXS_GROUP_DIALOG_SHOW_MODE, parent)
 {
 	return;
 }
 
+QString GxsForumGroupDialog::serviceHeader()
+{
+	return tr("Create New Forum");
+}
 
+QPixmap GxsForumGroupDialog::serviceImage()
+{
+	return QPixmap(":/images/konversation64.png");
+}
 
 bool GxsForumGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta)
 {
@@ -78,5 +86,3 @@ bool GxsForumGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMeta
 	rsGxsForums->createGroup(token, grp);
 	return true;
 }
-
-

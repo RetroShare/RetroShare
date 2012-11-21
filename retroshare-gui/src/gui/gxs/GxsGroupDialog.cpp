@@ -50,26 +50,19 @@
 #define GXSGROUP_LOADGROUP		2
 
 /** Constructor */
-GxsGroupDialog::GxsGroupDialog(TokenQueue *tokenQueue, uint32_t enableFlags, uint16_t defaultFlags, QWidget *parent, const QString &serviceHeader)
-: QDialog(parent), mTokenQueue(tokenQueue), mMode(GXS_GROUP_DIALOG_CREATE_MODE), mEnabledFlags(enableFlags), mDefaultsFlags(defaultFlags), mReadonlyFlags(0)
+GxsGroupDialog::GxsGroupDialog(TokenQueue *tokenQueue, uint32_t enableFlags, uint16_t defaultFlags, QWidget *parent)
+: QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mTokenQueue(tokenQueue), mMode(GXS_GROUP_DIALOG_CREATE_MODE), mEnabledFlags(enableFlags), mDefaultsFlags(defaultFlags), mReadonlyFlags(0)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
 
     // connect up the buttons.
-    connect( ui.cancelButton, SIGNAL( clicked ( bool ) ), this, SLOT( cancelDialog( ) ) );
-    connect( ui.createButton, SIGNAL( clicked ( bool ) ), this, SLOT( submitGroup( ) ) );
+    connect( ui.buttonBox, SIGNAL(accepted()), this, SLOT(submitGroup()));
+    connect( ui.buttonBox, SIGNAL(rejected()), this, SLOT(cancelDialog()));
     connect( ui.pubKeyShare_cb, SIGNAL( clicked() ), this, SLOT( setShareList( ) ));
 
     connect( ui.groupLogo, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
     connect( ui.addLogoButton, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
-
-    if(!serviceHeader.isEmpty())
-        ui.mServiceHeader->setText(serviceHeader);
-        setWindowTitle(serviceHeader);
-    
-    //ui.headerFrame->setHeaderImage(QPixmap(":/WikiPoos/images/resource-group-new_48.png"));
-    //ui.headerFrame->setHeaderText(tr("Create"));
 
     if (!ui.pubKeyShare_cb->isChecked())
     {
@@ -93,13 +86,22 @@ GxsGroupDialog::GxsGroupDialog(const RsGroupMetaData &grpMeta, uint32_t mode, QW
 	ui.idChooser->loadIds(0,"");
 }
 
+void GxsGroupDialog::showEvent(QShowEvent*)
+{
+    QString header = serviceHeader();
+    ui.headerFrame->setHeaderText(header);
+    setWindowTitle(header);
+    ui.headerFrame->setHeaderImage(serviceImage());
+}
+
 void GxsGroupDialog::setMode(uint32_t mode)
 {
     switch(mMode)
     {
         case GXS_GROUP_DIALOG_CREATE_MODE:
         {
-            ui.createButton->setText(tr("Create Group"));
+            ui.buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+            ui.buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Create Group"));
             newGroup();
         }
         break;
@@ -107,8 +109,7 @@ void GxsGroupDialog::setMode(uint32_t mode)
         default:
         case GXS_GROUP_DIALOG_SHOW_MODE:
         {
-            ui.cancelButton->setVisible(false);
-            ui.createButton->setText(tr("Close"));
+            ui.buttonBox->setStandardButtons(QDialogButtonBox::Close);
         }
         break;
 //TODO
@@ -354,7 +355,6 @@ uint32_t GxsGroupDialog::getGroupSignFlags()
 
 void GxsGroupDialog::setGroupSignFlags(uint32_t signFlags)
 {
-
     if (signFlags & RSGXS_GROUP_SIGN_PUBLISH_ENCRYPTED) {
         ui.publish_encrypt->setChecked(true);
     } else if (signFlags & RSGXS_GROUP_SIGN_PUBLISH_ALLSIGNED) {
@@ -388,7 +388,6 @@ void GxsGroupDialog::setGroupSignFlags(uint32_t signFlags)
     }
 }
 
-
 void GxsGroupDialog::cancelDialog()
 {
 	std::cerr << "GxsGroupDialog::cancelDialog() Should Close!";
@@ -396,7 +395,6 @@ void GxsGroupDialog::cancelDialog()
 
 	close();
 }
-
 
 void GxsGroupDialog::addGroupLogo() 
 {
@@ -408,7 +406,7 @@ void GxsGroupDialog::addGroupLogo()
 	picture = img;
 	
 	// to show the selected
-	ui.groupLogo->setIcon(picture);
+	ui.groupLogo->setPixmap(picture);
 }
 
 QPixmap GxsGroupDialog::getLogo()
@@ -447,7 +445,7 @@ void GxsGroupDialog::wikitype()
 	ui.groupLogo->hide();
 	ui.addLogoButton->hide();
 	
-	ui.headerImage->setPixmap(QPixmap(":/images/resource-group-new_48.png")) ;
+	ui.headerFrame->setHeaderImage(QPixmap(":/images/resource-group-new_48.png")) ;
 	ui.pubKeyShare_cb->setText(tr("Add Wiki Moderators"));
 	ui.contactsdockWidget->setWindowTitle(tr("Select Wiki Moderators"));
 }

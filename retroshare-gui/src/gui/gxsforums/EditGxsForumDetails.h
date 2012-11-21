@@ -32,7 +32,7 @@ class EditGxsForumDetails : public QDialog
 
 public:
     /** Default constructor */
-    EditGxsForumDetails(std::string forumId = "", QWidget *parent = 0, Qt::WFlags flags = 0);
+    EditGxsForumDetails(std::string forumId = "", QWidget *parent = 0);
 
 signals:
     void configChanged();

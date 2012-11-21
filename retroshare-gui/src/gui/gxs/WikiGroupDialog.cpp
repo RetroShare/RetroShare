@@ -52,7 +52,7 @@ uint32_t WikiCreateDefaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC    |
 
 
 WikiGroupDialog::WikiGroupDialog(TokenQueue *tokenQueue, QWidget *parent)
-	:GxsGroupDialog(tokenQueue, WikiCreateEnabledFlags, WikiCreateDefaultsFlags, parent, "Create New Wiki Group")
+	:GxsGroupDialog(tokenQueue, WikiCreateEnabledFlags, WikiCreateDefaultsFlags, parent)
 {
 
 	// To start with we only have open forums - with distribution controls.
@@ -93,7 +93,6 @@ WikiGroupDialog::WikiGroupDialog(TokenQueue *tokenQueue, QWidget *parent)
 
 WikiGroupDialog::WikiGroupDialog(const RsWikiCollection &collection, QWidget *parent)
     	:GxsGroupDialog(collection.mMeta, GXS_GROUP_DIALOG_SHOW_MODE, parent)
-
 {
 #if 0
 
@@ -118,6 +117,15 @@ WikiGroupDialog::WikiGroupDialog(const RsWikiCollection &collection, QWidget *pa
 
 }
 
+QString WikiGroupDialog::serviceHeader()
+{
+	return tr("Create New Wiki Group");
+}
+
+QPixmap WikiGroupDialog::serviceImage()
+{
+	return QPixmap();
+}
 
 bool WikiGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta)
 {
@@ -132,5 +140,3 @@ bool WikiGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaData
 
 	return true;
 }
-
-

@@ -35,7 +35,9 @@ public:
 	WikiGroupDialog(const RsWikiCollection &collection, QWidget *parent);
 
 protected:
-        virtual bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta);
+	virtual QString serviceHeader();
+	virtual QPixmap serviceImage();
+	virtual bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta);
 
 private:
 

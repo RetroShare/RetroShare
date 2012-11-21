@@ -125,7 +125,7 @@ public:
      * @param parent The parent dialog
      * @param mode
      */
-    GxsGroupDialog(TokenQueue* tokenQueue, uint32_t enableFlags, uint16_t defaultFlags, QWidget *parent = NULL, const QString& serviceHeader = "");
+    GxsGroupDialog(TokenQueue* tokenQueue, uint32_t enableFlags, uint16_t defaultFlags, QWidget *parent = NULL);
 
     /*!
      * Contructs a GxsGroupDialog for display a group or editing
@@ -147,6 +147,10 @@ protected slots:
         void addGroupLogo();
 
 protected:
+        virtual void showEvent(QShowEvent*);
+
+        virtual QString serviceHeader() = 0;
+        virtual QPixmap serviceImage() = 0;
 
         /*!
          * Main purpose is to help tansfer meta data to service

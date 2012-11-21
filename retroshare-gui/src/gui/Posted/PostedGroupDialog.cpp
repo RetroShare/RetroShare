@@ -41,7 +41,7 @@
                               0)
 
 PostedGroupDialog::PostedGroupDialog(TokenQueue* tokenQueue,  RsPosted* posted, QWidget *parent)
-        :GxsGroupDialog(tokenQueue, POSTED_ENABLE_FLAG, POSTED_CREATE_DEFAULT_FLAG, parent, "Create New Posted Topic"),
+        :GxsGroupDialog(tokenQueue, POSTED_ENABLE_FLAG, POSTED_CREATE_DEFAULT_FLAG, parent),
         mPosted(posted)
 {
 }
@@ -51,6 +51,15 @@ PostedGroupDialog::PostedGroupDialog(const RsPostedGroup& grp, uint32_t mode, QW
 {
 }
 
+QString PostedGroupDialog::serviceHeader()
+{
+	return tr("Create New Posted Topic");
+}
+
+QPixmap PostedGroupDialog::serviceImage()
+{
+	return QPixmap();
+}
 
 bool PostedGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta)
 {

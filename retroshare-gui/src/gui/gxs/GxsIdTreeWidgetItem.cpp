@@ -21,31 +21,28 @@
 
 #include "GxsIdTreeWidgetItem.h"
 
-#include <algorithm>
-
 #include <retroshare/rspeers.h>
 
 #include <iostream>
 
 /** Constructor */
-GxsIdTreeWidgetItem::GxsIdTreeWidgetItem(QTreeWidget *parent)
-:QTreeWidgetItem(parent), QObject(NULL), mTimer(NULL), mCount(0), mColumn(0)
+GxsIdTreeWidgetItem::GxsIdTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, QTreeWidget *parent)
+:RSTreeWidgetItem(compareRole, parent), QObject(NULL), mTimer(NULL), mCount(0), mColumn(0)
 {
-	mTimer = new QTimer(this);
-	mTimer->setSingleShot(true);
-	connect(mTimer, SIGNAL(timeout()), this, SLOT(loadId()));
-
-	return;
+	init();
 }
 
-GxsIdTreeWidgetItem::GxsIdTreeWidgetItem(QTreeWidgetItem *parent)
-:QTreeWidgetItem(parent), QObject(NULL), mTimer(NULL), mCount(0), mColumn(0)
+GxsIdTreeWidgetItem::GxsIdTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, QTreeWidgetItem *parent)
+:RSTreeWidgetItem(compareRole, parent), QObject(NULL), mTimer(NULL), mCount(0), mColumn(0)
+{
+	init();
+}
+
+void GxsIdTreeWidgetItem::init()
 {
 	mTimer = new QTimer(this);
 	mTimer->setSingleShot(true);
 	connect(mTimer, SIGNAL(timeout()), this, SLOT(loadId()));
-
-	return;
 }
 
 void GxsIdTreeWidgetItem::setId(const RsGxsId &id, int column)
@@ -135,7 +132,6 @@ void GxsIdTreeWidgetItem::loadId()
 	{
 		/* timer event to try again */
 		mTimer->setInterval(mCount * 1000);
-     		mTimer->start();
+		mTimer->start();
 	}
 }
-

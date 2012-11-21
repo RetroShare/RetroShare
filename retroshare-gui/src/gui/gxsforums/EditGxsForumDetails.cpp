@@ -31,13 +31,14 @@
 
 
 /** Default constructor */
-EditGxsForumDetails::EditGxsForumDetails(std::string forumId, QWidget *parent, Qt::WFlags flags)
-  : QDialog(parent, flags), m_forumId(forumId)
+EditGxsForumDetails::EditGxsForumDetails(std::string forumId, QWidget *parent)
+  : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), m_forumId(forumId)
 {
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
 
-    connect(ui.applyButton, SIGNAL(clicked()), this, SLOT(applyDialog()));
+    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(applyDialog()));
+    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 
     loadForum();
 }

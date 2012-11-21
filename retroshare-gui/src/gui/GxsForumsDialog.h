@@ -45,112 +45,126 @@ class ForumInfo;
 
 class GxsForumsThreadLoadParameters
 {
-	public:
-		
-		std::string ForumId;
-    		std::string FocusMsgId;
+public:
+	std::string ForumId;
+	std::string FocusMsgId;
 
-		uint32_t SubscribeFlags;
-		int ViewType;
-		uint32_t FilterColumn;
-	
-		std::map<uint32_t, QTreeWidgetItem *> MsgTokens;
-    		QList<QTreeWidgetItem*> Items;
-    		QList<QTreeWidgetItem*> ItemToExpand;
-		
-		bool FillComplete;
-		bool FlatView;
-		bool UseChildTS;
-		bool ExpandNewMessages;
+	uint32_t SubscribeFlags;
+	int ViewType;
+	uint32_t FilterColumn;
+
+	std::map<uint32_t, QTreeWidgetItem *> MsgTokens;
+	QList<QTreeWidgetItem*> Items;
+	QList<QTreeWidgetItem*> ItemToExpand;
+
+	bool FillComplete;
+	bool FlatView;
+	bool UseChildTS;
+	bool ExpandNewMessages;
 };
-
-
-
-
-
 
 class GxsForumsDialog : public RsAutoUpdatePage, public TokenResponse 
 {
-  Q_OBJECT
+	Q_OBJECT
+
+	Q_PROPERTY(QColor textColorRead READ textColorRead WRITE setTextColorRead)
+	Q_PROPERTY(QColor textColorUnread READ textColorUnread WRITE setTextColorUnread)
+	Q_PROPERTY(QColor textColorUnreadChildren READ textColorUnreadChildren WRITE setTextColorUnreadChildren)
+	Q_PROPERTY(QColor textColorNotSubscribed READ textColorNotSubscribed WRITE setTextColorNotSubscribed)
+	Q_PROPERTY(QColor textColorMissing READ textColorMissing WRITE setTextColorMissing)
 
 public:
-    GxsForumsDialog(QWidget *parent = 0);
-    ~GxsForumsDialog();
+	GxsForumsDialog(QWidget *parent = 0);
+	~GxsForumsDialog();
 
-    bool navigate(const std::string& forumId, const std::string& msgId);
+//#AFTER MERGE	virtual UserNotify *getUserNotify(QObject *parent);
 
-    /* overloaded from RsAuthUpdatePage */
-    virtual void updateDisplay();
+	bool navigate(const std::string& forumId, const std::string& msgId);
+
+	/* overloaded from RsAuthUpdatePage */
+	virtual void updateDisplay();
 
 	// Callback for all Loads.
-virtual	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+
+	QColor textColorRead() const { return mTextColorRead; }
+	QColor textColorUnread() const { return mTextColorUnread; }
+	QColor textColorUnreadChildren() const { return mTextColorUnreadChildren; }
+	QColor textColorNotSubscribed() const { return mTextColorNotSubscribed; }
+	QColor textColorMissing() const { return mTextColorMissing; }
+
+	void setTextColorRead(QColor color) { mTextColorRead = color; }
+	void setTextColorUnread(QColor color) { mTextColorUnread = color; }
+	void setTextColorUnreadChildren(QColor color) { mTextColorUnreadChildren = color; }
+	void setTextColorNotSubscribed(QColor color) { mTextColorNotSubscribed = color; }
+	void setTextColorMissing(QColor color) { mTextColorMissing = color; }
 
 protected:
-    bool eventFilter(QObject *obj, QEvent *ev);
+	bool eventFilter(QObject *obj, QEvent *ev);
+	void changeEvent(QEvent *e);
 
 private slots:
-    void forceUpdateDisplay(); // TEMP HACK FN.
+	void forceUpdateDisplay(); // TEMP HACK FN.
 
-    /** Create the context popup menu and it's submenus */
-    void forumListCustomPopupMenu( QPoint point );
-    void threadListCustomPopupMenu( QPoint point );
-    void restoreForumKeys();
-    void newforum();
+	/** Create the context popup menu and it's submenus */
+	void forumListCustomPopupMenu( QPoint point );
+	void threadListCustomPopupMenu( QPoint point );
+	void restoreForumKeys();
+	void newforum();
 
-    void changedForum(const QString &id);
-    void changedThread();
-    void clickedThread (QTreeWidgetItem *item, int column);
+	void changedForum(const QString &id);
+	void changedThread();
+	void clickedThread (QTreeWidgetItem *item, int column);
 
-    void replytomessage();
+	void replytomessage();
 	void replyMessageData(const RsGxsForumMsg &msg);
 
-    //void print();
-    //void printpreview();
+	//void print();
+	//void printpreview();
 
-    //void removemessage();
-    void markMsgAsRead();
-    void markMsgAsReadChildren();
-    void markMsgAsReadAll();
-    void markMsgAsUnread();
-    void markMsgAsUnreadAll();
-    void markMsgAsUnreadChildren();
-    void copyForumLink();
-    void copyMessageLink();
+	//void removemessage();
+	void markMsgAsRead();
+	void markMsgAsReadChildren();
+	void markMsgAsReadAll();
+	void markMsgAsUnread();
+	void markMsgAsUnreadAll();
+	void markMsgAsUnreadChildren();
+	void copyForumLink();
+	void copyMessageLink();
 
-    /* handle splitter */
-    void togglethreadview();
+	/* handle splitter */
+	void togglethreadview();
 
-    void createthread();
-    void createmessage();
+	void createthread();
+	void createmessage();
 
-    void subscribeToForum();
-    void unsubscribeToForum();
+	void subscribeToForum();
+	void unsubscribeToForum();
 
-    void showForumDetails();
-    void editForumDetails();
+	void showForumDetails();
+	void editForumDetails();
 
-    void previousMessage ();
-    void nextMessage ();
-	 void nextUnreadMessage();
-    void downloadAllFiles();
+	void previousMessage ();
+	void nextMessage ();
+	void nextUnreadMessage();
+	void downloadAllFiles();
 
-    void changedViewBox();
+	void changedViewBox();
 
-    void filterColumnChanged();
-    //void filterRegExpChanged();
-    ///void clearFilter();
+	void filterColumnChanged(int column);
+	void filterItems(const QString &text);
 
-    void generateMassData();
+	void generateMassData();
 
-    void fillThreadFinished();
-    void fillThreadProgress(int current, int count);
+	void fillThreadFinished();
+	void fillThreadProgress(int current, int count);
 
-    void shareKey();
+	void shareKey();
 
 private:
-    void insertForums();
-    void insertThreads();
-    void insertPost();
+	void insertForums();
+	void insertThreads();
+	void insertPost();
 	void insertPostData(const RsGxsForumMsg &msg); // Second Half.
 
 	// Utility Fns.
@@ -159,25 +173,23 @@ private:
 	
 	void forumMsgReadStatusChanged(const QString &forumId, const QString &msgId, int status);
 	
-    void updateMessageSummaryList(std::string forumId);
-    //void forumInfoToGroupItemInfo(const ForumInfo &forumInfo, GroupItemInfo &groupItemInfo);
-    void forumInfoToGroupItemInfo(const RsGroupMetaData &forumInfo, GroupItemInfo &groupItemInfo);
+	void updateMessageSummaryList(std::string forumId);
+//	void forumInfoToGroupItemInfo(const ForumInfo &forumInfo, GroupItemInfo &groupItemInfo);
+	void forumInfoToGroupItemInfo(const RsGroupMetaData &forumInfo, GroupItemInfo &groupItemInfo);
 
-    void forumSubscribe(bool subscribe);
-    void FillThreads(QList<QTreeWidgetItem *> &ThreadList, bool bExpandNewMessages, QList<QTreeWidgetItem*> &itemToExpand);
-    void FillChildren(QTreeWidgetItem *Parent, QTreeWidgetItem *NewParent, bool bExpandNewMessages, QList<QTreeWidgetItem*> &itemToExpand);
+	void forumSubscribe(bool subscribe);
+	void FillThreads(QList<QTreeWidgetItem *> &ThreadList, bool bExpandNewMessages, QList<QTreeWidgetItem*> &itemToExpand);
+	void FillChildren(QTreeWidgetItem *Parent, QTreeWidgetItem *NewParent, bool bExpandNewMessages, QList<QTreeWidgetItem*> &itemToExpand);
 
-    int getSelectedMsgCount(QList<QTreeWidgetItem*> *pRows, QList<QTreeWidgetItem*> *pRowsRead, QList<QTreeWidgetItem*> *pRowsUnread);
+	int getSelectedMsgCount(QList<QTreeWidgetItem*> *pRows, QList<QTreeWidgetItem*> *pRowsRead, QList<QTreeWidgetItem*> *pRowsUnread);
+	void setMsgReadStatus(QList<QTreeWidgetItem*> &Rows, bool bRead);
+	void markMsgAsReadUnread(bool bRead, bool bChildren, bool bForum);
+	void CalculateIconsAndFonts(QTreeWidgetItem *pItem = NULL);
+	void CalculateIconsAndFonts(QTreeWidgetItem *pItem, bool &bHasReadChilddren, bool &bHasUnreadChilddren);
 
-    void setMsgReadStatus(QList<QTreeWidgetItem*> &Rows, bool bRead);
-    void markMsgAsReadUnread(bool bRead, bool bChildren, bool bForum);
-    void CalculateIconsAndFonts(QTreeWidgetItem *pItem = NULL);
-    void CalculateIconsAndFonts(QTreeWidgetItem *pItem, bool &bHasReadChilddren, bool &bHasUnreadChilddren);
+	void processSettings(bool bLoad);
+	void togglethreadview_internal();
 
-    void processSettings(bool bLoad);
-    void togglethreadview_internal();
-
-	void filterItems(const QString& text);
 	bool filterItem(QTreeWidgetItem *pItem, const QString &text, int filterColumn);
 
 	// New Request/Response Loading Functions.
@@ -204,75 +216,40 @@ private:
 	void requestMsgData_ReplyMessage(const RsGxsGrpMsgIdPair &msgId);
 	void loadMsgData_ReplyMessage(const uint32_t &token);
 
-	bool convertMsgToThreadWidget(const RsGxsForumMsg &msgInfo,
-                                        bool useChildTS, uint32_t filterColumn, GxsIdTreeWidgetItem *item);
-	//bool convertMsgToThreadWidget(const RsGxsForumMsg &msgInfo, std::string authorName,
-         //                               bool useChildTS, uint32_t filterColumn, QTreeWidgetItem *item);
+	bool convertMsgToThreadWidget(const RsGxsForumMsg &msgInfo, bool useChildTS, uint32_t filterColumn, GxsIdTreeWidgetItem *item);
+//	bool convertMsgToThreadWidget(const RsGxsForumMsg &msgInfo, std::string authorName, bool useChildTS, uint32_t filterColumn, QTreeWidgetItem *item);
 
 	TokenQueue *mForumQueue;
 
-
-    bool m_bProcessSettings;
-
-    QTreeWidgetItem *yourForums;
-    QTreeWidgetItem *subscribedForums;
-    QTreeWidgetItem *popularForums;
-    QTreeWidgetItem *otherForums;
-
-    std::string mCurrForumId;
-    std::string mCurrThreadId;
-    int subscribeFlags;
-
-    QFont m_ForumNameFont;
-    int lastViewType;
-    std::string lastForumID;
-
+	bool m_bProcessSettings;
 	bool inMsgAsReadUnread;
-    //GxsForumsFillThread *fillThread;
 
-    // New Datatypes to replace the FillThread.
-    bool mThreadLoading;
-    GxsForumsThreadLoadParameters mThreadLoad;
-   
+	QTreeWidgetItem *yourForums;
+	QTreeWidgetItem *subscribedForums;
+	QTreeWidgetItem *popularForums;
+	QTreeWidgetItem *otherForums;
 
-    /** Qt Designer generated object */
-    Ui::GxsForumsDialog ui;
-};
+	RSTreeWidgetItemCompareRole *threadCompareRole;
+	std::string mCurrForumId;
+	std::string mCurrThreadId;
+	int subscribeFlags;
 
-#if 0
-class GxsForumsFillThread : public QThread
-{
-    Q_OBJECT
+	int lastViewType;
+	std::string lastForumID;
 
-public:
-    GxsForumsFillThread(GxsForumsDialog *parent);
-    ~GxsForumsFillThread();
+	// New Datatypes to replace the FillThread.
+	bool mThreadLoading;
+	GxsForumsThreadLoadParameters mThreadLoad;
 
-    void run();
-    void stop();
-    bool wasStopped() { return stopped; }
+	/* Color definitions (for standard see qss.default) */
+	QColor mTextColorRead;
+	QColor mTextColorUnread;
+	QColor mTextColorUnreadChildren;
+	QColor mTextColorNotSubscribed;
+	QColor mTextColorMissing;
 
-signals:
-    void progress(int current, int count);
-
-public:
-    std::string forumId;
-    int filterColumn;
-    int subscribeFlags;
-    bool fillComplete;
-    int viewType;
-    bool expandNewMessages;
-    std::string focusMsgId;
-
-    QList<QTreeWidgetItem*> Items;
-    QList<QTreeWidgetItem*> ItemToExpand;
-
-private:
-    volatile bool stopped;
+	/** Qt Designer generated object */
+	Ui::GxsForumsDialog ui;
 };
 
 #endif
-
-
-#endif
-

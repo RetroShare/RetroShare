@@ -19,6 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 #include "GxsForumDetails.h"
+//#AFTER MERGE #include "util/DateTime.h"
 
 #include <retroshare/rsiface.h>
 #include <retroshare/rspeers.h>
@@ -37,16 +38,13 @@
 #define DATETIME_FMT  "MMM dd hh:mm:ss"
 
 /** Default constructor */
-GxsForumDetails::GxsForumDetails(QWidget *parent, Qt::WFlags flags)
-  : QDialog(parent, flags)
+GxsForumDetails::GxsForumDetails(QWidget *parent)
+  : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
 {
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);
 
-  connect(ui.applyButton, SIGNAL(clicked()), this, SLOT(applyDialog()));
-  connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(closeinfodlg()));
-
-  ui.applyButton->setToolTip(tr("Apply and Close"));
+  connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
   
   ui.nameline ->setReadOnly(true);
   ui.popline ->setReadOnly(true);
@@ -70,16 +68,6 @@ GxsForumDetails::show()
     QDialog::show();
 
   }
-}
-
-void GxsForumDetails::closeEvent (QCloseEvent * event)
-{
- QWidget::closeEvent(event);
-}
-
-void GxsForumDetails::closeinfodlg()
-{
-	close();
 }
 
 void GxsForumDetails::showDetails(std::string mCurrForumId)
@@ -108,10 +96,7 @@ void GxsForumDetails::loadDialog()
 
 	// Set Last Post Date
 	if (fi.lastPost) {
-		QDateTime qtime;
-		qtime.setTime_t(fi.lastPost);
-		QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
-		ui.postline->setText(timestamp);
+		ui.postline->setText(DateTime::formatLongDateTime(fi.lastPost));
 	}
 
 	// Set Forum ID
@@ -132,15 +117,4 @@ void GxsForumDetails::loadDialog()
 	}
 #endif
 	
-}
-
-void GxsForumDetails::applyDialog()
-{
-
-	/* reload now */
-	loadDialog();
-
-	/* close the Dialog after the Changes applied */
-	closeinfodlg();
-
 }

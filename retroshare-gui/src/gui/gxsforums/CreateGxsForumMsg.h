@@ -29,17 +29,16 @@
 
 #include <retroshare/rsgxsforums.h>
 
-
-class CreateGxsForumMsg : public QMainWindow, public TokenResponse
+class CreateGxsForumMsg : public QDialog, public TokenResponse
 {
   Q_OBJECT
 
 public:
-    CreateGxsForumMsg(std::string fId, std::string pId);
+    CreateGxsForumMsg(const std::string &fId, const std::string &pId);
 
     void newMsg(); /* cleanup */
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
-	
+
 private slots:
     /** Create the context popup menu and it's submenus */
     void forumMessageCostumPopupMenu( QPoint point );
@@ -47,7 +46,6 @@ private slots:
     void fileHashingFinished(QList<HashedFile> hashedFiles);
     /* actions to take.... */
     void createMsg();
-    void cancelMsg();
     void pasteLink();
     void pasteLinkFull();
     void pasteOwnCertificateLink();
@@ -60,17 +58,16 @@ protected:
     void closeEvent (QCloseEvent * event);
 
 private:
-	
 	void saveForumInfo(const RsGroupMetaData &meta);
 	void saveParentMsg(const RsGxsForumMsg &msg);
 	void loadFormInformation();
 
 	void loadForumInfo(const uint32_t &token);
 	void loadParentMsg(const uint32_t &token);
-	
+
     std::string mForumId;
     std::string mParentId;
-	
+
 	bool mParentMsgLoaded;
 	bool mForumMetaLoaded;
 	RsGxsForumMsg mParentMsg;

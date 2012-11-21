@@ -33,8 +33,7 @@ class GxsForumDetails : public QDialog
 	public:  
 	
 	/** Default constructor */
-  GxsForumDetails(QWidget *parent = 0, Qt::WFlags flags = 0);
-  /** Default destructor */
+  GxsForumDetails(QWidget *parent = 0);
 	
 	void 	showDetails(std::string mCurrForumId);
 
@@ -45,14 +44,6 @@ public slots:
   /** Overloaded QWidget.show */
   void show();
 
-protected:
-  void closeEvent (QCloseEvent * event);
-  
-private slots:
-
-	void closeinfodlg();
-	void applyDialog();
-  
 private:
 
   void 	loadDialog();

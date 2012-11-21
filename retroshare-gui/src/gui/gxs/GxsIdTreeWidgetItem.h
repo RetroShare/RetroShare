@@ -23,17 +23,18 @@
 #ifndef _GXS_ID_TREEWIDGETITEM_H
 #define _GXS_ID_TREEWIDGETITEM_H
 
-#include <QTreeWidget>
 #include <QTimer>
 #include <retroshare/rsidentity.h>
 
-class GxsIdTreeWidgetItem : public QObject, public QTreeWidgetItem
+#include "gui/common/RSTreeWidgetItem.h"
+
+class GxsIdTreeWidgetItem : public QObject, public RSTreeWidgetItem
 {
-        Q_OBJECT
+	Q_OBJECT
 
 public:
-	GxsIdTreeWidgetItem(QTreeWidget *parent = NULL);
-	GxsIdTreeWidgetItem(QTreeWidgetItem *parent);
+	GxsIdTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, QTreeWidget *parent = NULL);
+	GxsIdTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, QTreeWidgetItem *parent);
 
 	void setId(const RsGxsId &id, int column);
 	bool getId(RsGxsId &id);
@@ -42,6 +43,7 @@ private slots:
 	void loadId();
 
 private:
+	void init();
 
 	QTimer *mTimer;
 	RsGxsId mId;
