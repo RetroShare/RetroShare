@@ -19,11 +19,11 @@
     </message>
     <message>
         <source>Max score: %1</source>
-        <translation type="unfinished"/>
+        <translation>总高得分: %1</translation>
     </message>
     <message>
         <source>Score: %1</source>
-        <translation type="unfinished"/>
+        <translation>得分: %1</translation>
     </message>
     <message>
         <source>Level: %1</source>
@@ -548,11 +548,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>In (KB/s)</source>
-        <translation type="unfinished"/>
+        <translation>入站(KB/s)</translation>
     </message>
     <message>
         <source>InMax (KB/s)</source>
-        <translation type="unfinished"/>
+        <translation>入站峰值(KB/s)</translation>
     </message>
     <message>
         <source>InQueue</source>
@@ -560,19 +560,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>InAllocated (KB/s)</source>
-        <translation type="unfinished"/>
+        <translation>入站速度配额(KB/s)</translation>
     </message>
     <message>
         <source>Allocated Sent</source>
-        <translation type="unfinished"/>
+        <translation>出站流量配额</translation>
     </message>
     <message>
         <source>Out (KB/s)</source>
-        <translation type="unfinished"/>
+        <translation>发送(KB/s)</translation>
     </message>
     <message>
         <source>OutMax (KB/s)</source>
-        <translation type="unfinished"/>
+        <translation>出站峰值(KB/s)</translation>
     </message>
     <message>
         <source>OutQueue</source>
@@ -580,7 +580,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>OutAllowed (KB/s)</source>
-        <translation type="unfinished"/>
+        <translation>允许发送(KB/s)</translation>
     </message>
     <message>
         <source>Allowed Recvd</source>
@@ -635,7 +635,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Public</source>
-        <translation type="unfinished"/>
+        <translation>公开</translation>
     </message>
     <message>
         <source>Allow List:</source>
@@ -655,7 +655,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Peer Calendars</source>
-        <translation type="unfinished"/>
+        <translation>节点日历</translation>
     </message>
 </context>
 <context>
@@ -823,7 +823,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Popular Channels</source>
-        <translation>活跃频道</translation>
+        <translation>活跃的频道</translation>
     </message>
     <message>
         <source>Other Channels</source>
@@ -953,16 +953,28 @@ Please choose one of it to chat with.</source>
         <translation>话题： %1</translation>
     </message>
     <message>
-        <source>Uncheck to mute participant</source>
-        <translation>取消静音聊天列表</translation>
-    </message>
-    <message>
         <source>%1 changed his name to: %2</source>
         <translation>%1 更新名称为： %2</translation>
     </message>
     <message>
         <source>Lobby chat</source>
         <translation>聊天室聊天</translation>
+    </message>
+    <message>
+        <source>Participants</source>
+        <translation>参加者</translation>
+    </message>
+    <message>
+        <source>Mute participant</source>
+        <translation>忽略参加者</translation>
+    </message>
+    <message>
+        <source>Double click to mute/unmute participant</source>
+        <translation>双击忽略/停止忽略参加者</translation>
+    </message>
+    <message>
+        <source>Right click to mute/unmute participants</source>
+        <translation>点击右键忽略/停止忽略参加者</translation>
     </message>
 </context>
 <context>
@@ -1130,7 +1142,7 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Variant</source>
-        <translation type="unfinished"/>
+        <translation>变化</translation>
     </message>
     <message>
         <source>Author:</source>
@@ -1457,7 +1469,7 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>External Address</source>
-        <translation>外部地址</translation>
+        <translation>公网地址</translation>
     </message>
     <message>
         <source>Dynamic DNS</source>
@@ -1557,7 +1569,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Your trust in this peer is ultimate, it&apos;s probably a key you own.</source>
-        <translation>您对此节点无限信任，它可能是您自己的密钥。*?*</translation>
+        <translation>您对此节点无限信任，这应该是您自己的密钥。</translation>
     </message>
     <message>
         <source>Your trust in this peer is full.</source>
@@ -1698,7 +1710,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Drag and Drop your friends&apos;s certificate in this Window or specify path in the box below</source>
-        <translation>拖拽您的好友证书到此窗口或在下框中指定文件的位置</translation>
+        <translation>拖拽您的好友证书到此窗口或在下框中指定证书文件的位置</translation>
     </message>
     <message>
         <source>Browse</source>
@@ -1746,7 +1758,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Your friends&apos; email addresses:</source>
-        <translation>您好友电子邮件地址:</translation>
+        <translation>您好友的邮件地址:</translation>
     </message>
     <message>
         <source>Enter Friends Email addresses</source>
@@ -2027,15 +2039,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation type="unfinished"/>
+        <translation>允许消息类型</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation type="unfinished"/>
+        <translation>署名消息</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation type="unfinished"/>
+        <translation>匿名消息</translation>
     </message>
     <message>
         <source>Blog Logo</source>
@@ -2359,15 +2371,15 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation type="unfinished"/>
+        <translation>允许消息类型</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation type="unfinished"/>
+        <translation>匿名消息</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation type="unfinished"/>
+        <translation>署名消息</translation>
     </message>
     <message>
         <source>Key Sharing</source>
@@ -2571,15 +2583,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation type="unfinished"/>
+        <translation>允许消息类型</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation type="unfinished"/>
+        <translation>署名消息</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation type="unfinished"/>
+        <translation>匿名消息</translation>
     </message>
     <message>
         <source>Contacts:</source>
@@ -2693,7 +2705,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation type="unfinished"/>
+        <translation>受限 － 开放只读，限制发帖(需个人发帖密钥)。</translation>
     </message>
     <message>
         <source>Private - (Private Publish Key required to view Messages)</source>
@@ -2713,15 +2725,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation type="unfinished"/>
+        <translation>允许消息类型</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation type="unfinished"/>
+        <translation>署名消息</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation type="unfinished"/>
+        <translation>匿名消息</translation>
     </message>
     <message>
         <source>Contacts:</source>
@@ -3038,7 +3050,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Datarate:</source>
-        <translation type="unfinished"/>
+        <translation>速率:</translation>
     </message>
     <message>
         <source>Completed:</source>
@@ -3125,7 +3137,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Nat Hole</source>
-        <translation type="unfinished"/>
+        <translation>NAT钻洞</translation>
     </message>
     <message>
         <source>Peer Address</source>
@@ -3317,18 +3329,18 @@ you plug it in.</source>
     <name>DiscStatus</name>
     <message>
         <source>Waiting outgoing discovery operations</source>
-        <translation type="unfinished"/>
+        <translation>等待出站探索操作</translation>
     </message>
     <message>
         <source>Waiting incoming discovery operations</source>
-        <translation type="unfinished"/>
+        <translation>等待入站探索操作</translation>
     </message>
 </context>
 <context>
     <name>DownloadToaster</name>
     <message>
         <source>Start file</source>
-        <translation type="unfinished"/>
+        <translation>启动文件任务</translation>
     </message>
 </context>
 <context>
@@ -3456,11 +3468,11 @@ you plug it in.</source>
     </message>
     <message>
         <source>Vote Up</source>
-        <translation type="unfinished"/>
+        <translation>赞</translation>
     </message>
     <message>
         <source>Vote Down</source>
-        <translation type="unfinished"/>
+        <translation>踩</translation>
     </message>
     <message>
         <source>Organization</source>
@@ -3610,7 +3622,7 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Chunk strategy</source>
-        <translation>分开策略</translation>
+        <translation>分块策略</translation>
     </message>
     <message>
         <source>Transfer type</source>
@@ -3661,7 +3673,7 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>RetroShare collection file</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare 资源集合文件</translation>
     </message>
     <message>
         <source>Subtitles</source>
@@ -3669,7 +3681,7 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Nintendo DS Rom</source>
-        <translation>Nintendo DS Rom</translation>
+        <translation>Nintendo DS ROM</translation>
     </message>
 </context>
 <context>
@@ -3739,15 +3751,15 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation type="unfinished"/>
+        <translation>允许消息类型</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation type="unfinished"/>
+        <translation>署名消息</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation type="unfinished"/>
+        <translation>匿名消息</translation>
     </message>
 </context>
 <context>
@@ -3906,15 +3918,15 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation type="unfinished"/>
+        <translation>允许消息类型</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation type="unfinished"/>
+        <translation>署名消息</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation type="unfinished"/>
+        <translation>匿名消息</translation>
     </message>
 </context>
 <context>
@@ -4005,7 +4017,7 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Your Forums</source>
-        <translation>您的论坛</translation>
+        <translation>我的论坛</translation>
     </message>
     <message>
         <source>Subscribed Forums</source>
@@ -4085,7 +4097,7 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>with children</source>
-        <translation type="unfinished"/>
+        <translation>包括子项</translation>
     </message>
     <message>
         <source>Mark as unread</source>
@@ -4101,7 +4113,7 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>AUTHD</source>
-        <translation type="unfinished"/>
+        <translation>仅签名文章</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -4113,11 +4125,11 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>[ ... Missing Message ... ]</source>
-        <translation type="unfinished"/>
+        <translation>[ ... 丢失消息 ... ]</translation>
     </message>
     <message>
         <source>Placeholder for missing Message</source>
-        <translation type="unfinished"/>
+        <translation>丢失消息占位</translation>
     </message>
     <message>
         <source>Original Message</source>
@@ -4125,11 +4137,11 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished"/>
+        <translation>发帖人</translation>
     </message>
     <message>
         <source>Sent</source>
-        <translation type="unfinished"/>
+        <translation>已发送</translation>
     </message>
     <message>
         <source>Subject</source>
@@ -4251,7 +4263,7 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Reply Message</source>
-        <translation type="unfinished"/>
+        <translation>回复贴文</translation>
     </message>
     <message>
         <source>Start new Thread for Selected Forum</source>
@@ -4271,7 +4283,7 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Your Forums</source>
-        <translation>您的论坛</translation>
+        <translation>我的论坛</translation>
     </message>
     <message>
         <source>Subscribed Forums</source>
@@ -4279,7 +4291,7 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Popular Forums</source>
-        <translation>活跃论坛</translation>
+        <translation>活跃的论坛</translation>
     </message>
     <message>
         <source>Other Forums</source>
@@ -4351,7 +4363,7 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>with children</source>
-        <translation type="unfinished"/>
+        <translation>包括子项</translation>
     </message>
     <message>
         <source>Mark as unread</source>
@@ -4367,15 +4379,15 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>AUTHD</source>
-        <translation type="unfinished"/>
+        <translation>仅签名文章</translation>
     </message>
     <message>
         <source>[ ... Missing Message ... ]</source>
-        <translation type="unfinished"/>
+        <translation>[ ... 丢失消息 ... ]</translation>
     </message>
     <message>
         <source>Placeholder for missing Message</source>
-        <translation type="unfinished"/>
+        <translation>丢失消息占位</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -4387,15 +4399,15 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Original Message</source>
-        <translation>原始信息</translation>
+        <translation>原始贴文</translation>
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished"/>
+        <translation>发帖人</translation>
     </message>
     <message>
         <source>Sent</source>
-        <translation type="unfinished"/>
+        <translation>已发送</translation>
     </message>
     <message>
         <source>Subject</source>
@@ -4434,7 +4446,7 @@ p, li { white-space：pre-wrap；}
     <name>FriendList</name>
     <message>
         <source>Friends</source>
-        <translation>朋友</translation>
+        <translation>好友</translation>
     </message>
     <message>
         <source>Status</source>
@@ -4494,11 +4506,11 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Set root is Decorated</source>
-        <translation type="unfinished"/>
+        <translation>根节点前显示展开符</translation>
     </message>
     <message>
         <source>Set Root Decorated</source>
-        <translation type="unfinished"/>
+        <translation>根节点前显示展开符</translation>
     </message>
     <message>
         <source>Show Groups</source>
@@ -4542,7 +4554,7 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Message Friend</source>
-        <translation type="unfinished"/>
+        <translation>给好友写邮件</translation>
     </message>
     <message>
         <source>Friend Details</source>
@@ -4653,7 +4665,7 @@ p, li { white-space：pre-wrap；}
     <name>FriendRecommendDialog</name>
     <message>
         <source>Friend Recommendations</source>
-        <translation>好友的推荐</translation>
+        <translation>好友推荐</translation>
     </message>
     <message>
         <source>Message:</source>
@@ -4688,7 +4700,7 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Unknown (Incoming) Connect Attempt</source>
-        <translation type="unfinished"/>
+        <translation>未知(入站)连接请求</translation>
     </message>
 </context>
 <context>
@@ -4714,7 +4726,7 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Edit Personal message</source>
-        <translation>编辑个人消息</translation>
+        <translation>编辑状态签名</translation>
     </message>
     <message>
         <source>Group Chat</source>
@@ -4761,26 +4773,6 @@ p, li { white-space：pre-wrap；}
         <translation>添加好友</translation>
     </message>
     <message>
-        <source>Create new Profile</source>
-        <translation>新建配置</translation>
-    </message>
-    <message>
-        <source>Create new Forum</source>
-        <translation>新建论坛</translation>
-    </message>
-    <message>
-        <source>F</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Create new Channel</source>
-        <translation>新建频道</translation>
-    </message>
-    <message>
-        <source>C</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Add your Avatar Picture</source>
         <translation>添加头像图片</translation>
     </message>
@@ -4790,7 +4782,7 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Set your Personal Message</source>
-        <translation>设置个人消息</translation>
+        <translation>设置状态签名</translation>
     </message>
     <message>
         <source>Edit your status Message</source>
@@ -4830,11 +4822,11 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Profile</source>
-        <translation type="unfinished"/>
+        <translation>个人信息</translation>
     </message>
     <message>
         <source>News Feed</source>
-        <translation type="unfinished"/>
+        <translation>事件中心</translation>
     </message>
     <message>
         <source>Welcome to RetroShare&apos;s group chat.</source>
@@ -5252,7 +5244,7 @@ and use the import button to load it</source>
     </message>
     <message>
         <source>For Advanced Users </source>
-        <translation type="unfinished"/>
+        <translation>高级用户适用</translation>
     </message>
     <message>
         <source>Enable Advanced Mode (Restart Required)</source>
@@ -5487,7 +5479,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>forums and channels, all of which are as secure as the file-sharing.</source>
-        <translation>论坛和频道与文件共享一样同样安全。</translation>
+        <translation>它的论坛和频道与文件共享功能一样安全。</translation>
     </message>
     <message>
         <source>Here is your friends ID Certificate.</source>
@@ -5499,7 +5491,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>and send them your ID Certificate to get securely connected.</source>
-        <translation>并发送将您的 ID 证书发送给他们即可建立安全连接。</translation>
+        <translation>并将您在 RetroShare 中的 ID 证书发送给他们即可与之建立安全连接。</translation>
     </message>
     <message>
         <source>Cut Below Here</source>
@@ -5550,7 +5542,7 @@ p, li { white-space：pre-wrap；}
     <name>GraphFrame</name>
     <message>
         <source>Recv: </source>
-        <translation type="unfinished"/>
+        <translation>接收:</translation>
     </message>
     <message>
         <source>%1 KB/s</source>
@@ -5558,7 +5550,7 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Sent: </source>
-        <translation type="unfinished"/>
+        <translation>发送:</translation>
     </message>
     <message>
         <source>%1 KB</source>
@@ -5611,6 +5603,42 @@ p, li { white-space：pre-wrap；}
     </message>
 </context>
 <context>
+    <name>GroupFlagsWidget</name>
+    <message>
+        <source>All your friends can browse this directory
+</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Only friends in groups </source>
+        <translation>仅组中好友</translation>
+    </message>
+    <message>
+        <source> can browse this directory
+</source>
+        <translation>可浏览此目录
+</translation>
+    </message>
+    <message>
+        <source>No one can browse this directory
+</source>
+        <translation>无人可浏览此目录
+</translation>
+    </message>
+    <message>
+        <source>All your friends can relay anonymous tunnels to this directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> can relay anonymous tunnels to this directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No one can anonymously access this directory.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>GroupTreeWidget</name>
     <message>
         <source>Title</source>
@@ -5649,15 +5677,15 @@ p, li { white-space：pre-wrap；}
     <name>GuiExprElement</name>
     <message>
         <source>and</source>
-        <translation type="unfinished"/>
+        <translation>与</translation>
     </message>
     <message>
         <source>and / or</source>
-        <translation type="unfinished"/>
+        <translation>与/或</translation>
     </message>
     <message>
         <source>or</source>
-        <translation type="unfinished"/>
+        <translation>或</translation>
     </message>
     <message>
         <source>Name</source>
@@ -6139,7 +6167,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>New Identity</source>
-        <translation type="unfinished"/>
+        <translation>新建身份</translation>
     </message>
     <message>
         <source>Pseudonym</source>
@@ -6317,11 +6345,11 @@ RetroShare 将暂停对此目录的访问。
     </message>
     <message>
         <source>Open Messenger</source>
-        <translation type="unfinished"/>
+        <translation>打开 RS Messanger</translation>
     </message>
     <message>
         <source>Open Messages</source>
-        <translation type="unfinished"/>
+        <translation>打开邮件箱</translation>
     </message>
     <message>
         <source>Bandwidth Graph</source>
@@ -6413,7 +6441,7 @@ RetroShare 将暂停对此目录的访问。
     </message>
     <message>
         <source>RetroShare %1 a secure decentralized communication platform</source>
-        <translation>RetroShare %1 是一个安全的分布式通信平台</translation>
+        <translation>RetroShare %1 ― 一款分布式的安全通信平台</translation>
     </message>
 </context>
 <context>
@@ -6500,7 +6528,7 @@ RetroShare 将暂停对此目录的访问。
     </message>
     <message>
         <source>Sets text font to code style</source>
-        <translation type="unfinished"/>
+        <translation>设置文本为代码样式</translation>
     </message>
     <message>
         <source>Underline</source>
@@ -6800,11 +6828,11 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished"/>
+        <translation>发件人</translation>
     </message>
     <message>
         <source>Sent</source>
-        <translation type="unfinished"/>
+        <translation>已发送</translation>
     </message>
     <message>
         <source>Subject</source>
@@ -6820,7 +6848,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Hi %1,&lt;br&gt;&lt;br&gt;%2 wants to be friends with you on RetroShare.&lt;br&gt;&lt;br&gt;Respond now:&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Thanks,&lt;br&gt;The RetroShare Team</source>
-        <translation type="unfinished"/>
+        <translation>你好 %1,&lt;br&gt;&lt;br&gt;%2 希望加你为 RetroShare 好友。&lt;br&gt;&lt;br&gt;立即回应:&lt;br&gt;%3&lt;br&gt;&lt;br&gt;谢谢,&lt;br&gt; RetroShare 软件小组</translation>
     </message>
     <message>
         <source>This friend is suggested by</source>
@@ -6843,7 +6871,7 @@ Do you want to save message ?</source>
     <name>MessagePage</name>
     <message>
         <source>Reading</source>
-        <translation type="unfinished"/>
+        <translation>邮件阅读</translation>
     </message>
     <message>
         <source>Set message to read on activate</source>
@@ -6891,7 +6919,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Message</source>
-        <translation type="unfinished"/>
+        <translation>邮件</translation>
     </message>
 </context>
 <context>
@@ -6905,7 +6933,7 @@ Do you want to save message ?</source>
     <name>MessageUserNotify</name>
     <message>
         <source>Message</source>
-        <translation type="unfinished"/>
+        <translation>邮件</translation>
     </message>
 </context>
 <context>
@@ -7015,7 +7043,7 @@ Do you want to save message ?</source>
     <name>MessageWindow</name>
     <message>
         <source>New Message</source>
-        <translation type="unfinished"/>
+        <translation>新邮件</translation>
     </message>
     <message>
         <source>Compose</source>
@@ -7198,7 +7226,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Outbox</source>
-        <translation>发件箱</translation>
+        <translation>待送箱</translation>
     </message>
     <message>
         <source>Draft</source>
@@ -7302,7 +7330,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Starred</source>
-        <translation>已加星标</translation>
+        <translation>加星</translation>
     </message>
     <message>
         <source>Open in a new window</source>
@@ -7542,7 +7570,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Did I authenticated peer</source>
-        <translation>节点是否被我认证为好友</translation>
+        <translation>是否已被我认证为好友</translation>
     </message>
     <message>
         <source>Did I sign his gpg key</source>
@@ -7550,7 +7578,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Did peer authenticated me</source>
-        <translation>节点是否认证我为好友</translation>
+        <translation>是否已认证我为好友</translation>
     </message>
     <message>
         <source>Cert Id</source>
@@ -7582,7 +7610,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>External ip address finder</source>
-        <translation>外网 IP 探测服务</translation>
+        <translation>公网 IP 探测服务</translation>
     </message>
     <message>
         <source>Clear</source>
@@ -7590,23 +7618,23 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Set Tabs Right</source>
-        <translation type="unfinished"/>
+        <translation>页柄居右</translation>
     </message>
     <message>
         <source>Set Tabs North</source>
-        <translation type="unfinished"/>
+        <translation>页柄居上</translation>
     </message>
     <message>
         <source>Set Tabs South</source>
-        <translation type="unfinished"/>
+        <translation>页柄居下</translation>
     </message>
     <message>
         <source>Set Tabs Left</source>
-        <translation type="unfinished"/>
+        <translation>页柄居左</translation>
     </message>
     <message>
         <source>Set Tabs Rounded</source>
-        <translation type="unfinished"/>
+        <translation>圆角页柄</translation>
     </message>
     <message>
         <source>Set Tabs Triangular</source>
@@ -7662,7 +7690,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Personal signature</source>
-        <translation>个人签名</translation>
+        <translation>状态签名</translation>
     </message>
     <message>
         <source>GPG key signed by you</source>
@@ -7696,7 +7724,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>yourself</source>
-        <translation type="unfinished"/>
+        <translation>我自己</translation>
     </message>
     <message>
         <source>Display</source>
@@ -7726,7 +7754,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Friendship level:</source>
-        <translation>好友等级:</translation>
+        <translation>好友层级:</translation>
     </message>
     <message>
         <source>Edge length:</source>
@@ -7737,7 +7765,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <name>NewTag</name>
     <message>
         <source>New Tag</source>
-        <translation type="unfinished"/>
+        <translation>新建标签</translation>
     </message>
     <message>
         <source>Name:</source>
@@ -7768,7 +7796,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>News Feed</source>
-        <translation type="unfinished"/>
+        <translation>事件中心</translation>
     </message>
     <message>
         <source>This is a test.</source>
@@ -7779,7 +7807,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <name>NotifyPage</name>
     <message>
         <source>News Feed</source>
-        <translation type="unfinished"/>
+        <translation>事件中心</translation>
     </message>
     <message>
         <source>Peers</source>
@@ -7811,7 +7839,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Add feeds at end</source>
-        <translation type="unfinished"/>
+        <translation>从尾部追加</translation>
     </message>
     <message>
         <source>Systray Icon</source>
@@ -7819,7 +7847,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Message</source>
-        <translation type="unfinished"/>
+        <translation>消息</translation>
     </message>
     <message>
         <source>Download completed</source>
@@ -7827,11 +7855,11 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Combined</source>
-        <translation type="unfinished"/>
+        <translation>合并</translation>
     </message>
     <message>
         <source>Toasters</source>
-        <translation type="unfinished"/>
+        <translation>弹出消息</translation>
     </message>
     <message>
         <source>Friend Connect</source>
@@ -7839,7 +7867,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>New Message</source>
-        <translation type="unfinished"/>
+        <translation>新邮件</translation>
     </message>
     <message>
         <source>Position</source>
@@ -7933,10 +7961,6 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation>正在保存文件索引...</translation>
     </message>
     <message>
-        <source>To sign, please enter the password that unlocks your PGP key:</source>
-        <translation>签名前需输入您GPG密钥的密码:</translation>
-    </message>
-    <message>
         <source>Unregistered plugin/executable</source>
         <translation>未注册插件/可执行程序</translation>
     </message>
@@ -7951,6 +7975,10 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <message>
         <source>This is a test.</source>
         <translation>这是一个测试。</translation>
+    </message>
+    <message>
+        <source>Please enter the password to unlock your PGP key:</source>
+        <translation>请输入密码解锁您的PGP密钥:</translation>
     </message>
 </context>
 <context>
@@ -8031,7 +8059,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Friend</source>
-        <translation>友元</translation>
+        <translation>好友</translation>
     </message>
     <message>
         <source>Friend Connected</source>
@@ -8085,7 +8113,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Public</source>
-        <translation type="unfinished"/>
+        <translation>公开</translation>
     </message>
     <message>
         <source>All Friends</source>
@@ -8097,7 +8125,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>N/A</source>
-        <translation type="unfinished"/>
+        <translation>不适用</translation>
     </message>
     <message>
         <source>University Friends</source>
@@ -8165,7 +8193,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Friends</source>
-        <translation>朋友</translation>
+        <translation>好友</translation>
     </message>
     <message>
         <source>Work</source>
@@ -8353,7 +8381,7 @@ Text
     </message>
     <message>
         <source>PhotoShare</source>
-        <translation type="unfinished"/>
+        <translation>照片共享</translation>
     </message>
     <message>
         <source>Please select an album before
@@ -8374,7 +8402,7 @@ requesting to edit it!</source>
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished"/>
+        <translation>来自</translation>
     </message>
     <message>
         <source>Status</source>
@@ -8513,7 +8541,7 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Authorize all plugins</source>
-        <translation type="unfinished"/>
+        <translation>允许所有插件</translation>
     </message>
     <message>
         <source>Plugin look-up directories</source>
@@ -8639,11 +8667,11 @@ malicious behavior of crafted plugins.</source>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"/>
+        <translation>新建</translation>
     </message>
     <message>
         <source>Top</source>
-        <translation type="unfinished"/>
+        <translation>置顶</translation>
     </message>
     <message>
         <source>Today</source>
@@ -8663,7 +8691,7 @@ malicious behavior of crafted plugins.</source>
     </message>
     <message>
         <source>This Year</source>
-        <translation type="unfinished"/>
+        <translation>今年</translation>
     </message>
     <message>
         <source>Refresh</source>
@@ -8694,7 +8722,7 @@ malicious behavior of crafted plugins.</source>
     </message>
     <message>
         <source>score</source>
-        <translation type="unfinished"/>
+        <translation>得分</translation>
     </message>
     <message>
         <source>\/</source>
@@ -8702,11 +8730,11 @@ malicious behavior of crafted plugins.</source>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"/>
+        <translation>日期</translation>
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished"/>
+        <translation>发信人</translation>
     </message>
     <message>
         <source>Site</source>
@@ -8733,11 +8761,11 @@ malicious behavior of crafted plugins.</source>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"/>
+        <translation>新建</translation>
     </message>
     <message>
         <source>Top</source>
-        <translation type="unfinished"/>
+        <translation>置顶</translation>
     </message>
     <message>
         <source>Today</source>
@@ -8761,7 +8789,7 @@ malicious behavior of crafted plugins.</source>
     </message>
     <message>
         <source>New Link Group</source>
-        <translation type="unfinished"/>
+        <translation>新建链接组</translation>
     </message>
     <message>
         <source>Submit Post</source>
@@ -8769,7 +8797,7 @@ malicious behavior of crafted plugins.</source>
     </message>
     <message>
         <source>Refresh</source>
-        <translation type="unfinished"/>
+        <translation>刷新</translation>
     </message>
     <message>
         <source>Showing 1-100</source>
@@ -8841,7 +8869,7 @@ malicious behavior of crafted plugins.</source>
     </message>
     <message>
         <source>AUTHD</source>
-        <translation type="unfinished"/>
+        <translation>仅签名文章</translation>
     </message>
 </context>
 <context>
@@ -8943,7 +8971,7 @@ and use the import button to load it</source>
     </message>
     <message>
         <source>Select Trusted Friend</source>
-        <translation>选择信赖的好友</translation>
+        <translation>选择信任的好友</translation>
     </message>
     <message>
         <source>Certificates (*.pqi *.pem)</source>
@@ -8955,7 +8983,7 @@ and use the import button to load it</source>
     </message>
     <message>
         <source>Email</source>
-        <translation type="unfinished"/>
+        <translation>Email</translation>
     </message>
     <message>
         <source>GID</source>
@@ -8982,7 +9010,7 @@ and use the import button to load it</source>
     <name>ProfileWidget</name>
     <message>
         <source>Edit Personal message</source>
-        <translation>编辑个人消息</translation>
+        <translation>编辑状态签名</translation>
     </message>
     <message>
         <source>Copy Certificate</source>
@@ -9046,7 +9074,7 @@ and use the import button to load it</source>
     </message>
     <message>
         <source>External Address:</source>
-        <translation>外部地址:</translation>
+        <translation>公网地址:</translation>
     </message>
     <message>
         <source>Dynamic DNS:</source>
@@ -9077,7 +9105,7 @@ and use the import button to load it</source>
     </message>
     <message>
         <source>Add to Pulse</source>
-        <translation type="unfinished"/>
+        <translation>添加至 Pulse</translation>
     </message>
     <message>
         <source>filter</source>
@@ -9108,7 +9136,7 @@ and use the import button to load it</source>
     <name>PulseItem</name>
     <message>
         <source>From</source>
-        <translation type="unfinished"/>
+        <translation>发信人</translation>
     </message>
     <message>
         <source>Date</source>
@@ -9175,11 +9203,11 @@ and open the Make Friend Wizard.
     </message>
     <message>
         <source>Do you want to process the link ?</source>
-        <translation type="unfinished"/>
+        <translation>您是否要打开此链接？</translation>
     </message>
     <message>
         <source>Do you want to process %1 links ?</source>
-        <translation type="unfinished"/>
+        <translation>您确实要打开 %1 个链接？</translation>
     </message>
     <message>
         <source>Confirmation</source>
@@ -9187,11 +9215,11 @@ and open the Make Friend Wizard.
     </message>
     <message>
         <source>%1 of %2 RetroShare link processed.</source>
-        <translation type="unfinished"/>
+        <translation>已处理 %1 共 %2 个 RetroShare 链接。</translation>
     </message>
     <message>
         <source>%1 of %2 RetroShare links processed.</source>
-        <translation type="unfinished"/>
+        <translation>已处理 %1 共 %2 个 RetroShare 链接。</translation>
     </message>
     <message>
         <source>File added</source>
@@ -9287,15 +9315,15 @@ and open the Make Friend Wizard.
     </message>
     <message>
         <source>Unable to make path</source>
-        <translation type="unfinished"/>
+        <translation>无法创建路径</translation>
     </message>
     <message>
         <source>Unable to make path:</source>
-        <translation type="unfinished"/>
+        <translation>无法创建路径:</translation>
     </message>
     <message>
         <source>Treatment of collection file has failed</source>
-        <translation type="unfinished"/>
+        <translation>资源集合文件处理失败</translation>
     </message>
     <message>
         <source>Deny friend</source>
@@ -9354,7 +9382,8 @@ and open the Make Friend Wizard.
     <message>
         <source>The collection file %1 could not be opened.
 Reported error is: %2</source>
-        <translation type="unfinished"/>
+        <translation>无法打开资源集合文件 %1 。
+错误: %2</translation>
     </message>
     <message>
         <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although GPG keys are mentioned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
@@ -9366,12 +9395,30 @@ Reported error is: %2</source>
     </message>
     <message>
         <source>An unexpected error occurred. Please report &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</source>
-        <translation type="unfinished"/>
+        <translation>发生意外错误。请报告 &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</translation>
     </message>
     <message>
         <source>An unexpected error occurred when Retroshare tried to acquire the single instance lock
  Lock file:
 </source>
+        <translation>Retroshare 尝试锁定 Lock 文件时发生意外错误
+ Lock 文件:
+</translation>
+    </message>
+    <message>
+        <source>Directory is browsable for friends from parent groups</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Directory is accessible by anonymous tunnels from friends from parent groups</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Directory is browsable for any friend</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Directory is accessible by anonymous tunnels from any friend</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -9419,7 +9466,7 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Next &gt;</source>
-        <translation>下一个&gt;</translation>
+        <translation>下一步 &gt;</translation>
     </message>
     <message>
         <source>Exit</source>
@@ -9483,7 +9530,7 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Directory</source>
-        <translation type="unfinished"/>
+        <translation>目录</translation>
     </message>
     <message>
         <source>Network Wide</source>
@@ -9503,7 +9550,7 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Automatically share incoming directory (Recommended)</source>
-        <translation type="unfinished"/>
+        <translation>自动共享接收文件目录(推荐)</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -9557,23 +9604,23 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Finish</source>
-        <translation type="unfinished"/>
+        <translation>完成</translation>
     </message>
     <message>
         <source>Select A Folder To Share</source>
-        <translation type="unfinished"/>
+        <translation>选择要共享的文件夹</translation>
     </message>
     <message>
         <source>Shared Directory Added!</source>
-        <translation type="unfinished"/>
+        <translation>共享文件夹添加成功！</translation>
     </message>
     <message>
         <source>Do you really want to stop sharing this directory ? </source>
-        <translation type="unfinished"/>
+        <translation>您确定要停止此文件夹的共享？</translation>
     </message>
     <message>
         <source>Warning!</source>
-        <translation type="unfinished"/>
+        <translation>警告！</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -9605,46 +9652,46 @@ p, li { white-space：pre-wrap；}
     <name>RatesStatus</name>
     <message>
         <source>&lt;strong&gt;Down:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Up:&lt;/strong&gt; 0.00 (kB/s) </source>
-        <translation type="unfinished"/>
+        <translation>&lt;strong&gt;下载：&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;上传：&lt;/strong&gt; 0.00 (kB/s) </translation>
     </message>
     <message>
         <source>Down</source>
-        <translation type="unfinished"/>
+        <translation>下载</translation>
     </message>
     <message>
         <source>Up</source>
-        <translation type="unfinished"/>
+        <translation>上传</translation>
     </message>
 </context>
 <context>
     <name>RelayPage</name>
     <message>
         <source>Enable Relay Connections</source>
-        <translation type="unfinished"/>
+        <translation>启用中继连接</translation>
     </message>
     <message>
         <source>Use Relay Servers</source>
-        <translation type="unfinished"/>
+        <translation>使用中继服务器</translation>
     </message>
     <message>
         <source>Relay options</source>
-        <translation type="unfinished"/>
+        <translation>中继选项</translation>
     </message>
     <message>
         <source>Number</source>
-        <translation type="unfinished"/>
+        <translation>数量</translation>
     </message>
     <message>
         <source>Bandwidth per link</source>
-        <translation type="unfinished"/>
+        <translation>每连接带宽</translation>
     </message>
     <message>
         <source>Total Bandwidth</source>
-        <translation type="unfinished"/>
+        <translation>总带宽</translation>
     </message>
     <message>
         <source>Friends</source>
-        <translation type="unfinished"/>
+        <translation>好友</translation>
     </message>
     <message>
         <source>kB/s</source>
@@ -9652,7 +9699,7 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Friends of Friends</source>
-        <translation type="unfinished"/>
+        <translation>好友的好友</translation>
     </message>
     <message>
         <source>General</source>
@@ -9660,43 +9707,31 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Total:</source>
-        <translation type="unfinished"/>
+        <translation>总计:</translation>
     </message>
     <message>
         <source>Relay Server Setup</source>
-        <translation type="unfinished"/>
+        <translation>中继服务器设置</translation>
     </message>
     <message>
         <source>Add Server</source>
-        <translation type="unfinished"/>
+        <translation>添加服务器</translation>
     </message>
     <message>
         <source>Server DHT Key</source>
-        <translation type="unfinished"/>
+        <translation>服务器 DHT 密钥</translation>
     </message>
     <message>
         <source>Remove Server</source>
-        <translation type="unfinished"/>
+        <translation>删除服务器</translation>
     </message>
     <message>
         <source>Relay</source>
-        <translation type="unfinished"/>
+        <translation>中继</translation>
     </message>
 </context>
 <context>
     <name>RetroshareDirModel</name>
-    <message>
-        <source>Anonymous</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Anonymous and browsable by friends</source>
-        <translation>匿名节点及好友可见</translation>
-    </message>
-    <message>
-        <source>Only browsable by friends</source>
-        <translation>仅好友可见</translation>
-    </message>
     <message>
         <source>NEW</source>
         <translation type="unfinished"/>
@@ -9706,27 +9741,27 @@ p, li { white-space：pre-wrap；}
     <name>RsCollectionDialog</name>
     <message>
         <source>Collection</source>
-        <translation type="unfinished"/>
+        <translation>资源集合</translation>
     </message>
     <message>
         <source>File name :</source>
-        <translation type="unfinished"/>
+        <translation>文件名:</translation>
     </message>
     <message>
         <source>Total size :</source>
-        <translation type="unfinished"/>
+        <translation>总计大小:</translation>
     </message>
     <message>
         <source>Selected files:</source>
-        <translation type="unfinished"/>
+        <translation>选中文件:</translation>
     </message>
     <message>
         <source>Select all</source>
-        <translation type="unfinished"/>
+        <translation>全部选中</translation>
     </message>
     <message>
         <source>Deselect all</source>
-        <translation type="unfinished"/>
+        <translation>全部取消</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -9734,15 +9769,15 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Download!</source>
-        <translation type="unfinished"/>
+        <translation>下载！</translation>
     </message>
     <message>
         <source>File</source>
-        <translation type="unfinished"/>
+        <translation>文件</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>大小</translation>
     </message>
     <message>
         <source>Hash</source>
@@ -9753,23 +9788,23 @@ p, li { white-space：pre-wrap；}
     <name>RsCollectionFile</name>
     <message>
         <source>Cannot open file %1</source>
-        <translation type="unfinished"/>
+        <translation>无法打开文件 %1</translation>
     </message>
     <message>
         <source>Error parsing xml file</source>
-        <translation type="unfinished"/>
+        <translation>xml 文件解析错误</translation>
     </message>
     <message>
         <source>Open collection file</source>
-        <translation type="unfinished"/>
+        <translation>打开集合文件</translation>
     </message>
     <message>
         <source>Collection files</source>
-        <translation type="unfinished"/>
+        <translation>资源集合文件</translation>
     </message>
     <message>
         <source>Create collection file</source>
-        <translation type="unfinished"/>
+        <translation>创建集合文件</translation>
     </message>
 </context>
 <context>
@@ -9797,7 +9832,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Sets the verbosity of RetroShare&apos;s logging.</source>
-        <translation type="unfinished"/>
+        <translation>设置 RetroShare 日志详细等级。</translation>
     </message>
     <message>
         <source>Sets RetroShare&apos;s interface style.</source>
@@ -9817,7 +9852,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Invalid language code specified: </source>
-        <translation>无效的语言代码指定: </translation>
+        <translation>指定的语言代码无效: </translation>
     </message>
     <message>
         <source>Invalid GUI style specified: </source>
@@ -9829,11 +9864,11 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Unable to open log file &apos;%1&apos;: %2</source>
-        <translation>不能打开日志文件 &quot;%1&apos;:%2</translation>
+        <translation>无法打开日志文件 &quot;%1&apos;:%2</translation>
     </message>
     <message>
         <source>built-in</source>
-        <translation type="unfinished"/>
+        <translation>内建</translation>
     </message>
 </context>
 <context>
@@ -9859,15 +9894,15 @@ Reducing image to %1x%2 pixels?</source>
     <name>SearchDialog</name>
     <message>
         <source>Any</source>
-        <translation type="unfinished"/>
+        <translation>任何</translation>
     </message>
     <message>
         <source>Archive</source>
-        <translation type="unfinished"/>
+        <translation>压缩包</translation>
     </message>
     <message>
         <source>Audio</source>
-        <translation type="unfinished"/>
+        <translation>音频</translation>
     </message>
     <message>
         <source>CD-Image</source>
@@ -9955,23 +9990,23 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Close All Search Results</source>
-        <translation type="unfinished"/>
+        <translation>关闭所有搜索结果</translation>
     </message>
     <message>
         <source>Download Selected</source>
-        <translation type="unfinished"/>
+        <translation>下载所选项目</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>下载</translation>
     </message>
     <message>
         <source>Include files from your own file list in the search result</source>
-        <translation type="unfinished"/>
+        <translation>搜索结果中包含我自己的文件</translation>
     </message>
     <message>
         <source>Include own files</source>
-        <translation type="unfinished"/>
+        <translation>包括我的文件</translation>
     </message>
     <message>
         <source>Search inside &quot;browsable&quot; files of your friends</source>
@@ -9984,78 +10019,79 @@ Reducing image to %1x%2 pixels?</source>
     <message>
         <source>Multi-hop search at distance 6 in the network 
 (always reports available files)</source>
-        <translation type="unfinished"/>
+        <translation>在6跳之内的节点间搜索
+(总是报告可用文件)</translation>
     </message>
     <message>
         <source>F2F search</source>
-        <translation type="unfinished"/>
+        <translation>F2F 搜索</translation>
     </message>
     <message>
         <source>Limit number of results to :</source>
-        <translation type="unfinished"/>
+        <translation>限制结果数量:</translation>
     </message>
     <message>
         <source>Enter a keyword here (at least 3 char long)</source>
-        <translation type="unfinished"/>
+        <translation>在此输入关键词(至少3个字符长)</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>复制 RetroShare 链接</translation>
     </message>
     <message>
         <source>Send RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>发送 RetroShare 链接</translation>
     </message>
     <message>
         <source>Download Notice</source>
-        <translation type="unfinished"/>
+        <translation>下载提示</translation>
     </message>
     <message>
         <source>Skipping Local Files</source>
-        <translation type="unfinished"/>
+        <translation>跳过本地文件</translation>
     </message>
     <message>
         <source>Sorry</source>
-        <translation type="unfinished"/>
+        <translation>抱歉</translation>
     </message>
     <message>
         <source>This function is not yet implemented.</source>
-        <translation type="unfinished"/>
+        <translation>此功能未实现。</translation>
     </message>
     <message>
         <source>Search again</source>
-        <translation type="unfinished"/>
+        <translation>再次搜索</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"/>
+        <translation>删除</translation>
     </message>
     <message>
         <source>Remove All</source>
-        <translation type="unfinished"/>
+        <translation>删除全部</translation>
     </message>
     <message>
         <source>Folder</source>
-        <translation type="unfinished"/>
+        <translation>文件夹</translation>
     </message>
     <message>
         <source>New RetroShare Link(s)</source>
-        <translation type="unfinished"/>
+        <translation>新建 RetroShare 链接</translation>
     </message>
     <message>
         <source>Close all Search Results</source>
-        <translation type="unfinished"/>
+        <translation>关闭所有搜索结果</translation>
     </message>
 </context>
 <context>
     <name>SecurityItem</name>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>展开</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>删除项目</translation>
     </message>
     <message>
         <source>Peer details</source>
@@ -10083,19 +10119,19 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished"/>
+        <translation>发送</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>名称:</translation>
     </message>
     <message>
         <source>Peer ID:</source>
-        <translation type="unfinished"/>
+        <translation>节点 ID</translation>
     </message>
     <message>
         <source>Trust: </source>
-        <translation type="unfinished"/>
+        <translation>信任:</translation>
     </message>
     <message>
         <source>Location:</source>
@@ -10103,15 +10139,15 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>IP Address:</source>
-        <translation type="unfinished"/>
+        <translation>IP 地址:</translation>
     </message>
     <message>
         <source>Connection Method:</source>
-        <translation type="unfinished"/>
+        <translation>连接方式:</translation>
     </message>
     <message>
         <source>Status:</source>
-        <translation type="unfinished"/>
+        <translation>状态:</translation>
     </message>
     <message>
         <source>Write Message</source>
@@ -10119,35 +10155,35 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Connect Attempt</source>
-        <translation type="unfinished"/>
+        <translation>连接尝试</translation>
     </message>
     <message>
         <source>Not Yet Friends</source>
-        <translation type="unfinished"/>
+        <translation>尚未成为好友</translation>
     </message>
     <message>
         <source>Unknown (Incoming) Connect Attempt</source>
-        <translation type="unfinished"/>
+        <translation>未知(入站)连接企图</translation>
     </message>
     <message>
         <source>Unknown (Outgoing) Connect Attempt</source>
-        <translation type="unfinished"/>
+        <translation>未知(出站)连接企图</translation>
     </message>
     <message>
         <source>Unknown Security Issue</source>
-        <translation type="unfinished"/>
+        <translation>未知安全问题</translation>
     </message>
     <message>
         <source>Unknown Peer</source>
-        <translation type="unfinished"/>
+        <translation>未知节点</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>隐藏</translation>
     </message>
     <message>
         <source>Do you want to remove this Friend?</source>
-        <translation type="unfinished"/>
+        <translation>您是否要删除此好友？</translation>
     </message>
     <message>
         <source>Quick Message</source>
@@ -10155,7 +10191,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Accept Friend Request</source>
-        <translation type="unfinished"/>
+        <translation>接受好友请求</translation>
     </message>
     <message>
         <source>wants to be friend with you on RetroShare</source>
@@ -10170,7 +10206,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Firewalled</source>
-        <translation type="unfinished"/>
+        <translation>防火墙限制</translation>
     </message>
     <message>
         <source>The DHT allows you to answer connection 
@@ -10191,27 +10227,27 @@ peers still need to trust each other to allow connection. </source>
     </message>
     <message>
         <source>Public: DHT &amp; Discovery</source>
-        <translation type="unfinished"/>
+        <translation>公开: DHT &amp; 节点探索</translation>
     </message>
     <message>
         <source>Private: Discovery Only</source>
-        <translation type="unfinished"/>
+        <translation>非公开: 仅节点探索</translation>
     </message>
     <message>
         <source>Inverted: DHT Only</source>
-        <translation type="unfinished"/>
+        <translation>反向: 仅 DHT</translation>
     </message>
     <message>
         <source>Dark Net: None</source>
-        <translation type="unfinished"/>
+        <translation>暗网: 无</translation>
     </message>
     <message>
         <source>Transfer Rates</source>
-        <translation type="unfinished"/>
+        <translation>传输速率</translation>
     </message>
     <message>
         <source>Download (KB/s) </source>
-        <translation type="unfinished"/>
+        <translation>下载(KB/s)</translation>
     </message>
     <message>
         <source>kB/s</source>
@@ -10219,47 +10255,47 @@ peers still need to trust each other to allow connection. </source>
     </message>
     <message>
         <source>Upload (KB/s) </source>
-        <translation type="unfinished"/>
+        <translation>上传(KB/s)</translation>
     </message>
     <message>
         <source>Allow Tunnel Connection</source>
-        <translation type="unfinished"/>
+        <translation>允许隧道连接</translation>
     </message>
     <message>
         <source>Local Address</source>
-        <translation type="unfinished"/>
+        <translation>本地地址</translation>
     </message>
     <message>
         <source>External Address</source>
-        <translation>외부 주소</translation>
+        <translation>公网地址</translation>
     </message>
     <message>
         <source>Dynamic DNS</source>
-        <translation type="unfinished"/>
+        <translation>动态域名</translation>
     </message>
     <message>
         <source>Port:</source>
-        <translation type="unfinished"/>
+        <translation>端口:</translation>
     </message>
     <message>
         <source>Acceptable ports range from 1024 to 65535. Ports below 1024 are reserved by your system.</source>
-        <translation type="unfinished"/>
+        <translation>可用端口范围1024-65535。1024以下的端口为系统保留。</translation>
     </message>
     <message>
         <source>Show Discovery information in statusbar</source>
-        <translation type="unfinished"/>
+        <translation>状态栏中显示探索消息</translation>
     </message>
     <message>
         <source>IP Service</source>
-        <translation type="unfinished"/>
+        <translation>IP 探测服务</translation>
     </message>
     <message>
         <source>Allow RetroShare to ask my ip to these websites:</source>
-        <translation type="unfinished"/>
+        <translation>允许 RetroShare 通过如下网站确定外网IP:</translation>
     </message>
     <message>
         <source>Turtle router</source>
-        <translation type="unfinished"/>
+        <translation>Turtle 路由</translation>
     </message>
     <message>
         <source>Max average tunnel request forwarded per second:</source>
@@ -10267,26 +10303,29 @@ peers still need to trust each other to allow connection. </source>
     </message>
     <message>
         <source>Server</source>
-        <translation type="unfinished"/>
+        <translation>服务器</translation>
     </message>
     <message>
         <source>Automatic (UPnP)</source>
-        <translation type="unfinished"/>
+        <translation>自动 (UPnP)</translation>
     </message>
     <message>
         <source>Manually Forwarded Port</source>
-        <translation type="unfinished"/>
+        <translation>手动端口转发</translation>
     </message>
     <message>
         <source>If you uncheck this, RetroShare will not use tunnel connection between peers that are firewalled and cannot connect directly. This is independent from F2F routing (turtle router).</source>
-        <translation type="unfinished"/>
+        <translation>如果您取消此项，RetroShare 将不再对防火墙后无法直接连接的节点使用隧道连接。此项与 F2F 路由(Turtle 路由)无关。</translation>
     </message>
     <message>
         <source>If you uncheck this, RetroShare can only determine your IP 
 when you connect to somebody. Leaving this checked helps 
 connecting when you have few friends. It also helps if you're 
 behind a firewall or a VPN.</source>
-        <translation type="unfinished"/>
+        <translation>如果您取消此项，RetroShare 将只能在您连接上好友后
+确定您的外网 IP 。启用此项可以帮助您在好友不多的
+情况下尽快连接。同时它可以改善防火墙阻挡和 VPN 
+下连接的情况。</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -10312,96 +10351,82 @@ statistically longer tunnels to pass. Be very careful though, since this generat
 many small packets that can significantly slow down your own file transfer. 
 
 The default value is 20.</source>
-        <translation type="unfinished"/>
+        <translation>此项控制您节点每秒转发的隧道请求数。
+
+如果您的Internet带宽充裕，可以将其提高至 30-40。
+允许更长的隧道通过。但它可能因产生很多小数据包
+造成您自己的文件传输缓慢，请慎重，
+
+默认值为 20 。</translation>
     </message>
 </context>
 <context>
     <name>Settings</name>
     <message>
         <source>Options</source>
-        <translation type="unfinished"/>
+        <translation>选项</translation>
     </message>
 </context>
 <context>
     <name>ShareDialog</name>
     <message>
         <source>RetroShare Share Folder</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare 共享文件夹</translation>
     </message>
     <message>
         <source>Share Folder</source>
-        <translation type="unfinished"/>
+        <translation>共享文件夹</translation>
     </message>
     <message>
         <source>Local Path</source>
-        <translation type="unfinished"/>
+        <translation>本地路径</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation type="unfinished"/>
+        <translation>浏览</translation>
     </message>
     <message>
         <source>Virtual Folder</source>
-        <translation type="unfinished"/>
+        <translation>虚拟文件夹</translation>
     </message>
     <message>
         <source>Share Flags</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Browseable by Friends</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Browsable</source>
-        <translation>直系好友可见</translation>
-    </message>
-    <message>
-        <source>Anonymous shared Network Wide</source>
-        <translation>匿名共享全网可见</translation>
-    </message>
-    <message>
-        <source>Network Wide</source>
-        <translation>全网匿名可见</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation>确定</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>取消 </translation>
+        <translation>共享标记</translation>
     </message>
     <message>
         <source>Select A Folder To Share</source>
-        <translation type="unfinished"/>
+        <translation>选择要共享的文件夹</translation>
+    </message>
+    <message>
+        <source>Share flags and groups: </source>
+        <translation>共享标记与分组</translation>
     </message>
 </context>
 <context>
     <name>ShareKey</name>
     <message>
         <source>Share Channel</source>
-        <translation type="unfinished"/>
+        <translation>共享频道</translation>
     </message>
     <message>
         <source>check peers you would like to share private publish key with</source>
-        <translation type="unfinished"/>
+        <translation>选择您希望与之共享个人发帖密钥的节点</translation>
     </message>
     <message>
         <source>Share for Friend</source>
-        <translation type="unfinished"/>
+        <translation>共享给好友</translation>
     </message>
     <message>
         <source>Contacts:</source>
-        <translation type="unfinished"/>
+        <translation>联系人:</translation>
     </message>
     <message>
         <source>Please select at least one peer</source>
-        <translation type="unfinished"/>
+        <translation>请确认至少有一个节点。</translation>
     </message>
     <message>
         <source>Select the Friends with which you want to Share your Channel.</source>
-        <translation type="unfinished"/>
+        <translation>选择可以分享您频道内容的好友</translation>
     </message>
 </context>
 <context>
@@ -10436,110 +10461,102 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Directory</source>
-        <translation type="unfinished"/>
+        <translation>目录</translation>
     </message>
     <message>
         <source>Virtual Folder</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Network Wide</source>
-        <translation>全网匿名可见</translation>
-    </message>
-    <message>
-        <source>Browsable</source>
-        <translation>直系好友可见</translation>
+        <translation>虚拟目录</translation>
     </message>
     <message>
         <source>Add a Share Directory</source>
-        <translation type="unfinished"/>
+        <translation>添加共享目录</translation>
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>添加</translation>
     </message>
     <message>
         <source>Stop sharing selected Directory</source>
-        <translation type="unfinished"/>
+        <translation>停止共享所选目录</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>关闭</translation>
+        <translation>删除</translation>
     </message>
     <message>
         <source>Edit selected Shared Directory</source>
-        <translation type="unfinished"/>
+        <translation>编辑所选共享目录</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>If checked, the share is anonymously shared to anybody.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>If checked, the share is browsable by your friends.</source>
-        <translation>如果选中，您的好友可以浏览这些文件。</translation>
+        <translation>编辑</translation>
     </message>
     <message>
         <source>Warning!</source>
-        <translation type="unfinished"/>
+        <translation>警告！</translation>
     </message>
     <message>
         <source>Do you really want to stop sharing this directory ?</source>
-        <translation type="unfinished"/>
+        <translation>您确定要停止此文件夹的共享？</translation>
     </message>
     <message>
         <source>Drop file error.</source>
-        <translation type="unfinished"/>
+        <translation>文件拖拽出错。</translation>
     </message>
     <message>
         <source>File can&apos;t be dropped, only directories are accepted.</source>
-        <translation type="unfinished"/>
+        <translation>文件无法拖拽，拖拽仅支持文件夹。</translation>
     </message>
     <message>
         <source>Directory not found or directory name not accepted.</source>
-        <translation type="unfinished"/>
+        <translation>目录未找到或目录名称不可接受。</translation>
     </message>
     <message>
         <source>Share Manager</source>
         <translation>共享管理器</translation>
+    </message>
+    <message>
+        <source>Share flags</source>
+        <translation>共享标记</translation>
+    </message>
+    <message>
+        <source>Parent groups</source>
+        <translation>父分组</translation>
+    </message>
+    <message>
+        <source>Apply and close</source>
+        <translation>应用并关闭</translation>
     </message>
 </context>
 <context>
     <name>SharedFilesDialog</name>
     <message>
         <source>Friends Folders</source>
-        <translation type="unfinished"/>
+        <translation>好友文件夹</translation>
     </message>
     <message>
         <source>My Folders</source>
-        <translation type="unfinished"/>
+        <translation>我的文件夹</translation>
     </message>
     <message>
         <source>All</source>
-        <translation type="unfinished"/>
+        <translation>全部</translation>
     </message>
     <message>
         <source>One day old</source>
-        <translation type="unfinished"/>
+        <translation>一日内</translation>
     </message>
     <message>
         <source>One Week old</source>
-        <translation type="unfinished"/>
+        <translation>一周内</translation>
     </message>
     <message>
         <source>One month old</source>
-        <translation type="unfinished"/>
+        <translation>一月内</translation>
     </message>
     <message>
         <source>Search files</source>
-        <translation type="unfinished"/>
+        <translation>搜索文件</translation>
     </message>
     <message>
         <source>Start Search</source>
@@ -10547,39 +10564,39 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Reset</source>
-        <translation type="unfinished"/>
+        <translation>重置</translation>
     </message>
     <message>
         <source>Tree view</source>
-        <translation type="unfinished"/>
+        <translation>树状视图</translation>
     </message>
     <message>
         <source>Flat view</source>
-        <translation type="unfinished"/>
+        <translation>普通视图</translation>
     </message>
     <message>
         <source>Download selected</source>
-        <translation type="unfinished"/>
+        <translation>下载所选项目</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>下载</translation>
     </message>
     <message>
         <source>check files</source>
-        <translation type="unfinished"/>
+        <translation>校验文件</translation>
     </message>
     <message>
         <source>Copy retroshare Links to Clipboard</source>
-        <translation type="unfinished"/>
+        <translation>复制 RetroShare 链接至剪切板</translation>
     </message>
     <message>
         <source>Copy retroshare Links to Clipboard (HTML)</source>
-        <translation type="unfinished"/>
+        <translation>复制 RetroShare 链接至剪切板(HTML格式)</translation>
     </message>
     <message>
         <source>Send retroshare Links</source>
-        <translation type="unfinished"/>
+        <translation>发送 RetroShare 链接</translation>
     </message>
     <message>
         <source>Send retroshare Links to Cloud</source>
@@ -10591,31 +10608,31 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Create collection file</source>
-        <translation type="unfinished"/>
+        <translation>创建集合文件</translation>
     </message>
     <message>
         <source>Open File</source>
-        <translation type="unfinished"/>
+        <translation>打开文件</translation>
     </message>
     <message>
         <source>Open Folder</source>
-        <translation type="unfinished"/>
+        <translation>打开文件夹</translation>
     </message>
     <message>
         <source>Checking...</source>
-        <translation type="unfinished"/>
+        <translation>文件校验中...</translation>
     </message>
     <message>
         <source>Check files</source>
-        <translation type="unfinished"/>
+        <translation>校验文件</translation>
     </message>
     <message>
         <source>Copy retroshare Link</source>
-        <translation type="unfinished"/>
+        <translation>复制 RetroShare 链接</translation>
     </message>
     <message>
         <source>Send retroshare Link</source>
-        <translation type="unfinished"/>
+        <translation>发送 RetroShare 链接</translation>
     </message>
     <message>
         <source>Recommend in a message to</source>
@@ -10623,66 +10640,66 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare 链接</translation>
     </message>
     <message>
         <source>Recommendation(s)</source>
-        <translation type="unfinished"/>
+        <translation>推荐</translation>
     </message>
     <message>
         <source>Set command for opening this file</source>
-        <translation type="unfinished"/>
+        <translation>设置此文件的文件打开命令</translation>
     </message>
     <message>
         <source>&lt;strong&gt;My Shared Files&lt;/strong&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;strong&gt;我的共享文件&lt;/strong&gt;</translation>
     </message>
     <message>
         <source>&lt;strong&gt;Friends Files&lt;/strong&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;strong&gt;好友的文件&lt;/strong&gt;</translation>
     </message>
     <message>
         <source>&lt;strong&gt;Files&lt;/strong&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;strong&gt;文件&lt;/strong&gt;</translation>
     </message>
     <message>
         <source>Files</source>
-        <translation type="unfinished"/>
+        <translation>共享</translation>
     </message>
     <message>
         <source>Split View</source>
-        <translation type="unfinished"/>
+        <translation>拆分视图</translation>
     </message>
 </context>
 <context>
     <name>SoundPage</name>
     <message>
         <source>Event:</source>
-        <translation type="unfinished"/>
+        <translation>事件:</translation>
     </message>
     <message>
         <source>Filename:</source>
-        <translation type="unfinished"/>
+        <translation>文件名:</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation type="unfinished"/>
+        <translation>浏览</translation>
     </message>
     <message>
         <source>Event</source>
-        <translation type="unfinished"/>
+        <translation>事件</translation>
     </message>
     <message>
         <source>Filename</source>
-        <translation type="unfinished"/>
+        <translation>文件名</translation>
     </message>
     <message>
         <source>Friend</source>
-        <translation type="unfinished"/>
+        <translation>好友</translation>
     </message>
     <message>
         <source>go Online</source>
-        <translation type="unfinished"/>
+        <translation>转为在线</translation>
     </message>
     <message>
         <source>Chatmessage</source>
@@ -10690,57 +10707,57 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>New Msg</source>
-        <translation type="unfinished"/>
+        <translation>新消息</translation>
     </message>
     <message>
         <source>Open File</source>
-        <translation type="unfinished"/>
+        <translation>打开文件</translation>
     </message>
     <message>
         <source>Sound</source>
-        <translation type="unfinished"/>
+        <translation>声音</translation>
     </message>
     <message>
         <source>Message</source>
-        <translation type="unfinished"/>
+        <translation>邮件</translation>
     </message>
     <message>
         <source>Message arrived</source>
-        <translation>收到消息</translation>
+        <translation>收到邮件</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>下载</translation>
     </message>
     <message>
         <source>Download complete</source>
-        <translation type="unfinished"/>
+        <translation>下载完成</translation>
     </message>
 </context>
 <context>
     <name>SoundStatus</name>
     <message>
         <source>Sound on</source>
-        <translation type="unfinished"/>
+        <translation>启用提示音</translation>
     </message>
     <message>
         <source>Sound off</source>
-        <translation type="unfinished"/>
+        <translation>禁用提示音</translation>
     </message>
 </context>
 <context>
     <name>SplashScreen</name>
     <message>
         <source>Load profile</source>
-        <translation type="unfinished"/>
+        <translation>载入配置文件</translation>
     </message>
     <message>
         <source>Load configuration</source>
-        <translation type="unfinished"/>
+        <translation>载入设置</translation>
     </message>
     <message>
         <source>Create interface</source>
-        <translation type="unfinished"/>
+        <translation>创建接口</translation>
     </message>
 </context>
 <context>
@@ -10767,7 +10784,7 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space：pre-wrap；}
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;管理配置和位置...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;管理身份配置和位置...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Log In</source>
@@ -10779,15 +10796,15 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Remember Password</source>
-        <translation type="unfinished"/>
+        <translation>记住密码</translation>
     </message>
     <message>
         <source>Warning</source>
-        <translation type="unfinished"/>
+        <translation>警告</translation>
     </message>
     <message>
         <source>Login</source>
-        <translation type="unfinished"/>
+        <translation>登录</translation>
     </message>
     <message>
         <source>Load Person Failure</source>
@@ -10795,7 +10812,7 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Missing PGP Certificate</source>
-        <translation type="unfinished"/>
+        <translation>缺失 PGP 证书</translation>
     </message>
     <message>
         <source>The password to your SSL certificate (your location) will be stored encrypted in your Gnome Keyring. 
@@ -10838,51 +10855,51 @@ This choice can be reverted in settings.</source>
     <name>StatusDefs</name>
     <message>
         <source>Offline</source>
-        <translation type="unfinished"/>
+        <translation>离线</translation>
     </message>
     <message>
         <source>Away</source>
-        <translation type="unfinished"/>
+        <translation>不在</translation>
     </message>
     <message>
         <source>Busy</source>
-        <translation type="unfinished"/>
+        <translation>忙碌</translation>
     </message>
     <message>
         <source>Online</source>
-        <translation type="unfinished"/>
+        <translation>在线</translation>
     </message>
     <message>
         <source>Idle</source>
-        <translation type="unfinished"/>
+        <translation>空闲</translation>
     </message>
     <message>
         <source>Friend is offline</source>
-        <translation type="unfinished"/>
+        <translation>好友已下线</translation>
     </message>
     <message>
         <source>Friend is away</source>
-        <translation type="unfinished"/>
+        <translation>好友已离开</translation>
     </message>
     <message>
         <source>Friend is busy</source>
-        <translation type="unfinished"/>
+        <translation>好友忙碌中</translation>
     </message>
     <message>
         <source>Friend is online</source>
-        <translation type="unfinished"/>
+        <translation>好友在线</translation>
     </message>
     <message>
         <source>Friend is idle</source>
-        <translation type="unfinished"/>
+        <translation>好友电脑空闲中</translation>
     </message>
     <message>
         <source>Connected</source>
-        <translation type="unfinished"/>
+        <translation>已连接</translation>
     </message>
     <message>
         <source>Unreachable</source>
-        <translation type="unfinished"/>
+        <translation>不可达</translation>
     </message>
     <message>
         <source>Available</source>
@@ -10890,31 +10907,31 @@ This choice can be reverted in settings.</source>
     </message>
     <message>
         <source>Trying tunnel connection</source>
-        <translation type="unfinished"/>
+        <translation>正在尝试隧道连接</translation>
     </message>
     <message>
         <source>Trying TCP</source>
-        <translation type="unfinished"/>
+        <translation>正在尝试 TCP</translation>
     </message>
     <message>
         <source>Trying UDP</source>
-        <translation type="unfinished"/>
+        <translation>正在尝试 UDP</translation>
     </message>
     <message>
         <source>Connected: TCP</source>
-        <translation type="unfinished"/>
+        <translation>已连接: TCP</translation>
     </message>
     <message>
         <source>Connected: UDP</source>
-        <translation type="unfinished"/>
+        <translation>已连接: UDP</translation>
     </message>
     <message>
         <source>Connected: Tunnel</source>
-        <translation type="unfinished"/>
+        <translation>已连接: 隧道</translation>
     </message>
     <message>
         <source>Connected: Unknown</source>
-        <translation type="unfinished"/>
+        <translation>已连接: 未知</translation>
     </message>
     <message>
         <source>DHT: Contact</source>
@@ -10922,18 +10939,18 @@ This choice can be reverted in settings.</source>
     </message>
     <message>
         <source>Neighbor</source>
-        <translation type="unfinished"/>
+        <translation>邻居</translation>
     </message>
 </context>
 <context>
     <name>StatusMessage</name>
     <message>
         <source>Personal message</source>
-        <translation>个人消息</translation>
+        <translation>状态签名</translation>
     </message>
     <message>
         <source>Status message</source>
-        <translation>状态消息</translation>
+        <translation>个人状态消息</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -10945,7 +10962,7 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space：pre-wrap；}
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;私人消息&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;状态签名&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -10964,94 +10981,94 @@ p, li { white-space：pre-wrap；}
     <name>StyleDialog</name>
     <message>
         <source>Define Style</source>
-        <translation type="unfinished"/>
+        <translation>样式定义</translation>
     </message>
     <message>
         <source>Choose color</source>
-        <translation type="unfinished"/>
+        <translation>选择颜色</translation>
     </message>
     <message>
         <source>Color 2</source>
-        <translation type="unfinished"/>
+        <translation>颜色 2</translation>
     </message>
     <message>
         <source>Color 1</source>
-        <translation type="unfinished"/>
+        <translation>颜色 1</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation type="unfinished"/>
+        <translation>样式</translation>
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished"/>
+        <translation>无</translation>
     </message>
     <message>
         <source>Solid</source>
-        <translation type="unfinished"/>
+        <translation>单色</translation>
     </message>
     <message>
         <source>Gradient</source>
-        <translation type="unfinished"/>
+        <translation>渐变色</translation>
     </message>
 </context>
 <context>
     <name>SubFileItem</name>
     <message>
         <source>%p Kb</source>
-        <translation type="unfinished"/>
+        <translation>%p Kb</translation>
     </message>
     <message>
         <source>Cancel Download</source>
-        <translation type="unfinished"/>
+        <translation>取消下载</translation>
     </message>
     <message>
         <source>Download File</source>
-        <translation type="unfinished"/>
+        <translation>下载文件</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>下载</translation>
     </message>
     <message>
         <source>Play File</source>
-        <translation type="unfinished"/>
+        <translation>播放文件</translation>
     </message>
     <message>
         <source>Play</source>
-        <translation type="unfinished"/>
+        <translation>播放</translation>
     </message>
     <message>
         <source>Save File</source>
-        <translation type="unfinished"/>
+        <translation>保存文件</translation>
     </message>
     <message>
         <source>ERROR</source>
-        <translation type="unfinished"/>
+        <translation>错误</translation>
     </message>
     <message>
         <source>EXTRA</source>
-        <translation type="unfinished"/>
+        <translation>其他</translation>
     </message>
     <message>
         <source>REMOTE</source>
-        <translation type="unfinished"/>
+        <translation>远程</translation>
     </message>
     <message>
         <source>DOWNLOAD</source>
-        <translation type="unfinished"/>
+        <translation>下载</translation>
     </message>
     <message>
         <source>LOCAL</source>
-        <translation type="unfinished"/>
+        <translation>本地</translation>
     </message>
     <message>
         <source>UPLOAD</source>
-        <translation type="unfinished"/>
+        <translation>上传</translation>
     </message>
     <message>
         <source>Remove Attachment</source>
-        <translation type="unfinished"/>
+        <translation>删除附件</translation>
     </message>
     <message>
         <source>File %1 does not exist at location.</source>
@@ -11059,75 +11076,83 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>File %1 is not completed.</source>
-        <translation type="unfinished"/>
+        <translation>文件 %1 未完成。</translation>
     </message>
     <message>
         <source>Save Channel File</source>
-        <translation type="unfinished"/>
+        <translation>保存频道文件</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation>打开</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>打开文件</translation>
     </message>
 </context>
 <context>
     <name>TBoard</name>
     <message>
         <source>Pause</source>
-        <translation type="unfinished"/>
+        <translation>暂停</translation>
     </message>
 </context>
 <context>
     <name>TagDefs</name>
     <message>
         <source>Important</source>
-        <translation type="unfinished"/>
+        <translation>重要</translation>
     </message>
     <message>
         <source>Work</source>
-        <translation type="unfinished"/>
+        <translation>工作</translation>
     </message>
     <message>
         <source>Personal</source>
-        <translation type="unfinished"/>
+        <translation>个人</translation>
     </message>
     <message>
         <source>Todo</source>
-        <translation type="unfinished"/>
+        <translation>待办</translation>
     </message>
     <message>
         <source>Later</source>
-        <translation type="unfinished"/>
+        <translation>搁置</translation>
     </message>
 </context>
 <context>
     <name>TagsMenu</name>
     <message>
         <source>Remove All Tags</source>
-        <translation type="unfinished"/>
+        <translation>删除所有标签</translation>
     </message>
     <message>
         <source>New tag ...</source>
-        <translation type="unfinished"/>
+        <translation>新标签</translation>
     </message>
 </context>
 <context>
     <name>TransferPage</name>
     <message>
         <source>Transfer options</source>
-        <translation type="unfinished"/>
+        <translation>传输选项</translation>
     </message>
     <message>
         <source>Maximum simultaneous downloads:</source>
-        <translation type="unfinished"/>
+        <translation>最多同时下载任务:</translation>
     </message>
     <message>
         <source>Slots reserved for non-cache transfers:</source>
-        <translation type="unfinished"/>
+        <translation>用户任务保留位</translation>
     </message>
     <message>
         <source>Default chunk strategy:</source>
-        <translation type="unfinished"/>
+        <translation>默认分块策略:</translation>
     </message>
     <message>
         <source>Safety disk space limit :</source>
-        <translation type="unfinished"/>
+        <translation>安全硬盘空间限制:</translation>
     </message>
     <message>
         <source>You can use this to force RetroShare to download your files rather 
@@ -11136,15 +11161,20 @@ to be equal to the queue size above will always prioritize your files
 over cache. 
 
 It is however recommended to leave at least a few slots for cache files.</source>
-        <translation type="unfinished"/>
+        <translation>您可利用此选项强制 RetroShare 优先下载您指定的资源，
+而不是更新缓存内容。此值设置等于上方的同时任务数时，
+程序将总优先下载您指定的文件而非缓存文件。
+
+不过推荐您还是留些位置给缓存文件(以便更新邮件、论坛、频道等)。
+</translation>
     </message>
     <message>
         <source>Streaming</source>
-        <translation type="unfinished"/>
+        <translation>顺序</translation>
     </message>
     <message>
         <source>Random</source>
-        <translation type="unfinished"/>
+        <translation>随机</translation>
     </message>
     <message>
         <source> MB</source>
@@ -11152,7 +11182,7 @@ It is however recommended to leave at least a few slots for cache files.</source
     </message>
     <message>
         <source>Transfer</source>
-        <translation type="unfinished"/>
+        <translation>传输</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -11179,100 +11209,100 @@ p, li { white-space：pre-wrap；}
     <name>TransferUserNotify</name>
     <message>
         <source>Download completed</source>
-        <translation type="unfinished"/>
+        <translation>下载完成</translation>
     </message>
     <message>
         <source>You have %1 completed downloads</source>
-        <translation type="unfinished"/>
+        <translation>您有 %1 个下载任务已完成</translation>
     </message>
     <message>
         <source>You have %1 completed download</source>
-        <translation type="unfinished"/>
+        <translation>您有 %1 个下载任务已完成</translation>
     </message>
     <message>
         <source>%1 completed downloads</source>
-        <translation type="unfinished"/>
+        <translation>%1 个下载任务已完成</translation>
     </message>
     <message>
         <source>%1 completed download</source>
-        <translation type="unfinished"/>
+        <translation>%1 个下载任务已完成</translation>
     </message>
 </context>
 <context>
     <name>TransfersDialog</name>
     <message>
         <source>Open Collection</source>
-        <translation type="unfinished"/>
+        <translation>打开资源集合</translation>
     </message>
     <message>
         <source>Show cache transfers</source>
-        <translation type="unfinished"/>
+        <translation>显示缓存传输任务</translation>
     </message>
     <message>
         <source>Uploads</source>
-        <translation type="unfinished"/>
+        <translation>上传</translation>
     </message>
     <message>
         <source>Selected transfer</source>
-        <translation type="unfinished"/>
+        <translation>所选传输任务</translation>
     </message>
     <message>
         <source>Done</source>
-        <translation type="unfinished"/>
+        <translation>已完成</translation>
     </message>
     <message>
         <source>Active</source>
-        <translation type="unfinished"/>
+        <translation>进行中</translation>
     </message>
     <message>
         <source>Outstanding</source>
-        <translation type="unfinished"/>
+        <translation>未完成</translation>
     </message>
     <message>
         <source>Name</source>
         <comment>i.e: file name</comment>
-        <translation type="unfinished"/>
+        <translation>名称</translation>
     </message>
     <message>
         <source>Size</source>
         <comment>i.e: file size</comment>
-        <translation type="unfinished"/>
+        <translation>大小</translation>
     </message>
     <message>
         <source>Completed</source>
-        <translation type="unfinished"/>
+        <translation>已完成</translation>
     </message>
     <message>
         <source>Speed</source>
         <comment>i.e: Download speed</comment>
-        <translation type="unfinished"/>
+        <translation>速度</translation>
     </message>
     <message>
         <source>Progress / Availability</source>
         <comment>i.e: % downloaded</comment>
-        <translation type="unfinished"/>
+        <translation>进度/可用块</translation>
     </message>
     <message>
         <source>Sources</source>
         <comment>i.e: Sources</comment>
-        <translation type="unfinished"/>
+        <translation>来源</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"/>
+        <translation>状态</translation>
     </message>
     <message>
         <source>Speed / Queue position</source>
-        <translation type="unfinished"/>
+        <translation>速度/队列位置</translation>
     </message>
     <message>
         <source>Remaining</source>
-        <translation type="unfinished"/>
+        <translation>剩余</translation>
     </message>
     <message>
         <source>Download time</source>
         <comment>i.e: Estimated Time of Arrival / Time left</comment>
-        <translation type="unfinished"/>
+        <translation>下载时间</translation>
     </message>
     <message>
         <source>Core-ID</source>
@@ -11281,21 +11311,21 @@ p, li { white-space：pre-wrap；}
     <message>
         <source>Peer</source>
         <comment>i.e: user name</comment>
-        <translation type="unfinished"/>
+        <translation>节点</translation>
     </message>
     <message>
         <source>Progress</source>
         <comment>i.e: % uploaded</comment>
-        <translation type="unfinished"/>
+        <translation>进度</translation>
     </message>
     <message>
         <source>Speed</source>
         <comment>i.e: upload speed</comment>
-        <translation type="unfinished"/>
+        <translation>速度</translation>
     </message>
     <message>
         <source>Transferred</source>
-        <translation type="unfinished"/>
+        <translation>已传输</translation>
     </message>
     <message>
         <source>Hash</source>
@@ -11303,23 +11333,23 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Router Statistics</source>
-        <translation type="unfinished"/>
+        <translation>路由状态统计</translation>
     </message>
     <message>
         <source>Router Requests</source>
-        <translation type="unfinished"/>
+        <translation>路由请求</translation>
     </message>
     <message>
         <source>Pause</source>
-        <translation type="unfinished"/>
+        <translation>暂停</translation>
     </message>
     <message>
         <source>Resume</source>
-        <translation type="unfinished"/>
+        <translation>恢复</translation>
     </message>
     <message>
         <source>Force Check</source>
-        <translation type="unfinished"/>
+        <translation>强制校验</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -11327,15 +11357,15 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Open Folder</source>
-        <translation type="unfinished"/>
+        <translation>打开文件夹</translation>
     </message>
     <message>
         <source>Open File</source>
-        <translation type="unfinished"/>
+        <translation>打开文件</translation>
     </message>
     <message>
         <source>Preview File</source>
-        <translation type="unfinished"/>
+        <translation>预览文件</translation>
     </message>
     <message>
         <source>Details...</source>
@@ -11343,39 +11373,39 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Clear Completed</source>
-        <translation type="unfinished"/>
+        <translation>清除完成任务</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>复制 RetroShare 链接</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>粘贴 RetroShare 链接</translation>
     </message>
     <message>
         <source>Down</source>
-        <translation type="unfinished"/>
+        <translation>向下</translation>
     </message>
     <message>
         <source>Up</source>
-        <translation type="unfinished"/>
+        <translation>向上</translation>
     </message>
     <message>
         <source>Top</source>
-        <translation type="unfinished"/>
+        <translation>置顶</translation>
     </message>
     <message>
         <source>Bottom</source>
-        <translation type="unfinished"/>
+        <translation>置底</translation>
     </message>
     <message>
         <source>Streaming</source>
-        <translation type="unfinished"/>
+        <translation>顺序</translation>
     </message>
     <message>
         <source>Slower</source>
-        <translation type="unfinished"/>
+        <translation>更慢</translation>
     </message>
     <message>
         <source>Average</source>
@@ -11383,79 +11413,79 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Faster</source>
-        <translation type="unfinished"/>
+        <translation>更快</translation>
     </message>
     <message>
         <source>Random</source>
-        <translation type="unfinished"/>
+        <translation>随机</translation>
     </message>
     <message>
         <source>Play</source>
-        <translation type="unfinished"/>
+        <translation>播放</translation>
     </message>
     <message>
         <source>Move in Queue...</source>
-        <translation type="unfinished"/>
+        <translation>队列位置...</translation>
     </message>
     <message>
         <source>Priority (Speed)...</source>
-        <translation type="unfinished"/>
+        <translation>优先级(速度)...</translation>
     </message>
     <message>
         <source>Chunk strategy</source>
-        <translation type="unfinished"/>
+        <translation>分块策略</translation>
     </message>
     <message>
         <source>Failed</source>
-        <translation type="unfinished"/>
+        <translation>失败</translation>
     </message>
     <message>
         <source>Okay</source>
-        <translation type="unfinished"/>
+        <translation>好</translation>
     </message>
     <message>
         <source>Transferring</source>
-        <translation type="unfinished"/>
+        <translation>传输中</translation>
     </message>
     <message>
         <source>Complete</source>
-        <translation type="unfinished"/>
+        <translation>完成</translation>
     </message>
     <message>
         <source>Waiting</source>
-        <translation type="unfinished"/>
+        <translation>等待中</translation>
     </message>
     <message>
         <source>Downloading</source>
-        <translation type="unfinished"/>
+        <translation>下载中</translation>
     </message>
     <message>
         <source>Queued</source>
-        <translation type="unfinished"/>
+        <translation>排队中</translation>
     </message>
     <message>
         <source>Paused</source>
-        <translation type="unfinished"/>
+        <translation>已暂停</translation>
     </message>
     <message>
         <source>Checking...</source>
-        <translation type="unfinished"/>
+        <translation>正在校验...</translation>
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>未知</translation>
     </message>
     <message>
         <source>version: </source>
-        <translation type="unfinished"/>
+        <translation>版本:</translation>
     </message>
     <message>
         <source>Uploading</source>
-        <translation type="unfinished"/>
+        <translation>上传中</translation>
     </message>
     <message>
         <source>Are you sure that you want to cancel and delete these files?</source>
-        <translation type="unfinished"/>
+        <translation>您确定要取消或删除这些文件吗？</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -11467,19 +11497,19 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>File preview</source>
-        <translation type="unfinished"/>
+        <translation>文件预览</translation>
     </message>
     <message>
         <source>File %1 preview failed.</source>
-        <translation type="unfinished"/>
+        <translation>文件 %1 预览失败。</translation>
     </message>
     <message>
         <source>Open Transfer</source>
-        <translation type="unfinished"/>
+        <translation>打开传输</translation>
     </message>
     <message>
         <source>File %1 is not completed. If it is a media file, try to preview it.</source>
-        <translation type="unfinished"/>
+        <translation>文件 %1 未完成。但如果是媒体文件，仍可尝试预览。</translation>
     </message>
     <message>
         <source>If the hash of the downloaded data does
@@ -11503,54 +11533,54 @@ RetroShare 将向数据源请求详细的校验
     </message>
     <message>
         <source>Needs checking</source>
-        <translation type="unfinished"/>
+        <translation>需要校验</translation>
     </message>
     <message>
         <source>Can&apos;t create link for file %1.</source>
-        <translation type="unfinished"/>
+        <translation>无法创建文件 %1 的链接。</translation>
     </message>
     <message>
         <source>Click OK when program terminates!</source>
-        <translation type="unfinished"/>
+        <translation>程序终止后请点击确定！</translation>
     </message>
     <message>
         <source>Downloads</source>
-        <translation type="unfinished"/>
+        <translation>下载</translation>
     </message>
 </context>
 <context>
     <name>TreeStyle_RDM</name>
     <message>
         <source>My files</source>
-        <translation type="unfinished"/>
+        <translation>我的文件</translation>
     </message>
     <message>
         <source>FILE</source>
-        <translation type="unfinished"/>
+        <translation>文件</translation>
     </message>
     <message>
         <source>Files</source>
-        <translation type="unfinished"/>
+        <translation>文件</translation>
     </message>
     <message>
         <source>File</source>
-        <translation type="unfinished"/>
+        <translation>文件</translation>
     </message>
     <message>
         <source>DIR</source>
-        <translation type="unfinished"/>
+        <translation>目录</translation>
     </message>
     <message>
         <source>Friends Directories</source>
-        <translation type="unfinished"/>
+        <translation>好友目录</translation>
     </message>
     <message>
         <source>My Directories</source>
-        <translation type="unfinished"/>
+        <translation>我的目录</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>大小</translation>
     </message>
     <message>
         <source>Age</source>
@@ -11558,26 +11588,30 @@ RetroShare 将向数据源请求详细的校验
     </message>
     <message>
         <source>Friend</source>
-        <translation type="unfinished"/>
+        <translation>好友</translation>
     </message>
     <message>
         <source>Share Type</source>
-        <translation type="unfinished"/>
+        <translation>共享类型</translation>
     </message>
     <message>
         <source>What&apos;s new</source>
         <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Groups</source>
+        <translation>分组</translation>
     </message>
 </context>
 <context>
     <name>TrustView</name>
     <message>
         <source>Zoom :</source>
-        <translation type="unfinished"/>
+        <translation>缩放:</translation>
     </message>
     <message>
         <source>Update</source>
-        <translation type="unfinished"/>
+        <translation>更新</translation>
     </message>
     <message>
         <source>Showing: whole network</source>
@@ -11589,7 +11623,7 @@ RetroShare 将向数据源请求详细的校验
     </message>
     <message>
         <source>Trust</source>
-        <translation type="unfinished"/>
+        <translation>信任</translation>
     </message>
     <message>
         <source> is authenticated (one way) by </source>
@@ -11609,15 +11643,15 @@ RetroShare 将向数据源请求详细的校验
     </message>
     <message>
         <source>Full</source>
-        <translation type="unfinished"/>
+        <translation>完全</translation>
     </message>
     <message>
         <source> is authenticated by </source>
-        <translation>被认证为好友，认证人为</translation>
+        <translation>被</translation>
     </message>
     <message>
         <source> peers, including him(her)self.</source>
-        <translation type="unfinished"/>
+        <translation> 个节点认证为好友，包括其自身。</translation>
     </message>
     <message>
         <source> authenticated </source>
@@ -11625,22 +11659,22 @@ RetroShare 将向数据源请求详细的校验
     </message>
     <message>
         <source>Showing: peers connected to </source>
-        <translation type="unfinished"/>
+        <translation>显示: 节点连接至</translation>
     </message>
     <message>
         <source>This table normally auto-updates every 10 seconds.</source>
-        <translation type="unfinished"/>
+        <translation>此表通常每10秒钟自动更新一次。</translation>
     </message>
 </context>
 <context>
     <name>TurtleRouterDialog</name>
     <message>
         <source>Search requests</source>
-        <translation type="unfinished"/>
+        <translation>搜索请求</translation>
     </message>
     <message>
         <source>Tunnel requests</source>
-        <translation type="unfinished"/>
+        <translation>隧道请求</translation>
     </message>
     <message>
         <source>Unknown hashes</source>
@@ -11648,37 +11682,37 @@ RetroShare 将向数据源请求详细的校验
     </message>
     <message>
         <source>Tunnel id</source>
-        <translation type="unfinished"/>
+        <translation>隧道 ID</translation>
     </message>
     <message>
         <source>last transfer</source>
-        <translation type="unfinished"/>
+        <translation>上次传输</translation>
     </message>
     <message>
         <source>Speed</source>
-        <translation type="unfinished"/>
+        <translation>速度</translation>
     </message>
     <message>
         <source>Request id: %1	 from [%2]	 %3 secs ago</source>
-        <translation type="unfinished"/>
+        <translation>请求ID: %1	来自[%2]	于 %3 秒前</translation>
     </message>
 </context>
 <context>
     <name>TurtleRouterDialogForm</name>
     <message>
         <source>Router Statistics</source>
-        <translation type="unfinished"/>
+        <translation>路由状态统计</translation>
     </message>
     <message>
         <source>F2F router information</source>
-        <translation type="unfinished"/>
+        <translation>F2F 路由器信息</translation>
     </message>
 </context>
 <context>
     <name>TurtleRouterStatistics</name>
     <message>
         <source>Router Statistics</source>
-        <translation type="unfinished"/>
+        <translation>路由状态统计</translation>
     </message>
     <message>
         <source>Age in seconds</source>
@@ -11686,54 +11720,54 @@ RetroShare 将向数据源请求详细的校验
     </message>
     <message>
         <source>Depth</source>
-        <translation type="unfinished"/>
+        <translation>深度</translation>
     </message>
     <message>
         <source>total</source>
-        <translation type="unfinished"/>
+        <translation>总计</translation>
     </message>
     <message>
         <source>Unknown Peer</source>
-        <translation type="unfinished"/>
+        <translation>未知节点</translation>
     </message>
 </context>
 <context>
     <name>TurtleRouterStatisticsWidget</name>
     <message>
         <source>Search requests repartition</source>
-        <translation type="unfinished"/>
+        <translation>搜索请求分配情况</translation>
     </message>
     <message>
         <source>Tunnel requests repartition</source>
-        <translation type="unfinished"/>
+        <translation>隧道请求分配情况</translation>
     </message>
     <message>
         <source>Turtle router traffic</source>
-        <translation type="unfinished"/>
+        <translation>Turtle 路由信息</translation>
     </message>
     <message>
         <source>Tunnel requests Up</source>
-        <translation type="unfinished"/>
+        <translation>出站隧道请求</translation>
     </message>
     <message>
         <source>Tunnel requests Dn</source>
-        <translation type="unfinished"/>
+        <translation>入站隧道请求</translation>
     </message>
     <message>
         <source>Incoming file data</source>
-        <translation type="unfinished"/>
+        <translation>入站文件数据</translation>
     </message>
     <message>
         <source>Outgoing file data</source>
-        <translation type="unfinished"/>
+        <translation>出站文件数据</translation>
     </message>
     <message>
         <source>Forwarded data    </source>
-        <translation type="unfinished"/>
+        <translation>已转发数据</translation>
     </message>
     <message>
         <source>TR Forward probabilities</source>
-        <translation type="unfinished"/>
+        <translation>TR 转发概率</translation>
     </message>
 </context>
 <context>
@@ -11759,19 +11793,19 @@ RetroShare 将向数据源请求详细的校验
     <name>UserNotify</name>
     <message>
         <source>You have %1 new messages</source>
-        <translation>您有 %1 封新邮件</translation>
+        <translation>您有 %1 个新消息</translation>
     </message>
     <message>
         <source>You have %1 new message</source>
-        <translation>您有 %1 封新邮件</translation>
+        <translation>您有 %1 个新消息</translation>
     </message>
     <message>
         <source>%1 new messages</source>
-        <translation>%1 封新邮件</translation>
+        <translation>%1 个新消息</translation>
     </message>
     <message>
         <source>%1 new message</source>
-        <translation>您有 %1 封新邮件</translation>
+        <translation>%1 个新消息</translation>
     </message>
 </context>
 <context>
@@ -11786,39 +11820,39 @@ RetroShare 将向数据源请求详细的校验
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished"/>
+        <translation>是</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished"/>
+        <translation>否</translation>
     </message>
     <message>
         <source>Help</source>
-        <translation type="unfinished"/>
+        <translation>帮助</translation>
     </message>
     <message>
         <source>Retry</source>
-        <translation type="unfinished"/>
+        <translation>重试</translation>
     </message>
     <message>
         <source>Show Log</source>
-        <translation type="unfinished"/>
+        <translation>显示日志</translation>
     </message>
     <message>
         <source>Show Settings</source>
-        <translation type="unfinished"/>
+        <translation>显示设置</translation>
     </message>
     <message>
         <source>Continue</source>
-        <translation type="unfinished"/>
+        <translation>继续</translation>
     </message>
     <message>
         <source>Quit</source>
-        <translation type="unfinished"/>
+        <translation>退出</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation type="unfinished"/>
+        <translation>浏览</translation>
     </message>
 </context>
 <context>
@@ -11829,71 +11863,71 @@ RetroShare 将向数据源请求详细的校验
     </message>
     <message>
         <source>Group Name:</source>
-        <translation type="unfinished"/>
+        <translation>组名称:</translation>
     </message>
     <message>
         <source>Category:</source>
-        <translation type="unfinished"/>
+        <translation>类别:</translation>
     </message>
     <message>
         <source>Travel</source>
-        <translation type="unfinished"/>
+        <translation>旅行</translation>
     </message>
     <message>
         <source>Holiday</source>
-        <translation type="unfinished"/>
+        <translation>假日</translation>
     </message>
     <message>
         <source>Friends</source>
-        <translation type="unfinished"/>
+        <translation>好友</translation>
     </message>
     <message>
         <source>Family</source>
-        <translation type="unfinished"/>
+        <translation>家人</translation>
     </message>
     <message>
         <source>Work</source>
-        <translation type="unfinished"/>
+        <translation>工作</translation>
     </message>
     <message>
         <source>Random</source>
-        <translation type="unfinished"/>
+        <translation>随机</translation>
     </message>
     <message>
         <source>Description:</source>
-        <translation type="unfinished"/>
+        <translation>描述:</translation>
     </message>
     <message>
         <source>Share Options</source>
-        <translation type="unfinished"/>
+        <translation>共享设置</translation>
     </message>
     <message>
         <source>Public</source>
-        <translation type="unfinished"/>
+        <translation>发布</translation>
     </message>
     <message>
         <source>All Friends</source>
-        <translation type="unfinished"/>
+        <translation>全部好友</translation>
     </message>
     <message>
         <source>Restricted</source>
-        <translation type="unfinished"/>
+        <translation>受限</translation>
     </message>
     <message>
         <source>N/A</source>
-        <translation type="unfinished"/>
+        <translation>不适用</translation>
     </message>
     <message>
         <source>University Friends</source>
-        <translation type="unfinished"/>
+        <translation>大学好友</translation>
     </message>
     <message>
         <source>This List Contains</source>
-        <translation type="unfinished"/>
+        <translation>此列表包含</translation>
     </message>
     <message>
         <source>All your Groups</source>
-        <translation type="unfinished"/>
+        <translation>您的所有分组</translation>
     </message>
     <message>
         <source>No Comments Allowed</source>
@@ -11913,18 +11947,18 @@ RetroShare 将向数据源请求详细的校验
     </message>
     <message>
         <source>Cancel </source>
-        <translation type="unfinished"/>
+        <translation>取消</translation>
     </message>
     <message>
         <source>Create Group</source>
-        <translation type="unfinished"/>
+        <translation>创建分组</translation>
     </message>
 </context>
 <context>
     <name>WikiDialog</name>
     <message>
         <source>Wiki Group</source>
-        <translation type="unfinished"/>
+        <translation>Wiki 分组</translation>
     </message>
     <message>
         <source>Page</source>
@@ -11940,7 +11974,7 @@ RetroShare 将向数据源请求详细的校验
     </message>
     <message>
         <source>By</source>
-        <translation type="unfinished"/>
+        <translation>操作者:</translation>
     </message>
     <message>
         <source>&lt;&lt;</source>
@@ -11956,7 +11990,7 @@ RetroShare 将向数据源请求详细的校验
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"/>
+        <translation>编辑</translation>
     </message>
     <message>
         <source>Mod &gt;&gt;</source>
@@ -11964,7 +11998,7 @@ RetroShare 将向数据源请求详细的校验
     </message>
     <message>
         <source>New Group</source>
-        <translation type="unfinished"/>
+        <translation>新建分组</translation>
     </message>
     <message>
         <source>New Page</source>
@@ -11972,7 +12006,7 @@ RetroShare 将向数据源请求详细的校验
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation>删除</translation>
     </message>
 </context>
 <context>
@@ -11983,7 +12017,7 @@ RetroShare 将向数据源请求详细的校验
     </message>
     <message>
         <source>Wiki Group:</source>
-        <translation type="unfinished"/>
+        <translation>Wiki 分组:</translation>
     </message>
     <message>
         <source>Page Name:</source>
@@ -11991,15 +12025,15 @@ RetroShare 将向数据源请求详细的校验
     </message>
     <message>
         <source>Edit ID</source>
-        <translation type="unfinished"/>
+        <translation>编辑 ID</translation>
     </message>
     <message>
         <source>Previous Version</source>
-        <translation type="unfinished"/>
+        <translation>之前版本</translation>
     </message>
     <message>
         <source>Prev ID</source>
-        <translation type="unfinished"/>
+        <translation>之前 ID</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -12007,50 +12041,50 @@ RetroShare 将向数据源请求详细的校验
     </message>
     <message>
         <source>Revert</source>
-        <translation type="unfinished"/>
+        <translation>撤销复原</translation>
     </message>
     <message>
         <source>Submit</source>
-        <translation type="unfinished"/>
+        <translation>提交</translation>
     </message>
 </context>
 <context>
     <name>WireDialog</name>
     <message>
         <source>TimeRange</source>
-        <translation type="unfinished"/>
+        <translation>时间范围</translation>
     </message>
     <message>
         <source>All</source>
-        <translation type="unfinished"/>
+        <translation>全部</translation>
     </message>
     <message>
         <source>Last Month</source>
-        <translation type="unfinished"/>
+        <translation>上月</translation>
     </message>
     <message>
         <source>Last Week</source>
-        <translation type="unfinished"/>
+        <translation>上周</translation>
     </message>
     <message>
         <source>Today</source>
-        <translation type="unfinished"/>
+        <translation>今天</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"/>
+        <translation>新建</translation>
     </message>
     <message>
         <source>from</source>
-        <translation type="unfinished"/>
+        <translation>自从</translation>
     </message>
     <message>
         <source>until</source>
-        <translation type="unfinished"/>
+        <translation>直到</translation>
     </message>
     <message>
         <source>Search/Filter</source>
-        <translation type="unfinished"/>
+        <translation>搜索/过滤</translation>
     </message>
     <message>
         <source>Network Wide</source>
@@ -12062,39 +12096,39 @@ RetroShare 将向数据源请求详细的校验
     </message>
     <message>
         <source>Showing:</source>
-        <translation type="unfinished"/>
+        <translation>当前显示:</translation>
     </message>
     <message>
         <source>Yourself</source>
-        <translation type="unfinished"/>
+        <translation>我自己</translation>
     </message>
     <message>
         <source>Friends</source>
-        <translation type="unfinished"/>
+        <translation>好友</translation>
     </message>
     <message>
         <source>Following</source>
-        <translation type="unfinished"/>
+        <translation>以下</translation>
     </message>
     <message>
         <source>Custom</source>
-        <translation type="unfinished"/>
+        <translation>自定义</translation>
     </message>
     <message>
         <source>Account 1</source>
-        <translation type="unfinished"/>
+        <translation>账户1</translation>
     </message>
     <message>
         <source>Account 2</source>
-        <translation type="unfinished"/>
+        <translation>账户2</translation>
     </message>
     <message>
         <source>Account 3</source>
-        <translation type="unfinished"/>
+        <translation>账户3</translation>
     </message>
     <message>
         <source>CheckBox</source>
-        <translation type="unfinished"/>
+        <translation>复选框</translation>
     </message>
     <message>
         <source>Post Pulse to Wire</source>
@@ -12106,7 +12140,7 @@ RetroShare 将向数据源请求详细的校验
     <message>
         <source>Unknown</source>
         <comment>Unknown (size)</comment>
-        <translation type="unfinished"/>
+        <translation>未知</translation>
     </message>
     <message>
         <source> B</source>
@@ -12115,32 +12149,32 @@ RetroShare 将向数据源请求详细的校验
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>未知</translation>
     </message>
     <message>
         <source>&lt; 1m</source>
         <comment>&lt; 1 minute</comment>
-        <translation type="unfinished"/>
+        <translation>&lt; 1 分钟</translation>
     </message>
     <message>
         <source>%1 minutes</source>
         <comment>e.g: 10minutes</comment>
-        <translation type="unfinished"/>
+        <translation>%1 分钟</translation>
     </message>
     <message>
         <source>%1h %2m</source>
         <comment>e.g: 3hours 5minutes</comment>
-        <translation type="unfinished"/>
+        <translation>%1 小时 %2 分</translation>
     </message>
     <message>
         <source>%1d %2h</source>
         <comment>e.g: 2days 10hours</comment>
-        <translation type="unfinished"/>
+        <translation>%1 天 %2 小时</translation>
     </message>
     <message>
         <source>%1y %2d</source>
         <comment>e.g: 2 years 2days </comment>
-        <translation type="unfinished"/>
+        <translation>%1 年 %2 天</translation>
     </message>
     <message>
         <source>k</source>
@@ -12168,7 +12202,7 @@ RetroShare 将向数据源请求详细的校验
     </message>
     <message>
         <source>Pictures (*.png *.xpm *.jpg *.tiff *.gif)</source>
-        <translation type="unfinished"/>
+        <translation>图片 (*.png *.xpm *.jpg *.tiff *.gif)</translation>
     </message>
     <message>
         <source> KB</source>

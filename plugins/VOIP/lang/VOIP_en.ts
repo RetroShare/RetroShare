@@ -171,12 +171,12 @@
 <context>
     <name>AudioPopupChatDialog</name>
     <message>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="14"/>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="15"/>
         <source>Mute yourself</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="34"/>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="35"/>
         <source>Deafen yourself</source>
         <translation type="unfinished"></translation>
     </message>
@@ -468,42 +468,42 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="92"/>
+        <location filename="../VOIPPlugin.cpp" line="93"/>
         <source>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="93"/>
+        <location filename="../VOIPPlugin.cpp" line="94"/>
         <source>&lt;br/&gt;The VOIP plugin adds VOIP to the private chat window of RetroShare. to use it, proceed as follows:&lt;UL&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="94"/>
+        <location filename="../VOIPPlugin.cpp" line="95"/>
         <source>&lt;li&gt; setup microphone levels using the configuration panel&lt;/li&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="95"/>
+        <location filename="../VOIPPlugin.cpp" line="96"/>
         <source>&lt;li&gt; check your microphone by looking at the VU-metters&lt;/li&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="96"/>
+        <location filename="../VOIPPlugin.cpp" line="97"/>
         <source>&lt;li&gt; in the private chat, enable sound input/output by clicking on the two VOIP icons&lt;/li&gt;&lt;/ul&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="97"/>
+        <location filename="../VOIPPlugin.cpp" line="98"/>
         <source>Your friend needs to run the plugin to talk/listen to you, or course.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="98"/>
+        <location filename="../VOIPPlugin.cpp" line="99"/>
         <source>&lt;br/&gt;&lt;br/&gt;This is an experimental feature. Don&apos;t hesitate to send comments and suggestion to the RS dev team.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="116"/>
+        <location filename="../VOIPPlugin.cpp" line="117"/>
         <source>RTT Statistics</source>
         <translation type="unfinished"></translation>
     </message>
@@ -533,7 +533,7 @@
 <context>
     <name>VOIP</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="152"/>
+        <location filename="../VOIPPlugin.cpp" line="153"/>
         <source>This plugin provides voice communication between friends in RetroShare.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -541,7 +541,7 @@
 <context>
     <name>VOIPPlugin</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="157"/>
+        <location filename="../VOIPPlugin.cpp" line="158"/>
         <source>VOIP</source>
         <translation type="unfinished"></translation>
     </message>

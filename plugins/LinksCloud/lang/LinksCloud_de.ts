@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.0" language="de">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="de" version="2.0">
 <context>
     <name>AddLinksDialog</name>
     <message>
@@ -290,32 +288,32 @@
         <location filename="../LinksDialog.cpp" line="734"/>
         <location filename="../LinksDialog.cpp" line="742"/>
         <source>Add Link Failure</source>
-        <translation type="unfinished">Link hinzufügen fehlgeschlagen</translation>
+        <translation>Link hinzufügen fehlgeschlagen</translation>
     </message>
     <message>
         <location filename="../LinksDialog.cpp" line="706"/>
         <source>Missing Link and/or Title</source>
-        <translation type="unfinished">Titel und/oder Url fehlt</translation>
+        <translation>Fehlender Link und/oder Titel</translation>
     </message>
     <message>
         <location filename="../LinksDialog.cpp" line="734"/>
         <source>Missing Link Data</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehlende Linkdaten</translation>
     </message>
     <message>
         <location filename="../LinksDialog.cpp" line="742"/>
         <source>Missing Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehlender Kommentar</translation>
     </message>
     <message>
         <location filename="../LinksDialog.cpp" line="757"/>
         <source>Link Title Not Changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Linktitel nicht geändert</translation>
     </message>
     <message>
         <location filename="../LinksDialog.cpp" line="757"/>
         <source>Do you want to continue?</source>
-        <translation type="unfinished"></translation>
+        <translation>Willst du fortfahren?</translation>
     </message>
     <message>
         <location filename="../LinksDialog.cpp" line="812"/>

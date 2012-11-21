@@ -952,16 +952,28 @@ Please choose one of it to chat with.</translation>
         <translation>Téma: %1</translation>
     </message>
     <message>
-        <source>Uncheck to mute participant</source>
-        <translation>Résztvevő némítása</translation>
-    </message>
-    <message>
         <source>%1 changed his name to: %2</source>
         <translation>%1 megváltoztatta a nevét: %2</translation>
     </message>
     <message>
         <source>Lobby chat</source>
         <translation>Csevegőszoba</translation>
+    </message>
+    <message>
+        <source>Participants</source>
+        <translation>Résztvevők</translation>
+    </message>
+    <message>
+        <source>Mute participant</source>
+        <translation>Résztvevő némítása</translation>
+    </message>
+    <message>
+        <source>Double click to mute/unmute participant</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Right click to mute/unmute participants</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4155,7 +4167,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Search Author</source>
-        <translation type="unfinished"/>
+        <translation>Szerző keresése</translation>
     </message>
     <message>
         <source>Search Content</source>
@@ -4757,26 +4769,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Add Friend</source>
         <translation>Barát hozzáadása</translation>
-    </message>
-    <message>
-        <source>Create new Profile</source>
-        <translation>Új profil létrehozása</translation>
-    </message>
-    <message>
-        <source>Create new Forum</source>
-        <translation>Új fórum létrehozása</translation>
-    </message>
-    <message>
-        <source>F</source>
-        <translation>F</translation>
-    </message>
-    <message>
-        <source>Create new Channel</source>
-        <translation>Új csatorna létrehozása</translation>
-    </message>
-    <message>
-        <source>C</source>
-        <translation>Cs</translation>
     </message>
     <message>
         <source>Add your Avatar Picture</source>
@@ -5611,6 +5603,43 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>GroupFlagsWidget</name>
+    <message>
+        <source>All your friends can browse this directory
+</source>
+        <translation>A mappát az összes barátod böngészheti
+</translation>
+    </message>
+    <message>
+        <source>Only friends in groups </source>
+        <translation>Csak a csoportokban szereplő barátok</translation>
+    </message>
+    <message>
+        <source> can browse this directory
+</source>
+        <translation>böngészheti a könyvtárat
+</translation>
+    </message>
+    <message>
+        <source>No one can browse this directory
+</source>
+        <translation>Senki nem böngészheti a könyvtárat
+</translation>
+    </message>
+    <message>
+        <source>All your friends can relay anonymous tunnels to this directory</source>
+        <translation>Az összes barátod továbbíthat névtelen alagutakat a mappához</translation>
+    </message>
+    <message>
+        <source> can relay anonymous tunnels to this directory</source>
+        <translation>továbbíthat névtelen alagutakat a mappához</translation>
+    </message>
+    <message>
+        <source>No one can anonymously access this directory.</source>
+        <translation>Senki nem kapcsolódhat névtelenül a mappához.</translation>
+    </message>
+</context>
+<context>
     <name>GroupTreeWidget</name>
     <message>
         <source>Title</source>
@@ -6413,7 +6442,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare %1 a secure decentralized communication platform</source>
-        <translation>RetroShare %1 egy biztonságot, decentralizált kommunikációs platform</translation>
+        <translation>RetroShare %1 egy biztonságos, központosítatlan kommunikációs platform</translation>
     </message>
 </context>
 <context>
@@ -7704,11 +7733,11 @@ Kattints rá jobb gombbal, majd választ ki a &apos;barátság kezdeményezése&
     </message>
     <message>
         <source>Search Name</source>
-        <translation type="unfinished"/>
+        <translation>Név keresése</translation>
     </message>
     <message>
         <source>Search Peer ID</source>
-        <translation type="unfinished"/>
+        <translation>Partner ID keresése</translation>
     </message>
 </context>
 <context>
@@ -7933,10 +7962,6 @@ Kattints rá jobb gombbal, majd választ ki a &apos;barátság kezdeményezése&
         <translation>Fájlindex mentése</translation>
     </message>
     <message>
-        <source>To sign, please enter the password that unlocks your PGP key:</source>
-        <translation>Kérlek add meg a PGP kulcsod jelszavát az aláíráshoz.</translation>
-    </message>
-    <message>
         <source>Unregistered plugin/executable</source>
         <translation>Nem regisztrált beépülő/futtatható állomány</translation>
     </message>
@@ -7951,6 +7976,10 @@ Kattints rá jobb gombbal, majd választ ki a &apos;barátság kezdeményezése&
     <message>
         <source>This is a test.</source>
         <translation>Ez egy teszt.</translation>
+    </message>
+    <message>
+        <source>Please enter the password to unlock your PGP key:</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9371,6 +9400,22 @@ A jelentett hiba: %2</translation>
 Zárolófájl:
 </translation>
     </message>
+    <message>
+        <source>Directory is browsable for friends from parent groups</source>
+        <translation>A szülőcsoportban található összes barátod böngészheti a mappát</translation>
+    </message>
+    <message>
+        <source>Directory is accessible by anonymous tunnels from friends from parent groups</source>
+        <translation>A szülőcsoportban lévő összes barátod böngészheti a mappát névtelen alagutakon keresztül</translation>
+    </message>
+    <message>
+        <source>Directory is browsable for any friend</source>
+        <translation>Az összes barátod böngészheti a mappát</translation>
+    </message>
+    <message>
+        <source>Directory is accessible by anonymous tunnels from any friend</source>
+        <translation>Az összes barátod böngészheti a mappát névtelen alagutakon keresztül</translation>
+    </message>
 </context>
 <context>
     <name>QuickStartWizard</name>
@@ -9682,18 +9727,6 @@ p, li { white-space: pre-wrap; }
 </context>
 <context>
     <name>RetroshareDirModel</name>
-    <message>
-        <source>Anonymous</source>
-        <translation>Névtelen</translation>
-    </message>
-    <message>
-        <source>Anonymous and browsable by friends</source>
-        <translation>Névtelen és barátok számára böngészhető</translation>
-    </message>
-    <message>
-        <source>Only browsable by friends</source>
-        <translation>Csak barátok számára böngészhető</translation>
-    </message>
     <message>
         <source>NEW</source>
         <translation>ÚJ</translation>
@@ -10349,32 +10382,12 @@ Az alapértelmezett érték 20.</translation>
         <translation>Megosztás beállításai</translation>
     </message>
     <message>
-        <source>Browseable by Friends</source>
-        <translation>Barátok által böngészhető</translation>
-    </message>
-    <message>
-        <source>Browsable</source>
-        <translation>Böngészhető</translation>
-    </message>
-    <message>
-        <source>Anonymous shared Network Wide</source>
-        <translation>Az egész hálózat számára névtelenül megosztva</translation>
-    </message>
-    <message>
-        <source>Network Wide</source>
-        <translation>Az egész hálózat számára megosztva</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation>Oké</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Mégse</translation>
-    </message>
-    <message>
         <source>Select A Folder To Share</source>
         <translation>Válassz ki egy megosztandó mappát</translation>
+    </message>
+    <message>
+        <source>Share flags and groups: </source>
+        <translation>Megosztásjelzők és csoportok:</translation>
     </message>
 </context>
 <context>
@@ -10443,14 +10456,6 @@ p, li { white-space: pre-wrap; }
         <translation>Virtuális mappa</translation>
     </message>
     <message>
-        <source>Network Wide</source>
-        <translation>Egész hálózatnak</translation>
-    </message>
-    <message>
-        <source>Browsable</source>
-        <translation>Böngészhető</translation>
-    </message>
-    <message>
         <source>Add a Share Directory</source>
         <translation>Mappa hozzáadása a megosztáshoz</translation>
     </message>
@@ -10467,24 +10472,12 @@ p, li { white-space: pre-wrap; }
         <translation>Eltávolítás</translation>
     </message>
     <message>
-        <source>Close</source>
-        <translation>Bezárás</translation>
-    </message>
-    <message>
         <source>Edit selected Shared Directory</source>
         <translation>A kiválasztott mappa megosztási beállításainak módosítása</translation>
     </message>
     <message>
         <source>Edit</source>
         <translation>Szerkesztés</translation>
-    </message>
-    <message>
-        <source>If checked, the share is anonymously shared to anybody.</source>
-        <translation>Ha bejelölöd, a megosztás névtelen elérhető lesz bárki által.</translation>
-    </message>
-    <message>
-        <source>If checked, the share is browsable by your friends.</source>
-        <translation>Ha bejelölöd, a megosztás böngészhető lesz a barátaid által.</translation>
     </message>
     <message>
         <source>Warning!</source>
@@ -10509,6 +10502,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Share Manager</source>
         <translation>Megosztáskezelő</translation>
+    </message>
+    <message>
+        <source>Share flags</source>
+        <translation>Megosztásjelzők</translation>
+    </message>
+    <message>
+        <source>Parent groups</source>
+        <translation>Szülőcsoportok</translation>
+    </message>
+    <message>
+        <source>Apply and close</source>
+        <translation>Alkalmazás és bezárás</translation>
     </message>
 </context>
 <context>
@@ -11065,6 +11070,14 @@ p, li { white-space: pre-wrap; }
         <source>Save Channel File</source>
         <translation>Csatorna fájl mentése</translation>
     </message>
+    <message>
+        <source>Open</source>
+        <translation>Megnyitás</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>Fájl megnyitása</translation>
+    </message>
 </context>
 <context>
     <name>TBoard</name>
@@ -11564,6 +11577,10 @@ Kérlek, légy türelmes!</translation>
     <message>
         <source>What&apos;s new</source>
         <translation>Újdonságok</translation>
+    </message>
+    <message>
+        <source>Groups</source>
+        <translation>Csoportok</translation>
     </message>
 </context>
 <context>

@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.0" language="de">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="de" version="2.0">
 <context>
     <name>AudioInput</name>
     <message>
@@ -173,12 +171,12 @@
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="14"/>
         <source>Mute yourself</source>
-        <translation type="unfinished"></translation>
+        <translation>Dich selbst stumm schalten</translation>
     </message>
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="34"/>
         <source>Deafen yourself</source>
-        <translation type="unfinished"></translation>
+        <translation>Dich selbst taub schalten</translation>
     </message>
 </context>
 <context>
@@ -390,7 +388,7 @@
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="70"/>
-        <source>&lt;p &gt;Open your sound control panel and go to the recording settings. Make sure the microphone is selected as active input with maximum recording volume. If there&apos;s an option to enable a &amp;quot;Microphone boost&amp;quot; make sure it&apos;s checked. &lt;/p&gt;
+        <source>&lt;p &gt;Open your sound control panel and go to the recording settings. Make sure the microphone is selected as active input with maximum recording volume. If there's an option to enable a &amp;quot;Microphone boost&amp;quot; make sure it's checked. &lt;/p&gt;
 &lt;p&gt;Speak loudly, as when you are annoyed or excited. Decrease the volume in the sound control panel until the bar below stays as high as possible in the green and orange but not the red zone while you speak. &lt;/p&gt;</source>
         <translation>Öffnen Sie die Lautstärkeeinstellungen und gehen Sie zu den Aufnahmeeinstellungen. Versichern Sie sich, dass das Mikrofon als aktives Eingabegerät mit maximaler Aufnahmelautstärke ausgewählt ist. Falls es eine Option &quot;Mikrofon Boost&quot; gibt, sollte diese aktiviert sein.
 

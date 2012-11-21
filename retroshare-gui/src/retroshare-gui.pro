@@ -715,17 +715,18 @@ SOURCES +=  main.cpp \
 RESOURCES += gui/images.qrc lang/lang.qrc gui/help/content/content.qrc
 
 TRANSLATIONS +=  \
-            lang/retroshare_en.ts \
             lang/retroshare_cs.ts \
-            lang/retroshare_es.ts \
             lang/retroshare_da.ts \
             lang/retroshare_de.ts \
+            lang/retroshare_en.ts \
+            lang/retroshare_es.ts \
 			lang/retroshare_fi.ts \
             lang/retroshare_fr.ts \
-            lang/retroshare_ja_JP.ts  \
-            lang/retroshare_ko.ts  \
-            lang/retroshare_pl.ts  \
-            lang/retroshare_ru.ts  \
+            lang/retroshare_hu.ts \
+            lang/retroshare_ja_JP.ts \
+            lang/retroshare_ko.ts \
+            lang/retroshare_pl.ts \
+            lang/retroshare_ru.ts \
             lang/retroshare_sv.ts \
             lang/retroshare_tr.ts \
             lang/retroshare_zh_CN.ts
