@@ -11,9 +11,13 @@ AlbumCreateDialog::AlbumCreateDialog(TokenQueue *photoQueue, RsPhotoV2 *rs_photo
     ui(new Ui::AlbumCreateDialog), mPhotoQueue(photoQueue), mRsPhoto(rs_photo)
 {
     ui->setupUi(this);
+    
+	ui->headerFrame->setHeaderImage(QPixmap(":/images/album_create_64.png"));
+    ui->headerFrame->setHeaderText(tr("Create Album"));
 
     connect(ui->publishButton, SIGNAL(clicked()), this, SLOT(publishAlbum()));
     connect(ui->AlbumThumbNail, SIGNAL(clicked()), this, SLOT(addAlbumThumbnail()));
+    
 }
 
 AlbumCreateDialog::~AlbumCreateDialog()
