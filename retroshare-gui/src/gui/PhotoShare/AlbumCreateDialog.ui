@@ -123,8 +123,8 @@ border-radius: 10px;
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/channels.png</normaloff>:/images/channels.png</iconset>
+           <iconset resource="Photo_images.qrc">
+            <normaloff>:/images/album_64.png</normaloff>:/images/album_64.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -349,6 +349,7 @@ border-radius: 10px;
  </customwidgets>
  <resources>
   <include location="../images.qrc"/>
+  <include location="Photo_images.qrc"/>
  </resources>
  <connections>
   <connection>
