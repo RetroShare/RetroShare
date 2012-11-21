@@ -1,3 +1,140 @@
+Changes for 0.5.4c
+
+  * Improvements
+     - GUI
+        * patch from AC to perform html optimization of forum posts using the canonical function optimizeHtml()
+        * fixed bug preventing share manager to modify more than one directory at once
+        * Moved most of the hardcoded colors of lists and trees to the file qss.default (with help from braindead).
+          Now the stylesheet can redefine these colors.
+        * Added multiselective mute/unmute to chat lobby. Added mute/unmute with double click on icon.
+        * Added flag for hungarian language.
+        * Fixed sorting of date in forums
+        * redesigned the Chatlobby participants list
+            - used now QTreeWidget instead of a QListWidget
+            - added icons for display the muted participants
+            - added context menu for "Mute participant" ( context menu fix from thunder)
+
+        * Removed context help button from the dialogs (currently not used) and added 
+          minimize/maximize buttons to the "floating" dialogs.
+        * Added to identify for Channel Files if its a media file(s) or not, to change the Play Button text from "Play" to "Open"        
+		* Added icons for the Channel TreeWidget
+        * Added placeholder text for Search Filter items on Group TreeWidget
+        * Added placeholder text for Search Filter items in Messages Dialog
+        * update the authors on the help page
+        * Redesigned GenCertDialog for the usage in Profile Manager.
+        * Removed the filter comboboxes and replaced it with a menu in LineEditClear.
+        * Added settings for the blinking icons
+            - private chat window/tab
+            - chat lobby tab
+            - all tray notifier
+        * Added a find Icon Button for the class LineEditClear
+        * Removed all not needed find icons from the Dialogs.
+        * Enabled sorting for the Lobby Dialog
+        * Added a placeholder text for the Search Forum filter
+
+        * Added blinking of the chat icon for private chat window and chat lobby
+        * Added blinking of the systray icon for the notifier and enabled it 
+          for private chat.
+        * Cleaned includes in FriendsDialog.cpp
+        * Fixed switching between combined and not combined tray icon notify 
+          with available messages.
+        * Added sounds when message has arrived and download was finished.
+        * The next unread button in forums search for child items and start 
+          at the top when the end of the list is reached.
+        * Changed SoundManger to allow the plugins to play sounds.
+        * Added example to VOIP (commented out).
+        * Added more PRE_TARGETDEPS for Windows compile.
+		* Added Search Filter for the FriendsList
+        * set a minimum spacing on ChatWidget
+        * Added to display tooltip's for the Voip button's
+        * Moved the Send Button to right side of the Chat LineEdit for better look.
+        * Changed some language strings in the GUI, removed hardcoded fonts (Patch from Henry)
+        * removed html strings from GenCertDialog
+        * moved some description text from the header, to look better
+        * update translation strings
+        * several improvements of the GUI layout.
+        * cleaned up many unnecessary files
+        * Improved (ungendered) English friend recommendation message (patch ID: 3536093 )
+        * Support for custom qss in data dir and config dir
+        * update win installer script, to install turkish Qt translation
+        * renamed Bubble Compact folder
+        * Added attempt to load the translations for the Qt's internal srings from datadir/translations
+		- removed some warnings and debug info 
+		- Fixed sensitivity of the action in the context menu to copy a link from the chat text 
+			when scrollbars are visible.
+		- Stored some license files to utf-8 encoding, required by nsis installer
+		- Changed font color in ProfileWidget to standard.
+		- Corrected installer translation
+		- Disabled fix color of chat messages for Qt 4.5 and lower because of missing methods on QColor in Qt 4.5
+		- Add direct public sources for files shared in channels, when available
+		- Improvements to turtle router:
+			* made faster tunnels stay longer by increasing tunnel campain time. Should favor fast tunnels. 
+			* desactivated tunnel shortenning since it cannot produce consistent tunnels every time
+			* increase cache TTL for search requests to 240 secs and tunnel requests to 120 secs.
+          This should remove some zombie tunnels and search requests.
+		- Debian Buildscript. Fixed Version for Packagename
+    
+    - VOIP plugin
+        * Added support for external translation files for the main application and the plugins LinksCloud and VOIP.
+          The following files are loaded from the directory <executable dir>/translations: retroshare_*.qm, LinksCloud_*.qm, VOIP_*.qm
+        * Added turkish voip translation
+        * Added Brazilian Portuguese VOIP translation
+        * Added support for external translation files for the main application and the plugins LinksCloud and VOIP.
+          The following files are loaded from the directory <executable dir>/translations: retroshare_*.qm, LinksCloud_*.qm, VOIP_*.qm
+        * Added turkish voip translation
+        * Added Brazilian Portuguese VOIP translation    
+
+    - FT
+        * added dynamic adding of direct sources from file lists. Useful for channels. Is called once every 61 seconds.
+        * Added new link type: EXTRA_FILE, to allow sendign links with sources included so as to trigger direct transfer.
+          This makes possible to send files through chat without permitting tunnel access to the files. The client requests
+          the file as a direct transfer only, using the supplied source.
+
+     - Patch to allow compilation on BSD
+     - Fixed command to grab upnp patched version
+
+     - Merged branch that provide group-based file permissions.
+          Now users can sort peers into groups in the friend list, and attribute flags and parent groups 
+          to the directories in the share manager.
+          
+        Flags are B-B-N, meaning in order:
+           - browsable for peers in the parent groups
+           - browsable for everyone
+           - network wide for everyone
+           Backward compatibility makes previously BN flags been interpreted as -BN, meaning 
+           browsable/network wide for everyone.
+
+        The merge also includes a significant improvement of the naming of flags with incompatible types
+        which should sort out some existing bugs as well, since inconsistencies in flag usage have been
+        found during the process.
+        
+    - DHT
+        * Improved the dht msg history storage.
+        * specify how long we store for.
+        * cleanup old msgs.
+        * improve printing of history.
+        * add timeline storage as well.
+        * disabled by default, enable USE_HISTORY in bdnode.c
+
+         There appears to be a bug related to copying bdId's around.
+         Some of the bootstrap ids are malformed, and this crashes rs.        
+
+  * Bugs
+     - added additional checking of incoming compressed chunk map, in case the data is 
+       currupted, which might happens with a corrupted ft_transfer.cfg file.
+     - fixed permission of drap+dropped files. all attached files get added to extra list, 
+       but with different permission flags depending on the client. From that, we compute 
+       sharing permissions : turtle, or direct transfer only 
+     - suppressed unitialized memory read in p3peers.cc
+     - added missing mutex in destructor of ftFileProvider. Probably responsible for some random crashes
+     - Fixed stupid bug inDHT. Labels are the wrong way around.
+        This meant limit is set to HIGH (50msg/sec) when it should be LOW 
+        (5msg/sec)
+     - Fixed "jumping" of the items in channels and news feed when items are changed (load, toggle and remove).
+     - Added workaround for QTBUG-3372.
+     - Hide request Label, when peer is unknown
+     - Fixed edit of a message with plaintext. The newlines remain unchanged (investigated by braindead)
+
 Changes for 0.5.4b
 
 	* Bugs

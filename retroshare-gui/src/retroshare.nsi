@@ -2,10 +2,11 @@
 
 ; Define your application name
 !define APPNAME "RetroShare"
-!define VERSION "0.5.4b"
-!define REVISION "5792"
+!define VERSION "0.5.4c"
+!define REVISION "5858"
 !define APPNAMEANDVERSION "${APPNAME} ${VERSION} ${REVISION}"
 !define QTBASE "d:\qt\2010.05"
+!define RSBASE "d:\Development\retroshare\retroshare-gui\"
 
 ; Main Install settings
 Name "${APPNAMEANDVERSION}"
@@ -149,7 +150,7 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
     LangString DESC_sec_main ${LANG_GERMAN} "Installiert die RetroShare Programmdateien."
     LangString DESC_sec_data ${LANG_GERMAN} "Installiert RetroShare Skins"
     LangString DESC_sec_plugins ${LANG_GERMAN} "Installiert die RetroShare Erweiterungen."
-    LangString DESC_sec_shortcuts ${LANG_GERMAN} "RetroShare Verknüpfung im Startmenü, Desktop oder im Schnellstarter erstellen."
+    LangString DESC_sec_shortcuts ${LANG_GERMAN} "RetroShare Verknüpfung im Startmenüe, Desktop oder im Schnellstarter erstellen."
     LangString DESC_sec_link ${LANG_GERMAN} "RetroShare mit .rsc Dateiendung verknüpfen"
     LangString LANGUAGEID ${LANG_GERMAN} "1031"
             
@@ -338,9 +339,9 @@ Section $(sec_main) sec_main
   File /r "${QTBASE}\qt\bin\libgcc_s_dw2-1.dll"
   File /r "${QTBASE}\qt\plugins\imageformats"
   File /r  ${QTBASE}\qt\qt_*.qm
-  File /r  translations\qt_*.qm
+  File /r  ${RSBASE}\src\qt_*.qm
   File /r "release\pthreadGC2d.dll"
-  File /r "D:\Development\lib\libminiupnpc-1.3\miniupnpc.dll"
+  File /r "d:\Development\lib\libminiupnpc-1.3\miniupnpc.dll"
   File /r "changelog.txt"
   File /r /x Data "release\bdboot.txt" 
 
