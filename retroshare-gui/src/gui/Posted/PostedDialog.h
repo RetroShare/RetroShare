@@ -31,28 +31,27 @@
 
 #include <map>
 
-//#include "gui/Posted/PostedList.h"
-//#include "gui/Posted/PostedComments.h"
+class CommentHolder
+{
+public:
 
-//#include "gui/PhotoShare/PhotoAddDialog.h"
-//#include "gui/PhotoShare/PhotoSlideShow.h"
-//#include "util/TokenQueue.h"
+    /*!
+     * This should be used for loading comments of a message on a main comment viewing page
+     * @param msgId the message id for which comments will be requested
+     */
+    virtual void commentLoad(const RsGxsMessageId& msgId) = 0;
+};
 
 class PostedListDialog;
 class PostedComments;
 
-class PostedDialog : public MainPage
+class PostedDialog : public MainPage, public CommentHolder
 {
   Q_OBJECT
 
 public:
 	PostedDialog(QWidget *parent = 0);
-
-//virtual void addTab(std::string item);
-
-private slots:
-
-	//void OpenSlideShow();
+        void commentLoad(const RsGxsMessageId &msgId);
 
 private:
 

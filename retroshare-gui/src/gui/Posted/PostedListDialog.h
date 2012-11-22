@@ -35,8 +35,10 @@
 #include "gui/common/GroupTreeWidget.h"
 
 #include "util/TokenQueue.h"
-
 #include "retroshare-gui/RsAutoUpdatePage.h"
+
+
+class CommentHolder;
 
 /*********************** **** **** **** ***********************/
 /** Request / Response of Data ********************************/
@@ -54,14 +56,9 @@ class PostedListDialog : public RsAutoUpdatePage, public PostedHolder, public To
   Q_OBJECT
 
 public:
-	PostedListDialog(QWidget *parent = 0);
+        PostedListDialog(CommentHolder* commentHolder, QWidget *parent = 0);
 
-    virtual void deletePostedItem(PostedItem *, uint32_t ptype) { return; }
-    virtual void notifySelection(PostedItem *item, int ptype) { return; }
-    virtual void requestComments(std::string threadId);
-
-signals:
-    void loadComments( std::string );
+        void showComments(const RsGxsMessageId &threadId);
 
 private slots:
 
@@ -116,6 +113,8 @@ private:
 
     QMap<RsGxsGroupId, RsPostedGroup> mGroups;
     TokenQueue *mPostedQueue;
+
+    CommentHolder* mCommentHolder;
 
     /* UI - from Designer */
     Ui::PostedListDialog ui;

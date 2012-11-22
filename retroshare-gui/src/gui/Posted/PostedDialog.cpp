@@ -47,17 +47,22 @@
 PostedDialog::PostedDialog(QWidget *parent)
 : MainPage(parent)
 {
-	ui.setupUi(this);
+    ui.setupUi(this);
 
-        mPostedList = new PostedListDialog(NULL);
-        mPostedComments = new PostedComments(NULL);
+    mPostedList = new PostedListDialog(NULL);
+    mPostedComments = new PostedComments(NULL);
 
-	QString list("List");
-	ui.tabWidget->addTab(mPostedList, list);
-	QString comments("Comments");
-	ui.tabWidget->addTab(mPostedComments, comments);
+    QString list("List");
+    ui.tabWidget->addTab(mPostedList, list);
+    QString comments("Comments");
+    ui.tabWidget->addTab(mPostedComments, comments);
 
-	connect(mPostedList, SIGNAL(loadComments( std::string ) ), mPostedComments, SLOT(loadComments( std::string ) ) );
+    connect(mPostedList, SIGNAL(loadComments( std::string ) ), mPostedComments, SLOT(loadComments( std::string ) ) );
+}
+
+void PostedDialog::commentLoad(const RsGxsMessageId &msgId)
+{
+    mPostedComments->loadComments(msgId);
 }
 
 

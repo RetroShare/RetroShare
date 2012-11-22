@@ -194,9 +194,8 @@ bool RsGxsPostedSerialiser::serialiseGxsPostedPostItem(RsGxsPostedPostItem* item
 
     /* GxsPhotoAlbumItem */
 
-    ok &= SetTlvString(data, tlvsize, &offset, 1, item->mPost.mNotes);
     ok &= SetTlvString(data, tlvsize, &offset, 1, item->mPost.mLink);
-
+    ok &= SetTlvString(data, tlvsize, &offset, 1, item->mPost.mNotes);
 
     if(offset != tlvsize)
     {

@@ -15,6 +15,7 @@ void PostedCreatePostDialog::createPost()
     post.mMeta.mGroupId = mGrpId;
     post.mLink = ui->linkEdit->text().toStdString();
     post.mNotes = ui->notesTextEdit->toPlainText().toStdString();
+    post.mMeta.mMsgName = ui->titleEdit->text().toStdString();
 
     uint32_t token;
     mPosted->submitPost(token, post);

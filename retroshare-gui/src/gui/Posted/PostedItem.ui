@@ -60,7 +60,7 @@ border-radius: 10px}</string>
         <item>
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
-           <widget class="QToolButton" name="toolButton_2">
+           <widget class="QToolButton" name="voteUpButton">
             <property name="text">
              <string>/\</string>
             </property>
@@ -74,7 +74,7 @@ border-radius: 10px}</string>
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="toolButton">
+           <widget class="QToolButton" name="voteDownButton">
             <property name="text">
              <string>\/</string>
             </property>
@@ -278,8 +278,6 @@ border-radius: 10px}</string>
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../../retroshare-gui/src/gui/images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

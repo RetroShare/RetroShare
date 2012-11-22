@@ -34,10 +34,8 @@ class PostedItem;
 class PostedHolder
 {
 	public:
-virtual void deletePostedItem(PostedItem *, uint32_t ptype) = 0;
-virtual void notifySelection(PostedItem *item, int ptype) = 0;
 
-virtual void requestComments(std::string threadId) = 0;
+    virtual void showComments(const RsGxsMessageId& threadId) = 0;
 };
 
 
@@ -48,15 +46,7 @@ class PostedItem : public QWidget, private Ui::PostedItem
 public:
 	PostedItem(PostedHolder *parent, const RsPostedPost &item);
 
-	//void setDummyText();
-	//void updateParent(PhotoHolder *parent); // for external construction.
-	//void removeItem();
-
-	//void setSelected(bool on);
-	//bool isSelected();
-
-protected:
-	//void mousePressEvent(QMouseEvent *event);
+        RsPostedPost getPost() const;
 
 private slots:
         void loadComments();
@@ -66,7 +56,8 @@ private:
         bool mSelected;
 
         std::string mThreadId;
-        PostedHolder *mParent;
+        PostedHolder *mPostHolder;
+        RsPostedPost mPost;
 
 };
 

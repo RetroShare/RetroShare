@@ -43,7 +43,8 @@ GxsCommentTreeWidget::GxsCommentTreeWidget(QWidget *parent)
     :QTreeWidget(parent), mRsService(NULL), mTokenQueue(NULL)
 {
 
-   	return;
+
+    return;
 }
 
 void GxsCommentTreeWidget::setup(RsTokenService *service)

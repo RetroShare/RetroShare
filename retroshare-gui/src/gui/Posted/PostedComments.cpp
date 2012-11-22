@@ -61,16 +61,13 @@
 PostedComments::PostedComments(QWidget *parent)
 :QWidget(parent)
 {
-	ui.setupUi(this);
-
-	/* setup TokenQueue */
-	//mPhotoQueue = new TokenQueue(rsPhoto, this);
-
-        ui.treeWidget->setup(rsPosted->getTokenService());
+    ui.setupUi(this);
+    ui.postFrame->setVisible(false);
+    ui.treeWidget->setup(rsPosted->getTokenService());
 
 }
 
-void PostedComments::loadComments( std::string threadId )
+void PostedComments::loadComments(const RsGxsMessageId& threadId )
 {
 	std::cerr << "PostedComments::loadComments(" << threadId << ")";
 	std::cerr << std::endl;

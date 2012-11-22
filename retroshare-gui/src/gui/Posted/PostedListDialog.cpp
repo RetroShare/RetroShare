@@ -25,6 +25,7 @@
 
 #include "gui/Posted/PostedGroupDialog.h"
 #include "gui/Posted/PostedCreatePostDialog.h"
+#include "gui/Posted/PostedDialog.h"
 
 #include <retroshare/rsposted.h>
 #include <gxs/rsgxsflags.h>
@@ -63,8 +64,8 @@
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
 
 /** Constructor */
-PostedListDialog::PostedListDialog(QWidget *parent)
-: RsAutoUpdatePage(1000,parent)
+PostedListDialog::PostedListDialog(CommentHolder *commentHolder, QWidget *parent)
+: RsAutoUpdatePage(1000,parent), mCommentHolder(commentHolder)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
@@ -93,7 +94,7 @@ void PostedListDialog::groupListCustomPopupMenu( QPoint /*point*/ )
 {
     QMenu contextMnu( this );
 
-    QAction *action = contextMnu.addAction(QIcon(IMAGE_MESSAGE), tr("Create Topic"), this, SLOT(newPost()));
+    QAction *action = contextMnu.addAction(QIcon(IMAGE_MESSAGE), tr("Submit Post"), this, SLOT(newPost()));
     action->setDisabled (mCurrTopicId.empty());
 
     contextMnu.exec(QCursor::pos());
@@ -103,6 +104,11 @@ void PostedListDialog::newPost()
 {
     PostedCreatePostDialog cp(mPostedQueue, rsPosted, mCurrTopicId, this);
     cp.exec();
+}
+
+void PostedListDialog::showComments(const RsGxsMessageId &threadId)
+{
+    mCommentHolder->commentLoad(threadId);
 }
 
 void PostedListDialog::updateDisplay()
@@ -118,16 +124,6 @@ void PostedListDialog::updateDisplay()
         insertGroups();
         insertThreads();
     }
-
-}
-
-void PostedListDialog::requestComments(std::string threadId)
-{
-	/* call a signal */
-	std::cerr << "PostedListDialog::requestComments(" << threadId << ")";
-	std::cerr << std::endl;
-
-	loadComments(threadId);
 
 }
 

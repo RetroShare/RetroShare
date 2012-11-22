@@ -35,55 +35,41 @@
 #include <algorithm>
 #include <iostream>
 
-/****
- * #define DEBUG_ITEM 1
- ****/
 
 /** Constructor */
-PostedItem::PostedItem(PostedHolder *parent, const RsPostedPost &post)
-:QWidget(NULL)
+PostedItem::PostedItem(PostedHolder *postHolder, const RsPostedPost &post)
+:QWidget(NULL), mPostHolder(postHolder)
 {
 	setupUi(this);
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 
-	titleLabel->setText(QString::fromUtf8(post.mMeta.mMsgName.c_str()));
-	//dateLabel->setText(QString("Whenever"));
+        QDateTime qtime;
+        qtime.setTime_t(mPost.mMeta.mPublishTs);
+        QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
+        dateLabel->setText(timestamp);
 	fromLabel->setText(QString::fromUtf8(post.mMeta.mAuthorId.c_str()));
-	//siteLabel->setText(QString::fromUtf8(post.mMeta.mAuthorId.c_str()));
-	//scoreLabel->setText(QString("1140"));
+        titleLabel->setText("<a href=" + QString::fromStdString(post.mLink) +
+                           "><span style=\" text-decoration: underline; color:#0000ff;\">" +
+                           QString::fromStdString(post.mMeta.mMsgName) + "</span></a>");
+        siteLabel->setText("<a href=" + QString::fromStdString(post.mLink) +
+                           "><span style=\" text-decoration: underline; color:#0000ff;\">" +
+                           QString::fromStdString(post.mLink) + "</span></a>");
 
-        // exposed for testing...
-        float score = 0;
-	time_t now = time(NULL);
-
-	QString fromLabelTxt = QString(" Age: ") + QString::number(now - post.mMeta.mPublishTs);
-	fromLabelTxt += QString(" Score: ") + QString::number(score);
-	fromLabel->setText(fromLabelTxt);
-
-	uint32_t votes = 0;
-	uint32_t comments = 0;
-        //rsPosted->extractPostedCache(post.mMeta.mServiceString, votes, comments);
-	scoreLabel->setText(QString::number(votes));
-	QString commentLabel = QString("Comments: ") + QString::number(comments);
-	commentLabel += QString(" Votes: ") + QString::number(votes);
-	siteLabel->setText(commentLabel);
-	
-	QDateTime ts;
-	ts.setTime_t(post.mMeta.mPublishTs);
-	dateLabel->setText(ts.toString(QString("yyyy/MM/dd hh:mm:ss")));
-
-	mThreadId = post.mMeta.mThreadId;
-	mParent = parent;
+        scoreLabel->setText(QString("1"));
 
 	connect( commentButton, SIGNAL( clicked() ), this, SLOT( loadComments() ) );
 
 	return;
 }
 
+RsPostedPost PostedItem::getPost() const
+{
+    return mPost;
+}
 
 void PostedItem::loadComments()
 {
 	std::cerr << "PostedItem::loadComments() Requesting for " << mThreadId;
 	std::cerr << std::endl;
-	mParent->requestComments(mThreadId);
+        mPostHolder->showComments(mPost.mMeta.mMsgId);
 }
