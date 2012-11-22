@@ -7,5 +7,6 @@
 		<file>images/album_subscribe.png</file>
 		<file>images/album_unsubscribe.png</file>
 		<file>images/album_create_64.png</file>
+		<file>images/album_default_128.png</file>
 	</qresource>
 </RCC>

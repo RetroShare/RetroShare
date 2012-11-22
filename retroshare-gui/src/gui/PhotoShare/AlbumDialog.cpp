@@ -38,7 +38,16 @@ void AlbumDialog::setUp()
 
     QPixmap qtn;
     qtn.loadFromData(mAlbum.mThumbnail.data, mAlbum.mThumbnail.size, mAlbum.mThumbnail.type.c_str());
-    ui->label_thumbNail->setPixmap(qtn);
+
+    if(mAlbum.mThumbnail.size != 0)
+    {
+		ui->label_thumbNail->setPixmap(qtn);
+    }
+    else
+    {
+		// display a default Album icon when album has no Thumbnail
+		ui->label_thumbNail->setPixmap(QPixmap(":/images/album_default_128.png"));
+    }
 }
 
 void AlbumDialog::updateAlbumPhotos(){

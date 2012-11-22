@@ -23,7 +23,16 @@ void AlbumItem::setUp()
     ui->label_Photographer->setText(QString::fromStdString(mAlbum.mPhotographer));
     QPixmap qtn;
     qtn.loadFromData(mAlbum.mThumbnail.data, mAlbum.mThumbnail.size, mAlbum.mThumbnail.type.c_str());
-    ui->label_Thumbnail->setPixmap(qtn);
+    
+    if(mAlbum.mThumbnail.size != 0)
+    {
+		ui->label_Thumbnail->setPixmap(qtn);
+    }
+    else
+    {
+		// display a default Album icon when album has no Thumbnail
+		ui->label_Thumbnail->setPixmap(QPixmap(":/images/album_default_128.png"));
+    }
 }
 
 void AlbumItem::mousePressEvent(QMouseEvent *event)
