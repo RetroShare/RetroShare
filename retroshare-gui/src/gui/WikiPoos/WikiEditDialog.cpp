@@ -31,6 +31,8 @@ WikiEditDialog::WikiEditDialog(QWidget *parent)
 : QWidget(parent)
 {
 	ui.setupUi(this);
+	
+
 
 	connect(ui.pushButton_Cancel, SIGNAL( clicked( void ) ), this, SLOT( cancelEdit( void ) ) );
 	connect(ui.pushButton_Revert, SIGNAL( clicked( void ) ), this, SLOT( revertEdit( void ) ) );
@@ -72,6 +74,9 @@ void WikiEditDialog::setNewPage()
 	ui.lineEdit_Page->setText("");
 	ui.lineEdit_PrevVersion->setText("");
 	ui.textEdit->setPlainText("");
+	
+	ui.headerFrame->setHeaderImage(QPixmap(":/images/appointment-new_64.png"));
+    ui.headerFrame->setHeaderText(tr("Create New Wiki Page"));
 }
 
 
@@ -197,6 +202,10 @@ void WikiEditDialog::setupData(const std::string &groupId, const std::string &pa
         	RsGxsGrpMsgIdPair msgId = std::make_pair(groupId, pageId);
 		requestPage(msgId);
 	}
+	
+		
+	ui.headerFrame->setHeaderImage(QPixmap(":/images/story-editor_48.png"));
+    ui.headerFrame->setHeaderText(tr("Edit Wiki Page"));
 }
 
 

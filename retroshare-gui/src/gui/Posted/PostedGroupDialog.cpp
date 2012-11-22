@@ -58,7 +58,7 @@ QString PostedGroupDialog::serviceHeader()
 
 QPixmap PostedGroupDialog::serviceImage()
 {
-	return QPixmap();
+	return QPixmap(":/images/posted_add_64.png");
 }
 
 bool PostedGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta)

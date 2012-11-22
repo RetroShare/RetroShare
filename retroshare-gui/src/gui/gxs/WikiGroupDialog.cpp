@@ -124,7 +124,7 @@ QString WikiGroupDialog::serviceHeader()
 
 QPixmap WikiGroupDialog::serviceImage()
 {
-	return QPixmap();
+	return QPixmap(":/images/resource-group_64.png");
 }
 
 bool WikiGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta)
