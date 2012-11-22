@@ -970,11 +970,11 @@ Bitte wähle einen zum Chatten aus.</translation>
     </message>
     <message>
         <source>Double click to mute/unmute participant</source>
-        <translation type="unfinished"/>
+        <translation>Doppelklick um die Stummschaltung des Teilnehmers zu aktivieren/deaktivieren</translation>
     </message>
     <message>
         <source>Right click to mute/unmute participants</source>
-        <translation type="unfinished"/>
+        <translation>Rechtsklick um die Stummschaltung des Teilnehmers zu aktivieren/deaktivieren</translation>
     </message>
 </context>
 <context>
@@ -7980,7 +7980,7 @@ Rechtsklick und als Freund hinzufügen um zu verbinden.</translation>
     </message>
     <message>
         <source>Please enter the password to unlock your PGP key:</source>
-        <translation type="unfinished"/>
+        <translation>Bitte gib das Passwort ein, das deinen PGP-Schlüssel entsperrt:</translation>
     </message>
 </context>
 <context>
