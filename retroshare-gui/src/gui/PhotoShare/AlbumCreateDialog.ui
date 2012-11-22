@@ -67,12 +67,12 @@
            <widget class="QComboBox" name="comboBox_Category_2">
             <item>
              <property name="text">
-              <string>Travel</string>
+              <string>Animals</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>Holiday</string>
+              <string>Family</string>
              </property>
             </item>
             <item>
@@ -82,7 +82,32 @@
             </item>
             <item>
              <property name="text">
-              <string>Family</string>
+              <string>Flowers</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Holiday</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Landcapes</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Pets</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Portraits</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Travel</string>
              </property>
             </item>
             <item>
