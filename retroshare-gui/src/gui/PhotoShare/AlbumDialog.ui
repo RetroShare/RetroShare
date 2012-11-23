@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>649</width>
-    <height>436</height>
+    <width>725</width>
+    <height>427</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -77,6 +77,13 @@
              <string>Summary</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_3">
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_9">
+               <property name="text">
+                <string>Album Title:</string>
+               </property>
+              </widget>
+             </item>
              <item row="0" column="1">
               <widget class="QLineEdit" name="lineEdit_Title">
                <property name="enabled">
@@ -94,6 +101,19 @@
               <widget class="QLabel" name="label_7">
                <property name="text">
                 <string>Category:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLineEdit" name="lineEdit_Category">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
                </property>
               </widget>
              </item>
@@ -137,6 +157,13 @@
                </property>
               </widget>
              </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="label_6">
+               <property name="text">
+                <string>When</string>
+               </property>
+              </widget>
+             </item>
              <item row="4" column="1">
               <widget class="QLineEdit" name="lineEdit_When">
                <property name="enabled">
@@ -150,32 +177,45 @@
                </property>
               </widget>
              </item>
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_9">
+             <item row="5" column="0">
+              <widget class="QLabel" name="label">
                <property name="text">
-                <string>Album Title:</string>
+                <string>Description:</string>
                </property>
               </widget>
              </item>
-             <item row="4" column="0">
-              <widget class="QLabel" name="label_6">
-               <property name="text">
-                <string>When</string>
+             <item row="5" column="1" rowspan="2">
+              <widget class="QTextEdit" name="textEdit_description">
+               <property name="readOnly">
+                <bool>true</bool>
                </property>
               </widget>
              </item>
-             <item row="1" column="1">
-              <widget class="QLineEdit" name="lineEdit_Category">
-               <property name="enabled">
-                <bool>false</bool>
+             <item row="6" column="0">
+              <spacer name="verticalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
                </property>
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
                </property>
-              </widget>
+              </spacer>
+             </item>
+             <item row="7" column="1">
+              <spacer name="verticalSpacer">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
              </item>
             </layout>
            </widget>
@@ -254,6 +294,19 @@
                  </property>
                 </widget>
                </item>
+               <item row="3" column="1">
+                <spacer name="verticalSpacer_3">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
               </layout>
              </widget>
             </item>
@@ -299,8 +352,8 @@ p, li { white-space: pre-wrap; }
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>625</width>
-               <height>112</height>
+               <width>701</width>
+               <height>69</height>
               </rect>
              </property>
              <property name="styleSheet">

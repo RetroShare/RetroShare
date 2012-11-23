@@ -7,8 +7,8 @@
 #include "gxs/rsgxsflags.h"
 
 AlbumCreateDialog::AlbumCreateDialog(TokenQueue *photoQueue, RsPhotoV2 *rs_photo, QWidget *parent):
-    QDialog(parent),
-    ui(new Ui::AlbumCreateDialog), mPhotoQueue(photoQueue), mRsPhoto(rs_photo)
+    QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint),
+    ui(new Ui::AlbumCreateDialog), mPhotoQueue(photoQueue), mRsPhoto(rs_photo), mPhotoSelected(NULL)
 {
     ui->setupUi(this);
     
@@ -17,13 +17,24 @@ AlbumCreateDialog::AlbumCreateDialog(TokenQueue *photoQueue, RsPhotoV2 *rs_photo
     
 
 #if QT_VERSION >= 0x040700
-    ui->lineEdit_Title_2->setPlaceholderText(tr("Untitle Album")) ;
+    ui->lineEdit_Title_2->setPlaceholderText(tr("Untitle Album"));
+    ui->lineEdit_Caption_2->setPlaceholderText(tr("Say something about this album..."));
     //ui->textEdit_Description->setPlaceholderText(tr("Say something about this album...")) ;
-    ui->lineEdit_Where->setPlaceholderText(tr("Where were this taken?")) ;
+    ui->lineEdit_Where->setPlaceholderText(tr("Where were this taken?"));
 #endif
 
+	ui->backButton->hide();
+	
     connect(ui->publishButton, SIGNAL(clicked()), this, SLOT(publishAlbum()));
     connect(ui->AlbumThumbNail, SIGNAL(clicked()), this, SLOT(addAlbumThumbnail()));
+    
+    connect(ui->addphotosButton, SIGNAL(clicked()),this, SLOT(changePage()));
+    connect(ui->backButton, SIGNAL(clicked()),this, SLOT(backPage()));
+
+    
+    mPhotoDrop = ui->scrollAreaWidgetContents;
+    mPhotoDrop->setPhotoItemHolder(this);
+
     
 }
 
@@ -68,7 +79,33 @@ void AlbumCreateDialog::publishAlbum()
     uint32_t token;
     mRsPhoto->submitAlbumDetails(token, album);
     mPhotoQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_ACK, 0);
+    
+    publishPhotos();
+    
     close();
+}
+
+void AlbumCreateDialog::publishPhotos()
+{
+    // get fields for album to publish, publish and then exit dialog
+    RsPhotoAlbum album;
+
+    QSet<PhotoItem*> photos;
+
+    mPhotoDrop->getPhotos(photos);
+
+    QSetIterator<PhotoItem*> sit(photos);
+
+    while(sit.hasNext())
+    {
+        PhotoItem* item = sit.next();
+        uint32_t token;
+        RsPhotoPhoto photo = item->getPhotoDetails();
+        photo.mMeta.mGroupId = album.mMeta.mGroupId;
+        mRsPhoto->submitPhoto(token, photo);
+        mPhotoQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, 0);
+    }
+    
 }
 
 bool AlbumCreateDialog::getAlbumThumbnail(RsPhotoThumbnail &nail)
@@ -110,4 +147,44 @@ void AlbumCreateDialog::addAlbumThumbnail()
 
     // to show the selected
     ui->AlbumThumbNail->setIcon(mThumbNail);
+}
+
+void AlbumCreateDialog::changePage()
+{
+	int nextPage = ui->stackedWidget->currentIndex() + 1;
+	if (nextPage >= ui->stackedWidget->count())
+	nextPage = 0;
+	ui->stackedWidget->setCurrentIndex(nextPage);
+	
+	ui->backButton->show();
+	ui->addphotosButton->hide();
+}
+
+void AlbumCreateDialog::backPage()
+{
+	int nextPage = ui->stackedWidget->currentIndex() - 1;
+	if (nextPage >= ui->stackedWidget->count())
+	nextPage = 0;
+	ui->stackedWidget->setCurrentIndex(nextPage);
+	
+	ui->backButton->hide();
+	ui->addphotosButton->show();
+}
+
+void AlbumCreateDialog::notifySelection(PhotoShareItem *selection)
+{
+
+    PhotoItem* pItem = dynamic_cast<PhotoItem*>(selection);
+
+    if(mPhotoSelected  == NULL)
+    {
+        return;
+    }
+    else
+    {
+        mPhotoSelected->setSelected(false);
+        mPhotoSelected = pItem;
+    }
+
+    mPhotoSelected->setSelected(true);
 }

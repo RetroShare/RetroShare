@@ -5,7 +5,7 @@
 #include "gxs/rsgxsflags.h"
 
 AlbumDialog::AlbumDialog(const RsPhotoAlbum& album, TokenQueue* photoQueue, RsPhotoV2* rs_Photo, QWidget *parent) :
-    QDialog(parent),
+    QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint),
     ui(new Ui::AlbumDialog), mRsPhoto(rs_Photo), mPhotoQueue(photoQueue), mAlbum(album), mPhotoSelected(NULL)
 {
     ui->setupUi(this);
@@ -35,6 +35,9 @@ void AlbumDialog::setUp()
     ui->lineEdit_Caption->setText(QString::fromStdString(mAlbum.mCaption));
     ui->lineEdit_Category->setText(QString::fromStdString(mAlbum.mCategory));
     ui->lineEdit_Identity->setText(QString::fromStdString(mAlbum.mMeta.mAuthorId));
+    ui->lineEdit_Where->setText(QString::fromStdString(mAlbum.mWhere));
+    ui->textEdit_description->setText(QString::fromStdString(mAlbum.mDescription));
+
 
     QPixmap qtn;
     qtn.loadFromData(mAlbum.mThumbnail.data, mAlbum.mThumbnail.size, mAlbum.mThumbnail.type.c_str());
