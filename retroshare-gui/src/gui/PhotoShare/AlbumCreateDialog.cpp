@@ -14,6 +14,13 @@ AlbumCreateDialog::AlbumCreateDialog(TokenQueue *photoQueue, RsPhotoV2 *rs_photo
     
 	ui->headerFrame->setHeaderImage(QPixmap(":/images/album_create_64.png"));
     ui->headerFrame->setHeaderText(tr("Create Album"));
+    
+
+#if QT_VERSION >= 0x040700
+    ui->lineEdit_Title_2->setPlaceholderText(tr("Untitle Album")) ;
+    //ui->textEdit_Description->setPlaceholderText(tr("Say something about this album...")) ;
+    ui->lineEdit_Where->setPlaceholderText(tr("Where were this taken?")) ;
+#endif
 
     connect(ui->publishButton, SIGNAL(clicked()), this, SLOT(publishAlbum()));
     connect(ui->AlbumThumbNail, SIGNAL(clicked()), this, SLOT(addAlbumThumbnail()));

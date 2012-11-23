@@ -236,7 +236,7 @@
       <property name="alignment">
        <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
       </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents_2">
+      <widget class="PhotoDrop" name="scrollAreaWidgetContents_2">
        <property name="geometry">
         <rect>
          <x>0</x>
@@ -248,21 +248,7 @@
        <property name="styleSheet">
         <string notr="true">QWidget#scrollAreaWidgetContents{border: none;}</string>
        </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <item>
-         <spacer name="horizontalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>426</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
+       <layout class="QHBoxLayout" name="horizontalLayout_3"/>
       </widget>
      </widget>
     </widget>
@@ -299,6 +285,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PhotoDrop</class>
+   <extends>QWidget</extends>
+   <header>gui/PhotoShare/PhotoDrop.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../images.qrc"/>
   <include location="Photo_images.qrc"/>
