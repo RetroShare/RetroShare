@@ -19,39 +19,32 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-
 #ifndef _CREATEGROUP_H
 #define _CREATEGROUP_H
 
 #include "ui_CreateGroup.h"
 
-
 class CreateGroup : public QDialog
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    /** Default constructor */
-    CreateGroup(const std::string groupId, QWidget *parent = 0);
-    /** Default destructor */
-    ~CreateGroup();
-
-public slots:
+	/** Default constructor */
+	CreateGroup(const std::string &groupId, QWidget *parent = 0);
+	/** Default destructor */
+	~CreateGroup();
 
 private slots:
+	void changeGroup();
+	void groupNameChanged(QString);
 
 private:
-    std::string m_groupId;
+	std::string mGroupId;
+	QStringList mUsedGroupNames;
+	bool mIsStandard;
 
-    QStringList usedGroupNames;
-
-    /** Qt Designer generated object */
-    Ui::CreateGroup ui;
-
-private slots:
-    void on_buttonBox_accepted();
-    void on_groupname_textChanged(QString );
+	/** Qt Designer generated object */
+	Ui::CreateGroup ui;
 };
 
 #endif
-

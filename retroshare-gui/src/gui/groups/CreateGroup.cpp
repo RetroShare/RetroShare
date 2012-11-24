@@ -23,81 +23,128 @@
 
 #include <retroshare/rspeers.h>
 
-#include "util/misc.h"
-
 #include "CreateGroup.h"
 #include "gui/common/GroupDefs.h"
+#include "gui/settings/rsharesettings.h"
+#include "util/misc.h"
 
 /** Default constructor */
-CreateGroup::CreateGroup(const std::string groupId, QWidget *parent)
+CreateGroup::CreateGroup(const std::string &groupId, QWidget *parent)
   : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
 {
-    /* Invoke Qt Designer generated QObject setup routine */
-    ui.setupUi(this);
+	/* Invoke Qt Designer generated QObject setup routine */
+	ui.setupUi(this);
 
-    ui.headerFrame->setHeaderImage(QPixmap(":/images/user/add_group256.png"));
+	Settings->loadWidgetInformation(this);
 
-    m_groupId = groupId;
+	mIsStandard = false;
 
-    if (m_groupId.empty() == false) {
-        /* edit exisiting group */
-        RsGroupInfo groupInfo;
-        if (rsPeers->getGroupInfo(m_groupId, groupInfo)) {
-            ui.groupname->setText(misc::removeNewLine(groupInfo.name));
+	ui.headerFrame->setHeaderImage(QPixmap(":/images/user/add_group256.png"));
 
-            setWindowTitle(tr("Edit Group"));
-            ui.headerFrame->setHeaderText(tr("Edit Group"));
-        } else {
-            /* Group not found, create new */
-            m_groupId.clear();
-        }
-    } else {
-        ui.headerFrame->setHeaderText(tr("Create a Group"));
-    }
+	mGroupId = groupId;
 
-    std::list<RsGroupInfo> groupInfoList;
-    rsPeers->getGroupInfoList(groupInfoList);
+	/* Initialize friends list */
+	ui.friendList->setHeaderText(tr("Friends"));
+	ui.friendList->setModus(FriendSelectionWidget::MODUS_CHECK);
+	ui.friendList->setShowType(FriendSelectionWidget::SHOW_GROUP | FriendSelectionWidget::SHOW_GPG);
+	ui.friendList->start();
 
-    std::list<RsGroupInfo>::iterator groupIt;
-    for (groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); groupIt++) {
-        if (m_groupId.empty() || groupIt->id != m_groupId) {
-            usedGroupNames.append(GroupDefs::name(*groupIt));
-        }
-    }
+	if (mGroupId.empty() == false) {
+		/* edit exisiting group */
+		RsGroupInfo groupInfo;
+		if (rsPeers->getGroupInfo(mGroupId, groupInfo)) {
+			mIsStandard = (groupInfo.flag & RS_GROUP_FLAG_STANDARD);
 
-    on_groupname_textChanged(ui.groupname->text());
+			if (mIsStandard) {
+				ui.groupName->setText(GroupDefs::name(groupInfo));
+			} else {
+				ui.groupName->setText(misc::removeNewLine(groupInfo.name));
+			}
+
+			setWindowTitle(tr("Edit Group"));
+			ui.headerFrame->setHeaderText(tr("Edit Group"));
+
+			ui.groupName->setDisabled(mIsStandard);
+
+			ui.friendList->setSelectedGpgIds(groupInfo.peerIds, false);
+		} else {
+			/* Group not found, create new */
+			mGroupId.clear();
+		}
+	} else {
+		ui.headerFrame->setHeaderText(tr("Create a Group"));
+	}
+
+	std::list<RsGroupInfo> groupInfoList;
+	rsPeers->getGroupInfoList(groupInfoList);
+
+	std::list<RsGroupInfo>::iterator groupIt;
+	for (groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); groupIt++) {
+		if (mGroupId.empty() || groupIt->id != mGroupId) {
+			mUsedGroupNames.append(GroupDefs::name(*groupIt));
+		}
+	}
+
+	connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(changeGroup()));
+	connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+	connect(ui.groupName, SIGNAL(textChanged(QString)), this, SLOT(groupNameChanged(QString)));
+
+	groupNameChanged(ui.groupName->text());
 }
 
 /** Destructor. */
 CreateGroup::~CreateGroup()
 {
+	Settings->saveWidgetInformation(this);
 }
 
-void CreateGroup::on_groupname_textChanged(QString text)
+void CreateGroup::groupNameChanged(QString text)
 {
-    if (text.isEmpty() || usedGroupNames.contains(misc::removeNewLine(text))) {
-        ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
-    } else {
-        ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
-    }
+	if (text.isEmpty() || mUsedGroupNames.contains(misc::removeNewLine(text))) {
+		ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+	} else {
+		ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+	}
 }
 
-void CreateGroup::on_buttonBox_accepted()
+void CreateGroup::changeGroup()
 {
-    RsGroupInfo groupInfo;
+	RsGroupInfo groupInfo;
 
-    if (m_groupId.empty()) {
-        // add new group
-        groupInfo.name = misc::removeNewLine(ui.groupname->text()).toUtf8().constData();
-        if (rsPeers->addGroup(groupInfo)) {
-            close();
-        }
-    } else {
-        if (rsPeers->getGroupInfo(m_groupId, groupInfo) == true) {
-            groupInfo.name = misc::removeNewLine(ui.groupname->text()).toUtf8().constData();
-            if (rsPeers->editGroup(m_groupId, groupInfo)) {
-                close();
-            }
-        }
-    }
+	if (mGroupId.empty()) {
+		// add new group
+		groupInfo.name = misc::removeNewLine(ui.groupName->text()).toUtf8().constData();
+		if (!rsPeers->addGroup(groupInfo)) {
+			return;
+		}
+	} else {
+		if (rsPeers->getGroupInfo(mGroupId, groupInfo) == true) {
+			if (!mIsStandard) {
+				groupInfo.name = misc::removeNewLine(ui.groupName->text()).toUtf8().constData();
+				if (!rsPeers->editGroup(mGroupId, groupInfo)) {
+					return;
+				}
+			}
+		}
+	}
+
+	std::list<std::string> gpgIds;
+	ui.friendList->selectedGpgIds(gpgIds, true);
+
+	std::list<std::string>::iterator it;
+	for (it = groupInfo.peerIds.begin(); it != groupInfo.peerIds.end(); ++it) {
+		std::list<std::string>::iterator gpgIt = std::find(gpgIds.begin(), gpgIds.end(), *it);
+		if (gpgIt == gpgIds.end()) {
+			rsPeers->assignPeerToGroup(groupInfo.id, *it, false);
+			continue;
+		}
+
+		gpgIds.erase(gpgIt);
+	}
+
+	for (it = gpgIds.begin(); it != gpgIds.end(); ++it) {
+		rsPeers->assignPeerToGroup(groupInfo.id, *it, true);
+	}
+
+	accept();
 }

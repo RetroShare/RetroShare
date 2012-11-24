@@ -78,8 +78,10 @@ FriendSelectionWidget::FriendSelectionWidget(QWidget *parent) :
 
 	started = false;
 	listModus = MODUS_SINGLE;
-	showGroups = true;
-	inItemChanged = false;
+	showTypes = SHOW_GROUP | SHOW_SSL;
+	inGroupItemChanged = false;
+	inGpgItemChanged = false;
+	inSslItemChanged = false;
 
 	connect(ui->friendList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequested(QPoint)));
 	connect(ui->friendList, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(itemDoubleClicked(QTreeWidgetItem*,int)));
@@ -142,9 +144,9 @@ void FriendSelectionWidget::setModus(Modus modus)
 	fillList();
 }
 
-void FriendSelectionWidget::setShowGroups(bool show)
+void FriendSelectionWidget::setShowType(ShowTypes types)
 {
-	showGroups = show;
+	showTypes = types;
 
 	fillList();
 }
@@ -155,6 +157,31 @@ void FriendSelectionWidget::start()
 	fillList();
 }
 
+static void initSslItem(QTreeWidgetItem *item, const RsPeerDetails &detail, const std::list<StatusInfo> &statusInfo, QColor textColorOnline)
+{
+	QString name = PeerDefs::nameWithLocation(detail);
+	item->setText(COLUMN_NAME, name);
+
+	int state = RS_STATUS_OFFLINE;
+	if (detail.state & RS_PEER_STATE_CONNECTED) {
+		std::list<StatusInfo>::const_iterator it;
+		for (it = statusInfo.begin(); it != statusInfo.end() ; it++) {
+			if (it->id == detail.id) {
+				state = it->status;
+				break;
+			}
+		}
+	}
+
+	if (state != (int) RS_STATUS_OFFLINE) {
+		item->setTextColor(COLUMN_NAME, textColorOnline);
+	}
+
+	item->setIcon(COLUMN_NAME, QIcon(StatusDefs::imageUser(state)));
+	item->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.id));
+	item->setData(COLUMN_DATA, ROLE_SORT, "2 " + name);
+}
+
 void FriendSelectionWidget::fillList()
 {
 	if (!started) {
@@ -163,10 +190,19 @@ void FriendSelectionWidget::fillList()
 
 	// get selected items
 	std::list<std::string> sslIdsSelected;
-	selectedSslIds(sslIdsSelected, true);
+	if (showTypes & SHOW_SSL) {
+		selectedSslIds(sslIdsSelected, true);
+	}
 
 	std::list<std::string> groupIdsSelected;
-	selectedGroupIds(groupIdsSelected);
+	if (showTypes & SHOW_GROUP) {
+		selectedGroupIds(groupIdsSelected);
+	}
+
+	std::list<std::string> gpgIdsSelected;
+	if (showTypes & SHOW_GPG) {
+		selectedGpgIds(gpgIdsSelected, true);
+	}
 
 	// remove old items
 	ui->friendList->clear();
@@ -176,22 +212,30 @@ void FriendSelectionWidget::fillList()
 	std::list<RsGroupInfo>::iterator groupIt;
 	rsPeers->getGroupInfoList(groupInfoList);
 
+	std::list<std::string> gpgIds;
+	std::list<std::string>::iterator gpgIt;
+	rsPeers->getGPGAcceptedList(gpgIds);
+
 	std::list<std::string> sslIds;
 	std::list<std::string>::iterator sslIt;
-	rsPeers->getFriendList(sslIds);
+	if ((showTypes & (SHOW_SSL | SHOW_GPG)) == SHOW_SSL) {
+		rsPeers->getFriendList(sslIds);
+	}
 
 	std::list<StatusInfo> statusInfo;
+	std::list<StatusInfo>::iterator statusIt;
 	rsStatus->getStatusList(statusInfo);
 
-	std::list<std::string> filledSslIds;
+	std::list<std::string> filledIds; // gpg or ssl id
 
 	// start with groups
 	groupIt = groupInfoList.begin();
 	while (true) {
 		QTreeWidgetItem *groupItem = NULL;
+		QTreeWidgetItem *gpgItem = NULL;
 		RsGroupInfo *groupInfo = NULL;
 
-		if (showGroups && groupIt != groupInfoList.end()) {
+		if ((showTypes & SHOW_GROUP) && groupIt != groupInfoList.end()) {
 			groupInfo = &(*groupIt);
 
 			if (groupInfo->peerIds.size() == 0) {
@@ -228,67 +272,144 @@ void FriendSelectionWidget::fillList()
 			}
 		}
 
-		// iterate through ssl ids
-		for (sslIt = sslIds.begin(); sslIt != sslIds.end(); sslIt++) {
-			RsPeerDetails detail;
-			if (!rsPeers->getPeerDetails(*sslIt, detail)) {
-				continue; /* BAD */
-			}
-
-			if (groupInfo) {
-				// we fill a group, check if gpg id is assigned
-				if (std::find(groupInfo->peerIds.begin(), groupInfo->peerIds.end(), detail.gpg_id) == groupInfo->peerIds.end()) {
-					continue;
-				}
-			} else {
-				// we fill the not assigned ssl ids
-				if (std::find(filledSslIds.begin(), filledSslIds.end(), *sslIt) != filledSslIds.end()) {
-					continue;
-				}
-			}
-
-			// add equal too, its no problem
-			filledSslIds.push_back(detail.id);
-
-			// make a widget per friend
-			QTreeWidgetItem *item = new RSTreeWidgetItem(compareRole, IDTYPE_SSL);
-
-			QString name = PeerDefs::nameWithLocation(detail);
-			item->setText(COLUMN_NAME, name);
-
-			int state = RS_STATUS_OFFLINE;
-			if (detail.state & RS_PEER_STATE_CONNECTED) {
-				std::list<StatusInfo>::iterator it;
-				for (it = statusInfo.begin(); it != statusInfo.end() ; it++) {
-					if (it->id == detail.id) {
-						state = it->status;
-						break;
+		if (showTypes & SHOW_GPG) {
+			// iterate through gpg ids
+			for (gpgIt = gpgIds.begin(); gpgIt != gpgIds.end(); gpgIt++) {
+				if (groupInfo) {
+					// we fill a group, check if gpg id is assigned
+					if (std::find(groupInfo->peerIds.begin(), groupInfo->peerIds.end(), *gpgIt) == groupInfo->peerIds.end()) {
+						continue;
+					}
+				} else {
+					// we fill the not assigned gpg ids
+					if (std::find(filledIds.begin(), filledIds.end(), *gpgIt) != filledIds.end()) {
+						continue;
 					}
 				}
+
+				// add equal too, its no problem
+				filledIds.push_back(*gpgIt);
+
+				RsPeerDetails detail;
+				if (!rsPeers->getPeerDetails(*gpgIt, detail)) {
+					continue; /* BAD */
+				}
+
+				// make a widget per friend
+				gpgItem = new RSTreeWidgetItem(compareRole, IDTYPE_GPG);
+
+				QString name = QString::fromUtf8(detail.name.c_str());
+				gpgItem->setText(COLUMN_NAME, name);
+
+				sslIds.clear();
+				rsPeers->getAssociatedSSLIds(*gpgIt, sslIds);
+
+				int state = RS_STATUS_OFFLINE;
+				for (statusIt = statusInfo.begin(); statusIt != statusInfo.end() ; statusIt++) {
+					if (std::find(sslIds.begin(), sslIds.end(), statusIt->id) != sslIds.end()) {
+						if (statusIt->status != RS_STATUS_OFFLINE) {
+							state = RS_STATUS_ONLINE;
+							break;
+						}
+					}
+				}
+
+				if (state != (int) RS_STATUS_OFFLINE) {
+					gpgItem->setTextColor(COLUMN_NAME, textColorOnline());
+				}
+
+				gpgItem->setIcon(COLUMN_NAME, QIcon(StatusDefs::imageUser(state)));
+				gpgItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.gpg_id));
+				gpgItem->setData(COLUMN_DATA, ROLE_SORT, "2 " + name);
+
+				if (listModus == MODUS_CHECK) {
+					gpgItem->setFlags(Qt::ItemIsUserCheckable | gpgItem->flags());
+					gpgItem->setCheckState(0, Qt::Unchecked);
+				}
+
+				// add to the list
+				if (groupItem) {
+					groupItem->addChild(gpgItem);
+				} else {
+					ui->friendList->addTopLevelItem(gpgItem);
+				}
+
+				gpgItem->setExpanded(true);
+
+				if (showTypes & SHOW_SSL) {
+					// iterate through associated ssl ids
+					for (sslIt = sslIds.begin(); sslIt != sslIds.end(); sslIt++) {
+						RsPeerDetails detail;
+						if (!rsPeers->getPeerDetails(*sslIt, detail)) {
+							continue; /* BAD */
+						}
+
+						// make a widget per friend
+						QTreeWidgetItem *item = new RSTreeWidgetItem(compareRole, IDTYPE_SSL);
+
+						initSslItem(item, detail, statusInfo, textColorOnline());
+
+						if (listModus == MODUS_CHECK) {
+							item->setFlags(Qt::ItemIsUserCheckable | item->flags());
+							item->setCheckState(0, Qt::Unchecked);
+						}
+
+						// add to the list
+						gpgItem->addChild(item);
+
+						if (std::find(sslIdsSelected.begin(), sslIdsSelected.end(), detail.id) != sslIdsSelected.end()) {
+							setSelected(listModus, item, true);
+						}
+					}
+				}
+
+				if (std::find(gpgIdsSelected.begin(), gpgIdsSelected.end(), detail.gpg_id) != gpgIdsSelected.end()) {
+					setSelected(listModus, gpgItem, true);
+				}
 			}
+		} else {
+			// iterate through ssl ids
+			for (sslIt = sslIds.begin(); sslIt != sslIds.end(); sslIt++) {
+				RsPeerDetails detail;
+				if (!rsPeers->getPeerDetails(*sslIt, detail)) {
+					continue; /* BAD */
+				}
 
-			if (state != (int) RS_STATUS_OFFLINE) {
-				item->setTextColor(COLUMN_NAME, textColorOnline());
-			}
+				if (groupInfo) {
+					// we fill a group, check if gpg id is assigned
+					if (std::find(groupInfo->peerIds.begin(), groupInfo->peerIds.end(), detail.gpg_id) == groupInfo->peerIds.end()) {
+						continue;
+					}
+				} else {
+					// we fill the not assigned ssl ids
+					if (std::find(filledIds.begin(), filledIds.end(), *sslIt) != filledIds.end()) {
+						continue;
+					}
+				}
 
-			item->setIcon(COLUMN_NAME, QIcon(StatusDefs::imageUser(state)));
-			item->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.id));
-			item->setData(COLUMN_DATA, ROLE_SORT, "2 " + name);
+				// add equal too, its no problem
+				filledIds.push_back(detail.id);
 
-			if (listModus == MODUS_CHECK) {
-				item->setFlags(Qt::ItemIsUserCheckable | item->flags());
-				item->setCheckState(0, Qt::Unchecked);
-			}
+				// make a widget per friend
+				QTreeWidgetItem *item = new RSTreeWidgetItem(compareRole, IDTYPE_SSL);
 
-			// add to the list
-			if (groupItem) {
-				groupItem->addChild(item);
-			} else {
-				ui->friendList->addTopLevelItem(item);
-			}
+				initSslItem(item, detail, statusInfo, textColorOnline());
 
-			if (std::find(sslIdsSelected.begin(), sslIdsSelected.end(), detail.id) != sslIdsSelected.end()) {
-				setSelected(listModus, item, true);
+				if (listModus == MODUS_CHECK) {
+					item->setFlags(Qt::ItemIsUserCheckable | item->flags());
+					item->setCheckState(0, Qt::Unchecked);
+				}
+
+				// add to the list
+				if (groupItem) {
+					groupItem->addChild(item);
+				} else {
+					ui->friendList->addTopLevelItem(item);
+				}
+
+				if (std::find(sslIdsSelected.begin(), sslIdsSelected.end(), detail.id) != sslIdsSelected.end()) {
+					setSelected(listModus, item, true);
+				}
 			}
 		}
 
@@ -311,21 +432,79 @@ void FriendSelectionWidget::fillList()
 
 void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
 {
+	QString gpgId;
+	int gpgStatus = RS_STATUS_OFFLINE;
+
+	if (showTypes & SHOW_GPG) {
+		/* need gpg id and online state */
+		RsPeerDetails detail;
+		if (rsPeers->getPeerDetails(peerId.toStdString(), detail)) {
+			gpgId = QString::fromStdString(detail.gpg_id);
+
+			if (status == (int) RS_STATUS_OFFLINE) {
+				/* try other locations */
+				std::list<std::string> sslIds;
+				rsPeers->getAssociatedSSLIds(detail.gpg_id, sslIds);
+
+				std::list<StatusInfo> statusInfo;
+				std::list<StatusInfo>::iterator statusIt;
+				rsStatus->getStatusList(statusInfo);
+
+				for (statusIt = statusInfo.begin(); statusIt != statusInfo.end() ; statusIt++) {
+					if (std::find(sslIds.begin(), sslIds.end(), statusIt->id) != sslIds.end()) {
+						if (statusIt->status != RS_STATUS_OFFLINE) {
+							gpgStatus = RS_STATUS_ONLINE;
+							break;
+						}
+					}
+				}
+			} else {
+				/* one location is online */
+				gpgStatus = RS_STATUS_ONLINE;
+			}
+		}
+	}
 	QTreeWidgetItemIterator itemIterator(ui->friendList);
 	QTreeWidgetItem *item;
 	while ((item = *itemIterator) != NULL) {
 		itemIterator++;
 
-		if (item->data(COLUMN_DATA, ROLE_ID).toString() == peerId) {
-			QColor color;
-			if (status != (int) RS_STATUS_OFFLINE) {
-				color = textColorOnline();
-			}
+		switch ((IdType) item->type()) {
+		case IDTYPE_NONE:
+		case IDTYPE_GROUP:
+			break;
+		case IDTYPE_GPG:
+			{
+				if (item->data(COLUMN_DATA, ROLE_ID).toString() == gpgId) {
+					QColor color;
+					if (status != (int) RS_STATUS_OFFLINE) {
+						color = textColorOnline();
+					} else {
+						color = ui->friendList->palette().color(QPalette::Text);
+					}
 
-			item->setTextColor(COLUMN_NAME, color);
-			item->setIcon(COLUMN_NAME, QIcon(StatusDefs::imageUser(status)));
-			//break; no break, friend can assigned to groups more than one
+					item->setTextColor(COLUMN_NAME, color);
+					item->setIcon(COLUMN_NAME, QIcon(StatusDefs::imageUser(gpgStatus)));
+				}
+			}
+			break;
+		case IDTYPE_SSL:
+			{
+				if (item->data(COLUMN_DATA, ROLE_ID).toString() == peerId) {
+					QColor color;
+					if (status != (int) RS_STATUS_OFFLINE) {
+						color = textColorOnline();
+					} else {
+						color = ui->friendList->palette().color(QPalette::Text);
+					}
+
+					item->setTextColor(COLUMN_NAME, color);
+					item->setIcon(COLUMN_NAME, QIcon(StatusDefs::imageUser(status)));
+				}
+			}
+			break;
 		}
+		// friend can assigned to groups more than one
 	}
 }
 
@@ -345,10 +524,6 @@ void FriendSelectionWidget::itemDoubleClicked(QTreeWidgetItem *item, int /*colum
 
 void FriendSelectionWidget::itemChanged(QTreeWidgetItem *item, int column)
 {
-	if (inItemChanged) {
-		return;
-	}
-
 	if (listModus != MODUS_CHECK) {
 		return;
 	}
@@ -357,46 +532,87 @@ void FriendSelectionWidget::itemChanged(QTreeWidgetItem *item, int column)
 		return;
 	}
 
-	if (!showGroups) {
-		return;
-	}
-
-	inItemChanged = true;
-
 	switch ((IdType) item->type()) {
 	case IDTYPE_NONE:
 		break;
 	case IDTYPE_GROUP:
 		{
+			if (inGroupItemChanged || inGpgItemChanged || inSslItemChanged) {
+				break;
+			}
+
+			inGroupItemChanged = true;
+
 			bool selected = isSelected(listModus, item);
 
 			int childCount = item->childCount();
 			for (int i = 0; i < childCount; ++i) {
 				setSelected(listModus, item->child(i), selected);
 			}
+
+			inGroupItemChanged = false;
+		}
+		break;
+	case IDTYPE_GPG:
+		{
+			if (inGpgItemChanged) {
+				break;
+			}
+
+			inGpgItemChanged = true;
+
+			if (!inSslItemChanged) {
+				bool selected = isSelected(listModus, item);
+
+				int childCount = item->childCount();
+				for (int i = 0; i < childCount; ++i) {
+					setSelected(listModus, item->child(i), selected);
+				}
+			}
+
+			if (!inGroupItemChanged) {
+				QTreeWidgetItem *itemParent = item->parent();
+				if (itemParent) {
+					int childCount = itemParent->childCount();
+					bool foundUnselected = false;
+					for (int index = 0; index < childCount; ++index) {
+						if (!isSelected(listModus, itemParent->child(index))) {
+							foundUnselected = true;
+							break;
+						}
+					}
+					setSelected(listModus, itemParent, !foundUnselected);
+				}
+			}
+
+			inGpgItemChanged = false;
 		}
 		break;
 	case IDTYPE_SSL:
 		{
-			QTreeWidgetItem *itemParent = item->parent();
-			if (itemParent == NULL) {
+			if (inGroupItemChanged || inGpgItemChanged || inSslItemChanged) {
 				break;
 			}
 
-			int childCount = itemParent->childCount();
-			bool foundUnselected = false;
-			for (int index = 0; index < childCount; ++index) {
-				if (!isSelected(listModus, itemParent->child(index))) {
-					foundUnselected = true;
-					break;
+			inSslItemChanged = true;
+
+			QTreeWidgetItem *itemParent = item->parent();
+			if (itemParent) {
+				int childCount = itemParent->childCount();
+				bool foundUnselected = false;
+				for (int index = 0; index < childCount; ++index) {
+					if (!isSelected(listModus, itemParent->child(index))) {
+						foundUnselected = true;
+						break;
+					}
 				}
+				setSelected(listModus, itemParent, !foundUnselected);
 			}
-			setSelected(listModus, itemParent, !foundUnselected);
+
+			inSslItemChanged = false;
 		}
 		break;
 	}
-
-	inItemChanged = false;
 }
 
 void FriendSelectionWidget::filterItems(const QString& text)
@@ -470,15 +686,35 @@ void FriendSelectionWidget::selectedIds(IdType idType, std::list<std::string> &i
 				}
 			}
 			break;
+		case IDTYPE_GPG:
+			if (idType == IDTYPE_GPG) {
+				if (isSelected(listModus, item)) {
+					id = item->data(COLUMN_DATA, ROLE_ID).toString().toStdString();
+				} else {
+					if (!onlyDirectSelected) {
+						QTreeWidgetItem *itemParent = item;
+						while ((itemParent = itemParent->parent()) != NULL) {
+							if (isSelected(listModus, itemParent)) {
+								id = item->data(COLUMN_DATA, ROLE_ID).toString().toStdString();
+								break;
+							}
+						}
+					}
+				}
+			}
+			break;
 		case IDTYPE_SSL:
 			if (idType == IDTYPE_SSL) {
 				if (isSelected(listModus, item)) {
 					id = item->data(COLUMN_DATA, ROLE_ID).toString().toStdString();
 				} else {
 					if (!onlyDirectSelected) {
-						QTreeWidgetItem *itemParent = item->parent();
-						if (itemParent && isSelected(listModus, itemParent)) {
-							id = item->data(COLUMN_DATA, ROLE_ID).toString().toStdString();
+						QTreeWidgetItem *itemParent = item;
+						while ((itemParent = itemParent->parent()) != NULL) {
+							if (isSelected(listModus, itemParent)) {
+								id = item->data(COLUMN_DATA, ROLE_ID).toString().toStdString();
+								break;
+							}
 						}
 					}
 				}
@@ -505,6 +741,7 @@ void FriendSelectionWidget::setSelectedIds(IdType idType, const std::list<std::s
 		case IDTYPE_NONE:
 			break;
 		case IDTYPE_GROUP:
+		case IDTYPE_GPG:
 		case IDTYPE_SSL:
 			if (idType == itemType) {
 				if (std::find(ids.begin(), ids.end(), id) != ids.end()) {

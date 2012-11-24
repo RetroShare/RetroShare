@@ -43,7 +43,8 @@ public:
 	{
 		IDTYPE_NONE,
 		IDTYPE_GROUP,
-		IDTYPE_SSL
+		IDTYPE_SSL,
+		IDTYPE_GPG
 	};
 
 	enum Modus
@@ -53,21 +54,31 @@ public:
 		MODUS_CHECK
 	};
 
+    enum ShowType {
+        SHOW_GROUP = 1,
+        SHOW_GPG   = 2,
+        SHOW_SSL   = 4
+    };
+
+    Q_DECLARE_FLAGS(ShowTypes, ShowType)
+
 public:
 	explicit FriendSelectionWidget(QWidget *parent = 0);
 	~FriendSelectionWidget();
 
 	void setHeaderText(const QString &text);
 	void setModus(Modus modus);
-	void setShowGroups(bool show);
+	void setShowType(ShowTypes types);
 	void start();
 
 	int selectedItemCount();
 	QString selectedId(IdType &idType);
 	void selectedSslIds(std::list<std::string> &sslIds, bool onlyDirectSelected) { selectedIds(IDTYPE_SSL, sslIds, onlyDirectSelected); }
+	void selectedGpgIds(std::list<std::string> &gpgIds, bool onlyDirectSelected) { selectedIds(IDTYPE_GPG, gpgIds, onlyDirectSelected); }
 	void selectedGroupIds(std::list<std::string> &groupIds) { selectedIds(IDTYPE_GROUP, groupIds, true); }
 
 	void setSelectedSslIds(const std::list<std::string> &sslIds, bool add) { setSelectedIds(IDTYPE_SSL, sslIds, add); }
+	void setSelectedGpgIds(const std::list<std::string> &gpgIds, bool add) { setSelectedIds(IDTYPE_GPG, gpgIds, add); }
 	void setSelectedGroupIds(const std::list<std::string> &groupIds, bool add) { setSelectedIds(IDTYPE_GROUP, groupIds, add); }
 
 	QColor textColorOnline() const { return mTextColorOnline; }
@@ -99,13 +110,17 @@ private:
 	bool started;
 	RSTreeWidgetItemCompareRole *compareRole;
 	Modus listModus;
-	bool showGroups;
-	bool inItemChanged;
+	ShowTypes showTypes;
+	bool inGroupItemChanged;
+	bool inGpgItemChanged;
+	bool inSslItemChanged;
 
 	/* Color definitions (for standard see qss.default) */
 	QColor mTextColorOnline;
 
 	Ui::FriendSelectionWidget *ui;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(FriendSelectionWidget::ShowTypes)
 
 #endif // FRIENDSELECTIONWIDGET_H

@@ -1592,6 +1592,8 @@ bool p3PeerMgrIMPL::addGroup(RsGroupInfo &groupInfo)
 		groupItem->PeerId(getOwnId());
 
 		groupList.push_back(groupItem);
+
+		groupInfo.id = groupItem->id;
 	}
 
 	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_GROUPLIST, NOTIFY_TYPE_ADD);

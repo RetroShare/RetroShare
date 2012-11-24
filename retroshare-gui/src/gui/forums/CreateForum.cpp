@@ -55,6 +55,7 @@ CreateForum::CreateForum()
 	/* initialize key share list */
 	ui.keyShareList->setHeaderText(tr("Contacts:"));
 	ui.keyShareList->setModus(FriendSelectionWidget::MODUS_CHECK);
+	ui.keyShareList->setShowType(FriendSelectionWidget::SHOW_GROUP | FriendSelectionWidget::SHOW_SSL);
 	ui.keyShareList->start();
 
 	newForum();

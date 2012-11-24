@@ -58,6 +58,7 @@ CreateLobbyDialog::CreateLobbyDialog(const std::list<std::string>& peer_list, in
 	/* initialize key share list */
 	ui->keyShareList->setHeaderText(tr("Contacts:"));
 	ui->keyShareList->setModus(FriendSelectionWidget::MODUS_CHECK);
+	ui->keyShareList->setShowType(FriendSelectionWidget::SHOW_GROUP | FriendSelectionWidget::SHOW_SSL);
 	ui->keyShareList->start();
 	ui->keyShareList->setSelectedSslIds(peer_list, false);
 

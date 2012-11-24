@@ -338,10 +338,9 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
 
                  contextMnu.addSeparator();
 
-                 QAction *action = contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Group"), this, SLOT(editGroup()));
-                 action->setDisabled(standard);
+                 contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Group"), this, SLOT(editGroup()));
 
-                 action = contextMnu.addAction(QIcon(IMAGE_REMOVE), tr("Remove Group"), this, SLOT(removeGroup()));
+                 QAction *action = contextMnu.addAction(QIcon(IMAGE_REMOVE), tr("Remove Group"), this, SLOT(removeGroup()));
                  action->setDisabled(standard);
 
                  lobbyMenu = contextMnu.addMenu(QIcon(IMAGE_CHAT), tr("Chat lobbies")) ;

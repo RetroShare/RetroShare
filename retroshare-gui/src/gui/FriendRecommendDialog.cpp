@@ -47,6 +47,7 @@ FriendRecommendDialog::FriendRecommendDialog() :
 
 	ui->recommendList->setHeaderText(tr("Recommend friends"));
 	ui->recommendList->setModus(FriendSelectionWidget::MODUS_CHECK);
+	ui->recommendList->setShowType(FriendSelectionWidget::SHOW_GROUP | FriendSelectionWidget::SHOW_SSL);
 	ui->recommendList->start();
 
 	ui->toList->setHeaderText(tr("To"));

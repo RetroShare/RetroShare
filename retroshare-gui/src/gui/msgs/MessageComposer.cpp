@@ -209,6 +209,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     /* initialize friends list */
     ui.friendSelectionWidget->setHeaderText(tr("Send To:"));
     ui.friendSelectionWidget->setModus(FriendSelectionWidget::MODUS_MULTI);
+    ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GROUP | FriendSelectionWidget::SHOW_SSL);
     ui.friendSelectionWidget->start();
 
     QActionGroup *grp = new QActionGroup(this);

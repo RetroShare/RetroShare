@@ -2787,6 +2787,10 @@ p, li { white-space: pre-wrap; }
         <source>Edit Group</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Friends</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>CreateLobbyDialog</name>
