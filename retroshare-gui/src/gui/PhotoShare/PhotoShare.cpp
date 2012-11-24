@@ -26,7 +26,7 @@
 #include "ui_PhotoShare.h"
 
 #include <retroshare/rspeers.h>
-#include <retroshare/rsphotoV2.h>
+#include <retroshare/rsphoto.h>
 #include <gxs/rsgxsflags.h>
 
 #include <iostream>
@@ -93,7 +93,7 @@ PhotoShare::PhotoShare(QWidget *parent)
         timer->start(1000);
 
         /* setup TokenQueue */
-        mPhotoQueue = new TokenQueue(rsPhotoV2->getTokenService(), this);
+        mPhotoQueue = new TokenQueue(rsPhoto->getTokenService(), this);
         requestAlbumData();
 }
 
@@ -165,14 +165,14 @@ void PhotoShare::notifySelection(PhotoShareItem *selection)
 void PhotoShare::checkUpdate()
 {
         /* update */
-        if (!rsPhotoV2)
+        if (!rsPhoto)
                 return;
 
-        if (rsPhotoV2->updated())
+        if (rsPhoto->updated())
         {
                 //insertAlbums();
             std::list<std::string> grpIds;
-            rsPhotoV2->groupsChanged(grpIds);
+            rsPhoto->groupsChanged(grpIds);
             if(!grpIds.empty())
             {
                 RsTokReqOptions opts;
@@ -182,7 +182,7 @@ void PhotoShare::checkUpdate()
             }
 
             GxsMsgIdResult res;
-            rsPhotoV2->msgsChanged(res);
+            rsPhoto->msgsChanged(res);
             if(!res.empty())
                 requestPhotoList(res);
         }
@@ -214,14 +214,14 @@ void PhotoShare::OpenSlideShow()
 
 void PhotoShare::createAlbum()
 {
-    AlbumCreateDialog albumCreate(mPhotoQueue, rsPhotoV2, this);
+    AlbumCreateDialog albumCreate(mPhotoQueue, rsPhoto, this);
     albumCreate.exec();
 }
 
 void PhotoShare::OpenAlbumDialog()
 {
     if (mAlbumSelected) {
-        AlbumDialog dlg(mAlbumSelected->getAlbum(), mPhotoQueue, rsPhotoV2);
+        AlbumDialog dlg(mAlbumSelected->getAlbum(), mPhotoQueue, rsPhoto);
         dlg.exec();
     }
 }
@@ -229,7 +229,7 @@ void PhotoShare::OpenAlbumDialog()
 void PhotoShare::OpenPhotoDialog()
 {
     if (mPhotoSelected) {
-        PhotoDialog *dlg = new PhotoDialog(rsPhotoV2, mPhotoSelected->getPhotoDetails());
+        PhotoDialog *dlg = new PhotoDialog(rsPhoto, mPhotoSelected->getPhotoDetails());
         dlg->show();
     }
 }
@@ -418,12 +418,12 @@ void PhotoShare::subscribeToAlbum()
         uint32_t token;
 
         if(IS_ALBUM_SUBSCRIBED(mAlbumSelected->getAlbum().mMeta.mSubscribeFlags))
-            rsPhotoV2->subscribeToAlbum(token, id, false);
+            rsPhoto->subscribeToAlbum(token, id, false);
         else if(IS_ALBUM_ADMIN(mAlbumSelected->getAlbum().mMeta.mSubscribeFlags))
             return;
         else if(IS_ALBUM_N_SUBSCR_OR_ADMIN(
                 mAlbumSelected->getAlbum().mMeta.mSubscribeFlags))
-            rsPhotoV2->subscribeToAlbum(token, id, true);
+            rsPhoto->subscribeToAlbum(token, id, true);
         else
             return;
 
@@ -473,7 +473,7 @@ void PhotoShare::loadAlbumList(const uint32_t &token)
         std::cerr << std::endl;
 
         std::list<std::string> albumIds;
-        rsPhotoV2->getGroupList(token, albumIds);
+        rsPhoto->getGroupList(token, albumIds);
 
         requestAlbumData(albumIds);
 
@@ -507,7 +507,7 @@ bool PhotoShare::loadAlbumData(const uint32_t &token)
     std::cerr << std::endl;
 
     std::vector<RsPhotoAlbum> albums;
-    rsPhotoV2->getAlbum(token, albums);
+    rsPhoto->getAlbum(token, albums);
 
     std::vector<RsPhotoAlbum>::iterator vit = albums.begin();
 
@@ -541,7 +541,7 @@ void PhotoShare::requestPhotoList(const std::string &albumId)
 void PhotoShare::acknowledgeGroup(const uint32_t &token)
 {
     RsGxsGroupId grpId;
-    rsPhotoV2->acknowledgeGrp(token, grpId);
+    rsPhoto->acknowledgeGrp(token, grpId);
 
     if(!grpId.empty())
     {
@@ -558,7 +558,7 @@ void PhotoShare::acknowledgeGroup(const uint32_t &token)
 void PhotoShare::acknowledgeMessage(const uint32_t &token)
 {
     std::pair<RsGxsGroupId, RsGxsMessageId> p;
-    rsPhotoV2->acknowledgeMsg(token, p);
+    rsPhoto->acknowledgeMsg(token, p);
 
     // just acknowledge don't load it
     // loading is only instigated by clicking an album (i.e. requesting photo data)
@@ -584,7 +584,7 @@ void PhotoShare::loadPhotoList(const uint32_t &token)
 
         GxsMsgIdResult res;
 
-        rsPhotoV2->getMsgList(token, res);
+        rsPhoto->getMsgList(token, res);
         requestPhotoData(res);
 }
 
@@ -614,7 +614,7 @@ void PhotoShare::loadPhotoData(const uint32_t &token)
         clearPhotos();
 
         PhotoResult res;
-        rsPhotoV2->getPhoto(token, res);
+        rsPhoto->getPhoto(token, res);
         PhotoResult::iterator mit = res.begin();
 
 

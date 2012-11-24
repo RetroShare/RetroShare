@@ -26,7 +26,7 @@
 
 #include "ui_PhotoSlideShow.h"
 
-#include <retroshare/rsphotoV2.h>
+#include <retroshare/rsphoto.h>
 #include "util/TokenQueue.h"
 #include "AlbumItem.h"
 

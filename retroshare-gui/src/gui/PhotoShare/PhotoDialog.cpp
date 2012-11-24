@@ -5,7 +5,7 @@
 #include "retroshare/rsidentity.h"
 #include "AddCommentDialog.h"
 
-PhotoDialog::PhotoDialog(RsPhotoV2 *rs_photo, const RsPhotoPhoto &photo, QWidget *parent) :
+PhotoDialog::PhotoDialog(RsPhoto *rs_photo, const RsPhotoPhoto &photo, QWidget *parent) :
     QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint),
     ui(new Ui::PhotoDialog), mRsPhoto(rs_photo), mPhotoQueue(new TokenQueue(mRsPhoto->getTokenService(), this)),
     mPhotoDetails(photo)
@@ -84,8 +84,8 @@ void PhotoDialog::resetComments()
 void PhotoDialog::requestComments()
 {
     RsTokReqOptions opts;
-    opts.mMsgFlagMask = RsPhotoV2::FLAG_MSG_TYPE_MASK;
-    opts.mMsgFlagFilter = RsPhotoV2::FLAG_MSG_TYPE_PHOTO_COMMENT;
+    opts.mMsgFlagMask = RsPhoto::FLAG_MSG_TYPE_MASK;
+    opts.mMsgFlagFilter = RsPhoto::FLAG_MSG_TYPE_PHOTO_COMMENT;
 
     opts.mReqType = GXS_REQUEST_TYPE_MSG_IDS;
     opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;

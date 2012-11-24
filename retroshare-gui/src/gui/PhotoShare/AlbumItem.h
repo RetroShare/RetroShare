@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include "string.h"
-#include "retroshare/rsphotoV2.h"
+#include "retroshare/rsphoto.h"
 #include "PhotoShareItemHolder.h"
 
 namespace Ui {

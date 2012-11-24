@@ -3,7 +3,8 @@
 
 #include <QDialog>
 #include "util/TokenQueue.h"
-#include "retroshare/rsphotoV2.h"
+#include "retroshare/rsphoto.h"
+#include "retroshare/rsphoto.h"
 #include "PhotoShareItemHolder.h"
 #include "PhotoItem.h"
 #include "PhotoDrop.h"
@@ -18,7 +19,7 @@ class AlbumCreateDialog : public QDialog, public PhotoShareItemHolder
     Q_OBJECT
 
 public:
-    explicit AlbumCreateDialog(TokenQueue* photoQueue, RsPhotoV2* rs_photo, QWidget *parent = 0);
+    explicit AlbumCreateDialog(TokenQueue* photoQueue, RsPhoto* rs_photo, QWidget *parent = 0);
     ~AlbumCreateDialog();
     
     void notifySelection(PhotoShareItem* selection);
@@ -39,7 +40,7 @@ private:
     Ui::AlbumCreateDialog *ui;
 
     TokenQueue* mPhotoQueue;
-    RsPhotoV2* mRsPhoto;
+    RsPhoto* mRsPhoto;
     QPixmap mThumbNail;
     PhotoDrop* mPhotoDrop;
     PhotoItem* mPhotoSelected;

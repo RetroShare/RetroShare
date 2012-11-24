@@ -2,7 +2,7 @@
 #define PHOTOCOMMENTITEM_H
 
 #include <QWidget>
-#include "retroshare/rsphotoV2.h"
+#include "retroshare/rsphoto.h"
 
 namespace Ui {
     class PhotoCommentItem;

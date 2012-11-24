@@ -32,8 +32,8 @@
 #include "rsgxsservice.h"
 
 /* The Main Interface Class - for information about your Peers */
-class RsPhotoV2;
-extern RsPhotoV2 *rsPhotoV2;
+class RsPhoto;
+extern RsPhoto *rsPhoto;
 
 /******************* NEW STUFF FOR NEW CACHE SYSTEM *********/
 
@@ -176,7 +176,7 @@ typedef std::map<RsGxsGroupId, std::vector<RsPhotoPhoto> > PhotoResult;
 typedef std::map<RsGxsGroupId, std::vector<RsPhotoComment> > PhotoCommentResult;
 typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsPhotoComment> > PhotoRelatedCommentResult;
 
-class RsPhotoV2
+class RsPhoto
 {
 
 public:
@@ -186,9 +186,9 @@ public:
     static const uint32_t FLAG_MSG_TYPE_MASK;
 
 
-    RsPhotoV2()  { return; }
+    RsPhoto()  { return; }
 
-    virtual ~RsPhotoV2() { return; }
+    virtual ~RsPhoto() { return; }
 
     /*!
      * Use to enquire if groups or msgs have changed

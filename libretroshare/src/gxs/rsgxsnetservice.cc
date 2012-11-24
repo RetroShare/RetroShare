@@ -86,6 +86,8 @@ void RsGxsNetService::syncWithPeers()
                 sendItem(grp);
         }
 
+
+#ifdef GXS_ENABLE_SYNC_MSGS
         std::map<RsGxsGroupId, RsGxsGrpMetaData* > grpMeta;
         mDataStore->retrieveGxsGrpMetaData(grpMeta);
 
@@ -123,6 +125,7 @@ void RsGxsNetService::syncWithPeers()
                     sendItem(msg);
             }
         }
+#endif
 }
 
 bool RsGxsNetService::loadList(std::list<RsItem*>& load)

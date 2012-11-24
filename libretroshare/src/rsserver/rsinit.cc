@@ -1827,7 +1827,7 @@ RsTurtle *rsTurtle = NULL ;
 #include "services/p3idservice.h"
 #include "services/p3wiki.h"
 #include "services/p3posted.h"
-#include "services/p3photoserviceV2.h"
+#include "services/p3photoservice.h"
 #include "services/p3gxsforums.h"
 
 // Not too many to convert now!
@@ -2278,8 +2278,27 @@ int RsServer::StartupRetroShare()
 	mPluginsManager->registerCacheServices() ;
 
 
-
 #ifdef ENABLE_GXS_SERVICES
+
+        // The idea is that if priorGxsDir is non
+        // empty and matches an exist directory location
+        // the given ssl user id then this directory is cleaned
+        // and deleted
+        std::string priorGxsDir = "./" + mLinkMgr->getOwnId() + "/", currGxsDir = RsInitConfig::configDir + "/GXS_phase1";
+        bool cleanUpGxsDir = false;
+
+        if(!priorGxsDir.empty())
+            cleanUpGxsDir = RsDirUtil::checkDirectory(priorGxsDir);
+
+        std::list<std::string> filesToKeep;
+        bool cleanUpSuccess = RsDirUtil::cleanupDirectory(priorGxsDir, filesToKeep);
+
+        if(!cleanUpSuccess)
+            std::cerr << "RsInit::StartupRetroShare() Clean up of Old Gxs Dir Failed!";
+        else
+            rmdir(priorGxsDir.c_str());
+
+        RsDirUtil::checkCreateDirectory(currGxsDir);
 
 	// Testing New Cache Services.
 	//p3WikiServiceVEG *mWikis = new p3WikiServiceVEG(RS_SERVICE_GXSV1_TYPE_WIKI);
@@ -2295,7 +2314,7 @@ int RsServer::StartupRetroShare()
 
 
         // TODO: temporary to store GXS service data, remove
-        RsDirUtil::checkCreateDirectory(mLinkMgr->getOwnId());
+        RsDirUtil::checkCreateDirectory(currGxsDir);
 
         RsNxsNetMgr* nxsMgr =  new RsNxsNetMgrImpl(mLinkMgr);
 
@@ -2303,7 +2322,7 @@ int RsServer::StartupRetroShare()
 
         p3IdService *mGxsIdService = NULL;
 
-        RsGeneralDataService* gxsid_ds = new RsDataService("./" + mLinkMgr->getOwnId() + "/", "gxsid_db",
+        RsGeneralDataService* gxsid_ds = new RsDataService(currGxsDir + "/", "gxsid_db",
                         RS_SERVICE_GXSV1_TYPE_GXSID, NULL);
 
         gxsid_ds->resetDataStore(); 
@@ -2338,27 +2357,27 @@ int RsServer::StartupRetroShare()
         RsGenExchange::setAuthenPolicyFlag(flag, photoAuthenPolicy,
                                            RsGenExchange::GRP_OPTION_BITS);
 
-        p3PhotoServiceV2 *mPhotoV2 = NULL;
+        p3PhotoService *mPhoto = NULL;
 
 
-        RsGeneralDataService* photo_ds = new RsDataService("./" + mLinkMgr->getOwnId() + "/", "photoV2_db",
+        RsGeneralDataService* photo_ds = new RsDataService(currGxsDir + "/", "photoV2_db",
                         RS_SERVICE_GXSV1_TYPE_PHOTO, NULL);
 
         photo_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
 
 
         // init gxs services
-        mPhotoV2 = new p3PhotoServiceV2(photo_ds, NULL, mGxsIdService, photoAuthenPolicy);
+        mPhoto = new p3PhotoService(photo_ds, NULL, mGxsIdService, photoAuthenPolicy);
 
         // create GXS photo service
         RsGxsNetService* photo_ns = new RsGxsNetService(
-                        RS_SERVICE_GXSV1_TYPE_PHOTO, photo_ds, nxsMgr, mPhotoV2);
+                        RS_SERVICE_GXSV1_TYPE_PHOTO, photo_ds, nxsMgr, mPhoto);
 
         /**** Posted GXS service ****/
 
         p3Posted *mPosted = NULL;
 
-        RsGeneralDataService* posted_ds = new RsDataService("./" + mLinkMgr->getOwnId()+ "/", "posted_db",
+        RsGeneralDataService* posted_ds = new RsDataService(currGxsDir + "/", "posted_db",
                                                             RS_SERVICE_GXSV1_TYPE_POSTED);
 
         posted_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
@@ -2374,7 +2393,7 @@ int RsServer::StartupRetroShare()
 
         p3Wiki *mWiki = NULL;
 
-        RsGeneralDataService* wiki_ds = new RsDataService("./" + mLinkMgr->getOwnId()+ "/", "wiki_db",
+        RsGeneralDataService* wiki_ds = new RsDataService(currGxsDir + "/", "wiki_db",
                                                             RS_SERVICE_GXSV1_TYPE_WIKI);
 
         wiki_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
@@ -2389,7 +2408,7 @@ int RsServer::StartupRetroShare()
 
         p3GxsForums *mGxsForums = NULL;
 
-        RsGeneralDataService* gxsforums_ds = new RsDataService("./" + mLinkMgr->getOwnId()+ "/", "gxsforums_db",
+        RsGeneralDataService* gxsforums_ds = new RsDataService(currGxsDir + "/", "gxsforums_db",
                                                             RS_SERVICE_GXSV1_TYPE_FORUMS);
 
         gxsforums_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
@@ -2411,12 +2430,12 @@ int RsServer::StartupRetroShare()
         //mGxsCore->addService(mGxsIdService);
 #if ENABLE_OTHER_GXS_SERVICES
         createThread(*mGxsIdService);
-        createThread(*mPhotoV2);
+        createThread(*mPhoto);
         createThread(*mPosted);
         createThread(*mWiki);
         createThread(*mGxsForums);
 //
-//        mGxsCore->addService(mPhotoV2);
+//        mGxsCore->addService(mPhoto);
 //        mGxsCore->addService(mPosted);
 //        mGxsCore->addService(mWiki);
 #endif
@@ -2707,7 +2726,7 @@ int RsServer::StartupRetroShare()
 #if ENABLE_OTHER_GXS_SERVICES
         rsWiki = mWiki;
         rsPosted = mPosted;
-        rsPhotoV2 = mPhotoV2;
+        rsPhoto = mPhoto;
         rsGxsForums = mGxsForums;
 #endif
 

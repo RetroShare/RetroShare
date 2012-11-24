@@ -33,7 +33,7 @@
 #include "serialiser/rstlvtypes.h"
 
 #include "rsgxsitems.h"
-#include "retroshare/rsphotoV2.h"
+#include "retroshare/rsphoto.h"
 
 const uint8_t RS_PKT_SUBTYPE_PHOTO_ITEM = 0x02;
 const uint8_t RS_PKT_SUBTYPE_PHOTO_SHOW_ITEM = 0x03;

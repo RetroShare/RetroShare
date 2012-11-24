@@ -3,7 +3,7 @@
 
 #include <QDialog>
 #include <QSet>
-#include "retroshare/rsphotoV2.h"
+#include "retroshare/rsphoto.h"
 #include "util/TokenQueue.h"
 #include "PhotoCommentItem.h"
 
@@ -16,7 +16,7 @@ class PhotoDialog : public QDialog, public TokenResponse
     Q_OBJECT
 
 public:
-    explicit PhotoDialog(RsPhotoV2* rs_photo, const RsPhotoPhoto& photo, QWidget *parent = 0);
+    explicit PhotoDialog(RsPhoto* rs_photo, const RsPhotoPhoto& photo, QWidget *parent = 0);
     ~PhotoDialog();
 
 private slots:
@@ -53,7 +53,7 @@ private:
 private:
     Ui::PhotoDialog *ui;
 
-    RsPhotoV2* mRsPhoto;
+    RsPhoto* mRsPhoto;
     TokenQueue* mPhotoQueue;
     RsPhotoPhoto mPhotoDetails;
     QSet<PhotoCommentItem*> mComments;

@@ -6,7 +6,7 @@
 #include "util/misc.h"
 #include "gxs/rsgxsflags.h"
 
-AlbumCreateDialog::AlbumCreateDialog(TokenQueue *photoQueue, RsPhotoV2 *rs_photo, QWidget *parent):
+AlbumCreateDialog::AlbumCreateDialog(TokenQueue *photoQueue, RsPhoto *rs_photo, QWidget *parent):
     QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint),
     ui(new Ui::AlbumCreateDialog), mPhotoQueue(photoQueue), mRsPhoto(rs_photo), mPhotoSelected(NULL)
 {

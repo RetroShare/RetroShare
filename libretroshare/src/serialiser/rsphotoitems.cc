@@ -25,7 +25,7 @@
 
 #include <iostream>
 
-#include "rsphotov2items.h"
+#include "rsphotoitems.h"
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rsbaseserial.h"
 

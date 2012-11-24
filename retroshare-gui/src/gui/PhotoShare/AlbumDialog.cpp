@@ -4,7 +4,7 @@
 #include "ui_AlbumDialog.h"
 #include "gxs/rsgxsflags.h"
 
-AlbumDialog::AlbumDialog(const RsPhotoAlbum& album, TokenQueue* photoQueue, RsPhotoV2* rs_Photo, QWidget *parent) :
+AlbumDialog::AlbumDialog(const RsPhotoAlbum& album, TokenQueue* photoQueue, RsPhoto* rs_Photo, QWidget *parent) :
     QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint),
     ui(new Ui::AlbumDialog), mRsPhoto(rs_Photo), mPhotoQueue(photoQueue), mAlbum(album), mPhotoSelected(NULL)
 {

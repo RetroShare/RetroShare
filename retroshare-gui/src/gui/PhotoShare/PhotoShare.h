@@ -5,7 +5,7 @@
 #include <map>
 #include "ui_PhotoShare.h"
 
-#include "retroshare/rsphotoV2.h"
+#include "retroshare/rsphoto.h"
 #include "retroshare-gui/mainpage.h"
 
 #include "AlbumCreateDialog.h"

@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QLabel>
 #include "PhotoShareItemHolder.h"
-#include "retroshare/rsphotoV2.h"
+#include "retroshare/rsphoto.h"
 
 namespace Ui {
     class PhotoItem;

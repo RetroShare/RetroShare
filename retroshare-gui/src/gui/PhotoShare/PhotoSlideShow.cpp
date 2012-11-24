@@ -39,7 +39,7 @@ PhotoSlideShow::PhotoSlideShow(const RsPhotoAlbum& album, QWidget *parent)
 	connect(ui.pushButton_Close, SIGNAL( clicked( void ) ), this, SLOT( closeShow( void ) ) );
 	connect(ui.fullscreenButton, SIGNAL(clicked()),this, SLOT(setFullScreen()));
 
-        mPhotoQueue = new TokenQueue(rsPhotoV2->getTokenService(), this);
+        mPhotoQueue = new TokenQueue(rsPhoto->getTokenService(), this);
 
 	mRunning = true;
 	mShotActive = true;
@@ -236,7 +236,7 @@ bool PhotoSlideShow::loadPhotoData(const uint32_t &token)
 	std::cerr << std::endl;
 	
         PhotoResult res;
-        rsPhotoV2->getPhoto(token, res);
+        rsPhoto->getPhoto(token, res);
         PhotoResult::iterator mit = res.begin();
 
 
