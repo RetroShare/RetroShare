@@ -78,6 +78,7 @@
 #include "statusbar/dhtstatus.h"
 #include "statusbar/hashingstatus.h"
 #include "statusbar/discstatus.h"
+#include "statusbar/OpModeStatus.h"
 #include "statusbar/SoundStatus.h"
 #include <retroshare/rsstatus.h>
 
@@ -357,6 +358,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
     ratesstatus = new RatesStatus();
     statusBar()->addPermanentWidget(ratesstatus);
+
+    statusBar()->addPermanentWidget(new OpModeStatus());
 
     statusBar()->addPermanentWidget(new SoundStatus());
     /** Status Bar end ******/
