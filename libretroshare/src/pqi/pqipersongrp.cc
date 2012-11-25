@@ -108,7 +108,7 @@ int pqipersongrp::tickServiceSend()
 
 	// init
 pqipersongrp::pqipersongrp(SecurityPolicy *glob, unsigned long flags)
-	:pqihandler(glob), pqil(NULL), config(NULL), initFlags(flags)
+	:pqihandler(glob), pqil(NULL), initFlags(flags)
 {
 }
 
@@ -221,57 +221,6 @@ bool    pqipersongrp::resetListener(struct sockaddr_in &local)
 	}
 	return 1;
 }
-
-/* NOT bothering to protect Config with a mutex.... it is not going to change
- * and has its own internal mutexs.
- */
-int	pqipersongrp::setConfig(p3GeneralConfig *cfg)
-{
-	config = cfg;
-	return 1;
-}
-
-static const std::string pqih_ftr("PQIH_FTR");
-
-int     pqipersongrp::save_config()
-{
-	char line[512];
-	sprintf(line, "%f %f", getMaxRate(true), getMaxRate(false));
-	if (config)
-	{
-		config -> setSetting(pqih_ftr, std::string(line));
-	}
-	return 1;
-}
-	
-int     pqipersongrp::load_config()
-{
-	std::string line;
-	if (config)
-	{
-		line = config -> getSetting(pqih_ftr);
-	}
-
-	float mri, mro;
-
-	if (2 == sscanf(line.c_str(), "%f %f", &mri, &mro))
-	{
-		setMaxRate(true, mri);
-		setMaxRate(false, mro);
-	}
-	else
-	{
-		pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone,
-			"pqipersongrp::load_config() Loading Default Rates!");
-
-
-		setMaxRate(true,  DEFAULT_DOWNLOAD_KB_RATE);
-		setMaxRate(false, DEFAULT_UPLOAD_KB_RATE);
-	}
-
-	return 1;
-}
-	
 
 void    pqipersongrp::statusChange(const std::list<pqipeer> &plist)
 {

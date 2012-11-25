@@ -57,10 +57,6 @@ class pqipersongrp: public pqihandler, public pqiMonitor, public p3ServiceServer
 virtual bool resetListener(struct sockaddr_in &local); // overloaded from pqiNetListener 
 int     init_listener(); 
 
-int     setConfig(p3GeneralConfig *cfg);
-int	save_config();
-int	load_config();
-
 	/*************** pqiMonitor callback ***********************/
 virtual void    statusChange(const std::list<pqipeer> &plist);
 
@@ -119,7 +115,6 @@ virtual int checkOutgoingRsItem(RsItem *item, int global)
 	int tickServiceSend();
 
 	pqilistener *pqil;
-	p3GeneralConfig *config;
 	unsigned long initFlags;
 };
 

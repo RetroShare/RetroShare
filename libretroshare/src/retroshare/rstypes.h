@@ -112,7 +112,6 @@ class RsConfig
 		{
 			localPort = extPort = 0 ;
 			firewalled = forwardPort = false ;
-			maxDownloadDataRate = maxUploadDataRate = maxIndivDataRate = 0 ;
 			promptAtBoot = 0 ;
 			DHTActive = uPnPActive = netLocalOk = netUpnpOk = netDhtOk = netStunOk = netExtraAddressOk = false ;
 			uPnPState = DHTPeers = 0 ;
@@ -128,10 +127,6 @@ class RsConfig
 
 		bool			firewalled;
 		bool			forwardPort;
-
-		int			maxDownloadDataRate;     /* kb */
-		int			maxUploadDataRate;     /* kb */
-		int			maxIndivDataRate; /* kb */
 
 		int			promptAtBoot; /* popup the password prompt */
 

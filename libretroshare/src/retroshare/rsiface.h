@@ -157,8 +157,6 @@ class RsControl /* The Main Interface Class - for controlling the server */
 		/****************************************/
 		/* Config */
 
-		virtual int     ConfigSetDataRates( int totalDownload, int totalUpload ) = 0;
-		virtual int     ConfigGetDataRates( float &inKb, float &outKb) = 0;
 		virtual	int 	ConfigSetBootPrompt( bool on ) = 0;
 		virtual void    ConfigFinalSave( ) 			   = 0;
 		virtual void 	rsGlobalShutDown( )			   = 0;

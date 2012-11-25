@@ -32,6 +32,7 @@
 #include "pqi/p3linkmgr.h"
 #include "pqi/p3netmgr.h"
 #include "pqi/p3cfgmgr.h"
+#include "pqi/pqihandler.h"
 
 
 #define RS_CONFIG_ADVANCED_STRING       "AdvMode"
@@ -42,8 +43,10 @@ class p3ServerConfig: public RsServerConfig
 {
 	public:
 
-	p3ServerConfig(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr, p3NetMgr *netMgr, p3GeneralConfig *genCfg);
+	p3ServerConfig(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr, p3NetMgr *netMgr, pqihandler *pqih, p3GeneralConfig *genCfg);
 virtual ~p3ServerConfig();
+
+	void load_config();
 
 	/* From RsIface::RsConfig */
 
@@ -88,8 +91,9 @@ virtual bool setConfigurationOption(uint32_t key, const std::string &opt);
 virtual uint32_t getOperatingMode();
 virtual bool     setOperatingMode(uint32_t opMode);
 
-virtual int SetDataRates( int downKb, int upKb );
-virtual int GetDataRates( float &inKb, float &outKb );
+virtual int SetMaxDataRates( int downKb, int upKb );
+virtual int GetMaxDataRates( int &downKb, int &upKb );
+virtual int GetCurrentDataRates( float &inKb, float &outKb );
 
 /********************* ABOVE is RsConfig Interface *******/
 
@@ -102,10 +106,13 @@ bool findConfigurationOption(uint32_t key, std::string &keystr);
 	p3PeerMgr *mPeerMgr;
 	p3LinkMgr *mLinkMgr;
 	p3NetMgr  *mNetMgr;
+	pqihandler *mPqiHandler;
 	p3GeneralConfig *mGeneralConfig;
 
 	RsMutex configMtx;
 	uint32_t mUserLevel; // store last one... will later be a config Item too.
+	float mRateDownload;
+	float mRateUpload;
 
 };
 

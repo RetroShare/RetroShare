@@ -45,49 +45,6 @@ const int p3facemsgzone = 11453;
 /* RsIface Config */
 /* Config */
 
-int     RsServer::ConfigSetDataRates( int totalDownload, int totalUpload ) /* in kbrates */
-{
-	/* fill the rsiface class */
-	RsIface &iface = getIface();
-
-	/* lock Mutexes */
-	lockRsCore();     /* LOCK */
-	iface.lockData(); /* LOCK */
-
-	pqih -> setMaxRate(true, totalDownload);
-	pqih -> setMaxRate(false, totalUpload);
-
-	pqih -> save_config();
-
-	/* unlock Mutexes */
-	iface.unlockData(); /* UNLOCK */
-	unlockRsCore();     /* UNLOCK */
-
-	/* does its own locking */
-	UpdateAllConfig();
-	return 1;
-}
-
-
-int     RsServer::ConfigGetDataRates( float &inKb, float &outKb ) /* in kbrates */
-{
-	/* fill the rsiface class */
-	RsIface &iface = getIface();
-
-	/* lock Mutexes */
-	lockRsCore();     /* LOCK */
-	iface.lockData(); /* LOCK */
-
-	pqih -> getCurrentRates(inKb, outKb);
-
-	/* unlock Mutexes */
-	iface.unlockData(); /* UNLOCK */
-	unlockRsCore();     /* UNLOCK */
-
-	return 1;
-}
-
-
 int     RsServer::ConfigSetBootPrompt( bool /*on*/ )
 {
 
@@ -120,11 +77,6 @@ int RsServer::UpdateAllConfig()
 	
 	config.extAddr = rs_inet_ntoa(pstate.serveraddr.sin_addr);
 	config.extPort = ntohs(pstate.serveraddr.sin_port);
-
-	/* data rates */
-	config.maxDownloadDataRate = (int) pqih -> getMaxRate(true);     /* kb */
-	config.maxUploadDataRate = (int) pqih -> getMaxRate(false);     /* kb */
-
 	config.promptAtBoot = true; /* popup the password prompt */      
 
 	/* update network configuration */

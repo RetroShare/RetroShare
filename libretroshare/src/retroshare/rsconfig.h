@@ -278,8 +278,9 @@ virtual uint32_t getOperatingMode() = 0;
 virtual bool     setOperatingMode(uint32_t opMode) = 0;
 
 	/* Data Rate Control - to be moved here */
-virtual int SetDataRates( int downKb, int upKb ) = 0;
-virtual int GetDataRates( float &inKb, float &outKb ) = 0;
+virtual int SetMaxDataRates( int downKb, int upKb ) = 0;
+virtual int GetMaxDataRates( int &inKb, int &outKb ) = 0;
+virtual int GetCurrentDataRates( float &inKb, float &outKb ) = 0;
 
 };
 

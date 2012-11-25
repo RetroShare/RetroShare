@@ -2407,9 +2407,8 @@ int RsServer::StartupRetroShare()
 	/**************************************************************************/
 	/* trigger generalConfig loading for classes that require it */
 	/**************************************************************************/
-	pqih->setConfig(mGeneralConfig);
-
-	pqih->load_config();
+	p3ServerConfig *serverConfig = new p3ServerConfig(mPeerMgr, mLinkMgr, mNetMgr, pqih, mGeneralConfig);
+	serverConfig->load_config();
 
 	/**************************************************************************/
 	/* Force Any Configuration before Startup (After Load) */
@@ -2543,7 +2542,7 @@ int RsServer::StartupRetroShare()
 
 	rsDisc  = new p3Discovery(ad);
 	rsBandwidthControl = mBwCtrl;
-	rsConfig = new p3ServerConfig(mPeerMgr, mLinkMgr, mNetMgr, mGeneralConfig);
+	rsConfig = serverConfig;
 
 	rsMsgs  = new p3Msgs(msgSrv, chatSrv);
 	rsForums = mForums;
