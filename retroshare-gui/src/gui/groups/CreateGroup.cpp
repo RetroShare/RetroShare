@@ -28,6 +28,8 @@
 #include "gui/settings/rsharesettings.h"
 #include "util/misc.h"
 
+#include <algorithm>
+
 /** Default constructor */
 CreateGroup::CreateGroup(const std::string &groupId, QWidget *parent)
   : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
