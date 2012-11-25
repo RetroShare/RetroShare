@@ -106,9 +106,9 @@ void PostedListDialog::newPost()
     cp.exec();
 }
 
-void PostedListDialog::showComments(const RsGxsMessageId &threadId)
+void PostedListDialog::showComments(const RsPostedPost& post)
 {
-    mCommentHolder->commentLoad(threadId);
+    mCommentHolder->commentLoad(post);
 }
 
 void PostedListDialog::updateDisplay()
@@ -403,6 +403,7 @@ void PostedListDialog::loadRequest(const TokenQueue *queue, const TokenRequest &
                                 break;
                             case RS_TOKREQ_ANSTYPE_SUMMARY:
                                 loadGroupSummary(req.mToken);
+                                break;
                             default:
                                 std::cerr << "Error, unexpected anstype:" << req.mAnsType << std::endl;
                                 break;

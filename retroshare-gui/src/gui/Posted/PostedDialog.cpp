@@ -49,7 +49,7 @@ PostedDialog::PostedDialog(QWidget *parent)
 {
     ui.setupUi(this);
 
-    mPostedList = new PostedListDialog(NULL);
+    mPostedList = new PostedListDialog(this, NULL);
     mPostedComments = new PostedComments(NULL);
 
     QString list("List");
@@ -60,9 +60,10 @@ PostedDialog::PostedDialog(QWidget *parent)
     connect(mPostedList, SIGNAL(loadComments( std::string ) ), mPostedComments, SLOT(loadComments( std::string ) ) );
 }
 
-void PostedDialog::commentLoad(const RsGxsMessageId &msgId)
+void PostedDialog::commentLoad(const RsPostedPost &post)
 {
-    mPostedComments->loadComments(msgId);
+    mPostedComments->loadComments(post);
+    ui.tabWidget->setCurrentWidget(mPostedComments);
 }
 
 

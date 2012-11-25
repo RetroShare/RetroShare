@@ -35,7 +35,7 @@ class PostedHolder
 {
 	public:
 
-    virtual void showComments(const RsGxsMessageId& threadId) = 0;
+    virtual void showComments(const RsPostedPost& post) = 0;
 };
 
 

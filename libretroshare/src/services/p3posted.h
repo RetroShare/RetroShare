@@ -29,6 +29,7 @@ public:
     bool getGroup(const uint32_t &token, std::vector<RsPostedGroup> &group);
     bool getPost(const uint32_t &token, PostedPostResult& posts) ;
     bool getComment(const uint32_t &token, PostedCommentResult& comments) ;
+    bool getRelatedComment(const uint32_t& token, PostedRelatedCommentResult &comments);
     bool getGroupRank(const uint32_t& token, GroupRank& grpRank);
 
     bool submitGroup(uint32_t &token, RsPostedGroup &group);

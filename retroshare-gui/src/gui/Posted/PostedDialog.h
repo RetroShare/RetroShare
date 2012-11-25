@@ -39,7 +39,7 @@ public:
      * This should be used for loading comments of a message on a main comment viewing page
      * @param msgId the message id for which comments will be requested
      */
-    virtual void commentLoad(const RsGxsMessageId& msgId) = 0;
+    virtual void commentLoad(const RsPostedPost&) = 0;
 };
 
 class PostedListDialog;
@@ -51,7 +51,7 @@ class PostedDialog : public MainPage, public CommentHolder
 
 public:
 	PostedDialog(QWidget *parent = 0);
-        void commentLoad(const RsGxsMessageId &msgId);
+        void commentLoad(const RsPostedPost &);
 
 private:
 

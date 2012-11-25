@@ -24,6 +24,7 @@
 #ifndef MRK_POSTED_LIST_DIALOG_H
 #define MRK_POSTED_LIST_DIALOG_H
 
+
 #include "retroshare-gui/mainpage.h"
 #include "ui_PostedListDialog.h"
 
@@ -58,7 +59,7 @@ class PostedListDialog : public RsAutoUpdatePage, public PostedHolder, public To
 public:
         PostedListDialog(CommentHolder* commentHolder, QWidget *parent = 0);
 
-        void showComments(const RsGxsMessageId &threadId);
+        void showComments(const RsPostedPost& post);
 
 private slots:
 

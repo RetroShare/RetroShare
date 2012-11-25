@@ -44,42 +44,48 @@ class GxsCommentTreeWidget : public QTreeWidget, public TokenResponse
     Q_OBJECT
         
 public:
-	GxsCommentTreeWidget(QWidget *parent = 0);
-        void setup(RsTokenService *service);
+    GxsCommentTreeWidget(QWidget *parent = 0);
+    void setup(RsTokenService *service);
 
-	void requestComments(std::string threadId);
+    void requestComments(const RsGxsGrpMsgIdPair& threadId);
+    void getCurrentMsgId(RsGxsMessageId& parentId);
+    void setCurrentMsgId(QTreeWidgetItem* current, QTreeWidgetItem* previous);
 
-        void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+    void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 protected:
 
-	/* to be overloaded */
-	virtual void service_requestComments(std::string threadId);
-	virtual void service_loadThread(const uint32_t &token);
-	virtual QTreeWidgetItem *service_createMissingItem(std::string parent);
+    /* to be overloaded */
+    virtual void service_requestComments(const RsGxsGrpMsgIdPair& threadId);
+    virtual void service_loadThread(const uint32_t &token);
+    virtual QTreeWidgetItem *service_createMissingItem(const RsGxsMessageId& parent);
 
-	void clearItems();
-	void completeItems();
+    void clearItems();
+    void completeItems();
 
-	void loadThread(const uint32_t &token);
-	
-	void addItem(std::string itemId, std::string parentId, QTreeWidgetItem *item);
+    void acknowledgeComment(const uint32_t& token);
+    void loadThread(const uint32_t &token);
+
+    void addItem(std::string itemId, std::string parentId, QTreeWidgetItem *item);
+
+public slots:
+    void customPopUpMenu(const QPoint& point);
+private slots:
 
 
+    void makeComment();
 
-	/* Data */
-	std::string mThreadId;
+protected:
 
-	std::map<std::string, QTreeWidgetItem *> mLoadingMap;
-	std::multimap<std::string, QTreeWidgetItem *> mPendingInsertMap;
+    /* Data */
+    RsGxsGrpMsgIdPair mThreadId;
+    RsGxsMessageId mCurrentMsgId;
 
-        TokenQueue *mTokenQueue;
-        RsTokenService *mRsService;
+    std::map<std::string, QTreeWidgetItem *> mLoadingMap;
+    std::multimap<std::string, QTreeWidgetItem *> mPendingInsertMap;
 
-	protected:
-//virtual QMimeData * mimeData ( const QList<QTreeWidgetItem *> items ) const;
-//virtual QStringList mimeTypes () const; 
-//virtual Qt::DropActions supportedDropActions () const;
+    TokenQueue *mTokenQueue;
+    RsTokenService *mRsService;
 
 };
 

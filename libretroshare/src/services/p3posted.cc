@@ -7,6 +7,12 @@ const uint32_t RsPosted::FLAG_MSGTYPE_VOTE = 0x0004;
 
 RsPosted *rsPosted = NULL;
 
+RsPostedComment::RsPostedComment(const RsGxsPostedCommentItem & item)
+{
+   mComment = item.mComment.mComment;
+   mMeta = item.meta;
+}
+
 p3Posted::p3Posted(RsGeneralDataService *gds, RsNetworkExchangeService *nes)
     : RsGenExchange(gds, nes, new RsGxsPostedSerialiser(), RS_SERVICE_GXSV1_TYPE_POSTED), RsPosted(this)
 {
@@ -116,6 +122,11 @@ bool p3Posted::getComment(const uint32_t &token, PostedCommentResult &comments)
     }
 
     return ok;
+}
+
+bool p3Posted::getRelatedComment(const uint32_t& token, PostedRelatedCommentResult &comments)
+{
+    return RsGenExchange::getMsgRelatedDataT<RsGxsPostedCommentItem, RsPostedComment>(token, comments);
 }
 
 bool p3Posted::getGroupRank(const uint32_t &token, GroupRank &grpRank)

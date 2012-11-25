@@ -56,6 +56,7 @@ QString PostedGroupDialog::serviceHeader()
 	return tr("Create New Posted Topic");
 }
 
+
 QPixmap PostedGroupDialog::serviceImage()
 {
 	return QPixmap(":/images/posted_add_64.png");

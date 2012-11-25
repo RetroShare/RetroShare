@@ -42,12 +42,17 @@ public:
 
 public slots:
 
-        void loadComments(const RsGxsMessageId& );
+        void loadComments(const RsPostedPost& );
+
+    private slots:
+
+        void test(QPoint p);
 
 private:
         void loadRequest(const TokenQueue *queue, const TokenRequest &req) { return; }
+        void setUpPostFrame();
 
-        TokenQueue *mPhotoQueue;
+        RsPostedPost mCurrentPost;
 
 	/* UI - from Designer */
 	Ui::PostedComments ui;

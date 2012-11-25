@@ -22,6 +22,7 @@
  */
 
 #include "PostedComments.h"
+#include "PostedCreateCommentDialog.h"
 
 #include <retroshare/rsposted.h>
 
@@ -30,10 +31,8 @@
 
 #include <QTimer>
 #include <QMessageBox>
+#include <QDateTime>
 
-/******
- * #define PHOTO_DEBUG 1
- *****/
 
 
 /****************************************************************
@@ -64,15 +63,51 @@ PostedComments::PostedComments(QWidget *parent)
     ui.setupUi(this);
     ui.postFrame->setVisible(false);
     ui.treeWidget->setup(rsPosted->getTokenService());
+    connect(ui.treeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(test(QPoint)));
+}
+
+void PostedComments::test(QPoint p)
+{
+    int x = p.x();
+    int y = p.y();
+    int  c= x+y;
 
 }
 
-void PostedComments::loadComments(const RsGxsMessageId& threadId )
+void PostedComments::loadComments(const RsPostedPost& post)
 {
-	std::cerr << "PostedComments::loadComments(" << threadId << ")";
+        std::cerr << "PostedComments::loadComments(" << post.mMeta.mOrigMsgId << ")";
 	std::cerr << std::endl;
+
+        mCurrentPost = post;
+        setUpPostFrame();
+
+        RsGxsGrpMsgIdPair threadId;
+
+        threadId.first = post.mMeta.mOrigMsgId;
+        threadId.second = post.mMeta.mGroupId;
 
 	ui.treeWidget->requestComments(threadId);
 }
 
+
+void PostedComments::setUpPostFrame()
+{
+    ui.postFrame->setVisible(true);
+
+    QDateTime qtime;
+    qtime.setTime_t(mCurrentPost.mMeta.mPublishTs);
+    QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
+    ui.dateLabel->setText(timestamp);
+    ui.fromLabel->setText(QString::fromUtf8(mCurrentPost.mMeta.mAuthorId.c_str()));
+    ui.titleLabel->setText("<a href=" + QString::fromStdString(mCurrentPost.mLink) +
+                       "><span style=\" text-decoration: underline; color:#0000ff;\">" +
+                       QString::fromStdString(mCurrentPost.mMeta.mMsgName) + "</span></a>");
+    ui.siteLabel->setText("<a href=" + QString::fromStdString(mCurrentPost.mLink) +
+                       "><span style=\" text-decoration: underline; color:#0000ff;\">" +
+                       QString::fromStdString(mCurrentPost.mLink) + "</span></a>");
+
+    ui.scoreLabel->setText(QString("1"));
+
+}
 

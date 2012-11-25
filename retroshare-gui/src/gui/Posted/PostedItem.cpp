@@ -38,7 +38,7 @@
 
 /** Constructor */
 PostedItem::PostedItem(PostedHolder *postHolder, const RsPostedPost &post)
-:QWidget(NULL), mPostHolder(postHolder)
+:QWidget(NULL), mPostHolder(postHolder), mPost(post)
 {
 	setupUi(this);
 	setAttribute ( Qt::WA_DeleteOnClose, true );
@@ -71,5 +71,5 @@ void PostedItem::loadComments()
 {
 	std::cerr << "PostedItem::loadComments() Requesting for " << mThreadId;
 	std::cerr << std::endl;
-        mPostHolder->showComments(mPost.mMeta.mMsgId);
+        mPostHolder->showComments(mPost);
 }
