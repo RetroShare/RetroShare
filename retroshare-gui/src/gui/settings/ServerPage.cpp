@@ -43,6 +43,7 @@ ServerPage::ServerPage(QWidget * parent, Qt::WFlags flags)
   connect( ui.allowIpDeterminationCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleIpDetermination(bool) ) );
   connect( ui.allowTunnelConnectionCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleTunnelConnection(bool) ) );
   connect( ui._max_tr_up_per_sec_SB, SIGNAL( valueChanged( int ) ), this, SLOT( updateMaxTRUpRate(int) ) );
+  connect( ui._turtle_enabled_CB, SIGNAL( toggled( bool ) ), this, SLOT( toggleTurtleRouting(bool) ) );
 
    QTimer *timer = new QTimer(this);
    timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
@@ -193,6 +194,13 @@ void ServerPage::load()
 	ui.showDiscStatusBar->setChecked(Settings->getStatusBarFlags() & STATUSBAR_DISC);
 
 	ui._max_tr_up_per_sec_SB->setValue(rsTurtle->getMaxTRForwardRate()) ;
+
+	ui._turtle_enabled_CB->setChecked(rsTurtle->enabled()) ;
+}
+
+void ServerPage::toggleTurtleRouting(bool b)
+{
+	rsTurtle->setEnabled(b) ;
 }
 
 /** Loads the settings for this page */

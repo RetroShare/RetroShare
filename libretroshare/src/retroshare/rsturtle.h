@@ -88,6 +88,9 @@ class RsTurtle
 		RsTurtle() {}
 		virtual ~RsTurtle() {}
 
+		virtual void setEnabled(bool) = 0 ;
+		virtual bool enabled() const = 0 ;
+
 		// Lauches a search request through the pipes, and immediately returns
 		// the request id, which will be further used by the gui to store results
 		// as they come back.

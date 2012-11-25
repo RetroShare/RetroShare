@@ -104,6 +104,7 @@ p3turtle::p3turtle(p3LinkMgr *lm,ftServer *fs)
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
+	_turtle_routing_enabled = true ;
 	_ft_server = fs ;
 	_ft_controller = fs->getController() ;
 
@@ -119,6 +120,24 @@ p3turtle::p3turtle(p3LinkMgr *lm,ftServer *fs)
 	_traffic_info.reset() ;
 	_sharing_strategy = SHARE_ENTIRE_NETWORK ;
 	_max_tr_up_rate = MAX_TR_FORWARD_PER_SEC ;
+}
+
+void p3turtle::setEnabled(bool b) 
+{
+	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
+	_turtle_routing_enabled = b;
+
+	if(b)
+		std::cerr << "Enabling turtle routing" << std::endl;
+	else
+		std::cerr << "Disabling turtle routing" << std::endl;
+
+	IndicateConfigChanged() ;
+}
+bool p3turtle::enabled() const
+{
+	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
+	return _turtle_routing_enabled ;
 }
 
 int p3turtle::tick()
@@ -154,7 +173,8 @@ int p3turtle::tick()
 #ifdef P3TURTLE_DEBUG
 		std::cerr << "Calling tunnel management." << std::endl ;
 #endif
-		manageTunnels() ;
+		if(_turtle_routing_enabled)
+			manageTunnels() ;
 
 		{
 			RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
@@ -497,7 +517,7 @@ void p3turtle::locked_closeTunnel(TurtleTunnelId tid,std::vector<std::pair<Turtl
 
 	if(it == _local_tunnels.end())
 	{
-		std::cerr << "p3turtle: was asked to close tunnel " << (void*)tid << ", which actually doesn't exist." << std::endl ;
+		std::cerr << "p3turtle: was asked to close tunnel " << reinterpret_cast<void*>(tid) << ", which actually doesn't exist." << std::endl ;
 		return ;
 	}
 #ifdef P3TURTLE_DEBUG
@@ -593,8 +613,12 @@ bool p3turtle::saveList(bool& cleanup, std::list<RsItem*>& lst)
 	RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
 	RsTlvKeyValue kv;
 	kv.key = "TURTLE_CONFIG_MAX_TR_RATE" ;
-
 	rs_sprintf(kv.value, "%g", _max_tr_up_rate);
+	vitem->tlvkvs.pairs.push_back(kv) ;
+
+	kv.key = "TURTLE_ENABLED" ;
+	kv.value = _turtle_routing_enabled?"TRUE":"FALSE" ;
+
 	vitem->tlvkvs.pairs.push_back(kv) ;
 
 	lst.push_back(vitem) ;
@@ -613,17 +637,24 @@ bool p3turtle::loadList(std::list<RsItem*>& load)
 
 		if(vitem != NULL)
 			for(std::list<RsTlvKeyValue>::const_iterator kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit) 
+			{
 				if(kit->key == "TURTLE_CONFIG_MAX_TR_RATE")
 				{
-#ifdef CHAT_DEBUG
-					std::cerr << "Loaded config default nick name for chat: " << kit->value << std::endl ;
-#endif
 					int val ;
 					if (sscanf(kit->value.c_str(), "%d", &val) == 1)
 					{
 						setMaxTRForwardRate(val) ;
+						std::cerr << "Setting max TR forward rate to " << val << std::endl ;
 					}
 				}
+				if(kit->key == "TURTLE_ENABLED")
+				{
+					_turtle_routing_enabled = (kit->value == "TRUE") ;
+
+					if(!_turtle_routing_enabled)
+						std::cerr << "WARNING: turtle routing has been disabled. You can enable it again in config->server->turtle router." << std::endl;
+				}
+			}
 
 		delete vitem ;
 	}
@@ -697,33 +728,38 @@ int p3turtle::handleIncoming()
 	{
 		nhandled++;
 
-		RsTurtleGenericTunnelItem *gti = dynamic_cast<RsTurtleGenericTunnelItem *>(item) ;
-
-		if(gti != NULL)
-			routeGenericTunnelItem(gti) ;	/// Generic packets, that travel through established tunnels. 
-		else			 							/// These packets should be destroyed by the client.
+		if(!_turtle_routing_enabled)
+			delete item ;
+		else
 		{
-			/// Special packets that require specific treatment, because tunnels do not exist for these packets.
-			/// These packets are destroyed here, after treatment.
-			//
-			switch(item->PacketSubType())
+			RsTurtleGenericTunnelItem *gti = dynamic_cast<RsTurtleGenericTunnelItem *>(item) ;
+
+			if(gti != NULL)
+				routeGenericTunnelItem(gti) ;	/// Generic packets, that travel through established tunnels. 
+			else			 							/// These packets should be destroyed by the client.
 			{
-				case RS_TURTLE_SUBTYPE_STRING_SEARCH_REQUEST:
-				case RS_TURTLE_SUBTYPE_REGEXP_SEARCH_REQUEST: handleSearchRequest(dynamic_cast<RsTurtleSearchRequestItem *>(item)) ;
-																			 break ;
+				/// Special packets that require specific treatment, because tunnels do not exist for these packets.
+				/// These packets are destroyed here, after treatment.
+				//
+				switch(item->PacketSubType())
+				{
+					case RS_TURTLE_SUBTYPE_STRING_SEARCH_REQUEST:
+					case RS_TURTLE_SUBTYPE_REGEXP_SEARCH_REQUEST: handleSearchRequest(dynamic_cast<RsTurtleSearchRequestItem *>(item)) ;
+																				 break ;
 
-				case RS_TURTLE_SUBTYPE_SEARCH_RESULT : handleSearchResult(dynamic_cast<RsTurtleSearchResultItem *>(item)) ;
-																	break ;
+					case RS_TURTLE_SUBTYPE_SEARCH_RESULT : handleSearchResult(dynamic_cast<RsTurtleSearchResultItem *>(item)) ;
+																		break ;
 
-				case RS_TURTLE_SUBTYPE_OPEN_TUNNEL   : handleTunnelRequest(dynamic_cast<RsTurtleOpenTunnelItem *>(item)) ;
-																	break ;
+					case RS_TURTLE_SUBTYPE_OPEN_TUNNEL   : handleTunnelRequest(dynamic_cast<RsTurtleOpenTunnelItem *>(item)) ;
+																		break ;
 
-				case RS_TURTLE_SUBTYPE_TUNNEL_OK     : handleTunnelResult(dynamic_cast<RsTurtleTunnelOkItem *>(item)) ;
-																	break ;
-				default:
-																	std::cerr << "p3turtle::handleIncoming: Unknown packet subtype " << item->PacketSubType() << std::endl ;
+					case RS_TURTLE_SUBTYPE_TUNNEL_OK     : handleTunnelResult(dynamic_cast<RsTurtleTunnelOkItem *>(item)) ;
+																		break ;
+					default:
+																		std::cerr << "p3turtle::handleIncoming: Unknown packet subtype " << item->PacketSubType() << std::endl ;
+				}
+				delete item;
 			}
-			delete item;
 		}
 	}
 
@@ -1025,7 +1061,7 @@ void p3turtle::routeGenericTunnelItem(RsTurtleGenericTunnelItem *item)
 		case RS_TURTLE_SUBTYPE_CHUNK_CRC_REQUEST:	handleRecvChunkCRCRequest(dynamic_cast<RsTurtleChunkCrcRequestItem *>(item)) ;
 																break ;
 	default:
-																std::cerr << "WARNING: Unknown packet type received: id=" << (void*)(item->PacketSubType()) << ". Is somebody trying to poison you ?" << std::endl ;
+																std::cerr << "WARNING: Unknown packet type received: id=" << reinterpret_cast<void*>(item->PacketSubType()) << ". Is somebody trying to poison you ?" << std::endl ;
 #ifdef P3TURTLE_DEBUG
 																exit(-1) ;
 #endif
@@ -2050,7 +2086,7 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 					new_vpid = _local_tunnels[item->tunnel_id].vpid ; // save it for off-mutex usage.
 				}
 			if(!found)
-				std::cerr << "p3turtle: error. Could not find hash that emmitted tunnel request " << (void*)item->tunnel_id << std::endl ;
+				std::cerr << "p3turtle: error. Could not find hash that emmitted tunnel request " << reinterpret_cast<void*>(item->tunnel_id) << std::endl ;
 		}
 		else
 		{											// Nope, forward it back.

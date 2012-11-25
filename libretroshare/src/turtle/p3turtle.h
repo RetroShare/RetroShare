@@ -218,6 +218,11 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 	public:
 		p3turtle(p3LinkMgr *lm,ftServer *m);
 
+		// Enables/disable the service. Still ticks, but does nothing. Default is true.
+		//
+		virtual void setEnabled(bool) ;	
+		virtual bool enabled() const ;	
+
 		// Lauches a search request through the pipes, and immediately returns
 		// the request id, which will be further used by the gui to store results
 		// as they come back.
@@ -252,7 +257,7 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		
 		virtual void getTrafficStatistics(TurtleTrafficStatisticsInfo& info) const ;
 
-		/************* from pqiMonitor *******************/
+		/************* from p3service *******************/
 
 		/// This function does many things:
 		/// 	- It handles incoming and outgoing packets
@@ -425,6 +430,7 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		TurtleTrafficStatisticsInfoOp _traffic_info_buffer ;	// used as a buffer to collect bytes
 
 		float _max_tr_up_rate ;
+		bool  _turtle_routing_enabled ;
 
 #ifdef P3TURTLE_DEBUG
 		// debug function
