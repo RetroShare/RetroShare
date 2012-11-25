@@ -23,7 +23,7 @@
 #include "StatisticDialog.h"
 #include <control/bandwidthevent.h>
 
-#include <retroshare/rsiface.h>
+#include <retroshare/rsconfig.h>
 
 #include <QTime>
 #include <QHeaderView>
@@ -121,7 +121,7 @@ void StatisticDialog::timerEvent( QTimerEvent * )
  	/* set users/friends/network */
 	float downKb = 0;
 	float upKb = 0;
-	rsicontrol -> ConfigGetDataRates(downKb, upKb);
+	rsConfig->GetCurrentDataRates(downKb, upKb);
 
         updateGraph(downKb,upKb);
   //

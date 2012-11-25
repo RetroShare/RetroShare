@@ -580,7 +580,7 @@ void MainWindow::updateStatus()
 
     float downKb = 0;
     float upKb = 0;
-    rsicontrol -> ConfigGetDataRates(downKb, upKb);
+    rsConfig->GetCurrentDataRates(downKb, upKb);
 
     if (ratesstatus)
         ratesstatus->getRatesStatus(downKb, upKb);

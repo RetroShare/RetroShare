@@ -27,7 +27,7 @@
 
 #include <iostream>
 
-#include <retroshare/rsiface.h>
+#include <retroshare/rsconfig.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsturtle.h>
 
@@ -170,13 +170,11 @@ void ServerPage::load()
 
 	ui.discComboBox->setCurrentIndex(netIndex);
 
-	rsiface->lockData(); /* Lock Interface */
-
-	ui.totalDownloadRate->setValue(rsiface->getConfig().maxDownloadDataRate);
-	ui.totalUploadRate->setValue(rsiface->getConfig().maxUploadDataRate);
-
-	rsiface->unlockData(); /* UnLock Interface */
-
+	int dlrate = 0;
+	int ulrate = 0;
+	rsConfig->GetMaxDataRates(dlrate, ulrate);
+	ui.totalDownloadRate->setValue(dlrate);
+	ui.totalUploadRate->setValue(ulrate);
 
 	toggleUPnP();
 
@@ -317,8 +315,7 @@ void ServerPage::saveAddresses()
 	}
 
 	rsPeers->setDynDNS(ownId, ui.dynDNS->text().toStdString());
-
-	rsicontrol->ConfigSetDataRates( ui.totalDownloadRate->value(), ui.totalUploadRate->value() );
+	rsConfig->SetMaxDataRates( ui.totalDownloadRate->value(), ui.totalUploadRate->value() );
 
 	load();
 }

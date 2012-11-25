@@ -25,7 +25,7 @@
 #include <control/bandwidthevent.h>
 #include "bwgraph.h"
 #include <retroshare-gui/RsAutoUpdatePage.h>
-#include <retroshare/rsiface.h>
+#include <retroshare/rsconfig.h>
 
 #include <iomanip>
 #include <unistd.h>
@@ -110,7 +110,7 @@ BandwidthGraph::timerEvent( QTimerEvent * )
  	/* set users/friends/network */
 	/*float downKb = 0;
 	float upKb = 0;
-	rsicontrol -> ConfigGetDataRates(downKb, upKb);
+	rsConfig->GetCurrentDataRates(downKb, upKb);
 
   updateGraph(downKb,upKb);*/
 
@@ -125,7 +125,7 @@ BandwidthGraph::updategraphstatus( )
  	/* set users/friends/network */
 	float downKb = 0;
 	float upKb = 0;
-	rsicontrol -> ConfigGetDataRates(downKb, upKb);
+	rsConfig->GetCurrentDataRates(downKb, upKb);
 
         updateGraph(downKb,upKb);
 
