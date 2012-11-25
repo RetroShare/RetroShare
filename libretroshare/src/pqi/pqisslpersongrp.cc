@@ -49,13 +49,13 @@ const int pqipersongrpzone = 354;
 #endif
 
 
-pqilistener * pqisslpersongrp::createListener(struct sockaddr_in laddr)
+pqilistener * pqisslpersongrp::locked_createListener(struct sockaddr_in laddr)
 {
 	pqilistener *listener = new pqissllistener(laddr, mPeerMgr);
 	return listener;
 }
 
-pqiperson * pqisslpersongrp::createPerson(std::string id, pqilistener *listener)
+pqiperson * pqisslpersongrp::locked_createPerson(std::string id, pqilistener *listener)
 {
 	pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, "pqipersongrp::createPerson() PeerId: " + id);
 

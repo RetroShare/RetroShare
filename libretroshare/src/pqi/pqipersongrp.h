@@ -97,8 +97,9 @@ virtual int status();
 	protected:
 
 	/********* FUNCTIONS to OVERLOAD for specialisation ********/
-virtual pqilistener *createListener(struct sockaddr_in laddr) = 0;
-virtual pqiperson   *createPerson(std::string id, pqilistener *listener) = 0;
+	// THESE NEED TO BE LOCKED UNTIL PQILISTENER IS THREAD-SAFE.
+virtual pqilistener *locked_createListener(struct sockaddr_in laddr) = 0;
+virtual pqiperson   *locked_createPerson(std::string id, pqilistener *listener) = 0;
 	/********* FUNCTIONS to OVERLOAD for specialisation ********/
 
 	/* Overloaded RsItem Check
@@ -131,8 +132,8 @@ class pqipersongrpDummy: public pqipersongrp
 	protected:
 
 	/********* FUNCTIONS to OVERLOAD for specialisation ********/
-virtual pqilistener *createListener(struct sockaddr_in laddr);
-virtual pqiperson   *createPerson(std::string id, pqilistener *listener);
+virtual pqilistener *locked_createListener(struct sockaddr_in laddr);
+virtual pqiperson   *locked_createPerson(std::string id, pqilistener *listener);
 	/********* FUNCTIONS to OVERLOAD for specialisation ********/
 };
 
