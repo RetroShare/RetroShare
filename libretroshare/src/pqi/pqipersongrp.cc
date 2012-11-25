@@ -311,7 +311,6 @@ void pqipersongrp::statusChanged()
 			}
 		}
 
-
 #ifdef PGRP_DEBUG
 		std::cerr << "pqipersongrp::statusChanged() There are ";
 		std::cerr << connect_count << " connection attempts and " << waitingIds.size();
@@ -320,7 +319,6 @@ void pqipersongrp::statusChanged()
 		std::cerr << std::endl;
 #endif
 
-		RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 		/* start some waiting id's */
 		for (int i = connect_count; i < MAX_CONNECT_COUNT; i++) 
 		{
@@ -330,11 +328,11 @@ void pqipersongrp::statusChanged()
 			std::string waitingId = waitingIds.front();
 			waitingIds.pop_front();
 	
-	#ifdef PGRP_DEBUG
+#ifdef PGRP_DEBUG
 			std::cerr << " pqipersongrp::statusChanged() id: " << waitingId << " connect peer";
 			std::cerr << std::endl;
-	#endif
-	
+#endif
+
 			toConnect.push_back(waitingId);
 		}
 	} /* UNLOCKED */
@@ -344,7 +342,6 @@ void pqipersongrp::statusChanged()
 	{
 		connectPeer(*cit, true);
 	}
-		
 }
 ///////////////////////////////////////////////////////////
 #endif
