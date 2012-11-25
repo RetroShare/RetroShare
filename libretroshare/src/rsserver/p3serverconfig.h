@@ -114,6 +114,7 @@ bool findConfigurationOption(uint32_t key, std::string &keystr);
 	float mRateDownload;
 	float mRateUpload;
 
+	uint32_t mOpMode;
 };
 
 #endif

@@ -223,6 +223,11 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		virtual void setEnabled(bool) ;	
 		virtual bool enabled() const ;	
 
+                // This is temporary, used by Operating Mode. 
+		// Turtle operates when both enabled() && sessionEnabled() are true.
+                virtual void setSessionEnabled(bool);
+                virtual bool sessionEnabled() const;
+
 		// Lauches a search request through the pipes, and immediately returns
 		// the request id, which will be further used by the gui to store results
 		// as they come back.
@@ -431,6 +436,7 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 
 		float _max_tr_up_rate ;
 		bool  _turtle_routing_enabled ;
+		bool  _turtle_routing_session_enabled ;
 
 #ifdef P3TURTLE_DEBUG
 		// debug function

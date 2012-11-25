@@ -119,8 +119,8 @@ extern RsServerConfig *rsConfig;
 
 #define RS_OPMODE_FULL		0x0001
 #define RS_OPMODE_NOTURTLE	0x0002
-#define RS_OPMODE_GAMING	0x0004
-#define RS_OPMODE_MINIMAL	0x0008
+#define RS_OPMODE_GAMING	0x0003
+#define RS_OPMODE_MINIMAL	0x0004
 
 
 class RsConfigStartup

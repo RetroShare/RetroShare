@@ -23,6 +23,7 @@
  *
  */
 
+#include <retroshare/rsturtle.h>
 #include "rsserver/p3serverconfig.h"
 #include "services/p3bwctrl.h"
 
@@ -46,9 +47,13 @@ p3ServerConfig::p3ServerConfig(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr, p3NetMgr 
 
 	mGeneralConfig = genCfg;
 
+	RsStackMutex stack(configMtx); /******* LOCKED MUTEX *****/
+
 	mUserLevel = RSCONFIG_USER_LEVEL_NEW; /* START LEVEL */
 	mRateDownload =  DEFAULT_DOWNLOAD_KB_RATE;
 	mRateUpload = DEFAULT_UPLOAD_KB_RATE;
+
+	mOpMode = RS_OPMODE_FULL;
 
 	rsConfig = this;
 }
@@ -320,6 +325,7 @@ uint32_t p3ServerConfig::getConnectModes()
 
 uint32_t p3ServerConfig::getOperatingMode()
 {
+#ifdef SAVE_OPERATING_MODE
 	std::string modestr = mGeneralConfig->getSetting(RS_CONFIG_OPERATING_STRING);
 	uint32_t mode = RS_OPMODE_FULL;
 
@@ -340,11 +346,16 @@ uint32_t p3ServerConfig::getOperatingMode()
 		mode = RS_OPMODE_MINIMAL;
 	}
 	return mode;
+#else
+	RsStackMutex stack(configMtx); /******* LOCKED MUTEX *****/
+	return mOpMode;
+#endif
 }
 
 
 bool p3ServerConfig::setOperatingMode(uint32_t opMode)
 {
+#ifdef SAVE_OPERATING_MODE
 	std::string modestr = "FULL";
 	switch(opMode)
 	{
@@ -364,6 +375,12 @@ bool p3ServerConfig::setOperatingMode(uint32_t opMode)
 		break;
 	}
 	mGeneralConfig->setSetting(RS_CONFIG_OPERATING_STRING, modestr);
+#else
+	{
+		RsStackMutex stack(configMtx); /******* LOCKED MUTEX *****/
+		mOpMode = opMode;
+	}
+#endif
 	return switchToOperatingMode(opMode);
 }
 
@@ -372,12 +389,16 @@ bool p3ServerConfig::switchToOperatingMode(uint32_t opMode)
 {
 	float dl_rate = 0;
 	float ul_rate = 0;
+	bool turtle_enabled = true;
 
 	{
 		RsStackMutex stack(configMtx); /******* LOCKED MUTEX *****/
 		dl_rate = mRateDownload;
 		ul_rate = mRateUpload;
 	}
+
+	std::cerr << "p3ServerConfig::switchToOperatingMode(" << opMode << ")";
+	std::cerr << std::endl;
 
 	switch (opMode)
 	{
@@ -388,17 +409,20 @@ bool p3ServerConfig::switchToOperatingMode(uint32_t opMode)
 			/* switch on popups, enable hashing */
                 	//setMaxRate(true, mri); // In / Download
                 	//setMaxRate(false, mro); // Out / Upload.
+			turtle_enabled = true;
 		break;
 		case RS_OPMODE_NOTURTLE:
 			/* switch on all transfers - except turtle, enable hashing */
 			/* 100% bandwidth */
 			/* switch on popups, enable hashing */
+			turtle_enabled = false;
 
 		break;
 		case RS_OPMODE_GAMING:
 			/* switch on all transfers */
 			/* reduce bandwidth to 25% */
 			/* switch off popups, enable hashing */
+			turtle_enabled = true;
 
 			dl_rate *= 0.25;
 			ul_rate *= 0.25;
@@ -408,6 +432,7 @@ bool p3ServerConfig::switchToOperatingMode(uint32_t opMode)
 			/* reduce bandwidth to 10%, but make sure there is enough for VoIP */
 			/* switch on popups, enable hashing */
 
+			turtle_enabled = false;
 
 			dl_rate *= 0.10;
 			ul_rate *= 0.10;
@@ -427,8 +452,16 @@ bool p3ServerConfig::switchToOperatingMode(uint32_t opMode)
 	{
         	mPqiHandler -> setMaxRate(true, dl_rate);
         	mPqiHandler -> setMaxRate(false, ul_rate);
+
+		std::cerr << "p3ServerConfig::switchToOperatingMode() D/L: " << dl_rate << " U/L: " << ul_rate;
+		std::cerr << std::endl;
+
 	}
 
+	std::cerr << "p3ServerConfig::switchToOperatingMode() Turtle Mode: " << turtle_enabled;
+	std::cerr << std::endl;
+
+	rsTurtle->setSessionEnabled(turtle_enabled);
 	return true;
 }
 

@@ -88,8 +88,13 @@ class RsTurtle
 		RsTurtle() {}
 		virtual ~RsTurtle() {}
 
+		// This is saved permanently.
 		virtual void setEnabled(bool) = 0 ;
 		virtual bool enabled() const = 0 ;
+
+		// This is temporary, used by Operating Mode.
+		virtual void setSessionEnabled(bool) = 0 ;
+		virtual bool sessionEnabled() const = 0 ;
 
 		// Lauches a search request through the pipes, and immediately returns
 		// the request id, which will be further used by the gui to store results

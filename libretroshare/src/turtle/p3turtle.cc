@@ -105,6 +105,8 @@ p3turtle::p3turtle(p3LinkMgr *lm,ftServer *fs)
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
 	_turtle_routing_enabled = true ;
+	_turtle_routing_session_enabled = true;
+
 	_ft_server = fs ;
 	_ft_controller = fs->getController() ;
 
@@ -140,6 +142,25 @@ bool p3turtle::enabled() const
 	return _turtle_routing_enabled ;
 }
 
+
+void p3turtle::setSessionEnabled(bool b) 
+{
+	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
+	_turtle_routing_session_enabled = b;
+
+	if(b)
+		std::cerr << "Enabling turtle routing for this Session" << std::endl;
+	else
+		std::cerr << "Disabling turtle routing for this Session" << std::endl;
+}
+
+bool p3turtle::sessionEnabled() const
+{
+	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
+	return _turtle_routing_session_enabled ;
+}
+
+
 int p3turtle::tick()
 {
 	// Handle tunnel trafic
@@ -173,7 +194,7 @@ int p3turtle::tick()
 #ifdef P3TURTLE_DEBUG
 		std::cerr << "Calling tunnel management." << std::endl ;
 #endif
-		if(_turtle_routing_enabled)
+		if(_turtle_routing_enabled && _turtle_routing_session_enabled)
 			manageTunnels() ;
 
 		{
@@ -728,7 +749,7 @@ int p3turtle::handleIncoming()
 	{
 		nhandled++;
 
-		if(!_turtle_routing_enabled)
+		if(!(_turtle_routing_enabled && _turtle_routing_session_enabled))
 			delete item ;
 		else
 		{
