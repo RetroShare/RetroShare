@@ -26,17 +26,12 @@
 
 #include "StatusMessage.h"
 #include "ProfileManager.h"
+#include "util/DateTime.h"
 
 #include <QApplication>
 #include <QClipboard>
 #include <QMessageBox>
-#include <QTime>
-
-#include <iomanip>
-
-/* Define the format used for displaying the date and time */
-#define DATETIME_FMT  "MMM dd hh:mm:ss"
-
+#include <QDateTime>
 
 /** Default constructor */
 ProfileWidget::ProfileWidget(QWidget *parent, Qt::WFlags flags)
@@ -44,12 +39,12 @@ ProfileWidget::ProfileWidget(QWidget *parent, Qt::WFlags flags)
 {
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
-  
+
     connect(ui.editstatustoolButton,SIGNAL(clicked()), this, SLOT(statusmessagedlg()));
     connect(ui.CopyCertButton,SIGNAL(clicked()), this, SLOT(copyCert()));
     connect(ui.profile_Button,SIGNAL(clicked()), this, SLOT(profilemanager()));
 
-    ui.onlinesince->setText(QDateTime::currentDateTime().toString(DATETIME_FMT));
+    ui.onlinesince->setText(DateTime::formatLongDateTime(QDateTime::currentDateTime()));
 }
 
 void ProfileWidget::showEvent ( QShowEvent * /*event*/ )
@@ -61,10 +56,6 @@ void ProfileWidget::showEvent ( QShowEvent * /*event*/ )
         ui.country->setText(QString::fromUtf8(detail.location.c_str()));
 
         ui.peerid->setText(QString::fromStdString(detail.id));
-        
-        // Dont Show a timestamp in RS calculate the day
-        QDateTime date = QDateTime::fromTime_t(detail.lastConnect);
-        QString stime = date.toString(Qt::LocalDate);
 
         /* set retroshare version */
         std::map<std::string, std::string>::iterator vit;
@@ -113,7 +104,7 @@ void ProfileWidget::copyCert()
                          QMessageBox::Ok, QMessageBox::Ok);
         return;
     }
-    
+
     QClipboard *clipboard = QApplication::clipboard();
     clipboard->setText(QString::fromStdString(cert));
                                 
@@ -121,7 +112,6 @@ void ProfileWidget::copyCert()
                              tr("RetroShare"),
                              tr("Your Cert is copied to Clipboard, paste and send it to your "
                                 "friend via email or some other way"));                               
-
 }
 
 void ProfileWidget::profilemanager()
