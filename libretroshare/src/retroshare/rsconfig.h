@@ -117,6 +117,12 @@ extern RsServerConfig *rsConfig;
 #define RS_CONFIG_ADVANCED		0x0101
 
 
+#define RS_OPMODE_FULL		0x0001
+#define RS_OPMODE_NOTURTLE	0x0002
+#define RS_OPMODE_GAMING	0x0004
+#define RS_OPMODE_MINIMAL	0x0008
+
+
 class RsConfigStartup
 {
 	public:
@@ -266,6 +272,14 @@ virtual uint32_t getConnectModes() = 0;
 virtual bool getConfigurationOption(uint32_t key, std::string &opt) = 0;
 virtual bool setConfigurationOption(uint32_t key, const std::string &opt) = 0;
 
+
+	/* Operating Mode */
+virtual uint32_t getOperatingMode() = 0;
+virtual bool     setOperatingMode(uint32_t opMode) = 0;
+
+	/* Data Rate Control - to be moved here */
+virtual int SetDataRates( int downKb, int upKb ) = 0;
+virtual int GetDataRates( float &inKb, float &outKb ) = 0;
 
 };
 

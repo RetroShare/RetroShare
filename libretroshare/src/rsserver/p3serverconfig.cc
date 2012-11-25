@@ -278,4 +278,105 @@ uint32_t p3ServerConfig::getConnectModes()
 	return mNetMgr->getConnectModes();
 }
 
+        /* Operating Mode */
+#define RS_CONFIG_OPERATING_STRING 	"OperatingMode"
+
+uint32_t p3ServerConfig::getOperatingMode()
+{
+	std::string modestr = mGeneralConfig->getSetting(RS_CONFIG_OPERATING_STRING);
+	uint32_t mode = RS_OPMODE_FULL;
+
+	if (modestr == "FULL")
+	{
+		mode = RS_OPMODE_FULL;
+	}
+	else if (modestr == "NOTURTLE")
+	{
+		mode = RS_OPMODE_NOTURTLE;
+	}
+	else if (modestr == "GAMING")
+	{
+		mode = RS_OPMODE_GAMING;
+	}
+	else if (modestr == "MINIMAL_TRANSFER")
+	{
+		mode = RS_OPMODE_MINIMAL;
+	}
+	return mode;
+}
+
+bool p3ServerConfig::setOperatingMode(uint32_t opMode)
+{
+	std::string modestr = "FULL";
+	switch(opMode)
+	{
+		case RS_OPMODE_FULL:
+			modestr = "FULL";
+		break;
+		case RS_OPMODE_NOTURTLE:
+			modestr = "NOTURTLE";
+
+		break;
+		case RS_OPMODE_GAMING:
+			modestr = "GAMING";
+
+		break;
+		case RS_OPMODE_MINIMAL:
+			modestr = "MINIMAL_TRANSFER";
+		break;
+	}
+	mGeneralConfig->setSetting(RS_CONFIG_OPERATING_STRING, modestr);
+	return switchToOperatingMode(opMode);
+}
+
+bool p3ServerConfig::switchToOperatingMode(uint32_t opMode)
+{
+	switch (opMode)
+	{
+		default:
+		case RS_OPMODE_FULL:
+			/* switch on all transfers */
+			/* 100% bandwidth */
+			/* switch on popups, enable hashing */
+		break;
+		case RS_OPMODE_NOTURTLE:
+			/* switch on all transfers - except turtle, enable hashing */
+			/* 100% bandwidth */
+			/* switch on popups, enable hashing */
+
+		break;
+		case RS_OPMODE_GAMING:
+			/* switch on all transfers */
+			/* reduce bandwidth to 25% */
+			/* switch off popups, enable hashing */
+		break;
+		case RS_OPMODE_MINIMAL:
+			/* switch off all transfers */
+			/* reduce bandwidth to 10%, but make sure there is enough for VoIP */
+			/* switch on popups, enable hashing */
+		break;
+	}
+	return true;
+}
+
+
+/* handle data rates.
+ * Mutex must be handled at the lower levels: TODO */
+
+int p3ServerConfig::SetDataRates( int downKb, int upKb ) /* in kbrates */
+{
+        //pqih -> setMaxRate(true, totalDownload);
+        //pqih -> setMaxRate(false, totalUpload);
+
+        //pqih -> save_config();
+        return 1;
+}
+
+
+int p3ServerConfig::GetDataRates( float &inKb, float &outKb ) /* in kbrates */
+{
+        //pqih -> getCurrentRates(inKb, outKb);
+        return 1;
+}
+
 

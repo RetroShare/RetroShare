@@ -84,9 +84,18 @@ virtual uint32_t getConnectModes();
 virtual bool getConfigurationOption(uint32_t key, std::string &opt);
 virtual bool setConfigurationOption(uint32_t key, const std::string &opt);
 
+	/* Operating Mode */
+virtual uint32_t getOperatingMode();
+virtual bool     setOperatingMode(uint32_t opMode);
+
+virtual int SetDataRates( int downKb, int upKb );
+virtual int GetDataRates( float &inKb, float &outKb );
+
 /********************* ABOVE is RsConfig Interface *******/
 
 	private:
+
+bool switchToOperatingMode(uint32_t opMode);
 
 bool findConfigurationOption(uint32_t key, std::string &keystr);
 
