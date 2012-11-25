@@ -262,19 +262,23 @@ void pqipersongrp::statusChanged()
 
 	if (RsInit::isWindowsXP() == false) {
 		/* the problem only exist in Windows XP */
+		RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 		waitingIds.clear();
 		return;
 	}	
 
-	/* there is no need for a mutex for waitingIds */
-
-	if (waitingIds.empty()) {
-		/* nothing to do */
-		return;
+	{
+		RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+		if (waitingIds.empty()) 
+		{
+			/* nothing to do */
+			return;
+		}
 	}
 
 	/* check for active connections and start waiting id's */
 	long connect_count = 0;
+	std::list<std::string> toConnect;
 
 	{
 		RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
@@ -307,27 +311,40 @@ void pqipersongrp::statusChanged()
 			}
 		}
 
-	} /* UNLOCKED */
 
 #ifdef PGRP_DEBUG
-	std::cerr << "pqipersongrp::statusChanged() There are " << connect_count << " connection attempts and " << waitingIds.size() << " waiting connections. Can start " << (MAX_CONNECT_COUNT - connect_count) << " connection attempts." << std::endl;
-#endif
-
-	/* start some waiting id's */
-	for (int i = connect_count; i < MAX_CONNECT_COUNT; i++) {
-		if (waitingIds.empty()) {
-			break;
-		}
-		std::string waitingId = waitingIds.front();
-		waitingIds.pop_front();
-
-#ifdef PGRP_DEBUG
-		std::cerr << " pqipersongrp::statusChanged() id: " << waitingId << " connect peer";
+		std::cerr << "pqipersongrp::statusChanged() There are ";
+		std::cerr << connect_count << " connection attempts and " << waitingIds.size();
+		std::cerr << " waiting connections. Can start ";
+		std::cerr << (MAX_CONNECT_COUNT - connect_count) << " connection attempts.";
 		std::cerr << std::endl;
 #endif
 
-		connectPeer(waitingId, true);
+		RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+		/* start some waiting id's */
+		for (int i = connect_count; i < MAX_CONNECT_COUNT; i++) 
+		{
+			if (waitingIds.empty()) {
+				break;
+			}
+			std::string waitingId = waitingIds.front();
+			waitingIds.pop_front();
+	
+	#ifdef PGRP_DEBUG
+			std::cerr << " pqipersongrp::statusChanged() id: " << waitingId << " connect peer";
+			std::cerr << std::endl;
+	#endif
+	
+			toConnect.push_back(waitingId);
+		}
+	} /* UNLOCKED */
+
+	std::list<std::string>::iterator cit;
+	for(cit = toConnect.begin(); cit != toConnect.end(); cit++)
+	{
+		connectPeer(*cit, true);
 	}
+		
 }
 ///////////////////////////////////////////////////////////
 #endif
