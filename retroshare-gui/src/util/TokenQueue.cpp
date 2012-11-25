@@ -26,16 +26,14 @@
 
 #include <QTimer>
 
-
 /******
  * #define ID_DEBUG 1
  *****/
 
 /** Constructor */
 TokenQueue::TokenQueue(RsTokenService *service, TokenResponse *resp)
-:QWidget(NULL), mService(service), mResponder(resp)
+	: QWidget(NULL), mService(service), mResponder(resp)
 {
-	return;
 }
 
 bool TokenQueue::requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, std::list<RsGxsGroupId>& ids, uint32_t usertype)
@@ -47,14 +45,13 @@ bool TokenQueue::requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTok
 	return true;
 }
 
-
 bool TokenQueue::requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, uint32_t usertype)
 {
-    uint32_t basictype = TOKENREQ_GROUPINFO;
-    mService->requestGroupInfo(token, anstype, opts);
-    queueRequest(token, basictype, anstype, usertype);
+	uint32_t basictype = TOKENREQ_GROUPINFO;
+	mService->requestGroupInfo(token, anstype, opts);
+	queueRequest(token, basictype, anstype, usertype);
 
-    return true;
+	return true;
 }
 
 bool TokenQueue::requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, const GxsMsgReq& ids, uint32_t usertype)
@@ -66,35 +63,33 @@ bool TokenQueue::requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokRe
 	return true;
 }
 
-
 bool TokenQueue::requestMsgRelatedInfo(uint32_t &token, uint32_t anstype,  const RsTokReqOptions &opts, const std::vector<RsGxsGrpMsgIdPair> &msgId, uint32_t usertype)
 {
-    uint32_t basictype = TOKENREQ_MSGINFO;
-    mService->requestMsgRelatedInfo(token, anstype, opts, msgId);
-    queueRequest(token, basictype, anstype, usertype);
+	uint32_t basictype = TOKENREQ_MSGINFO;
+	mService->requestMsgRelatedInfo(token, anstype, opts, msgId);
+	queueRequest(token, basictype, anstype, usertype);
 
-    return true;
+	return true;
 }
 
-
 bool TokenQueue::requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts,
-                                  const std::list<RsGxsGroupId> &grpIds, uint32_t usertype)
+								const std::list<RsGxsGroupId> &grpIds, uint32_t usertype)
 {
-    uint32_t basictype = TOKENREQ_MSGINFO;
-    mService->requestMsgInfo(token, anstype, opts, grpIds);
-    queueRequest(token, basictype, anstype, usertype);
+	uint32_t basictype = TOKENREQ_MSGINFO;
+	mService->requestMsgInfo(token, anstype, opts, grpIds);
+	queueRequest(token, basictype, anstype, usertype);
 
-    return true;
+	return true;
 }
 
 
 void TokenQueue::queueRequest(uint32_t token, uint32_t basictype, uint32_t anstype, uint32_t usertype)
 {
-        std::cerr << "TokenQueue::queueRequest() Token: " << token << " Type: " << basictype;
+	std::cerr << "TokenQueue::queueRequest() Token: " << token << " Type: " << basictype;
 	std::cerr << " AnsType: " << anstype << " UserType: " << usertype;
 	std::cerr << std::endl;
 
-        TokenRequest req;
+	TokenRequest req;
 	req.mToken = token;
 	req.mType = basictype;
 	req.mAnsType = anstype;
@@ -103,7 +98,7 @@ void TokenQueue::queueRequest(uint32_t token, uint32_t basictype, uint32_t ansty
 	gettimeofday(&req.mRequestTs, NULL);
 	req.mPollTs = req.mRequestTs;
 
-        mRequests.push_back(req);
+	mRequests.push_back(req);
 
 	if (mRequests.size() == 1)
 	{
@@ -119,26 +114,23 @@ void TokenQueue::doPoll(float dt)
 	QTimer::singleShot((int) (dt * 1000.0), this, SLOT(pollRequests()));
 }
 
-
 void TokenQueue::pollRequests()
 {
 	double pollPeriod = 1.0; // max poll period.
 
-
-	if (mRequests.empty())
-	{
+	if (mRequests.empty())	{
 		return;
 	}
 
-        TokenRequest req;
-        req = mRequests.front();
-        mRequests.pop_front();
+	TokenRequest req;
+	req = mRequests.front();
+	mRequests.pop_front();
 
-        if (checkForRequest(req.mToken))
-        {
-            /* clean it up and handle */
-            loadRequest(req);
-        }
+	if (checkForRequest(req.mToken))
+	{
+		/* clean it up and handle */
+		loadRequest(req);
+	}
 	else
 	{
 
@@ -147,15 +139,14 @@ void TokenQueue::pollRequests()
 		/* drop old requests too */
 		if (time(NULL) - req.mRequestTs.tv_sec < MAX_REQUEST_AGE)
 		{
-        		mRequests.push_back(req);
+			mRequests.push_back(req);
 		}
 		else
 		{
-        		std::cerr << "TokenQueue::loadRequest(): ";
+			std::cerr << "TokenQueue::loadRequest(): ";
 			std::cerr << "Dropping old Token: " << req.mToken << " Type: " << req.mType;
 			std::cerr << std::endl;
 		}
-
 	}
 
 	if (mRequests.size() > 0)
@@ -164,35 +155,31 @@ void TokenQueue::pollRequests()
 	}
 }
 
-
 bool TokenQueue::checkForRequest(uint32_t token)
 {
 	/* check token */
-    uint32_t status =  mService->requestStatus(token);
-    return ( (RsTokenService::GXS_REQUEST_V2_STATUS_FAILED == status) ||
-            (RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE == status) );
+	uint32_t status =  mService->requestStatus(token);
+	return ( (RsTokenService::GXS_REQUEST_V2_STATUS_FAILED == status) ||
+			 (RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE == status) );
 }
 
 
 void TokenQueue::loadRequest(const TokenRequest &req)
 {
-        std::cerr << "TokenQueue::loadRequest(): ";
+	std::cerr << "TokenQueue::loadRequest(): ";
 	std::cerr << "Token: " << req.mToken << " Type: " << req.mType;
 	std::cerr << " AnsType: " << req.mAnsType << " UserType: " << req.mUserType;
 	std::cerr << std::endl;
 
 	mResponder->loadRequest(this, req);
-
-	return;
 }
-
 
 bool TokenQueue::cancelRequest(const uint32_t token)
 {
 	/* cancel at lower level first */
 	mService->cancelRequest(token);
 
-        std::list<TokenRequest>::iterator it;
+	std::list<TokenRequest>::iterator it;
 
 	for(it = mRequests.begin(); it != mRequests.end(); it++)
 	{
@@ -200,21 +187,15 @@ bool TokenQueue::cancelRequest(const uint32_t token)
 		{
 			mRequests.erase(it);
 
-                        std::cerr << "TokenQueue::cancelRequest() Cleared Request: " << token;
+			std::cerr << "TokenQueue::cancelRequest() Cleared Request: " << token;
 			std::cerr << std::endl;
 
 			return true;
 		}
 	}
 
-        std::cerr << "TokenQueue::cancelRequest() Failed to Find Request: " << token;
+	std::cerr << "TokenQueue::cancelRequest() Failed to Find Request: " << token;
 	std::cerr << std::endl;
 
 	return false;
 }
-
-
-
-
-
-
