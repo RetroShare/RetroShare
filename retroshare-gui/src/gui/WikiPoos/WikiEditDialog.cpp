@@ -77,6 +77,7 @@ void WikiEditDialog::setNewPage()
 	
 	ui.headerFrame->setHeaderImage(QPixmap(":/images/appointment-new_64.png"));
     ui.headerFrame->setHeaderText(tr("Create New Wiki Page"));
+    setWindowTitle(tr("Create New Wiki Page"));
 }
 
 
@@ -206,6 +207,7 @@ void WikiEditDialog::setupData(const std::string &groupId, const std::string &pa
 		
 	ui.headerFrame->setHeaderImage(QPixmap(":/images/story-editor_48.png"));
     ui.headerFrame->setHeaderText(tr("Edit Wiki Page"));
+    setWindowTitle(tr("Edit Wiki Page"));
 }
 
 
