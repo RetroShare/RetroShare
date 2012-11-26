@@ -988,7 +988,6 @@ posted {
             gui/Posted/PostedListDialog.h \
             gui/Posted/PostedItem.h \
             gui/Posted/PostedComments.h \
-            util/TokenQueueVEG.h \
             gui/Posted/PostedGroupDialog.h \
     gui/Posted/PostedCreatePostDialog.h \
     gui/Posted/PostedCreateCommentDialog.h
@@ -1004,7 +1003,6 @@ posted {
             gui/Posted/PostedListDialog.cpp \
             gui/Posted/PostedItem.cpp \
             gui/Posted/PostedComments.cpp \
-            util/TokenQueueVEG.cpp \
             gui/Posted/PostedGroupDialog.cpp \
     gui/Posted/PostedCreatePostDialog.cpp \
     gui/Posted/PostedCreateCommentDialog.cpp
