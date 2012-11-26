@@ -268,7 +268,7 @@
              </sizepolicy>
             </property>
             <property name="toolTip">
-             <string>Edit Personal message</string>
+             <string>Edit status message</string>
             </property>
             <property name="text">
              <string/>
@@ -762,10 +762,10 @@
      <normaloff>:/images/message-news.png</normaloff>:/images/message-news.png</iconset>
    </property>
    <property name="text">
-    <string>Set your Personal Message</string>
+    <string>Set your status message</string>
    </property>
    <property name="toolTip">
-    <string>Edit your status Message</string>
+    <string>Edit your status message</string>
    </property>
   </action>
   <action name="actionMessageHistory">

@@ -35,10 +35,10 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="toolTip">
-         <string>Edit Personal message</string>
+         <string>Edit status message</string>
         </property>
         <property name="text">
-         <string>Edit Personal message</string>
+         <string>Edit status message</string>
         </property>
         <property name="icon">
          <iconset resource="../images.qrc">

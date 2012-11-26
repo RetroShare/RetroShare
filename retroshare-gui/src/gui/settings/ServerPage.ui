@@ -377,7 +377,7 @@ p, li { white-space: pre-wrap; }
          <item>
           <widget class="QLabel" name="label_6">
            <property name="text">
-            <string>Max average tunnel request forwarded per second:</string>
+            <string>Max. tunnel requests forwarded per second:</string>
            </property>
           </widget>
          </item>

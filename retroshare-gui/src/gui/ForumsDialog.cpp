@@ -1872,14 +1872,21 @@ void ForumsFillThread::run()
 
         item->setText(COLUMN_THREAD_TITLE, ForumsDialog::titleFromInfo(msginfo));
 
-        text = QString::fromUtf8(rsPeers->getPeerName(msginfo.srcId).c_str());
-        if (text.isEmpty())
+        if (msginfo.msgflags & RS_DISTRIB_MISSING_MSG)
         {
-            item->setText(COLUMN_THREAD_AUTHOR, tr("Anonymous"));
+            item->setText(COLUMN_THREAD_AUTHOR, tr("Unknown"));
         }
         else
         {
-            item->setText(COLUMN_THREAD_AUTHOR, text);
+            text = QString::fromUtf8(rsPeers->getPeerName(msginfo.srcId).c_str());
+            if (text.isEmpty())
+            {
+                item->setText(COLUMN_THREAD_AUTHOR, tr("Anonymous"));
+            }
+            else
+            {
+                item->setText(COLUMN_THREAD_AUTHOR, text);
+            }
         }
 
         if (msginfo.msgflags & RS_DISTRIB_AUTHEN_REQ)

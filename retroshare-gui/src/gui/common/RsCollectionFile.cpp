@@ -134,7 +134,7 @@ RsCollectionFile::RsCollectionFile(const std::vector<DirDetails>& file_infos)
 
 static void showErrorBox(const QString& filename, const QString& error)
 {
-	QMessageBox mb(QMessageBox::Warning, QObject::tr("Treatment of collection file has failed"), QObject::tr("The collection file %1 could not be opened.\nReported error is: %2").arg(filename).arg(error), QMessageBox::Ok);
+	QMessageBox mb(QMessageBox::Warning, QObject::tr("Failed to process collection file"), QObject::tr("The collection file %1 could not be opened.\nReported error is: %2").arg(filename).arg(error), QMessageBox::Ok);
 	mb.setWindowIcon(QIcon(":/images/rstray3.png"));
 	mb.exec();
 }
