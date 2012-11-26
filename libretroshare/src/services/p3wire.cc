@@ -1,0 +1,207 @@
+/*
+ * libretroshare/src/services p3wire.cc
+ *
+ * Wire interface for RetroShare.
+ *
+ * Copyright 2012-2012 by Robert Fernie.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License Version 2.1 as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
+ *
+ * Please report all bugs and problems to "retroshare@lunamutt.com".
+ *
+ */
+
+#include "services/p3wire.h"
+#include "serialiser/rswireitems.h"
+
+#include "util/rsrandom.h"
+
+/****
+ * #define WIRE_DEBUG 1
+ ****/
+
+RsWire *rsWire = NULL;
+
+
+p3Wire::p3Wire(RsGeneralDataService* gds, RsNetworkExchangeService* nes)
+	:RsGenExchange(gds, nes, new RsGxsWireSerialiser(), RS_SERVICE_GXSV1_TYPE_WIRE), RsWire(this), mWireMtx("WireMtx")
+{
+
+}
+
+void p3Wire::service_tick()
+{
+	return;
+}
+
+
+void p3Wire::notifyChanges(std::vector<RsGxsNotify*>& changes)
+{
+	std::cerr << "p3Wire::notifyChanges() New stuff";
+	std::cerr << std::endl;
+
+	receiveChanges(changes);
+}
+
+        /* Specific Service Data */
+bool p3Wire::getGroupData(const uint32_t &token, std::vector<RsWireGroup> &groups)
+{
+	std::cerr << "p3Wire::getGroupData()";
+	std::cerr << std::endl;
+
+	std::vector<RsGxsGrpItem*> grpData;
+	bool ok = RsGenExchange::getGroupData(token, grpData);
+	
+	if(ok)
+	{
+		std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
+		
+		for(; vit != grpData.end(); vit++)
+		{
+			RsGxsWireGroupItem* item = dynamic_cast<RsGxsWireGroupItem*>(*vit);
+
+			if (item)
+			{
+				RsWireGroup group = item->group;
+				group.mMeta = item->meta;
+				delete item;
+				groups.push_back(group);
+
+				std::cerr << "p3Wire::getGroupData() Adding WireGroup to Vector: ";
+				std::cerr << std::endl;
+				std::cerr << group;
+				std::cerr << std::endl;
+			}
+			else
+			{
+				std::cerr << "Not a WireGroupItem, deleting!" << std::endl;
+				delete *vit;
+			}
+
+		}
+	}
+	return ok;
+}
+
+
+bool p3Wire::getPulseData(const uint32_t &token, std::vector<RsWirePulse> &pulses)
+{
+	GxsMsgDataMap msgData;
+	bool ok = RsGenExchange::getMsgData(token, msgData);
+	
+	if(ok)
+	{
+		GxsMsgDataMap::iterator mit = msgData.begin();
+		
+		for(; mit != msgData.end();  mit++)
+		{
+			RsGxsGroupId grpId = mit->first;
+			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
+			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
+			
+			for(; vit != msgItems.end(); vit++)
+			{
+				RsGxsWirePulseItem* item = dynamic_cast<RsGxsWirePulseItem*>(*vit);
+				
+				if(item)
+				{
+					RsWirePulse pulse = item->pulse;
+					pulse.mMeta = item->meta;
+					pulses.push_back(pulse);
+					delete item;
+				}
+				else
+				{
+					std::cerr << "Not a WikiPulse Item, deleting!" << std::endl;
+					delete *vit;
+				}
+			}
+		}
+	}
+	return ok;
+}
+
+
+bool p3Wire::createGroup(uint32_t &token, RsWireGroup &group)
+{
+	RsGxsWireGroupItem* groupItem = new RsGxsWireGroupItem();
+	groupItem->group = group;
+	groupItem->meta = group.mMeta;
+
+        std::cerr << "p3Wire::createGroup(): ";
+	std::cerr << std::endl;
+	std::cerr << group;
+	std::cerr << std::endl;
+
+        std::cerr << "p3Wire::createGroup() pushing to RsGenExchange";
+	std::cerr << std::endl;
+
+	RsGenExchange::publishGroup(token, groupItem);
+	return true;
+}
+
+
+bool p3Wire::createPulse(uint32_t &token, RsWirePulse &pulse)
+{
+	std::cerr << "p3Wire::createPulse(): " << pulse;
+	std::cerr << std::endl;
+
+        RsGxsWirePulseItem* pulseItem = new RsGxsWirePulseItem();
+        pulseItem->pulse = pulse;
+        pulseItem->meta = pulse.mMeta;
+
+        RsGenExchange::publishMsg(token, pulseItem);
+	return true;
+}
+
+
+std::ostream &operator<<(std::ostream &out, const RsWireGroup &group)
+{
+        out << "RsWireGroup [ ";
+        out << " Name: " << group.mMeta.mGroupName;
+        out << " Desc: " << group.mDescription;
+        //out << " Category: " << group.mCategory;
+        out << " ]";
+        return out;
+}
+
+std::ostream &operator<<(std::ostream &out, const RsWirePulse &pulse)
+{
+        out << "RsWirePulse [ ";
+        out << "Title: " << pulse.mMeta.mMsgName;
+        out << "PulseText: " << pulse.mPulseText;
+        out << "]";
+        return out;
+}
+
+/***** FOR TESTING *****/
+
+std::string p3Wire::genRandomId()
+{
+        std::string randomId;
+        for(int i = 0; i < 20; i++)
+        {
+                randomId += (char) ('a' + (RSRandom::random_u32() % 26));
+        }
+
+        return randomId;
+}
+
+void p3Wire::generateDummyData()
+{
+
+}
+
+

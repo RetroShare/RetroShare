@@ -1829,12 +1829,7 @@ RsTurtle *rsTurtle = NULL ;
 #include "services/p3posted.h"
 #include "services/p3photoservice.h"
 #include "services/p3gxsforums.h"
-
-// Not too many to convert now!
-#include "services/p3wikiserviceVEG.h"
-#include "services/p3wireVEG.h"
-//#include "services/p3idserviceVEG.h"
-//#include "services/p3forumsVEG.h"
+#include "services/p3wire.h"
 #endif
 
 #ifndef PQI_DISABLE_TUNNEL
@@ -2284,7 +2279,8 @@ int RsServer::StartupRetroShare()
         // empty and matches an exist directory location
         // the given ssl user id then this directory is cleaned
         // and deleted
-        std::string priorGxsDir = "./" + mLinkMgr->getOwnId() + "/", currGxsDir = RsInitConfig::configDir + "/GXS_phase1";
+        std::string priorGxsDir = "./" + mLinkMgr->getOwnId() + "/";
+	std::string currGxsDir = RsInitConfig::configDir + "/GXS_phase1";
         bool cleanUpGxsDir = false;
 
         if(!priorGxsDir.empty())
@@ -2297,21 +2293,6 @@ int RsServer::StartupRetroShare()
             std::cerr << "RsInit::StartupRetroShare() Clean up of Old Gxs Dir Failed!";
         else
             rmdir(priorGxsDir.c_str());
-
-        RsDirUtil::checkCreateDirectory(currGxsDir);
-
-	// Testing New Cache Services.
-	//p3WikiServiceVEG *mWikis = new p3WikiServiceVEG(RS_SERVICE_GXSV1_TYPE_WIKI);
-	//pqih -> addService(mWikis);
-	
-	// Testing New Cache Services.
-        p3WireVEG *mWire = new p3WireVEG(RS_SERVICE_GXSV1_TYPE_WIRE);
-	pqih -> addService(mWire);
-
-	// Testing New Cache Services.
-        //p3ForumsVEG *mForumsV2 = new p3ForumsVEG(RS_SERVICE_GXSV1_TYPE_FORUMS);
-	//pqih -> addService(mForumsV2);
-
 
         // TODO: temporary to store GXS service data, remove
         RsDirUtil::checkCreateDirectory(currGxsDir);
@@ -2339,7 +2320,6 @@ int RsServer::StartupRetroShare()
         /**** Photo service ****/
 
         // create photo authentication policy
-
         uint32_t photoAuthenPolicy = 0;
 
         uint8_t flag = 0;
@@ -2404,6 +2384,23 @@ int RsServer::StartupRetroShare()
         RsGxsNetService* wiki_ns = new RsGxsNetService(
                         RS_SERVICE_GXSV1_TYPE_WIKI, wiki_ds, nxsMgr, mWiki);
 
+
+        /**** Wire GXS service ****/
+
+        p3Wire *mWire = NULL;
+
+        RsGeneralDataService* wire_ds = new RsDataService(currGxsDir + "/", "wire_db",
+                                                            RS_SERVICE_GXSV1_TYPE_WIRE);
+
+        wire_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
+
+        mWire = new p3Wire(wire_ds, NULL);
+
+        // create GXS photo service
+        RsGxsNetService* wire_ns = new RsGxsNetService(
+                        RS_SERVICE_GXSV1_TYPE_WIRE, wire_ds, nxsMgr, mWire);
+
+
         /**** Forum GXS service ****/
 
         p3GxsForums *mGxsForums = NULL;
@@ -2425,19 +2422,13 @@ int RsServer::StartupRetroShare()
 #ifdef ENABLE_GXS_CORE
 
         /*** start up GXS core runner ***/
-
-//        GxsCoreServer* mGxsCore = new GxsCoreServer();
-        //mGxsCore->addService(mGxsIdService);
 #if ENABLE_OTHER_GXS_SERVICES
         createThread(*mGxsIdService);
         createThread(*mPhoto);
         createThread(*mPosted);
         createThread(*mWiki);
+        createThread(*mWire);
         createThread(*mGxsForums);
-//
-//        mGxsCore->addService(mPhoto);
-//        mGxsCore->addService(mPosted);
-//        mGxsCore->addService(mWiki);
 #endif
 
         // cores ready start up GXS net servers
@@ -2446,6 +2437,7 @@ int RsServer::StartupRetroShare()
         createThread(*photo_ns);
         createThread(*posted_ns);
         createThread(*wiki_ns);
+        createThread(*wire_ns);
         createThread(*gxsforums_ns);
 #endif
 
@@ -2458,8 +2450,6 @@ int RsServer::StartupRetroShare()
         pqih->addService(gxsforums_ns);
 #endif
 
-        // start up gxs core server
-        //createThread(*mGxsCore);
 #endif
 
 
@@ -2728,10 +2718,9 @@ int RsServer::StartupRetroShare()
         rsPosted = mPosted;
         rsPhoto = mPhoto;
         rsGxsForums = mGxsForums;
+        rsWire = mWire;
 #endif
 
-        rsWireVEG = mWire;
-        //rsForumsVEG = mForumsV2;
 
 #endif // ENABLE_GXS_SERVICES
 
@@ -2747,7 +2736,6 @@ int RsServer::StartupRetroShare()
 #else
 	rsGameLauncher = NULL;
 #endif
-
 
 	/* put a welcome message in! */
 	if (RsInitConfig::firsttime_run)

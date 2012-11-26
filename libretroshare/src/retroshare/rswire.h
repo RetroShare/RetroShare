@@ -30,38 +30,20 @@
 #include <string>
 #include <list>
 
-#include <retroshare/rsidentityVEG.h>
+#include "gxs/rstokenservice.h"
+#include "gxs/rsgxsifaceimpl.h"
+
 
 /* The Main Interface Class - for information about your Peers */
-class RsWireVEG;
-extern RsWireVEG *rsWireVEG;
-
-class RsWireGroupShare
-{
-	public:
-
-	uint32_t mShareType;
-	std::string mShareGroupId;
-	std::string mPublishKey;
-	uint32_t mCommentMode;
-	uint32_t mResizeMode;
-};
+class RsWire;
+extern RsWire *rsWire;
 
 class RsWireGroup
 {
 	public:
 
 	RsGroupMetaData mMeta;
-
-	//std::string mGroupId;
-	//std::string mName;
-
 	std::string mDescription;
-	std::string mCategory;
-
-	std::string mHashTags;
-
-	RsWireGroupShare mShareOptions;
 };
 
 
@@ -102,46 +84,40 @@ class RsWirePulse
 
 	RsMsgMetaData mMeta;
 
-	//std::string mGroupId;
-	//std::string mOrigPageId;
-	//std::string mPrevId;
-	//std::string mPageId;
-	//std::string mName;
+	std::string mPulseText; // all the text is stored here.
+	std::string mHashTags; 
 
-	std::string mPulse; // all the text is stored here.
+// These will be added at some point.
+//	std::string mInReplyPulse;
 
-	std::string mInReplyPulse;
+//	uint32_t mPulseFlags;
 
-	uint32_t mPulseFlags;
+//	std::list<std::string> mMentions;
+//	std::list<std::string> mHashTags;
+//	std::list<std::string> mUrls;
 
-	std::list<std::string> mMentions;
-	std::list<std::string> mHashTags;
-	std::list<std::string> mUrls;
-
-	RsWirePlace mPlace;
+//	RsWirePlace mPlace;
 };
 
 
+std::ostream &operator<<(std::ostream &out, const RsWireGroup &group);
+std::ostream &operator<<(std::ostream &out, const RsWirePulse &pulse);
 
 
-
-class RsWireVEG: public RsTokenServiceVEG
+class RsWire: public RsGxsIfaceImpl
 {
 	public:
 
-	RsWireVEG()  { return; }
-virtual ~RsWireVEG() { return; }
+	RsWire(RsGenExchange *gxs): RsGxsIfaceImpl(gxs)  { return; }
+virtual ~RsWire() { return; }
 
 	/* Specific Service Data */
-virtual bool getGroupData(const uint32_t &token, RsWireGroup &group) = 0;
-virtual bool getMsgData(const uint32_t &token, RsWirePulse &pulse) = 0;
+virtual bool getGroupData(const uint32_t &token, std::vector<RsWireGroup> &groups) = 0;
+virtual bool getPulseData(const uint32_t &token, std::vector<RsWirePulse> &pulses) = 0;
 
-	/* Create Stuff */
-virtual bool createGroup(uint32_t &token, RsWireGroup &group, bool isNew) = 0;
-virtual bool createPulse(uint32_t &token, RsWirePulse &pulse, bool isNew) = 0;
+virtual bool createGroup(uint32_t &token, RsWireGroup &group) = 0;
+virtual bool createPulse(uint32_t &token, RsWirePulse &pulse) = 0;
 
 };
-
-
 
 #endif

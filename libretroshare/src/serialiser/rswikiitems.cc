@@ -198,7 +198,7 @@ bool RsGxsWikiSerialiser::serialiseGxsWikiCollectionItem(RsGxsWikiCollectionItem
 #ifdef GXSID_DEBUG
 	if (!ok)
 	{
-		std::cerr << "RsGxsWikiSerialiser::serialiseGxsIdcollectionItem() NOK" << std::endl;
+		std::cerr << "RsGxsWikiSerialiser::serialiseGxsWikiCollectionItem() NOK" << std::endl;
 	}
 #endif
 	
@@ -354,7 +354,7 @@ bool RsGxsWikiSerialiser::serialiseGxsWikiSnapshotItem(RsGxsWikiSnapshotItem *it
 #ifdef GXSID_DEBUG
 	if (!ok)
 	{
-		std::cerr << "RsGxsWikiSerialiser::serialiseGxsIdgroupItem() NOK" << std::endl;
+		std::cerr << "RsGxsWikiSerialiser::serialiseGxsWikiSnapshotItem() NOK" << std::endl;
 	}
 #endif
 	
@@ -502,7 +502,7 @@ bool RsGxsWikiSerialiser::serialiseGxsWikiCommentItem(RsGxsWikiCommentItem *item
 #ifdef GXSID_DEBUG
 	if (!ok)
 	{
-		std::cerr << "RsGxsWikiSerialiser::serialiseGxsIdgroupItem() NOK" << std::endl;
+		std::cerr << "RsGxsWikiSerialiser::serialiseGxsWikiCommentItem() NOK" << std::endl;
 	}
 #endif
 	

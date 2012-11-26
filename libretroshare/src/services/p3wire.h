@@ -1,5 +1,5 @@
 /*
- * libretroshare/src/services: p3wikiservice.h
+ * libretroshare/src/services: p3wire.h
  *
  * Wiki interface for RetroShare.
  *
@@ -23,10 +23,10 @@
  *
  */
 
-#ifndef P3_WIKI_SERVICE_HEADER
-#define P3_WIKI_SERVICE_HEADER
+#ifndef P3_WIRE_SERVICE_HEADER
+#define P3_WIRE_SERVICE_HEADER
 
-#include "retroshare/rswiki.h"
+#include "retroshare/rswire.h"
 #include "gxs/rsgenexchange.h"
 
 #include <map>
@@ -38,10 +38,10 @@
  *
  */
 
-class p3Wiki: public RsGenExchange, public RsWiki
+class p3Wire: public RsGenExchange, public RsWire
 {
 public:
-    p3Wiki(RsGeneralDataService* gds, RsNetworkExchangeService* nes);
+    p3Wire(RsGeneralDataService* gds, RsNetworkExchangeService* nes);
 
 protected:
 
@@ -52,36 +52,20 @@ public:
 virtual void service_tick();
 
         /* Specific Service Data */
-virtual bool getCollections(const uint32_t &token, std::vector<RsWikiCollection> &collections);
-virtual bool getSnapshots(const uint32_t &token, std::vector<RsWikiSnapshot> &snapshots);
-virtual bool getComments(const uint32_t &token, std::vector<RsWikiComment> &comments);
+virtual bool getGroupData(const uint32_t &token, std::vector<RsWireGroup> &groups);
+virtual bool getPulseData(const uint32_t &token, std::vector<RsWirePulse> &pulses);
 
-virtual bool getRelatedSnapshots(const uint32_t &token, std::vector<RsWikiSnapshot> &snapshots);
-
-virtual bool submitCollection(uint32_t &token, RsWikiCollection &collection);
-virtual bool submitSnapshot(uint32_t &token, RsWikiSnapshot &snapshot);
-virtual bool submitComment(uint32_t &token, RsWikiComment &comment);
-
-virtual void generateDummyData();
+virtual bool createGroup(uint32_t &token, RsWireGroup &group);
+virtual bool createPulse(uint32_t &token, RsWirePulse &pulse);
 
 	private:
 
+virtual void generateDummyData();
 std::string genRandomId();
-//	RsMutex mWikiMtx;
+
+	RsMutex mWireMtx;
 
 
-	// Dummy Stuff.
-	void dummyTick();
-
-	bool mAboutActive;
-	uint32_t mAboutToken;
-	int  mAboutLines;
-	RsGxsMessageId mAboutThreadId;
-
-	bool mImprovActive;
-	uint32_t mImprovToken;
-	int  mImprovLines;
-	RsGxsMessageId mImprovThreadId;
 };
 
 #endif 

@@ -137,16 +137,15 @@ PUBLIC_HEADERS = retroshare/rsblogs.h \
     retroshare/rstypes.h \
     retroshare/rsdht.h \
     retroshare/rsdsdv.h \
-    retroshare/rsconfig.h \
-    retroshare/rsphotoV2.h
+    retroshare/rsconfig.h 
+
 HEADERS += plugins/pluginmanager.h \
     plugins/dlfcn_win32.h \
     serialiser/rspluginitems.h
 HEADERS += $$PUBLIC_HEADERS
 
 # public headers to be...
-HEADERS += retroshare/rsgame.h \
-    retroshare/rsphoto.h
+HEADERS += retroshare/rsgame.h 
 
 # ################################ Linux ##########################################
         linux-* { 
@@ -610,16 +609,12 @@ HEADERS += retroshare/rsgame.h \
                 gxs/rsgxsdataaccess.h \
                 retroshare/rsgxsservice.h \
                 serialiser/rsgxsitems.h \
-                serialiser/rsphotov2items.h \
                 util/retrodb.h \
                 util/contentvalue.h \
                 gxs/gxscoreserver.h \
                 gxs/gxssecurity.h \
                 gxs/rsgxsifaceimpl.h \
                 gxs/gxstokenqueue.h \
-                services/p3posted.h \
-                retroshare/rsposted.h \
-                serialiser/rsposteditems.h
 
 
             SOURCES += serialiser/rsnxsitems.cc \
@@ -628,17 +623,13 @@ HEADERS += retroshare/rsgame.h \
                 gxs/rsgxsnetservice.cc \
                 gxs/rsgxsdata.cc \
                 serialiser/rsgxsitems.cc \
-                services/p3photoserviceV2.cc \
                 gxs/rsgxsdataaccess.cc \
-                serialiser/rsphotov2items.cc \
                 util/retrodb.cc \
                 util/contentvalue.cc \
                 gxs/gxscoreserver.cc \
                 gxs/gxssecurity.cc \
                 gxs/rsgxsifaceimpl.cc \
                 gxs/gxstokenqueue.cc \
-                services/p3posted.cc \
-                serialiser/rsposteditems.cc
 
             # Identity Service
             HEADERS += retroshare/rsidentity.h \
@@ -665,26 +656,34 @@ HEADERS += retroshare/rsgame.h \
             SOURCES += services/p3wiki.cc \
                 serialiser/rswikiitems.cc \
 
+            # Wiki Service
+            HEADERS += retroshare/rswire.h \
+                services/p3wire.h \
+                serialiser/rswireitems.h
+
+            SOURCES += services/p3wire.cc \
+                serialiser/rswireitems.cc \
+
+	    # Posted Service
+            HEADERS += services/p3posted.h \
+                retroshare/rsposted.h \
+                serialiser/rsposteditems.h
+
+            SOURCES +=  services/p3posted.cc \
+                serialiser/rsposteditems.cc
+
+            #Photo Service
+            HEADERS += services/p3photoservice.h \
+                retroshare/rsphoto.h \
+                serialiser/rsphotoitems.h \
+
+	    SOURCES += services/p3photoservice.cc \
+                serialiser/rsphotoitems.cc \
         }
 
         newservices { 
-            HEADERS += services/p3photoserviceV2.h \
-                retroshare/rsphotoVEG.h \
-                services/p3gxsserviceVEG.h \
-                services/p3wikiserviceVEG.h \
-                retroshare/rswikiVEG.h \
-                retroshare/rswireVEG.h \
-                services/p3wireVEG.h \
-                retroshare/rsforumsVEG.h \
-                services/p3forumsVEG.h
-		# Do I need this?
-                #serialiser/rsphotoitemsVEG.h \
+		# source code for p3gxsserviceVEG / p3postedVEG will be maintained
+		# until they are finished - for reference... but it wont compile.	
 
-            SOURCES += services/p3gxsserviceVEG.cc \
-                services/p3wikiserviceVEG.cc \
-                services/p3wireVEG.cc \
-                services/p3forumsVEG.cc
-		# Do I need this?
-                # serialiser/rsphotoitemsVEG.cc \
         }
 
