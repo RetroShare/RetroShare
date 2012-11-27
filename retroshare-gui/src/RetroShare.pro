@@ -376,6 +376,7 @@ HEADERS +=  rshare.h \
             gui/common/PopularityDefs.h \
             gui/common/GroupTreeWidget.h \
             gui/common/RSTreeView.h \
+            gui/common/RSTreeWidget.h \
             gui/common/AvatarWidget.h \
             gui/common/FriendList.h \
             gui/common/FriendSelectionWidget.h \
@@ -636,6 +637,7 @@ SOURCES +=  main.cpp \
             gui/common/PopularityDefs.cpp \
             gui/common/GroupTreeWidget.cpp \
             gui/common/RSTreeView.cpp \
+            gui/common/RSTreeWidget.cpp \
             gui/common/AvatarWidget.cpp \
             gui/common/FriendList.cpp \
             gui/common/FriendSelectionWidget.cpp \
@@ -968,17 +970,19 @@ gxsforums {
             gui/gxsforums/GxsForumDetails.h \
             gui/gxsforums/EditGxsForumDetails.h \
             gui/gxsforums/CreateGxsForumMsg.h \
+            gui/gxsforums/GxsForumThreadWidget.h
 
 	FORMS += gui/GxsForumsDialog.ui \
             gui/gxsforums/GxsForumDetails.ui \
             gui/gxsforums/EditGxsForumDetails.ui \
             gui/gxsforums/CreateGxsForumMsg.ui \
+            gui/gxsforums/GxsForumThreadWidget.ui
 
 	SOURCES += gui/GxsForumsDialog.cpp \
             gui/gxsforums/GxsForumDetails.cpp \
             gui/gxsforums/EditGxsForumDetails.cpp \
             gui/gxsforums/CreateGxsForumMsg.cpp \
-
+            gui/gxsforums/GxsForumThreadWidget.cpp
 }
 
 
