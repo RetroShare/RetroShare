@@ -1772,10 +1772,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>It seems your friend is already registered. Adding it might just set it&apos;s ip address.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Options</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1954,6 +1950,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This peer is already on your friend list. Adding it might just set it&apos;s ip address.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4138,6 +4138,10 @@ p, li { white-space: pre-wrap; }
         <source>none</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Unknown</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ForumsV2Dialog</name>
@@ -4673,10 +4677,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Edit Personal message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Group Chat</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4726,14 +4726,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>A</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set your Personal Message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit your status Message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4826,6 +4818,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit status message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set your status message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit your status message</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7832,6 +7836,25 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
 </context>
 <context>
+    <name>OpModeStatus</name>
+    <message>
+        <source>Normal Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Anon D/L</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gaming Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Low Traffic</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>PeerDefs</name>
     <message>
         <source>Unknown</source>
@@ -8833,10 +8856,6 @@ and use the import button to load it</source>
 <context>
     <name>ProfileWidget</name>
     <message>
-        <source>Edit Personal message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Copy Certificate</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8906,6 +8925,10 @@ and use the import button to load it</source>
     </message>
     <message>
         <source>Addresses list:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit status message</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9142,10 +9165,6 @@ and open the Make Friend Wizard.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Treatment of collection file has failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Deny friend</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9235,6 +9254,10 @@ Reported error is: %2</source>
     </message>
     <message>
         <source>Directory is accessible by anonymous tunnels from any friend</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to process collection file</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10071,10 +10094,6 @@ peers still need to trust each other to allow connection. </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Max average tunnel request forwarded per second:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Server</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10124,6 +10143,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unchecking this disables all anonymous routing activity, except cache cleaning. Incoming tunnel requests are discarded, and no tunnel requests are sent to anyone.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Max. tunnel requests forwarded per second:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10686,19 +10709,11 @@ This choice can be reverted in settings.</source>
 <context>
     <name>StatusMessage</name>
     <message>
-        <source>Personal message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Status message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Personal message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>Message:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10706,7 +10721,15 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Enter your Status message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Status message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Enter your message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
