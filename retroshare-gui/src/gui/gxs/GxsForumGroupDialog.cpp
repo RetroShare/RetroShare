@@ -60,15 +60,25 @@ GxsForumGroupDialog::GxsForumGroupDialog(TokenQueue *tokenQueue, QWidget *parent
 
 }
 
-GxsForumGroupDialog::GxsForumGroupDialog(const RsGxsForumGroup &group, QWidget *parent)
-	:GxsGroupDialog(group.mMeta, GXS_GROUP_DIALOG_SHOW_MODE, parent)
+GxsForumGroupDialog::GxsForumGroupDialog(const RsGxsForumGroup &group, Mode mode, QWidget *parent)
+	:GxsGroupDialog(group.mMeta, mode, parent)
 {
 	return;
 }
 
 QString GxsForumGroupDialog::serviceHeader()
 {
-	return tr("Create New Forum");
+	switch (mode())
+	{
+	case MODE_CREATE:
+		return tr("Create New Forum");
+	case MODE_SHOW:
+		return tr("Forum");
+	case MODE_EDIT:
+		return tr("Edit Forum");
+	}
+
+	return "";
 }
 
 QPixmap GxsForumGroupDialog::serviceImage()

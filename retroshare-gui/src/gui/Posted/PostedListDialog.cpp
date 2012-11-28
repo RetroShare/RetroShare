@@ -152,7 +152,7 @@ void PostedListDialog::showGroupDetails()
 		return;
 	}
 	
-        PostedGroupDialog cf(mGroups[mCurrTopicId], GXS_GROUP_DIALOG_SHOW_MODE, this);
+	PostedGroupDialog cf(mGroups[mCurrTopicId], GxsGroupDialog::MODE_SHOW, this);
 	cf.exec ();
 }
 

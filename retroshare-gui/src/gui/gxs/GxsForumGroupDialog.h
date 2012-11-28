@@ -32,7 +32,7 @@ class GxsForumGroupDialog : public GxsGroupDialog
 
 public:
 	GxsForumGroupDialog(TokenQueue *tokenQueue, QWidget *parent);
-	GxsForumGroupDialog(const RsGxsForumGroup &group, QWidget *parent);
+	GxsForumGroupDialog(const RsGxsForumGroup &group, Mode mode, QWidget *parent);
 
 protected:
 	virtual QString serviceHeader();

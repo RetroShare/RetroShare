@@ -235,8 +235,6 @@ void GxsForumsDialog::forceUpdateDisplay()
 
 	/* update Forums List */
 	insertForums();
-	/* update threads as well */
-//#TODO	insertThreads();
 }
 
 void GxsForumsDialog::forumInfoToGroupItemInfo(const RsGroupMetaData &forumInfo, GroupItemInfo &groupItemInfo)
@@ -258,19 +256,6 @@ void GxsForumsDialog::forumInfoToGroupItemInfo(const RsGroupMetaData &forumInfo,
 	{
 		groupItemInfo.icon = QIcon(IMAGE_FORUM);
 	}
-
-//	groupItemInfo.id = QString::fromStdString(forumInfo.forumId);
-//	groupItemInfo.name = QString::fromStdWString(forumInfo.forumName);
-//	groupItemInfo.description = QString::fromStdWString(forumInfo.forumDesc);
-//	groupItemInfo.popularity = forumInfo.pop;
-//	groupItemInfo.lastpost = QDateTime::fromTime_t(forumInfo.lastPost);
-//
-//	if (forumInfo.forumFlags & RS_DISTRIB_AUTHEN_REQ) {
-//		groupItemInfo.name += " (" + tr("AUTHD") + ")";
-//		groupItemInfo.icon = QIcon(IMAGE_FORUMAUTHD);
-//	} else {
-//		groupItemInfo.icon = QIcon(IMAGE_FORUM);
-//	}
 }
 
 /***** INSERT FORUM LISTS *****/
@@ -470,7 +455,7 @@ void GxsForumsDialog::showForumDetails()
 	RsGxsForumGroup grp;
 	grp.mMeta.mGroupId = mForumId;
 
-	GxsForumGroupDialog cf(grp, this);
+	GxsForumGroupDialog cf(grp, GxsGroupDialog::MODE_SHOW, this);
 	cf.exec ();
 }
 
@@ -483,10 +468,7 @@ void GxsForumsDialog::editForumDetails()
 	RsGxsForumGroup grp;
 	grp.mMeta.mGroupId = mForumId;
 
-	GxsForumGroupDialog cf(grp, this);
-
-	//GxsForumGroupDialog cf (mForumQueue, this, mCurrForumId, GXS_GROUP_DIALOG_EDIT_MODE);
-
+	GxsForumGroupDialog cf(grp, GxsGroupDialog::MODE_EDIT, this);
 	cf.exec ();
 }
 

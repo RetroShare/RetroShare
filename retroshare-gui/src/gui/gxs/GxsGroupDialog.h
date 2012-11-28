@@ -92,10 +92,6 @@ public:
 #define GXS_GROUP_DEFAULTS_COMMENTS_YES		0x00001000
 #define GXS_GROUP_DEFAULTS_COMMENTS_NO		0x00002000
 
-#define GXS_GROUP_DIALOG_CREATE_MODE		1
-#define GXS_GROUP_DIALOG_SHOW_MODE		2
-#define GXS_GROUP_DIALOG_EDIT_MODE		3
-
 /*!
  * The aim of this dialog is to be convenient to encapsulate group
  * creation code for several GXS services such forums, channels
@@ -111,67 +107,77 @@ public:
  */
 class GxsGroupDialog : public QDialog
 {
-        Q_OBJECT
+	Q_OBJECT
+
+public:
+	enum Mode {
+		MODE_CREATE,
+		MODE_SHOW,
+		MODE_EDIT
+	};
 
 public:
 
-    /*!
-     * Constructs a GxsGroupDialog for creating group
-     * @param tokenQueue This should be the TokenQueue of the (parent) service
-     *        in order to receive acknowledgement of group creation, if set to NULL with create mode \n
-     *        creation will not happen
-     * @param enableFlags This determines what options are enabled such as Icon, Description, publish type and key sharing
-     * @param defaultFlags This deter
-     * @param parent The parent dialog
-     * @param mode
-     */
-    GxsGroupDialog(TokenQueue* tokenQueue, uint32_t enableFlags, uint16_t defaultFlags, QWidget *parent = NULL);
+	/*!
+	 * Constructs a GxsGroupDialog for creating group
+	 * @param tokenQueue This should be the TokenQueue of the (parent) service
+	 *        in order to receive acknowledgement of group creation, if set to NULL with create mode \n
+	 *        creation will not happen
+	 * @param enableFlags This determines what options are enabled such as Icon, Description, publish type and key sharing
+	 * @param defaultFlags This deter
+	 * @param parent The parent dialog
+	 * @param mode
+	 */
+	GxsGroupDialog(TokenQueue* tokenQueue, uint32_t enableFlags, uint16_t defaultFlags, QWidget *parent = NULL);
 
-    /*!
-     * Contructs a GxsGroupDialog for display a group or editing
-     * @param grpMeta This is used to fill out the dialog
-     * @param mode This determines whether the dialog starts in show or edit mode (Edit not supported yet)
-     * @param parent
-     */
-    GxsGroupDialog(const RsGroupMetaData& grpMeta, uint32_t mode = GXS_GROUP_DIALOG_SHOW_MODE, QWidget *parent = NULL);
-    void wikitype();
+	/*!
+	 * Contructs a GxsGroupDialog for display a group or editing
+	 * @param grpMeta This is used to fill out the dialog
+	 * @param mode This determines whether the dialog starts in show or edit mode (Edit not supported yet)
+	 * @param parent
+	 */
+	GxsGroupDialog(const RsGroupMetaData& grpMeta, Mode mode, QWidget *parent = NULL);
+	void wikitype();
+
+	uint32_t mode() { return mMode; }
 
 private:
-    void newGroup();
-    void setMode(uint32_t mode);
+	void newGroup();
+	void init();
+	void initMode();
 
-    // Functions that can be overloaded for specific stuff.
+	// Functions that can be overloaded for specific stuff.
 
 protected slots:
-        void submitGroup();
-        void addGroupLogo();
+	void submitGroup();
+	void addGroupLogo();
 
 protected:
-        virtual void showEvent(QShowEvent*);
+	virtual void showEvent(QShowEvent*);
 
-        virtual QString serviceHeader() = 0;
-        virtual QPixmap serviceImage() = 0;
+	virtual QString serviceHeader() = 0;
+	virtual QPixmap serviceImage() = 0;
 
-        /*!
-         * Main purpose is to help tansfer meta data to service
-         *
-         * @param token This should be set to the token retrieved
-         * @param meta The deriving GXS service should set their grp meta to this value
-         */
-        virtual bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta) = 0;
+	/*!
+	 * Main purpose is to help tansfer meta data to service
+	 *
+	 * @param token This should be set to the token retrieved
+	 * @param meta The deriving GXS service should set their grp meta to this value
+	 */
+	virtual bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta) = 0;
 
-        /*!
-         * This returns a group logo from the ui \n
-         * Should be calleld by deriving service
-         * @return The logo for the service
-         */
-        QPixmap getLogo();
+	/*!
+	 * This returns a group logo from the ui \n
+	 * Should be calleld by deriving service
+	 * @return The logo for the service
+	 */
+	QPixmap getLogo();
 
-        /*!
-         * This returns a group description string from the ui
-         * @return group description string
-         */
-        virtual QString getDescription();
+	/*!
+	 * This returns a group description string from the ui
+	 * @return group description string
+	 */
+	virtual QString getDescription();
 
 	
 private slots:
@@ -196,8 +202,8 @@ private:
 
 	std::list<std::string> mShareList;
 	QPixmap picture;
-        TokenQueue *mTokenQueue;
-        RsGroupMetaData mGrpMeta;
+	TokenQueue *mTokenQueue;
+	RsGroupMetaData mGrpMeta;
 
 	uint32_t mMode;
 	uint32_t mEnabledFlags;

@@ -51,11 +51,25 @@
 
 /** Constructor */
 GxsGroupDialog::GxsGroupDialog(TokenQueue *tokenQueue, uint32_t enableFlags, uint16_t defaultFlags, QWidget *parent)
-: QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mTokenQueue(tokenQueue), mMode(GXS_GROUP_DIALOG_CREATE_MODE), mEnabledFlags(enableFlags), mDefaultsFlags(defaultFlags), mReadonlyFlags(0)
+    : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mTokenQueue(tokenQueue), mMode(MODE_CREATE), mEnabledFlags(enableFlags), mReadonlyFlags(0), mDefaultsFlags(defaultFlags)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
 
+    init();
+}
+
+GxsGroupDialog::GxsGroupDialog(const RsGroupMetaData &grpMeta, Mode mode, QWidget *parent)
+	: QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mTokenQueue(NULL), mGrpMeta(grpMeta), mMode(mode), mEnabledFlags(0), mReadonlyFlags(0), mDefaultsFlags(0)
+{
+	/* Invoke the Qt Designer generated object setup routine */
+	ui.setupUi(this);
+
+	init();
+}
+
+void GxsGroupDialog::init()
+{
     // connect up the buttons.
     connect( ui.buttonBox, SIGNAL(accepted()), this, SLOT(submitGroup()));
     connect( ui.buttonBox, SIGNAL(rejected()), this, SLOT(cancelDialog()));
@@ -77,13 +91,9 @@ GxsGroupDialog::GxsGroupDialog(TokenQueue *tokenQueue, uint32_t enableFlags, uin
 
     /* Setup Reasonable Defaults */
 
-	ui.idChooser->loadIds(0,"");
-}
+    ui.idChooser->loadIds(0,"");
 
-GxsGroupDialog::GxsGroupDialog(const RsGroupMetaData &grpMeta, uint32_t mode, QWidget *parent)
-    : QDialog(parent), mMode(mode), mGrpMeta(grpMeta) {
-
-	ui.idChooser->loadIds(0,"");
+    initMode();
 }
 
 void GxsGroupDialog::showEvent(QShowEvent*)
@@ -94,11 +104,11 @@ void GxsGroupDialog::showEvent(QShowEvent*)
     ui.headerFrame->setHeaderImage(serviceImage());
 }
 
-void GxsGroupDialog::setMode(uint32_t mode)
+void GxsGroupDialog::initMode()
 {
-    switch(mMode)
+    switch (mode())
     {
-        case GXS_GROUP_DIALOG_CREATE_MODE:
+        case MODE_CREATE:
         {
             ui.buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
             ui.buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Create Group"));
@@ -106,14 +116,13 @@ void GxsGroupDialog::setMode(uint32_t mode)
         }
         break;
 
-        default:
-        case GXS_GROUP_DIALOG_SHOW_MODE:
+        case MODE_SHOW:
         {
             ui.buttonBox->setStandardButtons(QDialogButtonBox::Close);
         }
         break;
 //TODO
-//        case GXS_GROUP_DIALOG_EDIT_MODE:
+//        case MODE_EDIT:
 //        {
 //            ui.createButton->setText(tr("Submit Changes"));
 //        }
@@ -128,7 +137,6 @@ void GxsGroupDialog::clearForm()
 	ui.groupDesc->clear();
 	ui.groupName->setFocus();
 }
-
 
 void GxsGroupDialog::setupDefaults()
 {
@@ -267,24 +275,23 @@ void GxsGroupDialog::submitGroup()
     std::cerr << std::endl;
 
     /* switch depending on mode */
-    switch(mMode)
+    switch (mode())
     {
-        case GXS_GROUP_DIALOG_CREATE_MODE:
+        case MODE_CREATE:
         {
             /* just close if down */
             createGroup();
         }
         break;
 
-        default:
-        case GXS_GROUP_DIALOG_SHOW_MODE:
+        case MODE_SHOW:
         {
             /* just close if down */
             cancelDialog();
         }
         break;
 
-        case GXS_GROUP_DIALOG_EDIT_MODE:
+        case MODE_EDIT:
         {
             /* TEMP: just close if down */
             cancelDialog();

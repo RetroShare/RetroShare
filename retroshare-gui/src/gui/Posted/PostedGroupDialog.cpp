@@ -46,14 +46,24 @@ PostedGroupDialog::PostedGroupDialog(TokenQueue* tokenQueue,  RsPosted* posted, 
 {
 }
 
-PostedGroupDialog::PostedGroupDialog(const RsPostedGroup& grp, uint32_t mode, QWidget *parent)
+PostedGroupDialog::PostedGroupDialog(const RsPostedGroup& grp, Mode mode, QWidget *parent)
         :GxsGroupDialog(grp.mMeta, mode, parent), mGrp(grp)
 {
 }
 
 QString PostedGroupDialog::serviceHeader()
 {
-	return tr("Create New Posted Topic");
+	switch (mode())
+	{
+	case MODE_CREATE:
+		return tr("Create New Posted Topic");
+	case MODE_SHOW:
+		return tr("Posted Topic");
+	case MODE_EDIT:
+		return tr("Edit Posted Topic");
+	}
+
+	return "";
 }
 
 

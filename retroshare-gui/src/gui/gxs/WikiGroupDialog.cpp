@@ -92,7 +92,7 @@ WikiGroupDialog::WikiGroupDialog(TokenQueue *tokenQueue, QWidget *parent)
 }
 
 WikiGroupDialog::WikiGroupDialog(const RsWikiCollection &collection, QWidget *parent)
-    	:GxsGroupDialog(collection.mMeta, GXS_GROUP_DIALOG_SHOW_MODE, parent)
+		:GxsGroupDialog(collection.mMeta, MODE_SHOW, parent)
 {
 #if 0
 
@@ -119,7 +119,17 @@ WikiGroupDialog::WikiGroupDialog(const RsWikiCollection &collection, QWidget *pa
 
 QString WikiGroupDialog::serviceHeader()
 {
-	return tr("Create New Wiki Group");
+	switch (mode())
+	{
+	case MODE_CREATE:
+		return tr("Create New Wiki Group");
+	case MODE_SHOW:
+		return tr("Wiki Group");
+	case MODE_EDIT:
+		return tr("Edit Wiki Group");
+	}
+
+	return "";
 }
 
 QPixmap WikiGroupDialog::serviceImage()

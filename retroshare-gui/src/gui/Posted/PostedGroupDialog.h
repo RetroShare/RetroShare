@@ -40,7 +40,7 @@ public:
     /*!
      * This constructs a show dialog which displays an already existing group
      */
-    PostedGroupDialog(const RsPostedGroup& grp, uint32_t mode, QWidget *parent = NULL);
+    PostedGroupDialog(const RsPostedGroup& grp, Mode mode, QWidget *parent = NULL);
 
 protected:
     virtual QString serviceHeader();
