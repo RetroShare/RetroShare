@@ -133,27 +133,17 @@ void GxsForumsDialog::processSettings(bool bLoad)
 	Settings->endGroup();
 }
 
-int GxsForumsDialog::subscribeFlags(const std::string &forumId)
-{
-	QMap<std::string, int>::const_iterator it = mSubscribeFlags.find(mForumId);
-	if (it != mSubscribeFlags.end()) {
-		return it.value();
-	}
-
-	return 0;
-}
-
 void GxsForumsDialog::forumListCustomPopupMenu(QPoint /*point*/)
 {
-	int flags = subscribeFlags(mForumId);
+	int subscribeFlags = ui.forumTreeWidget->subscribeFlags(QString::fromStdString(mForumId));
 
 	QMenu contextMnu(this);
 
 	QAction *action = contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Subscribe to Forum"), this, SLOT(subscribeToForum()));
-	action->setDisabled (mForumId.empty() || IS_GROUP_SUBSCRIBED(flags));
+	action->setDisabled (mForumId.empty() || IS_GROUP_SUBSCRIBED(subscribeFlags));
 
 	action = contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Unsubscribe to Forum"), this, SLOT(unsubscribeToForum()));
-	action->setEnabled (!mForumId.empty() && IS_GROUP_SUBSCRIBED(flags));
+	action->setEnabled (!mForumId.empty() && IS_GROUP_SUBSCRIBED(subscribeFlags));
 
 	contextMnu.addSeparator();
 
@@ -163,16 +153,16 @@ void GxsForumsDialog::forumListCustomPopupMenu(QPoint /*point*/)
 	action->setEnabled (!mForumId.empty ());
 
 	action = contextMnu.addAction(QIcon(":/images/settings16.png"), tr("Edit Forum Details"), this, SLOT(editForumDetails()));
-	action->setEnabled (!mForumId.empty () && IS_GROUP_ADMIN(flags));
+	action->setEnabled (!mForumId.empty () && IS_GROUP_ADMIN(subscribeFlags));
 
 	QAction *shareKeyAct = new QAction(QIcon(":/images/gpgp_key_generate.png"), tr("Share Forum"), &contextMnu);
 	connect( shareKeyAct, SIGNAL( triggered() ), this, SLOT( shareKey() ) );
-	shareKeyAct->setEnabled(!mForumId.empty() && IS_GROUP_ADMIN(flags));
+	shareKeyAct->setEnabled(!mForumId.empty() && IS_GROUP_ADMIN(subscribeFlags));
 	contextMnu.addAction( shareKeyAct);
 
 	QAction *restoreKeysAct = new QAction(QIcon(":/images/settings16.png"), tr("Restore Publish Rights for Forum" ), &contextMnu);
 	connect( restoreKeysAct , SIGNAL( triggered() ), this, SLOT( restoreForumKeys() ) );
-	restoreKeysAct->setEnabled(!mForumId.empty() && !IS_GROUP_ADMIN(flags));
+	restoreKeysAct->setEnabled(!mForumId.empty() && !IS_GROUP_ADMIN(subscribeFlags));
 	contextMnu.addAction( restoreKeysAct);
 
 	action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyForumLink()));
@@ -181,10 +171,10 @@ void GxsForumsDialog::forumListCustomPopupMenu(QPoint /*point*/)
 	contextMnu.addSeparator();
 
 	action = contextMnu.addAction(QIcon(":/images/message-mail-read.png"), tr("Mark all as read"), this, SLOT(markMsgAsReadAll()));
-	action->setEnabled (!mForumId.empty () && IS_GROUP_SUBSCRIBED(flags));
+	action->setEnabled (!mForumId.empty () && IS_GROUP_SUBSCRIBED(subscribeFlags));
 
 	action = contextMnu.addAction(QIcon(":/images/message-mail.png"), tr("Mark all as unread"), this, SLOT(markMsgAsUnreadAll()));
-	action->setEnabled (!mForumId.empty () && IS_GROUP_SUBSCRIBED(flags));
+	action->setEnabled (!mForumId.empty () && IS_GROUP_SUBSCRIBED(subscribeFlags));
 
 #ifdef DEBUG_FORUMS
 	contextMnu.addSeparator();
@@ -256,6 +246,7 @@ void GxsForumsDialog::forumInfoToGroupItemInfo(const RsGroupMetaData &forumInfo,
 	//groupItemInfo.description = QString::fromUtf8(forumInfo.forumDesc);
 	groupItemInfo.popularity = forumInfo.mPop;
 	groupItemInfo.lastpost = QDateTime::fromTime_t(forumInfo.mLastPost);
+	groupItemInfo.subscribeFlags = forumInfo.mSubscribeFlags;
 
 #if TOGXS
 	if (forumInfo.mGroupFlags & RS_DISTRIB_AUTHEN_REQ) {
@@ -285,8 +276,6 @@ void GxsForumsDialog::forumInfoToGroupItemInfo(const RsGroupMetaData &forumInfo,
 /***** INSERT FORUM LISTS *****/
 void GxsForumsDialog::insertForumsData(const std::list<RsGroupMetaData> &forumList)
 {
-	mSubscribeFlags.clear();
-
 	std::list<RsGroupMetaData>::const_iterator it;
 
 	QList<GroupItemInfo> adminList;
@@ -298,9 +287,6 @@ void GxsForumsDialog::insertForumsData(const std::list<RsGroupMetaData> &forumLi
 	for (it = forumList.begin(); it != forumList.end(); it++) {
 		/* sort it into Publish (Own), Subscribed, Popular and Other */
 		uint32_t flags = it->mSubscribeFlags;
-
-		/* store for later use with poll */
-		mSubscribeFlags[it->mGroupId] = flags;
 
 		GroupItemInfo groupItemInfo;
 		forumInfoToGroupItemInfo(*it, groupItemInfo);

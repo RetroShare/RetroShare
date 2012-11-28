@@ -86,7 +86,6 @@ private slots:
 
 private:
 	void insertForums();
-	int subscribeFlags(const std::string &forumId);
 	
 	void updateMessageSummaryList(std::string forumId);
 //	void forumInfoToGroupItemInfo(const ForumInfo &forumInfo, GroupItemInfo &groupItemInfo);
@@ -106,7 +105,6 @@ private:
 //	void loadGroupSummary_CurrentForum(const uint32_t &token);
 
 	std::string mForumId;
-	QMap<std::string, int> mSubscribeFlags;
 	TokenQueue *mForumQueue;
 
 	QTreeWidgetItem *yourForums;

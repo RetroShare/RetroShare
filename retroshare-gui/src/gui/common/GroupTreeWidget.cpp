@@ -37,12 +37,13 @@
 #define COLUMN_COUNT       2
 #define COLUMN_DATA        COLUMN_NAME
 
-#define ROLE_ID           Qt::UserRole
-#define ROLE_NAME         Qt::UserRole + 1
-#define ROLE_DESCRIPTION  Qt::UserRole + 2
-#define ROLE_POPULARITY   Qt::UserRole + 3
-#define ROLE_LASTPOST     Qt::UserRole + 4
-#define ROLE_SEARCH_SCORE Qt::UserRole + 5
+#define ROLE_ID              Qt::UserRole
+#define ROLE_NAME            Qt::UserRole + 1
+#define ROLE_DESCRIPTION     Qt::UserRole + 2
+#define ROLE_POPULARITY      Qt::UserRole + 3
+#define ROLE_LASTPOST        Qt::UserRole + 4
+#define ROLE_SEARCH_SCORE    Qt::UserRole + 5
+#define ROLE_SUBSCRIBE_FLAGS Qt::UserRole + 6
 
 #define COMBO_NAME_INDEX  0
 #define COMBO_DESC_INDEX  1
@@ -299,6 +300,8 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		item->setToolTip(COLUMN_NAME, tooltip);
 		item->setToolTip(COLUMN_POPULARITY, tooltip);
 
+		item->setData(COLUMN_DATA, ROLE_SUBSCRIBE_FLAGS, itemInfo.subscribeFlags);
+
 		/* Set color */
 		QBrush brush;
 		if (itemInfo.privatekey) {
@@ -388,6 +391,16 @@ QTreeWidgetItem *GroupTreeWidget::activateId(const QString &id, bool focus)
 		ui->treeWidget->setFocus();
 	}
 	return item;
+}
+
+int GroupTreeWidget::subscribeFlags(const QString &id)
+{
+	QTreeWidgetItem *item = getItemFromId(id);
+	if (item == NULL) {
+		return 0;
+	}
+
+	return item->data(COLUMN_DATA, ROLE_SUBSCRIBE_FLAGS).toInt();
 }
 
 void GroupTreeWidget::calculateScore(QTreeWidgetItem *item, const QString &filterText)

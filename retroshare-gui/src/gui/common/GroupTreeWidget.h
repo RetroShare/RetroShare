@@ -42,6 +42,7 @@ public:
 	{
 		popularity = 0;
 		privatekey = false;
+		subscribeFlags = 0;
 	}
 
 public:
@@ -52,6 +53,7 @@ public:
 	QDateTime lastpost;
 	QIcon     icon;
 	bool      privatekey;
+	int       subscribeFlags;
 };
 
 class GroupTreeWidget : public QWidget
@@ -78,6 +80,8 @@ public:
 
 	QTreeWidgetItem *getItemFromId(const QString &id);
 	QTreeWidgetItem *activateId(const QString &id, bool focus);
+
+	int subscribeFlags(const QString &id);
 
 signals:
 	void treeCustomContextMenuRequested(const QPoint &pos);
