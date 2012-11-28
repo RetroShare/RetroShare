@@ -74,7 +74,7 @@ BlogsDialog::BlogsDialog(QWidget *parent)
     itemFont = QFont("ARIAL", 10);
     itemFont.setBold(true);
 	
-    QStandardItem *OwnBlogs = new QStandardItem(tr("Own Blogs"));
+    QStandardItem *OwnBlogs = new QStandardItem(tr("My Blogs"));
     OwnBlogs->setForeground(QBrush(QColor(79, 79, 79)));
     OwnBlogs->setFont(itemFont);
     

@@ -434,7 +434,7 @@
          <string>Include files from your own file list in the search result</string>
         </property>
         <property name="text">
-         <string>Include own files</string>
+         <string>Include my files</string>
         </property>
        </widget>
       </item>

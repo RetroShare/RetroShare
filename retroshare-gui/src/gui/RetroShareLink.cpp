@@ -592,7 +592,7 @@ QString RetroShareLink::title() const
 	case TYPE_MESSAGE:
 		return PeerDefs::rsidFromId(hash().toStdString());
 	case TYPE_CERTIFICATE:
-		return QObject::tr("Click to add this RetroShare cert to your GPG keyring\nand open the Make Friend Wizard.\n") + QString("GPG Id = ") + GPGId() + QString("\nSSLId = ")+SSLId();
+		return QObject::tr("Click to add this RetroShare cert to your PGP keyring\nand open the Make Friend Wizard.\n") + QString("GPG Id = ") + GPGId() + QString("\nSSLId = ")+SSLId();
 	}
 
 	return "";

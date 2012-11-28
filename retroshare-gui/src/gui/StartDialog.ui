@@ -205,7 +205,7 @@
         <item>
          <widget class="QLabel" name="label_3">
           <property name="text">
-           <string>Name (GPG Id) - location:</string>
+           <string>Name (PGP Id) - location:</string>
           </property>
          </widget>
         </item>

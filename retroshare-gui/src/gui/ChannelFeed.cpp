@@ -86,7 +86,7 @@ ChannelFeed::ChannelFeed(QWidget *parent)
     /* Initialize group tree */
     treeWidget->initDisplayMenu(displayButton);
 
-    ownChannels = treeWidget->addCategoryItem(tr("Own Channels"), QIcon(IMAGE_CHANNELBLUE), true);
+    ownChannels = treeWidget->addCategoryItem(tr("My Channels"), QIcon(IMAGE_CHANNELBLUE), true);
     subcribedChannels = treeWidget->addCategoryItem(tr("Subscribed Channels"), QIcon(IMAGE_CHANNELRED), true);
     popularChannels = treeWidget->addCategoryItem(tr("Popular Channels"), QIcon(IMAGE_CHANNELGREEN ), false);
     otherChannels = treeWidget->addCategoryItem(tr("Other Channels"), QIcon(IMAGE_CHANNELYELLOW), false);

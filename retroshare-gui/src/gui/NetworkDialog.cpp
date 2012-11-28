@@ -417,7 +417,7 @@ void NetworkDialog::insertConnect()
 		if (detail.ownsign) 
 		{
 			item -> setText(2, tr("Personal signature"));
-			item -> setToolTip(2, tr("GPG key signed by you"));
+			item -> setToolTip(2, tr("PGP key signed by you"));
 		} 
 		else 
 			switch(detail.trustLvl)

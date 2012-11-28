@@ -147,7 +147,7 @@
        <item>
         <widget class="QToolButton" name="shareButton">
          <property name="toolTip">
-          <string>Share Files for your Friends</string>
+          <string>Share files for your friends</string>
          </property>
          <property name="icon">
           <iconset>

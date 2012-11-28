@@ -122,7 +122,7 @@ void ConnectFriendWizard::setCertificate(const QString &certificate, bool friend
 void ConnectFriendWizard::setGpgId(const std::string &gpgId, bool friendRequest)
 {
 	if (!rsPeers->getPeerDetails(gpgId, peerDetails)) {
-		setField("errorMessage", tr("Cannot get peer details of gpg key %1").arg(QString::fromStdString(gpgId)));
+		setField("errorMessage", tr("Cannot get peer details of PGP key %1").arg(QString::fromStdString(gpgId)));
 		setStartId(Page_ErrorMessage);
 		return;
 	}

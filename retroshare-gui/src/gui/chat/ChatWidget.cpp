@@ -413,7 +413,7 @@ void ChatWidget::contextMenu(QPoint point)
 	contextMnu->addSeparator();
 	QAction *action = contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
 	action->setDisabled(RSLinkClipboard::empty());
-	contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste own certificate link"), this, SLOT(pasteOwnCertificateLink()));
+	contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste my certificate link"), this, SLOT(pasteOwnCertificateLink()));
 
 	contextMnu->exec(QCursor::pos());
 	delete(contextMnu);

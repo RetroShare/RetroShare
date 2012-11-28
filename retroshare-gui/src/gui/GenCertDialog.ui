@@ -54,7 +54,7 @@
          <item row="0" column="0" colspan="2">
           <widget class="QLabel" name="no_gpg_key_label">
            <property name="text">
-            <string>It looks like you don't own any Profile (GPG keys). Please fill in the form below to generate one, or import an existing profile.</string>
+            <string>It looks like you don't own any profile (PGP keys). Please fill in the form below to create one, or import an existing profile.</string>
            </property>
            <property name="wordWrap">
             <bool>true</bool>
@@ -64,7 +64,7 @@
          <item row="2" column="1">
           <widget class="QComboBox" name="genPGPuser">
            <property name="toolTip">
-            <string>Your profile is associated to a GPG key. RetroShare currently ignores DSA keys.</string>
+            <string>Your profile is associated with a PGP key. RetroShare currently ignores DSA keys.</string>
            </property>
           </widget>
          </item>
@@ -78,7 +78,7 @@
          <item row="3" column="1">
           <widget class="QLineEdit" name="name_input">
            <property name="toolTip">
-            <string>Enter here your nickname</string>
+            <string>Enter your nickname here</string>
            </property>
           </widget>
          </item>
@@ -93,7 +93,7 @@
           <widget class="QLineEdit" name="email_input">
            <property name="toolTip">
             <string>Be careful: this email will be visible to your friends and friends 
-of your friends. This information is required by GPG, but to stay 
+of your friends. This information is required by PGP, but to stay 
 anonymous, you can use a fake email.</string>
            </property>
           </widget>
@@ -101,7 +101,7 @@ anonymous, you can use a fake email.</string>
          <item row="5" column="0">
           <widget class="QLabel" name="password_label">
            <property name="toolTip">
-            <string>This Password is for GPG</string>
+            <string>This Password is for PGP</string>
            </property>
            <property name="text">
             <string>Password</string>
@@ -111,7 +111,7 @@ anonymous, you can use a fake email.</string>
          <item row="5" column="1">
           <widget class="QLineEdit" name="password_input">
            <property name="toolTip">
-            <string>Put a strong password here. This password protects your GPG key.</string>
+            <string>Put a strong password here. This password protects your PGP key.</string>
            </property>
            <property name="inputMask">
             <string/>
@@ -143,7 +143,7 @@ anonymous, you can use a fake email.</string>
             <number>1</number>
            </property>
            <property name="text">
-            <string>Put a meaningful location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same identity (gpg key).</string>
+            <string>Put a meaningful location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same identity (PGP key).</string>
            </property>
            <property name="scaledContents">
             <bool>false</bool>
@@ -162,7 +162,7 @@ anonymous, you can use a fake email.</string>
             </size>
            </property>
            <property name="text">
-            <string>Generate New Identity</string>
+            <string>Create new identity</string>
            </property>
            <property name="icon">
             <iconset resource="images.qrc">
@@ -210,10 +210,10 @@ anonymous, you can use a fake email.</string>
               </size>
              </property>
              <property name="toolTip">
-              <string>Your profile is associated to a GPG key</string>
+              <string>Your profile is associated with a PGP key</string>
              </property>
              <property name="text">
-              <string>Generate a new identity</string>
+              <string>Create a new identity</string>
              </property>
              <property name="icon">
               <iconset resource="images.qrc">
@@ -328,7 +328,7 @@ anonymous, you can use a fake email.</string>
         <item>
          <widget class="QLabel" name="headerLabel2">
           <property name="text">
-           <string>RetroShare uses gpg keys for identity management.</string>
+           <string>RetroShare uses PGP keys for identity management.</string>
           </property>
          </widget>
         </item>

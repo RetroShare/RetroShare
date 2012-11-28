@@ -234,7 +234,7 @@ void ConfCertDialog::load()
         ui.radioButton_trust_never->hide();
 
         ui.is_signing_me->hide();
-        ui.signersBox->setTitle(tr("Your key is signed by : "));
+        ui.signersBox->setTitle(tr("My key is signed by : "));
 
     } else {
         ui.web_of_trust_label->show();
@@ -319,9 +319,9 @@ void ConfCertDialog::load()
         }
 
         if (detail.hasSignedMe) {
-            ui.is_signing_me->setText(tr("Peer has authenticated me as a friend and did sign my GPG key"));
+            ui.is_signing_me->setText(tr("Peer has authenticated me as a friend and did sign my PGP key"));
         } else {
-            ui.is_signing_me->setText(tr("Peer has not authenticated me as a friend and did not sign my GPG key"));
+            ui.is_signing_me->setText(tr("Peer has not authenticated me as a friend and did not sign my PGP key"));
         }
     }
 

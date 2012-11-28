@@ -410,10 +410,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Own Blogs</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Subscribed Blogs</source>
         <translation type="unfinished"></translation>
     </message>
@@ -457,6 +453,10 @@ Available: %3</source>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Unsubscribe To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>My Blogs</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -785,10 +785,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Own Channels</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Subscribed Channels</source>
         <translation type="unfinished"></translation>
     </message>
@@ -858,6 +854,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Publish rights can&apos;t be restored for this channel.&lt;br/&gt;You&apos;re not the creator of this channel.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>My Channels</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1379,11 +1379,11 @@ Please choose one of it to chat with.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Paste own certificate link</source>
+        <source>appears to be Offline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>appears to be Offline.</source>
+        <source>Paste my certificate link</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1524,10 +1524,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Your key is signed by : </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Peer key is signed by : </source>
         <translation type="unfinished"></translation>
     </message>
@@ -1549,14 +1545,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Your trust in this peer is not set.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Peer has authenticated me as a friend and did sign my GPG key</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Peer has not authenticated me as a friend and did not sign my GPG key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1582,6 +1570,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Other info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>My key is signed by : </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peer has authenticated me as a friend and did sign my PGP key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peer has not authenticated me as a friend and did not sign my PGP key</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1924,10 +1924,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Cannot get peer details of gpg key %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>You have a friend request from</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1954,6 +1950,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>This peer is already on your friend list. Adding it might just set it&apos;s ip address.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot get peer details of PGP key %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2615,11 +2615,11 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Paste own certificate link</source>
+        <source>Start New Thread</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Start New Thread</source>
+        <source>Paste my certificate link</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2749,10 +2749,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Paste own certificate link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>In Reply to</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2766,6 +2762,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add Extra File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste my certificate link</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3964,10 +3964,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Your Forums</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Subscribed Forums</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4123,6 +4119,10 @@ p, li { white-space: pre-wrap; }
         <source>Search Content</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>My Forums</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ForumsFillThread</name>
@@ -4231,10 +4231,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>PrintPreview</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Your Forums</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4391,6 +4387,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>You can&apos;t reply to a non-existant Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>My Forums</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4970,15 +4970,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Your profile is associated to a GPG key</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enter here your nickname</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4986,21 +4978,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Be careful: this email will be visible to your friends and friends 
-of your friends. This information is required by GPG, but to stay 
-anonymous, you can use a fake email.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This Password is for GPG</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Password</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Put a strong password here. This password protects your GPG key.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5058,14 +5036,6 @@ Fill in your GPG password when asked, to sign your new key.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>It looks like you don&apos;t own any Profile (GPG keys). Please fill in the form below to generate one, or import an existing profile.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Generate a new identity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Import new identity</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5075,14 +5045,6 @@ Fill in your GPG password when asked, to sign your new key.</source>
     </message>
     <message>
         <source>Use identity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Your profile is associated to a GPG key. RetroShare currently ignores DSA keys.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Generate New Identity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5142,19 +5104,11 @@ and use the import button to load it</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Put a meaningful location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same identity (gpg key).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Your identity was not saved. An error occurred.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Your identity was imported successfully:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>RetroShare uses gpg keys for identity management.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5167,6 +5121,52 @@ and use the import button to load it</source>
     </message>
     <message>
         <source>Failed to Generate your new Certificate, maybe PGP password is wrong!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>It looks like you don&apos;t own any profile (PGP keys). Please fill in the form below to create one, or import an existing profile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your profile is associated with a PGP key. RetroShare currently ignores DSA keys.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter your nickname here</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Be careful: this email will be visible to your friends and friends 
+of your friends. This information is required by PGP, but to stay 
+anonymous, you can use a fake email.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This Password is for PGP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put a strong password here. This password protects your PGP key.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put a meaningful location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same identity (PGP key).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create new identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your profile is associated with a PGP key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create a new identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RetroShare uses PGP keys for identity management.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7288,15 +7288,15 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Share Files for your Friends</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Search Friends</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Share files for your friends</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7541,10 +7541,6 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>GPG key signed by you</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Marginally trusted peer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7583,6 +7579,10 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Search Peer ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PGP key signed by you</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7788,10 +7788,6 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
 <context>
     <name>NotifyQt</name>
     <message>
-        <source>GPG key passphrase</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Wrong password !</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7825,6 +7821,10 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Please enter the password to unlock your PGP key:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PGP key passphrase</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8663,10 +8663,6 @@ malicious behavior of crafted plugins.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Your Topics</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Subscribed Topics</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8720,6 +8716,10 @@ malicious behavior of crafted plugins.</source>
     </message>
     <message>
         <source>AUTHD</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>My Topics</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9023,12 +9023,6 @@ and use the import button to load it</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Click to add this RetroShare cert to your GPG keyring
-and open the Make Friend Wizard.
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Add file</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9223,14 +9217,6 @@ Reported error is: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although GPG keys are mentioned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Initialization failed. Wrong or missing installation of gpg.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>An unexpected error occurred. Please report &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9258,6 +9244,20 @@ Reported error is: %2</source>
     </message>
     <message>
         <source>Failed to process collection file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Click to add this RetroShare cert to your PGP keyring
+and open the Make Friend Wizard.
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although PGP keys are mentioned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Initialization failed. Wrong or missing installation of PGP.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9807,10 +9807,6 @@ Reducing image to %1x%2 pixels?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Include own files</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Search inside &quot;browsable&quot; files of your friends</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9881,6 +9877,10 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Close all Search Results</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Include my files</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10567,10 +10567,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Name (GPG Id) - location:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Remember Password</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10612,6 +10608,10 @@ This choice can be reverted in settings.</source>
  Your PGP password will not be stored.
 
 This choice can be reverted in settings.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name (PGP Id) - location:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
