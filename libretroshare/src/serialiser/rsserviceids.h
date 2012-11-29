@@ -138,14 +138,16 @@ const uint16_t RS_SERVICE_GXSV1_TYPE_WIRE        = 0xf304;
 const uint16_t RS_SERVICE_GXSV1_TYPE_FORUMS      = 0xf305;
 const uint16_t RS_SERVICE_GXSV1_TYPE_POSTED      = 0xf306;
 const uint16_t RS_SERVICE_GXSV1_TYPE_CHANNELS    = 0xf307;
+const uint16_t RS_SERVICE_GXSV1_TYPE_GXSCIRCLE   = 0xf307;
 
 const uint16_t RS_SERVICE_GXSV2_TYPE_GXSID       = 0xf311;
-const uint16_t RS_SERVICE_GXSV2_TYPE_PHOTO       = 0xf312;
-const uint16_t RS_SERVICE_GXSV2_TYPE_WIKI        = 0xf313;
-const uint16_t RS_SERVICE_GXSV2_TYPE_WIRE        = 0xf314;
-const uint16_t RS_SERVICE_GXSV2_TYPE_FORUMS      = 0xf315;
-const uint16_t RS_SERVICE_GXSV2_TYPE_POSTED      = 0xf316;
-const uint16_t RS_SERVICE_GXSV2_TYPE_CHANNELS    = 0xf317;
+const uint16_t RS_SERVICE_GXSV2_TYPE_GXSCIRCLE   = 0xf312;
+const uint16_t RS_SERVICE_GXSV2_TYPE_PHOTO       = 0xf313;
+const uint16_t RS_SERVICE_GXSV2_TYPE_WIKI        = 0xf314;
+const uint16_t RS_SERVICE_GXSV2_TYPE_WIRE        = 0xf315;
+const uint16_t RS_SERVICE_GXSV2_TYPE_FORUMS      = 0xf316;
+const uint16_t RS_SERVICE_GXSV2_TYPE_POSTED      = 0xf317;
+const uint16_t RS_SERVICE_GXSV2_TYPE_CHANNELS    = 0xf318;
 
  /* Example Versions (VEG) of New Cache Services  */
 const uint16_t RS_SERVICE_VEG_TYPE_IDENTITY    = 0xf320;

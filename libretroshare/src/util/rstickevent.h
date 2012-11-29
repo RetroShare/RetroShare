@@ -44,16 +44,33 @@ class RsTickEvent
 void	tick_events();
 
 void    schedule_now(uint32_t event_type);
-void    schedule_event(uint32_t event_type, time_t when);
+void    schedule_now(uint32_t event_type, const std::string &elabel);
+
+void    schedule_event(uint32_t event_type, time_t when, const std::string &elabel);
+
 void    schedule_in(uint32_t event_type, uint32_t in_secs);
+void    schedule_in(uint32_t event_type, uint32_t in_secs, const std::string &elabel);
 
 int32_t event_count(uint32_t event_type);
 bool 	prev_event_ago(uint32_t event_type, int32_t &age);
 
+	protected:
+
 	// Overloaded to handle the events.
-virtual void    handle_event(uint32_t event_type);
+virtual void    handle_event(uint32_t event_type, const std::string &event_label);
 
 	private:
+
+	class EventData
+	{
+		public:
+		EventData() :mEventType(0) { return; }
+		EventData(uint32_t etype) :mEventType(etype) { return; }
+		EventData(uint32_t etype, std::string elabel) :mEventLabel(elabel), mEventType(etype) { return; }
+
+		std::string mEventLabel;
+		uint32_t mEventType;
+	};
 
 void 	count_adjust_locked(uint32_t event_type, int32_t change);
 void 	note_event_locked(uint32_t event_type);
@@ -61,7 +78,7 @@ void 	note_event_locked(uint32_t event_type);
 	RsMutex mEventMtx;
 	std::map<uint32_t, int32_t>    mEventCount;
 	std::map<uint32_t, time_t>      mPreviousEvent;
-	std::multimap<time_t, uint32_t> mEvents;
+	std::multimap<time_t, EventData> mEvents;
 };
 
 #endif // RS_UTIL_TICK_EVENT

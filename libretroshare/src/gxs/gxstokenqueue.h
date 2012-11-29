@@ -58,6 +58,8 @@ bool	queueRequest(uint32_t token, uint32_t req_type);
 
 void	checkRequests(); // must be called by
 
+	protected:
+
 	// This must be overloaded to complete the functionality.
 virtual void handleResponse(uint32_t token, uint32_t req_type);
 

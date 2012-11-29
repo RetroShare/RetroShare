@@ -109,7 +109,9 @@ RsIdentity *rsIdentity = NULL;
 
 p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *nes)
 	: RsGxsIdExchange(gds, nes, new RsGxsIdSerialiser(), RS_SERVICE_GXSV1_TYPE_GXSID), 
-	RsIdentity(this), GxsTokenQueue(this), RsTickEvent(), mIdMtx("p3IdService")
+	RsIdentity(this), GxsTokenQueue(this), RsTickEvent(), mIdMtx("p3IdService"),
+        mPublicKeyCache(DEFAULT_MEM_CACHE_SIZE, "GxsIdPublicKeyCache"), 
+        mPrivateKeyCache(DEFAULT_MEM_CACHE_SIZE, "GxsIdPrivateKeyCache")
 {
 	mBgSchedule_Mode = 0;
 	mBgSchedule_Active = false;
@@ -702,11 +704,13 @@ bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 	// Create Cache Data.
 	RsGxsIdCache pubcache(item, pubkey);
 	mPublicKeyCache.store(id, pubcache);
+	mPublicKeyCache.resize();
 
 	if (full_key_ok)
 	{
 		RsGxsIdCache fullcache(item, fullkey);
 		mPrivateKeyCache.store(id, fullcache);
+		mPrivateKeyCache.resize();
 	}
 
 	return true;
@@ -809,10 +813,6 @@ bool p3IdService::cache_load_for_token(uint32_t token)
 			cache_store(item);
 			delete item;
                 }
-
-		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		mPrivateKeyCache.resize();
-		mPublicKeyCache.resize();
         }
 	else
 	{
@@ -2430,7 +2430,7 @@ void p3IdService::handleResponse(uint32_t token, uint32_t req_type)
 
 
 	// Overloaded from RsTickEvent for Event callbacks.
-void p3IdService::handle_event(uint32_t event_type)
+void p3IdService::handle_event(uint32_t event_type, const std::string &elabel)
 {
 	std::cerr << "p3IdService::handle_event(" << event_type << ")";
 	std::cerr << std::endl;

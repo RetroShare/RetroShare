@@ -221,13 +221,6 @@ virtual int  getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key);
 virtual bool getReputation(const RsGxsId &id, const GixsReputation &rep);
 
 
-
-        // Overloaded from GxsTokenQueue for Request callbacks.
-virtual void handleResponse(uint32_t token, uint32_t req_type);
-
-        // Overloaded from RsTickEvent.
-virtual void handle_event(uint32_t event_type);
-
 	protected:
 
 	/** Notifications **/
@@ -235,6 +228,12 @@ virtual void notifyChanges(std::vector<RsGxsNotify*>& changes);
 
 	/** Overloaded to add PgpIdHash to Group Definition **/
 virtual void service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet);
+
+        // Overloaded from GxsTokenQueue for Request callbacks.
+virtual void handleResponse(uint32_t token, uint32_t req_type);
+
+        // Overloaded from RsTickEvent.
+virtual void handle_event(uint32_t event_type, const std::string &elabel);
 
 	private:
 

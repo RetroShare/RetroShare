@@ -82,7 +82,7 @@ class RsGxsIdGroup
 	std::string mPgpIdHash; 
 	std::string mPgpIdSign;   // Need a signature as proof - otherwise anyone could add others Hashes.
 
-	// Serialised - for GUI's benefit.
+	// Not Serialised - for GUI's benefit.
 	bool mPgpKnown;
 	std::string mPgpId;
 };

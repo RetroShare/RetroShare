@@ -46,10 +46,15 @@ class p3GxsForums: public RsGenExchange, public RsGxsForums,
 
 	p3GxsForums(RsGeneralDataService* gds, RsNetworkExchangeService* nes);
 
+virtual void service_tick();
+
 	protected:
 
+
 virtual void notifyChanges(std::vector<RsGxsNotify*>& changes);
-virtual void service_tick();
+
+        // Overloaded from RsTickEvent.
+virtual void handle_event(uint32_t event_type, const std::string &elabel);
 
 	public:
 
@@ -70,8 +75,6 @@ virtual bool createGroup(uint32_t &token, RsGxsForumGroup &group);
 virtual bool createMsg(uint32_t &token, RsGxsForumMsg &msg);
 
 
-        // Overloaded from RsTickEvent.
-virtual void handle_event(uint32_t event_type);
 
 	private:
 

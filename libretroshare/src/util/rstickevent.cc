@@ -67,16 +67,16 @@ void	RsTickEvent::tick_events()
 		}
 	}
 
-	std::list<uint32_t> toProcess;
-	std::list<uint32_t>::iterator it;
+	std::list<EventData> toProcess;
+	std::list<EventData>::iterator it;
 
 	{
 		RsStackMutex stack(mEventMtx); /********** STACK LOCKED MTX ******/
 		while((!mEvents.empty()) && (mEvents.begin()->first <= now))
 		{
-			std::multimap<time_t, uint32_t>::iterator it = mEvents.begin();
-			uint32_t event_type = it->second;
-			toProcess.push_back(event_type);
+			std::multimap<time_t, EventData>::iterator it = mEvents.begin();
+			uint32_t event_type = it->second.mEventType;
+			toProcess.push_back(it->second);
 			mEvents.erase(it);
 
 			count_adjust_locked(event_type, -1);
@@ -86,40 +86,53 @@ void	RsTickEvent::tick_events()
 	for(it = toProcess.begin(); it != toProcess.end(); it++)
 	{
 		std::cerr << "RsTickEvent::tick_events() calling handle_event(";
-		std::cerr << *it << ")";
+		std::cerr << it->mEventType << ", " << it->mEventLabel << ")";
 		std::cerr << std::endl;
-		handle_event(*it);
+		handle_event(it->mEventType, it->mEventLabel);
 	}
 }
 
 void RsTickEvent::schedule_now(uint32_t event_type)
 {
-	RsTickEvent::schedule_in(event_type, 0);
+	std::string elabel;
+	RsTickEvent::schedule_in(event_type, 0, elabel);
 }
 
-void RsTickEvent::schedule_event(uint32_t event_type, time_t when)
+
+void RsTickEvent::schedule_now(uint32_t event_type, const std::string &elabel)
+{
+	RsTickEvent::schedule_in(event_type, 0, elabel);
+}
+
+void RsTickEvent::schedule_event(uint32_t event_type, time_t when, const std::string &elabel)
 {
 	RsStackMutex stack(mEventMtx); /********** STACK LOCKED MTX ******/
-	mEvents.insert(std::make_pair(when, event_type));
+	mEvents.insert(std::make_pair(when, EventData(event_type, elabel)));
 
 	count_adjust_locked(event_type, 1);
 }
 
 void RsTickEvent::schedule_in(uint32_t event_type, uint32_t in_secs)
 {
-	std::cerr << "RsTickEvent::schedule_in(" << event_type << ") in " << in_secs << " secs";
-	std::cerr << std::endl;
-
-	RsStackMutex stack(mEventMtx); /********** STACK LOCKED MTX ******/
-	time_t event_time = time(NULL) + in_secs;
-	mEvents.insert(std::make_pair(event_time, event_type));
-
-	count_adjust_locked(event_type, 1);
+	std::string elabel;
+	RsTickEvent::schedule_in(event_type, in_secs, elabel);
 }
 
-void RsTickEvent::handle_event(uint32_t event_type)
+
+void RsTickEvent::schedule_in(uint32_t event_type, uint32_t in_secs, const std::string &elabel)
 {
-	std::cerr << "RsTickEvent::handle_event(" << event_type << ") ERROR Not Handled";
+	std::cerr << "RsTickEvent::schedule_in(" << event_type << ", " << elabel << ") in " << in_secs << " secs";
+	std::cerr << std::endl;
+
+	time_t event_time = time(NULL) + in_secs;
+	RsTickEvent::schedule_event(event_type, event_time, elabel);
+}
+
+
+void RsTickEvent::handle_event(uint32_t event_type, const std::string &elabel)
+{
+	std::cerr << "RsTickEvent::handle_event(" << event_type << ", " << elabel;
+	std::cerr << ") ERROR Not Handled";
 	std::cerr << std::endl;
 }
 
