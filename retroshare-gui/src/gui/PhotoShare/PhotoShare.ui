@@ -146,12 +146,25 @@
       <item>
        <widget class="QPushButton" name="pushButton_YourAlbums">
         <property name="text">
-         <string>Your Albums</string>
+         <string>My Albums</string>
+        </property>
+        <property name="icon">
+         <iconset resource="Photo_images.qrc">
+          <normaloff>:/images/my_album_48.png</normaloff>:/images/my_album_48.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>48</width>
+          <height>48</height>
+         </size>
         </property>
         <property name="checkable">
          <bool>true</bool>
         </property>
         <property name="autoExclusive">
+         <bool>true</bool>
+        </property>
+        <property name="flat">
          <bool>true</bool>
         </property>
        </widget>
@@ -161,10 +174,23 @@
         <property name="text">
          <string>Subscribed Albums</string>
         </property>
+        <property name="icon">
+         <iconset resource="Photo_images.qrc">
+          <normaloff>:/images/subscribed_album_48.png</normaloff>:/images/subscribed_album_48.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>48</width>
+          <height>48</height>
+         </size>
+        </property>
         <property name="checkable">
          <bool>true</bool>
         </property>
         <property name="autoExclusive">
+         <bool>true</bool>
+        </property>
+        <property name="flat">
          <bool>true</bool>
         </property>
        </widget>
@@ -174,6 +200,16 @@
         <property name="text">
          <string>Shared Albums</string>
         </property>
+        <property name="icon">
+         <iconset resource="Photo_images.qrc">
+          <normaloff>:/images/friends_album_48.png</normaloff>:/images/friends_album_48.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>48</width>
+          <height>48</height>
+         </size>
+        </property>
         <property name="checkable">
          <bool>true</bool>
         </property>
@@ -181,6 +217,9 @@
          <bool>false</bool>
         </property>
         <property name="autoExclusive">
+         <bool>true</bool>
+        </property>
+        <property name="flat">
          <bool>true</bool>
         </property>
        </widget>
@@ -206,7 +245,7 @@
          <x>0</x>
          <y>0</y>
          <width>804</width>
-         <height>225</height>
+         <height>208</height>
         </rect>
        </property>
        <property name="styleSheet">
@@ -242,7 +281,7 @@
          <x>0</x>
          <y>0</y>
          <width>804</width>
-         <height>224</height>
+         <height>208</height>
         </rect>
        </property>
        <property name="styleSheet">

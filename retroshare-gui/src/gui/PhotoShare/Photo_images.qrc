@@ -8,5 +8,8 @@
 		<file>images/album_unsubscribe.png</file>
 		<file>images/album_create_64.png</file>
 		<file>images/album_default_128.png</file>
+		<file>images/my_album_48.png</file>
+		<file>images/subscribed_album_48.png</file>
+		<file>images/friends_album_48.png</file>
 	</qresource>
 </RCC>
