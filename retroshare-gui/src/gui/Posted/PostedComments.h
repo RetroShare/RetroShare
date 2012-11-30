@@ -44,12 +44,8 @@ public slots:
 
         void loadComments(const RsPostedPost& );
 
-    private slots:
-
-        void test(QPoint p);
-
 private:
-        void loadRequest(const TokenQueue *queue, const TokenRequest &req) { return; }
+        void loadRequest(const TokenQueue *queue, const TokenRequest &req);
         void setUpPostFrame();
 
         RsPostedPost mCurrentPost;

@@ -26,19 +26,6 @@
 
 #include "util/TokenQueue.h"
 
-/* indicies for search results item columns SR_ = Search Result */
-#define SR_NAME_COL         0
-#define SR_SIZE_COL         1
-#define SR_ID_COL           2
-#define SR_TYPE_COL         3
-#define SR_AGE_COL          4
-#define SR_HASH_COL         5
-#define SR_SEARCH_ID_COL    6
-#define SR_UID_COL          7
-#define SR_DATA_COL         SR_NAME_COL
-
-#define SR_ROLE_LOCAL       Qt::UserRole
-
 class GxsCommentTreeWidget : public QTreeWidget, public TokenResponse
 {
     Q_OBJECT
@@ -49,7 +36,7 @@ public:
 
     void requestComments(const RsGxsGrpMsgIdPair& threadId);
     void getCurrentMsgId(RsGxsMessageId& parentId);
-    void setCurrentMsgId(QTreeWidgetItem* current, QTreeWidgetItem* previous);
+    void applyRankings(std::map<RsGxsMessageId, uint32_t>& positions);
 
     void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
@@ -70,10 +57,11 @@ protected:
 
 public slots:
     void customPopUpMenu(const QPoint& point);
-private slots:
+    void setCurrentMsgId(QTreeWidgetItem* current, QTreeWidgetItem* previous);
 
 
     void makeComment();
+    void replyToComment();
 
 protected:
 

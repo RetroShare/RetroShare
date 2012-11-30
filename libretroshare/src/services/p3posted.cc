@@ -14,7 +14,7 @@ RsPostedComment::RsPostedComment(const RsGxsPostedCommentItem & item)
 }
 
 p3Posted::p3Posted(RsGeneralDataService *gds, RsNetworkExchangeService *nes)
-    : RsGenExchange(gds, nes, new RsGxsPostedSerialiser(), RS_SERVICE_GXSV1_TYPE_POSTED), RsPosted(this)
+    : RsGenExchange(gds, nes, new RsGxsPostedSerialiser(), RS_SERVICE_GXSV1_TYPE_POSTED), RsPosted(this), mPostedMutex("Posted")
 {
 }
 
@@ -129,11 +129,6 @@ bool p3Posted::getRelatedComment(const uint32_t& token, PostedRelatedCommentResu
     return RsGenExchange::getMsgRelatedDataT<RsGxsPostedCommentItem, RsPostedComment>(token, comments);
 }
 
-bool p3Posted::getGroupRank(const uint32_t &token, GroupRank &grpRank)
-{
-
-}
-
 bool p3Posted::submitGroup(uint32_t &token, RsPostedGroup &group)
 {
     RsGxsPostedGroupItem* grpItem = new RsGxsPostedGroupItem();
@@ -177,7 +172,125 @@ bool p3Posted::submitComment(uint32_t &token, RsPostedComment &comment)
 }
 
         // Special Ranking Request.
-bool p3Posted::requestRanking(uint32_t &token, RsGxsGroupId groupId)
+bool p3Posted::requestCommentRankings(uint32_t &token, const RankType &rType, const RsGxsGrpMsgIdPair &msgId)
+{
+    token = RsGenExchange::generatePublicToken();
+
+    RsStackMutex stack(mPostedMutex);
+
+    GxsPostedCommentRanking* gpc = new GxsPostedCommentRanking();
+    gpc->msgId = msgId;
+    gpc->rType = rType;
+    gpc->pubToken = token;
+
+    mPendingCommentRanks.insert(std::make_pair(token, gpc));
+
+    return true;
+}
+
+bool p3Posted::requestMessageRankings(uint32_t &token, const RankType &rType, const RsGxsGroupId &groupId)
+{
+    token = RsGenExchange::generatePublicToken();
+
+    RsStackMutex stack(mPostedMutex);
+    GxsPostedPostRanking* gp = new GxsPostedPostRanking();
+    gp->grpId = groupId;
+    gp->rType = rType;
+    gp->pubToken = token;
+
+    mPendingPostRanks.insert(std::make_pair(token, gp));
+
+    return true;
+}
+
+bool p3Posted::getRanking(const uint32_t &token, PostedRanking &ranking)
+{
+
+}
+
+void p3Posted::processRankings()
+{
+    processMessageRanks();
+
+    processCommentRanks();
+}
+
+void p3Posted::processMessageRanks()
+{
+
+    RsStackMutex stack(mPostedMutex);
+    std::map<uint32_t, GxsPostedPostRanking*>::iterator mit =mPendingPostRanks.begin();
+
+    for(; mit !=mPendingPostRanks.begin(); mit++)
+    {
+        uint32_t token;
+        std::list<RsGxsGroupId> grpL;
+        grpL.push_back(mit->second->grpId);
+        RsTokReqOptions opts;
+        opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+        opts.mOptions = RS_TOKREQOPT_MSG_LATEST | RS_TOKREQOPT_MSG_THREAD;
+        RsGenExchange::getTokenService()->requestMsgInfo(token, GXS_REQUEST_TYPE_GROUP_DATA, opts, grpL);
+        GxsPostedPostRanking* gp = mit->second;
+        gp->reqToken = token;
+
+        while(true)
+        {
+            uint32_t status = RsGenExchange::getTokenService()->requestStatus(token);
+
+            if(RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE
+               == status)
+            {
+                completePostedPostCalc(gp);
+                break;
+            }
+            else if(RsTokenService::GXS_REQUEST_V2_STATUS_FAILED
+                    == status)
+            {
+                discardCalc(token);
+                break;
+            }
+        }
+    }
+
+    mPendingPostRanks.clear();
+
+
+}
+
+void p3Posted::discardCalc(const uint32_t &token)
+{
+
+}
+
+void p3Posted::completePostedPostCalc(GxsPostedPostRanking *gpp)
+{
+    GxsMsgMetaMap msgMetas;
+    getMsgMeta(gpp->reqToken, msgMetas);
+
+    GxsMsgMetaMap::iterator mit = msgMetas.begin();
+
+    for(; mit != msgMetas.end(); mit++ )
+    {
+        RsGxsMsgMetaData* m = NULL;
+        //retrieveScores(m->mServiceString, upVotes, downVotes, nComments);
+
+        // then dependent on rank request type process for that way
+    }
+
+
+}
+
+bool p3Posted::retrieveScores(const std::string &serviceString, uint32_t &upVotes, uint32_t downVotes, uint32_t nComments)
+{
+    if (2 == sscanf(serviceString.c_str(), "%d %d %d", &upVotes, &downVotes, &nComments))
+    {
+            return true;
+    }
+
+    return false;
+}
+
+void p3Posted::processCommentRanks()
 {
 
 }

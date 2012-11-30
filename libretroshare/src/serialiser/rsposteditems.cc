@@ -435,7 +435,7 @@ RsGxsPostedCommentItem* RsGxsPostedSerialiser::deserialiseGxsPostedCommentItem(v
 
     if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
             (RS_SERVICE_GXSV1_TYPE_POSTED != getRsItemService(rstype)) ||
-            (RS_PKT_SUBTYPE_POSTED_POST_ITEM != getRsItemSubType(rstype)))
+            (RS_PKT_SUBTYPE_POSTED_COMMENT_ITEM != getRsItemSubType(rstype)))
     {
 #ifdef GXS_POSTED_SERIAL_DEBUG
             std::cerr << "RsGxsPostedSerialiser::deserialiseGxsPostedCommentItem() FAIL wrong type" << std::endl;

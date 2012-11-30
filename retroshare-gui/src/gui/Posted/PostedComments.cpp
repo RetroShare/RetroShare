@@ -63,14 +63,10 @@ PostedComments::PostedComments(QWidget *parent)
     ui.setupUi(this);
     ui.postFrame->setVisible(false);
     ui.treeWidget->setup(rsPosted->getTokenService());
-    connect(ui.treeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(test(QPoint)));
 }
 
-void PostedComments::test(QPoint p)
+void PostedComments::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
-    int x = p.x();
-    int y = p.y();
-    int  c= x+y;
 
 }
 
@@ -84,8 +80,8 @@ void PostedComments::loadComments(const RsPostedPost& post)
 
         RsGxsGrpMsgIdPair threadId;
 
-        threadId.first = post.mMeta.mOrigMsgId;
-        threadId.second = post.mMeta.mGroupId;
+        threadId.first = post.mMeta.mGroupId;
+        threadId.second = post.mMeta.mOrigMsgId;
 
 	ui.treeWidget->requestComments(threadId);
 }
@@ -107,7 +103,9 @@ void PostedComments::setUpPostFrame()
                        "><span style=\" text-decoration: underline; color:#0000ff;\">" +
                        QString::fromStdString(mCurrentPost.mLink) + "</span></a>");
 
-    ui.scoreLabel->setText(QString("1"));
+    ui.scoreLabel->setText(QString("0"));
+
+    ui.notesBrowser->setPlainText(QString::fromStdString(mCurrentPost.mNotes));
 
 }
 

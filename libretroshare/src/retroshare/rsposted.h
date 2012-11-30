@@ -70,6 +70,7 @@ typedef std::map<RsGxsGroupId, std::vector<RsPostedComment> > PostedCommentResul
 typedef std::map<RsGxsGroupId, std::vector<RsPostedVote> > PostedVoteResult;
 typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsPostedComment> > PostedRelatedCommentResult;
 typedef std::pair<RsGxsGroupId, int32_t> GroupRank;
+typedef std::map<RsGxsMessageId, uint32_t> PostedRanking;
 
 std::ostream &operator<<(std::ostream &out, const RsPostedGroup &group);
 std::ostream &operator<<(std::ostream &out, const RsPostedPost &post);
@@ -81,6 +82,8 @@ class RsPosted : public RsGxsIfaceImpl
 {
         public:
 
+    enum RankType {TopRankType, BestRankType, NewRankType };
+
     static const uint32_t FLAG_MSGTYPE_POST;
     static const uint32_t FLAG_MSGTYPE_VOTE;
     static const uint32_t FLAG_MSGTYPE_COMMENT;
@@ -91,19 +94,33 @@ virtual ~RsPosted() { return; }
 
         /* Specific Service Data */
 
-virtual bool getGroup(const uint32_t &token, std::vector<RsPostedGroup> &group) = 0;
-virtual bool getPost(const uint32_t &token, PostedPostResult &post) = 0;
-virtual bool getComment(const uint32_t &token, PostedCommentResult &comment) = 0;
-virtual bool getRelatedComment(const uint32_t& token, PostedRelatedCommentResult& comments) = 0;
-virtual bool getGroupRank(const uint32_t &token, GroupRank& grpRank) = 0;
+    virtual bool getGroup(const uint32_t &token, std::vector<RsPostedGroup> &group) = 0;
+    virtual bool getPost(const uint32_t &token, PostedPostResult &post) = 0;
+    virtual bool getComment(const uint32_t &token, PostedCommentResult &comment) = 0;
+    virtual bool getRelatedComment(const uint32_t& token, PostedRelatedCommentResult& comments) = 0;
+    virtual bool getRanking(const uint32_t& token, PostedRanking& ranking) = 0;
 
-virtual bool submitGroup(uint32_t &token, RsPostedGroup &group) = 0;
-virtual bool submitPost(uint32_t &token, RsPostedPost &post) = 0;
-virtual bool submitVote(uint32_t &token, RsPostedVote &vote) = 0;
-virtual bool submitComment(uint32_t &token, RsPostedComment &comment) = 0;
+    virtual bool submitGroup(uint32_t &token, RsPostedGroup &group) = 0;
+    virtual bool submitPost(uint32_t &token, RsPostedPost &post) = 0;
+    virtual bool submitVote(uint32_t &token, RsPostedVote &vote) = 0;
+    virtual bool submitComment(uint32_t &token, RsPostedComment &comment) = 0;
 
         // Special Ranking Request.
-virtual bool requestRanking(uint32_t &token, RsGxsGroupId groupId) = 0;
+    /*!
+     * Makes request for posts of a topic
+     * @param token
+     * @param rType
+     * @param groupId
+     */
+    virtual bool requestMessageRankings(uint32_t &token, const RankType& rType, const RsGxsGroupId& groupId) = 0;
+
+    /*!
+     * Makes request for ranking of comments for a post
+     * @param token
+     * @param rType type of ranking to collect
+     * @param msgId message id of post as groupid-messageid pair
+     */
+    virtual bool requestCommentRankings(uint32_t &token, const RankType& rType, const RsGxsGrpMsgIdPair& msgId) = 0;
 
 };
 

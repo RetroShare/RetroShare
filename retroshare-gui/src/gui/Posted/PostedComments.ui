@@ -23,10 +23,7 @@
       </sizepolicy>
      </property>
      <property name="styleSheet">
-      <string notr="true">QFrame#frame{border: 2px solid #CCCCCC;
-background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                     stop: 0 #EEEEEE, stop: 1 #CCCCCC);
-border-radius: 10px}</string>
+      <string notr="true">background-color: rgb(203, 203, 203);</string>
      </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -245,6 +242,13 @@ border-radius: 10px}</string>
     </widget>
    </item>
    <item>
+    <widget class="QTextBrowser" name="notesBrowser">
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(203, 203, 203);</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QGroupBox" name="sortGroup">
@@ -339,47 +343,15 @@ border-radius: 10px}</string>
      </column>
      <column>
       <property name="text">
+       <string>Date</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
        <string>Points</string>
       </property>
      </column>
     </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
-     <item>
-      <spacer name="horizontalSpacer_3">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="makeCommentButton">
-       <property name="text">
-        <string>Make Comment</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
    </item>
   </layout>
  </widget>

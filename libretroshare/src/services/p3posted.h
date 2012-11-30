@@ -1,8 +1,33 @@
 #ifndef P3POSTED_H
 #define P3POSTED_H
 
+#include <map>
+
 #include "retroshare/rsposted.h"
 #include "gxs/rsgenexchange.h"
+
+
+class GxsPostedPostRanking
+{
+public:
+
+    uint32_t pubToken;
+    uint32_t reqToken;
+    RsPosted::RankType rType;
+    RsGxsGroupId grpId;
+    PostedRanking result;
+};
+
+class GxsPostedCommentRanking
+{
+public:
+
+    uint32_t pubToken;
+    uint32_t reqToken;
+    RsPosted::RankType rType;
+    RsGxsGrpMsgIdPair msgId;
+    PostedRanking result;
+};
 
 class p3Posted : public RsGenExchange, public RsPosted
 {
@@ -30,20 +55,34 @@ public:
     bool getPost(const uint32_t &token, PostedPostResult& posts) ;
     bool getComment(const uint32_t &token, PostedCommentResult& comments) ;
     bool getRelatedComment(const uint32_t& token, PostedRelatedCommentResult &comments);
-    bool getGroupRank(const uint32_t& token, GroupRank& grpRank);
+    bool getRanking(const uint32_t &token, PostedRanking &ranking);
 
     bool submitGroup(uint32_t &token, RsPostedGroup &group);
     bool submitPost(uint32_t &token, RsPostedPost &post);
     bool submitVote(uint32_t &token, RsPostedVote &vote);
     bool submitComment(uint32_t &token, RsPostedComment &comment) ;
             // Special Ranking Request.
-    bool requestRanking(uint32_t &token, RsGxsGroupId groupId) ;
+    bool requestMessageRankings(uint32_t &token, const RankType &rType, const RsGxsGroupId &groupId);
+    bool requestCommentRankings(uint32_t &token, const RankType &rType, const RsGxsGrpMsgIdPair &msgId);
 
-            // Control Ranking Calculations.
-//    bool setViewMode(uint32_t mode);
-//    bool setViewPeriod(uint32_t period);
-//    bool setViewRange(uint32_t first, uint32_t count);
+private:
 
+    void processRankings();
+    void processMessageRanks();
+    void processCommentRanks();
+    void discardCalc(const uint32_t& token);
+    void completePostedPostCalc(GxsPostedPostRanking* gpp);
+    bool retrieveScores(const std::string& serviceString, uint32_t& upVotes, uint32_t downVotes, uint32_t nComments);
+
+private:
+
+    std::map<uint32_t, GxsPostedPostRanking*> mPendingPostRanks;
+    std::map<uint32_t, GxsPostedPostRanking*> mPendingCalculationPostRanks;
+
+    std::map<uint32_t, GxsPostedCommentRanking*> mPendingCommentRanks;
+    std::map<uint32_t, GxsPostedCommentRanking*> mPendingCalculationCommentRanks;
+
+    RsMutex mPostedMutex;
 };
 
 #endif // P3POSTED_H
