@@ -1304,7 +1304,7 @@ void FlatStyle_RDM::updateRefs()
 		_ref_stack.pop_back() ;
 		DirDetails details ;
 
-		if (requestDirDetails(ref, details, RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_REMOTE))
+		if (requestDirDetails(ref, details, RS_FILE_HINTS_REMOTE))
 		{
 			if(details.type == DIR_TYPE_FILE)		// only push files, not directories nor persons.
 				_ref_entries.push_back(std::pair<void*,QString>(ref,computeDirectoryPath(details)));
