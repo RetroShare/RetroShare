@@ -66,7 +66,7 @@ HashingStatus::HashingStatus(QWidget *parent)
     statusHashing = new StatusLabel(hbox, movie->frameRect().width() + hbox->spacing(), this);
     hbox->addWidget(statusHashing);
 
-    QSpacerItem *horizontalSpacer = new QSpacerItem(1000, 0, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    QSpacerItem *horizontalSpacer = new QSpacerItem(3000, 0, QSizePolicy::Expanding, QSizePolicy::Minimum);
     hbox->addItem(horizontalSpacer);
     
     setLayout(hbox);
