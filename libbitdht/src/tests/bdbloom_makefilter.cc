@@ -23,7 +23,7 @@
  *
  */
 
-
+#include <stdio.h>
 #include "util/bdbloom.h"
 #include "bitdht/bdstddht.h"
 #include <iostream>
