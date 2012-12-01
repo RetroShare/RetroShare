@@ -50,6 +50,9 @@ void 	revertEdit();
 void 	submitEdit();
 void 	previewToggle();
 void 	historyToggle();
+void  	detailsToggle();
+void 	textChanged();
+void    textReset();
 
 private:
 
@@ -76,6 +79,7 @@ void 	loadEditTreeData(const uint32_t &token);
 	bool mPageLoading;
 
         bool mRepublishMode;
+        bool mTextChanged;
 
 	QString mCurrentText;
 

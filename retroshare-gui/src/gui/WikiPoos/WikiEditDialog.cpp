@@ -26,6 +26,12 @@
 
 #include <iostream>
 
+//#define USE_PEGMMD_RENDERER	1
+
+#ifdef USE_PEGMMD_RENDERER
+#include "markdown_lib.h"
+#endif
+
 
 #define 	WIKIEDITDIALOG_GROUP		0x0001
 #define 	WIKIEDITDIALOG_PAGE		0x0002
@@ -43,14 +49,68 @@ WikiEditDialog::WikiEditDialog(QWidget *parent)
 	connect(ui.pushButton_Submit, SIGNAL( clicked( void ) ), this, SLOT( submitEdit( void ) ) );
 	connect(ui.pushButton_Preview, SIGNAL( clicked( void ) ), this, SLOT( previewToggle( void ) ) );
 	connect(ui.pushButton_History, SIGNAL( clicked( void ) ), this, SLOT( historyToggle( void ) ) );
+	connect(ui.toolButton_Show, SIGNAL( clicked( void ) ), this, SLOT( detailsToggle( void ) ) );
+	connect(ui.toolButton_Hide, SIGNAL( clicked( void ) ), this, SLOT( detailsToggle( void ) ) );
+	connect(ui.textEdit, SIGNAL( textChanged( void ) ), this, SLOT( textChanged( void ) ) );
 
 	mWikiQueue = new TokenQueue(rsWiki->getTokenService(), this);
         mRepublishMode = false;
         mPreviewMode = false;
 	mPageLoading = false;
+	mTextChanged = false;
 	mCurrentText = "";
 
 	ui.groupBox_History->hide();
+	detailsToggle();
+}
+
+void WikiEditDialog::textChanged()
+{
+	mTextChanged = true;
+	ui.pushButton_Revert->setEnabled(true);
+	ui.pushButton_Submit->setEnabled(true);
+	ui.label_Status->setText("Modified");
+}
+
+
+void WikiEditDialog::textReset()
+{
+	mTextChanged = false;
+	ui.pushButton_Revert->setEnabled(false);
+	ui.pushButton_Submit->setEnabled(false);
+	ui.label_Status->setText("Original");
+}
+
+
+
+void WikiEditDialog::detailsToggle()
+{
+	std::cerr << "WikiEditDialog::detailsToggle()";
+	std::cerr << std::endl;
+	if (ui.toolButton_Hide->isHidden())
+	{
+		ui.toolButton_Hide->show();
+		ui.toolButton_Show->hide();
+
+		ui.label_PrevVersion->show();
+		ui.label_Group->show();
+		ui.label_Tags->show();
+		ui.lineEdit_PrevVersion->show();
+		ui.lineEdit_Group->show();
+		ui.lineEdit_Tags->show();
+	}
+	else
+	{
+		ui.toolButton_Hide->hide();
+		ui.toolButton_Show->show();
+
+		ui.label_PrevVersion->hide();
+		ui.label_Group->hide();
+		ui.label_Tags->hide();
+		ui.lineEdit_PrevVersion->hide();
+		ui.lineEdit_Group->hide();
+		ui.lineEdit_Tags->hide();
+	}
 }
 
 void WikiEditDialog::historyToggle()
@@ -101,10 +161,25 @@ void WikiEditDialog::redrawPage()
 
 	if (mPreviewMode)
 	{
+#ifdef USE_PEGMMD_RENDERER
 		/* render as HTML */
-		QString renderedText = "RENDERED TEXT:\n";
+		QByteArray byte_array = mCurrentText.toUtf8();
+
+		int extensions = 0;
+		char *answer = markdown_to_string(byte_array.data(), extensions, HTML_FORMAT);
+
+		QString renderedText = QString::fromUtf8(answer);
+		ui.textEdit->setHtml(renderedText);
+
+		// free answer.
+		free(answer);
+#else
+		/* render as HTML */
+		QString renderedText = "IN (dummy) RENDERED TEXT MODE:\n";
 		renderedText += mCurrentText;
 		ui.textEdit->setPlainText(renderedText);
+#endif
+
 
 		/* disable edit */
 		ui.textEdit->setReadOnly(true);
@@ -143,6 +218,7 @@ void WikiEditDialog::setPreviousPage(RsWikiSnapshot &page)
 	ui.lineEdit_PrevVersion->setText(QString::fromStdString(mWikiSnapshot.mMeta.mMsgId));
 	mCurrentText = QString::fromUtf8(mWikiSnapshot.mPage.c_str());
         redrawPage();
+	textReset();
 }
 
 
@@ -163,6 +239,7 @@ void WikiEditDialog::setNewPage()
 	ui.headerFrame->setHeaderText(tr("Create New Wiki Page"));
 	setWindowTitle(tr("Create New Wiki Page"));
 
+	textReset();
 }
 
 
@@ -192,6 +269,7 @@ void WikiEditDialog::revertEdit()
 		mCurrentText = QString::fromUtf8(mWikiSnapshot.mPage.c_str());
 	}
         redrawPage();
+	textReset();
 }
 
 
@@ -255,7 +333,18 @@ void WikiEditDialog::submitEdit()
 
 
 	mWikiSnapshot.mMeta.mMsgName = ui.lineEdit_Page->text().toStdString();
-	mWikiSnapshot.mPage = ui.textEdit->toPlainText().toStdString();
+
+	if (!mPreviewMode)
+	{
+		/* can just use the current text */
+		mCurrentText = ui.textEdit->toPlainText();
+	}
+
+	{	
+		// complicated way of preserving Utf8 text */
+		QByteArray byte_array = mCurrentText.toUtf8();
+		mWikiSnapshot.mPage = std::string(byte_array.data());
+	}
 
 	std::cerr << "WikiEditDialog::submitEdit() PageTitle: " << mWikiSnapshot.mMeta.mMsgName;
 	std::cerr << std::endl;
