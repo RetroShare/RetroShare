@@ -79,9 +79,7 @@ IdDialog::IdDialog(QWidget *parent)
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
 	timer->start(1000);
 
-	rsIdentity->generateDummyData();
 	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
-
 }
 
 void IdDialog::ListTypeToggled(bool checked)
