@@ -27,6 +27,7 @@
 #include <udp/udpstack.h>
 #include <udp/udpbitdht.h>
 #include <bitdht/bdstddht.h>
+#include <string.h>
 
 #include "bdhandler.h"
 
