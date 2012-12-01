@@ -1825,6 +1825,7 @@ RsTurtle *rsTurtle = NULL ;
 
 #ifdef ENABLE_GXS_SERVICES
 #include "services/p3idservice.h"
+#include "services/p3gxscircles.h"
 #include "services/p3wiki.h"
 #include "services/p3posted.h"
 #include "services/p3photoservice.h"
@@ -2315,6 +2316,22 @@ int RsServer::StartupRetroShare()
         RsGxsNetService* gxsid_ns = new RsGxsNetService(
                         RS_SERVICE_GXSV1_TYPE_GXSID, gxsid_ds, nxsMgr, mGxsIdService);
 
+        /**** GxsCircle service ****/
+
+        p3GxsCircles *mGxsCircles = NULL;
+
+        RsGeneralDataService* gxscircles_ds = new RsDataService(currGxsDir + "/", "gxscircles_db",
+                        RS_SERVICE_GXSV1_TYPE_GXSCIRCLE, NULL);
+
+        gxscircles_ds->resetDataStore(); 
+
+        // init gxs services
+        mGxsCircles = new p3GxsCircles(gxscircles_ds, NULL, mGxsIdService);
+
+        // create GXS Circle service
+        RsGxsNetService* gxscircles_ns = new RsGxsNetService(
+                        RS_SERVICE_GXSV1_TYPE_GXSCIRCLE, gxscircles_ds, nxsMgr, mGxsCircles);
+
 
 #if ENABLE_OTHER_GXS_SERVICES
         /**** Photo service ****/
@@ -2424,6 +2441,7 @@ int RsServer::StartupRetroShare()
         /*** start up GXS core runner ***/
 #if ENABLE_OTHER_GXS_SERVICES
         createThread(*mGxsIdService);
+        createThread(*mGxsCircles);
         createThread(*mPhoto);
         createThread(*mPosted);
         createThread(*mWiki);
@@ -2433,6 +2451,7 @@ int RsServer::StartupRetroShare()
 
         // cores ready start up GXS net servers
         createThread(*gxsid_ns);
+        createThread(*gxscircles_ns);
 #if ENABLE_OTHER_GXS_SERVICES
         createThread(*photo_ns);
         createThread(*posted_ns);
@@ -2443,6 +2462,7 @@ int RsServer::StartupRetroShare()
 
         // now add to p3service
         pqih->addService(gxsid_ns);
+        pqih->addService(gxscircles_ns);
 #if ENABLE_OTHER_GXS_SERVICES
         pqih->addService(photo_ns);
         pqih->addService(posted_ns);
@@ -2713,6 +2733,7 @@ int RsServer::StartupRetroShare()
         // Testing of new cache system interfaces.
 
 	rsIdentity = mGxsIdService;
+	rsGxsCircles = mGxsCircles;
 #if ENABLE_OTHER_GXS_SERVICES
         rsWiki = mWiki;
         rsPosted = mPosted;

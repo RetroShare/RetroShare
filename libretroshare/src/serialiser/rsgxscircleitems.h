@@ -38,20 +38,29 @@
 const uint8_t RS_PKT_SUBTYPE_GXSCIRCLE_GROUP_ITEM = 0x02;
 const uint8_t RS_PKT_SUBTYPE_GXSCIRCLE_MSG_ITEM = 0x03;
 
+const uint16_t GXSCIRCLE_GXSIDSET	= 0x0001;
+const uint16_t GXSCIRCLE_SUBCIRCLESET	= 0x0002;
+
 class RsGxsCircleGroupItem : public RsGxsGrpItem
 {
 
 public:
 
 	RsGxsCircleGroupItem():  RsGxsGrpItem(RS_SERVICE_GXSV1_TYPE_GXSCIRCLE,
-			RS_PKT_SUBTYPE_GXSCIRCLE_GROUP_ITEM) { return;}
+			RS_PKT_SUBTYPE_GXSCIRCLE_GROUP_ITEM), 
+			gxsIdSet(GXSCIRCLE_GXSIDSET), 
+			subCircleSet(GXSCIRCLE_SUBCIRCLESET) { return;}
         virtual ~RsGxsCircleGroupItem() { return;}
 
         void clear();
 	std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
+	bool convertFrom(const RsGxsCircleGroup &group);
+	bool convertTo(RsGxsCircleGroup &group) const;
 
-	RsGxsCircleGroup group;
+	// DIFFERENT FROM OTHER ONES, as stupid serialisation otherwise.
+	RsTlvStringSet gxsIdSet;
+	RsTlvStringSet subCircleSet;
 };
 
 class RsGxsCircleMsgItem : public RsGxsMsgItem

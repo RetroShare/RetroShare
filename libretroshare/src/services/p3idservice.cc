@@ -39,6 +39,9 @@
 /****
  * #define ID_DEBUG 1
  ****/
+#define GXSID_GEN_DUMMY_DATA	1
+
+
 
 #define ID_REQUEST_LIST		0x0001
 #define ID_REQUEST_IDENTITY	0x0002
@@ -91,6 +94,15 @@ RsIdentity *rsIdentity = NULL;
 
 #define GXSID_EVENT_CACHETEST 		0x1000
 
+#define GXSID_EVENT_DUMMYDATA		0x2000
+#define GXSID_EVENT_DUMMY_OWNIDS	0x2001
+#define GXSID_EVENT_DUMMY_PGPID		0x2002
+#define GXSID_EVENT_DUMMY_UNKNOWN_PGPID	0x2003
+#define GXSID_EVENT_DUMMY_PSEUDOID	0x2004
+
+
+/* delays */
+
 #define CACHETEST_PERIOD	60
 
 #define OWNID_RELOAD_DELAY		10
@@ -121,6 +133,11 @@ p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *ne
 	RsTickEvent::schedule_in(GXSID_EVENT_PGPHASH, PGPHASH_PERIOD);
 	RsTickEvent::schedule_in(GXSID_EVENT_REPUTATION, REPUTATION_PERIOD);
 	RsTickEvent::schedule_now(GXSID_EVENT_CACHEOWNIDS);
+
+#ifdef GXSID_GEN_DUMMY_DATA
+	RsTickEvent::schedule_now(GXSID_EVENT_DUMMYDATA);
+#endif
+
 }
 
 
@@ -1129,6 +1146,7 @@ typedef t_RsGenericIdType<SHA_DIGEST_LENGTH> GxsIdPgpHash;
 static void calcPGPHash(const RsGxsId &id, const PGPFingerprintType &pgp, GxsIdPgpHash &hash);
 
 
+// Must Use meta.
 void p3IdService::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet)
 {
 	RsGxsIdGroupItem *item = dynamic_cast<RsGxsIdGroupItem *>(grpItem);
@@ -1138,7 +1156,7 @@ void p3IdService::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet
 		std::cerr << std::endl;
 		return;
 	}
-	
+
 	/********************* TEMP HACK UNTIL GXS FILLS IN GROUP_ID *****************/	
 	// find private admin key
 	std::map<std::string, RsTlvSecurityKey>::iterator mit = keySet.keys.begin();
@@ -1163,19 +1181,61 @@ void p3IdService::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet
 		
 	/********************* TEMP HACK UNTIL GXS FILLS IN GROUP_ID *****************/	
 
+	// SANITY CHECK.
+	if (item->group.mMeta.mAuthorId != item->meta.mAuthorId)
+	{
+		std::cerr << "p3IdService::service_CreateGroup() AuthorId mismatch(";
+		std::cerr << item->group.mMeta.mAuthorId;
+		std::cerr << " vs ";
+		std::cerr << item->meta.mAuthorId;
+		std::cerr << std::endl;
+	}
+		
+	if (item->group.mMeta.mGroupId != item->meta.mGroupId)
+	{
+		std::cerr << "p3IdService::service_CreateGroup() GroupId mismatch(";
+		std::cerr << item->group.mMeta.mGroupId;
+		std::cerr << " vs ";
+		std::cerr << item->meta.mGroupId;
+		std::cerr << std::endl;
+	}
+		
+		
+	if (item->group.mMeta.mGroupFlags != item->meta.mGroupFlags)
+	{
+		std::cerr << "p3IdService::service_CreateGroup() GroupFlags mismatch(";
+		std::cerr << item->group.mMeta.mGroupFlags;
+		std::cerr << " vs ";
+		std::cerr << item->meta.mGroupFlags;
+		std::cerr << std::endl;
+	}
+		
+
+
+
+
+
 	std::cerr << "p3IdService::service_CreateGroup() for : " << item->group.mMeta.mGroupId;
 	std::cerr << std::endl;
 	std::cerr << "p3IdService::service_CreateGroup() Alt GroupId : " << item->meta.mGroupId;
 	std::cerr << std::endl;
 
-	if (item->group.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
+#ifdef GXSID_GEN_DUMMY_DATA
+	if ((item->group.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID) && (item->group.mMeta.mAuthorId != ""))
+#else
+	if (item->group.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID) 
+#endif
 	{
 		/* create the hash */
 		GxsIdPgpHash hash;
 
 		/* */
 		PGPFingerprintType ownFinger;
+#ifdef GXSID_GEN_DUMMY_DATA
+		PGPIdType ownId(item->group.mMeta.mAuthorId);
+#else
 		PGPIdType ownId(AuthGPG::getAuthGPG()->getGPGOwnId());
+#endif
 
 		if (!AuthGPG::getAuthGPG()->getKeyFingerprint(ownId,ownFinger))
 		{
@@ -1214,6 +1274,12 @@ void p3IdService::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet
 #endif
 
 	}
+
+	// Enforce no AuthorId.
+	item->meta.mAuthorId = "";
+	item->group.mMeta.mAuthorId = "";
+	// copy meta data to be sure its all the same.
+	//item->group.mMeta = item->meta;
 
 	// Reload in a little bit.
 	// HACK to get it to work.
@@ -1567,129 +1633,166 @@ void calcPGPHash(const RsGxsId &id, const PGPFingerprintType &pgp, GxsIdPgpHash 
 /************************************************************************************/
 /************************************************************************************/
 
-std::string p3IdService::genRandomId()
+
+std::string p3IdService::genRandomId(int len)
 {
 	std::string randomId;
-	for(int i = 0; i < 20; i++)
+	for(int i = 0; i < len; i++)
 	{
-		randomId += (char) ('a' + (RSRandom::random_u32() % 26));
+		int val = RSRandom::random_u32() % 16;
+		if (val < 10)
+		{
+			randomId += (char) ('0' + val);
+		}
+		else
+		{
+			randomId += (char) ('a' + (val - 10));
+		}
 	}
 	
 	return randomId;
 }
 	
+#define MAX_KNOWN_PGPIDS	50 
+#define MAX_UNKNOWN_PGPIDS	50 
+#define MAX_PSEUDOIDS		100
+
+#define DUMMY_GXSID_DELAY	5
+
 void p3IdService::generateDummyData()
+{
+
+	generateDummy_OwnIds();
+
+	time_t age = 0;
+	for(int i = 0; i < MAX_KNOWN_PGPIDS; i++)
+	{
+		age += DUMMY_GXSID_DELAY;
+		RsTickEvent::schedule_in(GXSID_EVENT_DUMMY_PGPID, age);
+	}
+
+	for(int i = 0; i < MAX_PSEUDOIDS; i++)
+	{
+		age += DUMMY_GXSID_DELAY;
+		RsTickEvent::schedule_in(GXSID_EVENT_DUMMY_PSEUDOID, age);
+	}
+
+	for(int i = 0; i < MAX_UNKNOWN_PGPIDS; i++)
+	{
+		age += DUMMY_GXSID_DELAY;
+		RsTickEvent::schedule_in(GXSID_EVENT_DUMMY_UNKNOWN_PGPID, age);
+	}
+}
+
+
+
+
+
+void p3IdService::generateDummy_OwnIds()
 {
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
 	/* grab all the gpg ids... and make some ids */
 
-	std::list<std::string> gpgids;
-	std::list<std::string>::iterator it;
-	
-	rsPeers->getGPGAllList(gpgids);
-
 	std::string ownId = rsPeers->getGPGOwnId();
-	gpgids.push_back(ownId);
 
+	// generate some ownIds.
 	int genCount = 0;
 	int i;
-	for(it = gpgids.begin(); it != gpgids.end(); it++)
-	{
-		/* create one or two for each one */
-		int nIds = 1 + (RSRandom::random_u32() % 2);
-		for(i = 0; i < nIds; i++)
-		{
-			RsGxsIdGroup id;
 
-                	RsPeerDetails details;
-
-			//id.mKeyId = genRandomId();
-			id.mMeta.mGroupId = genRandomId();
-			id.mMeta.mGroupFlags = RSGXSID_GROUPFLAG_REALID;
-			id.mPgpIdHash = genRandomId();
-			id.mPgpIdSign = genRandomId();
-
-                	if (rsPeers->getPeerDetails(*it, details))
-			{
-				std::ostringstream out;
-				out << details.name << "_" << i + 1;
-
-				//id.mNickname = out.str();
-				id.mMeta.mGroupName = out.str();
-			
-	
-			}
-			else
-			{
-				std::cerr << "p3IdService::generateDummyData() missing" << std::endl;
-				std::cerr << std::endl;
-
-				//id.mNickname = genRandomId();
-				id.mMeta.mGroupName = genRandomId();
-			}
-
-			uint32_t dummyToken = 0;
-			createGroup(dummyToken, id);
-
-// LIMIT - AS GENERATION IS BROKEN.
-#define MAX_TEST_GEN 5
-			if (++genCount > MAX_TEST_GEN)
-			{
-				return;
-			}
-		}
-	}
-	return;
-
-#define MAX_RANDOM_GPGIDS	10 //1000
-#define MAX_RANDOM_PSEUDOIDS	50 //5000
-
-	int nFakeGPGs = (RSRandom::random_u32() % MAX_RANDOM_GPGIDS);
-	int nFakePseudoIds = (RSRandom::random_u32() % MAX_RANDOM_PSEUDOIDS);
-
-	/* make some fake gpg ids */
-	for(i = 0; i < nFakeGPGs; i++)
+	int nIds = 2 + (RSRandom::random_u32() % 2);
+	for(i = 0; i < nIds; i++)
 	{
 		RsGxsIdGroup id;
+               	RsPeerDetails details;
 
-                RsPeerDetails details;
-
-		id.mMeta.mGroupName = genRandomId();
-
-		id.mMeta.mGroupId = genRandomId();
 		id.mMeta.mGroupFlags = RSGXSID_GROUPFLAG_REALID;
-		id.mPgpIdHash = genRandomId();
-		id.mPgpIdSign = genRandomId();
+
+		// HACK FOR DUMMY GENERATION.
+		id.mMeta.mAuthorId = ownId;
+               	if (rsPeers->getPeerDetails(ownId, details))
+		{
+			std::ostringstream out;
+			out << details.name << "_" << i + 1;
+
+			id.mMeta.mGroupName = out.str();
+		}
 
 		uint32_t dummyToken = 0;
 		createGroup(dummyToken, id);
 	}
-
-	/* make lots of pseudo ids */
-	for(i = 0; i < nFakePseudoIds; i++)
-	{
-		RsGxsIdGroup id;
-
-                RsPeerDetails details;
-
-		id.mMeta.mGroupName = genRandomId();
-
-		id.mMeta.mGroupId = genRandomId();
-		id.mMeta.mGroupFlags = 0;
-		id.mPgpIdHash = "";
-		id.mPgpIdSign = "";
-
-
-		uint32_t dummyToken = 0;
-		createGroup(dummyToken, id);
-	}
-
-	//mUpdated = true;
-
-	return;
 }
 
+
+void p3IdService::generateDummy_FriendPGP()
+{
+	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+
+	// Now Generate for friends.
+	std::list<std::string> gpgids;
+	std::list<std::string>::iterator it;
+	rsPeers->getGPGAllList(gpgids);
+
+	RsGxsIdGroup id;
+
+	id.mMeta.mGroupFlags = RSGXSID_GROUPFLAG_REALID;
+
+	int idx = RSRandom::random_f32() * (gpgids.size() - 1);
+	it = gpgids.begin();
+	for(int j = 0; j < idx; j++, it++);
+
+	// HACK FOR DUMMY GENERATION.
+	id.mMeta.mAuthorId = *it;
+
+	RsPeerDetails details;
+	if (rsPeers->getPeerDetails(*it, details))
+	{
+		std::ostringstream out;
+		out << details.name << "_" << RSRandom::random_u32() % 1000;
+		id.mMeta.mGroupName = out.str();
+	}
+	else
+	{
+		std::cerr << "p3IdService::generateDummy_FriendPGP() missing" << std::endl;
+		std::cerr << std::endl;
+		id.mMeta.mGroupName = genRandomId();
+	}
+
+	uint32_t dummyToken = 0;
+	createGroup(dummyToken, id);
+}
+
+
+void p3IdService::generateDummy_UnknownPGP()
+{
+	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+
+	RsGxsIdGroup id;
+
+	// FAKE DATA.
+	id.mMeta.mGroupFlags = RSGXSID_GROUPFLAG_REALID;
+	id.mPgpIdHash = genRandomId(40);
+	id.mPgpIdSign = genRandomId(40);
+	id.mMeta.mGroupName = genRandomId();
+
+	uint32_t dummyToken = 0;
+	createGroup(dummyToken, id);
+}
+
+
+void p3IdService::generateDummy_UnknownPseudo()
+{
+	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+
+	RsGxsIdGroup id;
+
+	// FAKE DATA.
+	id.mMeta.mGroupFlags = 0;
+	id.mMeta.mGroupName = genRandomId();
+
+	uint32_t dummyToken = 0;
+	createGroup(dummyToken, id);
+}
 
 
 std::string rsIdTypeToString(uint32_t idtype)
@@ -2460,6 +2563,26 @@ void p3IdService::handle_event(uint32_t event_type, const std::string &elabel)
 
 		case GXSID_EVENT_PGPHASH_PROC:
 			pgphash_process();
+			break;
+
+		case GXSID_EVENT_DUMMYDATA:
+			generateDummyData();
+			break;
+
+		case GXSID_EVENT_DUMMY_OWNIDS:
+			generateDummy_OwnIds();
+			break;
+
+		case GXSID_EVENT_DUMMY_PGPID:
+			generateDummy_FriendPGP();
+			break;
+
+		case GXSID_EVENT_DUMMY_UNKNOWN_PGPID:
+			generateDummy_UnknownPGP();
+			break;
+
+		case GXSID_EVENT_DUMMY_PSEUDOID:
+			generateDummy_UnknownPseudo();
 			break;
 
 		default:

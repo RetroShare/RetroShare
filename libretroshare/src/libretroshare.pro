@@ -642,13 +642,11 @@ HEADERS += retroshare/rsgame.h
 
             # GxsCircles Service
             HEADERS += services/p3gxscircles.h \
-
-#               serialiser/rsgxscircleitems.h
-#		retroshare/rsgxscircles.h \
+		serialiser/rsgxscircleitems.h \
+		retroshare/rsgxscircles.h \
 
             SOURCES += services/p3gxscircles.cc \
-
-#                serialiser/rsgxscircleitems.cc \
+		serialiser/rsgxscircleitems.cc \
 
             # GxsForums Service
             HEADERS += retroshare/rsgxsforums.h \

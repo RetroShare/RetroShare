@@ -137,6 +137,31 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 /******************* RsCircles Interface  ***************************************/
 /********************************************************************************/
 
+void p3GxsCircles::createLocalCircle()
+{
+	return;
+}
+
+void p3GxsCircles::addToLocalCircle()
+{
+	return;
+}
+
+void p3GxsCircles::removeFromLocalCircle()
+{
+	return;
+}
+
+void p3GxsCircles::getLocalCirclePeers()
+{
+	return;
+}
+
+void p3GxsCircles::getListOfLocalCircles()
+{
+	return;
+}
+
 
 #if 0
 bool p3GxsCircles:: getNickname(const RsGxsId &id, std::string &nickname)
@@ -181,34 +206,7 @@ bool p3GxsCircles:: getOwnIds(std::list<RsGxsId> &ownIds)
 	return true;
 }
 
-
-//
-bool p3GxsCircles::submitOpinion(uint32_t& token, RsIdOpinion &opinion)
-{
-	return false;
-}
-
-bool p3GxsCircles::createIdentity(uint32_t& token, RsIdentityParameters &params)
-{
-
-	RsGxsIdGroup id;
-
-	id.mMeta.mGroupName = params.nickname;
-	if (params.isPgpLinked)
-	{
-		id.mMeta.mGroupFlags = RSGXSID_GROUPFLAG_REALID;
-	}
-	else
-	{
-		id.mMeta.mGroupFlags = 0;
-	}
-
-	createGroup(token, id);
-
-	return true;
-}
 #endif
-
 
 /********************************************************************************/
 /******************* RsGixs Interface     ***************************************/
@@ -269,8 +267,8 @@ bool p3GxsCircles::getGroupData(const uint32_t &token, std::vector<RsGxsCircleGr
 		for(; vit != grpData.end(); vit++)
 		{
 			RsGxsCircleGroupItem* item = dynamic_cast<RsGxsCircleGroupItem*>(*vit);
-			RsGxsCircleGroup group = item->group;
-			group.mMeta = item->meta;
+			RsGxsCircleGroup group;
+			item->convertTo(group);
 
 			// If its cached - add that info (TODO).
 			groups.push_back(group);
@@ -287,8 +285,7 @@ bool p3GxsCircles::getGroupData(const uint32_t &token, std::vector<RsGxsCircleGr
 bool 	p3GxsCircles::createGroup(uint32_t& token, RsGxsCircleGroup &group)
 {
     RsGxsCircleGroupItem* item = new RsGxsCircleGroupItem();
-    item->group = group;
-    item->meta = group.mMeta;
+    item->convertFrom(group);
     RsGenExchange::publishGroup(token, item);
     return true;
 }
@@ -688,8 +685,8 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 		for(; vit != grpData.end(); vit++)
 		{
 			RsGxsCircleGroupItem *item = dynamic_cast<RsGxsCircleGroupItem*>(*vit);
-			RsGxsCircleGroup group = item->group;
-			group.mMeta = item->meta;
+			RsGxsCircleGroup group;
+			item->convertTo(group);
 
 			std::cerr << "p3GxsCircles::cache_load_for_token() Loaded Id with Meta: ";
 			std::cerr << item->meta;
@@ -1204,19 +1201,33 @@ void p3GxsCircles::generateDummyData()
 /************************************************************************************/
 
 
-std::ostream &operator<<(std::ostream &out, const RsGxsIdGroup &grp)
+std::ostream &operator<<(std::ostream &out, const RsGxsCircleGroup &grp)
 {
-	out << "RsGxsIdGroup: Meta: " << grp.mMeta;
-	out << " PgpIdHash: " << grp.mPgpIdHash;
-	out << " PgpIdSign: [binary]"; // << grp.mPgpIdSign;
+	out << "RsGxsCircleGroup: Meta: " << grp.mMeta;
+	out << "InvitedMembers: ";
 	out << std::endl;
-	
+
+        std::list<RsGxsId>::const_iterator it;
+        std::list<RsGxsCircleId>::const_iterator sit;
+	for(it = grp.mInvitedMembers.begin();
+		it != grp.mInvitedMembers.begin(); it++)
+	{
+		out << "\t" << *it;
+		out << std::endl;
+	}
+
+	for(sit = grp.mSubCircles.begin();
+		sit != grp.mSubCircles.begin(); sit++)
+	{
+		out << "\t" << *it;
+		out << std::endl;
+	}
 	return out;
 }
 
-std::ostream &operator<<(std::ostream &out, const RsGxsIdOpinion &opinion)
+std::ostream &operator<<(std::ostream &out, const RsGxsCircleMsg &msg)
 {
-	out << "RsGxsIdOpinion: Meta: " << opinion.mMeta;
+	out << "RsGxsCircleMsg: Meta: " << msg.mMeta;
 	out << std::endl;
 	
 	return out;

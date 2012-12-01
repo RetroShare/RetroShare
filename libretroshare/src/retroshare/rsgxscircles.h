@@ -85,6 +85,7 @@ class RsGxsCircleMsg
 
 	// Signature by user signifying that they want to be part of the group.
 	// maybe Phase 3.
+	std::string stuff;
 };
 
 

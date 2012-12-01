@@ -206,62 +206,6 @@ public:
     RsIdentity(RsGenExchange *gxs): RsGxsIfaceImpl(gxs)  { return; }
     virtual ~RsIdentity() { return; }
 
-    /* Specific Service Data */
-
-    /*!
-     * @param token token to be redeemed for album request
-     * @param album the album returned for given request token
-     * @return false if request token is invalid, check token status for error report
-     */
-//    virtual bool getAlbum(const uint32_t &token, std::vector<RsPhotoAlbum> &album) = 0;
-
-    /*!
-     * @param token token to be redeemed for photo request
-     * @param photo the photo returned for given request token
-     * @return false if request token is invalid, check token status for error report
-     */
-//    virtual bool getPhoto(const uint32_t &token,
-//                                              PhotoResult &photo) = 0;
-
-    /* details are updated in album - to choose Album ID, and storage path */
-
-    /*!
-     * @param token token to be redeemed for photo request
-     * @param photo the photo returned for given request token
-     * @return false if request token is invalid, check token status for error report
-     */
-//    virtual bool getPhotoComment(const uint32_t &token,
-//                                              PhotoCommentResult& comments) = 0;
-
-    /*!
-     * submits album, which returns a token that needs
-     * to be acknowledge to get album grp id
-     * @param token token to redeem for acknowledgement
-     * @param album album to be submitted
-     */
-//    virtual bool submitAlbumDetails(uint32_t& token, RsPhotoAlbum &album) = 0;
-
-    /*!
-     * submits photo, which returns a token that needs
-     * to be acknowledged to get photo msg-grp id pair
-     * @param token token to redeem for acknowledgement
-     * @param photo photo to be submitted
-     */
-//    virtual bool submitPhoto(uint32_t& token, RsPhotoPhoto &photo) = 0;
-
-    /*!
-     * submits photo comment, which returns a token that needs
-     * to be acknowledged to get photo msg-grp id pair
-     * The mParentId needs to be set to an existing msg for which
-     * commenting is enabled
-     * @param token token to redeem for acknowledgement
-     * @param comment comment to be submitted
-     */
-//    virtual bool submitComment(uint32_t& token, RsPhotoComment &photo) = 0;
-
-/********************************************************************************************/
-/********************************************************************************************/
-/********************************************************************************************/
 /********************************************************************************************/
 /********************************************************************************************/
 
@@ -284,60 +228,8 @@ virtual bool createIdentity(uint32_t& token, RsIdentityParameters &params) = 0;
         /* Specific Service Data */
 	/* We expose these initially for testing / GUI purposes.
          */
+
 virtual bool    getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> &groups) = 0;
-
-	/* In the Identity System - You don't access the Messages Directly.
-	 * as they represent idividuals opinions....
-	 * This is reflected in the TokenService calls returning false.
-	 *
-	 * Below is the additional interface to look at reputation.
-	 */
-
-	/* So we will want to cache much of the identity stuff, so that we have quick access to the results.
-	 * The following bits of data will not use the request/response interface, and should be available immediately.
-	 *
- 	 * ID => Nickname, knownGPG, reputation.
-	 *
-	 * This will require quite a bit of data... 
-	 *       20 Bytes + 50 + 1 + 4 Bytes? (< 100 Bytes).
-	 * 		x 10,000 IDs.    => ~1 MB of cache (Good).
-	 * 		x 100,000 IDs.   => ~10 MB of cache (Good).
-	 * 		x 1,000,000 IDs. => ~100 MB of cache (Too Big).
-	 *
-	 * We also need to store quick access to your OwnIds.
-	 */
-
-//virtual uint32_t getIdDetails(const std::string &id, std::string &nickname, bool &isGpgKnown, 
-//						uint32_t &ownOpinion, float &reputation);
-//virtual uint32_t getOwnIds(std::list<std::string> &ownIds);
-//virtual bool  setOpinion(const std::string &id, uint32_t opinion);
-
-
-virtual void generateDummyData() = 0;
-
-#if 0
-
-        /* Data Requests */
-virtual bool requestIdentityList(uint32_t &token) = 0;
-virtual bool requestIdentities(uint32_t &token, const std::list<std::string> &ids) = 0;
-virtual bool requestIdReputations(uint32_t &token, const std::list<std::string> &ids) = 0;
-virtual bool requestIdPeerOpinion(uint32_t &token, const std::string &aboutId, const std::string &peerId) = 0;
-//virtual bool requestIdGpgDetails(uint32_t &token, const std::list<std::string> &ids) = 0;
-
-        /* Poll */
-virtual uint32_t requestStatus(const uint32_t token) = 0;
-
-        /* Retrieve Data */
-virtual bool getIdentityList(const uint32_t token, std::list<std::string> &ids) = 0;
-virtual bool getIdentity(const uint32_t token, RsIdData &data) = 0;
-virtual bool getIdReputation(const uint32_t token, RsIdReputation &reputation) = 0;
-virtual bool getIdPeerOpinion(const uint32_t token, RsIdOpinion &opinion) = 0;
-
-        /* Updates */
-virtual bool updateIdentity(RsIdData &data) = 0;
-virtual bool updateOpinion(RsIdOpinion &opinion) = 0;
-
-#endif
 
 };
 

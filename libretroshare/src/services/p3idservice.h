@@ -307,8 +307,12 @@ virtual void handle_event(uint32_t event_type, const std::string &elabel);
  */
 
 virtual void generateDummyData();
+	void generateDummy_OwnIds();
+	void generateDummy_FriendPGP();
+	void generateDummy_UnknownPGP();
+	void generateDummy_UnknownPseudo();
 
-std::string genRandomId();
+std::string genRandomId(int len = 20);
 
 	bool reputation_start();
 	bool reputation_continue();

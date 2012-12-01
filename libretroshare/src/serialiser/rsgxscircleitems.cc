@@ -25,7 +25,7 @@
 
 #include <iostream>
 
-#include "rswireitems.h"
+#include "rsgxscircleitems.h"
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rsbaseserial.h"
 
@@ -107,17 +107,37 @@ RsItem* RsGxsCircleSerialiser::deserialise(void* data, uint32_t* size)
 
 void RsGxsCircleGroupItem::clear()
 {
-	group.mDescription.clear();
+	gxsIdSet.TlvClear();
+	subCircleSet.TlvClear();
 }
+
+bool RsGxsCircleGroupItem::convertFrom(const RsGxsCircleGroup &group)
+{
+	clear();
+
+	meta = group.mMeta;
+	gxsIdSet.ids = group.mInvitedMembers;
+	subCircleSet.ids = group.mSubCircles;
+	return true;
+}
+
+bool RsGxsCircleGroupItem::convertTo(RsGxsCircleGroup &group) const
+{
+	group.mMeta = meta;
+	group.mInvitedMembers = gxsIdSet.ids;
+	group.mSubCircles = subCircleSet.ids;
+	return true;
+}
+
 
 std::ostream& RsGxsCircleGroupItem::print(std::ostream& out, uint16_t indent)
 {
 	printRsItemBase(out, "RsGxsCircleGroupItem", indent);
 	uint16_t int_Indent = indent + 2;
 
-	printIndent(out, int_Indent);
-	out << "Description: " << group.mDescription << std::endl;
-  
+ 	gxsIdSet.print(out, int_Indent);
+ 	subCircleSet.print(out, int_Indent);
+ 
 	printRsItemEnd(out ,"RsGxsCircleGroupItem", indent);
 	return out;
 }
@@ -125,11 +145,10 @@ std::ostream& RsGxsCircleGroupItem::print(std::ostream& out, uint16_t indent)
 
 uint32_t RsGxsCircleSerialiser::sizeGxsCircleGroupItem(RsGxsCircleGroupItem *item)
 {
-
-	const RsCircleGroup& group = item->group;
 	uint32_t s = 8; // header
 
-	s += GetTlvStringSize(group.mDescription);
+	s += item->gxsIdSet.TlvSize();
+	s += item->subCircleSet.TlvSize();
 
 	return s;
 }
@@ -162,7 +181,8 @@ bool RsGxsCircleSerialiser::serialiseGxsCircleGroupItem(RsGxsCircleGroupItem *it
 	offset += 8;
 	
 	/* GxsCircleGroupItem */
-	ok &= SetTlvString(data, tlvsize, &offset, 1, item->group.mDescription);
+	ok &= item->gxsIdSet.SetTlv(data, tlvsize, &offset);
+	ok &= item->subCircleSet.SetTlv(data, tlvsize, &offset);
 	
 	if(offset != tlvsize)
 	{
@@ -222,7 +242,8 @@ RsGxsCircleGroupItem* RsGxsCircleSerialiser::deserialiseGxsCircleGroupItem(void 
 	/* skip the header */
 	offset += 8;
 	
-	ok &= GetTlvString(data, rssize, &offset, 1, item->group.mDescription);
+	ok &= item->gxsIdSet.GetTlv(data, rssize, &offset);
+	ok &= item->subCircleSet.GetTlv(data, rssize, &offset);
 	
 	if (offset != rssize)
 	{
@@ -255,8 +276,7 @@ RsGxsCircleGroupItem* RsGxsCircleSerialiser::deserialiseGxsCircleGroupItem(void 
 
 void RsGxsCircleMsgItem::clear()
 {
-	pulse.mPulseText.clear();
-	pulse.mHashTags.clear();
+	msg.stuff.clear();
 }
 
 std::ostream& RsGxsCircleMsgItem::print(std::ostream& out, uint16_t indent)
@@ -265,10 +285,7 @@ std::ostream& RsGxsCircleMsgItem::print(std::ostream& out, uint16_t indent)
 	uint16_t int_Indent = indent + 2;
 
 	printIndent(out, int_Indent);
-	out << "Page: " << pulse.mPulseText << std::endl;
-  
-	printIndent(out, int_Indent);
-	out << "HashTags: " << pulse.mHashTags << std::endl;
+	out << "Stuff: " << msg.stuff << std::endl;
   
 	printRsItemEnd(out ,"RsGxsCircleMsgItem", indent);
 	return out;
@@ -278,11 +295,10 @@ std::ostream& RsGxsCircleMsgItem::print(std::ostream& out, uint16_t indent)
 uint32_t RsGxsCircleSerialiser::sizeGxsCircleMsgItem(RsGxsCircleMsgItem *item)
 {
 
-	const RsCircleMsg& pulse = item->pulse;
+	const RsGxsCircleMsg &msg = item->msg;
 	uint32_t s = 8; // header
 
-	s += GetTlvStringSize(pulse.mPulseText);
-	s += GetTlvStringSize(pulse.mHashTags);
+	s += GetTlvStringSize(msg.stuff);
 
 	return s;
 }
@@ -315,8 +331,7 @@ bool RsGxsCircleSerialiser::serialiseGxsCircleMsgItem(RsGxsCircleMsgItem *item, 
 	offset += 8;
 	
 	/* GxsCircleMsgItem */
-	ok &= SetTlvString(data, tlvsize, &offset, 1, item->pulse.mPulseText);
-	ok &= SetTlvString(data, tlvsize, &offset, 1, item->pulse.mHashTags);
+	ok &= SetTlvString(data, tlvsize, &offset, 1, item->msg.stuff);
 	
 	if(offset != tlvsize)
 	{
@@ -376,8 +391,7 @@ RsGxsCircleMsgItem* RsGxsCircleSerialiser::deserialiseGxsCircleMsgItem(void *dat
 	/* skip the header */
 	offset += 8;
 	
-	ok &= GetTlvString(data, rssize, &offset, 1, item->pulse.mPulseText);
-	ok &= GetTlvString(data, rssize, &offset, 1, item->pulse.mHashTags);
+	ok &= GetTlvString(data, rssize, &offset, 1, item->msg.stuff);
 	
 	if (offset != rssize)
 	{
