@@ -78,7 +78,7 @@ bdNodeManager::bdNodeManager(bdNodeId *id, std::string dhtVersion, std::string b
         mNetworkSize = 0;
         mBdNetworkSize = 0;
 
-	std::string bfilter = "15108044002028000000200040400081a20840001000010400070240220000020501196b2420105218204008000000201102802041000a000004000004002881001180068301458000180000040000010080820e0005811000220200040800210280582001118024041002200004000000c44400080485a50008011084040200";
+	std::string bfilter = "edff727f3a49f55c0504ad99d4282f7a26b3f69b59ebc6ca496879c6805a0aa567dffb755f17fdfd44dd24180bf2b61ebfbe68e9a53e79d7893f002140882daf7efbfed66f36eb170064208286040001fbefbbbbef1fa7fdf4a21128d050a208cd3a529a7efdc672c8255130e022b134bc6c77dfbf455d054349c575774d427b";
 
 	mBloomFilter.setFilterBits(bfilter);
 
@@ -643,9 +643,9 @@ void bdNodeManager::SearchForLocalNet()
 int bdNodeManager::status()
 {
 	/* do status of bdNode */
-#ifdef DEBUG_MGR
+//#ifdef DEBUG_MGR
 	printState();
-#endif
+//#endif
 
 	checkStatus();
 	checkBadPeerStatus();
@@ -655,10 +655,10 @@ int bdNodeManager::status()
 	mBdNetworkSize = mNodeSpace.calcNetworkSizeWithFlag(
 					LOCAL_NET_FLAG);
 
-#ifdef DEBUG_MGR
+//#ifdef DEBUG_MGR
 	std::cerr << "BitDHT NetworkSize: " << mNetworkSize << std::endl;
 	std::cerr << "BitDHT App NetworkSize: " << mBdNetworkSize << std::endl;
-#endif
+//#endif
 
 	return 1;
 }
