@@ -26,21 +26,99 @@
 
 #include <iostream>
 
+
+#define 	WIKIEDITDIALOG_GROUP		0x0001
+#define 	WIKIEDITDIALOG_PAGE		0x0002
+#define 	WIKIEDITDIALOG_BASEHISTORY	0x0003
+#define 	WIKIEDITDIALOG_EDITTREE		0x0005
+
 /** Constructor */
 WikiEditDialog::WikiEditDialog(QWidget *parent)
 : QWidget(parent)
 {
 	ui.setupUi(this);
-	
-
 
 	connect(ui.pushButton_Cancel, SIGNAL( clicked( void ) ), this, SLOT( cancelEdit( void ) ) );
 	connect(ui.pushButton_Revert, SIGNAL( clicked( void ) ), this, SLOT( revertEdit( void ) ) );
 	connect(ui.pushButton_Submit, SIGNAL( clicked( void ) ), this, SLOT( submitEdit( void ) ) );
+	connect(ui.pushButton_Preview, SIGNAL( clicked( void ) ), this, SLOT( previewToggle( void ) ) );
+	connect(ui.pushButton_History, SIGNAL( clicked( void ) ), this, SLOT( historyToggle( void ) ) );
 
 	mWikiQueue = new TokenQueue(rsWiki->getTokenService(), this);
         mRepublishMode = false;
+        mPreviewMode = false;
+	mPageLoading = false;
+	mCurrentText = "";
+
+	ui.groupBox_History->hide();
 }
+
+void WikiEditDialog::historyToggle()
+{
+	std::cerr << "WikiEditDialog::historyToggle()";
+	std::cerr << std::endl;
+	if (ui.groupBox_History->isHidden())
+	{
+		ui.groupBox_History->show();
+		ui.pushButton_History->setText(tr("Hide Edit History"));
+	}
+	else
+	{
+		ui.groupBox_History->hide();
+		ui.pushButton_History->setText(tr("Show Edit History"));
+	}
+}
+
+
+void WikiEditDialog::previewToggle()
+{
+	std::cerr << "WikiEditDialog::previewToggle()";
+	std::cerr << std::endl;
+
+	if (mPreviewMode)
+	{
+		mPreviewMode = false;
+		ui.pushButton_Preview->setText(tr("Preview"));
+	}
+	else
+	{
+		// Save existing Text into buffer.
+		mCurrentText = ui.textEdit->toPlainText();
+		mPreviewMode = true;
+		ui.pushButton_Preview->setText(tr("Edit Page"));
+	}
+	if (!mPageLoading)
+	{
+		redrawPage();
+	}
+}
+
+
+void WikiEditDialog::redrawPage()
+{
+	std::cerr << "WikiEditDialog::redrawPage()";
+	std::cerr << std::endl;
+
+	if (mPreviewMode)
+	{
+		/* render as HTML */
+		QString renderedText = "RENDERED TEXT:\n";
+		renderedText += mCurrentText;
+		ui.textEdit->setPlainText(renderedText);
+
+		/* disable edit */
+		ui.textEdit->setReadOnly(true);
+	}
+	else
+	{
+		/* plain text - for editing */
+		ui.textEdit->setPlainText(mCurrentText);
+
+		/* enable edit */
+		ui.textEdit->setReadOnly(false);
+	}
+}
+
 
 void WikiEditDialog::setGroup(RsWikiCollection &group)
 {
@@ -63,7 +141,8 @@ void WikiEditDialog::setPreviousPage(RsWikiSnapshot &page)
 
 	ui.lineEdit_Page->setText(QString::fromStdString(mWikiSnapshot.mMeta.mMsgName));
 	ui.lineEdit_PrevVersion->setText(QString::fromStdString(mWikiSnapshot.mMeta.mMsgId));
-	ui.textEdit->setPlainText(QString::fromStdString(mWikiSnapshot.mPage));
+	mCurrentText = QString::fromUtf8(mWikiSnapshot.mPage.c_str());
+        redrawPage();
 }
 
 
@@ -73,11 +152,17 @@ void WikiEditDialog::setNewPage()
         mRepublishMode = false;
 	ui.lineEdit_Page->setText("");
 	ui.lineEdit_PrevVersion->setText("");
-	ui.textEdit->setPlainText("");
-	
+
+	mCurrentText = "";
+	redrawPage();
+	ui.treeWidget_History->clear();
+	ui.groupBox_History->hide();
+	ui.pushButton_History->setText(tr("Show Edit History"));
+
 	ui.headerFrame->setHeaderImage(QPixmap(":/images/appointment-new_64.png"));
-    ui.headerFrame->setHeaderText(tr("Create New Wiki Page"));
-    setWindowTitle(tr("Create New Wiki Page"));
+	ui.headerFrame->setHeaderText(tr("Create New Wiki Page"));
+	setWindowTitle(tr("Create New Wiki Page"));
+
 }
 
 
@@ -99,12 +184,14 @@ void WikiEditDialog::revertEdit()
 {
 	if (mNewPage)
 	{
-		ui.textEdit->setPlainText("");
+		mCurrentText = "";
 	}
 	else
 	{
 		ui.textEdit->setPlainText(QString::fromStdString(mWikiSnapshot.mPage));
+		mCurrentText = QString::fromUtf8(mWikiSnapshot.mPage.c_str());
 	}
+        redrawPage();
 }
 
 
@@ -224,7 +311,7 @@ void WikiEditDialog::requestGroup(const std::string &groupId)
         RsTokReqOptions opts;
         opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 	uint32_t token;
-        mWikiQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, ids, 0);
+        mWikiQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, ids, WIKIEDITDIALOG_GROUP);
 }
 
 void WikiEditDialog::loadGroup(const uint32_t &token)
@@ -258,7 +345,8 @@ void WikiEditDialog::requestPage(const RsGxsGrpMsgIdPair &msgId)
         vect_msgIds.push_back(msgId.second);
 
 	uint32_t token;
-        mWikiQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, 0);
+        mWikiQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, WIKIEDITDIALOG_PAGE);
+	mPageLoading = true;
 }
 
 void WikiEditDialog::loadPage(const uint32_t &token)
@@ -276,9 +364,209 @@ void WikiEditDialog::loadPage(const uint32_t &token)
         		std::cerr << std::endl;
 			return;
 		}
-		setPreviousPage(snapshots[0]);
+
+		RsWikiSnapshot &page = snapshots[0];
+		setPreviousPage(page);
+
+		/* request the history now */
+		mThreadMsgIdPair.first = page.mMeta.mGroupId;
+		if (page.mMeta.mThreadId.empty())
+		{
+			mThreadMsgIdPair.second = page.mMeta.mOrigMsgId;
+		}
+		else
+		{
+			mThreadMsgIdPair.second = page.mMeta.mThreadId;
+		}
+		requestBaseHistory(mThreadMsgIdPair);
+	}
+	mPageLoading = false;
+}
+
+
+/*********************** LOAD EDIT HISTORY **********************/
+
+#define WIKIEDITTREE_COL_ORIGPAGEID	0
+#define WIKIEDITTREE_COL_PAGEID		1
+#define WIKIEDITTREE_COL_PARENTID	2
+
+void WikiEditDialog::requestBaseHistory(const RsGxsGrpMsgIdPair &origMsgId)
+{
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
+	opts.mOptions = RS_TOKREQOPT_MSG_VERSIONS;
+        std::vector<RsGxsGrpMsgIdPair> msgIds;
+        msgIds.push_back(origMsgId);
+	uint32_t token;
+        mWikiQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, WIKIEDITDIALOG_BASEHISTORY);
+	ui.treeWidget_History->clear();
+}
+
+void WikiEditDialog::loadBaseHistory(const uint32_t &token)
+{
+	std::cerr << "WikiEditDialog::loadBaseHistory()";
+	std::cerr << std::endl;
+
+
+	std::vector<RsWikiSnapshot> snapshots;
+	std::vector<RsWikiSnapshot>::iterator vit;
+        if (!rsWiki->getRelatedSnapshots(token, snapshots))
+	{
+		// ERROR
+		std::cerr << "WikiEditDialog::loadBaseHistory() ERROR";
+		std::cerr << std::endl;
+		return;
+	}
+
+	for(vit = snapshots.begin(); vit != snapshots.end(); vit++)
+	{
+                RsWikiSnapshot &page = *vit;
+
+	        std::cerr << "WikiEditDialog::loadBaseHistory() TopLevel Result: PageTitle: " << page.mMeta.mMsgName;
+	        std::cerr << " GroupId: " << page.mMeta.mGroupId;
+	        std::cerr << std::endl;
+	        std::cerr << "\tOrigMsgId: " << page.mMeta.mOrigMsgId;
+	        std::cerr << " MsgId: " << page.mMeta.mMsgId;
+	        std::cerr << std::endl;
+	        std::cerr << "\tThreadId: " << page.mMeta.mThreadId;
+	        std::cerr << " ParentId: " << page.mMeta.mParentId;
+	        std::cerr << std::endl;
+		
+		QTreeWidgetItem *modItem = new QTreeWidgetItem();
+		modItem->setText(WIKIEDITTREE_COL_ORIGPAGEID, QString::fromStdString(page.mMeta.mOrigMsgId));
+		modItem->setText(WIKIEDITTREE_COL_PAGEID, QString::fromStdString(page.mMeta.mMsgId));
+		modItem->setText(WIKIEDITTREE_COL_PARENTID, QString::fromStdString(page.mMeta.mParentId));
+		ui.treeWidget_History->addTopLevelItem(modItem);
+        }
+
+	/* then we need to request all pages from this thread */
+	requestEditTreeData();
+}
+
+
+void WikiEditDialog::requestEditTreeData() //const RsGxsGroupId &groupId)
+{
+	// SWITCH THIS TO A THREAD REQUEST - WHEN WE CAN!
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+        opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
+
+	std::list<RsGxsGroupId> groupIds;
+	groupIds.push_back(mThreadMsgIdPair.first);
+
+	uint32_t token;
+	mWikiQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, WIKIEDITDIALOG_EDITTREE);
+}
+
+
+void WikiEditDialog::loadEditTreeData(const uint32_t &token)
+{
+	std::cerr << "WikiEditDialog::loadEditTreeData()";
+	std::cerr << std::endl;
+
+
+	std::vector<RsWikiSnapshot> snapshots;
+	std::vector<RsWikiSnapshot>::iterator vit;
+        if (!rsWiki->getSnapshots(token, snapshots))
+	{
+		// ERROR
+		std::cerr << "WikiEditDialog::loadEditTreeData() ERROR";
+		std::cerr << std::endl;
+		return;
+	}
+
+	std::cerr << "WikiEditDialog::loadEditTreeData() Loaded " << snapshots.size();
+	std::cerr << std::endl;
+	std::cerr << "WikiEditDialog::loadEditTreeData() Using ThreadId: " << mThreadMsgIdPair.second;
+	std::cerr << std::endl;
+
+
+	std::map<RsGxsMessageId, QTreeWidgetItem *> items;
+	std::map<RsGxsMessageId, QTreeWidgetItem *>::iterator iit;
+	std::list<QTreeWidgetItem *> unparented;
+	std::list<QTreeWidgetItem *>::iterator uit;
+
+	// Grab the existing TopLevelItems, and insert into map.
+       	int itemCount = ui.treeWidget_History->topLevelItemCount();
+       	for (int nIndex = 0; nIndex < itemCount; nIndex++) 
+       	{
+		QTreeWidgetItem *item = ui.treeWidget_History->topLevelItem(nIndex);
+
+		/* index by MsgId --> ONLY For Wiki Thread Head Items... SPECIAL HACK FOR HERE! */	
+		std::string msgId = item->text(WIKIEDITTREE_COL_PAGEID).toStdString();
+		items[msgId] = item;
+	}
+
+
+	for(vit = snapshots.begin(); vit != snapshots.end(); vit++)
+	{
+                RsWikiSnapshot &snapshot = *vit;
+	
+	        std::cerr << "Result: PageTitle: " << snapshot.mMeta.mMsgName;
+	        std::cerr << " GroupId: " << snapshot.mMeta.mGroupId;
+	        std::cerr << std::endl;
+	        std::cerr << "\tOrigMsgId: " << snapshot.mMeta.mOrigMsgId;
+	        std::cerr << " MsgId: " << snapshot.mMeta.mMsgId;
+	        std::cerr << std::endl;
+	        std::cerr << "\tThreadId: " << snapshot.mMeta.mThreadId;
+	        std::cerr << " ParentId: " << snapshot.mMeta.mParentId;
+	        std::cerr << std::endl;
+
+		if (snapshot.mMeta.mParentId == "")
+		{
+			/* Ignore! */
+	        	std::cerr << "Ignoring ThreadHead Item";
+	        	std::cerr << std::endl;
+			continue;
+		}
+
+		if (snapshot.mMeta.mThreadId != mThreadMsgIdPair.second)
+		{
+			/* Ignore! */
+	        	std::cerr << "Ignoring Different Thread Item";
+	        	std::cerr << std::endl;
+			continue;
+		}
+
+		/* create an Entry */
+		QTreeWidgetItem *modItem = new QTreeWidgetItem();
+		modItem->setText(WIKIEDITTREE_COL_ORIGPAGEID, QString::fromStdString(snapshot.mMeta.mOrigMsgId));
+		modItem->setText(WIKIEDITTREE_COL_PAGEID, QString::fromStdString(snapshot.mMeta.mMsgId));
+		modItem->setText(WIKIEDITTREE_COL_PARENTID, QString::fromStdString(snapshot.mMeta.mParentId));
+
+		/* find the parent */
+		iit = items.find(snapshot.mMeta.mParentId);
+		if (iit != items.end())
+		{
+			(iit->second)->addChild(modItem);
+		}
+		else
+		{
+			unparented.push_back(modItem);
+		}
+		items[snapshot.mMeta.mOrigMsgId] = modItem;
+	}
+
+	for(uit = unparented.begin(); uit != unparented.end(); uit++)
+	{
+		std::string parentId = (*uit)->text(WIKIEDITTREE_COL_PARENTID).toStdString();
+
+		iit = items.find(parentId);
+		if (iit != items.end())
+		{
+			(iit->second)->addChild(*uit);
+		}
+		else
+		{
+			/* ERROR */
+			std::cerr << "Unparented!!!";
+			std::cerr << std::endl;
+		}
 	}
 }
+
+
 
 void WikiEditDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
@@ -287,22 +575,34 @@ void WikiEditDialog::loadRequest(const TokenQueue *queue, const TokenRequest &re
 		
 	if (queue == mWikiQueue)
 	{
-		/* now switch on req */
-		switch(req.mType)
+		switch(req.mUserType)
 		{
-		case TOKENREQ_GROUPINFO:
-			loadGroup(req.mToken);
+			case WIKIEDITDIALOG_GROUP:
+				loadGroup(req.mToken);
+				break;
+
+			case WIKIEDITDIALOG_PAGE:
+				loadPage(req.mToken);
+				break;
+
+			case WIKIEDITDIALOG_BASEHISTORY:
+				loadBaseHistory(req.mToken);
+				break;
+
+			case WIKIEDITDIALOG_EDITTREE:
+				loadEditTreeData(req.mToken);
+				break;
+			default:
+				std::cerr << "WikiEditDialog::loadRequest() ERROR: INVALID TYPE";
+				std::cerr << std::endl;
 			break;
-		case TOKENREQ_MSGINFO:
-			loadPage(req.mToken);
-			break;
-		default:
-			std::cerr << "WikiEditDialog::loadRequest() ERROR: INVALID TYPE";
-			std::cerr << std::endl;
-		break;
 		}
 	}
 }
+
+
+
+
 
 
 

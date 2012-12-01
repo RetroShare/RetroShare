@@ -48,8 +48,12 @@ private slots:
 void 	cancelEdit();
 void 	revertEdit();
 void 	submitEdit();
+void 	previewToggle();
+void 	historyToggle();
 
 private:
+
+void    redrawPage();
 
 void 	setGroup(RsWikiCollection &group);
 void 	setPreviousPage(RsWikiSnapshot &page);
@@ -59,9 +63,23 @@ void 	loadPage(const uint32_t &token);
 void 	requestGroup(const std::string &groupId);
 void 	loadGroup(const uint32_t &token);
 
+void 	requestBaseHistory(const RsGxsGrpMsgIdPair &origMsgId);
+void 	loadBaseHistory(const uint32_t &token);
+void 	requestEditTreeData();
+void 	loadEditTreeData(const uint32_t &token);
+
+
+
         bool mNewPage;
 
+	bool mPreviewMode;
+	bool mPageLoading;
+
         bool mRepublishMode;
+
+	QString mCurrentText;
+
+	RsGxsGrpMsgIdPair mThreadMsgIdPair;
 	RsGxsMessageId mRepublishOrigId;
 
 	RsWikiCollection mWikiCollection;
