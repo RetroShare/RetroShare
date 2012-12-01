@@ -72,7 +72,7 @@ virtual bool	getGPGDetails(const std::string &id, RsPeerDetails &d);
 virtual bool	getAssociatedSSLIds(const std::string &gpg_id, std::list<std::string> &ids);
 
 	/* Add/Remove Friends */
-virtual	bool addFriend(const std::string &ssl_id, const std::string &gpg_id);
+virtual	bool addFriend(const std::string &ssl_id, const std::string &gpg_id,ServicePermissionFlags flags = RS_SERVICE_PERM_ALL);
 virtual	bool removeFriend(const std::string &ssl_or_gpgid);
 virtual bool removeFriendLocation(const std::string &sslId);
 
@@ -122,6 +122,13 @@ virtual bool assignPeerToGroup(const std::string &groupId, const std::string &pe
 virtual bool assignPeersToGroup(const std::string &groupId, const std::list<std::string> &peerIds, bool assign);
 
 virtual FileSearchFlags computePeerPermissionFlags(const std::string& peer_id,FileStorageFlags share_flags,const std::list<std::string>& parent_groups) ;
+
+// service permission stuff
+
+	virtual ServicePermissionFlags servicePermissionFlags(const std::string& gpg_id) ;
+	virtual ServicePermissionFlags servicePermissionFlags_sslid(const std::string& ssl_id) ;
+	virtual void setServicePermissionFlags(const std::string& gpg_id,const ServicePermissionFlags& flags) ;
+
 	private:
 
 	p3LinkMgr *mLinkMgr;

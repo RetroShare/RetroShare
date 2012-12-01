@@ -261,6 +261,16 @@ CacheDataPending::CacheDataPending(const CacheData &data, bool local, bool histo
 	return;
 }
 
+bool p3GroupDistrib::isPeerAcceptedAsCacheProvider(const std::string& ssl_id)
+{
+	return rsPeers->servicePermissionFlags_sslid(ssl_id) & RS_SERVICE_PERM_DISTRIB ;
+}
+
+bool p3GroupDistrib::isPeerAcceptedAsCacheReceiver(const std::string& ssl_id)
+{
+	return rsPeers->servicePermissionFlags_sslid(ssl_id) & RS_SERVICE_PERM_DISTRIB ;
+}
+
 void p3GroupDistrib::HistoricalCachesDone()
 {
 	RsStackMutex stack(distribMtx);

@@ -244,40 +244,43 @@ bool    p3Peers::isFriend(const std::string &ssl_id)
 
 bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 {
-        #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::getPeerDetails() called for id : " << id << std::endl;
-        #endif
+#ifdef P3PEERS_DEBUG
+	std::cerr << "p3Peers::getPeerDetails() called for id : " << id << std::endl;
+#endif
 
 	// NOW Only for SSL Details.
 
-        std::string sOwnId = AuthSSL::getAuthSSL()->OwnId();
-        peerState ps;
+	std::string sOwnId = AuthSSL::getAuthSSL()->OwnId();
+	peerState ps;
 
 	if (id == sOwnId)
 	{
-                mPeerMgr->getOwnNetStatus(ps);
-                ps.gpg_id = AuthGPG::getAuthGPG()->getGPGOwnId();
+		mPeerMgr->getOwnNetStatus(ps);
+		ps.gpg_id = AuthGPG::getAuthGPG()->getGPGOwnId();
 	}
 	else
 	{
-        	if (!mPeerMgr->getFriendNetStatus(id, ps))
+		if (!mPeerMgr->getFriendNetStatus(id, ps))
 		{
 #ifdef P3PEERS_DEBUG
 			std::cerr << "p3Peers::getPeerDetails() ERROR not an SSL Id: " << id << std::endl;
 #endif
-        		d.isOnlyGPGdetail = true;
-        		return getGPGDetails(id, d);
+			d.isOnlyGPGdetail = true;
+			d.service_perm_flags = mPeerMgr->servicePermissionFlags(id) ;
+			return getGPGDetails(id, d);
 		}
 	}
 
-        /* get from gpg (first), to fill in the sign and trust details */
-        /* don't retrun now, we've got fill in the ssl and connection info */
-        getGPGDetails(ps.gpg_id, d);
-        d.isOnlyGPGdetail = false;
+	/* get from gpg (first), to fill in the sign and trust details */
+	/* don't retrun now, we've got fill in the ssl and connection info */
+	getGPGDetails(ps.gpg_id, d);
+	d.isOnlyGPGdetail = false;
 
-        //get the ssl details
-        d.id 		= id;
-        d.location 	= ps.location;
+	//get the ssl details
+	d.id 		= id;
+	d.location 	= ps.location;
+
+	d.service_perm_flags = mPeerMgr->servicePermissionFlags(ps.gpg_id) ;
 
 	/* generate */
 	d.authcode  	= "AUTHCODE";
@@ -288,10 +291,9 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 	d.localPort	= ntohs(ps.localaddr.sin_port);
 	d.extAddr	= rs_inet_ntoa(ps.serveraddr.sin_addr);
 	d.extPort	= ntohs(ps.serveraddr.sin_port);
-        d.dyndns        = ps.dyndns;
+	d.dyndns        = ps.dyndns;
 	d.lastConnect	= ps.lastcontact;
 	d.connectPeriod = 0;
-
 
 	std::list<pqiIpAddress>::iterator it;
 	for(it = ps.ipAddrs.mLocal.mAddrs.begin(); 
@@ -327,21 +329,21 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 			d.netMode	= RS_NETMODE_UNREACHABLE;
 			break;
 	}
-	
+
 	d.visState	= 0;
 	if (!(ps.visState & RS_VIS_STATE_NODISC))
 	{
 		d.visState |= RS_VS_DISC_ON;
 	}
-	
+
 	if (!(ps.visState & RS_VIS_STATE_NODHT))
 	{
 		d.visState |= RS_VS_DHT_ON;
 	}
-	
-	
-	
-	
+
+
+
+
 	/* Translate */
 	peerConnectState pcs;
 	if (!mLinkMgr->getFriendNetStatus(id, pcs)) 
@@ -349,12 +351,12 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 		std::cerr << "p3Peers::getPeerDetails() ERROR No Link Information : " << id << std::endl;
 		return true;
 	}
-	
+
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::getPeerDetails() got a SSL id and is returning SSL and GPG details for id : " << id << std::endl;
 #endif
-	
-	
+
+
 	d.state		= 0;
 	if (pcs.state & RS_PEER_S_FRIEND)
 		d.state |= RS_PEER_STATE_FRIEND;
@@ -552,7 +554,7 @@ std::string p3Peers::getGPGId(const std::string &sslid_or_gpgid)
 	 */
 
 	/* Add/Remove Friends */
-bool 	p3Peers::addFriend(const std::string &ssl_id, const std::string &gpg_id)
+bool 	p3Peers::addFriend(const std::string &ssl_id, const std::string &gpg_id,ServicePermissionFlags perm_flags)
 {
 
 #ifdef P3PEERS_DEBUG
@@ -598,7 +600,7 @@ bool 	p3Peers::addFriend(const std::string &ssl_id, const std::string &gpg_id)
 	 * This will cause the SSL certificate to be retained for 30 days... and give the person a chance to connect!
 	 *  */
 	time_t now = time(NULL);
-	return mPeerMgr->addFriend(ssl_id, gpg_id, RS_NET_MODE_UDP, RS_VIS_STATE_STD, now);
+	return mPeerMgr->addFriend(ssl_id, gpg_id, RS_NET_MODE_UDP, RS_VIS_STATE_STD, now, perm_flags);
 }
 
 
@@ -928,6 +930,7 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
 		pd.extPort = cert.ext_port_us();
 		pd.dyndns = cert.dns_string() ;
 		pd.isOnlyGPGdetail = pd.id.empty();
+		pd.service_perm_flags = RS_SERVICE_PERM_ALL ;
 	} 
 	catch (...) 
 	{
@@ -1214,3 +1217,18 @@ RsGroupInfo::RsGroupInfo()
 {
 	flag = 0;
 }
+
+ServicePermissionFlags p3Peers::servicePermissionFlags_sslid(const std::string& ssl_id) 
+{
+	return mPeerMgr->servicePermissionFlags_sslid(ssl_id) ;
+}
+ServicePermissionFlags p3Peers::servicePermissionFlags(const std::string& gpg_id) 
+{
+	return mPeerMgr->servicePermissionFlags(gpg_id) ;
+}
+void p3Peers::setServicePermissionFlags(const std::string& gpg_id,const ServicePermissionFlags& flags) 
+{
+	mPeerMgr->setServicePermissionFlags(gpg_id,flags) ;
+}
+
+

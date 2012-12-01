@@ -26,6 +26,7 @@
 #ifndef MRK_PQI_PEER_MANAGER_HEADER
 #define MRK_PQI_PEER_MANAGER_HEADER
 
+#include <retroshare/rspeers.h>
 #include "pqi/pqimonitor.h"
 #include "pqi/pqiipset.h"
 #include "pqi/pqiassist.h"
@@ -122,7 +123,7 @@ class p3PeerMgr
 virtual ~p3PeerMgr() { return; }
 
 virtual bool 	addFriend(const std::string &ssl_id, const std::string &gpg_id, uint32_t netMode = RS_NET_MODE_UDP,
-	   uint32_t visState = RS_VIS_STATE_STD , time_t lastContact = 0) = 0;
+	   uint32_t visState = RS_VIS_STATE_STD , time_t lastContact = 0,ServicePermissionFlags = RS_SERVICE_PERM_ALL) = 0;
 virtual bool	removeFriend(const std::string &ssl_id) = 0;
 
 virtual bool	isFriend(const std::string &ssl_id) = 0;
@@ -141,6 +142,9 @@ virtual bool    getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo)
 virtual bool    getGroupInfoList(std::list<RsGroupInfo> &groupInfoList) = 0;
 virtual bool    assignPeersToGroup(const std::string &groupId, const std::list<std::string> &peerIds, bool assign) = 0;
 
+	virtual ServicePermissionFlags servicePermissionFlags(const std::string& gpg_id) =0;
+	virtual ServicePermissionFlags servicePermissionFlags_sslid(const std::string& ssl_id) =0;
+	virtual void setServicePermissionFlags(const std::string& gpg_id,const ServicePermissionFlags& flags) =0;
 
 	/**************** Set Net Info ****************/
 	/*
@@ -210,7 +214,7 @@ class p3PeerMgrIMPL: public p3PeerMgr, public p3Config
 /************************************************************************************************/
 
 virtual bool 	addFriend(const std::string &ssl_id, const std::string &gpg_id, uint32_t netMode = RS_NET_MODE_UDP,
-	   uint32_t visState = RS_VIS_STATE_STD , time_t lastContact = 0);
+	   uint32_t visState = RS_VIS_STATE_STD , time_t lastContact = 0,ServicePermissionFlags = RS_SERVICE_PERM_ALL);
 virtual bool	removeFriend(const std::string &ssl_id);
 
 virtual bool	isFriend(const std::string &ssl_id);
@@ -229,6 +233,9 @@ virtual bool    getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo)
 virtual bool    getGroupInfoList(std::list<RsGroupInfo> &groupInfoList);
 virtual bool    assignPeersToGroup(const std::string &groupId, const std::list<std::string> &peerIds, bool assign);
 
+	virtual ServicePermissionFlags servicePermissionFlags(const std::string& gpg_id) ;
+	virtual ServicePermissionFlags servicePermissionFlags_sslid(const std::string& ssl_id) ;
+	virtual void setServicePermissionFlags(const std::string& gpg_id,const ServicePermissionFlags& flags) ;
 
 	/**************** Set Net Info ****************/
 	/*
@@ -330,13 +337,15 @@ private:
 
 	peerState mOwnState;
 
-	std::map<std::string, peerState> mFriendList;
+	std::map<std::string, peerState> mFriendList;	// <SSLid , peerState>
 	std::map<std::string, peerState> mOthersList;
 
 	std::list<RsPeerGroupItem *> groupList;
 	uint32_t lastGroupId;
 
 	std::list<RsItem *> saveCleanupList; /* TEMPORARY LIST WHEN SAVING */
+
+	std::map<std::string, ServicePermissionFlags> mFriendsPermissionFlags ; // permission flags for each gpg key
 };
 
 #endif // MRK_PQI_PEER_MANAGER_HEADER

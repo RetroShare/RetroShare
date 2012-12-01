@@ -218,6 +218,9 @@ QString RetroshareDirModel::getGroupsString(const std::list<std::string>& group_
 			if(++it != group_ids.end())
 				groups_str += ", " ;
 		}
+		else
+			++it ;
+
 	return groups_str ;
 }
 

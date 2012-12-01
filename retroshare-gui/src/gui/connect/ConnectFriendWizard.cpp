@@ -222,6 +222,10 @@ void ConnectFriendWizard::initializePage(int id)
 		{
 			std::cerr << "Conclusion page id : " << peerDetails.id << "; gpg_id : " << peerDetails.gpg_id << std::endl;
 
+			ui->_anonymous_routing_CB_2->setChecked(peerDetails.service_perm_flags & RS_SERVICE_PERM_TURTLE) ;
+			ui->_discovery_CB_2        ->setChecked(peerDetails.service_perm_flags & RS_SERVICE_PERM_DISCOVERY) ;
+			ui->_forums_channels_CB_2  ->setChecked(peerDetails.service_perm_flags & RS_SERVICE_PERM_DISTRIB) ;
+
 			//set the radio button to sign the GPG key
 			if (peerDetails.accept_connection && !peerDetails.ownsign) {
 				//gpg key connection is already accepted, don't propose to accept it again
@@ -489,6 +493,17 @@ int ConnectFriendWizard::nextId() const
 	return -1;
 }
 
+ServicePermissionFlags ConnectFriendWizard::serviceFlags() const
+{
+	ServicePermissionFlags flags(0) ;
+
+	if(ui->_anonymous_routing_CB_2->isChecked()) flags |= RS_SERVICE_PERM_TURTLE ;
+	if(        ui->_discovery_CB_2->isChecked()) flags |= RS_SERVICE_PERM_DISCOVERY ;
+	if(  ui->_forums_channels_CB_2->isChecked()) flags |= RS_SERVICE_PERM_DISTRIB ;
+
+	return flags ;
+}
+
 void ConnectFriendWizard::accept()
 {
 	bool sign = false;
@@ -526,7 +541,7 @@ void ConnectFriendWizard::accept()
 			rsPeers->signGPGCertificate(peerDetails.gpg_id); //bye default sign set accept_connection to true;
 		} else if (accept_connection) {
 			std::cerr << "ConclusionPage::validatePage() accepting GPG key for connection." << std::endl;
-			rsPeers->addFriend("", peerDetails.gpg_id);
+			rsPeers->addFriend("", peerDetails.gpg_id,serviceFlags()) ;
 		}
 
 		if (!groupId.isEmpty()) {
@@ -535,7 +550,8 @@ void ConnectFriendWizard::accept()
 	}
 
 	if (peerDetails.id != "") {
-		rsPeers->addFriend(peerDetails.id, peerDetails.gpg_id);
+		rsPeers->addFriend(peerDetails.id, peerDetails.gpg_id,serviceFlags()) ;
+
 		//let's check if there is ip adresses in the wizard.
 		if (!peerDetails.extAddr.empty() && peerDetails.extPort) {
 			std::cerr << "ConnectFriendWizard::accept() : setting ip ext address." << std::endl;

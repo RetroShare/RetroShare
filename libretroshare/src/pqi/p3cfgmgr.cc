@@ -939,6 +939,9 @@ bool p3Config::saveConfig()
 
 	written = written && stream->encryptedSendItems(toSave);
 
+	if(!written)
+		std::cerr << "(EE) Error while writing config file " << Filename() << ": file dropped!!" << std::endl;
+
 	/* store the hash */
 	setHash(cfg_bio->gethash());
 

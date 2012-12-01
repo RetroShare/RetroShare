@@ -52,13 +52,24 @@ template<int n> class t_RsFlags32
 		uint32_t _bits ;
 };
 
-#define FLAGS_TAG_FILE_SEARCH 	0xf29ba5
-#define FLAGS_TAG_PERMISSION  	0x8133ea
 #define FLAGS_TAG_TRANSFER_REQS 	0x4228af
 #define FLAGS_TAG_FILE_STORAGE 	0x184738
+#define FLAGS_TAG_FILE_SEARCH 	0xf29ba5
+#define FLAGS_TAG_SERVICE_PERM 	0x380912
 
-typedef t_RsFlags32<FLAGS_TAG_PERMISSION> 	FilePermissionFlags ;
+// Flags for requesting transfers, ask for turtle, cache, speed, etc.
+//
 typedef t_RsFlags32<FLAGS_TAG_TRANSFER_REQS> TransferRequestFlags ;
-typedef t_RsFlags32<FLAGS_TAG_FILE_STORAGE > FileStorageFlags ;			// this makes it a uint32_t class incompatible with other flag class
-typedef t_RsFlags32<FLAGS_TAG_FILE_SEARCH  > FileSearchFlags ;			// this makes it a uint32_t class incompatible with other flag class
+
+// Flags for file storage. Mainly permissions like BROWSABLE/NETWORK_WIDE for groups and peers.
+//
+typedef t_RsFlags32<FLAGS_TAG_FILE_STORAGE > FileStorageFlags ;			
+
+// Flags for searching in files that could be local, downloads, remote, etc.
+//
+typedef t_RsFlags32<FLAGS_TAG_FILE_SEARCH  > FileSearchFlags ;			
+
+// Service permissions. Will allow each user to use or not use each service.
+//
+typedef t_RsFlags32<FLAGS_TAG_SERVICE_PERM > ServicePermissionFlags ;			
 

@@ -150,7 +150,7 @@ const std::string& Hash();
 /**
  * Checks if configuration has changed
  */
-void	IndicateConfigChanged();
+virtual void	IndicateConfigChanged();
 void	setHash(const std::string& h);
 
 	RsMutex cfgMtx;

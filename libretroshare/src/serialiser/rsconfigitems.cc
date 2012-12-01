@@ -687,6 +687,7 @@ uint32_t    RsPeerConfigSerialiser::size(RsItem *i)
 	RsPeerStunItem *psi;
 	RsPeerNetItem *pni;
 	RsPeerGroupItem *pgi;
+	RsPeerServicePermissionItem *pri;
 
 	if (NULL != (oldpni = dynamic_cast<RsPeerOldNetItem *>(i)))
 	{
@@ -704,6 +705,10 @@ uint32_t    RsPeerConfigSerialiser::size(RsItem *i)
 	{
 		return sizeGroup(pgi);
 	}
+	else if (NULL != (pri = dynamic_cast<RsPeerServicePermissionItem *>(i)))
+	{
+		return sizePermissions(pri);
+	}
 
 	return 0;
 }
@@ -715,6 +720,7 @@ bool    RsPeerConfigSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsi
 	RsPeerNetItem *pni;
 	RsPeerStunItem *psi;
 	RsPeerGroupItem *pgi;
+	RsPeerServicePermissionItem *pri;
 
 	if (NULL != (oldpni = dynamic_cast<RsPeerOldNetItem *>(i)))
 	{
@@ -731,6 +737,10 @@ bool    RsPeerConfigSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsi
 	else if (NULL != (pgi = dynamic_cast<RsPeerGroupItem *>(i)))
 	{
 		return serialiseGroup(pgi, data, pktsize);
+	}
+	else if (NULL != (pri = dynamic_cast<RsPeerServicePermissionItem *>(i)))
+	{
+		return serialisePermissions(pri, data, pktsize);
 	}
 
 	return false;
@@ -764,6 +774,8 @@ RsItem *RsPeerConfigSerialiser::deserialise(void *data, uint32_t *pktsize)
 			return deserialiseStun(data, pktsize);
 		case RS_PKT_SUBTYPE_PEER_GROUP:
 			return deserialiseGroup(data, pktsize);
+		case RS_PKT_SUBTYPE_PEER_PERMISSIONS:
+			return deserialisePermissions(data, pktsize);
 		default:
 			return NULL;
 	}
@@ -1540,6 +1552,138 @@ RsPeerGroupItem *RsPeerConfigSerialiser::deserialiseGroup(void *data, uint32_t *
 
 	return item;
 }
+
+/**************************************************************/
+
+std::ostream& RsPeerServicePermissionItem::print(std::ostream &out, uint16_t indent)
+{
+	printRsItemBase(out, "RsPeerServicePermissionItem", indent);
+	uint16_t int_Indent = indent + 2;
+
+	for(uint32_t i=0;i<pgp_ids.size();++i)
+	{
+		printIndent(out, int_Indent);
+		out << "pgp id: " << pgp_ids[i] << ": " << service_flags[i].toUInt32() << std::endl; 
+	}
+	printRsItemEnd(out, "RsPeerServicePermissionItem", indent);
+	return out;
+}
+
+uint32_t RsPeerConfigSerialiser::sizePermissions(RsPeerServicePermissionItem *i)
+{	
+	uint32_t s = 8; /* header */
+	s += 4 ; // number of pgp ids in he item.
+
+	for(uint32_t j=0;j<i->pgp_ids.size();++j)
+	{
+		s += GetTlvStringSize(i->pgp_ids[j]) ;
+		s += 4; /* flag */
+	}
+
+	return s;
+}
+
+bool RsPeerConfigSerialiser::serialisePermissions(RsPeerServicePermissionItem *item, void *data, uint32_t *size)
+{
+	uint32_t tlvsize = RsPeerConfigSerialiser::sizePermissions(item);
+	uint32_t offset = 0;
+
+	if(*size < tlvsize)
+		return false; /* not enough space */
+
+	*size = tlvsize;
+
+	bool ok = true;
+
+	// serialise header
+
+	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+
+#ifdef RSSERIAL_DEBUG
+	std::cerr << "RsPeerConfigSerialiser::serialiseGroup() Header: " << ok << std::endl;
+	std::cerr << "RsPeerConfigSerialiser::serialiseGroup() Header: " << tlvsize << std::endl;
+#endif
+
+	/* skip the header */
+	offset += 8;
+
+	/* add mandatory parts first */
+	ok &= setRawUInt32(data, tlvsize, &offset, item->pgp_ids.size());
+
+	for(uint32_t i=0;i<item->pgp_ids.size();++i)
+	{
+		ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_KEY, item->pgp_ids[i]);
+		ok &= setRawUInt32(data, tlvsize, &offset, item->service_flags[i].toUInt32());
+	}
+
+	if(offset != tlvsize)
+	{
+		ok = false;
+		std::cerr << "(EE) Item size ERROR in RsPeerServicePermissionItem!" << std::endl;
+#ifdef RSSERIAL_ERROR_DEBUG
+		std::cerr << "RsPeerConfigSerialiser::serialisePermissions() Size Error! " << std::endl;
+#endif
+	}
+
+	return ok;
+}
+
+RsPeerServicePermissionItem *RsPeerConfigSerialiser::deserialisePermissions(void *data, uint32_t *size)
+{
+	/* get the type and size */
+	uint32_t rstype = getRsItemId(data);
+	uint32_t rssize = getRsItemSize(data);
+
+	uint32_t offset = 0;
+
+	if ((RS_PKT_VERSION1 != getRsItemVersion(rstype)) ||
+		(RS_PKT_CLASS_CONFIG != getRsItemClass(rstype)) ||
+		(RS_PKT_TYPE_PEER_CONFIG  != getRsItemType(rstype)) ||
+		(RS_PKT_SUBTYPE_PEER_PERMISSIONS != getRsItemSubType(rstype)))
+	{
+		return NULL; /* wrong type */
+	}
+
+	if (*size < rssize)    /* check size */
+		return NULL; /* not enough data */
+
+	/* set the packet length */
+	*size = rssize;
+
+	bool ok = true;
+
+	RsPeerServicePermissionItem *item = new RsPeerServicePermissionItem ;
+	item->clear();
+
+	/* skip the header */
+	offset += 8;
+
+	/* get mandatory parts first */
+	uint32_t s;
+	ok &= getRawUInt32(data, rssize, &offset, &s);
+	item->pgp_ids.resize(s) ;
+	item->service_flags.resize(s) ;
+
+	for(uint32_t i=0;i<s;++i)
+	{
+		uint32_t flags ;
+		ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_KEY, item->pgp_ids[i]);
+		ok &= getRawUInt32(data, rssize, &offset, &flags);
+		
+		item->service_flags[i] = ServicePermissionFlags(flags) ;
+	}
+
+	if (offset != rssize)
+	{
+		/* error */
+		std::cerr << "(EE) Item size ERROR in RsPeerServicePermissionItem!" << std::endl;
+		delete item;
+		return NULL;
+	}
+
+	return item;
+}
+
 
 
 /****************************************************************************/

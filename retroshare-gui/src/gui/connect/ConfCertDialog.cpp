@@ -79,6 +79,9 @@ ConfCertDialog::ConfCertDialog(const std::string& id, QWidget *parent, Qt::WFlag
     connect(ui.trusthelpButton, SIGNAL(clicked()), this, SLOT(showHelpDialog()));
     connect(ui._shouldAddSignatures_CB, SIGNAL(toggled(bool)), this, SLOT(loadInvitePage()));
     connect(ui._useOldFormat_CB, SIGNAL(toggled(bool)), this, SLOT(loadInvitePage()));
+    // connect(ui._anonymous_routing_CB, SIGNAL(toggled(bool)), this, SLOT(setServiceFlags()));
+    // connect(ui._discovery_CB, SIGNAL(toggled(bool)), this, SLOT(setServiceFlags()));
+    // connect(ui._forums_channels_CB, SIGNAL(toggled(bool)), this, SLOT(setServiceFlags()));
 
     ui.avatar->setFrameType(AvatarWidget::NORMAL_FRAME);
 
@@ -120,6 +123,21 @@ void ConfCertDialog::showIt(const std::string& peer_id, enumPage page)
     /* window will destroy itself! */
 }
 
+void ConfCertDialog::setServiceFlags()
+{
+    RsPeerDetails detail;
+    if (!rsPeers->getPeerDetails(mId, detail))
+		 return ;
+
+	 ServicePermissionFlags flags(0) ;
+
+	 if(ui._anonymous_routing_CB->isChecked()) flags = flags | RS_SERVICE_PERM_TURTLE ;
+	 if(        ui._discovery_CB->isChecked()) flags = flags | RS_SERVICE_PERM_DISCOVERY ;
+	 if(  ui._forums_channels_CB->isChecked()) flags = flags | RS_SERVICE_PERM_DISTRIB ;
+
+	 rsPeers->setServicePermissionFlags(detail.gpg_id,flags) ;
+}
+
 void ConfCertDialog::loadAll()
 {
     QMap<std::string, ConfCertDialog*>::iterator it;
@@ -150,6 +168,10 @@ void ConfCertDialog::load()
 		 ui.make_friend_button->setEnabled(true) ;
 		 ui.make_friend_button->setToolTip("") ;
 	 }
+
+	 ui._anonymous_routing_CB->setChecked(detail.service_perm_flags & RS_SERVICE_PERM_TURTLE    ) ;
+	 ui._discovery_CB->setChecked(        detail.service_perm_flags & RS_SERVICE_PERM_DISCOVERY ) ;
+	 ui._forums_channels_CB->setChecked(  detail.service_perm_flags & RS_SERVICE_PERM_DISTRIB   ) ;
 
     ui.name->setText(QString::fromUtf8(detail.name.c_str()));
     ui.peerid->setText(QString::fromStdString(detail.id));
@@ -417,6 +439,8 @@ void ConfCertDialog::applyDialog()
             emit configChanged();
     }
 
+	 setServiceFlags() ;
+
     loadAll();
     close();
 }
@@ -429,6 +453,7 @@ void ConfCertDialog::makeFriend()
     } 
 	
     rsPeers->addFriend(mId, gpg_id);
+	 setServiceFlags() ;
     loadAll();
 
     emit configChanged();

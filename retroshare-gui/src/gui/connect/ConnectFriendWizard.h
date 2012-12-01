@@ -54,6 +54,8 @@ private slots:
 	void friendCertChanged();
 	void cleanFriendCert();
 
+	ServicePermissionFlags serviceFlags() const ;
+
 	/* CertificatePage */
 	void loadFriendCert();
 	void generateCertificateCalled();

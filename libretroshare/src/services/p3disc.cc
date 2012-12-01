@@ -163,7 +163,8 @@ int p3disc::handleIncoming()
 		// if discovery reply then respond if haven't already.
 		if (NULL != (dri = dynamic_cast<RsDiscReply *> (item)))	
 		{
-			recvDiscReply(dri);
+			if(rsPeers->servicePermissionFlags_sslid(item->PeerId()) & RS_SERVICE_PERM_DISCOVERY)
+				recvDiscReply(dri);
 		}
 		else if (NULL != (dvi = dynamic_cast<RsDiscVersion *> (item))) 
 		{
@@ -173,7 +174,9 @@ int p3disc::handleIncoming()
 		}
 		else if (NULL != (inf = dynamic_cast<RsDiscAskInfo *> (item))) /* Ping */ 
 		{
-			recvAskInfo(inf);
+			if(rsPeers->servicePermissionFlags_sslid(item->PeerId()) & RS_SERVICE_PERM_DISCOVERY)
+				recvAskInfo(inf);
+
 			nhandled++;
 			delete item;
 		}
@@ -221,7 +224,10 @@ void p3disc::statusChange(const std::list<pqipeer> &plist)
 			std::cerr << "p3disc::statusChange() Starting Disc with: " << pit->id << std::endl;
 #endif
 			sendOwnVersion(pit->id);
-			sendAllInfoToJustConnectedPeer(pit->id);
+
+			if(rsPeers->servicePermissionFlags_sslid(pit->id) & RS_SERVICE_PERM_DISCOVERY)
+				sendAllInfoToJustConnectedPeer(pit->id);
+
 			sendJustConnectedPeerInfoToAllPeer(pit->id);
 		} 
 		else if (!(pit->state & RS_PEER_S_FRIEND) && (pit->actions & RS_PEER_MOVED)) 
@@ -372,25 +378,26 @@ void p3disc::sendJustConnectedPeerInfoToAllPeer(const std::string &connectedPeer
 
 		std::list<std::string>::iterator it;
 		for (it = onlineIds.begin(); it != onlineIds.end(); it++) 
-		{
-			std::list<std::string> &idList = mSendIdList[*it];
+			if(rsPeers->servicePermissionFlags_sslid(*it) & RS_SERVICE_PERM_DISCOVERY)
+			{
+				std::list<std::string> &idList = mSendIdList[*it];
 
-			if (std::find(idList.begin(), idList.end(), gpg_connectedPeerId) == idList.end()) 
-			{
+				if (std::find(idList.begin(), idList.end(), gpg_connectedPeerId) == idList.end()) 
+				{
 #ifdef P3DISC_DEBUG
-				std::cerr << "p3disc::sendJustConnectedPeerInfoToAllPeer() adding to queue for: ";
-				std::cerr << *it << std::endl;
+					std::cerr << "p3disc::sendJustConnectedPeerInfoToAllPeer() adding to queue for: ";
+					std::cerr << *it << std::endl;
 #endif
-				idList.push_back(gpg_connectedPeerId);
-			}
-			else
-			{
+					idList.push_back(gpg_connectedPeerId);
+				}
+				else
+				{
 #ifdef P3DISC_DEBUG
-				std::cerr << "p3disc::sendJustConnectedPeerInfoToAllPeer() already in queue for: ";
-				std::cerr << *it << std::endl;
+					std::cerr << "p3disc::sendJustConnectedPeerInfoToAllPeer() already in queue for: ";
+					std::cerr << *it << std::endl;
 #endif
+				}
 			}
-		}
 	}
 }
 

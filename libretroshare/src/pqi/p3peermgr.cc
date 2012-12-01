@@ -441,7 +441,7 @@ bool    p3PeerMgrIMPL::haveOnceConnected()
 /*******************************************************************/
 /*******************************************************************/
 
-bool p3PeerMgrIMPL::addFriend(const std::string& input_id, const std::string& input_gpg_id, uint32_t netMode, uint32_t visState, time_t lastContact)
+bool p3PeerMgrIMPL::addFriend(const std::string& input_id, const std::string& input_gpg_id, uint32_t netMode, uint32_t visState, time_t lastContact,ServicePermissionFlags service_flags)
 {
 	bool notifyLinkMgr = false;
 	std::string id = input_id ;
@@ -463,7 +463,8 @@ bool p3PeerMgrIMPL::addFriend(const std::string& input_id, const std::string& in
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 
-		if (id == AuthSSL::getAuthSSL()->OwnId()) {
+		if (id == AuthSSL::getAuthSSL()->OwnId()) 
+		{
 #ifdef PEER_DEBUG
 			std::cerr << "p3PeerMgrIMPL::addFriend() cannot add own id as a friend." << std::endl;
 #endif
@@ -560,6 +561,8 @@ bool p3PeerMgrIMPL::addFriend(const std::string& input_id, const std::string& in
 		mLinkMgr->addFriend(id, !(visState & RS_VIS_STATE_NODHT));
 	}
 
+	setServicePermissionFlags(gpg_id,service_flags) ;
+
 #ifdef PEER_DEBUG
 	printPeerLists(std::cerr);
 	mLinkMgr->printPeerLists(std::cerr);
@@ -579,7 +582,8 @@ bool p3PeerMgrIMPL::removeFriend(const std::string &id)
 
         rslog(RSL_WARNING, p3peermgrzone, "p3PeerMgr::removeFriend() id: " + id);
 
-	std::list<std::string> toRemove; // This is a list of SSLIds.
+	std::list<std::string> sslid_toRemove; // This is a list of SSLIds.
+	std::list<std::string> pgpid_toRemove; // This is a list of SSLIds.
 
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
@@ -596,7 +600,8 @@ bool p3PeerMgrIMPL::removeFriend(const std::string &id)
 #endif
 				peerState peer = it->second;
 
-				toRemove.push_back(it->second.id);
+				sslid_toRemove.push_back(it->second.id);
+				pgpid_toRemove.push_back(it->second.gpg_id);
 
 				mOthersList[id] = peer;
 				mStatusChanged = true;
@@ -606,13 +611,15 @@ bool p3PeerMgrIMPL::removeFriend(const std::string &id)
 		}
 
 		std::list<std::string>::iterator rit;
-		for(rit = toRemove.begin(); rit != toRemove.end(); rit++) 
-		{
+		for(rit = sslid_toRemove.begin(); rit != sslid_toRemove.end(); rit++) 
 			if (mFriendList.end() != (it = mFriendList.find(*rit))) 
-			{
 				mFriendList.erase(it);
-			}
-		}
+
+		std::map<std::string,ServicePermissionFlags>::iterator it2 ;
+
+		for(rit = pgpid_toRemove.begin(); rit != pgpid_toRemove.end(); rit++) 
+			if (mFriendsPermissionFlags.end() != (it2 = mFriendsPermissionFlags.find(*rit))) 
+				mFriendsPermissionFlags.erase(it2);
 
 #ifdef PEER_DEBUG
 		std::cerr << "p3PeerMgrIMPL::removeFriend() new mFriendList.size() : " << mFriendList.size() << std::endl;
@@ -620,7 +627,7 @@ bool p3PeerMgrIMPL::removeFriend(const std::string &id)
 	}
 
 	std::list<std::string>::iterator rit;
-	for(rit = toRemove.begin(); rit != toRemove.end(); rit++) 
+	for(rit = sslid_toRemove.begin(); rit != sslid_toRemove.end(); rit++) 
 	{
 		mLinkMgr->removeFriend(*rit);
 	}
@@ -638,7 +645,7 @@ bool p3PeerMgrIMPL::removeFriend(const std::string &id)
 	mLinkMgr->printPeerLists(std::cerr);
 #endif
 
-        return !toRemove.empty();
+        return !sslid_toRemove.empty();
 }
 
 
@@ -1312,6 +1319,17 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 #endif
 	}
 
+	RsPeerServicePermissionItem *sitem = new RsPeerServicePermissionItem ;
+
+	for(std::map<std::string,ServicePermissionFlags>::const_iterator it(mFriendsPermissionFlags.begin());it!=mFriendsPermissionFlags.end();++it)
+	{
+		sitem->pgp_ids.push_back(it->first) ;
+		sitem->service_flags.push_back(it->second) ;
+	}
+
+	saveData.push_back(sitem) ;
+	saveCleanupList.push_back(sitem);
+
 	// Now save config for network digging strategies
 	
 	RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
@@ -1414,7 +1432,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 				std::cerr << std::endl;
 #endif
 				/* ************* */
-				addFriend(pitem->pid, pitem->gpg_id, pitem->netMode, pitem->visState, pitem->lastContact);
+				addFriend(pitem->pid, pitem->gpg_id, pitem->netMode, pitem->visState, pitem->lastContact, RS_SERVICE_PERM_ALL);
 				setLocation(pitem->pid, pitem->location);
 			}
 			
@@ -1482,6 +1500,23 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 			}
 
 			continue;
+		}
+		RsPeerServicePermissionItem *sitem = dynamic_cast<RsPeerServicePermissionItem*>(*it) ;
+
+		if(sitem)
+		{
+			RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+			std::cerr << "Loaded service permission item: " << std::endl;
+
+			for(uint32_t i=0;i<sitem->pgp_ids.size();++i)
+				if(AuthGPG::getAuthGPG()->isGPGAccepted(sitem->pgp_ids[i]))
+				{
+					mFriendsPermissionFlags[sitem->pgp_ids[i]] = sitem->service_flags[i] ;
+					std::cerr << "   " << sitem->pgp_ids[i] << " - " << sitem->service_flags[i] << std::endl;
+				}
+				else
+					std::cerr << "   " << sitem->pgp_ids[i] << " - Not a friend!" << std::endl;
 		}
 
 		delete (*it);
@@ -1765,6 +1800,52 @@ bool p3PeerMgrIMPL::assignPeersToGroup(const std::string &groupId, const std::li
 	return changed;
 }
 
+
+/**********************************************************************
+ **********************************************************************
+ ******************** Service permission stuff ************************
+ **********************************************************************
+ **********************************************************************/
+
+ServicePermissionFlags p3PeerMgrIMPL::servicePermissionFlags_sslid(const std::string& ssl_id)
+{
+		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+		std::map<std::string, peerState>::const_iterator it = mFriendList.find(ssl_id);
+
+	if(it == mFriendList.end())
+		return RS_SERVICE_PERM_ALL ;
+	else
+		return servicePermissionFlags(it->second.gpg_id) ;
+}
+
+
+ServicePermissionFlags p3PeerMgrIMPL::servicePermissionFlags(const std::string& pgp_id)
+{
+		// 
+		std::map<std::string,ServicePermissionFlags>::const_iterator it = mFriendsPermissionFlags.find( pgp_id ) ;
+
+		if(it == mFriendsPermissionFlags.end())
+			return RS_SERVICE_PERM_ALL ;
+		else
+			return it->second ;
+}
+void p3PeerMgrIMPL::setServicePermissionFlags(const std::string& pgp_id, const ServicePermissionFlags& flags)
+{
+		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+		// Check that we have a PGP id. This should not be necessary, but because
+		// we use std::string, anything can get passed down here.
+		//
+		if(pgp_id.length() != 16)
+		{
+			std::cerr << "Bad parameter passed to setServicePermissionFlags(): " << pgp_id << std::endl;
+			return ;
+		}
+
+		mFriendsPermissionFlags[pgp_id] = flags ;
+		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+}
 
 /**********************************************************************
  **********************************************************************

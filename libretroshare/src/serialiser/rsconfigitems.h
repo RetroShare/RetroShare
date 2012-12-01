@@ -48,10 +48,11 @@ const uint8_t RS_PKT_TYPE_HISTORY_CONFIG = 0x06;
 const uint8_t RS_PKT_SUBTYPE_KEY_VALUE = 0x01;
 
 	/* PEER CONFIG SUBTYPES */
-const uint8_t RS_PKT_SUBTYPE_PEER_OLD_NET = 0x01;
-const uint8_t RS_PKT_SUBTYPE_PEER_STUN    = 0x02;
-const uint8_t RS_PKT_SUBTYPE_PEER_NET     = 0x03;     /* replacement for OLD_NET */
-const uint8_t RS_PKT_SUBTYPE_PEER_GROUP   = 0x04;
+const uint8_t RS_PKT_SUBTYPE_PEER_OLD_NET     = 0x01;
+const uint8_t RS_PKT_SUBTYPE_PEER_STUN        = 0x02;
+const uint8_t RS_PKT_SUBTYPE_PEER_NET         = 0x03;     /* replacement for OLD_NET */
+const uint8_t RS_PKT_SUBTYPE_PEER_GROUP       = 0x04;
+const uint8_t RS_PKT_SUBTYPE_PEER_PERMISSIONS = 0x05;
 
 	/* FILE CONFIG SUBTYPES */
 const uint8_t RS_PKT_SUBTYPE_FILE_TRANSFER = 0x01;
@@ -119,6 +120,23 @@ std::ostream &print(std::ostream &out, uint16_t indent = 0);
 	RsTlvIpAddrSet extAddrList;
 };
 
+class RsPeerServicePermissionItem : public RsItem
+{
+	public:
+		RsPeerServicePermissionItem() : RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_PEER_CONFIG, RS_PKT_SUBTYPE_PEER_PERMISSIONS) {}
+		virtual ~RsPeerServicePermissionItem() {}
+
+		virtual void clear()
+		{
+			pgp_ids.clear() ;
+			service_flags.clear() ;
+		}
+		std::ostream &print(std::ostream &out, uint16_t indent = 0);
+
+		/* Mandatory */
+		std::vector<std::string> pgp_ids ;
+		std::vector<ServicePermissionFlags> service_flags ;
+};
 class RsPeerGroupItem : public RsItem
 {
 public:
@@ -191,6 +209,9 @@ virtual	uint32_t    sizeGroup(RsPeerGroupItem *);
 virtual	bool        serialiseGroup  (RsPeerGroupItem *item, void *data, uint32_t *size);
 virtual	RsPeerGroupItem *    deserialiseGroup(void *data, uint32_t *size);
 
+virtual	uint32_t    sizePermissions(RsPeerServicePermissionItem *);
+virtual	bool        serialisePermissions  (RsPeerServicePermissionItem *item, void *data, uint32_t *size);
+virtual	RsPeerServicePermissionItem *    deserialisePermissions(void *data, uint32_t *size);
 };
 
 /**************************************************************************/

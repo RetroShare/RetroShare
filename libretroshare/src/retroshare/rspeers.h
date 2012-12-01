@@ -66,6 +66,14 @@ const uint32_t RS_PEER_STATE_ONLINE	= 0x0002;
 const uint32_t RS_PEER_STATE_CONNECTED  = 0x0004;
 const uint32_t RS_PEER_STATE_UNREACHABLE= 0x0008;
 
+// Service permission flags. 
+//
+const ServicePermissionFlags RS_SERVICE_PERM_TURTLE     ( 0x00000001 ) ;	
+const ServicePermissionFlags RS_SERVICE_PERM_DISCOVERY  ( 0x00000002 ) ;
+const ServicePermissionFlags RS_SERVICE_PERM_DISTRIB    ( 0x00000004 ) ;
+const ServicePermissionFlags RS_SERVICE_PERM_ALL        = RS_SERVICE_PERM_TURTLE | RS_SERVICE_PERM_DISCOVERY | RS_SERVICE_PERM_DISTRIB ;
+// ...
+
 /* Connect state */
 const uint32_t RS_PEER_CONNECTSTATE_TRYING_TUNNEL     = 1;
 const uint32_t RS_PEER_CONNECTSTATE_TRYING_TCP        = 2;
@@ -171,6 +179,9 @@ class RsPeerDetails
 
 	bool accept_connection;
 
+	/* Peer permission flags. What services the peer can use (Only valid if friend).*/
+	ServicePermissionFlags service_perm_flags ;
+
 	/* Network details (only valid if friend) */
 	uint32_t		state;
 
@@ -247,7 +258,7 @@ class RsPeers
 		virtual bool    getAssociatedSSLIds(const std::string &gpg_id, std::list<std::string> &ids) = 0;
 
 		/* Add/Remove Friends */
-		virtual	bool addFriend(const std::string &ssl_id, const std::string &gpg_id)    = 0;
+		virtual	bool addFriend(const std::string &ssl_id, const std::string &gpg_id,ServicePermissionFlags flags = RS_SERVICE_PERM_ALL)    = 0;
 		virtual	bool removeFriend(const std::string &ssl_or_gpg_id)  			= 0;
 		virtual bool removeFriendLocation(const std::string &sslId) 			= 0;
 
@@ -309,6 +320,11 @@ class RsPeers
 		//
 		virtual FileSearchFlags computePeerPermissionFlags(const std::string& peer_id,FileStorageFlags file_sharing_flags,const std::list<std::string>& file_parent_groups) = 0;
 
+		/* Service permission flags */
+
+		virtual ServicePermissionFlags servicePermissionFlags(const std::string& gpg_id) = 0;
+		virtual ServicePermissionFlags servicePermissionFlags_sslid(const std::string& ssl_id) = 0;
+		virtual void setServicePermissionFlags(const std::string& gpg_id,const ServicePermissionFlags& flags) = 0;
 };
 
 #endif

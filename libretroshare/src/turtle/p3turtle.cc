@@ -749,7 +749,7 @@ int p3turtle::handleIncoming()
 	{
 		nhandled++;
 
-		if(!(_turtle_routing_enabled && _turtle_routing_session_enabled))
+		if( (!(_turtle_routing_enabled && _turtle_routing_session_enabled)) || !(RS_SERVICE_PERM_TURTLE & rsPeers->servicePermissionFlags_sslid(item->PeerId())))
 			delete item ;
 		else
 		{
@@ -903,6 +903,9 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 
 		for(std::list<std::string>::const_iterator it(onlineIds.begin());it!=onlineIds.end();++it)
 		{
+			if(!(RS_SERVICE_PERM_TURTLE & rsPeers->servicePermissionFlags_sslid(*it)))
+				continue ;
+
 			uint32_t linkType = mLinkMgr->getLinkType(*it);
 
 			if ((linkType & RS_NET_CONN_SPEED_TRICKLE) || (linkType & RS_NET_CONN_SPEED_LOW)) 	// don't forward searches to slow link types (e.g relay peers)!
@@ -1955,6 +1958,15 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 	{
 		std::list<std::string> onlineIds ;
 		mLinkMgr->getOnlineList(onlineIds);
+
+		for(std::list<std::string>::iterator it(onlineIds.begin());it!=onlineIds.end();)
+			if(!(RS_SERVICE_PERM_TURTLE & rsPeers->servicePermissionFlags_sslid(*it)))
+			{
+				std::list<std::string>::iterator tmp = it++ ;
+				onlineIds.erase(tmp) ;
+			}
+			else
+				++it ;
 
 		int nb_online_ids = onlineIds.size() ;
 

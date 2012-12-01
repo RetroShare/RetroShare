@@ -384,7 +384,10 @@ bool pqiSSLstore::encryptedSendItems(const std::list<RsItem*>& rsItemList)
 	{
 		sizeItem = rsSerialiser->size(*it);
 		if(!rsSerialiser->serialise(*it, (data+offset),&sizeItem))
+		{
+			std::cerr << "(EE) pqiSSLstore::encryptedSendItems(): One item did not serialize. sizeItem=" << sizeItem << ". Dropping the entire file. " << std::endl;
 			return false;
+		}
 		offset += sizeItem;
 
 		if (!(bio_flags & BIN_FLAGS_NO_DELETE))

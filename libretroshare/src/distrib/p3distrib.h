@@ -287,6 +287,11 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 
 	private:
 
+		// derived from CacheSource
+		virtual bool isPeerAcceptedAsCacheReceiver(const std::string& ssl_id) ;
+		// derived from CacheStore
+		virtual bool isPeerAcceptedAsCacheProvider(const std::string& ssl_id) ;
+
 		/* these lists are filled by the overloaded fns... then cleared by the thread */
 		bool mHistoricalCaches; // initially true.... falsified by HistoricalCachesDone() 
 		std::list<CacheDataPending> mPendingCaches;
