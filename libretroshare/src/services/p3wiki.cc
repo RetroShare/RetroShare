@@ -407,6 +407,30 @@ bool generateNextDummyPage(const RsGxsMessageId &threadId, const int lines, cons
 }
 
 
+#include <retroshare/rsidentity.h>
+
+std::string chooseRandomAuthorId()
+{
+        /* chose a random Id to sign with */
+        std::list<RsGxsId> ownIds;
+        std::list<RsGxsId>::iterator it;
+
+        rsIdentity->getOwnIds(ownIds);
+
+        uint32_t idx = (uint32_t) (ownIds.size() * RSRandom::random_f32());
+        int i = 0;
+        for(it = ownIds.begin(); (it != ownIds.end()) && (i < idx); it++, i++);
+
+	std::string answer;
+        if (it != ownIds.end())
+        {
+		answer = *it;
+        }
+	return answer;
+}
+
+
+
 void p3Wiki::dummyTick()
 {
 	if (mAboutActive)
@@ -437,6 +461,7 @@ void p3Wiki::dummyTick()
 				page.mMeta.mGroupId = groupId;
 				page.mPage = "Baseline page... a placeholder for About Wiki";
 				page.mMeta.mMsgName = "About RsWiki";
+				page.mMeta.mAuthorId = chooseRandomAuthorId();
 
 				submitSnapshot(mAboutToken, page);
 				mAboutLines++;
@@ -459,6 +484,7 @@ void p3Wiki::dummyTick()
 
 				RsWikiSnapshot page;				
 				page.mMeta.mMsgName = "About RsWiki";
+				page.mMeta.mAuthorId = chooseRandomAuthorId();
 				if (!generateNextDummyPage(mAboutThreadId, mAboutLines, msgId, about_txt, about_len, page))
 				{
 					std::cerr << "About Pages Done";
@@ -502,6 +528,7 @@ void p3Wiki::dummyTick()
 				page.mMeta.mGroupId = groupId;
 				page.mPage = "Baseline page... a placeholder for Improv Wiki";
 				page.mMeta.mMsgName = "Improv RsWiki";
+				page.mMeta.mAuthorId = chooseRandomAuthorId();
 
 				submitSnapshot(mImprovToken, page);
 				mImprovLines++;
@@ -524,6 +551,7 @@ void p3Wiki::dummyTick()
 
 				RsWikiSnapshot page;				
 				page.mMeta.mMsgName = "Improv RsWiki";
+				page.mMeta.mAuthorId = chooseRandomAuthorId();
 				if (!generateNextDummyPage(mImprovThreadId, mImprovLines, msgId, improvements_txt, improvements_len, page))
 				{
 					std::cerr << "Improv Pages Done";
