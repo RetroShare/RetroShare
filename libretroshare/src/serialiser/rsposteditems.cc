@@ -25,6 +25,7 @@
  */
 
 #include "serialiser/rsposteditems.h"
+#include "rsbaseserial.h"
 
 
 uint32_t RsGxsPostedSerialiser::size(RsItem *item)
@@ -154,6 +155,7 @@ uint32_t RsGxsPostedSerialiser::sizeGxsPostedVoteItem(RsGxsPostedVoteItem* item)
     RsPostedVote& v = item->mVote;
 
     uint32_t s = 8;
+    s += 1; // for vote direction
 
     return s;
 }
@@ -289,7 +291,7 @@ bool RsGxsPostedSerialiser::serialiseGxsPostedVoteItem(RsGxsPostedVoteItem* item
     /* skip the header */
     offset += 8;
 
-    /* GxsPhotoAlbumItem */
+    ok &= setRawUInt32(data, tlvsize, &offset, item->mVote.mDirection);
 
     if(offset != tlvsize)
     {
@@ -524,6 +526,8 @@ RsGxsPostedVoteItem* RsGxsPostedSerialiser::deserialiseGxsPostedVoteItem(void *d
     RsGxsPostedVoteItem* item = new RsGxsPostedVoteItem();
     /* skip the header */
     offset += 8;
+
+    ok &= getRawUInt8(data, rssize, &offset, &(item->mVote.mDirection));
 
     if (offset != rssize)
     {

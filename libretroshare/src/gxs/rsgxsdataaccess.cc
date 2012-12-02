@@ -771,9 +771,15 @@ void RsGxsDataAccess::processRequests()
 bool RsGxsDataAccess::getGroupData(GroupDataReq* req)
 {
 	std::map<RsGxsGroupId, RsNxsGrp*> grpData;
+        std::list<RsGxsGroupId> grpIdsOut;
 
-        std::list<RsGxsGroupId>::iterator lit = req->mGroupIds.begin(),
-        lit_end = req->mGroupIds.end();
+        getGroupList(req->mGroupIds, req->Options, grpIdsOut);
+
+        if(grpIdsOut.empty())
+            return true;
+
+        std::list<RsGxsGroupId>::iterator lit = grpIdsOut.begin(),
+        lit_end = grpIdsOut.end();
 
         for(; lit != lit_end; lit++)
         {
@@ -794,9 +800,16 @@ bool RsGxsDataAccess::getGroupSummary(GroupMetaReq* req)
 
 	std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMeta;
 
-	std::list<RsGxsGroupId>::const_iterator lit = req->mGroupIds.begin();
+        std::list<RsGxsGroupId> grpIdsOut;
 
-	for(; lit != req->mGroupIds.end(); lit++)
+        getGroupList(req->mGroupIds, req->Options, grpIdsOut);
+
+        if(grpIdsOut.empty())
+            return true;
+
+        std::list<RsGxsGroupId>::const_iterator lit = grpIdsOut.begin();
+
+        for(; lit != grpIdsOut.end(); lit++)
 		grpMeta[*lit] = NULL;
 
 	mDataStore->retrieveGxsGrpMetaData(grpMeta);
@@ -811,24 +824,37 @@ bool RsGxsDataAccess::getGroupSummary(GroupMetaReq* req)
 
 bool RsGxsDataAccess::getGroupList(GroupIdReq* req)
 {
-	std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMeta;
+    getGroupList(req->mGroupIds, req->Options, req->mGroupIdResult);
 
-	std::list<RsGxsGroupId>::const_iterator lit = req->mGroupIds.begin();
+    return true;
+}
 
-	for(; lit != req->mGroupIds.end(); lit++)
-		grpMeta[*lit] = NULL;
+bool RsGxsDataAccess::getGroupList(const std::list<RsGxsGroupId>& grpIdsIn, const RsTokReqOptions& opts, std::list<RsGxsGroupId>& grpIdsOut)
+{
+    std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMeta;
 
-	mDataStore->retrieveGxsGrpMetaData(grpMeta);
+    std::list<RsGxsGroupId>::const_iterator lit = grpIdsIn.begin();
 
-	std::map<std::string, RsGxsGrpMetaData*>::iterator mit = grpMeta.begin();
+    for(; lit != grpIdsIn.end(); lit++)
+            grpMeta[*lit] = NULL;
 
-	for(; mit != grpMeta.end(); mit++)
-	{
-		req->mGroupIdResult.push_back(mit->first);
-		delete mit->second; // so wasteful!!
-	}
+    mDataStore->retrieveGxsGrpMetaData(grpMeta);
 
-	return true;
+    std::map<std::string, RsGxsGrpMetaData*>::iterator mit = grpMeta.begin();
+
+    for(; mit != grpMeta.end(); mit++)
+    {
+            grpIdsOut.push_back(mit->first);
+    }
+
+    filterGrpList(grpIdsOut, opts, grpMeta);
+
+    for(mit = grpMeta.begin(); mit != grpMeta.end(); mit++)
+    {
+            delete mit->second; // so wasteful!!
+    }
+
+    return true;
 }
 
 bool RsGxsDataAccess::getMsgData(MsgDataReq* req)
@@ -1394,6 +1420,32 @@ void RsGxsDataAccess::filterMsgList(GxsMsgIdResult& msgIds, const RsTokReqOption
 	}
 }
 
+void RsGxsDataAccess::filterGrpList(std::list<RsGxsGroupId> &grpIds, const RsTokReqOptions &opts, const GrpMetaFilter &meta) const
+{
+    std::list<RsGxsGroupId>::iterator lit = grpIds.begin();
+
+    for(; lit != grpIds.end(); )
+    {
+        GrpMetaFilter::const_iterator cit = meta.find(*lit);
+
+        bool keep = false;
+
+        if(cit != meta.end())
+        {
+           keep = checkGrpFilter(opts, cit->second);
+        }
+
+        if(keep)
+        {
+            lit++;
+        }else
+        {
+            lit = grpIds.erase(lit);
+        }
+
+    }
+}
+
 
 bool RsGxsDataAccess::checkRequestStatus(const uint32_t& token,
 		uint32_t& status, uint32_t& reqtype, uint32_t& anstype, time_t& ts)
@@ -1516,6 +1568,26 @@ bool RsGxsDataAccess::disposeOfPublicToken(const uint32_t& token)
 	return true;
 }
 
+bool RsGxsDataAccess::checkGrpFilter(const RsTokReqOptions &opts, const RsGxsGrpMetaData *meta) const
+{
+
+    bool subscribeMatch = false;
+
+    if(opts.mSubscribeMask)
+    {
+        // Exact Flags match required.
+        if ((opts.mSubscribeMask & opts.mSubscribeFilter) == (opts.mSubscribeMask & meta->mSubscribeFlags))
+        {
+                subscribeMatch = true;
+        }
+    }
+    else
+    {
+        subscribeMatch = true;
+    }
+
+    return subscribeMatch;
+}
 bool RsGxsDataAccess::checkMsgFilter(const RsTokReqOptions& opts, const RsGxsMsgMetaData* meta) const
 {
 	bool statusMatch = false;

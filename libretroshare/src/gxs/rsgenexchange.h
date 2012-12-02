@@ -306,7 +306,7 @@ protected:
 
     /*!
      * Retrieve keys for a given group, \n
-     * call is blocking retrieval for underlying db
+     * call is blocking retrieval from underlying db
      * @warning under normal circumstance a service should not need this
      * @param grpId the id of the group to retrieve keys for
      * @param keys this is set to the retrieved keys

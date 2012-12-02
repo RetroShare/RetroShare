@@ -32,6 +32,7 @@
 
 
 typedef std::map< RsGxsGroupId, std::map<RsGxsMessageId, RsGxsMsgMetaData*> > MsgMetaFilter;
+typedef std::map< RsGxsGroupId, RsGxsGrpMetaData* > GrpMetaFilter;
 
 class RsGxsDataAccess : public RsTokenService
 {
@@ -305,6 +306,14 @@ private:
     bool getGroupList(GroupIdReq* req);
 
     /*!
+     * convenience function for filtering grpIds
+     * @param grpIdsIn The ids to filter with opts
+     * @param opts the filter options
+     * @param grpIdsOut grpIdsIn filtered with opts
+     */
+    bool getGroupList(const std::list<RsGxsGroupId>& grpIdsIn, const RsTokReqOptions& opts, std::list<RsGxsGroupId>& grpIdsOut);
+
+    /*!
      * Attempts to retrieve msg id list from data store
      * Computationally/CPU-Bandwidth expensive
      * @param req
@@ -358,6 +367,14 @@ private:
      */
     void filterMsgList(GxsMsgIdResult& msgIds, const RsTokReqOptions& opts, const MsgMetaFilter& meta) const;
 
+    /*!
+     * This filter msgs based of options supplied (at the moment just status masks)
+     * @param grpIds The group ids to filter
+     * @param opts the request options containing mask set by user
+     * @param meta The accompanying meta information for group ids
+     */
+    void filterGrpList(std::list<RsGxsGroupId>& msgIds, const RsTokReqOptions& opts, const GrpMetaFilter& meta) const;
+
 
     /*!
      * This applies the options to the meta to find out if the given message satisfies
@@ -367,6 +384,16 @@ private:
      * @return true if msg meta passes all options
      */
     bool checkMsgFilter(const RsTokReqOptions& opts, const RsGxsMsgMetaData* meta) const;
+
+    /*!
+     * This applies the options to the meta to find out if the given group satisfies
+     * them
+     * @param opts options containing filters to check
+     * @param meta meta containing currently defined options for group
+     * @return true if group meta passes all options
+     */
+    bool checkGrpFilter(const RsTokReqOptions& opts, const RsGxsGrpMetaData* meta) const;
+
 
     /*!
      * This is a filter method which applies the request options to the list of ids

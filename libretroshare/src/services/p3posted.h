@@ -15,7 +15,7 @@ public:
     uint32_t reqToken;
     RsPosted::RankType rType;
     RsGxsGroupId grpId;
-    PostedRanking result;
+    PostedRanking rankingResult;
 };
 
 class GxsPostedCommentRanking
@@ -28,6 +28,19 @@ public:
     RsGxsGrpMsgIdPair msgId;
     PostedRanking result;
 };
+
+class PostedScore {
+public:
+    int32_t upVotes, downVotes;
+    time_t date;
+    RsGxsMessageId msgId;
+};
+
+
+#define UPDATE_PHASE_GRP_REQUEST 1
+#define UPDATE_PHASE_GRP_MSG_REQUEST 2
+#define UPDATE_VOTE_COMMENT_REQUEST 3
+#define UPDATE_COMPLETE_UPDATE 4
 
 class p3Posted : public RsGenExchange, public RsPosted
 {
@@ -67,21 +80,57 @@ public:
 
 private:
 
+    /* Functions for processing rankings */
+
     void processRankings();
     void processMessageRanks();
     void processCommentRanks();
     void discardCalc(const uint32_t& token);
     void completePostedPostCalc(GxsPostedPostRanking* gpp);
-    bool retrieveScores(const std::string& serviceString, uint32_t& upVotes, uint32_t downVotes, uint32_t nComments);
+    void completePostedCommentRanking(GxsPostedCommentRanking* gpc);
+    bool retrieveScores(const std::string& serviceString, uint32_t& upVotes, uint32_t downVotes, uint32_t nComments) const;
+    bool storeScores(std::string& serviceString, uint32_t& upVotes, uint32_t downVotes, uint32_t nComments) const;
+
+    // for posts
+    void calcPostedPostRank(const std::vector<RsMsgMetaData>, PostedRanking& ranking, bool com(const PostedScore& i, const PostedScore &j)) const;
+
+    // for comments
+    void calcPostedCommentsRank(const std::map<RsGxsMessageId, std::vector<RsGxsMessageId> >& msgBranches, std::map<RsGxsMessageId, RsMsgMetaData>& msgMetas,
+                                PostedRanking& ranking, bool com(const PostedScore& i, const PostedScore &j)) const;
+
+    /* Functions for maintaing vote counts in meta data */
+
+    /*!
+     * Update votes should only be called when a vote comes in
+     * Several phases to calculating votes.
+     * First get all messages for groups which you are subscribed
+     * Then for these messages get all the votes accorded to them
+     * Then do the calculation and update messages
+     * Also stores updates for messages which have new scores
+     */
+    void updateVotes();
+    bool updateRequestGroups(uint32_t& token);
+    bool updateRequestMessages(uint32_t& token);
+    bool updateRequestVotesComments(uint32_t& token);
+    bool updateCompleteUpdate();
+    bool updateMsg(const RsGxsGrpMsgIdPair& msgId, const std::vector<RsPostedVote>& msgVotes,
+                        const std::vector<RsGxsMessageId>& msgCommentIds);
 
 private:
 
+    // for calculating ranks
     std::map<uint32_t, GxsPostedPostRanking*> mPendingPostRanks;
     std::map<uint32_t, GxsPostedPostRanking*> mPendingCalculationPostRanks;
-
     std::map<uint32_t, GxsPostedCommentRanking*> mPendingCommentRanks;
     std::map<uint32_t, GxsPostedCommentRanking*> mPendingCalculationCommentRanks;
 
+    // for maintaining vote counts in msg meta
+    uint32_t mVoteUpdataToken, mVoteToken, mCommentToken;
+    bool mUpdateTokenQueued;
+    uint32_t mUpdatePhase;
+    std::vector<RsGxsGrpMsgIdPair> mMsgsPendingUpdate;
+
+    RsTokenService* mTokenService;
     RsMutex mPostedMutex;
 };
 

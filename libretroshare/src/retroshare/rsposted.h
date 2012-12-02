@@ -87,6 +87,7 @@ class RsPosted : public RsGxsIfaceImpl
     static const uint32_t FLAG_MSGTYPE_POST;
     static const uint32_t FLAG_MSGTYPE_VOTE;
     static const uint32_t FLAG_MSGTYPE_COMMENT;
+    static const uint32_t FLAG_MSGTYPE_MASK;
 
 
     RsPosted(RsGenExchange* gxs) : RsGxsIfaceImpl(gxs) { return; }
@@ -138,17 +139,20 @@ class RsPostedPost
         std::string mNotes;
 };
 
+class RsGxsPostedVoteItem;
 
 class RsPostedVote
 {
-        public:
-        RsPostedVote()
-        {
-            mMeta.mMsgFlags = RsPosted::FLAG_MSGTYPE_VOTE;
-                return;
-        }
+public:
 
-        RsMsgMetaData mMeta;
+    RsPostedVote(const RsGxsPostedVoteItem&);
+    RsPostedVote()
+    {
+        mMeta.mMsgFlags = RsPosted::FLAG_MSGTYPE_VOTE;
+            return;
+    }
+    uint8_t mDirection;
+    RsMsgMetaData mMeta;
 };
 
 class RsGxsPostedCommentItem;

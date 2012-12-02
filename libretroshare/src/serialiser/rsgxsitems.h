@@ -34,6 +34,7 @@
 class RsGxsGrpMetaData;
 class RsGxsMsgMetaData;
 
+
 class RsGroupMetaData
 {
 public:
@@ -48,6 +49,7 @@ public:
             mLastPost = 0;
 
             mGroupStatus = 0;
+            mCircleType = 0;
 
             //mPublishTs = 0;
     }
@@ -62,6 +64,10 @@ public:
     time_t      mPublishTs; // Mandatory.
     std::string mAuthorId;   // Optional.
 
+    // for circles
+    std::string mCircleId;
+    uint32_t mCircleType;
+
     // BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
 
     uint32_t    mSubscribeFlags;
@@ -72,6 +78,12 @@ public:
 
     uint32_t    mGroupStatus;
     std::string mServiceString; // Service Specific Free-Form extra storage.
+    std::string mOriginator;
+    std::string mInternalCircle;
+
+
+
+
 
 };
 

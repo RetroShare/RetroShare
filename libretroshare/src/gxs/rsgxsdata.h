@@ -27,7 +27,6 @@
  */
 
 #include <string>
-
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvtypes.h"
 #include "serialiser/rstlvkeys.h"
@@ -59,6 +58,9 @@ public:
     uint32_t    mSignFlags;
     std::string mAuthorId;
 
+    std::string mCircleId;
+    uint32_t mCircleType;
+
 
     RsTlvKeySignatureSet signSet;
     RsTlvSecurityKeySet keys;
@@ -74,7 +76,8 @@ public:
     time_t      mLastPost; // ???
 
     uint32_t    mGroupStatus;
-
+    std::string mOriginator;
+    std::string mInternalCircle;
 };
 
 

@@ -79,6 +79,7 @@ RsTokReqOptions()
 {
 	mOptions = 0;
         mStatusFilter = 0; mStatusMask = 0; mSubscribeFilter = 0;
+        mSubscribeMask = 0;
         mMsgFlagMask = 0; mMsgFlagFilter = 0;
 	mBefore = 0; mAfter = 0; mReqType = 0;
 }
@@ -95,7 +96,7 @@ uint32_t mMsgFlagMask, mMsgFlagFilter;
 
 uint32_t mReqType;
 
-uint32_t mSubscribeFilter; // Only for Groups.
+uint32_t mSubscribeFilter, mSubscribeMask; // Only for Groups.
 
 // Time range... again applied after Options.
 time_t   mBefore;

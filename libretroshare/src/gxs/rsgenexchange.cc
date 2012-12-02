@@ -1570,6 +1570,7 @@ void RsGenExchange::processRecvdMessages()
         RsGxsMsgMetaData* meta = new RsGxsMsgMetaData();
         bool ok = meta->deserialise(msg->meta.bin_data, &(msg->meta.bin_len));
 
+
         if(ok)
         {
             std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMetas.find(msg->grpId);
@@ -1578,7 +1579,9 @@ void RsGenExchange::processRecvdMessages()
             if(mit != grpMetas.end()){
                 RsGxsGrpMetaData* grpMeta = mit->second;
                 ok = true;
-                     //&= validateMsg(msg, grpMeta->mGroupFlags, grpMeta->keys);
+//                msg->metaData = meta;
+  //             ok &= validateMsg(msg, grpMeta->mGroupFlags, grpMeta->keys);
+    //           msg->metaData = NULL;
             }
             else
                 ok = false;

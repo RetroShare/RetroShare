@@ -51,6 +51,10 @@
 #define KEY_KEY_SET std::string("keySet")
 #define KEY_GRP_NAME std::string("grpName")
 #define KEY_GRP_SIGN_FLAGS std::string("signFlags")
+#define KEY_GRP_CIRCLE_ID std::string("circleId")
+#define KEY_GRP_CIRCLE_TYPE std::string("circleType")
+#define KEY_GRP_INTERNAL_CIRCLE std::string("internalCircle")
+#define KEY_GRP_ORIGINATOR std::string("originator")
 
 // grp local
 #define KEY_GRP_SUBCR_FLAG std::string("subscribeFlag")
@@ -98,6 +102,11 @@
 #define COL_ORIG_GRP_ID 12
 #define COL_GRP_SERV_STRING 13
 #define COL_GRP_SIGN_FLAGS 14
+#define COL_GRP_CIRCLE_ID 15
+#define COL_GRP_CIRCL_TYPE 16
+#define COL_GRP_INTERN_CIRCLE 17
+#define COL_GRP_ORIGINATOR 18
+
 
 // msg col numbers
 #define COL_MSG_ID 5
@@ -150,7 +159,8 @@ RsDataService::RsDataService(const std::string &serviceDir, const std::string &d
     grpMetaColumns.push_back(KEY_KEY_SET); grpMetaColumns.push_back(KEY_GRP_SUBCR_FLAG); grpMetaColumns.push_back(KEY_GRP_POP);
     grpMetaColumns.push_back(KEY_MSG_COUNT); grpMetaColumns.push_back(KEY_GRP_STATUS); grpMetaColumns.push_back(KEY_GRP_NAME);
     grpMetaColumns.push_back(KEY_GRP_LAST_POST); grpMetaColumns.push_back(KEY_ORIG_GRP_ID); grpMetaColumns.push_back(KEY_NXS_SERV_STRING);
-    grpMetaColumns.push_back(KEY_GRP_SIGN_FLAGS);
+    grpMetaColumns.push_back(KEY_GRP_SIGN_FLAGS); grpMetaColumns.push_back(KEY_GRP_CIRCLE_ID); grpMetaColumns.push_back(KEY_GRP_CIRCLE_TYPE);
+    grpMetaColumns.push_back(KEY_GRP_INTERNAL_CIRCLE); grpMetaColumns.push_back(KEY_GRP_ORIGINATOR);
 
     // for retrieving actual grp data
     grpColumns.push_back(KEY_GRP_ID); grpColumns.push_back(KEY_NXS_FILE); grpColumns.push_back(KEY_NXS_FILE_OFFSET);
@@ -209,6 +219,10 @@ void RsDataService::initialise(){
                  KEY_NXS_SERV_STRING + " TEXT," +
                  KEY_NXS_FLAGS + " INT," +
                  KEY_GRP_SIGN_FLAGS + " INT," +
+                 KEY_GRP_CIRCLE_ID + " TEXT," +
+                 KEY_GRP_CIRCLE_TYPE + " INT," +
+                 KEY_GRP_INTERNAL_CIRCLE + " TEXT," +
+                 KEY_GRP_ORIGINATOR + " TEXT," +
                  KEY_SIGN_SET + " BLOB);");
 
 }
@@ -235,7 +249,7 @@ RsGxsGrpMetaData* RsDataService::getGrpMeta(RetroCursor &c)
     c.getString(COL_GRP_NAME, grpMeta->mGroupName);
     c.getString(COL_ORIG_GRP_ID, grpMeta->mOrigGrpId);
     c.getString(COL_GRP_SERV_STRING, grpMeta->mServiceString);
-     grpMeta->mSignFlags = c.getInt32(COL_GRP_SIGN_FLAGS);
+    grpMeta->mSignFlags = c.getInt32(COL_GRP_SIGN_FLAGS);
 
     grpMeta->mPublishTs = c.getInt32(COL_TIME_STAMP);
     grpMeta->mGroupFlags = c.getInt32(COL_NXS_FLAGS);
@@ -255,6 +269,11 @@ RsGxsGrpMetaData* RsDataService::getGrpMeta(RetroCursor &c)
     grpMeta->mMsgCount = c.getInt32(COL_MSG_COUNT);
     grpMeta->mLastPost = c.getInt32(COL_GRP_LAST_POST);
     grpMeta->mGroupStatus = c.getInt32(COL_GRP_STATUS);
+
+    c.getString(COL_GRP_CIRCLE_ID, grpMeta->mCircleId);
+    grpMeta->mCircleType = c.getInt32(COL_GRP_CIRCL_TYPE);
+    c.getString(COL_GRP_INTERN_CIRCLE, grpMeta->mInternalCircle);
+    c.getString(COL_GRP_ORIGINATOR, grpMeta->mOriginator);
 
 
     if(ok)
@@ -539,6 +558,10 @@ int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
         cv.put(KEY_NXS_FLAGS, (int32_t)grpMetaPtr->mGroupFlags);
         cv.put(KEY_TIME_STAMP, (int32_t)grpMetaPtr->mPublishTs);
         cv.put(KEY_GRP_SIGN_FLAGS, (int32_t)grpMetaPtr->mSignFlags);
+        cv.put(KEY_GRP_CIRCLE_ID, grpMetaPtr->mCircleId);
+        cv.put(KEY_GRP_CIRCLE_TYPE, (int32_t)grpMetaPtr->mCircleType);
+        cv.put(KEY_GRP_INTERNAL_CIRCLE, grpMetaPtr->mInternalCircle);
+        cv.put(KEY_GRP_ORIGINATOR, grpMetaPtr->mOriginator);
 
         if(! (grpMetaPtr->mAuthorId.empty()) ){
             cv.put(KEY_NXS_IDENTITY, grpMetaPtr->mAuthorId);

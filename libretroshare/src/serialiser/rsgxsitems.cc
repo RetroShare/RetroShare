@@ -42,6 +42,10 @@
 		this->mGroupName = rGxsMeta.mGroupName;
                 this->mServiceString = rGxsMeta.mServiceString;
                 this->mSignFlags = rGxsMeta.mSignFlags;
+                this->mCircleId = rGxsMeta.mCircleId;
+                this->mCircleType = rGxsMeta.mCircleType;
+                this->mInternalCircle = rGxsMeta.mInternalCircle;
+                this->mOriginator = rGxsMeta.mOriginator;
 	}
 
 
