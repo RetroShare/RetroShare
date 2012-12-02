@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>902</width>
+    <width>918</width>
     <height>669</height>
    </rect>
   </property>
@@ -109,8 +109,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>271</width>
-             <height>302</height>
+             <width>241</width>
+             <height>307</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout">
@@ -154,8 +154,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>271</width>
-             <height>302</height>
+             <width>241</width>
+             <height>294</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -436,8 +436,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>600</width>
-            <height>611</height>
+            <width>645</width>
+            <height>609</height>
            </rect>
           </property>
           <property name="styleSheet">
@@ -454,22 +454,6 @@
             <layout class="QVBoxLayout" name="verticalLayout_3">
              <item>
               <widget class="QTextBrowser" name="textBrowser"/>
-             </item>
-             <item>
-              <spacer name="verticalSpacer">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::MinimumExpanding</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-              </spacer>
              </item>
             </layout>
            </item>

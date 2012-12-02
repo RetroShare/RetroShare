@@ -37,6 +37,12 @@
 
 #include <QTimer>
 
+//#define USE_PEGMMD_RENDERER     1
+
+#ifdef USE_PEGMMD_RENDERER
+#include "markdown_lib.h"
+#endif
+
 /******
  * #define WIKI_DEBUG 1
  *****/
@@ -318,7 +324,22 @@ void WikiDialog::modTreeChanged()
 
 void WikiDialog::updateWikiPage(const RsWikiSnapshot &page)
 {
-	ui.textBrowser->setPlainText(QString::fromStdString(page.mPage));
+#ifdef USE_PEGMMD_RENDERER
+	/* render as HTML */
+	int extensions = 0;
+	char *answer = markdown_to_string((char *) page.mPage.c_str(), extensions, HTML_FORMAT);
+
+	QString renderedText = QString::fromUtf8(answer);
+	ui.textBrowser->setHtml(renderedText);
+
+	// free answer.
+	free(answer);
+#else
+	/* render as HTML */
+	QString renderedText = "IN (dummy) RENDERED TEXT MODE:\n";
+	renderedText += QString::fromStdString(page.mPage);
+	ui.textBrowser->setPlainText(renderedText);
+#endif
 }
 
 

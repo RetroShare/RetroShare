@@ -29,12 +29,15 @@
 #include <retroshare/rswiki.h>
 #include "util/TokenQueue.h"
 
+class RSTreeWidgetItemCompareRole;
+
 class WikiEditDialog : public QWidget, public TokenResponse
 {
   Q_OBJECT
 
 public:
 	WikiEditDialog(QWidget *parent = 0);
+	~WikiEditDialog();
 
 void 	setNewPage();
 
@@ -54,7 +57,14 @@ void  	detailsToggle();
 void 	textChanged();
 void    textReset();
 
+void 	historySelected();
+void 	oldHistoryChanged();
+
 private:
+
+void 	updateHistoryStatus();
+void 	updateHistoryChildren(QTreeWidgetItem *item, bool isLatest);
+void 	updateHistoryItem(QTreeWidgetItem *item, bool isLatest);
 
 void    redrawPage();
 
@@ -77,6 +87,7 @@ void 	loadEditTreeData(const uint32_t &token);
 
 	bool mPreviewMode;
 	bool mPageLoading;
+        bool mOldHistoryEnabled;
 
         bool mRepublishMode;
         bool mTextChanged;
@@ -90,6 +101,8 @@ void 	loadEditTreeData(const uint32_t &token);
 	RsWikiSnapshot mWikiSnapshot;
 
 	Ui::WikiEditDialog ui;
+
+	RSTreeWidgetItemCompareRole *mThreadCompareRole;
 
 	TokenQueue *mWikiQueue;
 };

@@ -54,9 +54,21 @@
          <property name="title">
           <string>Page Edit History</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0">
+         <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0">
+          <item>
+           <widget class="QCheckBox" name="checkBox_OldHistory">
+            <property name="text">
+             <string>Enable Obsolete Edits</string>
+            </property>
+           </widget>
+          </item>
           <item>
            <widget class="QTreeWidget" name="treeWidget_History">
+            <column>
+             <property name="text">
+              <string>Publish Date</string>
+             </property>
+            </column>
             <column>
              <property name="text">
               <string>By</string>
@@ -64,7 +76,7 @@
             </column>
             <column>
              <property name="text">
-              <string>When</string>
+              <string>PageId</string>
              </property>
             </column>
            </widget>
