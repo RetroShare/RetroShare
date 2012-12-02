@@ -36,7 +36,7 @@
      <item row="4" column="0">
       <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>GPG Name</string>
+        <string>PGP Name</string>
        </property>
       </widget>
      </item>
@@ -46,7 +46,7 @@
      <item row="5" column="0">
       <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>GPG Email</string>
+        <string>PGP Email</string>
        </property>
       </widget>
      </item>
@@ -72,7 +72,7 @@
      <item row="2" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>GPG Hash</string>
+        <string>PGP Hash</string>
        </property>
       </widget>
      </item>
@@ -82,7 +82,7 @@
      <item row="3" column="0">
       <widget class="QLabel" name="label_6">
        <property name="text">
-        <string>GPG Id</string>
+        <string>PGP Id</string>
        </property>
       </widget>
      </item>
@@ -115,7 +115,7 @@
        <item>
         <widget class="QRadioButton" name="radioButton_GpgId">
          <property name="text">
-          <string>Gpg Associated ID</string>
+          <string>PGP Associated ID</string>
          </property>
         </widget>
        </item>

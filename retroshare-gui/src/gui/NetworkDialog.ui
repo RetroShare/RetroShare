@@ -110,7 +110,7 @@
            <string>Did I authenticated peer</string>
           </property>
           <property name="toolTip">
-           <string>Did I sign his gpg key</string>
+           <string>Did I sign his PGP key</string>
           </property>
          </column>
          <column>
@@ -180,7 +180,7 @@
           <item>
            <widget class="QCheckBox" name="showUnvalidKeys">
             <property name="text">
-             <string>Show keys that are not validated by the GPG web of trust</string>
+             <string>Show keys that are not validated by the PGP web of trust</string>
             </property>
            </widget>
           </item>

@@ -76,7 +76,7 @@
 requests from your friends using BitTorrent's DHT. 
 It greatly improves the connectivity. 
 
-The Discovery service sends locations and GPG 
+The Discovery service sends locations and PGP 
 identities of your trusted contacts to connected 
 peers, to help them choose new friends. 
 The friendship is never automatic however, and both 

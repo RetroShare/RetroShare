@@ -106,7 +106,7 @@ void GenCertDialog::init()
 		ui.label->hide();
 		text += tr("You can create a new identity with this form.");
 	} else {
-		text += tr("You can use an existing identity (i.e. a gpg key pair), from the list below, or create a new one with this form.");
+		text += tr("You can use an existing identity (i.e. a PGP key pair), from the list below, or create a new one with this form.");
 	}
 	ui.headerLabel2->setText(text);
 
@@ -203,7 +203,7 @@ void GenCertDialog::genPerson()
 		if (genLoc.length() < 3) {
 			/* Message Dialog */
 			QMessageBox::warning(this,
-								 tr("Generate GPG key Failure"),
+								 tr("Generate PGP key Failure"),
 								 tr("Location field is required with a minimum of 3 characters"),
 								 QMessageBox::Ok);
 			return;
@@ -225,14 +225,14 @@ void GenCertDialog::genPerson()
 			ui.email_input->text().length() < 3 || genLoc.length() < 3) {
 			/* Message Dialog */
 			QMessageBox::warning(this,
-								 tr("Generate GPG key Failure"),
+								 tr("Generate PGP key Failure"),
 								 tr("All fields are required with a minimum of 3 characters"),
 								 QMessageBox::Ok);
 			return;
 		}
 		//generate a new gpg key
 		std::string err_string;
-		ui.no_gpg_key_label->setText(tr("Generating new GPG key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. \n\nFill in your GPG password when asked, to sign your new key."));
+		ui.no_gpg_key_label->setText(tr("Generating new PGP key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. \n\nFill in your PGP password when asked, to sign your new key."));
 		ui.no_gpg_key_label->show();
 		ui.new_gpg_key_checkbox->hide();
 		ui.name_label->hide();

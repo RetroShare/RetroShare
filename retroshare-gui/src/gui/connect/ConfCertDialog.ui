@@ -504,7 +504,7 @@
              </font>
             </property>
             <property name="title">
-             <string>GPG Key</string>
+             <string>PGP Key</string>
             </property>
             <property name="flat">
              <bool>false</bool>
@@ -522,7 +522,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>Peer has signed my GPG key</string>
+                <string>Peer has signed my PGP key</string>
                </property>
               </widget>
              </item>
@@ -578,7 +578,7 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="text">
-               <string>Sign GPG key</string>
+               <string>Sign PGP key</string>
               </property>
               <property name="icon">
                <iconset resource="../images.qrc">
@@ -607,7 +607,7 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="text">
-               <string>Sign GPG key</string>
+               <string>Sign PGP key</string>
               </property>
               <property name="icon">
                <iconset resource="../images.qrc">

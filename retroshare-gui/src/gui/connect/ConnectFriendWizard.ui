@@ -664,7 +664,7 @@
         <item row="1" column="0">
          <widget class="QCheckBox" name="fr_signGPGCheckBox">
           <property name="text">
-           <string>Authenticate friend (Sign GPG Key)</string>
+           <string>Authenticate friend (Sign PGP Key)</string>
           </property>
          </widget>
         </item>
@@ -866,7 +866,7 @@
        <item row="1" column="0">
         <widget class="QCheckBox" name="signGPGCheckBox">
          <property name="text">
-          <string>Authenticate friend (Sign GPG Key)</string>
+          <string>Authenticate friend (Sign PGP Key)</string>
          </property>
         </widget>
        </item>
