@@ -95,11 +95,11 @@ PGPHandler::PGPHandler(const std::string& pubring, const std::string& secring,co
 	// Check that the file exists. If not, create a void keyring.
 	
 	FILE *ftest ;
-	ftest = fopen(pubring.c_str(),"rb") ;
+	ftest = RsDirUtil::rs_fopen(pubring.c_str(),"rb") ;
 	bool pubring_exist = (ftest != NULL) ;
 	if(ftest != NULL)
 		fclose(ftest) ;
-	ftest = fopen(secring.c_str(),"rb") ;
+	ftest = RsDirUtil::rs_fopen(secring.c_str(),"rb") ;
 	bool secring_exist = (ftest != NULL) ;
 	if(ftest != NULL)
 		fclose(ftest) ;
@@ -579,7 +579,7 @@ bool PGPHandler::exportGPGKeyPair(const std::string& filename,const PGPIdType& e
 		return false ;
 	}
 
-	FILE *f = fopen(filename.c_str(),"w") ;
+	FILE *f = RsDirUtil::rs_fopen(filename.c_str(),"w") ;
 	if(f == NULL)
 	{
 		std::cerr << "Cannot output key " << exported_key_id.toStdString() << ": file " << filename << " cannot be written. Please check for permissions, quotas, disk space." << std::endl;
@@ -676,7 +676,7 @@ bool PGPHandler::importGPGKeyPair(const std::string& filename,PGPIdType& importe
 
 	// 1 - Test for file existance
 	//
-	FILE *ftest = fopen(filename.c_str(),"r") ;
+	FILE *ftest = RsDirUtil::rs_fopen(filename.c_str(),"r") ;
 
 	if(ftest == NULL)
 	{
@@ -958,7 +958,7 @@ bool PGPHandler::decryptTextFromFile(const PGPIdType&,std::string& text,const st
 	unsigned char *out_buf = NULL ;
 	std::string buf ;
 
-	FILE *f = fopen(inputfile.c_str(),"rb") ;
+	FILE *f = RsDirUtil::rs_fopen(inputfile.c_str(),"rb") ;
 
 	if (f == NULL)
 	{
@@ -1294,7 +1294,7 @@ struct PrivateTrustPacket
 
 void PGPHandler::locked_readPrivateTrustDatabase()
 {
-	FILE *fdb = fopen(_trustdb_path.c_str(),"rb") ;
+	FILE *fdb = RsDirUtil::rs_fopen(_trustdb_path.c_str(),"rb") ;
 #ifdef DEBUG_PGPHANDLER
 	std::cerr << "PGPHandler:  Reading private trust database." << std::endl;
 #endif
@@ -1334,7 +1334,7 @@ void PGPHandler::locked_readPrivateTrustDatabase()
 
 bool PGPHandler::locked_writePrivateTrustDatabase()
 {
-	FILE *fdb = fopen((_trustdb_path+".tmp").c_str(),"wb") ;
+	FILE *fdb = RsDirUtil::rs_fopen((_trustdb_path+".tmp").c_str(),"wb") ;
 #ifdef DEBUG_PGPHANDLER
 	std::cerr << "PGPHandler:  Reading private trust database." << std::endl;
 #endif
