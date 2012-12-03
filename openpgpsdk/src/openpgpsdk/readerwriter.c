@@ -32,6 +32,7 @@
 
 #include <openpgpsdk/readerwriter.h>
 #include <openpgpsdk/callback.h>
+#include <util/opsdir.h>
 
 #include "parse_local.h"
 
@@ -183,7 +184,7 @@ int ops_setup_file_write(ops_create_info_t **cinfo, const char* filename, ops_bo
         flags |= O_EXCL;
     flags |= O_BINARY;
 
-    fd=open(filename, flags, 0600);
+    fd=ops_open(filename, flags, 0600);
     if(fd < 0)
         {
         perror(filename);
@@ -221,7 +222,7 @@ int ops_setup_file_append(ops_create_info_t **cinfo, const char* filename)
      * initialise needed structures for writing to file
      */
 
-    fd=open(filename,O_WRONLY | O_APPEND | O_BINARY | O_CREAT, 0600);
+    fd=ops_open(filename,O_WRONLY | O_APPEND | O_BINARY | O_CREAT, 0600);
 
     if(fd < 0)
         {
@@ -267,7 +268,7 @@ int ops_setup_file_read(ops_parse_info_t **pinfo, const char *filename,
      * initialise needed structures for reading
      */
 
-    fd=open(filename,O_RDONLY | O_BINARY);
+    fd=ops_open(filename,O_RDONLY | O_BINARY, 0);
 
     if (fd < 0)
         {

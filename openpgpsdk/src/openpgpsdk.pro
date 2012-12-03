@@ -67,9 +67,10 @@ HEADERS += openpgpsdk/writer.h \
            openpgpsdk/accumulate.h \
            openpgpsdk/armour.h \
            openpgpsdk/parse_local.h \
-           openpgpsdk/keyring_local.h
+           openpgpsdk/keyring_local.h \
+           util/opsdir.h \
+           util/opsstring.h
 
-          
 SOURCES += openpgpsdk/accumulate.c \
            openpgpsdk/compress.c \
            openpgpsdk/create.c \
@@ -106,4 +107,6 @@ SOURCES += openpgpsdk/accumulate.c \
            openpgpsdk/writer_fd.c \
            openpgpsdk/writer_memory.c \
            openpgpsdk/writer_skey_checksum.c \
-           openpgpsdk/writer_stream_encrypt_se_ip.c
+           openpgpsdk/writer_stream_encrypt_se_ip.c \
+           util/opsdir.c \
+           util/opsstring.c

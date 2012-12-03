@@ -37,6 +37,7 @@
 #include <unistd.h>
 
 #include <openpgpsdk/final.h>
+#include <util/opsdir.h>
 
 #include <openssl/dsa.h>
 
@@ -1001,7 +1002,7 @@ ops_boolean_t ops_sign_file_as_cleartext(const char* input_filename,
 
 	// open file to sign
 
-	fd_in=open(input_filename, O_RDONLY | O_BINARY);
+	fd_in=ops_open(input_filename, O_RDONLY | O_BINARY, 0);
 
 	if(fd_in < 0)
 	{

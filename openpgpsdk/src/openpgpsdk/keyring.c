@@ -46,6 +46,7 @@
 #include <assert.h>
 
 #include <openpgpsdk/final.h>
+#include <util/opsdir.h>
 
 /**
    \ingroup HighLevel_Keyring
@@ -738,7 +739,7 @@ ops_boolean_t ops_keyring_read_from_file(ops_keyring_t *keyring, const ops_boole
     //    ops_parse_options(pinfo,OPS_PTAG_SS_ALL,OPS_PARSE_RAW);
     ops_parse_options(pinfo,OPS_PTAG_SS_ALL,OPS_PARSE_PARSED);
 
-    fd=open(filename,O_RDONLY | O_BINARY);
+    fd=ops_open(filename,O_RDONLY | O_BINARY, 0);
 
     if(fd < 0)
         {

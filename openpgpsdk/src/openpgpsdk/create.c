@@ -40,6 +40,7 @@
 #ifndef WIN32
 #include <unistd.h>
 #endif
+#include <util/opsdir.h>
 
 #include <openpgpsdk/writer.h>
 #include <openpgpsdk/final.h>
@@ -1197,7 +1198,7 @@ ops_write_literal_data_from_file(const char *filename,
     ops_memory_t* mem=NULL;
     size_t len=0;
 
-    fd=open(filename,O_RDONLY | O_BINARY);
+    fd=ops_open(filename,O_RDONLY | O_BINARY, 0);
 
     if (fd < 0)
         return ops_false;
@@ -1251,7 +1252,7 @@ ops_memory_t* ops_write_mem_from_file(const char *filename, int* errnum)
 
     *errnum=0;
 
-    fd=open(filename,O_RDONLY | O_BINARY);
+    fd=ops_open(filename,O_RDONLY | O_BINARY, 0);
 
     if (fd < 0)
         {
@@ -1305,7 +1306,7 @@ int ops_write_file_from_buf(const char *filename, const char* buf,
 
     flags |= O_BINARY;
 
-    fd=open(filename,flags, 0600);
+    fd=ops_open(filename,flags, 0600);
     if (fd < 0)
         {
         perror(NULL); 
