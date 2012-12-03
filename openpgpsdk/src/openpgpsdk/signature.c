@@ -37,7 +37,7 @@
 #include <unistd.h>
 
 #include <openpgpsdk/final.h>
-#include <util/opsdir.h>
+#include <openpgpsdk/opsdir.h>
 
 #include <openssl/dsa.h>
 

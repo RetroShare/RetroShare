@@ -32,7 +32,7 @@
 
 #include <openpgpsdk/readerwriter.h>
 #include <openpgpsdk/callback.h>
-#include <util/opsdir.h>
+#include <openpgpsdk/opsdir.h>
 
 #include "parse_local.h"
 

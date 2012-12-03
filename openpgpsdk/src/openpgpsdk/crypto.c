@@ -33,7 +33,7 @@
 #include <fcntl.h>
 
 #include <openpgpsdk/final.h>
-#include <util/opsdir.h>
+#include <openpgpsdk/opsdir.h>
 
 /**
 \ingroup Core_MPI

@@ -40,7 +40,7 @@
 #ifndef WIN32
 #include <unistd.h>
 #endif
-#include <util/opsdir.h>
+#include <openpgpsdk/opsdir.h>
 
 #include <openpgpsdk/writer.h>
 #include <openpgpsdk/final.h>
