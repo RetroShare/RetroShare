@@ -180,8 +180,8 @@ ops_boolean_t ops_encrypt_file(const char* input_filename,
     int fd_out=0;
 
     ops_create_info_t *cinfo;
-#ifdef WINDOWS_SYS
-    fd_in=ops_open(input_filename, O_RDONLY | O_BINARY);
+#ifdef WIN32
+    fd_in=ops_open(input_filename, O_RDONLY | O_BINARY, 0);
 #else
     fd_in=ops_open(input_filename, O_RDONLY, 0);
 #endif
