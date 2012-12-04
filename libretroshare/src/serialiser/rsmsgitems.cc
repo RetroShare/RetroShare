@@ -56,6 +56,19 @@ std::ostream& RsChatMsgItem::print(std::ostream &out, uint16_t indent)
 	printRsItemEnd(out, "RsChatMsgItem", indent);
 	return out;
 }
+std::ostream& RsChatLobbyListItem_deprecated2::print(std::ostream &out, uint16_t indent)
+{
+	printRsItemBase(out, "RsChatLobbyListItem_deprecated2", indent);
+
+	for(uint32_t i=0;i<lobby_ids.size();++i)
+	{
+		printIndent(out, indent+2);
+		out << "lobby 0x" << std::hex << lobby_ids[i] << std::dec << " (name=\"" << lobby_names[i] << "\", topic="<< lobby_topics[i]  << "\", count=" << lobby_counts[i] << std::endl ;
+	}
+
+	printRsItemEnd(out, "RsChatLobbyListItem_deprecated2", indent);
+	return out;
+}
 std::ostream& RsChatLobbyListItem_deprecated::print(std::ostream &out, uint16_t indent)
 {
 	printRsItemBase(out, "RsChatLobbyListItem_deprecated", indent);
@@ -76,7 +89,7 @@ std::ostream& RsChatLobbyListItem::print(std::ostream &out, uint16_t indent)
 	for(uint32_t i=0;i<lobby_ids.size();++i)
 	{
 		printIndent(out, indent+2);
-		out << "lobby 0x" << std::hex << lobby_ids[i] << std::dec << " (name=\"" << lobby_names[i] << "\", topic="<< lobby_topics[i]  << "\", count=" << lobby_counts[i] << std::endl ;
+		out << "lobby 0x" << std::hex << lobby_ids[i] << std::dec << " (name=\"" << lobby_names[i] << "\", topic="<< lobby_topics[i]  << "\", count=" << lobby_counts[i] << ", privacy_level = " << lobby_privacy_levels[i] << std::endl ;
 	}
 
 	printRsItemEnd(out, "RsChatLobbyListItem", indent);
@@ -242,6 +255,7 @@ RsItem *RsChatSerialiser::deserialise(void *data, uint32_t *pktsize)
 		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST:	return new RsChatLobbyListRequestItem(data,*pktsize) ;
 		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST:        	return new RsChatLobbyListItem(data,*pktsize) ;
 		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated:	return new RsChatLobbyListItem_deprecated(data,*pktsize) ;
+		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated2:return new RsChatLobbyListItem_deprecated2(data,*pktsize) ;
 		default:
 			std::cerr << "Unknown packet type in chat!" << std::endl ;
 			return NULL ;
@@ -299,6 +313,21 @@ uint32_t RsChatLobbyListRequestItem::serial_size()
 	uint32_t s = 8 ;	// header
 	return s ;
 }
+uint32_t RsChatLobbyListItem_deprecated2::serial_size()
+{
+	uint32_t s = 8 ;	// header
+	s += 4 ; 			// number of elements in the vectors
+	s += lobby_ids.size() * 8 ;	// lobby_ids
+
+	for(uint32_t i=0;i<lobby_names.size();++i)
+		s += GetTlvStringSize(lobby_names[i]) ;	// lobby_names
+		
+  for(uint32_t i=0;i<lobby_topics.size();++i)
+		s += GetTlvStringSize(lobby_topics[i]) ;	// lobby_topics
+
+	s += lobby_counts.size() * 4 ;	// lobby_counts
+	return s ;
+}
 uint32_t RsChatLobbyListItem_deprecated::serial_size()
 {
 	uint32_t s = 8 ;	// header
@@ -324,6 +353,7 @@ uint32_t RsChatLobbyListItem::serial_size()
 		s += GetTlvStringSize(lobby_topics[i]) ;	// lobby_topics
 
 	s += lobby_counts.size() * 4 ;	// lobby_counts
+	s += lobby_privacy_levels.size() * 4 ;	// lobby_privacy_levels
 	return s ;
 }
 uint32_t RsChatLobbyMsgItem::serial_size()
@@ -524,6 +554,41 @@ bool RsChatLobbyListItem_deprecated::serialise(void *data, uint32_t& pktsize)
 	}
 	return ok ;
 }
+bool RsChatLobbyListItem_deprecated2::serialise(void *data, uint32_t& pktsize)
+{
+	uint32_t tlvsize = serial_size() ;
+	bool ok = true ;
+	ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);		// correct header!
+
+	if (pktsize < tlvsize)
+		return false; /* not enough space */
+
+	if(lobby_ids.size() != lobby_counts.size() || lobby_ids.size() != lobby_names.size())
+	{
+		std::cerr << "Consistency error in RsChatLobbyListItem!! Sizes don't match!" << std::endl;
+		return false ;
+	}
+	pktsize = tlvsize ;
+
+	uint32_t offset = 8 ;
+	ok &= setRawUInt32(data, tlvsize, &offset, lobby_ids.size());
+
+	for(uint32_t i=0;i<lobby_ids.size();++i)
+	{
+		ok &= setRawUInt64(data, tlvsize, &offset, lobby_ids[i]);
+		ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, lobby_names[i]);
+		ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, lobby_topics[i]);
+		ok &= setRawUInt32(data, tlvsize, &offset, lobby_counts[i]);
+	}
+	if (offset != tlvsize)
+	{
+		ok = false;
+#ifdef CHAT_DEBUG
+		std::cerr << "RsChatSerialiser::serialiseItem() Size Error! " << std::endl;
+#endif
+	}
+	return ok ;
+}
 bool RsChatLobbyListItem::serialise(void *data, uint32_t& pktsize)
 {
 	uint32_t tlvsize = serial_size() ;
@@ -547,8 +612,9 @@ bool RsChatLobbyListItem::serialise(void *data, uint32_t& pktsize)
 	{
 		ok &= setRawUInt64(data, tlvsize, &offset, lobby_ids[i]);
 		ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, lobby_names[i]);
-    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, lobby_topics[i]);
+		ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, lobby_topics[i]);
 		ok &= setRawUInt32(data, tlvsize, &offset, lobby_counts[i]);
+		ok &= setRawUInt32(data, tlvsize, &offset, lobby_privacy_levels[i]);
 	}
 	if (offset != tlvsize)
 	{
@@ -884,6 +950,34 @@ RsChatLobbyListItem_deprecated::RsChatLobbyListItem_deprecated(void *data,uint32
 	if (!ok)
 		std::cerr << "Unknown error while deserializing." << std::endl ;
 }
+RsChatLobbyListItem_deprecated2::RsChatLobbyListItem_deprecated2(void *data,uint32_t)
+	: RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated2)
+{
+	uint32_t rssize = getRsItemSize(data);
+	bool ok = true ;
+	uint32_t offset = 8; // skip the header 
+
+	uint32_t n=0 ;
+	ok &= getRawUInt32(data, rssize, &offset, &n);
+
+	lobby_ids.resize(n) ;
+	lobby_names.resize(n) ;
+	lobby_topics.resize(n) ;
+	lobby_counts.resize(n) ;
+
+	for(uint32_t i=0;i<n;++i)
+	{
+		ok &= getRawUInt64(data, rssize, &offset, &lobby_ids[i]);
+		ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, lobby_names[i]);
+		ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, lobby_topics[i]);
+		ok &= getRawUInt32(data, rssize, &offset, &lobby_counts[i]);
+	}
+
+	if (offset != rssize)
+		std::cerr << "Size error while deserializing." << std::endl ;
+	if (!ok)
+		std::cerr << "Unknown error while deserializing." << std::endl ;
+}
 RsChatLobbyListItem::RsChatLobbyListItem(void *data,uint32_t)
 	: RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_LIST)
 {
@@ -896,15 +990,17 @@ RsChatLobbyListItem::RsChatLobbyListItem(void *data,uint32_t)
 
 	lobby_ids.resize(n) ;
 	lobby_names.resize(n) ;
-  lobby_topics.resize(n) ;
+	lobby_topics.resize(n) ;
 	lobby_counts.resize(n) ;
+	lobby_privacy_levels.resize(n) ;
 
 	for(uint32_t i=0;i<n;++i)
 	{
 		ok &= getRawUInt64(data, rssize, &offset, &lobby_ids[i]);
 		ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, lobby_names[i]);
-    ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, lobby_topics[i]);
+		ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, lobby_topics[i]);
 		ok &= getRawUInt32(data, rssize, &offset, &lobby_counts[i]);
+		ok &= getRawUInt32(data, rssize, &offset, &lobby_privacy_levels[i]);
 	}
 
 	if (offset != rssize)

@@ -61,7 +61,7 @@ p3ChatService::p3ChatService(p3LinkMgr *lm, p3HistoryMgr *historyMgr)
 	_default_nick_name = rsPeers->getPeerName(rsPeers->getOwnId());
 	_should_reset_lobby_counts = false ;
 	
-	last_public_lobby_info_request_time = 0 ;
+	last_visible_lobby_info_request_time = 0 ;
 }
 
 int	p3ChatService::tick()
@@ -348,7 +348,7 @@ void p3ChatService::locked_printDebugInfo() const
 
 	std::cerr << "Visible public lobbies: " << std::endl;
 
-	for( std::map<ChatLobbyId,PublicChatLobbyRecord>::const_iterator it(_public_lobbies.begin()) ;it!=_public_lobbies.end();++it)
+	for( std::map<ChatLobbyId,VisibleChatLobbyRecord>::const_iterator it(_visible_lobbies.begin()) ;it!=_visible_lobbies.end();++it)
 	{
 		std::cerr << "   " << std::hex << it->first << " name = " << std::dec << it->second.lobby_name << it->second.lobby_topic << std::endl;
 		for(std::set<std::string>::const_iterator it2(it->second.participating_friends.begin());it2!=it->second.participating_friends.end();++it2)
@@ -654,7 +654,13 @@ void p3ChatService::handleRecvChatLobbyListRequest(RsChatLobbyListRequestItem *c
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
 		for(std::map<ChatLobbyId,ChatLobbyEntry>::const_iterator it(_chat_lobbys.begin());it!=_chat_lobbys.end();++it)
-			if(it->second.lobby_privacy_level == RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC)
+		{
+			const ChatLobbyEntry& lobby(it->second) ;
+
+			if(lobby.lobby_privacy_level == RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC 
+					|| (lobby.lobby_privacy_level == RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE 
+						&& (lobby.previously_known_peers.find(clr->PeerId()) != lobby.previously_known_peers.end() 
+							||lobby.participating_friends.find(clr->PeerId()) != lobby.participating_friends.end()) ))
 			{
 #ifdef CHAT_DEBUG
 				std::cerr << "  Adding lobby " << std::hex << it->first << std::dec << " \"" << it->second.lobby_name << it->second.lobby_topic << "\" count=" << it->second.nick_names.size() << std::endl;
@@ -662,13 +668,15 @@ void p3ChatService::handleRecvChatLobbyListRequest(RsChatLobbyListRequestItem *c
 
 				item->lobby_ids.push_back(it->first) ;
 				item->lobby_names.push_back(it->second.lobby_name) ;
-        item->lobby_topics.push_back(it->second.lobby_topic) ;
+				item->lobby_topics.push_back(it->second.lobby_topic) ;
 				item->lobby_counts.push_back(it->second.nick_names.size()) ;
+				item->lobby_privacy_levels.push_back(it->second.lobby_privacy_level) ;
 			}
 #ifdef CHAT_DEBUG
 			else
 				std::cerr << "  Not adding private lobby " << std::hex << it->first << std::dec << std::endl ;
 #endif
+		}
 	}
 
 	item->PeerId(clr->PeerId()) ;
@@ -678,15 +686,29 @@ void p3ChatService::handleRecvChatLobbyListRequest(RsChatLobbyListRequestItem *c
 #endif
 	sendItem(item);
 
-	// *********** Also send an item in old format. To be removed.
+	// *********** Also send an item in old formats. To be removed.
 	
 	RsChatLobbyListItem_deprecated *itemd = new RsChatLobbyListItem_deprecated;
-	itemd->lobby_ids = item->lobby_ids ;
-	itemd->lobby_names = item->lobby_names ;
-	itemd->lobby_counts = item->lobby_counts ;
+	RsChatLobbyListItem_deprecated2 *itemd2 = new RsChatLobbyListItem_deprecated2;
+
+	for(uint32_t i=0;i<item->lobby_ids.size();++i)
+		if(item->lobby_privacy_levels[i] == RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC)
+		{
+			itemd->lobby_ids.push_back(item->lobby_ids[i]) ;
+			itemd->lobby_names.push_back(item->lobby_names[i]) ;
+			itemd->lobby_counts.push_back(item->lobby_counts[i]) ;
+
+			itemd2->lobby_ids.push_back(item->lobby_ids[i]) ;
+			itemd2->lobby_names.push_back(item->lobby_names[i]) ;
+			itemd2->lobby_counts.push_back(item->lobby_counts[i]) ;
+			itemd2->lobby_topics.push_back(item->lobby_topics[i]) ;
+		}
+
 	itemd->PeerId(clr->PeerId()) ;
+	itemd2->PeerId(clr->PeerId()) ;
 
 	sendItem(itemd) ;
+	sendItem(itemd2) ;
 
 	// End of part to remove in future versions. *************
 }
@@ -699,7 +721,7 @@ void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem_deprecated *item
 
 		for(uint32_t i=0;i<item->lobby_ids.size();++i)
 		{
-			PublicChatLobbyRecord& rec(_public_lobbies[item->lobby_ids[i]]) ;
+			VisibleChatLobbyRecord& rec(_visible_lobbies[item->lobby_ids[i]]) ;
 
 			rec.lobby_id = item->lobby_ids[i] ;
 			rec.lobby_name = item->lobby_names[i] ;
@@ -711,6 +733,36 @@ void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem_deprecated *item
 				rec.total_number_of_peers = std::max(rec.total_number_of_peers,item->lobby_counts[i]) ;
 
 			rec.last_report_time = now ;
+			rec.lobby_privacy_level = RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC ;
+		}
+	}
+
+	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
+	_should_reset_lobby_counts = false ;
+}
+void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem_deprecated2 *item)
+{
+	{
+		time_t now = time(NULL) ;
+
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+		for(uint32_t i=0;i<item->lobby_ids.size();++i)
+		{
+			VisibleChatLobbyRecord& rec(_visible_lobbies[item->lobby_ids[i]]) ;
+
+			rec.lobby_id = item->lobby_ids[i] ;
+			rec.lobby_name = item->lobby_names[i] ;
+      rec.lobby_topic = item->lobby_topics[i] ;
+			rec.participating_friends.insert(item->PeerId()) ;
+
+			if(_should_reset_lobby_counts)
+				rec.total_number_of_peers = item->lobby_counts[i] ;
+			else
+				rec.total_number_of_peers = std::max(rec.total_number_of_peers,item->lobby_counts[i]) ;
+
+			rec.last_report_time = now ;
+			rec.lobby_privacy_level = RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC ;
 		}
 	}
 
@@ -726,7 +778,7 @@ void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
 
 		for(uint32_t i=0;i<item->lobby_ids.size();++i)
 		{
-			PublicChatLobbyRecord& rec(_public_lobbies[item->lobby_ids[i]]) ;
+			VisibleChatLobbyRecord& rec(_visible_lobbies[item->lobby_ids[i]]) ;
 
 			rec.lobby_id = item->lobby_ids[i] ;
 			rec.lobby_name = item->lobby_names[i] ;
@@ -739,13 +791,13 @@ void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
 				rec.total_number_of_peers = std::max(rec.total_number_of_peers,item->lobby_counts[i]) ;
 
 			rec.last_report_time = now ;
+			rec.lobby_privacy_level = item->lobby_privacy_levels[i] ;
 		}
 	}
 
 	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
 	_should_reset_lobby_counts = false ;
 }
-
 void p3ChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *item)
 {
 #ifdef CHAT_DEBUG
@@ -1007,20 +1059,20 @@ void p3ChatService::handleRecvChatStatusItem(RsChatStatusItem *cs)
 		rsicontrol->getNotify().notifyChatStatus(cs->PeerId(),cs->status_string,false) ;
 }
 
-void p3ChatService::getListOfNearbyChatLobbies(std::vector<PublicChatLobbyRecord>& public_lobbies)
+void p3ChatService::getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord>& visible_lobbies)
 {
 	{
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
-		public_lobbies.clear() ;
+		visible_lobbies.clear() ;
 
-		for(std::map<ChatLobbyId,PublicChatLobbyRecord>::const_iterator it(_public_lobbies.begin());it!=_public_lobbies.end();++it)
-			public_lobbies.push_back(it->second) ;
+		for(std::map<ChatLobbyId,VisibleChatLobbyRecord>::const_iterator it(_visible_lobbies.begin());it!=_visible_lobbies.end();++it)
+			visible_lobbies.push_back(it->second) ;
 	}
 
 	time_t now = time(NULL) ;
 
-	if(now > MIN_DELAY_BETWEEN_PUBLIC_LOBBY_REQ + last_public_lobby_info_request_time)
+	if(now > MIN_DELAY_BETWEEN_PUBLIC_LOBBY_REQ + last_visible_lobby_info_request_time)
 	{
 		std::list<std::string> ids ;
 		mLinkMgr->getOnlineList(ids);
@@ -1035,7 +1087,7 @@ void p3ChatService::getListOfNearbyChatLobbies(std::vector<PublicChatLobbyRecord
 
 			sendItem(item);
 		}
-		last_public_lobby_info_request_time = now ;
+		last_visible_lobby_info_request_time = now ;
 		_should_reset_lobby_counts = true ;
 	}
 }
@@ -2214,7 +2266,7 @@ void p3ChatService::denyLobbyInvite(const ChatLobbyId& lobby_id)
 	_lobby_invites_queue.erase(it) ;
 }
 
-bool p3ChatService::joinPublicChatLobby(const ChatLobbyId& lobby_id)
+bool p3ChatService::joinVisibleChatLobby(const ChatLobbyId& lobby_id)
 {
 #ifdef CHAT_DEBUG
 	std::cerr << "Joining public chat lobby " << std::hex << lobby_id << std::dec << std::endl;
@@ -2226,9 +2278,9 @@ bool p3ChatService::joinPublicChatLobby(const ChatLobbyId& lobby_id)
 
 		// create a unique id.
 		//
-		std::map<ChatLobbyId,PublicChatLobbyRecord>::const_iterator it(_public_lobbies.find(lobby_id)) ;
+		std::map<ChatLobbyId,VisibleChatLobbyRecord>::const_iterator it(_visible_lobbies.find(lobby_id)) ;
 
-		if(it == _public_lobbies.end())
+		if(it == _visible_lobbies.end())
 		{
 			std::cerr << "  lobby is not a known public chat lobby. Sorry!" << std::endl;
 			return false ;
@@ -2252,12 +2304,12 @@ bool p3ChatService::joinPublicChatLobby(const ChatLobbyId& lobby_id)
 		time_t now = time(NULL) ;
 
 		ChatLobbyEntry entry ;
-		entry.lobby_privacy_level = RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC ;
+		entry.lobby_privacy_level = it->second.lobby_privacy_level ;//RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC ;
 		entry.participating_friends.clear() ;
 		entry.nick_name = _default_nick_name ;	
 		entry.lobby_id = lobby_id ;
 		entry.lobby_name = it->second.lobby_name ;
-    entry.lobby_topic = it->second.lobby_topic ;
+		entry.lobby_topic = it->second.lobby_topic ;
 		entry.virtual_peer_id = makeVirtualPeerId(lobby_id) ;
 		entry.connexion_challenge_count = 0 ;
 		entry.last_activity = now ; 
@@ -2307,7 +2359,7 @@ ChatLobbyId p3ChatService::createChatLobby(const std::string& lobby_name,const s
 		entry.nick_name = _default_nick_name ;	// to be changed. For debug only!!
 		entry.lobby_id = lobby_id ;
 		entry.lobby_name = lobby_name ;
-    entry.lobby_topic = lobby_topic ;
+		entry.lobby_topic = lobby_topic ;
 		entry.virtual_peer_id = makeVirtualPeerId(lobby_id) ;
 		entry.connexion_challenge_count = 0 ;
 		entry.last_activity = now ;
@@ -2348,6 +2400,7 @@ void p3ChatService::handleFriendUnsubscribeLobby(RsChatLobbyUnsubscribeItem *ite
 #ifdef CHAT_DEBUG
 				std::cerr << "  removing peer id " << item->PeerId() << " from participant list of lobby " << std::hex << item->lobby_id << std::dec << std::endl;
 #endif
+				it->second.previously_known_peers.insert(*it2) ;
 				it->second.participating_friends.erase(it2) ;
 				break ;
 			}
@@ -2580,16 +2633,16 @@ void p3ChatService::cleanLobbyCaches()
 		// 2 - clean deprecated public chat lobby records
 		// 
 
-		for(std::map<ChatLobbyId,PublicChatLobbyRecord>::iterator it(_public_lobbies.begin());it!=_public_lobbies.end();)
+		for(std::map<ChatLobbyId,VisibleChatLobbyRecord>::iterator it(_visible_lobbies.begin());it!=_visible_lobbies.end();)
 			if(it->second.last_report_time + MAX_KEEP_PUBLIC_LOBBY_RECORD < now)	// this lobby record is too late.
 			{
 #ifdef CHAT_DEBUG
 				std::cerr << "  removing old public lobby record 0x" << std::hex << it->first << ", time=" << std::dec << now - it->second.last_report_time << " secs ago" << std::endl;
 #endif
 
-				std::map<ChatLobbyMsgId,PublicChatLobbyRecord>::iterator tmp(it) ;
+				std::map<ChatLobbyMsgId,VisibleChatLobbyRecord>::iterator tmp(it) ;
 				++tmp ;
-				_public_lobbies.erase(it) ;
+				_visible_lobbies.erase(it) ;
 				it = tmp ;
 			}
 			else

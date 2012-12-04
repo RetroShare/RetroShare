@@ -169,8 +169,8 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		void sendLobbyStatusString(const ChatLobbyId& id,const std::string& status_string) ;
 		ChatLobbyId createChatLobby(const std::string& lobby_name,const std::string& lobby_topic, const std::list<std::string>& invited_friends,uint32_t privacy_type) ;
 
-		void getListOfNearbyChatLobbies(std::vector<PublicChatLobbyRecord>& public_lobbies) ;
-		bool joinPublicChatLobby(const ChatLobbyId& id) ;
+		void getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord>& public_lobbies) ;
+		bool joinVisibleChatLobby(const ChatLobbyId& id) ;
 
 	protected:
 		/************* from p3Config *******************/
@@ -212,6 +212,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		void handleRecvChatLobbyListRequest(RsChatLobbyListRequestItem *item) ;
 		void handleRecvChatLobbyList(RsChatLobbyListItem *item) ;
 		void handleRecvChatLobbyList(RsChatLobbyListItem_deprecated *item) ;
+		void handleRecvChatLobbyList(RsChatLobbyListItem_deprecated2 *item) ;
 		void handleRecvChatLobbyEventItem(RsChatLobbyEventItem *item) ;
 
 		/// Sends a request for an avatar to the peer of given id
@@ -277,15 +278,16 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 				int connexion_challenge_count ;
 				time_t last_connexion_challenge_time ;
 				time_t last_keep_alive_packet_time ;
+				std::set<std::string> previously_known_peers ;
 		};
 
 		std::map<ChatLobbyId,ChatLobbyEntry> _chat_lobbys ;
 		std::map<ChatLobbyId,ChatLobbyInvite> _lobby_invites_queue ;
-		std::map<ChatLobbyId,PublicChatLobbyRecord> _public_lobbies ;
+		std::map<ChatLobbyId,VisibleChatLobbyRecord> _visible_lobbies ;
 		std::map<std::string,ChatLobbyId> _lobby_ids ;
 		std::string _default_nick_name ;
 		time_t last_lobby_challenge_time ; // prevents bruteforce attack
-		time_t last_public_lobby_info_request_time ;	// allows to ask for updates
+		time_t last_visible_lobby_info_request_time ;	// allows to ask for updates
 		bool _should_reset_lobby_counts ;
 };
 

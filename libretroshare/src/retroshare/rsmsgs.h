@@ -164,10 +164,10 @@ class ChatLobbyInvite
 		std::string lobby_topic ;
 		uint32_t lobby_privacy_level ;						
 };
-class PublicChatLobbyRecord
+class VisibleChatLobbyRecord
 {
 	public:
-		PublicChatLobbyRecord() { total_number_of_peers = 0 ; }
+		VisibleChatLobbyRecord() { total_number_of_peers = 0 ; }
 
 		ChatLobbyId lobby_id ;									// unique id of the lobby
 		std::string lobby_name ;								// name to use for this lobby
@@ -176,6 +176,7 @@ class PublicChatLobbyRecord
 
 		uint32_t total_number_of_peers ;						// total number of particpating peers. Might not be
 		time_t last_report_time ; 								// last time the lobby was reported.
+		uint32_t lobby_privacy_level ;						// see RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC / RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE
 };
 class ChatLobbyInfo
 {
@@ -261,11 +262,11 @@ virtual void getAvatarData(const std::string& pid,unsigned char *& data,int& siz
 virtual void setOwnAvatarData(const unsigned char *data,int size) = 0 ;
 virtual void getOwnAvatarData(unsigned char *& data,int& size) = 0 ;
 
-virtual bool joinPublicChatLobby(const ChatLobbyId& lobby_id) = 0 ;
+virtual bool joinVisibleChatLobby(const ChatLobbyId& lobby_id) = 0 ;
 virtual bool isLobbyId(const std::string& virtual_peer_id,ChatLobbyId& lobby_id) = 0;
 virtual bool getVirtualPeerId(const ChatLobbyId& lobby_id,std::string& vpid) = 0;
 virtual void getChatLobbyList(std::list<ChatLobbyInfo>& cl_info) = 0;
-virtual void getListOfNearbyChatLobbies(std::vector<PublicChatLobbyRecord>& public_lobbies) = 0 ;
+virtual void getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord>& public_lobbies) = 0 ;
 virtual void invitePeerToLobby(const ChatLobbyId& lobby_id,const std::string& peer_id) = 0;
 virtual bool acceptLobbyInvite(const ChatLobbyId& id) = 0 ;
 virtual void denyLobbyInvite(const ChatLobbyId& id) = 0 ;

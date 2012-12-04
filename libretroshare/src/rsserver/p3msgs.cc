@@ -303,12 +303,12 @@ bool p3Msgs::getNickNameForChatLobby(const ChatLobbyId& lobby_id,std::string& ni
 	return mChatSrv->getNickNameForChatLobby(lobby_id,nick_name) ;
 }
 
-bool p3Msgs::joinPublicChatLobby(const ChatLobbyId& lobby_id) 
+bool p3Msgs::joinVisibleChatLobby(const ChatLobbyId& lobby_id) 
 {
-	return mChatSrv->joinPublicChatLobby(lobby_id) ;
+	return mChatSrv->joinVisibleChatLobby(lobby_id) ;
 }
 
-void p3Msgs::getListOfNearbyChatLobbies(std::vector<PublicChatLobbyRecord>& public_lobbies) 
+void p3Msgs::getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord>& public_lobbies) 
 {
 	mChatSrv->getListOfNearbyChatLobbies(public_lobbies) ;
 }

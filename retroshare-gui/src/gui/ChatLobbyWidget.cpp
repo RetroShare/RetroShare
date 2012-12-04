@@ -153,68 +153,80 @@ void ChatLobbyWidget::updateDisplay()
 #ifdef CHAT_LOBBY_GUI_DEBUG
 	std::cerr << "updating chat lobby display!" << std::endl;
 #endif
-	std::vector<PublicChatLobbyRecord> publicLobbies;
-	rsMsgs->getListOfNearbyChatLobbies(publicLobbies);
+	std::vector<VisibleChatLobbyRecord> visibleLobbies;
+	rsMsgs->getListOfNearbyChatLobbies(visibleLobbies);
 
 	std::list<ChatLobbyInfo> lobbies;
 	rsMsgs->getChatLobbyList(lobbies);
 
 #ifdef CHAT_LOBBY_GUI_DEBUG
-	std::cerr << "got " << publicLobbies.size() << " public lobbies, and " << lobbies.size() << " private lobbies." << std::endl;
+	std::cerr << "got " << visibleLobbies.size() << " visible lobbies, and " << lobbies.size() << " private lobbies." << std::endl;
 #endif
 
 	// now, do a nice display of lobbies
 	
 	std::string vpid;
 	uint32_t i;
-	uint32_t size = publicLobbies.size();
+	uint32_t size = visibleLobbies.size();
 	std::list<ChatLobbyInfo>::const_iterator lobbyIt;
 
 	// remove not existing public lobbies
-	int childCount = publicLobbyItem->childCount();
-	int childIndex = 0;
-	while (childIndex < childCount) {
-		QTreeWidgetItem *itemLoop = publicLobbyItem->child(childIndex);
-		if (itemLoop->type() == TYPE_LOBBY) {
-			// check for public lobby
-			for (i = 0; i < size; ++i) {
-				if (itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == publicLobbies[i].lobby_id) {
-					break;
-				}
-			}
 
-			if (i >= size) {
-				// check for private lobby with public level
-				for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt) {
-					if (lobbyIt->lobby_privacy_level == RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC &&
-						itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == lobbyIt->lobby_id) {
+	for(int p=0;p<2;++p)
+	{
+		QTreeWidgetItem *lobby_item = (p==0)?publicLobbyItem:privateLobbyItem ;
+
+		int childCnt = lobby_item->childCount();
+		int childIndex = 0;
+
+		while (childIndex < childCnt) {
+			QTreeWidgetItem *itemLoop = lobby_item->child(childIndex);
+			if (itemLoop->type() == TYPE_LOBBY) 
+			{
+				// check for visible lobby
+				for (i = 0; i < size; ++i) 
+					if (itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == visibleLobbies[i].lobby_id) 
 						break;
+
+				if (i >= size) 
+				{
+					// Check for participating lobby with public level
+					//
+					for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt) 
+						if(itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == lobbyIt->lobby_id) 
+							break;
+
+					if (lobbyIt == lobbies.end()) 
+					{
+						delete(lobby_item->takeChild(lobby_item->indexOfChild(itemLoop)));
+						childCnt = lobby_item->childCount();
+						continue;
 					}
 				}
-
-				if (lobbyIt == lobbies.end()) {
-					delete(publicLobbyItem->takeChild(publicLobbyItem->indexOfChild(itemLoop)));
-					childCount = publicLobbyItem->childCount();
-					continue;
-				}
 			}
+			childIndex++;
 		}
-		childIndex++;
 	}
 
-	for (i = 0; i < size; ++i) {
-		const PublicChatLobbyRecord &lobby = publicLobbies[i];
+	// Now add visible lobbies
+	//
+	for (i = 0; i < size; ++i) 
+	{
+		const VisibleChatLobbyRecord &lobby = visibleLobbies[i];
 
 #ifdef CHAT_LOBBY_GUI_DEBUG
-		std::cerr << "adding " << lobby.lobby_name << "topic " << lobby.lobby_topic << " #" << std::hex << lobby.lobby_id << std::dec << " public " << lobby.total_number_of_peers << " peers." << std::endl;
+		std::cerr << "adding " << lobby.lobby_name << "topic " << lobby.lobby_topic << " #" << std::hex << lobby.lobby_id << std::dec << " public " << lobby.total_number_of_peers << " peers. Lobby type: " << lobby.lobby_privacy_level << std::endl;
 #endif
 
 		QTreeWidgetItem *item = NULL;
+		QTreeWidgetItem *lobby_item = (visibleLobbies[i].lobby_privacy_level == RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC)?publicLobbyItem:privateLobbyItem ;
 
-		// search existing item
-		childCount = publicLobbyItem->childCount();
-		for (childIndex = 0; childIndex < childCount; childIndex++) {
-			QTreeWidgetItem *itemLoop = publicLobbyItem->child(childIndex);
+		// Search existing item
+		//
+		int childCnt = lobby_item->childCount();
+		for (int childIndex = 0; childIndex < childCnt; childIndex++) 
+		{
+			QTreeWidgetItem *itemLoop = lobby_item->child(childIndex);
 			if (itemLoop->type() == TYPE_LOBBY && itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == lobby.lobby_id) {
 				item = itemLoop;
 				break;
@@ -223,10 +235,13 @@ void ChatLobbyWidget::updateDisplay()
 
 		if (item == NULL) {
 			item = new RSTreeWidgetItem(compareRole, TYPE_LOBBY);
-			publicLobbyItem->addChild(item);
+			lobby_item->addChild(item);
 		}
 
-		item->setIcon(COLUMN_NAME, QIcon(IMAGE_PUBLIC));
+		if(lobby_item == publicLobbyItem)
+			item->setIcon(COLUMN_NAME, QIcon(IMAGE_PUBLIC));
+		else
+			item->setIcon(COLUMN_NAME, QIcon(IMAGE_PRIVATE));
 
 		bool subscribed = false;
 		if (rsMsgs->getVirtualPeerId(lobby.lobby_id, vpid)) {
@@ -236,29 +251,10 @@ void ChatLobbyWidget::updateDisplay()
 		updateItem(item, lobby.lobby_id, lobby.lobby_name,lobby.lobby_topic, lobby.total_number_of_peers, subscribed);
 	}
 
-	// remove not existing private lobbies
-	childCount = privateLobbyItem->childCount();
-	childIndex = 0;
-	while (childIndex < childCount) {
-		QTreeWidgetItem *itemLoop = privateLobbyItem->child(childIndex);
-		if (itemLoop->type() == TYPE_LOBBY) {
-			for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt) {
-				if (lobbyIt->lobby_privacy_level == RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE &&
-					itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == lobbyIt->lobby_id) {
-					break;
-				}
-			}
-
-			if (lobbyIt == lobbies.end()) {
-				delete(privateLobbyItem->takeChild(privateLobbyItem->indexOfChild(itemLoop)));
-				childCount = privateLobbyItem->childCount();
-				continue;
-			}
-		}
-		childIndex++;
-	}
-
-	for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt) {
+	// Now add participating lobbies.
+	//
+	for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt) 
+	{
 		const ChatLobbyInfo &lobby = *lobbyIt;
 
 #ifdef CHAT_LOBBY_GUI_DEBUG
@@ -275,8 +271,8 @@ void ChatLobbyWidget::updateDisplay()
 		QTreeWidgetItem *item = NULL;
 
 		// search existing item
-		childCount = itemParent->childCount();
-		for (childIndex = 0; childIndex < childCount; childIndex++) {
+		int childCount = itemParent->childCount();
+		for (int childIndex = 0; childIndex < childCount; childIndex++) {
 			QTreeWidgetItem *itemLoop = itemParent->child(childIndex);
 			if (itemLoop->type() == TYPE_LOBBY && itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == lobby.lobby_id) {
 				item = itemLoop;
@@ -318,7 +314,7 @@ static void subscribeLobby(QTreeWidgetItem *item)
 	}
 
 	ChatLobbyId id = item->data(COLUMN_DATA, ROLE_ID).toULongLong();
-	if (rsMsgs->joinPublicChatLobby(id)) {
+	if (rsMsgs->joinVisibleChatLobby(id)) {
 		std::string vpeer_id;
 		if (rsMsgs->getVirtualPeerId(id, vpeer_id)) {
 			ChatDialog::chatFriend(vpeer_id) ;

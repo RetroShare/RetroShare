@@ -59,10 +59,11 @@ const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE	= 0x0A ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_EVENT_DEPREC  = 0x0B ;	// don't use ! Deprecated
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_MSG        	= 0x0C ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST 	= 0x0D ;
-const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated = 0x0E ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated = 0x0E ;	// to be removed
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE       	= 0x0F ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_EVENT       	= 0x10 ;
-const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST         	= 0x11 ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated2	= 0x11 ;	// to be removed (deprecated since 02 Dec. 2012)
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST         	= 0x12 ;
 
 // for defining tags themselves and msg tags
 const uint8_t RS_PKT_SUBTYPE_MSG_TAG_TYPE 	= 0x03;
@@ -200,6 +201,23 @@ class RsChatLobbyListItem_deprecated: public RsChatItem
 		std::vector<std::string> lobby_names ;
 		std::vector<uint32_t>    lobby_counts ;
 };
+class RsChatLobbyListItem_deprecated2: public RsChatItem
+{
+	public:
+		RsChatLobbyListItem_deprecated2() : RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated2) {}
+		RsChatLobbyListItem_deprecated2(void *data,uint32_t size) ; 
+		virtual ~RsChatLobbyListItem_deprecated2() {}
+
+		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+
+		virtual bool serialise(void *data,uint32_t& size) ;	
+		virtual uint32_t serial_size() ;				 			
+
+		std::vector<ChatLobbyId> lobby_ids ;
+		std::vector<std::string> lobby_names ;
+		std::vector<std::string> lobby_topics ;
+		std::vector<uint32_t>    lobby_counts ;
+};
 class RsChatLobbyListItem: public RsChatItem
 {
 	public:
@@ -216,6 +234,7 @@ class RsChatLobbyListItem: public RsChatItem
 		std::vector<std::string> lobby_names ;
 		std::vector<std::string> lobby_topics ;
 		std::vector<uint32_t>    lobby_counts ;
+		std::vector<uint32_t>    lobby_privacy_levels ;
 };
 class RsChatLobbyUnsubscribeItem: public RsChatItem
 {
