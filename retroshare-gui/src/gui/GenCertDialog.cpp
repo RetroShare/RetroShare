@@ -221,8 +221,7 @@ void GenCertDialog::genPerson()
 		QVariant data = ui.genPGPuser->itemData(pgpidx);
 		PGPId = (data.toString()).toStdString();
 	} else {
-		if (ui.password_input->text().length() < 3 || ui.name_input->text().length() < 3 ||
-			ui.email_input->text().length() < 3 || genLoc.length() < 3) {
+		if (ui.password_input->text().length() < 3 || ui.name_input->text().length() < 3 || genLoc.length() < 3) {
 			/* Message Dialog */
 			QMessageBox::warning(this,
 								 tr("Generate PGP key Failure"),
