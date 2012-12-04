@@ -420,7 +420,7 @@
            </property>
           </spacer>
          </item>
-         <item row="0" column="11">
+         <item row="0" column="12">
           <widget class="QPushButton" name="nextUnreadButton">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
@@ -433,7 +433,7 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="13">
+         <item row="0" column="14">
           <widget class="QPushButton" name="expandButton">
            <property name="maximumSize">
             <size>
@@ -463,6 +463,13 @@
           <widget class="Line" name="line">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="11">
+          <widget class="QPushButton" name="refreshButton">
+           <property name="text">
+            <string>Refresh</string>
            </property>
           </widget>
          </item>

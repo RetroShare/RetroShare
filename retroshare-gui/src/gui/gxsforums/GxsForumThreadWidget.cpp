@@ -87,6 +87,9 @@ GxsForumThreadWidget::GxsForumThreadWidget(const std::string &forumId, QWidget *
 	mInProcessSettings = false;
 
 	mThreadQueue = new TokenQueue(rsGxsForums->getTokenService(), this);
+	mTokenGroupSummary = 0;
+	mTokenPost = 0;
+	mRequestGroupSummary = false;
 
 	mInMsgAsReadUnread = false;
 
@@ -107,6 +110,9 @@ GxsForumThreadWidget::GxsForumThreadWidget(const std::string &forumId, QWidget *
 	connect(ui->nextButton, SIGNAL(clicked()), this, SLOT(nextMessage()));
 	connect(ui->nextUnreadButton, SIGNAL(clicked()), this, SLOT(nextUnreadMessage()));
 	connect(ui->downloadButton, SIGNAL(clicked()), this, SLOT(downloadAllFiles()));
+
+	// HACK - TEMPORARY HIJACKING THIS BUTTON FOR REFRESH.
+	connect(ui->refreshButton, SIGNAL(clicked()), this, SLOT(forceUpdateDisplay()));
 
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
 	connect(ui->filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
@@ -159,8 +165,17 @@ GxsForumThreadWidget::GxsForumThreadWidget(const std::string &forumId, QWidget *
 	ui->progLayOutTxt->hide();
 	ui->progressBarLayOut->setEnabled(false);
 
+//	mTimer = new QTimer;
+//	mTimer->setInterval(1000);
+//	mTimer->setSingleShot(true);
+
+//	QObject::connect(mTimer, SIGNAL(timeout()), this, SLOT(updateDisplay()));
+
+//	mTimer->start();
+
 	mThreadLoading = false;
 
+	ui->forumName->setText(tr("Loading"));
 	insertThreads();
 
 	ui->threadTreeWidget->installEventFilter(this);
@@ -170,6 +185,7 @@ GxsForumThreadWidget::~GxsForumThreadWidget()
 {
 	delete ui;
 
+//	delete(mTimer);
 	delete(mThreadQueue);
 	delete(mThreadCompareRole);
 }
@@ -220,6 +236,25 @@ QString GxsForumThreadWidget::forumName()
 	return ui->forumName->text();
 }
 
+QIcon GxsForumThreadWidget::forumIcon()
+{
+	if (mRequestGroupSummary || mThreadLoading) {
+		return QIcon(":/images/kalarm.png");
+	}
+
+//#TODO
+//	if (has new messages) {
+//		return QIcon(nice icon);
+//	}
+
+	return QIcon();
+}
+
+void GxsForumThreadWidget::updateInterface()
+{
+	emit forumChanged(this);
+}
+
 void GxsForumThreadWidget::changeEvent(QEvent *e)
 {
 	QWidget::changeEvent(e);
@@ -232,6 +267,39 @@ void GxsForumThreadWidget::changeEvent(QEvent *e)
 		break;
 	}
 }
+
+#ifdef TODO
+void GxsForumThreadWidget::updateDisplay()
+{
+	std::list<std::string> forumIds;
+	std::list<std::string>::iterator it;
+	if (!rsGxsForums)
+		return;
+
+#if 0
+	// TODO groupsChanged... HACK XXX.
+	if ((rsGxsForums->groupsChanged(forumIds)) || (rsGxsForums->updated()))
+	{
+		/* update Forums List */
+		insertForums();
+
+		it = std::find(forumIds.begin(), forumIds.end(), mCurrForumId);
+		if (it != forumIds.end())
+		{
+			/* update threads as well */
+			insertThreads();
+		}
+	}
+#endif
+
+	/* The proper version (above) can be done with a data request -> TODO */
+	if (rsGxsForums->updated())
+	{
+		/* update Forums List */
+		insertThreads();
+	}
+}
+#endif
 
 void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 {
@@ -369,10 +437,6 @@ void GxsForumThreadWidget::togglethreadview_internal()
 
 void GxsForumThreadWidget::changedThread()
 {
-	if (mThreadLoading) {
-		return;
-	}
-
 	/* just grab the ids of the current item */
 	QTreeWidgetItem *item = ui->threadTreeWidget->currentItem();
 
@@ -381,11 +445,20 @@ void GxsForumThreadWidget::changedThread()
 	} else {
 		mThreadId = item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString().toStdString();
 	}
+
+	if (mThreadLoading) {
+		return;
+	}
+
 	insertPost();
 }
 
 void GxsForumThreadWidget::clickedThread(QTreeWidgetItem *item, int column)
 {
+	if (mThreadLoading) {
+		return;
+	}
+
 	if (mForumId.empty() || !IS_GROUP_SUBSCRIBED(mSubscribeFlags)) {
 		return;
 	}
@@ -528,6 +601,16 @@ void GxsForumsDialog::fillThreadProgress(int current, int count)
 }
 #endif
 
+// HACK until update works.
+void GxsForumThreadWidget::forceUpdateDisplay()
+{
+	std::cerr << "GxsForumThreadWidget::forceUpdateDisplay()";
+	std::cerr << std::endl;
+
+	/* update Thread List */
+	insertThreads();
+}
+
 void GxsForumThreadWidget::insertThreads()
 {
 #ifdef DEBUG_FORUMS
@@ -560,6 +643,8 @@ void GxsForumThreadWidget::insertThreads()
 		return;
 	}
 
+//	ui->threadTitle->setText(tr("Loading"));
+
 	// Get Current Forum Info... then complete insertForumThreads().
 	requestGroupSummary_CurrentForum(mForumId);
 }
@@ -570,7 +655,7 @@ void GxsForumThreadWidget::insertForumThreads(const RsGroupMetaData &fi)
 	QString forumName = QString::fromUtf8(fi.mGroupName.c_str());
 	if (forumName != ui->forumName->text()) {
 		ui->forumName->setText(forumName);
-		emit forumChanged(this);
+		updateInterface();
 	}
 
 //	ui->progressBarLayOut->setEnabled(true);
@@ -680,6 +765,7 @@ void GxsForumThreadWidget::fillThreadFinished()
 	ui->newthreadButton->setEnabled(IS_GROUP_SUBSCRIBED(mSubscribeFlags));
 
 	mThreadLoading = false;
+	updateInterface();
 
 #ifdef DEBUG_FORUMS
 	std::cerr << "GxsForumsDialog::fillThreadFinished done" << std::endl;
@@ -1388,14 +1474,24 @@ void GxsForumThreadWidget::requestGroupSummary_CurrentForum(const std::string &f
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
 
+	if (mRequestGroupSummary) {
+		std::cerr << "GxsForumThreadWidget::requestGroupSummary() Canceling Request: " << mTokenGroupSummary;
+		std::cerr << std::endl;
+
+		mThreadQueue->cancelRequest(mTokenGroupSummary);
+		mTokenGroupSummary = 0;
+		mRequestGroupSummary = false;
+	}
+
 	std::list<std::string> grpIds;
 	grpIds.push_back(forumId);
 
 	std::cerr << "GxsForumsDialog::requestGroupSummary_CurrentForum(" << forumId << ")";
 	std::cerr << std::endl;
 
-	uint32_t token;
-	mThreadQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, grpIds, FORUMSV2DIALOG_CURRENTFORUM);
+	mThreadQueue->requestGroupInfo(mTokenGroupSummary, RS_TOKREQ_ANSTYPE_SUMMARY, opts, grpIds, FORUMSV2DIALOG_CURRENTFORUM);
+	mRequestGroupSummary = true;
+	updateInterface();
 }
 
 void GxsForumThreadWidget::loadGroupSummary_CurrentForum(const uint32_t &token)
@@ -1403,8 +1499,23 @@ void GxsForumThreadWidget::loadGroupSummary_CurrentForum(const uint32_t &token)
 	std::cerr << "GxsForumsDialog::loadGroupSummary_CurrentForum()";
 	std::cerr << std::endl;
 
+	if (!mRequestGroupSummary) {
+		std::cerr << "GxsForumThreadWidget::loadGroupSummary_CurrentForum()) No waiting request got token: " << token;
+		std::cerr << std::endl;
+		return;
+	}
+
+	if (token != mTokenGroupSummary) {
+		std::cerr << "GxsForumThreadWidget::loadGroupSummary()) Wrong token - want: " << mTokenGroupSummary << " got: " << token;
+		std::cerr << std::endl;
+		return;
+	}
+
 	std::list<RsGroupMetaData> groupInfo;
 	rsGxsForums->getGroupSummary(token, groupInfo);
+	mTokenGroupSummary = 0;
+	mRequestGroupSummary = false;
+	updateInterface();
 
 	if (groupInfo.size() == 1)
 	{
@@ -1418,8 +1529,6 @@ void GxsForumThreadWidget::loadGroupSummary_CurrentForum(const uint32_t &token)
 	}
 }
 
-/*********************** **** **** **** ***********************/
-/*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
 
@@ -1457,6 +1566,7 @@ void GxsForumThreadWidget::loadCurrentForumThreads(const std::string &forumId)
 	std::cerr << std::endl;
 
 	mThreadLoading = true;
+	updateInterface();
 
 	mThreadLoad.ForumId = mForumId;
 //#AFTER MERGE	mThreadLoad.FilterColumn = ui.filterLineEdit->currentFilter();
@@ -1774,6 +1884,14 @@ void GxsForumThreadWidget::requestMsgData_InsertPost(const RsGxsGrpMsgIdPair &ms
 	uint32_t token;
 	mForumQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, FORUMV2DIALOG_INSERT_POST);
 #else
+	if (mTokenPost) {
+		std::cerr << "GxsForumThreadWidget::requestMsgData_InsertPost() Canceling Request: " << mTokenPost;
+		std::cerr << std::endl;
+
+		mThreadQueue->cancelRequest(mTokenPost);
+		mTokenPost = 0;
+	}
+
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
@@ -1784,8 +1902,7 @@ void GxsForumThreadWidget::requestMsgData_InsertPost(const RsGxsGrpMsgIdPair &ms
 	std::vector<RsGxsMessageId> &vect = msgIds[msgId.first];
 	vect.push_back(msgId.second);
 
-	uint32_t token;
-	mThreadQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, FORUMV2DIALOG_INSERT_POST);
+	mThreadQueue->requestMsgInfo(mTokenPost, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, FORUMV2DIALOG_INSERT_POST);
 #endif
 }
 
@@ -1814,6 +1931,7 @@ void GxsForumThreadWidget::loadMsgData_InsertPost(const uint32_t &token)
 		std::cerr << "GxsForumsDialog::loadMsgData_InsertPost() ERROR Missing Message Data...";
 		std::cerr << std::endl;
 	}
+	mTokenPost = 0;
 }
 
 /*********************** **** **** **** ***********************/
@@ -1877,11 +1995,6 @@ void GxsForumThreadWidget::loadMsgData_ReplyMessage(const uint32_t &token)
 	}
 }
 
-/*********************** **** **** **** ***********************/
-/*********************** **** **** **** ***********************/
-
-/*********************** **** **** **** ***********************/
-/*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
 

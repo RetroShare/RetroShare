@@ -106,6 +106,8 @@ private:
 
 	std::string mForumId;
 	TokenQueue *mForumQueue;
+	uint32_t mTokenGroupSummary;
+	bool mRequestGroupSummary;
 
 	QTreeWidgetItem *yourForums;
 	QTreeWidgetItem *subscribedForums;

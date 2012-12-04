@@ -51,12 +51,12 @@ class GxsForumThreadWidget : public QWidget, public TokenResponse
 public:
 	explicit GxsForumThreadWidget(const std::string &forumId, QWidget *parent = NULL);
 	~GxsForumThreadWidget();
-    
-    QColor textColorRead() const { return mTextColorRead; }
-    QColor textColorUnread() const { return mTextColorUnread; }
-    QColor textColorUnreadChildren() const { return mTextColorUnreadChildren; }
-    QColor textColorNotSubscribed() const { return mTextColorNotSubscribed; }
-    QColor textColorMissing() const { return mTextColorMissing; }
+
+	QColor textColorRead() const { return mTextColorRead; }
+	QColor textColorUnread() const { return mTextColorUnread; }
+	QColor textColorUnreadChildren() const { return mTextColorUnreadChildren; }
+	QColor textColorNotSubscribed() const { return mTextColorNotSubscribed; }
+	QColor textColorMissing() const { return mTextColorMissing; }
 
 	void setTextColorRead(QColor color) { mTextColorRead = color; }
 	void setTextColorUnread(QColor color) { mTextColorUnread = color; }
@@ -66,6 +66,7 @@ public:
 
 	std::string forumId() { return mForumId; }
 	QString forumName();
+	QIcon forumIcon();
 
 	// Callback for all Loads.
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
@@ -78,6 +79,10 @@ protected:
 	void changeEvent(QEvent *e);
 
 private slots:
+	void forceUpdateDisplay(); // TEMP HACK FN.
+
+//	void updateDisplay();
+
 	/** Create the context popup menu and it's submenus */
 	void threadListCustomPopupMenu(QPoint point);
 
@@ -143,6 +148,8 @@ private:
 
 	void processSettings(bool bLoad);
 
+	void updateInterface();
+
 	std::string mForumId;
 	std::string mLastForumID;
 	std::string mThreadId;
@@ -152,6 +159,10 @@ private:
 	int mLastViewType;
 	RSTreeWidgetItemCompareRole *mThreadCompareRole;
 	TokenQueue *mThreadQueue;
+	uint32_t mTokenGroupSummary;
+	uint32_t mTokenPost;
+	bool mRequestGroupSummary;
+//	QTimer *mTimer;
 
 	void requestGroupSummary_CurrentForum(const std::string &forumId);
 	void loadGroupSummary_CurrentForum(const uint32_t &token);
@@ -172,7 +183,6 @@ private:
 
 	bool convertMsgToThreadWidget(const RsGxsForumMsg &msgInfo, bool useChildTS, uint32_t filterColumn, GxsIdTreeWidgetItem *item);
 //	bool convertMsgToThreadWidget(const RsGxsForumMsg &msgInfo, std::string authorName, bool useChildTS, uint32_t filterColumn, QTreeWidgetItem *item);
-
 
 	// New Datatypes to replace the FillThread.
 	bool mThreadLoading;

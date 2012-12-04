@@ -69,6 +69,8 @@ GxsForumsDialog::GxsForumsDialog(QWidget *parent)
 
 		/* Setup Queue */
 	mForumQueue = new TokenQueue(rsGxsForums->getTokenService(), this);
+	mTokenGroupSummary = 0;
+	mRequestGroupSummary = false;
 
 	connect(ui.forumTreeWidget, SIGNAL(treeCustomContextMenuRequested(QPoint)), this, SLOT(forumListCustomPopupMenu(QPoint)));
 	connect(ui.newForumButton, SIGNAL(clicked()), this, SLOT(newforum()));
@@ -222,8 +224,6 @@ void GxsForumsDialog::updateDisplay()
 	{
 		/* update Forums List */
 		insertForums();
-		/* update threads as well */
-//#TODO		insertThreads();
 	}
 }
 
@@ -342,7 +342,8 @@ void GxsForumsDialog::changedForum(const QString &id)
 	if (!threadWidget) {
 		/* create a thread widget */
 		threadWidget = new GxsForumThreadWidget(id.toStdString());
-		ui.threadTabWidget->addTab(threadWidget, tr("Loading"));
+		int index = ui.threadTabWidget->addTab(threadWidget, threadWidget->forumName());
+		ui.threadTabWidget->setTabIcon(index, threadWidget->forumIcon());
 		connect(threadWidget, SIGNAL(forumChanged(QWidget*)), this, SLOT(threadTabChanged(QWidget*)));
 	}
 
@@ -370,6 +371,7 @@ void GxsForumsDialog::threadTabChanged(QWidget *widget)
 	}
 
 	ui.threadTabWidget->setTabText(index, threadWidget->forumName());
+	ui.threadTabWidget->setTabIcon(index, threadWidget->forumIcon());
 }
 
 QString GxsForumsDialog::titleFromInfo(const RsMsgMetaData &meta)
@@ -608,17 +610,38 @@ void GxsForumsDialog::requestGroupSummary()
 	std::cerr << "GxsForumsDialog::requestGroupSummary()";
 	std::cerr << std::endl;
 
+	if (mRequestGroupSummary) {
+		std::cerr << "GxsForumsDialog::requestGroupSummary() Canceling Request: " << mTokenGroupSummary;
+		std::cerr << std::endl;
+
+		mForumQueue->cancelRequest(mTokenGroupSummary);
+		mTokenGroupSummary = 0;
+		mRequestGroupSummary = false;
+	}
+
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
 
-	uint32_t token;
-	mForumQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, FORUMSV2DIALOG_LISTING);
+	mForumQueue->requestGroupInfo(mTokenGroupSummary, RS_TOKREQ_ANSTYPE_SUMMARY, opts, FORUMSV2DIALOG_LISTING);
+	mRequestGroupSummary = true;
 }
 
 void GxsForumsDialog::loadGroupSummary(const uint32_t &token)
 {
 	std::cerr << "GxsForumsDialog::loadGroupSummary()";
 	std::cerr << std::endl;
+
+	if (!mRequestGroupSummary) {
+		std::cerr << "GxsForumsDialog::loadGroupSummary()) No waiting request got token: " << token;
+		std::cerr << std::endl;
+		return;
+	}
+
+	if (token != mTokenGroupSummary) {
+		std::cerr << "GxsForumsDialog::loadGroupSummary()) Wrong token - want: " << mTokenGroupSummary << " got: " << token;
+		std::cerr << std::endl;
+		return;
+	}
 
 	std::list<RsGroupMetaData> groupInfo;
 	rsGxsForums->getGroupSummary(token, groupInfo);
@@ -632,6 +655,8 @@ void GxsForumsDialog::loadGroupSummary(const uint32_t &token)
 		std::cerr << "GxsForumsDialog::loadGroupSummary() ERROR No Groups...";
 		std::cerr << std::endl;
 	}
+	mTokenGroupSummary = 0;
+	mRequestGroupSummary = false;
 }
 
 /*********************** **** **** **** ***********************/
