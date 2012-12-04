@@ -1132,7 +1132,7 @@ std::ostream& RsTurtleStringSearchRequestItem::print(std::ostream& o, uint16_t)
 	o << "Search request (string):" << std::endl ;
 	o << "  direct origin: \"" << PeerId() << "\"" << std::endl ;
 	o << "  match string: \"" << match_string << "\"" << std::endl ;
-	o << "  Req. Id: " << (void *)request_id << std::endl ;
+	o << "  Req. Id: " << std::hex << request_id << std::dec << std::endl ;
 	o << "  Depth  : " << depth << std::endl ;
 
 	return o ;
@@ -1141,7 +1141,7 @@ std::ostream& RsTurtleRegExpSearchRequestItem::print(std::ostream& o, uint16_t)
 {
 	o << "Search request (regexp):" << std::endl ;
 	o << "  direct origin: \"" << PeerId() << "\"" << std::endl ;
-	o << "  Req. Id: " << (void *)request_id << std::endl ;
+	o << "  Req. Id: " << std::hex << request_id << std::dec << std::endl ;
 	o << "  Depth  : " << depth << std::endl ;
 	o << "  RegExp: " << std::endl ;
 	o << "    Toks: " ; for(unsigned int i=0;i<expr._tokens.size();++i) std::cout << (int)expr._tokens[i] << " " ; std::cout << std::endl ;
@@ -1157,7 +1157,7 @@ std::ostream& RsTurtleSearchResultItem::print(std::ostream& o, uint16_t)
 
 	o << "  Peer id: " << PeerId() << std::endl ;
 	o << "  Depth  : " << depth << std::endl ;
-	o << "  Req. Id: " << (void *)request_id << std::endl ;
+	o << "  Req. Id: " << std::hex << request_id << std::dec << std::endl ;
 	o << "  Files:" << std::endl ;
 	
 	for(std::list<TurtleFileInfo>::const_iterator it(result.begin());it!=result.end();++it)
@@ -1171,8 +1171,8 @@ std::ostream& RsTurtleOpenTunnelItem::print(std::ostream& o, uint16_t)
 	o << "Open Tunnel:" << std::endl ;
 
 	o << "  Peer id    : " << PeerId() << std::endl ;
-	o << "  Partial tId: " << (void *)partial_tunnel_id << std::endl ;
-	o << "  Req. Id    : " << (void *)request_id << std::endl ;
+	o << "  Partial tId: " << std::hex << partial_tunnel_id << std::dec << std::endl ;
+	o << "  Req. Id    : " << std::hex << request_id << std::dec << std::endl ;
 	o << "  Depth      : " << depth << std::endl ;
 	o << "  Hash       : " << file_hash << std::endl ;
 
@@ -1184,8 +1184,8 @@ std::ostream& RsTurtleTunnelOkItem::print(std::ostream& o, uint16_t)
 	o << "Tunnel Ok:" << std::endl ;
 
 	o << "  Peer id   : " << PeerId() << std::endl ;
-	o << "  tunnel id : " << (void*)tunnel_id << std::endl ;
-	o << "  Req. Id   : " << (void *)request_id << std::endl ;
+	o << "  tunnel id : " << std::hex << tunnel_id << std::dec << std::endl ;
+	o << "  Req. Id   : " << std::hex << request_id << std::dec << std::endl ;
 
 	return o ;
 }
@@ -1194,7 +1194,7 @@ std::ostream& RsTurtleFileRequestItem::print(std::ostream& o, uint16_t)
 {
 	o << "File request item:" << std::endl ;
 
-	o << "  tunnel id : " << (void*)tunnel_id << std::endl ;
+	o << "  tunnel id : " << std::hex << tunnel_id << std::dec << std::endl ;
 	o << "  offset    : " << chunk_offset << std::endl ;
 	o << "  chunk size: " << chunk_size << std::endl ;
 
@@ -1205,10 +1205,10 @@ std::ostream& RsTurtleFileDataItem::print(std::ostream& o, uint16_t)
 {
 	o << "File request item:" << std::endl ;
 
-	o << "  tunnel id : " << (void*)tunnel_id << std::endl ;
+	o << "  tunnel id : " << std::hex << tunnel_id << std::dec << std::endl ;
 	o << "  offset    : " << chunk_offset << std::endl ;
 	o << "  chunk size: " << chunk_size << std::endl ;
-	o << "  data      : " << (void*)chunk_data << std::endl ;
+	o << "  data      : " << std::hex << chunk_data << std::dec << std::endl ;
 
 	return o ;
 }
@@ -1217,12 +1217,12 @@ std::ostream& RsTurtleFileMapItem::print(std::ostream& o, uint16_t)
 {
 	o << "File map item:" << std::endl ;
 
-	o << "  tunnel id : " << (void*)tunnel_id << std::endl ;
+	o << "  tunnel id : " << std::hex << tunnel_id << std::dec << std::endl ;
 	o << "  direction : " << direction << std::endl ;
 	o << "  map      : " ;
 
 	for(uint32_t i=0;i<compressed_map._map.size();++i)
-		o << (void*)compressed_map._map[i] << std::endl ;
+		o << std::hex << compressed_map._map[i] << std::dec << std::endl ;
 
 	return o ;
 }
@@ -1231,7 +1231,7 @@ std::ostream& RsTurtleFileMapRequestItem::print(std::ostream& o, uint16_t)
 {
 	o << "File map request item:" << std::endl ;
 
-	o << "  tunnel id : " << (void*)tunnel_id << std::endl ;
+	o << "  tunnel id : " << std::hex << tunnel_id << std::dec << std::endl ;
 	o << "  direction : " << direction << std::endl ;
 
 	return o ;
@@ -1241,16 +1241,16 @@ std::ostream& RsTurtleFileCrcItem::print(std::ostream& o, uint16_t)
 {
 	o << "File CRC item:" << std::endl ;
 
-	o << "  tunnel id : " << (void*)tunnel_id << std::endl ;
+	o << "  tunnel id : " << std::hex << tunnel_id << std::dec << std::endl ;
 	o << "  map      : " ;
 
 	for(uint32_t i=0;i<crc_map._ccmap._map.size();++i)
-		o << (void*)crc_map._ccmap._map[i] << std::endl ;
+		o << std::hex << crc_map._ccmap._map[i] << std::endl ;
 
 	o << "  CRC      : " ;
 
 	for(uint32_t i=0;i<crc_map._crcs.size();++i)
-		o << (void*)crc_map._crcs[i] << std::endl ;
+		o << std::hex << crc_map._crcs[i] << std::dec << std::endl ;
 
 	return o ;
 }
@@ -1258,7 +1258,7 @@ std::ostream& RsTurtleFileCrcRequestItem::print(std::ostream& o, uint16_t)
 {
 	o << "File CRC request item:" << std::endl ;
 
-	o << "  tunnel id : " << (void*)tunnel_id << std::endl ;
+	o << "  tunnel id : " << std::hex << tunnel_id << std::dec << std::endl ;
 
 	return o ;
 }
@@ -1266,7 +1266,7 @@ std::ostream& RsTurtleChunkCrcRequestItem::print(std::ostream& o, uint16_t)
 {
 	o << "Chunk CRC request item:" << std::endl ;
 
-	o << "  tunnel id : " << (void*)tunnel_id << std::endl ;
+	o << "  tunnel id : " << std::hex << tunnel_id << std::dec << std::endl ;
 	o << "  chunk num : " << chunk_number << std::endl ;
 
 	return o ;
@@ -1275,7 +1275,7 @@ std::ostream& RsTurtleChunkCrcItem::print(std::ostream& o, uint16_t)
 {
 	o << "Chunk CRC request item:" << std::endl ;
 
-	o << "  tunnel id : " << (void*)tunnel_id << std::endl ;
+	o << "  tunnel id : " << std::hex << tunnel_id << std::dec << std::endl ;
 	o << "  chunk num : " << chunk_number << std::endl ;
 	o << "   sha1 sum : " << check_sum.toStdString() << std::endl ;
 
