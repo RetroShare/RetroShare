@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>731</width>
-    <height>701</height>
+    <width>946</width>
+    <height>568</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,6 +28,7 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
+     <zorder>splitter_History</zorder>
     </widget>
    </item>
    <item row="1" column="0">
@@ -54,11 +55,28 @@
          <property name="title">
           <string>Page Edit History</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0">
+         <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
            <widget class="QCheckBox" name="checkBox_OldHistory">
             <property name="text">
              <string>Enable Obsolete Edits</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox_Merge">
+            <property name="text">
+             <string>Chose for Merge</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_Merge">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Merge for Republish (TODO)</string>
             </property>
            </widget>
           </item>

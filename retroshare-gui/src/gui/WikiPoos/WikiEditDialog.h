@@ -59,6 +59,8 @@ void    textReset();
 
 void 	historySelected();
 void 	oldHistoryChanged();
+void  	mergeModeToggle();
+void  	generateMerge();
 
 private:
 
@@ -87,9 +89,12 @@ void 	loadEditTreeData(const uint32_t &token);
 
 	bool mPreviewMode;
 	bool mPageLoading;
+        bool mHistoryLoaded;
+        bool mHistoryMergeMode;
         bool mOldHistoryEnabled;
 
         bool mRepublishMode;
+	bool mIgnoreTextChange; // when we do it programmatically.
         bool mTextChanged;
 
 	QString mCurrentText;

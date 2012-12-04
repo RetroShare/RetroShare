@@ -54,7 +54,6 @@ private slots:
 	void OpenOrShowRepublishDialog();
 
 	void groupTreeChanged();
-	void modTreeChanged();
 
 	void newGroup();
 	void showGroupDetails();
@@ -66,32 +65,18 @@ private:
 
 void 	clearWikiPage();
 void    clearGroupTree();
-void    clearModsTree();
-
-void 	insertModsForPage(const std::string &origPageId);
-
-void 	insertModsForPage(const RsGxsGrpMsgIdPair &origPageId);
 
 void 	updateWikiPage(const RsWikiSnapshot &page);
 
 bool 	getSelectedPage(std::string &groupId, std::string &pageId, std::string &origPageId);	
 std::string getSelectedPage();
 std::string getSelectedGroup();
-std::string getSelectedMod();
-
-
 
 void 	requestGroupList();
 void 	loadGroupData(const uint32_t &token);
 
 void 	requestPages(const std::list<RsGxsGroupId> &groupIds);
 void 	loadPages(const uint32_t &token);
-
-void 	requestModPages(const RsGxsGrpMsgIdPair &origMsgId);
-void 	loadModPages(const uint32_t &token);
-
-void 	requestEditTreeData();
-void 	loadEditTreeData(const uint32_t &token);
 
 void 	requestWikiPage(const  RsGxsGrpMsgIdPair &msgId);
 void 	loadWikiPage(const uint32_t &token);

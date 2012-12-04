@@ -6,24 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>918</width>
-    <height>669</height>
+    <width>764</width>
+    <height>514</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string/>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QSplitter" name="splitter_2">
+  <layout class="QVBoxLayout" name="verticalLayout_4">
+   <item>
+    <widget class="QSplitter" name="splitter">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QWidget" name="layoutWidget">
-      <layout class="QVBoxLayout" name="verticalLayout_6">
-       <property name="spacing">
-        <number>0</number>
-       </property>
+     <widget class="QWidget" name="">
+      <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
         <widget class="QFrame" name="titleBarFrame">
          <property name="frameShape">
@@ -96,88 +93,40 @@
         </widget>
        </item>
        <item>
-        <widget class="QSplitter" name="splitter">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
+        <widget class="QScrollArea" name="scrollArea_2">
+         <property name="widgetResizable">
+          <bool>true</bool>
          </property>
-         <widget class="QScrollArea" name="scrollArea_2">
-          <property name="widgetResizable">
-           <bool>true</bool>
+         <widget class="QWidget" name="scrollAreaWidgetContents_2">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>241</width>
+            <height>448</height>
+           </rect>
           </property>
-          <widget class="QWidget" name="scrollAreaWidgetContents_2">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>241</width>
-             <height>307</height>
-            </rect>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout">
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QTreeWidget" name="treeWidget_Pages">
-              <column>
-               <property name="text">
-                <string>Wiki Group</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Page</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Id</string>
-               </property>
-              </column>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </widget>
-         <widget class="QScrollArea" name="scrollArea_3">
-          <property name="widgetResizable">
-           <bool>true</bool>
-          </property>
-          <widget class="QWidget" name="scrollAreaWidgetContents_4">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>241</width>
-             <height>294</height>
-            </rect>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_4">
-            <property name="margin">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QTreeWidget" name="treeWidget_Mods">
-              <column>
-               <property name="text">
-                <string>Page Modification</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>By</string>
-               </property>
-              </column>
-             </widget>
-            </item>
-           </layout>
-          </widget>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <item>
+            <widget class="QTreeWidget" name="treeWidget_Pages">
+             <column>
+              <property name="text">
+               <string>Wiki Group</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Page</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Id</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </widget>
        </item>
@@ -254,32 +203,6 @@
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="toolButton_PrevMod">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="text">
-             <string>Mod</string>
-            </property>
-            <property name="icon">
-             <iconset resource="Wiki_images.qrc">
-              <normaloff>:/images/arrow-left.png</normaloff>:/images/arrow-left.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>24</width>
-              <height>24</height>
-             </size>
-            </property>
-            <property name="toolButtonStyle">
-             <enum>Qt::ToolButtonTextBesideIcon</enum>
-            </property>
-            <property name="autoRaise">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
            <widget class="QToolButton" name="toolButton_Republish">
             <property name="text">
              <string>Republish</string>
@@ -310,32 +233,6 @@
             <property name="icon">
              <iconset resource="Wiki_images.qrc">
               <normaloff>:/images/story-editor.png</normaloff>:/images/story-editor.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>24</width>
-              <height>24</height>
-             </size>
-            </property>
-            <property name="toolButtonStyle">
-             <enum>Qt::ToolButtonTextBesideIcon</enum>
-            </property>
-            <property name="autoRaise">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QToolButton" name="toolButton_NextMod">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="text">
-             <string>Mod</string>
-            </property>
-            <property name="icon">
-             <iconset resource="Wiki_images.qrc">
-              <normaloff>:/images/arrow-right.png</normaloff>:/images/arrow-right.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -436,26 +333,36 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>645</width>
-            <height>609</height>
+            <width>491</width>
+            <height>454</height>
            </rect>
           </property>
           <property name="styleSheet">
            <string notr="true">QWidget#scrollAreaWidgetContents{border: none;}</string>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <property name="margin">
-            <number>0</number>
-           </property>
+          <layout class="QVBoxLayout" name="verticalLayout">
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout_3">
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
              <item>
-              <widget class="QTextBrowser" name="textBrowser"/>
+              <widget class="QLabel" name="label_3">
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Search</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEdit"/>
              </item>
             </layout>
+           </item>
+           <item>
+            <widget class="QTextBrowser" name="textBrowser"/>
            </item>
           </layout>
          </widget>

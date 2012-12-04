@@ -69,6 +69,8 @@ WikiEditDialog::WikiEditDialog(QWidget *parent)
 	connect(ui.toolButton_Hide, SIGNAL( clicked( void ) ), this, SLOT( detailsToggle( void ) ) );
 	connect(ui.textEdit, SIGNAL( textChanged( void ) ), this, SLOT( textChanged( void ) ) );
 	connect(ui.checkBox_OldHistory, SIGNAL( clicked( void ) ), this, SLOT( oldHistoryChanged( void ) ) );
+	connect(ui.checkBox_Merge, SIGNAL( clicked( void ) ), this, SLOT( mergeModeToggle( void ) ) );
+	connect(ui.pushButton_Merge, SIGNAL( clicked( void ) ), this, SLOT( generateMerge( void ) ) );
 	connect(ui.treeWidget_History, SIGNAL( itemSelectionChanged( void ) ), this, SLOT( historySelected( void ) ) );
 
 	mWikiQueue = new TokenQueue(rsWiki->getTokenService(), this);
@@ -79,8 +81,13 @@ WikiEditDialog::WikiEditDialog(QWidget *parent)
         mRepublishMode = false;
         mPreviewMode = false;
 	mPageLoading = false;
+
+	mIgnoreTextChange = false;
 	mTextChanged = false;
 	mCurrentText = "";
+
+	mHistoryLoaded = false;
+	mHistoryMergeMode = false;
 
 	ui.checkBox_OldHistory->setChecked(false);
 	mOldHistoryEnabled = false;
@@ -93,8 +100,25 @@ WikiEditDialog::~WikiEditDialog()
         delete (mThreadCompareRole);
 }
 
+void WikiEditDialog::mergeModeToggle()
+{
+	mHistoryMergeMode = ui.checkBox_Merge->isChecked();
+	updateHistoryStatus();
+}
+
+void WikiEditDialog::generateMerge()
+{
+	std::cerr << "WikiEditDialog::generateMerge() TODO" << std::endl;
+
+}
+
 void WikiEditDialog::textChanged()
 {
+	if (mIgnoreTextChange)
+	{
+		std::cerr << "WikiEditDialog::textChanged() Ignored" << std::endl;
+		return;
+	}
 	std::cerr << "WikiEditDialog::textChanged()" << std::endl;
 
 	mTextChanged = true;
@@ -127,6 +151,23 @@ void WikiEditDialog::textReset()
 void WikiEditDialog::historySelected()
 {
 	std::cerr << "WikiEditDialog::historySelected()" << std::endl;
+
+	QList<QTreeWidgetItem *> selected = ui.treeWidget_History->selectedItems();
+	if (selected.empty())
+	{
+		std::cerr << "WikiEditDialog::historySelected() ERROR Nothing selected" << std::endl;
+		return;
+	}
+	QTreeWidgetItem *item = *(selected.begin());
+	
+	RsGxsGrpMsgIdPair newSnapshot = mThreadMsgIdPair;
+	std::string pageId = item->data(WET_DATA_COLUMN, WET_ROLE_PAGEID).toString().toStdString();
+	newSnapshot.second = pageId;
+
+	std::cerr << "WikiEditDialog::historySelected() New PageId: " << pageId;
+	std::cerr << std::endl;
+
+	requestPage(newSnapshot);
 }
 
 
@@ -139,6 +180,9 @@ void WikiEditDialog::oldHistoryChanged()
 
 void WikiEditDialog::updateHistoryStatus()
 {
+	std::cerr << "WikiEditDialog::updateHistoryStatus()";
+	std::cerr << std::endl;
+
 	/* iterate through every History Item */
 	int count = ui.treeWidget_History->topLevelItemCount();
 	for(int i = 0; i < count; i++)
@@ -180,12 +224,35 @@ void WikiEditDialog::updateHistoryItem(QTreeWidgetItem *item, bool isLatest)
 
 	if (isSelectable)
 	{
+		std::cerr << "WikiEditDialog::updateHistoryItem() isSelectable";
+		std::cerr << std::endl;
+
 		item->setFlags(Qt::ItemIsSelectable | 
 			Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
+
+		if (mHistoryMergeMode)
+		{
+			QVariant qvar = item->data(WET_COL_PAGEID, Qt::CheckStateRole);
+			std::cerr << "WikiEditDialog::CheckStateRole:: VariantType: " << (int) qvar.type();
+			std::cerr << std::endl;
+			if (!qvar.isValid())
+			{
+				item->setData(WET_COL_PAGEID, Qt::CheckStateRole, Qt::Unchecked);
+			}
+			
+		}
+		else
+		{
+			item->setData(WET_COL_PAGEID, Qt::CheckStateRole, QVariant());
+		}
 	}
 	else
 	{
-		item->setFlags(0);
+		std::cerr << "WikiEditDialog::updateHistoryItem() NOT isSelectable";
+		std::cerr << std::endl;
+
+		item->setData(WET_COL_PAGEID, Qt::CheckStateRole, QVariant());
+		item->setFlags(Qt::ItemIsUserCheckable);
 	}
 }
 
@@ -241,8 +308,6 @@ void WikiEditDialog::previewToggle()
 	std::cerr << "WikiEditDialog::previewToggle()";
 	std::cerr << std::endl;
 
-	bool prevTextChanged = mTextChanged;
-
 	if (mPreviewMode)
 	{
 		mPreviewMode = false;
@@ -255,16 +320,11 @@ void WikiEditDialog::previewToggle()
 		mPreviewMode = true;
 		ui.pushButton_Preview->setText(tr("Edit Page"));
 	}
-	if (!mPageLoading)
-	{
-		redrawPage();
-	}
 
-	/* fix textChanged signal - if we have caused it to change */
-	if (!prevTextChanged)
-	{
-		textReset();
-	}
+
+	mIgnoreTextChange = true;
+	redrawPage();
+	mIgnoreTextChange = false;
 
 	std::cerr << "WikiEditDialog::previewToggle() END";
 	std::cerr << std::endl;
@@ -334,7 +394,11 @@ void WikiEditDialog::setPreviousPage(RsWikiSnapshot &page)
 	ui.lineEdit_Page->setText(QString::fromStdString(mWikiSnapshot.mMeta.mMsgName));
 	ui.lineEdit_PrevVersion->setText(QString::fromStdString(mWikiSnapshot.mMeta.mMsgId));
 	mCurrentText = QString::fromUtf8(mWikiSnapshot.mPage.c_str());
-        redrawPage();
+
+	mIgnoreTextChange = true;
+	redrawPage();
+	mIgnoreTextChange = false;
+
 	textReset();
 }
 
@@ -343,6 +407,7 @@ void WikiEditDialog::setNewPage()
 {
 	mNewPage = true;
         mRepublishMode = false;
+	mHistoryLoaded = false;
 	ui.lineEdit_Page->setText("");
 	ui.lineEdit_PrevVersion->setText("");
 
@@ -364,6 +429,7 @@ void WikiEditDialog::setRepublishMode(RsGxsMessageId &origMsgId)
 {
         mRepublishMode = true;
         mRepublishOrigId = origMsgId;
+	ui.pushButton_Submit->setText(tr("Republish"));
 }
 
 
@@ -486,6 +552,7 @@ void WikiEditDialog::submitEdit()
 void WikiEditDialog::setupData(const std::string &groupId, const std::string &pageId)
 {
         mRepublishMode = false;
+	mHistoryLoaded = false;
 	if (groupId != "")
 	{
 		requestGroup(groupId);
@@ -496,11 +563,10 @@ void WikiEditDialog::setupData(const std::string &groupId, const std::string &pa
         	RsGxsGrpMsgIdPair msgId = std::make_pair(groupId, pageId);
 		requestPage(msgId);
 	}
-	
-		
+
 	ui.headerFrame->setHeaderImage(QPixmap(":/images/story-editor_48.png"));
-    ui.headerFrame->setHeaderText(tr("Edit Wiki Page"));
-    setWindowTitle(tr("Edit Wiki Page"));
+	ui.headerFrame->setHeaderText(tr("Edit Wiki Page"));
+	setWindowTitle(tr("Edit Wiki Page"));
 }
 
 
@@ -584,7 +650,10 @@ void WikiEditDialog::loadPage(const uint32_t &token)
 		{
 			mThreadMsgIdPair.second = page.mMeta.mThreadId;
 		}
-		requestBaseHistory(mThreadMsgIdPair);
+		if (!mHistoryLoaded)
+		{
+			requestBaseHistory(mThreadMsgIdPair);
+		}
 	}
 	mPageLoading = false;
 }
@@ -801,6 +870,7 @@ void WikiEditDialog::loadEditTreeData(const uint32_t &token)
 	}
 
 	// Enable / Disable Items.
+	mHistoryLoaded = true;
 	updateHistoryStatus();
 }
 
