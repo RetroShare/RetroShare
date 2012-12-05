@@ -191,7 +191,7 @@ void ShareManager::updateFlags()
     if(isLoading)
         return ;
 
-	 isLoading = true ;	// stops GUI update. Otherwise each call to rsFiles->updateShareFlags() modifies the GUI that we count on to check
+	isLoading = true ;	// stops GUI update. Otherwise each call to rsFiles->updateShareFlags() modifies the GUI that we count on to check
 	 							// what has changed => fail!
 
    // std::cerr << "Updating flags" << std::endl;
@@ -268,6 +268,7 @@ void ShareManager::editShareDirectory()
             if (it->filename == filename) {
                 /* file name found, show dialog */
                 ShareDialog sharedlg (it->filename, this);
+                sharedlg.setWindowTitle(tr("Edit Shared Folder"));
                 sharedlg.exec();
                 break;
             }

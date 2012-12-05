@@ -42,7 +42,7 @@ ShareDialog::ShareDialog(std::string filename, QWidget *parent)
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
 
-    ui.headerFrame->setHeaderImage(QPixmap(":/images/fileshare48.png"));
+    ui.headerFrame->setHeaderImage(QPixmap(":/images/fileshare64.png"));
     ui.headerFrame->setHeaderText(tr("Share Folder"));
 
     connect(ui.browseButton, SIGNAL(clicked( bool ) ), this , SLOT( browseDirectory() ) );
@@ -97,8 +97,10 @@ ShareDialog::ShareDialog(std::string filename, QWidget *parent)
                 ui.browseButton->setDisabled(true);
                 ui.virtualpath_lineEdit->setText(QString::fromUtf8(it->virtualname.c_str()));
 
-					 groupflagsbox->setFlags(it->shareflags) ;
+				groupflagsbox->setFlags(it->shareflags) ;
 				groupselectionbox->setSelectedGroupIds(it->parent_groups) ;
+				
+				ui.headerFrame->setHeaderText(tr("Edit Shared Folder"));
 
                 break;
             }
