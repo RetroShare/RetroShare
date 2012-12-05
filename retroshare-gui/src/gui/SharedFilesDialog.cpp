@@ -36,6 +36,7 @@
 #endif
 #include "RetroShareLink.h"
 #include "RemoteDirModel.h"
+#include "ShareDialog.h"
 #include "common/PeerDefs.h"
 
 #include <retroshare/rspeers.h>
@@ -52,9 +53,10 @@
 #define IMAGE_FRIEND         ":/images/peers_16x16.png"
 #define IMAGE_PROGRESS       ":/images/browse-looking.gif"
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
-#define IMAGE_OPENFOLDER        ":/images/folderopen.png"
+#define IMAGE_OPENFOLDER     ":/images/folderopen.png"
 #define IMAGE_OPENFILE		 ":/images/fileopen.png"
 #define IMAGE_COLLECTION     ":/images/mimetypes/rscollection-16.png"
+#define IMAGE_EDITSHARE      ":/images/edit_16.png"
 
 // Define to avoid using the search in treeview, because it is really slow for now.
 //
@@ -229,6 +231,8 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
   connect(openfileAct, SIGNAL(triggered()), this, SLOT(openfile()));
   openfolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this);
   connect(openfolderAct, SIGNAL(triggered()), this, SLOT(openfolder()));
+  editshareAct = new QAction(QIcon(IMAGE_EDITSHARE), tr("Edit Share Permissions"), this);
+  connect(editshareAct, SIGNAL(triggered()), this, SLOT(editSharePermissions()));
 }
 
 void SharedFilesDialog::hideEvent(QHideEvent *)
@@ -430,6 +434,7 @@ void SharedFilesDialog::createCollectionFile()
 	QModelIndexList lst = getLocalSelected();
 	localModel->createCollectionFile(this, lst);
 }
+
 void SharedFilesDialog::downloadRemoteSelected()
 {
   /* call back to the model (which does all the interfacing? */
@@ -439,6 +444,24 @@ void SharedFilesDialog::downloadRemoteSelected()
 
   QModelIndexList lst = getRemoteSelected();
   model -> downloadSelected(lst);
+}
+
+void SharedFilesDialog::editSharePermissions()
+{
+	std::list<SharedDirInfo> dirs;
+	rsFiles->getSharedDirectories(dirs);
+
+	std::list<SharedDirInfo>::const_iterator it;
+	for (it = dirs.begin(); it != dirs.end(); it++) {
+		if (currentFile == currentFile) {
+			/* file name found, show dialog */
+			ShareDialog sharedlg (it->filename, this);
+			sharedlg.setWindowTitle(tr("Edit Shared Folder"));
+			sharedlg.exec();
+			break;
+		}
+	}
+
 }
 
 void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
@@ -738,7 +761,9 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
     case DIR_TYPE_DIR:
         contextMnu.addAction(openfolderAct);
         contextMnu.addSeparator();
-		  contextMnu.addAction(createcollectionfileAct) ;
+        contextMnu.addAction(editshareAct) ;
+        contextMnu.addSeparator();
+		contextMnu.addAction(createcollectionfileAct) ;
         break;
     case DIR_TYPE_FILE:
         contextMnu.addAction(openfileAct);

@@ -78,6 +78,7 @@ private slots:
   void playselectedfiles();
   void openfile();
   void openfolder();
+  void editSharePermissions();
 
   void recommendFilesToMsg();
   void runCommandForFile();
@@ -120,6 +121,7 @@ private:
   QAction* copyremotelinkAct;
   QAction* copylinklocalAct;
   QAction* sendlinkAct;
+  QAction* editshareAct;
 #ifdef RS_USE_LINKS
   QAction* sendlinkCloudAct;
   QAction* addlinkCloudAct;
