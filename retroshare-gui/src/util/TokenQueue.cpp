@@ -98,7 +98,9 @@ void TokenQueue::queueRequest(uint32_t token, uint32_t basictype, uint32_t ansty
 	gettimeofday(&req.mRequestTs, NULL);
 	req.mPollTs = req.mRequestTs;
 
+        mTokenMtx.lock();
 	mRequests.push_back(req);
+        mTokenMtx.unlock();
 
 	if (mRequests.size() == 1)
 	{
@@ -123,8 +125,11 @@ void TokenQueue::pollRequests()
 	}
 
 	TokenRequest req;
+
+        mTokenMtx.lock();
 	req = mRequests.front();
 	mRequests.pop_front();
+        mTokenMtx.unlock();
 
 	if (checkForRequest(req.mToken))
 	{
@@ -139,7 +144,9 @@ void TokenQueue::pollRequests()
 		/* drop old requests too */
 		if (time(NULL) - req.mRequestTs.tv_sec < MAX_REQUEST_AGE)
 		{
+                    mTokenMtx.lock();
 			mRequests.push_back(req);
+                        mTokenMtx.unlock();
 		}
 		else
 		{
@@ -163,6 +170,39 @@ bool TokenQueue::checkForRequest(uint32_t token)
 			 (RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE == status) );
 }
 
+bool TokenQueue::activeRequestExist(const uint32_t& userType)
+{
+    mTokenMtx.lock();
+
+    std::list<TokenRequest>::const_iterator lit = mRequests.begin();
+
+    for(; lit != mRequests.end(); lit++)
+    {
+        const TokenRequest& req = *lit;
+
+        if(req.mUserType == userType)
+            return true;
+    }
+
+    mTokenMtx.unlock();
+}
+
+void TokenQueue::activeRequestTokens(const uint32_t& userType, std::list<uint32_t>& tokens)
+{
+    mTokenMtx.lock();
+
+    std::list<TokenRequest>::const_iterator lit = mRequests.begin();
+
+    for(; lit != mRequests.end(); lit++)
+    {
+        const TokenRequest& req = *lit;
+
+        if(req.mUserType == userType)
+            tokens.push_back(req.mToken);
+    }
+
+    mTokenMtx.unlock();
+}
 
 void TokenQueue::loadRequest(const TokenRequest &req)
 {
@@ -181,6 +221,7 @@ bool TokenQueue::cancelRequest(const uint32_t token)
 
 	std::list<TokenRequest>::iterator it;
 
+        mTokenMtx.lock();
 	for(it = mRequests.begin(); it != mRequests.end(); it++)
 	{
 		if (it->mToken == token)
@@ -193,6 +234,7 @@ bool TokenQueue::cancelRequest(const uint32_t token)
 			return true;
 		}
 	}
+        mTokenMtx.unlock();
 
 	std::cerr << "TokenQueue::cancelRequest() Failed to Find Request: " << token;
 	std::cerr << std::endl;

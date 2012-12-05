@@ -20,7 +20,16 @@ void GenExchangeTester::setUp()
 
     RsGixsDummy* gixsDummy = new RsGixsDummy("incoming", "outgoing");
 
-    mTestService = new GenExchangeTestService(mDataStore, mNxs, gixsDummy, 0);
+    uint32_t serviceAuthenPolicy = 0;
+
+    uint8_t flag = 0;
+
+    flag = GXS_SERV::MSG_AUTHEN_ROOT_PUBLISH_SIGN;
+    RsGenExchange::setAuthenPolicyFlag(flag, serviceAuthenPolicy,
+                                       RsGenExchange::RESTRICTED_GRP_BITS);
+
+
+    mTestService = new GenExchangeTestService(mDataStore, mNxs, gixsDummy, serviceAuthenPolicy);
     mTokenService = mTestService->getTokenService();
     mTestService->start();
 }

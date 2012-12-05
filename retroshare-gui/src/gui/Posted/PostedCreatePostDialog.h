@@ -3,6 +3,8 @@
 
 #include <QDialog>
 #include "retroshare/rsposted.h"
+#include "PostedUserTypes.h"
+
 #include "util/TokenQueue.h"
 
 namespace Ui {

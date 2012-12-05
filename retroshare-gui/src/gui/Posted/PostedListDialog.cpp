@@ -63,6 +63,9 @@
 #define IMAGE_FORUMAUTHD     ":/images/konv_message2.png"
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
 
+// token types to deal with
+
+
 /** Constructor */
 PostedListDialog::PostedListDialog(CommentHolder *commentHolder, QWidget *parent)
 : RsAutoUpdatePage(1000,parent), mCommentHolder(commentHolder)
@@ -87,8 +90,19 @@ PostedListDialog::PostedListDialog(CommentHolder *commentHolder, QWidget *parent
     mSortButton = ui.hotSortButton;
 
     connect( ui.newTopicButton, SIGNAL( clicked() ), this, SLOT( newTopic() ) );
+    connect(ui.refreshButton, SIGNAL(clicked()), this, SLOT(refreshTopics()));
 }
 
+void PostedListDialog::refreshTopics()
+{
+    std::cerr << "PostedListDialog::requestGroupSummary()";
+    std::cerr << std::endl;
+
+    RsTokReqOptions opts;
+    opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+    uint32_t token;
+    mPostedQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_SUMMARY, opts, TOKEN_USER_TYPE_TOPIC);
+}
 
 void PostedListDialog::groupListCustomPopupMenu( QPoint /*point*/ )
 {
@@ -104,6 +118,19 @@ void PostedListDialog::newPost()
 {
     PostedCreatePostDialog cp(mPostedQueue, rsPosted, mCurrTopicId, this);
     cp.exec();
+}
+
+void PostedListDialog::submitVote(const RsGxsGrpMsgIdPair &msgId, bool up)
+{
+    uint32_t token;
+    RsPostedVote vote;
+
+    vote.mMeta.mGroupId = msgId.first;
+    vote.mMeta.mParentId = msgId.second;
+    vote.mDirection = (uint8_t)up;
+    rsPosted->submitVote(token, vote);
+
+    mPostedQueue->queueRequest(token, 0 , RS_TOKREQ_ANSTYPE_ACK, TOKEN_USER_TYPE_VOTE);
 }
 
 void PostedListDialog::showComments(const RsPostedPost& post)
@@ -167,10 +194,10 @@ void PostedListDialog::requestGroupSummary()
         std::cerr << "PostedListDialog::requestGroupSummary()";
         std::cerr << std::endl;
 
-        std::list<std::string> ids;
         RsTokReqOptions opts;
+        opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
 	uint32_t token;
-        mPostedQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_SUMMARY, opts, ids, POSTEDDIALOG_LISTING);
+        mPostedQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_SUMMARY, opts, TOKEN_USER_TYPE_TOPIC);
 }
 
 void PostedListDialog::acknowledgeGroup(const uint32_t &token)
@@ -180,17 +207,15 @@ void PostedListDialog::acknowledgeGroup(const uint32_t &token)
 
     if(!grpId.empty())
     {
-        std::list<RsGxsGroupId> grpIds;
-        grpIds.push_back(grpId);
 
         RsTokReqOptions opts;
         opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
         uint32_t reqToken;
-        mPostedQueue->requestGroupInfo(reqToken, RS_TOKREQ_ANSTYPE_SUMMARY, opts, grpIds, 0);
+        mPostedQueue->requestGroupInfo(reqToken, RS_TOKREQ_ANSTYPE_SUMMARY, opts, TOKEN_USER_TYPE_TOPIC);
     }
 }
 
-void PostedListDialog::acknowledgeMsg(const uint32_t &token)
+void PostedListDialog::acknowledgePostMsg(const uint32_t &token)
 {
     RsGxsGrpMsgIdPair msgId;
 
@@ -220,6 +245,18 @@ void PostedListDialog::loadGroupSummary(const uint32_t &token)
 void PostedListDialog::loadPostData(const uint32_t &token)
 {
     loadGroupThreadData_InsertThreads(token);
+}
+
+void PostedListDialog::acknowledgeVoteMsg(const uint32_t &token)
+{
+    RsGxsGrpMsgIdPair msgId;
+
+    rsPosted->acknowledgeMsg(token, msgId);
+}
+
+void PostedListDialog::loadVoteData(const uint32_t &token)
+{
+    return;
 }
 
 /*********************** **** **** **** ***********************/
@@ -307,7 +344,7 @@ void PostedListDialog::requestGroupThreadData_InsertThreads(const std::string &g
         std::cerr << std::endl;
 
 	uint32_t token;	
-        mPostedQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds, POSTEDDIALOG_INSERTTHREADS);
+        mPostedQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds, TOKEN_USER_TYPE_POST);
 }
 
 
@@ -332,6 +369,7 @@ void PostedListDialog::loadGroupThreadData_InsertThreads(const uint32_t &token)
 void PostedListDialog::loadPost(const RsPostedPost &post)
 {
     PostedItem *item = new PostedItem(this, post);
+    connect(item, SIGNAL(vote(RsGxsGrpMsgIdPair,bool)), this, SLOT(submitVote(RsGxsGrpMsgIdPair,bool)));
     QLayout *alayout = ui.scrollAreaWidgetContents->layout();
     alayout->addWidget(item);
 }
@@ -391,16 +429,14 @@ void PostedListDialog::loadRequest(const TokenQueue *queue, const TokenRequest &
 	std::cerr << std::endl;
 				
 	if (queue == mPostedQueue)
-	{
+        {
 		/* now switch on req */
-                switch(req.mType)
+                switch(req.mUserType)
 		{
-                    case TOKENREQ_GROUPINFO:
+
+                    case TOKEN_USER_TYPE_TOPIC:
                         switch(req.mAnsType)
                         {
-                            case RS_TOKREQ_ANSTYPE_ACK:
-                                acknowledgeGroup(req.mToken);
-                                break;
                             case RS_TOKREQ_ANSTYPE_SUMMARY:
                                 loadGroupSummary(req.mToken);
                                 break;
@@ -409,11 +445,11 @@ void PostedListDialog::loadRequest(const TokenQueue *queue, const TokenRequest &
                                 break;
                         }
                     break;
-                    case TOKENREQ_MSGINFO:
+                    case TOKEN_USER_TYPE_POST:
                         switch(req.mAnsType)
                         {
                             case RS_TOKREQ_ANSTYPE_ACK:
-                                acknowledgeMsg(req.mToken);
+                                acknowledgePostMsg(req.mToken);
                                 break;
                             case RS_TOKREQ_ANSTYPE_DATA:
                                 loadPostData(req.mToken);
@@ -422,13 +458,37 @@ void PostedListDialog::loadRequest(const TokenQueue *queue, const TokenRequest &
                                 std::cerr << "Error, unexpected anstype:" << req.mAnsType << std::endl;
                                 break;
                         }
-
+                        break;
+                     case TOKEN_USER_TYPE_VOTE:
+                        switch(req.mAnsType)
+                        {
+                            case RS_TOKREQ_ANSTYPE_ACK:
+                                acknowledgeVoteMsg(req.mToken);
+                                break;
+                            default:
+                                std::cerr << "Error, unexpected anstype:" << req.mAnsType << std::endl;
+                                break;
+                        }
+                        break;
                     default:
                             std::cerr << "PostedListDialog::loadRequest() ERROR: INVALID TYPE";
                             std::cerr << std::endl;
                             break;
 		}
 	}
+
+        /* now switch on req */
+        switch(req.mType)
+        {
+            case TOKENREQ_GROUPINFO:
+                switch(req.mAnsType)
+                {
+                    case RS_TOKREQ_ANSTYPE_ACK:
+                        acknowledgeGroup(req.mToken);
+                        break;
+                }
+            break;
+        }
 }
 
 
@@ -442,10 +502,10 @@ void PostedListDialog::loadRequest(const TokenQueue *queue, const TokenRequest &
 void PostedListDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo)
 {
     groupItemInfo.id = QString::fromStdString(groupInfo.mGroupId);
-groupItemInfo.name = QString::fromUtf8(groupInfo.mGroupName.c_str());
-//groupItemInfo.description = QString::fromUtf8(groupInfo.forumDesc);
-groupItemInfo.popularity = groupInfo.mPop;
-groupItemInfo.lastpost = QDateTime::fromTime_t(groupInfo.mLastPost);
+    groupItemInfo.name = QString::fromUtf8(groupInfo.mGroupName.c_str());
+    //groupItemInfo.description = QString::fromUtf8(groupInfo.forumDesc);
+    groupItemInfo.popularity = groupInfo.mPop;
+    groupItemInfo.lastpost = QDateTime::fromTime_t(groupInfo.mLastPost);
 
 
 }

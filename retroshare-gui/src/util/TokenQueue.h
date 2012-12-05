@@ -26,6 +26,7 @@
 
 #include <QWidget>
 #include <QTimer>
+#include <QMutex>
 #include <list>
 #include <string>
 #include <sys/time.h>
@@ -37,7 +38,7 @@
 
 #define TOKENREQ_GROUPINFO		1
 #define TOKENREQ_MSGINFO		2
-#define TOKENREQ_MSGRELATEDINFO	3
+#define TOKENREQ_MSGRELATEDINFO	        3
 
 
 class TokenQueue;
@@ -99,6 +100,8 @@ public:
 	bool checkForRequest(uint32_t token);
 	void loadRequest(const TokenRequest &req);
 
+        bool activeRequestExist(const uint32_t& userType);
+        void activeRequestTokens(const uint32_t& userType, std::list<uint32_t>& tokens);
 protected:
 	void doPoll(float dt);
 
@@ -111,6 +114,7 @@ private:
 
 	RsTokenService *mService;
 	TokenResponse *mResponder;
+        QMutex mTokenMtx;
 
 	QTimer *mTrigger;
 };

@@ -291,7 +291,7 @@ bool RsGxsPostedSerialiser::serialiseGxsPostedVoteItem(RsGxsPostedVoteItem* item
     /* skip the header */
     offset += 8;
 
-    ok &= setRawUInt32(data, tlvsize, &offset, item->mVote.mDirection);
+    ok &= setRawUInt8(data, tlvsize, &offset, item->mVote.mDirection);
 
     if(offset != tlvsize)
     {

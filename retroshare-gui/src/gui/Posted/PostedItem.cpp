@@ -40,26 +40,28 @@
 PostedItem::PostedItem(PostedHolder *postHolder, const RsPostedPost &post)
 :QWidget(NULL), mPostHolder(postHolder), mPost(post)
 {
-	setupUi(this);
-	setAttribute ( Qt::WA_DeleteOnClose, true );
+    setupUi(this);
+    setAttribute ( Qt::WA_DeleteOnClose, true );
 
-        QDateTime qtime;
-        qtime.setTime_t(mPost.mMeta.mPublishTs);
-        QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
-        dateLabel->setText(timestamp);
-	fromLabel->setText(QString::fromUtf8(post.mMeta.mAuthorId.c_str()));
-        titleLabel->setText("<a href=" + QString::fromStdString(post.mLink) +
-                           "><span style=\" text-decoration: underline; color:#0000ff;\">" +
-                           QString::fromStdString(post.mMeta.mMsgName) + "</span></a>");
-        siteLabel->setText("<a href=" + QString::fromStdString(post.mLink) +
-                           "><span style=\" text-decoration: underline; color:#0000ff;\">" +
-                           QString::fromStdString(post.mLink) + "</span></a>");
+    QDateTime qtime;
+    qtime.setTime_t(mPost.mMeta.mPublishTs);
+    QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
+    dateLabel->setText(timestamp);
+    fromLabel->setText(QString::fromUtf8(post.mMeta.mAuthorId.c_str()));
+    titleLabel->setText("<a href=" + QString::fromStdString(post.mLink) +
+                       "><span style=\" text-decoration: underline; color:#0000ff;\">" +
+                       QString::fromStdString(post.mMeta.mMsgName) + "</span></a>");
+    siteLabel->setText("<a href=" + QString::fromStdString(post.mLink) +
+                       "><span style=\" text-decoration: underline; color:#0000ff;\">" +
+                       QString::fromStdString(post.mLink) + "</span></a>");
 
-        scoreLabel->setText(QString("1"));
+    scoreLabel->setText(QString("1"));
 
-	connect( commentButton, SIGNAL( clicked() ), this, SLOT( loadComments() ) );
+    connect( commentButton, SIGNAL( clicked() ), this, SLOT( loadComments() ) );
+    connect( voteUpButton, SIGNAL(clicked()), this, SLOT(makeUpVote()));
+    connect( voteDownButton, SIGNAL(clicked()), this, SLOT( makeDownVote()));
 
-	return;
+    return;
 }
 
 RsPostedPost PostedItem::getPost() const
@@ -67,9 +69,25 @@ RsPostedPost PostedItem::getPost() const
     return mPost;
 }
 
+void PostedItem::makeDownVote()
+{
+    RsGxsGrpMsgIdPair msgId;
+    msgId.first = mPost.mMeta.mMsgId;
+    msgId.second = mPost.mMeta.mGroupId;
+    emit vote(msgId, false);
+}
+
+void PostedItem::makeUpVote()
+{
+    RsGxsGrpMsgIdPair msgId;
+    msgId.first = mPost.mMeta.mMsgId;
+    msgId.second = mPost.mMeta.mGroupId;
+    emit vote(msgId, true);
+}
+
 void PostedItem::loadComments()
 {
-	std::cerr << "PostedItem::loadComments() Requesting for " << mThreadId;
-	std::cerr << std::endl;
-        mPostHolder->showComments(mPost);
+    std::cerr << "PostedItem::loadComments() Requesting for " << mThreadId;
+    std::cerr << std::endl;
+    mPostHolder->showComments(mPost);
 }

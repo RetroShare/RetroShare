@@ -49,6 +49,12 @@ public:
     bool testGrpMetaModRequest();
     bool testMsgMetaModRequest();
 
+
+    // testing verification (publish).
+    // Strategy is
+    // inject a group which you only have the public signature for
+    // The injection can be done via
+
 private:
 
     // to be called at start

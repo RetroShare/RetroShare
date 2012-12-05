@@ -37,6 +37,7 @@
 
 #include "util/TokenQueue.h"
 #include "retroshare-gui/RsAutoUpdatePage.h"
+#include "PostedUserTypes.h"
 
 
 class CommentHolder;
@@ -69,6 +70,9 @@ private slots:
     void newTopic();
     void showGroupDetails();
     void newPost();
+    void refreshTopics();
+
+    void submitVote(const RsGxsGrpMsgIdPair& msgId, bool up);
 
 private:
 
@@ -86,12 +90,19 @@ private:
     void 	loadGroupSummary_CurrentForum(const uint32_t &token);
 
 
-    void        acknowledgeMsg(const uint32_t &token);
+    // posts
+    void        acknowledgePostMsg(const uint32_t &token);
     void        loadPostData(const uint32_t &token);
     void 	insertThreads();
     void 	loadCurrentTopicThreads(const std::string &forumId);
     void 	requestGroupThreadData_InsertThreads(const std::string &forumId);
     void 	loadGroupThreadData_InsertThreads(const uint32_t &token);
+
+    // votes
+
+    void       acknowledgeVoteMsg(const uint32_t& token);
+    void       loadVoteData(const uint32_t &token);
+
 
 
     void 	insertGroupData(const std::list<RsGroupMetaData> &groupList);

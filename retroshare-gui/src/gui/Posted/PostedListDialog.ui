@@ -23,7 +23,7 @@
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <property name="spacing">
-         <number>-1</number>
+         <number>6</number>
         </property>
         <property name="margin">
          <number>0</number>
@@ -71,6 +71,13 @@
          </widget>
         </item>
        </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="refreshButton">
+       <property name="text">
+        <string>Refresh</string>
+       </property>
       </widget>
      </item>
      <item>
@@ -168,13 +175,6 @@
        <item row="0" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
-          <widget class="QPushButton" name="refreshButton">
-           <property name="text">
-            <string>Refresh</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <spacer name="horizontalSpacer_2">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -220,8 +220,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>406</width>
-            <height>333</height>
+            <width>472</width>
+            <height>327</height>
            </rect>
           </property>
           <property name="sizePolicy">

@@ -50,6 +50,11 @@ public:
 
 private slots:
         void loadComments();
+        void makeUpVote();
+        void makeDownVote();
+
+signals:
+        void vote(const RsGxsGrpMsgIdPair& msgId, bool up);
 
 private:
 	uint32_t     mType;

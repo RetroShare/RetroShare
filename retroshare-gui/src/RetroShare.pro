@@ -197,8 +197,8 @@ bitdht {
         LIBS += ../../libbitdht/src/lib/libbitdht.a
         PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
 
-        #LIBS += C:\Development\Rs\v0.5-gxs-b1\libbitdht\libbitdht-build-desktop\lib\libbitdht.a
-        #PRE_TARGETDEPS *= C:\Development\Rs\v0.5-gxs-b1\libbitdht\libbitdht-build-desktop\lib\libbitdht.a
+#        LIBS += C:\Development\Rs\v0.5-gxs-b1\libbitdht\libbitdht-build-desktop\lib\libbitdht.a
+ #       PRE_TARGETDEPS *= C:\Development\Rs\v0.5-gxs-b1\libbitdht\libbitdht-build-desktop\lib\libbitdht.a
 
         # Chris version.
         #LIBS += ../../libbitdht/libbitdht-build-desktop/lib/libbitdht.a
@@ -988,7 +988,8 @@ posted {
             gui/Posted/PostedComments.h \
             gui/Posted/PostedGroupDialog.h \
     gui/Posted/PostedCreatePostDialog.h \
-    gui/Posted/PostedCreateCommentDialog.h
+    gui/Posted/PostedCreateCommentDialog.h \
+    gui/Posted/PostedUserTypes.h
 
 	FORMS += gui/Posted/PostedDialog.ui \
             gui/Posted/PostedListDialog.ui \

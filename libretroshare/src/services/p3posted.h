@@ -64,6 +64,21 @@ protected:
 
 public:
 
+    void generateTopics();
+    /*!
+     * Exists solely for testing
+     */
+    void generatePosts();
+
+    /*!
+     * Exists solely for testing
+     * Generates random votes to existing posts
+     * in the system
+     */
+    void generateVotes();
+
+public:
+
     bool getGroup(const uint32_t &token, std::vector<RsPostedGroup> &group);
     bool getPost(const uint32_t &token, PostedPostResult& posts) ;
     bool getComment(const uint32_t &token, PostedCommentResult& comments) ;
@@ -132,6 +147,11 @@ private:
 
     RsTokenService* mTokenService;
     RsMutex mPostedMutex;
+
+
+    // for data generation
+
+    bool mGeneratingPosts, mGeneratingTopics;
 };
 
 #endif // P3POSTED_H

@@ -1,10 +1,15 @@
 
 #include <algorithm>
 #include <math.h>
+#include <sstream>
 
 #include "p3posted.h"
 #include "gxs/rsgxsflags.h"
 #include "serialiser/rsposteditems.h"
+
+#define NUM_TOPICS_TO_GENERATE 7
+#define NUM_POSTS_TO_GENERATE 8
+#define NUM_VOTES_TO_GENERATE 23
 
 const uint32_t RsPosted::FLAG_MSGTYPE_COMMENT = 0x0001;
 const uint32_t RsPosted::FLAG_MSGTYPE_POST = 0x0002;
@@ -29,7 +34,7 @@ RsPostedVote::RsPostedVote(const RsGxsPostedVoteItem& item)
 
 p3Posted::p3Posted(RsGeneralDataService *gds, RsNetworkExchangeService *nes)
     : RsGenExchange(gds, nes, new RsGxsPostedSerialiser(), RS_SERVICE_GXSV1_TYPE_POSTED), RsPosted(this), mPostedMutex("Posted"),
-    mTokenService(NULL)
+    mTokenService(NULL), mGeneratingTopics(true), mGeneratingPosts(false)
 {
     mTokenService = RsGenExchange::getTokenService();
 }
@@ -41,6 +46,118 @@ void p3Posted::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
 void p3Posted::service_tick()
 {
+    generateTopics();
+
+    //generatePosts();
+}
+
+void p3Posted::generatePosts()
+{
+    if(mGeneratingPosts)
+    {
+        // request topics then chose at random which one to use to generate a post about
+        uint32_t token;
+        RsTokReqOptions opts;
+        opts.mReqType = GXS_REQUEST_TYPE_GROUP_IDS;
+        mTokenService->requestGroupInfo(token, 0, opts);
+        double timeDelta = 2.; // slow tick
+        while(mTokenService->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+        {
+#ifndef WINDOWS_SYS
+        usleep((int) (timeDelta * 1000000));
+#else
+        Sleep((int) (timeDelta * 1000));
+#endif
+        }
+
+        std::list<RsGxsGroupId> grpIds;
+        RsGenExchange::getGroupList(token, grpIds);
+
+
+        // for each group generate NUM_POSTS_TO_GENERATE posts
+        std::list<RsGxsGroupId>::iterator lit = grpIds.begin();
+
+        for(; lit != grpIds.end(); lit++)
+        {
+            RsGxsGroupId& grpId = *lit;
+
+            std::vector<uint32_t> tokens;
+
+            for(int i=0; i < NUM_POSTS_TO_GENERATE; i++)
+            {
+                std::ostringstream ostrm;
+                ostrm << i;
+                std::string link = "link" + ostrm.str();
+
+                RsPostedPost post;
+                post.mLink = link;
+                post.mNotes = link;
+                post.mMeta.mMsgName = link;
+                post.mMeta.mGroupId = grpId;
+
+                submitPost(token, post);
+                tokens.push_back(token);
+            }
+
+            while(!tokens.empty())
+            {
+                std::vector<uint32_t>::iterator vit = tokens.begin();
+
+                for(; vit != tokens.end(); )
+                {
+                    if(mTokenService->requestStatus(*vit) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+                       vit = tokens.erase(vit);
+                    else
+                        vit++;
+                }
+            }
+        }
+
+
+
+
+        // stop generating posts after acknowledging all the ones you created
+        mGeneratingPosts = false;
+    }
+}
+
+void p3Posted::generateTopics()
+{
+    if(mGeneratingTopics)
+    {
+        std::vector<uint32_t> tokens;
+
+        for(int i=0; i < NUM_TOPICS_TO_GENERATE; i++)
+        {
+            std::ostringstream strm;
+            strm << i;
+            std::string topicName = "Topic " + strm.str();
+
+            RsPostedGroup topic;
+            topic.mMeta.mGroupName = topicName;
+
+            uint32_t token;
+            submitGroup(token, topic);
+            tokens.push_back(token);
+        }
+
+
+        while(!tokens.empty())
+        {
+            std::vector<uint32_t>::iterator vit = tokens.begin();
+
+            for(; vit != tokens.end(); )
+            {
+                if(mTokenService->requestStatus(*vit) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+                   vit = tokens.erase(vit);
+                else
+                    vit++;
+            }
+        }
+
+        mGeneratingTopics = false;
+        mGeneratingPosts = true;
+    }
 
 }
 
