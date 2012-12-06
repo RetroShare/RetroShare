@@ -424,10 +424,6 @@ p, li { white-space: pre-wrap; }
         <translation>ID</translation>
     </message>
     <message>
-        <source>Own Blogs</source>
-        <translation>Blogs propios</translation>
-    </message>
-    <message>
         <source>Subscribed Blogs</source>
         <translation>Blogs suscritos</translation>
     </message>
@@ -474,6 +470,10 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Unsubscribe To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎ &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎ p, li { white-space: pre-wrap; }⏎ &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;⏎ &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Cancelar la suscripción al blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>My Blogs</source>
+        <translation>Mis blogs</translation>
     </message>
 </context>
 <context>
@@ -809,10 +809,6 @@ p, li { white-space: pre-wrap; }
         <translation>Activar descarga automática</translation>
     </message>
     <message>
-        <source>Own Channels</source>
-        <translation>Canales propios</translation>
-    </message>
-    <message>
         <source>Subscribed Channels</source>
         <translation>Canales suscritos</translation>
     </message>
@@ -883,6 +879,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Publish rights can&apos;t be restored for this channel.&lt;br/&gt;You&apos;re not the creator of this channel.</source>
         <translation>Los derechos de publicación no se pueden restaurar para este canal.&lt;br/&gt;Porque usted no es el creador de este canal.</translation>
+    </message>
+    <message>
+        <source>My Channels</source>
+        <translation>Mis canales</translation>
     </message>
 </context>
 <context>
@@ -965,11 +965,11 @@ Por favor, elija una para chatear.</translation>
     </message>
     <message>
         <source>Double click to mute/unmute participant</source>
-        <translation type="unfinished"/>
+        <translation>Doble clic para silenciar/activar al participante</translation>
     </message>
     <message>
         <source>Right click to mute/unmute participants</source>
-        <translation type="unfinished"/>
+        <translation>Clic derecho para silenciar/activar los participantes</translation>
     </message>
 </context>
 <context>
@@ -1404,12 +1404,12 @@ Por favor, elija una para chatear.</translation>
         <translation>Restablecer la fuente por defecto</translation>
     </message>
     <message>
-        <source>Paste own certificate link</source>
-        <translation>Pegar enlace del certificado propio</translation>
-    </message>
-    <message>
         <source>appears to be Offline.</source>
         <translation>parece estar fuera de línea.</translation>
+    </message>
+    <message>
+        <source>Paste my certificate link</source>
+        <translation>Pegar el enlace de mi certificado</translation>
     </message>
 </context>
 <context>
@@ -1499,14 +1499,6 @@ Por favor, elija una para chatear.</translation>
         <translation>Completa </translation>
     </message>
     <message>
-        <source>GPG Key</source>
-        <translation>Llave GPG</translation>
-    </message>
-    <message>
-        <source>Peer has signed my GPG key</source>
-        <translation>El vecino ha firmado mi llave GPG</translation>
-    </message>
-    <message>
         <source>Show Help for Trust Settings and Signing</source>
         <translation>Mostrar la ayuda para la configuración de confianza y firma</translation>
     </message>
@@ -1531,10 +1523,6 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Firmar una llave GPG no se puede deshacer, así que hágalo con prudencia.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <source>Sign GPG key</source>
-        <translation>Firmar llave GPG</translation>
-    </message>
-    <message>
         <source>Deny Friend</source>
         <translation>Bloquear amigo</translation>
     </message>
@@ -1553,10 +1541,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Error : cannot get peer details.</source>
         <translation>Error: No se pueden obtener los detalles del vecino.</translation>
-    </message>
-    <message>
-        <source>Your key is signed by : </source>
-        <translation>Su llave GPG está firmado por: </translation>
     </message>
     <message>
         <source>Peer key is signed by : </source>
@@ -1583,14 +1567,6 @@ p, li { white-space: pre-wrap; }
         <translation>No ha determinado el nivel de confianza en este vecino.</translation>
     </message>
     <message>
-        <source>Peer has authenticated me as a friend and did sign my GPG key</source>
-        <translation>Este vecino le ha autentificado como amigo y firmado su llave GPG</translation>
-    </message>
-    <message>
-        <source>Peer has not authenticated me as a friend and did not sign my GPG key</source>
-        <translation>Este vecino no le ha autentificado como amigo y tampoco ha firmado su llave GPG</translation>
-    </message>
-    <message>
         <source>Signature Failure</source>
         <translation>Error de firma</translation>
     </message>
@@ -1615,6 +1591,78 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Other info</source>
         <translation>Más información</translation>
+    </message>
+    <message>
+        <source>My key is signed by : </source>
+        <translation>Mi llave está firmada por:</translation>
+    </message>
+    <message>
+        <source>Peer has authenticated me as a friend and did sign my PGP key</source>
+        <translation>Este vecino me ha autenticado como amigo y firmó mi llave GPG</translation>
+    </message>
+    <message>
+        <source>Peer has not authenticated me as a friend and did not sign my PGP key</source>
+        <translation>Este vecino no me ha autenticado como amigo y no firmó mi clave PGP</translation>
+    </message>
+    <message>
+        <source>PGP Key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer has signed my PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Sign PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Services</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;User service permissions&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This tab allows you to finely tune which services each of your contacts is allowed to use with you.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Some services (Discovery, anonymous routing) can be switched off globally, which always overrides the settings per-user.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Anonymous routing</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Discovery</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling this means that forums and channels posts will not be passed from you to this friend, and items coming from this friend will be dropped.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forums/Channels</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation>Chat</translation>
+    </message>
+    <message>
+        <source>PushButton</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1804,20 +1852,12 @@ p, li { white-space: pre-wrap; }
         <translation>Firmantes</translation>
     </message>
     <message>
-        <source>It seems your friend is already registered. Adding it might just set it&apos;s ip address.</source>
-        <translation>Parece que su amigo ya está registrado. Volver a añadirle solamente cambiaría su dirección IP.</translation>
-    </message>
-    <message>
         <source>Options</source>
         <translation>Opciones</translation>
     </message>
     <message>
         <source>Add friend to group:</source>
         <translation>Añadir amigo a grupo:</translation>
-    </message>
-    <message>
-        <source>Authenticate friend (Sign GPG Key)</source>
-        <translation>Autentificar amigo (firmar llave GPG)</translation>
     </message>
     <message>
         <source>Add as friend to connect with</source>
@@ -1960,10 +2000,6 @@ p, li { white-space: pre-wrap; }
         <translation>Detalles de la solicitud</translation>
     </message>
     <message>
-        <source>Cannot get peer details of gpg key %1</source>
-        <translation>No se pudo obtener detalles de la clave gpg de su vecino %1</translation>
-    </message>
-    <message>
         <source>You have a friend request from</source>
         <translation>Tiene una solicitud de amistad de</translation>
     </message>
@@ -1987,6 +2023,34 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
         <translation>Su certificado se ha copiado al portapapeles. Péguelo y envíeselo a un amigo por email u otro medio</translation>
+    </message>
+    <message>
+        <source>This peer is already on your friend list. Adding it might just set it&apos;s ip address.</source>
+        <translation>Este vecino ya está en su lista de amigos. Añadiendolo sólo podrá establecer su dirección ip.</translation>
+    </message>
+    <message>
+        <source>Cannot get peer details of PGP key %1</source>
+        <translation>No se puede obtener detalles de pares con llave GPG %1</translation>
+    </message>
+    <message>
+        <source>Authenticate friend (Sign PGP Key)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Service permissions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Anonymous routing</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Discovery</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forums/channels</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2510,12 +2574,11 @@ Do you want to save your changes?</source>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; You can set your Thumbnail Image for your Channel Post.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; You can use Drag and Drop to Attach Files.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Set your Subject and Description for your Channel Post.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; You can View your Attached Files on Attachments Tab.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎ &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎ p, li { white-space: pre-wrap; }⏎ &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎ &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Puede definir una imagen en miniatura para sus publicaciones en el canal.&lt;/span&gt;&lt;/p&gt;⏎ &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Puede utilizar arrastrar y soltar para adjuntar archivos.&lt;/span&gt;&lt;/p&gt;⏎ &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Establecer el tema y la descripción para sus publicaciones en el canal.&lt;/span&gt;&lt;/p&gt;⏎ &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Puede ver sus archivos adjuntos en la pestaña Adjuntos.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;Attachments:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt; Use Drag and Drop / Add Files button, to Hash new files.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Copy/Paste RetroShare links from your shares&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2652,12 +2715,12 @@ p, li { white-space: pre-wrap; }
         <translation>Añadir otro archivo</translation>
     </message>
     <message>
-        <source>Paste own certificate link</source>
-        <translation>Pegar enlace del certificado propio</translation>
-    </message>
-    <message>
         <source>Start New Thread</source>
         <translation>Iniciar nuevo tema</translation>
+    </message>
+    <message>
+        <source>Paste my certificate link</source>
+        <translation>Pegar el enlace de mi certificado</translation>
     </message>
 </context>
 <context>
@@ -2786,10 +2849,6 @@ p, li { white-space: pre-wrap; }
         <translation>Pegar el enlace completo de RetroShare</translation>
     </message>
     <message>
-        <source>Paste own certificate link</source>
-        <translation>Pegar enlace del certificado propio</translation>
-    </message>
-    <message>
         <source>In Reply to</source>
         <translation>Como respuesta a</translation>
     </message>
@@ -2804,6 +2863,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Add Extra File</source>
         <translation>Añadir otro archivo</translation>
+    </message>
+    <message>
+        <source>Paste my certificate link</source>
+        <translation>Pegar el enlace de mi certificado</translation>
     </message>
 </context>
 <context>
@@ -2823,6 +2886,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Edit Group</source>
         <translation>Editar grupo</translation>
+    </message>
+    <message>
+        <source>Friends</source>
+        <translation>Amigos</translation>
     </message>
 </context>
 <context>
@@ -4000,10 +4067,6 @@ p, li { white-space: pre-wrap; }
         <translation>Vista previa</translation>
     </message>
     <message>
-        <source>Your Forums</source>
-        <translation>Sus foros</translation>
-    </message>
-    <message>
         <source>Subscribed Forums</source>
         <translation>Foros suscritos</translation>
     </message>
@@ -4159,6 +4222,10 @@ p, li { white-space: pre-wrap; }
         <source>Search Content</source>
         <translation>Buscar por contenido</translation>
     </message>
+    <message>
+        <source>My Forums</source>
+        <translation>Mis foros</translation>
+    </message>
 </context>
 <context>
     <name>ForumsFillThread</name>
@@ -4173,6 +4240,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>none</source>
         <translation>ningúno</translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>Desconocido</translation>
     </message>
 </context>
 <context>
@@ -4264,10 +4335,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>PrintPreview</source>
         <translation>Vista previa</translation>
-    </message>
-    <message>
-        <source>Your Forums</source>
-        <translation>Sus foros</translation>
     </message>
     <message>
         <source>Subscribed Forums</source>
@@ -4424,6 +4491,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>You can&apos;t reply to a non-existant Message</source>
         <translation>No puede responder a un mensaje inexistente</translation>
+    </message>
+    <message>
+        <source>My Forums</source>
+        <translation>Mis foros</translation>
     </message>
 </context>
 <context>
@@ -4709,10 +4780,6 @@ p, li { white-space: pre-wrap; }
         <translation>Mostrar</translation>
     </message>
     <message>
-        <source>Edit Personal message</source>
-        <translation>Editar su mensaje personal</translation>
-    </message>
-    <message>
         <source>Group Chat</source>
         <translation>Chat de grupo</translation>
     </message>
@@ -4763,14 +4830,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>A</source>
         <translation>A</translation>
-    </message>
-    <message>
-        <source>Set your Personal Message</source>
-        <translation>Poner su mensaje personal</translation>
-    </message>
-    <message>
-        <source>Edit your status Message</source>
-        <translation>Editar su mensaje de estado</translation>
     </message>
     <message>
         <source>Browse Message History</source>
@@ -4863,6 +4922,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Search</source>
         <translation>Buscar</translation>
+    </message>
+    <message>
+        <source>Edit status message</source>
+        <translation>Editar mensaje de estado</translation>
+    </message>
+    <message>
+        <source>Set your status message</source>
+        <translation>Establecer su mensaje de estado</translation>
+    </message>
+    <message>
+        <source>Edit your status message</source>
+        <translation>Editar su mensaje de estado</translation>
     </message>
 </context>
 <context>
@@ -5005,40 +5076,16 @@ p, li { white-space: pre-wrap; }
         <translation>Crear un nuevo perfil</translation>
     </message>
     <message>
-        <source>Your profile is associated to a GPG key</source>
-        <translation>Su perfil está vinculado con una llave GPG</translation>
-    </message>
-    <message>
         <source>Name</source>
         <translation>Nombre</translation>
-    </message>
-    <message>
-        <source>Enter here your nickname</source>
-        <translation>Introduzca aquí su apodo</translation>
     </message>
     <message>
         <source>Email</source>
         <translation>Email</translation>
     </message>
     <message>
-        <source>Be careful: this email will be visible to your friends and friends 
-of your friends. This information is required by GPG, but to stay 
-anonymous, you can use a fake email.</source>
-        <translation>Tenga cuidado: Esta direción de email estará visible a sus amigos y 
-amigos de sus amigos. Esta información es necesaria para GPG, 
-pero puedes poner una direción inventada.</translation>
-    </message>
-    <message>
-        <source>This Password is for GPG</source>
-        <translation>Esta contraseña es para GPG</translation>
-    </message>
-    <message>
         <source>Password</source>
         <translation>Contraseña</translation>
-    </message>
-    <message>
-        <source>Put a strong password here. This password protects your GPG key.</source>
-        <translation>Piense una contraseña fuerte. Protegerá su llave GPG.</translation>
     </message>
     <message>
         <source>Location</source>
@@ -5057,24 +5104,12 @@ pero puedes poner una direción inventada.</translation>
         <translation>Crear un nuevo lugar</translation>
     </message>
     <message>
-        <source>Generate GPG key Failure</source>
-        <translation>Error al generar la llave GPG</translation>
-    </message>
-    <message>
         <source>Location field is required with a minimum of 3 characters</source>
         <translation>El campo lugar requiere como mínimo 3 letras</translation>
     </message>
     <message>
         <source>All fields are required with a minimum of 3 characters</source>
         <translation>Todos los campos requieren como mínimo 3 letras</translation>
-    </message>
-    <message>
-        <source>Generating new GPG key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
-
-Fill in your GPG password when asked, to sign your new key.</source>
-        <translation>Generando una llave GPG, por favor sea paciente: este proceso necesita generar números primos grandes y puede tardar un poco en equipos lentos.
-
-Introduzca su contraseña cuando se le pregunte para firmar su nueva llave GPG.</translation>
     </message>
     <message>
         <source>Generate ID Failure</source>
@@ -5097,14 +5132,6 @@ Introduzca su contraseña cuando se le pregunte para firmar su nueva llave GPG.<
         <translation>[Requerido] Esta contraseña protege su llave GPG.</translation>
     </message>
     <message>
-        <source>It looks like you don&apos;t own any Profile (GPG keys). Please fill in the form below to generate one, or import an existing profile.</source>
-        <translation>Parece que no tiene ningún perfil (Llaves GPG). Por favor, rellene el siguiente formulario para generar una o importar un perfil existente.</translation>
-    </message>
-    <message>
-        <source>Generate a new identity</source>
-        <translation>Generar nueva identidad</translation>
-    </message>
-    <message>
         <source>Import new identity</source>
         <translation>Importar nueva identidad</translation>
     </message>
@@ -5115,14 +5142,6 @@ Introduzca su contraseña cuando se le pregunte para firmar su nueva llave GPG.<
     <message>
         <source>Use identity</source>
         <translation>Usar la identidad</translation>
-    </message>
-    <message>
-        <source>Your profile is associated to a GPG key. RetroShare currently ignores DSA keys.</source>
-        <translation>Su perfil está asociado a una clave GPG. RetroShare ignora actualmente las claves DSA.</translation>
-    </message>
-    <message>
-        <source>Generate New Identity</source>
-        <translation>Generar una nueva identidad</translation>
     </message>
     <message>
         <source>Create new Identity</source>
@@ -5185,10 +5204,6 @@ y utilizar el botón Importar para cargarla</translation>
         <translation>Puede instalar RetroShare en diferentes lugares con la misma identidad. Para ello, basta con exportar la identidad seleccionada, e importarla en el nuevo equipo, a continuación, cree un nuevo lugar con ella.</translation>
     </message>
     <message>
-        <source>Put a meaningful location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same identity (gpg key).</source>
-        <translation>Ponga un lugar significativo, ej.: hogar, portátil, etc. Este campo se utilizará para diferenciar las diferentes instalaciones con la misma identidad (clave gpg).</translation>
-    </message>
-    <message>
         <source>Your identity was not saved. An error occurred.</source>
         <translation>Su identidad no se ha guardado. Ocurrió un error.</translation>
     </message>
@@ -5197,20 +5212,72 @@ y utilizar el botón Importar para cargarla</translation>
         <translation>Su identidad se importó con éxito:</translation>
     </message>
     <message>
-        <source>RetroShare uses gpg keys for identity management.</source>
-        <translation>RetroShare utiliza claves gpg para la gestión de identidades.</translation>
-    </message>
-    <message>
         <source>You can create a new identity with this form.</source>
         <translation>Puede crear una nueva identidad con este formulario.</translation>
     </message>
     <message>
-        <source>You can use an existing identity (i.e. a gpg key pair), from the list below, or create a new one with this form.</source>
-        <translation>Puede utilizar una identidad existente (es decir, un par de claves gpg), de la siguiente lista, o crear una nueva con este formulario.</translation>
-    </message>
-    <message>
         <source>Failed to Generate your new Certificate, maybe PGP password is wrong!</source>
         <translation>¡Error al generar el nuevo certificado, tal vez la contraseña PGP es incorrecta!</translation>
+    </message>
+    <message>
+        <source>It looks like you don&apos;t own any profile (PGP keys). Please fill in the form below to create one, or import an existing profile.</source>
+        <translation>Parece que no tiene ningún perfil (llaves GPG). Por favor, rellene el siguiente formulario para crear o importar un perfil existente.</translation>
+    </message>
+    <message>
+        <source>Your profile is associated with a PGP key. RetroShare currently ignores DSA keys.</source>
+        <translation>Su perfil está asociado a una llave GPG. RetroShare actualmente ignora llaves DSA.</translation>
+    </message>
+    <message>
+        <source>Enter your nickname here</source>
+        <translation>Introduzca su nombre de usuario aquí</translation>
+    </message>
+    <message>
+        <source>Be careful: this email will be visible to your friends and friends 
+of your friends. This information is required by PGP, but to stay 
+anonymous, you can use a fake email.</source>
+        <translation>Tenga cuidado: este correo será visible para sus amigos y ⏎ los amigos de sus amigos. Esta información es requerida por GPG, pero ⏎ para una instalación anónima, puede utilizar un correo electrónico falso.</translation>
+    </message>
+    <message>
+        <source>This Password is for PGP</source>
+        <translation>Esta contraseña es para GPG</translation>
+    </message>
+    <message>
+        <source>Put a strong password here. This password protects your PGP key.</source>
+        <translation>Ponga una contraseña segura aquí. Esta contraseña protege su llave GPG.</translation>
+    </message>
+    <message>
+        <source>Put a meaningful location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same identity (PGP key).</source>
+        <translation>Ponga un lugar significativo. por ejemplo: casa, ordenador portátil, etc. Este campo se utiliza para diferenciar las diferentes instalaciones con la misma identidad (llave GPG).</translation>
+    </message>
+    <message>
+        <source>Create new identity</source>
+        <translation>Crear una nueva identidad</translation>
+    </message>
+    <message>
+        <source>Your profile is associated with a PGP key</source>
+        <translation>Su perfil está asociado a una llave GPG</translation>
+    </message>
+    <message>
+        <source>Create a new identity</source>
+        <translation>Crear una nueva identidad</translation>
+    </message>
+    <message>
+        <source>RetroShare uses PGP keys for identity management.</source>
+        <translation>RetroShare utiliza llaves GPG para la gestión de identidades.</translation>
+    </message>
+    <message>
+        <source>You can use an existing identity (i.e. a PGP key pair), from the list below, or create a new one with this form.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Generate PGP key Failure</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Generating new PGP key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
+
+Fill in your PGP password when asked, to sign your new key.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6054,22 +6121,6 @@ p, li { white-space: pre-wrap; }
         <translation>ID de la llave</translation>
     </message>
     <message>
-        <source>GPG Name</source>
-        <translation>Nombre GPG</translation>
-    </message>
-    <message>
-        <source>GPG Email</source>
-        <translation>Email GPG</translation>
-    </message>
-    <message>
-        <source>GPG Id</source>
-        <translation>ID GPG</translation>
-    </message>
-    <message>
-        <source>GPG Hash</source>
-        <translation>Hash GPG</translation>
-    </message>
-    <message>
         <source>Reputation</source>
         <translation>Reputación</translation>
     </message>
@@ -6081,6 +6132,22 @@ p, li { white-space: pre-wrap; }
         <source>Overall Rating</source>
         <translation>Valoración general</translation>
     </message>
+    <message>
+        <source>PGP Name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Email</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Hash</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>IdEditDialog</name>
@@ -6091,22 +6158,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Key ID</source>
         <translation>ID de la llave</translation>
-    </message>
-    <message>
-        <source>GPG Name</source>
-        <translation>Nombre GPG</translation>
-    </message>
-    <message>
-        <source>GPG Email</source>
-        <translation>Email GPG</translation>
-    </message>
-    <message>
-        <source>GPG Hash</source>
-        <translation>Hash GPG</translation>
-    </message>
-    <message>
-        <source>GPG Id</source>
-        <translation>ID GPG</translation>
     </message>
     <message>
         <source>New Identity</source>
@@ -6125,8 +6176,24 @@ p, li { white-space: pre-wrap; }
         <translation>Crear/Actualizar ID</translation>
     </message>
     <message>
-        <source>Gpg Associated ID</source>
-        <translation> ID asociada a GPG</translation>
+        <source>PGP Name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Email</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Hash</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Associated ID</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7383,16 +7450,16 @@ Do you want to save message ?</source>
         <translation>Añadir a amigo</translation>
     </message>
     <message>
-        <source>Share Files for your Friends</source>
-        <translation>Compartir archivos con sus amigos</translation>
-    </message>
-    <message>
         <source>Search Friends</source>
         <translation>Buscar a amigos</translation>
     </message>
     <message>
         <source>Search</source>
         <translation>Buscar</translation>
+    </message>
+    <message>
+        <source>Share files for your friends</source>
+        <translation>Compartir archivos con sus amigos</translation>
     </message>
 </context>
 <context>
@@ -7516,10 +7583,6 @@ Do you want to save message ?</source>
         <translation>He autentificado al vecino</translation>
     </message>
     <message>
-        <source>Did I sign his gpg key</source>
-        <translation>He firmado la llave GPG del vecino</translation>
-    </message>
-    <message>
         <source>Did peer authenticated me</source>
         <translation>El vecino me ha autentificado</translation>
     </message>
@@ -7534,10 +7597,6 @@ Do you want to save message ?</source>
     <message>
         <source>Peer ID</source>
         <translation>ID del vecino</translation>
-    </message>
-    <message>
-        <source>Show keys that are not validated by the GPG web of trust</source>
-        <translation>Mostrar las llaves GPG que no estén validadas por la red de confianza</translation>
     </message>
     <message>
         <source>Network Status</source>
@@ -7636,10 +7695,6 @@ Do you want to save message ?</source>
         <translation>Firma personal</translation>
     </message>
     <message>
-        <source>GPG key signed by you</source>
-        <translation>Llave GPG firmado por usted</translation>
-    </message>
-    <message>
         <source>Marginally trusted peer</source>
         <translation>Vecino de confianza marginal</translation>
     </message>
@@ -7680,6 +7735,18 @@ botón derecho y seleccione hacer amigo para conectar.</translation>
     <message>
         <source>Search Peer ID</source>
         <translation>Buscar por ID del vecino</translation>
+    </message>
+    <message>
+        <source>PGP key signed by you</source>
+        <translation>La llave GPG firmada por usted</translation>
+    </message>
+    <message>
+        <source>Did I sign his PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show keys that are not validated by the PGP web of trust</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7884,10 +7951,6 @@ botón derecho y seleccione hacer amigo para conectar.</translation>
 <context>
     <name>NotifyQt</name>
     <message>
-        <source>GPG key passphrase</source>
-        <translation>Contraseña de la llave GPG</translation>
-    </message>
-    <message>
         <source>Wrong password !</source>
         <translation>¡Contraseña errónea!</translation>
     </message>
@@ -7921,7 +7984,11 @@ botón derecho y seleccione hacer amigo para conectar.</translation>
     </message>
     <message>
         <source>Please enter the password to unlock your PGP key:</source>
-        <translation type="unfinished"/>
+        <translation>Por favor, introduzca la contraseña para desbloquear la clave PGP:</translation>
+    </message>
+    <message>
+        <source>PGP key passphrase</source>
+        <translation>Contraseña de la clave GPG</translation>
     </message>
 </context>
 <context>
@@ -7929,6 +7996,25 @@ botón derecho y seleccione hacer amigo para conectar.</translation>
     <message>
         <source>Friend Online</source>
         <translation>Amigo conectado</translation>
+    </message>
+</context>
+<context>
+    <name>OpModeStatus</name>
+    <message>
+        <source>Normal Mode</source>
+        <translation>Modo normal</translation>
+    </message>
+    <message>
+        <source>No Anon D/L</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Gaming Mode</source>
+        <translation>Modo de juego</translation>
+    </message>
+    <message>
+        <source>Low Traffic</source>
+        <translation>Poco tráfico</translation>
     </message>
 </context>
 <context>
@@ -8500,7 +8586,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Plugins is loaded.</source>
-        <translation>Los plugins están cargado.</translation>
+        <translation>Los plugins están cargados.</translation>
     </message>
     <message>
         <source>Unknown status.</source>
@@ -8751,10 +8837,6 @@ de un posible comportamiento malicioso de los plugins.</translation>
         <translation>Siguiente</translation>
     </message>
     <message>
-        <source>Your Topics</source>
-        <translation>Sus temas</translation>
-    </message>
-    <message>
         <source>Subscribed Topics</source>
         <translation>Temas suscritos</translation>
     </message>
@@ -8809,6 +8891,10 @@ de un posible comportamiento malicioso de los plugins.</translation>
     <message>
         <source>AUTHD</source>
         <translation>Autentificado</translation>
+    </message>
+    <message>
+        <source>My Topics</source>
+        <translation>Mis temas</translation>
     </message>
 </context>
 <context>
@@ -8948,10 +9034,6 @@ y utilizar el botón Importar para cargarla</translation>
 <context>
     <name>ProfileWidget</name>
     <message>
-        <source>Edit Personal message</source>
-        <translation>Editar su mensaje personal</translation>
-    </message>
-    <message>
         <source>Copy Certificate</source>
         <translation>Copiar certificado</translation>
     </message>
@@ -9022,6 +9104,10 @@ y utilizar el botón Importar para cargarla</translation>
     <message>
         <source>Addresses list:</source>
         <translation>Lista de direcciones:</translation>
+    </message>
+    <message>
+        <source>Edit status message</source>
+        <translation>Editar mensaje de estado</translation>
     </message>
 </context>
 <context>
@@ -9115,14 +9201,6 @@ archivo bloqueado:
     <message>
         <source>Maybe password is wrong</source>
         <translation>Probablemente la contraseña es incorrecta</translation>
-    </message>
-    <message>
-        <source>Click to add this RetroShare cert to your GPG keyring
-and open the Make Friend Wizard.
-</source>
-        <translation>Pulse aquí para añadir este certificado de RetroShare a su llavero GPG
-y abra el Asistente para hacer amigo.
-</translation>
     </message>
     <message>
         <source>Add file</source>
@@ -9261,10 +9339,6 @@ y abra el Asistente para hacer amigo.
         <translation>Incapaz de hacer la ruta:</translation>
     </message>
     <message>
-        <source>Treatment of collection file has failed</source>
-        <translation>Ha fallado el tratamiento del archivo de la colección</translation>
-    </message>
-    <message>
         <source>Deny friend</source>
         <translation>Bloquear amigo</translation>
     </message>
@@ -9324,14 +9398,6 @@ Reported error is: %2</source>
         <translation>El archivo de colección %1 no se puede abrir.⏎ El error reportado es: %2</translation>
     </message>
     <message>
-        <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although GPG keys are mentioned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
-        <translation>Esta versión de RetroShare está usando OpenPGP SDK. Como efecto secundario, no utiliza el sistema de depósito compartido de claves PGP, pero tiene su propio archivo de claves compartido por todas las instancias de RetroShare. &lt;br&gt;&lt;br&gt;No parece tener un anillo de llaves, aunque las llaves GPG son mencionadas por las cuentas existentes de RetroShare, probablemente debido a que acaba de cambiar a esta nueva versión del programa</translation>
-    </message>
-    <message>
-        <source>Initialization failed. Wrong or missing installation of gpg.</source>
-        <translation>Error en la inicialización. Instalación incorrecta o falta de gpg.</translation>
-    </message>
-    <message>
         <source>An unexpected error occurred. Please report &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</source>
         <translation>Ocurrió un error inesperado. Por favor informe &apos;RsInit::InitRetroShare código de retorno inesperado %1&apos;.</translation>
     </message>
@@ -9356,6 +9422,24 @@ Reported error is: %2</source>
     <message>
         <source>Directory is accessible by anonymous tunnels from any friend</source>
         <translation>El directorio es accesible por túneles anónimos desde cualquier amigo</translation>
+    </message>
+    <message>
+        <source>Failed to process collection file</source>
+        <translation>No se pudo procesar el archivo de colección</translation>
+    </message>
+    <message>
+        <source>Click to add this RetroShare cert to your PGP keyring
+and open the Make Friend Wizard.
+</source>
+        <translation>Pulse aquí para añadir este certificado de RetroShare a su archivo de llaves GPG⏎ y abra el Asistente para añadir amigos.\n</translation>
+    </message>
+    <message>
+        <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although PGP keys are mentioned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Initialization failed. Wrong or missing installation of PGP.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9935,10 +10019,6 @@ Reducing image to %1x%2 pixels?</source>
         <translation>Incluye archivos de su lista de archivos en los resultados de la búsqueda</translation>
     </message>
     <message>
-        <source>Include own files</source>
-        <translation>Incluir archivos propios</translation>
-    </message>
-    <message>
         <source>Search inside &quot;browsable&quot; files of your friends</source>
         <translation>Buscar dentro de las  carpetas navegables de sus amigos</translation>
     </message>
@@ -10011,6 +10091,10 @@ en la red (siempre informar de archivos disponibles)</translation>
     <message>
         <source>Close all Search Results</source>
         <translation>Cerrar todos los resultados de búsqueda</translation>
+    </message>
+    <message>
+        <source>Include my files</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -10139,26 +10223,6 @@ en la red (siempre informar de archivos disponibles)</translation>
         <translation>Con cortafuegos</translation>
     </message>
     <message>
-        <source>The DHT allows you to answer connection 
-requests from your friends using BitTorrent's DHT. 
-It greatly improves the connectivity. 
-
-The Discovery service sends locations and GPG 
-identities of your trusted contacts to connected 
-peers, to help them choose new friends. 
-The friendship is never automatic however, and both 
-peers still need to trust each other to allow connection. </source>
-        <translation>El DHT le permite responder a las peticiones de 
-conexión de sus amigos utilizando DHT de BitTorrent.
-Esto mejora notablemente la conectividad. 
-
-El servicio de descubrimiento envía ubicaciones e identidades 
-GPG de sus contactos de confianza a sus amigos conectados, 
-para ayudarles a elegir a nuevos amigos. Sin embargo, la 
-amistad nunca es automática y ambos vecinos todavía 
-necesitarán darse confianza entre sí para permitir la conexión. </translation>
-    </message>
-    <message>
         <source>Public: DHT &amp; Discovery</source>
         <translation>Público: DHT &amp; descubrimiento</translation>
     </message>
@@ -10231,10 +10295,6 @@ necesitarán darse confianza entre sí para permitir la conexión. </translation
         <translation>Turtle router</translation>
     </message>
     <message>
-        <source>Max average tunnel request forwarded per second:</source>
-        <translation>Promedio máximo de peticiones de túnel enviadas por segundo:</translation>
-    </message>
-    <message>
         <source>Server</source>
         <translation>Servidor</translation>
     </message>
@@ -10258,16 +10318,6 @@ behind a firewall or a VPN.</source>
         <translation>Si desmarca esto, RetroShare sólo puede determinar su IP ⏎ cuando se conecta a alguien. Si deja esto marcado le ayudará ⏎ a conectar cuando tiene pocos amigos. También ayuda si está ⏎ tras de un cortafuegos o una VPN.</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;Warning&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;This tab contains hard-core  parameters which are unlikely to need modification. Don&apos;t change them unless you really know what you&apos;re doing. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎ &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎ p, li { white-space: pre-wrap; }⏎ &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎ &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt;Aviso&lt;/span&gt;&lt;/p&gt;⏎ &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt;&lt;/p&gt;⏎ &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;Esta ficha contiene parámetros que es poco probable que necesiten modificación. No los cambie a menos que realmente sepa lo que está haciendo. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>This value controls how many tunnel request your peer can forward per second. 
 
 If you have a large internet bandwidth, you may raise this up to 30-40, to allow
@@ -10276,6 +10326,41 @@ many small packets that can significantly slow down your own file transfer.
 
 The default value is 20.</source>
         <translation>Este valor controla el número de túneles que solicitan sus pares para reenviar por segundo. ⏎ ⏎ Si tiene un gran ancho de banda de Internet, puede aumentar esto a 30-40, para permitir⏎ pasar estadísticamente más túneles. Tenga mucho cuidado, ya que esto genera ⏎ muchos paquetes pequeños que pueden ralentizar considerablemente su propia transferencia de archivos. ⏎ ⏎ El valor por defecto es 20.</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;Warning&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;This tab contains hard-core  parameters which are unlikely to need modification. Don&apos;t change them unless you really know what you&apos;re doing. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎ &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎ p, li { white-space: pre-wrap; }⏎ &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎ &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt;Aviso&lt;/span&gt;&lt;/p&gt;⏎ &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt;&lt;/p&gt;⏎ &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;/p&gt;⏎ &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;Esta ficha contiene parámetros que es poco probable que necesiten modificación. No los cambie a menos que realmente sepa lo que está haciendo. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Enable anonymous data routing</source>
+        <translation>Activar enrutamiento de datos anónimos</translation>
+    </message>
+    <message>
+        <source>Unchecking this disables all anonymous routing activity, except cache cleaning. Incoming tunnel requests are discarded, and no tunnel requests are sent to anyone.</source>
+        <translation>Desmarcando esto deshabilita toda la actividad de enrutamiento anónimo, excepto la limpieza de caché. Las peticiones de túneles entrantes se descartarán y ninguna petición de túnel será enviada.</translation>
+    </message>
+    <message>
+        <source>Max. tunnel requests forwarded per second:</source>
+        <translation>Max. peticiones de túnel reenviadas por segundo:</translation>
+    </message>
+    <message>
+        <source>The DHT allows you to answer connection 
+requests from your friends using BitTorrent's DHT. 
+It greatly improves the connectivity. 
+
+The Discovery service sends locations and PGP 
+identities of your trusted contacts to connected 
+peers, to help them choose new friends. 
+The friendship is never automatic however, and both 
+peers still need to trust each other to allow connection. </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -10683,7 +10768,7 @@ p, li { white-space: pre-wrap; }
         <source>Opens a dialog for creating a new profile or 
 adding locations to an existing profile. 
 The current identities/locations will not be affected.</source>
-        <translation>Abra un dialogo para cear un perfil nuevo o 
+        <translation>Abra un dialogo para crear un perfil nuevo o 
 añada lugares a un perfil ya existente.
 Las identidades/lugares actuales no se modificarán.</translation>
     </message>
@@ -10702,10 +10787,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Log In</source>
         <translation>Iniciar sesión</translation>
-    </message>
-    <message>
-        <source>Name (GPG Id) - location:</source>
-        <translation>Nombre (ID GPG) - lugar:</translation>
     </message>
     <message>
         <source>Remember Password</source>
@@ -10750,6 +10831,10 @@ This choice can be reverted in settings.</source>
 
 This choice can be reverted in settings.</source>
         <translation>La contraseña para su certificado SSL (su lugar) se almacena cifrada en el archivo de claves /help.dta. Esto no es seguro. ⏎ ⏎ Su contraseña PGP no será almacenada.⏎ ⏎ Esta elección puede revertirse en las opciones del programa.</translation>
+    </message>
+    <message>
+        <source>Name (PGP Id) - location:</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -10846,36 +10931,28 @@ This choice can be reverted in settings.</source>
 <context>
     <name>StatusMessage</name>
     <message>
-        <source>Personal message</source>
-        <translation>Mensaje personal</translation>
-    </message>
-    <message>
         <source>Status message</source>
         <translation>Mensaje de estado</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Personal message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Mensaje personal &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>Message:</source>
+        <translation>Mensage:</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Enter your Status message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Status message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎ &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎ p, li { white-space: pre-wrap; }⏎ &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎ &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Mensaje de estado&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Introduzca su mensaje de estado&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Enter your message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎ &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎ p, li { white-space: pre-wrap; }⏎ &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎ &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Escriba su mensaje&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>

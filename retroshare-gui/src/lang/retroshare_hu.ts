@@ -424,10 +424,6 @@ p, li { white-space: pre-wrap; }
         <translation>ID</translation>
     </message>
     <message>
-        <source>Own Blogs</source>
-        <translation>Saját blogok</translation>
-    </message>
-    <message>
         <source>Subscribed Blogs</source>
         <translation>Feliratkozások</translation>
     </message>
@@ -478,6 +474,10 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Leiratkozás a blogról&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>My Blogs</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -813,10 +813,6 @@ p, li { white-space: pre-wrap; }
         <translation>Automatikus letöltés engedélyezése</translation>
     </message>
     <message>
-        <source>Own Channels</source>
-        <translation>Saját csatornák</translation>
-    </message>
-    <message>
         <source>Subscribed Channels</source>
         <translation>Feliratkozások</translation>
     </message>
@@ -887,6 +883,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Publish rights can&apos;t be restored for this channel.&lt;br/&gt;You&apos;re not the creator of this channel.</source>
         <translation>A csatorna írási jogai nem visszaállíthatóak.&lt;br/&gt;Nem te vagy a csatorna létrehozója.</translation>
+    </message>
+    <message>
+        <source>My Channels</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1408,12 +1408,12 @@ Please choose one of it to chat with.</translation>
         <translation>Alapértelmezett betűtípus visszaállítása</translation>
     </message>
     <message>
-        <source>Paste own certificate link</source>
-        <translation>Saját tanúsítvány beillesztése</translation>
-    </message>
-    <message>
         <source>appears to be Offline.</source>
         <translation>úgy tűnik kijelentkezett.</translation>
+    </message>
+    <message>
+        <source>Paste my certificate link</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1503,14 +1503,6 @@ Please choose one of it to chat with.</translation>
         <translation>Teljes</translation>
     </message>
     <message>
-        <source>GPG Key</source>
-        <translation>GPG kulcs</translation>
-    </message>
-    <message>
-        <source>Peer has signed my GPG key</source>
-        <translation>A partner aláírta a GPG kulcsomat</translation>
-    </message>
-    <message>
         <source>Show Help for Trust Settings and Signing</source>
         <translation>A bizalmi beállítások és az aláírások segítségének mutatása</translation>
     </message>
@@ -1535,10 +1527,6 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <source>Sign GPG key</source>
-        <translation>GPG kulcs aláírása</translation>
-    </message>
-    <message>
         <source>Deny Friend</source>
         <translation>Barát elutasítása</translation>
     </message>
@@ -1557,10 +1545,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Error : cannot get peer details.</source>
         <translation>Hiba: a partner adatai nem elérhetőek.</translation>
-    </message>
-    <message>
-        <source>Your key is signed by : </source>
-        <translation>A kulcsodat aláírta:</translation>
     </message>
     <message>
         <source>Peer key is signed by : </source>
@@ -1587,14 +1571,6 @@ p, li { white-space: pre-wrap; }
         <translation>Nincs beállítva bizalmi szint a partnerhez.</translation>
     </message>
     <message>
-        <source>Peer has authenticated me as a friend and did sign my GPG key</source>
-        <translation>A partner barátjaként azonosított és aláírta a GPG kulcsomat.</translation>
-    </message>
-    <message>
-        <source>Peer has not authenticated me as a friend and did not sign my GPG key</source>
-        <translation>A partner nem azonosított barátjaként és nem írta alá a GPG kulcsomat.</translation>
-    </message>
-    <message>
         <source>Signature Failure</source>
         <translation>Hibás aláírás</translation>
     </message>
@@ -1619,6 +1595,78 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Other info</source>
         <translation>Egyéb adatok</translation>
+    </message>
+    <message>
+        <source>My key is signed by : </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer has authenticated me as a friend and did sign my PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer has not authenticated me as a friend and did not sign my PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer has signed my PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Sign PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Services</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;User service permissions&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This tab allows you to finely tune which services each of your contacts is allowed to use with you.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Some services (Discovery, anonymous routing) can be switched off globally, which always overrides the settings per-user.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Anonymous routing</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Discovery</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling this means that forums and channels posts will not be passed from you to this friend, and items coming from this friend will be dropped.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forums/Channels</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation>Csevegés</translation>
+    </message>
+    <message>
+        <source>PushButton</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1808,20 +1856,12 @@ p, li { white-space: pre-wrap; }
         <translation>Aláírók</translation>
     </message>
     <message>
-        <source>It seems your friend is already registered. Adding it might just set it&apos;s ip address.</source>
-        <translation>Úgy tűnik, a barátod már regisztrált. A hozzáadás valószínűleg csak egy ip cím beállítás lesz.</translation>
-    </message>
-    <message>
         <source>Options</source>
         <translation>Beállítások</translation>
     </message>
     <message>
         <source>Add friend to group:</source>
         <translation>Barát hozzáadása a csoporthoz:</translation>
-    </message>
-    <message>
-        <source>Authenticate friend (Sign GPG Key)</source>
-        <translation>Barát hitelesítése (GPG kulcs aláírása)</translation>
     </message>
     <message>
         <source>Add as friend to connect with</source>
@@ -1964,10 +2004,6 @@ p, li { white-space: pre-wrap; }
         <translation>A kérelem részletei</translation>
     </message>
     <message>
-        <source>Cannot get peer details of gpg key %1</source>
-        <translation>Nem kérhetőek le a %1 GPG kulcsból a partner adatai</translation>
-    </message>
-    <message>
         <source>You have a friend request from</source>
         <translation>Van egy baráti felkérésed tőle</translation>
     </message>
@@ -1992,6 +2028,34 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
         <translation>A tanúsítványod a vágólapra lett másolva. Illeszd be és küld el a barátodnak emailben vagy oszd meg vele egyéb módon</translation>
+    </message>
+    <message>
+        <source>This peer is already on your friend list. Adding it might just set it&apos;s ip address.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot get peer details of PGP key %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Authenticate friend (Sign PGP Key)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Service permissions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Anonymous routing</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Discovery</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forums/channels</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2515,19 +2579,11 @@ Szeretnéd elmenteni a változtatásaidat?</translation>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; You can set your Thumbnail Image for your Channel Post.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; You can use Drag and Drop to Attach Files.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Set your Subject and Description for your Channel Post.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; You can View your Attached Files on Attachments Tab.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Beállíthatsz egy előnézeti képet a csatorna bejegyzéséhez.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Bedobhatod a csatolandó fájlokat.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Állíts be tárgyat és részleteket a bejegyzéshez.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Megtekintheted a csatolt fájljaidat a mellékletek fülön.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;Attachments:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt; Use Drag and Drop / Add Files button, to Hash new files.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Copy/Paste RetroShare links from your shares&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2664,12 +2720,12 @@ p, li { white-space: pre-wrap; }
         <translation>Extra fájl hozzáadása</translation>
     </message>
     <message>
-        <source>Paste own certificate link</source>
-        <translation>Saját tanúsítvány beillesztése</translation>
-    </message>
-    <message>
         <source>Start New Thread</source>
         <translation>Új szál indítása</translation>
+    </message>
+    <message>
+        <source>Paste my certificate link</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2798,10 +2854,6 @@ p, li { white-space: pre-wrap; }
         <translation>Teljes RetroShare hivatkozás beillesztése</translation>
     </message>
     <message>
-        <source>Paste own certificate link</source>
-        <translation>Saját tanúsítvány beillesztése</translation>
-    </message>
-    <message>
         <source>In Reply to</source>
         <translation>Válasz</translation>
     </message>
@@ -2816,6 +2868,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Add Extra File</source>
         <translation>Extra fájl hozzáadása</translation>
+    </message>
+    <message>
+        <source>Paste my certificate link</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2835,6 +2891,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Edit Group</source>
         <translation>Csoport szerkesztése</translation>
+    </message>
+    <message>
+        <source>Friends</source>
+        <translation>Barátok</translation>
     </message>
 </context>
 <context>
@@ -4014,10 +4074,6 @@ p, li { white-space: pre-wrap; }
         <translation>Nyomtatási kép</translation>
     </message>
     <message>
-        <source>Your Forums</source>
-        <translation>Saját fórumok</translation>
-    </message>
-    <message>
         <source>Subscribed Forums</source>
         <translation>Feliratkozások</translation>
     </message>
@@ -4173,6 +4229,10 @@ p, li { white-space: pre-wrap; }
         <source>Search Content</source>
         <translation>Tartalom keresése</translation>
     </message>
+    <message>
+        <source>My Forums</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ForumsFillThread</name>
@@ -4187,6 +4247,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>none</source>
         <translation>nincs</translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>Ismeretlen</translation>
     </message>
 </context>
 <context>
@@ -4278,10 +4342,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>PrintPreview</source>
         <translation>Nyomtatási kép</translation>
-    </message>
-    <message>
-        <source>Your Forums</source>
-        <translation>Saját fórumok</translation>
     </message>
     <message>
         <source>Subscribed Forums</source>
@@ -4438,6 +4498,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>You can&apos;t reply to a non-existant Message</source>
         <translation>Nem válaszolhatsz nem létező üzenetre</translation>
+    </message>
+    <message>
+        <source>My Forums</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4723,10 +4787,6 @@ p, li { white-space: pre-wrap; }
         <translation>Megjelenítés beállításai</translation>
     </message>
     <message>
-        <source>Edit Personal message</source>
-        <translation>Személyes üzenet szerkesztése</translation>
-    </message>
-    <message>
         <source>Group Chat</source>
         <translation>Csoportos csevegés</translation>
     </message>
@@ -4777,14 +4837,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>A</source>
         <translation>A</translation>
-    </message>
-    <message>
-        <source>Set your Personal Message</source>
-        <translation>Személyes üzeneted beállítása</translation>
-    </message>
-    <message>
-        <source>Edit your status Message</source>
-        <translation>Személyes üzeneted szerkesztése</translation>
     </message>
     <message>
         <source>Browse Message History</source>
@@ -4877,6 +4929,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Search</source>
         <translation>Keresés</translation>
+    </message>
+    <message>
+        <source>Edit status message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Set your status message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit your status message</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5019,40 +5083,16 @@ p, li { white-space: pre-wrap; }
         <translation>Új profil létrehozása</translation>
     </message>
     <message>
-        <source>Your profile is associated to a GPG key</source>
-        <translation>A profilod egy GPG kulcshoz van társítva</translation>
-    </message>
-    <message>
         <source>Name</source>
         <translation>Név</translation>
-    </message>
-    <message>
-        <source>Enter here your nickname</source>
-        <translation>Írd be a becenevedet</translation>
     </message>
     <message>
         <source>Email</source>
         <translation>Email</translation>
     </message>
     <message>
-        <source>Be careful: this email will be visible to your friends and friends 
-of your friends. This information is required by GPG, but to stay 
-anonymous, you can use a fake email.</source>
-        <translation>Légy óvatos! A levél látható lesz a barátaid és azok barátai számára 
-Az adat szükséges a GPG-hez, de használhatsz kitalált címet is, 
-hogy névtelen maradj.</translation>
-    </message>
-    <message>
-        <source>This Password is for GPG</source>
-        <translation>GPG jelszava</translation>
-    </message>
-    <message>
         <source>Password</source>
         <translation>Jelszó</translation>
-    </message>
-    <message>
-        <source>Put a strong password here. This password protects your GPG key.</source>
-        <translation>Írj be egy bonyolult jelszót. Ez a jelszó fogja védeni a GPG kulcsodat.</translation>
     </message>
     <message>
         <source>Location</source>
@@ -5071,23 +5111,12 @@ hogy névtelen maradj.</translation>
         <translation>Egy új hely létrehozása</translation>
     </message>
     <message>
-        <source>Generate GPG key Failure</source>
-        <translation>Sikertelen GPG kulcs létrehozás</translation>
-    </message>
-    <message>
         <source>Location field is required with a minimum of 3 characters</source>
         <translation>A helynek legalább 3 karakter hosszúnak kell lennie</translation>
     </message>
     <message>
         <source>All fields are required with a minimum of 3 characters</source>
         <translation>Az összes adatnak legalább 3 karakter hosszúnak kell lennie</translation>
-    </message>
-    <message>
-        <source>Generating new GPG key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
-
-Fill in your GPG password when asked, to sign your new key.</source>
-        <translation>Kérlek várj! Az új GPG kulcs létrehozása folyamatban van. Ezen művelet végrehajtása sok számolást igényel, ezért lassú számítógépeken több percet is igénybe vehet. ⏎ ⏎ 
-Töltsd ki a jelszó mezőt, mikor az ablak erre kér, hogy aláírd az új kulcsodat.</translation>
     </message>
     <message>
         <source>Generate ID Failure</source>
@@ -5110,14 +5139,6 @@ Töltsd ki a jelszó mezőt, mikor az ablak erre kér, hogy aláírd az új kulc
         <translation>[Szükséges] Ez a jelszó védi a PGP kulcsodat.</translation>
     </message>
     <message>
-        <source>It looks like you don&apos;t own any Profile (GPG keys). Please fill in the form below to generate one, or import an existing profile.</source>
-        <translation>Úgy tűnik, hogy nincs saját profilod (GPG kulcs). Kérlek, töltsd ki az űrlapot, hogy készíts egyet, vagy importálj egy már meglévőt.</translation>
-    </message>
-    <message>
-        <source>Generate a new identity</source>
-        <translation>Új személyazonosság létrehozása</translation>
-    </message>
-    <message>
         <source>Import new identity</source>
         <translation>Új személyazonosság importálása</translation>
     </message>
@@ -5128,14 +5149,6 @@ Töltsd ki a jelszó mezőt, mikor az ablak erre kér, hogy aláírd az új kulc
     <message>
         <source>Use identity</source>
         <translation>Személyazonosság használata</translation>
-    </message>
-    <message>
-        <source>Your profile is associated to a GPG key. RetroShare currently ignores DSA keys.</source>
-        <translation>A profilod egy GPG kulcshoz van társítva. A RetroShare jelenleg nem fogad el DSA kulcsokat.</translation>
-    </message>
-    <message>
-        <source>Generate New Identity</source>
-        <translation>Új személyazonosság generálása</translation>
     </message>
     <message>
         <source>Create new Identity</source>
@@ -5196,10 +5209,6 @@ majd használd az importálást, hogy betöltsd.</translation>
         <translation>Egyetlen személyazonossággal használhatsz több helyszínt is. Ennek beállításához exportáld a kiválasztott személyazonosságot, majd importáld egy másik számítógépen és állítsd be egy új helyszínt.</translation>
     </message>
     <message>
-        <source>Put a meaningful location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same identity (gpg key).</source>
-        <translation>Beszédes nevet adj a helyszínnek. Pl.: otthoni számítógép, Karcsika laptopja, stb. Ez a mező arra használható, hogy elkülönítsd a különböző számítógépekre (helyszínekre) telepített RetroShare klienseket egyazon személyazonosság használata mellett.</translation>
-    </message>
-    <message>
         <source>Your identity was not saved. An error occurred.</source>
         <translation>A személyazonosságod nem lett elmentve. Hiba történt.</translation>
     </message>
@@ -5208,20 +5217,72 @@ majd használd az importálást, hogy betöltsd.</translation>
         <translation>A személyazonosságod sikeresen importálva lett.</translation>
     </message>
     <message>
-        <source>RetroShare uses gpg keys for identity management.</source>
-        <translation>A RetroShare GPG kulcsokat használ a személyazonosságok kezeléséhez.</translation>
-    </message>
-    <message>
         <source>You can create a new identity with this form.</source>
         <translation>Létrehozhatsz egy új személyazonosságot az űrlappal.</translation>
     </message>
     <message>
-        <source>You can use an existing identity (i.e. a gpg key pair), from the list below, or create a new one with this form.</source>
-        <translation>Használhatsz már meglévő személyazonosságot a listából, vagy létrehozhatsz egy újat.</translation>
-    </message>
-    <message>
         <source>Failed to Generate your new Certificate, maybe PGP password is wrong!</source>
         <translation>Az új tanúsítványod létrehozása sikertelen. Talán rossz a PGP jelszó.</translation>
+    </message>
+    <message>
+        <source>It looks like you don&apos;t own any profile (PGP keys). Please fill in the form below to create one, or import an existing profile.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile is associated with a PGP key. RetroShare currently ignores DSA keys.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enter your nickname here</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Be careful: this email will be visible to your friends and friends 
+of your friends. This information is required by PGP, but to stay 
+anonymous, you can use a fake email.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This Password is for PGP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Put a strong password here. This password protects your PGP key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Put a meaningful location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same identity (PGP key).</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create new identity</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile is associated with a PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create a new identity</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RetroShare uses PGP keys for identity management.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can use an existing identity (i.e. a PGP key pair), from the list below, or create a new one with this form.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Generate PGP key Failure</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Generating new PGP key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
+
+Fill in your PGP password when asked, to sign your new key.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6112,22 +6173,6 @@ p, li { white-space: pre-wrap; }
         <translation>Kulcs ID</translation>
     </message>
     <message>
-        <source>GPG Name</source>
-        <translation>GPG név</translation>
-    </message>
-    <message>
-        <source>GPG Email</source>
-        <translation>GPG email</translation>
-    </message>
-    <message>
-        <source>GPG Id</source>
-        <translation>GPG id</translation>
-    </message>
-    <message>
-        <source>GPG Hash</source>
-        <translation>GPG hash</translation>
-    </message>
-    <message>
         <source>Reputation</source>
         <translation>Népszerűség</translation>
     </message>
@@ -6139,6 +6184,22 @@ p, li { white-space: pre-wrap; }
         <source>Overall Rating</source>
         <translation>Összefoglaló értékelés</translation>
     </message>
+    <message>
+        <source>PGP Name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Email</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Hash</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>IdEditDialog</name>
@@ -6149,22 +6210,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Key ID</source>
         <translation>Kulcs ID</translation>
-    </message>
-    <message>
-        <source>GPG Name</source>
-        <translation>GPG név</translation>
-    </message>
-    <message>
-        <source>GPG Email</source>
-        <translation>GPG email</translation>
-    </message>
-    <message>
-        <source>GPG Hash</source>
-        <translation>GPG hash</translation>
-    </message>
-    <message>
-        <source>GPG Id</source>
-        <translation>GPG id</translation>
     </message>
     <message>
         <source>New Identity</source>
@@ -6183,8 +6228,24 @@ p, li { white-space: pre-wrap; }
         <translation>ID létrehozása/frissítése</translation>
     </message>
     <message>
-        <source>Gpg Associated ID</source>
-        <translation>GPG-vel társított ID</translation>
+        <source>PGP Name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Email</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Hash</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Associated ID</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7441,16 +7502,16 @@ Szeretnéd menteni az üzenetet?</translation>
         <translation>Barát hozzáadása</translation>
     </message>
     <message>
-        <source>Share Files for your Friends</source>
-        <translation>Fájlok megosztása barátokkal</translation>
-    </message>
-    <message>
         <source>Search Friends</source>
         <translation>Barátok keresése</translation>
     </message>
     <message>
         <source>Search</source>
         <translation>Keresés</translation>
+    </message>
+    <message>
+        <source>Share files for your friends</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7574,10 +7635,6 @@ Szeretnéd menteni az üzenetet?</translation>
         <translation>Hitelesítettem a partnert?</translation>
     </message>
     <message>
-        <source>Did I sign his gpg key</source>
-        <translation>Aláírtam a GPG kulcsát?</translation>
-    </message>
-    <message>
         <source>Did peer authenticated me</source>
         <translation>Hitelesített engem a partner?</translation>
     </message>
@@ -7592,10 +7649,6 @@ Szeretnéd menteni az üzenetet?</translation>
     <message>
         <source>Peer ID</source>
         <translation>Partner ID</translation>
-    </message>
-    <message>
-        <source>Show keys that are not validated by the GPG web of trust</source>
-        <translation>Az általam nem hitelesített GPG kulcsok mutatása</translation>
     </message>
     <message>
         <source>Network Status</source>
@@ -7694,10 +7747,6 @@ Szeretnéd menteni az üzenetet?</translation>
         <translation>Személyes aláírás</translation>
     </message>
     <message>
-        <source>GPG key signed by you</source>
-        <translation>Általam aláírt GPG kulcs</translation>
-    </message>
-    <message>
         <source>Marginally trusted peer</source>
         <translation>Részlegesen megbízható partner</translation>
     </message>
@@ -7738,6 +7787,18 @@ Kattints rá jobb gombbal, majd választ ki a &apos;barátság kezdeményezése&
     <message>
         <source>Search Peer ID</source>
         <translation>Partner ID keresése</translation>
+    </message>
+    <message>
+        <source>PGP key signed by you</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Did I sign his PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show keys that are not validated by the PGP web of trust</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7942,10 +8003,6 @@ Kattints rá jobb gombbal, majd választ ki a &apos;barátság kezdeményezése&
 <context>
     <name>NotifyQt</name>
     <message>
-        <source>GPG key passphrase</source>
-        <translation>GPG kulcs jelszava</translation>
-    </message>
-    <message>
         <source>Wrong password !</source>
         <translation>Rossz jelszó!</translation>
     </message>
@@ -7981,12 +8038,35 @@ Kattints rá jobb gombbal, majd választ ki a &apos;barátság kezdeményezése&
         <source>Please enter the password to unlock your PGP key:</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>PGP key passphrase</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>OnlineToaster</name>
     <message>
         <source>Friend Online</source>
         <translation>Bejelentkezett barát</translation>
+    </message>
+</context>
+<context>
+    <name>OpModeStatus</name>
+    <message>
+        <source>Normal Mode</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No Anon D/L</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Gaming Mode</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Low Traffic</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8811,10 +8891,6 @@ a kártevőként működő beépülők használatától.</translation>
         <translation>Következő</translation>
     </message>
     <message>
-        <source>Your Topics</source>
-        <translation>Saját témáid</translation>
-    </message>
-    <message>
         <source>Subscribed Topics</source>
         <translation>Feliratkozott témák</translation>
     </message>
@@ -8869,6 +8945,10 @@ a kártevőként működő beépülők használatától.</translation>
     <message>
         <source>AUTHD</source>
         <translation>HITELESÍTETT</translation>
+    </message>
+    <message>
+        <source>My Topics</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9006,10 +9086,6 @@ az importálás gombot, hogy betöltsd.</translation>
 <context>
     <name>ProfileWidget</name>
     <message>
-        <source>Edit Personal message</source>
-        <translation>Személyes üzenet szerkesztése</translation>
-    </message>
-    <message>
         <source>Copy Certificate</source>
         <translation>Tanúsítvány másolása</translation>
     </message>
@@ -9080,6 +9156,10 @@ az importálás gombot, hogy betöltsd.</translation>
     <message>
         <source>Addresses list:</source>
         <translation>Címlista:</translation>
+    </message>
+    <message>
+        <source>Edit status message</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9173,13 +9253,6 @@ Kérlek, először zárd be azt. Zárolt fájl:
     <message>
         <source>Maybe password is wrong</source>
         <translation>Talán rossz a jelszó</translation>
-    </message>
-    <message>
-        <source>Click to add this RetroShare cert to your GPG keyring
-and open the Make Friend Wizard.
-</source>
-        <translation>Kattints a tanúsítványra, hogy hozzáadhasd a kulcsaidhoz
-és megnyisd a barát hozzáadása varázslót.</translation>
     </message>
     <message>
         <source>Add file</source>
@@ -9318,10 +9391,6 @@ and open the Make Friend Wizard.
         <translation>Hibás útvonal:</translation>
     </message>
     <message>
-        <source>Treatment of collection file has failed</source>
-        <translation>A kollekciófájl javítása sikertelen</translation>
-    </message>
-    <message>
         <source>Deny friend</source>
         <translation>Barát elutasítása</translation>
     </message>
@@ -9381,14 +9450,6 @@ Reported error is: %2</source>
 A jelentett hiba: %2</translation>
     </message>
     <message>
-        <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although GPG keys are mentioned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
-        <translation>A RetroShare ezen verziója OpenPGP-SDK-t használ. Ennek köszönhetően nem a rendszer által megosztott PGP kulcstartót, hanem egy sajátot kezel. &lt;br&gt;&lt;br&gt;Nem fogod gyakran látni, hogy van egy ilyen kulcstartód, annak ellenére, hogy a GPG kulcsokról említést tesz már meglévő profilokban. Ez valószínűleg annak köszönhető, hogy most frissítettél az új verzióra.</translation>
-    </message>
-    <message>
-        <source>Initialization failed. Wrong or missing installation of gpg.</source>
-        <translation>Az elemzés sikertelen. Az oka hiányzó vagy rossz GPG telepítés.</translation>
-    </message>
-    <message>
         <source>An unexpected error occurred. Please report &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</source>
         <translation>Váratlan hiba történt. Kérlek jelentsd &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</translation>
     </message>
@@ -9415,6 +9476,24 @@ Zárolófájl:
     <message>
         <source>Directory is accessible by anonymous tunnels from any friend</source>
         <translation>Az összes barátod böngészheti a mappát névtelen alagutakon keresztül</translation>
+    </message>
+    <message>
+        <source>Failed to process collection file</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Click to add this RetroShare cert to your PGP keyring
+and open the Make Friend Wizard.
+</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although PGP keys are mentioned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Initialization failed. Wrong or missing installation of PGP.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -10000,10 +10079,6 @@ Lecsökkented a méretét %1x%2 pixelre?</translation>
         <translation>Saját fájljaim is megjelenhetnek az eredmények között</translation>
     </message>
     <message>
-        <source>Include own files</source>
-        <translation>Saját fájljaim belevétele</translation>
-    </message>
-    <message>
         <source>Search inside &quot;browsable&quot; files of your friends</source>
         <translation>Keresés a barátaim böngészésre megosztott fájljai között</translation>
     </message>
@@ -10076,6 +10151,10 @@ Lecsökkented a méretét %1x%2 pixelre?</translation>
     <message>
         <source>Close all Search Results</source>
         <translation>Összes keresési eredmény bezárása</translation>
+    </message>
+    <message>
+        <source>Include my files</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -10204,22 +10283,6 @@ Lecsökkented a méretét %1x%2 pixelre?</translation>
         <translation>Tűzfal mögött</translation>
     </message>
     <message>
-        <source>The DHT allows you to answer connection 
-requests from your friends using BitTorrent's DHT. 
-It greatly improves the connectivity. 
-
-The Discovery service sends locations and GPG 
-identities of your trusted contacts to connected 
-peers, to help them choose new friends. 
-The friendship is never automatic however, and both 
-peers still need to trust each other to allow connection. </source>
-        <translation>A DHT segítségedre lehet abban, hogy elfogadd a barátaidtól érkező
-kapcsolódási kísérleteket. Nagyban megkönnyíti a csatlakozásokat. 
-A felfedező szolgáltatás segítségével megoszthatod barátaid helyszíneit
-(gépnév) és GPG kulcsait más barátaiddal, hogy segítsd őket új
-kapcsolatok kialakításában. A baráti kapcsolat persze nem jöhet létre automatikusan. Szükség van mindkét partner egymás felé irányuló kölcsönös bizalmára.</translation>
-    </message>
-    <message>
         <source>Public: DHT &amp; Discovery</source>
         <translation>Publikus: DHT &amp; Felfedezés</translation>
     </message>
@@ -10292,10 +10355,6 @@ kapcsolatok kialakításában. A baráti kapcsolat persze nem jöhet létre auto
         <translation>Teknős útválasztó</translation>
     </message>
     <message>
-        <source>Max average tunnel request forwarded per second:</source>
-        <translation>Átlagosan továbbítható alagút kérések száma másodpercenként:</translation>
-    </message>
-    <message>
         <source>Server</source>
         <translation>Kiszolgáló</translation>
     </message>
@@ -10319,22 +10378,6 @@ behind a firewall or a VPN.</source>
         <translation>Amennyiben ezt nem jelölöd be, a RetroShare csak akkor tudja meghatározni az IP címedet, ha már csatlakoztál valakihez. Engedélyezve hagyva akkor segíthet, ha csak kevés barátod van, vagy tűzfal mögül csatlakozol, illetve VPN-t használsz.</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;Warning&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;This tab contains hard-core  parameters which are unlikely to need modification. Don&apos;t change them unless you really know what you&apos;re doing. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt;Vigyázat&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;Ez a fül olyan paramétereket tartalmaz, melyeket valószínűleg nem kell állítgatnod. Ne változtasd meg őket anélkül, hogy tudnád pontosan mit csinálsz. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>This value controls how many tunnel request your peer can forward per second. 
 
 If you have a large internet bandwidth, you may raise this up to 30-40, to allow
@@ -10346,6 +10389,41 @@ The default value is 20.</source>
 Amennyiben a sávszélességed gyors, növelheted 30-40-ig, hogy hosszabb alagutakat engedélyezz. 
 Légy óvatos, mert ez sok kis csomagot hozhat létre, melyek jelentősen lassíthatják a fájlátviteleidet. 
 Az alapértelmezett érték 20.</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;Warning&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;This tab contains hard-core  parameters which are unlikely to need modification. Don&apos;t change them unless you really know what you&apos;re doing. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enable anonymous data routing</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unchecking this disables all anonymous routing activity, except cache cleaning. Incoming tunnel requests are discarded, and no tunnel requests are sent to anyone.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Max. tunnel requests forwarded per second:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The DHT allows you to answer connection 
+requests from your friends using BitTorrent's DHT. 
+It greatly improves the connectivity. 
+
+The Discovery service sends locations and PGP 
+identities of your trusted contacts to connected 
+peers, to help them choose new friends. 
+The friendship is never automatic however, and both 
+peers still need to trust each other to allow connection. </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -10779,10 +10857,6 @@ p, li { white-space: pre-wrap; }
         <translation>Bejelentkezés</translation>
     </message>
     <message>
-        <source>Name (GPG Id) - location:</source>
-        <translation>Név (GPG ID) - helyszín:</translation>
-    </message>
-    <message>
         <source>Remember Password</source>
         <translation>Jelszó megjegyzése</translation>
     </message>
@@ -10837,6 +10911,10 @@ This choice can be reverted in settings.</source>
 A PGP jelszavad nem lesz tárolva.
 
 Ez a választás módosítható a beállításokban.</translation>
+    </message>
+    <message>
+        <source>Name (PGP Id) - location:</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -10933,36 +11011,28 @@ Ez a választás módosítható a beállításokban.</translation>
 <context>
     <name>StatusMessage</name>
     <message>
-        <source>Personal message</source>
-        <translation>Személyes üzenet</translation>
-    </message>
-    <message>
         <source>Status message</source>
         <translation>Állapot üzenet</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Personal message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Személyes üzenet&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>Message:</source>
+        <translation>Üzenet:</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Enter your Status message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Status message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Írd be az állapotüzeneted&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Enter your message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>

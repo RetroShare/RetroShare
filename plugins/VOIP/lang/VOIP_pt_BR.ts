@@ -38,8 +38,8 @@
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="76"/>
-        <source>&lt;b&gt;DoublePush Time&lt;/b&gt;&lt;br /&gt;If you press the push-to-talk key twice during the configured interval of time it will be locked. Mumble will keep transmitting until you hit the key once more to unlock PTT again.</source>
-        <translation>&lt;b&gt;Tempo para DuploClique&lt;/b&gt;&lt;br /&gt;Se você pressionar a tecla para falar duas vezes durante o intervalo de tempo configurado ela ficará travada. O Mumble ocnitnuará transmitindo até que você  pressione-a uma vez mais para destravar o PPF de novo.</translation>
+        <source>&lt;b&gt;DoublePush Time&lt;/b&gt;&lt;br /&gt;If you press the push-to-talk key twice during the configured interval of time it will be locked. RetroShare will keep transmitting until you hit the key once more to unlock PTT again.</source>
+        <translation>&lt;b&gt;Tempo para DuploClique&lt;/b&gt;&lt;br /&gt;Se você pressionar a tecla para falar duas vezes durante o intervalo de tempo configurado ela ficará travada. O RetroShare ocnitnuará transmitindo até que você  pressione-a uma vez mais para destravar o PPF de novo.</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="119"/>
@@ -119,8 +119,8 @@
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="307"/>
-        <source>&lt;b&gt;Maximum amplification of input.&lt;/b&gt;&lt;br /&gt;Mumble normalizes the input volume before compressing, and this sets how much it&apos;s allowed to amplify.&lt;br /&gt;The actual level is continually updated based on your current speech pattern, but it will never go above the level specified here.&lt;br /&gt;If the &lt;i&gt;Microphone loudness&lt;/i&gt; level of the audio statistics hover around 100%, you probably want to set this to 2.0 or so, but if, like most people, you are unable to reach 100%, set this to something much higher.&lt;br /&gt;Ideally, set it so &lt;i&gt;Microphone Loudness * Amplification Factor &gt;= 100&lt;/i&gt;, even when you&apos;re speaking really soft.&lt;br /&gt;&lt;br /&gt;Note that there is no harm in setting this to maximum, but Mumble will start picking up other conversations if you leave it to auto-tune to that level.</source>
-        <translation>&lt;b&gt;Amplificação máxima da entrada.&lt;/b&gt;&lt;br /&gt;O Mumble normaliza o volume de entrada antes da compressão, e isto configura quando ele pode amplificar.&lt;br /&gt;O nível real é continuamente atualizado baseado no seu padrão atual de fala, mas nunca passará do especificado aqui.&lt;br /&gt;Se a &lt;i&gt;Altura do microfone&lt;/i&gt; nível das estatísticas de áudio ficam sobre os 100%, você provavelmente quer configurar isto para 2.0 ou parecido, mas se , como a maioria das pessoas, você é incapaz de chegar aos 100%, configure isto muito mais alto.&lt;br /&gt;Idealmente, configure dem odo que a &lt;i&gt;Altura do microfone * Factor de Amplificação &gt;= 100&lt;/i&gt;, mesmo quando você está falando baixo.&lt;br /&gt;&lt;br /&gt;Note que não há dano em configurar isto no máximo, mas o Mumble começará a transmitir outras conversar se você deixá-lo auto-afinado para este nível.</translation>
+        <source>&lt;b&gt;Maximum amplification of input.&lt;/b&gt;&lt;br /&gt;RetroShare normalizes the input volume before compressing, and this sets how much it&apos;s allowed to amplify.&lt;br /&gt;The actual level is continually updated based on your current speech pattern, but it will never go above the level specified here.&lt;br /&gt;If the &lt;i&gt;Microphone loudness&lt;/i&gt; level of the audio statistics hover around 100%, you probably want to set this to 2.0 or so, but if, like most people, you are unable to reach 100%, set this to something much higher.&lt;br /&gt;Ideally, set it so &lt;i&gt;Microphone Loudness * Amplification Factor &gt;= 100&lt;/i&gt;, even when you&apos;re speaking really soft.&lt;br /&gt;&lt;br /&gt;Note that there is no harm in setting this to maximum, but RetroShare will start picking up other conversations if you leave it to auto-tune to that level.</source>
+        <translation>&lt;b&gt;Amplificação máxima da entrada.&lt;/b&gt;&lt;br /&gt;O RetroShare normaliza o volume de entrada antes da compressão, e isto configura quando ele pode amplificar.&lt;br /&gt;O nível real é continuamente atualizado baseado no seu padrão atual de fala, mas nunca passará do especificado aqui.&lt;br /&gt;Se a &lt;i&gt;Altura do microfone&lt;/i&gt; nível das estatísticas de áudio ficam sobre os 100%, você provavelmente quer configurar isto para 2.0 ou parecido, mas se , como a maioria das pessoas, você é incapaz de chegar aos 100%, configure isto muito mais alto.&lt;br /&gt;Idealmente, configure dem odo que a &lt;i&gt;Altura do microfone * Factor de Amplificação &gt;= 100&lt;/i&gt;, mesmo quando você está falando baixo.&lt;br /&gt;&lt;br /&gt;Note que não há dano em configurar isto no máximo, mas o RetroShare começará a transmitir outras conversar se você deixá-lo auto-afinado para este nível.</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="339"/>
@@ -169,12 +169,12 @@
 <context>
     <name>AudioPopupChatDialog</name>
     <message>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="14"/>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="15"/>
         <source>Mute yourself</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="34"/>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="35"/>
         <source>Deafen yourself</source>
         <translation type="unfinished"/>
     </message>
@@ -275,8 +275,8 @@
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="147"/>
-        <source>This is the probability that the last frame (20 ms) was speech and not environment noise.&lt;br /&gt;Voice activity transmission depends on this being right. The trick with this is that the middle of a sentence is always detected as speech; the problem is the pauses between words and the start of speech. It&apos;s hard to distinguish a sigh from a word starting with &apos;h&apos;.&lt;br /&gt;If this is in bold font, it means Mumble is currently transmitting (if you&apos;re connected).</source>
-        <translation>Este é provavelmetne o último quadro (20 ms) que era fala e não ruído ambiente.&lt;br /&gt;Transmissão da atividade vocal depende disto estar certo. O truque com isto é que o meio da sentença é sempre detectado como fala; o problema são as pausas entre as palavras e o começo da fala. É difícil distinguir um suspiro de uma palavra começando com &apos;h&apos;.&lt;br /&gt;Se isto está em negrito, significao que o Mumble está transmitindo atualmente (se você está conectado).</translation>
+        <source>This is the probability that the last frame (20 ms) was speech and not environment noise.&lt;br /&gt;Voice activity transmission depends on this being right. The trick with this is that the middle of a sentence is always detected as speech; the problem is the pauses between words and the start of speech. It&apos;s hard to distinguish a sigh from a word starting with &apos;h&apos;.&lt;br /&gt;If this is in bold font, it means RetroShare is currently transmitting (if you&apos;re connected).</source>
+        <translation>Este é provavelmetne o último quadro (20 ms) que era fala e não ruído ambiente.&lt;br /&gt;Transmissão da atividade vocal depende disto estar certo. O truque com isto é que o meio da sentença é sempre detectado como fala; o problema são as pausas entre as palavras e o começo da fala. É difícil distinguir um suspiro de uma palavra começando com &apos;h&apos;.&lt;br /&gt;Se isto está em negrito, significao que o RetroShare está transmitindo atualmente (se você está conectado).</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="162"/>
@@ -467,42 +467,42 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="92"/>
+        <location filename="../VOIPPlugin.cpp" line="93"/>
         <source>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="93"/>
+        <location filename="../VOIPPlugin.cpp" line="94"/>
         <source>&lt;br/&gt;The VOIP plugin adds VOIP to the private chat window of RetroShare. to use it, proceed as follows:&lt;UL&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="94"/>
+        <location filename="../VOIPPlugin.cpp" line="95"/>
         <source>&lt;li&gt; setup microphone levels using the configuration panel&lt;/li&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="95"/>
+        <location filename="../VOIPPlugin.cpp" line="96"/>
         <source>&lt;li&gt; check your microphone by looking at the VU-metters&lt;/li&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="96"/>
+        <location filename="../VOIPPlugin.cpp" line="97"/>
         <source>&lt;li&gt; in the private chat, enable sound input/output by clicking on the two VOIP icons&lt;/li&gt;&lt;/ul&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="97"/>
+        <location filename="../VOIPPlugin.cpp" line="98"/>
         <source>Your friend needs to run the plugin to talk/listen to you, or course.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="98"/>
+        <location filename="../VOIPPlugin.cpp" line="99"/>
         <source>&lt;br/&gt;&lt;br/&gt;This is an experimental feature. Don&apos;t hesitate to send comments and suggestion to the RS dev team.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="116"/>
+        <location filename="../VOIPPlugin.cpp" line="117"/>
         <source>RTT Statistics</source>
         <translation type="unfinished"/>
     </message>
@@ -532,7 +532,7 @@
 <context>
     <name>VOIP</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="152"/>
+        <location filename="../VOIPPlugin.cpp" line="153"/>
         <source>This plugin provides voice communication between friends in RetroShare.</source>
         <translation type="unfinished"/>
     </message>
@@ -540,7 +540,7 @@
 <context>
     <name>VOIPPlugin</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="157"/>
+        <location filename="../VOIPPlugin.cpp" line="158"/>
         <source>VOIP</source>
         <translation type="unfinished"/>
     </message>

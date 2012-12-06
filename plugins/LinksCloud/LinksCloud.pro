@@ -19,6 +19,7 @@ TRANSLATIONS +=  \
 			lang/LinksCloud_fi.ts \
 			lang/LinksCloud_fr.ts \
 			lang/LinksCloud_hu.ts \
+			lang/LinksCloud_it.ts \
 			lang/LinksCloud_ja_JP.ts \
 			lang/LinksCloud_ko.ts \
 			lang/LinksCloud_pl.ts \

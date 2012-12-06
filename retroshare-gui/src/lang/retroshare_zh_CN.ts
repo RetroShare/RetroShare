@@ -425,10 +425,6 @@ p, li { white-space: pre-wrap; }
         <translation>ID</translation>
     </message>
     <message>
-        <source>Own Blogs</source>
-        <translation>我的博客</translation>
-    </message>
-    <message>
         <source>Subscribed Blogs</source>
         <translation>订阅的博客</translation>
     </message>
@@ -479,6 +475,10 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;退订博客&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>My Blogs</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -814,10 +814,6 @@ p, li { white-space: pre-wrap; }
         <translation>启用自动下载</translation>
     </message>
     <message>
-        <source>Own Channels</source>
-        <translation>我的频道</translation>
-    </message>
-    <message>
         <source>Subscribed Channels</source>
         <translation>订阅的频道</translation>
     </message>
@@ -888,6 +884,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Publish rights can&apos;t be restored for this channel.&lt;br/&gt;You&apos;re not the creator of this channel.</source>
         <translation>无法恢复指定频道的发帖权限。&lt;br/&gt;您不是此频道的创建者。</translation>
+    </message>
+    <message>
+        <source>My Channels</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1409,12 +1409,12 @@ Please choose one of it to chat with.</source>
         <translation>重置为默认字体</translation>
     </message>
     <message>
-        <source>Paste own certificate link</source>
-        <translation>粘贴我的证书链接</translation>
-    </message>
-    <message>
         <source>appears to be Offline.</source>
         <translation>可能已下线。</translation>
+    </message>
+    <message>
+        <source>Paste my certificate link</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1504,14 +1504,6 @@ Please choose one of it to chat with.</source>
         <translation>完全</translation>
     </message>
     <message>
-        <source>GPG Key</source>
-        <translation>GPG 密钥</translation>
-    </message>
-    <message>
-        <source>Peer has signed my GPG key</source>
-        <translation>节点已经对我的GPG密钥签名</translation>
-    </message>
-    <message>
         <source>Show Help for Trust Settings and Signing</source>
         <translation>显示信任设置与签名的帮助信息</translation>
     </message>
@@ -1536,10 +1528,6 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;对好友密钥的签名无法撤销，请慎重使用此功能。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <source>Sign GPG key</source>
-        <translation>签名 GPG 密钥</translation>
-    </message>
-    <message>
         <source>Deny Friend</source>
         <translation>拒绝好友</translation>
     </message>
@@ -1558,10 +1546,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Error : cannot get peer details.</source>
         <translation>错误：无法获取节点详情。</translation>
-    </message>
-    <message>
-        <source>Your key is signed by : </source>
-        <translation>您密钥的签名人：</translation>
     </message>
     <message>
         <source>Peer key is signed by : </source>
@@ -1588,14 +1572,6 @@ p, li { white-space: pre-wrap; }
         <translation>您与此好友节点的信任关系尚未设置。</translation>
     </message>
     <message>
-        <source>Peer has authenticated me as a friend and did sign my GPG key</source>
-        <translation>此节点已经认证我为其好友并为我的 GPG 密钥签名</translation>
-    </message>
-    <message>
-        <source>Peer has not authenticated me as a friend and did not sign my GPG key</source>
-        <translation>此节点尚未认证我为其好友也未将我的 GPG 密钥签名</translation>
-    </message>
-    <message>
         <source>Signature Failure</source>
         <translation>签名失败</translation>
     </message>
@@ -1620,6 +1596,78 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Other info</source>
         <translation>其他信息</translation>
+    </message>
+    <message>
+        <source>My key is signed by : </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer has authenticated me as a friend and did sign my PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer has not authenticated me as a friend and did not sign my PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer has signed my PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Sign PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Services</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;User service permissions&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This tab allows you to finely tune which services each of your contacts is allowed to use with you.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Some services (Discovery, anonymous routing) can be switched off globally, which always overrides the settings per-user.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Anonymous routing</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Discovery</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling this means that forums and channels posts will not be passed from you to this friend, and items coming from this friend will be dropped.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forums/Channels</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation>聊天</translation>
+    </message>
+    <message>
+        <source>PushButton</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1809,20 +1857,12 @@ p, li { white-space: pre-wrap; }
         <translation>签名者</translation>
     </message>
     <message>
-        <source>It seems your friend is already registered. Adding it might just set it&apos;s ip address.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Options</source>
         <translation>选项</translation>
     </message>
     <message>
         <source>Add friend to group:</source>
         <translation>添加至好友分组:</translation>
-    </message>
-    <message>
-        <source>Authenticate friend (Sign GPG Key)</source>
-        <translation>认证好友(为好友的 GPG 密钥签名背书)</translation>
     </message>
     <message>
         <source>Add as friend to connect with</source>
@@ -1965,10 +2005,6 @@ p, li { white-space: pre-wrap; }
         <translation>请求详情</translation>
     </message>
     <message>
-        <source>Cannot get peer details of gpg key %1</source>
-        <translation>无法获取节点 GPG 密钥 %1 的详细信息</translation>
-    </message>
-    <message>
         <source>You have a friend request from</source>
         <translation>您有一个好友请求来自</translation>
     </message>
@@ -1994,6 +2030,34 @@ p, li { white-space: pre-wrap; }
         <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
         <translation>您的证书已复到剪切板，请将其通过邮件或其他方式发送给您的好友</translation>
     </message>
+    <message>
+        <source>This peer is already on your friend list. Adding it might just set it&apos;s ip address.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot get peer details of PGP key %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Authenticate friend (Sign PGP Key)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Service permissions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Anonymous routing</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Discovery</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forums/channels</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>CreateBlog</name>
@@ -2010,7 +2074,7 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;新建博客&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
@@ -2516,19 +2580,11 @@ Do you want to save your changes?</source>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; You can set your Thumbnail Image for your Channel Post.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; You can use Drag and Drop to Attach Files.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Set your Subject and Description for your Channel Post.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; You can View your Attached Files on Attachments Tab.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; 您可以为您的频道贴文设置图像缩略图。&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; 您可以通过拖拽附加文件。&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; 为您的频道贴文设置主题和描述。&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; 您可以在附件标签页中查看附加的文件。&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;Attachments:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt; Use Drag and Drop / Add Files button, to Hash new files.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Copy/Paste RetroShare links from your shares&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2665,12 +2721,12 @@ p, li { white-space: pre-wrap; }
         <translation>添加额外文件</translation>
     </message>
     <message>
-        <source>Paste own certificate link</source>
-        <translation>粘贴我的证书链接</translation>
-    </message>
-    <message>
         <source>Start New Thread</source>
         <translation>新建主题帖</translation>
+    </message>
+    <message>
+        <source>Paste my certificate link</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2799,10 +2855,6 @@ p, li { white-space: pre-wrap; }
         <translation>粘贴完整 RetroShare 链接</translation>
     </message>
     <message>
-        <source>Paste own certificate link</source>
-        <translation>粘贴我的证书链接</translation>
-    </message>
-    <message>
         <source>In Reply to</source>
         <translation>回复</translation>
     </message>
@@ -2817,6 +2869,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Add Extra File</source>
         <translation>添加额外文件</translation>
+    </message>
+    <message>
+        <source>Paste my certificate link</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2836,6 +2892,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Edit Group</source>
         <translation>编辑分组</translation>
+    </message>
+    <message>
+        <source>Friends</source>
+        <translation>好友</translation>
     </message>
 </context>
 <context>
@@ -4016,10 +4076,6 @@ p, li { white-space：pre-wrap；}
         <translation>打印预览</translation>
     </message>
     <message>
-        <source>Your Forums</source>
-        <translation>我的论坛</translation>
-    </message>
-    <message>
         <source>Subscribed Forums</source>
         <translation>订阅的论坛</translation>
     </message>
@@ -4175,6 +4231,10 @@ p, li { white-space：pre-wrap；}
         <source>Search Content</source>
         <translation>搜索内容</translation>
     </message>
+    <message>
+        <source>My Forums</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ForumsFillThread</name>
@@ -4189,6 +4249,10 @@ p, li { white-space：pre-wrap；}
     <message>
         <source>none</source>
         <translation>无</translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>未知</translation>
     </message>
 </context>
 <context>
@@ -4280,10 +4344,6 @@ p, li { white-space：pre-wrap；}
     <message>
         <source>PrintPreview</source>
         <translation>打印预览</translation>
-    </message>
-    <message>
-        <source>Your Forums</source>
-        <translation>我的论坛</translation>
     </message>
     <message>
         <source>Subscribed Forums</source>
@@ -4440,6 +4500,10 @@ p, li { white-space：pre-wrap；}
     <message>
         <source>You can&apos;t reply to a non-existant Message</source>
         <translation>您无法回复一条不存在的消息</translation>
+    </message>
+    <message>
+        <source>My Forums</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4725,10 +4789,6 @@ p, li { white-space：pre-wrap；}
         <translation>显示</translation>
     </message>
     <message>
-        <source>Edit Personal message</source>
-        <translation>编辑状态签名</translation>
-    </message>
-    <message>
         <source>Group Chat</source>
         <translation>群聊</translation>
     </message>
@@ -4779,14 +4839,6 @@ p, li { white-space：pre-wrap；}
     <message>
         <source>A</source>
         <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Set your Personal Message</source>
-        <translation>设置状态签名</translation>
-    </message>
-    <message>
-        <source>Edit your status Message</source>
-        <translation>编辑状态消息</translation>
     </message>
     <message>
         <source>Browse Message History</source>
@@ -4879,6 +4931,18 @@ p, li { white-space：pre-wrap；}
     <message>
         <source>Search</source>
         <translation>搜索 </translation>
+    </message>
+    <message>
+        <source>Edit status message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Set your status message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit your status message</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5018,38 +5082,16 @@ p, li { white-space: pre-wrap; }
         <translation>新建配置</translation>
     </message>
     <message>
-        <source>Your profile is associated to a GPG key</source>
-        <translation>您的配置与一个 GPG 密钥关联</translation>
-    </message>
-    <message>
         <source>Name</source>
         <translation>名称</translation>
-    </message>
-    <message>
-        <source>Enter here your nickname</source>
-        <translation>输入您的昵称</translation>
     </message>
     <message>
         <source>Email</source>
         <translation>Email</translation>
     </message>
     <message>
-        <source>Be careful: this email will be visible to your friends and friends 
-of your friends. This information is required by GPG, but to stay 
-anonymous, you can use a fake email.</source>
-        <translation>注意: 此邮件地址将对您的好友即好友的好友可见。此字段为GPG要求字段，如要保持匿名，请设置假电邮地址。</translation>
-    </message>
-    <message>
-        <source>This Password is for GPG</source>
-        <translation>此密码为 GPG 密码</translation>
-    </message>
-    <message>
         <source>Password</source>
         <translation>密码</translation>
-    </message>
-    <message>
-        <source>Put a strong password here. This password protects your GPG key.</source>
-        <translation>请输入一个强壮的密码。您需要靠它保护您的 GPG 密钥。</translation>
     </message>
     <message>
         <source>Location</source>
@@ -5068,24 +5110,12 @@ anonymous, you can use a fake email.</source>
         <translation>创建新位置</translation>
     </message>
     <message>
-        <source>Generate GPG key Failure</source>
-        <translation>GPG 密钥生成失败</translation>
-    </message>
-    <message>
         <source>Location field is required with a minimum of 3 characters</source>
         <translation>位置字段需要最少3个字符</translation>
     </message>
     <message>
         <source>All fields are required with a minimum of 3 characters</source>
         <translation>所有字段都需要最少3个字符</translation>
-    </message>
-    <message>
-        <source>Generating new GPG key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
-
-Fill in your GPG password when asked, to sign your new key.</source>
-        <translation>正在生成 GPG 密钥，请耐心等待：此过程需要生成大素数，在老爷机上可能需要几分钟。
-
-请在看到提示后输入您的 GPG 密钥，来为您的新密钥签名。</translation>
     </message>
     <message>
         <source>Generate ID Failure</source>
@@ -5108,14 +5138,6 @@ Fill in your GPG password when asked, to sign your new key.</source>
         <translation>[必填] 此密码保护您的 PGP 密钥。</translation>
     </message>
     <message>
-        <source>It looks like you don&apos;t own any Profile (GPG keys). Please fill in the form below to generate one, or import an existing profile.</source>
-        <translation>您似乎还没有任何配置文件(GPG密钥)。请填写下面的表单来生成密钥，或导入一个现有的配置文件。</translation>
-    </message>
-    <message>
-        <source>Generate a new identity</source>
-        <translation>生成新身份</translation>
-    </message>
-    <message>
         <source>Import new identity</source>
         <translation>导入新身份</translation>
     </message>
@@ -5126,14 +5148,6 @@ Fill in your GPG password when asked, to sign your new key.</source>
     <message>
         <source>Use identity</source>
         <translation>使用身份</translation>
-    </message>
-    <message>
-        <source>Your profile is associated to a GPG key. RetroShare currently ignores DSA keys.</source>
-        <translation>您的配置文件与一个 GPG 密钥相关联。 RetroShare 目前不支持 DSA 算法密钥。</translation>
-    </message>
-    <message>
-        <source>Generate New Identity</source>
-        <translation>生成新身份</translation>
     </message>
     <message>
         <source>Create new Identity</source>
@@ -5196,10 +5210,6 @@ and use the import button to load it</source>
         <translation>您可以将 RetroShare 安装于不同地点，使用同一身份登录。只需选中并导出您的身份,导入新电脑后，创建新位置即可。</translation>
     </message>
     <message>
-        <source>Put a meaningful location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same identity (gpg key).</source>
-        <translation>输入一个有意义的位置。例如：家，本本，地球，火星，等。此字段用于区分同一身份(GPG 密钥)安装的不同程序实例。</translation>
-    </message>
-    <message>
         <source>Your identity was not saved. An error occurred.</source>
         <translation>您的身份未保存。有错误发生。</translation>
     </message>
@@ -5208,20 +5218,72 @@ and use the import button to load it</source>
         <translation>您的身份导入成功:</translation>
     </message>
     <message>
-        <source>RetroShare uses gpg keys for identity management.</source>
-        <translation>RetroShare 使用 GPG 密钥进行身份管理。</translation>
-    </message>
-    <message>
         <source>You can create a new identity with this form.</source>
         <translation>您可以通过此表单创建新身份。</translation>
     </message>
     <message>
-        <source>You can use an existing identity (i.e. a gpg key pair), from the list below, or create a new one with this form.</source>
-        <translation>您可以从下表中选择使用现有身份(即 GPG 密钥对)，或通过此表创建新身份。</translation>
-    </message>
-    <message>
         <source>Failed to Generate your new Certificate, maybe PGP password is wrong!</source>
         <translation>新证书生成失败，可能您的 PGP 密码有误！</translation>
+    </message>
+    <message>
+        <source>It looks like you don&apos;t own any profile (PGP keys). Please fill in the form below to create one, or import an existing profile.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile is associated with a PGP key. RetroShare currently ignores DSA keys.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enter your nickname here</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Be careful: this email will be visible to your friends and friends 
+of your friends. This information is required by PGP, but to stay 
+anonymous, you can use a fake email.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This Password is for PGP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Put a strong password here. This password protects your PGP key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Put a meaningful location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same identity (PGP key).</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create new identity</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile is associated with a PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create a new identity</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RetroShare uses PGP keys for identity management.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can use an existing identity (i.e. a PGP key pair), from the list below, or create a new one with this form.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Generate PGP key Failure</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Generating new PGP key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
+
+Fill in your PGP password when asked, to sign your new key.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5607,7 +5669,8 @@ p, li { white-space：pre-wrap；}
     <message>
         <source>All your friends can browse this directory
 </source>
-        <translation type="unfinished"/>
+        <translation>所有好友可浏览此目录、
+</translation>
     </message>
     <message>
         <source>Only friends in groups </source>
@@ -5627,15 +5690,15 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>All your friends can relay anonymous tunnels to this directory</source>
-        <translation type="unfinished"/>
+        <translation>所有好友均可中继匿名隧道至此目录</translation>
     </message>
     <message>
         <source> can relay anonymous tunnels to this directory</source>
-        <translation type="unfinished"/>
+        <translation>可中继匿名隧道至此目录</translation>
     </message>
     <message>
         <source>No one can anonymously access this directory.</source>
-        <translation type="unfinished"/>
+        <translation>禁止任何人匿名访问此目录</translation>
     </message>
 </context>
 <context>
@@ -5795,7 +5858,7 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Contents</source>
-        <translation type="unfinished"/>
+        <translation>目录</translation>
     </message>
     <message>
         <source>Help Topics</source>
@@ -6111,22 +6174,6 @@ p, li { white-space: pre-wrap; }
         <translation>密钥 ID</translation>
     </message>
     <message>
-        <source>GPG Name</source>
-        <translation>GPG 名称</translation>
-    </message>
-    <message>
-        <source>GPG Email</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>GPG Id</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>GPG Hash</source>
-        <translation>GPG 散列值</translation>
-    </message>
-    <message>
         <source>Reputation</source>
         <translation>信誉</translation>
     </message>
@@ -6138,6 +6185,22 @@ p, li { white-space: pre-wrap; }
         <source>Overall Rating</source>
         <translation>总体评分</translation>
     </message>
+    <message>
+        <source>PGP Name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Email</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Hash</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>IdEditDialog</name>
@@ -6148,22 +6211,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Key ID</source>
         <translation>密钥 ID</translation>
-    </message>
-    <message>
-        <source>GPG Name</source>
-        <translation>GPG 名称</translation>
-    </message>
-    <message>
-        <source>GPG Email</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>GPG Hash</source>
-        <translation>GPG 散列值</translation>
-    </message>
-    <message>
-        <source>GPG Id</source>
-        <translation type="unfinished"/>
     </message>
     <message>
         <source>New Identity</source>
@@ -6182,8 +6229,24 @@ p, li { white-space: pre-wrap; }
         <translation>新建/更新 ID</translation>
     </message>
     <message>
-        <source>Gpg Associated ID</source>
-        <translation>GPG 关联 ID</translation>
+        <source>PGP Name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Email</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Hash</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Associated ID</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7440,16 +7503,16 @@ Do you want to save message ?</source>
         <translation>添加好友</translation>
     </message>
     <message>
-        <source>Share Files for your Friends</source>
-        <translation>共享文件给好友</translation>
-    </message>
-    <message>
         <source>Search Friends</source>
         <translation>搜索好友</translation>
     </message>
     <message>
         <source>Search</source>
         <translation>搜索 </translation>
+    </message>
+    <message>
+        <source>Share files for your friends</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7573,10 +7636,6 @@ Do you want to save message ?</source>
         <translation>是否已被我认证为好友</translation>
     </message>
     <message>
-        <source>Did I sign his gpg key</source>
-        <translation>其GPG密钥是否被我签名</translation>
-    </message>
-    <message>
         <source>Did peer authenticated me</source>
         <translation>是否已认证我为好友</translation>
     </message>
@@ -7591,10 +7650,6 @@ Do you want to save message ?</source>
     <message>
         <source>Peer ID</source>
         <translation>节点 ID</translation>
-    </message>
-    <message>
-        <source>Show keys that are not validated by the GPG web of trust</source>
-        <translation>显示未经 GPG web of trust 验证的密钥</translation>
     </message>
     <message>
         <source>Network Status</source>
@@ -7693,10 +7748,6 @@ Do you want to save message ?</source>
         <translation>状态签名</translation>
     </message>
     <message>
-        <source>GPG key signed by you</source>
-        <translation>经你签名的 GPG 密钥</translation>
-    </message>
-    <message>
         <source>Marginally trusted peer</source>
         <translation>有限信任的节点</translation>
     </message>
@@ -7737,6 +7788,18 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <message>
         <source>Search Peer ID</source>
         <translation>搜索节点 ID</translation>
+    </message>
+    <message>
+        <source>PGP key signed by you</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Did I sign his PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show keys that are not validated by the PGP web of trust</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7941,10 +8004,6 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
 <context>
     <name>NotifyQt</name>
     <message>
-        <source>GPG key passphrase</source>
-        <translation>GPG 密钥密码</translation>
-    </message>
-    <message>
         <source>Wrong password !</source>
         <translation>密码错误！</translation>
     </message>
@@ -7980,12 +8039,35 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <source>Please enter the password to unlock your PGP key:</source>
         <translation>请输入密码解锁您的PGP密钥:</translation>
     </message>
+    <message>
+        <source>PGP key passphrase</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>OnlineToaster</name>
     <message>
         <source>Friend Online</source>
         <translation>好友在线</translation>
+    </message>
+</context>
+<context>
+    <name>OpModeStatus</name>
+    <message>
+        <source>Normal Mode</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No Anon D/L</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Gaming Mode</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Low Traffic</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8157,19 +8239,19 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>No Comments Allowed</source>
-        <translation type="unfinished"/>
+        <translation>关闭评论</translation>
     </message>
     <message>
         <source>Authenticated Comments</source>
-        <translation type="unfinished"/>
+        <translation>署名评论</translation>
     </message>
     <message>
         <source>Any Comments Allowed</source>
-        <translation type="unfinished"/>
+        <translation>任意评论</translation>
     </message>
     <message>
         <source>Publish with XXX Key</source>
-        <translation type="unfinished"/>
+        <translation>使用XXX密钥发布</translation>
     </message>
     <message>
         <source>Album Thumbnail</source>
@@ -8742,7 +8824,7 @@ malicious behavior of crafted plugins.</source>
     </message>
     <message>
         <source>View Comments</source>
-        <translation type="unfinished"/>
+        <translation>查看评论</translation>
     </message>
     <message>
         <source>This is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title don&apos;t you think? Yes it is and should wrap around I hope</source>
@@ -8812,10 +8894,6 @@ malicious behavior of crafted plugins.</source>
         <translation>下一个</translation>
     </message>
     <message>
-        <source>Your Topics</source>
-        <translation>您的主题</translation>
-    </message>
-    <message>
         <source>Subscribed Topics</source>
         <translation>订阅的主题</translation>
     </message>
@@ -8870,6 +8948,10 @@ malicious behavior of crafted plugins.</source>
     <message>
         <source>AUTHD</source>
         <translation>仅签名文章</translation>
+    </message>
+    <message>
+        <source>My Topics</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9009,10 +9091,6 @@ and use the import button to load it</source>
 <context>
     <name>ProfileWidget</name>
     <message>
-        <source>Edit Personal message</source>
-        <translation>编辑状态签名</translation>
-    </message>
-    <message>
         <source>Copy Certificate</source>
         <translation>复制证书</translation>
     </message>
@@ -9083,6 +9161,10 @@ and use the import button to load it</source>
     <message>
         <source>Addresses list:</source>
         <translation>地址列表:</translation>
+    </message>
+    <message>
+        <source>Edit status message</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9176,14 +9258,6 @@ and use the import button to load it</source>
     <message>
         <source>Maybe password is wrong</source>
         <translation>密码错误</translation>
-    </message>
-    <message>
-        <source>Click to add this RetroShare cert to your GPG keyring
-and open the Make Friend Wizard.
-</source>
-        <translation>点击添加 RetroShare 证书至您的 GPG 钥匙环中
-并启动交友向导。
-</translation>
     </message>
     <message>
         <source>Add file</source>
@@ -9322,10 +9396,6 @@ and open the Make Friend Wizard.
         <translation>无法创建路径:</translation>
     </message>
     <message>
-        <source>Treatment of collection file has failed</source>
-        <translation>资源集合文件处理失败</translation>
-    </message>
-    <message>
         <source>Deny friend</source>
         <translation>拒绝好友</translation>
     </message>
@@ -9386,14 +9456,6 @@ Reported error is: %2</source>
 错误: %2</translation>
     </message>
     <message>
-        <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although GPG keys are mentioned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Initialization failed. Wrong or missing installation of gpg.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>An unexpected error occurred. Please report &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</source>
         <translation>发生意外错误。请报告 &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</translation>
     </message>
@@ -9407,18 +9469,36 @@ Reported error is: %2</source>
     </message>
     <message>
         <source>Directory is browsable for friends from parent groups</source>
-        <translation type="unfinished"/>
+        <translation>目录允许分组中的好友浏览</translation>
     </message>
     <message>
         <source>Directory is accessible by anonymous tunnels from friends from parent groups</source>
-        <translation type="unfinished"/>
+        <translation>目录允许透过分组中好友的匿名通道浏览</translation>
     </message>
     <message>
         <source>Directory is browsable for any friend</source>
-        <translation type="unfinished"/>
+        <translation>目录允许任意好友浏览</translation>
     </message>
     <message>
         <source>Directory is accessible by anonymous tunnels from any friend</source>
+        <translation>目录允许透过任意好友的匿名通道浏览</translation>
+    </message>
+    <message>
+        <source>Failed to process collection file</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Click to add this RetroShare cert to your PGP keyring
+and open the Make Friend Wizard.
+</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although PGP keys are mentioned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Initialization failed. Wrong or missing installation of PGP.</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -10005,10 +10085,6 @@ Reducing image to %1x%2 pixels?</source>
         <translation>搜索结果中包含我自己的文件</translation>
     </message>
     <message>
-        <source>Include own files</source>
-        <translation>包括我的文件</translation>
-    </message>
-    <message>
         <source>Search inside &quot;browsable&quot; files of your friends</source>
         <translation>在好友的“好友可见”文件中搜索</translation>
     </message>
@@ -10081,6 +10157,10 @@ Reducing image to %1x%2 pixels?</source>
     <message>
         <source>Close all Search Results</source>
         <translation>关闭所有搜索结果</translation>
+    </message>
+    <message>
+        <source>Include my files</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -10209,23 +10289,6 @@ Reducing image to %1x%2 pixels?</source>
         <translation>防火墙限制</translation>
     </message>
     <message>
-        <source>The DHT allows you to answer connection 
-requests from your friends using BitTorrent's DHT. 
-It greatly improves the connectivity. 
-
-The Discovery service sends locations and GPG 
-identities of your trusted contacts to connected 
-peers, to help them choose new friends. 
-The friendship is never automatic however, and both 
-peers still need to trust each other to allow connection. </source>
-        <translation>DHT 允许您借助 BitTorrent 的 DHT 功能回应好友的连接请求。 
-它可以极大的改善连通性。
-
-节点发现服务将信任好友的位置和 GPG 身份发送给已连接的节点， 
-来帮助他们选择新朋友。不过节点永远不会自动建立好友关系， 
-节点双方仍然需要互相信任对方再能建立连接。 </translation>
-    </message>
-    <message>
         <source>Public: DHT &amp; Discovery</source>
         <translation>公开: DHT &amp; 节点探索</translation>
     </message>
@@ -10298,10 +10361,6 @@ peers still need to trust each other to allow connection. </source>
         <translation>Turtle 路由</translation>
     </message>
     <message>
-        <source>Max average tunnel request forwarded per second:</source>
-        <translation>每秒转发隧道请求最大值:</translation>
-    </message>
-    <message>
         <source>Server</source>
         <translation>服务器</translation>
     </message>
@@ -10328,22 +10387,6 @@ behind a firewall or a VPN.</source>
 下连接的情况。</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;Warning&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;This tab contains hard-core  parameters which are unlikely to need modification. Don&apos;t change them unless you really know what you&apos;re doing. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space：pre-wrap；}
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt;警告&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;此标签页中有程序内置的固定参数，基本无需修改。如果您不了解，请勿修改。&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>This value controls how many tunnel request your peer can forward per second. 
 
 If you have a large internet bandwidth, you may raise this up to 30-40, to allow
@@ -10358,6 +10401,41 @@ The default value is 20.</source>
 造成您自己的文件传输缓慢，请慎重，
 
 默认值为 20 。</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;Warning&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;This tab contains hard-core  parameters which are unlikely to need modification. Don&apos;t change them unless you really know what you&apos;re doing. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enable anonymous data routing</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unchecking this disables all anonymous routing activity, except cache cleaning. Incoming tunnel requests are discarded, and no tunnel requests are sent to anyone.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Max. tunnel requests forwarded per second:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The DHT allows you to answer connection 
+requests from your friends using BitTorrent's DHT. 
+It greatly improves the connectivity. 
+
+The Discovery service sends locations and PGP 
+identities of your trusted contacts to connected 
+peers, to help them choose new friends. 
+The friendship is never automatic however, and both 
+peers still need to trust each other to allow connection. </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -10791,10 +10869,6 @@ p, li { white-space：pre-wrap；}
         <translation>登錄</translation>
     </message>
     <message>
-        <source>Name (GPG Id) - location:</source>
-        <translation>名称 (GPG Id) - 位置:</translation>
-    </message>
-    <message>
         <source>Remember Password</source>
         <translation>记住密码</translation>
     </message>
@@ -10849,6 +10923,10 @@ This choice can be reverted in settings.</source>
 您的 PGP 密码不会被保存。
 
 此选项可以在设置中改变。</translation>
+    </message>
+    <message>
+        <source>Name (PGP Id) - location:</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -10945,36 +11023,28 @@ This choice can be reverted in settings.</source>
 <context>
     <name>StatusMessage</name>
     <message>
-        <source>Personal message</source>
-        <translation>状态签名</translation>
-    </message>
-    <message>
         <source>Status message</source>
         <translation>个人状态消息</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Personal message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space：pre-wrap；}
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;状态签名&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>Message:</source>
+        <translation>消息:</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Enter your Status message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Status message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space：pre-wrap；}
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;输入您的状态消息&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Enter your message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -11694,7 +11764,7 @@ RetroShare 将向数据源请求详细的校验
     </message>
     <message>
         <source>Request id: %1	 from [%2]	 %3 secs ago</source>
-        <translation>请求ID: %1	来自[%2]	于 %3 秒前</translation>
+        <translation>请求ID: %1	来自[%2]	于 %3 s 前</translation>
     </message>
 </context>
 <context>
@@ -11931,19 +12001,19 @@ RetroShare 将向数据源请求详细的校验
     </message>
     <message>
         <source>No Comments Allowed</source>
-        <translation type="unfinished"/>
+        <translation>禁止评论</translation>
     </message>
     <message>
         <source>Authenticated Comments</source>
-        <translation type="unfinished"/>
+        <translation>署名评论</translation>
     </message>
     <message>
         <source>Any Comments Allowed</source>
-        <translation type="unfinished"/>
+        <translation>任意评论</translation>
     </message>
     <message>
         <source>Publish with XXX Key</source>
-        <translation type="unfinished"/>
+        <translation>使用XXX密钥发布</translation>
     </message>
     <message>
         <source>Cancel </source>

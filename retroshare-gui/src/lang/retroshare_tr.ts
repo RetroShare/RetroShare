@@ -408,10 +408,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Own Blogs</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Subscribed Blogs</source>
         <translation type="unfinished"/>
     </message>
@@ -455,6 +451,10 @@ Available: %3</source>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Unsubscribe To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>My Blogs</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -783,10 +783,6 @@ p, li { white-space: pre-wrap; }
         <translation>Otomatik Indirmeyi Etkinlestirin</translation>
     </message>
     <message>
-        <source>Own Channels</source>
-        <translation>Kendi Kanallarin</translation>
-    </message>
-    <message>
         <source>Subscribed Channels</source>
         <translation>Abone Kanallar</translation>
     </message>
@@ -857,6 +853,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Publish rights can&apos;t be restored for this channel.&lt;br/&gt;You&apos;re not the creator of this channel.</source>
         <translation>Yayin haklari bu kanal için geri alinamaz.&lt;br/&gt; Bu kanalin yaraticisi degilsiniz.</translation>
+    </message>
+    <message>
+        <source>My Channels</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1378,11 +1378,11 @@ Sohbet için birini seçin.</translation>
         <translation>Varsayilan yazi tipi sifirlayin</translation>
     </message>
     <message>
-        <source>Paste own certificate link</source>
-        <translation>Kendi sertifikasının linki yapıştırın</translation>
+        <source>appears to be Offline.</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>appears to be Offline.</source>
+        <source>Paste my certificate link</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -1473,14 +1473,6 @@ Sohbet için birini seçin.</translation>
         <translation>Tam</translation>
     </message>
     <message>
-        <source>GPG Key</source>
-        <translation>GPG anahtari</translation>
-    </message>
-    <message>
-        <source>Peer has signed my GPG key</source>
-        <translation>Peer benim GPG anahtari imzaladi</translation>
-    </message>
-    <message>
         <source>Show Help for Trust Settings and Signing</source>
         <translation>Güven Ayarlari ve Imza için Yardim Göster </translation>
     </message>
@@ -1497,10 +1489,6 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Sign GPG key</source>
-        <translation>GPG anahtari imzala</translation>
     </message>
     <message>
         <source>Deny Friend</source>
@@ -1521,10 +1509,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Error : cannot get peer details.</source>
         <translation>Hata: peer ayrintilarini alamadik.</translation>
-    </message>
-    <message>
-        <source>Your key is signed by : </source>
-        <translation>Anahtar imzalanmis:</translation>
     </message>
     <message>
         <source>Peer key is signed by : </source>
@@ -1551,14 +1535,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Peer has authenticated me as a friend and did sign my GPG key</source>
-        <translation>Peer beni arkadas olarak dogrulamis ve benim GPG anahtari imza atmis</translation>
-    </message>
-    <message>
-        <source>Peer has not authenticated me as a friend and did not sign my GPG key</source>
-        <translation>Peer beni arkadas olarak dogrulamis ve benim GPG anahtari isaret vermememis</translation>
-    </message>
-    <message>
         <source>Signature Failure</source>
         <translation>Imza Arizasi</translation>
     </message>
@@ -1582,6 +1558,78 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Other info</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>My key is signed by : </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer has authenticated me as a friend and did sign my PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer has not authenticated me as a friend and did not sign my PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer has signed my PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Sign PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Services</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;User service permissions&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This tab allows you to finely tune which services each of your contacts is allowed to use with you.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Some services (Discovery, anonymous routing) can be switched off globally, which always overrides the settings per-user.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Anonymous routing</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Discovery</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling this means that forums and channels posts will not be passed from you to this friend, and items coming from this friend will be dropped.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forums/Channels</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation>Sohbet</translation>
+    </message>
+    <message>
+        <source>PushButton</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -1772,20 +1820,12 @@ p, li { white-space: pre-wrap; }
         <translation>Imzalayanlar</translation>
     </message>
     <message>
-        <source>It seems your friend is already registered. Adding it might just set it&apos;s ip address.</source>
-        <translation>Bu arkadasin zaten kayitli görünüyor. Eklem ebu sadece ip adresi ayarlayabilirsiniz.</translation>
-    </message>
-    <message>
         <source>Options</source>
         <translation>Seçenekler</translation>
     </message>
     <message>
         <source>Add friend to group:</source>
         <translation>Gruba arkadas ekle:</translation>
-    </message>
-    <message>
-        <source>Authenticate friend (Sign GPG Key)</source>
-        <translation>Arkadasiniz dogrulugunu kanitla (Sign GPG Key)</translation>
     </message>
     <message>
         <source>Add as friend to connect with</source>
@@ -1928,10 +1968,6 @@ p, li { white-space: pre-wrap; }
         <translation>Istek hakkinda Detaylar</translation>
     </message>
     <message>
-        <source>Cannot get peer details of gpg key %1</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>You have a friend request from</source>
         <translation>Bir arkadaslik istegi var</translation>
     </message>
@@ -1955,6 +1991,34 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
         <translation>Sizin Cert panoya kopyalandi, yapistirin ve e-posta veya baska bir yolla yoluyla arkadasiniza gönderiniz</translation>
+    </message>
+    <message>
+        <source>This peer is already on your friend list. Adding it might just set it&apos;s ip address.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot get peer details of PGP key %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Authenticate friend (Sign PGP Key)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Service permissions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Anonymous routing</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Discovery</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forums/channels</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2473,11 +2537,10 @@ Do you want to save your changes?</source>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; You can set your Thumbnail Image for your Channel Post.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; You can use Drag and Drop to Attach Files.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Set your Subject and Description for your Channel Post.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; You can View your Attached Files on Attachments Tab.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;Attachments:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt; Use Drag and Drop / Add Files button, to Hash new files.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Copy/Paste RetroShare links from your shares&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -2615,12 +2678,12 @@ p, li { white-space: pre-wrap; }
         <translation>Ekstra Dosya Ekle</translation>
     </message>
     <message>
-        <source>Paste own certificate link</source>
-        <translation>Kendi sertifikasinin linki yapistirin</translation>
-    </message>
-    <message>
         <source>Start New Thread</source>
         <translation>Yeni konu baslat</translation>
+    </message>
+    <message>
+        <source>Paste my certificate link</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2749,10 +2812,6 @@ p, li { white-space: pre-wrap; }
         <translation>Tam RetroShare Linkı Yapıştır</translation>
     </message>
     <message>
-        <source>Paste own certificate link</source>
-        <translation>Kendi sertifikasının linki yapıştırın</translation>
-    </message>
-    <message>
         <source>In Reply to</source>
         <translation>Cevap olarak</translation>
     </message>
@@ -2767,6 +2826,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Add Extra File</source>
         <translation>Ekstra Dosya Ekle</translation>
+    </message>
+    <message>
+        <source>Paste my certificate link</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2786,6 +2849,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Edit Group</source>
         <translation>Grubu düzenle</translation>
+    </message>
+    <message>
+        <source>Friends</source>
+        <translation>Arkadaslar</translation>
     </message>
 </context>
 <context>
@@ -3960,10 +4027,6 @@ p, li { white-space: pre-wrap; }
         <translation>Baski Önizleme</translation>
     </message>
     <message>
-        <source>Your Forums</source>
-        <translation>Senin Forumlar</translation>
-    </message>
-    <message>
         <source>Subscribed Forums</source>
         <translation>Abone Forumlar</translation>
     </message>
@@ -4119,6 +4182,10 @@ p, li { white-space: pre-wrap; }
         <source>Search Content</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>My Forums</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ForumsFillThread</name>
@@ -4133,6 +4200,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>none</source>
         <translation>yok</translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>Bilinmeyen</translation>
     </message>
 </context>
 <context>
@@ -4224,10 +4295,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>PrintPreview</source>
         <translation>Baski Önizleme</translation>
-    </message>
-    <message>
-        <source>Your Forums</source>
-        <translation>Benim Forumlar</translation>
     </message>
     <message>
         <source>Subscribed Forums</source>
@@ -4383,6 +4450,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>You can&apos;t reply to a non-existant Message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>My Forums</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -4669,10 +4740,6 @@ p, li { white-space: pre-wrap; }
         <translation>Görüntü</translation>
     </message>
     <message>
-        <source>Edit Personal message</source>
-        <translation>Degistir Kisisel mesaji</translation>
-    </message>
-    <message>
         <source>Group Chat</source>
         <translation>Canli Sohbet</translation>
     </message>
@@ -4723,14 +4790,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>A</source>
         <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Set your Personal Message</source>
-        <translation>Kisisel Mesaj berlirle</translation>
-    </message>
-    <message>
-        <source>Edit your status Message</source>
-        <translation>Degistir Kisisel mesajini</translation>
     </message>
     <message>
         <source>Browse Message History</source>
@@ -4823,6 +4882,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Search</source>
         <translation>Baslat</translation>
+    </message>
+    <message>
+        <source>Edit status message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Set your status message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit your status message</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4962,38 +5033,16 @@ p, li { white-space: pre-wrap; }
         <translation>Yeni profil olustur</translation>
     </message>
     <message>
-        <source>Your profile is associated to a GPG key</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Name</source>
         <translation>Name</translation>
-    </message>
-    <message>
-        <source>Enter here your nickname</source>
-        <translation>Burada takma adinizi verin</translation>
     </message>
     <message>
         <source>Email</source>
         <translation>E-Posta</translation>
     </message>
     <message>
-        <source>Be careful: this email will be visible to your friends and friends 
-of your friends. This information is required by GPG, but to stay 
-anonymous, you can use a fake email.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>This Password is for GPG</source>
-        <translation>Bu Sifre GPG için</translation>
-    </message>
-    <message>
         <source>Password</source>
         <translation>Sifre</translation>
-    </message>
-    <message>
-        <source>Put a strong password here. This password protects your GPG key.</source>
-        <translation>Burada güçlü bir parola koyun. Bu sifre GPG anahtari korur.</translation>
     </message>
     <message>
         <source>Location</source>
@@ -5012,21 +5061,11 @@ anonymous, you can use a fake email.</source>
         <translation>Yeni bir yer olusturun</translation>
     </message>
     <message>
-        <source>Generate GPG key Failure</source>
-        <translation>GPG anahtar olusturma da Ariza var</translation>
-    </message>
-    <message>
         <source>Location field is required with a minimum of 3 characters</source>
         <translation>Yer alani da minimum 3 karakter gereklidir</translation>
     </message>
     <message>
         <source>All fields are required with a minimum of 3 characters</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Generating new GPG key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
-
-Fill in your GPG password when asked, to sign your new key.</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -5050,14 +5089,6 @@ Fill in your GPG password when asked, to sign your new key.</source>
         <translation>Gerekli] Bu sifre PGP anahtari korur.</translation>
     </message>
     <message>
-        <source>It looks like you don&apos;t own any Profile (GPG keys). Please fill in the form below to generate one, or import an existing profile.</source>
-        <translation>Herhangi Profil (GPG anahtarlari) yok gibi görünüyor. Bir olusturmak için asagidaki formu doldurunuz, veya varolan bir profili yükleyin.</translation>
-    </message>
-    <message>
-        <source>Generate a new identity</source>
-        <translation>Yeni Profil Olustur</translation>
-    </message>
-    <message>
         <source>Import new identity</source>
         <translation>Yeni kimlik ithalat et</translation>
     </message>
@@ -5068,14 +5099,6 @@ Fill in your GPG password when asked, to sign your new key.</source>
     <message>
         <source>Use identity</source>
         <translation>Kimligini kullanin</translation>
-    </message>
-    <message>
-        <source>Your profile is associated to a GPG key. RetroShare currently ignores DSA keys.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Generate New Identity</source>
-        <translation>Yeni Profil Oluştur</translation>
     </message>
     <message>
         <source>Create new Identity</source>
@@ -5138,10 +5161,6 @@ ve yüklemek için ithalat dügmesini kullanin</translation>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Put a meaningful location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same identity (gpg key).</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Your identity was not saved. An error occurred.</source>
         <translation type="unfinished"/>
     </message>
@@ -5150,19 +5169,71 @@ ve yüklemek için ithalat dügmesini kullanin</translation>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>RetroShare uses gpg keys for identity management.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>You can create a new identity with this form.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>You can use an existing identity (i.e. a gpg key pair), from the list below, or create a new one with this form.</source>
+        <source>Failed to Generate your new Certificate, maybe PGP password is wrong!</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Failed to Generate your new Certificate, maybe PGP password is wrong!</source>
+        <source>It looks like you don&apos;t own any profile (PGP keys). Please fill in the form below to create one, or import an existing profile.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile is associated with a PGP key. RetroShare currently ignores DSA keys.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enter your nickname here</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Be careful: this email will be visible to your friends and friends 
+of your friends. This information is required by PGP, but to stay 
+anonymous, you can use a fake email.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This Password is for PGP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Put a strong password here. This password protects your PGP key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Put a meaningful location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same identity (PGP key).</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create new identity</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile is associated with a PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create a new identity</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RetroShare uses PGP keys for identity management.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can use an existing identity (i.e. a PGP key pair), from the list below, or create a new one with this form.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Generate PGP key Failure</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Generating new PGP key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
+
+Fill in your PGP password when asked, to sign your new key.</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -5961,22 +6032,6 @@ p, li { white-space: pre-wrap; }
         <translation>Anahtar ID</translation>
     </message>
     <message>
-        <source>GPG Name</source>
-        <translation>GPG ismi</translation>
-    </message>
-    <message>
-        <source>GPG Email</source>
-        <translation>GPP E-Posta</translation>
-    </message>
-    <message>
-        <source>GPG Id</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>GPG Hash</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Reputation</source>
         <translation type="unfinished"/>
     </message>
@@ -5988,6 +6043,22 @@ p, li { white-space: pre-wrap; }
         <source>Overall Rating</source>
         <translation>Genel degerlendirme</translation>
     </message>
+    <message>
+        <source>PGP Name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Email</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Hash</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>IdEditDialog</name>
@@ -5998,22 +6069,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Key ID</source>
         <translation>Anahtar ID</translation>
-    </message>
-    <message>
-        <source>GPG Name</source>
-        <translation>GP ismi</translation>
-    </message>
-    <message>
-        <source>GPG Email</source>
-        <translation>GPP E-Posta</translation>
-    </message>
-    <message>
-        <source>GPG Hash</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>GPG Id</source>
-        <translation type="unfinished"/>
     </message>
     <message>
         <source>New Identity</source>
@@ -6032,7 +6087,23 @@ p, li { white-space: pre-wrap; }
         <translation>Kimligi Olustur / Güncelle</translation>
     </message>
     <message>
-        <source>Gpg Associated ID</source>
+        <source>PGP Name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Email</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Hash</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Associated ID</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -7286,16 +7357,16 @@ mesaji kaydetmek istiyor musunuz?</translation>
         <translation>Arkadas ekle</translation>
     </message>
     <message>
-        <source>Share Files for your Friends</source>
-        <translation>Arkadaşlar için dosya Paylaş</translation>
-    </message>
-    <message>
         <source>Search Friends</source>
         <translation>Arkadas Ara</translation>
     </message>
     <message>
         <source>Search</source>
         <translation>Baslat</translation>
+    </message>
+    <message>
+        <source>Share files for your friends</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7419,10 +7490,6 @@ mesaji kaydetmek istiyor musunuz?</translation>
         <translation>Dogrulanmis Peer</translation>
     </message>
     <message>
-        <source>Did I sign his gpg key</source>
-        <translation>Onun gpg anahtari imzaladim mi</translation>
-    </message>
-    <message>
         <source>Did peer authenticated me</source>
         <translation>Akran Beni dogrulanmis mi</translation>
     </message>
@@ -7437,10 +7504,6 @@ mesaji kaydetmek istiyor musunuz?</translation>
     <message>
         <source>Peer ID</source>
         <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Show keys that are not validated by the GPG web of trust</source>
-        <translation>Güven GPG web tarafindan onaylanmamislari göster </translation>
     </message>
     <message>
         <source>Network Status</source>
@@ -7539,10 +7602,6 @@ mesaji kaydetmek istiyor musunuz?</translation>
         <translation>Kisisel imza</translation>
     </message>
     <message>
-        <source>GPG key signed by you</source>
-        <translation>GPG anahtar benim tarafindan imzalanmisGPG anahtar benim tarafindan imzalanmis</translation>
-    </message>
-    <message>
         <source>Marginally trusted peer</source>
         <translation>Marjinal güvenilen akran</translation>
     </message>
@@ -7581,6 +7640,18 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Search Peer ID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP key signed by you</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Did I sign his PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show keys that are not validated by the PGP web of trust</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -7786,10 +7857,6 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
 <context>
     <name>NotifyQt</name>
     <message>
-        <source>GPG key passphrase</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Wrong password !</source>
         <translation type="unfinished"/>
     </message>
@@ -7825,12 +7892,35 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <source>Please enter the password to unlock your PGP key:</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>PGP key passphrase</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>OnlineToaster</name>
     <message>
         <source>Friend Online</source>
         <translation>Arkadas Çevrimiçi</translation>
+    </message>
+</context>
+<context>
+    <name>OpModeStatus</name>
+    <message>
+        <source>Normal Mode</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No Anon D/L</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Gaming Mode</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Low Traffic</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8646,10 +8736,6 @@ malicious behavior of crafted plugins.</source>
         <translation>Sonraki</translation>
     </message>
     <message>
-        <source>Your Topics</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Subscribed Topics</source>
         <translation type="unfinished"/>
     </message>
@@ -8704,6 +8790,10 @@ malicious behavior of crafted plugins.</source>
     <message>
         <source>AUTHD</source>
         <translation>Doğrulanmış</translation>
+    </message>
+    <message>
+        <source>My Topics</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8843,10 +8933,6 @@ ve yüklemek için ithalat dügmesini kullanin</translation>
 <context>
     <name>ProfileWidget</name>
     <message>
-        <source>Edit Personal message</source>
-        <translation>Degistir Kisisel mesaji</translation>
-    </message>
-    <message>
         <source>Copy Certificate</source>
         <translation>Kopyala Sertifika</translation>
     </message>
@@ -8916,6 +9002,10 @@ ve yüklemek için ithalat dügmesini kullanin</translation>
     </message>
     <message>
         <source>Addresses list:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit status message</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -9008,12 +9098,6 @@ ve yüklemek için ithalat dügmesini kullanin</translation>
     <message>
         <source>Maybe password is wrong</source>
         <translation>Belki şifre yanlış</translation>
-    </message>
-    <message>
-        <source>Click to add this RetroShare cert to your GPG keyring
-and open the Make Friend Wizard.
-</source>
-        <translation type="unfinished"/>
     </message>
     <message>
         <source>Add file</source>
@@ -9152,10 +9236,6 @@ and open the Make Friend Wizard.
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Treatment of collection file has failed</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Deny friend</source>
         <translation>Arkadas reddet</translation>
     </message>
@@ -9214,14 +9294,6 @@ Reported error is: %2</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although GPG keys are mentioned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Initialization failed. Wrong or missing installation of gpg.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>An unexpected error occurred. Please report &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</source>
         <translation type="unfinished"/>
     </message>
@@ -9245,6 +9317,24 @@ Reported error is: %2</source>
     </message>
     <message>
         <source>Directory is accessible by anonymous tunnels from any friend</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Failed to process collection file</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Click to add this RetroShare cert to your PGP keyring
+and open the Make Friend Wizard.
+</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although PGP keys are mentioned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Initialization failed. Wrong or missing installation of PGP.</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -9794,10 +9884,6 @@ Reducing image to %1x%2 pixels?</source>
         <translation>Arama sonucu kendi dosyalarini listeden dahil et</translation>
     </message>
     <message>
-        <source>Include own files</source>
-        <translation>kendi dosyalarini göster</translation>
-    </message>
-    <message>
         <source>Search inside &quot;browsable&quot; files of your friends</source>
         <translation>Arama için &quot;Arkadaslarinizin göz atilabilir&quot; dosyalari</translation>
     </message>
@@ -9868,6 +9954,10 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Close all Search Results</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Include my files</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -9997,18 +10087,6 @@ Reducing image to %1x%2 pixels?</source>
         <translation>Güvenlik duvari</translation>
     </message>
     <message>
-        <source>The DHT allows you to answer connection 
-requests from your friends using BitTorrent's DHT. 
-It greatly improves the connectivity. 
-
-The Discovery service sends locations and GPG 
-identities of your trusted contacts to connected 
-peers, to help them choose new friends. 
-The friendship is never automatic however, and both 
-peers still need to trust each other to allow connection. </source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Public: DHT &amp; Discovery</source>
         <translation type="unfinished"/>
     </message>
@@ -10081,10 +10159,6 @@ peers still need to trust each other to allow connection. </source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Max average tunnel request forwarded per second:</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Server</source>
         <translation type="unfinished"/>
     </message>
@@ -10108,16 +10182,6 @@ behind a firewall or a VPN.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;Warning&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;This tab contains hard-core  parameters which are unlikely to need modification. Don&apos;t change them unless you really know what you&apos;re doing. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>This value controls how many tunnel request your peer can forward per second. 
 
 If you have a large internet bandwidth, you may raise this up to 30-40, to allow
@@ -10125,6 +10189,41 @@ statistically longer tunnels to pass. Be very careful though, since this generat
 many small packets that can significantly slow down your own file transfer. 
 
 The default value is 20.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;Warning&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;This tab contains hard-core  parameters which are unlikely to need modification. Don&apos;t change them unless you really know what you&apos;re doing. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enable anonymous data routing</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unchecking this disables all anonymous routing activity, except cache cleaning. Incoming tunnel requests are discarded, and no tunnel requests are sent to anyone.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Max. tunnel requests forwarded per second:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The DHT allows you to answer connection 
+requests from your friends using BitTorrent's DHT. 
+It greatly improves the connectivity. 
+
+The Discovery service sends locations and PGP 
+identities of your trusted contacts to connected 
+peers, to help them choose new friends. 
+The friendship is never automatic however, and both 
+peers still need to trust each other to allow connection. </source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -10545,10 +10644,6 @@ p, li { white-space: pre-wrap; }
         <translation>Giris</translation>
     </message>
     <message>
-        <source>Name (GPG Id) - location:</source>
-        <translation>Isim (GPG Id) - yer:</translation>
-    </message>
-    <message>
         <source>Remember Password</source>
         <translation>Sifreyi hatirla</translation>
     </message>
@@ -10590,6 +10685,10 @@ This choice can be reverted in settings.</source>
  Your PGP password will not be stored.
 
 This choice can be reverted in settings.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Name (PGP Id) - location:</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -10687,36 +10786,28 @@ This choice can be reverted in settings.</source>
 <context>
     <name>StatusMessage</name>
     <message>
-        <source>Personal message</source>
-        <translation>Kisisel mesaj</translation>
-    </message>
-    <message>
         <source>Status message</source>
         <translation>Durum mesaji</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Personal message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Kisisel mesaj&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>Message:</source>
+        <translation>Mesaj:</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Enter your Status message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Status message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Durum mesaji veriniz&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Enter your message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>

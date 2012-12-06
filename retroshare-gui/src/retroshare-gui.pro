@@ -725,6 +725,7 @@ TRANSLATIONS +=  \
 			lang/retroshare_fi.ts \
             lang/retroshare_fr.ts \
             lang/retroshare_hu.ts \
+            lang/retroshare_it.ts \
             lang/retroshare_ja_JP.ts \
             lang/retroshare_ko.ts \
             lang/retroshare_pl.ts \
@@ -739,7 +740,6 @@ unfinishedtranslations {
             lang/retroshare_bg.ts \
             lang/retroshare_af.ts  \
             lang/retroshare_gr.ts  \
-            lang/retroshare_it.ts  \
             lang/retroshare_nl.ts \
             lang/retroshare_pt.ts  \
             lang/retroshare_sl.ts \
