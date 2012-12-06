@@ -84,7 +84,6 @@
         <file>images/channels16.png</file>
         <file>images/channels24.png</file>
         <file>images/channels32.png</file>
-        <file>images/channels_new32.png</file>
         <file>images/channels_new.png</file>
         <file>images/channelsred.png</file>
         <file>images/channelsyellow.png</file>
@@ -114,7 +113,6 @@
         <file>images/FileTypePicture.png</file>
         <file>images/FileTypeProgram.png</file>
         <file>images/FileTypeVideo.png</file>
-        <file>images/finished_background.png</file>
         <file>images/fonts.png</file>
         <file>images/folder16.png</file>
         <file>images/foldermail.png</file>
@@ -124,11 +122,9 @@
         <file>images/graph-downloading.png</file>
         <file>images/graph-notdownload.png</file>
         <file>images/graph-checking.png</file>
-        <file>images/add-friend24.png</file>
         <file>images/add-share24.png</file>
         <file>images/add_24x24.png</file>
         <file>images/advsearch_24x24.png</file>
-        <file>images/amsn.png</file>
         <file>images/amsn16.png</file>
         <file>images/attachment.png</file>
         <file>images/avatar_background.png</file>
@@ -264,7 +260,6 @@
         <file>images/im-user-busy.png</file>
         <file>images/im-user-inactive.png</file>
         <file>images/informations_24x24.png</file>
-        <file>images/invite-friend24.png</file>
         <file>images/connect_friend.png</file>
         <file>images/kalarm.png</file>
         <file>images/kbackgammon.png</file>
@@ -278,7 +273,6 @@
         <file>images/konqsidebar_news16.png</file>
         <file>images/konqsidebar_news24.png</file>
         <file>images/konversation.png</file>
-        <file>images/konversation_new.png</file>
         <file>images/konversation16.png</file>
         <file>images/konversation128.png</file>
         <file>images/konv_message2.png</file>
@@ -329,7 +323,6 @@
         <file>images/message-news.png</file>
         <file>images/message_new.png</file>
         <file>images/message.png</file>
-        <file>images/messages_new.png</file>
         <file>images/messenger.png</file>
         <file>images/mute-off-16.png</file>
         <file>images/mute-on-16.png</file>
@@ -369,7 +362,6 @@
         <file>images/rate-5.png</file>
         <file>images/rating.png</file>
         <file>images/records.png</file>
-        <file>images/removefriend16.png</file>
         <file>images/replymail-pressed.png</file>
         <file>images/replymail24.png</file>
         <file>images/replymailall24-hover.png</file>
@@ -382,8 +374,6 @@
         <file>images/retrosharelogo32.png</file>
         <file>images/rs1.png</file>
         <file>images/rs-2.png</file>
-        <file>images/rsmessenger16.png</file>
-        <file>images/rsmessenger32.png</file>
         <file>images/rstray3.png</file>
         <file>images/rstray0.png</file>
         <file>images/rstray1.png</file>
@@ -417,7 +407,6 @@
         <file>images/tab-undock.png</file>
         <file>images/tag24.png</file>
         <file>images/transferupdown.png</file>
-        <file>images/transfers_new32.png</file>
         <file>images/tools_wizard.png</file>
         <file>images/typing.png</file>
         <file>images/trustsettings.png</file>
