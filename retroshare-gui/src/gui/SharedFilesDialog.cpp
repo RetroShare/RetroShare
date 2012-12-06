@@ -760,8 +760,8 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
     switch (type) {
     case DIR_TYPE_DIR:
         contextMnu.addAction(openfolderAct);
-        contextMnu.addSeparator();
-        contextMnu.addAction(editshareAct) ;
+        //contextMnu.addSeparator();
+        //contextMnu.addAction(editshareAct) ;
         contextMnu.addSeparator();
 		contextMnu.addAction(createcollectionfileAct) ;
         break;
