@@ -67,7 +67,7 @@ public:
  * An important thing to note is that all requests are stacked (so FIFO)
  * This is to prevent overlapped loads on GXS UIs
  */
-class TokenQueue: public QWidget
+class TokenQueue: public QObject
 {
 	Q_OBJECT
 
@@ -100,8 +100,9 @@ public:
 	bool checkForRequest(uint32_t token);
 	void loadRequest(const TokenRequest &req);
 
-        bool activeRequestExist(const uint32_t& userType);
-        void activeRequestTokens(const uint32_t& userType, std::list<uint32_t>& tokens);
+	bool activeRequestExist(const uint32_t& userType);
+	void activeRequestTokens(const uint32_t& userType, std::list<uint32_t>& tokens);
+
 protected:
 	void doPoll(float dt);
 
@@ -114,7 +115,7 @@ private:
 
 	RsTokenService *mService;
 	TokenResponse *mResponder;
-        QMutex mTokenMtx;
+	QMutex mTokenMtx;
 
 	QTimer *mTrigger;
 };
