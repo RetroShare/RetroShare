@@ -78,6 +78,7 @@ std::ostream &operator<<(std::ostream &out, const RsPostedVote &vote);
 std::ostream &operator<<(std::ostream &out, const RsPostedComment &comment);
 
 
+
 class RsPosted : public RsGxsIfaceImpl
 {
         public:
@@ -105,6 +106,8 @@ virtual ~RsPosted() { return; }
     virtual bool submitPost(uint32_t &token, RsPostedPost &post) = 0;
     virtual bool submitVote(uint32_t &token, RsPostedVote &vote) = 0;
     virtual bool submitComment(uint32_t &token, RsPostedComment &comment) = 0;
+
+    virtual bool retrieveScores(const std::string& serviceString, uint32_t& upVotes, uint32_t& downVotes, uint32_t& nComments) const = 0;
 
         // Special Ranking Request.
     /*!

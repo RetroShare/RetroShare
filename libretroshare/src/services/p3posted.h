@@ -31,16 +31,15 @@ public:
 
 class PostedScore {
 public:
-    int32_t upVotes, downVotes;
+
+    PostedScore() : upVotes(0), downVotes(0), commentCount(0), date(0) {}
+    uint32_t upVotes, downVotes;
+    uint32_t commentCount;
     time_t date;
     RsGxsMessageId msgId;
 };
 
 
-#define UPDATE_PHASE_GRP_REQUEST 1
-#define UPDATE_PHASE_GRP_MSG_REQUEST 2
-#define UPDATE_VOTE_COMMENT_REQUEST 3
-#define UPDATE_COMPLETE_UPDATE 4
 
 class p3Posted : public RsGenExchange, public RsPosted
 {
@@ -93,6 +92,8 @@ public:
     bool requestMessageRankings(uint32_t &token, const RankType &rType, const RsGxsGroupId &groupId);
     bool requestCommentRankings(uint32_t &token, const RankType &rType, const RsGxsGrpMsgIdPair &msgId);
 
+    bool retrieveScores(const std::string& serviceString, uint32_t& upVotes, uint32_t& downVotes, uint32_t& nComments) const;
+
 private:
 
     /* Functions for processing rankings */
@@ -103,7 +104,7 @@ private:
     void discardCalc(const uint32_t& token);
     void completePostedPostCalc(GxsPostedPostRanking* gpp);
     void completePostedCommentRanking(GxsPostedCommentRanking* gpc);
-    bool retrieveScores(const std::string& serviceString, uint32_t& upVotes, uint32_t downVotes, uint32_t nComments) const;
+
     bool storeScores(std::string& serviceString, uint32_t& upVotes, uint32_t downVotes, uint32_t nComments) const;
 
     // for posts
@@ -124,12 +125,19 @@ private:
      * Also stores updates for messages which have new scores
      */
     void updateVotes();
-    bool updateRequestGroups(uint32_t& token);
-    bool updateRequestMessages(uint32_t& token);
-    bool updateRequestVotesComments(uint32_t& token);
-    bool updateCompleteUpdate();
-    bool updateMsg(const RsGxsGrpMsgIdPair& msgId, const std::vector<RsPostedVote>& msgVotes,
-                        const std::vector<RsGxsMessageId>& msgCommentIds);
+    bool updateRequestGroups();
+    bool updateRequestMessages();
+    bool updateRequestVotesComments();
+    bool updateCompleteVotes();
+    bool updateCompleteComments();
+
+    /*!
+     * The aim of this is create notifications
+     * for the UI of changes to a post if their vote
+     * or comment count has changed
+     */
+    bool updateComplete();
+
 
 private:
 
@@ -140,10 +148,14 @@ private:
     std::map<uint32_t, GxsPostedCommentRanking*> mPendingCalculationCommentRanks;
 
     // for maintaining vote counts in msg meta
-    uint32_t mVoteUpdataToken, mVoteToken, mCommentToken;
-    bool mUpdateTokenQueued;
+    uint32_t mUpdateRequestGroup, mUpdateRequestMessages, mUpdateRequestComments, mUpdateRequestVotes;
+    bool mPostUpdate;
     uint32_t mUpdatePhase;
     std::vector<RsGxsGrpMsgIdPair> mMsgsPendingUpdate;
+    time_t mLastUpdate;
+    GxsMsgMetaMap mMsgMetaUpdate;
+    std::map<RsGxsGrpMsgIdPair, PostedScore > mMsgCounts;
+    std::vector<uint32_t> mChangeTokens;
 
     RsTokenService* mTokenService;
     RsMutex mPostedMutex;
@@ -151,7 +163,11 @@ private:
 
     // for data generation
 
-    bool mGeneratingPosts, mGeneratingTopics;
+    bool mGeneratingPosts, mGeneratingTopics, mRequestPhase1, mRequestPhase2, mRequestPhase3;
+    std::vector<uint32_t> mTokens;
+    uint32_t mToken;
+    std::list<RsGxsGroupId> mGrpIds;
+
 };
 
 #endif // P3POSTED_H

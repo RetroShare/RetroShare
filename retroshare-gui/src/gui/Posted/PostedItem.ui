@@ -53,7 +53,7 @@ border-radius: 10px}</string>
            </font>
           </property>
           <property name="text">
-           <string>1</string>
+           <string>0</string>
           </property>
          </widget>
         </item>

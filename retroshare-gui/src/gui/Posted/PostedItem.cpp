@@ -55,7 +55,12 @@ PostedItem::PostedItem(PostedHolder *postHolder, const RsPostedPost &post)
                        "><span style=\" text-decoration: underline; color:#0000ff;\">" +
                        QString::fromStdString(post.mLink) + "</span></a>");
 
-    scoreLabel->setText(QString("1"));
+    uint32_t up, down, nComments;
+
+    rsPosted->retrieveScores(mPost.mMeta.mServiceString, up, down, nComments);
+
+    int32_t vote = up - down;
+    scoreLabel->setText(QString::number(vote));
 
     connect( commentButton, SIGNAL( clicked() ), this, SLOT( loadComments() ) );
     connect( voteUpButton, SIGNAL(clicked()), this, SLOT(makeUpVote()));
@@ -72,16 +77,16 @@ RsPostedPost PostedItem::getPost() const
 void PostedItem::makeDownVote()
 {
     RsGxsGrpMsgIdPair msgId;
-    msgId.first = mPost.mMeta.mMsgId;
-    msgId.second = mPost.mMeta.mGroupId;
+    msgId.first = mPost.mMeta.mGroupId;
+    msgId.second = mPost.mMeta.mMsgId;
     emit vote(msgId, false);
 }
 
 void PostedItem::makeUpVote()
 {
     RsGxsGrpMsgIdPair msgId;
-    msgId.first = mPost.mMeta.mMsgId;
-    msgId.second = mPost.mMeta.mGroupId;
+    msgId.first = mPost.mMeta.mGroupId;
+    msgId.second = mPost.mMeta.mMsgId;
     emit vote(msgId, true);
 }
 

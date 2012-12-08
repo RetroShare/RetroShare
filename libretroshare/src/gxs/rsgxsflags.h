@@ -91,6 +91,8 @@ namespace GXS_SERV {
 
     static const uint32_t GXS_MSG_STATUS_UNREAD = 0x00000200;
 
+    static const uint32_t GXS_MSG_STATUS_READ = 0x00000400;
+
     /** END GXS Msg status flags **/
 
     /** START GXS Grp status flags **/

@@ -1264,6 +1264,7 @@ void RsGenExchange::publishMsgs()
                     msg->metaData->serialise(metaDataBuff, &size);
                     msg->meta.setBinData(metaDataBuff, size);
 
+                    msg->metaData->mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_UNREAD;
                     msgId = msg->msgId;
                     grpId = msg->grpId;
                     mDataAccess->addMsgData(msg);
@@ -1322,9 +1323,11 @@ void RsGenExchange::publishGrps()
     int i = 0;
     for(; mit != mGrpsToPublish.end(); mit++)
     {
+
+        if(i > GEN_EXCH_GRP_CHUNK-1) break;
+
         toRemove.push_back(mit->first);
         i++;
-        if(i > GEN_EXCH_GRP_CHUNK) break;
 
         RsNxsGrp* grp = new RsNxsGrp(mServType);
         RsGxsGrpItem* grpItem = mit->second;

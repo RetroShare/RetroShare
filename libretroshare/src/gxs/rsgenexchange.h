@@ -403,20 +403,20 @@ public:
     void setGroupServiceString(uint32_t& token, const RsGxsGroupId& grpId, const std::string& servString);
 
     /*!
-	 * sets the msg status flag
-	 * @param token this is set to token value associated to this request
-	 * @param grpId Id of group whose subscribe file will be changed
-	 * @param status
-	 * @param mask Mask to apply to status flag
-	 */
+     * sets the msg status flag
+     * @param token this is set to token value associated to this request
+     * @param grpId Id of group whose subscribe file will be changed
+     * @param status
+     * @param mask Mask to apply to status flag
+     */
     void setMsgStatusFlags(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, const uint32_t& status, const uint32_t& mask);
 
     /*!
-	 * sets the message service string
-	 * @param token this is set to token value associated to this request
-	 * @param msgId Id of message whose service string will be changed
-	 * @param servString The service string to set msg to
-	 */
+     * sets the message service string
+     * @param token this is set to token value associated to this request
+     * @param msgId Id of message whose service string will be changed
+     * @param servString The service string to set msg to
+     */
     void setMsgServiceString(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, const std::string& servString );
 
 protected:
