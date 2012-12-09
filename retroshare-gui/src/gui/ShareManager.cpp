@@ -200,20 +200,30 @@ void ShareManager::updateFlags()
     std::list<SharedDirInfo> dirs;
     rsFiles->getSharedDirectories(dirs);
 
-    int row=0 ;
-    for(it = dirs.begin(); it != dirs.end(); it++,++row)
-    {
-        //std::cerr << "Looking for row=" << row << ", file=" << (*it).filename << ", flags=" << (*it).shareflags << std::endl ;
-        FileStorageFlags current_flags = (dynamic_cast<GroupFlagsWidget*>(ui.shareddirList->cellWidget(row,COLUMN_SHARE_FLAGS)))->flags() ;
+	 std::map<QString, FileStorageFlags> mapped_flags ;
 
-        if( (*it).shareflags != current_flags )
-        {
-            (*it).shareflags = current_flags ;
-				rsFiles->updateShareFlags(*it) ;	// modifies the flags
+	 for(int row=0;row<ui.shareddirList->rowCount();++row)
+	 {
+		 QString dirpath = ui.shareddirList->item(row,COLUMN_PATH)->text() ;
+		 FileStorageFlags flags = (dynamic_cast<GroupFlagsWidget*>(ui.shareddirList->cellWidget(row,COLUMN_SHARE_FLAGS)))->flags() ;
 
-//				std::cerr << "Push into the list: flags " << current_flags << " for directory: " << (*it).filename << std::endl;
-        }
-    }
+		 mapped_flags[dirpath] = flags ;
+
+//		 std::cerr << "Getting new flags " << flags << " for path " << dirpath.toStdString() << std::endl;
+	 }
+
+	 for(std::list<SharedDirInfo>::iterator it(dirs.begin());it!=dirs.end();++it)
+	 {
+		 FileStorageFlags newf = mapped_flags[QString::fromUtf8((*it).filename.c_str())] ;
+
+		 if( (*it).shareflags != newf )
+		 {
+			 (*it).shareflags = newf ;
+			 rsFiles->updateShareFlags(*it) ;	// modifies the flags
+
+//			 std::cerr << "Updating flags to " << newf << " for dir " << (*it).filename << std::endl ;
+		 }
+	 }
 
     isLoading = false ;	// re-enable GUI load
 	 load() ;				// update the GUI.
