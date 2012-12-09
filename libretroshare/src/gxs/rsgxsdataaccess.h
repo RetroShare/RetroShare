@@ -64,7 +64,7 @@ public:
     bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts);
 
     /*!
-     * Use this to get msg related information, store this value to pole for request completion
+     * Use this to get msg information (id, meta, or data), store token value to poll for request completion
      * @param token The token returned for the request
      * @param ansType The type of result wanted
      * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
@@ -74,11 +74,12 @@ public:
     bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const GxsMsgReq& msgIds);
 
     /*!
-     * Use this to get msg related information, store this value to pole for request completion
+     * Use this to get message information (id, meta, or data), store token value to poll for request completion
      * @param token The token returned for the request
      * @param ansType The type of result wanted
      * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
-     * @param groupIds The ids of the groups to get, this retrieve all the msgs info for each grpId in list
+     * @param groupIds The ids of the groups to get, this retrieve all the msgs info for each grpId in list, if group Id list is empty \n
+     * all messages for all groups are retrieved
      * @return true if request successful false otherwise
      */
     bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<RsGxsGroupId>& grpIds);

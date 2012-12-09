@@ -134,6 +134,7 @@ class RsPostedPost
         RsPostedPost()
         {
             mMeta.mMsgFlags = RsPosted::FLAG_MSGTYPE_POST;
+            mMeta.mServiceString = " 0 0 0";
             return;
         }
 

@@ -74,7 +74,7 @@ public:
      * Generates random votes to existing posts
      * in the system
      */
-    void generateVotes();
+    void generateVotesAndComments();
 
 public:
 
@@ -163,7 +163,8 @@ private:
 
     // for data generation
 
-    bool mGeneratingPosts, mGeneratingTopics, mRequestPhase1, mRequestPhase2, mRequestPhase3;
+    bool mGeneratingPosts, mGeneratingTopics,
+    mRequestPhase1, mRequestPhase2, mRequestPhase3, mGenerateVotesAndComments;
     std::vector<uint32_t> mTokens;
     uint32_t mToken;
     std::list<RsGxsGroupId> mGrpIds;

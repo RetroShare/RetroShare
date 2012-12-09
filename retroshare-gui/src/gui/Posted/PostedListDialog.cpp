@@ -140,19 +140,66 @@ void PostedListDialog::showComments(const RsPostedPost& post)
 
 void PostedListDialog::updateDisplay()
 {
-    std::list<std::string> groupIds;
-    std::list<std::string>::iterator it;
     if (!rsPosted)
         return;
+
+
+    std::list<std::string> groupIds;
+    std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgs;
+
 
     if (rsPosted->updated())
     {
         /* update Forums List */
-        insertGroups();
-        insertThreads();
+
+        rsPosted->groupsChanged(groupIds);
+        if(!groupIds.empty())
+        {
+            std::list<std::string>::iterator it = std::find(groupIds.begin(), groupIds.end(), mCurrTopicId);
+
+            if(it != groupIds.end()){
+                requestGroupSummary();
+                return;
+            }
+        }
+
+        rsPosted->msgsChanged(msgs);
+
+        if(!msgs.empty())
+        {
+
+
+            std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit = msgs.find(mCurrTopicId);
+            if(mit != msgs.end())
+            {
+                updateDisplayedItems(mit->second);
+            }
+        }
     }
 
 }
+
+
+void PostedListDialog::updateDisplayedItems(const std::vector<RsGxsMessageId> &msgIds)
+{
+
+    RsTokReqOptions opts;
+
+    opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+    opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
+
+
+    GxsMsgReq msgs;
+    msgs[mCurrTopicId] = msgIds;
+
+    std::cerr << "PostedListDialog::updateDisplayedItems(" << mCurrTopicId << ")";
+    std::cerr << std::endl;
+
+    uint32_t token;
+    mPostedQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgs, TOKEN_USER_TYPE_POST_MOD);
+
+}
+
 
 
 void PostedListDialog::changedTopic(const QString &id)
@@ -362,7 +409,8 @@ void PostedListDialog::loadGroupThreadData_InsertThreads(const uint32_t &token)
 
     for(; vit != posts.end(); vit++)
     {
-        loadPost(*vit);
+        RsPostedPost& p = *vit;
+        loadPost(p);
     }
 }
 
@@ -371,6 +419,7 @@ void PostedListDialog::loadPost(const RsPostedPost &post)
     PostedItem *item = new PostedItem(this, post);
     connect(item, SIGNAL(vote(RsGxsGrpMsgIdPair,bool)), this, SLOT(submitVote(RsGxsGrpMsgIdPair,bool)));
     QLayout *alayout = ui.scrollAreaWidgetContents->layout();
+    mPosts.insert(post.mMeta.mMsgId, item);
     alayout->addWidget(item);
 }
 
@@ -415,9 +464,37 @@ void PostedListDialog::clearPosts()
             alayout->removeWidget(item);
             delete item;
     }
+
+    mPosts.clear();
 }
 
+void PostedListDialog::updateCurrentDisplayComplete(const uint32_t &token)
+{
+    std::cerr << "PostedListDialog::loadGroupThreadData_InsertThreads()";
+    std::cerr << std::endl;
 
+    PostedPostResult result;
+    rsPosted->getPost(token, result);
+
+
+    if(result.find(mCurrTopicId) == result.end())
+        return;
+
+    std::vector<RsPostedPost>& posts = result[mCurrTopicId];
+    std::vector<RsPostedPost>::iterator vit = posts.begin();
+
+    for(; vit != posts.end(); vit++)
+    {
+
+        RsPostedPost& p = *vit;
+
+        // modify post content
+        if(mPosts.find(p.mMeta.mMsgId) != mPosts.end())
+            mPosts[p.mMeta.mMsgId]->setContent(p);
+
+    }
+
+}
 
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
@@ -464,6 +541,17 @@ void PostedListDialog::loadRequest(const TokenQueue *queue, const TokenRequest &
                         {
                             case RS_TOKREQ_ANSTYPE_ACK:
                                 acknowledgeVoteMsg(req.mToken);
+                                break;
+                            default:
+                                std::cerr << "Error, unexpected anstype:" << req.mAnsType << std::endl;
+                                break;
+                        }
+                        break;
+                     case TOKEN_USER_TYPE_POST_MOD:
+                        switch(req.mAnsType)
+                        {
+                            case RS_TOKREQ_ANSTYPE_DATA:
+                                updateCurrentDisplayComplete(req.mToken);
                                 break;
                             default:
                                 std::cerr << "Error, unexpected anstype:" << req.mAnsType << std::endl;

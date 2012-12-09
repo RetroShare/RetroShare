@@ -38,15 +38,15 @@ class PostedHolder
     virtual void showComments(const RsPostedPost& post) = 0;
 };
 
-
 class PostedItem : public QWidget, private Ui::PostedItem
 {
   Q_OBJECT
 
 public:
-	PostedItem(PostedHolder *parent, const RsPostedPost &item);
+        PostedItem(PostedHolder *parent, const RsPostedPost &post);
 
         RsPostedPost getPost() const;
+        void setContent(const RsPostedPost& post);
 
 private slots:
         void loadComments();

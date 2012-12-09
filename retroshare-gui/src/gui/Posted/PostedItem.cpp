@@ -43,6 +43,18 @@ PostedItem::PostedItem(PostedHolder *postHolder, const RsPostedPost &post)
     setupUi(this);
     setAttribute ( Qt::WA_DeleteOnClose, true );
 
+    setContent(mPost);
+
+    connect( commentButton, SIGNAL( clicked() ), this, SLOT( loadComments() ) );
+    connect( voteUpButton, SIGNAL(clicked()), this, SLOT(makeUpVote()));
+    connect( voteDownButton, SIGNAL(clicked()), this, SLOT( makeDownVote()));
+
+    return;
+}
+
+void PostedItem::setContent(const RsPostedPost &post)
+{
+    mPost = post;
     QDateTime qtime;
     qtime.setTime_t(mPost.mMeta.mPublishTs);
     QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
@@ -57,16 +69,20 @@ PostedItem::PostedItem(PostedHolder *postHolder, const RsPostedPost &post)
 
     uint32_t up, down, nComments;
 
-    rsPosted->retrieveScores(mPost.mMeta.mServiceString, up, down, nComments);
+    bool ok = rsPosted->retrieveScores(mPost.mMeta.mServiceString, up, down, nComments);
 
-    int32_t vote = up - down;
-    scoreLabel->setText(QString::number(vote));
+    if(ok)
+    {
+        int32_t vote = up - down;
+        scoreLabel->setText(QString::number(vote));
 
-    connect( commentButton, SIGNAL( clicked() ), this, SLOT( loadComments() ) );
-    connect( voteUpButton, SIGNAL(clicked()), this, SLOT(makeUpVote()));
-    connect( voteDownButton, SIGNAL(clicked()), this, SLOT( makeDownVote()));
+        numCommentsLabel->setText("<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px;"
+                                  "margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span"
+                                  "style=\" font-size:10pt; font-weight:600;\">#</span><span "
+                                  "style=\" font-size:8pt; font-weight:600;\"> Comments:  "
+                                  + QString::number(nComments) + "</span></p>");
+    }
 
-    return;
 }
 
 RsPostedPost PostedItem::getPost() const

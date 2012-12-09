@@ -26,6 +26,7 @@
 
 #include <retroshare/rsposted.h>
 
+
 #include <iostream>
 #include <sstream>
 

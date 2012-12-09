@@ -18,8 +18,9 @@
 #define NUM_TOPICS_TO_GENERATE 1
 #define NUM_POSTS_TO_GENERATE 1
 #define NUM_VOTES_TO_GENERATE 23
+#define NUM_COMMENTS_TO_GENERATE 23
 
-#define VOTE_UPDATE_PERIOD 20 // 20 seconds
+#define VOTE_UPDATE_PERIOD 30 // 20 seconds
 
 const uint32_t RsPosted::FLAG_MSGTYPE_COMMENT = 0x0001;
 const uint32_t RsPosted::FLAG_MSGTYPE_POST = 0x0002;
@@ -44,7 +45,8 @@ RsPostedVote::RsPostedVote(const RsGxsPostedVoteItem& item)
 
 p3Posted::p3Posted(RsGeneralDataService *gds, RsNetworkExchangeService *nes)
     : RsGenExchange(gds, nes, new RsGxsPostedSerialiser(), RS_SERVICE_GXSV1_TYPE_POSTED), RsPosted(this), mPostedMutex("Posted"),
-    mTokenService(NULL), mGeneratingTopics(true), mGeneratingPosts(false), mRequestPhase1(true), mRequestPhase2(false), mRequestPhase3(false)
+    mTokenService(NULL), mGeneratingTopics(true), mGeneratingPosts(false), mRequestPhase1(true), mRequestPhase2(false),
+    mRequestPhase3(false), mGenerateVotesAndComments(false)
 {
     mPostUpdate = false;
     mLastUpdate = time(NULL);
@@ -63,6 +65,7 @@ void p3Posted::service_tick()
 
     generateTopics();
     generatePosts();
+    generateVotesAndComments();
 
     time_t now = time(NULL);
 
@@ -74,6 +77,121 @@ void p3Posted::service_tick()
     }
 
     updateVotes();
+}
+
+void p3Posted::generateVotesAndComments()
+{
+    if(mGenerateVotesAndComments)
+    {
+
+        if(mRequestPhase1)
+        {
+            // request topics then chose at random which one to use to generate a post about
+            RsTokReqOptions opts;
+            opts.mReqType = GXS_REQUEST_TYPE_MSG_IDS;
+            opts.mMsgFlagFilter = RsPosted::FLAG_MSGTYPE_POST;
+            opts.mMsgFlagMask = RsPosted::FLAG_MSGTYPE_MASK;
+
+            mTokenService->requestMsgInfo(mToken, 0, opts, mGrpIds);
+            mRequestPhase1 = false;
+            mRequestPhase2 = true;
+            return;
+        }
+
+        if(mRequestPhase2)
+        {
+
+            if(mTokenService->requestStatus(mToken) == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+            {
+                GxsMsgIdResult msgIds;
+                RsGenExchange::getMsgList(mToken, msgIds);
+
+                // for each msg generate a random number of votes and comments
+
+
+                GxsMsgIdResult::iterator mit = msgIds.begin();
+
+                for(; mit != msgIds.end(); mit++)
+                {
+                    const RsGxsGroupId& grpId = mit->first;
+                    std::vector<RsGxsMessageId>& msgIdsV = mit->second;
+                    std::vector<RsGxsMessageId>::iterator vit = msgIdsV.begin();
+
+                    for(; vit != msgIdsV.end(); vit++)
+                    {
+                        const RsGxsMessageId& msgId = *vit;
+
+                        int nVotes = rand()%NUM_VOTES_TO_GENERATE;
+                        uint32_t token;
+
+                        for(int i=1; i < nVotes; i++)
+                        {
+                            RsPostedVote v;
+
+                            v.mDirection = (rand()%10 > 3) ? 0 : 1;
+                            v.mMeta.mParentId = msgId;
+                            v.mMeta.mGroupId = grpId;
+
+                            std::ostringstream ostrm;
+                            ostrm << i;
+
+                            v.mMeta.mMsgName = "Vote " + ostrm.str();
+
+
+
+                            submitVote(token, v);
+                            mTokens.push_back(token);
+
+                        }
+
+                        int nComments = rand()%NUM_COMMENTS_TO_GENERATE;
+
+                        // single level comments for now
+                        for(int i=1; i < nComments; i++)
+                        {
+                            RsPostedComment c;
+
+                            std::ostringstream ostrm;
+                            ostrm << i;
+
+                            c.mComment = "Comment " + ostrm.str();
+                            c.mMeta.mParentId = msgId;
+                            c.mMeta.mGroupId = grpId;
+
+                            submitComment(token, c);
+                            mTokens.push_back(token);
+
+                        }
+
+                    }
+                }
+                mRequestPhase2 = false;
+                mRequestPhase3 = true;
+            }
+        }
+
+        if(mRequestPhase3)
+        {
+            if(!mTokens.empty())
+            {
+                std::vector<uint32_t>::iterator vit = mTokens.begin();
+
+                for(; vit != mTokens.end(); )
+                {
+                    if(mTokenService->requestStatus(*vit) == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+                       vit = mTokens.erase(vit);
+                    else
+                       vit++;
+                }
+            }else
+            {
+                // stop generating posts after acknowledging all the ones you created
+                mGeneratingPosts = false;
+                mRequestPhase3 = false;
+            }
+        }
+
+    }
 }
 
 void p3Posted::generatePosts()
@@ -151,6 +269,8 @@ void p3Posted::generatePosts()
                 // stop generating posts after acknowledging all the ones you created
                 mGeneratingPosts = false;
                 mRequestPhase3 = false;
+                mGenerateVotesAndComments = true;
+                mRequestPhase1 = true;
             }
 
         }
@@ -544,7 +664,7 @@ void p3Posted::calcPostedPostRank(const std::vector<RsMsgMetaData > msgMeta, Pos
     std::vector<PostedScore>::iterator vit = scores.begin();
 
     int i = 1;
-    for(; vit != scores.end(); vit)
+    for(; vit != scores.end(); vit++)
     {
         const PostedScore& p = *vit;
         ranking.insert(std::make_pair(p.msgId, i++));
@@ -697,6 +817,11 @@ void p3Posted::updateVotes()
                     mPostUpdate = updateCompleteVotes();
                     break;
                 }
+            case UPDATE_PHASE_COMMENT_COUNT:
+                {
+                    mPostUpdate = updateCompleteComments();
+                    break;
+                }
             case UPDATE_PHASE_COMPLETE:
                 {
                     updateComplete();
@@ -774,13 +899,13 @@ bool p3Posted::updateRequestVotesComments()
         }
 
         RsTokReqOptions opts;
-//        // only need ids for comments
-//
-//        opts.mReqType = GXS_REQUEST_TYPE_MSG_IDS;
-//        opts.mOptions = RS_TOKREQOPT_MSG_LATEST | RS_TOKREQOPT_MSG_PARENT;
-//        opts.mMsgFlagMask = RsPosted::FLAG_MSGTYPE_MASK;
-//        opts.mMsgFlagFilter = RsPosted::FLAG_MSGTYPE_COMMENT;
-//        mTokenService->requestMsgRelatedInfo(mCommentToken, 0, opts, msgIds);
+        // only need ids for comments
+
+        opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_IDS;
+        opts.mOptions = RS_TOKREQOPT_MSG_LATEST | RS_TOKREQOPT_MSG_PARENT;
+        opts.mMsgFlagMask = RsPosted::FLAG_MSGTYPE_MASK;
+        opts.mMsgFlagFilter = RsPosted::FLAG_MSGTYPE_COMMENT;
+        mTokenService->requestMsgRelatedInfo(mUpdateRequestComments, 0, opts, msgIds);
 
         // need actual data for votes
         opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
@@ -835,11 +960,44 @@ bool p3Posted::updateCompleteVotes()
                 }
             }
         }
-        mUpdatePhase = UPDATE_PHASE_COMPLETE;
+        mUpdatePhase = UPDATE_PHASE_COMMENT_COUNT;
     }
     else if(status == RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
     {
         mTokenService->cancelRequest(mUpdateRequestVotes);
+        return false;
+    }
+    return true;
+}
+
+bool p3Posted::updateCompleteComments()
+{
+    uint32_t status = mTokenService->requestStatus(mUpdateRequestComments);
+
+    if(status == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+    {
+        MsgRelatedIdResult commentIds;
+        RsGenExchange::getMsgRelatedList(mUpdateRequestComments, commentIds);
+
+        // now for each msg count the number of votes and thats it
+
+        MsgRelatedIdResult::iterator mit = commentIds.begin();
+
+        for(; mit != commentIds.end(); mit++)
+        {
+            const std::vector<RsGxsMessageId>& v = mit->second;
+            std::vector<RsGxsMessageId>::const_iterator cit = v.begin();
+
+            for(; cit != v.end(); cit++)
+            {
+                mMsgCounts[mit->first].commentCount++;
+            }
+        }
+        mUpdatePhase = UPDATE_PHASE_COMPLETE;
+    }
+    else if(status == RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+    {
+        mTokenService->cancelRequest(mUpdateRequestComments);
         return false;
     }
     return true;
@@ -867,12 +1025,13 @@ bool p3Posted::updateComplete()
             msgId.second = msgMeta.mMsgId;
             PostedScore& sc = mMsgCounts[msgId];
 
-            bool changed = (sc.upVotes != upVotes) || (sc.downVotes != downVotes);
+            bool changed = (sc.upVotes != upVotes) || (sc.downVotes != downVotes)
+                           || (sc.commentCount != nComments);
 
             if(changed)
             {
                 std::string servStr;
-                storeScores(servStr, sc.upVotes, sc.downVotes, 0);
+                storeScores(servStr, sc.upVotes, sc.downVotes, sc.commentCount);
                 uint32_t token;
                 setMsgServiceString(token, msgId, servStr);
                 mChangeTokens.push_back(token);
@@ -886,4 +1045,24 @@ bool p3Posted::updateComplete()
 
     mPostUpdate = false;
     mUpdatePhase = UPDATE_PHASE_GRP_REQUEST;
+
+    if(!mMsgCounts.empty())
+    {
+        RsGxsMsgChange* msgChange = new RsGxsMsgChange();
+
+        std::map<RsGxsGrpMsgIdPair, PostedScore >::iterator mit_c = mMsgCounts.begin();
+
+        for(; mit_c != mMsgCounts.end(); mit_c++)
+        {
+            const RsGxsGrpMsgIdPair& msgId = mit_c->first;
+            msgChange->msgChangeMap[msgId.first].push_back(msgId.second);
+        }
+
+        std::vector<RsGxsNotify*> n;
+        n.push_back(msgChange);
+        notifyChanges(n);
+
+        mMsgCounts.clear();
+    }
+
 }

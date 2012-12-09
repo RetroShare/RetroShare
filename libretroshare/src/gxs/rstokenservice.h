@@ -163,10 +163,10 @@ public:
      * @param token The token returned for the request
      * @param ansType The type of result wanted
      * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
-     * @param groupIds The ids of the groups to get, this retrieve all the msgs info for each grpId in list
+     * @param groupIds The ids of the groups to get, this retrieves all the msgs info for each grpId in list
      * @return true if request successful false otherwise
      */
-    virtual bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<RsGxsGroupId>& msgIds) = 0;
+    virtual bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<RsGxsGroupId>& grpIds) = 0;
 
     /*!
      * For requesting msgs related to a given msg id within a group

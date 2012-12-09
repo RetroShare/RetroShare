@@ -104,12 +104,15 @@ private:
     void       loadVoteData(const uint32_t &token);
 
 
+    // update displayed item
+
+    void updateDisplayedItems(const std::vector<RsGxsMessageId>& msgIds);
+    void updateCurrentDisplayComplete(const uint32_t& token);
 
     void 	insertGroupData(const std::list<RsGroupMetaData> &groupList);
     void 	groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo);
 
     void loadRequest(const TokenQueue *queue, const TokenRequest &req);
-
 
 private:
 
@@ -124,6 +127,7 @@ private:
     RsGxsGroupId mCurrTopicId;
 
     QMap<RsGxsGroupId, RsPostedGroup> mGroups;
+    QMap<RsGxsMessageId, PostedItem*> mPosts;
     TokenQueue *mPostedQueue;
 
     CommentHolder* mCommentHolder;
