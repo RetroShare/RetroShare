@@ -36,6 +36,9 @@ OpModeStatus::OpModeStatus(QWidget *parent)
 	addItem(tr("Low Traffic"), RS_OPMODE_MINIMAL);
 
 	connect(this, SIGNAL(activated( int )), this, SLOT(setOpMode()));
+
+	setToolTip(tr("Use this DropList to quickly change Retroshare's behaviour\n No Anon D/L: switches off file forwarding\n Gaming Mode: 25% standard traffic and TODO: reduced popups\n Low Traffic: 10% standard traffic and TODO: pauses all file-transfers"));
+
 }
 
 

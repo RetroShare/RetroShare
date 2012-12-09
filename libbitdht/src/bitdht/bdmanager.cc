@@ -643,9 +643,9 @@ void bdNodeManager::SearchForLocalNet()
 int bdNodeManager::status()
 {
 	/* do status of bdNode */
-//#ifdef DEBUG_MGR
+#ifdef DEBUG_MGR
 	printState();
-//#endif
+#endif
 
 	checkStatus();
 	checkBadPeerStatus();
@@ -655,10 +655,10 @@ int bdNodeManager::status()
 	mBdNetworkSize = mNodeSpace.calcNetworkSizeWithFlag(
 					LOCAL_NET_FLAG);
 
-//#ifdef DEBUG_MGR
+#ifdef DEBUG_MGR
 	std::cerr << "BitDHT NetworkSize: " << mNetworkSize << std::endl;
 	std::cerr << "BitDHT App NetworkSize: " << mBdNetworkSize << std::endl;
-//#endif
+#endif
 
 	return 1;
 }
