@@ -69,8 +69,6 @@ GxsForumsDialog::GxsForumsDialog(QWidget *parent)
 
 		/* Setup Queue */
 	mForumQueue = new TokenQueue(rsGxsForums->getTokenService(), this);
-	mTokenGroupSummary = 0;
-	mRequestGroupSummary = false;
 
 	connect(ui.forumTreeWidget, SIGNAL(treeCustomContextMenuRequested(QPoint)), this, SLOT(forumListCustomPopupMenu(QPoint)));
 	connect(ui.newForumButton, SIGNAL(clicked()), this, SLOT(newforum()));
@@ -172,10 +170,10 @@ void GxsForumsDialog::forumListCustomPopupMenu(QPoint /*point*/)
 
 	contextMnu.addSeparator();
 
-	action = contextMnu.addAction(QIcon(":/images/message-mail-read.png"), tr("Mark all as read"), this, SLOT(markMsgAsReadAll()));
+	action = contextMnu.addAction(QIcon(":/images/message-mail-read.png"), tr("Mark all as read"), this, SLOT(markMsgAsRead()));
 	action->setEnabled (!mForumId.empty () && IS_GROUP_SUBSCRIBED(subscribeFlags));
 
-	action = contextMnu.addAction(QIcon(":/images/message-mail.png"), tr("Mark all as unread"), this, SLOT(markMsgAsUnreadAll()));
+	action = contextMnu.addAction(QIcon(":/images/message-mail.png"), tr("Mark all as unread"), this, SLOT(markMsgAsUnread()));
 	action->setEnabled (!mForumId.empty () && IS_GROUP_SUBSCRIBED(subscribeFlags));
 
 #ifdef DEBUG_FORUMS
@@ -319,6 +317,20 @@ void GxsForumsDialog::insertForumsData(const std::list<RsGroupMetaData> &forumLi
 	updateMessageSummaryList("");
 }
 
+GxsForumThreadWidget *GxsForumsDialog::forumThreadWidget(const std::string &id)
+{
+	int tabCount = ui.threadTabWidget->count();
+	for (int index = 0; index < tabCount; ++index) {
+		GxsForumThreadWidget *childWidget = dynamic_cast<GxsForumThreadWidget*>(ui.threadTabWidget->widget(index));
+		if (childWidget && childWidget->forumId() == id) {
+			return childWidget;
+			break;
+		}
+	}
+
+	return NULL;
+}
+
 void GxsForumsDialog::changedForum(const QString &id)
 {
 	mForumId = id.toStdString();
@@ -329,20 +341,12 @@ void GxsForumsDialog::changedForum(const QString &id)
 //	requestGroupSummary_CurrentForum(mForumId);
 
 	/* search exisiting tab */
-	GxsForumThreadWidget *threadWidget = NULL;
-	int tabCount = ui.threadTabWidget->count();
-	for (int index = 0; index < tabCount; ++index) {
-		GxsForumThreadWidget *childWidget = dynamic_cast<GxsForumThreadWidget*>(ui.threadTabWidget->widget(index));
-		if (childWidget && childWidget->forumId() == id.toStdString()) {
-			threadWidget = childWidget;
-			break;
-		}
-	}
+	GxsForumThreadWidget *threadWidget = forumThreadWidget(id.toStdString());
 
 	if (!threadWidget) {
 		/* create a thread widget */
 		threadWidget = new GxsForumThreadWidget(id.toStdString());
-		int index = ui.threadTabWidget->addTab(threadWidget, threadWidget->forumName());
+		int index = ui.threadTabWidget->addTab(threadWidget, threadWidget->forumName(true));
 		ui.threadTabWidget->setTabIcon(index, threadWidget->forumIcon());
 		connect(threadWidget, SIGNAL(forumChanged(QWidget*)), this, SLOT(threadTabChanged(QWidget*)));
 	}
@@ -370,31 +374,8 @@ void GxsForumsDialog::threadTabChanged(QWidget *widget)
 		return;
 	}
 
-	ui.threadTabWidget->setTabText(index, threadWidget->forumName());
+	ui.threadTabWidget->setTabText(index, threadWidget->forumName(true));
 	ui.threadTabWidget->setTabIcon(index, threadWidget->forumIcon());
-}
-
-QString GxsForumsDialog::titleFromInfo(const RsMsgMetaData &meta)
-{
-	// NOTE - NOTE SURE HOW THIS WILL WORK!
-#ifdef TOGXS
-	if (meta.mMsgStatus & RS_DISTRIB_MISSING_MSG) {
-		return QApplication::translate("GxsForumsDialog", "[ ... Missing Message ... ]");
-	}
-#endif
-
-	return QString::fromUtf8(meta.mMsgName.c_str());
-}
-
-QString GxsForumsDialog::messageFromInfo(const RsGxsForumMsg &msg)
-{
-#ifdef TOGXS
-	if (msg.mMeta.mMsgStatus & RS_DISTRIB_MISSING_MSG) {
-		return QApplication::translate("GxsForumsDialog", "Placeholder for missing Message");
-	}
-#endif
-
-	return QString::fromUtf8(msg.mMsg.c_str());
 }
 
 void GxsForumsDialog::copyForumLink()
@@ -420,6 +401,22 @@ void GxsForumsDialog::copyForumLink()
 #endif
 
 	QMessageBox::warning(this, "RetroShare", "ToDo");
+}
+
+void GxsForumsDialog::markMsgAsRead()
+{
+	GxsForumThreadWidget *threadWidget = forumThreadWidget(mForumId);
+	if (threadWidget) {
+		threadWidget->setAllMsgReadStatus(true);
+	}
+}
+
+void GxsForumsDialog::markMsgAsUnread()
+{
+	GxsForumThreadWidget *threadWidget = forumThreadWidget(mForumId);
+	if (threadWidget) {
+		threadWidget->setAllMsgReadStatus(false);
+	}
 }
 
 void GxsForumsDialog::newforum()
@@ -597,8 +594,8 @@ void GxsForumsDialog::generateMassData()
 /** Request / Response of Data ********************************/
 /*********************** **** **** **** ***********************/
 
-#define 	FORUMSV2DIALOG_LISTING			1
-//#define 	FORUMSV2DIALOG_CURRENTFORUM		2
+#define TOKEN_TYPE_LISTING       1
+//#define TOKEN_TYPE_CURRENTFORUM  2
 
 void GxsForumsDialog::insertForums()
 {
@@ -610,38 +607,29 @@ void GxsForumsDialog::requestGroupSummary()
 	std::cerr << "GxsForumsDialog::requestGroupSummary()";
 	std::cerr << std::endl;
 
-	if (mRequestGroupSummary) {
-		std::cerr << "GxsForumsDialog::requestGroupSummary() Canceling Request: " << mTokenGroupSummary;
-		std::cerr << std::endl;
+	std::list<uint32_t> tokens;
+	mForumQueue->activeRequestTokens(TOKEN_TYPE_LISTING, tokens);
+	if (!tokens.empty()) {
+		std::list<uint32_t>::iterator tokenIt;
+		for (tokenIt = tokens.begin(); tokenIt != tokens.end(); ++tokenIt) {
+			std::cerr << "GxsForumsDialog::requestGroupSummary() Canceling Request: " << *tokenIt;
+			std::cerr << std::endl;
 
-		mForumQueue->cancelRequest(mTokenGroupSummary);
-		mTokenGroupSummary = 0;
-		mRequestGroupSummary = false;
+			mForumQueue->cancelRequest(*tokenIt);
+		}
 	}
 
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
 
-	mForumQueue->requestGroupInfo(mTokenGroupSummary, RS_TOKREQ_ANSTYPE_SUMMARY, opts, FORUMSV2DIALOG_LISTING);
-	mRequestGroupSummary = true;
+	uint32_t token;
+	mForumQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, TOKEN_TYPE_LISTING);
 }
 
 void GxsForumsDialog::loadGroupSummary(const uint32_t &token)
 {
 	std::cerr << "GxsForumsDialog::loadGroupSummary()";
 	std::cerr << std::endl;
-
-	if (!mRequestGroupSummary) {
-		std::cerr << "GxsForumsDialog::loadGroupSummary()) No waiting request got token: " << token;
-		std::cerr << std::endl;
-		return;
-	}
-
-	if (token != mTokenGroupSummary) {
-		std::cerr << "GxsForumsDialog::loadGroupSummary()) Wrong token - want: " << mTokenGroupSummary << " got: " << token;
-		std::cerr << std::endl;
-		return;
-	}
 
 	std::list<RsGroupMetaData> groupInfo;
 	rsGxsForums->getGroupSummary(token, groupInfo);
@@ -655,8 +643,6 @@ void GxsForumsDialog::loadGroupSummary(const uint32_t &token)
 		std::cerr << "GxsForumsDialog::loadGroupSummary() ERROR No Groups...";
 		std::cerr << std::endl;
 	}
-	mTokenGroupSummary = 0;
-	mRequestGroupSummary = false;
 }
 
 /*********************** **** **** **** ***********************/
@@ -674,7 +660,7 @@ void GxsForumsDialog::loadGroupSummary(const uint32_t &token)
 //	std::cerr << std::endl;
 
 //	uint32_t token;
-//	mForumQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, grpIds, FORUMSV2DIALOG_CURRENTFORUM);
+//	mForumQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, grpIds, TOKEN_TYPE_CURRENTFORUM);
 //}
 
 //void GxsForumsDialog::loadGroupSummary_CurrentForum(const uint32_t &token)
@@ -713,11 +699,11 @@ void GxsForumsDialog::loadRequest(const TokenQueue *queue, const TokenRequest &r
 		/* now switch on req */
 		switch(req.mUserType)
 		{
-		case FORUMSV2DIALOG_LISTING:
+		case TOKEN_TYPE_LISTING:
 			loadGroupSummary(req.mToken);
 			break;
 
-//		case FORUMSV2DIALOG_CURRENTFORUM:
+//		case TOKEN_TYPE_CURRENTFORUM:
 //			loadGroupSummary_CurrentForum(req.mToken);
 //			break;
 

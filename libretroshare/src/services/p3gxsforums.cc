@@ -228,7 +228,7 @@ bool p3GxsForums::createMsg(uint32_t &token, RsGxsForumMsg &msg)
 
 void p3GxsForums::setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read)
 {
-	uint32_t mask = GXS_SERV::GXS_MSG_STATUS_UNREAD;
+	uint32_t mask = GXS_SERV::GXS_MSG_STATUS_UNREAD | GXS_SERV::GXS_MSG_STATUS_UNPROCESSED;
 	uint32_t status = GXS_SERV::GXS_MSG_STATUS_UNREAD;
 	if (read)
 	{
@@ -285,9 +285,9 @@ void p3GxsForums::dummy_tick()
 
 	if (mGenActive)
 	{
-		std::cerr << "p3Wiki::dummyTick() AboutActive";
+		std::cerr << "p3GxsForums::dummyTick() AboutActive";
 		std::cerr << std::endl;
-		
+
 		uint32_t status = RsGenExchange::getTokenService()->requestStatus(mGenToken);
 		if (status != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
 		{
@@ -405,6 +405,8 @@ bool p3GxsForums::generateMessage(uint32_t &token, const RsGxsGroupId &grpId, co
 	msg.mMeta.mGroupId = grpId;
 	msg.mMeta.mThreadId = threadId;
 	msg.mMeta.mParentId = parentId;
+
+	msg.mMeta.mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_UNREAD;
 
 	/* chose a random Id to sign with */
 	std::list<RsGxsId> ownIds;

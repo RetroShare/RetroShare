@@ -6,37 +6,13 @@
 #include "util/TokenQueue.h"
 
 class QTreeWidgetItem;
-class GxsIdTreeWidgetItem;
 class RSTreeWidgetItemCompareRole;
 class RsGxsForumMsg;
+class GxsForumsFillThread;
 
 namespace Ui {
 class GxsForumThreadWidget;
 }
-
-/* These are all the parameters that are required for thread loading.
- * They are kept static for the load duration.
- */
-
-class GxsForumsThreadLoadParameters
-{
-public:
-	std::string ForumId;
-	std::string FocusMsgId;
-
-	uint32_t SubscribeFlags;
-	int ViewType;
-	uint32_t FilterColumn;
-
-	std::map<uint32_t, QTreeWidgetItem *> MsgTokens;
-	QList<QTreeWidgetItem*> Items;
-	QList<QTreeWidgetItem*> ItemToExpand;
-
-	bool FillComplete;
-	bool FlatView;
-	bool UseChildTS;
-	bool ExpandNewMessages;
-};
 
 class GxsForumThreadWidget : public QWidget, public TokenResponse
 {
@@ -65,8 +41,15 @@ public:
 	void setTextColorMissing(QColor color) { mTextColorMissing = color; }
 
 	std::string forumId() { return mForumId; }
-	QString forumName();
+	QString forumName(bool withUnreadCount);
 	QIcon forumIcon();
+	unsigned int newCount() { return mNewCount; }
+	unsigned int unreadCount() { return mUnreadCount; }
+
+	QTreeWidgetItem *convertMsgToThreadWidget(const RsGxsForumMsg &msg, bool useChildTS, uint32_t filterColumn);
+	QTreeWidgetItem *generateMissingItem(const std::string &msgId);
+
+	void setAllMsgReadStatus(bool read);
 
 	// Callback for all Loads.
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
@@ -98,9 +81,7 @@ private slots:
 	//void removemessage();
 	void markMsgAsRead();
 	void markMsgAsReadChildren();
-	void markMsgAsReadAll();
 	void markMsgAsUnread();
-	void markMsgAsUnreadAll();
 	void markMsgAsUnreadChildren();
 
 	void copyMessageLink();
@@ -122,7 +103,8 @@ private slots:
 	void filterItems(const QString &text);
 
 	void fillThreadFinished();
-//	void fillThreadProgress(int current, int count);
+	void fillThreadProgress(int current, int count);
+	void fillThreadStatus(QString text);
 
 private:
 	void insertForumThreads(const RsGroupMetaData &fi);
@@ -141,6 +123,7 @@ private:
 	void markMsgAsReadUnread(bool read, bool children, bool forum);
 	void calculateIconsAndFonts(QTreeWidgetItem *item = NULL);
 	void calculateIconsAndFonts(QTreeWidgetItem *item, bool &hasReadChilddren, bool &hasUnreadChilddren);
+	void calculateUnreadCount();
 
 	void togglethreadview_internal();
 
@@ -159,34 +142,18 @@ private:
 	int mLastViewType;
 	RSTreeWidgetItemCompareRole *mThreadCompareRole;
 	TokenQueue *mThreadQueue;
-	uint32_t mTokenGroupSummary;
-	uint32_t mTokenPost;
-	bool mRequestGroupSummary;
 //	QTimer *mTimer;
+	GxsForumsFillThread *mFillThread;
+	unsigned int mUnreadCount;
+	unsigned int mNewCount;
 
 	void requestGroupSummary_CurrentForum(const std::string &forumId);
 	void loadGroupSummary_CurrentForum(const uint32_t &token);
-
-	void loadCurrentForumThreads(const std::string &forumId);
-	void requestGroupThreadData_InsertThreads(const std::string &forumId);
-	void loadGroupThreadData_InsertThreads(const uint32_t &token);
-	void loadForumBaseThread(const RsGxsForumMsg &msg);
-
-	void requestChildData_InsertThreads(uint32_t &token, const RsGxsGrpMsgIdPair &parentId);
-	void loadChildData_InsertThreads(const uint32_t &token);
-	void loadForumChildMsg(const RsGxsForumMsg &msg, QTreeWidgetItem *parent);
 
 	void requestMsgData_InsertPost(const RsGxsGrpMsgIdPair &msgId);
 	void loadMsgData_InsertPost(const uint32_t &token);
 	void requestMsgData_ReplyMessage(const RsGxsGrpMsgIdPair &msgId);
 	void loadMsgData_ReplyMessage(const uint32_t &token);
-
-	bool convertMsgToThreadWidget(const RsGxsForumMsg &msgInfo, bool useChildTS, uint32_t filterColumn, GxsIdTreeWidgetItem *item);
-//	bool convertMsgToThreadWidget(const RsGxsForumMsg &msgInfo, std::string authorName, bool useChildTS, uint32_t filterColumn, QTreeWidgetItem *item);
-
-	// New Datatypes to replace the FillThread.
-	bool mThreadLoading;
-	GxsForumsThreadLoadParameters mThreadLoad;
 
 	/* Color definitions (for standard see qss.default) */
 	QColor mTextColorRead;

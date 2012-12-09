@@ -968,7 +968,8 @@ gxsforums {
 
 	HEADERS += gui/GxsForumsDialog.h \
             gui/gxsforums/CreateGxsForumMsg.h \
-            gui/gxsforums/GxsForumThreadWidget.h
+            gui/gxsforums/GxsForumThreadWidget.h \
+            gui/gxsforums/GxsForumsFillThread.h
 
 	FORMS += gui/GxsForumsDialog.ui \
             gui/gxsforums/CreateGxsForumMsg.ui \
@@ -976,7 +977,8 @@ gxsforums {
 
 	SOURCES += gui/GxsForumsDialog.cpp \
             gui/gxsforums/CreateGxsForumMsg.cpp \
-            gui/gxsforums/GxsForumThreadWidget.cpp
+            gui/gxsforums/GxsForumThreadWidget.cpp \
+            gui/gxsforums/GxsForumsFillThread.cpp
 }
 
 

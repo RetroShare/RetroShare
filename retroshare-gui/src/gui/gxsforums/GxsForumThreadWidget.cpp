@@ -25,6 +25,7 @@
 
 #include "GxsForumThreadWidget.h"
 #include "ui_GxsForumThreadWidget.h"
+#include "GxsForumsFillThread.h"
 #include "gui/GxsForumsDialog.h"
 #include "gui/RetroShareLink.h"
 #include "gui/common/RSTreeWidgetItem.h"
@@ -42,6 +43,8 @@
 #include "gxs/rsgxsflags.h"
 
 #include <iostream>
+
+#define DEBUG_FORUMS
 
 /* Images for context menu icons */
 #define IMAGE_MESSAGE        ":/images/folder-draft.png"
@@ -76,6 +79,10 @@
 
 #define ROLE_THREAD_COUNT           3
 
+#define TOKEN_TYPE_CURRENTFORUM     1
+#define TOKEN_TYPE_INSERT_POST      2
+#define TOKEN_TYPE_REPLY_MESSAGE    3
+
 GxsForumThreadWidget::GxsForumThreadWidget(const std::string &forumId, QWidget *parent) :
 	QWidget(parent),
 	ui(new Ui::GxsForumThreadWidget)
@@ -85,11 +92,10 @@ GxsForumThreadWidget::GxsForumThreadWidget(const std::string &forumId, QWidget *
 	mForumId = forumId;
 	mSubscribeFlags = 0;
 	mInProcessSettings = false;
+	mUnreadCount = 0;
+	mNewCount = 0;
 
 	mThreadQueue = new TokenQueue(rsGxsForums->getTokenService(), this);
-	mTokenGroupSummary = 0;
-	mTokenPost = 0;
-	mRequestGroupSummary = false;
 
 	mInMsgAsReadUnread = false;
 
@@ -162,8 +168,8 @@ GxsForumThreadWidget::GxsForumThreadWidget(const std::string &forumId, QWidget *
 	ttheader->hideSection (COLUMN_THREAD_CONTENT);
 
 	ui->progressBar->hide();
-	ui->progLayOutTxt->hide();
-	ui->progressBarLayOut->setEnabled(false);
+	ui->progressText->hide();
+	ui->progressBarLayout->setEnabled(false);
 
 //	mTimer = new QTimer;
 //	mTimer->setInterval(1000);
@@ -173,7 +179,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const std::string &forumId, QWidget *
 
 //	mTimer->start();
 
-	mThreadLoading = false;
+	mFillThread = NULL;
 
 	ui->forumName->setText(tr("Loading"));
 	insertThreads();
@@ -183,6 +189,12 @@ GxsForumThreadWidget::GxsForumThreadWidget(const std::string &forumId, QWidget *
 
 GxsForumThreadWidget::~GxsForumThreadWidget()
 {
+	if (mFillThread) {
+		mFillThread->stop();
+		delete(mFillThread);
+		mFillThread = NULL;
+	}
+
 	delete ui;
 
 //	delete(mTimer);
@@ -231,27 +243,42 @@ void GxsForumThreadWidget::processSettings(bool load)
 	mInProcessSettings = false;
 }
 
-QString GxsForumThreadWidget::forumName()
+QString GxsForumThreadWidget::forumName(bool withUnreadCount)
 {
-	return ui->forumName->text();
+	QString name = ui->forumName->text();
+
+	if (withUnreadCount && mUnreadCount) {
+		name += QString(" (%1)").arg(mUnreadCount);
+	}
+
+	return name;
 }
 
 QIcon GxsForumThreadWidget::forumIcon()
 {
-	if (mRequestGroupSummary || mThreadLoading) {
+	if (mThreadQueue->activeRequestExist(TOKEN_TYPE_CURRENTFORUM) || mFillThread) {
 		return QIcon(":/images/kalarm.png");
 	}
 
-//#TODO
-//	if (has new messages) {
-//		return QIcon(nice icon);
-//	}
+	if (mNewCount) {
+		return QIcon(":/images/message-state-new.png");
+	}
 
 	return QIcon();
 }
 
 void GxsForumThreadWidget::updateInterface()
 {
+	if (mFillThread) {
+		ui->newthreadButton->setEnabled(false);
+	} else {
+		if (mThreadQueue->activeRequestExist(TOKEN_TYPE_CURRENTFORUM)) {
+			ui->newthreadButton->setEnabled(false);
+		} else {
+			ui->newthreadButton->setEnabled (IS_GROUP_SUBSCRIBED(mSubscribeFlags));
+		}
+	}
+
 	emit forumChanged(this);
 }
 
@@ -303,7 +330,7 @@ void GxsForumThreadWidget::updateDisplay()
 
 void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 {
-	if (mThreadLoading) {
+	if (mFillThread) {
 		return;
 	}
 
@@ -446,7 +473,7 @@ void GxsForumThreadWidget::changedThread()
 		mThreadId = item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString().toStdString();
 	}
 
-	if (mThreadLoading) {
+	if (mFillThread) {
 		return;
 	}
 
@@ -455,7 +482,7 @@ void GxsForumThreadWidget::changedThread()
 
 void GxsForumThreadWidget::clickedThread(QTreeWidgetItem *item, int column)
 {
-	if (mThreadLoading) {
+	if (mFillThread) {
 		return;
 	}
 
@@ -510,6 +537,7 @@ void GxsForumThreadWidget::calculateIconsAndFonts(QTreeWidgetItem *item, bool &h
 {
 	uint32_t status = item->data(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
 
+	bool isNew = IS_MSG_NEW(status);
 	bool unread = IS_MSG_UNREAD(status);
 	bool missing = item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MISSING).toBool();
 
@@ -523,7 +551,7 @@ void GxsForumThreadWidget::calculateIconsAndFonts(QTreeWidgetItem *item, bool &h
 		} else {
 			item->setIcon(COLUMN_THREAD_READ, QIcon(":/images/message-state-read.png"));
 		}
-		if (IS_MSG_UNREAD(status)) {
+		if (isNew) {
 			item->setIcon(COLUMN_THREAD_TITLE, QIcon(":/images/message-state-new.png"));
 		} else {
 			item->setIcon(COLUMN_THREAD_TITLE, QIcon());
@@ -547,7 +575,7 @@ void GxsForumThreadWidget::calculateIconsAndFonts(QTreeWidgetItem *item, bool &h
 		if (!IS_GROUP_SUBSCRIBED(mSubscribeFlags)) {
 			qf.setBold(false);
 			item->setTextColor(i, textColorNotSubscribed());
-		} else if (unread) {
+		} else if (unread || isNew) {
 			qf.setBold(true);
 			item->setTextColor(i, textColorUnread());
 		} else if (myUnreadChilddren) {
@@ -571,6 +599,40 @@ void GxsForumThreadWidget::calculateIconsAndFonts(QTreeWidgetItem *item, bool &h
 	hasUnreadChilddren = hasUnreadChilddren || myUnreadChilddren || unread;
 }
 
+void GxsForumThreadWidget::calculateUnreadCount()
+{
+	unsigned int unreadCount = 0;
+	unsigned int newCount = 0;
+
+	QTreeWidgetItemIterator itemIterator(ui->threadTreeWidget);
+	QTreeWidgetItem *item = NULL;
+	while ((item = *itemIterator) != NULL) {
+		itemIterator++;
+
+		uint32_t status = item->data(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
+		if (IS_MSG_UNREAD(status)) {
+			++unreadCount;
+		}
+		if (IS_MSG_NEW(status)) {
+			++newCount;
+		}
+	}
+
+	bool changed = false;
+	if (mUnreadCount != unreadCount) {
+		mUnreadCount = unreadCount;
+		changed = true;
+	}
+	if (mNewCount != newCount) {
+		mNewCount = newCount;
+		changed = true;
+	}
+
+	if (changed) {
+		updateInterface();
+	}
+}
+
 void GxsForumThreadWidget::calculateIconsAndFonts(QTreeWidgetItem *item /*= NULL*/)
 {
 	bool dummy1 = false;
@@ -591,15 +653,124 @@ void GxsForumThreadWidget::calculateIconsAndFonts(QTreeWidgetItem *item /*= NULL
 	}
 }
 
-#ifdef TODO
-void GxsForumsDialog::fillThreadProgress(int current, int count)
+static void cleanupItems (QList<QTreeWidgetItem *> &items)
+{
+	QList<QTreeWidgetItem *>::iterator item;
+	for (item = items.begin (); item != items.end (); item++) {
+		if (*item) {
+			delete (*item);
+		}
+	}
+	items.clear();
+}
+
+void GxsForumThreadWidget::fillThreadFinished()
+{
+#ifdef DEBUG_FORUMS
+	std::cerr << "GxsForumThreadWidget::fillThreadFinished" << std::endl;
+#endif
+
+	// thread has finished
+	GxsForumsFillThread *thread = dynamic_cast<GxsForumsFillThread*>(sender());
+	if (thread) {
+		if (thread == mFillThread) {
+			// current thread has finished, hide progressbar and release thread
+			ui->progressBar->hide();
+			ui->progressText->hide();
+			ui->progressBarLayout->setEnabled(false);
+			mFillThread = NULL;
+			updateInterface();
+
+			ui->threadTreeWidget->setPlaceholderText("");
+		}
+
+		if (thread->wasStopped()) {
+			// thread was stopped
+#ifdef DEBUG_FORUMS
+			std::cerr << "GxsForumThreadWidget::fillThreadFinished Thread was stopped" << std::endl;
+#endif
+		} else {
+#ifdef DEBUG_FORUMS
+			std::cerr << "GxsForumThreadWidget::fillThreadFinished Add messages" << std::endl;
+#endif
+
+			ui->threadTreeWidget->setSortingEnabled(false);
+
+			/* add all messages in! */
+			if (mLastViewType != thread->mViewType || mLastForumID != mForumId) {
+				ui->threadTreeWidget->clear();
+				mLastViewType = thread->mViewType;
+				mLastForumID = mForumId;
+				ui->threadTreeWidget->insertTopLevelItems(0, thread->mItems);
+
+				// clear list
+				thread->mItems.clear();
+			} else {
+				fillThreads (thread->mItems, thread->mExpandNewMessages, thread->mItemToExpand);
+
+				// cleanup list
+				cleanupItems (thread->mItems);
+			}
+
+			ui->threadTreeWidget->setSortingEnabled(true);
+
+			if (thread->mFocusMsgId.empty() == false) {
+				/* Search exisiting item */
+				QTreeWidgetItemIterator itemIterator(ui->threadTreeWidget);
+				QTreeWidgetItem *item = NULL;
+				while ((item = *itemIterator) != NULL) {
+					itemIterator++;
+
+					if (item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString().toStdString() == thread->mFocusMsgId) {
+						ui->threadTreeWidget->setCurrentItem(item);
+						ui->threadTreeWidget->setFocus();
+						break;
+					}
+				}
+			}
+
+			QList<QTreeWidgetItem*>::iterator itemIt;
+			for (itemIt = thread->mItemToExpand.begin(); itemIt != thread->mItemToExpand.end(); ++itemIt) {
+				if ((*itemIt)->isHidden() == false) {
+					(*itemIt)->setExpanded(true);
+				}
+			}
+			thread->mItemToExpand.clear();
+
+			if (ui->filterLineEdit->text().isEmpty() == false) {
+				filterItems(ui->filterLineEdit->text());
+			}
+			insertPost ();
+			calculateIconsAndFonts();
+			calculateUnreadCount();
+			updateInterface();
+		}
+
+#ifdef DEBUG_FORUMS
+		std::cerr << "GxsForumThreadWidget::fillThreadFinished Delete thread" << std::endl;
+#endif
+
+		thread->deleteLater();
+		thread = NULL;
+	}
+
+#ifdef DEBUG_FORUMS
+	std::cerr << "GxsForumThreadWidget::fillThreadFinished done" << std::endl;
+#endif
+}
+
+void GxsForumThreadWidget::fillThreadProgress(int current, int count)
 {
 	// show fill progress
 	if (count) {
-		ui.progressBar->setValue(current * ui.progressBar->maximum() / count);
+		ui->progressBar->setValue(current * ui->progressBar->maximum() / count);
 	}
 }
-#endif
+
+void GxsForumThreadWidget::fillThreadStatus(QString text)
+{
+	ui->progressText->setText(text);
+}
 
 // HACK until update works.
 void GxsForumThreadWidget::forceUpdateDisplay()
@@ -611,12 +782,116 @@ void GxsForumThreadWidget::forceUpdateDisplay()
 	insertThreads();
 }
 
+QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForumMsg &msg, bool useChildTS, uint32_t filterColumn)
+{
+	GxsIdTreeWidgetItem *item = new GxsIdTreeWidgetItem(mThreadCompareRole);
+	QString text;
+
+	item->setText(COLUMN_THREAD_TITLE, QString::fromUtf8(msg.mMeta.mMsgName.c_str()));
+
+	QDateTime qtime;
+	QString sort;
+
+	if (useChildTS)
+		qtime.setTime_t(msg.mMeta.mChildTs);
+	else
+		qtime.setTime_t(msg.mMeta.mPublishTs);
+
+//#AFTER MERGE			text = DateTime::formatDateTime(qtime);
+	sort = qtime.toString("yyyyMMdd_hhmmss");
+
+	if (useChildTS)
+	{
+		qtime.setTime_t(msg.mMeta.mPublishTs);
+		text += " / ";
+//#AFTER MERGE			text += DateTime::formatDateTime(qtime);
+		sort += "_" + qtime.toString("yyyyMMdd_hhmmss");
+	}
+	item->setText(COLUMN_THREAD_DATE, text);
+	item->setData(COLUMN_THREAD_DATE, ROLE_THREAD_SORT, sort);
+
+	item->setId(msg.mMeta.mAuthorId, COLUMN_THREAD_AUTHOR);
+//#TODO
+#if 0
+	text = QString::fromUtf8(authorName.c_str());
+
+	if (text.isEmpty())
+	{
+		item->setText(COLUMN_THREAD_AUTHOR, tr("Anonymous"));
+	}
+	else
+	{
+		item->setText(COLUMN_THREAD_AUTHOR, text);
+	}
+#endif
+//#TODO
+#ifdef TOGXS
+	if (msgInfo.mMeta.mMsgFlags & RS_DISTRIB_AUTHEN_REQ)
+	{
+		item->setText(COLUMN_THREAD_SIGNED, tr("signed"));
+		item->setIcon(COLUMN_THREAD_SIGNED, QIcon(":/images/mail-signed.png"));
+	}
+	else
+	{
+		item->setText(COLUMN_THREAD_SIGNED, tr("none"));
+		item->setIcon(COLUMN_THREAD_SIGNED, QIcon(":/images/mail-signature-unknown.png"));
+	}
+#endif
+
+	if (filterColumn == COLUMN_THREAD_CONTENT) {
+		// need content for filter
+		QTextDocument doc;
+		doc.setHtml(QString::fromUtf8(msg.mMsg.c_str()));
+		item->setText(COLUMN_THREAD_CONTENT, doc.toPlainText().replace(QString("\n"), QString(" ")));
+	}
+
+	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID, QString::fromStdString(msg.mMeta.mMsgId));
+//#TODO
+#if 0
+	if (IS_GROUP_SUBSCRIBED(subscribeFlags) && !(msginfo.mMsgFlags & RS_DISTRIB_MISSING_MSG)) {
+		rsGxsForums->getMessageStatus(msginfo.forumId, msginfo.msgId, status);
+	} else {
+		// show message as read
+		status = RSGXS_MSG_STATUS_READ;
+	}
+#endif
+	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS, msg.mMeta.mMsgStatus);
+
+	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MISSING, false);
+
+	return item;
+}
+
+QTreeWidgetItem *GxsForumThreadWidget::generateMissingItem(const std::string &msgId)
+{
+	GxsIdTreeWidgetItem *item = new GxsIdTreeWidgetItem(mThreadCompareRole);
+	item->setText(COLUMN_THREAD_TITLE, tr("[ ... Missing Message ... ]"));
+	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID, QString::fromStdString(msgId));
+	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MISSING, true);
+
+	return item;
+}
+
 void GxsForumThreadWidget::insertThreads()
 {
 #ifdef DEBUG_FORUMS
 	/* get the current Forum */
 	std::cerr << "GxsForumsDialog::insertThreads()" << std::endl;
 #endif
+
+	if (mFillThread) {
+#ifdef DEBUG_FORUMS
+		std::cerr << "GxsForumThreadWidget::insertThreads() stop current fill thread" << std::endl;
+#endif
+		// stop current fill thread
+		GxsForumsFillThread *thread = mFillThread;
+		mFillThread = NULL;
+		thread->stop();
+		delete(thread);
+
+		ui->progressBar->hide();
+		ui->progressText->hide();
+	}
 
 	mSubscribeFlags = 0;
 
@@ -643,6 +918,7 @@ void GxsForumThreadWidget::insertThreads()
 		return;
 	}
 
+//#TODO
 //	ui->threadTitle->setText(tr("Loading"));
 
 	// Get Current Forum Info... then complete insertForumThreads().
@@ -652,17 +928,13 @@ void GxsForumThreadWidget::insertThreads()
 void GxsForumThreadWidget::insertForumThreads(const RsGroupMetaData &fi)
 {
 	mSubscribeFlags = fi.mSubscribeFlags;
-	QString forumName = QString::fromUtf8(fi.mGroupName.c_str());
-	if (forumName != ui->forumName->text()) {
-		ui->forumName->setText(forumName);
-		updateInterface();
-	}
+	ui->forumName->setText(QString::fromUtf8(fi.mGroupName.c_str()));
 
-//	ui->progressBarLayOut->setEnabled(true);
+	ui->progressBarLayout->setEnabled(true);
 
-//	ui->progLayOutTxt->show();
-//	ui->progressBar->reset();
-//	ui->progressBar->show();
+	ui->progressText->show();
+	ui->progressBar->reset();
+	ui->progressBar->show();
 
 	ui->threadTreeWidget->setPlaceholderText(tr("Loading"));
 
@@ -670,106 +942,49 @@ void GxsForumThreadWidget::insertForumThreads(const RsGroupMetaData &fi)
 	std::cerr << "GxsForumsDialog::insertThreads() Start filling Forum threads" << std::endl;
 #endif
 
-	// Get Forum Threads... then complete fillThreadFinished().
-	loadCurrentForumThreads(fi.mGroupId);
-}
+	// create fill thread
+	mFillThread = new GxsForumsFillThread(this);
 
-static void cleanupItems (QList<QTreeWidgetItem *> &items)
-{
-	QList<QTreeWidgetItem *>::iterator item;
-	for (item = items.begin (); item != items.end (); item++) {
-		if (*item) {
-			delete (*item);
-		}
+	// set data
+	mFillThread->mCompareRole = mThreadCompareRole;
+	mFillThread->mForumId = mForumId;
+//#AFTER MERGE	mFillThread->mFilterColumn = ui->filterLineEdit->currentFilter();
+	mFillThread->mFilterColumn = COLUMN_THREAD_TITLE;
+	mFillThread->mSubscribeFlags = mSubscribeFlags;
+	mFillThread->mExpandNewMessages = Settings->getExpandNewMessages();
+	mFillThread->mViewType = ui->viewBox->currentIndex();
+	if (mLastViewType != mFillThread->mViewType || mLastForumID != mForumId) {
+		mFillThread->mFillComplete = true;
 	}
-	items.clear();
-}
 
-void GxsForumThreadWidget::fillThreadFinished()
-{
+	mFillThread->mFlatView = false;
+	mFillThread->mUseChildTS = false;
+
+	switch (mFillThread->mViewType) {
+	case VIEW_LAST_POST:
+		mFillThread->mUseChildTS = true;
+		break;
+	case VIEW_FLAT:
+		mFillThread->mFlatView = true;
+		break;
+	case VIEW_THREADED:
+		break;
+	}
+
+	ui->threadTreeWidget->setRootIsDecorated(!mFillThread->mFlatView);
+
+	// connect thread
+	connect(mFillThread, SIGNAL(finished()), this, SLOT(fillThreadFinished()), Qt::BlockingQueuedConnection);
+	connect(mFillThread, SIGNAL(status(QString)), this, SLOT(fillThreadStatus(QString)));
+	connect(mFillThread, SIGNAL(progress(int,int)), this, SLOT(fillThreadProgress(int,int)));
+
 #ifdef DEBUG_FORUMS
-	std::cerr << "GxsForumsDialog::fillThreadFinished" << std::endl;
+	std::cerr << "ForumsDialog::insertThreads() Start fill thread" << std::endl;
 #endif
 
-	// This is now only called with a successful Load.
-	// cleanup of incomplete is handled elsewhere.
-
-	// current thread has finished, hide progressbar and release thread
-//	ui->progressBar->hide();
-//	ui->progLayOutTxt->hide();
-//	ui->progressBarLayOut->setEnabled(false);
-
-	ui->threadTreeWidget->setPlaceholderText("");
-
-#ifdef DEBUG_FORUMS
-	std::cerr << "GxsForumsDialog::fillThreadFinished Add messages" << std::endl;
-#endif
-	ui->threadTreeWidget->setSortingEnabled(false);
-
-	/* add all messages in! */
-	if (mLastViewType != mThreadLoad.ViewType || mLastForumID != mForumId)
-	{
-		ui->threadTreeWidget->clear();
-		mLastViewType = mThreadLoad.ViewType;
-		mLastForumID = mForumId;
-		ui->threadTreeWidget->insertTopLevelItems(0, mThreadLoad.Items);
-
-		// clear list
-		mThreadLoad.Items.clear();
-	}
-	else
-	{
-		fillThreads(mThreadLoad.Items, mThreadLoad.ExpandNewMessages, mThreadLoad.ItemToExpand);
-
-		// cleanup list
-		cleanupItems(mThreadLoad.Items);
-	}
-
-	ui->threadTreeWidget->setSortingEnabled(true);
-
-	if (mThreadLoad.FocusMsgId.empty() == false)
-	{
-		/* Search exisiting item */
-		QTreeWidgetItemIterator itemIterator(ui->threadTreeWidget);
-		QTreeWidgetItem *item = NULL;
-		while ((item = *itemIterator) != NULL)
-		{
-			itemIterator++;
-
-			if (item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString().toStdString() == mThreadLoad.FocusMsgId)
-			{
-				ui->threadTreeWidget->setCurrentItem(item);
-				ui->threadTreeWidget->setFocus();
-				break;
-			}
-		}
-	}
-
-	QList<QTreeWidgetItem*>::iterator Item;
-	for (Item = mThreadLoad.ItemToExpand.begin(); Item != mThreadLoad.ItemToExpand.end(); Item++)
-	{
-		if ((*Item)->isHidden() == false)
-		{
-			(*Item)->setExpanded(true);
-		}
-	}
-	mThreadLoad.ItemToExpand.clear();
-
-	if (ui->filterLineEdit->text().isEmpty() == false) {
-		filterItems(ui->filterLineEdit->text());
-	}
-
-	insertPost();
-	calculateIconsAndFonts();
-
-	ui->newthreadButton->setEnabled(IS_GROUP_SUBSCRIBED(mSubscribeFlags));
-
-	mThreadLoading = false;
+	// start thread
+	mFillThread->start();
 	updateInterface();
-
-#ifdef DEBUG_FORUMS
-	std::cerr << "GxsForumsDialog::fillThreadFinished done" << std::endl;
-#endif
 }
 
 void GxsForumThreadWidget::fillThreads(QList<QTreeWidgetItem *> &threadList, bool expandNewMessages, QList<QTreeWidgetItem*> &itemToExpand)
@@ -999,9 +1214,19 @@ void GxsForumThreadWidget::insertPostData(const RsGxsForumMsg &msg)
 	QList<QTreeWidgetItem*> row;
 	row.append(item);
 
-	if (setToReadOnActive && IS_MSG_UNREAD(status))
-	{
-		setMsgReadStatus(row, true);
+	if (IS_MSG_NEW(status)) {
+		if (setToReadOnActive) {
+			/* set to read */
+			setMsgReadStatus(row, true);
+		} else {
+			/* set to unread by user */
+			setMsgReadStatus(row, false);
+		}
+	} else {
+		if (setToReadOnActive && IS_MSG_UNREAD(status)) {
+			/* set to read */
+			setMsgReadStatus(row, true);
+		}
 	}
 
 //#AFTER MERGE	ui.time_label->setText(DateTime::formatLongDateTime(msg.mMeta.mPublishTs));
@@ -1019,10 +1244,10 @@ void GxsForumThreadWidget::insertPostData(const RsGxsForumMsg &msg)
 		ui->by_label->setText( tr("By") + " " + text );
 	}
 
-	QString extraTxt = RsHtml().formatText(ui->postText->document(), GxsForumsDialog::messageFromInfo(msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
+	QString extraTxt = RsHtml().formatText(ui->postText->document(), QString::fromUtf8(msg.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
 
 	ui->postText->setHtml(extraTxt);
-	ui->threadTitle->setText(GxsForumsDialog::titleFromInfo(msg.mMeta));
+	ui->threadTitle->setText(QString::fromUtf8(msg.mMeta.mMsgName.c_str()));
 }
 
 void GxsForumThreadWidget::previousMessage()
@@ -1161,12 +1386,12 @@ void GxsForumThreadWidget::setMsgReadStatus(QList<QTreeWidgetItem*> &rows, bool 
 
 		uint32_t status = (*row)->data(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
 
-		uint32_t statusNew = (status & ~GXS_SERV::GXS_MSG_STATUS_UNREAD); // orig status, without UNREAD.
+		uint32_t statusNew = (status & ~(GXS_SERV::GXS_MSG_STATUS_UNREAD | GXS_SERV::GXS_MSG_STATUS_UNPROCESSED)); // orig status, without UNREAD and UNPROCESSED.
 		if (!read) {
 			statusNew |= GXS_SERV::GXS_MSG_STATUS_UNREAD;
 		}
 
-		if (IS_MSG_UNREAD(status) == read) // is it different?
+		if (status != statusNew) // is it different?
 		{
 			std::string msgId = (*row)->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString().toStdString();
 
@@ -1198,6 +1423,7 @@ void GxsForumThreadWidget::setMsgReadStatus(QList<QTreeWidgetItem*> &rows, bool 
 			calculateIconsAndFonts(*it);
 		}
 //#TODO		updateMessageSummaryList(mForumId);
+		calculateUnreadCount();
 	}
 }
 
@@ -1227,7 +1453,8 @@ void GxsForumThreadWidget::markMsgAsReadUnread (bool read, bool children, bool f
 
 			/* add only items with the right state or with not RSGXS_MSG_STATUS_READ */
 			uint32_t status = row->data(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
-			if (IS_MSG_UNREAD(status) == read) {
+			bool isUnread = IS_MSG_UNREAD(status);
+			if (isUnread == read || IS_MSG_NEW(status)) {
 				allRows.append(row);
 			}
 
@@ -1260,11 +1487,6 @@ void GxsForumThreadWidget::markMsgAsReadChildren()
 	markMsgAsReadUnread(true, true, false);
 }
 
-void GxsForumThreadWidget::markMsgAsReadAll()
-{
-	markMsgAsReadUnread(true, true, true);
-}
-
 void GxsForumThreadWidget::markMsgAsUnread()
 {
 	markMsgAsReadUnread(false, false, false);
@@ -1275,9 +1497,9 @@ void GxsForumThreadWidget::markMsgAsUnreadChildren()
 	markMsgAsReadUnread(false, true, false);
 }
 
-void GxsForumThreadWidget::markMsgAsUnreadAll()
+void GxsForumThreadWidget::setAllMsgReadStatus(bool read)
 {
-	markMsgAsReadUnread(false, true, true);
+	markMsgAsReadUnread(read, true, true);
 }
 
 void GxsForumThreadWidget::copyMessageLink()
@@ -1462,25 +1684,21 @@ bool GxsForumThreadWidget::filterItem(QTreeWidgetItem *item, const QString &text
 /** Request / Response of Data ********************************/
 /*********************** **** **** **** ***********************/
 
-#define 	FORUMSV2DIALOG_LISTING			1
-#define 	FORUMSV2DIALOG_CURRENTFORUM		2
-#define 	FORUMSV2DIALOG_INSERTTHREADS	3
-#define 	FORUMSV2DIALOG_INSERTCHILD		4
-#define 	FORUMV2DIALOG_INSERT_POST		5
-#define 	FORUMV2DIALOG_REPLY_MESSAGE		6
-
 void GxsForumThreadWidget::requestGroupSummary_CurrentForum(const std::string &forumId)
 {
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
 
-	if (mRequestGroupSummary) {
-		std::cerr << "GxsForumThreadWidget::requestGroupSummary() Canceling Request: " << mTokenGroupSummary;
-		std::cerr << std::endl;
+	std::list<uint32_t> tokens;
+	mThreadQueue->activeRequestTokens(TOKEN_TYPE_CURRENTFORUM, tokens);
+	if (!tokens.empty()) {
+		std::list<uint32_t>::iterator tokenIt;
+		for (tokenIt = tokens.begin(); tokenIt != tokens.end(); ++tokenIt) {
+			std::cerr << "GxsForumThreadWidget::requestGroupSummary() Canceling Request: " << *tokenIt;
+			std::cerr << std::endl;
 
-		mThreadQueue->cancelRequest(mTokenGroupSummary);
-		mTokenGroupSummary = 0;
-		mRequestGroupSummary = false;
+			mThreadQueue->cancelRequest(*tokenIt);
+		}
 	}
 
 	std::list<std::string> grpIds;
@@ -1489,9 +1707,8 @@ void GxsForumThreadWidget::requestGroupSummary_CurrentForum(const std::string &f
 	std::cerr << "GxsForumsDialog::requestGroupSummary_CurrentForum(" << forumId << ")";
 	std::cerr << std::endl;
 
-	mThreadQueue->requestGroupInfo(mTokenGroupSummary, RS_TOKREQ_ANSTYPE_SUMMARY, opts, grpIds, FORUMSV2DIALOG_CURRENTFORUM);
-	mRequestGroupSummary = true;
-	updateInterface();
+	uint32_t token;
+	mThreadQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, grpIds, TOKEN_TYPE_CURRENTFORUM);
 }
 
 void GxsForumThreadWidget::loadGroupSummary_CurrentForum(const uint32_t &token)
@@ -1499,23 +1716,8 @@ void GxsForumThreadWidget::loadGroupSummary_CurrentForum(const uint32_t &token)
 	std::cerr << "GxsForumsDialog::loadGroupSummary_CurrentForum()";
 	std::cerr << std::endl;
 
-	if (!mRequestGroupSummary) {
-		std::cerr << "GxsForumThreadWidget::loadGroupSummary_CurrentForum()) No waiting request got token: " << token;
-		std::cerr << std::endl;
-		return;
-	}
-
-	if (token != mTokenGroupSummary) {
-		std::cerr << "GxsForumThreadWidget::loadGroupSummary()) Wrong token - want: " << mTokenGroupSummary << " got: " << token;
-		std::cerr << std::endl;
-		return;
-	}
-
 	std::list<RsGroupMetaData> groupInfo;
 	rsGxsForums->getGroupSummary(token, groupInfo);
-	mTokenGroupSummary = 0;
-	mRequestGroupSummary = false;
-	updateInterface();
 
 	if (groupInfo.size() == 1)
 	{
@@ -1526,344 +1728,8 @@ void GxsForumThreadWidget::loadGroupSummary_CurrentForum(const uint32_t &token)
 	{
 		std::cerr << "GxsForumsDialog::loadGroupSummary_CurrentForum() ERROR Invalid Number of Groups...";
 		std::cerr << std::endl;
-	}
-}
 
-/*********************** **** **** **** ***********************/
-/*********************** **** **** **** ***********************/
-
-void GxsForumThreadWidget::loadCurrentForumThreads(const std::string &forumId)
-{
-	std::cerr << "GxsForumsDialog::loadCurrentForumThreads(" << forumId << ")";
-	std::cerr << std::endl;
-
-	/* if already active -> kill current loading */
-	if (mThreadLoading)
-	{
-		/* Cleanup */
-		std::cerr << "GxsForumsDialog::loadCurrentForumThreads() Cleanup old Threads";
-		std::cerr << std::endl;
-
-		/* Wipe Widget Tree */
-		mThreadLoad.Items.clear();
-
-		/* Stop all active requests */
-		std::map<uint32_t, QTreeWidgetItem *>::iterator it;
-		for (it = mThreadLoad.MsgTokens.begin(); it != mThreadLoad.MsgTokens.end(); ++it)
-		{
-			std::cerr << "GxsForumsDialog::loadCurrentForumThreads() Canceling Request: " << it->first;
-			std::cerr << std::endl;
-
-			mThreadQueue->cancelRequest(it->first);
-		}
-
-		mThreadLoad.MsgTokens.clear();
-		mThreadLoad.ItemToExpand.clear();
-	}
-
-	/* initiate loading */
-	std::cerr << "GxsForumsDialog::loadCurrentForumThreads() Initiating Loading";
-	std::cerr << std::endl;
-
-	mThreadLoading = true;
-	updateInterface();
-
-	mThreadLoad.ForumId = mForumId;
-//#AFTER MERGE	mThreadLoad.FilterColumn = ui.filterLineEdit->currentFilter();
-	mThreadLoad.FilterColumn = COLUMN_THREAD_TITLE;
-//
-	mThreadLoad.ViewType = ui->viewBox->currentIndex();
-	mThreadLoad.FillComplete = false;
-
-	if (mLastViewType != mThreadLoad.ViewType || mLastForumID != mForumId) {
-		mThreadLoad.FillComplete = true;
-	}
-
-	mThreadLoad.FlatView = false;
-	mThreadLoad.UseChildTS = false;
-	mThreadLoad.ExpandNewMessages = Settings->getExpandNewMessages();
-	mThreadLoad.SubscribeFlags = mSubscribeFlags;
-
-	if (mThreadLoad.ViewType == VIEW_FLAT) {
-		ui->threadTreeWidget->setRootIsDecorated(false);
-	} else {
-		ui->threadTreeWidget->setRootIsDecorated(true);
-	}
-
-	switch(mThreadLoad.ViewType)
-	{
-	case VIEW_LAST_POST:
-		mThreadLoad.UseChildTS = true;
-		break;
-	case VIEW_FLAT:
-		mThreadLoad.FlatView = true;
-		break;
-	case VIEW_THREADED:
-		break;
-	}
-
-	requestGroupThreadData_InsertThreads(forumId);
-}
-
-void GxsForumThreadWidget::requestGroupThreadData_InsertThreads(const std::string &forumId)
-{
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-
-	opts.mOptions = RS_TOKREQOPT_MSG_THREAD | RS_TOKREQOPT_MSG_LATEST;
-
-	std::list<std::string> grpIds;
-	grpIds.push_back(forumId);
-
-	std::cerr << "GxsForumsDialog::requestGroupThreadData_InsertThreads(" << forumId << ")";
-	std::cerr << std::endl;
-
-	uint32_t token;
-	mThreadQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds, FORUMSV2DIALOG_INSERTTHREADS);
-}
-
-void GxsForumThreadWidget::loadGroupThreadData_InsertThreads(const uint32_t &token)
-{
-	std::cerr << "GxsForumsDialog::loadGroupThreadData_InsertThreads()";
-	std::cerr << std::endl;
-
-	bool someData = false;
-
-	std::vector<RsGxsForumMsg> msgs;
-	std::vector<RsGxsForumMsg>::iterator vit;
-	if (rsGxsForums->getMsgData(token, msgs))
-	{
-		for (vit = msgs.begin(); vit != msgs.end(); ++vit)
-		{
-			std::cerr << "GxsForumsDialog::loadGroupThreadData_InsertThreads() MsgId: " << vit->mMeta.mMsgId;
-			std::cerr << std::endl;
-
-			loadForumBaseThread(*vit);
-			someData = true;
-		}
-	}
-
-	/* completed with no data */
-	if (!someData)
-	{
-		fillThreadFinished();
-	}
-}
-
-bool GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForumMsg &msgInfo, bool useChildTS, uint32_t filterColumn, GxsIdTreeWidgetItem *item)
-{
-	QString text;
-
-	{
-		QDateTime qtime;
-		QString sort;
-
-		if (useChildTS)
-			qtime.setTime_t(msgInfo.mMeta.mChildTs);
-		else
-			qtime.setTime_t(msgInfo.mMeta.mPublishTs);
-
-//#AFTER MERGE			text = DateTime::formatDateTime(qtime);
-		sort = qtime.toString("yyyyMMdd_hhmmss");
-
-		if (useChildTS)
-		{
-			qtime.setTime_t(msgInfo.mMeta.mPublishTs);
-			text += " / ";
-//#AFTER MERGE			text += DateTime::formatDateTime(qtime);
-			sort += "_" + qtime.toString("yyyyMMdd_hhmmss");
-		}
-		item->setText(COLUMN_THREAD_DATE, text);
-		item->setData(COLUMN_THREAD_DATE, ROLE_THREAD_SORT, sort);
-	}
-
-	item->setText(COLUMN_THREAD_TITLE, GxsForumsDialog::titleFromInfo(msgInfo.mMeta));
-
-	item->setId(msgInfo.mMeta.mAuthorId, COLUMN_THREAD_AUTHOR);
-#if 0
-	text = QString::fromUtf8(authorName.c_str());
-
-	if (text.isEmpty())
-	{
-		item->setText(COLUMN_THREAD_AUTHOR, tr("Anonymous"));
-	}
-	else
-	{
-		item->setText(COLUMN_THREAD_AUTHOR, text);
-	}
-#endif
-
-#ifdef TOGXS
-	if (msgInfo.mMeta.mMsgFlags & RS_DISTRIB_AUTHEN_REQ)
-	{
-		item->setText(COLUMN_THREAD_SIGNED, tr("signed"));
-		item->setIcon(COLUMN_THREAD_SIGNED, QIcon(":/images/mail-signed.png"));
-	}
-	else
-	{
-		item->setText(COLUMN_THREAD_SIGNED, tr("none"));
-		item->setIcon(COLUMN_THREAD_SIGNED, QIcon(":/images/mail-signature-unknown.png"));
-	}
-#endif
-
-	if (filterColumn == COLUMN_THREAD_CONTENT) {
-		// need content for filter
-		QTextDocument doc;
-		doc.setHtml(QString::fromUtf8(msgInfo.mMsg.c_str()));
-		item->setText(COLUMN_THREAD_CONTENT, doc.toPlainText().replace(QString("\n"), QString(" ")));
-	}
-
-	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID, QString::fromStdString(msgInfo.mMeta.mMsgId));
-
-#if 0
-	if (IS_GROUP_SUBSCRIBED(subscribeFlags) && !(msginfo.mMsgFlags & RS_DISTRIB_MISSING_MSG)) {
-		rsGxsForums->getMessageStatus(msginfo.forumId, msginfo.msgId, status);
-	} else {
-		// show message as read
-		status = RSGXS_MSG_STATUS_READ;
-	}
-#endif
-	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS, msgInfo.mMeta.mMsgStatus);
-
-#ifdef TOGXS
-	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MISSING, (msgInfo.mMeta.mMsgFlags & RS_DISTRIB_MISSING_MSG) ? true : false);
-#endif
-
-	return true;
-}
-
-void GxsForumThreadWidget::loadForumBaseThread(const RsGxsForumMsg &msg)
-{
-	//std::string authorName = rsPeers->getPeerName(msg.mMeta.mAuthorId);
-
-	//QTreeWidgetItem *item = new QTreeWidgetItem(); // no Parent.
-	GxsIdTreeWidgetItem *item = new GxsIdTreeWidgetItem(mThreadCompareRole); // no Parent.
-
-	//convertMsgToThreadWidget(msg, authorName, mThreadLoad.UseChildTS, mThreadLoad.FilterColumn, item);
-	convertMsgToThreadWidget(msg, mThreadLoad.UseChildTS, mThreadLoad.FilterColumn, item);
-
-	/* request Children Data */
-	uint32_t token;
-	RsGxsGrpMsgIdPair parentId = std::make_pair(msg.mMeta.mGroupId, msg.mMeta.mMsgId);
-	requestChildData_InsertThreads(token, parentId);
-
-	/* store pair of (token, item) */
-	mThreadLoad.MsgTokens[token] = item;
-
-	/* add item to final tree */
-	mThreadLoad.Items.append(item);
-}
-
-/*********************** **** **** **** ***********************/
-
-void GxsForumThreadWidget::requestChildData_InsertThreads(uint32_t &token, const RsGxsGrpMsgIdPair &parentId)
-{
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
-	opts.mOptions = RS_TOKREQOPT_MSG_PARENT |  RS_TOKREQOPT_MSG_LATEST;
-
-	std::cerr << "GxsForumsDialog::requestChildData_InsertThreads(" << parentId.first << "," << parentId.second << ")";
-	std::cerr << std::endl;
-
-	std::vector<RsGxsGrpMsgIdPair> msgIds;
-	msgIds.push_back(parentId);
-	mThreadQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, FORUMSV2DIALOG_INSERTCHILD);
-}
-
-void GxsForumThreadWidget::loadChildData_InsertThreads(const uint32_t &token)
-{
-	std::cerr << "GxsForumsDialog::loadChildData_InsertThreads()";
-	std::cerr << std::endl;
-
-	/* find the matching *item */
-	std::map<uint32_t, QTreeWidgetItem *>::iterator it;
-	it = mThreadLoad.MsgTokens.find(token);
-	if (it == mThreadLoad.MsgTokens.end())
-	{
-		std::cerr << "GxsForumsDialog::loadChildData_InsertThreads() ERROR Missing Token->Parent in Map";
-		std::cerr << std::endl;
-		/* finished with this one */
-		return;
-	}
-
-	QTreeWidgetItem *parent = it->second;
-	// cleanup map.
-	mThreadLoad.MsgTokens.erase(it);
-
-	std::cerr << "GxsForumsDialog::loadChildData_InsertThreads()";
-	std::cerr << std::endl;
-
-	std::vector<RsGxsForumMsg> msgs;
-	std::vector<RsGxsForumMsg>::iterator vit;
-	if (rsGxsForums->getRelatedMessages(token, msgs))
-	{
-		for(vit = msgs.begin(); vit != msgs.end(); vit++)
-		{
-			std::cerr << "GxsForumsDialog::loadChildData_InsertThreads() MsgId: " << vit->mMeta.mMsgId;
-			std::cerr << std::endl;
-
-			loadForumChildMsg(*vit, parent);
-		}
-	}
-	else
-	{
-		std::cerr << "GxsForumsDialog::loadChildData_InsertThreads() Error getting MsgData";
-		std::cerr << std::endl;
-	}
-
-	/* check for completion */
-	if (mThreadLoad.MsgTokens.size() == 0)
-	{
-		/* finished */
-		/* push data into GUI */
-		fillThreadFinished();
-	}
-}
-
-void GxsForumThreadWidget::loadForumChildMsg(const RsGxsForumMsg &msg, QTreeWidgetItem *parent)
-{
-	//std::string authorName = rsPeers->getPeerName(msg.mMeta.mAuthorId);
-
-	//QTreeWidgetItem *child = NULL;
-	GxsIdTreeWidgetItem *child = NULL;
-
-	if (mThreadLoad.FlatView)
-	{
-		child = new GxsIdTreeWidgetItem(mThreadCompareRole); // no Parent.
-	}
-	else
-	{
-		child = new GxsIdTreeWidgetItem(mThreadCompareRole, parent);
-	}
-
-	convertMsgToThreadWidget(msg, mThreadLoad.UseChildTS, mThreadLoad.FilterColumn, child);
-	//convertMsgToThreadWidget(msg, authorName, mThreadLoad.UseChildTS, mThreadLoad.FilterColumn, child);
-
-	/* request Children Data */
-	uint32_t token;
-	RsGxsGrpMsgIdPair parentId = std::make_pair(msg.mMeta.mGroupId, msg.mMeta.mMsgId);
-	requestChildData_InsertThreads(token, parentId);
-
-	/* store pair of (token, item) */
-	mThreadLoad.MsgTokens[token] = child;
-
-	// Leave this here... BUT IT WILL NEED TO BE FIXED.
-	if (mThreadLoad.FillComplete && mThreadLoad.ExpandNewMessages && IS_MSG_UNREAD(msg.mMeta.mMsgStatus))
-	{
-		QTreeWidgetItem *pParent = child;
-		while ((pParent = pParent->parent()) != NULL)
-		{
-			if (std::find(mThreadLoad.ItemToExpand.begin(), mThreadLoad.ItemToExpand.end(), pParent) == mThreadLoad.ItemToExpand.end())
-			{
-				mThreadLoad.ItemToExpand.push_back(pParent);
-			}
-		}
-	}
-
-	if (mThreadLoad.FlatView)
-	{
-		/* add item to final tree */
-		mThreadLoad.Items.append(child);
+		updateInterface();
 	}
 }
 
@@ -1882,14 +1748,20 @@ void GxsForumThreadWidget::requestMsgData_InsertPost(const RsGxsGrpMsgIdPair &ms
 	std::vector<RsGxsGrpMsgIdPair> msgIds;
 	msgIds.push_back(msgId);
 	uint32_t token;
-	mForumQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, FORUMV2DIALOG_INSERT_POST);
+	mForumQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, TOKEN_TYPE_INSERT_POST);
 #else
-	if (mTokenPost) {
-		std::cerr << "GxsForumThreadWidget::requestMsgData_InsertPost() Canceling Request: " << mTokenPost;
-		std::cerr << std::endl;
 
-		mThreadQueue->cancelRequest(mTokenPost);
-		mTokenPost = 0;
+	std::list<uint32_t> tokens;
+	mThreadQueue->activeRequestTokens(TOKEN_TYPE_INSERT_POST, tokens);
+	if (!tokens.empty()) {
+		std::list<uint32_t>::iterator tokenIt;
+		for (tokenIt = tokens.begin(); tokenIt != tokens.end(); ++tokenIt) {
+#ifdef DEBUG_FORUMS
+			std::cerr << "GxsForumThreadWidget::requestMsgData_InsertPost() Canceling Request: " << *tokenIt;
+			std::cerr << std::endl;
+#endif
+			mThreadQueue->cancelRequest(*tokenIt);
+		}
 	}
 
 	RsTokReqOptions opts;
@@ -1902,7 +1774,8 @@ void GxsForumThreadWidget::requestMsgData_InsertPost(const RsGxsGrpMsgIdPair &ms
 	std::vector<RsGxsMessageId> &vect = msgIds[msgId.first];
 	vect.push_back(msgId.second);
 
-	mThreadQueue->requestMsgInfo(mTokenPost, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, FORUMV2DIALOG_INSERT_POST);
+	uint32_t token;
+	mThreadQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, TOKEN_TYPE_INSERT_POST);
 #endif
 }
 
@@ -1912,26 +1785,17 @@ void GxsForumThreadWidget::loadMsgData_InsertPost(const uint32_t &token)
 	std::cerr << std::endl;
 
 	std::vector<RsGxsForumMsg> msgs;
-#if 0
-	if (rsGxsForums->getRelatedMessages(token, msgs))
-#else
-	if (rsGxsForums->getMsgData(token, msgs))
-#endif
-	{
-		if (msgs.size() != 1)
-		{
+	if (rsGxsForums->getMsgData(token, msgs)) {
+		if (msgs.size() != 1) {
 			std::cerr << "GxsForumsDialog::loadMsgData_InsertPost() ERROR Wrong number of answers";
 			std::cerr << std::endl;
 			return;
 		}
 		insertPostData(msgs[0]);
-	}
-	else
-	{
+	} else {
 		std::cerr << "GxsForumsDialog::loadMsgData_InsertPost() ERROR Missing Message Data...";
 		std::cerr << std::endl;
 	}
-	mTokenPost = 0;
 }
 
 /*********************** **** **** **** ***********************/
@@ -1949,7 +1813,7 @@ void GxsForumThreadWidget::requestMsgData_ReplyMessage(const RsGxsGrpMsgIdPair &
 	std::vector<RsGxsGrpMsgIdPair> msgIds;
 	msgIds.push_back(msgId);
 	uint32_t token;
-	mThreadQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, FORUMV2DIALOG_REPLY_MESSAGE);
+	mThreadQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, TOKEN_TYPE_REPLY_MESSAGE);
 #else
 
 	RsTokReqOptions opts;
@@ -1963,7 +1827,7 @@ void GxsForumThreadWidget::requestMsgData_ReplyMessage(const RsGxsGrpMsgIdPair &
 	vect.push_back(msgId.second);
 
 	uint32_t token;
-	mThreadQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, FORUMV2DIALOG_REPLY_MESSAGE);
+	mThreadQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, TOKEN_TYPE_REPLY_MESSAGE);
 #endif
 }
 
@@ -2008,23 +1872,15 @@ void GxsForumThreadWidget::loadRequest(const TokenQueue *queue, const TokenReque
 		/* now switch on req */
 		switch(req.mUserType)
 		{
-		case FORUMSV2DIALOG_CURRENTFORUM:
+		case TOKEN_TYPE_CURRENTFORUM:
 			loadGroupSummary_CurrentForum(req.mToken);
 			break;
 
-		case FORUMSV2DIALOG_INSERTTHREADS:
-			loadGroupThreadData_InsertThreads(req.mToken);
-			break;
-
-		case FORUMSV2DIALOG_INSERTCHILD:
-			loadChildData_InsertThreads(req.mToken);
-			break;
-
-		case FORUMV2DIALOG_INSERT_POST:
+		case TOKEN_TYPE_INSERT_POST:
 			loadMsgData_InsertPost(req.mToken);
 			break;
 
-		case FORUMV2DIALOG_REPLY_MESSAGE:
+		case TOKEN_TYPE_REPLY_MESSAGE:
 			loadMsgData_ReplyMessage(req.mToken);
 			break;
 

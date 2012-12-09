@@ -36,6 +36,7 @@
 
 class ForumInfo;
 class RsGxsForumMsg;
+class GxsForumThreadWidget;
 
 class GxsForumsDialog : public RsAutoUpdatePage, public TokenResponse 
 {
@@ -54,10 +55,6 @@ public:
 
 	// Callback for all Loads.
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
-
-	// Utility Fns.
-	static QString titleFromInfo(const RsMsgMetaData &meta);
-	static QString messageFromInfo(const RsGxsForumMsg &msg);
 
 private slots:
 	void forceUpdateDisplay(); // TEMP HACK FN.
@@ -80,6 +77,9 @@ private slots:
 	void showForumDetails();
 	void editForumDetails();
 
+	void markMsgAsRead();
+	void markMsgAsUnread();
+
 	void generateMassData();
 
 	void shareKey();
@@ -101,13 +101,13 @@ private:
 	void requestGroupSummary();
 	void loadGroupSummary(const uint32_t &token);
 
+	GxsForumThreadWidget *forumThreadWidget(const std::string &id);
+
 //	void requestGroupSummary_CurrentForum(const std::string &forumId);
 //	void loadGroupSummary_CurrentForum(const uint32_t &token);
 
 	std::string mForumId;
 	TokenQueue *mForumQueue;
-	uint32_t mTokenGroupSummary;
-	bool mRequestGroupSummary;
 
 	QTreeWidgetItem *yourForums;
 	QTreeWidgetItem *subscribedForums;
