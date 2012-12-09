@@ -10057,10 +10057,6 @@ Reducing image to %1x%2 pixels?</source>
         <source>Accept Friend Request</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>wants to be friend with you on RetroShare</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>ServerPage</name>
@@ -10254,6 +10250,10 @@ peers still need to trust each other to allow connection. </source>
         <source>Share flags and groups: </source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Edit Shared Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ShareKey</name>
@@ -10370,6 +10370,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Apply and close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Shared Folder</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10513,6 +10517,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Split View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Share Permissions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Shared Folder</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

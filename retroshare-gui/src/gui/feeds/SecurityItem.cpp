@@ -119,7 +119,6 @@ void SecurityItem::updateItemStatic()
 		case SEC_TYPE_CONNECT_ATTEMPT:
 			title = tr("Connect Attempt");
 			requestLabel->show();
-			requestLabel->setText(tr("wants to be friend with you on RetroShare"));
 			avatar->setDefaultAvatar(":images/avatar_request.png");
 			break;
 		case SEC_TYPE_AUTH_DENIED:
