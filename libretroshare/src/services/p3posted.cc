@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <math.h>
 #include <sstream>
+#include <stdio.h>
 
 #include "p3posted.h"
 #include "gxs/rsgxsflags.h"
