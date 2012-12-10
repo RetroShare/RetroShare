@@ -1653,9 +1653,9 @@ std::string p3IdService::genRandomId(int len)
 	return randomId;
 }
 	
-#define MAX_KNOWN_PGPIDS	50 
-#define MAX_UNKNOWN_PGPIDS	50 
-#define MAX_PSEUDOIDS		100
+#define MAX_KNOWN_PGPIDS	20 
+#define MAX_UNKNOWN_PGPIDS	20 
+#define MAX_PSEUDOIDS		20
 
 #define DUMMY_GXSID_DELAY	5
 

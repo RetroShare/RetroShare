@@ -29,6 +29,8 @@
 #include "retroshare/rswiki.h"
 #include "gxs/rsgenexchange.h"
 
+#include "util/rstickevent.h"
+
 #include <map>
 #include <string>
 
@@ -38,7 +40,8 @@
  *
  */
 
-class p3Wiki: public RsGenExchange, public RsWiki
+class p3Wiki: public RsGenExchange, public RsWiki, 
+	public RsTickEvent
 {
 public:
     p3Wiki(RsGeneralDataService* gds, RsNetworkExchangeService* nes);
@@ -46,6 +49,9 @@ public:
 protected:
 
 virtual void notifyChanges(std::vector<RsGxsNotify*>& changes) ;
+
+        // Overloaded from RsTickEvent.
+virtual void handle_event(uint32_t event_type, const std::string &elabel);
 
 public:
 
@@ -62,13 +68,14 @@ virtual bool submitCollection(uint32_t &token, RsWikiCollection &collection);
 virtual bool submitSnapshot(uint32_t &token, RsWikiSnapshot &snapshot);
 virtual bool submitComment(uint32_t &token, RsWikiComment &comment);
 
-virtual void generateDummyData();
 
 	private:
 
 std::string genRandomId();
 //	RsMutex mWikiMtx;
 
+
+virtual void generateDummyData();
 
 	// Dummy Stuff.
 	void dummyTick();
@@ -82,6 +89,11 @@ std::string genRandomId();
 	uint32_t mImprovToken;
 	int  mImprovLines;
 	RsGxsMessageId mImprovThreadId;
+
+	bool mMarkdownActive;
+	uint32_t mMarkdownToken;
+	int  mMarkdownLines;
+	RsGxsMessageId mMarkdownThreadId;
 };
 
 #endif 

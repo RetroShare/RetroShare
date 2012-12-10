@@ -131,9 +131,6 @@ virtual bool submitCollection(uint32_t &token, RsWikiCollection &collection) = 0
 virtual bool submitSnapshot(uint32_t &token, RsWikiSnapshot &snapshot) = 0;
 virtual bool submitComment(uint32_t &token, RsWikiComment &comment) = 0;
 
-	// for testing only.
-virtual void generateDummyData() = 0;
-
 };
 
 #endif

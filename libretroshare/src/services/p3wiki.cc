@@ -34,20 +34,35 @@
 
 RsWiki *rsWiki = NULL;
 
+/**
+ * #define WIKI_GEN_DUMMY_DATA	1
+ **/
+
+#define WIKI_GEN_DUMMY_DATA	1
+
+#define WIKI_EVENT_DUMMYTICK	0x0001	
+#define WIKI_EVENT_DUMMYSTART	0x0002
+
+#define DUMMYSTART_PERIOD	60 	// some time for dummyIds to be generated.
+#define DUMMYTICK_PERIOD	3
 
 p3Wiki::p3Wiki(RsGeneralDataService* gds, RsNetworkExchangeService* nes)
 	:RsGenExchange(gds, nes, new RsGxsWikiSerialiser(), RS_SERVICE_GXSV1_TYPE_WIKI), RsWiki(this)
 {
-
-
 	// Setup of dummy Pages.
 	mAboutActive = false;
 	mImprovActive = false;
+	mMarkdownActive = false;
+
+#ifdef WIKI_GEN_DUMMY_DATA
+	RsTickEvent::schedule_in(WIKI_EVENT_DUMMYSTART, DUMMYSTART_PERIOD);
+#endif
+
 }
 
 void p3Wiki::service_tick()
 {
-	dummyTick();
+	RsTickEvent::tick_events();
 	return;
 }
 
@@ -340,8 +355,49 @@ const std::string improvements_txt[] =
 	};
 
 
+const int markdown_len = 34;
+const std::string markdown_txt[] = {
+		"# An Example of Markdown Editing.",
+		"",
+		"Markdown is quite simple to use, and allows simple HTML.",
+		"",
+		"## Some Blocks below an H2 heading.",
+		"",
+		" * Firstly, we can put a link [in here][]",
+		" * Secondly, as you can see we're in a list.",
+		" * Thirdly, I don't know.",
+		"",
+		"### A Sub (H3) heading.",
+		"",
+		"#### If we want to get into the very small details. (H6).",
+		"",
+		"    A bit of code.",
+		"    This is a lit",
+		"    foreach(in loop)",
+		"         a++",
+		"    Double quoted stuff.",
+		"",
+		"Or it can be indented like this:",
+		"",
+		">   A block of indented stuff looks like this",
+		"> >   With double indenting and ",
+		"> > > triple indenting possible too",
+		"",
+		"Images can be embedded, but thats somethinng to work on in the future.",
+		"",
+		"Sadly it doesn't support tables or div's or anything that complex.",
+		"",
+		"Keep it simple and help write good wiki pages, thx.",
+		"",
+		"[in here]: http://example.com/  \"Optional Title Here\"",
+		""
+	};
+
+
 void p3Wiki::generateDummyData()
 {
+	std::cerr << "p3Wiki::generateDummyData()";
+	std::cerr << std::endl;
 
 #define GEN_COLLECTIONS		0
 
@@ -369,11 +425,20 @@ void p3Wiki::generateDummyData()
 
 	submitCollection(mImprovToken, wiki);
 
+	wiki.mMeta.mGroupFlags = 0;
+	wiki.mMeta.mGroupName = "RsWiki Markdown";
+
+	submitCollection(mMarkdownToken, wiki);
+
 	mAboutLines = 0;
 	mImprovLines = 0;
+	mMarkdownLines = 0;
 
 	mAboutActive = true;
 	mImprovActive = true;
+	mMarkdownActive = true;
+
+	RsTickEvent::schedule_in(WIKI_EVENT_DUMMYTICK, DUMMYTICK_PERIOD);
 }
 
 
@@ -566,9 +631,109 @@ void p3Wiki::dummyTick()
 			}
 		}
 	}
+
+
+	if (mMarkdownActive)
+	{
+		std::cerr << "p3Wiki::dummyTick() MarkdownActive";
+		std::cerr << std::endl;
+
+		uint32_t status = RsGenExchange::getTokenService()->requestStatus(mMarkdownToken);
+
+		if (status == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+		{
+			std::cerr << "p3Wiki::dummyTick() MarkdownActive, Lines: " << mMarkdownLines;
+			std::cerr << std::endl;
+
+			if (mMarkdownLines == 0)
+			{
+				/* get the group Id */
+				RsGxsGroupId groupId;
+				if (!acknowledgeTokenGrp(mMarkdownToken, groupId))
+				{
+					std::cerr << " ERROR ";
+					std::cerr << std::endl;
+					mMarkdownActive = false;
+				}
+
+				/* create baseline snapshot */
+				RsWikiSnapshot page;				
+				page.mMeta.mGroupId = groupId;
+				page.mPage = "Baseline page... a placeholder for Markdown Wiki";
+				page.mMeta.mMsgName = "Markdown RsWiki";
+				page.mMeta.mAuthorId = chooseRandomAuthorId();
+
+				submitSnapshot(mMarkdownToken, page);
+				mMarkdownLines++;
+			}
+			else
+			{
+				/* get the msg Id, and generate next snapshot */
+				RsGxsGrpMsgIdPair msgId;
+				if (!acknowledgeTokenMsg(mMarkdownToken, msgId))
+				{
+					std::cerr << " ERROR ";
+					std::cerr << std::endl;
+					mMarkdownActive = false;
+				}
+
+				if (mMarkdownLines == 1)
+				{
+					mMarkdownThreadId = msgId.second;
+				}
+
+				RsWikiSnapshot page;				
+				page.mMeta.mMsgName = "Markdown RsWiki";
+				page.mMeta.mAuthorId = chooseRandomAuthorId();
+				if (!generateNextDummyPage(mMarkdownThreadId, mMarkdownLines, msgId, markdown_txt, markdown_len, page))
+				{
+					std::cerr << "Markdown Pages Done";
+					std::cerr << std::endl;
+					mMarkdownActive = false;
+				}
+				else
+				{
+					mMarkdownLines++;
+					submitSnapshot(mMarkdownToken, page);
+				}
+			}
+		}
+	}
+
+	if ((mAboutActive) || (mImprovActive) || (mMarkdownActive))
+	{
+		/* reschedule next one */
+		RsTickEvent::schedule_in(WIKI_EVENT_DUMMYTICK, DUMMYTICK_PERIOD);
+	}
 }
 
 
 
+
+
+        // Overloaded from RsTickEvent for Event callbacks.
+void p3Wiki::handle_event(uint32_t event_type, const std::string &elabel)
+{
+	std::cerr << "p3Wiki::handle_event(" << event_type << ")";
+	std::cerr << std::endl;
+
+	// stuff.
+	switch(event_type)
+	{
+		case WIKI_EVENT_DUMMYSTART:
+			generateDummyData();
+			break;
+
+		case WIKI_EVENT_DUMMYTICK:
+			dummyTick();
+			break;
+
+		default:
+			/* error */
+			std::cerr << "p3Wiki::handle_event() Unknown Event Type: " << event_type;
+			std::cerr << std::endl;
+			break;
+	}
+}
 
 
