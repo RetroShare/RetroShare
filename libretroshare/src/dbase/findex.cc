@@ -1095,10 +1095,10 @@ int DirEntry::saveEntry(std::string &s)
 
 int FileIndex::searchHash(const std::string& hash, std::list<FileEntry *> &results) const
 {
-//#ifdef FI_DEBUG
+#ifdef FI_DEBUG
 	std::cerr << "FileIndex::searchHash(" << hash << ")";
 	std::cerr << std::endl;
-//#endif
+#endif
 
 	std::map<std::string,FileEntry*>::const_iterator it = _file_hashes.find(hash) ;
 
