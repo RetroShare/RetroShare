@@ -84,7 +84,6 @@ WikiDialog::WikiDialog(QWidget *parent)
 	timer->start(1000);
 
 	/* setup TokenQueue */
-        rsWiki->generateDummyData();
         mWikiQueue = new TokenQueue(rsWiki->getTokenService(), this);
 
 }

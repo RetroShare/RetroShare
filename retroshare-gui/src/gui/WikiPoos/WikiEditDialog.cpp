@@ -421,6 +421,9 @@ void WikiEditDialog::setNewPage()
 	ui.headerFrame->setHeaderText(tr("Create New Wiki Page"));
 	setWindowTitle(tr("Create New Wiki Page"));
 
+        /* fill in the available OwnIds for signing */
+        ui.comboBox_IdChooser->loadIds(IDCHOOSER_ID_REQUIRED, "");
+
 	textReset();
 }
 
@@ -529,6 +532,19 @@ void WikiEditDialog::submitEdit()
 		mWikiSnapshot.mPage = std::string(byte_array.data());
 	}
 
+	RsGxsId authorId;
+	if (ui.comboBox_IdChooser->getChosenId(authorId))
+	{
+		mWikiSnapshot.mMeta.mAuthorId = authorId;
+		std::cerr << "CreateGxsForumMsg::createMsg() AuthorId: " << authorId;
+		std::cerr << std::endl;
+	}
+	else
+	{
+		std::cerr << "CreateGxsForumMsg::createMsg() ERROR GETTING AuthorId!";
+		std::cerr << std::endl;
+	}
+
 	std::cerr << "WikiEditDialog::submitEdit() PageTitle: " << mWikiSnapshot.mMeta.mMsgName;
 	std::cerr << std::endl;
 	std::cerr << "WikiEditDialog::submitEdit() GroupId: " << mWikiSnapshot.mMeta.mGroupId;
@@ -540,6 +556,7 @@ void WikiEditDialog::submitEdit()
 	std::cerr << "WikiEditDialog::submitEdit() ThreadId: " << mWikiSnapshot.mMeta.mThreadId;
 	std::cerr << std::endl;
 	std::cerr << "WikiEditDialog::submitEdit() ParentId: " << mWikiSnapshot.mMeta.mParentId;
+	std::cerr << "WikiEditDialog::submitEdit() AuthorId: " << mWikiSnapshot.mMeta.mAuthorId;
 	std::cerr << std::endl;
 
 	uint32_t token;
@@ -567,6 +584,10 @@ void WikiEditDialog::setupData(const std::string &groupId, const std::string &pa
 	ui.headerFrame->setHeaderImage(QPixmap(":/images/story-editor_48.png"));
 	ui.headerFrame->setHeaderText(tr("Edit Wiki Page"));
 	setWindowTitle(tr("Edit Wiki Page"));
+
+        /* fill in the available OwnIds for signing */
+        ui.comboBox_IdChooser->loadIds(IDCHOOSER_ID_REQUIRED, "");
+
 }
 
 
