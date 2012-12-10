@@ -845,6 +845,7 @@ void 	FileIndexMonitor::updateCycle()
 		if (fiMods)
 			locked_saveFileIndexes(true) ;
 
+		fi.updateHashIndex() ;	// update hash map that is used to accelerate search.
 		fi.updateMaxModTime() ;	// Update modification times for proper display.
 
 		mInCheck = false;
@@ -978,10 +979,10 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 			/* don't hit the disk too hard! */
 #ifndef WINDOWS_SYS
 			/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-			usleep(40000); /* 40 msec */
+			usleep(10000); /* 10 msec */
 #else
 
-			Sleep(40);
+			Sleep(10);
 #endif
 
 			// Save the hashing result every 60 seconds, so has to save what is already hashed.
@@ -996,6 +997,7 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 				sleep(1) ;
 #endif
 				RsStackMutex stack(fiMutex); /**** LOCKED DIRS ****/
+				fi.updateHashIndex() ;
 				FileIndexMonitor::locked_saveFileIndexes(true) ;
 				last_save_size = hashed_size ;
 
@@ -1006,6 +1008,8 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 			// check if thread is running
 			running = isRunning();
 		}
+
+	fi.updateHashIndex() ;
 
 	cb->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 }

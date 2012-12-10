@@ -515,6 +515,7 @@ FileIndex::FileIndex(const std::string& pid)
 {
 	root = new PersonEntry(pid);
 	registerEntry(root) ;
+	_file_hashes.clear() ;
 }
 
 FileIndex::~FileIndex()
@@ -552,7 +553,26 @@ int	FileIndex::setRootDirectories(const std::list<std::string> &inlist, time_t u
 		(it->second)->updtime = updtime;
 	}
 
+	// update file hash index.
+	
+	updateHashIndex() ;
+
 	return 1;
+}
+
+void FileIndex::updateHashIndex() 
+{
+	_file_hashes.clear() ;
+	recursUpdateHashIndex(root) ;
+}
+
+void FileIndex::recursUpdateHashIndex(DirEntry *dir) 
+{
+	for(std::map<std::string,DirEntry*>::iterator it(dir->subdirs.begin());it!=dir->subdirs.end();++it)
+		recursUpdateHashIndex(it->second) ;
+	
+	for(std::map<std::string,FileEntry*>::iterator it(dir->files.begin());it!=dir->files.end();++it)
+		_file_hashes[it->second->hash] = it->second ;
 }
 
 void FileIndex::updateMaxModTime() 
@@ -632,6 +652,7 @@ FileEntry *FileIndex::updateFileEntry(const std::string& fpath, const FileEntry&
 #endif
 		return NULL;
 	}
+
 	return parent -> updateFile(fe, utime);
 }
 
@@ -909,6 +930,8 @@ int FileIndex::loadIndex(const std::string& filename, const std::string& expecte
 		}
 	}
 
+	updateHashIndex() ;
+
 	return 1;
 
 	/* parse error encountered */
@@ -1072,10 +1095,17 @@ int DirEntry::saveEntry(std::string &s)
 
 int FileIndex::searchHash(const std::string& hash, std::list<FileEntry *> &results) const
 {
-#ifdef FI_DEBUG
+//#ifdef FI_DEBUG
 	std::cerr << "FileIndex::searchHash(" << hash << ")";
 	std::cerr << std::endl;
-#endif
+//#endif
+
+	std::map<std::string,FileEntry*>::const_iterator it = _file_hashes.find(hash) ;
+
+	if(it!=_file_hashes.end() && isValid((void*)it->second))
+		results.push_back(it->second) ;
+
+#ifdef OLD_CODE_PLZ_REMOVE
 	DirEntry *ndir = NULL;
 	std::list<DirEntry *> dirlist;
 	dirlist.push_back(root);
@@ -1106,6 +1136,7 @@ int FileIndex::searchHash(const std::string& hash, std::list<FileEntry *> &resul
 			}
 		}
 	}
+#endif
 
 	return 0;
 }
