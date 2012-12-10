@@ -28,7 +28,6 @@ linux-g++-64 {
 ################################# Windows ##########################################
 
 win32 {
-		QMAKE_CC = g++
 		OBJECTS_DIR = temp/obj
 		MOC_DIR = temp/moc
 		DESTDIR = lib
