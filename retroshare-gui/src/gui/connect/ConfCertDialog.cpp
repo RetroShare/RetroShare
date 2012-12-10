@@ -69,6 +69,8 @@ ConfCertDialog::ConfCertDialog(const std::string& id, QWidget *parent, Qt::WFlag
 	ui.headerFrame->setHeaderImage(QPixmap(":/images/user/identityinfo64.png"));
 	ui.headerFrame->setHeaderText(tr("Friend Details"));
 
+	ui._chat_CB->hide() ;
+
 	setAttribute(Qt::WA_DeleteOnClose, true);
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(applyDialog()));

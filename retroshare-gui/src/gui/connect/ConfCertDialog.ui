@@ -789,7 +789,7 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkBox_3">
+           <widget class="QCheckBox" name="_chat_CB">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -798,13 +798,6 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="checked">
              <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButton">
-            <property name="text">
-             <string>PushButton</string>
             </property>
            </widget>
           </item>
