@@ -291,9 +291,12 @@ bool AuthGPG::DoOwnSignature(const void *data, unsigned int datalen, void *buf_s
 /* import to GnuPG and other Certificates */
 bool AuthGPG::VerifySignature(const void *data, int datalen, const void *sig, unsigned int siglen, const std::string &withfingerprint)
 {
-	if(withfingerprint.length() != 40)
+	static bool already_reported = false ;
+
+	if(withfingerprint.length() != 40 && !already_reported)
 	{
-		std::cerr << "AuthGPG::VerifySignature(): no (or dammaged) fingerprint. Nor verifying signature. This is likely to be an unknown peer. fingerprint=\"" << withfingerprint << "\"." << std::endl;
+		std::cerr << "AuthGPG::VerifySignature(): no (or dammaged) fingerprint. Nor verifying signature. This is likely to be an unknown peer. fingerprint=\"" << withfingerprint << "\". Not reporting other errors." << std::endl;
+		already_reported = true ;
 		return false ;
 	}
 
