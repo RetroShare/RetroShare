@@ -29,7 +29,7 @@
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvbase.h"
 
-#define RSSERIAL_DEBUG 1
+#define RSSERIAL_DEBUG 0
 #include <iostream>
 
 /*************************************************************************/
@@ -148,30 +148,44 @@ bool     RsChannelSerialiser::serialiseMsg(RsChannelMsg *item, void *data, uint3
 
 	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
+#ifdef RSSERIAL_DEBUG
 	std::cerr << "RsChannelSerialiser::serialiseMsg() Header: " << ok << std::endl;
 	std::cerr << "RsChannelSerialiser::serialiseMsg() Size: " << tlvsize << std::endl;
+#endif
 
 	/* skip the header */
 	offset += 8;
 
 	/* RsDistribMsg first */
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
+#ifdef RSSERIAL_DEBUG
 	std::cerr << "RsChannelSerialiser::serialiseMsg() grpId: " << ok << std::endl;
+#endif
 
 	ok &= setRawUInt32(data, tlvsize, &offset, item->timestamp);
+#ifdef RSSERIAL_DEBUG
 	std::cerr << "RsChannelSerialiser::serialiseMsg() timestamp: " << ok << std::endl;
+#endif
 
 	/* RsChannelMsg */
 	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_SUBJECT, item->subject);
+#ifdef RSSERIAL_DEBUG
 	std::cerr << "RsChannelSerialiser::serialiseMsg() Title: " << ok << std::endl;
+#endif
 	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_MSG, item->message);
+#ifdef RSSERIAL_DEBUG
 	std::cerr << "RsChannelSerialiser::serialiseMsg() Msg: " << ok << std::endl;
+#endif
 
 	ok &= item->attachment.SetTlv(data, tlvsize, &offset);
+#ifdef RSSERIAL_DEBUG
 	std::cerr << "RsChannelSerialiser::serialiseMsg() Attachment: " << ok << std::endl;
+#endif
 
 	ok &= item->thumbnail.SetTlv(data, tlvsize, &offset);
+#ifdef RSSERIAL_DEBUG
 	std::cerr << "RsChannelSerialiser::serialiseMsg() thumbnail: " << ok << std::endl;
+#endif
 
 	if (offset != tlvsize)
 	{
@@ -279,9 +293,10 @@ bool     RsChannelSerialiser::serialiseReadStatus(RsChannelReadStatus *item, voi
 	bool ok = true;
 
 	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
-
+#ifdef RSSERIAL_DEBUG
 	std::cerr << "RsChannelSerialiser::serialiseReadStatus() Header: " << ok << std::endl;
 	std::cerr << "RsChannelSerialiser::serialiseReadStatus() Size: " << tlvsize << std::endl;
+#endif
 
 	/* skip the header */
 	offset += 8;
@@ -289,13 +304,17 @@ bool     RsChannelSerialiser::serialiseReadStatus(RsChannelReadStatus *item, voi
 	/* RsDistribMsg first */
 
 	ok &= setRawUInt32(data, tlvsize, &offset, item->save_type);
+#ifdef RSSERIAL_DEBUG
 	std::cerr << "RsChannelSerialiser::serialiseReadStatus() save_type: " << ok << std::endl;
+#endif
 
 
 
 	/* RsChannelMsg */
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GROUPID, item->channelId);
+#ifdef RSSERIAL_DEBUG
 	std::cerr << "RsChannelSerialiser::serialiseReadStatus() channelId: " << ok << std::endl;
+#endif
 
 	std::map<std::string, uint32_t>::iterator mit = item->msgReadStatus.begin();
 
@@ -305,7 +324,9 @@ bool     RsChannelSerialiser::serialiseReadStatus(RsChannelReadStatus *item, voi
 		ok &= setRawUInt32(data, tlvsize, &offset, mit->second); /* value */
 	}
 
+#ifdef RSSERIAL_DEBUG
 	std::cerr << "RsChannelSerialiser::serialiseReadStatus() msgReadStatus: " << ok << std::endl;
+#endif
 
 	if (offset != tlvsize)
 	{
