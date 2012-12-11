@@ -76,6 +76,15 @@ RsServer::RsServer(RsIface &i, NotifyBase &callback)
 	/* Config */
 	mConfigMgr = NULL;
 	mGeneralConfig = NULL;
+
+        /* GXS */
+        mPhoto = NULL;
+        mWiki = NULL;
+        mPosted = NULL;
+        mGxsCircles = NULL;
+        mGxsIdService = NULL;
+        mGxsForums = NULL;
+        mWire = NULL;
 }
 
 RsServer::~RsServer()

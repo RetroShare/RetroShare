@@ -186,8 +186,20 @@ void RsServer::rsGlobalShutDown()
 	mPluginsManager->stopPlugins();
 
 	// stop the p3distrib threads
+
 	mForums->join();
 	mChannels->join();
+
+        if(mGxsCircles) mGxsCircles->join();
+        if(mGxsForums) mGxsForums->join();
+        if(mGxsIdService) mGxsIdService->join();
+        if(mPosted) mPosted->join();
+        if(mPhoto) mPhoto->join();
+        if(mWiki) mWiki->join();
+        if(mWire) mWire->join();
+
+
+
 
 #ifdef RS_USE_BLOGS
 	mBlogs->join();

@@ -45,6 +45,15 @@
 #include "services/p3channels.h"
 #include "services/p3forums.h"
 
+#include "services/p3idservice.h"
+#include "services/p3gxscircles.h"
+#include "services/p3wiki.h"
+#include "services/p3posted.h"
+#include "services/p3photoservice.h"
+#include "services/p3gxsforums.h"
+#include "services/p3wire.h"
+
+
 class p3PeerMgrIMPL;
 class p3LinkMgrIMPL;
 class p3NetMgrIMPL;
@@ -174,6 +183,16 @@ class RsServer: public RsControl, public RsThread
 		p3Channels *mChannels;
 		p3Forums *mForums;
 		/* caches (that need ticking) */
+
+                /* GXS */
+
+                p3Wiki *mWiki;
+                p3Posted *mPosted;
+                p3PhotoService *mPhoto;
+                p3GxsCircles *mGxsCircles;
+                p3IdService *mGxsIdService;
+                p3GxsForums *mGxsForums;
+                p3Wire *mWire;
 
 		/* Config */
 		p3ConfigMgr     *mConfigMgr;

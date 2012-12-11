@@ -15,12 +15,12 @@
 #define UPDATE_PHASE_COMMENT_COUNT 5
 #define UPDATE_PHASE_COMPLETE 6
 
-#define NUM_TOPICS_TO_GENERATE 1
-#define NUM_POSTS_TO_GENERATE 1
-#define NUM_VOTES_TO_GENERATE 23
-#define NUM_COMMENTS_TO_GENERATE 23
+#define NUM_TOPICS_TO_GENERATE 7
+#define NUM_POSTS_TO_GENERATE 7
+#define NUM_VOTES_TO_GENERATE 11
+#define NUM_COMMENTS_TO_GENERATE 4
 
-#define VOTE_UPDATE_PERIOD 30 // 20 seconds
+#define VOTE_UPDATE_PERIOD 5 // 20 seconds
 
 const uint32_t RsPosted::FLAG_MSGTYPE_COMMENT = 0x0001;
 const uint32_t RsPosted::FLAG_MSGTYPE_POST = 0x0002;
@@ -77,6 +77,8 @@ void p3Posted::service_tick()
     }
 
     updateVotes();
+
+    processRankings();
 }
 
 void p3Posted::generateVotesAndComments()
@@ -157,6 +159,7 @@ void p3Posted::generateVotesAndComments()
                             c.mComment = "Comment " + ostrm.str();
                             c.mMeta.mParentId = msgId;
                             c.mMeta.mGroupId = grpId;
+                            c.mMeta.mThreadId = msgId;
 
                             submitComment(token, c);
                             mTokens.push_back(token);
@@ -490,7 +493,7 @@ bool p3Posted::requestCommentRankings(uint32_t &token, const RankType &rType, co
     return true;
 }
 
-bool p3Posted::requestMessageRankings(uint32_t &token, const RankType &rType, const RsGxsGroupId &groupId)
+bool p3Posted::requestPostRankings(uint32_t &token, const RankType &rType, const RsGxsGroupId &groupId)
 {
     token = RsGenExchange::generatePublicToken();
 
@@ -499,64 +502,111 @@ bool p3Posted::requestMessageRankings(uint32_t &token, const RankType &rType, co
     gp->grpId = groupId;
     gp->rType = rType;
     gp->pubToken = token;
+    gp->rankingResult.rType = gp->rType;
+    gp->grpId = gp->grpId;
 
-    mPendingPostRanks.insert(std::make_pair(token, gp));
+    mPendingPostRanks.push_back(gp);
 
     return true;
 }
 
-bool p3Posted::getRanking(const uint32_t &token, PostedRanking &ranking)
+bool p3Posted::getPostRanking(const uint32_t &token, RsPostedPostRanking &ranking)
 {
+    RsStackMutex stack(mPostedMutex);
 
+    if( mCompletePostRanks.find(token) == mCompletePostRanks.end()) return false;
+
+    ranking = mCompletePostRanks[token];
+    mCompletePostRanks.erase(token);
+
+    // put this in service tick as it's blocking
+    // and likely costly
+    disposeOfPublicToken(token);
+
+    return true;
 }
 
 void p3Posted::processRankings()
 {
-    processMessageRanks();
+   // processPostRanks();
 
-    processCommentRanks();
+    //processCommentRanks();
 }
 
-void p3Posted::processMessageRanks()
+void p3Posted::processPostRanks()
 {
 
     RsStackMutex stack(mPostedMutex);
-    std::map<uint32_t, GxsPostedPostRanking*>::iterator mit =mPendingPostRanks.begin();
+
+    std::vector<GxsPostedPostRanking*>::iterator vit = mPendingPostRanks.begin();
 
     // go through all pending posts
-    for(; mit !=mPendingPostRanks.begin(); mit++)
+    for(; vit !=mPendingPostRanks.begin(); )
     {
+        GxsPostedPostRanking* gp = *vit;
         uint32_t token;
         std::list<RsGxsGroupId> grpL;
-        grpL.push_back(mit->second->grpId);
+        grpL.push_back(gp->grpId);
+
         RsTokReqOptions opts;
-        opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+        opts.mReqType = GXS_REQUEST_TYPE_MSG_META;
+        opts.mMsgFlagFilter = RsPosted::FLAG_MSGTYPE_POST;
+        opts.mMsgFlagMask = RsPosted::FLAG_MSGTYPE_MASK;
         opts.mOptions = RS_TOKREQOPT_MSG_LATEST | RS_TOKREQOPT_MSG_THREAD;
+
         RsGenExchange::getTokenService()->requestMsgInfo(token, GXS_REQUEST_TYPE_GROUP_DATA, opts, grpL);
-        GxsPostedPostRanking* gp = mit->second;
+
+
         gp->reqToken = token;
 
-        while(true)
-        {
-            uint32_t status = mTokenService->requestStatus(token);
-
-            if(RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE
-               == status)
-            {
-                completePostedPostCalc(gp);
-                break;
-            }
-            else if(RsTokenService::GXS_REQUEST_V2_STATUS_FAILED
-                    == status)
-            {
-                discardCalc(token);
-                break;
-            }
-        }
+        vit = mPendingPostRanks.erase(vit);
+        mCompletionPostRanks.push_back(gp);
     }
 
     mPendingPostRanks.clear();
 
+    vit = mCompletionPostRanks.begin();
+
+    for(; vit != mCompletionPostRanks.end(); )
+    {
+        bool ok = false;
+        GxsPostedPostRanking *gp = *vit;
+        uint32_t status = mTokenService->requestStatus(gp->reqToken);
+
+        if(RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE
+           == status)
+        {
+            ok = completePostedPostCalc(gp);
+
+            if(ok)
+            {
+                mCompletePostRanks.insert(
+                    std::make_pair(gp->pubToken, gp->rankingResult));
+            }
+        }
+        else if(RsTokenService::GXS_REQUEST_V2_STATUS_FAILED
+                == status)
+        {
+            discardCalc(gp->reqToken);
+            ok = false;
+        }else
+        {
+            vit++;
+            continue;
+        }
+
+        if(ok)
+        {
+            updatePublicRequestStatus(gp->pubToken, RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE);
+        }
+        else
+        {
+            updatePublicRequestStatus(gp->pubToken, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
+        }
+
+        vit = mCompletionPostRanks.erase(vit);
+        delete gp;
+    }
 
 }
 
@@ -617,25 +667,27 @@ bool PostedBestScoreComp(const PostedScore& i, const PostedScore& j)
         return i_score < j_score;
 }
 
-void p3Posted::completePostedPostCalc(GxsPostedPostRanking *gpp)
+bool p3Posted::completePostedPostCalc(GxsPostedPostRanking *gpp)
 {
     GxsMsgMetaMap msgMetas;
 
     if(getMsgMeta(gpp->reqToken, msgMetas))
     {
-        std::vector<RsMsgMetaData> msgMetaV = msgMetas[gpp->grpId];
+        std::vector<RsMsgMetaData>& msgMetaV = msgMetas[gpp->grpId];
         switch(gpp->rType)
         {
             case NewRankType:
-                calcPostedPostRank(msgMetaV, gpp->rankingResult, PostedNewScoreComp);
+                calcPostedPostRank(msgMetaV, gpp->rankingResult.ranking, PostedNewScoreComp);
                 break;
             case TopRankType:
-                calcPostedPostRank(msgMetaV, gpp->rankingResult, PostedTopScoreComp);
+                calcPostedPostRank(msgMetaV, gpp->rankingResult.ranking, PostedTopScoreComp);
                 break;
             default:
                 std::cerr << "Unknown ranking tpye: " << gpp->rType << std::endl;
         }
-    }
+        return true;
+    }else
+        return false;
 }
 
 
@@ -667,7 +719,7 @@ void p3Posted::calcPostedPostRank(const std::vector<RsMsgMetaData > msgMeta, Pos
     for(; vit != scores.end(); vit++)
     {
         const PostedScore& p = *vit;
-        ranking.insert(std::make_pair(p.msgId, i++));
+        ranking.insert(std::make_pair(i++, p.msgId));
     }
 }
 
@@ -713,7 +765,7 @@ void p3Posted::calcPostedCommentsRank(const std::map<RsGxsMessageId, std::vector
         for(; cvit != scores.end(); cvit)
         {
             const PostedScore& p = *cvit;
-            ranking.insert(std::make_pair(p.msgId, i++));
+            ranking.insert(std::make_pair(i++, p.msgId));
         }
     }
 

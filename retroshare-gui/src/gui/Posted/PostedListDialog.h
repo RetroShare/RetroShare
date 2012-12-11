@@ -74,9 +74,16 @@ private slots:
 
     void submitVote(const RsGxsGrpMsgIdPair& msgId, bool up);
 
+    void       getHotRankings();
+
 private:
 
     void 	clearPosts();
+
+    /*!
+     * Only removes it from layout
+     */
+    void        shallowClearPosts();
 
     void 	updateDisplay();
     void 	loadPost(const RsPostedPost &post);
@@ -102,6 +109,11 @@ private:
 
     void       acknowledgeVoteMsg(const uint32_t& token);
     void       loadVoteData(const uint32_t &token);
+
+    // ranking
+
+    void       loadRankings(const uint32_t& token);
+    void       applyRanking(const PostedRanking& ranks);
 
 
     // update displayed item

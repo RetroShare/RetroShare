@@ -15,7 +15,7 @@ public:
     uint32_t reqToken;
     RsPosted::RankType rType;
     RsGxsGroupId grpId;
-    PostedRanking rankingResult;
+    RsPostedPostRanking rankingResult;
 };
 
 class GxsPostedCommentRanking
@@ -82,14 +82,14 @@ public:
     bool getPost(const uint32_t &token, PostedPostResult& posts) ;
     bool getComment(const uint32_t &token, PostedCommentResult& comments) ;
     bool getRelatedComment(const uint32_t& token, PostedRelatedCommentResult &comments);
-    bool getRanking(const uint32_t &token, PostedRanking &ranking);
+    bool getPostRanking(const uint32_t &token, RsPostedPostRanking &ranking);
 
     bool submitGroup(uint32_t &token, RsPostedGroup &group);
     bool submitPost(uint32_t &token, RsPostedPost &post);
     bool submitVote(uint32_t &token, RsPostedVote &vote);
     bool submitComment(uint32_t &token, RsPostedComment &comment) ;
             // Special Ranking Request.
-    bool requestMessageRankings(uint32_t &token, const RankType &rType, const RsGxsGroupId &groupId);
+    bool requestPostRankings(uint32_t &token, const RankType &rType, const RsGxsGroupId &groupId);
     bool requestCommentRankings(uint32_t &token, const RankType &rType, const RsGxsGrpMsgIdPair &msgId);
 
     bool retrieveScores(const std::string& serviceString, uint32_t& upVotes, uint32_t& downVotes, uint32_t& nComments) const;
@@ -99,10 +99,10 @@ private:
     /* Functions for processing rankings */
 
     void processRankings();
-    void processMessageRanks();
+    void processPostRanks();
     void processCommentRanks();
     void discardCalc(const uint32_t& token);
-    void completePostedPostCalc(GxsPostedPostRanking* gpp);
+    bool completePostedPostCalc(GxsPostedPostRanking* gpp);
     void completePostedCommentRanking(GxsPostedCommentRanking* gpc);
 
     bool storeScores(std::string& serviceString, uint32_t& upVotes, uint32_t downVotes, uint32_t nComments) const;
@@ -142,8 +142,9 @@ private:
 private:
 
     // for calculating ranks
-    std::map<uint32_t, GxsPostedPostRanking*> mPendingPostRanks;
-    std::map<uint32_t, GxsPostedPostRanking*> mPendingCalculationPostRanks;
+    std::vector<GxsPostedPostRanking*> mPendingPostRanks;
+    std::vector<GxsPostedPostRanking*> mCompletionPostRanks;
+    std::map<uint32_t, RsPostedPostRanking> mCompletePostRanks;
     std::map<uint32_t, GxsPostedCommentRanking*> mPendingCommentRanks;
     std::map<uint32_t, GxsPostedCommentRanking*> mPendingCalculationCommentRanks;
 

@@ -80,6 +80,8 @@ PostedListDialog::PostedListDialog(CommentHolder *commentHolder, QWidget *parent
 
     connect( ui.groupTreeWidget, SIGNAL( treeCurrentItemChanged(QString) ), this, SLOT( changedTopic(QString) ) );
 
+    connect(ui.hotSortButton, SIGNAL(clicked()), this, SLOT(getHotRankings()));
+
     /* create posted tree */
     yourTopics = ui.groupTreeWidget->addCategoryItem(tr("Your Topics"), QIcon(IMAGE_FOLDER), true);
     subscribedTopics = ui.groupTreeWidget->addCategoryItem(tr("Subscribed Topics"), QIcon(IMAGE_FOLDERRED), true);
@@ -92,6 +94,60 @@ PostedListDialog::PostedListDialog(CommentHolder *commentHolder, QWidget *parent
     connect( ui.newTopicButton, SIGNAL( clicked() ), this, SLOT( newTopic() ) );
     connect(ui.refreshButton, SIGNAL(clicked()), this, SLOT(refreshTopics()));
 }
+
+void PostedListDialog::getHotRankings()
+{
+
+    if(mCurrTopicId.empty())
+        return;
+
+    std::cerr << "PostedListDialog::getHotRankings()";
+    std::cerr << std::endl;
+
+    RsTokReqOptions opts;
+    opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+    uint32_t token;
+    rsPosted->requestPostRankings(token, RsPosted::BestRankType, mCurrTopicId);
+    mPostedQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_DATA, TOKEN_USER_TYPE_POST_RANKINGS);
+}
+
+void PostedListDialog::loadRankings(const uint32_t &token)
+{
+
+    RsPostedPostRanking rankings;
+
+    if(!rsPosted->getPostRanking(token, rankings))
+        return;
+
+    if(rankings.grpId != mCurrTopicId)
+        return;
+
+    applyRanking(rankings.ranking);
+}
+
+void PostedListDialog::applyRanking(const PostedRanking& ranks)
+{
+    std::cerr << "PostedListDialog::loadGroupThreadData_InsertThreads()";
+    std::cerr << std::endl;
+
+    shallowClearPosts();
+
+    QLayout *alayout = ui.scrollAreaWidgetContents->layout();
+
+    PostedRanking::const_iterator mit = ranks.begin();
+
+    for(; mit != ranks.end(); mit++)
+    {
+        const RsGxsMessageId& msgId = mit->second;
+
+        if(mPosts.find(msgId) != mPosts.end())
+            alayout->addWidget(mPosts[msgId]);
+    }
+
+    return;
+}
+
+
 
 void PostedListDialog::refreshTopics()
 {
@@ -468,6 +524,48 @@ void PostedListDialog::clearPosts()
     mPosts.clear();
 }
 
+void PostedListDialog::shallowClearPosts()
+{
+    std::cerr << "PostedListDialog::clearPosts()" << std::endl;
+
+    std::list<PostedItem *> postedItems;
+    std::list<PostedItem *>::iterator pit;
+
+    QLayout *alayout = ui.scrollAreaWidgetContents->layout();
+    int count = alayout->count();
+    for(int i = 0; i < count; i++)
+    {
+            QLayoutItem *litem = alayout->itemAt(i);
+            if (!litem)
+            {
+                    std::cerr << "PostedListDialog::clearPosts() missing litem";
+                    std::cerr << std::endl;
+                    continue;
+            }
+
+            PostedItem *item = dynamic_cast<PostedItem *>(litem->widget());
+            if (item)
+            {
+                    std::cerr << "PostedListDialog::clearPosts() item: " << item;
+                    std::cerr << std::endl;
+
+                    postedItems.push_back(item);
+            }
+            else
+            {
+                    std::cerr << "PostedListDialog::clearPosts() Found Child, which is not a PostedItem???";
+                    std::cerr << std::endl;
+            }
+    }
+
+    for(pit = postedItems.begin(); pit != postedItems.end(); pit++)
+    {
+            PostedItem *item = *pit;
+            alayout->removeWidget(item);
+    }
+
+}
+
 void PostedListDialog::updateCurrentDisplayComplete(const uint32_t &token)
 {
     std::cerr << "PostedListDialog::loadGroupThreadData_InsertThreads()";
@@ -552,6 +650,17 @@ void PostedListDialog::loadRequest(const TokenQueue *queue, const TokenRequest &
                         {
                             case RS_TOKREQ_ANSTYPE_DATA:
                                 updateCurrentDisplayComplete(req.mToken);
+                                break;
+                            default:
+                                std::cerr << "Error, unexpected anstype:" << req.mAnsType << std::endl;
+                                break;
+                        }
+                        break;
+                     case TOKEN_USER_TYPE_POST_RANKINGS:
+                        switch(req.mAnsType)
+                        {
+                            case RS_TOKREQ_ANSTYPE_DATA:
+                                loadRankings(req.mToken);
                                 break;
                             default:
                                 std::cerr << "Error, unexpected anstype:" << req.mAnsType << std::endl;

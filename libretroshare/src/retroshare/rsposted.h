@@ -64,13 +64,14 @@ class RsPostedGroup
 class RsPostedPost;
 class RsPostedComment;
 class RsPostedVote;
+class RsPostedPostRanking;
 
 typedef std::map<RsGxsGroupId, std::vector<RsPostedPost> > PostedPostResult;
 typedef std::map<RsGxsGroupId, std::vector<RsPostedComment> > PostedCommentResult;
 typedef std::map<RsGxsGroupId, std::vector<RsPostedVote> > PostedVoteResult;
 typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsPostedComment> > PostedRelatedCommentResult;
 typedef std::pair<RsGxsGroupId, int32_t> GroupRank;
-typedef std::map<RsGxsMessageId, uint32_t> PostedRanking;
+typedef std::map<uint32_t, RsGxsMessageId> PostedRanking;
 
 std::ostream &operator<<(std::ostream &out, const RsPostedGroup &group);
 std::ostream &operator<<(std::ostream &out, const RsPostedPost &post);
@@ -100,7 +101,7 @@ virtual ~RsPosted() { return; }
     virtual bool getPost(const uint32_t &token, PostedPostResult &post) = 0;
     virtual bool getComment(const uint32_t &token, PostedCommentResult &comment) = 0;
     virtual bool getRelatedComment(const uint32_t& token, PostedRelatedCommentResult& comments) = 0;
-    virtual bool getRanking(const uint32_t& token, PostedRanking& ranking) = 0;
+    virtual bool getPostRanking(const uint32_t& token, RsPostedPostRanking& ranking) = 0;
 
     virtual bool submitGroup(uint32_t &token, RsPostedGroup &group) = 0;
     virtual bool submitPost(uint32_t &token, RsPostedPost &post) = 0;
@@ -116,7 +117,7 @@ virtual ~RsPosted() { return; }
      * @param rType
      * @param groupId
      */
-    virtual bool requestMessageRankings(uint32_t &token, const RankType& rType, const RsGxsGroupId& groupId) = 0;
+    virtual bool requestPostRankings(uint32_t &token, const RankType& rType, const RsGxsGroupId& groupId) = 0;
 
     /*!
      * Makes request for ranking of comments for a post
@@ -175,4 +176,12 @@ class RsPostedComment
         RsMsgMetaData mMeta;
 };
 
+class RsPostedPostRanking
+{
+public:
+
+    RsGxsGroupId grpId;
+    PostedRanking ranking;
+    RsPosted::RankType rType;
+};
 #endif // RSPOSTED_H

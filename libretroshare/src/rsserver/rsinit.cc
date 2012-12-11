@@ -1823,15 +1823,6 @@ RsTurtle *rsTurtle = NULL ;
 #include "gxs/rsgxsflags.h"
 #endif
 
-#ifdef ENABLE_GXS_SERVICES
-#include "services/p3idservice.h"
-#include "services/p3gxscircles.h"
-#include "services/p3wiki.h"
-#include "services/p3posted.h"
-#include "services/p3photoservice.h"
-#include "services/p3gxsforums.h"
-#include "services/p3wire.h"
-#endif
 
 #ifndef PQI_DISABLE_TUNNEL
 #include "services/p3tunnel.h"
@@ -2302,8 +2293,6 @@ int RsServer::StartupRetroShare()
 
         /**** Identity service ****/
 
-        p3IdService *mGxsIdService = NULL;
-
         RsGeneralDataService* gxsid_ds = new RsDataService(currGxsDir + "/", "gxsid_db",
                         RS_SERVICE_GXSV1_TYPE_GXSID, NULL);
 
@@ -2318,7 +2307,6 @@ int RsServer::StartupRetroShare()
 
         /**** GxsCircle service ****/
 
-        p3GxsCircles *mGxsCircles = NULL;
 
         RsGeneralDataService* gxscircles_ds = new RsDataService(currGxsDir + "/", "gxscircles_db",
                         RS_SERVICE_GXSV1_TYPE_GXSCIRCLE, NULL);
@@ -2354,8 +2342,6 @@ int RsServer::StartupRetroShare()
         RsGenExchange::setAuthenPolicyFlag(flag, photoAuthenPolicy,
                                            RsGenExchange::GRP_OPTION_BITS);
 
-        p3PhotoService *mPhoto = NULL;
-
 
         RsGeneralDataService* photo_ds = new RsDataService(currGxsDir + "/", "photoV2_db",
                         RS_SERVICE_GXSV1_TYPE_PHOTO, NULL);
@@ -2372,7 +2358,7 @@ int RsServer::StartupRetroShare()
 
         /**** Posted GXS service ****/
 
-        p3Posted *mPosted = NULL;
+
 
         RsGeneralDataService* posted_ds = new RsDataService(currGxsDir + "/", "posted_db",
                                                             RS_SERVICE_GXSV1_TYPE_POSTED);
@@ -2388,7 +2374,7 @@ int RsServer::StartupRetroShare()
 
         /**** Wiki GXS service ****/
 
-        p3Wiki *mWiki = NULL;
+
 
         RsGeneralDataService* wiki_ds = new RsDataService(currGxsDir + "/", "wiki_db",
                                                             RS_SERVICE_GXSV1_TYPE_WIKI);
@@ -2404,7 +2390,6 @@ int RsServer::StartupRetroShare()
 
         /**** Wire GXS service ****/
 
-        p3Wire *mWire = NULL;
 
         RsGeneralDataService* wire_ds = new RsDataService(currGxsDir + "/", "wire_db",
                                                             RS_SERVICE_GXSV1_TYPE_WIRE);
@@ -2419,8 +2404,6 @@ int RsServer::StartupRetroShare()
 
 
         /**** Forum GXS service ****/
-
-        p3GxsForums *mGxsForums = NULL;
 
         RsGeneralDataService* gxsforums_ds = new RsDataService(currGxsDir + "/", "gxsforums_db",
                                                             RS_SERVICE_GXSV1_TYPE_FORUMS);
