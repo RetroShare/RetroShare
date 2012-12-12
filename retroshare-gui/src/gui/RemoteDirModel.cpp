@@ -30,6 +30,7 @@
 #include <gui/common/RsCollectionFile.h>
 #include <gui/common/RsUrlHandler.h>
 #include <gui/common/FilesDefs.h>
+#include <gui/common/GroupDefs.h>
 #include "RemoteDirModel.h"
 #include <retroshare/rsfiles.h>
 #include <retroshare/rstypes.h>
@@ -213,7 +214,7 @@ QString RetroshareDirModel::getGroupsString(const std::list<std::string>& group_
 	for(std::list<std::string>::const_iterator it(group_ids.begin());it!=group_ids.end();)
 		if(rsPeers->getGroupInfo(*it,group_info)) 
 		{
-			groups_str += QString::fromStdString(group_info.name) ;
+			groups_str += GroupDefs::name(group_info) ;
 
 			if(++it != group_ids.end())
 				groups_str += ", " ;
