@@ -3,12 +3,13 @@ CONFIG += qt gui uic qrc resources uitools idle bitdht
 # Below is for GXS services.
 CONFIG += photoshare 
 CONFIG += wikipoos
-#CONFIG += thewire
 CONFIG += identities
 CONFIG += gxsforums 
 CONFIG += posted
 CONFIG += unfinished
 CONFIG += gxsgui
+#CONFIG += circles
+#CONFIG += thewire
 
 #CONFIG += pluginmgr 
 
@@ -53,6 +54,7 @@ linux-* {
 
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
+	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 	LIBS += -lssl -lupnp -lixml -lXss -lgnome-keyring
 	LIBS += -lsqlite3
 	LIBS *= -rdynamic
@@ -128,6 +130,7 @@ win32 {
         #PRE_TARGETDEPS += ../../libretroshare/src/lib/libretroshare.a
         PRE_TARGETDEPS += ../../libretroshare/libretroshare-build-desktop/lib/libretroshare.a
         LIBS += ../../libretroshare/libretroshare-build-desktop/lib/libretroshare.a
+	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 
         LIBS += C:\Development\Rs\v0.5-gxs-b1\openpgpsdk\openpgpsdk-build-desktop\lib\libops.a
         LIBS += C:\Development\Libraries\sqlite\sqlite-autoconf-3070900\.libs\libsqlite3.a
@@ -161,6 +164,7 @@ macx {
 	CONFIG += version_detail_bash_script
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
+	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
         LIBS += -lssl -lcrypto -lz 
         #LIBS += -lssl -lcrypto -lz -lgpgme -lgpg-error -lassuan
 	LIBS += ../../../miniupnpc-1.0/libminiupnpc.a
@@ -179,6 +183,7 @@ macx {
 freebsd-* {
 	INCLUDEPATH *= /usr/local/include/gpgme
 	LIBS *= ../../libretroshare/src/lib/libretroshare.a
+	LIBS *= ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 	LIBS *= -lssl
 	LIBS *= -lgpgme
 	LIBS *= -lupnp
@@ -226,6 +231,7 @@ DEPENDPATH += . \
             gui/elastic
 
 INCLUDEPATH += ../../libretroshare/src/
+INCLUDEPATH += ../../supportlibs/pegmarkdown
 
 # Input
 HEADERS +=  rshare.h \
@@ -960,6 +966,19 @@ identities {
         SOURCES +=  \
 		gui/Identity/IdDialog.cpp \
 		gui/Identity/IdEditDialog.cpp \
+
+}
+
+
+circles {
+
+        HEADERS +=  \
+		gui/Circles/CirclesDialog.h \
+
+	FORMS += gui/Circles/CirclesDialog.ui \
+
+        SOURCES +=  \
+		gui/Circles/CirclesDialog.cpp \
 
 }
 

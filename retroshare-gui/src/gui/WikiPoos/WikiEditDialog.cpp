@@ -28,7 +28,7 @@
 
 #include <iostream>
 
-//#define USE_PEGMMD_RENDERER	1
+#define USE_PEGMMD_RENDERER	1
 
 #ifdef USE_PEGMMD_RENDERER
 #include "markdown_lib.h"
