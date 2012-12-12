@@ -15,10 +15,10 @@
 #define UPDATE_PHASE_COMMENT_COUNT 5
 #define UPDATE_PHASE_COMPLETE 6
 
-#define NUM_TOPICS_TO_GENERATE 7
+#define NUM_TOPICS_TO_GENERATE 5
 #define NUM_POSTS_TO_GENERATE 7
 #define NUM_VOTES_TO_GENERATE 11
-#define NUM_COMMENTS_TO_GENERATE 4
+#define NUM_COMMENTS_TO_GENERATE 1
 
 #define VOTE_UPDATE_PERIOD 5 // 20 seconds
 
@@ -503,6 +503,7 @@ bool p3Posted::requestPostRankings(uint32_t &token, const RankType &rType, const
     gp->rType = rType;
     gp->pubToken = token;
     gp->rankingResult.rType = gp->rType;
+    gp->rankingResult.grpId = gp->grpId;
     gp->grpId = gp->grpId;
 
     mPendingPostRanks.push_back(gp);
@@ -528,7 +529,7 @@ bool p3Posted::getPostRanking(const uint32_t &token, RsPostedPostRanking &rankin
 
 void p3Posted::processRankings()
 {
-   // processPostRanks();
+      processPostRanks();
 
     //processCommentRanks();
 }
@@ -541,7 +542,7 @@ void p3Posted::processPostRanks()
     std::vector<GxsPostedPostRanking*>::iterator vit = mPendingPostRanks.begin();
 
     // go through all pending posts
-    for(; vit !=mPendingPostRanks.begin(); )
+    for(; vit !=mPendingPostRanks.end(); )
     {
         GxsPostedPostRanking* gp = *vit;
         uint32_t token;
@@ -617,15 +618,15 @@ void p3Posted::discardCalc(const uint32_t &token)
 
 bool PostedTopScoreComp(const PostedScore& i, const PostedScore& j)
 {
-    if((i.upVotes + (-i.downVotes)) == (j.upVotes + (-j.downVotes))){
-        return i.date < j.date;
-    }else
-        return (i.upVotes + (-i.downVotes)) < (j.upVotes + (-j.downVotes));
+//    if((i.upVotes -i.downVotes) == (j.upVotes - j.downVotes)){
+//        return i.date > j.date;
+//    }else
+        return (i.upVotes - i.downVotes) > (j.upVotes - j.downVotes);
 }
 
 bool PostedNewScoreComp(const PostedScore& i, const PostedScore& j)
 {
-    return i.date < j.date;
+    return i.date > j.date;
 }
 
 bool PostedBestScoreComp(const PostedScore& i, const PostedScore& j)
@@ -679,7 +680,7 @@ bool p3Posted::completePostedPostCalc(GxsPostedPostRanking *gpp)
             case NewRankType:
                 calcPostedPostRank(msgMetaV, gpp->rankingResult.ranking, PostedNewScoreComp);
                 break;
-            case TopRankType:
+            case BestRankType:
                 calcPostedPostRank(msgMetaV, gpp->rankingResult.ranking, PostedTopScoreComp);
                 break;
             default:
@@ -698,7 +699,7 @@ void p3Posted::calcPostedPostRank(const std::vector<RsMsgMetaData > msgMeta, Pos
     std::vector<RsMsgMetaData>::const_iterator cit = msgMeta.begin();
     std::vector<PostedScore> scores;
 
-    for(; cit != msgMeta.begin(); )
+    for(; cit != msgMeta.end(); cit++)
     {
         const RsMsgMetaData& m  = *cit;
         uint32_t upVotes, downVotes, nComments;
@@ -708,10 +709,11 @@ void p3Posted::calcPostedPostRank(const std::vector<RsMsgMetaData > msgMeta, Pos
         c.upVotes = upVotes;
         c.downVotes = downVotes;
         c.date = m.mPublishTs;
+        c.msgId = m.mMsgId;
         scores.push_back(c);
     }
 
-    std::sort(scores.begin(), scores.end(), comp);
+    std::sort(scores.begin(), scores.end(), PostedTopScoreComp);
 
     std::vector<PostedScore>::iterator vit = scores.begin();
 
