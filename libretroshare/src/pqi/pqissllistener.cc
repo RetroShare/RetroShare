@@ -428,6 +428,8 @@ int	pqissllistenbase::continueSSL(IncomingSSLInfo& incoming_connexion_info, bool
 				std::string out = "pqissllistenbase::continueSSL() Connection failed!\n";
 				pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out);
 
+				closeConnection(fd, incoming_connexion_info.ssl);
+
 				// basic-error while connecting, no security message needed
 				return -1;
 			}
