@@ -59,15 +59,17 @@ void RsCollectionFile::downloadFiles() const
 
 static QString purifyFileName(const QString& input,bool& bad)
 {
+	static const QString bad_chars = "/\\\"*:?<>|" ;
 	bad = false ;
 	QString output = input ;
 
 	for(uint32_t i=0;i<output.length();++i)
-		if(output[i] == '/' || output[i] == '\\')
-		{
-			output[i] = '_' ;
-			bad = true ;
-		}
+		for(int j=0;j<bad_chars.length();++j)
+			if(output[i] == bad_chars[j])
+			{
+				output[i] = '_' ;
+				bad = true ;
+			}
 
 	return output ;
 }

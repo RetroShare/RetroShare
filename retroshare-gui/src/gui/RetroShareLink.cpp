@@ -1061,14 +1061,15 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					}
 
 					QString cleanname = link.name() ;
-					bool bad_chars = false ;
+					static const QString bad_chars_str = "/\\\"*:?<>|" ;
 
 					for(uint32_t i=0;i<cleanname.length();++i)
-						if(cleanname[i] == '/' || cleanname[i] == '\\')
-						{
-							cleanname[i] = '_';
-							flag |= RSLINK_PROCESS_NOTIFY_BAD_CHARS ;
-						}
+						for(uint32_t j=0;j<bad_chars_str.length();++j)
+							if(cleanname[i] == bad_chars_str[j])
+							{
+								cleanname[i] = '_';
+								flag |= RSLINK_PROCESS_NOTIFY_BAD_CHARS ;
+							}
 
 					if (rsFiles->FileRequest(cleanname.toUtf8().constData(), link.hash().toStdString(), link.size(), "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds)) {
 						fileAdded.append(link.name());
@@ -1348,7 +1349,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 		}
 	}
 	if(flag & RSLINK_PROCESS_NOTIFY_BAD_CHARS)
-		result += QString("<br>%1").arg(QObject::tr("Warning: '/' and '\\' characters in some of the\nabove filenames will be replaced by '_'.")) ;
+		result += QString("<br>%1").arg(QObject::tr("Warning: forbidden characters found in filenames. \nCharacters <b>\",|,/,\\,&lt;,&gt;,*,?</b> will be replaced by '_'.")) ;
 
 	if (result.isEmpty() == false) {
 		QMessageBox mb(QObject::tr("Result"), "<html><body>" + result + "</body></html>", QMessageBox::Information, QMessageBox::Ok, 0, 0);

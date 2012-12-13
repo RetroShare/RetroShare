@@ -97,7 +97,7 @@ RsCollectionDialog::RsCollectionDialog(const QString& CollectionFileName,const s
 	_fileEntriesTW->installEventFilter(this);
 
 	if(wrong_chars)
-		QMessageBox::warning(NULL,tr("Bad filenames have been cleaned"),tr("Some filenames or directory names in this collection file\ncontained '/' or '\\' characters. They have been substitued to '_',\nand are listed in red.")) ;
+		QMessageBox::warning(NULL,tr("Bad filenames have been cleaned"),tr("Some filenames or directory names contained forbidden characters.\nCharacters <b>\",|,/,\\,&lt;,&gt;,*,?</b> will be replaced by '_'.\n Concerned files are listed in red.")) ;
 }
 
 bool RsCollectionDialog::eventFilter(QObject *obj, QEvent *event)
