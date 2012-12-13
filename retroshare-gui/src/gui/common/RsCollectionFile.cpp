@@ -51,12 +51,28 @@ void RsCollectionFile::downloadFiles() const
 	QDomElement docElem = _xml_doc.documentElement();
 
 	std::vector<DLinfo> dlinfos ;
-	recursCollectDLinfos(docElem,dlinfos,QString()) ;
+
+	recursCollectDLinfos(docElem,dlinfos,QString(),false) ;
 
 	RsCollectionDialog(_filename, dlinfos).exec() ;
 }
 
-void RsCollectionFile::recursCollectDLinfos(const QDomElement& e,std::vector<DLinfo>& dlinfos,const QString& current_path) const
+static QString purifyFileName(const QString& input,bool& bad)
+{
+	bad = false ;
+	QString output = input ;
+
+	for(uint32_t i=0;i<output.length();++i)
+		if(output[i] == '/' || output[i] == '\\')
+		{
+			output[i] = '_' ;
+			bad = true ;
+		}
+
+	return output ;
+}
+
+void RsCollectionFile::recursCollectDLinfos(const QDomElement& e,std::vector<DLinfo>& dlinfos,const QString& current_path, bool bad_chars_in_parent) const
 {
 	QDomNode n = e.firstChild() ;
 
@@ -72,14 +88,21 @@ void RsCollectionFile::recursCollectDLinfos(const QDomElement& e,std::vector<DLi
 		{
 			DLinfo i ;
 			i.hash = ee.attribute(QString("sha1")) ;
-			i.name = ee.attribute(QString("name")) ;
+			bool bad_chars_detected = false ;
+			i.name = purifyFileName(ee.attribute(QString("name")), bad_chars_detected) ;
+			i.filename_has_wrong_characters = bad_chars_detected || bad_chars_in_parent ;
 			i.size = ee.attribute(QString("size")).toULongLong() ;
 			i.path = current_path ;
 
 			dlinfos.push_back(i) ;
 		}
 		else if(ee.tagName() == QString("Directory"))
-			recursCollectDLinfos(ee,dlinfos,current_path + "/" + ee.attribute(QString("name"))) ;
+		{
+			bool bad_chars_detected = false ;
+			QString cleanDirName = purifyFileName(ee.attribute(QString("name")),bad_chars_detected) ;
+
+			recursCollectDLinfos(ee,dlinfos,current_path + "/" + cleanDirName, bad_chars_in_parent || bad_chars_detected) ;
+		}
 
 		n = n.nextSibling() ;
 	}
@@ -216,7 +239,7 @@ qulonglong RsCollectionFile::size()
 	QDomElement docElem = _xml_doc.documentElement();
 
 	std::vector<DLinfo> dlinfos;
-	recursCollectDLinfos(docElem, dlinfos, QString());
+	recursCollectDLinfos(docElem, dlinfos, QString(),false);
 
 	uint64_t size = 0;
 

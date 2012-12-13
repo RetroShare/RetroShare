@@ -68,10 +68,11 @@ class RsCollectionFile
 			qulonglong size ;
 			QString path ;
 			QString hash ;
+			bool filename_has_wrong_characters ;
 		};
 
 		void recursAddElements(QDomDocument&,const DirDetails&,QDomElement&) const ;
-		void recursCollectDLinfos(const QDomElement&,std::vector<DLinfo>& dlinfos,const QString& current_dir) const ;
+		void recursCollectDLinfos(const QDomElement&,std::vector<DLinfo>& dlinfos,const QString& current_dir,bool bad_chars_in_parent) const ;
 
 		QDomDocument _xml_doc ;
 		QString _filename ;

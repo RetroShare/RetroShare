@@ -52,6 +52,7 @@ RsCollectionDialog::RsCollectionDialog(const QString& CollectionFileName,const s
 
 	uint64_t total_size ;
 	uint32_t total_files ;
+	bool wrong_chars = false ;
 
 	for(uint32_t i=0;i<size;++i)
 	{
@@ -65,6 +66,12 @@ RsCollectionDialog::RsCollectionDialog(const QString& CollectionFileName,const s
 		item->setText(0, dlinfo.path + "/" + dlinfo.name);
 		item->setText(1, misc::friendlyUnit(dlinfo.size));
 		item->setText(2, dlinfo.hash);
+
+		if(dlinfo.filename_has_wrong_characters)
+		{
+			wrong_chars = true ;
+			item->setTextColor(0,QColor(255,80,120)) ;
+		}
 
 		_fileEntriesTW->addTopLevelItem(item);
 
@@ -88,6 +95,9 @@ RsCollectionDialog::RsCollectionDialog(const QString& CollectionFileName,const s
 	connect(_download_PB,SIGNAL(clicked()),this,SLOT(download())) ;
 
 	_fileEntriesTW->installEventFilter(this);
+
+	if(wrong_chars)
+		QMessageBox::warning(NULL,tr("Bad filenames have been cleaned"),tr("Some filenames or directory names in this collection file\ncontained '/' or '\\' characters. They have been substitued to '_',\nand are listed in red.")) ;
 }
 
 bool RsCollectionDialog::eventFilter(QObject *obj, QEvent *event)
