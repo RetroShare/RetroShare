@@ -1060,7 +1060,17 @@ static void processList(const QStringList &list, const QString &textSingular, co
 						srcIds.push_back((*it).peerId) ;
 					}
 
-					if (rsFiles->FileRequest(link.name().toUtf8().constData(), link.hash().toStdString(), link.size(), "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds)) {
+					QString cleanname = link.name() ;
+					bool bad_chars = false ;
+
+					for(uint32_t i=0;i<cleanname.length();++i)
+						if(cleanname[i] == '/' || cleanname[i] == '\\')
+						{
+							cleanname[i] = '_';
+							flag |= RSLINK_PROCESS_NOTIFY_BAD_CHARS ;
+						}
+
+					if (rsFiles->FileRequest(cleanname.toUtf8().constData(), link.hash().toStdString(), link.size(), "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds)) {
 						fileAdded.append(link.name());
 					} else {
 						fileExist.append(link.name());
@@ -1337,12 +1347,15 @@ static void processList(const QStringList &list, const QString &textSingular, co
 			result += QString("<br>%1: %2").arg(QObject::tr("Invalid links")).arg(countInvalid);
 		}
 	}
+	if(flag & RSLINK_PROCESS_NOTIFY_BAD_CHARS)
+		result += QString("<br>%1").arg(QObject::tr("Warning: '/' and '\\' characters in some of the\nabove filenames will be replaced by '_'.")) ;
 
 	if (result.isEmpty() == false) {
 		QMessageBox mb(QObject::tr("Result"), "<html><body>" + result + "</body></html>", QMessageBox::Information, QMessageBox::Ok, 0, 0);
 		mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
 		mb.exec();
 	}
+
 
 	return 0;
 }

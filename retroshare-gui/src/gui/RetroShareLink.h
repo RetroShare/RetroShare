@@ -37,9 +37,10 @@
 #include <QVector>
 #include <QUrl>
 
-#define RSLINK_PROCESS_NOTIFY_SUCCESS	1 // notify on success
-#define RSLINK_PROCESS_NOTIFY_ERROR		2 // notify on error
-#define RSLINK_PROCESS_NOTIFY_ASK		4 // ask for add the links
+#define RSLINK_PROCESS_NOTIFY_SUCCESS	  1 // notify on success
+#define RSLINK_PROCESS_NOTIFY_ERROR		  2 // notify on error
+#define RSLINK_PROCESS_NOTIFY_ASK		  4 // ask for add the links
+#define RSLINK_PROCESS_NOTIFY_BAD_CHARS  8 // / or \\ characters in a filename
 
 #define RSLINK_PROCESS_NOTIFY_ALL      -1
 
