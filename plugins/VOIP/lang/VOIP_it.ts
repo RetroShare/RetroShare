@@ -4,7 +4,7 @@
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="17"/>
         <source>Audio Wizard</source>
-        <translation type="unfinished"/>
+        <translation>Autoconfiguratore audio</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="30"/>
@@ -39,7 +39,7 @@
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="76"/>
         <source>&lt;b&gt;DoublePush Time&lt;/b&gt;&lt;br /&gt;If you press the push-to-talk key twice during the configured interval of time it will be locked. RetroShare will keep transmitting until you hit the key once more to unlock PTT again.</source>
-        <translation type="unfinished"/>
+        <translation>&lt;b&gt; Tempo di DoublePush&lt;/ b&gt;&lt;br /&gt; Se si preme  il tasto push-to-talk (premi-e-parla) due volte durante l&apos;intervallo di tempo configurato, esso resterà bloccato. RetroShare continuerà a trasmettere fino a quando si preme il tasto ancora una volta per sbloccare nuovamente PTT.</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="119"/>
@@ -85,7 +85,7 @@
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="225"/>
         <source>empty</source>
-        <translation type="unfinished"/>
+        <translation>vuoto</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="240"/>
@@ -120,12 +120,12 @@
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="307"/>
         <source>&lt;b&gt;Maximum amplification of input.&lt;/b&gt;&lt;br /&gt;RetroShare normalizes the input volume before compressing, and this sets how much it&apos;s allowed to amplify.&lt;br /&gt;The actual level is continually updated based on your current speech pattern, but it will never go above the level specified here.&lt;br /&gt;If the &lt;i&gt;Microphone loudness&lt;/i&gt; level of the audio statistics hover around 100%, you probably want to set this to 2.0 or so, but if, like most people, you are unable to reach 100%, set this to something much higher.&lt;br /&gt;Ideally, set it so &lt;i&gt;Microphone Loudness * Amplification Factor &gt;= 100&lt;/i&gt;, even when you&apos;re speaking really soft.&lt;br /&gt;&lt;br /&gt;Note that there is no harm in setting this to maximum, but RetroShare will start picking up other conversations if you leave it to auto-tune to that level.</source>
-        <translation type="unfinished"/>
+        <translation>&lt;br&gt;Amplificazione massima di ingresso.&lt;/ b&gt;&lt;br /&gt; RetroShare normalizza il volume di ingresso prima della compressione, e questo regola quanto è permesso amplificare. &lt;br /&gt;Il livello attuale viene continuamente aggiornato in base al tuo modello vocale corrente, ma non potrà mai andare al di sopra del livello qui specificato.&lt;br /&gt; Se il &lt;i&gt;Volume del microfono&lt;/ i&gt; delle statistiche audio si aggira intorno al 100%, probabilmente vorrai impostare questo valore a 2.0 o giù di lì, ma se, come la maggior parte delle persone, non riesci a raggiungere il 100%, impostalo a un livello un po&apos; più alto. &lt;br /&gt; Idealmente, imposta così &lt;i&gt;Volume microfono * Fattore di Amplificazione &gt; = 100 &lt;/ i&gt;, anche quando parli sottovoce. &lt;br /&gt;&lt;br /&gt; Nota  che non vi è nulla di male ad impostare questo al massimo, ma RetroShare  inizia a preferirre altre conversazioni, se si lascia per l&apos;auto-regolazione a quel livello.</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="339"/>
         <source>Echo Cancellation Processing</source>
-        <translation type="unfinished"/>
+        <translation>Elaborazione cancellazione dell&apos;eco</translation>
     </message>
 </context>
 <context>
@@ -133,12 +133,12 @@
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="98"/>
         <source>Continuous</source>
-        <translation type="unfinished"/>
+        <translation>Continuo</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="99"/>
         <source>Voice Activity</source>
-        <translation type="unfinished"/>
+        <translation>Attività Voce</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="100"/>
@@ -148,22 +148,22 @@
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="202"/>
         <source>%1 s</source>
-        <translation type="unfinished"/>
+        <translation>%1 s</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="210"/>
         <source>Off</source>
-        <translation type="unfinished"/>
+        <translation>Spento</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="213"/>
         <source>-%1 dB</source>
-        <translation type="unfinished"/>
+        <translation>-%1 dB</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.h" line="72"/>
         <source>VOIP</source>
-        <translation type="unfinished"/>
+        <translation>VOIP</translation>
     </message>
 </context>
 <context>
@@ -171,12 +171,12 @@
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="15"/>
         <source>Mute yourself</source>
-        <translation type="unfinished"/>
+        <translation>Mettiti in muto</translation>
     </message>
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="35"/>
         <source>Deafen yourself</source>
-        <translation type="unfinished"/>
+        <translation>Azzera l&apos;audio</translation>
     </message>
 </context>
 <context>
@@ -276,7 +276,7 @@
     <message>
         <location filename="../gui/AudioStats.ui" line="147"/>
         <source>This is the probability that the last frame (20 ms) was speech and not environment noise.&lt;br /&gt;Voice activity transmission depends on this being right. The trick with this is that the middle of a sentence is always detected as speech; the problem is the pauses between words and the start of speech. It&apos;s hard to distinguish a sigh from a word starting with &apos;h&apos;.&lt;br /&gt;If this is in bold font, it means RetroShare is currently transmitting (if you&apos;re connected).</source>
-        <translation type="unfinished"/>
+        <translation>Ciò è la probabilità che l&apos;ultimo frame (20 ms) era voce e non rumore ambiente. &lt;br /&gt; L&apos;attività di Trasmissione Voice  dipende dall&apos;esattezza di questo. Il trucco sta&apos; che la metà di una frase è sempre rilevato come discorso, il problema sono le pause tra le parole e l&apos;inizio del discorso. E &apos;difficile distinguere un sospiro da una parola che inizia con &apos; H aspirata&apos;. &lt;br /&gt; Se questo è in grassetto, significa che RetroShare sta trasmettendo (se sei connesso).</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="162"/>
@@ -397,12 +397,12 @@
     <message>
         <location filename="../gui/AudioWizard.ui" line="86"/>
         <source>Talk normally, and adjust the slider below so that the bar moves into green when you talk, and doesn&apos;t go into the orange zone.</source>
-        <translation type="unfinished"/>
+        <translation>Parla normalmente, e adatta il cursore sottostante in modo che la barra evolva nel verde mentre parli, e non vada nella zona arancio.</translation>
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="130"/>
         <source>Stop looping echo for this wizard</source>
-        <translation type="unfinished"/>
+        <translation>Arresta il ciclo di eco per questo autoconfiguratore</translation>
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="150"/>
@@ -470,37 +470,37 @@
     <message>
         <location filename="../VOIPPlugin.cpp" line="93"/>
         <source>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt; * Contributori: Cyril Soler, Josselin Jacquard&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="../VOIPPlugin.cpp" line="94"/>
         <source>&lt;br/&gt;The VOIP plugin adds VOIP to the private chat window of RetroShare. to use it, proceed as follows:&lt;UL&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;br/&gt;Il plugin VOIP aggiunge VOIP alla finestra di  conversazione privata di RetroShare. Per usarlo, procedi come segue:&lt;UL&gt;</translation>
     </message>
     <message>
         <location filename="../VOIPPlugin.cpp" line="95"/>
         <source>&lt;li&gt; setup microphone levels using the configuration panel&lt;/li&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;li&gt; regola i livelli del microfono usando il pannello di configurazione&lt;/li&gt;</translation>
     </message>
     <message>
         <location filename="../VOIPPlugin.cpp" line="96"/>
         <source>&lt;li&gt; check your microphone by looking at the VU-metters&lt;/li&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;li&gt; verifica il tuo microfono osservando il VU-meter&lt;/li&gt;</translation>
     </message>
     <message>
         <location filename="../VOIPPlugin.cpp" line="97"/>
         <source>&lt;li&gt; in the private chat, enable sound input/output by clicking on the two VOIP icons&lt;/li&gt;&lt;/ul&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;li&gt; in conversazione privata, abilita l&apos;ingresso/uscita audio cliccando sulle due icone VOIP &lt;/ li&gt;&lt;/ ul&gt;</translation>
     </message>
     <message>
         <location filename="../VOIPPlugin.cpp" line="98"/>
         <source>Your friend needs to run the plugin to talk/listen to you, or course.</source>
-        <translation type="unfinished"/>
+        <translation>Il tuo amico ha bisogno di eseguire il plugin per parlare/ascoltare, ovviamente.</translation>
     </message>
     <message>
         <location filename="../VOIPPlugin.cpp" line="99"/>
         <source>&lt;br/&gt;&lt;br/&gt;This is an experimental feature. Don&apos;t hesitate to send comments and suggestion to the RS dev team.</source>
-        <translation type="unfinished"/>
+        <translation>&lt;br/&gt;&lt;br/&gt;Questa è una funzione sperimentale. Non esitate a inviare commenti e suggerimenti al team sviluppatori di RS.</translation>
     </message>
     <message>
         <location filename="../VOIPPlugin.cpp" line="117"/>
@@ -512,7 +512,7 @@
         <location filename="../gui/VoipStatistics.cpp" line="147"/>
         <location filename="../gui/VoipStatistics.cpp" line="149"/>
         <source>secs</source>
-        <translation type="unfinished"/>
+        <translation>secondi</translation>
     </message>
     <message>
         <location filename="../gui/VoipStatistics.cpp" line="151"/>
@@ -527,7 +527,7 @@
     <message>
         <location filename="../gui/VoipStatistics.cpp" line="361"/>
         <source>Round Trip Time:</source>
-        <translation type="unfinished"/>
+        <translation>Tempo di andata-ritorno:</translation>
     </message>
 </context>
 <context>
@@ -535,7 +535,7 @@
     <message>
         <location filename="../VOIPPlugin.cpp" line="153"/>
         <source>This plugin provides voice communication between friends in RetroShare.</source>
-        <translation type="unfinished"/>
+        <translation>Questo plugin offre la comunicazione vocale tra amici in RetroShare.</translation>
     </message>
 </context>
 <context>
@@ -543,7 +543,7 @@
     <message>
         <location filename="../VOIPPlugin.cpp" line="158"/>
         <source>VOIP</source>
-        <translation type="unfinished"/>
+        <translation>VOIP</translation>
     </message>
 </context>
 <context>

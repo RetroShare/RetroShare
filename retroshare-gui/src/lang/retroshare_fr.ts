@@ -1102,7 +1102,7 @@ Choisissez celui avec lequel vous voulez tchater.</translation>
     </message>
     <message>
         <source>Change Chat Font</source>
-        <translation>Changer la police</translation>
+        <translation>Changer la police du chat</translation>
     </message>
     <message>
         <source>Chat Font:</source>
@@ -1230,7 +1230,7 @@ Choisissez celui avec lequel vous voulez tchater.</translation>
     </message>
     <message>
         <source>Use a single tabbed window</source>
-        <translation>Utilisez une seule fenêtre à onglets</translation>
+        <translation>Utiliser une seule fenêtre à onglets</translation>
     </message>
     <message>
         <source>Chat Lobby</source>
@@ -1626,26 +1626,6 @@ p, li { white-space: pre-wrap; }
         <translation>Services</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;User service permissions&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This tab allows you to finely tune which services each of your contacts is allowed to use with you.&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Some services (Discovery, anonymous routing) can be switched off globally, which always overrides the settings per-user.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Autorisations de service des utilisateurs&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Cet onglet vous permet de finement régler les services que chacun de vos contacts sera autorisé à utiliser avec vous&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Certains services (Découverte, routage anonyme) peuvent être arrêtés de façon globale, ce qui est toujours prioritaire sur les réglages par utilisateur.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Désactiver le routage anonyme supprime tous les envois/réceptions de tunnels et les demandes anonymes de recherche de/vers cet utilisateur. Cet utilisateur ne sera plus en mesure d&apos;effectuer des transferts anonymes à travers vous.&lt;/p&gt;&lt;p&gt;Pour un changement général, allez dans le panneau de configuration du serveur.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -1674,8 +1654,14 @@ p, li { white-space: pre-wrap; }
         <translation>Chat</translation>
     </message>
     <message>
-        <source>PushButton</source>
-        <translation>Bouton poussoir</translation>
+        <source>User service permissions</source>
+        <translation>Droits de partage de l&apos;utilisateur</translation>
+    </message>
+    <message>
+        <source>This tab allows you to finely tune which services each of your contacts is allowed to use with you.
+
+Some services (Discovery, anonymous routing) can be switched off globally, which always overrides the settings per-user.</source>
+        <translation>Cet onglet vous permet de finement régler les services que chacun de vos contacts est autorisé à utiliser. Certains services (Découverte, routage anonyme) peuvent être entièrement désactivé, ce qui sera toujours prioritaire sur les réglages par utilisateur.</translation>
     </message>
 </context>
 <context>
@@ -2052,7 +2038,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Service permissions</source>
-        <translation>Service des permissions</translation>
+        <translation>Service des droits</translation>
     </message>
     <message>
         <source>Anonymous routing</source>
@@ -2558,7 +2544,7 @@ Voulez-vous sauvegarder les changements?</translation>
     </message>
     <message>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation>On ne peut pas déposer un répertoire, seuls les fichiers sont acceptés.</translation>
+        <translation>On ne peut pas déposer un dossier, seuls les fichiers sont acceptés.</translation>
     </message>
     <message>
         <source>File not found or file name not accepted.</source>
@@ -3372,7 +3358,7 @@ des fichiers quand vous le rebrancher.</translation>
     </message>
     <message>
         <source>Auto-check shared directories every </source>
-        <translation>Vérifier automatiquement les répertoires partagés toutes les </translation>
+        <translation>Vérifier automatiquement les dossiers partagés toutes les </translation>
     </message>
     <message>
         <source> minute(s)</source>
@@ -3388,7 +3374,7 @@ des fichiers quand vous le rebrancher.</translation>
     </message>
     <message>
         <source>Directories</source>
-        <translation>Répertoires</translation>
+        <translation>Dossiers</translation>
     </message>
     <message>
         <source>Cache cleaning confirmation</source>
@@ -3786,7 +3772,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Directory</source>
-        <translation>Répertoire</translation>
+        <translation>Dossier</translation>
     </message>
 </context>
 <context>
@@ -5686,36 +5672,33 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GroupFlagsWidget</name>
     <message>
-        <source>All your friends can browse this directory
-</source>
-        <translation>Tous vos amis peuvent consulter ce répertoire \n</translation>
-    </message>
-    <message>
         <source>Only friends in groups </source>
         <translation>Seulement les amis dans les groupes</translation>
     </message>
     <message>
-        <source> can browse this directory
-</source>
-        <translation>peuvent consulter le répertoire \n</translation>
-    </message>
-    <message>
-        <source>No one can browse this directory
-</source>
-        <translation>Personne ne peux consulter le répertoire \n
-</translation>
-    </message>
-    <message>
         <source>All your friends can relay anonymous tunnels to this directory</source>
-        <translation>Tous vos amis peuvent relayer des tunnels anonymes vers ce répertoire</translation>
+        <translation>Tous vos amis peuvent relayer des tunnels anonymes vers ce dossier</translation>
     </message>
     <message>
         <source> can relay anonymous tunnels to this directory</source>
-        <translation>peuvent relayer des tunnels anonymes vers ce répertoire</translation>
+        <translation>peuvent relayer des tunnels anonymes vers ce dossier</translation>
     </message>
     <message>
         <source>No one can anonymously access this directory.</source>
-        <translation>Personne ne peux anonymement accéder ce répertoire.</translation>
+        <translation>Personne ne peux anonymement accéder à ce dossier.</translation>
+    </message>
+    <message>
+        <source>All your friends can browse this directory</source>
+        <translation>Tous vos amis peuvent consulter ce dossier</translation>
+    </message>
+    <message>
+        <source>Only friends in groups %1 can browse this directory</source>
+        <translation>Seulement les amis dans les groupes %1 peuvent consulter ce dossier</translation>
+    </message>
+    <message>
+        <source>No one can browse this directory</source>
+        <translation>Personne ne peux consulter ce dossier
+</translation>
     </message>
 </context>
 <context>
@@ -5840,7 +5823,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation>On ne peut pas déposer un répertoire, seuls les fichiers sont acceptés.</translation>
+        <translation>On ne peut pas déposer un dossier, seuls les fichiers sont acceptés.</translation>
     </message>
     <message>
         <source>File not found or file name not accepted.</source>
@@ -8086,6 +8069,16 @@ Clic droit et sélectionnez &apos;Devenir ami&apos; pour vous connecter.</transl
         <source>Low Traffic</source>
         <translation>Faible trafic</translation>
     </message>
+    <message>
+        <source>Use this DropList to quickly change Retroshare's behaviour
+ No Anon D/L: switches off file forwarding
+ Gaming Mode: 25% standard traffic and TODO: reduced popups
+ Low Traffic: 10% standard traffic and TODO: pauses all file-transfers</source>
+        <translation>Utilisez cette liste déroulante pour rapidement changer le comportement de Retroshare
+Non Anon D/L : désactive le transfert de fichier
+Mode jeu : 25% du trafic standard et TODO : réduction des popups
+Trafic faible : 10% du trafic standard et TODO : tous les transferts de fichiers en pause</translation>
+    </message>
 </context>
 <context>
     <name>PeerDefs</name>
@@ -8644,7 +8637,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Plugin look-up directories</source>
-        <translation>Répertoires des extensions</translation>
+        <translation>Dossiers des extensions</translation>
     </message>
     <message>
         <source>Loading error.</source>
@@ -9486,19 +9479,19 @@ L&apos;erreur reportée est : %2 </translation>
     </message>
     <message>
         <source>Directory is browsable for friends from parent groups</source>
-        <translation>Le répertoire est consultable pour les amis des groupes parents</translation>
+        <translation>Le dossier est consultable pour les amis des groupes parents</translation>
     </message>
     <message>
         <source>Directory is accessible by anonymous tunnels from friends from parent groups</source>
-        <translation>Le répertoire est accessible par les tunnels anonymes provenant des amis des groupes parents</translation>
+        <translation>Le dossier est accessible par les tunnels anonymes provenant des amis des groupes parents</translation>
     </message>
     <message>
         <source>Directory is browsable for any friend</source>
-        <translation>Le répertoire est consultable par tous les amis</translation>
+        <translation>Le dossier est consultable par tous les amis</translation>
     </message>
     <message>
         <source>Directory is accessible by anonymous tunnels from any friend</source>
-        <translation>Le répertoire est accessible par les tunnels anonymes de tous les amis</translation>
+        <translation>Le dossier est accessible par les tunnels anonymes de tous les amis</translation>
     </message>
     <message>
         <source>Failed to process collection file</source>
@@ -9628,7 +9621,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Directory</source>
-        <translation>Répertoire</translation>
+        <translation>Dossier</translation>
     </message>
     <message>
         <source>Network Wide</source>
@@ -10024,7 +10017,7 @@ Réduire l&apos;image par %1x%2 pixels ?</translation>
     </message>
     <message>
         <source>Directory</source>
-        <translation>Répertoire</translation>
+        <translation>Dossier</translation>
     </message>
     <message>
         <source>Start Search</source>
@@ -10421,24 +10414,6 @@ de nombreux petits paquets qui peuvent considérablement ralentir les transfert 
 La valeur par défaut est de 20.</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;Warning&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;This tab contains hard-core  parameters which are unlikely to need modification. Don&apos;t change them unless you really know what you&apos;re doing. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt;Avertissement&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;Cet onglet contient des paramètres du noyau qui sont peu susceptibles à être modifiés. Ne les changer pas sauf si vous savez vraiment ce que vous faites.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Enable anonymous data routing</source>
         <translation>Activer le routage des données anonymes</translation>
     </message>
@@ -10468,6 +10443,14 @@ de vos contacts de confiance aux autres pairs connectés
 pour les aider à choisir de nouveaux amis.
 L&apos;amitié n&apos;est jamais automatique, il faut que
 les pairs se fassent mutuellement confiance pour permettre la connexion.</translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <translation>Attention</translation>
+    </message>
+    <message>
+        <source>This tab contains hard-core parameters which are unlikely to need modification. Don&apos;t change them unless you really know what you&apos;re doing.</source>
+        <translation>Cet onglet contient des paramètres du noyau qui ne sont pas susceptibles d&apos;être modifiés. Ne les modifiez que si vous savez vraiment ce que vous faites.</translation>
     </message>
 </context>
 <context>
@@ -10511,6 +10494,10 @@ les pairs se fassent mutuellement confiance pour permettre la connexion.</transl
         <source>Share flags and groups: </source>
         <translation>Partager les drapeaux et les groupes :</translation>
     </message>
+    <message>
+        <source>Edit Shared Folder</source>
+        <translation>Modifier les dossiers partagés</translation>
+    </message>
 </context>
 <context>
     <name>ShareKey</name>
@@ -10547,7 +10534,7 @@ les pairs se fassent mutuellement confiance pour permettre la connexion.</transl
     </message>
     <message>
         <source>Shared Folder Manager</source>
-        <translation>Gestionnaire de dossier partagé</translation>
+        <translation>Gestionnaire des dossiers partagés</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -10571,7 +10558,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Directory</source>
-        <translation>Répertoire</translation>
+        <translation>Dossier</translation>
     </message>
     <message>
         <source>Virtual Folder</source>
@@ -10615,11 +10602,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File can&apos;t be dropped, only directories are accepted.</source>
-        <translation>On ne peut pas déposer un fichier, seuls les répertoires sont acceptés.</translation>
+        <translation>On ne peut pas déposer un fichier, seuls les dossiers sont acceptés.</translation>
     </message>
     <message>
         <source>Directory not found or directory name not accepted.</source>
-        <translation>Le répertoire n&apos;a pas été trouvé ou le nom du répertoire n&apos;est pas accepté.</translation>
+        <translation>Le dossier n&apos;a pas été trouvé ou le nom du dossier n&apos;est pas accepté.</translation>
     </message>
     <message>
         <source>Share Manager</source>
@@ -10636,6 +10623,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Apply and close</source>
         <translation>Appliquer et fermer</translation>
+    </message>
+    <message>
+        <source>Edit Shared Folder</source>
+        <translation>Modifier les dossiers partagés</translation>
     </message>
 </context>
 <context>
@@ -10779,6 +10770,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Split View</source>
         <translation>Vue partagée</translation>
+    </message>
+    <message>
+        <source>Edit Share Permissions</source>
+        <translation>Modifier les droits de partage</translation>
+    </message>
+    <message>
+        <source>Edit Shared Folder</source>
+        <translation>Modifier les dossiers partagés</translation>
     </message>
 </context>
 <context>
@@ -11467,7 +11466,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Open Folder</source>
-        <translation>Ouvrir le répertoire de destination</translation>
+        <translation>Ouvrir le dossier de destination</translation>
     </message>
     <message>
         <source>Open File</source>

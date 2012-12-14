@@ -526,7 +526,7 @@
     <message>
         <location filename="../gui/VoipStatistics.cpp" line="361"/>
         <source>Round Trip Time:</source>
-        <translation type="unfinished"/>
+        <translation>Tur och returtid:</translation>
     </message>
 </context>
 <context>

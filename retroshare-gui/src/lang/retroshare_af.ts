@@ -1587,18 +1587,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;User service permissions&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This tab allows you to finely tune which services each of your contacts is allowed to use with you.&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Some services (Discovery, anonymous routing) can be switched off globally, which always overrides the settings per-user.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
@@ -1627,7 +1615,13 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>PushButton</source>
+        <source>User service permissions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This tab allows you to finely tune which services each of your contacts is allowed to use with you.
+
+Some services (Discovery, anonymous routing) can be switched off globally, which always overrides the settings per-user.</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -5556,22 +5550,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GroupFlagsWidget</name>
     <message>
-        <source>All your friends can browse this directory
-</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Only friends in groups </source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source> can browse this directory
-</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>No one can browse this directory
-</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -5584,6 +5563,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>No one can anonymously access this directory.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>All your friends can browse this directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Only friends in groups %1 can browse this directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No one can browse this directory</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -7914,6 +7905,13 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <source>Low Traffic</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Use this DropList to quickly change Retroshare's behaviour
+ No Anon D/L: switches off file forwarding
+ Gaming Mode: 25% standard traffic and TODO: reduced popups
+ Low Traffic: 10% standard traffic and TODO: pauses all file-transfers</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>PeerDefs</name>
@@ -10176,17 +10174,6 @@ The default value is 20.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;Warning&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;This tab contains hard-core  parameters which are unlikely to need modification. Don&apos;t change them unless you really know what you&apos;re doing. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Enable anonymous data routing</source>
         <translation type="unfinished"/>
     </message>
@@ -10208,6 +10195,14 @@ identities of your trusted contacts to connected
 peers, to help them choose new friends. 
 The friendship is never automatic however, and both 
 peers still need to trust each other to allow connection. </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Warning</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This tab contains hard-core parameters which are unlikely to need modification. Don&apos;t change them unless you really know what you&apos;re doing.</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -10250,6 +10245,10 @@ peers still need to trust each other to allow connection. </source>
     </message>
     <message>
         <source>Share flags and groups: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit Shared Folder</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -10368,6 +10367,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Apply and close</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit Shared Folder</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -10511,6 +10514,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Split View</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit Share Permissions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit Shared Folder</source>
         <translation type="unfinished"/>
     </message>
 </context>

@@ -390,8 +390,8 @@
         <location filename="../gui/AudioWizard.ui" line="70"/>
         <source>&lt;p &gt;Open your sound control panel and go to the recording settings. Make sure the microphone is selected as active input with maximum recording volume. If there's an option to enable a &amp;quot;Microphone boost&amp;quot; make sure it's checked. &lt;/p&gt;
 &lt;p&gt;Speak loudly, as when you are annoyed or excited. Decrease the volume in the sound control panel until the bar below stays as high as possible in the green and orange but not the red zone while you speak. &lt;/p&gt;</source>
-        <translation>&lt;p&gt;Abra su panel de control de sonido y vaya a las opciones de grabación. Asegúrese que el micrófono está seleccionado como la entrada activa y con el máximo volumen de grabación. Si existe una opción para habilitar un &amp;quot;Potenciado del micrófono&amp;quot; asegúrese de que está activada.&lt;/p&gt;⏎ &lt;p&gt;Hable fuerte en voz alta, como cuando está molesto o entusiasmado. Baje el volumen en el panel de control de sonido hasta que la barra de abajo permanezca, mientras habla, tan alto como sea posible en la zona verde y naranja pero &lt;b&gt;no&lt;/b&gt; en la zona roja.&lt;/p&gt;
-</translation>
+        <translation>&lt;p&gt;Abra su panel de control de sonido y vaya a las opciones de grabación. Asegúrese que el micrófono está seleccionado como la entrada activa y con el máximo volumen de grabación. Si existe una opción para habilitar un &amp;quot;Potenciado del micrófono&amp;quot; asegúrese de que está activada.&lt;/p&gt;
+ &lt;p&gt;Hable fuerte en voz alta, como cuando está molesto o entusiasmado. Baje el volumen en el panel de control de sonido hasta que la barra de abajo permanezca, mientras habla, tan alto como sea posible en la zona verde y naranja pero &lt;b&gt;no&lt;/b&gt; en la zona roja.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="86"/>
