@@ -27,6 +27,7 @@
 #include <retroshare/rsiface.h>
 
 #include "gui/Identity/IdDialog.h"
+#include "gui/Circles/CirclesDialog.h"
 #include "gui/PhotoShare/PhotoShare.h"
 #include "gui/WikiPoos/WikiDialog.h"
 #include "gui/Posted/PostedDialog.h"
@@ -90,6 +91,10 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     IdDialog *idDialog = NULL;
     ui.stackPages->add(idDialog = new IdDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_LIBRARY), tr("Identities"), grp));
+
+    CirclesDialog *circlesDialog = NULL;
+    ui.stackPages->add(circlesDialog = new CirclesDialog(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_LIBRARY), tr("Circles"), grp));
 
     PhotoShare *photoShare = NULL;
     ui.stackPages->add(photoShare = new PhotoShare(ui.stackPages),

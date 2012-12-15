@@ -4,11 +4,11 @@ CONFIG += qt gui uic qrc resources uitools idle bitdht
 CONFIG += photoshare 
 CONFIG += wikipoos
 CONFIG += identities
+CONFIG += circles
 CONFIG += gxsforums 
 CONFIG += posted
 CONFIG += unfinished
 CONFIG += gxsgui
-#CONFIG += circles
 #CONFIG += thewire
 
 #CONFIG += pluginmgr 
@@ -1037,6 +1037,8 @@ gxsgui {
 		gui/gxs/GxsForumGroupDialog.h \
 		gui/gxs/GxsIdChooser.h \
 		gui/gxs/GxsIdLabel.h \
+		gui/gxs/GxsCircleChooser.h \
+		gui/gxs/GxsCircleLabel.h \
 		gui/gxs/GxsIdTreeWidgetItem.h \
 
 #            gui/gxs/GxsMsgDialog.h \
@@ -1052,6 +1054,8 @@ gxsgui {
 		gui/gxs/GxsForumGroupDialog.cpp \
 		gui/gxs/GxsIdChooser.cpp \
 		gui/gxs/GxsIdLabel.cpp \
+		gui/gxs/GxsCircleChooser.cpp \
+		gui/gxs/GxsCircleLabel.cpp \
 		gui/gxs/GxsIdTreeWidgetItem.cpp \
 
 #            gui/gxs/GxsMsgDialog.cpp \

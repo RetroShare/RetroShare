@@ -297,19 +297,16 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_8">
            <item>
-            <widget class="QComboBox" name="groupComboBox">
-             <item>
-              <property name="text">
-               <string>Select Group of Friends</string>
-              </property>
-             </item>
-            </widget>
+            <widget class="GxsCircleChooser" name="circleComboBox"/>
            </item>
            <item>
             <spacer name="horizontalSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::MinimumExpanding</enum>
+             </property>
              <property name="sizeHint" stdset="0">
               <size>
                <width>40</width>
@@ -319,24 +316,28 @@
             </spacer>
            </item>
            <item>
-            <widget class="QPushButton" name="editGroupsButton">
-             <property name="text">
-              <string>Edit Groups</string>
-             </property>
+            <widget class="QComboBox" name="localComboBox">
+             <item>
+              <property name="text">
+               <string>Some Friends</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Another Group</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Family?</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Enemies</string>
+              </property>
+             </item>
             </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_3">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
            </item>
           </layout>
          </item>
@@ -490,6 +491,11 @@
    <extends>QWidget</extends>
    <header>gui/common/FriendSelectionWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GxsCircleChooser</class>
+   <extends>QComboBox</extends>
+   <header>gui/gxs/GxsCircleChooser.h</header>
   </customwidget>
  </customwidgets>
  <resources>

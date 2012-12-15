@@ -29,6 +29,7 @@
 #include <algorithm>
 
 #include <retroshare/rspeers.h>
+#include <retroshare/rsgxscircles.h>
 
 #include <iostream>
 
@@ -51,12 +52,12 @@
 
 /** Constructor */
 GxsGroupDialog::GxsGroupDialog(TokenQueue *tokenQueue, uint32_t enableFlags, uint16_t defaultFlags, QWidget *parent)
-    : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mTokenQueue(tokenQueue), mMode(MODE_CREATE), mEnabledFlags(enableFlags), mReadonlyFlags(0), mDefaultsFlags(defaultFlags)
+	: QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mTokenQueue(tokenQueue), mMode(MODE_CREATE), mEnabledFlags(enableFlags), mReadonlyFlags(0), mDefaultsFlags(defaultFlags)
 {
-    /* Invoke the Qt Designer generated object setup routine */
-    ui.setupUi(this);
+	/* Invoke the Qt Designer generated object setup routine */
+	ui.setupUi(this);
 
-    init();
+	init();
 }
 
 GxsGroupDialog::GxsGroupDialog(const RsGroupMetaData &grpMeta, Mode mode, QWidget *parent)
@@ -70,64 +71,72 @@ GxsGroupDialog::GxsGroupDialog(const RsGroupMetaData &grpMeta, Mode mode, QWidge
 
 void GxsGroupDialog::init()
 {
-    // connect up the buttons.
-    connect( ui.buttonBox, SIGNAL(accepted()), this, SLOT(submitGroup()));
-    connect( ui.buttonBox, SIGNAL(rejected()), this, SLOT(cancelDialog()));
-    connect( ui.pubKeyShare_cb, SIGNAL( clicked() ), this, SLOT( setShareList( ) ));
+	// connect up the buttons.
+	connect( ui.buttonBox, SIGNAL(accepted()), this, SLOT(submitGroup()));
+	connect( ui.buttonBox, SIGNAL(rejected()), this, SLOT(cancelDialog()));
+	connect( ui.pubKeyShare_cb, SIGNAL( clicked() ), this, SLOT( setShareList( ) ));
 
-    connect( ui.groupLogo, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
-    connect( ui.addLogoButton, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
+	connect( ui.groupLogo, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
+	connect( ui.addLogoButton, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
 
-    if (!ui.pubKeyShare_cb->isChecked())
-    {
-            ui.contactsdockWidget->hide();
-            this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
-    }
+	ui.typePublic->setChecked(true);
+	updateCircleOptions();
 
-    /* initialize key share list */
-    ui.keyShareList->setHeaderText(tr("Contacts:"));
-    ui.keyShareList->setModus(FriendSelectionWidget::MODUS_CHECK);
-    ui.keyShareList->start();
+	connect( ui.typePublic, SIGNAL(clicked()), this , SLOT(updateCircleOptions()));
+	connect( ui.typeGroup, SIGNAL(clicked()), this , SLOT(updateCircleOptions()));
+	connect( ui.typeLocal, SIGNAL(clicked()), this , SLOT(updateCircleOptions()));
 
-    /* Setup Reasonable Defaults */
+	if (!ui.pubKeyShare_cb->isChecked())
+	{
+		ui.contactsdockWidget->hide();
+		this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
+	}
 
-    ui.idChooser->loadIds(0,"");
+	/* initialize key share list */
+	ui.keyShareList->setHeaderText(tr("Contacts:"));
+	ui.keyShareList->setModus(FriendSelectionWidget::MODUS_CHECK);
+	ui.keyShareList->start();
 
-    initMode();
+	/* Setup Reasonable Defaults */
+
+	ui.idChooser->loadIds(0,"");
+	ui.circleComboBox->loadCircles(0);
+
+	initMode();
 }
 
 void GxsGroupDialog::showEvent(QShowEvent*)
 {
-    QString header = serviceHeader();
-    ui.headerFrame->setHeaderText(header);
-    setWindowTitle(header);
-    ui.headerFrame->setHeaderImage(serviceImage());
+	QString header = serviceHeader();
+	ui.headerFrame->setHeaderText(header);
+	setWindowTitle(header);
+	ui.headerFrame->setHeaderImage(serviceImage());
 }
 
 void GxsGroupDialog::initMode()
 {
-    switch (mode())
-    {
-        case MODE_CREATE:
-        {
-            ui.buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-            ui.buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Create Group"));
-            newGroup();
-        }
-        break;
+	switch (mode())
+	{
+		case MODE_CREATE:
+		{
+			ui.buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+			ui.buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Create Group"));
+			newGroup();
+		}
+		break;
 
-        case MODE_SHOW:
-        {
-            ui.buttonBox->setStandardButtons(QDialogButtonBox::Close);
-        }
-        break;
+		case MODE_SHOW:
+		{
+			ui.buttonBox->setStandardButtons(QDialogButtonBox::Close);
+		}
+		break;
 //TODO
-//        case MODE_EDIT:
-//        {
-//            ui.createButton->setText(tr("Submit Changes"));
-//        }
-//        break;
-    }
+//		case MODE_EDIT:
+//		{
+//			ui.createButton->setText(tr("Submit Changes"));
+//		}
+//		break;
+	}
 }
 
 
@@ -142,258 +151,334 @@ void GxsGroupDialog::setupDefaults()
 {
 	/* Enable / Show Parts based on Flags */	
 
-    if (mDefaultsFlags & GXS_GROUP_DEFAULTS_DISTRIB_MASK)
-    {
-        if (mDefaultsFlags & GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC)
-        {
-            ui.typePublic->setChecked(true);
-        }
-        else if (mDefaultsFlags & GXS_GROUP_DEFAULTS_DISTRIB_GROUP)
-        {
-            ui.typeGroup->setChecked(true);
-        }
-        else if (mDefaultsFlags & GXS_GROUP_DEFAULTS_DISTRIB_LOCAL)
-        {
-            ui.typeLocal->setChecked(true);
-        }
-        else
-        {
-            // default
-            ui.typePublic->setChecked(true);
-        }
-    }
+	if (mDefaultsFlags & GXS_GROUP_DEFAULTS_DISTRIB_MASK)
+	{
+		if (mDefaultsFlags & GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC)
+		{
+			ui.typePublic->setChecked(true);
+		}
+		else if (mDefaultsFlags & GXS_GROUP_DEFAULTS_DISTRIB_GROUP)
+		{
+			ui.typeGroup->setChecked(true);
+		}
+		else if (mDefaultsFlags & GXS_GROUP_DEFAULTS_DISTRIB_LOCAL)
+		{
+			ui.typeLocal->setChecked(true);
+		}
+		else
+		{
+			// default
+			ui.typePublic->setChecked(true);
+		}
+	}
 
-    if (mDefaultsFlags & GXS_GROUP_DEFAULTS_PUBLISH_MASK)
-    {
-        if (mDefaultsFlags & GXS_GROUP_DEFAULTS_PUBLISH_ENCRYPTED)
-        {
-            ui.publish_encrypt->setChecked(true);
-        }
-        else if (mDefaultsFlags & GXS_GROUP_DEFAULTS_PUBLISH_REQUIRED)
-        {
-            ui.publish_required->setChecked(true);
-        }
-        else if (mDefaultsFlags & GXS_GROUP_DEFAULTS_PUBLISH_THREADS)
-        {
-           ui.publish_threads->setChecked(true);
-        }
-        else
-        {
-            // default
-            ui.publish_open->setChecked(true);
-        }
-    }
+	if (mDefaultsFlags & GXS_GROUP_DEFAULTS_PUBLISH_MASK)
+	{
+		if (mDefaultsFlags & GXS_GROUP_DEFAULTS_PUBLISH_ENCRYPTED)
+		{
+			ui.publish_encrypt->setChecked(true);
+		}
+		else if (mDefaultsFlags & GXS_GROUP_DEFAULTS_PUBLISH_REQUIRED)
+		{
+			ui.publish_required->setChecked(true);
+		}
+		else if (mDefaultsFlags & GXS_GROUP_DEFAULTS_PUBLISH_THREADS)
+		{
+		   ui.publish_threads->setChecked(true);
+		}
+		else
+		{
+			// default
+			ui.publish_open->setChecked(true);
+		}
+	}
 
-    if (mDefaultsFlags & GXS_GROUP_DEFAULTS_PERSONAL_MASK)
-    {
-        if (mDefaultsFlags & GXS_GROUP_DEFAULTS_PERSONAL_PGP)
-        {
-            ui.personal_pgp->setChecked(true);
-        }
-        else if (mDefaultsFlags & GXS_GROUP_DEFAULTS_PERSONAL_REQUIRED)
-        {
-            ui.personal_required->setChecked(true);
-        }
-        else if (mDefaultsFlags & GXS_GROUP_DEFAULTS_PERSONAL_IFNOPUB)
-        {
-            ui.personal_ifnopub->setChecked(true);
-        }
-        else
-        {
-            // default
-            ui.personal_ifnopub->setChecked(true);
-        }
-    }
+	if (mDefaultsFlags & GXS_GROUP_DEFAULTS_PERSONAL_MASK)
+	{
+		if (mDefaultsFlags & GXS_GROUP_DEFAULTS_PERSONAL_PGP)
+		{
+			ui.personal_pgp->setChecked(true);
+		}
+		else if (mDefaultsFlags & GXS_GROUP_DEFAULTS_PERSONAL_REQUIRED)
+		{
+			ui.personal_required->setChecked(true);
+		}
+		else if (mDefaultsFlags & GXS_GROUP_DEFAULTS_PERSONAL_IFNOPUB)
+		{
+			ui.personal_ifnopub->setChecked(true);
+		}
+		else
+		{
+			// default
+			ui.personal_ifnopub->setChecked(true);
+		}
+	}
 
-    if (mDefaultsFlags & GXS_GROUP_DEFAULTS_COMMENTS_MASK)
-    {
-        if (mDefaultsFlags & GXS_GROUP_DEFAULTS_COMMENTS_YES)
-        {
-            ui.comments_allowed->setChecked(true);
-        }
-        else if (mDefaultsFlags & GXS_GROUP_DEFAULTS_COMMENTS_NO)
-        {
-            ui.comments_no->setChecked(true);
-        }
-        else
-        {
-            // default
-            ui.comments_no->setChecked(true);
-        }
-    }
+	if (mDefaultsFlags & GXS_GROUP_DEFAULTS_COMMENTS_MASK)
+	{
+		if (mDefaultsFlags & GXS_GROUP_DEFAULTS_COMMENTS_YES)
+		{
+			ui.comments_allowed->setChecked(true);
+		}
+		else if (mDefaultsFlags & GXS_GROUP_DEFAULTS_COMMENTS_NO)
+		{
+			ui.comments_no->setChecked(true);
+		}
+		else
+		{
+			// default
+			ui.comments_no->setChecked(true);
+		}
+	}
 }
 
 void GxsGroupDialog::setupVisibility()
 {
-    {
-        ui.groupLogo->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ICON);
-        ui.addLogoButton->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ICON);
-    }
+	{
+		ui.groupLogo->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ICON);
+		ui.addLogoButton->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ICON);
+	}
 
-    {
-        ui.groupDesc->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DESCRIPTION);
-        ui.groupDescLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DESCRIPTION);
-    }
+	{
+		ui.groupDesc->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DESCRIPTION);
+		ui.groupDescLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DESCRIPTION);
+	}
 
-    {
-        ui.distribGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DISTRIBUTION);
-    }
+	{
+		ui.distribGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DISTRIBUTION);
+	}
 
-    {
-        ui.publishGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_PUBLISHSIGN);
-    }
+	{
+		ui.publishGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_PUBLISHSIGN);
+	}
 
-    {
-        ui.pubKeyShare_cb->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_SHAREKEYS);
-    }
+	{
+		ui.pubKeyShare_cb->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_SHAREKEYS);
+	}
 
-    {
-        ui.personalGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_PERSONALSIGN);
-    }
+	{
+		ui.personalGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_PERSONALSIGN);
+	}
 
-    {
-        ui.commentGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COMMENTS);
-    }
+	{
+		ui.commentGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COMMENTS);
+	}
 
-    {
-        ui.extraFrame->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_EXTRA);
-    }
+	{
+		ui.extraFrame->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_EXTRA);
+	}
 }
 
 
 void GxsGroupDialog::newGroup()
 {
-    setupDefaults();
-    setupVisibility();
-    clearForm();
+	setupDefaults();
+	setupVisibility();
+	clearForm();
 
 }
 
 void GxsGroupDialog::submitGroup()
 {
-    std::cerr << "GxsGroupDialog::submitGroup()";
-    std::cerr << std::endl;
+	std::cerr << "GxsGroupDialog::submitGroup()";
+	std::cerr << std::endl;
 
-    /* switch depending on mode */
-    switch (mode())
-    {
-        case MODE_CREATE:
-        {
-            /* just close if down */
-            createGroup();
-        }
-        break;
+	/* switch depending on mode */
+	switch (mode())
+	{
+		case MODE_CREATE:
+		{
+			/* just close if down */
+			createGroup();
+		}
+		break;
 
-        case MODE_SHOW:
-        {
-            /* just close if down */
-            cancelDialog();
-        }
-        break;
+		case MODE_SHOW:
+		{
+			/* just close if down */
+			cancelDialog();
+		}
+		break;
 
-        case MODE_EDIT:
-        {
-            /* TEMP: just close if down */
-            cancelDialog();
-        }
-        break;
-    }
+		case MODE_EDIT:
+		{
+			/* TEMP: just close if down */
+			cancelDialog();
+		}
+		break;
+	}
 }
 
 void GxsGroupDialog::createGroup()
 {
-    std::cerr << "GxsGroupDialog::createGroup()";
-    std::cerr << std::endl;
+	std::cerr << "GxsGroupDialog::createGroup()";
+	std::cerr << std::endl;
 
-    QString name = misc::removeNewLine(ui.groupName->text());
-    uint32_t flags = 0;
+	QString name = misc::removeNewLine(ui.groupName->text());
+	uint32_t flags = 0;
 
-    if(name.isEmpty())
-    {
-            /* error message */
-            QMessageBox::warning(this, "RetroShare", tr("Please add a Name"), QMessageBox::Ok, QMessageBox::Ok);
-            return; //Don't add  a empty name!!
-    }
+	if(name.isEmpty())
+	{
+			/* error message */
+			QMessageBox::warning(this, "RetroShare", tr("Please add a Name"), QMessageBox::Ok, QMessageBox::Ok);
+			return; //Don't add  a empty name!!
+	}
 
-    uint32_t token;
-    RsGroupMetaData meta;
+	uint32_t token;
+	RsGroupMetaData meta;
 
-    // Fill in the MetaData as best we can.
-    meta.mGroupName = std::string(name.toUtf8());
+	// Fill in the MetaData as best we can.
+	meta.mGroupName = std::string(name.toUtf8());
 
-    meta.mGroupFlags = flags;
-    meta.mSignFlags = getGroupSignFlags();
+	meta.mGroupFlags = flags;
+	meta.mSignFlags = getGroupSignFlags();
 
-    if (service_CreateGroup(token, meta))
-    {
-        // get the Queue to handle response.
-        if(mTokenQueue != NULL)
-            mTokenQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_ACK, GXSGROUP_NEWGROUPID);
-    }
-    close();
+	setCircleParameters(meta);
+
+	if (service_CreateGroup(token, meta))
+	{
+		// get the Queue to handle response.
+		if(mTokenQueue != NULL)
+			mTokenQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_ACK, GXSGROUP_NEWGROUPID);
+	}
+	close();
 }
 	
 uint32_t GxsGroupDialog::getGroupSignFlags()
 {
-    /* grab from the ui options -> */
-    uint32_t signFlags = 0;
-    if (ui.publish_encrypt->isChecked()) {
-        signFlags |= RSGXS_GROUP_SIGN_PUBLISH_ENCRYPTED;
-    } else if (ui.publish_required->isChecked()) {
-        signFlags |= RSGXS_GROUP_SIGN_PUBLISH_ALLSIGNED;
-    } else if (ui.publish_threads->isChecked()) {
-        signFlags |= RSGXS_GROUP_SIGN_PUBLISH_THREADHEAD;
-    } else {  // publish_open (default).
-        signFlags |= RSGXS_GROUP_SIGN_PUBLISH_NONEREQ;
-    }
+	/* grab from the ui options -> */
+	uint32_t signFlags = 0;
+	if (ui.publish_encrypt->isChecked()) {
+		signFlags |= RSGXS_GROUP_SIGN_PUBLISH_ENCRYPTED;
+	} else if (ui.publish_required->isChecked()) {
+		signFlags |= RSGXS_GROUP_SIGN_PUBLISH_ALLSIGNED;
+	} else if (ui.publish_threads->isChecked()) {
+		signFlags |= RSGXS_GROUP_SIGN_PUBLISH_THREADHEAD;
+	} else {  // publish_open (default).
+		signFlags |= RSGXS_GROUP_SIGN_PUBLISH_NONEREQ;
+	}
 
 // Author Signature.
-    if (ui.personal_pgp->isChecked()) {
-        signFlags |= RSGXS_GROUP_SIGN_AUTHOR_GPG;
-    } else if (ui.personal_required->isChecked()) {
-        signFlags |= RSGXS_GROUP_SIGN_AUTHOR_REQUIRED;
-    } else if (ui.personal_ifnopub->isChecked()) {
-        signFlags |= RSGXS_GROUP_SIGN_AUTHOR_IFNOPUBSIGN;
-    } else { // shouldn't allow this one.
-        signFlags |= RSGXS_GROUP_SIGN_AUTHOR_NONE;
-    }
-    return signFlags;
+	if (ui.personal_pgp->isChecked()) {
+		signFlags |= RSGXS_GROUP_SIGN_AUTHOR_GPG;
+	} else if (ui.personal_required->isChecked()) {
+		signFlags |= RSGXS_GROUP_SIGN_AUTHOR_REQUIRED;
+	} else if (ui.personal_ifnopub->isChecked()) {
+		signFlags |= RSGXS_GROUP_SIGN_AUTHOR_IFNOPUBSIGN;
+	} else { // shouldn't allow this one.
+		signFlags |= RSGXS_GROUP_SIGN_AUTHOR_NONE;
+	}
+	return signFlags;
 }
 
 void GxsGroupDialog::setGroupSignFlags(uint32_t signFlags)
 {
-    if (signFlags & RSGXS_GROUP_SIGN_PUBLISH_ENCRYPTED) {
-        ui.publish_encrypt->setChecked(true);
-    } else if (signFlags & RSGXS_GROUP_SIGN_PUBLISH_ALLSIGNED) {
-        ui.publish_required->setChecked(true);
-    } else if (signFlags & RSGXS_GROUP_SIGN_PUBLISH_THREADHEAD) {
-        ui.publish_threads->setChecked(true);
-    } else if (signFlags & RSGXS_GROUP_SIGN_PUBLISH_NONEREQ) {
-        ui.publish_open->setChecked(true);
-    }
+	if (signFlags & RSGXS_GROUP_SIGN_PUBLISH_ENCRYPTED) {
+		ui.publish_encrypt->setChecked(true);
+	} else if (signFlags & RSGXS_GROUP_SIGN_PUBLISH_ALLSIGNED) {
+		ui.publish_required->setChecked(true);
+	} else if (signFlags & RSGXS_GROUP_SIGN_PUBLISH_THREADHEAD) {
+		ui.publish_threads->setChecked(true);
+	} else if (signFlags & RSGXS_GROUP_SIGN_PUBLISH_NONEREQ) {
+		ui.publish_open->setChecked(true);
+	}
 
-    if (signFlags & RSGXS_GROUP_SIGN_AUTHOR_GPG) {
-        ui.personal_pgp->setChecked(true);
-    } else if (signFlags & RSGXS_GROUP_SIGN_AUTHOR_REQUIRED) {
-        ui.personal_required->setChecked(true);
-    } else if (signFlags & RSGXS_GROUP_SIGN_AUTHOR_IFNOPUBSIGN) {
-        ui.personal_ifnopub->setChecked(true);
-    } else if (signFlags & RSGXS_GROUP_SIGN_AUTHOR_NONE) {
-            // Its the same... but not quite.
-            //ui.personal_noifpub->setChecked();
-    }
+	if (signFlags & RSGXS_GROUP_SIGN_AUTHOR_GPG) {
+		ui.personal_pgp->setChecked(true);
+	} else if (signFlags & RSGXS_GROUP_SIGN_AUTHOR_REQUIRED) {
+		ui.personal_required->setChecked(true);
+	} else if (signFlags & RSGXS_GROUP_SIGN_AUTHOR_IFNOPUBSIGN) {
+		ui.personal_ifnopub->setChecked(true);
+	} else if (signFlags & RSGXS_GROUP_SIGN_AUTHOR_NONE) {
+			// Its the same... but not quite.
+			//ui.personal_noifpub->setChecked();
+	}
 
-    /* guess at comments */
-    if ((signFlags & RSGXS_GROUP_SIGN_PUBLISH_THREADHEAD)
-            && (signFlags & RSGXS_GROUP_SIGN_AUTHOR_IFNOPUBSIGN))
-    {
-        ui.comments_allowed->setChecked(true);
-    }
-    else
-    {
-        ui.comments_no->setChecked(true);
-    }
+	/* guess at comments */
+	if ((signFlags & RSGXS_GROUP_SIGN_PUBLISH_THREADHEAD)
+			&& (signFlags & RSGXS_GROUP_SIGN_AUTHOR_IFNOPUBSIGN))
+	{
+		ui.comments_allowed->setChecked(true);
+	}
+	else
+	{
+		ui.comments_no->setChecked(true);
+	}
 }
+
+
+
+/**** Above logic is flawed, and will be removed shortly
+ *
+ *
+ ****/
+
+void GxsGroupDialog::updateCircleOptions()
+{
+	if (ui.typeGroup->isChecked())
+	{
+		ui.circleComboBox->setEnabled(true);
+		ui.circleComboBox->setVisible(true);
+	}
+	else 
+	{
+		ui.circleComboBox->setEnabled(false);
+		ui.circleComboBox->setVisible(false);
+	}
+
+	if (ui.typeLocal->isChecked())
+	{
+		ui.localComboBox->setEnabled(true);
+		ui.localComboBox->setVisible(true);
+	}
+	else 
+	{
+		ui.localComboBox->setEnabled(false);
+		ui.localComboBox->setVisible(false);
+	}
+}
+
+void GxsGroupDialog::setCircleParameters(RsGroupMetaData &meta)
+{
+	bool problem = false;
+	if (ui.typePublic->isChecked())
+	{
+		meta.mCircleType = GXS_CIRCLE_TYPE_PUBLIC;
+		meta.mCircleId.clear();
+	}
+	else if (ui.typeGroup->isChecked())
+	{
+		meta.mCircleType = GXS_CIRCLE_TYPE_EXTERNAL;
+		if (!ui.circleComboBox->getChosenCircle(meta.mCircleId))
+		{
+			problem = true;
+		}
+	}
+	else if (ui.typeGroup->isChecked())
+	{
+		meta.mCircleType = GXS_CIRCLE_TYPE_YOUREYESONLY;
+		meta.mCircleId.clear();
+		meta.mOriginator.clear();
+		meta.mInternalCircle = "Internal Circle Id";
+	
+		problem = true;
+	}
+	else
+	{
+		problem = true;
+	}
+
+	if (problem)
+	{
+		// error.
+		meta.mCircleType = GXS_CIRCLE_TYPE_PUBLIC;
+		meta.mCircleId.clear();
+		meta.mOriginator.clear();
+		meta.mInternalCircle.clear();
+	}
+}
+
+
 
 void GxsGroupDialog::cancelDialog()
 {
@@ -418,12 +503,12 @@ void GxsGroupDialog::addGroupLogo()
 
 QPixmap GxsGroupDialog::getLogo()
 {
-    return picture;
+	return picture;
 }
 
 QString GxsGroupDialog::getDescription()
 {
-    return ui.groupDesc->document()->toPlainText();
+	return ui.groupDesc->document()->toPlainText();
 }
 
 /***********************************************************************************
@@ -437,13 +522,13 @@ void GxsGroupDialog::sendShareList(std::string groupId)
 
 void GxsGroupDialog::setShareList()
 {
-    if (ui.pubKeyShare_cb->isChecked()){
-        this->resize(this->size().width() + ui.contactsdockWidget->size().width(), this->size().height());
-        ui.contactsdockWidget->show();
-    } else {  // hide share widget
-        ui.contactsdockWidget->hide();
-        this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
-    }
+	if (ui.pubKeyShare_cb->isChecked()){
+		this->resize(this->size().width() + ui.contactsdockWidget->size().width(), this->size().height());
+		ui.contactsdockWidget->show();
+	} else {  // hide share widget
+		ui.contactsdockWidget->hide();
+		this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
+	}
 }
 	
 void GxsGroupDialog::wikitype()

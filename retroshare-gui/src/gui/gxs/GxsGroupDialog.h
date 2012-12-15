@@ -188,7 +188,13 @@ private slots:
 	// set private forum key share list
 	void setShareList();
 
+	void updateCircleOptions();
+
 private:
+
+
+	void setCircleParameters(RsGroupMetaData &meta);
+
 
 	void setGroupSignFlags(uint32_t signFlags);
 	uint32_t getGroupSignFlags();
