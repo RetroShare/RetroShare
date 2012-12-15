@@ -74,22 +74,27 @@ RsGxsCircles *rsGxsCircles = NULL;
 
 
 #define CIRCLEREQ_CACHELOAD	0x0001
-#define CIRCLEREQ_CACHEOWNIDS	0x0002
+#define CIRCLEREQ_CIRCLE_LIST   0x0002
 
-#define CIRCLEREQ_PGPHASH 	0x0010
-#define CIRCLEREQ_REPUTATION 	0x0020
+//#define CIRCLEREQ_PGPHASH 	0x0010
+//#define CIRCLEREQ_REPUTATION 	0x0020
 
-#define CIRCLEREQ_CACHETEST 	0x1000
+//#define CIRCLEREQ_CACHETEST 	0x1000
 
 // Events.
-#define CIRCLE_EVENT_CACHEOWNIDS	0x0001
+#define CIRCLE_EVENT_LOADIDS		0x0001
 #define CIRCLE_EVENT_CACHELOAD 		0x0002
 #define CIRCLE_EVENT_RELOADIDS 		0x0003
+#define CIRCLE_EVENT_DUMMYSTART		0x0004
+#define CIRCLE_EVENT_DUMMYLOAD 		0x0005
+#define CIRCLE_EVENT_DUMMYGEN 		0x0006
 
+#define CIRCLE_DUMMY_STARTPERIOD	300  // MUST BE LONG ENOUGH FOR IDS TO HAVE BEEN MADE.
+#define CIRCLE_DUMMY_GENPERIOD		10
 
-#define CIRCLE_EVENT_CACHETEST 		0x1000
-#define CACHETEST_PERIOD	60
-#define OWNID_RELOAD_DELAY		10
+//#define CIRCLE_EVENT_CACHETEST 		0x1000
+//#define CACHETEST_PERIOD	60
+//#define OWNID_RELOAD_DELAY		10
 
 #define GXSID_LOAD_CYCLE		10	// GXSID completes a load in this period.
 
@@ -108,8 +113,12 @@ p3GxsCircles::p3GxsCircles(RsGeneralDataService *gds, RsNetworkExchangeService *
 
 {
 	// Kick off Cache Testing, + Others.
-	RsTickEvent::schedule_in(CIRCLE_EVENT_CACHETEST, CACHETEST_PERIOD);
-	//RsTickEvent::schedule_now(CIRCLE_EVENT_CACHEOWNIDS);
+	//RsTickEvent::schedule_in(CIRCLE_EVENT_CACHETEST, CACHETEST_PERIOD);
+
+	RsTickEvent::schedule_now(CIRCLE_EVENT_LOADIDS);
+
+	// Dummy Circles.
+	RsTickEvent::schedule_in(CIRCLE_EVENT_DUMMYSTART, CIRCLE_DUMMY_STARTPERIOD);
 }
 
 
@@ -131,6 +140,16 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 	std::cerr << std::endl;
 
 	receiveChanges(changes);
+
+	// for new circles we need to add them to the list.
+	// TODO.
+#if 0
+	{
+		RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
+		mCircleIdList.push_back(grpItem->meta.mGroupId);
+	}
+#endif
+
 }
 
 /********************************************************************************/
@@ -169,24 +188,24 @@ bool p3GxsCircles:: getNickname(const RsGxsId &id, std::string &nickname)
 	return false;
 }
 
-bool p3GxsCircles:: getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
+#endif
+
+bool p3GxsCircles:: getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails &details)
 {
-	std::cerr << "p3GxsCircles::getIdDetails(" << id << ")";
+	std::cerr << "p3GxsCircles::getCircleDetails(" << id << ")";
 	std::cerr << std::endl;
 
 	{
 		RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
-		RsGxsIdCache data;
-		if (mPublicKeyCache.fetch(id, data))
+		if (mCircleCache.is_cached(id))
 		{
-			details = data.details;
-			return true;
-		}
-	
-		/* try private cache too */
-		if (mPrivateKeyCache.fetch(id, data))
-		{
-			details = data.details;
+			RsGxsCircleCache &data = mCircleCache.ref(id);
+
+			// should also have meta data....
+			details.mCircleId = id;
+			details.mCircleName = data.mCircleName;
+			details.mUnknownPeers = data.mUnknownPeers;
+			details.mAllowedPeers = data.mAllowedPeers;
 			return true;
 		}
 	}
@@ -198,15 +217,17 @@ bool p3GxsCircles:: getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
 }
 
 
-bool p3GxsCircles:: getOwnIds(std::list<RsGxsId> &ownIds)
+bool p3GxsCircles:: getCircleIdList(std::list<RsGxsCircleId> &circleIds)
 {
+	std::cerr << "p3GxsCircles::getCircleIdList()";
+	std::cerr << std::endl;
+
 	RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
-	ownIds = mOwnIds;
+	circleIds = mCircleIdList;
 
 	return true;
 }
 
-#endif
 
 /********************************************************************************/
 /******************* RsGixs Interface     ***************************************/
@@ -284,14 +305,20 @@ bool p3GxsCircles::getGroupData(const uint32_t &token, std::vector<RsGxsCircleGr
 
 bool 	p3GxsCircles::createGroup(uint32_t& token, RsGxsCircleGroup &group)
 {
-    RsGxsCircleGroupItem* item = new RsGxsCircleGroupItem();
-    item->convertFrom(group);
-    RsGenExchange::publishGroup(token, item);
-    return true;
+	std::cerr << "p3GxsCircles::createGroup()";
+	std::cerr << std::endl;
+
+	RsGxsCircleGroupItem* item = new RsGxsCircleGroupItem();
+	item->convertFrom(group);
+	RsGenExchange::publishGroup(token, item);
+	return true;
 }
 
 void p3GxsCircles::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& /*keySet*/)
 {
+	std::cerr << "p3GxsCircles::service_CreateGroup()";
+	std::cerr << std::endl;
+
 	RsGxsCircleGroupItem *item = dynamic_cast<RsGxsCircleGroupItem *>(grpItem);
 	if (!item)
 	{
@@ -310,6 +337,10 @@ void p3GxsCircles::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySe
 	grpItem->group.mMeta.mCircleId = grpItem->meta.mCircleId;
 #endif
 
+	{
+		RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
+		mCircleIdList.push_back(grpItem->meta.mGroupId);
+	}
 }
 
 
@@ -332,6 +363,7 @@ bool RsGxsCircleCache::loadBaseCircle(const RsGxsCircleGroup &circle)
 {
 
 	mCircleId = circle.mMeta.mGroupId;
+	mCircleName = circle.mMeta.mGroupName;
 	mUpdateTime = time(NULL);
 	mProcessedCircles.insert(mCircleId);
 
@@ -382,85 +414,52 @@ bool RsGxsCircleCache::addAllowedPeer(const RsPgpId &pgpId, const RsGxsId &gxsId
 
 
 
-
-/****************************************************************************/
-// ID STUFF. \/ \/ \/ \/ \/ \/ \/     :)
-/****************************************************************************/
-#if 0
-
 /************************************************************************************/
 /************************************************************************************/
 
-bool p3GxsCircles::cache_request_ownids()
+bool p3GxsCircles::request_CircleIdList()
 {
 	/* trigger request to load missing ids into cache */
 	std::list<RsGxsGroupId> groupIds;
-	std::cerr << "p3GxsCircles::cache_request_ownids()";
+	std::cerr << "p3GxsCircles::request_CircleIdList()";
 	std::cerr << std::endl;
 
-	uint32_t ansType = RS_TOKREQ_ANSTYPE_DATA; 
+	uint32_t ansType = RS_TOKREQ_ANSTYPE_LIST; 
 	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
-	//opts.mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_ADMIN;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_IDS;
 
 	uint32_t token = 0;
 	
 	RsGenExchange::getTokenService()->requestGroupInfo(token, ansType, opts);
-	GxsTokenQueue::queueRequest(token, CIRCLEREQ_CACHEOWNIDS);	
+	GxsTokenQueue::queueRequest(token, CIRCLEREQ_CIRCLE_LIST);	
 	return 1;
 }
 
 
-bool p3GxsCircles::cache_load_ownids(uint32_t token)
+bool p3GxsCircles::load_CircleIdList(uint32_t token)
 {
-	std::cerr << "p3GxsCircles::cache_load_ownids() : " << token;
+	std::cerr << "p3GxsCircles::load_CircleIdList() : " << token;
 	std::cerr << std::endl;
 
-	std::vector<RsGxsGrpItem*> grpData;
-	bool ok = RsGenExchange::getGroupData(token, grpData);
+        std::list<RsGxsGroupId> groupIds;
+    	bool ok = RsGenExchange::getGroupList(token, groupIds);
 
 	if(ok)
 	{
-		std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
-
 		// Save List 
+		std::list<RsGxsGroupId>::iterator vit;
+		RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
+
+		mCircleIdList.clear();
+
+		for(vit = groupIds.begin(); vit != groupIds.end(); vit++)
 		{
-			RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
-
-			mOwnIds.clear();
-			for(vit = grpData.begin(); vit != grpData.end(); vit++)
-			{
-				RsGxsIdGroupItem* item = dynamic_cast<RsGxsIdGroupItem*>(*vit);
-
-
-				if (item->meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
-				{
-					mOwnIds.push_back(item->meta.mGroupId);	
-				}
-			}
+			mCircleIdList.push_back(*vit);
 		}
-
-		// Cache Items too.
-		for(vit = grpData.begin(); vit != grpData.end(); vit++)
-		{
-			RsGxsIdGroupItem* item = dynamic_cast<RsGxsIdGroupItem*>(*vit);
-			if (item->meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
-			{
-	
-				std::cerr << "p3GxsCircles::cache_load_ownids() Loaded Id with Meta: ";
-				std::cerr << item->meta;
-				std::cerr << std::endl;
-	
-				/* cache the data */
-				cache_store(item);
-			}
-			delete item;
-		}
-
 	}
 	else
 	{
-		std::cerr << "p3GxsCircles::cache_load_ownids() ERROR no data";
+		std::cerr << "p3GxsCircles::load_CircleIdList() ERROR no data";
 		std::cerr << std::endl;
 
 		return false;
@@ -468,6 +467,12 @@ bool p3GxsCircles::cache_load_ownids(uint32_t token)
 	return true;
 }
 
+
+
+/****************************************************************************/
+// ID STUFF. \/ \/ \/ \/ \/ \/ \/     :)
+/****************************************************************************/
+#if 0
 
 /************************************************************************************/
 /************************************************************************************/
@@ -636,6 +641,9 @@ bool p3GxsCircles::cache_request_load(const RsGxsCircleId &id)
 
 bool p3GxsCircles::cache_start_load()
 {
+	std::cerr << "p3GxsCircles::cache_start_load()";
+	std::cerr << std::endl;
+
 	/* trigger request to load missing ids into cache */
 	std::list<RsGxsGroupId> groupIds;
 	{
@@ -826,6 +834,9 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 
 bool p3GxsCircles::cache_reloadids(const std::string &circleId)
 {
+	std::cerr << "p3GxsCircles::cache_reloadids()";
+	std::cerr << std::endl;
+
 	RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
 
 	/* fetch from loadMap */
@@ -833,6 +844,10 @@ bool p3GxsCircles::cache_reloadids(const std::string &circleId)
 	it = mLoadingCache.find(circleId);
 	if (it == mLoadingCache.end())
 	{
+		std::cerr << "p3GxsCircles::cache_reloadids() ERROR Id: " << circleId;
+		std::cerr << " Not in mLoadingCache Map";
+		std::cerr << std::endl;
+
 		// ERROR
 		return false;
 	}
@@ -854,20 +869,34 @@ bool p3GxsCircles::cache_reloadids(const std::string &circleId)
 				if (details.mPgpLinked && details.mPgpKnown)
 				{
 					cache.addAllowedPeer(details.mPgpId, *pit);
+
+					std::cerr << "p3GxsCircles::cache_reloadids() AllowedPeer: ";
+					std::cerr << *pit;
+					std::cerr << std::endl;
 				}
 				else
 				{
 					cache.mUnknownPeers.insert(*pit);
+
+					std::cerr << "p3GxsCircles::cache_reloadids() UnknownPeer: ";
+					std::cerr << *pit;
+					std::cerr << std::endl;
 				}
 			}
 			else
 			{
 				// ERROR.
+				std::cerr << "p3GxsCircles::cache_reloadids() ERROR ";
+				std::cerr << " Should haveKey for Id: " << *pit;
+				std::cerr << std::endl;
 			}
 		}
 		else
 		{
 			// UNKNOWN ID.
+			std::cerr << "p3GxsCircles::cache_reloadids() UNKNOWN Id: ";
+			std::cerr << *pit;
+			std::cerr << std::endl;
 		}
 	}
 
@@ -877,6 +906,9 @@ bool p3GxsCircles::cache_reloadids(const std::string &circleId)
 	// If sub-circles are complete too.
 	if (cache.mUnprocessedCircles.empty())
 	{
+		std::cerr << "p3GxsCircles::cache_reloadids() Adding to cache Id: ";
+		std::cerr << circleId;
+		std::cerr << std::endl;
 
 		// Push to Cache.
 		mCircleCache.store(circleId, cache);
@@ -885,6 +917,13 @@ bool p3GxsCircles::cache_reloadids(const std::string &circleId)
 		/* remove from loading queue */
 		mLoadingCache.erase(it);
 	}
+	else
+	{
+		std::cerr << "p3GxsCircles::cache_reloadids() WARNING Incomplete Cache Loading: ";
+		std::cerr << circleId;
+		std::cerr << std::endl;
+	}
+
 	return true;
 }
 
@@ -1082,117 +1121,135 @@ std::string p3GxsCircles::genRandomId()
 	
 void p3GxsCircles::generateDummyData()
 {
-	RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
+	// request Id Data...
+        std::cerr << "p3GxsCircles::generateDummyData() getting Id List";
+        std::cerr << std::endl;
 
-#if 0
-	/* grab all the gpg ids... and make some ids */
+        uint32_t ansType = RS_TOKREQ_ANSTYPE_DATA;
+        RsTokReqOptions opts;
+        opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 
-	std::list<std::string> gpgids;
-	std::list<std::string>::iterator it;
-	
-	rsPeers->getGPGAllList(gpgids);
+	uint32_t token;
+	rsIdentity->getTokenService()->requestGroupInfo(token, ansType, opts);
 
-	std::string ownId = rsPeers->getGPGOwnId();
-	gpgids.push_back(ownId);
-
-	int genCount = 0;
-	int i;
-	for(it = gpgids.begin(); it != gpgids.end(); it++)
 	{
-		/* create one or two for each one */
-		int nIds = 1 + (RSRandom::random_u32() % 2);
-		for(i = 0; i < nIds; i++)
+		RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
+        	mDummyIdToken = token;
+	}
+
+	RsTickEvent::schedule_in(CIRCLE_EVENT_DUMMYLOAD, CIRCLE_DUMMY_GENPERIOD);
+}
+
+
+void p3GxsCircles::checkDummyIdData()
+{
+	std::cerr << "p3GxsCircles::checkDummyIdData()";
+	std::cerr << std::endl;
+	// check the token.
+        uint32_t status =  rsIdentity->getTokenService()->requestStatus(mDummyIdToken);
+        if ( (RsTokenService::GXS_REQUEST_V2_STATUS_FAILED == status) ||
+                         (RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE == status) )
+	{
+		std::vector<RsGxsIdGroup> ids;
+		if (!rsIdentity->getGroupData(mDummyIdToken, ids))
 		{
-			RsGxsIdGroup id;
+			std::cerr << "p3GxsCircles::checkDummyIdData() ERROR getting data";
+			std::cerr << std::endl;
+			/* error */
+			return;
+		}
 
-			RsPeerDetails details;
-
-			//id.mKeyId = genRandomId();
-			id.mMeta.mGroupId = genRandomId();
-			id.mMeta.mGroupFlags = RSGXSID_GROUPFLAG_REALID;
-			id.mPgpIdHash = genRandomId();
-			id.mPgpIdSign = genRandomId();
-
-			if (rsPeers->getPeerDetails(*it, details))
+		std::vector<RsGxsIdGroup>::iterator it;
+		for(it = ids.begin(); it != ids.end(); it++)
+		{
+                        if (it->mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
 			{
-				std::ostringstream out;
-				out << details.name << "_" << i + 1;
+				std::cerr << "p3GxsCircles::checkDummyIdData() PgpLinkedId: " << it->mMeta.mGroupId;
+				std::cerr << std::endl;
+				mDummyPgpLinkedIds.push_back(it->mMeta.mGroupId);
 
-				//id.mNickname = out.str();
-				id.mMeta.mGroupName = out.str();
-			
-	
+				if (it->mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
+				{
+					std::cerr << "p3GxsCircles::checkDummyIdData() OwnId: " << it->mMeta.mGroupId;
+					std::cerr << std::endl;
+					mDummyOwnIds.push_back(it->mMeta.mGroupId);
+				}
 			}
 			else
 			{
-				std::cerr << "p3GxsCircles::generateDummyData() missing" << std::endl;
+				std::cerr << "p3GxsCircles::checkDummyIdData() Other Id: " << it->mMeta.mGroupId;
 				std::cerr << std::endl;
-
-				//id.mNickname = genRandomId();
-				id.mMeta.mGroupName = genRandomId();
-			}
-
-			uint32_t dummyToken = 0;
-			createGroup(dummyToken, id);
-
-// LIMIT - AS GENERATION IS BROKEN.
-#define MAX_TEST_GEN 5
-			if (++genCount > MAX_TEST_GEN)
-			{
-				return;
 			}
 		}
-	}
-	return;
-
-#define MAX_RANDOM_GPGIDS	10 //1000
-#define MAX_RANDOM_PSEUDOIDS	50 //5000
-
-	int nFakeGPGs = (RSRandom::random_u32() % MAX_RANDOM_GPGIDS);
-	int nFakePseudoIds = (RSRandom::random_u32() % MAX_RANDOM_PSEUDOIDS);
-
-	/* make some fake gpg ids */
-	for(i = 0; i < nFakeGPGs; i++)
-	{
-		RsGxsCircleGroup id;
-
-		RsPeerDetails details;
-
-		id.mMeta.mGroupName = genRandomId();
-
-		id.mMeta.mGroupId = genRandomId();
-		id.mMeta.mGroupFlags = RSGXSID_GROUPFLAG_REALID;
-		id.mPgpIdHash = genRandomId();
-		id.mPgpIdSign = genRandomId();
-
-		uint32_t dummyToken = 0;
-		createGroup(dummyToken, id);
+			
+		/* schedule the generate events */
+#define MAX_CIRCLES 10
+		for(int i = 0; i < MAX_CIRCLES; i++)
+		{
+			RsTickEvent::schedule_in(CIRCLE_EVENT_DUMMYGEN, i * CIRCLE_DUMMY_GENPERIOD);
+		}
+		return;
 	}
 
-	/* make lots of pseudo ids */
-	for(i = 0; i < nFakePseudoIds; i++)
-	{
-		RsGxsIdGroup id;
-
-		RsPeerDetails details;
-
-		id.mMeta.mGroupName = genRandomId();
-
-		id.mMeta.mGroupId = genRandomId();
-		id.mMeta.mGroupFlags = 0;
-		id.mPgpIdHash = "";
-		id.mPgpIdSign = "";
-
-
-		uint32_t dummyToken = 0;
-		createGroup(dummyToken, id);
-	}
-
-	//mUpdated = true;
-#endif
-	return;
+	// Otherwise - reschedule to come back here.
+	RsTickEvent::schedule_in(CIRCLE_EVENT_DUMMYLOAD, CIRCLE_DUMMY_GENPERIOD);
+        return;
 }
 
+
+void p3GxsCircles::generateDummyCircle()
+{
+	std::cerr << "p3GxsCircles::generateDummyCircle()";
+	std::cerr << std::endl;
+
+	int npgps = mDummyPgpLinkedIds.size();
+	RsGxsCircleGroup group;
+
+	std::set<RsGxsId> idset;
+	// select a random number of them.
+#define MAX_PEERS_PER_CIRCLE_GROUP	20
+	int nIds = 1 + (RSRandom::random_u32() % MAX_PEERS_PER_CIRCLE_GROUP);
+	for(int i = 0; i < nIds; i++)
+	{
+
+		int selection = (RSRandom::random_u32() % npgps);
+		std::list<RsGxsId>::iterator it = mDummyPgpLinkedIds.begin();
+		for(int j = 0; (it != mDummyPgpLinkedIds.end()) && (j < selection); j++, it++);
+		if (it != mDummyPgpLinkedIds.end())
+		{
+			idset.insert(*it);
+		}
+	}
+
+	/* be sure to add one of our IDs too (otherwise we wouldn't get the group)
+	 */
+	{
+
+		int selection = (RSRandom::random_u32() % mDummyOwnIds.size());
+		std::list<RsGxsId>::iterator it = mDummyOwnIds.begin();
+					mDummyOwnIds.push_back(*it);
+		for(int j = 0; (it != mDummyOwnIds.end()) && (j < selection); j++, it++);
+		if (it != mDummyOwnIds.end())
+		{
+			idset.insert(*it);
+		}
+	}
+
+	group.mMeta.mGroupName = genRandomId();
+	std::cerr << "p3GxsCircles::generateDummyCircle() Name: " << group.mMeta.mGroupName;
+	std::cerr << std::endl;
+
+	std::set<RsGxsId>::iterator it;
+	for(it = idset.begin(); it != idset.end(); it++)
+	{
+		group.mInvitedMembers.push_back(*it);
+		std::cerr << "p3GxsCircles::generateDummyCircle() Adding: " << *it;
+		std::cerr << std::endl;
+	}
+
+	uint32_t dummyToken;
+	createGroup(dummyToken, group);
+}
 
 
 /************************************************************************************/
@@ -1235,13 +1292,6 @@ std::ostream &operator<<(std::ostream &out, const RsGxsCircleMsg &msg)
 
 
 
-
-
-
-
-
-
-
 	// Overloaded from GxsTokenQueue for Request callbacks.
 void p3GxsCircles::handleResponse(uint32_t token, uint32_t req_type)
 {
@@ -1251,11 +1301,10 @@ void p3GxsCircles::handleResponse(uint32_t token, uint32_t req_type)
 	// stuff.
 	switch(req_type)
 	{
-#if 0
-		case CIRCLEREQ_CACHEOWNIDS:
-			cache_load_ownids(token);
+		case CIRCLEREQ_CIRCLE_LIST:
+			load_CircleIdList(token);
 			break;
-#endif
+
 		case CIRCLEREQ_CACHELOAD:
 			cache_load_for_token(token);
 			break;
@@ -1284,11 +1333,9 @@ void p3GxsCircles::handle_event(uint32_t event_type, const std::string &elabel)
 	// stuff.
 	switch(event_type)
 	{
-#if 0
-		case CIRCLE_EVENT_CACHEOWNIDS:
-			cache_request_ownids();
+		case CIRCLE_EVENT_LOADIDS:
+			request_CircleIdList();
 			break;
-#endif
 
 		case CIRCLE_EVENT_CACHELOAD:
 			cache_start_load();
@@ -1303,6 +1350,19 @@ void p3GxsCircles::handle_event(uint32_t event_type, const std::string &elabel)
 			cachetest_getlist();
 			break;
 #endif
+
+
+		case CIRCLE_EVENT_DUMMYSTART:
+			generateDummyData();
+			break;
+
+		case CIRCLE_EVENT_DUMMYLOAD:
+			checkDummyIdData();
+			break;
+
+		case CIRCLE_EVENT_DUMMYGEN:
+			generateDummyCircle();
+			break;
 
 		default:
 			/* error */

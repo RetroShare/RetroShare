@@ -928,6 +928,9 @@ bool p3IdService::cache_load_ownids(uint32_t token)
 	                }
 		}
 
+// No need to cache these items...
+// as it just causes the cache to be flushed.
+#if 0
 		// Cache Items too.
                 for(vit = grpData.begin(); vit != grpData.end(); vit++)
                 {
@@ -943,7 +946,8 @@ bool p3IdService::cache_load_ownids(uint32_t token)
 				cache_store(item);
 			}
 			delete item;
-                }
+		}
+#endif
 
         }
 	else

@@ -46,9 +46,9 @@ typedef std::string RsPeerId;	   // SSL ID.
 typedef std::string RsPgpId;
 typedef std::string RsCircleInternalId;
 
-#define GXS_PERM_TYPE_PUBLIC            0x0001
-#define GXS_PERM_TYPE_EXTERNAL          0x0002
-#define GXS_PERM_TYPE_YOUREYESONLY      0x0003
+#define GXS_CIRCLE_TYPE_PUBLIC            0x0001
+#define GXS_CIRCLE_TYPE_EXTERNAL          0x0002
+#define GXS_CIRCLE_TYPE_YOUREYESONLY      0x0003
 
 /* Permissions is part of GroupMetaData 
  */
@@ -88,6 +88,15 @@ class RsGxsCircleMsg
 	std::string stuff;
 };
 
+class RsGxsCircleDetails
+{
+        public:
+        RsGxsCircleId mCircleId;
+        std::string mCircleName;
+        std::set<RsGxsId> mUnknownPeers;
+        std::map<RsPgpId, std::list<RsGxsId> > mAllowedPeers;
+};
+
 
 
 
@@ -98,6 +107,18 @@ class RsGxsCircles: public RsGxsIfaceImpl
 	RsGxsCircles(RsGenExchange *gxs)
 	:RsGxsIfaceImpl(gxs)  { return; }
 virtual ~RsGxsCircles() { return; }
+
+
+	/* External Interface (Cached stuff) */
+virtual bool getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails &details) = 0;
+virtual bool getCircleIdList(std::list<RsGxsCircleId> &circleIds) = 0;
+
+	/* standard load */
+virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsCircleGroup> &groups) = 0;
+
+	/* make new group */
+virtual bool createGroup(uint32_t& token, RsGxsCircleGroup &group) = 0;
+
 
 };
 

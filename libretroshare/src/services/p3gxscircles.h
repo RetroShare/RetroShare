@@ -108,6 +108,7 @@ class RsGxsCircleCache
 	bool addAllowedPeer(const RsPgpId &pgpid, const RsGxsId &gxsId);
 
 	RsGxsCircleId mCircleId;
+	std::string mCircleName;
 
 	time_t mUpdateTime;
 	std::set<RsGxsCircleId> mUnprocessedCircles;
@@ -144,7 +145,34 @@ class p3GxsCircles: public RsGxsCircleExchange, public RsGxsCircles,
 	p3GxsCircles(RsGeneralDataService* gds, RsNetworkExchangeService* nes, 
 		p3IdService *identities);
 
-	virtual void service_tick(); // needed for background processing.
+	/*********** External Interface ***************/
+
+	virtual bool getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails &details);
+	virtual bool getCircleIdList(std::list<RsGxsCircleId> &circleIds);
+
+	virtual bool isLoaded(const RsGxsCircleId &circleId);
+	virtual bool loadCircle(const RsGxsCircleId &circleId);
+
+	virtual int canSend(const RsGxsCircleId &circleId, const RsPgpId &id);
+	virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist);
+
+	/*******/
+
+	virtual void createLocalCircle();
+	virtual void addToLocalCircle();
+	virtual void removeFromLocalCircle();
+	virtual void getLocalCirclePeers();
+	virtual void getListOfLocalCircles();
+
+	/*******/
+
+	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsCircleGroup> &groups);
+	virtual bool createGroup(uint32_t& token, RsGxsCircleGroup &group);
+
+	/**********************************************/
+
+	// needed for background processing.
+	virtual void service_tick(); 
 
 	protected:
 
@@ -162,28 +190,11 @@ class p3GxsCircles: public RsGxsCircleExchange, public RsGxsCircles,
 	// Overloaded from RsTickEvent.
 	virtual void handle_event(uint32_t event_type, const std::string &elabel);
 
-	public:
-
-
-	virtual bool isLoaded(const RsGxsCircleId &circleId);
-	virtual bool loadCircle(const RsGxsCircleId &circleId);
-
-	virtual int canSend(const RsGxsCircleId &circleId, const RsPgpId &id);
-	virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist);
-
-	/*** External Interface */
-
-	virtual void createLocalCircle();
-	virtual void addToLocalCircle();
-	virtual void removeFromLocalCircle();
-	virtual void getLocalCirclePeers();
-	virtual void getListOfLocalCircles();
-
-	/* similar functions for External Groups */
-	virtual bool createGroup(uint32_t& token, RsGxsCircleGroup &group);
-	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsCircleGroup> &groups);
-
 	private:
+
+	// Load data.
+	bool request_CircleIdList();
+	bool load_CircleIdList(uint32_t token);
 
 	// Need some crazy arsed cache to store the circle info.
 	// so we don't have to keep loading groups.
@@ -199,6 +210,8 @@ class p3GxsCircles: public RsGxsCircleExchange, public RsGxsCircles,
 	p3IdService *mIdentities; // Needed for constructing Circle Info,
 
 	RsMutex mCircleMtx; /* Locked Below Here */
+
+	std::list<RsGxsCircleId> mCircleIdList;
 
 	/***** Caching Circle Info, *****/
 	// initial load queue
@@ -216,8 +229,17 @@ class p3GxsCircles: public RsGxsCircleExchange, public RsGxsCircles,
 
 	private:
 
-virtual void generateDummyData();
-std::string genRandomId();
+	std::string genRandomId();
+
+	void generateDummyData();
+	void checkDummyIdData();
+	void generateDummyCircle();
+
+
+	uint32_t mDummyIdToken;
+	std::list<RsGxsId> mDummyPgpLinkedIds;
+	std::list<RsGxsId> mDummyOwnIds;
+
 
 };
 
