@@ -2,6 +2,7 @@
 
 echo This script is going to build the debian source package for RetroShare, from the svn.
 
+svnpath="svn://csoler@svn.code.sf.net/p/retroshare/code/"
 workdir=retroshare-0.5
 if test -d "$workdir" ;  then
 	echo Please remove the $workdir directory first.
@@ -39,41 +40,41 @@ tar zxvf $packages/BaseRetroShareDirs.tgz 2> /dev/null
 
 echo Checking out latest snapshot in libbitdht...
 cd $workdir/src/libbitdht/
-svn co -r$svn https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/libbitdht/src . 2> /dev/null
+svn co -r$svn $svnpath/trunk/libbitdht/src . 2> /dev/null
 cd ../../..
 #  
 echo Checking out latest snapshot in openpgpsdk...
 cd $workdir/src/openpgpsdk/
-svn co -r$svn https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/openpgpsdk/src . 2> /dev/null
+svn co -r$svn $svnpath/trunk/openpgpsdk/src . 2> /dev/null
 cd ../../..
 #  
 echo Checking out latest snapshot in libretroshare...
 cd $workdir/src/libretroshare/
-svn co -r$svn https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/libretroshare/src . 2> /dev/null
+svn co -r$svn $svnpath/trunk/libretroshare/src . 2> /dev/null
 cd ../../..
 #  
 echo Checking out latest snapshot in retroshare-gui...
 cd $workdir/src/retroshare-gui/
-svn co -r$svn https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/retroshare-gui/src . 2> /dev/null
+svn co -r$svn $svnpath/trunk/retroshare-gui/src . 2> /dev/null
 cd ../../..
 #
 echo Checking out latest snapshot in retroshare-nogui...
 cd $workdir/src/retroshare-nogui/
-svn co -r$svn https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/retroshare-nogui/src . 2> /dev/null
+svn co -r$svn $svnpath/trunk/retroshare-nogui/src . 2> /dev/null
 cd ../../..
 
 # LinksCloud plugin
 echo Checking out latest snapshot in LinksCloud plugin
 mkdir -p $workdir/src/plugins/LinksCloud
 cd $workdir/src/plugins/LinksCloud
-svn co -r$svn https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/plugins/LinksCloud . 2> /dev/null
+svn co -r$svn $svnpath/trunk/plugins/LinksCloud . 2> /dev/null
 cd ../../../..
 
 # VOIP plugin
 echo Checking out latest snapshot in VOIP plugin
 mkdir -p $workdir/src/plugins/VOIP
 cd $workdir/src/plugins/VOIP
-svn co -r$svn https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/plugins/VOIP . 2> /dev/null
+svn co -r$svn $svnpath/trunk/plugins/VOIP . 2> /dev/null
 cd ../../../..
 cp $workdir/src/retroshare-gui/gui/chat/PopupChatDialog.ui $workdir/src/plugins/VOIP/gui/PopupChatDialog.ui
 
@@ -81,7 +82,7 @@ cp $workdir/src/retroshare-gui/gui/chat/PopupChatDialog.ui $workdir/src/plugins/
 cd $workdir/src/plugins
 mkdir -p Common
 cd Common
-svn co -r$svn https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/plugins/Common . 2> /dev/null
+svn co -r$svn $svnpath/trunk/plugins/Common . 2> /dev/null
 cd ../../../..
 
 # bdboot.txt file
@@ -142,7 +143,7 @@ cd $workdir
 
 #for i in sid; do
 #for i in natty; do
-for i in quantal precise oneiric karmic lucid maverick natty; do
+for i in sid squeeze maverick natty oneiric precise quantal ; do
 	echo copying changelog for $i
 	cat ../changelog | sed -e s/XXXXXX/"$svn"/g | sed -e s/YYYYYY/"$i"/g > debian/changelog
 

@@ -15,6 +15,10 @@ rm -rf retroshare-0.5/src/retroshare-gui/*
 rm -rf retroshare-0.5/src/retroshare-gui/.svn/
 rm -rf retroshare-0.5/src/retroshare-nogui/*
 rm -rf retroshare-0.5/src/retroshare-nogui/.svn/
+rm -rf retroshare-0.5/src/plugins/VOIP/*
+rm -rf retroshare-0.5/src/plugins/VOIP/.svn/
+rm -rf retroshare-0.5/src/plugins/LinksCloud/*
+rm -rf retroshare-0.5/src/plugins/LinksCloud/.svn/
 
 find retroshare-0.5 -name "*~" -exec \rm {} \;
 
