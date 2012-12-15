@@ -178,7 +178,7 @@ linux-* {
 
 	# These two lines fixe compilation on ubuntu natty. Probably a ubuntu packaging error.
 	INCLUDEPATH *= /usr/lib/x86_64-linux-gnu/glib-2.0/include/
-	INCLUDEPATH *= /usr/lib/glib-2.0/include/
+	INCLUDEPATH *= /usr/lib/arm-linux-gnueabi/glib-2.0/include/
 	INCLUDEPATH *= /usr/lib/i386-linux-gnu/glib-2.0/include/
 
 	OPENPGPSDK_DIR = ../../openpgpsdk/src
