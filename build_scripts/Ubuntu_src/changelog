@@ -37,6 +37,8 @@ retroshare (0.5.4-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
             - made DataRate + Operating Mode work together.
             - add ToolTip to OpModeStatus .... (can't actually view - please correct as necessary)
 
+         * Fixed utf8 characters for group names in RemoteDirModel (shared files).
+         * Fixed layout of the FriendRequestPage in ConnectFriendWizard.
          * Added flags for services and service permissions for peers
            Flags are identity-related, meaning that all locations of the same peers have the same flags.
             - It's now possible to tweak which services each peer can use. Service that can be disabled are
@@ -51,6 +53,9 @@ retroshare (0.5.4-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
            Shoudl probably fix many startup issues
 
   * Bugs
+      - added proper filtering of directories from RSLinks and RsCollection to avoid the possibility of writing out of the 
+        download directory.
+      - Added missing closeConnection when the connection dies with SSL_ERROR_SYSCALL.
       - Fixed display of files in flat view. The files of friends are shown again
       - fixed bug in ShareManager causing directory flags to be set on wrong directory after sorting
       - Protected waitingIds with Mutex in pqipersongrp.cc.
@@ -61,7 +66,7 @@ retroshare (0.5.4-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
         This is required as neither Listener nor Person are thread safe (TODO).
       - fixed missing error msg in p3cfgmgr when serialisation fails.
       - fixed bug in RemoteDirModel causing infinite loop to happen when group name is unknown
-
+       
  -- Cyril Soler <csoler@users.sourceforge.net>  Tue, 20 Nov 2012 12:30:00 +0100
 
 retroshare (0.5.4-0.5875~precise) precise; urgency=low
