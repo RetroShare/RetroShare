@@ -1,0 +1,151 @@
+package rsctrl.core;
+
+///////////////////////////////////////////////////////////////
+// These are basic Messages, which are used as building blocks
+// throughout the rest of the interface.
+// They should not be sent RAW, but should be wrapped in another msg.
+///////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////
+// Expected PackageIds.
+
+enum ExtensionId { CORE = 0; }
+
+enum PackageId { 
+  PEERS = 1; 
+  SYSTEM = 2;
+  CHAT = 3;
+  SEARCH = 4;
+  FILES = 5;
+  // BELOW HERE IS STILL BEING DESIGNED.
+  //MSGS = 5;
+  //TRANSFER = 6;
+
+  // THEORETICAL ONES.
+  GXS = 1000; 
+}
+
+
+///////////////////////////////////////////////////////////////
+// Basic Status Response, should be in all responses
+
+message Status {
+  enum StatusCode {
+    FAILED        	= 0;
+    NO_IMPL_YET		= 1;
+    INVALID_QUERY 	= 2;
+    PARTIAL_SUCCESS   	= 3;
+    SUCCESS       	= 4;
+    READMSG       	= 5;
+  }
+
+  required StatusCode code = 1;
+  optional string msg = 2;
+}
+
+///////////////////////////////////////////////////////////////
+
+message IpAddr {
+  required string addr = 1 [default = ""];
+  required uint32 port = 2 [default = 0];  // must be 16 bit, 0 for unknown.
+}
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+// Peer structures, mainly rsctrl.peers related.
+
+message Location {
+
+  enum StateFlags {	// ORd together...
+    ONLINE 		= 1;
+    CONNECTED		= 2;
+    UNREACHABLE		= 4;
+  }
+
+  required string ssl_id = 1;
+  required string location = 2;
+
+  required IpAddr localaddr = 3;
+  required IpAddr extaddr   = 4;
+
+  required uint32 state = 5;  // Not an ENUM as ORd together.
+}
+
+message Person {
+
+  enum Relationship {	
+    FRIEND 			= 1;
+    FRIEND_OF_MANY_FRIENDS 	= 2;  // 3+ at the moment.
+    FRIEND_OF_FRIENDS		= 3;  // 1 or 2.
+    UNKNOWN			= 4;
+  }
+
+  required string gpg_id = 1;
+  required string name = 2;
+  required Relationship relation = 3;
+
+  repeated Location locations = 4;
+}
+
+///////////////////////////////////////////////////////////////
+// File structures, mainly rsctrl.files related.
+
+message File {
+  required string name = 1;
+  required string hash = 2;
+  required uint64 size = 3;
+
+  // THINK WE DONT WANT THESE HERE...
+  // BETTER TO KEEP File simple.
+  //optional string path = 4;
+  //optional string avail = 5;
+}
+
+message Dir {
+  required string name = 1;
+  required string path = 2;
+
+  repeated Dir subdirs = 3;
+  repeated File files = 4;
+}
+
+
+///////////////////////////////////////////////////////////////
+// System Status
+
+message SystemStatus {
+  enum NetCode {
+    BAD_UNKNOWN  	= 0;
+    BAD_OFFLINE  	= 1;
+    BAD_NATSYM 		= 2;
+    BAD_NODHT_NAT  	= 3;
+    WARNING_RESTART  	= 4;
+    WARNING_NATTED  	= 5;
+    WARNING_NODHT  	= 6;
+    GOOD  	 	= 7;
+    ADV_FORWARD  	= 8;
+  }
+
+  required NetCode net_status = 1;
+  optional string msg = 2;
+}
+
+
+///////////////////////////////////////////////////////////////
+// Bandwidth Measurements.
+
+message Bandwidth {
+  required float up = 1;   // kB/s
+  required float down = 2; // kB/s
+  optional string name = 3; // e.g. DHT, UDP, TCP, Stun, or Total.
+}
+
+message BandwidthSet {
+  repeated Bandwidth bandwidths = 1;
+}
+
+
+
+///////////////////////////////////////////////////////////////
+
+

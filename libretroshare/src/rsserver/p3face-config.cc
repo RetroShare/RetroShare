@@ -31,6 +31,7 @@
 #include "pqi/authssl.h"
 #include "pqi/authgpg.h"
 #include "retroshare/rsinit.h"
+#include "plugins/pluginmanager.h"
 #include "util/rsdebug.h"
 const int p3facemsgzone = 11453;
 
@@ -40,6 +41,19 @@ const int p3facemsgzone = 11453;
 #include "pqi/p3peermgr.h"
 #include "pqi/p3netmgr.h"
 
+
+// TO SHUTDOWN THREADS.
+#ifdef RS_ENABLE_GXS
+
+#include "services/p3idservice.h"
+#include "services/p3gxscircles.h"
+#include "services/p3wiki.h"
+#include "services/p3posted.h"
+#include "services/p3photoservice.h"
+#include "services/p3gxsforums.h"
+#include "services/p3wire.h"
+
+#endif
 
 /****************************************/
 /* RsIface Config */
@@ -134,9 +148,27 @@ void RsServer::rsGlobalShutDown()
 	join();
 	ftserver->StopThreads();
 
+	mPluginsManager->stopPlugins();
+
 	// stop the p3distrib threads
+
 	mForums->join();
 	mChannels->join();
+
+
+
+#ifdef RS_ENABLE_GXS
+        if(mGxsCircles) mGxsCircles->join();
+        if(mGxsForums) mGxsForums->join();
+        if(mGxsIdService) mGxsIdService->join();
+        if(mPosted) mPosted->join();
+        if(mPhoto) mPhoto->join();
+        if(mWiki) mWiki->join();
+        if(mWire) mWire->join();
+#endif
+
+
+
 
 #ifdef RS_USE_BLOGS
 	mBlogs->join();

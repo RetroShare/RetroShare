@@ -64,6 +64,9 @@ virtual void    setExternalPort(unsigned short eport_in);
 virtual bool    getInternalAddress(struct sockaddr_in &addr);
 virtual bool    getExternalAddress(struct sockaddr_in &addr);
 
+                /* TO IMPLEMENT: New Port Forward interface to support as many ports as necessary */
+virtual bool    requestPortForward(const PortForwardParams &params) { return false; }
+virtual bool    statusPortForward(const uint32_t fwdId, PortForwardParams &params) { return false; }
 
 	/* pqiNetAssistConnect - external interface functions */
 

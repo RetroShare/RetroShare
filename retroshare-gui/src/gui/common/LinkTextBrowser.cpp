@@ -1,4 +1,5 @@
 #include <QDesktopServices>
+#include <QPainter>
 
 #include "LinkTextBrowser.h"
 
@@ -32,5 +33,29 @@ void LinkTextBrowser::linkClicked(const QUrl &url)
 	else
 #endif
 		QDesktopServices::openUrl(url);
+}
+
+void LinkTextBrowser::setPlaceholderText(const QString &text)
+{
+	placeholderText = text;
+	viewport()->repaint();
+}
+
+void LinkTextBrowser::paintEvent(QPaintEvent *event)
+{
+	QTextBrowser::paintEvent(event);
+
+	if (placeholderText.isEmpty() == false && document()->isEmpty()) {
+		QWidget *vieportWidget = viewport();
+		QPainter painter(vieportWidget);
+
+		QPen pen = painter.pen();
+		QColor color = pen.color();
+		color.setAlpha(128);
+		pen.setColor(color);
+		painter.setPen(pen);
+
+		painter.drawText(QRect(QPoint(), vieportWidget->size()), Qt::AlignHCenter | Qt::AlignVCenter | Qt::TextWordWrap, placeholderText);
+	}
 }
 

@@ -62,6 +62,8 @@ RsServer::RsServer(RsIface &i, NotifyBase &callback)
 
 	pqih = NULL;
 
+	mPluginsManager = NULL;
+
 	/* services */
 	ad = NULL;
 	msgSrv = NULL;
@@ -74,6 +76,18 @@ RsServer::RsServer(RsIface &i, NotifyBase &callback)
 	/* Config */
 	mConfigMgr = NULL;
 	mGeneralConfig = NULL;
+
+        /* GXS - Amazingly we can still initialise these
+         * even without knowing the data-types (they are just pointers???)
+	 */
+        mPhoto = NULL;
+        mWiki = NULL;
+        mPosted = NULL;
+        mGxsCircles = NULL;
+        mGxsIdService = NULL;
+        mGxsForums = NULL;
+        mWire = NULL;
+
 }
 
 RsServer::~RsServer()

@@ -1,6 +1,31 @@
 #ifndef RSGXSNETSERVICE_H
 #define RSGXSNETSERVICE_H
 
+/*
+ * libretroshare/src/gxs: rsgxnetservice.h
+ *
+ * Access to rs network and synchronisation service implementation
+ *
+ * Copyright 2012-2012 by Christopher Evi-Parker
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License Version 2 as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
+ *
+ * Please report all bugs and problems to "retroshare@lunamutt.com".
+ *
+ */
+
 #include <list>
 #include <queue>
 
@@ -65,17 +90,22 @@ public:
 
 };
 
-//class RsNxsNetMgrImpl : public RsNxsNetMgrImpl
-//{
+class RsNxsNetMgrImpl : public RsNxsNetMgr
+{
 
-//public:
+public:
 
-//    RsNxsNetMgrImpl(p3LinkMgr* lMgr);
+    RsNxsNetMgrImpl(p3LinkMgr* lMgr);
 
-//    std::string getOwnId();
-//    void getOnlineList(std::set<std::string>& ssl_peers);
+    std::string getOwnId();
+    void getOnlineList(std::set<std::string>& ssl_peers);
 
-//};
+private:
+
+    p3LinkMgr* mLinkMgr;
+    RsMutex mNxsNetMgrMtx;
+
+};
 
 
 /// keep track of transaction number
@@ -265,44 +295,44 @@ private:
      * of msgs received from peer stored in passed transaction
      * @param tr transaction responsible for generating msg request
      */
-	void locked_genReqMsgTransaction(NxsTransaction* tr);
+    void locked_genReqMsgTransaction(NxsTransaction* tr);
 
     /*!
      * Generates new transaction to send grp requests based on list
      * of grps received from peer stored in passed transaction
      * @param tr transaction responsible for generating grp request
      */
-	void locked_genReqGrpTransaction(NxsTransaction* tr);
+    void locked_genReqGrpTransaction(NxsTransaction* tr);
 
-	/*!
-	 * Generates new transaction to send msg data based on list
-	 * of grpids received from peer stored in passed transaction
-	 * @param tr transaction responsible for generating grp request
-	 */
-	void locked_genSendMsgsTransaction(NxsTransaction* tr);
+    /*!
+     * Generates new transaction to send msg data based on list
+     * of grpids received from peer stored in passed transaction
+     * @param tr transaction responsible for generating grp request
+     */
+    void locked_genSendMsgsTransaction(NxsTransaction* tr);
 
-	/*!
-	 * Generates new transaction to send grp data based on list
-	 * of grps received from peer stored in passed transaction
-	 * @param tr transaction responsible for generating grp request
-	 */
-	void locked_genSendGrpsTransaction(NxsTransaction* tr);
+    /*!
+     * Generates new transaction to send grp data based on list
+     * of grps received from peer stored in passed transaction
+     * @param tr transaction responsible for generating grp request
+     */
+    void locked_genSendGrpsTransaction(NxsTransaction* tr);
 
-	/*!
-	 * convenience function to add a transaction to list
-	 * @param tr transaction to add
-	 */
-	bool locked_addTransaction(NxsTransaction* tr);
+    /*!
+     * convenience function to add a transaction to list
+     * @param tr transaction to add
+     */
+    bool locked_addTransaction(NxsTransaction* tr);
 
-	void cleanTransactionItems(NxsTransaction* tr) const;
+    void cleanTransactionItems(NxsTransaction* tr) const;
 
-	/*!
-	 *  @param tr the transaction to check for timeout
-	 *  @return false if transaction has timed out, true otherwise
-	 */
-	bool locked_checkTransacTimedOut(NxsTransaction* tr);
+    /*!
+     *  @param tr the transaction to check for timeout
+     *  @return false if transaction has timed out, true otherwise
+     */
+    bool locked_checkTransacTimedOut(NxsTransaction* tr);
 
-	/** E: Transaction processing **/
+    /** E: Transaction processing **/
 
     /** S: item handlers **/
 
@@ -370,6 +400,7 @@ private:
     RsMutex mNxsMutex;
 
     uint32_t mSyncTs;
+
     const uint32_t mSYNC_PERIOD;
 
 };

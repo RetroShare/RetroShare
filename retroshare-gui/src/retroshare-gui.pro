@@ -1,13 +1,21 @@
 CONFIG += qt gui uic qrc resources uitools idle bitdht
 
 # Below is for GXS services.
-#CONFIG += photoshare 
-#CONFIG += wikipoos 
-#CONFIG += thewire 
-#CONFIG += identities
-#CONFIG += forumsv2 
-#CONFIG += posted 
-#CONFIG += unfinished 
+# Should be disabled for releases.
+#CONFIG += gxs
+
+gxs {
+	CONFIG += photoshare
+	CONFIG += wikipoos
+	CONFIG += identities
+	CONFIG += circles
+	CONFIG += gxsforums
+	CONFIG += posted
+	CONFIG += unfinished
+	CONFIG += gxsgui
+	# thewire is incomplete - dont enable
+	#CONFIG += thewire
+}
 
 
 # Other Disabled Bits.
@@ -53,6 +61,12 @@ linux-* {
 	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
 	LIBS += -lssl -lupnp -lixml -lXss -lgnome-keyring
 	LIBS *= -lcrypto -ldl -lX11 -lz
+
+	gxs {
+		LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+		LIBS += -lsqlite3
+	}
+
 	LIBS *= -rdynamic
 	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions
 	DEFINES *= UBUNTU
@@ -137,6 +151,12 @@ win32 {
 	LIBS += -lole32 -lwinmm
 	RC_FILE = gui/images/retroshare_win.rc
 
+        gxs {
+                LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+		LIBS += C:\Development\Libraries\sqlite\sqlite-autoconf-3070900\.libs\libsqlite3.a
+                #LIBS += -lsqlite3
+        }
+
 	# export symbols for the plugins
 	LIBS += -Wl,--export-all-symbols,--out-implib,lib/libretroshare-gui.a
 
@@ -164,6 +184,12 @@ macx {
 	LIBS += -framework CoreFoundation
 	LIBS += -framework Security
 
+        gxs {
+                LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+                LIBS += -lsqlite3
+        }
+
+
     	INCLUDEPATH += .
 	#DEFINES* = MAC_IDLE # for idle feature
 	CONFIG -= uitools
@@ -181,6 +207,12 @@ freebsd-* {
 	LIBS *= -lupnp
 	LIBS *= -lgnome-keyring
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
+
+        gxs {
+                LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+                LIBS += -lsqlite3
+        }
+
 }
 
 ############################## Common stuff ######################################
@@ -365,6 +397,7 @@ HEADERS +=  rshare.h \
             gui/common/GroupDefs.h \
             gui/common/Emoticons.h \
             gui/common/RSListWidgetItem.h \
+            gui/common/RSTreeWidget.h \
             gui/common/RSTreeWidgetItem.h \
             gui/common/RSTabWidget.h \
             gui/common/RSItemDelegate.h \
@@ -631,6 +664,7 @@ SOURCES +=  main.cpp \
             gui/common/GroupDefs.cpp \
             gui/common/Emoticons.cpp \
             gui/common/RSListWidgetItem.cpp \
+            gui/common/RSTreeWidget.cpp \
             gui/common/RSTreeWidgetItem.cpp \
             gui/common/RSTabWidget.cpp \
             gui/common/RSItemDelegate.cpp \
@@ -830,162 +864,239 @@ DEFINES *= CHANNELS_FRAME_CATCHER
 
 }
 
+
 # BELOW IS GXS New Services.
 
+	
 unfinished {
-
-DEPENDPATH += gui/unfinished \
-
-HEADERS += gui/unfinished/ApplicationWindow.h \
-           gui/unfinished/CalDialog.h \
-           gui/unfinished/ExampleDialog.h \
-           gui/unfinished/GamesDialog.h \
-
-#           gui/unfinished/profile/ProfileView.h \
-#           gui/unfinished/profile/ProfileEdit.h
-#           gui/unfinished/StatisticDialog.h \
-#           gui/unfinished/PhotoDialog.h \
-#           gui/unfinished/PhotoShow.h \
-
-FORMS += gui/unfinished/ApplicationWindow.ui \
-         gui/unfinished/CalDialog.ui \
-         gui/unfinished/ExampleDialog.ui \
-         gui/unfinished/GamesDialog.ui \
-
-#         gui/unfinished/profile/ProfileView.ui \
-#         gui/unfinished/profile/ProfileEdit.ui
-#         gui/unfinished/StatisticDialog.ui \
-#         gui/unfinished/PhotoDialog.ui \
-#         gui/unfinished/PhotoShow.ui \
-
-SOURCES += gui/unfinished/ApplicationWindow.cpp \
-           gui/unfinished/CalDialog.cpp \
-           gui/unfinished/ExampleDialog.cpp \
-           gui/unfinished/GamesDialog.cpp \
-
-#           gui/unfinished/profile/ProfileView.cpp \
-#           gui/unfinished/profile/ProfileEdit.cpp
-#           gui/unfinished/StatisticDialog.cpp \
-#           gui/unfinished/PhotoDialog.cpp \
-#           gui/unfinished/PhotoShow.cpp \
-
-          DEFINES *= UNFINISHED
+	
+	DEPENDPATH += gui/unfinished \
+	
+	HEADERS += gui/unfinished/ApplicationWindow.h \
+		gui/unfinished/CalDialog.h \
+		gui/unfinished/ExampleDialog.h \
+		gui/unfinished/GamesDialog.h \
+	
+#		gui/unfinished/profile/ProfileView.h \
+#		gui/unfinished/profile/ProfileEdit.h
+#		gui/unfinished/StatisticDialog.h \
+#		gui/unfinished/PhotoDialog.h \
+#		gui/unfinished/PhotoShow.h \
+	
+	FORMS += gui/unfinished/ApplicationWindow.ui \
+		gui/unfinished/CalDialog.ui \
+		gui/unfinished/ExampleDialog.ui \
+		gui/unfinished/GamesDialog.ui \
+	
+#		gui/unfinished/profile/ProfileView.ui \
+#		gui/unfinished/profile/ProfileEdit.ui
+#		gui/unfinished/StatisticDialog.ui \
+#		gui/unfinished/PhotoDialog.ui \
+#		gui/unfinished/PhotoShow.ui \
+	
+	SOURCES += gui/unfinished/ApplicationWindow.cpp \
+		gui/unfinished/CalDialog.cpp \
+		gui/unfinished/ExampleDialog.cpp \
+		gui/unfinished/GamesDialog.cpp \
+	
+#		gui/unfinished/profile/ProfileView.cpp \
+#		gui/unfinished/profile/ProfileEdit.cpp
+#		gui/unfinished/StatisticDialog.cpp \
+#		gui/unfinished/PhotoDialog.cpp \
+#		gui/unfinished/PhotoShow.cpp \
+	
+	DEFINES *= UNFINISHED
 }
-
-
+	
+	
 photoshare {
-
-	HEADERS += gui/PhotoShare/PhotoItem.h \
-		gui/PhotoShare/PhotoDialog.h \
-		gui/PhotoShare/PhotoAddDialog.h \
-		gui/PhotoShare/PhotoDetailsDialog.h \
+	
+	HEADERS += \
 		gui/PhotoShare/PhotoDrop.h \
+		gui/PhotoShare/AlbumItem.h \
+		gui/PhotoShare/AlbumDialog.h \
+		gui/PhotoShare/AlbumCreateDialog.h \
+		gui/PhotoShare/PhotoItem.h \
+		gui/PhotoShare/PhotoShareItemHolder.h \
+		gui/PhotoShare/PhotoShare.h \
 		gui/PhotoShare/PhotoSlideShow.h \
-
-	FORMS += gui/PhotoShare/PhotoItem.ui \
+		gui/PhotoShare/PhotoDialog.h \
+		gui/PhotoShare/PhotoCommentItem.h \
+		gui/PhotoShare/AddCommentDialog.h
+	
+	FORMS += \
+		gui/PhotoShare/PhotoItem.ui \
 		gui/PhotoShare/PhotoDialog.ui \
-		gui/PhotoShare/PhotoAddDialog.ui \
-		gui/PhotoShare/PhotoDetailsDialog.ui \
+		gui/PhotoShare/AlbumItem.ui \
+		gui/PhotoShare/AlbumDialog.ui \
+		gui/PhotoShare/AlbumCreateDialog.ui \
+		gui/PhotoShare/PhotoShare.ui \
 		gui/PhotoShare/PhotoSlideShow.ui \
-
-	SOURCES += gui/PhotoShare/PhotoItem.cpp \
+		gui/PhotoShare/PhotoCommentItem.ui \
+		gui/PhotoShare/AddCommentDialog.ui
+	
+	SOURCES += \
+		gui/PhotoShare/PhotoItem.cpp \
 		gui/PhotoShare/PhotoDialog.cpp \
-		gui/PhotoShare/PhotoAddDialog.cpp \
-		gui/PhotoShare/PhotoDetailsDialog.cpp \
 		gui/PhotoShare/PhotoDrop.cpp \
+		gui/PhotoShare/AlbumItem.cpp \
+		gui/PhotoShare/AlbumDialog.cpp \
+		gui/PhotoShare/AlbumCreateDialog.cpp \
+		gui/PhotoShare/PhotoShareItemHolder.cpp \
+		gui/PhotoShare/PhotoShare.cpp \
 		gui/PhotoShare/PhotoSlideShow.cpp \
+		gui/PhotoShare/PhotoCommentItem.cpp \
+		gui/PhotoShare/AddCommentDialog.cpp
+	
+	RESOURCES += gui/PhotoShare/Photo_images.qrc
 
 }
-
-
+	
+	
 wikipoos {
-
+	
+	INCLUDEPATH += ../../supportlibs/pegmarkdown
+	
 	HEADERS += gui/WikiPoos/WikiDialog.h \
 		gui/WikiPoos/WikiAddDialog.h \
 		gui/WikiPoos/WikiEditDialog.h \
-
+	
 	FORMS += gui/WikiPoos/WikiDialog.ui \
 		gui/WikiPoos/WikiAddDialog.ui \
 		gui/WikiPoos/WikiEditDialog.ui \
-
+	
 	SOURCES += gui/WikiPoos/WikiDialog.cpp \
 		gui/WikiPoos/WikiAddDialog.cpp \
 		gui/WikiPoos/WikiEditDialog.cpp \
-
+	
+	RESOURCES += gui/WikiPoos/Wiki_images.qrc
 }
-
-
-
+	
+	
+	
 thewire {
-
+	
 	HEADERS += gui/TheWire/PulseItem.h \
 		gui/TheWire/WireDialog.h \
 		gui/TheWire/PulseAddDialog.h \
-
+	
 	FORMS += gui/TheWire/PulseItem.ui \
 		gui/TheWire/WireDialog.ui \
 		gui/TheWire/PulseAddDialog.ui \
-
+	
 	SOURCES += gui/TheWire/PulseItem.cpp \
 		gui/TheWire/WireDialog.cpp \
 		gui/TheWire/PulseAddDialog.cpp \
-
+	
 }
-
+	
 identities {
-
-	HEADERS += util/TokenQueue.h \
+	
+	HEADERS +=  \
 		gui/Identity/IdDialog.h \
 		gui/Identity/IdEditDialog.h \
-
+	
 	FORMS += gui/Identity/IdDialog.ui \
 		gui/Identity/IdEditDialog.ui \
-
-	SOURCES += util/TokenQueue.cpp \
+	
+	SOURCES +=  \
 		gui/Identity/IdDialog.cpp \
 		gui/Identity/IdEditDialog.cpp \
-
+	
 }
-
-
-forumsv2 {
-
-	HEADERS += gui/ForumsV2Dialog.h \
-            gui/forumsv2/ForumV2Details.h \
-            gui/forumsv2/EditForumV2Details.h \
-            gui/forumsv2/CreateForumV2.h \
-            gui/forumsv2/CreateForumV2Msg.h \
-
-	FORMS += gui/ForumsV2Dialog.ui \
-            gui/forumsv2/ForumV2Details.ui \
-            gui/forumsv2/EditForumV2Details.ui \
-            gui/forumsv2/CreateForumV2.ui \
-            gui/forumsv2/CreateForumV2Msg.ui \
-
-	SOURCES += gui/ForumsV2Dialog.cpp \
-            gui/forumsv2/ForumV2Details.cpp \
-            gui/forumsv2/EditForumV2Details.cpp \
-            gui/forumsv2/CreateForumV2.cpp \
-            gui/forumsv2/CreateForumV2Msg.cpp \
-
+	
+circles {
+	
+	HEADERS +=  \
+		gui/Circles/CirclesDialog.h \
+	
+	FORMS += gui/Circles/CirclesDialog.ui \
+	
+	SOURCES +=  \
+		gui/Circles/CirclesDialog.cpp \
+	
 }
-
-
+	
+	
+gxsforums {
+	
+	HEADERS += gui/GxsForumsDialog.h \
+		gui/gxsforums/CreateGxsForumMsg.h \
+		gui/gxsforums/GxsForumThreadWidget.h \
+		gui/gxsforums/GxsForumsFillThread.h
+	
+	FORMS += gui/GxsForumsDialog.ui \
+		gui/gxsforums/CreateGxsForumMsg.ui \
+		gui/gxsforums/GxsForumThreadWidget.ui
+	
+	SOURCES += gui/GxsForumsDialog.cpp \
+		gui/gxsforums/CreateGxsForumMsg.cpp \
+		gui/gxsforums/GxsForumThreadWidget.cpp \
+		gui/gxsforums/GxsForumsFillThread.cpp
+}
+	
+	
 posted {
-
+	
 	HEADERS += gui/Posted/PostedDialog.h \
-            gui/Posted/PostedListDialog.h \
-            gui/Posted/PostedItem.h \
-            gui/Posted/PostedComments.h \
-
+		gui/Posted/PostedListDialog.h \
+		gui/Posted/PostedItem.h \
+		gui/Posted/PostedComments.h \
+		gui/Posted/PostedGroupDialog.h \
+		gui/Posted/PostedCreatePostDialog.h \
+		gui/Posted/PostedCreateCommentDialog.h \
+		gui/Posted/PostedUserTypes.h
+	
 	FORMS += gui/Posted/PostedDialog.ui \
-            gui/Posted/PostedListDialog.ui \
-            gui/Posted/PostedItem.ui \
-            gui/Posted/PostedComments.ui \
-
+		gui/Posted/PostedListDialog.ui \
+		gui/Posted/PostedItem.ui \
+		gui/Posted/PostedComments.ui \
+		gui/Posted/PostedCreatePostDialog.ui \
+		gui/Posted/PostedCreateCommentDialog.ui
+	
 	SOURCES += gui/Posted/PostedDialog.cpp \
-            gui/Posted/PostedListDialog.cpp \
-            gui/Posted/PostedItem.cpp \
-            gui/Posted/PostedComments.cpp \
-
+		gui/Posted/PostedListDialog.cpp \
+		gui/Posted/PostedItem.cpp \
+		gui/Posted/PostedComments.cpp \
+		gui/Posted/PostedGroupDialog.cpp \
+		gui/Posted/PostedCreatePostDialog.cpp \
+		gui/Posted/PostedCreateCommentDialog.cpp
+	
+	RESOURCES += gui/Posted/Posted_images.qrc
+}
+	
+gxsgui {
+	
+	HEADERS += gui/gxs/GxsGroupDialog.h \
+		gui/gxs/GxsCommentTreeWidget.h \
+		gui/gxs/WikiGroupDialog.h \
+		gui/gxs/GxsForumGroupDialog.h \
+		gui/gxs/GxsIdChooser.h \
+		gui/gxs/GxsIdLabel.h \
+		gui/gxs/GxsCircleChooser.h \
+		gui/gxs/GxsCircleLabel.h \
+		gui/gxs/GxsIdTreeWidgetItem.h \
+		util/TokenQueue.h \
+	
+#		gui/gxs/GxsMsgDialog.h \
+	
+	FORMS += gui/gxs/GxsGroupDialog.ui \
+	
+#		gui/gxs/GxsMsgDialog.ui \
+#		gui/gxs/GxsCommentTreeWidget.ui \
+	
+	SOURCES += gui/gxs/GxsGroupDialog.cpp \
+		gui/gxs/GxsCommentTreeWidget.cpp \
+		gui/gxs/WikiGroupDialog.cpp \
+		gui/gxs/GxsForumGroupDialog.cpp \
+		gui/gxs/GxsIdChooser.cpp \
+		gui/gxs/GxsIdLabel.cpp \
+		gui/gxs/GxsCircleChooser.cpp \
+		gui/gxs/GxsCircleLabel.cpp \
+		gui/gxs/GxsIdTreeWidgetItem.cpp \
+		util/TokenQueue.cpp \
+	
+#		gui/gxs/GxsMsgDialog.cpp \
+	
+	
 }

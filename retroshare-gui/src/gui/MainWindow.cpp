@@ -322,10 +322,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
 #endif
 
-    if (activatePage((Page) Settings->getLastPageInMainWindow()) == false) {
-        /* Select the first action */
-        grp->actions()[0]->setChecked(true);
-    }
+    ui.stackPages->setCurrentIndex(Settings->getLastPageInMainWindow());
 
     /** StatusBar section ********/
     /* initialize combobox in status bar */
@@ -401,7 +398,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 /** Destructor. */
 MainWindow::~MainWindow()
 {
-    Settings->setLastPageInMainWindow(getActivatePage());
+    Settings->setLastPageInMainWindow(ui.stackPages->currentIndex());
 
     delete peerstatus;
     delete natstatus;

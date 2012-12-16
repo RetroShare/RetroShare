@@ -7,15 +7,14 @@
 
 #include "nxstestscenario.h"
 #include "gxs/rsdataservice.h"
+#include "gxs/rsgxsflags.h"
 #include "data_support.h"
+#include <stdio.h>
 
 NxsMessageTest::NxsMessageTest(uint16_t servtype)
-: mServType(servtype)
+: mServType(servtype), mMsgTestMtx("mMsgTestMtx")
 {
-	mStorePair.first = new RsDataService(".", "dStore1", mServType);
-	mStorePair.second = new RsDataService(".", "dStore2", mServType);
 
-	setUpDataBases();
 }
 
 std::string NxsMessageTest::getTestName()
@@ -24,21 +23,33 @@ std::string NxsMessageTest::getTestName()
 }
 
 NxsMessageTest::~NxsMessageTest(){
-	delete mStorePair.first;
-	delete mStorePair.second;
+
+    std::map<std::string, RsGeneralDataService*>::iterator mit = mPeerStoreMap.begin();
+
+    for(; mit != mPeerStoreMap.end(); mit++)
+    {
+        delete mit->second;
+    }
+
+    std::set<std::string>::iterator sit = mStoreNames.begin();
+
+    // remove db file
+    for(; sit != mStoreNames.end(); sit++)
+    {
+        const std::string& name = *sit;
+        remove(name.c_str());
+    }
 }
-void NxsMessageTest::setUpDataBases()
+RsGeneralDataService* NxsMessageTest::getDataService(const std::string& peer)
 {
-	// create several groups and then messages of that
-	// group for both second and first of pair
-	RsDataService* dStore = dynamic_cast<RsDataService*>(mStorePair.first);
-	populateStore(dStore);
+    if(mPeerStoreMap.find(peer) != mPeerStoreMap.end()) return NULL;
 
-	dStore = dynamic_cast<RsDataService*>(mStorePair.second);
-	populateStore(dStore);
+    RsDataService* dStore = new RsDataService("./", peer, mServType);
+    mStoreNames.insert(peer);
+    mPeerStoreMap.insert(std::make_pair(peer, dStore));
+    populateStore(dStore);
 
-	dStore = NULL;
-	return;
+    return dStore;
 }
 
 uint16_t NxsMessageTest::getServiceType()
@@ -49,7 +60,7 @@ uint16_t NxsMessageTest::getServiceType()
 void NxsMessageTest::populateStore(RsGeneralDataService* dStore)
 {
 
-	int nGrp = rand()%7;
+        int nGrp = (rand()%2)+1;
 	std::vector<std::string> grpIdList;
 	std::map<RsNxsGrp*, RsGxsGrpMetaData*> grps;
 	RsNxsGrp* grp = NULL;
@@ -71,16 +82,6 @@ void NxsMessageTest::populateStore(RsGeneralDataService* dStore)
 	}
 
 	dStore->storeGroup(grps);
-
-
-	std::map<RsNxsGrp*, RsGxsGrpMetaData*>::iterator grp_it
-	= grps.begin();
-    for(; grp_it != grps.end(); grp_it++)
-	{
-		delete grp_it->first;
-		delete grp_it->second;
-	}
-
 
 	int nMsgs = rand()%23;
 	std::map<RsNxsMsg*, RsGxsMsgMetaData*> msgs;
@@ -109,53 +110,68 @@ void NxsMessageTest::populateStore(RsGeneralDataService* dStore)
 
     dStore->storeMessage(msgs);
 
-    // clean up
-    std::map<RsNxsMsg*, RsGxsMsgMetaData*>::iterator msg_it
-    = msgs.begin();
+    return;
+}
 
-    for(; msg_it != msgs.end(); msg_it++)
+void NxsMessageTest::cleanUp()
+{
+
+    std::map<std::string, RsGeneralDataService*>::iterator mit = mPeerStoreMap.begin();
+
+    for(; mit != mPeerStoreMap.end(); mit++)
     {
-    	delete msg_it->first;
-    	delete msg_it->second;
+        RsGeneralDataService* d = mit->second;
+        d->resetDataStore();
     }
 
     return;
 }
 
-void NxsMessageTest::notifyNewMessages(std::vector<RsNxsMsg*>& messages)
+bool NxsMessageTest::testPassed(){
+    return false;
+}
+
+/*******************************/
+
+NxsMessageTestObserver::NxsMessageTestObserver(RsGeneralDataService *dStore)
+    :mStore(dStore)
 {
+
+}
+
+void NxsMessageTestObserver::notifyNewGroups(std::vector<RsNxsGrp *> &groups)
+{
+    std::vector<RsNxsGrp*>::iterator vit = groups.begin();
+    std::map<RsNxsGrp*, RsGxsGrpMetaData*> grps;
+
+    for(; vit != groups.end(); vit++)
+    {
+        RsNxsGrp* grp = *vit;
+        RsGxsGrpMetaData* meta = new RsGxsGrpMetaData();
+        meta->deserialise(grp->meta.bin_data, grp->meta.bin_len);
+        meta->mSubscribeFlags |= GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED;
+        meta->mGroupId = grp->grpId;
+        grps.insert(std::make_pair(grp, meta));
+    }
+
+    mStore->storeGroup(grps);
+}
+
+void NxsMessageTestObserver::notifyNewMessages(std::vector<RsNxsMsg *> &messages)
+{
+
 	std::vector<RsNxsMsg*>::iterator vit = messages.begin();
+	std::map<RsNxsMsg*, RsGxsMsgMetaData*> msgs;
 
 	for(; vit != messages.end(); vit++)
 	{
-		mPeerMsgs[(*vit)->PeerId()].push_back(*vit);
+		RsNxsMsg* msg = *vit;
+		RsGxsMsgMetaData* meta = new RsGxsMsgMetaData();
+		meta->mGroupId = msg->grpId;
+		meta->mMsgId = msg->msgId;
+		msgs.insert(std::make_pair(msg, meta));
 	}
+
+	mStore->storeMessage(msgs);
 }
 
-void NxsMessageTest::notifyNewGroups(std::vector<RsNxsGrp*>& groups)
-{
-	std::vector<RsNxsGrp*>::iterator vit = groups.begin();
-
-	for(; vit != groups.end(); vit++)
-	{
-		mPeerGrps[(*vit)->PeerId()].push_back(*vit);
-	}
-}
-
-RsGeneralDataService* NxsMessageTest::dummyDataService1()
-{
-	return mStorePair.first;
-}
-
-RsGeneralDataService* NxsMessageTest::dummyDataService2()
-{
-	return mStorePair.second;
-}
-
-void NxsMessageTest::cleanUp()
-{
-	mStorePair.first->resetDataStore();
-	mStorePair.second->resetDataStore();
-
-	return;
-}

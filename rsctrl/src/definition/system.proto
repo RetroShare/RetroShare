@@ -1,0 +1,79 @@
+package rsctrl.system;
+
+import "core.proto";
+
+///////////////////////////////////////////////////////////////
+// Configuration and Stats.
+///////////////////////////////////////////////////////////////
+
+enum RequestMsgIds {
+    MsgId_RequestSystemStatus = 1;
+    MsgId_RequestSystemQuit   = 2;
+}
+
+enum ResponseMsgIds {
+    MsgId_ResponseSystemStatus = 1;
+    MsgId_ResponseSystemQuit   = 2;
+}
+
+///////////////////////////////////////////////////////////////
+
+// REQUEST: RequestSystemStatus
+message RequestSystemStatus {
+  // Nothing here?
+}
+
+// RESPONSE: ResponseSystemStatus
+message ResponseSystemStatus {
+
+  enum NetCode {
+    BAD_UNKNOWN         = 0;
+    BAD_OFFLINE         = 1;
+    BAD_NATSYM          = 2;
+    BAD_NODHT_NAT       = 3;
+    WARNING_RESTART     = 4;
+    WARNING_NATTED      = 5;
+    WARNING_NODHT       = 6;
+    GOOD                = 7;
+    ADV_FORWARD         = 8;
+  }
+
+  // Status of response.
+  required rsctrl.core.Status status = 1;
+
+  // Peers.
+  required uint32 no_peers 		= 2;
+  required uint32 no_connected 		= 3;
+
+  // Basic Network Information.
+  required NetCode net_status = 4;
+
+  required rsctrl.core.Bandwidth bw_total = 5;
+}
+
+///////////////////////////////////////////////////////////////
+
+// REQUEST: RequestSystemQuit
+message RequestSystemQuit {
+
+  enum QuitCode {
+    CLOSE_CHANNEL       = 1;
+    SHUTDOWN_RS         = 2;  // NOT RECOMMENDED (but some people might like it)
+  }
+
+  required QuitCode quit_code = 1;
+}
+
+// RESPONSE: ResponseSystemQuit
+// Effect potentially immediate (with loss of connection) - only expect a response error.
+// Shutdown takes longer - so you should get a response.
+message ResponseSystemQuit {
+
+  // Status of response.
+  required rsctrl.core.Status status = 1;
+}
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+

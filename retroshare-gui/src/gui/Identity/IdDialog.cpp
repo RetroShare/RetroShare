@@ -25,6 +25,7 @@
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
+#include "gxs/rsgxsflags.h"
 
 #include <iostream>
 #include <sstream>
@@ -78,10 +79,7 @@ IdDialog::IdDialog(QWidget *parent)
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
 	timer->start(1000);
 
-	rsIdentity->generateDummyData();
-
-	mIdQueue = new TokenQueue(rsIdentity, this);
-
+	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 }
 
 void IdDialog::ListTypeToggled(bool checked)
@@ -133,6 +131,7 @@ void IdDialog::blankSelection()
 void IdDialog::requestIdDetails(std::string &id)
 {
 	RsTokReqOptions opts;
+        opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 
 	uint32_t token;
 	std::list<std::string> groupIds;
@@ -145,54 +144,90 @@ void IdDialog::requestIdDetails(std::string &id)
 void IdDialog::insertIdDetails(uint32_t token)
 {
 	/* get details from libretroshare */
-	RsIdGroup data;
-	if (!rsIdentity->getGroupData(token, data))
+	RsGxsIdGroup data;
+	std::vector<RsGxsIdGroup> datavector;
+	if (!rsIdentity->getGroupData(token, datavector))
 	{
 		ui.lineEdit_KeyId->setText("ERROR GETTING KEY!");
 		return;
 	}
 
+	if (datavector.size() != 1)
+	{
+		std::cerr << "IdDialog::insertIdDetails() Invalid datavector size";
+		ui.lineEdit_KeyId->setText("INVALID DV SIZE");
+		return;
+	}
+
+	data = datavector[0];
+
 	/* get GPG Details from rsPeers */
-	std::string gpgid  = rsPeers->getGPGOwnId();
-	RsPeerDetails details;
-	rsPeers->getPeerDetails(gpgid, details);
+	std::string ownPgpId  = rsPeers->getGPGOwnId();
 	
-	//ui.lineEdit_Nickname->setText(QString::fromStdString(data.mNickname));
 	ui.lineEdit_Nickname->setText(QString::fromStdString(data.mMeta.mGroupName));
-	//ui.lineEdit_KeyId->setText(QString::fromStdString(data.mKeyId));
 	ui.lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId));
-	ui.lineEdit_GpgHash->setText(QString::fromStdString(data.mGpgIdHash));
-	ui.lineEdit_GpgId->setText(QString::fromStdString(data.mGpgId));
-	ui.lineEdit_GpgName->setText(QString::fromStdString(data.mGpgName));
-	ui.lineEdit_GpgEmail->setText(QString::fromStdString(data.mGpgEmail));
-	
-	if (data.mIdType & RSID_RELATION_YOURSELF)
+	ui.lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash));
+	ui.lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId));
+
+	if (data.mPgpKnown)
+	{
+		RsPeerDetails details;
+		rsPeers->getGPGDetails(data.mPgpId, details);
+		ui.lineEdit_GpgName->setText(QString::fromStdString(details.name));
+		ui.lineEdit_GpgEmail->setText(QString::fromStdString(details.email));
+	}
+	else
+	{
+		if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
+		{
+			ui.lineEdit_GpgName->setText("Unknown Real Name");
+			ui.lineEdit_GpgEmail->setText("Unknown Email");
+		}
+		else
+		{
+			ui.lineEdit_GpgName->setText("Anonymous Id");
+			ui.lineEdit_GpgEmail->setText("-- N/A --");
+		}
+	}
+
+	bool isOwnId  = (data.mPgpKnown && (data.mPgpId == ownPgpId)) ||
+		(data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
+
+	if (isOwnId)
 	{
 		ui.radioButton_IdYourself->setChecked(true);
 	}
-	else if (data.mIdType & RSID_TYPE_PSEUDONYM)
+	else if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
+	{
+		if (data.mPgpKnown)
+		{
+			if (rsPeers->isGPGAccepted(data.mPgpId))
+			{
+				ui.radioButton_IdFriend->setChecked(true);
+			}
+			else
+			{
+				ui.radioButton_IdFOF->setChecked(true);
+			}
+		}
+		else 
+		{
+			ui.radioButton_IdOther->setChecked(true);
+		}
+	}
+	else
 	{
 		ui.radioButton_IdPseudo->setChecked(true);
 	}
-	else if (data.mIdType & RSID_RELATION_FRIEND)
-	{
-		ui.radioButton_IdFriend->setChecked(true);
-	}
-	else if (data.mIdType & RSID_RELATION_FOF)
-	{
-		ui.radioButton_IdFOF->setChecked(true);
-	}
-	else 
-	{
-		ui.radioButton_IdOther->setChecked(true);
-	}
-	
+
 	ui.pushButton_NewId->setEnabled(true);
-	if (data.mIdType & RSID_RELATION_YOURSELF)
+
+	if (isOwnId)
 	{
 		ui.pushButton_Reputation->setEnabled(false);
 		ui.pushButton_Delete->setEnabled(true);
-		ui.pushButton_EditId->setEnabled(true);
+		// No Editing Ids yet!
+		//ui.pushButton_EditId->setEnabled(true);
 	}
 	else
 	{
@@ -260,11 +295,13 @@ void IdDialog::OpenOrShowEditDialog()
 void IdDialog::requestIdList()
 {
 	RsTokReqOptions opts;
+        opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 
 	uint32_t token;
 	std::list<std::string> groupIds;
 
-        mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDDIALOG_IDLIST);
+        //mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDDIALOG_IDLIST);
+        mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, IDDIALOG_IDLIST);
 }
 
 
@@ -283,13 +320,24 @@ void IdDialog::insertIdList(uint32_t token)
 	bool acceptFriends = ui.radioButton_ListFriends->isChecked();
 	bool acceptOthers = ui.radioButton_ListOthers->isChecked();
 
-	//rsIdentity->getIdentityList(ids);
-
-	//for(it = ids.begin(); it != ids.end(); it++)
-	//{
-	RsIdGroup data;
-	while(rsIdentity->getGroupData(token, data))
+	RsGxsIdGroup data;
+	std::vector<RsGxsIdGroup> datavector;
+	std::vector<RsGxsIdGroup>::iterator vit;
+	if (!rsIdentity->getGroupData(token, datavector))
 	{
+		std::cerr << "IdDialog::insertIdList() Error getting GroupData";
+		std::cerr << std::endl;
+		return;
+	}
+
+	std::string ownPgpId  = rsPeers->getGPGOwnId();
+
+	for(vit = datavector.begin(); vit != datavector.end(); vit++)
+	{
+		data = (*vit);
+
+		bool isOwnId  = (data.mPgpKnown && (data.mPgpId == ownPgpId)) ||
+			(data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
 
 		/* do filtering */
 		bool ok = false;
@@ -297,40 +345,40 @@ void IdDialog::insertIdList(uint32_t token)
 		{
 			ok = true;
 		}
-		else if (data.mIdType & RSID_TYPE_PSEUDONYM)
+		else if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
+		{
+			if (isOwnId && acceptYourself)
+			{
+				ok = true;
+			}
+			else
+			{
+				if (data.mPgpKnown)
+				{
+					if (acceptFriends)
+					{
+						ok = true;
+					}
+				}
+				else 
+				{
+					if (acceptOthers)
+					{
+						ok = true;
+					}
+				}
+			}
+		}
+		else
 		{
  			if (acceptPseudo)
 			{
 				ok = true;
 			}
 
-			if ((data.mIdType & RSID_RELATION_YOURSELF) && (acceptYourself))
+			if (isOwnId && acceptYourself)
 			{
 				ok = true;
-			}
-		}
-		else
-		{
-			if (data.mIdType & RSID_RELATION_YOURSELF)
-			{
- 				if (acceptYourself)
-				{
-					ok = true;
-				}
-			}
-			else if (data.mIdType & (RSID_RELATION_FRIEND | RSID_RELATION_FOF)) 
-			{
-				if (acceptFriends)
-				{
-					ok = true;
-				}
-			}
-			else 
-			{
-				if (acceptOthers)
-				{
-					ok = true;
-				}
 			}
 		}
 
@@ -339,13 +387,26 @@ void IdDialog::insertIdList(uint32_t token)
 			continue;
 		}
 
-
 		QTreeWidgetItem *item = new QTreeWidgetItem();
-		//item->setText(RSID_COL_NICKNAME, QString::fromStdString(data.mNickname));
-		//item->setText(RSID_COL_KEYID, QString::fromStdString(data.mKeyId));
 		item->setText(RSID_COL_NICKNAME, QString::fromStdString(data.mMeta.mGroupName));
 		item->setText(RSID_COL_KEYID, QString::fromStdString(data.mMeta.mGroupId));
-		item->setText(RSID_COL_IDTYPE, QString::fromStdString(rsIdTypeToString(data.mIdType)));
+		if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
+		{
+			if (data.mPgpKnown)
+			{
+				RsPeerDetails details;
+				rsPeers->getGPGDetails(data.mPgpId, details);
+				item->setText(RSID_COL_IDTYPE, QString::fromStdString(details.name));
+			}
+			else
+			{
+				item->setText(RSID_COL_IDTYPE, "PGP Linked Id");
+			}
+		}
+		else
+		{
+			item->setText(RSID_COL_IDTYPE, "Anon Id");
+		}
 
                 tree->addTopLevelItem(item);
 	}

@@ -27,13 +27,15 @@
 
 
 #include <retroshare/rsiface.h>
+#include <retroshare/rsturtle.h>
+#include "util/rsthreads.h"
 
 #include <string>
 
 class NotifyTxt: public NotifyBase
 {
 	public:
-		NotifyTxt() { return; }
+		NotifyTxt():mNotifyMtx("NotifyMtx") { return; }
 		virtual ~NotifyTxt() { return; }
 		void setRsIface(RsIface *i) { iface = i; }
 
@@ -42,6 +44,20 @@ class NotifyTxt: public NotifyBase
 		virtual void notifyChat();
 		virtual bool askForPassword(const std::string& key_details, bool prev_is_bad, std::string& password);
 		virtual bool askForPluginConfirmation(const std::string& plugin_file, const std::string& plugin_hash);
+
+		virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& found_files);
+
+		/* interface for handling SearchResults */
+		void getSearchIds(std::list<uint32_t> &searchIds);
+
+		int getSearchResultCount(uint32_t id);
+		int getSearchResults(uint32_t id, std::list<TurtleFileInfo> &searchResults);
+
+		// only collect results for selected searches.
+		// will drop others.
+		int collectSearchResults(uint32_t searchId);
+		int clearSearchId(uint32_t searchId);
+
 
 	private:
 
@@ -54,6 +70,12 @@ class NotifyTxt: public NotifyBase
 		void displayTransfers();
 
 		RsIface *iface; /* so we can get the data */
+
+
+		/* store TurtleSearchResults */
+		RsMutex mNotifyMtx;
+
+		std::map<uint32_t, std::list<TurtleFileInfo> > mSearchResults;
 };
 
 #endif

@@ -187,6 +187,8 @@ void    SearchForLocalNet();
 
 	bdBloom mBloomFilter;
 
+        bool mLocalNetEnhancements;
+
 	/* future node functions */
 	//addPeerPing(foundId);
 	//clearPing(it->first);

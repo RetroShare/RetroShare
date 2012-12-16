@@ -10,8 +10,8 @@
     <height>671</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string/>
+  <property name="autoFillBackground">
+   <bool>false</bool>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -93,6 +93,20 @@
       </spacer>
      </item>
      <item>
+      <widget class="QToolButton" name="fullscreenButton">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../images.qrc">
+         <normaloff>:/images/window_fullscreen.png</normaloff>:/images/window_fullscreen.png</iconset>
+       </property>
+       <property name="autoRaise">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="pushButton_ShiftLeft">
        <property name="text">
         <string>&lt;&lt;</string>
@@ -101,8 +115,11 @@
      </item>
      <item>
       <widget class="QPushButton" name="pushButton_StartStop">
+       <property name="toolTip">
+        <string/>
+       </property>
        <property name="text">
-        <string>Stop/Run</string>
+        <string>Stop</string>
        </property>
       </widget>
      </item>
@@ -138,7 +155,8 @@
   </layout>
  </widget>
  <resources>
-  <include location="../LinksCloud/images.qrc"/>
+  <include location="Photo_images.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>

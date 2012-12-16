@@ -90,3 +90,6 @@ const uint8_t QOS_PRIORITY_RS_BWCTRL_ALLOWED_ITEM 		= 9 ;
 const uint8_t QOS_PRIORITY_RS_DSDV_ROUTE     			= 4 ;
 const uint8_t QOS_PRIORITY_RS_DSDV_DATA     			= 2 ;
 
+// GXS
+//
+const uint8_t QOS_PRIORITY_RS_GXS_NET                   = 3 ;

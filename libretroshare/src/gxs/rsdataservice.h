@@ -1,6 +1,31 @@
 #ifndef RSDATASERVICE_H
 #define RSDATASERVICE_H
 
+/*
+ * libretroshare/src/gxs: rsdataservice.h
+ *
+ * General Data service, interface for RetroShare.
+ *
+ * Copyright 2011-2012 by Evi-Parker Christopher
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License Version 2 as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
+ *
+ * Please report all bugs and problems to "retroshare@lunamutt.com".
+ *
+ */
+
 #include "gxs/rsgds.h"
 #include "util/retrodb.h"
 
@@ -10,7 +35,7 @@ class RsDataService : public RsGeneralDataService
 public:
 
     RsDataService(const std::string& serviceDir, const std::string& dbName, uint16_t serviceType, RsGxsSearchModule* mod = NULL);
-    virtual ~RsDataService() ;
+    virtual ~RsDataService();
 
     /*!
      * Retrieves all msgs
@@ -19,7 +44,7 @@ public:
      * @param cache whether to store results of this retrieval in memory for faster later retrieval
      * @return error code
      */
-    int retrieveNxsMsgs(const GxsMsgReq& reqIds, GxsMsgResult& msg, bool cache);
+    int retrieveNxsMsgs(const GxsMsgReq& reqIds, GxsMsgResult& msg, bool cache, bool withMeta = false);
 
     /*!
      * Retrieves groups, if empty, retrieves all grps, if map is not empty
@@ -36,7 +61,7 @@ public:
      * @param cache whether to store retrieval in mem for faster later retrieval
      * @return error code
      */
-    int retrieveGxsGrpMetaData(std::map<std::string, RsGxsGrpMetaData*>& grp);
+    int retrieveGxsGrpMetaData(std::map<RsGxsGroupId, RsGxsGrpMetaData*>& grp);
 
     /*!
      * Retrieves meta data of all groups stored (most current versions only)
@@ -45,7 +70,7 @@ public:
      * @param cache whether to store retrieval in mem for faster later retrieval
      * @return error code
      */
-    int retrieveGxsMsgMetaData(const std::vector<std::string>& grpIds, GxsMsgMetaResult& msgMeta);
+    int retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaResult& msgMeta);
 
     /*!
      * remove msgs in data store
@@ -53,14 +78,14 @@ public:
      * @param msgIds ids of messages to be removed
      * @return error code
      */
-    int removeMsgs(const std::string grpId, const std::vector<std::string>& msgIds);
+    int removeMsgs(const GxsMsgReq& msgIds);
 
     /*!
      * remove groups in data store listed in grpIds param
      * @param grpIds ids of groups to be removed
      * @return error code
      */
-    int removeGroups(const std::vector<std::string>& grpIds);
+    int removeGroups(const std::vector<RsGxsGroupId>& grpIds);
 
     /*!
      * @return the cache size set for this RsGeneralDataService in bytes
@@ -90,13 +115,13 @@ public:
      * @param metaData The meta data item to update
      * @return error code
      */
-    int updateMessageMetaData(MsgLocMetaData* metaData);
+    int updateMessageMetaData(MsgLocMetaData& metaData);
 
     /*!
      * @param metaData The meta data item to update
      * @return error code
      */
-    int updateGroupMetaData(GrpLocMetaData* meta);
+    int updateGroupMetaData(GrpLocMetaData& meta);
 
 
     /*!
@@ -117,11 +142,18 @@ private:
     void retrieveMessages(RetroCursor* c, std::vector<RsNxsMsg*>& msgs);
 
     /*!
-	 * Retrieves all the msg results from a cursor
-	 * @param c cursor to result set
-	 * @param msgs messages retrieved from cursor are stored here
-	 */
-	void retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>& grps, bool withMeta = false);
+     * Retrieves all the grp results from a cursor
+     * @param c cursor to result set
+     * @param grps groups retrieved from cursor are stored here
+     */
+    void retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>& grps);
+
+    /*!
+     * Retrieves all the msg meta results from a cursor
+     * @param c cursor to result set
+     * @param metaSet message metadata retrieved from cursor are stored here
+     */
+    void retrieveMsgMeta(RetroCursor* c, std::vector<RsGxsMsgMetaData*>& msgMeta);
 
     /*!
      * extracts a msg meta item from a cursor at its
@@ -157,6 +189,8 @@ private:
 
 
     RetroDb* mDb;
+
+    RsMutex mDbMutex;
 
     std::list<std::string> msgColumns;
     std::list<std::string> msgMetaColumns;

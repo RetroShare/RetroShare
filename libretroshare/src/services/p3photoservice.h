@@ -1,9 +1,12 @@
+#ifndef P3PHOTOSERVICEV2_H
+#define P3PHOTOSERVICEV2_H
+
 /*
- * libretroshare/src/services: p3photoservice.h
+ * libretroshare/src/retroshare: rsphoto.h
  *
- * 3P/PQI network interface for RetroShare.
+ * RetroShare C++ Interface.
  *
- * Copyright 2012-2012 by Robert Fernie.
+ * Copyright 2008-2012 by Robert Fernie, Christopher Evi-Parker
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,116 +26,123 @@
  *
  */
 
-#ifndef P3_PHOTO_SERVICE_HEADER
-#define P3_PHOTO_SERVICE_HEADER
-
-#include "services/p3gxsservice.h"
+#include "gxs/rsgenexchange.h"
 #include "retroshare/rsphoto.h"
 
-#include <map>
-#include <string>
-
-/* 
- * Photo Service
- *
- * This is an example service for the new cache system.
- * For the moment, it will only hold data passed to it from the GUI.
- * and spew that back when asked....
- *
- * We are doing it like this - so we can check the required interface functionality.
- *
- * Expect it won't take long before it'll be properly linked into the backend!
- *
- * This will be transformed into a Plugin Service, once the basics have been worked out.
- *
- */
-
-
-class PhotoDataProxy: public GxsDataProxy
+class p3PhotoService : public RsPhoto, public RsGenExchange
 {
-	public:
+public:
 
-	bool addAlbum(const RsPhotoAlbum &album);
-	bool addPhoto(const RsPhotoPhoto &photo);
+    p3PhotoService(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs* gixs,
+                     uint32_t authenPolicy);
 
-	bool getAlbum(const std::string &id, RsPhotoAlbum &album);
-	bool getPhoto(const std::string &id, RsPhotoPhoto &photo);
+public:
 
-        /* These Functions must be overloaded to complete the service */
-virtual bool convertGroupToMetaData(void *groupData, RsGroupMetaData &meta);
-virtual bool convertMsgToMetaData(void *groupData, RsMsgMetaData &meta);
+    /*!
+     * @return true if a change has occured
+     */
+    bool updated();
 
+    /*!
+     *
+     */
+    void service_tick();
+
+protected:
+
+    void notifyChanges(std::vector<RsGxsNotify*>& changes);
+public:
+
+    /** Requests **/
+
+    void groupsChanged(std::list<RsGxsGroupId>& grpIds);
+
+
+    void msgsChanged(std::map<RsGxsGroupId,
+                             std::vector<RsGxsMessageId> >& msgs);
+
+    RsTokenService* getTokenService();
+
+    bool getGroupList(const uint32_t &token,
+                              std::list<RsGxsGroupId> &groupIds);
+    bool getMsgList(const uint32_t &token,
+                            GxsMsgIdResult& msgIds);
+
+    /* Generic Summary */
+    bool getGroupSummary(const uint32_t &token,
+                                 std::list<RsGroupMetaData> &groupInfo);
+
+    bool getMsgSummary(const uint32_t &token,
+                               MsgMetaResult &msgInfo);
+
+    /* Specific Service Data */
+    bool getAlbum(const uint32_t &token, std::vector<RsPhotoAlbum> &albums);
+    bool getPhoto(const uint32_t &token, PhotoResult &photos);
+    bool getPhotoComment(const uint32_t &token, PhotoCommentResult &comments);
+    bool getPhotoRelatedComment(const uint32_t &token, PhotoRelatedCommentResult &comments);
+
+public:
+
+    /** Modifications **/
+
+    /*!
+     * submits album, which returns a token that needs
+     * to be acknowledge to get album grp id
+     * @param token token to redeem for acknowledgement
+     * @param album album to be submitted
+     */
+    bool submitAlbumDetails(uint32_t& token, RsPhotoAlbum &album);
+
+    /*!
+     * submits photo, which returns a token that needs
+     * to be acknowledge to get photo msg-grp id pair
+     * @param token token to redeem for acknowledgement
+     * @param photo photo to be submitted
+     */
+    bool submitPhoto(uint32_t& token, RsPhotoPhoto &photo);
+
+    /*!
+     * submits photo comment, which returns a token that needs
+     * to be acknowledged to get photo msg-grp id pair
+     * The mParentId needs to be set to an existing msg for which
+     * commenting is enabled
+     * @param token token to redeem for acknowledgement
+     * @param comment comment to be submitted
+     */
+    bool submitComment(uint32_t& token, RsPhotoComment &photo);
+
+    /*!
+     * subscribes to group, and returns token which can be used
+     * to be acknowledged to get group Id
+     * @param token token to redeem for acknowledgement
+     * @param grpId the id of the group to subscribe to
+     */
+    bool subscribeToAlbum(uint32_t& token, const RsGxsGroupId& grpId, bool subscribe);
+
+    /*!
+     * This allows the client service to acknowledge that their msgs has
+     * been created/modified and retrieve the create/modified msg ids
+     * @param token the token related to modification/create request
+     * @param msgIds map of grpid->msgIds of message created/modified
+     * @return true if token exists false otherwise
+     */
+    bool acknowledgeMsg(const uint32_t& token, std::pair<RsGxsGroupId, RsGxsMessageId>& msgId);
+
+    /*!
+	 * This allows the client service to acknowledge that their grps has
+	 * been created/modified and retrieve the create/modified grp ids
+	 * @param token the token related to modification/create request
+	 * @param msgIds vector of ids of groups created/modified
+	 * @return true if token exists false otherwise
+	 */
+    bool acknowledgeGrp(const uint32_t& token, RsGxsGroupId& grpId);
+
+private:
+
+    std::vector<RsGxsGroupChange*> mGroupChange;
+    std::vector<RsGxsMsgChange*> mMsgChange;
+
+    RsMutex mPhotoMutex;
 };
 
-
-
-class p3PhotoService: public p3GxsDataService, public RsPhoto
-{
-	public:
-
-	p3PhotoService(uint16_t type);
-
-virtual int	tick();
-
-	public:
-
-// NEW INTERFACE.
-/************* Extern Interface *******/
-
-        /* changed? */
-virtual bool updated();
-
-       /* Data Requests */
-virtual bool requestGroupInfo(     uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds);
-virtual bool requestMsgInfo(       uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds);
-virtual bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &msgIds);
-
-        /* Generic Lists */
-virtual bool getGroupList(         const uint32_t &token, std::list<std::string> &groupIds);
-virtual bool getMsgList(           const uint32_t &token, std::list<std::string> &msgIds);
-
-        /* Generic Summary */
-virtual bool getGroupSummary(      const uint32_t &token, std::list<RsGroupMetaData> &groupInfo);
-virtual bool getMsgSummary(        const uint32_t &token, std::list<RsMsgMetaData> &msgInfo);
-
-        /* Actual Data -> specific to Interface */
-        /* Specific Service Data */
-virtual bool getAlbum(const uint32_t &token, RsPhotoAlbum &album);
-virtual bool getPhoto(const uint32_t &token, RsPhotoPhoto &photo);
-
-        /* Poll */
-virtual uint32_t requestStatus(const uint32_t token);
-
-        /* Cancel Request */
-virtual bool cancelRequest(const uint32_t &token);
-
-        //////////////////////////////////////////////////////////////////////////////
-virtual bool setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask);
-virtual bool setGroupStatus(const std::string &groupId, const uint32_t status, const uint32_t statusMask);
-virtual bool setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask);
-virtual bool setMessageServiceString(const std::string &msgId, const std::string &str);
-virtual bool setGroupServiceString(const std::string &grpId, const std::string &str);
-
-virtual bool groupRestoreKeys(const std::string &groupId);
-virtual bool groupShareKeys(const std::string &groupId, std::list<std::string>& peers);
-
-
-/* details are updated in album - to choose Album ID, and storage path */
-virtual bool submitAlbumDetails(uint32_t &token, RsPhotoAlbum &album, bool isNew);
-virtual bool submitPhoto(uint32_t &token, RsPhotoPhoto &photo, bool isNew);
-
-
-
-	private:
-
-std::string genRandomId();
-
-	PhotoDataProxy *mPhotoProxy;
-
-	RsMutex mPhotoMtx;
-	bool mUpdated;
-
-
-};
-
-#endif 
+#endif // P3PHOTOSERVICEV2_H

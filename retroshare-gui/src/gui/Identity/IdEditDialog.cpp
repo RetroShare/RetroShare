@@ -41,8 +41,7 @@ IdEditDialog::IdEditDialog(QWidget *parent)
 	connect(ui.radioButton_Pseudo, SIGNAL( toggled( bool ) ), this, SLOT( IdTypeToggled( bool ) ) );
 	connect(ui.pushButton_Update, SIGNAL( clicked( void ) ), this, SLOT( updateId( void ) ) );
 	connect(ui.pushButton_Cancel, SIGNAL( clicked( void ) ), this, SLOT( cancelId( void ) ) );
-
-	mIdQueue = new TokenQueue(rsIdentity, this);
+	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 }
 
 void IdEditDialog::setupNewId(bool pseudo)
@@ -122,9 +121,19 @@ void IdEditDialog::loadExistingId(uint32_t token)
 	ui.radioButton_Pseudo->setEnabled(false);
 
         /* get details from libretroshare */
-        RsIdGroup data;
-        if (!rsIdentity->getGroupData(token, data))
-        {
+	RsGxsIdGroup data;
+	std::vector<RsGxsIdGroup> datavector;
+	if (!rsIdentity->getGroupData(token, datavector))
+	{
+		ui.lineEdit_KeyId->setText("ERROR GETTING KEY!");
+		return;
+	}
+	
+	if (datavector.size() != 1)
+	{
+		std::cerr << "IdDialog::insertIdDetails() Invalid datavector size";
+		std::cerr << std::endl;
+
 		ui.lineEdit_KeyId->setText("ERROR KEYID INVALID");
 		ui.lineEdit_Nickname->setText("");
 
@@ -134,49 +143,53 @@ void IdEditDialog::loadExistingId(uint32_t token)
 		ui.lineEdit_GpgEmail->setText("N/A");
 		return;
 	}
-	bool pseudo = (data.mIdType & RSID_TYPE_PSEUDONYM);
 
-	if (pseudo)
+	data = datavector[0];
+
+	bool realid = (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID);
+
+	if (realid)
 	{
-		ui.radioButton_Pseudo->setChecked(true);
+		ui.radioButton_GpgId->setChecked(true);
 	}
 	else
 	{
-		ui.radioButton_GpgId->setChecked(true);
+		ui.radioButton_Pseudo->setChecked(true);
 	}
 
 	// DOES THIS TRIGGER ALREADY???
 	// force - incase it wasn't triggered.
 	IdTypeToggled(true);
 
-	//ui.lineEdit_Nickname->setText(QString::fromStdString(data.mNickname));
-        //ui.lineEdit_KeyId->setText(QString::fromStdString(data.mKeyId));
 	ui.lineEdit_Nickname->setText(QString::fromStdString(data.mMeta.mGroupName));
         ui.lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId));
 
-	if (pseudo)
+	if (realid)
+	{
+		ui.lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash));
+
+		if (data.mPgpKnown)
+		{
+			RsPeerDetails details;
+			rsPeers->getGPGDetails(data.mPgpId, details);
+			ui.lineEdit_GpgName->setText(QString::fromStdString(details.name));
+			ui.lineEdit_GpgEmail->setText(QString::fromStdString(details.email));
+
+			ui.lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId));
+		}
+		else
+		{
+			ui.lineEdit_GpgId->setText("Unknown PgpId");
+			ui.lineEdit_GpgName->setText("Unknown Real Name");
+			ui.lineEdit_GpgEmail->setText("Unknown Email");
+		}
+	}
+	else
 	{
 		ui.lineEdit_GpgHash->setText("N/A");
 		ui.lineEdit_GpgId->setText("N/A");
 		ui.lineEdit_GpgName->setText("N/A");
 		ui.lineEdit_GpgEmail->setText("N/A");
-	}
-	else
-	{
-		ui.lineEdit_GpgHash->setText(QString::fromStdString(data.mGpgIdHash));
-
-		if (data.mGpgIdKnown)
-		{
-			ui.lineEdit_GpgId->setText(QString::fromStdString(data.mGpgId));
-			ui.lineEdit_GpgName->setText(QString::fromStdString(data.mGpgName));
-			ui.lineEdit_GpgEmail->setText(QString::fromStdString(data.mGpgEmail));
-		}
-		else
-		{
-			ui.lineEdit_GpgId->setText("EXIST Unknown");
-			ui.lineEdit_GpgName->setText("Unknown");
-			ui.lineEdit_GpgEmail->setText("Unknown");
-		}
 	}
 
 	return;
@@ -184,8 +197,9 @@ void IdEditDialog::loadExistingId(uint32_t token)
 
 void IdEditDialog::updateId()
 {
-	RsIdGroup rid;
+	RsGxsIdGroup rid;
 	// Must set, Nickname, KeyId(if existing), mIdType, GpgId.
+
 
 	rid.mMeta.mGroupName = ui.lineEdit_Nickname->text().toStdString();
 
@@ -196,7 +210,7 @@ void IdEditDialog::updateId()
 		return;
 	}
 
-	rid.mIdType = RSID_RELATION_YOURSELF;
+	//rid.mIdType = RSID_RELATION_YOURSELF;
 	if (ui.checkBox_NewId->isChecked())
 	{
 		rid.mMeta.mGroupId = "";
@@ -208,25 +222,31 @@ void IdEditDialog::updateId()
 
 	if (ui.radioButton_GpgId->isChecked())
 	{
-		rid.mIdType |= RSID_TYPE_REALID;
+		//rid.mIdType |= RSID_TYPE_REALID;
 
-		rid.mGpgId = ui.lineEdit_GpgId->text().toStdString();
-		rid.mGpgIdHash = ui.lineEdit_GpgHash->text().toStdString();
-		rid.mGpgName = ui.lineEdit_GpgName->text().toStdString();
-		rid.mGpgEmail = ui.lineEdit_GpgEmail->text().toStdString();
+		//rid.mGpgId = ui.lineEdit_GpgId->text().toStdString();
+		rid.mPgpIdHash = ui.lineEdit_GpgHash->text().toStdString();
+		//rid.mGpgName = ui.lineEdit_GpgName->text().toStdString();
+		//rid.mGpgEmail = ui.lineEdit_GpgEmail->text().toStdString();
 	}
 	else
 	{
-		rid.mIdType |= RSID_TYPE_PSEUDONYM;
+		//rid.mIdType |= RSID_TYPE_PSEUDONYM;
 
-		rid.mGpgId = "";
-		rid.mGpgIdHash = "";
-		rid.mGpgName = "";
-		rid.mGpgEmail = "";
+		//rid.mGpgId = "";
+		rid.mPgpIdHash = "";
+		//rid.mGpgName = "";
+		//rid.mGpgEmail = "";
 	}
 
-	// TODO.
-	//rsIdentity->updateIdentity(rid);
+	
+	// Can only create Identities for the moment!
+	RsIdentityParameters params;
+	params.nickname = rid.mMeta.mGroupName;
+	params.isPgpLinked = (ui.radioButton_GpgId->isChecked());
+
+	uint32_t dummyToken = 0;
+	rsIdentity->createIdentity(dummyToken, params);
 
 	hide();
 	return;

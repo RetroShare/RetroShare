@@ -29,7 +29,23 @@
 #include <bitdht/bdstddht.h>
 #include <string.h>
 
+#include <string.h>
+
 #include "bdhandler.h"
+
+
+/**** 
+ * This example bitdht app is designed to perform a single shot DHT search.
+ * Ww want to minimise the dht work, and number of UDP packets sent.
+ *
+ * This means we need to add:
+ * - don't search for App network.        (libbitdht option)
+ * - don't bother filling up Space.       (libbitdht option)
+ * - Programmatically add bootstrap peers. (libbitdht option)
+ *
+ */
+
+
 
 /* This is a conversion callback class 
  */
@@ -111,6 +127,11 @@ BitDhtHandler::BitDhtHandler(bdNodeId *ownId, uint16_t port, std::string appId, 
 
 	mUdpBitDht->start(); /* starts up the bitdht thread */
 
+        /* setup best mode for quick search */
+        uint32_t dhtFlags = BITDHT_MODE_TRAFFIC_MED | BITDHT_MODE_RELAYSERVERS_IGNORED;
+        mUdpBitDht->setDhtMode(dhtFlags);
+        mUdpBitDht->setAttachMode(false);
+
 	/* switch on the dht too */
 	mUdpBitDht->startDht();
 }
@@ -163,8 +184,19 @@ bool 	BitDhtHandler::FindNode(bdNodeId *peerId)
 	bdStdPrintNodeId(std::cerr, peerId);
 	std::cerr << ")" << std::endl;
 
+
+	BssResult res;
+        res.id.id = *peerId;
+        res.mode = BSS_SINGLE_SHOT;
+        res.status = 0;
+
+	{
+        	bdStackMutex stack(resultsMtx); /********** MUTEX LOCKED *************/
+        	mSearchNodes[*peerId] = res;
+	}
+
 	/* add in peer */
-	mUdpBitDht->addFindNode(peerId, BITDHT_QFLAGS_DO_IDLE);
+	mUdpBitDht->addFindNode(peerId, BITDHT_QFLAGS_DISGUISE);
 
 	return true ;
 }
@@ -179,9 +211,49 @@ bool 	BitDhtHandler::DropNode(bdNodeId *peerId)
 	/* remove in peer */
 	mUdpBitDht->removeFindNode(peerId);
 
+        bdStackMutex stack(resultsMtx); /********** MUTEX LOCKED *************/
+
+	/* find the node from our list */
+	std::map<bdNodeId, BssResult>::iterator it;
+	it = mSearchNodes.find(*peerId);
+	if (it != mSearchNodes.end())
+	{
+		std::cerr << "BitDhtHandler::DropNode() Found NodeId, removing";
+		std::cerr << std::endl;
+
+		mSearchNodes.erase(it);
+	}
 	return true ;
 }
 
+
+bool    BitDhtHandler::SearchResult(bdId *id, uint32_t &status)
+{
+        bdStackMutex stack(resultsMtx); /********** MUTEX LOCKED *************/
+
+	/* find the node from our list */
+	std::map<bdNodeId, BssResult>::iterator it;
+	it = mSearchNodes.find(id->id);
+	if (it != mSearchNodes.end())
+	{
+		if (it->second.status != 0)
+		{
+			std::cerr << "BitDhtHandler::SearchResults() Found Results";
+			std::cerr << std::endl;
+			status = it->second.status;
+			*id = it->second.id;
+			return true;
+		}
+
+		std::cerr << "BitDhtHandler::SearchResults() No Results Yet";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	std::cerr << "BitDhtHandler::SearchResults() ERROR: No Search Entry";
+	std::cerr << std::endl;
+	return false;
+}
 
 
 /********************** Callback Functions **************************/
@@ -204,6 +276,20 @@ int BitDhtHandler::PeerCallback(const bdId *id, uint32_t status)
 	bdStdPrintId(std::cerr, id);
 	std::cerr << std::endl;
 
+        bdStackMutex stack(resultsMtx); /********** MUTEX LOCKED *************/
+
+	/* find the node from our list */
+	std::map<bdNodeId, BssResult>::iterator it;
+	it = mSearchNodes.find(id->id);
+	if (it == mSearchNodes.end())
+	{
+		std::cerr << "BitDhtHandler::PeerCallback() Unknown NodeId !!! ";
+		std::cerr << std::endl;
+
+		return 1;
+	}
+	it->second.status = status;
+
 	bool connect = false;
 	switch(status)
 	{
@@ -211,6 +297,7 @@ int BitDhtHandler::PeerCallback(const bdId *id, uint32_t status)
 			/* do nothing */
 			std::cerr << "BitDhtHandler::PeerCallback() QUERY FAILURE ... do nothin ";
 			std::cerr << std::endl;
+
 
 		break;
 
@@ -225,19 +312,19 @@ int BitDhtHandler::PeerCallback(const bdId *id, uint32_t status)
 		case BITDHT_MGR_QUERY_PEER_UNREACHABLE:
 			/* do nothing */
 
-			std::cerr << "BitDhtHandler::PeerCallback() QUERY PEER UNREACHABLE ... flag? / do nothin ";
+			std::cerr << "BitDhtHandler::PeerCallback() QUERY PEER UNREACHABLE ... saving address ";
 			std::cerr << std::endl;
-
+			it->second.id = *id;
 
 		break;
 
 		case BITDHT_MGR_QUERY_PEER_ONLINE:
 			/* do something */
 
-			std::cerr << "BitDhtHandler::PeerCallback() QUERY PEER ONLINE ... try udp connection";
+			std::cerr << "BitDhtHandler::PeerCallback() QUERY PEER ONLINE ... saving address";
 			std::cerr << std::endl;
 
-			connect = true;
+			it->second.id = *id;
 		break;
 	}
 	return 1;

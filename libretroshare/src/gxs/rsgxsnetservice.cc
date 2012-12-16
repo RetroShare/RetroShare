@@ -1,4 +1,31 @@
+
+/*
+ * libretroshare/src/gxs: rsgxnetservice.cc
+ *
+ * Access to rs network and synchronisation service implementation
+ *
+ * Copyright 2012-2012 by Christopher Evi-Parker
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License Version 2 as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
+ *
+ * Please report all bugs and problems to "retroshare@lunamutt.com".
+ *
+ */
+
 #include "rsgxsnetservice.h"
+#include "rsgxsflags.h"
 
 #define NXS_NET_DEBUG
 
@@ -10,7 +37,7 @@ RsGxsNetService::RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
                                  RsNxsNetMgr *netMgr, RsNxsObserver *nxsObs)
                                      : p3Config(servType), p3ThreadedService(servType),
                                        mTransactionTimeOut(TRANSAC_TIMEOUT), mServType(servType), mDataStore(gds), mTransactionN(0),
-                                       mObserver(nxsObs), mNxsMutex("RsGxsNetService"), mNetMgr(netMgr), mSYNC_PERIOD(SYNC_PERIOD)
+                                       mObserver(nxsObs), mNxsMutex("RsGxsNetService"), mNetMgr(netMgr), mSYNC_PERIOD(SYNC_PERIOD), mSyncTs(0)
 
 {
 	addSerialType(new RsNxsSerialiser(mServType));
@@ -31,8 +58,9 @@ int RsGxsNetService::tick(){
         recvNxsItemQueue();
 
     uint32_t now = time(NULL);
+    uint32_t elapsed = mSYNC_PERIOD + mSyncTs;
 
-    if((mSYNC_PERIOD + mSyncTs) < now)
+    if((elapsed) < now)
     {
     	syncWithPeers();
     	mSyncTs = now;
@@ -49,17 +77,55 @@ void RsGxsNetService::syncWithPeers()
 
 	std::set<std::string>::iterator sit = peers.begin();
 
-	// for now just grps
-	for(; sit != peers.end(); sit++)
-	{
-		RsNxsSyncGrp *grp = new RsNxsSyncGrp(mServType);
-		grp->clear();
-		grp->PeerId(*sit);
-		sendItem(grp);
-	}
+        // for now just grps
+        for(; sit != peers.end(); sit++)
+        {
+                RsNxsSyncGrp *grp = new RsNxsSyncGrp(mServType);
+                grp->clear();
+                grp->PeerId(*sit);
+                sendItem(grp);
+        }
 
-	// TODO msgs
 
+#ifdef GXS_ENABLE_SYNC_MSGS
+        std::map<RsGxsGroupId, RsGxsGrpMetaData* > grpMeta;
+        mDataStore->retrieveGxsGrpMetaData(grpMeta);
+
+        std::map<RsGxsGroupId, RsGxsGrpMetaData* >::iterator
+                mit = grpMeta.begin();
+
+        std::vector<RsGxsGroupId> grpIds;
+
+        for(; mit != grpMeta.end(); mit++)
+        {
+            RsGxsGrpMetaData* meta = mit->second;
+
+            if(meta->mSubscribeFlags & (GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED |
+               GXS_SERV::GROUP_SUBSCRIBE_ADMIN) )
+                grpIds.push_back(mit->first);
+
+            delete meta;
+        }
+
+        sit = peers.begin();
+
+        // synchronise group msg for groups which we're subscribed to
+        for(; sit != peers.end(); sit++)
+        {
+            RsStackMutex stack(mNxsMutex);
+
+            std::vector<RsGxsGroupId>::iterator vit = grpIds.begin();
+
+            for(; vit != grpIds.end(); vit++)
+            {
+                    RsNxsSyncMsg* msg = new RsNxsSyncMsg(mServType);
+                    msg->clear();
+                    msg->PeerId(*sit);
+                    msg->grpId = *vit;
+                    sendItem(msg);
+            }
+        }
+#endif
 }
 
 bool RsGxsNetService::loadList(std::list<RsItem*>& load)
@@ -300,7 +366,8 @@ void RsGxsNetService::run(){
 
 bool RsGxsNetService::locked_checkTransacTimedOut(NxsTransaction* tr)
 {
-	return tr->mTimeOut < ((uint32_t) time(NULL));
+   return tr->mTimeOut < ((uint32_t) time(NULL));
+    // return false;
 }
 
 void RsGxsNetService::processTransactions(){
@@ -570,10 +637,11 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
 					// notify listener of grps
 					mObserver->notifyNewGroups(grps);
 
+
+
 				}else if(flag & RsNxsTransac::FLAG_TYPE_MSGS)
 				{
 
-					std::list<RsNxsItem*>::iterator lit = tr->mItems.begin();
 					std::vector<RsNxsMsg*> msgs;
 
 					while(tr->mItems.size() > 0)
@@ -697,14 +765,16 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 		}
 	}
 
+        if(msgItemL.empty())
+            return;
 
 	// get grp id for this transaction
 	RsNxsSyncMsgItem* item = msgItemL.front();
 	const std::string& grpId = item->grpId;
-	std::vector<std::string> grpIdV;
-	grpIdV.push_back(grpId);
+	GxsMsgReq reqIds;
+	reqIds[grpId] = std::vector<RsGxsMessageId>();
 	GxsMsgMetaResult result;
-	mDataStore->retrieveGxsMsgMetaData(grpIdV, result);
+	mDataStore->retrieveGxsMsgMetaData(reqIds, result);
 	std::vector<RsGxsMsgMetaData*> &msgMetaV = result[grpId];
 
 	std::vector<RsGxsMsgMetaData*>::const_iterator vit = msgMetaV.begin();
@@ -722,6 +792,8 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 	std::list<RsNxsSyncMsgItem*>::iterator llit = msgItemL.begin();
 	std::list<RsNxsItem*> reqList;
 
+	const std::string peerFrom = tr->mTransaction->PeerId();
+
 	for(; llit != msgItemL.end(); llit++)
 	{
 		const std::string& msgId = (*llit)->msgId;
@@ -732,35 +804,39 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 			msgItem->msgId = msgId;
 			msgItem->flag = RsNxsSyncMsgItem::FLAG_REQUEST;
 			msgItem->transactionNumber = transN;
+			msgItem->PeerId(peerFrom);
 			reqList.push_back(msgItem);
 		}
 	}
 
+        if(!reqList.empty())
+        {
 
-	RsNxsTransac* transac = new RsNxsTransac(mServType);
-	transac->transactFlag = RsNxsTransac::FLAG_TYPE_MSG_LIST_REQ
-			| RsNxsTransac::FLAG_BEGIN_P1;
-	transac->timestamp = 0;
-	transac->nItems = reqList.size();
-	transac->PeerId(tr->mTransaction->PeerId());
-	transac->transactionNumber = transN;
+            RsNxsTransac* transac = new RsNxsTransac(mServType);
+            transac->transactFlag = RsNxsTransac::FLAG_TYPE_MSG_LIST_REQ
+                            | RsNxsTransac::FLAG_BEGIN_P1;
+            transac->timestamp = 0;
+            transac->nItems = reqList.size();
+            transac->PeerId(tr->mTransaction->PeerId());
+            transac->transactionNumber = transN;
 
-	NxsTransaction* newTrans = new NxsTransaction();
-	newTrans->mItems = reqList;
-	newTrans->mFlag = NxsTransaction::FLAG_STATE_WAITING_CONFIRM;
-	newTrans->mTimeOut = time(NULL) + mTransactionTimeOut;
+            NxsTransaction* newTrans = new NxsTransaction();
+            newTrans->mItems = reqList;
+            newTrans->mFlag = NxsTransaction::FLAG_STATE_WAITING_CONFIRM;
+            newTrans->mTimeOut = time(NULL) + mTransactionTimeOut;
 
-	// create transaction copy with your id to indicate
-	// its an outgoing transaction
-	newTrans->mTransaction = new RsNxsTransac(*transac);
-	newTrans->mTransaction->PeerId(mOwnId);
+            // create transaction copy with your id to indicate
+            // its an outgoing transaction
+            newTrans->mTransaction = new RsNxsTransac(*transac);
+            newTrans->mTransaction->PeerId(mOwnId);
 
-	sendItem(transac);
+            sendItem(transac);
 
-	{
-		if(!locked_addTransaction(newTrans))
-			delete newTrans;
-	}
+            {
+                    if(!locked_addTransaction(newTrans))
+                            delete newTrans;
+            }
+        }
 }
 
 void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
@@ -806,7 +882,7 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
 
 		if(grpMetaMap.find(grpId) == grpMetaMap.end()){
 			RsNxsSyncGrpItem* grpItem = new RsNxsSyncGrpItem(mServType);
-
+                        grpItem->PeerId(tr->mTransaction->PeerId());
 			grpItem->grpId = grpId;
 			grpItem->flag = RsNxsSyncMsgItem::FLAG_REQUEST;
 			grpItem->transactionNumber = transN;
@@ -815,26 +891,36 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
 	}
 
 
-	RsNxsTransac* transac = new RsNxsTransac(mServType);
-	transac->transactFlag = RsNxsTransac::FLAG_TYPE_GRP_LIST_REQ
-			| RsNxsTransac::FLAG_BEGIN_P1;
-	transac->timestamp = 0;
-	transac->nItems = reqList.size();
-	transac->PeerId(tr->mTransaction->PeerId());
-	transac->transactionNumber = transN;
+	if(!reqList.empty())
+	{
 
-	NxsTransaction* newTrans = new NxsTransaction();
-	newTrans->mItems = reqList;
-	newTrans->mFlag = NxsTransaction::FLAG_STATE_WAITING_CONFIRM;
-	newTrans->mTimeOut = time(NULL) + mTransactionTimeOut;
-	newTrans->mTransaction = new RsNxsTransac(*transac);
-	newTrans->mTransaction->PeerId(mOwnId);
+		RsNxsTransac* transac = new RsNxsTransac(mServType);
+		transac->transactFlag = RsNxsTransac::FLAG_TYPE_GRP_LIST_REQ
+				| RsNxsTransac::FLAG_BEGIN_P1;
+		transac->timestamp = 0;
+		transac->nItems = reqList.size();
+		transac->PeerId(tr->mTransaction->PeerId());
+		transac->transactionNumber = transN;
 
-	sendItem(transac);
+		NxsTransaction* newTrans = new NxsTransaction();
+		newTrans->mItems = reqList;
+		newTrans->mFlag = NxsTransaction::FLAG_STATE_WAITING_CONFIRM;
+		newTrans->mTimeOut = time(NULL) + mTransactionTimeOut;
+		newTrans->mTransaction = new RsNxsTransac(*transac);
+		newTrans->mTransaction->PeerId(mOwnId);
 
-	if(!locked_addTransaction(newTrans))
-		delete newTrans;
+		sendItem(transac);
 
+		if(!locked_addTransaction(newTrans))
+			delete newTrans;
+
+	}
+
+	// clean up meta data
+	std::map<std::string, RsGxsGrpMetaData*>::iterator mit = grpMetaMap.begin();
+
+	for(; mit != grpMetaMap.end(); mit++)
+		delete mit->second;
 }
 
 void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
@@ -858,8 +944,13 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 		grps[item->grpId] = NULL;
 	}
 
-	mDataStore->retrieveNxsGrps(grps, false, false);
-
+	if(!grps.empty())
+	{
+		mDataStore->retrieveNxsGrps(grps, false, false);
+	}
+	else{
+		return;
+	}
 
 	NxsTransaction* newTr = new NxsTransaction();
 	newTr->mFlag = NxsTransaction::FLAG_STATE_WAITING_CONFIRM;
@@ -871,7 +962,7 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 	std::string peerId = tr->mTransaction->PeerId();
 	for(;mit != grps.end(); mit++)
 	{
-		mit->second->PeerId(peerId); // set so it gets send to right peer
+        mit->second->PeerId(peerId); // set so it gets sent to right peer
 		mit->second->transactionNumber = transN;
 		newTr->mItems.push_back(mit->second);
 	}
@@ -887,6 +978,7 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 	ntr->transactFlag = RsNxsTransac::FLAG_BEGIN_P1 |
 			RsNxsTransac::FLAG_TYPE_GRPS;
 	ntr->nItems = grps.size();
+        ntr->PeerId(tr->mTransaction->PeerId());
 
 	newTr->mTransaction = new RsNxsTransac(*ntr);
 	newTr->mTransaction->PeerId(mOwnId);
@@ -902,6 +994,77 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 
 void RsGxsNetService::locked_genSendMsgsTransaction(NxsTransaction* tr)
 {
+
+#ifdef NXS_NET_DEBUG
+	std::cerr << "locked_genSendMsgsTransaction()" << std::endl;
+	std::cerr << "Generating Msg data send fron TransN: " << tr->mTransaction->transactionNumber
+	          << std::endl;
+#endif
+
+	// go groups requested in transaction tr
+
+	std::list<RsNxsItem*>::iterator lit = tr->mItems.begin();
+
+	GxsMsgReq msgIds;
+	GxsMsgResult msgs;
+
+	if(tr->mItems.empty()){
+		return;
+	}
+
+	for(;lit != tr->mItems.end(); lit++)
+	{
+		RsNxsSyncMsgItem* item = dynamic_cast<RsNxsSyncMsgItem*>(*lit);
+		msgIds[item->grpId].push_back(item->msgId);
+	}
+
+	mDataStore->retrieveNxsMsgs(msgIds, msgs, false, false);
+
+	NxsTransaction* newTr = new NxsTransaction();
+	newTr->mFlag = NxsTransaction::FLAG_STATE_WAITING_CONFIRM;
+
+	uint32_t transN = locked_getTransactionId();
+
+        // store msg items to send in transaction
+	GxsMsgResult::iterator mit = msgs.begin();
+	std::string peerId = tr->mTransaction->PeerId();
+	uint32_t msgSize = 0;
+
+	for(;mit != msgs.end(); mit++)
+	{
+		std::vector<RsNxsMsg*>& msgV = mit->second;
+		std::vector<RsNxsMsg*>::iterator vit = msgV.begin();
+
+		for(; vit != msgV.end(); vit++)
+		{
+			RsNxsMsg* msg = *vit;
+			msg->PeerId(peerId);
+			msg->transactionNumber = transN;
+			newTr->mItems.push_back(msg);
+			msgSize++;
+		}
+	}
+
+	if(newTr->mItems.empty()){
+		delete newTr;
+		return;
+	}
+
+	RsNxsTransac* ntr = new RsNxsTransac(mServType);
+	ntr->transactionNumber = transN;
+	ntr->transactFlag = RsNxsTransac::FLAG_BEGIN_P1 |
+			RsNxsTransac::FLAG_TYPE_MSGS;
+	ntr->nItems = msgSize;
+	ntr->PeerId(peerId);
+
+	newTr->mTransaction = new RsNxsTransac(*ntr);
+	newTr->mTransaction->PeerId(mOwnId);
+	newTr->mTimeOut = time(NULL) + mTransactionTimeOut;
+
+	ntr->PeerId(tr->mTransaction->PeerId());
+	sendItem(ntr);
+
+	locked_addTransaction(newTr);
 
 	return;
 }
@@ -956,7 +1119,6 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrp* item)
 	if(grp.empty())
 		return;
 
-	std::vector<RsNxsSyncGrpItem*> grpSyncItems;
 	std::map<std::string, RsGxsGrpMetaData*>::iterator mit =
 	grp.begin();
 
@@ -975,6 +1137,7 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrp* item)
 		gItem->PeerId(peer);
 		gItem->transactionNumber = transN;
 		itemL.push_back(gItem);
+		delete mit->second; // release resource
 	}
 
 	tr->mFlag = NxsTransaction::FLAG_STATE_WAITING_CONFIRM;
@@ -1003,6 +1166,61 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrp* item)
 void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsg* item)
 {
 	RsStackMutex stack(mNxsMutex);
+
+	const std::string& peer = item->PeerId();
+
+	GxsMsgMetaResult metaResult;
+	GxsMsgReq req;
+	req[item->grpId] = std::vector<std::string>();
+	mDataStore->retrieveGxsMsgMetaData(req, metaResult);
+
+	std::vector<RsGxsMsgMetaData*>& msgMeta = metaResult[item->grpId];
+
+	if(req.empty()){
+		return;
+	}
+
+	std::vector<RsGxsMsgMetaData*>::iterator vit = msgMeta.begin();
+
+	NxsTransaction* tr = new NxsTransaction();
+	std::list<RsNxsItem*>& itemL = tr->mItems;
+
+	uint32_t transN = locked_getTransactionId();
+
+	for(; vit != msgMeta.end(); vit++)
+	{
+		RsGxsMsgMetaData* m = *vit;
+		RsNxsSyncMsgItem* mItem = new
+				RsNxsSyncMsgItem(mServType);
+		mItem->flag = RsNxsSyncGrpItem::FLAG_RESPONSE;
+		mItem->grpId = m->mGroupId;
+		mItem->msgId = m->mMsgId;
+		mItem->PeerId(peer);
+		mItem->transactionNumber = transN;
+		itemL.push_back(mItem);
+	}
+
+	tr->mFlag = NxsTransaction::FLAG_STATE_WAITING_CONFIRM;
+	RsNxsTransac* trItem = new RsNxsTransac(mServType);
+	trItem->transactFlag = RsNxsTransac::FLAG_BEGIN_P1
+			| RsNxsTransac::FLAG_TYPE_MSG_LIST_RESP;
+
+	trItem->nItems = itemL.size();
+
+	trItem->timestamp = 0;
+	trItem->PeerId(peer);
+	trItem->transactionNumber = transN;
+
+	// also make a copy for the resident transaction
+	tr->mTransaction = new RsNxsTransac(*trItem);
+	tr->mTransaction->PeerId(mOwnId);
+	tr->mTimeOut = time(NULL) + mTransactionTimeOut;
+
+	// signal peer to prepare for transaction
+	sendItem(trItem);
+
+	locked_addTransaction(tr);
+
 	return;
 }
 
@@ -1047,3 +1265,40 @@ NxsTransaction::~NxsTransaction(){
 	delete mTransaction;
 	mTransaction = NULL;
 }
+
+
+/* Net Manager */
+
+RsNxsNetMgrImpl::RsNxsNetMgrImpl(p3LinkMgr *lMgr)
+    : mLinkMgr(lMgr), mNxsNetMgrMtx("RsNxsNetMgrImpl")
+{
+
+}
+
+
+std::string RsNxsNetMgrImpl::getOwnId()
+{
+    RsStackMutex stack(mNxsNetMgrMtx);
+    return mLinkMgr->getOwnId();
+}
+
+void RsNxsNetMgrImpl::getOnlineList(std::set<std::string> &ssl_peers)
+{
+    ssl_peers.clear();
+
+    std::list<std::string> pList;
+    {
+        RsStackMutex stack(mNxsNetMgrMtx);
+        mLinkMgr->getOnlineList(pList);
+    }
+
+    std::list<std::string>::const_iterator lit = pList.begin();
+
+    for(; lit != pList.end(); lit++)
+        ssl_peers.insert(*lit);
+}
+
+
+
+
+

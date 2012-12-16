@@ -65,6 +65,7 @@ const uint16_t RS_SERVICE_TYPE_STATUS      = 0xf020;
 
 const uint16_t RS_SERVICE_TYPE_PLUGIN_ARADO_ID   = 0x0401;
 const uint16_t RS_SERVICE_TYPE_PLUGIN_QCHESS_ID  = 0x0402;
+const uint16_t RS_SERVICE_TYPE_PLUGIN_FEEDREADER = 0x0403;
 
 
 /****************** BELOW ARE ONLY THEORETICAL (CAN BE CHANGED) *****/
@@ -107,13 +108,6 @@ const uint16_t RS_SERVICE_TYPE_DSDV        = 0xf050;
 const uint16_t RS_SERVICE_TYPE_BWCTRL      = 0xf060;
 
 
- /* New Cache Services  */
-const uint16_t RS_SERVICE_TYPE_IDENTITY    = 0xf100;
-const uint16_t RS_SERVICE_TYPE_PHOTO       = 0xf101;
-const uint16_t RS_SERVICE_TYPE_WIKI        = 0xf102;
-const uint16_t RS_SERVICE_TYPE_WIRE        = 0xf103;
-const uint16_t RS_SERVICE_TYPE_FORUMSV2    = 0xf104;
-const uint16_t RS_SERVICE_TYPE_POSTED      = 0xf105;
 
 //const uint16_t RS_SERVICE_TYPE_DISTRIB     = 0xf110;
 //const uint16_t RS_SERVICE_TYPE_FORUM       = 0xf120;
@@ -133,9 +127,35 @@ const uint16_t RS_SERVICE_TYPE_GAME_QGO      = 0xf212;
 const uint16_t RS_SERVICE_TYPE_GAME_BIGTWO   = 0xf213;
 const uint16_t RS_SERVICE_TYPE_GAME_POKER    = 0xf214;
 
+ /* New Cache Services  */
 /* Rs Network Exchange Service */
-const uint16_t RS_SERVICE_TYPE_NXS = 0xf300;
+const uint16_t RS_SERVICE_TYPE_NXS 	   = 0xf300;
 
+const uint16_t RS_SERVICE_GXSV1_TYPE_GXSID       = 0xf301;
+const uint16_t RS_SERVICE_GXSV1_TYPE_PHOTO       = 0xf302;
+const uint16_t RS_SERVICE_GXSV1_TYPE_WIKI        = 0xf303;
+const uint16_t RS_SERVICE_GXSV1_TYPE_WIRE        = 0xf304;
+const uint16_t RS_SERVICE_GXSV1_TYPE_FORUMS      = 0xf305;
+const uint16_t RS_SERVICE_GXSV1_TYPE_POSTED      = 0xf306;
+const uint16_t RS_SERVICE_GXSV1_TYPE_CHANNELS    = 0xf307;
+const uint16_t RS_SERVICE_GXSV1_TYPE_GXSCIRCLE   = 0xf307;
+
+const uint16_t RS_SERVICE_GXSV2_TYPE_GXSID       = 0xf311;
+const uint16_t RS_SERVICE_GXSV2_TYPE_GXSCIRCLE   = 0xf312;
+const uint16_t RS_SERVICE_GXSV2_TYPE_PHOTO       = 0xf313;
+const uint16_t RS_SERVICE_GXSV2_TYPE_WIKI        = 0xf314;
+const uint16_t RS_SERVICE_GXSV2_TYPE_WIRE        = 0xf315;
+const uint16_t RS_SERVICE_GXSV2_TYPE_FORUMS      = 0xf316;
+const uint16_t RS_SERVICE_GXSV2_TYPE_POSTED      = 0xf317;
+const uint16_t RS_SERVICE_GXSV2_TYPE_CHANNELS    = 0xf318;
+
+ /* Example Versions (VEG) of New Cache Services  */
+const uint16_t RS_SERVICE_VEG_TYPE_IDENTITY    = 0xf320;
+const uint16_t RS_SERVICE_VEG_TYPE_PHOTO       = 0xf321;
+const uint16_t RS_SERVICE_VEG_TYPE_WIKI        = 0xf322;
+const uint16_t RS_SERVICE_VEG_TYPE_WIRE        = 0xf323;
+const uint16_t RS_SERVICE_VEG_TYPE_FORUMS      = 0xf324;
+const uint16_t RS_SERVICE_VEG_TYPE_POSTED      = 0xf325;
 
 /***************** IDS ALLOCATED FOR PLUGINS ******************/
 

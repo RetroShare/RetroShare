@@ -10,8 +10,15 @@ class LinkTextBrowser : public QTextBrowser
 public:
 	explicit LinkTextBrowser(QWidget *parent = 0);
 
+	void setPlaceholderText(const QString &text);
+
 private slots:
 	void linkClicked(const QUrl &url);
+
+protected:
+	void paintEvent(QPaintEvent *event);
+
+	QString placeholderText;
 };
 
 #endif // LINKTEXTBROWSER_H

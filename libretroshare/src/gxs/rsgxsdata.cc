@@ -1,10 +1,36 @@
 
+/*
+ * libretroshare/src/gxs: rsgxsdata.cc
+ *
+ * Gxs Data types used to specific services
+ *
+ * Copyright 2012-2012 by Christopher Evi-Parker, Robert Fernie
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License Version 2 as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
+ *
+ * Please report all bugs and problems to "retroshare@lunamutt.com".
+ *
+ */
+
 #include "rsgxsdata.h"
 #include "serialiser/rsbaseserial.h"
+#include "serialiser/rstlvbase.h"
 
 RsGxsGrpMetaData::RsGxsGrpMetaData()
 {
-
+    clear();
 }
 
 uint32_t RsGxsGrpMetaData::serial_size()
@@ -17,9 +43,11 @@ uint32_t RsGxsGrpMetaData::serial_size()
     s += 4;
     s += 4;
     s += GetTlvStringSize(mAuthorId);
-    s += adminSign.TlvSize();
+    s += GetTlvStringSize(mServiceString);
+    s += signSet.TlvSize();
     s += keys.TlvSize();
-    s += idSign.TlvSize();
+    s += 4; // for mCircleType
+    s += GetTlvStringSize(mCircleId);
 
     return s;
 }
@@ -30,6 +58,7 @@ void RsGxsGrpMetaData::clear(){
     mOrigGrpId.clear();
     mAuthorId.clear();
     mGroupName.clear();
+    mServiceString.clear();
     mPublishTs = 0;
     mGroupFlags = 0;
     mPop = 0;
@@ -37,10 +66,13 @@ void RsGxsGrpMetaData::clear(){
     mGroupStatus = 0;
     mLastPost = 0;
     mSubscribeFlags = 0;
-
-    adminSign.TlvClear();
+    signSet.TlvClear();
     keys.TlvClear();
-    idSign.TlvClear();
+    mCircleId.clear();
+    mInternalCircle.clear();
+    mOriginator.clear();
+    mCircleType = 0;
+
 }
 
 bool RsGxsGrpMetaData::serialise(void *data, uint32_t &pktsize)
@@ -72,11 +104,13 @@ bool RsGxsGrpMetaData::serialise(void *data, uint32_t &pktsize)
     ok &= SetTlvString(data, tlvsize, &offset, 0, mGroupName);
     ok &= setRawUInt32(data, tlvsize, &offset, mGroupFlags);
     ok &= setRawUInt32(data, tlvsize, &offset, mPublishTs);
+    ok &= setRawUInt32(data, tlvsize, &offset, mCircleType);
     ok &= SetTlvString(data, tlvsize, &offset, 0, mAuthorId);
-
-    ok &= adminSign.SetTlv(data, tlvsize, &offset);
+    ok &= SetTlvString(data, tlvsize, &offset, 0, mServiceString);
+    ok &= SetTlvString(data, tlvsize, &offset, 0, mCircleId);
+    ok &= signSet.SetTlv(data, tlvsize, &offset);
     ok &= keys.SetTlv(data, tlvsize, &offset);
-    ok &= idSign.SetTlv(data, tlvsize, &offset);
+
 
     return ok;
 }
@@ -98,11 +132,13 @@ bool RsGxsGrpMetaData::deserialise(void *data, uint32_t &pktsize)
     ok &= GetTlvString(data, pktsize, &offset, 0, mGroupName);
     ok &= getRawUInt32(data, pktsize, &offset, &mGroupFlags);
     ok &= getRawUInt32(data, pktsize, &offset, &mPublishTs);
+    ok &= getRawUInt32(data, pktsize, &offset, &mCircleType);
     ok &= GetTlvString(data, pktsize, &offset, 0, mAuthorId);
-
-    ok &= adminSign.GetTlv(data, pktsize, &offset);
+    ok &= GetTlvString(data, pktsize, &offset, 0, mServiceString);
+    ok &= GetTlvString(data, pktsize, &offset, 0, mCircleId);
+    ok &= signSet.GetTlv(data, pktsize, &offset);
     ok &= keys.GetTlv(data, pktsize, &offset);
-    ok &= idSign.GetTlv(data, pktsize, &offset);
+
 
     return ok;
 }
@@ -123,8 +159,7 @@ uint32_t RsGxsMsgMetaData::serial_size()
     s += GetTlvStringSize(mOrigMsgId);
     s += GetTlvStringSize(mAuthorId);
 
-    s += pubSign.TlvSize();
-    s += idSign.TlvSize();
+    s += signSet.TlvSize();
     s += GetTlvStringSize(mMsgName);
     s += 4;
     s += 4;
@@ -141,10 +176,9 @@ void RsGxsMsgMetaData::clear()
     mAuthorId.clear();
     mOrigMsgId.clear();
     mMsgName.clear();
+    mServiceString.clear();
 
-    pubSign.TlvClear();
-    idSign.TlvClear();
-
+    signSet.TlvClear();
     mPublishTs = 0;
     mMsgFlags = 0;
     mMsgStatus = 0;
@@ -181,8 +215,7 @@ bool RsGxsMsgMetaData::serialise(void *data, uint32_t *size)
     ok &= SetTlvString(data, *size, &offset, 0, mOrigMsgId);
     ok &= SetTlvString(data, *size, &offset, 0, mAuthorId);
 
-    ok &= pubSign.SetTlv(data, *size, &offset);
-    ok &= idSign.SetTlv(data, *size, &offset);
+    ok &= signSet.SetTlv(data, *size, &offset);
     ok &= SetTlvString(data, *size, &offset, 0, mMsgName);
     ok &= setRawUInt32(data, *size, &offset, mPublishTs);
     ok &= setRawUInt32(data, *size, &offset, mMsgFlags);
@@ -209,8 +242,7 @@ bool RsGxsMsgMetaData::deserialise(void *data, uint32_t *size)
     ok &= GetTlvString(data, *size, &offset, 0, mOrigMsgId);
     ok &= GetTlvString(data, *size, &offset, 0, mAuthorId);
 
-    ok &= pubSign.GetTlv(data, *size, &offset);
-    ok &= idSign.GetTlv(data, *size, &offset);
+    ok &= signSet.GetTlv(data, *size, &offset);
     ok &= GetTlvString(data, *size, &offset, 0, mMsgName);
     uint32_t t;
     ok &= getRawUInt32(data, *size, &offset, &t);
@@ -232,6 +264,12 @@ void RsGxsGrpMetaData::operator =(const RsGroupMetaData& rMeta)
 	this->mPublishTs = rMeta.mPublishTs;
 	this->mSubscribeFlags = rMeta.mSubscribeFlags;
 	this->mGroupName = rMeta.mGroupName;
+	this->mServiceString = rMeta.mServiceString;
+        this->mSignFlags = rMeta.mSignFlags;
+        this->mCircleId = rMeta.mCircleId;
+        this->mCircleType = rMeta.mCircleType;
+        this->mInternalCircle = rMeta.mInternalCircle;
+        this->mOriginator = rMeta.mOriginator;
 }
 
 void RsGxsMsgMetaData::operator =(const RsMsgMetaData& rMeta)
@@ -247,6 +285,7 @@ void RsGxsMsgMetaData::operator =(const RsMsgMetaData& rMeta)
 	this->mParentId = rMeta.mParentId ;
 	this->mPublishTs = rMeta.mPublishTs ;
 	this->mThreadId = rMeta.mThreadId;
+	this->mServiceString = rMeta.mServiceString;
 }
 
 

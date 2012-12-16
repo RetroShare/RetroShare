@@ -3,51 +3,105 @@
 
 #include "inttypes.h"
 
+/**
+ * The GXS_SERV namespace serves a single point of reference for definining grp and msg flags
+ * Declared and defined here are:
+ * - privacy flags which define the level of privacy that can be given \n
+ *   to a group
+ * - authentication types which defined types of authentication needed for a given message to
+ *   confirm its authenticity
+ * - subscription flags: This used only locally by the peer to subscription status to a \n
+ *   a group
+ * -
+ */
 namespace GXS_SERV {
 
 
-    /*** GROUP FLAGS ***/
 
-    /* type of group */
+    /** START privacy **/
 
-    static const uint32_t FLAG_GRP_TYPE_MASK;
+    static const uint32_t FLAG_PRIVACY_MASK = 0x0000000f;
 
     // pub key encrypted
-    static const uint32_t FLAG_GRP_TYPE_PRIVATE;
+    static const uint32_t FLAG_PRIVACY_PRIVATE = 0x00000001;
 
-    // single publisher, read only
-    static const uint32_t FLAG_GRP_TYPE_RESTRICTED;
+    // publish private key needed to publish
+    static const uint32_t FLAG_PRIVACY_RESTRICTED = 0x00000002;
 
-    // anyone can publish
-    static const uint32_t FLAG_GRP_TYPE_PUBLIC;
+    // anyone can publish, publish key pair not needed
+    static const uint32_t FLAG_PRIVACY_PUBLIC = 0x00000004;
 
+    /** END privacy **/
 
-    /* type of msgs allowed */
+    /** START authentication **/
 
-    static const uint32_t FLAG_MSG_TYPE_MASK;
+    static const uint32_t FLAG_AUTHEN_MASK = 0x000000f0;
 
-    // only signee can edit, and sign required
-    static const uint32_t FLAG_MSG_TYPE_SIGNED;
+    // identity
+    static const uint32_t FLAG_AUTHEN_IDENTITY = 0x000000010;
 
-    // no sign required, but signee can edit if signed
-    static const uint32_t FLAG_MSG_TYPE_ANON;
+    // publish key
+    static const uint32_t FLAG_AUTHEN_PUBLISH = 0x000000020;
 
-    // anyone can mod but sign must be provided (needed for wikis)
-    static const uint32_t FLAG_MSG_TYPE_SIGNED_SHARED;
+    // admin key
+    static const uint32_t FLAG_AUTHEN_ADMIN = 0x00000040;
 
-    /*** GROUP FLAGS ***/
+    // pgp sign identity
+    static const uint32_t FLAG_AUTHEN_PGP_IDENTITY = 0x00000080;
 
+    /** END authentication **/
 
+    /** START msg authentication flags **/
 
-    /*** MESSAGE FLAGS ***/
+    static const uint8_t MSG_AUTHEN_MASK = 0x0f;
 
-    // indicates message edits an existing message
-    static const uint32_t FLAG_MSG_EDIT;
+    static const uint8_t MSG_AUTHEN_ROOT_PUBLISH_SIGN = 0x01;
 
-    // indicates msg is id signed
-    static const uint32_t FLAG_MSG_ID_SIGNED;
+    static const uint8_t MSG_AUTHEN_CHILD_PUBLISH_SIGN = 0x02;
 
-    /*** MESSAGE FLAGS ***/
+    static const uint8_t MSG_AUTHEN_ROOT_AUTHOR_SIGN = 0x04;
+
+    static const uint8_t MSG_AUTHEN_CHILD_AUTHOR_SIGN = 0x08;
+
+    /** END msg authentication flags **/
+
+    /** START group options flag **/
+
+    static const uint8_t GRP_OPTION_AUTHEN_AUTHOR_SIGN = 0x01;
+
+    /** END group options flag **/
+
+    /** START Subscription Flags. (LOCAL) **/
+
+    static const uint32_t GROUP_SUBSCRIBE_ADMIN = 0x01;
+
+    static const uint32_t GROUP_SUBSCRIBE_PUBLISH = 0x02;
+
+    static const uint32_t GROUP_SUBSCRIBE_SUBSCRIBED = 0x04;
+
+    static const uint32_t GROUP_SUBSCRIBE_NOT_SUBSCRIBED = 0x08;
+
+    static const uint32_t GROUP_SUBSCRIBE_MASK = 0x0000000f;
+
+    /** END Subscription Flags. (LOCAL) **/
+
+    /** START GXS Msg status flags **/
+
+    static const uint32_t GXS_MSG_STATUS_UNPROCESSED = 0x000000100;
+
+    static const uint32_t GXS_MSG_STATUS_UNREAD = 0x00000200;
+
+    static const uint32_t GXS_MSG_STATUS_READ = 0x00000400;
+
+    /** END GXS Msg status flags **/
+
+    /** START GXS Grp status flags **/
+
+    static const uint32_t GXS_GRP_STATUS_UNPROCESSED = 0x000000100;
+
+    static const uint32_t GXS_GRP_STATUS_UNREAD = 0x00000200;
+
+    /** END GXS Grp status flags **/
 
 }
 

@@ -1,190 +1,175 @@
-/*
- * libretroshare/src/services: p3posted.h
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright 2012-2012 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-#ifndef P3_POSTED_SERVICE_HEADER
-#define P3_POSTED_SERVICE_HEADER
-
-#include "services/p3gxsservice.h"
-#include "retroshare/rsposted.h"
+#ifndef P3POSTED_H
+#define P3POSTED_H
 
 #include <map>
-#include <string>
 
-/* 
- * Posted Service
- *
- */
+#include "retroshare/rsposted.h"
+#include "gxs/rsgenexchange.h"
 
 
-class PostedDataProxy: public GxsDataProxy
+class GxsPostedPostRanking
 {
-	public:
+public:
 
-	bool addGroup(const RsPostedGroup &group);
-	bool addPost(const RsPostedPost &post);
-	bool addVote(const RsPostedVote &vote);
-	bool addComment(const RsPostedComment &comment);
+    uint32_t pubToken;
+    uint32_t reqToken;
+    RsPosted::RankType rType;
+    RsGxsGroupId grpId;
+    RsPostedPostRanking rankingResult;
+};
 
-	bool getGroup(const std::string &id, RsPostedGroup &group);
-	bool getPost(const std::string &id, RsPostedPost &post);
-	bool getVote(const std::string &id, RsPostedVote &vote);
-	bool getComment(const std::string &id, RsPostedComment &comment);
+class GxsPostedCommentRanking
+{
+public:
 
-        /* These Functions must be overloaded to complete the service */
-virtual bool convertGroupToMetaData(void *groupData, RsGroupMetaData &meta);
-virtual bool convertMsgToMetaData(void *groupData, RsMsgMetaData &meta);
+    uint32_t pubToken;
+    uint32_t reqToken;
+    RsPosted::RankType rType;
+    RsGxsGrpMsgIdPair msgId;
+    PostedRanking result;
+};
 
+class PostedScore {
+public:
+
+    PostedScore() : upVotes(0), downVotes(0), commentCount(0), date(0) {}
+    uint32_t upVotes, downVotes;
+    uint32_t commentCount;
+    time_t date;
+    RsGxsMessageId msgId;
 };
 
 
 
-class p3PostedService: public p3GxsDataService, public RsPosted
+class p3Posted : public RsGenExchange, public RsPosted
 {
-	public:
+public:
+    p3Posted(RsGeneralDataService* gds, RsNetworkExchangeService* nes);
 
-	p3PostedService(uint16_t type);
+protected:
 
-virtual int	tick();
+    /*!
+     * This confirms this class as an abstract one that \n
+     * should not be instantiated \n
+     * The deriving class should implement this function \n
+     * as it is called by the backend GXS system to \n
+     * update client of changes which should \n
+     * instigate client to retrieve new content from the system
+     * @param changes the changes that have occured to data held by this service
+     */
+    void notifyChanges(std::vector<RsGxsNotify*>& changes) ;
 
-	public:
+    void service_tick();
 
-// NEW INTERFACE.
-/************* Extern Interface *******/
+public:
 
-virtual bool updated();
+    void generateTopics();
+    /*!
+     * Exists solely for testing
+     */
+    void generatePosts();
 
-       /* Data Requests */
-virtual bool requestGroupInfo(     uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds);
-virtual bool requestMsgInfo(       uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds);
-virtual bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &msgIds);
+    /*!
+     * Exists solely for testing
+     * Generates random votes to existing posts
+     * in the system
+     */
+    void generateVotesAndComments();
 
-        /* Generic Lists */
-virtual bool getGroupList(         const uint32_t &token, std::list<std::string> &groupIds);
-virtual bool getMsgList(           const uint32_t &token, std::list<std::string> &msgIds);
+public:
 
-        /* Generic Summary */
-virtual bool getGroupSummary(      const uint32_t &token, std::list<RsGroupMetaData> &groupInfo);
-virtual bool getMsgSummary(        const uint32_t &token, std::list<RsMsgMetaData> &msgInfo);
+    bool getGroup(const uint32_t &token, std::vector<RsPostedGroup> &group);
+    bool getPost(const uint32_t &token, PostedPostResult& posts) ;
+    bool getComment(const uint32_t &token, PostedCommentResult& comments) ;
+    bool getRelatedComment(const uint32_t& token, PostedRelatedCommentResult &comments);
+    bool getPostRanking(const uint32_t &token, RsPostedPostRanking &ranking);
 
-        /* Actual Data -> specific to Interface */
-        /* Specific Service Data */
-virtual bool getGroup(const uint32_t &token, RsPostedGroup &group);
-virtual bool getPost(const uint32_t &token, RsPostedPost &post);
-virtual bool getComment(const uint32_t &token, RsPostedComment &comment);
+    bool submitGroup(uint32_t &token, RsPostedGroup &group);
+    bool submitPost(uint32_t &token, RsPostedPost &post);
+    bool submitVote(uint32_t &token, RsPostedVote &vote);
+    bool submitComment(uint32_t &token, RsPostedComment &comment) ;
+            // Special Ranking Request.
+    bool requestPostRankings(uint32_t &token, const RankType &rType, const RsGxsGroupId &groupId);
+    bool requestCommentRankings(uint32_t &token, const RankType &rType, const RsGxsGrpMsgIdPair &msgId);
 
+    bool retrieveScores(const std::string& serviceString, uint32_t& upVotes, uint32_t& downVotes, uint32_t& nComments) const;
 
-        /* Poll */
-virtual uint32_t requestStatus(const uint32_t token);
+private:
 
-        /* Cancel Request */
-virtual bool cancelRequest(const uint32_t &token);
+    /* Functions for processing rankings */
 
-        //////////////////////////////////////////////////////////////////////////////
-virtual bool setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask);
-virtual bool setGroupStatus(const std::string &groupId, const uint32_t status, const uint32_t statusMask);
-virtual bool setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask);
-virtual bool setMessageServiceString(const std::string &msgId, const std::string &str);
-virtual bool setGroupServiceString(const std::string &grpId, const std::string &str);
+    void processRankings();
+    void processPostRanks();
+    void processCommentRanks();
+    void discardCalc(const uint32_t& token);
+    bool completePostedPostCalc(GxsPostedPostRanking* gpp);
+    void completePostedCommentRanking(GxsPostedCommentRanking* gpc);
 
-virtual bool groupRestoreKeys(const std::string &groupId);
-virtual bool groupShareKeys(const std::string &groupId, std::list<std::string>& peers);
+    bool storeScores(std::string& serviceString, uint32_t& upVotes, uint32_t downVotes, uint32_t nComments) const;
 
-virtual bool submitGroup(uint32_t &token, RsPostedGroup &group, bool isNew);
-virtual bool submitPost(uint32_t &token, RsPostedPost &post, bool isNew);
-virtual bool submitVote(uint32_t &token, RsPostedVote &vote, bool isNew);
-virtual bool submitComment(uint32_t &token, RsPostedComment &comment, bool isNew);
+    // for posts
+    void calcPostedPostRank(const std::vector<RsMsgMetaData>, PostedRanking& ranking, bool com(const PostedScore& i, const PostedScore &j)) const;
 
-	// Extended Interface for Collated Data View.
-virtual bool setViewMode(uint32_t mode);
-virtual bool setViewPeriod(uint32_t period);
-virtual bool setViewRange(uint32_t first, uint32_t count);
+    // for comments
+    void calcPostedCommentsRank(const std::map<RsGxsMessageId, std::vector<RsGxsMessageId> >& msgBranches, std::map<RsGxsMessageId, RsMsgMetaData>& msgMetas,
+                                PostedRanking& ranking, bool com(const PostedScore& i, const PostedScore &j)) const;
 
-virtual bool requestRanking(uint32_t &token, std::string groupId);
-virtual bool getRankedPost(const uint32_t &token, RsPostedPost &post);
+    /* Functions for maintaing vote counts in meta data */
 
+    /*!
+     * Update votes should only be called when a vote comes in
+     * Several phases to calculating votes.
+     * First get all messages for groups which you are subscribed
+     * Then for these messages get all the votes accorded to them
+     * Then do the calculation and update messages
+     * Also stores updates for messages which have new scores
+     */
+    void updateVotes();
+    bool updateRequestGroups();
+    bool updateRequestMessages();
+    bool updateRequestVotesComments();
+    bool updateCompleteVotes();
+    bool updateCompleteComments();
 
-	// These are exposed for GUI usage.
-virtual bool encodePostedCache(std::string &str, uint32_t votes, uint32_t comments);
-virtual bool extractPostedCache(const std::string &str, uint32_t &votes, uint32_t &comments);
-virtual float calcPostScore(const RsMsgMetaData &meta);
-
-	private:
-
-	// 
-bool 	checkRankingRequest();
-bool 	processPosts();
-
-	// background processing of Votes.
-	// NB: These should probably be handled by a background thread.
-	// At the moment they are run from the tick() thread.
-
-bool 	background_checkTokenRequest();
-bool 	background_requestGroups();
-bool 	background_requestNewMessages();
-bool 	background_processNewMessages();
-
-bool 	background_updateVoteCounts();
-bool 	background_cleanup();
-
+    /*!
+     * The aim of this is create notifications
+     * for the UI of changes to a post if their vote
+     * or comment count has changed
+     */
+    bool updateComplete();
 
 
-std::string genRandomId();
-bool 	generateDummyData();
-bool 	addExtraDummyData();
+private:
 
-	PostedDataProxy *mPostedProxy;
+    // for calculating ranks
+    std::vector<GxsPostedPostRanking*> mPendingPostRanks;
+    std::vector<GxsPostedPostRanking*> mCompletionPostRanks;
+    std::map<uint32_t, RsPostedPostRanking> mCompletePostRanks;
+    std::map<uint32_t, GxsPostedCommentRanking*> mPendingCommentRanks;
+    std::map<uint32_t, GxsPostedCommentRanking*> mPendingCalculationCommentRanks;
 
-	RsMutex mPostedMtx;
-	bool mUpdated;
+    // for maintaining vote counts in msg meta
+    uint32_t mUpdateRequestGroup, mUpdateRequestMessages, mUpdateRequestComments, mUpdateRequestVotes;
+    bool mPostUpdate;
+    uint32_t mUpdatePhase;
+    std::vector<RsGxsGrpMsgIdPair> mMsgsPendingUpdate;
+    time_t mLastUpdate;
+    GxsMsgMetaMap mMsgMetaUpdate;
+    std::map<RsGxsGrpMsgIdPair, PostedScore > mMsgCounts;
+    std::vector<uint32_t> mChangeTokens;
 
-	// Ranking view mode, stored here.
-	uint32_t mViewMode;
-	uint32_t mViewPeriod;
-	uint32_t mViewStart;
-	uint32_t mViewCount;
+    RsTokenService* mTokenService;
+    RsMutex mPostedMutex;
 
-	// Processing Ranking stuff.
-	bool mProcessingRanking;
-	uint32_t mRankingState;
-	uint32_t mRankingExternalToken;
-	uint32_t mRankingInternalToken;
 
-	// background processing - Mutex protected.
-	time_t   mLastBgCheck;
-	bool 	 mBgProcessing;
-	uint32_t mBgPhase;
-	uint32_t mBgToken;
+    // for data generation
 
-	std::map<std::string, uint32_t> mBgVoteMap;	// ParentId -> Vote Count.
-	std::map<std::string, uint32_t> mBgCommentMap;  // ThreadId -> Comment Count.
-
-	// extra dummy data.
-        std::list<RsPostedVote>    mDummyLaterVotes;
-        std::list<RsPostedComment> mDummyLaterComments;
-
+    bool mGeneratingPosts, mGeneratingTopics,
+    mRequestPhase1, mRequestPhase2, mRequestPhase3, mGenerateVotesAndComments;
+    std::vector<uint32_t> mTokens;
+    uint32_t mToken;
+    std::list<RsGxsGroupId> mGrpIds;
 
 };
 
-#endif 
+#endif // P3POSTED_H

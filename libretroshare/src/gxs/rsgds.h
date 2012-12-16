@@ -36,6 +36,7 @@
 #include "serialiser/rsnxsitems.h"
 #include "gxs/rsgxsdata.h"
 #include "rsgxs.h"
+#include "util/contentvalue.h"
 
 
 class RsGxsSearchModule  {
@@ -53,6 +54,11 @@ public:
  */
 class MsgLocMetaData {
 
+public:
+    MsgLocMetaData(const MsgLocMetaData& meta){ msgId = meta.msgId; val = meta.val;}
+    MsgLocMetaData() {}
+    RsGxsGrpMsgIdPair msgId;
+    ContentValue val;
 };
 
 /*!
@@ -61,11 +67,17 @@ class MsgLocMetaData {
  */
 class GrpLocMetaData {
 
+public:
+    GrpLocMetaData(const GrpLocMetaData& meta){ grpId = meta.grpId; val = meta.val;}
+    GrpLocMetaData(){}
+    RsGxsGroupId grpId;
+    ContentValue val;
+
 };
 
-//typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > GxsMsgReq; // <grpId, msgIds>
-
-//typedef std::map<RsGxsGroupId, std::vector<RsGxsMsgMetaData*> > GxsMsgMetaResult; // <grpId, msg metadatas>
+typedef std::map<RsGxsGroupId, std::vector<RsNxsMsg*> > NxsMsgDataResult;
+typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsNxsMsg*> > NxsMsgRelatedDataResult;
+typedef std::map<RsGxsGroupId, std::vector<RsNxsMsg*> > GxsMsgResult; // <grpId, msgs>
 
 /*!
  * The main role of GDS is the preparation and handing out of messages requested from
@@ -93,6 +105,15 @@ class RsGeneralDataService
 
 public:
 
+    static const std::string MSG_META_SERV_STRING;
+    static const std::string MSG_META_STATUS;
+
+    static const std::string GRP_META_SUBSCRIBE_FLAG;
+    static const std::string GRP_META_STATUS;
+    static const std::string GRP_META_SERV_STRING;
+
+public:
+
     RsGeneralDataService(){}
     virtual ~RsGeneralDataService(){return;}
 
@@ -103,12 +124,12 @@ public:
      * @param cache whether to store results of this retrieval in memory for faster later retrieval
      * @return error code
      */
-    virtual int retrieveNxsMsgs(const GxsMsgReq& reqIds, GxsMsgResult& msg, bool cache) = 0;
+    virtual int retrieveNxsMsgs(const GxsMsgReq& reqIds, GxsMsgResult& msg, bool cache, bool withMeta=false) = 0;
 
     /*!
      * Retrieves all groups stored
      * @param grp retrieved groups
-     * @param withMeta this initialises the meta handles nxs grps
+     * @param withMeta if true the meta handle of nxs grps is intitialised
      * @param cache whether to store retrieval in mem for faster later retrieval
      * @return error code
      */
@@ -130,7 +151,7 @@ public:
      * @param cache whether to store retrieval in mem for faster later retrieval
      * @return error code
      */
-    virtual int retrieveGxsMsgMetaData(const std::vector<std::string>& grpIds, GxsMsgMetaResult& msgMeta) = 0;
+    virtual int retrieveGxsMsgMetaData(const GxsMsgReq& msgIds, GxsMsgMetaResult& msgMeta) = 0;
 
     /*!
      * remove msgs in data store listed in msgIds param
@@ -161,25 +182,25 @@ public:
      * @param msg map of message and decoded meta data information
      * @return error code
      */
-    virtual int storeMessage(std::map<RsNxsMsg*, RsGxsMsgMetaData*>& msg) = 0;
+    virtual int storeMessage(std::map<RsNxsMsg*, RsGxsMsgMetaData*>& msgs) = 0;
 
     /*!
      * Stores a list of groups in data store
      * @param grp map of group and decoded meta data
      * @return error code
      */
-    virtual int storeGroup(std::map<RsNxsGrp*, RsGxsGrpMetaData*>& grp) = 0;
+    virtual int storeGroup(std::map<RsNxsGrp*, RsGxsGrpMetaData*>& grsp) = 0;
 
 
     /*!
      * @param metaData
      */
-    virtual int updateMessageMetaData(MsgLocMetaData* metaData) = 0;
+    virtual int updateMessageMetaData(MsgLocMetaData& metaData) = 0;
 
     /*!
      * @param metaData
      */
-    virtual int updateGroupMetaData(GrpLocMetaData* meta) = 0;
+    virtual int updateGroupMetaData(GrpLocMetaData& meta) = 0;
 
 
     /*!

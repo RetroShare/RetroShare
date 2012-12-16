@@ -1,679 +1,388 @@
-/*
- * libretroshare/src/services p3photoservice.cc
- *
- * Photo Service for RetroShare.
- *
- * Copyright 2012-2012 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-#include "services/p3photoservice.h"
-#include "util/rsrandom.h"
-
-/****
- * #define PHOTO_DEBUG 1
- ****/
+#include "p3photoservice.h"
+#include "serialiser/rsphotoitems.h"
+#include "gxs/rsgxsflags.h"
 
 RsPhoto *rsPhoto = NULL;
 
 
-/********************************************************************************/
-/******************* Startup / Tick    ******************************************/
-/********************************************************************************/
+const uint32_t RsPhoto::FLAG_MSG_TYPE_MASK = 0x000f;
+const uint32_t RsPhoto::FLAG_MSG_TYPE_PHOTO_POST = 0x0001;
+const uint32_t RsPhoto::FLAG_MSG_TYPE_PHOTO_COMMENT = 0x0002;
 
-p3PhotoService::p3PhotoService(uint16_t type)
-	:p3GxsDataService(type, new PhotoDataProxy()), mPhotoMtx("p3PhotoService"), mUpdated(true)
-{
-     	RsStackMutex stack(mPhotoMtx); /********** STACK LOCKED MTX ******/
 
-	mPhotoProxy = (PhotoDataProxy *) mProxy;
-	return;
-}
 
 
-int	p3PhotoService::tick()
-{
-	//std::cerr << "p3PhotoService::tick()";
-	//std::cerr << std::endl;
-
-	fakeprocessrequests();
-	
-	return 0;
-}
-
-bool 	p3PhotoService::updated()
-{
-	RsStackMutex stack(mPhotoMtx); /********** STACK LOCKED MTX ******/
-	
-	if (mUpdated)
-	{
-		mUpdated = false;
-		return true;
-	}
-	return false;
-}
-
-
-       /* Data Requests */
-bool p3PhotoService::requestGroupInfo(     uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds)
-{
-	generateToken(token);
-	std::cerr << "p3PhotoService::requestGroupInfo() gets Token: " << token << std::endl;
-	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_GROUPS, groupIds);
-
-	return true;
-}
-
-bool p3PhotoService::requestMsgInfo(       uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds)
-{
-	generateToken(token);
-	std::cerr << "p3PhotoService::requestMsgInfo() gets Token: " << token << std::endl;
-	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_MSGS, groupIds);
-
-	return true;
-}
-
-bool p3PhotoService::requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &msgIds)
-{
-	generateToken(token);
-	std::cerr << "p3PhotoService::requestMsgRelatedInfo() gets Token: " << token << std::endl;
-	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_MSGRELATED, msgIds);
-
-	return true;
-}
-
-        /* Generic Lists */
-bool p3PhotoService::getGroupList(         const uint32_t &token, std::list<std::string> &groupIds)
-{
-	uint32_t status;
-	uint32_t reqtype;
-	uint32_t anstype;
-	time_t ts;
-	checkRequestStatus(token, status, reqtype, anstype, ts);
-
-	if (anstype != RS_TOKREQ_ANSTYPE_LIST)
-	{
-		std::cerr << "p3PhotoService::getGroupList() ERROR AnsType Wrong" << std::endl;
-		return false;
-	}
-	
-	if (reqtype != GXS_REQUEST_TYPE_GROUPS)
-	{
-		std::cerr << "p3PhotoService::getGroupList() ERROR ReqType Wrong" << std::endl;
-		return false;
-	}
-	
-	if (status != GXS_REQUEST_STATUS_COMPLETE)
-	{
-		std::cerr << "p3PhotoService::getGroupList() ERROR Status Incomplete" << std::endl;
-		return false;
-	}
-
-	bool ans = loadRequestOutList(token, groupIds);	
-	updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
-
-	return ans;
-}
-
-
-
-
-bool p3PhotoService::getMsgList(           const uint32_t &token, std::list<std::string> &msgIds)
-{
-	uint32_t status;
-	uint32_t reqtype;
-	uint32_t anstype;
-	time_t ts;
-	checkRequestStatus(token, status, reqtype, anstype, ts);
-
-	if (anstype != RS_TOKREQ_ANSTYPE_LIST)
-	{
-		std::cerr << "p3PhotoService::getMsgList() ERROR AnsType Wrong" << std::endl;
-		return false;
-	}
-	
-	if ((reqtype != GXS_REQUEST_TYPE_MSGS) && (reqtype != GXS_REQUEST_TYPE_MSGRELATED))
-	{
-		std::cerr << "p3PhotoService::getMsgList() ERROR ReqType Wrong" << std::endl;
-		return false;
-	}
-	
-	if (status != GXS_REQUEST_STATUS_COMPLETE)
-	{
-		std::cerr << "p3PhotoService::getMsgList() ERROR Status Incomplete" << std::endl;
-		return false;
-	}
-
-	bool ans = loadRequestOutList(token, msgIds);	
-	updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
-
-	return ans;
-}
-
-
-        /* Generic Summary */
-bool p3PhotoService::getGroupSummary(      const uint32_t &token, std::list<RsGroupMetaData> &groupInfo)
-{
-	uint32_t status;
-	uint32_t reqtype;
-	uint32_t anstype;
-	time_t ts;
-	checkRequestStatus(token, status, reqtype, anstype, ts);
-
-	if (anstype != RS_TOKREQ_ANSTYPE_SUMMARY)
-	{
-		std::cerr << "p3PhotoService::getGroupSummary() ERROR AnsType Wrong" << std::endl;
-		return false;
-	}
-	
-	if (reqtype != GXS_REQUEST_TYPE_GROUPS)
-	{
-		std::cerr << "p3PhotoService::getGroupSummary() ERROR ReqType Wrong" << std::endl;
-		return false;
-	}
-	
-	if (status != GXS_REQUEST_STATUS_COMPLETE)
-	{
-		std::cerr << "p3PhotoService::getGroupSummary() ERROR Status Incomplete" << std::endl;
-		return false;
-	}
-
-	std::list<std::string> groupIds;
-	bool ans = loadRequestOutList(token, groupIds);	
-	updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
-
-	/* convert to RsGroupMetaData */
-	mProxy->getGroupSummary(groupIds, groupInfo);
-
-	return ans;
-}
-
-bool p3PhotoService::getMsgSummary(        const uint32_t &token, std::list<RsMsgMetaData> &msgInfo)
-{
-	uint32_t status;
-	uint32_t reqtype;
-	uint32_t anstype;
-	time_t ts;
-	checkRequestStatus(token, status, reqtype, anstype, ts);
-
-	if (anstype != RS_TOKREQ_ANSTYPE_SUMMARY)
-	{
-		std::cerr << "p3PhotoService::getMsgSummary() ERROR AnsType Wrong" << std::endl;
-		return false;
-	}
-	
-	if ((reqtype != GXS_REQUEST_TYPE_MSGS) && (reqtype != GXS_REQUEST_TYPE_MSGRELATED))
-	{
-		std::cerr << "p3PhotoService::getMsgSummary() ERROR ReqType Wrong" << std::endl;
-		return false;
-	}
-	
-	if (status != GXS_REQUEST_STATUS_COMPLETE)
-	{
-		std::cerr << "p3PhotoService::getMsgSummary() ERROR Status Incomplete" << std::endl;
-		return false;
-	}
-
-	std::list<std::string> msgIds;
-	bool ans = loadRequestOutList(token, msgIds);	
-	updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
-
-	/* convert to RsMsgMetaData */
-	mProxy->getMsgSummary(msgIds, msgInfo);
-
-	return ans;
-}
-
-
-        /* Specific Service Data */
-bool p3PhotoService::getAlbum(const uint32_t &token, RsPhotoAlbum &album)
-{
-	std::cerr << "p3PhotoService::getAlbum() Token: " << token;
-	std::cerr << std::endl;
-
-	uint32_t status;
-	uint32_t reqtype;
-	uint32_t anstype;
-	time_t ts;
-	checkRequestStatus(token, status, reqtype, anstype, ts);
-	
-
-	if (anstype != RS_TOKREQ_ANSTYPE_DATA)
-	{
-		std::cerr << "p3PhotoService::getAlbum() ERROR AnsType Wrong" << std::endl;
-		return false;
-	}
-	
-	if (reqtype != GXS_REQUEST_TYPE_GROUPS)
-	{
-		std::cerr << "p3PhotoService::getAlbum() ERROR ReqType Wrong" << std::endl;
-		return false;
-	}
-	
-	if (status != GXS_REQUEST_STATUS_COMPLETE)
-	{
-		std::cerr << "p3PhotoService::getAlbum() ERROR Status Incomplete" << std::endl;
-		return false;
-	}
-	
-	std::string id;
-	if (!popRequestOutList(token, id))
-	{
-		/* finished */
-		updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
-		return false;
-	}
-	
-	/* convert to RsPhotoAlbum */
-	bool ans = mPhotoProxy->getAlbum(id, album);
-	return ans;
-}
-
-
-bool p3PhotoService::getPhoto(const uint32_t &token, RsPhotoPhoto &photo)
-{
-	std::cerr << "p3PhotoService::getPhoto() Token: " << token;
-	std::cerr << std::endl;
-
-	uint32_t status;
-	uint32_t reqtype;
-	uint32_t anstype;
-	time_t ts;
-	checkRequestStatus(token, status, reqtype, anstype, ts);
-	
-
-	if (anstype != RS_TOKREQ_ANSTYPE_DATA)
-	{
-		std::cerr << "p3PhotoService::getPhoto() ERROR AnsType Wrong" << std::endl;
-		return false;
-	}
-	
-	if ((reqtype != GXS_REQUEST_TYPE_MSGS) && (reqtype != GXS_REQUEST_TYPE_MSGRELATED))
-	{
-		std::cerr << "p3PhotoService::getPhoto() ERROR ReqType Wrong" << std::endl;
-		return false;
-	}
-	
-	if (status != GXS_REQUEST_STATUS_COMPLETE)
-	{
-		std::cerr << "p3PhotoService::getPhoto() ERROR Status Incomplete" << std::endl;
-		return false;
-	}
-	
-	std::string id;
-	if (!popRequestOutList(token, id))
-	{
-		/* finished */
-		updateRequestStatus(token, GXS_REQUEST_STATUS_DONE);
-		return false;
-	}
-	
-	/* convert to RsPhotoAlbum */
-	bool ans = mPhotoProxy->getPhoto(id, photo);
-	return ans;
-}
-
-
-
-        /* Poll */
-uint32_t p3PhotoService::requestStatus(const uint32_t token)
-{
-	uint32_t status;
-	uint32_t reqtype;
-	uint32_t anstype;
-	time_t ts;
-	checkRequestStatus(token, status, reqtype, anstype, ts);
-
-	return status;
-}
-
-
-        /* Cancel Request */
-bool p3PhotoService::cancelRequest(const uint32_t &token)
-{
-	return clearRequest(token);
-}
-
-
-bool p3PhotoService::setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask)
-{
-	return mPhotoProxy->setMessageStatus(msgId, status, statusMask);
-}
-
-bool p3PhotoService::setGroupStatus(const std::string &groupId, const uint32_t status, const uint32_t statusMask)
-{
-	return mPhotoProxy->setGroupStatus(groupId, status, statusMask);
-}
-
-bool p3PhotoService::setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask)
-{
-        return mPhotoProxy->setGroupSubscribeFlags(groupId, subscribeFlags, subscribeMask);
-}
-
-bool p3PhotoService::setMessageServiceString(const std::string &msgId, const std::string &str)
-{
-	return mPhotoProxy->setMessageServiceString(msgId, str);
-}
-
-bool p3PhotoService::setGroupServiceString(const std::string &grpId, const std::string &str)
-{
-	return mPhotoProxy->setGroupServiceString(grpId, str);
-}
-
-
-bool p3PhotoService::groupRestoreKeys(const std::string &groupId)
-{
-	return false;
-}
-
-bool p3PhotoService::groupShareKeys(const std::string &groupId, std::list<std::string>& peers)
-{
-	return false;
-}
-
-
-/* details are updated in album - to choose Album ID, and storage path */
-
-bool p3PhotoService::submitAlbumDetails(uint32_t &token, RsPhotoAlbum &album, bool isNew)
-{
-	/* check if its a modification or a new album */
-
-	/* add to database */
-
-	/* check if its a mod or new photo */
-	if (album.mMeta.mGroupId.empty())
-	{
-		/* new photo */
-
-		/* generate a temp id */
-		album.mMeta.mGroupId = genRandomId();
-		// TODO.
-		//album.mMeta.mPublishTs = time(NULL);
-
-		std::cerr << "p3PhotoService::submitAlbumDetails() Generated New GroupID: " << album.mMeta.mGroupId;
-		std::cerr << std::endl;
-	}
-
-	album.mModFlags = 0; // These are always cleared.
-
-	{
-		RsStackMutex stack(mPhotoMtx); /********** STACK LOCKED MTX ******/
-
-		mUpdated = true;
-
-		/* add / modify */
-		mPhotoProxy->addAlbum(album);
-	}
-
-	// Fake a request to return the GroupMetaData.
-	generateToken(token);
-	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
-	RsTokReqOptions opts; // NULL is good.
-	std::list<std::string> groupIds;  
-	groupIds.push_back(album.mMeta.mGroupId); // It will just return this one.
-
-	std::cerr << "p3PhotoService::submitAlbumDetails() Generating Request Token: " << token << std::endl;
-	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_GROUPS, groupIds);
-
-	return true;
-}
-
-bool p3PhotoService::submitPhoto(uint32_t &token, RsPhotoPhoto &photo, bool isNew)
-{
-	if (photo.mMeta.mGroupId.empty())
-	{
-		/* new photo */
-		std::cerr << "p3PhotoService::submitPhoto() Missing GroupID: ERROR";
-		std::cerr << std::endl;
-		return false;
-	}
-	
-	/* generate a new id */
-	photo.mMeta.mMsgId = genRandomId();
-	photo.mMeta.mPublishTs = time(NULL);
-
-	if (isNew)
-	{
-		/* new (Original Msg) photo */
-		photo.mMeta.mOrigMsgId = photo.mMeta.mMsgId; 
-		std::cerr << "p3PhotoService::submitPhoto() New Msg";
-		std::cerr << std::endl;
-	}
-	else
-	{
-		std::cerr << "p3PhotoService::submitPhoto() Updated Msg";
-		std::cerr << std::endl;
-	}
-
-	photo.mModFlags = 0; // These are always cleared.
-
-	std::cerr << "p3PhotoService::submitPhoto() OrigMsgId: " << photo.mMeta.mOrigMsgId;
-	std::cerr << " MsgId: " << photo.mMeta.mMsgId;
-	std::cerr << std::endl;
-
-	{
-		RsStackMutex stack(mPhotoMtx); /********** STACK LOCKED MTX ******/
-
-		mUpdated = true;
-		mPhotoProxy->addPhoto(photo);
-	}
-
-	// Fake a request to return the MsgMetaData.
-	generateToken(token);
-	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
-	RsTokReqOptions opts; // NULL is good.
-	std::list<std::string> msgIds;  
-	msgIds.push_back(photo.mMeta.mMsgId); // It will just return this one.
-
-	std::cerr << "p3PhotoService::submitPhoto() Generating Request Token: " << token << std::endl;
-	storeRequest(token, ansType, opts, GXS_REQUEST_TYPE_MSGRELATED, msgIds);
-
-	return true;
-}
-
-
-
-/********************************************************************************************/
-
-bool PhotoDataProxy::getAlbum(const std::string &id, RsPhotoAlbum &album)
-{
-	void *groupData = NULL;
-	RsGroupMetaData meta;
-	if (getGroupData(id, groupData) && getGroupSummary(id, meta))
-	{
-		RsPhotoAlbum *pA = (RsPhotoAlbum *) groupData;
-		// Shallow copy of thumbnail.
-		album = *pA;
-
-		// update definitive version of the metadata.
-		album.mMeta = meta;
-
-		std::cerr << "PhotoDataProxy::getAlbum() Id: " << id;
-		std::cerr << " MetaData: " << meta << " DataPointer: " << groupData;
-		std::cerr << std::endl;
-		return true;
-	}
-
-	std::cerr << "PhotoDataProxy::getAlbum() FAILED Id: " << id;
-	std::cerr << std::endl;
-
-	return false;
-}
-
-bool PhotoDataProxy::getPhoto(const std::string &id, RsPhotoPhoto &photo)
-{
-	void *msgData = NULL;
-	RsMsgMetaData meta;
-	if (getMsgData(id, msgData) && getMsgSummary(id, meta))
-	{
-		RsPhotoPhoto *pP = (RsPhotoPhoto *) msgData;
-		// Shallow copy of thumbnail.
-		photo = *pP;
-	
-		// update definitive version of the metadata.
-		photo.mMeta = meta;
-
-		std::cerr << "PhotoDataProxy::getPhoto() Id: " << id;
-		std::cerr << " MetaData: " << meta << " DataPointer: " << msgData;
-		std::cerr << std::endl;
-		return true;
-	}
-
-	std::cerr << "PhotoDataProxy::getPhoto() FAILED Id: " << id;
-	std::cerr << std::endl;
-
-	return false;
-}
-
-
-
-bool PhotoDataProxy::addAlbum(const RsPhotoAlbum &album)
-{
-	// Make duplicate.
-	RsPhotoAlbum *pA = new RsPhotoAlbum();
-	*pA = album;
-
-	std::cerr << "PhotoDataProxy::addAlbum()";
-	std::cerr << " MetaData: " << pA->mMeta << " DataPointer: " << pA;
-	std::cerr << std::endl;
-
-	// deep copy thumbnail.
-	pA->mThumbnail.data = NULL;
-	pA->mThumbnail.copyFrom(album.mThumbnail);
-
-	return createGroup(pA);
-}
-
-
-bool PhotoDataProxy::addPhoto(const RsPhotoPhoto &photo)
-{
-	// Make duplicate.
-	RsPhotoPhoto *pP = new RsPhotoPhoto();
-	*pP = photo;
-
-	std::cerr << "PhotoDataProxy::addPhoto()";
-	std::cerr << " MetaData: " << pP->mMeta << " DataPointer: " << pP;
-	std::cerr << std::endl;
-
-	// deep copy thumbnail.
-	pP->mThumbnail.data = NULL;
-	pP->mThumbnail.copyFrom(photo.mThumbnail);
-
-	return createMsg(pP);
-}
-
-
-
-        /* These Functions must be overloaded to complete the service */
-bool PhotoDataProxy::convertGroupToMetaData(void *groupData, RsGroupMetaData &meta)
-{
-	RsPhotoAlbum *album = (RsPhotoAlbum *) groupData;
-	meta = album->mMeta;
-
-	return true;
-}
-
-bool PhotoDataProxy::convertMsgToMetaData(void *msgData, RsMsgMetaData &meta)
-{
-	RsPhotoPhoto *photo = (RsPhotoPhoto *) msgData;
-	meta = photo->mMeta;
-
-	return true;
-}
-
-
-/********************************************************************************************/
-
-std::string p3PhotoService::genRandomId()
-{
-	std::string randomId;
-	for(int i = 0; i < 20; i++)
-	{
-		randomId += (char) ('a' + (RSRandom::random_u32() % 26));
-	}
-	
-	return randomId;
-}
-	
-	
 bool RsPhotoThumbnail::copyFrom(const RsPhotoThumbnail &nail)
 {
-	if (data)
-	{
-		deleteImage();
-	}
+        if (data)
+        {
+                deleteImage();
+        }
 
-	if ((!nail.data) || (nail.size == 0))
-	{
-		return false;
-	}
+        if ((!nail.data) || (nail.size == 0))
+        {
+                return false;
+        }
 
-	size = nail.size;
-	type = nail.type;
-	data = (uint8_t *) malloc(size);
-	memcpy(data, nail.data, size);
+        size = nail.size;
+        type = nail.type;
+        data = (uint8_t *) malloc(size);
+        memcpy(data, nail.data, size);
 
-	return true;
+        return true;
 }
 
 bool RsPhotoThumbnail::deleteImage()
 {
-	if (data)
-	{
-		free(data);
-		data = NULL;
-		size = 0;
-	}
-	return true;
+        if (data)
+        {
+                free(data);
+                data = NULL;
+                size = 0;
+                type.clear();
+        }
+        return true;
 }
 
 
-
-/********************************************************************************************/
-
 RsPhotoPhoto::RsPhotoPhoto()
-	:mSetFlags(0), mOrder(0), mMode(0), mModFlags(0)
+        :mSetFlags(0), mOrder(0), mMode(0), mModFlags(0)
 {
-	return;
+        return;
 }
 
 RsPhotoAlbum::RsPhotoAlbum()
-	:mMode(0), mSetFlags(0), mModFlags(0)
+        :mMode(0), mSetFlags(0), mModFlags(0)
 {
-	return;
+        return;
 }
 
+RsPhotoComment::RsPhotoComment()
+    : mComment(""), mCommentFlag(0) {
+
+}
+
+RsPhotoComment::RsPhotoComment(const RsGxsPhotoCommentItem &comment)
+    : mComment(""), mCommentFlag(0) {
+
+    *this = comment.comment;
+    (*this).mMeta = comment.meta;
+
+}
 std::ostream &operator<<(std::ostream &out, const RsPhotoPhoto &photo)
 {
-	out << "RsPhotoPhoto [ ";
-	out << "Title: " << photo.mMeta.mMsgName;
-	out << "]";
-	return out;
+        out << "RsPhotoPhoto [ ";
+        out << "Title: " << photo.mMeta.mMsgName;
+        out << "]";
+        return out;
 }
 
 
 std::ostream &operator<<(std::ostream &out, const RsPhotoAlbum &album)
 {
-	out << "RsPhotoAlbum [ ";
-	out << "Title: " << album.mMeta.mGroupName;
-	out << "]";
-	return out;
+        out << "RsPhotoAlbum [ ";
+        out << "Title: " << album.mMeta.mGroupName;
+        out << "]";
+        return out;
+}
+
+p3PhotoService::p3PhotoService(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs* gixs,
+                                   uint32_t authenPolicy)
+    : RsGenExchange(gds, nes, new RsGxsPhotoSerialiser(), RS_SERVICE_GXSV1_TYPE_PHOTO, gixs, authenPolicy),
+    mPhotoMutex(std::string("Photo Mutex"))
+{
+
+    // create dummy grps
+
+    RsGxsPhotoAlbumItem* item1 = new RsGxsPhotoAlbumItem(), *item2 = new RsGxsPhotoAlbumItem();
+
+    item1->meta.mGroupName = "Dummy Album 1";
+    item1->meta.mGroupFlags = GXS_SERV::FLAG_PRIVACY_RESTRICTED;
+    item1->album.mCaption = "Dummy 1";
+    item2->meta.mGroupName = "Dummy Album 2";
+    item2->meta.mGroupFlags = GXS_SERV::FLAG_PRIVACY_RESTRICTED;
+    item2->album.mCaption = "Dummy 2";
+
+    createDummyGroup(item1);
+    createDummyGroup(item2);
+}
+
+bool p3PhotoService::updated()
+{
+    RsStackMutex stack(mPhotoMutex);
+
+    bool changed =  (!mGroupChange.empty() || !mMsgChange.empty());
+
+    return changed;
+}
+
+void p3PhotoService::service_tick()
+{
+
+}
+
+
+
+void p3PhotoService::groupsChanged(std::list<RsGxsGroupId>& grpIds)
+{
+    RsStackMutex stack(mPhotoMutex);
+
+    while(!mGroupChange.empty())
+    {
+            RsGxsGroupChange* gc = mGroupChange.back();
+            std::list<RsGxsGroupId>& gList = gc->grpIdList;
+            std::list<RsGxsGroupId>::iterator lit = gList.begin();
+            for(; lit != gList.end(); lit++)
+                    grpIds.push_back(*lit);
+
+            mGroupChange.pop_back();
+            delete gc;
+    }
+}
+
+
+void p3PhotoService::msgsChanged(
+		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgs)
+{
+    RsStackMutex stack(mPhotoMutex);
+
+    while(!mMsgChange.empty())
+    {
+        RsGxsMsgChange* mc = mMsgChange.back();
+        msgs = mc->msgChangeMap;
+        mMsgChange.pop_back();
+        delete mc;
+    }
+}
+
+
+RsTokenService* p3PhotoService::getTokenService() {
+
+	return RsGenExchange::getTokenService();
+}
+
+
+bool p3PhotoService::getGroupList(const uint32_t& token,
+		std::list<RsGxsGroupId>& groupIds)
+{
+	return RsGenExchange::getGroupList(token, groupIds);
+}
+
+
+bool p3PhotoService::getMsgList(const uint32_t& token,
+		GxsMsgIdResult& msgIds)
+{
+
+	return RsGenExchange::getMsgList(token, msgIds);
+}
+
+
+bool p3PhotoService::getGroupSummary(const uint32_t& token,
+		std::list<RsGroupMetaData>& groupInfo)
+{
+	return RsGenExchange::getGroupMeta(token, groupInfo);
+}
+
+
+bool p3PhotoService::getMsgSummary(const uint32_t& token,
+		MsgMetaResult& msgInfo)
+{
+	return RsGenExchange::getMsgMeta(token, msgInfo);
+}
+
+
+bool p3PhotoService::getAlbum(const uint32_t& token, std::vector<RsPhotoAlbum>& albums)
+{
+	std::vector<RsGxsGrpItem*> grpData;
+	bool ok = RsGenExchange::getGroupData(token, grpData);
+
+	if(ok)
+	{
+		std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
+
+		for(; vit != grpData.end(); vit++)
+		{
+			RsGxsPhotoAlbumItem* item = dynamic_cast<RsGxsPhotoAlbumItem*>(*vit);
+			RsPhotoAlbum album = item->album;
+                        item->album.mMeta = item->meta;
+			album.mMeta = item->album.mMeta;
+			delete item;
+			albums.push_back(album);
+		}
+	}
+
+	return ok;
+}
+
+
+bool p3PhotoService::getPhoto(const uint32_t& token, PhotoResult& photos)
+{
+	GxsMsgDataMap msgData;
+	bool ok = RsGenExchange::getMsgData(token, msgData);
+
+	if(ok)
+	{
+		GxsMsgDataMap::iterator mit = msgData.begin();
+
+		for(; mit != msgData.end();  mit++)
+		{
+			RsGxsGroupId grpId = mit->first;
+			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
+			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
+
+			for(; vit != msgItems.end(); vit++)
+			{
+				RsGxsPhotoPhotoItem* item = dynamic_cast<RsGxsPhotoPhotoItem*>(*vit);
+
+				if(item)
+				{
+                                        RsPhotoPhoto photo = item->photo;
+					photo.mMeta = item->meta;
+					photos[grpId].push_back(photo);
+					delete item;
+				}else
+				{
+                                    std::cerr << "Not a photo Item, deleting!" << std::endl;
+                                    delete *vit;
+				}
+			}
+		}
+	}
+
+	return ok;
+}
+
+bool p3PhotoService::getPhotoComment(const uint32_t &token, PhotoCommentResult &comments)
+{
+    GxsMsgDataMap msgData;
+    bool ok = RsGenExchange::getMsgData(token, msgData);
+
+    if(ok)
+    {
+        GxsMsgDataMap::iterator mit = msgData.begin();
+
+        for(; mit != msgData.end();  mit++)
+        {
+            RsGxsGroupId grpId = mit->first;
+            std::vector<RsGxsMsgItem*>& msgItems = mit->second;
+            std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
+
+            for(; vit != msgItems.end(); vit++)
+            {
+                RsGxsPhotoCommentItem* item = dynamic_cast<RsGxsPhotoCommentItem*>(*vit);
+
+                if(item)
+                {
+                    RsPhotoComment comment = item->comment;
+                    comment.mMeta = item->meta;
+                    comments[grpId].push_back(comment);
+                    delete item;
+                }else
+                {
+                    std::cerr << "Not a comment Item, deleting!" << std::endl;
+                    delete *vit;
+                }
+            }
+        }
+    }
+
+    return ok;
+}
+
+RsPhotoComment& RsPhotoComment::operator=(const RsGxsPhotoCommentItem& comment)
+{
+    *this = comment.comment;
+    return *this;
+}
+
+bool p3PhotoService::getPhotoRelatedComment(const uint32_t &token, PhotoRelatedCommentResult &comments)
+{
+
+    return RsGenExchange::getMsgRelatedDataT<RsGxsPhotoCommentItem, RsPhotoComment>(token, comments);
+
+}
+
+bool p3PhotoService::submitAlbumDetails(uint32_t& token, RsPhotoAlbum& album)
+{
+    RsGxsPhotoAlbumItem* albumItem = new RsGxsPhotoAlbumItem();
+    albumItem->album = album;
+    albumItem->meta = album.mMeta;
+    RsGenExchange::publishGroup(token, albumItem);
+    return true;
+}
+
+
+
+void p3PhotoService::notifyChanges(std::vector<RsGxsNotify*>& changes)
+{
+
+    RsStackMutex stack(mPhotoMutex);
+
+    std::vector<RsGxsNotify*>::iterator vit = changes.begin();
+
+    for(; vit != changes.end(); vit++)
+    {
+        RsGxsNotify* n = *vit;
+        RsGxsGroupChange* gc;
+        RsGxsMsgChange* mc;
+        if((mc = dynamic_cast<RsGxsMsgChange*>(n)) != NULL)
+        {
+                mMsgChange.push_back(mc);
+        }
+        else if((gc = dynamic_cast<RsGxsGroupChange*>(n)) != NULL)
+        {
+                mGroupChange.push_back(gc);
+        }
+        else
+        {
+                delete n;
+        }
+    }
+}
+
+bool p3PhotoService::submitPhoto(uint32_t& token, RsPhotoPhoto& photo)
+{
+	RsGxsPhotoPhotoItem* photoItem = new RsGxsPhotoPhotoItem();
+	photoItem->photo = photo;
+	photoItem->meta = photo.mMeta;
+        photoItem->meta.mMsgFlags = FLAG_MSG_TYPE_PHOTO_POST;
+
+        RsGenExchange::publishMsg(token, photoItem);
+        return true;
+}
+
+bool p3PhotoService::submitComment(uint32_t &token, RsPhotoComment &comment)
+{
+    RsGxsPhotoCommentItem* commentItem = new RsGxsPhotoCommentItem();
+    commentItem->comment = comment;
+    commentItem->meta = comment.mMeta;
+    commentItem->meta.mMsgFlags = FLAG_MSG_TYPE_PHOTO_COMMENT;
+
+    RsGenExchange::publishMsg(token, commentItem);
+    return true;
+}
+
+bool p3PhotoService::acknowledgeMsg(const uint32_t& token,
+		std::pair<RsGxsGroupId, RsGxsMessageId>& msgId)
+{
+	return RsGenExchange::acknowledgeTokenMsg(token, msgId);
+}
+
+
+bool p3PhotoService::acknowledgeGrp(const uint32_t& token,
+		RsGxsGroupId& grpId)
+{
+	return RsGenExchange::acknowledgeTokenGrp(token, grpId);
+}
+
+bool p3PhotoService::subscribeToAlbum(uint32_t &token, const RsGxsGroupId &grpId, bool subscribe)
+{
+    if(subscribe)
+        RsGenExchange::setGroupSubscribeFlags(token, grpId, GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED, GXS_SERV::GROUP_SUBSCRIBE_MASK);
+    else
+        RsGenExchange::setGroupSubscribeFlags(token, grpId, 0, GXS_SERV::GROUP_SUBSCRIBE_MASK);
+
+    return true;
 }
 
 

@@ -23,7 +23,6 @@
 
 #include "gui/TheWire/PulseAddDialog.h"
 
-#include "gui/PhotoShare/PhotoDetailsDialog.h"
 #include "gui/PhotoShare/PhotoDrop.h"
 
 #include <iostream>

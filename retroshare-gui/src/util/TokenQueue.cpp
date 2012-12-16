@@ -32,12 +32,11 @@
 
 /** Constructor */
 TokenQueue::TokenQueue(RsTokenService *service, TokenResponse *resp)
-:QWidget(NULL), mService(service), mResponder(resp)
+	: QObject(NULL), mService(service), mResponder(resp)
 {
-	return;
 }
 
-bool TokenQueue::requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, std::list<std::string> ids, uint32_t usertype)
+bool TokenQueue::requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, std::list<RsGxsGroupId>& ids, uint32_t usertype)
 {
 	uint32_t basictype = TOKENREQ_GROUPINFO;
 	mService->requestGroupInfo(token, anstype, opts, ids);
@@ -46,8 +45,16 @@ bool TokenQueue::requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTok
 	return true;
 }
 
+bool TokenQueue::requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, uint32_t usertype)
+{
+	uint32_t basictype = TOKENREQ_GROUPINFO;
+	mService->requestGroupInfo(token, anstype, opts);
+	queueRequest(token, basictype, anstype, usertype);
 
-bool TokenQueue::requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, std::list<std::string> ids, uint32_t usertype)
+	return true;
+}
+
+bool TokenQueue::requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, const GxsMsgReq& ids, uint32_t usertype)
 {
 	uint32_t basictype = TOKENREQ_MSGINFO;
 	mService->requestMsgInfo(token, anstype, opts, ids);
@@ -56,11 +63,20 @@ bool TokenQueue::requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokRe
 	return true;
 }
 
-
-bool TokenQueue::requestMsgRelatedInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, std::list<std::string> ids, uint32_t usertype)
+bool TokenQueue::requestMsgRelatedInfo(uint32_t &token, uint32_t anstype,  const RsTokReqOptions &opts, const std::vector<RsGxsGrpMsgIdPair> &msgId, uint32_t usertype)
 {
-	uint32_t basictype = TOKENREQ_MSGRELATEDINFO;
-	mService->requestMsgRelatedInfo(token, anstype, opts, ids);
+	uint32_t basictype = TOKENREQ_MSGINFO;
+	mService->requestMsgRelatedInfo(token, anstype, opts, msgId);
+	queueRequest(token, basictype, anstype, usertype);
+
+	return true;
+}
+
+bool TokenQueue::requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts,
+								const std::list<RsGxsGroupId> &grpIds, uint32_t usertype)
+{
+	uint32_t basictype = TOKENREQ_MSGINFO;
+	mService->requestMsgInfo(token, anstype, opts, grpIds);
 	queueRequest(token, basictype, anstype, usertype);
 
 	return true;
@@ -82,7 +98,9 @@ void TokenQueue::queueRequest(uint32_t token, uint32_t basictype, uint32_t ansty
 	gettimeofday(&req.mRequestTs, NULL);
 	req.mPollTs = req.mRequestTs;
 
+
 	mRequests.push_back(req);
+
 
 	if (mRequests.size() == 1)
 	{
@@ -98,27 +116,43 @@ void TokenQueue::doPoll(float dt)
 	QTimer::singleShot((int) (dt * 1000.0), this, SLOT(pollRequests()));
 }
 
-
 void TokenQueue::pollRequests()
 {
-	std::list<TokenRequest>::iterator it;
-
 	double pollPeriod = 1.0; // max poll period.
-	for(it = mRequests.begin(); it != mRequests.end(); it++)
+
+	if (mRequests.empty())	{
+		return;
+	}
+
+	TokenRequest req;
+
+
+	req = mRequests.front();
+	mRequests.pop_front();
+
+
+	if (checkForRequest(req.mToken))
 	{
-		if (checkForRequest(it->mToken))
+		/* clean it up and handle */
+		loadRequest(req);
+	}
+	else
+	{
+
+#define MAX_REQUEST_AGE 30
+
+		/* drop old requests too */
+		if (time(NULL) - req.mRequestTs.tv_sec < MAX_REQUEST_AGE)
 		{
-			/* clean it up and handle */
-			loadRequest(*it);		
-			it = mRequests.erase(it);	
+
+			mRequests.push_back(req);
+
 		}
 		else
 		{
-			/* calculate desired poll period */
-
-			/* if less then current poll period, adjust */	
-			
-			it++;
+			std::cerr << "TokenQueue::loadRequest(): ";
+			std::cerr << "Dropping old Token: " << req.mToken << " Type: " << req.mType;
+			std::cerr << std::endl;
 		}
 	}
 
@@ -128,13 +162,52 @@ void TokenQueue::pollRequests()
 	}
 }
 
-
 bool TokenQueue::checkForRequest(uint32_t token)
 {
 	/* check token */
-	return (COMPLETED_REQUEST == mService->requestStatus(token));
+	uint32_t status =  mService->requestStatus(token);
+	return ( (RsTokenService::GXS_REQUEST_V2_STATUS_FAILED == status) ||
+			 (RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE == status) );
 }
 
+bool TokenQueue::activeRequestExist(const uint32_t& userType) const
+{
+
+
+	std::list<TokenRequest>::const_iterator lit = mRequests.begin();
+
+	for(; lit != mRequests.end(); lit++)
+	{
+		const TokenRequest& req = *lit;
+
+		if(req.mUserType == userType)
+		{
+
+			return true;
+		}
+	}
+
+
+
+	return false;
+}
+
+void TokenQueue::activeRequestTokens(const uint32_t& userType, std::list<uint32_t>& tokens) const
+{
+
+
+	std::list<TokenRequest>::const_iterator lit = mRequests.begin();
+
+	for(; lit != mRequests.end(); lit++)
+	{
+		const TokenRequest& req = *lit;
+
+		if(req.mUserType == userType)
+			tokens.push_back(req.mToken);
+	}
+
+
+}
 
 void TokenQueue::loadRequest(const TokenRequest &req)
 {
@@ -144,10 +217,7 @@ void TokenQueue::loadRequest(const TokenRequest &req)
 	std::cerr << std::endl;
 
 	mResponder->loadRequest(this, req);
-
-	return;
 }
-
 
 bool TokenQueue::cancelRequest(const uint32_t token)
 {
@@ -155,6 +225,7 @@ bool TokenQueue::cancelRequest(const uint32_t token)
 	mService->cancelRequest(token);
 
 	std::list<TokenRequest>::iterator it;
+
 
 	for(it = mRequests.begin(); it != mRequests.end(); it++)
 	{
@@ -165,18 +236,15 @@ bool TokenQueue::cancelRequest(const uint32_t token)
 			std::cerr << "TokenQueue::cancelRequest() Cleared Request: " << token;
 			std::cerr << std::endl;
 
+
+
 			return true;
 		}
 	}
+
 
 	std::cerr << "TokenQueue::cancelRequest() Failed to Find Request: " << token;
 	std::cerr << std::endl;
 
 	return false;
 }
-
-
-
-
-
-

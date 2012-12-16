@@ -1,92 +1,52 @@
-/*
- * Retroshare Photo Plugin.
- *
- * Copyright 2012-2012 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+#ifndef PHOTOITEM_H
+#define PHOTOITEM_H
 
-#ifndef MRK_PHOTO_PHOTO_ITEM_H
-#define MRK_PHOTO_PHOTO_ITEM_H
+#include <QWidget>
+#include <QLabel>
+#include "PhotoShareItemHolder.h"
+#include "retroshare/rsphoto.h"
 
-#include "ui_PhotoItem.h"
+namespace Ui {
+    class PhotoItem;
+}
 
-#include <retroshare/rsphoto.h>
-
-class PhotoItem;
-
-class PhotoHolder
+class PhotoItem : public QWidget, public PhotoShareItem
 {
-	public:
-virtual void deletePhotoItem(PhotoItem *, uint32_t ptype) = 0;
-virtual void notifySelection(PhotoItem *item, int ptype) = 0;
-};
-
-
-#define PHOTO_ITEM_TYPE_ALBUM	0x0001
-#define PHOTO_ITEM_TYPE_PHOTO	0x0002
-#define PHOTO_ITEM_TYPE_NEW	0x0003
-
-class PhotoItem : public QWidget, private Ui::PhotoItem
-{
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-	PhotoItem(PhotoHolder *parent, const RsPhotoAlbum &album);
-	PhotoItem(PhotoHolder *parent, const RsPhotoPhoto &photo, const RsPhotoAlbum &album);
-	PhotoItem(PhotoHolder *parent, std::string url); // for new photos.
 
-	void setDummyText();
-	void updateParent(PhotoHolder *parent); // for external construction.
-	void updateAlbumText(const RsPhotoAlbum &album);
-	void updatePhotoText(const RsPhotoPhoto &photo);
-	void updateText();
-	bool getPhotoThumbnail(RsPhotoThumbnail &nail);
-
-	void removeItem();
-
-	void setSelected(bool on);
-	bool isSelected();
-
-	const QPixmap *getPixmap();
-
-	// details are public - so that can be easily edited.
-	bool mIsPhoto;
-	bool mWasModified;
-	RsPhotoPhoto mPhotoDetails;
-	RsPhotoAlbum mAlbumDetails;
-
-//private slots:
-
+    PhotoItem(PhotoShareItemHolder *holder, const RsPhotoPhoto& photo, QWidget* parent = 0);
+    PhotoItem(PhotoShareItemHolder *holder, const QString& path,  QWidget* parent = 0); // for new photos.
+    ~PhotoItem();
+    void setSelected(bool selected);
+    bool isSelected(){ return mSelected; }
+    const RsPhotoPhoto& getPhotoDetails();
+    bool getPhotoThumbnail(RsPhotoThumbnail &nail);
 
 protected:
-	void mousePressEvent(QMouseEvent *event);
+        void mousePressEvent(QMouseEvent *event);
 
 private:
-	void updateImage(const RsPhotoThumbnail &thumbnail);
+        void updateImage(const RsPhotoThumbnail &thumbnail);
+        void setUp();
 
-	PhotoHolder *mParent;
-	uint32_t     mType;
+    private slots:
+        void setTitle();
+        void setPhotoGrapher();
 
+private:
+    Ui::PhotoItem *ui;
 
-        bool mSelected;
+    QPixmap mThumbNail;
+
+    QPixmap getPixmap() { return mThumbNail; }
+
+    bool mSelected;
+    RsPhotoPhoto mPhotoDetails;
+    PhotoShareItemHolder* mHolder;
+
+    QLabel *mTitleLabel, *mPhotoGrapherLabel;
 };
 
-
-#endif
-
+#endif // PHOTOITEM_H

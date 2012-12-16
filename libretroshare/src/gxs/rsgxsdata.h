@@ -1,10 +1,33 @@
 #ifndef RSGXSMETA_H
 #define RSGXSMETA_H
 
-#include <string>
+/*
+ * libretroshare/src/gxs: rsgxsdata.h
+ *
+ * Gxs Data types used to specific services
+ *
+ * Copyright 2012-2012 by Christopher Evi-Parker, Robert Fernie
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License Version 2 as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
+ *
+ * Please report all bugs and problems to "retroshare@lunamutt.com".
+ *
+ */
 
+#include <string>
 #include "serialiser/rsserial.h"
-#include "serialiser/rstlvbase.h"
 #include "serialiser/rstlvtypes.h"
 #include "serialiser/rstlvkeys.h"
 #include "serialiser/rsgxsitems.h"
@@ -32,14 +55,17 @@ public:
     std::string mGroupName;
     uint32_t    mGroupFlags;
     uint32_t    mPublishTs;
+    uint32_t    mSignFlags;
     std::string mAuthorId;
 
+    std::string mCircleId;
+    uint32_t mCircleType;
 
-    RsTlvKeySignature adminSign;
+
+    RsTlvKeySignatureSet signSet;
     RsTlvSecurityKeySet keys;
-    RsTlvKeySignature idSign;
 
-
+    std::string mServiceString;
 
     // BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
 
@@ -50,7 +76,8 @@ public:
     time_t      mLastPost; // ???
 
     uint32_t    mGroupStatus;
-
+    std::string mOriginator;
+    std::string mInternalCircle;
 };
 
 
@@ -75,8 +102,9 @@ public:
     RsGxsMessageId mOrigMsgId;
     std::string mAuthorId;
 
-    RsTlvKeySignature pubSign;
-    RsTlvKeySignature idSign;
+    RsTlvKeySignatureSet signSet;
+
+    std::string mServiceString;
 
     std::string mMsgName;
     time_t      mPublishTs;
@@ -84,8 +112,10 @@ public:
 
     // BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
     // normally READ / UNREAD flags. LOCAL Data.
+
     uint32_t    mMsgStatus;
     time_t      mChildTs;
+    bool validated;
 
 };
 

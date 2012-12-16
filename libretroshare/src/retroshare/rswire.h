@@ -30,39 +30,53 @@
 #include <string>
 #include <list>
 
-#include <retroshare/rsidentity.h>
+#include "gxs/rstokenservice.h"
+#include "gxs/rsgxsifaceimpl.h"
+
 
 /* The Main Interface Class - for information about your Peers */
 class RsWire;
 extern RsWire *rsWire;
-
-class RsWireGroupShare
-{
-	public:
-
-	uint32_t mShareType;
-	std::string mShareGroupId;
-	std::string mPublishKey;
-	uint32_t mCommentMode;
-	uint32_t mResizeMode;
-};
 
 class RsWireGroup
 {
 	public:
 
 	RsGroupMetaData mMeta;
-
-	//std::string mGroupId;
-	//std::string mName;
-
 	std::string mDescription;
-	std::string mCategory;
-
-	std::string mHashTags;
-
-	RsWireGroupShare mShareOptions;
 };
+
+
+
+/***********************************************************************
+ * So pulses operate in the following modes.
+ *
+ * => Standard, a post to your own group.
+ * => @User, gets duplicated on each user's group.
+ * => RT, duplicated as child of original post.
+ *
+ * From Twitter: 
+ *  twitter can be: embedded, replied to, favourited, unfavourited, 
+ *    retweeted, unretweeted and deleted
+ *
+ * See: https://dev.twitter.com/docs/platform-objects
+ *
+ * Format of message: .... 
+ *
+ *  #HashTags.
+ *  @68769381495134  => ID of Sender. 
+ *  <http>
+ *
+ ***********************************************************************/
+
+class RsWirePlace
+{
+	public:
+
+	
+
+};
+
 
 class RsWirePulse
 {
@@ -70,34 +84,40 @@ class RsWirePulse
 
 	RsMsgMetaData mMeta;
 
-	//std::string mGroupId;
-	//std::string mOrigPageId;
-	//std::string mPrevId;
-	//std::string mPageId;
-	//std::string mName;
+	std::string mPulseText; // all the text is stored here.
+	std::string mHashTags; 
 
-	std::string mPulse; // all the text is stored here.
+// These will be added at some point.
+//	std::string mInReplyPulse;
 
-	std::string mHashTags;
+//	uint32_t mPulseFlags;
+
+//	std::list<std::string> mMentions;
+//	std::list<std::string> mHashTags;
+//	std::list<std::string> mUrls;
+
+//	RsWirePlace mPlace;
 };
 
-class RsWire: public RsTokenService
+
+std::ostream &operator<<(std::ostream &out, const RsWireGroup &group);
+std::ostream &operator<<(std::ostream &out, const RsWirePulse &pulse);
+
+
+class RsWire: public RsGxsIfaceImpl
 {
 	public:
 
-	RsWire()  { return; }
+	RsWire(RsGenExchange *gxs): RsGxsIfaceImpl(gxs)  { return; }
 virtual ~RsWire() { return; }
 
 	/* Specific Service Data */
-virtual bool getGroupData(const uint32_t &token, RsWireGroup &group) = 0;
-virtual bool getMsgData(const uint32_t &token, RsWirePulse &pulse) = 0;
+virtual bool getGroupData(const uint32_t &token, std::vector<RsWireGroup> &groups) = 0;
+virtual bool getPulseData(const uint32_t &token, std::vector<RsWirePulse> &pulses) = 0;
 
-	/* Create Stuff */
-virtual bool createGroup(uint32_t &token, RsWireGroup &group, bool isNew) = 0;
-virtual bool createPulse(uint32_t &token, RsWirePulse &pulse, bool isNew) = 0;
+virtual bool createGroup(uint32_t &token, RsWireGroup &group) = 0;
+virtual bool createPulse(uint32_t &token, RsWirePulse &pulse) = 0;
 
 };
-
-
 
 #endif

@@ -103,6 +103,30 @@ bool operator==(const RsTlvSecurityKey& sk1, const RsTlvSecurityKey& sk2)
 	return true;
 }
 
+bool operator==(const RsTlvKeySignatureSet& kss1, const RsTlvKeySignatureSet& kss2)
+{
+    const std::map<SignType, RsTlvKeySignature>& set1 = kss1.keySignSet,
+    &set2  = kss2.keySignSet;
+
+    if(set1.size() != set2.size()) return false;
+
+    std::map<SignType, RsTlvKeySignature>::const_iterator it1 = set1.begin(), it2;
+
+    for(; it1 != set1.end(); it1++)
+    {
+        SignType st1 = it1->first;
+
+        if( (it2 =set2.find(st1)) == set2.end())
+            return false;
+
+        if(!(it1->second == it2->second))
+            return false;
+
+    }
+
+    return true;
+}
+
 bool operator==(const RsTlvKeySignature& ks1, const RsTlvKeySignature& ks2)
 {
 
@@ -136,6 +160,19 @@ void init_item(RsTlvImage& im)
 	im.image_type = RSTLV_IMAGE_TYPE_PNG;
 
 	return;
+}
+
+void init_item(RsTlvKeySignatureSet &kss)
+{
+    int numSign = rand()%21;
+
+    for(int i=0; i < numSign; i++)
+    {
+        RsTlvKeySignature sign;
+        SignType sType = rand()%2452;
+        init_item(sign);
+        kss.keySignSet.insert(std::make_pair(sType, sign));
+    }
 }
 
 bool operator==(const RsTlvBinaryData& bd1, const RsTlvBinaryData& bd2)

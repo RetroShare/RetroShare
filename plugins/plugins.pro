@@ -2,4 +2,5 @@ TEMPLATE = subdirs
 
 SUBDIRS += \
 		LinksCloud \
-		VOIP
+		VOIP \
+		FeedReader

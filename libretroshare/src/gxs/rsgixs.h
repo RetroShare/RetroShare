@@ -27,9 +27,11 @@
  */
 
 #include "gxs/rsgxs.h"
+#include "gxs/rsgenexchange.h"
 
-#include <openssl/ssl.h>
-#include <set>
+#include "retroshare/rsgxscircles.h"
+
+#include "serialiser/rstlvkeys.h"
 
 /*!
  * GIXP: General Identity Exchange Service.
@@ -60,116 +62,93 @@
  */
 
 
-/*!
- * Storage class for private and public publish keys
+/******
+ * More notes. The ideas above have been crystalised somewhat.
  *
+ * The Identity service will now serve two roles:
+ * 1) validating msgs.
+ * 2) reputation of identity.
+ *
+ * The identity will be equivalent to a Group Definition.
+ * and the reputation contained in the group's messages.
+ *
+ * 
+ * Group
+ *   MetaData:
+ *     Public Key
+ *     Signatures. (Admin & optional GPG).
+ *   RealData:
+ *     Nickname.
+ *     GPGHash
+ *
+ * The GPGHash will allow people to identify the real gpg user behind the identity.
+ * We must make sure that the Hash input has enough entropy that it cannot be brute-forced (e.g. like password hashes).
+ *
+ * The Identity service only has to provide hooks to access the Keys for each group.
+ * All the key definitions are exactly the same as for GroupMetaData.
+ *
+ * The Interface is split into three parts.
+ * 1) Internal interface used by GXS to verify signatures.
+ * 2) Internal interface used by GXS to help decide if we get a message or not.
+ * 3) External interface to access nicknames, generate new identities etc.
+ *
+ * The actual implementation will cache frequently used keys and nicknames, 
+ * as these will be used very frequently.
+ *****/
+
+typedef std::string PeerId; // SHOULD BE REMOVED => RsPeerId (SSLID)
+typedef std::string RsPgpId;
+typedef std::string RsGxsId;
+
+//
+//// External Interface - 
+//class RsIdentityService
+//{
+//    enum IdentityType { Pseudonym, Signed, Anonymous };
+//
+//    virtual bool loadId(const GxsId &id) = 0;	
+//
+//    virtual bool getNickname(const GxsId &id, std::string &nickname) = 0;	
+//
+//    virtual bool createKey(RsGixsProfile& profile, uint32_t type) = 0; /* fills in mKeyId, and signature */
+//
+//    virtual RsGixsProfile* getProfile(const KeyRef& keyref) = 0;
+//
+//	// modify reputation.
+//
+//};
+
+
+/* Identity Interface for GXS Message Verification.
  */
-class GixsKey
-{
-        KeyRef mKeyId;
-
-        /// public key
-        EVP_PKEY *mPubKey;
-
-        ///  NULL if non-existant */
-        EVP_PKEY *mPrivKey;
-};
-
-/*!
- *
- *
- */
-class KeyRef {
-
-    std::string refId;
-
-};
-
-
-class KeyRefSet {
-    std::set<KeyRef> mKeyRefSet;
-};
-
-class SignatureSet {
-    std::set<RsGxsSignature> mSignatureSet;
-};
-
-/*!
- *
- *
- */
-class RsGxsSignature {
-
-    KeyRef mKeyRef;
-};
-
-/*!
- * This is the actual identity \n
- * In a sense the group description with the GixsKey the "message"
- */
-class RsGixsProfile {
-
-public:
-
-    KeyRef mKeyRef;
-    std::string name;
-
-    /// may be superseded by newer timestamps
-    time_t mTimeStamp;
-    uint32_t mProfileType;
-
-    // TODO: add permissions members
-
-    RsGxsSignature mSignature;
-
-};
-
-/*!
- * Retroshare general identity exchange service
- *
- * Purpose: \n
- *   Provides a means to distribute identities among peers \n
- *   Also provides encyption, decryption, verification, \n
- *   and signing functionality using any created or received identities \n
- *
- * This may best be implemented as a singleton like current AuthGPG? \n
- *
- */
-class RsIdentityExchangeService : RsGxsService
+class RsGixs
 {
 public:
-
-    enum IdentityType { Pseudonym, Signed, Anonymous };
-
-    RsGixs();
-
-    /*!
-     * creates gixs profile and shares it
-     * @param profile
-     * @param type the type of profile to create, self signed, anonymous, and GPG signed
-     */
-    virtual bool createKey(RsGixsProfile& profile, uint32_t type) = 0; /* fills in mKeyId, and signature */
-
+	// Key related interface - used for validating msgs and groups.
     /*!
      * Use to query a whether given key is available by its key reference
      * @param keyref the keyref of key that is being checked for
      * @return true if available, false otherwise
      */
-    virtual bool haveKey(const KeyRef& keyref) = 0;
+    virtual bool haveKey(const RsGxsId &id) = 0;
 
     /*!
      * Use to query whether private key member of the given key reference is available
      * @param keyref the KeyRef of the key being checked for
      * @return true if private key is held here, false otherwise
      */
-    virtual bool havePrivateKey(const KeyRef& keyref) = 0;
+    virtual bool havePrivateKey(const RsGxsId &id) = 0;
 
+	// The fetchKey has an optional peerList.. this is people that had the msg with the signature.
+	// These same people should have the identity - so we ask them first.
     /*!
      * Use to request a given key reference
      * @param keyref the KeyRef of the key being requested
      * @return will
      */
-    virtual bool requestKey(const KeyRef& keyref) = 0;
+    virtual bool requestKey(const RsGxsId &id, const std::list<PeerId> &peers) = 0;
+    virtual bool requestPrivateKey(const RsGxsId &id) = 0;
+
 
     /*!
      * Retrieves a key identity
@@ -177,53 +156,68 @@ public:
      * @return a pointer to a valid profile if successful, otherwise NULL
      *
      */
-    virtual RsGixsProfile* getProfile(const KeyRef& keyref) = 0;
+    virtual int  getKey(const RsGxsId &id, RsTlvSecurityKey &key) = 0;
+    virtual int  getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key) = 0;	// For signing outgoing messages.
 
 
-    /*** process data ***/
+};
 
-    /*!
-     * Use to sign data with a given key
-     * @param keyref the key to sign the data with
-     * @param data the data to be signed
-     * @param dataLen the length of the data
-     * @param signature is set with the signature from signing with keyref
-     * @return false if signing failed, true otherwise
-     */
-    virtual bool sign(const KeyRef& keyref, unsigned char* data, uint32_t dataLen, std::string& signature) = 0;
+class GixsReputation
+{
+	public:
+		RsGxsId id;
+		int score;
+};
 
-    /*!
-     * Verify that the data is signed by the key owner
-     * @param keyref
-     * @param data
-     * @param dataLen
-     * @param signature
-     * @return false if verification failed, false otherwise
-     */
-    virtual bool verify(const KeyRef& keyref, unsigned char* data, int dataLen, std::string& signature) = 0;
 
-    /*!
-     * Attempt to decrypt data with a given key
-     * @param keyref
-     * @param data data to be decrypted
-     * @param dataLen length of data
-     * @param decryptedData decrypted data
-     * @param decryptDataLen length of decrypted data
-     * @return false
-     */
-    virtual bool decrypt(const KeyRef& keyref, unsigned char* data, int dataLen,
-                 unsigned char*& decryptedData, uint32_t& decyptDataLen) = 0;
+class RsGixsReputation 
+{
+public:
+	// get Reputation.
+    virtual bool getReputation(const RsGxsId &id, const GixsReputation &rep) = 0;
+};
 
-    /*!
-     * Attempt to encrypt data with a given key
-     * @param keyref
-     * @param data data to be encrypted
-     * @param dataLen length of data
-     * @param encryptedData encrypted data
-     * @param encryptDataLen length of encrypted data
-     */
-    virtual bool encrypt(const KeyRef& keyref, unsigned char* data, int dataLen,
-                 unsigned char*& encryptedData, uint32_t& encryptDataLen) = 0;
+
+/*** This Class pulls all the GXS Interfaces together ****/
+
+class RsGxsIdExchange: 
+	public RsGenExchange, 
+	public RsGixsReputation, 
+	public RsGixs
+{
+public:
+	RsGxsIdExchange(RsGeneralDataService* gds, RsNetworkExchangeService* ns, RsSerialType* serviceSerialiser, uint16_t mServType)
+	:RsGenExchange(gds,ns,serviceSerialiser,mServType, this) { return; }
+virtual ~RsGxsIdExchange() { return; }
+
+};
+
+
+
+
+/* For Circles Too */
+
+class RsGcxs
+{
+	public:
+
+        /* GXS Interface - for working out who can receive */
+        virtual bool isLoaded(const RsGxsCircleId &circleId) = 0;
+        virtual bool loadCircle(const RsGxsCircleId &circleId) = 0;
+
+        virtual int canSend(const RsGxsCircleId &circleId, const RsPgpId &id) = 0;
+        virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist) = 0;
+};
+
+
+
+class RsGxsCircleExchange: public RsGenExchange, public RsGcxs
+{
+public:
+	RsGxsCircleExchange(RsGeneralDataService* gds, RsNetworkExchangeService* ns, RsSerialType* serviceSerialiser, 
+			uint16_t mServType, RsGixs* gixs, uint32_t authenPolicy)
+	:RsGenExchange(gds,ns,serviceSerialiser,mServType, gixs, authenPolicy)  { return; }
+virtual ~RsGxsCircleExchange() { return; }
 
 };
 

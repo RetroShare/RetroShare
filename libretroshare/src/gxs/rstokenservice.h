@@ -40,6 +40,34 @@
 #define GXS_REQUEST_TYPE_MSG_META			0x00100000
 #define GXS_REQUEST_TYPE_MSG_IDS 			0x00200000
 
+#define GXS_REQUEST_TYPE_MSG_RELATED_DATA		0x00400000
+#define GXS_REQUEST_TYPE_MSG_RELATED_META		0x00800000
+#define GXS_REQUEST_TYPE_MSG_RELATED_IDS 		0x01000000
+
+
+
+// This bit will be filled out over time.
+#define RS_TOKREQOPT_MSG_VERSIONS	0x0001		// MSGRELATED: Returns All MsgIds with OrigMsgId = MsgId.
+#define RS_TOKREQOPT_MSG_ORIGMSG	0x0002		// MSGLIST: All Unique OrigMsgIds in a Group.
+#define RS_TOKREQOPT_MSG_LATEST		0x0004		// MSGLIST: All Latest MsgIds in Group. MSGRELATED: Latest MsgIds for Input Msgs.
+
+#define RS_TOKREQOPT_MSG_THREAD		0x0010		// MSGRELATED: All Msgs in Thread. MSGLIST: All Unique Thread Ids in Group.
+#define RS_TOKREQOPT_MSG_PARENT		0x0020		// MSGRELATED: All Children Msgs.
+
+#define RS_TOKREQOPT_MSG_AUTHOR		0x0040		// MSGLIST: Messages from this AuthorId
+
+// Read Status.
+#define RS_TOKREQOPT_READ		0x0001
+#define RS_TOKREQOPT_UNREAD		0x0002
+
+#define RS_TOKREQ_ANSTYPE_LIST		0x0001
+#define RS_TOKREQ_ANSTYPE_SUMMARY	0x0002
+#define RS_TOKREQ_ANSTYPE_DATA		0x0003
+#define RS_TOKREQ_ANSTYPE_ACK           0x0004
+
+
+
+
 /*!
  * This class provides useful generic support for GXS style services.
  * I expect much of this will be incorporated into the base GXS.
@@ -50,7 +78,9 @@ public:
 RsTokReqOptions()
 {
 	mOptions = 0;
-	mStatusFilter = 0; mStatusMask = 0; mSubscribeFilter = 0;
+        mStatusFilter = 0; mStatusMask = 0; mSubscribeFilter = 0;
+        mSubscribeMask = 0;
+        mMsgFlagMask = 0; mMsgFlagFilter = 0;
 	mBefore = 0; mAfter = 0; mReqType = 0;
 }
 
@@ -61,48 +91,62 @@ uint32_t mOptions;
 uint32_t mStatusFilter;
 uint32_t mStatusMask;
 
+// use
+uint32_t mMsgFlagMask, mMsgFlagFilter;
+
 uint32_t mReqType;
 
-uint32_t mSubscribeFilter; // Only for Groups.
+uint32_t mSubscribeFilter, mSubscribeMask; // Only for Groups.
 
 // Time range... again applied after Options.
 time_t   mBefore;
 time_t   mAfter;
 };
 
+std::ostream &operator<<(std::ostream &out, const RsGroupMetaData &meta);
+std::ostream &operator<<(std::ostream &out, const RsMsgMetaData &meta);
 
 /*!
  * A proxy class for requesting generic service data for GXS
  * This seperates the request mechanism from the actual retrieval of data
  */
-class RsTokenServiceV2
+class RsTokenService
 {
 
 public:
 
-	static const uint8_t GXS_REQUEST_STATUS_FAILED;
-	static const uint8_t GXS_REQUEST_STATUS_PENDING;
-	static const uint8_t GXS_REQUEST_STATUS_PARTIAL;
-	static const uint8_t GXS_REQUEST_STATUS_FINISHED_INCOMPLETE;
-	static const uint8_t GXS_REQUEST_STATUS_COMPLETE;
-	static const uint8_t GXS_REQUEST_STATUS_DONE;			 // ONCE ALL DATA RETRIEVED.
+        static const uint8_t GXS_REQUEST_V2_STATUS_FAILED;
+        static const uint8_t GXS_REQUEST_V2_STATUS_PENDING;
+        static const uint8_t GXS_REQUEST_V2_STATUS_PARTIAL;
+        static const uint8_t GXS_REQUEST_V2_STATUS_FINISHED_INCOMPLETE;
+        static const uint8_t GXS_REQUEST_V2_STATUS_COMPLETE;
+        static const uint8_t GXS_REQUEST_V2_STATUS_DONE;			 // ONCE ALL DATA RETRIEVED.
 
 public:
 
-    RsTokenServiceV2()  { return; }
-    virtual ~RsTokenServiceV2() { return; }
+    RsTokenService()  { return; }
+    virtual ~RsTokenService() { return; }
 
-        /* Data Requests */
+    /* Data Requests */
 
     /*!
      * Use this to request group related information
      * @param token The token returned for the request, store this value to pool for request completion
      * @param ansType The type of result (e.g. group data, meta, ids)
      * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
-     * @param groupIds group id to request info for. Leave empty to get info on all groups,
+     * @param groupIds group id to request info for
      * @return
      */
     virtual bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<RsGxsGroupId> &groupIds) = 0;
+
+    /*!
+     * Use this to request all group related info
+     * @param token The token returned for the request, store this value to pool for request completion
+     * @param ansType The type of result (e.g. group data, meta, ids)
+     * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
+     * @return
+     */
+    virtual bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts) = 0;
 
     /*!
      * Use this to get msg related information, store this value to pole for request completion
@@ -110,48 +154,32 @@ public:
      * @param ansType The type of result wanted
      * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
      * @param groupIds The ids of the groups to get, second entry of map empty to query for all msgs
-     * @return
+     * @return true if request successful false otherwise
      */
     virtual bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const GxsMsgReq& msgIds) = 0;
 
-
+    /*!
+     * Use this to get msg related information, store this value to pole for request completion
+     * @param token The token returned for the request
+     * @param ansType The type of result wanted
+     * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
+     * @param groupIds The ids of the groups to get, this retrieves all the msgs info for each grpId in list
+     * @return true if request successful false otherwise
+     */
+    virtual bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<RsGxsGroupId>& grpIds) = 0;
 
     /*!
-     * This sets the status of the message
-     * @param msgId the message id to set status for
-     * @param status status
-     * @param statusMask the mask for the settings targetted
-     * @return true if request made successfully, false otherwise
+     * For requesting msgs related to a given msg id within a group
+     * @param token The token returned for the request
+     * @param ansType The type of result wanted
+     * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
+     * @param groupIds The ids of the groups to get, second entry of map empty to query for all msgs
+     * @return true if request successful false otherwise
      */
-    virtual bool requestSetMessageStatus(uint32_t &token, const RsGxsGrpMsgIdPair &msgId,
-    		const uint32_t status, const uint32_t statusMask) = 0;
-
-    /*!
-     * Set the status of a group given by group Id
-     * @param token The token returned for this request
-     * @param grpId The Id of the group to apply status change to
-     * @param status The status to apply
-     * @param statusMask The status mask (target particular type of status)
-     * @return true if request made successfully, false otherwise
-     */
-    virtual bool requestSetGroupStatus(uint32_t &token, const RsGxsGroupId &grpId, const uint32_t status,
-    		const uint32_t statusMask) = 0;
-
-    /*!
-     * Use request status to find out if successfully set
-     * @param groupId
-     * @param subscribeFlags
-     * @param subscribeMask
-     * @return true if request made successfully, false otherwise
-     */
-    virtual bool requestSetGroupSubscribeFlags(uint32_t& token, const RsGxsGroupId &groupId, uint32_t subscribeFlags, uint32_t subscribeMask) = 0;
+    virtual bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::vector<RsGxsGrpMsgIdPair>& msgIds) = 0;
 
 
-    	// (FUTURE WORK).
-    //virtual bool groupRestoreKeys(const std::string &groupId) = 0;
-    //virtual bool groupShareKeys(const std::string &groupId, std::list<std::string>& peers) = 0;
-
-        /* Poll */
+    /* Poll */
 
     /*!
      * Request the status of ongoing request.

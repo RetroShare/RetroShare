@@ -1,13 +1,13 @@
+#ifdef WINDOWS_SYS
+#include "util/rswin.h"
+#endif // WINDOWS_SYS
+
 #include "ftfileprovider.h"
 #include "ftchunkmap.h"
 
 #include "util/rsdir.h"
 #include <stdlib.h>
 #include <stdio.h>
-
-#ifdef WINDOWS_SYS
-#include "util/rswin.h"
-#endif // WINDOWS_SYS
 
 /********
 * #define DEBUG_FT_FILE_PROVIDER 1

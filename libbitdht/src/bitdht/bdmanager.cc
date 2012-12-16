@@ -87,6 +87,8 @@ bdNodeManager::bdNodeManager(bdNodeId *id, std::string dhtVersion, std::string b
 	mFns->bdPrintNodeId(std::cerr, id);
 	std::cerr << std::endl;
 #endif
+
+	mLocalNetEnhancements = true;
 }
 
 int	bdNodeManager::stopDht()
@@ -400,34 +402,39 @@ void bdNodeManager::iteration()
 				std::cerr << std::endl;
 #endif
 
-				/* run a random search for ourselves, from own App DHT peer */
-				QueryRandomLocalNet();
 
+				/* This stuff is only important for "LocalNet based Features */
+				if (mLocalNetEnhancements)
+				{	
+					/* run a random search for ourselves, from own App DHT peer */
+					QueryRandomLocalNet();
+	
 #define SEARCH_MAX_SIZE 10					
- 				if (mBdNetworkSize < SEARCH_MAX_SIZE)
-				{
-#ifdef DEBUG_MGR
-					std::cerr << "Local Netsize: " << mBdNetworkSize << " to small...searching";
-					std::cerr << std::endl;
-#endif
-
-					/* if the network size is very small */
-					SearchForLocalNet();
-					mSearchingDone = false;
-				}
-				else
-				{
-					if (!mSearchingDone)
+	 				if (mBdNetworkSize < SEARCH_MAX_SIZE)
 					{
-						mSearchingDone = true;
-						mSearchTS = now;
 #ifdef DEBUG_MGR
-						std::cerr << "Completed LocalNet Search in : " << mSearchTS-mStartTS;
+						std::cerr << "Local Netsize: " << mBdNetworkSize << " to small...searching";
 						std::cerr << std::endl;
 #endif
+	
+						/* if the network size is very small */
+						SearchForLocalNet();
+						mSearchingDone = false;
+					}
+					else
+					{
+						if (!mSearchingDone)
+						{
+							mSearchingDone = true;
+							mSearchTS = now;
+#ifdef DEBUG_MGR
+							std::cerr << "Completed LocalNet Search in : " << mSearchTS-mStartTS;
+							std::cerr << std::endl;
+#endif
+						}
 					}
 				}
-
+	
 #ifdef DEBUG_MGR
 				std::cerr << "bdNodeManager::iteration(): REFRESH ";
 				std::cerr << std::endl;

@@ -34,7 +34,7 @@
 #include <iomanip>
 #include <iostream>
 
-//#define TLV_DEBUG 1
+#define TLV_DEBUG 1
 
 /************************************* RsTlvSecurityKey ************************************/
 
@@ -322,7 +322,7 @@ bool  RsTlvSecurityKeySet::GetTlv(void *data, uint32_t size, uint32_t *offset) /
 				if (ok)
 				{
 					keys[key.keyId] = key;
-					key.ShallowClear(); /* so that the Map can get control - should be ref counted*/
+					key.TlvClear(); /* so that the Map can get control - should be ref counted*/
 				}
 			}
 				break;
@@ -520,3 +520,170 @@ std::ostream &RsTlvKeySignature::print(std::ostream &out, uint16_t indent)
 	return out;
 }
 
+
+/************************************* RsTlvKeySignatureSet ************************************/
+
+RsTlvKeySignatureSet::RsTlvKeySignatureSet()
+{
+
+}
+
+std::ostream &RsTlvKeySignatureSet::print(std::ostream &out, uint16_t indent)
+{
+    printBase(out, "RsTlvKeySignatureSet", indent);
+    uint16_t int_Indent = indent + 2;
+
+    printIndent(out, int_Indent);
+
+    std::map<SignType, RsTlvKeySignature>::iterator mit = keySignSet.begin();
+
+    for(; mit != keySignSet.end(); mit++)
+    {
+        out << "SignType: " << mit->first << std::endl;
+        RsTlvKeySignature& sign = mit->second;
+        sign.print(out, indent);
+    }
+
+    out << std::endl;
+
+    printEnd(out, "RsTlvKeySignatureSet", indent);
+    return out;
+}
+
+void RsTlvKeySignatureSet::TlvClear()
+{
+    keySignSet.clear();
+}
+
+bool RsTlvKeySignatureSet::SetTlv(void *data, uint32_t size, uint32_t *offset)
+{
+
+    /* must check sizes */
+    uint32_t tlvsize = TlvSize();
+    uint32_t tlvend  = *offset + tlvsize;
+
+    if (size < tlvend)
+    {
+#ifdef TLV_DEBUG
+            std::cerr << "RsTlvKeySignatureSet::SetTlv() Failed not enough space";
+            std::cerr << std::endl;
+#endif
+            return false; /* not enough space */
+    }
+
+    bool ok = true;
+
+            /* start at data[offset] */
+    ok &= SetTlvBase(data, tlvend, offset, TLV_TYPE_KEYSIGNATURESET , tlvsize);
+
+
+    if(!keySignSet.empty())
+    {
+            std::map<SignType, RsTlvKeySignature>::iterator it;
+
+            for(it = keySignSet.begin(); it != keySignSet.end() ; ++it)
+            {
+                ok &= SetTlvUInt32(data, size, offset, TLV_TYPE_KEYSIGNATURETYPE, it->first);
+                ok &= (it->second).SetTlv(data, size, offset);
+            }
+    }
+
+
+return ok;
+}
+
+bool RsTlvKeySignatureSet::GetTlv(void *data, uint32_t size, uint32_t *offset)
+{
+    if (size < *offset + TLV_HEADER_SIZE)
+            return false;
+
+    uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[*offset])  );
+    uint32_t tlvsize = GetTlvSize( &(((uint8_t *) data)[*offset])  );
+    uint32_t tlvend = *offset + tlvsize;
+
+    if (size < tlvend)    /* check size */
+            return false; /* not enough space */
+
+    if (tlvtype != TLV_TYPE_KEYSIGNATURESET) /* check type */
+            return false;
+
+    bool ok = true;
+
+    /* ready to load */
+    TlvClear();
+
+    /* skip the header */
+    (*offset) += TLV_HEADER_SIZE;
+
+    SignType sign_type = 0;
+
+    /* while there is TLV  */
+    while((*offset) + 2 < tlvend)
+    {
+
+            /* get the next type */
+            uint16_t tlvsubtype = GetTlvType( &(((uint8_t *) data)[*offset]) );
+            SignType currType;
+
+            switch(tlvsubtype)
+            {
+                    case TLV_TYPE_KEYSIGNATURE:
+                    {
+                            RsTlvKeySignature sign;
+                            ok &= sign.GetTlv(data, size, offset);
+                            if (ok)
+                            {
+                                keySignSet[currType] = sign;
+                            }
+                    }
+                    break;
+                    case TLV_TYPE_KEYSIGNATURETYPE:
+                    {
+                        ok = GetTlvUInt32(data, size, offset, TLV_TYPE_KEYSIGNATURETYPE, &sign_type);
+
+                        if(ok)
+                            currType = sign_type;
+                    }
+                    break;
+                    default:
+                        ok &= SkipUnknownTlv(data, tlvend, offset);
+                        break;
+            }
+
+            if (!ok)
+                    break;
+    }
+
+
+
+    /***************************************************************************
+     * NB: extra components could be added (for future expansion of the type).
+     *            or be present (if this code is reading an extended version).
+     *
+     * We must chew up the extra characters to conform with TLV specifications
+     ***************************************************************************/
+    if (*offset != tlvend)
+    {
+#ifdef TLV_DEBUG
+            std::cerr << "RsTlvKeySignatureSet::GetTlv() Warning extra bytes at end of item";
+            std::cerr << std::endl;
+#endif
+            *offset = tlvend;
+    }
+
+    return ok;
+}
+
+uint32_t RsTlvKeySignatureSet::TlvSize()
+{
+    uint32_t s = TLV_HEADER_SIZE; // header size
+    std::map<SignType, RsTlvKeySignature>::iterator it;
+
+    for(it = keySignSet.begin(); it != keySignSet.end() ; ++it)
+    {
+        s += GetTlvUInt32Size(); // sign type
+        s += it->second.TlvSize(); // signature
+    }
+
+    return s;
+}

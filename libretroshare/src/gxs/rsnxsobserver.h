@@ -2,9 +2,9 @@
 #define RSNXSOBSERVER_H
 
 /*
- * libretroshare/src/gxp: gxp.h
+ * libretroshare/src/gxs: rsnxsobserver.h
  *
- * Observer, interface for RetroShare.
+ * Observer interface used by nxs to transport new messages to clients
  *
  * Copyright 2011-2012 by Robert Fernie, Evi-Parker Christopher
  *

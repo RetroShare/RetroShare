@@ -1,10 +1,9 @@
-
 /*
- * libretroshare/src/serialiser: rsphotoitems.cc
+ * libretroshare/src/retroshare: rsphoto.h
  *
- * RetroShare Serialiser.
+ * RetroShare C++ Interface.
  *
- * Copyright 2007-2008 by Robert Fernie.
+ * Copyright 2012-2012 by Christopher Evi-Parker, Robert Fernie
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,267 +23,631 @@
  *
  */
 
-#include "serialiser/rsbaseserial.h"
-#include "serialiser/rsphotoitems.h"
-#include "serialiser/rstlvbase.h"
-
-#define RSSERIAL_DEBUG 1
 #include <iostream>
 
-/*************************************************************************/
+#include "rsphotoitems.h"
+#include "serialiser/rstlvbase.h"
+#include "serialiser/rsbaseserial.h"
 
-void 	RsPhotoItem::clear()
+#define GXS_PHOTO_SERIAL_DEBUG
+
+
+uint32_t RsGxsPhotoSerialiser::size(RsItem* item)
 {
-	srcId.clear();
-	photoId.clear();
-	size = 0;
+	RsGxsPhotoPhotoItem* ppItem = NULL;
+	RsGxsPhotoAlbumItem* paItem = NULL;
+        RsGxsPhotoCommentItem* cItem = NULL;
 
-	name.clear();
-	comment.clear();
-
-	location.clear();
-	date.clear();
-
-	/* not serialised */
-	isAvailable = false;
-	path.clear();
-}
-
-std::ostream &RsPhotoItem::print(std::ostream &out, uint16_t indent)
-{
-        printRsItemBase(out, "RsPhotoItem", indent);
-	uint16_t int_Indent = indent + 2;
-        printIndent(out, int_Indent);
-        out << "srcId: " << srcId << std::endl;
-        printIndent(out, int_Indent);
-        out << "photoId: " << photoId << std::endl;
-        printIndent(out, int_Indent);
-        out << "size:  " << size  << std::endl;
-
-        printIndent(out, int_Indent);
-        out << "name:  " << name  << std::endl;
-
-        printIndent(out, int_Indent);
-	std::string cnv_comment(comment.begin(), comment.end());
-        out << "msg:  " << cnv_comment << std::endl;
-
-        printIndent(out, int_Indent);
-        out << "location:  " << location << std::endl;
-        printIndent(out, int_Indent);
-        out << "date:  " << date << std::endl;
-
-        printIndent(out, int_Indent);
-        out << "(NS) isAvailable:  " << isAvailable << std::endl;
-        printIndent(out, int_Indent);
-        out << "(NS) path:  " << path << std::endl;
-
-        printRsItemEnd(out, "RsPhotoItem", indent);
-        return out;
-}
-
-/*************************************************************************/
-/*************************************************************************/
-
-void 	RsPhotoShowItem::clear()
-{
-	showId.clear();
-	name.clear();
-	comment.clear();
-
-	location.clear();
-	date.clear();
-
-	photos.clear();
-}
-
-std::ostream &RsPhotoShowItem::print(std::ostream &out, uint16_t indent)
-{
-        printRsItemBase(out, "RsPhotoShowItem", indent);
-	uint16_t int_Indent = indent + 2;
-	uint16_t int_Indent2 = int_Indent + 2;
-
-        printIndent(out, int_Indent);
-        out << "showId: " << showId << std::endl;
-        printIndent(out, int_Indent);
-        out << "name:  " << name  << std::endl;
-
-        printIndent(out, int_Indent);
-	std::string cnv_comment(comment.begin(), comment.end());
-        out << "msg:  " << cnv_comment << std::endl;
-
-        printIndent(out, int_Indent);
-        out << "location:  " << location << std::endl;
-        printIndent(out, int_Indent);
-        out << "date:  " << date << std::endl;
-
-        printIndent(out, int_Indent);
-        out << "Photos in Show: " << photos.size() << std::endl;
-
-	std::list<RsPhotoRefItem>::iterator it;
-	for(it = photos.begin(); it != photos.end(); it++)
+	if((ppItem = dynamic_cast<RsGxsPhotoPhotoItem*>(item)) != NULL)
 	{
-        	printIndent(out, int_Indent2);
-        	out << "PhotoId:  " << it->photoId << std::endl;
-        	printIndent(out, int_Indent2 + 2);
-		std::string cnv_comment2(it->altComment.begin(), it->altComment.end());
-        	out << "AltComment:  " << cnv_comment2 << std::endl;
-        	printIndent(out, int_Indent2 + 2);
-        	out << "Delta T:  " << it->deltaT << std::endl;
+		return sizeGxsPhotoPhotoItem(ppItem);
+	}
+	else if((paItem = dynamic_cast<RsGxsPhotoAlbumItem*>(item)) != NULL)
+	{
+		return sizeGxsPhotoAlbumItem(paItem);
+	}
+        else if((cItem = dynamic_cast<RsGxsPhotoCommentItem*>(item)) != NULL)
+        {
+                return sizeGxsPhotoCommentItem(cItem);
+        }
+	else
+	{
+#ifdef GXS_PHOTO_SERIAL_DEBUG
+
+#endif
+		return NULL;
 	}
 
-        printRsItemEnd(out, "RsPhotoShowItem", indent);
-        return out;
 }
 
-RsPhotoRefItem::RsPhotoRefItem()
-	:deltaT(0)
+bool RsGxsPhotoSerialiser::serialise(RsItem* item, void* data, uint32_t* size)
 {
-	return;
+
+    RsGxsPhotoPhotoItem* ppItem = NULL;
+    RsGxsPhotoAlbumItem* paItem = NULL;
+    RsGxsPhotoCommentItem* cItem = NULL;
+
+    if((ppItem = dynamic_cast<RsGxsPhotoPhotoItem*>(item)) != NULL)
+    {
+        return serialiseGxsPhotoPhotoItem(ppItem, data, size);
+    }
+    else if((paItem = dynamic_cast<RsGxsPhotoAlbumItem*>(item)) != NULL)
+    {
+        return serialiseGxsPhotoAlbumItem(paItem, data, size);
+    }else if((cItem = dynamic_cast<RsGxsPhotoCommentItem*>(item)) != NULL)
+    {
+        return serialiseGxsPhotoCommentItem(cItem, data, size);
+    }
+    else
+    {
+#ifdef GXS_PHOTO_SERIAL_DEBUG
+
+#endif
+            return false;
+    }
+
 }
 
-/*************************************************************************/
-/*************************************************************************/
-/*************************************************************************/
-
-/* TODO serialiser */
-
-#if 0
-
-uint32_t    RsPhotoSerialiser::sizeLink(RsPhotoLinkMsg *item)
+RsItem* RsGxsPhotoSerialiser::deserialise(void* data, uint32_t* size)
 {
-	uint32_t s = 8; /* header */
-	s += GetTlvStringSize(item->rid);
-	s += 4; /* timestamp */
-	s += GetTlvWideStringSize(item->title);
-	s += GetTlvWideStringSize(item->comment);
-	s += 4; /* linktype  */
-	s += GetTlvWideStringSize(item->link);
+
+#ifdef RSSERIAL_DEBUG
+        std::cerr << "RsGxsPhotoSerialiser::deserialise()" << std::endl;
+#endif
+        /* get the type and size */
+        uint32_t rstype = getRsItemId(data);
+
+        if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+                (RS_SERVICE_GXSV1_TYPE_PHOTO != getRsItemService(rstype)))
+        {
+                return NULL; /* wrong type */
+        }
+
+        switch(getRsItemSubType(rstype))
+        {
+
+                case RS_PKT_SUBTYPE_PHOTO_SHOW_ITEM:
+			return deserialiseGxsPhotoPhotoItem(data, size);
+                case RS_PKT_SUBTYPE_PHOTO_ITEM:
+			return deserialiseGxsPhotoAlbumItem(data, size);
+                case RS_PKT_SUBTYPE_PHOTO_COMMENT_ITEM:
+                        return deserialiseGxsPhotoCommentItem(data, size);
+		default:
+			{
+#ifdef GXS_PHOTO_SERIAL_DEBUG
+				std::cerr << "RsGxsPhotoSerialiser::deserialise(): subtype could not be dealt with"
+                                    << std::endl;
+#endif
+				break;
+			}
+        }
+        return NULL;
+}
+
+uint32_t RsGxsPhotoSerialiser::sizeGxsPhotoAlbumItem(RsGxsPhotoAlbumItem* item)
+{
+
+	const RsPhotoAlbum& album = item->album;
+	uint32_t s = 8; // header
+
+	s += GetTlvStringSize(album.mCaption);
+	s += GetTlvStringSize(album.mCategory);
+	s += GetTlvStringSize(album.mDescription);
+	s += GetTlvStringSize(album.mHashTags);
+	s += GetTlvStringSize(album.mOther);
+	s += GetTlvStringSize(album.mPhotoPath);
+	s += GetTlvStringSize(album.mPhotographer);
+	s += GetTlvStringSize(album.mWhen);
+	s += GetTlvStringSize(album.mWhere);
+
+	RsTlvBinaryData b(item->PacketService()); // TODO, need something more persisitent
+	b.setBinData(album.mThumbnail.data, album.mThumbnail.size);
+	s += GetTlvStringSize(album.mThumbnail.type);
+	s += b.TlvSize();
 
 	return s;
 }
 
-/* serialise the data to the buffer */
-bool     RsPhotoSerialiser::serialiseLink(RsPhotoLinkMsg *item, void *data, uint32_t *pktsize)
+uint32_t    RsGxsPhotoSerialiser::sizeGxsPhotoCommentItem(RsGxsPhotoCommentItem *item)
 {
-	uint32_t tlvsize = sizeLink(item);
-	uint32_t offset = 0;
 
-	if (*pktsize < tlvsize)
-		return false; /* not enough space */
+    const RsPhotoComment& comment = item->comment;
+    uint32_t s = 8; // header
 
-	*pktsize = tlvsize;
+    s += GetTlvStringSize(comment.mComment);
+    s += 4; // mflags
 
-	bool ok = true;
+    return s;
 
-	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
-
-	std::cerr << "RsPhotoLinkSerialiser::serialiseLink() Header: " << ok << std::endl;
-	std::cerr << "RsPhotoLinkSerialiser::serialiseLink() Size: " << tlvsize << std::endl;
-
-	/* skip the header */
-	offset += 8;
-
-	/* add mandatory parts first */
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GENID, item->rid);
-	std::cerr << "RsPhotoLinkSerialiser::serialiseLink() rid: " << ok << std::endl;
-
-	ok &= setRawUInt32(data, tlvsize, &offset, item->timestamp);
-	std::cerr << "RsPhotoLinkSerialiser::serialiseLink() timestamp: " << ok << std::endl;
-
-	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_TITLE, item->title);
-	std::cerr << "RsPhotoLinkSerialiser::serialiseLink() Title: " << ok << std::endl;
-	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_COMMENT, item->comment);
-	std::cerr << "RsPhotoLinkSerialiser::serialiseLink() Comment: " << ok << std::endl;
-
-	ok &= setRawUInt32(data, tlvsize, &offset, item->linktype);
-	std::cerr << "RsPhotoLinkSerialiser::serialiseLink() linktype: " << ok << std::endl;
-
-	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_LINK, item->link);
-	std::cerr << "RsPhotoLinkSerialiser::serialiseLink() Link: " << ok << std::endl;
-
-	if (offset != tlvsize)
-	{
-		ok = false;
-		std::cerr << "RsPhotoLinkSerialiser::serialiseLink() Size Error! " << std::endl;
-	}
-
-	return ok;
 }
 
-RsPhotoLinkMsg *RsPhotoSerialiser::deserialiseLink(void *data, uint32_t *pktsize)
+bool RsGxsPhotoSerialiser::serialiseGxsPhotoAlbumItem(RsGxsPhotoAlbumItem* item, void* data,
+		uint32_t* size)
 {
-	/* get the type and size */
-	uint32_t rstype = getRsItemId(data);
-	uint32_t rssize = getRsItemSize(data);
 
-	uint32_t offset = 0;
-
-
-	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_TYPE_RANK != getRsItemService(rstype)) ||
-		(RS_PKT_SUBTYPE_RANK_LINK != getRsItemSubType(rstype)))
-	{
-		return NULL; /* wrong type */
-	}
-
-	if (*pktsize < rssize)    /* check size */
-		return NULL; /* not enough data */
-
-	/* set the packet length */
-	*pktsize = rssize;
-
-	bool ok = true;
-
-	/* ready to load */
-	RsPhotoLinkMsg *item = new RsPhotoLinkMsg();
-	item->clear();
-
-	/* skip the header */
-	offset += 8;
-
-	/* get mandatory parts first */
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_GENID, item->rid);
-	ok &= getRawUInt32(data, rssize, &offset, &(item->timestamp));
-	ok &= GetTlvWideString(data, rssize, &offset, TLV_TYPE_WSTR_TITLE, item->title);
-	ok &= GetTlvWideString(data, rssize, &offset, TLV_TYPE_WSTR_COMMENT, item->comment);
-	ok &= getRawUInt32(data, rssize, &offset, &(item->linktype));
-	ok &= GetTlvWideString(data, rssize, &offset, TLV_TYPE_WSTR_LINK, item->link);
-
-	if (offset != rssize)
-	{
-		/* error */
-		delete item;
-		return NULL;
-	}
-
-	if (!ok)
-	{
-		delete item;
-		return NULL;
-	}
-
-	return item;
-}
-
-
-uint32_t    RsPhotoSerialiser::size(RsItem *item)
-{
-	return sizeLink((RsPhotoLinkMsg *) item);
-}
-
-bool     RsPhotoSerialiser::serialise(RsItem *item, void *data, uint32_t *pktsize)
-{
-	return serialiseLink((RsPhotoLinkMsg *) item, data, pktsize);
-}
-
-RsItem *RsPhotoSerialiser::deserialise(void *data, uint32_t *pktsize)
-{
-	return deserialiseLink(data, pktsize);
-}
-
-
+#ifdef GXS_PHOTO_SERIAL_DEBUG
+    std::cerr << "RsGxsPhotoSerialiser::serialiseGxsPhotoAlbumItem()" << std::endl;
 #endif
 
+    uint32_t tlvsize = sizeGxsPhotoAlbumItem(item);
+    uint32_t offset = 0;
 
-/*************************************************************************/
+    if(*size < tlvsize){
+#ifdef GXS_PHOTO_SERIAL_DEBUG
+        std::cerr << "RsGxsPhotoSerialiser::serialiseGxsPhotoAlbumItem()" << std::endl;
+#endif
+        return false;
+    }
+
+    *size = tlvsize;
+
+    bool ok = true;
+
+    ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+
+    /* skip the header */
+    offset += 8;
+
+    /* GxsPhotoAlbumItem */
+
+    ok &= SetTlvString(data, tlvsize, &offset, 1, item->album.mCaption);
+    ok &= SetTlvString(data, tlvsize, &offset, 1, item->album.mCategory);
+    ok &= SetTlvString(data, tlvsize, &offset, 1, item->album.mDescription);
+    ok &= SetTlvString(data, tlvsize, &offset, 1, item->album.mHashTags);
+    ok &= SetTlvString(data, tlvsize, &offset, 1, item->album.mOther);
+    ok &= SetTlvString(data, tlvsize, &offset, 1, item->album.mPhotoPath);
+    ok &= SetTlvString(data, tlvsize, &offset, 1, item->album.mPhotographer);
+    ok &= SetTlvString(data, tlvsize, &offset, 1, item->album.mWhen);
+    ok &= SetTlvString(data, tlvsize, &offset, 1, item->album.mWhere);
+    ok &= SetTlvString(data, tlvsize, &offset, 1, item->album.mThumbnail.type);
+    RsTlvBinaryData b(RS_SERVICE_GXSV1_TYPE_PHOTO); // TODO, need something more persisitent
+    b.setBinData(item->album.mThumbnail.data, item->album.mThumbnail.size);
+    ok &= b.SetTlv(data, tlvsize, &offset);
+
+    if(offset != tlvsize)
+    {
+#ifdef GXS_PHOTO_SERIAL_DEBUG
+        std::cerr << "RsGxsPhotoSerialiser::serialiseGxsPhotoAlbumItem() FAIL Size Error! " << std::endl;
+#endif
+        ok = false;
+    }
+
+#ifdef GXS_PHOTO_SERIAL_DEBUG
+    if (!ok)
+    {
+        std::cerr << "RsGxsPhotoSerialiser::serialiseGxsPhotoAlbumItem() NOK" << std::endl;
+    }
+#endif
+
+    return ok;
+}
+
+RsGxsPhotoAlbumItem* RsGxsPhotoSerialiser::deserialiseGxsPhotoAlbumItem(void* data,
+		uint32_t* size)
+{
+
+
+#ifdef GXS_PHOTO_SERIAL_DEBUG
+    std::cerr << "RsGxsPhotoSerialiser::deserialiseGxsPhotoAlbumItem()" << std::endl;
+#endif
+    /* get the type and size */
+    uint32_t rstype = getRsItemId(data);
+    uint32_t rssize = getRsItemSize(data);
+
+    uint32_t offset = 0;
+
+
+    if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+            (RS_SERVICE_GXSV1_TYPE_PHOTO != getRsItemService(rstype)) ||
+            (RS_PKT_SUBTYPE_PHOTO_ITEM != getRsItemSubType(rstype)))
+    {
+#ifdef GXS_PHOTO_SERIAL_DEBUG
+            std::cerr << "RsGxsPhotoSerialiser::deserialiseGxsPhotoAlbumItem() FAIL wrong type" << std::endl;
+#endif
+            return NULL; /* wrong type */
+    }
+
+    if (*size < rssize)    /* check size */
+    {
+#ifdef GXS_PHOTO_SERIAL_DEBUG
+            std::cerr << "RsGxsPhotoSerialiser::deserialiseGxsPhotoAlbumItem() FAIL wrong size" << std::endl;
+#endif
+            return NULL; /* not enough data */
+    }
+
+    /* set the packet length */
+    *size = rssize;
+
+    bool ok = true;
+
+    RsGxsPhotoAlbumItem* item = new RsGxsPhotoAlbumItem();
+    /* skip the header */
+    offset += 8;
+
+
+    ok &= GetTlvString(data, rssize, &offset, 1, item->album.mCaption);
+    ok &= GetTlvString(data, rssize, &offset, 1, item->album.mCategory);
+    ok &= GetTlvString(data, rssize, &offset, 1, item->album.mDescription);
+    ok &= GetTlvString(data, rssize, &offset, 1, item->album.mHashTags);
+    ok &= GetTlvString(data, rssize, &offset, 1, item->album.mOther);
+    ok &= GetTlvString(data, rssize, &offset, 1, item->album.mPhotoPath);
+    ok &= GetTlvString(data, rssize, &offset, 1, item->album.mPhotographer);
+    ok &= GetTlvString(data, rssize, &offset, 1, item->album.mWhen);
+    ok &= GetTlvString(data, rssize, &offset, 1, item->album.mWhere);
+    ok &= GetTlvString(data, rssize, &offset, 1, item->album.mThumbnail.type);
+
+        RsTlvBinaryData b(RS_SERVICE_GXSV1_TYPE_PHOTO); // TODO, need something more persisitent
+	ok &= b.GetTlv(data, rssize, &offset);
+	item->album.mThumbnail.data = (uint8_t*)b.bin_data;
+	item->album.mThumbnail.size = b.bin_len;
+	b.TlvShallowClear();
+
+    if (offset != rssize)
+    {
+#ifdef GXS_PHOTO_SERIAL_DEBUG
+            std::cerr << "RsGxsPhotoSerialiser::deserialiseGxsPhotoAlbumItem() FAIL size mismatch" << std::endl;
+#endif
+            /* error */
+            delete item;
+            return NULL;
+    }
+
+    if (!ok)
+    {
+#ifdef GXS_PHOTO_SERIAL_DEBUG
+            std::cerr << "RsGxsPhotoSerialiser::deserialiseGxsPhotoAlbumItem() NOK" << std::endl;
+#endif
+            delete item;
+            return NULL;
+    }
+
+    return item;
+}
+
+uint32_t RsGxsPhotoSerialiser::sizeGxsPhotoPhotoItem(RsGxsPhotoPhotoItem* item)
+{
+
+	const RsPhotoPhoto& photo = item->photo;
+
+	uint32_t s = 8; // header size
+	s += GetTlvStringSize(photo.mCaption);
+	s += GetTlvStringSize(photo.mCategory);
+	s += GetTlvStringSize(photo.mDescription);
+	s += GetTlvStringSize(photo.mHashTags);
+	s += GetTlvStringSize(photo.mOther);
+	s += GetTlvStringSize(photo.mPhotographer);
+	s += GetTlvStringSize(photo.mWhen);
+	s += GetTlvStringSize(photo.mWhere);
+
+	RsTlvBinaryData b(item->PacketService()); // TODO, need something more persisitent
+	b.setBinData(photo.mThumbnail.data, photo.mThumbnail.size);
+	s += GetTlvStringSize(photo.mThumbnail.type);
+	s += b.TlvSize();
+
+	return s;
+}
+
+bool RsGxsPhotoSerialiser::serialiseGxsPhotoPhotoItem(RsGxsPhotoPhotoItem* item, void* data,
+		uint32_t* size)
+{
+
+
+#ifdef GXS_PHOTO_SERIAL_DEBUG
+    std::cerr << "RsGxsPhotoSerialiser::serialiseGxsPhotoPhotoItem()" << std::endl;
+#endif
+
+    uint32_t tlvsize = sizeGxsPhotoPhotoItem(item);
+    uint32_t offset = 0;
+
+    if(*size < tlvsize){
+#ifdef GXS_PHOTO_SERIAL_DEBUG
+        std::cerr << "RsGxsPhotoSerialiser::serialiseGxsPhotoPhotoItem()" << std::endl;
+#endif
+        return false;
+    }
+
+    *size = tlvsize;
+
+    bool ok = true;
+
+    ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+
+    /* skip the header */
+    offset += 8;
+
+    /* GxsPhotoAlbumItem */
+
+    ok &= SetTlvString(data, tlvsize, &offset, 1, item->photo.mCaption);
+    ok &= SetTlvString(data, tlvsize, &offset, 1, item->photo.mCategory);
+    ok &= SetTlvString(data, tlvsize, &offset, 1, item->photo.mDescription);
+    ok &= SetTlvString(data, tlvsize, &offset, 1, item->photo.mHashTags);
+    ok &= SetTlvString(data, tlvsize, &offset, 1, item->photo.mOther);
+    ok &= SetTlvString(data, tlvsize, &offset, 1, item->photo.mPhotographer);
+    ok &= SetTlvString(data, tlvsize, &offset, 1, item->photo.mWhen);
+    ok &= SetTlvString(data, tlvsize, &offset, 1, item->photo.mWhere);
+    ok &= SetTlvString(data, tlvsize, &offset, 1, item->photo.mThumbnail.type);
+    RsTlvBinaryData b(RS_SERVICE_GXSV1_TYPE_PHOTO); // TODO, need something more persisitent
+    b.setBinData(item->photo.mThumbnail.data, item->photo.mThumbnail.size);
+    ok &= b.SetTlv(data, tlvsize, &offset);
+
+    if(offset != tlvsize)
+    {
+#ifdef GXS_PHOTO_SERIAL_DEBUG
+        std::cerr << "RsGxsPhotoSerialiser::serialiseGxsPhotoPhotoItem() FAIL Size Error! " << std::endl;
+#endif
+        ok = false;
+    }
+
+#ifdef GXS_PHOTO_SERIAL_DEBUG
+    if (!ok)
+    {
+        std::cerr << "RsGxsPhotoSerialiser::serialiseGxsPhotoPhotoItem() NOK" << std::endl;
+    }
+#endif
+
+    return ok;
+}
+
+RsGxsPhotoPhotoItem* RsGxsPhotoSerialiser::deserialiseGxsPhotoPhotoItem(void* data,
+		uint32_t* size)
+{
+
+
+#ifdef GXS_PHOTO_SERIAL_DEBUG
+    std::cerr << "RsGxsPhotoSerialiser::deserialiseGxsPhotoPhotoItem()" << std::endl;
+#endif
+    /* get the type and size */
+    uint32_t rstype = getRsItemId(data);
+    uint32_t rssize = getRsItemSize(data);
+
+    uint32_t offset = 0;
+
+
+    if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+            (RS_SERVICE_GXSV1_TYPE_PHOTO != getRsItemService(rstype)) ||
+            (RS_PKT_SUBTYPE_PHOTO_SHOW_ITEM != getRsItemSubType(rstype)))
+    {
+#ifdef GXS_PHOTO_SERIAL_DEBUG
+            std::cerr << "RsGxsPhotoSerialiser::deserialiseGxsPhotoPhotoItem() FAIL wrong type" << std::endl;
+#endif
+            return NULL; /* wrong type */
+    }
+
+    if (*size < rssize)    /* check size */
+    {
+#ifdef GXS_PHOTO_SERIAL_DEBUG
+            std::cerr << "RsGxsPhotoSerialiser::deserialiseGxsPhotoPhotoItem() FAIL wrong size" << std::endl;
+#endif
+            return NULL; /* not enough data */
+    }
+
+    /* set the packet length */
+    *size = rssize;
+
+    bool ok = true;
+
+    RsGxsPhotoPhotoItem* item = new RsGxsPhotoPhotoItem();
+    /* skip the header */
+    offset += 8;
+
+    ok &= GetTlvString(data, rssize, &offset, 1, item->photo.mCaption);
+    ok &= GetTlvString(data, rssize, &offset, 1, item->photo.mCategory);
+    ok &= GetTlvString(data, rssize, &offset, 1, item->photo.mDescription);
+    ok &= GetTlvString(data, rssize, &offset, 1, item->photo.mHashTags);
+    ok &= GetTlvString(data, rssize, &offset, 1, item->photo.mOther);
+    ok &= GetTlvString(data, rssize, &offset, 1, item->photo.mPhotographer);
+    ok &= GetTlvString(data, rssize, &offset, 1, item->photo.mWhen);
+    ok &= GetTlvString(data, rssize, &offset, 1, item->photo.mWhere);
+    ok &= GetTlvString(data, rssize, &offset, 1, item->photo.mThumbnail.type);
+
+        RsTlvBinaryData b(RS_SERVICE_GXSV1_TYPE_PHOTO); // TODO, need something more persisitent
+	ok &= b.GetTlv(data, rssize, &offset);
+	item->photo.mThumbnail.data = (uint8_t*)(b.bin_data);
+	item->photo.mThumbnail.size = b.bin_len;
+	b.TlvShallowClear();
+
+    if (offset != rssize)
+    {
+#ifdef GXS_PHOTO_SERIAL_DEBUG
+            std::cerr << "RsGxsPhotoSerialiser::deserialiseGxsPhotoPhotoItem() FAIL size mismatch" << std::endl;
+#endif
+            /* error */
+            delete item;
+            return NULL;
+    }
+
+    if (!ok)
+    {
+#ifdef GXS_PHOTO_SERIAL_DEBUG
+            std::cerr << "RsGxsPhotoSerialiser::deserialiseGxsPhotoPhotoItem() NOK" << std::endl;
+#endif
+            delete item;
+            return NULL;
+    }
+
+    return item;
+}
+
+
+
+bool        RsGxsPhotoSerialiser::serialiseGxsPhotoCommentItem  (RsGxsPhotoCommentItem *item, void *data, uint32_t *size)
+{
+
+
+#ifdef GXS_PHOTO_SERIAL_DEBUG
+    std::cerr << "RsGxsPhotoSerialiser::serialiseGxsPhotoCommentItem()" << std::endl;
+#endif
+
+    uint32_t tlvsize = sizeGxsPhotoCommentItem(item);
+    uint32_t offset = 0;
+
+    if(*size < tlvsize){
+#ifdef GXS_PHOTO_SERIAL_DEBUG
+        std::cerr << "RsGxsPhotoSerialiser::serialiseGxsPhotoCommentItem()" << std::endl;
+#endif
+        return false;
+    }
+
+    *size = tlvsize;
+
+    bool ok = true;
+
+    ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+
+    /* skip the header */
+    offset += 8;
+
+    /* GxsPhotoAlbumItem */
+
+    ok &= SetTlvString(data, tlvsize, &offset, 0, item->comment.mComment);
+    ok &= setRawUInt32(data, tlvsize, &offset, item->comment.mCommentFlag);
+
+    if(offset != tlvsize)
+    {
+#ifdef GXS_PHOTO_SERIAL_DEBUG
+        std::cerr << "RsGxsPhotoSerialiser::serialiseGxsPhotoCommentItem() FAIL Size Error! " << std::endl;
+#endif
+        ok = false;
+    }
+
+#ifdef GXS_PHOTO_SERIAL_DEBUG
+    if (!ok)
+    {
+        std::cerr << "RsGxsPhotoSerialiser::serialiseGxsPhotoCommentItem() NOK" << std::endl;
+    }
+#endif
+
+    return ok;
+}
+
+RsGxsPhotoCommentItem *    RsGxsPhotoSerialiser::deserialiseGxsPhotoCommentItem(void *data, uint32_t *size)
+{
+
+
+#ifdef GXS_PHOTO_SERIAL_DEBUG
+    std::cerr << "RsGxsPhotoSerialiser::deserialiseGxsPhotoPhotoItem()" << std::endl;
+#endif
+    /* get the type and size */
+    uint32_t rstype = getRsItemId(data);
+    uint32_t rssize = getRsItemSize(data);
+
+    uint32_t offset = 0;
+
+
+    if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+            (RS_SERVICE_GXSV1_TYPE_PHOTO != getRsItemService(rstype)) ||
+            (RS_PKT_SUBTYPE_PHOTO_COMMENT_ITEM != getRsItemSubType(rstype)))
+    {
+#ifdef GXS_PHOTO_SERIAL_DEBUG
+            std::cerr << "RsGxsPhotoSerialiser::deserialiseGxsPhotoCommentItem() FAIL wrong type" << std::endl;
+#endif
+            return NULL; /* wrong type */
+    }
+
+    if (*size < rssize)    /* check size */
+    {
+#ifdef GXS_PHOTO_SERIAL_DEBUG
+            std::cerr << "RsGxsPhotoSerialiser::deserialiseGxsPhotoCommentItem() FAIL wrong size" << std::endl;
+#endif
+            return NULL; /* not enough data */
+    }
+
+    /* set the packet length */
+    *size = rssize;
+
+    bool ok = true;
+
+    RsGxsPhotoCommentItem* item = new RsGxsPhotoCommentItem();
+
+    /* skip the header */
+    offset += 8;
+
+    ok &= GetTlvString(data, rssize, &offset, 0, item->comment.mComment);
+    ok &= getRawUInt32(data, rssize, &offset, &(item->comment.mCommentFlag));
+
+    if (offset != rssize)
+    {
+#ifdef GXS_PHOTO_SERIAL_DEBUG
+            std::cerr << "RsGxsPhotoSerialiser::deserialiseGxsPhotoCommentItem() FAIL size mismatch" << std::endl;
+#endif
+            /* error */
+            delete item;
+            return NULL;
+    }
+
+    if (!ok)
+    {
+#ifdef GXS_PHOTO_SERIAL_DEBUG
+            std::cerr << "RsGxsPhotoSerialiser::deserialiseGxsPhotoCommentItem() NOK" << std::endl;
+#endif
+            delete item;
+            return NULL;
+    }
+
+    return item;
+}
+
+void RsGxsPhotoAlbumItem::clear()
+{
+	album.mCaption.clear();
+	album.mCategory.clear();
+	album.mDescription.clear();
+	album.mHashTags.clear();
+	album.mOther.clear();
+	album.mPhotoPath.clear();
+	album.mPhotographer.clear();
+	album.mWhen.clear();
+	album.mWhere.clear();
+	album.mThumbnail.deleteImage();
+}
+
+void RsGxsPhotoCommentItem::clear()
+{
+    comment.mComment.clear();
+    comment.mCommentFlag = 0;
+}
+
+std::ostream& RsGxsPhotoCommentItem::print(std::ostream& out, uint16_t indent)
+{
+    printRsItemBase(out, "RsGxsPhotoCommentItem", indent);
+    uint16_t int_Indent = indent + 2;
+
+
+    printRsItemEnd(out ,"RsGxsPhotoCommentItem", indent);
+    return out;
+}
+
+std::ostream& RsGxsPhotoAlbumItem::print(std::ostream& out, uint16_t indent)
+{
+    printRsItemBase(out, "RsGxsPhotoAlbumItem", indent);
+    uint16_t int_Indent = indent + 2;
+
+    out << album << std::endl;
+
+    printRsItemEnd(out ,"RsGxsPhotoAlbumItem", indent);
+    return out;
+}
+
+void RsGxsPhotoPhotoItem::clear()
+{
+	photo.mCaption.clear();
+	photo.mCategory.clear();
+	photo.mDescription.clear();
+	photo.mHashTags.clear();
+	photo.mOther.clear();
+	photo.mPhotographer.clear();
+	photo.mWhen.clear();
+	photo.mWhere.clear();
+	photo.mThumbnail.deleteImage();
+}
+
+std::ostream& RsGxsPhotoPhotoItem::print(std::ostream& out, uint16_t indent)
+{
+    printRsItemBase(out, "RsGxsPhotoPhotoItem", indent);
+    uint16_t int_Indent = indent + 2;
+
+
+    printRsItemEnd(out ,"RsGxsPhotoPhotoItem", indent);
+    return out;
+}
 

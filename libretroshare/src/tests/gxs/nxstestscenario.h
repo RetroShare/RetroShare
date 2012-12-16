@@ -15,14 +15,26 @@
 /*!
  * This scenario module provides data resources
  */
-class NxsTestScenario : public RsNxsObserver
+class NxsTestScenario
 {
 
 public:
 
     virtual std::string getTestName() = 0;
-    virtual RsGeneralDataService* dummyDataService1() = 0;
-    virtual RsGeneralDataService* dummyDataService2() = 0;
+
+    /*!
+     * @param peer
+     * @param namePath
+     * @return data service with populated with random grp/msg data, null if peer or pathname exists
+     */
+    virtual RsGeneralDataService* getDataService(const std::string& peer) = 0;
+
+
+    virtual bool testPassed() = 0;
+    /*!
+     * Service type for this test
+     * should correspond to serialiser service type
+     */
     virtual uint16_t getServiceType() = 0;
 
     /*!
@@ -34,25 +46,11 @@ public:
 
 };
 
-class NxsMessageTest : public NxsTestScenario
+class NxsMessageTestObserver : public RsNxsObserver
 {
-
 public:
 
-	NxsMessageTest(uint16_t servtype);
-	virtual ~NxsMessageTest();
-    std::string getTestName();
-    uint16_t getServiceType();
-    RsGeneralDataService* dummyDataService1();
-    RsGeneralDataService* dummyDataService2();
-
-    /*!
-     * Call to remove files created
-     * in the test directory
-     */
-    void cleanUp();
-
-public:
+    NxsMessageTestObserver(RsGeneralDataService* dStore);
 
     /*!
      * @param messages messages are deleted after function returns
@@ -64,6 +62,30 @@ public:
      */
     void notifyNewGroups(std::vector<RsNxsGrp*>& groups);
 
+private:
+
+    RsGeneralDataService* mStore;
+
+};
+
+class NxsMessageTest : public NxsTestScenario
+{
+
+public:
+
+    NxsMessageTest(uint16_t servtype);
+    virtual ~NxsMessageTest();
+    std::string getTestName();
+    uint16_t getServiceType();
+    RsGeneralDataService* getDataService(const std::string& peer);
+
+    /*!
+     * Call to remove files created
+     * in the test directory
+     */
+    void cleanUp();
+
+    bool testPassed();
 
 private:
     void setUpDataBases();
@@ -72,10 +94,11 @@ private:
 private:
 
     std::string mTestName;
-    std::pair<RsGeneralDataService*, RsGeneralDataService*> mStorePair;
-    std::map<std::string, std::vector<RsNxsMsg*> > mPeerMsgs;
-    std::map<std::string, std::vector<RsNxsGrp*> > mPeerGrps;
+    std::map<std::string, RsGeneralDataService*> mPeerStoreMap;
+    std::set<std::string> mStoreNames;
     uint16_t mServType;
+
+    RsMutex mMsgTestMtx;
 
 };
 

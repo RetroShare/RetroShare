@@ -31,83 +31,24 @@
 
 #include <map>
 
-//#include "gui/Posted/PostedItem.h"
-//#include "gui/PhotoShare/PhotoAddDialog.h"
-//#include "gui/PhotoShare/PhotoSlideShow.h"
 #include "util/TokenQueue.h"
 
-class PostedComments: public QWidget, public TokenResponse 
+class PostedComments: public QWidget, public TokenResponse
 {
   Q_OBJECT
 
 public:
 	PostedComments(QWidget *parent = 0);
 
+public slots:
+
+        void loadComments(const RsPostedPost& );
+
 private:
-        void loadRequest(const TokenQueue *queue, const TokenRequest &req) { return; }
+        void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+        void setUpPostFrame();
 
-#if 0
-virtual void deletePhotoItem(PhotoItem *, uint32_t type);
-virtual void notifySelection(PhotoItem *item, int ptype);
-
-	void notifyAlbumSelection(PhotoItem *item);
-	void notifyPhotoSelection(PhotoItem *item);
-
-private slots:
-
-	void checkUpdate();
-	void OpenOrShowPhotoAddDialog();
-	void OpenPhotoEditDialog();
-	void OpenSlideShow();
-private:
-
-	/* Request Response Functions for loading data */
-	void requestAlbumList();
-	void requestAlbumData(const std::list<std::string> &ids);
-	void requestPhotoList(const std::string &albumId);
-	void requestPhotoData(const std::list<std::string> &photoIds);
-	
-	void loadAlbumList(const uint32_t &token);
-	bool loadAlbumData(const uint32_t &token);
-	void loadPhotoList(const uint32_t &token);
-	void loadPhotoData(const uint32_t &token);
-	
-	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
-
-
-	/* TODO: These functions must be filled in for proper filtering to work 
-	 * and tied to the GUI input
-	 */
-
-	bool matchesAlbumFilter(const RsPhotoAlbum &album);
-	double AlbumScore(const RsPhotoAlbum &album);
-	bool matchesPhotoFilter(const RsPhotoPhoto &photo);
-	double PhotoScore(const RsPhotoPhoto &photo);
-
-	/* Grunt work of setting up the GUI */
-
-	//bool FilterNSortAlbums(const std::list<std::string> &albumIds, std::list<std::string> &filteredAlbumIds, int count);
-	//bool FilterNSortPhotos(const std::list<std::string> &photoIds, std::list<std::string> &filteredPhotoIds, int count);
-	//void insertAlbums();
-	//void insertPhotosForAlbum(const std::list<std::string> &albumIds);
-
-	void insertPhotosForSelectedAlbum();
-
-	void addAlbum(const RsPhotoAlbum &album);
-	void addPhoto(const RsPhotoPhoto &photo);
-
-	void clearAlbums();
-	void clearPhotos();
-
-	PhotoAddDialog *mAddDialog;
-	PhotoSlideShow *mSlideShow;
-
-	PhotoItem *mAlbumSelected;
-	PhotoItem *mPhotoSelected;
-
-#endif
-
-	TokenQueue *mPhotoQueue;
+        RsPostedPost mCurrentPost;
 
 	/* UI - from Designer */
 	Ui::PostedComments ui;

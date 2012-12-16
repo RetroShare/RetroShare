@@ -51,51 +51,38 @@ private slots:
 	void OpenOrShowAddPageDialog();
 	void OpenOrShowAddGroupDialog();
 	void OpenOrShowEditDialog();
+	void OpenOrShowRepublishDialog();
 
 	void groupTreeChanged();
-	void modTreeChanged();
+
+	void newGroup();
+	void showGroupDetails();
+	void editGroupDetails();
+
+	void insertWikiGroups();
 
 private:
 
 void 	clearWikiPage();
 void    clearGroupTree();
-void    clearModsTree();
 
-void 	insertWikiGroups();
-void 	insertModsForPage(const std::string &origPageId);
+void 	updateWikiPage(const RsWikiSnapshot &page);
 
-void 	updateWikiPage(const RsWikiPage &page);
-
-bool 	getSelectedPage(std::string &pageId, std::string &origPageId);	
+bool 	getSelectedPage(std::string &groupId, std::string &pageId, std::string &origPageId);	
 std::string getSelectedPage();
 std::string getSelectedGroup();
-std::string getSelectedMod();
-
-
 
 void 	requestGroupList();
-void 	loadGroupList(const uint32_t &token);
-void 	requestGroupData(const std::list<std::string> &groupIds);
 void 	loadGroupData(const uint32_t &token);
-void 	requestOriginalPages(const std::list<std::string> &groupIds);
-void 	loadOriginalPages(const uint32_t &token);
-void 	requestLatestPages(const std::list<std::string> &msgIds);
-void 	loadLatestPages(const uint32_t &token);
-void 	requestPages(const std::list<std::string> &msgIds);
+
+void 	requestPages(const std::list<RsGxsGroupId> &groupIds);
 void 	loadPages(const uint32_t &token);
 
-
-void 	requestModPageList(const std::string &origMsgId);
-void 	loadModPageList(const uint32_t &token);
-void 	requestModPages(const std::list<std::string> &msgIds);
-void 	loadModPages(const uint32_t &token);
-
-void 	requestWikiPage(const std::string &msgId);
+void 	requestWikiPage(const  RsGxsGrpMsgIdPair &msgId);
 void 	loadWikiPage(const uint32_t &token);
 
 
 	TokenQueue *mWikiQueue;
-
 
 	WikiAddDialog *mAddPageDialog;
 	WikiAddDialog *mAddGroupDialog;

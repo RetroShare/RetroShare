@@ -168,6 +168,21 @@ void RsPluginManager::loadPlugins(const std::vector<std::string>& plugin_directo
 	saveConfiguration();
 }
 
+void RsPluginManager::stopPlugins()
+{
+	std::cerr << "  Stopping plugins." << std::endl;
+
+	for (uint32_t i = 0; i < _plugins.size(); ++i)
+	{
+		if (_plugins[i].plugin != NULL)
+		{
+			_plugins[i].plugin->stop();
+//			delete _plugins[i].plugin;
+//			_plugins[i].plugin = NULL;
+		}
+	}
+}
+
 void RsPluginManager::getPluginStatus(int i,uint32_t& status,std::string& file_name,std::string& hash,uint32_t& svn_revision,std::string& error_string) const
 {
 	if((uint32_t)i >= _plugins.size())

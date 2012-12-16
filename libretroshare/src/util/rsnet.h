@@ -44,10 +44,8 @@
 
 #else
 
-#include "util/rswin.h"
 
 #include <winsock2.h>
-#include <ws2tcpip.h>
 
 #include <stdio.h> /* for ssize_t */
 //typedef uint32_t socklen_t;

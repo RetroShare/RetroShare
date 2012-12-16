@@ -19,32 +19,29 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <QtGui>
-#include <QMessageBox>
-#include <QSystemTrayIcon>
-#include <QString>
-#include <QtDebug>
-#include <QIcon>
-#include <QPixmap>
+#include <QCloseEvent>
 
 #include <rshare.h>
 #include "ApplicationWindow.h"
 
 #include <retroshare/rsiface.h>
 
-#include "gui/PhotoShare/PhotoDialog.h"
-#include "gui/WikiPoos/WikiDialog.h"
-#include "gui/TheWire/WireDialog.h"
 #include "gui/Identity/IdDialog.h"
-#include "gui/ForumsV2Dialog.h"
+#include "gui/Circles/CirclesDialog.h"
+#include "gui/PhotoShare/PhotoShare.h"
+#include "gui/WikiPoos/WikiDialog.h"
 #include "gui/Posted/PostedDialog.h"
+#include "gui/GxsForumsDialog.h"
+
+// THESE HAVE TO BE CONVERTED TO VEG FORMAT
+#if USE_VEG_SERVICE
+#include "gui/TheWire/WireDialog.h"
+#endif
 
 //#include "GamesDialog.h"
 //#include "CalDialog.h"
 //#include "PhotoDialog.h"
 //#include "StatisticDialog.h"
-
-#define FONT        QFont("Arial", 9)
 
 /* Images for toolbar icons */
 #define IMAGE_RETROSHARE        ":/images/RetroShare16.png"
@@ -57,7 +54,10 @@
 #define IMAGE_CALENDAR          ":/images/calendar.png"
 #define IMAGE_LIBRARY           ":/images/library.png"
 #define IMAGE_PLUGINS           ":/images/extension_32.png"
-#define IMAGE_FORUMSV2            ":/images/konversation.png"
+#define IMAGE_GXSFORUMS         ":/images/konversation.png"
+#define IMAGE_WIKI				":/images/wikibook_32.png"
+#define IMAGE_POSTED		    ":/images/posted_32.png"
+
 
 /** Constructor */
 ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
@@ -72,7 +72,6 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
 
     // Setting icons
     this->setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
-    loadStyleSheet("Default");
 
     /* Create the config pages and actions */
     QActionGroup *grp = new QActionGroup(this);
@@ -80,10 +79,6 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     //StatisticDialog *statisticDialog = NULL;
     //ui.stackPages->add(statisticDialog = new StatisticDialog(ui.stackPages),
     //                   createPageAction(QIcon(IMAGE_STATISTIC), tr("Statistics"), grp));
-
-    //PhotoDialog *photoDialog = NULL;
-    //ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
-    //                  createPageAction(QIcon(IMAGE_PHOTO), tr("Photo View"), grp));
 
     //GamesDialog *gamesDialog = NULL;
     //ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),
@@ -97,41 +92,51 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(idDialog = new IdDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_LIBRARY), tr("Identities"), grp));
 
-    PhotoDialog *photoDialog = NULL;
-    ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_PHOTO), tr("Photo View"), grp));
+    CirclesDialog *circlesDialog = NULL;
+    ui.stackPages->add(circlesDialog = new CirclesDialog(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_LIBRARY), tr("Circles"), grp));
+
+    PhotoShare *photoShare = NULL;
+    ui.stackPages->add(photoShare = new PhotoShare(ui.stackPages),
+                     createPageAction(QIcon(IMAGE_PHOTO), tr("Photo Share"), grp));
+
+    PostedDialog *postedDialog = NULL;
+    ui.stackPages->add(postedDialog = new PostedDialog(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_POSTED), tr("Posted Links"), grp));
 
     WikiDialog *wikiDialog = NULL;
     ui.stackPages->add(wikiDialog = new WikiDialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_LIBRARY), tr("Wiki Pages"), grp));
+                      createPageAction(QIcon(IMAGE_WIKI), tr("Wiki Pages"), grp));
 
+    GxsForumsDialog *gxsforumsDialog = NULL;
+    ui.stackPages->add(gxsforumsDialog = new GxsForumsDialog(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_GXSFORUMS), tr("GxsForums"), grp));
+
+// THESE HAVE TO BE CONVERTED TO VEG FORMAT
+#if USE_VEG_SERVICE
     WireDialog *wireDialog = NULL;
     ui.stackPages->add(wireDialog = new WireDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_BWGRAPH), tr("The Wire"), grp));
 
-    ForumsV2Dialog *forumsV2Dialog = NULL;
-    ui.stackPages->add(forumsV2Dialog = new ForumsV2Dialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_FORUMSV2), tr("ForumsV2"), grp));
-
-    PostedDialog *postedDialog = NULL;
-    ui.stackPages->add(postedDialog = new PostedDialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_LIBRARY), tr("Posted Links"), grp));
-
+#endif
 
    /* Create the toolbar */
    ui.toolBar->addActions(grp->actions());
    ui.toolBar->addSeparator();
    connect(grp, SIGNAL(triggered(QAction *)), ui.stackPages, SLOT(showPage(QAction *)));
 
-
+   ui.stackPages->setCurrentIndex(0);
 }
 
 /** Creates a new action associated with a config page. */
 QAction* ApplicationWindow::createPageAction(QIcon img, QString text, QActionGroup *group)
 {
+    QFont font;
     QAction *action = new QAction(img, text, group);
+    font = action->font();
+    font.setPointSize(9);
     action->setCheckable(true);
-    action->setFont(FONT);
+    action->setFont(font);
     return action;
 }
 
@@ -139,47 +144,18 @@ QAction* ApplicationWindow::createPageAction(QIcon img, QString text, QActionGro
  * the specified slot (if given). */
 void ApplicationWindow::addAction(QAction *action, const char *slot)
 {
-    action->setFont(FONT);
+    QFont font = action->font();
+    font.setPointSize(9);
+    action->setFont(font);
     ui.toolBar->addAction(action);
     connect(action, SIGNAL(triggered()), this, slot);
 }
-
-/** Overloads the default show so we can load settings */
-void ApplicationWindow::show()
-{
-
-    if (!this->isVisible()) {
-        QMainWindow::show();
-    } else {
-        QMainWindow::activateWindow();
-        setWindowState(windowState() & (~Qt::WindowMinimized | Qt::WindowActive));
-        QMainWindow::raise();
-    }
-}
-
-
-/** Shows the config dialog with focus set to the given page. */
-void ApplicationWindow::show(Page page)
-{
-    /* Show the dialog. */
-    show();
-
-    /* Set the focus to the specified page. */
-    ui.stackPages->setCurrentIndex((int)page);
-}
-
 
 /** Destructor. */
 ApplicationWindow::~ApplicationWindow()
 {
 // is this allocated anywhere ??
 //    delete exampleDialog;
-}
-
-/** Create and bind actions to events. Setup for initial
- * tray menu configuration. */
-void ApplicationWindow::createActions()
-{
 }
 
 void ApplicationWindow::closeEvent(QCloseEvent *e)
@@ -189,53 +165,3 @@ void ApplicationWindow::closeEvent(QCloseEvent *e)
     hide();
     e->ignore();
 }
-
-
-void ApplicationWindow::updateMenu()
-{
-    toggleVisibilityAction->setText(isVisible() ? tr("Hide") : tr("Show"));
-}
-
-void ApplicationWindow::toggleVisibility(QSystemTrayIcon::ActivationReason e)
-{
-    if(e == QSystemTrayIcon::Trigger || e == QSystemTrayIcon::DoubleClick){
-        if(isHidden()){
-            show();
-            if(isMinimized()){
-                if(isMaximized()){
-                    showMaximized();
-                }else{
-                    showNormal();
-                }
-            }
-            raise();
-            activateWindow();
-        }else{
-            hide();
-        }
-    }
-}
-
-void ApplicationWindow::toggleVisibilitycontextmenu()
-{
-    if (isVisible())
-        hide();
-    else
-        show();
-}
-
-
-
-void ApplicationWindow::loadStyleSheet(const QString &sheetName)
-{
-    QFile file(":/qss/" + sheetName.toLower() + ".qss");
-    file.open(QFile::ReadOnly);
-    QString styleSheet = QLatin1String(file.readAll());
-
-
-    qApp->setStyleSheet(styleSheet);
-
-}
-
-
-

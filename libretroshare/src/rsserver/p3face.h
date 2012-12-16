@@ -45,10 +45,23 @@
 #include "services/p3channels.h"
 #include "services/p3forums.h"
 
+/* GXS Classes - just declare the classes.
+   so we don't have to totally recompile to switch */
+
+class p3IdService;
+class p3GxsCircles;
+class p3GxsForums;
+class p3Wiki;
+class p3Posted;
+class p3PhotoService;
+class p3Wire;
+
+
 class p3PeerMgrIMPL;
 class p3LinkMgrIMPL;
 class p3NetMgrIMPL;
 class p3HistoryMgr;
+class RsPluginManager;
 
 /* The Main Interface Class - for controlling the server */
 
@@ -159,6 +172,8 @@ class RsServer: public RsControl, public RsThread
 
 		pqipersongrp *pqih;
 
+		RsPluginManager *mPluginsManager;
+
 		//sslroot *sslr;
 
 		/* services */
@@ -169,6 +184,15 @@ class RsServer: public RsControl, public RsThread
 		p3Channels *mChannels;
 		p3Forums *mForums;
 		/* caches (that need ticking) */
+
+                /* GXS */
+                p3Wiki *mWiki;
+                p3Posted *mPosted;
+                p3PhotoService *mPhoto;
+                p3GxsCircles *mGxsCircles;
+                p3IdService *mGxsIdService;
+                p3GxsForums *mGxsForums;
+                p3Wire *mWire;
 
 		/* Config */
 		p3ConfigMgr     *mConfigMgr;

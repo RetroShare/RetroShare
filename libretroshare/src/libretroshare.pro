@@ -1,6 +1,4 @@
 TEMPLATE = lib
-#CONFIG += staticlib release
-#CONFIG += staticlib testnetwork
 CONFIG += staticlib bitdht
 CONFIG -= qt
 TARGET = retroshare
@@ -8,8 +6,8 @@ TARGET = retroshare
 CONFIG += test_voip 
 
 # GXS Stuff.
-#CONFIG += newcache
-#CONFIG += newservices
+# This should be disabled for releases until further notice.
+#CONFIG += gxs
 
 # Beware: All data of the stripped services are lost
 DEFINES *= PQI_DISABLE_TUNNEL
@@ -20,38 +18,9 @@ profiling {
 	QMAKE_CXXFLAGS *= -pg -g -fno-omit-frame-pointer
 }
 
-release {
-	# UDP and TUNNEL dont work anymore.
-	#DEFINES *= PQI_DISABLE_UDP
-}
-
 # treat warnings as error for better removing
 #QMAKE_CFLAGS += -Werror
 #QMAKE_CXXFLAGS += -Werror
-
-testnetwork {
-	# used in rsserver/rsinit.cc Enabled Port Restrictions, and makes Proxy Port next to Dht Port.
-	DEFINES *= LOCALNET_TESTING  
-
-	# used in tcponudp/udprelay.cc Debugging Info for Relays.
-	DEFINES *= DEBUG_UDP_RELAY
-
-	# used in tcponudp/udpstunner.[h | cc] enables local stun (careful - modifies class variables).
-	DEFINES *= UDPSTUN_ALLOW_LOCALNET
-
-	# used in pqi/p3linkmgr.cc prints out extra debug.
-	DEFINES *= LINKMGR_DEBUG_LINKTYPE
-
-	# used in dht/connectstatebox to reduce connection times and display debug.
-	# DEFINES *= TESTING_PERIODS
-	# DEFINES *= DEBUG_CONNECTBOX
-
-        QMAKE_CXXFLAGS -= -fomit-frame-pointer
-        QMAKE_CXXFLAGS -= -O2 
-        QMAKE_CXXFLAGS *= -g -fno-omit-frame-pointer
-
-}
-
 
 #CONFIG += debug
 debug {
@@ -67,6 +36,7 @@ debug {
         QMAKE_CXXFLAGS -= -O2 -fomit-frame-pointer
         QMAKE_CXXFLAGS *= -g -fno-omit-frame-pointer
 }
+
 
 bitdht {
 
@@ -97,43 +67,14 @@ SOURCES +=	tcponudp/udppeer.cc \
 		tcponudp/udpstunner.cc \
 		tcponudp/udprelay.cc \
 
-# These two aren't actually used (and don't compile) .... 
-# but could be useful later
-#
-#		tcponudp/udpstunner.h \
-#		tcponudp/udpstunner.cc \
-#
-
 
         BITDHT_DIR = ../../libbitdht/src
 	INCLUDEPATH += . $${BITDHT_DIR}
-	# The next line if for compliance with debian packages. Keep it!
+	# The next line is for compliance with debian packages. Keep it!
 	INCLUDEPATH += ../libbitdht
 	DEFINES *= RS_USE_BITDHT
 }
 
-
-
-test_bitdht {
-	# DISABLE TCP CONNECTIONS...
-	DEFINES *= P3CONNMGR_NO_TCP_CONNECTIONS 
-
-	# NO AUTO CONNECTIONS??? FOR TESTING DHT STATUS.
-	DEFINES *= P3CONNMGR_NO_AUTO_CONNECTION 
-
-	# ENABLED UDP NOW.
-}
-
-
-
-
-use_blogs {
-
-	HEADERS +=	services/p3blogs.h
-	SOURCES +=	services/p3blogs.cc 
-
-	DEFINES *= RS_USE_BLOGS
-}
 
 
 
@@ -161,14 +102,14 @@ PUBLIC_HEADERS =	retroshare/rsblogs.h \
 					retroshare/rsconfig.h
 
 HEADERS += plugins/pluginmanager.h \
-				plugins/dlfcn_win32.h \
-				serialiser/rspluginitems.h
+		plugins/dlfcn_win32.h \
+		serialiser/rspluginitems.h
 
 HEADERS += $$PUBLIC_HEADERS
 
 # public headers to be...
-HEADERS +=		retroshare/rsgame.h \
-					retroshare/rsphoto.h
+HEADERS +=	retroshare/rsgame.h \
+		retroshare/rsphoto.h
 
 ################################# Linux ##########################################
 linux-* {
@@ -204,22 +145,23 @@ linux-* {
 		message(Could not find gpgme-config on your system, assuming gpgme.h is in /usr/include)
 	}
 
-	#libupnp implementation files
-	HEADERS += upnp/UPnPBase.h
-	SOURCES += upnp/UPnPBase.cpp
-
 	# where to put the shared library itself
 	target.path = $$LIB_DIR
 	INSTALLS *= target
 
-	# where to put the library's interface
+	# where to put the librarys interface
 	include_rsiface.path = $${INC_DIR}
 	include_rsiface.files = $$PUBLIC_HEADERS
 	INSTALLS += include_rsiface
 
 	#CONFIG += version_detail_bash_script
 
-	# Check if the system's libupnp has been Debian-patched
+
+	# linux/bsd can use either - libupnp is more complete and packaged.
+	#CONFIG += upnp_miniupnpc 
+	CONFIG += upnp_libupnp
+
+	# Check if the systems libupnp has been Debian-patched
 	system(grep -E 'char[[:space:]]+PublisherUrl' $${UPNP_DIR}/upnp.h >/dev/null 2>&1) {
 		# Normal libupnp
 	} else {
@@ -258,9 +200,7 @@ win32-x-g++ {
 	QMAKE_AR = i586-mingw32msvc-ar
 	DEFINES *= STATICLIB WIN32
 
-        #miniupnp implementation files
-        HEADERS += upnp/upnputil.h
-        SOURCES += upnp/upnputil.c
+	CONFIG += upnp_miniupnpc
 
         SSL_DIR=../../../../openssl
 	UPNPC_DIR = ../../../../miniupnpc-1.3
@@ -296,9 +236,7 @@ win32 {
 
 	DEFINES += USE_CMD_ARGS
 
-	#miniupnp implementation files
-	HEADERS += upnp/upnputil.h
-	SOURCES += upnp/upnputil.c
+	CONFIG += upnp_miniupnpc
 
 	UPNPC_DIR = ../../../miniupnpc-1.3
 
@@ -308,6 +246,13 @@ win32 {
 	OPENPGPSDK_DIR = ../../openpgpsdk/src
 
 	INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR} $${OPENPGPSDK_DIR}
+
+	# SQLite include path is required to compile GXS.
+	gxs {
+		SQLITE_DIR = ../../../../Libraries/sqlite/sqlite-autoconf-3070900
+		INCLUDEPATH += $${SQLITE_DIR}
+	}
+
 }
 
 
@@ -321,9 +266,7 @@ mac {
                 #DEFINES *= MINIUPNPC_VERSION=13
 		DESTDIR = lib
 
-                #miniupnp implementation files
-                HEADERS += upnp/upnputil.h
-                SOURCES += upnp/upnputil.c
+		CONFIG += upnp_miniupnpc
 
 		# zeroconf disabled at the end of libretroshare.pro (but need the code)
 		CONFIG += zeroconf
@@ -353,9 +296,10 @@ freebsd-* {
 
 	QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dstat64=stat -Dstatvfs64=statvfs -Dfopen64=fopen
 
-	#libupnp implementation files
-	HEADERS += upnp/UPnPBase.h
-	SOURCES += upnp/UPnPBase.cpp
+	# linux/bsd can use either - libupnp is more complete and packaged.
+	#CONFIG += upnp_miniupnpc 
+	CONFIG += upnp_libupnp
+
 	DESTDIR = lib
 }
 
@@ -482,7 +426,6 @@ HEADERS +=	turtle/p3turtle.h \
 			turtle/rsturtleitem.h \
 			turtle/turtletypes.h
 
-HEADERS +=	upnp/upnphandler.h
 
 HEADERS +=	util/folderiterator.h \
 			util/rsdebug.h \
@@ -500,6 +443,8 @@ HEADERS +=	util/folderiterator.h \
 			util/rsrandom.h \
 			util/radix64.h \
 			util/pugiconfig.h \  
+			util/rsmemcache.h \
+			util/rstickevent.h \
 
 SOURCES +=	dbase/cachestrapper.cc \
 			dbase/fimonitor.cc \
@@ -624,7 +569,6 @@ SOURCES +=	turtle/p3turtle.cc \
 #				turtle/turtlesearch.cc \
 #				turtle/turtletunnels.cc
 
-SOURCES +=	upnp/upnphandler.cc
 
 SOURCES +=	util/folderiterator.cc \
 			util/rsdebug.cc \
@@ -640,6 +584,21 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsversion.cc \
 			util/rswin.cc \
 			util/rsrandom.cc \
+			util/rstickevent.cc \
+
+
+upnp_miniupnpc {
+	HEADERS += upnp/upnputil.h upnp/upnphandler_miniupnp.h
+	SOURCES += upnp/upnputil.c upnp/upnphandler_miniupnp.cc
+}
+
+upnp_libupnp {
+	HEADERS += upnp/UPnPBase.h  upnp/upnphandler_linux.h
+	SOURCES += upnp/UPnPBase.cpp upnp/upnphandler_linux.cc
+	DEFINES *= RS_USE_LIBUPNP
+}
+
+
 
 zeroconf {
 
@@ -666,67 +625,151 @@ SOURCES +=	zeroconf/p3zcnatassist.cc \
 
 }
 
- # new gxs cache system
-newcache { 
+# new gxs cache system
+# this should be disabled for releases until further notice.
+gxs {
+	DEFINES *= RS_ENABLE_GXS
 
-HEADERS += serialiser/rsnxsitems.h \
-            gxs/rsgds.h \
-            gxs/rsgxs.h \
-            gxs/rsdataservice.h \
-            gxs/rsgxsnetservice.h \
-            gxs/rsgxsflags.h \
-            gxs/rsgenexchange.h \
-            gxs/rsnxsobserver.h \
-            gxs/rsgxsdata.h \
-            gxs/rstokenservice.h \
-            gxs/rsgxsdataaccess.h \
-    		retroshare/rsgxsservice.h \
-    		serialiser/rsgxsitems.h \
-		util/retrodb.h
-
-SOURCES += serialiser/rsnxsitems.cc \
-                gxs/rsdataservice.cc \
-                gxs/rsgenexchange.cc \
-            gxs/rsgxsnetservice.cc \
-            gxs/rsgxsdata.cc \
-    		services/p3photoserviceV2.cc \
-        	gxs/rsgxsdataaccess.cc \
-		util/retrodb.cc
-}
+	HEADERS += serialiser/rsnxsitems.h \
+		gxs/rsgds.h \
+		gxs/rsgxs.h \
+		gxs/rsdataservice.h \
+		gxs/rsgxsnetservice.h \
+		gxs/rsgxsflags.h \
+		gxs/rsgenexchange.h \
+		gxs/rsnxsobserver.h \
+		gxs/rsgxsdata.h \
+		gxs/rstokenservice.h \
+		gxs/rsgxsdataaccess.h \
+		retroshare/rsgxsservice.h \
+		serialiser/rsgxsitems.h \
+		util/retrodb.h \
+		util/contentvalue.h \
+		gxs/gxscoreserver.h \
+		gxs/gxssecurity.h \
+		gxs/rsgxsifaceimpl.h \
+		gxs/gxstokenqueue.h \
 
 
+	SOURCES += serialiser/rsnxsitems.cc \
+		gxs/rsdataservice.cc \
+		gxs/rsgenexchange.cc \
+		gxs/rsgxsnetservice.cc \
+		gxs/rsgxsdata.cc \
+		serialiser/rsgxsitems.cc \
+		gxs/rsgxsdataaccess.cc \
+		util/retrodb.cc \
+		util/contentvalue.cc \
+		gxs/gxscoreserver.cc \
+		gxs/gxssecurity.cc \
+		gxs/rsgxsifaceimpl.cc \
+		gxs/gxstokenqueue.cc \
 
-newservices { 
-
-HEADERS += services/p3photoservice.h \
-		serialiser/rsphotoitems.h \
-		retroshare/rsphoto.h \
-		services/p3gxsservice.h \
-		retroshare/rsidentity.h \
-		services/p3wikiservice.h \
-		retroshare/rswiki.h \
-		retroshare/rswire.h \
-		services/p3wire.h \
+	# Identity Service
+	HEADERS += retroshare/rsidentity.h \
+		gxs/rsgixs.h \
 		services/p3idservice.h \
-		retroshare/rsforumsv2.h \
-		services/p3forumsv2.h \
+		serialiser/rsgxsiditems.h
+
+	SOURCES += services/p3idservice.cc \
+		serialiser/rsgxsiditems.cc \
+
+	# GxsCircles Service
+	HEADERS += services/p3gxscircles.h \
+		serialiser/rsgxscircleitems.h \
+		retroshare/rsgxscircles.h \
+
+	SOURCES += services/p3gxscircles.cc \
+		serialiser/rsgxscircleitems.cc \
+
+	# GxsForums Service
+	HEADERS += retroshare/rsgxsforums.h \
+		services/p3gxsforums.h \
+		serialiser/rsgxsforumitems.h
+
+	SOURCES += services/p3gxsforums.cc \
+		serialiser/rsgxsforumitems.cc \
+
+	# Wiki Service
+	HEADERS += retroshare/rswiki.h \
+		services/p3wiki.h \
+		serialiser/rswikiitems.h
+
+	SOURCES += services/p3wiki.cc \
+		serialiser/rswikiitems.cc \
+
+	# Wiki Service
+	HEADERS += retroshare/rswire.h \
+		services/p3wire.h \
+		serialiser/rswireitems.h
+
+	SOURCES += services/p3wire.cc \
+		serialiser/rswireitems.cc \
+
+	# Posted Service
+	HEADERS += services/p3posted.h \
 		retroshare/rsposted.h \
-		services/p3posted.h \
-    	services/p3photoserviceV2.h \
-    	retroshare/rsphotoV2.h \
-    	
+		serialiser/rsposteditems.h
 
-SOURCES += services/p3photoservice.cc \
+	SOURCES +=  services/p3posted.cc \
+		serialiser/rsposteditems.cc
+
+	#Photo Service
+	HEADERS += services/p3photoservice.h \
+		retroshare/rsphoto.h \
+		serialiser/rsphotoitems.h \
+
+	SOURCES += services/p3photoservice.cc \
 		serialiser/rsphotoitems.cc \
-		services/p3gxsservice.cc \
-		services/p3wikiservice.cc \
-		services/p3wire.cc \
-		services/p3idservice.cc \
-		services/p3forumsv2.cc \
-		services/p3posted.cc \
-
-# Other Old Code.
-#	rsserver/p3photo.cc \
 }
 
+
+
+
+
+
+###########################################################################################################
+# OLD CONFIG OPTIONS.
+# Not used much - but might be useful one day.
+#
+
+testnetwork {
+	# used in rsserver/rsinit.cc Enabled Port Restrictions, and makes Proxy Port next to Dht Port.
+	DEFINES *= LOCALNET_TESTING  
+
+	# used in tcponudp/udprelay.cc Debugging Info for Relays.
+	DEFINES *= DEBUG_UDP_RELAY
+
+	# used in tcponudp/udpstunner.[h | cc] enables local stun (careful - modifies class variables).
+	DEFINES *= UDPSTUN_ALLOW_LOCALNET
+
+	# used in pqi/p3linkmgr.cc prints out extra debug.
+	DEFINES *= LINKMGR_DEBUG_LINKTYPE
+
+	# used in dht/connectstatebox to reduce connection times and display debug.
+	# DEFINES *= TESTING_PERIODS
+	# DEFINES *= DEBUG_CONNECTBOX
+}
+
+
+test_bitdht {
+	# DISABLE TCP CONNECTIONS...
+	DEFINES *= P3CONNMGR_NO_TCP_CONNECTIONS 
+
+	# NO AUTO CONNECTIONS??? FOR TESTING DHT STATUS.
+	DEFINES *= P3CONNMGR_NO_AUTO_CONNECTION 
+
+	# ENABLED UDP NOW.
+}
+
+
+
+
+use_blogs {
+
+	HEADERS +=	services/p3blogs.h
+	SOURCES +=	services/p3blogs.cc 
+
+	DEFINES *= RS_USE_BLOGS
+}
 

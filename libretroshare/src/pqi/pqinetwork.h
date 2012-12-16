@@ -45,12 +45,10 @@
 
 #else
 
-#include "util/rswin.h"
 
 #include "util/rsnet.h" /* more generic networking header */
 
 #include <winsock2.h>
-#include <ws2tcpip.h>
 typedef int socklen_t;
 //typedef unsigned long in_addr_t;
 

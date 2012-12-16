@@ -30,77 +30,107 @@
 #include <string>
 #include <list>
 
-#include <retroshare/rsidentity.h>
+#include "gxs/rstokenservice.h"
+#include "gxs/rsgxsifaceimpl.h"
 
 /* The Main Interface Class - for information about your Peers */
 class RsWiki;
 extern RsWiki *rsWiki;
 
-class RsWikiGroupShare
+
+/* so the basic idea of Wiki is a set of Collections about subjects.
+ *
+ * Collection: RS
+ *   - page: DHT
+ *       - edit
+ *           - edit
+ *     - official revision. (new version of thread head).
+ *
+ * A collection will be moderated by it creator - important to prevent stupid changes.
+ * We need a way to swap out / replace / fork collections if moderator is rubbish.
+ *
+ * This should probably be done that the collection level.
+ * and enable all the references to be modified.
+ *
+ * Collection1 (RS DHT)
+ *  : Turtle Link: Collection 0x54e4dafc34
+ *    - Page 1
+ *    - Page 2
+ *       - Link to Self:Page 1
+ *       - Link to Turtle:Page 1
+ *
+ *    
+ */
+
+#define FLAG_MSG_TYPE_WIKI_SNAPSHOT	0x0001
+#define FLAG_MSG_TYPE_WIKI_COMMENT	0x0002
+
+class CollectionRef
 {
 	public:
 
-	uint32_t mShareType;
-	std::string mShareGroupId;
-	std::string mPublishKey;
-	uint32_t mCommentMode;
-	uint32_t mResizeMode;
+	std::string KeyWord;
+        std::string CollectionId;
 };
 
-class RsWikiGroup
+
+class RsWikiCollection
 {
 	public:
 
 	RsGroupMetaData mMeta;
-
-	//std::string mGroupId;
-	//std::string mName;
 
 	std::string mDescription;
 	std::string mCategory;
 
 	std::string mHashTags;
 
-	RsWikiGroupShare mShareOptions;
+        //std::map<std::string, CollectionRef> linkReferences;
 };
 
-class RsWikiPage
+
+class RsWikiSnapshot
 {
 	public:
 
 	RsMsgMetaData mMeta;
 
-	// IN META DATA.
-	//std::string mGroupId;
-	//std::string mOrigPageId;
-	//std::string mPageId;
-	//std::string mName;
-
-	// WE SHOULD SWITCH TO USING THREAD/PARENT IDS HERE....
-	std::string mPrevId;
-
 	std::string mPage; // all the text is stored here.
-
 	std::string mHashTags;
 };
 
-class RsWiki: public RsTokenService
+
+class RsWikiComment
 {
 	public:
 
-	RsWiki()  { return; }
+	RsMsgMetaData mMeta;
+	std::string mComment; 
+};
+
+std::ostream &operator<<(std::ostream &out, const RsWikiCollection &group);
+std::ostream &operator<<(std::ostream &out, const RsWikiSnapshot &shot);
+std::ostream &operator<<(std::ostream &out, const RsWikiComment &comment);
+
+
+class RsWiki: public RsGxsIfaceImpl
+{
+	public:
+
+	RsWiki(RsGenExchange *gxs): RsGxsIfaceImpl(gxs)  { return; }
 virtual ~RsWiki() { return; }
 
 	/* Specific Service Data */
-virtual bool getGroupData(const uint32_t &token, RsWikiGroup &group) = 0;
-virtual bool getMsgData(const uint32_t &token, RsWikiPage &page) = 0;
+virtual bool getCollections(const uint32_t &token, std::vector<RsWikiCollection> &collections) = 0;
+virtual bool getSnapshots(const uint32_t &token, std::vector<RsWikiSnapshot> &snapshots) = 0;
+virtual bool getComments(const uint32_t &token, std::vector<RsWikiComment> &comments) = 0;
 
-virtual bool createGroup(uint32_t &token, RsWikiGroup &group, bool isNew) = 0;
-virtual bool createPage(uint32_t &token, RsWikiPage &page, bool isNew) = 0;
+virtual bool getRelatedSnapshots(const uint32_t &token, std::vector<RsWikiSnapshot> &snapshots) = 0;
 
+virtual bool submitCollection(uint32_t &token, RsWikiCollection &collection) = 0;
+virtual bool submitSnapshot(uint32_t &token, RsWikiSnapshot &snapshot) = 0;
+virtual bool submitComment(uint32_t &token, RsWikiComment &comment) = 0;
 
 };
-
-
 
 #endif

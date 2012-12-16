@@ -28,9 +28,11 @@
 
 #include <unistd.h>
 
-// for locking instances
 #ifndef WINDOWS_SYS
+// for locking instances
 #include <errno.h>
+#else
+#include "util/rswin.h"
 #endif
 
 #include "util/rsdebug.h"
@@ -1804,7 +1806,11 @@ RsTurtle *rsTurtle = NULL ;
 #ifdef RS_ENABLE_ZCNATASSIST
 	#include "zeroconf/p3zcnatassist.h"
 #else
-	#include "upnp/upnphandler.h"
+        #ifdef RS_USE_LIBUPNP
+		#include "upnp/upnphandler_linux.h"
+	#else
+		#include "upnp/upnphandler_miniupnp.h"
+        #endif
 #endif
 
 #include "services/p3disc.h"
@@ -1817,14 +1823,22 @@ RsTurtle *rsTurtle = NULL ;
 #include "services/p3blogs.h"
 #include "turtle/p3turtle.h"
 
-#ifdef ENABLE_GXS_SERVICES
-#include "services/p3photoservice.h"
-#include "services/p3wikiservice.h"
-#include "services/p3wire.h"
+#ifdef RS_ENABLE_GXS
+// NEW GXS SYSTEMS.
+#include "gxs/gxscoreserver.h"
+#include "gxs/rsdataservice.h"
+#include "gxs/rsgxsnetservice.h"
+#include "gxs/rsgxsflags.h"
+
 #include "services/p3idservice.h"
-#include "services/p3forumsv2.h"
+#include "services/p3gxscircles.h"
+#include "services/p3wiki.h"
 #include "services/p3posted.h"
-#endif
+#include "services/p3photoservice.h"
+#include "services/p3gxsforums.h"
+#include "services/p3wire.h"
+
+#endif // RS_ENABLE_GXS
 
 #ifndef PQI_DISABLE_TUNNEL
 #include "services/p3tunnel.h"
@@ -2187,7 +2201,7 @@ int RsServer::StartupRetroShare()
 	// possible entries include: /usr/lib/retroshare, ~/.retroshare/extensions/, etc.
 #endif
 
-	RsPluginManager *mPluginsManager = new RsPluginManager(RsInitConfig::main_executable_hash) ;
+	mPluginsManager = new RsPluginManager(RsInitConfig::main_executable_hash) ;
 	rsPlugins  = mPluginsManager ;
 	mConfigMgr->addConfiguration("plugins.cfg", mPluginsManager);
 
@@ -2266,31 +2280,184 @@ int RsServer::StartupRetroShare()
 	mPluginsManager->registerClientServices(pqih) ;
 	mPluginsManager->registerCacheServices() ;
 
-#ifdef ENABLE_GXS_SERVICES
-	// Testing New Cache Services.
-	p3PhotoService *mPhotos = new p3PhotoService(RS_SERVICE_TYPE_PHOTO);
-	pqih -> addService(mPhotos);
 
-	// Testing New Cache Services.
-	p3WikiService *mWikis = new p3WikiService(RS_SERVICE_TYPE_WIKI);
-	pqih -> addService(mWikis);
+#ifdef RS_ENABLE_GXS
 
-	// Testing New Cache Services.
-	p3Wire *mWire = new p3Wire(RS_SERVICE_TYPE_WIRE);
-	pqih -> addService(mWire);
+        // The idea is that if priorGxsDir is non
+        // empty and matches an exist directory location
+        // the given ssl user id then this directory is cleaned
+        // and deleted
+        std::string priorGxsDir = "./" + mLinkMgr->getOwnId() + "/";
+	std::string currGxsDir = RsInitConfig::configDir + "/GXS_phase1";
+        bool cleanUpGxsDir = false;
 
-	// Testing New Cache Services.
-	p3IdService *mIdentity = new p3IdService(RS_SERVICE_TYPE_IDENTITY);
-	pqih -> addService(mIdentity);
+        if(!priorGxsDir.empty())
+            cleanUpGxsDir = RsDirUtil::checkDirectory(priorGxsDir);
 
-	// Testing New Cache Services.
-	p3ForumsV2 *mForumsV2 = new p3ForumsV2(RS_SERVICE_TYPE_FORUMSV2);
-	pqih -> addService(mForumsV2);
+        std::list<std::string> filesToKeep;
+        bool cleanUpSuccess = RsDirUtil::cleanupDirectory(priorGxsDir, filesToKeep);
 
-	// Testing New Cache Services.
-	p3PostedService *mPosted = new p3PostedService(RS_SERVICE_TYPE_POSTED);
-	pqih -> addService(mPosted);
-#endif // ENABLE_GXS_SERVICES
+        if(!cleanUpSuccess)
+            std::cerr << "RsInit::StartupRetroShare() Clean up of Old Gxs Dir Failed!";
+        else
+            rmdir(priorGxsDir.c_str());
+
+        // TODO: temporary to store GXS service data, remove
+        RsDirUtil::checkCreateDirectory(currGxsDir);
+
+        RsNxsNetMgr* nxsMgr =  new RsNxsNetMgrImpl(mLinkMgr);
+
+        /**** Identity service ****/
+
+        RsGeneralDataService* gxsid_ds = new RsDataService(currGxsDir + "/", "gxsid_db",
+                        RS_SERVICE_GXSV1_TYPE_GXSID, NULL);
+
+        gxsid_ds->resetDataStore(); 
+
+        // init gxs services
+        mGxsIdService = new p3IdService(gxsid_ds, NULL);
+
+        // create GXS photo service
+        RsGxsNetService* gxsid_ns = new RsGxsNetService(
+                        RS_SERVICE_GXSV1_TYPE_GXSID, gxsid_ds, nxsMgr, mGxsIdService);
+
+        /**** GxsCircle service ****/
+
+
+        RsGeneralDataService* gxscircles_ds = new RsDataService(currGxsDir + "/", "gxscircles_db",
+                        RS_SERVICE_GXSV1_TYPE_GXSCIRCLE, NULL);
+
+        gxscircles_ds->resetDataStore(); 
+
+        // init gxs services
+        mGxsCircles = new p3GxsCircles(gxscircles_ds, NULL, mGxsIdService);
+
+        // create GXS Circle service
+        RsGxsNetService* gxscircles_ns = new RsGxsNetService(
+                        RS_SERVICE_GXSV1_TYPE_GXSCIRCLE, gxscircles_ds, nxsMgr, mGxsCircles);
+
+
+        /**** Photo service ****/
+        // create photo authentication policy
+        uint32_t photoAuthenPolicy = 0;
+
+        uint8_t flag = 0;
+
+        flag = GXS_SERV::MSG_AUTHEN_ROOT_PUBLISH_SIGN;
+        RsGenExchange::setAuthenPolicyFlag(flag, photoAuthenPolicy,
+                                           RsGenExchange::RESTRICTED_GRP_BITS);
+
+// Re-enable later, photo not using gixs yet
+//        flag = GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN;
+//        RsGenExchange::setAuthenPolicyFlag(flag, photoAuthenPolicy,
+//                                           RsGenExchange::RESTRICTED_GRP_BITS);
+
+        flag = GXS_SERV::GRP_OPTION_AUTHEN_AUTHOR_SIGN;
+        RsGenExchange::setAuthenPolicyFlag(flag, photoAuthenPolicy,
+                                           RsGenExchange::GRP_OPTION_BITS);
+
+
+        RsGeneralDataService* photo_ds = new RsDataService(currGxsDir + "/", "photoV2_db",
+                        RS_SERVICE_GXSV1_TYPE_PHOTO, NULL);
+
+        photo_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
+
+
+        // init gxs services
+        mPhoto = new p3PhotoService(photo_ds, NULL, mGxsIdService, photoAuthenPolicy);
+
+        // create GXS photo service
+        RsGxsNetService* photo_ns = new RsGxsNetService(
+                        RS_SERVICE_GXSV1_TYPE_PHOTO, photo_ds, nxsMgr, mPhoto);
+
+        /**** Posted GXS service ****/
+
+
+
+        RsGeneralDataService* posted_ds = new RsDataService(currGxsDir + "/", "posted_db",
+                                                            RS_SERVICE_GXSV1_TYPE_POSTED);
+
+        posted_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
+
+        mPosted = new p3Posted(posted_ds, NULL);
+
+        // create GXS photo service
+        RsGxsNetService* posted_ns = new RsGxsNetService(
+                        RS_SERVICE_GXSV1_TYPE_POSTED, posted_ds, nxsMgr, mPosted);
+
+
+        /**** Wiki GXS service ****/
+
+
+
+        RsGeneralDataService* wiki_ds = new RsDataService(currGxsDir + "/", "wiki_db",
+                                                            RS_SERVICE_GXSV1_TYPE_WIKI);
+
+        wiki_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
+
+        mWiki = new p3Wiki(wiki_ds, NULL);
+
+        // create GXS photo service
+        RsGxsNetService* wiki_ns = new RsGxsNetService(
+                        RS_SERVICE_GXSV1_TYPE_WIKI, wiki_ds, nxsMgr, mWiki);
+
+
+        /**** Wire GXS service ****/
+
+
+        RsGeneralDataService* wire_ds = new RsDataService(currGxsDir + "/", "wire_db",
+                                                            RS_SERVICE_GXSV1_TYPE_WIRE);
+
+        wire_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
+
+        mWire = new p3Wire(wire_ds, NULL);
+
+        // create GXS photo service
+        RsGxsNetService* wire_ns = new RsGxsNetService(
+                        RS_SERVICE_GXSV1_TYPE_WIRE, wire_ds, nxsMgr, mWire);
+
+
+        /**** Forum GXS service ****/
+
+        RsGeneralDataService* gxsforums_ds = new RsDataService(currGxsDir + "/", "gxsforums_db",
+                                                            RS_SERVICE_GXSV1_TYPE_FORUMS);
+
+        gxsforums_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
+
+        mGxsForums = new p3GxsForums(gxsforums_ds, NULL);
+
+        // create GXS photo service
+        RsGxsNetService* gxsforums_ns = new RsGxsNetService(
+                        RS_SERVICE_GXSV1_TYPE_FORUMS, gxsforums_ds, nxsMgr, mGxsForums);
+
+
+        /*** start up GXS core runner ***/
+        createThread(*mGxsIdService);
+        createThread(*mGxsCircles);
+        createThread(*mPhoto);
+        createThread(*mPosted);
+        createThread(*mWiki);
+        createThread(*mWire);
+        createThread(*mGxsForums);
+
+        // cores ready start up GXS net servers
+        createThread(*gxsid_ns);
+        createThread(*gxscircles_ns);
+        createThread(*photo_ns);
+        createThread(*posted_ns);
+        createThread(*wiki_ns);
+        createThread(*wire_ns);
+        createThread(*gxsforums_ns);
+
+        // now add to p3service
+        pqih->addService(gxsid_ns);
+        pqih->addService(gxscircles_ns);
+        pqih->addService(photo_ns);
+        pqih->addService(posted_ns);
+        pqih->addService(wiki_ns);
+        pqih->addService(gxsforums_ns);
+
+#endif // RS_ENABLE_GXS.
 
 
 #ifndef RS_RELEASE
@@ -2548,15 +2715,17 @@ int RsServer::StartupRetroShare()
 	rsForums = mForums;
 	rsChannels = mChannels;
 
-#ifdef ENABLE_GXS_SERVICES
-	// Testing of new cache system interfaces.
-	rsIdentity = mIdentity;
-	rsPhoto = mPhotos;
-	rsWiki = mWikis;
-	rsWire = mWire;
-	rsForumsV2 = mForumsV2;
-	rsPosted = mPosted;
-#endif // ENABLE_GXS_SERVICES
+#ifdef RS_ENABLE_GXS
+
+	rsIdentity = mGxsIdService;
+	rsGxsCircles = mGxsCircles;
+        rsWiki = mWiki;
+        rsPosted = mPosted;
+        rsPhoto = mPhoto;
+        rsGxsForums = mGxsForums;
+        rsWire = mWire;
+
+#endif // RS_ENABLE_GXS
 
 
 #ifdef RS_USE_BLOGS	
@@ -2570,7 +2739,6 @@ int RsServer::StartupRetroShare()
 #else
 	rsGameLauncher = NULL;
 #endif
-
 
 	/* put a welcome message in! */
 	if (RsInitConfig::firsttime_run)

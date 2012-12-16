@@ -1,112 +1,62 @@
-/*
- * Retroshare Photo Plugin.
- *
- * Copyright 2012-2012 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+#ifndef PHOTODIALOG_H
+#define PHOTODIALOG_H
 
-#ifndef MRK_PHOTO_DIALOG_H
-#define MRK_PHOTO_DIALOG_H
-
-#include "retroshare-gui/mainpage.h"
-#include "ui_PhotoDialog.h"
-
-#include <retroshare/rsphoto.h>
-
-#include <map>
-
-#include "gui/PhotoShare/PhotoItem.h"
-#include "gui/PhotoShare/PhotoAddDialog.h"
-#include "gui/PhotoShare/PhotoSlideShow.h"
+#include <QDialog>
+#include <QSet>
+#include "retroshare/rsphoto.h"
 #include "util/TokenQueue.h"
+#include "PhotoCommentItem.h"
 
-class PhotoDialog : public MainPage, public PhotoHolder, public TokenResponse 
+namespace Ui {
+    class PhotoDialog;
+}
+
+class PhotoDialog : public QDialog, public TokenResponse
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-	PhotoDialog(QWidget *parent = 0);
-
-virtual void deletePhotoItem(PhotoItem *, uint32_t type);
-virtual void notifySelection(PhotoItem *item, int ptype);
-
-	void notifyAlbumSelection(PhotoItem *item);
-	void notifyPhotoSelection(PhotoItem *item);
+    explicit PhotoDialog(RsPhoto* rs_photo, const RsPhotoPhoto& photo, QWidget *parent = 0);
+    ~PhotoDialog();
 
 private slots:
 
-	void checkUpdate();
-	void OpenOrShowPhotoAddDialog();
-	void OpenPhotoEditDialog();
-	void OpenSlideShow();
+    void addComment();
+    void createComment();
+	void setFullScreen();
+
+public:
+    void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 private:
+    void setUp();
 
-	/* Request Response Functions for loading data */
-	void requestAlbumList();
-	void requestAlbumData(const std::list<std::string> &ids);
-	void requestPhotoList(const std::string &albumId);
-	void requestPhotoData(const std::list<std::string> &photoIds);
-	
-	void loadAlbumList(const uint32_t &token);
-	bool loadAlbumData(const uint32_t &token);
-	void loadPhotoList(const uint32_t &token);
-	void loadPhotoData(const uint32_t &token);
-	
-	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+    /*!
+     * clears comments
+     * and places them back in dialog
+     */
+    void resetComments();
 
+    /*!
+     * Request comments
+     */
+    void requestComments();
 
-	/* TODO: These functions must be filled in for proper filtering to work 
-	 * and tied to the GUI input
-	 */
+    /*!
+     * Simply removes comments but doesn't place them back in dialog
+     */
+    void clearComments();
 
-	bool matchesAlbumFilter(const RsPhotoAlbum &album);
-	double AlbumScore(const RsPhotoAlbum &album);
-	bool matchesPhotoFilter(const RsPhotoPhoto &photo);
-	double PhotoScore(const RsPhotoPhoto &photo);
+    void acknowledgeComment(uint32_t token);
+    void loadComment(uint32_t token);
+    void loadList(uint32_t token);
+    void addComment(const RsPhotoComment& comment);
+private:
+    Ui::PhotoDialog *ui;
 
-	/* Grunt work of setting up the GUI */
-
-	//bool FilterNSortAlbums(const std::list<std::string> &albumIds, std::list<std::string> &filteredAlbumIds, int count);
-	//bool FilterNSortPhotos(const std::list<std::string> &photoIds, std::list<std::string> &filteredPhotoIds, int count);
-	//void insertAlbums();
-	//void insertPhotosForAlbum(const std::list<std::string> &albumIds);
-
-	void insertPhotosForSelectedAlbum();
-
-	void addAlbum(const RsPhotoAlbum &album);
-	void addPhoto(const RsPhotoPhoto &photo);
-
-	void clearAlbums();
-	void clearPhotos();
-
-	PhotoAddDialog *mAddDialog;
-	PhotoSlideShow *mSlideShow;
-
-	PhotoItem *mAlbumSelected;
-	PhotoItem *mPhotoSelected;
-
-	TokenQueue *mPhotoQueue;
-
-	/* UI - from Designer */
-	Ui::PhotoDialog ui;
-
+    RsPhoto* mRsPhoto;
+    TokenQueue* mPhotoQueue;
+    RsPhotoPhoto mPhotoDetails;
+    QSet<PhotoCommentItem*> mComments;
 };
 
-#endif
-
+#endif // PHOTODIALOG_H

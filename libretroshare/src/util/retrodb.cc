@@ -32,6 +32,8 @@
 
 //#define RETRODB_DEBUG
 
+
+
 void free_blob(void* dat){
 
     char* c = (char*) dat;
@@ -39,13 +41,6 @@ void free_blob(void* dat){
     dat = NULL;
 
 }
-
-const uint8_t ContentValue::BOOL_TYPE  = 1;
-const uint8_t ContentValue::DATA_TYPE = 2;
-const uint8_t ContentValue::STRING_TYPE = 3;
-const uint8_t ContentValue::DOUBLE_TYPE = 4;
-const uint8_t ContentValue::INT32_TYPE = 5;
-const uint8_t ContentValue::INT64_TYPE = 6;
 
 const int RetroDb::OPEN_READONLY = SQLITE_OPEN_READONLY;
 const int RetroDb::OPEN_READWRITE = SQLITE_OPEN_READWRITE;
@@ -234,25 +229,23 @@ bool RetroDb::sqlInsert(const std::string &table, const std::string& nullColumnH
         uint8_t type = mit->second;
         std::string key = mit->first;
 
-        switch(type){
 
-        case ContentValue::BOOL_TYPE:
+
+        if(ContentValue::BOOL_TYPE == type)
             {
                 bool value;
                 cv.getAsBool(key, value);
                 oStrStream << value;
                 qValues += oStrStream.str();
-                break;
             }
-        case ContentValue::DOUBLE_TYPE:
+        else if( ContentValue::DOUBLE_TYPE == type)
             {
                 double value;
                 cv.getAsDouble(key, value);
                 oStrStream << value;
                 qValues += oStrStream.str();
-                break;
             }
-        case ContentValue::DATA_TYPE:
+        else if( ContentValue::DATA_TYPE == type)
             {
                 char* value;
                 uint32_t len;
@@ -263,32 +256,28 @@ bool RetroDb::sqlInsert(const std::string &table, const std::string& nullColumnH
                 b.index = ++index;
                 blobL.push_back(b);
                 qValues += "?"; // parameter
-                break;
             }
-        case ContentValue::STRING_TYPE:
+        else if ( ContentValue::STRING_TYPE == type)
             {
                 std::string value;
                 cv.getAsString(key, value);
                 qValues += "'" + value +"'";
-                break;
             }
-        case ContentValue::INT32_TYPE:
+        else if ( ContentValue::INT32_TYPE == type)
             {
                 int32_t value;
                 cv.getAsInt32(key, value);
                 oStrStream << value;
                 qValues += oStrStream.str();
-                break;
             }
-        case ContentValue::INT64_TYPE:
+        else if( ContentValue::INT64_TYPE == type)
             {
                 int64_t value;
                 cv.getAsInt64(key, value);
                 oStrStream << value;
                 qValues += oStrStream.str();
-                break;
             }
-        }
+
 
         mit++;
         if(mit != keyTypeMap.end()){ // add comma if more columns left
@@ -419,57 +408,48 @@ bool RetroDb::sqlUpdate(const std::string &tableName, std::string whereClause, c
         uint8_t type = mit->second;
         std::string key = mit->first;
 
-        switch(type){
-
-        case ContentValue::BOOL_TYPE:
+        if( ContentValue::BOOL_TYPE == type)
             {
                 bool value;
                 cv.getAsBool(key, value);
                 oStrStream << value;
                 qValues += key + "='" + oStrStream.str();
-                break;
             }
-        case ContentValue::DOUBLE_TYPE:
+        else if( ContentValue::DOUBLE_TYPE == type)
             {
                 double value;
                 cv.getAsDouble(key, value);
                 oStrStream << value;
                 qValues += key + "='" + oStrStream.str();
-                break;
             }
-        case ContentValue::DATA_TYPE:
+        else if( ContentValue::DATA_TYPE == type)
             {
                 char* value;
                 uint32_t len;
                 cv.getAsData(key, len, value);
                 oStrStream.write(value, len);
                 qValues += key + "='" + oStrStream.str() + "' ";
-                break;
             }
-        case ContentValue::STRING_TYPE:
+        else if( ContentValue::STRING_TYPE == type)
             {
                 std::string value;
                 cv.getAsString(key, value);
                 qValues += key + "='" + value + "' ";
-                break;
             }
-        case ContentValue::INT32_TYPE:
+        else if( ContentValue::INT32_TYPE == type)
             {
                 int32_t value;
                 cv.getAsInt32(key, value);
                 oStrStream << value;
                 qValues += key + "='" + oStrStream.str() + "' ";
-                break;
             }
-        case ContentValue::INT64_TYPE:
+        else if( ContentValue::INT64_TYPE == type)
             {
                 int64_t value;
                 cv.getAsInt64(key, value);
                 oStrStream << value;
                 qValues += key + "='" + oStrStream.str() + "' ";
-                break;
             }
-        }
 
         mit++;
         if(mit != keyTypeMap.end()){ // add comma if more columns left
@@ -496,7 +476,6 @@ bool RetroDb::sqlUpdate(const std::string &tableName, std::string whereClause, c
 
     // execute query
     return execSQL(sqlQuery);
-
 }
 
 
@@ -713,278 +692,5 @@ const void* RetroCursor::getData(int columnIndex, uint32_t &datSize){
 
     return val;
 }
-
-
-
-
-/**************** content value implementation ******************/
-
-typedef std::pair<std::string, uint8_t> KeyTypePair;
-
-ContentValue::ContentValue(){
-
-}
-
-ContentValue::~ContentValue(){
-    // release resources held in data
-    clearData();
-}
-
-ContentValue::ContentValue(ContentValue &from){
-
-    std::map<std::string, uint8_t> keyTypeMap;
-    from.getKeyTypeMap(keyTypeMap);
-    std::map<std::string, uint8_t>::const_iterator cit =
-            keyTypeMap.begin();
-
-    uint8_t type = 0;
-    std::string currKey;
-    std::string val = "";
-    char *src = NULL;
-    uint32_t data_len = 0;
-
-    for(; cit != keyTypeMap.end(); cit++){
-
-        type = cit->second;
-        currKey = cit->first;
-
-        switch(type){
-
-        case INT32_TYPE:
-            {
-                int32_t value;
-                from.getAsInt32(currKey, value);
-                put(currKey, value);
-                break;
-            }
-        case INT64_TYPE:
-            {
-                int64_t value;
-                from.getAsInt64(currKey, value);
-                put(currKey, value);
-                break;
-            }
-        case STRING_TYPE:
-            {
-                from.getAsString(currKey, val);
-                put(currKey, val);
-                break;
-            }
-        case BOOL_TYPE:
-            {
-                bool value;
-                from.getAsBool(currKey, value);
-                put(currKey, value);
-                break;
-            }
-        case DATA_TYPE:
-            {
-                from.getAsData(currKey, data_len, src);
-                put(currKey, data_len, src);
-                break;
-            }
-        case DOUBLE_TYPE:
-            double value;
-            from.getAsDouble(currKey, value);
-            put(currKey, value);
-            break;
-        default:
-            std::cerr << "ContentValue::ContentValue(ContentValue &from):"
-                    << "Error! Unrecognised data type!" << std::endl;
-        }
-    }
-}
-
-void ContentValue::put(const std::string &key, bool value){
-
-    if(mKvSet.find(key) != mKvSet.end())
-        removeKeyValue(key);
-
-    mKvSet.insert(KeyTypePair(key, BOOL_TYPE));
-    mKvBool.insert(std::pair<std::string, bool>(key, value));
-}
-
-void ContentValue::put(const std::string &key, const std::string &value){
-
-    if(mKvSet.find(key) != mKvSet.end())
-        removeKeyValue(key);
-
-    mKvSet.insert(KeyTypePair(key, STRING_TYPE));
-    mKvString.insert(std::pair<std::string, std::string>(key, value));
-}
-
-void ContentValue::put(const std::string &key, double value){
-
-    if(mKvSet.find(key) != mKvSet.end())
-        removeKeyValue(key);
-
-    mKvSet.insert(KeyTypePair(key,DOUBLE_TYPE));
-    mKvDouble.insert(std::pair<std::string, double>(key, value));
-}
-
-void ContentValue::put(const std::string &key, int32_t value){
-
-    if(mKvSet.find(key) != mKvSet.end())
-        removeKeyValue(key);
-
-    mKvSet.insert(KeyTypePair(key, INT32_TYPE));
-    mKvInt32.insert(std::pair<std::string, int32_t>(key, value));
-}
-
-void ContentValue::put(const std::string &key, int64_t value){
-
-    if(mKvSet.find(key) != mKvSet.end())
-        removeKeyValue(key);
-
-    mKvSet.insert(KeyTypePair(key, INT64_TYPE));
-    mKvInt64.insert(std::pair<std::string, int64_t>(key, value));
-}
-
-void ContentValue::put(const std::string &key, uint32_t len, const char* value){
-
-
-    // release memory from old key value if key
-    // exists
-    if(mKvSet.find(key) != mKvSet.end()) {
-        removeKeyValue(key);
-    }
-
-    mKvSet.insert(KeyTypePair(key, DATA_TYPE));
-    char* dest = NULL;
-
-    // len is zero then just put a NULL entry
-    if(len != 0){
-        dest  = new char[len];
-        memcpy(dest, value, len);
-    }
-
-    mKvData.insert(std::pair<std::string, std::pair<uint32_t, char*> >
-                   (key, std::pair<uint32_t, char*>(len, dest)));
-}
-
-bool ContentValue::getAsBool(const std::string &key, bool& value) const{
-
-    std::map<std::string, bool>::const_iterator it;
-    if((it = mKvBool.find(key)) == mKvBool.end())
-        return false;
-
-  value = it->second;
-  return true;
-}
-
-bool ContentValue::getAsInt32(const std::string &key, int32_t& value) const{
-
-    std::map<std::string, int32_t>::const_iterator it;
-    if((it = mKvInt32.find(key)) == mKvInt32.end())
-        return false;
-
-    value = it->second;
-    return true;
-}
-
-bool ContentValue::getAsInt64(const std::string &key, int64_t& value) const{
-
-    std::map<std::string, int64_t>::const_iterator it;
-    if((it = mKvInt64.find(key)) == mKvInt64.end())
-        return false;
-
-    value = it->second;
-    return true;
-}
-
-bool ContentValue::getAsString(const std::string &key, std::string &value) const{
-
-    std::map<std::string, std::string>::const_iterator it;
-    if((it = mKvString.find(key)) == mKvString.end())
-        return false;
-
-    value = it->second;
-    return true;
-}
-
-bool ContentValue::getAsData(const std::string& key, uint32_t &len, char*& value) const{
-
-    std::map<std::string, std::pair<uint32_t, char*> >::const_iterator it;
-    if((it = mKvData.find(key)) == mKvData.end())
-        return false;
-
-    const std::pair<uint32_t, char*> &kvRef = it->second;
-
-    len = kvRef.first;
-    value = kvRef.second;
-    return true;
-}
-
-bool ContentValue::getAsDouble(const std::string &key, double& value) const{
-
-    std::map<std::string, double>::const_iterator it;
-    if((it = mKvDouble.find(key)) == mKvDouble.end())
-        return false;
-
-    value = it->second;
-    return true;
-}
-
-bool ContentValue::removeKeyValue(const std::string &key){
-
-    std::map<std::string, uint8_t>::iterator mit;
-
-    if((mit = mKvSet.find(key)) == mKvSet.end())
-        return false;
-
-    if(mit->second == BOOL_TYPE)
-        mKvBool.erase(key);
-
-    if(mit->second == INT64_TYPE)
-        mKvInt64.erase(key);
-
-    if(mit->second == DATA_TYPE){
-        delete[] (mKvData[key].second);
-        mKvData.erase(key);
-    }
-
-    if(mit->second == DOUBLE_TYPE)
-        mKvDouble.erase(key);
-
-    if(mit->second == STRING_TYPE)
-        mKvString.erase(key);
-
-    if(mit->second == INT32_TYPE)
-        mKvInt32.erase(key);
-
-
-    mKvSet.erase(key);
-    return true;
-}
-
-
-void ContentValue::getKeyTypeMap(std::map<std::string, uint8_t> &keySet) const {
-    keySet = mKvSet;
-}
-
-void ContentValue::clear(){
-    mKvSet.clear();
-    mKvBool.clear();
-    mKvDouble.clear();
-    mKvString.clear();
-    mKvInt32.clear();
-    mKvInt64.clear();
-    clearData();
-}
-
-void ContentValue::clearData(){
-
-    std::map<std::string, std::pair<uint32_t, char*> >::iterator
-            mit = mKvData.begin();
-
-    for(; mit != mKvData.end(); mit++){
-
-        if(mit->second.first != 0)
-            delete[] (mit->second.second);
-    }
-
-    mKvData.clear();
-}
-
 
 

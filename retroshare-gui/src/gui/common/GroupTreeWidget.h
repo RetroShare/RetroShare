@@ -47,6 +47,7 @@ public:
 	{
 		popularity = 0;
 		privatekey = false;
+		subscribeFlags = 0;
 	}
 
 public:
@@ -57,6 +58,7 @@ public:
 	QDateTime lastpost;
 	QIcon     icon;
 	bool      privatekey;
+	int       subscribeFlags;
 };
 
 class GroupTreeWidget : public QWidget
@@ -93,9 +95,12 @@ public:
 	void setTextColorCategory(QColor color) { mTextColor[GROUPTREEWIDGET_COLOR_CATEGORY] = color; }
 	void setTextColorPrivateKey(QColor color) { mTextColor[GROUPTREEWIDGET_COLOR_PRIVATEKEY] = color; }
 
+	int subscribeFlags(const QString &id);
+
 signals:
 	void treeCustomContextMenuRequested(const QPoint &pos);
 	void treeCurrentItemChanged(const QString &id);
+	void treeItemClicked(const QString &id);
 
 protected:
 	void changeEvent(QEvent *e);
@@ -103,6 +108,7 @@ protected:
 private slots:
 	void customContextMenuRequested(const QPoint &pos);
 	void currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
+	void itemClicked(QTreeWidgetItem *item, int column);
 	void filterChanged();
 
 	void sort();

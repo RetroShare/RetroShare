@@ -1,0 +1,117 @@
+package rsctrl.files;
+
+import "core.proto";
+
+///////////////////////////////////////////////////////////////
+// List Transfers.
+// Control Transfers.
+//
+// TODO:
+// Share Directories.
+///////////////////////////////////////////////////////////////
+
+enum RequestMsgIds {
+    MsgId_RequestTransferList 		= 1;
+    MsgId_RequestControlDownload   	= 2;
+}
+
+enum ResponseMsgIds {
+    MsgId_ResponseTransferList  	= 1;
+    MsgId_ResponseControlDownload  	= 2;
+}
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+
+// Building Blocks
+
+enum Direction {
+    DIRECTION_UPLOAD    = 1;
+    DIRECTION_DOWNLOAD  = 2;
+}
+
+message FileTransfer {
+
+  required rsctrl.core.File file 	= 1;
+  required Direction direction		= 2;
+  required float fraction		= 3;
+  required float rate_kBs		= 4;
+}
+
+///////////////////////////////////////////////////////////////
+// Transfer List.
+
+// REQUEST: RequestTransferList
+message RequestTransferList {
+  required Direction direction = 1;
+}
+
+// RESPONSE: ResponseTransferList
+message ResponseTransferList {
+
+  required rsctrl.core.Status status = 1;
+  repeated FileTransfer transfers = 2;
+
+}
+
+///////////////////////////////////////////////////////////////
+// Download.
+
+// REQUEST: RequestControlDownload
+// START requires name, hash & size.
+// other actions only require file hash.
+message RequestControlDownload {
+
+  enum Action {
+    ACTION_START    = 1; 	// start download.
+    ACTION_CONTINUE = 2; 	// move to top of queue.
+    ACTION_WAIT     = 3;	// send to bottom of queue.
+    ACTION_PAUSE    = 4; 	// hold indefinitely. 
+    ACTION_RESTART  = 5; 	// end pause, restart download.
+    ACTION_CHECK    = 6; 	// force check.
+    ACTION_CANCEL   = 7; 	// remove permenantly.
+  }
+
+  required rsctrl.core.File file 	= 1;
+  required Action action 		= 2;
+
+}
+
+// RESPONSE: ResponseControlDownload
+message ResponseControlDownload {
+  required rsctrl.core.Status status = 1;
+}
+
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+// SHARED FILES
+// THIS STUFF IS NOT FINISHED YET!
+//
+//// REQUEST: RequestListShares
+//message RequestListShares {
+//
+//  required uint32 depth = 1;		// HOW Many Directories to drill down.
+//  repeated string ShareLocation = 2;
+//}
+//
+//message ShareLocation {
+//  required string ssl_id = 1;
+//  required string path = 2;
+//}
+//
+//
+//
+//// REQUEST: RequestChangeShares
+//
+//// REQUEST: RequestLiCloseSearch
+//// REQUEST: RequestCloseSearch
+//
+
+
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+

@@ -27,8 +27,8 @@
 #include <iostream>
 
 /** Constructor */
-PhotoSlideShow::PhotoSlideShow(QWidget *parent)
-: QWidget(parent)
+PhotoSlideShow::PhotoSlideShow(const RsPhotoAlbum& album, QWidget *parent)
+: QWidget(parent), mAlbum(album)
 {
 	ui.setupUi(this);
 
@@ -37,18 +37,29 @@ PhotoSlideShow::PhotoSlideShow(QWidget *parent)
 	connect(ui.pushButton_ShowDetails, SIGNAL( clicked( void ) ), this, SLOT( showPhotoDetails( void ) ) );
 	connect(ui.pushButton_StartStop, SIGNAL( clicked( void ) ), this, SLOT( StartStop( void ) ) );
 	connect(ui.pushButton_Close, SIGNAL( clicked( void ) ), this, SLOT( closeShow( void ) ) );
+	connect(ui.fullscreenButton, SIGNAL(clicked()),this, SLOT(setFullScreen()));
 
-	mPhotoQueue = new TokenQueue(rsPhoto, this);
+        mPhotoQueue = new TokenQueue(rsPhoto->getTokenService(), this);
 
 	mRunning = true;
 	mShotActive = true;
 
 	mImageIdx = 0;
 
-	//loadImage();
+        requestPhotos();
+        loadImage();
         //QTimer::singleShot(5000, this, SLOT(timerEvent()));
 }
 
+PhotoSlideShow::~PhotoSlideShow(){
+
+    std::map<std::string, RsPhotoPhoto *>::iterator mit = mPhotos.begin();
+
+    for(; mit != mPhotos.end(); mit++)
+    {
+        delete mit->second;
+    }
+}
 
 void PhotoSlideShow::showPhotoDetails()
 {
@@ -95,10 +106,14 @@ void PhotoSlideShow::StartStop()
 	if (mRunning)
 	{
 		mRunning = false;
+		ui.pushButton_StartStop->setText(tr("Start"));
+		ui.pushButton_StartStop->setToolTip(tr("Start Slide Show"));
 	}
 	else
 	{
 		mRunning = true;
+		ui.pushButton_StartStop->setText(tr("Stop"));
+		ui.pushButton_StartStop->setToolTip(tr("Stop Slide Show"));
 		if (!mShotActive) // make sure only one timer running
 		{
 			mShotActive = true;
@@ -171,9 +186,7 @@ void PhotoSlideShow::loadImage()
                 	qtn.loadFromData(tn.data, tn.size, tn.type.c_str());
 			tn.data = 0;
 
-                	//ui.imgLabel->setPixmap(qtn);
-
-			QPixmap sqtn = qtn.scaled(ui.albumLabel->width(), ui.imgLabel->height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+                        QPixmap sqtn = qtn.scaled(800, 600, Qt::KeepAspectRatio, Qt::SmoothTransformation);
         		ui.imgLabel->setPixmap(sqtn);
 
         	}
@@ -207,81 +220,49 @@ void PhotoSlideShow::updateMoveButtons(uint32_t status)
 	}
 }
 
-
-
-
-void PhotoSlideShow::clearDialog()
+void PhotoSlideShow::requestPhotos()
 {
-#if 0
-	ui.lineEdit_Title->setText(QString("title"));
-	ui.lineEdit_Caption->setText(QString("Caption"));
-	ui.lineEdit_Where->setText(QString("Where"));
-	ui.lineEdit_When->setText(QString("When"));
-
-	ui.scrollAreaWidgetContents->clearPhotos();
-	ui.AlbumDrop->clearPhotos();
-
-	/* clean up album image */
-	mAlbumData.mThumbnail.deleteImage();
-
-	RsPhotoAlbum emptyAlbum;
-	mAlbumData = emptyAlbum;
-
-	/* add empty image */
-	PhotoItem *item = new PhotoItem(NULL, mAlbumData);
-	ui.AlbumDrop->addPhotoItem(item);
-
-	mAlbumEdit = false;
-#endif
+    RsTokReqOptions opts;
+    opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+    uint32_t token;
+    std::list<RsGxsGroupId> grpIds;
+    grpIds.push_back(mAlbum.mMeta.mGroupId);
+    mPhotoQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds, 0);
 }
-
-
-void PhotoSlideShow::loadAlbum(const std::string &albumId)
-{
-	/* much like main load fns */
-	clearDialog();
-
-	RsTokReqOptions opts;
-	uint32_t token;
-	std::list<std::string> albumIds;
-	albumIds.push_back(albumId);
-
-	// We need both Album and Photo Data.
-
-	mPhotoQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, albumIds, 0);
-
-}
-
 
 bool PhotoSlideShow::loadPhotoData(const uint32_t &token)
 {
 	std::cerr << "PhotoSlideShow::loadPhotoData()";
 	std::cerr << std::endl;
 	
-	bool moreData = true;
-	while(moreData)
-	{
-		RsPhotoPhoto photo;
-		
-		if (rsPhoto->getPhoto(token, photo))
-		{
-			RsPhotoPhoto *ptr = new RsPhotoPhoto;
-			*ptr = photo;
-			ptr->mThumbnail.data = 0;
-			ptr->mThumbnail.copyFrom(photo.mThumbnail);
+        PhotoResult res;
+        rsPhoto->getPhoto(token, res);
+        PhotoResult::iterator mit = res.begin();
 
-			mPhotos[photo.mMeta.mMsgId] = ptr;
-			mPhotoOrder[ptr->mOrder] = photo.mMeta.mMsgId;
 
-			std::cerr << "PhotoSlideShow::addAddPhoto() AlbumId: " << photo.mMeta.mGroupId;
-			std::cerr << " PhotoId: " << photo.mMeta.mMsgId;
-			std::cerr << std::endl;
-		}
-		else
-		{
-			moreData = false;
-		}
-	}
+        for(; mit != res.end(); mit++)
+        {
+            std::vector<RsPhotoPhoto>& photoV = mit->second;
+            std::vector<RsPhotoPhoto>::iterator vit = photoV.begin();
+            int i = 0;
+            for(; vit != photoV.end(); vit++)
+            {
+                RsPhotoPhoto& photo = *vit;
+                RsPhotoPhoto *ptr = new RsPhotoPhoto;
+                *ptr = photo;
+                ptr->mThumbnail.data = 0;
+                ptr->mThumbnail.copyFrom(photo.mThumbnail);
+                ptr->mOrder = i++;
+                mPhotos[photo.mMeta.mMsgId] = ptr;
+                mPhotoOrder[ptr->mOrder] = photo.mMeta.mMsgId;
+
+                std::cerr << "PhotoSlideShow::addAddPhoto() AlbumId: " << photo.mMeta.mGroupId;
+                std::cerr << " PhotoId: " << photo.mMeta.mMsgId;
+                std::cerr << std::endl;
+            }
+        }
+
+        
 
 	// Load and Start.
 	loadImage();
@@ -289,36 +270,6 @@ bool PhotoSlideShow::loadPhotoData(const uint32_t &token)
 
 	return true;
 }
-
-bool PhotoSlideShow::loadAlbumData(const uint32_t &token)
-{
-	std::cerr << "PhotoSlideShow::loadAlbumData()";
-	std::cerr << std::endl;
-			
-	bool moreData = true;
-	while(moreData)
-	{
-		RsPhotoAlbum album;
-		if (rsPhoto->getAlbum(token, album))
-		{
-			std::cerr << " PhotoSlideShow::loadAlbumData() AlbumId: " << album.mMeta.mGroupId << std::endl;
-			//updateAlbumDetails(album);
-
-			RsTokReqOptions opts;
-			opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
-			uint32_t token;
-			std::list<std::string> albumIds;
-			albumIds.push_back(album.mMeta.mGroupId);
-			mPhotoQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, albumIds, 0);
-		}
-		else
-		{
-			moreData = false;
-		}
-	}
-	return true;
-}
-
 
 void PhotoSlideShow::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
@@ -330,20 +281,36 @@ void PhotoSlideShow::loadRequest(const TokenQueue *queue, const TokenRequest &re
 		/* now switch on req */
 		switch(req.mType)
 		{
-			case TOKENREQ_GROUPINFO:
-				loadAlbumData(req.mToken);
-				break;
 			case TOKENREQ_MSGINFO:
 				loadPhotoData(req.mToken);
 				break;
 			default:
-				std::cerr << "PhotoSlideShow::loadRequest() ERROR: GROUP: INVALID ANS TYPE";
+                                std::cerr << "PhotoSlideShow::loadRequest() ERROR: REQ: INVALID REQ TYPE";
 				std::cerr << std::endl;
 				break; 
 		}
 	}
 }
 
+void PhotoSlideShow::setFullScreen()
+{
+  if (!isFullScreen()) {
+    // hide menu & toolbars
 
+#ifdef Q_WS_X11
+    show();
+    raise();
+    setWindowState( windowState() | Qt::WindowFullScreen );
+#else
+    setWindowState( windowState() | Qt::WindowFullScreen );
+    show();
+    raise();
+#endif
+  } else {
+
+    setWindowState( windowState() ^ Qt::WindowFullScreen );
+    show();
+  }
+}
 
 

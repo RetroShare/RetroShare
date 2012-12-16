@@ -57,38 +57,15 @@ PhotoDrop::PhotoDrop(QWidget *parent)
     : QWidget(parent)
 {
 	setAcceptDrops(true);
-	mIsSingleImageDrop = false;
 
 	mSelected = NULL;
         checkMoveButtons();
 	reorderPhotos();
 }
 
-void PhotoDrop::notifySelection(PhotoItem *item, int ptype)
-{
-	std::cerr << "PhotoDrop::notifySelection() from : " << ptype << " " << item;
-	std::cerr << std::endl;
-
-	if (mSelected)
-	{
-		std::cerr << "PhotoDrop::notifySelection() unselecting old one : " << mSelected;
-		std::cerr << std::endl;
-
-		mSelected->setSelected(false);
-	}
-
-	mSelected = item;
-	checkMoveButtons();
-}
-
 
 void PhotoDrop::clear()
 {
-}
-
-void PhotoDrop::setSingleImage()
-{
-	mIsSingleImageDrop = true;
 }
 
 
@@ -97,11 +74,6 @@ PhotoItem *PhotoDrop::getSelectedPhotoItem()
 	return mSelected;
 }
 
-
-void PhotoDrop::deletePhotoItem(PhotoItem *, uint32_t type)
-{
-	return;
-}
 
 
 void PhotoDrop::resizeEvent ( QResizeEvent * event ) 
@@ -175,6 +147,10 @@ PhotoItem *PhotoDrop::getPhotoIdx(int idx)
 	return NULL;
 }
 
+void PhotoDrop::getPhotos(QSet<PhotoItem *> &photos)
+{
+    photos = mPhotos;
+}
 
 
 void PhotoDrop::reorderPhotos()
@@ -637,11 +613,8 @@ void PhotoDrop::dropEvent(QDropEvent *event)
 			std::cerr << "Whole URL: " << uit->toString().toStdString() << std::endl;
 			std::cerr << "or As Local File: " << localpath.toStdString() << std::endl;
 
-			PhotoItem *item = new PhotoItem(this, localpath.toStdString());
-
-			addPhotoItem(item);
-			//mPhotos.push_back(item);
-			//layout()->addWidget(item);
+                        PhotoItem* item = new PhotoItem(mHolder, localpath);
+                        addPhotoItem(item);
 		}
         	event->setDropAction(Qt::CopyAction);
         	event->accept();
@@ -671,22 +644,30 @@ void PhotoDrop::mousePressEvent(QMouseEvent *event)
 	QWidget::mousePressEvent(event);
 }
 
-
+void PhotoDrop::setPhotoItemHolder(PhotoShareItemHolder *holder)
+{
+    mHolder = holder;
+}
 
 void PhotoDrop::addPhotoItem(PhotoItem *item)
 {
 	std::cerr << "PhotoDrop::addPhotoItem()";
 	std::cerr << std::endl;
 
-	if (mIsSingleImageDrop)
-	{
-		clearPhotos();
-	}
-
-	item->updateParent(this);
+        mPhotos.insert(item);
 	layout()->addWidget(item);
 	
         //checkMoveButtons();
 
 }
 
+bool PhotoDrop::deletePhoto(PhotoItem *item)
+{
+    if(mPhotos.contains(item)){
+        mPhotos.remove(item);
+        layout()->removeWidget(item);
+        delete item;
+    }
+    else
+        return false;
+}

@@ -2,6 +2,7 @@
 #include "support.h"
 #include "data_support.h"
 #include "rsdataservice_test.h"
+#include "gxs/rsgds.h"
 #include "gxs/rsdataservice.h"
 
 #define DATA_BASE_NAME "msg_grp_Store"
@@ -37,7 +38,7 @@ void test_groupStoreAndRetrieve(){
     setUp();
 
     int nGrp = rand()%32;
-    std::map<RsNxsGrp*, RsGxsGrpMetaData*> grps;
+    std::map<RsNxsGrp*, RsGxsGrpMetaData*> grps, grps_copy;
     RsNxsGrp* grp;
     RsGxsGrpMetaData* grpMeta;
     for(int i = 0; i < nGrp; i++){
@@ -50,16 +51,24 @@ void test_groupStoreAndRetrieve(){
        init_item(grpMeta);
        grpMeta->mGroupId = grp->grpId;
        grps.insert(p);
-
+       RsNxsGrp* grp_copy = new RsNxsGrp(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
+       *grp_copy = *grp;
+       RsGxsGrpMetaData* grpMeta_copy = new RsGxsGrpMetaData();
+       *grpMeta_copy = *grpMeta;
+       grps_copy.insert(std::make_pair(grp_copy, grpMeta_copy ));
        grpMeta = NULL;
        grp = NULL;
    }
 
     dStore->storeGroup(grps);
 
-    std::map<std::string, RsNxsGrp*> gR;
-    std::map<std::string, RsGxsGrpMetaData*> grpMetaR;
-    dStore->retrieveNxsGrps(gR, false);
+    //use copy, a grps are deleted in store
+    grps.clear();
+    grps = grps_copy;
+
+    std::map<RsGxsGroupId, RsNxsGrp*> gR;
+    std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMetaR;
+    dStore->retrieveNxsGrps(gR, false, false);
     dStore->retrieveGxsGrpMetaData(grpMetaR);
 
     std::map<RsNxsGrp*, RsGxsGrpMetaData*>::iterator mit = grps.begin();
@@ -140,6 +149,7 @@ void test_messageStoresAndRetrieve()
     grpV.push_back(grpId1);
 
     std::map<RsNxsMsg*, RsGxsMsgMetaData*> msgs;
+    std::map<RsNxsMsg*, RsGxsMsgMetaData*> msgs_copy;
     RsNxsMsg* msg = NULL;
     RsGxsMsgMetaData* msgMeta = NULL;
     int nMsgs = rand()%120;
@@ -164,14 +174,20 @@ void test_messageStoresAndRetrieve()
         const std::string& grpId = grpV[chosen];
 
         if(chosen)
-            req[grpId].insert(msg->msgId);
+            req[grpId].push_back(msg->msgId);
 
         msgMeta->mMsgId = msg->msgId;
         msgMeta->mGroupId = msg->grpId = grpId;
 
+        RsNxsMsg* msg_copy = new RsNxsMsg(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
+        RsGxsMsgMetaData* msgMeta_copy = new RsGxsMsgMetaData();
+
+        *msg_copy = *msg;
+        *msgMeta_copy = *msgMeta;
+
         // store msgs in map to use for verification
-        std::pair<std::string, RsNxsMsg*> vP(msg->msgId, msg);
-        std::pair<std::string, RsGxsMsgMetaData*> vPmeta(msg->msgId, msgMeta);
+        std::pair<std::string, RsNxsMsg*> vP(msg->msgId, msg_copy);
+        std::pair<std::string, RsGxsMsgMetaData*> vPmeta(msg->msgId, msgMeta_copy);
 
         if(!chosen)
         {
@@ -183,15 +199,21 @@ void test_messageStoresAndRetrieve()
             VergrpId1.insert(vP);
             VerMetagrpId0.insert(vPmeta);
         }
+
+
+
         msg = NULL;
         msgMeta = NULL;
 
         msgs.insert(p);
+        msgs_copy.insert(std::make_pair(msg_copy, msgMeta_copy));
     }
 
-    req[grpV[0]] = std::set<std::string>(); // assign empty list for other
+    req[grpV[0]] = std::vector<RsGxsMessageId>(); // assign empty list for other
 
     dStore->storeMessage(msgs);
+    msgs.clear();
+    msgs = msgs_copy;
 
     // now retrieve msgs for comparison
     // first selective retrieval
@@ -199,7 +221,8 @@ void test_messageStoresAndRetrieve()
     GxsMsgResult msgResult;
     GxsMsgMetaResult msgMetaResult;
     dStore->retrieveNxsMsgs(req, msgResult, false);
-    dStore->retrieveGxsMsgMetaData(grpV, msgMetaResult);
+
+    dStore->retrieveGxsMsgMetaData(req, msgMetaResult);
 
     // now look at result for grpId 1
     std::vector<RsNxsMsg*>& result0 = msgResult[grpId0];
@@ -316,8 +339,7 @@ void tearDown(){
 
 bool operator ==(const RsGxsGrpMetaData& l, const RsGxsGrpMetaData& r)
 {
-    if(!(l.adminSign == r.adminSign)) return false;
-    if(!(l.idSign == r.idSign)) return false;
+    if(!(l.signSet == r.signSet)) return false;
     if(!(l.keys == r.keys)) return false;
     if(l.mGroupFlags != r.mGroupFlags) return false;
     if(l.mPublishTs != r.mPublishTs) return false;
@@ -335,8 +357,7 @@ bool operator ==(const RsGxsGrpMetaData& l, const RsGxsGrpMetaData& r)
 bool operator ==(const RsGxsMsgMetaData& l, const RsGxsMsgMetaData& r)
 {
 
-    if(!(l.idSign == r.idSign)) return false;
-    if(!(l.pubSign == r.pubSign)) return false;
+    if(!(l.signSet == r.signSet)) return false;
     if(l.mGroupId != r.mGroupId) return false;
     if(l.mAuthorId != r.mAuthorId) return false;
     if(l.mParentId != r.mParentId) return false;

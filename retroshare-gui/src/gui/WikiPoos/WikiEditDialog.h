@@ -29,39 +29,85 @@
 #include <retroshare/rswiki.h>
 #include "util/TokenQueue.h"
 
+class RSTreeWidgetItemCompareRole;
+
 class WikiEditDialog : public QWidget, public TokenResponse
 {
   Q_OBJECT
 
 public:
 	WikiEditDialog(QWidget *parent = 0);
+	~WikiEditDialog();
 
 void 	setNewPage();
 
 void 	setupData(const std::string &groupId, const std::string &pageId);
 void 	loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
+void 	setRepublishMode(RsGxsMessageId &origMsgId);
+
 private slots:
 
 void 	cancelEdit();
 void 	revertEdit();
 void 	submitEdit();
+void 	previewToggle();
+void 	historyToggle();
+void  	detailsToggle();
+void 	textChanged();
+void    textReset();
+
+void 	historySelected();
+void 	oldHistoryChanged();
+void  	mergeModeToggle();
+void  	generateMerge();
 
 private:
 
-void 	setGroup(RsWikiGroup &group);
-void 	setPreviousPage(RsWikiPage &page);
+void 	updateHistoryStatus();
+void 	updateHistoryChildren(QTreeWidgetItem *item, bool isLatest);
+void 	updateHistoryItem(QTreeWidgetItem *item, bool isLatest);
 
-void 	requestPage(const std::string &msgId);
+void    redrawPage();
+
+void 	setGroup(RsWikiCollection &group);
+void 	setPreviousPage(RsWikiSnapshot &page);
+
+void 	requestPage(const RsGxsGrpMsgIdPair &msgId);
 void 	loadPage(const uint32_t &token);
 void 	requestGroup(const std::string &groupId);
 void 	loadGroup(const uint32_t &token);
 
+void 	requestBaseHistory(const RsGxsGrpMsgIdPair &origMsgId);
+void 	loadBaseHistory(const uint32_t &token);
+void 	requestEditTreeData();
+void 	loadEditTreeData(const uint32_t &token);
+
+
+
         bool mNewPage;
-	RsWikiGroup mWikiGroup;
-	RsWikiPage mWikiPage;
+
+	bool mPreviewMode;
+	bool mPageLoading;
+        bool mHistoryLoaded;
+        bool mHistoryMergeMode;
+        bool mOldHistoryEnabled;
+
+        bool mRepublishMode;
+	bool mIgnoreTextChange; // when we do it programmatically.
+        bool mTextChanged;
+
+	QString mCurrentText;
+
+	RsGxsGrpMsgIdPair mThreadMsgIdPair;
+	RsGxsMessageId mRepublishOrigId;
+
+	RsWikiCollection mWikiCollection;
+	RsWikiSnapshot mWikiSnapshot;
 
 	Ui::WikiEditDialog ui;
+
+	RSTreeWidgetItemCompareRole *mThreadCompareRole;
 
 	TokenQueue *mWikiQueue;
 };

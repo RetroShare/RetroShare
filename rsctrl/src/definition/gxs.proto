@@ -1,0 +1,287 @@
+package rsctrl.gxs;
+
+import "core.proto";
+
+///////////////////////////////////////////////////////////////
+// Base Messages for GXS Interface.
+///////////////////////////////////////////////////////////////
+
+enum RequestMsgIds {
+    MsgId_RequestPeers = 1;
+    MsgId_RequestAddPeer = 2;
+    MsgId_RequestModifyPeer = 3;
+}
+
+enum ResponseMsgIds {
+    MsgId_ResponsePeerList = 1;
+    MsgId_ResponseAddPeer = 2;
+    MsgId_ResponseModifyPeer = 3;
+}
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+
+// BASE DATA TYPES
+
+message Service {
+  //
+  required uint32 service_id = 1;
+  optional string service_name = 2;
+}
+
+message GroupMeta {
+
+  // FLAGS as ENUMs.
+  enum GroupFlags {
+    GF_FLAG1  = 1;
+    GF_FLAG2  = 2;
+    GF_FLAG3  = 4;
+    GF_FLAG4  = 8;
+  }
+
+  enum SignFlags {
+    SF_FLAG1  = 1;
+    SF_FLAG2  = 2;
+  }
+
+  enum SubscribeFlags {
+    SUBF_FLAG1  = 1;
+    SUBF_FLAG2  = 2;
+  }
+
+  enum StatusFlags {
+    STATF_FLAG1  = 1;
+    STATF_FLAG2  = 2;
+  }
+
+  // THIS IS FIXED: From NETWORK.
+  required string group_id		= 1;
+  required string group_name		= 2;
+  required uint32 group_flags		= 3;
+  required uint32 sign_flags		= 4;
+
+  required uint32 publish_ts		= 5;
+  optional string author_id 		= 6;
+
+  // BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
+
+  required uint32 subscribe_flags 	= 7;
+  required uint32 group_status 		= 8;
+
+  optional string service_string 	= 9;
+
+  optional uint32 pop 			= 10; // USED?
+  optional uint32 msg_count 		= 11; // ???
+  optional int32  last_post		= 12; // ???
+}
+
+
+message GroupGenericData {
+  required GroupMeta meta 	= 1;
+  required string  encoded_data = 2;
+}
+  
+
+message MsgMeta {
+
+  // FLAGS as ENUMs.
+  enum GroupFlags {
+    GF_FLAG1  = 1;
+    GF_FLAG2  = 2;
+    GF_FLAG3  = 4;
+    GF_FLAG4  = 8;
+  }
+
+  enum SignFlags {
+    SF_FLAG1  = 1;
+    SF_FLAG2  = 2;
+  }
+
+  enum SubscribeFlags {
+    SUBF_FLAG1  = 1;
+    SUBF_FLAG2  = 2;
+  }
+
+  enum StatusFlags {
+    STATF_FLAG1  = 1;
+    STATF_FLAG2  = 2;
+  }
+
+  // THIS IS FIXED: From NETWORK.
+  required string group_id		= 1;
+  required string msg_id		= 2;
+
+  required string thread_id		= 3;
+  required uint32 parent_id		= 4;
+  required uint32 origmsg_id		= 5;
+
+  optional string author_id 		= 6;
+
+  required uint32 publish_ts		= 7;
+  required uint32 msg_name		= 8;
+
+  required uint32 msg_flags		= 9;
+
+  // BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
+
+  required uint32 msg_status 		= 10;
+  required uint32 child_ts	 	= 11;
+  optional string service_string 	= 12;
+}
+
+message MsgGenericData {
+  required MsgMeta meta 	= 1;
+  required string  encoded_data = 2;
+}
+
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+
+message Filter {
+  required uint32 options 		= 1;
+
+  optional uint32 status_filter		= 2;
+  optional uint32 status_mask 		= 3;
+
+  optional uint32 req_type 		= 4;
+
+  optional uint32 subscribe_filter	= 5;
+
+  optional int32  before		= 6;
+  optional int32  after			= 7;
+}
+
+message MsgSet {
+  required string group_id		= 1;
+  repeated string msg_id		= 2;
+}
+
+message GroupMsgSet {
+  repeated MsgSet groups		= 1;
+}
+
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+
+// REQUEST: RequestGroupInfo
+message RequestGroupInfo {
+
+  required Service service 		= 1;
+  
+  required uint32 ans_type 		= 2;
+  required Filter options		= 3;
+  repeated string group_ids 		= 4;
+}
+
+
+// RESPONSE: ResponseGroupList
+message ResponseGroupList {
+
+  required rsctrl.core.Status status 	= 1;
+
+  required Service service 		= 2;
+  repeated string group_ids		= 3;
+}
+
+
+// RESPONSE: ResponseGroupMeta
+message ResponseGroupMeta {
+
+  required rsctrl.core.Status status 	= 1;
+
+  required Service service 		= 2;
+  repeated GroupMeta meta		= 3;
+}
+
+
+// RESPONSE: ResponseGroupData
+message ResponseGroupData {
+
+  required rsctrl.core.Status status 	= 1;
+
+  required Service service 		= 2;
+  repeated GroupGenericData data	= 3;
+}
+
+
+///////////////////////////////////////////////////////////////
+
+// REQUEST: RequestMsgInfo
+message RequestMsgInfo {
+
+  required Service service 		= 1;
+  
+  required uint32 ans_type 		= 2;
+  required Filter options		= 3;
+  repeated GroupMsgSet msgs		= 4;
+}
+
+// REQUEST: RequestMsgRelatedInfo
+message RequestMsgRelatedInfo {
+
+  required Service service 		= 1;
+  
+  required uint32 ans_type 		= 2;
+  required Filter options		= 3;
+  repeated GroupMsgSet msgs		= 4;
+}
+
+// RESPONSE: ResponseMsgList
+message ResponseMsgList {
+
+  required rsctrl.core.Status status 	= 1;
+
+  required Service service 		= 2;
+  repeated GroupMsgSet msgs		= 3;
+}
+
+// RESPONSE: ResponseMsgMeta
+message ResponseMsgMeta {
+
+  required rsctrl.core.Status status 	= 1;
+
+  required Service service 		= 2;
+  repeated MsgMeta meta			= 3;
+}
+
+// RESPONSE: ResponseMsgData
+message ResponseMsgData {
+
+  required rsctrl.core.Status status 	= 1;
+
+  required Service service 		= 2;
+  repeated MsgGenericData data		= 3;
+}
+
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+
+
+// REQUEST: RequestCreateGroup
+message RequestCreateGroup {
+
+  required Service service 		= 1;
+  repeated GroupGenericData data	= 2;
+}
+
+
+// RESPONSE: ResponseMsgMeta
+// As defined above.
+
+
+// REQUEST: RequestCreateMsg
+message RequestCreateMsg {
+
+  required Service service 		= 1;
+  repeated MsgGenericData data		= 2;
+}
+
+// RESPONSE: ResponseMsgMeta
+// As defined above.
+
+
+
+

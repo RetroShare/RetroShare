@@ -23,8 +23,12 @@
 
 #include "PostedListDialog.h"
 
-//#include <retroshare/rspeers.h>
+#include "gui/Posted/PostedGroupDialog.h"
+#include "gui/Posted/PostedCreatePostDialog.h"
+#include "gui/Posted/PostedDialog.h"
+
 #include <retroshare/rsposted.h>
+#include <gxs/rsgxsflags.h>
 
 #include <iostream>
 #include <sstream>
@@ -59,117 +63,219 @@
 #define IMAGE_FORUMAUTHD     ":/images/konv_message2.png"
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
 
+// token types to deal with
+
+
 /** Constructor */
-PostedListDialog::PostedListDialog(QWidget *parent)
-: RsAutoUpdatePage(1000,parent)
+PostedListDialog::PostedListDialog(CommentHolder *commentHolder, QWidget *parent)
+: RsAutoUpdatePage(1000,parent), mCommentHolder(commentHolder)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
 
-	/* Setup Queue */
-        mPostedQueue = new TokenQueue(rsPosted, this);
+    /* Setup Queue */
+    mPostedQueue = new TokenQueue(rsPosted->getTokenService(), this);
 
     connect( ui.groupTreeWidget, SIGNAL( treeCustomContextMenuRequested( QPoint ) ), this, SLOT( groupListCustomPopupMenu( QPoint ) ) );
 
     connect( ui.groupTreeWidget, SIGNAL( treeCurrentItemChanged(QString) ), this, SLOT( changedTopic(QString) ) );
 
-    /* Initialize group tree */
-    //ui.groupTreeWidget->initDisplayMenu(ui.displayButton);
+    connect(ui.hotSortButton, SIGNAL(clicked()), this, SLOT(getRankings()));
+    connect(ui.newSortButton, SIGNAL(clicked()), this, SLOT(getRankings()));
+    connect(ui.topSortButton, SIGNAL(clicked()), this, SLOT(getRankings()));
 
-    /* create forum tree */
+    /* create posted tree */
     yourTopics = ui.groupTreeWidget->addCategoryItem(tr("My Topics"), QIcon(IMAGE_FOLDER), true);
     subscribedTopics = ui.groupTreeWidget->addCategoryItem(tr("Subscribed Topics"), QIcon(IMAGE_FOLDERRED), true);
     popularTopics = ui.groupTreeWidget->addCategoryItem(tr("Popular Topics"), QIcon(IMAGE_FOLDERGREEN), false);
     otherTopics = ui.groupTreeWidget->addCategoryItem(tr("Other Topics"), QIcon(IMAGE_FOLDERYELLOW), false);
 
-    /* Hide platform specific features */
-#ifdef Q_WS_WIN
+    ui.hotSortButton->setChecked(true);
 
-#endif
+    connect( ui.newTopicButton, SIGNAL( clicked() ), this, SLOT( newTopic() ) );
+    connect(ui.refreshButton, SIGNAL(clicked()), this, SLOT(refreshTopics()));
+    connect(ui.submitPostButton, SIGNAL(clicked()), this, SLOT(newPost()));
 }
 
+void PostedListDialog::getRankings()
+{
+
+    if(mCurrTopicId.empty())
+        return;
+
+    std::cerr << "PostedListDialog::getHotRankings()";
+    std::cerr << std::endl;
+
+    RsTokReqOptions opts;
+    opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+    uint32_t token;
+
+    QObject* button = sender();
+    if(button == ui.hotSortButton)
+    {
+        rsPosted->requestPostRankings(token, RsPosted::HotRankType, mCurrTopicId);
+    }else if(button == ui.topSortButton)
+    {
+        rsPosted->requestPostRankings(token, RsPosted::TopRankType, mCurrTopicId);
+    }else if(button == ui.newSortButton)
+    {
+        rsPosted->requestPostRankings(token, RsPosted::NewRankType, mCurrTopicId);
+    }else{
+        return;
+    }
+
+    mPostedQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_DATA, TOKEN_USER_TYPE_POST_RANKINGS);
+}
+
+void PostedListDialog::loadRankings(const uint32_t &token)
+{
+
+    RsPostedPostRanking rankings;
+
+    if(!rsPosted->getPostRanking(token, rankings))
+        return;
+
+    if(rankings.grpId != mCurrTopicId)
+        return;
+
+    applyRanking(rankings.ranking);
+}
+
+void PostedListDialog::applyRanking(const PostedRanking& ranks)
+{
+    std::cerr << "PostedListDialog::loadGroupThreadData_InsertThreads()";
+    std::cerr << std::endl;
+
+    shallowClearPosts();
+
+    QLayout *alayout = ui.scrollAreaWidgetContents->layout();
+
+    PostedRanking::const_iterator mit = ranks.begin();
+
+    for(; mit != ranks.end(); mit++)
+    {
+        const RsGxsMessageId& msgId = mit->second;
+
+        if(mPosts.find(msgId) != mPosts.end())
+            alayout->addWidget(mPosts[msgId]);
+    }
+
+    return;
+}
+
+
+
+void PostedListDialog::refreshTopics()
+{
+    std::cerr << "PostedListDialog::requestGroupSummary()";
+    std::cerr << std::endl;
+
+    RsTokReqOptions opts;
+    opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+    uint32_t token;
+    mPostedQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_SUMMARY, opts, TOKEN_USER_TYPE_TOPIC);
+}
 
 void PostedListDialog::groupListCustomPopupMenu( QPoint /*point*/ )
 {
     QMenu contextMnu( this );
 
-    QAction *action = contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Subscribe to Forum"), this, SLOT(subscribeToForum()));
-    //action->setDisabled (mCurrTopicId.empty() || IS_FORUM_SUBSCRIBED(subscribeFlags));
-
-    action = contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Unsubscribe to Forum"), this, SLOT(unsubscribeToForum()));
-    //action->setEnabled (!mCurrTopicId.empty() && IS_FORUM_SUBSCRIBED(subscribeFlags));
-
-    contextMnu.addSeparator();
-
-    contextMnu.addAction(QIcon(IMAGE_NEWFORUM), tr("New Forum"), this, SLOT(newforum()));
-
-    action = contextMnu.addAction(QIcon(IMAGE_INFO), tr("Show Forum Details"), this, SLOT(showForumDetails()));
-    action->setEnabled (!mCurrTopicId.empty ());
-
-    action = contextMnu.addAction(QIcon(":/images/settings16.png"), tr("Edit Forum Details"), this, SLOT(editForumDetails()));
-    //action->setEnabled (!mCurrTopicId.empty () && IS_FORUM_ADMIN(subscribeFlags));
-
-    QAction *shareKeyAct = new QAction(QIcon(":/images/gpgp_key_generate.png"), tr("Share Forum"), &contextMnu);
-    connect( shareKeyAct, SIGNAL( triggered() ), this, SLOT( shareKey() ) );
-    //shareKeyAct->setEnabled(!mCurrTopicId.empty() && IS_FORUM_ADMIN(subscribeFlags));
-    contextMnu.addAction( shareKeyAct);
-
-    QAction *restoreKeysAct = new QAction(QIcon(":/images/settings16.png"), tr("Restore Publish Rights for Forum" ), &contextMnu);
-    connect( restoreKeysAct , SIGNAL( triggered() ), this, SLOT( restoreForumKeys() ) );
-    //restoreKeysAct->setEnabled(!mCurrTopicId.empty() && !IS_FORUM_ADMIN(subscribeFlags));
-    contextMnu.addAction( restoreKeysAct);
-
-    action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyForumLink()));
-    action->setEnabled(!mCurrTopicId.empty());
-
-    contextMnu.addSeparator();
-
-    action = contextMnu.addAction(QIcon(":/images/message-mail-read.png"), tr("Mark all as read"), this, SLOT(markMsgAsReadAll()));
-    //action->setEnabled (!mCurrTopicId.empty () && IS_FORUM_SUBSCRIBED(subscribeFlags));
-
-    action = contextMnu.addAction(QIcon(":/images/message-mail.png"), tr("Mark all as unread"), this, SLOT(markMsgAsUnreadAll()));
-    //action->setEnabled (!mCurrTopicId.empty () && IS_FORUM_SUBSCRIBED(subscribeFlags));
-
-#ifdef DEBUG_FORUMS
-    contextMnu.addSeparator();
-    action = contextMnu.addAction("Generate mass data", this, SLOT(generateMassData()));
-    action->setEnabled (!mCurrTopicId.empty() && IS_FORUM_SUBSCRIBED(subscribeFlags));
-#endif
+    QAction *action = contextMnu.addAction(QIcon(IMAGE_MESSAGE), tr("Submit Post"), this, SLOT(newPost()));
+    action->setDisabled (mCurrTopicId.empty());
 
     contextMnu.exec(QCursor::pos());
 }
 
+void PostedListDialog::newPost()
+{
+    if(mCurrTopicId.empty())
+        return;
+
+    PostedCreatePostDialog cp(mPostedQueue, rsPosted, mCurrTopicId, this);
+    cp.exec();
+}
+
+void PostedListDialog::submitVote(const RsGxsGrpMsgIdPair &msgId, bool up)
+{
+    uint32_t token;
+    RsPostedVote vote;
+
+    vote.mMeta.mGroupId = msgId.first;
+    vote.mMeta.mParentId = msgId.second;
+    vote.mDirection = (uint8_t)up;
+    rsPosted->submitVote(token, vote);
+
+    mPostedQueue->queueRequest(token, 0 , RS_TOKREQ_ANSTYPE_ACK, TOKEN_USER_TYPE_VOTE);
+}
+
+void PostedListDialog::showComments(const RsPostedPost& post)
+{
+    mCommentHolder->commentLoad(post);
+}
+
 void PostedListDialog::updateDisplay()
 {
-    std::list<std::string> groupIds;
-    std::list<std::string>::iterator it;
     if (!rsPosted)
         return;
 
-	// TODO groupsChanged... HACK XXX.
-#if 0
-    if ((rsPosted->groupsChanged(groupIds)) || (rsPosted->updated()))
-    {
-        /* update Forums List */
-        insertGroups();
 
-        it = std::find(groupIds.begin(), groupIds.end(), mCurrTopicId);
-        if (it != groupIds.end())
-        {
-            /* update threads as well */
-            insertThreads();
-        }
-    }
-#endif
+    std::list<std::string> groupIds;
+    std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgs;
+
 
     if (rsPosted->updated())
     {
         /* update Forums List */
-        insertGroups();
-        insertThreads();
+
+        rsPosted->groupsChanged(groupIds);
+        if(!groupIds.empty())
+        {
+            std::list<std::string>::iterator it = std::find(groupIds.begin(), groupIds.end(), mCurrTopicId);
+
+            if(it != groupIds.end()){
+                requestGroupSummary();
+                return;
+            }
+        }
+
+        rsPosted->msgsChanged(msgs);
+
+        if(!msgs.empty())
+        {
+
+
+            std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit = msgs.find(mCurrTopicId);
+            if(mit != msgs.end())
+            {
+                updateDisplayedItems(mit->second);
+            }
+        }
     }
 
 }
+
+
+void PostedListDialog::updateDisplayedItems(const std::vector<RsGxsMessageId> &msgIds)
+{
+
+    RsTokReqOptions opts;
+
+    opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+    opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
+
+
+    GxsMsgReq msgs;
+    msgs[mCurrTopicId] = msgIds;
+
+    std::cerr << "PostedListDialog::updateDisplayedItems(" << mCurrTopicId << ")";
+    std::cerr << std::endl;
+
+    uint32_t token;
+    mPostedQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgs, TOKEN_USER_TYPE_POST_MOD);
+
+}
+
+
 
 void PostedListDialog::changedTopic(const QString &id)
 {
@@ -179,15 +285,25 @@ void PostedListDialog::changedTopic(const QString &id)
 
 
 /*********************** **** **** **** ***********************/
-/** Request / Response of Data ********************************/
+/** New / Edit Groups          ********************************/
 /*********************** **** **** **** ***********************/
 
-#define 	POSTEDDIALOG_LISTING			1
-#define 	POSTEDDIALOG_CURRENTFORUM		2
-#define 	POSTEDDIALOG_INSERTTHREADS		3
-#define 	POSTEDDIALOG_INSERTCHILD		4
-#define 	POSTEDDIALOG_INSERT_POST		5
-#define 	POSTEDDIALOG_REPLY_MESSAGE		6
+void PostedListDialog::newTopic()
+{
+        PostedGroupDialog cf (mPostedQueue, rsPosted, this);
+	cf.exec ();
+}
+	
+void PostedListDialog::showGroupDetails()
+{
+	if (mCurrTopicId.empty()) 
+	{
+		return;
+	}
+	
+	PostedGroupDialog cf(mGroups[mCurrTopicId], GxsGroupDialog::MODE_SHOW, this);
+	cf.exec ();
+}
 
 
 void PostedListDialog::insertGroups()
@@ -200,10 +316,33 @@ void PostedListDialog::requestGroupSummary()
         std::cerr << "PostedListDialog::requestGroupSummary()";
         std::cerr << std::endl;
 
-        std::list<std::string> ids;
         RsTokReqOptions opts;
+        opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
 	uint32_t token;
-        mPostedQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_SUMMARY, opts, ids, POSTEDDIALOG_LISTING);
+        mPostedQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_SUMMARY, opts, TOKEN_USER_TYPE_TOPIC);
+}
+
+void PostedListDialog::acknowledgeGroup(const uint32_t &token)
+{
+    RsGxsGroupId grpId;
+    rsPosted->acknowledgeGrp(token, grpId);
+
+    if(!grpId.empty())
+    {
+
+        RsTokReqOptions opts;
+        opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+        uint32_t reqToken;
+        mPostedQueue->requestGroupInfo(reqToken, RS_TOKREQ_ANSTYPE_SUMMARY, opts, TOKEN_USER_TYPE_TOPIC);
+    }
+}
+
+void PostedListDialog::acknowledgePostMsg(const uint32_t &token)
+{
+    RsGxsGrpMsgIdPair msgId;
+
+    // just acknowledge, don't load anything
+    rsPosted->acknowledgeMsg(token, msgId);
 }
 
 void PostedListDialog::loadGroupSummary(const uint32_t &token)
@@ -225,6 +364,23 @@ void PostedListDialog::loadGroupSummary(const uint32_t &token)
         }
 }
 
+void PostedListDialog::loadPostData(const uint32_t &token)
+{
+    loadGroupThreadData_InsertThreads(token);
+}
+
+void PostedListDialog::acknowledgeVoteMsg(const uint32_t &token)
+{
+    RsGxsGrpMsgIdPair msgId;
+
+    rsPosted->acknowledgeMsg(token, msgId);
+}
+
+void PostedListDialog::loadVoteData(const uint32_t &token)
+{
+    return;
+}
+
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
 
@@ -232,7 +388,7 @@ void PostedListDialog::loadGroupSummary(const uint32_t &token)
 
 void PostedListDialog::requestGroupSummary_CurrentForum(const std::string &forumId)
 {
-	RsTokReqOptions opts;
+        RsTokReqOptions opts;
 	
 	std::list<std::string> grpIds;
 	grpIds.push_back(forumId);
@@ -272,144 +428,190 @@ void PostedListDialog::loadGroupSummary_CurrentForum(const uint32_t &token)
 
 void PostedListDialog::insertThreads()
 {
-	loadCurrentForumThreads(mCurrTopicId);
+        loadCurrentTopicThreads(mCurrTopicId);
 }
 
-void PostedListDialog::loadCurrentForumThreads(const std::string &forumId)
+void PostedListDialog::loadCurrentTopicThreads(const std::string &topicId)
 {
 
-        std::cerr << "PostedListDialog::loadCurrentForumThreads(" << forumId << ")";
+        std::cerr << "PostedListDialog::loadCurrentForumThreads(" << topicId << ")";
         std::cerr << std::endl;
 
-	if (forumId.empty())
+        if (topicId.empty())
 	{
         	std::cerr << "PostedListDialog::loadCurrentForumThreads() Empty GroupId .. ignoring Req";
         	std::cerr << std::endl;
 		return;
-	}
-
-	/* if already active -> kill current loading */
-	if (mThreadLoading)
-	{
-		/* Cleanup */
-	}
+        }
 
 	clearPosts();
 
-	/* initiate loading */
-        std::cerr << "PostedListDialog::loadCurrentForumThreads() Initiating Loading";
-        std::cerr << std::endl;
-
-	mThreadLoading = true;
-
-	requestGroupThreadData_InsertThreads(forumId);
+        /* initiate loading */
+        requestGroupThreadData_InsertThreads(topicId);
 }
 
 
 
 void PostedListDialog::requestGroupThreadData_InsertThreads(const std::string &groupId)
 {
-	RsTokReqOptions opts;
+        RsTokReqOptions opts;
 
-	opts.mOptions = RS_TOKREQOPT_MSG_THREAD | RS_TOKREQOPT_MSG_LATEST;
+        opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+        opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
 	
-	std::list<std::string> grpIds;
+        std::list<RsGxsGroupId> grpIds;
 	grpIds.push_back(groupId);
 
         std::cerr << "PostedListDialog::requestGroupThreadData_InsertThreads(" << groupId << ")";
         std::cerr << std::endl;
 
 	uint32_t token;	
-	//mPostedQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds, POSTEDDIALOG_INSERTTHREADS);
-
-	// Do specific Posted Request....
-	rsPosted->requestRanking(token, groupId);
-	// get the Queue to handle response.
-        mPostedQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_DATA, POSTEDDIALOG_INSERTTHREADS);
-
+        mPostedQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds, TOKEN_USER_TYPE_POST);
 }
 
 
 void PostedListDialog::loadGroupThreadData_InsertThreads(const uint32_t &token)
 {
-	std::cerr << "PostedListDialog::loadGroupThreadData_InsertThreads()";
-	std::cerr << std::endl;
-	
-	bool moreData = true;
-	while(moreData)
-	{
-		RsPostedPost post;
-		// Old Format.
-		//if (rsPosted->getPost(token, post))
+    std::cerr << "PostedListDialog::loadGroupThreadData_InsertThreads()";
+    std::cerr << std::endl;
 
-		if (rsPosted->getRankedPost(token, post))
-		{
-			std::cerr << "PostedListDialog::loadGroupThreadData_InsertThreads() MsgId: " << post.mMeta.mMsgId;
-			std::cerr << std::endl;
-		
-			loadPost(post);
-		}
-		else
-		{
-			moreData = false;
-		}
-	}
+    clearPosts();
 
-	mThreadLoading = false;
+    PostedPostResult result;
+    rsPosted->getPost(token, result);
+    std::vector<RsPostedPost>& posts = result[mCurrTopicId];
+    std::vector<RsPostedPost>::iterator vit = posts.begin();
 
+    for(; vit != posts.end(); vit++)
+    {
+        RsPostedPost& p = *vit;
+        loadPost(p);
+    }
 }
 
 void PostedListDialog::loadPost(const RsPostedPost &post)
 {
-        PostedItem *item = new PostedItem(this, post);
-        QLayout *alayout = ui.scrollAreaWidgetContents->layout();
-        alayout->addWidget(item);	
+    PostedItem *item = new PostedItem(this, post);
+    connect(item, SIGNAL(vote(RsGxsGrpMsgIdPair,bool)), this, SLOT(submitVote(RsGxsGrpMsgIdPair,bool)));
+    QLayout *alayout = ui.scrollAreaWidgetContents->layout();
+    mPosts.insert(post.mMeta.mMsgId, item);
+    alayout->addWidget(item);
 }
 
 
 void PostedListDialog::clearPosts()
 {
-        std::cerr << "PostedListDialog::clearPosts()" << std::endl;
+    std::cerr << "PostedListDialog::clearPosts()" << std::endl;
 
-        std::list<PostedItem *> postedItems;
-        std::list<PostedItem *>::iterator pit;
+    std::list<PostedItem *> postedItems;
+    std::list<PostedItem *>::iterator pit;
 
-        QLayout *alayout = ui.scrollAreaWidgetContents->layout();
-        int count = alayout->count();
-        for(int i = 0; i < count; i++)
-        {
-                QLayoutItem *litem = alayout->itemAt(i);
-                if (!litem)
-                {
-                        std::cerr << "PostedListDialog::clearPosts() missing litem";
-                        std::cerr << std::endl;
-                        continue;
-                }
+    QLayout *alayout = ui.scrollAreaWidgetContents->layout();
+    int count = alayout->count();
+    for(int i = 0; i < count; i++)
+    {
+            QLayoutItem *litem = alayout->itemAt(i);
+            if (!litem)
+            {
+                    std::cerr << "PostedListDialog::clearPosts() missing litem";
+                    std::cerr << std::endl;
+                    continue;
+            }
 
-                PostedItem *item = dynamic_cast<PostedItem *>(litem->widget());
-                if (item)
-                {
-                        std::cerr << "PostedListDialog::clearPosts() item: " << item;
-                        std::cerr << std::endl;
+            PostedItem *item = dynamic_cast<PostedItem *>(litem->widget());
+            if (item)
+            {
+                    std::cerr << "PostedListDialog::clearPosts() item: " << item;
+                    std::cerr << std::endl;
 
-                        postedItems.push_back(item);
-                }
-                else
-                {
-                        std::cerr << "PostedListDialog::clearPosts() Found Child, which is not a PostedItem???";
-                        std::cerr << std::endl;
-                }
-        }
+                    postedItems.push_back(item);
+            }
+            else
+            {
+                    std::cerr << "PostedListDialog::clearPosts() Found Child, which is not a PostedItem???";
+                    std::cerr << std::endl;
+            }
+    }
 
-        for(pit = postedItems.begin(); pit != postedItems.end(); pit++)
-        {
-                PostedItem *item = *pit;
-                alayout->removeWidget(item);
-                delete item;
-        }
+    for(pit = postedItems.begin(); pit != postedItems.end(); pit++)
+    {
+            PostedItem *item = *pit;
+            alayout->removeWidget(item);
+            delete item;
+    }
+
+    mPosts.clear();
 }
 
+void PostedListDialog::shallowClearPosts()
+{
+    std::cerr << "PostedListDialog::clearPosts()" << std::endl;
 
+    std::list<PostedItem *> postedItems;
+    std::list<PostedItem *>::iterator pit;
+
+    QLayout *alayout = ui.scrollAreaWidgetContents->layout();
+    int count = alayout->count();
+    for(int i = 0; i < count; i++)
+    {
+            QLayoutItem *litem = alayout->itemAt(i);
+            if (!litem)
+            {
+                    std::cerr << "PostedListDialog::clearPosts() missing litem";
+                    std::cerr << std::endl;
+                    continue;
+            }
+
+            PostedItem *item = dynamic_cast<PostedItem *>(litem->widget());
+            if (item)
+            {
+                    std::cerr << "PostedListDialog::clearPosts() item: " << item;
+                    std::cerr << std::endl;
+
+                    postedItems.push_back(item);
+            }
+            else
+            {
+                    std::cerr << "PostedListDialog::clearPosts() Found Child, which is not a PostedItem???";
+                    std::cerr << std::endl;
+            }
+    }
+
+    for(pit = postedItems.begin(); pit != postedItems.end(); pit++)
+    {
+            PostedItem *item = *pit;
+            alayout->removeWidget(item);
+    }
+
+}
+
+void PostedListDialog::updateCurrentDisplayComplete(const uint32_t &token)
+{
+    std::cerr << "PostedListDialog::loadGroupThreadData_InsertThreads()";
+    std::cerr << std::endl;
+
+    PostedPostResult result;
+    rsPosted->getPost(token, result);
+
+
+    if(result.find(mCurrTopicId) == result.end())
+        return;
+
+    std::vector<RsPostedPost>& posts = result[mCurrTopicId];
+    std::vector<RsPostedPost>::iterator vit = posts.begin();
+
+    for(; vit != posts.end(); vit++)
+    {
+
+        RsPostedPost& p = *vit;
+
+        // modify post content
+        if(mPosts.find(p.mMeta.mMsgId) != mPosts.end())
+            mPosts[p.mMeta.mMsgId]->setContent(p);
+
+    }
+
+}
 
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
@@ -421,28 +623,88 @@ void PostedListDialog::loadRequest(const TokenQueue *queue, const TokenRequest &
 	std::cerr << std::endl;
 				
 	if (queue == mPostedQueue)
-	{
+        {
 		/* now switch on req */
-		switch(req.mUserType)
+                switch(req.mUserType)
 		{
-			case POSTEDDIALOG_LISTING:
-				loadGroupSummary(req.mToken);
-				break;
 
-			case POSTEDDIALOG_CURRENTFORUM:
-				loadGroupSummary_CurrentForum(req.mToken);
-				break;
-
-			case POSTEDDIALOG_INSERTTHREADS:
-				loadGroupThreadData_InsertThreads(req.mToken);
-				break;
-
-			default:
-				std::cerr << "PostedListDialog::loadRequest() ERROR: INVALID TYPE";
-				std::cerr << std::endl;
-				break;
+                    case TOKEN_USER_TYPE_TOPIC:
+                        switch(req.mAnsType)
+                        {
+                            case RS_TOKREQ_ANSTYPE_SUMMARY:
+                                loadGroupSummary(req.mToken);
+                                break;
+                            default:
+                                std::cerr << "Error, unexpected anstype:" << req.mAnsType << std::endl;
+                                break;
+                        }
+                    break;
+                    case TOKEN_USER_TYPE_POST:
+                        switch(req.mAnsType)
+                        {
+                            case RS_TOKREQ_ANSTYPE_ACK:
+                                acknowledgePostMsg(req.mToken);
+                                break;
+                            case RS_TOKREQ_ANSTYPE_DATA:
+                                loadPostData(req.mToken);
+                                break;
+                            default:
+                                std::cerr << "Error, unexpected anstype:" << req.mAnsType << std::endl;
+                                break;
+                        }
+                        break;
+                     case TOKEN_USER_TYPE_VOTE:
+                        switch(req.mAnsType)
+                        {
+                            case RS_TOKREQ_ANSTYPE_ACK:
+                                acknowledgeVoteMsg(req.mToken);
+                                break;
+                            default:
+                                std::cerr << "Error, unexpected anstype:" << req.mAnsType << std::endl;
+                                break;
+                        }
+                        break;
+                     case TOKEN_USER_TYPE_POST_MOD:
+                        switch(req.mAnsType)
+                        {
+                            case RS_TOKREQ_ANSTYPE_DATA:
+                                updateCurrentDisplayComplete(req.mToken);
+                                break;
+                            default:
+                                std::cerr << "Error, unexpected anstype:" << req.mAnsType << std::endl;
+                                break;
+                        }
+                        break;
+                     case TOKEN_USER_TYPE_POST_RANKINGS:
+                        switch(req.mAnsType)
+                        {
+                            case RS_TOKREQ_ANSTYPE_DATA:
+                                loadRankings(req.mToken);
+                                break;
+                            default:
+                                std::cerr << "Error, unexpected anstype:" << req.mAnsType << std::endl;
+                                break;
+                        }
+                        break;
+                    default:
+                            std::cerr << "PostedListDialog::loadRequest() ERROR: INVALID TYPE";
+                            std::cerr << std::endl;
+                            break;
 		}
 	}
+
+        /* now switch on req */
+        switch(req.mType)
+        {
+            case TOKENREQ_GROUPINFO:
+                switch(req.mAnsType)
+                {
+                    case RS_TOKREQ_ANSTYPE_ACK:
+                        acknowledgeGroup(req.mToken);
+                        break;
+                }
+            break;
+        }
 }
 
 
@@ -455,24 +717,19 @@ void PostedListDialog::loadRequest(const TokenQueue *queue, const TokenRequest &
 
 void PostedListDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo)
 {
-
     groupItemInfo.id = QString::fromStdString(groupInfo.mGroupId);
     groupItemInfo.name = QString::fromUtf8(groupInfo.mGroupName.c_str());
     //groupItemInfo.description = QString::fromUtf8(groupInfo.forumDesc);
     groupItemInfo.popularity = groupInfo.mPop;
     groupItemInfo.lastpost = QDateTime::fromTime_t(groupInfo.mLastPost);
 
-    if (groupInfo.mGroupFlags & RS_DISTRIB_AUTHEN_REQ) {
-        groupItemInfo.name += " (" + tr("AUTHD") + ")";
-        groupItemInfo.icon = QIcon(IMAGE_FORUMAUTHD);
-    } else {
-        groupItemInfo.icon = QIcon(IMAGE_FORUM);
-    }
+
 }
 
 void PostedListDialog::insertGroupData(const std::list<RsGroupMetaData> &groupList)
 {
-	std::list<RsGroupMetaData>::const_iterator it;
+
+    std::list<RsGroupMetaData>::const_iterator it;
 
     QList<GroupItemInfo> adminList;
     QList<GroupItemInfo> subList;
@@ -481,53 +738,51 @@ void PostedListDialog::insertGroupData(const std::list<RsGroupMetaData> &groupLi
     std::multimap<uint32_t, GroupItemInfo> popMap;
 
     for (it = groupList.begin(); it != groupList.end(); it++) {
-		/* sort it into Publish (Own), Subscribed, Popular and Other */
-		uint32_t flags = it->mSubscribeFlags;
+        /* sort it into Publish (Own), Subscribed, Popular and Other */
+        uint32_t flags = it->mSubscribeFlags;
 
-        GroupItemInfo groupItemInfo;
-        groupInfoToGroupItemInfo(*it, groupItemInfo);
+    GroupItemInfo groupItemInfo;
+    groupInfoToGroupItemInfo(*it, groupItemInfo);
 
-        if (flags & RSGXS_GROUP_SUBSCRIBE_ADMIN) {
-            adminList.push_back(groupItemInfo);
-        } else if (flags & RSGXS_GROUP_SUBSCRIBE_SUBSCRIBED) {
-			/* subscribed forum */
-            subList.push_back(groupItemInfo);
-        } else {
-			/* rate the others by popularity */
-            popMap.insert(std::make_pair(it->mPop, groupItemInfo));
-		}
-	}
+  //  if (flags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN) {
+    adminList.push_back(groupItemInfo);
+  //  } else if (flags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED) {
+                /* subscribed forum */
+ //   subList.push_back(groupItemInfo);
+ //   } else {
+                /* rate the others by popularity */
+//    popMap.insert(std::make_pair(it->mPop, groupItemInfo));
+        }
+//    }
 
-	/* iterate backwards through popMap - take the top 5 or 10% of list */
-	uint32_t popCount = 5;
-	if (popCount < popMap.size() / 10)
-	{
-		popCount = popMap.size() / 10;
-	}
+    /* iterate backwards through popMap - take the top 5 or 10% of list */
+    uint32_t popCount = 5;
+    if (popCount < popMap.size() / 10)
+    {
+        popCount = popMap.size() / 10;
+    }
 
-	uint32_t i = 0;
-	uint32_t popLimit = 0;
+    uint32_t i = 0;
+    uint32_t popLimit = 0;
     std::multimap<uint32_t, GroupItemInfo>::reverse_iterator rit;
-	for(rit = popMap.rbegin(); ((rit != popMap.rend()) && (i < popCount)); rit++, i++) ;
+    for(rit = popMap.rbegin(); ((rit != popMap.rend()) && (i < popCount)); rit++, i++) ;
     if (rit != popMap.rend()) {
-        popLimit = rit->first;
+    popLimit = rit->first;
     }
 
     for (rit = popMap.rbegin(); rit != popMap.rend(); rit++) {
-		if (rit->second.popularity < (int) popLimit) {
-            otherList.append(rit->second);
-        } else {
-            popList.append(rit->second);
-        }
-	}
+        if (rit->second.popularity < (int) popLimit) {
+    otherList.append(rit->second);
+    } else {
+    popList.append(rit->second);
+    }
+    }
 
-	/* now we can add them in as a tree! */
+    /* now we can add them in as a tree! */
     ui.groupTreeWidget->fillGroupItems(yourTopics, adminList);
     ui.groupTreeWidget->fillGroupItems(subscribedTopics, subList);
     ui.groupTreeWidget->fillGroupItems(popularTopics, popList);
     ui.groupTreeWidget->fillGroupItems(otherTopics, otherList);
-
-	//	updateMessageSummaryList("");
 }
 
 /**************************************************************************************/

@@ -28,6 +28,10 @@
  *
  */
 
+#ifdef WINDOWS_SYS
+#include "util/rswin.h"
+#endif // WINDOWS_SYS
+
 #include "authssl.h"
 #include "sslfns.h"
 

@@ -1,0 +1,108 @@
+package rsctrl.msgs;
+
+import "core.proto";
+
+///////////////////////////////////////////////////////////////
+// Access, and Control your Friends / Peers and related Settings.
+///////////////////////////////////////////////////////////////
+
+enum RequestMsgIds {
+    MsgId_RequestPeers = 1;
+    MsgId_RequestAddPeer = 2;
+    MsgId_RequestModifyPeer = 3;
+}
+
+enum ResponseMsgIds {
+    MsgId_ResponsePeerList = 1;
+    MsgId_ResponseAddPeer = 2;
+    MsgId_ResponseModifyPeer = 3;
+}
+
+///////////////////////////////////////////////////////////////
+
+// REQUEST: RequestPeers
+message RequestPeers {
+
+  // About Who?
+  enum SetOption {
+    OWNID   = 1;
+    LISTED  = 2; 
+    ONLINE  = 3; 
+    FRIENDS = 4;
+    VALID   = 5; 	
+    SIGNED  = 6; 	
+    ALL     = 7; 	
+  }
+
+  // What do you want?
+  enum InfoOption {
+    NAMEONLY = 1;
+    BASIC    = 2;
+    LOCATION = 3;
+    ALLINFO  = 4;
+  }
+
+  required SetOption set = 1;
+  required InfoOption info = 2;
+  repeated string gpg_ids = 3;
+}
+
+
+// RESPONSE: ResponsePeerList
+message ResponsePeerList {
+  required rsctrl.core.Status status = 1;
+  repeated rsctrl.core.Person peers = 2;
+}
+
+///////////////////////////////////////////////////////////////
+
+// REQUEST: RequestAddPeer
+message RequestAddPeer {
+
+  enum AddCmd {
+    NOOP = 0; 		// No op.
+    ADD = 1; 		// Add existing from gpg_id.
+    REMOVE = 2; 	// Remove existing from gpg_id.
+    IMPORT = 3; 	// Import from cert, with gpg_id.
+    EXAMINE = 4; 	// Examine cert, but no action.
+  }
+
+  required string gpg_id = 1;
+  required AddCmd cmd = 2;
+  optional string cert = 3;
+}
+
+// RESPONSE: ResponseAddPeer
+message ResponseAddPeer {
+  required rsctrl.core.Status status = 1;
+  repeated rsctrl.core.Person peers = 2;
+}
+
+///////////////////////////////////////////////////////////////
+
+// REQUEST: RequestModifyPeer
+message RequestModifyPeer {
+
+  enum ModCmd {
+    NOOP    		= 0; 	
+    ADDRESS 		= 1;
+    DYNDNS  		= 2;
+    //SOMETHING_ELSE  	= 0x0000010; 
+    //SOMETHING_ELSE  	= 0x0000020; 
+    //SOMETHING_ELSE  	= 0x0000040; 
+    //SOMETHING_ELSE  	= 0x0000080; 
+  }
+
+  required ModCmd cmd = 1; 
+  //required int64 cmd = 1; // Could we OR the Cmds together?
+  repeated rsctrl.core.Person peers = 2;
+}
+
+// RESPONSE: ResponseModifyPeer
+message ResponseModifyPeer {
+  required rsctrl.core.Status status = 1;
+  repeated rsctrl.core.Person peers = 2;
+}
+
+///////////////////////////////////////////////////////////////
+

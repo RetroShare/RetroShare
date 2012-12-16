@@ -1,12 +1,9 @@
-#ifndef P3_PHOTO_ITEMS_H
-#define P3_PHOTO_ITEMS_H
-
 /*
- * libretroshare/src/serialiser: rsphotoitems.h
+ * libretroshare/src/retroshare: rsphoto.h
  *
- * RetroShare Serialiser.
+ * RetroShare C++ Interface.
  *
- * Copyright 2007-2008 by Robert Fernie.
+ * Copyright 2012-2012 by Christopher Evi-Parker, Robert Fernie
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,113 +23,91 @@
  *
  */
 
+#ifndef RSPHOTOV2ITEMS_H_
+#define RSPHOTOV2ITEMS_H_
+
 #include <map>
 
 #include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvtypes.h"
 
+#include "rsgxsitems.h"
+#include "retroshare/rsphoto.h"
+
 const uint8_t RS_PKT_SUBTYPE_PHOTO_ITEM = 0x02;
 const uint8_t RS_PKT_SUBTYPE_PHOTO_SHOW_ITEM = 0x03;
 const uint8_t RS_PKT_SUBTYPE_PHOTO_COMMENT_ITEM = 0x04;
 
-/**************************************************************************/
-
-class RsPhotoItem;
-class RsPhotoShowItem;
-class RsPhotoCommentItem;
-
-class RsPhotoItem: public RsItem
+class RsGxsPhotoAlbumItem : public RsGxsGrpItem
 {
-	public:
 
-	RsPhotoItem()
-	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_PHOTO, 
-		RS_PKT_SUBTYPE_PHOTO_ITEM) { return; }
-virtual ~RsPhotoItem() { return; }
-virtual void clear();
-virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+public:
 
-	std::string srcId;
-	std::string photoId; /* same as hash */
-	uint64_t    size;    /* file size */
+	RsGxsPhotoAlbumItem():  RsGxsGrpItem(RS_SERVICE_GXSV1_TYPE_PHOTO,
+			RS_PKT_SUBTYPE_PHOTO_ITEM) { return;}
+        virtual ~RsGxsPhotoAlbumItem() { return;}
 
-	std::string name;
-	std::wstring comment;
+        void clear();
+	std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-	std::string location; /* TODO: change to TLV */
-	std::string date;     /* TODO: change to TLV */
 
-	/* not serialised */
-	bool isAvailable;
-	std::string path;
+	RsPhotoAlbum album;
 };
 
-/* THIS must be turned into a TLV type + set (TOD) */
-class RsPhotoRefItem
+class RsGxsPhotoPhotoItem : public RsGxsMsgItem
 {
-	public:
-	RsPhotoRefItem();
+public:
 
-        std::string photoId;
-	std::wstring altComment;
-	uint32_t    deltaT; /* in 100ths of sec? */
+	RsGxsPhotoPhotoItem(): RsGxsMsgItem(RS_SERVICE_GXSV1_TYPE_PHOTO,
+			RS_PKT_SUBTYPE_PHOTO_SHOW_ITEM) {return; }
+        virtual ~RsGxsPhotoPhotoItem() { return;}
+        void clear();
+	std::ostream &print(std::ostream &out, uint16_t indent = 0);
+	RsPhotoPhoto photo;
 };
 
-class RsPhotoShowItem: public RsItem
+class RsGxsPhotoCommentItem : public RsGxsMsgItem
 {
-	public:
-	RsPhotoShowItem()
-	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_PHOTO, 
-		RS_PKT_SUBTYPE_PHOTO_SHOW_ITEM) { return; }
+public:
 
-virtual ~RsPhotoShowItem() { return; }
-virtual void clear();
-virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+    RsGxsPhotoCommentItem(): RsGxsMsgItem(RS_SERVICE_GXSV1_TYPE_PHOTO,
+                                          RS_PKT_SUBTYPE_PHOTO_COMMENT_ITEM) { return; }
+    virtual ~RsGxsPhotoCommentItem() { return; }
+    void clear();
+    std::ostream &print(std::ostream &out, uint16_t indent = 0);
+    RsPhotoComment comment;
 
-        std::string showId;
 
-        std::string name;
-        std::wstring comment;
-
-        std::string location; /* TODO -> TLV */
-        std::string date;     /* TODO -> TLV */
-        std::list<RsPhotoRefItem> photos; /* list as ordered */
 };
 
-class RsPhotoSerialiser: public RsSerialType
+class RsGxsPhotoSerialiser : public RsSerialType
 {
-	public:
-	RsPhotoSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_PHOTO)
+public:
+
+	RsGxsPhotoSerialiser()
+	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXSV1_TYPE_PHOTO)
 	{ return; }
-virtual     ~RsPhotoSerialiser()
-	{ return; }
-	
-virtual	uint32_t    size(RsItem *) { return 0; }
-virtual	bool        serialise  (RsItem */*item*/, void */*data*/, uint32_t */*size*/) { return false; }
-virtual	RsItem *    deserialise(void */*data*/, uint32_t */*size*/) { return NULL; }
+	virtual     ~RsGxsPhotoSerialiser() { return; }
+
+	uint32_t    size(RsItem *item);
+	bool        serialise  (RsItem *item, void *data, uint32_t *size);
+	RsItem *    deserialise(void *data, uint32_t *size);
 
 	private:
 
-	/* For RS_PKT_SUBTYPE_PHOTO_ITEM */
-//virtual	uint32_t    sizeLink(RsPhotoItem *);
-//virtual	bool        serialiseLink  (RsPhotoItem *item, void *data, uint32_t *size);
-//virtual	RsPhotoItem *deserialiseLink(void *data, uint32_t *size);
+	uint32_t    sizeGxsPhotoAlbumItem(RsGxsPhotoAlbumItem *item);
+	bool        serialiseGxsPhotoAlbumItem  (RsGxsPhotoAlbumItem *item, void *data, uint32_t *size);
+	RsGxsPhotoAlbumItem *    deserialiseGxsPhotoAlbumItem(void *data, uint32_t *size);
 
-	/* For RS_PKT_SUBTYPE_PHOTO_SHOW_ITEM */
-//virtual	uint32_t    sizeLink(RsPhotoShowItem *);
-//virtual	bool        serialiseLink  (RsPhotoShowItem *item, void *data, uint32_t *size);
-//virtual	RsPhotoShowItem *deserialiseLink(void *data, uint32_t *size);
+	uint32_t    sizeGxsPhotoPhotoItem(RsGxsPhotoPhotoItem *item);
+	bool        serialiseGxsPhotoPhotoItem  (RsGxsPhotoPhotoItem *item, void *data, uint32_t *size);
+	RsGxsPhotoPhotoItem *    deserialiseGxsPhotoPhotoItem(void *data, uint32_t *size);
 
-	/* For RS_PKT_SUBTYPE_PHOTO_COMMENT_ITEM */
-//virtual	uint32_t    sizeLink(RsPhotoCommentItem *);
-//virtual	bool        serialiseLink  (RsPhotoCommentItem *item, void *data, uint32_t *size);
-//virtual	RsPhotoCommentItem *deserialiseLink(void *data, uint32_t *size);
+        uint32_t    sizeGxsPhotoCommentItem(RsGxsPhotoCommentItem *item);
+        bool        serialiseGxsPhotoCommentItem  (RsGxsPhotoCommentItem *item, void *data, uint32_t *size);
+        RsGxsPhotoCommentItem *    deserialiseGxsPhotoCommentItem(void *data, uint32_t *size);
 
 };
 
-/**************************************************************************/
-
-#endif /* RS_PHOTO_ITEMS_H */
-
+#endif /* RSPHOTOV2ITEMS_H_ */

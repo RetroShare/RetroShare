@@ -35,286 +35,80 @@
 #include <algorithm>
 #include <iostream>
 
-/****
- * #define DEBUG_ITEM 1
- ****/
 
 /** Constructor */
-PostedItem::PostedItem(PostedHolder *parent, const RsPostedPost &post)
-:QWidget(NULL)
+PostedItem::PostedItem(PostedHolder *postHolder, const RsPostedPost &post)
+:QWidget(NULL), mPostHolder(postHolder), mPost(post)
 {
-	setupUi(this);
-	setAttribute ( Qt::WA_DeleteOnClose, true );
+    setupUi(this);
+    setAttribute ( Qt::WA_DeleteOnClose, true );
 
-	titleLabel->setText(QString::fromUtf8(post.mMeta.mMsgName.c_str()));
-	//dateLabel->setText(QString("Whenever"));
-	fromLabel->setText(QString::fromUtf8(post.mMeta.mAuthorId.c_str()));
-	//siteLabel->setText(QString::fromUtf8(post.mMeta.mAuthorId.c_str()));
-	//scoreLabel->setText(QString("1140"));
+    setContent(mPost);
 
-        // exposed for testing...
-	float score = rsPosted->calcPostScore(post.mMeta);
-	time_t now = time(NULL);
+    connect( commentButton, SIGNAL( clicked() ), this, SLOT( loadComments() ) );
+    connect( voteUpButton, SIGNAL(clicked()), this, SLOT(makeUpVote()));
+    connect( voteDownButton, SIGNAL(clicked()), this, SLOT( makeDownVote()));
 
-	QString fromLabelTxt = QString(" Age: ") + QString::number(now - post.mMeta.mPublishTs);
-	fromLabelTxt += QString(" Score: ") + QString::number(score);
-	fromLabel->setText(fromLabelTxt);
-
-	uint32_t votes = 0;
-	uint32_t comments = 0;
-	rsPosted->extractPostedCache(post.mMeta.mServiceString, votes, comments);
-	scoreLabel->setText(QString::number(votes));
-	QString commentLabel = QString("Comments: ") + QString::number(comments);
-	commentLabel += QString(" Votes: ") + QString::number(votes);
-	siteLabel->setText(commentLabel);
-	
-	QDateTime ts;
-	ts.setTime_t(post.mMeta.mPublishTs);
-	dateLabel->setText(ts.toString(QString("yyyy/MM/dd hh:mm:ss")));
-
-	return;
+    return;
 }
 
-
-#if 0
-
-PhotoItem::PhotoItem(PhotoHolder *parent, const RsPhotoAlbum &album)
-:QWidget(NULL), mParent(parent), mType(PHOTO_ITEM_TYPE_ALBUM) 
+void PostedItem::setContent(const RsPostedPost &post)
 {
-	setupUi(this);
-	setAttribute ( Qt::WA_DeleteOnClose, true );
+    mPost = post;
+    QDateTime qtime;
+    qtime.setTime_t(mPost.mMeta.mPublishTs);
+    QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
+    dateLabel->setText(timestamp);
+    fromLabel->setText(QString::fromUtf8(post.mMeta.mAuthorId.c_str()));
+    titleLabel->setText("<a href=" + QString::fromStdString(post.mLink) +
+                       "><span style=\" text-decoration: underline; color:#0000ff;\">" +
+                       QString::fromStdString(post.mMeta.mMsgName) + "</span></a>");
+    siteLabel->setText("<a href=" + QString::fromStdString(post.mLink) +
+                       "><span style=\" text-decoration: underline; color:#0000ff;\">" +
+                       QString::fromStdString(post.mLink) + "</span></a>");
 
-	mIsPhoto = false;
-	setDummyText();
-	updateAlbumText(album); // saves: mAlbumDetails = album;
-	updateImage(album.mThumbnail);
+    uint32_t up, down, nComments;
 
-	setSelected(false);
+    bool ok = rsPosted->retrieveScores(mPost.mMeta.mServiceString, up, down, nComments);
+
+    if(ok)
+    {
+        int32_t vote = up - down;
+        scoreLabel->setText(QString::number(vote));
+
+        numCommentsLabel->setText("<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px;"
+                                  "margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span"
+                                  "style=\" font-size:10pt; font-weight:600;\">#</span><span "
+                                  "style=\" font-size:8pt; font-weight:600;\"> Comments:  "
+                                  + QString::number(nComments) + "</span></p>");
+    }
+
 }
 
-
-PhotoItem::PhotoItem(PhotoHolder *parent, const RsPhotoPhoto &photo, const RsPhotoAlbum &album)
-:QWidget(NULL), mParent(parent), mType(PHOTO_ITEM_TYPE_PHOTO) 
+RsPostedPost PostedItem::getPost() const
 {
-	setupUi(this);
-
-	setAttribute ( Qt::WA_DeleteOnClose, true );
-
-	mIsPhoto = true;
-
-	setDummyText();
-	updatePhotoText(photo); // saves: mPhotoDetails = photo;
-	updateAlbumText(album); // saves: mAlbumDetails = album;
-
-	updateImage(photo.mThumbnail);
-
-	setSelected(false);
+    return mPost;
 }
 
-
-PhotoItem::PhotoItem(PhotoHolder *parent, std::string path) // for new photos.
-:QWidget(NULL), mParent(parent), mType(PHOTO_ITEM_TYPE_NEW) 
+void PostedItem::makeDownVote()
 {
-	setupUi(this);
-
-	setAttribute ( Qt::WA_DeleteOnClose, true );
-
-	setDummyText();
-	mIsPhoto = true;
-
-	int width = 120;
-	int height = 120;
-
-	//QPixmap qtn = QPixmap(QString::fromStdString(path)).scaled(width, height, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-	QPixmap qtn = QPixmap(QString::fromStdString(path)).scaled(width, height, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-	imgLabel->setPixmap(qtn);
-	setSelected(false);
+    RsGxsGrpMsgIdPair msgId;
+    msgId.first = mPost.mMeta.mGroupId;
+    msgId.second = mPost.mMeta.mMsgId;
+    emit vote(msgId, false);
 }
 
-void PhotoItem::updateParent(PhotoHolder *parent) // for external construction.
+void PostedItem::makeUpVote()
 {
-	mParent = parent;
+    RsGxsGrpMsgIdPair msgId;
+    msgId.first = mPost.mMeta.mGroupId;
+    msgId.second = mPost.mMeta.mMsgId;
+    emit vote(msgId, true);
 }
 
-
-void PhotoItem::setDummyText()
+void PostedItem::loadComments()
 {
-	titleLabel->setText(QString("Unknown"));
-	fromBoldLabel->setText(QString("By:"));
-	fromLabel->setText(QString("Unknown"));
-	statusBoldLabel->setText(QString("Where:"));
-	statusLabel->setText(QString("Unknown"));
-	dateBoldLabel->setText(QString("When:"));
-	dateLabel->setText(QString("Unknown"));
+    std::cerr << "PostedItem::loadComments() Requesting for " << mThreadId;
+    std::cerr << std::endl;
+    mPostHolder->showComments(mPost);
 }
-
-
-void PhotoItem::updateAlbumText(const RsPhotoAlbum &album)
-{
-	mAlbumDetails = album;
-	mAlbumDetails.mThumbnail.data = 0;
-	updateText();
-}
-
-void PhotoItem::updatePhotoText(const RsPhotoPhoto &photo)
-{
-	// Save new Photo details.
-	mPhotoDetails = photo;
-	mPhotoDetails.mThumbnail.data = 0;
-	updateText();
-}
-
-
-
-void PhotoItem::updateText()
-{
-	// SET Album Values first -> then overwrite with Photo Values.
-	if (mAlbumDetails.mSetFlags & RSPHOTO_FLAGS_ATTRIB_TITLE)
-	{
-		titleLabel->setText(QString::fromUtf8(mAlbumDetails.mMeta.mGroupName.c_str()));
-	}
-
-	// This needs to be fixed!! TODO
-	fromLabel->setText(QString::fromStdString(mAlbumDetails.mMeta.mGroupId));
-	if (mAlbumDetails.mSetFlags & RSPHOTO_FLAGS_ATTRIB_AUTHOR)
-	{
-		// This needs to be fixed!! TODO
-		fromLabel->setText(QString::fromStdString(mAlbumDetails.mMeta.mGroupId));
-	}
-
-	if (mAlbumDetails.mSetFlags & RSPHOTO_FLAGS_ATTRIB_WHERE)
-	{
-		statusLabel->setText(QString::fromUtf8(mAlbumDetails.mWhere.c_str()));
-	}
-
-	if (mAlbumDetails.mSetFlags & RSPHOTO_FLAGS_ATTRIB_WHEN)
-	{
-		dateLabel->setText(QString::fromUtf8(mAlbumDetails.mWhen.c_str()));
-	}
-	
-		// NOW Photo Bits.
-	if (mIsPhoto)
-	{
-		if (mPhotoDetails.mSetFlags & RSPHOTO_FLAGS_ATTRIB_TITLE)
-		{
-			titleLabel->setText(QString::fromUtf8(mPhotoDetails.mMeta.mMsgName.c_str()));
-		}
-	
-		if (mPhotoDetails.mSetFlags & RSPHOTO_FLAGS_ATTRIB_AUTHOR)
-		{
-			// This needs to be fixed!! TODO
-			fromLabel->setText(QString::fromStdString(mPhotoDetails.mMeta.mAuthorId));
-		}
-	
-		if (mPhotoDetails.mSetFlags & RSPHOTO_FLAGS_ATTRIB_WHERE)
-		{
-			statusLabel->setText(QString::fromUtf8(mPhotoDetails.mWhere.c_str()));
-		}
-	
-		if (mPhotoDetails.mSetFlags & RSPHOTO_FLAGS_ATTRIB_WHEN)
-		{
-			dateLabel->setText(QString::fromUtf8(mPhotoDetails.mWhen.c_str()));
-		}
-	}
-	
-}
-
-void PhotoItem::updateImage(const RsPhotoThumbnail &thumbnail)
-{
-	if (thumbnail.data != NULL)
-	{
-		QPixmap qtn;
-		qtn.loadFromData(thumbnail.data, thumbnail.size, thumbnail.type.c_str());
-		imgLabel->setPixmap(qtn);
-	}
-}
-
-bool PhotoItem::getPhotoThumbnail(RsPhotoThumbnail &nail)
-{
-	const QPixmap *tmppix = imgLabel->pixmap();
-
-        QByteArray ba;
-        QBuffer buffer(&ba);
-
-        if(!tmppix->isNull())
-	{
-                // send chan image
-
-                buffer.open(QIODevice::WriteOnly);
-                tmppix->save(&buffer, "PNG"); // writes image into ba in PNG format
-
-		RsPhotoThumbnail tmpnail;
-		tmpnail.data = (uint8_t *) ba.data();
-		tmpnail.size = ba.size();
-
-		nail.copyFrom(tmpnail);
-
-		return true;
-        }
-
-	nail.data = NULL;
-	nail.size = 0;
-	return false;
-}
-
-
-void PhotoItem::removeItem()
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "PhotoItem::removeItem()";
-	std::cerr << std::endl;
-#endif
-	hide();
-	if (mParent)
-	{
-		mParent->deletePhotoItem(this, mType);
-	}
-}
-
-
-void PhotoItem::setSelected(bool on)
-{
-	mSelected = on;
-	if (mSelected)
-	{
-		mParent->notifySelection(this, mType);
-		frame->setStyleSheet("QFrame#frame{border: 2px solid #55CC55;\nbackground: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #55EE55, stop: 1 #CCCCCC);\nborder-radius: 10px}");
-	}
-	else
-	{
-		frame->setStyleSheet("QFrame#frame{border: 2px solid #CCCCCC;\nbackground: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #EEEEEE, stop: 1 #CCCCCC);\nborder-radius: 10px}");
-	}
-	update();
-}
-
-bool PhotoItem::isSelected()
-{
-	return mSelected;
-}
-
-
-void PhotoItem::mousePressEvent(QMouseEvent *event)
-{
-        /* We can be very cunning here?
-	 * grab out position.
-	 * flag ourselves as selected.
-	 * then pass the mousePressEvent up for handling by the parent
-	 */
-
-        QPoint pos = event->pos();
-
-        std::cerr << "PhotoItem::mousePressEvent(" << pos.x() << ", " << pos.y() << ")";
-        std::cerr << std::endl;
-
-	setSelected(true);
-
-        QWidget::mousePressEvent(event);
-}
-
-
-const QPixmap *PhotoItem::getPixmap()
-{
-	return imgLabel->pixmap();
-}
-
-#endif

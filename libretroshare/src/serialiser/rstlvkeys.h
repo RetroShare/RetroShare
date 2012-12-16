@@ -41,6 +41,7 @@ const uint32_t RSTLV_KEY_TYPE_SHARED            = 0x0004;
 const uint32_t RSTLV_KEY_DISTRIB_PUBLIC         = 0x0010;
 const uint32_t RSTLV_KEY_DISTRIB_PRIVATE        = 0x0020;
 const uint32_t RSTLV_KEY_DISTRIB_ADMIN          = 0x0040;
+const uint32_t RSTLV_KEY_DISTRIB_IDENTITY       = 0x0080;
 
 
 class RsTlvSecurityKey: public RsTlvItem
@@ -98,6 +99,21 @@ virtual std::ostream &print(std::ostream &out, uint16_t indent);
 	// NO Certificates in Signatures... add as separate data type.
 };
 
+typedef uint32_t SignType;
+
+class RsTlvKeySignatureSet : public RsTlvItem
+{
+public:
+    RsTlvKeySignatureSet();
+    virtual ~RsTlvKeySignatureSet() { return; }
+    virtual uint32_t TlvSize();
+    virtual void	 TlvClear();
+    virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* serialise   */
+    virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
+    virtual std::ostream &print(std::ostream &out, uint16_t indent);
+
+    std::map<SignType, RsTlvKeySignature> keySignSet; // mandatory
+};
 
 
 #endif

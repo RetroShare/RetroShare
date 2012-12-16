@@ -17,13 +17,23 @@ int main()
 
 	// first setup
 	NxsMessageTest msgTest(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
-	NxsTestHub hub(&msgTest);
+        std::set<std::string> peers;
+        peers.insert("PeerA");
+        peers.insert("PeerB");
+        NxsTestHub hub(&msgTest, peers);
 
 	// now get things started
 	createThread(hub);
 
+        double timeDelta = 50;
+
 	// put this thread to sleep for 10 secs
-	sleep(10);
+        // make thread sleep for a bit
+#ifndef WINDOWS_SYS
+        usleep((int) (timeDelta * 1000000));
+#else
+        Sleep((int) (timeDelta * 1000));
+#endif
 
 	hub.join();
 	CHECK(hub.testsPassed());

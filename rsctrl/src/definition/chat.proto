@@ -1,0 +1,243 @@
+package rsctrl.chat;
+
+import "core.proto";
+
+///////////////////////////////////////////////////////////////
+// Private, Group and Chat Lobby RPC.
+//
+// OTHER COMMANDS TO ADD?
+// Status Strings.
+// Invite Friends to Private Lobbies.
+// Chat History.
+// ???
+///////////////////////////////////////////////////////////////
+
+enum RequestMsgIds {
+    MsgId_RequestChatLobbies = 1;
+    MsgId_RequestCreateLobby = 2;
+    MsgId_RequestJoinOrLeaveLobby = 3;
+    MsgId_RequestSetLobbyNickname = 4;
+    MsgId_RequestRegisterEvents = 5;
+    MsgId_RequestSendMessage = 6;
+}
+
+enum ResponseMsgIds {
+    // STANDARD RESPONSES.
+    MsgId_ResponseChatLobbies = 1;
+    MsgId_ResponseSetLobbyNickname = 4;
+    MsgId_ResponseRegisterEvents = 5;
+    MsgId_ResponseSendMessage = 6;
+
+    // EVENTS
+    MsgId_EventLobbyInvite = 101;
+    MsgId_EventChatMessage = 102;
+}
+
+///////////////////////////////////////////////////////////////
+// BUILDING BLOCKS.
+
+// This is a combination of ChatLobbyInfo & PublicChatLobbyRecord.
+// Which seem very similar??
+  
+enum LobbyPrivacyLevel {
+    PRIVACY_PRIVATE = 1;
+    PRIVACY_PUBLIC  = 2; 
+}
+
+enum ChatType {
+    TYPE_PRIVATE = 1;
+    TYPE_LOBBY = 2;
+    TYPE_GROUP = 3;
+}
+
+message ChatLobbyInfo {
+  required string lobby_id	= 1;
+  required string lobby_topic	= 2;
+  required string lobby_name	= 3;
+
+  required string lobby_nickname = 4; // empty for none set.
+
+  enum LobbyState {
+    LOBBYSTATE_JOINED = 1;
+    LOBBYSTATE_INVITED = 2;
+    LOBBYSTATE_PUBLIC = 3;
+  }
+  
+  required LobbyPrivacyLevel privacy_level   = 5;
+  required LobbyState   lobby_state = 6;
+
+  required uint32 no_peers 	= 7;
+  required uint32 last_report_time = 8;
+  required uint32 last_activity    = 9;
+  
+  repeated string participating_friends  = 10; // SSL_IDS?
+  repeated string nicknames = 11;
+}
+
+
+message ChatId {
+
+  required ChatType chat_type   = 1;
+  required string   chat_id	= 2;
+
+}
+
+message ChatMessage {
+
+  required ChatId id 		= 1;
+  required string msg 		= 2;
+
+  optional string peer_nickname = 3;
+  optional uint32 chat_flags	= 4;
+
+  optional uint32 send_time	= 5;
+  optional uint32 recv_time	= 6;
+
+}
+
+
+// RESPONSE: ResponseChatLobbies
+// This is a generic Response - used often.
+// lobbies, will contain a list of affected / requested Lobbies.
+message ResponseChatLobbies {
+
+  required rsctrl.core.Status status = 1;
+  repeated ChatLobbyInfo lobbies = 2;
+}
+
+
+
+///////////////////////////////////////////////////////////////
+
+// REQUEST: RequestChatLobbies
+message RequestChatLobbies {
+
+  enum LobbySet {
+    LOBBYSET_ALL = 1;
+    LOBBYSET_JOINED = 2;
+    LOBBYSET_INVITED = 3;
+    LOBBYSET_PUBLIC = 4;
+  }
+
+  required LobbySet lobby_set = 1; 
+  
+}
+
+// RESPONSE: ResponseChatLobbies
+
+///////////////////////////////////////////////////////////////
+
+
+// REQUEST: RequestCreateLobby
+message RequestCreateLobby {
+
+  required string lobby_name	= 1;
+  required string lobby_topic	= 2;
+
+  required LobbyPrivacyLevel privacy_level   = 4;
+
+  repeated string invited_friends  = 3; // SSL_IDS
+}
+
+// RESPONSE: ResponseChatLobbies
+
+///////////////////////////////////////////////////////////////
+
+// Accept / Deny Invite, Join / Leave Lobby (these can be combined?)
+
+// REQUEST: RequestJoinOrLeaveLobby
+message RequestJoinOrLeaveLobby {
+
+  enum LobbyAction {
+    JOIN_OR_ACCEPT = 1;
+    LEAVE_OR_DENY = 2;
+  }
+  
+  required string lobby_id	= 1;
+  required LobbyAction action   = 2;
+}
+
+// RESPONSE: ResponseChatLobbies
+
+///////////////////////////////////////////////////////////////
+
+// Set Nickname.
+// Get is done via requesting ChatLobby Info.
+// Empty lobby_ids => default Nickname.
+
+// REQUEST: RequestSetLobbyNickname
+message RequestSetLobbyNickname {
+  required string nickname = 1;
+  repeated string lobby_ids = 2;
+}
+
+// RESPONSE: ResponseSetLobbyNickname
+// Didnt think the whole Lobby status was necessary.
+message ResponseSetLobbyNickname {
+  required rsctrl.core.Status status = 1;
+}
+
+
+///////////////////////////////////////////////////////////////
+
+// Request Chat Events.
+// This is done by registering for events.
+
+// REQUEST: RequestRegisterEvents
+message RequestRegisterEvents {
+
+  enum RegisterAction {
+    REGISTER = 1;
+    DEREGISTER = 2;
+  }
+  
+  required RegisterAction action = 1;
+}
+
+// RESPONSE: ResponseRegisterEvents
+message ResponseRegisterEvents {
+  required rsctrl.core.Status status = 1;
+}
+
+// RESPONSE: EventLobbyInvite
+message EventLobbyInvite {
+  required ChatLobbyInfo lobby = 1;
+}
+
+// RESPONSE: EventChatMessage
+message EventChatMessage {
+  required ChatMessage msg = 1;
+}
+
+///////////////////////////////////////////////////////////////
+// Send Message.
+
+// REQUEST: RequestSendMessage
+message RequestSendMessage {
+  required ChatMessage msg = 1;
+}
+
+// RESPONSE: ResponseSendMessage
+message ResponseSendMessage {
+  required rsctrl.core.Status status = 1;
+}
+
+///////////////////////////////////////////////////////////////
+//// Chat History.
+//// THIS IS NOT IMPLEMENTED YET, DONT USE.
+//
+//// REQUEST: RequestChatHistory
+//message RequestChatHistory {
+//  required ChatId id	= 1;		/* lobby or chat, group id */
+//  required bool incoming = 2;	 
+//}
+//
+//// RESPONSE: ResponseChatHistory
+//message ResponseChatHistory {
+//  required rsctrl.core.Status status = 1;
+//  repeated ChatMessage msg = 2;
+//}
+//
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+

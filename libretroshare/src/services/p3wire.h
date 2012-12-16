@@ -1,13 +1,13 @@
 /*
  * libretroshare/src/services: p3wire.h
  *
- * Wire interface for RetroShare.
+ * Wiki interface for RetroShare.
  *
  * Copyright 2012-2012 by Robert Fernie.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
+ * License Version 2.1 as published by the Free Software Foundation.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -26,94 +26,45 @@
 #ifndef P3_WIRE_SERVICE_HEADER
 #define P3_WIRE_SERVICE_HEADER
 
-#include "services/p3gxsservice.h"
-
 #include "retroshare/rswire.h"
+#include "gxs/rsgenexchange.h"
 
 #include <map>
 #include <string>
 
 /* 
- * Wire Service
+ * Wiki Service
+ *
  *
  */
-class WireDataProxy: public GxsDataProxy
+
+class p3Wire: public RsGenExchange, public RsWire
 {
-        public:
+public:
+    p3Wire(RsGeneralDataService* gds, RsNetworkExchangeService* nes);
 
-        bool getGroup(const std::string &id, RsWireGroup &group);
-        bool getPulse(const std::string &id, RsWirePulse &pulse);
+protected:
 
-        bool addGroup(const RsWireGroup &group);
-        bool addPulse(const RsWirePulse &pulse);
+virtual void notifyChanges(std::vector<RsGxsNotify*>& changes) ;
 
-        /* These Functions must be overloaded to complete the service */
-virtual bool convertGroupToMetaData(void *groupData, RsGroupMetaData &meta);
-virtual bool convertMsgToMetaData(void *msgData, RsMsgMetaData &meta);
-};
+public:
 
+virtual void service_tick();
 
-class p3Wire: public p3GxsDataService, public RsWire
-{
-	public:
-
-	p3Wire(uint16_t type);
-
-virtual int	tick();
-
-	public:
-
-
-virtual bool updated();
-
-       /* Data Requests */
-virtual bool requestGroupInfo(     uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds);
-virtual bool requestMsgInfo(       uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &groupIds);
-virtual bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<std::string> &msgIds);
-
-        /* Generic Lists */
-virtual bool getGroupList(         const uint32_t &token, std::list<std::string> &groupIds);
-virtual bool getMsgList(           const uint32_t &token, std::list<std::string> &msgIds);
-
-        /* Generic Summary */
-virtual bool getGroupSummary(      const uint32_t &token, std::list<RsGroupMetaData> &groupInfo);
-virtual bool getMsgSummary(        const uint32_t &token, std::list<RsMsgMetaData> &msgInfo);
-
-        /* Actual Data -> specific to Interface */
         /* Specific Service Data */
-virtual bool getGroupData(const uint32_t &token, RsWireGroup &group);
-virtual bool getMsgData(const uint32_t &token, RsWirePulse &page);
+virtual bool getGroupData(const uint32_t &token, std::vector<RsWireGroup> &groups);
+virtual bool getPulseData(const uint32_t &token, std::vector<RsWirePulse> &pulses);
 
-        /* Poll */
-virtual uint32_t requestStatus(const uint32_t token);
-
-        /* Cancel Request */
-virtual bool cancelRequest(const uint32_t &token);
-
-        //////////////////////////////////////////////////////////////////////////////
-virtual bool setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask);
-virtual bool setGroupStatus(const std::string &groupId, const uint32_t status, const uint32_t statusMask);
-virtual bool setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask);
-virtual bool setMessageServiceString(const std::string &msgId, const std::string &str);
-virtual bool setGroupServiceString(const std::string &grpId, const std::string &str);
-
-virtual bool groupRestoreKeys(const std::string &groupId);
-virtual bool groupShareKeys(const std::string &groupId, std::list<std::string>& peers);
-
-virtual bool createGroup(uint32_t &token, RsWireGroup &group, bool isNew);
-virtual bool createPulse(uint32_t &token, RsWirePulse &pulse, bool isNew);
+virtual bool createGroup(uint32_t &token, RsWireGroup &group);
+virtual bool createPulse(uint32_t &token, RsWirePulse &pulse);
 
 	private:
 
+virtual void generateDummyData();
 std::string genRandomId();
-
-	WireDataProxy *mWireProxy;
 
 	RsMutex mWireMtx;
 
-	/***** below here is locked *****/
-
-	bool mUpdated;
 
 };
 
