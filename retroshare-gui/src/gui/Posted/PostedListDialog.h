@@ -74,7 +74,7 @@ private slots:
 
     void submitVote(const RsGxsGrpMsgIdPair& msgId, bool up);
 
-    void       getHotRankings();
+    void       getRankings();
 
 private:
 
@@ -133,7 +133,6 @@ private:
     QTreeWidgetItem *popularTopics;
     QTreeWidgetItem *otherTopics;
 
-    QAbstractButton *mSortButton;
 
     bool mThreadLoading;
     RsGxsGroupId mCurrTopicId;

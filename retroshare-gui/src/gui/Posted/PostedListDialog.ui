@@ -139,7 +139,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QPushButton" name="newPostButton">
+        <widget class="QPushButton" name="submitPostButton">
          <property name="text">
           <string>Submit Post</string>
          </property>
@@ -220,7 +220,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>472</width>
+            <width>426</width>
             <height>327</height>
            </rect>
           </property>

@@ -84,7 +84,7 @@ class RsPosted : public RsGxsIfaceImpl
 {
         public:
 
-    enum RankType {TopRankType, BestRankType, NewRankType };
+    enum RankType {TopRankType, HotRankType, NewRankType };
 
     static const uint32_t FLAG_MSGTYPE_POST;
     static const uint32_t FLAG_MSGTYPE_VOTE;

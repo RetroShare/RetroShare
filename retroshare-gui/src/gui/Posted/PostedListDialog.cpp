@@ -80,7 +80,9 @@ PostedListDialog::PostedListDialog(CommentHolder *commentHolder, QWidget *parent
 
     connect( ui.groupTreeWidget, SIGNAL( treeCurrentItemChanged(QString) ), this, SLOT( changedTopic(QString) ) );
 
-    connect(ui.hotSortButton, SIGNAL(clicked()), this, SLOT(getHotRankings()));
+    connect(ui.hotSortButton, SIGNAL(clicked()), this, SLOT(getRankings()));
+    connect(ui.newSortButton, SIGNAL(clicked()), this, SLOT(getRankings()));
+    connect(ui.topSortButton, SIGNAL(clicked()), this, SLOT(getRankings()));
 
     /* create posted tree */
     yourTopics = ui.groupTreeWidget->addCategoryItem(tr("Your Topics"), QIcon(IMAGE_FOLDER), true);
@@ -89,13 +91,13 @@ PostedListDialog::PostedListDialog(CommentHolder *commentHolder, QWidget *parent
     otherTopics = ui.groupTreeWidget->addCategoryItem(tr("Other Topics"), QIcon(IMAGE_FOLDERYELLOW), false);
 
     ui.hotSortButton->setChecked(true);
-    mSortButton = ui.hotSortButton;
 
     connect( ui.newTopicButton, SIGNAL( clicked() ), this, SLOT( newTopic() ) );
     connect(ui.refreshButton, SIGNAL(clicked()), this, SLOT(refreshTopics()));
+    connect(ui.submitPostButton, SIGNAL(clicked()), this, SLOT(newPost()));
 }
 
-void PostedListDialog::getHotRankings()
+void PostedListDialog::getRankings()
 {
 
     if(mCurrTopicId.empty())
@@ -107,7 +109,21 @@ void PostedListDialog::getHotRankings()
     RsTokReqOptions opts;
     opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
     uint32_t token;
-    rsPosted->requestPostRankings(token, RsPosted::BestRankType, mCurrTopicId);
+
+    QObject* button = sender();
+    if(button == ui.hotSortButton)
+    {
+        rsPosted->requestPostRankings(token, RsPosted::HotRankType, mCurrTopicId);
+    }else if(button == ui.topSortButton)
+    {
+        rsPosted->requestPostRankings(token, RsPosted::TopRankType, mCurrTopicId);
+    }else if(button == ui.newSortButton)
+    {
+        rsPosted->requestPostRankings(token, RsPosted::NewRankType, mCurrTopicId);
+    }else{
+        return;
+    }
+
     mPostedQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_DATA, TOKEN_USER_TYPE_POST_RANKINGS);
 }
 
@@ -172,6 +188,9 @@ void PostedListDialog::groupListCustomPopupMenu( QPoint /*point*/ )
 
 void PostedListDialog::newPost()
 {
+    if(mCurrTopicId.empty())
+        return;
+
     PostedCreatePostDialog cp(mPostedQueue, rsPosted, mCurrTopicId, this);
     cp.exec();
 }

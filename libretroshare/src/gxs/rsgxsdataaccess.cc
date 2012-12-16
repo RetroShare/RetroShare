@@ -297,6 +297,7 @@ void    RsGxsDataAccess::storeRequest(GxsRequest* req)
 	RsStackMutex stack(mDataMutex); /****** LOCKED *****/
 
         req->status = GXS_REQUEST_V2_STATUS_PENDING;
+        req->reqTime = time(NULL);
 	mRequests[req->token] = req;
 
 	return;
@@ -663,7 +664,7 @@ GxsRequest* RsGxsDataAccess::locked_retrieveRequest(const uint32_t& token)
 	return req;
 }
 
-#define MAX_REQUEST_AGE 10
+#define MAX_REQUEST_AGE 30
 
 void RsGxsDataAccess::processRequests()
 {
@@ -749,7 +750,7 @@ void RsGxsDataAccess::processRequests()
 				std::cerr << std::endl;
 				toClear.push_back(req->token);
 			}
-                        else if (false/*now - req->reqTime > MAX_REQUEST_AGE*/)
+                        else if (now - req->reqTime > MAX_REQUEST_AGE)
 			{
 				std::cerr << "RsGxsDataAccess::processrequests() Clearing Old Request Token: " << req->token;
 				std::cerr << std::endl;

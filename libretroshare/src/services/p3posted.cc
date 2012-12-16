@@ -18,9 +18,10 @@
 #define NUM_TOPICS_TO_GENERATE 5
 #define NUM_POSTS_TO_GENERATE 7
 #define NUM_VOTES_TO_GENERATE 11
-#define NUM_COMMENTS_TO_GENERATE 1
+#define NUM_COMMENTS_TO_GENERATE 3
 
 #define VOTE_UPDATE_PERIOD 5 // 20 seconds
+#define HOT_PERIOD 4 // 4 secs for testing prob 1 to 2 days in practice
 
 const uint32_t RsPosted::FLAG_MSGTYPE_COMMENT = 0x0001;
 const uint32_t RsPosted::FLAG_MSGTYPE_POST = 0x0002;
@@ -618,10 +619,89 @@ void p3Posted::discardCalc(const uint32_t &token)
 
 bool PostedTopScoreComp(const PostedScore& i, const PostedScore& j)
 {
-//    if((i.upVotes -i.downVotes) == (j.upVotes - j.downVotes)){
-//        return i.date > j.date;
-//    }else
-        return (i.upVotes - i.downVotes) > (j.upVotes - j.downVotes);
+    int32_t i_score = (int32_t)i.upVotes - (int32_t)i.downVotes;
+    int32_t j_score = (int32_t)j.upVotes - (int32_t)j.downVotes;
+
+    if(i_score == j_score){
+        return i.date > j.date;
+    }else
+    {
+        return i_score > j_score;
+    }
+}
+
+
+bool PostedHotScoreComp(const PostedScore& i, const PostedScore& j)
+{
+    int32_t i_score = (int32_t)i.upVotes - (int32_t)i.downVotes;
+    int32_t j_score = (int32_t)j.upVotes - (int32_t)j.downVotes;
+
+    time_t now = time(NULL);
+    long long td = now - i.date;
+
+    if(td == 0)
+    {
+        return i.date > j.date;
+    }
+
+    int y;
+    if(i_score > 0)
+    {
+        y = 1;
+    }else if(i_score == 0)
+    {
+        y = 0;
+    }else
+    {
+        y = -1;
+    }
+
+    double z;
+    if(abs(i_score) >= 1)
+    {
+        z = abs(i_score);
+    }
+    else
+    {
+        z = 1;
+    }
+
+    double i_hot_score = log10(z) + ( ((double)(y*td))
+                                      / HOT_PERIOD );
+
+    if(j_score > 0)
+    {
+        y = 1;
+    }else if(j_score == 0)
+    {
+        y = 0;
+    }else
+    {
+        y = -1;
+    }
+
+
+    if(abs(j_score) >= 1)
+    {
+        z = abs(j_score);
+    }
+    else
+    {
+        z = 1;
+    }
+
+    td = now - j.date;
+
+    double j_hot_score = log10(z) + ( ((double)(y*td))
+                                      / HOT_PERIOD );
+    if(i_hot_score == j_hot_score)
+    {
+        return i.date > j.date;
+    }else
+    {
+        return i_hot_score > j_hot_score;
+    }
+
 }
 
 bool PostedNewScoreComp(const PostedScore& i, const PostedScore& j)
@@ -680,7 +760,10 @@ bool p3Posted::completePostedPostCalc(GxsPostedPostRanking *gpp)
             case NewRankType:
                 calcPostedPostRank(msgMetaV, gpp->rankingResult.ranking, PostedNewScoreComp);
                 break;
-            case BestRankType:
+            case HotRankType:
+                calcPostedPostRank(msgMetaV, gpp->rankingResult.ranking, PostedHotScoreComp);
+                break;
+            case TopRankType:
                 calcPostedPostRank(msgMetaV, gpp->rankingResult.ranking, PostedTopScoreComp);
                 break;
             default:
@@ -713,15 +796,13 @@ void p3Posted::calcPostedPostRank(const std::vector<RsMsgMetaData > msgMeta, Pos
         scores.push_back(c);
     }
 
-    std::sort(scores.begin(), scores.end(), PostedTopScoreComp);
+    std::sort(scores.begin(), scores.end(), comp);
 
-    std::vector<PostedScore>::iterator vit = scores.begin();
 
-    int i = 1;
-    for(; vit != scores.end(); vit++)
+    for(int i = 0; i < scores.size(); i++)
     {
-        const PostedScore& p = *vit;
-        ranking.insert(std::make_pair(i++, p.msgId));
+        const PostedScore& p = scores[i];
+        ranking.insert(std::make_pair(i+1, p.msgId));
     }
 }
 
@@ -801,7 +882,7 @@ void p3Posted::completePostedCommentRanking(GxsPostedCommentRanking *gpc)
 
         switch(gpc->rType)
         {
-            case BestRankType:
+            case HotRankType:
                 calcPostedCommentsRank(msgBranches, remappedMsgMeta, gpc->result, PostedBestScoreComp);
                 break;
             case TopRankType:
