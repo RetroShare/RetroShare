@@ -42,7 +42,7 @@
 #define RSLINK_PROCESS_NOTIFY_ASK		  4 // ask for add the links
 #define RSLINK_PROCESS_NOTIFY_BAD_CHARS  8 // / or \\ characters in a filename
 
-#define RSLINK_PROCESS_NOTIFY_ALL      -1
+#define RSLINK_PROCESS_NOTIFY_ALL      15
 
 #define RSLINK_SCHEME 	"retroshare"
 

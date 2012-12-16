@@ -1062,6 +1062,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 
 					QString cleanname = link.name() ;
 					static const QString bad_chars_str = "/\\\"*:?<>|" ;
+					flag &= ~RSLINK_PROCESS_NOTIFY_BAD_CHARS ;
 
 					for(uint32_t i=0;i<cleanname.length();++i)
 						for(uint32_t j=0;j<bad_chars_str.length();++j)
