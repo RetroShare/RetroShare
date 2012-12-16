@@ -3,4 +3,6 @@ TEMPLATE = subdirs
 SUBDIRS += \
 		LinksCloud \
 		VOIP \
-		FeedReader
+
+# disabled until fixed.
+#		FeedReader

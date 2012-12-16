@@ -24,6 +24,8 @@
  *
  */
 
+#include <unistd.h>
+
 #include "rsgxsnetservice.h"
 #include "rsgxsflags.h"
 

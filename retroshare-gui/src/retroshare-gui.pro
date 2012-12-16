@@ -67,6 +67,7 @@ linux-* {
 		LIBS += -lsqlite3
 	}
 
+	LIBS *= -lglib-2.0
 	LIBS *= -rdynamic
 	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions
 	DEFINES *= UBUNTU

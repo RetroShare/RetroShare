@@ -24,6 +24,7 @@
  *
  */
 
+#include <unistd.h>
 
 #include "gxscoreserver.h"
 
