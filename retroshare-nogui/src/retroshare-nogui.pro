@@ -85,13 +85,15 @@ win32 {
 	RC_FILE = resources/retroshare_win.rc
 
 	DEFINES *= WINDOWS_SYS
-    
-    SSH_DIR = ../../../libssh-0.5.2
-    SSL_DIR = ../../../openssl-1.0.1c
 
-    INCLUDEPATH += . $${SSH_DIR}/include $${SSL_DIR}/include
-    
-    
+	SSL_DIR = ../../../openssl-1.0.1c
+
+	INCLUDEPATH += . $${SSL_DIR}/include
+
+	gxs {
+		LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+		LIBS += -lsqlite3
+	}
 }
 
 ##################################### MacOS ######################################
@@ -252,7 +254,3 @@ protorpc {
         QMAKE_CXXFLAGS += -pthread
 	LIBS += -lprotobuf
 }
-
-
-
-

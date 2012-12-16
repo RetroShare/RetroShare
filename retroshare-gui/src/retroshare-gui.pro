@@ -152,11 +152,10 @@ win32 {
 	LIBS += -lole32 -lwinmm
 	RC_FILE = gui/images/retroshare_win.rc
 
-        gxs {
-                LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-		LIBS += C:\Development\Libraries\sqlite\sqlite-autoconf-3070900\.libs\libsqlite3.a
-                #LIBS += -lsqlite3
-        }
+	gxs {
+		LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+		LIBS += -lsqlite3
+	}
 
 	# export symbols for the plugins
 	LIBS += -Wl,--export-all-symbols,--out-implib,lib/libretroshare-gui.a
