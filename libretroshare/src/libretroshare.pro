@@ -10,7 +10,7 @@ CONFIG += test_voip
 
 # GXS Stuff.
 # this should be disabled for releases until further notice.
-#CONFIG += gxs
+CONFIG += gxs
 
 # Beware: All data of the stripped services are lost
 DEFINES *= PQI_DISABLE_TUNNEL
@@ -237,7 +237,8 @@ HEADERS += retroshare/rsgame.h
                 $${PTHREADS_DIR} \
                 $${ZLIB_DIR} \
                 $${OPENPGPSDK_DIR}
-            newcache { 
+
+            gxs { 
                 SQLITE_DIR = ../../../../Libraries/sqlite/sqlite-autoconf-3070900
                 INCLUDEPATH += . \
                     $${SQLITE_DIR}
