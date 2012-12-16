@@ -44,13 +44,31 @@ extern "C" {
 
 		return (void*)p;
 	}
+
+	// This symbol contains the svn revision number grabbed from the executable.
+	// It will be tested by RS to load the plugin automatically, since it is safe to load plugins
+	// with same revision numbers, assuming that the revision numbers are up-to-date.
+	//
+#ifdef WIN32
+	__declspec(dllexport)
+#endif
+	uint32_t RETROSHARE_PLUGIN_revision = SVN_REVISION_NUMBER ;
+
+	// This symbol contains the svn revision number grabbed from the executable.
+	// It will be tested by RS to load the plugin automatically, since it is safe to load plugins
+	// with same revision numbers, assuming that the revision numbers are up-to-date.
+	//
+#ifdef WIN32
+	__declspec(dllexport)
+#endif
+	uint32_t RETROSHARE_PLUGIN_api = RS_PLUGIN_API_VERSION ;
 }
 
 void FeedReaderPlugin::getPluginVersion(int& major,int& minor,int& svn_rev) const
 {
 	major = 5;
-	minor = 1;
-	svn_rev = 4350;
+	minor = 4;
+	svn_rev = SVN_REVISION_NUMBER;
 }
 
 FeedReaderPlugin::FeedReaderPlugin()
