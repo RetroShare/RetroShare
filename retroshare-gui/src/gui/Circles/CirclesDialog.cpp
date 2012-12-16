@@ -27,6 +27,7 @@
 #include "gui/Circles/CirclesDialog.h"
 
 #include <retroshare/rsgxscircles.h>
+#include <retroshare/rspeers.h>
 
 #include <iostream>
 #include <sstream>
@@ -38,17 +39,7 @@
  *****/
 
 
-#if 0
-#define WIKIDIALOG_LISTING_GROUPDATA		2
-#define WIKIDIALOG_LISTING_PAGES		5
-#define WIKIDIALOG_MOD_LIST			6
-#define WIKIDIALOG_MOD_PAGES			7
-#define WIKIDIALOG_WIKI_PAGE			8
-
-#define WIKIDIALOG_EDITTREE_DATA		9
-
-#endif
-
+#define CIRCLESDIALOG_GROUPMETA			1
 
 /** Constructor */
 CirclesDialog::CirclesDialog(QWidget *parent)
@@ -57,90 +48,341 @@ CirclesDialog::CirclesDialog(QWidget *parent)
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
 
-#if 0
-	mAddPageDialog = NULL;
-	mAddGroupDialog = NULL;
-	mEditDialog = NULL;
-
-	connect( ui.toolButton_NewGroup, SIGNAL(clicked()), this, SLOT(OpenOrShowAddGroupDialog()));
-	connect( ui.toolButton_NewPage, SIGNAL(clicked()), this, SLOT(OpenOrShowAddPageDialog()));
-	connect( ui.toolButton_Edit, SIGNAL(clicked()), this, SLOT(OpenOrShowEditDialog()));
-	connect( ui.toolButton_Republish, SIGNAL(clicked()), this, SLOT(OpenOrShowRepublishDialog()));
-
-	// Usurped until Refresh works normally
-	connect( ui.toolButton_Delete, SIGNAL(clicked()), this, SLOT(insertWikiGroups()));
-
-	connect( ui.treeWidget_Pages, SIGNAL(itemSelectionChanged()), this, SLOT(groupTreeChanged()));
+	connect( ui.pushButton_refresh, SIGNAL(clicked()), this, SLOT(reloadAll()));
 
 	QTimer *timer = new QTimer(this);
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
 	timer->start(1000);
 
 	/* setup TokenQueue */
-        rsWiki->generateDummyData();
-        mCircleQueue = new TokenQueue(rsWiki->getTokenService(), this);
-#endif
+        mCircleQueue = new TokenQueue(rsGxsCircles->getTokenService(), this);
 
 	connect( ui.treeWidget_membership, SIGNAL(itemSelectionChanged()), this, SLOT(circle_selected()));
 	connect( ui.treeWidget_friends, SIGNAL(itemSelectionChanged()), this, SLOT(friend_selected()));
 	connect( ui.treeWidget_category, SIGNAL(itemSelectionChanged()), this, SLOT(category_selected()));
-
-
 }
 
-
-#if 0
 
 void CirclesDialog::checkUpdate()
 {
 
 	/* update */
-	if (!rsWiki)
+	if (!rsGxsCircles)
 		return;
 
-	if (rsWiki->updated())
+	if (rsGxsCircles->updated())
 	{
-		insertWikiGroups();
+		reloadAll();
 	}
 
 	return;
 }
 
+#define CIRCLEGROUP_CIRCLE_COL_GROUPNAME	0
+#define CIRCLEGROUP_CIRCLE_COL_GROUPID		1
 
+#define CIRCLEGROUP_FRIEND_COL_NAME	0
+#define CIRCLEGROUP_FRIEND_COL_ID	1
 
-
-void CirclesDialog::update()
+void CirclesDialog::reloadAll()
 {
-	/* load all circles, personal groups 
-	 * into the lists.
-	 */
+	requestGroupMeta();
+	/* grab all ids */
+	//std::list<std::string>
 
-	/* load friend list */
+	std::list<std::string> friend_pgpIds;
+	std::list<std::string> all_pgpIds;
+	std::list<std::string>::iterator it;
 
-	/* load categories */
+	std::set<std::string> friend_set;
 
-	std::list<RsGxsCircleId> public_circles;
-	rsGxsCircles->getPublicCircles(public_circle);
+	rsPeers->getGPGAcceptedList(friend_pgpIds);
+	rsPeers->getGPGAllList(all_pgpIds);
+
+	/* clear tree */
+	ui.treeWidget_friends->clear();
+
+	/* add the top level item */
+	QTreeWidgetItem *friendsItem = new QTreeWidgetItem();
+	friendsItem->setText(0, "Friends");
+	ui.treeWidget_friends->addTopLevelItem(friendsItem);
+
+	QTreeWidgetItem *fofItem = new QTreeWidgetItem();
+	fofItem->setText(0, "Friends Of Friends");
+	ui.treeWidget_friends->addTopLevelItem(fofItem);
+
+	for(it = friend_pgpIds.begin(); it != friend_pgpIds.end(); it++)
+	{
+		RsPeerDetails details;
+		if (rsPeers->getGPGDetails(*it, details))
+		{
+			friend_set.insert(*it);
+			QTreeWidgetItem *item = new QTreeWidgetItem();
+
+			item->setText(CIRCLEGROUP_FRIEND_COL_NAME, QString::fromStdString(details.name));
+			item->setText(CIRCLEGROUP_FRIEND_COL_ID, QString::fromStdString(*it));
+			friendsItem->addChild(item);
+		}
+        }
 
 
+	for(it = all_pgpIds.begin(); it != all_pgpIds.end(); it++)
+	{
+		if (friend_set.end() != friend_set.find(*it))
+		{
+			// already added as a friend.
+			continue;
+		}
 
+		RsPeerDetails details;
+		if (rsPeers->getGPGDetails(*it, details))
+		{
+			QTreeWidgetItem *item = new QTreeWidgetItem();
+
+			item->setText(CIRCLEGROUP_FRIEND_COL_NAME, QString::fromStdString(details.name));
+			item->setText(CIRCLEGROUP_FRIEND_COL_ID, QString::fromStdString(*it));
+			fofItem->addChild(item);
+		}
+        }
 }
+#define CLEAR_BACKGROUND	0
+#define GREEN_BACKGROUND	1
+#define BLUE_BACKGROUND		2
+#define RED_BACKGROUND		3
+#define GRAY_BACKGROUND		4
+
+
+void set_item_background(QTreeWidgetItem *item, uint32_t type)
+{
+	QBrush brush;
+	switch(type)
+	{
+		default:
+		case CLEAR_BACKGROUND:
+			brush = QBrush(Qt::white);
+			break;
+		case GREEN_BACKGROUND:
+			brush = QBrush(Qt::green);
+			break;
+		case BLUE_BACKGROUND:
+			brush = QBrush(Qt::blue);
+			break;
+		case RED_BACKGROUND:
+			brush = QBrush(Qt::red);
+			break;
+		case GRAY_BACKGROUND:
+			brush = QBrush(Qt::gray);
+			break;
+	}
+	item->setBackground (0, brush);
+}
+
+void update_children_background(QTreeWidgetItem *item, uint32_t type)
+{
+        int count = item->childCount();
+        for(int i = 0; i < count; i++)
+        {
+                QTreeWidgetItem *child = item->child(i);
+
+                if (child->childCount() > 0)
+                {
+                        update_children_background(child, type);
+                }
+                set_item_background(child, type);
+        }
+}
+
+
+void set_tree_background(QTreeWidget *tree, uint32_t type)
+{
+        std::cerr << "CirclesDialog set_tree_background()";
+        std::cerr << std::endl;
+
+	/* grab all toplevel */
+        int count = tree->topLevelItemCount();
+        for(int i = 0; i < count; i++)
+        {
+                QTreeWidgetItem *item = tree->topLevelItem(i);
+		/* resursively clear child backgrounds */
+                update_children_background(item, type);
+                set_item_background(item, type);
+        }
+}
+
+
+void check_mark_item(QTreeWidgetItem *item, const std::set<std::string> &names, uint32_t col, uint32_t type)
+{
+	QString coltext = item->text(col);
+	std::string colstr = coltext.toStdString();
+	if (names.end() != names.find(colstr))
+	{
+                set_item_background(item, type);
+		std::cerr << "CirclesDialog check_mark_item: found match: " << colstr;
+		std::cerr << std::endl;
+	}
+}
+
+void update_mark_children(QTreeWidgetItem *item, const std::set<std::string> &names, uint32_t col, uint32_t type)
+{
+        int count = item->childCount();
+        for(int i = 0; i < count; i++)
+        {
+                QTreeWidgetItem *child = item->child(i);
+
+                if (child->childCount() > 0)
+                {
+                        update_mark_children(child, names, col, type);
+                }
+                check_mark_item(child, names, col, type);
+        }
+}
+
+void mark_matching_tree(QTreeWidget *tree, const std::set<std::string> &names, uint32_t col, uint32_t type)
+{
+        std::cerr << "CirclesDialog mark_matching_tree()";
+        std::cerr << std::endl;
+
+	/* grab all toplevel */
+        int count = tree->topLevelItemCount();
+        for(int i = 0; i < count; i++)
+        {
+                QTreeWidgetItem *item = tree->topLevelItem(i);
+		/* resursively clear child backgrounds */
+                update_mark_children(item, names, col, type);
+                check_mark_item(item, names, col, type);
+        }
+}
+
+
+
+/**** Circles checks - v expensive ***/
+
+void mark_circle_item(QTreeWidgetItem *item, const std::set<std::string> &names)
+{
+	std::string id = item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID).toStdString();
+	RsGxsCircleDetails details;
+	if (rsGxsCircles->getCircleDetails(id, details))
+	{
+		std::set<std::string>::iterator it;
+		for(it = names.begin(); it != names.end(); it++)
+		{
+			if (details.mAllowedPeers.end() != details.mAllowedPeers.find(*it))
+			{
+               			set_item_background(item, GREEN_BACKGROUND);
+				std::cerr << "CirclesDialog mark_circle_item: found match: " << id;
+				std::cerr << std::endl;
+			}
+		}
+	}
+	else
+	{
+                set_item_background(item, GRAY_BACKGROUND);
+		std::cerr << "CirclesDialog mark_circle_item: no details: " << id;
+		std::cerr << std::endl;
+	}
+}
+
+void mark_circle_children(QTreeWidgetItem *item, const std::set<std::string> &names)
+{
+        int count = item->childCount();
+        for(int i = 0; i < count; i++)
+        {
+                QTreeWidgetItem *child = item->child(i);
+
+                if (child->childCount() > 0)
+                {
+                        mark_circle_children(child, names);
+                }
+                mark_circle_item(child, names);
+        }
+}
+
+
+void mark_circle_tree(QTreeWidget *tree, const std::set<std::string> &names)
+{
+        std::cerr << "CirclesDialog mark_circle_tree()";
+        std::cerr << std::endl;
+
+	/* grab all toplevel */
+        int count = tree->topLevelItemCount();
+        for(int i = 0; i < count; i++)
+        {
+                QTreeWidgetItem *item = tree->topLevelItem(i);
+                mark_circle_children(item, names);
+        }
+}
+
 
 
 void CirclesDialog::circle_selected()
 {
-	/* update friend lists */
+	QTreeWidgetItem *item = ui.treeWidget_membership->currentItem();
 
-	/* if personal group, update permissions */
+	std::cerr << "CirclesDialog::circle_selected() valid circle chosen";
+	std::cerr << std::endl;
+
+	set_tree_background(ui.treeWidget_membership, CLEAR_BACKGROUND);
+	set_tree_background(ui.treeWidget_friends, CLEAR_BACKGROUND);
+	set_tree_background(ui.treeWidget_category, CLEAR_BACKGROUND);
+
+	if ((!item) || (!item->parent()))
+	{
+		return;
+	}
+
+	set_item_background(item, BLUE_BACKGROUND);
+
+	QString coltext = item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID);
+	std::string id = coltext.toStdString();
+
+	/* update friend lists */
+	RsGxsCircleDetails details;
+	if (rsGxsCircles->getCircleDetails(id, details))
+	{
+		/* now mark all the members */
+		std::set<std::string> members;
+	        std::map<RsPgpId, std::list<RsGxsId> >::iterator it;
+		for(it = details.mAllowedPeers.begin(); it != details.mAllowedPeers.end(); it++)
+		{
+			members.insert(it->first);
+			std::cerr << "Circle member: " << it->first;
+			std::cerr << std::endl;
+		}
+
+		mark_matching_tree(ui.treeWidget_friends, members, 
+			CIRCLEGROUP_FRIEND_COL_ID, GREEN_BACKGROUND);
+	}
+	else
+	{
+		set_tree_background(ui.treeWidget_friends, GRAY_BACKGROUND);
+	}
+
 }
 
 
 void CirclesDialog::friend_selected()
 {
 	/* update circle lists */
+	QTreeWidgetItem *item = ui.treeWidget_friends->currentItem();
 
+	if ((!item) || (!item->parent()))
+	{
+		return;
+	}
+
+
+	set_tree_background(ui.treeWidget_membership, CLEAR_BACKGROUND);
+	set_tree_background(ui.treeWidget_friends, CLEAR_BACKGROUND);
+	set_tree_background(ui.treeWidget_category, CLEAR_BACKGROUND);
+
+	set_item_background(item, BLUE_BACKGROUND);
+
+	std::string id = item->text(CIRCLEGROUP_FRIEND_COL_ID).toStdString();
 
 	/* update permission lists */
+	std::set<std::string> names;
+	names.insert(id);
+	mark_circle_tree(ui.treeWidget_membership, names);
 }
 
 void CirclesDialog::category_selected()
@@ -151,133 +393,9 @@ void CirclesDialog::category_selected()
 }
 
 
-#endif
 
 
 #if 0
-
-
-void CirclesDialog::OpenOrShowAddPageDialog()
-{
-	std::string groupId = getSelectedGroup();
-	if (groupId == "")
-	{
-		std::cerr << "CirclesDialog::OpenOrShowAddPageDialog() No Group selected";
-		std::cerr << std::endl;
-		return;
-	}
-
-	if (!mEditDialog)
-	{
-		mEditDialog = new WikiEditDialog(NULL);
-	}
-
-	std::cerr << "CirclesDialog::OpenOrShowAddPageDialog() GroupId: " << groupId;
-	std::cerr << std::endl;
-
-	mEditDialog->setupData(groupId, "");
-	mEditDialog->setNewPage();
-
-	mEditDialog->show();
-}
-
-
-
-void CirclesDialog::OpenOrShowAddGroupDialog()
-{
-	newGroup();
-}
-
-/*********************** **** **** **** ***********************/
-/** New / Edit Groups          ********************************/
-/*********************** **** **** **** ***********************/
-
-void CirclesDialog::newGroup()
-{
-        WikiGroupDialog cf(mWikiQueue, this);
-        cf.wikitype();
-
-        cf.exec ();
-}
-
-void CirclesDialog::showGroupDetails()
-{
-	std::string groupId = getSelectedGroup();
-	if (groupId == "")
-	{
-		std::cerr << "CirclesDialog::showGroupDetails() No Group selected";
-		std::cerr << std::endl;
-		return;
-	}
-}
-
-void CirclesDialog::editGroupDetails()
-{
-	std::string groupId = getSelectedGroup();
-	if (groupId == "")
-	{
-		std::cerr << "CirclesDialog::editGroupDetails() No Group selected";
-		std::cerr << std::endl;
-		return;
-	}
-
-
-        //WikiGroupDialog cf (this);
-        //cf.existingGroup(groupId,  GXS_GROUP_DIALOG_EDIT_MODE);
-
-        //cf.exec ();
-}
-
-
-
-void CirclesDialog::OpenOrShowEditDialog()
-{
-	std::string groupId;
-	std::string pageId;
-	std::string origPageId;
-
-	if (!getSelectedPage(groupId, pageId, origPageId))
-	{
-		std::cerr << "CirclesDialog::OpenOrShowAddPageDialog() No Group or PageId selected";
-		std::cerr << std::endl;
-		return;
-	}
-
-	std::cerr << "CirclesDialog::OpenOrShowAddPageDialog()";
-	std::cerr << std::endl;
-
-	if (!mEditDialog)
-	{
-		mEditDialog = new WikiEditDialog(NULL);
-	}
-
-	mEditDialog->setupData(groupId, pageId);
-	mEditDialog->show();
-}
-
-void CirclesDialog::OpenOrShowRepublishDialog()
-{
-	OpenOrShowEditDialog();
-
-	std::string groupId;
-	std::string pageId;
-	std::string origPageId;
-
-	if (!getSelectedPage(groupId, pageId, origPageId))
-	{
-		std::cerr << "CirclesDialog::OpenOrShowAddRepublishDialog() No Group or PageId selected";
-		std::cerr << std::endl;
-		if (mEditDialog)
-		{
-			mEditDialog->hide();
-		}
-		return;
-	}
-
-	mEditDialog->setRepublishMode(origPageId);
-}
-
-
 void CirclesDialog::groupTreeChanged()
 {
 	/* */
@@ -423,239 +541,83 @@ std::string CirclesDialog::getSelectedGroup()
 	return groupId;
 }
 
+#endif
+
 /************************** Request / Response *************************/
 /*** Loading Main Index ***/
 
-void CirclesDialog::insertWikiGroups()
+void CirclesDialog::requestGroupMeta()
 {
-	requestGroupList();
-}
-
-
-void CirclesDialog::requestGroupList()
-{
-	std::cerr << "CirclesDialog::requestGroupList()";
+	std::cerr << "CirclesDialog::requestGroupMeta()";
 	std::cerr << std::endl;
 
 	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
 
 	uint32_t token;
-	mWikiQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_DATA, opts, WIKIDIALOG_LISTING_GROUPDATA);
+	mCircleQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_SUMMARY, opts, CIRCLESDIALOG_GROUPMETA);
 }
 
 
-void CirclesDialog::loadGroupData(const uint32_t &token)
+void CirclesDialog::loadGroupMeta(const uint32_t &token)
 {
-	std::cerr << "CirclesDialog::loadGroupData()";
+	std::cerr << "CirclesDialog::loadGroupMeta()";
 	std::cerr << std::endl;
 
-	clearGroupTree();
+	ui.treeWidget_membership->clear();
 
-	std::vector<RsWikiCollection> datavector;
-	std::vector<RsWikiCollection>::iterator vit;
+	std::list<RsGroupMetaData> groupInfo;
+	std::list<RsGroupMetaData>::iterator vit;
 
-        if (!rsWiki->getCollections(token, datavector))
-        {
-                std::cerr << "CirclesDialog::loadGroupData() Error getting GroupData";
+	if (!rsGxsCircles->getGroupSummary(token,groupInfo))
+	{
+                std::cerr << "CirclesDialog::loadGroupMeta() Error getting GroupMeta";
                 std::cerr << std::endl;
                 return;
         }
 
-        for(vit = datavector.begin(); vit != datavector.end(); vit++)
+	/* add the top level item */
+	QTreeWidgetItem *circlesItem = new QTreeWidgetItem();
+	circlesItem->setText(0, "Circles");
+	ui.treeWidget_membership->addTopLevelItem(circlesItem);
+
+        for(vit = groupInfo.begin(); vit != groupInfo.end(); vit++)
         {
-		RsWikiCollection &group = *vit;
-
 		/* Add Widget, and request Pages */
-
-		std::cerr << "CirclesDialog::addGroup() GroupId: " << group.mMeta.mGroupId;
-		std::cerr << " Group: " << group.mMeta.mGroupName;
+		std::cerr << "CirclesDialog::loadGroupMeta() GroupId: " << vit->mGroupId;
+		std::cerr << " Group: " << vit->mGroupName;
 		std::cerr << std::endl;
 
 		QTreeWidgetItem *groupItem = new QTreeWidgetItem();
-		groupItem->setText(WIKI_GROUP_COL_GROUPNAME, QString::fromStdString(group.mMeta.mGroupName));
-		groupItem->setText(WIKI_GROUP_COL_GROUPID, QString::fromStdString(group.mMeta.mGroupId));
-		ui.treeWidget_Pages->addTopLevelItem(groupItem);
-
-		/* request pages */
-		std::list<std::string> groupIds;	
-		groupIds.push_back(group.mMeta.mGroupId);
-
-		requestPages(groupIds);
-		//requestOriginalPages(groupIds);
+		groupItem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromStdString(vit->mGroupName));
+		groupItem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, QString::fromStdString(vit->mGroupId));
+		circlesItem->addChild(groupItem);
         }
 }
 
-
-void CirclesDialog::requestPages(const std::list<RsGxsGroupId> &groupIds)
-{
-	std::cerr << "CirclesDialog::requestPages()";
-	std::cerr << std::endl;
-
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-        opts.mOptions = (RS_TOKREQOPT_MSG_LATEST | RS_TOKREQOPT_MSG_THREAD); // We want latest version of Thread Heads.
-	uint32_t token;
-	mWikiQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, WIKIDIALOG_LISTING_PAGES);
-}
-
-
-void CirclesDialog::loadPages(const uint32_t &token)
-{
-	std::cerr << "CirclesDialog::loadPages()";
-	std::cerr << std::endl;
-
-	/* find parent in GUI Tree - stick children */
-
-	QTreeWidgetItem *groupItem = NULL;
-
-	std::vector<RsWikiSnapshot> snapshots;
-	std::vector<RsWikiSnapshot>::iterator vit;
-        if (!rsWiki->getSnapshots(token, snapshots))
-	{
-		// ERROR
-		return;
-	}
-
-	for(vit = snapshots.begin(); vit != snapshots.end(); vit++)
-	{
-                RsWikiSnapshot page = *vit;
-		if (!groupItem)
-		{
-			/* find the entry */
-        		int itemCount = ui.treeWidget_Pages->topLevelItemCount();
-        		for (int nIndex = 0; nIndex < itemCount; nIndex++) 
-        		{
-				QTreeWidgetItem *tmpItem = ui.treeWidget_Pages->topLevelItem(nIndex);
-                		std::string tmpid = tmpItem->data(WIKI_GROUP_COL_GROUPID, 
-						Qt::DisplayRole).toString().toStdString();
-				if (tmpid == page.mMeta.mGroupId)
-				{
-                			groupItem = tmpItem;
-					break;
-				}
-			}
-
-			if (!groupItem)
-			{
-				/* error */
-				std::cerr << "CirclesDialog::loadPages() ERROR Unable to find group";
-				std::cerr << std::endl;
-				return;
-			}
-		}
-						
-
-		std::cerr << "CirclesDialog::loadPages() PageId: " << page.mMeta.mMsgId;
-		std::cerr << " Page: " << page.mMeta.mMsgName;
-		std::cerr << std::endl;
-
-		QTreeWidgetItem *pageItem = new QTreeWidgetItem();
-		pageItem->setText(WIKI_GROUP_COL_PAGENAME, QString::fromStdString(page.mMeta.mMsgName));
-		pageItem->setText(WIKI_GROUP_COL_PAGEID, QString::fromStdString(page.mMeta.mMsgId));
-		pageItem->setText(WIKI_GROUP_COL_ORIGPAGEID, QString::fromStdString(page.mMeta.mOrigMsgId));
-
-		groupItem->addChild(pageItem);
-	}
-}
-
-/***** Wiki *****/
-
-void CirclesDialog::requestWikiPage(const RsGxsGrpMsgIdPair &msgId)
-{
-	std::cerr << "CirclesDialog::requestWikiPage(" << msgId.first << "," << msgId.second << ")";
-	std::cerr << std::endl;
-
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-
-	uint32_t token;
-
-	GxsMsgReq msgIds;
-	std::vector<RsGxsMessageId> &vect_msgIds = msgIds[msgId.first];
-	vect_msgIds.push_back(msgId.second);
-
-	mWikiQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, WIKIDIALOG_WIKI_PAGE);
-
-	//mWikiQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, WIKIDIALOG_WIKI_PAGE);
-}
-
-
-void CirclesDialog::loadWikiPage(const uint32_t &token)
-{
-	std::cerr << "CirclesDialog::loadWikiPage()";
-	std::cerr << std::endl;
-
-	// Should only have one WikiPage....
-	std::vector<RsWikiSnapshot> snapshots;
-        if (!rsWiki->getSnapshots(token, snapshots))
-	{
-		std::cerr << "CirclesDialog::loadWikiPage() ERROR";
-		std::cerr << std::endl;
-
-		// ERROR
-		return;
-	}
-
-	if (snapshots.size() != 1) 
-	{
-		std::cerr << "CirclesDialog::loadWikiPage() SIZE ERROR";
-		std::cerr << std::endl;
-
-		// ERROR
-		return;
-	}
-
-
-	RsWikiSnapshot page = snapshots[0];
-	
-	std::cerr << "CirclesDialog::loadWikiPage() PageId: " << page.mMeta.mMsgId;
-	std::cerr << " Page: " << page.mMeta.mMsgName;
-	std::cerr << std::endl;
-
-	updateWikiPage(page);
-}
-
-#endif
 
 
 void CirclesDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
 
-#if 0
 	std::cerr << "CirclesDialog::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;
 	
-	if (queue == mWikiQueue)
+	if (queue == mCircleQueue)
 	{
 		/* now switch on req */
 		switch(req.mUserType)
 		{
-			case WIKIDIALOG_LISTING_GROUPDATA:
-				loadGroupData(req.mToken);
+			case CIRCLESDIALOG_GROUPMETA:
+				loadGroupMeta(req.mToken);
 				break;
 
-			case WIKIDIALOG_LISTING_PAGES:
-				loadPages(req.mToken);
-				break;
-
-			case WIKIDIALOG_WIKI_PAGE:
-				loadWikiPage(req.mToken);
-				break;
-
-#define GXSGROUP_NEWGROUPID             1
-			case GXSGROUP_NEWGROUPID:
-				insertWikiGroups();
-				break;
 			default:
 				std::cerr << "CirclesDialog::loadRequest() ERROR: INVALID TYPE";
 				std::cerr << std::endl;
 				break;
 		}
 	}
-
-#endif
-
 }
 	
 	

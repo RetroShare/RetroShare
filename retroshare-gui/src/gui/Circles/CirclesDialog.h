@@ -44,8 +44,15 @@ void 	loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 private slots:
 
+void checkUpdate();
+
+void reloadAll();
+
+void circle_selected();
+void friend_selected();
+void category_selected();
+
 #if 0
-	void checkUpdate();
 	void OpenOrShowAddPageDialog();
 	void OpenOrShowAddGroupDialog();
 	void OpenOrShowEditDialog();
@@ -72,15 +79,11 @@ bool 	getSelectedPage(std::string &groupId, std::string &pageId, std::string &or
 std::string getSelectedPage();
 std::string getSelectedGroup();
 
-void 	requestGroupList();
-void 	loadGroupData(const uint32_t &token);
-
-void 	requestPages(const std::list<RsGxsGroupId> &groupIds);
-void 	loadPages(const uint32_t &token);
-
-void 	requestWikiPage(const  RsGxsGrpMsgIdPair &msgId);
-void 	loadWikiPage(const uint32_t &token);
 #endif
+
+void 	requestGroupMeta();
+void 	loadGroupMeta(const uint32_t &token);
+
 
 	TokenQueue *mCircleQueue;
 
