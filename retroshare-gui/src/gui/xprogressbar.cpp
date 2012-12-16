@@ -184,6 +184,39 @@ void xProgressBar::setColor()
 	}
 }
 
+void xProgressBar::overPaintSelectedChunks(const std::vector<uint32_t>& chunks,const QColor& gradColor_a1,const QColor& gradColor_a2, int width,uint32_t ss) const
+{
+	QLinearGradient linearGrad(rect.x(), rect.y(), rect.x(), rect.y() + rect.height() - 1);
+
+	linearGrad.setColorAt(0.00, gradColor_a1);
+	linearGrad.setColorAt(0.16, gradColor_a2);
+	linearGrad.setColorAt(1.00, gradColor_a1);
+
+	painter->setBrush(linearGrad);
+
+		std::cerr << "painting chunks: " ;
+	for(uint32_t i=0;i<chunks.size();++i)
+		std::cerr << chunks[i] <<  " " ;
+	std::cerr << std::endl;
+
+
+	if(chunks.empty())
+		return ;
+
+	int last_i = chunks[0] ;
+
+	for(uint32_t i=1;i<chunks.size();++i)
+		if(chunks[i] > chunks[i-1]+1)
+		{
+			int nb_consecutive_chunks = chunks[i-1] - last_i + 1 ;
+
+			painter->drawRect(rect.x() + hSpan+(int)rint(last_i*width/(float)ss), rect.y() + vSpan, (int)ceil(nb_consecutive_chunks*width/(float)ss), rect.height() - 1 - vSpan * 2);
+			last_i = chunks[i] ;
+		}
+	int nb_consecutive_chunks = chunks.back() - last_i + 1 ;
+	painter->drawRect(rect.x() + hSpan+(int)rint(last_i*width/(float)ss), rect.y() + vSpan, (int)ceil(nb_consecutive_chunks*width/(float)ss), rect.height() - 1 - vSpan * 2);
+}
+
 void xProgressBar::paint()
 {
 	// paint the progressBar background
@@ -225,32 +258,8 @@ void xProgressBar::paint()
 				i += j ;
 			}
 
-		{
-			QColor gradColor_a1, gradColor_a2 ;
-			gradColor_a1.setRgb(170,  20, 9);
-			gradColor_a2.setRgb(223, 121,123);
-			linearGrad.setColorAt(0.00, gradColor_a1);
-			linearGrad.setColorAt(0.16, gradColor_a2);
-			linearGrad.setColorAt(1.00, gradColor_a1);
-			painter->setBrush(linearGrad);
-
-			for(uint32_t i=0;i<_pinfo.chunks_in_progress.size();++i)
-				painter->drawRect(rect.x() + hSpan+(int)rint(_pinfo.chunks_in_progress[i]*width/(float)ss), rect.y() + vSpan, (int)ceil(1.0f*width/(float)ss), rect.height() - 1 - vSpan * 2);
-		}
-
-		{
-
-			QColor gradColor_a1, gradColor_a2 ;
-			gradColor_a1.setRgb(186, 143, 0);
-			gradColor_a2.setRgb(223, 196, 61);
-			linearGrad.setColorAt(0.00, gradColor_a1);
-			linearGrad.setColorAt(0.16, gradColor_a2);
-			linearGrad.setColorAt(1.00, gradColor_a1);
-			painter->setBrush(linearGrad);
-
-			for(uint32_t i=0;i<_pinfo.chunks_in_checking.size();++i)
-				painter->drawRect(rect.x() + hSpan+(int)rint(_pinfo.chunks_in_checking[i]*width/(float)ss), rect.y() + vSpan, (int)ceil(1.0f*width/(float)ss), rect.height() - 1 - vSpan * 2);
-		}
+		overPaintSelectedChunks( _pinfo.chunks_in_progress , QColor(170, 20,9), QColor(223,121,123), width,ss) ;
+		overPaintSelectedChunks( _pinfo.chunks_in_checking , QColor(186,143,0), QColor(223,196, 61), width,ss) ;
 	}
 	else
 	{

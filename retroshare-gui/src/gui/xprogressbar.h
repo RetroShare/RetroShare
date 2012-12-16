@@ -83,6 +83,7 @@ Q_OBJECT
 
 		void paint();
 
+		void overPaintSelectedChunks(const std::vector<uint32_t>& chunks,const QColor& gradColor_a1,const QColor& gradColor_a2, int width,uint32_t ss) const ;
 		void setColorSchema(const int value);
 		void setDisplayText(const bool display);
 		void setVerticalSpan(const int value);
