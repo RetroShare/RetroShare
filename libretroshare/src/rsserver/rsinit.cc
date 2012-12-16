@@ -1812,17 +1812,22 @@ RsTurtle *rsTurtle = NULL ;
 #include "services/p3blogs.h"
 #include "turtle/p3turtle.h"
 
-#define ENABLE_GXS_SERVICES	1
-#define ENABLE_GXS_CORE 1
-#define ENABLE_OTHER_GXS_SERVICES 1 // DISABLE TO LEAVE ONLY GXSID (for testing)
-
-#ifdef ENABLE_GXS_CORE
+#ifdef RS_ENABLE_GXS
+// NEW GXS SYSTEMS.
 #include "gxs/gxscoreserver.h"
 #include "gxs/rsdataservice.h"
 #include "gxs/rsgxsnetservice.h"
 #include "gxs/rsgxsflags.h"
-#endif
 
+#include "services/p3idservice.h"
+#include "services/p3gxscircles.h"
+#include "services/p3wiki.h"
+#include "services/p3posted.h"
+#include "services/p3photoservice.h"
+#include "services/p3gxsforums.h"
+#include "services/p3wire.h"
+
+#endif // RS_ENABLE_GXS
 
 #ifndef PQI_DISABLE_TUNNEL
 #include "services/p3tunnel.h"
@@ -2265,7 +2270,7 @@ int RsServer::StartupRetroShare()
 	mPluginsManager->registerCacheServices() ;
 
 
-#ifdef ENABLE_GXS_SERVICES
+#ifdef RS_ENABLE_GXS
 
         // The idea is that if priorGxsDir is non
         // empty and matches an exist directory location
@@ -2321,9 +2326,7 @@ int RsServer::StartupRetroShare()
                         RS_SERVICE_GXSV1_TYPE_GXSCIRCLE, gxscircles_ds, nxsMgr, mGxsCircles);
 
 
-#if ENABLE_OTHER_GXS_SERVICES
         /**** Photo service ****/
-
         // create photo authentication policy
         uint32_t photoAuthenPolicy = 0;
 
@@ -2415,14 +2418,9 @@ int RsServer::StartupRetroShare()
         // create GXS photo service
         RsGxsNetService* gxsforums_ns = new RsGxsNetService(
                         RS_SERVICE_GXSV1_TYPE_FORUMS, gxsforums_ds, nxsMgr, mGxsForums);
-#endif
 
-#endif // ENABLE_GXS_SERVICES
-
-#ifdef ENABLE_GXS_CORE
 
         /*** start up GXS core runner ***/
-#if ENABLE_OTHER_GXS_SERVICES
         createThread(*mGxsIdService);
         createThread(*mGxsCircles);
         createThread(*mPhoto);
@@ -2430,30 +2428,25 @@ int RsServer::StartupRetroShare()
         createThread(*mWiki);
         createThread(*mWire);
         createThread(*mGxsForums);
-#endif
 
         // cores ready start up GXS net servers
         createThread(*gxsid_ns);
         createThread(*gxscircles_ns);
-#if ENABLE_OTHER_GXS_SERVICES
         createThread(*photo_ns);
         createThread(*posted_ns);
         createThread(*wiki_ns);
         createThread(*wire_ns);
         createThread(*gxsforums_ns);
-#endif
 
         // now add to p3service
         pqih->addService(gxsid_ns);
         pqih->addService(gxscircles_ns);
-#if ENABLE_OTHER_GXS_SERVICES
         pqih->addService(photo_ns);
         pqih->addService(posted_ns);
         pqih->addService(wiki_ns);
         pqih->addService(gxsforums_ns);
-#endif
 
-#endif
+#endif // RS_ENABLE_GXS.
 
 
 #ifndef RS_RELEASE
@@ -2712,21 +2705,17 @@ int RsServer::StartupRetroShare()
 	rsForums = mForums;
 	rsChannels = mChannels;
 
-#ifdef ENABLE_GXS_SERVICES
-        // Testing of new cache system interfaces.
+#ifdef RS_ENABLE_GXS
 
 	rsIdentity = mGxsIdService;
 	rsGxsCircles = mGxsCircles;
-#if ENABLE_OTHER_GXS_SERVICES
         rsWiki = mWiki;
         rsPosted = mPosted;
         rsPhoto = mPhoto;
         rsGxsForums = mGxsForums;
         rsWire = mWire;
-#endif
 
-
-#endif // ENABLE_GXS_SERVICES
+#endif // RS_ENABLE_GXS
 
 
 #ifdef RS_USE_BLOGS	

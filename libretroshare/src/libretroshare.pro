@@ -9,8 +9,8 @@ TARGET = retroshare
 CONFIG += test_voip
 
 # GXS Stuff.
-CONFIG += newcache
-CONFIG += newservices
+# this should be disabled for releases until further notice.
+#CONFIG += gxs
 
 # Beware: All data of the stripped services are lost
 DEFINES *= PQI_DISABLE_TUNNEL
@@ -595,7 +595,10 @@ HEADERS += retroshare/rsgame.h
         }
         
         # new gxs cache system
-        newcache {
+        # this should be disabled for releases until further notice.
+        gxs {
+            DEFINES *= RS_ENABLE_GXS
+
             HEADERS += serialiser/rsnxsitems.h \
                 gxs/rsgds.h \
                 gxs/rsgxs.h \
@@ -687,11 +690,5 @@ HEADERS += retroshare/rsgame.h
 
 	    SOURCES += services/p3photoservice.cc \
                 serialiser/rsphotoitems.cc \
-        }
-
-        newservices { 
-		# source code for p3gxsserviceVEG / p3postedVEG will be maintained
-		# until they are finished - for reference... but it wont compile.	
-
         }
 

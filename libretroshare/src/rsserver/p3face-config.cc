@@ -42,6 +42,19 @@ const int p3facemsgzone = 11453;
 #include "pqi/p3netmgr.h"
 
 
+// TO SHUTDOWN THREADS.
+#ifdef RS_ENABLE_GXS
+
+#include "services/p3idservice.h"
+#include "services/p3gxscircles.h"
+#include "services/p3wiki.h"
+#include "services/p3posted.h"
+#include "services/p3photoservice.h"
+#include "services/p3gxsforums.h"
+#include "services/p3wire.h"
+
+#endif
+
 /****************************************/
 /* RsIface Config */
 /* Config */
@@ -190,6 +203,9 @@ void RsServer::rsGlobalShutDown()
 	mForums->join();
 	mChannels->join();
 
+
+
+#ifdef RS_ENABLE_GXS
         if(mGxsCircles) mGxsCircles->join();
         if(mGxsForums) mGxsForums->join();
         if(mGxsIdService) mGxsIdService->join();
@@ -197,6 +213,7 @@ void RsServer::rsGlobalShutDown()
         if(mPhoto) mPhoto->join();
         if(mWiki) mWiki->join();
         if(mWire) mWire->join();
+#endif
 
 
 

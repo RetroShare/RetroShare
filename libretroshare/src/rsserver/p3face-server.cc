@@ -77,7 +77,9 @@ RsServer::RsServer(RsIface &i, NotifyBase &callback)
 	mConfigMgr = NULL;
 	mGeneralConfig = NULL;
 
-        /* GXS */
+        /* GXS - Amazingly we can still initialise these
+         * even without knowing the data-types (they are just pointers???)
+	 */
         mPhoto = NULL;
         mWiki = NULL;
         mPosted = NULL;
@@ -85,6 +87,7 @@ RsServer::RsServer(RsIface &i, NotifyBase &callback)
         mGxsIdService = NULL;
         mGxsForums = NULL;
         mWire = NULL;
+
 }
 
 RsServer::~RsServer()

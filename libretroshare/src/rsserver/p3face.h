@@ -45,13 +45,16 @@
 #include "services/p3channels.h"
 #include "services/p3forums.h"
 
-#include "services/p3idservice.h"
-#include "services/p3gxscircles.h"
-#include "services/p3wiki.h"
-#include "services/p3posted.h"
-#include "services/p3photoservice.h"
-#include "services/p3gxsforums.h"
-#include "services/p3wire.h"
+/* GXS Classes - just declare the classes.
+   so we don't have to totally recompile to switch */
+
+class p3IdService;
+class p3GxsCircles;
+class p3GxsForums;
+class p3Wiki;
+class p3Posted;
+class p3PhotoService;
+class p3Wire;
 
 
 class p3PeerMgrIMPL;
@@ -185,7 +188,6 @@ class RsServer: public RsControl, public RsThread
 		/* caches (that need ticking) */
 
                 /* GXS */
-
                 p3Wiki *mWiki;
                 p3Posted *mPosted;
                 p3PhotoService *mPhoto;
