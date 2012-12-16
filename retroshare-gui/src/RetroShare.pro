@@ -1,15 +1,22 @@
 CONFIG += qt gui uic qrc resources uitools idle bitdht
 
 # Below is for GXS services.
-CONFIG += photoshare 
-CONFIG += wikipoos
-CONFIG += identities
-CONFIG += circles
-CONFIG += gxsforums 
-CONFIG += posted
-CONFIG += unfinished
-CONFIG += gxsgui
-#CONFIG += thewire
+# Should be disabled for releases.
+CONFIG += gxs
+
+gxs {
+	CONFIG += photoshare 
+	CONFIG += wikipoos
+	CONFIG += identities
+	CONFIG += circles
+	CONFIG += gxsforums 
+	CONFIG += posted
+	CONFIG += unfinished
+	CONFIG += gxsgui
+ 	# thewire is incomplete - dont enable
+	#CONFIG += thewire
+}
+
 
 #CONFIG += pluginmgr 
 
@@ -54,9 +61,13 @@ linux-* {
 
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
-	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 	LIBS += -lssl -lupnp -lixml -lXss -lgnome-keyring
-	LIBS += -lsqlite3
+
+        gxs {
+		LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+		LIBS += -lsqlite3
+	}
+
 	LIBS *= -rdynamic
 	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions
 	DEFINES *= UBUNTU
@@ -130,10 +141,14 @@ win32 {
         #PRE_TARGETDEPS += ../../libretroshare/src/lib/libretroshare.a
         PRE_TARGETDEPS += ../../libretroshare/libretroshare-build-desktop/lib/libretroshare.a
         LIBS += ../../libretroshare/libretroshare-build-desktop/lib/libretroshare.a
-	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+
+        gxs {
+		LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+        	LIBS += C:\Development\Libraries\sqlite\sqlite-autoconf-3070900\.libs\libsqlite3.a
+		#LIBS += -lsqlite3
+	}
 
         LIBS += C:\Development\Rs\v0.5-gxs-b1\openpgpsdk\openpgpsdk-build-desktop\lib\libops.a
-        LIBS += C:\Development\Libraries\sqlite\sqlite-autoconf-3070900\.libs\libsqlite3.a
 	LIBS += -L"../../../lib"
 	LIBS += -lssl -lcrypto -lpthreadGC2d -lminiupnpc -lz -lbz2
 # added after bitdht
@@ -231,7 +246,6 @@ DEPENDPATH += . \
             gui/elastic
 
 INCLUDEPATH += ../../libretroshare/src/
-INCLUDEPATH += ../../supportlibs/pegmarkdown
 
 # Input
 HEADERS +=  rshare.h \
@@ -921,6 +935,8 @@ photoshare {
 
 
 wikipoos {
+
+	INCLUDEPATH += ../../supportlibs/pegmarkdown
 
 	HEADERS += gui/WikiPoos/WikiDialog.h \
 		gui/WikiPoos/WikiAddDialog.h \
