@@ -37,6 +37,13 @@
     </message>
 </context>
 <context>
+    <name>AddCommentDialog</name>
+    <message>
+        <source>Add Comment</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AddFileAssociationDialog</name>
     <message>
         <source>File type(extension):</source>
@@ -96,6 +103,283 @@
     </message>
 </context>
 <context>
+    <name>AlbumCreateDialog</name>
+    <message>
+        <source>Create Album</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Album Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Category:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Animals</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Family</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flowers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Holiday</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Landcapes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pets</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Portraits</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Travel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Work</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Random</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Caption:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Where:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Photographer:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Description:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Share Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Policy:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quality:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Comments:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identity:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Public</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restricted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Resize Images (&lt; 1Mb)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Resize Images (&lt; 10Mb)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Send Original Images</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Comments Allowed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Authenticated Comments</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Any Comments Allowed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Publish with Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; Drag &amp;amp; Drop to insert pictures. Click on a picture to edit details below.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Photos</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Publish Album</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Untitle Album</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Say something about this album...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Where were this taken?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load Album Thumbnail</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AlbumDialog</name>
+    <message>
+        <source>Album</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Album Thumbnail</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Summary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Album Title:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Category:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Caption</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Where:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Description:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Share Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Comments</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Publish Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Visibility</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; Drag &amp;amp; Drop to insert pictures. Click on a picture to edit details below.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Photo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Photo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete Photo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Publish Photos</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AlbumItem</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Album Title :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Photographer :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AppearancePage</name>
     <message>
         <source>Language</source>
@@ -133,18 +417,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Photo View</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Identities</source>
         <translation type="unfinished"></translation>
     </message>
@@ -157,11 +429,19 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>ForumsV2</source>
+        <source>Posted Links</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Posted Links</source>
+        <source>Circles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Photo Share</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GxsForums</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1384,6 +1664,85 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Paste my certificate link</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CirclesDialog</name>
+    <message>
+        <source>Create Personal Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create Public Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Showing details: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Membership</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>IDs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Personal Circles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Public Circles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friends of Friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Others</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Permissions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Anon Transfers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Discovery</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Share Category</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2681,82 +3040,30 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>CreateForumV2</name>
+    <name>CreateGroup</name>
     <message>
-        <source>Create new Forum</source>
+        <source>Create a Group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Name</source>
+        <source>Group Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>check peers you would like to share private publish key with</source>
+        <source>Enter a name for your group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Share Key With</source>
+        <source>Edit Group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Description</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Type:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Public - Anyone can read and publish (Shared Publish Key)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Key Sharing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Share Private Publish Key</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Allowed Messages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Authenticated Messages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Anonymous Messages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Contacts:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Please add a Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New Forum</source>
+        <source>Friends</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>CreateForumV2Msg</name>
+    <name>CreateGxsForumMsg</name>
     <message>
         <source>Post Forum Message</source>
         <translation type="unfinished"></translation>
@@ -2794,15 +3101,15 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Post Forum Msg</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Close</source>
+        <source>Start New Thread</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Paste full RetroShare Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste own certificate link</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2819,33 +3126,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Paste my certificate link</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>CreateGroup</name>
-    <message>
-        <source>Create a Group</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Group Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enter a name for your group</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit Group</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Friends</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3406,29 +3686,6 @@ you plug it in.</source>
     </message>
 </context>
 <context>
-    <name>EditForumV2Details</name>
-    <message>
-        <source>Forum Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit Forum Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Forum Info</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Forum Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Forum Description</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>ExampleDialog</name>
     <message>
         <source>#</source>
@@ -3888,53 +4145,6 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>ForumV2Details</name>
-    <message>
-        <source>Forum Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Forum Info</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Forum Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Popularity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Last Post</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Forum ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Forum Description</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Allowed Messages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Authenticated Messages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Anonymous Messages</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>ForumsDialog</name>
     <message>
         <source>Display</source>
@@ -4197,257 +4407,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ForumsV2Dialog</name>
-    <message>
-        <source>Display</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Forum:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Last Post</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Threaded View</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Flat View</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Title</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Author</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Signed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Thread:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Previous Thread</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Next Thread</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Download all files</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Next unread</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Search forums</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Content</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Reply Message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start new Thread for Selected Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Loading</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Print</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PrintPreview</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Subscribed Forums</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Popular Forums</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Other Forums</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Subscribe to Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unsubscribe to Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show Forum Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit Forum Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Share Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Restore Publish Rights for Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mark all as read</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mark all as unread</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Reply</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start New Thread</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Reply to Author</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Expand all</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Collapse all</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mark as read</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>with children</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mark as unread</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>AUTHD</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>[ ... Missing Message ... ]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Placeholder for missing Message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No Forum Selected!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Original Message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>From</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sent</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Subject</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>On %1, %2 wrote:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You cant reply to an Anonymous Author</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Anonymous</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>signed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>none</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Forums</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You can&apos;t reply to a non-existant Message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>My Forums</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5695,6 +5654,436 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>GxsCommentTreeWidget</name>
+    <message>
+        <source>Reply to Comment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Submit Comment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Anonymous</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GxsForumGroupDialog</name>
+    <message>
+        <source>Create New Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GxsForumThreadWidget</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start new Thread for Selected Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search forums</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Last Post</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Threaded View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flat View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Title</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Author</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Signed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reply Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Previous Thread</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Next Thread</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Download all files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Next unread</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reply</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start New Thread</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reply to Author</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Expand all</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Collapse all</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mark as read</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>with children</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mark as unread</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy RetroShare Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Anonymous</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>signed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>none</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[ ... Missing Message ... ]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>By</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Forum Selected!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You cant reply to a non-existant Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You cant reply to an Anonymous Author</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GxsForumsDialog</name>
+    <message>
+        <source>Forums</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Display</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PrintPreview</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your Forums</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subscribed Forums</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Popular Forums</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other Forums</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subscribe to Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unsubscribe to Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Forum Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Forum Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Share Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restore Publish Rights for Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy RetroShare Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mark all as read</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mark all as unread</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>AUTHD</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Original Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>From</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subject</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GxsForumsFillThread</name>
+    <message>
+        <source>Waiting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Retrieving</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GxsGroupDialog</name>
+    <message>
+        <source>Create New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Icon</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Key recipients can publish to restricted-type Wiki Group, and can view and publish  for private-type channels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Share Publish Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>check peers you would like to share private publish key with</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Share Key With</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Message Distribution</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Public</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restricted to Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Only For Your Friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Some Friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Another Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Family?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enemies</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Publish Signatures</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Thread</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Required</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Encrypted Msgs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Personal Signatures</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PGP Required</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Signature Required</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>If No Publish Signature</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Comments</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Allow Comments</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Comments</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Contacts:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please add a Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load Group Logo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Wiki Moderators</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select Wiki Moderators</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>HashBox</name>
     <message>
         <source>Drop file error.</source>
@@ -6031,19 +6420,23 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>PGP Name</source>
+        <source>Identities</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>PGP Email</source>
+        <source>GPG Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>PGP Id</source>
+        <source>GPG Email</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>PGP Hash</source>
+        <source>GPG Id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GPG Hash</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8033,101 +8426,32 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
 </context>
 <context>
-    <name>PhotoAddDialog</name>
+    <name>PhotoCommentItem</name>
     <message>
-        <source>Share Options</source>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PhotoDialog</name>
+    <message>
+        <source>PhotoShare</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Public</source>
+        <source>Photo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>All Friends</source>
+        <source>TextLabel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Restricted</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>N/A</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>University Friends</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Family</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This List Contains</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>All your Groups</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Resize Images (&lt; 1Mb)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Resize Images (&lt; 10Mb)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Send Original Images</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No Comments Allowed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Authenticated Comments</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Any Comments Allowed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Publish with XXX Key</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Album Thumbnail</source>
+        <source>Comment</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Summary</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Category:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Travel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Holiday</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Friends</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Work</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Random</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8139,7 +8463,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Album Title:</source>
+        <source>Photo Title:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8147,144 +8471,61 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Delete Album</source>
+        <source>...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Edit Album Details</source>
+        <source>Add Comment</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>HELP:   Drag &amp; Drop to insert, and re-order pictures. Click on a picture to edit details below.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Delete Photo</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit Photo Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;&lt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&gt;&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Publish Album</source>
+        <source>Write a comment...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>PhotoDetailsDialog</name>
+    <name>PhotoItem</name>
     <message>
-        <source>Album Description</source>
+        <source>Form</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Album Name:</source>
+        <source>TextLabel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Category:</source>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Photo Title :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Travel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Holiday</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Friends</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Family</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Work</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Random</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Thumbnail
-Here
-Dummy
-Text
-1
-2
-3
-...................................</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Caption:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Photographer:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Where:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Other 1:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>HashTags:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Update Details</source>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Photographer :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>PhotoDialog</name>
+    <name>PhotoShare</name>
     <message>
-        <source>Rating</source>
+        <source>Form</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Filter</source>
+        <source>Create Album</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Source</source>
+        <source>View Album</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Category</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>[ - ]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>[ + ]</source>
+        <source>Subscribe To Album</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8292,11 +8533,19 @@ Text
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Edit Album</source>
+        <source>My Albums</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New Album</source>
+        <source>Subscribed Albums</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Shared Albums</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>View Photo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8306,29 +8555,6 @@ Text
     <message>
         <source>Please select an album before
 requesting to edit it!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cannot Edit Someone Else&apos;s Album</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>PhotoItem</name>
-    <message>
-        <source>Album:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>From</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Status</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Date</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8351,15 +8577,27 @@ requesting to edit it!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Stop/Run</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&gt;&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start Slide Show</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stop Slide Show</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8586,48 +8824,120 @@ malicious behavior of crafted plugins.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Today</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Yesterday</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This Week</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This Month</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This Year</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Showing 1-100</source>
+        <source>1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Prev</source>
+        <source>/\</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Next</source>
+        <source>score</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>\/</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Title this is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title dont you think? yes it is and should wrap around I hope</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>From</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Site</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Author</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Points</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PostedCreateCommentDialog</name>
+    <message>
+        <source>Make Comment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Comment&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PostedCreatePostDialog</name>
+    <message>
+        <source>Create Post</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Title&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Link&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PostedDialog</name>
+    <message>
+        <source>Posted Links</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PostedGroupDialog</name>
+    <message>
+        <source>Create New Posted Topic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Posted Topic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Posted Topic</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>PostedItem</name>
-    <message>
-        <source>1</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>/\</source>
         <translation type="unfinished"></translation>
@@ -8658,6 +8968,18 @@ malicious behavior of crafted plugins.</source>
     </message>
     <message>
         <source>This is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title don&apos;t you think? Yes it is and should wrap around I hope</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;#&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; Comments:  0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8700,10 +9022,6 @@ malicious behavior of crafted plugins.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New Link Group</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Submit Post</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8736,51 +9054,11 @@ malicious behavior of crafted plugins.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Subscribe to Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unsubscribe to Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show Forum Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit Forum Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Share Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Restore Publish Rights for Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mark all as read</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mark all as unread</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>AUTHD</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>My Topics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Topic</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9321,6 +9599,11 @@ and open the Make Friend Wizard.
         <source>Initialization failed. Wrong or missing installation of PGP.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Warning: forbidden characters found in filenames. 
+Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replaced by &apos;_&apos;.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QuickStartWizard</name>
@@ -9645,6 +9928,16 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bad filenames have been cleaned</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Some filenames or directory names contained forbidden characters.
+Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replaced by &apos;_&apos;.
+ Concerned files are listed in red.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11779,14 +12072,6 @@ Try to be patient!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Page Modification</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>By</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&lt;&lt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11795,15 +12080,7 @@ Try to be patient!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;&lt; Mod</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mod &gt;&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -11815,16 +12092,24 @@ Try to be patient!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Delete</source>
+        <source>Wiki Pages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Republish</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>WikiEditDialog</name>
-    <message>
-        <source>Wiki Page</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Wiki Group:</source>
         <translation type="unfinished"></translation>
@@ -11834,15 +12119,7 @@ Try to be patient!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Edit ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Previous Version</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Prev ID</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -11855,6 +12132,93 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Submit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Page Edit History</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Obsolete Edits</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chose for Merge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Merge for Republish (TODO)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Publish Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>By</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PageId</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>\/</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>/\</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Edit History</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preview</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide Edit History</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create New Wiki Page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Republish</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Wiki Page</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WikiGroupDialog</name>
+    <message>
+        <source>Create New Wiki Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wiki Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Wiki Group</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
