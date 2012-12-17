@@ -23,7 +23,7 @@
  *
  */
 
-#include "ft/ftdata.h"
+#include "ftdata_test.h"
 
 /******* Pair of Send/Recv (Only need to handle Send side) ******/
 ftDataSendPair::ftDataSendPair(ftDataRecv *recv)

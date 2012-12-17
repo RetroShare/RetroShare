@@ -41,6 +41,7 @@
 #include "ft/ftfilesearch.h"
 
 #include "ftdata_test.h"
+#include "ftsearch_test.h"
 
 void	do_random_server_test(ftDataMultiplex *mplex, ftExtraList *eList, std::list<std::string> &files);
 

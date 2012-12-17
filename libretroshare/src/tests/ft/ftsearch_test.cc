@@ -1,6 +1,6 @@
 #include "ftsearch_test.h"
 
-bool 	ftSearchDummy::search(std::string /*hash*/, FileSearchFlags hintflags, FileInfo &/*info*/) const
+bool 	ftSearchDummy::search(const std::string& /*hash*/, FileSearchFlags hintflags, FileInfo &/*info*/) const
 {
 	/* remove unused parameter warnings */
 	(void) hintflags;
