@@ -36,6 +36,11 @@ public:
 
 	virtual int processSystemStatus(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg);
 	virtual int processSystemQuit(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg);
+	virtual int processSystemExternalAccess(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg);
+
+// NASTY GLOBAL VARIABLE HACK - NEED TO THINK OF A BETTER SYSTEM.
+static uint16_t mExtPort;
+
 };
 
 

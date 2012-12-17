@@ -38,6 +38,8 @@ class RequestSystemStatus;
 class ResponseSystemStatus;
 class RequestSystemQuit;
 class ResponseSystemQuit;
+class RequestSystemExternalAccess;
+class ResponseSystemExternalAccess;
 
 enum ResponseSystemStatus_NetCode {
   ResponseSystemStatus_NetCode_BAD_UNKNOWN = 0,
@@ -86,11 +88,12 @@ inline bool RequestSystemQuit_QuitCode_Parse(
 }
 enum RequestMsgIds {
   MsgId_RequestSystemStatus = 1,
-  MsgId_RequestSystemQuit = 2
+  MsgId_RequestSystemQuit = 2,
+  MsgId_RequestSystemExternalAccess = 3
 };
 bool RequestMsgIds_IsValid(int value);
 const RequestMsgIds RequestMsgIds_MIN = MsgId_RequestSystemStatus;
-const RequestMsgIds RequestMsgIds_MAX = MsgId_RequestSystemQuit;
+const RequestMsgIds RequestMsgIds_MAX = MsgId_RequestSystemExternalAccess;
 const int RequestMsgIds_ARRAYSIZE = RequestMsgIds_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* RequestMsgIds_descriptor();
@@ -105,11 +108,12 @@ inline bool RequestMsgIds_Parse(
 }
 enum ResponseMsgIds {
   MsgId_ResponseSystemStatus = 1,
-  MsgId_ResponseSystemQuit = 2
+  MsgId_ResponseSystemQuit = 2,
+  MsgId_ResponseSystemExternalAccess = 3
 };
 bool ResponseMsgIds_IsValid(int value);
 const ResponseMsgIds ResponseMsgIds_MIN = MsgId_ResponseSystemStatus;
-const ResponseMsgIds ResponseMsgIds_MAX = MsgId_ResponseSystemQuit;
+const ResponseMsgIds ResponseMsgIds_MAX = MsgId_ResponseSystemExternalAccess;
 const int ResponseMsgIds_ARRAYSIZE = ResponseMsgIds_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* ResponseMsgIds_descriptor();
@@ -538,6 +542,185 @@ class ResponseSystemQuit : public ::google::protobuf::Message {
   void InitAsDefaultInstance();
   static ResponseSystemQuit* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class RequestSystemExternalAccess : public ::google::protobuf::Message {
+ public:
+  RequestSystemExternalAccess();
+  virtual ~RequestSystemExternalAccess();
+  
+  RequestSystemExternalAccess(const RequestSystemExternalAccess& from);
+  
+  inline RequestSystemExternalAccess& operator=(const RequestSystemExternalAccess& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const RequestSystemExternalAccess& default_instance();
+  
+  void Swap(RequestSystemExternalAccess* other);
+  
+  // implements Message ----------------------------------------------
+  
+  RequestSystemExternalAccess* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const RequestSystemExternalAccess& from);
+  void MergeFrom(const RequestSystemExternalAccess& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // @@protoc_insertion_point(class_scope:rsctrl.system.RequestSystemExternalAccess)
+ private:
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[1];
+  
+  friend void  protobuf_AddDesc_system_2eproto();
+  friend void protobuf_AssignDesc_system_2eproto();
+  friend void protobuf_ShutdownFile_system_2eproto();
+  
+  void InitAsDefaultInstance();
+  static RequestSystemExternalAccess* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class ResponseSystemExternalAccess : public ::google::protobuf::Message {
+ public:
+  ResponseSystemExternalAccess();
+  virtual ~ResponseSystemExternalAccess();
+  
+  ResponseSystemExternalAccess(const ResponseSystemExternalAccess& from);
+  
+  inline ResponseSystemExternalAccess& operator=(const ResponseSystemExternalAccess& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const ResponseSystemExternalAccess& default_instance();
+  
+  void Swap(ResponseSystemExternalAccess* other);
+  
+  // implements Message ----------------------------------------------
+  
+  ResponseSystemExternalAccess* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const ResponseSystemExternalAccess& from);
+  void MergeFrom(const ResponseSystemExternalAccess& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required .rsctrl.core.Status status = 1;
+  inline bool has_status() const;
+  inline void clear_status();
+  static const int kStatusFieldNumber = 1;
+  inline const ::rsctrl::core::Status& status() const;
+  inline ::rsctrl::core::Status* mutable_status();
+  inline ::rsctrl::core::Status* release_status();
+  
+  // required uint32 ext_port = 2;
+  inline bool has_ext_port() const;
+  inline void clear_ext_port();
+  static const int kExtPortFieldNumber = 2;
+  inline ::google::protobuf::uint32 ext_port() const;
+  inline void set_ext_port(::google::protobuf::uint32 value);
+  
+  // required string dht_key = 3;
+  inline bool has_dht_key() const;
+  inline void clear_dht_key();
+  static const int kDhtKeyFieldNumber = 3;
+  inline const ::std::string& dht_key() const;
+  inline void set_dht_key(const ::std::string& value);
+  inline void set_dht_key(const char* value);
+  inline void set_dht_key(const char* value, size_t size);
+  inline ::std::string* mutable_dht_key();
+  inline ::std::string* release_dht_key();
+  
+  // @@protoc_insertion_point(class_scope:rsctrl.system.ResponseSystemExternalAccess)
+ private:
+  inline void set_has_status();
+  inline void clear_has_status();
+  inline void set_has_ext_port();
+  inline void clear_has_ext_port();
+  inline void set_has_dht_key();
+  inline void clear_has_dht_key();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::rsctrl::core::Status* status_;
+  ::std::string* dht_key_;
+  ::google::protobuf::uint32 ext_port_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_system_2eproto();
+  friend void protobuf_AssignDesc_system_2eproto();
+  friend void protobuf_ShutdownFile_system_2eproto();
+  
+  void InitAsDefaultInstance();
+  static ResponseSystemExternalAccess* default_instance_;
+};
 // ===================================================================
 
 
@@ -732,6 +915,123 @@ inline ::rsctrl::core::Status* ResponseSystemQuit::release_status() {
   ::rsctrl::core::Status* temp = status_;
   status_ = NULL;
   return temp;
+}
+
+// -------------------------------------------------------------------
+
+// RequestSystemExternalAccess
+
+// -------------------------------------------------------------------
+
+// ResponseSystemExternalAccess
+
+// required .rsctrl.core.Status status = 1;
+inline bool ResponseSystemExternalAccess::has_status() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void ResponseSystemExternalAccess::set_has_status() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void ResponseSystemExternalAccess::clear_has_status() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void ResponseSystemExternalAccess::clear_status() {
+  if (status_ != NULL) status_->::rsctrl::core::Status::Clear();
+  clear_has_status();
+}
+inline const ::rsctrl::core::Status& ResponseSystemExternalAccess::status() const {
+  return status_ != NULL ? *status_ : *default_instance_->status_;
+}
+inline ::rsctrl::core::Status* ResponseSystemExternalAccess::mutable_status() {
+  set_has_status();
+  if (status_ == NULL) status_ = new ::rsctrl::core::Status;
+  return status_;
+}
+inline ::rsctrl::core::Status* ResponseSystemExternalAccess::release_status() {
+  clear_has_status();
+  ::rsctrl::core::Status* temp = status_;
+  status_ = NULL;
+  return temp;
+}
+
+// required uint32 ext_port = 2;
+inline bool ResponseSystemExternalAccess::has_ext_port() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void ResponseSystemExternalAccess::set_has_ext_port() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void ResponseSystemExternalAccess::clear_has_ext_port() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void ResponseSystemExternalAccess::clear_ext_port() {
+  ext_port_ = 0u;
+  clear_has_ext_port();
+}
+inline ::google::protobuf::uint32 ResponseSystemExternalAccess::ext_port() const {
+  return ext_port_;
+}
+inline void ResponseSystemExternalAccess::set_ext_port(::google::protobuf::uint32 value) {
+  set_has_ext_port();
+  ext_port_ = value;
+}
+
+// required string dht_key = 3;
+inline bool ResponseSystemExternalAccess::has_dht_key() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void ResponseSystemExternalAccess::set_has_dht_key() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void ResponseSystemExternalAccess::clear_has_dht_key() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void ResponseSystemExternalAccess::clear_dht_key() {
+  if (dht_key_ != &::google::protobuf::internal::kEmptyString) {
+    dht_key_->clear();
+  }
+  clear_has_dht_key();
+}
+inline const ::std::string& ResponseSystemExternalAccess::dht_key() const {
+  return *dht_key_;
+}
+inline void ResponseSystemExternalAccess::set_dht_key(const ::std::string& value) {
+  set_has_dht_key();
+  if (dht_key_ == &::google::protobuf::internal::kEmptyString) {
+    dht_key_ = new ::std::string;
+  }
+  dht_key_->assign(value);
+}
+inline void ResponseSystemExternalAccess::set_dht_key(const char* value) {
+  set_has_dht_key();
+  if (dht_key_ == &::google::protobuf::internal::kEmptyString) {
+    dht_key_ = new ::std::string;
+  }
+  dht_key_->assign(value);
+}
+inline void ResponseSystemExternalAccess::set_dht_key(const char* value, size_t size) {
+  set_has_dht_key();
+  if (dht_key_ == &::google::protobuf::internal::kEmptyString) {
+    dht_key_ = new ::std::string;
+  }
+  dht_key_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* ResponseSystemExternalAccess::mutable_dht_key() {
+  set_has_dht_key();
+  if (dht_key_ == &::google::protobuf::internal::kEmptyString) {
+    dht_key_ = new ::std::string;
+  }
+  return dht_key_;
+}
+inline ::std::string* ResponseSystemExternalAccess::release_dht_key() {
+  clear_has_dht_key();
+  if (dht_key_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = dht_key_;
+    dht_key_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
 }
 
 

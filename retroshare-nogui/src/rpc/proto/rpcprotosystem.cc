@@ -27,9 +27,13 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsconfig.h>
 #include <retroshare/rsiface.h>
+#include <retroshare/rsdht.h>
 
 #include <iostream>
 #include <algorithm>
+
+// NASTY GLOBAL VARIABLE HACK - NEED TO THINK OF A BETTER SYSTEM.
+uint16_t RpcProtoSystem::mExtPort = 0;
 
 RpcProtoSystem::RpcProtoSystem(uint32_t serviceId)
 	:RpcQueueService(serviceId)
@@ -91,6 +95,9 @@ int RpcProtoSystem::processMsg(uint32_t chan_id, uint32_t msg_id, uint32_t req_i
 			processSystemQuit(chan_id, msg_id, req_id, msg);
 			break;
 #endif
+		case rsctrl::system::MsgId_RequestSystemExternalAccess:
+			processSystemExternalAccess(chan_id, msg_id, req_id, msg);
+			break;
 		default:
 			std::cerr << "RpcProtoSystem::processMsg() ERROR should never get here";
 			std::cerr << std::endl;
@@ -276,6 +283,67 @@ int RpcProtoSystem::processSystemQuit(uint32_t chan_id, uint32_t msg_id, uint32_
 	// Correctly Name Message.
 	uint32_t out_msg_id = constructMsgId(rsctrl::core::CORE, rsctrl::core::SYSTEM, 
 				rsctrl::system::MsgId_ResponseSystemQuit, true);
+
+	// queue it.
+	queueResponse(chan_id, out_msg_id, req_id, outmsg);
+
+	return 1;
+}
+
+
+int RpcProtoSystem::processSystemExternalAccess(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg)
+{
+	std::cerr << "RpcProtoSystem::processSystemExternalAccess()";
+	std::cerr << std::endl;
+
+	// parse msg.
+	rsctrl::system::RequestSystemExternalAccess req;
+	if (!req.ParseFromString(msg))
+	{
+		std::cerr << "RpcProtoSystem::processSystemExternalAccess() ERROR ParseFromString()";
+		std::cerr << std::endl;
+		return 0;
+	}
+
+	// NO Options... so go straight to answer.
+	// response.
+	rsctrl::system::ResponseSystemExternalAccess resp;
+	bool success = true;
+
+
+	std::string dhtKey;
+	if (!rsDht->getOwnDhtId(dhtKey))
+	{
+		success = false;
+	}
+	// have to set something anyway!.
+	resp.set_dht_key(dhtKey);
+        // NASTY GLOBAL VARIABLE HACK - NEED TO THINK OF A BETTER SYSTEM.
+        resp.set_ext_port(mExtPort);
+
+        if (success)
+	{
+		rsctrl::core::Status *status = resp.mutable_status();
+		status->set_code(rsctrl::core::Status::SUCCESS);
+	}
+	else
+	{
+		rsctrl::core::Status *status = resp.mutable_status();
+		status->set_code(rsctrl::core::Status::FAILED);
+		status->set_msg("Unknown ERROR");
+	}
+
+	std::string outmsg;
+	if (!resp.SerializeToString(&outmsg))
+	{
+		std::cerr << "RpcProtoSystem::processSystemExternalAccess() ERROR SerialiseToString()";
+		std::cerr << std::endl;
+		return 0;
+	}
+	
+	// Correctly Name Message.
+	uint32_t out_msg_id = constructMsgId(rsctrl::core::CORE, rsctrl::core::SYSTEM, 
+				rsctrl::system::MsgId_ResponseSystemExternalAccess, true);
 
 	// queue it.
 	queueResponse(chan_id, out_msg_id, req_id, outmsg);

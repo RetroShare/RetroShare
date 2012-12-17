@@ -9,11 +9,13 @@ import "core.proto";
 enum RequestMsgIds {
     MsgId_RequestSystemStatus = 1;
     MsgId_RequestSystemQuit   = 2;
+    MsgId_RequestSystemExternalAccess = 3;
 }
 
 enum ResponseMsgIds {
     MsgId_ResponseSystemStatus = 1;
     MsgId_ResponseSystemQuit   = 2;
+    MsgId_ResponseSystemExternalAccess = 3;
 }
 
 ///////////////////////////////////////////////////////////////
@@ -71,6 +73,24 @@ message ResponseSystemQuit {
 
   // Status of response.
   required rsctrl.core.Status status = 1;
+}
+
+
+///////////////////////////////////////////////////////////////
+
+// REQUEST: RequestSystemExternalAccess
+message RequestSystemExternalAccess {
+  // Nothing here?
+}
+
+// RESPONSE: ResponseSystemExternalAccess
+message ResponseSystemExternalAccess {
+
+  // Status of response.
+  required rsctrl.core.Status status = 1;
+
+  required uint32 ext_port		= 2;
+  required string dht_key		= 3;
 }
 
 ///////////////////////////////////////////////////////////////

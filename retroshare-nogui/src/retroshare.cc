@@ -48,6 +48,9 @@
 
 #include "rpc/rpcsetup.h"
 
+// NASTY GLOBAL VARIABLE HACK - NEED TO THINK OF A BETTER SYSTEM.
+#include "rpc/proto/rpcprotosystem.h"
+
 #endif
 
 /* Basic instructions for running libretroshare as background thread.
@@ -108,7 +111,10 @@ int main(int argc, char **argv)
 	std::string sshRsaFile = "";
 	std::string sshPortStr = "7022";
 
-	while((c = getopt(argc, argv,"ChTL:P:K:GS::")) != -1)
+	uint16_t extPort = 0;
+	bool     extPortSet = false;
+
+	while((c = getopt(argc, argv,"ChTL:P:K:GS::E:")) != -1)
 	{
 		switch(c)
 		{
@@ -122,6 +128,11 @@ int main(int argc, char **argv)
 				{
 					sshPortStr = optarg; // optional.
 				}
+				strictCheck = false;
+				break;
+			case 'E':
+				extPort = atoi(optarg);
+				extPortSet = true;
 				strictCheck = false;
 				break;
 			case 'H':
@@ -158,6 +169,7 @@ int main(int argc, char **argv)
 				std::cerr << "\t-G                  Generate a Password Hash for SSH Server" << std::endl;
 				std::cerr << "\t-T                  Enable Terminal Interface" << std::endl;
 				std::cerr << "\t-S [port]           Enable SSH Server, optionally specify port" << std::endl;
+				std::cerr << "\t-E <port>           Specify Alternative External Port (provided to Clients)" << std::endl;
 				std::cerr << "\t-L <user>           Specify SSH login user (default:user)" << std::endl;
 				std::cerr << "\t-P <pwdhash>        Enable SSH login via Password" << std::endl;
 				std::cerr << "\t-C                  Enable RPC Protocol (requires -S too)" << std::endl;
@@ -364,6 +376,13 @@ int main(int argc, char **argv)
         		ssh->adduserpwdhash(sshUser, sshPwdHash);
 		}
 			
+		if (!extPortSet)
+		{
+			extPort = atoi(sshPortStr.c_str());
+		}
+
+		// NASTY GLOBAL VARIABLE HACK - NEED TO THINK OF A BETTER SYSTEM.
+		RpcProtoSystem::mExtPort = extPort;
 	}
 
 

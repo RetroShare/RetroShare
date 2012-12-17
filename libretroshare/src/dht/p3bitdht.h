@@ -168,6 +168,8 @@ virtual std::string getUdpAddressString();
 virtual void    getDhtRates(float &read, float &write);
 virtual void    getRelayRates(float &read, float &write, float &relay);
 
+virtual bool    getOwnDhtId(std::string &ownDhtId);
+
 /***********************************************************************************************
  ********** External RsDHT Interface (defined in libretroshare/src/retroshare/rsdht.h) *********
 ************************************************************************************************/

@@ -32,6 +32,12 @@ const ::google::protobuf::EnumDescriptor* RequestSystemQuit_QuitCode_descriptor_
 const ::google::protobuf::Descriptor* ResponseSystemQuit_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   ResponseSystemQuit_reflection_ = NULL;
+const ::google::protobuf::Descriptor* RequestSystemExternalAccess_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  RequestSystemExternalAccess_reflection_ = NULL;
+const ::google::protobuf::Descriptor* ResponseSystemExternalAccess_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  ResponseSystemExternalAccess_reflection_ = NULL;
 const ::google::protobuf::EnumDescriptor* RequestMsgIds_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* ResponseMsgIds_descriptor_ = NULL;
 
@@ -109,6 +115,37 @@ void protobuf_AssignDesc_system_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(ResponseSystemQuit));
+  RequestSystemExternalAccess_descriptor_ = file->message_type(4);
+  static const int RequestSystemExternalAccess_offsets_[1] = {
+  };
+  RequestSystemExternalAccess_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      RequestSystemExternalAccess_descriptor_,
+      RequestSystemExternalAccess::default_instance_,
+      RequestSystemExternalAccess_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestSystemExternalAccess, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestSystemExternalAccess, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(RequestSystemExternalAccess));
+  ResponseSystemExternalAccess_descriptor_ = file->message_type(5);
+  static const int ResponseSystemExternalAccess_offsets_[3] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseSystemExternalAccess, status_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseSystemExternalAccess, ext_port_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseSystemExternalAccess, dht_key_),
+  };
+  ResponseSystemExternalAccess_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      ResponseSystemExternalAccess_descriptor_,
+      ResponseSystemExternalAccess::default_instance_,
+      ResponseSystemExternalAccess_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseSystemExternalAccess, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseSystemExternalAccess, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(ResponseSystemExternalAccess));
   RequestMsgIds_descriptor_ = file->enum_type(0);
   ResponseMsgIds_descriptor_ = file->enum_type(1);
 }
@@ -131,6 +168,10 @@ void protobuf_RegisterTypes(const ::std::string&) {
     RequestSystemQuit_descriptor_, &RequestSystemQuit::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     ResponseSystemQuit_descriptor_, &ResponseSystemQuit::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    RequestSystemExternalAccess_descriptor_, &RequestSystemExternalAccess::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    ResponseSystemExternalAccess_descriptor_, &ResponseSystemExternalAccess::default_instance());
 }
 
 }  // namespace
@@ -144,6 +185,10 @@ void protobuf_ShutdownFile_system_2eproto() {
   delete RequestSystemQuit_reflection_;
   delete ResponseSystemQuit::default_instance_;
   delete ResponseSystemQuit_reflection_;
+  delete RequestSystemExternalAccess::default_instance_;
+  delete RequestSystemExternalAccess_reflection_;
+  delete ResponseSystemExternalAccess::default_instance_;
+  delete ResponseSystemExternalAccess_reflection_;
 }
 
 void protobuf_AddDesc_system_2eproto() {
@@ -169,21 +214,31 @@ void protobuf_AddDesc_system_2eproto() {
     "(\0162).rsctrl.system.RequestSystemQuit.Qui"
     "tCode\".\n\010QuitCode\022\021\n\rCLOSE_CHANNEL\020\001\022\017\n\013"
     "SHUTDOWN_RS\020\002\"9\n\022ResponseSystemQuit\022#\n\006s"
-    "tatus\030\001 \002(\0132\023.rsctrl.core.Status*K\n\rRequ"
-    "estMsgIds\022\035\n\031MsgId_RequestSystemStatus\020\001"
-    "\022\033\n\027MsgId_RequestSystemQuit\020\002*N\n\016Respons"
-    "eMsgIds\022\036\n\032MsgId_ResponseSystemStatus\020\001\022"
-    "\034\n\030MsgId_ResponseSystemQuit\020\002", 789);
+    "tatus\030\001 \002(\0132\023.rsctrl.core.Status\"\035\n\033Requ"
+    "estSystemExternalAccess\"f\n\034ResponseSyste"
+    "mExternalAccess\022#\n\006status\030\001 \002(\0132\023.rsctrl"
+    ".core.Status\022\020\n\010ext_port\030\002 \002(\r\022\017\n\007dht_ke"
+    "y\030\003 \002(\t*r\n\rRequestMsgIds\022\035\n\031MsgId_Reques"
+    "tSystemStatus\020\001\022\033\n\027MsgId_RequestSystemQu"
+    "it\020\002\022%\n!MsgId_RequestSystemExternalAcces"
+    "s\020\003*v\n\016ResponseMsgIds\022\036\n\032MsgId_ResponseS"
+    "ystemStatus\020\001\022\034\n\030MsgId_ResponseSystemQui"
+    "t\020\002\022&\n\"MsgId_ResponseSystemExternalAcces"
+    "s\020\003", 1003);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "system.proto", &protobuf_RegisterTypes);
   RequestSystemStatus::default_instance_ = new RequestSystemStatus();
   ResponseSystemStatus::default_instance_ = new ResponseSystemStatus();
   RequestSystemQuit::default_instance_ = new RequestSystemQuit();
   ResponseSystemQuit::default_instance_ = new ResponseSystemQuit();
+  RequestSystemExternalAccess::default_instance_ = new RequestSystemExternalAccess();
+  ResponseSystemExternalAccess::default_instance_ = new ResponseSystemExternalAccess();
   RequestSystemStatus::default_instance_->InitAsDefaultInstance();
   ResponseSystemStatus::default_instance_->InitAsDefaultInstance();
   RequestSystemQuit::default_instance_->InitAsDefaultInstance();
   ResponseSystemQuit::default_instance_->InitAsDefaultInstance();
+  RequestSystemExternalAccess::default_instance_->InitAsDefaultInstance();
+  ResponseSystemExternalAccess::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_system_2eproto);
 }
 
@@ -202,6 +257,7 @@ bool RequestMsgIds_IsValid(int value) {
   switch(value) {
     case 1:
     case 2:
+    case 3:
       return true;
     default:
       return false;
@@ -216,6 +272,7 @@ bool ResponseMsgIds_IsValid(int value) {
   switch(value) {
     case 1:
     case 2:
+    case 3:
       return true;
     default:
       return false;
@@ -1250,6 +1307,474 @@ void ResponseSystemQuit::Swap(ResponseSystemQuit* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = ResponseSystemQuit_descriptor_;
   metadata.reflection = ResponseSystemQuit_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+#endif  // !_MSC_VER
+
+RequestSystemExternalAccess::RequestSystemExternalAccess()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void RequestSystemExternalAccess::InitAsDefaultInstance() {
+}
+
+RequestSystemExternalAccess::RequestSystemExternalAccess(const RequestSystemExternalAccess& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void RequestSystemExternalAccess::SharedCtor() {
+  _cached_size_ = 0;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+RequestSystemExternalAccess::~RequestSystemExternalAccess() {
+  SharedDtor();
+}
+
+void RequestSystemExternalAccess::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void RequestSystemExternalAccess::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* RequestSystemExternalAccess::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return RequestSystemExternalAccess_descriptor_;
+}
+
+const RequestSystemExternalAccess& RequestSystemExternalAccess::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_system_2eproto();  return *default_instance_;
+}
+
+RequestSystemExternalAccess* RequestSystemExternalAccess::default_instance_ = NULL;
+
+RequestSystemExternalAccess* RequestSystemExternalAccess::New() const {
+  return new RequestSystemExternalAccess;
+}
+
+void RequestSystemExternalAccess::Clear() {
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool RequestSystemExternalAccess::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+        ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+      return true;
+    }
+    DO_(::google::protobuf::internal::WireFormat::SkipField(
+          input, tag, mutable_unknown_fields()));
+  }
+  return true;
+#undef DO_
+}
+
+void RequestSystemExternalAccess::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* RequestSystemExternalAccess::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int RequestSystemExternalAccess::ByteSize() const {
+  int total_size = 0;
+  
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void RequestSystemExternalAccess::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const RequestSystemExternalAccess* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const RequestSystemExternalAccess*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void RequestSystemExternalAccess::MergeFrom(const RequestSystemExternalAccess& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void RequestSystemExternalAccess::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void RequestSystemExternalAccess::CopyFrom(const RequestSystemExternalAccess& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool RequestSystemExternalAccess::IsInitialized() const {
+  
+  return true;
+}
+
+void RequestSystemExternalAccess::Swap(RequestSystemExternalAccess* other) {
+  if (other != this) {
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata RequestSystemExternalAccess::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = RequestSystemExternalAccess_descriptor_;
+  metadata.reflection = RequestSystemExternalAccess_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int ResponseSystemExternalAccess::kStatusFieldNumber;
+const int ResponseSystemExternalAccess::kExtPortFieldNumber;
+const int ResponseSystemExternalAccess::kDhtKeyFieldNumber;
+#endif  // !_MSC_VER
+
+ResponseSystemExternalAccess::ResponseSystemExternalAccess()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void ResponseSystemExternalAccess::InitAsDefaultInstance() {
+  status_ = const_cast< ::rsctrl::core::Status*>(&::rsctrl::core::Status::default_instance());
+}
+
+ResponseSystemExternalAccess::ResponseSystemExternalAccess(const ResponseSystemExternalAccess& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void ResponseSystemExternalAccess::SharedCtor() {
+  _cached_size_ = 0;
+  status_ = NULL;
+  ext_port_ = 0u;
+  dht_key_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+ResponseSystemExternalAccess::~ResponseSystemExternalAccess() {
+  SharedDtor();
+}
+
+void ResponseSystemExternalAccess::SharedDtor() {
+  if (dht_key_ != &::google::protobuf::internal::kEmptyString) {
+    delete dht_key_;
+  }
+  if (this != default_instance_) {
+    delete status_;
+  }
+}
+
+void ResponseSystemExternalAccess::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* ResponseSystemExternalAccess::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return ResponseSystemExternalAccess_descriptor_;
+}
+
+const ResponseSystemExternalAccess& ResponseSystemExternalAccess::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_system_2eproto();  return *default_instance_;
+}
+
+ResponseSystemExternalAccess* ResponseSystemExternalAccess::default_instance_ = NULL;
+
+ResponseSystemExternalAccess* ResponseSystemExternalAccess::New() const {
+  return new ResponseSystemExternalAccess;
+}
+
+void ResponseSystemExternalAccess::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (has_status()) {
+      if (status_ != NULL) status_->::rsctrl::core::Status::Clear();
+    }
+    ext_port_ = 0u;
+    if (has_dht_key()) {
+      if (dht_key_ != &::google::protobuf::internal::kEmptyString) {
+        dht_key_->clear();
+      }
+    }
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool ResponseSystemExternalAccess::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required .rsctrl.core.Status status = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_status()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(16)) goto parse_ext_port;
+        break;
+      }
+      
+      // required uint32 ext_port = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_ext_port:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &ext_port_)));
+          set_has_ext_port();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(26)) goto parse_dht_key;
+        break;
+      }
+      
+      // required string dht_key = 3;
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_dht_key:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_dht_key()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->dht_key().data(), this->dht_key().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void ResponseSystemExternalAccess::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required .rsctrl.core.Status status = 1;
+  if (has_status()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, this->status(), output);
+  }
+  
+  // required uint32 ext_port = 2;
+  if (has_ext_port()) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->ext_port(), output);
+  }
+  
+  // required string dht_key = 3;
+  if (has_dht_key()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->dht_key().data(), this->dht_key().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      3, this->dht_key(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* ResponseSystemExternalAccess::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required .rsctrl.core.Status status = 1;
+  if (has_status()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        1, this->status(), target);
+  }
+  
+  // required uint32 ext_port = 2;
+  if (has_ext_port()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(2, this->ext_port(), target);
+  }
+  
+  // required string dht_key = 3;
+  if (has_dht_key()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->dht_key().data(), this->dht_key().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        3, this->dht_key(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int ResponseSystemExternalAccess::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required .rsctrl.core.Status status = 1;
+    if (has_status()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+          this->status());
+    }
+    
+    // required uint32 ext_port = 2;
+    if (has_ext_port()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
+          this->ext_port());
+    }
+    
+    // required string dht_key = 3;
+    if (has_dht_key()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->dht_key());
+    }
+    
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void ResponseSystemExternalAccess::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const ResponseSystemExternalAccess* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const ResponseSystemExternalAccess*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void ResponseSystemExternalAccess::MergeFrom(const ResponseSystemExternalAccess& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_status()) {
+      mutable_status()->::rsctrl::core::Status::MergeFrom(from.status());
+    }
+    if (from.has_ext_port()) {
+      set_ext_port(from.ext_port());
+    }
+    if (from.has_dht_key()) {
+      set_dht_key(from.dht_key());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void ResponseSystemExternalAccess::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void ResponseSystemExternalAccess::CopyFrom(const ResponseSystemExternalAccess& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool ResponseSystemExternalAccess::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
+  
+  if (has_status()) {
+    if (!this->status().IsInitialized()) return false;
+  }
+  return true;
+}
+
+void ResponseSystemExternalAccess::Swap(ResponseSystemExternalAccess* other) {
+  if (other != this) {
+    std::swap(status_, other->status_);
+    std::swap(ext_port_, other->ext_port_);
+    std::swap(dht_key_, other->dht_key_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata ResponseSystemExternalAccess::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = ResponseSystemExternalAccess_descriptor_;
+  metadata.reflection = ResponseSystemExternalAccess_reflection_;
   return metadata;
 }
 

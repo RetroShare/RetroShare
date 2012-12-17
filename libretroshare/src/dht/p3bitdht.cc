@@ -161,6 +161,13 @@ p3BitDht::~p3BitDht()
 }
 
 
+bool 	p3BitDht::getOwnDhtId(std::string &ownDhtId)
+{
+        bdStdPrintNodeId(ownDhtId, &(mOwnDhtId), false);
+	return true;
+}
+
+
 void    p3BitDht::setupConnectBits(UdpStunner *dhtStunner, UdpStunner *proxyStunner, UdpRelayReceiver  *relay)
 {
 	mDhtStunner = dhtStunner;

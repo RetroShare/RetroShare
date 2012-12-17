@@ -190,6 +190,9 @@ virtual	int	 setRelayMode(uint32_t mode) = 0;
 virtual int	getRelayAllowance(int  classIdx, uint32_t &count, uint32_t &bandwidth) = 0;
 virtual int	setRelayAllowance(int classIdx, uint32_t  count, uint32_t  bandwidth) = 0;
 
+	// So we can provide to clients.
+virtual bool    getOwnDhtId(std::string &ownDhtId) = 0;
+
 
 #if 0
 virtual std::string getPeerStatusString();
