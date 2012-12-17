@@ -1,9 +1,10 @@
 // COMPILE_LINE: g++ -o test_pgp_handler test_pgp_handler.cc -I../../../openpgpsdk/include  -I../ -L../lib -lretroshare ../../../libbitdht/src/lib/libbitdht.a ../../../openpgpsdk/lib/libops.a -lgnome-keyring -lupnp -lssl -lcrypto -lbz2
 //
+#include <string.h>
 #include <stdlib.h>
 #include <iostream>
 #include <pgp/pgphandler.h>
-#include "argstream.h"
+#include <common/argstream.h>
 
 static std::string passphrase_callback(void *data,const char *uid_info,const char *what,int prev_was_bad)
 {

@@ -28,14 +28,15 @@
  */
 
 #include "retroshare/rsfiles.h"
+#include "retroshare/rspeers.h"
 #include "ft/ftserver.h"
 
 #include "ft/ftextralist.h"
 #include "ft/ftdatamultiplex.h"
 #include "ft/ftfilesearch.h"
 
-#include "pqi/p3authmgr.h"
-#include "pqi/p3connmgr.h"
+//#include "pqi/p3authmgr.h"
+//#include "pqi/p3connmgr.h"
 
 #include "util/rsdebug.h"
 
@@ -123,7 +124,7 @@ int main(int argc, char **argv)
 		std::cerr << "Adding: " << argv[optind] << std::endl;
 
 		SharedDirInfo info ;
-		info.shareflags = RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_BROWSABLE ;
+		info.shareflags = DIR_FLAGS_PERMISSIONS_MASK;
 		info.filename = std::string(argv[optind]);
 		info.virtualname = info.filename ;
 
@@ -140,8 +141,8 @@ int main(int argc, char **argv)
 
 	std::list<std::string>::const_iterator it, jit;
 
-	std::list<pqiAuthDetails> baseFriendList, friendList;
-	std::list<pqiAuthDetails>::iterator fit;
+	std::list<RsPeerDetails> baseFriendList, friendList;
+	std::list<RsPeerDetails>::iterator fit;
 
 	P3Hub *testHub = new P3Hub(0,NULL);
 	testHub->start();
@@ -149,12 +150,12 @@ int main(int argc, char **argv)
 	/* Setup Base Friend Info */
 	for(it = peerIds.begin(); it != peerIds.end(); it++)
 	{
-		pqiAuthDetails pad;
+		RsPeerDetails pad;
 		pad.id = *it;
 		pad.name = *it;
 		pad.trustLvl = 5;
 		pad.ownsign = true;
-		pad.trusted = false;
+		//pad.trusted = false;
 
 		baseFriendList.push_back(pad);
 

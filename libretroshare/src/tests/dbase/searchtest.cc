@@ -51,7 +51,9 @@ int main()
 
 	while(!hashresult.empty())
 	{
-		hashresult.back()->print(std::cout);
+	   std::string out ;
+		hashresult.back()->print(out);
+		std::cout << out << std::endl;
 		hashresult.pop_back();
 	}
 
@@ -65,7 +67,9 @@ int main()
 
 	while(!termresult.empty())
 	{
-		termresult.back()->print(std::cout);
+	   std::string out ;
+		termresult.back()->print(out);
+		std::cout << out << std::endl;
 		termresult.pop_back();
 	}
 

@@ -227,6 +227,7 @@ class FileIndex
 
 		/* debug */
 		int	printFileIndex(std::string &out);
+		int	printFileIndex(std::ostream &out);
 
 		/* load/save to file */
 		int 	loadIndex(const std::string& filename, const std::string& expectedHash, uint64_t size);

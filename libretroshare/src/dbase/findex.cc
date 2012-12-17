@@ -724,6 +724,14 @@ int	FileIndex::cleanOldEntries(time_t old)  /* removes entries older than old */
 
 
 
+int     FileIndex::printFileIndex(std::ostream &out)
+{
+	std::string sout ;
+	printFileIndex(sout) ;
+	out << sout << std::endl;
+
+	return 1 ;
+}
 int     FileIndex::printFileIndex(std::string &out)
 {
 	out += "FileIndex::printFileIndex()\n";

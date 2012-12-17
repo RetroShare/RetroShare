@@ -75,10 +75,15 @@ int test1(FileIndex *fi)
 
 	  	/* clean up the dir (should have no effect) */
 	  	fi -> removeOldDirectory(olddir->parent->path, olddir->name, stamp);
-		fi -> printFileIndex(std::cout);
+
+		std::string out ;
+		fi -> printFileIndex(out);
+		std::cout << out << std::endl;
 	}
 
-	fi -> printFileIndex(std::cout);
+		std::string out ;
+	fi -> printFileIndex(out);
+		std::cout << out << std::endl;
 
 	return 1;
 }
@@ -133,10 +138,14 @@ int test2(FileIndex *fi)
 	  /* clean up the dir */
 	  fi -> removeOldDirectory(olddir->parent->path, olddir->name, stamp);
 
-	  fi -> printFileIndex(std::cout);
+		std::string out ;
+	  fi -> printFileIndex(out);
+	  std::cout << out << std::endl;
 	}
 
-	fi -> printFileIndex(std::cout);
+		std::string out ;
+	fi -> printFileIndex(out);
+	std::cout << out << std::endl;
 
 	return 1;
 }
@@ -152,7 +161,9 @@ FileIndex *createBasicFileIndex(time_t age)
 	FileEntry fe;
 
 	/* print empty FileIndex */
-	fi -> printFileIndex(std::cout);
+	std::string out ;
+	fi -> printFileIndex(out);
+	std::cout << out << std::endl;
 
 	std::list<std::string> rootdirs;
 	rootdirs.push_back("base1");
@@ -206,7 +217,9 @@ FileIndex *createBasicFileIndex(time_t age)
 	fe.name = "file20";
 	fi -> updateFileEntry("/base3/",fe, age);
 
-	fi -> printFileIndex(std::cout);
+	out.clear() ;
+	fi -> printFileIndex(out);
+	std::cout << out << std::endl;
 
 	return fi;
 }

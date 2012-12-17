@@ -40,6 +40,8 @@
 #include "ft/ftdatamultiplex.h"
 #include "ft/ftfilesearch.h"
 
+#include "ftdata_test.h"
+
 void	do_random_server_test(ftDataMultiplex *mplex, ftExtraList *eList, std::list<std::string> &files);
 
 
@@ -107,7 +109,7 @@ int main(int argc, char **argv)
 
 	/* now work the thread */
 	std::list<std::string>::iterator it;
-	uint32_t flags = 0;
+	TransferRequestFlags flags(0);
 	for(it = fileList.begin(); it  != fileList.end(); it++)
 	{
 		eList->hashExtraFile(*it, dPeriod, flags);

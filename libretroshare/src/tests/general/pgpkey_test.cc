@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "util/utest.h"
-#include "util/pgpkey.h"
+#include "pgp/pgpkeyutil.h"
 
 INITTEST();
 

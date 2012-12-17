@@ -109,7 +109,7 @@ private:
 class P3Pipe: public P3Interface
 {
 	public:
-		P3Pipe() {return; }
+		P3Pipe() : pipeMtx(std::string("Pipe mutex")) {return; }
 		virtual ~P3Pipe() {return; }
 
 		virtual int	tick() { return 1; }

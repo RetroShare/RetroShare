@@ -10,7 +10,7 @@ extern "C"
 	#include <openpgpsdk/util.h>
 }
 
-#include "argstream.h"
+#include <common/argstream.h>
 
 int main(int argc,char *argv[])
 {

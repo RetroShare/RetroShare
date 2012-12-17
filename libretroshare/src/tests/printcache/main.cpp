@@ -9,7 +9,7 @@
 #include <set>
 #include <iostream>
 
-#include "argstream.h"
+#include <common/argstream.h>
 #include "pqi/pqistreamer.h"
 #include "pqi/pqibin.h"
 #include "serialiser/rsdistribitems.h"

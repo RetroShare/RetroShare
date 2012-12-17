@@ -22,11 +22,12 @@ RM = /bin/rm
 RANLIB = ranlib
 LIBDIR = $(RS_TOP_DIR)/lib
 BITDIR = $(DHT_TOP_DIR)/lib
+OPSDIR = $(OPS_TOP_DIR)/lib
 LIBRS = $(LIBDIR)/libretroshare.a
 BITDHT = $(BITDIR)/libbitdht.a
 # Unix: Linux/Cygwin
 INCLUDE = -I $(RS_TOP_DIR)  -I$(OPENPGP_INCLUDE_DIR)
-CFLAGS = -Wall -g $(INCLUDE)
+CFLAGS = -Wall -g $(INCLUDE) -I..
 #CFLAGS += -fprofile-arcs -ftest-coverage
 CFLAGS += ${DEFINES}
 
@@ -58,8 +59,11 @@ BIOCFLAGS =  -I $(SSL_DIR)/include ${DEFINES} -DOPENSSL_THREADS -D_REENTRANT -DD
 # OS specific Linking.
 #########################################################################
 
-LIBS =  -lgpgme -L$(LIBDIR) -lretroshare 
+LIBS =  -L$(LIBDIR) -lretroshare 
 LIBS +=  -L$(BITDIR) -lbitdht -lgnome-keyring
+LIBS += -L$(OPSDIR) -lops
+LIBS += -lixml -lbz2
+
 ifdef PQI_USE_XPGP
 	LIBS +=  -L$(SSL_DIR) 
   endif

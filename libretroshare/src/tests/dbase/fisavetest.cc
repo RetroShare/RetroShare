@@ -31,7 +31,9 @@ int main()
 	FileIndex *fi1 = createBasicFileIndex(100);
 	FileIndex *fi2 = new FileIndex("A SILLY ID");
 
-	fi1->printFileIndex(std::cout);
+	std::string out ;
+	fi1->printFileIndex(out);
+	std::cout << out <<std::endl;
 	std::string fhash;
 	uint64_t size;
 	std::set<std::string> forbiddenroots;
@@ -41,7 +43,9 @@ int main()
 	std::cout << " -- new file index -- " << std::endl;
 	
 	fi2->loadIndex("test.index", fhash, size);
-	fi2->printFileIndex(std::cout);
+	out.clear() ;
+	fi2->printFileIndex(out);
+	std::cout << out << std::endl;
 
 	delete fi1;
 	delete fi2;

@@ -1,6 +1,8 @@
 
 RS_TOP_DIR = ../..
 DHT_TOP_DIR = ../../../../libbitdht/src
+OPS_TOP_DIR = ../../../../openpgpsdk/src
+
 ##### Define any flags that are needed for this section #######
 ###############################################################
 
@@ -8,9 +10,10 @@ DHT_TOP_DIR = ../../../../libbitdht/src
 include $(RS_TOP_DIR)/tests/scripts/config.mk
 ###############################################################
 
-TESTOBJ  = ftfilemappertest.o ftfileprovidertest.o ftfilecreatortest.o ftextralisttest.o ftdataplextest.o fttransfermoduletest.o ftcrc32test.o ftcrossprovidercreatortest.o ftcontrollertest.o ftserver1test.o ftserver2test.o ftserver3test.o
+TESTOBJ  = ftfilemappertest.o ftfileprovidertest.o ftfilecreatortest.o ftextralisttest.o ftdataplextest.o fttransfermoduletest.o ftcrc32test.o ftcrossprovidercreatortest.o ftcontrollertest.o ftserver1test.o ftserver2test.o ftserver3test.o ftdata_test.o
 
-TESTS  = ftfilemappertest ftfileprovidertest ftfilecreatortest ftextralisttest ftdataplextest fttransfermoduletest ftcrc32test ftcrossprovidercreatortest ftcontrollertest ftserver1test ftserver2test fttransfermoduletest ftserver3test
+TESTS  = ftfileprovidertest ftfilecreatortest ftextralisttest ftdataplextest fttransfermoduletest ftcrc32test ftcrossprovidercreatortest ftcontrollertest ftserver1test ftserver2test fttransfermoduletest ftserver3test
+#ftfilemappertest 
 
 all: tests
 

@@ -101,7 +101,7 @@ int main(int argc, char **argv)
 	std::list<std::string> hashed;
 	std::list<std::string>::iterator it;
 
-	uint32_t flags = 0;
+	TransferRequestFlags flags(0);
 	for(it = hashList.begin(); it  != hashList.end(); it++)
 	{
 		sleep(period);
@@ -148,7 +148,7 @@ void	displayExtraListDetails(ftExtraList *eList, std::list<std::string> toHash, 
 	for(it = hashed.begin(); it != hashed.end(); it++)
 	{
 		FileInfo info;
-		if (eList->search(*it, 0, info))
+		if (eList->search(*it, FileSearchFlags(0), info))
 		{
 			std::cerr << "displayExtraListDetails() Found Hash: " << *it;
 			std::cerr << std::endl;

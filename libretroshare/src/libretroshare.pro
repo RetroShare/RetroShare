@@ -455,7 +455,6 @@ SOURCES +=	dbase/cachestrapper.cc \
 
 SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftcontroller.cc \
-			ft/ftdata.cc \
 			ft/ftdatamultiplex.cc \
 			ft/ftdbase.cc \
 			ft/ftextralist.cc \

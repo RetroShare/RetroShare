@@ -1,6 +1,6 @@
 
-#include "pqi/p3connmgr.h"
-#include "pqi/p3authmgr.h"
+//#include "pqi/p3connmgr.h"
+//#include "pqi/p3authmgr.h"
 #include "util/utest.h"
 
 #include "upnp/upnphandler.h" 

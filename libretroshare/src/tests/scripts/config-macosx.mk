@@ -40,6 +40,7 @@ RANLIB = ranlib
 # Dummy ranlib -> can't do it until afterwards with universal binaries.
 # RANLIB = ls -l 
 
+OPSDIR = $(OPS_TOP_DIR)/lib
 BITDIR = $(DHT_TOP_DIR)/lib
 LIBDIR = $(RS_TOP_DIR)/lib
 LIBRS = $(LIBDIR)/libretroshare.a
@@ -83,8 +84,9 @@ LIBS = -Wl,-search_paths_first
 # LIBS += -arch ppc -arch i386
 #LIBS += -Wl,-syslibroot,/Developer/SDKs/MacOSX10.5u.sdk 
 
-LIBS =  -lgpgme -L$(LIBDIR) -lretroshare
+LIBS =  -L$(LIBDIR) -lretroshare
 LIBS +=  -L$(BITDIR) -lbitdht 
+LIBS += -L$(OPSDIR) -lops
 ifdef PQI_USE_XPGP
         LIBS +=  -L$(SSL_DIR)
   endif

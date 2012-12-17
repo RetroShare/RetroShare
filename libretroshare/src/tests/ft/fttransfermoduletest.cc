@@ -46,6 +46,7 @@
 #include "ft/fttransfermodule.h"
 
 #include "util/utest.h"
+#include "ftdata_test.h"
 
 INITTEST()
 
@@ -122,7 +123,7 @@ int main(int argc, char **argv)
 
 	/* now work the thread */
 	std::list<std::string>::iterator it;
-	uint32_t flags = 0;
+	TransferRequestFlags flags(0);
 	for(it = fileList.begin(); it  != fileList.end(); it++)
 	{
 		eList->hashExtraFile(*it, dPeriod, flags);
@@ -150,7 +151,7 @@ int main(int argc, char **argv)
 	}
 
 	std::string savename = "/tmp/" + info.fname;	
-	ftFileCreator *creator = new ftFileCreator(savename, info.size, info.hash);
+	ftFileCreator *creator = new ftFileCreator(savename, info.size, info.hash,false);
 	ftController *controller = NULL;
 
 	ftTransferModule *transfer = new ftTransferModule(creator, ftmplex1, controller);

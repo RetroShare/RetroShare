@@ -37,7 +37,10 @@
 #include "util/rswin.h"
 #endif
 
+#include <vector>
 #include "retroshare/rsexpr.h"
+#include "retroshare/rstypes.h"
+#include "retroshare/rsfiles.h"
 
 #include "ft/ftserver.h"
 
@@ -45,8 +48,8 @@
 #include "ft/ftdatamultiplex.h"
 #include "ft/ftfilesearch.h"
 
-#include "pqi/p3authmgr.h"
-#include "pqi/p3connmgr.h"
+//#include "pqi/p3authmgr.h"
+//#include "pqi/p3connmgr.h"
 
 #include "util/rsdebug.h"
 
@@ -163,7 +166,7 @@ int main(int argc, char **argv)
 		SharedDirInfo info ;
 		info.filename = std::string(argv[optind]);
 		info.virtualname = info.filename ;
-		info.shareflags = RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_BROWSABLE ;
+		info.shareflags = DIR_FLAGS_PERMISSIONS_MASK;
 
 		fileList.push_back(info) ;
 	}

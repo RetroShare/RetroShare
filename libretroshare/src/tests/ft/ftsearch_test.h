@@ -23,32 +23,16 @@
  *
  */
 
-#ifndef FT_SEARCH_HEADER
-#define FT_SEARCH_HEADER
+#pragma once
 
-/* 
- * ftSearch
- *
- * This is a generic search interface - used by ft* to find files.
- * The derived class will search for Caches/Local/ExtraList/Remote entries.
- *
- */
+#include "ft/ftsearch.h" 
 
-#include "retroshare/rsfiles.h" // includes retroshare/rstypes.h too!
-
-class ftSearch
+class ftSearchDummy: public ftSearch
 {
-
 	public:
-		ftSearch() { return; }
-		virtual ~ftSearch() { return; }
-		virtual bool	search(const std::string &hash, FileSearchFlags hintflags,const std::string& peer_id, FileInfo &info) const 
-		{
-			std::cerr << "Non overloaded search method called!!!" << std::endl;
-			return false;
-		}
-		virtual bool	search(const std::string &hash, FileSearchFlags hintflags, FileInfo &info) const = 0;
 
+	ftSearchDummy() { return; }
+virtual ~ftSearchDummy() { return; }
+virtual bool	search(const std::string& hash, FileSearchFlags hintflags, FileInfo &info) const;
 };
 
-#endif

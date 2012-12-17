@@ -71,7 +71,7 @@ int main(int argc, char **argv)
 	{
 		SharedDirInfo dir;
 		dir.filename = argv[optind];
-		dir.shareflags = RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_BROWSABLE;
+		dir.shareflags = DIR_FLAGS_PERMISSIONS_MASK ;
 		rootdirs.push_back(dir);
 		std::cerr << "Adding shared directory: " << argv[optind] << std::endl;
 	}

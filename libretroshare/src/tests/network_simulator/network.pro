@@ -3,7 +3,7 @@ TEMPLATE = app
 CONFIG *= qt qglviewer 
 QT *= xml opengl
 
-INCLUDEPATH *= ../..
+INCLUDEPATH *= ../.. ..
 
 TARGET = NetworkSim
 
@@ -16,4 +16,4 @@ HEADERS = Network.h   MonitoredTurtle.h NetworkViewer.h NetworkSimulatorGUI.h \
 
 FORMS = NetworkSimulatorGUI.ui TurtleRouterStatistics.ui
 
-LIBS *= ../../lib/libretroshare.a ../../../../libbitdht/src/lib/libbitdht.a ../../../../openpgpsdk/src/lib/libops.a -lgnome-keyring -lupnp -lssl -lcrypto -lbz2
+LIBS *= ../../lib/libretroshare.a ../../../../libbitdht/src/lib/libbitdht.a ../../../../openpgpsdk/src/lib/libops.a -lgnome-keyring -lupnp -lssl -lcrypto -lbz2 -lixml

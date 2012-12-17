@@ -4,11 +4,12 @@ CONFIG = debug
 #SOURCES = main.cpp
 SOURCES = main_extended.cpp
 
-INCLUDEPATH *= ../..
+LIBS +=  ../../lib/libretroshare.a ../../../../libbitdht/src/lib/libbitdht.a ../../../../openpgpsdk/src/lib/libops.a
+LIBS += -lssl -lcrypto -lupnp -lgnome-keyring -lixml -lbz2
+
+INCLUDEPATH *= ../.. ..
 linux {
 	#LIBS = -lstdc++ -lm 
-	LIBS +=  ../../lib/libretroshare.a ../../../../libbitdht/src/lib/libbitdht.a 
-	LIBS += -lssl -lcrypto -lgpgme -lupnp -lgnome-keyring
 }
 macx {
     # ENABLE THIS OPTION FOR Univeral Binary BUILD.

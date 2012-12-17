@@ -23,6 +23,7 @@
  *
  */
 
+#include <stdio.h>
 #include <iostream>
 #include "retroshare/rstypes.h"
 #include <util/rsdir.h>
@@ -67,7 +68,9 @@ int main(int argc, char **argv)
 		std::cerr << "Hashing file :" << *it << std::endl ;
 
 		std::string hash  ;
-		RsDirUtil::hashFile( *it,hash) ;
+		uint64_t size ;
+		std::string name ;
+		RsDirUtil::hashFile( *it,name,hash,size) ;
 
 		std::cerr << "Hash = " << hash << std::endl;
 
@@ -87,7 +90,7 @@ int main(int argc, char **argv)
 			return 0 ;
 		}
 
-		uint64_t size = ftell(f) ;
+		size = ftell(f) ;
 
 		if(fseek(f,0,SEEK_SET))
 		{

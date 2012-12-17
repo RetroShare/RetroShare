@@ -4,7 +4,7 @@
 #include "NetworkSimulatorGUI.h"
 #include "MonitoredRsPeers.h"
 #include <QApplication>
-#include <argstream.h>
+#include <common/argstream.h>
 
 int main(int argc, char *argv[])
 {

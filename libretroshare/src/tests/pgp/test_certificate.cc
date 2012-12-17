@@ -1,7 +1,7 @@
 #include <fstream>
 #include <string.h>
 
-#include "argstream.h"
+#include <common/argstream.h>
 //#include <pqi/cleanupxpgp.h>
 #include <retroshare/rspeers.h>
 #include <pgp/rscertificate.h>

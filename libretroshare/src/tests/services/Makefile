@@ -1,6 +1,8 @@
 
 RS_TOP_DIR = ../..
 DHT_TOP_DIR = ../../../../libbitdht/src
+OPS_TOP_DIR = ../../../../openpgpsdk/src
+
 ##### Define any flags that are needed for this section #######
 ###############################################################
 
