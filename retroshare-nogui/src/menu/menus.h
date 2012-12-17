@@ -306,7 +306,7 @@ class MenuListShared: public MenuList
 	virtual uint32_t op();
 	int getEntryDesc(int idx, std::string &desc);
 	int unshareSelected();
-	int toggleFlagSelected(uint32_t shareflags);
+	int toggleFlagSelected(FileStorageFlags shareflags);
 };
 
 

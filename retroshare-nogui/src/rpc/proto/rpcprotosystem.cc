@@ -127,7 +127,7 @@ int RpcProtoSystem::processSystemStatus(uint32_t chan_id, uint32_t msg_id, uint3
 
 	float downKb = 0;
 	float upKb = 0;
-	rsicontrol -> ConfigGetDataRates(downKb, upKb);
+	rsConfig->GetCurrentDataRates(downKb, upKb);
 
 	// set the data.
 	resp.set_no_peers(nTotal);

@@ -497,7 +497,7 @@ int MenuListSearchList::downloadSelected()
         {
 		std::list<std::string> srcIds;
 		if (rsFiles -> FileRequest(it->name, it->hash, it->size, 
-				"", RS_FILE_HINTS_NETWORK_WIDE, srcIds))
+				"", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds))
 		{
 			std::cout << "MenuListSearchList::downloadSelected() Download Started";
 			std::cout << std::endl;
@@ -654,21 +654,31 @@ int MenuListShared::getEntryDesc(int idx, std::string &desc)
 	std::string shareflag;
 	int i=0;
 	for (it = dirs.begin(); (i < idx) && (it != dirs.end()); it++, i++);
-    if (it != dirs.end())
-    {
-    	if (it->shareflags == (RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE))
-    		shareflag = "networkwide - browsable";
-    	else if ((it->shareflags & RS_FILE_HINTS_BROWSABLE) == RS_FILE_HINTS_BROWSABLE)
-    		shareflag = "private - browsable";
-    	else if ((it->shareflags & RS_FILE_HINTS_NETWORK_WIDE) == RS_FILE_HINTS_NETWORK_WIDE)
-    		shareflag = "networkwide - anonymous";
-    	else
-    		shareflag = "not shared";
+	if (it != dirs.end())
+	{
+		bool networkwide = (it->shareflags & DIR_FLAGS_NETWORK_WIDE_OTHERS);
+		bool browsable = (it->shareflags & DIR_FLAGS_BROWSABLE_OTHERS);
+		if (networkwide && browsable)
+		{
+			shareflag = "networkwide - browsable";
+		}
+		else if (browsable)
+		{
+			shareflag = "private - browsable";
+		}
+		else if (networkwide)
+		{
+			shareflag = "networkwide - anonymous";
+		}
+		else
+		{
+			shareflag = "not shared";
+		}
 
-    	rs_sprintf(desc, "Path: %s Share Type:%s", it->filename.c_str(), shareflag.c_str());
-        return MENU_ENTRY_OKAY;
-    }
-    return MENU_ENTRY_NONE;
+		rs_sprintf(desc, "Path: %s Share Type:%s", it->filename.c_str(), shareflag.c_str());
+		return MENU_ENTRY_OKAY;
+	}
+	return MENU_ENTRY_NONE;
 }
 
 int MenuListShared::unshareSelected()
@@ -684,15 +694,15 @@ int MenuListShared::unshareSelected()
 	std::list<SharedDirInfo>::iterator it;
 	int i=0;
 	for (it = dirs.begin(); (i < mSelectIdx) && (it != dirs.end()); it++, i++);
-    if (it != dirs.end())
-    {
-    	rsFiles->removeSharedDirectory(it->filename);
-        return MENU_ENTRY_OKAY;
-    }
+	if (it != dirs.end())
+	{
+		rsFiles->removeSharedDirectory(it->filename);
+		return MENU_ENTRY_OKAY;
+	}
     return MENU_ENTRY_NONE;
 }
 
-int MenuListShared::toggleFlagSelected(uint32_t shareflags)
+int MenuListShared::toggleFlagSelected(FileStorageFlags shareflags)
 {
 	if (mSelectIdx < 0)
 	{
@@ -705,20 +715,21 @@ int MenuListShared::toggleFlagSelected(uint32_t shareflags)
 	std::list<SharedDirInfo>::iterator it;
 	int i=0;
 	for (it = dirs.begin(); (i < mSelectIdx) && (it != dirs.end()); it++, i++);
-    if (it != dirs.end())
-    {
-    	if((it->shareflags & shareflags) == shareflags)
-    	{
-        	it->shareflags = it->shareflags & ~shareflags; //disable shareflags
-            rsFiles->updateShareFlags(*it);
-        } else
-        {
-        	it->shareflags = it->shareflags | shareflags;  //anable shareflags
-            rsFiles->updateShareFlags(*it);
-        }
-        return MENU_ENTRY_OKAY;
-    }
-    return MENU_ENTRY_NONE;
+	if (it != dirs.end())
+	{
+		if(FileStorageFlags(it->shareflags & shareflags) == shareflags)
+		{
+			it->shareflags = FileStorageFlags(it->shareflags & ~shareflags); //disable shareflags
+			rsFiles->updateShareFlags(*it);
+		} 
+		else
+		{
+			it->shareflags = FileStorageFlags(it->shareflags | shareflags);  //anable shareflags
+			rsFiles->updateShareFlags(*it);
+		}
+		return MENU_ENTRY_OKAY;
+	}
+	return MENU_ENTRY_NONE;
 }
 
 uint32_t MenuListSharedUnshare::op_basic(std::string key)
@@ -748,7 +759,7 @@ uint32_t MenuListSharedTogglePublic::op_basic(std::string key)
 		return MENU_OP_ERROR;
 	}
 
-	mls->toggleFlagSelected(RS_FILE_HINTS_NETWORK_WIDE);
+	mls->toggleFlagSelected(DIR_FLAGS_NETWORK_WIDE_OTHERS);
 
 	return MENU_OP_INSTANT;
 }
@@ -764,7 +775,7 @@ uint32_t MenuListSharedToggleBrowsable::op_basic(std::string key)
 		return MENU_OP_ERROR;
 	}
 
-	mls->toggleFlagSelected(RS_FILE_HINTS_BROWSABLE);
+	mls->toggleFlagSelected(DIR_FLAGS_BROWSABLE_OTHERS);
 
 	return MENU_OP_INSTANT;
 }
@@ -809,7 +820,7 @@ uint32_t MenuListSharedAddShare::process_lines(std::string input)
 	SharedDirInfo shareddir;
 	shareddir.filename = dir;
 	shareddir.virtualname = topdir;
-	shareddir.shareflags = 0x0;
+	shareddir.shareflags = FileStorageFlags(0x0);
 
 	if (!rsFiles->addSharedDirectory(shareddir))
 	{

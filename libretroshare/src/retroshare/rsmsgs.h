@@ -164,6 +164,7 @@ class ChatLobbyInvite
 		std::string lobby_topic ;
 		uint32_t lobby_privacy_level ;						
 };
+
 class VisibleChatLobbyRecord
 {
 	public:
@@ -178,6 +179,8 @@ class VisibleChatLobbyRecord
 		time_t last_report_time ; 								// last time the lobby was reported.
 		uint32_t lobby_privacy_level ;						// see RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC / RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE
 };
+
+
 class ChatLobbyInfo
 {
 	public:

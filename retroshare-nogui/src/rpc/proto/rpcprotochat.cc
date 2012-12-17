@@ -45,7 +45,7 @@ bool convertStringToLobbyId(const std::string &chat_id, ChatLobbyId &lobby_id);
 bool convertLobbyIdToString(const ChatLobbyId &lobby_id, std::string &chat_id);
 
 bool fillLobbyInfoFromChatLobbyInfo(const ChatLobbyInfo &cfi, rsctrl::chat::ChatLobbyInfo *lobby);
-bool fillLobbyInfoFromPublicChatLobbyRecord(const PublicChatLobbyRecord &pclr, rsctrl::chat::ChatLobbyInfo *lobby);
+bool fillLobbyInfoFromVisibleChatLobbyRecord(const VisibleChatLobbyRecord &pclr, rsctrl::chat::ChatLobbyInfo *lobby);
 bool fillLobbyInfoFromChatLobbyInvite(const ChatLobbyInvite &cli, rsctrl::chat::ChatLobbyInfo *lobby);
 
 bool createQueuedEventSendMsg(const ChatInfo &chatinfo, rsctrl::chat::ChatType ctype, 
@@ -106,6 +106,7 @@ int RpcProtoChat::processMsg(uint32_t chan_id, uint32_t msg_id, uint32_t req_id,
 		case rsctrl::chat::MsgId_RequestChatLobbies:
 			processReqChatLobbies(chan_id, msg_id, req_id, msg);
 			break;
+
 		case rsctrl::chat::MsgId_RequestCreateLobby:
 			processReqCreateLobby(chan_id, msg_id, req_id, msg);
 			break;
@@ -163,7 +164,7 @@ int RpcProtoChat::processReqChatLobbies(uint32_t chan_id, uint32_t /*msg_id*/, u
 	// set these flags from request.
 	bool fetch_chatlobbylist = true;
 	bool fetch_invites = true;
-	bool fetch_publiclobbies = true;
+	bool fetch_visiblelobbies = true;
 
 	switch(req.lobby_set())
 	{
@@ -172,28 +173,28 @@ int RpcProtoChat::processReqChatLobbies(uint32_t chan_id, uint32_t /*msg_id*/, u
 			std::cerr << std::endl;
 			fetch_chatlobbylist = true;
 			fetch_invites = true;
-			fetch_publiclobbies = true;
+			fetch_visiblelobbies = true;
 			break;
 		case rsctrl::chat::RequestChatLobbies::LOBBYSET_JOINED:
 			std::cerr << "RpcProtoChat::processReqChatLobbies() LOBBYSET_JOINED";
 			std::cerr << std::endl;
 			fetch_chatlobbylist = true;
 			fetch_invites = false;
-			fetch_publiclobbies = false;
+			fetch_visiblelobbies = false;
 			break;
 		case rsctrl::chat::RequestChatLobbies::LOBBYSET_INVITED:
 			std::cerr << "RpcProtoChat::processReqChatLobbies() LOBBYSET_INVITED";
 			std::cerr << std::endl;
 			fetch_chatlobbylist = false;
 			fetch_invites = true;
-			fetch_publiclobbies = false;
+			fetch_visiblelobbies = false;
 			break;
-		case rsctrl::chat::RequestChatLobbies::LOBBYSET_PUBLIC:
-			std::cerr << "RpcProtoChat::processReqChatLobbies() LOBBYSET_PUBLIC";
+		case rsctrl::chat::RequestChatLobbies::LOBBYSET_VISIBLE:
+			std::cerr << "RpcProtoChat::processReqChatLobbies() LOBBYSET_VISIBLE";
 			std::cerr << std::endl;
 			fetch_chatlobbylist = false;
 			fetch_invites = false;
-			fetch_publiclobbies = true;
+			fetch_visiblelobbies = true;
 			break;
 		default:
 			std::cerr << "RpcProtoChat::processReqChatLobbies() LOBBYSET ERROR";
@@ -260,13 +261,13 @@ int RpcProtoChat::processReqChatLobbies(uint32_t chan_id, uint32_t /*msg_id*/, u
 		}
 	}
 			
-	if (fetch_publiclobbies)
+	if (fetch_visiblelobbies)
 	{
 		std::cerr << "RpcProtoChat::processReqChatLobbies() Fetching public lobbies";
 		std::cerr << std::endl;
 
-		std::vector<PublicChatLobbyRecord> public_lobbies;
-		std::vector<PublicChatLobbyRecord>::iterator it;
+		std::vector<VisibleChatLobbyRecord> public_lobbies;
+		std::vector<VisibleChatLobbyRecord>::iterator it;
 
 		rsMsgs->getListOfNearbyChatLobbies(public_lobbies);
 
@@ -275,7 +276,7 @@ int RpcProtoChat::processReqChatLobbies(uint32_t chan_id, uint32_t /*msg_id*/, u
 			if (done_lobbies.find(it->lobby_id) == done_lobbies.end())
 			{
 				rsctrl::chat::ChatLobbyInfo *lobby = resp.add_lobbies();
-				fillLobbyInfoFromPublicChatLobbyRecord(*it, lobby);
+				fillLobbyInfoFromVisibleChatLobbyRecord(*it, lobby);
 
 				done_lobbies.insert(it->lobby_id);
 
@@ -530,7 +531,7 @@ int RpcProtoChat::processReqJoinOrLeaveLobby(uint32_t chan_id, uint32_t /*msg_id
 			}
 			else
 			{
-				if (!rsMsgs->joinPublicChatLobby(lobby_id))
+				if (!rsMsgs->joinVisibleChatLobby(lobby_id))
 				{
 					std::cerr << "ERROR joinPublicChatLobby FAILED";
 					std::cerr << std::endl;
@@ -1132,7 +1133,7 @@ bool fillLobbyInfoFromChatLobbyInfo(const ChatLobbyInfo &cli, rsctrl::chat::Chat
 }
 
 
-bool fillLobbyInfoFromPublicChatLobbyRecord(const PublicChatLobbyRecord &pclr, rsctrl::chat::ChatLobbyInfo *lobby)
+bool fillLobbyInfoFromVisibleChatLobbyRecord(const VisibleChatLobbyRecord &pclr, rsctrl::chat::ChatLobbyInfo *lobby)
 {
 	/* convert info into response */
 	std::string chat_id;
@@ -1150,8 +1151,17 @@ bool fillLobbyInfoFromPublicChatLobbyRecord(const PublicChatLobbyRecord &pclr, r
 
 	lobby->set_lobby_nickname(nick);
 
-	lobby->set_privacy_level(rsctrl::chat::PRIVACY_PUBLIC);
-	lobby->set_lobby_state(rsctrl::chat::ChatLobbyInfo::LOBBYSTATE_PUBLIC);
+	// Could be Private or Public.
+	if (pclr.lobby_privacy_level & RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE)
+	{
+		lobby->set_privacy_level(rsctrl::chat::PRIVACY_PRIVATE);
+	}
+	else
+	{
+		lobby->set_privacy_level(rsctrl::chat::PRIVACY_PUBLIC);
+	}
+	// TODO.
+	lobby->set_lobby_state(rsctrl::chat::ChatLobbyInfo::LOBBYSTATE_VISIBLE);
 
 	lobby->set_no_peers(pclr.total_number_of_peers);
 

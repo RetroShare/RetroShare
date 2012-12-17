@@ -2,7 +2,7 @@ TEMPLATE = app
 TARGET = retroshare-nogui
 CONFIG += bitdht
 #CONFIG += introserver
-#CONFIG += sshserver
+CONFIG += sshserver
 
 # if you are linking against the libretroshare with gxs.
 # this option links against the required sqlite library.

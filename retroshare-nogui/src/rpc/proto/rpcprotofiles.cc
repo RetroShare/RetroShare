@@ -125,7 +125,7 @@ int RpcProtoFiles::processReqTransferList(uint32_t chan_id, uint32_t msg_id, uin
 	std::string errorMsg;
 
 	std::list<std::string> file_list;
-	int hints = 0;
+	FileSearchFlags hints(0);
 
 	/* convert msg parameters into local ones */
 	switch(req.direction())
@@ -236,7 +236,7 @@ int RpcProtoFiles::processReqControlDownload(uint32_t chan_id, uint32_t msg_id, 
 			// We Set NETWORK_WIDE flag here -> as files will be found via search.
 			// If this changes, we might be adjust flag (or pass it in!)
 			if (!rsFiles -> FileRequest(filename, filehash, filesize, 
-						"", RS_FILE_HINTS_NETWORK_WIDE, srcIds))
+						"", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds))
 			{
 				success = false;
 				errorMsg = "FileRequest ERROR";

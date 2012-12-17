@@ -423,7 +423,7 @@ void protobuf_AddDesc_chat_2eproto() {
 
   ::rsctrl::core::protobuf_AddDesc_core_2eproto();
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\nchat.proto\022\013rsctrl.chat\032\ncore.proto\"\236\003"
+    "\n\nchat.proto\022\013rsctrl.chat\032\ncore.proto\"\237\003"
     "\n\rChatLobbyInfo\022\020\n\010lobby_id\030\001 \002(\t\022\023\n\013lob"
     "by_topic\030\002 \002(\t\022\022\n\nlobby_name\030\003 \002(\t\022\026\n\016lo"
     "bby_nickname\030\004 \002(\t\0225\n\rprivacy_level\030\005 \002("
@@ -432,57 +432,57 @@ void protobuf_AddDesc_chat_2eproto() {
     "fo.LobbyState\022\020\n\010no_peers\030\007 \002(\r\022\030\n\020last_"
     "report_time\030\010 \002(\r\022\025\n\rlast_activity\030\t \002(\r"
     "\022\035\n\025participating_friends\030\n \003(\t\022\021\n\tnickn"
-    "ames\030\013 \003(\t\"R\n\nLobbyState\022\025\n\021LOBBYSTATE_J"
-    "OINED\020\001\022\026\n\022LOBBYSTATE_INVITED\020\002\022\025\n\021LOBBY"
-    "STATE_PUBLIC\020\003\"C\n\006ChatId\022(\n\tchat_type\030\001 "
-    "\002(\0162\025.rsctrl.chat.ChatType\022\017\n\007chat_id\030\002 "
-    "\002(\t\"\214\001\n\013ChatMessage\022\037\n\002id\030\001 \002(\0132\023.rsctrl"
-    ".chat.ChatId\022\013\n\003msg\030\002 \002(\t\022\025\n\rpeer_nickna"
-    "me\030\003 \001(\t\022\022\n\nchat_flags\030\004 \001(\r\022\021\n\tsend_tim"
-    "e\030\005 \001(\r\022\021\n\trecv_time\030\006 \001(\r\"g\n\023ResponseCh"
-    "atLobbies\022#\n\006status\030\001 \002(\0132\023.rsctrl.core."
-    "Status\022+\n\007lobbies\030\002 \003(\0132\032.rsctrl.chat.Ch"
-    "atLobbyInfo\"\257\001\n\022RequestChatLobbies\022;\n\tlo"
-    "bby_set\030\001 \002(\0162(.rsctrl.chat.RequestChatL"
-    "obbies.LobbySet\"\\\n\010LobbySet\022\020\n\014LOBBYSET_"
-    "ALL\020\001\022\023\n\017LOBBYSET_JOINED\020\002\022\024\n\020LOBBYSET_I"
-    "NVITED\020\003\022\023\n\017LOBBYSET_PUBLIC\020\004\"\215\001\n\022Reques"
-    "tCreateLobby\022\022\n\nlobby_name\030\001 \002(\t\022\023\n\013lobb"
-    "y_topic\030\002 \002(\t\0225\n\rprivacy_level\030\004 \002(\0162\036.r"
-    "sctrl.chat.LobbyPrivacyLevel\022\027\n\017invited_"
-    "friends\030\003 \003(\t\"\243\001\n\027RequestJoinOrLeaveLobb"
-    "y\022\020\n\010lobby_id\030\001 \002(\t\022@\n\006action\030\002 \002(\01620.rs"
-    "ctrl.chat.RequestJoinOrLeaveLobby.LobbyA"
-    "ction\"4\n\013LobbyAction\022\022\n\016JOIN_OR_ACCEPT\020\001"
-    "\022\021\n\rLEAVE_OR_DENY\020\002\">\n\027RequestSetLobbyNi"
-    "ckname\022\020\n\010nickname\030\001 \002(\t\022\021\n\tlobby_ids\030\002 "
-    "\003(\t\"\?\n\030ResponseSetLobbyNickname\022#\n\006statu"
-    "s\030\001 \002(\0132\023.rsctrl.core.Status\"\212\001\n\025Request"
-    "RegisterEvents\022A\n\006action\030\001 \002(\01621.rsctrl."
-    "chat.RequestRegisterEvents.RegisterActio"
-    "n\".\n\016RegisterAction\022\014\n\010REGISTER\020\001\022\016\n\nDER"
-    "EGISTER\020\002\"=\n\026ResponseRegisterEvents\022#\n\006s"
-    "tatus\030\001 \002(\0132\023.rsctrl.core.Status\"=\n\020Even"
-    "tLobbyInvite\022)\n\005lobby\030\001 \002(\0132\032.rsctrl.cha"
-    "t.ChatLobbyInfo\"9\n\020EventChatMessage\022%\n\003m"
-    "sg\030\001 \002(\0132\030.rsctrl.chat.ChatMessage\";\n\022Re"
-    "questSendMessage\022%\n\003msg\030\001 \002(\0132\030.rsctrl.c"
-    "hat.ChatMessage\":\n\023ResponseSendMessage\022#"
-    "\n\006status\030\001 \002(\0132\023.rsctrl.core.Status*\320\001\n\r"
-    "RequestMsgIds\022\034\n\030MsgId_RequestChatLobbie"
-    "s\020\001\022\034\n\030MsgId_RequestCreateLobby\020\002\022!\n\035Msg"
-    "Id_RequestJoinOrLeaveLobby\020\003\022!\n\035MsgId_Re"
-    "questSetLobbyNickname\020\004\022\037\n\033MsgId_Request"
-    "RegisterEvents\020\005\022\034\n\030MsgId_RequestSendMes"
-    "sage\020\006*\314\001\n\016ResponseMsgIds\022\035\n\031MsgId_Respo"
-    "nseChatLobbies\020\001\022\"\n\036MsgId_ResponseSetLob"
-    "byNickname\020\004\022 \n\034MsgId_ResponseRegisterEv"
-    "ents\020\005\022\035\n\031MsgId_ResponseSendMessage\020\006\022\032\n"
-    "\026MsgId_EventLobbyInvite\020e\022\032\n\026MsgId_Event"
-    "ChatMessage\020f*<\n\021LobbyPrivacyLevel\022\023\n\017PR"
-    "IVACY_PRIVATE\020\001\022\022\n\016PRIVACY_PUBLIC\020\002*<\n\010C"
-    "hatType\022\020\n\014TYPE_PRIVATE\020\001\022\016\n\nTYPE_LOBBY\020"
-    "\002\022\016\n\nTYPE_GROUP\020\003", 2377);
+    "ames\030\013 \003(\t\"S\n\nLobbyState\022\025\n\021LOBBYSTATE_J"
+    "OINED\020\001\022\026\n\022LOBBYSTATE_INVITED\020\002\022\026\n\022LOBBY"
+    "STATE_VISIBLE\020\003\"C\n\006ChatId\022(\n\tchat_type\030\001"
+    " \002(\0162\025.rsctrl.chat.ChatType\022\017\n\007chat_id\030\002"
+    " \002(\t\"\214\001\n\013ChatMessage\022\037\n\002id\030\001 \002(\0132\023.rsctr"
+    "l.chat.ChatId\022\013\n\003msg\030\002 \002(\t\022\025\n\rpeer_nickn"
+    "ame\030\003 \001(\t\022\022\n\nchat_flags\030\004 \001(\r\022\021\n\tsend_ti"
+    "me\030\005 \001(\r\022\021\n\trecv_time\030\006 \001(\r\"g\n\023ResponseC"
+    "hatLobbies\022#\n\006status\030\001 \002(\0132\023.rsctrl.core"
+    ".Status\022+\n\007lobbies\030\002 \003(\0132\032.rsctrl.chat.C"
+    "hatLobbyInfo\"\260\001\n\022RequestChatLobbies\022;\n\tl"
+    "obby_set\030\001 \002(\0162(.rsctrl.chat.RequestChat"
+    "Lobbies.LobbySet\"]\n\010LobbySet\022\020\n\014LOBBYSET"
+    "_ALL\020\001\022\023\n\017LOBBYSET_JOINED\020\002\022\024\n\020LOBBYSET_"
+    "INVITED\020\003\022\024\n\020LOBBYSET_VISIBLE\020\004\"\215\001\n\022Requ"
+    "estCreateLobby\022\022\n\nlobby_name\030\001 \002(\t\022\023\n\013lo"
+    "bby_topic\030\002 \002(\t\0225\n\rprivacy_level\030\004 \002(\0162\036"
+    ".rsctrl.chat.LobbyPrivacyLevel\022\027\n\017invite"
+    "d_friends\030\003 \003(\t\"\243\001\n\027RequestJoinOrLeaveLo"
+    "bby\022\020\n\010lobby_id\030\001 \002(\t\022@\n\006action\030\002 \002(\01620."
+    "rsctrl.chat.RequestJoinOrLeaveLobby.Lobb"
+    "yAction\"4\n\013LobbyAction\022\022\n\016JOIN_OR_ACCEPT"
+    "\020\001\022\021\n\rLEAVE_OR_DENY\020\002\">\n\027RequestSetLobby"
+    "Nickname\022\020\n\010nickname\030\001 \002(\t\022\021\n\tlobby_ids\030"
+    "\002 \003(\t\"\?\n\030ResponseSetLobbyNickname\022#\n\006sta"
+    "tus\030\001 \002(\0132\023.rsctrl.core.Status\"\212\001\n\025Reque"
+    "stRegisterEvents\022A\n\006action\030\001 \002(\01621.rsctr"
+    "l.chat.RequestRegisterEvents.RegisterAct"
+    "ion\".\n\016RegisterAction\022\014\n\010REGISTER\020\001\022\016\n\nD"
+    "EREGISTER\020\002\"=\n\026ResponseRegisterEvents\022#\n"
+    "\006status\030\001 \002(\0132\023.rsctrl.core.Status\"=\n\020Ev"
+    "entLobbyInvite\022)\n\005lobby\030\001 \002(\0132\032.rsctrl.c"
+    "hat.ChatLobbyInfo\"9\n\020EventChatMessage\022%\n"
+    "\003msg\030\001 \002(\0132\030.rsctrl.chat.ChatMessage\";\n\022"
+    "RequestSendMessage\022%\n\003msg\030\001 \002(\0132\030.rsctrl"
+    ".chat.ChatMessage\":\n\023ResponseSendMessage"
+    "\022#\n\006status\030\001 \002(\0132\023.rsctrl.core.Status*\320\001"
+    "\n\rRequestMsgIds\022\034\n\030MsgId_RequestChatLobb"
+    "ies\020\001\022\034\n\030MsgId_RequestCreateLobby\020\002\022!\n\035M"
+    "sgId_RequestJoinOrLeaveLobby\020\003\022!\n\035MsgId_"
+    "RequestSetLobbyNickname\020\004\022\037\n\033MsgId_Reque"
+    "stRegisterEvents\020\005\022\034\n\030MsgId_RequestSendM"
+    "essage\020\006*\314\001\n\016ResponseMsgIds\022\035\n\031MsgId_Res"
+    "ponseChatLobbies\020\001\022\"\n\036MsgId_ResponseSetL"
+    "obbyNickname\020\004\022 \n\034MsgId_ResponseRegister"
+    "Events\020\005\022\035\n\031MsgId_ResponseSendMessage\020\006\022"
+    "\032\n\026MsgId_EventLobbyInvite\020e\022\032\n\026MsgId_Eve"
+    "ntChatMessage\020f*<\n\021LobbyPrivacyLevel\022\023\n\017"
+    "PRIVACY_PRIVATE\020\001\022\022\n\016PRIVACY_PUBLIC\020\002*<\n"
+    "\010ChatType\022\020\n\014TYPE_PRIVATE\020\001\022\016\n\nTYPE_LOBB"
+    "Y\020\002\022\016\n\nTYPE_GROUP\020\003", 2379);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "chat.proto", &protobuf_RegisterTypes);
   ChatLobbyInfo::default_instance_ = new ChatLobbyInfo();
@@ -611,7 +611,7 @@ bool ChatLobbyInfo_LobbyState_IsValid(int value) {
 #ifndef _MSC_VER
 const ChatLobbyInfo_LobbyState ChatLobbyInfo::LOBBYSTATE_JOINED;
 const ChatLobbyInfo_LobbyState ChatLobbyInfo::LOBBYSTATE_INVITED;
-const ChatLobbyInfo_LobbyState ChatLobbyInfo::LOBBYSTATE_PUBLIC;
+const ChatLobbyInfo_LobbyState ChatLobbyInfo::LOBBYSTATE_VISIBLE;
 const ChatLobbyInfo_LobbyState ChatLobbyInfo::LobbyState_MIN;
 const ChatLobbyInfo_LobbyState ChatLobbyInfo::LobbyState_MAX;
 const int ChatLobbyInfo::LobbyState_ARRAYSIZE;
@@ -2324,7 +2324,7 @@ bool RequestChatLobbies_LobbySet_IsValid(int value) {
 const RequestChatLobbies_LobbySet RequestChatLobbies::LOBBYSET_ALL;
 const RequestChatLobbies_LobbySet RequestChatLobbies::LOBBYSET_JOINED;
 const RequestChatLobbies_LobbySet RequestChatLobbies::LOBBYSET_INVITED;
-const RequestChatLobbies_LobbySet RequestChatLobbies::LOBBYSET_PUBLIC;
+const RequestChatLobbies_LobbySet RequestChatLobbies::LOBBYSET_VISIBLE;
 const RequestChatLobbies_LobbySet RequestChatLobbies::LobbySet_MIN;
 const RequestChatLobbies_LobbySet RequestChatLobbies::LobbySet_MAX;
 const int RequestChatLobbies::LobbySet_ARRAYSIZE;

@@ -53,11 +53,11 @@ class ResponseSendMessage;
 enum ChatLobbyInfo_LobbyState {
   ChatLobbyInfo_LobbyState_LOBBYSTATE_JOINED = 1,
   ChatLobbyInfo_LobbyState_LOBBYSTATE_INVITED = 2,
-  ChatLobbyInfo_LobbyState_LOBBYSTATE_PUBLIC = 3
+  ChatLobbyInfo_LobbyState_LOBBYSTATE_VISIBLE = 3
 };
 bool ChatLobbyInfo_LobbyState_IsValid(int value);
 const ChatLobbyInfo_LobbyState ChatLobbyInfo_LobbyState_LobbyState_MIN = ChatLobbyInfo_LobbyState_LOBBYSTATE_JOINED;
-const ChatLobbyInfo_LobbyState ChatLobbyInfo_LobbyState_LobbyState_MAX = ChatLobbyInfo_LobbyState_LOBBYSTATE_PUBLIC;
+const ChatLobbyInfo_LobbyState ChatLobbyInfo_LobbyState_LobbyState_MAX = ChatLobbyInfo_LobbyState_LOBBYSTATE_VISIBLE;
 const int ChatLobbyInfo_LobbyState_LobbyState_ARRAYSIZE = ChatLobbyInfo_LobbyState_LobbyState_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* ChatLobbyInfo_LobbyState_descriptor();
@@ -74,11 +74,11 @@ enum RequestChatLobbies_LobbySet {
   RequestChatLobbies_LobbySet_LOBBYSET_ALL = 1,
   RequestChatLobbies_LobbySet_LOBBYSET_JOINED = 2,
   RequestChatLobbies_LobbySet_LOBBYSET_INVITED = 3,
-  RequestChatLobbies_LobbySet_LOBBYSET_PUBLIC = 4
+  RequestChatLobbies_LobbySet_LOBBYSET_VISIBLE = 4
 };
 bool RequestChatLobbies_LobbySet_IsValid(int value);
 const RequestChatLobbies_LobbySet RequestChatLobbies_LobbySet_LobbySet_MIN = RequestChatLobbies_LobbySet_LOBBYSET_ALL;
-const RequestChatLobbies_LobbySet RequestChatLobbies_LobbySet_LobbySet_MAX = RequestChatLobbies_LobbySet_LOBBYSET_PUBLIC;
+const RequestChatLobbies_LobbySet RequestChatLobbies_LobbySet_LobbySet_MAX = RequestChatLobbies_LobbySet_LOBBYSET_VISIBLE;
 const int RequestChatLobbies_LobbySet_LobbySet_ARRAYSIZE = RequestChatLobbies_LobbySet_LobbySet_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* RequestChatLobbies_LobbySet_descriptor();
@@ -271,7 +271,7 @@ class ChatLobbyInfo : public ::google::protobuf::Message {
   typedef ChatLobbyInfo_LobbyState LobbyState;
   static const LobbyState LOBBYSTATE_JOINED = ChatLobbyInfo_LobbyState_LOBBYSTATE_JOINED;
   static const LobbyState LOBBYSTATE_INVITED = ChatLobbyInfo_LobbyState_LOBBYSTATE_INVITED;
-  static const LobbyState LOBBYSTATE_PUBLIC = ChatLobbyInfo_LobbyState_LOBBYSTATE_PUBLIC;
+  static const LobbyState LOBBYSTATE_VISIBLE = ChatLobbyInfo_LobbyState_LOBBYSTATE_VISIBLE;
   static inline bool LobbyState_IsValid(int value) {
     return ChatLobbyInfo_LobbyState_IsValid(value);
   }
@@ -842,7 +842,7 @@ class RequestChatLobbies : public ::google::protobuf::Message {
   static const LobbySet LOBBYSET_ALL = RequestChatLobbies_LobbySet_LOBBYSET_ALL;
   static const LobbySet LOBBYSET_JOINED = RequestChatLobbies_LobbySet_LOBBYSET_JOINED;
   static const LobbySet LOBBYSET_INVITED = RequestChatLobbies_LobbySet_LOBBYSET_INVITED;
-  static const LobbySet LOBBYSET_PUBLIC = RequestChatLobbies_LobbySet_LOBBYSET_PUBLIC;
+  static const LobbySet LOBBYSET_VISIBLE = RequestChatLobbies_LobbySet_LOBBYSET_VISIBLE;
   static inline bool LobbySet_IsValid(int value) {
     return RequestChatLobbies_LobbySet_IsValid(value);
   }

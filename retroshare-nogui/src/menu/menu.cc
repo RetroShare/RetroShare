@@ -311,7 +311,7 @@ uint32_t MenuInterface::drawHeader(uint32_t drawFlags, std::string &buffer)
 
 	float downKb = 0;
 	float upKb = 0;
-	rsicontrol -> ConfigGetDataRates(downKb, upKb);
+	rsConfig->GetCurrentDataRates(downKb, upKb);
 
 	rs_sprintf_append(buffer, "Friends %d / %d Network: %s\r\n", 
 			nConnected, nTotal, natState.c_str());

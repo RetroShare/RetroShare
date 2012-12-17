@@ -60,7 +60,7 @@ message ChatLobbyInfo {
   enum LobbyState {
     LOBBYSTATE_JOINED = 1;
     LOBBYSTATE_INVITED = 2;
-    LOBBYSTATE_PUBLIC = 3;
+    LOBBYSTATE_VISIBLE = 3;
   }
   
   required LobbyPrivacyLevel privacy_level   = 5;
@@ -116,7 +116,7 @@ message RequestChatLobbies {
     LOBBYSET_ALL = 1;
     LOBBYSET_JOINED = 2;
     LOBBYSET_INVITED = 3;
-    LOBBYSET_PUBLIC = 4;
+    LOBBYSET_VISIBLE = 4;
   }
 
   required LobbySet lobby_set = 1; 
