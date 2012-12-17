@@ -18,7 +18,11 @@ bool bdSingleShotFindPeer(const std::string bootstrapfile, const std::string pee
 
 	/* install search node */
         bdNodeId searchId;
-        bdStdRandomNodeId(&searchId);
+	if (!bdStdLoadNodeId(&searchId, peerId))
+	{
+        	std::cerr << "bdSingleShotFindPeer(): Invalid Input Id: " << peerId;
+		return false;
+	}
 
         std::cerr << "bssdht: searching for Id: ";
         bdStdPrintNodeId(std::cerr, &searchId);
@@ -47,6 +51,26 @@ bool bdSingleShotFindPeer(const std::string bootstrapfile, const std::string pee
 	std::cerr << std::endl;
 
 	dht.shutdown();
+
+	if ((status == BITDHT_QUERY_PEER_UNREACHABLE) ||
+		(status == BITDHT_QUERY_SUCCESS))
+	{
+	
+		peer_ip = bdnet_inet_ntoa(resultId.addr.sin_addr);
+		peer_port = ntohs(resultId.addr.sin_port);
+	
+		std::cerr << "Answer: ";
+		std::cerr << std::endl;
+		std::cerr << "\tPeer IpAddress: " << peer_ip;
+		std::cerr << std::endl;
+		std::cerr << "\tPeer Port: " << peer_port;
+		std::cerr << std::endl;
+	}
+	else
+	{
+		std::cerr << "Sorry, Cant be found!";
+		std::cerr << std::endl;
+	}
 
 	return true;
 }
