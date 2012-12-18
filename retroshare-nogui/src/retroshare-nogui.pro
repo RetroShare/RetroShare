@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET = retroshare-nogui
-CONFIG += bitdht release
+CONFIG += bitdht
 #CONFIG += introserver
 CONFIG += sshserver
 
@@ -159,11 +159,16 @@ sshserver {
 	# ./retroshare-nogui -h  provides some more instructions.
 	#
 
+	win32 {
+		DEFINES *= LIBSSH_STATIC
+	}
+
 	INCLUDEPATH += $$LIBSSH_DIR/include/
-	LIBS += $$LIBSSH_DIR/build/src/libssh.a
-	LIBS += $$LIBSSH_DIR/build/src/threads/libssh_threads.a
-	#LIBS += -lssh
-	#LIBS += -lssh_threads
+	#LIBS += $$LIBSSH_DIR/build/src/libssh.a
+	#LIBS += $$LIBSSH_DIR/build/src/threads/libssh_threads.a
+	LIBS += -lssh
+	LIBS += -lssh_threads
+
 	HEADERS += ssh/rssshd.h
 	SOURCES += ssh/rssshd.cc
 
@@ -245,8 +250,11 @@ protorpc {
 	#	        ../../rsctrl/src/gencc/search.pb.cc \
 	#	        ../../rsctrl/src/gencc/files.pb.cc \
 
-        QMAKE_CFLAGS += -pthread
-        QMAKE_CXXFLAGS += -pthread
+	!win32 {
+		# unrecognized option
+		QMAKE_CFLAGS += -pthread
+		QMAKE_CXXFLAGS += -pthread
+	}
 	LIBS += -lprotobuf
 	
 	win32 {
