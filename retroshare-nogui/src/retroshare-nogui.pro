@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET = retroshare-nogui
-CONFIG += bitdht
+CONFIG += bitdht release
 #CONFIG += introserver
 CONFIG += sshserver
 
@@ -124,11 +124,6 @@ bitdht {
 	LIBS += ../../libbitdht/src/lib/libbitdht.a
 }
 
-win32 {
-# must be added after bitdht
-    LIBS += -lws2_32
-}
-
 DEPENDPATH += ../../libretroshare/src
             
 INCLUDEPATH += . ../../libretroshare/src
@@ -146,7 +141,7 @@ introserver {
 
 
 sshserver {
-	LIBSSH_DIR = ../../../lib/libssh-0.5.2
+	LIBSSH_DIR = ../../../libssh-0.5.2
 
 	# This Requires libssh-0.5.* to compile.
 	# Modify path below to point at it.
@@ -253,4 +248,13 @@ protorpc {
         QMAKE_CFLAGS += -pthread
         QMAKE_CXXFLAGS += -pthread
 	LIBS += -lprotobuf
+	
+	win32 {
+		PROTOPATH = ../../../protobuf-2.4.1
+		INCLUDEPATH += . $${PROTOPATH}/src
+	}
+}
+win32 {
+# must be added after ssh
+	LIBS += -lws2_32 -lcrypto	
 }
