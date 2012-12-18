@@ -8,7 +8,7 @@ CONFIG += sshserver
 # this option links against the required sqlite library.
 CONFIG += gxs
 
-CONFIG += debug
+#CONFIG += debug
 debug {
         QMAKE_CFLAGS -= -O2
         QMAKE_CFLAGS += -O0
