@@ -1,3 +1,72 @@
+Changes for 0.5.4d
+
+  * Improvements
+      - DHT
+         * disable bitdht printStatus
+         * increased expected dht startup period, as message rate has been dropped.
+         * updated bdboot.txt file.
+
+      - Chat
+         * Made the private lobbies more accessible:
+            - record which friend participates in a lobby even after they unsubscribed. The lobby 
+              list that is sent to these 
+            - friends contains the privaye lobby as well. In practice, people jsut need to be invited 
+              once to a private lobby. 
+            - Afterwards, they get the lobby in the list of nearby lobbies and can join by clicking on it.
+            - added new item RsChatLobbyList_deprecated2, to replace old existing item. Should be removed in v0.6
+            - changed PublicLobbies for VisibleLobbies in the code, to avoid confusion
+            - the change is backward compatible, although old peers won't receive private lobby info from 
+              new peers, of course.
+
+      - GUI
+         * Set email address in GenCertDialog to optional.
+         * Fixed display of "TextLabel" in SecurityItem.    - 
+         * Added patch from Henry: enable italian language
+         * Added patch from Henry: Renamed gpg to pgp
+         * removed some unused images
+         * Added "Edit Share Permissions" Context Menu entry to My Directions, to edit easily share 
+           permissions for each directory
+         * Updated languages from transiflex.
+         * updated English, Danish, German, Swedish translations
+         * Added OperatingMode ComboBox to the status bar
+            - Added second (temporary) switch to turtle.
+            - Use session switch for OperatingMode.
+            - made OperatingMode temporary - not saved.
+            - Moved DataRate interface from rsiface (old) -> rsConfig.
+            - Internally moved storage of data rate from pqipersongroup -> p3serverconfig
+            - made DataRate + Operating Mode work together.
+            - add ToolTip to OpModeStatus .... (can't actually view - please correct as necessary)
+
+         * Fixed utf8 characters for group names in RemoteDirModel (shared files).
+         * Fixed layout of the FriendRequestPage in ConnectFriendWizard.
+         * Added flags for services and service permissions for peers
+           Flags are identity-related, meaning that all locations of the same peers have the same flags.
+            - It's now possible to tweak which services each peer can use. Service that can be disabled are
+              forums/channels, discovery, anonymous routing.
+            - by default, peers have all flags on.
+      - File Transfer
+         * use a std::map to search file hashes instead of sweeping the entire database. Improves performance a lot.
+
+      - OpenPGP-SDK
+         * Added function "ops_open" to openpgpsdk to open files with utf8 characters on Windows.
+         * changed fopen into RsDirUtil::rs_fopen in PGPHandler, to allow paths with utf8 chars on windows. 
+           Shoudl probably fix many startup issues
+
+  * Bugs
+      - added proper filtering of directories from RSLinks and RsCollection to avoid the possibility of writing out of the 
+        download directory.
+      - Added missing closeConnection when the connection dies with SSL_ERROR_SYSCALL.
+      - Fixed display of files in flat view. The files of friends are shown again
+      - fixed bug in ShareManager causing directory flags to be set on wrong directory after sorting
+      - Protected waitingIds with Mutex in pqipersongrp.cc.
+      - Reviewed Mutex in pqihandler.
+         * In general it is okay, except for: DataRate Handling, and Win32 specific: WaitingList.
+         * Cleaned up some functions.
+         * renamed createPerson and createListener to locked_createPerson and locked_createListener.
+        This is required as neither Listener nor Person are thread safe (TODO).
+      - fixed missing error msg in p3cfgmgr when serialisation fails.
+      
+
 Changes for 0.5.4c
 
   * Improvements
