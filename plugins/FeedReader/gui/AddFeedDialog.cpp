@@ -61,6 +61,9 @@ AddFeedDialog::AddFeedDialog(RsFeedReader *feedReader, FeedReaderNotify *notify,
 	connect(ui->typeLocalRadio, SIGNAL(toggled(bool)), this, SLOT(validate()));
 	connect(ui->typeForumRadio, SIGNAL(toggled(bool)), this, SLOT(validate()));
 
+	ui->headerFrame->setHeaderText(tr("Feed Details"));
+	ui->headerFrame->setHeaderImage(QPixmap(":/images/FeedReader.png"));
+
 	ui->activatedCheckBox->setChecked(true);
 	ui->forumComboBox->setEnabled(false);
 	ui->useInfoFromFeedCheckBox->setChecked(true);

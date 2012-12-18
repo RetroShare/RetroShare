@@ -52,7 +52,7 @@ private slots:
 	void feedItemChanged(QTreeWidgetItem *item);
 	void msgItemChanged();
 	void msgItemClicked(QTreeWidgetItem *item, int column);
-	void filterColumnChanged();
+	void filterColumnChanged(int column);
 	void filterItems(const QString &text);
 	void toggleMsgText();
 	void newFolder();

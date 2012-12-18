@@ -2,7 +2,9 @@ TEMPLATE = subdirs
 
 SUBDIRS += \
 		LinksCloud \
-		VOIP \
+		VOIP
 
 # disabled until fixed.
-#		FeedReader
+win32 {
+	SUBDIRS += FeedReader
+}

@@ -69,34 +69,6 @@
 #define ROLE_MSG_READ       Qt::UserRole + 3
 #define ROLE_MSG_LINK       Qt::UserRole + 4
 
-static int filterColumnToComboBox(int nIndex)
-{
-    switch (nIndex) {
-    case COLUMN_MSG_TITLE:
-        return 0;
-    case COLUMN_MSG_PUBDATE:
-        return 1;
-    case COLUMN_MSG_AUTHOR:
-        return 2;
-    }
-
-    return filterColumnToComboBox(COLUMN_MSG_TITLE);
-}
-
-static int filterColumnFromComboBox(int nIndex)
-{
-    switch (nIndex) {
-    case 0:
-        return COLUMN_MSG_TITLE;
-    case 1:
-        return COLUMN_MSG_PUBDATE;
-    case 2:
-        return COLUMN_MSG_AUTHOR;
-    }
-
-    return COLUMN_MSG_TITLE;
-}
-
 FeedReaderDialog::FeedReaderDialog(RsFeedReader *feedReader, QWidget *parent)
 	: MainPage(parent), mFeedReader(feedReader), ui(new Ui::FeedReaderDialog)
 {
@@ -119,7 +91,7 @@ FeedReaderDialog::FeedReaderDialog(RsFeedReader *feedReader, QWidget *parent)
 	connect(ui->msgTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(msgTreeCustomPopupMenu(QPoint)));
 
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
-	connect(ui->filterColumnComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterColumnChanged()));
+	connect(ui->filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
 
 	connect(ui->linkButton, SIGNAL(clicked()), this, SLOT(openLinkMsg()));
 	connect(ui->expandButton, SIGNAL(clicked()), this, SLOT(toggleMsgText()));
@@ -161,6 +133,12 @@ FeedReaderDialog::FeedReaderDialog(RsFeedReader *feedReader, QWidget *parent)
 	/* set text of column "Read" to empty - without this the column has a number as header text */
 	QTreeWidgetItem *headerItem = ui->msgTreeWidget->headerItem();
 	headerItem->setText(COLUMN_MSG_READ, "");
+
+	/* add filter actions */
+	ui->filterLineEdit->addFilter(QIcon(), tr("Title"), COLUMN_MSG_TITLE, tr("Search Title"));
+	ui->filterLineEdit->addFilter(QIcon(), tr("Date"), COLUMN_MSG_PUBDATE, tr("Search Date"));
+	ui->filterLineEdit->addFilter(QIcon(), tr("Author"), COLUMN_MSG_AUTHOR, tr("Search Author"));
+	ui->filterLineEdit->setCurrentFilter(COLUMN_MSG_TITLE);
 
 	/* load settings */
 	processSettings(true);
@@ -217,7 +195,7 @@ void FeedReaderDialog::processSettings(bool load)
 		toggleMsgText_internal();
 
 		// filterColumn
-		ui->filterColumnComboBox->setCurrentIndex(filterColumnToComboBox(Settings->value("filterColumn", COLUMN_MSG_TITLE).toInt()));
+		ui->filterLineEdit->setCurrentFilter(Settings->value("filterColumn", COLUMN_MSG_TITLE).toInt());
 
 		// state of thread tree
 		header->restoreState(Settings->value("msgTree").toByteArray());
@@ -866,7 +844,7 @@ void FeedReaderDialog::setMsgAsReadUnread(QList<QTreeWidgetItem *> &rows, bool r
 	}
 }
 
-void FeedReaderDialog::filterColumnChanged()
+void FeedReaderDialog::filterColumnChanged(int column)
 {
 	if (mProcessSettings) {
 		return;
@@ -875,13 +853,12 @@ void FeedReaderDialog::filterColumnChanged()
 	filterItems(ui->filterLineEdit->text());
 
 	// save index
-	int filterColumn = filterColumnFromComboBox(ui->filterColumnComboBox->currentIndex());
-	Settings->setValueToGroup("FeedReaderDialog", "filterColumn", filterColumn);
+	Settings->setValueToGroup("FeedReaderDialog", "filterColumn", column);
 }
 
 void FeedReaderDialog::filterItems(const QString& text)
 {
-	int filterColumn = filterColumnFromComboBox(ui->filterColumnComboBox->currentIndex());
+	int filterColumn = ui->filterLineEdit->currentFilter();
 
 	int count = ui->msgTreeWidget->topLevelItemCount();
 	for (int index = 0; index < count; ++index) {
@@ -904,7 +881,7 @@ void FeedReaderDialog::filterItem(QTreeWidgetItem *item, const QString &text, in
 
 void FeedReaderDialog::filterItem(QTreeWidgetItem *item)
 {
-	filterItem(item, ui->filterLineEdit->text(), filterColumnFromComboBox(ui->filterColumnComboBox->currentIndex()));
+	filterItem(item, ui->filterLineEdit->text(), ui->filterLineEdit->currentFilter());
 }
 
 void FeedReaderDialog::toggleMsgText()

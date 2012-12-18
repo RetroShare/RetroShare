@@ -28,6 +28,7 @@
 #include "util/XPathWrapper.h"
 
 #include <openssl/evp.h>
+#include <unistd.h> // for usleep
 
 enum FeedFormat { FORMAT_RSS, FORMAT_RDF };
 
