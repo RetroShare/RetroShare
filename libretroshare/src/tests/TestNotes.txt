@@ -15,6 +15,13 @@ tcponudp	:  manual tests			convert to automatic
 dht		:  manual tests			ignore - old code - to be replaced soon.
 serialiser	:  automatic tests		complete tests, update tests.
 
+Suggestion to automate all tests
+================================
+
+	* each directory contains multiple executables.
+		- by default, each executable should perform an automatic test 
+		- each executable should return 0 when passed, !=0 otherwise
+		- each directory has a script "perform_auto_tests.sh" that calls all programs in the directory
 
 
 

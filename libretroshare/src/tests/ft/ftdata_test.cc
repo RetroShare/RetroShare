@@ -68,6 +68,15 @@ bool    ftDataSendPair::sendCRC32Map(const std::string& peer_id,const std::strin
 {
 	return mDataRecv->recvCRC32Map(peer_id,hash,crcmap) ;
 }
+
+bool ftDataSendPair::sendSingleChunkCRCRequest(const std::string& peer_id, const std::string& hash, unsigned int c_id)
+{
+	return mDataRecv->recvSingleChunkCRCRequest(peer_id,hash,c_id) ;
+}
+bool ftDataSendPair::sendSingleChunkCRC(const std::string& peer_id, const std::string& hash, uint32_t c_id, const Sha1CheckSum& crc)
+{
+	return mDataRecv->recvSingleChunkCRC(peer_id,hash,c_id,crc) ;
+}
 	/* Client Send */
 bool	ftDataSendDummy::sendDataRequest(const std::string &/*peerId*/, const std::string &/*hash*/,
 			uint64_t /*size*/, uint64_t /*offset*/, uint32_t /*chunksize*/)
@@ -143,4 +152,13 @@ bool 	ftDataRecvDummy::sendCRC32MapRequest(const std::string& /*peer_id*/,const 
 bool 	ftDataRecvDummy::sendCRC32Map(const std::string& /*peer_id*/,const std::string& /*hash*/, const CompressedChunkMap& /*cmap*/)
 {
 	return true ; 
+}
+
+bool ftDataSendDummy::sendSingleChunkCRCRequest(const std::string&, const std::string&, unsigned int)
+{
+	return true ;
+}
+bool ftDataSendDummy::sendSingleChunkCRC(const std::string&, const std::string&, uint32_t, const Sha1CheckSum&)
+{
+	return true ;
 }

@@ -27,6 +27,7 @@
 
 
 #include "util/rsdir.h"
+#include "../common/argstream.h"
 
 #include <iostream>
 #include <list>
@@ -41,41 +42,52 @@ void printHelp(int argc,char *argv[])
 
 int main(int argc,char *argv[])
 {
-	if(argc != 2)
-	{
-		printHelp(argc,argv) ;
-		return -1 ;
-	}
+	std::string inputfile ;
+	argstream as(argc,argv) ;
 
-	FILE *f = RsDirUtil::rs_fopen(argv[1],"r") ;
+	as >> parameter('i',"input",inputfile,"input file name to hash",false)
+		>> help() ;
+
+	as.defaultErrorHandling() ;
+
+	if(inputfile.empty())
+		inputfile = argv[0] ;
+
+	FILE *f = RsDirUtil::rs_fopen(inputfile.c_str(),"r") ;
 
 	if(f == NULL)
 	{
-		std::cerr << "Cannot open file " << argv[1] << " for read !" << std::endl;
+		std::cerr << "Cannot open file " << inputfile << " for read !" << std::endl;
 		return -1 ;
 	}
 
-	std::cerr << "Testing sha1" << std::endl;
+		std::cerr << "Testing sha1" << std::endl;
 	uint32_t SIZE = 1024*1024 ;
 	unsigned char *buf = new unsigned char[SIZE] ;
 	int len = fread(buf,1,SIZE,f) ;
 
-	std::cerr << "Read " << len << " bytes" << std::endl;
+		std::cerr << "Read " << len << " bytes" << std::endl;
 
 	Sha1CheckSum sum = RsDirUtil::sha1sum(buf,len) ;
-	std::cerr << std::hex << sum.fourbytes[0] << std::endl;
-	std::cerr << "New method        : " << sum.toStdString() << std::endl;
+	{
+		std::cerr << std::hex << sum.fourbytes[0] << std::endl;
+		std::cerr << "New method        : " << sum.toStdString() << std::endl;
+	}
 
 	std::string hash ;
 	uint64_t size ;
-	RsDirUtil::getFileHash(argv[1],hash,size) ;
+	RsDirUtil::getFileHash(inputfile.c_str(),hash,size) ;
 
-	std::cerr << "Old method        : " << hash << std::endl;
+		std::cerr << "Old method        : " << hash << std::endl;
+		if(hash != sum.toStdString())
+			return -1 ;
 
 	Sha1CheckSum H(hash) ;
-	std::cerr << "Hashed transformed: " << H.toStdString() << std::endl;
+		std::cerr << "Hashed transformed: " << H.toStdString() << std::endl;
+		if(hash != H.toStdString())
+			return -1 ;
 
-	std::cerr << "Computing all chunk hashes:" << std::endl;
+		std::cerr << "Computing all chunk hashes:" << std::endl;
 
 	fseek(f,0,SEEK_SET) ;
 	int n=0 ;
@@ -83,7 +95,7 @@ int main(int argc,char *argv[])
 	while(len = fread(buf,1,SIZE,f))
 	{
 		Sha1CheckSum sum = RsDirUtil::sha1sum(buf,len) ;
-		std::cerr << "Chunk " << n << ": " << sum.toStdString() << std::endl;
+			std::cerr << "Chunk " << n << ": " << sum.toStdString() << std::endl;
 		n++;
 	}
 
