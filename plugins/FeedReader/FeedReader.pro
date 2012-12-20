@@ -44,6 +44,9 @@ TARGET = FeedReader
 
 RESOURCES = gui/FeedReader_images.qrc \
 			lang/lang.qrc
+			
+TRANSLATIONS +=  \
+            lang/FeedReader_tr.ts
 
 linux-* {
 	LIBXML2_DIR = /usr/include/libxml2
