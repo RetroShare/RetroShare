@@ -2,7 +2,7 @@ CONFIG += qt gui uic qrc resources uitools idle bitdht
 
 # Below is for GXS services.
 # Should be disabled for releases.
-#CONFIG += gxs
+CONFIG += gxs
 
 gxs {
 	CONFIG += photoshare
@@ -139,22 +139,23 @@ win32 {
 	#LIBS += -L"D/Qt/2009.03/qt/plugins/imageformats"
 	#QTPLUGIN += qjpeg
 
-	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
+        PRE_TARGETDEPS += ../../libretroshare/libretroshare-build-desktop/lib/libretroshare.a
+        LIBS += ../../libretroshare/libretroshare-build-desktop/lib/libretroshare.a
 
-	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
-	LIBS += -L"../../../lib"
+
+        LIBS += C:\Development\Rs\rs_trunk\openpgpsdk\openpgpsdk-build-desktop\lib\libops.a
+
+        LIBS += -L"../../../lib"
 	LIBS += -lssl -lcrypto -lpthreadGC2d -lminiupnpc -lz
 # added after bitdht
 #	LIBS += -lws2_32
-	LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
+        LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32 -lbz2
 	LIBS += -lole32 -lwinmm
 	RC_FILE = gui/images/retroshare_win.rc
 
 	gxs {
-		LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-		LIBS += -lsqlite3
+                LIBS += C:\Development\Rs\rs_trunk\supportlibs\pegmarkdown-build-desktop\lib\libpegmarkdown.a
+                LIBS += C:\Development\Libraries\sqlite\sqlite-autoconf-3070900\.libs\libsqlite3.a
 	}
 
 	# export symbols for the plugins
@@ -223,8 +224,8 @@ freebsd-* {
 # ###########################################
 
 bitdht {
-	LIBS += ../../libbitdht/src/lib/libbitdht.a
-	PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
+        LIBS += C:\Development\Rs\rs_trunk\libbitdht\libbitdht-build-desktop\lib\libbitdht.a
+        PRE_TARGETDEPS *= C:\Development\Rs\rs_trunk\libbitdht\libbitdht-build-desktop\lib\libbitdht.a
 }
 
 win32 {
@@ -453,7 +454,8 @@ HEADERS +=  rshare.h \
             gui/groups/CreateGroup.h \
             gui/dht/DhtWindow.h \
             gui/bwctrl/BwCtrlWindow.h \
-            gui/GetStartedDialog.h
+            gui/GetStartedDialog.h \
+    util/RsGxsUpdateBroadcast.h
 
 
 FORMS +=    gui/StartDialog.ui \
@@ -746,7 +748,8 @@ SOURCES +=  main.cpp \
             gui/groups/CreateGroup.cpp \
             gui/dht/DhtWindow.cpp \
             gui/bwctrl/BwCtrlWindow.cpp \
-            gui/GetStartedDialog.cpp
+            gui/GetStartedDialog.cpp \
+    util/RsGxsUpdateBroadcast.cpp
 
 RESOURCES += gui/images.qrc lang/lang.qrc gui/help/content/content.qrc
 

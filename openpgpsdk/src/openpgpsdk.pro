@@ -27,9 +27,10 @@ win32 {
 	#QMAKE_CXXFLAGS_DEBUG += -O2
 	#QMAKE_CFLAGS_DEBUG += -O2
 
-	SSL_DIR = ../../../openssl-1.0.1c
-	ZLIB_DIR = ../../../zlib-1.2.3
-	BZIP_DIR = ../../../bzip2-1.0.6
+        SSL_DIR = ../../../OpenSSL
+        ZLIB_DIR = ../../../lib/zlib-1.2.3
+        BZIP_DIR = ../../../lib/bzip2-1.0.6
+
 
 	INCLUDEPATH += $${SSL_DIR}/include $${ZLIB_DIR} $${BZIP_DIR}
 }

@@ -46,6 +46,7 @@ public:
      */
     RsGxsIfaceImpl(RsGenExchange* gxs);
 
+protected:
     /*!
      * Gxs services should call this for automatic handling of
      * changes, send
@@ -53,14 +54,14 @@ public:
      */
     void receiveChanges(std::vector<RsGxsNotify*>& changes);
 
+public:
+
     /*!
      * Checks to see if a change has been received for
      * for a message or group
      * @return true if a change has occured for msg or group
      */
     virtual bool updated();
-
-public:
 
     /*!
      * The groups changed. \n
