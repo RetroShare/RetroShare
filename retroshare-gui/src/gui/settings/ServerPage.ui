@@ -357,7 +357,7 @@ behind a firewall or a VPN.</string>
       <attribute name="title">
        <string>Turtle router</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout">
+      <layout class="QGridLayout">
        <item row="0" column="0">
         <widget class="QLabel" name="label_7">
          <property name="maximumSize">
