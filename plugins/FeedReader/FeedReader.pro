@@ -12,6 +12,7 @@ SOURCES =	FeedReaderPlugin.cpp \
 			gui/FeedReaderNotify.cpp \
 			gui/FeedReaderConfig.cpp \
 			gui/FeedReaderStringDefs.cpp \
+			gui/FeedReaderUserNotify.cpp \
 			util/CURLWrapper.cpp \
 			util/XMLWrapper.cpp \
 			util/HTMLWrapper.cpp \
@@ -28,6 +29,7 @@ HEADERS =	FeedReaderPlugin.h \
 			gui/FeedReaderNotify.h \
 			gui/FeedReaderConfig.h \
 			gui/FeedReaderStringDefs.h \
+			gui/FeedReaderUserNotify.h \
 			util/CURLWrapper.h \
 			util/XMLWrapper.h \
 			util/HTMLWrapper.h \

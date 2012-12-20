@@ -40,6 +40,7 @@
 #include "gui/notifyqt.h"
 #include "gui/common/AvatarDefs.h"
 #include "gui/MainWindow.h"
+#include "mainpage.h"
 #include "util/DateTime.h"
 
 static QMap<std::string, ConfCertDialog*> instances;

@@ -37,6 +37,7 @@
 #include "gui/common/RSTreeWidgetItem.h"
 #include "util/HandleRichText.h"
 #include "gui/settings/rsharesettings.h"
+#include "FeedReaderUserNotify.h"
 
 #include "interface/rsFeedReader.h"
 #include "retroshare/rsiface.h"
@@ -176,6 +177,11 @@ FeedReaderDialog::~FeedReaderDialog()
 
 	mFeedReader->setNotify(NULL);
 	delete(mNotify);
+}
+
+UserNotify *FeedReaderDialog::getUserNotify(QObject *parent)
+{
+	return new FeedReaderUserNotify(this, mFeedReader, mNotify, parent);
 }
 
 void FeedReaderDialog::processSettings(bool load)

@@ -837,27 +837,47 @@ bool p3FeedReader::getMessageCount(const std::string &feedId, uint32_t *msgCount
 
 	RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
 
-	std::map<std::string, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
-	if (feedIt == mFeeds.end()) {
+	if (feedId.empty()) {
+		std::map<std::string, RsFeedReaderFeed*>::iterator feedIt;
+		for (feedIt = mFeeds.begin(); feedIt != mFeeds.end(); ++feedIt) {
+			RsFeedReaderFeed *fi = feedIt->second;
+
+			std::map<std::string, RsFeedReaderMsg*>::iterator msgIt;
+			for (msgIt = fi->msgs.begin(); msgIt != fi->msgs.end(); ++msgIt) {
+				RsFeedReaderMsg *mi = msgIt->second;
+
+				if (mi->flag & RS_FEEDMSG_FLAG_DELETED) {
+					continue;
+				}
+
+				if (msgCount) ++(*msgCount);
+				if (newCount && (mi->flag & RS_FEEDMSG_FLAG_NEW)) ++(*newCount);
+				if (unreadCount && (mi->flag & RS_FEEDMSG_FLAG_READ) == 0) ++(*unreadCount);
+			}
+		}
+	} else {
+		std::map<std::string, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
+		if (feedIt == mFeeds.end()) {
 #ifdef FEEDREADER_DEBUG
-		std::cerr << "p3FeedReader::getMessageCount - feed " << feedId << " not found" << std::endl;
+			std::cerr << "p3FeedReader::getMessageCount - feed " << feedId << " not found" << std::endl;
 #endif
-		return false;
-	}
-
-	RsFeedReaderFeed *fi = feedIt->second;
-
-	std::map<std::string, RsFeedReaderMsg*>::iterator msgIt;
-	for (msgIt = fi->msgs.begin(); msgIt != fi->msgs.end(); ++msgIt) {
-		RsFeedReaderMsg *mi = msgIt->second;
-
-		if (mi->flag & RS_FEEDMSG_FLAG_DELETED) {
-			continue;
+			return false;
 		}
 
-		if (msgCount) ++(*msgCount);
-		if (newCount && (mi->flag & RS_FEEDMSG_FLAG_NEW)) ++(*newCount);
-		if (unreadCount && (mi->flag & RS_FEEDMSG_FLAG_READ) == 0) ++(*unreadCount);
+		RsFeedReaderFeed *fi = feedIt->second;
+
+		std::map<std::string, RsFeedReaderMsg*>::iterator msgIt;
+		for (msgIt = fi->msgs.begin(); msgIt != fi->msgs.end(); ++msgIt) {
+			RsFeedReaderMsg *mi = msgIt->second;
+
+			if (mi->flag & RS_FEEDMSG_FLAG_DELETED) {
+				continue;
+			}
+
+			if (msgCount) ++(*msgCount);
+			if (newCount && (mi->flag & RS_FEEDMSG_FLAG_NEW)) ++(*newCount);
+			if (unreadCount && (mi->flag & RS_FEEDMSG_FLAG_READ) == 0) ++(*unreadCount);
+		}
 	}
 
 	return true;

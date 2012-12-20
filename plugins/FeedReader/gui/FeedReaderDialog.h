@@ -42,6 +42,8 @@ public:
 	FeedReaderDialog(RsFeedReader *feedReader, QWidget *parent = 0);
 	~FeedReaderDialog();
 
+	virtual UserNotify *getUserNotify(QObject *parent);
+
 protected:
 	virtual void showEvent(QShowEvent *e);
 	bool eventFilter(QObject *obj, QEvent *ev);

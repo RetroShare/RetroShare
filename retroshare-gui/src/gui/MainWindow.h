@@ -25,11 +25,15 @@
 #include <QSystemTrayIcon>
 #include <set>
 
-#include "ui_MainWindow.h"
 #include "gui/common/rwindow.h"
+
+namespace Ui {
+class MainWindow;
+}
 
 class QComboBox;
 class QLabel;
+class QActionGroup;
 class Idle;
 class PeerStatus;
 class NATStatus;
@@ -49,6 +53,8 @@ class MessengerWindow;
 class PluginsPage;
 class ChannelFeed;
 class BandwidthGraph;
+class MainPage;
+class UserNotify;
 
 #ifdef RS_USE_LINKS
 class LinksDialog;
@@ -96,6 +102,7 @@ public:
     static void raiseWindow();
     /** Shows the MainWindow dialog with focus set to the given page. */
     static void showWindow(Page page);
+    static void showWindow(MainPage *page);
     /** Set focus to the given page. */
     static bool activatePage (Page page);
     static Page getActivatePage ();
@@ -240,7 +247,7 @@ private:
     bool isIdle;
 
     /** Qt Designer generated object */
-    Ui::MainWindow ui;
+    Ui::MainWindow *ui;
 };
 
 #endif

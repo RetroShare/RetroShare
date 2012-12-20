@@ -37,6 +37,7 @@
 
 #include "rshare.h"
 #include "MainWindow.h"
+#include "ui_MainWindow.h"
 #include "MessengerWindow.h"
 #include "NetworkDialog.h"
 #include "SearchDialog.h"
@@ -174,10 +175,10 @@
 
 /** Constructor */
 MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
-    : RWindow("MainWindow", parent, flags)
+    : RWindow("MainWindow", parent, flags), ui(new Ui::MainWindow)
 {
     /* Invoke the Qt Designer generated QObject setup routine */
-    ui.setupUi(this);
+    ui->setupUi(this);
 
     _instance = this;
 
@@ -217,19 +218,19 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     #endif    
 
     /** Left Side ToolBar**/
-    connect(ui.actionAdd_Friend, SIGNAL(triggered() ), this , SLOT( addFriend() ) );
-    connect(ui.actionAdd_Share, SIGNAL(triggered() ), this , SLOT( openShareManager() ) );
-    connect(ui.actionOptions, SIGNAL(triggered()), this, SLOT( showSettings()) );
-    connect(ui.actionMessenger, SIGNAL(triggered()), this, SLOT( showMessengerWindow()) );
+    connect(ui->actionAdd_Friend, SIGNAL(triggered() ), this , SLOT( addFriend() ) );
+    connect(ui->actionAdd_Share, SIGNAL(triggered() ), this , SLOT( openShareManager() ) );
+    connect(ui->actionOptions, SIGNAL(triggered()), this, SLOT( showSettings()) );
+    connect(ui->actionMessenger, SIGNAL(triggered()), this, SLOT( showMessengerWindow()) );
 
-    ui.actionMessenger->setVisible(true);
+    ui->actionMessenger->setVisible(true);
 
-    connect(ui.actionAbout, SIGNAL(triggered()), this, SLOT( showabout()) );
-    //connect(ui.actionColor, SIGNAL(triggered()), this, SLOT( setStyle()) );
+    connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT( showabout()) );
+    //connect(ui->actionColor, SIGNAL(triggered()), this, SLOT( setStyle()) );
 
     /** adjusted quit behaviour: trigger a warning that can be switched off in the saved
         config file RetroShare.conf */
-    connect(ui.actionQuit, SIGNAL(triggered()), this, SLOT(doQuit()));
+    connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(doQuit()));
 
     QList<QPair<MainPage*, QAction*> > notify;
 
@@ -237,36 +238,36 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     QActionGroup *grp = new QActionGroup(this);
     QAction *action;
 
-    ui.stackPages->add(networkDialog = new NetworkDialog(ui.stackPages),
+    ui->stackPages->add(networkDialog = new NetworkDialog(ui->stackPages),
                        createPageAction(QIcon(IMAGE_NETWORK2), tr("Network"), grp));
 
-    ui.stackPages->add(friendsDialog = new FriendsDialog(ui.stackPages),
+    ui->stackPages->add(friendsDialog = new FriendsDialog(ui->stackPages),
                        action = createPageAction(QIcon(IMAGE_PEERS), tr("Friends"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(friendsDialog, action));
 
-    ui.stackPages->add(searchDialog = new SearchDialog(ui.stackPages),
+    ui->stackPages->add(searchDialog = new SearchDialog(ui->stackPages),
                        createPageAction(QIcon(IMAGE_SEARCH), tr("Search"), grp));
 
-    ui.stackPages->add(transfersDialog = new TransfersDialog(ui.stackPages),
+    ui->stackPages->add(transfersDialog = new TransfersDialog(ui->stackPages),
                       action = createPageAction(QIcon(IMAGE_TRANSFERS), tr("Transfers"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(transfersDialog, action));
 
-    ui.stackPages->add(sharedfilesDialog = new SharedFilesDialog(ui.stackPages),
+    ui->stackPages->add(sharedfilesDialog = new SharedFilesDialog(ui->stackPages),
                        createPageAction(QIcon(IMAGE_FILES), tr("Files"), grp));
 
-    ui.stackPages->add(messagesDialog = new MessagesDialog(ui.stackPages),
+    ui->stackPages->add(messagesDialog = new MessagesDialog(ui->stackPages),
                       action = createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(messagesDialog, action));
 
-    ui.stackPages->add(channelFeed = new ChannelFeed(ui.stackPages),
+    ui->stackPages->add(channelFeed = new ChannelFeed(ui->stackPages),
                       action = createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(channelFeed, action));
 
 #ifdef BLOGS
-	 ui.stackPages->add(blogsFeed = new BlogsDialog(ui.stackPages), createPageAction(QIcon(IMAGE_BLOGS), tr("Blogs"), grp));
+     ui->stackPages->add(blogsFeed = new BlogsDialog(ui->stackPages), createPageAction(QIcon(IMAGE_BLOGS), tr("Blogs"), grp));
 #endif
                       
-    ui.stackPages->add(forumsDialog = new ForumsDialog(ui.stackPages),
+    ui->stackPages->add(forumsDialog = new ForumsDialog(ui->stackPages),
                        action = createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(forumsDialog, action));
 
@@ -285,7 +286,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 			 std::cerr << "  Addign widget page for plugin " << rsPlugins->plugin(i)->getPluginName() << std::endl;
 			 MainPage *pluginPage = rsPlugins->plugin(i)->qt_page();
 			 QAction *pluginAction = createPageAction(icon, QString::fromUtf8(rsPlugins->plugin(i)->getPluginName().c_str()), grp);
-			 ui.stackPages->add(pluginPage, pluginAction);
+			 ui->stackPages->add(pluginPage, pluginAction);
 			 notify.push_back(QPair<MainPage*, QAction*>(pluginPage, pluginAction));
 		 }
 		 else if(rsPlugins->plugin(i) == NULL)
@@ -297,7 +298,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
 #ifndef RS_RELEASE_VERSION
 #ifdef PLUGINMGR
-    ui.stackPages->add(pluginsPage = new PluginsPage(ui.stackPages),
+    ui->stackPages->add(pluginsPage = new PluginsPage(ui->stackPages),
                        createPageAction(QIcon(IMAGE_PLUGINS), tr("Plugins"), grp));
 #endif
 #endif
@@ -307,22 +308,22 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
     if (!advancedMode)
     {
-    	ui.stackPages->add(getStartedPage = new GetStartedDialog(ui.stackPages),
+        ui->stackPages->add(getStartedPage = new GetStartedDialog(ui->stackPages),
                        createPageAction(QIcon(IMG_HELP), tr("Getting Started"), grp));
     }
 #endif
 
     /* Create the toolbar */
-    ui.toolBar->addActions(grp->actions());
+    ui->toolBar->addActions(grp->actions());
 
-    connect(grp, SIGNAL(triggered(QAction *)), ui.stackPages, SLOT(showPage(QAction *)));
+    connect(grp, SIGNAL(triggered(QAction *)), ui->stackPages, SLOT(showPage(QAction *)));
 
 #ifdef UNFINISHED
-    ui.toolBar->addSeparator();
-    addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
+    ui->toolBar->addSeparator();
+    addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), ui->toolBar), SLOT(showApplWindow()));
 #endif
 
-    ui.stackPages->setCurrentIndex(Settings->getLastPageInMainWindow());
+    ui->stackPages->setCurrentIndex(Settings->getLastPageInMainWindow());
 
     /** StatusBar section ********/
     /* initialize combobox in status bar */
@@ -368,7 +369,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     for (notifyIt = notify.begin(); notifyIt != notify.end(); ++notifyIt) {
         UserNotify *userNotify = notifyIt->first->getUserNotify(this);
         if (userNotify) {
-            userNotify->initialize(ui.toolBar, notifyIt->second);
+            userNotify->initialize(ui->toolBar, notifyIt->second);
             connect(userNotify, SIGNAL(countChanged()), this, SLOT(updateTrayCombine()));
             userNotifyList.push_back(userNotify);
         }
@@ -384,7 +385,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     loadOwnStatus();
 
     /* Set focus to the current page */
-    ui.stackPages->currentWidget()->setFocus();
+    ui->stackPages->currentWidget()->setFocus();
 
     idle = new Idle();
     idle->start();
@@ -398,7 +399,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 /** Destructor. */
 MainWindow::~MainWindow()
 {
-    Settings->setLastPageInMainWindow(ui.stackPages->currentIndex());
+    Settings->setLastPageInMainWindow(ui->stackPages->currentIndex());
 
     delete peerstatus;
     delete natstatus;
@@ -409,6 +410,8 @@ MainWindow::~MainWindow()
 #ifdef UNFINISHED
     delete applicationWindow;
 #endif
+
+    delete(ui);
 }
 
 void MainWindow::displayDiskSpaceWarning(int loc,int size_limit_mb)
@@ -676,7 +679,7 @@ void MainWindow::addAction(QAction *action, const char *slot)
     font = action->font();
     font.setPointSize(9);
     action->setFont(font);
-    ui.toolBar->addAction(action);
+    ui->toolBar->addAction(action);
     connect(action, SIGNAL(triggered()), this, slot);
 }
 
@@ -759,6 +762,19 @@ void SetForegroundWindowInternal(HWND hWnd)
     activatePage (page);
 }
 
+/** Shows the MainWindow with focus set to the given page. */
+/*static*/ void MainWindow::showWindow(MainPage *page)
+{
+    if (_instance == NULL) {
+        return;
+    }
+
+    /* Show the dialog. */
+    raiseWindow();
+    /* Set the focus to the specified page. */
+    _instance->ui->stackPages->setCurrentPage(page);
+}
+
 /** Set focus to the given page. */
 /*static*/ bool MainWindow::activatePage(Page page)
 {
@@ -802,7 +818,7 @@ void SetForegroundWindowInternal(HWND hWnd)
 
     if (Page) {
         /* Set the focus to the specified page. */
-        _instance->ui.stackPages->setCurrentPage(Page);
+        _instance->ui->stackPages->setCurrentPage(Page);
         return true;
     }
 
@@ -816,7 +832,7 @@ void SetForegroundWindowInternal(HWND hWnd)
        return Network;
    }
 
-   QWidget *page = _instance->ui.stackPages->currentWidget();
+   QWidget *page = _instance->ui->stackPages->currentWidget();
 
    if (page == _instance->networkDialog) {
        return Network;
@@ -1074,11 +1090,11 @@ void MainWindow::on_actionQuick_Start_Wizard_activated()
 void
 MainWindow::retranslateUi()
 {
-  ui.retranslateUi(this);
-  foreach (MainPage *page, ui.stackPages->pages()) {
+  ui->retranslateUi(this);
+  foreach (MainPage *page, ui->stackPages->pages()) {
     page->retranslateUi();
   }
-  foreach (QAction *action, ui.toolBar->actions()) {
+  foreach (QAction *action, ui->toolBar->actions()) {
     action->setText(tr(qPrintable(action->data().toString()), "MainWindow"));
   }
 }
