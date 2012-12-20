@@ -52,9 +52,9 @@ PostedDialog::PostedDialog(QWidget *parent)
     mPostedList = new PostedListDialog(this, NULL);
     mPostedComments = new PostedComments(NULL);
 
-    QString list("List");
+    QString list(tr("List"));
     ui.tabWidget->addTab(mPostedList, list);
-    QString comments("Comments");
+    QString comments(tr("Comments"));
     ui.tabWidget->addTab(mPostedComments, comments);
 
     connect(mPostedList, SIGNAL(loadComments( std::string ) ), mPostedComments, SLOT(loadComments( std::string ) ) );

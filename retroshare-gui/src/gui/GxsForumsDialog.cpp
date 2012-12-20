@@ -85,7 +85,7 @@ GxsForumsDialog::GxsForumsDialog(QWidget *parent)
 	ui.splitter->setSizes(sizes);
 
 	/* create forum tree */
-	yourForums = ui.forumTreeWidget->addCategoryItem(tr("Your Forums"), QIcon(IMAGE_FOLDER), true);
+	yourForums = ui.forumTreeWidget->addCategoryItem(tr("My Forums"), QIcon(IMAGE_FOLDER), true);
 	subscribedForums = ui.forumTreeWidget->addCategoryItem(tr("Subscribed Forums"), QIcon(IMAGE_FOLDERRED), true);
 	popularForums = ui.forumTreeWidget->addCategoryItem(tr("Popular Forums"), QIcon(IMAGE_FOLDERGREEN), false);
 	otherForums = ui.forumTreeWidget->addCategoryItem(tr("Other Forums"), QIcon(IMAGE_FOLDERYELLOW), false);

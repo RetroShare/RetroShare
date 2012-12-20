@@ -20,7 +20,7 @@ AlbumCreateDialog::AlbumCreateDialog(TokenQueue *photoQueue, RsPhoto *rs_photo, 
     ui->lineEdit_Title_2->setPlaceholderText(tr("Untitle Album"));
     ui->lineEdit_Caption_2->setPlaceholderText(tr("Say something about this album..."));
     //ui->textEdit_Description->setPlaceholderText(tr("Say something about this album...")) ;
-    ui->lineEdit_Where->setPlaceholderText(tr("Where were this taken?"));
+    ui->lineEdit_Where->setPlaceholderText(tr("Where were these taken?"));
 #endif
 
 	ui->backButton->hide();
