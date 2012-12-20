@@ -140,14 +140,16 @@ std::string FeedReaderPlugin::getPluginName() const
 	return QApplication::translate("FeedReaderPlugin", "FeedReader").toUtf8().constData();
 }
 
-QTranslator* FeedReaderPlugin::qt_translator(QApplication */*app*/, const QString& languageCode) const
+QTranslator* FeedReaderPlugin::qt_translator(QApplication */*app*/, const QString& languageCode, const QString& externalDir) const
 {
 	if (languageCode == "en") {
 		return NULL;
 	}
 
 	QTranslator* translator = new QTranslator();
-	if (translator->load(":/lang/FeedReader_" + languageCode + ".qm")) {
+	if (translator->load(externalDir + "/FeedReader_" + languageCode + ".qm")) {
+		return translator;
+	} else if (translator->load(":/lang/FeedReader_" + languageCode + ".qm")) {
 		return translator;
 	}
 

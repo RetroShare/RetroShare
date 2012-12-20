@@ -278,19 +278,19 @@
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.ui" line="168"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="138"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="139"/>
         <source>Title</source>
         <translation>Başlık</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.ui" line="182"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="139"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="140"/>
         <source>Date</source>
         <translation>Tarih</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.ui" line="187"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="140"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="141"/>
         <source>Author</source>
         <translation>Yazar</translation>
     </message>
@@ -300,164 +300,164 @@
         <translation>Mesaj:</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="110"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="111"/>
         <source>Message Folders</source>
         <translation>Mesaj Klasörleri</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="138"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="139"/>
         <source>Search Title</source>
         <translation>Başlık ara</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="139"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="140"/>
         <source>Search Date</source>
         <translation>Tarih ara</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="140"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="141"/>
         <source>Search Author</source>
         <translation>Yazarı ara</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="155"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="156"/>
         <source>Open link in browser</source>
         <translation>Bağlantıyı tarayıcıda aç</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="156"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="157"/>
         <source>Copy link to clipboard</source>
         <translation>Linki Panoya kopyala</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="292"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="298"/>
         <source>New</source>
         <translation>Yeni</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="293"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="299"/>
         <source>Feed</source>
         <translation>Feed</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="297"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="303"/>
         <source>Folder</source>
         <translation>Dosya</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="304"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="310"/>
         <source>Edit</source>
         <translation>Düzenle</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="309"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="315"/>
         <source>Delete</source>
         <translation>Sil</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="321"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="327"/>
         <source>Update</source>
         <translation>Güncelleştir</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="324"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="330"/>
         <source>Activate</source>
         <translation>Etkinleştir</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="324"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="330"/>
         <source>Deactivate</source>
         <translation>Etkisizleştir</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="338"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="344"/>
         <source>Mark as read</source>
         <translation>Okundu olarak işaretle</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="341"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="347"/>
         <source>Mark as unread</source>
         <translation>Okunmadı olarak işaretle</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="344"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="350"/>
         <source>Mark all as read</source>
         <translation>Tümünü okundu olarak işaretle</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="348"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="354"/>
         <source>Copy link</source>
         <translation>bağlantıyı kopyala</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="351"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="357"/>
         <source>Remove</source>
         <translation>Kaldır</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="515"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="521"/>
         <source>No name</source>
         <translation>İsimsiz</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="900"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="906"/>
         <source>Hide</source>
         <translation>Gizle</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="904"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="910"/>
         <source>Expand</source>
         <translation>Genişlet</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="911"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="917"/>
         <source>Add new folder</source>
         <translation>Yeni klasör ekle</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="912"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="918"/>
         <source>Please enter a name for the folder</source>
         <translation>Klasör için bir ad verin</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="918"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="971"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="924"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="977"/>
         <source>Create folder</source>
         <translation>Klasör oluştur</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="918"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="971"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="924"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="977"/>
         <source>Cannot create folder.</source>
         <translation>Klasör oluşturulamıyor.</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="944"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="950"/>
         <source>Remove folder</source>
         <translation>Klasörü kaldır</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="944"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="950"/>
         <source>Remove feed</source>
         <translation>Feed&apos;i kaldır</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="944"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="950"/>
         <source>Do you want to remove the folder %1?</source>
         <translation>%1 klasörü kaldırmak istiyor musunuz?</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="944"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="950"/>
         <source>Do you want to remove the feed %1?</source>
         <translation>%1 feed&apos;i kaldırmak istiyor musunuz?</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="964"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="970"/>
         <source>Edit folder</source>
         <translation>Klasörü düzenle</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="965"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="971"/>
         <source>Please enter a new name for the folder</source>
         <translation>Klasör için yeni bir isim verin</translation>
     </message>
@@ -606,6 +606,14 @@
         <location filename="../gui/FeedReaderStringDefs.cpp" line="140"/>
         <source>Unknown error</source>
         <translation>Bilinmeyen hata</translation>
+    </message>
+</context>
+<context>
+    <name>FeedReaderUserNotify</name>
+    <message>
+        <location filename="../gui/FeedReaderUserNotify.cpp" line="38"/>
+        <source>FeedReader Message</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

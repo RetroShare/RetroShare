@@ -1,0 +1,21 @@
+<RCC>
+  <qresource prefix="/lang">
+    <file>FeedReader_cs.qm</file>
+    <file>FeedReader_en.qm</file>
+    <file>FeedReader_es.qm</file>
+    <file>FeedReader_da.qm</file>
+    <file>FeedReader_de.qm</file>
+	<file>FeedReader_fi.qm</file>
+    <file>FeedReader_fr.qm</file>
+    <file>FeedReader_hu.qm</file>
+    <file>FeedReader_it.qm</file>
+    <file>FeedReader_ja_JP.qm</file>
+    <file>FeedReader_ko.qm</file>
+    <file>FeedReader_pl.qm</file>
+    <file>FeedReader_ru.qm</file>
+    <file>FeedReader_sv.qm</file>
+    <file>FeedReader_tr.qm</file>
+    <file>FeedReader_zh_CN.qm</file>
+  </qresource>
+</RCC>
+
