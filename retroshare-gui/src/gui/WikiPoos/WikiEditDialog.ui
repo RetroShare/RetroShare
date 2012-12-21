@@ -65,7 +65,7 @@
           <item>
            <widget class="QCheckBox" name="checkBox_Merge">
             <property name="text">
-             <string>Chose for Merge</string>
+             <string>Choose for Merge</string>
             </property>
            </widget>
           </item>

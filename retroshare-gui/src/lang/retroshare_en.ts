@@ -6424,19 +6424,19 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>GPG Name</source>
+        <source>PGP Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>GPG Email</source>
+        <source>PGP Email</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>GPG Id</source>
+        <source>PGP Id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>GPG Hash</source>
+        <source>PGP Hash</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12151,10 +12151,6 @@ Try to be patient!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Chose for Merge</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Merge for Republish (TODO)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12212,6 +12208,10 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Edit Wiki Page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose for Merge</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
