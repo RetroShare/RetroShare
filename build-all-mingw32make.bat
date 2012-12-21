@@ -56,6 +56,8 @@ if not %clean%x==x mingw32-make clean
 qmake libbitdht.pro
 
 mingw32-make %%a
+
+
 cd ..\..\openpgpsdk\src
 
 if not %clean%x==x mingw32-make clean 
@@ -63,6 +65,7 @@ if not %clean%x==x mingw32-make clean
 qmake openpgpsdk.pro
 
 mingw32-make
+
 
 cd ..\..\libretroshare\src
 
@@ -72,6 +75,16 @@ qmake libretroshare.pro
 
 mingw32-make %%a
 
+
+cd ..\..\supportlibs\pegmarkdown
+
+if not %clean%x==x mingw32-make clean 
+
+qmake pegmarkdown.pro
+
+mingw32-make %%a
+
+
 cd ..\..\retroshare-nogui\src
 
 if not %clean%x==x mingw32-make clean 
@@ -79,6 +92,7 @@ if not %clean%x==x mingw32-make clean
 qmake retroshare-nogui.pro
 
 mingw32-make %%a
+
 
 cd ..\..\retroshare-gui\src
 
