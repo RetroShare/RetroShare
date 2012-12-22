@@ -42,4 +42,7 @@ bool ConvertUtf16ToUtf8(const std::wstring& source, std::string& dest);
 int rs_sprintf(std::string &str, const char *fmt, ...);
 int rs_sprintf_append(std::string &str, const char *fmt, ...);
 
+void stringToUpperCase(const std::string& s, std::string &upper);
+void stringToLowerCase(const std::string& s, std::string &lower);
+
 #endif // RSSTRING_H_

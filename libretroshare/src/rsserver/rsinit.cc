@@ -201,28 +201,6 @@ bool RsInitConfig::udpListenerOnly;
 static bool getAvailableAccounts(std::list<accountId> &ids,int& failing_accounts,std::map<std::string,std::vector<std::string> >& unsupported_keys);
 static bool checkAccount(std::string accountdir, accountId &id,std::map<std::string,std::vector<std::string> >& unsupported_keys);
 
-static std::string toUpperCase(const std::string& s)
-{
-	std::string res(s) ;
-
-	for(uint32_t i=0;i<res.size();++i)
-		if(res[i] > 96 && res[i] < 123)
-			res[i] -= 97-65 ;
-
-	return res ;
-}
-
-static std::string toLowerCase(const std::string& s)
-{
-	std::string res(s) ;
-
-	for(uint32_t i=0;i<res.size();++i)
-		if(res[i] > 64 && res[i] < 91)
-			res[i] += 97-65 ;
-
-	return res ;
-}
-
 void RsInit::InitRsConfig()
 {
 #ifndef WINDOWS_SYS
@@ -655,8 +633,10 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 
 	// if a different user id has been passed to cmd line check for that instead
 
-	std::string lower_case_user_string = toLowerCase(prefUserString) ;
-	std::string upper_case_user_string = toUpperCase(prefUserString) ;
+	std::string lower_case_user_string;
+	stringToLowerCase(prefUserString, lower_case_user_string) ;
+	std::string upper_case_user_string;
+	stringToUpperCase(prefUserString, upper_case_user_string) ;
 
 	bool pgpNameFound = false;
 	if(prefUserString != "")

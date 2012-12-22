@@ -269,3 +269,21 @@ int rs_sprintf_append(std::string &str, const char *fmt, ...)
 
 	return retval;
 }
+
+void stringToUpperCase(const std::string& s, std::string &upper)
+{
+	upper = s ;
+
+	for(uint32_t i=0;i<upper.size();++i)
+		if(upper[i] > 96 && upper[i] < 123)
+			upper[i] -= 97-65 ;
+}
+
+void stringToLowerCase(const std::string& s, std::string &lower)
+{
+	lower = s ;
+
+	for(uint32_t i=0;i<lower.size();++i)
+		if(lower[i] > 64 && lower[i] < 91)
+			lower[i] += 97-65 ;
+}

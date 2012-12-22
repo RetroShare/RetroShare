@@ -863,29 +863,28 @@ RsFeedReaderErrorState p3FeedReaderThread::process(const RsFeedReaderFeed &feed,
 							xml.getChildText(node, "link", item->link);
 						}
 
-						long todo; // remove sid
-//						// remove sid=
-//						CString sLinkUpper = sLink;
-//						sLinkUpper.MakeUpper ();
-//						int nSIDStart = sLinkUpper.Find (TEXT("SID="));
-//						if (nSIDStart != -1) {
-//							int nSIDEnd1 = sLinkUpper.Find (TEXT(";"), nSIDStart);
-//							int nSIDEnd2 = sLinkUpper.Find (TEXT("#"), nSIDStart);
+						// remove sid=
+						std::string linkUpper;
+						stringToUpperCase(item->link, linkUpper);
+						std::string::size_type sidStart = linkUpper.find("SID=");
+						if (sidStart != std::string::npos) {
+							std::string::size_type sidEnd1 = linkUpper.find(";", sidStart);
+							std::string::size_type sidEnd2 = linkUpper.find("#", sidStart);
 
-//							if (nSIDEnd1 == -1) {
-//								nSIDEnd1 = sLinkUpper.GetLength ();
-//							}
-//							if (nSIDEnd2 == -1) {
-//								nSIDEnd2 = sLinkUpper.GetLength ();
-//							}
+							if (sidEnd1 == std::string::npos) {
+								sidEnd1 = linkUpper.size();
+							}
+							if (sidEnd2 == std::string::npos) {
+								sidEnd2 = linkUpper.size();
+							}
 
-//							if (nSIDStart > 0 && sLinkUpper [nSIDStart - 1] == '&') {
-//								nSIDStart--;
-//							}
+							if (sidStart > 0 && linkUpper[sidStart - 1] == '&') {
+								sidStart--;
+							}
 
-//							int nSIDEnd = min (nSIDEnd1, nSIDEnd2);
-//							sLink.Delete (nSIDStart, nSIDEnd - nSIDStart);
-//						}
+							std::string::size_type sidEnd = std::min(sidEnd1, sidEnd2);
+							item->link.erase(sidStart, sidEnd - sidStart);
+						}
 
 						xml.getChildText(node, "author", item->author);
 
