@@ -655,7 +655,7 @@
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="231"/>
-        <source>Titel:</source>
+        <source>Title:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

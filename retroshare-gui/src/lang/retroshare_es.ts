@@ -35,6 +35,13 @@
     </message>
 </context>
 <context>
+    <name>AddCommentDialog</name>
+    <message>
+        <source>Add Comment</source>
+        <translation>Añadir un comentario</translation>
+    </message>
+</context>
+<context>
     <name>AddFileAssociationDialog</name>
     <message>
         <source>File type(extension):</source>
@@ -95,6 +102,299 @@
     </message>
 </context>
 <context>
+    <name>AlbumCreateDialog</name>
+    <message>
+        <source>Create Album</source>
+        <translation>Crear álbum</translation>
+    </message>
+    <message>
+        <source>Album Name:</source>
+        <translation>Nombre del álbum:</translation>
+    </message>
+    <message>
+        <source>Category:</source>
+        <translation>Categoría:</translation>
+    </message>
+    <message>
+        <source>Animals</source>
+        <translation>Animales</translation>
+    </message>
+    <message>
+        <source>Family</source>
+        <translation>Familia</translation>
+    </message>
+    <message>
+        <source>Friends</source>
+        <translation>Amigos</translation>
+    </message>
+    <message>
+        <source>Flowers</source>
+        <translation>Flores</translation>
+    </message>
+    <message>
+        <source>Holiday</source>
+        <translation>Fiesta</translation>
+    </message>
+    <message>
+        <source>Landcapes</source>
+        <translation>Paisajes</translation>
+    </message>
+    <message>
+        <source>Pets</source>
+        <translation>Mascotas</translation>
+    </message>
+    <message>
+        <source>Portraits</source>
+        <translation>Retratos</translation>
+    </message>
+    <message>
+        <source>Travel</source>
+        <translation>Viajes</translation>
+    </message>
+    <message>
+        <source>Work</source>
+        <translation>Trabajo</translation>
+    </message>
+    <message>
+        <source>Random</source>
+        <translation>Aleatorio</translation>
+    </message>
+    <message>
+        <source>Caption:</source>
+        <translation>Título:</translation>
+    </message>
+    <message>
+        <source>Where:</source>
+        <translation>Donde:</translation>
+    </message>
+    <message>
+        <source>Photographer:</source>
+        <translation>Fotógrafo:</translation>
+    </message>
+    <message>
+        <source>Description:</source>
+        <translation>Descripción:</translation>
+    </message>
+    <message>
+        <source>Share Options</source>
+        <translation>Opciones de compartición</translation>
+    </message>
+    <message>
+        <source>Policy:</source>
+        <translation>Política:</translation>
+    </message>
+    <message>
+        <source>Quality:</source>
+        <translation>Calidad:</translation>
+    </message>
+    <message>
+        <source>Comments:</source>
+        <translation>Comentarios:</translation>
+    </message>
+    <message>
+        <source>Identity:</source>
+        <translation>Identidad:</translation>
+    </message>
+    <message>
+        <source>Public</source>
+        <translation>Público</translation>
+    </message>
+    <message>
+        <source>Restricted</source>
+        <translation>Restringido</translation>
+    </message>
+    <message>
+        <source>Resize Images (&lt; 1Mb)</source>
+        <translation>Redimensionar imágenes (&lt; 1Mb)</translation>
+    </message>
+    <message>
+        <source>Resize Images (&lt; 10Mb)</source>
+        <translation>Redimensionar imágenes (&lt; 10Mb)</translation>
+    </message>
+    <message>
+        <source>Send Original Images</source>
+        <translation>Enviar imágenes originales</translation>
+    </message>
+    <message>
+        <source>No Comments Allowed</source>
+        <translation>No se permiten comentarios</translation>
+    </message>
+    <message>
+        <source>Authenticated Comments</source>
+        <translation>Comentarios autenticados</translation>
+    </message>
+    <message>
+        <source>Any Comments Allowed</source>
+        <translation>Permitir cualquier comentario</translation>
+    </message>
+    <message>
+        <source>Publish with Identity</source>
+        <translation>Publicar con identidad</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; Drag &amp;amp; Drop to insert pictures. Click on a picture to edit details below.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+ &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+ p, li { white-space: pre-wrap; }
+ &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+ &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; Arrastrar y soltar para insertar imágenes. A continuación pulse en una imagen para editar los detalles.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Back</source>
+        <translation>Atrás</translation>
+    </message>
+    <message>
+        <source>Add Photos</source>
+        <translation>Añadir fotos</translation>
+    </message>
+    <message>
+        <source>Publish Album</source>
+        <translation>Publicar álbum</translation>
+    </message>
+    <message>
+        <source>Untitle Album</source>
+        <translation>Álbum sin título</translation>
+    </message>
+    <message>
+        <source>Say something about this album...</source>
+        <translation>Diga algo sobre este álbum...</translation>
+    </message>
+    <message>
+        <source>Load Album Thumbnail</source>
+        <translation>Cargar álbum de miniaturas</translation>
+    </message>
+    <message>
+        <source>Where were these taken?</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>AlbumDialog</name>
+    <message>
+        <source>Album</source>
+        <translation>Álbum</translation>
+    </message>
+    <message>
+        <source>Album Thumbnail</source>
+        <translation>Álbum de miniaturas</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation>Texto de la etiqueta</translation>
+    </message>
+    <message>
+        <source>Summary</source>
+        <translation>Resumen</translation>
+    </message>
+    <message>
+        <source>Album Title:</source>
+        <translation>Título del álbum:</translation>
+    </message>
+    <message>
+        <source>Category:</source>
+        <translation>Categoría:</translation>
+    </message>
+    <message>
+        <source>Caption</source>
+        <translation>Título</translation>
+    </message>
+    <message>
+        <source>Where:</source>
+        <translation>Donde:</translation>
+    </message>
+    <message>
+        <source>When</source>
+        <translation>Cuando</translation>
+    </message>
+    <message>
+        <source>Description:</source>
+        <translation>Descripción:</translation>
+    </message>
+    <message>
+        <source>Share Options</source>
+        <translation>Opciones de compartición</translation>
+    </message>
+    <message>
+        <source>Comments</source>
+        <translation>Comentarios</translation>
+    </message>
+    <message>
+        <source>Publish Identity</source>
+        <translation>Publicar identidad</translation>
+    </message>
+    <message>
+        <source>Visibility</source>
+        <translation>Visibilidad</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; Drag &amp;amp; Drop to insert pictures. Click on a picture to edit details below.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+ &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+ p, li { white-space: pre-wrap; }
+ &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+ &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; Arrastrar y soltar para insertar imágenes. A continuación pulse en una imagen para editar los detalles.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Add Photo</source>
+        <translation>Añadir foto</translation>
+    </message>
+    <message>
+        <source>Edit Photo</source>
+        <translation>Editar foto</translation>
+    </message>
+    <message>
+        <source>Delete Photo</source>
+        <translation>Borrar foto</translation>
+    </message>
+    <message>
+        <source>Publish Photos</source>
+        <translation>Publicar fotos</translation>
+    </message>
+</context>
+<context>
+    <name>AlbumItem</name>
+    <message>
+        <source>Form</source>
+        <translation>Formulario</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation>Texto de la etiqueta</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Album Title :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+ &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+ p, li { white-space: pre-wrap; }
+ &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+ &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Título del Álbum :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Photographer :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+ &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+ p, li { white-space: pre-wrap; }
+ &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+ &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Fotógrafo :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+</context>
+<context>
     <name>AppearancePage</name>
     <message>
         <source>Language</source>
@@ -132,18 +432,6 @@
         <translation>RetroShare</translation>
     </message>
     <message>
-        <source>Photo View</source>
-        <translation>Visor de imágenes</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Ocultar</translation>
-    </message>
-    <message>
-        <source>Show</source>
-        <translation>Mostrar</translation>
-    </message>
-    <message>
         <source>Identities</source>
         <translation>Identidades</translation>
     </message>
@@ -156,12 +444,20 @@
         <translation>Wire</translation>
     </message>
     <message>
-        <source>ForumsV2</source>
-        <translation>ForosV2</translation>
-    </message>
-    <message>
         <source>Posted Links</source>
         <translation>Enlaces publicados</translation>
+    </message>
+    <message>
+        <source>Circles</source>
+        <translation>Círculos</translation>
+    </message>
+    <message>
+        <source>Photo Share</source>
+        <translation>Compartir foto</translation>
+    </message>
+    <message>
+        <source>GxsForums</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1418,6 +1714,85 @@ Por favor, elija una para chatear.</translation>
     </message>
 </context>
 <context>
+    <name>CirclesDialog</name>
+    <message>
+        <source>Create Personal Group</source>
+        <translation>Crear grupo personal</translation>
+    </message>
+    <message>
+        <source>Create Public Group</source>
+        <translation>Crear grupo público</translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation>Refrescar</translation>
+    </message>
+    <message>
+        <source>Showing details: </source>
+        <translation>Mostrando detalles:</translation>
+    </message>
+    <message>
+        <source>Membership</source>
+        <translation>Afiliación</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>Nombre</translation>
+    </message>
+    <message>
+        <source>IDs</source>
+        <translation>IDs</translation>
+    </message>
+    <message>
+        <source>Personal Circles</source>
+        <translation>Círculos personales</translation>
+    </message>
+    <message>
+        <source>Public Circles</source>
+        <translation>Círculos públicos</translation>
+    </message>
+    <message>
+        <source>Peers</source>
+        <translation>Vecinos</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>Estado</translation>
+    </message>
+    <message>
+        <source>ID</source>
+        <translation>ID</translation>
+    </message>
+    <message>
+        <source>Friends</source>
+        <translation>Amigos</translation>
+    </message>
+    <message>
+        <source>Friends of Friends</source>
+        <translation>Amigos de amigos</translation>
+    </message>
+    <message>
+        <source>Others</source>
+        <translation>Otros</translation>
+    </message>
+    <message>
+        <source>Permissions</source>
+        <translation>Permisos</translation>
+    </message>
+    <message>
+        <source>Anon Transfers</source>
+        <translation>Transferencias anónimas</translation>
+    </message>
+    <message>
+        <source>Discovery</source>
+        <translation>Descubrimiento</translation>
+    </message>
+    <message>
+        <source>Share Category</source>
+        <translation>Compartir categoría</translation>
+    </message>
+</context>
+<context>
     <name>ConfCertDialog</name>
     <message>
         <source>Friend Details</source>
@@ -1655,13 +2030,13 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>User service permissions</source>
-        <translation type="unfinished"/>
+        <translation>Permisos de servicio de usuario</translation>
     </message>
     <message>
         <source>This tab allows you to finely tune which services each of your contacts is allowed to use with you.
 
 Some services (Discovery, anonymous routing) can be switched off globally, which always overrides the settings per-user.</source>
-        <translation type="unfinished"/>
+        <translation>Esta pestaña te permite ajustar con detalle qué servicio se le permite usar a cada uno de tus contactos contigo.⏎ ⏎ Algunos servicios (Descubrimiento, enrutado anónimo) se pueden desactivar de manera global, lo que anulará las configuraciones del usuario.</translation>
     </message>
 </context>
 <context>
@@ -2730,152 +3105,6 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>CreateForumV2</name>
-    <message>
-        <source>Create new Forum</source>
-        <translation>Crear nuevo foro</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>Nombre</translation>
-    </message>
-    <message>
-        <source>check peers you would like to share private publish key with</source>
-        <translation>Seleccione los vecinos con los que le gustaría compartir su llave de publicación privada</translation>
-    </message>
-    <message>
-        <source>Share Key With</source>
-        <translation>Compartir la llave privada con</translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation>Descripción</translation>
-    </message>
-    <message>
-        <source>Type:</source>
-        <translation>Tipo:</translation>
-    </message>
-    <message>
-        <source>Public - Anyone can read and publish (Shared Publish Key)</source>
-        <translation>Público - Cualquiera puede leer y escribir (Llave publica compartida)</translation>
-    </message>
-    <message>
-        <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation>Restringido - Cualquiera puede leer, publicación limitada (Publicar la llave privada)</translation>
-    </message>
-    <message>
-        <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation>Privado - (Es necesario publicar la llave privada para leer los mensajes)</translation>
-    </message>
-    <message>
-        <source>Key Sharing</source>
-        <translation>Llave de compartición</translation>
-    </message>
-    <message>
-        <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
-        <translation>Los destinatarios de la llave podrán publicar en canales restringidos, y leer y publicar en canales privados</translation>
-    </message>
-    <message>
-        <source>Share Private Publish Key</source>
-        <translation>Compartir llave de publicación privada</translation>
-    </message>
-    <message>
-        <source>Allowed Messages</source>
-        <translation>Mensajes permitidos</translation>
-    </message>
-    <message>
-        <source>Authenticated Messages</source>
-        <translation>Mensajes autentificados</translation>
-    </message>
-    <message>
-        <source>Anonymous Messages</source>
-        <translation>Mensajes anónimos</translation>
-    </message>
-    <message>
-        <source>Contacts:</source>
-        <translation>Contactos:</translation>
-    </message>
-    <message>
-        <source>Please add a Name</source>
-        <translation>Por favor, añada un nombre</translation>
-    </message>
-    <message>
-        <source>New Forum</source>
-        <translation>Nuevo foro</translation>
-    </message>
-</context>
-<context>
-    <name>CreateForumV2Msg</name>
-    <message>
-        <source>Post Forum Message</source>
-        <translation>Escribir mensaje de foro</translation>
-    </message>
-    <message>
-        <source>Forum</source>
-        <translation>Foro</translation>
-    </message>
-    <message>
-        <source>Subject</source>
-        <translation>Asunto</translation>
-    </message>
-    <message>
-        <source>Attach File</source>
-        <translation>Adjuntar archivo</translation>
-    </message>
-    <message>
-        <source>Sign Message</source>
-        <translation>Firmar mensaje</translation>
-    </message>
-    <message>
-        <source>Paste RetroShare Link</source>
-        <translation>Pegar enlade de RetroShare</translation>
-    </message>
-    <message>
-        <source>Forum Post</source>
-        <translation>Mensaje de foro</translation>
-    </message>
-    <message>
-        <source>Attach files via drag and drop</source>
-        <translation>Añadir archivos arrastrándolos</translation>
-    </message>
-    <message>
-        <source>You can attach files via drag and drop here in this window</source>
-        <translation>Puede adjuntar archivos arrastrándolos a esta ventana</translation>
-    </message>
-    <message>
-        <source>Post Forum Msg</source>
-        <translation>Escribir mensaje de foro</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>Cerrar</translation>
-    </message>
-    <message>
-        <source>Paste full RetroShare Link</source>
-        <translation>Pegar el enlace completo de RetroShare</translation>
-    </message>
-    <message>
-        <source>In Reply to</source>
-        <translation>Como respuesta a</translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation>RetroShare</translation>
-    </message>
-    <message>
-        <source>Please set a Forum Subject and Forum Message</source>
-        <translation>Por favor, elija un tema para el foro y escriba un mensaje</translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation>Añadir otro archivo</translation>
-    </message>
-    <message>
-        <source>Paste my certificate link</source>
-        <translation>Pegar el enlace de mi certificado</translation>
-    </message>
-</context>
-<context>
     <name>CreateGroup</name>
     <message>
         <source>Create a Group</source>
@@ -2896,6 +3125,73 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Friends</source>
         <translation>Amigos</translation>
+    </message>
+</context>
+<context>
+    <name>CreateGxsForumMsg</name>
+    <message>
+        <source>Post Forum Message</source>
+        <translation>Enviar mensaje al foro</translation>
+    </message>
+    <message>
+        <source>Forum</source>
+        <translation>Foro</translation>
+    </message>
+    <message>
+        <source>Subject</source>
+        <translation>Asunto</translation>
+    </message>
+    <message>
+        <source>Attach File</source>
+        <translation>Archivo adjunto</translation>
+    </message>
+    <message>
+        <source>Sign Message</source>
+        <translation>Firmar mensaje</translation>
+    </message>
+    <message>
+        <source>Paste RetroShare Link</source>
+        <translation>Pegar enlace de RetroShare</translation>
+    </message>
+    <message>
+        <source>Forum Post</source>
+        <translation>Mensaje de foro</translation>
+    </message>
+    <message>
+        <source>Attach files via drag and drop</source>
+        <translation>Adjuntar archivos mediante arrastrar y soltar</translation>
+    </message>
+    <message>
+        <source>You can attach files via drag and drop here in this window</source>
+        <translation>En esta ventana puede adjuntar archivos mediante arrastrar y soltar</translation>
+    </message>
+    <message>
+        <source>Start New Thread</source>
+        <translation>Iniciar nuevo tema</translation>
+    </message>
+    <message>
+        <source>Paste full RetroShare Link</source>
+        <translation>Pegar enlace completo de RetroShare</translation>
+    </message>
+    <message>
+        <source>In Reply to</source>
+        <translation>En respuesta a</translation>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation>RetroShare</translation>
+    </message>
+    <message>
+        <source>Please set a Forum Subject and Forum Message</source>
+        <translation>Por favor, elija un tema para el foro y mensaje del foro</translation>
+    </message>
+    <message>
+        <source>Add Extra File</source>
+        <translation>Añadir mas archivos</translation>
+    </message>
+    <message>
+        <source>Paste my certificate link</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3458,29 +3754,6 @@ los hashes al conectarlo.</translation>
     </message>
 </context>
 <context>
-    <name>EditForumV2Details</name>
-    <message>
-        <source>Forum Details</source>
-        <translation>Detalles del foro</translation>
-    </message>
-    <message>
-        <source>Edit Forum Details</source>
-        <translation>Editar detalles del foro</translation>
-    </message>
-    <message>
-        <source>Forum Info</source>
-        <translation>Información sobre el foro</translation>
-    </message>
-    <message>
-        <source>Forum Name</source>
-        <translation>Nombre del foro</translation>
-    </message>
-    <message>
-        <source>Forum Description</source>
-        <translation>Descripción del foro</translation>
-    </message>
-</context>
-<context>
     <name>ExampleDialog</name>
     <message>
         <source>#</source>
@@ -3943,53 +4216,6 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>ForumV2Details</name>
-    <message>
-        <source>Forum Details</source>
-        <translation>Detalles del foro</translation>
-    </message>
-    <message>
-        <source>Forum Info</source>
-        <translation>Información sobre el foro</translation>
-    </message>
-    <message>
-        <source>Forum Name</source>
-        <translation>Nombre del foro</translation>
-    </message>
-    <message>
-        <source>Popularity</source>
-        <translation>Popularidad</translation>
-    </message>
-    <message>
-        <source>Last Post</source>
-        <translation>Última entrada</translation>
-    </message>
-    <message>
-        <source>Forum ID</source>
-        <translation>ID del foro</translation>
-    </message>
-    <message>
-        <source>Forum Description</source>
-        <translation>Descripción del foro</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>Seguridad</translation>
-    </message>
-    <message>
-        <source>Allowed Messages</source>
-        <translation>Mensajes permitidos</translation>
-    </message>
-    <message>
-        <source>Authenticated Messages</source>
-        <translation>Mensajes autentificados</translation>
-    </message>
-    <message>
-        <source>Anonymous Messages</source>
-        <translation>Mensajes anónimos</translation>
-    </message>
-</context>
-<context>
     <name>ForumsDialog</name>
     <message>
         <source>Display</source>
@@ -4253,257 +4479,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Unknown</source>
         <translation>Desconocido</translation>
-    </message>
-</context>
-<context>
-    <name>ForumsV2Dialog</name>
-    <message>
-        <source>Display</source>
-        <translation>Mostrar</translation>
-    </message>
-    <message>
-        <source>Create Forum</source>
-        <translation>Crear foro</translation>
-    </message>
-    <message>
-        <source>Forum:</source>
-        <translation>Foro:</translation>
-    </message>
-    <message>
-        <source>Last Post</source>
-        <translation>Última entrada</translation>
-    </message>
-    <message>
-        <source>Threaded View</source>
-        <translation>Vista jerárquica</translation>
-    </message>
-    <message>
-        <source>Flat View</source>
-        <translation>Vista plana</translation>
-    </message>
-    <message>
-        <source>Title</source>
-        <translation>Título</translation>
-    </message>
-    <message>
-        <source>Date</source>
-        <translation>Fecha</translation>
-    </message>
-    <message>
-        <source>Author</source>
-        <translation>Autor</translation>
-    </message>
-    <message>
-        <source>Signed</source>
-        <translation>Firmado</translation>
-    </message>
-    <message>
-        <source>Thread:</source>
-        <translation>Tema:</translation>
-    </message>
-    <message>
-        <source>Previous Thread</source>
-        <translation>Tema anterior</translation>
-    </message>
-    <message>
-        <source>Next Thread</source>
-        <translation>Tema siguiente</translation>
-    </message>
-    <message>
-        <source>Download all files</source>
-        <translation>Descargar todo</translation>
-    </message>
-    <message>
-        <source>Next unread</source>
-        <translation>Siguiente sin leer</translation>
-    </message>
-    <message>
-        <source>Search forums</source>
-        <translation>Buscar foros</translation>
-    </message>
-    <message>
-        <source>Content</source>
-        <translation>Contenido</translation>
-    </message>
-    <message>
-        <source>Reply Message</source>
-        <translation>Responder a mensaje</translation>
-    </message>
-    <message>
-        <source>Start new Thread for Selected Forum</source>
-        <translation>Inicia un tema nuevo en el foro seleccionado</translation>
-    </message>
-    <message>
-        <source>Loading</source>
-        <translation>Cargando</translation>
-    </message>
-    <message>
-        <source>Print</source>
-        <translation>Imprimir</translation>
-    </message>
-    <message>
-        <source>PrintPreview</source>
-        <translation>Vista previa</translation>
-    </message>
-    <message>
-        <source>Subscribed Forums</source>
-        <translation>Foros suscritos</translation>
-    </message>
-    <message>
-        <source>Popular Forums</source>
-        <translation>Foros populares</translation>
-    </message>
-    <message>
-        <source>Other Forums</source>
-        <translation>Otros foros</translation>
-    </message>
-    <message>
-        <source>Subscribe to Forum</source>
-        <translation>Suscribirse al foro</translation>
-    </message>
-    <message>
-        <source>Unsubscribe to Forum</source>
-        <translation>Anular suscripción del foro</translation>
-    </message>
-    <message>
-        <source>New Forum</source>
-        <translation>Nuevo foro</translation>
-    </message>
-    <message>
-        <source>Show Forum Details</source>
-        <translation>Mostrar detalles del foro</translation>
-    </message>
-    <message>
-        <source>Edit Forum Details</source>
-        <translation>Editar detalles del foro</translation>
-    </message>
-    <message>
-        <source>Share Forum</source>
-        <translation>Compartir foro</translation>
-    </message>
-    <message>
-        <source>Restore Publish Rights for Forum</source>
-        <translation>Restituir derechos de publicación para el foro</translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation>Copiar enlace de RetroShare</translation>
-    </message>
-    <message>
-        <source>Mark all as read</source>
-        <translation>Marcar todos como leídos</translation>
-    </message>
-    <message>
-        <source>Mark all as unread</source>
-        <translation>Marcar todos como no leídos</translation>
-    </message>
-    <message>
-        <source>Reply</source>
-        <translation>Responder</translation>
-    </message>
-    <message>
-        <source>Start New Thread</source>
-        <translation>Iniciar nuevo tema</translation>
-    </message>
-    <message>
-        <source>Reply to Author</source>
-        <translation>Responder al autor</translation>
-    </message>
-    <message>
-        <source>Expand all</source>
-        <translation>Expandir todo</translation>
-    </message>
-    <message>
-        <source>Collapse all</source>
-        <translation>Colapsar todo</translation>
-    </message>
-    <message>
-        <source>Mark as read</source>
-        <translation>Marcar como leido</translation>
-    </message>
-    <message>
-        <source>with children</source>
-        <translation>con descendientes</translation>
-    </message>
-    <message>
-        <source>Mark as unread</source>
-        <translation>Marcar como no leido</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Ocultar</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Expandir</translation>
-    </message>
-    <message>
-        <source>AUTHD</source>
-        <translation>Autentificado</translation>
-    </message>
-    <message>
-        <source>[ ... Missing Message ... ]</source>
-        <translation>[ ... Mensaje faltante ... ]</translation>
-    </message>
-    <message>
-        <source>Placeholder for missing Message</source>
-        <translation>Marcador de posición para mensaje faltante</translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation>RetroShare</translation>
-    </message>
-    <message>
-        <source>No Forum Selected!</source>
-        <translation>¡Ningún foro seleccionado!</translation>
-    </message>
-    <message>
-        <source>Original Message</source>
-        <translation>Mensaje original</translation>
-    </message>
-    <message>
-        <source>From</source>
-        <translation>De</translation>
-    </message>
-    <message>
-        <source>Sent</source>
-        <translation>Enviar</translation>
-    </message>
-    <message>
-        <source>Subject</source>
-        <translation>Asunto</translation>
-    </message>
-    <message>
-        <source>On %1, %2 wrote:</source>
-        <translation>En %1, %2 escribió:</translation>
-    </message>
-    <message>
-        <source>You cant reply to an Anonymous Author</source>
-        <translation>No puede responder a un autor anónimo</translation>
-    </message>
-    <message>
-        <source>Anonymous</source>
-        <translation>Anónimo</translation>
-    </message>
-    <message>
-        <source>signed</source>
-        <translation>firmado</translation>
-    </message>
-    <message>
-        <source>none</source>
-        <translation>ningúno</translation>
-    </message>
-    <message>
-        <source>Forums</source>
-        <translation>Foros</translation>
-    </message>
-    <message>
-        <source>You can&apos;t reply to a non-existant Message</source>
-        <translation>No puede responder a un mensaje inexistente</translation>
-    </message>
-    <message>
-        <source>My Forums</source>
-        <translation>Mis foros</translation>
     </message>
 </context>
 <context>
@@ -5387,50 +5362,12 @@ Fill in your PGP password when asked, to sign your new key.</source>
         <translation>Invitar a los amigos</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;RetroShare is nothing without your Friends. Click on the Button to start the process.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;Email an Invitation with your &amp;quot;ID Certificate&amp;quot; to your friends.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;Be sure to get their invitation back as well... &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;You can only connect with friends if you have both added each other.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;RetroShare no es nada sin sus amigos. Haga clic en el botón para iniciar el proceso.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Envie por email una invitación con su &amp;quot;Certificado ID&amp;quot; a sus amigos.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Asegúrese de obtener su invitación de vuelta... &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Sólo puede conectar con un amigo si ambos se agregaron mutuamente.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Add Your Friends to RetroShare</source>
         <translation>Añadir a sus amigos a RetroShare</translation>
     </message>
     <message>
         <source> Add Friends </source>
         <translation>Añadir amigos</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;When your friends send you a their invitations, Click to open the Add Friends window.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Cut and Paste your Friend&apos;s &amp;quot;ID Certificates&amp;quot; into the window and add them as friends.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Cuando sus amigos le envien una de sus invitaciones, pulse en ella para abrir la ventana Añadir amigos.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Corte y pegue el &amp;quot;Certificado ID&amp;quot; de sus amigos dentro de la ventana y añádalos como amigos.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Connect To Friends</source>
@@ -5441,70 +5378,8 @@ p, li { white-space: pre-wrap; }
         <translation>Avanzado: Abrir el puerto del cortafuegos</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;You can improve your Retroshare performance by opening an External Port. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;This will speed up connections and allow more people to connect with you &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;The easiest way to do this is by enabling UPnP on your Wireless Box or Router.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;As each router is different, you need to find out your Router Model and Google for instructions.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;If none of this makes sense, don't worry about it Retroshare will still work.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Puede mejorar el rendimiento de Retroshare abriendo un puerto externo. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Esto acelerará las conexiones y permitirá a más gente conectarse con usted &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;La forma más sencilla de hacerlo es habilitando UPnP en su dispositivo inalámbrico o en el router.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Como cada router es diferente, es necesario saber el modelo de su router y buscar en Google para obtener instrucciones.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Si nada de esto tiene sentido para usted, no se preocupe por ello Retroshare seguirá funcionando.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Further Help and Support</source>
         <translation>Más ayuda y soporte técnico</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;Having trouble getting started with RetroShare?&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;1) look at the FAQ Wiki. This is a bit old, we trying to bring it up to date.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;2) check out the Online Forums. Ask questions and discuss features.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;3) try the Internal RetroShare Forums &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;	- These come online once you are connected to friends.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;4) If you are still stuck. Email us.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Enjoy Retrosharing&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;¿Tiene problemas para empezar con RetroShare?&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;1) Busque en el FAQ Wiki. Esto es un poco viejo, pero estamos tratando de ponerlo al día.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;2) Revise los foros en línea. Haga preguntas y opine sobre las características.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;3) Pruebe en los foros internos de RetroShare &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;	- Estos vienen en línea una vez que esté conectado con sus amigos.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;4) Si todavía está atascado. Envíenos un email.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Disfrute de Retrosharing&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Open RS Website</source>
@@ -5579,32 +5454,76 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;Be Online at the same time, and RetroShare will automatically connect you!&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;Your client needs to find the RetroShare Network before it can make connections.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;This takes 5-30 minutes the first time you start up RetroShare&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;The DHT indicator (in the Status Bar) turns Green when it can make connections.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;After a couple of minutes, the NAT indicator (also in the Status Bar) switch to Yellow or Green.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:12pt;&quot;&gt;If it remains Red, then you have a Nasty Firewall, that RetroShare struggles to connect through.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Look in the Further Help section for more advice about connecting.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
- &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
- p, li { white-space: pre-wrap; }
- &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
- &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;¡Estar en línea al mismo tiempo, y RetroShare le conectará automáticamente!&lt;/span&gt;&lt;/p&gt;
- &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
- &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Su cliente debe encontrar la red de RetroShare antes de poder hacer conexiones.&lt;/span&gt;&lt;/p&gt;
- &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Esto requiere de 5 a 30 minutos la primera vez que inicie RetroShare&lt;/span&gt;&lt;/p&gt;
- &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
- &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;El indicador DHT (en la barra de estado) se vuelve verde cuando pueden hacerse las conexiones.&lt;/span&gt;&lt;/p&gt;
- &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
- &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Después de un par de minutos, el indicador NAT (también en la barra de estado) cambia a amarillo o verde.&lt;/span&gt;&lt;/p&gt;
- &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Si permanece rojo, entonces es que está conectado tras un Firewall, RetroShare se esforzará para conectarse a través de él.&lt;/span&gt;&lt;/p&gt;
- &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
- &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Busque en la sección de ayuda adicional para más consejos acerca de la conexión.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;RetroShare is nothing without your Friends. Click on the Button to start the process.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Email an Invitation with your &amp;quot;ID Certificate&amp;quot; to your friends.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Be sure to get their invitation back as well... &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;You can only connect with friends if you have both added each other.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;When your friends send you a their invitations, Click to open the Add Friends window.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Cut and Paste your Friend&apos;s &amp;quot;ID Certificates&amp;quot; into the window and add them as friends.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Be Online at the same time, and RetroShare will automatically connect you!&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Your client needs to find the RetroShare Network before it can make connections.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;This takes 5-30 minutes the first time you start up RetroShare&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;The DHT indicator (in the Status Bar) turns Green when it can make connections.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;After a couple of minutes, the NAT indicator (also in the Status Bar) switch to Yellow or Green.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;If it remains Red, then you have a Nasty Firewall, that RetroShare struggles to connect through.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Look in the Further Help section for more advice about connecting.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;You can improve your Retroshare performance by opening an External Port. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;This will speed up connections and allow more people to connect with you &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;The easiest way to do this is by enabling UPnP on your Wireless Box or Router.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;As each router is different, you need to find out your Router Model and Google for instructions.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;If none of this makes sense, don't worry about it Retroshare will still work.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Having trouble getting started with RetroShare?&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;1) look at the FAQ Wiki. This is a bit old, we trying to bring it up to date.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;2) check out the Online Forums. Ask questions and discuss features.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;3) try the Internal RetroShare Forums &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;	- These come online once you are connected to friends.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;4) If you are still stuck. Email us.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Enjoy Retrosharing&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5691,15 +5610,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>All your friends can browse this directory</source>
-        <translation type="unfinished"/>
+        <translation>Todos tus amigos pueden explorar este directorio</translation>
     </message>
     <message>
         <source>Only friends in groups %1 can browse this directory</source>
-        <translation type="unfinished"/>
+        <translation>Sólo los amigos en los grupos %1 pueden explorar este directorio</translation>
     </message>
     <message>
         <source>No one can browse this directory</source>
-        <translation type="unfinished"/>
+        <translation>Nadie puede explorar este directorio</translation>
     </message>
 </context>
 <context>
@@ -5814,6 +5733,436 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>is in range</source>
         <translation>es en el rango</translation>
+    </message>
+</context>
+<context>
+    <name>GxsCommentTreeWidget</name>
+    <message>
+        <source>Reply to Comment</source>
+        <translation>Responder al comentario</translation>
+    </message>
+    <message>
+        <source>Submit Comment</source>
+        <translation>Enviar comentario</translation>
+    </message>
+    <message>
+        <source>Anonymous</source>
+        <translation>Anónimo</translation>
+    </message>
+</context>
+<context>
+    <name>GxsForumGroupDialog</name>
+    <message>
+        <source>Create New Forum</source>
+        <translation>Crear nuevo foro</translation>
+    </message>
+    <message>
+        <source>Forum</source>
+        <translation>Foro</translation>
+    </message>
+    <message>
+        <source>Edit Forum</source>
+        <translation>Editar Foro</translation>
+    </message>
+</context>
+<context>
+    <name>GxsForumThreadWidget</name>
+    <message>
+        <source>Form</source>
+        <translation>Formulario</translation>
+    </message>
+    <message>
+        <source>Start new Thread for Selected Forum</source>
+        <translation>Iniciar nuevo tema para el foro seleccionado</translation>
+    </message>
+    <message>
+        <source>Search forums</source>
+        <translation>Buscar foros</translation>
+    </message>
+    <message>
+        <source>Last Post</source>
+        <translation>Último mensaje</translation>
+    </message>
+    <message>
+        <source>Threaded View</source>
+        <translation>Vista por discusión</translation>
+    </message>
+    <message>
+        <source>Flat View</source>
+        <translation>Vista plana</translation>
+    </message>
+    <message>
+        <source>Title</source>
+        <translation>Título</translation>
+    </message>
+    <message>
+        <source>Date</source>
+        <translation>Fecha</translation>
+    </message>
+    <message>
+        <source>Author</source>
+        <translation>Autor</translation>
+    </message>
+    <message>
+        <source>Signed</source>
+        <translation>Firmado</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Cargando</translation>
+    </message>
+    <message>
+        <source>Reply Message</source>
+        <translation>Responder mensaje</translation>
+    </message>
+    <message>
+        <source>Previous Thread</source>
+        <translation>Tema anterior</translation>
+    </message>
+    <message>
+        <source>Next Thread</source>
+        <translation>Tema siguiente</translation>
+    </message>
+    <message>
+        <source>Download all files</source>
+        <translation>Descargar todos los archivos</translation>
+    </message>
+    <message>
+        <source>Next unread</source>
+        <translation>Siguiente no leído</translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation>Refrescar</translation>
+    </message>
+    <message>
+        <source>Reply</source>
+        <translation>Responder</translation>
+    </message>
+    <message>
+        <source>Start New Thread</source>
+        <translation>Iniciar nuevo tema</translation>
+    </message>
+    <message>
+        <source>Reply to Author</source>
+        <translation>Responder al autor</translation>
+    </message>
+    <message>
+        <source>Expand all</source>
+        <translation>Expandir todo</translation>
+    </message>
+    <message>
+        <source>Collapse all</source>
+        <translation>Colapsar todo</translation>
+    </message>
+    <message>
+        <source>Mark as read</source>
+        <translation>Marcar como leído</translation>
+    </message>
+    <message>
+        <source>with children</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Mark as unread</source>
+        <translation>Marcar como no leído</translation>
+    </message>
+    <message>
+        <source>Copy RetroShare Link</source>
+        <translation>Copiar enlace de RetroShare</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Ocultar</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Expandir</translation>
+    </message>
+    <message>
+        <source>Anonymous</source>
+        <translation>Anónimo</translation>
+    </message>
+    <message>
+        <source>signed</source>
+        <translation>firmado</translation>
+    </message>
+    <message>
+        <source>none</source>
+        <translation>ninguno</translation>
+    </message>
+    <message>
+        <source>[ ... Missing Message ... ]</source>
+        <translation>[ ... Mensaje perdido ... ]</translation>
+    </message>
+    <message>
+        <source>By</source>
+        <translation>Por</translation>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation>RetroShare</translation>
+    </message>
+    <message>
+        <source>No Forum Selected!</source>
+        <translation>¡Ningún foro seleccionado!</translation>
+    </message>
+    <message>
+        <source>You cant reply to a non-existant Message</source>
+        <translation>No puede responder a un mensaje inexistente</translation>
+    </message>
+    <message>
+        <source>You cant reply to an Anonymous Author</source>
+        <translation>No puede responder a un autor anónimo</translation>
+    </message>
+</context>
+<context>
+    <name>GxsForumsDialog</name>
+    <message>
+        <source>Forums</source>
+        <translation>Foros</translation>
+    </message>
+    <message>
+        <source>Display</source>
+        <translation>Mostrar</translation>
+    </message>
+    <message>
+        <source>Create Forum</source>
+        <translation>Crear foro</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>Imprimir</translation>
+    </message>
+    <message>
+        <source>PrintPreview</source>
+        <translation>Vista previa</translation>
+    </message>
+    <message>
+        <source>Subscribed Forums</source>
+        <translation>Foros suscritos</translation>
+    </message>
+    <message>
+        <source>Popular Forums</source>
+        <translation>Foros populares</translation>
+    </message>
+    <message>
+        <source>Other Forums</source>
+        <translation>Otros foros</translation>
+    </message>
+    <message>
+        <source>Subscribe to Forum</source>
+        <translation>Suscribirse al foro</translation>
+    </message>
+    <message>
+        <source>Unsubscribe to Forum</source>
+        <translation>Desuscribirse al foro</translation>
+    </message>
+    <message>
+        <source>New Forum</source>
+        <translation>Nuevo foro</translation>
+    </message>
+    <message>
+        <source>Show Forum Details</source>
+        <translation>Mostrar detalles del foro</translation>
+    </message>
+    <message>
+        <source>Edit Forum Details</source>
+        <translation>Editar detalles del foro</translation>
+    </message>
+    <message>
+        <source>Share Forum</source>
+        <translation>Compartir foro</translation>
+    </message>
+    <message>
+        <source>Restore Publish Rights for Forum</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Copy RetroShare Link</source>
+        <translation>Copiar enlace de RetroShare</translation>
+    </message>
+    <message>
+        <source>Mark all as read</source>
+        <translation>Marcar todo como leído</translation>
+    </message>
+    <message>
+        <source>Mark all as unread</source>
+        <translation>Marcar todo como no leído</translation>
+    </message>
+    <message>
+        <source>AUTHD</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Original Message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>From</source>
+        <translation>De</translation>
+    </message>
+    <message>
+        <source>Subject</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>My Forums</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsForumsFillThread</name>
+    <message>
+        <source>Waiting</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Retrieving</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsGroupDialog</name>
+    <message>
+        <source>Create New</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add Icon</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Key recipients can publish to restricted-type Wiki Group, and can view and publish  for private-type channels</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Share Publish Key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>check peers you would like to share private publish key with</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Share Key With</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Message Distribution</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Public</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Restricted to Group</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Only For Your Friends</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Some Friends</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Another Group</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Family?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enemies</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Publish Signatures</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation>Abrir</translation>
+    </message>
+    <message>
+        <source>New Thread</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Required</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Encrypted Msgs</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Personal Signatures</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Required</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Signature Required</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>If No Publish Signature</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Comments</source>
+        <translation>Comentarios</translation>
+    </message>
+    <message>
+        <source>Allow Comments</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No Comments</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Contacts:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create Group</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please add a Name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Load Group Logo</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add Wiki Moderators</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Select Wiki Moderators</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5988,82 +6337,47 @@ p, li { white-space: pre-wrap; }
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare is an Open Source cross-platform, &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;private and secure decentralized commmunication platform.	&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;It lets you share securely your friends, &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;using a web-of-trust to authenticate peers and OpenSSL to encrypt all communication. &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare provides file sharing, chat, messages and channels&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Useful external links to more information:&lt;/span&gt;&lt;/p&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Webpage&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/wiki/index.php/Main_Page&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Wiki&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/forum/&quot;&gt;RetroShare's Forum&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://sourceforge.net/projects/retroshare/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Project Page&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://www.lunamutt.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Lunamutt Homepage.&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Translators:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;French&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;:Temet&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jarek&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Serbian&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;: Kunalagon Umuhanik &amp;lt;kunalagon@gmail.com&amp;gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Swedish:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; dnylander&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Website Translators:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Swedish: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Daniel Wester&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;wester@speedmail.se&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;German: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Keller&lt;/span&gt;&lt;span style=&quot;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&lt;span style=&quot;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;&lt;span style=&quot;&quot;&gt;Maciej Mrug&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;About RetroShare&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Acerca de RetroShare&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Translators:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt;French&lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt;&quot;&gt;:Temet&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt;&quot;&gt;Jarek&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt;Serbian&lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt;&quot;&gt;: Kunalagon Umuhanik &amp;lt;kunalagon@gmail.com&amp;gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt;Swedish:&lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt;&quot;&gt; dnylander&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Website Translators:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt;Swedish: &lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt;&quot;&gt; Daniel Wester&lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt;&quot;&gt;wester@speedmail.se&lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt;German: &lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt;&quot;&gt;Keller&lt;/span&gt;&lt;span style=&quot; font-family:'Arial';&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&lt;span style=&quot; font-family:'Arial';&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;;&quot;&gt;Maciej Mrug&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
- &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
- p, li { white-space: pre-wrap; }
- &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
- &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Traductores de RetroShare:&lt;/span&gt;&lt;/p&gt;
- &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
- &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Francés&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;:Temet&lt;/span&gt;&lt;/p&gt;
- &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Polaco: &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;Jarek&lt;/span&gt;&lt;/p&gt;
- &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Serbio&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;: Kunalagon Umuhanik &amp;lt;kunalagon@gmail.com&amp;gt;&lt;/span&gt;&lt;/p&gt;
- &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Español&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;: Manuel Montero &quot;Senpai&quot; &amp;lt;http://pagina.de/senpai&amp;gt;&lt;/span&gt;&lt;/p&gt;
- &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Sueco:&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt; dnylander&lt;/span&gt;&lt;/p&gt;
- &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
- &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Traductores de la página web de RetroShare:&lt;/span&gt;&lt;/p&gt;
- &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
- &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Sueco: &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt; Daniel Wester&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;wester@speedmail.se&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
- &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Alemán: &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;Keller&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
- &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;Polaco: &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;;&quot;&gt;Maciej Mrug&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-weight:600;&quot;&gt;RetroShare is an Open Source cross-platform, &lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-weight:600;&quot;&gt;private and secure decentralized commmunication platform.	&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-weight:600;&quot;&gt;It lets you share securely your friends, &lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-weight:600;&quot;&gt;using a web-of-trust to authenticate peers and OpenSSL to encrypt all communication. &lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-weight:600;&quot;&gt;RetroShare provides file sharing, chat, messages and channels&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:8pt; font-weight:600;&quot;&gt;Useful external links to more information:&lt;/span&gt;&lt;/p&gt;
-&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:'Arial'; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Webpage&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-family:'Arial'; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/wiki/index.php/Main_Page&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Wiki&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-family:'Arial'; font-size:8pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/forum/&quot;&gt;RetroShare's Forum&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-family:'Arial'; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://sourceforge.net/projects/retroshare/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Project Page&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://www.lunamutt.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Lunamutt Homepage.&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
- &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
- p, li { white-space: pre-wrap; }
- &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
- &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;RetroShare es de código abierto y multiplataforma, &lt;/span&gt;&lt;/p&gt;
- &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;es una plataforma de comunicación descentralizada privada y segura.»&lt;/span&gt;&lt;/p&gt;
- &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;Que le permite compartir de forma segura con sus amigos, &lt;/span&gt;&lt;/p&gt;
- &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;usando una red de anillos de confianza para autenticar pares y OpenSSL para cifrar todas las comunicaciones. &lt;/span&gt;&lt;/p&gt;
- &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-weight:600;&quot;&gt;RetroShare ofrece intercambio de archivos, chat, mensajes y canales&lt;/span&gt;&lt;/p&gt;
- &lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
- &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Enlaces externos útiles para obtener más información:&lt;/span&gt;&lt;/p&gt;
- &lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Página de Retroshare&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
- &lt;li style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/wiki/index.php/Main_Page&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Wiki de Retroshare&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
- &lt;li style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/forum/&quot;&gt;Foro de RetroShare&lt;/a&gt;&lt;/li&gt;
- &lt;li style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://sourceforge.net/projects/retroshare/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Página del proyecto Retroshare&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
- &lt;li style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://www.lunamutt.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Página de Lunamutt.&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6186,6 +6500,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Overall Rating</source>
         <translation>Valoración general</translation>
+    </message>
+    <message>
+        <source>Identities</source>
+        <translation>Identidades</translation>
     </message>
     <message>
         <source>PGP Name</source>
@@ -8076,7 +8394,10 @@ botón derecho y seleccione hacer amigo para conectar.</translation>
  No Anon D/L: switches off file forwarding
  Gaming Mode: 25% standard traffic and TODO: reduced popups
  Low Traffic: 10% standard traffic and TODO: pauses all file-transfers</source>
-        <translation type="unfinished"/>
+        <translation>Usa la lista desplegable para cambia rápidamente el comportamiento de Retroshare.
+Sin Anonimato D/S: desactiva el reenvío de archivos
+ Modo Juego: 25% del tráfico estándar y TODO: avisos reducidos
+ Tráfico Reducido: 10% del tráfico estándar y TODO: pausa todas las transferencias de archivos</translation>
     </message>
 </context>
 <context>
@@ -8197,102 +8518,33 @@ botón derecho y seleccione hacer amigo para conectar.</translation>
     </message>
 </context>
 <context>
-    <name>PhotoAddDialog</name>
+    <name>PhotoCommentItem</name>
     <message>
-        <source>Share Options</source>
-        <translation>Opciones de compartición</translation>
+        <source>Form</source>
+        <translation>Formulario</translation>
+    </message>
+</context>
+<context>
+    <name>PhotoDialog</name>
+    <message>
+        <source>PhotoShare</source>
+        <translation>Compartir fotos</translation>
     </message>
     <message>
-        <source>Public</source>
-        <translation>Público</translation>
+        <source>Photo</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>All Friends</source>
-        <translation>Todos los amigos</translation>
+        <source>TextLabel</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Restricted</source>
-        <translation>Restringido</translation>
-    </message>
-    <message>
-        <source>N/A</source>
-        <translation>N/A</translation>
-    </message>
-    <message>
-        <source>University Friends</source>
-        <translation>Amigos de la universidad</translation>
-    </message>
-    <message>
-        <source>Family</source>
-        <translation>Familia</translation>
-    </message>
-    <message>
-        <source>This List Contains</source>
-        <translation>Esta lista contiene</translation>
-    </message>
-    <message>
-        <source>All your Groups</source>
-        <translation>Todos sus grupos</translation>
-    </message>
-    <message>
-        <source>Resize Images (&lt; 1Mb)</source>
-        <translation>Redimensionar imágenes (&lt; 1Mb)</translation>
-    </message>
-    <message>
-        <source>Resize Images (&lt; 10Mb)</source>
-        <translation>Redimensionar imágenes (&lt; 10Mb)</translation>
-    </message>
-    <message>
-        <source>Send Original Images</source>
-        <translation>Enviar imágenes originales</translation>
-    </message>
-    <message>
-        <source>No Comments Allowed</source>
-        <translation>No se permiten comentarios</translation>
-    </message>
-    <message>
-        <source>Authenticated Comments</source>
-        <translation>Comentarios autentificados</translation>
-    </message>
-    <message>
-        <source>Any Comments Allowed</source>
-        <translation>Ningún comentario permitido</translation>
-    </message>
-    <message>
-        <source>Publish with XXX Key</source>
-        <translation>Publicar con llave XXX</translation>
-    </message>
-    <message>
-        <source>Album Thumbnail</source>
-        <translation>Album de miniaturas</translation>
+        <source>Comment</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Summary</source>
-        <translation>Sumario</translation>
-    </message>
-    <message>
-        <source>Category:</source>
-        <translation>Categoría:</translation>
-    </message>
-    <message>
-        <source>Travel</source>
-        <translation>Viaje</translation>
-    </message>
-    <message>
-        <source>Holiday</source>
-        <translation>Festivo</translation>
-    </message>
-    <message>
-        <source>Friends</source>
-        <translation>Amigos</translation>
-    </message>
-    <message>
-        <source>Work</source>
-        <translation>Trabajo</translation>
-    </message>
-    <message>
-        <source>Random</source>
-        <translation>Aleatorio</translation>
+        <translation>Resumen</translation>
     </message>
     <message>
         <source>Caption</source>
@@ -8300,208 +8552,110 @@ botón derecho y seleccione hacer amigo para conectar.</translation>
     </message>
     <message>
         <source>Where:</source>
-        <translation>Lugar:</translation>
+        <translation>Donde:</translation>
     </message>
     <message>
-        <source>Album Title:</source>
-        <translation>Título del album:</translation>
-    </message>
-    <message>
-        <source>When</source>
-        <translation>Cuando</translation>
-    </message>
-    <message>
-        <source>Delete Album</source>
-        <translation>Borrar album</translation>
-    </message>
-    <message>
-        <source>Edit Album Details</source>
-        <translation>Editar detalles del album</translation>
-    </message>
-    <message>
-        <source>HELP:   Drag &amp; Drop to insert, and re-order pictures. Click on a picture to edit details below.</source>
-        <translation>AYUDA:   Arrastre y suelte para insertar y reordenar las fotografías. A continuación pulse en una imagen para editar los detalles.</translation>
-    </message>
-    <message>
-        <source>Delete Photo</source>
-        <translation>Borrar foto</translation>
-    </message>
-    <message>
-        <source>Edit Photo Details</source>
-        <translation>Editar detalles de la foto</translation>
-    </message>
-    <message>
-        <source>&lt;&lt;</source>
-        <translation>&lt;&lt;</translation>
-    </message>
-    <message>
-        <source>&gt;&gt;</source>
-        <translation>&gt;&gt;</translation>
-    </message>
-    <message>
-        <source>Publish Album</source>
-        <translation>Publicar album</translation>
-    </message>
-</context>
-<context>
-    <name>PhotoDetailsDialog</name>
-    <message>
-        <source>Album Description</source>
-        <translation>Descripción del album</translation>
-    </message>
-    <message>
-        <source>Album Name:</source>
-        <translation>Nombre del album:</translation>
-    </message>
-    <message>
-        <source>Category:</source>
-        <translation>Categoría:</translation>
-    </message>
-    <message>
-        <source>Travel</source>
-        <translation>Viaje</translation>
-    </message>
-    <message>
-        <source>Holiday</source>
-        <translation>Festivo</translation>
-    </message>
-    <message>
-        <source>Friends</source>
-        <translation>Amigos</translation>
-    </message>
-    <message>
-        <source>Family</source>
-        <translation>Familia</translation>
-    </message>
-    <message>
-        <source>Work</source>
-        <translation>Trabajo</translation>
-    </message>
-    <message>
-        <source>Random</source>
-        <translation>Aleatorio</translation>
-    </message>
-    <message>
-        <source>Thumbnail
-Here
-Dummy
-Text
-1
-2
-3
-...................................</source>
-        <translation>Miniatura
-Aquí
-Maqueta
-Texto
-1
-2
-3
-...................................</translation>
-    </message>
-    <message>
-        <source>Caption:</source>
-        <translation>Título:</translation>
-    </message>
-    <message>
-        <source>Photographer:</source>
-        <translation>Fotógrafo:</translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation>Descripción</translation>
-    </message>
-    <message>
-        <source>Where:</source>
-        <translation>Lugar:</translation>
+        <source>Photo Title:</source>
+        <translation>Título de la foto:</translation>
     </message>
     <message>
         <source>When</source>
         <translation>Cuando</translation>
     </message>
     <message>
-        <source>Other 1:</source>
-        <translation>Otro 1:</translation>
+        <source>...</source>
+        <translation>...</translation>
     </message>
     <message>
-        <source>HashTags:</source>
-        <translation>Hash de las etiquetas:</translation>
+        <source>Add Comment</source>
+        <translation>Añadir comentario</translation>
     </message>
     <message>
-        <source>Update Details</source>
-        <translation>Actualizar detalles</translation>
-    </message>
-</context>
-<context>
-    <name>PhotoDialog</name>
-    <message>
-        <source>Rating</source>
-        <translation>Valoración</translation>
-    </message>
-    <message>
-        <source>Filter</source>
-        <translation>Filtrar</translation>
-    </message>
-    <message>
-        <source>Source</source>
-        <translation>Fuente</translation>
-    </message>
-    <message>
-        <source>Category</source>
-        <translation>Categoría</translation>
-    </message>
-    <message>
-        <source>[ - ]</source>
-        <translation>[ - ]</translation>
-    </message>
-    <message>
-        <source>[ + ]</source>
-        <translation>[ + ]</translation>
-    </message>
-    <message>
-        <source>Slide Show</source>
-        <translation>Presentación con diapositivas</translation>
-    </message>
-    <message>
-        <source>Edit Album</source>
-        <translation>Editar album</translation>
-    </message>
-    <message>
-        <source>New Album</source>
-        <translation>Nuevo album</translation>
-    </message>
-    <message>
-        <source>PhotoShare</source>
-        <translation>Compartir fotos</translation>
-    </message>
-    <message>
-        <source>Please select an album before
-requesting to edit it!</source>
-        <translation>¡Por favor, seleccione un álbum antes 
-de intentar editarlo!</translation>
-    </message>
-    <message>
-        <source>Cannot Edit Someone Else&apos;s Album</source>
-        <translation>No se puede editar el album de otro</translation>
+        <source>Write a comment...</source>
+        <translation>Escribir un comentario...</translation>
     </message>
 </context>
 <context>
     <name>PhotoItem</name>
     <message>
-        <source>Album:</source>
-        <translation>Album:</translation>
+        <source>Form</source>
+        <translation>Formulario</translation>
     </message>
     <message>
-        <source>From</source>
-        <translation>De</translation>
+        <source>TextLabel</source>
+        <translation>Texto de la etiqueta</translation>
     </message>
     <message>
-        <source>Status</source>
-        <translation>Estado</translation>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Photo Title :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+ &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+ p, li { white-space: pre-wrap; }
+ &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+ &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Título de la foto :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <source>Date</source>
-        <translation>Fecha</translation>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Photographer :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+ &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+ p, li { white-space: pre-wrap; }
+ &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+ &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Fotógrafo :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+</context>
+<context>
+    <name>PhotoShare</name>
+    <message>
+        <source>Form</source>
+        <translation>Formulario</translation>
+    </message>
+    <message>
+        <source>Create Album</source>
+        <translation>Crear álbum</translation>
+    </message>
+    <message>
+        <source>View Album</source>
+        <translation>Ver álbum</translation>
+    </message>
+    <message>
+        <source>Subscribe To Album</source>
+        <translation>Suscribirse al álbum</translation>
+    </message>
+    <message>
+        <source>Slide Show</source>
+        <translation>Diapositivas</translation>
+    </message>
+    <message>
+        <source>My Albums</source>
+        <translation>Mi álbum</translation>
+    </message>
+    <message>
+        <source>Subscribed Albums</source>
+        <translation>Álbum suscritos</translation>
+    </message>
+    <message>
+        <source>Shared Albums</source>
+        <translation>Álbumes compartidos</translation>
+    </message>
+    <message>
+        <source>View Photo</source>
+        <translation>Ver foto</translation>
+    </message>
+    <message>
+        <source>PhotoShare</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please select an album before
+requesting to edit it!</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8523,16 +8677,28 @@ de intentar editarlo!</translation>
         <translation>&lt;&lt;</translation>
     </message>
     <message>
-        <source>Stop/Run</source>
-        <translation>Parar/Activar</translation>
-    </message>
-    <message>
         <source>&gt;&gt;</source>
         <translation>&gt;&gt;</translation>
     </message>
     <message>
         <source>Close</source>
         <translation>Cerrar</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Start Slide Show</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Stop Slide Show</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8765,48 +8931,128 @@ de un posible comportamiento malicioso de los plugins.</translation>
         <translation>Más alto</translation>
     </message>
     <message>
-        <source>Today</source>
-        <translation>Hoy</translation>
-    </message>
-    <message>
-        <source>Yesterday</source>
-        <translation>Ayer</translation>
-    </message>
-    <message>
-        <source>This Week</source>
-        <translation>Esta semana</translation>
-    </message>
-    <message>
-        <source>This Month</source>
-        <translation>Este mes</translation>
-    </message>
-    <message>
-        <source>This Year</source>
-        <translation>Este año</translation>
-    </message>
-    <message>
         <source>Refresh</source>
         <translation>Refrescar</translation>
     </message>
     <message>
-        <source>Showing 1-100</source>
-        <translation>Mostrando 1-100</translation>
+        <source>1</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Prev</source>
-        <translation>Anterior</translation>
+        <source>/\</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Next</source>
-        <translation>Siguiente</translation>
+        <source>score</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>\/</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Title this is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title dont you think? yes it is and should wrap around I hope</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Date</source>
+        <translation>Fecha</translation>
+    </message>
+    <message>
+        <source>From</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Site</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Author</source>
+        <translation>Autor</translation>
+    </message>
+    <message>
+        <source>Points</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>PostedCreateCommentDialog</name>
+    <message>
+        <source>Make Comment</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Comment&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>PostedCreatePostDialog</name>
+    <message>
+        <source>Create Post</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Title&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Link&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>PostedDialog</name>
+    <message>
+        <source>Posted Links</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>List</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Comments</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>PostedGroupDialog</name>
+    <message>
+        <source>Create New Posted Topic</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Posted Topic</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit Posted Topic</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>PostedItem</name>
-    <message>
-        <source>1</source>
-        <translation>1</translation>
-    </message>
     <message>
         <source>/\</source>
         <translation>/\</translation>
@@ -8838,6 +9084,18 @@ de un posible comportamiento malicioso de los plugins.</translation>
     <message>
         <source>This is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title don&apos;t you think? Yes it is and should wrap around I hope</source>
         <translation>Este es un título muy muy muy laaaaaaaaaarrrrgo ¿no le parece? Sí lo es, y debe rehacerlo, espero…</translation>
+    </message>
+    <message>
+        <source>0</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;#&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; Comments:  0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8879,10 +9137,6 @@ de un posible comportamiento malicioso de los plugins.</translation>
         <translation>Este año</translation>
     </message>
     <message>
-        <source>New Link Group</source>
-        <translation>Nuevo grupo de enlace</translation>
-    </message>
-    <message>
         <source>Submit Post</source>
         <translation>Enviar mensaje</translation>
     </message>
@@ -8915,52 +9169,12 @@ de un posible comportamiento malicioso de los plugins.</translation>
         <translation>Otros temas</translation>
     </message>
     <message>
-        <source>Subscribe to Forum</source>
-        <translation>Suscribirse al foro</translation>
-    </message>
-    <message>
-        <source>Unsubscribe to Forum</source>
-        <translation>Anular suscripción al foro</translation>
-    </message>
-    <message>
-        <source>New Forum</source>
-        <translation>Nuevo foro</translation>
-    </message>
-    <message>
-        <source>Show Forum Details</source>
-        <translation>Mostrar detalles del foro</translation>
-    </message>
-    <message>
-        <source>Edit Forum Details</source>
-        <translation>Editar detalles del foro</translation>
-    </message>
-    <message>
-        <source>Share Forum</source>
-        <translation>Compartir foro</translation>
-    </message>
-    <message>
-        <source>Restore Publish Rights for Forum</source>
-        <translation>Restituir derechos de publicación para el foro</translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation>Copiar enlace de RetroShare</translation>
-    </message>
-    <message>
-        <source>Mark all as read</source>
-        <translation>Marcar todos como leídos</translation>
-    </message>
-    <message>
-        <source>Mark all as unread</source>
-        <translation>Marcar todos como no leídos</translation>
-    </message>
-    <message>
-        <source>AUTHD</source>
-        <translation>Autentificado</translation>
-    </message>
-    <message>
         <source>My Topics</source>
         <translation>Mis temas</translation>
+    </message>
+    <message>
+        <source>New Topic</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9512,6 +9726,11 @@ and open the Make Friend Wizard.
         <source>Initialization failed. Wrong or missing installation of PGP.</source>
         <translation>La inicialización ha fallado. Instalación de GPG dañada o ausente.</translation>
     </message>
+    <message>
+        <source>Warning: forbidden characters found in filenames. 
+Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replaced by &apos;_&apos;.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>QuickStartWizard</name>
@@ -9868,6 +10087,16 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Hash</source>
         <translation>Hash</translation>
+    </message>
+    <message>
+        <source>Bad filenames have been cleaned</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Some filenames or directory names contained forbidden characters.
+Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replaced by '_'.
+ Concerned files are listed in red.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -10446,7 +10675,7 @@ peers still need to trust each other to allow connection. </source>
     </message>
     <message>
         <source>This tab contains hard-core parameters which are unlikely to need modification. Don&apos;t change them unless you really know what you&apos;re doing.</source>
-        <translation type="unfinished"/>
+        <translation>Esta pestaña contiene parámetros del núcleo que raramente necesitarás modificar. No los cambies a no ser que de verdad sepas lo que haces.</translation>
     </message>
 </context>
 <context>
@@ -10492,7 +10721,7 @@ peers still need to trust each other to allow connection. </source>
     </message>
     <message>
         <source>Edit Shared Folder</source>
-        <translation type="unfinished"/>
+        <translation>Editar la carpeta compartida</translation>
     </message>
 </context>
 <context>
@@ -10617,7 +10846,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edit Shared Folder</source>
-        <translation type="unfinished"/>
+        <translation>Editar la carpeta compartida</translation>
     </message>
 </context>
 <context>
@@ -10764,11 +10993,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edit Share Permissions</source>
-        <translation type="unfinished"/>
+        <translation>Editar los permisos del recurso compartido</translation>
     </message>
     <message>
         <source>Edit Shared Folder</source>
-        <translation type="unfinished"/>
+        <translation>Editar la carpeta compartida</translation>
     </message>
 </context>
 <context>
@@ -12071,14 +12300,6 @@ bloques defectuosos y los descargará de nuevo.
         <translation>ID</translation>
     </message>
     <message>
-        <source>Page Modification</source>
-        <translation>Modificación de la página</translation>
-    </message>
-    <message>
-        <source>By</source>
-        <translation>Por</translation>
-    </message>
-    <message>
         <source>&lt;&lt;</source>
         <translation>&lt;&lt;</translation>
     </message>
@@ -12087,16 +12308,8 @@ bloques defectuosos y los descargará de nuevo.
         <translation>&gt;&gt;</translation>
     </message>
     <message>
-        <source>&lt;&lt; Mod</source>
-        <translation>&lt;&lt; Mod</translation>
-    </message>
-    <message>
         <source>Edit</source>
         <translation>Editar</translation>
-    </message>
-    <message>
-        <source>Mod &gt;&gt;</source>
-        <translation>Mod &gt;&gt;</translation>
     </message>
     <message>
         <source>New Group</source>
@@ -12107,16 +12320,24 @@ bloques defectuosos y los descargará de nuevo.
         <translation>Nueva página</translation>
     </message>
     <message>
-        <source>Delete</source>
-        <translation>Borrar</translation>
+        <source>Wiki Pages</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Republish</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation>Buscar</translation>
     </message>
 </context>
 <context>
     <name>WikiEditDialog</name>
-    <message>
-        <source>Wiki Page</source>
-        <translation>Página Wiki</translation>
-    </message>
     <message>
         <source>Wiki Group:</source>
         <translation>Grupo Wiki:</translation>
@@ -12126,16 +12347,8 @@ bloques defectuosos y los descargará de nuevo.
         <translation>Nombre de la página:</translation>
     </message>
     <message>
-        <source>Edit ID</source>
-        <translation>Editar ID</translation>
-    </message>
-    <message>
         <source>Previous Version</source>
         <translation>Versión anterior</translation>
-    </message>
-    <message>
-        <source>Prev ID</source>
-        <translation>ID anterior</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -12148,6 +12361,93 @@ bloques defectuosos y los descargará de nuevo.
     <message>
         <source>Submit</source>
         <translation>Enviar</translation>
+    </message>
+    <message>
+        <source>Page Edit History</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enable Obsolete Edits</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Merge for Republish (TODO)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Publish Date</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>By</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PageId</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>\/</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>/\</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Tags</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Edit History</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Preview</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Hide Edit History</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit Page</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create New Wiki Page</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Republish</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit Wiki Page</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Choose for Merge</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>WikiGroupDialog</name>
+    <message>
+        <source>Create New Wiki Group</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Wiki Group</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit Wiki Group</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>

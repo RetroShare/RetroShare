@@ -85,7 +85,7 @@
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="225"/>
         <source>empty</source>
-        <translation type="unfinished"/>
+        <translation>puste</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="240"/>
@@ -158,12 +158,12 @@
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="213"/>
         <source>-%1 dB</source>
-        <translation type="unfinished"/>
+        <translation>-%1 dB</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.h" line="72"/>
         <source>VOIP</source>
-        <translation type="unfinished"/>
+        <translation>VOIP</translation>
     </message>
 </context>
 <context>
@@ -171,7 +171,7 @@
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="15"/>
         <source>Mute yourself</source>
-        <translation type="unfinished"/>
+        <translation>Wycisz siebie</translation>
     </message>
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="35"/>
@@ -435,7 +435,7 @@
     <message>
         <location filename="../gui/AudioWizard.ui" line="213"/>
         <source>Voice Detection</source>
-        <translation type="unfinished"/>
+        <translation>Detekcja Głosu</translation>
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="226"/>
@@ -478,7 +478,7 @@
     <message>
         <location filename="../VOIPPlugin.cpp" line="95"/>
         <source>&lt;li&gt; setup microphone levels using the configuration panel&lt;/li&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;li&gt; ustaw poziom mikrofonu używając panelu konfiguracyjnego&lt;/li&gt;</translation>
     </message>
     <message>
         <location filename="../VOIPPlugin.cpp" line="96"/>
@@ -541,7 +541,7 @@
     <message>
         <location filename="../VOIPPlugin.cpp" line="158"/>
         <source>VOIP</source>
-        <translation type="unfinished"/>
+        <translation>VOIP</translation>
     </message>
 </context>
 <context>

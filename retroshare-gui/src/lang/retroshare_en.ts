@@ -5261,10 +5261,6 @@ Fill in your PGP password when asked, to sign your new key.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enable Experimental Features (Restart Required)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Register retroshare:// as URL protocol (Restart required)</source>
         <translation type="unfinished"></translation>
     </message>
