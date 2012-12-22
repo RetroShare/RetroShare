@@ -27,6 +27,7 @@
 #include <vector>
 #include <stdarg.h>
 #include <stdlib.h>
+#include <stdint.h>
 #endif
 #include <stdio.h>
 
