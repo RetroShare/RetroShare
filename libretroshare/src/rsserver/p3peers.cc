@@ -905,7 +905,7 @@ bool 	p3Peers::loadCertificateFromFile(const std::string &/*fname*/, std::string
         return false;
 }
 
-bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetails &pd,std::string& /*error_string*/)
+bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetails &pd,uint32_t& error_code)
 {
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::LoadCertificateFromString() ";
@@ -932,9 +932,10 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
 		pd.isOnlyGPGdetail = pd.id.empty();
 		pd.service_perm_flags = RS_SERVICE_PERM_ALL ;
 	} 
-	catch (...) 
+	catch(uint32_t e) 
 	{
-		std::cerr << "ConnectFriendWizard : Parse ip address error." << std::endl;
+		std::cerr << "ConnectFriendWizard : Parse ip address error :" << e << std::endl;
+		error_code = e;
 		return false ;
 	}
 

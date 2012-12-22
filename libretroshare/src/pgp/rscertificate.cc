@@ -8,7 +8,9 @@
 #include <pgp/pgpkeyutil.h>
 #include "rscertificate.h"
 
-#define DEBUG_RSCERTIFICATE 
+//#define DEBUG_RSCERTIFICATE 
+
+//#define V_06_USE_CHECKSUM
 
 static const std::string PGP_CERTIFICATE_START     ( "-----BEGIN PGP PUBLIC KEY BLOCK-----" );
 static const std::string PGP_CERTIFICATE_END       ( "-----END PGP PUBLIC KEY BLOCK-----" );
@@ -23,10 +25,11 @@ static const uint8_t CERTIFICATE_PTAG_LOCIPANDPORT_SECTION  = 0x03 ;
 static const uint8_t CERTIFICATE_PTAG_DNS_SECTION           = 0x04 ;  
 static const uint8_t CERTIFICATE_PTAG_SSLID_SECTION         = 0x05 ;  
 static const uint8_t CERTIFICATE_PTAG_NAME_SECTION          = 0x06 ;  
+static const uint8_t CERTIFICATE_PTAG_CHECKSUM_SECTION      = 0x07 ;  
 
 static bool is_acceptable_radix64Char(char c)
 {
-	return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '+' || c == '/' ||  '=' ;
+	return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '+' || c == '/' ||  c == '=' ;
 }
 
 RsCertificate::~RsCertificate()
@@ -80,7 +83,17 @@ std::string RsCertificate::toStdString() const
 		addPacket( CERTIFICATE_PTAG_NAME_SECTION        , (unsigned char *)location_name.c_str() ,location_name.length()   , buf, p, BS ) ;
 		addPacket( CERTIFICATE_PTAG_SSLID_SECTION       , location_id.toByteArray()              ,location_id.SIZE_IN_BYTES, buf, p, BS ) ;
 	}
+#ifdef V_06_USE_CHECKSUM
+	uint32_t computed_crc = PGPKeyManagement::compute24bitsCRC(buf,p) ;
 
+	// handle endian issues.
+	unsigned char mem[3] ;
+	mem[0] =  computed_crc        & 0xff ;
+	mem[1] = (computed_crc >> 8 ) & 0xff ;
+	mem[2] = (computed_crc >> 16) & 0xff ;
+
+	addPacket( CERTIFICATE_PTAG_CHECKSUM_SECTION,mem,3,buf,p,BS) ;
+#endif
 	std::string out_string ;
 
 	Radix64::encode((char *)buf, p, out_string) ;
@@ -108,10 +121,10 @@ RsCertificate::RsCertificate(const std::string& str)
 	pgp_version("Version: OpenPGP:SDK v0.9"),
 		dns_name(""),only_pgp(true)
 {
-	std::string err_string ;
+	uint32_t err_code ;
 
-	if(!initFromString(str,err_string) && !initFromString_oldFormat(str,err_string))
-		throw std::runtime_error(err_string) ;
+	if(!initFromString(str,err_code) && !initFromString_oldFormat(str,err_code))
+		throw err_code ;
 }
 
 RsCertificate::RsCertificate(const RsPeerDetails& Detail, const unsigned char *binary_pgp_block,size_t binary_pgp_block_size)
@@ -162,9 +175,10 @@ void RsCertificate::scan_ip(const std::string& ip_string, unsigned short port,un
 	ip_and_port[5] =  port        & 0xff ;
 }
 
-bool RsCertificate::initFromString(const std::string& instr,std::string& err_string)
+bool RsCertificate::initFromString(const std::string& instr,uint32_t& err_code)
 {
 	std::string str ;
+	err_code = CERTIFICATE_PARSING_ERROR_NO_ERROR ;
 
 	// 0 - clean the string and check that it is pure radix64
 	//
@@ -179,7 +193,7 @@ bool RsCertificate::initFromString(const std::string& instr,std::string& err_str
 		str += instr[i] ;
 	}
 #ifdef DEBUG_RSCERTIFICATE
-	std::cerr << "Decodign from:" << str << std::endl;
+	std::cerr << "Decoding from:" << str << std::endl;
 #endif
 	// 1 - decode the string.
 	//
@@ -187,6 +201,7 @@ bool RsCertificate::initFromString(const std::string& instr,std::string& err_str
 	size_t size ;
 	Radix64::decode(str,bf, size) ;
 
+	bool checksum_check_passed = false ;
 	unsigned char *buf = (unsigned char *)bf ;
 	size_t total_s = 0 ;
 	only_pgp = true ;
@@ -203,7 +218,7 @@ bool RsCertificate::initFromString(const std::string& instr,std::string& err_str
 
 		if(total_s > size)
 		{
-			err_string = "Abnormal size read. Bigger than memory block." ;
+			err_code = CERTIFICATE_PARSING_ERROR_SIZE_ERROR ;
 			return false ;
 		}
 
@@ -225,7 +240,7 @@ bool RsCertificate::initFromString(const std::string& instr,std::string& err_str
 			case CERTIFICATE_PTAG_SSLID_SECTION: 
 															if(s != location_id.SIZE_IN_BYTES)
 															{
-																err_string = "Inconsistent size in certificate section 'location ID'" ;
+																err_code = CERTIFICATE_PARSING_ERROR_INVALID_LOCATION_ID ;
 																return false ;
 															}
 
@@ -241,7 +256,7 @@ bool RsCertificate::initFromString(const std::string& instr,std::string& err_str
 			case CERTIFICATE_PTAG_LOCIPANDPORT_SECTION: 
 														  if(s != 6)
 														  {
-															  err_string = "Inconsistent size in certificate section 'external IP'" ;
+															  err_code = CERTIFICATE_PARSING_ERROR_INVALID_LOCAL_IP;
 															  return false ;
 														  }
 
@@ -251,20 +266,49 @@ bool RsCertificate::initFromString(const std::string& instr,std::string& err_str
 			case CERTIFICATE_PTAG_EXTIPANDPORT_SECTION: 
 														  if(s != 6)
 														  {
-															  err_string = "Inconsistent size in certificate section 'external IP'" ;
+															  err_code = CERTIFICATE_PARSING_ERROR_INVALID_EXTERNAL_IP;
 															  return false ;
 														  }
 
 														  memcpy(ipv4_external_ip_and_port,buf,s) ;
 														  buf = &buf[s] ;
 														  break ;
+			case CERTIFICATE_PTAG_CHECKSUM_SECTION: 
+														  {
+															  if(s != 3 || total_s+3 != size)
+															  {
+																  err_code = CERTIFICATE_PARSING_ERROR_INVALID_CHECKSUM_SECTION ;
+																  return false ;
+															  }
+															  uint32_t computed_crc = PGPKeyManagement::compute24bitsCRC((unsigned char *)bf,size-5) ;
+															  uint32_t certificate_crc = buf[0] + (buf[1] << 8) + (buf[2] << 16) ;
+
+															  if(computed_crc != certificate_crc)
+															  {
+																  err_code = CERTIFICATE_PARSING_ERROR_CHECKSUM_ERROR ;
+																  return false ;
+															  }
+															  else
+																  checksum_check_passed = true ;
+														  }
+														  break ;
 			default:
-														  err_string = "Cannot read certificate. Parsing error in binary packets." ;
+														  err_code = CERTIFICATE_PARSING_ERROR_UNKNOWN_SECTION_PTAG ;
 														  return false ;
 		}
 
 		total_s += s ;
 	}
+#ifdef V_06_USE_CHECKSUM
+	if(!checksum_check_passed)
+	{
+		err_code = CERTIFICATE_PARSING_ERROR_MISSING_CHECKSUM ;
+		return false ;
+	}
+#endif
+
+	if(total_s != size)	
+		std::cerr << "(EE) Certificate contains trailing characters. Weird." << std::endl;
 
 	delete[] bf ;
 	return true ;
@@ -755,7 +799,7 @@ std::string RsCertificate::toStdString_oldFormat() const
 	return res ;
 }
 
-bool RsCertificate::initFromString_oldFormat(const std::string& certstr,std::string& err_string)
+bool RsCertificate::initFromString_oldFormat(const std::string& certstr,uint32_t& err_code)
 {
 	//parse the text to get ip address
 	try 

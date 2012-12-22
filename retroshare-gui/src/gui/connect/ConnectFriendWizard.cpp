@@ -96,6 +96,24 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 	ui->rsidRadioButton->hide();
 }
 
+QString ConnectFriendWizard::getErrorString(uint32_t error_code)
+{
+	switch(error_code)
+	{
+		case CERTIFICATE_PARSING_ERROR_SIZE_ERROR: 					return tr("Abnormal size read is bigger than memory block.") ;
+		case CERTIFICATE_PARSING_ERROR_INVALID_LOCATION_ID: 		return tr("Invalid location id.") ;
+		case CERTIFICATE_PARSING_ERROR_INVALID_EXTERNAL_IP: 		return tr("Invalid external IP.") ;
+		case CERTIFICATE_PARSING_ERROR_INVALID_LOCAL_IP: 			return tr("Invalid local IP.") ;
+		case CERTIFICATE_PARSING_ERROR_INVALID_CHECKSUM_SECTION: return tr("Invalid checksum section.") ;
+		case CERTIFICATE_PARSING_ERROR_CHECKSUM_ERROR: 				return tr("Checksum mismatch. Certificate is corrupted.") ;
+		case CERTIFICATE_PARSING_ERROR_UNKNOWN_SECTION_PTAG:		return tr("Unknown section type found (Certificate might be corrupted).") ;
+		case CERTIFICATE_PARSING_ERROR_MISSING_CHECKSUM:			return tr("Missing checksum.") ;
+
+		default:
+			return tr("Unknown certificate error") ;
+	}
+}
+
 void ConnectFriendWizard::setCertificate(const QString &certificate, bool friendRequest)
 {
 	if (certificate.isEmpty()) {
@@ -103,9 +121,9 @@ void ConnectFriendWizard::setCertificate(const QString &certificate, bool friend
 		return;
 	}
 
-	std::string error_string;
+	uint32_t cert_load_error_code;
 
-	if (rsPeers->loadDetailsFromStringCert(certificate.toUtf8().constData(), peerDetails, error_string))
+	if (rsPeers->loadDetailsFromStringCert(certificate.toUtf8().constData(), peerDetails, cert_load_error_code))
 	{
 #ifdef FRIEND_WIZARD_DEBUG
 		std::cerr << "ConnectFriendWizard got id : " << peerDetails.id << "; gpg_id : " << peerDetails.gpg_id << std::endl;
@@ -114,7 +132,7 @@ void ConnectFriendWizard::setCertificate(const QString &certificate, bool friend
 		setStartId(friendRequest ? Page_FriendRequest : Page_Conclusion);
 	} else {
 		// error message
-		setField("errorMessage", tr("Certificate Load Failed") + ": " + QString::fromUtf8(error_string.c_str()));
+		setField("errorMessage", tr("Certificate Load Failed") + ": \n\n" + getErrorString(cert_load_error_code)) ;
 		setStartId(Page_ErrorMessage);
 	}
 }
@@ -372,9 +390,9 @@ bool ConnectFriendWizard::validateCurrentPage()
 	case Page_Text:
 		{
 			std::string certstr = ui->friendCertEdit->toPlainText().toUtf8().constData();
-			std::string error_string;
+			uint32_t cert_load_error_code;
 
-			if (rsPeers->loadDetailsFromStringCert(certstr, peerDetails, error_string)) {
+			if (rsPeers->loadDetailsFromStringCert(certstr, peerDetails, cert_load_error_code)) {
 				mCertificate = certstr;
 #ifdef FRIEND_WIZARD_DEBUG
 				std::cerr << "ConnectFriendWizard got id : " << peerDetails.id << "; gpg_id : " << peerDetails.gpg_id << std::endl;
@@ -382,7 +400,7 @@ bool ConnectFriendWizard::validateCurrentPage()
 				break;
 			}
 			// error message
-			setField("errorMessage", tr("Certificate Load Failed") + ": " + QString::fromUtf8(error_string.c_str()));
+			setField("errorMessage", tr("Certificate Load Failed") + ": \n\n" + getErrorString(cert_load_error_code)) ;
 			error = false;
 			break;
 		}
@@ -406,14 +424,14 @@ bool ConnectFriendWizard::validateCurrentPage()
 					break;
 				}
 
-				std::string error_string;
-				if (rsPeers->loadDetailsFromStringCert(certstr, peerDetails, error_string)) {
+				uint32_t cert_error_code;
+				if (rsPeers->loadDetailsFromStringCert(certstr, peerDetails, cert_error_code)) {
 					mCertificate = certstr;
 #ifdef FRIEND_WIZARD_DEBUG
 					std::cerr << "ConnectFriendWizard got id : " << peerDetails.id << "; gpg_id : " << peerDetails.gpg_id << std::endl;
 #endif
 				} else {
-					setField("errorMessage", QString(tr("Certificate Load Failed:something is wrong with %1 ")).arg(fn) + ": " + QString::fromUtf8(error_string.c_str()));
+					setField("errorMessage", QString(tr("Certificate Load Failed:something is wrong with %1 ")).arg(fn) + ": " + getErrorString(cert_error_code));
 					error = false;
 				}
 			} else {

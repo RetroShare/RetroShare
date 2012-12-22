@@ -51,8 +51,8 @@ class RsCertificate
 		static bool cleanCertificate_oldFormat(const std::string& input,std::string& output,int&) ;		// old text format
 		static void scan_ip(const std::string& ip_string, unsigned short port,unsigned char *destination_memory) ;
 
-		bool initFromString(const std::string& str,std::string& err_string) ;
-		bool initFromString_oldFormat(const std::string& str,std::string& err_string) ;
+		bool initFromString(const std::string& str,uint32_t& err_code) ;
+		bool initFromString_oldFormat(const std::string& str,uint32_t& err_code) ;
 
 		static void addPacket(uint8_t ptag, const unsigned char *mem, size_t size, unsigned char *& buf, size_t& offset, size_t& buf_size) ;
 

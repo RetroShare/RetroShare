@@ -1,4 +1,4 @@
-To use this branch:
+To compile:
 
 	- get source code for libssh-0.5.2, unzip it, and create build directory (if needed) 
 
@@ -36,3 +36,8 @@ To use this branch:
 
 		and use the command line interface to control your RS instance.
 
+List of non backward compatible changes for V0.6:
+================================================
+
+- in rscertificate.cc, enable V_06_USE_CHECKSUM
+- in p3charservice, remove all usage of _deprecated items

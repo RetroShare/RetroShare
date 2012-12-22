@@ -68,6 +68,9 @@ private slots:
 	void groupCurrentIndexChanged(int index);
 
 private:
+	// returns the translated error string for the error code (to be found in rspeers.h)
+	QString getErrorString(uint32_t) ;
+
 	bool error;
 	RsPeerDetails peerDetails;
 	std::string mCertificate;
