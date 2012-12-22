@@ -382,8 +382,8 @@ class p3GeneralConfig: public p3Config
 	p3GeneralConfig();
 
 // General Configuration System
-std::string 	getSetting(std::string opt);
-void 		setSetting(std::string opt, std::string val);
+std::string 	getSetting(const std::string &opt);
+void 		setSetting(const std::string &opt, const std::string &val);
 
 	protected:
 

@@ -28,7 +28,7 @@
 
 #include "p3FeedReader.h"
 
-const uint32_t CONFIG_TYPE_FEEDREADER = 0x0001; // is this correct?
+const uint32_t CONFIG_TYPE_FEEDREADER = 0xf001; // is this correct?
 
 const uint8_t RS_PKT_SUBTYPE_FEEDREADER_FEED  = 0x02;
 const uint8_t RS_PKT_SUBTYPE_FEEDREADER_MSG   = 0x03;

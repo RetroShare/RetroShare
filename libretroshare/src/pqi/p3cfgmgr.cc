@@ -615,6 +615,14 @@ void	p3ConfigMgr::addConfiguration(std::string file, pqiConfig *conf)
 	filename += file;
 
 	conf->setFilename(filename);
+
+	std::map<uint32_t, pqiConfig *>::iterator cit = configs.find(conf->Type());
+	if (cit != configs.end())
+	{
+		std::cerr << "p3Config::addConfiguration() WARNING: type " << conf->Type();
+		std::cerr << " with filename " << filename;
+		std::cerr << " already added with filename " << cit->second->Filename() << std::endl;
+	}
 	configs[conf->Type()] = conf;
 }
 
@@ -1174,7 +1182,7 @@ p3GeneralConfig::p3GeneralConfig()
 }
 
 		// General Configuration System
-std::string     p3GeneralConfig::getSetting(std::string opt)
+std::string     p3GeneralConfig::getSetting(const std::string &opt)
 {
 #ifdef CONFIG_DEBUG
 	std::cerr << "p3GeneralConfig::getSetting(" << opt << ")";
@@ -1192,29 +1200,29 @@ std::string     p3GeneralConfig::getSetting(std::string opt)
 	return it->second;
 }
 
-void            p3GeneralConfig::setSetting(std::string opt, std::string val)
+void            p3GeneralConfig::setSetting(const std::string &opt, const std::string &val)
 {
 #ifdef CONFIG_DEBUG
 	std::cerr << "p3GeneralConfig::setSetting(" << opt << " = " << val << ")";
 	std::cerr << std::endl;
 #endif
-      {
-	RsStackMutex stack(cfgMtx); /***** LOCK STACK MUTEX ****/
-
-	/* extract from config */
-	std::map<std::string, std::string>::iterator it;
-	if (settings.end() != (it = settings.find(opt)))
 	{
-		if (it->second == val)
-		{
-			/* no change */
-			return;
-		}
-	}
+		RsStackMutex stack(cfgMtx); /***** LOCK STACK MUTEX ****/
 
-	settings[opt] = val;
-      }
-        /* outside mutex */
+		/* extract from config */
+		std::map<std::string, std::string>::iterator it;
+		if (settings.end() != (it = settings.find(opt)))
+		{
+			if (it->second == val)
+			{
+				/* no change */
+				return;
+			}
+		}
+
+		settings[opt] = val;
+	}
+	/* outside mutex */
 	IndicateConfigChanged();
 
 	return;
