@@ -7,6 +7,7 @@ SOURCES =	FeedReaderPlugin.cpp \
 			services/p3FeedReaderThread.cc \
 			services/rsFeedReaderItems.cc \
 			gui/FeedReaderDialog.cpp \
+			gui/FeedReaderMessageWidget.cpp \
 			gui/AddFeedDialog.cpp \
 			gui/PreviewFeedDialog.cpp \
 			gui/FeedReaderNotify.cpp \
@@ -24,6 +25,7 @@ HEADERS =	FeedReaderPlugin.h \
 			services/p3FeedReaderThread.h \
 			services/rsFeedReaderItems.h \
 			gui/FeedReaderDialog.h \
+			gui/FeedReaderMessageWidget.h \
 			gui/AddFeedDialog.h \
 			gui/PreviewFeedDialog.h \
 			gui/FeedReaderNotify.h \
@@ -36,6 +38,7 @@ HEADERS =	FeedReaderPlugin.h \
 			util/XPathWrapper.h
 
 FORMS =		gui/FeedReaderDialog.ui \
+			gui/FeedReaderMessageWidget.ui \
 			gui/AddFeedDialog.ui \
 			gui/PreviewFeedDialog.ui \
 			gui/FeedReaderConfig.ui

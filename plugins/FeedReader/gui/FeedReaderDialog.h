@@ -33,6 +33,7 @@ class QTreeWidgetItem;
 class RsFeedReader;
 class RSTreeWidgetItemCompareRole;
 class FeedReaderNotify;
+class FeedReaderMessageWidget;
 
 class FeedReaderDialog : public MainPage
 {
@@ -50,52 +51,37 @@ protected:
 
 private slots:
 	void feedTreeCustomPopupMenu(QPoint point);
-	void msgTreeCustomPopupMenu(QPoint point);
 	void feedItemChanged(QTreeWidgetItem *item);
-	void msgItemChanged();
-	void msgItemClicked(QTreeWidgetItem *item, int column);
-	void filterColumnChanged(int column);
-	void filterItems(const QString &text);
-	void toggleMsgText();
 	void newFolder();
 	void newFeed();
 	void removeFeed();
 	void editFeed();
 	void activateFeed();
 	void processFeed();
-	void markAsReadMsg();
-	void markAsUnreadMsg();
-	void markAllAsReadMsg();
-	void copyLinksMsg();
-	void removeMsg();
-	void openLinkMsg();
-	void copyLinkMsg();
+
+	void messageTabCloseRequested(int index);
+	void messageTabChanged(QWidget *widget);
 
 	/* FeedReaderNotify */
 	void feedChanged(const QString &feedId, int type);
-	void msgChanged(const QString &feedId, const QString &msgId, int type);
 
 private:
 	std::string currentFeedId();
-	std::string currentMsgId();
 	void processSettings(bool load);
+	void addFeedToExpand(const std::string &feedId);
+	void getExpandedFeedIds(QList<std::string> &feedIds);
 	void updateFeeds(const std::string &parentId, QTreeWidgetItem *parentItem);
 	void updateFeedItem(QTreeWidgetItem *item, FeedInfo &info);
-	void updateMsgs(const std::string &feedId);
-	void calculateMsgIconsAndFonts(QTreeWidgetItem *item);
-	void updateMsgItem(QTreeWidgetItem *item, FeedMsgInfo &info);
-	void setMsgAsReadUnread(QList<QTreeWidgetItem*> &rows, bool read);
-	void filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn);
-	void filterItem(QTreeWidgetItem *item);
-	void toggleMsgText_internal();
 
 	void calculateFeedItems();
 	void calculateFeedItem(QTreeWidgetItem *item, uint32_t &unreadCount, bool &loading);
 
+	FeedReaderMessageWidget *feedMessageWidget(const std::string &id);
+
 	bool mProcessSettings;
+	QList<std::string> *mOpenFeedIds;
 	QTreeWidgetItem *mRootItem;
 	RSTreeWidgetItemCompareRole *mFeedCompareRole;
-	RSTreeWidgetItemCompareRole *mMsgCompareRole;
 
 	// gui interface
 	RsFeedReader *mFeedReader;
