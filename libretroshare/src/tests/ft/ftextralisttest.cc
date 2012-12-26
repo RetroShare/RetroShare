@@ -28,6 +28,7 @@
 #endif
 
 #include "ft/ftextralist.h"
+#include "util/utest.h"
 
 extern "C" void* runExtraList(void* p)
 {
@@ -62,6 +63,8 @@ void usage(char *name)
 	std::cerr << std::endl;
 }
 	
+INITTEST() ;
+
 int main(int argc, char **argv)
 {
         int c;
@@ -115,12 +118,15 @@ int main(int argc, char **argv)
 		displayExtraListDetails(eList,  toHash, hashed);
 	}
 
-	for(int i=0;i<50;++i)
+	for(int i=0;i<20;++i)
 	{
 		sleep(period);
 
 		displayExtraListDetails(eList,  toHash, hashed);
 	}
+
+	FINALREPORT("Extra list test.") ;
+	return 0; 
 }
 
 void	displayExtraListDetails(ftExtraList *eList, std::list<std::string> toHash, std::list<std::string> hashed)

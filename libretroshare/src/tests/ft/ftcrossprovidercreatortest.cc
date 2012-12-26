@@ -16,6 +16,49 @@ static void transfer(ftFileProvider *server, const std::string& server_peer_id,f
 
 static const float TRANSFER_FAIL_PROBABILITY = 0.0f ;
 
+void validateChunksToCheck(const Sha1Map& chunk_crc_map,ftFileCreator *client,const std::string& client_name)
+{
+	std::vector<uint32_t> chunks ;
+	client->getChunksToCheck(chunks) ;
+
+	if(chunks.size() > 0)
+		for(uint32_t i=0;i<chunks.size();++i)
+		{
+			std::cerr << "Validating Chunk " << chunks[i] << " for peer: " << client_name << ", with hash " << chunk_crc_map[chunks[i]].toStdString() << std::endl;
+			client->verifyChunk(chunks[i],chunk_crc_map[chunks[i]]) ;
+		}
+}
+
+void initChunkCrcMap(const std::string& fname,Sha1Map& map)
+{
+	FILE *fd = fopen(fname.c_str(),"rb") ;
+	unsigned char *buf = new unsigned char[ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE] ;
+
+	if(fd == NULL)
+	{
+		std::cerr << "Cannot read file " << fname << ". Something's wrong!" << std::endl;
+		delete[] buf ;
+		exit(1) ;
+	}
+
+	for(int i=0;i<map.size();++i)
+	{
+		uint32_t len ;
+		if(fseeko64(fd,(uint64_t)i * (uint64_t)ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE,SEEK_SET)!=0 || 0==(len = fread(buf,1,ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE,fd))) 
+		{
+			std::cerr << "Cannot fseek/read from file " << fname << " at position " << (uint64_t)i * (uint64_t)ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE << std::endl;
+			fclose(fd) ;
+			exit(1) ;
+		}
+		map.set(i, RsDirUtil::sha1sum(buf,len)) ;
+
+		std::cerr << "  chunk " << i << ": crc = " << map[i].toStdString() << std::endl;
+	}
+	fclose(fd) ;
+
+	delete[] buf ;
+}
+
 int main()
 {
 	// We create two file creators and feed them with a file both from elsewhere
@@ -32,7 +75,7 @@ int main()
 	std::string fname = "source_tmp.bin" ;
 	std::string fname_copy_1 = "copy_1_tmp.bin" ;
 	std::string fname_copy_2 = "copy_2_tmp.bin" ;
-	uint64_t size = 15560000 ;
+	uint64_t size = 5000000 ;
 	std::string hash = "" ;
 
 	pthread_t seed = 8;//getpid() ;
@@ -53,6 +96,17 @@ int main()
 	std::string peer_id_1("client peer id 1") ;
 	std::string peer_id_2("client peer id 2") ;
 	std::string server_id("server peer id") ;
+
+	// 4 - prepare a chunk crc map to verify chunks.
+	
+	Sha1Map chunk_crc_map(size,ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE) ;
+
+	initChunkCrcMap(fname,chunk_crc_map) ;
+
+	std::cerr << "Computed chunk CRC map: " << std::endl;
+
+	for(int i=0;i<chunk_crc_map.size();++i)
+		std::cerr << "  Chunk " << i << " : " << chunk_crc_map[i].toStdString() << std::endl;
 
 	while( !(client1->finished() && client2->finished()))
 	{
@@ -111,6 +165,11 @@ int main()
 
 		printf("Client1: %08lld, Client2: %08lld, transfer from %s to %s\r",client1->getRecvd(),client2->getRecvd(),tmpserver_pid.c_str(),tmpclient_pid.c_str()) ;
 		fflush(stdout) ;
+
+		// Also get chunk checking list from each server, and validate them.
+
+		validateChunksToCheck(chunk_crc_map,client1,"client 1") ;
+		validateChunksToCheck(chunk_crc_map,client2,"client 2") ;
 	}
 
 	// hash the received data
