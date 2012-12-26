@@ -24,26 +24,29 @@
  */
 
 /*
- * ftServer2Test - Demonstrates how to check for test stuff.
- * This tests hashing of files using extraList.
+ * Test for Whole Basic system.....
+ *
+ * Put it all together, and make it compile.
  */
 
 #ifdef WIN32
 #include "util/rswin.h"
 #endif
 
-
-#include "retroshare/rsfiles.h"
 #include "ft/ftserver.h"
 
 #include "ft/ftextralist.h"
 #include "ft/ftdatamultiplex.h"
 #include "ft/ftfilesearch.h"
 
-//#include "pqi/p3authmgr.h"
-//#include "pqi/p3connmgr.h"
+#include "pqi/p3linkmgr.h"
+#include "pqi/p3peermgr.h"
+#include "pqi/p3netmgr.h"
 
 #include "util/rsdebug.h"
+#include "util/utest.h"
+#include "common/testutils.h"
+#include "retroshare/rsiface.h"
 
 #include "pqitestor.h"
 #include "util/rsdir.h"
@@ -84,7 +87,7 @@ int main(int argc, char **argv)
         std::list<std::string> extraList;
 	std::list<std::string> peerIds;
 	std::map<std::string, ftServer *> mFtServers;
-	std::map<std::string, p3ConnectMgr *> mConnMgrs;
+	std::map<std::string, p3LinkMgrIMPL *> mLinkMgrs;
 
 	ftServer *mLoadServer = NULL;
 	std::list<ftServer *> mOtherServers;
@@ -92,13 +95,13 @@ int main(int argc, char **argv)
 
 #ifdef PTW32_STATIC_LIB
          pthread_win32_process_attach_np();
-#endif   
+#endif 
 
 #ifdef WIN32
         // Windows Networking Init.
         WORD wVerReq = MAKEWORD(2,2);
         WSADATA wsaData;
-
+ 
         if (0 != WSAStartup(wVerReq, &wsaData))
         {
                 std::cerr << "Failed to Startup Windows Networking";
@@ -151,11 +154,21 @@ int main(int argc, char **argv)
 	{
 		std::cerr << "Adding: " << argv[optind] << std::endl;
 		SharedDirInfo info ;
-		info.shareflag = RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_BROWSABLE ;
-		info.filename = string(argv[optind]);
-		info.virtualname = string(argv[optind]);
+		info.shareflags = DIR_FLAGS_PERMISSIONS_MASK;
+		info.filename = std::string(argv[optind]);
+		info.virtualname = std::string(argv[optind]);
 		fileList.push_back(info) ;
 	}
+	std::cerr << "Point 2" << std::endl;
+
+	std::string ssl_own_id = TestUtils::createRandomSSLId() ;
+	std::string gpg_own_id = TestUtils::createRandomPGPId() ;
+
+	TestUtils::DummyAuthGPG fakeGPG(gpg_own_id) ;
+	AuthGPG::setAuthGPG_debug(&fakeGPG) ;
+
+	TestUtils::DummyAuthSSL fakeSSL(ssl_own_id) ;
+	AuthSSL::setAuthSSL_debug(&fakeSSL) ;
 
 	/* We need to setup a series 2 - 4 different ftServers....
 	 *
@@ -167,11 +180,8 @@ int main(int argc, char **argv)
 
 	std::list<std::string>::const_iterator it, jit;
 
-	std::list<pqiAuthDetails> baseFriendList, friendList;
-	std::list<pqiAuthDetails>::iterator fit;
-
-
-	/* Add in serialiser */
+	std::list<RsPeerDetails> baseFriendList, friendList;
+	std::list<RsPeerDetails>::iterator fit;
 
         RsSerialiser *rss = new RsSerialiser();
         rss->addSerialType(new RsFileItemSerialiser());
@@ -185,17 +195,17 @@ int main(int argc, char **argv)
 	/* Setup Base Friend Info */
 	for(it = peerIds.begin(); it != peerIds.end(); it++)
 	{
-		pqiAuthDetails pad;
+		RsPeerDetails pad;
 		pad.id = *it;
+		pad.gpg_id = TestUtils::createRandomPGPId() ;
 		pad.name = *it;
 		pad.trustLvl = 5;
 		pad.ownsign = true;
-		pad.trusted = false;
+		//pad.trusted = false;
 
 		baseFriendList.push_back(pad);
 
-		std::cerr << "ftserver1test::setup peer: " << *it;
-		std::cerr << std::endl;
+		std::cerr << "ftserver1test::setup peer: " << *it << std::endl;
 	}
 
 	std::ostringstream pname;
@@ -219,22 +229,26 @@ int main(int argc, char **argv)
 			}
 		}
 
-		p3AuthMgr *authMgr = new p3DummyAuthMgr(*it, friendList);
-		p3ConnectMgr *connMgr = new p3ConnectMgr(authMgr);
-		mConnMgrs[*it] = connMgr;
+		//p3AuthMgr *authMgr = new p3DummyAuthMgr(*it, friendList);
+		p3PeerMgrIMPL *peerMgr = new p3PeerMgrIMPL(ssl_own_id,gpg_own_id,"My GPG name","My SSL location");
 
+		p3NetMgrIMPL *netMgr = new p3NetMgrIMPL ;
+		p3LinkMgrIMPL *linkMgr = new p3LinkMgrIMPL(peerMgr,netMgr);
+		mLinkMgrs[*it] = linkMgr;
+
+		rsPeers = new TestUtils::DummyRsPeers(linkMgr,peerMgr,netMgr) ;
 
 		for(fit = friendList.begin(); fit != friendList.end(); fit++)
 		{
 			/* add as peer to authMgr */
-			connMgr->addFriend(fit->id);
+			peerMgr->addFriend(fit->id,fit->gpg_id);
 		}
 
 		P3Pipe *pipe = new P3Pipe(); //(*it);
 
 		/* add server */
 		ftServer *server;
-		server = new ftServer(authMgr, connMgr);
+		server = new ftServer(peerMgr,linkMgr);
 		mFtServers[*it] = server;
 		if (!mLoadServer)
 		{
@@ -254,11 +268,11 @@ int main(int argc, char **argv)
 		std::string cachepath = configpath + "/cache";
 		RsDirUtil::checkCreateDirectory(cachepath);
 
-                std::string partialspath = configpath + "/partials";
-                RsDirUtil::checkCreateDirectory(partialspath);
+		std::string partialspath = configpath + "/partials";
+		RsDirUtil::checkCreateDirectory(partialspath);
 
-                std::string downloadpath = configpath + "/downloads";
-                RsDirUtil::checkCreateDirectory(downloadpath);
+		std::string downloadpath = configpath + "/downloads";
+		RsDirUtil::checkCreateDirectory(downloadpath);
 
 		std::string localpath = cachepath + "/local";
 		RsDirUtil::checkCreateDirectory(localpath);
@@ -268,10 +282,12 @@ int main(int argc, char **argv)
 
 		server->setConfigDirectory(configpath);
 
-		NotifyBase *base = NULL;
+                //sleep(60);
+
+		NotifyBase *base = new NotifyBase;
 		server->SetupFtServer(base);
 
-		testHub->addP3Pipe(*it, pipe, connMgr);
+		testHub->addP3Pipe(*it, pipe, linkMgr);
 		server->StartupThreads();
 
 		/* setup any extra bits */
@@ -284,7 +300,7 @@ int main(int argc, char **argv)
 			server->setSharedDirectories(fileList);
 			for(eit = extraList.begin(); eit != extraList.end(); eit++)
 			{
-				server->ExtraFileHash(*eit, 3600, 0);
+				server->ExtraFileHash(*eit, 3600, TransferRequestFlags(0));
 			}
 		}
 
@@ -295,14 +311,13 @@ int main(int argc, char **argv)
 		mLoadServer->setSharedDirectories(fileList);
 		for(eit = extraList.begin(); eit != extraList.end(); eit++)
 		{
-			mLoadServer->ExtraFileHash(*eit, 3600, 0);
+			mLoadServer->ExtraFileHash(*eit, 3600, TransferRequestFlags(0));
 		}
 	}
-		
 
 	/* stick your real test here */
 	std::map<std::string, ftServer *>::iterator sit;
-	std::map<std::string, p3ConnectMgr *>::iterator cit;
+	std::map<std::string, p3LinkMgrIMPL *>::iterator cit;
 
 	/* Start up test thread */
 	pthread_t tid;
@@ -330,7 +345,7 @@ int main(int argc, char **argv)
 			(sit->second)->tick();
 		}
 
-		for(cit = mConnMgrs.begin(); cit != mConnMgrs.end(); cit++)
+		for(cit = mLinkMgrs.begin(); cit != mLinkMgrs.end(); cit++)
 		{
 			/* update */
 			(cit->second)->tick();
@@ -379,7 +394,8 @@ void *do_server_test_thread(void *data)
 		REPORT("Successfully Found ExtraFile");
 
 		/* now we can try a search (should succeed) */
-		uint32_t hintflags = 0;
+		FileSearchFlags hintflags = RS_FILE_HINTS_EXTRA;
+
 		if (mFt->loadServer->FileDetails(info.hash, hintflags, info2))
 		{
 			CHECK(info2.hash == info.hash);

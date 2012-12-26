@@ -44,8 +44,8 @@ ftdataplextest : ftdataplextest.o ftsearch_dummy.o ftdata_dummy.o
 ftserver1test : ftserver1test.o pqitestor.o
 	$(CC) $(CFLAGS) -o ftserver1test ftserver1test.o pqitestor.o $(LIBS)
 
-ftserver2test : ftserver2test.o 
-	$(CC) $(CFLAGS) -o ftserver2test ftserver2test.o $(LIBS)
+ftserver2test : ftserver2test.o pqitestor.o
+	$(CC) $(CFLAGS) -o ftserver2test ftserver2test.o pqitestor.o $(LIBS)
 
 ftserver3test : ftserver3test.o 
 	$(CC) $(CFLAGS) -o ftserver3test ftserver3test.o $(LIBS)
