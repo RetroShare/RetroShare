@@ -30,6 +30,7 @@
 #include "retroshare/rsfiles.h"
 #include "retroshare/rspeers.h"
 #include "retroshare/rsiface.h"
+#include "rsserver/p3peers.h"
 #include "ft/ftserver.h"
 
 #include "ft/ftextralist.h"
@@ -89,6 +90,17 @@ class FakeSSL: public AuthSSLimpl
 
 	private:
 		std::string mOwnId ;
+};
+
+class FakeRsPeers: public p3Peers
+{
+	public:
+		FakeRsPeers(p3LinkMgr *lm, p3PeerMgr *pm, p3NetMgr *nm) : p3Peers(lm,pm,nm) {}
+
+		virtual bool getFriendList(std::list<std::string>& fl) { fl = mFriends ; return true ;}
+
+	private:
+		std::list<std::string> mFriends ;
 };
 
 class TestData
@@ -246,9 +258,12 @@ int main(int argc, char **argv)
 
 		//p3AuthMgr *authMgr = new p3DummyAuthMgr(*it, friendList);
 		p3PeerMgrIMPL *peerMgr = new p3PeerMgrIMPL(ssl_own_id,gpg_own_id,"My GPG name","My SSL location");
+
 		p3NetMgrIMPL *netMgr = new p3NetMgrIMPL ;
 		p3LinkMgrIMPL *linkMgr = new p3LinkMgrIMPL(peerMgr,netMgr);
 		mLinkMgrs[*it] = linkMgr;
+
+		rsPeers = new FakeRsPeers(linkMgr,peerMgr,netMgr) ;
 
 
 		for(fit = friendList.begin(); fit != friendList.end(); fit++)
@@ -378,6 +393,8 @@ void *do_server_test_thread(void *data)
         std::list<std::string>::iterator eit;
 	for(eit = mFt->extraList.begin(); eit != mFt->extraList.end(); eit++)
 	{
+		std::cerr << "Treating extra file " << *eit << std::endl;
+
 		while(!mFt->loadServer->ExtraFileStatus(*eit, info))
 		{
 
@@ -396,7 +413,7 @@ void *do_server_test_thread(void *data)
 		REPORT("Successfully Found ExtraFile");
 
 		/* now we can try a search (should succeed) */
-		FileSearchFlags hintflags;
+		FileSearchFlags hintflags = RS_FILE_HINTS_EXTRA;
 
 		if (mFt->loadServer->FileDetails(info.hash, hintflags, info2))
 		{
