@@ -48,7 +48,7 @@ int main()
 			RsItem *item = new testRawItem ;
 			item->setPriorityLevel(i % nb_levels) ;
 
-			qos.in_rsItem(item) ;
+			qos.in_rsItem(item,item->priority_level()) ;
 		}
 		std::cerr << "QOS is filled with: " << std::endl;
 		qos.print() ;
@@ -105,7 +105,7 @@ int main()
 				case 4: item->setPriorityLevel( 8 ) ; break ;
 			}
 
-			qos.in_rsItem(item) ;
+			qos.in_rsItem(item,item->priority_level()) ;
 		}
 
 		// Now perform stats on outputs for the 10000 first elements
@@ -114,7 +114,7 @@ int main()
 
 		for(uint32_t i=0;i<10000;++i)
 		{
-			RsItem *item = qos.out_rsItem() ;
+			testRawItem *item = static_cast<testRawItem*>(qos.out_rsItem()) ;
 			hist[item->priority_level()]++ ;
 			delete item ;
 		}
@@ -151,7 +151,7 @@ int main()
 			{
 				testRawItem *item = new testRawItem ;
 				item->setPriorityLevel(i%nb_levels) ;
-				qos.in_rsItem(item) ;
+				qos.in_rsItem(item,item->priority_level()) ;
 			}
 
 			// pop a random number of packets out

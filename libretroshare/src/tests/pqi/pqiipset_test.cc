@@ -87,8 +87,9 @@ bool test_addr_list()
 	/* print out the list */
 	std::cerr << "IpAddressList (expect variation: 192.168.2.[100-103]:7812)";
 	std::cerr << std::endl;
-	list.printIpAddressList(std::cerr);
-	std::cerr << std::endl;
+	std::string out ;
+	list.printIpAddressList(out) ;
+	std::cerr << out << std::endl;
 
 	const uint32_t expectedListSize = 4;
 	CHECK(list.mAddrs.size() == expectedListSize);
@@ -125,8 +126,8 @@ bool test_addr_list()
 	/* print out the list */
 	std::cerr << "IpAddressList (first item to be 192.168.2.200:8812)";
 	std::cerr << std::endl;
-	list.printIpAddressList(std::cerr);
-	std::cerr << std::endl;
+	list.printIpAddressList(out) ;
+	std::cerr << out<< std::endl;
 	
 	/* now add with the different ports */
 
@@ -146,8 +147,8 @@ bool test_addr_list()
 
 	std::cerr << "IpAddressList (expect same Ip, but variations in port)";
 	std::cerr << std::endl;
-	list.printIpAddressList(std::cerr);
-	std::cerr << std::endl;
+	list.printIpAddressList(out) ;
+	std::cerr << out <<std::endl;
 
         REPORT("pqiIpAddrList Test");
 

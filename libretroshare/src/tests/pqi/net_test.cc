@@ -304,7 +304,9 @@ bool test_bind_addr(struct sockaddr_in addr)
         if (0 != (err = bind(sockfd, (struct sockaddr *) &addr, sizeof(addr))))
         {
                 std::cerr <<  " Failed to Bind to Local Address!" << std::endl;
-                showSocketError(std::cerr);
+					 std::string out ;
+                showSocketError(out) ;
+					 std::cerr << out << std::endl;
 
         	FAILED("Couldn't Bind to socket");
 
