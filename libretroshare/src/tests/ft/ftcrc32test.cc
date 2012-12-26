@@ -34,34 +34,37 @@
 #endif
 
 #include "util/rsdir.h"
+#include <common/fileutils.h>
+#include <common/argstream.h>
 
-void usage(char *name)
-{
-	std::cerr << "Computes a CRC32 map of a file." << std::endl;
-	std::cerr << "Usage: " << name << " -h <path>" << std::endl;
-}
-	
 int main(int argc, char **argv)
 {
-        int c;
-        uint32_t period = 1;
-        uint32_t dPeriod = 600; /* default 10 minutes */
+	int c;
+	uint32_t period = 1;
+	uint32_t dPeriod = 600; /* default 10 minutes */
 
-        std::list<std::string> hashList;
+	std::string inputfile ;
 
-        while(-1 != (c = getopt(argc, argv, "f:h:")))
-		  {
-			  switch (c)
-			  {
-				  case 'f':
-					  hashList.push_back(std::string(optarg));
-					  break;
-				  default:
-					  usage(argv[0]);
-					  break;
-			  }
-		  }
-	
+	argstream as(argc,argv) ;
+
+	as >> parameter('i',"input",inputfile,"Input file to hash. If none, a random file will be created in /tmp",false)
+		>> help() ;
+
+	as.defaultErrorHandling() ;
+
+	if(inputfile == "")
+	{
+		uint64_t S = 3983782 ;
+		std::cerr << "Creating a dummy input file in /tmp, of size " << S << std::endl;
+		inputfile = "crc_test_data.bin" ;
+
+		if(!FileUtils::createRandomFile(inputfile,S))
+			return 1 ;
+	}
+
+	std::list<std::string> hashList ;
+	hashList.push_back(inputfile) ;
+
 	uint32_t flags = 0;
 	for(std::list<std::string>::const_iterator it(hashList.begin()); it  != hashList.end(); it++)
 	{
@@ -79,7 +82,7 @@ int main(int argc, char **argv)
 		if(f == NULL)
 		{
 			std::cerr << "Could not open this file! Sorry." << std::endl ;
-			return 0 ;
+			return 1 ;
 		}
 		CRC32Map crc_map ;
 
@@ -87,7 +90,7 @@ int main(int argc, char **argv)
 		{
 			std::cerr << "Could not fseek to end of this file! Sorry." << std::endl ;
 			fclose(f) ;
-			return 0 ;
+			return 1 ;
 		}
 
 		size = ftell(f) ;
@@ -96,7 +99,7 @@ int main(int argc, char **argv)
 		{
 			std::cerr << "Could not fseek to beginning of this file! Sorry." << std::endl ;
 			fclose(f) ;
-			return 0 ;
+			return 1 ;
 		}
 
 		std::cerr << "File size:" << size << std::endl ;
@@ -109,9 +112,9 @@ int main(int argc, char **argv)
 		for(uint32_t i=0;i<crc_map.size();++i)
 			std::cerr << (void*)crc_map[i] ;
 		std::cerr << std::endl;
-
-		return 1 ;
 	}
+
+	return 0 ;
 }
 
 

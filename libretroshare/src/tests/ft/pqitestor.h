@@ -52,14 +52,14 @@ class hubItem
 {
 	public:
 	hubItem()
-	:mPQI(NULL), mConnMgr(NULL) { return; }
+	:mPQI(NULL), mLinkMgr(NULL) { return; }
 
-	hubItem(std::string id, P3Pipe *pqi, p3ConnectMgr *mgr)
-	:mPeerId(id), mPQI(pqi), mConnMgr(mgr) { return; }
+	hubItem(std::string id, P3Pipe *pqi, p3LinkMgr *mgr)
+	:mPeerId(id), mPQI(pqi), mLinkMgr(mgr) { return; }
 
 	std::string mPeerId;
 	P3Pipe *mPQI;
-	p3ConnectMgr *mConnMgr;
+	p3LinkMgr *mLinkMgr;
 };
 
 
@@ -68,7 +68,7 @@ class P3Hub: public RsThread
 	public:
 
 	P3Hub(uint32_t flags, RsSerialiser *rss);
-void 	addP3Pipe(std::string id, P3Pipe *, p3ConnectMgr *mgr);
+void 	addP3Pipe(std::string id, P3Pipe *, p3LinkMgr *mgr);
 
 virtual	void run();
 
@@ -136,6 +136,11 @@ class P3Pipe: public P3Interface
 		virtual int SendFileCRC32MapRequest(RsFileCRC32MapRequest*) ;
 		virtual RsFileCRC32Map* GetFileCRC32Map() ;
 		virtual int SendFileCRC32Map(RsFileCRC32Map*) ;
+
+		virtual RsFileSingleChunkCrcRequest* GetFileSingleChunkCrcRequest() ;
+		virtual int SendFileSingleChunkCrcRequest(RsFileSingleChunkCrcRequest*) ;
+		virtual RsFileSingleChunkCrc* GetFileSingleChunkCrc() ;
+		virtual int SendFileSingleChunkCrc(RsFileSingleChunkCrc*) ;
 
 		/* Lower Interface for PQIHub */
 

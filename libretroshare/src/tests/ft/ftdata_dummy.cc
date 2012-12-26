@@ -23,7 +23,7 @@
  *
  */
 
-#include "ftdata_test.h"
+#include "ftdata_dummy.h"
 
 /******* Pair of Send/Recv (Only need to handle Send side) ******/
 ftDataSendPair::ftDataSendPair(ftDataRecv *recv)
@@ -142,14 +142,22 @@ bool 	ftDataRecvDummy::recvChunkMap(const std::string& /*peer_id*/,const std::st
 {
 	return true;
 }
+bool ftDataRecvDummy::recvSingleChunkCrcRequest(const std::string& peer_id,const std::string& hash,uint32_t chunk_id) 
+{
+	return true ;
+}
+bool ftDataRecvDummy::recvSingleChunkCrc(const std::string& peer_id,const std::string& hash,uint32_t chunk_id,const Sha1CheckSum& sum) 
+{
+	return true ;
+}
 
-bool 	ftDataRecvDummy::sendCRC32MapRequest(const std::string& /*peer_id*/,const std::string& /*hash*/)
+bool 	ftDataRecvDummy::recvCRC32MapRequest(const std::string& /*peer_id*/,const std::string& /*hash*/)
 {
 	return true ;
 }
 
 	/* Send a chunk map */
-bool 	ftDataRecvDummy::sendCRC32Map(const std::string& /*peer_id*/,const std::string& /*hash*/, const CompressedChunkMap& /*cmap*/)
+bool 	ftDataRecvDummy::recvCRC32Map(const std::string& /*peer_id*/,const std::string& /*hash*/, const CompressedChunkMap& /*cmap*/)
 {
 	return true ; 
 }

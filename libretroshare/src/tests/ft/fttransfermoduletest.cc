@@ -46,7 +46,8 @@
 #include "ft/fttransfermodule.h"
 
 #include "util/utest.h"
-#include "ftdata_test.h"
+#include "ftdata_dummy.h"
+#include "ftsearch_dummy.h"
 
 INITTEST()
 

@@ -1,4 +1,4 @@
-#include "ftsearch_test.h"
+#include "ftsearch_dummy.h"
 
 bool 	ftSearchDummy::search(const std::string& /*hash*/, FileSearchFlags hintflags, FileInfo &/*info*/) const
 {

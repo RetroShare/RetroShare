@@ -135,10 +135,13 @@ virtual bool recvChunkMap(const std::string& peer_id,const std::string& hash,
 		const CompressedChunkMap& cmap,bool is_client);
 
 	/* Send a request for a chunk map */
-virtual bool 	sendCRC32MapRequest(const std::string& peer_id,const std::string& hash);
+virtual bool 	recvCRC32MapRequest(const std::string& peer_id,const std::string& hash);
 
 	/* Send a chunk map */
-virtual bool 	sendCRC32Map(const std::string& peer_id,const std::string& hash, const CompressedChunkMap& cmap);
+virtual bool 	recvCRC32Map(const std::string& peer_id,const std::string& hash, const CompressedChunkMap& cmap);
+
+virtual bool recvSingleChunkCrcRequest(const std::string& peer_id,const std::string& hash,uint32_t chunk_id) ;
+virtual bool recvSingleChunkCrc(const std::string& peer_id,const std::string& hash,uint32_t chunk_id,const Sha1CheckSum& sum);
 };
 
 #endif

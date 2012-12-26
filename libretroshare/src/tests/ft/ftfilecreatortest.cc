@@ -128,6 +128,8 @@ int test_fill(ftFileCreator *creator)
 
         REPORT("Test Fill");
 
-	return 1;
+		  int res = TESTRESULT();
+		  std::cerr << "Test result: " << res << std::endl;
+	return res ;
 }
 

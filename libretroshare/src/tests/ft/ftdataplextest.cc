@@ -36,15 +36,19 @@
 #include "util/rswin.h"
 #endif
 
+#include <sstream>
+#include <util/utest.h>
+#include <common/fileutils.h>
 #include "ft/ftextralist.h"
 #include "ft/ftdatamultiplex.h"
 #include "ft/ftfilesearch.h"
 
-#include "ftdata_test.h"
-#include "ftsearch_test.h"
+#include "ftdata_dummy.h"
+#include "ftsearch_dummy.h"
 
 void	do_random_server_test(ftDataMultiplex *mplex, ftExtraList *eList, std::list<std::string> &files);
 
+INITTEST() ;
 
 void usage(char *name)
 {
@@ -78,15 +82,26 @@ int main(int argc, char **argv)
 
 	if (optind >= argc)
 	{
-		std::cerr << "Missing Files" << std::endl;
-		usage(argv[0]);
-	}
+		uint32_t N = 4 ;
+		std::cerr << "Missing Files. Generating " << N << " random files." << std::endl;
 
-	for(; optind < argc; optind++)
-	{
-		std::cerr << "Adding: " << argv[optind] << std::endl;
-		fileList.push_back(std::string(argv[optind]));
+		for(uint32_t i=0;i<N;++i)
+		{
+			std::ostringstream ss ;
+			ss << "file_" << i << ".bin" ;
+			uint64_t size = lrand48()%1000 + 200000 ;
+			std::string filename = ss.str() ;
+			if(!FileUtils::createRandomFile(filename,size))
+				return 1 ;
+			std::cerr << "  file: " << filename << ", size=" << size << std::endl;
+		}
 	}
+	else
+		for(; optind < argc; optind++)
+		{
+			std::cerr << "Adding: " << argv[optind] << std::endl;
+			fileList.push_back(std::string(argv[optind]));
+		}
 
 	ftExtraList *eList = new ftExtraList();
 	eList->start();
@@ -121,6 +136,10 @@ int main(int argc, char **argv)
 
 	/* just request random data packets first */
 	do_random_server_test(ftmplex, eList, fileList);
+
+	FINALREPORT("FtDataPlex test") ;
+
+	return TESTRESULT() ;
 }
 
 

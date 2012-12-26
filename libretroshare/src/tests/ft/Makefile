@@ -10,7 +10,7 @@ OPS_TOP_DIR = ../../../../openpgpsdk/src
 include $(RS_TOP_DIR)/tests/scripts/config.mk
 ###############################################################
 
-TESTOBJ  = ftfilemappertest.o ftfileprovidertest.o ftfilecreatortest.o ftextralisttest.o ftdataplextest.o fttransfermoduletest.o ftcrc32test.o ftcrossprovidercreatortest.o ftcontrollertest.o ftserver1test.o ftserver2test.o ftserver3test.o ftdata_test.o ftsearch_test.o
+TESTOBJ  = ftfilemappertest.o ftfileprovidertest.o ftfilecreatortest.o ftextralisttest.o ftdataplextest.o fttransfermoduletest.o ftcrc32test.o ftcrossprovidercreatortest.o ftcontrollertest.o ftserver1test.o ftserver2test.o ftserver3test.o ftdata_dummy.o ftsearch_dummy.o
 
 TESTS  = ftfileprovidertest ftfilecreatortest ftextralisttest ftdataplextest fttransfermoduletest ftcrc32test ftcrossprovidercreatortest ftcontrollertest ftserver1test ftserver2test fttransfermoduletest ftserver3test
 #ftfilemappertest 
@@ -33,13 +33,13 @@ ftfileprovidertest : ftfileprovidertest.o
 	$(CC) $(CFLAGS) -o ftfileprovidertest ftfileprovidertest.o $(LIBS)
 
 fttransfermoduletest : fttransfermoduletest.o 
-	$(CC) $(CFLAGS) -o fttransfermoduletest fttransfermoduletest.o $(LIBS)
+	$(CC) $(CFLAGS) -o fttransfermoduletest ftdata_dummy.o ftsearch_dummy.o fttransfermoduletest.o $(LIBS)
 
 ftextralisttest : ftextralisttest.o 
 	$(CC) $(CFLAGS) -o ftextralisttest ftextralisttest.o $(LIBS)
 
-ftdataplextest : ftdataplextest.o ftsearch_test.o ftdata_test.o
-	$(CC) $(CFLAGS) -o ftdataplextest  ftdata_test.o ftdataplextest.o ftsearch_test.o $(LIBS)
+ftdataplextest : ftdataplextest.o ftsearch_dummy.o ftdata_dummy.o
+	$(CC) $(CFLAGS) -o ftdataplextest  ftdata_dummy.o ftdataplextest.o ftsearch_dummy.o $(LIBS)
 
 ftserver1test : ftserver1test.o 
 	$(CC) $(CFLAGS) -o ftserver1test ftserver1test.o $(LIBS)

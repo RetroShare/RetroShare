@@ -37,6 +37,9 @@
 
 //#include "pqi/p3authmgr.h"
 //#include "pqi/p3connmgr.h"
+#include "pqi/p3peermgr.h"
+#include "pqi/p3linkmgr.h"
+#include "pqi/p3netmgr.h"
 
 #include "util/rsdebug.h"
 
@@ -79,7 +82,7 @@ int main(int argc, char **argv)
         std::list<std::string> extraList;
 	std::list<std::string> peerIds;
 	std::map<std::string, ftServer *> mFtServers;
-	std::map<std::string, p3ConnectMgr *> mConnMgrs;
+	std::map<std::string, p3LinkMgrIMPL *> mLinkMgrs;
 
 	ftServer *mLoadServer = NULL;
 	std::list<ftServer *> mOtherServers;
@@ -184,22 +187,24 @@ int main(int argc, char **argv)
 			}
 		}
 
-		p3AuthMgr *authMgr = new p3DummyAuthMgr(*it, friendList);
-		p3ConnectMgr *connMgr = new p3ConnectMgr(authMgr);
-		mConnMgrs[*it] = connMgr;
+		//p3AuthMgr *authMgr = new p3DummyAuthMgr(*it, friendList);
+		p3PeerMgrIMPL *peerMgr = new p3PeerMgrIMPL;
+		p3NetMgrIMPL *netMgr = new p3NetMgrIMPL ;
+		p3LinkMgrIMPL *linkMgr = new p3LinkMgrIMPL(peerMgr,netMgr);
+		mLinkMgrs[*it] = linkMgr;
 
 
 		for(fit = friendList.begin(); fit != friendList.end(); fit++)
 		{
 			/* add as peer to authMgr */
-			connMgr->addFriend(fit->id);
+			peerMgr->addFriend(fit->id);
 		}
 
 		P3Pipe *pipe = new P3Pipe(); //(*it);
 
 		/* add server */
 		ftServer *server;
-		server = new ftServer(connMgr);
+		server = new ftServer(peerMgr,linkMgr);
 		mFtServers[*it] = server;
 		if (!mLoadServer)
 		{
@@ -230,7 +235,7 @@ int main(int argc, char **argv)
 		NotifyBase *base = NULL;
 		server->SetupFtServer(base);
 
-		testHub->addP3Pipe(*it, pipe, connMgr);
+		testHub->addP3Pipe(*it, pipe, linkMgr);
 		server->StartupThreads();
 
 		/* setup any extra bits */
@@ -239,7 +244,7 @@ int main(int argc, char **argv)
 			server->setSharedDirectories(fileList);
 			for(eit = extraList.begin(); eit != extraList.end(); eit++)
 			{
-				server->ExtraFileHash(*eit, 3600, 0);
+				server->ExtraFileHash(*eit, 3600, TransferRequestFlags(0));
 			}
 		}
 
@@ -250,14 +255,14 @@ int main(int argc, char **argv)
 		mLoadServer->setSharedDirectories(fileList);
 		for(eit = extraList.begin(); eit != extraList.end(); eit++)
 		{
-			mLoadServer->ExtraFileHash(*eit, 3600, 0);
+			mLoadServer->ExtraFileHash(*eit, 3600, TransferRequestFlags(0));
 		}
 	}
 		
 
 	/* stick your real test here */
 	std::map<std::string, ftServer *>::iterator sit;
-	std::map<std::string, p3ConnectMgr *>::iterator cit;
+	std::map<std::string, p3LinkMgrIMPL *>::iterator cit;
 
 	/* Start up test thread */
 	pthread_t tid;
@@ -285,7 +290,7 @@ int main(int argc, char **argv)
 			(sit->second)->tick();
 		}
 
-		for(cit = mConnMgrs.begin(); cit != mConnMgrs.end(); cit++)
+		for(cit = mLinkMgrs.begin(); cit != mLinkMgrs.end(); cit++)
 		{
 			/* update */
 			(cit->second)->tick();
@@ -334,7 +339,8 @@ void *do_server_test_thread(void *data)
 		REPORT("Successfully Found ExtraFile");
 
 		/* now we can try a search (should succeed) */
-		uint32_t hintflags = 0;
+		FileSearchFlags hintflags;
+
 		if (mFt->loadServer->FileDetails(info.hash, hintflags, info2))
 		{
 			CHECK(info2.hash == info.hash);
@@ -361,6 +367,7 @@ void *do_server_test_thread(void *data)
 
 		/* search with other flags (should fail) */
 		hintflags = RS_FILE_HINTS_REMOTE | RS_FILE_HINTS_SPEC_ONLY;
+
 		if (mFt->loadServer->FileDetails(info.hash, hintflags, info2))
 		{
 			REPORT2( false, "Search for Extra File (Fail Flags)");
@@ -383,18 +390,19 @@ void *do_server_test_thread(void *data)
         ftServer *server=mFt->loadServer;
 
 	std::string fname,filehash,destination;
-	uint32_t size,flags; 
+	uint32_t size;
+	FileSearchFlags flags; 
 	std::list<std::string> srcIds;
 
         /* select a file from otherServers */
-        if (mFt->otherServers == NULL)
+        if (mFt->otherServers.empty() )
         {
           REPORT2(false,"No otherServers available");
           exit(1);
         }
        
         DirDetails details;
-        flags = DIR_FLAGS_DETAILS |  DIR_FLAGS_REMOTE;
+        flags = RS_FILE_HINTS_REMOTE;
         void *ref = NULL;
  
         if(!server->RequestDirDetails(ref,details,flags))
@@ -407,8 +415,7 @@ void *do_server_test_thread(void *data)
           REPORT("RemoteDirModel::downloadSelected() Calling File Request");
           std::list<std::string> srcIds;
           srcIds.push_back(details.id);
-          server->FileRequest(details.name, details.hash,
-                     details.count, "", 0, srcIds);
+          server->FileRequest(details.name, details.hash, details.count, "", TransferRequestFlags(0), srcIds);
         }
 
 	exit(1);

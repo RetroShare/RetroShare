@@ -40,14 +40,14 @@ P3Hub::P3Hub(uint32_t flags, RsSerialiser *rss)
 	return;
 }
 
-void	P3Hub::addP3Pipe(std::string id, P3Pipe *pqi, p3ConnectMgr *mgr)
+void	P3Hub::addP3Pipe(std::string id, P3Pipe *pqi, p3LinkMgr *mgr)
 {
 	hubItem item(id, pqi, mgr);
 
 	std::map<std::string, hubItem>::iterator it;
 	for(it = mPeers.begin(); it != mPeers.end(); it++)
 	{
-		(it->second).mConnMgr->connectResult(id, true, 0);
+		(it->second).mLinkMgr->connectResult(id, true, 0);
 		mgr->connectResult(it->first, true, 0);
 	}
 
