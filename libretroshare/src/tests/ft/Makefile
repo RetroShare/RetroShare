@@ -41,8 +41,8 @@ ftextralisttest : ftextralisttest.o
 ftdataplextest : ftdataplextest.o ftsearch_dummy.o ftdata_dummy.o
 	$(CC) $(CFLAGS) -o ftdataplextest  ftdata_dummy.o ftdataplextest.o ftsearch_dummy.o $(LIBS)
 
-ftserver1test : ftserver1test.o 
-	$(CC) $(CFLAGS) -o ftserver1test ftserver1test.o $(LIBS)
+ftserver1test : ftserver1test.o pqitestor.o
+	$(CC) $(CFLAGS) -o ftserver1test ftserver1test.o pqitestor.o $(LIBS)
 
 ftserver2test : ftserver2test.o 
 	$(CC) $(CFLAGS) -o ftserver2test ftserver2test.o $(LIBS)

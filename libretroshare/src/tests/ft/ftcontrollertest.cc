@@ -56,53 +56,6 @@
 
 #include <sstream>
 
-class FakeGPG: public AuthGPG
-{
-	public:
-		FakeGPG(const std::string& ownId)
-			:AuthGPG("pgp_pubring.pgp","pgp_secring.pgp","pgp_trustdb.pgp","lock"), mOwnId(ownId)
-			{
-			}
-
-		virtual std::string getGPGOwnId() 
-		{
-			return mOwnId ;
-		}
-
-		virtual bool isGPGAccepted(const std::string& pgp_id) { return true ; }
-
-	private:
-		std::string mOwnId ;
-};
-
-class FakeSSL: public AuthSSLimpl
-{
-	public:
-		FakeSSL(const std::string& ownId)
-		:	mOwnId(ownId)
-			{
-			}
-
-		virtual std::string OwnId() 
-		{
-			return mOwnId ;
-		}
-
-	private:
-		std::string mOwnId ;
-};
-
-class FakeRsPeers: public p3Peers
-{
-	public:
-		FakeRsPeers(p3LinkMgr *lm, p3PeerMgr *pm, p3NetMgr *nm) : p3Peers(lm,pm,nm) {}
-
-		virtual bool getFriendList(std::list<std::string>& fl) { fl = mFriends ; return true ;}
-
-	private:
-		std::list<std::string> mFriends ;
-};
-
 class TestData
 {
 	public:
@@ -176,10 +129,10 @@ int main(int argc, char **argv)
 	std::string ssl_own_id = TestUtils::createRandomSSLId() ;
 	std::string gpg_own_id = TestUtils::createRandomPGPId() ;
 
-	FakeGPG fakeGPG(gpg_own_id) ;
+	TestUtils::DummyAuthGPG fakeGPG(gpg_own_id) ;
 	AuthGPG::setAuthGPG_debug(&fakeGPG) ;
 
-	FakeSSL fakeSSL(ssl_own_id) ;
+	TestUtils::DummyAuthSSL fakeSSL(ssl_own_id) ;
 	AuthSSL::setAuthSSL_debug(&fakeSSL) ;
 
 	/* do logging */
@@ -263,8 +216,7 @@ int main(int argc, char **argv)
 		p3LinkMgrIMPL *linkMgr = new p3LinkMgrIMPL(peerMgr,netMgr);
 		mLinkMgrs[*it] = linkMgr;
 
-		rsPeers = new FakeRsPeers(linkMgr,peerMgr,netMgr) ;
-
+		rsPeers = new TestUtils::DummyRsPeers(linkMgr,peerMgr,netMgr) ;
 
 		for(fit = friendList.begin(); fit != friendList.end(); fit++)
 		{

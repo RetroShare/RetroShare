@@ -2,6 +2,10 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <util/rsid.h>
+#include <pqi/p3linkmgr.h>
+#include <pqi/authgpg.h>
+#include <pqi/authssl.h>
+#include <rsserver/p3peers.h>
 
 class TestUtils
 {
@@ -42,4 +46,51 @@ class TestUtils
 		{
 			return t_RsGenericIdType<8>::random().toStdString(true);
 		}
+
+		class DummyAuthGPG: public AuthGPG
+		{
+			public:
+				DummyAuthGPG(const std::string& ownId)
+					:AuthGPG("pgp_pubring.pgp","pgp_secring.pgp","pgp_trustdb.pgp","lock"), mOwnId(ownId)
+				{
+				}
+
+				virtual std::string getGPGOwnId() 
+				{
+					return mOwnId ;
+				}
+
+				virtual bool isGPGAccepted(const std::string& pgp_id) { return true ; }
+
+			private:
+				std::string mOwnId ;
+		};
+
+		class DummyAuthSSL: public AuthSSLimpl
+		{
+			public:
+				DummyAuthSSL(const std::string& ownId)
+					:	mOwnId(ownId)
+				{
+				}
+
+				virtual std::string OwnId() 
+				{
+					return mOwnId ;
+				}
+
+			private:
+				std::string mOwnId ;
+		};
+
+		class DummyRsPeers: public p3Peers
+		{
+			public:
+				DummyRsPeers(p3LinkMgr *lm, p3PeerMgr *pm, p3NetMgr *nm) : p3Peers(lm,pm,nm) {}
+
+				//virtual bool getFriendList(std::list<std::string>& fl) { ; return true ;}
+
+			private:
+				std::list<std::string> mFriends ;
+		};
 };

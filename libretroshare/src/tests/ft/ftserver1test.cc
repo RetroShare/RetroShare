@@ -41,8 +41,12 @@
 
 #include "pqi/p3linkmgr.h"
 #include "pqi/p3peermgr.h"
+#include "pqi/p3netmgr.h"
 
 #include "util/rsdebug.h"
+#include "util/utest.h"
+#include "common/testutils.h"
+#include "retroshare/rsiface.h"
 
 #include "pqitestor.h"
 #include "util/rsdir.h"
@@ -50,6 +54,7 @@
 #include <sstream>
 
 
+INITTEST();
 
 void	do_random_server_test(ftDataMultiplex *mplex, ftExtraList *eList, std::list<std::string> &files);
 
@@ -67,10 +72,10 @@ int main(int argc, char **argv)
         uint32_t debugLevel = 5;
 	bool debugStderr = true;
 
-        std::list<std::string> fileList;
+        std::list<SharedDirInfo> fileList;
 	std::list<std::string> peerIds;
 	std::map<std::string, ftServer *> mFtServers;
-	std::map<std::string, p3ConnectMgr *> mConnMgrs;
+	std::map<std::string, p3LinkMgrIMPL *> mLinkMgrs;
 
 #ifdef PTW32_STATIC_LIB
          pthread_win32_process_attach_np();
@@ -127,9 +132,25 @@ int main(int argc, char **argv)
 	for(; optind < argc; optind++)
 	{
 		std::cerr << "Adding: " << argv[optind] << std::endl;
-		fileList.push_back(std::string(argv[optind]));
+
+		SharedDirInfo info ;
+		info.filename = std::string(argv[optind]) ;
+		info.virtualname = info.filename ;
+		info.shareflags = DIR_FLAGS_PERMISSIONS_MASK ;
+		info.parent_groups.clear() ;
+
+		fileList.push_back(info);
 	}
 	std::cerr << "Point 2" << std::endl;
+
+	std::string ssl_own_id = TestUtils::createRandomSSLId() ;
+	std::string gpg_own_id = TestUtils::createRandomPGPId() ;
+
+	TestUtils::DummyAuthGPG fakeGPG(gpg_own_id) ;
+	AuthGPG::setAuthGPG_debug(&fakeGPG) ;
+
+	TestUtils::DummyAuthSSL fakeSSL(ssl_own_id) ;
+	AuthSSL::setAuthSSL_debug(&fakeSSL) ;
 
 	/* We need to setup a series 2 - 4 different ftServers....
 	 *
@@ -141,30 +162,27 @@ int main(int argc, char **argv)
 
 	std::list<std::string>::const_iterator it, jit;
 
-	std::list<pqiAuthDetails> baseFriendList, friendList;
-	std::list<pqiAuthDetails>::iterator fit;
+	std::list<RsPeerDetails> baseFriendList, friendList;
+	std::list<RsPeerDetails>::iterator fit;
 
-	std::cerr << "Point 3" << std::endl;
-	P3Hub *testHub = new P3Hub(0, NULL);
+	P3Hub *testHub = new P3Hub(0,NULL);
 	testHub->start();
-	std::cerr << "Point 4" << std::endl;
 
 	/* Setup Base Friend Info */
 	for(it = peerIds.begin(); it != peerIds.end(); it++)
 	{
-		pqiAuthDetails pad;
+		RsPeerDetails pad;
 		pad.id = *it;
+		pad.gpg_id = TestUtils::createRandomPGPId() ;
 		pad.name = *it;
 		pad.trustLvl = 5;
 		pad.ownsign = true;
-		pad.trusted = false;
+		//pad.trusted = false;
 
 		baseFriendList.push_back(pad);
 
-		std::cerr << "ftserver1test::setup peer: " << *it;
-		std::cerr << std::endl;
+		std::cerr << "ftserver1test::setup peer: " << *it << std::endl;
 	}
-	std::cerr << "Point 5" << std::endl;
 
 	std::ostringstream pname;
 	pname << "/tmp/rstst-" << time(NULL);
@@ -172,7 +190,6 @@ int main(int argc, char **argv)
 	std::string basepath = pname.str();
 	RsDirUtil::checkCreateDirectory(basepath);
 
-	std::cerr << "Point 6" << std::endl;
 
 
 	for(it = peerIds.begin(); it != peerIds.end(); it++)
@@ -188,22 +205,26 @@ int main(int argc, char **argv)
 			}
 		}
 
-		p3AuthMgr *authMgr = new p3DummyAuthMgr(*it, friendList);
-		p3ConnectMgr *connMgr = new p3ConnectMgr(authMgr);
-		mConnMgrs[*it] = connMgr;
+		//p3AuthMgr *authMgr = new p3DummyAuthMgr(*it, friendList);
+		p3PeerMgrIMPL *peerMgr = new p3PeerMgrIMPL(ssl_own_id,gpg_own_id,"My GPG name","My SSL location");
 
+		p3NetMgrIMPL *netMgr = new p3NetMgrIMPL ;
+		p3LinkMgrIMPL *linkMgr = new p3LinkMgrIMPL(peerMgr,netMgr);
+		mLinkMgrs[*it] = linkMgr;
+
+		rsPeers = new TestUtils::DummyRsPeers(linkMgr,peerMgr,netMgr) ;
 
 		for(fit = friendList.begin(); fit != friendList.end(); fit++)
 		{
 			/* add as peer to authMgr */
-			connMgr->addFriend(fit->id);
+			peerMgr->addFriend(fit->id,fit->gpg_id);
 		}
 
 		P3Pipe *pipe = new P3Pipe(); //(*it);
 
 		/* add server */
 		ftServer *server;
-		server = new ftServer(authMgr, connMgr);
+		server = new ftServer(peerMgr,linkMgr);
 		mFtServers[*it] = server;
 
 		server->setP3Interface(pipe);
@@ -230,24 +251,23 @@ int main(int argc, char **argv)
 
                 //sleep(60);
 
-		NotifyBase *base = NULL;
+		NotifyBase *base = new NotifyBase;
 		server->SetupFtServer(base);
 
-		testHub->addP3Pipe(*it, pipe, connMgr);
+		testHub->addP3Pipe(*it, pipe, linkMgr);
 		server->StartupThreads();
 
 		/* setup any extra bits */
 		server->setPartialsDirectory(partialspath);
 		server->setDownloadDirectory(downloadpath);
 		server->setSharedDirectories(fileList);
-
 	}
 
 	/* stick your real test here */
 	std::map<std::string, ftServer *>::iterator sit;
-	std::map<std::string, p3ConnectMgr *>::iterator cit;
+	std::map<std::string, p3LinkMgrIMPL *>::iterator cit;
 
-	while(1)
+	for(int i=0;i < 20;++i)
 	{
 		std::cerr << "ftserver1test::sleep()";
 		std::cerr << std::endl;
@@ -260,12 +280,14 @@ int main(int argc, char **argv)
 			(sit->second)->tick();
 		}
 
-		for(cit = mConnMgrs.begin(); cit != mConnMgrs.end(); cit++)
+		for(cit = mLinkMgrs.begin(); cit != mLinkMgrs.end(); cit++)
 		{
 			/* update */
 			(cit->second)->tick();
 		}
 	}
+
+	FINALREPORT("FtServer running.") ;
 }
 
 
