@@ -31,6 +31,7 @@
 #include <stdexcept>
 #include <string>
 #include <stdint.h>
+#include <util/rsrandom.h>
 
 template<uint32_t ID_SIZE_IN_BYTES> class t_RsGenericIdType
 {
@@ -45,6 +46,18 @@ template<uint32_t ID_SIZE_IN_BYTES> class t_RsGenericIdType
 		// Explicit constructor from a byte array. The array should have size at least ID_SIZE_IN_BYTES
 		//
 		explicit t_RsGenericIdType(const unsigned char bytes[]) ;
+
+		// Random initialization. Can be useful for testing.
+		//
+		static t_RsGenericIdType<ID_SIZE_IN_BYTES> random() 
+		{
+			t_RsGenericIdType<ID_SIZE_IN_BYTES> id ;
+
+			for(uint32_t i=0;i<ID_SIZE_IN_BYTES;++i)
+				id.bytes[i] = RSRandom::random_u32() & 0xff ;
+
+			return id ;
+		}
 
 		// Converts to a std::string using cached value. 
 		//

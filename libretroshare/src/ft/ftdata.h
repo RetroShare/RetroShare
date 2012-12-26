@@ -99,6 +99,10 @@ class ftDataRecv
 
 		/// Send a chunk map
 		virtual bool recvCRC32Map(const std::string& peer_id,const std::string& hash,const CRC32Map& crcmap) = 0;
+
+		virtual bool recvSingleChunkCRCRequest(const std::string& peer_id,const std::string& hash,uint32_t chunk_id) = 0;
+		virtual bool recvSingleChunkCRC(const std::string& peer_id,const std::string& hash,uint32_t chunk_id,const Sha1CheckSum& sum) = 0;
+
 };
 
 #endif

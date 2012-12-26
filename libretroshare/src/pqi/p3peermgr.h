@@ -290,7 +290,10 @@ virtual bool 	haveOnceConnected();
 /* Extra IMPL Functions (used by p3LinkMgr, p3NetMgr + Setup) */
 /************************************************************************************************/
 
-        p3PeerMgrIMPL();
+        p3PeerMgrIMPL(	const std::string& ssl_own_id,
+				  				const std::string& gpg_own_id,
+				  				const std::string& gpg_own_name,
+				  				const std::string& ssl_own_location) ;
 
 void	setManagers(p3LinkMgrIMPL *linkMgr, p3NetMgrIMPL *netMgr);
 

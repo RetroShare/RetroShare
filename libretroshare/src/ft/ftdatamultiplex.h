@@ -148,8 +148,8 @@ class ftDataMultiplex: public ftDataRecv, public RsQueueThread
 		/// Receive a CRC map request
 		virtual bool recvCRC32MapRequest(const std::string& peer_id,const std::string& hash) ;
 
-		virtual bool recvSingleChunkCrcRequest(const std::string& peer_id,const std::string& hash,uint32_t chunk_id) ;
-		virtual bool recvSingleChunkCrc(const std::string& peer_id,const std::string& hash,uint32_t chunk_id,const Sha1CheckSum& sum) ;
+		virtual bool recvSingleChunkCRCRequest(const std::string& peer_id,const std::string& hash,uint32_t chunk_id) ;
+		virtual bool recvSingleChunkCRC(const std::string& peer_id,const std::string& hash,uint32_t chunk_id,const Sha1CheckSum& sum) ;
 		
 		// Returns the chunk map from the file uploading client. Also initiates a chunk map request if this 
 		// map is too old. This supposes that the caller will ask again in a few seconds.

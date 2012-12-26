@@ -225,6 +225,9 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		/* GPG service */
 		virtual bool addService(AuthGPGService *service) ;
 
+		// This is for debug purpose only. Don't use it !!
+		static void setAuthGPG_debug(AuthGPG *auth_gpg) { _instance = auth_gpg ; } 
+
 	protected:
 		AuthGPG(const std::string& path_to_pubring, const std::string& path_to_secring,const std::string& path_to_trustdb,const std::string& pgp_lock_file);
 		virtual ~AuthGPG();

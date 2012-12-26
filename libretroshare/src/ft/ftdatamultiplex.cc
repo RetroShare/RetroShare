@@ -285,7 +285,7 @@ bool	ftDataMultiplex::recvCRC32MapRequest(const std::string& peerId, const std::
 
 	return true;
 }
-bool	ftDataMultiplex::recvSingleChunkCrcRequest(const std::string& peerId, const std::string& hash,uint32_t chunk_number)
+bool	ftDataMultiplex::recvSingleChunkCRCRequest(const std::string& peerId, const std::string& hash,uint32_t chunk_number)
 {
 #ifdef MPLEX_DEBUG
 	std::cerr << "ftDataMultiplex::recvChunkMapRequest() Server Recv";
@@ -489,7 +489,7 @@ bool 	ftDataMultiplex::doWork()
 	return true;
 }
 
-bool ftDataMultiplex::recvSingleChunkCrc(const std::string& peerId, const std::string& hash,uint32_t chunk_number,const Sha1CheckSum& crc)
+bool ftDataMultiplex::recvSingleChunkCRC(const std::string& peerId, const std::string& hash,uint32_t chunk_number,const Sha1CheckSum& crc)
 {
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
 

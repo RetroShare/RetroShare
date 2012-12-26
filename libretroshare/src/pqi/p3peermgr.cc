@@ -97,7 +97,10 @@ std::string textPeerConnectState(peerState &state)
 }
 
 
-p3PeerMgrIMPL::p3PeerMgrIMPL()
+p3PeerMgrIMPL::p3PeerMgrIMPL(	const std::string& ssl_own_id,
+										const std::string& gpg_own_id,
+										const std::string& gpg_own_name,
+										const std::string& ssl_own_location)
 	:p3Config(CONFIG_TYPE_PEERS), mPeerMtx("p3PeerMgr"), mStatusChanged(false)
 {
 
@@ -108,10 +111,10 @@ p3PeerMgrIMPL::p3PeerMgrIMPL()
 		mNetMgr = NULL;
 
 		/* setup basics of own state */
-		mOwnState.id = AuthSSL::getAuthSSL()->OwnId();
-		mOwnState.gpg_id = AuthGPG::getAuthGPG()->getGPGOwnId();
-		mOwnState.name = AuthGPG::getAuthGPG()->getGPGOwnName();
-		mOwnState.location = AuthSSL::getAuthSSL()->getOwnLocation();
+		mOwnState.id = ssl_own_id ;
+		mOwnState.gpg_id = gpg_own_id ;
+		mOwnState.name = gpg_own_name ;
+		mOwnState.location = ssl_own_location ;
 		mOwnState.netMode = RS_NET_MODE_UPNP; // Default to UPNP.
 		mOwnState.visState = 0;
 	

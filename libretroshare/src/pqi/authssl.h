@@ -86,7 +86,6 @@ class sslcert
 };
 
 /* required to install instance */
-extern void    AuthSSLInit();
 
 class AuthSSL
 {
@@ -94,6 +93,7 @@ class AuthSSL
 	AuthSSL();
 
 static AuthSSL *getAuthSSL();
+static void    AuthSSLInit();
 
         /* Initialisation Functions (Unique) */
 virtual bool    validateOwnCertificate(X509 *x509, EVP_PKEY *pkey) = 0;
@@ -155,6 +155,9 @@ virtual void   getCurrentConnectionAttemptInfo(      std::string& gpg_id,      s
 
 virtual bool    FailedCertificate(X509 *x509, const std::string& gpgid,const std::string& sslid,const std::string& sslcn,const struct sockaddr_in &addr, bool incoming) = 0; /* store for discovery */
 virtual bool 	CheckCertificate(std::string peerId, X509 *x509) = 0; /* check that they are exact match */
+
+static void setAuthSSL_debug(AuthSSL*) ;	// used for debug only. The real function is InitSSL()
+static AuthSSL *instance_ssl ;
 };
 
 
@@ -234,9 +237,6 @@ virtual bool 	CheckCertificate(std::string peerId, X509 *x509); /* check that th
 
 
     private:
-
-        // the single instance of this
-        static AuthSSL *instance_ssl;
 
 bool    LocalStoreCert(X509* x509);
 bool 	RemoveX509(std::string id);

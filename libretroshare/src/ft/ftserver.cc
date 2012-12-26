@@ -1361,7 +1361,7 @@ FileInfo(ffr);
 		i++; /* count */
 
 		/* incoming data */
-		mFtDataplex->recvSingleChunkCrcRequest(fscrcr->PeerId(), fscrcr->hash,fscrcr->chunk_number) ;
+		mFtDataplex->recvSingleChunkCRCRequest(fscrcr->PeerId(), fscrcr->hash,fscrcr->chunk_number) ;
 
 		delete fscrcr;
 	}
@@ -1382,7 +1382,7 @@ FileInfo(ffr);
 		i++; /* count */
 
 		/* incoming data */
-		mFtDataplex->recvSingleChunkCrc(fscrc->PeerId(), fscrc->hash,fscrc->chunk_number,fscrc->check_sum); 
+		mFtDataplex->recvSingleChunkCRC(fscrc->PeerId(), fscrc->hash,fscrc->chunk_number,fscrc->check_sum); 
 
 		delete fscrcr;
 	}

@@ -1343,7 +1343,7 @@ void p3turtle::handleRecvChunkCRC(RsTurtleChunkCrcItem *item)
 		vpid = tunnel.vpid ;
 	}
 
-	_ft_server->getMultiplexer()->recvSingleChunkCrc(vpid,hash,item->chunk_number,item->check_sum) ;
+	_ft_server->getMultiplexer()->recvSingleChunkCRC(vpid,hash,item->chunk_number,item->check_sum) ;
 }
 void p3turtle::handleRecvChunkCRCRequest(RsTurtleChunkCrcRequestItem *item)
 {
@@ -1379,7 +1379,7 @@ void p3turtle::handleRecvChunkCRCRequest(RsTurtleChunkCrcRequestItem *item)
 		vpid = tunnel.vpid ;
 	}
 
-	_ft_server->getMultiplexer()->recvSingleChunkCrcRequest(vpid,hash,item->chunk_number) ;
+	_ft_server->getMultiplexer()->recvSingleChunkCRCRequest(vpid,hash,item->chunk_number) ;
 }
 void p3turtle::handleRecvFileCRC32Map(RsTurtleFileCrcItem *item)
 {

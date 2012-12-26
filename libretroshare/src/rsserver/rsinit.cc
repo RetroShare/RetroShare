@@ -598,7 +598,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 	 * 4) Get List of GPG Accounts.
 	 */
 	/* create singletons */
-	AuthSSLInit();
+	AuthSSL::AuthSSLInit();
 	AuthSSL::getAuthSSL() -> InitAuth(NULL, NULL, NULL);
 
 	// first check config directories, and set bootstrap values.
@@ -1945,7 +1945,10 @@ int RsServer::StartupRetroShare()
 
 	/* History Manager */
 	mHistoryMgr = new p3HistoryMgr();
-	mPeerMgr = new p3PeerMgrIMPL();
+	mPeerMgr = new p3PeerMgrIMPL( AuthSSL::getAuthSSL()->OwnId(),
+											AuthGPG::getAuthGPG()->getGPGOwnId(),
+											AuthGPG::getAuthGPG()->getGPGOwnName(),
+											AuthSSL::getAuthSSL()->getOwnLocation());
 	mNetMgr = new p3NetMgrIMPL();
 	mLinkMgr = new p3LinkMgrIMPL(mPeerMgr, mNetMgr);
 

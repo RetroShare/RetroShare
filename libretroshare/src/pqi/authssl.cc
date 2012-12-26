@@ -59,7 +59,7 @@
  ***/
 
 // initialisation du pointeur de singleton
-static AuthSSL *instance_ssl = NULL;
+AuthSSL *AuthSSL::instance_ssl = NULL;
 static pthread_mutex_t *mutex_buf = NULL;
 
 struct CRYPTO_dynlock_value
@@ -200,12 +200,12 @@ void tls_cleanup()
 }
 
 /* hidden function - for testing purposes() */
-void setAuthSSL(AuthSSL *newssl)
+void AuthSSL::setAuthSSL_debug(AuthSSL *newssl)
 {
 	instance_ssl = newssl;
 }
 
-void AuthSSLInit()
+void AuthSSL::AuthSSLInit()
 {
 	if (instance_ssl == NULL)
 	{
