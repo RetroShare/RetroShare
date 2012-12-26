@@ -26,7 +26,7 @@ OPSDIR = $(OPS_TOP_DIR)/lib
 LIBRS = $(LIBDIR)/libretroshare.a
 BITDHT = $(BITDIR)/libbitdht.a
 # Unix: Linux/Cygwin
-INCLUDE = -I $(RS_TOP_DIR)  -I$(OPENPGP_INCLUDE_DIR)
+INCLUDE = -I$(RS_TOP_DIR)  -I$(OPS_TOP_DIR) -I$(DHT_TOP_DIR)
 CFLAGS = -Wall -g $(INCLUDE) -I..
 #CFLAGS += -fprofile-arcs -ftest-coverage
 CFLAGS += ${DEFINES}

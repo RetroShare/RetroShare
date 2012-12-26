@@ -39,8 +39,8 @@
 #include "ft/ftdatamultiplex.h"
 #include "ft/ftfilesearch.h"
 
-#include "pqi/p3authmgr.h"
-#include "pqi/p3connmgr.h"
+#include "pqi/p3linkmgr.h"
+#include "pqi/p3peermgr.h"
 
 #include "util/rsdebug.h"
 

@@ -24,7 +24,7 @@
  */
 
 #include "ft/pqitestor.h"
-#include "pqi/p3connmgr.h"
+#include "pqi/p3linkmgr.h"
 
 /******
  *#define HUB_DEBUG 1
@@ -47,8 +47,9 @@ void	P3Hub::addP3Pipe(std::string id, P3Pipe *pqi, p3LinkMgr *mgr)
 	std::map<std::string, hubItem>::iterator it;
 	for(it = mPeers.begin(); it != mPeers.end(); it++)
 	{
-		(it->second).mLinkMgr->connectResult(id, true, 0);
-		mgr->connectResult(it->first, true, 0);
+		sockaddr_in remote_addr ;
+		(it->second).mLinkMgr->connectResult(id, true, 0,remote_addr);
+		mgr->connectResult(it->first, true, 0,remote_addr);
 	}
 
 	mPeers[id] = item;
@@ -211,7 +212,7 @@ void 	P3Hub::run()
 
 
 PQIPipe::PQIPipe(std::string peerId)
-	:PQInterface(peerId)
+	:PQInterface(peerId),pipeMtx("Pipe mutex")
 {
 	return;
 }
@@ -328,117 +329,5 @@ int P3Pipe::PushRecvdItem(RsItem *item)
 	}
 
 	return 1;
-}
-
-int	P3Pipe::SearchSpecific(RsCacheRequest *item)
-{
-	SendAllItem(item);
-	return 1;
-}
-
-int     P3Pipe::SendSearchResult(RsCacheItem *item)
-{
-	SendAllItem(item);
-	return 1;
-}
-
-int     P3Pipe::SendFileRequest(RsFileRequest *item)
-{
-	SendAllItem(item);
-	return 1;
-}
-
-int     P3Pipe::SendFileData(RsFileData *item)
-{
-	SendAllItem(item);
-	return 1;
-}
-
-int	P3Pipe::SendRsRawItem(RsRawItem *item)
-{
-	SendAllItem(item);
-	return 1;
-}
-
-	// Cache Requests
-RsCacheRequest *P3Pipe::RequestedSearch()
-{
-	RsStackMutex stack(pipeMtx); /***** LOCK MUTEX ****/
-
-	if (mRecvdRsCacheRequests.size() == 0)
-	{
-		return NULL;
-	}
-
-	RsCacheRequest *item = mRecvdRsCacheRequests.front();
-	mRecvdRsCacheRequests.pop_front();
-	
-	return item;
-}
-
-
-	// Cache Results
-RsCacheItem *P3Pipe::GetSearchResult()
-{
-	RsStackMutex stack(pipeMtx); /***** LOCK MUTEX ****/
-
-	if (mRecvdRsCacheItems.size() == 0)
-	{
-		return NULL;
-	}
-
-	RsCacheItem *item = mRecvdRsCacheItems.front();
-	mRecvdRsCacheItems.pop_front();
-	
-	return item;
-}
-
-
-	// FileTransfer.
-RsFileRequest *P3Pipe::GetFileRequest()
-{
-	RsStackMutex stack(pipeMtx); /***** LOCK MUTEX ****/
-
-	if (mRecvdRsFileRequests.size() == 0)
-	{
-		return NULL;
-	}
-
-	RsFileRequest *item = mRecvdRsFileRequests.front();
-	mRecvdRsFileRequests.pop_front();
-	
-	return item;
-}
-
-
-RsFileData *P3Pipe::GetFileData()
-{
-	RsStackMutex stack(pipeMtx); /***** LOCK MUTEX ****/
-
-	if (mRecvdRsFileDatas.size() == 0)
-	{
-		return NULL;
-	}
-
-	RsFileData *item = mRecvdRsFileDatas.front();
-	mRecvdRsFileDatas.pop_front();
-	
-	return item;
-}
-
-
-RsRawItem *P3Pipe::GetRsRawItem()
-{
-	RsStackMutex stack(pipeMtx); /***** LOCK MUTEX ****/
-
-	if (mRecvdRsRawItems.size() == 0)
-	{
-		return NULL;
-	}
-
-	RsRawItem *item = mRecvdRsRawItems.front();
-	mRecvdRsRawItems.pop_front();
-	
-	return item;
 }
 

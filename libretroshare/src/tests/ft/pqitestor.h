@@ -37,6 +37,7 @@
 
 #include "pqi/pqi.h"
 #include "util/rsthreads.h"
+#include "serialiser/rsbaseitems.h"
 
 #include <string>
 
@@ -45,8 +46,7 @@ class PQIPipe;
 class PQIHub;
 class P3Pipe;
 class P3Hub;
-class p3ConnectMgr;
-
+class p3LinkMgr;
 
 class hubItem
 {
@@ -116,31 +116,30 @@ class P3Pipe: public P3Interface
 		virtual int	status() { return 1; }
 
 		/* Overloaded from P3Interface */
-		virtual int	SearchSpecific(RsCacheRequest *item);
-		virtual int     SendSearchResult(RsCacheItem *item);
-		virtual int     SendFileRequest(RsFileRequest *item);
-		virtual int     SendFileData(RsFileData *item);
-		virtual int	SendRsRawItem(RsRawItem *item);
 
-		virtual RsCacheRequest *RequestedSearch();
-		virtual RsCacheItem *GetSearchResult();
-		virtual RsFileRequest *GetFileRequest();
-		virtual RsFileData *GetFileData();
-		virtual RsRawItem *GetRsRawItem();
+		virtual RsCacheRequest *RequestedSearch()										{ return GetSpecificItem(mRecvdRsCacheRequests) ; }
+		virtual RsCacheItem *GetSearchResult() 										{ return GetSpecificItem(mRecvdRsCacheItems) ; }
+		virtual RsFileRequest *GetFileRequest() 										{ return GetSpecificItem(mRecvdRsFileRequests) ; }
+		virtual RsFileData *GetFileData() 												{ return GetSpecificItem(mRecvdRsFileDatas) ; }
+		virtual RsRawItem *GetRsRawItem() 												{ return GetSpecificItem(mRecvdRsRawItems) ; }
+		virtual RsFileChunkMapRequest* GetFileChunkMapRequest() 					{ return GetSpecificItem(mRecvdRsChunkMapRequests) ; }
+		virtual RsFileChunkMap* GetFileChunkMap()  									{ return GetSpecificItem(mRecvdRsChunkMaps) ; }
+		virtual RsFileCRC32MapRequest* GetFileCRC32MapRequest()  				{ return GetSpecificItem(mRecvdRsCRC32MapRequests) ; }
+		virtual RsFileCRC32Map* GetFileCRC32Map()  									{ return GetSpecificItem(mRecvdRsCRC32Maps) ; }
+		virtual RsFileSingleChunkCrcRequest* GetFileSingleChunkCrcRequest() 	{ return GetSpecificItem(mRecvdRsSingleChunkCRCRequests) ; }
+		virtual RsFileSingleChunkCrc* GetFileSingleChunkCrc()						{ return GetSpecificItem(mRecvdRsSingleChunkCRCs) ; }
 
-		virtual RsFileChunkMapRequest* GetFileChunkMapRequest() ;
-		virtual int SendFileChunkMapRequest(RsFileChunkMapRequest*) ;
-		virtual RsFileChunkMap* GetFileChunkMap() ;
-		virtual int SendFileChunkMap(RsFileChunkMap*) ;
-		virtual RsFileCRC32MapRequest* GetFileCRC32MapRequest() ;
-		virtual int SendFileCRC32MapRequest(RsFileCRC32MapRequest*) ;
-		virtual RsFileCRC32Map* GetFileCRC32Map() ;
-		virtual int SendFileCRC32Map(RsFileCRC32Map*) ;
-
-		virtual RsFileSingleChunkCrcRequest* GetFileSingleChunkCrcRequest() ;
-		virtual int SendFileSingleChunkCrcRequest(RsFileSingleChunkCrcRequest*) ;
-		virtual RsFileSingleChunkCrc* GetFileSingleChunkCrc() ;
-		virtual int SendFileSingleChunkCrc(RsFileSingleChunkCrc*) ;
+		virtual int	SearchSpecific(RsCacheRequest *item)								{ SendAllItem(item); return 1 ; }
+		virtual int SendSearchResult(RsCacheItem *item)									{ SendAllItem(item); return 1 ; }
+		virtual int SendFileRequest(RsFileRequest *item)								{ SendAllItem(item); return 1 ; }
+		virtual int SendFileData(RsFileData *item)										{ SendAllItem(item); return 1 ; }
+		virtual int	SendRsRawItem(RsRawItem *item)										{ SendAllItem(item); return 1 ; }
+		virtual int SendFileChunkMapRequest(RsFileChunkMapRequest*item) 				{ SendAllItem(item); return 1 ; }
+		virtual int SendFileChunkMap(RsFileChunkMap*item) 									{ SendAllItem(item); return 1 ; }
+		virtual int SendFileCRC32MapRequest(RsFileCRC32MapRequest*item) 				{ SendAllItem(item); return 1 ; }
+		virtual int SendFileCRC32Map(RsFileCRC32Map*item) 									{ SendAllItem(item); return 1 ; }
+		virtual int SendFileSingleChunkCrcRequest(RsFileSingleChunkCrcRequest*item)	{ SendAllItem(item); return 1 ; }
+		virtual int SendFileSingleChunkCrc(RsFileSingleChunkCrc*item) 					{ SendAllItem(item); return 1 ; }
 
 		/* Lower Interface for PQIHub */
 
@@ -148,6 +147,18 @@ class P3Pipe: public P3Interface
 		int 	PushRecvdItem(RsItem *item);
 
 	private:
+		template<class T> T *GetSpecificItem(std::list<T*>& item_list)
+		{
+			RsStackMutex stack(pipeMtx); /***** LOCK MUTEX ****/
+
+			if (item_list.size() == 0)
+				return NULL;
+
+			T *item = item_list.front();
+			item_list.pop_front();
+
+			return item;
+		}
 
 		int 	SendAllItem(RsItem *item);
 
@@ -155,11 +166,17 @@ class P3Pipe: public P3Interface
 
 		std::list<RsItem *> mSentItems; 
 
-		std::list<RsCacheRequest *> mRecvdRsCacheRequests;
-		std::list<RsCacheItem *> mRecvdRsCacheItems;
-		std::list<RsFileRequest *> mRecvdRsFileRequests;
-		std::list<RsFileData *> mRecvdRsFileDatas;
-		std::list<RsRawItem *> mRecvdRsRawItems;
+		std::list<RsCacheRequest *> 				mRecvdRsCacheRequests;
+		std::list<RsCacheItem *> 					mRecvdRsCacheItems;
+		std::list<RsFileRequest *> 				mRecvdRsFileRequests;
+		std::list<RsFileData *> 					mRecvdRsFileDatas;
+		std::list<RsRawItem *> 						mRecvdRsRawItems;
+		std::list<RsFileChunkMapRequest *> 		mRecvdRsChunkMapRequests;
+		std::list<RsFileChunkMap *> 				mRecvdRsChunkMaps;
+		std::list<RsFileCRC32MapRequest *> 			mRecvdRsCRC32MapRequests;
+		std::list<RsFileCRC32Map *> 					mRecvdRsCRC32Maps;
+		std::list<RsFileSingleChunkCrcRequest *>	mRecvdRsSingleChunkCRCRequests;
+		std::list<RsFileSingleChunkCrc *> 			mRecvdRsSingleChunkCRCs;
 };
 
 

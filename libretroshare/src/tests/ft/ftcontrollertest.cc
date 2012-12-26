@@ -29,6 +29,7 @@
 
 #include "retroshare/rsfiles.h"
 #include "retroshare/rspeers.h"
+#include "retroshare/rsiface.h"
 #include "ft/ftserver.h"
 
 #include "ft/ftextralist.h"
@@ -41,6 +42,10 @@
 #include "pqi/p3linkmgr.h"
 #include "pqi/p3netmgr.h"
 
+#include "pqi/authssl.h"
+#include "pqi/authgpg.h"
+
+#include "common/testutils.h"
 #include "util/rsdebug.h"
 
 #include "pqitestor.h"
@@ -50,6 +55,41 @@
 
 #include <sstream>
 
+class FakeGPG: public AuthGPG
+{
+	public:
+		FakeGPG(const std::string& ownId)
+			:AuthGPG("pgp_pubring.pgp","pgp_secring.pgp","pgp_trustdb.pgp","lock"), mOwnId(ownId)
+			{
+			}
+
+		virtual std::string getGPGOwnId() 
+		{
+			return mOwnId ;
+		}
+
+		virtual bool isGPGAccepted(const std::string& pgp_id) { return true ; }
+
+	private:
+		std::string mOwnId ;
+};
+
+class FakeSSL: public AuthSSLimpl
+{
+	public:
+		FakeSSL(const std::string& ownId)
+		:	mOwnId(ownId)
+			{
+			}
+
+		virtual std::string OwnId() 
+		{
+			return mOwnId ;
+		}
+
+	private:
+		std::string mOwnId ;
+};
 
 class TestData
 {
@@ -72,49 +112,66 @@ void usage(char *name)
 	
 int main(int argc, char **argv)
 {
-        int c;
-        uint32_t period = 1;
-        uint32_t debugLevel = 5;
-	bool debugStderr = true;
+	int c;
+	uint32_t debugLevel = 5;
 	bool loadAll = false;
 
-        std::list<SharedDirInfo> fileList;
-        std::list<std::string> extraList;
+	std::list<SharedDirInfo> fileList;
+	std::list<std::string> extraList;
 	std::list<std::string> peerIds;
 	std::map<std::string, ftServer *> mFtServers;
 	std::map<std::string, p3LinkMgrIMPL *> mLinkMgrs;
 
 	ftServer *mLoadServer = NULL;
 	std::list<ftServer *> mOtherServers;
-        std::list<std::string>::iterator eit;
+	std::list<std::string>::iterator eit;
 
-        while(-1 != (c = getopt(argc, argv, "asd:p:e:")))
-        {
-                switch (c)
-                {
-                case 'p':
-                        peerIds.push_back(optarg);
-                        break;
-                case 'd':
-                        debugLevel = atoi(optarg);
-                        break;
-                case 's':
-                        debugStderr = true;
-                        break;
-                case 'e':
-                        extraList.push_back(optarg);
-                        break;
-                case 'a':
-                        loadAll = true;
-                        break;
-                default:
-                        usage(argv[0]);
-                        break;
-                }
-        }
+	while(-1 != (c = getopt(argc, argv, "asd:p:e:")))
+	{
+		switch (c)
+		{
+			case 'p':
+				peerIds.push_back(optarg);
+				break;
+			case 'd':
+				debugLevel = atoi(optarg);
+				break;
+//			case 's':
+//				debugStderr = true;
+//				break;
+			case 'e':
+				extraList.push_back(optarg);
+				break;
+			case 'a':
+				loadAll = true;
+				break;
+			default:
+				usage(argv[0]);
+				break;
+		}
+	}
+
+	if(peerIds.empty())
+	{
+		peerIds.push_back(TestUtils::createRandomSSLId()) ;
+
+		// then add some other peer ids.
+		peerIds.push_back(TestUtils::createRandomSSLId()) ;
+		peerIds.push_back(TestUtils::createRandomSSLId()) ;
+		peerIds.push_back(TestUtils::createRandomSSLId()) ;
+	}
+
+	std::string ssl_own_id = TestUtils::createRandomSSLId() ;
+	std::string gpg_own_id = TestUtils::createRandomPGPId() ;
+
+	FakeGPG fakeGPG(gpg_own_id) ;
+	AuthGPG::setAuthGPG_debug(&fakeGPG) ;
+
+	FakeSSL fakeSSL(ssl_own_id) ;
+	AuthSSL::setAuthSSL_debug(&fakeSSL) ;
 
 	/* do logging */
-  	setOutputLevel(debugLevel);
+	setOutputLevel(debugLevel);
 
 	if (optind >= argc)
 	{
@@ -155,6 +212,7 @@ int main(int argc, char **argv)
 	{
 		RsPeerDetails pad;
 		pad.id = *it;
+		pad.gpg_id = TestUtils::createRandomPGPId() ;
 		pad.name = *it;
 		pad.trustLvl = 5;
 		pad.ownsign = true;
@@ -162,8 +220,7 @@ int main(int argc, char **argv)
 
 		baseFriendList.push_back(pad);
 
-		std::cerr << "ftserver1test::setup peer: " << *it;
-		std::cerr << std::endl;
+		std::cerr << "ftserver1test::setup peer: " << *it << std::endl;
 	}
 
 	std::ostringstream pname;
@@ -188,7 +245,7 @@ int main(int argc, char **argv)
 		}
 
 		//p3AuthMgr *authMgr = new p3DummyAuthMgr(*it, friendList);
-		p3PeerMgrIMPL *peerMgr = new p3PeerMgrIMPL;
+		p3PeerMgrIMPL *peerMgr = new p3PeerMgrIMPL(ssl_own_id,gpg_own_id,"My GPG name","My SSL location");
 		p3NetMgrIMPL *netMgr = new p3NetMgrIMPL ;
 		p3LinkMgrIMPL *linkMgr = new p3LinkMgrIMPL(peerMgr,netMgr);
 		mLinkMgrs[*it] = linkMgr;
@@ -197,7 +254,7 @@ int main(int argc, char **argv)
 		for(fit = friendList.begin(); fit != friendList.end(); fit++)
 		{
 			/* add as peer to authMgr */
-			peerMgr->addFriend(fit->id);
+			peerMgr->addFriend(fit->id,fit->gpg_id);
 		}
 
 		P3Pipe *pipe = new P3Pipe(); //(*it);
@@ -226,13 +283,13 @@ int main(int argc, char **argv)
 
 		std::string localpath = cachepath + "/local";
 		RsDirUtil::checkCreateDirectory(localpath);
-		
+
 		std::string remotepath = cachepath + "/remote";
 		RsDirUtil::checkCreateDirectory(remotepath);
 
 		server->setConfigDirectory(configpath);
 
-		NotifyBase *base = NULL;
+		NotifyBase *base = new NotifyBase;
 		server->SetupFtServer(base);
 
 		testHub->addP3Pipe(*it, pipe, linkMgr);
@@ -258,7 +315,7 @@ int main(int argc, char **argv)
 			mLoadServer->ExtraFileHash(*eit, 3600, TransferRequestFlags(0));
 		}
 	}
-		
+
 
 	/* stick your real test here */
 	std::map<std::string, ftServer *>::iterator sit;
@@ -273,7 +330,7 @@ int main(int argc, char **argv)
 	mFt->otherServers = mOtherServers;
 	mFt->extraList = extraList;
 
-        void *data = (void *) mFt;
+	void *data = (void *) mFt;
 	pthread_create(&tid, 0, &do_server_test_thread, data);
 	pthread_detach(tid); /* so memory is reclaimed in linux */
 
@@ -390,7 +447,6 @@ void *do_server_test_thread(void *data)
         ftServer *server=mFt->loadServer;
 
 	std::string fname,filehash,destination;
-	uint32_t size;
 	FileSearchFlags flags; 
 	std::list<std::string> srcIds;
 

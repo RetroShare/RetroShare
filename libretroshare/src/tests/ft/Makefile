@@ -10,7 +10,7 @@ OPS_TOP_DIR = ../../../../openpgpsdk/src
 include $(RS_TOP_DIR)/tests/scripts/config.mk
 ###############################################################
 
-TESTOBJ  = ftfilemappertest.o ftfileprovidertest.o ftfilecreatortest.o ftextralisttest.o ftdataplextest.o fttransfermoduletest.o ftcrc32test.o ftcrossprovidercreatortest.o ftcontrollertest.o ftserver1test.o ftserver2test.o ftserver3test.o ftdata_dummy.o ftsearch_dummy.o
+TESTOBJ  = pqitestor.o ftfilemappertest.o ftfileprovidertest.o ftfilecreatortest.o ftextralisttest.o ftdataplextest.o fttransfermoduletest.o ftcrc32test.o ftcrossprovidercreatortest.o ftcontrollertest.o ftserver1test.o ftserver2test.o ftserver3test.o ftdata_dummy.o ftsearch_dummy.o
 
 TESTS  = ftfileprovidertest ftfilecreatortest ftextralisttest ftdataplextest fttransfermoduletest ftcrc32test ftcrossprovidercreatortest ftcontrollertest ftserver1test ftserver2test fttransfermoduletest ftserver3test
 #ftfilemappertest 
@@ -20,8 +20,8 @@ all: tests
 ftfilemappertest : ftfilemappertest.o 
 	$(CC) $(CFLAGS) -o ftfilemappertest ftfilemappertest.o $(LIBS)
 	
-ftcontrollertest : ftcontrollertest.o 
-	$(CC) $(CFLAGS) -o ftcontrollertest ftcontrollertest.o $(LIBS)
+ftcontrollertest : ftcontrollertest.o pqitestor.o
+	$(CC) $(CFLAGS) -o ftcontrollertest ftcontrollertest.o pqitestor.o $(LIBS)
 	
 ftfilecreatortest : ftfilecreatortest.o 
 	$(CC) $(CFLAGS) -o ftfilecreatortest ftfilecreatortest.o $(LIBS)
