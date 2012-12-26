@@ -1,4 +1,4 @@
-#/bin/sh 
+#!/bin/sh 
 # Script to Test the udp_server code.
 
 EXEC=./udpsort_test
