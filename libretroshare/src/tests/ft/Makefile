@@ -47,8 +47,8 @@ ftserver1test : ftserver1test.o pqitestor.o
 ftserver2test : ftserver2test.o pqitestor.o
 	$(CC) $(CFLAGS) -o ftserver2test ftserver2test.o pqitestor.o $(LIBS)
 
-ftserver3test : ftserver3test.o 
-	$(CC) $(CFLAGS) -o ftserver3test ftserver3test.o $(LIBS)
+ftserver3test : ftserver3test.o pqitestor.o
+	$(CC) $(CFLAGS) -o ftserver3test ftserver3test.o pqitestor.o $(LIBS)
 
 ftcrc32test : ftcrc32test.o 
 	$(CC) $(CFLAGS) -O0 -g -o ftcrc32test ftcrc32test.o $(LIBS)
