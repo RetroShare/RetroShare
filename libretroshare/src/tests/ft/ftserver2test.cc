@@ -236,12 +236,12 @@ int main(int argc, char **argv)
 		p3LinkMgrIMPL *linkMgr = new p3LinkMgrIMPL(peerMgr,netMgr);
 		mLinkMgrs[*it] = linkMgr;
 
-		rsPeers = new TestUtils::DummyRsPeers(linkMgr,peerMgr,netMgr) ;
-
+		//rsPeers = new TestUtils::DummyRsPeers(linkMgr,peerMgr,netMgr) ;
 		for(fit = friendList.begin(); fit != friendList.end(); fit++)
 		{
 			/* add as peer to authMgr */
 			peerMgr->addFriend(fit->id,fit->gpg_id);
+			linkMgr->addFriend(fit->id,true);
 		}
 
 		P3Pipe *pipe = new P3Pipe(); //(*it);
@@ -258,7 +258,6 @@ int main(int argc, char **argv)
 		{
 			mOtherServers.push_back(server);
 		}
-
 
 		server->setP3Interface(pipe);
 

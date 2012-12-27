@@ -69,6 +69,7 @@ int main()
 	// test if chunks availability is correctly handled.
 
 	RsDiscSpace::setPartialsPath(".") ;
+	RsDiscSpace::setDownloadPath(".") ;
 
 	// 1 - Create a temporary file, compute its hash
 	//

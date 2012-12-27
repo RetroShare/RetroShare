@@ -1,9 +1,12 @@
 #include "ft/ftfilecreator.h"
 
 #include "util/utest.h"
+#include "common/testutils.h"
 #include <stdlib.h>
 
 #include "util/rswin.h"
+#include "util/rsdir.h"
+#include "util/rsdiscspace.h"
 #include "pqi/p3cfgmgr.h"
 #include "ft/ftserver.h"
 #include "turtle/p3turtle.h"
@@ -15,15 +18,22 @@ static int test_fill(ftFileCreator *creator);
 
 int main()
 {
+	RsDiscSpace::setDownloadPath("/tmp") ;
+	RsDiscSpace::setPartialsPath("/tmp") ;
+
 	/* use ftcreator to create a file on tmp drive */
-	ftFileCreator fcreator("/tmp/rs-ftfc-test.dta",100000,"hash", true);
+	std::string hash = TestUtils::createRandomFileHash() ;
+	uint64_t size = 12943090 ;
 
-	test_timeout(&fcreator);
-	test_fill(&fcreator);
+	ftFileCreator fcreator1("/tmp/rs-ftfc-test.dta",size,hash,true);
+	ftFileCreator fcreator2("/tmp/rs-ftfc-test.dta",size,hash,true);
 
-        FINALREPORT("RsTlvItem Stack Tests");
+	test_timeout(&fcreator1);
+	test_fill(&fcreator2);
 
-        return TESTRESULT();
+	FINALREPORT("RsTlvItem Stack Tests");
+
+	return TESTRESULT();
 }
 
 
@@ -78,8 +88,10 @@ int test_fill(ftFileCreator *creator)
 	std::cerr << "Initial Transferred:" << init_trans << std::endl;
 
 	uint32_t size_hint = 1000;
-	std::string peer_id = "dummyId";
+	std::string peer_id = TestUtils::createRandomSSLId();
 	bool toOld = false;
+	std::cerr << "Allocating data size in memory for " << creator->fileSize() << " bytes." << std::endl;
+	unsigned char *total_file_data = new unsigned char[creator->fileSize()] ;
 
 	while(creator->getMissingChunk(peer_id, size_hint, offset, chunk, toOld))
 	{
@@ -103,21 +115,41 @@ int test_fill(ftFileCreator *creator)
 				((uint8_t *) data)[i] = '\n';
 			}
 		}
+		memcpy(total_file_data+offset,data,chunk) ;
+
+		//std::cerr << "  adding file data at offset " << offset << ", size = " << chunk << std::endl;
 
 		creator->addFileData(offset, chunk, data);
 		free(data);
-#ifndef WINDOWS_SYS
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-		usleep(250000); /* 1/4 of sec */
-#else
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-		Sleep(250); /* 1/4 of sec */
-#endif
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+//#ifndef WINDOWS_SYS
+///********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+//		usleep(250000); /* 1/4 of sec */
+//#else
+///********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+//		Sleep(250); /* 1/4 of sec */
+//#endif
+///********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 		chunk = 1000; /* reset chunk size */
 
 	}
+	// validate all chunks
+	
+	std::vector<uint32_t> chunks_to_check ;
+	creator->getChunksToCheck(chunks_to_check) ;
+
+	std::cerr << "Validating " << chunks_to_check.size() << " chunks." << std::endl;
+
+	uint32_t CHUNKMAP_SIZE = 1024*1024 ;
+
+	for(uint32_t i=0;i<chunks_to_check.size();++i)
+	{
+		uint32_t chunk_size = std::min(CHUNKMAP_SIZE, (uint32_t)(creator->fileSize() - chunks_to_check[i]*CHUNKMAP_SIZE)) ;
+		Sha1CheckSum crc = RsDirUtil::sha1sum(total_file_data+chunks_to_check[i]*CHUNKMAP_SIZE,chunk_size) ;
+		std::cerr << "  Checking crc for chunk " << chunks_to_check[i] << " of size " << chunk_size << ". Reference is " << crc.toStdString() << std::endl;
+		creator->verifyChunk(chunks_to_check[i],crc) ;
+	}
+	delete[] total_file_data ;
 
 	uint64_t end_size = creator->getFileSize();
 	uint64_t end_trans = creator->getRecvd();
