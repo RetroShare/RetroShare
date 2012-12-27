@@ -272,193 +272,201 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.ui" line="137"/>
-        <source>Search forums</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/FeedReaderDialog.ui" line="168"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="139"/>
-        <source>Title</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/FeedReaderDialog.ui" line="182"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="140"/>
-        <source>Date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/FeedReaderDialog.ui" line="187"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="141"/>
-        <source>Author</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/FeedReaderDialog.ui" line="210"/>
-        <source>Message:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="111"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="81"/>
         <source>Message Folders</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="139"/>
-        <source>Search Title</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="140"/>
-        <source>Search Date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="141"/>
-        <source>Search Author</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="156"/>
-        <source>Open link in browser</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="157"/>
-        <source>Copy link to clipboard</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="298"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="239"/>
         <source>New</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="299"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="240"/>
         <source>Feed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="303"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="244"/>
         <source>Folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="310"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="251"/>
         <source>Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="315"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="256"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="327"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="268"/>
         <source>Update</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="330"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="271"/>
         <source>Activate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="330"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="271"/>
         <source>Deactivate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="344"/>
-        <source>Mark as read</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="347"/>
-        <source>Mark as unread</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="350"/>
-        <source>Mark all as read</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="354"/>
-        <source>Copy link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="357"/>
-        <source>Remove</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="521"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="451"/>
         <source>No name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="906"/>
-        <source>Hide</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="910"/>
-        <source>Expand</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="917"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="588"/>
         <source>Add new folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="918"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="589"/>
         <source>Please enter a name for the folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="924"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="977"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="595"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="648"/>
         <source>Create folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="924"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="977"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="595"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="648"/>
         <source>Cannot create folder.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="950"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="621"/>
         <source>Remove folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="950"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="621"/>
         <source>Remove feed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="950"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="621"/>
         <source>Do you want to remove the folder %1?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="950"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="621"/>
         <source>Do you want to remove the feed %1?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="970"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="641"/>
         <source>Edit folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="971"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="642"/>
         <source>Please enter a new name for the folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FeedReaderMessageWidget</name>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.ui" line="14"/>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.ui" line="45"/>
+        <source>Search forums</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.ui" line="76"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="75"/>
+        <source>Title</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.ui" line="90"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="76"/>
+        <source>Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.ui" line="95"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="77"/>
+        <source>Author</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="75"/>
+        <source>Search Title</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="76"/>
+        <source>Search Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="77"/>
+        <source>Search Author</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="89"/>
+        <source>Open link in browser</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="90"/>
+        <source>Copy link to clipboard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="190"/>
+        <source>No name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="228"/>
+        <source>Mark as read</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="231"/>
+        <source>Mark as unread</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="234"/>
+        <source>Mark all as read</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="238"/>
+        <source>Copy link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="241"/>
+        <source>Remove</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="588"/>
+        <source>Hide</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="592"/>
+        <source>Expand</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

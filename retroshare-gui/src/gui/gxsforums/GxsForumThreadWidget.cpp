@@ -36,6 +36,7 @@
 #include "gui/gxs/GxsForumGroupDialog.h"
 #include "CreateGxsForumMsg.h"
 #include "gui/msgs/MessageComposer.h"
+#include "util/DateTime.h"
 
 #include <retroshare/rsgxsforums.h>
 #include <retroshare/rspeers.h>
@@ -140,22 +141,12 @@ GxsForumThreadWidget::GxsForumThreadWidget(const std::string &forumId, QWidget *
 	QTreeWidgetItem *headerItem = ui->threadTreeWidget->headerItem();
 	headerItem->setText(COLUMN_THREAD_READ, "");
 
-//#AFTER MERGE
-	setTextColorNotSubscribed(Qt::black);
-	setTextColorUnread(Qt::black);
-	setTextColorUnreadChildren(Qt::gray);
-	setTextColorRead(Qt::gray);
-	setTextColorMissing(Qt::darkRed);
-
-	/* Initialize group tree */
-//#AFTER MERGE	ui.forumTreeWidget->initDisplayMenu(ui.displayButton);
-
 	/* add filter actions */
-//#AFTER MERGE	ui.filterLineEdit->addFilter(QIcon(), tr("Title"), COLUMN_THREAD_TITLE, tr("Search Title"));
-//#AFTER MERGE	ui.filterLineEdit->addFilter(QIcon(), tr("Date"), COLUMN_THREAD_DATE, tr("Search Date"));
-//#AFTER MERGE	ui.filterLineEdit->addFilter(QIcon(), tr("Author"), COLUMN_THREAD_AUTHOR, tr("Search Author"));
-//#AFTER MERGE	ui.filterLineEdit->addFilter(QIcon(), tr("Content"), COLUMN_THREAD_CONTENT, tr("Search Content"));
-//#AFTER MERGE	ui.filterLineEdit->setCurrentFilter(COLUMN_THREAD_TITLE);
+	ui->filterLineEdit->addFilter(QIcon(), tr("Title"), COLUMN_THREAD_TITLE, tr("Search Title"));
+	ui->filterLineEdit->addFilter(QIcon(), tr("Date"), COLUMN_THREAD_DATE, tr("Search Date"));
+	ui->filterLineEdit->addFilter(QIcon(), tr("Author"), COLUMN_THREAD_AUTHOR, tr("Search Author"));
+	ui->filterLineEdit->addFilter(QIcon(), tr("Content"), COLUMN_THREAD_CONTENT, tr("Search Content"));
+	ui->filterLineEdit->setCurrentFilter(COLUMN_THREAD_TITLE);
 
 	mLastViewType = -1;
 
@@ -219,7 +210,7 @@ void GxsForumThreadWidget::processSettings(bool load)
 		togglethreadview_internal();
 
 		// filterColumn
-//#AFTER MERGE		ui.filterLineEdit->setCurrentFilter(Settings->value("filterColumn", COLUMN_THREAD_TITLE).toInt());
+		ui->filterLineEdit->setCurrentFilter(Settings->value("filterColumn", COLUMN_THREAD_TITLE).toInt());
 
 		// index of viewBox
 		ui->viewBox->setCurrentIndex(Settings->value("viewBox", VIEW_THREADED).toInt());
@@ -797,14 +788,14 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	else
 		qtime.setTime_t(msg.mMeta.mPublishTs);
 
-//#AFTER MERGE			text = DateTime::formatDateTime(qtime);
+	text = DateTime::formatDateTime(qtime);
 	sort = qtime.toString("yyyyMMdd_hhmmss");
 
 	if (useChildTS)
 	{
 		qtime.setTime_t(msg.mMeta.mPublishTs);
 		text += " / ";
-//#AFTER MERGE			text += DateTime::formatDateTime(qtime);
+		text += DateTime::formatDateTime(qtime);
 		sort += "_" + qtime.toString("yyyyMMdd_hhmmss");
 	}
 	item->setText(COLUMN_THREAD_DATE, text);
@@ -948,7 +939,7 @@ void GxsForumThreadWidget::insertForumThreads(const RsGroupMetaData &fi)
 	// set data
 	mFillThread->mCompareRole = mThreadCompareRole;
 	mFillThread->mForumId = mForumId;
-//#AFTER MERGE	mFillThread->mFilterColumn = ui->filterLineEdit->currentFilter();
+	mFillThread->mFilterColumn = ui->filterLineEdit->currentFilter();
 	mFillThread->mFilterColumn = COLUMN_THREAD_TITLE;
 	mFillThread->mSubscribeFlags = mSubscribeFlags;
 	mFillThread->mExpandNewMessages = Settings->getExpandNewMessages();
@@ -1229,12 +1220,11 @@ void GxsForumThreadWidget::insertPostData(const RsGxsForumMsg &msg)
 		}
 	}
 
-//#AFTER MERGE	ui.time_label->setText(DateTime::formatLongDateTime(msg.mMeta.mPublishTs));
+	ui->time_label->setText(DateTime::formatLongDateTime(msg.mMeta.mPublishTs));
 
 	std::string authorName = rsPeers->getPeerName(msg.mMeta.mAuthorId);
 	QString text = QString::fromUtf8(authorName.c_str());
 
-//#AFTER MERGE	merge from ForumsDialog
 	if (text.isEmpty())
 	{
 		ui->by_label->setText( tr("By") + " " + tr("Anonymous"));
@@ -1561,11 +1551,11 @@ static QString buildReplyHeader(const RsMsgMetaData &meta)
 	QString header = QString("<span>-----%1-----").arg(QApplication::translate("GxsForumsDialog", "Original Message"));
 	header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(QApplication::translate("GxsForumsDialog", "From"), from);
 
-//#AFTER MERGE  header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(QApplication::translate("GxsForumsDialog", "Sent"), DateTime::formatLongDateTime(meta.mPublishTs));
+	header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(QApplication::translate("GxsForumsDialog", "Sent"), DateTime::formatLongDateTime(meta.mPublishTs));
 	header += QString("<font size='3'><strong>%1: </strong>%2</font></span><br>").arg(QApplication::translate("GxsForumsDialog", "Subject"), QString::fromUtf8(meta.mMsgName.c_str()));
 	header += "<br>";
 
-//#AFTER MERGE    header += QApplication::translate("GxsForumsDialog", "On %1, %2 wrote:").arg(DateTime::formatDateTime(meta.mPublishTs), from);
+	header += QApplication::translate("GxsForumsDialog", "On %1, %2 wrote:").arg(DateTime::formatDateTime(meta.mPublishTs), from);
 
 	return header;
 }
@@ -1644,8 +1634,7 @@ void GxsForumThreadWidget::filterColumnChanged(int column)
 
 void GxsForumThreadWidget::filterItems(const QString& text)
 {
-//#AFTER MERGE	int filterColumn = ui.filterLineEdit->currentFilter();
-	int filterColumn = COLUMN_THREAD_TITLE;
+	int filterColumn = ui->filterLineEdit->currentFilter();
 
 	int count = ui->threadTreeWidget->topLevelItemCount();
 	for (int index = 0; index < count; ++index) {

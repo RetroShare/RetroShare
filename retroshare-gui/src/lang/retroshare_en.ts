@@ -2373,6 +2373,42 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
         <source>Forums/channels</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Abnormal size read is bigger than memory block.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid location id.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid external IP.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid local IP.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid checksum section.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Checksum mismatch. Certificate is corrupted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown section type found (Certificate might be corrupted).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Missing checksum.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown certificate error</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>CreateBlog</name>
@@ -5829,6 +5865,26 @@ p, li { white-space: pre-wrap; }
         <source>You cant reply to an Anonymous Author</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Search Title</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search Author</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Content</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search Content</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>GxsForumsDialog</name>
@@ -5922,6 +5978,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>My Forums</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>On %1, %2 wrote:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

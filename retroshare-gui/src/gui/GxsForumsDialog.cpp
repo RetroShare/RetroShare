@@ -79,6 +79,9 @@ GxsForumsDialog::GxsForumsDialog(QWidget *parent)
 	// HACK - TEMPORARY HIJACKING THIS BUTTON FOR REFRESH.
 	connect(ui.refreshButton, SIGNAL(clicked()), this, SLOT(forceUpdateDisplay()));
 
+	/* Initialize group tree */
+	ui.forumTreeWidget->initDisplayMenu(ui.displayButton);
+
 	/* Set initial size the splitter */
 	QList<int> sizes;
 	sizes << 300 << width(); // Qt calculates the right sizes
@@ -107,7 +110,7 @@ GxsForumsDialog::~GxsForumsDialog()
 	delete(mForumQueue);
 }
 
-//#AFTER MERGE UserNotify *GxsForumsDialog::getUserNotify(QObject *parent)
+//UserNotify *GxsForumsDialog::getUserNotify(QObject *parent)
 //{
 //	return new GxsForumUserNotify(parent);
 //}

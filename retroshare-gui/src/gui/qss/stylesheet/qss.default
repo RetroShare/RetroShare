@@ -13,7 +13,7 @@ AvatarWidget[frameState="BUSY"]{border-image:url(:/images/avatarstatus-bg-busy-1
 
 /* Color definitions */
 
-ForumsDialog
+ForumsDialog, GxsForumThreadWidget
 {
 	qproperty-textColorRead: gray;
 	qproperty-textColorUnread: black; 

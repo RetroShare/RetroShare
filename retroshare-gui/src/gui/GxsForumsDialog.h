@@ -46,7 +46,7 @@ public:
 	GxsForumsDialog(QWidget *parent = 0);
 	~GxsForumsDialog();
 
-//#AFTER MERGE	virtual UserNotify *getUserNotify(QObject *parent);
+//	virtual UserNotify *getUserNotify(QObject *parent);
 
 	bool navigate(const std::string& forumId, const std::string& msgId);
 
