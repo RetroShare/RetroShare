@@ -27,12 +27,15 @@
 
 
 #include "util/rsdir.h"
+#include "util/utest.h"
 
 #include <iostream>
 #include <list>
 #include <string>
 
 bool testRsDirUtils(std::string path);
+
+INITTEST() ;
 
 int main()
 {
@@ -62,6 +65,10 @@ int main()
 	{
 		testRsDirUtils(*it);
 	}
+
+	FINALREPORT("dirtest");
+
+	return TESTRESULT() ;
 }
 
 bool testRsDirUtils(std::string path)

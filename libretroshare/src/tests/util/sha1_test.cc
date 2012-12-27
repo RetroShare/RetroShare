@@ -27,7 +27,8 @@
 
 
 #include "util/rsdir.h"
-#include "../common/argstream.h"
+#include "util/utest.h"
+#include <common/argstream.h>
 
 #include <iostream>
 #include <list>
@@ -39,6 +40,8 @@ void printHelp(int argc,char *argv[])
 	std::cerr << argv[0] << ": test RS sha1sum class implementation." << std::endl;
 	std::cerr << "Usage: " << argv[0] << " [test file]" << std::endl ;
 }
+
+INITTEST() ;
 
 int main(int argc,char *argv[])
 {
@@ -55,11 +58,7 @@ int main(int argc,char *argv[])
 
 	FILE *f = RsDirUtil::rs_fopen(inputfile.c_str(),"r") ;
 
-	if(f == NULL)
-	{
-		std::cerr << "Cannot open file " << inputfile << " for read !" << std::endl;
-		return -1 ;
-	}
+	CHECK(f != NULL) ;
 
 		std::cerr << "Testing sha1" << std::endl;
 	uint32_t SIZE = 1024*1024 ;
@@ -79,13 +78,11 @@ int main(int argc,char *argv[])
 	RsDirUtil::getFileHash(inputfile.c_str(),hash,size) ;
 
 		std::cerr << "Old method        : " << hash << std::endl;
-		if(hash != sum.toStdString())
-			return -1 ;
+		CHECK(hash == sum.toStdString()) ;
 
 	Sha1CheckSum H(hash) ;
 		std::cerr << "Hashed transformed: " << H.toStdString() << std::endl;
-		if(hash != H.toStdString())
-			return -1 ;
+		CHECK(hash == H.toStdString()) ;
 
 		std::cerr << "Computing all chunk hashes:" << std::endl;
 
@@ -100,6 +97,8 @@ int main(int argc,char *argv[])
 	}
 
 	fclose(f) ;
-	return 0 ;
+
+	FINALREPORT("Sha1Test") ;
+	return TESTRESULT() ;
 }
 
