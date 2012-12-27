@@ -3,7 +3,7 @@
 //#include "pqi/p3authmgr.h"
 #include "util/utest.h"
 
-#include "upnp/upnphandler.h" 
+#include "upnp/upnphandler_linux.h" 
 #include "dht/opendhtmgr.h" 
 #include "tcponudp/tou.h"
 

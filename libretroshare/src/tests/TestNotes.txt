@@ -1,28 +1,39 @@
 
 This file documents the high-level status of the regression cases.
-------------------------------------------------------------------------------------
-DIRECTORY	   STATUS			TODO		
-------------------------------------------------------------------------------------
-services	:  NO TESTS			write test framework for services.
-turtle		:  NO TESTS			write tests
-rsserver	:  NO TESTS			write tests
-upnp		:  NO TESTS			write tests.
-util		:  limited manual tests		complete tests, convert to automatic
-dbase		:  limited manual tests		complete tests, convert to automatic
-pqi		:  limited manual tests		complete tests, convert to automatic
-ft		:  manual tests			complete tests, convert to automatic
-tcponudp	:  manual tests			convert to automatic
-dht		:  manual tests			ignore - old code - to be replaced soon.
-serialiser	:  automatic tests		complete tests, update tests.
+-----------+----------------------+-------------------------------------------------
+DIRECTORY  |  STATUS              |  TODO      
+-----------+----------------------+-------------------------------------------------
+services   |  NO TESTS            |  write test framework for services.
+turtle     |  NO TESTS            |  write tests
+rsserver   |  NO TESTS            |  write tests
+upnp       |  automatic tests     |  [--S]
+pgp        |  automatic tests     |  [---]
+util       |  automatic tests     |  [---]
+dbase      |  automatic tests     |  [--S]
+pqi        |  automatic tests     |  [C--]
+ft         |  automatic tests     |  [-FS] (ftcontrollertest, ftserver2test, fttransfermoduletest)
+tcponudp   |  automatic tests     |  [-F-] Takes 15 mins. test_tou,bidir_tou,stacks_tou fail
+dht        |  NO TESTS            |  write tests
+serialiser |  automatic tests     |  [-F-] (tlvrandom_test)
+-----------+----------------------+-------------------------------------------------
 
-Suggestion to automate all tests
-================================
+Legend:
+   [---]   : nothing to do. All work perfectly.
+   [  S]   : needs scripts
+   [ F ]   : some tests fail
+   [C  ]   : some tests don't compile
+   [E  ]   : some test execution fail
 
-	* each directory contains multiple executables.
-		- by default, each executable should perform an automatic test 
-		- each executable should return 0 when passed, !=0 otherwise
-		- each directory has a script "perform_auto_tests.sh" that calls all programs in the directory
+Commands:
+   - to launch tests in a directory:
+      > \rm *.tstout
+      > make regress
 
+   - to use parameters:
+      * create a script [testname].sh where [testname] is the name of the
+        executable test. It will be used automatically by the above command.
+      * in the script, use a single command, or if necessary put all commands
+        on one line using &&.
 
 
 

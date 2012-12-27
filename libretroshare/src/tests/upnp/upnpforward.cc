@@ -31,8 +31,10 @@
 #include "util/rswin.h"
 #endif
 
-//#include "util/rsdebug.h"
+#include "util/utest.h"
 #include "upnp/upnphandler_linux.h"
+
+INITTEST() ;
 
 #include <sstream>
 
@@ -104,7 +106,8 @@ int main(int argc, char **argv)
 	/* give it a chance to work its magic. */
 	sleep(30);
 
-	return 1;
+	FINALREPORT("upnpforward") ;
+	return TESTRESULT();
 }
 
 

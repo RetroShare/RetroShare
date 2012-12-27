@@ -171,7 +171,8 @@ virtual bool	getFriendNetStatus(const std::string &id, peerConnectState &state) 
 virtual void 	setTunnelConnection(bool b) = 0; // ONLY used by p3peermgr.cc & p3peers.cc MOVE => p3PeerMgr
 virtual bool 	getTunnelConnection() = 0;       // ONLY used by p3peermgr.cc & p3peers.cc MOVE => p3PeerMgr
 
-
+	/************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
+virtual int 	addFriend(const std::string &ssl_id, bool isVisible) = 0;
 	/******* overloaded from pqiConnectCb *************/
 // THESE MUSTn't BE specfied HERE - as overloaded from pqiConnectCb.
 //virtual void    peerStatus(std::string id, const pqiIpAddrSet &addrs, 
@@ -247,7 +248,7 @@ void 	tick();
 void    setFriendVisibility(const std::string &id, bool isVisible);
 
 	/* add/remove friends */
-int 	addFriend(const std::string &ssl_id, bool isVisible);
+virtual int 	addFriend(const std::string &ssl_id, bool isVisible);
 int 	removeFriend(const std::string &ssl_id);
 
 void 	printPeerLists(std::ostream &out);
