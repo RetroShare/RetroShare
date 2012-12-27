@@ -38,7 +38,7 @@
 
 #include <sstream>
 #include <util/utest.h>
-#include <common/fileutils.h>
+#include <common/testutils.h>
 #include "ft/ftextralist.h"
 #include "ft/ftdatamultiplex.h"
 #include "ft/ftfilesearch.h"
@@ -91,7 +91,7 @@ int main(int argc, char **argv)
 			ss << "file_" << i << ".bin" ;
 			uint64_t size = lrand48()%1000 + 200000 ;
 			std::string filename = ss.str() ;
-			if(!FileUtils::createRandomFile(filename,size))
+			if(!TestUtils::createRandomFile(filename,size))
 				return 1 ;
 			std::cerr << "  file: " << filename << ", size=" << size << std::endl;
 		}

@@ -24,6 +24,7 @@
  */
 
 #include <iostream>
+#include <stdexcept>
 #include "retroshare/rsfiles.h"
 #include "retroshare/rsiface.h"
 #include "retroshare/rsinit.h"
@@ -128,6 +129,9 @@ void RsDiscSpace::setPartialsPath(const std::string& path)
 bool RsDiscSpace::checkForDiscSpace(RsDiscSpace::DiscLocation loc)
 {
 	RsStackMutex m(_mtx) ; // Locked
+
+	if(_partials_path == "" || _download_path == "")
+		throw std::runtime_error("Download path and partial path not properly set in RsDiscSpace. Please call RsDiscSpace::setPartialsPath() and RsDiscSpace::setDownloadPath()") ;
 
 	time_t now = time(NULL) ;
 

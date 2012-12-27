@@ -34,8 +34,11 @@
 #endif
 
 #include "util/rsdir.h"
-#include <common/fileutils.h>
+#include "util/utest.h"
+#include <common/testutils.h>
 #include <common/argstream.h>
+
+INITTEST() ;
 
 int main(int argc, char **argv)
 {
@@ -58,7 +61,7 @@ int main(int argc, char **argv)
 		std::cerr << "Creating a dummy input file in /tmp, of size " << S << std::endl;
 		inputfile = "crc_test_data.bin" ;
 
-		if(!FileUtils::createRandomFile(inputfile,S))
+		if(!TestUtils::createRandomFile(inputfile,S))
 			return 1 ;
 	}
 
@@ -114,7 +117,8 @@ int main(int argc, char **argv)
 		std::cerr << std::endl;
 	}
 
-	return 0 ;
+	FINALREPORT("CRC32 test") ;
+	return TESTRESULT() ;
 }
 
 

@@ -38,6 +38,10 @@ class TestUtils
 			return true ;
 		}
 
+		static std::string createRandomFileHash()
+		{
+			return t_RsGenericIdType<20>::random().toStdString(false);
+		}
 		static std::string createRandomSSLId()
 		{
 			return t_RsGenericIdType<16>::random().toStdString(false);

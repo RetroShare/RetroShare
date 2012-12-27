@@ -42,12 +42,12 @@
 
 
 
-#include "pqi/p3connmgr.h"
+//#include "pqi/p3connmgr.h"
 #include "pqi/authssltest.h"
 #include "pqi/authgpgtest.h"
 
 #include "pqi/p3dhtmgr.h"
-#include "upnp/upnphandler.h"
+#include "upnp/upnphandler_linux.h"
 
 #include "util/rsnet.h"
 #include <iostream>
