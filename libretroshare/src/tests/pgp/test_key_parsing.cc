@@ -10,7 +10,10 @@ extern "C"
 	#include <openpgpsdk/util.h>
 }
 
+#include <util/utest.h>
 #include <common/argstream.h>
+
+INITTEST() ;
 
 int main(int argc,char *argv[])
 {
@@ -36,8 +39,7 @@ int main(int argc,char *argv[])
 		kr->nkeys_allocated = 0 ;
 		kr->keys = 0 ;
 
-		if(ops_false == ops_keyring_read_from_file(kr,armoured, keyfile.c_str()))
-			throw std::runtime_error("PGPHandler::readKeyRing(): cannot read key file. File corrupted, or missing/superfluous armour parameter.") ;
+		CHECK(ops_false != ops_keyring_read_from_file(kr,armoured, keyfile.c_str())) ;
 
 		for(int i=0;i<kr->nkeys;++i)
 		{
@@ -48,7 +50,9 @@ int main(int argc,char *argv[])
 
 		ops_list_packets(const_cast<char *>(keyfile.c_str()),armoured,kr,NULL) ;
 
-		return 0 ;
+		FINALREPORT("Test key parsing") ;
+
+		return TESTRESULT() ;
 	}
 	catch(std::exception& e)
 	{

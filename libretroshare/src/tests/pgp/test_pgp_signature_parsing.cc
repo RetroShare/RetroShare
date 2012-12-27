@@ -3,7 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <iostream>
+#include <util/utest.h>
 #include <pgp/pgphandler.h>
+
+INITTEST() ;
 
 static std::string passphrase_callback(void *data,const char *uid_info,const char *what,int prev_was_bad)
 {
@@ -46,5 +49,9 @@ int main(int argc,char *argv[])
 	PGPHandler pgph(pubring,secring,trustdb,lockfil) ;
 
 	pgph.printKeys() ;
+
+	FINALREPORT("Signature parsing") ;
+
+	return TESTRESULT() ;
 }
 

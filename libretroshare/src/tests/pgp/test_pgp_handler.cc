@@ -4,10 +4,17 @@
 #include <stdlib.h>
 #include <iostream>
 #include <pgp/pgphandler.h>
+#include <util/utest.h>
 #include <common/argstream.h>
 
+INITTEST() ;
+
+static std::string static_passphrase = "" ;
 static std::string passphrase_callback(void *data,const char *uid_info,const char *what,int prev_was_bad)
 {
+	if(!static_passphrase.empty())
+		return static_passphrase ;
+
 	if(prev_was_bad)
 		std::cerr << "Bad passphrase." << std::endl;
 
@@ -95,6 +102,7 @@ int main(int argc,char *argv[])
 	bool test_output = false ;
 	bool test_signature = false ;
 	bool test_passphrase_callback = false ;
+	bool full_test = false ;
 
 	std::string key_id_string = "" ;
 	std::string secring_file = "" ;
@@ -107,6 +115,7 @@ int main(int argc,char *argv[])
 		>> option('4',"keygen",test_gen_key,"Test key generation.")
 		>> option('5',"signature",test_signature,"Test signature.")
 		>> option('6',"output",test_output,"Test output.")
+		>> option('F',"fulltest",full_test,"Test everything.")
 		>> parameter('f',"file",file_to_encrypt,"File to encrypt. Used with -3",false)
 		>> parameter('p',"pubring",pubring_file,"Public keyring file.",false)
 		>> parameter('s',"secring",secring_file,"Secret keyring file.",false)
@@ -115,20 +124,23 @@ int main(int argc,char *argv[])
 
 	as.defaultErrorHandling() ;
 
-	if(test_pgpid_type + test_keyring_read + test_file_encryption + test_gen_key + test_signature + test_output != 1)
-	{
-		std::cerr << "Options 1 to 6 are mutually exclusive." << std::endl;
-		return 1; 
-	}
-	if(test_pgpid_type)
+	if(!full_test)
+		if(test_pgpid_type + test_keyring_read + test_file_encryption + test_gen_key + test_signature + test_output != 1)
+		{
+			std::cerr << "Options 1 to 6 are mutually exclusive." << std::endl;
+			return 1; 
+		}
+	if(full_test || test_pgpid_type)
 	{
 		// test pgp ids.
 		//
-		PGPIdType id = PGPIdType(std::string("3e5b22140ef56abb")) ;
+		std::string st("3e5b22140ef56abb") ;
+		PGPIdType id = PGPIdType(std::string(st)) ;
 
 		//std::cerr << "Id is : " << std::hex << id.toUInt64() << std::endl;
 		std::cerr << "Id st : " << id.toStdString() << std::endl;
-		return 0 ;
+
+		CHECK(id.toStdString(false) == st) ;
 	}
 
 	// test PGPHandler
@@ -144,7 +156,38 @@ int main(int argc,char *argv[])
 	PGPHandler::setPassphraseCallback(&passphrase_callback) ;
 	PGPHandler pgph(pubring,secring,trustdb,lockfile) ;
 
-	if(test_keyring_read)
+	std::string email_str("test@gmail.com") ;
+	std::string  name_str("test") ;
+	std::string passw_str("test00") ;
+	PGPIdType cert_id ; ;
+
+	if(full_test || test_gen_key)
+	{
+		std::cerr << "Now generating a new PGP certificate: " << std::endl;
+		std::cerr << "   email: " << email_str << std::endl;
+		std::cerr << "   passw: " << passw_str << std::endl;
+		std::cerr << "   name : " <<  name_str << std::endl;
+
+		PGPIdType newid ;
+		std::string errString ;
+		static_passphrase = passw_str ;
+
+		bool res = pgph.GeneratePGPCertificate(name_str, email_str, passw_str, newid, errString) ;
+
+		cert_id = newid ;
+
+		CHECK(res) ;
+
+		if(!res)
+			std::cerr << "Generation of certificate returned error: " << errString << std::endl;
+		else
+			std::cerr << "Certificate generation success. New id = " << newid.toStdString() << std::endl;
+	}
+
+	if(full_test)
+		key_id_string = cert_id.toStdString(true) ;
+
+	if(full_test || test_keyring_read)
 	{
 		pgph.printKeys() ;
 
@@ -156,33 +199,18 @@ int main(int argc,char *argv[])
 		std::list<PGPIdType> lst ;	
 		pgph.availableGPGCertificatesWithPrivateKeys(lst) ;
 
+		bool found = false ;
+
 		for(std::list<PGPIdType>::const_iterator it(lst.begin());it!=lst.end();++it)
+		{
 			std::cerr << "Found id : " << (*it).toStdString() << std::endl;
-		return 0 ;
+			if(cert_id == *it)
+				found = true ;
+		}
+		CHECK(found) ;
 	}
 
-	if(test_gen_key)
-	{
-		std::string email_str("test@gmail.com") ;
-		std::string  name_str("test") ;
-		std::string passw_str("test00") ;
-
-		std::cerr << "Now generating a new PGP certificate: " << std::endl;
-		std::cerr << "   email: " << email_str << std::endl;
-		std::cerr << "   passw: " << passw_str << std::endl;
-		std::cerr << "   name : " <<  name_str << std::endl;
-
-		PGPIdType newid ;
-		std::string errString ;
-
-		if(!pgph.GeneratePGPCertificate(name_str, email_str, passw_str, newid, errString))
-			std::cerr << "Generation of certificate returned error: " << errString << std::endl;
-		else
-			std::cerr << "Certificate generation success. New id = " << newid.toStdString() << std::endl;
-		return 0 ;
-	}
-
-	if(test_output)
+	if(full_test || test_output)
 	{
 		PGPIdType id2( (key_id_string.empty())?askForKeyId(pgph):key_id_string) ;
 
@@ -197,8 +225,9 @@ int main(int argc,char *argv[])
 
 		std::cerr << "Loaded cert id: " << id3.toStdString() << ", Error string=\"" << error_string << "\"" << std::endl;
 
+		CHECK(id3 == id2) ;
+
 		std::cerr << cert << std::endl;
-		return 0 ;
 	}
 
 	if(test_passphrase_callback)
@@ -207,10 +236,9 @@ int main(int argc,char *argv[])
 		std::string newid = "XXXXXXXXXXXXXXXX" ;
 		std::string pass = passphrase_callback(NULL,newid.c_str(),"Please enter password: ",false) ;
 		std::cerr << "Password = \"" << pass << "\"" << std::endl;
-		return 0 ;
 	}
 
-	if(test_signature)
+	if(full_test || test_signature)
 	{
 		if(key_id_string.empty())
 			key_id_string = askForKeyId(pgph) ;
@@ -228,7 +256,11 @@ int main(int argc,char *argv[])
 		unsigned char sign[1000] ;
 		uint32_t signlen = 1000 ;
 
-		if(!pgph.SignDataBin(key_id,test_bin,BUFF_LEN,sign,&signlen))
+		bool res = pgph.SignDataBin(key_id,test_bin,BUFF_LEN,sign,&signlen) ;
+
+		CHECK(res) ;
+
+		if(!res)
 			std::cerr << "Signature error." << std::endl;
 		else
 			std::cerr << "Signature success." << std::endl;
@@ -238,10 +270,17 @@ int main(int argc,char *argv[])
 		std::cerr << "Now verifying signature..." << std::endl;
 
 		PGPFingerprintType fingerprint ;
-		if(!pgph.getKeyFingerprint(key_id,fingerprint) )
+		res = pgph.getKeyFingerprint(key_id,fingerprint);
+
+		CHECK(res) ;
+
+		if(!res)
 			std::cerr << "Cannot find fingerprint of key id " << key_id.toStdString() << std::endl;
 
-		if(!pgph.VerifySignBin(test_bin,BUFF_LEN,sign,signlen,fingerprint))
+		res = pgph.VerifySignBin(test_bin,BUFF_LEN,sign,signlen,fingerprint) ;
+		CHECK(res) ;
+
+		if(!res)
 			std::cerr << "Signature verification failed." << std::endl;
 		else
 			std::cerr << "Signature verification worked!" << std::endl;
@@ -249,7 +288,7 @@ int main(int argc,char *argv[])
 		delete[] test_bin ;
 	}
 
-	if(test_file_encryption)
+	if(full_test || test_file_encryption)
 	{
 		if(key_id_string.empty())
 			key_id_string = askForKeyId(pgph) ;
@@ -260,7 +299,11 @@ int main(int argc,char *argv[])
 
 		std::cerr << "Checking encrypted file creation: streaming chain \"" << text_to_encrypt << "\" to file " << outfile << " with key " << key_id.toStdString() << std::endl;
 
-		if(!pgph.encryptTextToFile(key_id,text_to_encrypt,outfile))
+		bool res = pgph.encryptTextToFile(key_id,text_to_encrypt,outfile) ;
+
+		CHECK(res) ;
+
+		if(!res)
 			std::cerr << "Encryption failed" << std::endl;
 		else
 			std::cerr << "Encryption success" << std::endl;
@@ -268,15 +311,21 @@ int main(int argc,char *argv[])
 		std::string decrypted_text = "" ;
 		outfile = "crypted_toto.pgp" ;
 
-		if(!pgph.decryptTextFromFile(key_id,decrypted_text,outfile))
+		res = pgph.decryptTextFromFile(key_id,decrypted_text,outfile) ;
+
+		CHECK(res) ;
+
+		if(!res)
 			std::cerr << "Decryption failed" << std::endl;
 		else
 			std::cerr << "Decryption success" << std::endl;
 
 		std::cerr << "Decrypted text: \"" << decrypted_text << "\"" << std::endl;
-		return 0 ;
+
+		CHECK(decrypted_text == text_to_encrypt) ;
 	}
 
-	return 0 ;
+	FINALREPORT("PGP Handler test") ;
+	return TESTRESULT() ;
 }
 
