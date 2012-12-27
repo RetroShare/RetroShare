@@ -27,8 +27,6 @@
  * #define DEBUG_FTCHUNK 1
  *********/
 
-#define USE_NEW_CHUNK_CHECKING_CODE
-
 #ifdef DEBUG_FTCHUNK
 #include <assert.h>
 #endif
@@ -165,21 +163,12 @@ void ChunkMap::dataReceived(const ftChunk::ChunkId& cid)
 		std::cerr << "*** ChunkMap::dataReceived: Chunk is complete. Removing it." << std::endl ;
 #endif
 
-#ifdef USE_NEW_CHUNK_CHECKING_CODE
-		// In this case (cache files, mainly) we rely on the final hash-checking only.
-		//
-		if(_assume_availability)
-			_map[n] = FileChunksInfo::CHUNK_DONE ;
-		else
-#endif
-			_map[n] = FileChunksInfo::CHUNK_CHECKING ;
+		_map[n] = FileChunksInfo::CHUNK_CHECKING ;
 
 		if(n > 0 || _file_size > CHUNKMAP_FIXED_CHUNK_SIZE)	// dont' put <1MB files into checking mode. This is useless.
 			_chunks_checking_queue.push_back(n) ;
-#ifdef USE_NEW_CHUNK_CHECKING_CODE
 		else
 			_map[n] = FileChunksInfo::CHUNK_DONE ;
-#endif
 
 		_slices_to_download.erase(itc) ;
 
@@ -197,11 +186,7 @@ void ChunkMap::updateTotalDownloaded()
 	for(uint32_t i=0;i<_map.size();++i)
 		switch(_map[i])
 		{
-#ifdef USE_NEW_CHUNK_CHECKING_CODE
 			case FileChunksInfo::CHUNK_CHECKING: _file_is_complete = false ;
-#else
-			case FileChunksInfo::CHUNK_CHECKING: //_file_is_complete = false ;********WARNING******** Re-enable this when users have massively switched to chunk checking code
-#endif
 			case FileChunksInfo::CHUNK_DONE:		 _total_downloaded += sizeOfChunk(i) ;
 															 break ;
 			default:
@@ -256,12 +241,7 @@ void ChunkMap::setChunkCheckingResult(uint32_t chunk_number,bool check_succeeded
 		_file_is_complete = true ;
 
 		for(uint32_t i=0;i<_map.size();++i)
-#ifdef USE_NEW_CHUNK_CHECKING_CODE
 			if(_map[i] != FileChunksInfo::CHUNK_DONE)
-#else
-			if(_map[i] != FileChunksInfo::CHUNK_DONE && _map[i] != FileChunksInfo::CHUNK_CHECKING)
-#endif
-
 			{
 				_file_is_complete = false ;
 				break ;
@@ -637,13 +617,6 @@ void ChunkMap::getAvailabilityMap(CompressedChunkMap& compressed_map) const
 
 void ChunkMap::forceCheck()
 {
-#ifdef USE_NEW_CHUNK_CHECKING_CODE
-	// In this case (cache files, mainly) we rely on the final hash-checking only.
-	//
-	if(_assume_availability)
-		return ;
-#endif
-
 	for(uint32_t i=0;i<_map.size();++i)
 	{
 		_map[i] = FileChunksInfo::CHUNK_CHECKING ;
