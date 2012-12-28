@@ -2399,6 +2399,42 @@ Alcuni servizi (scoperta, routing anonimo) possono essere spenti globalmente, il
         <source>Forums/channels</source>
         <translation>Forum/canali</translation>
     </message>
+    <message>
+        <source>Abnormal size read is bigger than memory block.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid location id.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid external IP.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid local IP.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid checksum section.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Checksum mismatch. Certificate is corrupted.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown section type found (Certificate might be corrupted).</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Missing checksum.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown certificate error</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>CreateBlog</name>
@@ -5305,10 +5341,6 @@ Compila la tua password PGP quando richiesto, per firmare la nuova chiave.</tran
         <translation>Generale</translation>
     </message>
     <message>
-        <source>Enable Experimental Features (Restart Required)</source>
-        <translation>Abilita funzionalità sperimentali (Necessario riavvio)</translation>
-    </message>
-    <message>
         <source>Register retroshare:// as URL protocol (Restart required)</source>
         <translation>Registrare retroshare: / / come protocollo URL (riavvio richiesto)</translation>
     </message>
@@ -5877,6 +5909,26 @@ p, li { white-space: pre-wrap; }
         <source>You cant reply to an Anonymous Author</source>
         <translation>Non puoi rispondere a un autore anonimo</translation>
     </message>
+    <message>
+        <source>Search Title</source>
+        <translation>Ricerca titolo</translation>
+    </message>
+    <message>
+        <source>Search Date</source>
+        <translation>Ricerca data</translation>
+    </message>
+    <message>
+        <source>Search Author</source>
+        <translation>Cerca autore</translation>
+    </message>
+    <message>
+        <source>Content</source>
+        <translation>Contenuti</translation>
+    </message>
+    <message>
+        <source>Search Content</source>
+        <translation>Ricerca di contenuti</translation>
+    </message>
 </context>
 <context>
     <name>GxsForumsDialog</name>
@@ -5972,6 +6024,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>My Forums</source>
         <translation>Il miei forums</translation>
+    </message>
+    <message>
+        <source>Sent</source>
+        <translation>Inviato</translation>
+    </message>
+    <message>
+        <source>On %1, %2 wrote:</source>
+        <translation>Su %1, %2 scrive:</translation>
     </message>
 </context>
 <context>
@@ -6340,7 +6400,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;About RetroShare&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Riguardo RetroShare&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -12389,7 +12453,7 @@ Cerca di essere paziente!</translation>
     </message>
     <message>
         <source>Choose for Merge</source>
-        <translation type="unfinished"/>
+        <translation>Scegli per fusione</translation>
     </message>
 </context>
 <context>

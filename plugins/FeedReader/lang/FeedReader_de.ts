@@ -1,979 +1,734 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.0" language="de_DE">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="de" version="2.0">
 <context>
     <name>AddFeedDialog</name>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="+14"/>
+        <location filename="../gui/AddFeedDialog.ui" line="14"/>
         <source>Create new feed</source>
-        <translation type="unfinished"></translation>
+        <translation>Neuen Feed erstellen</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location filename="../gui/AddFeedDialog.ui" line="49"/>
         <source>Authentication (not yet supported)</source>
-        <translation type="unfinished"></translation>
+        <translation>Authentifizierung (noch nicht unterstützt)</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location filename="../gui/AddFeedDialog.ui" line="55"/>
         <source>Feed needs authentication</source>
-        <translation type="unfinished"></translation>
+        <translation>Feed benötigt Authentifizierung</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location filename="../gui/AddFeedDialog.ui" line="62"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzer</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location filename="../gui/AddFeedDialog.ui" line="69"/>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Passwort</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location filename="../gui/AddFeedDialog.ui" line="89"/>
         <source>Update interval</source>
-        <translation type="unfinished"></translation>
+        <translation>Updateintervall</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location filename="../gui/AddFeedDialog.ui" line="95"/>
         <source>Use standard update interval</source>
-        <translation type="unfinished"></translation>
+        <translation>Standardupdateintervall benutzen</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location filename="../gui/AddFeedDialog.ui" line="102"/>
         <source>Interval in minutes (0 = manual)</source>
-        <translation type="unfinished"></translation>
+        <translation>Intervall in Minuten (0 = manuell)</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location filename="../gui/AddFeedDialog.ui" line="121"/>
         <source>Last update</source>
-        <translation type="unfinished"></translation>
+        <translation>Letztes Update</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location filename="../gui/AddFeedDialog.ui" line="134"/>
         <source>Never</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location filename="../gui/AddFeedDialog.ui" line="146"/>
         <source>Storage time</source>
-        <translation type="unfinished"></translation>
+        <translation>Speicherzeit</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location filename="../gui/AddFeedDialog.ui" line="152"/>
         <source>Use standard storage time</source>
-        <translation type="unfinished"></translation>
+        <translation>Standardspeicherzeit benutzen</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location filename="../gui/AddFeedDialog.ui" line="159"/>
         <source>Days (0 = off)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tage (0 = aus)</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location filename="../gui/AddFeedDialog.ui" line="182"/>
         <source>Proxy</source>
-        <translation type="unfinished"></translation>
+        <translation>Proxy</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location filename="../gui/AddFeedDialog.ui" line="188"/>
         <source>Use standard proxy</source>
-        <translation type="unfinished"></translation>
+        <translation>Standardproxy benutzen</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location filename="../gui/AddFeedDialog.ui" line="195"/>
         <source>Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Server</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location filename="../gui/AddFeedDialog.ui" line="205"/>
         <source>:</source>
-        <translation type="unfinished"></translation>
+        <translation>:</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location filename="../gui/AddFeedDialog.ui" line="231"/>
         <source>Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>Vorschau</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location filename="../gui/AddFeedDialog.ui" line="240"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Typ</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location filename="../gui/AddFeedDialog.ui" line="251"/>
         <source>Forum</source>
-        <translation type="unfinished"></translation>
+        <translation>Forum</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location filename="../gui/AddFeedDialog.ui" line="276"/>
         <source>Local Feed</source>
-        <translation type="unfinished"></translation>
+        <translation>Lokaler Feed</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location filename="../gui/AddFeedDialog.ui" line="299"/>
         <source>Misc</source>
-        <translation type="unfinished"></translation>
+        <translation>Verschiedenes</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location filename="../gui/AddFeedDialog.ui" line="305"/>
         <source>Activated</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktiviert</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location filename="../gui/AddFeedDialog.ui" line="312"/>
         <source>Use name and description from feed</source>
-        <translation type="unfinished"></translation>
+        <translation>Name und Beschreibung aus dem Feed benutzen</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location filename="../gui/AddFeedDialog.ui" line="319"/>
         <source>Update forum information</source>
-        <translation type="unfinished"></translation>
+        <translation>Foruminformation auffrischen</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location filename="../gui/AddFeedDialog.ui" line="326"/>
         <source>Embed images (experimental for local feeds)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilder einbetten (experimentell für lokale Feeds)</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location filename="../gui/AddFeedDialog.ui" line="333"/>
         <source>Save complete web page (experimental for local feeds)</source>
-        <translation type="unfinished"></translation>
+        <translation>Komplette Webseite speichern (experimentell für lokale Feeds)</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location filename="../gui/AddFeedDialog.ui" line="345"/>
         <source>Description:</source>
-        <translation type="unfinished"></translation>
+        <translation>Beschreibung</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location filename="../gui/AddFeedDialog.ui" line="359"/>
         <source>RSS-Feed-URL:</source>
-        <translation type="unfinished"></translation>
+        <translation>RSS-Feed-URL:</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location filename="../gui/AddFeedDialog.ui" line="369"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Name:</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="+64"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="64"/>
         <source>Feed Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Feeddetails</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="94"/>
         <source>Create a new anonymous public forum</source>
-        <translation type="unfinished"></translation>
+        <translation>Ein neues anonymes öffentliches Forum erstellen</translation>
     </message>
     <message>
-        <location line="+116"/>
-        <location line="+108"/>
-        <location line="+15"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="210"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="318"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="333"/>
         <source>Edit feed</source>
-        <translation type="unfinished"></translation>
+        <translation>Feed bearbeiten</translation>
     </message>
     <message>
-        <location line="-97"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="236"/>
         <source>Not yet created</source>
-        <translation type="unfinished"></translation>
+        <translation>Noch nicht erstellt</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="242"/>
         <source>Unknown forum</source>
-        <translation type="unfinished"></translation>
+        <translation>unbekanntes Forum</translation>
     </message>
     <message>
-        <location line="+76"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="318"/>
         <source>Can&apos;t edit feed. Feed does not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Feed nicht bearbeiten: Feed existiert nicht.</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="328"/>
         <source>Create feed</source>
-        <translation type="unfinished"></translation>
+        <translation>Feed erstellen</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="328"/>
         <source>Cannot create feed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Feed nicht erstellen.</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="333"/>
         <source>Cannot change feed.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>AddLinksDialog</name>
-    <message>
-        <source>Add Link</source>
-        <translation type="obsolete">Link hinzufügen</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt;Add Link to Cloud&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt;Link zur Wolke hinzufügen&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="obsolete">Abbrechen</translation>
-    </message>
-    <message>
-        <source>Add a new Link</source>
-        <translation type="obsolete">Neuen Link hinzufügen</translation>
-    </message>
-    <message>
-        <source>Title:</source>
-        <translation type="obsolete">Titel:</translation>
-    </message>
-    <message>
-        <source>Url:</source>
-        <translation type="obsolete">Url:</translation>
-    </message>
-    <message>
-        <source>Add Anonymous Link</source>
-        <translation type="obsolete">Anonym hinzufügen</translation>
-    </message>
-    <message>
-        <source>+2 Great!</source>
-        <translation type="obsolete">+2 Großartig!</translation>
-    </message>
-    <message>
-        <source>+1 Good</source>
-        <translation type="obsolete">+1 Gut</translation>
-    </message>
-    <message>
-        <source>0 Okay</source>
-        <translation type="obsolete">0 In Ordnung</translation>
-    </message>
-    <message>
-        <source>-1 Sux</source>
-        <translation type="obsolete">-1 Nervt</translation>
-    </message>
-    <message>
-        <source>-2 Bad Link</source>
-        <translation type="obsolete">-2 Schlechter Link</translation>
-    </message>
-    <message>
-        <source>New Link</source>
-        <translation type="obsolete">Neuer Link</translation>
-    </message>
-    <message>
-        <source>Add Link Failure</source>
-        <translation type="obsolete">Link hinzufügen fehlgeschlagen</translation>
-    </message>
-    <message>
-        <source>Missing Link and/or Title</source>
-        <translation type="obsolete">Titel und/oder Url fehlt</translation>
+        <translation>Kann Feed nicht ändern</translation>
     </message>
 </context>
 <context>
     <name>FeedReaderConfig</name>
     <message>
-        <location filename="../gui/FeedReaderConfig.ui" line="+14"/>
+        <location filename="../gui/FeedReaderConfig.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Formular</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location filename="../gui/FeedReaderConfig.ui" line="20"/>
         <source>Update</source>
-        <translation type="unfinished"></translation>
+        <translation>Update</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location filename="../gui/FeedReaderConfig.ui" line="26"/>
         <source>Interval in minutes (0 = manual)</source>
-        <translation type="unfinished"></translation>
+        <translation>Intervall in Minuten (0 = manuell)</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location filename="../gui/FeedReaderConfig.ui" line="49"/>
         <source>Storage time</source>
-        <translation type="unfinished"></translation>
+        <translation>Speicherzeit</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location filename="../gui/FeedReaderConfig.ui" line="55"/>
         <source>Days (0 = off)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tage (0 = aus)</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location filename="../gui/FeedReaderConfig.ui" line="78"/>
         <source>Proxy</source>
-        <translation type="unfinished"></translation>
+        <translation>Proxy</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location filename="../gui/FeedReaderConfig.ui" line="84"/>
         <source>Use proxy</source>
-        <translation type="unfinished"></translation>
+        <translation>Proxy benutzen</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location filename="../gui/FeedReaderConfig.ui" line="91"/>
         <source>Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Server</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location filename="../gui/FeedReaderConfig.ui" line="108"/>
         <source>:</source>
-        <translation type="unfinished"></translation>
+        <translation>:</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location filename="../gui/FeedReaderConfig.ui" line="118"/>
         <source>Misc</source>
-        <translation type="unfinished"></translation>
+        <translation>Verschiedenes</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location filename="../gui/FeedReaderConfig.ui" line="124"/>
         <source>Set message to read on activate</source>
-        <translation type="unfinished"></translation>
+        <translation>Beitrag beim Aktivieren als gelesen markieren</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderConfig.h" line="+47"/>
+        <location filename="../gui/FeedReaderConfig.h" line="47"/>
         <source>FeedReader</source>
-        <translation type="unfinished"></translation>
+        <translation>FeedReader</translation>
     </message>
 </context>
 <context>
     <name>FeedReaderDialog</name>
     <message>
-        <location filename="../gui/FeedReaderDialog.ui" line="+68"/>
+        <location filename="../gui/FeedReaderDialog.ui" line="68"/>
         <source>Feeds</source>
-        <translation type="unfinished"></translation>
+        <translation>Feeds</translation>
     </message>
     <message>
-        <location line="+69"/>
-        <source>Search forums</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+31"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="+139"/>
-        <source>Title</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="+1"/>
-        <source>Date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="+1"/>
-        <source>Author</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+23"/>
-        <source>Message:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="-30"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="81"/>
         <source>Message Folders</source>
         <translation>Nachrichtenordner</translation>
     </message>
     <message>
-        <location line="+28"/>
-        <source>Search Title</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Search Date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Search Author</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+15"/>
-        <source>Open link in browser</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Copy link to clipboard</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+141"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="239"/>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>Neu</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="240"/>
         <source>Feed</source>
-        <translation type="unfinished"></translation>
+        <translation>Feed</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="244"/>
         <source>Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Ordner</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="251"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Bearbeiten</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="256"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="268"/>
         <source>Update</source>
-        <translation type="unfinished"></translation>
+        <translation>Update</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="271"/>
         <source>Activate</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktivieren</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="271"/>
         <source>Deactivate</source>
-        <translation type="unfinished"></translation>
+        <translation>Deaktivieren</translation>
     </message>
     <message>
-        <location line="+14"/>
-        <source>Mark as read</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Mark as unread</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Mark all as read</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Copy link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Remove</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+164"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="451"/>
         <source>No name</source>
-        <translation type="unfinished"></translation>
+        <translation>Kein Name</translation>
     </message>
     <message>
-        <location line="+385"/>
-        <source>Hide</source>
-        <translation type="unfinished">Verbergen</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Expand</source>
-        <translation type="unfinished">Erweitern</translation>
-    </message>
-    <message>
-        <location line="+7"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="588"/>
         <source>Add new folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Neuen Ordner hinzufügen</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="589"/>
         <source>Please enter a name for the folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitte einen Namen für den Ordner eingeben</translation>
     </message>
     <message>
-        <location line="+6"/>
-        <location line="+53"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="595"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="648"/>
         <source>Create folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Ordner erstellen</translation>
     </message>
     <message>
-        <location line="-53"/>
-        <location line="+53"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="595"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="648"/>
         <source>Cannot create folder.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Ordner nicht erstellen</translation>
     </message>
     <message>
-        <location line="-27"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="621"/>
         <source>Remove folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Ordner entfernen</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="621"/>
         <source>Remove feed</source>
-        <translation type="unfinished"></translation>
+        <translation>Feed entfernen</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="621"/>
         <source>Do you want to remove the folder %1?</source>
-        <translation type="unfinished"></translation>
+        <translation>Willst du den Ordner %1 entfernen?</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="621"/>
         <source>Do you want to remove the feed %1?</source>
-        <translation type="unfinished"></translation>
+        <translation>Willst du den Feed %1 entfernen?</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="641"/>
         <source>Edit folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Ordner bearbeiten</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="642"/>
         <source>Please enter a new name for the folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitte einen neuen Namen für den Ordner eingeben</translation>
+    </message>
+</context>
+<context>
+    <name>FeedReaderMessageWidget</name>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.ui" line="14"/>
+        <source>Form</source>
+        <translation>Formular</translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.ui" line="45"/>
+        <source>Search forums</source>
+        <translation>Foren durchsuchen</translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.ui" line="76"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="75"/>
+        <source>Title</source>
+        <translation>Titel</translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.ui" line="90"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="76"/>
+        <source>Date</source>
+        <translation>Datum</translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.ui" line="95"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="77"/>
+        <source>Author</source>
+        <translation>Autor</translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="75"/>
+        <source>Search Title</source>
+        <translation>Titel durchsuchen</translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="76"/>
+        <source>Search Date</source>
+        <translation>Datum durchsuchen</translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="77"/>
+        <source>Search Author</source>
+        <translation>Autor durchsuchen</translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="89"/>
+        <source>Open link in browser</source>
+        <translation>Verknüpfung im Browser öffnen</translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="90"/>
+        <source>Copy link to clipboard</source>
+        <translation>Verknüpfung in die Zwischenablage kopieren</translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="190"/>
+        <source>No name</source>
+        <translation>Kein Name</translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="228"/>
+        <source>Mark as read</source>
+        <translation>Als gelesen markieren</translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="231"/>
+        <source>Mark as unread</source>
+        <translation>Als ungelesen markieren</translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="234"/>
+        <source>Mark all as read</source>
+        <translation>Alle als gelesen markieren</translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="238"/>
+        <source>Copy link</source>
+        <translation>Verknüpfung kopieren</translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="241"/>
+        <source>Remove</source>
+        <translation>Entfernen</translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="588"/>
+        <source>Hide</source>
+        <translation>Verbergen</translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="592"/>
+        <source>Expand</source>
+        <translation>Erweitern</translation>
     </message>
 </context>
 <context>
     <name>FeedReaderPlugin</name>
     <message>
-        <location filename="../FeedReaderPlugin.cpp" line="+135"/>
+        <location filename="../FeedReaderPlugin.cpp" line="135"/>
         <source>This plugin provides a Feedreader.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dieses Plug-in stellt einen Feedreader bereit.</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location filename="../FeedReaderPlugin.cpp" line="140"/>
         <source>FeedReader</source>
-        <translation type="unfinished"></translation>
+        <translation>FeedReader</translation>
     </message>
 </context>
 <context>
     <name>FeedReaderStringDefs</name>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="+36"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="36"/>
         <source>Feed not found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Feed nicht gefunden.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="39"/>
         <source>Parent not found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Übergeordnetes Objekt nicht gefunden.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="42"/>
         <source>Parent is no folder.</source>
-        <translation type="unfinished"></translation>
+        <translation>Übergeordnetes Objekt ist kein Ordner.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="45"/>
         <source>Feed is a folder.</source>
-        <translation type="unfinished"></translation>
+        <translation>Feed ist ein Ordner.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="48"/>
         <source>Feed is no folder.</source>
-        <translation type="unfinished"></translation>
+        <translation>Feed ist kein Ordner.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="51"/>
         <source>Unknown error occured.</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekannter Fehler aufgetreten</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="65"/>
         <source>Waiting for download</source>
-        <translation type="unfinished"></translation>
+        <translation>Warte auf Download</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="67"/>
         <source>Downloading</source>
-        <translation type="unfinished"></translation>
+        <translation>Ladend</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="69"/>
         <source>Waiting for process</source>
-        <translation type="unfinished"></translation>
+        <translation>Warte auf Verarbeitung</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="71"/>
         <source>Processing</source>
-        <translation type="unfinished"></translation>
+        <translation>Verarbeite</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="91"/>
         <source>Internal download error</source>
-        <translation type="unfinished"></translation>
+        <translation>Interner Fehler beim Herunterladen</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="94"/>
         <source>Download error</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Herunterladen</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="97"/>
         <source>Unknown content type</source>
-        <translation type="unfinished"></translation>
+        <translation>Typ des Inhalts unbekannt</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="100"/>
         <source>Download not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Download nicht gefunden</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="103"/>
         <source>Unknown response code</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekannter Antwortcode</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="108"/>
         <source>Internal process error</source>
-        <translation type="unfinished"></translation>
+        <translation>Interner Verarbeitungsfehler</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="111"/>
         <source>Unknown XML format</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekanntes XML-Format</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="114"/>
         <source>Can&apos;t create forum</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Forum nicht erstellen</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="117"/>
         <source>Forum not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Forum nicht gefunden</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="120"/>
         <source>You are not admin of the forum</source>
-        <translation type="unfinished"></translation>
+        <translation>Du bist nicht der Administrator des Forums</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="123"/>
         <source>The forum is no anonymous forum</source>
-        <translation type="unfinished"></translation>
+        <translation>Das Forum ist kein anonymes Forum</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="127"/>
         <source>Can&apos;t read html</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Html nicht lesen</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="130"/>
         <source>Internal XPath error</source>
-        <translation type="unfinished"></translation>
+        <translation>Interner XPath-Fehler</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="133"/>
         <source>Wrong XPath expression</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehlerhafter XPath-Ausdruck</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="136"/>
         <source>Empty XPath result</source>
-        <translation type="unfinished"></translation>
+        <translation>Leeres XPath-Resultat</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="140"/>
         <source>Unknown error</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekannter Fehler</translation>
     </message>
 </context>
 <context>
     <name>FeedReaderUserNotify</name>
     <message>
-        <location filename="../gui/FeedReaderUserNotify.cpp" line="+38"/>
+        <location filename="../gui/FeedReaderUserNotify.cpp" line="38"/>
         <source>FeedReader Message</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>LinksCloudPlugin</name>
-    <message>
-        <source>This plugin provides a set of cached links, and a voting system to promote them.</source>
-        <translation type="obsolete">Das Plugin stellt Links und ein Wahlsystem zur Verfügung, um sie zu verbreiten.</translation>
-    </message>
-    <message>
-        <source>LinksCloud</source>
-        <translation type="obsolete">Verknüpfungswolke</translation>
-    </message>
-</context>
-<context>
-    <name>LinksDialog</name>
-    <message>
-        <source>Title / Comment</source>
-        <translation type="obsolete">Titel / Kommentar</translation>
-    </message>
-    <message>
-        <source>Score</source>
-        <translation type="obsolete">Punkte</translation>
-    </message>
-    <message>
-        <source>Peer / Link</source>
-        <translation type="obsolete">Nachbar / Link</translation>
-    </message>
-    <message>
-        <source>Sort by</source>
-        <translation type="obsolete">Sortiere nach</translation>
-    </message>
-    <message>
-        <source>Combo</source>
-        <translation type="obsolete">Kombiniert</translation>
-    </message>
-    <message>
-        <source>Time</source>
-        <translation type="obsolete">Zeit</translation>
-    </message>
-    <message>
-        <source>Ranking</source>
-        <translation type="obsolete">Platzierung</translation>
-    </message>
-    <message>
-        <source>In last</source>
-        <translation type="obsolete">Im letzten</translation>
-    </message>
-    <message>
-        <source>Month</source>
-        <translation type="obsolete">Monat</translation>
-    </message>
-    <message>
-        <source>Week</source>
-        <translation type="obsolete">Woche</translation>
-    </message>
-    <message>
-        <source>From</source>
-        <translation type="obsolete">Von</translation>
-    </message>
-    <message>
-        <source>All Peers</source>
-        <translation type="obsolete">Alle Nachbarn</translation>
-    </message>
-    <message>
-        <source>Own Links</source>
-        <translation type="obsolete">Eigene Links</translation>
-    </message>
-    <message>
-        <source>Show</source>
-        <translation type="obsolete">Zeige</translation>
-    </message>
-    <message>
-        <source>Top 100</source>
-        <translation type="obsolete">Top 100</translation>
-    </message>
-    <message>
-        <source>Bottom 100</source>
-        <translation type="obsolete">Letzten 100</translation>
-    </message>
-    <message>
-        <source>Link:</source>
-        <translation type="obsolete">Link:</translation>
-    </message>
-    <message>
-        <source>Add Anonymous Link</source>
-        <translation type="obsolete">Anonym hinzufügen</translation>
-    </message>
-    <message>
-        <source>Add Link/Comment</source>
-        <translation type="obsolete">Link/Kommentar hinzufügen</translation>
-    </message>
-    <message>
-        <source>Title:</source>
-        <translation type="obsolete">Titel:</translation>
-    </message>
-    <message>
-        <source>Score:</source>
-        <translation type="obsolete">Punkte:</translation>
-    </message>
-    <message>
-        <source>+2 Great!</source>
-        <translation type="obsolete">+2 Großartig!</translation>
-    </message>
-    <message>
-        <source>+1 Good</source>
-        <translation type="obsolete">+1 Gut</translation>
-    </message>
-    <message>
-        <source>0 Okay</source>
-        <translation type="obsolete">0 In Ordnung</translation>
-    </message>
-    <message>
-        <source>-1 Sux</source>
-        <translation type="obsolete">-1 Nervt</translation>
-    </message>
-    <message>
-        <source>-2 Bad Link</source>
-        <translation type="obsolete">-2 Schlechter Link</translation>
-    </message>
-    <message>
-        <source>Url:</source>
-        <translation type="obsolete">Url:</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Links Cloud&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Verknüpfungswolke&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Add new link</source>
-        <translation type="obsolete">Neuen Link hinzufügen</translation>
-    </message>
-    <message>
-        <source>Share Link Anonymously</source>
-        <translation type="obsolete">Link anonym verteilen</translation>
-    </message>
-    <message>
-        <source>Vote on Link</source>
-        <translation type="obsolete">Wähle für Link</translation>
-    </message>
-    <message>
-        <source>Download</source>
-        <translation type="obsolete">Herunterladen</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation type="obsolete">Erweitern</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation type="obsolete">Verbergen</translation>
-    </message>
-    <message>
-        <source>File Request Confirmation</source>
-        <translation type="obsolete">Bestätigung der Dateianforderung</translation>
-    </message>
-    <message>
-        <source>The file has been added to your download list.</source>
-        <translation type="obsolete">Die Datei wurde zur Downloadliste hinzugefügt.</translation>
-    </message>
-    <message>
-        <source>File Request canceled</source>
-        <translation type="obsolete">Dateianforderung abgebrochen</translation>
-    </message>
-    <message>
-        <source>The file has not been added to your download list, because you already have it.</source>
-        <translation type="obsolete">Die folgende Datei wurde nicht zur Downloadliste hinzugefügt, da Du diese schon hast.</translation>
-    </message>
-    <message>
-        <source>File Request Error</source>
-        <translation type="obsolete">Fehler bei der Dateianforderung</translation>
-    </message>
-    <message>
-        <source>The file link is malformed.</source>
-        <translation type="obsolete">Link ist fehlerhaft.</translation>
+        <translation>FeedReader-Nachricht</translation>
     </message>
 </context>
 <context>
     <name>PreviewFeedDialog</name>
     <message>
-        <location filename="../gui/PreviewFeedDialog.ui" line="+14"/>
+        <location filename="../gui/PreviewFeedDialog.ui" line="14"/>
         <source>Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>Vorschau</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location filename="../gui/PreviewFeedDialog.ui" line="34"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Name:</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location filename="../gui/PreviewFeedDialog.ui" line="41"/>
         <source>Feed name</source>
-        <translation type="unfinished"></translation>
+        <translation>Feedname</translation>
     </message>
     <message>
-        <location line="+124"/>
+        <location filename="../gui/PreviewFeedDialog.ui" line="165"/>
         <source>Previous</source>
-        <translation type="unfinished"></translation>
+        <translation>Vorherige</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location filename="../gui/PreviewFeedDialog.ui" line="178"/>
         <source>0/0</source>
-        <translation type="unfinished"></translation>
+        <translation>0/0</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location filename="../gui/PreviewFeedDialog.ui" line="191"/>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation>Nächstes</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location filename="../gui/PreviewFeedDialog.ui" line="211"/>
         <source>Structure</source>
-        <translation type="unfinished"></translation>
+        <translation>Struktur</translation>
     </message>
     <message>
-        <location line="+20"/>
-        <source>Titel:</source>
-        <translation type="unfinished"></translation>
+        <location filename="../gui/PreviewFeedDialog.ui" line="231"/>
+        <source>Title:</source>
+        <translation>Titel:</translation>
     </message>
     <message>
-        <location line="+99"/>
+        <location filename="../gui/PreviewFeedDialog.ui" line="330"/>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
     <message>
-        <location line="+48"/>
+        <location filename="../gui/PreviewFeedDialog.ui" line="378"/>
         <source>Use XPath</source>
-        <translation type="unfinished"></translation>
+        <translation>XPath benutzen</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location filename="../gui/PreviewFeedDialog.ui" line="419"/>
         <source>XPath use</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+14"/>
+        <location filename="../gui/PreviewFeedDialog.ui" line="433"/>
         <source>XPath remove</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gui/PreviewFeedDialog.cpp" line="+172"/>
+        <location filename="../gui/PreviewFeedDialog.cpp" line="172"/>
         <source>Cannot create preview</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Vorschau nicht erstellen</translation>
     </message>
     <message>
-        <location line="+179"/>
+        <location filename="../gui/PreviewFeedDialog.cpp" line="351"/>
         <source>Hide XPath expressions</source>
-        <translation type="unfinished"></translation>
+        <translation>XPath-Ausdruck ausblenden</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location filename="../gui/PreviewFeedDialog.cpp" line="354"/>
         <source>Show XPath expressions</source>
-        <translation type="unfinished"></translation>
+        <translation>XPath-Ausdruck anzeigen</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location filename="../gui/PreviewFeedDialog.cpp" line="373"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Hinzufügen</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location filename="../gui/PreviewFeedDialog.cpp" line="376"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Bearbeiten</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location filename="../gui/PreviewFeedDialog.cpp" line="382"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
-        <location line="+115"/>
+        <location filename="../gui/PreviewFeedDialog.cpp" line="497"/>
         <source>No name</source>
-        <translation type="unfinished"></translation>
+        <translation>Kein Name</translation>
     </message>
     <message>
-        <location line="+87"/>
-        <location line="+19"/>
+        <location filename="../gui/PreviewFeedDialog.cpp" line="584"/>
+        <location filename="../gui/PreviewFeedDialog.cpp" line="603"/>
         <source>Error getting content</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Besorgen des Inhalts</translation>
     </message>
     <message>
-        <location line="+114"/>
+        <location filename="../gui/PreviewFeedDialog.cpp" line="717"/>
         <source>Error parsing document</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler bei der Bearbeitung des Dokuments</translation>
     </message>
 </context>
 </TS>

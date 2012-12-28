@@ -2430,6 +2430,42 @@ Die folgenden Wege sind möglich:</translation>
         <source>Forums/channels</source>
         <translation>Foren/Kanäle</translation>
     </message>
+    <message>
+        <source>Abnormal size read is bigger than memory block.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid location id.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid external IP.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid local IP.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid checksum section.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Checksum mismatch. Certificate is corrupted.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown section type found (Certificate might be corrupted).</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Missing checksum.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown certificate error</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>CreateBlog</name>
@@ -5344,10 +5380,6 @@ Gib, wenn du gefragt wirst, dein PGP Passwort ein, um deinen neuen Schlüssel zu
         <translation>Allgemein</translation>
     </message>
     <message>
-        <source>Enable Experimental Features (Restart Required)</source>
-        <translation>Experimentelle Funktionen aktivieren (Neustart nötig)</translation>
-    </message>
-    <message>
         <source>Register retroshare:// as URL protocol (Restart required)</source>
         <translation>retroshare:// als Protokoll registrieren (Neustart erforderlich)</translation>
     </message>
@@ -5972,6 +6004,26 @@ p, li { white-space: pre-wrap; }
         <source>You cant reply to an Anonymous Author</source>
         <translation>Du kannst einem anonymen Autor nicht antworten</translation>
     </message>
+    <message>
+        <source>Search Title</source>
+        <translation>Titel durchsuchen</translation>
+    </message>
+    <message>
+        <source>Search Date</source>
+        <translation>Datum durchsuchen</translation>
+    </message>
+    <message>
+        <source>Search Author</source>
+        <translation>Autor durchsuchen</translation>
+    </message>
+    <message>
+        <source>Content</source>
+        <translation>Inhalt</translation>
+    </message>
+    <message>
+        <source>Search Content</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>GxsForumsDialog</name>
@@ -6066,6 +6118,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>My Forums</source>
         <translation>Eigene Foren</translation>
+    </message>
+    <message>
+        <source>Sent</source>
+        <translation>Gesendet</translation>
+    </message>
+    <message>
+        <source>On %1, %2 wrote:</source>
+        <translation>Am %1, schrieb %2:</translation>
     </message>
 </context>
 <context>

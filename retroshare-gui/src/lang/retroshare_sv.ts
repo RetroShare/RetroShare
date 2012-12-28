@@ -2426,6 +2426,42 @@ Vissa tjänster (Upptäckt, anonym routning) kan stängas av lokalt, vilket allt
         <source>Forums/channels</source>
         <translation>Forum/Kanaler</translation>
     </message>
+    <message>
+        <source>Abnormal size read is bigger than memory block.</source>
+        <translation>Abnormal size read is bigger than memory block.</translation>
+    </message>
+    <message>
+        <source>Invalid location id.</source>
+        <translation>Ogiltigt plats-ID.</translation>
+    </message>
+    <message>
+        <source>Invalid external IP.</source>
+        <translation>Ogiltig extern IP-adress</translation>
+    </message>
+    <message>
+        <source>Invalid local IP.</source>
+        <translation>Ogiltig lokal IP-adress</translation>
+    </message>
+    <message>
+        <source>Invalid checksum section.</source>
+        <translation>Ogiltig checksumma</translation>
+    </message>
+    <message>
+        <source>Checksum mismatch. Certificate is corrupted.</source>
+        <translation>Checksumman stämmer inte. Certifikatet är korrupt.</translation>
+    </message>
+    <message>
+        <source>Unknown section type found (Certificate might be corrupted).</source>
+        <translation>En okänd sektion upptäcktes (Certifikatet kan vara korrupt).</translation>
+    </message>
+    <message>
+        <source>Missing checksum.</source>
+        <translation>Checksumma saknas.</translation>
+    </message>
+    <message>
+        <source>Unknown certificate error</source>
+        <translation>Okänt certifikatfel</translation>
+    </message>
 </context>
 <context>
     <name>CreateBlog</name>
@@ -5336,10 +5372,6 @@ Ange ditt PGP-lösenord vid anmodan, för att signera din nya nyckel.</translati
         <translation>Allmänt</translation>
     </message>
     <message>
-        <source>Enable Experimental Features (Restart Required)</source>
-        <translation>Aktivera experimentella funktioner (Kräver omstart)</translation>
-    </message>
-    <message>
         <source>Register retroshare:// as URL protocol (Restart required)</source>
         <translation>Registrera retroshare:// som URL-protokoll (Kräver omstart)</translation>
     </message>
@@ -5964,6 +5996,26 @@ p, li { white-space: pre-wrap; }
         <source>You cant reply to an Anonymous Author</source>
         <translation>Du kan inte svara en anonym upphovsman</translation>
     </message>
+    <message>
+        <source>Search Title</source>
+        <translation>Sök titel</translation>
+    </message>
+    <message>
+        <source>Search Date</source>
+        <translation>Sök på datum</translation>
+    </message>
+    <message>
+        <source>Search Author</source>
+        <translation>Sök författare</translation>
+    </message>
+    <message>
+        <source>Content</source>
+        <translation>Innehåll</translation>
+    </message>
+    <message>
+        <source>Search Content</source>
+        <translation>Sökinnehåll</translation>
+    </message>
 </context>
 <context>
     <name>GxsForumsDialog</name>
@@ -6058,6 +6110,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>My Forums</source>
         <translation>Mina forum</translation>
+    </message>
+    <message>
+        <source>Sent</source>
+        <translation>Skickat</translation>
+    </message>
+    <message>
+        <source>On %1, %2 wrote:</source>
+        <translation>I %1, skrev %2:</translation>
     </message>
 </context>
 <context>

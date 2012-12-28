@@ -241,7 +241,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Back</source>
-        <translation type="unfinished"/>
+        <translation>Wstecz</translation>
     </message>
     <message>
         <source>Add Photos</source>
@@ -1749,7 +1749,7 @@ Wybierz, z którą chcesz rozmawiać.</translation>
     </message>
     <message>
         <source>ID</source>
-        <translation type="unfinished"/>
+        <translation>ID</translation>
     </message>
     <message>
         <source>Friends</source>
@@ -1765,7 +1765,7 @@ Wybierz, z którą chcesz rozmawiać.</translation>
     </message>
     <message>
         <source>Permissions</source>
-        <translation type="unfinished"/>
+        <translation>Pozwolenia</translation>
     </message>
     <message>
         <source>Anon Transfers</source>
@@ -2407,6 +2407,42 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     <message>
         <source>Forums/channels</source>
         <translation>Forum/kanały</translation>
+    </message>
+    <message>
+        <source>Abnormal size read is bigger than memory block.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid location id.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid external IP.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid local IP.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid checksum section.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Checksum mismatch. Certificate is corrupted.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown section type found (Certificate might be corrupted).</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Missing checksum.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown certificate error</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3783,7 +3819,10 @@ you plug it in.</source>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Friends&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Przyjaciele&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -4403,7 +4442,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>You can&apos;t reply an Anonymous Author</source>
-        <translation type="unfinished"/>
+        <translation>Nie możesz odpowiedzieć Anonimowemu Autorowi</translation>
     </message>
     <message>
         <source>Search Title</source>
@@ -4419,7 +4458,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Search Content</source>
-        <translation type="unfinished"/>
+        <translation>Szukaj Zawartości</translation>
     </message>
     <message>
         <source>My Forums</source>
@@ -5298,12 +5337,8 @@ Wypełnij w twoim haśle PGP, kiedy otrzymasz zapytanie, by podpisać twój nowy
         <translation>Ogólne</translation>
     </message>
     <message>
-        <source>Enable Experimental Features (Restart Required)</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Register retroshare:// as URL protocol (Restart required)</source>
-        <translation type="unfinished"/>
+        <translation>Zarejestruj retroshare:// jako protokół URL (Wymagany restart)</translation>
     </message>
 </context>
 <context>
@@ -5608,7 +5643,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Search Description</source>
-        <translation type="unfinished"/>
+        <translation>Szukaj Opisu</translation>
     </message>
 </context>
 <context>
@@ -5744,7 +5779,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Flat View</source>
-        <translation type="unfinished"/>
+        <translation>Widok Płaski</translation>
     </message>
     <message>
         <source>Title</source>
@@ -5804,11 +5839,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Expand all</source>
-        <translation type="unfinished"/>
+        <translation>Rozwiń wszystkie</translation>
     </message>
     <message>
         <source>Collapse all</source>
-        <translation type="unfinished"/>
+        <translation>Zwiń wszystkie</translation>
     </message>
     <message>
         <source>Mark as read</source>
@@ -5836,7 +5871,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Anonymous</source>
-        <translation type="unfinished"/>
+        <translation>Anonimowy</translation>
     </message>
     <message>
         <source>signed</source>
@@ -5868,7 +5903,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>You cant reply to an Anonymous Author</source>
-        <translation type="unfinished"/>
+        <translation>Nie możesz odpowiedzieć Anonimowemu Autorowi</translation>
+    </message>
+    <message>
+        <source>Search Title</source>
+        <translation>Szukaj Tytuł</translation>
+    </message>
+    <message>
+        <source>Search Date</source>
+        <translation>Szukaj Datę</translation>
+    </message>
+    <message>
+        <source>Search Author</source>
+        <translation>Szukaj Autora</translation>
+    </message>
+    <message>
+        <source>Content</source>
+        <translation>Zawartość</translation>
+    </message>
+    <message>
+        <source>Search Content</source>
+        <translation>Szukaj Zawartości</translation>
     </message>
 </context>
 <context>
@@ -5911,7 +5966,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unsubscribe to Forum</source>
-        <translation type="unfinished"/>
+        <translation>Odsubskrybuj Forum</translation>
     </message>
     <message>
         <source>New Forum</source>
@@ -5965,6 +6020,14 @@ p, li { white-space: pre-wrap; }
         <source>My Forums</source>
         <translation>Moje Fora</translation>
     </message>
+    <message>
+        <source>Sent</source>
+        <translation>Wysłano</translation>
+    </message>
+    <message>
+        <source>On %1, %2 wrote:</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>GxsForumsFillThread</name>
@@ -5985,11 +6048,11 @@ p, li { white-space: pre-wrap; }
     <name>GxsGroupDialog</name>
     <message>
         <source>Create New</source>
-        <translation type="unfinished"/>
+        <translation>Utwórz Nowy</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Nazwa</translation>
     </message>
     <message>
         <source>Add Icon</source>
@@ -6025,11 +6088,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Restricted to Group</source>
-        <translation type="unfinished"/>
+        <translation>Zarezerwowane dla Grupy</translation>
     </message>
     <message>
         <source>Only For Your Friends</source>
-        <translation type="unfinished"/>
+        <translation>Tylko Dla Twoich Przyjaciół</translation>
     </message>
     <message>
         <source>Some Friends</source>
@@ -6105,7 +6168,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please add a Name</source>
-        <translation type="unfinished"/>
+        <translation>Proszę, dodaj Nazwę</translation>
     </message>
     <message>
         <source>Load Group Logo</source>
@@ -6451,7 +6514,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished"/>
+        <translation>Inne</translation>
     </message>
     <message>
         <source>Pseudonym</source>
@@ -6475,7 +6538,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Identities</source>
-        <translation type="unfinished"/>
+        <translation>Tożsamości</translation>
     </message>
     <message>
         <source>PGP Name</source>
@@ -7767,15 +7830,15 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Search Content</source>
-        <translation type="unfinished"/>
+        <translation>Szukaj Zawartości</translation>
     </message>
     <message>
         <source>Search Tags</source>
-        <translation type="unfinished"/>
+        <translation>Szukaj Tagów</translation>
     </message>
     <message>
         <source>Search Attachments</source>
-        <translation type="unfinished"/>
+        <translation>Szukaj Załączników</translation>
     </message>
 </context>
 <context>
@@ -8068,7 +8131,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Search Name</source>
-        <translation type="unfinished"/>
+        <translation>Szukaj Nazwy</translation>
     </message>
     <message>
         <source>Search Peer ID</source>
@@ -8348,7 +8411,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Gaming Mode</source>
-        <translation type="unfinished"/>
+        <translation>Tryb Grania</translation>
     </message>
     <message>
         <source>Low Traffic</source>
@@ -8608,7 +8671,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>View Photo</source>
-        <translation type="unfinished"/>
+        <translation>Pokaż Zdjęcie</translation>
     </message>
     <message>
         <source>PhotoShare</source>
@@ -8702,7 +8765,11 @@ requesting to edit it!</source>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;more&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;More&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;more&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Więcej&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Enable this plugin (restart required)</source>
@@ -8726,11 +8793,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>will be enabled after your restart RetroShare.</source>
-        <translation type="unfinished"/>
+        <translation>zostanie odblokowane po restarcie RetroShare.</translation>
     </message>
     <message>
         <source>Show more details about this plugin</source>
-        <translation type="unfinished"/>
+        <translation>Pokaż więcej szczegółów o tej wtyczce</translation>
     </message>
 </context>
 <context>
@@ -8803,7 +8870,7 @@ malicious behavior of crafted plugins.</source>
     </message>
     <message>
         <source>Hash rejected. Enable it manually and restart, if you need.</source>
-        <translation type="unfinished"/>
+        <translation>Hash odrzucony. Odblokuj manualnie i zrestartuj jeśli potrzebujesz.</translation>
     </message>
     <message>
         <source>No API number supplied. Please read plugin development manual.</source>
@@ -8907,7 +8974,7 @@ malicious behavior of crafted plugins.</source>
     </message>
     <message>
         <source>Title this is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title dont you think? yes it is and should wrap around I hope</source>
-        <translation type="unfinished"/>
+        <translation>To jest bardzo bardzo bardzo bardzo dłłłłłłłłłłłłłłuuuuuuuuuuuuuuuugi tytuł, nie sądzisz? Tak, jest i powinien, jak mam nadzieję, zawinąć się</translation>
     </message>
     <message>
         <source>Date</source>
@@ -8984,7 +9051,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"/>
+        <translation>Notki</translation>
     </message>
 </context>
 <context>
@@ -9182,35 +9249,35 @@ p, li { white-space: pre-wrap; }
     <name>ProfileManager</name>
     <message>
         <source>Profile Manager</source>
-        <translation type="unfinished"/>
+        <translation>Menedżer profili</translation>
     </message>
     <message>
         <source>Generate New Identity</source>
-        <translation type="unfinished"/>
+        <translation>Generuj Nową Tożsamość</translation>
     </message>
     <message>
         <source>Import new identity</source>
-        <translation type="unfinished"/>
+        <translation>Importuj nową tożsamość</translation>
     </message>
     <message>
         <source>Export selected identity</source>
-        <translation type="unfinished"/>
+        <translation>Eksportuj wybrane tożsamości</translation>
     </message>
     <message>
         <source>Identities</source>
-        <translation type="unfinished"/>
+        <translation>Tożsamości</translation>
     </message>
     <message>
         <source>Export Identity</source>
-        <translation type="unfinished"/>
+        <translation>Eksportuj Tożsamość</translation>
     </message>
     <message>
         <source>RetroShare Identity files (*.asc)</source>
-        <translation type="unfinished"/>
+        <translation>Pliki Tożsamości RetroShare (*.asc)</translation>
     </message>
     <message>
         <source>Identity saved</source>
-        <translation type="unfinished"/>
+        <translation>Tożsamość zapisana</translation>
     </message>
     <message>
         <source>Your identity was successfully saved
@@ -9222,19 +9289,19 @@ and use the import button to load it</source>
     </message>
     <message>
         <source>Identity not saved</source>
-        <translation type="unfinished"/>
+        <translation>Tożsamość nie zapisana</translation>
     </message>
     <message>
         <source>Identity not loaded</source>
-        <translation type="unfinished"/>
+        <translation>Tożsamość nie załadowana</translation>
     </message>
     <message>
         <source>Your identity was not loaded properly:</source>
-        <translation type="unfinished"/>
+        <translation>Twoja tożsamość nie została załadowana poprawnie:</translation>
     </message>
     <message>
         <source>New identity imported</source>
-        <translation type="unfinished"/>
+        <translation>Nowa tożsamość zaimportowana</translation>
     </message>
     <message>
         <source>You can use it now to create a new location.</source>
@@ -9262,15 +9329,15 @@ and use the import button to load it</source>
     </message>
     <message>
         <source>You can manage here your profiles, import, export your profiles or generate one .</source>
-        <translation type="unfinished"/>
+        <translation>Możesz zarządzać tutaj swoimi profilami, importować, eksportować swoje profile, lub generować je.</translation>
     </message>
     <message>
         <source>Import Identity</source>
-        <translation type="unfinished"/>
+        <translation>Importuj Tożsamość</translation>
     </message>
     <message>
         <source>Your identity was not saved. An error occurred.</source>
-        <translation type="unfinished"/>
+        <translation>Twoja tożsamość nie została zapisana. Zdarzył się błąd.</translation>
     </message>
     <message>
         <source>Your identity was imported successfully:</source>
@@ -9301,7 +9368,7 @@ and use the import button to load it</source>
     </message>
     <message>
         <source>Public Information</source>
-        <translation type="unfinished"/>
+        <translation>Informacje Publiczne</translation>
     </message>
     <message>
         <source>Name:</source>
@@ -9337,7 +9404,7 @@ and use the import button to load it</source>
     </message>
     <message>
         <source>Local Address:</source>
-        <translation type="unfinished"/>
+        <translation>Adres Lokalny:</translation>
     </message>
     <message>
         <source>External Address:</source>
@@ -10024,7 +10091,9 @@ p, li { white-space: pre-wrap; }
         <source>Some filenames or directory names contained forbidden characters.
 Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replaced by '_'.
  Concerned files are listed in red.</source>
-        <translation type="unfinished"/>
+        <translation>Niektóre nazwy plików lub katalogów zawierały zakazane symbole.
+Symbole &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; zostaną zastąpione przez &apos;_&apos;.
+Pliki których to dotyczy są oznaczone na czerwono.</translation>
     </message>
 </context>
 <context>
@@ -10110,7 +10179,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>built-in</source>
-        <translation type="unfinished"/>
+        <translation>wbudowane</translation>
     </message>
 </context>
 <context>
@@ -11856,7 +11925,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>This table normally auto-updates every 10 seconds.</source>
-        <translation type="unfinished"/>
+        <translation>Ta tabela normalnie aktualizuje się automatycznie co 10 sekund.</translation>
     </message>
 </context>
 <context>
@@ -12052,7 +12121,7 @@ Try to be patient!</source>
     <name>WikiAddDialog</name>
     <message>
         <source>Basic Details</source>
-        <translation type="unfinished"/>
+        <translation>Podstawowe Szczegóły</translation>
     </message>
     <message>
         <source>Group Name:</source>
@@ -12064,7 +12133,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Travel</source>
-        <translation type="unfinished"/>
+        <translation>Podróż</translation>
     </message>
     <message>
         <source>Holiday</source>
@@ -12080,7 +12149,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Work</source>
-        <translation type="unfinished"/>
+        <translation>Praca</translation>
     </message>
     <message>
         <source>Random</source>
@@ -12136,7 +12205,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Publish with XXX Key</source>
-        <translation type="unfinished"/>
+        <translation>Publikuj z Kluczem XXX</translation>
     </message>
     <message>
         <source>Cancel </source>
@@ -12210,7 +12279,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Previous Version</source>
-        <translation type="unfinished"/>
+        <translation>Poprzednia Wersja</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -12226,7 +12295,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Page Edit History</source>
-        <translation type="unfinished"/>
+        <translation>Historia Edycji Strony</translation>
     </message>
     <message>
         <source>Enable Obsolete Edits</source>
@@ -12258,7 +12327,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Tags</source>
-        <translation type="unfinished"/>
+        <translation>Tagi</translation>
     </message>
     <message>
         <source>Show Edit History</source>
@@ -12372,7 +12441,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Following</source>
-        <translation type="unfinished"/>
+        <translation>Następujące</translation>
     </message>
     <message>
         <source>Custom</source>
