@@ -82,6 +82,34 @@
             </property>
            </spacer>
           </item>
+          <item>
+           <widget class="QToolButton" name="feedAddButton">
+            <property name="toolTip">
+             <string>Add new feed</string>
+            </property>
+            <property name="icon">
+             <iconset resource="FeedReader_images.qrc">
+              <normaloff>:/images/FeedAdd.png</normaloff>:/images/FeedAdd.png</iconset>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="feedProcessButton">
+            <property name="toolTip">
+             <string>Update feed</string>
+            </property>
+            <property name="icon">
+             <iconset resource="FeedReader_images.qrc">
+              <normaloff>:/images/FeedProcess.png</normaloff>:/images/FeedProcess.png</iconset>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>

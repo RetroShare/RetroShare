@@ -68,10 +68,13 @@ FeedReaderDialog::FeedReaderDialog(RsFeedReader *feedReader, QWidget *parent)
 	connect(mNotify, SIGNAL(notifyMsgChanged(QString,QString,int)), this, SLOT(msgChanged(QString,QString,int)));
 
 	/* connect signals */
-	connect(ui->feedTreeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(feedItemChanged(QTreeWidgetItem*)));
+	connect(ui->feedTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(feedItemChanged(QTreeWidgetItem*)));
 	connect(ui->messageTabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(messageTabCloseRequested(int)));
 
 	connect(ui->feedTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(feedTreeCustomPopupMenu(QPoint)));
+
+	connect(ui->feedAddButton, SIGNAL(clicked()), this, SLOT(newFeed()));
+	connect(ui->feedProcessButton, SIGNAL(clicked()), this, SLOT(processFeed()));
 
 	mFeedCompareRole = new RSTreeWidgetItemCompareRole;
 	mFeedCompareRole->setRole(COLUMN_FEED_NAME, ROLE_FEED_SORT);
@@ -98,6 +101,8 @@ FeedReaderDialog::FeedReaderDialog(RsFeedReader *feedReader, QWidget *parent)
 	ui->feedTreeWidget->sortItems(COLUMN_FEED_NAME, Qt::AscendingOrder);
 
 	ui->feedTreeWidget->installEventFilter(this);
+
+	feedItemChanged(NULL);
 }
 
 FeedReaderDialog::~FeedReaderDialog()
@@ -536,12 +541,19 @@ FeedReaderMessageWidget *FeedReaderDialog::feedMessageWidget(const std::string &
 void FeedReaderDialog::feedItemChanged(QTreeWidgetItem *item)
 {
 	if (!item) {
+		ui->feedAddButton->setEnabled(false);
+		ui->feedProcessButton->setEnabled(false);
 		return;
 	}
 
+	ui->feedProcessButton->setEnabled(true);
+
 	if (item->data(COLUMN_FEED_DATA, ROLE_FEED_FOLDER).toBool()) {
+		ui->feedAddButton->setEnabled(true);
 		return;
 	}
+
+	ui->feedAddButton->setEnabled(false);
 
 	std::string feedId = item->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toString().toStdString();
 	/* search exisiting tab */

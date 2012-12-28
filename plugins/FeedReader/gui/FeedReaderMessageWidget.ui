@@ -40,6 +40,79 @@
            <number>2</number>
           </property>
           <item>
+           <widget class="QToolButton" name="msgReadButton">
+            <property name="toolTip">
+             <string>Mark messages as read</string>
+            </property>
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset resource="FeedReader_images.qrc">
+              <normaloff>:/images/FeedMsgRead.png</normaloff>:/images/FeedMsgRead.png</iconset>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="msgUnreadButton">
+            <property name="toolTip">
+             <string>Mark messages as unread</string>
+            </property>
+            <property name="icon">
+             <iconset resource="FeedReader_images.qrc">
+              <normaloff>:/images/FeedMsgUnread.png</normaloff>:/images/FeedMsgUnread.png</iconset>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="msgReadAllButton">
+            <property name="toolTip">
+             <string>Mark all messages as read</string>
+            </property>
+            <property name="icon">
+             <iconset resource="FeedReader_images.qrc">
+              <normaloff>:/images/FeedMsgReadAll.png</normaloff>:/images/FeedMsgReadAll.png</iconset>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="msgRemoveButton">
+            <property name="toolTip">
+             <string>Remove messages</string>
+            </property>
+            <property name="icon">
+             <iconset resource="FeedReader_images.qrc">
+              <normaloff>:/images/FeedMsgDelete.png</normaloff>:/images/FeedMsgDelete.png</iconset>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="feedProcessButton">
+            <property name="toolTip">
+             <string>Update feed</string>
+            </property>
+            <property name="icon">
+             <iconset resource="FeedReader_images.qrc">
+              <normaloff>:/images/FeedProcess.png</normaloff>:/images/FeedProcess.png</iconset>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="LineEditClear" name="filterLineEdit">
             <property name="toolTip">
              <string>Search forums</string>
@@ -175,14 +248,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>LineEditClear</class>
-   <extends>QLineEdit</extends>
-   <header>gui/common/LineEditClear.h</header>
-  </customwidget>
-  <customwidget>
    <class>LinkTextBrowser</class>
    <extends>QTextBrowser</extends>
    <header>gui/common/LinkTextBrowser.h</header>
+  </customwidget>
+  <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header location="global">gui/common/LineEditClear.h</header>
   </customwidget>
  </customwidgets>
  <resources>

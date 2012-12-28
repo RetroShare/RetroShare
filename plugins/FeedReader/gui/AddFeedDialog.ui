@@ -25,14 +25,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="HeaderFrame" name="headerFrame">
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>64</height>
-      </size>
-     </property>
-    </widget>
+    <widget class="HeaderFrame" name="headerFrame"/>
    </item>
    <item>
     <widget class="QFrame" name="frame">

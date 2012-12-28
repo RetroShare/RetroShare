@@ -1241,9 +1241,11 @@ void p3FeedReader::cleanFeeds()
 		if (removedMsgIds.size()) {
 			IndicateConfigChanged();
 
-			std::list<std::pair<std::string, std::string> >::iterator it;
-			for (it = removedMsgIds.begin(); it != removedMsgIds.end(); ++it) {
-				mNotify->msgChanged(it->first, it->second, NOTIFY_TYPE_DEL);
+			if (mNotify) {
+				std::list<std::pair<std::string, std::string> >::iterator it;
+				for (it = removedMsgIds.begin(); it != removedMsgIds.end(); ++it) {
+					mNotify->msgChanged(it->first, it->second, NOTIFY_TYPE_DEL);
+				}
 			}
 		}
 	}

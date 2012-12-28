@@ -3,6 +3,7 @@
 #include <QKeyEvent>
 #include <QClipboard>
 #include <QDesktopServices>
+#include <QTimer>
 
 #include "FeedReaderMessageWidget.h"
 #include "ui_FeedReaderMessageWidget.h"
@@ -50,6 +51,18 @@ FeedReaderMessageWidget::FeedReaderMessageWidget(const std::string &feedId, RsFe
 
 	connect(ui->linkButton, SIGNAL(clicked()), this, SLOT(openLinkMsg()));
 	connect(ui->expandButton, SIGNAL(clicked()), this, SLOT(toggleMsgText()));
+
+	connect(ui->msgReadButton, SIGNAL(clicked()), this, SLOT(markAsReadMsg()));
+	connect(ui->msgUnreadButton, SIGNAL(clicked()), this, SLOT(markAsUnreadMsg()));
+	connect(ui->msgReadAllButton, SIGNAL(clicked()), this, SLOT(markAllAsReadMsg()));
+	connect(ui->msgRemoveButton, SIGNAL(clicked()), this, SLOT(removeMsg()));
+	connect(ui->feedProcessButton, SIGNAL(clicked()), this, SLOT(processFeed()));
+
+	// create timer for navigation
+	timer = new QTimer(this);
+	timer->setInterval(300);
+	timer->setSingleShot(true);
+	connect(timer, SIGNAL(timeout()), this, SLOT(updateCurrentMessage()));
 
 	mMsgCompareRole = new RSTreeWidgetItemCompareRole;
 	mMsgCompareRole->setRole(COLUMN_MSG_TITLE, ROLE_MSG_SORT);
@@ -108,10 +121,15 @@ FeedReaderMessageWidget::FeedReaderMessageWidget(const std::string &feedId, RsFe
 	}
 
 	updateMsgs();
+	updateCurrentMessage();
 }
 
 FeedReaderMessageWidget::~FeedReaderMessageWidget()
 {
+	// stop and delete timer
+	timer->stop();
+	delete(timer);
+
 	/* save settings */
 	processSettings(false);
 
@@ -452,10 +470,21 @@ void FeedReaderMessageWidget::msgItemClicked(QTreeWidgetItem *item, int column)
 		setMsgAsReadUnread(rows, !read);
 		return;
 	}
+
+	// show current message directly
+	updateCurrentMessage();
 }
 
 void FeedReaderMessageWidget::msgItemChanged()
 {
+	timer->stop();
+	timer->start();
+}
+
+void FeedReaderMessageWidget::updateCurrentMessage()
+{
+	timer->stop();
+
 	long todo; // show link somewhere
 
 	std::string msgId = currentMsgId();
@@ -465,6 +494,11 @@ void FeedReaderMessageWidget::msgItemChanged()
 //		ui->msgLink->clear();
 		ui->msgText->clear();
 		ui->linkButton->setEnabled(false);
+
+		ui->msgReadButton->setEnabled(false);
+		ui->msgUnreadButton->setEnabled(false);
+		ui->msgReadAllButton->setEnabled(false);
+		ui->msgRemoveButton->setEnabled(false);
 		return;
 	}
 
@@ -475,8 +509,18 @@ void FeedReaderMessageWidget::msgItemChanged()
 //		ui->msgLink->clear();
 		ui->msgText->clear();
 		ui->linkButton->setEnabled(false);
+
+		ui->msgReadButton->setEnabled(false);
+		ui->msgUnreadButton->setEnabled(false);
+		ui->msgReadAllButton->setEnabled(false);
+		ui->msgRemoveButton->setEnabled(false);
 		return;
 	}
+
+	ui->msgReadButton->setEnabled(true);
+	ui->msgUnreadButton->setEnabled(true);
+	ui->msgReadAllButton->setEnabled(true);
+	ui->msgRemoveButton->setEnabled(true);
 
 	/* get msg */
 	FeedMsgInfo msgInfo;
@@ -655,6 +699,15 @@ void FeedReaderMessageWidget::removeMsg()
 		msgIds.push_back((*it)->data(COLUMN_MSG_DATA, ROLE_MSG_ID).toString().toStdString());
 	}
 	mFeedReader->removeMsgs(mFeedId, msgIds);
+}
+
+void FeedReaderMessageWidget::processFeed()
+{
+	if (mFeedId.empty()) {
+		return;
+	}
+
+	mFeedReader->processFeed(mFeedId);
 }
 
 void FeedReaderMessageWidget::copyLinkMsg()

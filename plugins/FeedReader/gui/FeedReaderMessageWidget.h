@@ -7,6 +7,7 @@ namespace Ui {
 class FeedReaderMessageWidget;
 }
 
+class QTimer;
 class FeedMsgInfo;
 class QTreeWidgetItem;
 class RSTreeWidgetItemCompareRole;
@@ -34,6 +35,7 @@ signals:
 
 private slots:
 	void msgTreeCustomPopupMenu(QPoint point);
+	void updateCurrentMessage();
 	void msgItemChanged();
 	void msgItemClicked(QTreeWidgetItem *item, int column);
 	void filterColumnChanged(int column);
@@ -44,6 +46,7 @@ private slots:
 	void markAllAsReadMsg();
 	void copyLinksMsg();
 	void removeMsg();
+	void processFeed();
 	void openLinkMsg();
 	void copyLinkMsg();
 
@@ -67,6 +70,7 @@ private:
 	std::string mFeedId;
 	QString mFeedName;
 	unsigned int mUnreadCount;
+	QTimer *timer;
 
 	// gui interface
 	RsFeedReader *mFeedReader;
