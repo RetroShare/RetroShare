@@ -30,7 +30,7 @@
 #define ROLE_MSG_LINK       Qt::UserRole + 4
 
 FeedReaderMessageWidget::FeedReaderMessageWidget(const std::string &feedId, RsFeedReader *feedReader, FeedReaderNotify *notify, QWidget *parent) :
-	QWidget(parent), mFeedId(feedId), mFeedReader(feedReader), mNotify(notify), ui(new Ui::FeedReaderMessageWidget)
+	QWidget(parent), mFeedReader(feedReader), mNotify(notify), ui(new Ui::FeedReaderMessageWidget)
 {
 	ui->setupUi(this);
 
@@ -111,17 +111,7 @@ FeedReaderMessageWidget::FeedReaderMessageWidget(const std::string &feedId, RsFe
 
 	ui->msgTreeWidget->installEventFilter(this);
 
-	FeedInfo feedInfo;
-	if (mFeedReader->getFeedInfo(mFeedId, feedInfo)) {
-		mFeedName = QString::fromUtf8(feedInfo.name.c_str());
-
-		mFeedReader->getMessageCount(mFeedId, NULL, NULL, &mUnreadCount);
-	} else {
-		mFeedId.clear();
-	}
-
-	updateMsgs();
-	updateCurrentMessage();
+	setFeedId(feedId);
 }
 
 FeedReaderMessageWidget::~FeedReaderMessageWidget()
@@ -203,6 +193,35 @@ bool FeedReaderMessageWidget::eventFilter(QObject *obj, QEvent *event)
 	return QWidget::eventFilter(obj, event);
 }
 
+void FeedReaderMessageWidget::setFeedId(const std::string &feedId)
+{
+	if (mFeedId == feedId) {
+		if (!feedId.empty()) {
+			return;
+		}
+	}
+
+	mFeedId = feedId;
+
+	ui->feedProcessButton->setEnabled(!mFeedId.empty());
+
+	if (!mFeedId.empty()) {
+		FeedInfo feedInfo;
+		if (mFeedReader->getFeedInfo(mFeedId, feedInfo)) {
+			mFeedName = QString::fromUtf8(feedInfo.name.c_str());
+
+			mFeedReader->getMessageCount(mFeedId, NULL, NULL, &mUnreadCount);
+		} else {
+			mFeedId.clear();
+		}
+	}
+
+	emit feedMessageChanged(this);
+
+	updateMsgs();
+	updateCurrentMessage();
+}
+
 QString FeedReaderMessageWidget::feedName(bool withUnreadCount)
 {
 	QString name = mFeedName.isEmpty() ? tr("No name") : mFeedName;
@@ -250,6 +269,7 @@ void FeedReaderMessageWidget::msgTreeCustomPopupMenu(QPoint /*point*/)
 	action->setEnabled(!selectedItems.empty());
 
 	action = contextMnu.addAction(QIcon(""), tr("Mark all as read"), this, SLOT(markAllAsReadMsg()));
+	action->setEnabled(!mFeedId.empty());
 
 	contextMnu.addSeparator();
 

@@ -23,6 +23,7 @@ public:
 	~FeedReaderMessageWidget();
 
 	std::string feedId() { return mFeedId; }
+	void setFeedId(const std::string &feedId);
 	QString feedName(bool withUnreadCount);
 	QIcon feedIcon();
 

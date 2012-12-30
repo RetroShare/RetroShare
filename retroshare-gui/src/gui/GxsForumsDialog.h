@@ -65,9 +65,11 @@ private slots:
 	void restoreForumKeys();
 	void newforum();
 
-	void changedForum(const QString &id);
+	void changedForum(const QString &forumId);
+	void openInNewTab();
 	void threadTabCloseRequested(int index);
-	void threadTabChanged(QWidget *widget);
+	void threadTabChanged(int index);
+	void threadTabInfoChanged(QWidget *widget);
 
 	void copyForumLink();
 
@@ -101,13 +103,15 @@ private:
 	void requestGroupSummary();
 	void loadGroupSummary(const uint32_t &token);
 
-	GxsForumThreadWidget *forumThreadWidget(const std::string &id);
+	GxsForumThreadWidget *forumThreadWidget(const std::string &forumId);
+	GxsForumThreadWidget *createThreadWidget(const std::string &forumId);
 
 //	void requestGroupSummary_CurrentForum(const std::string &forumId);
 //	void loadGroupSummary_CurrentForum(const uint32_t &token);
 
 	std::string mForumId;
 	TokenQueue *mForumQueue;
+	GxsForumThreadWidget *mThreadWidget;
 
 	QTreeWidgetItem *yourForums;
 	QTreeWidgetItem *subscribedForums;

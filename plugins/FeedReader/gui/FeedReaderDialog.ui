@@ -141,7 +141,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QTabWidget" name="messageTabWidget">
+     <widget class="RSTabWidget" name="messageTabWidget">
       <property name="tabsClosable">
        <bool>true</bool>
       </property>
@@ -158,6 +158,12 @@
    <class>RSTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>gui/common/RSTreeWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RSTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header>gui/common/RSTabWidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

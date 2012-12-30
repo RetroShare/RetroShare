@@ -90,7 +90,6 @@ GxsForumThreadWidget::GxsForumThreadWidget(const std::string &forumId, QWidget *
 {
 	ui->setupUi(this);
 
-	mForumId = forumId;
 	mSubscribeFlags = 0;
 	mInProcessSettings = false;
 	mUnreadCount = 0;
@@ -172,8 +171,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const std::string &forumId, QWidget *
 
 	mFillThread = NULL;
 
-	ui->forumName->setText(tr("Loading"));
-	insertThreads();
+	setForumId(forumId);
 
 	ui->threadTreeWidget->installEventFilter(this);
 }
@@ -234,9 +232,27 @@ void GxsForumThreadWidget::processSettings(bool load)
 	mInProcessSettings = false;
 }
 
+void GxsForumThreadWidget::setForumId(const std::string &forumId)
+{
+	if (mForumId == forumId) {
+		if (!forumId.empty()) {
+			return;
+		}
+	}
+
+	mForumId = forumId;
+	ui->forumName->setText(mForumId.empty () ? "" : tr("Loading"));
+	mNewCount = 0;
+	mUnreadCount = 0;
+
+	emit forumChanged(this);
+
+	insertThreads();
+}
+
 QString GxsForumThreadWidget::forumName(bool withUnreadCount)
 {
-	QString name = ui->forumName->text();
+	QString name = mForumId.empty () ? tr("No name") : ui->forumName->text();
 
 	if (withUnreadCount && mUnreadCount) {
 		name += QString(" (%1)").arg(mUnreadCount);

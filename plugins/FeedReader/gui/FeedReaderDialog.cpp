@@ -68,10 +68,15 @@ FeedReaderDialog::FeedReaderDialog(RsFeedReader *feedReader, QWidget *parent)
 	connect(mNotify, SIGNAL(notifyMsgChanged(QString,QString,int)), this, SLOT(msgChanged(QString,QString,int)));
 
 	/* connect signals */
-	connect(ui->feedTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(feedItemChanged(QTreeWidgetItem*)));
-	connect(ui->messageTabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(messageTabCloseRequested(int)));
-
+	connect(ui->feedTreeWidget, SIGNAL(itemActivated(QTreeWidgetItem*,int)), this, SLOT(feedTreeItemActivated(QTreeWidgetItem*)));
+	if (!style()->styleHint(QStyle::SH_ItemView_ActivateItemOnSingleClick, NULL, this)) {
+		// need signal itemClicked too
+		connect(ui->feedTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(feedTreeItemActivated(QTreeWidgetItem*)));
+	}
 	connect(ui->feedTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(feedTreeCustomPopupMenu(QPoint)));
+
+	connect(ui->messageTabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(messageTabCloseRequested(int)));
+	connect(ui->messageTabWidget, SIGNAL(currentChanged(int)), this, SLOT(messageTabChanged(int)));
 
 	connect(ui->feedAddButton, SIGNAL(clicked()), this, SLOT(newFeed()));
 	connect(ui->feedProcessButton, SIGNAL(clicked()), this, SLOT(processFeed()));
@@ -102,7 +107,11 @@ FeedReaderDialog::FeedReaderDialog(RsFeedReader *feedReader, QWidget *parent)
 
 	ui->feedTreeWidget->installEventFilter(this);
 
-	feedItemChanged(NULL);
+	mMessageWidget = createMessageWidget("");
+	// remove close button of the the first tab
+	ui->messageTabWidget->hideCloseButton(ui->messageTabWidget->indexOf(mMessageWidget));
+
+	feedTreeItemActivated(NULL);
 }
 
 FeedReaderDialog::~FeedReaderDialog()
@@ -231,14 +240,33 @@ std::string FeedReaderDialog::currentFeedId()
 	return item->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toString().toStdString();
 }
 
+void FeedReaderDialog::setCurrentFeedId(const std::string &feedId)
+{
+	if (feedId.empty()) {
+		return;
+	}
+
+	QTreeWidgetItemIterator it(ui->feedTreeWidget);
+	QTreeWidgetItem *item;
+	while ((item = *it) != NULL) {
+		if (item->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toString().toStdString() == feedId) {
+			ui->feedTreeWidget->setCurrentItem(item);
+			break;
+		}
+		++it;
+	}
+}
+
 void FeedReaderDialog::feedTreeCustomPopupMenu(QPoint /*point*/)
 {
 	QMenu contextMnu(this);
 
 	bool folder = false;
+	std::string feedId;
 	QTreeWidgetItem *item = ui->feedTreeWidget->currentItem();
 	if (item) {
 		folder = item->data(COLUMN_FEED_DATA, ROLE_FEED_FOLDER).toBool();
+		feedId = item->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toString().toStdString();
 	}
 
 	QMenu *menu = contextMnu.addMenu(QIcon(""), tr("New"));
@@ -248,6 +276,13 @@ void FeedReaderDialog::feedTreeCustomPopupMenu(QPoint /*point*/)
 	}
 	action = menu->addAction(QIcon(":/images/FolderAdd.png"), tr("Folder"), this, SLOT(newFolder()));
 	if (!item || !folder) {
+		action->setEnabled(false);
+	}
+
+	contextMnu.addSeparator();
+
+	action = contextMnu.addAction(QIcon(""), tr("Open in new tab"), this, SLOT(openInNewTab()));
+	if (!item || folder || feedMessageWidget(feedId)) {
 		action->setEnabled(false);
 	}
 
@@ -530,6 +565,9 @@ FeedReaderMessageWidget *FeedReaderDialog::feedMessageWidget(const std::string &
 	int tabCount = ui->messageTabWidget->count();
 	for (int index = 0; index < tabCount; ++index) {
 		FeedReaderMessageWidget *childWidget = dynamic_cast<FeedReaderMessageWidget*>(ui->messageTabWidget->widget(index));
+		if (childWidget == mMessageWidget) {
+			continue;
+		}
 		if (childWidget && childWidget->feedId() == id) {
 			return childWidget;
 		}
@@ -538,7 +576,17 @@ FeedReaderMessageWidget *FeedReaderDialog::feedMessageWidget(const std::string &
 	return NULL;
 }
 
-void FeedReaderDialog::feedItemChanged(QTreeWidgetItem *item)
+FeedReaderMessageWidget *FeedReaderDialog::createMessageWidget(const std::string &feedId)
+{
+	FeedReaderMessageWidget *messageWidget = new FeedReaderMessageWidget(feedId, mFeedReader, mNotify);
+	int index = ui->messageTabWidget->addTab(messageWidget, messageWidget->feedName(true));
+	ui->messageTabWidget->setTabIcon(index, messageWidget->feedIcon());
+	connect(messageWidget, SIGNAL(feedMessageChanged(QWidget*)), this, SLOT(messageTabInfoChanged(QWidget*)));
+
+	return messageWidget;
+}
+
+void FeedReaderDialog::feedTreeItemActivated(QTreeWidgetItem *item)
 {
 	if (!item) {
 		ui->feedAddButton->setEnabled(false);
@@ -558,13 +606,27 @@ void FeedReaderDialog::feedItemChanged(QTreeWidgetItem *item)
 	std::string feedId = item->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toString().toStdString();
 	/* search exisiting tab */
 	FeedReaderMessageWidget *messageWidget = feedMessageWidget(feedId);
-
 	if (!messageWidget) {
-		/* create a message widget */
-		messageWidget = new FeedReaderMessageWidget(feedId, mFeedReader, mNotify);
-		int index = ui->messageTabWidget->addTab(messageWidget, messageWidget->feedName(true));
-		ui->messageTabWidget->setTabIcon(index, messageWidget->feedIcon());
-		connect(messageWidget, SIGNAL(feedMessageChanged(QWidget*)), this, SLOT(messageTabChanged(QWidget*)));
+		/* not found, use standard tab */
+		messageWidget = mMessageWidget;
+		messageWidget->setFeedId(feedId);
+	}
+
+	ui->messageTabWidget->setCurrentWidget(messageWidget);
+}
+
+void FeedReaderDialog::openInNewTab()
+{
+	std::string feedId = currentFeedId();
+	if (feedId.empty()) {
+		return;
+	}
+
+	/* search exisiting tab */
+	FeedReaderMessageWidget *messageWidget = feedMessageWidget(feedId);
+	if (!messageWidget) {
+		/* not found, create new tab */
+		messageWidget = createMessageWidget(feedId);
 	}
 
 	ui->messageTabWidget->setCurrentWidget(messageWidget);
@@ -573,12 +635,28 @@ void FeedReaderDialog::feedItemChanged(QTreeWidgetItem *item)
 void FeedReaderDialog::messageTabCloseRequested(int index)
 {
 	FeedReaderMessageWidget *messageWidget = dynamic_cast<FeedReaderMessageWidget*>(ui->messageTabWidget->widget(index));
-	if (messageWidget) {
-		delete(messageWidget);
+	if (!messageWidget) {
+		return;
 	}
+
+	if (messageWidget == mMessageWidget) {
+		return;
+	}
+
+	delete(messageWidget);
 }
 
-void FeedReaderDialog::messageTabChanged(QWidget *widget)
+void FeedReaderDialog::messageTabChanged(int index)
+{
+	FeedReaderMessageWidget *messageWidget = dynamic_cast<FeedReaderMessageWidget*>(ui->messageTabWidget->widget(index));
+	if (!messageWidget) {
+		return;
+	}
+
+	setCurrentFeedId(messageWidget->feedId());
+}
+
+void FeedReaderDialog::messageTabInfoChanged(QWidget *widget)
 {
 	int index = ui->messageTabWidget->indexOf(widget);
 	if (index < 0) {

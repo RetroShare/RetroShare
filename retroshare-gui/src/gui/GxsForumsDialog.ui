@@ -168,7 +168,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QTabWidget" name="threadTabWidget">
+     <widget class="RSTabWidget" name="threadTabWidget">
       <property name="currentIndex">
        <number>-1</number>
       </property>
@@ -194,6 +194,12 @@
   </action>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>RSTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header>gui/common/RSTabWidget.h</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>GroupTreeWidget</class>
    <extends>QWidget</extends>

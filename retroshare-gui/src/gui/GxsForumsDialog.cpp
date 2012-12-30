@@ -72,8 +72,9 @@ GxsForumsDialog::GxsForumsDialog(QWidget *parent)
 
 	connect(ui.forumTreeWidget, SIGNAL(treeCustomContextMenuRequested(QPoint)), this, SLOT(forumListCustomPopupMenu(QPoint)));
 	connect(ui.newForumButton, SIGNAL(clicked()), this, SLOT(newforum()));
-	connect(ui.forumTreeWidget, SIGNAL(treeItemClicked(QString)), this, SLOT(changedForum(QString)));
+	connect(ui.forumTreeWidget, SIGNAL(treeItemActivated(QString)), this, SLOT(changedForum(QString)));
 	connect(ui.threadTabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(threadTabCloseRequested(int)));
+	connect(ui.threadTabWidget, SIGNAL(currentChanged(int)), this, SLOT(threadTabChanged(int)));
 	connect(NotifyQt::getInstance(), SIGNAL(forumMsgReadSatusChanged(QString,QString,int)), this, SLOT(forumMsgReadSatusChanged(QString,QString,int)));
 
 	// HACK - TEMPORARY HIJACKING THIS BUTTON FOR REFRESH.
@@ -95,6 +96,10 @@ GxsForumsDialog::GxsForumsDialog(QWidget *parent)
 
 	// load settings
 	processSettings(true);
+
+	mThreadWidget = createThreadWidget("");
+	// remove close button of the the first tab
+	ui.threadTabWidget->hideCloseButton(ui.threadTabWidget->indexOf(mThreadWidget));
 
 /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -147,6 +152,11 @@ void GxsForumsDialog::forumListCustomPopupMenu(QPoint /*point*/)
 
 	action = contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Unsubscribe to Forum"), this, SLOT(unsubscribeToForum()));
 	action->setEnabled (!mForumId.empty() && IS_GROUP_SUBSCRIBED(subscribeFlags));
+
+	action = contextMnu.addAction(QIcon(""), tr("Open in new tab"), this, SLOT(openInNewTab()));
+	if (mForumId.empty() || forumThreadWidget(mForumId)) {
+		action->setEnabled(false);
+	}
 
 	contextMnu.addSeparator();
 
@@ -320,12 +330,15 @@ void GxsForumsDialog::insertForumsData(const std::list<RsGroupMetaData> &forumLi
 	updateMessageSummaryList("");
 }
 
-GxsForumThreadWidget *GxsForumsDialog::forumThreadWidget(const std::string &id)
+GxsForumThreadWidget *GxsForumsDialog::forumThreadWidget(const std::string &forumId)
 {
 	int tabCount = ui.threadTabWidget->count();
 	for (int index = 0; index < tabCount; ++index) {
 		GxsForumThreadWidget *childWidget = dynamic_cast<GxsForumThreadWidget*>(ui.threadTabWidget->widget(index));
-		if (childWidget && childWidget->forumId() == id) {
+		if (childWidget == mThreadWidget) {
+			continue;
+		}
+		if (childWidget && childWidget->forumId() == forumId) {
 			return childWidget;
 			break;
 		}
@@ -334,9 +347,19 @@ GxsForumThreadWidget *GxsForumsDialog::forumThreadWidget(const std::string &id)
 	return NULL;
 }
 
-void GxsForumsDialog::changedForum(const QString &id)
+GxsForumThreadWidget *GxsForumsDialog::createThreadWidget(const std::string &forumId)
 {
-	mForumId = id.toStdString();
+	GxsForumThreadWidget *threadWidget = new GxsForumThreadWidget(forumId);
+	int index = ui.threadTabWidget->addTab(threadWidget, threadWidget->forumName(true));
+	ui.threadTabWidget->setTabIcon(index, threadWidget->forumIcon());
+	connect(threadWidget, SIGNAL(forumChanged(QWidget*)), this, SLOT(threadTabInfoChanged(QWidget*)));
+
+	return threadWidget;
+}
+
+void GxsForumsDialog::changedForum(const QString &forumId)
+{
+	mForumId = forumId.toStdString();
 	if (mForumId.empty()) {
 		return;
 	}
@@ -344,14 +367,28 @@ void GxsForumsDialog::changedForum(const QString &id)
 //	requestGroupSummary_CurrentForum(mForumId);
 
 	/* search exisiting tab */
-	GxsForumThreadWidget *threadWidget = forumThreadWidget(id.toStdString());
+	GxsForumThreadWidget *threadWidget = forumThreadWidget(mForumId);
 
 	if (!threadWidget) {
-		/* create a thread widget */
-		threadWidget = new GxsForumThreadWidget(id.toStdString());
-		int index = ui.threadTabWidget->addTab(threadWidget, threadWidget->forumName(true));
-		ui.threadTabWidget->setTabIcon(index, threadWidget->forumIcon());
-		connect(threadWidget, SIGNAL(forumChanged(QWidget*)), this, SLOT(threadTabChanged(QWidget*)));
+		/* not found, use standard tab */
+		threadWidget = mThreadWidget;
+		threadWidget->setForumId(mForumId);
+	}
+
+	ui.threadTabWidget->setCurrentWidget(threadWidget);
+}
+
+void GxsForumsDialog::openInNewTab()
+{
+	if (mForumId.empty()) {
+		return;
+	}
+
+	/* search exisiting tab */
+	GxsForumThreadWidget *threadWidget = forumThreadWidget(mForumId);
+	if (!threadWidget) {
+		/* not found, create new tab */
+		threadWidget = createThreadWidget(mForumId);
 	}
 
 	ui.threadTabWidget->setCurrentWidget(threadWidget);
@@ -360,12 +397,28 @@ void GxsForumsDialog::changedForum(const QString &id)
 void GxsForumsDialog::threadTabCloseRequested(int index)
 {
 	GxsForumThreadWidget *threadWidget = dynamic_cast<GxsForumThreadWidget*>(ui.threadTabWidget->widget(index));
-	if (threadWidget) {
-		delete(threadWidget);
+	if (!threadWidget) {
+		return;
 	}
+
+	if (threadWidget == mThreadWidget) {
+		return;
+	}
+
+	delete(threadWidget);
 }
 
-void GxsForumsDialog::threadTabChanged(QWidget *widget)
+void GxsForumsDialog::threadTabChanged(int index)
+{
+	GxsForumThreadWidget *threadWidget = dynamic_cast<GxsForumThreadWidget*>(ui.threadTabWidget->widget(index));
+	if (!threadWidget) {
+		return;
+	}
+
+	ui.forumTreeWidget->activateId(QString::fromStdString(threadWidget->forumId()), false);
+}
+
+void GxsForumsDialog::threadTabInfoChanged(QWidget *widget)
 {
 	int index = ui.threadTabWidget->indexOf(widget);
 	if (index < 0) {

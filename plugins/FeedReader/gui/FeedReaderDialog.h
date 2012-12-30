@@ -46,12 +46,13 @@ public:
 	virtual UserNotify *getUserNotify(QObject *parent);
 
 protected:
-	virtual void showEvent(QShowEvent *e);
+	virtual void showEvent(QShowEvent *event);
 	bool eventFilter(QObject *obj, QEvent *ev);
 
 private slots:
 	void feedTreeCustomPopupMenu(QPoint point);
-	void feedItemChanged(QTreeWidgetItem *item);
+	void feedTreeItemActivated(QTreeWidgetItem *item);
+	void openInNewTab();
 	void newFolder();
 	void newFeed();
 	void removeFeed();
@@ -60,13 +61,15 @@ private slots:
 	void processFeed();
 
 	void messageTabCloseRequested(int index);
-	void messageTabChanged(QWidget *widget);
+	void messageTabChanged(int index);
+	void messageTabInfoChanged(QWidget *widget);
 
 	/* FeedReaderNotify */
 	void feedChanged(const QString &feedId, int type);
 
 private:
 	std::string currentFeedId();
+	void setCurrentFeedId(const std::string &feedId);
 	void processSettings(bool load);
 	void addFeedToExpand(const std::string &feedId);
 	void getExpandedFeedIds(QList<std::string> &feedIds);
@@ -76,12 +79,14 @@ private:
 	void calculateFeedItems();
 	void calculateFeedItem(QTreeWidgetItem *item, uint32_t &unreadCount, bool &loading);
 
-	FeedReaderMessageWidget *feedMessageWidget(const std::string &id);
+	FeedReaderMessageWidget *feedMessageWidget(const std::string &feedId);
+	FeedReaderMessageWidget *createMessageWidget(const std::string &feedId);
 
 	bool mProcessSettings;
 	QList<std::string> *mOpenFeedIds;
 	QTreeWidgetItem *mRootItem;
 	RSTreeWidgetItemCompareRole *mFeedCompareRole;
+	FeedReaderMessageWidget *mMessageWidget;
 
 	// gui interface
 	RsFeedReader *mFeedReader;

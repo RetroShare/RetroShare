@@ -100,7 +100,7 @@ public:
 signals:
 	void treeCustomContextMenuRequested(const QPoint &pos);
 	void treeCurrentItemChanged(const QString &id);
-	void treeItemClicked(const QString &id);
+	void treeItemActivated(const QString &id);
 
 protected:
 	void changeEvent(QEvent *e);
@@ -108,7 +108,7 @@ protected:
 private slots:
 	void customContextMenuRequested(const QPoint &pos);
 	void currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
-	void itemClicked(QTreeWidgetItem *item, int column);
+	void itemActivated(QTreeWidgetItem *item, int column);
 	void filterChanged();
 
 	void sort();

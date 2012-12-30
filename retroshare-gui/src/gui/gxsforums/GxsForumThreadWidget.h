@@ -41,6 +41,7 @@ public:
 	void setTextColorMissing(QColor color) { mTextColorMissing = color; }
 
 	std::string forumId() { return mForumId; }
+	void setForumId(const std::string &forumId);
 	QString forumName(bool withUnreadCount);
 	QIcon forumIcon();
 	unsigned int newCount() { return mNewCount; }

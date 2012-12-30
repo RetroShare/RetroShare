@@ -70,7 +70,11 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 
 	connect(ui->treeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customContextMenuRequested(QPoint)));
 	connect(ui->treeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)), this, SLOT(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
-	connect(ui->treeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(itemClicked(QTreeWidgetItem*,int)));
+	connect(ui->treeWidget, SIGNAL(itemActivated(QTreeWidgetItem*,int)), this, SLOT(itemActivated(QTreeWidgetItem*,int)));
+	if (!style()->styleHint(QStyle::SH_ItemView_ActivateItemOnSingleClick, NULL, this)) {
+		// need signal itemClicked too
+		connect(ui->treeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(itemActivated(QTreeWidgetItem*,int)));
+	}
 
 	/* Add own item delegate */
 	RSItemDelegate *itemDelegate = new RSItemDelegate(this);
@@ -234,7 +238,7 @@ void GroupTreeWidget::currentItemChanged(QTreeWidgetItem *current, QTreeWidgetIt
 	emit treeCurrentItemChanged(id);
 }
 
-void GroupTreeWidget::itemClicked(QTreeWidgetItem *item, int column)
+void GroupTreeWidget::itemActivated(QTreeWidgetItem *item, int column)
 {
 	Q_UNUSED(column);
 
@@ -244,7 +248,7 @@ void GroupTreeWidget::itemClicked(QTreeWidgetItem *item, int column)
 		id = item->data(COLUMN_DATA, ROLE_ID).toString();
 	}
 
-	emit treeItemClicked(id);
+	emit treeItemActivated(id);
 }
 
 QTreeWidgetItem *GroupTreeWidget::addCategoryItem(const QString &name, const QIcon &icon, bool expand)
