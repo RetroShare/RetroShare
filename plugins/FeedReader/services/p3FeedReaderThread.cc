@@ -276,6 +276,7 @@ RsFeedReaderErrorState p3FeedReaderThread::download(const RsFeedReaderFeed &feed
 				std::string contentType = CURL.contentType();
 
 				if (isContentType(contentType, "text/xml") ||
+					isContentType(contentType, "text/html") ||
 					isContentType(contentType, "application/rss+xml") ||
 					isContentType(contentType, "application/xml") ||
 					isContentType(contentType, "application/xhtml+xml") ||
@@ -900,7 +901,15 @@ RsFeedReaderErrorState p3FeedReaderThread::process(const RsFeedReaderFeed &feed,
 							item->link.erase(sidStart, sidEnd - sidStart);
 						}
 
-						xml.getChildText(node, "author", item->author);
+						if (feedFormat == FORMAT_ATOM) {
+							/* <author><name>... */
+							xmlNodePtr author = xml.findNode(node->children, "author", false);
+							if (author) {
+								xml.getChildText(node, "name", item->author);
+							}
+						} else {
+							xml.getChildText(node, "author", item->author);
+						}
 
 						switch (feedFormat) {
 						case FORMAT_RSS:

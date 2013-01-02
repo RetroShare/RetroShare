@@ -668,6 +668,11 @@ void FeedReaderDialog::messageTabInfoChanged(QWidget *widget)
 		return;
 	}
 
+	if (messageWidget != mMessageWidget && messageWidget->feedId().empty()) {
+		messageWidget->deleteLater();
+		return;
+	}
+
 	ui->messageTabWidget->setTabText(index, messageWidget->feedName(true));
 	ui->messageTabWidget->setTabIcon(index, messageWidget->feedIcon());
 }

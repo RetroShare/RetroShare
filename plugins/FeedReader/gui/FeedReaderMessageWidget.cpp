@@ -214,12 +214,14 @@ void FeedReaderMessageWidget::setFeedId(const std::string &feedId)
 		} else {
 			mFeedId.clear();
 		}
+	} else {
+		mFeedName.clear();
 	}
-
-	emit feedMessageChanged(this);
 
 	updateMsgs();
 	updateCurrentMessage();
+
+	emit feedMessageChanged(this);
 }
 
 QString FeedReaderMessageWidget::feedName(bool withUnreadCount)
@@ -405,7 +407,7 @@ void FeedReaderMessageWidget::feedChanged(const QString &feedId, int type)
 	}
 
 	if (type == NOTIFY_TYPE_DEL) {
-		deleteLater();
+		setFeedId("");
 		return;
 	}
 
