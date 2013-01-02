@@ -30,7 +30,7 @@
 #include <openssl/evp.h>
 #include <unistd.h> // for usleep
 
-enum FeedFormat { FORMAT_RSS, FORMAT_RDF };
+enum FeedFormat { FORMAT_RSS, FORMAT_RDF, FORMAT_ATOM };
 
 /*********
  * #define FEEDREADER_DEBUG
@@ -278,7 +278,8 @@ RsFeedReaderErrorState p3FeedReaderThread::download(const RsFeedReaderFeed &feed
 				if (isContentType(contentType, "text/xml") ||
 					isContentType(contentType, "application/rss+xml") ||
 					isContentType(contentType, "application/xml") ||
-					isContentType(contentType, "application/xhtml+xml")) {
+					isContentType(contentType, "application/xhtml+xml") ||
+					isContentType(contentType, "application/atom+xml")) {
 					/* ok */
 					result = RS_FEED_ERRORSTATE_OK;
 				} else {
@@ -321,6 +322,7 @@ static xmlNodePtr getNextItem(FeedFormat feedFormat, xmlNodePtr channel, xmlNode
 	if (!item) {
 		switch (feedFormat) {
 		case FORMAT_RSS:
+		case FORMAT_ATOM:
 				item = channel->children;
 				break;
 		case FORMAT_RDF:
@@ -333,7 +335,7 @@ static xmlNodePtr getNextItem(FeedFormat feedFormat, xmlNodePtr channel, xmlNode
 		item = item->next;
 	}
 	for (; item; item = item->next) {
-		if (item->type == XML_ELEMENT_NODE && xmlStrEqual(item->name, BAD_CAST"item")) {
+		if (item->type == XML_ELEMENT_NODE && xmlStrcasecmp(item->name, (feedFormat == FORMAT_ATOM) ? BAD_CAST"entry" : BAD_CAST"item") == 0) {
 			break;
 		}
 	}
@@ -809,17 +811,29 @@ RsFeedReaderErrorState p3FeedReaderThread::process(const RsFeedReaderFeed &feed,
 		xmlNodePtr root = xml.getRootElement();
 		if (root) {
 			FeedFormat feedFormat;
-			if (xmlStrEqual(root->name, BAD_CAST"rss")) {
+			if (xmlStrcasecmp(root->name, BAD_CAST"rss") == 0) {
 				feedFormat = FORMAT_RSS;
-			} else if (xmlStrEqual (root->name, BAD_CAST"rdf")) {
+			} else if (xmlStrcasecmp (root->name, BAD_CAST"rdf") == 0) {
 				feedFormat = FORMAT_RDF;
+			} else if (xmlStrcasecmp (root->name, BAD_CAST"feed") == 0) {
+				feedFormat = FORMAT_ATOM;
 			} else {
 				result = RS_FEED_ERRORSTATE_PROCESS_UNKNOWN_FORMAT;
-				error = "Only RSS or RDF supported";
+				error = "Only RSS, RDF or ATOM supported";
 			}
 
 			if (result == RS_FEED_ERRORSTATE_OK) {
-				xmlNodePtr channel = xml.findNode(root->children, "channel");
+				xmlNodePtr channel = NULL;
+				switch (feedFormat) {
+				case FORMAT_RSS:
+				case FORMAT_RDF:
+					channel = xml.findNode(root->children, "channel");
+					break;
+				case FORMAT_ATOM:
+					channel = root;
+					break;
+				}
+
 				if (channel) {
 					/* import header info */
 					if (feed.flag & RS_FEED_FLAG_INFO_FROM_FEED) {
@@ -830,7 +844,7 @@ RsFeedReaderErrorState p3FeedReaderThread::process(const RsFeedReaderFeed &feed,
 								title.erase(p, 1);
 							}
 							std::string description;
-							xml.getChildText(channel, "description", description);
+							xml.getChildText(channel, (feedFormat == FORMAT_ATOM) ? "subtitle" : "description", description);
 							mFeedReader->setFeedInfo(feed.feedId, title, description);
 						}
 					}
@@ -888,13 +902,29 @@ RsFeedReaderErrorState p3FeedReaderThread::process(const RsFeedReaderFeed &feed,
 
 						xml.getChildText(node, "author", item->author);
 
-						xml.getChildText(node, "description", item->description);
+						switch (feedFormat) {
+						case FORMAT_RSS:
+						case FORMAT_RDF:
+							xml.getChildText(node, "description", item->description);
+							break;
+						case FORMAT_ATOM:
+							/* try content */
+							if (!xml.getChildText(node, "content", item->description)) {
+								/* use summary */
+								xml.getChildText(node, "summary", item->description);
+							}
+							break;
+						}
 
 						std::string pubDate;
 						if (xml.getChildText(node, "pubdate", pubDate)) {
 							item->pubDate = parseRFC822Date(pubDate);
 						}
 						if (xml.getChildText(node, "date", pubDate)) {
+							item->pubDate = parseISO8601Date (pubDate);
+						}
+						if (xml.getChildText(node, "updated", pubDate)) {
+							// atom
 							item->pubDate = parseISO8601Date (pubDate);
 						}
 
@@ -1029,7 +1059,7 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 
 				switch (node->type) {
 				case XML_ELEMENT_NODE:
-					if (xmlStrEqual(node->name, BAD_CAST"img")) {
+					if (xmlStrcasecmp(node->name, BAD_CAST"img") == 0) {
 						/* process images */
 
 						if ((feed.flag & RS_FEED_FLAG_EMBED_IMAGES) == 0) {
@@ -1038,7 +1068,7 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 							nodesToDelete.push_back(node);
 							continue;
 						}
-					} else if (xmlStrEqual(node->name, BAD_CAST"script")) {
+					} else if (xmlStrcasecmp(node->name, BAD_CAST"script") == 0) {
 						/* remove script */
 						xmlUnlinkNode(node);
 						nodesToDelete.push_back(node);
@@ -1055,22 +1085,11 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 					{
 						/* check for only space */
 						std::string content;
-						if (html.getContent(node, content)) {
+						if (html.getContent(node, content, false)) {
 							std::string newContent = content;
 
-							/* trim left */
-							std::string::size_type find = newContent.find_first_not_of(" \t\r\n");
-							if (find != std::string::npos) {
-								newContent.erase(0, find);
-
-								/* trim right */
-								find = newContent.find_last_not_of(" \t\r\n");
-								if (find != std::string::npos) {
-									newContent.erase(find + 1);
-								}
-							} else {
-								newContent.clear();
-							}
+							/* trim */
+							XMLWrapper::trimString(newContent);
 
 							if (newContent.empty()) {
 								xmlUnlinkNode(node);

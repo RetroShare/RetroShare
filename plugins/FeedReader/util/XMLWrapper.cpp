@@ -42,6 +42,24 @@ XMLWrapper::~XMLWrapper()
 	xmlCharEncCloseFunc(mCharEncodingHandler);
 }
 
+void XMLWrapper::trimString(std::string &string)
+{
+	/* trim left */
+	std::string::size_type find = string.find_first_not_of(" \t\r\n");
+	if (find != std::string::npos) {
+		string.erase(0, find);
+
+		/* trim right */
+		find = string.find_last_not_of(" \t\r\n");
+		if (find != std::string::npos) {
+			string.erase(find + 1);
+		}
+	} else {
+		string.clear();
+	}
+}
+
+
 XMLWrapper &XMLWrapper::operator=(const XMLWrapper &xml)
 {
 	cleanup();
@@ -124,7 +142,7 @@ bool XMLWrapper::readXML(const char *xml)
 	return false;
 }
 
-bool XMLWrapper::getContent(xmlNodePtr node, std::string &content)
+bool XMLWrapper::getContent(xmlNodePtr node, std::string &content, bool trim)
 {
 	content.clear();
 
@@ -139,6 +157,10 @@ bool XMLWrapper::getContent(xmlNodePtr node, std::string &content)
 
 	bool result = convertToString(xmlContent, content);
 	xmlFree(xmlContent);
+
+	if (result && trim) {
+		trimString(content);
+	}
 
 	return result;
 }
@@ -158,6 +180,41 @@ bool XMLWrapper::setContent(xmlNodePtr node, const char *content)
 	xmlFree(xmlContent);
 
 	return true;
+}
+
+bool XMLWrapper::nodeDump(xmlNodePtr node, std::string &content, bool trim)
+{
+	content.clear();
+
+	if (!mDocument) {
+		return false;
+	}
+
+	if (!node) {
+		return false;
+	}
+
+	bool result = false;
+
+	xmlBufferPtr buffer = xmlBufferCreate();
+	if (buffer) {
+		xmlOutputBufferPtr outputBuffer = xmlOutputBufferCreateBuffer(buffer, NULL);
+		if (outputBuffer) {
+			xmlNodeDumpOutput(outputBuffer, mDocument, node, 0, 0, "UTF8");
+			xmlOutputBufferClose(outputBuffer);
+			outputBuffer = NULL;
+
+			result = convertToString(buffer->content, content);
+
+			if (result && trim) {
+				trimString(content);
+			}
+		}
+		xmlBufferFree(buffer);
+		buffer = NULL;
+	}
+
+	return result;
 }
 
 std::string XMLWrapper::nodeName(xmlNodePtr node)
@@ -227,6 +284,16 @@ bool XMLWrapper::getChildText(xmlNodePtr node, const char *childName, std::strin
 
 	if (!child->children) {
 		return false;
+	}
+
+	if (getAttr(child, "type") == "xhtml") {
+		/* search div */
+		xmlNodePtr div = findNode(child->children, "div", false);
+		if (!div) {
+			return false;
+		}
+
+		return nodeDump(div, text, true);
 	}
 
 	if (child->children->type != XML_TEXT_NODE) {

@@ -33,6 +33,9 @@ public:
 	XMLWrapper();
 	~XMLWrapper();
 
+	// find better place
+	static void trimString(std::string &string);
+
 	XMLWrapper &operator=(const XMLWrapper &xml);
 
 	void cleanup();
@@ -48,8 +51,10 @@ public:
 	xmlNodePtr findNode(xmlNodePtr node, const char *name, bool children = false);
 	bool getChildText(xmlNodePtr node, const char *childName, std::string &text);
 
-	bool getContent(xmlNodePtr node, std::string &content);
+	bool getContent(xmlNodePtr node, std::string &content, bool trim);
 	bool setContent(xmlNodePtr node, const char *content);
+
+	bool nodeDump(xmlNodePtr node, std::string &content, bool trim);
 
 	std::string getAttr(xmlNodePtr node, xmlAttrPtr attr);
 	std::string getAttr(xmlNodePtr node, const char *name);

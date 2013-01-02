@@ -578,7 +578,7 @@ static void buildNodeText(HTMLWrapper &html, xmlNodePtr node, QString &text)
 		if (node->children && !node->children->next && node->children->type == XML_TEXT_NODE) {
 			/* only one text node as child */
 			std::string content;
-			if (html.getContent(node->children, content)) {
+			if (html.getContent(node->children, content, false)) {
 				text += QString::fromUtf8(content.c_str());
 			} else {
 				text += QApplication::translate("PreviewFeedDialog", "Error getting content");
@@ -597,7 +597,7 @@ static void buildNodeText(HTMLWrapper &html, xmlNodePtr node, QString &text)
 			}
 
 			std::string content;
-			if (html.getContent(node, content)) {
+			if (html.getContent(node, content, false)) {
 				text += QString::fromUtf8(content.c_str());
 			} else {
 				text += QApplication::translate("PreviewFeedDialog", "Error getting content");
