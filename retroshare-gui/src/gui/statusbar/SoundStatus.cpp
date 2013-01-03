@@ -39,6 +39,7 @@ SoundStatus::SoundStatus(QWidget *parent)
 	imageButton->setFlat(true);
 	imageButton->setCheckable(true);
 	imageButton->setMaximumSize(24, 24);
+	imageButton->setFocusPolicy(Qt::ClickFocus);
 	hbox->addWidget(imageButton);
 
 	setLayout(hbox);

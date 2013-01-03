@@ -39,6 +39,7 @@ OpModeStatus::OpModeStatus(QWidget *parent)
 
 	setToolTip(tr("Use this DropList to quickly change Retroshare's behaviour\n No Anon D/L: switches off file forwarding\n Gaming Mode: 25% standard traffic and TODO: reduced popups\n Low Traffic: 10% standard traffic and TODO: pauses all file-transfers"));
 
+	setFocusPolicy(Qt::ClickFocus);
 }
 
 

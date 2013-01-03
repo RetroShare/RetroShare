@@ -46,6 +46,7 @@ LineEditClear::LineEditClear(QWidget *parent)
 								"QToolButton:hover { border-image: url(:/images/closehover.png) }"
 								"QToolButton:pressed  { border-image: url(:/images/closepressed.png) }");
 	mClearButton->hide();
+	mClearButton->setFocusPolicy(Qt::NoFocus);
 
 	connect(mClearButton, SIGNAL(clicked()), this, SLOT(clear()));
 	connect(this, SIGNAL(textChanged(const QString&)), this, SLOT(updateClearButton(const QString&)));
@@ -127,6 +128,7 @@ void LineEditClear::showFilterIcon()
 								 "QToolButton[popupMode=\"2\"] { padding-right: 10px; }"
 								 "QToolButton::menu-indicator[popupMode=\"2\"] { subcontrol-origin: padding; subcontrol-position: bottom right; top: 5px; left: -3px; width: 7px; }");
 	mFilterButton->move(2, 2);
+	mFilterButton->setFocusPolicy(Qt::NoFocus);
 
 	reposButtons();
 }

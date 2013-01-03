@@ -84,6 +84,9 @@
           </item>
           <item>
            <widget class="QToolButton" name="feedAddButton">
+            <property name="focusPolicy">
+             <enum>Qt::ClickFocus</enum>
+            </property>
             <property name="toolTip">
              <string>Add new feed</string>
             </property>
@@ -98,6 +101,9 @@
           </item>
           <item>
            <widget class="QToolButton" name="feedProcessButton">
+            <property name="focusPolicy">
+             <enum>Qt::ClickFocus</enum>
+            </property>
             <property name="toolTip">
              <string>Update feed</string>
             </property>

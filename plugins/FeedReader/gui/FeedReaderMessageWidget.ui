@@ -41,6 +41,9 @@
           </property>
           <item>
            <widget class="QToolButton" name="msgReadButton">
+            <property name="focusPolicy">
+             <enum>Qt::ClickFocus</enum>
+            </property>
             <property name="toolTip">
              <string>Mark messages as read</string>
             </property>
@@ -58,6 +61,9 @@
           </item>
           <item>
            <widget class="QToolButton" name="msgUnreadButton">
+            <property name="focusPolicy">
+             <enum>Qt::ClickFocus</enum>
+            </property>
             <property name="toolTip">
              <string>Mark messages as unread</string>
             </property>
@@ -72,6 +78,9 @@
           </item>
           <item>
            <widget class="QToolButton" name="msgReadAllButton">
+            <property name="focusPolicy">
+             <enum>Qt::ClickFocus</enum>
+            </property>
             <property name="toolTip">
              <string>Mark all messages as read</string>
             </property>
@@ -86,6 +95,9 @@
           </item>
           <item>
            <widget class="QToolButton" name="msgRemoveButton">
+            <property name="focusPolicy">
+             <enum>Qt::ClickFocus</enum>
+            </property>
             <property name="toolTip">
              <string>Remove messages</string>
             </property>
@@ -100,6 +112,9 @@
           </item>
           <item>
            <widget class="QToolButton" name="feedProcessButton">
+            <property name="focusPolicy">
+             <enum>Qt::ClickFocus</enum>
+            </property>
             <property name="toolTip">
              <string>Update feed</string>
             </property>
@@ -187,6 +202,9 @@
          </item>
          <item>
           <widget class="QToolButton" name="linkButton">
+           <property name="focusPolicy">
+            <enum>Qt::ClickFocus</enum>
+           </property>
            <property name="icon">
             <iconset resource="FeedReader_images.qrc">
              <normaloff>:/images/Link.png</normaloff>:/images/Link.png</iconset>
@@ -240,6 +258,9 @@
        <font>
         <pointsize>9</pointsize>
        </font>
+      </property>
+      <property name="textInteractionFlags">
+       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
       </property>
      </widget>
     </widget>
