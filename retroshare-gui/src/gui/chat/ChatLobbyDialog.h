@@ -40,6 +40,7 @@ public:
 	virtual bool hasPeerStatus() { return false; }
 	virtual bool notifyBlink();
 	void setNickname(const QString &nickname);
+	bool isParticipantMuted(const QString &participant);
 
 private slots:
 	void showParticipantsFrame(bool show);
@@ -68,7 +69,6 @@ private:
 
 	void muteParticipant(const QString &nickname);
 	void unMuteParticipant(const QString &nickname);
-	bool isParticipantMuted(const QString &participant);
 	bool isNicknameInLobby(const QString &nickname);
 	
 	ChatLobbyId lobbyId;

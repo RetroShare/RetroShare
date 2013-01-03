@@ -41,6 +41,7 @@
 #include "toaster/FriendRequestToaster.h"
 
 #include "chat/ChatDialog.h"
+#include "chat/ChatLobbyDialog.h"
 #include "chat/ChatWidget.h"
 #include "FriendsDialog.h"
 #include "gui/settings/rsharesettings.h"
@@ -698,6 +699,11 @@ void NotifyQt::UpdateGUI()
 						ChatWidget *chatWidget;
 						if (chatDialog && (chatWidget = chatDialog->getChatWidget()) && chatWidget->isActive()) {
 							// do not show when active
+							break;
+						}
+						ChatLobbyDialog *chatLobbyDialog = dynamic_cast<ChatLobbyDialog*>(chatDialog);
+						if (!chatLobbyDialog || chatLobbyDialog->isParticipantMuted(QString::fromUtf8(title.c_str()))) {
+							// participant is muted
 							break;
 						}
 						toaster = new Toaster(new ChatLobbyToaster(id, QString::fromUtf8(title.c_str()), QString::fromUtf8(msg.c_str())));
