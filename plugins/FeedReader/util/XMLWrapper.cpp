@@ -107,7 +107,11 @@ bool XMLWrapper::convertFromString(const char *text, xmlChar *&xmlText)
 	int ret = xmlCharEncInFunc(mCharEncodingHandler, out, in);
 	if (ret >= 0) {
 		result = true;
+#if LIBXML_VERSION >= 20800
 		xmlText = xmlBufferDetach(out);
+#else
+		xmlText = xmlStrdup(xmlBufferContent(out));
+#endif
 	}
 
 	xmlBufferFree(in);
