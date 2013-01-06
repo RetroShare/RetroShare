@@ -66,6 +66,8 @@ class NotifyQt: public QObject, public NotifyBase
 
 		void testToaster(uint notifyFlags, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin);
 
+		void notifySettingsChanged();
+
 	signals:
 		// It's beneficial to send info to the GUI using signals, because signals are thread-safe
 		// as they get queued by Qt.
@@ -107,6 +109,7 @@ class NotifyQt: public QObject, public NotifyBase
 
 		/* Notify from GUI */
 		void chatStyleChanged(int /*ChatStyle::enumStyleType*/ styleType);
+		void settingsChanged();
 
 	public slots:
 		void UpdateGUI(); /* called by timer */

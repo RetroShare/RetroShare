@@ -50,7 +50,8 @@ void FeedReaderConfig::load()
 {
 	ui->updateIntervalSpinBox->setValue(rsFeedReader->getStandardUpdateInterval() / 60);
 	ui->storageTimeSpinBox->setValue(rsFeedReader->getStandardStorageTime() / (60 * 60 *24));
-	ui->setMsgToReadOnActivate->setChecked(Settings->valueFromGroup("FeedReaderDialog", "SetMsgToReadOnActivate", true).toBool());
+	ui->setMsgToReadOnActivate->setChecked(FeedReaderSetting_SetMsgToReadOnActivate());
+	ui->openAllInNewTabCheckBox->setChecked(FeedReaderSetting_OpenAllInNewTab());
 
 	std::string proxyAddress;
 	uint16_t proxyPort;
@@ -67,6 +68,7 @@ bool FeedReaderConfig::save(QString &/*errmsg*/)
 	rsFeedReader->setStandardStorageTime(ui->storageTimeSpinBox->value() * 60 *60 * 24);
 	rsFeedReader->setStandardProxy(ui->useProxyCheckBox->isChecked(), ui->proxyAddressLineEdit->text().toUtf8().constData(), ui->proxyPortSpinBox->value());
 	Settings->setValueToGroup("FeedReaderDialog", "SetMsgToReadOnActivate", ui->setMsgToReadOnActivate->isChecked());
+	Settings->setValueToGroup("FeedReaderDialog", "OpenAllInNewTab", ui->openAllInNewTabCheckBox->isChecked());
 
 	return true;
 }

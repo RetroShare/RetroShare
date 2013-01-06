@@ -34,10 +34,14 @@ public:
 
 	void setPlaceholderText(const QString &text);
 
+signals:
+	void signalMouseMiddleButtonClicked(QTreeWidgetItem *item);
+
 protected:
 	void paintEvent(QPaintEvent *event);
+	virtual void mousePressEvent(QMouseEvent *event);
 
-	QString placeholderText;
+	QString mPlaceholderText;
 };
 
 #endif

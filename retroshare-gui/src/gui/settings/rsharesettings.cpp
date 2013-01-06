@@ -698,9 +698,9 @@ bool RshareSettings::getMsgSetToReadOnActivate ()
     return valueFromGroup("MessageDialog", "SetMsgToReadOnActivate", true).toBool();
 }
 
-void RshareSettings::setMsgSetToReadOnActivate (bool bValue)
+void RshareSettings::setMsgSetToReadOnActivate (bool value)
 {
-    setValueToGroup("MessageDialog", "SetMsgToReadOnActivate", bValue);
+    setValueToGroup("MessageDialog", "SetMsgToReadOnActivate", value);
 }
 
 RshareSettings::enumMsgOpen RshareSettings::getMsgOpen()
@@ -735,19 +735,29 @@ bool RshareSettings::getForumMsgSetToReadOnActivate ()
     return valueFromGroup("ForumDialog", "SetMsgToReadOnActivate", true).toBool();
 }
 
-void RshareSettings::setForumMsgSetToReadOnActivate (bool bValue)
+void RshareSettings::setForumMsgSetToReadOnActivate(bool value)
 {
-    setValueToGroup("ForumDialog", "SetMsgToReadOnActivate", bValue);
+    setValueToGroup("ForumDialog", "SetMsgToReadOnActivate", value);
 }
 
-bool RshareSettings::getExpandNewMessages()
+bool RshareSettings::getForumExpandNewMessages()
 {
     return valueFromGroup("ForumDialog", "ExpandNewMessages", true).toBool();
 }
 
-void RshareSettings::setExpandNewMessages (bool bValue)
+void RshareSettings::setForumExpandNewMessages(bool value)
 {
-    setValueToGroup("ForumDialog", "ExpandNewMessages", bValue);
+    setValueToGroup("ForumDialog", "ExpandNewMessages", value);
+}
+
+bool RshareSettings::getForumOpenAllInNewTab()
+{
+    return valueFromGroup("ForumDialog", "OpenAllInNewTab", true).toBool();
+}
+
+bool RshareSettings::setForumOpenAllInNewTab(bool value)
+{
+    setValueToGroup("ForumDialog", "OpenAllInNewTab", value);
 }
 
 /* time before idle */

@@ -30,6 +30,7 @@
 class QToolButton;
 class RshareSettings;
 class RSTreeWidgetItemCompareRole;
+class RSTreeWidget;
 
 #define GROUPTREEWIDGET_COLOR_STANDARD   -1
 #define GROUPTREEWIDGET_COLOR_CATEGORY   0
@@ -88,6 +89,8 @@ public:
 
 	QTreeWidgetItem *getItemFromId(const QString &id);
 	QTreeWidgetItem *activateId(const QString &id, bool focus);
+
+	RSTreeWidget *treeWidget();
 
 	QColor textColorCategory() const { return mTextColor[GROUPTREEWIDGET_COLOR_CATEGORY]; }
 	QColor textColorPrivateKey() const { return mTextColor[GROUPTREEWIDGET_COLOR_PRIVATEKEY]; }

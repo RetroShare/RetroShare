@@ -340,7 +340,7 @@ RsFeedAddResult p3FeedReader::addFolder(const std::string parentId, const std::s
 	IndicateConfigChanged();
 
 	if (mNotify) {
-		mNotify->feedChanged(feedId, NOTIFY_TYPE_ADD);
+		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_ADD);
 	}
 
 	return RS_FEED_ADD_RESULT_SUCCESS;
@@ -380,7 +380,7 @@ RsFeedAddResult p3FeedReader::setFolder(const std::string &feedId, const std::st
 	IndicateConfigChanged();
 
 	if (mNotify) {
-		mNotify->feedChanged(feedId, NOTIFY_TYPE_MOD);
+		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
 	}
 
 	return RS_FEED_ADD_RESULT_SUCCESS;
@@ -427,7 +427,7 @@ RsFeedAddResult p3FeedReader::addFeed(const FeedInfo &feedInfo, std::string &fee
 	IndicateConfigChanged();
 
 	if (mNotify) {
-		mNotify->feedChanged(feedId, NOTIFY_TYPE_ADD);
+		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_ADD);
 	}
 
 	return RS_FEED_ADD_RESULT_SUCCESS;
@@ -496,7 +496,7 @@ RsFeedAddResult p3FeedReader::setFeed(const std::string &feedId, const FeedInfo 
 	IndicateConfigChanged();
 
 	if (mNotify) {
-		mNotify->feedChanged(feedId, NOTIFY_TYPE_MOD);
+		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
 	}
 
 	if (!forumId.empty()) {
@@ -602,7 +602,7 @@ bool p3FeedReader::removeFeed(const std::string &feedId)
 		/* only notify remove of feed */
 		std::list<std::string>::iterator it;
 		for (it = removedFeedIds.begin(); it != removedFeedIds.end(); ++it) {
-			mNotify->feedChanged(*it, NOTIFY_TYPE_DEL);
+			mNotify->notifyFeedChanged(*it, NOTIFY_TYPE_DEL);
 		}
 	}
 
@@ -648,7 +648,7 @@ bool p3FeedReader::addPreviewFeed(const FeedInfo &feedInfo, std::string &feedId)
 	}
 
 	if (mNotify) {
-		mNotify->feedChanged(feedId, NOTIFY_TYPE_ADD);
+		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_ADD);
 	}
 
 	{
@@ -766,8 +766,8 @@ bool p3FeedReader::removeMsg(const std::string &feedId, const std::string &msgId
 	}
 
 	if (mNotify) {
-		mNotify->feedChanged(feedId, NOTIFY_TYPE_MOD);
-		mNotify->msgChanged(feedId, msgId, NOTIFY_TYPE_DEL);
+		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
+		mNotify->notifyMsgChanged(feedId, msgId, NOTIFY_TYPE_DEL);
 	}
 
 	return true;
@@ -814,11 +814,11 @@ bool p3FeedReader::removeMsgs(const std::string &feedId, const std::list<std::st
 	}
 
 	if (mNotify && !removedMsgs.empty()) {
-		mNotify->feedChanged(feedId, NOTIFY_TYPE_MOD);
+		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
 
 		std::list<std::string>::iterator it;
 		for (it = removedMsgs.begin(); it != removedMsgs.end(); ++it) {
-			mNotify->msgChanged(feedId, *it, NOTIFY_TYPE_DEL);
+			mNotify->notifyMsgChanged(feedId, *it, NOTIFY_TYPE_DEL);
 		}
 	}
 
@@ -1061,7 +1061,7 @@ bool p3FeedReader::processFeed(const std::string &feedId)
 
 	if (mNotify) {
 		for (it = notifyIds.begin(); it != notifyIds.end(); ++it) {
-			mNotify->feedChanged(*it, NOTIFY_TYPE_MOD);
+			mNotify->notifyFeedChanged(*it, NOTIFY_TYPE_MOD);
 		}
 	}
 
@@ -1110,8 +1110,8 @@ bool p3FeedReader::setMessageRead(const std::string &feedId, const std::string &
 	if (changed) {
 		IndicateConfigChanged();
 		if (mNotify) {
-			mNotify->feedChanged(feedId, NOTIFY_TYPE_MOD);
-			mNotify->msgChanged(feedId, msgId, NOTIFY_TYPE_MOD);
+			mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
+			mNotify->notifyMsgChanged(feedId, msgId, NOTIFY_TYPE_MOD);
 		}
 	}
 
@@ -1187,7 +1187,7 @@ int p3FeedReader::tick()
 
 	if (mNotify) {
 		for (it = notifyIds.begin(); it != notifyIds.end(); ++it) {
-			mNotify->feedChanged(*it, NOTIFY_TYPE_MOD);
+			mNotify->notifyFeedChanged(*it, NOTIFY_TYPE_MOD);
 		}
 	}
 
@@ -1244,7 +1244,7 @@ void p3FeedReader::cleanFeeds()
 			if (mNotify) {
 				std::list<std::pair<std::string, std::string> >::iterator it;
 				for (it = removedMsgIds.begin(); it != removedMsgIds.end(); ++it) {
-					mNotify->msgChanged(it->first, it->second, NOTIFY_TYPE_DEL);
+					mNotify->notifyMsgChanged(it->first, it->second, NOTIFY_TYPE_DEL);
 				}
 			}
 		}
@@ -1474,7 +1474,7 @@ bool p3FeedReader::getFeedToDownload(RsFeedReaderFeed &feed, const std::string &
 	}
 
 	if (mNotify) {
-		mNotify->feedChanged(feedId, NOTIFY_TYPE_MOD);
+		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
 	}
 
 	return true;
@@ -1525,7 +1525,7 @@ void p3FeedReader::onDownloadSuccess(const std::string &feedId, const std::strin
 	}
 
 	if (mNotify) {
-		mNotify->feedChanged(feedId, NOTIFY_TYPE_MOD);
+		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
 	}
 }
 
@@ -1562,7 +1562,7 @@ void p3FeedReader::onDownloadError(const std::string &feedId, RsFeedReaderErrorS
 	}
 
 	if (mNotify) {
-		mNotify->feedChanged(feedId, NOTIFY_TYPE_MOD);
+		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
 	}
 }
 
@@ -1617,7 +1617,7 @@ bool p3FeedReader::getFeedToProcess(RsFeedReaderFeed &feed, const std::string &n
 	}
 
 	if (mNotify) {
-		mNotify->feedChanged(feedId, NOTIFY_TYPE_MOD);
+		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
 	}
 
 	return true;
@@ -1832,11 +1832,11 @@ void p3FeedReader::onProcessSuccess_addMsgs(const std::string &feedId, std::list
 	}
 
 	if (mNotify) {
-		mNotify->feedChanged(feedId, NOTIFY_TYPE_MOD);
+		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
 
 		std::list<std::string>::iterator it;
 		for (it = addedMsgs.begin(); it != addedMsgs.end(); ++it) {
-			mNotify->msgChanged(feedId, *it, NOTIFY_TYPE_ADD);
+			mNotify->notifyMsgChanged(feedId, *it, NOTIFY_TYPE_ADD);
 		}
 	}
 }
@@ -1874,7 +1874,7 @@ void p3FeedReader::onProcessError(const std::string &feedId, RsFeedReaderErrorSt
 	}
 
 	if (mNotify) {
-		mNotify->feedChanged(feedId, NOTIFY_TYPE_MOD);
+		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
 	}
 }
 
@@ -1930,7 +1930,7 @@ void p3FeedReader::setFeedInfo(const std::string &feedId, const std::string &nam
 		}
 
 		if (mNotify) {
-			mNotify->feedChanged(feedId, NOTIFY_TYPE_MOD);
+			mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
 		}
 	}
 

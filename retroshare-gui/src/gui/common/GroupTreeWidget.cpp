@@ -434,6 +434,11 @@ QTreeWidgetItem *GroupTreeWidget::activateId(const QString &id, bool focus)
 	return item;
 }
 
+RSTreeWidget *GroupTreeWidget::treeWidget()
+{
+	return ui->treeWidget;
+}
+
 int GroupTreeWidget::subscribeFlags(const QString &id)
 {
 	QTreeWidgetItem *item = getItemFromId(id);

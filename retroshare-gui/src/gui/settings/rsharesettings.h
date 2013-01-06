@@ -236,21 +236,23 @@ public:
   void setStatusBarFlag(uint flag, bool enable);
 
   /* Messages */
-  bool getMsgSetToReadOnActivate ();
-  void setMsgSetToReadOnActivate (bool bValue);
+  bool getMsgSetToReadOnActivate();
+  void setMsgSetToReadOnActivate(bool value);
 
   enumMsgOpen getMsgOpen();
   void setMsgOpen(enumMsgOpen value);
 
   /* Forums */
-  bool getForumMsgSetToReadOnActivate ();
-  void setForumMsgSetToReadOnActivate (bool bValue);
-  bool getExpandNewMessages ();
-  void setExpandNewMessages (bool bValue);
+  bool getForumMsgSetToReadOnActivate();
+  void setForumMsgSetToReadOnActivate(bool value);
+  bool getForumExpandNewMessages();
+  void setForumExpandNewMessages(bool value);
+  bool getForumOpenAllInNewTab();
+  bool setForumOpenAllInNewTab(bool value);
 
   /* time before idle */
   uint getMaxTimeBeforeIdle();
-  void setMaxTimeBeforeIdle(uint nValue);
+  void setMaxTimeBeforeIdle(uint value);
 
 protected:
   /** Default constructor. */

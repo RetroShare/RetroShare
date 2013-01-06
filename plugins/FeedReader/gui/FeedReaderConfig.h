@@ -28,6 +28,9 @@ namespace Ui {
 class FeedReaderConfig;
 }
 
+#define FeedReaderSetting_SetMsgToReadOnActivate() Settings->valueFromGroup("FeedReaderDialog", "SetMsgToReadOnActivate", true).toBool()
+#define FeedReaderSetting_OpenAllInNewTab() Settings->valueFromGroup("FeedReaderDialog", "OpenAllInNewTab", true).toBool()
+
 class FeedReaderConfig : public ConfigPage 
 {
 	Q_OBJECT

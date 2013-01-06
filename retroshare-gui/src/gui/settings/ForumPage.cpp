@@ -42,7 +42,8 @@ bool
 ForumPage::save(QString &/*errmsg*/)
 {
     Settings->setForumMsgSetToReadOnActivate(ui.setMsgToReadOnActivate->isChecked());
-    Settings->setExpandNewMessages(ui.expandNewMessages->isChecked());
+    Settings->setForumExpandNewMessages(ui.expandNewMessages->isChecked());
+    Settings->setForumOpenAllInNewTab(ui.openAllInNewTabCheckBox->isChecked());
 
     return true;
 }
@@ -52,5 +53,6 @@ void
 ForumPage::load()
 {
     ui.setMsgToReadOnActivate->setChecked(Settings->getForumMsgSetToReadOnActivate());
-    ui.expandNewMessages->setChecked(Settings->getExpandNewMessages());
+    ui.expandNewMessages->setChecked(Settings->getForumExpandNewMessages());
+    ui.openAllInNewTabCheckBox->setChecked(Settings->getForumOpenAllInNewTab());
 }

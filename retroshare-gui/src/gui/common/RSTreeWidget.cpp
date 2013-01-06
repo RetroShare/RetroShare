@@ -20,6 +20,7 @@
  ****************************************************************/
 
 #include <QPainter>
+#include <QMouseEvent>
 
 #include "RSTreeWidget.h"
 
@@ -29,7 +30,7 @@ RSTreeWidget::RSTreeWidget(QWidget *parent) : QTreeWidget(parent)
 
 void RSTreeWidget::setPlaceholderText(const QString &text)
 {
-	placeholderText = text;
+	mPlaceholderText = text;
 	viewport()->repaint();
 }
 
@@ -37,7 +38,7 @@ void RSTreeWidget::paintEvent(QPaintEvent *event)
 {
 	QTreeWidget::paintEvent(event);
 
-	if (placeholderText.isEmpty() == false && model() && model()->rowCount() == 0) {
+	if (mPlaceholderText.isEmpty() == false && model() && model()->rowCount() == 0) {
 		QWidget *vieportWidget = viewport();
 		QPainter painter(vieportWidget);
 
@@ -47,6 +48,22 @@ void RSTreeWidget::paintEvent(QPaintEvent *event)
 		pen.setColor(color);
 		painter.setPen(pen);
 
-		painter.drawText(QRect(QPoint(), vieportWidget->size()), Qt::AlignHCenter | Qt::AlignVCenter | Qt::TextWordWrap, placeholderText);
+		painter.drawText(QRect(QPoint(), vieportWidget->size()), Qt::AlignHCenter | Qt::AlignVCenter | Qt::TextWordWrap, mPlaceholderText);
 	}
+}
+
+void RSTreeWidget::mousePressEvent(QMouseEvent *event)
+{
+	if (event->buttons() & Qt::MiddleButton) {
+		if (receivers(SIGNAL(signalMouseMiddleButtonClicked(QTreeWidgetItem*))) > 0) {
+			QTreeWidgetItem *item = itemAt(event->pos());
+			if (item) {
+				setCurrentItem(item);
+				emit signalMouseMiddleButtonClicked(item);
+			}
+			return; // eat event
+		}
+	}
+
+	QTreeWidget::mousePressEvent(event);
 }

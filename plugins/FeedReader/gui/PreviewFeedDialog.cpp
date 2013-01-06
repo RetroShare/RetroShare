@@ -160,8 +160,8 @@ PreviewFeedDialog::PreviewFeedDialog(RsFeedReader *feedReader, FeedReaderNotify 
 	connect(ui->xpathUseListWidget->itemDelegate(), SIGNAL(closeEditor(QWidget*,QAbstractItemDelegate::EndEditHint)), this, SLOT(xpathCloseEditor(QWidget*,QAbstractItemDelegate::EndEditHint)));
 	connect(ui->xpathRemoveListWidget->itemDelegate(), SIGNAL(closeEditor(QWidget*,QAbstractItemDelegate::EndEditHint)), this, SLOT(xpathCloseEditor(QWidget*,QAbstractItemDelegate::EndEditHint)));
 
-	connect(mNotify, SIGNAL(notifyFeedChanged(QString,int)), this, SLOT(feedChanged(QString,int)));
-	connect(mNotify, SIGNAL(notifyMsgChanged(QString,QString,int)), this, SLOT(msgChanged(QString,QString,int)));
+	connect(mNotify, SIGNAL(feedChanged(QString,int)), this, SLOT(feedChanged(QString,int)));
+	connect(mNotify, SIGNAL(msgChanged(QString,QString,int)), this, SLOT(msgChanged(QString,QString,int)));
 
 //	ui->documentTreeWidget->setItemDelegate(new PreviewItemDelegate(ui->documentTreeWidget));
 	ui->structureFrame->hide();

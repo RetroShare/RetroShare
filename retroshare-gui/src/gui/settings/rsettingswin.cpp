@@ -39,6 +39,7 @@
 #include "ForumPage.h"
 #include "PluginsPage.h"
 #include "rsharesettings.h"
+#include "gui/notifyqt.h"
 
 #define IMAGE_GENERAL       ":/images/kcmsystem24.png"
 
@@ -201,6 +202,10 @@ RSettingsWin::saveChanges()
 
 	/* call to RsIface save function.... */
 	//rsicontrol -> ConfigSave();
+
+	if (NotifyQt::getInstance()) {
+		NotifyQt::getInstance()->notifySettingsChanged();
+	}
 
     close();
 }

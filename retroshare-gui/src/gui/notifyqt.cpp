@@ -837,6 +837,11 @@ void NotifyQt::notifyChatStyleChanged(int /*ChatStyle::enumStyleType*/ styleType
 	emit chatStyleChanged(styleType);
 }
 
+void NotifyQt::notifySettingsChanged()
+{
+	emit settingsChanged();
+}
+
 void NotifyQt::startWaitingToasters()
 {
 	{

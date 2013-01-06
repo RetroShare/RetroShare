@@ -1765,7 +1765,7 @@ ForumsFillThread::ForumsFillThread(ForumsDialog *parent)
     stopped = false;
     compareRole = NULL;
 
-    expandNewMessages = Settings->getExpandNewMessages();
+    expandNewMessages = Settings->getForumExpandNewMessages();
     fillComplete = false;
 
     filterColumn = 0;

@@ -958,7 +958,7 @@ void GxsForumThreadWidget::insertForumThreads(const RsGroupMetaData &fi)
 	mFillThread->mFilterColumn = ui->filterLineEdit->currentFilter();
 	mFillThread->mFilterColumn = COLUMN_THREAD_TITLE;
 	mFillThread->mSubscribeFlags = mSubscribeFlags;
-	mFillThread->mExpandNewMessages = Settings->getExpandNewMessages();
+	mFillThread->mExpandNewMessages = Settings->getForumExpandNewMessages();
 	mFillThread->mViewType = ui->viewBox->currentIndex();
 	if (mLastViewType != mFillThread->mViewType || mLastForumID != mForumId) {
 		mFillThread->mFillComplete = true;

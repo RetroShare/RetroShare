@@ -8,6 +8,7 @@
 #include "FeedReaderMessageWidget.h"
 #include "ui_FeedReaderMessageWidget.h"
 #include "FeedReaderNotify.h"
+#include "FeedReaderConfig.h"
 
 #include "gui/common/RSTreeWidgetItem.h"
 #include "gui/settings/rsharesettings.h"
@@ -38,8 +39,8 @@ FeedReaderMessageWidget::FeedReaderMessageWidget(const std::string &feedId, RsFe
 	mUnreadCount = 0;
 
 	/* connect signals */
-	connect(mNotify, SIGNAL(notifyFeedChanged(QString,int)), this, SLOT(feedChanged(QString,int)));
-	connect(mNotify, SIGNAL(notifyMsgChanged(QString,QString,int)), this, SLOT(msgChanged(QString,QString,int)));
+	connect(mNotify, SIGNAL(feedChanged(QString,int)), this, SLOT(feedChanged(QString,int)));
+	connect(mNotify, SIGNAL(msgChanged(QString,QString,int)), this, SLOT(msgChanged(QString,QString,int)));
 
 	connect(ui->msgTreeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(msgItemChanged()));
 	connect(ui->msgTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(msgItemClicked(QTreeWidgetItem*,int)));
@@ -554,7 +555,7 @@ void FeedReaderMessageWidget::updateCurrentMessage()
 		return;
 	}
 
-	bool setToReadOnActive = Settings->valueFromGroup("FeedReaderDialog", "SetMsgToReadOnActivate", true).toBool();
+	bool setToReadOnActive = FeedReaderSetting_SetMsgToReadOnActivate();
 	bool isnew = item->data(COLUMN_MSG_DATA, ROLE_MSG_NEW).toBool();
 	bool read = item->data(COLUMN_MSG_DATA, ROLE_MSG_READ).toBool();
 

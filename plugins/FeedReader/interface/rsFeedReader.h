@@ -164,8 +164,8 @@ class RsFeedReaderNotify
 public:
 	RsFeedReaderNotify() {}
 
-	virtual void feedChanged(const std::string &/*feedId*/, int /*type*/) {}
-	virtual void msgChanged(const std::string &/*feedId*/, const std::string &/*msgId*/, int /*type*/) {}
+	virtual void notifyFeedChanged(const std::string &/*feedId*/, int /*type*/) {}
+	virtual void notifyMsgChanged(const std::string &/*feedId*/, const std::string &/*msgId*/, int /*type*/) {}
 };
 
 class RsFeedReader

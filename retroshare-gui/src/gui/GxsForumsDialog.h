@@ -57,6 +57,7 @@ public:
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 private slots:
+	void settingsChanged();
 	void forceUpdateDisplay(); // TEMP HACK FN.
 
 	/** Create the context popup menu and it's submenus */
@@ -66,6 +67,7 @@ private slots:
 	void newforum();
 
 	void changedForum(const QString &forumId);
+	void forumTreeMiddleButtonClicked(QTreeWidgetItem *item);
 	void openInNewTab();
 	void threadTabCloseRequested(int index);
 	void threadTabChanged(int index);
@@ -93,6 +95,7 @@ private:
 //	void forumInfoToGroupItemInfo(const ForumInfo &forumInfo, GroupItemInfo &groupItemInfo);
 	void forumInfoToGroupItemInfo(const RsGroupMetaData &forumInfo, GroupItemInfo &groupItemInfo);
 
+	void openForumInNewTab(const std::string &forumId);
 	void forumSubscribe(bool subscribe);
 
 	void processSettings(bool load);

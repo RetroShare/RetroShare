@@ -29,6 +29,7 @@
 #include "settings/rsharesettings.h"
 #include "RetroShareLink.h"
 #include "channels/ShareKey.h"
+#include "common/RSTreeWidget.h"
 #include "notifyqt.h"
 
 // These should be in retroshare/ folder.
@@ -69,13 +70,16 @@ GxsForumsDialog::GxsForumsDialog(QWidget *parent)
 
 		/* Setup Queue */
 	mForumQueue = new TokenQueue(rsGxsForums->getTokenService(), this);
+	mThreadWidget = NULL;
 
 	connect(ui.forumTreeWidget, SIGNAL(treeCustomContextMenuRequested(QPoint)), this, SLOT(forumListCustomPopupMenu(QPoint)));
 	connect(ui.newForumButton, SIGNAL(clicked()), this, SLOT(newforum()));
 	connect(ui.forumTreeWidget, SIGNAL(treeItemActivated(QString)), this, SLOT(changedForum(QString)));
+	connect(ui.forumTreeWidget->treeWidget(), SIGNAL(signalMouseMiddleButtonClicked(QTreeWidgetItem*)), this, SLOT(forumTreeMiddleButtonClicked(QTreeWidgetItem*)));
 	connect(ui.threadTabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(threadTabCloseRequested(int)));
 	connect(ui.threadTabWidget, SIGNAL(currentChanged(int)), this, SLOT(threadTabChanged(int)));
 	connect(NotifyQt::getInstance(), SIGNAL(forumMsgReadSatusChanged(QString,QString,int)), this, SLOT(forumMsgReadSatusChanged(QString,QString,int)));
+	connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
 
 	// HACK - TEMPORARY HIJACKING THIS BUTTON FOR REFRESH.
 	connect(ui.refreshButton, SIGNAL(clicked()), this, SLOT(forceUpdateDisplay()));
@@ -97,9 +101,7 @@ GxsForumsDialog::GxsForumsDialog(QWidget *parent)
 	// load settings
 	processSettings(true);
 
-	mThreadWidget = createThreadWidget("");
-	// remove close button of the the first tab
-	ui.threadTabWidget->hideCloseButton(ui.threadTabWidget->indexOf(mThreadWidget));
+	settingsChanged();
 
 /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -120,11 +122,11 @@ GxsForumsDialog::~GxsForumsDialog()
 //	return new GxsForumUserNotify(parent);
 //}
 
-void GxsForumsDialog::processSettings(bool bLoad)
+void GxsForumsDialog::processSettings(bool load)
 {
 	Settings->beginGroup(QString("GxsForumsDialog"));
 
-	if (bLoad) {
+	if (load) {
 		// load settings
 
 		// state of splitter
@@ -136,9 +138,25 @@ void GxsForumsDialog::processSettings(bool bLoad)
 		Settings->setValue("Splitter", ui.splitter->saveState());
 	}
 
-	ui.forumTreeWidget->processSettings(Settings, bLoad);
+	ui.forumTreeWidget->processSettings(Settings, load);
 
 	Settings->endGroup();
+}
+
+void GxsForumsDialog::settingsChanged()
+{
+	if (Settings->getForumOpenAllInNewTab()) {
+		if (mThreadWidget) {
+			delete(mThreadWidget);
+			mThreadWidget = NULL;
+		}
+	} else {
+		if (!mThreadWidget) {
+			mThreadWidget = createThreadWidget("");
+			// remove close button of the the first tab
+			ui.threadTabWidget->hideCloseButton(ui.threadTabWidget->indexOf(mThreadWidget));
+		}
+	}
 }
 
 void GxsForumsDialog::forumListCustomPopupMenu(QPoint /*point*/)
@@ -153,9 +171,11 @@ void GxsForumsDialog::forumListCustomPopupMenu(QPoint /*point*/)
 	action = contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Unsubscribe to Forum"), this, SLOT(unsubscribeToForum()));
 	action->setEnabled (!mForumId.empty() && IS_GROUP_SUBSCRIBED(subscribeFlags));
 
-	action = contextMnu.addAction(QIcon(""), tr("Open in new tab"), this, SLOT(openInNewTab()));
-	if (mForumId.empty() || forumThreadWidget(mForumId)) {
-		action->setEnabled(false);
+	if (!Settings->getForumOpenAllInNewTab()) {
+		action = contextMnu.addAction(QIcon(""), tr("Open in new tab"), this, SLOT(openInNewTab()));
+		if (mForumId.empty() || forumThreadWidget(mForumId)) {
+			action->setEnabled(false);
+		}
 	}
 
 	contextMnu.addSeparator();
@@ -335,7 +355,7 @@ GxsForumThreadWidget *GxsForumsDialog::forumThreadWidget(const std::string &foru
 	int tabCount = ui.threadTabWidget->count();
 	for (int index = 0; index < tabCount; ++index) {
 		GxsForumThreadWidget *childWidget = dynamic_cast<GxsForumThreadWidget*>(ui.threadTabWidget->widget(index));
-		if (childWidget == mThreadWidget) {
+		if (mThreadWidget && childWidget == mThreadWidget) {
 			continue;
 		}
 		if (childWidget && childWidget->forumId() == forumId) {
@@ -370,25 +390,40 @@ void GxsForumsDialog::changedForum(const QString &forumId)
 	GxsForumThreadWidget *threadWidget = forumThreadWidget(mForumId);
 
 	if (!threadWidget) {
-		/* not found, use standard tab */
-		threadWidget = mThreadWidget;
-		threadWidget->setForumId(mForumId);
+		if (mThreadWidget) {
+			/* not found, use standard tab */
+			threadWidget = mThreadWidget;
+			threadWidget->setForumId(mForumId);
+		} else {
+			/* create new tab */
+			threadWidget = createThreadWidget(mForumId);
+		}
 	}
 
 	ui.threadTabWidget->setCurrentWidget(threadWidget);
 }
 
+void GxsForumsDialog::forumTreeMiddleButtonClicked(QTreeWidgetItem *item)
+{
+	openForumInNewTab(ui.forumTreeWidget->itemId(item).toStdString());
+}
+
 void GxsForumsDialog::openInNewTab()
 {
-	if (mForumId.empty()) {
+	openForumInNewTab(mForumId);
+}
+
+void GxsForumsDialog::openForumInNewTab(const std::string &forumId)
+{
+	if (forumId.empty()) {
 		return;
 	}
 
 	/* search exisiting tab */
-	GxsForumThreadWidget *threadWidget = forumThreadWidget(mForumId);
+	GxsForumThreadWidget *threadWidget = forumThreadWidget(forumId);
 	if (!threadWidget) {
 		/* not found, create new tab */
-		threadWidget = createThreadWidget(mForumId);
+		threadWidget = createThreadWidget(forumId);
 	}
 
 	ui.threadTabWidget->setCurrentWidget(threadWidget);

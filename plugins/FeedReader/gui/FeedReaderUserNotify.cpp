@@ -30,7 +30,7 @@
 FeedReaderUserNotify::FeedReaderUserNotify(FeedReaderDialog *feedReaderDialog, RsFeedReader *feedReader, FeedReaderNotify *notify, QObject *parent) :
 	UserNotify(parent), mFeedReaderDialog(feedReaderDialog), mFeedReader(feedReader), mNotify(notify)
 {
-	connect(mNotify, SIGNAL(notifyMsgChanged(QString,QString,int)), this, SLOT(updateIcon()), Qt::QueuedConnection);
+	connect(mNotify, SIGNAL(msgChanged(QString,QString,int)), this, SLOT(updateIcon()), Qt::QueuedConnection);
 }
 
 bool FeedReaderUserNotify::hasSetting(QString &name)

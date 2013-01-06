@@ -50,8 +50,10 @@ protected:
 	bool eventFilter(QObject *obj, QEvent *ev);
 
 private slots:
+	void settingsChanged();
 	void feedTreeCustomPopupMenu(QPoint point);
 	void feedTreeItemActivated(QTreeWidgetItem *item);
+	void feedTreeMiddleButtonClicked(QTreeWidgetItem *item);
 	void openInNewTab();
 	void newFolder();
 	void newFeed();
@@ -75,6 +77,7 @@ private:
 	void getExpandedFeedIds(QList<std::string> &feedIds);
 	void updateFeeds(const std::string &parentId, QTreeWidgetItem *parentItem);
 	void updateFeedItem(QTreeWidgetItem *item, FeedInfo &info);
+	void openFeedInNewTab(const std::string &feedId);
 
 	void calculateFeedItems();
 	void calculateFeedItem(QTreeWidgetItem *item, uint32_t &unreadCount, bool &loading);
