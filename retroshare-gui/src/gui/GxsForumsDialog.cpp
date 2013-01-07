@@ -23,7 +23,7 @@
 #include <QMessageBox>
 
 #include "GxsForumsDialog.h"
-#include "gxs/GxsForumGroupDialog.h"
+#include "gxsforums/GxsForumGroupDialog.h"
 #include "gxsforums/GxsForumThreadWidget.h"
 
 #include "settings/rsharesettings.h"

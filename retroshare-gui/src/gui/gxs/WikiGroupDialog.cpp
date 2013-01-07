@@ -24,7 +24,7 @@
 #include <retroshare/rswiki.h>
 #include <iostream>
 
-const uint32_t WikiCreateEnabledFlags = ( GXS_GROUP_FLAGS_ICON        |
+const uint32_t WikiCreateEnabledFlags = ( // GXS_GROUP_FLAGS_ICON        |
                           GXS_GROUP_FLAGS_DESCRIPTION   |
                           GXS_GROUP_FLAGS_DISTRIBUTION  |
                           // GXS_GROUP_FLAGS_PUBLISHSIGN   |
@@ -117,16 +117,28 @@ WikiGroupDialog::WikiGroupDialog(const RsWikiCollection &collection, QWidget *pa
 
 }
 
-QString WikiGroupDialog::serviceHeader()
+QString WikiGroupDialog::uiText(UiType uiType)
 {
-	switch (mode())
+	switch (uiType)
 	{
-	case MODE_CREATE:
-		return tr("Create New Wiki Group");
-	case MODE_SHOW:
-		return tr("Wiki Group");
-	case MODE_EDIT:
-		return tr("Edit Wiki Group");
+	case UITYPE_SERVICE_HEADER:
+		switch (mode())
+		{
+		case MODE_CREATE:
+			return tr("Create New Wiki Group");
+		case MODE_SHOW:
+			return tr("Wiki Group");
+		case MODE_EDIT:
+			return tr("Edit Wiki Group");
+		}
+		break;
+	case UITYPE_KEY_SHARE_CHECKBOX:
+		return tr("Add Wiki Moderators");
+	case UITYPE_CONTACTS_DOCK:
+		return tr("Select Wiki Moderators");
+	default:
+		// remove compiler warnings
+		break;
 	}
 
 	return "";

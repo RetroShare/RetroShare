@@ -51,21 +51,28 @@ PostedGroupDialog::PostedGroupDialog(const RsPostedGroup& grp, Mode mode, QWidge
 {
 }
 
-QString PostedGroupDialog::serviceHeader()
+QString PostedGroupDialog::uiText(UiType uiType)
 {
-	switch (mode())
+	switch (uiType)
 	{
-	case MODE_CREATE:
-		return tr("Create New Posted Topic");
-	case MODE_SHOW:
-		return tr("Posted Topic");
-	case MODE_EDIT:
-		return tr("Edit Posted Topic");
+	case UITYPE_SERVICE_HEADER:
+		switch (mode())
+		{
+		case MODE_CREATE:
+			return tr("Create New Posted Topic");
+		case MODE_SHOW:
+			return tr("Posted Topic");
+		case MODE_EDIT:
+			return tr("Edit Posted Topic");
+		}
+		break;
+	default:
+		// remove compiler warnings
+		break;
 	}
 
 	return "";
 }
-
 
 QPixmap PostedGroupDialog::serviceImage()
 {

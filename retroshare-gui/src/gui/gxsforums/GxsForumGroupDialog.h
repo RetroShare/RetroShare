@@ -19,11 +19,10 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-
 #ifndef _GXSFORUM_GROUP_DIALOG_H
 #define _GXSFORUM_GROUP_DIALOG_H
 
-#include "GxsGroupDialog.h"
+#include "gui/gxs/GxsGroupDialog.h"
 #include <retroshare/rsgxsforums.h>
 
 class GxsForumGroupDialog : public GxsGroupDialog
@@ -35,10 +34,9 @@ public:
 	GxsForumGroupDialog(const RsGxsForumGroup &group, Mode mode, QWidget *parent);
 
 protected:
-	virtual QString serviceHeader();
+	virtual QString uiText(UiType uiType);
 	virtual QPixmap serviceImage();
 	virtual bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta);
 };
 
 #endif
-

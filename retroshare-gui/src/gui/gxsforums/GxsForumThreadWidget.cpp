@@ -33,7 +33,6 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
 #include "util/HandleRichText.h"
-#include "gui/gxs/GxsForumGroupDialog.h"
 #include "CreateGxsForumMsg.h"
 #include "gui/msgs/MessageComposer.h"
 #include "util/DateTime.h"

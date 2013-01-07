@@ -107,10 +107,20 @@ void GxsGroupDialog::init()
 
 void GxsGroupDialog::showEvent(QShowEvent*)
 {
-	QString header = serviceHeader();
+	QString header = uiText(UITYPE_SERVICE_HEADER);
 	ui.headerFrame->setHeaderText(header);
 	setWindowTitle(header);
 	ui.headerFrame->setHeaderImage(serviceImage());
+
+	QString text = uiText(UITYPE_KEY_SHARE_CHECKBOX);
+	if (!text.isEmpty()) {
+		ui.pubKeyShare_cb->setText(text);
+	}
+
+	text = uiText(UITYPE_CONTACTS_DOCK);
+	if (!text.isEmpty()) {
+		ui.contactsdockWidget->setWindowTitle(text);
+	}
 }
 
 void GxsGroupDialog::initMode()
@@ -529,15 +539,4 @@ void GxsGroupDialog::setShareList()
 		ui.contactsdockWidget->hide();
 		this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
 	}
-}
-	
-void GxsGroupDialog::wikitype()
-{
-	// hide logo Button/Label
-	ui.groupLogo->hide();
-	ui.addLogoButton->hide();
-	
-	ui.headerFrame->setHeaderImage(QPixmap(":/images/resource-group-new_48.png")) ;
-	ui.pubKeyShare_cb->setText(tr("Add Wiki Moderators"));
-	ui.contactsdockWidget->setWindowTitle(tr("Select Wiki Moderators"));
 }

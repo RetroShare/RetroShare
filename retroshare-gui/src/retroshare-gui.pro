@@ -1021,6 +1021,7 @@ circles {
 gxsforums {
 	
 	HEADERS += gui/GxsForumsDialog.h \
+		gui/gxsforums/GxsForumGroupDialog.h \
 		gui/gxsforums/CreateGxsForumMsg.h \
 		gui/gxsforums/GxsForumThreadWidget.h \
 		gui/gxsforums/GxsForumsFillThread.h
@@ -1030,6 +1031,7 @@ gxsforums {
 		gui/gxsforums/GxsForumThreadWidget.ui
 	
 	SOURCES += gui/GxsForumsDialog.cpp \
+		gui/gxsforums/GxsForumGroupDialog.cpp \
 		gui/gxsforums/CreateGxsForumMsg.cpp \
 		gui/gxsforums/GxsForumThreadWidget.cpp \
 		gui/gxsforums/GxsForumsFillThread.cpp
@@ -1070,7 +1072,6 @@ gxsgui {
 	HEADERS += gui/gxs/GxsGroupDialog.h \
 		gui/gxs/GxsCommentTreeWidget.h \
 		gui/gxs/WikiGroupDialog.h \
-		gui/gxs/GxsForumGroupDialog.h \
 		gui/gxs/GxsIdChooser.h \
 		gui/gxs/GxsIdLabel.h \
 		gui/gxs/GxsCircleChooser.h \
@@ -1088,7 +1089,6 @@ gxsgui {
 	SOURCES += gui/gxs/GxsGroupDialog.cpp \
 		gui/gxs/GxsCommentTreeWidget.cpp \
 		gui/gxs/WikiGroupDialog.cpp \
-		gui/gxs/GxsForumGroupDialog.cpp \
 		gui/gxs/GxsIdChooser.cpp \
 		gui/gxs/GxsIdLabel.cpp \
 		gui/gxs/GxsCircleChooser.cpp \

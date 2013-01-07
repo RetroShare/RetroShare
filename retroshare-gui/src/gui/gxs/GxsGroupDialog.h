@@ -19,14 +19,12 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-
 #ifndef _GXS_GROUP_DIALOG_H
 #define _GXS_GROUP_DIALOG_H
 
 #include "ui_GxsGroupDialog.h"
 
 #include "util/TokenQueue.h"
-
 
 /********
  * Notes:
@@ -51,25 +49,22 @@ class GxsGroupExtension: public QWidget
 {
 public:
 	GxsGroupExtension() : QWidget() { return; }
-
 };
-
 
 /*** Group flags affect what is visually enabled that gets input into the grpMeta ***/
 
 #define GXS_GROUP_FLAGS_ICON			0x00000001
 #define GXS_GROUP_FLAGS_DESCRIPTION		0x00000002
-#define GXS_GROUP_FLAGS_DISTRIBUTION		0x00000004
+#define GXS_GROUP_FLAGS_DISTRIBUTION	0x00000004
 #define GXS_GROUP_FLAGS_PUBLISHSIGN		0x00000008
 #define GXS_GROUP_FLAGS_SHAREKEYS		0x00000010
-#define GXS_GROUP_FLAGS_PERSONALSIGN		0x00000020
+#define GXS_GROUP_FLAGS_PERSONALSIGN	0x00000020
 #define GXS_GROUP_FLAGS_COMMENTS		0x00000040
 
 #define GXS_GROUP_FLAGS_EXTRA			0x00000100
 
 /*** Default flags are used to determine privacy of group, signatures required ***
  *** whether publish or id and whether comments are allowed or not             ***/
-
 
 #define GXS_GROUP_DEFAULTS_DISTRIB_MASK		0x0000000f
 #define GXS_GROUP_DEFAULTS_PUBLISH_MASK		0x000000f0
@@ -116,6 +111,12 @@ public:
 		MODE_EDIT
 	};
 
+	enum UiType {
+		UITYPE_SERVICE_HEADER,
+		UITYPE_KEY_SHARE_CHECKBOX,
+		UITYPE_CONTACTS_DOCK
+	};
+
 public:
 
 	/*!
@@ -137,7 +138,6 @@ public:
 	 * @param parent
 	 */
 	GxsGroupDialog(const RsGroupMetaData& grpMeta, Mode mode, QWidget *parent = NULL);
-	void wikitype();
 
 	uint32_t mode() { return mMode; }
 
@@ -155,7 +155,7 @@ protected slots:
 protected:
 	virtual void showEvent(QShowEvent*);
 
-	virtual QString serviceHeader() = 0;
+	virtual QString uiText(UiType uiType) = 0;
 	virtual QPixmap serviceImage() = 0;
 
 	/*!
@@ -178,7 +178,6 @@ protected:
 	 * @return group description string
 	 */
 	virtual QString getDescription();
-
 	
 private slots:
 
@@ -191,10 +190,7 @@ private slots:
 	void updateCircleOptions();
 
 private:
-
-
 	void setCircleParameters(RsGroupMetaData &meta);
-
 
 	void setGroupSignFlags(uint32_t signFlags);
 	uint32_t getGroupSignFlags();
@@ -204,7 +200,6 @@ private:
 	void createGroup();
 	void sendShareList(std::string forumId);
 	void loadNewGroupId(const uint32_t &token);
-
 
 	std::list<std::string> mShareList;
 	QPixmap picture;
@@ -221,4 +216,3 @@ private:
 };
 
 #endif
-

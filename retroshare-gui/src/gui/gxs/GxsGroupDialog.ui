@@ -142,7 +142,7 @@
              <item>
               <widget class="QCheckBox" name="pubKeyShare_cb">
                <property name="toolTip">
-                <string>Key recipients can publish to restricted-type Wiki Group, and can view and publish  for private-type channels</string>
+                <string>Key recipients can publish to restricted-type group and can view and publish for private-type channels</string>
                </property>
                <property name="text">
                 <string>Share Publish Key</string>

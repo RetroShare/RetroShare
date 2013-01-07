@@ -52,32 +52,35 @@ const uint32_t ForumCreateDefaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC   
 			GXS_GROUP_DEFAULTS_COMMENTS_NO          |
 			0);
 
-
-
 GxsForumGroupDialog::GxsForumGroupDialog(TokenQueue *tokenQueue, QWidget *parent)
 	:GxsGroupDialog(tokenQueue, ForumCreateEnabledFlags, ForumCreateDefaultsFlags, parent)
 {
-
 }
 
 GxsForumGroupDialog::GxsForumGroupDialog(const RsGxsForumGroup &group, Mode mode, QWidget *parent)
 	:GxsGroupDialog(group.mMeta, mode, parent)
 {
-	return;
 }
 
-QString GxsForumGroupDialog::serviceHeader()
+QString GxsForumGroupDialog::uiText(UiType uiType)
 {
-	switch (mode())
+	switch (uiType)
 	{
-	case MODE_CREATE:
-		return tr("Create New Forum");
-	case MODE_SHOW:
-		return tr("Forum");
-	case MODE_EDIT:
-		return tr("Edit Forum");
+	case UITYPE_SERVICE_HEADER:
+		switch (mode())
+		{
+		case MODE_CREATE:
+			return tr("Create New Forum");
+		case MODE_SHOW:
+			return tr("Forum");
+		case MODE_EDIT:
+			return tr("Edit Forum");
+		}
+		break;
+	default:
+		// remove compiler warnings
+		break;
 	}
-
 	return "";
 }
 
