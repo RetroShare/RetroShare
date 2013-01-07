@@ -219,6 +219,8 @@ void FeedReaderMessageWidget::setFeedId(const std::string &feedId)
 		mFeedName.clear();
 	}
 
+	ui->msgReadAllButton->setEnabled(!mFeedId.empty());
+
 	updateMsgs();
 	updateCurrentMessage();
 
@@ -520,7 +522,6 @@ void FeedReaderMessageWidget::updateCurrentMessage()
 
 		ui->msgReadButton->setEnabled(false);
 		ui->msgUnreadButton->setEnabled(false);
-		ui->msgReadAllButton->setEnabled(false);
 		ui->msgRemoveButton->setEnabled(false);
 		return;
 	}
@@ -535,14 +536,12 @@ void FeedReaderMessageWidget::updateCurrentMessage()
 
 		ui->msgReadButton->setEnabled(false);
 		ui->msgUnreadButton->setEnabled(false);
-		ui->msgReadAllButton->setEnabled(false);
 		ui->msgRemoveButton->setEnabled(false);
 		return;
 	}
 
 	ui->msgReadButton->setEnabled(true);
 	ui->msgUnreadButton->setEnabled(true);
-	ui->msgReadAllButton->setEnabled(true);
 	ui->msgRemoveButton->setEnabled(true);
 
 	/* get msg */
