@@ -4,6 +4,7 @@
 #include <QThread>
 
 class GxsForumThreadWidget;
+class RsGxsForumMsg;
 class RSTreeWidgetItemCompareRole;
 class QTreeWidgetItem;
 
@@ -39,6 +40,8 @@ public:
 	QList<QTreeWidgetItem*> mItemToExpand;
 
 private:
+	void calculateExpand(const RsGxsForumMsg &msg, QTreeWidgetItem *item);
+
 	GxsForumThreadWidget *mParent;
 	volatile bool mStopped;
 };

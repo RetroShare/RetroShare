@@ -25,6 +25,7 @@
 #include "GxsForumsFillThread.h"
 #include "GxsForumThreadWidget.h"
 
+#include "gxs/rsgxsflags.h"
 #include <retroshare/rsgxsforums.h>
 
 #include <iostream>
@@ -72,6 +73,18 @@ void GxsForumsFillThread::stop()
 	mStopped = true;
 	QApplication::processEvents();
 	wait();
+}
+
+void GxsForumsFillThread::calculateExpand(const RsGxsForumMsg &msg, QTreeWidgetItem *item)
+{
+	if (mFillComplete && mExpandNewMessages && IS_MSG_UNREAD(msg.mMeta.mMsgStatus)) {
+		QTreeWidgetItem *parentItem = item;
+		while ((parentItem = parentItem->parent()) != NULL) {
+			if (std::find(mItemToExpand.begin(), mItemToExpand.end(), parentItem) == mItemToExpand.end()) {
+				mItemToExpand.push_back(parentItem);
+			}
+		}
+	}
 }
 
 void GxsForumsFillThread::run()
@@ -162,6 +175,7 @@ void GxsForumsFillThread::run()
 
 		QTreeWidgetItem *item = mParent->convertMsgToThreadWidget(msg, mUseChildTS, mFilterColumn);
 		threadList.push_back(QPair<std::string, QTreeWidgetItem*>(msg.mMeta.mMsgId, item));
+		calculateExpand(msg, item);
 
 		mItems.append(item);
 		emit progress(++pos, count);
@@ -202,6 +216,7 @@ void GxsForumsFillThread::run()
 					threadPair.second->addChild(item);
 				}
 
+				calculateExpand(msg, item);
 
 				/* add item to process list */
 				threadList.push_back(QPair<std::string, QTreeWidgetItem*>(msg.mMeta.mMsgId, item));

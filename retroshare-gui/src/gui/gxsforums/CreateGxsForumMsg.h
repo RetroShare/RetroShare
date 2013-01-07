@@ -19,7 +19,6 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-
 #ifndef _CREATE_GXSFORUM_MSG_DIALOG_H
 #define _CREATE_GXSFORUM_MSG_DIALOG_H
 
@@ -31,31 +30,32 @@
 
 class CreateGxsForumMsg : public QDialog, public TokenResponse
 {
-  Q_OBJECT
+	Q_OBJECT
 
 public:
-    CreateGxsForumMsg(const std::string &fId, const std::string &pId);
+	CreateGxsForumMsg(const std::string &fId, const std::string &pId);
+	~CreateGxsForumMsg();
 
-    void newMsg(); /* cleanup */
+	void newMsg(); /* cleanup */
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 private slots:
-    /** Create the context popup menu and it's submenus */
-    void forumMessageCostumPopupMenu( QPoint point );
+	/** Create the context popup menu and it's submenus */
+	void forumMessageCostumPopupMenu( QPoint point );
 
-    void fileHashingFinished(QList<HashedFile> hashedFiles);
-    /* actions to take.... */
-    void createMsg();
-    void pasteLink();
-    void pasteLinkFull();
-    void pasteOwnCertificateLink();
+	void fileHashingFinished(QList<HashedFile> hashedFiles);
+	/* actions to take.... */
+	void createMsg();
+	void pasteLink();
+	void pasteLinkFull();
+	void pasteOwnCertificateLink();
 
-    void smileyWidgetForums();
-    void addSmileys();
-    void addFile();
+	void smileyWidgetForums();
+	void addSmileys();
+	void addFile();
 
 protected:
-    void closeEvent (QCloseEvent * event);
+	void closeEvent (QCloseEvent * event);
 
 private:
 	void saveForumInfo(const RsGroupMetaData &meta);
@@ -65,8 +65,8 @@ private:
 	void loadForumInfo(const uint32_t &token);
 	void loadParentMsg(const uint32_t &token);
 
-    std::string mForumId;
-    std::string mParentId;
+	std::string mForumId;
+	std::string mParentId;
 
 	bool mParentMsgLoaded;
 	bool mForumMetaLoaded;
@@ -75,9 +75,8 @@ private:
 
 	TokenQueue *mForumQueue;
 
-    /** Qt Designer generated object */
-    Ui::CreateGxsForumMsg ui;
+	/** Qt Designer generated object */
+	Ui::CreateGxsForumMsg ui;
 };
 
 #endif
-
