@@ -43,16 +43,13 @@ public:
     PostedGroupDialog(const RsPostedGroup& grp, Mode mode, QWidget *parent = NULL);
 
 protected:
-    virtual QString uiText(UiType uiType);
+    virtual void initUi();
     virtual QPixmap serviceImage();
     bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta);
 
 private:
-
     RsPostedGroup mGrp;
     RsPosted* mPosted;
-
 };
 
 #endif
-

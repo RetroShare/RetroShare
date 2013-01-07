@@ -117,31 +117,23 @@ WikiGroupDialog::WikiGroupDialog(const RsWikiCollection &collection, QWidget *pa
 
 }
 
-QString WikiGroupDialog::uiText(UiType uiType)
+void WikiGroupDialog::initUi()
 {
-	switch (uiType)
+	switch (mode())
 	{
-	case UITYPE_SERVICE_HEADER:
-		switch (mode())
-		{
-		case MODE_CREATE:
-			return tr("Create New Wiki Group");
-		case MODE_SHOW:
-			return tr("Wiki Group");
-		case MODE_EDIT:
-			return tr("Edit Wiki Group");
-		}
+	case MODE_CREATE:
+		setUiText(UITYPE_SERVICE_HEADER, tr("Create New Wiki Group"));
 		break;
-	case UITYPE_KEY_SHARE_CHECKBOX:
-		return tr("Add Wiki Moderators");
-	case UITYPE_CONTACTS_DOCK:
-		return tr("Select Wiki Moderators");
-	default:
-		// remove compiler warnings
+	case MODE_SHOW:
+		setUiText(UITYPE_SERVICE_HEADER, tr("Wiki Group"));
+		break;
+	case MODE_EDIT:
+		setUiText(UITYPE_SERVICE_HEADER, tr("Edit Wiki Group"));
 		break;
 	}
 
-	return "";
+	setUiText(UITYPE_KEY_SHARE_CHECKBOX, tr("Add Wiki Moderators"));
+	setUiText(UITYPE_CONTACTS_DOCK, tr("Select Wiki Moderators"));
 }
 
 QPixmap WikiGroupDialog::serviceImage()

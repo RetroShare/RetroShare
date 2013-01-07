@@ -155,8 +155,10 @@ protected slots:
 protected:
 	virtual void showEvent(QShowEvent*);
 
-	virtual QString uiText(UiType uiType) = 0;
+	virtual void initUi() = 0;
 	virtual QPixmap serviceImage() = 0;
+
+	void setUiText(UiType uiType, const QString &text);
 
 	/*!
 	 * Main purpose is to help tansfer meta data to service

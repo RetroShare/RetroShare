@@ -62,26 +62,20 @@ GxsForumGroupDialog::GxsForumGroupDialog(const RsGxsForumGroup &group, Mode mode
 {
 }
 
-QString GxsForumGroupDialog::uiText(UiType uiType)
+void GxsForumGroupDialog::initUi()
 {
-	switch (uiType)
+	switch (mode())
 	{
-	case UITYPE_SERVICE_HEADER:
-		switch (mode())
-		{
-		case MODE_CREATE:
-			return tr("Create New Forum");
-		case MODE_SHOW:
-			return tr("Forum");
-		case MODE_EDIT:
-			return tr("Edit Forum");
-		}
+	case MODE_CREATE:
+		setUiText(UITYPE_SERVICE_HEADER, tr("Create New Forum"));
 		break;
-	default:
-		// remove compiler warnings
+	case MODE_SHOW:
+		setUiText(UITYPE_SERVICE_HEADER, tr("Forum"));
+		break;
+	case MODE_EDIT:
+		setUiText(UITYPE_SERVICE_HEADER, tr("Edit Forum"));
 		break;
 	}
-	return "";
 }
 
 QPixmap GxsForumGroupDialog::serviceImage()

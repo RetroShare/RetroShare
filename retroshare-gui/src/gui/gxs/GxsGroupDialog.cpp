@@ -107,19 +107,25 @@ void GxsGroupDialog::init()
 
 void GxsGroupDialog::showEvent(QShowEvent*)
 {
-	QString header = uiText(UITYPE_SERVICE_HEADER);
-	ui.headerFrame->setHeaderText(header);
-	setWindowTitle(header);
 	ui.headerFrame->setHeaderImage(serviceImage());
 
-	QString text = uiText(UITYPE_KEY_SHARE_CHECKBOX);
-	if (!text.isEmpty()) {
-		ui.pubKeyShare_cb->setText(text);
-	}
+	initUi();
+}
 
-	text = uiText(UITYPE_CONTACTS_DOCK);
-	if (!text.isEmpty()) {
+void GxsGroupDialog::setUiText(UiType uiType, const QString &text)
+{
+	switch (uiType)
+	{
+	case UITYPE_SERVICE_HEADER:
+		setWindowTitle(text);
+		ui.headerFrame->setHeaderText(text);
+		break;
+	case UITYPE_KEY_SHARE_CHECKBOX:
+		ui.pubKeyShare_cb->setText(text);
+		break;
+	case UITYPE_CONTACTS_DOCK:
 		ui.contactsdockWidget->setWindowTitle(text);
+		break;
 	}
 }
 
