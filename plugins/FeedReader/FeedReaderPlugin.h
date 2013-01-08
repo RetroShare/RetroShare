@@ -27,6 +27,7 @@
 #include "services/p3FeedReader.h"
 
 class p3FeedReader;
+class FeedReaderNotify;
 class RsForums;
 
 class FeedReaderPlugin: public RsPlugin
@@ -52,10 +53,13 @@ public:
 	virtual void setInterfaces(RsPlugInInterfaces& interfaces);
 	virtual ConfigPage *qt_config_page() const;
 
+	virtual FeedNotify *qt_feedNotify();
+
 private:
 	mutable p3FeedReader *mFeedReader;
+	mutable FeedReaderNotify *mNotify;
 	mutable RsPluginHandler *mPlugInHandler;
 	mutable MainPage *mainpage;
 	mutable QIcon *mIcon;
+	mutable FeedNotify *mFeedNotify;
 };
-

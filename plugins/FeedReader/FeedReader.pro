@@ -13,7 +13,9 @@ SOURCES =	FeedReaderPlugin.cpp \
 			gui/FeedReaderNotify.cpp \
 			gui/FeedReaderConfig.cpp \
 			gui/FeedReaderStringDefs.cpp \
+			gui/FeedReaderFeedNotify.cpp \
 			gui/FeedReaderUserNotify.cpp \
+			gui/FeedReaderFeedItem.cpp \
 			util/CURLWrapper.cpp \
 			util/XMLWrapper.cpp \
 			util/HTMLWrapper.cpp \
@@ -31,7 +33,9 @@ HEADERS =	FeedReaderPlugin.h \
 			gui/FeedReaderNotify.h \
 			gui/FeedReaderConfig.h \
 			gui/FeedReaderStringDefs.h \
+			gui/FeedReaderFeedNotify.h \
 			gui/FeedReaderUserNotify.h \
+			gui/FeedReaderFeedItem.h \
 			util/CURLWrapper.h \
 			util/XMLWrapper.h \
 			util/HTMLWrapper.h \
@@ -41,7 +45,8 @@ FORMS =		gui/FeedReaderDialog.ui \
 			gui/FeedReaderMessageWidget.ui \
 			gui/AddFeedDialog.ui \
 			gui/PreviewFeedDialog.ui \
-			gui/FeedReaderConfig.ui
+			gui/FeedReaderConfig.ui \
+			gui/FeedReaderFeedItem.ui
 
 TARGET = FeedReader
 

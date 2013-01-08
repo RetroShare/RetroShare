@@ -42,40 +42,22 @@ bool FeedReaderUserNotify::hasSetting(QString &name)
 
 bool FeedReaderUserNotify::notifyEnabled()
 {
-	bool enable = true;
-
-	Settings->beginGroup(QString("FeedReader"));
-	enable = Settings->value("TrayNotifyEnable", enable).toBool();
-	Settings->endGroup();
-
-	return enable;
+	return Settings->valueFromGroup("FeedReader", "TrayNotifyEnable", true).toBool();
 }
 
 bool FeedReaderUserNotify::notifyCombined()
 {
-	bool combined = false;
-
-	Settings->beginGroup(QString("FeedReader"));
-	combined = Settings->value("TrayNotifyCombined", combined).toBool();
-	Settings->endGroup();
-
-	return combined;
+	return Settings->valueFromGroup("FeedReader", "TrayNotifyCombined", false).toBool();
 }
 
 bool FeedReaderUserNotify::notifyBlink()
 {
-	bool blink = false;
-
-	Settings->beginGroup(QString("FeedReader"));
-	blink = Settings->value("TrayNotifyBlink", blink).toBool();
-	Settings->endGroup();
-
-	return blink;
+	return Settings->valueFromGroup("FeedReader", "TrayNotifyBlink", false).toBool();
 }
 
 void FeedReaderUserNotify::setNotifyEnabled(bool enabled, bool combined, bool blink)
 {
-	Settings->beginGroup(QString("FeedReader"));
+	Settings->beginGroup("FeedReader");
 	Settings->setValue("TrayNotifyEnable", enabled);
 	Settings->setValue("TrayNotifyCombined", combined);
 	Settings->setValue("TrayNotifyBlink", blink);

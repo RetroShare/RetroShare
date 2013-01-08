@@ -19,15 +19,16 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-
 #include <rshare.h>
 #include "NotifyPage.h"
 
 #include <retroshare/rsnotify.h>
+#include <retroshare/rsplugin.h>
 #include "rsharesettings.h"
 
 #include "gui/MainWindow.h"
 #include "gui/common/UserNotify.h"
+#include "gui/common/FeedNotify.h"
 #include "gui/notifyqt.h"
 #include "gui/NewsFeed.h"
 
@@ -41,11 +42,34 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WFlags flags)
   connect(ui.notifyButton, SIGNAL(clicked()), this, SLOT(testNotify()));
   connect(ui.toasterButton, SIGNAL(clicked()), this, SLOT(testToaster()));
 
-  /* add user notify */
   QFont font = ui.notify_Peers->font(); // use font from existing checkbox
+
+  /* add feed notify */
+  int row = 0;
+  int pluginCount = rsPlugins->nbPlugins();
+  for (int i = 0; i < pluginCount; ++i) {
+      RsPlugin *rsPlugin = rsPlugins->plugin(i);
+      if (rsPlugin) {
+          FeedNotify *feedNotify = rsPlugin->qt_feedNotify();
+          if (feedNotify) {
+              QString name;
+              if (!feedNotify->hasSetting(name)) {
+                  continue;
+              }
+
+              QCheckBox *enabledCheckBox = new QCheckBox(name, this);
+              enabledCheckBox->setFont(font);
+              ui.feedLayout->addWidget(enabledCheckBox, row++);
+
+              mFeedNotifySettingList.push_back(FeedNotifySetting(feedNotify, enabledCheckBox));
+          }
+      }
+  }
+
+  /* add user notify */
   const QList<UserNotify*> &userNotifyList = MainWindow::getInstance()->getUserNotifyList();
   QList<UserNotify*>::const_iterator it;
-  int row = 0;
+  row = 0;
   for (it = userNotifyList.begin(); it != userNotifyList.end(); ++it) {
       UserNotify *userNotify = *it;
 
@@ -135,6 +159,12 @@ NotifyPage::save(QString &/*errmsg*/)
     if (ui.message_ConnectAttempt->isChecked())
         messageflags |= RS_MESSAGE_CONNECT_ATTEMPT;
 
+    /* save feed notify */
+    QList<FeedNotifySetting>::iterator feedNotifyIt;
+    for (feedNotifyIt = mFeedNotifySettingList.begin(); feedNotifyIt != mFeedNotifySettingList.end(); ++feedNotifyIt) {
+        feedNotifyIt->mFeedNotify->setNotifyEnabled(feedNotifyIt->mEnabledCheckBox->isChecked());
+    }
+
     /* save user notify */
     QList<UserNotifySetting>::iterator notifyIt;
     for (notifyIt = mUserNotifySettingList.begin(); notifyIt != mUserNotifySettingList.end(); ++notifyIt) {
@@ -218,12 +248,18 @@ void NotifyPage::load()
     ui.spinBoxToasterXMargin->setValue(margin.x());
     ui.spinBoxToasterYMargin->setValue(margin.y());
 
+    /* load feed notify */
+    QList<FeedNotifySetting>::iterator feedNotifyIt;
+    for (feedNotifyIt = mFeedNotifySettingList.begin(); feedNotifyIt != mFeedNotifySettingList.end(); ++feedNotifyIt) {
+        feedNotifyIt->mEnabledCheckBox->setChecked(feedNotifyIt->mFeedNotify->notifyEnabled());
+    }
+
     /* load user notify */
-    QList<UserNotifySetting>::iterator notifyIt;
-    for (notifyIt = mUserNotifySettingList.begin(); notifyIt != mUserNotifySettingList.end(); ++notifyIt) {
-        notifyIt->mEnabledCheckBox->setChecked(notifyIt->mUserNotify->notifyEnabled());
-        notifyIt->mCombinedCheckBox->setChecked(notifyIt->mUserNotify->notifyCombined());
-        notifyIt->mBlinkCheckBox->setChecked(notifyIt->mUserNotify->notifyBlink());
+    QList<UserNotifySetting>::iterator userNotifyIt;
+    for (userNotifyIt = mUserNotifySettingList.begin(); userNotifyIt != mUserNotifySettingList.end(); ++userNotifyIt) {
+        userNotifyIt->mEnabledCheckBox->setChecked(userNotifyIt->mUserNotify->notifyEnabled());
+        userNotifyIt->mCombinedCheckBox->setChecked(userNotifyIt->mUserNotify->notifyCombined());
+        userNotifyIt->mBlinkCheckBox->setChecked(userNotifyIt->mUserNotify->notifyBlink());
     }
 
     notifyToggled();

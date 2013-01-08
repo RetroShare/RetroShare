@@ -52,6 +52,7 @@ class RsPQIService ;
 class RsAutoUpdatePage ;
 class PopupChatDialog ;
 class SoundEvents;
+class FeedNotify;
 
 // Plugin API version. Not used yet, but will be in the future the
 // main value that decides for compatibility.
@@ -94,12 +95,12 @@ class RsPlugin
 		//================================ Services ==================================//
 		//
 		// Cache service. Use this for providing cache-based services, such as channels, forums.
-		// Example plugin: LinksCloud 
+		// Example plugin: LinksCloud
 		//
-		virtual RsCacheService *rs_cache_service() 	const	{ return NULL ; }	
+		virtual RsCacheService *rs_cache_service() 	const	{ return NULL ; }
 
 		// Peer-to-Peer service. Use this for providing a service based to friend to friend
-		// exchange of data, such as chat, messages, etc. 
+		// exchange of data, such as chat, messages, etc.
 		// Example plugin: VOIP
 		//
 		virtual RsPQIService   *rs_pqi_service() 		const	{ return NULL ; }
@@ -133,13 +134,18 @@ class RsPlugin
 
 		// Any derived class of PopupChatDialog to be used for chat.
 		//
-		virtual PopupChatDialog    *qt_allocate_new_popup_chat_dialog() const { return NULL ; }	
+		virtual PopupChatDialog    *qt_allocate_new_popup_chat_dialog() const { return NULL ; }
 
 		virtual QTranslator    *qt_translator(QApplication * /* app */, const QString& /* languageCode */, const QString& /* externalDir */ ) const	{ return NULL ; }
 
-		// 
+		//
+		//================================== Notify ==================================//
+		//
+		virtual FeedNotify *qt_feedNotify() { return NULL; }
+
+		//
 		//========================== Plugin Description ==============================//
-		// 
+		//
 		//  All these items appear in the config->plugins tab, as a description of the plugin.
 		//
 		uint32_t getSvnRevision() const { return SVN_REVISION_NUMBER ; }	// This is read from libretroshare/util/rsversion.h
@@ -148,9 +154,9 @@ class RsPlugin
 		virtual std::string getPluginName() const = 0 ;
 		virtual void getPluginVersion(int& major,int& minor,int& svn_rev) const = 0 ;
 
-		// 
+		//
 		//========================== Plugin Interface ================================//
-		// 
+		//
 		// Use these methods to access main objects from RetroShare.
 		//
 		virtual void setInterfaces(RsPlugInInterfaces& interfaces) = 0;

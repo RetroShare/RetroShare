@@ -26,6 +26,7 @@
 #include "ui_NotifyPage.h"
 
 class UserNotify;
+class FeedNotify;
 
 class UserNotifySetting
 {
@@ -38,6 +39,17 @@ public:
 public:
     UserNotifySetting(UserNotify *userNotify, QCheckBox *enabledCheckBox, QCheckBox *combinedCheckBox, QCheckBox *blinkCheckBox)
         : mUserNotify(userNotify), mEnabledCheckBox(enabledCheckBox), mCombinedCheckBox(combinedCheckBox), mBlinkCheckBox(blinkCheckBox) {}
+};
+
+class FeedNotifySetting
+{
+public:
+    FeedNotify *mFeedNotify;
+    QCheckBox *mEnabledCheckBox;
+
+public:
+    FeedNotifySetting(FeedNotify *feedNotify, QCheckBox *enabledCheckBox)
+        : mFeedNotify(feedNotify), mEnabledCheckBox(enabledCheckBox) {}
 };
 
 class NotifyPage : public ConfigPage
@@ -67,6 +79,7 @@ private:
 	uint getNewsFlags();
 	uint getNotifyFlags();
 
+    QList<FeedNotifySetting> mFeedNotifySettingList;
     QList<UserNotifySetting> mUserNotifySettingList;
 
     /** Qt Designer generated object */

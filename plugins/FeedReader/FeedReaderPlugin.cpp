@@ -27,7 +27,9 @@
 
 #include "FeedReaderPlugin.h"
 #include "gui/FeedReaderDialog.h"
+#include "gui/FeedReaderNotify.h"
 #include "gui/FeedReaderConfig.h"
+#include "gui/FeedReaderFeedNotify.h"
 #include "services/p3FeedReader.h"
 
 #define IMAGE_FEEDREADER ":/images/FeedReader.png"
@@ -77,6 +79,8 @@ FeedReaderPlugin::FeedReaderPlugin()
 	mIcon = NULL ;
 	mPlugInHandler = NULL;
 	mFeedReader = NULL;
+	mNotify = NULL;
+	mFeedNotify = NULL;
 }
 
 void FeedReaderPlugin::setInterfaces(RsPlugInInterfaces &/*interfaces*/)
@@ -91,10 +95,18 @@ ConfigPage *FeedReaderPlugin::qt_config_page() const
 MainPage *FeedReaderPlugin::qt_page() const
 {
 	if (mainpage == NULL) {
-		mainpage = new FeedReaderDialog(mFeedReader);
+		mainpage = new FeedReaderDialog(mFeedReader, mNotify);
 	}
 
 	return mainpage;
+}
+
+FeedNotify *FeedReaderPlugin::qt_feedNotify()
+{
+	if (!mFeedNotify) {
+		mFeedNotify = new FeedReaderFeedNotify(mFeedReader, mNotify);
+	}
+	return mFeedNotify;
 }
 
 RsPQIService *FeedReaderPlugin::rs_pqi_service() const
@@ -102,6 +114,9 @@ RsPQIService *FeedReaderPlugin::rs_pqi_service() const
 	if (mFeedReader == NULL) {
 		mFeedReader = new p3FeedReader(mPlugInHandler);
 		rsFeedReader = mFeedReader;
+
+		mNotify = new FeedReaderNotify();
+		mFeedReader->setNotify(mNotify);
 	}
 
 	return mFeedReader;
@@ -110,7 +125,16 @@ RsPQIService *FeedReaderPlugin::rs_pqi_service() const
 void FeedReaderPlugin::stop()
 {
 	if (mFeedReader) {
+		mFeedReader->setNotify(NULL);
 		mFeedReader->stop();
+	}
+	if (mNotify) {
+		delete(mNotify);
+		mNotify = NULL;
+	}
+	if (mFeedNotify) {
+		delete mFeedNotify;
+		mFeedNotify = NULL;
 	}
 }
 

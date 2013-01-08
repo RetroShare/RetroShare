@@ -413,6 +413,7 @@ HEADERS +=  rshare.h \
             gui/common/LineEditClear.h \
             gui/common/DropLineEdit.h \
             gui/common/LinkTextBrowser.h \
+            gui/common/FeedNotify.h \
             gui/common/UserNotify.h \
             gui/common/HeaderFrame.h \
             gui/common/MimeTextEdit.h \
@@ -680,6 +681,7 @@ SOURCES +=  main.cpp \
             gui/common/LineEditClear.cpp \
             gui/common/DropLineEdit.cpp \
             gui/common/LinkTextBrowser.cpp \
+            gui/common/FeedNotify.cpp \
             gui/common/UserNotify.cpp \
             gui/common/HeaderFrame.cpp \
             gui/common/MimeTextEdit.cpp \

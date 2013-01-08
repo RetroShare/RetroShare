@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -28,6 +28,7 @@
 #include <retroshare/rschannels.h>
 #include <retroshare/rsforums.h>
 #include <retroshare/rsmsgs.h>
+#include <retroshare/rsplugin.h>
 
 #include "feeds/ChanNewItem.h"
 #include "feeds/ChanMsgItem.h"
@@ -49,6 +50,7 @@
 #include "settings/rsharesettings.h"
 #include "chat/ChatDialog.h"
 #include "msgs/MessageComposer.h"
+#include "common/FeedNotify.h"
 
 const uint32_t NEWSFEED_PEERLIST = 	0x0001;
 const uint32_t NEWSFEED_FORUMNEWLIST = 	0x0002;
@@ -71,8 +73,8 @@ static NewsFeed *instance = NULL;
 NewsFeed::NewsFeed(QWidget *parent)
 : MainPage (parent)
 {
-  	/* Invoke the Qt Designer generated object setup routine */
-  	setupUi(this);
+	/* Invoke the Qt Designer generated object setup routine */
+	setupUi(this);
 
 	if (!instance) {
 		instance = this;
@@ -195,6 +197,23 @@ void NewsFeed::updateFeed()
 			default:
 				break;
 		}
+	} else {
+		/* process plugin feeds */
+		int pluginCount = rsPlugins->nbPlugins();
+		for (int i = 0; i < pluginCount; ++i) {
+			RsPlugin *rsPlugin = rsPlugins->plugin(i);
+			if (rsPlugin) {
+				FeedNotify *feedNotify = rsPlugin->qt_feedNotify();
+				if (feedNotify && feedNotify->notifyEnabled()) {
+					QWidget *item = feedNotify->feedItem(this);
+					if (item) {
+						addFeedItem(item);
+						break;
+					}
+				}
+			}
+		}
+
 	}
 }
 
@@ -430,7 +449,7 @@ void NewsFeed::addFeedItemIfUnique(QWidget *item, int itemType, const std::strin
 			}
 		}
 	}
-		
+
 	addFeedItem(item);
 }
 
@@ -551,12 +570,12 @@ void	NewsFeed::addFeedItemSecurityUnknownOut(RsFeedItem &fi)
 {
 	/* make new widget */
 	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, fi.mId1, fi.mId2, fi.mId4, SEC_TYPE_UNKNOWN_OUT, false);
-	
+
 	/* store */
-	
+
 	/* add to layout */
 	addFeedItemIfUnique(pi, SEC_TYPE_UNKNOWN_OUT, fi.mId2, false);
-	
+
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityUnknownOut()";
 	std::cerr << std::endl;

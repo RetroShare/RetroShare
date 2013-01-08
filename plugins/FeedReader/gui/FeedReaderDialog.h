@@ -40,7 +40,7 @@ class FeedReaderDialog : public MainPage
 	Q_OBJECT
 
 public:
-	FeedReaderDialog(RsFeedReader *feedReader, QWidget *parent = 0);
+	FeedReaderDialog(RsFeedReader *feedReader, FeedReaderNotify *notify, QWidget *parent = 0);
 	~FeedReaderDialog();
 
 	virtual UserNotify *getUserNotify(QObject *parent);

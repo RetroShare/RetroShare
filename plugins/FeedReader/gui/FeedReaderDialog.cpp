@@ -55,8 +55,8 @@
 #define ROLE_FEED_ERROR       Qt::UserRole + 8
 #define ROLE_FEED_DEACTIVATED Qt::UserRole + 9
 
-FeedReaderDialog::FeedReaderDialog(RsFeedReader *feedReader, QWidget *parent)
-	: MainPage(parent), mFeedReader(feedReader), ui(new Ui::FeedReaderDialog)
+FeedReaderDialog::FeedReaderDialog(RsFeedReader *feedReader, FeedReaderNotify *notify, QWidget *parent)
+	: MainPage(parent), mFeedReader(feedReader), mNotify(notify), ui(new Ui::FeedReaderDialog)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui->setupUi(this);
@@ -65,8 +65,6 @@ FeedReaderDialog::FeedReaderDialog(RsFeedReader *feedReader, QWidget *parent)
 	mOpenFeedIds = NULL;
 	mMessageWidget = NULL;
 
-	mNotify = new FeedReaderNotify();
-	mFeedReader->setNotify(mNotify);
 	connect(mNotify, SIGNAL(feedChanged(QString,int)), this, SLOT(feedChanged(QString,int)));
 	connect(mNotify, SIGNAL(msgChanged(QString,QString,int)), this, SLOT(msgChanged(QString,QString,int)));
 
@@ -125,9 +123,6 @@ FeedReaderDialog::~FeedReaderDialog()
 
 	delete(mFeedCompareRole);
 	delete(ui);
-
-	mFeedReader->setNotify(NULL);
-	delete(mNotify);
 
 	if (mOpenFeedIds) {
 		delete mOpenFeedIds;

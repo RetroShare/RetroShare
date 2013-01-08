@@ -3164,6 +3164,14 @@ p, li { white-space: pre-wrap; }
         <source>Paste my certificate link</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>No Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>CreateLobbyDialog</name>
@@ -6035,10 +6043,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Key recipients can publish to restricted-type Wiki Group, and can view and publish  for private-type channels</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Share Publish Key</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6151,11 +6155,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add Wiki Moderators</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select Wiki Moderators</source>
+        <source>Key recipients can publish to restricted-type group and can view and publish for private-type channels</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12306,6 +12306,14 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Edit Wiki Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Wiki Moderators</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select Wiki Moderators</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
