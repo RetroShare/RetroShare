@@ -424,6 +424,7 @@ void Rshare::resetLanguageAndStyle()
 
 void Rshare::loadStyleSheet(const QString &sheetName)
 {
+    QString locale = QLocale().name();
     QString styleSheet;
 
     /* load the default stylesheet */
@@ -433,7 +434,15 @@ void Rshare::loadStyleSheet(const QString &sheetName)
         file.close();
     }
 
+    /* load locale depended default stylesheet */
+    file.setFileName(":/qss/stylesheet/qss." + locale);
+    if (file.open(QFile::ReadOnly)) {
+        styleSheet = QLatin1String(file.readAll()) + "\n";
+        file.close();
+    }
+
     if (!sheetName.isEmpty()) {
+        /* load stylesheet */
         if (sheetName.left(1) == ":") {
             /* internal stylesheet */
             file.setFileName(":/qss/stylesheet/" + sheetName.mid(1) + ".qss");
@@ -445,8 +454,16 @@ void Rshare::loadStyleSheet(const QString &sheetName)
             }
         }
         if (file.open(QFile::ReadOnly)) {
-            styleSheet += QLatin1String(file.readAll());
+            styleSheet += QLatin1String(file.readAll()) + "\n";
             file.close();
+
+            /* load language depended stylesheet */
+            QFileInfo fileInfo(file.fileName());
+            file.setFileName(fileInfo.path() + "/" + fileInfo.baseName() + "_" + locale + ".lqss");
+            if (file.open(QFile::ReadOnly)) {
+                styleSheet += QLatin1String(file.readAll()) + "\n";
+                file.close();
+            }
         }
     }
     qApp->setStyleSheet(styleSheet);
