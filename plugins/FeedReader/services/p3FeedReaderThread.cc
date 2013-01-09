@@ -876,6 +876,10 @@ RsFeedReaderErrorState p3FeedReaderThread::process(const RsFeedReaderFeed &feed,
 						/* try feedburner:origLink */
 						if (!xml.getChildText(node, "origLink", item->link) || item->link.empty()) {
 							xml.getChildText(node, "link", item->link);
+							if (item->link.empty()) {
+								xmlNodePtr linkNode = xml.findNode(node, "link", true);
+								item->link = xml.getAttr(linkNode, "href");
+							}
 						}
 
 						// remove sid=
@@ -908,7 +912,9 @@ RsFeedReaderErrorState p3FeedReaderThread::process(const RsFeedReaderFeed &feed,
 								xml.getChildText(node, "name", item->author);
 							}
 						} else {
-							xml.getChildText(node, "author", item->author);
+							if (!xml.getChildText(node, "author", item->author)) {
+								xml.getChildText(node, "creator", item->author);
+							}
 						}
 
 						switch (feedFormat) {
