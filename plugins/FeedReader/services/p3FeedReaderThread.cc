@@ -906,7 +906,7 @@ RsFeedReaderErrorState p3FeedReaderThread::process(const RsFeedReaderFeed &feed,
 						}
 
 						if (feedFormat == FORMAT_ATOM) {
-							/* <author><name>... */
+							/* <author><name>...</name></author> */
 							xmlNodePtr author = xml.findNode(node->children, "author", false);
 							if (author) {
 								xml.getChildText(node, "name", item->author);
@@ -920,7 +920,11 @@ RsFeedReaderErrorState p3FeedReaderThread::process(const RsFeedReaderFeed &feed,
 						switch (feedFormat) {
 						case FORMAT_RSS:
 						case FORMAT_RDF:
-							xml.getChildText(node, "description", item->description);
+							/* try content:encoded */
+							if (!xml.getChildText(node, "encoded", item->description)) {
+								/* use description */
+								xml.getChildText(node, "description", item->description);
+							}
 							break;
 						case FORMAT_ATOM:
 							/* try content */

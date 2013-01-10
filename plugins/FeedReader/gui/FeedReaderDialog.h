@@ -45,6 +45,8 @@ public:
 
 	virtual UserNotify *getUserNotify(QObject *parent);
 
+	static QIcon iconFromFeed(const FeedInfo &feedInfo);
+
 protected:
 	virtual void showEvent(QShowEvent *event);
 	bool eventFilter(QObject *obj, QEvent *ev);
@@ -76,11 +78,11 @@ private:
 	void addFeedToExpand(const std::string &feedId);
 	void getExpandedFeedIds(QList<std::string> &feedIds);
 	void updateFeeds(const std::string &parentId, QTreeWidgetItem *parentItem);
-	void updateFeedItem(QTreeWidgetItem *item, FeedInfo &info);
+	void updateFeedItem(QTreeWidgetItem *item, const FeedInfo &feedInfo);
 	void openFeedInNewTab(const std::string &feedId);
 
 	void calculateFeedItems();
-	void calculateFeedItem(QTreeWidgetItem *item, uint32_t &unreadCount, bool &loading);
+	void calculateFeedItem(QTreeWidgetItem *item, uint32_t &unreadCount, uint32_t &newCount, bool &loading);
 
 	FeedReaderMessageWidget *feedMessageWidget(const std::string &feedId);
 	FeedReaderMessageWidget *createMessageWidget(const std::string &feedId);

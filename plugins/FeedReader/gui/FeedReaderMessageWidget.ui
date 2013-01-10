@@ -42,7 +42,7 @@
           <item>
            <widget class="QToolButton" name="msgReadButton">
             <property name="focusPolicy">
-             <enum>Qt::ClickFocus</enum>
+             <enum>Qt::NoFocus</enum>
             </property>
             <property name="toolTip">
              <string>Mark messages as read</string>
@@ -62,7 +62,7 @@
           <item>
            <widget class="QToolButton" name="msgUnreadButton">
             <property name="focusPolicy">
-             <enum>Qt::ClickFocus</enum>
+             <enum>Qt::NoFocus</enum>
             </property>
             <property name="toolTip">
              <string>Mark messages as unread</string>
@@ -79,7 +79,7 @@
           <item>
            <widget class="QToolButton" name="msgReadAllButton">
             <property name="focusPolicy">
-             <enum>Qt::ClickFocus</enum>
+             <enum>Qt::NoFocus</enum>
             </property>
             <property name="toolTip">
              <string>Mark all messages as read</string>
@@ -96,7 +96,7 @@
           <item>
            <widget class="QToolButton" name="msgRemoveButton">
             <property name="focusPolicy">
-             <enum>Qt::ClickFocus</enum>
+             <enum>Qt::NoFocus</enum>
             </property>
             <property name="toolTip">
              <string>Remove messages</string>
@@ -113,7 +113,7 @@
           <item>
            <widget class="QToolButton" name="feedProcessButton">
             <property name="focusPolicy">
-             <enum>Qt::ClickFocus</enum>
+             <enum>Qt::NoFocus</enum>
             </property>
             <property name="toolTip">
              <string>Update feed</string>
@@ -203,7 +203,7 @@
          <item>
           <widget class="QToolButton" name="linkButton">
            <property name="focusPolicy">
-            <enum>Qt::ClickFocus</enum>
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="icon">
             <iconset resource="FeedReader_images.qrc">

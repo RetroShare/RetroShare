@@ -48,12 +48,13 @@
 #define ROLE_FEED_SORT        Qt::UserRole + 1
 #define ROLE_FEED_FOLDER      Qt::UserRole + 2
 #define ROLE_FEED_UNREAD      Qt::UserRole + 3
-#define ROLE_FEED_NAME        Qt::UserRole + 4
-#define ROLE_FEED_WORKSTATE   Qt::UserRole + 5
-#define ROLE_FEED_LOADING     Qt::UserRole + 6
-#define ROLE_FEED_ICON        Qt::UserRole + 7
-#define ROLE_FEED_ERROR       Qt::UserRole + 8
-#define ROLE_FEED_DEACTIVATED Qt::UserRole + 9
+#define ROLE_FEED_NEW         Qt::UserRole + 4
+#define ROLE_FEED_NAME        Qt::UserRole + 5
+#define ROLE_FEED_WORKSTATE   Qt::UserRole + 6
+#define ROLE_FEED_LOADING     Qt::UserRole + 7
+#define ROLE_FEED_ICON        Qt::UserRole + 8
+#define ROLE_FEED_ERROR       Qt::UserRole + 9
+#define ROLE_FEED_DEACTIVATED Qt::UserRole + 10
 
 FeedReaderDialog::FeedReaderDialog(RsFeedReader *feedReader, FeedReaderNotify *notify, QWidget *parent)
 	: MainPage(parent), mFeedReader(feedReader), mNotify(notify), ui(new Ui::FeedReaderDialog)
@@ -404,22 +405,25 @@ void FeedReaderDialog::updateFeeds(const std::string &parentId, QTreeWidgetItem 
 	calculateFeedItems();
 }
 
-void FeedReaderDialog::calculateFeedItem(QTreeWidgetItem *item, uint32_t &unreadCount, bool &loading)
+void FeedReaderDialog::calculateFeedItem(QTreeWidgetItem *item, uint32_t &unreadCount, uint32_t &newCount, bool &loading)
 {
 	uint32_t unreadCountItem = 0;
+	uint32_t newCountItem = 0;
 	bool loadingItem = false;
 
 	if (item->data(COLUMN_FEED_DATA, ROLE_FEED_FOLDER).toBool()) {
 		int childCount = item->childCount();
 		for (int index = 0; index < childCount; ++index) {
-			calculateFeedItem(item->child(index), unreadCountItem, loadingItem);
+			calculateFeedItem(item->child(index), unreadCountItem, newCountItem, loadingItem);
 		}
 	} else {
 		unreadCountItem = item->data(COLUMN_FEED_DATA, ROLE_FEED_UNREAD).toUInt();
+		newCountItem = item->data(COLUMN_FEED_DATA, ROLE_FEED_NEW).toUInt();
 		loadingItem = item->data(COLUMN_FEED_DATA, ROLE_FEED_LOADING).toBool();
 	}
 
 	unreadCount += unreadCountItem;
+	newCount += newCountItem;
 	loading = loading || loadingItem;
 
 	QString name = item->data(COLUMN_FEED_DATA, ROLE_FEED_NAME).toString();
@@ -459,6 +463,8 @@ void FeedReaderDialog::calculateFeedItem(QTreeWidgetItem *item, uint32_t &unread
 		overlayIcon = QImage(":/images/FeedProcessOverlay.png");
 	} else if (item->data(COLUMN_FEED_DATA, ROLE_FEED_ERROR).toBool()) {
 		overlayIcon = QImage(":/images/FeedErrorOverlay.png");
+	} else if (newCountItem) {
+		overlayIcon = QImage(":/images/FeedNewOverlay.png");
 	}
 	if (!overlayIcon.isNull()) {
 		if (icon.isNull()) {
@@ -478,47 +484,56 @@ void FeedReaderDialog::calculateFeedItem(QTreeWidgetItem *item, uint32_t &unread
 void FeedReaderDialog::calculateFeedItems()
 {
 	uint32_t unreadCount = 0;
+	uint32_t newCount = 0;
 	bool loading = false;
 
-	calculateFeedItem(mRootItem, unreadCount, loading);
+	calculateFeedItem(mRootItem, unreadCount, newCount, loading);
 	ui->feedTreeWidget->sortItems(COLUMN_FEED_NAME, Qt::AscendingOrder);
 }
 
-void FeedReaderDialog::updateFeedItem(QTreeWidgetItem *item, FeedInfo &info)
+QIcon FeedReaderDialog::iconFromFeed(const FeedInfo &feedInfo)
 {
-
 	QIcon icon;
-	if (info.flag.folder) {
+	if (feedInfo.flag.folder) {
 		/* use folder icon */
 		icon = QIcon(":/images/Folder.png");
 	} else {
-		long todo; // show icon from feed
-//		if (info.icon.empty()) {
+		if (feedInfo.icon.empty()) {
 			/* use standard icon */
 			icon = QIcon(":/images/Feed.png");
-//		} else {
-//			/* use icon from feed */
-//			icon = QIcon(QPixmap::fromImage(QImage((uchar*) QByteArray::fromBase64(info.icon.c_str()).constData(), 16, 16, QImage::Format_RGB32)));
-//		}
+		} else {
+			/* use icon from feed */
+			QPixmap pixmap;
+			if (pixmap.loadFromData(QByteArray::fromBase64(feedInfo.icon.c_str()))) {
+				icon = pixmap.scaled(16, 16, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+			}
+		}
 	}
 
-	item->setData(COLUMN_FEED_DATA, ROLE_FEED_ICON, icon);
+	return icon;
+}
 
-	QString name = QString::fromUtf8(info.name.c_str());
+void FeedReaderDialog::updateFeedItem(QTreeWidgetItem *item, const FeedInfo &feedInfo)
+{
+	item->setData(COLUMN_FEED_DATA, ROLE_FEED_ICON, iconFromFeed(feedInfo));
+
+	QString name = QString::fromUtf8(feedInfo.name.c_str());
 	item->setData(COLUMN_FEED_DATA, ROLE_FEED_NAME, name.isEmpty() ? tr("No name") : name);
-	item->setData(COLUMN_FEED_DATA, ROLE_FEED_WORKSTATE, FeedReaderStringDefs::workState(info.workstate));
+	item->setData(COLUMN_FEED_DATA, ROLE_FEED_WORKSTATE, FeedReaderStringDefs::workState(feedInfo.workstate));
 
 	uint32_t unreadCount;
-	mFeedReader->getMessageCount(info.feedId, NULL, NULL, &unreadCount);
+	uint32_t newCount;
+	mFeedReader->getMessageCount(feedInfo.feedId, NULL, &newCount, &unreadCount);
 
-	item->setData(COLUMN_FEED_NAME, ROLE_FEED_SORT, QString("%1_%2").arg(QString(info.flag.folder ? "0" : "1"), name));
+	item->setData(COLUMN_FEED_NAME, ROLE_FEED_SORT, QString("%1_%2").arg(QString(feedInfo.flag.folder ? "0" : "1"), name));
 	item->setData(COLUMN_FEED_DATA, ROLE_FEED_UNREAD, unreadCount);
-	item->setData(COLUMN_FEED_DATA, ROLE_FEED_LOADING, info.workstate != FeedInfo::WAITING);
-	item->setData(COLUMN_FEED_DATA, ROLE_FEED_ID, QString::fromStdString(info.feedId));
-	item->setData(COLUMN_FEED_DATA, ROLE_FEED_FOLDER, info.flag.folder);
-	item->setData(COLUMN_FEED_DATA, ROLE_FEED_DEACTIVATED, info.flag.deactivated);
-	item->setData(COLUMN_FEED_DATA, ROLE_FEED_ERROR, (bool) (info.errorState != RS_FEED_ERRORSTATE_OK));
-	item->setToolTip(COLUMN_FEED_NAME, (info.errorState != RS_FEED_ERRORSTATE_OK) ? FeedReaderStringDefs::errorString(info) : "");
+	item->setData(COLUMN_FEED_DATA, ROLE_FEED_NEW, newCount);
+	item->setData(COLUMN_FEED_DATA, ROLE_FEED_LOADING, feedInfo.workstate != FeedInfo::WAITING);
+	item->setData(COLUMN_FEED_DATA, ROLE_FEED_ID, QString::fromStdString(feedInfo.feedId));
+	item->setData(COLUMN_FEED_DATA, ROLE_FEED_FOLDER, feedInfo.flag.folder);
+	item->setData(COLUMN_FEED_DATA, ROLE_FEED_DEACTIVATED, feedInfo.flag.deactivated);
+	item->setData(COLUMN_FEED_DATA, ROLE_FEED_ERROR, (bool) (feedInfo.errorState != RS_FEED_ERRORSTATE_OK));
+	item->setToolTip(COLUMN_FEED_NAME, (feedInfo.errorState != RS_FEED_ERRORSTATE_OK) ? FeedReaderStringDefs::errorString(feedInfo) : "");
 }
 
 void FeedReaderDialog::feedChanged(const QString &feedId, int type)

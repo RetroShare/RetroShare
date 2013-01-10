@@ -53,6 +53,18 @@ FeedReaderFeedItem::FeedReaderFeedItem(RsFeedReader *feedReader, FeedReaderNotif
 	mFeedId = feedInfo.feedId;
 	mMsgId = msgInfo.msgId;
 
+	if (feedInfo.icon.empty()) {
+		ui->feedIconLabel->hide();
+	} else {
+		/* use icon from feed */
+		QPixmap pixmap;
+		if (pixmap.loadFromData(QByteArray::fromBase64(feedInfo.icon.c_str()))) {
+			ui->feedIconLabel->setPixmap(pixmap.scaled(16, 16, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+		} else {
+			ui->feedIconLabel->hide();
+		}
+	}
+
 	ui->titleLabel->setText(QString::fromUtf8(feedInfo.name.c_str()));
 	ui->msgTitleLabel->setText(QString::fromUtf8(msgInfo.title.c_str()));
 	ui->descriptionLabel->setText(QString::fromUtf8(msgInfo.description.c_str()));

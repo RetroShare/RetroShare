@@ -50,29 +50,47 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_6">
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_4">
-          <item>
-           <widget class="QLabel" name="logoLabel">
-            <property name="maximumSize">
-             <size>
-              <width>48</width>
-              <height>48</height>
-             </size>
-            </property>
-            <property name="pixmap">
-             <pixmap resource="FeedReader_images.qrc">:/images/FeedReader.png</pixmap>
-            </property>
-            <property name="scaledContents">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <widget class="QLabel" name="logoLabel">
+          <property name="maximumSize">
+           <size>
+            <width>48</width>
+            <height>48</height>
+           </size>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="FeedReader_images.qrc">:/images/FeedReader.png</pixmap>
+          </property>
+          <property name="scaledContents">
+           <bool>true</bool>
+          </property>
+         </widget>
         </item>
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="QLabel" name="feedIconLabel">
+              <property name="minimumSize">
+               <size>
+                <width>16</width>
+                <height>16</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16</width>
+                <height>16</height>
+               </size>
+              </property>
+              <property name="pixmap">
+               <pixmap resource="FeedReader_images.qrc">:/images/Feed.png</pixmap>
+              </property>
+              <property name="scaledContents">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
             <item>
              <widget class="QLabel" name="titleLabel">
               <property name="sizePolicy">
@@ -258,6 +276,12 @@ p, li { white-space: pre-wrap; }
          </property>
          <item>
           <widget class="QFrame" name="msgFrame">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="frameShape">
             <enum>QFrame::Box</enum>
            </property>

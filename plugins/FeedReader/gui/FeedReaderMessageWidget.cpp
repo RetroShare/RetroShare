@@ -4,17 +4,18 @@
 #include <QClipboard>
 #include <QDesktopServices>
 #include <QTimer>
+#include <QPainter>
 
 #include "FeedReaderMessageWidget.h"
 #include "ui_FeedReaderMessageWidget.h"
 #include "FeedReaderNotify.h"
 #include "FeedReaderConfig.h"
+#include "FeedReaderDialog.h"
 
 #include "gui/common/RSTreeWidgetItem.h"
 #include "gui/settings/rsharesettings.h"
 #include "util/HandleRichText.h"
 
-#include "interface/rsFeedReader.h"
 #include "retroshare/rsiface.h"
 
 #define COLUMN_MSG_COUNT    4
@@ -37,6 +38,7 @@ FeedReaderMessageWidget::FeedReaderMessageWidget(const std::string &feedId, RsFe
 
 	mProcessSettings = false;
 	mUnreadCount = 0;
+	mNewCount = 0;
 
 	/* connect signals */
 	connect(mNotify, SIGNAL(feedChanged(QString,int)), this, SLOT(feedChanged(QString,int)));
@@ -60,10 +62,10 @@ FeedReaderMessageWidget::FeedReaderMessageWidget(const std::string &feedId, RsFe
 	connect(ui->feedProcessButton, SIGNAL(clicked()), this, SLOT(processFeed()));
 
 	// create timer for navigation
-	timer = new QTimer(this);
-	timer->setInterval(300);
-	timer->setSingleShot(true);
-	connect(timer, SIGNAL(timeout()), this, SLOT(updateCurrentMessage()));
+	mTimer = new QTimer(this);
+	mTimer->setInterval(300);
+	mTimer->setSingleShot(true);
+	connect(mTimer, SIGNAL(timeout()), this, SLOT(updateCurrentMessage()));
 
 	mMsgCompareRole = new RSTreeWidgetItemCompareRole;
 	mMsgCompareRole->setRole(COLUMN_MSG_TITLE, ROLE_MSG_SORT);
@@ -118,8 +120,8 @@ FeedReaderMessageWidget::FeedReaderMessageWidget(const std::string &feedId, RsFe
 FeedReaderMessageWidget::~FeedReaderMessageWidget()
 {
 	// stop and delete timer
-	timer->stop();
-	delete(timer);
+	mTimer->stop();
+	delete(mTimer);
 
 	/* save settings */
 	processSettings(false);
@@ -207,16 +209,14 @@ void FeedReaderMessageWidget::setFeedId(const std::string &feedId)
 	ui->feedProcessButton->setEnabled(!mFeedId.empty());
 
 	if (!mFeedId.empty()) {
-		FeedInfo feedInfo;
-		if (mFeedReader->getFeedInfo(mFeedId, feedInfo)) {
-			mFeedName = QString::fromUtf8(feedInfo.name.c_str());
-
-			mFeedReader->getMessageCount(mFeedId, NULL, NULL, &mUnreadCount);
+		if (mFeedReader->getFeedInfo(mFeedId, mFeedInfo)) {
+			mFeedReader->getMessageCount(mFeedId, NULL, &mNewCount, &mUnreadCount);
 		} else {
 			mFeedId.clear();
+			mFeedInfo = FeedInfo();
 		}
 	} else {
-		mFeedName.clear();
+		mFeedInfo = FeedInfo();
 	}
 
 	ui->msgReadAllButton->setEnabled(!mFeedId.empty());
@@ -229,7 +229,7 @@ void FeedReaderMessageWidget::setFeedId(const std::string &feedId)
 
 QString FeedReaderMessageWidget::feedName(bool withUnreadCount)
 {
-	QString name = mFeedName.isEmpty() ? tr("No name") : mFeedName;
+	QString name = mFeedInfo.name.empty() ? tr("No name") : QString::fromUtf8(mFeedInfo.name.c_str());
 
 	if (withUnreadCount && mUnreadCount) {
 		name += QString(" (%1)").arg(mUnreadCount);
@@ -240,15 +240,38 @@ QString FeedReaderMessageWidget::feedName(bool withUnreadCount)
 
 QIcon FeedReaderMessageWidget::feedIcon()
 {
-//	if (mThreadQueue->activeRequestExist(TOKEN_TYPE_CURRENTFORUM) || mFillThread) {
-//		return QIcon(":/images/kalarm.png");
-//	}
+	QIcon icon = FeedReaderDialog::iconFromFeed(mFeedInfo);
 
-//	if (mNewCount) {
-//		return QIcon(":/images/message-state-new.png");
-//	}
+	if (mFeedInfo.flag.deactivated) {
+		/* create disabled icon */
+		icon = icon.pixmap(QSize(16, 16), QIcon::Disabled);
+	}
 
-	return QIcon();
+	if (!mFeedId.empty()) {
+		QImage overlayIcon;
+
+		if (mFeedInfo.workstate != FeedInfo::WAITING) {
+			/* overlaying icon */
+			overlayIcon = QImage(":/images/FeedProcessOverlay.png");
+		} else if (mFeedInfo.errorState != RS_FEED_ERRORSTATE_OK) {
+			overlayIcon = QImage(":/images/FeedErrorOverlay.png");
+		} else if (mNewCount) {
+			overlayIcon = QImage(":/images/FeedNewOverlay.png");
+		}
+		if (!overlayIcon.isNull()) {
+			if (icon.isNull()) {
+				icon = QPixmap::fromImage(overlayIcon);
+			} else {
+				QPixmap pixmap = icon.pixmap(QSize(16, 16));
+				QPainter painter(&pixmap);
+				painter.drawImage(0, 0, overlayIcon.scaled(pixmap.size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+				painter.end();
+				icon = pixmap;
+			}
+		}
+	}
+
+	return icon;
 }
 
 std::string FeedReaderMessageWidget::currentMsgId()
@@ -415,16 +438,12 @@ void FeedReaderMessageWidget::feedChanged(const QString &feedId, int type)
 	}
 
 	if (type == NOTIFY_TYPE_MOD) {
-		FeedInfo feedInfo;
-		if (!mFeedReader->getFeedInfo(mFeedId, feedInfo)) {
+		if (!mFeedReader->getFeedInfo(mFeedId, mFeedInfo)) {
+			setFeedId("");
 			return;
 		}
 
-		QString name = QString::fromUtf8(feedInfo.name.c_str());
-		if (name != mFeedName) {
-			mFeedName = name;
-			emit feedMessageChanged(this);
-		}
+		emit feedMessageChanged(this);
 	}
 }
 
@@ -439,9 +458,11 @@ void FeedReaderMessageWidget::msgChanged(const QString &feedId, const QString &m
 	}
 
 	uint32_t unreadCount;
-	mFeedReader->getMessageCount(mFeedId, NULL, NULL, &unreadCount);
-	if (unreadCount != mUnreadCount) {
+	uint32_t newCount;
+	mFeedReader->getMessageCount(mFeedId, NULL, &newCount, &unreadCount);
+	if (unreadCount != mUnreadCount || newCount || mNewCount) {
 		mUnreadCount = unreadCount;
+		mNewCount = newCount;
 		emit feedMessageChanged(this);
 	}
 
@@ -502,13 +523,13 @@ void FeedReaderMessageWidget::msgItemClicked(QTreeWidgetItem *item, int column)
 
 void FeedReaderMessageWidget::msgItemChanged()
 {
-	timer->stop();
-	timer->start();
+	mTimer->stop();
+	mTimer->start();
 }
 
 void FeedReaderMessageWidget::updateCurrentMessage()
 {
-	timer->stop();
+	mTimer->stop();
 
 	long todo; // show link somewhere
 

@@ -213,7 +213,6 @@ void NewsFeed::updateFeed()
 				}
 			}
 		}
-
 	}
 }
 

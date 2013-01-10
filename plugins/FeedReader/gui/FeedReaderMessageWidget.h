@@ -3,6 +3,8 @@
 
 #include <QWidget>
 
+#include "interface/rsFeedReader.h"
+
 namespace Ui {
 class FeedReaderMessageWidget;
 }
@@ -17,7 +19,7 @@ class FeedReaderNotify;
 class FeedReaderMessageWidget : public QWidget
 {
 	Q_OBJECT
-    
+
 public:
 	explicit FeedReaderMessageWidget(const std::string &feedId, RsFeedReader *feedReader, FeedReaderNotify *notify, QWidget *parent = 0);
 	~FeedReaderMessageWidget();
@@ -69,9 +71,10 @@ private:
 	bool mProcessSettings;
 	RSTreeWidgetItemCompareRole *mMsgCompareRole;
 	std::string mFeedId;
-	QString mFeedName;
 	unsigned int mUnreadCount;
-	QTimer *timer;
+	unsigned int mNewCount;
+	QTimer *mTimer;
+	FeedInfo mFeedInfo;
 
 	// gui interface
 	RsFeedReader *mFeedReader;
