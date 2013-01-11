@@ -850,7 +850,7 @@ RsFeedReaderErrorState p3FeedReaderThread::process(const RsFeedReaderFeed &feed,
 						}
 					}
 
-					/* get item count */
+					/* process items */
 					xmlNodePtr node;
 					for (node = NULL; (node = getNextItem(feedFormat, channel, node)) != NULL; ) {
 						if (!isRunning()) {
@@ -936,7 +936,7 @@ RsFeedReaderErrorState p3FeedReaderThread::process(const RsFeedReaderFeed &feed,
 						}
 
 						std::string pubDate;
-						if (xml.getChildText(node, "pubdate", pubDate)) {
+						if (xml.getChildText(node, "pubDate", pubDate)) {
 							item->pubDate = parseRFC822Date(pubDate);
 						}
 						if (xml.getChildText(node, "date", pubDate)) {
