@@ -142,9 +142,17 @@ bool RsGxsGrpMetaData::deserialise(void *data, uint32_t &pktsize)
 
     return ok;
 }
+int RsGxsMsgMetaData::refcount = 0;
 
 RsGxsMsgMetaData::RsGxsMsgMetaData(){
 
+	//std::cout << "\nrefcount++ : " << ++refcount << std::endl;
+	return;
+}
+
+RsGxsMsgMetaData::~RsGxsMsgMetaData(){
+	//std::cout << "\nrefcount-- : " << --refcount << std::endl;
+	return;
 }
 
 uint32_t RsGxsMsgMetaData::serial_size()

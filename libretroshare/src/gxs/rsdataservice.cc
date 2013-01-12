@@ -969,6 +969,7 @@ int RsDataService::resetDataStore()
         std::string msgFile = file + "-msgs";
         remove(file.c_str()); // remove group file
         remove(msgFile.c_str()); // and remove messages file
+        delete mit->second;
     }
     {
         RsStackMutex stack(mDbMutex);

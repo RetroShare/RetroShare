@@ -254,7 +254,8 @@ protected:
                                     &msg->msg.bin_len);
                     GxsMsgType* mItem = dynamic_cast<GxsMsgType*>(item);
 
-                    if(mItem == NULL){
+                    if(mItem == NULL)
+                    {
                         delete msg;
                         continue;
                     }

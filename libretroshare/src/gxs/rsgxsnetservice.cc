@@ -79,14 +79,14 @@ void RsGxsNetService::syncWithPeers()
 
 	std::set<std::string>::iterator sit = peers.begin();
 
-        // for now just grps
-        for(; sit != peers.end(); sit++)
-        {
-                RsNxsSyncGrp *grp = new RsNxsSyncGrp(mServType);
-                grp->clear();
-                grp->PeerId(*sit);
-                sendItem(grp);
-        }
+	// for now just grps
+	for(; sit != peers.end(); sit++)
+	{
+			RsNxsSyncGrp *grp = new RsNxsSyncGrp(mServType);
+			grp->clear();
+			grp->PeerId(*sit);
+			sendItem(grp);
+	}
 
 
 #ifdef GXS_ENABLE_SYNC_MSGS
@@ -152,41 +152,42 @@ void RsGxsNetService::recvNxsItemQueue(){
     while(NULL != (item=recvItem()))
     {
 #ifdef NXS_NET_DEBUG
-            std::cerr << "RsGxsNetService Item:" << (void*)item << std::endl ;
+		std::cerr << "RsGxsNetService Item:" << (void*)item << std::endl ;
 #endif
-            // RsNxsItem needs dynamic_cast, since they have derived siblings.
-            //
-            RsNxsItem *ni = dynamic_cast<RsNxsItem*>(item) ;
-            if(ni != NULL)
-            {
+		// RsNxsItem needs dynamic_cast, since they have derived siblings.
+		//
+		RsNxsItem *ni = dynamic_cast<RsNxsItem*>(item) ;
+		if(ni != NULL)
+		{
 
-            	// a live transaction has a non zero value
-                if(ni->transactionNumber != 0){
+			// a live transaction has a non zero value
+			if(ni->transactionNumber != 0){
 
 #ifdef NXS_NET_DEBUG
-                	std::cerr << "recvNxsItemQueue()" << std::endl;
-                	std::cerr << "handlingTransaction, transN" << ni->transactionNumber << std::endl;
+				std::cerr << "recvNxsItemQueue()" << std::endl;
+				std::cerr << "handlingTransaction, transN" << ni->transactionNumber << std::endl;
 #endif
 
-                    if(handleTransaction(ni))
-                            continue ;
-                }
+				if(handleTransaction(ni))
+						continue ;
+			}
 
 
-                switch(ni->PacketSubType())
-                {
-                case RS_PKT_SUBTYPE_NXS_SYNC_GRP: handleRecvSyncGroup (dynamic_cast<RsNxsSyncGrp*>(ni)) ; break ;
-                case RS_PKT_SUBTYPE_NXS_SYNC_MSG: handleRecvSyncMessage (dynamic_cast<RsNxsSyncMsg*>(ni)) ; break ;
-                default:
-                    std::cerr << "Unhandled item subtype " << ni->PacketSubType() << " in RsGxsNetService: " << std::endl; break;
-                }
-            delete item ;
-        }
+			switch(ni->PacketSubType())
+			{
+				case RS_PKT_SUBTYPE_NXS_SYNC_GRP: handleRecvSyncGroup (dynamic_cast<RsNxsSyncGrp*>(ni)) ; break ;
+				case RS_PKT_SUBTYPE_NXS_SYNC_MSG: handleRecvSyncMessage (dynamic_cast<RsNxsSyncMsg*>(ni)) ; break ;
+				default:
+					std::cerr << "Unhandled item subtype " << ni->PacketSubType() << " in RsGxsNetService: " << std::endl; break;
+			}
+			delete item ;
+		}
     }
 }
 
 
-bool RsGxsNetService::handleTransaction(RsNxsItem* item){
+bool RsGxsNetService::handleTransaction(RsNxsItem* item)
+{
 
 	/*!
 	 * This attempts to handle a transaction
@@ -201,9 +202,9 @@ bool RsGxsNetService::handleTransaction(RsNxsItem* item){
 	RsNxsTransac* transItem = dynamic_cast<RsNxsTransac*>(item);
 
 	// if this is a RsNxsTransac item process
-	if(transItem){
+	if(transItem)
 		return locked_processTransac(transItem);
-	}
+
 
 	// then this must be transaction content to be consumed
 	// first check peer exist for transaction
@@ -221,7 +222,8 @@ bool RsGxsNetService::handleTransaction(RsNxsItem* item){
 
 		transExists = transMap.find(transN) != transMap.end();
 
-		if(transExists){
+		if(transExists)
+		{
 
 #ifdef NXS_NET_DEBUG
 			std::cerr << "handleTransaction() " << std::endl;
@@ -231,13 +233,12 @@ bool RsGxsNetService::handleTransaction(RsNxsItem* item){
 
 			tr = transMap[transN];
 			tr->mItems.push_back(item);
-		}
 
-	}else{
-		return false;
+			return true;
+		}
 	}
 
-	return true;
+	return false;
 }
 
 bool RsGxsNetService::locked_processTransac(RsNxsTransac* item)
@@ -368,8 +369,8 @@ void RsGxsNetService::run(){
 
 bool RsGxsNetService::locked_checkTransacTimedOut(NxsTransaction* tr)
 {
-   return tr->mTimeOut < ((uint32_t) time(NULL));
-    // return false;
+   //return tr->mTimeOut < ((uint32_t) time(NULL));
+     return false;
 }
 
 void RsGxsNetService::processTransactions(){
@@ -1027,7 +1028,7 @@ void RsGxsNetService::locked_genSendMsgsTransaction(NxsTransaction* tr)
 
 	uint32_t transN = locked_getTransactionId();
 
-        // store msg items to send in transaction
+	// store msg items to send in transaction
 	GxsMsgResult::iterator mit = msgs.begin();
 	std::string peerId = tr->mTransaction->PeerId();
 	uint32_t msgSize = 0;

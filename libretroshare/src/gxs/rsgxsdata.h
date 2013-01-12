@@ -87,7 +87,8 @@ class RsGxsMsgMetaData
 {
 public:
 
-    RsGxsMsgMetaData();
+    explicit RsGxsMsgMetaData();
+    ~RsGxsMsgMetaData();
     bool deserialise(void *data, uint32_t *size);
     bool serialise(void* data, uint32_t *size);
     uint32_t serial_size();
@@ -96,7 +97,7 @@ public:
 
     RsGxsGroupId mGroupId;
     RsGxsMessageId mMsgId;
-
+    static int refcount;
     RsGxsMessageId mThreadId;
     RsGxsMessageId mParentId;
     RsGxsMessageId mOrigMsgId;
