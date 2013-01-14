@@ -48,3 +48,8 @@ QWidget *FeedNotify::feedItem(FeedHolder */*parent*/)
 {
 	return NULL;
 }
+
+QWidget *FeedNotify::testFeedItem(FeedHolder */*parent*/)
+{
+	return NULL;
+}

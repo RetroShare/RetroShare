@@ -409,6 +409,24 @@ void NewsFeed::testFeeds(uint notifyFlags)
 	}
 }
 
+void NewsFeed::testFeed(FeedNotify *feedNotify)
+{
+	if (!instance) {
+		return;
+	}
+
+	if (!feedNotify) {
+		return;
+	}
+
+	QWidget *feedItem = feedNotify->testFeedItem(instance);
+	if (!feedItem) {
+		return;
+	}
+
+	instance->addFeedItem(feedItem);
+}
+
 void NewsFeed::addFeedItem(QWidget *item)
 {
 	item->setAttribute(Qt::WA_DeleteOnClose, true);

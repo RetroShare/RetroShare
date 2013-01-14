@@ -20,6 +20,8 @@
  ****************************************************************/
 
 #include <QMutex>
+#include <QDateTime>
+#include <QBuffer>
 
 #include "FeedReaderFeedNotify.h"
 #include "FeedReaderNotify.h"
@@ -113,6 +115,27 @@ QWidget *FeedReaderFeedNotify::feedItem(FeedHolder *parent)
 	if (!msgPending) {
 		return NULL;
 	}
+
+	return new FeedReaderFeedItem(mFeedReader, mNotify, parent, feedInfo, msgInfo);
+}
+
+QWidget *FeedReaderFeedNotify::testFeedItem(FeedHolder *parent)
+{
+	FeedInfo feedInfo;
+	feedInfo.name = tr("Test").toUtf8().constData();
+
+	QByteArray faviconData;
+	QBuffer buffer(&faviconData);
+	buffer.open(QIODevice::WriteOnly);
+	if (QPixmap(":/images/Feed.png").scaled(16, 16, Qt::IgnoreAspectRatio, Qt::SmoothTransformation).save(&buffer, "ICO")) {
+		feedInfo.icon = faviconData.toBase64().constData();
+	}
+	buffer.close();
+
+	FeedMsgInfo msgInfo;
+	msgInfo.title = tr("Test message").toUtf8().constData();
+	msgInfo.description = tr("This is a test message.").toUtf8().constData();
+	msgInfo.pubDate = QDateTime::currentDateTime().toTime_t();
 
 	return new FeedReaderFeedItem(mFeedReader, mNotify, parent, feedInfo, msgInfo);
 }

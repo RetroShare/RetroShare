@@ -31,6 +31,7 @@ class QMutex;
 class FeedReaderFeedNotify : public FeedNotify
 {
 	Q_OBJECT
+
 protected:
 	class FeedItem
 	{
@@ -50,6 +51,7 @@ public:
 	virtual bool notifyEnabled();
 	virtual void setNotifyEnabled(bool enabled);
 	virtual QWidget *feedItem(FeedHolder *parent);
+	virtual QWidget *testFeedItem(FeedHolder *parent);
 
 private slots:
 	void msgChanged(const QString &feedId, const QString &msgId, int type);

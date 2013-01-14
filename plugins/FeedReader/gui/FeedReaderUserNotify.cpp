@@ -26,10 +26,12 @@
 #include "gui/MainWindow.h"
 
 #include "interface/rsFeedReader.h"
+#include "retroshare/rsiface.h"
 
 FeedReaderUserNotify::FeedReaderUserNotify(FeedReaderDialog *feedReaderDialog, RsFeedReader *feedReader, FeedReaderNotify *notify, QObject *parent) :
 	UserNotify(parent), mFeedReaderDialog(feedReaderDialog), mFeedReader(feedReader), mNotify(notify)
 {
+	connect(mNotify, SIGNAL(feedChanged(QString,int)), this, SLOT(feedChanged(QString,int)), Qt::QueuedConnection);
 	connect(mNotify, SIGNAL(msgChanged(QString,QString,int)), this, SLOT(updateIcon()), Qt::QueuedConnection);
 }
 
@@ -85,4 +87,11 @@ unsigned int FeedReaderUserNotify::getNewCount()
 void FeedReaderUserNotify::iconClicked()
 {
 	MainWindow::showWindow(mFeedReaderDialog);
+}
+
+void FeedReaderUserNotify::feedChanged(const QString &/*feedId*/, int type)
+{
+	if (type == NOTIFY_TYPE_DEL) {
+		updateIcon();
+	}
 }

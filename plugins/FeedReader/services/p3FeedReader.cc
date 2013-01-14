@@ -204,6 +204,7 @@ static void feedMsgToInfo(const RsFeedReaderMsg *msg, FeedMsgInfo &info)
 
 	info.flag.isnew = (msg->flag & RS_FEEDMSG_FLAG_NEW);
 	info.flag.read = (msg->flag & RS_FEEDMSG_FLAG_READ);
+	info.flag.deleted = (msg->flag & RS_FEEDMSG_FLAG_DELETED);
 }
 
 void p3FeedReader::setNotify(RsFeedReaderNotify *notify)
@@ -758,7 +759,8 @@ bool p3FeedReader::removeMsg(const std::string &feedId, const std::string &msgId
 			return false;
 		}
 
-		msgIt->second->flag |= RS_FEEDMSG_FLAG_DELETED;
+		msgIt->second->flag |= RS_FEEDMSG_FLAG_DELETED | RS_FEEDMSG_FLAG_READ;
+		msgIt->second->flag &= ~RS_FEEDMSG_FLAG_NEW;
 	}
 
 	if (changed) {
@@ -803,7 +805,8 @@ bool p3FeedReader::removeMsgs(const std::string &feedId, const std::list<std::st
 				continue;
 			}
 
-			msgIt->second->flag |= RS_FEEDMSG_FLAG_DELETED;
+			msgIt->second->flag |= RS_FEEDMSG_FLAG_DELETED | RS_FEEDMSG_FLAG_READ;
+			msgIt->second->flag &= ~RS_FEEDMSG_FLAG_NEW;
 
 			removedMsgs.push_back(*idIt);
 		}

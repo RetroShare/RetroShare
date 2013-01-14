@@ -38,6 +38,7 @@ public:
 	virtual bool notifyEnabled();
 	virtual void setNotifyEnabled(bool /*enabled*/);
 	virtual QWidget *feedItem(FeedHolder */*parent*/);
+	virtual QWidget *testFeedItem(FeedHolder */*parent*/);
 };
 
 #endif // FEEDNOTIFY_H

@@ -41,6 +41,9 @@ public:
 	virtual bool notifyBlink();
 	virtual void setNotifyEnabled(bool enabled, bool combined, bool blink);
 
+private slots:
+	void feedChanged(const QString &feedId, int type);
+
 private:
 	virtual QIcon getIcon();
 	virtual QIcon getMainIcon(bool hasNew);

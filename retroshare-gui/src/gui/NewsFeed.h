@@ -31,6 +31,7 @@ class RsFeedItem;
 class ForumNewItem;
 class ChanMsgItem;
 class ChatMsgItem;
+class FeedNotify;
 
 class NewsFeed : public MainPage, public FeedHolder, private Ui::NewsFeed
 {
@@ -48,6 +49,7 @@ public:
   virtual void openChat(std::string peerId);
 
   static void testFeeds(uint notifyFlags);
+  static void testFeed(FeedNotify *feedNotify);
 
 signals:
   void newsFeedChanged(int count);

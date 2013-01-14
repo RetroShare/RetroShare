@@ -285,6 +285,14 @@ void NotifyPage::notifyToggled()
 void NotifyPage::testNotify()
 {
     NewsFeed::testFeeds(getNewsFlags());
+
+    /* notify of plugins */
+    QList<FeedNotifySetting>::iterator feedNotifyIt;
+    for (feedNotifyIt = mFeedNotifySettingList.begin(); feedNotifyIt != mFeedNotifySettingList.end(); ++feedNotifyIt) {
+        if (feedNotifyIt->mEnabledCheckBox->isChecked()) {
+            NewsFeed::testFeed(feedNotifyIt->mFeedNotify);
+        }
+    }
 }
 
 void NotifyPage::testToaster()

@@ -143,6 +143,7 @@ public:
 		pubDate = 0;
 		flag.isnew = false;
 		flag.read = false;
+		flag.deleted = false;
 	}
 
 	std::string msgId;
@@ -156,6 +157,7 @@ public:
 	struct {
 		bool isnew : 1;
 		bool read : 1;
+		bool deleted : 1;
 	} flag;
 };
 
