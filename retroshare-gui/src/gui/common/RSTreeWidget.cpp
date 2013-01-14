@@ -54,7 +54,11 @@ void RSTreeWidget::paintEvent(QPaintEvent *event)
 
 void RSTreeWidget::mousePressEvent(QMouseEvent *event)
 {
+#if QT_VERSION < 0x040700
+	if (event->buttons() & Qt::MidButton) {
+#else
 	if (event->buttons() & Qt::MiddleButton) {
+#endif
 		if (receivers(SIGNAL(signalMouseMiddleButtonClicked(QTreeWidgetItem*))) > 0) {
 			QTreeWidgetItem *item = itemAt(event->pos());
 			if (item) {
