@@ -191,7 +191,9 @@ PreviewFeedDialog::PreviewFeedDialog(RsFeedReader *feedReader, FeedReaderNotify 
 	updateMsgCount();
 
 	ui->xpathUseListWidget->installEventFilter(this);
+	ui->xpathUseListWidget->viewport()->installEventFilter(this);
 	ui->xpathRemoveListWidget->installEventFilter(this);
+	ui->xpathRemoveListWidget->viewport()->installEventFilter(this);
 
 	/* load settings */
 	processSettings(true);
@@ -252,6 +254,9 @@ bool PreviewFeedDialog::eventFilter(QObject *obj, QEvent *event)
 				}
 			}
 		}
+	}
+	if (event->type() == QEvent::Drop) {
+		processXPath();
 	}
 	/* pass the event on to the parent class */
 	return QDialog::eventFilter(obj, event);
@@ -733,6 +738,9 @@ void PreviewFeedDialog::fillStructureTree()
 
 void PreviewFeedDialog::getXPaths(std::list<std::string> &xpathsToUse, std::list<std::string> &xpathsToRemove)
 {
+	xpathsToUse.clear();
+	xpathsToRemove.clear();
+
 	int row;
 	int rowCount = ui->xpathUseListWidget->count();
 	for (row = 0; row < rowCount; ++row) {

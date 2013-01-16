@@ -37,6 +37,8 @@ public:
 
 	bool compile(const char *expression);
 
+	xmlXPathObjectType type();
+
 	unsigned int count();
 	xmlNodePtr node(unsigned int index);
 
@@ -48,4 +50,4 @@ protected:
 	xmlXPathObjectPtr mResult;
 };
 
-#endif 
+#endif

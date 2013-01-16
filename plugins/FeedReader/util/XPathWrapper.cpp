@@ -71,9 +71,22 @@ bool XPathWrapper::compile(const char *expression)
 	return true;
 }
 
+xmlXPathObjectType XPathWrapper::type()
+{
+	if (mResult) {
+		return mResult->type;
+	}
+
+	return XPATH_UNDEFINED;
+}
+
 unsigned int XPathWrapper::count()
 {
 	if (!mResult) {
+		return 0;
+	}
+
+	if (mResult->type != XPATH_NODESET) {
 		return 0;
 	}
 
@@ -87,6 +100,10 @@ unsigned int XPathWrapper::count()
 xmlNodePtr XPathWrapper::node(unsigned int index)
 {
 	if (!mResult) {
+		return NULL;
+	}
+
+	if (mResult->type != XPATH_NODESET) {
 		return NULL;
 	}
 

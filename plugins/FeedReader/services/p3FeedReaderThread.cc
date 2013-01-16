@@ -93,6 +93,10 @@ void p3FeedReaderThread::run()
 						if (isRunning()) {
 							/* second, process the descriptions */
 							for (it = msgs.begin(); it != msgs.end(); ) {
+								if (!isRunning()) {
+									break;
+								}
+
 								RsFeedReaderMsg *mi = *it;
 								result = processMsg(feed, mi, errorString);
 								if (result != RS_FEED_ERRORSTATE_OK) {
@@ -116,11 +120,13 @@ void p3FeedReaderThread::run()
 									++it;
 								}
 							}
-							if (result == RS_FEED_ERRORSTATE_OK) {
-								/* third, add messages */
-								mFeedReader->onProcessSuccess_addMsgs(feed.feedId, msgs, false);
-							} else {
-								mFeedReader->onProcessError(feed.feedId, result, errorString);
+							if (isRunning()) {
+								if (result == RS_FEED_ERRORSTATE_OK) {
+									/* third, add messages */
+									mFeedReader->onProcessSuccess_addMsgs(feed.feedId, msgs, false);
+								} else {
+									mFeedReader->onProcessError(feed.feedId, result, errorString);
+								}
 							}
 						}
 					} else {
@@ -1057,198 +1063,203 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 		return result;
 	}
 
-	/* process description */
-	long todo; // encoding
-	HTMLWrapper html;
-	if (html.readHTML(msg->description.c_str(), url.c_str())) {
-		xmlNodePtr root = html.getRootElement();
-		if (root) {
-			std::list<xmlNodePtr> nodesToDelete;
+	if (isRunning()) {
+		/* process description */
+		long todo; // encoding
+		HTMLWrapper html;
+		if (html.readHTML(msg->description.c_str(), url.c_str())) {
+			xmlNodePtr root = html.getRootElement();
+			if (root) {
+				std::list<xmlNodePtr> nodesToDelete;
 
-			/* process all children */
-			std::list<xmlNodePtr> nodes;
-			nodes.push_back(root);
+				/* process all children */
+				std::list<xmlNodePtr> nodes;
+				nodes.push_back(root);
 
-			while (!nodes.empty()) {
-				if (!isRunning()) {
-					break;
-				}
-				xmlNodePtr node = nodes.front();
-				nodes.pop_front();
+				while (!nodes.empty()) {
+					if (!isRunning()) {
+						break;
+					}
+					xmlNodePtr node = nodes.front();
+					nodes.pop_front();
 
-				switch (node->type) {
-				case XML_ELEMENT_NODE:
-					if (xmlStrcasecmp(node->name, BAD_CAST"img") == 0) {
-						/* process images */
+					switch (node->type) {
+					case XML_ELEMENT_NODE:
+						if (xmlStrcasecmp(node->name, BAD_CAST"img") == 0) {
+							/* process images */
 
-						if ((feed.flag & RS_FEED_FLAG_EMBED_IMAGES) == 0) {
-							/* remove image */
+							if ((feed.flag & RS_FEED_FLAG_EMBED_IMAGES) == 0) {
+								/* remove image */
+								xmlUnlinkNode(node);
+								nodesToDelete.push_back(node);
+								continue;
+							}
+						} else if (xmlStrcasecmp(node->name, BAD_CAST"script") == 0) {
+							/* remove script */
 							xmlUnlinkNode(node);
 							nodesToDelete.push_back(node);
 							continue;
 						}
-					} else if (xmlStrcasecmp(node->name, BAD_CAST"script") == 0) {
-						/* remove script */
-						xmlUnlinkNode(node);
-						nodesToDelete.push_back(node);
-						continue;
-					}
 
-					xmlNodePtr child;
-					for (child = node->children; child; child = child->next) {
-						nodes.push_back(child);
-					}
-					break;
+						xmlNodePtr child;
+						for (child = node->children; child; child = child->next) {
+							nodes.push_back(child);
+						}
+						break;
 
-				case XML_TEXT_NODE:
-					{
-						/* check for only space */
-						std::string content;
-						if (html.getContent(node, content, false)) {
-							std::string newContent = content;
+					case XML_TEXT_NODE:
+						{
+							/* check for only space */
+							std::string content;
+							if (html.getContent(node, content, false)) {
+								std::string newContent = content;
 
-							/* trim */
-							XMLWrapper::trimString(newContent);
+								/* trim */
+								XMLWrapper::trimString(newContent);
 
-							if (newContent.empty()) {
-								xmlUnlinkNode(node);
-								nodesToDelete.push_back(node);
-							} else {
-								if (content != newContent) {
-									html.setContent(node, newContent.c_str());
+								if (newContent.empty()) {
+									xmlUnlinkNode(node);
+									nodesToDelete.push_back(node);
+								} else {
+									if (content != newContent) {
+										html.setContent(node, newContent.c_str());
+									}
 								}
 							}
 						}
-					}
-					break;
+						break;
 
-				case XML_COMMENT_NODE:
-//					xmlUnlinkNode(node);
-//					nodesToDelete.push_back(node);
-					break;
+					case XML_COMMENT_NODE:
+//						xmlUnlinkNode(node);
+//						nodesToDelete.push_back(node);
+						break;
 
-				case XML_ATTRIBUTE_NODE:
-				case XML_CDATA_SECTION_NODE:
-				case XML_ENTITY_REF_NODE:
-				case XML_ENTITY_NODE:
-				case XML_PI_NODE:
-				case XML_DOCUMENT_NODE:
-				case XML_DOCUMENT_TYPE_NODE:
-				case XML_DOCUMENT_FRAG_NODE:
-				case XML_NOTATION_NODE:
-				case XML_HTML_DOCUMENT_NODE:
-				case XML_DTD_NODE:
-				case XML_ELEMENT_DECL:
-				case XML_ATTRIBUTE_DECL:
-				case XML_ENTITY_DECL:
-				case XML_NAMESPACE_DECL:
-				case XML_XINCLUDE_START:
-				case XML_XINCLUDE_END:
+					case XML_ATTRIBUTE_NODE:
+					case XML_CDATA_SECTION_NODE:
+					case XML_ENTITY_REF_NODE:
+					case XML_ENTITY_NODE:
+					case XML_PI_NODE:
+					case XML_DOCUMENT_NODE:
+					case XML_DOCUMENT_TYPE_NODE:
+					case XML_DOCUMENT_FRAG_NODE:
+					case XML_NOTATION_NODE:
+					case XML_HTML_DOCUMENT_NODE:
+					case XML_DTD_NODE:
+					case XML_ELEMENT_DECL:
+					case XML_ATTRIBUTE_DECL:
+					case XML_ENTITY_DECL:
+					case XML_NAMESPACE_DECL:
+					case XML_XINCLUDE_START:
+					case XML_XINCLUDE_END:
 #ifdef LIBXML_DOCB_ENABLED
-				case XML_DOCB_DOCUMENT_NODE:
+					case XML_DOCB_DOCUMENT_NODE:
 #endif
-					break;
+						break;
+					}
 				}
-			}
 
-			std::list<xmlNodePtr>::iterator nodeIt;
-			for (nodeIt = nodesToDelete.begin(); nodeIt != nodesToDelete.end(); ++nodeIt) {
-				xmlFreeNode(*nodeIt);
-			}
-			nodesToDelete.clear();
+				std::list<xmlNodePtr>::iterator nodeIt;
+				for (nodeIt = nodesToDelete.begin(); nodeIt != nodesToDelete.end(); ++nodeIt) {
+					xmlFreeNode(*nodeIt);
+				}
+				nodesToDelete.clear();
 
-			if (!feed.preview) {
-				result = processXPath(feed.xpathsToUse.ids, feed.xpathsToRemove.ids, html, errorString);
-			}
+				if (isRunning() && !feed.preview) {
+					result = processXPath(feed.xpathsToUse.ids, feed.xpathsToRemove.ids, html, errorString);
+				}
 
-			if (result == RS_FEED_ERRORSTATE_OK) {
-				unsigned int xpathCount;
-				unsigned int xpathIndex;
-				XPathWrapper *xpath = html.createXPath();
-				if (xpath) {
-					/* process images */
-					if (xpath->compile("//img")) {
-						xpathCount = xpath->count();
-						for (xpathIndex = 0; xpathIndex < xpathCount; ++xpathIndex) {
-							xmlNodePtr node = xpath->node(xpathIndex);
+				if (isRunning() && result == RS_FEED_ERRORSTATE_OK) {
+					unsigned int xpathCount;
+					unsigned int xpathIndex;
+					XPathWrapper *xpath = html.createXPath();
+					if (xpath) {
+						/* process images */
+						if (xpath->compile("//img")) {
+							xpathCount = xpath->count();
+							for (xpathIndex = 0; xpathIndex < xpathCount; ++xpathIndex) {
+								if (!isRunning()) {
+									break;
+								}
+								xmlNodePtr node = xpath->node(xpathIndex);
 
-							if (node->type == XML_ELEMENT_NODE) {
-								bool removeImage = true;
+								if (node->type == XML_ELEMENT_NODE) {
+									bool removeImage = true;
 
-								if (feed.flag & RS_FEED_FLAG_EMBED_IMAGES) {
-									/* embed image */
-									std::string src = html.getAttr(node, "src");
-									if (!src.empty()) {
-										/* download image */
+									if (feed.flag & RS_FEED_FLAG_EMBED_IMAGES) {
+										/* embed image */
+										std::string src = html.getAttr(node, "src");
+										if (!src.empty()) {
+											/* download image */
 #ifdef FEEDREADER_DEBUG
-										std::cerr << "p3FeedReaderThread::processHTML - feed " << feed.feedId << " (" << feed.name << ") download image " << src << std::endl;
+											std::cerr << "p3FeedReaderThread::processHTML - feed " << feed.feedId << " (" << feed.name << ") download image " << src << std::endl;
 #endif
-										std::vector<unsigned char> data;
-										CURLWrapper CURL(proxy);
-										CURLcode code = CURL.downloadBinary(calculateLink(url, src), data);
-										if (code == CURLE_OK && CURL.responseCode() == 200) {
-											std::string contentType = CURL.contentType();
-											if (isContentType(contentType, "image/")) {
-												std::string base64;
-												if (toBase64(data, base64)) {
-													std::string imageBase64;
-													rs_sprintf(imageBase64, "data:%s;base64,%s", contentType.c_str(), base64.c_str());
-													if (html.setAttr(node, "src", imageBase64.c_str())) {
-														removeImage = false;
+											std::vector<unsigned char> data;
+											CURLWrapper CURL(proxy);
+											CURLcode code = CURL.downloadBinary(calculateLink(url, src), data);
+											if (code == CURLE_OK && CURL.responseCode() == 200) {
+												std::string contentType = CURL.contentType();
+												if (isContentType(contentType, "image/")) {
+													std::string base64;
+													if (toBase64(data, base64)) {
+														std::string imageBase64;
+														rs_sprintf(imageBase64, "data:%s;base64,%s", contentType.c_str(), base64.c_str());
+														if (html.setAttr(node, "src", imageBase64.c_str())) {
+															removeImage = false;
+														}
 													}
 												}
 											}
 										}
 									}
-								}
 
-								if (removeImage) {
-									/* remove image */
-									xmlUnlinkNode(node);
-									nodesToDelete.push_back(node);
-									continue;
+									if (removeImage) {
+										/* remove image */
+										xmlUnlinkNode(node);
+										nodesToDelete.push_back(node);
+										continue;
+									}
 								}
 							}
+						} else {
+							// unable to compile xpath expression
+							result = RS_FEED_ERRORSTATE_PROCESS_XPATH_INTERNAL_ERROR;
 						}
+						delete(xpath);
+						xpath = NULL;
 					} else {
-						// unable to compile xpath expression
+						// unable to create xpath object
 						result = RS_FEED_ERRORSTATE_PROCESS_XPATH_INTERNAL_ERROR;
+						std::cerr << "p3FeedReaderThread::process - feed " << feed.feedId << " (" << feed.name << "), unable to create xpath object" << std::endl;
 					}
-					delete(xpath);
-					xpath = NULL;
-				} else {
-					// unable to create xpath object
-					result = RS_FEED_ERRORSTATE_PROCESS_XPATH_INTERNAL_ERROR;
-					std::cerr << "p3FeedReaderThread::process - feed " << feed.feedId << " (" << feed.name << "), unable to create xpath object" << std::endl;
 				}
-			}
 
-			for (nodeIt = nodesToDelete.begin(); nodeIt != nodesToDelete.end(); ++nodeIt) {
-				xmlFreeNode(*nodeIt);
-			}
-			nodesToDelete.clear();
+				for (nodeIt = nodesToDelete.begin(); nodeIt != nodesToDelete.end(); ++nodeIt) {
+					xmlFreeNode(*nodeIt);
+				}
+				nodesToDelete.clear();
 
-			if (result == RS_FEED_ERRORSTATE_OK) {
-				if (isRunning()) {
-					if (!html.saveHTML(msg->description)) {
+				if (result == RS_FEED_ERRORSTATE_OK) {
+					if (isRunning()) {
+						if (!html.saveHTML(msg->description)) {
 #ifdef FEEDREADER_DEBUG
-						std::cerr << "p3FeedReaderThread::processHTML - feed " << feed.feedId << " (" << feed.name << ") cannot dump html" << std::endl;
+							std::cerr << "p3FeedReaderThread::processHTML - feed " << feed.feedId << " (" << feed.name << ") cannot dump html" << std::endl;
 #endif
-						result = RS_FEED_ERRORSTATE_PROCESS_INTERNAL_ERROR;
+							result = RS_FEED_ERRORSTATE_PROCESS_INTERNAL_ERROR;
+						}
 					}
 				}
+			} else {
+#ifdef FEEDREADER_DEBUG
+				std::cerr << "p3FeedReaderThread::processHTML - feed " << feed.feedId << " (" << feed.name << ") no root element" << std::endl;
+#endif
+				result = RS_FEED_ERRORSTATE_PROCESS_HTML_ERROR;
 			}
 		} else {
 #ifdef FEEDREADER_DEBUG
-			std::cerr << "p3FeedReaderThread::processHTML - feed " << feed.feedId << " (" << feed.name << ") no root element" << std::endl;
+			std::cerr << "p3FeedReaderThread::processHTML - feed " << feed.feedId << " (" << feed.name << ") cannot read html" << std::endl;
 #endif
 			result = RS_FEED_ERRORSTATE_PROCESS_HTML_ERROR;
 		}
-	} else {
-#ifdef FEEDREADER_DEBUG
-		std::cerr << "p3FeedReaderThread::processHTML - feed " << feed.feedId << " (" << feed.name << ") cannot read html" << std::endl;
-#endif
-		result = RS_FEED_ERRORSTATE_PROCESS_HTML_ERROR;
 	}
 
 	return result;
@@ -1351,6 +1362,8 @@ RsFeedReaderErrorState p3FeedReaderThread::processXPath(const std::list<std::str
 		}
 		nodesToDelete.clear();
 	}
+
+	delete(xpath);
 
 	return result;
 }
