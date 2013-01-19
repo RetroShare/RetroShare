@@ -180,7 +180,7 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		 * STAGE 4: Loading and Saving Certificates. (Strings and Files)
 		 *
 		 ****/
-		virtual bool LoadCertificateFromString(const std::string &pem, std::string &gpg_id,std::string& error_string);
+		virtual bool LoadCertificateFromString(const std::string &pem, PGPIdType& gpg_id,std::string& error_string);
 		virtual std::string SaveCertificateToString(const std::string &id,bool include_signatures) ;
 
 		// Cached certificates.

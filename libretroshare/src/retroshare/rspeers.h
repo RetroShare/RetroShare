@@ -296,14 +296,14 @@ class RsPeers
 		virtual  bool hasExportMinimal() = 0 ;
 
 		// Add keys to the keyring
-		virtual	bool loadCertificateFromFile(const std::string &fname, std::string &ssl_id, std::string &gpg_id)  = 0;
-		virtual	bool loadCertificateFromString(const std::string &cert, std::string &ssl_id, std::string &gpg_id)  = 0;
+		virtual	bool loadCertificateFromString(const std::string& cert, std::string& ssl_id,std::string& pgp_id, std::string& error_string)  = 0;
 
 		// Gets the GPG details, but does not add the key to the keyring.
 		virtual	bool loadDetailsFromStringCert(const std::string& certGPG, RsPeerDetails &pd,uint32_t& error_code) = 0;
 
+		// Certificate utils
 		virtual	bool cleanCertificate(const std::string &certstr, std::string &cleanCert,int& error_code) = 0;
-		virtual	bool saveCertificateToFile(const std::string &id, const std::string &fname)  = 0;
+		virtual	bool saveCertificateToFile(const std::string& id, const std::string &fname)  = 0;
 		virtual	std::string saveCertificateToString(const std::string &id)  	= 0;
 
 		virtual	bool signGPGCertificate(const std::string &gpg_id)                   	= 0;

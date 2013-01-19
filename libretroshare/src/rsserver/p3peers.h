@@ -100,9 +100,7 @@ virtual bool GetPGPBase64StringAndCheckSum(const std::string& gpg_id,std::string
 
 virtual bool hasExportMinimal() ;
 
-virtual	bool loadCertificateFromFile(const std::string &fname, std::string &id, std::string &gpg_id);
-virtual	bool loadCertificateFromString(const std::string& cert, std::string &id, std::string &gpg_id);
-
+virtual	bool loadCertificateFromString(const std::string& cert, std::string& ssl_id,std::string& pgp_id, std::string& error_string);
 virtual	bool loadDetailsFromStringCert(const std::string &cert, RsPeerDetails &pd, uint32_t& error_code);
 
 virtual	bool cleanCertificate(const std::string &certstr, std::string &cleanCert,int& error_code);

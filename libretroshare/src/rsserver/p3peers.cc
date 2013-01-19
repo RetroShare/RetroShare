@@ -888,21 +888,17 @@ std::string p3Peers::GetRetroshareInvite(const std::string& ssl_id,bool include_
 
 //===========================================================================
 
-bool 	p3Peers::loadCertificateFromString(const std::string& cert, std::string& id, std::string& gpg_id)
+bool 	p3Peers::loadCertificateFromString(const std::string& cert, std::string& ssl_id, std::string& gpg_id, std::string& error_string)
 {
 	RsCertificate crt(cert) ;
+	PGPIdType gpgid ;
 
-	return AuthGPG::getAuthGPG()->LoadCertificateFromString(crt.armouredPGPKey(),id,gpg_id) ;
-}
+	bool res = AuthGPG::getAuthGPG()->LoadCertificateFromString(crt.armouredPGPKey(),gpgid,error_string) ;
 
-bool 	p3Peers::loadCertificateFromFile(const std::string &/*fname*/, std::string &/*id*/, std::string &/*gpg_id*/)
-{
-#ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::LoadCertificateFromFile() not implemented yet";
-	std::cerr << std::endl;
-#endif
+	gpg_id = gpgid.toStdString() ;
+	ssl_id = crt.sslid_string() ;
 
-        return false;
+	return res ;
 }
 
 bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetails &pd,uint32_t& error_code)

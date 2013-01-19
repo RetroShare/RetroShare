@@ -544,9 +544,9 @@ void ConnectFriendWizard::accept()
 
 	if (!mCertificate.empty() && (accept_connection || sign))
 	{
-		std::string ssl_id, pgp_id ;
+		std::string pgp_id,ssl_id,error_string ;
 
-		if(!rsPeers->loadCertificateFromString(mCertificate,ssl_id,pgp_id))
+		if(!rsPeers->loadCertificateFromString(mCertificate,ssl_id,pgp_id,error_string))
 		{
 			std::cerr << "ConnectFriendWizard::accept(): cannot load that certificate." << std::endl;
 			return ;

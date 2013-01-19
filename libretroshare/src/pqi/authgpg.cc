@@ -242,7 +242,9 @@ void AuthGPG::processServices()
 				 std::cerr << "AuthGPGimpl::processServices() Process load operation" << std::endl;
 #endif
 				 std::string error_string ;
-				 LoadCertificateFromString(loadOrSave->m_certGpg, loadOrSave->m_certGpgId,error_string);
+				 PGPIdType pgp_id ;
+				 LoadCertificateFromString(loadOrSave->m_certGpg, pgp_id,error_string);
+				 loadOrSave->m_certGpgId = pgp_id.toStdString() ;
 			 }
 
 
@@ -551,16 +553,11 @@ std::string AuthGPG::SaveCertificateToString(const std::string &id,bool include_
 }
 
 /* import to GnuPG and other Certificates */
-bool AuthGPG::LoadCertificateFromString(const std::string &str, std::string &gpg_id,std::string& error_string)
+bool AuthGPG::LoadCertificateFromString(const std::string &str, PGPIdType& gpg_id,std::string& error_string)
 {
 	RsStackMutex stack(gpgMtxEngine); /******* LOCKED ******/
 
-	PGPIdType id ;
-	bool res = PGPHandler::LoadCertificateFromString(str,id,error_string) ;
-
-	gpg_id = id.toStdString(); 
-
-	return res ;
+	return PGPHandler::LoadCertificateFromString(str,gpg_id,error_string) ;
 }
 
 /*****************************************************************
