@@ -2,11 +2,12 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <errno.h>
+#include <string.h>
 #include <iostream>
 #include "ftfilemapper.h"
 #include "ftchunkmap.h"
 
-//#define DEBUG_FILEMAPPER
+#define DEBUG_FILEMAPPER
 
 ftFileMapper::ftFileMapper(uint64_t file_size,uint32_t chunk_size) 
 	: _file_size(file_size),_chunk_size(chunk_size)
@@ -192,6 +193,7 @@ uint32_t ftFileMapper::allocateNewEmptyChunk(FILE *fd_out)
 #endif
 
 	uint32_t first_free_chunk = _data_chunk_ids.size() ;
+	_data_chunk_ids.push_back(first_free_chunk) ;
 
 	if(_mapped_chunks[first_free_chunk] >= 0 && _mapped_chunks[first_free_chunk] < (int)first_free_chunk)
 	{
@@ -203,7 +205,6 @@ uint32_t ftFileMapper::allocateNewEmptyChunk(FILE *fd_out)
 
 		moveChunk(_mapped_chunks[first_free_chunk],first_free_chunk,fd_out) ;
 		_mapped_chunks[first_free_chunk] = first_free_chunk ;
-		_data_chunk_ids.push_back(first_free_chunk) ;
 
 #ifdef DEBUG_FILEMAPPER
 		std::cerr << "(DD)   Returning " << old_chunk << std::endl;
@@ -231,6 +232,7 @@ bool ftFileMapper::wipeChunk(uint32_t cid,FILE *fd) const
 	uint32_t size = (cid == _mapped_chunks.size()-1)?(_file_size - cid*_chunk_size) : _chunk_size ;
 
 	void *buf = malloc(size) ;
+	memset(buf,0,size) ;		// Avoids uninitialized memory read below.
 
 	if(buf == NULL)
 	{

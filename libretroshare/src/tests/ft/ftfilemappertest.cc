@@ -4,21 +4,31 @@
 
 #include <util/utest.h>
 #include <util/rsdir.h>
+#include <common/argstream.h>
 #include <stdlib.h>
 #include <iostream>
 #include <stdint.h>
 
 INITTEST();
 
-int main()
+int main(int argc,char *argv[])
 {
 	/* Use ftfilemapper to create a file with chunks downloaded on a random direction. */
+
+	argstream as(argc,argv) ;
+	int random_seed = 0 ;
+	uint64_t size = 1024*1024*12+234;//4357283      ; // some size. Not an integer number of chunks
+
+	as >> parameter('r',"random-seed",random_seed,"Random seed for the test. Use the same seed to get the same behavior.",false) 
+		>> parameter('s',"size",size,"file size to test.",false) 
+		>> help() ;
+
+	as.defaultErrorHandling() ;
 
 	static const std::string tmpdir = "." ;
 	static const std::string input_file = tmpdir+"/"+"input.bin" ;
 	static const std::string output_file = tmpdir+"/"+"output.bin" ;
-	static const uint64_t size = 1024*1024*12+234;//4357283      ; // some size. Not an integer number of chunks
-	static const uint32_t chunk_size = 1024*1024 ; // 1MB
+ 	static const uint32_t chunk_size = 1024*1024 ; // 1MB
 
 	pid_t pid = getpid() ;
 	srand48(pid) ;

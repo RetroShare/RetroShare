@@ -12,8 +12,7 @@ include $(RS_TOP_DIR)/tests/scripts/config.mk
 
 TESTOBJ  = pqitestor.o ftfilemappertest.o ftfileprovidertest.o ftfilecreatortest.o ftextralisttest.o ftdataplextest.o fttransfermoduletest.o ftcrc32test.o ftcrossprovidercreatortest.o ftcontrollertest.o ftserver1test.o ftserver2test.o ftserver3test.o ftdata_dummy.o ftsearch_dummy.o
 
-TESTS  = ftfileprovidertest ftfilecreatortest ftextralisttest ftdataplextest fttransfermoduletest ftcrc32test ftcrossprovidercreatortest ftcontrollertest ftserver1test ftserver2test fttransfermoduletest ftserver3test
-#ftfilemappertest 
+TESTS  = ftfileprovidertest ftfilecreatortest ftextralisttest ftdataplextest fttransfermoduletest ftcrc32test ftcrossprovidercreatortest ftcontrollertest ftserver1test ftserver2test fttransfermoduletest ftserver3test ftfilemappertest 
 
 all: tests
 
