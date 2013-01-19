@@ -43,9 +43,9 @@
  ****/
 
 /** Constructor */
-SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const std::string &gpgId, const std::string &sslId, const std::string& ip_address,uint32_t type, bool isHome)
+SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const std::string &gpgId, const std::string &sslId, const std::string &sslCn, const std::string& ip_address,uint32_t type, bool isHome)
 :QWidget(NULL), mParent(parent), mFeedId(feedId),
-	mSslId(sslId), mGpgId(gpgId), mType(type), mIsHome(isHome), mIP(ip_address)
+	mGpgId(gpgId), mSslId(sslId), mSslCn(sslCn), mType(type), mIsHome(isHome), mIP(ip_address)
 {
     /* Invoke the Qt Designer generated object setup routine */
     setupUi(this);
@@ -180,9 +180,9 @@ void SecurityItem::updateItem()
 				 */
 
 				/* set peer name */
-				peerNameLabel->setText(tr("Unknown Peer"));
+				peerNameLabel->setText(QString("%1 (%2)").arg(tr("Unknown Peer"), QString::fromUtf8(mSslCn.c_str())));
 
-				nameLabel->setText(QString::fromStdString(mGpgId));
+				nameLabel->setText(QString::fromUtf8(mSslCn.c_str()) + " (" + QString::fromStdString(mGpgId) + ")");
 				idLabel->setText(QString::fromStdString(mSslId));
 
 				statusLabel->setText(tr("Unknown Peer"));
