@@ -34,6 +34,7 @@
  */
 #include "ftfileprovider.h"
 #include "ftchunkmap.h"
+#include "ftfilemapper.h"
 #include <map>
 
 class ZeroInitCounter
@@ -43,7 +44,7 @@ class ZeroInitCounter
 		uint32_t cnt ;
 };
 
-class ftFileCreator: public ftFileProvider
+class ftFileCreator: public ftFileProvider, public ftFileMapper
 {
 	public:
 
@@ -75,7 +76,7 @@ class ftFileCreator: public ftFileProvider
 		//        bad_chunks: count of achieved chunks that don't match the CRC
 		// incomplete_chunks: count of any bad or not yet downloaded chunk
 		//
-		bool crossCheckChunkMap(const CRC32Map& ref,uint32_t& bad_chunks,uint32_t& incomplete_chunks) ;
+		bool crossCheckChunkMap(const CRC32Map& ref,uint32_t& bad_chunks);//,uint32_t& incomplete_chunks) ;
 
 		// Sets all chunks to checking state
 		//
@@ -127,7 +128,7 @@ class ftFileCreator: public ftFileProvider
 		// 	- sending availability info to the peers for which we also are a source
 		//
 		virtual void getAvailabilityMap(CompressedChunkMap& cmap) ;
-		void setAvailabilityMap(const CompressedChunkMap& cmap) ;
+		void setAvailabilityMap(const CompressedChunkMap& cmap,const std::vector<uint32_t>& data_chunks_ids) ;
 
 		// This is called when receiving the availability map from a source peer, for the file being handled.
 		//

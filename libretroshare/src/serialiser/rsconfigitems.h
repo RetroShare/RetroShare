@@ -298,8 +298,9 @@ class RsFileTransfer: public RsItem
 
 		// chunk information
 		uint32_t flags ;
-		uint32_t chunk_strategy ;				// strategy flags for chunks
+		uint32_t chunk_strategy ;						// strategy flags for chunks
 		CompressedChunkMap compressed_chunk_map ;	// chunk availability (bitwise)
+		std::vector<uint32_t> data_chunk_ids ;		// ids of downloaded chunks
 };
 
 /**************************************************************************/

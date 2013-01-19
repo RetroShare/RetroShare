@@ -165,7 +165,7 @@ private:
 			uint32_t chunk_size, void *data);
   
   bool checkFile() ;
-  bool checkCRC() ;
+  //bool checkCRC() ;
   
   /* These have independent Mutexes / are const locally (no Mutex protection)*/
   ftFileCreator *mFileCreator;

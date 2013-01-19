@@ -18,7 +18,7 @@
 ***********************************************************/
 
 ftFileCreator::ftFileCreator(const std::string& path, uint64_t size, const std::string& hash,bool assume_availability)
-	: ftFileProvider(path,size,hash), chunkMap(size,assume_availability)
+	: ftFileProvider(path,size,hash), ftFileMapper(size,ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE), chunkMap(size,assume_availability)
 {
 	/* 
          * FIXME any inits to do?
@@ -140,17 +140,9 @@ bool ftFileCreator::addFileData(uint64_t offset, uint32_t chunk_size, void *data
 		/* 
 		 * go to the offset of the file 
 		 */
-		if (0 != fseeko64(this->fd, offset, SEEK_SET))
-		{
-			std::cerr << "ftFileCreator::addFileData() Bad fseek at offset " << offset << ", fd=" << (void*)(this->fd) << ", size=" << mSize << ", errno=" << errno << std::endl;
-			return 0;
-		}
-
-		if (1 != fwrite(data, chunk_size, 1, this->fd))
+		if(!storeData(data,chunk_size,offset,fd))
 		{
 			std::cerr << "ftFileCreator::addFileData() Bad fwrite." << std::endl;
-			std::cerr << "ERRNO: " << errno << std::endl;
-
 			return 0;
 		}
 
@@ -541,7 +533,8 @@ bool ftFileCreator::locked_printChunkMap()
 	return true; 
 }
 
-void ftFileCreator::setAvailabilityMap(const CompressedChunkMap& cmap) 
+void ftFileCreator::setAvailabilityMap(const CompressedChunkMap& cmap,const std::vector<uint32_t>& data_chunk_ids) 
+//void ftFileCreator::setAvailabilityMap(const CompressedChunkMap& cmap) 
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 
@@ -553,6 +546,11 @@ void ftFileCreator::setAvailabilityMap(const CompressedChunkMap& cmap)
 		std::cerr << (void*)cmap._map[i] ;
 	std::cerr << std::endl ;
 #endif
+
+	if(!locked_initializeFileAttrs() )
+		return ;
+
+	initMappedChunks(mSize,cmap,data_chunk_ids) ;
 }
 
 void ftFileCreator::getAvailabilityMap(CompressedChunkMap& map) 
@@ -666,7 +664,7 @@ bool ftFileCreator::verifyChunk(uint32_t chunk_number,const Sha1CheckSum& sum)
 	return true ;
 }
 
-bool ftFileCreator::crossCheckChunkMap(const CRC32Map& ref,uint32_t& bad_chunks,uint32_t& incomplete_chunks)
+bool ftFileCreator::crossCheckChunkMap(const CRC32Map& ref,uint32_t& bad_chunks)
 {
 	{
 		RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
@@ -684,7 +682,6 @@ bool ftFileCreator::crossCheckChunkMap(const CRC32Map& ref,uint32_t& bad_chunks,
 			return false ;
 
 		unsigned char *buff = new unsigned char[chunk_size] ;
-		incomplete_chunks = 0 ;
 		bad_chunks = 0 ;
 		uint32_t len = 0 ;
 
@@ -692,7 +689,7 @@ bool ftFileCreator::crossCheckChunkMap(const CRC32Map& ref,uint32_t& bad_chunks,
 		{
 			printf("  Chunk %05d/%05d:",i,nb_chunks) ;
 
-			if(fseeko64(fd,(uint64_t)i * (uint64_t)chunk_size,SEEK_SET)==0 && (len = fread(buff,1,chunk_size,fd)) > 0)
+			if(retrieveData(buff,chunk_size,(uint64_t)i * (uint64_t)chunk_size,fd)) //fseeko64(fd,(uint64_t)i * (uint64_t)chunk_size,SEEK_SET)==0 && (len = fread(buff,1,chunk_size,fd)) > 0)
 			{
 				uint32_t crc = RsDirUtil::rs_CRC32(buff,len) ;
 

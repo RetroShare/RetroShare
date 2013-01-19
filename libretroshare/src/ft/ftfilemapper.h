@@ -48,6 +48,8 @@
 #include <string>
 #include <vector>
 
+class CompressedChunkMap ;
+
 class ftFileMapper
 {
 	public:
@@ -57,6 +59,10 @@ class ftFileMapper
 		// Storage/retreive of data. All offsets are given in absolute position in the file. The class handles
 		// the real mapping (hence the name).
 		
+		// initialization from saved data.
+
+		void initMappedChunks(uint64_t file_size,const CompressedChunkMap& cmap,const std::vector<uint32_t>& data_chunks_ids) ;
+
 		// Stores the data in the file, at the given offset. The chunk does not necessarily exist. If not, 
 		// the data is written at the end of the current file. If yes, it is written at the actual place.
 		// Returned values:
@@ -72,7 +78,7 @@ class ftFileMapper
 		//		true: 	the data has correctly been read
 		//		false: 	the data could not beread, or does not exist.
 		//
-		bool readData(void *buff, uint32_t data_size, uint64_t offset) ;
+		bool retrieveData(void *data, uint32_t data_size, uint64_t offset,FILE *fd) ;
 
 		// debug
 		void print() const ;
@@ -80,11 +86,16 @@ class ftFileMapper
 	private:
 		uint64_t _file_size ;	// size of the file
 		uint32_t _chunk_size ;	// size of chunks
-		uint32_t _first_free_chunk ; // first chunk in the mapped file to be available
 
-		// List of chunk ids (0,1,2,3...) stored in the order 
-		std::vector<int> _mapped_chunks ;
-		std::vector<int> _data_chunks ;
+		// List of chunk ids (0,1,2,3...) stored in the order. Two arrays represent the same info for efficiency reasons. We have
+		//
+		// 	_mapped_chunks[_data_chunks[i]] = i
+		// 	_data_chunks[_mapped_chunks[i]] = i
+		//
+		std::vector<int> _mapped_chunks ;	 //  Index into the Partial file of where each chunk is stored. -1 for unmapped chunk. Has 
+		                                     // size equal to number of chunks.
+		std::vector<uint32_t> _data_chunk_ids ; //  index of the chunk that ends up at each place of the partials file. Has size n were n 
+														 	 // is the number of downloaded chunks.  _first_free_chunk = _data_chunks.size().
 
 		bool writeData(uint64_t offset,uint32_t size,void *data,FILE *fd) const ;
 		bool readData(uint64_t offset,uint32_t size,void *data,FILE *fd) const ;

@@ -519,7 +519,8 @@ int ftTransferModule::tick()
 		  checkFile() ;
 		  break ;
 	  case FT_TM_FLAG_CHUNK_CRC: // File is waiting for CRC32 map. Check if received, and re-set matched chunks
-		  checkCRC() ;
+		  std::cerr << "Warning: unhandled case for chunkCRC(). This is unexpected to endup here." << std::endl;
+		  //checkCRC() ;
 		  break ;
 	  default:
 		  break;
@@ -631,19 +632,12 @@ void ftTransferModule::forceCheck()
 	std::cerr << "ftTransferModule::forceCheck(): setting flags to force check." << std::endl ;
 #endif
 
-#ifndef USE_NEW_CHUNK_CHECKING_CODE
-	mFlag = FT_TM_FLAG_CHUNK_CRC ;	// Ask for CRC map.
-
-	 // setup flags for CRC state machine to work properly
-	_crcmap_state = FT_TM_CRC_MAP_STATE_DONT_HAVE ;
-	_crcmap_last_asked_time = 0 ;
-#else
 	mFileCreator->forceCheck() ;
 	mFlag = FT_TM_FLAG_DOWNLOADING ;	// Ask for CRC map.
 	mFileStatus.stat = ftFileStatus::PQIFILE_DOWNLOADING;
-#endif
 }
 
+#ifdef TO_REMOVE
 bool ftTransferModule::checkCRC()
 {
 	// We have a finite state machine here.
@@ -797,6 +791,7 @@ bool ftTransferModule::checkCRC()
 
 	return true ;
 }
+#endif
 
 void ftTransferModule::addCRC32Map(const CRC32Map& crc_map)
 {

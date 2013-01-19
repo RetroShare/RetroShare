@@ -1040,7 +1040,8 @@ bool	ftController::handleAPendingRequest()
 				std::cerr << "Hash " << req.mHash << " is in downloads" << std::endl ;
 				std::cerr << "  setting chunk strategy to " << rsft->chunk_strategy << std::endl;
 #endif
-				(fit->second)->mCreator->setAvailabilityMap(rsft->compressed_chunk_map) ;
+				//(fit->second)->mCreator->setAvailabilityMap(rsft->compressed_chunk_map) ;
+				(fit->second)->mCreator->setAvailabilityMap(rsft->compressed_chunk_map,rsft->data_chunk_ids) ;
 				(fit->second)->mCreator->setChunkStrategy((FileChunksInfo::ChunkStrategy)(rsft->chunk_strategy)) ;
 			}
 
@@ -1923,8 +1924,6 @@ RsSerialiser *ftController::setupSerialiser()
 
 bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 {
-
-
 	/* it can delete them! */
 	cleanup = true;
 
@@ -2013,8 +2012,10 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 
 		rft->transferred = fit->second->mCreator->getRecvd();
 
-		// Remove turtle peers from sources, as they are not supposed to survive a reboot of RS, since they are dynamic sources.
-		// Otherwize, such sources are unknown from the turtle router, at restart, and never get removed.
+		// Remove turtle peers from sources, as they are not supposed to survive
+		// a reboot of RS, since they are dynamic sources.  Otherwize, such
+		// sources are unknown from the turtle router, at restart, and never get
+		// removed.
 		//
 		for(std::list<std::string>::iterator sit(rft->allPeerIds.ids.begin());sit!=rft->allPeerIds.ids.end();)
 			if(mTurtle->isTurtlePeer(*sit))
@@ -2144,7 +2145,8 @@ bool ftController::loadList(std::list<RsItem *>& load)
 				}
 				else
 				{
-					(fit->second)->mCreator->setAvailabilityMap(rsft->compressed_chunk_map) ;
+					//(fit->second)->mCreator->setAvailabilityMap(rsft->compressed_chunk_map) ;
+					(fit->second)->mCreator->setAvailabilityMap(rsft->compressed_chunk_map,rsft->data_chunk_ids) ;
 					(fit->second)->mCreator->setChunkStrategy((FileChunksInfo::ChunkStrategy)(rsft->chunk_strategy)) ;
 				}
 			}

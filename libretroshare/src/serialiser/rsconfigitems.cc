@@ -122,7 +122,7 @@ void 	RsFileTransfer::clear()
 	trate = 0;
 	lrate = 0;
 	ltransfer = 0;
-
+	data_chunk_ids.clear() ;
 }
 
 std::ostream &RsFileTransfer::print(std::ostream &out, uint16_t indent)
@@ -211,6 +211,8 @@ uint32_t    RsFileConfigSerialiser::sizeTransfer(RsFileTransfer *item)
 	s += 4; // flags
 	s += 4; // chunk map size
 	s += 4*item->compressed_chunk_map._map.size(); // compressed_chunk_map
+	s += 4; // data_chunk_ids size
+	s += 4*item->data_chunk_ids.size(); // ids of data chunks in the file mapper 
 
 	return s;
 }
@@ -259,6 +261,11 @@ bool     RsFileConfigSerialiser::serialiseTransfer(RsFileTransfer *item, void *d
 
 	for(uint32_t i=0;i<item->compressed_chunk_map._map.size();++i)
 		ok &= setRawUInt32(data, tlvsize, &offset, item->compressed_chunk_map._map[i]);
+
+	ok &= setRawUInt32(data, tlvsize, &offset, item->data_chunk_ids.size());
+
+	for(uint32_t i=0;i<item->data_chunk_ids.size();++i)
+		ok &= setRawUInt32(data, tlvsize, &offset, item->data_chunk_ids[i]);
 
 	if (offset != tlvsize)
 	{
@@ -325,14 +332,26 @@ RsFileTransfer *RsFileConfigSerialiser::deserialiseTransfer(void *data, uint32_t
 	ok &= getRawUInt32(data, rssize, &offset, &map_size);
 
 	item->compressed_chunk_map._map.resize(map_size) ;
-	for(uint32_t i=0;i<map_size;++i)
+	for(uint32_t i=0;i<map_size && ok;++i)
 		ok &= getRawUInt32(data, rssize, &offset, &(item->compressed_chunk_map._map[i]));
 
+	// Now load optional part.
+	//
 	if (offset != rssize)
 	{
-		/* error */
-		delete item;
-		return NULL;
+		uint32_t chk_size = 0 ;
+		ok &= getRawUInt32(data, rssize, &offset, &chk_size);
+
+		item->data_chunk_ids.resize(chk_size) ;
+		for(uint32_t i=0;i<chk_size && ok;++i)
+			ok &= getRawUInt32(data, rssize, &offset, &(item->data_chunk_ids[i]));
+
+		if (offset != rssize)
+		{
+			/* error */
+			delete item;
+			return NULL;
+		}
 	}
 
 	if (!ok)

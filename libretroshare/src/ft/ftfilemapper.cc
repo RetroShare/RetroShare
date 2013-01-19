@@ -4,6 +4,7 @@
 #include <errno.h>
 #include <iostream>
 #include "ftfilemapper.h"
+#include "ftchunkmap.h"
 
 //#define DEBUG_FILEMAPPER
 
@@ -16,11 +17,9 @@ ftFileMapper::ftFileMapper(uint64_t file_size,uint32_t chunk_size)
 	std::cerr << "(DD) Creating ftFileMapper for file of size " << file_size << ", with " << nb_chunks << " chunks." << std::endl;
 #endif
 
-	_first_free_chunk = 0 ;
 	_mapped_chunks.clear() ;
 	_mapped_chunks.resize(nb_chunks,-1) ;
-	_data_chunks.clear() ;
-	_data_chunks.resize(nb_chunks,-1) ;
+	_data_chunk_ids.clear() ;
 }
 
 bool ftFileMapper::computeStorageOffset(uint64_t offset,uint64_t& storage_offset) const
@@ -43,6 +42,24 @@ bool ftFileMapper::computeStorageOffset(uint64_t offset,uint64_t& storage_offset
 #endif
 		return false ;
 	}
+}
+
+bool ftFileMapper::readData(uint64_t offset,uint32_t size,void *data,FILE *fd) const
+{
+	if (0 != fseeko64(fd, offset, SEEK_SET))
+	{
+		std::cerr << "(EE) ftFileMapper::ftFileMapper::readData() Bad fseek at offset " << offset << ", fd=" << (void*)fd << ", size=" << size << ", errno=" << errno << std::endl;
+		return false;
+	}
+
+	if (1 != fread(data, size, 1, fd))
+	{
+		std::cerr << "(EE) ftFileMapper::readData() Bad fread." << std::endl;
+		std::cerr << "ERRNO: " << errno << std::endl;
+
+		return false;
+	}
+	return true ;
 }
 
 bool ftFileMapper::writeData(uint64_t offset,uint32_t size,void *data,FILE *fd) const
@@ -102,7 +119,7 @@ bool ftFileMapper::storeData(void *data, uint32_t data_size, uint64_t offset,FIL
 		std::cerr << "(DD)   allocated new empty chunk " << empty_chunk << std::endl;
 #endif
 
-		if(cid < _first_free_chunk && cid != empty_chunk)	// the place is already occupied by some data
+		if(cid < _data_chunk_ids.size() && cid != empty_chunk)	// the place is already occupied by some data
 		{
 #ifdef DEBUG_FILEMAPPER
 			std::cerr << "(DD)   chunk already in use. " << std::endl;
@@ -117,7 +134,7 @@ bool ftFileMapper::storeData(void *data, uint32_t data_size, uint64_t offset,FIL
 
 			// Get the old chunk id that was mapping to this place
 			//
-			int oid = _data_chunks[cid] ;
+			int oid = _data_chunk_ids[cid] ;
 
 			if(oid < 0)
 			{
@@ -131,8 +148,8 @@ bool ftFileMapper::storeData(void *data, uint32_t data_size, uint64_t offset,FIL
 
 			_mapped_chunks[cid] = cid ; // this one is in place, since we swapped it
 			_mapped_chunks[oid] = empty_chunk ;
-			_data_chunks[cid] = cid ;
-			_data_chunks[empty_chunk] = oid ;
+			_data_chunk_ids[cid] = cid ;
+			_data_chunk_ids[empty_chunk] = oid ;
 		}
 		else // allocate a new chunk at end of the file.
 		{
@@ -141,7 +158,7 @@ bool ftFileMapper::storeData(void *data, uint32_t data_size, uint64_t offset,FIL
 #endif
 
 			_mapped_chunks[cid] = empty_chunk ;
-			_data_chunks[empty_chunk] = cid ;
+			_data_chunk_ids[empty_chunk] = cid ;
 		}
 
 		real_offset = _mapped_chunks[cid]*_chunk_size + (offset % (uint64_t)_chunk_size) ;
@@ -154,26 +171,39 @@ bool ftFileMapper::storeData(void *data, uint32_t data_size, uint64_t offset,FIL
 	return writeData(real_offset,data_size,data,fd) ;
 }
 
+bool ftFileMapper::retrieveData(void *data, uint32_t data_size, uint64_t offset,FILE *fd)
+{
+	uint64_t storage_offset ;
+
+	if(!computeStorageOffset(offset,storage_offset) )
+	{
+		std::cerr << "(EE) ftFileMapper::retrieveData(): attempt to get unmapped data at offset " << offset << std::endl;
+		return false ;
+	}
+	return readData(storage_offset,data_size,data,fd) ;
+}
+
 uint32_t ftFileMapper::allocateNewEmptyChunk(FILE *fd_out)
 {
-	// look into _first_free_chunk. Is it the place of a chunk already mapped before?
+	// look into first_free_chunk. Is it the place of a chunk already mapped before?
 	//
 #ifdef DEBUG_FILEMAPPER
 	std::cerr << "(DD) ftFileMapper::getFirstEmptyChunk()" << std::endl;
 #endif
 
-	if(_mapped_chunks[_first_free_chunk] >= 0 && _mapped_chunks[_first_free_chunk] < (int)_first_free_chunk)
+	uint32_t first_free_chunk = _data_chunk_ids.size() ;
+
+	if(_mapped_chunks[first_free_chunk] >= 0 && _mapped_chunks[first_free_chunk] < (int)first_free_chunk)
 	{
-		uint32_t old_chunk = _mapped_chunks[_first_free_chunk] ;
+		uint32_t old_chunk = _mapped_chunks[first_free_chunk] ;
 
 #ifdef DEBUG_FILEMAPPER
-		std::cerr << "(DD)   first free chunk " << _first_free_chunk << " is actually mapped to " <<  old_chunk << ". Moving it." << std::endl;
+		std::cerr << "(DD)   first free chunk " << first_free_chunk << " is actually mapped to " <<  old_chunk << ". Moving it." << std::endl;
 #endif
 
-		moveChunk(_mapped_chunks[_first_free_chunk],_first_free_chunk,fd_out) ;
-		_mapped_chunks[_first_free_chunk] = _first_free_chunk ;
-		_data_chunks[_first_free_chunk] = _first_free_chunk ;
-		_first_free_chunk++ ;
+		moveChunk(_mapped_chunks[first_free_chunk],first_free_chunk,fd_out) ;
+		_mapped_chunks[first_free_chunk] = first_free_chunk ;
+		_data_chunk_ids.push_back(first_free_chunk) ;
 
 #ifdef DEBUG_FILEMAPPER
 		std::cerr << "(DD)   Returning " << old_chunk << std::endl;
@@ -184,15 +214,15 @@ uint32_t ftFileMapper::allocateNewEmptyChunk(FILE *fd_out)
 	else
 	{
 #ifdef DEBUG_FILEMAPPER
-		std::cerr << "(DD)   first free chunk is fine. Returning " << _first_free_chunk << ", and making room" << std::endl;
+		std::cerr << "(DD)   first free chunk is fine. Returning " << first_free_chunk << ", and making room" << std::endl;
 #endif
 		
 		// We need to wipe the entire chunk, since it might be moved before beign completely written, which would cause
 		// a fread error.
 		//
-		wipeChunk(_first_free_chunk,fd_out) ;
+		wipeChunk(first_free_chunk,fd_out) ;
 
-		return _first_free_chunk++ ;
+		return first_free_chunk ;
 	}
 }
 
@@ -224,6 +254,44 @@ bool ftFileMapper::wipeChunk(uint32_t cid,FILE *fd) const
 
 	free(buf) ;
 	return true ;
+}
+
+void ftFileMapper::initMappedChunks(uint64_t file_size,const CompressedChunkMap& cmap,const std::vector<uint32_t>& data_chunk_ids)
+{
+	uint32_t numck = ChunkMap::getNumberOfChunks(file_size) ;
+	uint32_t count = cmap.countFilledChunks(numck) ;
+
+	_mapped_chunks.clear() ;
+	_mapped_chunks.resize(numck,-1) ;
+	_data_chunk_ids.clear() ;
+
+	// 0 - retro-compatibility. First check that the number of chunks in both maps co-incide.
+
+	if(data_chunk_ids.size() != count)
+	{
+		std::cerr << "(II) ftFileMapper::initMappedChunks(): file has " << count << " chunks on disk, but no mapping. Assuming it's an unfragmented file (backward compatibility)!" << std::endl;
+		_data_chunk_ids.resize(numck) ;
+
+		for(uint32_t i=0;i<numck;++i)
+		{
+			_data_chunk_ids[i] = i ;
+			_mapped_chunks[i] = i ;
+		}
+	}
+	else 
+	{
+		std::cerr << "(II) ftFileMapper::initMappedChunks(): file has " << count << " chunks on disk. Data ids is fine." << std::endl;
+
+		_data_chunk_ids = data_chunk_ids;
+
+		for(uint32_t i=0;i<data_chunk_ids.size();++i)
+			_mapped_chunks[data_chunk_ids[i]] = i ;
+	}
+			
+	std::cerr << "(DD) ftFileMapper::initMappedChunks(): counted " << count << " filled chunks." << std::endl;
+	std::cerr << "(DD) ftFileMapper::initMappedChunks(): printing: " << std::endl;
+
+	print() ;
 }
 
 bool ftFileMapper::moveChunk(uint32_t to_move, uint32_t new_place,FILE *fd_out)
@@ -290,10 +358,10 @@ void ftFileMapper::print() const
 		std::cerr << _mapped_chunks[i] << " " ;
 	}
 
-	std::cerr << "] - ffc = " << _first_free_chunk << " - [ ";
+	std::cerr << "] - ffc = " << _data_chunk_ids.size() << " - [ ";
 	
-	for(uint32_t i=0;i<_data_chunks.size();++i)
-		std::cerr << _data_chunks[i] << " " ;
+	for(uint32_t i=0;i<_data_chunk_ids.size();++i)
+		std::cerr << _data_chunk_ids[i] << " " ;
 	std::cerr << " ] " << std::endl;
 
 }

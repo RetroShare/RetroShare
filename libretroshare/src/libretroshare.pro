@@ -137,12 +137,12 @@ linux-* {
 	system(which gpg-error-config >/dev/null 2>&1) {
 		INCLUDEPATH += $$system(gpg-error-config --cflags | sed -e "s/-I//g")
 	} else {
-		message(Could not find gpg-error-config on your system, assuming gpg-error.h is in /usr/include)
+		message("Could not find gpg-error-config on your system, assuming gpg-error.h is in /usr/include")
 	}
 	system(which gpgme-config >/dev/null 2>&1) {
 		INCLUDEPATH += $$system(gpgme-config --cflags | sed -e "s/-I//g")
 	} else {
-		message(Could not find gpgme-config on your system, assuming gpgme.h is in /usr/include)
+		message("Could not find gpgme-config on your system, assuming gpgme.h is in /usr/include")
 	}
 
 	# where to put the shared library itself
@@ -323,6 +323,7 @@ HEADERS +=	ft/ftchunkmap.h \
 			ft/ftfilesearch.h \
 			ft/ftsearch.h \
 			ft/ftserver.h \
+			ft/ftfilemapper.h \
 			ft/fttransfermodule.h
 
 HEADERS +=	pqi/authssl.h \
@@ -462,6 +463,7 @@ SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftfileprovider.cc \
 			ft/ftfilesearch.cc \
 			ft/ftserver.cc \
+			ft/ftfilemapper.cc \
 			ft/fttransfermodule.cc \
 
 SOURCES +=	pqi/authgpg.cc \
