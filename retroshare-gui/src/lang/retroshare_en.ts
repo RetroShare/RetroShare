@@ -9691,6 +9691,22 @@ and open the Make Friend Wizard.
 Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replaced by &apos;_&apos;.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Directory is NOT browsable for friends from parent groups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory is NOT accessible by anonymous tunnels from friends from parent groups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory is NOT browsable for any friend</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory is NOT accessible by anonymous tunnels from any friend</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QuickStartWizard</name>
