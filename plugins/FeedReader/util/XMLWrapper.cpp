@@ -25,6 +25,14 @@
 #include "XMLWrapper.h"
 #include "XPathWrapper.h"
 
+#include <util/rsstring.h>
+#include <util/rsthreads.h>
+#include <libxslt/transform.h>
+#include <libxslt/xsltutils.h>
+
+static RsMutex xmlMtx("XMLWrapper");
+static std::string xmlErrorString;
+
 XMLWrapper::XMLWrapper()
 {
 	mDocument = NULL;
@@ -40,6 +48,35 @@ XMLWrapper::~XMLWrapper()
 {
 	cleanup();
 	xmlCharEncCloseFunc(mCharEncodingHandler);
+}
+
+static void xmlErrorHandler(void */*context*/, const char *msg, ...)
+{
+	va_list vl;
+
+	va_start(vl, msg);
+	rs_sprintf_append_args(xmlErrorString, msg, vl);
+	va_end(vl);
+}
+
+void XMLWrapper::handleError(bool init, std::string &errorString)
+{
+	if (init) {
+		xmlMtx.lock();
+		xmlErrorString.clear();
+		errorString.clear();
+
+		xsltSetGenericErrorFunc(this, xmlErrorHandler);
+		xmlSetGenericErrorFunc(this, xmlErrorHandler);
+	} else {
+		xsltSetGenericErrorFunc(NULL, NULL);
+		xmlSetGenericErrorFunc(NULL, NULL);
+
+		errorString = xmlErrorString;
+		xmlErrorString.clear();
+
+		xmlMtx.unlock();
+	}
 }
 
 void XMLWrapper::trimString(std::string &string)
@@ -59,7 +96,6 @@ void XMLWrapper::trimString(std::string &string)
 	}
 }
 
-
 XMLWrapper &XMLWrapper::operator=(const XMLWrapper &xml)
 {
 	cleanup();
@@ -78,6 +114,13 @@ void XMLWrapper::cleanup()
 		xmlFreeDoc(mDocument);
 		mDocument = NULL;
 	}
+}
+
+void XMLWrapper::attach(xmlDocPtr document)
+{
+	cleanup();
+
+	mDocument = document;
 }
 
 bool XMLWrapper::convertToString(const xmlChar *xmlText, std::string &text)
@@ -138,7 +181,10 @@ bool XMLWrapper::readXML(const char *xml)
 {
 	cleanup();
 
-	mDocument = xmlReadDoc(BAD_CAST xml, "", NULL, XML_PARSE_NOERROR | XML_PARSE_NOWARNING | XML_PARSE_COMPACT | XML_PARSE_NOENT | XML_PARSE_NOCDATA);
+	handleError(true, mLastErrorString);
+	mDocument = xmlReadDoc(BAD_CAST xml, "", NULL, /*XML_PARSE_NOERROR | XML_PARSE_NOWARNING | */XML_PARSE_COMPACT | XML_PARSE_NOENT | XML_PARSE_NOCDATA);
+	handleError(false, mLastErrorString);
+
 	if (mDocument) {
 		return true;
 	}
@@ -357,4 +403,24 @@ XPathWrapper *XMLWrapper::createXPath()
 	}
 
 	return NULL;
+}
+
+bool XMLWrapper::transform(const XMLWrapper &style, XMLWrapper &result)
+{
+	handleError(true, mLastErrorString);
+
+	xmlDocPtr resultDoc = NULL;
+
+	xsltStylesheetPtr stylesheet = xsltParseStylesheetDoc(style.getDocument());
+	if (stylesheet) {
+		resultDoc = xsltApplyStylesheet(stylesheet, getDocument(), NULL);
+		stylesheet->doc = NULL; // xsltFreeStylesheet is freeing doc
+		xsltFreeStylesheet(stylesheet);
+	}
+
+	result.attach(resultDoc);
+
+	handleError(false, mLastErrorString);
+
+	return resultDoc ? true : false;
 }

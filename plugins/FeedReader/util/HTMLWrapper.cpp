@@ -32,7 +32,10 @@ bool HTMLWrapper::readHTML(const char *html, const char *url)
 {
 	cleanup();
 
-	mDocument = htmlReadMemory(html, strlen(html), url, "", HTML_PARSE_NOERROR | HTML_PARSE_NOWARNING | HTML_PARSE_COMPACT | HTML_PARSE_NONET | HTML_PARSE_NOBLANKS);
+	handleError(true, mLastErrorString);
+	mDocument = htmlReadMemory(html, strlen(html), url, "", /*HTML_PARSE_NOERROR | HTML_PARSE_NOWARNING | */HTML_PARSE_COMPACT | HTML_PARSE_NONET | HTML_PARSE_NOBLANKS);
+	handleError(false, mLastErrorString);
+
 	if (mDocument) {
 		return true;
 	}
@@ -48,7 +51,10 @@ bool HTMLWrapper::saveHTML(std::string &html)
 
 	xmlChar *newHtml = NULL;
 	int newHtmlSize = 0;
+	handleError(true, mLastErrorString);
 	htmlDocDumpMemoryFormat(mDocument, &newHtml, &newHtmlSize, 0);
+	handleError(false, mLastErrorString);
+
 	if (newHtml) {
 		convertToString(newHtml, html);
 		xmlFree(newHtml);

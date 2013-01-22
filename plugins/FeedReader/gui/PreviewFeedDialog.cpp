@@ -30,7 +30,6 @@
 #include "util/HandleRichText.h"
 #include "gui/settings/rsharesettings.h"
 
-#include "interface/rsFeedReader.h"
 #include "retroshare/rsiface.h"
 #include "util/HTMLWrapper.h"
 
@@ -146,35 +145,44 @@ PreviewFeedDialog::PreviewFeedDialog(RsFeedReader *feedReader, FeedReaderNotify 
 	ui->setupUi(this);
 
 	ui->feedNameLabel->clear();
-	ui->useXPathCheckBox->setChecked(true);
 
 	/* connect signals */
 	connect(ui->previousPushButton, SIGNAL(clicked()), this, SLOT(previousMsg()));
 	connect(ui->nextPushButton, SIGNAL(clicked()), this, SLOT(nextMsg()));
-	connect(ui->closeStructureButton, SIGNAL(clicked()), this, SLOT(showStructureFrame()));
-	connect(ui->structureButton, SIGNAL(toggled(bool)), this, SLOT(showStructureFrame(bool)));
-	connect(ui->xpathPushButton, SIGNAL(toggled(bool)), this, SLOT(showXPathFrame(bool)));
-	connect(ui->useXPathCheckBox, SIGNAL(toggled(bool)), this, SLOT(fillStructureTree()));
+	connect(ui->structureButton, SIGNAL(toggled(bool)), this, SLOT(showStructureFrame()));
 	connect(ui->xpathUseListWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(xpathListCustomPopupMenu(QPoint)));
 	connect(ui->xpathRemoveListWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(xpathListCustomPopupMenu(QPoint)));
 	connect(ui->xpathUseListWidget->itemDelegate(), SIGNAL(closeEditor(QWidget*,QAbstractItemDelegate::EndEditHint)), this, SLOT(xpathCloseEditor(QWidget*,QAbstractItemDelegate::EndEditHint)));
 	connect(ui->xpathRemoveListWidget->itemDelegate(), SIGNAL(closeEditor(QWidget*,QAbstractItemDelegate::EndEditHint)), this, SLOT(xpathCloseEditor(QWidget*,QAbstractItemDelegate::EndEditHint)));
+	connect(ui->transformationTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(transformationTypeChanged()));
 
 	connect(mNotify, SIGNAL(feedChanged(QString,int)), this, SLOT(feedChanged(QString,int)));
 	connect(mNotify, SIGNAL(msgChanged(QString,QString,int)), this, SLOT(msgChanged(QString,QString,int)));
 
+	ui->transformationTypeComboBox->addItem(FeedReaderStringDefs::transforationTypeString(RS_FEED_TRANSFORMATION_TYPE_NONE), RS_FEED_TRANSFORMATION_TYPE_NONE);
+	ui->transformationTypeComboBox->addItem(FeedReaderStringDefs::transforationTypeString(RS_FEED_TRANSFORMATION_TYPE_XPATH), RS_FEED_TRANSFORMATION_TYPE_XPATH);
+	ui->transformationTypeComboBox->addItem(FeedReaderStringDefs::transforationTypeString(RS_FEED_TRANSFORMATION_TYPE_XSLT), RS_FEED_TRANSFORMATION_TYPE_XSLT);
+
+	ui->xsltTextEdit->setPlaceholderText(tr("XSLT is used on focus lost or when Ctrl+Enter is pressed"));
+
 //	ui->documentTreeWidget->setItemDelegate(new PreviewItemDelegate(ui->documentTreeWidget));
-	ui->structureFrame->hide();
+	showStructureFrame();
+
+	/* Set initial size the splitter */
+//	QList<int> sizes;
+//	sizes << 300 << 300 << 150; // Qt calculates the right sizes
+//	ui->splitter->setSizes(sizes);
 
 	if (mFeedReader->addPreviewFeed(feedInfo, mFeedId)) {
 		setFeedInfo("");
 	} else {
 		setFeedInfo(tr("Cannot create preview"));
 	}
-	setXPathInfo("");
-	showXPathFrame(true);
+	setTransformationInfo("");
 
-	/* fill xpath expressions */
+	/* fill xpath/xslt expressions */
+	ui->transformationTypeComboBox->setCurrentIndex(ui->transformationTypeComboBox->findData(feedInfo.transformationType));
+
 	QListWidgetItem *item;
 	std::string xpath;
 	foreach(xpath, feedInfo.xpathsToUse){
@@ -188,12 +196,15 @@ PreviewFeedDialog::PreviewFeedDialog(RsFeedReader *feedReader, FeedReaderNotify 
 		ui->xpathRemoveListWidget->addItem(item);
 	}
 
+	ui->xsltTextEdit->setPlainText(QString::fromUtf8(feedInfo.xslt.c_str()));
+
 	updateMsgCount();
 
 	ui->xpathUseListWidget->installEventFilter(this);
 	ui->xpathUseListWidget->viewport()->installEventFilter(this);
 	ui->xpathRemoveListWidget->installEventFilter(this);
 	ui->xpathRemoveListWidget->viewport()->installEventFilter(this);
+	ui->xsltTextEdit->installEventFilter(this);
 
 	/* load settings */
 	processSettings(true);
@@ -234,8 +245,6 @@ void PreviewFeedDialog::processSettings(bool load)
 
 bool PreviewFeedDialog::eventFilter(QObject *obj, QEvent *event)
 {
-	long todo_here;
-
 	if (event->type() == QEvent::KeyPress) {
 		QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
 		if (keyEvent) {
@@ -247,16 +256,28 @@ bool PreviewFeedDialog::eventFilter(QObject *obj, QEvent *event)
 						QListWidgetItem *item = listWidget->currentItem();
 						if (item) {
 							delete(item);
-							processXPath();
+							processTransformation();
 						}
 						return true; // eat event
 					}
 				}
 			}
+			if ((keyEvent->key() == Qt::Key_Enter || keyEvent->key() == Qt::Key_Return) && (keyEvent->modifiers() & Qt::ControlModifier)) {
+				/* Ctrl+Enter pressed */
+				if (obj == ui->xsltTextEdit) {
+					processTransformation();
+					return true; // eat event
+				}
+			}
 		}
 	}
 	if (event->type() == QEvent::Drop) {
-		processXPath();
+		processTransformation();
+	}
+	if (event->type() == QEvent::FocusOut) {
+		if (obj == ui->xsltTextEdit) {
+			processTransformation();
+		}
 	}
 	/* pass the event on to the parent class */
 	return QDialog::eventFilter(obj, event);
@@ -338,27 +359,51 @@ void PreviewFeedDialog::msgChanged(const QString &feedId, const QString &msgId, 
 	updateMsgCount();
 }
 
-void PreviewFeedDialog::showStructureFrame(bool show)
+void PreviewFeedDialog::showStructureFrame()
 {
-	ui->structureButton->setChecked(show);
-	ui->structureFrame->setVisible(show);
+	bool show = ui->structureButton->isChecked();
+	RsFeedTransformationType transformationType = (RsFeedTransformationType) ui->transformationTypeComboBox->itemData(ui->transformationTypeComboBox->currentIndex()).toInt();
 
-	if (show) {
-		fillStructureTree();
+	ui->structureTreeFrame->setVisible(show);
+
+	switch (transformationType) {
+	case RS_FEED_TRANSFORMATION_TYPE_NONE:
+		ui->msgTextOrg->hide();
+		ui->structureTreeWidgetOrg->hide();
+		ui->transformationFrame->hide();
+		ui->xpathFrame->hide();
+		ui->xsltFrame->hide();
+		break;
+	case RS_FEED_TRANSFORMATION_TYPE_XPATH:
+		ui->msgTextOrg->setVisible(show);
+		ui->structureTreeWidgetOrg->show();
+		ui->transformationFrame->setVisible(show);
+		ui->xpathFrame->show();
+		ui->xsltFrame->hide();
+		break;
+	case RS_FEED_TRANSFORMATION_TYPE_XSLT:
+		ui->msgTextOrg->setVisible(show);
+		ui->structureTreeWidgetOrg->show();
+		ui->transformationFrame->setVisible(show);
+		ui->xpathFrame->hide();
+		ui->xsltFrame->show();
+		break;
 	}
+
+	if (ui->msgTextOrg->isVisible()) {
+		QString msgTxt = RsHtml().formatText(ui->msgTextOrg->document(), QString::fromUtf8(mDescription.c_str()), RSHTML_FORMATTEXT_EMBED_LINKS);
+		ui->msgTextOrg->setHtml(msgTxt);
+	} else {
+		ui->msgTextOrg->clear();
+	}
+	fillStructureTree(false);
+	fillStructureTree(true);
 }
 
-void PreviewFeedDialog::showXPathFrame(bool show)
+void PreviewFeedDialog::transformationTypeChanged()
 {
-	ui->xpathFrame->setVisible(show);
-
-	if (show) {
-		ui->xpathPushButton->setToolTip(tr("Hide XPath expressions"));
-		ui->xpathPushButton->setIcon(QIcon(":images/show_toolbox_frame.png"));
-	} else {
-		ui->xpathPushButton->setToolTip(tr("Show XPath expressions"));
-		ui->xpathPushButton->setIcon(QIcon(":images/hide_toolbox_frame.png"));
-	}
+	showStructureFrame();
+	processTransformation();
 }
 
 void PreviewFeedDialog::xpathListCustomPopupMenu(QPoint /*point*/)
@@ -396,7 +441,7 @@ void PreviewFeedDialog::xpathListCustomPopupMenu(QPoint /*point*/)
 
 void PreviewFeedDialog::xpathCloseEditor(QWidget */*editor*/, QAbstractItemDelegate::EndEditHint /*hint*/)
 {
-	processXPath();
+	processTransformation();
 }
 
 void PreviewFeedDialog::addXPath()
@@ -468,7 +513,7 @@ void PreviewFeedDialog::removeXPath()
 		delete(item);
 	}
 
-	processXPath();
+	processTransformation();
 }
 
 int PreviewFeedDialog::getMsgPos()
@@ -491,10 +536,10 @@ void PreviewFeedDialog::setFeedInfo(const QString &info)
 	ui->feedInfoLabel->setVisible(!info.isEmpty());
 }
 
-void PreviewFeedDialog::setXPathInfo(const QString &info)
+void PreviewFeedDialog::setTransformationInfo(const QString &info)
 {
-	ui->xpathInfoLabel->setText(info);
-	ui->xpathInfoLabel->setVisible(!info.isEmpty());
+	ui->transformationInfoLabel->setText(info);
+	ui->transformationInfoLabel->setVisible(!info.isEmpty());
 }
 
 void PreviewFeedDialog::fillFeedInfo(const FeedInfo &feedInfo)
@@ -551,8 +596,9 @@ void PreviewFeedDialog::updateMsg()
 	if (mMsgId.empty() || !mFeedReader->getMsgInfo(mFeedId, mMsgId, msgInfo)) {
 		ui->msgTitle->clear();
 		ui->msgText->clear();
+		ui->msgTextOrg->clear();
 		mDescription.clear();
-		mDescriptionXPath.clear();
+		mDescriptionTransformed.clear();
 		return;
 	}
 
@@ -561,8 +607,15 @@ void PreviewFeedDialog::updateMsg()
 	/* store description */
 	mDescription = msgInfo.description;
 
+	if (ui->msgTextOrg->isVisible()) {
+		QString msgTxt = RsHtml().formatText(ui->msgTextOrg->document(), QString::fromUtf8(mDescription.c_str()), RSHTML_FORMATTEXT_EMBED_LINKS);
+		ui->msgTextOrg->setHtml(msgTxt);
+	}
+
+	showStructureFrame();
+
 	/* process xpath */
-	processXPath();
+	processTransformation();
 }
 
 static void buildNodeText(HTMLWrapper &html, xmlNodePtr node, QString &text)
@@ -699,44 +752,52 @@ static void examineChildElements(QTreeWidget *treeWidget, HTMLWrapper &html, QLi
 //	treeWidget->setItemWidget(item, 0, label);
 }
 
-void PreviewFeedDialog::fillStructureTree()
+void PreviewFeedDialog::fillStructureTree(bool transform)
 {
-	if (!ui->structureTreeWidget->isVisible()) {
-		return;
+	if (transform && ui->structureTreeWidget->isVisible()) {
+		if (mDescriptionTransformed.empty()) {
+			ui->structureTreeWidget->clear();
+		} else {
+			HTMLWrapper html;
+			if (html.readHTML(mDescriptionTransformed.c_str(), "")) {
+				xmlNodePtr root = html.getRootElement();
+				if (root) {
+					QList<xmlNodePtr> nodes;
+					nodes.push_back(root);
+					examineChildElements(ui->structureTreeWidget, html, nodes, ui->structureTreeWidget->invisibleRootItem());
+					ui->structureTreeWidget->resizeColumnToContents(0);
+				}
+			} else {
+				QTreeWidgetItem *item = new QTreeWidgetItem;
+				item->setText(0, tr("Error parsing document") + ": " + QString::fromUtf8(html.lastError().c_str()));
+				ui->structureTreeWidget->addTopLevelItem(item);
+			}
+		}
 	}
 
-//	if (ui->structureTreeWidget->topLevelItemCount() > 0) {
-//		return;
-//	}
-
-	if (mDescriptionXPath.empty()) {
-		ui->structureTreeWidget->clear();
-		return;
+	if (!transform && ui->structureTreeWidgetOrg->isVisible()) {
+		if (mDescription.empty()) {
+			ui->structureTreeWidgetOrg->clear();
+		} else {
+			HTMLWrapper html;
+			if (html.readHTML(mDescription.c_str(), "")) {
+				xmlNodePtr root = html.getRootElement();
+				if (root) {
+					QList<xmlNodePtr> nodes;
+					nodes.push_back(root);
+					examineChildElements(ui->structureTreeWidgetOrg, html, nodes, ui->structureTreeWidgetOrg->invisibleRootItem());
+					ui->structureTreeWidgetOrg->resizeColumnToContents(0);
+				}
+			} else {
+				QTreeWidgetItem *item = new QTreeWidgetItem;
+				item->setText(0, tr("Error parsing document") + ": " + QString::fromUtf8(html.lastError().c_str()));
+				ui->structureTreeWidgetOrg->addTopLevelItem(item);
+			}
+		}
 	}
-
-	bool useXPath = ui->useXPathCheckBox->isChecked();
-
-	HTMLWrapper html;
-	if (!html.readHTML(useXPath ? mDescriptionXPath.c_str() : mDescription.c_str(), "")) {
-		QTreeWidgetItem *item = new QTreeWidgetItem;
-		item->setText(0, tr("Error parsing document"));
-		ui->structureTreeWidget->addTopLevelItem(item);
-
-		return;
-	}
-
-	xmlNodePtr root = html.getRootElement();
-	if (!root) {
-		return;
-	}
-
-	QList<xmlNodePtr> nodes;
-	nodes.push_back(root);
-	examineChildElements(ui->structureTreeWidget, html, nodes, ui->structureTreeWidget->invisibleRootItem());
-	ui->structureTreeWidget->resizeColumnToContents(0);
 }
 
-void PreviewFeedDialog::getXPaths(std::list<std::string> &xpathsToUse, std::list<std::string> &xpathsToRemove)
+RsFeedTransformationType PreviewFeedDialog::getData(std::list<std::string> &xpathsToUse, std::list<std::string> &xpathsToRemove, std::string &xslt)
 {
 	xpathsToUse.clear();
 	xpathsToRemove.clear();
@@ -751,24 +812,40 @@ void PreviewFeedDialog::getXPaths(std::list<std::string> &xpathsToUse, std::list
 	for (row = 0; row < rowCount; ++row) {
 		xpathsToRemove.push_back(ui->xpathRemoveListWidget->item(row)->text().toUtf8().constData());
 	}
+
+	xslt = ui->xsltTextEdit->toPlainText().toUtf8().constData();
+
+	return (RsFeedTransformationType) ui->transformationTypeComboBox->itemData(ui->transformationTypeComboBox->currentIndex()).toInt();
 }
 
-void PreviewFeedDialog::processXPath()
+void PreviewFeedDialog::processTransformation()
 {
 	std::list<std::string> xpathsToUse;
 	std::list<std::string> xpathsToRemove;
+	std::string xslt;
 
-	getXPaths(xpathsToUse, xpathsToRemove);
+	RsFeedTransformationType transformationType = getData(xpathsToUse, xpathsToRemove, xslt);
 
-	mDescriptionXPath = mDescription;
+	mDescriptionTransformed = mDescription;
 	std::string errorString;
-	RsFeedReaderErrorState result = mFeedReader->processXPath(xpathsToUse, xpathsToRemove, mDescriptionXPath, errorString);
-	setXPathInfo(FeedReaderStringDefs::errorString(result, errorString));
+
+	RsFeedReaderErrorState result = RS_FEED_ERRORSTATE_OK;
+	switch (transformationType) {
+	case RS_FEED_TRANSFORMATION_TYPE_NONE:
+		break;
+	case RS_FEED_TRANSFORMATION_TYPE_XPATH:
+		result = mFeedReader->processXPath(xpathsToUse, xpathsToRemove, mDescriptionTransformed, errorString);
+		break;
+	case RS_FEED_TRANSFORMATION_TYPE_XSLT:
+		result = mFeedReader->processXslt(xslt, mDescriptionTransformed, errorString);
+		break;
+	}
+	setTransformationInfo(FeedReaderStringDefs::errorString(result, errorString));
 
 	/* fill message */
-	QString msgTxt = RsHtml().formatText(ui->msgText->document(), QString::fromUtf8(mDescriptionXPath.c_str()), RSHTML_FORMATTEXT_EMBED_LINKS);
+	QString msgTxt = RsHtml().formatText(ui->msgText->document(), QString::fromUtf8(mDescriptionTransformed.c_str()), RSHTML_FORMATTEXT_EMBED_LINKS);
 	ui->msgText->setHtml(msgTxt);
 
 	/* fill structure */
-	fillStructureTree();
+	fillStructureTree(true);
 }

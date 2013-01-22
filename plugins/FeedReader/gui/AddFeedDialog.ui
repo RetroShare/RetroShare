@@ -21,7 +21,16 @@
    <property name="spacing">
     <number>0</number>
    </property>
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -36,6 +45,61 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_7">
+      <item row="3" column="0">
+       <widget class="QGroupBox" name="typeGroupBox">
+        <property name="title">
+         <string>Type</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <property name="leftMargin">
+          <number>6</number>
+         </property>
+         <property name="topMargin">
+          <number>6</number>
+         </property>
+         <property name="rightMargin">
+          <number>6</number>
+         </property>
+         <property name="bottomMargin">
+          <number>6</number>
+         </property>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QRadioButton" name="typeForumRadio">
+             <property name="text">
+              <string>Forum</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="forumComboBox"/>
+           </item>
+           <item>
+            <widget class="QLabel" name="forumNameLabel">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string notr="true">Forum name</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="typeLocalRadio">
+           <property name="text">
+            <string>Local Feed</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
       <item row="7" column="0">
        <widget class="QGroupBox" name="authenticationGroupBox">
         <property name="title">
@@ -72,63 +136,6 @@
             <enum>QLineEdit::Password</enum>
            </property>
           </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item row="8" column="0">
-       <widget class="QGroupBox" name="updateInteralGroupBox">
-        <property name="title">
-         <string>Update interval</string>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_5">
-         <item row="0" column="0" colspan="2">
-          <widget class="QCheckBox" name="useStandardUpdateInterval">
-           <property name="text">
-            <string>Use standard update interval</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="updateIntervalLabel">
-           <property name="text">
-            <string>Interval in minutes (0 = manual)</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QSpinBox" name="updateIntervalSpinBox">
-           <property name="maximumSize">
-            <size>
-             <width>50</width>
-             <height>16777215</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0" colspan="2">
-          <layout class="QHBoxLayout" name="lastUpdateLayout">
-           <item>
-            <widget class="QLabel" name="lastUpdateLabel">
-             <property name="text">
-              <string>Last update</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="lastUpdate">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Never</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
          </item>
         </layout>
        </widget>
@@ -209,47 +216,47 @@
         </layout>
        </widget>
       </item>
-      <item row="11" column="0" colspan="2">
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QDialogButtonBox" name="buttonBox">
-          <property name="standardButtons">
-           <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="previewButton">
-          <property name="text">
-           <string>Preview</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="3" column="0">
-       <widget class="QGroupBox" name="typeGroupBox">
+      <item row="8" column="0">
+       <widget class="QGroupBox" name="updateInteralGroupBox">
         <property name="title">
-         <string>Type</string>
+         <string>Update interval</string>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_3">
-         <property name="margin">
-          <number>6</number>
-         </property>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <layout class="QGridLayout" name="gridLayout_5">
+         <item row="0" column="0" colspan="2">
+          <widget class="QCheckBox" name="useStandardUpdateInterval">
+           <property name="text">
+            <string>Use standard update interval</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="updateIntervalLabel">
+           <property name="text">
+            <string>Interval in minutes (0 = manual)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QSpinBox" name="updateIntervalSpinBox">
+           <property name="maximumSize">
+            <size>
+             <width>50</width>
+             <height>16777215</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0" colspan="2">
+          <layout class="QHBoxLayout" name="lastUpdateLayout">
            <item>
-            <widget class="QRadioButton" name="typeForumRadio">
+            <widget class="QLabel" name="lastUpdateLabel">
              <property name="text">
-              <string>Forum</string>
+              <string>Last update</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="forumComboBox"/>
-           </item>
-           <item>
-            <widget class="QLabel" name="forumNameLabel">
+            <widget class="QLabel" name="lastUpdate">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
                <horstretch>0</horstretch>
@@ -257,78 +264,25 @@
               </sizepolicy>
              </property>
              <property name="text">
-              <string notr="true">Forum name</string>
+              <string>Never</string>
              </property>
             </widget>
            </item>
           </layout>
          </item>
-         <item>
-          <widget class="QRadioButton" name="typeLocalRadio">
-           <property name="text">
-            <string>Local Feed</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
         </layout>
        </widget>
       </item>
-      <item row="3" column="1">
-       <widget class="QGroupBox" name="flagGroupBox">
-        <property name="title">
-         <string>Misc</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_2">
-         <item>
-          <widget class="QCheckBox" name="activatedCheckBox">
-           <property name="text">
-            <string>Activated</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="useInfoFromFeedCheckBox">
-           <property name="text">
-            <string>Use name and description from feed</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="updateForumInfoCheckBox">
-           <property name="text">
-            <string>Update forum information</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="embedImagesCheckBox">
-           <property name="text">
-            <string>Embed images (experimental for local feeds)</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="saveCompletePageCheckBox">
-           <property name="text">
-            <string>Save complete web page (experimental for local feeds)</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
+      <item row="11" column="0" colspan="2">
+       <layout class="QHBoxLayout" name="buttonLayout">
+        <item>
+         <widget class="QDialogButtonBox" name="buttonBox">
+          <property name="standardButtons">
+           <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item row="1" column="0" colspan="2">
        <layout class="QVBoxLayout" name="descriptionLayout">
@@ -367,6 +321,83 @@
          <widget class="QLineEdit" name="nameLineEdit"/>
         </item>
        </layout>
+      </item>
+      <item row="4" column="0">
+       <widget class="QGroupBox" name="groupBox">
+        <property name="title">
+         <string>Transformation</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="QLabel" name="transformationTypeLabel">
+             <property name="text">
+              <string>Transformation type</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="previewButton">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Preview &amp;&amp; Transformation</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="3" column="1" rowspan="2">
+       <widget class="QGroupBox" name="flagGroupBox">
+        <property name="title">
+         <string>Misc</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <widget class="QCheckBox" name="activatedCheckBox">
+           <property name="text">
+            <string>Activated</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="useInfoFromFeedCheckBox">
+           <property name="text">
+            <string>Use name and description from feed</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="updateForumInfoCheckBox">
+           <property name="text">
+            <string>Update forum information</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="embedImagesCheckBox">
+           <property name="text">
+            <string>Embed images</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="saveCompletePageCheckBox">
+           <property name="text">
+            <string>Save complete web page (experimental for local feeds)</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </item>
      </layout>
     </widget>

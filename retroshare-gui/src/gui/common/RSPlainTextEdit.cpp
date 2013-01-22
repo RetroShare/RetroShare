@@ -1,7 +1,8 @@
 /****************************************************************
- *  RetroShare GUI is distributed under the following license:
  *
- *  Copyright (C) 2012 by Thunder
+ *  RetroShare is distributed under the following license:
+ *
+ *  Copyright (C) 2013, RetroShare Team
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -19,23 +20,35 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#ifndef FEEDREADER_STRINGDEFS_H
-#define FEEDREADER_STRINGDEFS_H
+#include <QPainter>
 
-#include <QString>
+#include "RSPlainTextEdit.h"
 
-#include "interface/rsFeedReader.h"
-
-class QWidget;
-
-class FeedReaderStringDefs
+RSPlainTextEdit::RSPlainTextEdit(QWidget *parent)
+	: QPlainTextEdit(parent)
 {
-public:
-	static bool showError(QWidget *parent, RsFeedAddResult result, const QString &title, const QString &text);
-	static QString workState(FeedInfo::WorkState state);
-	static QString errorString(const FeedInfo &feedInfo);
-	static QString errorString(RsFeedReaderErrorState errorState, const std::string &errorString);
-	static QString transforationTypeString(RsFeedTransformationType transformationType);
-};
+}
 
-#endif
+void RSPlainTextEdit::setPlaceholderText(const QString &text)
+{
+	mPlaceholderText = text;
+	viewport()->repaint();
+}
+
+void RSPlainTextEdit::paintEvent(QPaintEvent *event)
+{
+	QPlainTextEdit::paintEvent(event);
+
+	if (mPlaceholderText.isEmpty() == false && toPlainText().isEmpty()) {
+		QWidget *vieportWidget = viewport();
+		QPainter painter(vieportWidget);
+
+		QPen pen = painter.pen();
+		QColor color = pen.color();
+		color.setAlpha(128);
+		pen.setColor(color);
+		painter.setPen(pen);
+
+		painter.drawText(QRect(QPoint(), vieportWidget->size()), Qt::AlignHCenter | Qt::AlignVCenter | Qt::TextWordWrap, mPlaceholderText);
+	}
+}

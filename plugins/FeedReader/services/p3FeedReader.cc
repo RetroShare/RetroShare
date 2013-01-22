@@ -88,8 +88,10 @@ static void feedToInfo(const RsFeedReaderFeed *feed, FeedInfo &info)
 	info.errorState = feed->errorState;
 	info.errorString = feed->errorString;
 
+	info.transformationType = feed->transformationType;
 	info.xpathsToUse = feed->xpathsToUse.ids;
 	info.xpathsToRemove = feed->xpathsToRemove.ids;
+	info.xslt = feed->xslt;
 
 	info.flag.folder = (feed->flag & RS_FEED_FLAG_FOLDER);
 	info.flag.infoFromFeed = (feed->flag & RS_FEED_FLAG_INFO_FROM_FEED);
@@ -144,8 +146,10 @@ static void infoToFeed(const FeedInfo &info, RsFeedReaderFeed *feed, bool add)
 		feed->forumId = info.forumId;
 	}
 
+	feed->transformationType = info.transformationType;
 	feed->xpathsToUse.ids = info.xpathsToUse;
 	feed->xpathsToRemove.ids = info.xpathsToRemove;
+	feed->xslt = info.xslt;
 
 //	feed->preview = info.flag.preview;
 
@@ -200,6 +204,7 @@ static void feedMsgToInfo(const RsFeedReaderMsg *msg, FeedMsgInfo &info)
 	info.link = msg->link;
 	info.author = msg->author;
 	info.description = msg->description;
+	info.descriptionTransformed = msg->descriptionTransformed;
 	info.pubDate = msg->pubDate;
 
 	info.flag.isnew = (msg->flag & RS_FEEDMSG_FLAG_NEW);
@@ -491,6 +496,7 @@ RsFeedAddResult p3FeedReader::setFeed(const std::string &feedId, const FeedInfo 
 			forumId = fi->forumId;
 			librs::util::ConvertUtf8ToUtf16(fi->name, forumInfo.forumName);
 			librs::util::ConvertUtf8ToUtf16(fi->description, forumInfo.forumDesc);
+			forumInfo.forumName.insert(0, FEEDREADER_FORUM_PREFIX);
 		}
 	}
 
@@ -759,8 +765,11 @@ bool p3FeedReader::removeMsg(const std::string &feedId, const std::string &msgId
 			return false;
 		}
 
-		msgIt->second->flag |= RS_FEEDMSG_FLAG_DELETED | RS_FEEDMSG_FLAG_READ;
-		msgIt->second->flag &= ~RS_FEEDMSG_FLAG_NEW;
+		RsFeedReaderMsg *mi = msgIt->second;
+		mi->flag |= RS_FEEDMSG_FLAG_DELETED | RS_FEEDMSG_FLAG_READ;
+		mi->flag &= ~RS_FEEDMSG_FLAG_NEW;
+		mi->description.clear();
+		mi->descriptionTransformed.clear();
 	}
 
 	if (changed) {
@@ -805,8 +814,11 @@ bool p3FeedReader::removeMsgs(const std::string &feedId, const std::list<std::st
 				continue;
 			}
 
-			msgIt->second->flag |= RS_FEEDMSG_FLAG_DELETED | RS_FEEDMSG_FLAG_READ;
-			msgIt->second->flag &= ~RS_FEEDMSG_FLAG_NEW;
+			RsFeedReaderMsg *mi = msgIt->second;
+			mi->flag |= RS_FEEDMSG_FLAG_DELETED | RS_FEEDMSG_FLAG_READ;
+			mi->flag &= ~RS_FEEDMSG_FLAG_NEW;
+			mi->description.clear();
+			mi->descriptionTransformed.clear();
 
 			removedMsgs.push_back(*idIt);
 		}
@@ -1121,9 +1133,72 @@ bool p3FeedReader::setMessageRead(const std::string &feedId, const std::string &
 	return true;
 }
 
+bool p3FeedReader::retransformMsg(const std::string &feedId, const std::string &msgId)
+{
+	bool msgChanged = false;
+	bool feedChanged = false;
+
+	{
+		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
+
+		std::map<std::string, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
+		if (feedIt == mFeeds.end()) {
+#ifdef FEEDREADER_DEBUG
+			std::cerr << "p3FeedReader::setMessageRead - feed " << feedId << " not found" << std::endl;
+#endif
+			return false;
+		}
+
+		RsFeedReaderFeed *fi = feedIt->second;
+
+		std::map<std::string, RsFeedReaderMsg*>::iterator msgIt;
+		msgIt = fi->msgs.find(msgId);
+		if (msgIt == fi->msgs.end()) {
+#ifdef FEEDREADER_DEBUG
+			std::cerr << "p3FeedReader::setMessageRead - msg " << msgId << " not found" << std::endl;
+#endif
+			return false;
+		}
+
+		RsFeedReaderMsg *mi = msgIt->second;
+
+		std::string errorString;
+		std::string descriptionTransformed = mi->descriptionTransformed;
+		if (p3FeedReaderThread::processTransformation(*fi, mi, errorString) == RS_FEED_ERRORSTATE_OK) {
+			if (mi->descriptionTransformed != descriptionTransformed) {
+				msgChanged = true;
+			}
+		} else {
+			if (!errorString.empty()) {
+				fi->errorString = errorString;
+				feedChanged = true;
+			}
+		}
+	}
+
+	if (feedChanged || msgChanged) {
+		IndicateConfigChanged();
+		if (mNotify) {
+			if (feedChanged) {
+				mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
+			}
+			if (msgChanged) {
+				mNotify->notifyMsgChanged(feedId, msgId, NOTIFY_TYPE_MOD);
+			}
+		}
+	}
+
+	return true;
+}
+
 RsFeedReaderErrorState p3FeedReader::processXPath(const std::list<std::string> &xpathsToUse, const std::list<std::string> &xpathsToRemove, std::string &description, std::string &errorString)
 {
 	return p3FeedReaderThread::processXPath(xpathsToUse, xpathsToRemove, description, errorString);
+}
+
+RsFeedReaderErrorState p3FeedReader::processXslt(const std::string &xslt, std::string &description, std::string &errorString)
+{
+	return p3FeedReaderThread::processXslt(xslt, description, errorString);
 }
 
 /***************************************************************************/
@@ -1776,7 +1851,8 @@ void p3FeedReader::onProcessSuccess_addMsgs(const std::string &feedId, std::list
 				if (forum) {
 					miNew->flag = RS_FEEDMSG_FLAG_DELETED;
 					forumMsgs.push_back(*miNew);
-//					miNew->description.clear();
+					miNew->description.clear();
+					miNew->descriptionTransformed.clear();
 				} else {
 					miNew->flag = RS_FEEDMSG_FLAG_NEW;
 					addedMsgs.push_back(miNew->msgId);
@@ -1816,7 +1892,7 @@ void p3FeedReader::onProcessSuccess_addMsgs(const std::string &feedId, std::list
 			forumMsgInfo.forumId = forumId;
 			librs::util::ConvertUtf8ToUtf16(mi.title, forumMsgInfo.title);
 
-			std::string description = mi.description;
+			std::string description = mi.descriptionTransformed.empty() ? mi.description : mi.descriptionTransformed;
 			/* add link */
 			if (!mi.link.empty()) {
 				description += "<br><a href=\"" + mi.link + "\">" + mi.link + "</a>";

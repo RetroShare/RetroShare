@@ -26,6 +26,9 @@
 #include <string>
 #include <list>
 
+class RsFeedReader;
+extern RsFeedReader *rsFeedReader;
+
 enum RsFeedReaderErrorState {
 	RS_FEED_ERRORSTATE_OK                             = 0,
 
@@ -47,12 +50,11 @@ enum RsFeedReaderErrorState {
 	RS_FEED_ERRORSTATE_PROCESS_HTML_ERROR             = 150,
 	RS_FEED_ERRORSTATE_PROCESS_XPATH_INTERNAL_ERROR   = 151,
 	RS_FEED_ERRORSTATE_PROCESS_XPATH_WRONG_EXPRESSION = 152,
-	RS_FEED_ERRORSTATE_PROCESS_XPATH_NO_RESULT        = 153
+	RS_FEED_ERRORSTATE_PROCESS_XPATH_NO_RESULT        = 153,
+	RS_FEED_ERRORSTATE_PROCESS_XSLT_FORMAT_ERROR      = 154,
+	RS_FEED_ERRORSTATE_PROCESS_XSLT_TRANSFORM_ERROR   = 155,
+	RS_FEED_ERRORSTATE_PROCESS_XSLT_NO_RESULT         = 156
 };
-
-
-class RsFeedReader;
-extern RsFeedReader *rsFeedReader;
 
 enum RsFeedAddResult
 {
@@ -62,6 +64,13 @@ enum RsFeedAddResult
 	RS_FEED_ADD_RESULT_PARENT_IS_NO_FOLDER,
 	RS_FEED_ADD_RESULT_FEED_IS_FOLDER,
 	RS_FEED_ADD_RESULT_FEED_IS_NO_FOLDER
+};
+
+enum RsFeedTransformationType
+{
+	RS_FEED_TRANSFORMATION_TYPE_NONE  = 0,
+	RS_FEED_TRANSFORMATION_TYPE_XPATH = 1,
+	RS_FEED_TRANSFORMATION_TYPE_XSLT  = 2
 };
 
 class FeedInfo
@@ -96,28 +105,31 @@ public:
 		flag.embedImages = false;
 		flag.saveCompletePage = false;
 		flag.preview = false;
+		transformationType = RS_FEED_TRANSFORMATION_TYPE_NONE;
 	}
 
-	std::string            feedId;
-	std::string            parentId;
-	std::string            url;
-	std::string            name;
-	std::string            description;
-	std::string            icon;
-	std::string            user;
-	std::string            password;
-	std::string            proxyAddress;
-	uint16_t               proxyPort;
-	uint32_t               updateInterval;
-	time_t                 lastUpdate;
-	uint32_t               storageTime;
-	std::string            forumId;
-	WorkState              workstate;
-	RsFeedReaderErrorState errorState;
-	std::string            errorString;
+	std::string              feedId;
+	std::string              parentId;
+	std::string              url;
+	std::string              name;
+	std::string              description;
+	std::string              icon;
+	std::string              user;
+	std::string              password;
+	std::string              proxyAddress;
+	uint16_t                 proxyPort;
+	uint32_t                 updateInterval;
+	time_t                   lastUpdate;
+	uint32_t                 storageTime;
+	std::string              forumId;
+	WorkState                workstate;
+	RsFeedReaderErrorState   errorState;
+	std::string              errorString;
 
-	std::list<std::string> xpathsToUse;
-	std::list<std::string> xpathsToRemove;
+	RsFeedTransformationType transformationType;
+	std::list<std::string>   xpathsToUse;
+	std::list<std::string>   xpathsToRemove;
+	std::string              xslt;
 
 	struct {
 		bool folder : 1;
@@ -152,6 +164,7 @@ public:
 	std::string link;
 	std::string author;
 	std::string description;
+	std::string descriptionTransformed;
 	time_t      pubDate;
 
 	struct {
@@ -202,8 +215,10 @@ public:
 	virtual bool            getFeedMsgIdList(const std::string &feedId, std::list<std::string> &msgIds) = 0;
 	virtual bool            processFeed(const std::string &feedId) = 0;
 	virtual bool            setMessageRead(const std::string &feedId, const std::string &msgId, bool read) = 0;
+	virtual bool            retransformMsg(const std::string &feedId, const std::string &msgId) = 0;
 
 	virtual RsFeedReaderErrorState processXPath(const std::list<std::string> &xpathsToUse, const std::list<std::string> &xpathsToRemove, std::string &description, std::string &errorString) = 0;
+	virtual RsFeedReaderErrorState processXslt(const std::string &xslt, std::string &description, std::string &errorString) = 0;
 };
 
 #endif

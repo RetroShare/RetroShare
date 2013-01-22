@@ -229,14 +229,11 @@ static int vasprintf(char **sptr, const char *fmt, va_list argv)
 //}
 #endif
 
-int rs_sprintf(std::string &str, const char *fmt, ...)
+int rs_sprintf_args(std::string &str, const char *fmt, va_list ap)
 {
 	char *buffer = NULL;
-	va_list ap;
 
-	va_start(ap, fmt);
-	int retval = vasprintf(&buffer, fmt, ap);
-	va_end(ap);
+	int retval = vasprintf(&buffer, fmt, (va_list) ap);
 
 	if (retval >= 0) {
 		if (buffer) {
@@ -252,14 +249,22 @@ int rs_sprintf(std::string &str, const char *fmt, ...)
 	return retval;
 }
 
-int rs_sprintf_append(std::string &str, const char *fmt, ...)
+int rs_sprintf(std::string &str, const char *fmt, ...)
 {
 	va_list ap;
-	char *buffer = NULL;
 
 	va_start(ap, fmt);
-	int retval = vasprintf(&buffer, fmt, ap);
+	int retval = rs_sprintf_args(str, fmt, ap);
 	va_end(ap);
+
+	return retval;
+}
+
+int rs_sprintf_append_args(std::string &str, const char *fmt, va_list ap)
+{
+	char *buffer = NULL;
+
+	int retval = vasprintf(&buffer, fmt, (va_list) ap);
 
 	if (retval >= 0) {
 		if (buffer) {
@@ -267,6 +272,17 @@ int rs_sprintf_append(std::string &str, const char *fmt, ...)
 			free(buffer);
 		}
 	}
+
+	return retval;
+}
+
+int rs_sprintf_append(std::string &str, const char *fmt, ...)
+{
+	va_list ap;
+
+	va_start(ap, fmt);
+	int retval = rs_sprintf_append_args(str, fmt, ap);
+	va_end(ap);
 
 	return retval;
 }

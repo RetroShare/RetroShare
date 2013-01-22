@@ -65,26 +65,28 @@ public:
 	virtual void clear();
 	virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
-	std::string            feedId;
-	std::string            parentId;
-	std::string            name;
-	std::string            url;
-	std::string            user;
-	std::string            password;
-	std::string            proxyAddress;
-	uint16_t               proxyPort;
-	uint32_t               updateInterval;
-	time_t                 lastUpdate;
-	uint32_t               flag; // RS_FEED_FLAG_...
-	std::string            forumId;
-	uint32_t               storageTime;
-	std::string            description;
-	std::string            icon;
-	RsFeedReaderErrorState errorState;
-	std::string            errorString;
+	std::string              feedId;
+	std::string              parentId;
+	std::string              name;
+	std::string              url;
+	std::string              user;
+	std::string              password;
+	std::string              proxyAddress;
+	uint16_t                 proxyPort;
+	uint32_t                 updateInterval;
+	time_t                   lastUpdate;
+	uint32_t                 flag; // RS_FEED_FLAG_...
+	std::string              forumId;
+	uint32_t                 storageTime;
+	std::string              description;
+	std::string              icon;
+	RsFeedReaderErrorState   errorState;
+	std::string              errorString;
 
-	RsTlvStringSet         xpathsToUse;
-	RsTlvStringSet         xpathsToRemove;
+	RsFeedTransformationType transformationType;
+	RsTlvStringSet           xpathsToUse;
+	RsTlvStringSet           xpathsToRemove;
+	std::string              xslt;
 
 	/* Not Serialised */
 	bool        preview;
@@ -113,6 +115,7 @@ public:
 	std::string link;
 	std::string author;
 	std::string description;
+	std::string descriptionTransformed;
 	time_t      pubDate;
 	uint32_t    flag; // RS_FEEDMSG_FLAG_...
 };

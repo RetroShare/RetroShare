@@ -63,8 +63,10 @@ private:
 	std::string mFeedId;
 	std::string mParentId;
 
+	RsFeedTransformationType mTransformationType;
 	std::list<std::string> mXPathsToUse;
 	std::list<std::string> mXPathsToRemove;
+	std::string mXslt;
 
 	Ui::AddFeedDialog *ui;
 };

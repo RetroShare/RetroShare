@@ -51,11 +51,15 @@ public:
 	static RsFeedReaderErrorState processXPath(const std::list<std::string> &xpathsToUse, const std::list<std::string> &xpathsToRemove, std::string &description, std::string &errorString);
 	static RsFeedReaderErrorState processXPath(const std::list<std::string> &xpathsToUse, const std::list<std::string> &xpathsToRemove, HTMLWrapper &html, std::string &errorString);
 
+	static RsFeedReaderErrorState processXslt(const std::string &xslt, std::string &description, std::string &errorString);
+	static RsFeedReaderErrorState processXslt(const std::string &xslt, HTMLWrapper &html, std::string &errorString);
+
+	static RsFeedReaderErrorState processTransformation(const RsFeedReaderFeed &feed, RsFeedReaderMsg *msg, std::string &errorString);
 private:
 	virtual void run();
 
-	RsFeedReaderErrorState download(const RsFeedReaderFeed &feed, std::string &content, std::string &icon, std::string &error);
-	RsFeedReaderErrorState process(const RsFeedReaderFeed &feed, std::list<RsFeedReaderMsg*> &entries, std::string &error);
+	RsFeedReaderErrorState download(const RsFeedReaderFeed &feed, std::string &content, std::string &icon, std::string &errorString);
+	RsFeedReaderErrorState process(const RsFeedReaderFeed &feed, std::list<RsFeedReaderMsg*> &entries, std::string &errorString);
 
 	std::string getProxyForFeed(const RsFeedReaderFeed &feed);
 	RsFeedReaderErrorState processMsg(const RsFeedReaderFeed &feed, RsFeedReaderMsg *msg, std::string &errorString);

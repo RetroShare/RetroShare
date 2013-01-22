@@ -117,6 +117,10 @@ void p3FeedReaderThread::run()
 										delete (*it1);
 									}
 								} else {
+									result = processTransformation(feed, mi, errorString);
+									if (result != RS_FEED_ERRORSTATE_OK) {
+										break;
+									}
 									++it;
 								}
 							}
@@ -258,14 +262,14 @@ static bool getFavicon(CURLWrapper &CURL, const std::string &url, std::string &i
 	return result;
 }
 
-RsFeedReaderErrorState p3FeedReaderThread::download(const RsFeedReaderFeed &feed, std::string &content, std::string &icon, std::string &error)
+RsFeedReaderErrorState p3FeedReaderThread::download(const RsFeedReaderFeed &feed, std::string &content, std::string &icon, std::string &errorString)
 {
 #ifdef FEEDREADER_DEBUG
 	std::cerr << "p3FeedReaderThread::download - feed " << feed.feedId << " (" << feed.name << ")" << std::endl;
 #endif
 
 	content.clear();
-	error.clear();
+	errorString.clear();
 
 	RsFeedReaderErrorState result;
 
@@ -291,7 +295,7 @@ RsFeedReaderErrorState p3FeedReaderThread::download(const RsFeedReaderFeed &feed
 					result = RS_FEED_ERRORSTATE_OK;
 				} else {
 					result = RS_FEED_ERRORSTATE_DOWNLOAD_UNKNOWN_CONTENT_TYPE;
-					error = contentType;
+					errorString = contentType;
 				}
 			}
 			break;
@@ -300,17 +304,17 @@ RsFeedReaderErrorState p3FeedReaderThread::download(const RsFeedReaderFeed &feed
 			break;
 		default:
 			result = RS_FEED_ERRORSTATE_DOWNLOAD_UNKOWN_RESPONSE_CODE;
-			rs_sprintf(error, "%ld", responseCode);
+			rs_sprintf(errorString, "%ld", responseCode);
 		}
 
 		getFavicon(CURL, feed.url, icon);
 	} else {
 		result = RS_FEED_ERRORSTATE_DOWNLOAD_ERROR;
-		error = curl_easy_strerror(code);
+		errorString = curl_easy_strerror(code);
 	}
 
 #ifdef FEEDREADER_DEBUG
-	std::cerr << "p3FeedReaderThread::download - feed " << feed.feedId << " (" << feed.name << "), result " << result << ", error = " << error << std::endl;
+	std::cerr << "p3FeedReaderThread::download - feed " << feed.feedId << " (" << feed.name << "), result " << result << ", error = " << errorString << std::endl;
 #endif
 
 	return result;
@@ -805,7 +809,7 @@ static time_t parseISO8601Date(const std::string &pubDate)
 	return result;
 }
 
-RsFeedReaderErrorState p3FeedReaderThread::process(const RsFeedReaderFeed &feed, std::list<RsFeedReaderMsg*> &entries, std::string &error)
+RsFeedReaderErrorState p3FeedReaderThread::process(const RsFeedReaderFeed &feed, std::list<RsFeedReaderMsg*> &entries, std::string &errorString)
 {
 #ifdef FEEDREADER_DEBUG
 	std::cerr << "p3FeedReaderThread::process - feed " << feed.feedId << " (" << feed.name << ")" << std::endl;
@@ -826,7 +830,7 @@ RsFeedReaderErrorState p3FeedReaderThread::process(const RsFeedReaderFeed &feed,
 				feedFormat = FORMAT_ATOM;
 			} else {
 				result = RS_FEED_ERRORSTATE_PROCESS_UNKNOWN_FORMAT;
-				error = "Only RSS, RDF or ATOM supported";
+				errorString = "Only RSS, RDF or ATOM supported";
 			}
 
 			if (result == RS_FEED_ERRORSTATE_OK) {
@@ -962,19 +966,23 @@ RsFeedReaderErrorState p3FeedReaderThread::process(const RsFeedReaderFeed &feed,
 					}
 				} else {
 					result = RS_FEED_ERRORSTATE_PROCESS_UNKNOWN_FORMAT;
-					error = "Channel not found";
+					errorString = "Channel not found";
 				}
 			}
 		} else {
 			result = RS_FEED_ERRORSTATE_PROCESS_UNKNOWN_FORMAT;
-			error = "Can't read document";
+			errorString = "Can't read document";
 		}
 	} else {
 		result = RS_FEED_ERRORSTATE_PROCESS_INTERNAL_ERROR;
+		errorString = xml.lastError();
 	}
 
 #ifdef FEEDREADER_DEBUG
-	std::cerr << "p3FeedReaderThread::process - feed " << feed.feedId << " (" << feed.name << "), result " << result << ", error = " << error << std::endl;
+	std::cerr << "p3FeedReaderThread::process - feed " << feed.feedId << " (" << feed.name << "), result " << result << ", error = " << errorString << std::endl;
+	if (result == RS_FEED_ERRORSTATE_PROCESS_INTERNAL_ERROR) {
+		std::cerr << "  Error: " << errorString << std::endl;
+	}
 #endif
 
 	return result;
@@ -1059,7 +1067,7 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 	}
 
 	/* check if string contains xml chars (very simple test) */
-	if (msg->description.find('<') == std::string::npos) {
+	if (msg->description.find('<') == std::string::npos && feed.transformationType == RS_FEED_TRANSFORMATION_TYPE_NONE) {
 		return result;
 	}
 
@@ -1164,10 +1172,6 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 				}
 				nodesToDelete.clear();
 
-				if (isRunning() && !feed.preview) {
-					result = processXPath(feed.xpathsToUse.ids, feed.xpathsToRemove.ids, html, errorString);
-				}
-
 				if (isRunning() && result == RS_FEED_ERRORSTATE_OK) {
 					unsigned int xpathCount;
 					unsigned int xpathIndex;
@@ -1241,8 +1245,10 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 				if (result == RS_FEED_ERRORSTATE_OK) {
 					if (isRunning()) {
 						if (!html.saveHTML(msg->description)) {
+							errorString = html.lastError();
 #ifdef FEEDREADER_DEBUG
 							std::cerr << "p3FeedReaderThread::processHTML - feed " << feed.feedId << " (" << feed.name << ") cannot dump html" << std::endl;
+							std::cerr << "  Error: " << errorString << std::endl;
 #endif
 							result = RS_FEED_ERRORSTATE_PROCESS_INTERNAL_ERROR;
 						}
@@ -1255,11 +1261,37 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 				result = RS_FEED_ERRORSTATE_PROCESS_HTML_ERROR;
 			}
 		} else {
+			errorString = html.lastError();
 #ifdef FEEDREADER_DEBUG
 			std::cerr << "p3FeedReaderThread::processHTML - feed " << feed.feedId << " (" << feed.name << ") cannot read html" << std::endl;
+			std::cerr << "  Error: " << errorString << std::endl;
 #endif
 			result = RS_FEED_ERRORSTATE_PROCESS_HTML_ERROR;
 		}
+	}
+
+	return result;
+}
+
+RsFeedReaderErrorState p3FeedReaderThread::processTransformation(const RsFeedReaderFeed &feed, RsFeedReaderMsg *msg, std::string &errorString)
+{
+	RsFeedReaderErrorState result = RS_FEED_ERRORSTATE_OK;
+
+	switch (feed.transformationType) {
+	case RS_FEED_TRANSFORMATION_TYPE_NONE:
+		break;
+	case RS_FEED_TRANSFORMATION_TYPE_XPATH:
+		msg->descriptionTransformed = msg->description;
+		result = processXPath(feed.xpathsToUse.ids, feed.xpathsToRemove.ids, msg->descriptionTransformed, errorString);
+		break;
+	case RS_FEED_TRANSFORMATION_TYPE_XSLT:
+		msg->descriptionTransformed = msg->description;
+		result = processXslt(feed.xslt, msg->descriptionTransformed, errorString);
+		break;
+	}
+
+	if (msg->descriptionTransformed == msg->description) {
+		msg->descriptionTransformed.clear();
 	}
 
 	return result;
@@ -1376,8 +1408,6 @@ RsFeedReaderErrorState p3FeedReaderThread::processXPath(const std::list<std::str
 
 	RsFeedReaderErrorState result = RS_FEED_ERRORSTATE_OK;
 
-	long todo_fill_errorString;
-
 	/* process description */
 	long todo; // encoding
 	HTMLWrapper html;
@@ -1388,8 +1418,10 @@ RsFeedReaderErrorState p3FeedReaderThread::processXPath(const std::list<std::str
 
 			if (result == RS_FEED_ERRORSTATE_OK) {
 				if (!html.saveHTML(description)) {
+					errorString = html.lastError();
 #ifdef FEEDREADER_DEBUG
 					std::cerr << "p3FeedReaderThread::processXPath - cannot dump html" << std::endl;
+					std::cerr << "  Error: " << errorString << std::endl;
 #endif
 					result = RS_FEED_ERRORSTATE_PROCESS_INTERNAL_ERROR;
 				}
@@ -1398,11 +1430,131 @@ RsFeedReaderErrorState p3FeedReaderThread::processXPath(const std::list<std::str
 #ifdef FEEDREADER_DEBUG
 			std::cerr << "p3FeedReaderThread::processXPath - no root element" << std::endl;
 #endif
+			errorString = "No root element found";
 			result = RS_FEED_ERRORSTATE_PROCESS_HTML_ERROR;
 		}
 	} else {
+		errorString = html.lastError();
 #ifdef FEEDREADER_DEBUG
 		std::cerr << "p3FeedReaderThread::processXPath - cannot read html" << std::endl;
+		std::cerr << "  Error: " << errorString << std::endl;
+#endif
+		result = RS_FEED_ERRORSTATE_PROCESS_HTML_ERROR;
+	}
+
+	return result;
+}
+
+RsFeedReaderErrorState p3FeedReaderThread::processXslt(const std::string &xslt, HTMLWrapper &html, std::string &errorString)
+{
+	XMLWrapper style;
+	if (!style.readXML(xslt.c_str())) {
+		errorString = style.lastError();
+#ifdef FEEDREADER_DEBUG
+		std::cerr << "p3FeedReaderThread::processXslt - error loading style" << std::endl;
+		std::cerr << "  Error: " << errorString << std::endl;
+#endif
+		return RS_FEED_ERRORSTATE_PROCESS_XSLT_FORMAT_ERROR;
+	}
+
+	XMLWrapper xmlResult;
+	if (!html.transform(style, xmlResult)) {
+		errorString = html.lastError();
+#ifdef FEEDREADER_DEBUG
+		std::cerr << "p3FeedReaderThread::processXslt - error transform" << std::endl;
+		std::cerr << "  Error: " << errorString << std::endl;
+#endif
+		return RS_FEED_ERRORSTATE_PROCESS_XSLT_TRANSFORM_ERROR;
+	}
+
+	RsFeedReaderErrorState result = RS_FEED_ERRORSTATE_OK;
+
+	xmlNodePtr root = xmlResult.getRootElement();
+	if (root) {
+		if (xmlResult.nodeName(root) == "html") {
+			if (root->children && xmlResult.nodeName(root->children) == "body") {
+				root = root->children->children;
+			}
+		}
+		HTMLWrapper htmlNew;
+		if (htmlNew.createHTML()) {
+			xmlNodePtr body = htmlNew.getBody();
+			if (body) {
+				/* copy result nodes */
+				xmlNodePtr node;
+				for (node = root; node; node = node->next) {
+					xmlNodePtr newNode = xmlCopyNode(node, 1);
+					if (newNode) {
+						if (!xmlAddChild(body, newNode)) {
+							xmlFreeNode(newNode);
+							break;
+						}
+					} else {
+						result = RS_FEED_ERRORSTATE_PROCESS_INTERNAL_ERROR;
+#ifdef FEEDREADER_DEBUG
+						std::cerr << "p3FeedReaderThread::processXslt - node copy error" << std::endl;
+#endif
+						break;
+					}
+				}
+			} else {
+				result = RS_FEED_ERRORSTATE_PROCESS_HTML_ERROR;
+			}
+		} else {
+			result = RS_FEED_ERRORSTATE_PROCESS_HTML_ERROR;
+		}
+
+		if (result == RS_FEED_ERRORSTATE_OK) {
+			html = htmlNew;
+		}
+	} else {
+#ifdef FEEDREADER_DEBUG
+		std::cerr << "p3FeedReaderThread::processXslt - no result" << std::endl;
+#endif
+		result = RS_FEED_ERRORSTATE_PROCESS_XSLT_NO_RESULT;
+	}
+
+	return result;
+}
+
+RsFeedReaderErrorState p3FeedReaderThread::processXslt(const std::string &xslt, std::string &description, std::string &errorString)
+{
+	if (xslt.empty()) {
+		return RS_FEED_ERRORSTATE_OK;
+	}
+
+	RsFeedReaderErrorState result = RS_FEED_ERRORSTATE_OK;
+
+	/* process description */
+	long todo; // encoding
+	HTMLWrapper html;
+	if (html.readHTML(description.c_str(), "")) {
+		xmlNodePtr root = html.getRootElement();
+		if (root) {
+			result = processXslt(xslt, html, errorString);
+
+			if (result == RS_FEED_ERRORSTATE_OK) {
+				if (!html.saveHTML(description)) {
+					errorString = html.lastError();
+#ifdef FEEDREADER_DEBUG
+					std::cerr << "p3FeedReaderThread::processXslt - cannot dump html" << std::endl;
+					std::cerr << "  Error: " << errorString << std::endl;
+#endif
+					result = RS_FEED_ERRORSTATE_PROCESS_INTERNAL_ERROR;
+				}
+			}
+		} else {
+#ifdef FEEDREADER_DEBUG
+			std::cerr << "p3FeedReaderThread::processXslt - no root element" << std::endl;
+#endif
+			errorString = "No root element found";
+			result = RS_FEED_ERRORSTATE_PROCESS_HTML_ERROR;
+		}
+	} else {
+		errorString = html.lastError();
+#ifdef FEEDREADER_DEBUG
+		std::cerr << "p3FeedReaderThread::processXslt - cannot read html" << std::endl;
+		std::cerr << "  Error: " << errorString << std::endl;
 #endif
 		result = RS_FEED_ERRORSTATE_PROCESS_HTML_ERROR;
 	}

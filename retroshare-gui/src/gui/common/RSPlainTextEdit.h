@@ -1,7 +1,8 @@
 /****************************************************************
- *  RetroShare GUI is distributed under the following license:
  *
- *  Copyright (C) 2012 by Thunder
+ *  RetroShare is distributed under the following license:
+ *
+ *  Copyright (C) 2013, RetroShare Team
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -19,23 +20,25 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#ifndef FEEDREADER_STRINGDEFS_H
-#define FEEDREADER_STRINGDEFS_H
+#ifndef RSPLAINTEXTEDIT_H
+#define RSPLAINTEXTEDIT_H
 
-#include <QString>
+#include <QPlainTextEdit>
 
-#include "interface/rsFeedReader.h"
-
-class QWidget;
-
-class FeedReaderStringDefs
+class RSPlainTextEdit : public QPlainTextEdit
 {
+	Q_OBJECT
+
 public:
-	static bool showError(QWidget *parent, RsFeedAddResult result, const QString &title, const QString &text);
-	static QString workState(FeedInfo::WorkState state);
-	static QString errorString(const FeedInfo &feedInfo);
-	static QString errorString(RsFeedReaderErrorState errorState, const std::string &errorString);
-	static QString transforationTypeString(RsFeedTransformationType transformationType);
+	RSPlainTextEdit(QWidget *parent = 0);
+
+	void setPlaceholderText(const QString &text);
+
+protected:
+	void paintEvent(QPaintEvent *event);
+
+private:
+	QString mPlaceholderText;
 };
 
-#endif
+#endif // RSPLAINTEXTEDIT_H

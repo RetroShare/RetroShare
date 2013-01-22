@@ -71,7 +71,7 @@ QString FeedReaderStringDefs::workState(FeedInfo::WorkState state)
 		return QApplication::translate("FeedReaderStringDefs", "Processing");
 	}
 
-	return "";
+	return QApplication::translate("FeedReaderStringDefs", "Unknown");
 }
 
 QString FeedReaderStringDefs::errorString(const FeedInfo &feedInfo)
@@ -135,6 +135,15 @@ QString FeedReaderStringDefs::errorString(RsFeedReaderErrorState errorState, con
 	case RS_FEED_ERRORSTATE_PROCESS_XPATH_NO_RESULT:
 		errorText = QApplication::translate("FeedReaderStringDefs", "Empty XPath result");
 		break;
+	case RS_FEED_ERRORSTATE_PROCESS_XSLT_FORMAT_ERROR:
+		errorText = QApplication::translate("FeedReaderStringDefs", "XSLT format error");
+		break;
+	case RS_FEED_ERRORSTATE_PROCESS_XSLT_TRANSFORM_ERROR:
+		errorText = QApplication::translate("FeedReaderStringDefs", "XSLT transformation error");
+		break;
+	case RS_FEED_ERRORSTATE_PROCESS_XSLT_NO_RESULT:
+		errorText = QApplication::translate("FeedReaderStringDefs", "Empty XSLT result");
+		break;
 
 	default:
 		errorText = QApplication::translate("FeedReaderStringDefs", "Unknown error");
@@ -145,4 +154,18 @@ QString FeedReaderStringDefs::errorString(RsFeedReaderErrorState errorState, con
 	}
 
 	return errorText;
+}
+
+QString FeedReaderStringDefs::transforationTypeString(RsFeedTransformationType transformationType)
+{
+	switch (transformationType) {
+	case RS_FEED_TRANSFORMATION_TYPE_NONE:
+		return QApplication::translate("FeedReaderStringDefs", "No transformation");
+	case RS_FEED_TRANSFORMATION_TYPE_XPATH:
+		return QApplication::translate("FeedReaderStringDefs", "XPath");
+	case RS_FEED_TRANSFORMATION_TYPE_XSLT:
+		return QApplication::translate("FeedReaderStringDefs", "XSLT");
+	}
+
+	return QApplication::translate("FeedReaderStringDefs", "Unknown");
 }

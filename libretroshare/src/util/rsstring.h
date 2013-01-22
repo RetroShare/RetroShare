@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -23,6 +23,7 @@
 #define RSSTRING_H_
 
 #include <string>
+#include <stdarg.h>
 
 namespace librs { namespace util {
 
@@ -39,7 +40,9 @@ bool ConvertUtf16ToUtf8(const std::wstring& source, std::string& dest);
 #define UINT64FMT "%llu"
 #endif
 
+int rs_sprintf_args(std::string &str, const char *fmt, va_list ap);
 int rs_sprintf(std::string &str, const char *fmt, ...);
+int rs_sprintf_append_args(std::string &str, const char *fmt, va_list ap);
 int rs_sprintf_append(std::string &str, const char *fmt, ...);
 
 void stringToUpperCase(const std::string& s, std::string &upper);

@@ -39,11 +39,15 @@ public:
 	XMLWrapper &operator=(const XMLWrapper &xml);
 
 	void cleanup();
+	std::string lastError() { return mLastErrorString; }
 
 	bool readXML(const char *xml);
 
 	xmlDocPtr getDocument() const;
 	xmlNodePtr getRootElement() const;
+
+	bool convertToString(const xmlChar *xmlText, std::string &text);
+	bool convertFromString(const char *text, xmlChar *&xmlText);
 
 	std::string nodeName(xmlNodePtr node);
 	std::string attrName(xmlAttrPtr attr);
@@ -62,12 +66,16 @@ public:
 
 	XPathWrapper *createXPath();
 
-	bool convertToString(const xmlChar *xmlText, std::string &text);
-	bool convertFromString(const char *text, xmlChar *&xmlText);
+	bool transform(const XMLWrapper &style, XMLWrapper &result);
+
+protected:
+	void attach(xmlDocPtr document);
+	void handleError(bool init, std::string &errorString);
 
 protected:
 	xmlDocPtr mDocument;
 	xmlCharEncodingHandlerPtr mCharEncodingHandler;
+	std::string mLastErrorString;
 };
 
-#endif 
+#endif

@@ -52,6 +52,7 @@ private slots:
 	void processFeed();
 	void openLinkMsg();
 	void copyLinkMsg();
+	void retransformMsg();
 
 	/* FeedReaderNotify */
 	void feedChanged(const QString &feedId, int type);

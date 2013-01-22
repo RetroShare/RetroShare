@@ -25,6 +25,8 @@
 #include <QDialog>
 #include <QItemDelegate>
 
+#include "interface/rsFeedReader.h"
+
 namespace Ui {
 class PreviewFeedDialog;
 }
@@ -54,12 +56,12 @@ class FeedInfo;
 class PreviewFeedDialog : public QDialog
 {
 	Q_OBJECT
-	
+
 public:
 	PreviewFeedDialog(RsFeedReader *feedReader, FeedReaderNotify *notify, const FeedInfo &feedInfo, QWidget *parent = 0);
 	~PreviewFeedDialog();
 
-	void getXPaths(std::list<std::string> &xpathsToUse, std::list<std::string> &xpathsToRemove);
+	RsFeedTransformationType getData(std::list<std::string> &xpathsToUse, std::list<std::string> &xpathsToRemove, std::string &xslt);
 
 protected:
 	bool eventFilter(QObject *obj, QEvent *ev);
@@ -67,14 +69,13 @@ protected:
 private slots:
 	void previousMsg();
 	void nextMsg();
-	void showStructureFrame(bool show = false);
-	void showXPathFrame(bool show);
+	void showStructureFrame();
 	void xpathListCustomPopupMenu(QPoint point);
 	void xpathCloseEditor(QWidget *editor, QAbstractItemDelegate::EndEditHint hint);
 	void addXPath();
 	void editXPath();
 	void removeXPath();
-	void fillStructureTree();
+	void transformationTypeChanged();
 
 	/* FeedReaderNotify */
 	void feedChanged(const QString &feedId, int type);
@@ -84,11 +85,12 @@ private:
 	void processSettings(bool load);
 	int getMsgPos();
 	void setFeedInfo(const QString &info);
-	void setXPathInfo(const QString &info);
+	void setTransformationInfo(const QString &info);
 	void fillFeedInfo(const FeedInfo &feedInfo);
 	void updateMsgCount();
 	void updateMsg();
-	void processXPath();
+	void fillStructureTree(bool transform);
+	void processTransformation();
 
 	RsFeedReader *mFeedReader;
 	FeedReaderNotify *mNotify;
@@ -96,7 +98,7 @@ private:
 	std::string mMsgId;
 	std::list<std::string> mMsgIds;
 	std::string mDescription;
-	std::string mDescriptionXPath;
+	std::string mDescriptionTransformed;
 
 	Ui::PreviewFeedDialog *ui;
 };

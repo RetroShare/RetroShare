@@ -76,17 +76,17 @@ linux-* {
 
 	INCLUDEPATH += $${LIBXML2_DIR}
 
-	LIBS += -lcurl -lxml2
+	LIBS += -lcurl -lxml2 -lxslt
 }
 
 win32 {
-	DEFINES += CURL_STATICLIB LIBXML_STATIC
+	DEFINES += CURL_STATICLIB LIBXML_STATIC LIBXSLT_STATIC LIBEXSLT_STATIC
 
 	CURL_DIR = ../../../curl-7.26.0
 	LIBXML2_DIR = ../../../libxml2-2.8.0
-	LIBICONV_DIR = ../../../libiconv-1.14
+	LIBXSLT_DIR = ../../../libxslt-1.1.28
 
-	INCLUDEPATH += $${CURL_DIR}/include $${LIBXML2_DIR}/include $${LIBICONV_DIR}/include
+	INCLUDEPATH += $${CURL_DIR}/include $${LIBXML2_DIR}/include $${LIBXSLT_DIR} $${LIBICONV_DIR}/include
 
-	LIBS += -lcurl -lxml2 -lws2_32 -lwldap32
+	LIBS += -lcurl -lxml2 -lxslt -lws2_32 -lwldap32
 }

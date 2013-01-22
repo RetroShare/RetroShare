@@ -62,8 +62,10 @@ public:
 	virtual bool            getFeedMsgIdList(const std::string &feedId, std::list<std::string> &msgIds);
 	virtual bool            processFeed(const std::string &feedId);
 	virtual bool            setMessageRead(const std::string &feedId, const std::string &msgId, bool read);
+	virtual bool            retransformMsg(const std::string &feedId, const std::string &msgId);
 
 	virtual RsFeedReaderErrorState processXPath(const std::list<std::string> &xpathsToUse, const std::list<std::string> &xpathsToRemove, std::string &description, std::string &errorString);
+	virtual RsFeedReaderErrorState processXslt(const std::string &xslt, std::string &description, std::string &errorString);
 
 	/****************** p3Service STUFF ******************/
 	virtual int tick();

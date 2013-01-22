@@ -51,8 +51,10 @@ void RsFeedReaderFeed::clear()
 	icon.clear();
 	errorState = RS_FEED_ERRORSTATE_OK;
 	errorString.clear();
+	transformationType = RS_FEED_TRANSFORMATION_TYPE_NONE;
 	xpathsToUse.ids.clear();
 	xpathsToRemove.ids.clear();
+	xslt.clear();
 
 	preview = false;
 	workstate = WAITING;
@@ -85,8 +87,10 @@ uint32_t RsFeedReaderSerialiser::sizeFeed(RsFeedReaderFeed *item)
 	s += GetTlvStringSize(item->forumId);
 	s += sizeof(uint32_t); /* errorstate */
 	s += GetTlvStringSize(item->errorString);
+	s +=  sizeof(uint32_t); /* transformationType */
 	s += item->xpathsToUse.TlvSize();
 	s += item->xpathsToRemove.TlvSize();
+	s += GetTlvStringSize(item->xslt);
 
 	return s;
 }
@@ -110,7 +114,7 @@ bool RsFeedReaderSerialiser::serialiseFeed(RsFeedReaderFeed *item, void *data, u
 	offset += 8;
 
 	/* add values */
-	ok &= setRawUInt16(data, tlvsize, &offset, 0); /* version */
+	ok &= setRawUInt16(data, tlvsize, &offset, 1); /* version */
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GENID, item->feedId);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, item->parentId);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_LINK, item->url);
@@ -128,8 +132,10 @@ bool RsFeedReaderSerialiser::serialiseFeed(RsFeedReaderFeed *item, void *data, u
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, item->forumId);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->errorState);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, item->errorString);
+	ok &= setRawUInt32(data, tlvsize, &offset, item->transformationType);
 	ok &= item->xpathsToUse.SetTlv(data, tlvsize, &offset);
 	ok &= item->xpathsToRemove.SetTlv(data, tlvsize, &offset);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, item->xslt);
 
 	if (offset != tlvsize)
 	{
@@ -192,9 +198,28 @@ RsFeedReaderFeed *RsFeedReaderSerialiser::deserialiseFeed(void *data, uint32_t *
 	ok &= getRawUInt32(data, rssize, &offset, &errorState);
 	item->errorState = (RsFeedReaderErrorState) errorState;
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_VALUE, item->errorString);
+	if (version >= 1) {
+		uint32_t value = RS_FEED_TRANSFORMATION_TYPE_NONE;
+		ok &= getRawUInt32(data, rssize, &offset, &value);
+		if (ok)
+		{
+			item->transformationType = (RsFeedTransformationType) value;
+		}
+	}
 	ok &= item->xpathsToUse.GetTlv(data, rssize, &offset);
 	ok &= item->xpathsToRemove.GetTlv(data, rssize, &offset);
+	if (version >= 1) {
+		ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_VALUE, item->xslt);
+	}
 
+	if (version == 0)
+	{
+		if (!item->xpathsToUse.ids.empty() || !item->xpathsToRemove.ids.empty())
+		{
+			/* set transformation type */
+			item->transformationType = RS_FEED_TRANSFORMATION_TYPE_XPATH;
+		}
+	}
 	if (offset != rssize)
 	{
 		/* error */
@@ -226,6 +251,7 @@ void RsFeedReaderMsg::clear()
 	link.clear();
 	author.clear();
 	description.clear();
+	descriptionTransformed.clear();
 	pubDate = 0;
 	flag = 0;
 }
@@ -245,6 +271,7 @@ uint32_t RsFeedReaderSerialiser::sizeMsg(RsFeedReaderMsg *item)
 	s += GetTlvStringSize(item->link);
 	s += GetTlvStringSize(item->author);
 	s += GetTlvStringSize(item->description);
+	s += GetTlvStringSize(item->descriptionTransformed);
 	s += sizeof(time_t); /* pubDate */
 	s += sizeof(uint32_t); /* flag */
 
@@ -270,13 +297,14 @@ bool RsFeedReaderSerialiser::serialiseMsg(RsFeedReaderMsg *item, void *data, uin
 	offset += 8;
 
 	/* add values */
-	ok &= setRawUInt16(data, tlvsize, &offset, 0); /* version */
+	ok &= setRawUInt16(data, tlvsize, &offset, 1); /* version */
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GENID, item->msgId);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, item->feedId);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, item->title);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_LINK, item->link);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, item->author);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_COMMENT, item->description);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_COMMENT, item->descriptionTransformed);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->pubDate);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->flag);
 
@@ -328,6 +356,9 @@ RsFeedReaderMsg *RsFeedReaderSerialiser::deserialiseMsg(void *data, uint32_t *pk
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_LINK, item->link);
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_VALUE, item->author);
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_COMMENT, item->description);
+	if (version >= 1) {
+		ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_COMMENT, item->descriptionTransformed);
+	}
 	ok &= getRawUInt32(data, rssize, &offset, (uint32_t*) &(item->pubDate));
 	ok &= getRawUInt32(data, rssize, &offset, &(item->flag));
 

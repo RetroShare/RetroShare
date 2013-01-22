@@ -219,7 +219,16 @@ void FeedReaderMessageWidget::setFeedId(const std::string &feedId)
 		mFeedInfo = FeedInfo();
 	}
 
-	ui->msgReadAllButton->setEnabled(!mFeedId.empty());
+	if (mFeedId.empty()) {
+		ui->msgReadAllButton->setEnabled(false);
+		ui->msgTreeWidget->setPlaceholderText("");
+	} else {
+		if (mFeedInfo.flag.forum) {
+			ui->msgTreeWidget->setPlaceholderText(tr("The messages will be added to the forum"));
+		} else {
+			ui->msgTreeWidget->setPlaceholderText("");
+		}
+	}
 
 	updateMsgs();
 	updateCurrentMessage();
@@ -306,6 +315,11 @@ void FeedReaderMessageWidget::msgTreeCustomPopupMenu(QPoint /*point*/)
 
 	action = contextMnu.addAction(QIcon(""), tr("Remove"), this, SLOT(removeMsg()));
 	action->setEnabled(!selectedItems.empty());
+
+	contextMnu.addSeparator();
+
+	action = contextMnu.addAction(QIcon(""), tr("Retransform"), this, SLOT(retransformMsg()));
+	action->setEnabled((mFeedInfo.transformationType != RS_FEED_TRANSFORMATION_TYPE_NONE) && !selectedItems.empty());
 
 	contextMnu.exec(QCursor::pos());
 }
@@ -495,6 +509,12 @@ void FeedReaderMessageWidget::msgChanged(const QString &feedId, const QString &m
 		}
 	}
 
+	if (type == NOTIFY_TYPE_MOD) {
+		if (msgId.toStdString() == currentMsgId()) {
+			updateCurrentMessage();
+		}
+	}
+
 	if (type == NOTIFY_TYPE_ADD) {
 		QTreeWidgetItem *item = new RSTreeWidgetItem(mMsgCompareRole);
 		updateMsgItem(item, msgInfo);
@@ -591,7 +611,7 @@ void FeedReaderMessageWidget::updateCurrentMessage()
 		setMsgAsReadUnread(row, setToReadOnActive);
 	}
 
-	QString msgTxt = RsHtml().formatText(ui->msgText->document(), QString::fromUtf8(msgInfo.description.c_str()), RSHTML_FORMATTEXT_EMBED_LINKS);
+	QString msgTxt = RsHtml().formatText(ui->msgText->document(), QString::fromUtf8((msgInfo.descriptionTransformed.empty() ? msgInfo.description : msgInfo.descriptionTransformed).c_str()), RSHTML_FORMATTEXT_EMBED_LINKS);
 
 	ui->msgText->setHtml(msgTxt);
 	ui->msgTitle->setText(QString::fromUtf8(msgInfo.title.c_str()));
@@ -742,6 +762,20 @@ void FeedReaderMessageWidget::removeMsg()
 		msgIds.push_back((*it)->data(COLUMN_MSG_DATA, ROLE_MSG_ID).toString().toStdString());
 	}
 	mFeedReader->removeMsgs(mFeedId, msgIds);
+}
+
+void FeedReaderMessageWidget::retransformMsg()
+{
+	if (mFeedId.empty()) {
+		return;
+	}
+
+	QList<QTreeWidgetItem*> selectedItems = ui->msgTreeWidget->selectedItems();
+	QList<QTreeWidgetItem*>::iterator it;
+
+	for (it = selectedItems.begin(); it != selectedItems.end(); ++it) {
+		mFeedReader->retransformMsg(mFeedId, (*it)->data(COLUMN_MSG_DATA, ROLE_MSG_ID).toString().toStdString());
+	}
 }
 
 void FeedReaderMessageWidget::processFeed()

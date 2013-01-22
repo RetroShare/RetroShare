@@ -67,7 +67,7 @@ FeedReaderFeedItem::FeedReaderFeedItem(RsFeedReader *feedReader, FeedReaderNotif
 
 	ui->titleLabel->setText(QString::fromUtf8(feedInfo.name.c_str()));
 	ui->msgTitleLabel->setText(QString::fromUtf8(msgInfo.title.c_str()));
-	ui->descriptionLabel->setText(QString::fromUtf8(msgInfo.description.c_str()));
+	ui->descriptionLabel->setText(QString::fromUtf8((msgInfo.descriptionTransformed.empty() ? msgInfo.description : msgInfo.descriptionTransformed).c_str()));
 
 	ui->dateTimeLabel->setText(DateTime::formatLongDateTime(msgInfo.pubDate));
 

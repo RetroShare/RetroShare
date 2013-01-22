@@ -53,7 +53,6 @@ AddFeedDialog::AddFeedDialog(RsFeedReader *feedReader, FeedReaderNotify *notify,
 
 	/* currently only for loacl feeds */
 	connect(ui->saveCompletePageCheckBox, SIGNAL(toggled(bool)), this, SLOT(denyForumToggled()));
-	connect(ui->embedImagesCheckBox, SIGNAL(toggled(bool)), this, SLOT(denyForumToggled()));
 
 	connect(ui->urlLineEdit, SIGNAL(textChanged(QString)), this, SLOT(validate()));
 	connect(ui->nameLineEdit, SIGNAL(textChanged(QString)), this, SLOT(validate()));
@@ -77,6 +76,9 @@ AddFeedDialog::AddFeedDialog(RsFeedReader *feedReader, FeedReaderNotify *notify,
 
 	/* not yet supported */
 	ui->authenticationGroupBox->setEnabled(false);
+
+	mTransformationType = RS_FEED_TRANSFORMATION_TYPE_NONE;
+	ui->transformationTypeLabel->setText(FeedReaderStringDefs::transforationTypeString(mTransformationType));
 
 	/* fill own forums */
 	std::list<ForumInfo> forumList;
@@ -163,7 +165,7 @@ void AddFeedDialog::typeForumToggled()
 
 void AddFeedDialog::denyForumToggled()
 {
-	if (ui->saveCompletePageCheckBox->isChecked() || ui->embedImagesCheckBox->isChecked()) {
+	if (ui->saveCompletePageCheckBox->isChecked()) {
 		ui->typeForumRadio->setEnabled(false);
 		ui->typeLocalRadio->setChecked(true);
 	} else {
@@ -230,7 +232,6 @@ bool AddFeedDialog::fillFeed(const std::string &feedId)
 		if (feedInfo.flag.forum) {
 			ui->typeForumRadio->setChecked(true);
 			ui->saveCompletePageCheckBox->setEnabled(false);
-			ui->embedImagesCheckBox->setEnabled(false);
 
 			if (feedInfo.forumId.empty()) {
 				ui->forumNameLabel->setText(tr("Not yet created"));
@@ -263,8 +264,12 @@ bool AddFeedDialog::fillFeed(const std::string &feedId)
 		ui->useStandardStorageTimeCheckBox->setChecked(feedInfo.flag.standardStorageTime);
 		ui->storageTimeSpinBox->setValue(feedInfo.storageTime / (60 * 60 *24));
 
+		mTransformationType = feedInfo.transformationType;
 		mXPathsToUse = feedInfo.xpathsToUse;
 		mXPathsToRemove = feedInfo.xpathsToRemove;
+		mXslt = feedInfo.xslt;
+
+		ui->transformationTypeLabel->setText(FeedReaderStringDefs::transforationTypeString(mTransformationType));
 	}
 
 	return true;
@@ -306,8 +311,10 @@ void AddFeedDialog::getFeedInfo(FeedInfo &feedInfo)
 	feedInfo.flag.standardStorageTime = ui->useStandardStorageTimeCheckBox->isChecked();
 	feedInfo.storageTime = ui->storageTimeSpinBox->value() * 60 *60 * 24;
 
+	feedInfo.transformationType = mTransformationType;
 	feedInfo.xpathsToUse = mXPathsToUse;
 	feedInfo.xpathsToRemove = mXPathsToRemove;
+	feedInfo.xslt = mXslt;
 }
 
 void AddFeedDialog::createFeed()
@@ -345,6 +352,7 @@ void AddFeedDialog::preview()
 
 	PreviewFeedDialog dialog(mFeedReader, mNotify, feedInfo, this);
 	if (dialog.exec() == QDialog::Accepted) {
-		dialog.getXPaths(mXPathsToUse, mXPathsToRemove);
+		mTransformationType = dialog.getData(mXPathsToUse, mXPathsToRemove, mXslt);
+		ui->transformationTypeLabel->setText(FeedReaderStringDefs::transforationTypeString(mTransformationType));
 	}
 }
