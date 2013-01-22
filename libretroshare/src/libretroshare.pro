@@ -118,9 +118,7 @@ linux-* {
 	isEmpty(LIB_DIR) { LIB_DIR = $${PREFIX}/lib/ }
 
 	# These two lines fixe compilation on ubuntu natty. Probably a ubuntu packaging error.
-	INCLUDEPATH *= /usr/lib/x86_64-linux-gnu/glib-2.0/include/
-	INCLUDEPATH *= /usr/lib/arm-linux-gnueabi/glib-2.0/include/
-	INCLUDEPATH *= /usr/lib/i386-linux-gnu/glib-2.0/include/
+	INCLUDEPATH += $$system(pkg-config --cflags glib-2.0 | sed -e "s/-I//g")
 
 	OPENPGPSDK_DIR = ../../openpgpsdk/src
 	INCLUDEPATH *= $${OPENPGPSDK_DIR} ../openpgpsdk
@@ -132,18 +130,6 @@ linux-* {
 	SSL_DIR = /usr/include/openssl
 	UPNP_DIR = /usr/include/upnp
 	INCLUDEPATH += . $${SSL_DIR} $${UPNP_DIR}
-
-	#gpg files
-	system(which gpg-error-config >/dev/null 2>&1) {
-		INCLUDEPATH += $$system(gpg-error-config --cflags | sed -e "s/-I//g")
-	} else {
-		message(Could not find gpg-error-config on your system, assuming gpg-error.h is in /usr/include)
-	}
-	system(which gpgme-config >/dev/null 2>&1) {
-		INCLUDEPATH += $$system(gpgme-config --cflags | sed -e "s/-I//g")
-	} else {
-		message(Could not find gpgme-config on your system, assuming gpgme.h is in /usr/include)
-	}
 
 	# where to put the shared library itself
 	target.path = $$LIB_DIR
