@@ -310,10 +310,10 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     ui.hashBox->setDropWidget(this);
     ui.hashBox->setAutoHide(true);
 
-//#if QT_VERSION < 0x040700
-	// embedded images are not supported before QT 4.7.0
+#if QT_VERSION < 0x040700
+    // embedded images are not supported before QT 4.7.0
     ui.imagebtn->setVisible(false);
-//#endif
+#endif
 
     /* Hide platform specific features */
 #ifdef Q_WS_WIN

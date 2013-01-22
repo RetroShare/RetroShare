@@ -33,11 +33,11 @@ bool MimeTextEdit::canInsertFromMimeData(const QMimeData* source) const
 {
 #if QT_VERSION >= 0x040700
 	// embedded images are not supported before QT 4.7.0
-//	if (source != NULL) {
-//		if (source->hasImage()) {
-//			return true;
-//		}
-//	}
+	if (source != NULL) {
+		if (source->hasImage()) {
+			return true;
+		}
+	}
 #endif
 
 	return QTextEdit::canInsertFromMimeData(source);
@@ -47,20 +47,20 @@ void MimeTextEdit::insertFromMimeData(const QMimeData* source)
 {
 #if QT_VERSION >= 0x040700
 	// embedded images are not supported before QT 4.7.0
-//	if (source != NULL) {
-//		if (source->hasImage()) {
-//			// insert as embedded image
-//			QImage image = qvariant_cast<QImage>(source->imageData());
-//			if (image.isNull() == false) {
-//				QString	encodedImage;
-//				if (RsHtml::makeEmbeddedImage(image, encodedImage, 640*480)) {
-//					QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(encodedImage);
-//					this->textCursor().insertFragment(fragment);
-//					return;
-//				}
-//			}
-//		}
-//	}
+	if (source != NULL) {
+		if (source->hasImage()) {
+			// insert as embedded image
+			QImage image = qvariant_cast<QImage>(source->imageData());
+			if (image.isNull() == false) {
+				QString	encodedImage;
+				if (RsHtml::makeEmbeddedImage(image, encodedImage, 640*480)) {
+					QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(encodedImage);
+					this->textCursor().insertFragment(fragment);
+					return;
+				}
+			}
+		}
+	}
 #endif
 
 	return QTextEdit::insertFromMimeData(source);
