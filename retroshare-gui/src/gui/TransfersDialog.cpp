@@ -1040,7 +1040,7 @@ void TransfersDialog::insertTransfers()
 			uint32_t chunk_size = 1024*1024 ;
 			uint32_t nb_chunks = (uint32_t)((info.size + (uint64_t)chunk_size - 1) / (uint64_t)(chunk_size)) ;
 
-			uint32_t filled_chunks = pinfo.cmap.filledChunks(nb_chunks) ;
+			uint32_t filled_chunks = pinfo.cmap.countFilledChunks(nb_chunks) ;
 			pinfo.type = FileProgressInfo::UPLOAD_LINE ;
 			pinfo.nb_chunks = pinfo.cmap._map.empty()?0:nb_chunks ;
 

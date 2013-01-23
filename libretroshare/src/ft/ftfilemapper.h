@@ -80,9 +80,14 @@ class ftFileMapper
 		//
 		bool retrieveData(void *data, uint32_t data_size, uint64_t offset,FILE *fd) ;
 
+		// Returns the number of each chunk that is mapped to place 0,1,2,... on the disk.
+		//
+		const std::vector<uint32_t>& getMappedChunks() const { return _data_chunk_ids ; }
+
 		// debug
 		void print() const ;
 
+		virtual void forceCheckPartialFile() {}
 	private:
 		uint64_t _file_size ;	// size of the file
 		uint32_t _chunk_size ;	// size of chunks

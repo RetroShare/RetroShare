@@ -337,6 +337,9 @@ class FileChunksInfo
 		// The list of pending requests, chunk per chunk (by chunk id)
 		//
 		std::map<uint32_t, std::vector<SliceInfo> > pending_slices ;
+
+		// chunk order on the disk
+		std::vector<uint32_t> chunks_on_disk ;
 };
 
 class CompressedChunkMap

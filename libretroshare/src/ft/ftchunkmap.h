@@ -197,10 +197,10 @@ class ChunkMap
 		/// gets lost when force checking the file.
 		void updateTotalDownloaded() ;
 
-	protected:
 		/// handles what size the last chunk has.
 		uint32_t sizeOfChunk(uint32_t chunk_number) const ;
 
+	protected:
 		/// Returns a chunk available for this peer_id, depending on the chunk strategy.
 		//
 		uint32_t getAvailableChunk(const std::string& peer_id,bool& chunk_map_too_old) ;

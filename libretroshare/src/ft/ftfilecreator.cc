@@ -507,6 +507,8 @@ void ftFileCreator::getChunkMap(FileChunksInfo& info)
 
 		info.pending_slices[n].push_back(si) ;
 	}
+
+	info.chunks_on_disk = getMappedChunks() ;
 }
 
 bool ftFileCreator::locked_printChunkMap()
@@ -611,7 +613,11 @@ void ftFileCreator::forceCheck()
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 
-	chunkMap.forceCheck(); 
+	std::cerr << "WARNING: forceCheck() for mapped files is not yet implemented." << std::endl;
+	return ;
+
+	forceCheckPartialFile() ;	// calls ftFileMapper, to ask for re-hashing the partial file
+	chunkMap.forceCheck(); 		// sets all chunk to checking mode.
 }
 
 void ftFileCreator::getSourcesList(uint32_t chunk_num,std::vector<std::string>& sources)
@@ -635,11 +641,10 @@ bool ftFileCreator::verifyChunk(uint32_t chunk_number,const Sha1CheckSum& sum)
 	if(!locked_initializeFileAttrs() )
 		return false ;
 
-	static const uint32_t chunk_size = ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE ;
-	unsigned char *buff = new unsigned char[chunk_size] ;
-	uint32_t len ;
+	uint32_t len = chunkMap.sizeOfChunk(chunk_number);
+	unsigned char *buff = new unsigned char[len] ;
 
-	if(fseeko64(fd,(uint64_t)chunk_number * (uint64_t)chunk_size,SEEK_SET)==0 && (len = fread(buff,1,chunk_size,fd)) > 0)
+	if(retrieveData(buff,len,(uint64_t)chunk_number * (uint64_t)ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE,fd)) // if(fseeko64(fd,(uint64_t)chunk_number * (uint64_t)chunk_size,SEEK_SET)==0 && (len = fread(buff,1,chunk_size,fd)) > 0)
 	{
 		Sha1CheckSum comp = RsDirUtil::sha1sum(buff,len) ;
 

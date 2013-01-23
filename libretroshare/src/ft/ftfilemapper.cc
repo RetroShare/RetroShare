@@ -269,7 +269,7 @@ void ftFileMapper::initMappedChunks(uint64_t file_size,const CompressedChunkMap&
 
 	// 0 - retro-compatibility. First check that the number of chunks in both maps co-incide.
 
-	if(data_chunk_ids.size() != count)
+	if(data_chunk_ids.size() < count)
 	{
 		std::cerr << "(II) ftFileMapper::initMappedChunks(): file has " << count << " chunks on disk, but no mapping. Assuming it's an unfragmented file (backward compatibility)!" << std::endl;
 		_data_chunk_ids.resize(numck) ;

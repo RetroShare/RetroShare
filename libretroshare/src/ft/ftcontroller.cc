@@ -1040,7 +1040,6 @@ bool	ftController::handleAPendingRequest()
 				std::cerr << "Hash " << req.mHash << " is in downloads" << std::endl ;
 				std::cerr << "  setting chunk strategy to " << rsft->chunk_strategy << std::endl;
 #endif
-				//(fit->second)->mCreator->setAvailabilityMap(rsft->compressed_chunk_map) ;
 				(fit->second)->mCreator->setAvailabilityMap(rsft->compressed_chunk_map,rsft->data_chunk_ids) ;
 				(fit->second)->mCreator->setChunkStrategy((FileChunksInfo::ChunkStrategy)(rsft->chunk_strategy)) ;
 			}
@@ -2030,6 +2029,7 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 
 		fit->second->mCreator->getAvailabilityMap(rft->compressed_chunk_map) ;
 		rft->chunk_strategy = fit->second->mCreator->getChunkStrategy() ;
+		rft->data_chunk_ids = fit->second->mCreator->getMappedChunks() ;
 
 		saveData.push_back(rft);
 	}
@@ -2145,7 +2145,6 @@ bool ftController::loadList(std::list<RsItem *>& load)
 				}
 				else
 				{
-					//(fit->second)->mCreator->setAvailabilityMap(rsft->compressed_chunk_map) ;
 					(fit->second)->mCreator->setAvailabilityMap(rsft->compressed_chunk_map,rsft->data_chunk_ids) ;
 					(fit->second)->mCreator->setChunkStrategy((FileChunksInfo::ChunkStrategy)(rsft->chunk_strategy)) ;
 				}
