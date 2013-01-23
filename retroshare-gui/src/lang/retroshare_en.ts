@@ -4733,6 +4733,10 @@ p, li { white-space: pre-wrap; }
         <source>Search Friends</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FriendsDialog</name>
@@ -4898,6 +4902,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edit your status message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Service permissions</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10601,6 +10609,25 @@ peers still need to trust each other to allow connection. </source>
     </message>
     <message>
         <source>This tab contains hard-core parameters which are unlikely to need modification. Don&apos;t change them unless you really know what you&apos;re doing.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ServicePermissionDialog</name>
+    <message>
+        <source>Service permissions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Anonymous routing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Discovery</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Forums/Channels</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

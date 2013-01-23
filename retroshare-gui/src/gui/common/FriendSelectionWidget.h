@@ -69,10 +69,11 @@ public:
 	void setHeaderText(const QString &text);
 	void setModus(Modus modus);
 	void setShowType(ShowTypes types);
+	int addColumn(const QString &title);
 	void start();
 
 	int selectedItemCount();
-	QString selectedId(IdType &idType);
+	std::string selectedId(IdType &idType);
 	void selectedSslIds(std::list<std::string> &sslIds, bool onlyDirectSelected) { selectedIds(IDTYPE_SSL, sslIds, onlyDirectSelected); }
 	void selectedGpgIds(std::list<std::string> &gpgIds, bool onlyDirectSelected) { selectedIds(IDTYPE_GPG, gpgIds, onlyDirectSelected); }
 	void selectedGroupIds(std::list<std::string> &groupIds) { selectedIds(IDTYPE_GROUP, groupIds, true); }
@@ -80,6 +81,12 @@ public:
 	void setSelectedSslIds(const std::list<std::string> &sslIds, bool add) { setSelectedIds(IDTYPE_SSL, sslIds, add); }
 	void setSelectedGpgIds(const std::list<std::string> &gpgIds, bool add) { setSelectedIds(IDTYPE_GPG, gpgIds, add); }
 	void setSelectedGroupIds(const std::list<std::string> &groupIds, bool add) { setSelectedIds(IDTYPE_GROUP, groupIds, add); }
+
+	void itemsFromId(IdType idType, const std::string &id, QList<QTreeWidgetItem*> &items);
+	void items(QList<QTreeWidgetItem*> &items, IdType = IDTYPE_NONE);
+
+	IdType idTypeFromItem(QTreeWidgetItem *item);
+	std::string idFromItem(QTreeWidgetItem *item);
 
 	QColor textColorOnline() const { return mTextColorOnline; }
 
@@ -89,9 +96,11 @@ protected:
 	void changeEvent(QEvent *e);
 
 signals:
+	void itemAdded(int idType, const QString &id, QTreeWidgetItem *item);
 	void contentChanged();
 	void customContextMenuRequested(const QPoint &pos);
-	void doubleClicked(IdType idType, const QString &id);
+	void doubleClicked(int idType, const QString &id);
+	void itemChanged(int idType, const QString &id, QTreeWidgetItem *item, int column);
 
 private slots:
 	void fillList();
@@ -107,13 +116,14 @@ private:
 	void selectedIds(IdType idType, std::list<std::string> &ids, bool onlyDirectSelected);
 	void setSelectedIds(IdType idType, const std::list<std::string> &ids, bool add);
 
-	bool started;
-	RSTreeWidgetItemCompareRole *compareRole;
-	Modus listModus;
-	ShowTypes showTypes;
-	bool inGroupItemChanged;
-	bool inGpgItemChanged;
-	bool inSslItemChanged;
+	bool mStarted;
+	RSTreeWidgetItemCompareRole *mCompareRole;
+	Modus mListModus;
+	ShowTypes mShowTypes;
+	bool mInGroupItemChanged;
+	bool mInGpgItemChanged;
+	bool mInSslItemChanged;
+	bool mInFillList;
 
 	/* Color definitions (for standard see qss.default) */
 	QColor mTextColorOnline;

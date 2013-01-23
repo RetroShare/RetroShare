@@ -201,7 +201,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(const QString&,int)), this, SLOT(peerStatusChanged(const QString&,int)));
     connect(ui.friendSelectionWidget, SIGNAL(contentChanged()), this, SLOT(buildCompleter()));
     connect(ui.friendSelectionWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuMsgSendList(QPoint)));
-    connect(ui.friendSelectionWidget, SIGNAL(doubleClicked(IdType,QString)), this, SLOT(addTo()));
+    connect(ui.friendSelectionWidget, SIGNAL(doubleClicked(int,QString)), this, SLOT(addTo()));
 
     /* hide the Tree +/- */
     ui.msgFileList -> setRootIsDecorated( false );
@@ -2281,13 +2281,13 @@ void MessageComposer::addRecommend()
 void MessageComposer::friendDetails()
 {
     FriendSelectionWidget::IdType idType;
-    QString id = ui.friendSelectionWidget->selectedId(idType);
+    std::string id = ui.friendSelectionWidget->selectedId(idType);
 
-    if (id.isEmpty() || idType != FriendSelectionWidget::IDTYPE_SSL) {
+    if (id.empty() || idType != FriendSelectionWidget::IDTYPE_SSL) {
         return;
     }
 
-    ConfCertDialog::showIt(id.toStdString(), ConfCertDialog::PageDetails);
+    ConfCertDialog::showIt(id, ConfCertDialog::PageDetails);
 }
 
 void MessageComposer::tagAboutToShow()

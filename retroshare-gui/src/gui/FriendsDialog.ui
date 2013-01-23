@@ -839,6 +839,11 @@
     <string>Reset font to default</string>
    </property>
   </action>
+  <action name="actionServicePermission">
+   <property name="text">
+    <string>Service permissions</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

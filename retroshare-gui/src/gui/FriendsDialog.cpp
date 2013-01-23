@@ -53,8 +53,8 @@
 #include "util/DateTime.h"
 #include "chat/CreateLobbyDialog.h"
 #include "FriendRecommendDialog.h"
-
 #include "FriendsDialog.h"
+#include "ServicePermissionDialog.h"
 
 /* Images for Newsfeed icons */
 #define IMAGE_NEWSFEED           ""
@@ -87,6 +87,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     connect( ui.actionAdd_Friend, SIGNAL(triggered()), this, SLOT(addFriend()));
     connect( ui.actionCreate_new_Chat_lobby, SIGNAL(triggered()), this, SLOT(createChatLobby()));
     connect( ui.actionFriendRecommendations, SIGNAL(triggered()), this, SLOT(recommendFriends()));
+    connect( ui.actionServicePermission, SIGNAL(triggered()), this, SLOT(servicePermission()));
     connect( ui.filter_lineEdit, SIGNAL(textChanged(QString)), ui.friendList, SLOT(filterItems(QString)));
 
     ui.filter_lineEdit->setPlaceholderText(tr("Search")) ;
@@ -169,6 +170,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     menu->addAction(ui.actionAdd_Group);
     menu->addAction(ui.actionCreate_new_Chat_lobby);
     menu->addAction(ui.actionFriendRecommendations);
+    menu->addAction(ui.actionServicePermission);
 
     menu->addSeparator();
     menu->addAction(ui.actionSet_your_Avatar);
@@ -329,7 +331,7 @@ void FriendsDialog::addFriend()
     connwiz.exec ();
 }
 
-void FriendsDialog::resetStatusBar() 
+void FriendsDialog::resetStatusBar()
 {
 #ifdef FRIENDS_DEBUG
 	std::cerr << "FriendsDialog: reseting status bar." << std::endl ;
@@ -568,7 +570,7 @@ void  FriendsDialog::insertSendList()
 
         /* get a link to the table */
         //QTreeWidget *sendWidget = ui.msgSendList;
-	QList<QTreeWidgetItem *> items;
+    QList<QTreeWidgetItem *> items;
 
 	for(it = peers.begin(); it != peers.end(); it++)
 	{
@@ -579,8 +581,8 @@ void  FriendsDialog::insertSendList()
 			continue; /* BAD */
 		}
 
-		/* make a widget per friend */
-           	QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
+        /* make a widget per friend */
+            QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
 
 		/* add all the labels */
 		/* (0) Person */
@@ -608,7 +610,7 @@ void  FriendsDialog::insertSendList()
 		items.append(item);
 	}
 
-        /* remove old items */
+		/* remove old items */
 	//sendWidget->clear();
 	//sendWidget->setColumnCount(1);
 
@@ -777,9 +779,9 @@ void FriendsDialog::fileHashingFinished(QList<HashedFile> hashedFiles)
         HashedFile& hashedFile = *it;
         RetroShareLink link;
 
-        if (!link.createExtraFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash),QString::fromStdString(rsPeers->getOwnId()))) 
+        if (!link.createExtraFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash),QString::fromStdString(rsPeers->getOwnId())))
             continue;
-        
+
         mesgString += link.toHtmlSize();
         if (it!= hashedFiles.end()) {
             mesgString += "<BR>";
@@ -876,9 +878,15 @@ void FriendsDialog::recommendFriends()
 	FriendRecommendDialog::showYourself();
 }
 
+void FriendsDialog::servicePermission()
+{
+	ServicePermissionDialog dlg;
+	dlg.exec();
+}
+
 /*static*/ ChatTabWidget *FriendsDialog::getTabWidget()
 {
-    return instance ? instance->ui.tabWidget : NULL;
+	return instance ? instance->ui.tabWidget : NULL;
 }
 
 /*static*/ bool FriendsDialog::isGroupChatActive()

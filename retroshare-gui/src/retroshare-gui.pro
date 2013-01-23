@@ -284,6 +284,7 @@ HEADERS +=  rshare.h \
             gui/MessengerWindow.h \
             gui/FriendsDialog.h \
             gui/FriendRecommendDialog.h \
+            gui/ServicePermissionDialog.h \
             gui/RemoteDirModel.h \
             gui/RetroShareLink.h \
             gui/SearchTreeWidget.h \
@@ -485,6 +486,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/HelpDialog.ui \
             gui/DetailsDialog.ui \
             gui/FriendRecommendDialog.ui \
+            gui/ServicePermissionDialog.ui \
             gui/bwgraph/bwgraph.ui \
             gui/profile/ProfileWidget.ui \
             gui/profile/StatusMessage.ui \
@@ -586,6 +588,7 @@ SOURCES +=  main.cpp \
             gui/MessengerWindow.cpp \
             gui/FriendsDialog.cpp \
             gui/FriendRecommendDialog.cpp \
+            gui/ServicePermissionDialog.cpp \
             gui/RemoteDirModel.cpp \
             gui/RsAutoUpdatePage.cpp \
             gui/RetroShareLink.cpp \
