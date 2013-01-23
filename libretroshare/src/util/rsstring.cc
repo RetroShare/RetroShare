@@ -233,7 +233,7 @@ int rs_sprintf_args(std::string &str, const char *fmt, va_list ap)
 {
 	char *buffer = NULL;
 
-	int retval = vasprintf(&buffer, fmt, (va_list) ap);
+	int retval = vasprintf(&buffer, fmt, ap);
 
 	if (retval >= 0) {
 		if (buffer) {
@@ -264,7 +264,7 @@ int rs_sprintf_append_args(std::string &str, const char *fmt, va_list ap)
 {
 	char *buffer = NULL;
 
-	int retval = vasprintf(&buffer, fmt, (va_list) ap);
+	int retval = vasprintf(&buffer, fmt, ap);
 
 	if (retval >= 0) {
 		if (buffer) {
