@@ -303,6 +303,9 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
     QObject::connect(ui.downloadList->selectionModel(),SIGNAL(selectionChanged (const QItemSelection&, const QItemSelection&)),this,SLOT(showFileDetails())) ;
 
+	 ftiw->toggleDisplayMode(ui.diskMap_CB->isChecked()) ;
+    connect(ui.diskMap_CB, SIGNAL(toggled(bool)), ftiw, SLOT( toggleDisplayMode(bool)));
+
 	 ui.tabWidget->addTab( new TurtleRouterStatistics(), tr("Router Statistics")) ;
 
 	 ui.tabWidget->addTab( new TurtleRouterDialog(), tr("Router Requests")) ;

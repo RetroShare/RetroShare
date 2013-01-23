@@ -44,6 +44,7 @@ FileTransferInfoWidget::FileTransferInfoWidget(QWidget * /*parent*/, Qt::WFlags 
 	QRect TaskGraphRect = geometry();
 	maxWidth = TaskGraphRect.width();
 	maxHeight = 0;
+	draw_file_map = false ;
 	pixmap = QPixmap(size());
 	pixmap.fill(this, 0, 0);
 
@@ -62,6 +63,12 @@ void FileTransferInfoWidget::resizeEvent(QResizeEvent */*event*/)
 
     updateDisplay();
 }
+void FileTransferInfoWidget::toggleDisplayMode(bool b)
+{
+	draw_file_map = b ;
+	updateDisplay();
+}
+
 void FileTransferInfoWidget::updateDisplay()
 {
         //std::cout << "In TaskGraphPainterWidget::updateDisplay()" << std::endl ;
@@ -110,7 +117,7 @@ void FileTransferInfoWidget::paintEvent(QPaintEvent */*event*/)
 void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info,QPainter *painter)
 {
     x=0;
-    y=0;
+    y=5;
     int blocks = info.chunks.size() ;
 	 uint64_t fileSize = info.file_size ;
 	 uint32_t blockSize = info.chunk_size ;
@@ -123,6 +130,8 @@ void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info
 	 painter->drawText(0,y,tr("Chunk map") + ":") ;
 	 y += block_sep ;
 
+	 QPixmap variablePixmap(downloadedPixmap) ;
+
 	 // draw the chunk map
 	 //
     for (int i=0;i<blocks;i++)
@@ -134,6 +143,16 @@ void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info
         }
         QRectF target(x, y, 12.0, 12.0);
 
+		  if(draw_file_map)
+		  {
+			  if(i<info.chunks_on_disk.size())
+				  variablePixmap.fill(QColor::fromHsv(int(300*info.chunks_on_disk[i]/(float)blocks),200,255)) ;
+			  else
+				  variablePixmap.fill(QColor::fromHsv(int(300*i/(float)blocks),0,128)) ;
+
+			  painter->drawPixmap(target,variablePixmap,source) ;
+		  }
+		  else
 		  switch(info.chunks[i])
 		  {
 			  case FileChunksInfo::CHUNK_DONE: 			painter->drawPixmap(target, downloadedPixmap, source);

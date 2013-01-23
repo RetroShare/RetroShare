@@ -39,6 +39,10 @@ public:
 	 void setFileHash(const std::string& hash) { _file_hash = hash ; }
 
 	 virtual void updateDisplay() ;	// update from RsAutoUpdateWidget
+
+public slots:
+	void toggleDisplayMode(bool) ;
+
 protected:
 	 void draw(const FileInfo& nfo,const FileChunksInfo& details,QPainter *painter) ;
 
@@ -56,6 +60,7 @@ private:
     QPixmap downloadingPixmap;
     QPixmap notDownloadPixmap;
     QPixmap checkingPixmap;
+	 bool draw_file_map ;
 
 	 std::string _file_hash ;
 };

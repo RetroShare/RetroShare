@@ -164,10 +164,10 @@ sshserver {
 	}
 
 	INCLUDEPATH += $$LIBSSH_DIR/include/
-	#LIBS += $$LIBSSH_DIR/build/src/libssh.a
-	#LIBS += $$LIBSSH_DIR/build/src/threads/libssh_threads.a
-	LIBS += -lssh
-	LIBS += -lssh_threads
+	LIBS += $$LIBSSH_DIR/build/src/libssh.a
+	LIBS += $$LIBSSH_DIR/build/src/threads/libssh_threads.a
+	#LIBS += -lssh
+	#LIBS += -lssh_threads
 
 	HEADERS += ssh/rssshd.h
 	SOURCES += ssh/rssshd.cc

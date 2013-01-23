@@ -166,7 +166,7 @@
        </font>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="uploadsTab">
        <attribute name="icon">
@@ -228,8 +228,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>100</width>
-             <height>30</height>
+             <width>598</width>
+             <height>91</height>
             </rect>
            </property>
           </widget>
@@ -282,6 +282,19 @@
             </item>
            </layout>
           </item>
+          <item row="0" column="4">
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>368</width>
+              <height>13</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
           <item row="0" column="3">
            <layout class="QGridLayout">
             <item row="0" column="0">
@@ -303,19 +316,6 @@
             </item>
            </layout>
           </item>
-          <item row="0" column="4">
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>368</width>
-              <height>13</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
           <item row="0" column="2">
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
@@ -336,6 +336,13 @@
              </widget>
             </item>
            </layout>
+          </item>
+          <item row="0" column="5">
+           <widget class="QCheckBox" name="diskMap_CB">
+            <property name="text">
+             <string>Show disk map</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
