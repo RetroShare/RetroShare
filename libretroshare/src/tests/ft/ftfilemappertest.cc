@@ -78,6 +78,7 @@ int main(int argc,char *argv[])
 		CHECK(fmapper.storeData( (unsigned char *)membuf+chunk.offset,chunk.size,chunk.offset,fout) ) ;
 		chunk_map.dataReceived(chunk.id) ;
 
+		fmapper.consistencyTest() ;
 		fmapper.print() ;
 
 		delete chunk.ref_cnt ;

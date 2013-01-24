@@ -86,6 +86,7 @@ class ftFileMapper
 
 		// debug
 		void print() const ;
+		bool consistencyTest() const ;
 
 		virtual void forceCheckPartialFile() {}
 	private:

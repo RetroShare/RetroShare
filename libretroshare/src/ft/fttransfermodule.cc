@@ -26,6 +26,7 @@
 /******
  * #define FT_DEBUG 1
  *****/
+#define FT_DEBUG 1
 
 #define USE_NEW_CHUNK_CHECKING_CODE
 
@@ -618,6 +619,10 @@ bool ftTransferModule::checkFile()
 #endif
 			return true ;
 		}
+#ifdef FT_DEBUG
+		else
+			std::cerr << "ftTransferModule::checkFile(): hash finished. File verification failed. Computed hash: " << check_hash << ", expected: " << mHash  << std::endl ;
+#endif
 	}
 
 

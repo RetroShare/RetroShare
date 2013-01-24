@@ -21,6 +21,10 @@ ftFileMapper::ftFileMapper(uint64_t file_size,uint32_t chunk_size)
 	_mapped_chunks.clear() ;
 	_mapped_chunks.resize(nb_chunks,-1) ;
 	_data_chunk_ids.clear() ;
+	
+#ifdef DEBUG_FILEMAPPER
+	consistencyTest();
+#endif
 }
 
 bool ftFileMapper::computeStorageOffset(uint64_t offset,uint64_t& storage_offset) const
@@ -162,7 +166,11 @@ bool ftFileMapper::storeData(void *data, uint32_t data_size, uint64_t offset,FIL
 			_data_chunk_ids[empty_chunk] = cid ;
 		}
 
-		real_offset = _mapped_chunks[cid]*_chunk_size + (offset % (uint64_t)_chunk_size) ;
+#ifdef DEBUG_FILEMAPPER
+		consistencyTest();
+#endif
+
+		real_offset = _mapped_chunks[cid]*(uint64_t)_chunk_size + (offset % (uint64_t)_chunk_size) ;
 	}
 #ifdef DEBUG_FILEMAPPER
 	std::cerr << "(DD)   real offset = " << real_offset << ", data size=" << data_size << std::endl;
@@ -203,8 +211,13 @@ uint32_t ftFileMapper::allocateNewEmptyChunk(FILE *fd_out)
 		std::cerr << "(DD)   first free chunk " << first_free_chunk << " is actually mapped to " <<  old_chunk << ". Moving it." << std::endl;
 #endif
 
-		moveChunk(_mapped_chunks[first_free_chunk],first_free_chunk,fd_out) ;
+		moveChunk(old_chunk,first_free_chunk,fd_out) ;
 		_mapped_chunks[first_free_chunk] = first_free_chunk ;
+
+		// After that, the consistency is broken, because 
+		// 	_data_chunk_ids[old_chunk] = _data_chunk_ids[first_free_chunk] = first_free_chunk
+		// However, we cannot give a sensible value to _data_chunk_ids[old_chunk] because it's going to 
+		// be attributed by the client.
 
 #ifdef DEBUG_FILEMAPPER
 		std::cerr << "(DD)   Returning " << old_chunk << std::endl;
@@ -294,6 +307,10 @@ void ftFileMapper::initMappedChunks(uint64_t file_size,const CompressedChunkMap&
 	std::cerr << "(DD) ftFileMapper::initMappedChunks(): printing: " << std::endl;
 
 	print() ;
+
+#ifdef DEBUG_FILEMAPPER
+	consistencyTest();
+#endif
 }
 
 bool ftFileMapper::moveChunk(uint32_t to_move, uint32_t new_place,FILE *fd_out)
@@ -308,7 +325,7 @@ bool ftFileMapper::moveChunk(uint32_t to_move, uint32_t new_place,FILE *fd_out)
 #endif
 
 	uint32_t new_place_size = (new_place == _mapped_chunks.size()-1)?(_file_size - (_mapped_chunks.size()-1)*_chunk_size) : _chunk_size ;
-	uint32_t   to_move_size = (new_place == _mapped_chunks.size()-1)?(_file_size - (_mapped_chunks.size()-1)*_chunk_size) : _chunk_size ;
+	uint32_t   to_move_size = ( to_move  == _mapped_chunks.size()-1)?(_file_size - (_mapped_chunks.size()-1)*_chunk_size) : _chunk_size ;
 
 	uint32_t size = std::min(new_place_size,to_move_size) ;
 	void *buff = malloc(size) ;
@@ -318,7 +335,7 @@ bool ftFileMapper::moveChunk(uint32_t to_move, uint32_t new_place,FILE *fd_out)
 		std::cerr << "(EE) ftFileMapper::moveChunk(): cannot open temporary buffer. Out of memory??" << std::endl;
 		return false ;
 	}
-	if(fseeko64(fd_out, to_move*_chunk_size, SEEK_SET) != 0)
+	if(fseeko64(fd_out, to_move*(uint64_t)_chunk_size, SEEK_SET) != 0)
 	{
 		std::cerr << "(EE) ftFileMapper::moveChunk(): cannot fseek file at position " << to_move*_chunk_size << std::endl;
 		return false ;
@@ -335,7 +352,7 @@ bool ftFileMapper::moveChunk(uint32_t to_move, uint32_t new_place,FILE *fd_out)
 		return false ;
 	}
 
-	if(fseeko64(fd_out, new_place*_chunk_size, SEEK_SET)!= 0)
+	if(fseeko64(fd_out, new_place*(uint64_t)_chunk_size, SEEK_SET)!= 0)
 	{
 		std::cerr << "(EE) ftFileMapper::moveChunk(): cannot fseek file at position " << new_place*_chunk_size << std::endl;
 		return false ;
@@ -368,4 +385,23 @@ void ftFileMapper::print() const
 
 }
 
+bool ftFileMapper::consistencyTest() const
+{
+	for(uint32_t i=0;i<_data_chunk_ids.size();++i)
+		if(!(_mapped_chunks[_data_chunk_ids[i]] == i))
+		{
+			std::cerr << "(EE) Consistency error in file mapper: _mapped_chunks[_data_chunk_ids[i]] != i, for i=" << i << std::endl;
+			print() ;
+			assert(false) ;
+		}
+
+	for(uint32_t i=0;i<_mapped_chunks.size();++i)
+		if(!( (_mapped_chunks[i] == -1) || (_mapped_chunks[i] < _data_chunk_ids.size() && _data_chunk_ids[_mapped_chunks[i]] == i))) 
+		{
+			std::cerr << "(EE) Consistency error in file mapper: _mapped_chunks[i] != -1, and _mapped_chunks[i]=" << _mapped_chunks[i] << ". _data_chunk_ids.size()=" << _data_chunk_ids.size() << ", and _data_chunk_ids[_mapped_chunks[i]] == " << _data_chunk_ids[_mapped_chunks[i]] << ", for i=" << i << std::endl;
+			print() ;
+			assert(false) ;
+		}
+	return true ;
+}
 

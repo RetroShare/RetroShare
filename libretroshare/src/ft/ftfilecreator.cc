@@ -613,8 +613,8 @@ void ftFileCreator::forceCheck()
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 
-	std::cerr << "WARNING: forceCheck() for mapped files is not yet implemented." << std::endl;
-	return ;
+//	std::cerr << "WARNING: forceCheck() for mapped files is not yet implemented." << std::endl;
+//	return ;
 
 	forceCheckPartialFile() ;	// calls ftFileMapper, to ask for re-hashing the partial file
 	chunkMap.forceCheck(); 		// sets all chunk to checking mode.
