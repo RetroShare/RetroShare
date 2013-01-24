@@ -162,6 +162,7 @@ bool GxsSecurity::validateNxsMsg(RsNxsMsg& msg, RsTlvKeySignature& sign, RsTlvSe
 
             msgMeta.mOrigMsgId = origMsgId;
             msgMeta.mMsgId = msgId;
+            msgMeta.signSet = signSet;
 
             if (signOk == 1)
             {

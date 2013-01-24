@@ -24,6 +24,8 @@ PhotoItem::PhotoItem(PhotoShareItemHolder *holder, const RsPhotoPhoto &photo, QW
     ui->lineEdit_PhotoGrapher->setVisible(false);
 
     setUp();
+
+    ui->idChooser->setVisible(false);
 }
 
 PhotoItem::PhotoItem(PhotoShareItemHolder *holder, const QString& path, QWidget *parent) :
@@ -42,6 +44,8 @@ PhotoItem::PhotoItem(PhotoShareItemHolder *holder, const QString& path, QWidget 
 
     connect(ui->lineEdit_Title, SIGNAL(editingFinished()), this, SLOT(setTitle()));
     connect(ui->lineEdit_PhotoGrapher, SIGNAL(editingFinished()), this, SLOT(setPhotoGrapher()));
+
+    ui->idChooser->loadIds(0, "");
 
 }
 
@@ -101,6 +105,15 @@ void PhotoItem::setPhotoGrapher()
 
 const RsPhotoPhoto& PhotoItem::getPhotoDetails()
 {
+
+
+    if(ui->idChooser->isVisible())
+    {
+        RsGxsId id;
+        ui->idChooser->getChosenId(id);
+        mPhotoDetails.mMeta.mAuthorId = id;
+    }
+
     return mPhotoDetails;
 }
 

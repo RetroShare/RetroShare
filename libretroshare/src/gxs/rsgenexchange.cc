@@ -101,20 +101,20 @@ void RsGenExchange::tick()
 
 	publishMsgs();
 
-        processGrpMetaChanges();
+	processGrpMetaChanges();
 
-        processMsgMetaChanges();
+	processMsgMetaChanges();
 
-        processRecvdData();
+	processRecvdData();
 
-        if(!mNotifications.empty())
-        {
-            notifyChanges(mNotifications);
-            mNotifications.clear();
-        }
+	if(!mNotifications.empty())
+	{
+		notifyChanges(mNotifications);
+		mNotifications.clear();
+	}
 
-        // implemented service tick function
-        service_tick();
+	// implemented service tick function
+	service_tick();
 }
 
 bool RsGenExchange::acknowledgeTokenMsg(const uint32_t& token,
@@ -177,7 +177,7 @@ void RsGenExchange::generateGroupKeys(RsTlvSecurityKeySet& keySet, bool genPubli
     adminKey.keyId = adminKey.keyId + "_public";
 
     adminKey.startTS = time(NULL);
-    adminKey.endTS = 0; /* no end */
+    adminKey.endTS = adminKey.startTS + 60 * 60 * 24 * 365 * 5; /* approx 5 years */
 
     privAdminKey.startTS = adminKey.startTS;
     privAdminKey.endTS = 0; /* no end */
@@ -434,7 +434,7 @@ bool RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBina
 
                 // poll immediately but, don't spend more than a second polling
                 while( (mGixs->getPrivateKey(msgMeta.mAuthorId, authorKey) == -1) &&
-                       ((now + 1) >> time(NULL))
+                       ((now + 5) > time(NULL))
                     )
                 {
     #ifndef WINDOWS_SYS
@@ -632,7 +632,6 @@ bool RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSec
         {
             valid = false;
         }
-
     }
 
 
@@ -664,7 +663,7 @@ bool RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSec
     #endif
                 }
 
-                RsTlvKeySignature sign = metaData.signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_PUBLISH];
+                RsTlvKeySignature sign = metaData.signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_IDENTITY];
                 valid &= GxsSecurity::validateNxsMsg(*msg, sign, authorKey);
             }else
             {

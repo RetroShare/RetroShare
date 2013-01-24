@@ -1106,9 +1106,9 @@ uint32_t RsNxsSerialiser::sizeNxsExtended(RsNxsExtended *item){
     return 0;
 }
 
-
+int RsNxsGrp::refcount = 0;
 /** print and clear functions **/
-
+int RsNxsMsg::refcount = 0;
 void RsNxsMsg::clear()
 {
 

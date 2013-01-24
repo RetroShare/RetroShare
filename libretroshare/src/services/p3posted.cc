@@ -68,18 +68,18 @@ void p3Posted::service_tick()
     generatePosts();
     generateVotesAndComments();
 
-    time_t now = time(NULL);
-
-    if((now > (time_t) (VOTE_UPDATE_PERIOD + mLastUpdate)) &&
-       (mUpdatePhase == UPDATE_PHASE_GRP_REQUEST))
-    {
-        mPostUpdate = true;
-        mLastUpdate = time(NULL);
-    }
-
-    updateVotes();
-
-    processRankings();
+//    time_t now = time(NULL);
+//
+//    if((now > (time_t) (VOTE_UPDATE_PERIOD + mLastUpdate)) &&
+//       (mUpdatePhase == UPDATE_PHASE_GRP_REQUEST))
+//    {
+//        mPostUpdate = true;
+//        mLastUpdate = time(NULL);
+//    }
+//
+//    updateVotes();
+//
+//    processRankings();
 }
 
 void p3Posted::generateVotesAndComments()
@@ -505,7 +505,6 @@ bool p3Posted::requestPostRankings(uint32_t &token, const RankType &rType, const
     gp->pubToken = token;
     gp->rankingResult.rType = gp->rType;
     gp->rankingResult.grpId = gp->grpId;
-    gp->grpId = gp->grpId;
 
     mPendingPostRanks.push_back(gp);
 
@@ -768,6 +767,7 @@ bool p3Posted::completePostedPostCalc(GxsPostedPostRanking *gpp)
                 break;
             default:
                 std::cerr << "Unknown ranking tpye: " << gpp->rType << std::endl;
+                break;
         }
         return true;
     }else

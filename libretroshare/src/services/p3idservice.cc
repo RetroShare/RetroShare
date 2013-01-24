@@ -691,21 +691,24 @@ bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 
         for (kit = keySet.keys.begin(); kit != keySet.keys.end(); kit++)
         {
-		if (kit->second.keyFlags | RSTLV_KEY_DISTRIB_ADMIN)
+                if (kit->second.keyFlags & RSTLV_KEY_DISTRIB_ADMIN)
 		{
 			std::cerr << "p3IdService::cache_store() Found Admin Key";
 			std::cerr << std::endl;
 
 			/* save full key - if we have it */
-			if (kit->second.keyFlags | RSTLV_KEY_TYPE_FULL)
+                        if (kit->second.keyFlags & RSTLV_KEY_TYPE_FULL)
 			{
 				fullkey = kit->second;
 				full_key_ok = true;
 			}
 
-			/* cache public key always */
-			pubkey = kit->second;
-			pub_key_ok = true;
+                        if (kit->second.keyFlags & RSTLV_KEY_TYPE_PUBLIC_ONLY)
+                        {
+                            /* cache public key always */
+                            pubkey = kit->second;
+                            pub_key_ok = true;
+                        }
 		}
 	}
 
