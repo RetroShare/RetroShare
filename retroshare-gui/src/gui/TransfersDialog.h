@@ -36,6 +36,7 @@ class QStandardItemModel;
 class QStandardItem;
 class DetailsDialog;
 class FileProgressInfo;
+class SearchDialog;
 
 class TransfersDialog : public RsAutoUpdatePage
 {
@@ -53,6 +54,8 @@ public:
     virtual void updateDisplay() ;				// derived from RsAutoUpdateWidget
 
     static DetailsDialog *detailsdlg;
+
+	 SearchDialog *searchDialog ;
 
 public slots:
     void insertTransfers();

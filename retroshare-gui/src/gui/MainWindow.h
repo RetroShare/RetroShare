@@ -119,7 +119,7 @@ public:
 
     NetworkDialog     *networkDialog;
     FriendsDialog     *friendsDialog;
-    SearchDialog      *searchDialog;
+//    SearchDialog      *searchDialog;
     TransfersDialog   *transfersDialog;
     MessagesDialog    *messagesDialog;
     SharedFilesDialog *sharedfilesDialog;

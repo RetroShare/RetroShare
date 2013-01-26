@@ -120,7 +120,6 @@
 /* Images for toolbar icons */
 #define IMAGE_NETWORK2          ":/images/rs1.png"
 #define IMAGE_PEERS         	":/images/groupchat.png"
-#define IMAGE_SEARCH    		":/images/filefind.png"
 #define IMAGE_TRANSFERS      	":/images/ktorrent32.png"
 #define IMAGE_FILES   	        ":/images/fileshare32.png"
 #define IMAGE_CHANNELS       	":/images/channels.png"
@@ -245,8 +244,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
                        action = createPageAction(QIcon(IMAGE_PEERS), tr("Friends"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(friendsDialog, action));
 
-    ui->stackPages->add(searchDialog = new SearchDialog(ui->stackPages),
-                       createPageAction(QIcon(IMAGE_SEARCH), tr("Search"), grp));
+//    ui->stackPages->add(searchDialog = new SearchDialog(ui->stackPages),
+//                       createPageAction(QIcon(IMAGE_SEARCH), tr("Search"), grp));
 
     ui->stackPages->add(transfersDialog = new TransfersDialog(ui->stackPages),
                       action = createPageAction(QIcon(IMAGE_TRANSFERS), tr("Transfers"), grp));
@@ -791,9 +790,9 @@ void SetForegroundWindowInternal(HWND hWnd)
     case Friends:
         Page = _instance->friendsDialog;
         break;
-    case Search:
-        Page = _instance->searchDialog;
-        break;
+//    case Search:
+//        Page = _instance->searchDialog;
+//        break;
     case Transfers:
         Page = _instance->transfersDialog;
         break;
@@ -840,9 +839,9 @@ void SetForegroundWindowInternal(HWND hWnd)
    if (page == _instance->friendsDialog) {
        return Friends;
    }
-   if (page == _instance->searchDialog) {
-       return Search;
-   }
+//   if (page == _instance->searchDialog) {
+//       return Search;
+//   }
    if (page == _instance->transfersDialog) {
        return Transfers;
    }
@@ -884,8 +883,8 @@ void SetForegroundWindowInternal(HWND hWnd)
        return _instance->networkDialog;
    case Friends:
        return _instance->friendsDialog;
-   case Search:
-       return _instance->searchDialog;
+//   case Search:
+//       return _instance->searchDialog;
    case Transfers:
        return _instance->transfersDialog;
    case SharedDirectories:
