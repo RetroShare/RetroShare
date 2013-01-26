@@ -21,6 +21,7 @@
 
 #include "ServerPage.h"
 #include <gui/TurtleRouterDialog.h>
+#include <gui/TurtleRouterStatistics.h>
 
 #include "rshare.h"
 #include "rsharesettings.h"
@@ -69,6 +70,11 @@ ServerPage::ServerPage(QWidget * parent, Qt::WFlags flags)
 
 	for(std::list<std::string>::const_iterator it(ip_servers.begin());it!=ip_servers.end();++it)
 		ui.IPServersLV->addItem(QString::fromStdString(*it)) ;
+
+	TurtleRouterStatistics *trs = new TurtleRouterStatistics ;
+	trs->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding)) ;
+	ui.tabWidget->widget(2)->layout()->addWidget(trs) ;
+	ui.tabWidget->widget(2)->layout()->update() ;
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
