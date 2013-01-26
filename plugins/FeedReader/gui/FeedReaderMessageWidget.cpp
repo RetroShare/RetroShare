@@ -224,8 +224,10 @@ void FeedReaderMessageWidget::setFeedId(const std::string &feedId)
 		ui->msgTreeWidget->setPlaceholderText("");
 	} else {
 		if (mFeedInfo.flag.forum) {
+			ui->msgReadAllButton->setEnabled(false);
 			ui->msgTreeWidget->setPlaceholderText(tr("The messages will be added to the forum"));
 		} else {
+			ui->msgReadAllButton->setEnabled(true);
 			ui->msgTreeWidget->setPlaceholderText("");
 		}
 	}
@@ -310,7 +312,7 @@ void FeedReaderMessageWidget::msgTreeCustomPopupMenu(QPoint /*point*/)
 
 	contextMnu.addSeparator();
 
-	action = contextMnu.addAction(QIcon(""), tr("Copy link"), this, SLOT(copyLinskMsg()));
+	action = contextMnu.addAction(QIcon(""), tr("Copy link"), this, SLOT(copySelectedLinksMsg()));
 	action->setEnabled(!selectedItems.empty());
 
 	action = contextMnu.addAction(QIcon(""), tr("Remove"), this, SLOT(removeMsg()));
@@ -727,7 +729,7 @@ void FeedReaderMessageWidget::markAllAsReadMsg()
 	setMsgAsReadUnread(items, true);
 }
 
-void FeedReaderMessageWidget::copyLinksMsg()
+void FeedReaderMessageWidget::copySelectedLinksMsg()
 {
 	QString links;
 

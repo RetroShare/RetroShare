@@ -47,7 +47,7 @@ private slots:
 	void markAsReadMsg();
 	void markAsUnreadMsg();
 	void markAllAsReadMsg();
-	void copyLinksMsg();
+	void copySelectedLinksMsg();
 	void removeMsg();
 	void processFeed();
 	void openLinkMsg();
