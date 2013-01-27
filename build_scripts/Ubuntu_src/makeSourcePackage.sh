@@ -70,6 +70,13 @@ cd $workdir/src/plugins/LinksCloud
 svn co -r$svn $svnpath/trunk/plugins/LinksCloud . 2> /dev/null
 cd ../../../..
 
+# FeedReader plugin
+echo Checking out latest snapshot in FeedReader plugin
+mkdir -p $workdir/src/plugins/FeedReader
+cd $workdir/src/plugins/FeedReader
+svn co -r$svn $svnpath/trunk/plugins/FeedReader . 2> /dev/null
+cd ../../../..
+
 # VOIP plugin
 echo Checking out latest snapshot in VOIP plugin
 mkdir -p $workdir/src/plugins/VOIP
@@ -115,6 +122,7 @@ echo Preparing package
 ./cleanProFile.sh $workdir/src/retroshare-nogui/retroshare-nogui.pro
 ./cleanProFile_voip.sh $workdir/src/plugins/VOIP/VOIP.pro
 ./cleanProFile_linkscloud.sh $workdir/src/plugins/LinksCloud/LinksCloud.pro
+./cleanProFile_feedreader.sh $workdir/src/plugins/FeedReader/FeedReader.pro
 
 echo "DESTDIR = ../../libretroshare/src/lib/" > /tmp/toto75299
 cat $workdir/src/libretroshare/libretroshare.pro /tmp/toto75299 > /tmp/toto752992
