@@ -2,25 +2,13 @@
 
 rm BaseRetroShareDirs.tgz 
 
-rm -rf retroshare-0.5/libbitdht/
-rm -rf retroshare-0.5/libretroshare/
-
-rm -rf retroshare-0.5/src/libbitdht/*
-rm -rf retroshare-0.5/src/libbitdht/.svn/
-rm -rf retroshare-0.5/src/openpgpsdk/*
-rm -rf retroshare-0.5/src/openpgpsdk/.svn/
-rm -rf retroshare-0.5/src/libretroshare/*
-rm -rf retroshare-0.5/src/libretroshare/.svn/
-rm -rf retroshare-0.5/src/retroshare-gui/*
-rm -rf retroshare-0.5/src/retroshare-gui/.svn/
-rm -rf retroshare-0.5/src/retroshare-nogui/*
-rm -rf retroshare-0.5/src/retroshare-nogui/.svn/
-rm -rf retroshare-0.5/src/plugins/VOIP/*
-rm -rf retroshare-0.5/src/plugins/VOIP/.svn/
-rm -rf retroshare-0.5/src/plugins/LinksCloud/*
-rm -rf retroshare-0.5/src/plugins/LinksCloud/.svn/
+mv retroshare-0.5/src/data retroshare-0.5/
+rm -rf retroshare-0.5/libssh-0.5.2
+rm -rf retroshare-0.5/src/*
+mv retroshare-0.5/data retroshare-0.5/src/
 
 find retroshare-0.5 -name "*~" -exec \rm {} \;
+find retroshare-0.5 -name ".svn" -exec \rm -rf {} \;
 
 tar zcvf BaseRetroShareDirs.tgz retroshare-0.5/
 
