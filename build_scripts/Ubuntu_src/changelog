@@ -1,6 +1,74 @@
 retroshare (0.5.4-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
   * Improvements
+    - GUI
+      * Added new dialog to set service permissions for friends.
+      * Enabled embedded images in private chat and messages (only for QT version 4.7.0 and higher)
+      * added tooltips to GroupFlagsWidget when buttons are unchecked (Patch from Anonym)
+      * when an unknow user attempt to connect, show the name in the security item (Patch from Anonym)
+      * Load new stylesheets for locale depended things. Loading order: qss.default (internal), qss.<locale> (internal e.g. qss.de_DE)
+          stylesheet.qss (internal or external), stylesheet_<locale>.lqss (parallel to stylesheet)
+      * Added api for news feeds to the plugin interface. Added news feeds to the FeedReader plugin.
+      * Removed toaster for muted participant of a chat lobby.
+      * Removed the policy TabFocus from some gui elements.
+      * Made cert parsing errors translatable
+      * added turkish translation
+
+    - Packaging
+      * packaging of NewsReader plugin and retroshare-nogui
+      * added patch from bNK to make glib include dir detected on all linux systems. 
+        Removed warnings about gpgme and gpg-error , which have no reason to stay now.
+
+    - FeedReader:
+      * Added error handling to xml functions
+      * Added xslt transformation
+      * Added retransform of existing messages
+      * Redesigned preview dialog
+      * Enabled embed images for forum feeds
+      * Changed config format, switching back to an older version results in a loss of all data of the FeedReader
+      * Fixed memory leak in xpath processing
+      * Stop long loops when closing the preview dialog or shutdown
+      * Added drag and drop to xpath lists in preview dialog
+      * Fixed save of xpaths lists
+      * Recalculate message count of the user notify when a feed with new items is deleted.
+      * Set deleted message to read and !new.
+      * Added test feed item in notify settings.
+      * Fixed crash when removing a feed displayed in the main tab.
+      * Fixed reading author of ATOM feeds.
+
+    - libretroshare
+      * fixed inconsistency in parameter naming, causing error_string to be mixed up with gpg id (Not a bug).
+      * removed unimplemented entry loadCertificateFromFile()
+      * removed #ifdef USE_NEW_CHUNK_CHECKING_CODE (enabled by default). Disable assume_availablility to put chunks or 
+        not in checking mode. This was inconsistent. As a side effect, cache files of size > 1MB get chunk-checked as well, which is good
+      * fixed tests: compilation, running, added new util functions, etc. Updated test results.
+      * Added little upnp utility / test.
+      * added checksum for new certificate format. Will be enabled in 0.6.
+      * Fixed up bootstrap singleshot search function. Now returns parameters. Not functioning 100% correctly yet - due 
+        to libbitdht behaviour (TO FIX)
+      * merged GXS branch into trunk. GXS Services are disabled by default.
+
+    - retroshare-nogui
+      * made port non-optional for -S <port> 
+      * Added SystemExternalAccess Function to RPC. This provides ExternalPort + DHTKey to Client. To be 
+        used to find and connect - even if Dynamic IP address changes :)
+      * fixed compilation
+
+    - GXS
+      * lots of improvements to GXSForums. Not released yet.
+      * added pegmarkdown langage to Wiki
+
+    - Other
+      * added list of non backward compatible changes in README.txt, so that we can track them
+
+  * Bugs
+    - fixed the wrong notification of unexpected characters in management of RetroShare Links
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Mon, 28 Jan 2013 16:30:00 +0100
+
+retroshare (0.5.4-0.5995~precise) precise; urgency=low
+
+  * Improvements
       - DHT
          * disable bitdht printStatus
          * increased expected dht startup period, as message rate has been dropped.
