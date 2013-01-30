@@ -42,8 +42,6 @@
 #include "DLListDelegate.h"
 #include "ULListDelegate.h"
 #include "FileTransferInfoWidget.h"
-#include "TurtleRouterDialog.h"
-//#include "TurtleRouterStatistics.h"
 #include "SearchDialog.h"
 #include "xprogressbar.h"
 #include "settings/rsharesettings.h"
@@ -306,9 +304,9 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     QObject::connect(ui.downloadList->selectionModel(),SIGNAL(selectionChanged (const QItemSelection&, const QItemSelection&)),this,SLOT(showFileDetails())) ;
 
 	 ui.tabWidget->insertTab(0,searchDialog = new SearchDialog(), QIcon(IMAGE_SEARCH), tr("Search")) ;
-	 //ui.tabWidget->addTab( new TurtleRouterStatistics(), tr("Router Statistics")) ;
 
-	 ui.tabWidget->addTab( new TurtleRouterDialog(), tr("Router Requests")) ;
+	 //ui.tabWidget->addTab( new TurtleRouterStatistics(), tr("Router Statistics")) ;
+	 //ui.tabWidget->addTab( new TurtleRouterDialog(), tr("Router Requests")) ;
 
 	 for(int i=0;i<rsPlugins->nbPlugins();++i)
 		 if(rsPlugins->plugin(i) != NULL && rsPlugins->plugin(i)->qt_transfers_tab() != NULL)

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>573</width>
+    <width>632</width>
     <height>683</height>
    </rect>
   </property>
@@ -112,7 +112,7 @@ peers still need to trust each other to allow connection. </string>
    <item row="1" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -374,6 +374,23 @@ behind a firewall or a VPN.</string>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
+          <widget class="QCheckBox" name="_turtle_enabled_CB">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Unchecking this disables all anonymous routing activity, except cache cleaning. Incoming tunnel requests are discarded, and no tunnel requests are sent to anyone.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Enabled</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_routing_info_PB">
+           <property name="text">
+            <string>Show routing info</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QLabel" name="label_6">
            <property name="text">
             <string>Max. tunnel req. forwarded per second:</string>
@@ -405,30 +422,7 @@ The default value is 20.</string>
            </property>
           </widget>
          </item>
-         <item>
-          <widget class="QCheckBox" name="_turtle_enabled_CB">
-           <property name="toolTip">
-            <string>Unchecking this disables all anonymous routing activity, except cache cleaning. Incoming tunnel requests are discarded, and no tunnel requests are sent to anyone.</string>
-           </property>
-           <property name="text">
-            <string>Enable anonymous data routing</string>
-           </property>
-          </widget>
-         </item>
         </layout>
-       </item>
-       <item>
-        <spacer name="verticalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
        </item>
       </layout>
      </widget>

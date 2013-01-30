@@ -25,6 +25,8 @@
 #include <retroshare-gui/configpage.h>
 #include "ui_ServerPage.h"
 
+class TurtleRouterDialog ;
+
 class ServerPage: public ConfigPage
 {
     Q_OBJECT
@@ -47,6 +49,7 @@ public slots:
 private slots:
     void saveAddresses();
     void toggleUPnP();
+    void showRoutingInfo();
     void toggleIpDetermination(bool) ;
     void toggleTunnelConnection(bool) ;
 	 void updateMaxTRUpRate(int) ;
@@ -54,6 +57,8 @@ private slots:
 
 private:
     Ui::ServerPage ui;
+
+	 TurtleRouterDialog *_routing_info_page ;
 };
 
 #endif // !SERVERPAGE_H

@@ -45,10 +45,13 @@ ServerPage::ServerPage(QWidget * parent, Qt::WFlags flags)
   connect( ui.allowTunnelConnectionCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleTunnelConnection(bool) ) );
   connect( ui._max_tr_up_per_sec_SB, SIGNAL( valueChanged( int ) ), this, SLOT( updateMaxTRUpRate(int) ) );
   connect( ui._turtle_enabled_CB, SIGNAL( toggled( bool ) ), this, SLOT( toggleTurtleRouting(bool) ) );
+  connect( ui._routing_info_PB, SIGNAL( clicked() ), this, SLOT( showRoutingInfo() ) );
 
    QTimer *timer = new QTimer(this);
    timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
    timer->start(1000);
+
+	_routing_info_page = NULL ;
 
 	//load();
 	updateStatus();
@@ -74,12 +77,25 @@ ServerPage::ServerPage(QWidget * parent, Qt::WFlags flags)
 	TurtleRouterStatistics *trs = new TurtleRouterStatistics ;
 	trs->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding)) ;
 	ui.tabWidget->widget(2)->layout()->addWidget(trs) ;
+	ui.tabWidget->widget(2)->layout()->setContentsMargins(0,5,0,0) ;
+
+	QSpacerItem *verticalSpacer = new QSpacerItem(0,0,QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+	ui.tabWidget->widget(2)->layout()->addItem(verticalSpacer) ;
 	ui.tabWidget->widget(2)->layout()->update() ;
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
 #endif
+}
+
+void ServerPage::showRoutingInfo()
+{
+	if(_routing_info_page == NULL)
+		_routing_info_page = new TurtleRouterDialog ;
+
+	_routing_info_page->show() ;
 }
 
 void ServerPage::updateMaxTRUpRate(int b)
@@ -198,12 +214,14 @@ void ServerPage::load()
 	ui.showDiscStatusBar->setChecked(Settings->getStatusBarFlags() & STATUSBAR_DISC);
 
 	ui._max_tr_up_per_sec_SB->setValue(rsTurtle->getMaxTRForwardRate()) ;
-
 	ui._turtle_enabled_CB->setChecked(rsTurtle->enabled()) ;
 }
 
 void ServerPage::toggleTurtleRouting(bool b)
 {
+	ui._max_tr_up_per_sec_SB->setEnabled(b) ;
+	ui._routing_info_PB->setEnabled(true) ;	// always enabled!
+
 	rsTurtle->setEnabled(b) ;
 }
 
