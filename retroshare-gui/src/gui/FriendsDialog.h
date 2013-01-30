@@ -115,7 +115,7 @@ private slots:
 
     void setCurrentFileName(const QString &fileName);
 
-    void newsFeedChanged(int count);
+    //void newsFeedChanged(int count);
 
     void createChatLobby();
     void recommendFriends();
@@ -141,9 +141,9 @@ private:
 
     QFont mCurrentFont; /* how the text will come out */
 
-    QWidget *newsFeed;
-    QColor newsFeedTabColor;
-    QString newsFeedText;
+    //QWidget *newsFeed;
+    //QColor newsFeedTabColor;
+    //QString newsFeedText;
     bool inChatCharFormatChanged;
 
     /** Qt Designer generated object */

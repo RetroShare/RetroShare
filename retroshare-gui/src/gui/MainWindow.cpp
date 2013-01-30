@@ -45,6 +45,7 @@
 #include "MessagesDialog.h"
 #include "SharedFilesDialog.h"
 #include "PluginsPage.h"
+#include "NewsFeed.h"
 #include "ShareManager.h"
 #include "NetworkView.h"
 #include "ForumsDialog.h"
@@ -236,6 +237,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /* Create the Main pages and actions */
     QActionGroup *grp = new QActionGroup(this);
     QAction *action;
+
+    ui->stackPages->add(newsFeed = new NewsFeed(ui->stackPages),
+                       createPageAction(QIcon(IMAGE_NEWSFEED), tr("News feed"), grp));
 
 //    ui->stackPages->add(networkDialog = new NetworkDialog(ui->stackPages),
 //                       createPageAction(QIcon(IMAGE_NETWORK2), tr("Network"), grp));

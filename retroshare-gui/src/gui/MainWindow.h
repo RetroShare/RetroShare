@@ -54,6 +54,7 @@ class PluginsPage;
 class ChannelFeed;
 class BandwidthGraph;
 class MainPage;
+class NewsFeed;
 class UserNotify;
 
 #ifdef RS_USE_LINKS
@@ -118,8 +119,10 @@ public:
     */
 
 //    NetworkDialog     *networkDialog;
-    FriendsDialog     *friendsDialog;
 //    SearchDialog      *searchDialog;
+
+    NewsFeed          *newsFeed;
+    FriendsDialog     *friendsDialog;
     TransfersDialog   *transfersDialog;
     MessagesDialog    *messagesDialog;
     SharedFilesDialog *sharedfilesDialog;

@@ -101,13 +101,13 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     ui.avatar->setOwnId();
 
     ui.tabWidget->setTabPosition(QTabWidget::North);
-    ui.tabWidget->addTab(networkView = new NetworkView(),QIcon(IMAGE_PEERS), tr("Local network"));
-    ui.tabWidget->addTab(networkDialog = new NetworkDialog(),QIcon(IMAGE_NETWORK2), tr("Known people"));
+    ui.tabWidget->addTab(networkView = new NetworkView(),QIcon(IMAGE_NETWORK2), tr("Local network"));
+    ui.tabWidget->addTab(networkDialog = new NetworkDialog(),QIcon(IMAGE_PEERS), tr("Known people"));
     //ui.tabWidget->addTab(new ChatLobbyWidget(), tr("Chat lobbies"));
     //ui.tabWidget->addTab(new ProfileWidget(), tr("Profile"));
-    newsFeed = new NewsFeed();
-    int newsFeedTabIndex = ui.tabWidget->insertTab(0, newsFeed, tr("News Feed"));
-    ui.tabWidget->setCurrentIndex(newsFeedTabIndex);
+    //newsFeed = new NewsFeed();
+    //int newsFeedTabIndex = ui.tabWidget->insertTab(0, newsFeed, tr("News Feed"));
+    //ui.tabWidget->setCurrentIndex(newsFeedTabIndex);
 
     ui.tabWidget->hideCloseButton(0);
     ui.tabWidget->hideCloseButton(1);
@@ -115,10 +115,10 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     ui.tabWidget->hideCloseButton(3);
 
     /* get the current text and text color of the tab bar */
-    newsFeedTabColor = ui.tabWidget->tabBar()->tabTextColor(newsFeedTabIndex);
-    newsFeedText = ui.tabWidget->tabBar()->tabText(newsFeedTabIndex);
+    //newsFeedTabColor = ui.tabWidget->tabBar()->tabTextColor(newsFeedTabIndex);
+    //newsFeedText = ui.tabWidget->tabBar()->tabText(newsFeedTabIndex);
 
-    connect(newsFeed, SIGNAL(newsFeedChanged(int)), this, SLOT(newsFeedChanged(int)));
+    //connect(newsFeed, SIGNAL(newsFeedChanged(int)), this, SLOT(newsFeedChanged(int)));
 
     connect(ui.Sendbtn, SIGNAL(clicked()), this, SLOT(sendMsg()));
     connect(ui.emoticonBtn, SIGNAL(clicked()), this, SLOT(smileyWidgetgroupchat()));
@@ -855,23 +855,23 @@ void FriendsDialog::on_actionAdd_Group_activated()
     createGrpDialog.exec();
 }
 
-void FriendsDialog::newsFeedChanged(int count)
-{
-    int newsFeedTabIndex = ui.tabWidget->indexOf(newsFeed);
-    if (newsFeedTabIndex < 0) {
-        return;
-    }
-
-    if (count) {
-        ui.tabWidget->tabBar()->setTabText(newsFeedTabIndex, QString("%1 (%2)").arg(newsFeedText).arg(count));
-        ui.tabWidget->tabBar()->setTabTextColor(newsFeedTabIndex, Qt::blue);
-        ui.tabWidget->tabBar()->setTabIcon(newsFeedTabIndex, QIcon(IMAGE_NEWSFEED_NEW));
-    } else {
-        ui.tabWidget->tabBar()->setTabText(newsFeedTabIndex, newsFeedText);
-        ui.tabWidget->tabBar()->setTabTextColor(newsFeedTabIndex, newsFeedTabColor);
-        ui.tabWidget->tabBar()->setTabIcon(newsFeedTabIndex,  QIcon(IMAGE_NEWSFEED));
-    }
-}
+// void FriendsDialog::newsFeedChanged(int count)
+// {
+//     int newsFeedTabIndex = ui.tabWidget->indexOf(newsFeed);
+//     if (newsFeedTabIndex < 0) {
+//         return;
+//     }
+// 
+//     if (count) {
+//         ui.tabWidget->tabBar()->setTabText(newsFeedTabIndex, QString("%1 (%2)").arg(newsFeedText).arg(count));
+//         ui.tabWidget->tabBar()->setTabTextColor(newsFeedTabIndex, Qt::blue);
+//         ui.tabWidget->tabBar()->setTabIcon(newsFeedTabIndex, QIcon(IMAGE_NEWSFEED_NEW));
+//     } else {
+//         ui.tabWidget->tabBar()->setTabText(newsFeedTabIndex, newsFeedText);
+//         ui.tabWidget->tabBar()->setTabTextColor(newsFeedTabIndex, newsFeedTabColor);
+//         ui.tabWidget->tabBar()->setTabIcon(newsFeedTabIndex,  QIcon(IMAGE_NEWSFEED));
+//     }
+// }
 
 void FriendsDialog::createChatLobby()
 {
