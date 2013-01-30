@@ -2,12 +2,11 @@
 
 ###################### PARAMETERS ####################
 version="0.5.4"
+svnpath="svn://csoler@svn.code.sf.net/p/retroshare/code/"
+workdir=retroshare-$version
 ######################################################
 
 echo This script is going to build the debian source package for RetroShare, from the svn.
-
-svnpath="svn://csoler@svn.code.sf.net/p/retroshare/code/"
-workdir=retroshare-$version
 
 if test -d "$workdir" ;  then
 	echo Please remove the $workdir directory first.
@@ -55,6 +54,12 @@ wget http://www.libssh.org/files/0.5/libssh-0.5.2.tar.gz
 cd $workdir
 tar zxvf ../libssh-0.5.2.tar.gz
 cd ..
+
+# cleaning up protobof generated files
+\rm -f $workdir/src/rsctrl/src/gencc/*.pb.h
+\rm -f $workdir/src/rsctrl/src/gencc/*.pb.cpp
+\rm -f $workdir/src/retroshare-nogui/src/rpc/proto/gencc/*.pb.h
+\rm -f $workdir/src/retroshare-nogui/src/rpc/proto/gencc/*.pb.cc
 
 echo Setting version numbers...
 
