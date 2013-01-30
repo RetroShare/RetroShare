@@ -55,10 +55,14 @@
 #include "FriendRecommendDialog.h"
 #include "FriendsDialog.h"
 #include "ServicePermissionDialog.h"
+#include "NetworkView.h"
+#include "NetworkDialog.h"
 
 /* Images for Newsfeed icons */
 #define IMAGE_NEWSFEED           ""
 #define IMAGE_NEWSFEED_NEW       ":/images/message-state-new.png"
+#define IMAGE_NETWORK2          ":/images/rs1.png"
+#define IMAGE_PEERS         	":/images/groupchat.png"
 
 /******
  * #define FRIENDS_DEBUG 1
@@ -97,8 +101,10 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     ui.avatar->setOwnId();
 
     ui.tabWidget->setTabPosition(QTabWidget::North);
-    ui.tabWidget->addTab(new ChatLobbyWidget(), tr("Chat lobbies"));
-    ui.tabWidget->addTab(new ProfileWidget(), tr("Profile"));
+    ui.tabWidget->addTab(networkView = new NetworkView(),QIcon(IMAGE_PEERS), tr("Local network"));
+    ui.tabWidget->addTab(networkDialog = new NetworkDialog(),QIcon(IMAGE_NETWORK2), tr("Known people"));
+    //ui.tabWidget->addTab(new ChatLobbyWidget(), tr("Chat lobbies"));
+    //ui.tabWidget->addTab(new ProfileWidget(), tr("Profile"));
     newsFeed = new NewsFeed();
     int newsFeedTabIndex = ui.tabWidget->insertTab(0, newsFeed, tr("News Feed"));
     ui.tabWidget->setCurrentIndex(newsFeedTabIndex);

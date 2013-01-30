@@ -117,7 +117,7 @@ public:
     * Notify Class...
     */
 
-    NetworkDialog     *networkDialog;
+//    NetworkDialog     *networkDialog;
     FriendsDialog     *friendsDialog;
 //    SearchDialog      *searchDialog;
     TransfersDialog   *transfersDialog;

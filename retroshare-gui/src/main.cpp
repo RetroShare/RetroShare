@@ -43,6 +43,7 @@
 #include "util/EventReceiver.h"
 #include "gui/RetroShareLink.h"
 #include "gui/SoundManager.h"
+#include "gui/NetworkView.h"
 #include "lang/languagesupport.h"
 
 /*** WINDOWS DON'T LIKE THIS - REDEFINES VER numbers.
@@ -329,15 +330,15 @@ int main(int argc, char *argv[])
 	QObject::connect(notify,SIGNAL(filesPostModChanged(bool))         ,w                            ,SLOT(postModDirectories(bool)         )) ;
 	QObject::connect(notify,SIGNAL(transfersChanged())                ,w->transfersDialog  		,SLOT(insertTransfers()                )) ;
 	QObject::connect(notify,SIGNAL(publicChatChanged(int))            ,w->friendsDialog      		,SLOT(publicChatChanged(int)           ));
-	QObject::connect(notify,SIGNAL(neighboursChanged())               ,w->networkDialog    		,SLOT(insertConnect()                  )) ;
+	QObject::connect(notify,SIGNAL(neighboursChanged())               ,w->friendsDialog->networkDialog    		,SLOT(insertConnect()                  )) ;
 	QObject::connect(notify,SIGNAL(messagesChanged())                 ,w->messagesDialog   		,SLOT(insertMessages()                 )) ;
 	QObject::connect(notify,SIGNAL(messagesTagsChanged())             ,w->messagesDialog   		,SLOT(messagesTagsChanged()            )) ;
 
 	QObject::connect(notify,SIGNAL(chatStatusChanged(const QString&,const QString&,bool)),w->friendsDialog,SLOT(updatePeerStatusString(const QString&,const QString&,bool)));
 	QObject::connect(notify,SIGNAL(ownStatusMessageChanged()),w->friendsDialog,SLOT(loadmypersonalstatus()));
 
-	QObject::connect(notify,SIGNAL(logInfoChanged(const QString&))		,w->networkDialog,SLOT(setLogInfo(QString))) ;
-	QObject::connect(notify,SIGNAL(discInfoChanged())						,w->networkDialog,SLOT(updateNewDiscoveryInfo()),Qt::QueuedConnection) ;
+	QObject::connect(notify,SIGNAL(logInfoChanged(const QString&))		,w->friendsDialog->networkDialog,SLOT(setLogInfo(QString))) ;
+	QObject::connect(notify,SIGNAL(discInfoChanged())						,w->friendsDialog->networkView,SLOT(update()),Qt::QueuedConnection) ;
 	QObject::connect(notify,SIGNAL(errorOccurred(int,int,const QString&)),w,SLOT(displayErrorMessage(int,int,const QString&))) ;
 
 	w->installGroupChatNotifier();

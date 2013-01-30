@@ -291,7 +291,7 @@
          </property>
          <widget class="QWidget" name="groupChatTab">
           <attribute name="title">
-           <string>Group Chat</string>
+           <string>Broadcast</string>
           </attribute>
           <layout class="QGridLayout" name="gridLayout_3">
            <item row="1" column="0">

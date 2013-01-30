@@ -134,7 +134,7 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     ui.unvalidGPGkeyWidget->sortItems( 1, Qt::AscendingOrder );
 
 //    ui.networkTab->addTab(new TrustView(),QString(tr("Authentication matrix")));
-    ui.networkTab->addTab(networkview = new NetworkView(),QString(tr("Network View")));
+//    ui.networkTab->addTab(networkview = new NetworkView(),QString(tr("Network View")));
     
     ui.showUnvalidKeys->setMinimumWidth(20);
      
@@ -159,7 +159,7 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     menu->addSeparator();
     menu->addAction(ui.actionTabsTriangular); 
     menu->addAction(ui.actionTabsRounded);
-    ui.viewButton->setMenu(menu);
+    //ui.viewButton->setMenu(menu);
     
     QTimer *timer2 = new QTimer(this);
     connect(timer2, SIGNAL(timeout()), this, SLOT(updateNetworkStatus()));
@@ -170,8 +170,8 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     ui.filterLineEdit->addFilter(QIcon(), tr("Peer ID"), COLUMN_PEERID, tr("Search Peer ID"));
     ui.filterLineEdit->setCurrentFilter(COLUMN_PEERNAME);
 
-    updateNetworkStatus();
-    loadtabsettings();
+    //updateNetworkStatus();
+    //loadtabsettings();
     
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -192,12 +192,12 @@ void NetworkDialog::changeEvent(QEvent *e)
     }
 }
 
-void NetworkDialog::updateNewDiscoveryInfo()
-{
-	//std::cerr << "Received new p3disc info. Updating networkview." << std::endl;
-	networkview->update();
-	networkview->updateDisplay();
-}
+//void NetworkDialog::updateNewDiscoveryInfo()
+//{
+//	//std::cerr << "Received new p3disc info. Updating networkview." << std::endl;
+//	//networkview->update();
+//	//networkview->updateDisplay();
+//}
 
 void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint /*point*/ )
 {
@@ -687,117 +687,74 @@ void NetworkDialog::on_actionCreate_New_Profile_activated()
 //    gencertdialog.exec ();
 }
 
-void NetworkDialog::updateNetworkStatus()
-{
-	if(RsAutoUpdatePage::eventsLocked())
-		return ;
-
-    rsiface->lockData(); /* Lock Interface */
-
-    /* now the extra bit .... switch on check boxes */
-    const RsConfig &config = rsiface->getConfig();
-
-    
-       /******* Network Status Tab *******/
-             
-      if(config.netUpnpOk)
-      {
-         ui.iconlabel_upnp->setPixmap(QPixmap(":/images/ledon1.png"));
-      }
-      else
-      {    
-         ui.iconlabel_upnp->setPixmap(QPixmap(":/images/ledoff1.png"));
-      }
-                              
-      if (config.netLocalOk)
-      {
-          ui.iconlabel_netLimited->setPixmap(QPixmap(":/images/ledon1.png"));
-      }
-      else
-      {          
-          ui.iconlabel_netLimited->setPixmap(QPixmap(":/images/ledoff1.png"));
-      }
-
-      if (config.netExtraAddressOk)
-      {
-          ui.iconlabel_ext->setPixmap(QPixmap(":/images/ledon1.png"));
-      }
-      else
-      {
-          ui.iconlabel_ext->setPixmap(QPixmap(":/images/ledoff1.png"));
-      }
-
-    rsiface->unlockData(); /* UnLock Interface */
-}
-
-void NetworkDialog::on_actionTabsnorth_activated()
-{
-  ui.networkTab->setTabPosition(QTabWidget::North);
-  
-  Settings->setValueToGroup("NetworkDialog", "TabWidget_Position",ui.networkTab->tabPosition());
-}
-
-void NetworkDialog::on_actionTabssouth_activated()
-{
-  ui.networkTab->setTabPosition(QTabWidget::South);
-
-  Settings->setValueToGroup("NetworkDialog", "TabWidget_Position",ui.networkTab->tabPosition());
-
-}
-
-void NetworkDialog::on_actionTabswest_activated()
-{
-  ui.networkTab->setTabPosition(QTabWidget::West);
-
-  Settings->setValueToGroup("NetworkDialog", "TabWidget_Position",ui.networkTab->tabPosition());
-}
-
-void NetworkDialog::on_actionTabsright_activated()
-{
-  ui.networkTab->setTabPosition(QTabWidget::East);
-
-  Settings->setValueToGroup("NetworkDialog", "TabWidget_Position",ui.networkTab->tabPosition());
-}
-
-void NetworkDialog::on_actionTabsTriangular_activated()
-{
-  ui.networkTab->setTabShape(QTabWidget::Triangular);
-  ui.tabBottom->setTabShape(QTabWidget::Triangular);
-}
-
-void NetworkDialog::on_actionTabsRounded_activated()
-{
-  ui.networkTab->setTabShape(QTabWidget::Rounded);
-  ui.tabBottom->setTabShape(QTabWidget::Rounded);
-}
-
-void NetworkDialog::loadtabsettings()
-{
-  Settings->beginGroup("NetworkDialog");
-
-  if(Settings->value("TabWidget_Position","0").toInt() == 0)
-  {
-    qDebug() << "Tab North";
-    ui.networkTab->setTabPosition(QTabWidget::North);
-  }
-  else if (Settings->value("TabWidget_Position","1").toInt() == 1)
-  {
-    qDebug() << "Tab South";
-    ui.networkTab->setTabPosition(QTabWidget::South);
-  }
-  else if (Settings->value("TabWidget_Position","2").toInt() ==2)
-  {
-    qDebug() << "Tab West";
-    ui.networkTab->setTabPosition(QTabWidget::West);
-  }
-  else if(Settings->value("TabWidget_Position","3").toInt() ==3)
-  {
-    qDebug() << "Tab East";
-    ui.networkTab->setTabPosition(QTabWidget::East);
-  }
-
-  Settings->endGroup();
-}
+// void NetworkDialog::on_actionTabsnorth_activated()
+// {
+//   ui.networkTab->setTabPosition(QTabWidget::North);
+//   
+//   Settings->setValueToGroup("NetworkDialog", "TabWidget_Position",ui.networkTab->tabPosition());
+// }
+// 
+// void NetworkDialog::on_actionTabssouth_activated()
+// {
+//   ui.networkTab->setTabPosition(QTabWidget::South);
+// 
+//   Settings->setValueToGroup("NetworkDialog", "TabWidget_Position",ui.networkTab->tabPosition());
+// 
+// }
+// 
+// void NetworkDialog::on_actionTabswest_activated()
+// {
+//   ui.networkTab->setTabPosition(QTabWidget::West);
+// 
+//   Settings->setValueToGroup("NetworkDialog", "TabWidget_Position",ui.networkTab->tabPosition());
+// }
+// 
+// void NetworkDialog::on_actionTabsright_activated()
+// {
+//   ui.networkTab->setTabPosition(QTabWidget::East);
+// 
+//   Settings->setValueToGroup("NetworkDialog", "TabWidget_Position",ui.networkTab->tabPosition());
+// }
+// 
+// void NetworkDialog::on_actionTabsTriangular_activated()
+// {
+//   ui.networkTab->setTabShape(QTabWidget::Triangular);
+//   ui.tabBottom->setTabShape(QTabWidget::Triangular);
+// }
+// 
+// void NetworkDialog::on_actionTabsRounded_activated()
+// {
+//   ui.networkTab->setTabShape(QTabWidget::Rounded);
+//   ui.tabBottom->setTabShape(QTabWidget::Rounded);
+// }
+// 
+// void NetworkDialog::loadtabsettings()
+// {
+//   Settings->beginGroup("NetworkDialog");
+// 
+//   if(Settings->value("TabWidget_Position","0").toInt() == 0)
+//   {
+//     qDebug() << "Tab North";
+//     ui.networkTab->setTabPosition(QTabWidget::North);
+//   }
+//   else if (Settings->value("TabWidget_Position","1").toInt() == 1)
+//   {
+//     qDebug() << "Tab South";
+//     ui.networkTab->setTabPosition(QTabWidget::South);
+//   }
+//   else if (Settings->value("TabWidget_Position","2").toInt() ==2)
+//   {
+//     qDebug() << "Tab West";
+//     ui.networkTab->setTabPosition(QTabWidget::West);
+//   }
+//   else if(Settings->value("TabWidget_Position","3").toInt() ==3)
+//   {
+//     qDebug() << "Tab East";
+//     ui.networkTab->setTabPosition(QTabWidget::East);
+//   }
+// 
+//   Settings->endGroup();
+// }
 
 void NetworkDialog::filterColumnChanged(int)
 {

@@ -118,7 +118,7 @@
 
 
 /* Images for toolbar icons */
-#define IMAGE_NETWORK2          ":/images/rs1.png"
+//#define IMAGE_NETWORK2          ":/images/rs1.png"
 #define IMAGE_PEERS         	":/images/groupchat.png"
 #define IMAGE_TRANSFERS      	":/images/ktorrent32.png"
 #define IMAGE_FILES   	        ":/images/fileshare32.png"
@@ -237,8 +237,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     QActionGroup *grp = new QActionGroup(this);
     QAction *action;
 
-    ui->stackPages->add(networkDialog = new NetworkDialog(ui->stackPages),
-                       createPageAction(QIcon(IMAGE_NETWORK2), tr("Network"), grp));
+//    ui->stackPages->add(networkDialog = new NetworkDialog(ui->stackPages),
+//                       createPageAction(QIcon(IMAGE_NETWORK2), tr("Network"), grp));
 
     ui->stackPages->add(friendsDialog = new FriendsDialog(ui->stackPages),
                        action = createPageAction(QIcon(IMAGE_PEERS), tr("Friends"), grp));
@@ -784,9 +784,9 @@ void SetForegroundWindowInternal(HWND hWnd)
     MainPage *Page = NULL;
 
     switch (page) {
-    case Network:
-        Page = _instance->networkDialog;
-        break;
+//    case Network:
+//        Page = _instance->networkDialog;
+//        break;
     case Friends:
         Page = _instance->friendsDialog;
         break;
@@ -833,9 +833,9 @@ void SetForegroundWindowInternal(HWND hWnd)
 
    QWidget *page = _instance->ui->stackPages->currentWidget();
 
-   if (page == _instance->networkDialog) {
-       return Network;
-   }
+//   if (page == _instance->networkDialog) {
+//       return Network;
+//   }
    if (page == _instance->friendsDialog) {
        return Friends;
    }
@@ -879,8 +879,8 @@ void SetForegroundWindowInternal(HWND hWnd)
    }
 
    switch (page) {
-   case Network:
-       return _instance->networkDialog;
+//   case Network:
+//       return _instance->networkDialog;
    case Friends:
        return _instance->friendsDialog;
 //   case Search:

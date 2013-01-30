@@ -32,6 +32,8 @@ class QAction;
 class QTextEdit;
 class QTextCharFormat;
 class ChatTabWidget;
+class NetworkDialog;
+class NetworkView;
 
 class FriendsDialog : public RsAutoUpdatePage
 {
@@ -51,6 +53,8 @@ public:
     static bool isGroupChatActive();
     static void groupChatActivate();
 
+	 NetworkDialog *networkDialog ;
+	 NetworkView *networkView ;
 public slots:
 
     void publicChatChanged(int type);

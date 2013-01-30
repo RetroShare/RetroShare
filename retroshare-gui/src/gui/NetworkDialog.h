@@ -59,7 +59,7 @@ public slots:
   void  insertConnect();
 //  std::string loadneighbour();
   /* void loadneighbour(); */
-  void updateNewDiscoveryInfo() ;
+  //void updateNewDiscoveryInfo() ;
 
 protected:
   void changeEvent(QEvent *e);
@@ -87,17 +87,17 @@ private slots:
 
   void on_actionCreate_New_Profile_activated();
     
-  void updateNetworkStatus();
+  //void updateNetworkStatus();
   
-  void loadtabsettings();
+//  void loadtabsettings();
   
-  void on_actionTabsright_activated();
-  void on_actionTabsnorth_activated();
-  void on_actionTabssouth_activated();
-  void on_actionTabswest_activated();
-
-  void on_actionTabsRounded_activated();
-  void on_actionTabsTriangular_activated();
+//  void on_actionTabsright_activated();
+//  void on_actionTabsnorth_activated();
+//  void on_actionTabssouth_activated();
+//  void on_actionTabswest_activated();
+//
+//  void on_actionTabsRounded_activated();
+//  void on_actionTabsTriangular_activated();
   
   void filterColumnChanged(int);
   void filterItems(const QString &text);
@@ -107,7 +107,7 @@ private:
 
   QTreeWidget *connecttreeWidget;
   
-  class NetworkView *networkview;
+//  class NetworkView *networkview;
   
   bool filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn);
 
