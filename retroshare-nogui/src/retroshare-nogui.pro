@@ -161,13 +161,18 @@ sshserver {
 
 	win32 {
 		DEFINES *= LIBSSH_STATIC
+		LIBSSH_DIR = ../../../libssh-0.5.2
 	}
 
 	INCLUDEPATH += $$LIBSSH_DIR/include/
-	LIBS += $$LIBSSH_DIR/build/src/libssh.a
-	LIBS += $$LIBSSH_DIR/build/src/threads/libssh_threads.a
-	#LIBS += -lssh
-	#LIBS += -lssh_threads
+
+	win32 {
+		LIBS += -lssh
+		LIBS += -lssh_threads
+	} else {
+		LIBS += $$LIBSSH_DIR/build/src/libssh.a
+		LIBS += $$LIBSSH_DIR/build/src/threads/libssh_threads.a
+	}
 
 	HEADERS += ssh/rssshd.h
 	SOURCES += ssh/rssshd.cc
