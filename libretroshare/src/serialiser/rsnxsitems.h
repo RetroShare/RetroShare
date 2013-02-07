@@ -202,6 +202,8 @@ public:
     std::string grpId; /// group Id, needed to complete version Id (ncvi)
     static int refcount;
     RsTlvBinaryData grp; /// actual group data
+    uint8_t pos; /// used for splitting up grp
+    uint8_t count; /// number of split up messages
 
     /*!
      * This should contains all data
@@ -284,6 +286,8 @@ public:
     virtual void clear();
     virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
+    uint8_t pos; /// used for splitting up msg
+    uint8_t count; /// number of split up messages
     std::string grpId; /// group id, forms part of version id
     std::string msgId; /// msg id
     static int refcount;

@@ -133,7 +133,7 @@ class RsGxsNetService : public RsNetworkExchangeService, public p3ThreadedServic
 {
 public:
 
-
+	static const uint32_t FRAGMENT_SIZE;
     /*!
      * only one observer is allowed
      * @param servType service type
@@ -364,6 +364,60 @@ private:
     void syncWithPeers();
 
 private:
+
+    typedef std::vector<RsNxsGrp*> GrpFragments;
+	typedef std::vector<RsNxsMsg*> MsgFragments;
+
+    /*!
+     * Fragment a message into individual fragments which are at most 150kb
+     * @param msg message to fragment
+     * @param msgFragments fragmented message
+     * @return false if fragmentation fails true otherwise
+     */
+    bool fragmentMsg(RsNxsMsg& msg, MsgFragments& msgFragments) const;
+
+    /*!
+     * Fragment a group into individual fragments which are at most 150kb
+     * @param grp group to fragment
+     * @param grpFragments fragmented group
+     * @return false if fragmentation fails true other wise
+     */
+    bool fragmentGrp(RsNxsGrp& grp, GrpFragments& grpFragments) const;
+
+    /*!
+     * Fragment a message into individual fragments which are at most 150kb
+     * @param msg message to fragment
+     * @param msgFragments fragmented message
+     * @return NULL if not possible to reconstruct message from fragment,
+     *              pointer to defragments nxs message is possible
+     */
+    RsNxsMsg* deFragmentMsg(MsgFragments& msgFragments) const;
+
+    /*!
+     * Fragment a group into individual fragments which are at most 150kb
+     * @param grp group to fragment
+     * @param grpFragments fragmented group
+     * @return NULL if not possible to reconstruct group from fragment,
+     *              pointer to defragments nxs group is possible
+     */
+    RsNxsGrp* deFragmentGrp(GrpFragments& grpFragments) const;
+
+
+    /*!
+     * Note that if all fragments for a message are not found then its fragments are dropped
+     * @param fragments message fragments which are not necessarily from the same message
+     * @param partFragments the partitioned fragments (into message ids)
+     */
+    void collateMsgFragments(MsgFragments fragments, std::map<RsGxsMessageId, MsgFragments>& partFragments) const;
+
+    /*!
+	 * Note that if all fragments for a group are not found then its fragments are dropped
+	 * @param fragments group fragments which are not necessarily from the same group
+	 * @param partFragments the partitioned fragments (into message ids)
+	 */
+    void collateGrpFragments(GrpFragments fragments, std::map<RsGxsGroupId, GrpFragments>& partFragments) const;
+private:
+
 
     /*** transactions ***/
 

@@ -25,6 +25,7 @@
  */
 
 #include <unistd.h>
+#include <math.h>
 
 #include "rsgxsnetservice.h"
 #include "rsgxsflags.h"
@@ -34,6 +35,7 @@
 #define SYNC_PERIOD 12 // in microseconds every 10 seconds (1 second for testing)
 #define TRANSAC_TIMEOUT 5 // 5 seconds
 
+ const uint32_t RsGxsNetService::FRAGMENT_SIZE = 150000;
 
 RsGxsNetService::RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
                                  RsNxsNetMgr *netMgr, RsNxsObserver *nxsObs)
@@ -127,6 +129,236 @@ void RsGxsNetService::syncWithPeers()
             }
         }
 //#endif
+}
+
+
+bool RsGxsNetService::fragmentMsg(RsNxsMsg& msg, MsgFragments& msgFragments) const
+{
+	// first determine how many fragments
+	uint32_t msgSize = msg.msg.TlvSize();
+	uint32_t dataLeft = msgSize;
+	uint8_t nFragments = ceil(float(msgSize)/FRAGMENT_SIZE);
+	char buffer[FRAGMENT_SIZE];
+	int currPos = 0;
+
+
+	for(uint8_t i=0; i < nFragments; i++)
+	{
+		RsNxsMsg* msgFrag = new RsNxsMsg(mServType);
+		msgFrag->grpId = msg.grpId;
+		msgFrag->msgId = msg.msgId;
+		msgFrag->meta = msg.meta;
+		msgFrag->pos = i;
+		msgFrag->count = nFragments;
+		uint32_t fragSize = std::min(dataLeft, FRAGMENT_SIZE);
+
+		memcpy(buffer, ((char*)msg.msg.bin_data) + currPos, fragSize);
+
+		currPos += fragSize;
+		dataLeft -= fragSize;
+		msgFragments.push_back(msgFrag);
+	}
+
+	return true;
+}
+
+bool RsGxsNetService::fragmentGrp(RsNxsGrp& grp, GrpFragments& grpFragments) const
+{
+	// first determine how many fragments
+	uint32_t grpSize = grp.grp.TlvSize();
+	uint32_t dataLeft = grpSize;
+	uint8_t nFragments = ceil(float(grpSize)/FRAGMENT_SIZE);
+	char buffer[FRAGMENT_SIZE];
+	int currPos = 0;
+
+
+	for(uint8_t i=0; i < nFragments; i++)
+	{
+		RsNxsGrp* grpFrag = new RsNxsGrp(mServType);
+		grpFrag->grpId = grp.grpId;
+		grpFrag->meta = grp.meta;
+		grpFrag->pos = i;
+		grpFrag->count = nFragments;
+		uint32_t fragSize = std::min(dataLeft, FRAGMENT_SIZE);
+
+		memcpy(buffer, ((char*)grp.grp.bin_data) + currPos, fragSize);
+
+		currPos += fragSize;
+		dataLeft -= fragSize;
+		grpFragments.push_back(grpFrag);
+	}
+
+	return true;
+}
+
+RsNxsMsg* RsGxsNetService::deFragmentMsg(MsgFragments& msgFragments) const
+{
+	if(msgFragments.empty()) return NULL;
+
+	// first determine total size for binary data
+	MsgFragments::iterator mit = msgFragments.begin();
+	uint32_t datSize = 0;
+
+	for(; mit != msgFragments.end(); mit++)
+		datSize += (*mit)->msg.bin_len;
+
+	char* data = new char[datSize];
+	uint32_t currPos = 0;
+
+	for(mit = msgFragments.begin(); mit != msgFragments.end(); mit++)
+	{
+		RsNxsMsg* msg = *mit;
+		memcpy(data + (currPos), msg->msg.bin_data, msg->msg.bin_len);
+		currPos += msg->msg.bin_len;
+	}
+
+	RsNxsMsg* msg = new RsNxsMsg(mServType);
+	const RsNxsMsg& m = *(*(msgFragments.begin()));
+	msg->msg.setBinData(data, datSize);
+	msg->msgId = m.msgId;
+	msg->grpId = m.grpId;
+	msg->transactionNumber = m.transactionNumber;
+	msg->meta = m.meta;
+
+	delete[] data;
+	return msg;
+}
+
+RsNxsGrp* RsGxsNetService::deFragmentGrp(GrpFragments& grpFragments) const
+{
+	if(grpFragments.empty()) return NULL;
+
+	// first determine total size for binary data
+	GrpFragments::iterator mit = grpFragments.begin();
+	uint32_t datSize = 0;
+
+	for(; mit != grpFragments.end(); mit++)
+		datSize += (*mit)->grp.bin_len;
+
+	char* data = new char[datSize];
+	uint32_t currPos = 0;
+
+	for(mit = grpFragments.begin(); mit != grpFragments.end(); mit++)
+	{
+		RsNxsGrp* grp = *mit;
+		memcpy(data + (currPos), grp->grp.bin_data, grp->grp.bin_len);
+		currPos += grp->grp.bin_len;
+	}
+
+	RsNxsGrp* grp = new RsNxsGrp(mServType);
+	const RsNxsGrp& g = *(*(grpFragments.begin()));
+	grp->grp.setBinData(data, datSize);
+	grp->grpId = g.grpId;
+	grp->transactionNumber = g.transactionNumber;
+	grp->meta = g.meta;
+
+	delete[] data;
+
+	return grp;
+}
+
+struct GrpFragCollate
+{
+	RsGxsGroupId mGrpId;
+	GrpFragCollate(const RsGxsGroupId& grpId) : mGrpId(grpId){ }
+	bool operator()(RsNxsGrp* grp) { return grp->grpId == mGrpId;}
+};
+
+void RsGxsNetService::collateGrpFragments(GrpFragments fragments,
+		std::map<RsGxsGroupId, GrpFragments>& partFragments) const
+{
+	// get all unique grpIds;
+	GrpFragments::iterator vit = fragments.begin();
+	std::set<RsGxsGroupId> grpIds;
+
+	for(; vit != fragments.end(); vit++)
+		grpIds.insert( (*vit)->grpId );
+
+	std::set<RsGxsGroupId>::iterator sit = grpIds.begin();
+
+	for(; sit != grpIds.end(); sit++)
+	{
+		const RsGxsGroupId& grpId = *sit;
+		GrpFragments::iterator bound = std::partition(
+					fragments.begin(), fragments.end(),
+					GrpFragCollate(grpId));
+
+		// something will always be found for a group id
+		for(vit = fragments.begin(); vit != bound; )
+		{
+			partFragments[grpId].push_back(*vit);
+			vit = fragments.erase(vit);
+		}
+
+		GrpFragments& f = partFragments[grpId];
+		RsNxsGrp* grp = *(f.begin());
+
+		// if counts of fragments is incorrect remove
+		// from coalescion
+		if(grp->count != f.size())
+		{
+			GrpFragments::iterator vit2 = f.begin();
+
+			for(; vit2 != f.end(); vit2++)
+				delete *vit2;
+
+			partFragments.erase(grpId);
+		}
+	}
+
+	fragments.clear();
+}
+
+struct MsgFragCollate
+{
+	RsGxsGroupId mMsgId;
+	MsgFragCollate(const RsGxsMessageId& msgId) : mMsgId(msgId){ }
+	bool operator()(RsNxsMsg* msg) { return msg->msgId == mMsgId;}
+};
+
+void RsGxsNetService::collateMsgFragments(MsgFragments fragments, std::map<RsGxsMessageId, MsgFragments>& partFragments) const
+{
+	// get all unique message Ids;
+	MsgFragments::iterator vit = fragments.begin();
+	std::set<RsGxsMessageId> msgIds;
+
+	for(; vit != fragments.end(); vit++)
+		msgIds.insert( (*vit)->msgId );
+
+
+	std::set<RsGxsMessageId>::iterator sit = msgIds.begin();
+
+	for(; sit != msgIds.end(); sit++)
+	{
+		const RsGxsMessageId& msgId = *sit;
+		MsgFragments::iterator bound = std::partition(
+					fragments.begin(), fragments.end(),
+					MsgFragCollate(msgId));
+
+		// something will always be found for a group id
+		for(vit = fragments.begin(); vit != bound; )
+		{
+			partFragments[msgId].push_back(*vit);
+			vit = fragments.erase(vit);
+		}
+
+		MsgFragments& f = partFragments[msgId];
+		RsNxsMsg* msg = *(f.begin());
+
+		// if counts of fragments is incorrect remove
+		// from coalescion
+		if(msg->count != f.size())
+		{
+			MsgFragments::iterator vit2 = f.begin();
+
+			for(; vit2 != f.end(); vit2++)
+				delete *vit2;
+
+			partFragments.erase(msgId);
+		}
+	}
+
+	fragments.clear();
 }
 
 bool RsGxsNetService::loadList(std::list<RsItem*>& load)

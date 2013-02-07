@@ -132,6 +132,11 @@ public:
      */
     int resetDataStore();
 
+
+    bool validSize(RsNxsMsg* msg) const;
+    bool validSize(RsNxsGrp* grp) const;
+
+
 private:
 
     /*!
