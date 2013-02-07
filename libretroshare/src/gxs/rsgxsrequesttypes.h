@@ -58,6 +58,7 @@ class GroupIdReq : public GxsRequest
 {
 
 public:
+
 	std::list<std::string> mGroupIds;
 	std::list<std::string> mGroupIdResult;
 };

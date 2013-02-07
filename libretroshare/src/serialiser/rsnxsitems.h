@@ -73,6 +73,7 @@ public:
         setPriorityLevel(QOS_PRIORITY_RS_VOIP_PING);
         return;
     }
+    virtual ~RsNxsItem(){ return; }
 
     virtual void clear() = 0;
     virtual std::ostream &print(std::ostream &out, uint16_t indent = 0) = 0;
@@ -188,15 +189,21 @@ class RsNxsGrp : public RsNxsItem
 public:
 
     RsNxsGrp(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_GRP), grp(servtype), meta(servtype),
-    metaData(NULL) { clear(); return; }
-    virtual ~RsNxsGrp() { if(metaData) delete metaData; }
+    metaData(NULL) { clear();
+    //std::cout << "\nGrp refcount++ : " << ++refcount << std::endl;
+    return; }
+    virtual ~RsNxsGrp() { if(metaData) delete metaData;
+    //std::cout << "\nGrp refcount-- : " << --refcount << std::endl;
+    }
 
     virtual void clear();
     virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
     std::string grpId; /// group Id, needed to complete version Id (ncvi)
-
+    static int refcount;
     RsTlvBinaryData grp; /// actual group data
+    uint8_t pos; /// used for splitting up grp
+    uint8_t count; /// number of split up messages
 
     /*!
      * This should contains all data
@@ -263,15 +270,27 @@ class RsNxsMsg : public RsNxsItem
 public:
 
     RsNxsMsg(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_MSG), meta(servtype), msg(servtype),
-    metaData(NULL) { clear(); return; }
-    ~RsNxsMsg() { if(metaData) delete metaData; }
+    metaData(NULL) {
+    //	std::cout << "\nrefcount++ : " << ++refcount << std::endl;
+    	clear(); return;
+    }
+    virtual ~RsNxsMsg()
+    {
+    	//std::cout << "\nrefcount-- : " << --refcount << std::endl;
+    	if(metaData){
+    		//std::cout << "\ndeleted\n";
+    		delete metaData;
+    	}
+    }
 
     virtual void clear();
     virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
+    uint8_t pos; /// used for splitting up msg
+    uint8_t count; /// number of split up messages
     std::string grpId; /// group id, forms part of version id
     std::string msgId; /// msg id
-
+    static int refcount;
     /*!
      * This should contains all the data
      * which is not specific to the Gxs service data

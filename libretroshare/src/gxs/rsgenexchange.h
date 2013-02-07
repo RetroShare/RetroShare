@@ -254,7 +254,8 @@ protected:
                                     &msg->msg.bin_len);
                     GxsMsgType* mItem = dynamic_cast<GxsMsgType*>(item);
 
-                    if(mItem == NULL){
+                    if(mItem == NULL)
+                    {
                         delete msg;
                         continue;
                     }
@@ -474,7 +475,7 @@ private:
      * Meta is serialised and stored in group at this point also
      * @param grp Nxs group to create
      */
-    bool createGroup(RsNxsGrp* grp, RsTlvSecurityKeySet& keySet);
+    bool createGroup(RsNxsGrp* grp, RsTlvSecurityKeySet& privateKeySet, RsTlvSecurityKeySet& publicKeySet);
 
     /*!
      * This completes the creation of an instance on RsNxsMsg
@@ -503,10 +504,11 @@ private:
 
     /*!
      * Generate a set of keys that can define a GXS group
-     * @param keySet this is set generated keys
-     * @param genPublicKeys should public keys also be generated
+     * @param privatekeySet contains private generated keys
+     * @param privatekeySet contains public generated keys (counterpart of private)
+     * @param genPublicKeys should publish key pair also be generated
      */
-    void generateGroupKeys(RsTlvSecurityKeySet& keySet, bool genPublishKeys);
+    void generateGroupKeys(RsTlvSecurityKeySet& privatekeySet, RsTlvSecurityKeySet& publickeySet, bool genPublishKeys);
 
     /*!
      * Attempts to validate msg

@@ -46,6 +46,7 @@ public:
      */
     RsGxsIfaceImpl(RsGenExchange* gxs);
 
+protected:
     /*!
      * Gxs services should call this for automatic handling of
      * changes, send
@@ -53,14 +54,20 @@ public:
      */
     void receiveChanges(std::vector<RsGxsNotify*>& changes);
 
+public:
+
     /*!
      * Checks to see if a change has been received for
      * for a message or group
+     * @param willCallGrpChanged if this is set to true, group changed function will return list
+     *        groups that have changed, if false, the group changed list is cleared
+     * @param willCallMsgChanged if this is set to true, msgChanged function will return map
+     *        messages that have changed, if false, the message changed map is cleared
      * @return true if a change has occured for msg or group
+     * @see groupsChanged
+     * @see msgsChanged
      */
-    virtual bool updated();
-
-public:
+    virtual bool updated(bool willCallGrpChanged = false, bool willCallMsgChanged = false);
 
     /*!
      * The groups changed. \n
@@ -68,7 +75,8 @@ public:
      * the group actually set for ui notification.
      * If receivedChanges is not passed RsGxsNotify changes
      * this function does nothing
-     * @param grpIds
+     * @param grpIds returns list of grpIds that have changed
+     * @see updated
      */
     virtual void groupsChanged(std::list<RsGxsGroupId>& grpIds);
 
@@ -78,7 +86,8 @@ public:
      * the msg actually set for ui notification.
      * If receivedChanges is not passed RsGxsNotify changes
      * this function does nothing
-     * @param msgs
+     * @param msgs returns map of message ids that have changed
+     * @see updated
      */
     virtual void msgsChanged(std::map<RsGxsGroupId,
                              std::vector<RsGxsMessageId> >& msgs);

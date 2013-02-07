@@ -223,7 +223,7 @@ void PostedListDialog::updateDisplay()
     std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgs;
 
 
-    if (rsPosted->updated())
+    if (rsPosted->updated(true, true))
     {
         /* update Forums List */
 

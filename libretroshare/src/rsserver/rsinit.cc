@@ -2263,7 +2263,6 @@ int RsServer::StartupRetroShare()
 	mPluginsManager->registerClientServices(pqih) ;
 	mPluginsManager->registerCacheServices() ;
 
-
 #ifdef RS_ENABLE_GXS
 
         // The idea is that if priorGxsDir is non
@@ -2331,9 +2330,9 @@ int RsServer::StartupRetroShare()
                                            RsGenExchange::RESTRICTED_GRP_BITS);
 
 // Re-enable later, photo not using gixs yet
-//        flag = GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN;
-//        RsGenExchange::setAuthenPolicyFlag(flag, photoAuthenPolicy,
-//                                           RsGenExchange::RESTRICTED_GRP_BITS);
+        flag = GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN; // should be GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN for comments
+        RsGenExchange::setAuthenPolicyFlag(flag, photoAuthenPolicy,
+                                           RsGenExchange::RESTRICTED_GRP_BITS);
 
         flag = GXS_SERV::GRP_OPTION_AUTHEN_AUTHOR_SIGN;
         RsGenExchange::setAuthenPolicyFlag(flag, photoAuthenPolicy,

@@ -130,6 +130,10 @@ bool GxsSecurity::validateNxsMsg(RsNxsMsg& msg, RsTlvKeySignature& sign, RsTlvSe
             RsTlvKeySignatureSet signSet = msgMeta.signSet;
             msgMeta.signSet.TlvClear();
 
+            RsGxsMessageId msgId = msgMeta.mMsgId, origMsgId = msgMeta.mOrigMsgId;
+            msgMeta.mOrigMsgId.clear();
+            msgMeta.mMsgId.clear();
+
             uint32_t metaDataLen = msgMeta.serial_size();
             uint32_t allMsgDataLen = metaDataLen + msg.msg.bin_len;
             char* metaData = new char[metaDataLen];
@@ -156,6 +160,9 @@ bool GxsSecurity::validateNxsMsg(RsNxsMsg& msg, RsTlvKeySignature& sign, RsTlvSe
             EVP_PKEY_free(signKey);
             EVP_MD_CTX_destroy(mdctx);
 
+            msgMeta.mOrigMsgId = origMsgId;
+            msgMeta.mMsgId = msgId;
+            msgMeta.signSet = signSet;
 
             if (signOk == 1)
             {

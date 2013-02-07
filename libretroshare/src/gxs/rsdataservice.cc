@@ -134,6 +134,7 @@ const std::string RsGeneralDataService::GRP_META_SUBSCRIBE_FLAG = KEY_GRP_SUBCR_
 const std::string RsGeneralDataService::MSG_META_SERV_STRING = KEY_NXS_SERV_STRING;
 const std::string RsGeneralDataService::MSG_META_STATUS = KEY_MSG_STATUS;
 
+const uint32_t RsGeneralDataService::GXS_MAX_ITEM_SIZE = 1572864; // 1.5 Mbytes
 
 RsDataService::RsDataService(const std::string &serviceDir, const std::string &dbName, uint16_t serviceType,
                              RsGxsSearchModule *mod)
@@ -453,6 +454,9 @@ int RsDataService::storeMessage(std::map<RsNxsMsg *, RsGxsMsgMetaData *> &msg)
         RsNxsMsg* msgPtr = mit->first;
         RsGxsMsgMetaData* msgMetaPtr = mit->second;
 
+        // skip msg item if size if greater than
+        if(!validSize(msgPtr)) continue;
+
         // create or access file in binary
         std::string msgFile = mServiceDir + "/" + msgPtr->grpId + "-msgs";
         std::fstream ostrm(msgFile.c_str(), std::ios::binary | std::ios::app | std::ios::out);
@@ -519,6 +523,13 @@ int RsDataService::storeMessage(std::map<RsNxsMsg *, RsGxsMsgMetaData *> &msg)
     return ret;
 }
 
+bool RsDataService::validSize(RsNxsMsg* msg) const
+{
+	if((msg->msg.TlvSize() + msg->meta.TlvSize()) <= GXS_MAX_ITEM_SIZE) return true;
+
+	return false;
+}
+
 
 int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
 {
@@ -535,6 +546,9 @@ int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
 
         RsNxsGrp* grpPtr = sit->first;
         RsGxsGrpMetaData* grpMetaPtr = sit->second;
+
+        // if data is larger than max item size do not add
+        if(!validSize(grpPtr)) continue;
 
         std::string grpFile = mServiceDir + "/" + grpPtr->grpId;
         std::fstream ostrm(grpFile.c_str(), std::ios::binary | std::ios::app | std::ios::out);
@@ -605,6 +619,12 @@ int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
     }
 
     return ret;
+}
+
+bool RsDataService::validSize(RsNxsGrp* grp) const
+{
+	if((grp->grp.TlvSize() + grp->meta.TlvSize()) <= GXS_MAX_ITEM_SIZE) return true;
+	return false;
 }
 
 int RsDataService::retrieveNxsGrps(std::map<std::string, RsNxsGrp *> &grp, bool withMeta, bool cache){
@@ -969,6 +989,7 @@ int RsDataService::resetDataStore()
         std::string msgFile = file + "-msgs";
         remove(file.c_str()); // remove group file
         remove(msgFile.c_str()); // and remove messages file
+        delete mit->second;
     }
     {
         RsStackMutex stack(mDbMutex);

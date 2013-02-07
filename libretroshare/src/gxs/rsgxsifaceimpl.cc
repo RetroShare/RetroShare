@@ -52,11 +52,26 @@ void RsGxsIfaceImpl::groupsChanged(std::list<RsGxsGroupId> &grpIds)
     }
 }
 
-bool RsGxsIfaceImpl::updated()
+bool RsGxsIfaceImpl::updated(bool willCallGrpChanged, bool willCallMsgChanged)
 {
-    RsStackMutex stack(mGxsIfaceMutex);
+	bool changed = false;
+	{
+		RsStackMutex stack(mGxsIfaceMutex);
 
-    bool changed =  (!mGroupChange.empty() || !mMsgChange.empty());
+		changed =  (!mGroupChange.empty() || !mMsgChange.empty());
+	}
+
+	if(!willCallGrpChanged)
+	{
+		std::list<RsGxsGroupId> grpIds;
+		groupsChanged(grpIds);
+	}
+
+	if(!willCallMsgChanged)
+	{
+		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgs;
+		msgsChanged(msgs);
+	}
 
     return changed;
 }

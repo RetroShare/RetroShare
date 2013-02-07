@@ -105,6 +105,8 @@ class RsGeneralDataService
 
 public:
 
+	static const uint32_t GXS_MAX_ITEM_SIZE;
+
     static const std::string MSG_META_SERV_STRING;
     static const std::string MSG_META_STATUS;
 
@@ -209,6 +211,22 @@ public:
      * as it was when first constructed
      */
     virtual int resetDataStore() = 0;
+
+    /*!
+     * Use to determine if message isn't over the storage
+     * limit for a single message item
+     * @param msg the message to check size validity
+     * @return whether the size of of msg is valid
+     */
+    virtual bool validSize(RsNxsMsg* msg) const = 0 ;
+
+    /*!
+     * Use to determine if group isn't over the storage limit
+     * for a single group item
+     * @param grp the group to check size validity
+     * @return whether the size of grp is valid for storage
+     */
+    virtual bool validSize(RsNxsGrp* grp) const = 0 ;
 
 };
 
