@@ -43,6 +43,7 @@
 #include "ULListDelegate.h"
 #include "FileTransferInfoWidget.h"
 #include "SearchDialog.h"
+#include "SharedFilesDialog.h"
 #include "xprogressbar.h"
 #include "settings/rsharesettings.h"
 #include "util/misc.h"
@@ -304,6 +305,9 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     QObject::connect(ui.downloadList->selectionModel(),SIGNAL(selectionChanged (const QItemSelection&, const QItemSelection&)),this,SLOT(showFileDetails())) ;
 
 	 ui.tabWidget->insertTab(0,searchDialog = new SearchDialog(), QIcon(IMAGE_SEARCH), tr("Search")) ;
+	 ui.tabWidget->insertTab(1,remoteSharedFiles = new RemoteSharedFilesDialog(), QIcon(IMAGE_SEARCH), tr("Friends files")) ;
+
+	 ui.tabWidget->addTab(localSharedFiles = new LocalSharedFilesDialog(), QIcon(IMAGE_SEARCH), tr("Your files")) ;
 
 	 //ui.tabWidget->addTab( new TurtleRouterStatistics(), tr("Router Statistics")) ;
 	 //ui.tabWidget->addTab( new TurtleRouterDialog(), tr("Router Requests")) ;

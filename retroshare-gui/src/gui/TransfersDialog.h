@@ -37,6 +37,8 @@ class QStandardItem;
 class DetailsDialog;
 class FileProgressInfo;
 class SearchDialog;
+class LocalSharedFilesDialog;
+class RemoteSharedFilesDialog;
 
 class TransfersDialog : public RsAutoUpdatePage
 {
@@ -56,6 +58,8 @@ public:
     static DetailsDialog *detailsdlg;
 
 	 SearchDialog *searchDialog ;
+	 LocalSharedFilesDialog *localSharedFiles ;
+	 RemoteSharedFilesDialog *remoteSharedFiles ;
 
 public slots:
     void insertTransfers();

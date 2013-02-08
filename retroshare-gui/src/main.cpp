@@ -325,9 +325,11 @@ int main(int argc, char *argv[])
 	std::cerr << "connecting signals and slots" << std::endl ;
 	QObject::connect(notify,SIGNAL(gotTurtleSearchResult(qulonglong,FileDetail)),w->transfersDialog->searchDialog	,SLOT(updateFiles(qulonglong,FileDetail))) ;
 	QObject::connect(notify,SIGNAL(diskFull(int,int))						,w                   		,SLOT(displayDiskSpaceWarning(int,int))) ;
-	QObject::connect(notify,SIGNAL(filesPreModChanged(bool))          ,w->sharedfilesDialog		,SLOT(preModDirectories(bool)          )) ;
-	QObject::connect(notify,SIGNAL(filesPostModChanged(bool))         ,w->sharedfilesDialog		,SLOT(postModDirectories(bool)         )) ;
-	QObject::connect(notify,SIGNAL(filesPostModChanged(bool))         ,w                            ,SLOT(postModDirectories(bool)         )) ;
+	QObject::connect(notify,SIGNAL(filesPreModChanged(bool))          ,w->transfersDialog->localSharedFiles			,SLOT(preModDirectories(bool)          )) ;
+	QObject::connect(notify,SIGNAL(filesPreModChanged(bool))          ,w->transfersDialog->remoteSharedFiles		,SLOT(preModDirectories(bool)          )) ;
+	QObject::connect(notify,SIGNAL(filesPostModChanged(bool))         ,w->transfersDialog->localSharedFiles			,SLOT(postModDirectories(bool)         )) ;
+	QObject::connect(notify,SIGNAL(filesPostModChanged(bool))         ,w->transfersDialog->remoteSharedFiles		,SLOT(postModDirectories(bool)         )) ;
+	QObject::connect(notify,SIGNAL(filesPostModChanged(bool))         ,w                         ,SLOT(postModDirectories(bool)         )) ;
 	QObject::connect(notify,SIGNAL(transfersChanged())                ,w->transfersDialog  		,SLOT(insertTransfers()                )) ;
 	QObject::connect(notify,SIGNAL(publicChatChanged(int))            ,w->friendsDialog      		,SLOT(publicChatChanged(int)           ));
 	QObject::connect(notify,SIGNAL(neighboursChanged())               ,w->friendsDialog->networkDialog    		,SLOT(insertConnect()                  )) ;

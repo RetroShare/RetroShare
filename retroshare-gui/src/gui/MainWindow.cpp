@@ -43,7 +43,7 @@
 #include "SearchDialog.h"
 #include "TransfersDialog.h"
 #include "MessagesDialog.h"
-#include "SharedFilesDialog.h"
+//#include "SharedFilesDialog.h"
 #include "PluginsPage.h"
 #include "NewsFeed.h"
 #include "ShareManager.h"
@@ -255,8 +255,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
                       action = createPageAction(QIcon(IMAGE_TRANSFERS), tr("Transfers"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(transfersDialog, action));
 
-    ui->stackPages->add(sharedfilesDialog = new SharedFilesDialog(ui->stackPages),
-                       createPageAction(QIcon(IMAGE_FILES), tr("Files"), grp));
+//    ui->stackPages->add(sharedfilesDialog = new SharedFilesDialog(ui->stackPages),
+//                       createPageAction(QIcon(IMAGE_FILES), tr("Files"), grp));
 
     ui->stackPages->add(messagesDialog = new MessagesDialog(ui->stackPages),
                       action = createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));
@@ -800,8 +800,8 @@ void SetForegroundWindowInternal(HWND hWnd)
     case Transfers:
         Page = _instance->transfersDialog;
         break;
-    case SharedDirectories:
-        Page = _instance->sharedfilesDialog;
+//    case SharedDirectories:
+//        Page = _instance->sharedfilesDialog;
         break;
     case Messages:
         Page = _instance->messagesDialog;
@@ -849,9 +849,9 @@ void SetForegroundWindowInternal(HWND hWnd)
    if (page == _instance->transfersDialog) {
        return Transfers;
    }
-   if (page == _instance->sharedfilesDialog) {
-       return SharedDirectories;
-   }
+//   if (page == _instance->sharedfilesDialog) {
+//       return SharedDirectories;
+ //  }
    if (page == _instance->messagesDialog) {
        return Messages;
    }
@@ -891,8 +891,8 @@ void SetForegroundWindowInternal(HWND hWnd)
 //       return _instance->searchDialog;
    case Transfers:
        return _instance->transfersDialog;
-   case SharedDirectories:
-       return _instance->sharedfilesDialog;
+//   case SharedDirectories:
+//       return _instance->sharedfilesDialog;
    case Messages:
        return _instance->messagesDialog;
 #ifdef RS_USE_LINKS

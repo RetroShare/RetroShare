@@ -37,137 +37,140 @@
      <item>
       <widget class="QCheckBox" name="showUnvalidKeys">
        <property name="text">
-        <string>Show keys that are not validated by the PGP web of trust</string>
+        <string>Show all accessible keys</string>
        </property>
       </widget>
      </item>
     </layout>
    </item>
    <item>
-    <widget class="QTreeWidget" name="connecttreeWidget">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
      </property>
-     <property name="contextMenuPolicy">
-      <enum>Qt::CustomContextMenu</enum>
-     </property>
-     <property name="acceptDrops">
-      <bool>false</bool>
-     </property>
-     <property name="autoFillBackground">
-      <bool>false</bool>
-     </property>
-     <property name="lineWidth">
-      <number>20</number>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>16</width>
-       <height>16</height>
-      </size>
-     </property>
-     <property name="uniformRowHeights">
-      <bool>true</bool>
-     </property>
-     <property name="sortingEnabled">
-      <bool>true</bool>
-     </property>
-     <property name="animated">
-      <bool>true</bool>
-     </property>
-     <property name="allColumnsShowFocus">
-      <bool>true</bool>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-     <attribute name="headerCascadingSectionResizes">
-      <bool>true</bool>
-     </attribute>
-     <attribute name="headerDefaultSectionSize">
-      <number>200</number>
-     </attribute>
-     <attribute name="headerStretchLastSection">
-      <bool>true</bool>
-     </attribute>
-     <column>
-      <property name="text">
-       <string/>
+     <widget class="QTreeWidget" name="connecttreeWidget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Name</string>
+      <property name="contextMenuPolicy">
+       <enum>Qt::CustomContextMenu</enum>
       </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Did I authenticated peer</string>
+      <property name="acceptDrops">
+       <bool>false</bool>
       </property>
-      <property name="toolTip">
-       <string>Did I sign his PGP key</string>
+      <property name="autoFillBackground">
+       <bool>false</bool>
       </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Did peer authenticated me</string>
+      <property name="lineWidth">
+       <number>20</number>
       </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Cert Id</string>
+      <property name="iconSize">
+       <size>
+        <width>16</width>
+        <height>16</height>
+       </size>
       </property>
-     </column>
-    </widget>
-   </item>
-   <item>
-    <widget class="QTreeWidget" name="unvalidGPGkeyWidget">
-     <property name="contextMenuPolicy">
-      <enum>Qt::CustomContextMenu</enum>
-     </property>
-     <property name="sortingEnabled">
-      <bool>true</bool>
-     </property>
-     <property name="allColumnsShowFocus">
-      <bool>true</bool>
-     </property>
-     <attribute name="headerCascadingSectionResizes">
-      <bool>true</bool>
-     </attribute>
-     <attribute name="headerDefaultSectionSize">
-      <number>200</number>
-     </attribute>
-     <attribute name="headerShowSortIndicator" stdset="0">
-      <bool>true</bool>
-     </attribute>
-     <column>
-      <property name="text">
-       <string/>
+      <property name="uniformRowHeights">
+       <bool>true</bool>
       </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Name</string>
+      <property name="sortingEnabled">
+       <bool>true</bool>
       </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Did I authenticated peer</string>
+      <property name="animated">
+       <bool>true</bool>
       </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Did peer authenticated me</string>
+      <property name="allColumnsShowFocus">
+       <bool>true</bool>
       </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Cert Id</string>
+      <property name="wordWrap">
+       <bool>true</bool>
       </property>
-     </column>
+      <attribute name="headerCascadingSectionResizes">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="headerDefaultSectionSize">
+       <number>200</number>
+      </attribute>
+      <attribute name="headerStretchLastSection">
+       <bool>true</bool>
+      </attribute>
+      <column>
+       <property name="text">
+        <string/>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Name</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Did I authenticated peer</string>
+       </property>
+       <property name="toolTip">
+        <string>Did I sign his PGP key</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Did peer authenticated me</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Cert Id</string>
+       </property>
+      </column>
+     </widget>
+     <widget class="QTreeWidget" name="unvalidGPGkeyWidget">
+      <property name="contextMenuPolicy">
+       <enum>Qt::CustomContextMenu</enum>
+      </property>
+      <property name="sortingEnabled">
+       <bool>true</bool>
+      </property>
+      <property name="allColumnsShowFocus">
+       <bool>true</bool>
+      </property>
+      <attribute name="headerCascadingSectionResizes">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="headerDefaultSectionSize">
+       <number>200</number>
+      </attribute>
+      <attribute name="headerShowSortIndicator" stdset="0">
+       <bool>true</bool>
+      </attribute>
+      <column>
+       <property name="text">
+        <string/>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Name</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Did I authenticated peer</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Did peer authenticated me</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Cert Id</string>
+       </property>
+      </column>
+     </widget>
     </widget>
    </item>
   </layout>
