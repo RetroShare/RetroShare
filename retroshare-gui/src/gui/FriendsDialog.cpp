@@ -103,7 +103,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     ui.tabWidget->setTabPosition(QTabWidget::North);
     ui.tabWidget->addTab(networkView = new NetworkView(),QIcon(IMAGE_NETWORK2), tr("Local network"));
     ui.tabWidget->addTab(networkDialog = new NetworkDialog(),QIcon(IMAGE_PEERS), tr("Known people"));
-    //ui.tabWidget->addTab(new ChatLobbyWidget(), tr("Chat lobbies"));
+    ui.tabWidget->addTab(new ChatLobbyWidget(), tr("Chat lobbies"));
     //ui.tabWidget->addTab(new ProfileWidget(), tr("Profile"));
     //newsFeed = new NewsFeed();
     //int newsFeedTabIndex = ui.tabWidget->insertTab(0, newsFeed, tr("News Feed"));
