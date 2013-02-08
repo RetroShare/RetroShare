@@ -157,10 +157,6 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
 
 	header->setStretchLastSection(false);
 
-	// Setup the current view model.
-	//
-	changeCurrentViewModel(ui.viewType_CB->currentIndex()) ;
-
 	/* Set Multi Selection */
 	ui.dirTreeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
@@ -196,6 +192,10 @@ LocalSharedFilesDialog::LocalSharedFilesDialog(QWidget *parent)
 
 	// load settings
 	processSettings(true);
+	// Setup the current view model.
+	//
+	changeCurrentViewModel(ui.viewType_CB->currentIndex()) ;
+
 }
 
 RemoteSharedFilesDialog::RemoteSharedFilesDialog(QWidget *parent)
@@ -209,6 +209,10 @@ RemoteSharedFilesDialog::RemoteSharedFilesDialog(QWidget *parent)
 
 	// load settings
 	processSettings(true);
+	// Setup the current view model.
+	//
+	changeCurrentViewModel(ui.viewType_CB->currentIndex()) ;
+
 }
 
 void SharedFilesDialog::hideEvent(QHideEvent *)
@@ -305,30 +309,18 @@ void SharedFilesDialog::changeCurrentViewModel(int c)
 	if(model!=NULL)
 		model->setVisible(false) ;
 
-	if(c == 0)
+	if(c==0)
 	{
 		model = tree_model ;
 		proxyModel = tree_proxyModel ;
-		ui.dirTreeView->setColumnHidden(3,true) ;
-		ui.dirTreeView->setColumnHidden(4,true) ;
-#ifdef DONT_USE_SEARCH_IN_TREE_VIEW
-		ui.filterLabel->hide();
-		ui.filterPatternLineEdit->hide();
-		ui.filterStartButton->hide();
-		ui.filterClearButton->hide();
-#endif
 	}
 	else
 	{
 		model = flat_model ;
 		proxyModel = flat_proxyModel ;
-		ui.dirTreeView->setColumnHidden(3,false) ;
-		ui.dirTreeView->setColumnHidden(4,false) ;
-#ifdef DONT_USE_SEARCH_IN_TREE_VIEW
-		ui.filterLabel->show();
-		ui.filterPatternLineEdit->show();
-#endif
 	}
+
+	showProperColumns() ;
 
 	if(isVisible())
 	{
@@ -348,6 +340,53 @@ void SharedFilesDialog::changeCurrentViewModel(int c)
 	if(c == 1)
 #endif
 		FilterItems();
+}
+
+void LocalSharedFilesDialog::showProperColumns()
+{
+	if(model == tree_model)
+	{
+		ui.dirTreeView->setColumnHidden(3,false) ;
+		ui.dirTreeView->setColumnHidden(4,false) ;
+#ifdef DONT_USE_SEARCH_IN_TREE_VIEW
+		ui.filterLabel->hide();
+		ui.filterPatternLineEdit->hide();
+		ui.filterStartButton->hide();
+		ui.filterClearButton->hide();
+#endif
+	}
+	else
+	{
+		ui.dirTreeView->setColumnHidden(3,true) ;
+		ui.dirTreeView->setColumnHidden(4,false) ;
+#ifdef DONT_USE_SEARCH_IN_TREE_VIEW
+		ui.filterLabel->show();
+		ui.filterPatternLineEdit->show();
+#endif
+	}
+}
+void RemoteSharedFilesDialog::showProperColumns()
+{
+	if(model == tree_model)
+	{
+		ui.dirTreeView->setColumnHidden(3,true) ;
+		ui.dirTreeView->setColumnHidden(4,true) ;
+#ifdef DONT_USE_SEARCH_IN_TREE_VIEW
+		ui.filterLabel->hide();
+		ui.filterPatternLineEdit->hide();
+		ui.filterStartButton->hide();
+		ui.filterClearButton->hide();
+#endif
+	}
+	else
+	{
+		ui.dirTreeView->setColumnHidden(3,false) ;
+		ui.dirTreeView->setColumnHidden(4,false) ;
+#ifdef DONT_USE_SEARCH_IN_TREE_VIEW
+		ui.filterLabel->show();
+		ui.filterPatternLineEdit->show();
+#endif
+	}
 }
 
 void LocalSharedFilesDialog::checkUpdate()

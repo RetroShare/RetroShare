@@ -44,9 +44,12 @@ public:
 
 protected:
   QTreeView *directoryView() ;
+  virtual void showProperColumns() = 0 ;
+
+protected slots:
+  virtual void spawnCustomPopupMenu(QPoint point) = 0;
 
 private slots:
-  virtual void spawnCustomPopupMenu(QPoint point) = 0;
 
 	/* For handling the model updates */
   void  preModDirectories() ;
@@ -143,6 +146,7 @@ class LocalSharedFilesDialog : public SharedFilesDialog
 
 	protected:
 		virtual void processSettings(bool bLoad) ;
+		virtual void showProperColumns() ;
 
 	private slots:
 		void createCollectionFile();
@@ -169,6 +173,7 @@ class RemoteSharedFilesDialog : public SharedFilesDialog
 
 	protected:
 		virtual void processSettings(bool bLoad) ;
+		virtual void showProperColumns() ;
 
 	private slots:
 		void downloadRemoteSelected();
