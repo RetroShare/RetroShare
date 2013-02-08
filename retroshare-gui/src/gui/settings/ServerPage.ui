@@ -306,15 +306,19 @@ peers still need to trust each other to allow connection. </string>
         </layout>
        </item>
        <item>
-        <widget class="QCheckBox" name="allowTunnelConnectionCB">
-         <property name="toolTip">
-          <string>If you uncheck this, RetroShare will not use tunnel connection between peers that are firewalled and cannot connect directly. This is independent from F2F routing (turtle router).</string>
-         </property>
+        <widget class="QLabel" name="label_7">
          <property name="text">
-          <string>Allow Tunnel Connection</string>
+          <string>Known / Previous IPs:</string>
          </property>
-         <property name="checked">
-          <bool>true</bool>
+        </widget>
+       </item>
+       <item>
+        <widget class="QListWidget" name="ipAddressList">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>150</height>
+          </size>
          </property>
         </widget>
        </item>
@@ -362,13 +366,14 @@ behind a firewall or a VPN.</string>
         </spacer>
        </item>
       </layout>
-      <zorder>allowTunnelConnectionCB</zorder>
       <zorder>showDiscStatusBar</zorder>
       <zorder>allowIpDeterminationCB</zorder>
       <zorder>IPServersLV</zorder>
       <zorder></zorder>
       <zorder>textlabel_ext</zorder>
       <zorder>textlabel_netLimited</zorder>
+      <zorder>ipAddressList</zorder>
+      <zorder>label_7</zorder>
      </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
@@ -446,6 +451,19 @@ behind a firewall or a VPN.</string>
              </widget>
             </item>
            </layout>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="allowTunnelConnectionCB">
+            <property name="toolTip">
+             <string>If you uncheck this, RetroShare will not use tunnel connection between peers that are firewalled and cannot connect directly. This is independent from F2F routing (turtle router).</string>
+            </property>
+            <property name="text">
+             <string>Allow Tunnel Connection</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
           <item>
            <spacer name="verticalSpacer_3">
@@ -538,7 +556,6 @@ The default value is 20.</string>
   <tabstop>extAddress</tabstop>
   <tabstop>extPort</tabstop>
   <tabstop>dynDNS</tabstop>
-  <tabstop>allowTunnelConnectionCB</tabstop>
   <tabstop>showDiscStatusBar</tabstop>
   <tabstop>totalDownloadRate</tabstop>
   <tabstop>totalUploadRate</tabstop>

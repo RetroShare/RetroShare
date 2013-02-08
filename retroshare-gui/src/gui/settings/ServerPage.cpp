@@ -216,6 +216,10 @@ void ServerPage::load()
 
 	ui._max_tr_up_per_sec_SB->setValue(rsTurtle->getMaxTRForwardRate()) ;
 	ui._turtle_enabled_CB->setChecked(rsTurtle->enabled()) ;
+
+		ui.ipAddressList->clear();
+		for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
+			ui.ipAddressList->addItem(QString::fromStdString(*it));
 }
 
 void ServerPage::toggleTurtleRouting(bool b)
