@@ -292,6 +292,17 @@ border-image: url(:/images/closepressed.png)
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QPushButton" name="addShares_PB">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="images.qrc">
+          <normaloff>:/images/add-share24.png</normaloff>:/images/add-share24.png</iconset>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>

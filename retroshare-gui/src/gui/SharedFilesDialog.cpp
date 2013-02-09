@@ -35,6 +35,7 @@
 #include "AddLinksDialog.h"
 #endif
 #include "RetroShareLink.h"
+#include "ShareManager.h"
 #include "RemoteDirModel.h"
 #include "ShareDialog.h"
 #include "common/PeerDefs.h"
@@ -196,6 +197,7 @@ LocalSharedFilesDialog::LocalSharedFilesDialog(QWidget *parent)
 	//
 	changeCurrentViewModel(ui.viewType_CB->currentIndex()) ;
 
+  connect(ui.addShares_PB, SIGNAL(clicked()), this, SLOT(addShares()));
 }
 
 RemoteSharedFilesDialog::RemoteSharedFilesDialog(QWidget *parent)
@@ -213,6 +215,12 @@ RemoteSharedFilesDialog::RemoteSharedFilesDialog(QWidget *parent)
 	//
 	changeCurrentViewModel(ui.viewType_CB->currentIndex()) ;
 
+	ui.addShares_PB->hide() ;
+}
+
+void LocalSharedFilesDialog::addShares()
+{
+	ShareManager::showYourself();
 }
 
 void SharedFilesDialog::hideEvent(QHideEvent *)

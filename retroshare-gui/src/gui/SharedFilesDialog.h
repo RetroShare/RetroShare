@@ -149,6 +149,7 @@ class LocalSharedFilesDialog : public SharedFilesDialog
 		virtual void showProperColumns() ;
 
 	private slots:
+		void addShares();
 		void createCollectionFile();
 		void checkUpdate() ;
 		void editSharePermissions();
