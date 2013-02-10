@@ -44,7 +44,7 @@ class p3GxsForums: public RsGenExchange, public RsGxsForums,
 {
 	public:
 
-	p3GxsForums(RsGeneralDataService* gds, RsNetworkExchangeService* nes);
+	p3GxsForums(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs* gixs);
 
 virtual void service_tick();
 

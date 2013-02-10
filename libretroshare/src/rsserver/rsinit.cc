@@ -2262,7 +2262,7 @@ int RsServer::StartupRetroShare()
 	//
 	mPluginsManager->registerClientServices(pqih) ;
 	mPluginsManager->registerCacheServices() ;
-
+//#define RS_ENABLE_GXS
 #ifdef RS_ENABLE_GXS
 
         // The idea is that if priorGxsDir is non
@@ -2425,7 +2425,7 @@ int RsServer::StartupRetroShare()
         gxsforums_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
 #endif
 
-        mGxsForums = new p3GxsForums(gxsforums_ds, NULL);
+        mGxsForums = new p3GxsForums(gxsforums_ds, NULL, mGxsIdService);
 
         // create GXS photo service
         RsGxsNetService* gxsforums_ns = new RsGxsNetService(
