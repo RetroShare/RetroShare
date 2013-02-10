@@ -165,11 +165,26 @@ void GxsForumsDialog::forumListCustomPopupMenu(QPoint /*point*/)
 
 	QMenu contextMnu(this);
 
+        std::cerr << "GxsForumsDialog::forumListCustomPopupMenu()";
+	std::cerr << std::endl;
+        std::cerr << "    mForumId: " << mForumId;
+	std::cerr << std::endl;
+        std::cerr << "    subscribeFlags: " << subscribeFlags;
+	std::cerr << std::endl;
+        std::cerr << "    IS_GROUP_SUBSCRIBED(): " << IS_GROUP_SUBSCRIBED(subscribeFlags);
+	std::cerr << std::endl;
+        std::cerr << "    IS_GROUP_ADMIN(): " << IS_GROUP_ADMIN(subscribeFlags);
+	std::cerr << std::endl;
+	std::cerr << std::endl;
+
+
 	QAction *action = contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Subscribe to Forum"), this, SLOT(subscribeToForum()));
-	action->setDisabled (mForumId.empty() || IS_GROUP_SUBSCRIBED(subscribeFlags));
+        // TODO DISABLED CONDITION IS WRONG, as subscribeFlags is = -1....
+	//action->setDisabled (mForumId.empty() || IS_GROUP_SUBSCRIBED(subscribeFlags));
 
 	action = contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Unsubscribe to Forum"), this, SLOT(unsubscribeToForum()));
-	action->setEnabled (!mForumId.empty() && IS_GROUP_SUBSCRIBED(subscribeFlags));
+        // TODO DISABLED CONDITION IS WRONG, as subscribeFlags is = -1....
+	//action->setEnabled (!mForumId.empty() && IS_GROUP_SUBSCRIBED(subscribeFlags));
 
 	if (!Settings->getForumOpenAllInNewTab()) {
 		action = contextMnu.addAction(QIcon(""), tr("Open in new tab"), this, SLOT(openInNewTab()));
