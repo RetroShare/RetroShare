@@ -44,7 +44,8 @@ class p3Wiki: public RsGenExchange, public RsWiki,
 	public RsTickEvent
 {
 public:
-    p3Wiki(RsGeneralDataService* gds, RsNetworkExchangeService* nes);
+    p3Wiki(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs *gixs);
+static uint32_t wikiAuthenPolicy();
 
 protected:
 

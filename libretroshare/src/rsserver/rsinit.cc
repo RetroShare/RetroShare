@@ -2392,7 +2392,7 @@ int RsServer::StartupRetroShare()
         wiki_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
 #endif
 
-        mWiki = new p3Wiki(wiki_ds, NULL);
+        mWiki = new p3Wiki(wiki_ds, NULL, mGxsIdService);
 
         // create GXS photo service
         RsGxsNetService* wiki_ns = new RsGxsNetService(
