@@ -7,7 +7,7 @@ CONFIG += test_voip
 
 # GXS Stuff.
 # This should be disabled for releases until further notice.
-CONFIG += gxs
+#CONFIG += gxs
 
 # Beware: All data of the stripped services are lost
 DEFINES *= PQI_DISABLE_TUNNEL
