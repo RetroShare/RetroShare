@@ -654,6 +654,8 @@ int RsDataService::retrieveNxsGrps(std::map<std::string, RsNxsGrp *> &grp, bool 
         RsStackMutex stack(mDbMutex);
         std::map<std::string, RsNxsGrp *>::iterator mit = grp.begin();
 
+        std::list<std::string> toRemove;
+
         for(; mit != grp.end(); mit++)
         {
             const std::string& grpId = mit->first;
@@ -669,11 +671,17 @@ int RsDataService::retrieveNxsGrps(std::map<std::string, RsNxsGrp *> &grp, bool 
                         RsNxsGrp* ng = grps.front();
                         grp[ng->grpId] = ng;
                 }else{
-                        grp.erase(grpId);
+                        toRemove.push_back(grpId);
                 }
 
                 delete c;
             }
+        }
+
+        std::list<std::string>::iterator grpIdIt;
+        for (grpIdIt = toRemove.begin(); grpIdIt != toRemove.end(); ++grpIdIt)
+        {
+            grp.erase(*grpIdIt);
         }
     }
 
