@@ -78,6 +78,8 @@ virtual bool createMsg(uint32_t &token, RsGxsForumMsg &msg);
 
 	private:
 
+static uint32_t forumsAuthenPolicy();
+
 virtual bool generateDummyData();
 
 std::string genRandomId();

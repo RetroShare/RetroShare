@@ -51,7 +51,7 @@ RsGxsForums *rsGxsForums = NULL;
 /********************************************************************************/
 
 p3GxsForums::p3GxsForums(RsGeneralDataService *gds, RsNetworkExchangeService *nes)
-    : RsGenExchange(gds, nes, new RsGxsForumSerialiser(), RS_SERVICE_GXSV1_TYPE_FORUMS), RsGxsForums(this)
+    : RsGenExchange(gds, nes, new RsGxsForumSerialiser(), RS_SERVICE_GXSV1_TYPE_FORUMS, NULL, forumsAuthenPolicy()), RsGxsForums(this)
 {
 	// For Dummy Msgs.
 	mGenActive = false;
@@ -64,6 +64,22 @@ p3GxsForums::p3GxsForums(RsGeneralDataService *gds, RsNetworkExchangeService *ne
 
 }
 
+uint32_t p3GxsForums::forumsAuthenPolicy()
+{
+	uint32_t policy;
+    uint32_t flag = GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN |
+    		GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN;
+
+    RsGenExchange::setAuthenPolicyFlag(flag, policy,
+                                       RsGenExchange::RESTRICTED_GRP_BITS);
+
+    RsGenExchange::setAuthenPolicyFlag(flag, policy,
+                                           RsGenExchange::PUBLIC_GRP_BITS);
+
+    RsGenExchange::setAuthenPolicyFlag(flag, policy,
+                                               RsGenExchange::PRIVATE_GRP_BITS);
+    return policy;
+}
 void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 {
 	receiveChanges(changes);
