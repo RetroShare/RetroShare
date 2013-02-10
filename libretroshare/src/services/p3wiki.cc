@@ -54,8 +54,10 @@ p3Wiki::p3Wiki(RsGeneralDataService* gds, RsNetworkExchangeService* nes)
 	mImprovActive = false;
 	mMarkdownActive = false;
 
-#ifdef WIKI_GEN_DUMMY_DATA
+#ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
+  #ifdef WIKI_GEN_DUMMY_DATA
 	RsTickEvent::schedule_in(WIKI_EVENT_DUMMYSTART, DUMMYSTART_PERIOD);
+  #endif
 #endif
 
 }

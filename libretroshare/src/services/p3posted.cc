@@ -64,9 +64,13 @@ void p3Posted::notifyChanges(std::vector<RsGxsNotify *> &changes)
 void p3Posted::service_tick()
 {
 
+#ifndef GXS_DEV_TESTNET // DISABLE DUMMYDATA if TEST_NET
+
     generateTopics();
     generatePosts();
     generateVotesAndComments();
+
+#endif
 
 //    time_t now = time(NULL);
 //

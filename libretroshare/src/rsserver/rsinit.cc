@@ -2271,6 +2271,11 @@ int RsServer::StartupRetroShare()
         // and deleted
         std::string priorGxsDir = "./" + mLinkMgr->getOwnId() + "/";
 	std::string currGxsDir = RsInitConfig::configDir + "/GXS_phase1";
+
+#ifdef GXS_DEV_TESTNET // Different Directory for testing.
+	currGxsDir += "_TESTNET";
+#endif
+
         bool cleanUpGxsDir = false;
 
         if(!priorGxsDir.empty())
@@ -2294,7 +2299,9 @@ int RsServer::StartupRetroShare()
         RsGeneralDataService* gxsid_ds = new RsDataService(currGxsDir + "/", "gxsid_db",
                         RS_SERVICE_GXSV1_TYPE_GXSID, NULL);
 
+#ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         gxsid_ds->resetDataStore(); 
+#endif
 
         // init gxs services
         mGxsIdService = new p3IdService(gxsid_ds, NULL);
@@ -2309,7 +2316,9 @@ int RsServer::StartupRetroShare()
         RsGeneralDataService* gxscircles_ds = new RsDataService(currGxsDir + "/", "gxscircles_db",
                         RS_SERVICE_GXSV1_TYPE_GXSCIRCLE, NULL);
 
+#ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         gxscircles_ds->resetDataStore(); 
+#endif
 
         // init gxs services
         mGxsCircles = new p3GxsCircles(gxscircles_ds, NULL, mGxsIdService);
@@ -2342,7 +2351,9 @@ int RsServer::StartupRetroShare()
         RsGeneralDataService* photo_ds = new RsDataService(currGxsDir + "/", "photoV2_db",
                         RS_SERVICE_GXSV1_TYPE_PHOTO, NULL);
 
+#ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         photo_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
+#endif
 
 
         // init gxs services
@@ -2359,7 +2370,9 @@ int RsServer::StartupRetroShare()
         RsGeneralDataService* posted_ds = new RsDataService(currGxsDir + "/", "posted_db",
                                                             RS_SERVICE_GXSV1_TYPE_POSTED);
 
+#ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         posted_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
+#endif
 
         mPosted = new p3Posted(posted_ds, NULL);
 
@@ -2375,7 +2388,9 @@ int RsServer::StartupRetroShare()
         RsGeneralDataService* wiki_ds = new RsDataService(currGxsDir + "/", "wiki_db",
                                                             RS_SERVICE_GXSV1_TYPE_WIKI);
 
+#ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         wiki_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
+#endif
 
         mWiki = new p3Wiki(wiki_ds, NULL);
 
@@ -2390,7 +2405,9 @@ int RsServer::StartupRetroShare()
         RsGeneralDataService* wire_ds = new RsDataService(currGxsDir + "/", "wire_db",
                                                             RS_SERVICE_GXSV1_TYPE_WIRE);
 
+#ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         wire_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
+#endif
 
         mWire = new p3Wire(wire_ds, NULL);
 
@@ -2404,7 +2421,9 @@ int RsServer::StartupRetroShare()
         RsGeneralDataService* gxsforums_ds = new RsDataService(currGxsDir + "/", "gxsforums_db",
                                                             RS_SERVICE_GXSV1_TYPE_FORUMS);
 
+#ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         gxsforums_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
+#endif
 
         mGxsForums = new p3GxsForums(gxsforums_ds, NULL);
 

@@ -94,6 +94,8 @@ p3PhotoService::p3PhotoService(RsGeneralDataService* gds, RsNetworkExchangeServi
 
     // create dummy grps
 
+#ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
+
     RsGxsPhotoAlbumItem* item1 = new RsGxsPhotoAlbumItem(), *item2 = new RsGxsPhotoAlbumItem();
 
     item1->meta.mGroupName = "Dummy Album 1";
@@ -105,6 +107,10 @@ p3PhotoService::p3PhotoService(RsGeneralDataService* gds, RsNetworkExchangeServi
 
     createDummyGroup(item1);
     createDummyGroup(item2);
+
+#endif
+
+
 }
 
 bool p3PhotoService::updated()

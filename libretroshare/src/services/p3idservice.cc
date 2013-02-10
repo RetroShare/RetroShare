@@ -38,10 +38,10 @@
 
 /****
  * #define ID_DEBUG 1
+ * #define GXSID_GEN_DUMMY_DATA	1
  ****/
+
 #define GXSID_GEN_DUMMY_DATA	1
-
-
 
 #define ID_REQUEST_LIST		0x0001
 #define ID_REQUEST_IDENTITY	0x0002
@@ -129,13 +129,17 @@ p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *ne
 	mBgSchedule_Active = false;
 
 	// Kick off Cache Testing, + Others.
-	RsTickEvent::schedule_in(GXSID_EVENT_CACHETEST, CACHETEST_PERIOD);
 	RsTickEvent::schedule_in(GXSID_EVENT_PGPHASH, PGPHASH_PERIOD);
 	RsTickEvent::schedule_in(GXSID_EVENT_REPUTATION, REPUTATION_PERIOD);
 	RsTickEvent::schedule_now(GXSID_EVENT_CACHEOWNIDS);
 
-#ifdef GXSID_GEN_DUMMY_DATA
+#ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
+
+	RsTickEvent::schedule_in(GXSID_EVENT_CACHETEST, CACHETEST_PERIOD);
+
+  #ifdef GXSID_GEN_DUMMY_DATA
 	RsTickEvent::schedule_now(GXSID_EVENT_DUMMYDATA);
+  #endif
 #endif
 
 }
@@ -1156,6 +1160,9 @@ static void calcPGPHash(const RsGxsId &id, const PGPFingerprintType &pgp, GxsIdP
 // Must Use meta.
 void p3IdService::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet)
 {
+	std::cerr << "p3IdService::service_CreateGroup()";
+	std::cerr << std::endl;
+
 	RsGxsIdGroupItem *item = dynamic_cast<RsGxsIdGroupItem *>(grpItem);
 	if (!item)
 	{
@@ -1219,29 +1226,25 @@ void p3IdService::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet
 		
 
 
-
-
-
 	std::cerr << "p3IdService::service_CreateGroup() for : " << item->group.mMeta.mGroupId;
 	std::cerr << std::endl;
 	std::cerr << "p3IdService::service_CreateGroup() Alt GroupId : " << item->meta.mGroupId;
 	std::cerr << std::endl;
 
-#ifdef GXSID_GEN_DUMMY_DATA
-	if ((item->group.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID) && (item->group.mMeta.mAuthorId != ""))
-#else
 	if (item->group.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID) 
-#endif
 	{
 		/* create the hash */
 		GxsIdPgpHash hash;
 
 		/* */
 		PGPFingerprintType ownFinger;
-#ifdef GXSID_GEN_DUMMY_DATA
-		PGPIdType ownId(item->group.mMeta.mAuthorId);
-#else
 		PGPIdType ownId(AuthGPG::getAuthGPG()->getGPGOwnId());
+
+#ifdef GXSID_GEN_DUMMY_DATA
+		if (item->group.mMeta.mAuthorId != "")
+		{
+			ownId = PGPIdType(item->group.mMeta.mAuthorId);
+		}
 #endif
 
 		if (!AuthGPG::getAuthGPG()->getKeyFingerprint(ownId,ownFinger))
@@ -1253,6 +1256,9 @@ void p3IdService::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet
 
 		calcPGPHash(item->group.mMeta.mGroupId, ownFinger, hash);
 		item->group.mPgpIdHash = hash.toStdString();
+
+		std::cerr << "p3IdService::service_CreateGroup() Calculated PgpIdHash : " << item->group.mPgpIdHash;
+		std::cerr << std::endl;
 
 		/* do signature */
 
@@ -1525,6 +1531,17 @@ bool p3IdService::checkId(const RsGxsIdGroup &grp, PGPIdType &pgpId)
 	std::cerr << "p3IdService::checkId() Starting Match Check for RsGxsId: ";
 	std::cerr << grp.mMeta.mGroupId;
 	std::cerr << std::endl;
+
+        /* some sanity checking... make sure hash is the right size */
+
+	std::cerr << "p3IdService::checkId() PgpIdHash is: " << grp.mPgpIdHash;
+	std::cerr << std::endl;
+
+	if (grp.mPgpIdHash.length() != SHA_DIGEST_LENGTH * 2)
+	{
+		std::cerr << "ERROR PgpIdHash len:" << grp.mPgpIdHash.length();
+		std::cerr << std::endl;
+	}
 
 	/* iterate through and check hash */
 	GxsIdPgpHash ans(grp.mPgpIdHash);

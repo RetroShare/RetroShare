@@ -55,7 +55,13 @@ p3GxsForums::p3GxsForums(RsGeneralDataService *gds, RsNetworkExchangeService *ne
 {
 	// For Dummy Msgs.
 	mGenActive = false;
+
+#ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
+
 	RsTickEvent::schedule_in(FORUM_TESTEVENT_DUMMYDATA, DUMMYDATA_PERIOD);
+
+#endif
+
 }
 
 void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)

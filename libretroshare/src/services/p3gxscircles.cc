@@ -118,7 +118,13 @@ p3GxsCircles::p3GxsCircles(RsGeneralDataService *gds, RsNetworkExchangeService *
 	RsTickEvent::schedule_now(CIRCLE_EVENT_LOADIDS);
 
 	// Dummy Circles.
+
+#ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
+
 	RsTickEvent::schedule_in(CIRCLE_EVENT_DUMMYSTART, CIRCLE_DUMMY_STARTPERIOD);
+
+#endif
+
 }
 
 

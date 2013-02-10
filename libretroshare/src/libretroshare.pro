@@ -7,7 +7,7 @@ CONFIG += test_voip
 
 # GXS Stuff.
 # This should be disabled for releases until further notice.
-#CONFIG += gxs
+CONFIG += gxs
 
 # Beware: All data of the stripped services are lost
 DEFINES *= PQI_DISABLE_TUNNEL
@@ -614,6 +614,9 @@ SOURCES +=	zeroconf/p3zcnatassist.cc \
 # this should be disabled for releases until further notice.
 gxs {
 	DEFINES *= RS_ENABLE_GXS
+
+	#DEFINES *= GXS_DEV_TESTNET
+	#DEFINES *= GXS_ENABLE_SYNC_MSGS
 
 	HEADERS += serialiser/rsnxsitems.h \
 		gxs/rsgds.h \
