@@ -707,12 +707,13 @@ bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 				full_key_ok = true;
 			}
 
-                        if (kit->second.keyFlags & RSTLV_KEY_TYPE_PUBLIC_ONLY)
-                        {
-                            /* cache public key always */
-                            pubkey = kit->second;
-                            pub_key_ok = true;
-                        }
+			/* cache public key always 
+			 * we don't need to check the keyFlags, 
+			 * as both FULL and PUBLIC_ONLY keys contain the PUBLIC key
+			 */
+			pubkey = kit->second;
+			pub_key_ok = true;
+
 		}
 	}
 
