@@ -44,7 +44,7 @@
 #define ROLE_LASTPOST        Qt::UserRole + 4
 #define ROLE_SEARCH_SCORE    Qt::UserRole + 5
 #define ROLE_SUBSCRIBE_FLAGS Qt::UserRole + 6
-#define ROLE_COLOR        Qt::UserRole + 6
+#define ROLE_COLOR           Qt::UserRole + 7
 
 #define FILTER_NAME_INDEX  0
 #define FILTER_DESC_INDEX  1
