@@ -182,7 +182,7 @@ void RsDataService::initialise(){
 
     // create table for msg data
     mDb->execSQL("CREATE TABLE " + MSG_TABLE_NAME + "(" +
-                 KEY_MSG_ID + " TEXT," +
+                 KEY_MSG_ID + " TEXT PRIMARY KEY," +
                  KEY_GRP_ID +  " TEXT," +
                  KEY_NXS_FLAGS + " INT,"  +
                  KEY_ORIG_MSG_ID +  " TEXT," +
@@ -202,7 +202,7 @@ void RsDataService::initialise(){
 
     // create table for grp data
     mDb->execSQL("CREATE TABLE " + GRP_TABLE_NAME + "(" +
-                 KEY_GRP_ID + " TEXT," +
+                 KEY_GRP_ID + " TEXT PRIMARY KEY," +
                  KEY_TIME_STAMP + " INT," +
                  KEY_NXS_FILE + " TEXT," +
                  KEY_NXS_FILE_OFFSET + " INT," +
@@ -770,7 +770,6 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
         }
 
         msg[grpId] = msgSet;
-        msgSet.clear();
 
         if(withMeta)
         {
@@ -784,6 +783,7 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
 
             metaReqIds[grpId] = msgIds;
         }
+        msgSet.clear();
     }
 
     // tres expensive !?

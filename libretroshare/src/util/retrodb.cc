@@ -265,14 +265,14 @@ bool RetroDb::sqlInsert(const std::string &table, const std::string& nullColumnH
             }
         else if ( ContentValue::INT32_TYPE == type)
             {
-                int32_t value;
+                int32_t value = 0;
                 cv.getAsInt32(key, value);
                 oStrStream << value;
                 qValues += oStrStream.str();
             }
         else if( ContentValue::INT64_TYPE == type)
             {
-                int64_t value;
+                int64_t value = 0;
                 cv.getAsInt64(key, value);
                 oStrStream << value;
                 qValues += oStrStream.str();
