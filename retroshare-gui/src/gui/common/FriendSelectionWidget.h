@@ -24,6 +24,7 @@
 #define FRIENDSELECTIONWIDGET_H
 
 #include <QWidget>
+#include <QDialog>
 
 namespace Ui {
 class FriendSelectionWidget;

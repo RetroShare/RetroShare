@@ -45,6 +45,7 @@ public:
 private slots:
 	void showParticipantsFrame(bool show);
 	void participantsTreeWidgetCostumPopupMenu( QPoint point );
+	void inviteFriends() ;
 
 protected:
 	/** Default constructor */
@@ -74,6 +75,8 @@ private:
 	ChatLobbyId lobbyId;
 	QString _lobby_name ;
 	time_t lastUpdateListTime;
+
+	QPushButton *inviteFriendsButton ;
 
 	/** Qt Designer generated object */
 	Ui::ChatLobbyDialog ui;

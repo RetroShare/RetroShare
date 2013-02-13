@@ -33,6 +33,7 @@
 #include "gui/FriendsDialog.h"
 #include <gui/common/html.h>
 #include "gui/common/RSTreeWidgetItem.h"
+#include "gui/common/FriendSelectionDialog.h"
 
 #include <retroshare/rsnotify.h>
 
@@ -57,9 +58,45 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WF
 	ui.participantsList->setColumnCount(COLUMN_COUNT);
 	ui.participantsList->setColumnWidth(COLUMN_ICON, 20);
 
-	// Mute a Participant
 	muteAct = new QAction(QIcon(), tr("Mute participant"), this);
 	connect(muteAct, SIGNAL(triggered()), this, SLOT(changePartipationState()));
+
+	// Add a button to invite friends.
+	//
+	inviteFriendsButton = new QPushButton ;
+	inviteFriendsButton->setMinimumSize(QSize(28,28)) ;
+	inviteFriendsButton->setMaximumSize(QSize(28,28)) ;
+	inviteFriendsButton->setText(QString()) ;
+	inviteFriendsButton->setToolTip(tr("Invite friends to this lobby"));
+
+	QIcon icon ;
+	icon.addPixmap(QPixmap(":/images/edit_add24.png")) ;
+	inviteFriendsButton->setIcon(icon) ;
+	inviteFriendsButton->setIconSize(QSize(22,22)) ;
+
+	connect(inviteFriendsButton, SIGNAL(clicked()), this , SLOT(inviteFriends()));
+
+	getChatWidget()->addChatButton(inviteFriendsButton) ;
+}
+
+void ChatLobbyDialog::inviteFriends()
+{
+	std::cerr << "Inviting friends" << std::endl;
+
+	std::list<std::string> ids = FriendSelectionDialog::selectFriends() ;
+
+	std::cerr << "Inviting these friends:" << std::endl;
+
+	ChatLobbyId lobby_id;
+	if (!rsMsgs->isLobbyId(getPeerId(), lobby_id)) 
+		return ;
+
+	for(std::list<std::string>::const_iterator it(ids.begin());it!=ids.end();++it)
+	{
+		std::cerr << "    " << *it  << std::endl;
+
+		rsMsgs->invitePeerToLobby(lobby_id,*it) ;
+	}
 }
 
 void ChatLobbyDialog::participantsTreeWidgetCostumPopupMenu(QPoint)
