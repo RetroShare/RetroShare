@@ -3,6 +3,7 @@
 #include <QMessageBox>
 #include "ChatLobbyWidget.h"
 #include "chat/CreateLobbyDialog.h"
+#include "chat/ChatTabWidget.h"
 #include "common/RSTreeWidgetItem.h"
 #include "notifyqt.h"
 #include "chat/ChatLobbyDialog.h"
@@ -39,6 +40,12 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
 	QObject::connect(NotifyQt::getInstance(), SIGNAL(lobbyListChanged()), SLOT(lobbyChanged()));
 	QObject::connect(NotifyQt::getInstance(), SIGNAL(chatLobbyEvent(qulonglong,int,const QString&,const QString&)), this, SLOT(displayChatLobbyEvent(qulonglong,int,const QString&,const QString&)));
 	QObject::connect(NotifyQt::getInstance(), SIGNAL(chatLobbyInviteReceived()), this, SLOT(readChatLobbyInvites()));
+
+	lobbyTreeWidget = new QTreeWidget ;
+	getTabWidget()->addTab(lobbyTreeWidget,tr("Lobby list")) ;
+
+	layout()->addWidget( getTabWidget() ) ;
+	layout()->update() ;
 
 	QObject::connect(lobbyTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(lobbyTreeWidgetCostumPopupMenu()));
 	QObject::connect(lobbyTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(itemDoubleClicked(QTreeWidgetItem*,int)));
@@ -347,6 +354,13 @@ void ChatLobbyWidget::unsubscribeItem()
 void ChatLobbyWidget::itemDoubleClicked(QTreeWidgetItem *item, int /*column*/)
 {
 	subscribeLobby(item);
+}
+
+ChatTabWidget *ChatLobbyWidget::getTabWidget()
+{
+	static ChatTabWidget *instance = new ChatTabWidget() ;
+
+	return instance ;
 }
 
 void ChatLobbyWidget::displayChatLobbyEvent(qulonglong lobby_id, int event_type, const QString& nickname, const QString& str)

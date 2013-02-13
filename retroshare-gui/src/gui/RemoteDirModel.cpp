@@ -619,7 +619,7 @@ QVariant TreeStyle_RDM::headerData(int section, Qt::Orientation orientation, int
 				if (RemoteMode)
 					return tr("Friend");
 				else
-					return tr("Share Type");
+					return tr("Share Flags");
 			case 4:
 				if (RemoteMode)
 					return tr("What's new");
@@ -665,7 +665,7 @@ QVariant FlatStyle_RDM::headerData(int section, Qt::Orientation orientation, int
 				if(RemoteMode)
 					return tr("Friend");
 				else
-					return tr("Share Type");
+					return tr("Share Flags");
 			case 4:
 				return tr("Directory");
 		}

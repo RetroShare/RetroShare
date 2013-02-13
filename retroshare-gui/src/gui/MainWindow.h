@@ -43,6 +43,7 @@ class DHTStatus;
 class HashingStatus;
 class ForumsDialog;
 class FriendsDialog;
+class ChatLobbyWidget;
 class ChatDialog;
 class NetworkDialog;
 class SearchDialog;
@@ -79,17 +80,18 @@ public:
         /* Fixed numbers for load and save the last page */
         Network            = 0,  /** Network page. */
         Friends            = 1,  /** Friends page. */
-        Search             = 2,  /** Search page. */
+        ChatLobby          = 2,  /** Chat Lobby page. */
         Transfers          = 3,  /** Transfers page. */
         SharedDirectories  = 4,  /** Shared Directories page. */
         Messages           = 5,  /** Messages page. */
         Channels           = 6,  /** Channels page. */
         Forums             = 7,  /** Forums page. */
+        Search             = 8,  /** Search page. */
 #ifdef BLOGS
-        Blogs              = 8,  /** Blogs page. */
+        Blogs              = 9,  /** Blogs page. */
 #endif
 #ifdef RS_USE_LINKS
-        Links              = 9,  /** Links page. */
+        Links              = 10,  /** Links page. */
 #endif        
     };
 
@@ -124,6 +126,7 @@ public:
     NewsFeed          *newsFeed;
     FriendsDialog     *friendsDialog;
     TransfersDialog   *transfersDialog;
+    ChatLobbyWidget     *chatLobbyDialog;
     MessagesDialog    *messagesDialog;
     SharedFilesDialog *sharedfilesDialog;
     ForumsDialog      *forumsDialog;

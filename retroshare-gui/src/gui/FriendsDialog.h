@@ -49,7 +49,6 @@ public:
 
     virtual void updateDisplay() ;	// overloaded from RsAutoUpdatePage
 
-    static ChatTabWidget *getTabWidget();
     static bool isGroupChatActive();
     static void groupChatActivate();
 
@@ -117,7 +116,6 @@ private slots:
 
     //void newsFeedChanged(int count);
 
-    void createChatLobby();
     void recommendFriends();
     void servicePermission();
 

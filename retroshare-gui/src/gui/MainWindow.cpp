@@ -50,6 +50,7 @@
 #include "NetworkView.h"
 #include "ForumsDialog.h"
 #include "FriendsDialog.h"
+#include "ChatLobbyWidget.h"
 #include "HelpDialog.h"
 #include "AboutDialog.h"
 #include "QuickStartWizard.h"
@@ -255,8 +256,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
                       action = createPageAction(QIcon(IMAGE_TRANSFERS), tr("Transfers"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(transfersDialog, action));
 
-//    ui->stackPages->add(sharedfilesDialog = new SharedFilesDialog(ui->stackPages),
-//                       createPageAction(QIcon(IMAGE_FILES), tr("Files"), grp));
+    ui->stackPages->add(chatLobbyDialog = new ChatLobbyWidget(ui->stackPages),
+                      action = createPageAction(QIcon(IMAGE_CHAT), tr("Chat Lobbies"), grp));
+    notify.push_back(QPair<MainPage*, QAction*>(chatLobbyDialog, action));
 
     ui->stackPages->add(messagesDialog = new MessagesDialog(ui->stackPages),
                       action = createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));
@@ -787,37 +789,39 @@ void SetForegroundWindowInternal(HWND hWnd)
 
     MainPage *Page = NULL;
 
-    switch (page) {
-//    case Network:
-//        Page = _instance->networkDialog;
-//        break;
-    case Friends:
-        Page = _instance->friendsDialog;
-        break;
-//    case Search:
-//        Page = _instance->searchDialog;
-//        break;
-    case Transfers:
-        Page = _instance->transfersDialog;
-        break;
-//    case SharedDirectories:
-//        Page = _instance->sharedfilesDialog;
-        break;
-    case Messages:
-        Page = _instance->messagesDialog;
-        break;
-    case Channels:
-        Page = _instance->channelFeed;
-        break;
-    case Forums:
-        Page = _instance->forumsDialog;
-        break;
+	 switch (page) {
+		 //    case Network:
+		 //        Page = _instance->networkDialog;
+		 //        break;
+		 case Friends:
+			 Page = _instance->friendsDialog;
+			 break;
+		 case ChatLobby:
+			 Page = _instance->chatLobbyDialog;
+			 break;
+		 case Transfers:
+			 Page = _instance->transfersDialog;
+			 break;
+			 //    case SharedDirectories:
+			 //        Page = _instance->sharedfilesDialog;
+			 break;
+		 case Messages:
+			 Page = _instance->messagesDialog;
+			 break;
+		 case Channels:
+			 Page = _instance->channelFeed;
+			 break;
+		 case Forums:
+			 Page = _instance->forumsDialog;
+			 break;
 #ifdef BLOGS
-    case Blogs:
-        Page = _instance->blogsFeed;
-        break;
+		 case Blogs:
+			 Page = _instance->blogsFeed;
+			 break;
 #endif
-    }
+		 default:
+			 std::cerr << "Show page called on value that is not handled yet. Please code it! (value = " << Page << ")" << std::endl;
+	 }
 
     if (Page) {
         /* Set the focus to the specified page. */
@@ -843,9 +847,9 @@ void SetForegroundWindowInternal(HWND hWnd)
    if (page == _instance->friendsDialog) {
        return Friends;
    }
-//   if (page == _instance->searchDialog) {
-//       return Search;
-//   }
+   if (page == _instance->chatLobbyDialog) {
+       return ChatLobby;
+   }
    if (page == _instance->transfersDialog) {
        return Transfers;
    }
@@ -887,8 +891,8 @@ void SetForegroundWindowInternal(HWND hWnd)
 //       return _instance->networkDialog;
    case Friends:
        return _instance->friendsDialog;
-//   case Search:
-//       return _instance->searchDialog;
+   case ChatLobby:
+       return _instance->chatLobbyDialog;
    case Transfers:
        return _instance->transfersDialog;
 //   case SharedDirectories:

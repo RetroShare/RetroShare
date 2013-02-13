@@ -25,6 +25,7 @@
 #include <QMenu>
 
 #include "ChatLobbyDialog.h"
+#include "gui/ChatLobbyWidget.h"
 #include "ChatTabWidget.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/settings/RsharePeerSettings.h"
@@ -123,7 +124,8 @@ void ChatLobbyDialog::init(const std::string &peerId, const QString &title)
 	showParticipantsFrame(PeerSettings->getShowParticipantsFrame(peerId));
 
 	// add to window
-	ChatTabWidget *tabWidget = FriendsDialog::getTabWidget();
+	ChatTabWidget *tabWidget = ChatLobbyWidget::getTabWidget();
+
 	if (tabWidget) {
 		tabWidget->addDialog(this);
 	}
@@ -455,8 +457,8 @@ bool ChatLobbyDialog::canClose()
 void ChatLobbyDialog::showDialog(uint chatflags)
 {
 	if (chatflags & RS_CHAT_FOCUS) {
-		MainWindow::showWindow(MainWindow::Friends);
-		ChatTabWidget *tabWidget = FriendsDialog::getTabWidget();
+		MainWindow::showWindow(MainWindow::ChatLobby);
+		ChatTabWidget *tabWidget = ChatLobbyWidget::getTabWidget();
 		if (tabWidget) {
 			tabWidget->setCurrentWidget(this);
 		}
