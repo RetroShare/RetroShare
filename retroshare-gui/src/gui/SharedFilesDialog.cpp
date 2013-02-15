@@ -97,7 +97,6 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
 
-	connect(ui.checkButton, SIGNAL(clicked()), this, SLOT(forceCheck()));
 //==	connect(ui.localButton, SIGNAL(toggled(bool)), this, SLOT(showFrame(bool)));
 //==	connect(ui.remoteButton, SIGNAL(toggled(bool)), this, SLOT(showFrameRemote(bool)));
 //==	connect(ui.splittedButton, SIGNAL(toggled(bool)), this, SLOT(showFrameSplitted(bool)));
@@ -123,23 +122,6 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
 	flat_proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
 	flat_proxyModel->setSortRole(RetroshareDirModel::SortRole);
 	flat_proxyModel->sort(0);
-
-//==	localModel = new TreeStyle_RDM(false);
-//==
-//==	localProxyModel = new SFDSortFilterProxyModel(localModel, this);
-//==	localProxyModel->setDynamicSortFilter(true);
-//==	localProxyModel->setSourceModel(localModel);
-//==	localProxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
-//==	localProxyModel->setSortRole(RetroshareDirModel::SortRole);
-//==	localProxyModel->sort(0);
-
-//==	ui.dirTreeView->setModel(localProxyModel);
-
-//==	connect( ui.dirTreeView, SIGNAL( collapsed(const QModelIndex & ) ), localModel, SLOT(  collapsed(const QModelIndex & ) ) );
-//==	connect( ui.dirTreeView, SIGNAL( expanded(const QModelIndex & ) ), localModel, SLOT(  expanded(const QModelIndex & ) ) );
-
-//==	connect( localModel, SIGNAL( layoutAboutToBeChanged() ), ui.localDirTreeView, SLOT( reset() ) );
-//==	connect( localModel, SIGNAL( layoutChanged() ), ui.localDirTreeView, SLOT( update() ) );
 
 	connect(ui.filterClearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
 	connect(ui.filterStartButton, SIGNAL(clicked()), this, SLOT(startFilter()));
@@ -198,6 +180,7 @@ LocalSharedFilesDialog::LocalSharedFilesDialog(QWidget *parent)
 	changeCurrentViewModel(ui.viewType_CB->currentIndex()) ;
 
   connect(ui.addShares_PB, SIGNAL(clicked()), this, SLOT(addShares()));
+  connect(ui.checkButton, SIGNAL(clicked()), this, SLOT(forceCheck()));
 }
 
 RemoteSharedFilesDialog::RemoteSharedFilesDialog(QWidget *parent)
@@ -810,54 +793,6 @@ LocalSharedFilesDialog::tryToAddNewAssotiation()
         Settings->setValueToGroup("FileAssotiations", currType, currCmd);
     }
 }
-
-//============================================================================
-/**
- Toggles the Splitted, Remote and Local View on and off*/
-
-//== void SharedFilesDialog::showFrame(bool show)
-//== {
-//==     if (show) {
-//==         ui.localframe->setVisible(true);
-//==         ui.remoteframe->setVisible(false);
-//== 
-//==         ui.localButton->setChecked(true);
-//== 
-//==         ui.remoteButton->setChecked(false);
-//==         ui.splittedButton->setChecked(false);
-//== 
-//==         ui.titleBarLabel->setText( tr("<strong>My Shared Files</strong>"));
-//==     }
-//== }
-//== 
-//== void SharedFilesDialog::showFrameRemote(bool show)
-//== {
-//==     if (show) {
-//==         ui.remoteframe->setVisible(true);
-//==         ui.localframe->setVisible(false);
-//== 
-//==         ui.remoteButton->setChecked(true);
-//==         ui.localButton->setChecked(false);
-//==         ui.splittedButton->setChecked(false);
-//== 
-//==         ui.titleBarLabel->setText( tr("<strong>Friends Files</strong>"));
-//==     }
-//== }
-//== 
-//== void SharedFilesDialog::showFrameSplitted(bool show)
-//== {
-//==     if (show) {
-//==         ui.remoteframe->setVisible(true);
-//==         ui.localframe->setVisible(true);
-//== 
-//==         ui.splittedButton->setChecked(true);
-//== 
-//==         ui.localButton->setChecked(false);
-//==         ui.remoteButton->setChecked(false);
-//== 
-//==         ui.titleBarLabel->setText( tr("<strong>Files</strong>"));
-//==     }
-//== }
 
 void SharedFilesDialog::indicatorChanged(int index)
 {
