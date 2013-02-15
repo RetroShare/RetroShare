@@ -163,7 +163,7 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
 
   /* Hide platform specific features */
   copylinklocalAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Links to Clipboard" ), this );
-  connect( copylinklocalAct , SIGNAL( triggered() ), this, SLOT( copyLinkLocal() ) );
+  connect( copylinklocalAct , SIGNAL( triggered() ), this, SLOT( copyLink() ) );
   copylinklocalhtmlAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Links to Clipboard (HTML)" ), this );
   connect( copylinklocalhtmlAct , SIGNAL( triggered() ), this, SLOT( copyLinkhtml() ) );
   sendlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links" ), this );
@@ -442,7 +442,7 @@ void RemoteSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 
     if (type == DIR_TYPE_FILE) {
         QAction *copyremotelinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Link" ), &contextMnu );
-        connect( copyremotelinkAct , SIGNAL( triggered() ), this, SLOT( copyLinkRemote() ) );
+        connect( copyremotelinkAct , SIGNAL( triggered() ), this, SLOT( copyLink() ) );
 
         QAction *sendremotelinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link" ), &contextMnu );
         connect( sendremotelinkAct , SIGNAL( triggered() ), this, SLOT( sendremoteLinkTo(  ) ) );
@@ -589,7 +589,7 @@ void SharedFilesDialog::sendLinkTo()
 #ifdef RS_USE_LINKS
 void SharedFilesDialog::sendLinkToCloud()
 {
-	copyLinkLocal ();
+	copyLink();
 
 	AddLinksDialog *nAddLinksDialog = new AddLinksDialog(QApplication::clipboard()->text());
 
@@ -601,7 +601,7 @@ void SharedFilesDialog::sendLinkToCloud()
 
 void SharedFilesDialog::addLinkToCloud()
 {
-	copyLinkLocal ();
+	copyLink();
 
 	AddLinksDialog *nAddLinksDialog = new AddLinksDialog(QApplication::clipboard()->text());
 
