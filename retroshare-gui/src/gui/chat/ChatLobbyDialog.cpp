@@ -324,10 +324,10 @@ void ChatLobbyDialog::updateParticipantsList()
 			} else {
 				widgetitem->setIcon(COLUMN_ICON, QIcon(":/images/greenled.png"));
 			}
-			widgetitem->setToolTip(COLUMN_ICON, tr("Double click to mute/unmute participant"));
+			//widgetitem->setToolTip(COLUMN_ICON, tr("Double click to mute/unmute participant"));
 
 			widgetitem->setText(COLUMN_NAME, participant);
-			widgetitem->setToolTip(COLUMN_NAME, tr("Right click to mute/unmute participants"));
+			widgetitem->setToolTip(COLUMN_NAME,tr("Right click to mute/unmute participants<br/>Double click to address this person"));
 
 			ui.participantsList->addTopLevelItem(widgetitem);
 			if (selectedParcipants.contains(participant)) {
@@ -379,20 +379,26 @@ void ChatLobbyDialog::participantsTreeWidgetDoubleClicked(QTreeWidgetItem *item,
 		return;
 	}
 
-	if (column != COLUMN_ICON) {
-		return;
+	if(column == COLUMN_NAME)
+	{
+		getChatWidget()->pasteText("@"+item->text(COLUMN_NAME)) ;
+		return ;
 	}
 
-	QString nickname = item->text(COLUMN_NAME);
-	if (isParticipantMuted(nickname)) {
-		unMuteParticipant(nickname);
-	} else {
-		muteParticipant(nickname);
-	}
-
-	mutedParticipants->removeDuplicates();
-
-	updateParticipantsList();
+//	if (column == COLUMN_ICON) {
+//		return;
+//	}
+//
+//	QString nickname = item->text(COLUMN_NAME);
+//	if (isParticipantMuted(nickname)) {
+//		unMuteParticipant(nickname);
+//	} else {
+//		muteParticipant(nickname);
+//	}
+//
+//	mutedParticipants->removeDuplicates();
+//
+//	updateParticipantsList();
 }
 
 void ChatLobbyDialog::muteParticipant(const QString &nickname) {
