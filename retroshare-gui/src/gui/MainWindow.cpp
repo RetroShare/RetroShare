@@ -53,7 +53,6 @@
 #include "ChatLobbyWidget.h"
 #include "HelpDialog.h"
 #include "AboutDialog.h"
-#include "QuickStartWizard.h"
 #include "ChannelFeed.h"
 #include "bwgraph/bwgraph.h"
 #include "help/browser/helpbrowser.h"
@@ -1085,12 +1084,6 @@ void MainWindow::showHelpDialog()
 void MainWindow::showHelpDialog(const QString &topic)
 {
   HelpBrowser::showWindow(topic);
-}
-
-void MainWindow::on_actionQuick_Start_Wizard_activated()
-{
-    QuickStartWizard qstartwizard(this);
-    qstartwizard.exec();
 }
 
 /** Called when the user changes the UI translation. */

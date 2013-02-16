@@ -29,6 +29,7 @@
 #include <util/stringutil.h>
 #include <QSystemTrayIcon>
 #include "rsharesettings.h"
+#include <gui/QuickStartWizard.h>
 
 /** Constructor */
 GeneralPage::GeneralPage(QWidget * parent, Qt::WFlags flags)
@@ -51,11 +52,16 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WFlags flags)
     ui.enableRetroShareProtocol->setVisible(false);
     ui.adminLabel->setVisible(false);
 #endif
+	 connect(ui.runStartWizard_PB,SIGNAL(clicked()), this,SLOT(runStartWizard())) ;
 }
 
 /** Destructor */
 GeneralPage::~GeneralPage()
 {
+}
+void GeneralPage::runStartWizard()
+{
+    QuickStartWizard(this).exec();
 }
 
 /** Saves the changes on this page */
