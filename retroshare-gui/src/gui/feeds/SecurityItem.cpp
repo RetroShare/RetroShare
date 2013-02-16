@@ -122,7 +122,7 @@ void SecurityItem::updateItemStatic()
 			avatar->setDefaultAvatar(":images/avatar_request.png");
 			break;
 		case SEC_TYPE_AUTH_DENIED:
-			title = tr("Not Yet Friends");
+			title = tr("Connection refused by remote peer");
 			requestLabel->hide();
 			avatar->setDefaultAvatar(":images/avatar_request.png");
 			break;
