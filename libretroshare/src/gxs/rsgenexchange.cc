@@ -175,8 +175,6 @@ void RsGenExchange::generateGroupKeys(RsTlvSecurityKeySet& privatekeySet,
     GxsSecurity::setRSAPublicKey(adminKey, rsa_admin_pub);
     GxsSecurity::setRSAPrivateKey(privAdminKey, rsa_admin);
 
-    adminKey.keyId = adminKey.keyId + "_public";
-
     adminKey.startTS = time(NULL);
     adminKey.endTS = adminKey.startTS + 60 * 60 * 24 * 365 * 5; /* approx 5 years */
 
@@ -207,7 +205,6 @@ void RsGenExchange::generateGroupKeys(RsTlvSecurityKeySet& privatekeySet,
         GxsSecurity::setRSAPrivateKey(privPubKey, rsa_publish);
 
         pubKey.startTS = adminKey.startTS;
-        pubKey.keyId = pubKey.keyId + "_public";
         pubKey.endTS = pubKey.startTS + 60 * 60 * 24 * 365 * 5; /* approx 5 years */
 
         privPubKey.startTS = adminKey.startTS;
@@ -639,8 +636,6 @@ bool RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSec
 
             if(haveKey)
             {
-                std::list<std::string> peers;
-                mGixs->requestKey(metaData.mAuthorId, peers);
 
                 RsTlvSecurityKey authorKey;
 
@@ -662,6 +657,8 @@ bool RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSec
                 valid &= GxsSecurity::validateNxsMsg(*msg, sign, authorKey);
             }else
             {
+                std::list<std::string> peers;
+                mGixs->requestKey(metaData.mAuthorId, peers);
                 valid = false;
             }
         }
