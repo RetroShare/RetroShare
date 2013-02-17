@@ -194,12 +194,6 @@ void xProgressBar::overPaintSelectedChunks(const std::vector<uint32_t>& chunks,c
 
 	painter->setBrush(linearGrad);
 
-		std::cerr << "painting chunks: " ;
-	for(uint32_t i=0;i<chunks.size();++i)
-		std::cerr << chunks[i] <<  " " ;
-	std::cerr << std::endl;
-
-
 	if(chunks.empty())
 		return ;
 
