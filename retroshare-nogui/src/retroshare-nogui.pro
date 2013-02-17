@@ -255,6 +255,8 @@ protorpc {
 	#	        ../../rsctrl/src/gencc/search.pb.cc \
 	#	        ../../rsctrl/src/gencc/files.pb.cc \
 
+	INCLUDEPATH *= rpc/proto/gencc
+
 	!win32 {
 		# unrecognized option
 		QMAKE_CFLAGS += -pthread
