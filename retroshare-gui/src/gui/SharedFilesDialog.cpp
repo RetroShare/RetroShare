@@ -144,10 +144,10 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
 	ui.dirTreeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   /* Hide platform specific features */
-  copylinklocalAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Links to Clipboard" ), this );
-  connect( copylinklocalAct , SIGNAL( triggered() ), this, SLOT( copyLink() ) );
-  copylinklocalhtmlAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Links to Clipboard (HTML)" ), this );
-  connect( copylinklocalhtmlAct , SIGNAL( triggered() ), this, SLOT( copyLinkhtml() ) );
+  copylinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Links to Clipboard" ), this );
+  connect( copylinkAct , SIGNAL( triggered() ), this, SLOT( copyLink() ) );
+  copylinkhtmlAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Links to Clipboard (HTML)" ), this );
+  connect( copylinkhtmlAct , SIGNAL( triggered() ), this, SLOT( copyLinkhtml() ) );
   sendlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links" ), this );
   connect( sendlinkAct , SIGNAL( triggered() ), this, SLOT( sendLinkTo( ) ) );
 #ifdef RS_USE_LINKS
@@ -156,14 +156,6 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
   addlinkCloudAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Add Links to Cloud" ), this );
   connect( addlinkCloudAct , SIGNAL( triggered() ), this, SLOT( addLinkToCloud(  ) ) );
 #endif
-  createcollectionfileAct = new QAction(QIcon(IMAGE_COLLECTION), tr("Create collection file"), this);
-  connect(createcollectionfileAct, SIGNAL(triggered()), this, SLOT(createCollectionFile()));
-  openfileAct = new QAction(QIcon(IMAGE_OPENFILE), tr("Open File"), this);
-  connect(openfileAct, SIGNAL(triggered()), this, SLOT(openfile()));
-  openfolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this);
-  connect(openfolderAct, SIGNAL(triggered()), this, SLOT(openfolder()));
-  editshareAct = new QAction(QIcon(IMAGE_EDITSHARE), tr("Edit Share Permissions"), this);
-  connect(editshareAct, SIGNAL(triggered()), this, SLOT(editSharePermissions()));
 }
 
 LocalSharedFilesDialog::LocalSharedFilesDialog(QWidget *parent)
@@ -181,6 +173,16 @@ LocalSharedFilesDialog::LocalSharedFilesDialog(QWidget *parent)
 
   connect(ui.addShares_PB, SIGNAL(clicked()), this, SLOT(addShares()));
   connect(ui.checkButton, SIGNAL(clicked()), this, SLOT(forceCheck()));
+
+  createcollectionfileAct = new QAction(QIcon(IMAGE_COLLECTION), tr("Create collection file"), this);
+  openfileAct = new QAction(QIcon(IMAGE_OPENFILE), tr("Open File"), this);
+  openfolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this);
+  editshareAct = new QAction(QIcon(IMAGE_EDITSHARE), tr("Edit Share Permissions"), this);
+
+  connect(createcollectionfileAct, SIGNAL(triggered()), this, SLOT(createCollectionFile()));
+  connect(openfileAct, SIGNAL(triggered()), this, SLOT(openfile()));
+  connect(openfolderAct, SIGNAL(triggered()), this, SLOT(openfolder()));
+  connect(editshareAct, SIGNAL(triggered()), this, SLOT(editSharePermissions()));
 }
 
 RemoteSharedFilesDialog::RemoteSharedFilesDialog(QWidget *parent)
@@ -424,17 +426,17 @@ void RemoteSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
     contextMnu.addAction( downloadAct);
 
     if (type == DIR_TYPE_FILE) {
-        QAction *copyremotelinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Link" ), &contextMnu );
-        connect( copyremotelinkAct , SIGNAL( triggered() ), this, SLOT( copyLink() ) );
+        //QAction *copyremotelinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Link" ), &contextMnu );
+        //connect( copyremotelinkAct , SIGNAL( triggered() ), this, SLOT( copyLink() ) );
 
-        QAction *sendremotelinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link" ), &contextMnu );
-        connect( sendremotelinkAct , SIGNAL( triggered() ), this, SLOT( sendremoteLinkTo(  ) ) );
+        //QAction *sendremotelinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link" ), &contextMnu );
+        //connect( sendremotelinkAct , SIGNAL( triggered() ), this, SLOT( sendremoteLinkTo(  ) ) );
 
         contextMnu.addSeparator();
-        contextMnu.addAction( copyremotelinkAct);
-        contextMnu.addAction( sendremotelinkAct);
+        contextMnu.addAction( copylinkAct);
+        contextMnu.addAction( sendlinkAct);
         contextMnu.addSeparator();
-        contextMnu.addAction(QIcon(IMAGE_MSG), tr("Recommend in a message to"), this, SLOT(addMsgRemoteSelected()));
+        contextMnu.addAction(QIcon(IMAGE_MSG), tr("Recommend in a message to"), this, SLOT(recommendFilesToMsg()));
     }
 
     contextMnu.exec(QCursor::pos());
@@ -533,7 +535,7 @@ void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
 
 void SharedFilesDialog::copyLink()
 {
-    copyLink ( getSelected() , true);
+    copyLink ( getSelected() , isRemote());
 }
 
 void SharedFilesDialog::copyLinkhtml( )
@@ -713,7 +715,7 @@ void LocalSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 		 case DIR_TYPE_FILE:
 			 contextMnu.addAction(openfileAct);
 			 contextMnu.addSeparator();
-			 contextMnu.addAction(copylinklocalAct);
+			 contextMnu.addAction(copylinkAct);
 			 contextMnu.addAction(sendlinkAct);
 			 contextMnu.addSeparator();
 			 contextMnu.addAction(createcollectionfileAct) ;

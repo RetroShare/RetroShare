@@ -45,6 +45,7 @@ public:
 protected:
   QTreeView *directoryView() ;
   virtual void showProperColumns() = 0 ;
+  virtual bool isRemote() const = 0 ;
 
 protected slots:
   virtual void spawnCustomPopupMenu(QPoint point) = 0;
@@ -105,19 +106,14 @@ protected:
   QModelIndexList getSelected();
 
   /** Defines the actions for the context menu for QTreeWidget */
-  QAction* openfileAct;
-  QAction* createcollectionfileAct;
-  QAction* openfolderAct;
-  QAction* copyremotelinkAct;
-  QAction* copylinklocalAct;
+  QAction* copylinkAct;
   QAction* sendlinkAct;
-  QAction* editshareAct;
 #ifdef RS_USE_LINKS
   QAction* sendlinkCloudAct;
   QAction* addlinkCloudAct;
 #endif
   QAction* sendchatlinkAct;
-  QAction* copylinklocalhtmlAct;
+  QAction* copylinkhtmlAct;
 
   /* RetroshareDirModel */
   RetroshareDirModel *tree_model;
@@ -147,6 +143,7 @@ class LocalSharedFilesDialog : public SharedFilesDialog
 	protected:
 		virtual void processSettings(bool bLoad) ;
 		virtual void showProperColumns() ;
+		virtual bool isRemote() const { return false ; }
 
 	private slots:
 		void addShares();
@@ -161,6 +158,12 @@ class LocalSharedFilesDialog : public SharedFilesDialog
 		void forceCheck();
 
 		QAction* fileAssotiationAction(const QString fileName);
+
+	private:
+		QAction* openfileAct;
+		QAction* createcollectionfileAct;
+		QAction* openfolderAct;
+		QAction* editshareAct;
 };
 class RemoteSharedFilesDialog : public SharedFilesDialog
 {
@@ -175,6 +178,7 @@ class RemoteSharedFilesDialog : public SharedFilesDialog
 	protected:
 		virtual void processSettings(bool bLoad) ;
 		virtual void showProperColumns() ;
+		virtual bool isRemote() const { return true ; }
 
 	private slots:
 		void downloadRemoteSelected();
