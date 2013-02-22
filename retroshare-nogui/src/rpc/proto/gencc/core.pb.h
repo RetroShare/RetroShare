@@ -87,13 +87,14 @@ inline bool Location_StateFlags_Parse(
     Location_StateFlags_descriptor(), name, value);
 }
 enum Person_Relationship {
-  Person_Relationship_FRIEND = 1,
-  Person_Relationship_FRIEND_OF_MANY_FRIENDS = 2,
-  Person_Relationship_FRIEND_OF_FRIENDS = 3,
-  Person_Relationship_UNKNOWN = 4
+  Person_Relationship_YOURSELF = 1,
+  Person_Relationship_FRIEND = 2,
+  Person_Relationship_FRIEND_OF_MANY_FRIENDS = 3,
+  Person_Relationship_FRIEND_OF_FRIENDS = 4,
+  Person_Relationship_UNKNOWN = 5
 };
 bool Person_Relationship_IsValid(int value);
-const Person_Relationship Person_Relationship_Relationship_MIN = Person_Relationship_FRIEND;
+const Person_Relationship Person_Relationship_Relationship_MIN = Person_Relationship_YOURSELF;
 const Person_Relationship Person_Relationship_Relationship_MAX = Person_Relationship_UNKNOWN;
 const int Person_Relationship_Relationship_ARRAYSIZE = Person_Relationship_Relationship_MAX + 1;
 
@@ -606,6 +607,7 @@ class Person : public ::google::protobuf::Message {
   // nested types ----------------------------------------------------
   
   typedef Person_Relationship Relationship;
+  static const Relationship YOURSELF = Person_Relationship_YOURSELF;
   static const Relationship FRIEND = Person_Relationship_FRIEND;
   static const Relationship FRIEND_OF_MANY_FRIENDS = Person_Relationship_FRIEND_OF_MANY_FRIENDS;
   static const Relationship FRIEND_OF_FRIENDS = Person_Relationship_FRIEND_OF_FRIENDS;

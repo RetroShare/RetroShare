@@ -292,28 +292,28 @@ void protobuf_AddDesc_core_2eproto() {
     "rl.core.IpAddr\022$\n\007extaddr\030\004 \002(\0132\023.rsctrl"
     ".core.IpAddr\022\r\n\005state\030\005 \002(\r\"8\n\nStateFlag"
     "s\022\n\n\006ONLINE\020\001\022\r\n\tCONNECTED\020\002\022\017\n\013UNREACHA"
-    "BLE\020\004\"\340\001\n\006Person\022\016\n\006gpg_id\030\001 \002(\t\022\014\n\004name"
+    "BLE\020\004\"\356\001\n\006Person\022\016\n\006gpg_id\030\001 \002(\t\022\014\n\004name"
     "\030\002 \002(\t\0222\n\010relation\030\003 \002(\0162 .rsctrl.core.P"
     "erson.Relationship\022(\n\tlocations\030\004 \003(\0132\025."
-    "rsctrl.core.Location\"Z\n\014Relationship\022\n\n\006"
-    "FRIEND\020\001\022\032\n\026FRIEND_OF_MANY_FRIENDS\020\002\022\025\n\021"
-    "FRIEND_OF_FRIENDS\020\003\022\013\n\007UNKNOWN\020\004\"0\n\004File"
-    "\022\014\n\004name\030\001 \002(\t\022\014\n\004hash\030\002 \002(\t\022\014\n\004size\030\003 \002"
-    "(\004\"f\n\003Dir\022\014\n\004name\030\001 \002(\t\022\014\n\004path\030\002 \002(\t\022!\n"
-    "\007subdirs\030\003 \003(\0132\020.rsctrl.core.Dir\022 \n\005file"
-    "s\030\004 \003(\0132\021.rsctrl.core.File\"\372\001\n\014SystemSta"
-    "tus\0225\n\nnet_status\030\001 \002(\0162!.rsctrl.core.Sy"
-    "stemStatus.NetCode\022\013\n\003msg\030\002 \001(\t\"\245\001\n\007NetC"
-    "ode\022\017\n\013BAD_UNKNOWN\020\000\022\017\n\013BAD_OFFLINE\020\001\022\016\n"
-    "\nBAD_NATSYM\020\002\022\021\n\rBAD_NODHT_NAT\020\003\022\023\n\017WARN"
-    "ING_RESTART\020\004\022\022\n\016WARNING_NATTED\020\005\022\021\n\rWAR"
-    "NING_NODHT\020\006\022\010\n\004GOOD\020\007\022\017\n\013ADV_FORWARD\020\010\""
-    "3\n\tBandwidth\022\n\n\002up\030\001 \002(\002\022\014\n\004down\030\002 \002(\002\022\014"
-    "\n\004name\030\003 \001(\t\":\n\014BandwidthSet\022*\n\nbandwidt"
-    "hs\030\001 \003(\0132\026.rsctrl.core.Bandwidth*\027\n\013Exte"
-    "nsionId\022\010\n\004CORE\020\000*M\n\tPackageId\022\t\n\005PEERS\020"
-    "\001\022\n\n\006SYSTEM\020\002\022\010\n\004CHAT\020\003\022\n\n\006SEARCH\020\004\022\t\n\005F"
-    "ILES\020\005\022\010\n\003GXS\020\350\007", 1296);
+    "rsctrl.core.Location\"h\n\014Relationship\022\014\n\010"
+    "YOURSELF\020\001\022\n\n\006FRIEND\020\002\022\032\n\026FRIEND_OF_MANY"
+    "_FRIENDS\020\003\022\025\n\021FRIEND_OF_FRIENDS\020\004\022\013\n\007UNK"
+    "NOWN\020\005\"0\n\004File\022\014\n\004name\030\001 \002(\t\022\014\n\004hash\030\002 \002"
+    "(\t\022\014\n\004size\030\003 \002(\004\"f\n\003Dir\022\014\n\004name\030\001 \002(\t\022\014\n"
+    "\004path\030\002 \002(\t\022!\n\007subdirs\030\003 \003(\0132\020.rsctrl.co"
+    "re.Dir\022 \n\005files\030\004 \003(\0132\021.rsctrl.core.File"
+    "\"\372\001\n\014SystemStatus\0225\n\nnet_status\030\001 \002(\0162!."
+    "rsctrl.core.SystemStatus.NetCode\022\013\n\003msg\030"
+    "\002 \001(\t\"\245\001\n\007NetCode\022\017\n\013BAD_UNKNOWN\020\000\022\017\n\013BA"
+    "D_OFFLINE\020\001\022\016\n\nBAD_NATSYM\020\002\022\021\n\rBAD_NODHT"
+    "_NAT\020\003\022\023\n\017WARNING_RESTART\020\004\022\022\n\016WARNING_N"
+    "ATTED\020\005\022\021\n\rWARNING_NODHT\020\006\022\010\n\004GOOD\020\007\022\017\n\013"
+    "ADV_FORWARD\020\010\"3\n\tBandwidth\022\n\n\002up\030\001 \002(\002\022\014"
+    "\n\004down\030\002 \002(\002\022\014\n\004name\030\003 \001(\t\":\n\014BandwidthS"
+    "et\022*\n\nbandwidths\030\001 \003(\0132\026.rsctrl.core.Ban"
+    "dwidth*\027\n\013ExtensionId\022\010\n\004CORE\020\000*M\n\tPacka"
+    "geId\022\t\n\005PEERS\020\001\022\n\n\006SYSTEM\020\002\022\010\n\004CHAT\020\003\022\n\n"
+    "\006SEARCH\020\004\022\t\n\005FILES\020\005\022\010\n\003GXS\020\350\007", 1310);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "core.proto", &protobuf_RegisterTypes);
   Status::default_instance_ = new Status();
@@ -1394,6 +1394,7 @@ bool Person_Relationship_IsValid(int value) {
     case 2:
     case 3:
     case 4:
+    case 5:
       return true;
     default:
       return false;
@@ -1401,6 +1402,7 @@ bool Person_Relationship_IsValid(int value) {
 }
 
 #ifndef _MSC_VER
+const Person_Relationship Person::YOURSELF;
 const Person_Relationship Person::FRIEND;
 const Person_Relationship Person::FRIEND_OF_MANY_FRIENDS;
 const Person_Relationship Person::FRIEND_OF_FRIENDS;

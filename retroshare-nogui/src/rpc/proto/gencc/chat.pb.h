@@ -49,6 +49,8 @@ class EventLobbyInvite;
 class EventChatMessage;
 class RequestSendMessage;
 class ResponseSendMessage;
+class RequestChatHistory;
+class ResponseChatHistory;
 
 enum ChatLobbyInfo_LobbyState {
   ChatLobbyInfo_LobbyState_LOBBYSTATE_JOINED = 1,
@@ -135,11 +137,12 @@ enum RequestMsgIds {
   MsgId_RequestJoinOrLeaveLobby = 3,
   MsgId_RequestSetLobbyNickname = 4,
   MsgId_RequestRegisterEvents = 5,
-  MsgId_RequestSendMessage = 6
+  MsgId_RequestSendMessage = 6,
+  MsgId_RequestChatHistory = 7
 };
 bool RequestMsgIds_IsValid(int value);
 const RequestMsgIds RequestMsgIds_MIN = MsgId_RequestChatLobbies;
-const RequestMsgIds RequestMsgIds_MAX = MsgId_RequestSendMessage;
+const RequestMsgIds RequestMsgIds_MAX = MsgId_RequestChatHistory;
 const int RequestMsgIds_ARRAYSIZE = RequestMsgIds_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* RequestMsgIds_descriptor();
@@ -157,6 +160,7 @@ enum ResponseMsgIds {
   MsgId_ResponseSetLobbyNickname = 4,
   MsgId_ResponseRegisterEvents = 5,
   MsgId_ResponseSendMessage = 6,
+  MsgId_ResponseChatHistory = 7,
   MsgId_EventLobbyInvite = 101,
   MsgId_EventChatMessage = 102
 };
@@ -1846,6 +1850,196 @@ class ResponseSendMessage : public ::google::protobuf::Message {
   void InitAsDefaultInstance();
   static ResponseSendMessage* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class RequestChatHistory : public ::google::protobuf::Message {
+ public:
+  RequestChatHistory();
+  virtual ~RequestChatHistory();
+  
+  RequestChatHistory(const RequestChatHistory& from);
+  
+  inline RequestChatHistory& operator=(const RequestChatHistory& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const RequestChatHistory& default_instance();
+  
+  void Swap(RequestChatHistory* other);
+  
+  // implements Message ----------------------------------------------
+  
+  RequestChatHistory* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const RequestChatHistory& from);
+  void MergeFrom(const RequestChatHistory& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required .rsctrl.chat.ChatId id = 1;
+  inline bool has_id() const;
+  inline void clear_id();
+  static const int kIdFieldNumber = 1;
+  inline const ::rsctrl::chat::ChatId& id() const;
+  inline ::rsctrl::chat::ChatId* mutable_id();
+  inline ::rsctrl::chat::ChatId* release_id();
+  
+  // @@protoc_insertion_point(class_scope:rsctrl.chat.RequestChatHistory)
+ private:
+  inline void set_has_id();
+  inline void clear_has_id();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::rsctrl::chat::ChatId* id_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_chat_2eproto();
+  friend void protobuf_AssignDesc_chat_2eproto();
+  friend void protobuf_ShutdownFile_chat_2eproto();
+  
+  void InitAsDefaultInstance();
+  static RequestChatHistory* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class ResponseChatHistory : public ::google::protobuf::Message {
+ public:
+  ResponseChatHistory();
+  virtual ~ResponseChatHistory();
+  
+  ResponseChatHistory(const ResponseChatHistory& from);
+  
+  inline ResponseChatHistory& operator=(const ResponseChatHistory& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const ResponseChatHistory& default_instance();
+  
+  void Swap(ResponseChatHistory* other);
+  
+  // implements Message ----------------------------------------------
+  
+  ResponseChatHistory* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const ResponseChatHistory& from);
+  void MergeFrom(const ResponseChatHistory& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required .rsctrl.core.Status status = 1;
+  inline bool has_status() const;
+  inline void clear_status();
+  static const int kStatusFieldNumber = 1;
+  inline const ::rsctrl::core::Status& status() const;
+  inline ::rsctrl::core::Status* mutable_status();
+  inline ::rsctrl::core::Status* release_status();
+  
+  // required .rsctrl.chat.ChatId id = 2;
+  inline bool has_id() const;
+  inline void clear_id();
+  static const int kIdFieldNumber = 2;
+  inline const ::rsctrl::chat::ChatId& id() const;
+  inline ::rsctrl::chat::ChatId* mutable_id();
+  inline ::rsctrl::chat::ChatId* release_id();
+  
+  // repeated .rsctrl.chat.ChatMessage msgs = 3;
+  inline int msgs_size() const;
+  inline void clear_msgs();
+  static const int kMsgsFieldNumber = 3;
+  inline const ::rsctrl::chat::ChatMessage& msgs(int index) const;
+  inline ::rsctrl::chat::ChatMessage* mutable_msgs(int index);
+  inline ::rsctrl::chat::ChatMessage* add_msgs();
+  inline const ::google::protobuf::RepeatedPtrField< ::rsctrl::chat::ChatMessage >&
+      msgs() const;
+  inline ::google::protobuf::RepeatedPtrField< ::rsctrl::chat::ChatMessage >*
+      mutable_msgs();
+  
+  // @@protoc_insertion_point(class_scope:rsctrl.chat.ResponseChatHistory)
+ private:
+  inline void set_has_status();
+  inline void clear_has_status();
+  inline void set_has_id();
+  inline void clear_has_id();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::rsctrl::core::Status* status_;
+  ::rsctrl::chat::ChatId* id_;
+  ::google::protobuf::RepeatedPtrField< ::rsctrl::chat::ChatMessage > msgs_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_chat_2eproto();
+  friend void protobuf_AssignDesc_chat_2eproto();
+  friend void protobuf_ShutdownFile_chat_2eproto();
+  
+  void InitAsDefaultInstance();
+  static ResponseChatHistory* default_instance_;
+};
 // ===================================================================
 
 
@@ -3271,6 +3465,126 @@ inline ::rsctrl::core::Status* ResponseSendMessage::release_status() {
   ::rsctrl::core::Status* temp = status_;
   status_ = NULL;
   return temp;
+}
+
+// -------------------------------------------------------------------
+
+// RequestChatHistory
+
+// required .rsctrl.chat.ChatId id = 1;
+inline bool RequestChatHistory::has_id() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void RequestChatHistory::set_has_id() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void RequestChatHistory::clear_has_id() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void RequestChatHistory::clear_id() {
+  if (id_ != NULL) id_->::rsctrl::chat::ChatId::Clear();
+  clear_has_id();
+}
+inline const ::rsctrl::chat::ChatId& RequestChatHistory::id() const {
+  return id_ != NULL ? *id_ : *default_instance_->id_;
+}
+inline ::rsctrl::chat::ChatId* RequestChatHistory::mutable_id() {
+  set_has_id();
+  if (id_ == NULL) id_ = new ::rsctrl::chat::ChatId;
+  return id_;
+}
+inline ::rsctrl::chat::ChatId* RequestChatHistory::release_id() {
+  clear_has_id();
+  ::rsctrl::chat::ChatId* temp = id_;
+  id_ = NULL;
+  return temp;
+}
+
+// -------------------------------------------------------------------
+
+// ResponseChatHistory
+
+// required .rsctrl.core.Status status = 1;
+inline bool ResponseChatHistory::has_status() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void ResponseChatHistory::set_has_status() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void ResponseChatHistory::clear_has_status() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void ResponseChatHistory::clear_status() {
+  if (status_ != NULL) status_->::rsctrl::core::Status::Clear();
+  clear_has_status();
+}
+inline const ::rsctrl::core::Status& ResponseChatHistory::status() const {
+  return status_ != NULL ? *status_ : *default_instance_->status_;
+}
+inline ::rsctrl::core::Status* ResponseChatHistory::mutable_status() {
+  set_has_status();
+  if (status_ == NULL) status_ = new ::rsctrl::core::Status;
+  return status_;
+}
+inline ::rsctrl::core::Status* ResponseChatHistory::release_status() {
+  clear_has_status();
+  ::rsctrl::core::Status* temp = status_;
+  status_ = NULL;
+  return temp;
+}
+
+// required .rsctrl.chat.ChatId id = 2;
+inline bool ResponseChatHistory::has_id() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void ResponseChatHistory::set_has_id() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void ResponseChatHistory::clear_has_id() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void ResponseChatHistory::clear_id() {
+  if (id_ != NULL) id_->::rsctrl::chat::ChatId::Clear();
+  clear_has_id();
+}
+inline const ::rsctrl::chat::ChatId& ResponseChatHistory::id() const {
+  return id_ != NULL ? *id_ : *default_instance_->id_;
+}
+inline ::rsctrl::chat::ChatId* ResponseChatHistory::mutable_id() {
+  set_has_id();
+  if (id_ == NULL) id_ = new ::rsctrl::chat::ChatId;
+  return id_;
+}
+inline ::rsctrl::chat::ChatId* ResponseChatHistory::release_id() {
+  clear_has_id();
+  ::rsctrl::chat::ChatId* temp = id_;
+  id_ = NULL;
+  return temp;
+}
+
+// repeated .rsctrl.chat.ChatMessage msgs = 3;
+inline int ResponseChatHistory::msgs_size() const {
+  return msgs_.size();
+}
+inline void ResponseChatHistory::clear_msgs() {
+  msgs_.Clear();
+}
+inline const ::rsctrl::chat::ChatMessage& ResponseChatHistory::msgs(int index) const {
+  return msgs_.Get(index);
+}
+inline ::rsctrl::chat::ChatMessage* ResponseChatHistory::mutable_msgs(int index) {
+  return msgs_.Mutable(index);
+}
+inline ::rsctrl::chat::ChatMessage* ResponseChatHistory::add_msgs() {
+  return msgs_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::rsctrl::chat::ChatMessage >&
+ResponseChatHistory::msgs() const {
+  return msgs_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::rsctrl::chat::ChatMessage >*
+ResponseChatHistory::mutable_msgs() {
+  return &msgs_;
 }
 
 

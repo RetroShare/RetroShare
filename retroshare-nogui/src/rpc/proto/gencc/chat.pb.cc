@@ -67,6 +67,12 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* ResponseSendMessage_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   ResponseSendMessage_reflection_ = NULL;
+const ::google::protobuf::Descriptor* RequestChatHistory_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  RequestChatHistory_reflection_ = NULL;
+const ::google::protobuf::Descriptor* ResponseChatHistory_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  ResponseChatHistory_reflection_ = NULL;
 const ::google::protobuf::EnumDescriptor* RequestMsgIds_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* ResponseMsgIds_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* LobbyPrivacyLevel_descriptor_ = NULL;
@@ -332,6 +338,38 @@ void protobuf_AssignDesc_chat_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(ResponseSendMessage));
+  RequestChatHistory_descriptor_ = file->message_type(15);
+  static const int RequestChatHistory_offsets_[1] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestChatHistory, id_),
+  };
+  RequestChatHistory_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      RequestChatHistory_descriptor_,
+      RequestChatHistory::default_instance_,
+      RequestChatHistory_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestChatHistory, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestChatHistory, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(RequestChatHistory));
+  ResponseChatHistory_descriptor_ = file->message_type(16);
+  static const int ResponseChatHistory_offsets_[3] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseChatHistory, status_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseChatHistory, id_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseChatHistory, msgs_),
+  };
+  ResponseChatHistory_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      ResponseChatHistory_descriptor_,
+      ResponseChatHistory::default_instance_,
+      ResponseChatHistory_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseChatHistory, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseChatHistory, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(ResponseChatHistory));
   RequestMsgIds_descriptor_ = file->enum_type(0);
   ResponseMsgIds_descriptor_ = file->enum_type(1);
   LobbyPrivacyLevel_descriptor_ = file->enum_type(2);
@@ -378,6 +416,10 @@ void protobuf_RegisterTypes(const ::std::string&) {
     RequestSendMessage_descriptor_, &RequestSendMessage::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     ResponseSendMessage_descriptor_, &ResponseSendMessage::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    RequestChatHistory_descriptor_, &RequestChatHistory::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    ResponseChatHistory_descriptor_, &ResponseChatHistory::default_instance());
 }
 
 }  // namespace
@@ -413,6 +455,10 @@ void protobuf_ShutdownFile_chat_2eproto() {
   delete RequestSendMessage_reflection_;
   delete ResponseSendMessage::default_instance_;
   delete ResponseSendMessage_reflection_;
+  delete RequestChatHistory::default_instance_;
+  delete RequestChatHistory_reflection_;
+  delete ResponseChatHistory::default_instance_;
+  delete ResponseChatHistory_reflection_;
 }
 
 void protobuf_AddDesc_chat_2eproto() {
@@ -468,21 +514,27 @@ void protobuf_AddDesc_chat_2eproto() {
     "\003msg\030\001 \002(\0132\030.rsctrl.chat.ChatMessage\";\n\022"
     "RequestSendMessage\022%\n\003msg\030\001 \002(\0132\030.rsctrl"
     ".chat.ChatMessage\":\n\023ResponseSendMessage"
-    "\022#\n\006status\030\001 \002(\0132\023.rsctrl.core.Status*\320\001"
-    "\n\rRequestMsgIds\022\034\n\030MsgId_RequestChatLobb"
-    "ies\020\001\022\034\n\030MsgId_RequestCreateLobby\020\002\022!\n\035M"
-    "sgId_RequestJoinOrLeaveLobby\020\003\022!\n\035MsgId_"
-    "RequestSetLobbyNickname\020\004\022\037\n\033MsgId_Reque"
-    "stRegisterEvents\020\005\022\034\n\030MsgId_RequestSendM"
-    "essage\020\006*\314\001\n\016ResponseMsgIds\022\035\n\031MsgId_Res"
-    "ponseChatLobbies\020\001\022\"\n\036MsgId_ResponseSetL"
-    "obbyNickname\020\004\022 \n\034MsgId_ResponseRegister"
-    "Events\020\005\022\035\n\031MsgId_ResponseSendMessage\020\006\022"
-    "\032\n\026MsgId_EventLobbyInvite\020e\022\032\n\026MsgId_Eve"
-    "ntChatMessage\020f*<\n\021LobbyPrivacyLevel\022\023\n\017"
-    "PRIVACY_PRIVATE\020\001\022\022\n\016PRIVACY_PUBLIC\020\002*<\n"
-    "\010ChatType\022\020\n\014TYPE_PRIVATE\020\001\022\016\n\nTYPE_LOBB"
-    "Y\020\002\022\016\n\nTYPE_GROUP\020\003", 2379);
+    "\022#\n\006status\030\001 \002(\0132\023.rsctrl.core.Status\"5\n"
+    "\022RequestChatHistory\022\037\n\002id\030\001 \002(\0132\023.rsctrl"
+    ".chat.ChatId\"\203\001\n\023ResponseChatHistory\022#\n\006"
+    "status\030\001 \002(\0132\023.rsctrl.core.Status\022\037\n\002id\030"
+    "\002 \002(\0132\023.rsctrl.chat.ChatId\022&\n\004msgs\030\003 \003(\013"
+    "2\030.rsctrl.chat.ChatMessage*\356\001\n\rRequestMs"
+    "gIds\022\034\n\030MsgId_RequestChatLobbies\020\001\022\034\n\030Ms"
+    "gId_RequestCreateLobby\020\002\022!\n\035MsgId_Reques"
+    "tJoinOrLeaveLobby\020\003\022!\n\035MsgId_RequestSetL"
+    "obbyNickname\020\004\022\037\n\033MsgId_RequestRegisterE"
+    "vents\020\005\022\034\n\030MsgId_RequestSendMessage\020\006\022\034\n"
+    "\030MsgId_RequestChatHistory\020\007*\353\001\n\016Response"
+    "MsgIds\022\035\n\031MsgId_ResponseChatLobbies\020\001\022\"\n"
+    "\036MsgId_ResponseSetLobbyNickname\020\004\022 \n\034Msg"
+    "Id_ResponseRegisterEvents\020\005\022\035\n\031MsgId_Res"
+    "ponseSendMessage\020\006\022\035\n\031MsgId_ResponseChat"
+    "History\020\007\022\032\n\026MsgId_EventLobbyInvite\020e\022\032\n"
+    "\026MsgId_EventChatMessage\020f*<\n\021LobbyPrivac"
+    "yLevel\022\023\n\017PRIVACY_PRIVATE\020\001\022\022\n\016PRIVACY_P"
+    "UBLIC\020\002*<\n\010ChatType\022\020\n\014TYPE_PRIVATE\020\001\022\016\n"
+    "\nTYPE_LOBBY\020\002\022\016\n\nTYPE_GROUP\020\003", 2629);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "chat.proto", &protobuf_RegisterTypes);
   ChatLobbyInfo::default_instance_ = new ChatLobbyInfo();
@@ -500,6 +552,8 @@ void protobuf_AddDesc_chat_2eproto() {
   EventChatMessage::default_instance_ = new EventChatMessage();
   RequestSendMessage::default_instance_ = new RequestSendMessage();
   ResponseSendMessage::default_instance_ = new ResponseSendMessage();
+  RequestChatHistory::default_instance_ = new RequestChatHistory();
+  ResponseChatHistory::default_instance_ = new ResponseChatHistory();
   ChatLobbyInfo::default_instance_->InitAsDefaultInstance();
   ChatId::default_instance_->InitAsDefaultInstance();
   ChatMessage::default_instance_->InitAsDefaultInstance();
@@ -515,6 +569,8 @@ void protobuf_AddDesc_chat_2eproto() {
   EventChatMessage::default_instance_->InitAsDefaultInstance();
   RequestSendMessage::default_instance_->InitAsDefaultInstance();
   ResponseSendMessage::default_instance_->InitAsDefaultInstance();
+  RequestChatHistory::default_instance_->InitAsDefaultInstance();
+  ResponseChatHistory::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_chat_2eproto);
 }
 
@@ -537,6 +593,7 @@ bool RequestMsgIds_IsValid(int value) {
     case 4:
     case 5:
     case 6:
+    case 7:
       return true;
     default:
       return false;
@@ -553,6 +610,7 @@ bool ResponseMsgIds_IsValid(int value) {
     case 4:
     case 5:
     case 6:
+    case 7:
     case 101:
     case 102:
       return true;
@@ -5007,6 +5065,529 @@ void ResponseSendMessage::Swap(ResponseSendMessage* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = ResponseSendMessage_descriptor_;
   metadata.reflection = ResponseSendMessage_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int RequestChatHistory::kIdFieldNumber;
+#endif  // !_MSC_VER
+
+RequestChatHistory::RequestChatHistory()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void RequestChatHistory::InitAsDefaultInstance() {
+  id_ = const_cast< ::rsctrl::chat::ChatId*>(&::rsctrl::chat::ChatId::default_instance());
+}
+
+RequestChatHistory::RequestChatHistory(const RequestChatHistory& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void RequestChatHistory::SharedCtor() {
+  _cached_size_ = 0;
+  id_ = NULL;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+RequestChatHistory::~RequestChatHistory() {
+  SharedDtor();
+}
+
+void RequestChatHistory::SharedDtor() {
+  if (this != default_instance_) {
+    delete id_;
+  }
+}
+
+void RequestChatHistory::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* RequestChatHistory::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return RequestChatHistory_descriptor_;
+}
+
+const RequestChatHistory& RequestChatHistory::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_chat_2eproto();  return *default_instance_;
+}
+
+RequestChatHistory* RequestChatHistory::default_instance_ = NULL;
+
+RequestChatHistory* RequestChatHistory::New() const {
+  return new RequestChatHistory;
+}
+
+void RequestChatHistory::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (has_id()) {
+      if (id_ != NULL) id_->::rsctrl::chat::ChatId::Clear();
+    }
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool RequestChatHistory::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required .rsctrl.chat.ChatId id = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_id()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void RequestChatHistory::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required .rsctrl.chat.ChatId id = 1;
+  if (has_id()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, this->id(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* RequestChatHistory::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required .rsctrl.chat.ChatId id = 1;
+  if (has_id()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        1, this->id(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int RequestChatHistory::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required .rsctrl.chat.ChatId id = 1;
+    if (has_id()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+          this->id());
+    }
+    
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void RequestChatHistory::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const RequestChatHistory* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const RequestChatHistory*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void RequestChatHistory::MergeFrom(const RequestChatHistory& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_id()) {
+      mutable_id()->::rsctrl::chat::ChatId::MergeFrom(from.id());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void RequestChatHistory::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void RequestChatHistory::CopyFrom(const RequestChatHistory& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool RequestChatHistory::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
+  
+  if (has_id()) {
+    if (!this->id().IsInitialized()) return false;
+  }
+  return true;
+}
+
+void RequestChatHistory::Swap(RequestChatHistory* other) {
+  if (other != this) {
+    std::swap(id_, other->id_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata RequestChatHistory::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = RequestChatHistory_descriptor_;
+  metadata.reflection = RequestChatHistory_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int ResponseChatHistory::kStatusFieldNumber;
+const int ResponseChatHistory::kIdFieldNumber;
+const int ResponseChatHistory::kMsgsFieldNumber;
+#endif  // !_MSC_VER
+
+ResponseChatHistory::ResponseChatHistory()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void ResponseChatHistory::InitAsDefaultInstance() {
+  status_ = const_cast< ::rsctrl::core::Status*>(&::rsctrl::core::Status::default_instance());
+  id_ = const_cast< ::rsctrl::chat::ChatId*>(&::rsctrl::chat::ChatId::default_instance());
+}
+
+ResponseChatHistory::ResponseChatHistory(const ResponseChatHistory& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void ResponseChatHistory::SharedCtor() {
+  _cached_size_ = 0;
+  status_ = NULL;
+  id_ = NULL;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+ResponseChatHistory::~ResponseChatHistory() {
+  SharedDtor();
+}
+
+void ResponseChatHistory::SharedDtor() {
+  if (this != default_instance_) {
+    delete status_;
+    delete id_;
+  }
+}
+
+void ResponseChatHistory::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* ResponseChatHistory::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return ResponseChatHistory_descriptor_;
+}
+
+const ResponseChatHistory& ResponseChatHistory::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_chat_2eproto();  return *default_instance_;
+}
+
+ResponseChatHistory* ResponseChatHistory::default_instance_ = NULL;
+
+ResponseChatHistory* ResponseChatHistory::New() const {
+  return new ResponseChatHistory;
+}
+
+void ResponseChatHistory::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (has_status()) {
+      if (status_ != NULL) status_->::rsctrl::core::Status::Clear();
+    }
+    if (has_id()) {
+      if (id_ != NULL) id_->::rsctrl::chat::ChatId::Clear();
+    }
+  }
+  msgs_.Clear();
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool ResponseChatHistory::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required .rsctrl.core.Status status = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_status()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(18)) goto parse_id;
+        break;
+      }
+      
+      // required .rsctrl.chat.ChatId id = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_id:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_id()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(26)) goto parse_msgs;
+        break;
+      }
+      
+      // repeated .rsctrl.chat.ChatMessage msgs = 3;
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_msgs:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+                input, add_msgs()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(26)) goto parse_msgs;
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void ResponseChatHistory::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required .rsctrl.core.Status status = 1;
+  if (has_status()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, this->status(), output);
+  }
+  
+  // required .rsctrl.chat.ChatId id = 2;
+  if (has_id()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      2, this->id(), output);
+  }
+  
+  // repeated .rsctrl.chat.ChatMessage msgs = 3;
+  for (int i = 0; i < this->msgs_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      3, this->msgs(i), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* ResponseChatHistory::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required .rsctrl.core.Status status = 1;
+  if (has_status()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        1, this->status(), target);
+  }
+  
+  // required .rsctrl.chat.ChatId id = 2;
+  if (has_id()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        2, this->id(), target);
+  }
+  
+  // repeated .rsctrl.chat.ChatMessage msgs = 3;
+  for (int i = 0; i < this->msgs_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        3, this->msgs(i), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int ResponseChatHistory::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required .rsctrl.core.Status status = 1;
+    if (has_status()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+          this->status());
+    }
+    
+    // required .rsctrl.chat.ChatId id = 2;
+    if (has_id()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+          this->id());
+    }
+    
+  }
+  // repeated .rsctrl.chat.ChatMessage msgs = 3;
+  total_size += 1 * this->msgs_size();
+  for (int i = 0; i < this->msgs_size(); i++) {
+    total_size +=
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        this->msgs(i));
+  }
+  
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void ResponseChatHistory::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const ResponseChatHistory* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const ResponseChatHistory*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void ResponseChatHistory::MergeFrom(const ResponseChatHistory& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  msgs_.MergeFrom(from.msgs_);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_status()) {
+      mutable_status()->::rsctrl::core::Status::MergeFrom(from.status());
+    }
+    if (from.has_id()) {
+      mutable_id()->::rsctrl::chat::ChatId::MergeFrom(from.id());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void ResponseChatHistory::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void ResponseChatHistory::CopyFrom(const ResponseChatHistory& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool ResponseChatHistory::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
+  
+  if (has_status()) {
+    if (!this->status().IsInitialized()) return false;
+  }
+  if (has_id()) {
+    if (!this->id().IsInitialized()) return false;
+  }
+  for (int i = 0; i < msgs_size(); i++) {
+    if (!this->msgs(i).IsInitialized()) return false;
+  }
+  return true;
+}
+
+void ResponseChatHistory::Swap(ResponseChatHistory* other) {
+  if (other != this) {
+    std::swap(status_, other->status_);
+    std::swap(id_, other->id_);
+    msgs_.Swap(&other->msgs_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata ResponseChatHistory::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = ResponseChatHistory_descriptor_;
+  metadata.reflection = ResponseChatHistory_reflection_;
   return metadata;
 }
 

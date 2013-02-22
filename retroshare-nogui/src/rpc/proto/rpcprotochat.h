@@ -45,6 +45,9 @@ protected:
 	int processReqRegisterEvents(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg);
 	int processReqSendMessage(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg);
 
+	int processReqChatHistory(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg);
+
+
 	// EVENTS.
 	virtual int locked_checkForEvents(uint32_t event, const std::list<RpcEventRegister> &registered, std::list<RpcQueuedMsg> &events); 
 };

@@ -38,6 +38,9 @@
 
 #include <set>
 
+bool condenseSearchResults(const std::list<TurtleFileInfo> &searchResults, uint32_t limit,
+		rsctrl::search::SearchSet *result_set);
+
 
 RpcProtoSearch::RpcProtoSearch(uint32_t serviceId, NotifyTxt *notify)
 	:RpcQueueService(serviceId), mNotify(notify), searchMtx("RpcProtoSearch")
@@ -420,21 +423,7 @@ int RpcProtoSearch::processReqSearchResults(uint32_t chan_id, uint32_t /* msg_id
 	        std::list<TurtleFileInfo> searchResults;
 		mNotify->getSearchResults(*rit, searchResults);
 
-		/* convert into useful list */
-		for(it = searchResults.begin(); it != searchResults.end(); it++)
-		{
-			/* add to answer */
-			rsctrl::search::SearchHit *hit = set->add_hits();
-			rsctrl::core::File *file = hit->mutable_file();
-
-			file->set_hash(it->hash);
-			file->set_name(it->name);
-			file->set_size(it->size);
-
-			// Uhm not provided for now. default to NETWORK
-			hit->set_loc(rsctrl::search::SearchHit::NETWORK); 
-			hit->set_no_hits(1); // No aggregation yet.
-        	}
+		condenseSearchResults(searchResults, req.result_limit(), set);
 	}
 
 	/* DONE - Generate Reply */
@@ -590,4 +579,100 @@ int RpcProtoSearch::clear_searches(uint32_t chan_id)
 	mActiveSearches.erase(mit);
 	return 1;
 }
+
+
+
+class RpcSearchInfo
+{
+	public:
+	std::string hash;
+	std::string name;
+	uint64_t    size;
+	std::map<std::string, uint32_t> name_map;
+	uint32_t hits;
+};
+
+
+bool condenseSearchResults(const std::list<TurtleFileInfo> &searchResults, uint32_t limit,
+		rsctrl::search::SearchSet *result_set)
+{
+	std::map<std::string, RpcSearchInfo> searchMap;
+	std::map<std::string, RpcSearchInfo>::iterator mit;
+
+	std::list<TurtleFileInfo>::const_iterator it;
+	for(it = searchResults.begin(); it != searchResults.end(); it++)
+	{
+		mit = searchMap.find(it->hash);
+		if (mit != searchMap.end())
+		{
+			mit->second.hits++;
+			
+			if (mit->second.name_map.find(it->name) == mit->second.name_map.end())
+			{
+				mit->second.name_map[it->name] = 1;
+			}
+			else
+			{
+				mit->second.name_map[it->name]++;
+			}
+
+			if (it->size != mit->second.size)
+			{
+				// ERROR.
+			}
+		}
+		else
+		{
+			RpcSearchInfo info;
+			info.hash = it->hash;
+			info.size = it->size;
+			info.name_map[it->name] = 1;
+			info.hits = 1;
+
+			searchMap[it->hash] = info;	
+		}
+	}
+
+	unsigned int i = 0;
+	for(mit = searchMap.begin(); (mit != searchMap.end()) && (i < limit); mit++, i++)
+	{
+		std::map<std::string, uint32_t>::reverse_iterator nit;
+		nit = mit->second.name_map.rbegin();
+
+		/* add to answer */
+		rsctrl::search::SearchHit *hit = result_set->add_hits();
+		rsctrl::core::File *file = hit->mutable_file();
+
+		file->set_hash(mit->second.hash);
+		file->set_name(nit->first);
+		file->set_size(mit->second.size);
+
+		// Uhm not provided for now. default to NETWORK
+		hit->set_loc(rsctrl::search::SearchHit::NETWORK); 
+		hit->set_no_hits(mit->second.hits); // No aggregation yet.
+
+		// guarenteed to have one item here.
+		for(nit++; nit != mit->second.name_map.rend(); nit++)
+		{
+			hit->add_alt_names(nit->first);
+		}
+	}
+
+	return true;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

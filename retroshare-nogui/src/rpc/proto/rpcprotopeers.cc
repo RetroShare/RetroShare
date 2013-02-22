@@ -216,9 +216,14 @@ int RpcProtoPeers::processRequestPeers(uint32_t chan_id, uint32_t msg_id, uint32
 		{
 			std::cerr << "RpcProtoPeers::processRequestPeers() LISTED";
 			std::cerr << std::endl;
-			/* extract ids from request (TODO) */
-			std::string own_id = rsPeers->getGPGOwnId();
-			ids.push_back(own_id);
+			int no_gpg_ids = reqp.gpg_ids_size();
+			for (int i = 0; i < no_gpg_ids; i++)
+			{
+				std::string listed_id = reqp.gpg_ids(i);
+				std::cerr << "RpcProtoPeers::processRequestPeers() Adding Id: " << listed_id;
+				std::cerr << std::endl;
+				ids.push_back(listed_id);
+			}
 			break;
 
 		}
@@ -292,6 +297,9 @@ int RpcProtoPeers::processRequestPeers(uint32_t chan_id, uint32_t msg_id, uint32
 		RsPeerDetails details;
 		if (!rsPeers->getGPGDetails(*git, details))
 		{
+			std::cerr << "RpcProtoPeers::processRequestPeers() ERROR Finding GPGID: ";
+			std::cerr << *git;
+			std::cerr << std::endl;
 			continue; /* uhm.. */
 		}
 
@@ -305,8 +313,17 @@ int RpcProtoPeers::processRequestPeers(uint32_t chan_id, uint32_t msg_id, uint32
 		std::cerr << *git << " name: " << details.name;
 		std::cerr << std::endl;
 
-		if (details.state & RS_PEER_STATE_FRIEND)
+		//if (details.state & RS_PEER_STATE_FRIEND)
+		if (*git == rsPeers->getGPGOwnId())
 		{
+			std::cerr << "RpcProtoPeers::processRequestPeers() Relation YOURSELF";
+			std::cerr << std::endl;
+			person->set_relation(rsctrl::core::Person::YOURSELF);
+		}
+		else if (rsPeers->isGPGAccepted(*git))
+		{
+			std::cerr << "RpcProtoPeers::processRequestPeers() Relation FRIEND";
+			std::cerr << std::endl;
 			person->set_relation(rsctrl::core::Person::FRIEND);
 		}
 		else 
@@ -318,15 +335,21 @@ int RpcProtoPeers::processRequestPeers(uint32_t chan_id, uint32_t msg_id, uint32
 			{
 				if (size > 2)
 				{
+					std::cerr << "RpcProtoPeers::processRequestPeers() Relation FRIEND_OF_MANY_FRIENDS";
+					std::cerr << std::endl;
 					person->set_relation(rsctrl::core::Person::FRIEND_OF_MANY_FRIENDS);
 				}
 				else
 				{
+					std::cerr << "RpcProtoPeers::processRequestPeers() Relation FRIEND_OF_FRIENDS";
+					std::cerr << std::endl;
 					person->set_relation(rsctrl::core::Person::FRIEND_OF_FRIENDS);
 				}
 			}
 			else
 			{
+				std::cerr << "RpcProtoPeers::processRequestPeers() Relation UNKNOWN";
+				std::cerr << std::endl;
 				person->set_relation(rsctrl::core::Person::UNKNOWN);
 			}
 		}
@@ -338,6 +361,8 @@ int RpcProtoPeers::processRequestPeers(uint32_t chan_id, uint32_t msg_id, uint32
 
 			if (!rsPeers->getAssociatedSSLIds(*git, ssl_ids))
 			{
+				std::cerr << "RpcProtoPeers::processRequestPeers() No Locations";
+				std::cerr << std::endl;
 				continue; /* end of this peer */
 			}
 
@@ -356,9 +381,9 @@ int RpcProtoPeers::processRequestPeers(uint32_t chan_id, uint32_t msg_id, uint32
 
 				rsctrl::core::Location *loc = person->add_locations();
 
-		std::cerr << "RpcProtoPeers::processRequestPeers() \t Adding Location: ";
-		std::cerr << *sit << " loc: " << ssldetails.location;
-		std::cerr << std::endl;
+				std::cerr << "RpcProtoPeers::processRequestPeers() \t Adding Location: ";
+				std::cerr << *sit << " loc: " << ssldetails.location;
+				std::cerr << std::endl;
 
 				/* fill in ssl details */
 				loc->set_ssl_id(*sit);

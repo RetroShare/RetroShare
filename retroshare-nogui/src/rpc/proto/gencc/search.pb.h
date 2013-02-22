@@ -207,6 +207,22 @@ class SearchHit : public ::google::protobuf::Message {
   inline ::google::protobuf::uint32 no_hits() const;
   inline void set_no_hits(::google::protobuf::uint32 value);
   
+  // repeated string alt_names = 4;
+  inline int alt_names_size() const;
+  inline void clear_alt_names();
+  static const int kAltNamesFieldNumber = 4;
+  inline const ::std::string& alt_names(int index) const;
+  inline ::std::string* mutable_alt_names(int index);
+  inline void set_alt_names(int index, const ::std::string& value);
+  inline void set_alt_names(int index, const char* value);
+  inline void set_alt_names(int index, const char* value, size_t size);
+  inline ::std::string* add_alt_names();
+  inline void add_alt_names(const ::std::string& value);
+  inline void add_alt_names(const char* value);
+  inline void add_alt_names(const char* value, size_t size);
+  inline const ::google::protobuf::RepeatedPtrField< ::std::string>& alt_names() const;
+  inline ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_alt_names();
+  
   // @@protoc_insertion_point(class_scope:rsctrl.search.SearchHit)
  private:
   inline void set_has_file();
@@ -221,9 +237,10 @@ class SearchHit : public ::google::protobuf::Message {
   ::rsctrl::core::File* file_;
   ::google::protobuf::uint32 loc_;
   ::google::protobuf::uint32 no_hits_;
+  ::google::protobuf::RepeatedPtrField< ::std::string> alt_names_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
   
   friend void  protobuf_AddDesc_search_2eproto();
   friend void protobuf_AssignDesc_search_2eproto();
@@ -811,6 +828,13 @@ class RequestSearchResults : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
+  // optional uint32 result_limit = 1;
+  inline bool has_result_limit() const;
+  inline void clear_result_limit();
+  static const int kResultLimitFieldNumber = 1;
+  inline ::google::protobuf::uint32 result_limit() const;
+  inline void set_result_limit(::google::protobuf::uint32 value);
+  
   // repeated uint32 search_ids = 2;
   inline int search_ids_size() const;
   inline void clear_search_ids();
@@ -825,13 +849,16 @@ class RequestSearchResults : public ::google::protobuf::Message {
   
   // @@protoc_insertion_point(class_scope:rsctrl.search.RequestSearchResults)
  private:
+  inline void set_has_result_limit();
+  inline void clear_has_result_limit();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   ::google::protobuf::RepeatedField< ::google::protobuf::uint32 > search_ids_;
+  ::google::protobuf::uint32 result_limit_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
   
   friend void  protobuf_AddDesc_search_2eproto();
   friend void protobuf_AssignDesc_search_2eproto();
@@ -1014,6 +1041,50 @@ inline ::google::protobuf::uint32 SearchHit::no_hits() const {
 inline void SearchHit::set_no_hits(::google::protobuf::uint32 value) {
   set_has_no_hits();
   no_hits_ = value;
+}
+
+// repeated string alt_names = 4;
+inline int SearchHit::alt_names_size() const {
+  return alt_names_.size();
+}
+inline void SearchHit::clear_alt_names() {
+  alt_names_.Clear();
+}
+inline const ::std::string& SearchHit::alt_names(int index) const {
+  return alt_names_.Get(index);
+}
+inline ::std::string* SearchHit::mutable_alt_names(int index) {
+  return alt_names_.Mutable(index);
+}
+inline void SearchHit::set_alt_names(int index, const ::std::string& value) {
+  alt_names_.Mutable(index)->assign(value);
+}
+inline void SearchHit::set_alt_names(int index, const char* value) {
+  alt_names_.Mutable(index)->assign(value);
+}
+inline void SearchHit::set_alt_names(int index, const char* value, size_t size) {
+  alt_names_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* SearchHit::add_alt_names() {
+  return alt_names_.Add();
+}
+inline void SearchHit::add_alt_names(const ::std::string& value) {
+  alt_names_.Add()->assign(value);
+}
+inline void SearchHit::add_alt_names(const char* value) {
+  alt_names_.Add()->assign(value);
+}
+inline void SearchHit::add_alt_names(const char* value, size_t size) {
+  alt_names_.Add()->assign(reinterpret_cast<const char*>(value), size);
+}
+inline const ::google::protobuf::RepeatedPtrField< ::std::string>&
+SearchHit::alt_names() const {
+  return alt_names_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::std::string>*
+SearchHit::mutable_alt_names() {
+  return &alt_names_;
 }
 
 // -------------------------------------------------------------------
@@ -1254,6 +1325,28 @@ inline void RequestCloseSearch::set_search_id(::google::protobuf::uint32 value) 
 // -------------------------------------------------------------------
 
 // RequestSearchResults
+
+// optional uint32 result_limit = 1;
+inline bool RequestSearchResults::has_result_limit() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void RequestSearchResults::set_has_result_limit() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void RequestSearchResults::clear_has_result_limit() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void RequestSearchResults::clear_result_limit() {
+  result_limit_ = 0u;
+  clear_has_result_limit();
+}
+inline ::google::protobuf::uint32 RequestSearchResults::result_limit() const {
+  return result_limit_;
+}
+inline void RequestSearchResults::set_result_limit(::google::protobuf::uint32 value) {
+  set_has_result_limit();
+  result_limit_ = value;
+}
 
 // repeated uint32 search_ids = 2;
 inline int RequestSearchResults::search_ids_size() const {

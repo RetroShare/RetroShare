@@ -141,7 +141,7 @@ introserver {
 
 
 sshserver {
-	LIBSSH_DIR = ../../../../libssh-0.5.2
+	LIBSSH_DIR = ../../../lib/libssh-0.5.2
 
 	# This Requires libssh-0.5.* to compile.
 	# Modify path below to point at it.

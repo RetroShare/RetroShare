@@ -59,10 +59,11 @@ void protobuf_AssignDesc_search_2eproto() {
       "search.proto");
   GOOGLE_CHECK(file != NULL);
   SearchHit_descriptor_ = file->message_type(0);
-  static const int SearchHit_offsets_[3] = {
+  static const int SearchHit_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SearchHit, file_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SearchHit, loc_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SearchHit, no_hits_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SearchHit, alt_names_),
   };
   SearchHit_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -168,7 +169,8 @@ void protobuf_AssignDesc_search_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(RequestListSearches));
   RequestSearchResults_descriptor_ = file->message_type(7);
-  static const int RequestSearchResults_offsets_[1] = {
+  static const int RequestSearchResults_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestSearchResults, result_limit_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestSearchResults, search_ids_),
   };
   RequestSearchResults_reflection_ =
@@ -264,26 +266,27 @@ void protobuf_AddDesc_search_2eproto() {
   ::rsctrl::core::protobuf_AddDesc_core_2eproto();
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\014search.proto\022\rrsctrl.search\032\ncore.prot"
-    "o\"y\n\tSearchHit\022\037\n\004file\030\001 \002(\0132\021.rsctrl.co"
-    "re.File\022\013\n\003loc\030\002 \002(\r\022\017\n\007no_hits\030\003 \002(\r\"-\n"
-    "\007LocFlag\022\t\n\005LOCAL\020\001\022\n\n\006FRIEND\020\002\022\013\n\007NETWO"
-    "RK\020\004\"F\n\tSearchSet\022\021\n\tsearch_id\030\001 \002(\r\022&\n\004"
-    "hits\030\002 \003(\0132\030.rsctrl.search.SearchHit\"#\n\022"
-    "RequestBasicSearch\022\r\n\005terms\030\001 \003(\t\"!\n\020Req"
-    "uestAdvSearch\022\r\n\005terms\030\001 \003(\t\"K\n\021Response"
-    "SearchIds\022#\n\006status\030\001 \002(\0132\023.rsctrl.core."
-    "Status\022\021\n\tsearch_id\030\002 \003(\r\"\'\n\022RequestClos"
-    "eSearch\022\021\n\tsearch_id\030\001 \002(\r\"\025\n\023RequestLis"
-    "tSearches\"*\n\024RequestSearchResults\022\022\n\nsea"
-    "rch_ids\030\002 \003(\r\"h\n\025ResponseSearchResults\022#"
-    "\n\006status\030\001 \002(\0132\023.rsctrl.core.Status\022*\n\010s"
-    "earches\030\002 \003(\0132\030.rsctrl.search.SearchSet*"
-    "\212\001\n\rRequestMsgIds\022\034\n\030MsgId_RequestBasicS"
-    "earch\020\001\022\034\n\030MsgId_RequestCloseSearch\020\003\022\035\n"
-    "\031MsgId_RequestListSearches\020\004\022\036\n\032MsgId_Re"
-    "questSearchResults\020\005*N\n\016ResponseMsgIds\022\033"
-    "\n\027MsgId_ResponseSearchIds\020\001\022\037\n\033MsgId_Res"
-    "ponseSearchResults\020\005", 820);
+    "o\"\214\001\n\tSearchHit\022\037\n\004file\030\001 \002(\0132\021.rsctrl.c"
+    "ore.File\022\013\n\003loc\030\002 \002(\r\022\017\n\007no_hits\030\003 \002(\r\022\021"
+    "\n\talt_names\030\004 \003(\t\"-\n\007LocFlag\022\t\n\005LOCAL\020\001\022"
+    "\n\n\006FRIEND\020\002\022\013\n\007NETWORK\020\004\"F\n\tSearchSet\022\021\n"
+    "\tsearch_id\030\001 \002(\r\022&\n\004hits\030\002 \003(\0132\030.rsctrl."
+    "search.SearchHit\"#\n\022RequestBasicSearch\022\r"
+    "\n\005terms\030\001 \003(\t\"!\n\020RequestAdvSearch\022\r\n\005ter"
+    "ms\030\001 \003(\t\"K\n\021ResponseSearchIds\022#\n\006status\030"
+    "\001 \002(\0132\023.rsctrl.core.Status\022\021\n\tsearch_id\030"
+    "\002 \003(\r\"\'\n\022RequestCloseSearch\022\021\n\tsearch_id"
+    "\030\001 \002(\r\"\025\n\023RequestListSearches\"@\n\024Request"
+    "SearchResults\022\024\n\014result_limit\030\001 \001(\r\022\022\n\ns"
+    "earch_ids\030\002 \003(\r\"h\n\025ResponseSearchResults"
+    "\022#\n\006status\030\001 \002(\0132\023.rsctrl.core.Status\022*\n"
+    "\010searches\030\002 \003(\0132\030.rsctrl.search.SearchSe"
+    "t*\212\001\n\rRequestMsgIds\022\034\n\030MsgId_RequestBasi"
+    "cSearch\020\001\022\034\n\030MsgId_RequestCloseSearch\020\003\022"
+    "\035\n\031MsgId_RequestListSearches\020\004\022\036\n\032MsgId_"
+    "RequestSearchResults\020\005*N\n\016ResponseMsgIds"
+    "\022\033\n\027MsgId_ResponseSearchIds\020\001\022\037\n\033MsgId_R"
+    "esponseSearchResults\020\005", 862);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "search.proto", &protobuf_RegisterTypes);
   SearchHit::default_instance_ = new SearchHit();
@@ -374,6 +377,7 @@ const int SearchHit::LocFlag_ARRAYSIZE;
 const int SearchHit::kFileFieldNumber;
 const int SearchHit::kLocFieldNumber;
 const int SearchHit::kNoHitsFieldNumber;
+const int SearchHit::kAltNamesFieldNumber;
 #endif  // !_MSC_VER
 
 SearchHit::SearchHit()
@@ -437,6 +441,7 @@ void SearchHit::Clear() {
     loc_ = 0u;
     no_hits_ = 0u;
   }
+  alt_names_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
@@ -488,6 +493,24 @@ bool SearchHit::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
+        if (input->ExpectTag(34)) goto parse_alt_names;
+        break;
+      }
+      
+      // repeated string alt_names = 4;
+      case 4: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_alt_names:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->add_alt_names()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->alt_names(0).data(), this->alt_names(0).length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(34)) goto parse_alt_names;
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -526,6 +549,15 @@ void SearchHit::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(3, this->no_hits(), output);
   }
   
+  // repeated string alt_names = 4;
+  for (int i = 0; i < this->alt_names_size(); i++) {
+  ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    this->alt_names(i).data(), this->alt_names(i).length(),
+    ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      4, this->alt_names(i), output);
+  }
+  
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -549,6 +581,15 @@ void SearchHit::SerializeWithCachedSizes(
   // required uint32 no_hits = 3;
   if (has_no_hits()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(3, this->no_hits(), target);
+  }
+  
+  // repeated string alt_names = 4;
+  for (int i = 0; i < this->alt_names_size(); i++) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->alt_names(i).data(), this->alt_names(i).length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteStringToArray(4, this->alt_names(i), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -584,6 +625,13 @@ int SearchHit::ByteSize() const {
     }
     
   }
+  // repeated string alt_names = 4;
+  total_size += 1 * this->alt_names_size();
+  for (int i = 0; i < this->alt_names_size(); i++) {
+    total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
+      this->alt_names(i));
+  }
+  
   if (!unknown_fields().empty()) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
@@ -609,6 +657,7 @@ void SearchHit::MergeFrom(const ::google::protobuf::Message& from) {
 
 void SearchHit::MergeFrom(const SearchHit& from) {
   GOOGLE_CHECK_NE(&from, this);
+  alt_names_.MergeFrom(from.alt_names_);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from.has_file()) {
       mutable_file()->::rsctrl::core::File::MergeFrom(from.file());
@@ -649,6 +698,7 @@ void SearchHit::Swap(SearchHit* other) {
     std::swap(file_, other->file_);
     std::swap(loc_, other->loc_);
     std::swap(no_hits_, other->no_hits_);
+    alt_names_.Swap(&other->alt_names_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -1963,6 +2013,7 @@ void RequestListSearches::Swap(RequestListSearches* other) {
 // ===================================================================
 
 #ifndef _MSC_VER
+const int RequestSearchResults::kResultLimitFieldNumber;
 const int RequestSearchResults::kSearchIdsFieldNumber;
 #endif  // !_MSC_VER
 
@@ -1982,6 +2033,7 @@ RequestSearchResults::RequestSearchResults(const RequestSearchResults& from)
 
 void RequestSearchResults::SharedCtor() {
   _cached_size_ = 0;
+  result_limit_ = 0u;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -2015,6 +2067,9 @@ RequestSearchResults* RequestSearchResults::New() const {
 }
 
 void RequestSearchResults::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    result_limit_ = 0u;
+  }
   search_ids_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -2026,6 +2081,21 @@ bool RequestSearchResults::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional uint32 result_limit = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &result_limit_)));
+          set_has_result_limit();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(16)) goto parse_search_ids;
+        break;
+      }
+      
       // repeated uint32 search_ids = 2;
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
@@ -2066,6 +2136,11 @@ bool RequestSearchResults::MergePartialFromCodedStream(
 
 void RequestSearchResults::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
+  // optional uint32 result_limit = 1;
+  if (has_result_limit()) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(1, this->result_limit(), output);
+  }
+  
   // repeated uint32 search_ids = 2;
   for (int i = 0; i < this->search_ids_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(
@@ -2080,6 +2155,11 @@ void RequestSearchResults::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* RequestSearchResults::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
+  // optional uint32 result_limit = 1;
+  if (has_result_limit()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(1, this->result_limit(), target);
+  }
+  
   // repeated uint32 search_ids = 2;
   for (int i = 0; i < this->search_ids_size(); i++) {
     target = ::google::protobuf::internal::WireFormatLite::
@@ -2096,6 +2176,15 @@ void RequestSearchResults::SerializeWithCachedSizes(
 int RequestSearchResults::ByteSize() const {
   int total_size = 0;
   
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // optional uint32 result_limit = 1;
+    if (has_result_limit()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
+          this->result_limit());
+    }
+    
+  }
   // repeated uint32 search_ids = 2;
   {
     int data_size = 0;
@@ -2132,6 +2221,11 @@ void RequestSearchResults::MergeFrom(const ::google::protobuf::Message& from) {
 void RequestSearchResults::MergeFrom(const RequestSearchResults& from) {
   GOOGLE_CHECK_NE(&from, this);
   search_ids_.MergeFrom(from.search_ids_);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_result_limit()) {
+      set_result_limit(from.result_limit());
+    }
+  }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
 
@@ -2154,6 +2248,7 @@ bool RequestSearchResults::IsInitialized() const {
 
 void RequestSearchResults::Swap(RequestSearchResults* other) {
   if (other != this) {
+    std::swap(result_limit_, other->result_limit_);
     search_ids_.Swap(&other->search_ids_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
