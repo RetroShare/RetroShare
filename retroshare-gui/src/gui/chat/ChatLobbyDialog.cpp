@@ -25,6 +25,7 @@
 #include <QMenu>
 
 #include "ChatLobbyDialog.h"
+#include "gui/ChatLobbyWidget.h"
 #include "ChatTabWidget.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/settings/RsharePeerSettings.h"
@@ -32,6 +33,7 @@
 #include "gui/FriendsDialog.h"
 #include <gui/common/html.h>
 #include "gui/common/RSTreeWidgetItem.h"
+#include "gui/common/FriendSelectionDialog.h"
 
 #include <retroshare/rsnotify.h>
 
@@ -56,9 +58,45 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WF
 	ui.participantsList->setColumnCount(COLUMN_COUNT);
 	ui.participantsList->setColumnWidth(COLUMN_ICON, 20);
 
-	// Mute a Participant
 	muteAct = new QAction(QIcon(), tr("Mute participant"), this);
 	connect(muteAct, SIGNAL(triggered()), this, SLOT(changePartipationState()));
+
+	// Add a button to invite friends.
+	//
+	inviteFriendsButton = new QPushButton ;
+	inviteFriendsButton->setMinimumSize(QSize(28,28)) ;
+	inviteFriendsButton->setMaximumSize(QSize(28,28)) ;
+	inviteFriendsButton->setText(QString()) ;
+	inviteFriendsButton->setToolTip(tr("Invite friends to this lobby"));
+
+	QIcon icon ;
+	icon.addPixmap(QPixmap(":/images/edit_add24.png")) ;
+	inviteFriendsButton->setIcon(icon) ;
+	inviteFriendsButton->setIconSize(QSize(22,22)) ;
+
+	connect(inviteFriendsButton, SIGNAL(clicked()), this , SLOT(inviteFriends()));
+
+	getChatWidget()->addChatButton(inviteFriendsButton) ;
+}
+
+void ChatLobbyDialog::inviteFriends()
+{
+	std::cerr << "Inviting friends" << std::endl;
+
+	std::list<std::string> ids = FriendSelectionDialog::selectFriends() ;
+
+	std::cerr << "Inviting these friends:" << std::endl;
+
+	ChatLobbyId lobby_id;
+	if (!rsMsgs->isLobbyId(getPeerId(), lobby_id)) 
+		return ;
+
+	for(std::list<std::string>::const_iterator it(ids.begin());it!=ids.end();++it)
+	{
+		std::cerr << "    " << *it  << std::endl;
+
+		rsMsgs->invitePeerToLobby(lobby_id,*it) ;
+	}
 }
 
 void ChatLobbyDialog::participantsTreeWidgetCostumPopupMenu(QPoint)
@@ -123,7 +161,8 @@ void ChatLobbyDialog::init(const std::string &peerId, const QString &title)
 	showParticipantsFrame(PeerSettings->getShowParticipantsFrame(peerId));
 
 	// add to window
-	ChatTabWidget *tabWidget = FriendsDialog::getTabWidget();
+	ChatTabWidget *tabWidget = ChatLobbyWidget::getTabWidget();
+
 	if (tabWidget) {
 		tabWidget->addDialog(this);
 	}
@@ -285,10 +324,10 @@ void ChatLobbyDialog::updateParticipantsList()
 			} else {
 				widgetitem->setIcon(COLUMN_ICON, QIcon(":/images/greenled.png"));
 			}
-			widgetitem->setToolTip(COLUMN_ICON, tr("Double click to mute/unmute participant"));
+			//widgetitem->setToolTip(COLUMN_ICON, tr("Double click to mute/unmute participant"));
 
 			widgetitem->setText(COLUMN_NAME, participant);
-			widgetitem->setToolTip(COLUMN_NAME, tr("Right click to mute/unmute participants"));
+			widgetitem->setToolTip(COLUMN_NAME,tr("Right click to mute/unmute participants<br/>Double click to address this person"));
 
 			ui.participantsList->addTopLevelItem(widgetitem);
 			if (selectedParcipants.contains(participant)) {
@@ -340,20 +379,26 @@ void ChatLobbyDialog::participantsTreeWidgetDoubleClicked(QTreeWidgetItem *item,
 		return;
 	}
 
-	if (column != COLUMN_ICON) {
-		return;
+	if(column == COLUMN_NAME)
+	{
+		getChatWidget()->pasteText("@"+item->text(COLUMN_NAME)) ;
+		return ;
 	}
 
-	QString nickname = item->text(COLUMN_NAME);
-	if (isParticipantMuted(nickname)) {
-		unMuteParticipant(nickname);
-	} else {
-		muteParticipant(nickname);
-	}
-
-	mutedParticipants->removeDuplicates();
-
-	updateParticipantsList();
+//	if (column == COLUMN_ICON) {
+//		return;
+//	}
+//
+//	QString nickname = item->text(COLUMN_NAME);
+//	if (isParticipantMuted(nickname)) {
+//		unMuteParticipant(nickname);
+//	} else {
+//		muteParticipant(nickname);
+//	}
+//
+//	mutedParticipants->removeDuplicates();
+//
+//	updateParticipantsList();
 }
 
 void ChatLobbyDialog::muteParticipant(const QString &nickname) {
@@ -455,8 +500,8 @@ bool ChatLobbyDialog::canClose()
 void ChatLobbyDialog::showDialog(uint chatflags)
 {
 	if (chatflags & RS_CHAT_FOCUS) {
-		MainWindow::showWindow(MainWindow::Friends);
-		ChatTabWidget *tabWidget = FriendsDialog::getTabWidget();
+		MainWindow::showWindow(MainWindow::ChatLobby);
+		ChatTabWidget *tabWidget = ChatLobbyWidget::getTabWidget();
 		if (tabWidget) {
 			tabWidget->setCurrentWidget(this);
 		}

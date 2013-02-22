@@ -19,6 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QDate>
 #include <QMessageBox>
 #include <QClipboard>
 #include <QFile>
@@ -27,9 +28,12 @@
 
 #include "CryptoPage.h"
 #include "util/misc.h"
+#include "util/DateTime.h"
 #include <gui/RetroShareLink.h>
+#include <gui/profile/ProfileManager.h>
 
 #include <retroshare/rspeers.h> //for rsPeers variable
+#include <retroshare/rsdisc.h> //for rsPeers variable
 
 /** Constructor */
 CryptoPage::CryptoPage(QWidget * parent, Qt::WFlags flags)
@@ -38,7 +42,7 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WFlags flags)
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
 
-  connect(ui.copykeyButton, SIGNAL(clicked()), this, SLOT(copyPublicKey()));
+//  connect(ui.copykeyButton, SIGNAL(clicked()), this, SLOT(copyPublicKey()));
   connect(ui.saveButton, SIGNAL(clicked()), this, SLOT(fileSaveAs()));
   connect(ui._includeSignatures_CB, SIGNAL(toggled(bool)), this, SLOT(load()));
   connect(ui._copyLink_PB, SIGNAL(clicked()), this, SLOT(copyRSLink()));
@@ -48,7 +52,45 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WFlags flags)
 #ifdef Q_WS_WIN
 
 #endif
+      connect(ui.profile_Button,SIGNAL(clicked()), this, SLOT(profilemanager()));
+
+    ui.onlinesince->setText(DateTime::formatLongDateTime(QDateTime::currentDateTime()));
 }
+void CryptoPage::profilemanager()
+{
+    ProfileManager profilemanager;
+    profilemanager.exec();
+}
+void CryptoPage::showEvent ( QShowEvent * /*event*/ )
+{
+    RsPeerDetails detail;
+    if (rsPeers->getPeerDetails(rsPeers->getOwnId(),detail))
+    {
+        ui.name->setText(QString::fromUtf8(detail.name.c_str()));
+        ui.country->setText(QString::fromUtf8(detail.location.c_str()));
+
+        ui.peerid->setText(QString::fromStdString(detail.id));
+        ui.pgpid->setText(QString::fromStdString(detail.gpg_id));
+
+        /* set retroshare version */
+        std::map<std::string, std::string>::iterator vit;
+        std::map<std::string, std::string> versions;
+        bool retv = rsDisc->getDiscVersions(versions);
+        if (retv && versions.end() != (vit = versions.find(detail.id)))
+        {
+            ui.version->setText(QString::fromStdString(vit->second));
+        }
+
+        std::list<std::string> ids;
+        ids.clear();
+        rsPeers->getGPGAcceptedList(ids);
+        int friends = ids.size();
+
+        ui.friendsEdit->setText(QString::number(friends));
+    }
+	 load() ;
+}
+
 
 CryptoPage::~CryptoPage()
 {

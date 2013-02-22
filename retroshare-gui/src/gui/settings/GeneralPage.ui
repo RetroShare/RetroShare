@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>411</width>
-    <height>400</height>
+    <width>485</width>
+    <height>465</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -182,17 +182,28 @@
     </widget>
    </item>
    <item>
-    <spacer name="verticalSpacer">
+    <spacer name="verticalSpacer_2">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>178</width>
-       <height>95</height>
+       <width>20</width>
+       <height>40</height>
       </size>
      </property>
     </spacer>
+   </item>
+   <item>
+    <widget class="QPushButton" name="runStartWizard_PB">
+     <property name="text">
+      <string>Launch startup wizard</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../images.qrc">
+       <normaloff>:/images/tools_wizard.png</normaloff>:/images/tools_wizard.png</iconset>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

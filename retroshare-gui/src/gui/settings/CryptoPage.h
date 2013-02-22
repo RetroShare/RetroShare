@@ -46,7 +46,8 @@ class CryptoPage : public ConfigPage
       virtual void load();
       void copyPublicKey();
 		void copyRSLink() ;
-      
+		virtual void showEvent ( QShowEvent * event );
+		void profilemanager();
       bool fileSave();
       bool fileSaveAs();
 

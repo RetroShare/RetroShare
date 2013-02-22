@@ -78,6 +78,7 @@ public:
 
 	bool isActive();
 	void setDefaultExtraFileFlags(TransferRequestFlags f) ;
+	void pasteText(const QString&);
 
 private slots:
 	void clearChatHistory();

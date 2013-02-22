@@ -21,6 +21,7 @@
 
 #include "ServerPage.h"
 #include <gui/TurtleRouterDialog.h>
+#include <gui/TurtleRouterStatistics.h>
 
 #include "rshare.h"
 #include "rsharesettings.h"
@@ -30,6 +31,7 @@
 #include <retroshare/rsconfig.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsturtle.h>
+#include <retroshare/rsiface.h>
 
 #include <QTimer>
 
@@ -44,10 +46,13 @@ ServerPage::ServerPage(QWidget * parent, Qt::WFlags flags)
   connect( ui.allowTunnelConnectionCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleTunnelConnection(bool) ) );
   connect( ui._max_tr_up_per_sec_SB, SIGNAL( valueChanged( int ) ), this, SLOT( updateMaxTRUpRate(int) ) );
   connect( ui._turtle_enabled_CB, SIGNAL( toggled( bool ) ), this, SLOT( toggleTurtleRouting(bool) ) );
+  connect( ui._routing_info_PB, SIGNAL( clicked() ), this, SLOT( showRoutingInfo() ) );
 
    QTimer *timer = new QTimer(this);
    timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
    timer->start(1000);
+
+	_routing_info_page = NULL ;
 
 	//load();
 	updateStatus();
@@ -70,10 +75,28 @@ ServerPage::ServerPage(QWidget * parent, Qt::WFlags flags)
 	for(std::list<std::string>::const_iterator it(ip_servers.begin());it!=ip_servers.end();++it)
 		ui.IPServersLV->addItem(QString::fromStdString(*it)) ;
 
+	TurtleRouterStatistics *trs = new TurtleRouterStatistics ;
+	trs->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding)) ;
+	ui.tabWidget->widget(2)->layout()->addWidget(trs) ;
+	ui.tabWidget->widget(2)->layout()->setContentsMargins(0,5,0,0) ;
+
+	QSpacerItem *verticalSpacer = new QSpacerItem(0,0,QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+	ui.tabWidget->widget(2)->layout()->addItem(verticalSpacer) ;
+	ui.tabWidget->widget(2)->layout()->update() ;
+
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
 #endif
+}
+
+void ServerPage::showRoutingInfo()
+{
+	if(_routing_info_page == NULL)
+		_routing_info_page = new TurtleRouterDialog ;
+
+	_routing_info_page->show() ;
 }
 
 void ServerPage::updateMaxTRUpRate(int b)
@@ -192,12 +215,18 @@ void ServerPage::load()
 	ui.showDiscStatusBar->setChecked(Settings->getStatusBarFlags() & STATUSBAR_DISC);
 
 	ui._max_tr_up_per_sec_SB->setValue(rsTurtle->getMaxTRForwardRate()) ;
-
 	ui._turtle_enabled_CB->setChecked(rsTurtle->enabled()) ;
+
+		ui.ipAddressList->clear();
+		for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
+			ui.ipAddressList->addItem(QString::fromStdString(*it));
 }
 
 void ServerPage::toggleTurtleRouting(bool b)
 {
+	ui._max_tr_up_per_sec_SB->setEnabled(b) ;
+	ui._routing_info_PB->setEnabled(true) ;	// always enabled!
+
 	rsTurtle->setEnabled(b) ;
 }
 
@@ -224,6 +253,34 @@ void ServerPage::updateStatus()
 	ui.localAddress->setText(QString::fromStdString(detail.localAddr));
 	/* set the server address */
 	ui.extAddress->setText(QString::fromStdString(detail.extAddr));
+
+
+	// Now update network bits.
+	//
+	rsiface->lockData(); /* Lock Interface */
+
+	/* now the extra bit .... switch on check boxes */
+	const RsConfig &config = rsiface->getConfig();
+
+
+	/******* Network Status Tab *******/
+
+	if(config.netUpnpOk)
+		ui.iconlabel_upnp->setPixmap(QPixmap(":/images/ledon1.png"));
+	else
+		ui.iconlabel_upnp->setPixmap(QPixmap(":/images/ledoff1.png"));
+
+	if (config.netLocalOk)
+		ui.iconlabel_netLimited->setPixmap(QPixmap(":/images/ledon1.png"));
+	else
+		ui.iconlabel_netLimited->setPixmap(QPixmap(":/images/ledoff1.png"));
+
+	if (config.netExtraAddressOk)
+		ui.iconlabel_ext->setPixmap(QPixmap(":/images/ledon1.png"));
+	else
+		ui.iconlabel_ext->setPixmap(QPixmap(":/images/ledoff1.png"));
+
+	rsiface->unlockData(); /* UnLock Interface */
 }
 
 void ServerPage::toggleUPnP()

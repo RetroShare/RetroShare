@@ -118,9 +118,9 @@ void  NetworkView::updateDisplay()
 
 	/* add all friends */
 	std::string ownGPGId = rsPeers->getGPGOwnId();
-#ifdef DEBUG_NETWORKVIEW
+//#ifdef DEBUG_NETWORKVIEW
 	std::cerr << "NetworkView::updateDisplay()" << std::endl;
-#endif
+//#endif
 
 	std::deque<NodeInfo> nodes_to_treat ;						// list of nodes to be treated. Used as a queue. The int is the level of friendness
 	std::set<std::string> nodes_considered ;					// list of nodes already considered. Eases lookup.

@@ -32,6 +32,8 @@ class QAction;
 class QTextEdit;
 class QTextCharFormat;
 class ChatTabWidget;
+class NetworkDialog;
+class NetworkView;
 
 class FriendsDialog : public RsAutoUpdatePage
 {
@@ -47,10 +49,11 @@ public:
 
     virtual void updateDisplay() ;	// overloaded from RsAutoUpdatePage
 
-    static ChatTabWidget *getTabWidget();
     static bool isGroupChatActive();
     static void groupChatActivate();
 
+	 NetworkDialog *networkDialog ;
+	 NetworkView *networkView ;
 public slots:
 
     void publicChatChanged(int type);
@@ -111,9 +114,8 @@ private slots:
 
     void setCurrentFileName(const QString &fileName);
 
-    void newsFeedChanged(int count);
+    //void newsFeedChanged(int count);
 
-    void createChatLobby();
     void recommendFriends();
     void servicePermission();
 
@@ -137,9 +139,9 @@ private:
 
     QFont mCurrentFont; /* how the text will come out */
 
-    QWidget *newsFeed;
-    QColor newsFeedTabColor;
-    QString newsFeedText;
+    //QWidget *newsFeed;
+    //QColor newsFeedTabColor;
+    //QString newsFeedText;
     bool inChatCharFormatChanged;
 
     /** Qt Designer generated object */

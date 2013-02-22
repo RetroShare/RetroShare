@@ -35,32 +35,14 @@ public:
   /** Default constructor */
   DetailsDialog(QWidget *parent = 0, Qt::WFlags flags = 0);
   /** Default destructor */
-  ~DetailsDialog();
+  ~DetailsDialog() {}
   
-	void setFileHash(const std::string& hash) { _file_hash = hash ; }
+	void setFileHash(const std::string& hash) ;
 
 public slots:
   /** Overloaded QWidget.show */
   void show();
-  
-  void setFileName(const QString & filename);
-	void setHash(const QString & hash);
-	void setLink(const QString & link);
-	void setSize(const qulonglong & size);
-	void setStatus(const QString & status);
-	void setPriority(const QString & priority); 
-	void setSources(const QString & sources);
-	void setDatarate(const double & datarate);
-        void setCompleted(const QString & completed);
-  void setRemaining(const QString & remaining) ;
-  void setDownloadtime(const QString & downloadtime);
-  void setType(const QString & type); 
-  void setChunkSize(const uint32_t chunksize);
-  void setNumberOfChunks(const size_t numberofchunks);
-
- 
-protected:
-  void closeEvent (QCloseEvent * event);
+	void copyLink() ;
   
 private slots:
   void on_ok_dButton_clicked();

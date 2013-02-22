@@ -42,7 +42,6 @@
 #include "im_history/ImHistoryBrowser.h"
 #include "MainWindow.h"
 #include "NewsFeed.h"
-#include "ChatLobbyWidget.h"
 #include "notifyqt.h"
 #include "profile/ProfileWidget.h"
 #include "profile/StatusMessage.h"
@@ -51,14 +50,17 @@
 #include "util/misc.h"
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
-#include "chat/CreateLobbyDialog.h"
 #include "FriendRecommendDialog.h"
 #include "FriendsDialog.h"
 #include "ServicePermissionDialog.h"
+#include "NetworkView.h"
+#include "NetworkDialog.h"
 
 /* Images for Newsfeed icons */
 #define IMAGE_NEWSFEED           ""
 #define IMAGE_NEWSFEED_NEW       ":/images/message-state-new.png"
+#define IMAGE_NETWORK2          ":/images/rs1.png"
+#define IMAGE_PEERS         	":/images/groupchat.png"
 
 /******
  * #define FRIENDS_DEBUG 1
@@ -85,8 +87,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     connect( ui.actionSet_your_Personal_Message, SIGNAL(triggered()), this, SLOT(statusmessage()));
     connect( ui.addfileButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
     connect( ui.actionAdd_Friend, SIGNAL(triggered()), this, SLOT(addFriend()));
-    connect( ui.actionCreate_new_Chat_lobby, SIGNAL(triggered()), this, SLOT(createChatLobby()));
-    connect( ui.actionFriendRecommendations, SIGNAL(triggered()), this, SLOT(recommendFriends()));
+	 connect( ui.actionFriendRecommendations, SIGNAL(triggered()), this, SLOT(recommendFriends()));
     connect( ui.actionServicePermission, SIGNAL(triggered()), this, SLOT(servicePermission()));
     connect( ui.filter_lineEdit, SIGNAL(textChanged(QString)), ui.friendList, SLOT(filterItems(QString)));
 
@@ -97,11 +98,13 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     ui.avatar->setOwnId();
 
     ui.tabWidget->setTabPosition(QTabWidget::North);
-    ui.tabWidget->addTab(new ChatLobbyWidget(), tr("Chat lobbies"));
-    ui.tabWidget->addTab(new ProfileWidget(), tr("Profile"));
-    newsFeed = new NewsFeed();
-    int newsFeedTabIndex = ui.tabWidget->insertTab(0, newsFeed, tr("News Feed"));
-    ui.tabWidget->setCurrentIndex(newsFeedTabIndex);
+    ui.tabWidget->addTab(networkView = new NetworkView(),QIcon(IMAGE_NETWORK2), tr("Local network"));
+    ui.tabWidget->addTab(networkDialog = new NetworkDialog(),QIcon(IMAGE_PEERS), tr("Known people"));
+
+    //ui.tabWidget->addTab(new ProfileWidget(), tr("Profile"));
+    //newsFeed = new NewsFeed();
+    //int newsFeedTabIndex = ui.tabWidget->insertTab(0, newsFeed, tr("News Feed"));
+    //ui.tabWidget->setCurrentIndex(newsFeedTabIndex);
 
     ui.tabWidget->hideCloseButton(0);
     ui.tabWidget->hideCloseButton(1);
@@ -109,10 +112,10 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     ui.tabWidget->hideCloseButton(3);
 
     /* get the current text and text color of the tab bar */
-    newsFeedTabColor = ui.tabWidget->tabBar()->tabTextColor(newsFeedTabIndex);
-    newsFeedText = ui.tabWidget->tabBar()->tabText(newsFeedTabIndex);
+    //newsFeedTabColor = ui.tabWidget->tabBar()->tabTextColor(newsFeedTabIndex);
+    //newsFeedText = ui.tabWidget->tabBar()->tabText(newsFeedTabIndex);
 
-    connect(newsFeed, SIGNAL(newsFeedChanged(int)), this, SLOT(newsFeedChanged(int)));
+    //connect(newsFeed, SIGNAL(newsFeedChanged(int)), this, SLOT(newsFeedChanged(int)));
 
     connect(ui.Sendbtn, SIGNAL(clicked()), this, SLOT(sendMsg()));
     connect(ui.emoticonBtn, SIGNAL(clicked()), this, SLOT(smileyWidgetgroupchat()));
@@ -849,29 +852,23 @@ void FriendsDialog::on_actionAdd_Group_activated()
     createGrpDialog.exec();
 }
 
-void FriendsDialog::newsFeedChanged(int count)
-{
-    int newsFeedTabIndex = ui.tabWidget->indexOf(newsFeed);
-    if (newsFeedTabIndex < 0) {
-        return;
-    }
-
-    if (count) {
-        ui.tabWidget->tabBar()->setTabText(newsFeedTabIndex, QString("%1 (%2)").arg(newsFeedText).arg(count));
-        ui.tabWidget->tabBar()->setTabTextColor(newsFeedTabIndex, Qt::blue);
-        ui.tabWidget->tabBar()->setTabIcon(newsFeedTabIndex, QIcon(IMAGE_NEWSFEED_NEW));
-    } else {
-        ui.tabWidget->tabBar()->setTabText(newsFeedTabIndex, newsFeedText);
-        ui.tabWidget->tabBar()->setTabTextColor(newsFeedTabIndex, newsFeedTabColor);
-        ui.tabWidget->tabBar()->setTabIcon(newsFeedTabIndex,  QIcon(IMAGE_NEWSFEED));
-    }
-}
-
-void FriendsDialog::createChatLobby()
-{
-	std::list<std::string> friends;
-	CreateLobbyDialog(friends).exec();
-}
+// void FriendsDialog::newsFeedChanged(int count)
+// {
+//     int newsFeedTabIndex = ui.tabWidget->indexOf(newsFeed);
+//     if (newsFeedTabIndex < 0) {
+//         return;
+//     }
+// 
+//     if (count) {
+//         ui.tabWidget->tabBar()->setTabText(newsFeedTabIndex, QString("%1 (%2)").arg(newsFeedText).arg(count));
+//         ui.tabWidget->tabBar()->setTabTextColor(newsFeedTabIndex, Qt::blue);
+//         ui.tabWidget->tabBar()->setTabIcon(newsFeedTabIndex, QIcon(IMAGE_NEWSFEED_NEW));
+//     } else {
+//         ui.tabWidget->tabBar()->setTabText(newsFeedTabIndex, newsFeedText);
+//         ui.tabWidget->tabBar()->setTabTextColor(newsFeedTabIndex, newsFeedTabColor);
+//         ui.tabWidget->tabBar()->setTabIcon(newsFeedTabIndex,  QIcon(IMAGE_NEWSFEED));
+//     }
+// }
 
 void FriendsDialog::recommendFriends()
 {
@@ -882,11 +879,6 @@ void FriendsDialog::servicePermission()
 {
 	ServicePermissionDialog dlg;
 	dlg.exec();
-}
-
-/*static*/ ChatTabWidget *FriendsDialog::getTabWidget()
-{
-	return instance ? instance->ui.tabWidget : NULL;
 }
 
 /*static*/ bool FriendsDialog::isGroupChatActive()

@@ -411,6 +411,7 @@ HEADERS +=  rshare.h \
             gui/common/AvatarWidget.h \
             gui/common/FriendList.h \
             gui/common/FriendSelectionWidget.h \
+            gui/common/FriendSelectionDialog.h \
             gui/common/HashBox.h \
             gui/common/LineEditClear.h \
             gui/common/DropLineEdit.h \
@@ -682,6 +683,7 @@ SOURCES +=  main.cpp \
             gui/common/AvatarWidget.cpp \
             gui/common/FriendList.cpp \
             gui/common/FriendSelectionWidget.cpp \
+            gui/common/FriendSelectionDialog.cpp \
             gui/common/HashBox.cpp \
             gui/common/LineEditClear.cpp \
             gui/common/DropLineEdit.cpp \

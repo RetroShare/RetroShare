@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>581</width>
-    <height>331</height>
+    <width>758</width>
+    <height>339</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -16,14 +16,8 @@
     <verstretch>1</verstretch>
    </sizepolicy>
   </property>
-  <layout class="QGridLayout" name="gridLayout_5">
-   <property name="horizontalSpacing">
-    <number>6</number>
-   </property>
-   <property name="verticalSpacing">
-    <number>0</number>
-   </property>
-   <item row="0" column="0" colspan="3">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
     <widget class="QFrame" name="titleBarFrame">
      <property name="maximumSize">
       <size>
@@ -41,107 +35,6 @@
       <property name="margin">
        <number>2</number>
       </property>
-      <item>
-       <widget class="QComboBox" name="FileTypeComboBox">
-        <item>
-         <property name="text">
-          <string>Any</string>
-         </property>
-         <property name="icon">
-          <iconset resource="images.qrc">
-           <normaloff>:/images/FileTypeAny.png</normaloff>:/images/FileTypeAny.png</iconset>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Archive</string>
-         </property>
-         <property name="icon">
-          <iconset resource="images.qrc">
-           <normaloff>:/images/FileTypeArchive.png</normaloff>:/images/FileTypeArchive.png</iconset>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Audio</string>
-         </property>
-         <property name="icon">
-          <iconset resource="images.qrc">
-           <normaloff>:/images/FileTypeAudio.png</normaloff>:/images/FileTypeAudio.png</iconset>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>CD-Image</string>
-         </property>
-         <property name="icon">
-          <iconset resource="images.qrc">
-           <normaloff>:/images/FileTypeCDImage.png</normaloff>:/images/FileTypeCDImage.png</iconset>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Document</string>
-         </property>
-         <property name="icon">
-          <iconset resource="images.qrc">
-           <normaloff>:/images/FileTypeDocument.png</normaloff>:/images/FileTypeDocument.png</iconset>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Picture</string>
-         </property>
-         <property name="icon">
-          <iconset resource="images.qrc">
-           <normaloff>:/images/FileTypePicture.png</normaloff>:/images/FileTypePicture.png</iconset>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Program</string>
-         </property>
-         <property name="icon">
-          <iconset resource="images.qrc">
-           <normaloff>:/images/FileTypeProgram.png</normaloff>:/images/FileTypeProgram.png</iconset>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Video</string>
-         </property>
-         <property name="icon">
-          <iconset resource="images.qrc">
-           <normaloff>:/images/FileTypeVideo.png</normaloff>:/images/FileTypeVideo.png</iconset>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Directory</string>
-         </property>
-         <property name="icon">
-          <iconset resource="images.qrc">
-           <normaloff>:/images/folder16.png</normaloff>:/images/folder16.png</iconset>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item>
-       <spacer>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Fixed</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>13</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <property name="spacing">
@@ -197,22 +90,6 @@
        </layout>
       </item>
       <item>
-       <spacer>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Minimum</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>50</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
        <widget class="QPushButton" name="toggleAdvancedSearchBtn">
         <property name="toolTip">
          <string>Advanced Search</string>
@@ -222,17 +99,70 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QCheckBox" name="_friendListsearch_SB">
+        <property name="toolTip">
+         <string>Search inside &quot;browsable&quot; files of your friends</string>
+        </property>
+        <property name="text">
+         <string>Browsable files</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="_anonF2Fsearch_CB">
+        <property name="toolTip">
+         <string>Multi-hop search at distance 6 in the network 
+(always reports available files)</string>
+        </property>
+        <property name="text">
+         <string>Distant</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="_ownFiles_CB">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>Include files from your own file list in the search result</string>
+        </property>
+        <property name="text">
+         <string>Own files</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="cloaseallsearchresultsButton">
+        <property name="toolTip">
+         <string>Close all Search Results</string>
+        </property>
+        <property name="text">
+         <string>Clear</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
-   <item row="1" column="0" colspan="3">
+   <item>
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
      <widget class="QTreeWidget" name="searchSummaryWidget">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+       <sizepolicy hsizetype="Maximum" vsizetype="Minimum">
         <horstretch>0</horstretch>
         <verstretch>1</verstretch>
        </sizepolicy>
@@ -279,9 +209,9 @@
        </property>
       </column>
      </widget>
-     <widget class="QWidget" name="layoutWidget">
-      <layout class="QGridLayout" name="gridLayout_4">
-       <item row="1" column="0">
+     <widget class="QWidget" name="">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
         <widget class="SearchTreeWidget" name="searchResultWidget">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
@@ -338,173 +268,163 @@
          </column>
         </widget>
        </item>
-       <item row="0" column="0">
-        <widget class="LineEditClear" name="filterLineEdit">
-         <property name="toolTip">
-          <string>Filter Search Result</string>
-         </property>
-        </widget>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Filter:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="LineEditClear" name="filterLineEdit">
+           <property name="toolTip">
+            <string>Filter Search Result</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Max results:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="_max_results_SB">
+           <property name="suffix">
+            <string/>
+           </property>
+           <property name="minimum">
+            <number>100</number>
+           </property>
+           <property name="maximum">
+            <number>5000</number>
+           </property>
+           <property name="singleStep">
+            <number>100</number>
+           </property>
+           <property name="value">
+            <number>1000</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="FileTypeComboBox">
+           <item>
+            <property name="text">
+             <string>Any</string>
+            </property>
+            <property name="icon">
+             <iconset resource="images.qrc">
+              <normaloff>:/images/FileTypeAny.png</normaloff>:/images/FileTypeAny.png</iconset>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Archive</string>
+            </property>
+            <property name="icon">
+             <iconset resource="images.qrc">
+              <normaloff>:/images/FileTypeArchive.png</normaloff>:/images/FileTypeArchive.png</iconset>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Audio</string>
+            </property>
+            <property name="icon">
+             <iconset resource="images.qrc">
+              <normaloff>:/images/FileTypeAudio.png</normaloff>:/images/FileTypeAudio.png</iconset>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>CD-Image</string>
+            </property>
+            <property name="icon">
+             <iconset resource="images.qrc">
+              <normaloff>:/images/FileTypeCDImage.png</normaloff>:/images/FileTypeCDImage.png</iconset>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Document</string>
+            </property>
+            <property name="icon">
+             <iconset resource="images.qrc">
+              <normaloff>:/images/FileTypeDocument.png</normaloff>:/images/FileTypeDocument.png</iconset>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Picture</string>
+            </property>
+            <property name="icon">
+             <iconset resource="images.qrc">
+              <normaloff>:/images/FileTypePicture.png</normaloff>:/images/FileTypePicture.png</iconset>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Program</string>
+            </property>
+            <property name="icon">
+             <iconset resource="images.qrc">
+              <normaloff>:/images/FileTypeProgram.png</normaloff>:/images/FileTypeProgram.png</iconset>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Video</string>
+            </property>
+            <property name="icon">
+             <iconset resource="images.qrc">
+              <normaloff>:/images/FileTypeVideo.png</normaloff>:/images/FileTypeVideo.png</iconset>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Directory</string>
+            </property>
+            <property name="icon">
+             <iconset resource="images.qrc">
+              <normaloff>:/images/folder16.png</normaloff>:/images/folder16.png</iconset>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonDownload">
+           <property name="minimumSize">
+            <size>
+             <width>120</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>26</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Download Selected</string>
+           </property>
+           <property name="text">
+            <string>Download selected</string>
+           </property>
+           <property name="icon">
+            <iconset resource="images.qrc">
+             <normaloff>:/images/download16.png</normaloff>:/images/download16.png</iconset>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QPushButton" name="cloaseallsearchresultsButton">
-     <property name="toolTip">
-      <string>Close all Search Results</string>
-     </property>
-     <property name="text">
-      <string>Close All Search Results</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <spacer name="horizontalSpacer_2">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>29</width>
-       <height>17</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="2" column="2">
-    <widget class="QPushButton" name="pushButtonDownload">
-     <property name="minimumSize">
-      <size>
-       <width>120</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>26</height>
-      </size>
-     </property>
-     <property name="toolTip">
-      <string>Download Selected</string>
-     </property>
-     <property name="text">
-      <string>Download</string>
-     </property>
-     <property name="icon">
-      <iconset resource="images.qrc">
-       <normaloff>:/images/download16.png</normaloff>:/images/download16.png</iconset>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0" colspan="3">
-    <widget class="QFrame" name="buttonFrame">
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>38</height>
-      </size>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::Box</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Sunken</enum>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <property name="horizontalSpacing">
-       <number>6</number>
-      </property>
-      <property name="verticalSpacing">
-       <number>1</number>
-      </property>
-      <property name="margin">
-       <number>3</number>
-      </property>
-      <item row="1" column="0">
-       <widget class="QCheckBox" name="_ownFiles_CB">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="toolTip">
-         <string>Include files from your own file list in the search result</string>
-        </property>
-        <property name="text">
-         <string>Include my files</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QCheckBox" name="_friendListsearch_SB">
-        <property name="toolTip">
-         <string>Search inside &quot;browsable&quot; files of your friends</string>
-        </property>
-        <property name="text">
-         <string>Search in friends lists</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="2">
-       <widget class="QCheckBox" name="_anonF2Fsearch_CB">
-        <property name="toolTip">
-         <string>Multi-hop search at distance 6 in the network 
-(always reports available files)</string>
-        </property>
-        <property name="text">
-         <string>F2F search</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="3">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Limit number of results to :</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="4">
-       <widget class="QSpinBox" name="_max_results_SB">
-        <property name="suffix">
-         <string/>
-        </property>
-        <property name="minimum">
-         <number>100</number>
-        </property>
-        <property name="maximum">
-         <number>5000</number>
-        </property>
-        <property name="singleStep">
-         <number>100</number>
-        </property>
-        <property name="value">
-         <number>1000</number>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="5">
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>5</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
     </widget>
    </item>
   </layout>

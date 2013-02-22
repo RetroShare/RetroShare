@@ -36,6 +36,9 @@ class QStandardItemModel;
 class QStandardItem;
 class DetailsDialog;
 class FileProgressInfo;
+class SearchDialog;
+class LocalSharedFilesDialog;
+class RemoteSharedFilesDialog;
 
 class TransfersDialog : public RsAutoUpdatePage
 {
@@ -52,7 +55,11 @@ public:
 //    virtual void keyPressEvent(QKeyEvent *) ;
     virtual void updateDisplay() ;				// derived from RsAutoUpdateWidget
 
-    static DetailsDialog *detailsdlg;
+	 static DetailsDialog *detailsDialog() ;
+
+	 SearchDialog *searchDialog ;
+	 LocalSharedFilesDialog *localSharedFiles ;
+	 RemoteSharedFilesDialog *remoteSharedFiles ;
 
 public slots:
     void insertTransfers();
@@ -150,6 +157,8 @@ private:
     QAction *chunkRandomAct;
     QAction *chunkStreamingAct;
     QAction *detailsfileAct;
+    QAction *toggleShowCacheTransfersAct;
+    QAction *openCollectionAct;
 
     bool m_bProcessSettings;
     void processSettings(bool bLoad);
@@ -167,6 +176,7 @@ private:
     /** Qt Designer generated object */
     Ui::TransfersDialog ui;
 
+	 bool _show_cache_transfers ;
 public slots:
 	// these two functions add entries to the transfers dialog, and return the row id of the entry modified/added
 	//
@@ -176,6 +186,7 @@ public slots:
     int addUploadItem(const QString& symbol, const QString& name, const QString& coreID, qlonglong size, const FileProgressInfo& pinfo, double dlspeed, const QString& sources,const QString& source_id, const QString& status, qlonglong completed, qlonglong remaining);
 
     void showFileDetails() ;
+	 void toggleShowCacheTransfers() ;
 
     double getProgress(int row, QStandardItemModel *model);
     double getSpeed(int row, QStandardItemModel *model);

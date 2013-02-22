@@ -28,6 +28,7 @@
 #include <retroshare/rstypes.h>
 #include "util/misc.h"
 #include "FileTransferInfoWidget.h"
+#include "RetroShareLink.h"
 
 // Variables to decide of display behaviour. Should be adapted to window size.
 //
@@ -110,7 +111,7 @@ void FileTransferInfoWidget::paintEvent(QPaintEvent */*event*/)
 void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info,QPainter *painter)
 {
     x=0;
-    y=0;
+    y=5;
     int blocks = info.chunks.size() ;
 	 uint64_t fileSize = info.file_size ;
 	 uint32_t blockSize = info.chunk_size ;
@@ -240,9 +241,10 @@ void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info
 
 	 // various info:
 	 //
-
 	 painter->setPen(QColor::fromRgb(0,0,0)) ;
 	 y += text_height ; painter->drawText(0,y,tr("File info") + ":") ;
+	 y += block_sep ;
+	 y += text_height ; painter->drawText(20,y,tr("File name") + ":") ; painter->drawText(tab_size,y,QString::fromStdString(nfo.fname)) ;
 	 y += block_sep ;
 	 y += text_height ; painter->drawText(20,y,tr("File hash") + ":") ; painter->drawText(tab_size,y,QString::fromStdString(nfo.hash)) ;
 	 y += block_sep ;

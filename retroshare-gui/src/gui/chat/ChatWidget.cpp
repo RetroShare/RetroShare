@@ -387,15 +387,21 @@ bool ChatWidget::isActive()
 	return true;
 }
 
+void ChatWidget::pasteText(const QString& S)
+{
+	//std::cerr << "In paste link" << std::endl;
+	ui->chatTextEdit->insertHtml(S);
+}
+
 void ChatWidget::pasteLink()
 {
-	std::cerr << "In paste link" << std::endl;
+	//std::cerr << "In paste link" << std::endl;
 	ui->chatTextEdit->insertHtml(RSLinkClipboard::toHtml());
 }
 
 void ChatWidget::pasteOwnCertificateLink()
 {
-	std::cerr << "In paste own certificate link" << std::endl;
+	//std::cerr << "In paste own certificate link" << std::endl;
 	RetroShareLink link ;
 	std::string ownId = rsPeers->getOwnId() ;
 

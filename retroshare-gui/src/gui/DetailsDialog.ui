@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>525</width>
-    <height>477</height>
+    <width>787</width>
+    <height>644</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,348 +21,143 @@
    <item row="0" column="0" colspan="3">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabGeneral">
       <attribute name="icon">
        <iconset resource="images.qrc">
-        <normaloff>:/images/fileinfo.png</normaloff>:/images/fileinfo.png</iconset>
+        <normaloff>:/images/blockdevice.png</normaloff>:/images/blockdevice.png</iconset>
       </attribute>
       <attribute name="title">
        <string>General</string>
       </attribute>
       <layout class="QGridLayout">
-       <item row="0" column="0">
-        <widget class="QGroupBox" name="genralgroupBox">
-         <property name="title">
-          <string>General</string>
-         </property>
-         <layout class="QGridLayout">
-          <item row="0" column="0">
-           <widget class="QLabel" name="name_label">
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="layoutDirection">
-             <enum>Qt::LeftToRight</enum>
-            </property>
-            <property name="text">
-             <string>File Name:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLabel" name="name_label_2">
-            <property name="text">
-             <string notr="true">Name Label</string>
-            </property>
-            <property name="textInteractionFlags">
-             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2" rowspan="7">
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>336</width>
-              <height>98</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="hash_label">
-            <property name="maximumSize">
-             <size>
-              <width>1677215</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="layoutDirection">
-             <enum>Qt::LeftToRight</enum>
-            </property>
-            <property name="text">
-             <string>Hash:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="size_label">
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="layoutDirection">
-             <enum>Qt::LeftToRight</enum>
-            </property>
-            <property name="text">
-             <string>Size:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLabel" name="size_label_2">
-            <property name="text">
-             <string notr="true">Size Label</string>
-            </property>
-            <property name="textInteractionFlags">
-             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="status_label">
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="layoutDirection">
-             <enum>Qt::LeftToRight</enum>
-            </property>
-            <property name="text">
-             <string>Status:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QLabel" name="status_label_2">
-            <property name="text">
-             <string notr="true">Status Label</string>
-            </property>
-            <property name="textInteractionFlags">
-             <set>Qt::LinksAccessibleByMouse</set>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="priority_label">
-            <property name="text">
-             <string>Priority:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QLabel" name="priority_label_2">
-            <property name="text">
-             <string notr="true">Priority Label</string>
-            </property>
-            <property name="textInteractionFlags">
-             <set>Qt::LinksAccessibleByMouse</set>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QLabel" name="type_label_2">
-            <property name="text">
-             <string notr="true">Type Label</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="type_label">
-            <property name="text">
-             <string>Type:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLabel" name="hash_label_2">
-            <property name="text">
-             <string notr="true">Hash Label</string>
-            </property>
-            <property name="textInteractionFlags">
-             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
        <item row="1" column="0">
-        <widget class="QGroupBox" name="groupBox_2">
-         <property name="title">
-          <string>Transfer</string>
+        <layout class="QGridLayout" name="_2">
+         <property name="margin">
+          <number>6</number>
          </property>
-         <layout class="QGridLayout">
-          <item row="0" column="0">
-           <widget class="QLabel" name="sources_label">
-            <property name="text">
-             <string>Sources:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="datarate_label">
-            <property name="text">
-             <string>Datarate:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="completed_label">
-            <property name="text">
-             <string>Completed:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLabel" name="sources_line">
-            <property name="text">
-             <string notr="true">Source Label</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLabel" name="datarate_line">
-            <property name="text">
-             <string notr="true">Datarate Label</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLabel" name="completed_line">
-            <property name="text">
-             <string notr="true">Completed Label</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2" rowspan="7">
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="3" column="1">
-           <widget class="QLabel" name="chunksizelabel">
-            <property name="text">
-             <string notr="true">Chunks Label</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Chunk size:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QLabel" name="numberofchunkslabel">
-            <property name="toolTip">
-             <string>Number of Chunks</string>
-            </property>
-            <property name="text">
-             <string notr="true">Chunks Number Label</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="label_2">
-            <property name="toolTip">
-             <string>Number of Chunks</string>
-            </property>
-            <property name="text">
-             <string>Chunks:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QLabel" name="remaining_line">
-            <property name="text">
-             <string notr="true">Remaining Label</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="remaining_label">
-            <property name="text">
-             <string>Remaining:</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
+         <item row="0" column="0">
+          <layout class="QGridLayout" name="_3">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="pixmap">
+              <pixmap resource="images.qrc">:/images/graph-downloaded.png</pixmap>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLabel" name="label_5">
+             <property name="text">
+              <string>Done</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="0" column="1">
+          <layout class="QGridLayout" name="_4">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_6">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="pixmap">
+              <pixmap resource="images.qrc">:/images/graph-downloading.png</pixmap>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLabel" name="label_7">
+             <property name="text">
+              <string>Active</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="0" column="3">
+          <layout class="QGridLayout" name="_5">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_8">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="pixmap">
+              <pixmap resource="images.qrc">:/images/graph-notdownload.png</pixmap>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLabel" name="label_9">
+             <property name="text">
+              <string>Outstanding</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="0" column="4">
+          <spacer name="horizontalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>368</width>
+             <height>13</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="2">
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QLabel" name="label_10">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="pixmap">
+              <pixmap resource="images.qrc">:/images/graph-checking.png</pixmap>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_11">
+             <property name="text">
+              <string>Needs checking</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
        </item>
-       <item row="2" column="0">
-        <widget class="QGroupBox" name="groupBox_3">
-         <property name="title">
-          <string>Date</string>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <item>
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string>Download time:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="downloadtime_line">
-            <property name="text">
-             <string notr="true">Download Time Label</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_3">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>274</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="tabComments">
-      <attribute name="icon">
-       <iconset resource="images.qrc">
-        <normaloff>:/images/filecomments.png</normaloff>:/images/filecomments.png</iconset>
-      </attribute>
-      <attribute name="title">
-       <string>Comments</string>
-      </attribute>
-      <layout class="QGridLayout">
        <item row="0" column="0">
-        <widget class="QTreeView" name="commentsTreeView"/>
+        <widget class="QScrollArea" name="fileTransferInfoWidget">
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <widget class="QWidget" name="scrollAreaWidgetContents">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>747</width>
+            <height>505</height>
+           </rect>
+          </property>
+         </widget>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -374,33 +169,20 @@
        <item row="0" column="0" colspan="2">
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
-          <string>retroshare link(s)</string>
+          <string>retroshare link</string>
          </property>
          <layout class="QGridLayout">
-          <item row="0" column="0">
+          <item row="1" column="0">
            <widget class="QTextEdit" name="Linktext"/>
           </item>
+          <item row="0" column="0">
+           <widget class="QPushButton" name="copylinkdetailsButton">
+            <property name="text">
+             <string>Copy link to clipboard</string>
+            </property>
+           </widget>
+          </item>
          </layout>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <spacer>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>351</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="1" column="1">
-        <widget class="QPushButton" name="copylinkdetailsButton">
-         <property name="text">
-          <string>Copy</string>
-         </property>
         </widget>
        </item>
       </layout>

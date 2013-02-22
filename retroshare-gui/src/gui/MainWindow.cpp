@@ -43,15 +43,16 @@
 #include "SearchDialog.h"
 #include "TransfersDialog.h"
 #include "MessagesDialog.h"
-#include "SharedFilesDialog.h"
+//#include "SharedFilesDialog.h"
 #include "PluginsPage.h"
+#include "NewsFeed.h"
 #include "ShareManager.h"
 #include "NetworkView.h"
 #include "ForumsDialog.h"
 #include "FriendsDialog.h"
+#include "ChatLobbyWidget.h"
 #include "HelpDialog.h"
 #include "AboutDialog.h"
-#include "QuickStartWizard.h"
 #include "ChannelFeed.h"
 #include "bwgraph/bwgraph.h"
 #include "help/browser/helpbrowser.h"
@@ -118,9 +119,8 @@
 
 
 /* Images for toolbar icons */
-#define IMAGE_NETWORK2          ":/images/rs1.png"
+//#define IMAGE_NETWORK2          ":/images/rs1.png"
 #define IMAGE_PEERS         	":/images/groupchat.png"
-#define IMAGE_SEARCH    		":/images/filefind.png"
 #define IMAGE_TRANSFERS      	":/images/ktorrent32.png"
 #define IMAGE_FILES   	        ":/images/fileshare32.png"
 #define IMAGE_CHANNELS       	":/images/channels.png"
@@ -238,22 +238,26 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     QActionGroup *grp = new QActionGroup(this);
     QAction *action;
 
-    ui->stackPages->add(networkDialog = new NetworkDialog(ui->stackPages),
-                       createPageAction(QIcon(IMAGE_NETWORK2), tr("Network"), grp));
+    ui->stackPages->add(newsFeed = new NewsFeed(ui->stackPages),
+                       createPageAction(QIcon(IMAGE_NEWSFEED), tr("News feed"), grp));
+
+//    ui->stackPages->add(networkDialog = new NetworkDialog(ui->stackPages),
+//                       createPageAction(QIcon(IMAGE_NETWORK2), tr("Network"), grp));
 
     ui->stackPages->add(friendsDialog = new FriendsDialog(ui->stackPages),
                        action = createPageAction(QIcon(IMAGE_PEERS), tr("Friends"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(friendsDialog, action));
 
-    ui->stackPages->add(searchDialog = new SearchDialog(ui->stackPages),
-                       createPageAction(QIcon(IMAGE_SEARCH), tr("Search"), grp));
+//    ui->stackPages->add(searchDialog = new SearchDialog(ui->stackPages),
+//                       createPageAction(QIcon(IMAGE_SEARCH), tr("Search"), grp));
 
     ui->stackPages->add(transfersDialog = new TransfersDialog(ui->stackPages),
                       action = createPageAction(QIcon(IMAGE_TRANSFERS), tr("Transfers"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(transfersDialog, action));
 
-    ui->stackPages->add(sharedfilesDialog = new SharedFilesDialog(ui->stackPages),
-                       createPageAction(QIcon(IMAGE_FILES), tr("Files"), grp));
+    ui->stackPages->add(chatLobbyDialog = new ChatLobbyWidget(ui->stackPages),
+                      action = createPageAction(QIcon(IMAGE_CHAT), tr("Chat Lobbies"), grp));
+    notify.push_back(QPair<MainPage*, QAction*>(chatLobbyDialog, action));
 
     ui->stackPages->add(messagesDialog = new MessagesDialog(ui->stackPages),
                       action = createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));
@@ -784,37 +788,39 @@ void SetForegroundWindowInternal(HWND hWnd)
 
     MainPage *Page = NULL;
 
-    switch (page) {
-    case Network:
-        Page = _instance->networkDialog;
-        break;
-    case Friends:
-        Page = _instance->friendsDialog;
-        break;
-    case Search:
-        Page = _instance->searchDialog;
-        break;
-    case Transfers:
-        Page = _instance->transfersDialog;
-        break;
-    case SharedDirectories:
-        Page = _instance->sharedfilesDialog;
-        break;
-    case Messages:
-        Page = _instance->messagesDialog;
-        break;
-    case Channels:
-        Page = _instance->channelFeed;
-        break;
-    case Forums:
-        Page = _instance->forumsDialog;
-        break;
+	 switch (page) {
+		 //    case Network:
+		 //        Page = _instance->networkDialog;
+		 //        break;
+		 case Friends:
+			 Page = _instance->friendsDialog;
+			 break;
+		 case ChatLobby:
+			 Page = _instance->chatLobbyDialog;
+			 break;
+		 case Transfers:
+			 Page = _instance->transfersDialog;
+			 break;
+			 //    case SharedDirectories:
+			 //        Page = _instance->sharedfilesDialog;
+			 break;
+		 case Messages:
+			 Page = _instance->messagesDialog;
+			 break;
+		 case Channels:
+			 Page = _instance->channelFeed;
+			 break;
+		 case Forums:
+			 Page = _instance->forumsDialog;
+			 break;
 #ifdef BLOGS
-    case Blogs:
-        Page = _instance->blogsFeed;
-        break;
+		 case Blogs:
+			 Page = _instance->blogsFeed;
+			 break;
 #endif
-    }
+		 default:
+			 std::cerr << "Show page called on value that is not handled yet. Please code it! (value = " << Page << ")" << std::endl;
+	 }
 
     if (Page) {
         /* Set the focus to the specified page. */
@@ -834,21 +840,21 @@ void SetForegroundWindowInternal(HWND hWnd)
 
    QWidget *page = _instance->ui->stackPages->currentWidget();
 
-   if (page == _instance->networkDialog) {
-       return Network;
-   }
+//   if (page == _instance->networkDialog) {
+//       return Network;
+//   }
    if (page == _instance->friendsDialog) {
        return Friends;
    }
-   if (page == _instance->searchDialog) {
-       return Search;
+   if (page == _instance->chatLobbyDialog) {
+       return ChatLobby;
    }
    if (page == _instance->transfersDialog) {
        return Transfers;
    }
-   if (page == _instance->sharedfilesDialog) {
-       return SharedDirectories;
-   }
+//   if (page == _instance->sharedfilesDialog) {
+//       return SharedDirectories;
+ //  }
    if (page == _instance->messagesDialog) {
        return Messages;
    }
@@ -880,16 +886,16 @@ void SetForegroundWindowInternal(HWND hWnd)
    }
 
    switch (page) {
-   case Network:
-       return _instance->networkDialog;
+//   case Network:
+//       return _instance->networkDialog;
    case Friends:
        return _instance->friendsDialog;
-   case Search:
-       return _instance->searchDialog;
+   case ChatLobby:
+       return _instance->chatLobbyDialog;
    case Transfers:
        return _instance->transfersDialog;
-   case SharedDirectories:
-       return _instance->sharedfilesDialog;
+//   case SharedDirectories:
+//       return _instance->sharedfilesDialog;
    case Messages:
        return _instance->messagesDialog;
 #ifdef RS_USE_LINKS
@@ -1078,12 +1084,6 @@ void MainWindow::showHelpDialog()
 void MainWindow::showHelpDialog(const QString &topic)
 {
   HelpBrowser::showWindow(topic);
-}
-
-void MainWindow::on_actionQuick_Start_Wizard_activated()
-{
-    QuickStartWizard qstartwizard(this);
-    qstartwizard.exec();
 }
 
 /** Called when the user changes the UI translation. */

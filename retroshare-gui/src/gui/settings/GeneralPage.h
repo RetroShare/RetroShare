@@ -44,6 +44,8 @@ public:
   virtual QPixmap iconPixmap() const { return QPixmap(":/images/kcmsystem24.png") ; }
   virtual QString pageName() const { return tr("General") ; }
 
+  public slots:
+	  void runStartWizard() ;
 private:
   /** Qt Designer generated object */
   Ui::GeneralPage ui;

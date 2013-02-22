@@ -34,55 +34,44 @@ class SharedFilesDialog : public RsAutoUpdatePage
 
 public:
   /** Default Constructor */
-  SharedFilesDialog(QWidget *parent = 0);
-  /** Default Destructor */
-  ~SharedFilesDialog();
+  SharedFilesDialog(RetroshareDirModel *tree_model,RetroshareDirModel *flat_model,QWidget *parent = 0);
 
-  virtual void updatePage() { checkUpdate() ; }
+  /** Default Destructor */
+  ~SharedFilesDialog() {}
+
   virtual void hideEvent(QHideEvent *) ;
   virtual void showEvent(QShowEvent *) ;
 
+protected:
+  QTreeView *directoryView() ;
+  virtual void showProperColumns() = 0 ;
+  virtual bool isRemote() const = 0 ;
+
+protected slots:
+  virtual void spawnCustomPopupMenu(QPoint point) = 0;
 
 private slots:
 
 	/* For handling the model updates */
-  void  preModDirectories(bool update_local);
-  void  postModDirectories(bool update_local);
-
-  void checkUpdate();
-  void forceCheck();
+  void  preModDirectories() ;
+  void  postModDirectories() ;
 
   /** Create the context popup menu and it's submenus */
-  void shareddirtreeviewCostumPopupMenu( QPoint point );
+//  void customPopupMenu(QPoint point) ;
 
-  void sharedDirTreeWidgetContextMenu( QPoint point );
-
-  void downloadRemoteSelected();
-  void createCollectionFile();
-  void addMsgRemoteSelected();
-
-  void copyLinkRemote();
-  void copyLinkLocal();
+  void copyLink();
   void copyLinkhtml();
   void sendLinkTo();
-  void sendremoteLinkTo();
 #ifdef RS_USE_LINKS
   void sendLinkToCloud();
   void addLinkToCloud();
 #endif
 
-  void showFrame(bool show);
-  void showFrameRemote(bool show);
-  void showFrameSplitted(bool show);
-
-  void playselectedfiles();
-  void openfile();
-  void openfolder();
-  void editSharePermissions();
+//==  void showFrame(bool show);
+//==  void showFrameRemote(bool show);
+//==  void showFrameSplitted(bool show);
 
   void recommendFilesToMsg();
-  void runCommandForFile();
-  void tryToAddNewAssotiation();
 	
   void indicatorChanged(int index);
 
@@ -95,7 +84,12 @@ private slots:
 signals:
   void playFiles(QStringList files);
 
-private:
+protected:
+  /** Qt Designer generated object */
+  Ui::SharedFilesDialog ui;
+  virtual void processSettings(bool bLoad) = 0;
+
+protected:
   //now context menu are created again every time theu are called ( in some
   //slots.. Maybe it's not good...
   //** Define the popup menus for the Context menu */
@@ -103,34 +97,23 @@ private:
 
   //QMenu* contextMnu2;
 
-  void processSettings(bool bLoad);
-
   void copyLink (const QModelIndexList& lst, bool remote);
 
   void FilterItems();
   bool tree_FilterItem(const QModelIndex &index, const QString &text, int level);
   bool flat_FilterItem(const QModelIndex &index, const QString &text, int level);
 
-  QModelIndexList getRemoteSelected();
-  QModelIndexList getLocalSelected();
+  QModelIndexList getSelected();
 
   /** Defines the actions for the context menu for QTreeWidget */
-  QAction* openfileAct;
-  QAction* createcollectionfileAct;
-  QAction* openfolderAct;
-  QAction* copyremotelinkAct;
-  QAction* copylinklocalAct;
+  QAction* copylinkAct;
   QAction* sendlinkAct;
-  QAction* editshareAct;
 #ifdef RS_USE_LINKS
   QAction* sendlinkCloudAct;
   QAction* addlinkCloudAct;
 #endif
   QAction* sendchatlinkAct;
-  QAction* copylinklocalhtmlAct;
-
-  /** Qt Designer generated object */
-  Ui::SharedFilesDialog ui;
+  QAction* copylinkhtmlAct;
 
   /* RetroshareDirModel */
   RetroshareDirModel *tree_model;
@@ -140,15 +123,65 @@ private:
   QSortFilterProxyModel *flat_proxyModel;
   QSortFilterProxyModel *proxyModel;
 
-  RetroshareDirModel *localModel;
-  QSortFilterProxyModel *localProxyModel;
-
   QString currentCommand;
   QString currentFile;
 
   QString lastFilterString;
+};
 
-  QAction* fileAssotiationAction(const QString fileName);
+class LocalSharedFilesDialog : public SharedFilesDialog
+{
+	Q_OBJECT
+
+	public:
+		LocalSharedFilesDialog(QWidget *parent=NULL) ;
+		virtual ~LocalSharedFilesDialog();
+
+		virtual void spawnCustomPopupMenu(QPoint point);
+		virtual void updatePage() { checkUpdate() ; }
+
+	protected:
+		virtual void processSettings(bool bLoad) ;
+		virtual void showProperColumns() ;
+		virtual bool isRemote() const { return false ; }
+
+	private slots:
+		void addShares();
+		void createCollectionFile();
+		void checkUpdate() ;
+		void editSharePermissions();
+		void playselectedfiles();
+		void openfile();
+		void openfolder();
+		void runCommandForFile();
+		void tryToAddNewAssotiation();
+		void forceCheck();
+
+		QAction* fileAssotiationAction(const QString fileName);
+
+	private:
+		QAction* openfileAct;
+		QAction* createcollectionfileAct;
+		QAction* openfolderAct;
+		QAction* editshareAct;
+};
+class RemoteSharedFilesDialog : public SharedFilesDialog
+{
+	Q_OBJECT
+
+	public:
+		RemoteSharedFilesDialog(QWidget *parent=NULL) ;
+		virtual ~RemoteSharedFilesDialog() ;
+
+		virtual void spawnCustomPopupMenu(QPoint point);
+
+	protected:
+		virtual void processSettings(bool bLoad) ;
+		virtual void showProperColumns() ;
+		virtual bool isRemote() const { return true ; }
+
+	private slots:
+		void downloadRemoteSelected();
 };
 
 #endif

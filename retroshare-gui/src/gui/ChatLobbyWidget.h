@@ -1,9 +1,11 @@
 #pragma once
 
+#include <QTreeWidget>
 #include "ui_ChatLobbyWidget.h"
 #include "RsAutoUpdatePage.h"
 
 class RSTreeWidgetItemCompareRole;
+class ChatTabWidget ;
 
 class ChatLobbyWidget : public RsAutoUpdatePage, Ui::ChatLobbyWidget
 {
@@ -18,6 +20,7 @@ public:
 
 	virtual void updateDisplay();
 
+	static ChatTabWidget *getTabWidget() ;
 protected slots:
 	void lobbyChanged();
 	void lobbyTreeWidgetCostumPopupMenu();
@@ -32,4 +35,7 @@ private:
 	RSTreeWidgetItemCompareRole *compareRole;
 	QTreeWidgetItem *privateLobbyItem;
 	QTreeWidgetItem *publicLobbyItem;
+
+	ChatTabWidget *tabWidget ;
+	QTreeWidget *lobbyTreeWidget ;
 };

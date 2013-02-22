@@ -20,6 +20,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QDialogButtonBox>
 #include "FriendSelectionWidget.h"
 #include "ui_FriendSelectionWidget.h"
 #include "gui/notifyqt.h"
@@ -835,3 +836,4 @@ std::string FriendSelectionWidget::idFromItem(QTreeWidgetItem *item)
 
 	return item->data(COLUMN_DATA, ROLE_ID).toString().toStdString();
 }
+

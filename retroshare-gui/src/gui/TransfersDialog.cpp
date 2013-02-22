@@ -42,8 +42,8 @@
 #include "DLListDelegate.h"
 #include "ULListDelegate.h"
 #include "FileTransferInfoWidget.h"
-#include "TurtleRouterDialog.h"
-#include "TurtleRouterStatistics.h"
+#include "SearchDialog.h"
+#include "SharedFilesDialog.h"
 #include "xprogressbar.h"
 #include "settings/rsharesettings.h"
 #include "util/misc.h"
@@ -66,6 +66,7 @@
 /* Images for context menu icons */
 #define IMAGE_INFO                 ":/images/fileinfo.png"
 #define IMAGE_CANCEL               ":/images/delete.png"
+#define IMAGE_LIBRARY               ":/images/library.png"
 #define IMAGE_CLEARCOMPLETED       ":/images/deleteall.png"
 #define IMAGE_PLAY		             ":/images/player_play.png"
 #define IMAGE_COPYLINK             ":/images/copyrslink.png"
@@ -81,10 +82,9 @@
 #define IMAGE_PRIORITYNORMAL			 ":/images/prioritynormal.png"
 #define IMAGE_PRIORITYHIGH			   ":/images/priorityhigh.png"
 #define IMAGE_PRIORITYAUTO			   ":/images/priorityauto.png"
+#define IMAGE_SEARCH    		      ":/images/filefind.png"
 
 Q_DECLARE_METATYPE(FileProgressInfo) 
-
-DetailsDialog *TransfersDialog::detailsdlg = NULL;
 
 class SortByNameItem : public QStandardItem
 {
@@ -292,20 +292,24 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     // set default column and sort order for upload
     ui.uploadsList->sortByColumn(UNAME, Qt::AscendingOrder);
 	
-    FileTransferInfoWidget *ftiw = new FileTransferInfoWidget();
-    ui.fileTransferInfoWidget->setWidget(ftiw);
-    ui.fileTransferInfoWidget->setWidgetResizable(true);
-    ui.fileTransferInfoWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    ui.fileTransferInfoWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    ui.fileTransferInfoWidget->viewport()->setBackgroundRole(QPalette::NoRole);
-    ui.fileTransferInfoWidget->setFrameStyle(QFrame::NoFrame);
-    ui.fileTransferInfoWidget->setFocusPolicy(Qt::NoFocus);
+    // FileTransferInfoWidget *ftiw = new FileTransferInfoWidget();
+    // ui.fileTransferInfoWidget->setWidget(ftiw);
+    // ui.fileTransferInfoWidget->setWidgetResizable(true);
+    // ui.fileTransferInfoWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    // ui.fileTransferInfoWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    // ui.fileTransferInfoWidget->viewport()->setBackgroundRole(QPalette::NoRole);
+    // ui.fileTransferInfoWidget->setFrameStyle(QFrame::NoFrame);
+    // ui.fileTransferInfoWidget->setFocusPolicy(Qt::NoFocus);
 
     QObject::connect(ui.downloadList->selectionModel(),SIGNAL(selectionChanged (const QItemSelection&, const QItemSelection&)),this,SLOT(showFileDetails())) ;
 
-	 ui.tabWidget->addTab( new TurtleRouterStatistics(), tr("Router Statistics")) ;
+	 ui.tabWidget->insertTab(2,searchDialog = new SearchDialog(), QIcon(IMAGE_SEARCH), tr("Search")) ;
+	 ui.tabWidget->insertTab(3,remoteSharedFiles = new RemoteSharedFilesDialog(), QIcon(IMAGE_SEARCH), tr("Friends files")) ;
 
-	 ui.tabWidget->addTab( new TurtleRouterDialog(), tr("Router Requests")) ;
+	 ui.tabWidget->addTab(localSharedFiles = new LocalSharedFilesDialog(), QIcon(IMAGE_SEARCH), tr("Your files")) ;
+
+	 //ui.tabWidget->addTab( new TurtleRouterStatistics(), tr("Router Statistics")) ;
+	 //ui.tabWidget->addTab( new TurtleRouterDialog(), tr("Router Requests")) ;
 
 	 for(int i=0;i<rsPlugins->nbPlugins();++i)
 		 if(rsPlugins->plugin(i) != NULL && rsPlugins->plugin(i)->qt_transfers_tab() != NULL)
@@ -327,10 +331,14 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
 #endif
 
-	 QObject::connect(ui._showCacheTransfers_CB,SIGNAL(toggled(bool)),this,SLOT(insertTransfers())) ;
-	 QObject::connect(ui.openCollection, SIGNAL(clicked()), this, SLOT(openCollection()));
+   toggleShowCacheTransfersAct = new QAction(tr( "Show cache transfers" ), this );
+	toggleShowCacheTransfersAct->setCheckable(true) ;
+	connect(toggleShowCacheTransfersAct,SIGNAL(triggered()),this,SLOT(toggleShowCacheTransfers())) ;
 
-	 // Actions. Only need to be defined once.
+	openCollectionAct = new QAction(QIcon(IMAGE_LIBRARY), tr( "Download from collection file..." ), this );
+	connect(openCollectionAct, SIGNAL(triggered()), this, SLOT(openCollection()));
+
+	// Actions. Only need to be defined once.
    pauseAct = new QAction(QIcon(IMAGE_PAUSE), tr("Pause"), this);
    connect(pauseAct, SIGNAL(triggered()), this, SLOT(pauseFileTransfer()));
 
@@ -405,6 +413,12 @@ UserNotify *TransfersDialog::getUserNotify(QObject *parent)
     return new TransferUserNotify(parent);
 }
 
+void TransfersDialog::toggleShowCacheTransfers()
+{
+	_show_cache_transfers = !_show_cache_transfers ;
+	insertTransfers() ;
+}
+
 void TransfersDialog::processSettings(bool bLoad)
 {
     m_bProcessSettings = true;
@@ -418,14 +432,14 @@ void TransfersDialog::processSettings(bool bLoad)
         // load settings
 
         // state of checks
-        ui._showCacheTransfers_CB->setChecked(Settings->value("showCacheTransfers", false).toBool());
+        _show_cache_transfers = Settings->value("showCacheTransfers", false).toBool();
 
         // state of the lists
         DLHeader->restoreState(Settings->value("downloadList").toByteArray());
         ULHeader->restoreState(Settings->value("uploadList").toByteArray());
 
         // state of splitter
-        ui.splitter->restoreState(Settings->value("Splitter").toByteArray());
+//        ui.splitter->restoreState(Settings->value("Splitter").toByteArray());
 
         // selected tab
         ui.tabWidget->setCurrentIndex(Settings->value("selectedTab").toInt());
@@ -433,14 +447,14 @@ void TransfersDialog::processSettings(bool bLoad)
         // save settings
 
         // state of checks
-        Settings->setValue("showCacheTransfers", ui._showCacheTransfers_CB->isChecked());
+        Settings->setValue("showCacheTransfers", _show_cache_transfers);
 
         // state of the lists
         Settings->setValue("downloadList", DLHeader->saveState());
         Settings->setValue("uploadList", ULHeader->saveState());
 
         // state of splitter
-        Settings->setValue("Splitter", ui.splitter->saveState());
+//        Settings->setValue("Splitter", ui.splitter->saveState());
 
         // selected tab
         Settings->setValue("selectedTab", ui.tabWidget->currentIndex());
@@ -604,6 +618,12 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint /*point*/ )
 	}
 	contextMnu.addAction( pastelinkAct);
 
+	contextMnu.addSeparator();
+
+	contextMnu.addAction( toggleShowCacheTransfersAct ) ;
+	toggleShowCacheTransfersAct->setChecked(_show_cache_transfers) ;
+	contextMnu.addAction( openCollectionAct ) ;
+	
 	contextMnu.addSeparator();
 
 	contextMnu.exec(QCursor::pos());
@@ -908,8 +928,6 @@ void TransfersDialog::insertTransfers()
 	std::list<std::string> downHashes;
 	rsFiles->FileDownloads(downHashes);
 
-	bool showCacheTransfers = ui._showCacheTransfers_CB->isChecked();
-
 	/* get only once */
 	std::map<std::string, std::string> versions;
 	rsDisc->getDiscVersions(versions);
@@ -945,7 +963,7 @@ void TransfersDialog::insertTransfers()
 			continue;
 		}
 
-		if ((fileInfo.transfer_info_flags & RS_FILE_REQ_CACHE) && !showCacheTransfers) {
+		if ((fileInfo.transfer_info_flags & RS_FILE_REQ_CACHE) && !_show_cache_transfers) {
 			// if file transfer is a cache file index file, don't show it
 			DLListModel->removeRow(row);
 			rowCount = DLListModel->rowCount();
@@ -971,7 +989,7 @@ void TransfersDialog::insertTransfers()
 			continue;
 		}
 
-		if ((fileInfo.transfer_info_flags & RS_FILE_REQ_CACHE) && !showCacheTransfers) {
+		if ((fileInfo.transfer_info_flags & RS_FILE_REQ_CACHE) && !_show_cache_transfers) {
 			//if file transfer is a cache file index file, don't show it
 			continue;
 		}
@@ -998,7 +1016,7 @@ void TransfersDialog::insertTransfers()
 		if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_UPLOAD, info)) 
 			continue;
 		
-		if((info.transfer_info_flags & RS_FILE_REQ_CACHE) && showCacheTransfers)
+		if((info.transfer_info_flags & RS_FILE_REQ_CACHE) && _show_cache_transfers)
 			continue ;
 
 		std::list<TransferInfo>::iterator pit;
@@ -1170,39 +1188,23 @@ void TransfersDialog::copyLink ()
 	RSLinkClipboard::copyLinks(links) ;
 }
 
+DetailsDialog *TransfersDialog::detailsDialog()
+{
+	static DetailsDialog *detailsdlg = new DetailsDialog ;
+
+	 return detailsdlg ;
+}
+
 void TransfersDialog::showDetailsDialog()
 {
-    if (detailsdlg == NULL) {
-        // create window
-        detailsdlg = new DetailsDialog ();
-    }
-
     updateDetailsDialog ();
 
-    detailsdlg->show();
+    detailsDialog()->show();
 }
 
 void TransfersDialog::updateDetailsDialog()
 {
-    if (detailsdlg == NULL) {
-        return;
-    }
-
     std::string file_hash ;
-    QString fhash;
-    QString fsize;
-    QString fname;
-    QString fstatus;
-    QString fpriority;
-    QString fsources;
-
-    qulonglong filesize = 0;
-    double fdatarate = 0;
-    qulonglong fcompleted = 0;
-    qulonglong fremaining = 0;
-
-    qulonglong fdownloadtime = 0;
-
     std::set<int> rows;
     std::set<int>::iterator it;
     getSelectedItems(NULL, &rows);
@@ -1210,84 +1212,10 @@ void TransfersDialog::updateDetailsDialog()
     if (rows.size()) {
         int row = *rows.begin();
 
-        fhash = getID(row, DLListModel);
-        fsize = getFileSize(row, DLListModel);
-        fname = getFileName(row, DLListModel);
-        fstatus = getStatus(row, DLListModel);
-        fpriority = getPriority(row, DLListModel);
-        fsources = getSources(row, DLListModel);
-
-        filesize = getFileSize(row, DLListModel);
-        fdatarate = getSpeed(row, DLListModel);
-        fcompleted = getTransfered(row, DLListModel);
-        fremaining = getRemainingTime(row, DLListModel);
-
-        fdownloadtime = getDownloadTime(row, DLListModel);
-
-// maybe show all links in retroshare link(s) Tab
-//        int nb_select = 0 ;
-//
-//        for(int i = 0; i <= DLListModel->rowCount(); i++)
-//        if(selection->isRowSelected(i, QModelIndex()))
-//        {
-//            file_hash = getID(i, DLListModel).toStdString();
-//            ++nb_select ;
-//        }
-
         file_hash = getID(row, DLListModel).toStdString();
     }
 
-    detailsdlg->setFileHash(file_hash);
-
-    // Set Details.. Window Title
-    detailsdlg->setWindowTitle(tr("Details:") + fname);
-
-    // General GroupBox
-    detailsdlg->setHash(fhash);
-    detailsdlg->setFileName(fname);
-    detailsdlg->setSize(filesize);
-    detailsdlg->setStatus(fstatus);
-    detailsdlg->setPriority(fpriority);
-    detailsdlg->setType(QFileInfo(fname).suffix());
-
-    // Transfer GroupBox
-    detailsdlg->setSources(fsources);
-    detailsdlg->setDatarate(fdatarate);
-    if (fname.isEmpty()) {
-        detailsdlg->setCompleted(misc::friendlyUnit(-1));
-        detailsdlg->setRemaining(misc::friendlyUnit(-1));
-    } else {
-        detailsdlg->setCompleted(misc::friendlyUnit(fcompleted));
-        detailsdlg->setRemaining(misc::friendlyUnit(fremaining));
-    }
-
-    //Date GroupBox
-    if (fname.isEmpty()) {
-        detailsdlg->setDownloadtime(misc::userFriendlyDuration(-1));
-    } else {
-        detailsdlg->setDownloadtime(misc::userFriendlyDuration(fdownloadtime));
-    }
-
-    // retroshare link(s) Tab
-    if (fname.isEmpty()) {
-        detailsdlg->setLink("");
-    } else {
-        RetroShareLink link;
-        if (link.createFile(fname, filesize, fhash)) {
-            detailsdlg->setLink(link.toString());
-        } else {
-            detailsdlg->setLink("");
-        }
-    }
-
-    FileChunksInfo info ;
-    if (fhash.isEmpty() == false && rsFiles->FileDownloadChunksDetails(fhash.toStdString(), info)) {
-        detailsdlg->setChunkSize(info.chunk_size);
-        detailsdlg->setNumberOfChunks(info.chunks.size());
-    } else {
-        detailsdlg->setChunkSize(0);
-        detailsdlg->setNumberOfChunks(0);
-    }
+    detailsDialog()->setFileHash(file_hash);
 }
 
 void TransfersDialog::pasteLink()
@@ -1593,15 +1521,11 @@ void TransfersDialog::showFileDetails()
 			  ++nb_select ;
 		}
 	if(nb_select != 1)
-		dynamic_cast<FileTransferInfoWidget*>(ui.fileTransferInfoWidget->widget())->setFileHash("") ;
+		detailsDialog()->setFileHash("") ;
 	else
-		dynamic_cast<FileTransferInfoWidget*>(ui.fileTransferInfoWidget->widget())->setFileHash(file_hash) ;
+		detailsDialog()->setFileHash(file_hash) ;
 	
-	std::cout << "calling update " << std::endl ;
-	dynamic_cast<FileTransferInfoWidget*>(ui.fileTransferInfoWidget->widget())->updateDisplay() ;
-	std::cout << "done" << std::endl ;
-
-        updateDetailsDialog ();
+	updateDetailsDialog ();
 }
 
 double TransfersDialog::getProgress(int , QStandardItemModel *)

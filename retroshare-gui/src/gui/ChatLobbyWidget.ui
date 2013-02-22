@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>608</width>
-    <height>397</height>
+    <height>188</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout">
@@ -87,40 +87,6 @@
        </widget>
       </item>
      </layout>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QTreeWidget" name="lobbyTreeWidget">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="contextMenuPolicy">
-      <enum>Qt::CustomContextMenu</enum>
-     </property>
-     <property name="editTriggers">
-      <set>QAbstractItemView::NoEditTriggers</set>
-     </property>
-     <property name="rootIsDecorated">
-      <bool>false</bool>
-     </property>
-     <property name="itemsExpandable">
-      <bool>false</bool>
-     </property>
-     <property name="sortingEnabled">
-      <bool>true</bool>
-     </property>
-     <property name="allColumnsShowFocus">
-      <bool>true</bool>
-     </property>
-     <property name="expandsOnDoubleClick">
-      <bool>false</bool>
-     </property>
-     <property name="columnCount">
-      <number>0</number>
-     </property>
     </widget>
    </item>
   </layout>
