@@ -74,10 +74,11 @@ message Location {
 message Person {
 
   enum Relationship {	
-    FRIEND 			= 1;
-    FRIEND_OF_MANY_FRIENDS 	= 2;  // 3+ at the moment.
-    FRIEND_OF_FRIENDS		= 3;  // 1 or 2.
-    UNKNOWN			= 4;
+    YOURSELF 			= 1;
+    FRIEND 			= 2;
+    FRIEND_OF_MANY_FRIENDS 	= 3;  // 3+ at the moment.
+    FRIEND_OF_FRIENDS		= 4;  // 1 or 2.
+    UNKNOWN			= 5;
   }
 
   required string gpg_id = 1;

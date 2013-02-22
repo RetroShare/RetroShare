@@ -19,6 +19,7 @@ enum RequestMsgIds {
     MsgId_RequestSetLobbyNickname = 4;
     MsgId_RequestRegisterEvents = 5;
     MsgId_RequestSendMessage = 6;
+    MsgId_RequestChatHistory = 7;
 }
 
 enum ResponseMsgIds {
@@ -27,6 +28,7 @@ enum ResponseMsgIds {
     MsgId_ResponseSetLobbyNickname = 4;
     MsgId_ResponseRegisterEvents = 5;
     MsgId_ResponseSendMessage = 6;
+    MsgId_ResponseChatHistory = 7;
 
     // EVENTS
     MsgId_EventLobbyInvite = 101;
@@ -223,21 +225,22 @@ message ResponseSendMessage {
 }
 
 ///////////////////////////////////////////////////////////////
-//// Chat History.
-//// THIS IS NOT IMPLEMENTED YET, DONT USE.
-//
-//// REQUEST: RequestChatHistory
-//message RequestChatHistory {
-//  required ChatId id	= 1;		/* lobby or chat, group id */
-//  required bool incoming = 2;	 
-//}
-//
-//// RESPONSE: ResponseChatHistory
-//message ResponseChatHistory {
-//  required rsctrl.core.Status status = 1;
-//  repeated ChatMessage msg = 2;
-//}
-//
+// Chat History.
+// INITIALLY THIS WILL ONLY WORK WITH PRIVATE CHATS.
+// NEED TO EXTEND INTERNALS TO HANDLE LOBBIES.
+
+// REQUEST: RequestChatHistory
+message RequestChatHistory {
+  required ChatId id	= 1;		/* lobby or chat, group id */
+}
+
+// RESPONSE: ResponseChatHistory
+message ResponseChatHistory {
+  required rsctrl.core.Status status = 1;
+  required ChatId id	             = 2;	/* lobby or chat, group id */
+  repeated ChatMessage msgs          = 3;
+}
+
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
 

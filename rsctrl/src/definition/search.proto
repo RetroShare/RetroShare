@@ -33,7 +33,7 @@ message SearchHit {
   required rsctrl.core.File file 	= 1;
   required uint32 loc 			= 2; // OR of LocFlag so uint field
   required uint32 no_hits 		= 3; // NOT USED YET.
-
+  repeated string alt_names		= 4;
 }
 
 message SearchSet {
@@ -100,8 +100,8 @@ message RequestListSearches {
 // Empty search_ids => all results.
 message RequestSearchResults {
 
+  optional uint32 result_limit = 1;
   repeated uint32 search_ids = 2;
-
 }
 
 // RESPONSE: ResponseSearchResults

@@ -15,7 +15,7 @@ HCODE = $(patsubst %.proto,$(CDESTPATH)/%.pb.h, $(PROTO))
 PYCODE = $(patsubst %.proto,$(PYDESTPATH)/%_pb2.py, $(PROTO))
 
 
-all: allc
+all: allc python_proto
 
 allc: $(CCODE) 
 	echo $(CCODE)
