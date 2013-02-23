@@ -40,6 +40,13 @@ class FriendsDialog : public RsAutoUpdatePage
     Q_OBJECT
 
 public:
+		 enum Page {
+						 /* Fixed numbers for load and save the last page */
+			 				NetworkTab         = 0,  /** Network page. */
+							NetworkViewTab     = 1,  /** Network new graph. */
+							BroadcastTab       = 2   /** Old group chat page. */
+		 };
+
     /** Default Constructor */
     FriendsDialog(QWidget *parent = 0);
     /** Default Destructor */
@@ -51,6 +58,8 @@ public:
 
     static bool isGroupChatActive();
     static void groupChatActivate();
+
+	 void activatePage(FriendsDialog::Page page) ;
 
 	 NetworkDialog *networkDialog ;
 	 NetworkView *networkView ;

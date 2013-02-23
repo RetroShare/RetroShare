@@ -408,6 +408,19 @@ TransfersDialog::~TransfersDialog()
     processSettings(false);
 }
 
+void TransfersDialog::activatePage(TransfersDialog::Page page)
+{
+	switch(page)
+	{
+		case TransfersDialog::SearchTab: ui.tabWidget->setCurrentWidget(searchDialog) ;
+													break ;
+		case TransfersDialog::LocalSharedFilesTab: ui.tabWidget->setCurrentWidget(localSharedFiles) ;
+													break ;
+		case TransfersDialog::RemoteSharedFilesTab: ui.tabWidget->setCurrentWidget(remoteSharedFiles) ;
+													break ;
+	}
+}
+
 UserNotify *TransfersDialog::getUserNotify(QObject *parent)
 {
     return new TransferUserNotify(parent);

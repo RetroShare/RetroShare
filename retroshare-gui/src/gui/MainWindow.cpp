@@ -786,49 +786,47 @@ void SetForegroundWindowInternal(HWND hWnd)
         return false;
     }
 
-    MainPage *Page = NULL;
-
 	 switch (page) {
-		 //    case Network:
-		 //        Page = _instance->networkDialog;
-		 //        break;
+		 case Search:
+			 _instance->ui->stackPages->setCurrentPage( _instance->transfersDialog );
+			 _instance->transfersDialog->activatePage(TransfersDialog::SearchTab) ;
+			 break ;
+		 case Network:
+			 _instance->ui->stackPages->setCurrentPage( _instance->friendsDialog );
+			 _instance->friendsDialog->activatePage(FriendsDialog::NetworkTab) ;
+			 break;
 		 case Friends:
-			 Page = _instance->friendsDialog;
+			 _instance->ui->stackPages->setCurrentPage( _instance->friendsDialog );
 			 break;
 		 case ChatLobby:
-			 Page = _instance->chatLobbyDialog;
+			 _instance->ui->stackPages->setCurrentPage( _instance->chatLobbyDialog );
 			 break;
 		 case Transfers:
-			 Page = _instance->transfersDialog;
+			 _instance->ui->stackPages->setCurrentPage( _instance->transfersDialog );
 			 break;
-			 //    case SharedDirectories:
-			 //        Page = _instance->sharedfilesDialog;
+		 case SharedDirectories:
+			 _instance->ui->stackPages->setCurrentPage( _instance->transfersDialog );
+			 _instance->transfersDialog->activatePage(TransfersDialog::LocalSharedFilesTab) ;
 			 break;
 		 case Messages:
-			 Page = _instance->messagesDialog;
+			 _instance->ui->stackPages->setCurrentPage( _instance->messagesDialog );
 			 break;
 		 case Channels:
-			 Page = _instance->channelFeed;
-			 break;
+			 _instance->ui->stackPages->setCurrentPage( _instance->channelFeed );
+			 return true ;
 		 case Forums:
-			 Page = _instance->forumsDialog;
-			 break;
+			 _instance->ui->stackPages->setCurrentPage( _instance->forumsDialog );
+			 return true ;
 #ifdef BLOGS
 		 case Blogs:
 			 Page = _instance->blogsFeed;
-			 break;
+			 return true ;
 #endif
 		 default:
-			 std::cerr << "Show page called on value that is not handled yet. Please code it! (value = " << Page << ")" << std::endl;
+			 std::cerr << "Show page called on value that is not handled yet. Please code it! (value = " << page << ")" << std::endl;
 	 }
 
-    if (Page) {
-        /* Set the focus to the specified page. */
-        _instance->ui->stackPages->setCurrentPage(Page);
-        return true;
-    }
-
-    return false;
+	 return false ;
 }
 
 /** Get the active page. */

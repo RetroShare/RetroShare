@@ -45,14 +45,22 @@ class TransfersDialog : public RsAutoUpdatePage
 Q_OBJECT
 
 public:
+			 enum Page {
+						 /* Fixed numbers for load and save the last page */
+			 				SearchTab              = 0,  /** Network page. */
+							LocalSharedFilesTab    = 1,  /** Network new graph. */
+							RemoteSharedFilesTab   = 2   /** Old group chat page. */
+		 };
+
+
     /** Default Constructor */
     TransfersDialog(QWidget *parent = 0);
     ~TransfersDialog();
 
     virtual UserNotify *getUserNotify(QObject *parent);
 
-// replaced by shortcut
-//    virtual void keyPressEvent(QKeyEvent *) ;
+	 void activatePage(TransfersDialog::Page page) ;
+
     virtual void updateDisplay() ;				// derived from RsAutoUpdateWidget
 
 	 static DetailsDialog *detailsDialog() ;

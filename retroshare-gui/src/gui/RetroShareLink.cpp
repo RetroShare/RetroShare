@@ -45,7 +45,7 @@
 #include <retroshare/rsforums.h>
 #include <retroshare/rschannels.h>
 
-#define DEBUG_RSLINK 1
+//#define DEBUG_RSLINK 1
 
 #define HOST_FILE        "file"
 #define HOST_EXTRAFILE   "extra"
@@ -1212,8 +1212,6 @@ static void processList(const QStringList &list, const QString &textSingular, co
 #ifdef DEBUG_RSLINK
 					std::cerr << " RetroShareLink::process SearchRequest : string : " << link.name().toStdString() << std::endl;
 #endif
-
-					MainWindow::showWindow(MainWindow::Search);
 					SearchDialog *searchDialog = dynamic_cast<SearchDialog*>(MainWindow::getPage(MainWindow::Search));
 					if (!searchDialog) 
 					{
@@ -1221,6 +1219,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 						break;
 					}
 
+					MainWindow::showWindow(MainWindow::Search);
 					searchDialog->searchKeywords(link.name());
 					searchStarted.append(link.name());
 					break;

@@ -228,6 +228,19 @@ FriendsDialog::~FriendsDialog ()
     }
 }
 
+void FriendsDialog::activatePage(FriendsDialog::Page page)
+{
+	switch(page)
+	{
+		case FriendsDialog::NetworkTab: ui.tabWidget->setCurrentWidget(networkDialog) ;
+											  break ;
+		case FriendsDialog::BroadcastTab: ui.tabWidget->setCurrentWidget(networkDialog) ;
+											  break ;
+		case FriendsDialog::NetworkViewTab: ui.tabWidget->setCurrentWidget(networkView) ;
+											  break ;
+	}
+}
+
 UserNotify *FriendsDialog::getUserNotify(QObject *parent)
 {
     return new ChatUserNotify(parent);
