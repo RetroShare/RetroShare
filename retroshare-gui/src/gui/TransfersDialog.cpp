@@ -1490,7 +1490,7 @@ void TransfersDialog::changeSpeed(int speed)
 
 void TransfersDialog::changeQueuePosition(QueueMove mv)
 {
-	std::cerr << "In changeQueuePosition (gui)"<< std::endl ;
+//	std::cerr << "In changeQueuePosition (gui)"<< std::endl ;
 	std::set<std::string> items;
 	std::set<std::string>::iterator it;
 	getSelectedItems(&items, NULL);
@@ -1503,7 +1503,7 @@ void TransfersDialog::changeQueuePosition(QueueMove mv)
 
 void TransfersDialog::clearcompleted()
 {
-	std::cerr << "TransfersDialog::clearcompleted()" << std::endl;
+//	std::cerr << "TransfersDialog::clearcompleted()" << std::endl;
 	rsFiles->FileClearCompleted();
 }
 
@@ -1511,8 +1511,6 @@ void TransfersDialog::showFileDetails()
 {
 	std::string file_hash ;
 	int nb_select = 0 ;
-
-	std::cout << "new selection " << std::endl ;
 
 	for(int i = 0; i <= DLListModel->rowCount(); i++) 
 		if(selection->isRowSelected(i, QModelIndex())) 

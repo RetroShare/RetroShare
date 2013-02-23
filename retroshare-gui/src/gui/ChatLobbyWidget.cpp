@@ -365,8 +365,6 @@ ChatTabWidget *ChatLobbyWidget::getTabWidget()
 
 void ChatLobbyWidget::displayChatLobbyEvent(qulonglong lobby_id, int event_type, const QString& nickname, const QString& str)
 {
-	std::cerr << "Received displayChatLobbyEvent()!" << std::endl;
-
 	std::string vpid;
 	if (rsMsgs->getVirtualPeerId(lobby_id, vpid)) {
 		if (ChatLobbyDialog *cld = dynamic_cast<ChatLobbyDialog*>(ChatDialog::getExistingChat(vpid))) {

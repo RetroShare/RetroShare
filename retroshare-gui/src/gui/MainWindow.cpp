@@ -43,7 +43,7 @@
 #include "SearchDialog.h"
 #include "TransfersDialog.h"
 #include "MessagesDialog.h"
-//#include "SharedFilesDialog.h"
+#include "SharedFilesDialog.h"
 #include "PluginsPage.h"
 #include "NewsFeed.h"
 #include "ShareManager.h"
@@ -885,32 +885,35 @@ void SetForegroundWindowInternal(HWND hWnd)
        return NULL;
    }
 
-   switch (page) {
-//   case Network:
-//       return _instance->networkDialog;
-   case Friends:
-       return _instance->friendsDialog;
-   case ChatLobby:
-       return _instance->chatLobbyDialog;
-   case Transfers:
-       return _instance->transfersDialog;
-//   case SharedDirectories:
-//       return _instance->sharedfilesDialog;
-   case Messages:
-       return _instance->messagesDialog;
+   switch (page) 
+	{
+		case Network:
+			return _instance->friendsDialog->networkDialog;
+		case Friends:
+			return _instance->friendsDialog;
+		case ChatLobby:
+			return _instance->chatLobbyDialog;
+		case Transfers:
+			return _instance->transfersDialog;
+		case SharedDirectories:
+			return _instance->transfersDialog->localSharedFiles;
+		case Search:
+			return _instance->transfersDialog->searchDialog;
+		case Messages:
+			return _instance->messagesDialog;
 #ifdef RS_USE_LINKS
-   case Links:
-       return _instance->linksDialog;
+		case Links:
+			return _instance->linksDialog;
 #endif
-   case Channels:
-       return _instance->channelFeed;
-   case Forums:
-       return _instance->forumsDialog;
+		case Channels:
+			return _instance->channelFeed;
+		case Forums:
+			return _instance->forumsDialog;
 #ifdef BLOGS
-   case Blogs:
-       return _instance->blogsFeed;
+		case Blogs:
+			return _instance->blogsFeed;
 #endif
-   }
+	}
 
    return NULL;
 }

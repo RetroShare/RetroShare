@@ -1215,7 +1215,9 @@ static void processList(const QStringList &list, const QString &textSingular, co
 
 					MainWindow::showWindow(MainWindow::Search);
 					SearchDialog *searchDialog = dynamic_cast<SearchDialog*>(MainWindow::getPage(MainWindow::Search));
-					if (!searchDialog) {
+					if (!searchDialog) 
+					{
+						std::cerr << "Retrieve of search dialog failed. Please debug!" << std::endl;
 						break;
 					}
 
