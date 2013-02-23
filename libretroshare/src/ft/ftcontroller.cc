@@ -283,8 +283,6 @@ void ftController::run()
 
 void ftController::searchForDirectSources()
 {
-	std::cerr << "Searching for potential new direct sources" << std::endl;
-
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
 	for(std::map<std::string,ftFileControl*>::iterator it(mDownloads.begin()); it != mDownloads.end(); it++)
