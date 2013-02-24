@@ -419,6 +419,8 @@ QTreeWidgetItem *ChatLobbyWidget::getTreeWidgetItem(ChatLobbyId id)
 
 			if (itemLoop->type() == TYPE_LOBBY && itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == id) 
 				return itemLoop ;
+
+			++childIndex ;
 		}
 	}
 	return NULL ;
