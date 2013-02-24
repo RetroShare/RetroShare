@@ -69,16 +69,39 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WF
 	inviteFriendsButton->setText(QString()) ;
 	inviteFriendsButton->setToolTip(tr("Invite friends to this lobby"));
 
+	{
 	QIcon icon ;
 	icon.addPixmap(QPixmap(":/images/edit_add24.png")) ;
 	inviteFriendsButton->setIcon(icon) ;
 	inviteFriendsButton->setIconSize(QSize(22,22)) ;
+	}
 
 	connect(inviteFriendsButton, SIGNAL(clicked()), this , SLOT(inviteFriends()));
 
 	getChatWidget()->addChatButton(inviteFriendsButton) ;
+
+	unsubscribeButton = new QPushButton ;
+	unsubscribeButton->setMinimumSize(QSize(28,28)) ;
+	unsubscribeButton->setMaximumSize(QSize(28,28)) ;
+	unsubscribeButton->setText(QString()) ;
+	unsubscribeButton->setToolTip(tr("Leave this lobby (Unsubscribe)"));
+
+	{
+	QIcon icon ;
+	icon.addPixmap(QPixmap(":/images/deletemail24.png")) ;
+	unsubscribeButton->setIcon(icon) ;
+	unsubscribeButton->setIconSize(QSize(22,22)) ;
+	}
+
+	connect(unsubscribeButton, SIGNAL(clicked()), this , SLOT(leaveLobby()));
+
+	getChatWidget()->addChatButton(unsubscribeButton) ;
 }
 
+void ChatLobbyDialog::leaveLobby()
+{
+	emit lobbyLeave(id()) ;
+}
 void ChatLobbyDialog::inviteFriends()
 {
 	std::cerr << "Inviting friends" << std::endl;
@@ -161,11 +184,8 @@ void ChatLobbyDialog::init(const std::string &peerId, const QString &title)
 	showParticipantsFrame(PeerSettings->getShowParticipantsFrame(peerId));
 
 	// add to window
-	ChatTabWidget *tabWidget = ChatLobbyWidget::getTabWidget();
 
-	if (tabWidget) {
-		tabWidget->addDialog(this);
-	}
+	dynamic_cast<ChatLobbyWidget*>(MainWindow::getPage(MainWindow::ChatLobby))->addChatPage(this) ;
 
 	/** List of muted Participants */
 	mutedParticipants = new QStringList;
@@ -463,6 +483,7 @@ void ChatLobbyDialog::displayLobbyEvent(int event_type, const QString& nickname,
 		break;
 	case RS_CHAT_LOBBY_EVENT_PEER_STATUS:
 		ui.chatWidget->updateStatusString(nickname + " %1", str);
+		emit typingEventReceived(id()) ;
 		break;
 	case RS_CHAT_LOBBY_EVENT_PEER_CHANGE_NICKNAME:
 		ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 changed his name to: %2").arg(nickname, str), ChatWidget::TYPE_SYSTEM);
@@ -499,12 +520,10 @@ bool ChatLobbyDialog::canClose()
 
 void ChatLobbyDialog::showDialog(uint chatflags)
 {
-	if (chatflags & RS_CHAT_FOCUS) {
+	if (chatflags & RS_CHAT_FOCUS) 
+	{
 		MainWindow::showWindow(MainWindow::ChatLobby);
-		ChatTabWidget *tabWidget = ChatLobbyWidget::getTabWidget();
-		if (tabWidget) {
-			tabWidget->setCurrentWidget(this);
-		}
+		dynamic_cast<ChatLobbyWidget*>(MainWindow::getPage(MainWindow::ChatLobby))->setCurrentChatPage(this) ;
 	}
 }
 

@@ -41,11 +41,17 @@ public:
 	virtual bool notifyBlink();
 	void setNickname(const QString &nickname);
 	bool isParticipantMuted(const QString &participant);
+	ChatLobbyId id() const { return lobbyId ;}
 
 private slots:
 	void showParticipantsFrame(bool show);
 	void participantsTreeWidgetCostumPopupMenu( QPoint point );
 	void inviteFriends() ;
+	void leaveLobby() ;
+
+signals:
+	void lobbyLeave(ChatLobbyId) ;
+	void typingEventReceived(ChatLobbyId) ;
 
 protected:
 	/** Default constructor */
@@ -77,6 +83,7 @@ private:
 	time_t lastUpdateListTime;
 
 	QPushButton *inviteFriendsButton ;
+	QPushButton *unsubscribeButton ;
 
 	/** Qt Designer generated object */
 	Ui::ChatLobbyDialog ui;

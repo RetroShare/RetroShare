@@ -1,4 +1,6 @@
 #include <QTreeWidget>
+#include <QTextBrowser>
+#include <QTimer>
 #include <QMenu>
 #include <QMessageBox>
 #include "ChatLobbyWidget.h"
@@ -41,14 +43,9 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
 	QObject::connect(NotifyQt::getInstance(), SIGNAL(chatLobbyEvent(qulonglong,int,const QString&,const QString&)), this, SLOT(displayChatLobbyEvent(qulonglong,int,const QString&,const QString&)));
 	QObject::connect(NotifyQt::getInstance(), SIGNAL(chatLobbyInviteReceived()), this, SLOT(readChatLobbyInvites()));
 
-	lobbyTreeWidget = new QTreeWidget ;
-	getTabWidget()->addTab(lobbyTreeWidget,tr("Lobby list")) ;
-
-	layout()->addWidget( getTabWidget() ) ;
-	layout()->update() ;
-
-	QObject::connect(lobbyTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(lobbyTreeWidgetCostumPopupMenu()));
+	QObject::connect(lobbyTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(lobbyTreeWidgetCustomPopupMenu(QPoint)));
 	QObject::connect(lobbyTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(itemDoubleClicked(QTreeWidgetItem*,int)));
+	QObject::connect(lobbyTreeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(updateCurrentLobby()));
 
 	QObject::connect(newlobbytoolButton, SIGNAL(clicked()), this, SLOT(createChatLobby()));
 
@@ -86,9 +83,17 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
 	publicLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC);
 	lobbyTreeWidget->insertTopLevelItem(1, publicLobbyItem);
 
+	// add one blank page.
+	//
+	_lobby_blank_page = new QTextBrowser(this) ;
+	_lobby_blank_page->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding) ;
+	stackedWidget->addWidget(_lobby_blank_page) ;
+
 	lobbyTreeWidget->expandAll();
+//	lobbyTreeWidget->setSelectionMode(QAbstractItemView::SingleSelection);
 
 	lobbyChanged();
+	showBlankPage(0) ;
 }
 
 ChatLobbyWidget::~ChatLobbyWidget()
@@ -98,8 +103,9 @@ ChatLobbyWidget::~ChatLobbyWidget()
 	}
 }
 
-void ChatLobbyWidget::lobbyTreeWidgetCostumPopupMenu()
+void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
 {
+	std::cerr << "Creating customPopupMennu" << std::endl;
 	QTreeWidgetItem *item = lobbyTreeWidget->currentItem();
 
 	QMenu contextMnu(this);
@@ -153,6 +159,26 @@ static void updateItem(QTreeWidgetItem *item, ChatLobbyId id, const std::string 
 	for (int column = 0; column < COLUMN_COUNT; ++column) {
 		item->setTextColor(column, subscribed ? QColor() : QColor(Qt::gray));
 	}
+}
+
+void ChatLobbyWidget::addChatPage(ChatLobbyDialog *d)
+{
+	// check that the page does not already exist. 
+
+	if(_lobby_dialogs.find(d->id()) == _lobby_dialogs.end())
+	{
+		stackedWidget->addWidget(d) ;
+
+		connect(d,SIGNAL(lobbyLeave(ChatLobbyId)),this,SLOT(unsubscribeChatLobby(ChatLobbyId))) ;
+		connect(d,SIGNAL(typingEventReceived(ChatLobbyId)),this,SLOT(updateTypingStatus(ChatLobbyId))) ;
+
+		_lobby_dialogs[d->id()] = d ; 
+	}
+}
+
+void ChatLobbyWidget::setCurrentChatPage(ChatLobbyDialog *d)
+{
+	stackedWidget->setCurrentWidget(d) ;
 }
 
 void ChatLobbyWidget::updateDisplay()
@@ -314,6 +340,21 @@ void ChatLobbyWidget::createChatLobby()
 	CreateLobbyDialog(friends, privacyLevel).exec();
 }
 
+void ChatLobbyWidget::showLobby(QTreeWidgetItem *item)
+{
+	if (item == NULL && item->type() != TYPE_LOBBY) {
+		showBlankPage(0) ;
+		return;
+	}
+
+	ChatLobbyId id = item->data(COLUMN_DATA, ROLE_ID).toULongLong();
+
+	if(_lobby_dialogs.find(id) == _lobby_dialogs.end())
+		showBlankPage(id) ;
+	else
+		stackedWidget->setCurrentWidget(_lobby_dialogs[id]) ;
+}
+
 static void subscribeLobby(QTreeWidgetItem *item)
 {
 	if (item == NULL && item->type() != TYPE_LOBBY) {
@@ -329,9 +370,92 @@ static void subscribeLobby(QTreeWidgetItem *item)
 	}
 }
 
+void ChatLobbyWidget::showBlankPage(ChatLobbyId id)
+{
+	// show the default blank page.
+	stackedWidget->setCurrentWidget(_lobby_blank_page) ;
+	
+	// Update information
+	std::vector<VisibleChatLobbyRecord> lobbies;
+	rsMsgs->getListOfNearbyChatLobbies(lobbies);
+
+	for(std::vector<VisibleChatLobbyRecord>::const_iterator it(lobbies.begin());it!=lobbies.end();++it)
+		if( (*it).lobby_id == id)
+		{
+			QString lobby_description_string ;
+
+			lobby_description_string += "<h2>"+tr("Selected lobby info")+"</h2>" ;
+			lobby_description_string += "<b>"+tr("Lobby name: ")+"</b>\t" + (*it).lobby_name.c_str() + "<br/>" ;
+			lobby_description_string += "<b>"+tr("Lobby Id: ")+"</b>\t" + QString::number((*it).lobby_id,16) + "<br/>" ;
+			lobby_description_string += "<b>"+tr("Topic: ")+"</b>\t" + (*it).lobby_topic.c_str() + "<br/>" ;
+			lobby_description_string += "<b>"+tr("Type: ")+"</b>\t" + (( (*it).lobby_privacy_level == RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE)?tr("Private"):tr("Public")) + "<br/>" ;
+			lobby_description_string += "<b>"+tr("Peers: ")+"</b>\t" + QString::number((*it).total_number_of_peers) + "<br/>" ;
+
+			lobby_description_string += "<br/><br/>"+tr("You're not subscribed to this lobby; Double click-it to enter and chat.") ;
+
+			_lobby_blank_page->setText(lobby_description_string) ;
+			return ;
+		}
+
+	QString text = tr("No lobby selected. \n\nSelect lobbies at left to show details.\n\nDouble click lobbies to enter and chat.") ;
+	_lobby_blank_page->setText(text) ;
+}
 void ChatLobbyWidget::subscribeItem()
 {
 	subscribeLobby(lobbyTreeWidget->currentItem());
+}
+
+QTreeWidgetItem *ChatLobbyWidget::getTreeWidgetItem(ChatLobbyId id)
+{
+	for(int p=0;p<2;++p)
+	{
+		QTreeWidgetItem *lobby_item = (p==0)?publicLobbyItem:privateLobbyItem ;
+
+		int childCnt = lobby_item->childCount();
+		int childIndex = 0;
+
+		while (childIndex < childCnt) {
+			QTreeWidgetItem *itemLoop = lobby_item->child(childIndex);
+
+			if (itemLoop->type() == TYPE_LOBBY && itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == id) 
+				return itemLoop ;
+		}
+	}
+	return NULL ;
+}
+void ChatLobbyWidget::updateTypingStatus(ChatLobbyId id)
+{
+	QTreeWidgetItem *item = getTreeWidgetItem(id) ;
+	
+	if(item != NULL)
+	{
+		item->setIcon(0,QIcon(":images/typing.png")) ;
+
+		_icon_changed_map[item] = time(NULL) ;
+
+		QTimer::singleShot(5000,this,SLOT(resetLobbyTreeIcons())) ;
+	}
+	else
+		std::cerr << "Could not find item for lobby id " << (void*)id << std::endl;
+}
+
+void ChatLobbyWidget::resetLobbyTreeIcons()
+{
+	time_t now = time(NULL) ;
+
+	for(std::map<QTreeWidgetItem*,time_t>::iterator it(_icon_changed_map.begin());it!=_icon_changed_map.end();)
+		if(it->second + 5 < now)
+		{
+			it->first->setIcon(0,QIcon()) ;
+
+			std::map<QTreeWidgetItem*,time_t>::iterator tmp(it) ;
+			++tmp ;
+
+			_icon_changed_map.erase(it) ;
+			it = tmp ;
+		}
+		else
+			++it ;
 }
 
 void ChatLobbyWidget::unsubscribeItem()
@@ -343,24 +467,44 @@ void ChatLobbyWidget::unsubscribeItem()
 
 	const ChatLobbyId id = item->data(COLUMN_DATA, ROLE_ID).toULongLong();
 
-	std::string vpeer_id;
-	if (rsMsgs->getVirtualPeerId(id, vpeer_id)) {
-		ChatDialog::closeChat(vpeer_id);
+	unsubscribeChatLobby(id) ;
+}
+
+void ChatLobbyWidget::unsubscribeChatLobby(ChatLobbyId id)
+{
+	std::cerr << "Unsubscribing from chat lobby" << std::endl;
+
+	// close the tab.
+
+	std::map<ChatLobbyId,ChatLobbyDialog*>::iterator it = _lobby_dialogs.find(id) ;
+
+	if(it != _lobby_dialogs.end())
+	{
+		stackedWidget->removeWidget(it->second) ;
+		_lobby_dialogs.erase(it) ;
 	}
+	
+	// Unsubscribe the chat lobby
+	std::string vpeer_id;
+	if (rsMsgs->getVirtualPeerId(id, vpeer_id)) 
+		ChatDialog::closeChat(vpeer_id);
 
 	rsMsgs->unsubscribeChatLobby(id);
+}
+
+void ChatLobbyWidget::updateCurrentLobby()
+{
+	QList<QTreeWidgetItem *> items = lobbyTreeWidget->selectedItems() ;
+
+	if(items.empty())
+		showLobby(0) ;
+	else
+		showLobby(items.front());
 }
 
 void ChatLobbyWidget::itemDoubleClicked(QTreeWidgetItem *item, int /*column*/)
 {
 	subscribeLobby(item);
-}
-
-ChatTabWidget *ChatLobbyWidget::getTabWidget()
-{
-	static ChatTabWidget *instance = new ChatTabWidget() ;
-
-	return instance ;
 }
 
 void ChatLobbyWidget::displayChatLobbyEvent(qulonglong lobby_id, int event_type, const QString& nickname, const QString& str)
