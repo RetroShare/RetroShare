@@ -1,0 +1,152 @@
+package rsctrl.stream;
+
+import "core.proto";
+
+///////////////////////////////////////////////////////////////
+// This protocol defines how to stream data from retroshare.
+// It can be used for VoIP or Files, or whatever.
+//
+// There are two parts.
+// Control and actual streaming.
+//
+///////////////////////////////////////////////////////////////
+
+enum RequestMsgIds {
+    MsgId_RequestStartFileStream   	= 1;
+    MsgId_RequestControlStream          = 2;
+    MsgId_RequestListStreams            = 3;
+}
+
+enum ResponseMsgIds {
+    MsgId_ResponseStreamDetail  	= 1;  // RESPONSE to 
+    MsgId_StreamData  			= 2;
+}
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+
+// Building Blocks
+
+enum StreamType {
+    STREAM_TYPE_ALL     = 1; 	// all streams
+    STREAM_TYPE_FILES   = 2; 	// files stream
+    STREAM_TYPE_VOIP    = 3; 	// VoIP stream
+    STREAM_TYPE_OTHER   = 4; 	// Who knows what else.
+}
+
+enum StreamState {
+    STREAM_STATE_ERROR    = 0;
+    STREAM_STATE_RUN      = 1;
+    STREAM_STATE_PAUSED   = 2;
+    STREAM_TYPE_FINISHED  = 3;
+}
+
+message StreamFileDetail {
+
+  required rsctrl.core.File file 	= 1;
+  required uint64           offset      = 5;
+
+}
+
+
+message StreamVoipDetail {
+
+  // THIS NEEDS MORE DEFINITION.
+  required string           peerId      = 1;
+  required uint64           duration    = 2;
+  required uint64           offset      = 3;
+
+}
+
+
+message StreamDesc {
+
+  required uint32         stream_id     = 1;
+  required StreamType     stream_type   = 2;
+  required StreamState    stream_state  = 3;
+  required float          rate_kBs	= 4;
+  optional StreamFileDetail file        = 5;
+  optional StreamVoipDetail voip        = 6;
+
+}
+
+
+message StreamData {
+
+  required uint32             stream_id    = 1;
+  required StreamState        stream_state = 2;
+  required rsctrl.core.Timestamp send_time = 3;
+  required uint64             offset       = 4;
+  required uint32             size         = 5;
+  required bytes              stream_data  = 6;
+
+}
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+
+
+// REQUEST: RequestStartFileStream
+message RequestStartFileStream {
+
+  required rsctrl.core.File file 	= 1;
+  required float rate_kBs		= 2;
+
+  // byte range. allows to restart transfer!
+  optional uint64 startByte             = 3;
+  optional uint64 endByte               = 4;
+
+}
+
+// RESPONSE: ResponseStreamDetail
+message ResponseStreamDetail {
+
+  required rsctrl.core.Status status     = 1;
+  repeated StreamDesc         streams    = 2;
+
+}
+
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+
+// REQUEST: RequestControlStream
+message RequestControlStream {
+
+  enum StreamAction {
+    STREAM_START        = 1; 	// start stream
+    STREAM_STOP         = 2; 	// stop stream
+    STREAM_PAUSE        = 3; 	// pause stream
+    STREAM_CHANGE_RATE  = 4; 	// rate of the stream
+    STREAM_SEEK         = 5; 	// move streaming position.
+  }
+
+  required uint32           stream_id   = 1;
+  required StreamAction     action      = 2;
+  optional float            rate_kBs    = 3;
+  optional int64            seek_byte   = 4;
+}
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+
+// REQUEST: RequestListStreams
+message RequestListStreams {
+
+  required StreamType request_type      = 1;
+
+}
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+
+// RESPONSE: ResponseStreamData
+message ResponseStreamData {
+  required rsctrl.core.Status status     = 1;
+  required StreamData         data       = 2;
+}
+
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+

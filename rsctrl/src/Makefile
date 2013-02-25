@@ -1,7 +1,7 @@
 
 EXEC = protoc
-#PROTO = core.proto peers.proto system.proto chat.proto search.proto files.proto  gxs.proto  msgs.proto 
-PROTO = core.proto peers.proto system.proto chat.proto search.proto files.proto
+#PROTO = core.proto peers.proto system.proto chat.proto search.proto files.proto stream.proto  gxs.proto  msgs.proto 
+PROTO = core.proto peers.proto system.proto chat.proto search.proto files.proto stream.proto
 
 PROTOPATH = ./definition
 #CDESTPATH = ./gencc

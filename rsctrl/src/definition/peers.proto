@@ -9,13 +9,12 @@ import "core.proto";
 enum RequestMsgIds {
     MsgId_RequestPeers = 1;
     MsgId_RequestAddPeer = 2;
-    MsgId_RequestModifyPeer = 3;
+    MsgId_RequestExaminePeer = 3;
+    MsgId_RequestModifyPeer = 4;
 }
 
 enum ResponseMsgIds {
     MsgId_ResponsePeerList = 1;
-    MsgId_ResponseAddPeer = 2;
-    MsgId_ResponseModifyPeer = 3;
 }
 
 ///////////////////////////////////////////////////////////////
@@ -44,7 +43,7 @@ message RequestPeers {
 
   required SetOption set = 1;
   required InfoOption info = 2;
-  repeated string gpg_ids = 3;
+  repeated string pgp_ids = 3;
 }
 
 
@@ -60,22 +59,31 @@ message ResponsePeerList {
 message RequestAddPeer {
 
   enum AddCmd {
-    NOOP = 0; 		// No op.
-    ADD = 1; 		// Add existing from gpg_id.
-    REMOVE = 2; 	// Remove existing from gpg_id.
-    IMPORT = 3; 	// Import from cert, with gpg_id.
+    ADD     = 1; 	// Add existing from gpg_id.
+    REMOVE  = 2; 	// Remove existing from gpg_id.
+  }
+
+  required AddCmd cmd = 1;
+  required string pgp_id = 2;
+  optional string ssl_id = 3;
+
+}
+
+///////////////////////////////////////////////////////////////
+
+// REQUEST: RequestExaminePeer
+message RequestExaminePeer {
+
+  enum ExamineCmd {
+    IMPORT  = 3; 	// Import from cert, with gpg_id.
     EXAMINE = 4; 	// Examine cert, but no action.
   }
 
-  required string gpg_id = 1;
-  required AddCmd cmd = 2;
-  optional string cert = 3;
-}
+  // Must have GPG ID to import. Proves you've looked at it.
+  required string pgp_id = 1;  
+  required ExamineCmd cmd = 2;
+  required string cert = 3;
 
-// RESPONSE: ResponseAddPeer
-message ResponseAddPeer {
-  required rsctrl.core.Status status = 1;
-  repeated rsctrl.core.Person peers = 2;
 }
 
 ///////////////////////////////////////////////////////////////
@@ -95,12 +103,6 @@ message RequestModifyPeer {
 
   required ModCmd cmd = 1; 
   //required int64 cmd = 1; // Could we OR the Cmds together?
-  repeated rsctrl.core.Person peers = 2;
-}
-
-// RESPONSE: ResponseModifyPeer
-message ResponseModifyPeer {
-  required rsctrl.core.Status status = 1;
   repeated rsctrl.core.Person peers = 2;
 }
 

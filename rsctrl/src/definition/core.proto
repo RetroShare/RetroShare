@@ -17,9 +17,10 @@ enum PackageId {
   CHAT = 3;
   SEARCH = 4;
   FILES = 5;
+  STREAM = 6;
+
   // BELOW HERE IS STILL BEING DESIGNED.
-  //MSGS = 5;
-  //TRANSFER = 6;
+  //MSGS = 7;
 
   // THEORETICAL ONES.
   GXS = 1000; 
@@ -108,6 +109,14 @@ message Dir {
 
   repeated Dir subdirs = 3;
   repeated File files = 4;
+}
+
+
+///////////////////////////////////////////////////////////////
+
+message Timestamp {
+  required uint64 secs       = 1;
+  required uint32 microsecs  = 2;
 }
 
 
