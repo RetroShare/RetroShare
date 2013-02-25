@@ -3,6 +3,7 @@
 #include <QTimer>
 #include <QMenu>
 #include <QMessageBox>
+#include <time.h>
 #include "ChatLobbyWidget.h"
 #include "chat/CreateLobbyDialog.h"
 #include "chat/ChatTabWidget.h"
