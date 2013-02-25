@@ -39,6 +39,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* Dir_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   Dir_reflection_ = NULL;
+const ::google::protobuf::Descriptor* Timestamp_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  Timestamp_reflection_ = NULL;
 const ::google::protobuf::Descriptor* SystemStatus_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   SystemStatus_reflection_ = NULL;
@@ -168,7 +171,23 @@ void protobuf_AssignDesc_core_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(Dir));
-  SystemStatus_descriptor_ = file->message_type(6);
+  Timestamp_descriptor_ = file->message_type(6);
+  static const int Timestamp_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Timestamp, secs_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Timestamp, microsecs_),
+  };
+  Timestamp_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      Timestamp_descriptor_,
+      Timestamp::default_instance_,
+      Timestamp_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Timestamp, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Timestamp, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(Timestamp));
+  SystemStatus_descriptor_ = file->message_type(7);
   static const int SystemStatus_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SystemStatus, net_status_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SystemStatus, msg_),
@@ -185,7 +204,7 @@ void protobuf_AssignDesc_core_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(SystemStatus));
   SystemStatus_NetCode_descriptor_ = SystemStatus_descriptor_->enum_type(0);
-  Bandwidth_descriptor_ = file->message_type(7);
+  Bandwidth_descriptor_ = file->message_type(8);
   static const int Bandwidth_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Bandwidth, up_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Bandwidth, down_),
@@ -202,7 +221,7 @@ void protobuf_AssignDesc_core_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(Bandwidth));
-  BandwidthSet_descriptor_ = file->message_type(8);
+  BandwidthSet_descriptor_ = file->message_type(9);
   static const int BandwidthSet_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BandwidthSet, bandwidths_),
   };
@@ -244,6 +263,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     Dir_descriptor_, &Dir::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    Timestamp_descriptor_, &Timestamp::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     SystemStatus_descriptor_, &SystemStatus::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     Bandwidth_descriptor_, &Bandwidth::default_instance());
@@ -266,6 +287,8 @@ void protobuf_ShutdownFile_core_2eproto() {
   delete File_reflection_;
   delete Dir::default_instance_;
   delete Dir_reflection_;
+  delete Timestamp::default_instance_;
+  delete Timestamp_reflection_;
   delete SystemStatus::default_instance_;
   delete SystemStatus_reflection_;
   delete Bandwidth::default_instance_;
@@ -302,18 +325,20 @@ void protobuf_AddDesc_core_2eproto() {
     "(\t\022\014\n\004size\030\003 \002(\004\"f\n\003Dir\022\014\n\004name\030\001 \002(\t\022\014\n"
     "\004path\030\002 \002(\t\022!\n\007subdirs\030\003 \003(\0132\020.rsctrl.co"
     "re.Dir\022 \n\005files\030\004 \003(\0132\021.rsctrl.core.File"
-    "\"\372\001\n\014SystemStatus\0225\n\nnet_status\030\001 \002(\0162!."
-    "rsctrl.core.SystemStatus.NetCode\022\013\n\003msg\030"
-    "\002 \001(\t\"\245\001\n\007NetCode\022\017\n\013BAD_UNKNOWN\020\000\022\017\n\013BA"
-    "D_OFFLINE\020\001\022\016\n\nBAD_NATSYM\020\002\022\021\n\rBAD_NODHT"
-    "_NAT\020\003\022\023\n\017WARNING_RESTART\020\004\022\022\n\016WARNING_N"
-    "ATTED\020\005\022\021\n\rWARNING_NODHT\020\006\022\010\n\004GOOD\020\007\022\017\n\013"
-    "ADV_FORWARD\020\010\"3\n\tBandwidth\022\n\n\002up\030\001 \002(\002\022\014"
-    "\n\004down\030\002 \002(\002\022\014\n\004name\030\003 \001(\t\":\n\014BandwidthS"
-    "et\022*\n\nbandwidths\030\001 \003(\0132\026.rsctrl.core.Ban"
-    "dwidth*\027\n\013ExtensionId\022\010\n\004CORE\020\000*M\n\tPacka"
-    "geId\022\t\n\005PEERS\020\001\022\n\n\006SYSTEM\020\002\022\010\n\004CHAT\020\003\022\n\n"
-    "\006SEARCH\020\004\022\t\n\005FILES\020\005\022\010\n\003GXS\020\350\007", 1310);
+    "\",\n\tTimestamp\022\014\n\004secs\030\001 \002(\004\022\021\n\tmicrosecs"
+    "\030\002 \002(\r\"\372\001\n\014SystemStatus\0225\n\nnet_status\030\001 "
+    "\002(\0162!.rsctrl.core.SystemStatus.NetCode\022\013"
+    "\n\003msg\030\002 \001(\t\"\245\001\n\007NetCode\022\017\n\013BAD_UNKNOWN\020\000"
+    "\022\017\n\013BAD_OFFLINE\020\001\022\016\n\nBAD_NATSYM\020\002\022\021\n\rBAD"
+    "_NODHT_NAT\020\003\022\023\n\017WARNING_RESTART\020\004\022\022\n\016WAR"
+    "NING_NATTED\020\005\022\021\n\rWARNING_NODHT\020\006\022\010\n\004GOOD"
+    "\020\007\022\017\n\013ADV_FORWARD\020\010\"3\n\tBandwidth\022\n\n\002up\030\001"
+    " \002(\002\022\014\n\004down\030\002 \002(\002\022\014\n\004name\030\003 \001(\t\":\n\014Band"
+    "widthSet\022*\n\nbandwidths\030\001 \003(\0132\026.rsctrl.co"
+    "re.Bandwidth*\027\n\013ExtensionId\022\010\n\004CORE\020\000*Y\n"
+    "\tPackageId\022\t\n\005PEERS\020\001\022\n\n\006SYSTEM\020\002\022\010\n\004CHA"
+    "T\020\003\022\n\n\006SEARCH\020\004\022\t\n\005FILES\020\005\022\n\n\006STREAM\020\006\022\010"
+    "\n\003GXS\020\350\007", 1368);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "core.proto", &protobuf_RegisterTypes);
   Status::default_instance_ = new Status();
@@ -322,6 +347,7 @@ void protobuf_AddDesc_core_2eproto() {
   Person::default_instance_ = new Person();
   File::default_instance_ = new File();
   Dir::default_instance_ = new Dir();
+  Timestamp::default_instance_ = new Timestamp();
   SystemStatus::default_instance_ = new SystemStatus();
   Bandwidth::default_instance_ = new Bandwidth();
   BandwidthSet::default_instance_ = new BandwidthSet();
@@ -331,6 +357,7 @@ void protobuf_AddDesc_core_2eproto() {
   Person::default_instance_->InitAsDefaultInstance();
   File::default_instance_->InitAsDefaultInstance();
   Dir::default_instance_->InitAsDefaultInstance();
+  Timestamp::default_instance_->InitAsDefaultInstance();
   SystemStatus::default_instance_->InitAsDefaultInstance();
   Bandwidth::default_instance_->InitAsDefaultInstance();
   BandwidthSet::default_instance_->InitAsDefaultInstance();
@@ -368,6 +395,7 @@ bool PackageId_IsValid(int value) {
     case 3:
     case 4:
     case 5:
+    case 6:
     case 1000:
       return true;
     default:
@@ -2466,6 +2494,254 @@ void Dir::Swap(Dir* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = Dir_descriptor_;
   metadata.reflection = Dir_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int Timestamp::kSecsFieldNumber;
+const int Timestamp::kMicrosecsFieldNumber;
+#endif  // !_MSC_VER
+
+Timestamp::Timestamp()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void Timestamp::InitAsDefaultInstance() {
+}
+
+Timestamp::Timestamp(const Timestamp& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void Timestamp::SharedCtor() {
+  _cached_size_ = 0;
+  secs_ = GOOGLE_ULONGLONG(0);
+  microsecs_ = 0u;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+Timestamp::~Timestamp() {
+  SharedDtor();
+}
+
+void Timestamp::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void Timestamp::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* Timestamp::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return Timestamp_descriptor_;
+}
+
+const Timestamp& Timestamp::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_core_2eproto();  return *default_instance_;
+}
+
+Timestamp* Timestamp::default_instance_ = NULL;
+
+Timestamp* Timestamp::New() const {
+  return new Timestamp;
+}
+
+void Timestamp::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    secs_ = GOOGLE_ULONGLONG(0);
+    microsecs_ = 0u;
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool Timestamp::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required uint64 secs = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
+                 input, &secs_)));
+          set_has_secs();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(16)) goto parse_microsecs;
+        break;
+      }
+      
+      // required uint32 microsecs = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_microsecs:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &microsecs_)));
+          set_has_microsecs();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void Timestamp::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required uint64 secs = 1;
+  if (has_secs()) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt64(1, this->secs(), output);
+  }
+  
+  // required uint32 microsecs = 2;
+  if (has_microsecs()) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->microsecs(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* Timestamp::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required uint64 secs = 1;
+  if (has_secs()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(1, this->secs(), target);
+  }
+  
+  // required uint32 microsecs = 2;
+  if (has_microsecs()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(2, this->microsecs(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int Timestamp::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required uint64 secs = 1;
+    if (has_secs()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::UInt64Size(
+          this->secs());
+    }
+    
+    // required uint32 microsecs = 2;
+    if (has_microsecs()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
+          this->microsecs());
+    }
+    
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void Timestamp::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const Timestamp* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const Timestamp*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void Timestamp::MergeFrom(const Timestamp& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_secs()) {
+      set_secs(from.secs());
+    }
+    if (from.has_microsecs()) {
+      set_microsecs(from.microsecs());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void Timestamp::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Timestamp::CopyFrom(const Timestamp& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Timestamp::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
+  
+  return true;
+}
+
+void Timestamp::Swap(Timestamp* other) {
+  if (other != this) {
+    std::swap(secs_, other->secs_);
+    std::swap(microsecs_, other->microsecs_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata Timestamp::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = Timestamp_descriptor_;
+  metadata.reflection = Timestamp_reflection_;
   return metadata;
 }
 

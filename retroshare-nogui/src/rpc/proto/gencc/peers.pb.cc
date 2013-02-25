@@ -30,16 +30,14 @@ const ::google::protobuf::Descriptor* RequestAddPeer_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   RequestAddPeer_reflection_ = NULL;
 const ::google::protobuf::EnumDescriptor* RequestAddPeer_AddCmd_descriptor_ = NULL;
-const ::google::protobuf::Descriptor* ResponseAddPeer_descriptor_ = NULL;
+const ::google::protobuf::Descriptor* RequestExaminePeer_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  ResponseAddPeer_reflection_ = NULL;
+  RequestExaminePeer_reflection_ = NULL;
+const ::google::protobuf::EnumDescriptor* RequestExaminePeer_ExamineCmd_descriptor_ = NULL;
 const ::google::protobuf::Descriptor* RequestModifyPeer_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   RequestModifyPeer_reflection_ = NULL;
 const ::google::protobuf::EnumDescriptor* RequestModifyPeer_ModCmd_descriptor_ = NULL;
-const ::google::protobuf::Descriptor* ResponseModifyPeer_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  ResponseModifyPeer_reflection_ = NULL;
 const ::google::protobuf::EnumDescriptor* RequestMsgIds_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* ResponseMsgIds_descriptor_ = NULL;
 
@@ -56,7 +54,7 @@ void protobuf_AssignDesc_peers_2eproto() {
   static const int RequestPeers_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestPeers, set_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestPeers, info_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestPeers, gpg_ids_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestPeers, pgp_ids_),
   };
   RequestPeers_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -89,9 +87,9 @@ void protobuf_AssignDesc_peers_2eproto() {
       sizeof(ResponsePeerList));
   RequestAddPeer_descriptor_ = file->message_type(2);
   static const int RequestAddPeer_offsets_[3] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestAddPeer, gpg_id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestAddPeer, cmd_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestAddPeer, cert_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestAddPeer, pgp_id_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestAddPeer, ssl_id_),
   };
   RequestAddPeer_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -105,22 +103,24 @@ void protobuf_AssignDesc_peers_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(RequestAddPeer));
   RequestAddPeer_AddCmd_descriptor_ = RequestAddPeer_descriptor_->enum_type(0);
-  ResponseAddPeer_descriptor_ = file->message_type(3);
-  static const int ResponseAddPeer_offsets_[2] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseAddPeer, status_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseAddPeer, peers_),
+  RequestExaminePeer_descriptor_ = file->message_type(3);
+  static const int RequestExaminePeer_offsets_[3] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestExaminePeer, pgp_id_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestExaminePeer, cmd_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestExaminePeer, cert_),
   };
-  ResponseAddPeer_reflection_ =
+  RequestExaminePeer_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
-      ResponseAddPeer_descriptor_,
-      ResponseAddPeer::default_instance_,
-      ResponseAddPeer_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseAddPeer, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseAddPeer, _unknown_fields_),
+      RequestExaminePeer_descriptor_,
+      RequestExaminePeer::default_instance_,
+      RequestExaminePeer_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestExaminePeer, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestExaminePeer, _unknown_fields_),
       -1,
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(ResponseAddPeer));
+      sizeof(RequestExaminePeer));
+  RequestExaminePeer_ExamineCmd_descriptor_ = RequestExaminePeer_descriptor_->enum_type(0);
   RequestModifyPeer_descriptor_ = file->message_type(4);
   static const int RequestModifyPeer_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestModifyPeer, cmd_),
@@ -138,22 +138,6 @@ void protobuf_AssignDesc_peers_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(RequestModifyPeer));
   RequestModifyPeer_ModCmd_descriptor_ = RequestModifyPeer_descriptor_->enum_type(0);
-  ResponseModifyPeer_descriptor_ = file->message_type(5);
-  static const int ResponseModifyPeer_offsets_[2] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseModifyPeer, status_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseModifyPeer, peers_),
-  };
-  ResponseModifyPeer_reflection_ =
-    new ::google::protobuf::internal::GeneratedMessageReflection(
-      ResponseModifyPeer_descriptor_,
-      ResponseModifyPeer::default_instance_,
-      ResponseModifyPeer_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseModifyPeer, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseModifyPeer, _unknown_fields_),
-      -1,
-      ::google::protobuf::DescriptorPool::generated_pool(),
-      ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(ResponseModifyPeer));
   RequestMsgIds_descriptor_ = file->enum_type(0);
   ResponseMsgIds_descriptor_ = file->enum_type(1);
 }
@@ -175,11 +159,9 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     RequestAddPeer_descriptor_, &RequestAddPeer::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    ResponseAddPeer_descriptor_, &ResponseAddPeer::default_instance());
+    RequestExaminePeer_descriptor_, &RequestExaminePeer::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     RequestModifyPeer_descriptor_, &RequestModifyPeer::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    ResponseModifyPeer_descriptor_, &ResponseModifyPeer::default_instance());
 }
 
 }  // namespace
@@ -191,12 +173,10 @@ void protobuf_ShutdownFile_peers_2eproto() {
   delete ResponsePeerList_reflection_;
   delete RequestAddPeer::default_instance_;
   delete RequestAddPeer_reflection_;
-  delete ResponseAddPeer::default_instance_;
-  delete ResponseAddPeer_reflection_;
+  delete RequestExaminePeer::default_instance_;
+  delete RequestExaminePeer_reflection_;
   delete RequestModifyPeer::default_instance_;
   delete RequestModifyPeer_reflection_;
-  delete ResponseModifyPeer::default_instance_;
-  delete ResponseModifyPeer_reflection_;
 }
 
 void protobuf_AddDesc_peers_2eproto() {
@@ -211,45 +191,41 @@ void protobuf_AddDesc_peers_2eproto() {
     "\251\002\n\014RequestPeers\0221\n\003set\030\001 \002(\0162$.rsctrl.p"
     "eers.RequestPeers.SetOption\0223\n\004info\030\002 \002("
     "\0162%.rsctrl.peers.RequestPeers.InfoOption"
-    "\022\017\n\007gpg_ids\030\003 \003(\t\"^\n\tSetOption\022\t\n\005OWNID\020"
+    "\022\017\n\007pgp_ids\030\003 \003(\t\"^\n\tSetOption\022\t\n\005OWNID\020"
     "\001\022\n\n\006LISTED\020\002\022\r\n\tCONNECTED\020\003\022\013\n\007FRIENDS\020"
     "\004\022\t\n\005VALID\020\005\022\n\n\006SIGNED\020\006\022\007\n\003ALL\020\007\"@\n\nInf"
     "oOption\022\014\n\010NAMEONLY\020\001\022\t\n\005BASIC\020\002\022\014\n\010LOCA"
     "TION\020\003\022\013\n\007ALLINFO\020\004\"[\n\020ResponsePeerList\022"
     "#\n\006status\030\001 \002(\0132\023.rsctrl.core.Status\022\"\n\005"
-    "peers\030\002 \003(\0132\023.rsctrl.core.Person\"\242\001\n\016Req"
-    "uestAddPeer\022\016\n\006gpg_id\030\001 \002(\t\0220\n\003cmd\030\002 \002(\016"
-    "2#.rsctrl.peers.RequestAddPeer.AddCmd\022\014\n"
-    "\004cert\030\003 \001(\t\"@\n\006AddCmd\022\010\n\004NOOP\020\000\022\007\n\003ADD\020\001"
-    "\022\n\n\006REMOVE\020\002\022\n\n\006IMPORT\020\003\022\013\n\007EXAMINE\020\004\"Z\n"
-    "\017ResponseAddPeer\022#\n\006status\030\001 \002(\0132\023.rsctr"
-    "l.core.Status\022\"\n\005peers\030\002 \003(\0132\023.rsctrl.co"
-    "re.Person\"\231\001\n\021RequestModifyPeer\0223\n\003cmd\030\001"
-    " \002(\0162&.rsctrl.peers.RequestModifyPeer.Mo"
-    "dCmd\022\"\n\005peers\030\002 \003(\0132\023.rsctrl.core.Person"
-    "\"+\n\006ModCmd\022\010\n\004NOOP\020\000\022\013\n\007ADDRESS\020\001\022\n\n\006DYN"
-    "DNS\020\002\"]\n\022ResponseModifyPeer\022#\n\006status\030\001 "
-    "\002(\0132\023.rsctrl.core.Status\022\"\n\005peers\030\002 \003(\0132"
-    "\023.rsctrl.core.Person*^\n\rRequestMsgIds\022\026\n"
-    "\022MsgId_RequestPeers\020\001\022\030\n\024MsgId_RequestAd"
-    "dPeer\020\002\022\033\n\027MsgId_RequestModifyPeer\020\003*e\n\016"
+    "peers\030\002 \003(\0132\023.rsctrl.core.Person\"\201\001\n\016Req"
+    "uestAddPeer\0220\n\003cmd\030\001 \002(\0162#.rsctrl.peers."
+    "RequestAddPeer.AddCmd\022\016\n\006pgp_id\030\002 \002(\t\022\016\n"
+    "\006ssl_id\030\003 \001(\t\"\035\n\006AddCmd\022\007\n\003ADD\020\001\022\n\n\006REMO"
+    "VE\020\002\"\223\001\n\022RequestExaminePeer\022\016\n\006pgp_id\030\001 "
+    "\002(\t\0228\n\003cmd\030\002 \002(\0162+.rsctrl.peers.RequestE"
+    "xaminePeer.ExamineCmd\022\014\n\004cert\030\003 \002(\t\"%\n\nE"
+    "xamineCmd\022\n\n\006IMPORT\020\003\022\013\n\007EXAMINE\020\004\"\231\001\n\021R"
+    "equestModifyPeer\0223\n\003cmd\030\001 \002(\0162&.rsctrl.p"
+    "eers.RequestModifyPeer.ModCmd\022\"\n\005peers\030\002"
+    " \003(\0132\023.rsctrl.core.Person\"+\n\006ModCmd\022\010\n\004N"
+    "OOP\020\000\022\013\n\007ADDRESS\020\001\022\n\n\006DYNDNS\020\002*|\n\rReques"
+    "tMsgIds\022\026\n\022MsgId_RequestPeers\020\001\022\030\n\024MsgId"
+    "_RequestAddPeer\020\002\022\034\n\030MsgId_RequestExamin"
+    "ePeer\020\003\022\033\n\027MsgId_RequestModifyPeer\020\004*,\n\016"
     "ResponseMsgIds\022\032\n\026MsgId_ResponsePeerList"
-    "\020\001\022\031\n\025MsgId_ResponseAddPeer\020\002\022\034\n\030MsgId_R"
-    "esponseModifyPeer\020\003", 1139);
+    "\020\001", 1042);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "peers.proto", &protobuf_RegisterTypes);
   RequestPeers::default_instance_ = new RequestPeers();
   ResponsePeerList::default_instance_ = new ResponsePeerList();
   RequestAddPeer::default_instance_ = new RequestAddPeer();
-  ResponseAddPeer::default_instance_ = new ResponseAddPeer();
+  RequestExaminePeer::default_instance_ = new RequestExaminePeer();
   RequestModifyPeer::default_instance_ = new RequestModifyPeer();
-  ResponseModifyPeer::default_instance_ = new ResponseModifyPeer();
   RequestPeers::default_instance_->InitAsDefaultInstance();
   ResponsePeerList::default_instance_->InitAsDefaultInstance();
   RequestAddPeer::default_instance_->InitAsDefaultInstance();
-  ResponseAddPeer::default_instance_->InitAsDefaultInstance();
+  RequestExaminePeer::default_instance_->InitAsDefaultInstance();
   RequestModifyPeer::default_instance_->InitAsDefaultInstance();
-  ResponseModifyPeer::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_peers_2eproto);
 }
 
@@ -269,6 +245,7 @@ bool RequestMsgIds_IsValid(int value) {
     case 1:
     case 2:
     case 3:
+    case 4:
       return true;
     default:
       return false;
@@ -282,8 +259,6 @@ const ::google::protobuf::EnumDescriptor* ResponseMsgIds_descriptor() {
 bool ResponseMsgIds_IsValid(int value) {
   switch(value) {
     case 1:
-    case 2:
-    case 3:
       return true;
     default:
       return false;
@@ -352,7 +327,7 @@ const int RequestPeers::InfoOption_ARRAYSIZE;
 #ifndef _MSC_VER
 const int RequestPeers::kSetFieldNumber;
 const int RequestPeers::kInfoFieldNumber;
-const int RequestPeers::kGpgIdsFieldNumber;
+const int RequestPeers::kPgpIdsFieldNumber;
 #endif  // !_MSC_VER
 
 RequestPeers::RequestPeers()
@@ -410,7 +385,7 @@ void RequestPeers::Clear() {
     set_ = 1;
     info_ = 1;
   }
-  gpg_ids_.Clear();
+  pgp_ids_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
@@ -458,24 +433,24 @@ bool RequestPeers::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(26)) goto parse_gpg_ids;
+        if (input->ExpectTag(26)) goto parse_pgp_ids;
         break;
       }
       
-      // repeated string gpg_ids = 3;
+      // repeated string pgp_ids = 3;
       case 3: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_gpg_ids:
+         parse_pgp_ids:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->add_gpg_ids()));
+                input, this->add_pgp_ids()));
           ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->gpg_ids(0).data(), this->gpg_ids(0).length(),
+            this->pgp_ids(0).data(), this->pgp_ids(0).length(),
             ::google::protobuf::internal::WireFormat::PARSE);
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(26)) goto parse_gpg_ids;
+        if (input->ExpectTag(26)) goto parse_pgp_ids;
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -510,13 +485,13 @@ void RequestPeers::SerializeWithCachedSizes(
       2, this->info(), output);
   }
   
-  // repeated string gpg_ids = 3;
-  for (int i = 0; i < this->gpg_ids_size(); i++) {
+  // repeated string pgp_ids = 3;
+  for (int i = 0; i < this->pgp_ids_size(); i++) {
   ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-    this->gpg_ids(i).data(), this->gpg_ids(i).length(),
+    this->pgp_ids(i).data(), this->pgp_ids(i).length(),
     ::google::protobuf::internal::WireFormat::SERIALIZE);
     ::google::protobuf::internal::WireFormatLite::WriteString(
-      3, this->gpg_ids(i), output);
+      3, this->pgp_ids(i), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -539,13 +514,13 @@ void RequestPeers::SerializeWithCachedSizes(
       2, this->info(), target);
   }
   
-  // repeated string gpg_ids = 3;
-  for (int i = 0; i < this->gpg_ids_size(); i++) {
+  // repeated string pgp_ids = 3;
+  for (int i = 0; i < this->pgp_ids_size(); i++) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->gpg_ids(i).data(), this->gpg_ids(i).length(),
+      this->pgp_ids(i).data(), this->pgp_ids(i).length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
     target = ::google::protobuf::internal::WireFormatLite::
-      WriteStringToArray(3, this->gpg_ids(i), target);
+      WriteStringToArray(3, this->pgp_ids(i), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -572,11 +547,11 @@ int RequestPeers::ByteSize() const {
     }
     
   }
-  // repeated string gpg_ids = 3;
-  total_size += 1 * this->gpg_ids_size();
-  for (int i = 0; i < this->gpg_ids_size(); i++) {
+  // repeated string pgp_ids = 3;
+  total_size += 1 * this->pgp_ids_size();
+  for (int i = 0; i < this->pgp_ids_size(); i++) {
     total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
-      this->gpg_ids(i));
+      this->pgp_ids(i));
   }
   
   if (!unknown_fields().empty()) {
@@ -604,7 +579,7 @@ void RequestPeers::MergeFrom(const ::google::protobuf::Message& from) {
 
 void RequestPeers::MergeFrom(const RequestPeers& from) {
   GOOGLE_CHECK_NE(&from, this);
-  gpg_ids_.MergeFrom(from.gpg_ids_);
+  pgp_ids_.MergeFrom(from.pgp_ids_);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from.has_set()) {
       set_set(from.set());
@@ -638,7 +613,7 @@ void RequestPeers::Swap(RequestPeers* other) {
   if (other != this) {
     std::swap(set_, other->set_);
     std::swap(info_, other->info_);
-    gpg_ids_.Swap(&other->gpg_ids_);
+    pgp_ids_.Swap(&other->pgp_ids_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -921,11 +896,8 @@ const ::google::protobuf::EnumDescriptor* RequestAddPeer_AddCmd_descriptor() {
 }
 bool RequestAddPeer_AddCmd_IsValid(int value) {
   switch(value) {
-    case 0:
     case 1:
     case 2:
-    case 3:
-    case 4:
       return true;
     default:
       return false;
@@ -933,19 +905,16 @@ bool RequestAddPeer_AddCmd_IsValid(int value) {
 }
 
 #ifndef _MSC_VER
-const RequestAddPeer_AddCmd RequestAddPeer::NOOP;
 const RequestAddPeer_AddCmd RequestAddPeer::ADD;
 const RequestAddPeer_AddCmd RequestAddPeer::REMOVE;
-const RequestAddPeer_AddCmd RequestAddPeer::IMPORT;
-const RequestAddPeer_AddCmd RequestAddPeer::EXAMINE;
 const RequestAddPeer_AddCmd RequestAddPeer::AddCmd_MIN;
 const RequestAddPeer_AddCmd RequestAddPeer::AddCmd_MAX;
 const int RequestAddPeer::AddCmd_ARRAYSIZE;
 #endif  // _MSC_VER
 #ifndef _MSC_VER
-const int RequestAddPeer::kGpgIdFieldNumber;
 const int RequestAddPeer::kCmdFieldNumber;
-const int RequestAddPeer::kCertFieldNumber;
+const int RequestAddPeer::kPgpIdFieldNumber;
+const int RequestAddPeer::kSslIdFieldNumber;
 #endif  // !_MSC_VER
 
 RequestAddPeer::RequestAddPeer()
@@ -964,9 +933,9 @@ RequestAddPeer::RequestAddPeer(const RequestAddPeer& from)
 
 void RequestAddPeer::SharedCtor() {
   _cached_size_ = 0;
-  gpg_id_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-  cmd_ = 0;
-  cert_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  cmd_ = 1;
+  pgp_id_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  ssl_id_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -975,11 +944,11 @@ RequestAddPeer::~RequestAddPeer() {
 }
 
 void RequestAddPeer::SharedDtor() {
-  if (gpg_id_ != &::google::protobuf::internal::kEmptyString) {
-    delete gpg_id_;
+  if (pgp_id_ != &::google::protobuf::internal::kEmptyString) {
+    delete pgp_id_;
   }
-  if (cert_ != &::google::protobuf::internal::kEmptyString) {
-    delete cert_;
+  if (ssl_id_ != &::google::protobuf::internal::kEmptyString) {
+    delete ssl_id_;
   }
   if (this != default_instance_) {
   }
@@ -1007,15 +976,15 @@ RequestAddPeer* RequestAddPeer::New() const {
 
 void RequestAddPeer::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (has_gpg_id()) {
-      if (gpg_id_ != &::google::protobuf::internal::kEmptyString) {
-        gpg_id_->clear();
+    cmd_ = 1;
+    if (has_pgp_id()) {
+      if (pgp_id_ != &::google::protobuf::internal::kEmptyString) {
+        pgp_id_->clear();
       }
     }
-    cmd_ = 0;
-    if (has_cert()) {
-      if (cert_ != &::google::protobuf::internal::kEmptyString) {
-        cert_->clear();
+    if (has_ssl_id()) {
+      if (ssl_id_ != &::google::protobuf::internal::kEmptyString) {
+        ssl_id_->clear();
       }
     }
   }
@@ -1029,14 +998,363 @@ bool RequestAddPeer::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required string gpg_id = 1;
+      // required .rsctrl.peers.RequestAddPeer.AddCmd cmd = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+          int value;
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          if (::rsctrl::peers::RequestAddPeer_AddCmd_IsValid(value)) {
+            set_cmd(static_cast< ::rsctrl::peers::RequestAddPeer_AddCmd >(value));
+          } else {
+            mutable_unknown_fields()->AddVarint(1, value);
+          }
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(18)) goto parse_pgp_id;
+        break;
+      }
+      
+      // required string pgp_id = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_pgp_id:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_pgp_id()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->pgp_id().data(), this->pgp_id().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(26)) goto parse_ssl_id;
+        break;
+      }
+      
+      // optional string ssl_id = 3;
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_ssl_id:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_ssl_id()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->ssl_id().data(), this->ssl_id().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void RequestAddPeer::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required .rsctrl.peers.RequestAddPeer.AddCmd cmd = 1;
+  if (has_cmd()) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      1, this->cmd(), output);
+  }
+  
+  // required string pgp_id = 2;
+  if (has_pgp_id()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->pgp_id().data(), this->pgp_id().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      2, this->pgp_id(), output);
+  }
+  
+  // optional string ssl_id = 3;
+  if (has_ssl_id()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->ssl_id().data(), this->ssl_id().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      3, this->ssl_id(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* RequestAddPeer::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required .rsctrl.peers.RequestAddPeer.AddCmd cmd = 1;
+  if (has_cmd()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      1, this->cmd(), target);
+  }
+  
+  // required string pgp_id = 2;
+  if (has_pgp_id()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->pgp_id().data(), this->pgp_id().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        2, this->pgp_id(), target);
+  }
+  
+  // optional string ssl_id = 3;
+  if (has_ssl_id()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->ssl_id().data(), this->ssl_id().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        3, this->ssl_id(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int RequestAddPeer::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required .rsctrl.peers.RequestAddPeer.AddCmd cmd = 1;
+    if (has_cmd()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::EnumSize(this->cmd());
+    }
+    
+    // required string pgp_id = 2;
+    if (has_pgp_id()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->pgp_id());
+    }
+    
+    // optional string ssl_id = 3;
+    if (has_ssl_id()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->ssl_id());
+    }
+    
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void RequestAddPeer::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const RequestAddPeer* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const RequestAddPeer*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void RequestAddPeer::MergeFrom(const RequestAddPeer& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_cmd()) {
+      set_cmd(from.cmd());
+    }
+    if (from.has_pgp_id()) {
+      set_pgp_id(from.pgp_id());
+    }
+    if (from.has_ssl_id()) {
+      set_ssl_id(from.ssl_id());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void RequestAddPeer::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void RequestAddPeer::CopyFrom(const RequestAddPeer& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool RequestAddPeer::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
+  
+  return true;
+}
+
+void RequestAddPeer::Swap(RequestAddPeer* other) {
+  if (other != this) {
+    std::swap(cmd_, other->cmd_);
+    std::swap(pgp_id_, other->pgp_id_);
+    std::swap(ssl_id_, other->ssl_id_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata RequestAddPeer::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = RequestAddPeer_descriptor_;
+  metadata.reflection = RequestAddPeer_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+const ::google::protobuf::EnumDescriptor* RequestExaminePeer_ExamineCmd_descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return RequestExaminePeer_ExamineCmd_descriptor_;
+}
+bool RequestExaminePeer_ExamineCmd_IsValid(int value) {
+  switch(value) {
+    case 3:
+    case 4:
+      return true;
+    default:
+      return false;
+  }
+}
+
+#ifndef _MSC_VER
+const RequestExaminePeer_ExamineCmd RequestExaminePeer::IMPORT;
+const RequestExaminePeer_ExamineCmd RequestExaminePeer::EXAMINE;
+const RequestExaminePeer_ExamineCmd RequestExaminePeer::ExamineCmd_MIN;
+const RequestExaminePeer_ExamineCmd RequestExaminePeer::ExamineCmd_MAX;
+const int RequestExaminePeer::ExamineCmd_ARRAYSIZE;
+#endif  // _MSC_VER
+#ifndef _MSC_VER
+const int RequestExaminePeer::kPgpIdFieldNumber;
+const int RequestExaminePeer::kCmdFieldNumber;
+const int RequestExaminePeer::kCertFieldNumber;
+#endif  // !_MSC_VER
+
+RequestExaminePeer::RequestExaminePeer()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void RequestExaminePeer::InitAsDefaultInstance() {
+}
+
+RequestExaminePeer::RequestExaminePeer(const RequestExaminePeer& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void RequestExaminePeer::SharedCtor() {
+  _cached_size_ = 0;
+  pgp_id_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  cmd_ = 3;
+  cert_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+RequestExaminePeer::~RequestExaminePeer() {
+  SharedDtor();
+}
+
+void RequestExaminePeer::SharedDtor() {
+  if (pgp_id_ != &::google::protobuf::internal::kEmptyString) {
+    delete pgp_id_;
+  }
+  if (cert_ != &::google::protobuf::internal::kEmptyString) {
+    delete cert_;
+  }
+  if (this != default_instance_) {
+  }
+}
+
+void RequestExaminePeer::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* RequestExaminePeer::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return RequestExaminePeer_descriptor_;
+}
+
+const RequestExaminePeer& RequestExaminePeer::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_peers_2eproto();  return *default_instance_;
+}
+
+RequestExaminePeer* RequestExaminePeer::default_instance_ = NULL;
+
+RequestExaminePeer* RequestExaminePeer::New() const {
+  return new RequestExaminePeer;
+}
+
+void RequestExaminePeer::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (has_pgp_id()) {
+      if (pgp_id_ != &::google::protobuf::internal::kEmptyString) {
+        pgp_id_->clear();
+      }
+    }
+    cmd_ = 3;
+    if (has_cert()) {
+      if (cert_ != &::google::protobuf::internal::kEmptyString) {
+        cert_->clear();
+      }
+    }
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool RequestExaminePeer::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required string pgp_id = 1;
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_gpg_id()));
+                input, this->mutable_pgp_id()));
           ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->gpg_id().data(), this->gpg_id().length(),
+            this->pgp_id().data(), this->pgp_id().length(),
             ::google::protobuf::internal::WireFormat::PARSE);
         } else {
           goto handle_uninterpreted;
@@ -1045,7 +1363,7 @@ bool RequestAddPeer::MergePartialFromCodedStream(
         break;
       }
       
-      // required .rsctrl.peers.RequestAddPeer.AddCmd cmd = 2;
+      // required .rsctrl.peers.RequestExaminePeer.ExamineCmd cmd = 2;
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
@@ -1054,8 +1372,8 @@ bool RequestAddPeer::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          if (::rsctrl::peers::RequestAddPeer_AddCmd_IsValid(value)) {
-            set_cmd(static_cast< ::rsctrl::peers::RequestAddPeer_AddCmd >(value));
+          if (::rsctrl::peers::RequestExaminePeer_ExamineCmd_IsValid(value)) {
+            set_cmd(static_cast< ::rsctrl::peers::RequestExaminePeer_ExamineCmd >(value));
           } else {
             mutable_unknown_fields()->AddVarint(2, value);
           }
@@ -1066,7 +1384,7 @@ bool RequestAddPeer::MergePartialFromCodedStream(
         break;
       }
       
-      // optional string cert = 3;
+      // required string cert = 3;
       case 3: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
@@ -1099,24 +1417,24 @@ bool RequestAddPeer::MergePartialFromCodedStream(
 #undef DO_
 }
 
-void RequestAddPeer::SerializeWithCachedSizes(
+void RequestExaminePeer::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // required string gpg_id = 1;
-  if (has_gpg_id()) {
+  // required string pgp_id = 1;
+  if (has_pgp_id()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->gpg_id().data(), this->gpg_id().length(),
+      this->pgp_id().data(), this->pgp_id().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
     ::google::protobuf::internal::WireFormatLite::WriteString(
-      1, this->gpg_id(), output);
+      1, this->pgp_id(), output);
   }
   
-  // required .rsctrl.peers.RequestAddPeer.AddCmd cmd = 2;
+  // required .rsctrl.peers.RequestExaminePeer.ExamineCmd cmd = 2;
   if (has_cmd()) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       2, this->cmd(), output);
   }
   
-  // optional string cert = 3;
+  // required string cert = 3;
   if (has_cert()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->cert().data(), this->cert().length(),
@@ -1131,25 +1449,25 @@ void RequestAddPeer::SerializeWithCachedSizes(
   }
 }
 
-::google::protobuf::uint8* RequestAddPeer::SerializeWithCachedSizesToArray(
+::google::protobuf::uint8* RequestExaminePeer::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // required string gpg_id = 1;
-  if (has_gpg_id()) {
+  // required string pgp_id = 1;
+  if (has_pgp_id()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->gpg_id().data(), this->gpg_id().length(),
+      this->pgp_id().data(), this->pgp_id().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->gpg_id(), target);
+        1, this->pgp_id(), target);
   }
   
-  // required .rsctrl.peers.RequestAddPeer.AddCmd cmd = 2;
+  // required .rsctrl.peers.RequestExaminePeer.ExamineCmd cmd = 2;
   if (has_cmd()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
       2, this->cmd(), target);
   }
   
-  // optional string cert = 3;
+  // required string cert = 3;
   if (has_cert()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->cert().data(), this->cert().length(),
@@ -1166,24 +1484,24 @@ void RequestAddPeer::SerializeWithCachedSizes(
   return target;
 }
 
-int RequestAddPeer::ByteSize() const {
+int RequestExaminePeer::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required string gpg_id = 1;
-    if (has_gpg_id()) {
+    // required string pgp_id = 1;
+    if (has_pgp_id()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->gpg_id());
+          this->pgp_id());
     }
     
-    // required .rsctrl.peers.RequestAddPeer.AddCmd cmd = 2;
+    // required .rsctrl.peers.RequestExaminePeer.ExamineCmd cmd = 2;
     if (has_cmd()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::EnumSize(this->cmd());
     }
     
-    // optional string cert = 3;
+    // required string cert = 3;
     if (has_cert()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::StringSize(
@@ -1202,10 +1520,10 @@ int RequestAddPeer::ByteSize() const {
   return total_size;
 }
 
-void RequestAddPeer::MergeFrom(const ::google::protobuf::Message& from) {
+void RequestExaminePeer::MergeFrom(const ::google::protobuf::Message& from) {
   GOOGLE_CHECK_NE(&from, this);
-  const RequestAddPeer* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const RequestAddPeer*>(
+  const RequestExaminePeer* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const RequestExaminePeer*>(
       &from);
   if (source == NULL) {
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
@@ -1214,11 +1532,11 @@ void RequestAddPeer::MergeFrom(const ::google::protobuf::Message& from) {
   }
 }
 
-void RequestAddPeer::MergeFrom(const RequestAddPeer& from) {
+void RequestExaminePeer::MergeFrom(const RequestExaminePeer& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_gpg_id()) {
-      set_gpg_id(from.gpg_id());
+    if (from.has_pgp_id()) {
+      set_pgp_id(from.pgp_id());
     }
     if (from.has_cmd()) {
       set_cmd(from.cmd());
@@ -1230,27 +1548,27 @@ void RequestAddPeer::MergeFrom(const RequestAddPeer& from) {
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
 
-void RequestAddPeer::CopyFrom(const ::google::protobuf::Message& from) {
+void RequestExaminePeer::CopyFrom(const ::google::protobuf::Message& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void RequestAddPeer::CopyFrom(const RequestAddPeer& from) {
+void RequestExaminePeer::CopyFrom(const RequestExaminePeer& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool RequestAddPeer::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
+bool RequestExaminePeer::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
   
   return true;
 }
 
-void RequestAddPeer::Swap(RequestAddPeer* other) {
+void RequestExaminePeer::Swap(RequestExaminePeer* other) {
   if (other != this) {
-    std::swap(gpg_id_, other->gpg_id_);
+    std::swap(pgp_id_, other->pgp_id_);
     std::swap(cmd_, other->cmd_);
     std::swap(cert_, other->cert_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
@@ -1259,270 +1577,11 @@ void RequestAddPeer::Swap(RequestAddPeer* other) {
   }
 }
 
-::google::protobuf::Metadata RequestAddPeer::GetMetadata() const {
+::google::protobuf::Metadata RequestExaminePeer::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = RequestAddPeer_descriptor_;
-  metadata.reflection = RequestAddPeer_reflection_;
-  return metadata;
-}
-
-
-// ===================================================================
-
-#ifndef _MSC_VER
-const int ResponseAddPeer::kStatusFieldNumber;
-const int ResponseAddPeer::kPeersFieldNumber;
-#endif  // !_MSC_VER
-
-ResponseAddPeer::ResponseAddPeer()
-  : ::google::protobuf::Message() {
-  SharedCtor();
-}
-
-void ResponseAddPeer::InitAsDefaultInstance() {
-  status_ = const_cast< ::rsctrl::core::Status*>(&::rsctrl::core::Status::default_instance());
-}
-
-ResponseAddPeer::ResponseAddPeer(const ResponseAddPeer& from)
-  : ::google::protobuf::Message() {
-  SharedCtor();
-  MergeFrom(from);
-}
-
-void ResponseAddPeer::SharedCtor() {
-  _cached_size_ = 0;
-  status_ = NULL;
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-}
-
-ResponseAddPeer::~ResponseAddPeer() {
-  SharedDtor();
-}
-
-void ResponseAddPeer::SharedDtor() {
-  if (this != default_instance_) {
-    delete status_;
-  }
-}
-
-void ResponseAddPeer::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* ResponseAddPeer::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return ResponseAddPeer_descriptor_;
-}
-
-const ResponseAddPeer& ResponseAddPeer::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_peers_2eproto();  return *default_instance_;
-}
-
-ResponseAddPeer* ResponseAddPeer::default_instance_ = NULL;
-
-ResponseAddPeer* ResponseAddPeer::New() const {
-  return new ResponseAddPeer;
-}
-
-void ResponseAddPeer::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (has_status()) {
-      if (status_ != NULL) status_->::rsctrl::core::Status::Clear();
-    }
-  }
-  peers_.Clear();
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-  mutable_unknown_fields()->Clear();
-}
-
-bool ResponseAddPeer::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
-  ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required .rsctrl.core.Status status = 1;
-      case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_status()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(18)) goto parse_peers;
-        break;
-      }
-      
-      // repeated .rsctrl.core.Person peers = 2;
-      case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_peers:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-                input, add_peers()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(18)) goto parse_peers;
-        if (input->ExpectAtEnd()) return true;
-        break;
-      }
-      
-      default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-  return true;
-#undef DO_
-}
-
-void ResponseAddPeer::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // required .rsctrl.core.Status status = 1;
-  if (has_status()) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      1, this->status(), output);
-  }
-  
-  // repeated .rsctrl.core.Person peers = 2;
-  for (int i = 0; i < this->peers_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      2, this->peers(i), output);
-  }
-  
-  if (!unknown_fields().empty()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        unknown_fields(), output);
-  }
-}
-
-::google::protobuf::uint8* ResponseAddPeer::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
-  // required .rsctrl.core.Status status = 1;
-  if (has_status()) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        1, this->status(), target);
-  }
-  
-  // repeated .rsctrl.core.Person peers = 2;
-  for (int i = 0; i < this->peers_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        2, this->peers(i), target);
-  }
-  
-  if (!unknown_fields().empty()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        unknown_fields(), target);
-  }
-  return target;
-}
-
-int ResponseAddPeer::ByteSize() const {
-  int total_size = 0;
-  
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required .rsctrl.core.Status status = 1;
-    if (has_status()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-          this->status());
-    }
-    
-  }
-  // repeated .rsctrl.core.Person peers = 2;
-  total_size += 1 * this->peers_size();
-  for (int i = 0; i < this->peers_size(); i++) {
-    total_size +=
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        this->peers(i));
-  }
-  
-  if (!unknown_fields().empty()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        unknown_fields());
-  }
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void ResponseAddPeer::MergeFrom(const ::google::protobuf::Message& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  const ResponseAddPeer* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const ResponseAddPeer*>(
-      &from);
-  if (source == NULL) {
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-    MergeFrom(*source);
-  }
-}
-
-void ResponseAddPeer::MergeFrom(const ResponseAddPeer& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  peers_.MergeFrom(from.peers_);
-  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_status()) {
-      mutable_status()->::rsctrl::core::Status::MergeFrom(from.status());
-    }
-  }
-  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
-}
-
-void ResponseAddPeer::CopyFrom(const ::google::protobuf::Message& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void ResponseAddPeer::CopyFrom(const ResponseAddPeer& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool ResponseAddPeer::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
-  
-  if (has_status()) {
-    if (!this->status().IsInitialized()) return false;
-  }
-  for (int i = 0; i < peers_size(); i++) {
-    if (!this->peers(i).IsInitialized()) return false;
-  }
-  return true;
-}
-
-void ResponseAddPeer::Swap(ResponseAddPeer* other) {
-  if (other != this) {
-    std::swap(status_, other->status_);
-    peers_.Swap(&other->peers_);
-    std::swap(_has_bits_[0], other->_has_bits_[0]);
-    _unknown_fields_.Swap(&other->_unknown_fields_);
-    std::swap(_cached_size_, other->_cached_size_);
-  }
-}
-
-::google::protobuf::Metadata ResponseAddPeer::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = ResponseAddPeer_descriptor_;
-  metadata.reflection = ResponseAddPeer_reflection_;
+  metadata.descriptor = RequestExaminePeer_descriptor_;
+  metadata.reflection = RequestExaminePeer_reflection_;
   return metadata;
 }
 
@@ -1803,265 +1862,6 @@ void RequestModifyPeer::Swap(RequestModifyPeer* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = RequestModifyPeer_descriptor_;
   metadata.reflection = RequestModifyPeer_reflection_;
-  return metadata;
-}
-
-
-// ===================================================================
-
-#ifndef _MSC_VER
-const int ResponseModifyPeer::kStatusFieldNumber;
-const int ResponseModifyPeer::kPeersFieldNumber;
-#endif  // !_MSC_VER
-
-ResponseModifyPeer::ResponseModifyPeer()
-  : ::google::protobuf::Message() {
-  SharedCtor();
-}
-
-void ResponseModifyPeer::InitAsDefaultInstance() {
-  status_ = const_cast< ::rsctrl::core::Status*>(&::rsctrl::core::Status::default_instance());
-}
-
-ResponseModifyPeer::ResponseModifyPeer(const ResponseModifyPeer& from)
-  : ::google::protobuf::Message() {
-  SharedCtor();
-  MergeFrom(from);
-}
-
-void ResponseModifyPeer::SharedCtor() {
-  _cached_size_ = 0;
-  status_ = NULL;
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-}
-
-ResponseModifyPeer::~ResponseModifyPeer() {
-  SharedDtor();
-}
-
-void ResponseModifyPeer::SharedDtor() {
-  if (this != default_instance_) {
-    delete status_;
-  }
-}
-
-void ResponseModifyPeer::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* ResponseModifyPeer::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return ResponseModifyPeer_descriptor_;
-}
-
-const ResponseModifyPeer& ResponseModifyPeer::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_peers_2eproto();  return *default_instance_;
-}
-
-ResponseModifyPeer* ResponseModifyPeer::default_instance_ = NULL;
-
-ResponseModifyPeer* ResponseModifyPeer::New() const {
-  return new ResponseModifyPeer;
-}
-
-void ResponseModifyPeer::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (has_status()) {
-      if (status_ != NULL) status_->::rsctrl::core::Status::Clear();
-    }
-  }
-  peers_.Clear();
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-  mutable_unknown_fields()->Clear();
-}
-
-bool ResponseModifyPeer::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
-  ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required .rsctrl.core.Status status = 1;
-      case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_status()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(18)) goto parse_peers;
-        break;
-      }
-      
-      // repeated .rsctrl.core.Person peers = 2;
-      case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_peers:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-                input, add_peers()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(18)) goto parse_peers;
-        if (input->ExpectAtEnd()) return true;
-        break;
-      }
-      
-      default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-  return true;
-#undef DO_
-}
-
-void ResponseModifyPeer::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // required .rsctrl.core.Status status = 1;
-  if (has_status()) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      1, this->status(), output);
-  }
-  
-  // repeated .rsctrl.core.Person peers = 2;
-  for (int i = 0; i < this->peers_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      2, this->peers(i), output);
-  }
-  
-  if (!unknown_fields().empty()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        unknown_fields(), output);
-  }
-}
-
-::google::protobuf::uint8* ResponseModifyPeer::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
-  // required .rsctrl.core.Status status = 1;
-  if (has_status()) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        1, this->status(), target);
-  }
-  
-  // repeated .rsctrl.core.Person peers = 2;
-  for (int i = 0; i < this->peers_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        2, this->peers(i), target);
-  }
-  
-  if (!unknown_fields().empty()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        unknown_fields(), target);
-  }
-  return target;
-}
-
-int ResponseModifyPeer::ByteSize() const {
-  int total_size = 0;
-  
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required .rsctrl.core.Status status = 1;
-    if (has_status()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-          this->status());
-    }
-    
-  }
-  // repeated .rsctrl.core.Person peers = 2;
-  total_size += 1 * this->peers_size();
-  for (int i = 0; i < this->peers_size(); i++) {
-    total_size +=
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        this->peers(i));
-  }
-  
-  if (!unknown_fields().empty()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        unknown_fields());
-  }
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void ResponseModifyPeer::MergeFrom(const ::google::protobuf::Message& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  const ResponseModifyPeer* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const ResponseModifyPeer*>(
-      &from);
-  if (source == NULL) {
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-    MergeFrom(*source);
-  }
-}
-
-void ResponseModifyPeer::MergeFrom(const ResponseModifyPeer& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  peers_.MergeFrom(from.peers_);
-  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_status()) {
-      mutable_status()->::rsctrl::core::Status::MergeFrom(from.status());
-    }
-  }
-  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
-}
-
-void ResponseModifyPeer::CopyFrom(const ::google::protobuf::Message& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void ResponseModifyPeer::CopyFrom(const ResponseModifyPeer& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool ResponseModifyPeer::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
-  
-  if (has_status()) {
-    if (!this->status().IsInitialized()) return false;
-  }
-  for (int i = 0; i < peers_size(); i++) {
-    if (!this->peers(i).IsInitialized()) return false;
-  }
-  return true;
-}
-
-void ResponseModifyPeer::Swap(ResponseModifyPeer* other) {
-  if (other != this) {
-    std::swap(status_, other->status_);
-    peers_.Swap(&other->peers_);
-    std::swap(_has_bits_[0], other->_has_bits_[0]);
-    _unknown_fields_.Swap(&other->_unknown_fields_);
-    std::swap(_cached_size_, other->_cached_size_);
-  }
-}
-
-::google::protobuf::Metadata ResponseModifyPeer::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = ResponseModifyPeer_descriptor_;
-  metadata.reflection = ResponseModifyPeer_reflection_;
   return metadata;
 }
 

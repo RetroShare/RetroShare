@@ -39,6 +39,7 @@ class Location;
 class Person;
 class File;
 class Dir;
+class Timestamp;
 class SystemStatus;
 class Bandwidth;
 class BandwidthSet;
@@ -158,6 +159,7 @@ enum PackageId {
   CHAT = 3,
   SEARCH = 4,
   FILES = 5,
+  STREAM = 6,
   GXS = 1000
 };
 bool PackageId_IsValid(int value);
@@ -937,6 +939,98 @@ class Dir : public ::google::protobuf::Message {
   
   void InitAsDefaultInstance();
   static Dir* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Timestamp : public ::google::protobuf::Message {
+ public:
+  Timestamp();
+  virtual ~Timestamp();
+  
+  Timestamp(const Timestamp& from);
+  
+  inline Timestamp& operator=(const Timestamp& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Timestamp& default_instance();
+  
+  void Swap(Timestamp* other);
+  
+  // implements Message ----------------------------------------------
+  
+  Timestamp* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Timestamp& from);
+  void MergeFrom(const Timestamp& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required uint64 secs = 1;
+  inline bool has_secs() const;
+  inline void clear_secs();
+  static const int kSecsFieldNumber = 1;
+  inline ::google::protobuf::uint64 secs() const;
+  inline void set_secs(::google::protobuf::uint64 value);
+  
+  // required uint32 microsecs = 2;
+  inline bool has_microsecs() const;
+  inline void clear_microsecs();
+  static const int kMicrosecsFieldNumber = 2;
+  inline ::google::protobuf::uint32 microsecs() const;
+  inline void set_microsecs(::google::protobuf::uint32 value);
+  
+  // @@protoc_insertion_point(class_scope:rsctrl.core.Timestamp)
+ private:
+  inline void set_has_secs();
+  inline void clear_has_secs();
+  inline void set_has_microsecs();
+  inline void clear_has_microsecs();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::google::protobuf::uint64 secs_;
+  ::google::protobuf::uint32 microsecs_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_core_2eproto();
+  friend void protobuf_AssignDesc_core_2eproto();
+  friend void protobuf_ShutdownFile_core_2eproto();
+  
+  void InitAsDefaultInstance();
+  static Timestamp* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -2106,6 +2200,54 @@ Dir::files() const {
 inline ::google::protobuf::RepeatedPtrField< ::rsctrl::core::File >*
 Dir::mutable_files() {
   return &files_;
+}
+
+// -------------------------------------------------------------------
+
+// Timestamp
+
+// required uint64 secs = 1;
+inline bool Timestamp::has_secs() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void Timestamp::set_has_secs() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void Timestamp::clear_has_secs() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void Timestamp::clear_secs() {
+  secs_ = GOOGLE_ULONGLONG(0);
+  clear_has_secs();
+}
+inline ::google::protobuf::uint64 Timestamp::secs() const {
+  return secs_;
+}
+inline void Timestamp::set_secs(::google::protobuf::uint64 value) {
+  set_has_secs();
+  secs_ = value;
+}
+
+// required uint32 microsecs = 2;
+inline bool Timestamp::has_microsecs() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void Timestamp::set_has_microsecs() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void Timestamp::clear_has_microsecs() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void Timestamp::clear_microsecs() {
+  microsecs_ = 0u;
+  clear_has_microsecs();
+}
+inline ::google::protobuf::uint32 Timestamp::microsecs() const {
+  return microsecs_;
+}
+inline void Timestamp::set_microsecs(::google::protobuf::uint32 value) {
+  set_has_microsecs();
+  microsecs_ = value;
 }
 
 // -------------------------------------------------------------------

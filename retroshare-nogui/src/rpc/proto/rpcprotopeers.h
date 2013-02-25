@@ -36,6 +36,9 @@ public:
 
 	virtual int processRequestPeers(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg);
 	virtual int processAddPeer(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg);
+
+	// these aren't implemented yet.
+	virtual int processExaminePeer(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg);
 	virtual int processModifyPeer(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg);
 };
 

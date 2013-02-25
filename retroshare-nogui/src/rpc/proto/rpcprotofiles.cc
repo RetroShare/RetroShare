@@ -105,7 +105,7 @@ int RpcProtoFiles::processMsg(uint32_t chan_id, uint32_t msg_id, uint32_t req_id
 
 
 
-int RpcProtoFiles::processReqTransferList(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg)
+int RpcProtoFiles::processReqTransferList(uint32_t chan_id, uint32_t /* msg_id */, uint32_t req_id, const std::string &msg)
 {
 	std::cerr << "RpcProtoFiles::processReqTransferList()";
 	std::cerr << std::endl;
@@ -204,7 +204,7 @@ int RpcProtoFiles::processReqTransferList(uint32_t chan_id, uint32_t msg_id, uin
 	return 1;
 }
 
-int RpcProtoFiles::processReqControlDownload(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg)
+int RpcProtoFiles::processReqControlDownload(uint32_t chan_id, uint32_t /* msg_id */, uint32_t req_id, const std::string &msg)
 {
 	std::cerr << "RpcProtoFiles::processReqControlDownload()";
 	std::cerr << std::endl;
