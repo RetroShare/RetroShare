@@ -106,4 +106,12 @@ namespace GXS_SERV {
 }
 
 
+// GENERIC GXS MACROS
+#define IS_MSG_NEW(status)                      (status & GXS_SERV::GXS_MSG_STATUS_UNPROCESSED)
+#define IS_MSG_UNREAD(status)                   (status & GXS_SERV::GXS_MSG_STATUS_UNREAD)
+#define IS_GROUP_ADMIN(subscribeFlags)          (subscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
+#define IS_GROUP_SUBSCRIBED(subscribeFlags)     (subscribeFlags & (GXS_SERV::GROUP_SUBSCRIBE_ADMIN | GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED))
+
+
+
 #endif // RSGXSFLAGS_H
