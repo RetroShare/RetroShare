@@ -61,6 +61,12 @@ private slots:
 
 	void insertWikiGroups();
 
+	// GroupTreeWidget stuff.
+	void groupListCustomPopupMenu(QPoint point);
+        void subscribeToGroup();
+        void unsubscribeToGroup();
+	void wikiGroupChanged(const QString &groupId);
+
 private:
 
 void 	clearWikiPage();
@@ -71,6 +77,16 @@ void 	updateWikiPage(const RsWikiSnapshot &page);
 bool 	getSelectedPage(std::string &groupId, std::string &pageId, std::string &origPageId);	
 std::string getSelectedPage();
 std::string getSelectedGroup();
+
+
+      // Using GroupTreeWidget.
+void    wikiSubscribe(bool subscribe);
+void 	GroupMetaDataToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo);
+void 	insertGroupsData(const std::list<RsGroupMetaData> &wikiList);
+
+
+void 	requestGroupMeta();
+void 	loadGroupMeta(const uint32_t &token);
 
 void 	requestGroupList();
 void 	loadGroupData(const uint32_t &token);
@@ -91,6 +107,13 @@ void 	loadWikiPage(const uint32_t &token);
 	std::string mGroupSelected;
 	std::string mPageSelected;
 	std::string mModSelected;
+
+
+	QTreeWidgetItem *mYourGroups;
+	QTreeWidgetItem *mSubscribedGroups;
+	QTreeWidgetItem *mPopularGroups;
+	QTreeWidgetItem *mOtherGroups;
+	std::string mGroupId; // From GroupTreeWidget
 
 	/* UI - from Designer */
 	Ui::WikiDialog ui;

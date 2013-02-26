@@ -105,14 +105,24 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>268</width>
-            <height>456</height>
+            <width>241</width>
+            <height>454</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <property name="margin">
             <number>0</number>
            </property>
+           <item>
+            <widget class="GroupTreeWidget" name="groupTreeWidget" native="true">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>150</height>
+              </size>
+             </property>
+            </widget>
+           </item>
            <item>
             <widget class="QTreeWidget" name="treeWidget_Pages">
              <column>
@@ -339,8 +349,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>465</width>
-            <height>456</height>
+            <width>491</width>
+            <height>454</height>
            </rect>
           </property>
           <property name="styleSheet">
@@ -380,6 +390,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>GroupTreeWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/common/GroupTreeWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="Wiki_images.qrc"/>
  </resources>

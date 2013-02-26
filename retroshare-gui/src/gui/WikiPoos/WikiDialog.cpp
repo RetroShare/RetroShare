@@ -21,6 +21,7 @@
  *
  */
 
+#include <QMenu>
 #include <QFile>
 #include <QFileInfo>
 
@@ -31,6 +32,10 @@
 #include "gui/gxs/WikiGroupDialog.h"
 
 #include <retroshare/rswiki.h>
+
+// These should be in retroshare/ folder.
+#include "gxs/rsgxsflags.h"
+
 
 #include <iostream>
 #include <sstream>
@@ -49,13 +54,29 @@
 
 #define WIKI_DEBUG 1
 
-#define WIKIDIALOG_LISTING_GROUPDATA		2
+#define WIKIDIALOG_LISTING_GROUPMETA		2
+#define WIKIDIALOG_LISTING_GROUPDATA		3
 #define WIKIDIALOG_LISTING_PAGES		5
 #define WIKIDIALOG_MOD_LIST			6
 #define WIKIDIALOG_MOD_PAGES			7
 #define WIKIDIALOG_WIKI_PAGE			8
 
 #define WIKIDIALOG_EDITTREE_DATA		9
+
+
+
+/* Images for TreeWidget (Copied from GxsForums.cpp) */
+#define IMAGE_FOLDER         ":/images/folder16.png"
+#define IMAGE_FOLDERGREEN    ":/images/folder_green.png"
+#define IMAGE_FOLDERRED      ":/images/folder_red.png"
+#define IMAGE_FOLDERYELLOW   ":/images/folder_yellow.png"
+#define IMAGE_FORUM          ":/images/konversation.png"
+#define IMAGE_SUBSCRIBE      ":/images/edit_add24.png"
+#define IMAGE_UNSUBSCRIBE    ":/images/cancel.png"
+#define IMAGE_INFO           ":/images/info16.png"
+#define IMAGE_NEWFORUM       ":/images/new_forum16.png"
+#define IMAGE_FORUMAUTHD     ":/images/konv_message2.png"
+#define IMAGE_COPYLINK       ":/images/copyrslink.png"
 
 
 /** Constructor */
@@ -79,12 +100,29 @@ WikiDialog::WikiDialog(QWidget *parent)
 
 	connect( ui.treeWidget_Pages, SIGNAL(itemSelectionChanged()), this, SLOT(groupTreeChanged()));
 
+
+	// GroupTreeWidget.
+        connect(ui.groupTreeWidget, SIGNAL(treeCustomContextMenuRequested(QPoint)), this, SLOT(groupListCustomPopupMenu(QPoint)));
+        connect(ui.groupTreeWidget, SIGNAL(treeItemActivated(QString)), this, SLOT(wikiGroupChanged(QString)));
+
+
+
+
+
 	QTimer *timer = new QTimer(this);
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
 	timer->start(1000);
 
 	/* setup TokenQueue */
         mWikiQueue = new TokenQueue(rsWiki->getTokenService(), this);
+
+
+	/* Setup Group Tree */
+        mYourGroups = ui.groupTreeWidget->addCategoryItem(tr("My Groups"), QIcon(IMAGE_FOLDER), true);
+        mSubscribedGroups = ui.groupTreeWidget->addCategoryItem(tr("Subscribed Groups"), QIcon(IMAGE_FOLDERRED), true);
+        mPopularGroups = ui.groupTreeWidget->addCategoryItem(tr("Popular Groups"), QIcon(IMAGE_FOLDERGREEN), false);
+        mOtherGroups = ui.groupTreeWidget->addCategoryItem(tr("Other Groups"), QIcon(IMAGE_FOLDERYELLOW), false);
+
 
 }
 
@@ -373,7 +411,47 @@ std::string WikiDialog::getSelectedGroup()
 
 void WikiDialog::insertWikiGroups()
 {
-	requestGroupList();
+	//requestGroupList();
+	requestGroupMeta();
+}
+
+
+void WikiDialog::requestGroupMeta()
+{
+	std::cerr << "WikiDialog::requestGroupMeta()";
+	std::cerr << std::endl;
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+
+	uint32_t token;
+	mWikiQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_SUMMARY, opts, WIKIDIALOG_LISTING_GROUPMETA);
+}
+
+
+void WikiDialog::loadGroupMeta(const uint32_t &token)
+{
+	std::cerr << "WikiDialog::loadGroupMeta()";
+	std::cerr << std::endl;
+
+	std::list<RsGroupMetaData> groupMeta;
+
+        if (!rsWiki->getGroupSummary(token, groupMeta))
+        {
+                std::cerr << "WikiDialog::loadGroupMeta() Error getting GroupMeta";
+                std::cerr << std::endl;
+                return;
+        }
+
+        if (groupMeta.size() > 0)
+        {
+                insertGroupsData(groupMeta);
+        }
+        else
+        {
+                std::cerr << "WikiDialog::loadGroupMeta() ERROR No Groups...";
+                std::cerr << std::endl;
+        }
 }
 
 
@@ -400,15 +478,15 @@ void WikiDialog::loadGroupData(const uint32_t &token)
 	std::vector<RsWikiCollection> datavector;
 	std::vector<RsWikiCollection>::iterator vit;
 
-        if (!rsWiki->getCollections(token, datavector))
-        {
-                std::cerr << "WikiDialog::loadGroupData() Error getting GroupData";
-                std::cerr << std::endl;
-                return;
-        }
+	if (!rsWiki->getCollections(token, datavector))
+	{
+		std::cerr << "WikiDialog::loadGroupData() Error getting GroupData";
+		std::cerr << std::endl;
+		return;
+	}
 
-        for(vit = datavector.begin(); vit != datavector.end(); vit++)
-        {
+	for(vit = datavector.begin(); vit != datavector.end(); vit++)
+	{
 		RsWikiCollection &group = *vit;
 
 		/* Add Widget, and request Pages */
@@ -428,8 +506,9 @@ void WikiDialog::loadGroupData(const uint32_t &token)
 
 		requestPages(groupIds);
 		//requestOriginalPages(groupIds);
-        }
+	}
 }
+
 
 
 void WikiDialog::requestPages(const std::list<RsGxsGroupId> &groupIds)
@@ -439,7 +518,7 @@ void WikiDialog::requestPages(const std::list<RsGxsGroupId> &groupIds)
 
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-        opts.mOptions = (RS_TOKREQOPT_MSG_LATEST | RS_TOKREQOPT_MSG_THREAD); // We want latest version of Thread Heads.
+	opts.mOptions = (RS_TOKREQOPT_MSG_LATEST | RS_TOKREQOPT_MSG_THREAD); // We want latest version of Thread Heads.
 	uint32_t token;
 	mWikiQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, WIKIDIALOG_LISTING_PAGES);
 }
@@ -456,7 +535,7 @@ void WikiDialog::loadPages(const uint32_t &token)
 
 	std::vector<RsWikiSnapshot> snapshots;
 	std::vector<RsWikiSnapshot>::iterator vit;
-        if (!rsWiki->getSnapshots(token, snapshots))
+	if (!rsWiki->getSnapshots(token, snapshots))
 	{
 		// ERROR
 		return;
@@ -464,19 +543,19 @@ void WikiDialog::loadPages(const uint32_t &token)
 
 	for(vit = snapshots.begin(); vit != snapshots.end(); vit++)
 	{
-                RsWikiSnapshot page = *vit;
+		RsWikiSnapshot page = *vit;
 		if (!groupItem)
 		{
 			/* find the entry */
-        		int itemCount = ui.treeWidget_Pages->topLevelItemCount();
-        		for (int nIndex = 0; nIndex < itemCount; nIndex++) 
-        		{
+			int itemCount = ui.treeWidget_Pages->topLevelItemCount();
+			for (int nIndex = 0; nIndex < itemCount; nIndex++) 
+			{
 				QTreeWidgetItem *tmpItem = ui.treeWidget_Pages->topLevelItem(nIndex);
-                		std::string tmpid = tmpItem->data(WIKI_GROUP_COL_GROUPID, 
+				std::string tmpid = tmpItem->data(WIKI_GROUP_COL_GROUPID, 
 						Qt::DisplayRole).toString().toStdString();
 				if (tmpid == page.mMeta.mGroupId)
 				{
-                			groupItem = tmpItem;
+					groupItem = tmpItem;
 					break;
 				}
 			}
@@ -533,7 +612,7 @@ void WikiDialog::loadWikiPage(const uint32_t &token)
 
 	// Should only have one WikiPage....
 	std::vector<RsWikiSnapshot> snapshots;
-        if (!rsWiki->getSnapshots(token, snapshots))
+	if (!rsWiki->getSnapshots(token, snapshots))
 	{
 		std::cerr << "WikiDialog::loadWikiPage() ERROR";
 		std::cerr << std::endl;
@@ -573,6 +652,10 @@ void WikiDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 		/* now switch on req */
 		switch(req.mUserType)
 		{
+			case WIKIDIALOG_LISTING_GROUPMETA:
+				loadGroupMeta(req.mToken);
+				break;
+
 			case WIKIDIALOG_LISTING_GROUPDATA:
 				loadGroupData(req.mToken);
 				break;
@@ -585,7 +668,7 @@ void WikiDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 				loadWikiPage(req.mToken);
 				break;
 
-#define GXSGROUP_NEWGROUPID             1
+#define GXSGROUP_NEWGROUPID	     1
 			case GXSGROUP_NEWGROUPID:
 				insertWikiGroups();
 				break;
@@ -601,4 +684,181 @@ void WikiDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 	
 	
 
+/************************** Group Widget Stuff *********************************/
+
+
+void WikiDialog::subscribeToGroup()
+{
+        wikiSubscribe(true);
+}
+
+void WikiDialog::unsubscribeToGroup()
+{
+        wikiSubscribe(false);
+}
+
+void WikiDialog::wikiSubscribe(bool subscribe)
+{
+        if (mGroupId.empty()) {
+                return;
+        }
+
+        uint32_t token;
+        rsWiki->subscribeToGroup(token, mGroupId, subscribe);
+}
+
+
+void WikiDialog::wikiGroupChanged(const QString &groupId)
+{
+	mGroupId = groupId.toStdString();
+
+        if (mGroupId.empty()) {
+                return;
+        }
+
+	std::list<RsGxsGroupId> groupIds;
+	groupIds.push_back(mGroupId);
+	requestPages(groupIds);
+
+}
+
+
+void WikiDialog::groupListCustomPopupMenu(QPoint /*point*/)
+{
+
+	int subscribeFlags = ui.groupTreeWidget->subscribeFlags(QString::fromStdString(mGroupId));
+
+	QMenu contextMnu(this);
+
+	std::cerr << "WikiDialog::groupListCustomPopupMenu()";
+	std::cerr << std::endl;
+	std::cerr << "    mGroupId: " << mGroupId;
+	std::cerr << std::endl;
+	std::cerr << "    subscribeFlags: " << subscribeFlags;
+	std::cerr << std::endl;
+	std::cerr << "    IS_GROUP_SUBSCRIBED(): " << IS_GROUP_SUBSCRIBED(subscribeFlags);
+	std::cerr << std::endl;
+	std::cerr << "    IS_GROUP_ADMIN(): " << IS_GROUP_ADMIN(subscribeFlags);
+	std::cerr << std::endl;
+	std::cerr << std::endl;
+
+	QAction *action = contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Subscribe to Group"), this, SLOT(subscribeToGroup()));
+	action->setDisabled (mGroupId.empty() || IS_GROUP_SUBSCRIBED(subscribeFlags));
+
+	action = contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Unsubscribe to Group"), this, SLOT(unsubscribeToGroup()));
+	action->setEnabled (!mGroupId.empty() && IS_GROUP_SUBSCRIBED(subscribeFlags));
+
+	/************** NOT ENABLED YET *****************/
+
+	//if (!Settings->getForumOpenAllInNewTab()) {
+	//	action = contextMnu.addAction(QIcon(""), tr("Open in new tab"), this, SLOT(openInNewTab()));
+	//	if (mForumId.empty() || forumThreadWidget(mForumId)) {
+	//		action->setEnabled(false);
+	//	}
+	//}
+
+	//contextMnu.addSeparator();
+
+	//contextMnu.addAction(QIcon(IMAGE_NEWFORUM), tr("New Forum"), this, SLOT(newforum()));
+
+	//action = contextMnu.addAction(QIcon(IMAGE_INFO), tr("Show Forum Details"), this, SLOT(showForumDetails()));
+	//action->setEnabled (!mForumId.empty ());
+
+	//action = contextMnu.addAction(QIcon(":/images/settings16.png"), tr("Edit Forum Details"), this, SLOT(editForumDetails()));
+	//action->setEnabled (!mForumId.empty () && IS_GROUP_ADMIN(subscribeFlags));
+
+	//QAction *shareKeyAct = new QAction(QIcon(":/images/gpgp_key_generate.png"), tr("Share Forum"), &contextMnu);
+	//connect( shareKeyAct, SIGNAL( triggered() ), this, SLOT( shareKey() ) );
+	//shareKeyAct->setEnabled(!mForumId.empty() && IS_GROUP_ADMIN(subscribeFlags));
+	//contextMnu.addAction( shareKeyAct);
+
+	//QAction *restoreKeysAct = new QAction(QIcon(":/images/settings16.png"), tr("Restore Publish Rights for Forum" ), &contextMnu);
+	//connect( restoreKeysAct , SIGNAL( triggered() ), this, SLOT( restoreForumKeys() ) );
+	//restoreKeysAct->setEnabled(!mForumId.empty() && !IS_GROUP_ADMIN(subscribeFlags));
+	//contextMnu.addAction( restoreKeysAct);
+
+	//action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyForumLink()));
+	//action->setEnabled(!mForumId.empty());
+
+	//contextMnu.addSeparator();
+
+	contextMnu.exec(QCursor::pos());
+}
+
+
+
+
+
+void WikiDialog::insertGroupsData(const std::list<RsGroupMetaData> &wikiList)
+{
+	std::list<RsGroupMetaData>::const_iterator it;
+
+	QList<GroupItemInfo> adminList;
+	QList<GroupItemInfo> subList;
+	QList<GroupItemInfo> popList;
+	QList<GroupItemInfo> otherList;
+	std::multimap<uint32_t, GroupItemInfo> popMap;
+
+	for (it = wikiList.begin(); it != wikiList.end(); it++) {
+		/* sort it into Publish (Own), Subscribed, Popular and Other */
+		uint32_t flags = it->mSubscribeFlags;
+
+		GroupItemInfo groupItemInfo;
+		GroupMetaDataToGroupItemInfo(*it, groupItemInfo);
+
+		if (IS_GROUP_ADMIN(flags)) {
+			adminList.push_back(groupItemInfo);
+		} else if (IS_GROUP_SUBSCRIBED(flags)) {
+			/* subscribed forum */
+			subList.push_back(groupItemInfo);
+		} else {
+			/* rate the others by popularity */
+			popMap.insert(std::make_pair(it->mPop, groupItemInfo));
+		}
+	}
+
+	/* iterate backwards through popMap - take the top 5 or 10% of list */
+	uint32_t popCount = 5;
+	if (popCount < popMap.size() / 10)
+	{
+		popCount = popMap.size() / 10;
+	}
+
+	uint32_t i = 0;
+	uint32_t popLimit = 0;
+	std::multimap<uint32_t, GroupItemInfo>::reverse_iterator rit;
+	for(rit = popMap.rbegin(); ((rit != popMap.rend()) && (i < popCount)); rit++, i++) ;
+	if (rit != popMap.rend()) {
+		popLimit = rit->first;
+	}
+
+	for (rit = popMap.rbegin(); rit != popMap.rend(); rit++) {
+		if (rit->second.popularity < (int) popLimit) {
+			otherList.append(rit->second);
+		} else {
+			popList.append(rit->second);
+		}
+	}
+
+	/* now we can add them in as a tree! */
+	ui.groupTreeWidget->fillGroupItems(mYourGroups, adminList);
+	ui.groupTreeWidget->fillGroupItems(mSubscribedGroups, subList);
+	ui.groupTreeWidget->fillGroupItems(mPopularGroups, popList);
+	ui.groupTreeWidget->fillGroupItems(mOtherGroups, otherList);
+
+}
+
+void WikiDialog::GroupMetaDataToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo)
+{
+
+	groupItemInfo.id = QString::fromStdString(groupInfo.mGroupId);
+	groupItemInfo.name = QString::fromUtf8(groupInfo.mGroupName.c_str());
+	//groupItemInfo.description = QString::fromUtf8(groupInfo.forumDesc);
+	groupItemInfo.popularity = groupInfo.mPop;
+	groupItemInfo.lastpost = QDateTime::fromTime_t(groupInfo.mLastPost);
+	groupItemInfo.subscribeFlags = groupInfo.mSubscribeFlags;
+
+	groupItemInfo.icon = QIcon(IMAGE_FORUM);
+
+}
 
