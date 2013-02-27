@@ -1619,6 +1619,43 @@ std::string ftController::getPartialsDirectory()
 	return mPartialsPath;
 }
 
+bool ftController::setDestinationDirectory(const std::string& hash,const std::string& dest_dir)
+{
+	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+	std::map<std::string, ftFileControl*>::iterator it = mDownloads.find(hash);
+
+	if (it == mDownloads.end())
+		return false;
+
+	std::cerr << "(II) Changing destination of file " << it->second->mDestination << std::endl;
+
+	it->second->mDestination = dest_dir + '/' + it->second->mName ;
+
+	std::cerr << "(II) ...to " << it->second->mDestination << std::endl;
+
+	return true ;
+}
+bool ftController::setDestinationName(const std::string& hash,const std::string& dest_name)
+{
+	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+	std::map<std::string, ftFileControl*>::iterator it = mDownloads.find(hash);
+
+	if (it == mDownloads.end())
+		return false;
+
+	std::cerr << "(II) Changing destination of file " << it->second->mDestination << std::endl;
+
+	std::string dest_path ;
+	RsDirUtil::removeTopDir(it->second->mDestination, dest_path); /* remove fname */
+
+	it->second->mDestination = dest_path + '/' + dest_name ;
+	it->second->mName = dest_name ;
+
+	std::cerr << "(II) ...to " << it->second->mDestination << std::endl;
+
+	return true ;
+}
+
 bool 	ftController::FileDetails(const std::string &hash, FileInfo &info)
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/

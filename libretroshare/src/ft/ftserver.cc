@@ -288,6 +288,14 @@ bool ftServer::FileRequest(const std::string& fname, const std::string& hash, ui
 	return true ;
 }
 
+bool ftServer::setDestinationName(const std::string& hash,const std::string& name)
+{
+	return mFtController->setDestinationName(hash,name);
+}
+bool ftServer::setDestinationDirectory(const std::string& hash,const std::string& directory)
+{
+	return mFtController->setDestinationDirectory(hash,directory);
+}
 bool ftServer::setChunkStrategy(const std::string& hash,FileChunksInfo::ChunkStrategy s)
 {
 	return mFtController->setChunkStrategy(hash,s);

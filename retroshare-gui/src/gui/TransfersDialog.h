@@ -77,7 +77,7 @@ public slots:
 private slots:
 
     /** Create the context popup menu and it's submenus */
-    void downloadListCostumPopupMenu( QPoint point );
+    void downloadListCustomPopupMenu( QPoint point );
 
     void cancel();
     void forceCheck();
@@ -86,6 +86,9 @@ private slots:
 
     void copyLink();
     void pasteLink();
+    void renameFile();
+    void setDestinationDirectory();
+    void chooseDestinationDirectory();
 
 //    void rootdecorated();
 //    void rootisnotdecorated();
@@ -167,6 +170,8 @@ private:
     QAction *detailsfileAct;
     QAction *toggleShowCacheTransfersAct;
     QAction *openCollectionAct;
+    QAction *renameFileAct;
+    QAction *specifyDestinationDirectoryAct;
 
     bool m_bProcessSettings;
     void processSettings(bool bLoad);

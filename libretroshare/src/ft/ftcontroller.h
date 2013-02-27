@@ -146,6 +146,8 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 		bool 	FileClearCompleted();
 		bool 	FlagFileComplete(std::string hash);
 		bool  getFileDownloadChunksDetails(const std::string& hash,FileChunksInfo& info);
+		bool  setDestinationName(const std::string& hash,const std::string& dest_name) ;
+		bool  setDestinationDirectory(const std::string& hash,const std::string& dest_name) ;
 
 		// Download speed
 		bool getPriority(const std::string& hash,DwlSpeed& p);

@@ -24,6 +24,8 @@
 #endif
 
 #include <QMenu>
+#include <QInputDialog>
+#include <QFileDialog>
 #include <QStandardItemModel>
 #include <QTreeView>
 #include <QShortcut>
@@ -182,7 +184,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
     m_bProcessSettings = false;
 
-    connect( ui.downloadList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( downloadListCostumPopupMenu( QPoint ) ) );
+    connect( ui.downloadList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( downloadListCustomPopupMenu( QPoint ) ) );
 
     // Set Download list model
     DLListModel = new QStandardItemModel(0,ID + 1);
@@ -397,6 +399,10 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 	connect(chunkRandomAct, SIGNAL(triggered()), this, SLOT(chunkRandom()));
 	playAct = new QAction(QIcon(IMAGE_PLAY), tr( "Play" ), this );
 	connect( playAct , SIGNAL( triggered() ), this, SLOT( openTransfer() ) );
+	renameFileAct = new QAction(QIcon(IMAGE_PRIORITYNORMAL), tr("Rename file..."), this);
+	connect(renameFileAct, SIGNAL(triggered()), this, SLOT(renameFile()));
+	specifyDestinationDirectoryAct = new QAction(QIcon(IMAGE_SEARCH),tr("Specify..."),this) ;
+	connect(specifyDestinationDirectoryAct,SIGNAL(triggered()),this,SLOT(chooseDestinationDirectory())) ;
 
     // load settings
     processSettings(true);
@@ -489,7 +495,7 @@ void TransfersDialog::processSettings(bool bLoad)
 //		RsAutoUpdatePage::keyPressEvent(e) ;
 //}
 
-void TransfersDialog::downloadListCostumPopupMenu( QPoint /*point*/ )
+void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 {
 	std::set<std::string> items;
 	std::set<std::string>::iterator it;
@@ -500,7 +506,7 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint /*point*/ )
 	/* check which item is selected
 	 * - if it is completed - play should appear in menu
 	 */
-	std::cerr << "TransfersDialog::downloadListCostumPopupMenu()" << std::endl;
+	std::cerr << "TransfersDialog::downloadListCustomPopupMenu()" << std::endl;
 	
 	FileInfo info;
 
@@ -543,7 +549,7 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint /*point*/ )
 	chunkMenu.addAction(chunkStreamingAct);
 	chunkMenu.addAction(chunkRandomAct);
 
-        QMenu contextMnu( this );
+	QMenu contextMnu( this );
 
 	if (addPlayOption)
 		contextMnu.addAction(playAct);
@@ -581,7 +587,34 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint /*point*/ )
 			contextMnu.addMenu(&priorityQueueMenu) ;
 
 		if(all_downloading)
+		{
 			contextMnu.addMenu( &chunkMenu);
+
+			if(single)
+				contextMnu.addAction(renameFileAct) ;
+
+			QMenu *directoryMenu = contextMnu.addMenu(QIcon(IMAGE_OPENFOLDER),tr("Set destination directory")) ;
+			directoryMenu->addAction(specifyDestinationDirectoryAct);
+
+			// Now get the list of existing directories.
+
+			std::list<SharedDirInfo> dirs ;
+			rsFiles->getSharedDirectories(dirs) ;
+
+			for(std::list<SharedDirInfo>::const_iterator it(dirs.begin());it!=dirs.end();++it)
+			{
+				// check for existence of directory name
+				QFile directory(QString::fromUtf8((*it).filename.c_str())) ;
+
+				if(!directory.exists()) continue ;
+				if(!(directory.permissions() & QFile::WriteOwner)) continue ;
+
+				QAction *act = new QAction(QString::fromUtf8((*it).virtualname.c_str()),directoryMenu) ;
+				act->setData(QString::fromUtf8((*it).filename.c_str())) ;
+				connect(act,SIGNAL(triggered()),this,SLOT(setDestinationDirectory())) ;
+				directoryMenu->addAction(act) ;
+			}
+		}
 
 		if(!all_paused)
 			contextMnu.addAction( pauseAct);
@@ -640,6 +673,36 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint /*point*/ )
 	contextMnu.addSeparator();
 
 	contextMnu.exec(QCursor::pos());
+}
+
+void TransfersDialog::chooseDestinationDirectory()
+{
+	QString dest_dir = QFileDialog::getExistingDirectory(this,tr("Choose directory")) ;
+
+	if(dest_dir.isNull())
+		return ;
+
+	std::set<std::string> items ;
+	getSelectedItems(&items, NULL);
+
+	for(std::set<std::string>::const_iterator it(items.begin());it!=items.end();++it)
+	{
+		std::cerr << "Setting new directory " << dest_dir.toUtf8().data() << " to file " << *it << std::endl;
+		rsFiles->setDestinationDirectory(*it,dest_dir.toUtf8().data() ) ;
+	}
+}
+void TransfersDialog::setDestinationDirectory()
+{
+	std::string dest_dir(qobject_cast<QAction*>(sender())->data().toString().toUtf8().data()) ;
+
+	std::set<std::string> items ;
+	getSelectedItems(&items, NULL);
+
+	for(std::set<std::string>::const_iterator it(items.begin());it!=items.end();++it)
+	{
+		std::cerr << "Setting new directory " << dest_dir << " to file " << *it << std::endl;
+		rsFiles->setDestinationDirectory(*it,dest_dir) ;
+	}
 }
 
 int TransfersDialog::addItem(int row, const FileInfo &fileInfo, const std::map<std::string, std::string> &versions)
@@ -711,13 +774,13 @@ int TransfersDialog::addItem(int row, const FileInfo &fileInfo, const std::map<s
 		DLListModel->setItem(row, PROGRESS, new ProgressItem(NULL));
 		DLListModel->setItem(row, PRIORITY, new PriorityItem(NULL));
 
-		QString fileName = QString::fromUtf8(fileInfo.fname.c_str());
-
-		DLListModel->setData(DLListModel->index(row, NAME), fileName);
 		DLListModel->setData(DLListModel->index(row, SIZE), QVariant((qlonglong) fileInfo.size));
 		DLListModel->setData(DLListModel->index(row, ID), fileHash);
-		DLListModel->setData(DLListModel->index(row, NAME), FilesDefs::getIconFromFilename(fileName), Qt::DecorationRole);
 	}
+	QString fileName = QString::fromUtf8(fileInfo.fname.c_str());
+
+	DLListModel->setData(DLListModel->index(row, NAME), fileName);
+	DLListModel->setData(DLListModel->index(row, NAME), FilesDefs::getIconFromFilename(fileName), Qt::DecorationRole);
 
 	DLListModel->setData(DLListModel->index(row, COMPLETED), QVariant((qlonglong)completed));
 	DLListModel->setData(DLListModel->index(row, DLSPEED), QVariant((double)fileDlspeed));
@@ -1499,11 +1562,62 @@ void TransfersDialog::changeSpeed(int speed)
 		rsFiles->changeDownloadSpeed(*it, speed);
 	}
 }
+static bool checkFileName(const QString& name)
+{
+	if(name.contains('/')) return false ;
+	if(name.contains('\\')) return false ;
+	if(name.contains('|')) return false ;
+	if(name.contains(':')) return false ;
+	if(name.contains('?')) return false ;
+	if(name.contains('>')) return false ;
+	if(name.contains('<')) return false ;
+	if(name.contains('*')) return false ;
 
+	if(name.length() == 0)
+		return false ;
+	if(name.length() > 255)
+		return false ;
+
+	return true ;
+}
+
+void TransfersDialog::renameFile()
+{
+	std::set<std::string> items;
+	getSelectedItems(&items, NULL);
+
+	if(items.size() != 1)
+	{
+		std::cerr << "Can't rename more than one file. This should not be called." << std::endl;
+		return ;
+	}
+
+	std::string hash = *(items.begin()) ;
+
+	FileInfo info ;
+	if (!rsFiles->FileDetails(hash, RS_FILE_HINTS_DOWNLOAD, info)) 
+		return ;
+
+	bool ok = true ;
+	bool first = true ;
+	QString new_name ;
+
+	do
+	{
+		new_name = QInputDialog::getText(NULL,tr("Change file name"),first?tr("Please enter a new file name"):tr("Please enter a new--and valid--filename"),QLineEdit::Normal,QString::fromUtf8(info.fname.c_str()),&ok) ;
+
+		if(!ok)
+			return ;
+		first = false ;
+	}
+	while(!checkFileName(new_name)) ;
+
+	rsFiles->setDestinationName(hash, new_name.toUtf8().data());
+}
 
 void TransfersDialog::changeQueuePosition(QueueMove mv)
 {
-//	std::cerr << "In changeQueuePosition (gui)"<< std::endl ;
+	//	std::cerr << "In changeQueuePosition (gui)"<< std::endl ;
 	std::set<std::string> items;
 	std::set<std::string>::iterator it;
 	getSelectedItems(&items, NULL);

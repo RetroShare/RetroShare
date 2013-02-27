@@ -121,6 +121,8 @@ class RsFiles
 		/// Returns false is we already have the file. Otherwise, initiates the dl and returns true.
 		virtual bool FileRequest(const std::string& fname, const std::string& hash, uint64_t size, const std::string& dest, TransferRequestFlags flags, const std::list<std::string>& srcIds) = 0;
 		virtual bool FileCancel(const std::string& hash) = 0;
+		virtual bool setDestinationDirectory(const std::string& hash,const std::string& new_path) = 0;
+		virtual bool setDestinationName(const std::string& hash,const std::string& new_name) = 0;
 		virtual bool setChunkStrategy(const std::string& hash,FileChunksInfo::ChunkStrategy) = 0;
 		virtual void setDefaultChunkStrategy(FileChunksInfo::ChunkStrategy) = 0;
 		virtual FileChunksInfo::ChunkStrategy defaultChunkStrategy() = 0;

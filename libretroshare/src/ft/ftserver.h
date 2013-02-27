@@ -129,6 +129,8 @@ virtual bool FileRequest(const std::string& fname, const std::string& hash, uint
 virtual bool FileCancel(const std::string& hash);
 virtual bool FileControl(const std::string& hash, uint32_t flags);
 virtual bool FileClearCompleted();
+virtual bool setDestinationDirectory(const std::string& hash,const std::string& new_path) ;
+virtual bool setDestinationName(const std::string& hash,const std::string& new_name) ;
 virtual bool setChunkStrategy(const std::string& hash,FileChunksInfo::ChunkStrategy s) ;
 virtual void setDefaultChunkStrategy(FileChunksInfo::ChunkStrategy) ;
 virtual FileChunksInfo::ChunkStrategy defaultChunkStrategy() ;
