@@ -130,7 +130,6 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
 
 	/* Set header resize modes and initial section sizes  */
 	QHeaderView * header = ui.dirTreeView->header () ;
-	header->setResizeMode (0, QHeaderView::Interactive);
 
 	header->resizeSection ( 0, 490 );
 	header->resizeSection ( 1, 70 );
@@ -326,6 +325,9 @@ void SharedFilesDialog::changeCurrentViewModel(int c)
 
 	ui.dirTreeView->setModel(proxyModel);
 	ui.dirTreeView->update();
+
+	QHeaderView * header = ui.dirTreeView->header () ;
+	header->setResizeMode (0, QHeaderView::Interactive);
 
 	ui.dirTreeView->header()->headerDataChanged(Qt::Horizontal,0,4) ;
 
