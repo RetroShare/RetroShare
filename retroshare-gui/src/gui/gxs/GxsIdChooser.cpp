@@ -38,6 +38,7 @@ void GxsIdChooser::loadIds(uint32_t chooserFlags, RsGxsId defId)
 {
 	mFlags = chooserFlags;
 	mDefaultId = defId;
+	clear();
 	loadPrivateIds();
 }
 

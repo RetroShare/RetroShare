@@ -421,8 +421,8 @@ void WikiEditDialog::setNewPage()
 	ui.headerFrame->setHeaderText(tr("Create New Wiki Page"));
 	setWindowTitle(tr("Create New Wiki Page"));
 
-        /* fill in the available OwnIds for signing */
-        ui.comboBox_IdChooser->loadIds(IDCHOOSER_ID_REQUIRED, "");
+        /* no need for for REQUIRED ID */
+        ui.comboBox_IdChooser->loadIds(0, "");
 
 	textReset();
 }
@@ -433,6 +433,8 @@ void WikiEditDialog::setRepublishMode(RsGxsMessageId &origMsgId)
         mRepublishMode = true;
         mRepublishOrigId = origMsgId;
 	ui.pushButton_Submit->setText(tr("Republish"));
+        /* no need for for REQUIRED ID */
+        ui.comboBox_IdChooser->loadIds(0, "");
 }
 
 
@@ -469,9 +471,9 @@ void WikiEditDialog::submitEdit()
 		mWikiSnapshot.mMeta.mGroupId = mWikiCollection.mMeta.mGroupId;
 		mWikiSnapshot.mMeta.mOrigMsgId = "";
 		mWikiSnapshot.mMeta.mMsgId = "";
-#if 0
-		mWikiSnapshot.mPrevId = "";
-#endif
+		mWikiSnapshot.mMeta.mParentId = "";
+		mWikiSnapshot.mMeta.mThreadId = "";
+
 		std::cerr << "WikiEditDialog::submitEdit() Is New Page";
 		std::cerr << std::endl;
 	}

@@ -596,6 +596,10 @@ void WikiDialog::wikiGroupChanged(const QString &groupId)
 	groupIds.push_back(mGroupId);
 	requestPages(groupIds);
 
+	int subscribeFlags = ui.groupTreeWidget->subscribeFlags(QString::fromStdString(mGroupId));
+	ui.toolButton_NewPage->setEnabled(IS_GROUP_ADMIN(subscribeFlags));
+	ui.toolButton_Republish->setEnabled(IS_GROUP_ADMIN(subscribeFlags));
+
 }
 
 

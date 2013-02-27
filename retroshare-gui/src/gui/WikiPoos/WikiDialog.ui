@@ -127,17 +127,17 @@
             <widget class="QTreeWidget" name="treeWidget_Pages">
              <column>
               <property name="text">
-               <string>Wiki Group</string>
+               <string>Page Name</string>
               </property>
              </column>
              <column>
               <property name="text">
-               <string>Page</string>
+               <string>Page Id</string>
               </property>
              </column>
              <column>
               <property name="text">
-               <string>Id</string>
+               <string>Orig Id</string>
               </property>
              </column>
             </widget>
