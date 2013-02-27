@@ -18,14 +18,14 @@
 #define INDEX_OTHER_UNCHECKED     5
 
 QString GroupFlagsWidget::_tooltips_on[4] = {
-	QObject::tr("Directory is browsable for friends from parent groups"),
-	QObject::tr("Directory is accessible by anonymous tunnels from friends from parent groups"),
+	QObject::tr("Directory is browsable for friends from groups"),
+	QObject::tr("Directory is accessible by anonymous tunnels from friends from groups"),
 	QObject::tr("Directory is browsable for any friend"),
 	QObject::tr("Directory is accessible by anonymous tunnels from any friend") 
 };
 QString GroupFlagsWidget::_tooltips_off[4] = {
-	QObject::tr("Directory is NOT browsable for friends from parent groups"),
-	QObject::tr("Directory is NOT accessible by anonymous tunnels from friends from parent groups"),
+	QObject::tr("Directory is NOT browsable for friends from groups"),
+	QObject::tr("Directory is NOT accessible by anonymous tunnels from friends from groups"),
 	QObject::tr("Directory is NOT browsable for any friend"),
 	QObject::tr("Directory is NOT accessible by anonymous tunnels from any friend")
 };

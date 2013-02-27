@@ -125,7 +125,7 @@ p, li { white-space: pre-wrap; }
            </column>
            <column>
             <property name="text">
-             <string>Parent groups</string>
+             <string>Groups</string>
             </property>
             <property name="toolTip">
              <string comment="If checked, the share is browsable by your friends"/>

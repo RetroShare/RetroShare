@@ -306,7 +306,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 	 ui.tabWidget->insertTab(2,searchDialog = new SearchDialog(), QIcon(IMAGE_SEARCH), tr("Search")) ;
 	 ui.tabWidget->insertTab(3,remoteSharedFiles = new RemoteSharedFilesDialog(), QIcon(IMAGE_SEARCH), tr("Friends files")) ;
 
-	 ui.tabWidget->addTab(localSharedFiles = new LocalSharedFilesDialog(), QIcon(IMAGE_SEARCH), tr("Your files")) ;
+	 ui.tabWidget->addTab(localSharedFiles = new LocalSharedFilesDialog(), QIcon(IMAGE_SEARCH), tr("My files")) ;
 
 	 //ui.tabWidget->addTab( new TurtleRouterStatistics(), tr("Router Statistics")) ;
 	 //ui.tabWidget->addTab( new TurtleRouterDialog(), tr("Router Requests")) ;
