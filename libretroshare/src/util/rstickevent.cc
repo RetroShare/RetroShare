@@ -85,9 +85,11 @@ void	RsTickEvent::tick_events()
 
 	for(it = toProcess.begin(); it != toProcess.end(); it++)
 	{
+#ifdef DEBUG_EVENTS
 		std::cerr << "RsTickEvent::tick_events() calling handle_event(";
 		std::cerr << it->mEventType << ", " << it->mEventLabel << ")";
 		std::cerr << std::endl;
+#endif // DEBUG_EVENTS
 		handle_event(it->mEventType, it->mEventLabel);
 	}
 }
@@ -121,8 +123,10 @@ void RsTickEvent::schedule_in(uint32_t event_type, uint32_t in_secs)
 
 void RsTickEvent::schedule_in(uint32_t event_type, uint32_t in_secs, const std::string &elabel)
 {
+#ifdef DEBUG_EVENTS
 	std::cerr << "RsTickEvent::schedule_in(" << event_type << ", " << elabel << ") in " << in_secs << " secs";
 	std::cerr << std::endl;
+#endif // DEBUG_EVENTS
 
 	time_t event_time = time(NULL) + in_secs;
 	RsTickEvent::schedule_event(event_type, event_time, elabel);
