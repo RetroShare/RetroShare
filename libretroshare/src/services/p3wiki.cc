@@ -308,6 +308,9 @@ bool p3Wiki::submitSnapshot(uint32_t &token, RsWikiSnapshot &snapshot)
 
 bool p3Wiki::submitComment(uint32_t &token, RsWikiComment &comment)
 {
+	std::cerr << "p3Wiki::submitComment(): " << comment;
+	std::cerr << std::endl;
+
         RsGxsWikiCommentItem* commentItem = new RsGxsWikiCommentItem();
         commentItem->comment = comment;
         commentItem->meta = comment.mMeta;

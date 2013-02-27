@@ -1,7 +1,10 @@
 #include "rsnxsitems.h"
 #include "rsbaseserial.h"
 
-#define RSSERIAL_DEBUG
+/***
+ * #define RSSERIAL_DEBUG	1
+ ***/
+
 const uint8_t RsNxsSyncGrpItem::FLAG_REQUEST = 0x001;
 const uint8_t RsNxsSyncGrpItem::FLAG_RESPONSE = 0x002;
 
@@ -110,7 +113,7 @@ RsItem* RsNxsSerialiser::deserialise(void *data, uint32_t *size) {
             return deserialNxsExtended(data, size);
         default:
             {
-#ifdef NXS_DEBUG
+#ifdef RSSERIAL_DEBUG
                 std::cerr << "RsNxsSerialiser::deserialise() : data has no type"
                           << std::endl;
 #endif

@@ -30,7 +30,9 @@
 #include "rsgxsnetservice.h"
 #include "rsgxsflags.h"
 
-#define NXS_NET_DEBUG
+/**
+ * #define NXS_NET_DEBUG	1
+ **/
 
 #define SYNC_PERIOD 12 // in microseconds every 10 seconds (1 second for testing)
 #define TRANSAC_TIMEOUT 5 // 5 seconds

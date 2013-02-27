@@ -44,6 +44,10 @@
  *   - mLruMap[AccessTS] => key (multimap)
  */
 
+/***
+ * #define DEBUG_RSMEMCACHE	1
+ ***/
+
 #define DEFAULT_MEM_CACHE_SIZE 100
 
 template<class Key, class Value> class RsMemCache
@@ -107,14 +111,18 @@ template<class Key, class Value> bool RsMemCache<Key, Value>::is_cached(const Ke
 	it = mDataMap.find(key);
 	if (it == mDataMap.end())
 	{
+#ifdef DEBUG_RSMEMCACHE
 		std::cerr << "RsMemCache::is_cached(" << key << ") false";
 		std::cerr << std::endl;
+#endif // DEBUG_RSMEMCACHE
 
 		mStats_cachemiss++;
 		return false;
 	}
+#ifdef DEBUG_RSMEMCACHE
 	std::cerr << "RsMemCache::is_cached(" << key << ") false";
 	std::cerr << std::endl;
+#endif // DEBUG_RSMEMCACHE
 	mStats_iscached++;
 	return true;
 	
@@ -123,20 +131,29 @@ template<class Key, class Value> bool RsMemCache<Key, Value>::is_cached(const Ke
 
 template<class Key, class Value> bool RsMemCache<Key, Value>::fetch(const Key &key, Value &data)
 {
+#ifdef DEBUG_RSMEMCACHE
+	std::cerr << "RsMemCache::fetch()";
+	std::cerr << std::endl;
 	printStats(std::cerr);
+#endif // DEBUG_RSMEMCACHE
+
 	typename std::map<Key, cache_data>::iterator it;
 	it = mDataMap.find(key);
 	if (it == mDataMap.end())
 	{
+#ifdef DEBUG_RSMEMCACHE
 		std::cerr << "RsMemCache::fetch(" << key << ") false";
 		std::cerr << std::endl;
+#endif // DEBUG_RSMEMCACHE
 
 		mStats_accessmiss++;
 		return false;
 	}
 	
+#ifdef DEBUG_RSMEMCACHE
 	std::cerr << "RsMemCache::fetch(" << key << ") OK";
 	std::cerr << std::endl;
+#endif // DEBUG_RSMEMCACHE
 
 	data = it->second.data;
 
@@ -154,13 +171,20 @@ template<class Key, class Value> bool RsMemCache<Key, Value>::fetch(const Key &k
 
 template<class Key, class Value> Value &RsMemCache<Key, Value>::ref(const Key &key)
 {
+#ifdef DEBUG_RSMEMCACHE
+	std::cerr << "RsMemCache::ref()";
+	std::cerr << std::endl;
 	printStats(std::cerr);
+#endif // DEBUG_RSMEMCACHE
+
 	typename std::map<Key, cache_data>::iterator it;
 	it = mDataMap.find(key);
 	if (it == mDataMap.end())
 	{
+#ifdef DEBUG_RSMEMCACHE
 		std::cerr << "RsMemCache::ref(" << key << ") ERROR missing Key inserting Empty Data in LRU slot";
 		std::cerr << std::endl;
+#endif // DEBUG_RSMEMCACHE
 
 		// insert operation.
 		time_t new_ts = 0;
@@ -175,8 +199,10 @@ template<class Key, class Value> Value &RsMemCache<Key, Value>::ref(const Key &k
 	}
 	else
 	{
+#ifdef DEBUG_RSMEMCACHE
 		std::cerr << "RsMemCache::ref(" << key << ") OK";
 		std::cerr << std::endl;
+#endif // DEBUG_RSMEMCACHE
 
 		/* update ts on data */
         	time_t old_ts = it->second.ts;
@@ -192,9 +218,11 @@ template<class Key, class Value> Value &RsMemCache<Key, Value>::ref(const Key &k
 
 template<class Key, class Value> bool RsMemCache<Key, Value>::store(const Key &key, const Value &data)
 {
+#ifdef DEBUG_RSMEMCACHE
 	std::cerr << "RsMemCache::store()";
 	std::cerr << std::endl;
 	printStats(std::cerr);
+#endif // DEBUG_RSMEMCACHE
 
 	/* update lrumap entry */
         time_t old_ts = 0;
@@ -206,8 +234,10 @@ template<class Key, class Value> bool RsMemCache<Key, Value>::store(const Key &k
 	if (it != mDataMap.end())
 	{
 		// ERROR.
+#ifdef DEBUG_RSMEMCACHE
 		std::cerr << "RsMemCache::store() WARNING overriding existing entry";
 		std::cerr << std::endl;
+#endif // DEBUG_RSMEMCACHE
 
 		old_ts = it->second.ts;
 	}
@@ -229,8 +259,10 @@ template<class Key, class Value> bool RsMemCache<Key, Value>::update_lrumap(cons
 {
 	if (old_ts == 0)
 	{
+#ifdef DEBUG_RSMEMCACHE
 		std::cerr << "p3IdService::locked_cache_update_lrumap(" << key << ") just insert!";
 		std::cerr << std::endl;
+#endif // DEBUG_RSMEMCACHE
 
 		/* new insertion */
 		mLruMap.insert(std::make_pair(new_ts, key));
@@ -247,29 +279,37 @@ template<class Key, class Value> bool RsMemCache<Key, Value>::update_lrumap(cons
 		if (mit->second == key)
 		{
 			mLruMap.erase(mit);
+#ifdef DEBUG_RSMEMCACHE
 			std::cerr << "p3IdService::locked_cache_update_lrumap(" << key << ") rm old";
 			std::cerr << std::endl;
+#endif // DEBUG_RSMEMCACHE
 
 			if (new_ts != 0) // == 0, means remove.
 			{	
+#ifdef DEBUG_RSMEMCACHE
 				std::cerr << "p3IdService::locked_cache_update_lrumap(" << key << ") added new_ts";
 				std::cerr << std::endl;
+#endif // DEBUG_RSMEMCACHE
 				mLruMap.insert(std::make_pair(new_ts, key));
 			}
 			return true;
 		}
 	}
+#ifdef DEBUG_RSMEMCACHE
 	std::cerr << "p3IdService::locked_cache_update_lrumap(" << key << ") ERROR";
 	std::cerr << std::endl;
+#endif // DEBUG_RSMEMCACHE
 
 	return false;
 }
 
 template<class Key, class Value> bool RsMemCache<Key, Value>::resize()
 {
+#ifdef DEBUG_RSMEMCACHE
 	std::cerr << "RsMemCache::resize()";
 	std::cerr << std::endl;
 	printStats(std::cerr);
+#endif // DEBUG_RSMEMCACHE
 
 	int count_to_clear = 0;
 	{
@@ -285,8 +325,10 @@ template<class Key, class Value> bool RsMemCache<Key, Value>::resize()
 		if (mDataCount > mMaxSize)
 		{
 			count_to_clear = mDataCount - mMaxSize;
+#ifdef DEBUG_RSMEMCACHE
 			std::cerr << "RsMemCache::resize() to_clear: " << count_to_clear;
 			std::cerr << std::endl;
+#endif // DEBUG_RSMEMCACHE
 		}
 	}
 
@@ -322,8 +364,10 @@ template<class Key, class Value> bool RsMemCache<Key, Value>::discard_LRU(int co
 			}
 			else
 			{
+#ifdef DEBUG_RSMEMCACHE
 				std::cerr << "RsMemCache::discard_LRU() removing: " << key;
 				std::cerr << std::endl;
+#endif // DEBUG_RSMEMCACHE
 				mDataMap.erase(it);
 				mDataCount--;
 				mStats_dropped++;
@@ -332,8 +376,11 @@ template<class Key, class Value> bool RsMemCache<Key, Value>::discard_LRU(int co
 		else
 		{
 			// No More Data, ERROR.
+#ifdef DEBUG_RSMEMCACHE
 			std::cerr << "RsMemCache::discard_LRU(): INFO more more cache data";
 			std::cerr << std::endl;
+#endif // DEBUG_RSMEMCACHE
+
 			return true;
 		}
 		count_to_clear--;

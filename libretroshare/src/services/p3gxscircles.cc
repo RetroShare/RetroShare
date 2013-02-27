@@ -37,7 +37,7 @@
 #include <stdio.h>
 
 /****
- * #define ID_DEBUG 1
+ * #define DEBUG_CIRCLES	 1
  ****/
 
 RsGxsCircles *rsGxsCircles = NULL;
@@ -226,8 +226,11 @@ bool p3GxsCircles:: getNickname(const RsGxsId &id, std::string &nickname)
 
 bool p3GxsCircles:: getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails &details)
 {
+
+#ifdef DEBUG_CIRCLES
 	std::cerr << "p3GxsCircles::getCircleDetails(" << id << ")";
 	std::cerr << std::endl;
+#endif // DEBUG_CIRCLES
 
 	{
 		RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
@@ -253,8 +256,10 @@ bool p3GxsCircles:: getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails
 
 bool p3GxsCircles:: getCircleIdList(std::list<RsGxsCircleId> &circleIds)
 {
+#ifdef DEBUG_CIRCLES
 	std::cerr << "p3GxsCircles::getCircleIdList()";
 	std::cerr << std::endl;
+#endif // DEBUG_CIRCLES
 
 	RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
 	circleIds = mCircleIdList;
@@ -339,8 +344,10 @@ bool p3GxsCircles::getGroupData(const uint32_t &token, std::vector<RsGxsCircleGr
 
 bool 	p3GxsCircles::createGroup(uint32_t& token, RsGxsCircleGroup &group)
 {
+#ifdef DEBUG_CIRCLES
 	std::cerr << "p3GxsCircles::createGroup()";
 	std::cerr << std::endl;
+#endif // DEBUG_CIRCLES
 
 	RsGxsCircleGroupItem* item = new RsGxsCircleGroupItem();
 	item->convertFrom(group);
@@ -350,8 +357,10 @@ bool 	p3GxsCircles::createGroup(uint32_t& token, RsGxsCircleGroup &group)
 
 void p3GxsCircles::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& /*keySet*/)
 {
+#ifdef DEBUG_CIRCLES
 	std::cerr << "p3GxsCircles::service_CreateGroup()";
 	std::cerr << std::endl;
+#endif // DEBUG_CIRCLES
 
 	RsGxsCircleGroupItem *item = dynamic_cast<RsGxsCircleGroupItem *>(grpItem);
 	if (!item)
@@ -401,8 +410,10 @@ bool RsGxsCircleCache::loadBaseCircle(const RsGxsCircleGroup &circle)
 	mUpdateTime = time(NULL);
 	mProcessedCircles.insert(mCircleId);
 
+#ifdef DEBUG_CIRCLES
 	std::cerr << "RsGxsCircleCache::loadBaseCircle(" << mCircleId << ")";
 	std::cerr << std::endl;
+#endif // DEBUG_CIRCLES
 
 	return true;
 }
@@ -412,8 +423,10 @@ bool RsGxsCircleCache::loadSubCircle(const RsGxsCircleCache &subcircle)
 	/* copy across all the lists */
 
 	/* should not be any unprocessed circles or peers */
+#ifdef DEBUG_CIRCLES
 	std::cerr << "RsGxsCircleCache::loadSubCircle(" << subcircle.mCircleId << ") TODO";
 	std::cerr << std::endl;
+#endif // DEBUG_CIRCLES
 
 	return true;
 }
@@ -455,8 +468,10 @@ bool p3GxsCircles::request_CircleIdList()
 {
 	/* trigger request to load missing ids into cache */
 	std::list<RsGxsGroupId> groupIds;
+#ifdef DEBUG_CIRCLES
 	std::cerr << "p3GxsCircles::request_CircleIdList()";
 	std::cerr << std::endl;
+#endif // DEBUG_CIRCLES
 
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_LIST; 
 	RsTokReqOptions opts;
@@ -472,8 +487,10 @@ bool p3GxsCircles::request_CircleIdList()
 
 bool p3GxsCircles::load_CircleIdList(uint32_t token)
 {
+#ifdef DEBUG_CIRCLES
 	std::cerr << "p3GxsCircles::load_CircleIdList() : " << token;
 	std::cerr << std::endl;
+#endif // DEBUG_CIRCLES
 
         std::list<RsGxsGroupId> groupIds;
     	bool ok = RsGenExchange::getGroupList(token, groupIds);
@@ -628,8 +645,10 @@ bool p3GxsCircles::cachetest_handlerequest(uint32_t token)
 
 bool p3GxsCircles::cache_request_load(const RsGxsCircleId &id)
 {
+#ifdef DEBUG_CIRCLES
 	std::cerr << "p3GxsCircles::cache_request_load(" << id << ")";
 	std::cerr << std::endl;
+#endif // DEBUG_CIRCLES
 
 	{
 		RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
@@ -675,8 +694,10 @@ bool p3GxsCircles::cache_request_load(const RsGxsCircleId &id)
 
 bool p3GxsCircles::cache_start_load()
 {
+#ifdef DEBUG_CIRCLES
 	std::cerr << "p3GxsCircles::cache_start_load()";
 	std::cerr << std::endl;
+#endif // DEBUG_CIRCLES
 
 	/* trigger request to load missing ids into cache */
 	std::list<RsGxsGroupId> groupIds;
@@ -687,8 +708,11 @@ bool p3GxsCircles::cache_start_load()
 		std::list<RsGxsId>::iterator it;
 		for(it = mCacheLoad_ToCache.begin(); it != mCacheLoad_ToCache.end(); it++)
 		{
+#ifdef DEBUG_CIRCLES
 			std::cerr << "p3GxsCircles::cache_start_load() GroupId: " << *it;
 			std::cerr << std::endl;
+#endif // DEBUG_CIRCLES
+
 			groupIds.push_back(*it); // might need conversion?
 		}
 
@@ -697,8 +721,10 @@ bool p3GxsCircles::cache_start_load()
 
 	if (groupIds.size() > 0)
 	{
+#ifdef DEBUG_CIRCLES
 		std::cerr << "p3GxsCircles::cache_start_load() #Groups: " << groupIds.size();
 		std::cerr << std::endl;
+#endif // DEBUG_CIRCLES
 
 		uint32_t ansType = RS_TOKREQ_ANSTYPE_DATA; 
 		RsTokReqOptions opts;
@@ -714,8 +740,10 @@ bool p3GxsCircles::cache_start_load()
 
 bool p3GxsCircles::cache_load_for_token(uint32_t token)
 {
+#ifdef DEBUG_CIRCLES
 	std::cerr << "p3GxsCircles::cache_load_for_token() : " << token;
 	std::cerr << std::endl;
+#endif // DEBUG_CIRCLES
 
 	std::vector<RsGxsGrpItem*> grpData;
 	bool ok = RsGenExchange::getGroupData(token, grpData);
@@ -730,9 +758,11 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 			RsGxsCircleGroup group;
 			item->convertTo(group);
 
+#ifdef DEBUG_CIRCLES
 			std::cerr << "p3GxsCircles::cache_load_for_token() Loaded Id with Meta: ";
 			std::cerr << item->meta;
 			std::cerr << std::endl;
+#endif // DEBUG_CIRCLES
 
 
 			RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
@@ -868,8 +898,10 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 
 bool p3GxsCircles::cache_reloadids(const std::string &circleId)
 {
+#ifdef DEBUG_CIRCLES
 	std::cerr << "p3GxsCircles::cache_reloadids()";
 	std::cerr << std::endl;
+#endif // DEBUG_CIRCLES
 
 	RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
 
@@ -904,17 +936,21 @@ bool p3GxsCircles::cache_reloadids(const std::string &circleId)
 				{
 					cache.addAllowedPeer(details.mPgpId, *pit);
 
+#ifdef DEBUG_CIRCLES
 					std::cerr << "p3GxsCircles::cache_reloadids() AllowedPeer: ";
 					std::cerr << *pit;
 					std::cerr << std::endl;
+#endif // DEBUG_CIRCLES
 				}
 				else
 				{
 					cache.mUnknownPeers.insert(*pit);
 
+#ifdef DEBUG_CIRCLES
 					std::cerr << "p3GxsCircles::cache_reloadids() UnknownPeer: ";
 					std::cerr << *pit;
 					std::cerr << std::endl;
+#endif // DEBUG_CIRCLES
 				}
 			}
 			else
@@ -940,9 +976,11 @@ bool p3GxsCircles::cache_reloadids(const std::string &circleId)
 	// If sub-circles are complete too.
 	if (cache.mUnprocessedCircles.empty())
 	{
+#ifdef DEBUG_CIRCLES
 		std::cerr << "p3GxsCircles::cache_reloadids() Adding to cache Id: ";
 		std::cerr << circleId;
 		std::cerr << std::endl;
+#endif // DEBUG_CIRCLES
 
 		// Push to Cache.
 		mCircleCache.store(circleId, cache);
@@ -1156,8 +1194,10 @@ std::string p3GxsCircles::genRandomId()
 void p3GxsCircles::generateDummyData()
 {
 	// request Id Data...
+#ifdef DEBUG_CIRCLES
         std::cerr << "p3GxsCircles::generateDummyData() getting Id List";
         std::cerr << std::endl;
+#endif // DEBUG_CIRCLES
 
         uint32_t ansType = RS_TOKREQ_ANSTYPE_DATA;
         RsTokReqOptions opts;
@@ -1177,8 +1217,11 @@ void p3GxsCircles::generateDummyData()
 
 void p3GxsCircles::checkDummyIdData()
 {
+#ifdef DEBUG_CIRCLES
 	std::cerr << "p3GxsCircles::checkDummyIdData()";
 	std::cerr << std::endl;
+#endif // DEBUG_CIRCLES
+
 	// check the token.
         uint32_t status =  rsIdentity->getTokenService()->requestStatus(mDummyIdToken);
         if ( (RsTokenService::GXS_REQUEST_V2_STATUS_FAILED == status) ||
@@ -1198,21 +1241,27 @@ void p3GxsCircles::checkDummyIdData()
 		{
                         if (it->mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
 			{
+#ifdef DEBUG_CIRCLES
 				std::cerr << "p3GxsCircles::checkDummyIdData() PgpLinkedId: " << it->mMeta.mGroupId;
 				std::cerr << std::endl;
+#endif // DEBUG_CIRCLES
 				mDummyPgpLinkedIds.push_back(it->mMeta.mGroupId);
 
 				if (it->mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
 				{
+#ifdef DEBUG_CIRCLES
 					std::cerr << "p3GxsCircles::checkDummyIdData() OwnId: " << it->mMeta.mGroupId;
 					std::cerr << std::endl;
+#endif // DEBUG_CIRCLES
 					mDummyOwnIds.push_back(it->mMeta.mGroupId);
 				}
 			}
 			else
 			{
+#ifdef DEBUG_CIRCLES
 				std::cerr << "p3GxsCircles::checkDummyIdData() Other Id: " << it->mMeta.mGroupId;
 				std::cerr << std::endl;
+#endif // DEBUG_CIRCLES
 			}
 		}
 			
@@ -1233,8 +1282,10 @@ void p3GxsCircles::checkDummyIdData()
 
 void p3GxsCircles::generateDummyCircle()
 {
+#ifdef DEBUG_CIRCLES
 	std::cerr << "p3GxsCircles::generateDummyCircle()";
 	std::cerr << std::endl;
+#endif // DEBUG_CIRCLES
 
 	int npgps = mDummyPgpLinkedIds.size();
 	RsGxsCircleGroup group;
@@ -1270,15 +1321,19 @@ void p3GxsCircles::generateDummyCircle()
 	}
 
 	group.mMeta.mGroupName = genRandomId();
+#ifdef DEBUG_CIRCLES
 	std::cerr << "p3GxsCircles::generateDummyCircle() Name: " << group.mMeta.mGroupName;
 	std::cerr << std::endl;
+#endif // DEBUG_CIRCLES
 
 	std::set<RsGxsId>::iterator it;
 	for(it = idset.begin(); it != idset.end(); it++)
 	{
 		group.mInvitedMembers.push_back(*it);
+#ifdef DEBUG_CIRCLES
 		std::cerr << "p3GxsCircles::generateDummyCircle() Adding: " << *it;
 		std::cerr << std::endl;
+#endif // DEBUG_CIRCLES
 	}
 
 	uint32_t dummyToken;
@@ -1329,8 +1384,10 @@ std::ostream &operator<<(std::ostream &out, const RsGxsCircleMsg &msg)
 	// Overloaded from GxsTokenQueue for Request callbacks.
 void p3GxsCircles::handleResponse(uint32_t token, uint32_t req_type)
 {
+#ifdef DEBUG_CIRCLES
 	std::cerr << "p3GxsCircles::handleResponse(" << token << "," << req_type << ")";
 	std::cerr << std::endl;
+#endif // DEBUG_CIRCLES
 
 	// stuff.
 	switch(req_type)
@@ -1361,8 +1418,10 @@ void p3GxsCircles::handleResponse(uint32_t token, uint32_t req_type)
 	// Overloaded from RsTickEvent for Event callbacks.
 void p3GxsCircles::handle_event(uint32_t event_type, const std::string &elabel)
 {
+#ifdef DEBUG_CIRCLES
 	std::cerr << "p3GxsCircles::handle_event(" << event_type << ")";
 	std::cerr << std::endl;
+#endif // DEBUG_CIRCLES
 
 	// stuff.
 	switch(event_type)
