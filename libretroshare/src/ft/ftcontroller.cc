@@ -970,11 +970,12 @@ bool ftController::completeFile(std::string hash)
 		}
 		rsicontrol->getNotify().notifyDownloadComplete(hash);
 		rsicontrol->getNotify().notifyDownloadCompleteCount(completeCount);
+
+		rsFiles->ForceDirectoryCheck() ;
 	}
 
 	IndicateConfigChanged(); /* completed transfer -> save */
 	return true;
-
 }
 
 	/***************************************************************/
