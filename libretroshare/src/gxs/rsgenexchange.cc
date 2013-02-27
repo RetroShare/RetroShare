@@ -314,74 +314,38 @@ bool RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBina
     // restricted is a special case which heeds whether publish sign needs to be checked or not
     // one may or may not want
 
-    if(msgMeta.mParentId.empty())
+    uint8_t author_flag = GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN;
+    uint8_t publish_flag = GXS_SERV::MSG_AUTHEN_ROOT_PUBLISH_SIGN;
+
+    if(!msgMeta.mParentId.empty())
     {
-        isParent = true;
+        // Child Message.
+        author_flag = GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN;
+        publish_flag = GXS_SERV::MSG_AUTHEN_CHILD_PUBLISH_SIGN;
     }
-    else
+
+    PrivacyBitPos pos = PUBLIC_GRP_BITS;
+    if (grpFlag & GXS_SERV::FLAG_PRIVACY_RESTRICTED)
     {
-        isParent = false;
+        pos = RESTRICTED_GRP_BITS;
     }
-
-
-    if(isParent)
+    else if (grpFlag & GXS_SERV::FLAG_PRIVACY_PRIVATE)
     {
-        needIdentitySign = false;
-        needPublishSign = false;
-
-        if(grpFlag & GXS_SERV::FLAG_PRIVACY_PUBLIC)
-        {
-            needPublishSign = false;
-
-            if(checkMsgAuthenFlag(PUBLIC_GRP_BITS, GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN))
-                needIdentitySign = true;
-
-        }
-        else if(grpFlag & GXS_SERV::FLAG_PRIVACY_RESTRICTED)
-        {
-            needPublishSign = true;
-
-            if(checkMsgAuthenFlag(RESTRICTED_GRP_BITS, GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN))
-                needIdentitySign = true;
-        }
-        else if(grpFlag & GXS_SERV::FLAG_PRIVACY_PRIVATE)
-        {
-            needPublishSign = false;
-
-            if(checkMsgAuthenFlag(PRIVATE_GRP_BITS, GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN))
-                needIdentitySign = true;
-        }
-
-    }else
-    {
-        if(grpFlag & GXS_SERV::FLAG_PRIVACY_PUBLIC)
-        {
-            needPublishSign = false;
-
-            if(checkMsgAuthenFlag(PUBLIC_GRP_BITS, GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN))
-                needIdentitySign = true;
-
-        }
-        else if(grpFlag & GXS_SERV::FLAG_PRIVACY_RESTRICTED)
-        {
-            if(checkMsgAuthenFlag(RESTRICTED_GRP_BITS, GXS_SERV::MSG_AUTHEN_CHILD_PUBLISH_SIGN))
-                needPublishSign = true;
-
-            if(checkMsgAuthenFlag(RESTRICTED_GRP_BITS, GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN))
-                needIdentitySign = true;
-        }
-        else if(grpFlag & GXS_SERV::FLAG_PRIVACY_PRIVATE)
-        {
-            needPublishSign = false;
-
-            if(checkMsgAuthenFlag(PRIVATE_GRP_BITS, GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN))
-                needIdentitySign = true;
-        }
+        pos = PRIVATE_GRP_BITS;
     }
+    
+    needIdentitySign = false;
+    needPublishSign = false;
+    if (checkMsgAuthenFlag(pos, publish_flag))
+        needPublishSign = true;
+
+    // Check required permissions, and allow them to sign it - if they want too - as well!
+    if ((checkMsgAuthenFlag(pos, author_flag)) || (!msgMeta.mAuthorId.empty()))
+        needIdentitySign = true;
+
 
     if(needPublishSign)
     {
-
         // public and shared is publish key
         RsTlvSecurityKeySet& keys = grpMeta.keys;
         RsTlvSecurityKey* pubKey;
@@ -397,6 +361,13 @@ bool RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBina
                         break;
         }
 
+        if (!pub_key_found)
+        {
+            std::cerr << "RsGenExchange::createMsgSignatures()";
+            std::cerr << " ERROR Cannot find PUBLISH KEY for Message Signing";
+            std::cerr << std::endl;
+            return false;
+        }
         // private publish key
         pubKey = &(mit->second);
 
@@ -409,10 +380,18 @@ bool RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBina
     }
 
 
-    if(needIdentitySign)
+    if (needIdentitySign)
     {
         if(mGixs)
         {
+		/***************************************************************
+		 * NOTE: The logic below is wrong.
+		 * mGixs->havePrivateKey(msgMeta.mAuthorId) can return False if the Key isn't cached.
+		 *
+		 * This Operation should be retried again - later.
+		 *
+		 **************************************************************/ 
+
             bool haveKey = mGixs->havePrivateKey(msgMeta.mAuthorId);
 
             if(haveKey)
@@ -424,18 +403,26 @@ bool RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBina
                 double timeDelta = 0.002; // fast polling
                 time_t now = time(NULL);
 
+                bool auth_key_fetched = false;
                 // poll immediately but, don't spend more than a second polling
-                while( (mGixs->getPrivateKey(msgMeta.mAuthorId, authorKey) == -1) &&
-                       ((now + 5) > time(NULL))
-                    )
-                {
-    #ifndef WINDOWS_SYS
-            usleep((int) (timeDelta * 1000000));
-    #else
-            Sleep((int) (timeDelta * 1000));
-    #endif
+                while((!auth_key_fetched) && ((now + 5) > time(NULL)))
+		{
+			auth_key_fetched = (mGixs->getPrivateKey(msgMeta.mAuthorId, authorKey) == 1);
+#ifndef WINDOWS_SYS
+                        usleep((int) (timeDelta * 1000000));
+#else
+                        Sleep((int) (timeDelta * 1000));
+#endif
                 }
 
+
+		if (!auth_key_fetched)
+		{
+                     std::cerr << "RsGenExchange::createMsgSignatures()";
+                     std::cerr << " ERROR Cannot find AUTHOR KEY for Message Signing";
+                     std::cerr << std::endl;
+                     return false;
+                }
 
                 RsTlvKeySignature sign;
                 ok &= GxsSecurity::getSignature((char*)msgData.bin_data, msgData.bin_len,
@@ -455,10 +442,7 @@ bool RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBina
             ok = false;
         }
     }
-
     return ok;
-
-
 }
 
 bool RsGenExchange::createMessage(RsNxsMsg* msg)
@@ -518,85 +502,41 @@ bool RsGenExchange::createMessage(RsNxsMsg* msg)
 
 bool RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSecurityKeySet& grpKeySet)
 {
-    bool isParent = false;
-    bool checkPublishSign, checkIdentitySign;
+    bool needIdentitySign = false;
+    bool needPublishSign = false;
     bool valid = true;
 
-    // publish signature is determined by whether group is public or not
-    // for private group signature is not needed as it needs decrypting with
-    // the private publish key anyways
+    uint8_t author_flag = GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN;
+    uint8_t publish_flag = GXS_SERV::MSG_AUTHEN_ROOT_PUBLISH_SIGN;
 
-    // restricted is a special case which heeds whether publish sign needs to be checked or not
-    // one may or may not want
-
-    if(msg->metaData->mParentId.empty())
+    if(!msg->metaData->mParentId.empty())
     {
-        isParent = true;
-    }
-    else
-    {
-        isParent = false;
+        // Child Message.
+        author_flag = GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN;
+        publish_flag = GXS_SERV::MSG_AUTHEN_CHILD_PUBLISH_SIGN;
     }
 
-
-    if(isParent)
+    PrivacyBitPos pos = PUBLIC_GRP_BITS;
+    if (grpFlag & GXS_SERV::FLAG_PRIVACY_RESTRICTED)
     {
-        checkIdentitySign = false;
-        checkPublishSign = false;
-
-        if(grpFlag & GXS_SERV::FLAG_PRIVACY_PUBLIC)
-        {
-            checkPublishSign = false;
-
-            if(checkMsgAuthenFlag(PUBLIC_GRP_BITS, GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN))
-                checkIdentitySign = true;
-
-        }
-        else if(grpFlag & GXS_SERV::FLAG_PRIVACY_RESTRICTED)
-        {
-            checkPublishSign = true;
-
-            if(checkMsgAuthenFlag(RESTRICTED_GRP_BITS, GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN))
-                checkIdentitySign = true;
-        }
-        else if(grpFlag & GXS_SERV::FLAG_PRIVACY_PRIVATE)
-        {
-            checkPublishSign = false;
-
-            if(checkMsgAuthenFlag(PRIVATE_GRP_BITS, GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN))
-                checkIdentitySign = true;
-        }
-
-    }else
-    {
-        if(grpFlag & GXS_SERV::FLAG_PRIVACY_PUBLIC)
-        {
-            checkPublishSign = false;
-
-            if(checkMsgAuthenFlag(PUBLIC_GRP_BITS, GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN))
-                checkIdentitySign = true;
-
-        }
-        else if(grpFlag & GXS_SERV::FLAG_PRIVACY_RESTRICTED)
-        {
-            if(checkMsgAuthenFlag(RESTRICTED_GRP_BITS, GXS_SERV::MSG_AUTHEN_CHILD_PUBLISH_SIGN))
-                checkPublishSign = true;
-
-            if(checkMsgAuthenFlag(RESTRICTED_GRP_BITS, GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN))
-                checkIdentitySign = true;
-        }
-        else if(grpFlag & GXS_SERV::FLAG_PRIVACY_PRIVATE)
-        {
-            checkPublishSign = false;
-
-            if(checkMsgAuthenFlag(PRIVATE_GRP_BITS, GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN))
-                checkIdentitySign = true;
-        }
+        pos = RESTRICTED_GRP_BITS;
     }
+    else if (grpFlag & GXS_SERV::FLAG_PRIVACY_PRIVATE)
+    {
+        pos = PRIVATE_GRP_BITS;
+    }
+    
+    if (checkMsgAuthenFlag(pos, publish_flag))
+        needPublishSign = true;
+
+    // Check required permissions, if they have signed it anyway - we need to validate it.
+    if ((checkMsgAuthenFlag(pos, author_flag)) || (!msg->metaData->mAuthorId.empty()))
+        needIdentitySign = true;
+
 
     RsGxsMsgMetaData& metaData = *(msg->metaData);
 
-    if(checkPublishSign)
+    if(needPublishSign)
     {
         RsTlvKeySignature sign = metaData.signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_PUBLISH];
 
@@ -628,7 +568,7 @@ bool RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSec
 
 
 
-    if(checkIdentitySign)
+    if(needIdentitySign)
     {
         if(mGixs)
         {
@@ -641,20 +581,31 @@ bool RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSec
 
                 double timeDelta = 0.002; // fast polling
                 time_t now = time(NULL);
+                bool auth_key_fetched = false;
                 // poll immediately but, don't spend more than a second polling
-                while( (mGixs->getKey(metaData.mAuthorId, authorKey) == -1) &&
-                       ((now + 1) >> time(NULL))
-                    )
-                {
-    #ifndef WINDOWS_SYS
-            usleep((int) (timeDelta * 1000000));
-    #else
-            Sleep((int) (timeDelta * 1000));
-    #endif
+                while((!auth_key_fetched) && ((now + 1) > time(NULL)))
+		{
+			auth_key_fetched = (mGixs->getKey(metaData.mAuthorId, authorKey) == 1);
+#ifndef WINDOWS_SYS
+                        usleep((int) (timeDelta * 1000000));
+#else
+                        Sleep((int) (timeDelta * 1000));
+#endif
                 }
+
+
+		if (!auth_key_fetched)
+		{
+                     std::cerr << "RsGenExchange::validateMsg()";
+                     std::cerr << " ERROR Cannot find AUTHOR KEY for Message Validation";
+                     std::cerr << std::endl;
+                     return false;
+                }
+
 
                 RsTlvKeySignature sign = metaData.signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_IDENTITY];
                 valid &= GxsSecurity::validateNxsMsg(*msg, sign, authorKey);
+
             }else
             {
                 std::list<std::string> peers;
@@ -1209,6 +1160,8 @@ void RsGenExchange::publishMsgs()
 
         for(; mit != mMsgsToPublish.end(); mit++)
 	{
+	    std::cerr << "RsGenExchange::publishMsgs() Publishing a Message";
+	    std::cerr << std::endl;
 
             RsNxsMsg* msg = new RsNxsMsg(mServType);
             RsGxsMsgItem* msgItem = mit->second;
@@ -1296,6 +1249,14 @@ void RsGenExchange::publishMsgs()
                 else
                 {
                     // delete msg if created wasn't ok
+
+			/*******************************************************************************
+			 * NOTE: THIS LOGIC IS WRONG.
+			 * It is possible, that message creation failed because Author Keys
+			 * were not cached...  If this is the case - it should be re-tried
+			 * in a few seconds - when the cache has been loaded.
+			 ******************************************************************************/
+
                     delete msg;
                     mDataAccess->updatePublicRequestStatus(mit->first, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
 
@@ -1631,6 +1592,20 @@ void RsGenExchange::processRecvdMessages()
 
         if(!ok)
         {
+
+		/*********************************************************************
+		 * ONCE AGAIN - You fail to handle the case where the Key is not in the Cache.
+		 * When this happens -- and it will happen frequently!
+		 * You MUST retry.
+		 *
+		 * Suggested approach:
+		 *     1) Change validateMsg() and createMsgSignatures to return INT instead of BOOL.
+		 *     2) return -1 for fail , 0 for missing keys, 1 for success.  
+                 *     3) if missing keys, put on queue and retry in 1 or 2 seconds.
+		 *
+	  	 ************************************************************************/
+
+
 #ifdef GXS_GENX_DEBUG
             std::cerr << "failed to deserialise incoming meta, grpId: "
                     << msg->grpId << ", msgId: " << msg->msgId << std::endl;
