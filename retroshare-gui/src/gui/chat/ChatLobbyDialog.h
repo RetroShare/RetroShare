@@ -52,6 +52,9 @@ private slots:
 signals:
 	void lobbyLeave(ChatLobbyId) ;
 	void typingEventReceived(ChatLobbyId) ;
+	void messageReceived(ChatLobbyId) ;
+	void peerJoined(ChatLobbyId) ;
+	void peerLeft(ChatLobbyId) ;
 
 protected:
 	/** Default constructor */

@@ -10,6 +10,13 @@ class ChatTabWidget ;
 class ChatLobbyDialog ;
 class QTextBrowser ;
 
+struct ChatLobbyInfoStruct
+{
+	QIcon default_icon ;
+	ChatLobbyDialog *dialog ;
+	time_t last_typing_event ;
+};
+
 class ChatLobbyWidget : public RsAutoUpdatePage, Ui::ChatLobbyWidget
 {
 	Q_OBJECT
@@ -41,6 +48,9 @@ protected slots:
 	void unsubscribeChatLobby(ChatLobbyId id) ;
 	void updateTypingStatus(ChatLobbyId id) ;
 	void resetLobbyTreeIcons() ;
+	void updateMessageChanged(ChatLobbyId);
+	void updatePeerEntering(ChatLobbyId);
+	void updatePeerLeaving(ChatLobbyId);
 
 private:
 	RSTreeWidgetItemCompareRole *compareRole;
@@ -50,7 +60,7 @@ private:
 
 	ChatTabWidget *tabWidget ;
 
-	std::map<ChatLobbyId,ChatLobbyDialog*> _lobby_dialogs ;
+	std::map<ChatLobbyId,ChatLobbyInfoStruct> _lobby_infos ;
 	QTextBrowser *_lobby_blank_page ;
 
 	std::map<QTreeWidgetItem*,time_t> _icon_changed_map ;
