@@ -46,8 +46,8 @@
 
 #define PUB_GRP_OFFSET 0
 #define RESTR_GRP_OFFSET 8
-#define PRIV_GRP_OFFSET 9
-#define GRP_OPTIONS_OFFSET 7
+#define PRIV_GRP_OFFSET 16
+#define GRP_OPTIONS_OFFSET 24
 
 #define GXS_MASK "GXS_MASK_HACK"
 
@@ -307,6 +307,10 @@ bool RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBina
     bool ok = true;
     uint32_t grpFlag = grpMeta.mGroupFlags;
 
+    std::cerr << "RsGenExchange::createMsgSignatures() for Msg.mMsgName: " << msgMeta.mMsgName;
+    std::cerr << std::endl;
+
+
     // publish signature is determined by whether group is public or not
     // for private group signature is not needed as it needs decrypting with
     // the private publish key anyways
@@ -337,11 +341,26 @@ bool RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBina
     needIdentitySign = false;
     needPublishSign = false;
     if (checkMsgAuthenFlag(pos, publish_flag))
+    {
         needPublishSign = true;
+        std::cerr << "Needs Publish sign! (Service Flags)";
+        std::cerr << std::endl;
+    }
 
     // Check required permissions, and allow them to sign it - if they want too - as well!
-    if ((checkMsgAuthenFlag(pos, author_flag)) || (!msgMeta.mAuthorId.empty()))
+    if (checkMsgAuthenFlag(pos, author_flag))
+    {
         needIdentitySign = true;
+        std::cerr << "Needs Identity sign! (Service Flags)";
+        std::cerr << std::endl;
+    }
+
+    if (!msgMeta.mAuthorId.empty())
+    {
+        needIdentitySign = true;
+        std::cerr << "Needs Identity sign! (AuthorId Exists)";
+        std::cerr << std::endl;
+    }
 
 
     if(needPublishSign)
@@ -429,16 +448,21 @@ bool RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBina
                                                 &authorKey, sign);
                 signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_IDENTITY] = sign;
 
-            }else
+            }
+            else
             {
+                std::cerr << "RsGenExchange::createMsgSignatures()";
+                std::cerr << " ERROR AUTHOR KEY is not Cached / available for Message Signing";
+                std::cerr << std::endl;
+
                 ok = false;
             }
         }
         else
         {
-#ifdef GEN_EXHANGE_DEBUG
+            std::cerr << "RsGenExchange::createMsgSignatures()";
             std::cerr << "Gixs not enabled while request identity signature validation!" << std::endl;
-#endif
+
             ok = false;
         }
     }
@@ -628,6 +652,10 @@ bool RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSec
 
 bool RsGenExchange::checkMsgAuthenFlag(const PrivacyBitPos& pos, const uint8_t& flag) const
 {
+    std::cerr << "RsGenExchange::checkMsgAuthenFlag(pos: " << pos << " flag: ";
+    std::cerr << (int) flag << " mAuthenPolicy: " << mAuthenPolicy << ")";
+    std::cerr << std::endl;
+
     switch(pos)
     {
         case PUBLIC_GRP_BITS:
@@ -870,19 +898,19 @@ bool RsGenExchange::setAuthenPolicyFlag(const uint8_t &msgFlag, uint32_t& authen
     switch(pos)
     {
         case PUBLIC_GRP_BITS:
-            authenFlag &= ~PUB_GRP_MASK;
+            //authenFlag &= ~PUB_GRP_MASK;
             authenFlag |= temp;
             break;
         case RESTRICTED_GRP_BITS:
-            authenFlag &= ~RESTR_GRP_MASK;
+            //authenFlag &= ~RESTR_GRP_MASK;
             authenFlag |= (temp << RESTR_GRP_OFFSET);
             break;
         case PRIVATE_GRP_BITS:
-            authenFlag &= ~PRIV_GRP_MASK;
+            //authenFlag &= ~PRIV_GRP_MASK;
             authenFlag |= (temp << PRIV_GRP_OFFSET);
             break;
         case GRP_OPTION_BITS:
-            authenFlag &= ~GRP_OPTIONS_MASK;
+            //authenFlag &= ~GRP_OPTIONS_MASK;
             authenFlag |= (temp << GRP_OPTIONS_OFFSET);
             break;
         default:
