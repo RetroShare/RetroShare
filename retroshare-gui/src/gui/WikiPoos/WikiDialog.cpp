@@ -55,7 +55,6 @@
 #define WIKI_DEBUG 1
 
 #define WIKIDIALOG_LISTING_GROUPMETA		2
-#define WIKIDIALOG_LISTING_GROUPDATA		3
 #define WIKIDIALOG_LISTING_PAGES		5
 #define WIKIDIALOG_MOD_LIST			6
 #define WIKIDIALOG_MOD_PAGES			7
@@ -345,19 +344,13 @@ bool WikiDialog::getSelectedPage(std::string &groupId, std::string &pageId, std:
 		return false;
 	}
 
-	QTreeWidgetItem *parent = item->parent();
-
-	if (!parent)
+	/* check if it has changed */
+	groupId = getSelectedGroup();
+	if (groupId == "")
 	{
-#ifdef WIKI_DEBUG 
-		std::cerr << "WikiDialog::getSelectedPage() No Parent -> Group Selected" << std::endl;
-#endif
 		return false;
 	}
 
-
-	/* check if it has changed */
-	groupId = parent->text(WIKI_GROUP_COL_GROUPID).toStdString();
 	pageId = item->text(WIKI_GROUP_COL_PAGEID).toStdString();
 	origPageId = item->text(WIKI_GROUP_COL_ORIGPAGEID).toStdString();
 
@@ -370,48 +363,18 @@ bool WikiDialog::getSelectedPage(std::string &groupId, std::string &pageId, std:
 
 std::string WikiDialog::getSelectedGroup()
 {
-	std::string groupId;
 #ifdef WIKI_DEBUG 
-	std::cerr << "WikiDialog::getSelectedGroup()" << std::endl;
+	std::cerr << "WikiDialog::getSelectedGroup(): " << mGroupId << std::endl;
 #endif
-
-	/* get current item */
-	QTreeWidgetItem *item = ui.treeWidget_Pages->currentItem();
-
-	if (!item)
-	{
-		/* leave current list */
-#ifdef WIKI_DEBUG 
-		std::cerr << "WikiDialog::getSelectedGroup() Nothing selected" << std::endl;
-#endif
-		return groupId;
-	}
-
-	QTreeWidgetItem *parent = item->parent();
-
-	if (parent)
-	{
-		groupId = parent->text(WIKI_GROUP_COL_GROUPID).toStdString();
-#ifdef WIKI_DEBUG 
-		std::cerr << "WikiDialog::getSelectedGroup() Page -> GroupId: " << groupId << std::endl;
-#endif
-		return groupId;
-	}
-
-	/* otherwise, we are on the group already */
-	groupId = item->text(WIKI_GROUP_COL_GROUPID).toStdString();
-#ifdef WIKI_DEBUG 
-	std::cerr << "WikiDialog::getSelectedGroup() GroupId: " << groupId << std::endl;
-#endif
-	return groupId;
+	return mGroupId;
 }
+
 
 /************************** Request / Response *************************/
 /*** Loading Main Index ***/
 
 void WikiDialog::insertWikiGroups()
 {
-	//requestGroupList();
 	requestGroupMeta();
 }
 
@@ -455,62 +418,6 @@ void WikiDialog::loadGroupMeta(const uint32_t &token)
 }
 
 
-void WikiDialog::requestGroupList()
-{
-	std::cerr << "WikiDialog::requestGroupList()";
-	std::cerr << std::endl;
-
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
-
-	uint32_t token;
-	mWikiQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_DATA, opts, WIKIDIALOG_LISTING_GROUPDATA);
-}
-
-
-void WikiDialog::loadGroupData(const uint32_t &token)
-{
-	std::cerr << "WikiDialog::loadGroupData()";
-	std::cerr << std::endl;
-
-	clearGroupTree();
-
-	std::vector<RsWikiCollection> datavector;
-	std::vector<RsWikiCollection>::iterator vit;
-
-	if (!rsWiki->getCollections(token, datavector))
-	{
-		std::cerr << "WikiDialog::loadGroupData() Error getting GroupData";
-		std::cerr << std::endl;
-		return;
-	}
-
-	for(vit = datavector.begin(); vit != datavector.end(); vit++)
-	{
-		RsWikiCollection &group = *vit;
-
-		/* Add Widget, and request Pages */
-
-		std::cerr << "WikiDialog::addGroup() GroupId: " << group.mMeta.mGroupId;
-		std::cerr << " Group: " << group.mMeta.mGroupName;
-		std::cerr << std::endl;
-
-		QTreeWidgetItem *groupItem = new QTreeWidgetItem();
-		groupItem->setText(WIKI_GROUP_COL_GROUPNAME, QString::fromStdString(group.mMeta.mGroupName));
-		groupItem->setText(WIKI_GROUP_COL_GROUPID, QString::fromStdString(group.mMeta.mGroupId));
-		ui.treeWidget_Pages->addTopLevelItem(groupItem);
-
-		/* request pages */
-		std::list<std::string> groupIds;	
-		groupIds.push_back(group.mMeta.mGroupId);
-
-		requestPages(groupIds);
-		//requestOriginalPages(groupIds);
-	}
-}
-
-
-
 void WikiDialog::requestPages(const std::list<RsGxsGroupId> &groupIds)
 {
 	std::cerr << "WikiDialog::requestPages()";
@@ -529,7 +436,7 @@ void WikiDialog::loadPages(const uint32_t &token)
 	std::cerr << "WikiDialog::loadPages()";
 	std::cerr << std::endl;
 
-	/* find parent in GUI Tree - stick children */
+	clearGroupTree();
 
 	QTreeWidgetItem *groupItem = NULL;
 
@@ -544,31 +451,6 @@ void WikiDialog::loadPages(const uint32_t &token)
 	for(vit = snapshots.begin(); vit != snapshots.end(); vit++)
 	{
 		RsWikiSnapshot page = *vit;
-		if (!groupItem)
-		{
-			/* find the entry */
-			int itemCount = ui.treeWidget_Pages->topLevelItemCount();
-			for (int nIndex = 0; nIndex < itemCount; nIndex++) 
-			{
-				QTreeWidgetItem *tmpItem = ui.treeWidget_Pages->topLevelItem(nIndex);
-				std::string tmpid = tmpItem->data(WIKI_GROUP_COL_GROUPID, 
-						Qt::DisplayRole).toString().toStdString();
-				if (tmpid == page.mMeta.mGroupId)
-				{
-					groupItem = tmpItem;
-					break;
-				}
-			}
-
-			if (!groupItem)
-			{
-				/* error */
-				std::cerr << "WikiDialog::loadPages() ERROR Unable to find group";
-				std::cerr << std::endl;
-				return;
-			}
-		}
-						
 
 		std::cerr << "WikiDialog::loadPages() PageId: " << page.mMeta.mMsgId;
 		std::cerr << " Page: " << page.mMeta.mMsgName;
@@ -579,7 +461,7 @@ void WikiDialog::loadPages(const uint32_t &token)
 		pageItem->setText(WIKI_GROUP_COL_PAGEID, QString::fromStdString(page.mMeta.mMsgId));
 		pageItem->setText(WIKI_GROUP_COL_ORIGPAGEID, QString::fromStdString(page.mMeta.mOrigMsgId));
 
-		groupItem->addChild(pageItem);
+		ui.treeWidget_Pages->addTopLevelItem(pageItem);
 	}
 }
 
@@ -600,8 +482,6 @@ void WikiDialog::requestWikiPage(const RsGxsGrpMsgIdPair &msgId)
 	vect_msgIds.push_back(msgId.second);
 
 	mWikiQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, WIKIDIALOG_WIKI_PAGE);
-
-	//mWikiQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, WIKIDIALOG_WIKI_PAGE);
 }
 
 
@@ -654,10 +534,6 @@ void WikiDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 		{
 			case WIKIDIALOG_LISTING_GROUPMETA:
 				loadGroupMeta(req.mToken);
-				break;
-
-			case WIKIDIALOG_LISTING_GROUPDATA:
-				loadGroupData(req.mToken);
 				break;
 
 			case WIKIDIALOG_LISTING_PAGES:

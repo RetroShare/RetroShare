@@ -88,9 +88,6 @@ void 	insertGroupsData(const std::list<RsGroupMetaData> &wikiList);
 void 	requestGroupMeta();
 void 	loadGroupMeta(const uint32_t &token);
 
-void 	requestGroupList();
-void 	loadGroupData(const uint32_t &token);
-
 void 	requestPages(const std::list<RsGxsGroupId> &groupIds);
 void 	loadPages(const uint32_t &token);
 
