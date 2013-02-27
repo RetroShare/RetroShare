@@ -154,6 +154,7 @@
 #define IMAGE_TWOONLINE         ":/images/rstray2.png"
 #define IMAGE_BLOGS             ":/images/kblogger.png"
 #define IMAGE_DHT               ":/images/dht16.png"
+#define IMAGE_CHATLOBBY			":/images/user/agt_forum32.png"
 
 /*static*/ MainWindow *MainWindow::_instance = NULL;
 
@@ -256,7 +257,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     notify.push_back(QPair<MainPage*, QAction*>(transfersDialog, action));
 
     ui->stackPages->add(chatLobbyDialog = new ChatLobbyWidget(ui->stackPages),
-                      action = createPageAction(QIcon(IMAGE_CHAT), tr("Chat Lobbies"), grp));
+                      action = createPageAction(QIcon(IMAGE_CHATLOBBY), tr("Chat Lobbies"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(chatLobbyDialog, action));
 
     ui->stackPages->add(messagesDialog = new MessagesDialog(ui->stackPages),
