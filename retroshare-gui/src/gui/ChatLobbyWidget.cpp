@@ -181,6 +181,7 @@ void ChatLobbyWidget::addChatPage(ChatLobbyDialog *d)
 
 		_lobby_infos[d->id()].dialog = d ; 
 		_lobby_infos[d->id()].default_icon = QIcon() ; 
+		_lobby_infos[d->id()].last_typing_event = time(NULL) ;
 	}
 }
 
@@ -529,6 +530,11 @@ void ChatLobbyWidget::updateCurrentLobby()
 	{
 		showLobby(items.front());
 		items.front()->setIcon(0,QIcon()) ;
+
+		ChatLobbyId id = items.front()->data(COLUMN_DATA, ROLE_ID).toULongLong();
+
+		if(_lobby_infos.find(id) != _lobby_infos.end())
+			_lobby_infos[id].default_icon = QIcon() ;
 	}
 }
 void ChatLobbyWidget::updateMessageChanged(ChatLobbyId id)
