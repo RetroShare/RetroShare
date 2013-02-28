@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 #include "p3posted.h"
-#include "gxs/rsgxsflags.h"
+#include "retroshare/rsgxsflags.h"
 #include "serialiser/rsposteditems.h"
 
 #define UPDATE_PHASE_GRP_REQUEST 1
@@ -58,7 +58,7 @@ p3Posted::p3Posted(RsGeneralDataService *gds, RsNetworkExchangeService *nes)
 
 void p3Posted::notifyChanges(std::vector<RsGxsNotify *> &changes)
 {
-    receiveChanges(changes);
+    RsGxsIfaceHelper::receiveChanges(changes);
 }
 
 void p3Posted::service_tick()

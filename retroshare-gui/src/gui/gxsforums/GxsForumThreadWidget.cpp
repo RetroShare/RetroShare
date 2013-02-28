@@ -40,9 +40,10 @@
 #include <retroshare/rsgxsforums.h>
 #include <retroshare/rspeers.h>
 // These should be in retroshare/ folder.
-#include "gxs/rsgxsflags.h"
+#include "retroshare/rsgxsflags.h"
 
 #include <iostream>
+#include <algorithm>
 
 #define DEBUG_FORUMS
 

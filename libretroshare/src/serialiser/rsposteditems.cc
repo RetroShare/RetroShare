@@ -26,6 +26,7 @@
 
 #include "serialiser/rsposteditems.h"
 #include "rsbaseserial.h"
+#include "rstlvbase.h"
 
 
 uint32_t RsGxsPostedSerialiser::size(RsItem *item)

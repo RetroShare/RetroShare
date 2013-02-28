@@ -31,7 +31,7 @@
 #include <list>
 
 #include "gxs/rstokenservice.h"
-#include "gxs/rsgxsifaceimpl.h"
+#include "retroshare/rsgxsifacehelper.h"
 
 /* The Main Interface Class - for information about your Peers */
 class RsWiki;
@@ -113,11 +113,11 @@ std::ostream &operator<<(std::ostream &out, const RsWikiSnapshot &shot);
 std::ostream &operator<<(std::ostream &out, const RsWikiComment &comment);
 
 
-class RsWiki: public RsGxsIfaceImpl
+class RsWiki: public RsGxsIfaceHelper
 {
 	public:
 
-	RsWiki(RsGenExchange *gxs): RsGxsIfaceImpl(gxs)  { return; }
+	RsWiki(RsGxsIface *gxs): RsGxsIfaceHelper(gxs)  { return; }
 virtual ~RsWiki() { return; }
 
 	/* Specific Service Data */

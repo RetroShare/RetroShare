@@ -1805,10 +1805,9 @@ RsTurtle *rsTurtle = NULL ;
 
 #ifdef RS_ENABLE_GXS
 // NEW GXS SYSTEMS.
-#include "gxs/gxscoreserver.h"
 #include "gxs/rsdataservice.h"
 #include "gxs/rsgxsnetservice.h"
-#include "gxs/rsgxsflags.h"
+#include "retroshare/rsgxsflags.h"
 
 #include "services/p3idservice.h"
 #include "services/p3gxscircles.h"

@@ -25,7 +25,7 @@
 
 #include "services/p3idservice.h"
 #include "serialiser/rsgxsiditems.h"
-#include "gxs/rsgxsflags.h"
+#include "retroshare/rsgxsflags.h"
 #include "util/rsrandom.h"
 #include "util/rsstring.h"
 
@@ -158,7 +158,7 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
 	std::cerr << "p3IdService::notifyChanges()";
 	std::cerr << std::endl;
 
-	receiveChanges(changes);
+	RsGxsIfaceHelper::receiveChanges(changes);
 }
 
 /********************************************************************************/

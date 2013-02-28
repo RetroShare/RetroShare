@@ -36,25 +36,8 @@
 
 /* data types used throughout Gxs from netservice to genexchange */
 
-typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > GxsMsgReq;
-typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > GxsMsgIdResult;
 typedef std::map<RsGxsGroupId, std::vector<RsGxsMsgMetaData*> > GxsMsgMetaResult;
-typedef std::map<RsGxsGroupId, std::vector<RsMsgMetaData> > MsgMetaResult;
 typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsGxsMsgMetaData*> > MsgRelatedMetaResult;
-typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsGxsMessageId> > MsgRelatedIdResult;
 
-
-
-class RsGxsService
-{
-
-public:
-
-    RsGxsService(){}
-    virtual ~RsGxsService(){}
-
-    virtual void tick() = 0;
-
-};
 
 #endif // RSGXS_H

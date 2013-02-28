@@ -1,6 +1,6 @@
 #include "p3photoservice.h"
 #include "serialiser/rsphotoitems.h"
-#include "gxs/rsgxsflags.h"
+#include "retroshare/rsgxsflags.h"
 
 RsPhoto *rsPhoto = NULL;
 
@@ -136,7 +136,7 @@ void p3PhotoService::groupsChanged(std::list<RsGxsGroupId>& grpIds)
     while(!mGroupChange.empty())
     {
             RsGxsGroupChange* gc = mGroupChange.back();
-            std::list<RsGxsGroupId>& gList = gc->grpIdList;
+            std::list<RsGxsGroupId>& gList = gc->mGrpIdList;
             std::list<RsGxsGroupId>::iterator lit = gList.begin();
             for(; lit != gList.end(); lit++)
                     grpIds.push_back(*lit);

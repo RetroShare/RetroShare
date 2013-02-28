@@ -4,6 +4,8 @@
 
 #include "gxs/rstokenservice.h"
 
+typedef std::map<RsGxsGroupId, std::vector<RsMsgMetaData> > GxsMsgMetaMap;
+typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsMsgMetaData> > GxsMsgRelatedMetaMap;
 
 /*!
  * The aim of this class is to abstract
@@ -28,7 +30,7 @@ public:
 class RsGxsGroupChange : public RsGxsNotify
 {
 public:
-    std::list<RsGxsGroupId> grpIdList;
+    std::list<RsGxsGroupId> mGrpIdList;
 };
 
 /*!

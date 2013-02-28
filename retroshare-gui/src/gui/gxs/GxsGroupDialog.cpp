@@ -24,7 +24,7 @@
 #include "util/misc.h"
 #include "GxsGroupDialog.h"
 #include "gui/common/PeerDefs.h"
-#include "gxs/rsgxsflags.h"
+#include "retroshare/rsgxsflags.h"
 
 #include <algorithm>
 
@@ -331,7 +331,7 @@ void GxsGroupDialog::createGroup()
 	std::cerr << std::endl;
 
 	QString name = misc::removeNewLine(ui.groupName->text());
-	uint32_t flags = 0;
+	uint32_t flags = GXS_SERV::FLAG_PRIVACY_PUBLIC;
 
 	if(name.isEmpty())
 	{

@@ -29,9 +29,10 @@
 #include <inttypes.h>
 #include <string>
 #include <list>
+#include <set>
 
 #include "gxs/rstokenservice.h"
-#include "gxs/rsgxsifaceimpl.h"
+#include "retroshare/rsgxsifacehelper.h"
 
 #include "retroshare/rsidentity.h"
 
@@ -100,12 +101,12 @@ class RsGxsCircleDetails
 
 
 
-class RsGxsCircles: public RsGxsIfaceImpl
+class RsGxsCircles: public RsGxsIfaceHelper
 {
 	public:
 
-	RsGxsCircles(RsGenExchange *gxs)
-	:RsGxsIfaceImpl(gxs)  { return; }
+	RsGxsCircles(RsGxsIface *gxs)
+	:RsGxsIfaceHelper(gxs)  { return; }
 virtual ~RsGxsCircles() { return; }
 
 

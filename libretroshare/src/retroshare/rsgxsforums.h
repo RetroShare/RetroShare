@@ -31,7 +31,7 @@
 #include <list>
 
 #include "gxs/rstokenservice.h"
-#include "gxs/rsgxsifaceimpl.h"
+#include "retroshare/rsgxsifacehelper.h"
 
 
 
@@ -59,12 +59,12 @@ class RsGxsForumMsg
 std::ostream &operator<<(std::ostream &out, const RsGxsForumGroup &group);
 std::ostream &operator<<(std::ostream &out, const RsGxsForumMsg &msg);
 
-class RsGxsForums: public RsGxsIfaceImpl
+class RsGxsForums: public RsGxsIfaceHelper
 {
 	public:
 
-	RsGxsForums(RsGenExchange *gxs)
-	:RsGxsIfaceImpl(gxs)  { return; }
+	RsGxsForums(RsGxsIface *gxs)
+	:RsGxsIfaceHelper(gxs)  { return; }
 virtual ~RsGxsForums() { return; }
 
 	/* Specific Service Data */

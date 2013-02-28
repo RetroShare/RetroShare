@@ -3,13 +3,13 @@
 
 #include <QObject>
 
-#include <gxs/rsgxsifaceimpl.h>
+#include <retroshare/rsgxsifacehelper.h>
 
 class RsGxsUpdateBroadcast : public QObject
 {
     Q_OBJECT
 public:
-    explicit RsGxsUpdateBroadcast(RsGxsIfaceImpl* ifaceImpl, float dt, QObject *parent = 0);
+    explicit RsGxsUpdateBroadcast(RsGxsIfaceHelper* ifaceImpl, float dt, QObject *parent = 0);
 
     void startMonitor();
     void update();
@@ -26,7 +26,7 @@ public slots:
 
 private:
 
-    RsGxsIfaceImpl* mIfaceImpl;
+    RsGxsIfaceHelper* mIfaceImpl;
     float mDt;
 };
 

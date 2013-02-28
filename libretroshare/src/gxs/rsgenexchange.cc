@@ -35,7 +35,7 @@
 #include "rsgenexchange.h"
 #include "gxssecurity.h"
 #include "util/contentvalue.h"
-#include "rsgxsflags.h"
+#include "retroshare/rsgxsflags.h"
 #include "rsgixs.h"
 
 
@@ -674,6 +674,96 @@ bool RsGenExchange::checkMsgAuthenFlag(const PrivacyBitPos& pos, const uint8_t& 
             std::cerr << "pos option not recognised";
             return false;
     }
+}
+
+void RsGenExchange::receiveChanges(std::vector<RsGxsNotify*>& changes)
+{
+	RsStackMutex stack(mGenMtx);
+
+	std::vector<RsGxsNotify*>::iterator vit = changes.begin();
+
+	for(; vit != changes.end(); vit++)
+	{
+		RsGxsNotify* n = *vit;
+		RsGxsGroupChange* gc;
+		RsGxsMsgChange* mc;
+		if((mc = dynamic_cast<RsGxsMsgChange*>(n)) != NULL)
+		{
+				mMsgChange.push_back(mc);
+		}
+		else if((gc = dynamic_cast<RsGxsGroupChange*>(n)) != NULL)
+		{
+				mGroupChange.push_back(gc);
+		}
+		else
+		{
+			delete n;
+		}
+	}
+
+}
+
+void RsGenExchange::msgsChanged(std::map<RsGxsGroupId,
+                             std::vector<RsGxsMessageId> >& msgs)
+{
+	RsStackMutex stack(mGenMtx);
+
+	while(!mMsgChange.empty())
+	{
+		RsGxsMsgChange* mc = mMsgChange.back();
+		msgs = mc->msgChangeMap;
+		mMsgChange.pop_back();
+		delete mc;
+	}
+}
+
+void RsGenExchange::groupsChanged(std::list<RsGxsGroupId>& grpIds)
+{
+	RsStackMutex stack(mGenMtx);
+
+	while(!mGroupChange.empty())
+	{
+		RsGxsGroupChange* gc = mGroupChange.back();
+		std::list<RsGxsGroupId>& gList = gc->mGrpIdList;
+		std::list<RsGxsGroupId>::iterator lit = gList.begin();
+		for(; lit != gList.end(); lit++)
+				grpIds.push_back(*lit);
+
+		mGroupChange.pop_back();
+		delete gc;
+	}
+}
+
+bool RsGenExchange::subscribeToGroup(uint32_t& token, const RsGxsGroupId& grpId, bool subscribe)
+{
+    if(subscribe)
+        setGroupSubscribeFlags(token, grpId, GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED,  GXS_SERV::GROUP_SUBSCRIBE_MASK);
+    else
+        setGroupSubscribeFlags(token, grpId, 0, GXS_SERV::GROUP_SUBSCRIBE_MASK);
+
+    return true;
+}
+bool RsGenExchange::updated(bool willCallGrpChanged, bool willCallMsgChanged)
+{
+	bool changed = false;
+	{
+		RsStackMutex stack(mGenMtx);
+
+		changed =  (!mGroupChange.empty() || !mMsgChange.empty());
+	}
+
+	if(!willCallGrpChanged)
+	{
+		std::list<RsGxsGroupId> grpIds;
+		groupsChanged(grpIds);
+	}
+
+	if(!willCallMsgChanged)
+	{
+		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgs;
+		msgsChanged(msgs);
+	}
+	return changed;
 }
 
 bool RsGenExchange::getGroupList(const uint32_t &token, std::list<RsGxsGroupId> &groupIds)
@@ -1698,7 +1788,7 @@ void RsGenExchange::processRecvdGroups()
     if(!grpIds.empty())
     {
         RsGxsGroupChange* c = new RsGxsGroupChange();
-        c->grpIdList = grpIds;
+        c->mGrpIdList = grpIds;
         mNotifications.push_back(c);
         mDataStore->storeGroup(grps);
     }

@@ -16,8 +16,6 @@
  */
 namespace GXS_SERV {
 
-
-
     /** START privacy **/
 
     static const uint32_t FLAG_PRIVACY_MASK = 0x0000000f;

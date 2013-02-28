@@ -3,7 +3,7 @@
 #include "RsGxsUpdateBroadcast.h"
 
 
-RsGxsUpdateBroadcast::RsGxsUpdateBroadcast(RsGxsIfaceImpl *ifaceImpl, float dt, QObject *parent) :
+RsGxsUpdateBroadcast::RsGxsUpdateBroadcast(RsGxsIfaceHelper *ifaceImpl, float dt, QObject *parent) :
     QObject(parent), mIfaceImpl(ifaceImpl), mDt(dt)
 {
 }

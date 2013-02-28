@@ -29,7 +29,7 @@
 #include <retroshare/rsidentity.h>
 
 
-#include "gxs/rsgxsflags.h"
+#include "retroshare/rsgxsflags.h"
 #include <stdio.h>
 
 // For Dummy Msgs.
@@ -82,7 +82,7 @@ uint32_t p3GxsForums::forumsAuthenPolicy()
 }
 void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 {
-	receiveChanges(changes);
+	RsGxsIfaceHelper::receiveChanges(changes);
 }
 
 void	p3GxsForums::service_tick()

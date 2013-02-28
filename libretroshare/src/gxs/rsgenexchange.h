@@ -32,6 +32,7 @@
 #include "rsgxs.h"
 #include "rsgds.h"
 #include "rsnxs.h"
+#include "retroshare/rsgxsiface.h"
 #include "rsgxsdataaccess.h"
 #include "rsnxsobserver.h"
 #include "retroshare/rsgxsservice.h"
@@ -40,8 +41,7 @@
 typedef std::map<RsGxsGroupId, std::vector<RsGxsMsgItem*> > GxsMsgDataMap;
 typedef std::map<RsGxsGroupId, RsGxsGrpItem*> GxsGroupDataMap;
 typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsGxsMsgItem*> > GxsMsgRelatedDataMap;
-typedef std::map<RsGxsGroupId, std::vector<RsMsgMetaData> > GxsMsgMetaMap;
-typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsMsgMetaData> > GxsMsgRelatedMetaMap;
+
 
 /*!
  * This should form the parent class to \n
@@ -65,7 +65,7 @@ typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsMsgMetaData> > GxsMsgRelatedMe
 
 class RsGixs;
 
-class RsGenExchange : public RsGxsService, public RsNxsObserver, public RsThread
+class RsGenExchange : public RsNxsObserver, public RsThread, public RsGxsIface
 {
 public:
 
@@ -111,7 +111,6 @@ public:
      * Any backgroup processing needed by
      */
     virtual void service_tick() = 0;
-
 
     /*!
      *
@@ -190,8 +189,51 @@ public:
     bool getMsgRelatedMeta(const uint32_t &token, GxsMsgRelatedMetaMap& msgMeta);
 
 
+    /*!
+     * Gxs services should call this for automatic handling of
+     * changes, send
+     * @param changes
+     */
+    virtual void receiveChanges(std::vector<RsGxsNotify*>& changes);
+
+    /*!
+     * Checks to see if a change has been received for
+     * for a message or group
+     * @param willCallGrpChanged if this is set to true, group changed function will return list
+     *        groups that have changed, if false, the group changed list is cleared
+     * @param willCallMsgChanged if this is set to true, msgChanged function will return map
+     *        messages that have changed, if false, the message changed map is cleared
+     * @return true if a change has occured for msg or group
+     * @see groupsChanged
+     * @see msgsChanged
+     */
+    bool updated(bool willCallGrpChanged = false, bool willCallMsgChanged = false);
+
+    /*!
+     * The groups changed. \n
+     * class can reimplement to use to tailor
+     * the group actually set for ui notification.
+     * If receivedChanges is not passed RsGxsNotify changes
+     * this function does nothing
+     * @param grpIds returns list of grpIds that have changed
+     * @see updated
+     */
+    void groupsChanged(std::list<RsGxsGroupId>& grpIds);
+
+    /*!
+     * The msg changed. \n
+     * class can reimplement to use to tailor
+     * the msg actually set for ui notification.
+     * If receivedChanges is not passed RsGxsNotify changes
+     * this function does nothing
+     * @param msgs returns map of message ids that have changed
+     * @see updated
+     */
+    void msgsChanged(std::map<RsGxsGroupId,
+                             std::vector<RsGxsMessageId> >& msgs);
 
 
+    bool subscribeToGroup(uint32_t& token, const RsGxsGroupId& grpId, bool subscribe);
 protected:
 
     /*!
@@ -563,6 +605,8 @@ private:
 private:
 
     std::vector<RsGxsNotify*> mChanges;
+    std::vector<RsGxsGroupChange*> mGroupChange;
+    std::vector<RsGxsMsgChange*> mMsgChange;
 };
 
 #endif // RSGENEXCHANGE_H

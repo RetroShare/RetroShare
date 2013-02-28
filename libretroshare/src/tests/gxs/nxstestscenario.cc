@@ -7,7 +7,7 @@
 
 #include "nxstestscenario.h"
 #include "gxs/rsdataservice.h"
-#include "gxs/rsgxsflags.h"
+#include "retroshare/rsgxsflags.h"
 #include "data_support.h"
 #include <stdio.h>
 

@@ -25,10 +25,11 @@
 #include "GxsForumsFillThread.h"
 #include "GxsForumThreadWidget.h"
 
-#include "gxs/rsgxsflags.h"
+#include "retroshare/rsgxsflags.h"
 #include <retroshare/rsgxsforums.h>
 
 #include <iostream>
+#include <algorithm>
 
 #define DEBUG_FORUMS
 

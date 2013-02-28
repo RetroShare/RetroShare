@@ -27,7 +27,7 @@
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsphoto.h>
-#include <gxs/rsgxsflags.h>
+#include <retroshare/rsgxsflags.h>
 
 #include <iostream>
 #include <sstream>

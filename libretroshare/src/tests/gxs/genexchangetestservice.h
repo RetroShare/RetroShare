@@ -2,7 +2,7 @@
 #define GENEXCHANGETESTSERVICE_H
 
 #include "gxs/rsgenexchange.h"
-#include "gxs/rsgxsifaceimpl.h"
+#include "retroshare/rsgxsifacehelper.h"
 #include "rsdummyservices.h"
 
 class GenExchangeTestService : public RsGenExchange

@@ -26,7 +26,8 @@
  *
  */
 
-#include "gxs/rsgenexchange.h"
+#include "retroshare/rsgxsiface.h"
+#include "rsgxsflags.h"
 
 /*!
  * The simple idea of this class is to implement the simple interface functions
@@ -36,7 +37,7 @@
  * - subscription to groups
  * - retrieval of msgs and group ids and meta info
  */
-class RsGxsIfaceImpl
+class RsGxsIfaceHelper
 {
 public:
 
@@ -44,17 +45,21 @@ public:
      *
      * @param gxs handle to RsGenExchange instance of service (Usually the service class itself)
      */
-    RsGxsIfaceImpl(RsGenExchange* gxs);
+	RsGxsIfaceHelper(RsGxsIface* gxs)
+	    : mGxs(gxs)
+	{}
 
-protected:
+    ~RsGxsIfaceHelper(){}
+
     /*!
      * Gxs services should call this for automatic handling of
      * changes, send
      * @param changes
      */
-    void receiveChanges(std::vector<RsGxsNotify*>& changes);
-
-public:
+    void receiveChanges(std::vector<RsGxsNotify *> &changes)
+    {
+    	mGxs->receiveChanges(changes);
+    }
 
     /*!
      * Checks to see if a change has been received for
@@ -67,7 +72,10 @@ public:
      * @see groupsChanged
      * @see msgsChanged
      */
-    virtual bool updated(bool willCallGrpChanged = false, bool willCallMsgChanged = false);
+    bool updated(bool willCallGrpChanged = false, bool willCallMsgChanged = false)
+    {
+    	return mGxs->updated(willCallGrpChanged, willCallMsgChanged);
+    }
 
     /*!
      * The groups changed. \n
@@ -78,7 +86,10 @@ public:
      * @param grpIds returns list of grpIds that have changed
      * @see updated
      */
-    virtual void groupsChanged(std::list<RsGxsGroupId>& grpIds);
+    void groupsChanged(std::list<RsGxsGroupId> &grpIds)
+    {
+    	mGxs->groupsChanged(grpIds);
+    }
 
     /*!
      * The msg changed. \n
@@ -89,13 +100,17 @@ public:
      * @param msgs returns map of message ids that have changed
      * @see updated
      */
-    virtual void msgsChanged(std::map<RsGxsGroupId,
-                             std::vector<RsGxsMessageId> >& msgs);
-
+    void msgsChanged(std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgs)
+    {
+    	mGxs->msgsChanged(msgs);
+    }
     /*!
      * @return handle to token service for this GXS service
      */
-    RsTokenService* getTokenService();
+    RsTokenService* getTokenService()
+    {
+        return mGxs->getTokenService();
+    }
 
     /* Generic Lists */
 
@@ -106,7 +121,10 @@ public:
      * @return false if request token is invalid, check token status for error report
      */
     bool getGroupList(const uint32_t &token,
-                              std::list<RsGxsGroupId> &groupIds);
+            std::list<RsGxsGroupId> &groupIds)
+	{
+    	return mGxs->getGroupList(token, groupIds);
+	}
 
     /*!
      * Retrieves list of msg ids associated to a request token
@@ -115,7 +133,10 @@ public:
      * @return false if request token is invalid, check token status for error report
      */
     bool getMsgList(const uint32_t &token,
-                            GxsMsgIdResult& msgIds);
+            GxsMsgIdResult& msgIds)
+	{
+    	return mGxs->getMsgList(token, msgIds);
+	}
 
     /*!
      * Retrieves list of msg related ids associated to a request token
@@ -123,8 +144,10 @@ public:
      * @param msgIds the ids return for given request token
      * @return false if request token is invalid, check token status for error report
      */
-    bool getMsgRelatedList(const uint32_t &token,
-                           MsgRelatedIdResult& msgIds);
+    bool getMsgRelatedList(const uint32_t &token, MsgRelatedIdResult &msgIds)
+    {
+        return mGxs->getMsgRelatedList(token, msgIds);
+    }
 
     /*!
      * @param token token to be redeemed for group summary request
@@ -132,7 +155,10 @@ public:
      * @return false if request token is invalid, check token status for error report
      */
     bool getGroupSummary(const uint32_t &token,
-                                 std::list<RsGroupMetaData> &groupInfo);
+            std::list<RsGroupMetaData> &groupInfo)
+	{
+    	return mGxs->getGroupMeta(token, groupInfo);
+	}
 
     /*!
      * @param token token to be redeemed for message summary request
@@ -140,15 +166,20 @@ public:
      * @return false if request token is invalid, check token status for error report
      */
     bool getMsgSummary(const uint32_t &token,
-                               GxsMsgMetaMap &msgInfo);
+            GxsMsgMetaMap &msgInfo)
+	{
+    	return mGxs->getMsgMeta(token, msgInfo);
+	}
 
     /*!
      * @param token token to be redeemed for message related summary request
      * @param msgInfo the message metadata returned for given request token
      * @return false if request token is invalid, check token status for error report
      */
-    bool getMsgrelatedSummary(const uint32_t &token,
-                               GxsMsgRelatedMetaMap &msgInfo);
+    bool getMsgrelatedSummary(const uint32_t &token, GxsMsgRelatedMetaMap &msgInfo)
+    {
+        return mGxs->getMsgRelatedMeta(token, msgInfo);
+    }
 
     /*!
      * subscribes to group, and returns token which can be used
@@ -156,7 +187,10 @@ public:
      * @param token token to redeem for acknowledgement
      * @param grpId the id of the group to subscribe to
      */
-    virtual bool subscribeToGroup(uint32_t& token, const RsGxsGroupId& grpId, bool subscribe);
+    bool subscribeToGroup(uint32_t& token, const RsGxsGroupId& grpId, bool subscribe)
+    {
+    	return mGxs->subscribeToGroup(token, grpId, subscribe);
+    }
 
     /*!
      * This allows the client service to acknowledge that their msgs has
@@ -165,7 +199,10 @@ public:
      * @param msgIds map of grpid->msgIds of message created/modified
      * @return true if token exists false otherwise
      */
-    bool acknowledgeMsg(const uint32_t& token, std::pair<RsGxsGroupId, RsGxsMessageId>& msgId);
+    bool acknowledgeMsg(const uint32_t& token, std::pair<RsGxsGroupId, RsGxsMessageId>& msgId)
+    {
+		return mGxs->acknowledgeTokenMsg(token, msgId);
+    }
 
     /*!
      * This allows the client service to acknowledge that their grps has
@@ -174,17 +211,14 @@ public:
      * @param msgIds vector of ids of groups created/modified
      * @return true if token exists false otherwise
      */
-    bool acknowledgeGrp(const uint32_t& token, RsGxsGroupId& grpId);
-
+    bool acknowledgeGrp(const uint32_t& token, RsGxsGroupId& grpId)
+    {
+            return mGxs->acknowledgeTokenGrp(token, grpId);
+    }
 
 private:
 
-    RsGenExchange* mGxs;
-
-    std::vector<RsGxsGroupChange*> mGroupChange;
-    std::vector<RsGxsMsgChange*> mMsgChange;
-
-    RsMutex mGxsIfaceMutex;
+    RsGxsIface* mGxs;
 };
 
 #endif // RSGXSIFACEIMPL_H

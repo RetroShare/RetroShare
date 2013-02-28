@@ -34,7 +34,6 @@
 
 typedef std::string RsGxsGroupId;
 typedef std::string RsGxsMessageId;
-typedef std::pair<RsGxsGroupId, RsGxsMessageId> RsGxsGrpMsgIdPair;
 
 class RsGroupMetaData;
 class RsMsgMetaData;

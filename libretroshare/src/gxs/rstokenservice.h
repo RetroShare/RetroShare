@@ -30,8 +30,8 @@
 #include <string>
 #include <list>
 
-#include "serialiser/rsgxsitems.h"
-#include "gxs/rsgxs.h"
+//#include "gxs/rsgxs.h"
+#include "retroshare/rsgxsifacetypes.h"
 
 #define GXS_REQUEST_TYPE_GROUP_DATA			0x00010000
 #define GXS_REQUEST_TYPE_GROUP_META			0x00020000
@@ -64,8 +64,6 @@
 #define RS_TOKREQ_ANSTYPE_SUMMARY	0x0002
 #define RS_TOKREQ_ANSTYPE_DATA		0x0003
 #define RS_TOKREQ_ANSTYPE_ACK           0x0004
-
-
 
 
 /*!

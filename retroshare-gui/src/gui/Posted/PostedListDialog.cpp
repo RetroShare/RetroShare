@@ -28,7 +28,7 @@
 #include "gui/Posted/PostedDialog.h"
 
 #include <retroshare/rsposted.h>
-#include <gxs/rsgxsflags.h>
+#include <retroshare/rsgxsflags.h>
 
 #include <iostream>
 #include <sstream>

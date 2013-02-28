@@ -31,7 +31,7 @@
 #include <list>
 
 #include "gxs/rstokenservice.h"
-#include "gxs/rsgxsifaceimpl.h"
+#include "retroshare/rsgxsifacehelper.h"
 
 /* The Main Interface Class - for information about your Peers */
 class RsIdentity;
@@ -198,12 +198,12 @@ class RsIdentityParameters
 };
 
 
-class RsIdentity: public RsGxsIfaceImpl
+class RsIdentity: public RsGxsIfaceHelper
 {
 
 public:
 
-    RsIdentity(RsGenExchange *gxs): RsGxsIfaceImpl(gxs)  { return; }
+    RsIdentity(RsGxsIface *gxs): RsGxsIfaceHelper(gxs)  { return; }
     virtual ~RsIdentity() { return; }
 
 /********************************************************************************************/

@@ -1,7 +1,7 @@
 #include "genexchangetester.h"
 #include "support.h"
 #include "gxs/rsdataservice.h"
-#include "gxs/rsgxsflags.h"
+#include "retroshare/rsgxsflags.h"
 
 #define TEST_FLAG 0x00004;
 #define TEST_MASK 0x0000f;

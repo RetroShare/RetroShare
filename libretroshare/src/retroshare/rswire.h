@@ -31,7 +31,7 @@
 #include <list>
 
 #include "gxs/rstokenservice.h"
-#include "gxs/rsgxsifaceimpl.h"
+#include "retroshare/rsgxsifacehelper.h"
 
 
 /* The Main Interface Class - for information about your Peers */
@@ -104,11 +104,11 @@ std::ostream &operator<<(std::ostream &out, const RsWireGroup &group);
 std::ostream &operator<<(std::ostream &out, const RsWirePulse &pulse);
 
 
-class RsWire: public RsGxsIfaceImpl
+class RsWire: public RsGxsIfaceHelper
 {
 	public:
 
-	RsWire(RsGenExchange *gxs): RsGxsIfaceImpl(gxs)  { return; }
+	RsWire(RsGxsIface *gxs): RsGxsIfaceHelper(gxs)  { return; }
 virtual ~RsWire() { return; }
 
 	/* Specific Service Data */

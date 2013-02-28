@@ -238,7 +238,6 @@ win32 {
 		SQLITE_DIR = ../../../sqlite-autoconf-3070900
 		INCLUDEPATH += $${SQLITE_DIR}
 	}
-
 }
 
 
@@ -623,7 +622,8 @@ gxs {
 		gxs/rsgxs.h \
 		gxs/rsdataservice.h \
 		gxs/rsgxsnetservice.h \
-		gxs/rsgxsflags.h \
+		retroshare/rsgxsflags.h \
+		retroshare/rsgxsifacetypes.h \
 		gxs/rsgenexchange.h \
 		gxs/rsnxsobserver.h \
 		gxs/rsgxsdata.h \
@@ -633,10 +633,10 @@ gxs {
 		serialiser/rsgxsitems.h \
 		util/retrodb.h \
 		util/contentvalue.h \
-		gxs/gxscoreserver.h \
 		gxs/gxssecurity.h \
-		gxs/rsgxsifaceimpl.h \
+		gxs/rsgxsifacehelper.h \
 		gxs/gxstokenqueue.h \
+		gxs/rsgxsiface.h
 
 
 	SOURCES += serialiser/rsnxsitems.cc \
@@ -648,9 +648,7 @@ gxs {
 		gxs/rsgxsdataaccess.cc \
 		util/retrodb.cc \
 		util/contentvalue.cc \
-		gxs/gxscoreserver.cc \
 		gxs/gxssecurity.cc \
-		gxs/rsgxsifaceimpl.cc \
 		gxs/gxstokenqueue.cc \
 
 	# Identity Service

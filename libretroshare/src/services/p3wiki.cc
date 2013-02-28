@@ -24,7 +24,7 @@
  */
 
 #include "services/p3wiki.h"
-#include "gxs/rsgxsflags.h"
+#include "retroshare/rsgxsflags.h"
 #include "serialiser/rswikiitems.h"
 
 #include "util/rsrandom.h"
@@ -110,7 +110,7 @@ void p3Wiki::notifyChanges(std::vector<RsGxsNotify*>& changes)
 	std::cerr << "p3Wiki::notifyChanges() New stuff";
 	std::cerr << std::endl;
 
-	receiveChanges(changes);
+	RsGxsIfaceHelper::receiveChanges(changes);
 }
 
         /* Specific Service Data */

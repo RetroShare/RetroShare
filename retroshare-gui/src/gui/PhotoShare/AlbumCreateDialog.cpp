@@ -4,7 +4,7 @@
 #include "ui_AlbumCreateDialog.h"
 
 #include "util/misc.h"
-#include "gxs/rsgxsflags.h"
+#include "retroshare/rsgxsflags.h"
 
 AlbumCreateDialog::AlbumCreateDialog(TokenQueue *photoQueue, RsPhoto *rs_photo, QWidget *parent):
     QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint),

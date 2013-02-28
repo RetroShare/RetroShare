@@ -31,7 +31,7 @@
 #include <string>
 #include <list>
 #include "gxs/rstokenservice.h"
-#include "gxs/rsgxsifaceimpl.h"
+#include "retroshare/rsgxsifacehelper.h"
 
 class RsPosted;
 extern RsPosted *rsPosted;
@@ -80,7 +80,7 @@ std::ostream &operator<<(std::ostream &out, const RsPostedComment &comment);
 
 
 
-class RsPosted : public RsGxsIfaceImpl
+class RsPosted : public RsGxsIfaceHelper
 {
         public:
 
@@ -92,7 +92,7 @@ class RsPosted : public RsGxsIfaceImpl
     static const uint32_t FLAG_MSGTYPE_MASK;
 
 
-    RsPosted(RsGenExchange* gxs) : RsGxsIfaceImpl(gxs) { return; }
+    RsPosted(RsGxsIface* gxs) : RsGxsIfaceHelper(gxs) { return; }
 virtual ~RsPosted() { return; }
 
         /* Specific Service Data */

@@ -25,7 +25,7 @@
 
 #include "services/p3gxscircles.h"
 #include "serialiser/rsgxscircleitems.h"
-#include "gxs/rsgxsflags.h"
+#include "retroshare/rsgxsflags.h"
 #include "util/rsrandom.h"
 #include "util/rsstring.h"
 
@@ -173,7 +173,7 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 	std::cerr << "p3GxsCircles::notifyChanges()";
 	std::cerr << std::endl;
 
-	receiveChanges(changes);
+	RsGxsIfaceHelper::receiveChanges(changes);
 
 	// for new circles we need to add them to the list.
 	// TODO.

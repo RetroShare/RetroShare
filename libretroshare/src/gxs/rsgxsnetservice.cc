@@ -28,7 +28,7 @@
 #include <math.h>
 
 #include "rsgxsnetservice.h"
-#include "rsgxsflags.h"
+#include "retroshare/rsgxsflags.h"
 
 /**
  * #define NXS_NET_DEBUG	1
