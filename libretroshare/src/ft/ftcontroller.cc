@@ -104,7 +104,7 @@ ftController::ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string /
 	ctrlMutex("ftController"),
 	doneMutex("ftController"),
 	mFtActive(false),
-	mDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_RANDOM) 
+	mDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE) 
 {
 	_max_active_downloads = 5 ; // default queue size
 	_min_prioritized_transfers = 3 ;
@@ -2234,6 +2234,11 @@ bool  ftController::loadConfigMap(std::map<std::string, std::string> &configMap)
 		{
 			setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_RANDOM) ;
 			std::cerr << "Note: loading default value for chunk strategy: random" << std::endl;
+		}
+		else if(mit->second == "PROGRESSIVE")
+		{
+			setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE) ;
+			std::cerr << "Note: loading default value for chunk strategy: progressive" << std::endl;
 		}
 		else
 			std::cerr << "**** ERROR ***: Unknown value for default chunk strategy in keymap." << std::endl ;

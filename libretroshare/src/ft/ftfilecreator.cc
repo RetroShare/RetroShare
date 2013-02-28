@@ -416,10 +416,10 @@ void ftFileCreator::setChunkStrategy(FileChunksInfo::ChunkStrategy s)
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 
 	// Let's check, for safety.
-	if(s != FileChunksInfo::CHUNK_STRATEGY_STREAMING && s != FileChunksInfo::CHUNK_STRATEGY_RANDOM)
+	if(s != FileChunksInfo::CHUNK_STRATEGY_STREAMING && s != FileChunksInfo::CHUNK_STRATEGY_RANDOM && s != FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE)
 	{
 		std::cerr << "ftFileCreator::ERROR: invalid chunk strategy " << s << "!" << " setting default value " << FileChunksInfo::CHUNK_STRATEGY_STREAMING << std::endl ;
-		s = FileChunksInfo::CHUNK_STRATEGY_STREAMING ;
+		s = FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE ;
 	}
 
 #ifdef FILE_DEBUG

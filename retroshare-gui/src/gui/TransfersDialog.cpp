@@ -397,6 +397,8 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 	connect(priorityFastAct, SIGNAL(triggered()), this, SLOT(speedFast()));
 	chunkRandomAct = new QAction(QIcon(IMAGE_PRIORITYAUTO), tr("Random"), this);
 	connect(chunkRandomAct, SIGNAL(triggered()), this, SLOT(chunkRandom()));
+	chunkProgressiveAct = new QAction(QIcon(IMAGE_PRIORITYAUTO), tr("Progressive"), this);
+	connect(chunkProgressiveAct, SIGNAL(triggered()), this, SLOT(chunkProgressive()));
 	playAct = new QAction(QIcon(IMAGE_PLAY), tr( "Play" ), this );
 	connect( playAct , SIGNAL( triggered() ), this, SLOT( openTransfer() ) );
 	renameFileAct = new QAction(QIcon(IMAGE_PRIORITYNORMAL), tr("Rename file..."), this);
@@ -547,6 +549,7 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 	QMenu chunkMenu(tr("Chunk strategy"), this);
 	chunkMenu.setIcon(QIcon(IMAGE_PRIORITY));
 	chunkMenu.addAction(chunkStreamingAct);
+	chunkMenu.addAction(chunkProgressiveAct);
 	chunkMenu.addAction(chunkRandomAct);
 
 	QMenu contextMnu( this );
@@ -1509,6 +1512,10 @@ void TransfersDialog::chunkStreaming()
 void TransfersDialog::chunkRandom()
 {
 	setChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_RANDOM) ;
+}
+void TransfersDialog::chunkProgressive()
+{
+	setChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE) ;
 }
 void TransfersDialog::setChunkStrategy(FileChunksInfo::ChunkStrategy s)
 {

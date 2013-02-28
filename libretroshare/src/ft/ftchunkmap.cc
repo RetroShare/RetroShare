@@ -38,6 +38,7 @@
 
 static const uint32_t SOURCE_CHUNK_MAP_UPDATE_PERIOD	=  60 ; //! TTL for chunkmap info
 static const uint32_t INACTIVE_CHUNK_TIME_LAPSE 		= 300 ; //! TTL for an inactive chunk
+static const uint32_t FT_CHUNKMAP_MAX_CHUNK_JUMP		=  50 ; //! Maximum chunk jump in progressive DL mode
 
 std::ostream& operator<<(std::ostream& o,const ftChunk& c)
 {
@@ -74,7 +75,7 @@ ChunkMap::ChunkMap(uint64_t s,bool availability)
 		++n ;
 
 	_map.resize(n,FileChunksInfo::CHUNK_OUTSTANDING) ;
-	_strategy = FileChunksInfo::CHUNK_STRATEGY_RANDOM ;
+	_strategy = FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE ;
 	_total_downloaded = 0 ;
 	_file_is_complete = false ;
 #ifdef DEBUG_FTCHUNK
@@ -537,27 +538,45 @@ uint32_t ChunkMap::getAvailableChunk(const std::string& peer_id,bool& map_is_too
 		map_is_too_old = false ;// the map is not too old
 
 	uint32_t available_chunks = 0 ;
+	uint32_t available_chunks_before_max_dist = 0 ;
+	uint32_t max_dist = 0;		// id of the highest downloaded chunk
 
 	for(unsigned int i=0;i<_map.size();++i)
-		if(_map[i] == FileChunksInfo::CHUNK_OUTSTANDING && (peer_chunks->is_full || peer_chunks->cmap[i]))
+		if(_map[i] == FileChunksInfo::CHUNK_OUTSTANDING)
 		{
-			if(_strategy == FileChunksInfo::CHUNK_STRATEGY_STREAMING)
-			{
-#ifdef DEBUG_FTCHUNK
-				std::cerr << "ChunkMap::getAvailableChunk: returning chunk " << i << " for peer " << peer_id << std::endl;
-#endif
-				return i ;
-			}
-			else
+			if(peer_chunks->is_full || peer_chunks->cmap[i])
 				++available_chunks ;
+		}
+		else
+		{
+			max_dist = i ;
+			available_chunks_before_max_dist = available_chunks ;
 		}
 
 	if(available_chunks > 0)
 	{
-		uint32_t chosen_chunk_number = rand() % available_chunks ;
+		uint32_t chunk_jump ;
+		uint32_t chosen_chunk_number ;
+
+		switch(_strategy)
+		{
+			case FileChunksInfo::CHUNK_STRATEGY_STREAMING:   chunk_jump = 1 ;
+																			 chosen_chunk_number = 0 ;
+																		    break ;
+			case FileChunksInfo::CHUNK_STRATEGY_RANDOM:      chunk_jump = _map.size() ;
+																			 chosen_chunk_number = rand() % available_chunks ;
+																		    break ;
+			case FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE: chunk_jump = FT_CHUNKMAP_MAX_CHUNK_JUMP ;
+																			 chosen_chunk_number = rand() % std::min(available_chunks, available_chunks_before_max_dist+FT_CHUNKMAP_MAX_CHUNK_JUMP) ;
+																		    break ;
+			default:
+																			 chunk_jump = _map.size() ;
+																			 chosen_chunk_number = 0 ;
+		}
+		uint32_t max_chunk = std::min((uint32_t)_map.size(),max_dist + chunk_jump) ;
 		uint32_t j=0 ;
 
-		for(uint32_t i=0;i<_map.size();++i)
+		for(uint32_t i=0;i<max_chunk;++i)
 			if(_map[i] == FileChunksInfo::CHUNK_OUTSTANDING && (peer_chunks->is_full || peer_chunks->cmap[i]))
 			{
 				if(j == chosen_chunk_number)

@@ -38,10 +38,12 @@ TransferPage::TransferPage(QWidget * parent, Qt::WFlags flags)
 	ui._queueSize_SB->setValue(rsFiles->getQueueSize()) ;
 	ui._minPrioritized_SB->setValue(rsFiles->getMinPrioritizedTransfers()) ;
 
-	if(rsFiles->defaultChunkStrategy() == FileChunksInfo::CHUNK_STRATEGY_STREAMING)
-		ui._defaultStrategy_CB->setCurrentIndex(0) ;
-	else
-		ui._defaultStrategy_CB->setCurrentIndex(1) ;
+	switch(rsFiles->defaultChunkStrategy())
+	{
+		case FileChunksInfo::CHUNK_STRATEGY_STREAMING: ui._defaultStrategy_CB->setCurrentIndex(0) ; break ;
+		case FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE: ui._defaultStrategy_CB->setCurrentIndex(1) ; break ;
+		case FileChunksInfo::CHUNK_STRATEGY_RANDOM: ui._defaultStrategy_CB->setCurrentIndex(2) ; break ;
+	}
 
 	ui._diskSpaceLimit_SB->setValue(rsFiles->freeDiskSpaceLimit()) ;
 
@@ -63,9 +65,11 @@ void TransferPage::updateDefaultStrategy(int i)
 		case 0: rsFiles->setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_STREAMING) ;
 				  break ;
 
-		case 1: rsFiles->setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_RANDOM) ;
+		case 2: rsFiles->setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_RANDOM) ;
 				  break ;
 
+		case 1: rsFiles->setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE) ;
+				  break ;
 		default: ;
 	}
 }

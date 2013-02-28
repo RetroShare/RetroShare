@@ -76,7 +76,7 @@ int main()
 	std::string fname = "source_tmp.bin" ;
 	std::string fname_copy_1 = "copy_1_tmp.bin" ;
 	std::string fname_copy_2 = "copy_2_tmp.bin" ;
-	uint64_t size = 5000000 ;
+	uint64_t size = 100000000 ;
 	std::string hash = "" ;
 
 	pthread_t seed = 8;//getpid() ;
@@ -91,6 +91,9 @@ int main()
 	ftFileProvider *server = new ftFileProvider(fname,size,hash) ;
 	ftFileCreator *client1 = new ftFileCreator(fname_copy_1,size,hash,false) ;
 	ftFileCreator *client2 = new ftFileCreator(fname_copy_2,size,hash,false) ;
+
+	client1->setChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_RANDOM) ;
+	client2->setChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE) ;
 
 	// 3 - Exchange chunks, and build two copies of the file.
 	//

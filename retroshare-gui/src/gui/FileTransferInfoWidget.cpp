@@ -260,7 +260,14 @@ void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info
 	 y += block_sep ;
 	 y += text_height ; painter->drawText(20,y,tr("Number of sources") + ":") ; painter->drawText(tab_size,y,QString::number(info.compressed_peer_availability_maps.size())) ;
 	 y += block_sep ;
-	 y += text_height ; painter->drawText(20,y,tr("Chunk strategy") + ":") ; painter->drawText(tab_size,y,(info.strategy==FileChunksInfo::CHUNK_STRATEGY_RANDOM)?"Random":"Streaming") ;
+	 y += text_height ; painter->drawText(20,y,tr("Chunk strategy") + ":") ; 
+	 switch(info.strategy)
+	 {
+		 case FileChunksInfo::CHUNK_STRATEGY_RANDOM:      painter->drawText(tab_size,y,"Random") ; break ;
+		 case FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE: painter->drawText(tab_size,y,"Progressive") ; break ;
+		 default:
+		 case FileChunksInfo::CHUNK_STRATEGY_STREAMING:   painter->drawText(tab_size,y,"Streaming") ; break ;
+	 }
 	 y += block_sep ;
 	 y += text_height ; painter->drawText(20,y,tr("Transfer type") + ":") ; 
 	 if(nfo.transfer_info_flags & RS_FILE_REQ_ANONYMOUS_ROUTING) painter->drawText(tab_size,y,tr("Anonymous F2F")) ;

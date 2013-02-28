@@ -116,6 +116,7 @@ private slots:
     void changeQueuePosition(QueueMove) ;
 
     void chunkRandom();
+    void chunkProgressive();
     void chunkStreaming();
 
     void showDetailsDialog();
@@ -166,6 +167,7 @@ private:
     QAction *queueTopAct;
     QAction *queueBottomAct;
     QAction *chunkRandomAct;
+    QAction *chunkProgressiveAct;
     QAction *chunkStreamingAct;
     QAction *detailsfileAct;
     QAction *toggleShowCacheTransfersAct;
