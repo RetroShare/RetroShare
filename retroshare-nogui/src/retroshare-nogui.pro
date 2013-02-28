@@ -171,9 +171,24 @@ sshserver {
 		LIBS += -lssh
 		LIBS += -lssh_threads
 	} else {
-		LIBS += $$LIBSSH_DIR/build/src/libssh.a
-		LIBS += $$LIBSSH_DIR/build/src/threads/libssh_threads.a
-	}
+		SSH_OK = $$system(pkg-config --atleast-version 0.5.2 libssh && echo yes)
+		isEmpty(SSH_OK) {
+			exists($$LIBSSH_DIR/build/src/libssh.a):exists($$LIBSSH_DIR/build/src/threads/libssh_threads.a) {
+				LIBS += $$LIBSSH_DIR/build/src/libssh.a
+				LIBS += $$LIBSSH_DIR/build/src/threads/libssh_threads.a
+			} 
+			else {
+				! exists($$LIBSSH_DIR/build/src/libssh.a):message($$LIBSSH_DIR/build/src/libssh.a does not exist)
+				! exists($$LIBSSH_DIR/build/src/threads/libssh_threads.a):message($$LIBSSH_DIR/build/src/threads/libssh_threads.a does not exist)
+				message(You need to download and compile libssh)
+				message(See http://sourceforge.net/p/retroshare/code/6163/tree/trunk/)
+				error(Please fix this and try again. Will stop now.)
+			}
+		} else {
+			LIBS += -lssh
+			LIBS += -lssh_threads
+		}
+ 	}
 
 	HEADERS += ssh/rssshd.h
 	SOURCES += ssh/rssshd.cc
