@@ -13,7 +13,7 @@ build-stamp: builddir/Makefile
 	# Add here commands to compile the package.
 	cd libssh-0.5.2 && mkdir build && cd build && cmake -DWITH_STATIC_LIB=ON .. && make 
 	cp -r libssh-0.5.2 ..
-	cd src/rsctrl/src && make
+	#cd src/rsctrl/src && make
 	cd src && qmake-qt4 CONFIG=release RetroShare.pro && make
 	touch $@
 
