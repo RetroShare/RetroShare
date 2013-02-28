@@ -212,6 +212,15 @@ sshserver {
 
 protorpc {
 	# Proto Services
+	PROTOS = core.proto peers.proto system.proto chat.proto search.proto files.proto
+	DESTPATH = rpc/proto/gencc
+	PROTOPATH = ../../rsctrl/src/definition
+	CMD =
+	for(pf, PROTOS):CMD += protoc --cpp_out=$${DESTPATH} --proto_path=./$${PROTOPATH} $${PROTOPATH}/$${pf};
+	protobuf_gen.commands = $${CMD}
+	QMAKE_EXTRA_TARGETS += protobuf_gen
+	PRE_TARGETDEPS += protobuf_gen
+
 	HEADERS += rpc/proto/rpcprotopeers.h \
 		rpc/proto/rpcprotosystem.h \
 		rpc/proto/rpcprotochat.h \
