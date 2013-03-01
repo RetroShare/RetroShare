@@ -987,6 +987,8 @@ bool p3Posted::updateRequestGroups()
     mTokenService->requestGroupInfo(mUpdateRequestGroup, 0, opts);
 
     mUpdatePhase = UPDATE_PHASE_MSG_REQUEST;
+
+	 return true ;
 }
 
 bool p3Posted::updateRequestMessages()
@@ -1204,4 +1206,6 @@ bool p3Posted::updateComplete()
         mMsgCounts.clear();
     }
 
+
+	 return true ;
 }
