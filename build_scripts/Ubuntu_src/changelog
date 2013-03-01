@@ -1,14 +1,17 @@
 retroshare (0.5.4-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
   * Improvements
-    - added dynamic menu for choosing the destination directory for files, and change the name of the des. file
-    - merged branch v0.5-ImprovedGUI. Brings all sorts of changes, the most of which are:
+    - Added dynamic menu for choosing the destination directory for files, and change the name of the des. file
+    - Merged branch v0.5-ImprovedGUI. Brings all sorts of changes, the most of which are:
       * News feed to be a new tab at the top level.
       * improved transfers panel. Some tabs have been moved to Config.
       * new Chat lobby panel with improved layout. Removed tabs.
       * merged shared files and search into Transfers
-    - auto-check of shared files after download
-    - removed Qt flags from nogui .pro file
-    - ongoing new services (Not released yet): Wiki, GXS, Forums, Identity. 
+    - Auto-check of shared files after download
+    - Removed Qt flags from nogui .pro file
+    - Packaging of VOIP for ubuntu lucid, and improved packaging scripts
+    - Added new "Progressive" download mode, in between random and streaming. Still random as the 
+      former and disk-friendly as the later.
+    - Lots of work on ongoing new services (Not released yet): Wiki, GXS, Forums, Identity. 
 
  -- Cyril Soler <csoler@users.sourceforge.net>  Wed, 27 Jan 2013 21:30:00 +0100
 
