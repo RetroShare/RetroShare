@@ -560,7 +560,7 @@ uint32_t ChunkMap::getAvailableChunk(const std::string& peer_id,bool& map_is_too
 
 		switch(_strategy)
 		{
-			case FileChunksInfo::CHUNK_STRATEGY_STREAMING:   chunk_jump = 1 ;
+			case FileChunksInfo::CHUNK_STRATEGY_STREAMING:   chunk_jump = 2 ;
 																			 chosen_chunk_number = 0 ;
 																		    break ;
 			case FileChunksInfo::CHUNK_STRATEGY_RANDOM:      chunk_jump = _map.size() ;
