@@ -503,6 +503,10 @@ bool	p3Peers::getAssociatedSSLIds(const std::string &gpg_id, std::list<std::stri
 	return mPeerMgr->getAssociatedPeers(gpg_id, ids);
 }
 
+bool    p3Peers::gpgSignData(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen)
+{
+	return AuthGPG::getAuthGPG()->SignDataBin(data,len,sign,signlen);
+}
 
 bool	p3Peers::getGPGDetails(const std::string &id, RsPeerDetails &d)
 {

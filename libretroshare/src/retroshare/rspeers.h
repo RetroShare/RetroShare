@@ -268,6 +268,7 @@ class RsPeers
 		virtual bool    getGPGAllList(std::list<std::string> &gpg_ids) 	= 0;
 		virtual bool	getGPGDetails(const std::string &gpg_id, RsPeerDetails &d) = 0;
 		virtual bool    getAssociatedSSLIds(const std::string &gpg_id, std::list<std::string> &ids) = 0;
+		virtual bool    gpgSignData(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen) = 0;
 
 		/* Add/Remove Friends */
 		virtual	bool addFriend(const std::string &ssl_id, const std::string &gpg_id,ServicePermissionFlags flags = RS_SERVICE_PERM_ALL)    = 0;

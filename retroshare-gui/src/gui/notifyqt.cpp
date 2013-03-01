@@ -28,6 +28,7 @@
 #include "notifyqt.h"
 #include <retroshare/rsnotify.h>
 #include <retroshare/rspeers.h>
+#include <util/rsdir.h>
 
 #include "RsAutoUpdatePage.h"
 
@@ -144,6 +145,91 @@ void NotifyQt::notifyOwnAvatarChanged()
 	std::cerr << "Notifyqt:: notified that own avatar changed" << std::endl ;
         #endif
 	emit ownAvatarChanged() ;
+}
+
+class SignatureEventData
+{
+	public:
+		SignatureEventData(const void *_data,int32_t _len,unsigned int _signlen)
+			: data(_data),len(_len)
+		{
+			// We need a new memory chnk because there's no guarranty _sign nor _signlen are not in the stack
+
+			sign = (unsigned char *)malloc(_signlen) ;
+			signlen = new unsigned int ;
+			*signlen = _signlen ;
+			signature_result = 0 ;
+		}
+
+		~SignatureEventData()
+		{
+			free(sign) ;
+			delete signlen ;
+		}
+
+		bool performSignature()
+		{
+			if(rsPeers->gpgSignData(data,len,sign,signlen))
+				signature_result = 1 ;
+		}
+
+		const void *data ;
+		uint32_t len ;
+		unsigned char *sign ;
+		unsigned int *signlen ;
+		int signature_result ;		// 0=pending, 1=done, 2=failed.
+};
+
+bool NotifyQt::askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,int& signature_result)
+{
+	{
+		QMutexLocker m(&_mutex) ;
+
+		std::cerr << "NotifyQt:: deferred signature event requeted. " << std::endl;
+
+		// Look into the queue
+
+		Sha1CheckSum chksum = RsDirUtil::sha1sum((uint8_t*)data,len) ;
+
+		std::map<std::string,SignatureEventData*>::iterator it = _deferred_signature_queue.find(chksum.toStdString()) ;
+
+		if(it != _deferred_signature_queue.end())
+			if(it->second->signature_result != 0)	// found it. Copy the result, and remove from the queue.
+			{
+				// We should check for the exact data match, for the sake of being totally secure.
+				//
+				std::cerr << "Found into queue: returning it" << std::endl;
+
+				memcpy(sign,it->second->sign,*it->second->signlen) ;
+				*signlen = *(it->second->signlen) ;
+				signature_result = it->second->signature_result ;
+
+				delete it->second ;
+				_deferred_signature_queue.erase(it) ;
+
+				return true ;
+			}
+			else
+				return false ;		// already registered, but not done yet.
+
+		// Not found. Store in the queue and emit a signal.
+		//
+		std::cerr << "NotifyQt:: deferred signature event requeted. Pushing into queue" << std::endl;
+
+		SignatureEventData *edta = new SignatureEventData(data,len,*signlen) ;
+
+		_deferred_signature_queue[chksum.toStdString()] = edta ;
+	}
+	emit deferredSignatureHandlingRequested() ;
+	return false;
+}
+
+void NotifyQt::handleSignatureEvent()
+{
+	std::cerr << "NotifyQt:: performing a deferred signature in the main GUI thread." << std::endl;
+
+	for(std::map<std::string,SignatureEventData*>::const_iterator it(_deferred_signature_queue.begin());it!=_deferred_signature_queue.end();++it)
+		it->second->performSignature() ;
 }
 
 bool NotifyQt::askForPassword(const std::string& key_details, bool prev_is_bad, std::string& password)

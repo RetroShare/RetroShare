@@ -205,6 +205,8 @@ class NotifyBase
 
 	virtual bool askForPassword(const std::string& /* key_details */, bool /* prev_is_bad */, std::string& /* password */ ) { return false ;}
 	virtual bool askForPluginConfirmation(const std::string& /* plugin_filename */, const std::string& /* plugin_file_hash */) { return false ;}
+	virtual bool askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,int& signature_result) { signature_result = false ;return true; }
+
 };
 
 const int NOTIFY_LIST_NEIGHBOURS             = 1;

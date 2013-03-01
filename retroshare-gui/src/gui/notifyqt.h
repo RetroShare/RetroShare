@@ -20,6 +20,7 @@ class MessagesDialog;
 class ChannelsDialog;
 class MessengerWindow;
 class Toaster;
+class SignatureEventData ;
 struct TurtleFileInfo;
 
 //class NotifyQt: public NotifyBase, public QObject
@@ -60,6 +61,20 @@ class NotifyQt: public QObject, public NotifyBase
 		virtual void notifyDownloadCompleteCount(uint32_t count);
 		virtual bool askForPassword(const std::string& key_details, bool prev_is_bad, std::string& password);
 		virtual bool askForPluginConfirmation(const std::string& plugin_filename, const std::string& plugin_file_hash);
+
+		// Queues the signature event so that it canhappen in the main GUI thread (to ask for passwd).
+		// To use this function: call is multiple times as soon as it returns true.
+		//
+		// Dont' use a while, if you're in a mutexed part, otherwize it will lock. You need to call the function
+		// and periodically exit the locked code between calls to allow the signature to happen.
+		//
+		// Returns:
+		// 	false = the signature is registered, but the result is not there yet. Call again soon.
+		// 	true  = signature done. Data is ready. signature_result takes the following values:
+		// 					1: signature success
+		// 					2: signature failed. Wrong passwd, user pressed cancel, etc.
+		//
+		virtual bool askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,int& signature_result) ;
 
 		/* Notify from GUI */
 		void notifyChatStyleChanged(int /*ChatStyle::enumStyleType*/ styleType);
@@ -106,6 +121,7 @@ class NotifyQt: public QObject, public NotifyBase
 		void channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status);
 		void historyChanged(uint msgId, int type);
 		void chatLobbyInviteReceived() ;
+		void deferredSignatureHandlingRequested() ;
 
 		/* Notify from GUI */
 		void chatStyleChanged(int /*ChatStyle::enumStyleType*/ styleType);
@@ -116,6 +132,7 @@ class NotifyQt: public QObject, public NotifyBase
 
 	private slots:
 		void runningTick();
+		void handleSignatureEvent() ;
 
 	private:
 		NotifyQt();
@@ -134,6 +151,7 @@ class NotifyQt: public QObject, public NotifyBase
 		bool _enabled ;
 		QMutex _mutex ;
 
+		std::map<std::string,SignatureEventData*> _deferred_signature_queue ;
 //		void displayNeighbours();
 //		void displayFriends();
 //		void displayDirectories();

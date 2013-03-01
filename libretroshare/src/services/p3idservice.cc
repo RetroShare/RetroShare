@@ -26,6 +26,7 @@
 #include "services/p3idservice.h"
 #include "serialiser/rsgxsiditems.h"
 #include "retroshare/rsgxsflags.h"
+#include "retroshare/rsiface.h"
 #include "util/rsrandom.h"
 #include "util/rsstring.h"
 
@@ -47,6 +48,8 @@
 #define ID_REQUEST_IDENTITY	0x0002
 #define ID_REQUEST_REPUTATION	0x0003
 #define ID_REQUEST_OPINION	0x0004
+
+#define ENABLE_PGP_SIGNATURES 1
 
 RsIdentity *rsIdentity = NULL;
 
@@ -1340,7 +1343,9 @@ void p3IdService::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet
 #define MAX_SIGN_SIZE 2048
 		uint8_t signarray[MAX_SIGN_SIZE]; 
 		unsigned int sign_size = MAX_SIGN_SIZE;
-		if (!AuthGPG::getAuthGPG()->SignDataBin((void *) hash.toByteArray(), hash.SIZE_IN_BYTES, signarray, &sign_size))
+		int result ;
+
+		if (!rsicontrol->getNotify().askForDeferredSelfSignature((void *) hash.toByteArray(), hash.SIZE_IN_BYTES, signarray, &sign_size,result))
 		{
 			/* error */
 			std::cerr << "p3IdService::service_CreateGroup() ERROR Signing stuff";
