@@ -578,8 +578,7 @@ void p3Posted::processPostRanks()
         GxsPostedPostRanking *gp = *vit;
         uint32_t status = mTokenService->requestStatus(gp->reqToken);
 
-        if(RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE
-           == status)
+        if(RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE == status)
         {
             ok = completePostedPostCalc(gp);
 
@@ -849,7 +848,7 @@ void p3Posted::calcPostedCommentsRank(const std::map<RsGxsMessageId, std::vector
         std::vector<PostedScore>::iterator cvit = scores.begin();
 
         int i = 1;
-        for(; cvit != scores.end(); cvit)
+        for(; cvit != scores.end(); ++cvit)
         {
             const PostedScore& p = *cvit;
             ranking.insert(std::make_pair(i++, p.msgId));
