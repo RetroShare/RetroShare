@@ -543,6 +543,9 @@ void ChatLobbyWidget::updateMessageChanged(ChatLobbyId id)
 
 	QTreeWidgetItem *item = getTreeWidgetItem(id) ;
 
+	if(item == NULL)
+		return ;
+
 	item->setIcon(0,_lobby_infos[id].default_icon) ;
 }
 
