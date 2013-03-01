@@ -539,7 +539,6 @@ uint32_t ChunkMap::getAvailableChunk(const std::string& peer_id,bool& map_is_too
 
 	uint32_t available_chunks = 0 ;
 	uint32_t available_chunks_before_max_dist = 0 ;
-	uint32_t max_dist = 0;		// id of the highest downloaded chunk
 
 	for(unsigned int i=0;i<_map.size();++i)
 		if(_map[i] == FileChunksInfo::CHUNK_OUTSTANDING)
@@ -548,35 +547,26 @@ uint32_t ChunkMap::getAvailableChunk(const std::string& peer_id,bool& map_is_too
 				++available_chunks ;
 		}
 		else
-		{
-			max_dist = i ;
 			available_chunks_before_max_dist = available_chunks ;
-		}
 
 	if(available_chunks > 0)
 	{
-		uint32_t chunk_jump ;
 		uint32_t chosen_chunk_number ;
 
 		switch(_strategy)
 		{
-			case FileChunksInfo::CHUNK_STRATEGY_STREAMING:   chunk_jump = 2 ;
-																			 chosen_chunk_number = 0 ;
+			case FileChunksInfo::CHUNK_STRATEGY_STREAMING:   chosen_chunk_number = 0 ;
 																		    break ;
-			case FileChunksInfo::CHUNK_STRATEGY_RANDOM:      chunk_jump = _map.size() ;
-																			 chosen_chunk_number = rand() % available_chunks ;
+			case FileChunksInfo::CHUNK_STRATEGY_RANDOM:      chosen_chunk_number = rand() % available_chunks ;
 																		    break ;
-			case FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE: chunk_jump = FT_CHUNKMAP_MAX_CHUNK_JUMP ;
-																			 chosen_chunk_number = rand() % std::min(available_chunks, available_chunks_before_max_dist+FT_CHUNKMAP_MAX_CHUNK_JUMP) ;
+			case FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE: chosen_chunk_number = rand() % std::min(available_chunks, available_chunks_before_max_dist+FT_CHUNKMAP_MAX_CHUNK_JUMP) ;
 																		    break ;
 			default:
-																			 chunk_jump = _map.size() ;
 																			 chosen_chunk_number = 0 ;
 		}
-		uint32_t max_chunk = std::min((uint32_t)_map.size(),max_dist + chunk_jump) ;
 		uint32_t j=0 ;
 
-		for(uint32_t i=0;i<max_chunk;++i)
+		for(uint32_t i=0;i<_map.size();++i)
 			if(_map[i] == FileChunksInfo::CHUNK_OUTSTANDING && (peer_chunks->is_full || peer_chunks->cmap[i]))
 			{
 				if(j == chosen_chunk_number)
