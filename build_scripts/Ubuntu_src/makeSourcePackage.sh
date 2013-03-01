@@ -56,8 +56,8 @@ tar zxvf ../libssh-0.5.2.tar.gz
 cd ..
 
 # cleaning up protobof generated files
-\rm -f $workdir/src/rsctrl/src/gencc/*.pb.h
-\rm -f $workdir/src/rsctrl/src/gencc/*.pb.cpp
+#        \rm -f $workdir/src/rsctrl/src/gencc/*.pb.h
+#        \rm -f $workdir/src/rsctrl/src/gencc/*.pb.cpp
 \rm -f $workdir/src/retroshare-nogui/src/rpc/proto/gencc/*.pb.h
 \rm -f $workdir/src/retroshare-nogui/src/rpc/proto/gencc/*.pb.cc
 
@@ -94,5 +94,14 @@ for i in maverick natty oneiric precise quantal ; do
 	# This is the key for "Cyril Soler <csoler@sourceforge.net>"
 	debuild -S -kC737CA98
 done
+for i in lucid; do
+	echo copying changelog for $i
+	cat ../changelog | sed -e s/XXXXXX/"$svn"/g | sed -e s/YYYYYY/"$i"/g > debian/changelog
+	cp ../control.ubuntu_lucid debian/control
+
+	# This is the key for "Cyril Soler <csoler@sourceforge.net>"
+	debuild -S -kC737CA98
+done
+
 
 
