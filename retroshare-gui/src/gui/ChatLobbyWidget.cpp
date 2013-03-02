@@ -160,8 +160,15 @@ static void updateItem(QTreeWidgetItem *item, ChatLobbyId id, const std::string 
 	item->setData(COLUMN_DATA, ROLE_ID, (qulonglong)id);
 	item->setData(COLUMN_DATA, ROLE_SUBSCRIBED, subscribed);
 
+	QColor color = QApplication::palette().color(QPalette::Active, QPalette::Text);
+	if (!subscribed) {
+		// Average between Base and Text colors
+		QColor color2 = QApplication::palette().color(QPalette::Active, QPalette::Base);
+		color.setRgbF((color2.redF()+color.redF())/2, (color2.greenF()+color.greenF())/2, (color2.blueF()+color.blueF())/2);
+	}
+
 	for (int column = 0; column < COLUMN_COUNT; ++column) {
-		item->setTextColor(column, subscribed ? QColor() : QColor(Qt::gray));
+		item->setTextColor(column, color);
 	}
 }
 
