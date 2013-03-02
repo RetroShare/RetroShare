@@ -719,7 +719,6 @@ void SearchDialog::searchKeywords(const QString& keywords)
 
 		/* abstraction to allow reusee of tree rendering code */
 		resultsToTree(keywords,req_id, finalResults);
-		ui.lineEdit->clear() ;
 	}
 }
 
