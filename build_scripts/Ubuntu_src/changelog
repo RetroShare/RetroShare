@@ -13,6 +13,10 @@ retroshare (0.5.4-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
       former and disk-friendly as the later.
     - Lots of work on ongoing new services (Not released yet): Wiki, GXS, Forums, Identity. 
 
+  * Bugs
+    - Fixed crash when lobby invitation received
+    - Fixed DL getting stalled in streaming mode
+
  -- Cyril Soler <csoler@users.sourceforge.net>  Wed, 27 Jan 2013 21:30:00 +0100
 
 retroshare (0.5.4-0.6099~precise) precise; urgency=low
