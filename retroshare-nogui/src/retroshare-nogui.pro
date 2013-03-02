@@ -83,6 +83,8 @@ win32 {
 	LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
 	LIBS += -lole32 -lwinmm
 
+	PROTOCPATH=$$PWD/../../../lib/bin/
+
 	RC_FILE = resources/retroshare_win.rc
 
 	DEFINES *= WINDOWS_SYS
@@ -228,10 +230,10 @@ sshserver {
 protorpc {
 	# Proto Services
 	PROTOS = core.proto peers.proto system.proto chat.proto search.proto files.proto
-	DESTPATH = rpc/proto/gencc
-	PROTOPATH = ../../rsctrl/src/definition
-	CMD =
-	for(pf, PROTOS):CMD += protoc --cpp_out=$${DESTPATH} --proto_path=./$${PROTOPATH} $${PROTOPATH}/$${pf};
+	DESTPATH = $$PWD/rpc/proto/gencc
+	PROTOPATH = $$PWD/../../rsctrl/src/definition
+	CMD = echo Building protobuf files
+	for(pf, PROTOS):CMD += && $${PROTOCPATH}protoc --cpp_out=$${DESTPATH} --proto_path=$${PROTOPATH} $${PROTOPATH}/$${pf}
 	protobuf_gen.commands = $${CMD}
 	QMAKE_EXTRA_TARGETS += protobuf_gen
 	PRE_TARGETDEPS += protobuf_gen
