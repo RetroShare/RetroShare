@@ -546,6 +546,13 @@ void ChatLobbyWidget::updateCurrentLobby()
 }
 void ChatLobbyWidget::updateMessageChanged(ChatLobbyId id)
 {
+	QTreeWidgetItem *current_item = lobbyTreeWidget->currentItem();
+
+	// Don't show anything for current lobby.
+	//
+	if(current_item != NULL && current_item->data(COLUMN_DATA, ROLE_ID).toULongLong() == id)
+		return ;
+
 	_lobby_infos[id].default_icon = QIcon(IMAGE_MESSAGE) ;
 
 	QTreeWidgetItem *item = getTreeWidgetItem(id) ;
