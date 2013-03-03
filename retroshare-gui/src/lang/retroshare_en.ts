@@ -444,6 +444,11 @@ p, li { white-space: pre-wrap; }
         <source>GxsForums</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source> Warning: The services here are experimental. Please help us test them. 
+ But Remember: Any data here *WILL* be lost when we upgrade the protocols.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AttachFileItem</name>
@@ -9727,14 +9732,6 @@ Reported error is: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Directory is browsable for friends from parent groups</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Directory is accessible by anonymous tunnels from friends from parent groups</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Directory is browsable for any friend</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9766,19 +9763,27 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Directory is NOT browsable for friends from parent groups</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Directory is NOT accessible by anonymous tunnels from friends from parent groups</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Directory is NOT browsable for any friend</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Directory is NOT accessible by anonymous tunnels from any friend</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory is browsable for friends from groups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory is accessible by anonymous tunnels from friends from groups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory is NOT browsable for friends from groups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory is NOT accessible by anonymous tunnels from friends from groups</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10884,15 +10889,15 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Parent groups</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Apply and close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Edit Shared Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Groups</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11462,12 +11467,16 @@ It is however recommended to leave at least a few slots for cache files.</source
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Progressive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;RetroShare&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt; is capable of transferring data and search requests between peers that are not necessarily friends. This traffic however only transits through a connected list of friends and is anonymous.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory in the shared files dialog to be:&lt;/span&gt;&lt;/p&gt;
 &lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Browsable by friends&lt;/span&gt;: files are seen by your friends.&lt;/li&gt;
 &lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anonymously shared&lt;/span&gt;: files are anonymously reachable through distant F2F tunnels.&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
@@ -11782,11 +11791,43 @@ Try to be patient!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Your files</source>
+        <source>Download from collection file...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Download from collection file...</source>
+        <source>My files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Progressive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rename file...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Specify...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set destination directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change file name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please enter a new file name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please enter a new--and valid--filename</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12199,18 +12240,6 @@ Try to be patient!</source>
 <context>
     <name>WikiDialog</name>
     <message>
-        <source>Wiki Group</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Id</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&lt;&lt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12244,6 +12273,42 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Page Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Page Id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Orig Id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>My Groups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subscribed Groups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Popular Groups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other Groups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subscribe to Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unsubscribe to Group</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
