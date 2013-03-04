@@ -1815,6 +1815,7 @@ RsTurtle *rsTurtle = NULL ;
 #include "services/p3posted.h"
 #include "services/p3photoservice.h"
 #include "services/p3gxsforums.h"
+#include "services/p3gxschannels.h"
 #include "services/p3wire.h"
 
 #endif // RS_ENABLE_GXS
@@ -2261,7 +2262,7 @@ int RsServer::StartupRetroShare()
 	//
 	mPluginsManager->registerClientServices(pqih) ;
 	mPluginsManager->registerCacheServices() ;
-//#define RS_ENABLE_GXS
+
 #ifdef RS_ENABLE_GXS
 
         // The idea is that if priorGxsDir is non
@@ -2431,23 +2432,20 @@ int RsServer::StartupRetroShare()
                         RS_SERVICE_GXSV1_TYPE_FORUMS, gxsforums_ds, nxsMgr, mGxsForums);
 
 
-        /*** start up GXS core runner ***/
-        createThread(*mGxsIdService);
-        createThread(*mGxsCircles);
-        createThread(*mPhoto);
-        createThread(*mPosted);
-        createThread(*mWiki);
-        createThread(*mWire);
-        createThread(*mGxsForums);
+        /**** Channel GXS service ****/
 
-        // cores ready start up GXS net servers
-        createThread(*gxsid_ns);
-        createThread(*gxscircles_ns);
-        createThread(*photo_ns);
-        createThread(*posted_ns);
-        createThread(*wiki_ns);
-        createThread(*wire_ns);
-        createThread(*gxsforums_ns);
+        RsGeneralDataService* gxschannels_ds = new RsDataService(currGxsDir + "/", "gxschannels_db",
+                                                            RS_SERVICE_GXSV1_TYPE_CHANNELS);
+
+//#ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
+        gxschannels_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
+//#endif
+
+        mGxsChannels = new p3GxsChannels(gxschannels_ds, NULL, mGxsIdService);
+
+        // create GXS photo service
+        RsGxsNetService* gxschannels_ns = new RsGxsNetService(
+                        RS_SERVICE_GXSV1_TYPE_CHANNELS, gxschannels_ds, nxsMgr, mGxsChannels);
 
         // now add to p3service
         pqih->addService(gxsid_ns);
@@ -2456,6 +2454,7 @@ int RsServer::StartupRetroShare()
         pqih->addService(posted_ns);
         pqih->addService(wiki_ns);
         pqih->addService(gxsforums_ns);
+        pqih->addService(gxschannels_ns);
 
 #endif // RS_ENABLE_GXS.
 
@@ -2676,6 +2675,41 @@ int RsServer::StartupRetroShare()
 	/* Start up Threads */
 	/**************************************************************************/
 
+#ifdef RS_ENABLE_GXS
+
+	// Must Set the GXS pointers before starting threads.
+	rsIdentity = mGxsIdService;
+	rsGxsCircles = mGxsCircles;
+	rsWiki = mWiki;
+	rsPosted = mPosted;
+	rsPhoto = mPhoto;
+	rsGxsForums = mGxsForums;
+	rsGxsChannels = mGxsChannels;
+	rsWire = mWire;
+
+	/*** start up GXS core runner ***/
+	createThread(*mGxsIdService);
+	createThread(*mGxsCircles);
+	createThread(*mPhoto);
+	createThread(*mPosted);
+	createThread(*mWiki);
+	createThread(*mWire);
+	createThread(*mGxsForums);
+	createThread(*mGxsChannels);
+
+	// cores ready start up GXS net servers
+	createThread(*gxsid_ns);
+	createThread(*gxscircles_ns);
+	createThread(*photo_ns);
+	createThread(*posted_ns);
+	createThread(*wiki_ns);
+	createThread(*wire_ns);
+	createThread(*gxsforums_ns);
+	createThread(*gxschannels_ns);
+
+
+#endif // RS_ENABLE_GXS
+
 	ftserver->StartupThreads();
 	ftserver->ResumeTransfers();
 
@@ -2715,17 +2749,6 @@ int RsServer::StartupRetroShare()
 	rsForums = mForums;
 	rsChannels = mChannels;
 
-#ifdef RS_ENABLE_GXS
-
-	rsIdentity = mGxsIdService;
-	rsGxsCircles = mGxsCircles;
-        rsWiki = mWiki;
-        rsPosted = mPosted;
-        rsPhoto = mPhoto;
-        rsGxsForums = mGxsForums;
-        rsWire = mWire;
-
-#endif // RS_ENABLE_GXS
 
 
 #ifdef RS_USE_BLOGS	

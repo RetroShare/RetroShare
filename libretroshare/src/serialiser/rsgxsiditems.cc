@@ -79,9 +79,6 @@ bool RsGxsIdSerialiser::serialise(RsItem *item, void *data, uint32_t *size)
 RsItem* RsGxsIdSerialiser::deserialise(void* data, uint32_t* size)
 {
 		
-#ifdef GXSID_DEBUG
-	std::cerr << "RsGxsIdSerialiser::deserialise()" << std::endl;
-#endif
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
 		
@@ -160,9 +157,6 @@ uint32_t RsGxsIdSerialiser::sizeGxsIdGroupItem(RsGxsIdGroupItem *item)
 bool RsGxsIdSerialiser::serialiseGxsIdGroupItem(RsGxsIdGroupItem *item, void *data, uint32_t *size)
 {
 	
-#ifdef GXSID_DEBUG
-	std::cerr << "RsGxsIdSerialiser::serialiseGxsIdGroupItem()" << std::endl;
-#endif
 	
 	uint32_t tlvsize = sizeGxsIdGroupItem(item);
 	uint32_t offset = 0;
@@ -208,10 +202,6 @@ bool RsGxsIdSerialiser::serialiseGxsIdGroupItem(RsGxsIdGroupItem *item, void *da
 	
 RsGxsIdGroupItem* RsGxsIdSerialiser::deserialiseGxsIdGroupItem(void *data, uint32_t *size)
 {
-	
-#ifdef GXSID_DEBUG
-	std::cerr << "RsGxsIdSerialiser::deserialiseGxsIdGroupItem()" << std::endl;
-#endif
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
 	uint32_t rssize = getRsItemSize(data);
@@ -313,9 +303,6 @@ uint32_t RsGxsIdSerialiser::sizeGxsIdOpinionItem(RsGxsIdOpinionItem *item)
 bool RsGxsIdSerialiser::serialiseGxsIdOpinionItem(RsGxsIdOpinionItem *item, void *data, uint32_t *size)
 {
 	
-#ifdef GXSID_DEBUG
-	std::cerr << "RsGxsIdSerialiser::serialiseGxsIdOpinionItem()" << std::endl;
-#endif
 	
 	uint32_t tlvsize = sizeGxsIdOpinionItem(item);
 	uint32_t offset = 0;
@@ -361,9 +348,6 @@ bool RsGxsIdSerialiser::serialiseGxsIdOpinionItem(RsGxsIdOpinionItem *item, void
 RsGxsIdOpinionItem* RsGxsIdSerialiser::deserialiseGxsIdOpinionItem(void *data, uint32_t *size)
 {
 	
-#ifdef GXSID_DEBUG
-	std::cerr << "RsGxsIdSerialiser::deserialiseGxsIdOpinionItem()" << std::endl;
-#endif
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
 	uint32_t rssize = getRsItemSize(data);
@@ -460,17 +444,13 @@ uint32_t RsGxsIdSerialiser::sizeGxsIdCommentItem(RsGxsIdCommentItem *item)
 bool RsGxsIdSerialiser::serialiseGxsIdCommentItem(RsGxsIdCommentItem *item, void *data, uint32_t *size)
 {
 	
-#ifdef GXSID_DEBUG
-	std::cerr << "RsGxsIdSerialiser::serialiseGxsIdCommentItem()" << std::endl;
-#endif
-	
 	uint32_t tlvsize = sizeGxsIdCommentItem(item);
 	uint32_t offset = 0;
 	
 	if(*size < tlvsize)
 	{
 #ifdef GXSID_DEBUG
-		std::cerr << "RsGxsIdSerialiser::serialiseGxsIdCommentItem()" << std::endl;
+		std::cerr << "RsGxsIdSerialiser::serialiseGxsIdCommentItem() Not enough space" << std::endl;
 #endif
 		return false;
 	}
@@ -503,14 +483,11 @@ bool RsGxsIdSerialiser::serialiseGxsIdCommentItem(RsGxsIdCommentItem *item, void
 #endif
 	
 	return ok;
-	}
+}
 	
 RsGxsIdCommentItem* RsGxsIdSerialiser::deserialiseGxsIdCommentItem(void *data, uint32_t *size)
 {
 	
-#ifdef GXSID_DEBUG
-	std::cerr << "RsGxsIdSerialiser::deserialiseGxsIdCommentItem()" << std::endl;
-#endif
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
 	uint32_t rssize = getRsItemSize(data);

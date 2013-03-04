@@ -249,6 +249,7 @@ protected:
      */
     bool getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem*>& grpItem);
 
+public:
     /*!
      * retrieves message data associated to a request token
      * @param token token to be redeemed for message item retrieval
@@ -262,6 +263,8 @@ protected:
      * @param msgItems
      */
     bool getMsgRelatedData(const uint32_t &token, GxsMsgRelatedDataMap& msgItems);
+
+protected:
 
     /*!
      * Convenience template function for retrieve
@@ -391,6 +394,7 @@ protected:
      */
     void publishGroup(uint32_t& token, RsGxsGrpItem* grpItem);
 
+public:
     /*!
      * Enables publication of a message item \n
      * Setting mOrigMsgId meta member to blank \n
@@ -403,6 +407,7 @@ protected:
      */
     void publishMsg(uint32_t& token, RsGxsMsgItem* msgItem);
 
+protected:
     /*!
      * This represents the group before its signature is calculated
      * Reimplement this function if you need to access keys to further extend

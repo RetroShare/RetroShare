@@ -1,7 +1,7 @@
 /*
- * libretroshare/src/services p3gxsforums.cc
+ * libretroshare/src/services p3gxschannels.cc
  *
- * GxsForums interface for RetroShare.
+ * GxsChannels interface for RetroShare.
  *
  * Copyright 2012-2012 by Robert Fernie.
  *
@@ -23,8 +23,8 @@
  *
  */
 
-#include "services/p3gxsforums.h"
-#include "serialiser/rsgxsforumitems.h"
+#include "services/p3gxschannels.h"
+#include "serialiser/rsgxschannelitems.h"
 
 #include <retroshare/rsidentity.h>
 
@@ -37,59 +37,82 @@
 #include "util/rsstring.h"
 
 /****
- * #define GXSFORUM_DEBUG 1
+ * #define GXSCHANNEL_DEBUG 1
  ****/
+#define GXSCHANNEL_DEBUG 1
 
-RsGxsForums *rsGxsForums = NULL;
+RsGxsChannels *rsGxsChannels = NULL;
 
 
-#define FORUM_TESTEVENT_DUMMYDATA	0x0001
+#define CHANNEL_TESTEVENT_DUMMYDATA	0x0001
 #define DUMMYDATA_PERIOD		60	// long enough for some RsIdentities to be generated.
 
 /********************************************************************************/
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
 
-p3GxsForums::p3GxsForums(RsGeneralDataService *gds, RsNetworkExchangeService *nes, RsGixs* gixs)
-    : RsGenExchange(gds, nes, new RsGxsForumSerialiser(), RS_SERVICE_GXSV1_TYPE_FORUMS, gixs, forumsAuthenPolicy()), RsGxsForums(this)
+p3GxsChannels::p3GxsChannels(RsGeneralDataService *gds, RsNetworkExchangeService *nes, RsGixs* gixs)
+    : RsGenExchange(gds, nes, new RsGxsChannelSerialiser(), RS_SERVICE_GXSV1_TYPE_CHANNELS, gixs, channelsAuthenPolicy()), RsGxsChannels(this)
 {
 	// For Dummy Msgs.
 	mGenActive = false;
+	mCommentService = new p3GxsCommentService(this,  RS_SERVICE_GXSV1_TYPE_CHANNELS);
 
-#ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
+//#ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
 
-	RsTickEvent::schedule_in(FORUM_TESTEVENT_DUMMYDATA, DUMMYDATA_PERIOD);
+	RsTickEvent::schedule_in(CHANNEL_TESTEVENT_DUMMYDATA, DUMMYDATA_PERIOD);
 
-#endif
+//#endif
 
 }
 
-uint32_t p3GxsForums::forumsAuthenPolicy()
-{
-	uint32_t policy;
-	uint32_t flag = GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN |
-			GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN;
 
+
+uint32_t p3GxsChannels::channelsAuthenPolicy()
+{
+	uint32_t policy = 0;
+	uint32_t flag = 0;
+
+	flag = GXS_SERV::MSG_AUTHEN_ROOT_PUBLISH_SIGN;
 	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::RESTRICTED_GRP_BITS);
 	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PUBLIC_GRP_BITS);
 	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PRIVATE_GRP_BITS);
+
+	flag = GXS_SERV::MSG_AUTHEN_CHILD_PUBLISH_SIGN;
+	//RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PUBLIC_GRP_BITS);
+	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::RESTRICTED_GRP_BITS);
+	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PRIVATE_GRP_BITS);
+
+	flag = GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN; 
+	//RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::RESTRICTED_GRP_BITS);
+	//RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PUBLIC_GRP_BITS);
+	//RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PRIVATE_GRP_BITS);
+
+	flag = GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN;
+	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::RESTRICTED_GRP_BITS);
+	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PUBLIC_GRP_BITS);
+	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PRIVATE_GRP_BITS);
+
 	return policy;
 }
 
 
-void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
+
+
+
+void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 {
-	RsGxsIfaceHelper::receiveChanges(changes);
+	 RsGxsIfaceHelper::receiveChanges(changes);
 }
 
-void	p3GxsForums::service_tick()
+void	p3GxsChannels::service_tick()
 {
 	dummy_tick();
 	RsTickEvent::tick_events();
 	return;
 }
 
-bool p3GxsForums::getGroupData(const uint32_t &token, std::vector<RsGxsForumGroup> &groups)
+bool p3GxsChannels::getGroupData(const uint32_t &token, std::vector<RsGxsChannelGroup> &groups)
 {
 	std::vector<RsGxsGrpItem*> grpData;
 	bool ok = RsGenExchange::getGroupData(token, grpData);
@@ -100,8 +123,8 @@ bool p3GxsForums::getGroupData(const uint32_t &token, std::vector<RsGxsForumGrou
 		
 		for(; vit != grpData.end(); vit++)
 		{
-			RsGxsForumGroupItem* item = dynamic_cast<RsGxsForumGroupItem*>(*vit);
-			RsGxsForumGroup grp = item->mGroup;
+			RsGxsChannelGroupItem* item = dynamic_cast<RsGxsChannelGroupItem*>(*vit);
+			RsGxsChannelGroup grp = item->mGroup;
 			item->mGroup.mMeta = item->meta;
 			grp.mMeta = item->mGroup.mMeta;
 			delete item;
@@ -116,7 +139,7 @@ bool p3GxsForums::getGroupData(const uint32_t &token, std::vector<RsGxsForumGrou
  * at the moment - fix it up later
  */
 
-bool p3GxsForums::getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs)
+bool p3GxsChannels::getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &msgs)
 {
 	GxsMsgDataMap msgData;
 	bool ok = RsGenExchange::getMsgData(token, msgData);
@@ -133,18 +156,18 @@ bool p3GxsForums::getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &
 		
 			for(; vit != msgItems.end(); vit++)
 			{
-				RsGxsForumMsgItem* item = dynamic_cast<RsGxsForumMsgItem*>(*vit);
+				RsGxsChannelPostItem* item = dynamic_cast<RsGxsChannelPostItem*>(*vit);
 		
 				if(item)
 				{
-					RsGxsForumMsg msg = item->mMsg;
+					RsGxsChannelPost msg = item->mMsg;
 					msg.mMeta = item->meta;
 					msgs.push_back(msg);
 					delete item;
 				}
 				else
 				{
-					std::cerr << "Not a GxsForumMsgItem, deleting!" << std::endl;
+					std::cerr << "Not a GxsChannelPostItem, deleting!" << std::endl;
 					delete *vit;
 				}
 			}
@@ -155,7 +178,7 @@ bool p3GxsForums::getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &
 }
 
 
-bool p3GxsForums::getRelatedMessages(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs)
+bool p3GxsChannels::getRelatedPosts(const uint32_t &token, std::vector<RsGxsChannelPost> &msgs)
 {
 	GxsMsgRelatedDataMap msgData;
 	bool ok = RsGenExchange::getMsgRelatedData(token, msgData);
@@ -171,14 +194,14 @@ bool p3GxsForums::getRelatedMessages(const uint32_t &token, std::vector<RsGxsFor
 			
 			for(; vit != msgItems.end(); vit++)
 			{
-				RsGxsForumMsgItem* item = dynamic_cast<RsGxsForumMsgItem*>(*vit);
+				RsGxsChannelPostItem* item = dynamic_cast<RsGxsChannelPostItem*>(*vit);
 		
 				if(item)
 				{
 					/* HACK UNTIL CHRIS FIXES RELATED MSGS in GXS */
 					if (item->meta.mMsgId == (mit->first).second)
 					{
-						std::cerr << "p3GxsForums::getRelatedMessages()";
+						std::cerr << "p3GxsChannels::getRelatedPosts()";
 						std::cerr << " ERROR Found Original - discarding";
 						std::cerr << " Id: " << item->meta.mMsgId;
 						std::cerr << std::endl;
@@ -188,7 +211,7 @@ bool p3GxsForums::getRelatedMessages(const uint32_t &token, std::vector<RsGxsFor
 	
 					if (item->meta.mParentId != (mit->first).second)
 					{
-						std::cerr << "p3GxsForums::getRelatedMessages()";
+						std::cerr << "p3GxsChannels::getRelatedPosts()";
 						std::cerr << " ERROR Found !CHILD - discarding";
 						std::cerr << " Id: " << item->meta.mMsgId;
 						std::cerr << std::endl;
@@ -196,14 +219,14 @@ bool p3GxsForums::getRelatedMessages(const uint32_t &token, std::vector<RsGxsFor
 						continue;
 					}
 	
-					RsGxsForumMsg msg = item->mMsg;
+					RsGxsChannelPost msg = item->mMsg;
 					msg.mMeta = item->meta;
 					msgs.push_back(msg);
 					delete item;
 				}
 				else
 				{
-					std::cerr << "Not a GxsForumMsgItem, deleting!" << std::endl;
+					std::cerr << "Not a GxsChannelPostItem, deleting!" << std::endl;
 					delete *vit;
 				}
 			}
@@ -213,13 +236,14 @@ bool p3GxsForums::getRelatedMessages(const uint32_t &token, std::vector<RsGxsFor
 	return ok;
 }
 
+
 /********************************************************************************************/
 
-bool p3GxsForums::createGroup(uint32_t &token, RsGxsForumGroup &group)
+bool p3GxsChannels::createGroup(uint32_t &token, RsGxsChannelGroup &group)
 {
-	std::cerr << "p3GxsForums::createGroup()" << std::endl;
+	std::cerr << "p3GxsChannels::createGroup()" << std::endl;
 
-	RsGxsForumGroupItem* grpItem = new RsGxsForumGroupItem();
+	RsGxsChannelGroupItem* grpItem = new RsGxsChannelGroupItem();
 	grpItem->mGroup = group;
 	grpItem->meta = group.mMeta;
 
@@ -228,12 +252,12 @@ bool p3GxsForums::createGroup(uint32_t &token, RsGxsForumGroup &group)
 }
 
 
-bool p3GxsForums::createMsg(uint32_t &token, RsGxsForumMsg &msg)
+bool p3GxsChannels::createPost(uint32_t &token, RsGxsChannelPost &msg)
 {
-	std::cerr << "p3GxsForums::createForumMsg() GroupId: " << msg.mMeta.mGroupId;
+	std::cerr << "p3GxsChannels::createChannelPost() GroupId: " << msg.mMeta.mGroupId;
 	std::cerr << std::endl;
 
-	RsGxsForumMsgItem* msgItem = new RsGxsForumMsgItem();
+	RsGxsChannelPostItem* msgItem = new RsGxsChannelPostItem();
 	msgItem->mMsg = msg;
 	msgItem->meta = msg.mMeta;
 	
@@ -245,7 +269,7 @@ bool p3GxsForums::createMsg(uint32_t &token, RsGxsForumMsg &msg)
 /********************************************************************************************/
 /********************************************************************************************/
 
-void p3GxsForums::setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read)
+void p3GxsChannels::setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read)
 {
 	uint32_t mask = GXS_SERV::GXS_MSG_STATUS_UNREAD | GXS_SERV::GXS_MSG_STATUS_UNPROCESSED;
 	uint32_t status = GXS_SERV::GXS_MSG_STATUS_UNREAD;
@@ -261,13 +285,13 @@ void p3GxsForums::setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair&
 /********************************************************************************************/
 /********************************************************************************************/
 
-/* so we need the same tick idea as wiki for generating dummy forums
+/* so we need the same tick idea as wiki for generating dummy channels
  */
 
 #define 	MAX_GEN_GROUPS		5
 #define 	MAX_GEN_MESSAGES	100
 
-std::string p3GxsForums::genRandomId()
+std::string p3GxsChannels::genRandomId()
 {
         std::string randomId;
         for(int i = 0; i < 20; i++)
@@ -278,15 +302,15 @@ std::string p3GxsForums::genRandomId()
         return randomId;
 }
 
-bool p3GxsForums::generateDummyData()
+bool p3GxsChannels::generateDummyData()
 {
 	mGenCount = 0;
 	mGenRefs.resize(MAX_GEN_MESSAGES);
 
 	std::string groupName;
-	rs_sprintf(groupName, "TestForum_%d", mGenCount);
+	rs_sprintf(groupName, "TestChannel_%d", mGenCount);
 
-	std::cerr << "p3GxsForums::generateDummyData() Starting off with Group: " << groupName;
+	std::cerr << "p3GxsChannels::generateDummyData() Starting off with Group: " << groupName;
 	std::cerr << std::endl;
 
 	/* create a new group */
@@ -298,24 +322,24 @@ bool p3GxsForums::generateDummyData()
 }
 
 
-void p3GxsForums::dummy_tick()
+void p3GxsChannels::dummy_tick()
 {
 	/* check for a new callback */
 
 	if (mGenActive)
 	{
-		std::cerr << "p3GxsForums::dummyTick() AboutActive";
+		std::cerr << "p3GxsChannels::dummyTick() AboutActive";
 		std::cerr << std::endl;
 
 		uint32_t status = RsGenExchange::getTokenService()->requestStatus(mGenToken);
 		if (status != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
 		{
-			std::cerr << "p3GxsForums::dummy_tick() Status: " << status;
+			std::cerr << "p3GxsChannels::dummy_tick() Status: " << status;
 			std::cerr << std::endl;
 
 			if (status == RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
 			{
-				std::cerr << "p3GxsForums::dummy_tick() generateDummyMsgs() FAILED";
+				std::cerr << "p3GxsChannels::dummy_tick() generateDummyMsgs() FAILED";
 				std::cerr << std::endl;
 				mGenActive = false;
 			}
@@ -335,10 +359,10 @@ void p3GxsForums::dummy_tick()
 				return;
 			}
 
-			std::cerr << "p3GxsForums::dummy_tick() Acknowledged GroupId: " << groupId;
+			std::cerr << "p3GxsChannels::dummy_tick() Acknowledged GroupId: " << groupId;
 			std::cerr << std::endl;
 
-			ForumDummyRef ref(groupId, emptyId, emptyId);
+			ChannelDummyRef ref(groupId, emptyId, emptyId);
 			mGenRefs[mGenCount] = ref;
 		}
 		else if (mGenCount < MAX_GEN_MESSAGES)
@@ -353,17 +377,17 @@ void p3GxsForums::dummy_tick()
 				return;
 			}
 
-			std::cerr << "p3GxsForums::dummy_tick() Acknowledged <GroupId: " << msgId.first << ", MsgId: " << msgId.second << ">";
+			std::cerr << "p3GxsChannels::dummy_tick() Acknowledged <GroupId: " << msgId.first << ", MsgId: " << msgId.second << ">";
 			std::cerr << std::endl;
 
 			/* store results for later selection */
 
-			ForumDummyRef ref(msgId.first, mGenThreadId, msgId.second);
+			ChannelDummyRef ref(msgId.first, mGenThreadId, msgId.second);
 			mGenRefs[mGenCount] = ref;
 		}
 		else
 		{
-			std::cerr << "p3GxsForums::dummy_tick() Finished";
+			std::cerr << "p3GxsChannels::dummy_tick() Finished";
 			std::cerr << std::endl;
 
 			/* done */
@@ -376,9 +400,9 @@ void p3GxsForums::dummy_tick()
 		if (mGenCount < MAX_GEN_GROUPS)
 		{
 			std::string groupName;
-			rs_sprintf(groupName, "TestForum_%d", mGenCount);
+			rs_sprintf(groupName, "TestChannel_%d", mGenCount);
 
-			std::cerr << "p3GxsForums::dummy_tick() Generating Group: " << groupName;
+			std::cerr << "p3GxsChannels::dummy_tick() Generating Group: " << groupName;
 			std::cerr << std::endl;
 
 			/* create a new group */
@@ -388,7 +412,7 @@ void p3GxsForums::dummy_tick()
 		{
 			/* create a new message */
 			uint32_t idx = (uint32_t) (mGenCount * RSRandom::random_f32());
-			ForumDummyRef &ref = mGenRefs[idx];
+			ChannelDummyRef &ref = mGenRefs[idx];
 
 			RsGxsGroupId grpId = ref.mGroupId;
 			RsGxsMessageId parentId = ref.mMsgId;
@@ -398,28 +422,58 @@ void p3GxsForums::dummy_tick()
 				mGenThreadId = parentId;
 			}
 
-			std::cerr << "p3GxsForums::dummy_tick() Generating Msg ... ";
+			std::cerr << "p3GxsChannels::dummy_tick() Generating Msg ... ";
 			std::cerr << " GroupId: " << grpId;
 			std::cerr << " ThreadId: " << mGenThreadId;
 			std::cerr << " ParentId: " << parentId;
 			std::cerr << std::endl;
 
-			generateMessage(mGenToken, grpId, parentId, mGenThreadId);
+			if (parentId.empty())
+			{
+				generatePost(mGenToken, grpId);
+			}
+			else
+			{
+				generateComment(mGenToken, grpId, parentId, mGenThreadId);
+			}
 		}
 	}
 }
 
 
-bool p3GxsForums::generateMessage(uint32_t &token, const RsGxsGroupId &grpId, const RsGxsMessageId &parentId, const RsGxsMessageId &threadId)
+bool p3GxsChannels::generatePost(uint32_t &token, const RsGxsGroupId &grpId)
 {
-	RsGxsForumMsg msg;
+	RsGxsChannelPost msg;
 
 	std::string rndId = genRandomId();
 
-	rs_sprintf(msg.mMsg, "Forum Msg: GroupId: %s, ThreadId: %s, ParentId: %s + some randomness: %s", 
-		grpId.c_str(), threadId.c_str(), parentId.c_str(), rndId.c_str());
+	rs_sprintf(msg.mMsg, "Channel Msg: GroupId: %s, some randomness: %s", 
+		grpId.c_str(), rndId.c_str());
 	
 	msg.mMeta.mMsgName = msg.mMsg;
+
+	msg.mMeta.mGroupId = grpId;
+	msg.mMeta.mThreadId = "";
+	msg.mMeta.mParentId = "";
+
+	msg.mMeta.mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_UNREAD;
+
+	createPost(token, msg);
+
+	return true;
+}
+
+
+bool p3GxsChannels::generateComment(uint32_t &token, const RsGxsGroupId &grpId, const RsGxsMessageId &parentId, const RsGxsMessageId &threadId)
+{
+	RsGxsComment msg;
+
+	std::string rndId = genRandomId();
+
+	rs_sprintf(msg.mComment, "Channel Comment: GroupId: %s, ThreadId: %s, ParentId: %s + some randomness: %s", 
+		grpId.c_str(), threadId.c_str(), parentId.c_str(), rndId.c_str());
+	
+	msg.mMeta.mMsgName = msg.mComment;
 
 	msg.mMeta.mGroupId = grpId;
 	msg.mMeta.mThreadId = threadId;
@@ -439,50 +493,50 @@ bool p3GxsForums::generateMessage(uint32_t &token, const RsGxsGroupId &grpId, co
 
 	if (it != ownIds.end())
 	{
-		std::cerr << "p3GxsForums::generateMessage() Author: " << *it;
+		std::cerr << "p3GxsChannels::generateMessage() Author: " << *it;
 		std::cerr << std::endl;
 		msg.mMeta.mAuthorId = *it;
 	} 
 	else
 	{
-		std::cerr << "p3GxsForums::generateMessage() No Author!";
+		std::cerr << "p3GxsChannels::generateMessage() No Author!";
 		std::cerr << std::endl;
 	} 
 
-	createMsg(token, msg);
+	createComment(token, msg);
 
 	return true;
 }
 
 
-bool p3GxsForums::generateGroup(uint32_t &token, std::string groupName)
+bool p3GxsChannels::generateGroup(uint32_t &token, std::string groupName)
 {
-	/* generate a new forum */
-	RsGxsForumGroup forum;
-	forum.mMeta.mGroupName = groupName;
+	/* generate a new channel */
+	RsGxsChannelGroup channel;
+	channel.mMeta.mGroupName = groupName;
 
-	createGroup(token, forum);
+	createGroup(token, channel);
 
 	return true;
 }
 
 
         // Overloaded from RsTickEvent for Event callbacks.
-void p3GxsForums::handle_event(uint32_t event_type, const std::string &elabel)
+void p3GxsChannels::handle_event(uint32_t event_type, const std::string &elabel)
 {
-	std::cerr << "p3GxsForums::handle_event(" << event_type << ")";
+	std::cerr << "p3GxsChannels::handle_event(" << event_type << ")";
 	std::cerr << std::endl;
 
 	// stuff.
 	switch(event_type)
 	{
-		case FORUM_TESTEVENT_DUMMYDATA:
+		case CHANNEL_TESTEVENT_DUMMYDATA:
 			generateDummyData();
 			break;
 
 		default:
 			/* error */
-			std::cerr << "p3GxsForums::handle_event() Unknown Event Type: " << event_type;
+			std::cerr << "p3GxsChannels::handle_event() Unknown Event Type: " << event_type;
 			std::cerr << std::endl;
 			break;
 	}

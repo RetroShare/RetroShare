@@ -51,6 +51,7 @@ const int p3facemsgzone = 11453;
 #include "services/p3posted.h"
 #include "services/p3photoservice.h"
 #include "services/p3gxsforums.h"
+#include "services/p3gxschannels.h"
 #include "services/p3wire.h"
 
 #endif
@@ -160,6 +161,7 @@ void RsServer::rsGlobalShutDown()
 #ifdef RS_ENABLE_GXS
         if(mGxsCircles) mGxsCircles->join();
         if(mGxsForums) mGxsForums->join();
+        if(mGxsChannels) mGxsChannels->join();
         if(mGxsIdService) mGxsIdService->join();
         if(mPosted) mPosted->join();
         if(mPhoto) mPhoto->join();

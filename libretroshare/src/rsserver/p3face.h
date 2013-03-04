@@ -51,6 +51,7 @@
 class p3IdService;
 class p3GxsCircles;
 class p3GxsForums;
+class p3GxsChannels;
 class p3Wiki;
 class p3Posted;
 class p3PhotoService;
@@ -192,6 +193,7 @@ class RsServer: public RsControl, public RsThread
                 p3GxsCircles *mGxsCircles;
                 p3IdService *mGxsIdService;
                 p3GxsForums *mGxsForums;
+                p3GxsChannels *mGxsChannels;
                 p3Wire *mWire;
 
 		/* Config */

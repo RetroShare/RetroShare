@@ -7,7 +7,7 @@ CONFIG += test_voip
 
 # GXS Stuff.
 # This should be disabled for releases until further notice.
-#CONFIG += gxs
+#CONFIG += gxs debug
 
 # Beware: All data of the stripped services are lost
 DEFINES *= PQI_DISABLE_TUNNEL
@@ -676,6 +676,18 @@ gxs {
 	SOURCES += services/p3gxsforums.cc \
 		serialiser/rsgxsforumitems.cc \
 
+	# GxsChannels Service
+	HEADERS += retroshare/rsgxschannels.h \
+		services/p3gxschannels.h \
+		services/p3gxscommon.h \
+		serialiser/rsgxscommentitems.h \
+		serialiser/rsgxschannelitems.h \
+
+	SOURCES += services/p3gxschannels.cc \
+		services/p3gxscommon.cc \
+		serialiser/rsgxscommentitems.cc \
+		serialiser/rsgxschannelitems.cc \
+
 	# Wiki Service
 	HEADERS += retroshare/rswiki.h \
 		services/p3wiki.h \
@@ -684,7 +696,7 @@ gxs {
 	SOURCES += services/p3wiki.cc \
 		serialiser/rswikiitems.cc \
 
-	# Wiki Service
+	# Wire Service
 	HEADERS += retroshare/rswire.h \
 		services/p3wire.h \
 		serialiser/rswireitems.h
