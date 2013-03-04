@@ -34,6 +34,10 @@
 
 uint32_t RsGxsCommentSerialiser::size(RsItem *item)
 {
+#ifdef GXSCOMMENT_DEBUG
+	std::cerr << "RsGxsCommentSerialiser::size()" << std::endl;
+#endif
+
 	RsGxsCommentItem* com_item = NULL;
 	RsGxsVoteItem* vote_item = NULL;
 
@@ -51,6 +55,10 @@ uint32_t RsGxsCommentSerialiser::size(RsItem *item)
 
 bool RsGxsCommentSerialiser::serialise(RsItem *item, void *data, uint32_t *size)
 {
+#ifdef GXSCOMMENT_DEBUG
+	std::cerr << "RsGxsCommentSerialiser::serialise()" << std::endl;
+#endif
+
 	RsGxsCommentItem* com_item = NULL;
 	RsGxsVoteItem* vote_item = NULL;
 
@@ -78,6 +86,9 @@ RsItem* RsGxsCommentSerialiser::deserialise(void* data, uint32_t* size)
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
 		(getRsItemService(PacketId()) != getRsItemService(rstype)))
 	{
+#ifdef GXSCOMMENT_DEBUG
+		std::cerr << "RsGxsCommentSerialiser::deserialise() ERROR Wrong Type" << std::endl;
+#endif
 		return NULL; /* wrong type */
 	}
 		
@@ -134,6 +145,10 @@ uint32_t RsGxsCommentSerialiser::sizeGxsCommentItem(RsGxsCommentItem *item)
 
 	s += GetTlvStringSize(msg.mComment); // mMsg.
 
+#ifdef GXSCOMMENT_DEBUG
+	std::cerr << "RsGxsCommentSerialiser::sizeGxsCommentItem() is: " << s << std::endl;
+#endif
+
 	return s;
 }
 
@@ -150,8 +165,9 @@ bool RsGxsCommentSerialiser::serialiseGxsCommentItem(RsGxsCommentItem *item, voi
 	if(*size < tlvsize)
 	{
 #ifdef GXSCOMMENT_DEBUG
-		std::cerr << "RsGxsCommentSerialiser::serialiseGxsCommentItem()" << std::endl;
+		std::cerr << "RsGxsCommentSerialiser::serialiseGxsCommentItem() Failed size too small" << std::endl;
 #endif
+
 		return false;
 	}
 	

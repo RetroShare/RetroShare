@@ -34,6 +34,10 @@
 
 uint32_t RsGxsChannelSerialiser::size(RsItem *item)
 {
+#ifdef GXSCHANNEL_DEBUG
+        std::cerr << "RsGxsChannelSerialiser::size()" << std::endl;
+#endif
+
 	RsGxsChannelGroupItem* grp_item = NULL;
 	RsGxsChannelPostItem* op_item = NULL;
 
@@ -47,13 +51,17 @@ uint32_t RsGxsChannelSerialiser::size(RsItem *item)
 	}
 	else
 	{
-		RsGxsCommentSerialiser::size(item);
+		return RsGxsCommentSerialiser::size(item);
 	}
 	return 0;
 }
 
 bool RsGxsChannelSerialiser::serialise(RsItem *item, void *data, uint32_t *size)
 {
+#ifdef GXSCHANNEL_DEBUG
+        std::cerr << "RsGxsChannelSerialiser::serialise()" << std::endl;
+#endif
+
 	RsGxsChannelGroupItem* grp_item = NULL;
 	RsGxsChannelPostItem* op_item = NULL;
 
@@ -69,7 +77,6 @@ bool RsGxsChannelSerialiser::serialise(RsItem *item, void *data, uint32_t *size)
 	{
 		return RsGxsCommentSerialiser::serialise(item, data, size);
 	}
-	return false;
 }
 
 RsItem* RsGxsChannelSerialiser::deserialise(void* data, uint32_t* size)
@@ -84,6 +91,9 @@ RsItem* RsGxsChannelSerialiser::deserialise(void* data, uint32_t* size)
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
 		(RS_SERVICE_GXSV1_TYPE_CHANNELS != getRsItemService(rstype)))
 	{
+#ifdef GXSCHANNEL_DEBUG
+		std::cerr << "RsGxsChannelSerialiser::deserialise() ERROR Wrong Type" << std::endl;
+#endif
 		return NULL; /* wrong type */
 	}
 		
@@ -300,7 +310,7 @@ bool RsGxsChannelSerialiser::serialiseGxsChannelPostItem(RsGxsChannelPostItem *i
 	if(*size < tlvsize)
 	{
 #ifdef GXSCHANNEL_DEBUG
-		std::cerr << "RsGxsChannelSerialiser::serialiseGxsChannelPostItem()" << std::endl;
+		std::cerr << "RsGxsChannelSerialiser::serialiseGxsChannelPostItem() ERROR space too small" << std::endl;
 #endif
 		return false;
 	}

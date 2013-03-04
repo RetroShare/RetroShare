@@ -43,7 +43,7 @@ class RsGxsCommentItem : public RsGxsMsgItem
 {
 public:
 
-	RsGxsCommentItem(uint8_t service_type): RsGxsMsgItem(service_type, 
+	RsGxsCommentItem(uint16_t service_type): RsGxsMsgItem(service_type, 
 			RS_PKT_SUBTYPE_GXSCOMMENT_COMMENT_ITEM) {return; }
         virtual ~RsGxsCommentItem() { return;}
         void clear();
@@ -57,7 +57,7 @@ class RsGxsVoteItem : public RsGxsMsgItem
 {
 public:
 
-	RsGxsVoteItem(uint8_t service_type): RsGxsMsgItem(service_type, 
+	RsGxsVoteItem(uint16_t service_type): RsGxsMsgItem(service_type, 
 			RS_PKT_SUBTYPE_GXSCOMMENT_VOTE_ITEM) {return; }
         virtual ~RsGxsVoteItem() { return;}
         void clear();
