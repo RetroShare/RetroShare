@@ -144,7 +144,7 @@ introserver {
 
 
 sshserver {
-	LIBSSH_DIR = ../../../../libssh-0.5.2
+	LIBSSH_DIR = ../../../../libssh-0.5.4
 
 	# This Requires libssh-0.5.* to compile.
 	# Modify path below to point at it.
@@ -164,7 +164,7 @@ sshserver {
 
 	win32 {
 		DEFINES *= LIBSSH_STATIC
-		LIBSSH_DIR = ../../../libssh-0.5.2
+		LIBSSH_DIR = ../../../libssh-0.5.4
 	}
 
 	INCLUDEPATH += $$LIBSSH_DIR/include/
@@ -173,7 +173,7 @@ sshserver {
 		LIBS += -lssh
 		LIBS += -lssh_threads
 	} else {
-		SSH_OK = $$system(pkg-config --atleast-version 0.5.2 libssh && echo yes)
+		SSH_OK = $$system(pkg-config --atleast-version 0.5.4 libssh && echo yes)
 		isEmpty(SSH_OK) {
 			exists($$LIBSSH_DIR/build/src/libssh.a):exists($$LIBSSH_DIR/build/src/threads/libssh_threads.a) {
 				LIBS += $$LIBSSH_DIR/build/src/libssh.a
