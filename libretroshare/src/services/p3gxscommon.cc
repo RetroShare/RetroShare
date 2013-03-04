@@ -59,7 +59,7 @@ RsGxsVote::RsGxsVote()
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
 
-p3GxsCommentService::p3GxsCommentService(RsGenExchange *exchange, uint32_t service_type)
+p3GxsCommentService::p3GxsCommentService(RsGenExchange *exchange, uint16_t service_type)
     : mExchange(exchange), mServiceType(service_type)
 {
 	return;
@@ -67,6 +67,9 @@ p3GxsCommentService::p3GxsCommentService(RsGenExchange *exchange, uint32_t servi
 
 bool p3GxsCommentService::getGxsCommentData(const uint32_t &token, std::vector<RsGxsComment> &comments)
 {
+	std::cerr << "p3GxsCommentService::getGxsCommentData()";
+	std::cerr << std::endl;
+
 	GxsMsgDataMap msgData;
 	bool ok = mExchange->getMsgData(token, msgData);
 		
@@ -127,11 +130,20 @@ bool p3GxsCommentService::getGxsCommentData(const uint32_t &token, std::vector<R
 				}
 			}
 		}
+
+		std::cerr << "p3GxsCommentService::getGxsCommentData() Found " << comments.size() << " Comments";
+		std::cerr << std::endl;
+		std::cerr << "p3GxsCommentService::getGxsCommentData() Found " << voteMap.size() << " Votes";
+		std::cerr << std::endl;
+
 		/* delete the votes */
 		for (it = voteMap.begin(); it != voteMap.end(); it++)
 		{
 			delete it->second;
 		}
+
+
+		
 	}
 		
 	return ok;
@@ -140,6 +152,9 @@ bool p3GxsCommentService::getGxsCommentData(const uint32_t &token, std::vector<R
 
 bool p3GxsCommentService::getGxsRelatedComments(const uint32_t &token, std::vector<RsGxsComment> &comments)
 {
+	std::cerr << "p3GxsCommentService::getGxsRelatedComments()";
+	std::cerr << std::endl;
+
 	GxsMsgRelatedDataMap msgData;
 	bool ok = mExchange->getMsgRelatedData(token, msgData);
 			
@@ -159,27 +174,6 @@ bool p3GxsCommentService::getGxsRelatedComments(const uint32_t &token, std::vect
 		
 				if(item)
 				{
-					/* HACK UNTIL CHRIS FIXES RELATED MSGS in GXS */
-					if (item->meta.mMsgId == (mit->first).second)
-					{
-						std::cerr << "p3GxsChannels::getRelatedComments()";
-						std::cerr << " ERROR Found Original - discarding";
-						std::cerr << " Id: " << item->meta.mMsgId;
-						std::cerr << std::endl;
-						delete item;
-						continue;
-					}
-	
-					if (item->meta.mParentId != (mit->first).second)
-					{
-						std::cerr << "p3GxsChannels::getRelatedComments()";
-						std::cerr << " ERROR Found !CHILD - discarding";
-						std::cerr << " Id: " << item->meta.mMsgId;
-						std::cerr << std::endl;
-						delete item;
-						continue;
-					}
-	
 					RsGxsComment comment = item->mMsg;
 					comment.mMeta = item->meta;
 					comments.push_back(comment);
@@ -218,6 +212,12 @@ bool p3GxsCommentService::getGxsRelatedComments(const uint32_t &token, std::vect
 				}
 			}
 		}
+
+		std::cerr << "p3GxsCommentService::getGxsRelatedComments() Found " << comments.size() << " Comments";
+		std::cerr << std::endl;
+		std::cerr << "p3GxsCommentService::getGxsRelatedComments() Found " << voteMap.size() << " Votes";
+		std::cerr << std::endl;
+
 		/* delete the votes */
 		for (it = voteMap.begin(); it != voteMap.end(); it++)
 		{

@@ -37,7 +37,7 @@ class p3GxsCommentService
 {
 	public:
 
-	p3GxsCommentService(RsGenExchange *exchange, uint32_t service_type);
+	p3GxsCommentService(RsGenExchange *exchange, uint16_t service_type);
 
 	bool getGxsCommentData(const uint32_t &token, std::vector<RsGxsComment> &msgs);
 	bool getGxsRelatedComments(const uint32_t &token, std::vector<RsGxsComment> &msgs);
@@ -52,7 +52,7 @@ class p3GxsCommentService
 	private:
 
 	RsGenExchange 	*mExchange;
-	uint32_t	mServiceType;
+	uint16_t	mServiceType;
 };
 
 

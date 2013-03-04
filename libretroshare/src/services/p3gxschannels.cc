@@ -198,27 +198,6 @@ bool p3GxsChannels::getRelatedPosts(const uint32_t &token, std::vector<RsGxsChan
 		
 				if(item)
 				{
-					/* HACK UNTIL CHRIS FIXES RELATED MSGS in GXS */
-					if (item->meta.mMsgId == (mit->first).second)
-					{
-						std::cerr << "p3GxsChannels::getRelatedPosts()";
-						std::cerr << " ERROR Found Original - discarding";
-						std::cerr << " Id: " << item->meta.mMsgId;
-						std::cerr << std::endl;
-						delete item;
-						continue;
-					}
-	
-					if (item->meta.mParentId != (mit->first).second)
-					{
-						std::cerr << "p3GxsChannels::getRelatedPosts()";
-						std::cerr << " ERROR Found !CHILD - discarding";
-						std::cerr << " Id: " << item->meta.mMsgId;
-						std::cerr << std::endl;
-						delete item;
-						continue;
-					}
-	
 					RsGxsChannelPost msg = item->mMsg;
 					msg.mMeta = item->meta;
 					msgs.push_back(msg);
