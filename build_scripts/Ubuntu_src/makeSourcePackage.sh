@@ -50,9 +50,10 @@ cd ../..
 cp $workdir/src/retroshare-gui/src/gui/chat/PopupChatDialog.ui $workdir/src/plugins/VOIP/gui/PopupChatDialog.ui
 
 # handling of libssh-0.5.2
-wget http://www.libssh.org/files/0.5/libssh-0.5.2.tar.gz
+#wget http://www.libssh.org/files/0.5/libssh-0.5.2.tar.gz
+wget https://red.libssh.org/attachments/download/41/libssh-0.5.4.tar.gz
 cd $workdir
-tar zxvf ../libssh-0.5.2.tar.gz
+tar zxvf ../libssh-0.5.4.tar.gz
 cd ..
 
 # cleaning up protobof generated files
