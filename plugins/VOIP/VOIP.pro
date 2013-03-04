@@ -1,16 +1,15 @@
 !include("../Common/retroshare_plugin.pri"): error("Could not include file ../Common/retroshare_plugin.pri")
 
+exists($$[QMAKE_MKSPECS]/features/mobility.prf) {
+  CONFIG += mobility
+} else {
+  QT += multimedia
+}
 CONFIG += qt uic qrc resources
-CONFIG += mobility
 MOBILITY = multimedia
 
-QT_VERSION = $$[QT_VERSION]
-QT_VERSION = $$split(QT_VERSION, ".")
-QT_VER_MAJ = $$member(QT_VERSION, 0)
-QT_VER_MIN = $$member(QT_VERSION, 1)
- 
-lessThan(QT_VER_MAJ, 4) | lessThan(QT_VER_MIN, 7) | win32 {
-   QT += multimedia
+win32 {
+   QT *= multimedia
 }
 
 INCLUDEPATH += ../../retroshare-gui/src/temp/ui ../../libretroshare/src
