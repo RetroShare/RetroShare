@@ -881,11 +881,20 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 			RsTlvBinaryData& data = (*lit)->grp;
 			RsItem* item = mSerialiser->deserialise(data.bin_data, &data.bin_len);
 
-                        if(item != NULL)
+                        if(item)
                         {
 				RsGxsGrpItem* gItem = dynamic_cast<RsGxsGrpItem*>(item);
-				gItem->meta = *((*lit)->metaData);
-                                grpItem.push_back(gItem);
+				if (gItem)
+				{
+					gItem->meta = *((*lit)->metaData);
+                                	grpItem.push_back(gItem);
+				}
+				else
+				{
+					std::cerr << "RsGenExchange::getGroupData() deserialisation/dynamic_cast ERROR";
+					std::cerr << std::endl;
+					delete item;
+				}
 			}
 			else
 			{
@@ -922,9 +931,26 @@ bool RsGenExchange::getMsgData(const uint32_t &token,
 
                 RsItem* item = mSerialiser->deserialise(msg->msg.bin_data,
                                 &msg->msg.bin_len);
-                RsGxsMsgItem* mItem = dynamic_cast<RsGxsMsgItem*>(item);
-                mItem->meta = *((*vit)->metaData); // get meta info from nxs msg
-                gxsMsgItems.push_back(mItem);
+		if (item)
+		{
+                	RsGxsMsgItem* mItem = dynamic_cast<RsGxsMsgItem*>(item);
+			if (mItem)
+			{
+                		mItem->meta = *((*vit)->metaData); // get meta info from nxs msg
+                		gxsMsgItems.push_back(mItem);
+			}
+			else
+			{
+				std::cerr << "RsGenExchange::getMsgData() deserialisation/dynamic_cast ERROR";
+				std::cerr << std::endl;
+				delete item;
+			}
+		}
+		else
+		{
+			std::cerr << "RsGenExchange::getMsgData() deserialisation ERROR";
+			std::cerr << std::endl;
+		}
                 delete msg;
             }
             msgItems[grpId] = gxsMsgItems;
@@ -956,13 +982,27 @@ bool RsGenExchange::getMsgRelatedData(const uint32_t &token, GxsMsgRelatedDataMa
 
                 RsItem* item = mSerialiser->deserialise(msg->msg.bin_data,
                                 &msg->msg.bin_len);
-                RsGxsMsgItem* mItem = dynamic_cast<RsGxsMsgItem*>(item);
+		if (item)
+		{
+                	RsGxsMsgItem* mItem = dynamic_cast<RsGxsMsgItem*>(item);
 
-                if(mItem != NULL)
-                {
-                    mItem->meta = *((*vit)->metaData); // get meta info from nxs msg
-                    gxsMsgItems.push_back(mItem);
-                }
+                	if (mItem)
+                	{
+                    		mItem->meta = *((*vit)->metaData); // get meta info from nxs msg
+                    		gxsMsgItems.push_back(mItem);
+                	}
+			else
+			{
+				std::cerr << "RsGenExchange::getMsgRelatedData() deserialisation/dynamic_cast ERROR";
+				std::cerr << std::endl;
+				delete item;
+			}
+		}
+		else
+		{
+			std::cerr << "RsGenExchange::getMsgRelatedData() deserialisation ERROR";
+			std::cerr << std::endl;
+		}
                 delete msg;
             }
             msgItems[msgId] = gxsMsgItems;
