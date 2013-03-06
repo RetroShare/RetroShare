@@ -38,10 +38,34 @@
 #include "retroshare/rsgxsservice.h"
 #include "serialiser/rsnxsitems.h"
 
+template<class GxsItem, typename Identity = std::string>
+class GxsPendingSignItem
+{
+public:
+	GxsPendingSignItem(GxsItem item, Identity id) :
+		mItem(item), mId(id), mAttempts(0)
+	{}
+
+	GxsPendingSignItem(const GxsPendingSignItem& gpsi)
+	{
+		this->mItem = gpsi.mItem;
+		this->mId = gpsi.mId;
+		this->mAttempts = gpsi.mAttempts;
+	}
+
+	bool operator==(const Identity& id)
+	{
+		return this->mId == id;
+	}
+
+	GxsItem mItem;
+	Identity mId;
+	uint8_t mAttempts;
+};
+
 typedef std::map<RsGxsGroupId, std::vector<RsGxsMsgItem*> > GxsMsgDataMap;
 typedef std::map<RsGxsGroupId, RsGxsGrpItem*> GxsGroupDataMap;
 typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsGxsMsgItem*> > GxsMsgRelatedDataMap;
-
 
 /*!
  * This should form the parent class to \n
@@ -68,6 +92,9 @@ class RsGixs;
 class RsGenExchange : public RsNxsObserver, public RsThread, public RsGxsIface
 {
 public:
+
+	/// used by class derived for RsGenExchange to indicate if service create passed or not
+	enum { SERVICE_CREATE_SUCCESS, SERVICE_CREATE_FAIL, SERVICE_FAIL_TRY_LATER } ServiceCreate_Returns;
 
     /*!
      * Constructs a RsGenExchange object, the owner ship of gds, ns, and serviceserialiser passes \n
@@ -130,8 +157,9 @@ public:
      * Convenience function for setting bit patterns of the individual privacy level authentication
      * policy and group options
      * @param flag the bit pattern (and policy) set for the privacy policy
-     * @param authenFlag Only the policy portion chosen will be modified with 'flag'
-     * @param pos The policy portion to modify
+     * @param authenFlag Only the policy portion chosen will be modified with 'flag',
+     * the origianl flags in the indicated bit position (pos) are over-written
+     * @param pos The policy bit portion to modify
      * @see PrivacyBitPos
      */
     static bool setAuthenPolicyFlag(const uint8_t& flag, uint32_t& authenFlag, const PrivacyBitPos& pos);
@@ -234,6 +262,7 @@ public:
 
 
     bool subscribeToGroup(uint32_t& token, const RsGxsGroupId& grpId, bool subscribe);
+
 protected:
 
     /*!
@@ -355,7 +384,7 @@ protected:
      * call is blocking retrieval from underlying db
      * @warning under normal circumstance a service should not need this
      * @param grpId the id of the group to retrieve keys for
-     * @param keys this is set to the retrieved keys
+     * @param keys set to the retrieved keys
      * @return false if group does not exist or grpId is empty
      */
     bool getGroupKeys(const RsGxsGroupId& grpId, RsTlvSecurityKeySet& keySet);
@@ -530,17 +559,21 @@ private:
      * What signatures are calculated are based on the authentication policy
      * of the service
      * @param msg the Nxs message to create
+     * CREATE_FAIL, CREATE_SUCCESS, CREATE_ID_SIGN_NOT_AVAIL
+     * @return CREATE_SUCCESS for success, CREATE_FAIL for fail,
+     * 		   CREATE_ID_SIGN_NOT_AVAIL for Id sign key not avail (but requested)
      */
-    bool createMessage(RsNxsMsg* msg);
+    int createMessage(RsNxsMsg* msg);
 
     /*!
      * convenience function to create sign
      * @param signSet signatures are stored here
      * @param msgData message data to be signed
      * @param grpMeta the meta data for group the message belongs to
-     * @return false if signature creation for any required signature fails, true otherwise
+     * @return SIGN_SUCCESS for success, SIGN_FAIL for fail,
+     * 		   ID_NOT_AVAIL for Id sign key not avail (but requested), try later
      */
-    bool createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinaryData& msgData,
+    int createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinaryData& msgData,
                              const RsGxsMsgMetaData& msgMeta, RsGxsGrpMetaData& grpMeta);
 
     /*!
@@ -562,9 +595,10 @@ private:
      * @param msg message to be validated
      * @param grpFlag the flag for the group the message belongs to
      * @param grpKeySet
-     * @return true if msg validates, false otherwise
+     * @return VALIDATE_SUCCESS for success, VALIDATE_FAIL for fail,
+     * 		   VALIDATE_ID_SIGN_NOT_AVAIL for Id sign key not avail (but requested)
      */
-    bool validateMsg(RsNxsMsg* msg, const uint32_t& grpFlag, RsTlvSecurityKeySet& grpKeySet);
+    int validateMsg(RsNxsMsg* msg, const uint32_t& grpFlag, RsTlvSecurityKeySet& grpKeySet);
 
     /*!
      * Checks flag against a given privacy bit block
@@ -606,12 +640,24 @@ private:
     /// authentication policy
     uint32_t mAuthenPolicy;
 
+    std::map<uint32_t, GxsPendingSignItem<RsGxsMsgItem*, uint32_t> >
+    	mMsgPendingSign;
+
+    std::vector<GxsPendingSignItem<RsNxsMsg*, RsGxsGrpMsgIdPair> > mMsgPendingValidate;
+    typedef std::vector<GxsPendingSignItem<RsNxsMsg*, RsGxsGrpMsgIdPair> > NxsMsgPendingVect;
+
+    std::map<RsGxsGroupId, GxsPendingSignItem<RsGxsGrpItem*> >
+    	mGrpPendingSign, mGrpPendingValidation;
 
 private:
 
     std::vector<RsGxsNotify*> mChanges;
     std::vector<RsGxsGroupChange*> mGroupChange;
     std::vector<RsGxsMsgChange*> mMsgChange;
+
+    const uint8_t CREATE_FAIL, CREATE_SUCCESS, CREATE_FAIL_TRY_LATER, SIGN_MAX_ATTEMPTS;
+    const uint8_t SIGN_FAIL, SIGN_SUCCESS, SIGN_FAIL_TRY_LATER;
+    const uint8_t VALIDATE_FAIL, VALIDATE_SUCCESS, VALIDATE_FAIL_TRY_LATER, VALIDATE_MAX_ATTEMPTS;
 };
 
 #endif // RSGENEXCHANGE_H

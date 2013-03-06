@@ -30,7 +30,7 @@
 #include <string>
 #include <sys/time.h>
 
-#include <gxs/rstokenservice.h>
+#include <retroshare/rstokenservice.h>
 
 
 #define COMPLETED_REQUEST		4

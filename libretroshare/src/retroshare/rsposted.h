@@ -30,7 +30,7 @@
 #include <inttypes.h>
 #include <string>
 #include <list>
-#include "gxs/rstokenservice.h"
+#include "retroshare/rstokenservice.h"
 #include "retroshare/rsgxsifacehelper.h"
 
 class RsPosted;

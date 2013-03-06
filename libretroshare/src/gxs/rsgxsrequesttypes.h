@@ -26,7 +26,7 @@
  *
  */
 
-#include "gxs/rstokenservice.h"
+#include "retroshare/rstokenservice.h"
 #include "gxs/rsgds.h"
 
 class GxsRequest

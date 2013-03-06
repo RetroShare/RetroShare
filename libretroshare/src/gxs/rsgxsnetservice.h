@@ -119,13 +119,13 @@ typedef std::map<std::string, TransactionIdMap > TransactionsPeerMap;
  * This class implements the RsNetWorkExchangeService
  * using transactions to handle synchrnisation of Nxs items between
  * peers in a network
- * Transactions requires the maintenance of several states between peers, and whether
+ * Transactions requires the maintenance of several states between peers
  *
  * Thus a data structure maintains: peers, and their active transactions
  * Then for each transaction it needs to be noted if this is an outgoing or incoming transaction
  * Outgoing transaction are in 3 different states:
  *   1. START 2. INITIATED 3. SENDING 4. END
- * Incoming transaction are also in 3 different states
+ * Incoming transaction are in 3 different states
  *   1. START 2. RECEIVING 3. END
  */
 class RsGxsNetService : public RsNetworkExchangeService, public p3ThreadedService,

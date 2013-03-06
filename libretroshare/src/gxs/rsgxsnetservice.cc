@@ -1365,15 +1365,22 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrp* item)
 
 	for(; mit != grp.end(); mit++)
 	{
-		RsNxsSyncGrpItem* gItem = new
+		RsGxsGrpMetaData* grpMeta = mit->second;
+
+		if(grpMeta->mSubscribeFlags & (GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED |
+	               GXS_SERV::GROUP_SUBSCRIBE_ADMIN) )
+		{
+			RsNxsSyncGrpItem* gItem = new
 				RsNxsSyncGrpItem(mServType);
-		gItem->flag = RsNxsSyncGrpItem::FLAG_RESPONSE;
-		gItem->grpId = mit->first;
-		gItem->publishTs = mit->second->mPublishTs;
-		gItem->PeerId(peer);
-		gItem->transactionNumber = transN;
-		itemL.push_back(gItem);
-		delete mit->second; // release resource
+			gItem->flag = RsNxsSyncGrpItem::FLAG_RESPONSE;
+			gItem->grpId = mit->first;
+			gItem->publishTs = mit->second->mPublishTs;
+			gItem->PeerId(peer);
+			gItem->transactionNumber = transN;
+			itemL.push_back(gItem);
+		}
+
+		delete grpMeta; // release resource
 	}
 
 	tr->mFlag = NxsTransaction::FLAG_STATE_WAITING_CONFIRM;

@@ -26,7 +26,7 @@
  *
  */
 
-#include "rstokenservice.h"
+#include "retroshare/rstokenservice.h"
 #include "rsgxsrequesttypes.h"
 #include "rsgds.h"
 

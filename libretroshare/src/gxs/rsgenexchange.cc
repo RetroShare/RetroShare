@@ -37,6 +37,7 @@
 #include "util/contentvalue.h"
 #include "retroshare/rsgxsflags.h"
 #include "rsgixs.h"
+#include "rsgxsutil.h"
 
 
 #define PUB_GRP_MASK 0x000f
@@ -56,7 +57,10 @@
 RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService *ns,
                              RsSerialType *serviceSerialiser, uint16_t servType, RsGixs* gixs, uint32_t authenPolicy)
 : mGenMtx("GenExchange"), mDataStore(gds), mNetService(ns), mSerialiser(serviceSerialiser),
-    mServType(servType), mGixs(gixs), mAuthenPolicy(authenPolicy)
+    mServType(servType), mGixs(gixs), mAuthenPolicy(authenPolicy),
+    CREATE_FAIL(0), CREATE_SUCCESS(1), CREATE_FAIL_TRY_LATER(2), SIGN_MAX_ATTEMPTS(5),
+    SIGN_FAIL(0), SIGN_SUCCESS(1), SIGN_FAIL_TRY_LATER(2),
+    VALIDATE_FAIL(0), VALIDATE_SUCCESS(1), VALIDATE_FAIL_TRY_LATER(2), VALIDATE_MAX_ATTEMPTS(5)
 {
 
     mDataAccess = new RsGxsDataAccess(gds);
@@ -65,7 +69,7 @@ RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService
 
 RsGenExchange::~RsGenExchange()
 {
-    // need to destruct in a certain order (prob a bad thing!)
+    // need to destruct in a certain order (bad thing, TODO: put down instance ownership rules!)
     delete mNetService;
 
     delete mDataAccess;
@@ -299,13 +303,13 @@ bool RsGenExchange::createGroup(RsNxsGrp *grp, RsTlvSecurityKeySet& privateKeySe
     return ok;
 }
 
-bool RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinaryData& msgData,
+int RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinaryData& msgData,
                                         const RsGxsMsgMetaData& msgMeta, RsGxsGrpMetaData& grpMeta)
 {
-    bool isParent = false;
     bool needPublishSign = false, needIdentitySign = false;
-    bool ok = true;
     uint32_t grpFlag = grpMeta.mGroupFlags;
+
+    bool publishSignSuccess = false;
 
     std::cerr << "RsGenExchange::createMsgSignatures() for Msg.mMsgName: " << msgMeta.mMsgName;
     std::cerr << std::endl;
@@ -362,7 +366,6 @@ bool RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBina
         std::cerr << std::endl;
     }
 
-
     if(needPublishSign)
     {
         // public and shared is publish key
@@ -380,96 +383,93 @@ bool RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBina
                         break;
         }
 
-        if (!pub_key_found)
+        if (pub_key_found)
         {
-            std::cerr << "RsGenExchange::createMsgSignatures()";
-            std::cerr << " ERROR Cannot find PUBLISH KEY for Message Signing";
-            std::cerr << std::endl;
-            return false;
+            // private publish key
+            pubKey = &(mit->second);
+
+            RsTlvKeySignature pubSign = signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_PUBLISH];
+
+            publishSignSuccess = GxsSecurity::getSignature((char*)msgData.bin_data, msgData.bin_len, pubKey, pubSign);
+
+            //place signature in msg meta
+            signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_PUBLISH] = pubSign;
+        }else
+        {
+        	std::cerr << "RsGenExchange::createMsgSignatures()";
+			std::cerr << " ERROR Cannot find PUBLISH KEY for Message Signing!";
+			std::cerr << " ERROR Publish Sign failed!";
+			std::cerr << std::endl;
         }
-        // private publish key
-        pubKey = &(mit->second);
 
-        RsTlvKeySignature pubSign = signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_PUBLISH];
-
-        ok &= GxsSecurity::getSignature((char*)msgData.bin_data, msgData.bin_len, pubKey, pubSign);
-
-        //place signature in msg meta
-        signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_PUBLISH] = pubSign;
+    }
+    else // publish sign not needed so set as successful
+    {
+    	publishSignSuccess = true;
     }
 
+    int id_ret;
 
     if (needIdentitySign)
     {
         if(mGixs)
         {
-		/***************************************************************
-		 * NOTE: The logic below is wrong.
-		 * mGixs->havePrivateKey(msgMeta.mAuthorId) can return False if the Key isn't cached.
-		 *
-		 * This Operation should be retried again - later.
-		 *
-		 **************************************************************/ 
-
             bool haveKey = mGixs->havePrivateKey(msgMeta.mAuthorId);
 
             if(haveKey)
             {
-                mGixs->requestPrivateKey(msgMeta.mAuthorId);
-
                 RsTlvSecurityKey authorKey;
-
-                double timeDelta = 0.002; // fast polling
-                time_t now = time(NULL);
-
-                bool auth_key_fetched = false;
-                // poll immediately but, don't spend more than a second polling
-                while((!auth_key_fetched) && ((now + 5) > time(NULL)))
-		{
-			auth_key_fetched = (mGixs->getPrivateKey(msgMeta.mAuthorId, authorKey) == 1);
-#ifndef WINDOWS_SYS
-                        usleep((int) (timeDelta * 1000000));
-#else
-                        Sleep((int) (timeDelta * 1000));
-#endif
-                }
-
-
-		if (!auth_key_fetched)
-		{
-                     std::cerr << "RsGenExchange::createMsgSignatures()";
-                     std::cerr << " ERROR Cannot find AUTHOR KEY for Message Signing";
-                     std::cerr << std::endl;
-                     return false;
-                }
-
+                mGixs->getPrivateKey(msgMeta.mAuthorId, authorKey);
                 RsTlvKeySignature sign;
-                ok &= GxsSecurity::getSignature((char*)msgData.bin_data, msgData.bin_len,
-                                                &authorKey, sign);
-                signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_IDENTITY] = sign;
 
+                if(GxsSecurity::getSignature((char*)msgData.bin_data, msgData.bin_len,
+                                                &authorKey, sign))
+                {
+                	id_ret = SIGN_SUCCESS;
+                }
+                else
+                {
+                	id_ret = SIGN_FAIL;
+                }
+
+                signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_IDENTITY] = sign;
             }
             else
             {
-                std::cerr << "RsGenExchange::createMsgSignatures()";
-                std::cerr << " ERROR AUTHOR KEY is not Cached / available for Message Signing";
+            	mGixs->requestPrivateKey(msgMeta.mAuthorId);
+
+                std::cerr << "RsGenExchange::createMsgSignatures(): ";
+                std::cerr << " ERROR AUTHOR KEY: " <<  msgMeta.mAuthorId
+                		  << " is not Cached / available for Message Signing\n";
+                std::cerr << "RsGenExchange::createMsgSignatures():  Requestiong AUTHOR KEY";
                 std::cerr << std::endl;
 
-                ok = false;
+                id_ret = SIGN_FAIL_TRY_LATER;
             }
         }
         else
         {
             std::cerr << "RsGenExchange::createMsgSignatures()";
             std::cerr << "Gixs not enabled while request identity signature validation!" << std::endl;
-
-            ok = false;
+            id_ret = SIGN_FAIL;
         }
     }
-    return ok;
+    else
+    {
+    	id_ret = SIGN_SUCCESS;
+    }
+
+    if(publishSignSuccess)
+    {
+    	return id_ret;
+    }
+    else
+    {
+    	return SIGN_FAIL;
+    }
 }
 
-bool RsGenExchange::createMessage(RsNxsMsg* msg)
+int RsGenExchange::createMessage(RsNxsMsg* msg)
 {
 	const RsGxsGroupId& id = msg->grpId;
 
@@ -477,17 +477,20 @@ bool RsGenExchange::createMessage(RsNxsMsg* msg)
 
 	metaMap.insert(std::make_pair(id, (RsGxsGrpMetaData*)(NULL)));
 	mDataStore->retrieveGxsGrpMetaData(metaMap);
-        bool ok = true;
-        RsGxsMsgMetaData &meta = *(msg->metaData);
+
+	RsGxsMsgMetaData &meta = *(msg->metaData);
+
+	int ret_val;
 
 	if(!metaMap[id])
 	{
-            return false;
+		return CREATE_FAIL;
 	}
 	else
 	{
             // get publish key
-            RsGxsGrpMetaData* grpMeta = metaMap[id];
+
+		RsGxsGrpMetaData* grpMeta = metaMap[id];
 
             uint32_t metaDataLen = meta.serial_size();
             uint32_t allMsgDataLen = metaDataLen + msg->msg.bin_len;
@@ -505,7 +508,8 @@ bool RsGenExchange::createMessage(RsNxsMsg* msg)
             msgData.setBinData(allMsgData, allMsgDataLen);
 
             // create signatures
-            ok &= createMsgSignatures(meta.signSet, msgData, meta, *grpMeta);
+           ret_val = createMsgSignatures(meta.signSet, msgData, meta, *grpMeta);
+
 
             // get hash of msg data to create msg id
             pqihash hash;
@@ -521,14 +525,24 @@ bool RsGenExchange::createMessage(RsNxsMsg* msg)
             delete grpMeta;
 	}
 
-	return ok;
+	if(ret_val == SIGN_FAIL)
+		return CREATE_FAIL;
+	else if(ret_val == SIGN_FAIL_TRY_LATER)
+		return CREATE_FAIL_TRY_LATER;
+	else if(ret_val == SIGN_SUCCESS)
+		return CREATE_SUCCESS;
+	else
+	{
+		std::cerr << "Unknown return value from signature attempt!";
+		return CREATE_FAIL;
+	}
 }
 
-bool RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSecurityKeySet& grpKeySet)
+int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSecurityKeySet& grpKeySet)
 {
     bool needIdentitySign = false;
     bool needPublishSign = false;
-    bool valid = true;
+    bool publishValidate = true, idValidate = true;
 
     uint8_t author_flag = GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN;
     uint8_t publish_flag = GXS_SERV::MSG_AUTHEN_ROOT_PUBLISH_SIGN;
@@ -582,12 +596,16 @@ bool RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSec
         if(!keyId.empty())
         {
             RsTlvSecurityKey& key = keys[keyId];
-            valid &= GxsSecurity::validateNxsMsg(*msg, sign, key);
+            publishValidate &= GxsSecurity::validateNxsMsg(*msg, sign, key);
         }
         else
         {
-            valid = false;
+            publishValidate = false;
         }
+    }
+    else
+    {
+    	publishValidate = true;
     }
 
 
@@ -602,39 +620,27 @@ bool RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSec
             {
 
                 RsTlvSecurityKey authorKey;
+                bool auth_key_fetched = mGixs->getKey(metaData.mAuthorId, authorKey) == 1;
 
-                double timeDelta = 0.002; // fast polling
-                time_t now = time(NULL);
-                bool auth_key_fetched = false;
-                // poll immediately but, don't spend more than a second polling
-                while((!auth_key_fetched) && ((now + 1) > time(NULL)))
-		{
-			auth_key_fetched = (mGixs->getKey(metaData.mAuthorId, authorKey) == 1);
-#ifndef WINDOWS_SYS
-                        usleep((int) (timeDelta * 1000000));
-#else
-                        Sleep((int) (timeDelta * 1000));
-#endif
-                }
+				if (auth_key_fetched)
+				{
 
-
-		if (!auth_key_fetched)
-		{
+	                RsTlvKeySignature sign = metaData.signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_IDENTITY];
+	                idValidate &= GxsSecurity::validateNxsMsg(*msg, sign, authorKey);
+				}
+				else
+				{
                      std::cerr << "RsGenExchange::validateMsg()";
-                     std::cerr << " ERROR Cannot find AUTHOR KEY for Message Validation";
+                     std::cerr << " ERROR Cannot Retrieve AUTHOR KEY for Message Validation";
                      std::cerr << std::endl;
-                     return false;
+                     idValidate = false;
                 }
-
-
-                RsTlvKeySignature sign = metaData.signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_IDENTITY];
-                valid &= GxsSecurity::validateNxsMsg(*msg, sign, authorKey);
 
             }else
             {
                 std::list<std::string> peers;
                 mGixs->requestKey(metaData.mAuthorId, peers);
-                valid = false;
+                return VALIDATE_FAIL_TRY_LATER;
             }
         }
         else
@@ -642,12 +648,19 @@ bool RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSec
 #ifdef GEN_EXHANGE_DEBUG
             std::cerr << "Gixs not enabled while request identity signature validation!" << std::endl;
 #endif
-            valid = false;
+            idValidate = false;
         }
-
+    }
+    else
+    {
+    	idValidate = true;
     }
 
-    return valid;
+    if(publishValidate && idValidate)
+    	return VALIDATE_SUCCESS;
+    else
+    	return VALIDATE_FAIL;
+
 }
 
 bool RsGenExchange::checkMsgAuthenFlag(const PrivacyBitPos& pos, const uint8_t& flag) const
@@ -1070,7 +1083,18 @@ void RsGenExchange::notifyNewMessages(std::vector<RsNxsMsg *>& messages)
 
     // store these for tick() to pick them up
     for(; vit != messages.end(); vit++)
-        mReceivedMsgs.push_back(*vit);
+    {
+    	RsNxsMsg* msg = *vit;
+
+    	NxsMsgPendingVect::iterator it =
+    			std::find(mMsgPendingValidate.begin(), mMsgPendingValidate.end(), getMsgIdPair(*msg));
+
+    	// if we have msg already just delete it
+    	if(it == mMsgPendingValidate.end())
+    		mReceivedMsgs.push_back(msg);
+    	else
+    		delete msg;
+    }
 
 }
 
@@ -1265,7 +1289,6 @@ bool RsGenExchange::processGrpMask(const RsGxsGroupId& grpId, ContentValue &grpC
     RsGxsGrpMetaData* grpMeta = NULL;
     bool ok = false;
 
-
     std::map<RsGxsGroupId, RsGxsGrpMetaData* > grpMetaMap;
     std::map<RsGxsGroupId, RsGxsGrpMetaData* >::iterator mit;
     grpMetaMap.insert(std::make_pair(grpId, (RsGxsGrpMetaData*)(NULL)));
@@ -1312,130 +1335,172 @@ bool RsGenExchange::processGrpMask(const RsGxsGroupId& grpId, ContentValue &grpC
 
 void RsGenExchange::publishMsgs()
 {
+
 	RsStackMutex stack(mGenMtx);
+
+	// stick back msgs pending signature
+	typedef std::map<uint32_t, GxsPendingSignItem<RsGxsMsgItem*, uint32_t> > PendSignMap;
+
+	PendSignMap::iterator sign_it = mMsgPendingSign.begin();
+
+	for(; sign_it != mMsgPendingSign.end(); sign_it++)
+	{
+		GxsPendingSignItem<RsGxsMsgItem*, uint32_t>& item = sign_it->second;
+		mMsgsToPublish.insert(std::make_pair(sign_it->first, item.mItem));
+	}
 
 	std::map<uint32_t, RsGxsMsgItem*>::iterator mit = mMsgsToPublish.begin();
 
-        for(; mit != mMsgsToPublish.end(); mit++)
+	for(; mit != mMsgsToPublish.end(); mit++)
 	{
-	    std::cerr << "RsGenExchange::publishMsgs() Publishing a Message";
-	    std::cerr << std::endl;
+		std::cerr << "RsGenExchange::publishMsgs() Publishing a Message";
+		std::cerr << std::endl;
 
-            RsNxsMsg* msg = new RsNxsMsg(mServType);
-            RsGxsMsgItem* msgItem = mit->second;
+		RsNxsMsg* msg = new RsNxsMsg(mServType);
+		RsGxsMsgItem* msgItem = mit->second;
+		const uint32_t& token = mit->first;
 
-            msg->grpId = msgItem->meta.mGroupId;
+		msg->grpId = msgItem->meta.mGroupId;
 
-            uint32_t size = mSerialiser->size(msgItem);
-            char* mData = new char[size];
-            bool serialOk = false;
-            bool createOk = false;
-            serialOk = mSerialiser->serialise(msgItem, mData, &size);
+		uint32_t size = mSerialiser->size(msgItem);
+		char* mData = new char[size];
 
-            if(serialOk)
-            {
-                msg->msg.setBinData(mData, size);
+		bool serialOk = false;
 
-                // now create meta
-                msg->metaData = new RsGxsMsgMetaData();
-                *(msg->metaData) = msgItem->meta;
+		// for fatal sign creation
+		bool createOk = false;
 
-                // assign time stamp
-                msg->metaData->mPublishTs = time(NULL);
+		// if sign requests to try later
+		bool tryLater = false;
 
-                // now intialise msg (sign it)
-                createOk = createMessage(msg);
-                RsGxsMessageId msgId;
-                RsGxsGroupId grpId = msgItem->meta.mGroupId;
+		serialOk = mSerialiser->serialise(msgItem, mData, &size);
 
-                bool msgDoesnExist = false, validSize = false;
+		if(serialOk)
+		{
+			msg->msg.setBinData(mData, size);
 
-                if(createOk)
-                {
+			// now create meta
+			msg->metaData = new RsGxsMsgMetaData();
+			*(msg->metaData) = msgItem->meta;
 
-                    GxsMsgReq req;
-                    std::vector<RsGxsMessageId> msgV;
-                    msgV.push_back(msg->msgId);
-                    GxsMsgMetaResult res;
-                    req.insert(std::make_pair(msg->grpId, msgV));
-                    mDataStore->retrieveGxsMsgMetaData(req, res);
-                    msgDoesnExist = res[grpId].empty();
+			// assign time stamp
+			msg->metaData->mPublishTs = time(NULL);
+
+			// now intialise msg (sign it)
+			uint8_t createReturn = createMessage(msg);
+
+			if(createReturn == CREATE_FAIL)
+			{
+				createOk = false;
+			}
+			else if(createReturn == CREATE_FAIL_TRY_LATER)
+			{
+				PendSignMap::iterator pit = mMsgPendingSign.find(token);
+				tryLater = true;
+
+				// add to queue of messages waiting for a successful
+				// sign attempt
+				if(pit == mMsgPendingSign.end())
+				{
+					GxsPendingSignItem<RsGxsMsgItem*, uint32_t> gsi(msgItem, token);
+					mMsgPendingSign.insert(std::make_pair(token, gsi));
+				}
+				else
+				{
+					// remove from attempts queue if over sign
+					// attempts limit
+					if(pit->second.mAttempts == SIGN_MAX_ATTEMPTS)
+					{
+						mMsgPendingSign.erase(token);
+						tryLater = false;
+					}
+					else
+					{
+						pit->second.mAttempts++;
+					}
+				}
+
+				createOk = false;
+			}
+			else if(createReturn == CREATE_SUCCESS)
+			{
+				createOk = true;
+
+				// erase from queue if it exists
+				mMsgPendingSign.erase(token);
+			}
+			else // unknown return, just fail
+				createOk = false;
+
+
+
+			RsGxsMessageId msgId;
+			RsGxsGroupId grpId = msgItem->meta.mGroupId;
+
+			bool validSize = false;
+
+			// check message not over single msg storage limit
+			if(createOk)
+			{
+				validSize = mDataStore->validSize(msg);
+			}
+
+			if(createOk && validSize)
+			{
+				// empty orig msg id means this is the original
+				// msg
+				if(msg->metaData->mOrigMsgId.empty())
+				{
+					msg->metaData->mOrigMsgId = msg->metaData->mMsgId;
+				}
+
+				// now serialise meta data
+				size = msg->metaData->serial_size();
+
+				char* metaDataBuff = new char[size];
+				bool s = msg->metaData->serialise(metaDataBuff, &size);
+				s &= msg->meta.setBinData(metaDataBuff, size);
+
+				msg->metaData->mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_UNREAD;
+				msgId = msg->msgId;
+				grpId = msg->grpId;
+				mDataAccess->addMsgData(msg);
+
+				delete[] metaDataBuff;
+
+				// add to published to allow acknowledgement
+				mMsgNotify.insert(std::make_pair(mit->first, std::make_pair(grpId, msgId)));
+				mDataAccess->updatePublicRequestStatus(mit->first, RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE);
+			}
+			else
+			{
+				// delete msg if create msg not ok
+				delete msg;
+
+				if(!tryLater)
+					mDataAccess->updatePublicRequestStatus(mit->first,
+							RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
 
 #ifdef GEN_EXCH_DEBUG
-                    if (!msgDoesnExist)
-                    {
-                        std::cerr << "RsGenExchange::publishMsgs() msg exists already :( " << std::endl;
-                    }
+				std::cerr << "RsGenExchange::publishMsgs() failed to publish msg " << std::endl;
 #endif
-                }
-
-                if(createOk && msgDoesnExist)
-                {
-                	validSize = mDataStore->validSize(msg);
-                }
-
-                if(createOk && msgDoesnExist && validSize)
-                {
-                    // empty orig msg id means this is the original
-                    // msg
-                    // TODO: a non empty msgid means one should at least
-                    // have the msg on disk, after which this msg is signed
-                    // based on the security settings
-                    // public grp (sign by grp public pub key, private/id: signed by
-                    // id
-                    if(msg->metaData->mOrigMsgId.empty())
-                    {
-                        msg->metaData->mOrigMsgId = msg->metaData->mMsgId;
-                    }
-
-                    // now serialise meta data
-                    size = msg->metaData->serial_size();
-                    char metaDataBuff[size];
-                    msg->metaData->serialise(metaDataBuff, &size);
-                    msg->meta.setBinData(metaDataBuff, size);
-
-                    msg->metaData->mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_UNREAD;
-                    msgId = msg->msgId;
-                    grpId = msg->grpId;
-                    mDataAccess->addMsgData(msg);
-
-
-                    // add to published to allow acknowledgement
-                    mMsgNotify.insert(std::make_pair(mit->first, std::make_pair(grpId, msgId)));
-                    mDataAccess->updatePublicRequestStatus(mit->first, RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE);
-                }
-                else
-                {
-                    // delete msg if created wasn't ok
-
-			/*******************************************************************************
-			 * NOTE: THIS LOGIC IS WRONG.
-			 * It is possible, that message creation failed because Author Keys
-			 * were not cached...  If this is the case - it should be re-tried
-			 * in a few seconds - when the cache has been loaded.
-			 ******************************************************************************/
-
-                    delete msg;
-                    mDataAccess->updatePublicRequestStatus(mit->first, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
-
+			}
+		}
+		else
+		{
 #ifdef GEN_EXCH_DEBUG
-                    std::cerr << "RsGenExchange::publishMsgs() failed to publish msg " << std::endl;
+			std::cerr << "RsGenExchange::publishMsgs() failed to serialise msg " << std::endl;
 #endif
-                }
-            }
-            else
-            {
-#ifdef GEN_EXCH_DEBUG
-                std::cerr << "RsGenExchange::publishMsgs() failed to serialise msg " << std::endl;
-#endif
-            }
+		}
 
-            delete[] mData;
-            delete msgItem;
+		delete[] mData;
+
+		if(!tryLater)
+			delete msgItem;
 	}
 
-	// clear msg list as we're done publishing them and entries
-	// are invalid
+	// clear msg item map as we're done publishing them and all
+	// entries are invalid
 	mMsgsToPublish.clear();
 }
 
@@ -1699,9 +1764,29 @@ void RsGenExchange::processRecvdData()
 }
 
 
+
 void RsGenExchange::processRecvdMessages()
 {
     RsStackMutex stack(mGenMtx);
+
+
+    NxsMsgPendingVect::iterator pend_it = mMsgPendingValidate.begin();
+
+    for(; pend_it != mMsgPendingValidate.end();)
+    {
+    	GxsPendingSignItem<RsNxsMsg*, RsGxsGrpMsgIdPair>& gpsi = *pend_it;
+
+    	if(gpsi.mAttempts == VALIDATE_MAX_ATTEMPTS)
+    	{
+    		delete gpsi.mItem;
+    		pend_it = mMsgPendingValidate.erase(pend_it);
+    	}
+    	else
+    	{
+    		mReceivedMsgs.push_back(gpsi.mItem);
+    		pend_it++;
+    	}
+    }
 
     std::vector<RsNxsMsg*>::iterator vit = mReceivedMsgs.begin();
     GxsMsgReq msgIds;
@@ -1723,63 +1808,80 @@ void RsGenExchange::processRecvdMessages()
         RsNxsMsg* msg = *vit;
         RsGxsMsgMetaData* meta = new RsGxsMsgMetaData();
         bool ok = meta->deserialise(msg->meta.bin_data, &(msg->meta.bin_len));
+        msg->metaData = meta;
 
+        uint8_t validateReturn = VALIDATE_FAIL;
 
         if(ok)
         {
             std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMetas.find(msg->grpId);
 
             // validate msg
-            if(mit != grpMetas.end()){
+            if(mit != grpMetas.end())
+            {
                 RsGxsGrpMetaData* grpMeta = mit->second;
-                ok = true;
-                 msg->metaData = meta;
-                 ok &= validateMsg(msg, grpMeta->mGroupFlags, grpMeta->keys);
-               msg->metaData = NULL;
+                validateReturn = validateMsg(msg, grpMeta->mGroupFlags, grpMeta->keys);
             }
-            else
-                ok = false;
 
-            if(ok)
+            if(validateReturn == VALIDATE_SUCCESS)
             {
                 meta->mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_UNREAD;
                 msgs.insert(std::make_pair(msg, meta));
                 msgIds[msg->grpId].push_back(msg->msgId);
+
+                NxsMsgPendingVect::iterator validated_entry = std::find(mMsgPendingValidate.begin(), mMsgPendingValidate.end(),
+                		getMsgIdPair(*msg));
+
+                if(validated_entry != mMsgPendingValidate.end()) mMsgPendingValidate.erase(validated_entry);
             }
         }
-
-        if(!ok)
+        else
         {
+        	validateReturn = VALIDATE_FAIL;
+        }
 
-		/*********************************************************************
-		 * ONCE AGAIN - You fail to handle the case where the Key is not in the Cache.
-		 * When this happens -- and it will happen frequently!
-		 * You MUST retry.
-		 *
-		 * Suggested approach:
-		 *     1) Change validateMsg() and createMsgSignatures to return INT instead of BOOL.
-		 *     2) return -1 for fail , 0 for missing keys, 1 for success.  
-                 *     3) if missing keys, put on queue and retry in 1 or 2 seconds.
-		 *
-	  	 ************************************************************************/
-
+        if(validateReturn == VALIDATE_FAIL)
+        {
 
 #ifdef GXS_GENX_DEBUG
             std::cerr << "failed to deserialise incoming meta, grpId: "
                     << msg->grpId << ", msgId: " << msg->msgId << std::endl;
 #endif
+
+            NxsMsgPendingVect::iterator failed_entry = std::find(mMsgPendingValidate.begin(), mMsgPendingValidate.end(),
+            		getMsgIdPair(*msg));
+
+            if(failed_entry != mMsgPendingValidate.end()) mMsgPendingValidate.erase(failed_entry);
             delete msg;
-            delete meta;
+
+
+        }
+        else if(validateReturn == VALIDATE_FAIL_TRY_LATER)
+        {
+
+        	RsGxsGrpMsgIdPair id;
+        	id.first = msg->grpId;
+        	id.second = msg->msgId;
+
+        	// first check you haven't made too many attempts
+
+        	NxsMsgPendingVect::iterator vit = std::find(
+        			mMsgPendingValidate.begin(), mMsgPendingValidate.end(), id);
+
+        	if(vit == mMsgPendingValidate.end())
+        	{
+        		GxsPendingSignItem<RsNxsMsg*, RsGxsGrpMsgIdPair> item(msg, id);
+        		mMsgPendingValidate.push_back(item);
+        	}else
+        	{
+				vit->mAttempts++;
+        	}
         }
     }
 
-    std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMetas.begin();
-
-    // clean up resources
-    for(; mit != grpMetas.end(); mit++)
-    {
-        delete mit->second;
-    }
+    // clean up resources from group meta retrieval
+    freeAndClearContainerResource<std::map<RsGxsGroupId, RsGxsGrpMetaData*>,
+    	RsGxsGrpMetaData*>(grpMetas);
 
     if(!msgIds.empty())
     {

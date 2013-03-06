@@ -5,7 +5,7 @@ TARGET = retroshare
 
 CONFIG += test_voip 
 
-# GXS Stuff.
+ #GXS Stuff.
 # This should be disabled for releases until further notice.
 #CONFIG += gxs debug
 
@@ -22,7 +22,7 @@ profiling {
 #QMAKE_CFLAGS += -Werror
 #QMAKE_CXXFLAGS += -Werror
 
-#CONFIG += debug
+CONFIG += debug
 debug {
 #	DEFINES *= DEBUG
 #	DEFINES *= OPENDHT_DEBUG DHT_DEBUG CONN_DEBUG DEBUG_UDP_SORTER P3DISC_DEBUG DEBUG_UDP_LAYER FT_DEBUG EXTADDRSEARCH_DEBUG
@@ -627,11 +627,12 @@ gxs {
 		gxs/rsgenexchange.h \
 		gxs/rsnxsobserver.h \
 		gxs/rsgxsdata.h \
-		gxs/rstokenservice.h \
+		retroshare/rstokenservice.h \
 		gxs/rsgxsdataaccess.h \
 		retroshare/rsgxsservice.h \
 		serialiser/rsgxsitems.h \
 		util/retrodb.h \
+		gxs/rsgxsutil.h \
 		util/contentvalue.h \
 		gxs/gxssecurity.h \
 		gxs/rsgxsifacehelper.h \

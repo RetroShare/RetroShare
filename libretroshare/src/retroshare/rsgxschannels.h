@@ -30,7 +30,7 @@
 #include <string>
 #include <list>
 
-#include "gxs/rstokenservice.h"
+#include "retroshare/rstokenservice.h"
 #include "retroshare/rsgxsifacehelper.h"
 #include "retroshare/rsgxscommon.h"
 
