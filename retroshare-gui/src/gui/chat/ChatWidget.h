@@ -135,9 +135,13 @@ private:
 	void setColorAndFont();
 	void processSettings(bool load);
 
+	void completeNickname(bool reverse);
+
 	std::string peerId;
 	QString title;
 	QString name;
+	QString completionWord;
+	int completionPosition;
 
 	QColor currentColor;
 	QFont  currentFont;

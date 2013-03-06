@@ -233,23 +233,34 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 			updateStatusTyping();
 
 			QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-			if (keyEvent && (keyEvent->key() == Qt::Key_Enter || keyEvent->key() == Qt::Key_Return)) {
-				// Enter pressed
-				if (Settings->getChatSendMessageWithCtrlReturn()) {
-					if (keyEvent->modifiers() & Qt::ControlModifier) {
-						// send message with Ctrl+Enter
-						sendChat();
+			if (keyEvent) {
+				if (isChatLobby) {
+					if (keyEvent->key() == Qt::Key_Tab) {
+						completeNickname((bool)(keyEvent->modifiers() & Qt::ShiftModifier));
 						return true; // eat event
 					}
-				} else {
-					if (keyEvent->modifiers() & Qt::ControlModifier) {
-						// insert return
-						ui->chatTextEdit->textCursor().insertText("\n");
-					} else {
-						// send message with Enter
-						sendChat();
+					else {
+						completionWord.clear();
 					}
-					return true; // eat event
+				}
+				if (keyEvent->key() == Qt::Key_Enter || keyEvent->key() == Qt::Key_Return) {
+					// Enter pressed
+					if (Settings->getChatSendMessageWithCtrlReturn()) {
+						if (keyEvent->modifiers() & Qt::ControlModifier) {
+							// send message with Ctrl+Enter
+							sendChat();
+							return true; // eat event
+						}
+					} else {
+						if (keyEvent->modifiers() & Qt::ControlModifier) {
+							// insert return
+							ui->chatTextEdit->textCursor().insertText("\n");
+						} else {
+							// send message with Enter
+							sendChat();
+						}
+						return true; // eat event
+					}
 				}
 			}
 		}
@@ -264,6 +275,124 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 	}
 	// pass the event on to the parent class
 	return QWidget::eventFilter(obj, event);
+}
+
+/**
+ * @brief Utility function for completeNickname.
+ */
+static bool caseInsensitiveCompare(QString a, QString b)
+{
+	return a.toLower() < b.toLower();
+}
+
+/**
+ * @brief Completes nickname based on previous characters.
+ * @param reverse true to list nicknames in reverse alphabetical order.
+ */
+void ChatWidget::completeNickname(bool reverse)
+{
+	// Find lobby we belong to
+	const ChatLobbyInfo *lobby = NULL;
+	std::list<ChatLobbyInfo> lobbies;
+	rsMsgs->getChatLobbyList(lobbies);
+
+	std::list<ChatLobbyInfo>::const_iterator lobbyIt;
+	for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt) {
+		std::string vpid;
+		if (rsMsgs->getVirtualPeerId(lobbyIt->lobby_id, vpid)) {
+			if (vpid == peerId) {
+				lobby = &*lobbyIt;
+				break;
+			}
+		}
+	}
+
+	if (!lobby)
+		return;
+
+	QTextCursor cursor = ui->chatTextEdit->textCursor();
+
+	// Do nothing if there is a selection
+	if (cursor.anchor() != cursor.position())
+		return;
+
+	// We want to complete the word typed by the user. This is easy.
+	// But also, if there are two participants whose name start with the word
+	// the user typed, the first press on <tab> should show the first
+	// participant’s name, and the second press on <tab> should show the
+	// second participant’s name.
+
+	cursor.beginEditBlock();
+	if (!completionWord.isEmpty()) {
+		cursor.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor, cursor.position() - completionPosition);
+	}
+	else {
+		cursor.movePosition(QTextCursor::PreviousWord, QTextCursor::KeepAnchor);
+		completionPosition = cursor.position();
+	}
+	if (cursor.selectedText() == ": ") {
+		cursor.movePosition(QTextCursor::PreviousWord, QTextCursor::KeepAnchor);
+	}
+	bool firstWord = (cursor.position() == 0);
+	QString word = cursor.selectedText();
+	if (word.endsWith(": ")) {
+		word.chop(2);
+	}
+
+	if (word.length() > 0) {
+		// Sort participants list
+		std::list<QString> participants;
+		for (	std::map<std::string,time_t>::const_iterator it = lobby->nick_names.begin();
+				it != lobby->nick_names.end();
+				it++) {
+			participants.push_front(QString::fromUtf8(it->first.c_str()));
+		}
+		participants.sort(caseInsensitiveCompare);
+
+		// Search for a participant nickname that starts with the previous word
+		std::list<QString>::const_iterator it, start, end;
+		int delta;
+		bool skippedParticipant = false;
+		if (reverse) {
+			// Note: at the moment reverse completion doesn’t work because
+			// shift-tab selects the previous widget
+			start = participants.end();
+			--start;
+			end = participants.begin();
+			--end;
+			delta = -1;
+		}
+		else {
+			start = participants.begin();
+			end = participants.end();
+			delta = 1;
+		}
+		do {
+			for (it = start; it != end; (delta == 1) ? ++it : --it) {
+				QString participant = *it;
+				if (participant.startsWith(word, Qt::CaseInsensitive)) {
+					if (!completionWord.isEmpty() && !skippedParticipant) {
+						// This participant nicknaem was completed with <tab>;
+						// skip it and find the next one that starts with
+						// completionWord
+						word = completionWord;
+						skippedParticipant = true;
+						continue;
+					}
+					skippedParticipant = false;
+					cursor.insertText(participant);
+					if (firstWord) {
+						cursor.insertText(QString(": "));
+					}
+					break;
+				}
+			}
+		} while (skippedParticipant);
+		if (completionWord.isEmpty()) {
+			completionWord = word;
+		}
+	}
+	cursor.endEditBlock();
 }
 
 void ChatWidget::addToolsAction(QAction *action)
