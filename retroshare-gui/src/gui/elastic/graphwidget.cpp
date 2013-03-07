@@ -219,7 +219,7 @@ void GraphWidget::itemMoved()
 #ifdef DEBUG_ELASTIC
 		 std::cout << "starting timer" << std::endl;
 #endif
-        timerId = startTimer(1000 / 25);
+        timerId = startTimer(1000 / 25);	// hit timer 25 times per second.
 	 }
 }
 
@@ -307,36 +307,44 @@ void GraphWidget::timerEvent(QTimerEvent *event)
 	 static const int S = 256 ;
 	 static double *forceMap = new double[2*S*S] ;
 
-	 memset(forceMap,0,2*S*S*sizeof(double)) ;
+	 // Update force map only once every 8 hits.
+	 //
+	 static uint32_t hit = 0 ;
+
 	 QRectF R(scene()->sceneRect()) ;
 
-    foreach (Node *node, _nodes)
+	 if( (hit++ & 7) == 0)
 	 {
-		 QPointF pos = node->mapToScene(QPointF(0,0)) ;
+		 memset(forceMap,0,2*S*S*sizeof(double)) ;
 
-		 float x = S*(pos.x()-R.left())/R.width() ;
-		 float y = S*(pos.y()- R.top())/R.height() ;
-
-		 int i=(int)floor(x) ;
-		 int j=(int)floor(y) ;
-		 float di = x-i ;
-		 float dj = y-j ;
-
-		 if( i>=0 && i<S-1 && j>=0 && j<S-1)
+		 foreach (Node *node, _nodes)
 		 {
-			 forceMap[2*(i  +S*(j  ))] += (1-di)*(1-dj) ;
-			 forceMap[2*(i+1+S*(j  ))] +=    di *(1-dj) ;
-			 forceMap[2*(i  +S*(j+1))] += (1-di)*dj ;
-			 forceMap[2*(i+1+S*(j+1))] +=    di *dj ;
+			 QPointF pos = node->mapToScene(QPointF(0,0)) ;
+
+			 float x = S*(pos.x()-R.left())/R.width() ;
+			 float y = S*(pos.y()- R.top())/R.height() ;
+
+			 int i=(int)floor(x) ;
+			 int j=(int)floor(y) ;
+			 float di = x-i ;
+			 float dj = y-j ;
+
+			 if( i>=0 && i<S-1 && j>=0 && j<S-1)
+			 {
+				 forceMap[2*(i  +S*(j  ))] += (1-di)*(1-dj) ;
+				 forceMap[2*(i+1+S*(j  ))] +=    di *(1-dj) ;
+				 forceMap[2*(i  +S*(j+1))] += (1-di)*dj ;
+				 forceMap[2*(i+1+S*(j+1))] +=    di *dj ;
+			 }
 		 }
+
+		 // compute convolution with 1/omega kernel.
+		 convolveWithGaussian(forceMap,S,20) ;
 	 }
 
-	 // compute convolution with 1/omega kernel.
-	 convolveWithGaussian(forceMap,S,20) ;
-	 
 	 static float speedf=1.0f;
 
-    foreach (Node *node, _nodes)
+	 foreach (Node *node, _nodes)
 	 {
 		 QPointF pos = node->mapToScene(QPointF(0,0)) ;
 		 float x = S*(pos.x()-R.left())/R.width() ;
