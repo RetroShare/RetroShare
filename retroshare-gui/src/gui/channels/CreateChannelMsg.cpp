@@ -120,12 +120,14 @@ void CreateChannelMsg::pasteLink()
 
 	if(!not_have.empty())
 	{
-		QString msg = tr("Channel security policy prevents you from posting files that you don't have. If you have these files, you need to share them before, or attach them explicitly:")+"<br><br>" ;
+		QString msg = tr("You are about to add files you're not actually sharing. Do you still want this to happen?")+"<br><br>" ;
 
 		for(QList<RetroShareLink>::const_iterator it(not_have.begin());it!=not_have.end();++it)
 			msg += (*it).toString() + "<br>" ;
 
-		QMessageBox::warning(NULL,tr("You can only post files that you do have"),msg) ;
+		if(QMessageBox::YesToAll == QMessageBox::question(NULL,tr("About to post un-owned files to a channel."),msg,QMessageBox::YesToAll | QMessageBox::No))
+			for(QList<RetroShareLink>::const_iterator it(not_have.begin());it!=not_have.end();++it)
+				addAttachment((*it).hash().toStdString(), (*it).name().toUtf8().constData(), (*it).size(), false, "") ;
 	}
 }
 
