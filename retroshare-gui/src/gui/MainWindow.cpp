@@ -253,7 +253,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 //                       createPageAction(QIcon(IMAGE_SEARCH), tr("Search"), grp));
 
     ui->stackPages->add(transfersDialog = new TransfersDialog(ui->stackPages),
-                      action = createPageAction(QIcon(IMAGE_TRANSFERS), tr("Transfers"), grp));
+                      action = createPageAction(QIcon(IMAGE_TRANSFERS), tr("File sharing"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(transfersDialog, action));
 
     ui->stackPages->add(chatLobbyDialog = new ChatLobbyWidget(ui->stackPages),
