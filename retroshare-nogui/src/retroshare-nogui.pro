@@ -289,7 +289,7 @@ protorpc {
 		QMAKE_CFLAGS += -pthread
 		QMAKE_CXXFLAGS += -pthread
 	}
-	LIBS += -lprotobuf
+	LIBS += -lprotobuf -lpthread
 	
 	win32 {
 		PROTOPATH = ../../../protobuf-2.4.1
