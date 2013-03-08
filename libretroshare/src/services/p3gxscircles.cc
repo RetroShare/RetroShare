@@ -355,7 +355,7 @@ bool 	p3GxsCircles::createGroup(uint32_t& token, RsGxsCircleGroup &group)
 	return true;
 }
 
-void p3GxsCircles::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& /*keySet*/)
+RsGenExchange::ServiceCreate_Return p3GxsCircles::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& /*keySet*/)
 {
 #ifdef DEBUG_CIRCLES
 	std::cerr << "p3GxsCircles::service_CreateGroup()";
@@ -367,7 +367,7 @@ void p3GxsCircles::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySe
 	{
 		std::cerr << "p3GxsCircles::service_CreateGroup() ERROR invalid cast";
 		std::cerr << std::endl;
-		return;
+		return SERVICE_CREATE_FAIL;
 	}
 
 	// Now copy the GroupId into the mCircleId, and set the mode.
@@ -384,6 +384,8 @@ void p3GxsCircles::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySe
 		RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
 		mCircleIdList.push_back(grpItem->meta.mGroupId);
 	}
+
+	return SERVICE_CREATE_SUCCESS;
 }
 
 

@@ -73,6 +73,11 @@ uint32_t p3GxsForums::forumsAuthenPolicy()
 	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::RESTRICTED_GRP_BITS);
 	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PUBLIC_GRP_BITS);
 	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PRIVATE_GRP_BITS);
+
+	flag = GXS_SERV::GRP_OPTION_AUTHEN_AUTHOR_SIGN;
+
+	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::GRP_OPTION_BITS);
+
 	return policy;
 }
 

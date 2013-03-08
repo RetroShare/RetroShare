@@ -1229,7 +1229,7 @@ static void calcPGPHash(const RsGxsId &id, const PGPFingerprintType &pgp, GxsIdP
 
 
 // Must Use meta.
-void p3IdService::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet)
+RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet)
 {
 #ifdef DEBUG_IDS
 	std::cerr << "p3IdService::service_CreateGroup()";
@@ -1241,7 +1241,7 @@ void p3IdService::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet
 	{
 		std::cerr << "p3IdService::service_CreateGroup() ERROR invalid cast";
 		std::cerr << std::endl;
-		return;
+		return SERVICE_CREATE_FAIL;
 	}
 
 	/********************* TEMP HACK UNTIL GXS FILLS IN GROUP_ID *****************/	
@@ -1262,7 +1262,7 @@ void p3IdService::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet
 	{
 		std::cerr << "p3IdService::service_CreateGroup() ERROR no admin key";
 		std::cerr << std::endl;
-		return;
+		return SERVICE_CREATE_FAIL;
 	}
 	
 		
@@ -1297,8 +1297,6 @@ void p3IdService::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet
 		std::cerr << std::endl;
 	}
 		
-
-
 #ifdef DEBUG_IDS
 	std::cerr << "p3IdService::service_CreateGroup() for : " << item->group.mMeta.mGroupId;
 	std::cerr << std::endl;
@@ -1326,7 +1324,7 @@ void p3IdService::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet
 		{
 			std::cerr << "p3IdService::service_CreateGroup() ERROR Own Finger is stuck";
 			std::cerr << std::endl;
-			return; // abandon attempt!
+			return SERVICE_CREATE_FAIL; // abandon attempt!
 		}
 
 		calcPGPHash(item->group.mMeta.mGroupId, ownFinger, hash);
@@ -1376,6 +1374,7 @@ void p3IdService::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet
 	// Reload in a little bit.
 	// HACK to get it to work.
 	RsTickEvent::schedule_in(GXSID_EVENT_CACHEOWNIDS, OWNID_RELOAD_DELAY);
+	return SERVICE_CREATE_SUCCESS;
 }
 
 

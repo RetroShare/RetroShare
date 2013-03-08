@@ -94,7 +94,7 @@ class RsGenExchange : public RsNxsObserver, public RsThread, public RsGxsIface
 public:
 
 	/// used by class derived for RsGenExchange to indicate if service create passed or not
-	enum { SERVICE_CREATE_SUCCESS, SERVICE_CREATE_FAIL, SERVICE_FAIL_TRY_LATER } ServiceCreate_Returns;
+	enum ServiceCreate_Return { SERVICE_CREATE_SUCCESS, SERVICE_CREATE_FAIL, SERVICE_FAIL_TRY_LATER } ;
 
     /*!
      * Constructs a RsGenExchange object, the owner ship of gds, ns, and serviceserialiser passes \n
@@ -441,6 +441,7 @@ protected:
      * This represents the group before its signature is calculated
      * Reimplement this function if you need to access keys to further extend
      * security of your group items using keyset properties
+     * Derived service should return one of three ServiceCreate_Return enum values below
      * @warning do not modify keySet!
      * @param grp The group which is stored by GXS prior
      *            service can make specific modifications need
@@ -448,8 +449,9 @@ protected:
      * @param keySet this is the key set used to define the group
      *               contains private and public admin and publish keys
      *               (use key flags to distinguish)
+     * @return SERVICE_CREATE_SUCCESS, SERVICE_CREATE_FAIL, SERVICE_FAIL_TRY_LATER
      */
-    virtual void service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet);
+    virtual ServiceCreate_Return service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet);
 
 public:
 
@@ -550,8 +552,10 @@ private:
      * by assigning it a groupId and signature via SHA1 and EVP_sign respectively \n
      * Meta is serialised and stored in group at this point also
      * @param grp Nxs group to create
+     * @return CREATE_SUCCESS for success, CREATE_FAIL for fail,
+     * 		   CREATE_FAIL_TRY_LATER for Id sign key not avail (but requested)
      */
-    bool createGroup(RsNxsGrp* grp, RsTlvSecurityKeySet& privateKeySet, RsTlvSecurityKeySet& publicKeySet);
+    uint8_t createGroup(RsNxsGrp* grp, RsTlvSecurityKeySet& privateKeySet, RsTlvSecurityKeySet& publicKeySet);
 
     /*!
      * This completes the creation of an instance on RsNxsMsg
@@ -561,7 +565,7 @@ private:
      * @param msg the Nxs message to create
      * CREATE_FAIL, CREATE_SUCCESS, CREATE_ID_SIGN_NOT_AVAIL
      * @return CREATE_SUCCESS for success, CREATE_FAIL for fail,
-     * 		   CREATE_ID_SIGN_NOT_AVAIL for Id sign key not avail (but requested)
+     * 		   CREATE_FAIL_TRY_LATER for Id sign key not avail (but requested)
      */
     int createMessage(RsNxsMsg* msg);
 
@@ -571,10 +575,21 @@ private:
      * @param msgData message data to be signed
      * @param grpMeta the meta data for group the message belongs to
      * @return SIGN_SUCCESS for success, SIGN_FAIL for fail,
-     * 		   ID_NOT_AVAIL for Id sign key not avail (but requested), try later
+     * 		   SIGN_FAIL_TRY_LATER for Id sign key not avail (but requested), try later
      */
     int createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinaryData& msgData,
                              const RsGxsMsgMetaData& msgMeta, RsGxsGrpMetaData& grpMeta);
+
+    /*!
+     * convenience function to create sign for groups
+     * @param signSet signatures are stored here
+     * @param grpData group data to be signed
+     * @param grpMeta the meta data for group to be signed
+     * @return SIGN_SUCCESS for success, SIGN_FAIL for fail,
+     * 		   SIGN_FAIL_TRY_LATER for Id sign key not avail (but requested), try later
+     */
+    int createGroupSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinaryData& grpData,
+    							RsGxsGrpMetaData& grpMeta);
 
     /*!
      * check meta change is legal
@@ -606,7 +621,7 @@ private:
      * @param flag the flag to and(&) against
      * @param the result of the (bit-block & flag)
      */
-    bool checkMsgAuthenFlag(const PrivacyBitPos& pos, const uint8_t& flag) const;
+    bool checkAuthenFlag(const PrivacyBitPos& pos, const uint8_t& flag) const;
 
     void  groupShareKeys(std::list<std::string> peers);
 
@@ -617,6 +632,8 @@ private:
     RsGeneralDataService* mDataStore;
     RsNetworkExchangeService *mNetService;
     RsSerialType *mSerialiser;
+    /// service type
+    uint16_t mServType;
     RsGixs* mGixs;
 
     std::vector<RsNxsMsg*> mReceivedMsgs;
@@ -634,8 +651,7 @@ private:
 
     std::vector<RsGxsNotify*> mNotifications;
 
-    /// service type
-    uint16_t mServType;
+
 
     /// authentication policy
     uint32_t mAuthenPolicy;
@@ -646,8 +662,12 @@ private:
     std::vector<GxsPendingSignItem<RsNxsMsg*, RsGxsGrpMsgIdPair> > mMsgPendingValidate;
     typedef std::vector<GxsPendingSignItem<RsNxsMsg*, RsGxsGrpMsgIdPair> > NxsMsgPendingVect;
 
-    std::map<RsGxsGroupId, GxsPendingSignItem<RsGxsGrpItem*> >
-    	mGrpPendingSign, mGrpPendingValidation;
+
+    std::vector<GxsPendingSignItem<RsGxsGrpItem*, RsGxsGroupId> >
+    	 mGrpPendingValidation;
+
+    std::vector<GxsPendingSignItem<RsGxsGrpItem*, uint32_t> > mGrpPendingSign;
+    typedef std::vector<GxsPendingSignItem<RsGxsGrpItem*, uint32_t> > NxsGrpSignPendVect;
 
 private:
 

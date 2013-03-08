@@ -182,7 +182,7 @@ class p3GxsCircles: public RsGxsCircleExchange, public RsGxsCircles,
 	virtual void notifyChanges(std::vector<RsGxsNotify*>& changes);
 
 	/** Overloaded to add PgpIdHash to Group Definition **/
-	virtual void service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet);
+	virtual ServiceCreate_Return service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet);
 
 	// Overloaded from GxsTokenQueue for Request callbacks.
 	virtual void handleResponse(uint32_t token, uint32_t req_type);

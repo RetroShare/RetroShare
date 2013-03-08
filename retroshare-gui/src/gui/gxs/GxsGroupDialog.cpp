@@ -350,6 +350,7 @@ void GxsGroupDialog::createGroup()
 	meta.mSignFlags = getGroupSignFlags();
 
 	setCircleParameters(meta);
+    ui.idChooser->getChosenId(meta.mAuthorId);
 
 	if (service_CreateGroup(token, meta))
 	{
@@ -357,6 +358,7 @@ void GxsGroupDialog::createGroup()
 		if(mTokenQueue != NULL)
 			mTokenQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_ACK, GXSGROUP_NEWGROUPID);
 	}
+
 	close();
 }
 	

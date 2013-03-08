@@ -226,7 +226,7 @@ void RsGenExchange::generateGroupKeys(RsTlvSecurityKeySet& privatekeySet,
     }
 }
 
-bool RsGenExchange::createGroup(RsNxsGrp *grp, RsTlvSecurityKeySet& privateKeySet, RsTlvSecurityKeySet& publicKeySet)
+uint8_t RsGenExchange::createGroup(RsNxsGrp *grp, RsTlvSecurityKeySet& privateKeySet, RsTlvSecurityKeySet& publicKeySet)
 {
     std::cerr << "RsGenExchange::createGroup()";
     std::cerr << std::endl;
@@ -281,6 +281,11 @@ bool RsGenExchange::createGroup(RsNxsGrp *grp, RsTlvSecurityKeySet& privateKeySe
     // add admin sign to grpMeta
     meta->signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_ADMIN] = adminSign;
 
+    RsTlvBinaryData grpData(mServType);
+	grpData.setBinData(allGrpData, allGrpDataLen);
+
+    uint8_t ret = createGroupSignatures(meta->signSet, grpData, *(grp->metaData));
+
     // set meta to be transported as meta without private
     // key components
     grp->meta.setBinData(metaData, metaDataLen);
@@ -296,11 +301,95 @@ bool RsGenExchange::createGroup(RsNxsGrp *grp, RsTlvSecurityKeySet& privateKeySe
 
     if (!ok)
     {
-	std::cerr << "RsGenExchange::createGroup() ERROR !okay (getSignature error)";
-	std::cerr << std::endl;
+		std::cerr << "RsGenExchange::createGroup() ERROR !okay (getSignature error)";
+		std::cerr << std::endl;
+		return CREATE_FAIL;
     }
 
-    return ok;
+    if(ret == SIGN_FAIL)
+    {
+    	return CREATE_FAIL;
+    }else if(ret == SIGN_FAIL_TRY_LATER)
+    {
+    	return CREATE_FAIL_TRY_LATER;
+    }else if(ret == SIGN_SUCCESS)
+    {
+    	return CREATE_SUCCESS;
+    }else{
+    	return CREATE_FAIL;
+    }
+
+
+}
+
+int RsGenExchange::createGroupSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinaryData& grpData,
+    							RsGxsGrpMetaData& grpMeta)
+{
+	bool needIdentitySign = false;
+    int id_ret;
+
+    uint8_t author_flag = GXS_SERV::GRP_OPTION_AUTHEN_AUTHOR_SIGN;
+
+    PrivacyBitPos pos = GRP_OPTION_BITS;
+
+    // Check required permissions, and allow them to sign it - if they want too - as well!
+    if (checkAuthenFlag(pos, author_flag))
+    {
+        needIdentitySign = true;
+        std::cerr << "Needs Identity sign! (Service Flags)";
+        std::cerr << std::endl;
+    }
+
+    if (needIdentitySign)
+    {
+        if(mGixs)
+        {
+            bool haveKey = mGixs->havePrivateKey(grpMeta.mAuthorId);
+
+            if(haveKey)
+            {
+                RsTlvSecurityKey authorKey;
+                mGixs->getPrivateKey(grpMeta.mAuthorId, authorKey);
+                RsTlvKeySignature sign;
+
+                if(GxsSecurity::getSignature((char*)grpData.bin_data, grpData.bin_len,
+                                                &authorKey, sign))
+                {
+                	id_ret = SIGN_SUCCESS;
+                }
+                else
+                {
+                	id_ret = SIGN_FAIL;
+                }
+
+                signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_IDENTITY] = sign;
+            }
+            else
+            {
+            	mGixs->requestPrivateKey(grpMeta.mAuthorId);
+
+                std::cerr << "RsGenExchange::createGroupSignatures(): ";
+                std::cerr << " ERROR AUTHOR KEY: " <<  grpMeta.mAuthorId
+                		  << " is not Cached / available for Message Signing\n";
+                std::cerr << "RsGenExchange::createGroupSignatures():  Requestiong AUTHOR KEY";
+                std::cerr << std::endl;
+
+                id_ret = SIGN_FAIL_TRY_LATER;
+            }
+        }
+        else
+        {
+            std::cerr << "RsGenExchange::createGroupSignatures()";
+            std::cerr << "Gixs not enabled while request identity signature validation!" << std::endl;
+            id_ret = SIGN_FAIL;
+        }
+    }
+    else
+    {
+    	id_ret = SIGN_SUCCESS;
+    }
+
+	return id_ret;
 }
 
 int RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinaryData& msgData,
@@ -344,7 +433,7 @@ int RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinar
     
     needIdentitySign = false;
     needPublishSign = false;
-    if (checkMsgAuthenFlag(pos, publish_flag))
+    if (checkAuthenFlag(pos, publish_flag))
     {
         needPublishSign = true;
         std::cerr << "Needs Publish sign! (Service Flags)";
@@ -352,7 +441,7 @@ int RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinar
     }
 
     // Check required permissions, and allow them to sign it - if they want too - as well!
-    if (checkMsgAuthenFlag(pos, author_flag))
+    if (checkAuthenFlag(pos, author_flag))
     {
         needIdentitySign = true;
         std::cerr << "Needs Identity sign! (Service Flags)";
@@ -564,11 +653,11 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSecu
         pos = PRIVATE_GRP_BITS;
     }
     
-    if (checkMsgAuthenFlag(pos, publish_flag))
+    if (checkAuthenFlag(pos, publish_flag))
         needPublishSign = true;
 
     // Check required permissions, if they have signed it anyway - we need to validate it.
-    if ((checkMsgAuthenFlag(pos, author_flag)) || (!msg->metaData->mAuthorId.empty()))
+    if ((checkAuthenFlag(pos, author_flag)) || (!msg->metaData->mAuthorId.empty()))
         needIdentitySign = true;
 
 
@@ -663,7 +752,7 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSecu
 
 }
 
-bool RsGenExchange::checkMsgAuthenFlag(const PrivacyBitPos& pos, const uint8_t& flag) const
+bool RsGenExchange::checkAuthenFlag(const PrivacyBitPos& pos, const uint8_t& flag) const
 {
     std::cerr << "RsGenExchange::checkMsgAuthenFlag(pos: " << pos << " flag: ";
     std::cerr << (int) flag << " mAuthenPolicy: " << mAuthenPolicy << ")";
@@ -1504,23 +1593,39 @@ void RsGenExchange::publishMsgs()
 	mMsgsToPublish.clear();
 }
 
-void RsGenExchange::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet)
+RsGenExchange::ServiceCreate_Return RsGenExchange::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet)
 {
 #ifdef GEN_EXCH_DEBUG
 	std::cerr << "RsGenExchange::service_CreateGroup(): Does nothing"
 			  << std::endl;
 #endif
-	return;
+	return SERVICE_CREATE_SUCCESS;
 }
 
 
-#define GEN_EXCH_GRP_CHUNK 3
+#define GEN_EXCH_GRP_CHUNK 30
 
 void RsGenExchange::publishGrps()
 {
-
     RsStackMutex stack(mGenMtx);
 
+    NxsGrpSignPendVect::iterator pend_it = mGrpPendingSign.begin();
+
+    for(; pend_it != mGrpPendingSign.end();)
+    {
+    	GxsPendingSignItem<RsGxsGrpItem*, uint32_t>& gpsi = *pend_it;
+
+    	if(gpsi.mAttempts == SIGN_MAX_ATTEMPTS)
+    	{
+    		pend_it = mGrpPendingSign.erase(pend_it);
+    	}
+    	else
+    	{
+    		gpsi.mAttempts++;
+    		mGrpsToPublish.insert(std::make_pair(gpsi.mId, gpsi.mItem));
+    		pend_it++;
+    	}
+    }
     std::map<uint32_t, RsGxsGrpItem*>::iterator mit = mGrpsToPublish.begin();
     std::vector<uint32_t> toRemove;
     int i = 0;
@@ -1529,7 +1634,8 @@ void RsGenExchange::publishGrps()
 
         if(i > GEN_EXCH_GRP_CHUNK-1) break;
 
-        toRemove.push_back(mit->first);
+        uint32_t token = mit->first;
+        toRemove.push_back(token);
         i++;
 
         RsNxsGrp* grp = new RsNxsGrp(mServType);
@@ -1555,92 +1661,116 @@ void RsGenExchange::publishGrps()
             }
         }
 
-        bool ok = true;
+        uint8_t create = CREATE_FAIL;
 
         if(privKeyFound)
         {
-            // get group id from private admin key id
-            grpItem->meta.mGroupId = grp->grpId = privAdminKey.keyId;
+		    // get group id from private admin key id
+			grpItem->meta.mGroupId = grp->grpId = privAdminKey.keyId;
+
+			privatekeySet.keys.insert(publicKeySet.keys.begin(),
+					publicKeySet.keys.end());
+
+			ServiceCreate_Return ret = service_CreateGroup(grpItem, privatekeySet);
+
+			uint32_t size = mSerialiser->size(grpItem);
+			char gData[size];
+			bool serialOk = mSerialiser->serialise(grpItem, gData, &size);
+
+			grp->grp.setBinData(gData, size);
+
+			if(serialOk)
+			{
+				grp->metaData = new RsGxsGrpMetaData();
+				grpItem->meta.mPublishTs = time(NULL);
+				*(grp->metaData) = grpItem->meta;
+				grp->metaData->mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_ADMIN;
+
+				create = createGroup(grp, privatekeySet, publicKeySet);
+
+				if(create == CREATE_SUCCESS)
+				{
+					if(mDataStore->validSize(grp))
+					{
+						RsGxsGroupId grpId = grp->grpId;
+						mDataAccess->addGroupData(grp);
+
+						std::cerr << "RsGenExchange::publishGrps() ok -> pushing to notifies" << std::endl;
+
+						// add to published to allow acknowledgement
+						mGrpNotify.insert(std::make_pair(mit->first, grpId));
+						mDataAccess->updatePublicRequestStatus(mit->first, RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE);
+
+					}
+					else
+					{
+						create = CREATE_FAIL;
+					}
+				}
+			}
         }
         else
         {
-            ok = false;
-        }
-
-        //tempKeySet = privatekeySet;
-        privatekeySet.keys.insert(publicKeySet.keys.begin(),
-        		publicKeySet.keys.end());
-
-        service_CreateGroup(grpItem, privatekeySet);
-        //privatekeySet = tempKeySet;
-
-
-
-        uint32_t size = mSerialiser->size(grpItem);
-        char gData[size];
-        ok = mSerialiser->serialise(grpItem, gData, &size);
-
-        if (!ok)
-        {
-            std::cerr << "RsGenExchange::publishGrps() !ok ERROR After First Serialise" << std::endl;
-        }
-
-        grp->grp.setBinData(gData, size);
-
-        if(ok)
-        {
-            grp->metaData = new RsGxsGrpMetaData();
-            grpItem->meta.mPublishTs = time(NULL);
-            *(grp->metaData) = grpItem->meta;
-            grp->metaData->mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_ADMIN;
-
-            if (!createGroup(grp, privatekeySet, publicKeySet))
-            {
-                    std::cerr << "RsGenExchange::publishGrps() !ok ERROR After createGroup" << std::endl;
-            }
-            else
-            {
-
-            	// ensure group size is not too large
-            	ok &= mDataStore->validSize(grp);
-
-            	if(ok)
-            	{
-					RsGxsGroupId grpId = grp->grpId;
-					mDataAccess->addGroupData(grp);
-
-					std::cerr << "RsGenExchange::publishGrps() ok -> pushing to notifies" << std::endl;
-
-					// add to published to allow acknowledgement
-					mGrpNotify.insert(std::make_pair(mit->first, grpId));
-					mDataAccess->updatePublicRequestStatus(mit->first, RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE);
-            	}
-            }
-        }
-
-        if(!ok)
-        {
-
 #ifdef GEN_EXCH_DEBUG
+        	std::cerr << "RsGenExchange::publishGrps() Could not find private publish keys " << std::endl;
 #endif
-            std::cerr << "RsGenExchange::publishGrps() failed to publish grp " << std::endl;
+        	create = CREATE_FAIL;
+        }
+
+        if(create == CREATE_FAIL)
+        {
+#ifdef GEN_EXCH_DEBUG
+        	std::cerr << "RsGenExchange::publishGrps() failed to publish grp " << std::endl;
+#endif
+
             delete grp;
+            delete grpItem;
 
             // add to published to allow acknowledgement, grpid is empty as grp creation failed
-            mGrpNotify.insert(std::make_pair(mit->first, RsGxsGroupId("")));
-            mDataAccess->updatePublicRequestStatus(mit->first, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
-            continue;
+            mGrpNotify.insert(std::make_pair(token, RsGxsGroupId("")));
+            mDataAccess->updatePublicRequestStatus(token, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
+
+        }
+        else if(create == CREATE_FAIL_TRY_LATER)
+        {
+        	delete grp;
+
+        	NxsGrpSignPendVect::iterator vit = std::find(mGrpPendingSign.begin(),
+        			mGrpPendingSign.end(), token);
+
+        	if(vit == mGrpPendingSign.end())
+        	{
+        		GxsPendingSignItem<RsGxsGrpItem*, uint32_t> gpsi(grpItem, token);
+				mGrpPendingSign.push_back(gpsi);
+        	}else
+        	{
+        		if(vit->mAttempts == SIGN_MAX_ATTEMPTS)
+        		{
+        			delete vit->mItem;
+        		}
+        	}
+        }
+        else if(create == CREATE_SUCCESS)
+        {
+        	delete grpItem;
         }
 
-        delete grpItem;
+        if((create == CREATE_SUCCESS) || (create == CREATE_FAIL))
+        {
+        	NxsGrpSignPendVect::iterator vit = std::find(mGrpPendingSign.begin(),
+        			mGrpPendingSign.end(), token);
 
+        	// set to max attempts so entry removed in next publish pass
+        	if(vit != mGrpPendingSign.end())
+        	{
+        		vit->mAttempts = SIGN_MAX_ATTEMPTS;
+        	}
+        }
     }
 
     // clear grp list as we're done publishing them and entries
     // are invalid
-
-
-    for(int i = 0; i < toRemove.size(); i++)
+    for(std::vector<uint32_t>::size_type i = 0; i < toRemove.size(); i++)
        mGrpsToPublish.erase(toRemove[i]);
 }
 
