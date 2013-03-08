@@ -1,23 +1,22 @@
 To compile:
 
-	- get source code for libssh-0.5.2, unzip it, and create build directory (if needed) 
+	- install the package dependencies. On ubuntu:
+		# sudo apt-get install libglib2.0-dev libupnp-dev qt4-dev-tools libqt4-dev libssl-dev libxss-dev \
+		       libgnome-keyring-dev libbz2-dev libqt4-opengl-dev libqtmultimediakit1 qtmobility-dev      \
+			   libspeex-dev libspeexdsp-dev libxslt1-dev libprotobuf-dev protobuf-compiler cmake         \
+			   libcurl4-openssl-dev
 
-		# wget http://www.libssh.org/files/0.5/libssh-0.5.2.tar.gz
-		# tar zxvf libssh-0.5.2.tar.gz
-		# cd libssh-0.5.2
+	- get source code for libssh-0.5.4, unzip it, and create build directory (if needed) 
+
+		# wget https://red.libssh.org/attachments/download/41/libssh-0.5.4.tar.gz
+		# tar zxvf libssh-0.5.4.tar.gz
+		# cd libssh-0.5.4
 		# mkdir build
 		# cd build
 		# cmake -DWITH_STATIC_LIB=ON ..
 		# make
 		# cd ../..
 	
-	- build the google proto files
-
-		# cd rsctrl/src
-		# make
-
-		Don't bother about python related errors.
-
 	- go to retroshare-nogui, and compile it
 
 		# cd ../../retroshare-nogui
@@ -26,7 +25,7 @@ To compile:
 
 	- to use the SSH RS server:
 		
-		# ssh-keygen -t rsa -f rs_ssh_host_rsa_key			# this makes a RSA
+		# ssh-keygen -t rsa -f rs_ssh_host_rsa_key					# this makes a RSA
 		# ./retroshare-nogui -G										# generates a login+passwd hash for the RSA key used.
 		# ./retroshare-nogui -S 7022 -U[SSLid] -P [Passwd hash]
 
@@ -41,3 +40,6 @@ List of non backward compatible changes for V0.6:
 
 - in rscertificate.cc, enable V_06_USE_CHECKSUM
 - in p3charservice, remove all usage of _deprecated items
+- turn file transfer into a service. Will break item IDs, but cleanup and
+  simplify lots of code.
+
