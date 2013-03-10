@@ -130,6 +130,8 @@ p3NetMgrIMPL::p3NetMgrIMPL()
 		mOldNatHole = RSNET_NATHOLE_UNKNOWN;
 		mLocalAddr.sin_port = 0;
 		mLocalAddr.sin_addr.s_addr = 0;
+		mExtAddr.sin_port = 0;
+		mExtAddr.sin_addr.s_addr = 0;
 	}
 	
 #ifdef NETMGR_DEBUG
