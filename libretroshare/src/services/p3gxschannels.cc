@@ -58,45 +58,29 @@ p3GxsChannels::p3GxsChannels(RsGeneralDataService *gds, RsNetworkExchangeService
 	mGenActive = false;
 	mCommentService = new p3GxsCommentService(this,  RS_SERVICE_GXSV1_TYPE_CHANNELS);
 
-//#ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
+#ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
 
 	RsTickEvent::schedule_in(CHANNEL_TESTEVENT_DUMMYDATA, DUMMYDATA_PERIOD);
 
-//#endif
+#endif
 
 }
-
-
 
 uint32_t p3GxsChannels::channelsAuthenPolicy()
 {
 	uint32_t policy = 0;
 	uint32_t flag = 0;
 
-	flag = GXS_SERV::MSG_AUTHEN_ROOT_PUBLISH_SIGN;
+	flag = GXS_SERV::MSG_AUTHEN_ROOT_PUBLISH_SIGN | GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN;
 	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::RESTRICTED_GRP_BITS);
-	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PUBLIC_GRP_BITS);
-	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PRIVATE_GRP_BITS);
 
-	flag = GXS_SERV::MSG_AUTHEN_CHILD_PUBLISH_SIGN;
-	//RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PUBLIC_GRP_BITS);
-	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::RESTRICTED_GRP_BITS);
-	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PRIVATE_GRP_BITS);
-
-	flag = GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN; 
-	//RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::RESTRICTED_GRP_BITS);
-	//RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PUBLIC_GRP_BITS);
-	//RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PRIVATE_GRP_BITS);
-
-	flag = GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN;
-	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::RESTRICTED_GRP_BITS);
+	flag |= GXS_SERV::MSG_AUTHEN_CHILD_PUBLISH_SIGN;
+	//flag |= GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN;
 	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PUBLIC_GRP_BITS);
 	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PRIVATE_GRP_BITS);
 
 	return policy;
 }
-
-
 
 
 

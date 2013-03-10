@@ -362,9 +362,105 @@ std::string GxsSecurity::getRsaKeySign(RSA *pubkey)
 }
 
 
-bool GxsSecurity::validateNxsGrp(RsNxsGrp *newGrp, RsTlvKeySignature& sign, RsTlvSecurityKey& key)
+bool GxsSecurity::validateNxsGrp(RsNxsGrp& grp, RsTlvKeySignature& sign, RsTlvSecurityKey& key)
 {
-	return false;
+#ifdef GXS_SECURITY_DEBUG
+        std::cerr << "GxsSecurity::validateNxsGrp()";
+        std::cerr << std::endl;
+        std::cerr << "RsNxsGrp :";
+        std::cerr << std::endl;
+        grp.print(std::cerr, 10);
+        std::cerr << std::endl;
+#endif
+
+        RsGxsGrpMetaData& grpMeta = *(grp.metaData);
+
+        /********************* check signature *******************/
+
+        /* check signature timeperiod */
+        if ((grpMeta.mPublishTs < key.startTS) ||
+                (grpMeta.mPublishTs > key.endTS))
+        {
+#ifdef GXS_SECURITY_DEBUG
+                std::cerr << " GxsSecurity::validateNxsMsg() TS out of range";
+                std::cerr << std::endl;
+#endif
+                return false;
+        }
+
+        /* decode key */
+        const unsigned char *keyptr = (const unsigned char *) key.keyData.bin_data;
+        long keylen = key.keyData.bin_len;
+        unsigned int siglen = sign.signData.bin_len;
+        unsigned char *sigbuf = (unsigned char *) sign.signData.bin_data;
+
+#ifdef DISTRIB_DEBUG
+        std::cerr << "GxsSecurity::validateNxsMsg() Decode Key";
+        std::cerr << " keylen: " << keylen << " siglen: " << siglen;
+        std::cerr << std::endl;
+#endif
+
+        /* extract admin key */
+        RSA *rsakey = d2i_RSAPublicKey(NULL, &(keyptr), keylen);
+
+        if (!rsakey)
+        {
+#ifdef GXS_SECURITY_DEBUG
+                std::cerr << "GxsSecurity::validateNxsGrp()";
+                std::cerr << " Invalid RSA Key";
+                std::cerr << std::endl;
+
+                key.print(std::cerr, 10);
+#endif
+        }
+
+
+        RsTlvKeySignatureSet signSet = grpMeta.signSet;
+        grpMeta.signSet.TlvClear();
+
+        uint32_t metaDataLen = grpMeta.serial_size();
+        uint32_t allGrpDataLen = metaDataLen + grp.grp.bin_len;
+        char* metaData = new char[metaDataLen];
+        char* allGrpData = new char[allGrpDataLen]; // msgData + metaData
+
+        grpMeta.serialise(metaData, metaDataLen);
+
+        // copy msg data and meta in allmsgData buffer
+        memcpy(allGrpData, grp.grp.bin_data, grp.grp.bin_len);
+        memcpy(allGrpData+(grp.grp.bin_len), metaData, metaDataLen);
+
+
+        EVP_PKEY *signKey = EVP_PKEY_new();
+        EVP_PKEY_assign_RSA(signKey, rsakey);
+
+        /* calc and check signature */
+        EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
+
+        EVP_VerifyInit(mdctx, EVP_sha1());
+        EVP_VerifyUpdate(mdctx, allGrpData, allGrpDataLen);
+        int signOk = EVP_VerifyFinal(mdctx, sigbuf, siglen, signKey);
+
+        /* clean up */
+        EVP_PKEY_free(signKey);
+        EVP_MD_CTX_destroy(mdctx);
+
+        grpMeta.signSet = signSet;
+
+        if (signOk == 1)
+        {
+#ifdef GXS_SECURITY_DEBUG
+                std::cerr << "GxsSecurity::validateNxsGrp() Signature OK";
+                std::cerr << std::endl;
+#endif
+                return true;
+        }
+
+#ifdef GXS_SECURITY_DEBUG
+        std::cerr << "GxsSecurity::validateNxsGrp() Signature invalid";
+        std::cerr << std::endl;
+#endif
+
+return false;
 }
 
 void GxsSecurity::setRSAPublicKey(RsTlvSecurityKey & key, RSA *rsa_pub)

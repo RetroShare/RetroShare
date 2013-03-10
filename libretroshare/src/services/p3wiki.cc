@@ -69,7 +69,9 @@ uint32_t p3Wiki::wikiAuthenPolicy()
 	uint32_t policy = 0;
 	uint8_t flag = 0;
 
-	flag = GXS_SERV::MSG_AUTHEN_ROOT_PUBLISH_SIGN;
+	// Edits generally need an authors signature.
+
+	flag = GXS_SERV::MSG_AUTHEN_ROOT_PUBLISH_SIGN | GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN;
 	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PUBLIC_GRP_BITS);
 	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::RESTRICTED_GRP_BITS);
 	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PRIVATE_GRP_BITS);
@@ -84,12 +86,6 @@ uint32_t p3Wiki::wikiAuthenPolicy()
 	//RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PUBLIC_GRP_BITS);
 	//RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::RESTRICTED_GRP_BITS);
 	//RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PRIVATE_GRP_BITS);
-
-	// Edits generally need an authors signature.
-	flag = GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN; 
-	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PUBLIC_GRP_BITS);
-	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::RESTRICTED_GRP_BITS);
-	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PRIVATE_GRP_BITS);
 
 	//flag = GXS_SERV::GRP_OPTION_AUTHEN_AUTHOR_SIGN;
 	//RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::GRP_OPTION_BITS);

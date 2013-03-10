@@ -120,7 +120,7 @@ public:
          * @param key the public key to use to check signature
          * @return true if group valid false otherwise
          */
-        static bool validateNxsGrp(RsNxsGrp *newGrp, RsTlvKeySignature& sign, RsTlvSecurityKey& key);
+        static bool validateNxsGrp(RsNxsGrp& grp, RsTlvKeySignature& sign, RsTlvSecurityKey& key);
 
         /*!
          * Validate a msg's signature using the given public key

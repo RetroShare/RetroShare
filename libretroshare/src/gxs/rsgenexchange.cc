@@ -286,15 +286,6 @@ uint8_t RsGenExchange::createGroup(RsNxsGrp *grp, RsTlvSecurityKeySet& privateKe
 
     uint8_t ret = createGroupSignatures(meta->signSet, grpData, *(grp->metaData));
 
-    // set meta to be transported as meta without private
-    // key components
-    grp->meta.setBinData(metaData, metaDataLen);
-
-    // but meta that is stored locally
-    // has private keys
-    // nxs net transports only bin data
-    meta->keys = privateKeySet;
-
     // clean up
     delete[] allGrpData;
     delete[] metaData;
@@ -333,7 +324,7 @@ int RsGenExchange::createGroupSignatures(RsTlvKeySignatureSet& signSet, RsTlvBin
     PrivacyBitPos pos = GRP_OPTION_BITS;
 
     // Check required permissions, and allow them to sign it - if they want too - as well!
-    if (checkAuthenFlag(pos, author_flag))
+    if ((!grpMeta.mAuthorId.empty()) || checkAuthenFlag(pos, author_flag))
     {
         needIdentitySign = true;
         std::cerr << "Needs Identity sign! (Service Flags)";
@@ -577,41 +568,40 @@ int RsGenExchange::createMessage(RsNxsMsg* msg)
 	}
 	else
 	{
-            // get publish key
-
+		// get publish key
 		RsGxsGrpMetaData* grpMeta = metaMap[id];
 
-            uint32_t metaDataLen = meta.serial_size();
-            uint32_t allMsgDataLen = metaDataLen + msg->msg.bin_len;
-            char* metaData = new char[metaDataLen];
-            char* allMsgData = new char[allMsgDataLen]; // msgData + metaData
+		uint32_t metaDataLen = meta.serial_size();
+		uint32_t allMsgDataLen = metaDataLen + msg->msg.bin_len;
+		char* metaData = new char[metaDataLen];
+		char* allMsgData = new char[allMsgDataLen]; // msgData + metaData
 
-            meta.serialise(metaData, &metaDataLen);
+		meta.serialise(metaData, &metaDataLen);
 
-            // copy msg data and meta in allmsgData buffer
-            memcpy(allMsgData, msg->msg.bin_data, msg->msg.bin_len);
-            memcpy(allMsgData+(msg->msg.bin_len), metaData, metaDataLen);
+		// copy msg data and meta in allmsgData buffer
+		memcpy(allMsgData, msg->msg.bin_data, msg->msg.bin_len);
+		memcpy(allMsgData+(msg->msg.bin_len), metaData, metaDataLen);
 
-            RsTlvBinaryData msgData(0);
+		RsTlvBinaryData msgData(0);
 
-            msgData.setBinData(allMsgData, allMsgDataLen);
+		msgData.setBinData(allMsgData, allMsgDataLen);
 
-            // create signatures
-           ret_val = createMsgSignatures(meta.signSet, msgData, meta, *grpMeta);
+		// create signatures
+	   ret_val = createMsgSignatures(meta.signSet, msgData, meta, *grpMeta);
 
 
-            // get hash of msg data to create msg id
-            pqihash hash;
-            hash.addData(allMsgData, allMsgDataLen);
-            hash.Complete(msg->msgId);
+		// get hash of msg data to create msg id
+		pqihash hash;
+		hash.addData(allMsgData, allMsgDataLen);
+		hash.Complete(msg->msgId);
 
-            // assign msg id to msg meta
-            msg->metaData->mMsgId = msg->msgId;
+		// assign msg id to msg meta
+		msg->metaData->mMsgId = msg->msgId;
 
-            delete[] metaData;
-            delete[] allMsgData;
+		delete[] metaData;
+		delete[] allMsgData;
 
-            delete grpMeta;
+		delete grpMeta;
 	}
 
 	if(ret_val == SIGN_FAIL)
@@ -749,6 +739,79 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSecu
     	return VALIDATE_SUCCESS;
     else
     	return VALIDATE_FAIL;
+
+}
+
+int RsGenExchange::validateGrp(RsNxsGrp* grp, RsTlvSecurityKeySet& grpKeySet)
+{
+
+	bool needIdentitySign = false, idValidate = false;
+	RsGxsGrpMetaData& metaData = *(grp->metaData);
+
+    int id_ret;
+
+    uint8_t author_flag = GXS_SERV::GRP_OPTION_AUTHEN_AUTHOR_SIGN;
+
+    PrivacyBitPos pos = GRP_OPTION_BITS;
+
+    // Check required permissions, and allow them to sign it - if they want too - as well!
+    if (!(metaData.mAuthorId.empty()) || checkAuthenFlag(pos, author_flag))
+    {
+        needIdentitySign = true;
+        std::cerr << "Needs Identity sign! (Service Flags)";
+        std::cerr << std::endl;
+    }
+
+	if(needIdentitySign)
+	{
+		if(mGixs)
+		{
+			bool haveKey = mGixs->haveKey(metaData.mAuthorId);
+
+			if(haveKey)
+			{
+
+				RsTlvSecurityKey authorKey;
+				bool auth_key_fetched = mGixs->getKey(metaData.mAuthorId, authorKey) == 1;
+
+				if (auth_key_fetched)
+				{
+
+					RsTlvKeySignature sign = metaData.signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_IDENTITY];
+					idValidate = GxsSecurity::validateNxsGrp(*grp, sign, authorKey);
+				}
+				else
+				{
+					 std::cerr << "RsGenExchange::validateGrp()";
+					 std::cerr << " ERROR Cannot Retrieve AUTHOR KEY for Group Sign Validation";
+					 std::cerr << std::endl;
+					 idValidate = false;
+				}
+
+			}else
+			{
+				std::list<std::string> peers;
+				mGixs->requestKey(metaData.mAuthorId, peers);
+				return VALIDATE_FAIL_TRY_LATER;
+			}
+		}
+		else
+		{
+#ifdef GEN_EXHANGE_DEBUG
+			std::cerr << "Gixs not enabled while request identity signature validation!" << std::endl;
+#endif
+			idValidate = false;
+		}
+	}
+	else
+	{
+		idValidate = true;
+	}
+
+	if(idValidate)
+		return VALIDATE_SUCCESS;
+	else
+		return VALIDATE_FAIL;
 
 }
 
@@ -1130,19 +1193,19 @@ bool RsGenExchange::setAuthenPolicyFlag(const uint8_t &msgFlag, uint32_t& authen
     switch(pos)
     {
         case PUBLIC_GRP_BITS:
-            //authenFlag &= ~PUB_GRP_MASK;
+            authenFlag &= ~PUB_GRP_MASK;
             authenFlag |= temp;
             break;
         case RESTRICTED_GRP_BITS:
-            //authenFlag &= ~RESTR_GRP_MASK;
+            authenFlag &= ~RESTR_GRP_MASK;
             authenFlag |= (temp << RESTR_GRP_OFFSET);
             break;
         case PRIVATE_GRP_BITS:
-            //authenFlag &= ~PRIV_GRP_MASK;
+            authenFlag &= ~PRIV_GRP_MASK;
             authenFlag |= (temp << PRIV_GRP_OFFSET);
             break;
         case GRP_OPTION_BITS:
-            //authenFlag &= ~GRP_OPTIONS_MASK;
+            authenFlag &= ~GRP_OPTIONS_MASK;
             authenFlag |= (temp << GRP_OPTIONS_OFFSET);
             break;
         default:
@@ -1160,7 +1223,23 @@ void RsGenExchange::notifyNewGroups(std::vector<RsNxsGrp *> &groups)
 
     // store these for tick() to pick them up
     for(; vit != groups.end(); vit++)
-        mReceivedGrps.push_back(*vit);
+    {
+    	RsNxsGrp* grp = *vit;
+    	NxsGrpPendValidVect::iterator received = std::find(mReceivedGrps.begin(),
+    			mReceivedGrps.end(), grp->grpId);
+
+    	// drop group if you already have them
+    	// TODO: move this to nxs layer to save bandwidth
+    	if(received == mReceivedGrps.end())
+    	{
+    		GxsPendingSignItem<RsNxsGrp*, RsGxsGroupId> gpsi(grp, grp->grpId);
+    		mReceivedGrps.push_back(gpsi);
+    	}
+    	else
+    	{
+    		delete grp;
+    	}
+    }
 
 }
 
@@ -1674,10 +1753,12 @@ void RsGenExchange::publishGrps()
 			ServiceCreate_Return ret = service_CreateGroup(grpItem, privatekeySet);
 
 			uint32_t size = mSerialiser->size(grpItem);
-			char gData[size];
-			bool serialOk = mSerialiser->serialise(grpItem, gData, &size);
+			char *gData = new char[size];
 
+			bool serialOk = mSerialiser->serialise(grpItem, gData, &size);
 			grp->grp.setBinData(gData, size);
+
+			delete[] gData;
 
 			if(serialOk)
 			{
@@ -1690,10 +1771,22 @@ void RsGenExchange::publishGrps()
 
 				if(create == CREATE_SUCCESS)
 				{
-					if(mDataStore->validSize(grp))
+
+					uint32_t mdSize = grp->metaData->serial_size();
+					char* metaData = new char[mdSize];
+					serialOk = grp->metaData->serialise(metaData, mdSize);
+					grp->meta.setBinData(metaData, mdSize);
+					delete[] metaData;
+
+					// place back private keys for publisher
+					grp->metaData->keys = privatekeySet;
+
+					if(mDataStore->validSize(grp) && serialOk)
 					{
 						RsGxsGroupId grpId = grp->grpId;
 						mDataAccess->addGroupData(grp);
+
+
 
 						std::cerr << "RsGenExchange::publishGrps() ok -> pushing to notifies" << std::endl;
 
@@ -1982,7 +2075,7 @@ void RsGenExchange::processRecvdMessages()
             		getMsgIdPair(*msg));
 
             if(failed_entry != mMsgPendingValidate.end()) mMsgPendingValidate.erase(failed_entry);
-            delete msg;
+			delete msg;
 
 
         }
@@ -2024,37 +2117,69 @@ void RsGenExchange::processRecvdMessages()
     mReceivedMsgs.clear();
 }
 
-
 void RsGenExchange::processRecvdGroups()
 {
     RsStackMutex stack(mGenMtx);
 
-    std::vector<RsNxsGrp*>::iterator vit = mReceivedGrps.begin();
+    NxsGrpPendValidVect::iterator vit = mReceivedGrps.begin();
     std::map<RsNxsGrp*, RsGxsGrpMetaData*> grps;
 
     std::list<RsGxsGroupId> grpIds;
 
-    for(; vit != mReceivedGrps.end(); vit++)
+    while( vit != mReceivedGrps.end())
     {
-        RsNxsGrp* grp = *vit;
+    	GxsPendingSignItem<RsNxsGrp*, RsGxsGroupId>& gpsi = *vit;
+        RsNxsGrp* grp = gpsi.mItem;
         RsGxsGrpMetaData* meta = new RsGxsGrpMetaData();
-        bool ok = meta->deserialise(grp->meta.bin_data, grp->meta.bin_len);
+        bool deserialOk = meta->deserialise(grp->meta.bin_data, grp->meta.bin_len);
+        bool erase = true;
 
-        if(ok)
+        if(deserialOk)
         {
-            meta->mGroupStatus = GXS_SERV::GXS_GRP_STATUS_UNPROCESSED | GXS_SERV::GXS_GRP_STATUS_UNREAD;
-            grps.insert(std::make_pair(grp, meta));
-            grpIds.push_back(grp->grpId);
+        	grp->metaData = meta;
+        	uint8_t ret = validateGrp(grp, meta->keys);
+
+
+        	if(ret == VALIDATE_SUCCESS)
+        	{
+				meta->mGroupStatus = GXS_SERV::GXS_GRP_STATUS_UNPROCESSED | GXS_SERV::GXS_GRP_STATUS_UNREAD;
+				grps.insert(std::make_pair(grp, meta));
+				grpIds.push_back(grp->grpId);
+
+				erase = true;
+        	}
+        	else if(ret == VALIDATE_FAIL)
+        	{
+#ifdef GXS_GENX_DEBUG
+				std::cerr << "failed to deserialise incoming meta, grpId: "
+						<< grp->grpId << std::endl;
+#endif
+				delete grp;
+				erase = true;
+        	}
+        	else  if(ret == VALIDATE_FAIL_TRY_LATER)
+        	{
+        		if(gpsi.mAttempts == VALIDATE_MAX_ATTEMPTS)
+        		{
+        			delete grp;
+        			erase = true;
+        		}
+        		else
+        		{
+        			erase = false;
+        		}
+        	}
         }
         else
         {
-#ifdef GXS_GENX_DEBUG
-            std::cerr << "failed to deserialise incoming meta, grpId: "
-                    << grp->grpId << std::endl;
-#endif
-            delete grp;
-            delete meta;
+        	delete grp;
+			erase = true;
         }
+
+        if(erase)
+        	vit = mReceivedGrps.erase(vit);
+        else
+        	vit++;
     }
 
     if(!grpIds.empty())
@@ -2064,8 +2189,4 @@ void RsGenExchange::processRecvdGroups()
         mNotifications.push_back(c);
         mDataStore->storeGroup(grps);
     }
-
-    mReceivedGrps.clear();
-
 }
-

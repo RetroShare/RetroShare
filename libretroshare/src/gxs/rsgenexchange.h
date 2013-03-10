@@ -550,7 +550,6 @@ private:
     /*!
      * This completes the creation of an instance on RsNxsGrp
      * by assigning it a groupId and signature via SHA1 and EVP_sign respectively \n
-     * Meta is serialised and stored in group at this point also
      * @param grp Nxs group to create
      * @return CREATE_SUCCESS for success, CREATE_FAIL for fail,
      * 		   CREATE_FAIL_TRY_LATER for Id sign key not avail (but requested)
@@ -606,14 +605,23 @@ private:
     void generateGroupKeys(RsTlvSecurityKeySet& privatekeySet, RsTlvSecurityKeySet& publickeySet, bool genPublishKeys);
 
     /*!
-     * Attempts to validate msg
+     * Attempts to validate msg signatures
      * @param msg message to be validated
      * @param grpFlag the flag for the group the message belongs to
-     * @param grpKeySet
+     * @param grpKeySet the key set user has for the message's group
      * @return VALIDATE_SUCCESS for success, VALIDATE_FAIL for fail,
      * 		   VALIDATE_ID_SIGN_NOT_AVAIL for Id sign key not avail (but requested)
      */
     int validateMsg(RsNxsMsg* msg, const uint32_t& grpFlag, RsTlvSecurityKeySet& grpKeySet);
+
+    /*!
+	 * Attempts to validate group signatures
+	 * @param grp group to be validated
+	 * @param grpKeySet the keys set user has for the group
+	 * @return VALIDATE_SUCCESS for success, VALIDATE_FAIL for fail,
+	 * 		   VALIDATE_ID_SIGN_NOT_AVAIL for Id sign key not avail (but requested)
+	 */
+	int validateGrp(RsNxsGrp* grp, RsTlvSecurityKeySet& grpKeySet);
 
     /*!
      * Checks flag against a given privacy bit block
@@ -637,7 +645,9 @@ private:
     RsGixs* mGixs;
 
     std::vector<RsNxsMsg*> mReceivedMsgs;
-    std::vector<RsNxsGrp*> mReceivedGrps;
+
+    typedef std::vector<GxsPendingSignItem<RsNxsGrp*, RsGxsGroupId> > NxsGrpPendValidVect;
+    NxsGrpPendValidVect mReceivedGrps;
 
     std::map<uint32_t, RsGxsGrpItem*> mGrpsToPublish;
     std::map<uint32_t, RsGxsMsgItem*> mMsgsToPublish;
@@ -661,10 +671,6 @@ private:
 
     std::vector<GxsPendingSignItem<RsNxsMsg*, RsGxsGrpMsgIdPair> > mMsgPendingValidate;
     typedef std::vector<GxsPendingSignItem<RsNxsMsg*, RsGxsGrpMsgIdPair> > NxsMsgPendingVect;
-
-
-    std::vector<GxsPendingSignItem<RsGxsGrpItem*, RsGxsGroupId> >
-    	 mGrpPendingValidation;
 
     std::vector<GxsPendingSignItem<RsGxsGrpItem*, uint32_t> > mGrpPendingSign;
     typedef std::vector<GxsPendingSignItem<RsGxsGrpItem*, uint32_t> > NxsGrpSignPendVect;
