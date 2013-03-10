@@ -352,12 +352,12 @@ bool ChunkMap::getDataChunk(const std::string& peer_id,uint32_t size_hint,ftChun
 
 	chunk.peer_id = peer_id ;
 
-	if(it->second.empty())
-		_active_chunks_feed.erase(it) ;
-
 #ifdef DEBUG_FTCHUNK
 	std::cout << "*** ChunkMap::getDataChunk: returning slice " << chunk << " for peer " << it->first << std::endl ;
 #endif
+	if(it->second.empty())
+		_active_chunks_feed.erase(it) ;
+
 	return true ;
 }
 
