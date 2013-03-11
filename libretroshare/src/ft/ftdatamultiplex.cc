@@ -811,14 +811,14 @@ bool ftDataMultiplex::handleRecvClientChunkMapRequest(const std::string& peerId,
 			// If we can't find the client, it's not a problem. Chunk maps from
 			// clients are not essential, as they are only used for display.
 #ifdef MPLEX_DEBUG
-			std::cerr << "ftDataMultiplex::handleRecvServerChunkMapRequest() ERROR: No matching Client for hash " << hash ;
+			std::cerr << "ftDataMultiplex::handleRecvClientChunkMapRequest() ERROR: No matching Client for hash " << hash ;
 			std::cerr << ". Performing local search." << std::endl;
 #endif
 			return false;
 		}
 
 #ifdef MPLEX_DEBUG
-		std::cerr << "ftDataMultiplex::handleRecvServerChunkMapRequest() Sending map of file " << hash << ", to peer " << peerId << std::endl;
+		std::cerr << "ftDataMultiplex::handleRecvClientChunkMapRequest() Sending map of file " << hash << ", to peer " << peerId << std::endl;
 #endif
 
 		(it->second).mCreator->getAvailabilityMap(cmap);
@@ -989,7 +989,10 @@ bool ftDataMultiplex::handleRecvServerChunkMapRequest(const std::string& peerId,
 		it = mServers.find(hash) ;
 
 		if(it == mServers.end())	// handleSearchRequest should have filled mServers[hash], but we have been off-mutex since,
+		{
+			std::cerr << "ftDataMultiplex::handleRecvChunkMapReq() : weird state: search request succeeded, but no server available!" << std::endl;
 			return false ;				// so it's safer to check again.
+		}
 		else
 			it->second->getAvailabilityMap(cmap);
 	}

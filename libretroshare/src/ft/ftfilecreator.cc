@@ -573,6 +573,9 @@ void ftFileCreator::setSourceMap(const std::string& peer_id,const CompressedChun
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 
+#ifdef FILE_DEBUG
+	std::cerr << "ftFileCreator:: Received source map for hash " << hash << " for source peer " << peer_id << std::endl;
+#endif
 	// At this point, we should cancel all file chunks that are asked to the
 	// peer and which this peer actually doesn't possesses. Otherwise, the transfer may get stuck. 
 	// This should be done by:
