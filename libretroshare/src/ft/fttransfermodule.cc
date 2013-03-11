@@ -48,12 +48,11 @@
  *
  */
 
-const double 	FT_TM_MAX_PEER_RATE 		= 10 * 1024 * 1024; /* 10MB/s */
-const uint32_t FT_TM_MAX_RESETS  		= 5;
-
-const uint32_t FT_TM_MINIMUM_CHUNK 		= 1024; /* ie 1Kb / sec */
-const uint32_t FT_TM_RESTART_DOWNLOAD 	= 20; /* 20 seconds */
-const uint32_t FT_TM_DOWNLOAD_TIMEOUT 	= 20; /* 10 seconds */
+const double 	FT_TM_MAX_PEER_RATE 		       = 10 * 1024 * 1024; /* 10MB/s */
+const uint32_t FT_TM_MAX_RESETS  		       = 5;
+const uint32_t FT_TM_MINIMUM_CHUNK 		       = 1024; /* ie 1Kb / sec */
+const uint32_t FT_TM_RESTART_DOWNLOAD 	       = 20; /* 20 seconds */
+const uint32_t FT_TM_DOWNLOAD_TIMEOUT 	       = 20; /* 10 seconds */
 const uint32_t FT_TM_CRC_MAP_MAX_WAIT_PER_GIG = 20; /* 20 seconds per gigabyte */
 
 // const double FT_TM_MAX_INCREASE = 1.00;
@@ -873,38 +872,29 @@ bool ftTransferModule::locked_tickPeerTransfer(peerInfo &info)
 	int ageReq = ts - info.lastTS;
 
 	/* if offline - ignore */
-	if ((info.state == PQIPEER_SUSPEND) ||
-	    (info.state == PQIPEER_NOT_ONLINE))
-	{
-
+	if(info.state == PQIPEER_SUSPEND) 
 		return false;
-	}
 
 	if (ageReq > (int) (FT_TM_RESTART_DOWNLOAD * (info.nResets + 1)))
 	{
+		// The succession of ifs, makes the process continue every 6 * FT_TM_RESTART_DOWNLOAD * FT_TM_MAX_RESETS seconds
+		// on average, which is one attempt every 600 seconds in the least, which corresponds to once every 10 minutes in
+		// average.
+		//
 		if (info.nResets > 1) /* 3rd timeout */
 		{
 			/* 90% chance of return false...
 			 * will mean variations in which peer
 			 * starts first. hopefully stop deadlocks.
 			 */
-			if (rand() % 10 != 0)
-			{
+			if (rand() % 12 != 0)
 				return false;
-			}
 		}
 
 		info.state = PQIPEER_DOWNLOADING;
 		info.recvTS = ts; /* reset to activate */
-		info.nResets++;
+		info.nResets = std::min(FT_TM_MAX_RESETS,info.nResets + 1);
 		ageRecv = 0;
-
-		if (info.nResets >= FT_TM_MAX_RESETS)
-		{
-			/* for this file anyway */
-			info.state = PQIPEER_NOT_ONLINE;
-			return false;
-		}
 	}
 
 	if (ageRecv > (int) FT_TM_DOWNLOAD_TIMEOUT)
