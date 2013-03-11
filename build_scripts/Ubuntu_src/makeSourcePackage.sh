@@ -88,7 +88,7 @@ cd $workdir
 
 #for i in sid; do
 #for i in precise; do
-for i in maverick natty oneiric precise quantal ; do
+for i in maverick natty oneiric precise quantal raring; do
 	echo copying changelog for $i
 	cat ../changelog | sed -e s/XXXXXX/"$svn"/g | sed -e s/YYYYYY/"$i"/g > debian/changelog
 
