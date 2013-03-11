@@ -22,6 +22,8 @@
  * Please report all bugs and problems to "retroshare@lunamutt.com".
  *
  */
+#ifndef P3_GXSCOMMON_SERVICE_HEADER
+#define P3_GXSCOMMON_SERVICE_HEADER
 
 #include "retroshare/rsgxscommon.h"
 #include "gxs/rsgenexchange.h"
@@ -56,4 +58,5 @@ class p3GxsCommentService
 };
 
 
+#endif
 

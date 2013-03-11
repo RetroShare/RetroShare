@@ -35,11 +35,6 @@
 
 RsWiki *rsWiki = NULL;
 
-/**
- * #define WIKI_GEN_DUMMY_DATA	1
- **/
-
-#define WIKI_GEN_DUMMY_DATA	1
 
 #define WIKI_EVENT_DUMMYTICK	0x0001	
 #define WIKI_EVENT_DUMMYSTART	0x0002
@@ -56,11 +51,8 @@ p3Wiki::p3Wiki(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs 
 	mImprovActive = false;
 	mMarkdownActive = false;
 
-#ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
-  #ifdef WIKI_GEN_DUMMY_DATA
-	RsTickEvent::schedule_in(WIKI_EVENT_DUMMYSTART, DUMMYSTART_PERIOD);
-  #endif
-#endif
+	// TestData disabled in Repo.
+	//RsTickEvent::schedule_in(WIKI_EVENT_DUMMYSTART, DUMMYSTART_PERIOD);
 
 }
 

@@ -45,10 +45,22 @@ class RsGxsFile
 class RsGxsImage
 {
 	public:
-	RsGxsImage();
+	RsGxsImage();	
+	~RsGxsImage();
+
+//NB: Must make sure that we always use methods - to be consistent about malloc/free for this data.
+static uint8_t *allocate(uint32_t size);
+static void release(void *data);
+
+	void take(uint8_t *data, uint32_t size); // Copies Pointer.
+	void copy(uint8_t *data, uint32_t size); // Allocates and Copies.
+	void clear(); 				// Frees.
+	void shallowClear(); 			// Clears Pointer.
+
 	uint8_t *mData;
 	uint32_t mSize;
 };
+
 
 #define GXS_VOTE_DOWN 	0x0001
 #define GXS_VOTE_UP	0x0002

@@ -2370,11 +2370,11 @@ int RsServer::StartupRetroShare()
         RsGeneralDataService* posted_ds = new RsDataService(currGxsDir + "/", "posted_db",
                                                             RS_SERVICE_GXSV1_TYPE_POSTED);
 
-#ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
+//#ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         posted_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
-#endif
+//#endif
 
-        mPosted = new p3Posted(posted_ds, NULL);
+        mPosted = new p3Posted(posted_ds, NULL, mGxsIdService);
 
         // create GXS photo service
         RsGxsNetService* posted_ns = new RsGxsNetService(

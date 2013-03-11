@@ -37,6 +37,8 @@
 #include "rsgxsitems.h"
 #include "retroshare/rsgxschannels.h"
 
+#include "util/rsdir.h"
+
 const uint8_t RS_PKT_SUBTYPE_GXSCHANNEL_GROUP_ITEM = 0x02;
 const uint8_t RS_PKT_SUBTYPE_GXSCHANNEL_POST_ITEM = 0x03;
 
@@ -52,8 +54,12 @@ public:
         void clear();
 	std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
+	// use conversion functions to transform:
+	bool fromChannelGroup(RsGxsChannelGroup &group, bool moveImage);
+	bool toChannelGroup(RsGxsChannelGroup &group, bool moveImage);
 
-	RsGxsChannelGroup mGroup;
+	std::string mDescription;
+	RsTlvImage mImage;
 };
 
 class RsGxsChannelPostItem : public RsGxsMsgItem
@@ -66,7 +72,14 @@ public:
         void clear();
 	std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-	RsGxsChannelPost mMsg;
+	// Slightly unusual structure.
+	// use conversion functions to transform:
+	bool fromChannelPost(RsGxsChannelPost &post, bool moveImage);
+	bool toChannelPost(RsGxsChannelPost &post, bool moveImage);
+
+	std::string mMsg;
+	RsTlvFileSet mAttachment;
+	RsTlvImage mThumbnail;
 };
 
 

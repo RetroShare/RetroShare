@@ -28,6 +28,7 @@
 #include "serialiser/rsgxscommentitems.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
 
 RsGxsComment::RsGxsComment()
@@ -37,11 +38,71 @@ RsGxsComment::RsGxsComment()
 	score = 0;
 }
 
+/********************************************************************************/
+
 RsGxsImage::RsGxsImage()
 {
 	mData = NULL;
 	mSize = 0;
 }
+
+
+RsGxsImage::~RsGxsImage()
+{
+	clear();
+}
+
+
+void RsGxsImage::take(uint8_t *data, uint32_t size)
+{
+	// Copies Pointer.
+	clear();
+	mData = data;
+	mSize = size;
+}
+
+// NB Must make sure that we always use malloc/free for this data.
+uint8_t *RsGxsImage::allocate(uint32_t size)
+{
+	return (uint8_t *) malloc(size);
+}
+
+void RsGxsImage::release(void *data)
+{
+	free(data);
+}
+
+void RsGxsImage::copy(uint8_t *data, uint32_t size)
+{
+	// Allocates and Copies.
+	clear(); 
+	if (data && size)
+	{
+		mData = allocate(size);
+		memcpy(mData, data, size);
+		mSize = size;
+	}
+}
+
+void RsGxsImage::clear()
+{
+	// Frees.
+	if (mData)
+	{
+		release(mData);               
+	}
+	mData = NULL;
+	mSize = 0;
+}
+
+void RsGxsImage::shallowClear()
+{
+	// Clears Pointer.
+	mData = NULL;
+	mSize = 0;
+}
+
+/********************************************************************************/
 
 
 RsGxsFile::RsGxsFile()

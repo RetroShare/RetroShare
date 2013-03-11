@@ -30,6 +30,7 @@
 #include "retroshare/rsgxschannels.h"
 #include "services/p3gxscommon.h"
 #include "gxs/rsgenexchange.h"
+#include "gxs/gxstokenqueue.h"
 
 #include "util/rstickevent.h"
 
@@ -40,7 +41,20 @@
  *
  */
 
+
+class SSGxsChannelGroup
+{
+	public:
+
+	bool load(const std::string &input);
+	std::string save() const;
+
+	bool mAutoDownload;
+};
+
+
 class p3GxsChannels: public RsGenExchange, public RsGxsChannels, 
+	public GxsTokenQueue,
 	public RsTickEvent	/* only needed for testing - remove after */
 {
 	public:
@@ -65,7 +79,6 @@ virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &p
 virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsGxsChannelPost> &posts);
 
         //////////////////////////////////////////////////////////////////////////////
-virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read);
 
 //virtual bool setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask);
 //virtual bool setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask);
@@ -76,7 +89,7 @@ virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgI
 virtual bool createGroup(uint32_t &token, RsGxsChannelGroup &group);
 virtual bool createPost(uint32_t &token, RsGxsChannelPost &post);
 
-
+virtual void setChannelAutoDownload(uint32_t&, const RsGxsGroupId&, bool);
 
 	/* Comment service - Provide RsGxsCommentService - redirect to p3GxsCommentService */
 virtual bool getCommentData(const uint32_t &token, std::vector<RsGxsComment> &msgs)
@@ -104,9 +117,45 @@ virtual bool acknowledgeComment(const uint32_t& token, std::pair<RsGxsGroupId, R
 		return acknowledgeMsg(token, msgId);
 	}
 
+
+	// Overloaded from RsGxsIface.
+virtual void subscribeToGroup(const RsGxsGroupId &groupId, bool subscribe);
+
+	// Set Statuses.
+virtual void setMessageProcessedStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool processed);
+virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read);
+
+	protected:
+
+	// Overloaded from GxsTokenQueue for Request callbacks.
+virtual void handleResponse(uint32_t token, uint32_t req_type);
+
 	private:
 
 static uint32_t channelsAuthenPolicy();
+
+	// Handle Processing.
+	void request_AllSubscribedGroups();
+	void request_SpecificSubscribedGroups(const std::list<RsGxsGroupId> &groups);
+	void load_SubscribedGroups(const uint32_t &token);
+
+	void request_SpecificUnprocessedPosts(std::list<std::pair<RsGxsGroupId, RsGxsMessageId> > &ids);
+	void load_SpecificUnprocessedPosts(const uint32_t &token);
+
+	void request_GroupUnprocessedPosts(const std::list<RsGxsGroupId> &grouplist);
+	void load_GroupUnprocessedPosts(const uint32_t &token);
+
+	void handleUnprocessedPost(const RsGxsChannelPost &msg);
+
+	// Local Cache of Subscribed Groups. and AutoDownload Flag.
+	void updateSubscribedGroup(const RsGroupMetaData &group);
+	void clearUnsubscribedGroup(const RsGxsGroupId &id);
+	bool autoDownloadEnabled(const RsGxsGroupId &id);
+	bool setAutoDownload(const RsGxsGroupId &groupId, bool enabled);
+
+
+
+	std::map<RsGxsGroupId, RsGroupMetaData> mSubscribedGroups;
 
 
 // DUMMY DATA,

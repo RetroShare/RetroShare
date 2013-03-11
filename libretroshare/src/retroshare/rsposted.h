@@ -1,6 +1,5 @@
-#ifndef RSPOSTED_H
-#define RSPOSTED_H
-
+#ifndef RETROSHARE_GXS_RSPOSTED_GUI_INTERFACE_H
+#define RETROSHARE_GXS_RSPOSTED_GUI_INTERFACE_H
 
 /*
  * libretroshare/src/retroshare: rsposted.h
@@ -11,7 +10,7 @@
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
+ * License Version 2.1 as published by the Free Software Foundation.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -30,21 +29,25 @@
 #include <inttypes.h>
 #include <string>
 #include <list>
+
 #include "retroshare/rstokenservice.h"
 #include "retroshare/rsgxsifacehelper.h"
+#include "retroshare/rsgxscommon.h"
 
+/* The Main Interface Class - for information about your Posted */
 class RsPosted;
 extern RsPosted *rsPosted;
 
-/* The Main Interface Class - for information about your Peers */
-
+class RsPostedPost;
 class RsPostedGroup
 {
-        public:
-        RsGroupMetaData mMeta;
-        std::string mDescription;
-        RsPostedGroup() { return; }
+	public:
+	RsPostedGroup() { return; }
+
+	RsGroupMetaData mMeta;
+	std::string mDescription;
 };
+
 
 //#define RSPOSTED_MSGTYPE_POST		0x0001
 //#define RSPOSTED_MSGTYPE_VOTE		0x0002
@@ -61,127 +64,99 @@ class RsPostedGroup
 #define RSPOSTED_VIEWMODE_HOT		3
 #define RSPOSTED_VIEWMODE_COMMENTS	4
 
-class RsPostedPost;
-class RsPostedComment;
-class RsPostedVote;
-class RsPostedPostRanking;
-
-typedef std::map<RsGxsGroupId, std::vector<RsPostedPost> > PostedPostResult;
-typedef std::map<RsGxsGroupId, std::vector<RsPostedComment> > PostedCommentResult;
-typedef std::map<RsGxsGroupId, std::vector<RsPostedVote> > PostedVoteResult;
-typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsPostedComment> > PostedRelatedCommentResult;
-typedef std::pair<RsGxsGroupId, int32_t> GroupRank;
-typedef std::map<uint32_t, RsGxsMessageId> PostedRanking;
 
 std::ostream &operator<<(std::ostream &out, const RsPostedGroup &group);
 std::ostream &operator<<(std::ostream &out, const RsPostedPost &post);
-std::ostream &operator<<(std::ostream &out, const RsPostedVote &vote);
-std::ostream &operator<<(std::ostream &out, const RsPostedComment &comment);
 
 
-
-class RsPosted : public RsGxsIfaceHelper
+class RsPosted : public RsGxsIfaceHelper, public RsGxsCommentService
 {
-        public:
+	    public:
 
-    enum RankType {TopRankType, HotRankType, NewRankType };
+	enum RankType {TopRankType, HotRankType, NewRankType };
 
-    static const uint32_t FLAG_MSGTYPE_POST;
-    static const uint32_t FLAG_MSGTYPE_VOTE;
-    static const uint32_t FLAG_MSGTYPE_COMMENT;
-    static const uint32_t FLAG_MSGTYPE_MASK;
+	static const uint32_t FLAG_MSGTYPE_POST;
+	static const uint32_t FLAG_MSGTYPE_MASK;
 
-
-    RsPosted(RsGxsIface* gxs) : RsGxsIfaceHelper(gxs) { return; }
+	RsPosted(RsGxsIface* gxs) : RsGxsIfaceHelper(gxs) { return; }
 virtual ~RsPosted() { return; }
 
-        /* Specific Service Data */
+	    /* Specific Service Data */
 
-    virtual bool getGroup(const uint32_t &token, std::vector<RsPostedGroup> &group) = 0;
-    virtual bool getPost(const uint32_t &token, PostedPostResult &post) = 0;
-    virtual bool getComment(const uint32_t &token, PostedCommentResult &comment) = 0;
-    virtual bool getRelatedComment(const uint32_t& token, PostedRelatedCommentResult& comments) = 0;
-    virtual bool getPostRanking(const uint32_t& token, RsPostedPostRanking& ranking) = 0;
+virtual bool getGroupData(const uint32_t &token, std::vector<RsPostedGroup> &groups) = 0;
+virtual bool getPostData(const uint32_t &token, std::vector<RsPostedPost> &posts) = 0;
+virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsPostedPost> &posts) = 0;
 
-    virtual bool submitGroup(uint32_t &token, RsPostedGroup &group) = 0;
-    virtual bool submitPost(uint32_t &token, RsPostedPost &post) = 0;
-    virtual bool submitVote(uint32_t &token, RsPostedVote &vote) = 0;
-    virtual bool submitComment(uint32_t &token, RsPostedComment &comment) = 0;
 
-    virtual bool retrieveScores(const std::string& serviceString, uint32_t& upVotes, uint32_t& downVotes, uint32_t& nComments) const = 0;
+	// SPECIAL RANKING FNS.
+virtual bool requestPostRankings(uint32_t &token, const RankType &rType, uint32_t count, uint32_t page_no, const RsGxsGroupId &groupId) = 0;
 
-        // Special Ranking Request.
-    /*!
-     * Makes request for posts of a topic
-     * @param token
-     * @param rType
-     * @param groupId
-     */
-    virtual bool requestPostRankings(uint32_t &token, const RankType& rType, const RsGxsGroupId& groupId) = 0;
+virtual bool getPostRanking(const uint32_t &token, std::vector<RsPostedPost> &msgs) = 0;
 
-    /*!
-     * Makes request for ranking of comments for a post
-     * @param token
-     * @param rType type of ranking to collect
-     * @param msgId message id of post as groupid-messageid pair
-     */
-    virtual bool requestCommentRankings(uint32_t &token, const RankType& rType, const RsGxsGrpMsgIdPair& msgId) = 0;
+
+//virtual bool getPostRanking(const uint32_t& token, std::vector<RsPostedPost> &ranking) = 0;
+
+	    /* From RsGxsCommentService */
+//virtual bool getCommentData(const uint32_t &token, std::vector<RsGxsComment> &comments) = 0;
+//virtual bool getRelatedComments(const uint32_t &token, std::vector<RsGxsComment> &comments) = 0;
+//virtual bool createComment(uint32_t &token, RsGxsComment &comment) = 0;
+//virtual bool createVote(uint32_t &token, RsGxsVote &vote) = 0;
+
+        //////////////////////////////////////////////////////////////////////////////
+virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read) = 0;
+
+virtual bool createGroup(uint32_t &token, RsPostedGroup &group) = 0;
+virtual bool createPost(uint32_t &token, RsPostedPost &post) = 0;
+
+	//virtual bool retrieveScores(const std::string& serviceString, uint32_t& upVotes, uint32_t& downVotes, uint32_t& nComments) const = 0;
+
+	    // Special Ranking Request.
+	/*!
+	 * Makes request for posts of a topic
+	 * @param token
+	 * @param rType
+	 * @param groupId
+	 */
+	//virtual bool requestPostRankings(uint32_t &token, const RankType& rType, const RsGxsGroupId& groupId) = 0;
+
+	/*!
+	 * Makes request for ranking of comments for a post
+	 * @param token
+	 * @param rType type of ranking to collect
+	 * @param msgId message id of post as groupid-messageid pair
+	 */
+	//virtual bool requestCommentRankings(uint32_t &token, const RankType& rType, const RsGxsGrpMsgIdPair& msgId) = 0;
 
 };
+
+
 
 class RsPostedPost
 {
-        public:
-        RsPostedPost()
-        {
-            mMeta.mMsgFlags = RsPosted::FLAG_MSGTYPE_POST;
-            mMeta.mServiceString = " 0 0 0";
-            return;
-        }
+	public:
+	RsPostedPost()
+	{
+		mMeta.mMsgFlags = RsPosted::FLAG_MSGTYPE_POST;
+		mUpVotes = 0;
+		mDownVotes = 0;
+		mComments = 0;
+		return;
+	}
 
-        RsMsgMetaData mMeta;
-        std::string mLink;
-        std::string mNotes;
+	RsMsgMetaData mMeta;
+	std::string mLink;
+	std::string mNotes;
+
+	// Calculated.
+	uint32_t mUpVotes;
+	uint32_t mDownVotes;
+	uint32_t mComments;
+
+	// and Calculated Scores:???
+	double  mHotScore;
+	double  mTopScore;
+	double  mNewScore;
 };
 
-class RsGxsPostedVoteItem;
 
-class RsPostedVote
-{
-public:
-
-    RsPostedVote(const RsGxsPostedVoteItem&);
-    RsPostedVote()
-    {
-        mMeta.mMsgFlags = RsPosted::FLAG_MSGTYPE_VOTE;
-            return;
-    }
-    uint8_t mDirection;
-    RsMsgMetaData mMeta;
-};
-
-class RsGxsPostedCommentItem;
-
-class RsPostedComment
-{
-        public:
-        RsPostedComment()
-        {
-            mMeta.mMsgFlags = RsPosted::FLAG_MSGTYPE_COMMENT;
-                return;
-        }
-
-        RsPostedComment(const RsGxsPostedCommentItem& );
-        std::string mComment;
-        RsMsgMetaData mMeta;
-};
-
-class RsPostedPostRanking
-{
-public:
-
-    RsGxsGroupId grpId;
-    PostedRanking ranking;
-    RsPosted::RankType rType;
-};
-#endif // RSPOSTED_H
+#endif // RETROSHARE_GXS_RSPOSTED_GUI_INTERFACE_H

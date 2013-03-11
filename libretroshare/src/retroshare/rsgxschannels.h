@@ -48,10 +48,9 @@ class RsGxsChannelGroup
 	public:
 	RsGroupMetaData mMeta;
 	std::string mDescription;
+	RsGxsImage mImage;
 
-	//RsGxsImage mChanImage;
 	bool mAutoDownload;
-
 };
 
 class RsGxsChannelPost
@@ -60,14 +59,13 @@ class RsGxsChannelPost
 	RsMsgMetaData mMeta;
 	std::string mMsg;  // UTF8 encoded.
 
-	//std::list<RsGxsFile> mFiles;
+	std::list<RsGxsFile> mFiles;
 	uint32_t mCount;   // auto calced.
 	uint64_t mSize;    // auto calced.
-	//RsGxsImage mThumbnail;
+
+	RsGxsImage mThumbnail;
 };
 
-
-//typedef std::map<RsGxsGroupId, std::vector<RsGxsChannelMsg> > GxsChannelMsgResult;
 
 std::ostream &operator<<(std::ostream &out, const RsGxsChannelGroup &group);
 std::ostream &operator<<(std::ostream &out, const RsGxsChannelPost &post);
@@ -94,6 +92,8 @@ virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsGxsChannelPost
 
         //////////////////////////////////////////////////////////////////////////////
 virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read) = 0;
+
+virtual void setChannelAutoDownload(uint32_t& token, const RsGxsGroupId& groupId, bool autoDownload) = 0;
 
 //virtual bool setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask);
 //virtual bool setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask);

@@ -44,7 +44,12 @@
 RsGxsChannels *rsGxsChannels = NULL;
 
 
-#define CHANNEL_TESTEVENT_DUMMYDATA	0x0001
+#define	 GXSCHANNELS_SUBSCRIBED_META		1
+#define  GXSCHANNELS_UNPROCESSED_SPECIFIC	2
+#define  GXSCHANNELS_UNPROCESSED_GENERIC	3
+
+#define CHANNEL_PROCESS	 		0x0001
+#define CHANNEL_TESTEVENT_DUMMYDATA	0x0002
 #define DUMMYDATA_PERIOD		60	// long enough for some RsIdentities to be generated.
 
 /********************************************************************************/
@@ -52,17 +57,16 @@ RsGxsChannels *rsGxsChannels = NULL;
 /********************************************************************************/
 
 p3GxsChannels::p3GxsChannels(RsGeneralDataService *gds, RsNetworkExchangeService *nes, RsGixs* gixs)
-    : RsGenExchange(gds, nes, new RsGxsChannelSerialiser(), RS_SERVICE_GXSV1_TYPE_CHANNELS, gixs, channelsAuthenPolicy()), RsGxsChannels(this)
+    : RsGenExchange(gds, nes, new RsGxsChannelSerialiser(), RS_SERVICE_GXSV1_TYPE_CHANNELS, gixs, channelsAuthenPolicy()), RsGxsChannels(this), GxsTokenQueue(this)
 {
 	// For Dummy Msgs.
 	mGenActive = false;
 	mCommentService = new p3GxsCommentService(this,  RS_SERVICE_GXSV1_TYPE_CHANNELS);
 
-#ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
+	RsTickEvent::schedule_in(CHANNEL_PROCESS, 0);
 
-	RsTickEvent::schedule_in(CHANNEL_TESTEVENT_DUMMYDATA, DUMMYDATA_PERIOD);
-
-#endif
+	// Test Data disabled in repo.
+	//RsTickEvent::schedule_in(CHANNEL_TESTEVENT_DUMMYDATA, DUMMYDATA_PERIOD);
 
 }
 
@@ -86,6 +90,44 @@ uint32_t p3GxsChannels::channelsAuthenPolicy()
 
 void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 {
+	std::cerr << "p3GxsChannels::notifyChanges()";
+	std::cerr << std::endl;
+
+	/* iterate through and grab any new messages */
+	std::list<RsGxsGroupId> unprocessedGroups;
+
+	std::vector<RsGxsNotify *>::iterator it;
+	for(it = changes.begin(); it != changes.end(); it++)
+	{
+		RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
+		if (msgChange)
+		{
+			std::cerr << "p3GxsChannels::notifyChanges() Found Message Change Notification";
+			std::cerr << std::endl;
+
+			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
+			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit;
+			for(mit = msgChangeMap.begin(); mit != msgChangeMap.end(); mit++)
+			{
+				std::cerr << "p3GxsChannels::notifyChanges() Msgs for Group: " << mit->first;
+				std::cerr << std::endl;
+
+				if (autoDownloadEnabled(mit->first))
+				{
+					std::cerr << "p3GxsChannels::notifyChanges() AutoDownload for Group: " << mit->first;
+					std::cerr << std::endl;
+
+					/* problem is most of these will be comments and votes, 
+					 * should make it occasional - every 5mins / 10minutes TODO */
+					unprocessedGroups.push_back(mit->first);
+				}
+			}
+		}
+	}
+
+	request_SpecificSubscribedGroups(unprocessedGroups);
+
+
 	 RsGxsIfaceHelper::receiveChanges(changes);
 }
 
@@ -98,6 +140,9 @@ void	p3GxsChannels::service_tick()
 
 bool p3GxsChannels::getGroupData(const uint32_t &token, std::vector<RsGxsChannelGroup> &groups)
 {
+	std::cerr << "p3GxsChannels::getGroupData()";
+	std::cerr << std::endl;
+
 	std::vector<RsGxsGrpItem*> grpData;
 	bool ok = RsGenExchange::getGroupData(token, grpData);
 		
@@ -108,13 +153,26 @@ bool p3GxsChannels::getGroupData(const uint32_t &token, std::vector<RsGxsChannel
 		for(; vit != grpData.end(); vit++)
 		{
 			RsGxsChannelGroupItem* item = dynamic_cast<RsGxsChannelGroupItem*>(*vit);
-			RsGxsChannelGroup grp = item->mGroup;
-			item->mGroup.mMeta = item->meta;
-			grp.mMeta = item->mGroup.mMeta;
-			delete item;
-			groups.push_back(grp);
+			if (item)
+			{
+				RsGxsChannelGroup grp;
+				item->toChannelGroup(grp, true);
+				delete item;
+				groups.push_back(grp);
+			}
+			else
+			{
+				std::cerr << "p3GxsChannels::getGroupData() ERROR in decode";
+				std::cerr << std::endl;
+			}
 		}
 	}
+	else
+	{
+		std::cerr << "p3GxsChannels::getGroupData() ERROR in request";
+		std::cerr << std::endl;
+	}
+
 	return ok;
 }
 
@@ -125,6 +183,9 @@ bool p3GxsChannels::getGroupData(const uint32_t &token, std::vector<RsGxsChannel
 
 bool p3GxsChannels::getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &msgs)
 {
+	std::cerr << "p3GxsChannels::getPostData()";
+	std::cerr << std::endl;
+
 	GxsMsgDataMap msgData;
 	bool ok = RsGenExchange::getMsgData(token, msgData);
 		
@@ -144,8 +205,8 @@ bool p3GxsChannels::getPostData(const uint32_t &token, std::vector<RsGxsChannelP
 		
 				if(item)
 				{
-					RsGxsChannelPost msg = item->mMsg;
-					msg.mMeta = item->meta;
+					RsGxsChannelPost msg;
+					item->toChannelPost(msg, true);
 					msgs.push_back(msg);
 					delete item;
 				}
@@ -157,6 +218,11 @@ bool p3GxsChannels::getPostData(const uint32_t &token, std::vector<RsGxsChannelP
 			}
 		}
 	}
+	else
+	{
+		std::cerr << "p3GxsChannels::getPostData() ERROR in request";
+		std::cerr << std::endl;
+	}
 		
 	return ok;
 }
@@ -164,6 +230,9 @@ bool p3GxsChannels::getPostData(const uint32_t &token, std::vector<RsGxsChannelP
 
 bool p3GxsChannels::getRelatedPosts(const uint32_t &token, std::vector<RsGxsChannelPost> &msgs)
 {
+	std::cerr << "p3GxsChannels::getRelatedPosts()";
+	std::cerr << std::endl;
+
 	GxsMsgRelatedDataMap msgData;
 	bool ok = RsGenExchange::getMsgRelatedData(token, msgData);
 			
@@ -182,8 +251,8 @@ bool p3GxsChannels::getRelatedPosts(const uint32_t &token, std::vector<RsGxsChan
 		
 				if(item)
 				{
-					RsGxsChannelPost msg = item->mMsg;
-					msg.mMeta = item->meta;
+					RsGxsChannelPost msg;
+					item->toChannelPost(msg, true);
 					msgs.push_back(msg);
 					delete item;
 				}
@@ -195,11 +264,424 @@ bool p3GxsChannels::getRelatedPosts(const uint32_t &token, std::vector<RsGxsChan
 			}
 		}
 	}
+	else
+	{
+		std::cerr << "p3GxsChannels::getRelatedPosts() ERROR in request";
+		std::cerr << std::endl;
+	}
 			
 	return ok;
 }
 
 
+/********************************************************************************************/
+/********************************************************************************************/
+
+void p3GxsChannels::setChannelAutoDownload(uint32_t&, const RsGxsGroupId&, bool)
+{
+	std::cerr << "p3GxsChannels::setChannelAutoDownload() TODO";
+	std::cerr << std::endl;
+
+	return;
+}
+
+
+void p3GxsChannels::request_AllSubscribedGroups()
+{
+#ifdef GXSCHANNELS_DEBUG
+        std::cerr << "p3GxsChannels::request_SubscribedGroups()";
+        std::cerr << std::endl;
+#endif // GXSCHANNELS_DEBUG
+
+        uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
+        RsTokReqOptions opts;
+        opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+
+        uint32_t token = 0;
+
+        RsGenExchange::getTokenService()->requestGroupInfo(token, ansType, opts);
+        GxsTokenQueue::queueRequest(token, GXSCHANNELS_SUBSCRIBED_META);
+
+}
+
+
+void p3GxsChannels::request_SpecificSubscribedGroups(const std::list<RsGxsGroupId> &groups)
+{
+#ifdef GXSCHANNELS_DEBUG
+        std::cerr << "p3GxsChannels::request_SpecificSubscribedGroups()";
+        std::cerr << std::endl;
+#endif // GXSCHANNELS_DEBUG
+
+        uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
+        RsTokReqOptions opts;
+        opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+
+        uint32_t token = 0;
+
+        RsGenExchange::getTokenService()->requestGroupInfo(token, ansType, opts, groups);
+        GxsTokenQueue::queueRequest(token, GXSCHANNELS_SUBSCRIBED_META);
+}
+
+
+void p3GxsChannels::load_SubscribedGroups(const uint32_t &token)
+{
+#ifdef GXSCHANNELS_DEBUG
+        std::cerr << "p3GxsChannels::load_SubscribedGroups()";
+        std::cerr << std::endl;
+#endif // GXSCHANNELS_DEBUG
+
+	std::list<RsGroupMetaData> groups;
+	std::list<RsGxsGroupId> groupList;
+
+	getGroupMeta(token, groups);
+
+	std::list<RsGroupMetaData>::iterator it;
+	for(it = groups.begin(); it != groups.end(); it++)
+	{
+		if (it->mSubscribeFlags & 
+			(GXS_SERV::GROUP_SUBSCRIBE_ADMIN |
+			GXS_SERV::GROUP_SUBSCRIBE_PUBLISH |
+			GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED ))
+		{
+        		std::cerr << "p3GxsChannels::load_SubscribedGroups() updating Subscribed Group: " << it->mGroupId;
+        		std::cerr << std::endl;
+
+			updateSubscribedGroup(*it);
+			if (autoDownloadEnabled(it->mGroupId))
+			{
+        			std::cerr << "p3GxsChannels::load_SubscribedGroups() remembering AutoDownload Group: " << it->mGroupId;
+        			std::cerr << std::endl;
+				groupList.push_back(it->mGroupId);
+			}
+		}
+		else
+		{
+        		std::cerr << "p3GxsChannels::load_SubscribedGroups() clearing unsubscribed Group: " << it->mGroupId;
+        		std::cerr << std::endl;
+			clearUnsubscribedGroup(it->mGroupId);
+		}
+	}
+
+	/* Query for UNPROCESSED POSTS from checkGroupList */
+	request_GroupUnprocessedPosts(groupList);
+}
+
+
+
+void p3GxsChannels::updateSubscribedGroup(const RsGroupMetaData &group)
+{
+        std::cerr << "p3GxsChannels::updateSubscribedGroup() id: " << group.mGroupId;
+        std::cerr << std::endl;
+
+	mSubscribedGroups[group.mGroupId] = group;
+}
+
+
+void p3GxsChannels::clearUnsubscribedGroup(const RsGxsGroupId &id)
+{
+        std::cerr << "p3GxsChannels::clearUnsubscribedGroup() id: " << id;
+        std::cerr << std::endl;
+
+	//std::map<RsGxsGroupId, RsGrpMetaData> mSubscribedGroups;
+	std::map<RsGxsGroupId, RsGroupMetaData>::iterator it;
+
+	it = mSubscribedGroups.find(id);
+	if (it != mSubscribedGroups.end())
+	{
+		mSubscribedGroups.erase(it);
+	}
+}
+
+
+void p3GxsChannels::subscribeToGroup(const RsGxsGroupId &groupId, bool subscribe)
+{
+        std::cerr << "p3GxsChannels::subscribedToGroup() id: " << groupId << " subscribe: " << subscribe;
+        std::cerr << std::endl;
+
+	std::list<RsGxsGroupId> groups;
+	groups.push_back(groupId);
+
+	// Call down to do the real work.
+	uint32_t token;
+	RsGenExchange::subscribeToGroup(token, groupId, subscribe);
+
+	// reload Group afterwards.
+	request_SpecificSubscribedGroups(groups);
+}
+
+
+void p3GxsChannels::request_SpecificUnprocessedPosts(std::list<std::pair<RsGxsGroupId, RsGxsMessageId> > &ids)
+{
+#ifdef GXSCHANNELS_DEBUG
+        std::cerr << "p3GxsChannels::request_SpecificUnprocessedPosts()";
+        std::cerr << std::endl;
+#endif // GXSCHANNELS_DEBUG
+
+        uint32_t ansType = RS_TOKREQ_ANSTYPE_DATA;
+        RsTokReqOptions opts;
+        opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+
+        uint32_t token = 0;
+
+        RsGenExchange::getTokenService()->requestGroupInfo(token, ansType, opts);
+        GxsTokenQueue::queueRequest(token, GXSCHANNELS_UNPROCESSED_SPECIFIC);
+}
+
+
+void p3GxsChannels::request_GroupUnprocessedPosts(const std::list<RsGxsGroupId> &grouplist)
+{
+#ifdef GXSCHANNELS_DEBUG
+        std::cerr << "p3GxsChannels::request_GroupUnprocessedPosts()";
+        std::cerr << std::endl;
+#endif // GXSCHANNELS_DEBUG
+
+        uint32_t ansType = RS_TOKREQ_ANSTYPE_DATA;
+        RsTokReqOptions opts;
+        opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+
+        uint32_t token = 0;
+
+        RsGenExchange::getTokenService()->requestGroupInfo(token, ansType, opts);
+        GxsTokenQueue::queueRequest(token, GXSCHANNELS_UNPROCESSED_GENERIC);
+}
+
+
+void p3GxsChannels::load_SpecificUnprocessedPosts(const uint32_t &token)
+{
+	std::vector<RsGxsChannelPost> posts;
+	if (!getRelatedPosts(token, posts))
+	{
+		std::cerr << "p3GxsChannels::load_GroupUnprocessedPosts ERROR";
+		return;
+	}
+
+
+	std::vector<RsGxsChannelPost>::iterator it;
+	for(it = posts.begin(); it != posts.end(); it++)
+	{
+		/* autodownload the files */
+		handleUnprocessedPost(*it);
+	}
+}
+
+	
+void p3GxsChannels::load_GroupUnprocessedPosts(const uint32_t &token)
+{
+	std::vector<RsGxsChannelPost> posts;
+
+	if (!getPostData(token, posts))
+	{
+		std::cerr << "p3GxsChannels::load_GroupUnprocessedPosts ERROR";
+		return;
+	}
+
+
+	std::vector<RsGxsChannelPost>::iterator it;
+	for(it = posts.begin(); it != posts.end(); it++)
+	{
+		handleUnprocessedPost(*it);
+	}
+}
+
+	
+	
+void p3GxsChannels::handleUnprocessedPost(const RsGxsChannelPost &msg)
+{
+        std::cerr << "p3GxsChannels::handleUnprocessedPost() GroupId: " << msg.mMeta.mGroupId << " MsgId: " << msg.mMeta.mMsgId;
+        std::cerr << std::endl;
+
+	/* check that autodownload is set */
+	if (autoDownloadEnabled(msg.mMeta.mGroupId))
+	{
+		
+        	std::cerr << "p3GxsChannels::handleUnprocessedPost() AutoDownload Enabled ... handling";
+        	std::cerr << std::endl;
+
+		/* check the date is not too old */
+
+		/* start download */
+
+        	std::cerr << "p3GxsChannels::handleUnprocessedPost() START DOWNLOAD (TODO)";
+        	std::cerr << std::endl;
+
+
+		/* mark as processed */
+		uint32_t token;
+		RsGxsGrpMsgIdPair msgId(msg.mMeta.mGroupId, msg.mMeta.mMsgId);
+		setMessageProcessedStatus(token, msgId, true);
+	}
+	else
+	{
+        	std::cerr << "p3GxsChannels::handleUnprocessedPost() AutoDownload Disabled ... skipping";
+        	std::cerr << std::endl;
+	}
+}
+
+
+        // Overloaded from GxsTokenQueue for Request callbacks.
+void p3GxsChannels::handleResponse(uint32_t token, uint32_t req_type)
+{
+#ifdef GXSCHANNELS_DEBUG
+        std::cerr << "p3GxsChannels::handleResponse(" << token << "," << req_type << ")";
+        std::cerr << std::endl;
+#endif // GXSCHANNELS_DEBUG
+
+        // stuff.
+        switch(req_type)
+        {
+        	case GXSCHANNELS_SUBSCRIBED_META:
+			load_SubscribedGroups(token);
+                        break;
+
+		case GXSCHANNELS_UNPROCESSED_SPECIFIC:
+			load_SpecificUnprocessedPosts(token);
+                        break;
+
+		case GXSCHANNELS_UNPROCESSED_GENERIC:
+			load_SpecificUnprocessedPosts(token);
+                        break;
+
+                default:
+                        /* error */
+                        std::cerr << "p3GxsService::handleResponse() Unknown Request Type: " << req_type;
+                        std::cerr << std::endl;
+                        break;
+        }
+}
+
+
+/********************************************************************************************/
+/********************************************************************************************/
+
+
+bool p3GxsChannels::autoDownloadEnabled(const RsGxsGroupId &id)
+{
+        std::cerr << "p3GxsChannels::autoDownloadEnabled(" << id << ")";
+        std::cerr << std::endl;
+
+	std::map<RsGxsGroupId, RsGroupMetaData>::iterator it;
+
+	it = mSubscribedGroups.find(id);
+	if (it != mSubscribedGroups.end())
+	{
+        	std::cerr << "p3GxsChannels::autoDownloadEnabled() No Entry";
+        	std::cerr << std::endl;
+
+		return false;
+	}
+
+	/* extract from ServiceString */
+	SSGxsChannelGroup ss;
+	ss.load(it->second.mServiceString);
+	return ss.mAutoDownload;
+}
+
+#define RSGXSCHANNEL_MAX_SERVICE_STRING	128
+
+bool SSGxsChannelGroup::load(const std::string &input)
+{
+        char line[RSGXSCHANNEL_MAX_SERVICE_STRING];
+	int download_val;
+        mAutoDownload = false;
+        if (1 == sscanf(input.c_str(), "D:%d", &download_val))
+        {
+		if (download_val == 1)
+		{
+                	mAutoDownload = true;
+		}
+        }
+        return true;
+}
+
+std::string SSGxsChannelGroup::save() const
+{
+        std::string output;
+        if (mAutoDownload)
+        {
+                output += "D:1";
+        }
+        else
+        {
+                output += "D:0";
+        }
+        return output;
+}
+
+bool p3GxsChannels::setAutoDownload(const RsGxsGroupId &groupId, bool enabled)
+{
+        std::cerr << "p3GxsChannels::setAutoDownload() id: " << groupId << " enabled: " << enabled;
+        std::cerr << std::endl;
+
+	std::map<RsGxsGroupId, RsGroupMetaData>::iterator it;
+
+	it = mSubscribedGroups.find(groupId);
+	if (it != mSubscribedGroups.end())
+	{
+        	std::cerr << "p3GxsChannels::setAutoDownload() Missing Group";
+        	std::cerr << std::endl;
+
+		return false;
+	}
+
+	/* extract from ServiceString */
+	SSGxsChannelGroup ss;
+	ss.load(it->second.mServiceString);
+	if (enabled == ss.mAutoDownload)
+	{
+		/* it should be okay! */
+        	std::cerr << "p3GxsChannels::setAutoDownload() WARNING setting looks okay already";
+        	std::cerr << std::endl;
+
+	}
+
+	/* we are just going to set it anyway. */
+	ss.mAutoDownload = enabled;
+	std::string serviceString = ss.save();
+	uint32_t token;
+	RsGenExchange::setGroupServiceString(token, groupId, serviceString);
+
+	/* now reload it */
+	std::list<RsGxsGroupId> groups;
+	groups.push_back(groupId);
+
+	request_SpecificSubscribedGroups(groups);
+
+	return true;
+}
+
+/********************************************************************************************/
+/********************************************************************************************/
+
+void p3GxsChannels::setMessageProcessedStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool processed)
+{
+        std::cerr << "p3GxsChannels::setMessageProcessedStatus()";
+        std::cerr << std::endl;
+
+        uint32_t mask = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED;
+        uint32_t status = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED;
+        if (processed)
+        {
+                status = 0;
+        }
+        setMsgStatusFlags(token, msgId, status, mask);
+}
+
+void p3GxsChannels::setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read)
+{
+        std::cerr << "p3GxsChannels::setMessageReadStatus()";
+        std::cerr << std::endl;
+
+        uint32_t mask = GXS_SERV::GXS_MSG_STATUS_UNREAD;
+        uint32_t status = GXS_SERV::GXS_MSG_STATUS_UNREAD;
+        if (read)
+        {
+                status = 0;
+        }
+        setMsgStatusFlags(token, msgId, status, mask);
+}
+
+
+/********************************************************************************************/
 /********************************************************************************************/
 
 bool p3GxsChannels::createGroup(uint32_t &token, RsGxsChannelGroup &group)
@@ -207,8 +689,7 @@ bool p3GxsChannels::createGroup(uint32_t &token, RsGxsChannelGroup &group)
 	std::cerr << "p3GxsChannels::createGroup()" << std::endl;
 
 	RsGxsChannelGroupItem* grpItem = new RsGxsChannelGroupItem();
-	grpItem->mGroup = group;
-	grpItem->meta = group.mMeta;
+	grpItem->fromChannelGroup(group, true);
 
 	RsGenExchange::publishGroup(token, grpItem);
 	return true;
@@ -221,29 +702,12 @@ bool p3GxsChannels::createPost(uint32_t &token, RsGxsChannelPost &msg)
 	std::cerr << std::endl;
 
 	RsGxsChannelPostItem* msgItem = new RsGxsChannelPostItem();
-	msgItem->mMsg = msg;
-	msgItem->meta = msg.mMeta;
+	msgItem->fromChannelPost(msg, true);
 	
 	RsGenExchange::publishMsg(token, msgItem);
 	return true;
 }
 
-
-/********************************************************************************************/
-/********************************************************************************************/
-
-void p3GxsChannels::setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read)
-{
-	uint32_t mask = GXS_SERV::GXS_MSG_STATUS_UNREAD | GXS_SERV::GXS_MSG_STATUS_UNPROCESSED;
-	uint32_t status = GXS_SERV::GXS_MSG_STATUS_UNREAD;
-	if (read)
-	{
-		status = 0;
-	}
-
-	setMsgStatusFlags(token, msgId, status, mask);
-
-}
 
 /********************************************************************************************/
 /********************************************************************************************/
@@ -451,7 +915,7 @@ bool p3GxsChannels::generateComment(uint32_t &token, const RsGxsGroupId &grpId, 
 	rsIdentity->getOwnIds(ownIds);
 
 	uint32_t idx = (uint32_t) (ownIds.size() * RSRandom::random_f32());
-	int i = 0;
+	uint32_t i = 0;
 	for(it = ownIds.begin(); (it != ownIds.end()) && (i < idx); it++, i++);
 
 	if (it != ownIds.end())
@@ -496,6 +960,9 @@ void p3GxsChannels::handle_event(uint32_t event_type, const std::string &elabel)
 		case CHANNEL_TESTEVENT_DUMMYDATA:
 			generateDummyData();
 			break;
+
+		case CHANNEL_PROCESS:
+			request_AllSubscribedGroups();
 
 		default:
 			/* error */
