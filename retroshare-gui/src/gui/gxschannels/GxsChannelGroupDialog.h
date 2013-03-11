@@ -1,7 +1,7 @@
 /****************************************************************
  *  RetroShare is distributed under the following license:
  *
- *  Copyright (C) 2008 Robert Fernie
+ *  Copyright (C) 2013 Robert Fernie
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -19,31 +19,24 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-
-#ifndef _POSTED_GROUP_DIALOG_H
-#define _POSTED_GROUP_DIALOG_H
+#ifndef _GXSCHANNEL_GROUP_DIALOG_H
+#define _GXSCHANNEL_GROUP_DIALOG_H
 
 #include "gui/gxs/GxsGroupDialog.h"
-#include <retroshare/rsposted.h>
+#include <retroshare/rsgxschannels.h>
 
-class PostedGroupDialog : public GxsGroupDialog
+class GxsChannelGroupDialog : public GxsGroupDialog
 {
 	Q_OBJECT
 
 public:
-	PostedGroupDialog(TokenQueue *tokenQueue, QWidget *parent);
-	PostedGroupDialog(const RsPostedGroup &topic, QWidget *parent);
+	GxsChannelGroupDialog(TokenQueue *tokenQueue, QWidget *parent);
+	GxsChannelGroupDialog(const RsGxsChannelGroup &group, Mode mode, QWidget *parent);
 
 protected:
 	virtual void initUi();
 	virtual QPixmap serviceImage();
 	virtual bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta);
-
-private:
-
-    RsPostedGroup mTopic;
-
 };
 
 #endif
-

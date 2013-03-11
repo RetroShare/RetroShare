@@ -1,5 +1,5 @@
 /*
- * Retroshare Posted Dialog
+ * Retroshare Comment Dialog
  *
  * Copyright 2012-2012 by Robert Fernie.
  *
@@ -21,46 +21,30 @@
  *
  */
 
-#ifndef MRK_POSTED_DIALOG_H
-#define MRK_POSTED_DIALOG_H
+#ifndef MRK_GXS_COMMENT_DIALOG_H
+#define MRK_GXS_COMMENT_DIALOG_H
 
-#include <retroshare/rsposted.h>
-
+#include "ui_GxsCommentDialog.h"
 #include "gui/gxs/GxsCommentContainer.h"
-#include "gui/Posted/PostedListDialog.h"
 
-class PostedDialog : public GxsCommentContainer
+
+class GxsCommentDialog: public QWidget 
 {
   Q_OBJECT
 
 public:
-	PostedDialog(QWidget *parent = 0)
-	:GxsCommentContainer(parent) { return; }
+	GxsCommentDialog(QWidget *parent, RsTokenService *token_service, RsGxsCommentService *comment_service);
 
-	virtual GxsServiceDialog *createServiceDialog()
-	{
-		return new PostedListDialog(this);
-	}
+        void setCommentHeader(GxsCommentHeader *header);
+        void commentLoad(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId);
 
-	virtual QString getServiceName()
-	{
-		return tr("Posted");
-	}
+private:
 
-	virtual RsTokenService *getTokenService()
-	{
-		return rsPosted->getTokenService();
-	}
+        RsGxsGroupId   mGrpId;
+        RsGxsMessageId mMsgId;
 
-	virtual RsGxsCommentService *getCommentService()
-	{
-		return rsPosted;
-	}
-
-	virtual GxsCommentHeader *createHeaderWidget()
-	{
-		return NULL;
-	}
+	/* UI - from Designer */
+	Ui::GxsCommentDialog ui;
 };
 
 #endif

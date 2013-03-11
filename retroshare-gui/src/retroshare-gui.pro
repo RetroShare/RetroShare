@@ -2,7 +2,7 @@ CONFIG += qt gui uic qrc resources uitools idle bitdht
 
 # Below is for GXS services.
 # Should be disabled for releases.
-#CONFIG += gxs
+#CONFIG += gxs debug
 
 gxs {
 	CONFIG += photoshare
@@ -10,6 +10,7 @@ gxs {
 	CONFIG += identities
 	CONFIG += circles
 	CONFIG += gxsforums
+	CONFIG += gxschannels
 	CONFIG += posted
 	CONFIG += unfinished
 	CONFIG += gxsgui
@@ -1047,31 +1048,53 @@ gxsforums {
 }
 	
 	
+gxschannels {
+	
+	HEADERS += gui/gxschannels/GxsChannelDialog.h \
+		gui/gxschannels/GxsChannelGroupDialog.h \
+		gui/gxschannels/CreateGxsChannelMsg.h \
+		gui/gxschannels/ChannelDialog.h \
+		gui/feeds/GxsChannelPostItem.h \
+	
+	FORMS += gui/gxschannels/GxsChannelDialog.ui \
+		gui/gxschannels/CreateGxsChannelMsg.ui \
+		gui/feeds/GxsChannelPostItem.ui \
+	
+	SOURCES += gui/gxschannels/GxsChannelDialog.cpp \
+		gui/gxschannels/GxsChannelGroupDialog.cpp \
+		gui/gxschannels/CreateGxsChannelMsg.cpp \
+		gui/feeds/GxsChannelPostItem.cpp \
+}
+	
+	
 posted {
 	
 	HEADERS += gui/Posted/PostedDialog.h \
 		gui/Posted/PostedListDialog.h \
 		gui/Posted/PostedItem.h \
-		gui/Posted/PostedComments.h \
 		gui/Posted/PostedGroupDialog.h \
 		gui/Posted/PostedCreatePostDialog.h \
-		gui/Posted/PostedCreateCommentDialog.h \
 		gui/Posted/PostedUserTypes.h
+
+		#gui/Posted/PostedCreateCommentDialog.h \
+		#gui/Posted/PostedComments.h \
 	
-	FORMS += gui/Posted/PostedDialog.ui \
-		gui/Posted/PostedListDialog.ui \
+	FORMS += gui/Posted/PostedListDialog.ui \
 		gui/Posted/PostedItem.ui \
-		gui/Posted/PostedComments.ui \
 		gui/Posted/PostedCreatePostDialog.ui \
-		gui/Posted/PostedCreateCommentDialog.ui
+
+		#gui/Posted/PostedDialog.ui \
+		#gui/Posted/PostedComments.ui \
+		#gui/Posted/PostedCreateCommentDialog.ui
 	
-	SOURCES += gui/Posted/PostedDialog.cpp \
-		gui/Posted/PostedListDialog.cpp \
+	SOURCES += gui/Posted/PostedListDialog.cpp \
 		gui/Posted/PostedItem.cpp \
-		gui/Posted/PostedComments.cpp \
 		gui/Posted/PostedGroupDialog.cpp \
 		gui/Posted/PostedCreatePostDialog.cpp \
-		gui/Posted/PostedCreateCommentDialog.cpp
+
+		#gui/Posted/PostedDialog.cpp \
+		#gui/Posted/PostedComments.cpp \
+		#gui/Posted/PostedCreateCommentDialog.cpp
 	
 	RESOURCES += gui/Posted/Posted_images.qrc
 }
@@ -1079,30 +1102,39 @@ posted {
 gxsgui {
 	
 	HEADERS += gui/gxs/GxsGroupDialog.h \
-		gui/gxs/GxsCommentTreeWidget.h \
 		gui/gxs/WikiGroupDialog.h \
 		gui/gxs/GxsIdChooser.h \
 		gui/gxs/GxsIdLabel.h \
 		gui/gxs/GxsCircleChooser.h \
 		gui/gxs/GxsCircleLabel.h \
 		gui/gxs/GxsIdTreeWidgetItem.h \
+		gui/gxs/GxsCommentTreeWidget.h \
+		gui/gxs/GxsCommentContainer.h \
+		gui/gxs/GxsCommentDialog.h \
+		gui/gxs/GxsCreateCommentDialog.h \
 		util/TokenQueue.h \
 	
 #		gui/gxs/GxsMsgDialog.h \
 	
 	FORMS += gui/gxs/GxsGroupDialog.ui \
+		gui/gxs/GxsCommentContainer.ui \
+		gui/gxs/GxsCommentDialog.ui \
+		gui/gxs/GxsCreateCommentDialog.ui \
 	
 #		gui/gxs/GxsMsgDialog.ui \
 #		gui/gxs/GxsCommentTreeWidget.ui \
 	
 	SOURCES += gui/gxs/GxsGroupDialog.cpp \
-		gui/gxs/GxsCommentTreeWidget.cpp \
 		gui/gxs/WikiGroupDialog.cpp \
 		gui/gxs/GxsIdChooser.cpp \
 		gui/gxs/GxsIdLabel.cpp \
 		gui/gxs/GxsCircleChooser.cpp \
 		gui/gxs/GxsCircleLabel.cpp \
 		gui/gxs/GxsIdTreeWidgetItem.cpp \
+		gui/gxs/GxsCommentTreeWidget.cpp \
+		gui/gxs/GxsCommentContainer.cpp \
+		gui/gxs/GxsCommentDialog.cpp \
+		gui/gxs/GxsCreateCommentDialog.cpp \
 		util/TokenQueue.cpp \
 	
 #		gui/gxs/GxsMsgDialog.cpp \

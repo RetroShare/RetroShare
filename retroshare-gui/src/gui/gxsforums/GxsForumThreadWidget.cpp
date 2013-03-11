@@ -1808,19 +1808,6 @@ void GxsForumThreadWidget::loadMsgData_InsertPost(const uint32_t &token)
 
 void GxsForumThreadWidget::requestMsgData_ReplyMessage(const RsGxsGrpMsgIdPair &msgId)
 {
-#if 0
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
-
-	std::cerr << "GxsForumsDialog::requestMsgData_ReplyMessage(" << msgId.first << "," << msgId.second << ")";
-	std::cerr << std::endl;
-
-	std::vector<RsGxsGrpMsgIdPair> msgIds;
-	msgIds.push_back(msgId);
-	uint32_t token;
-	mThreadQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, TOKEN_TYPE_REPLY_MESSAGE);
-#else
-
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
@@ -1833,7 +1820,7 @@ void GxsForumThreadWidget::requestMsgData_ReplyMessage(const RsGxsGrpMsgIdPair &
 
 	uint32_t token;
 	mThreadQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, TOKEN_TYPE_REPLY_MESSAGE);
-#endif
+
 }
 
 void GxsForumThreadWidget::loadMsgData_ReplyMessage(const uint32_t &token)
@@ -1842,11 +1829,7 @@ void GxsForumThreadWidget::loadMsgData_ReplyMessage(const uint32_t &token)
 	std::cerr << std::endl;
 
 	std::vector<RsGxsForumMsg> msgs;
-#if 0
-	if (rsGxsForums->getRelatedMessages(token, msgs))
-#else
 	if (rsGxsForums->getMsgData(token, msgs))
-#endif
 	{
 		if (msgs.size() != 1)
 		{

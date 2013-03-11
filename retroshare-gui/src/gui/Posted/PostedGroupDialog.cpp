@@ -20,35 +20,49 @@
  ****************************************************************/
 
 #include "PostedGroupDialog.h"
-#include "util/TokenQueue.h"
 
-#include <retroshare/rsposted.h>
+#include <retroshare/rswiki.h>
 #include <iostream>
 
-#define POSTED_ENABLE_FLAG   ( GXS_GROUP_FLAGS_ICON          | \
-                            GXS_GROUP_FLAGS_DESCRIPTION   | \
-                            GXS_GROUP_FLAGS_DISTRIBUTION  | \
-                            GXS_GROUP_FLAGS_PUBLISHSIGN   | \
-                            GXS_GROUP_FLAGS_SHAREKEYS     | \
-                            GXS_GROUP_FLAGS_PERSONALSIGN  | \
-                            GXS_GROUP_FLAGS_COMMENTS      | \
-                            0)
+const uint32_t PostedCreateEnabledFlags = ( // GXS_GROUP_FLAGS_ICON        |
+                          GXS_GROUP_FLAGS_DESCRIPTION   |
+                          GXS_GROUP_FLAGS_DISTRIBUTION  |
+                          // GXS_GROUP_FLAGS_PUBLISHSIGN   |
+                          GXS_GROUP_FLAGS_SHAREKEYS     |
+                          // GXS_GROUP_FLAGS_PERSONALSIGN  |
+                          // GXS_GROUP_FLAGS_COMMENTS      |
+                          0);
 
-#define POSTED_CREATE_DEFAULT_FLAG ( GXS_GROUP_DEFAULTS_DISTRIB_LOCAL        | \
-                              GXS_GROUP_DEFAULTS_PUBLISH_REQUIRED     | \
-                              GXS_GROUP_DEFAULTS_PERSONAL_IFNOPUB     | \
-                              GXS_GROUP_DEFAULTS_COMMENTS_NO          | \
-                              0)
+uint32_t PostedCreateDefaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC    |
+                           //GXS_GROUP_DEFAULTS_DISTRIB_GROUP        |
+                           //GXS_GROUP_DEFAULTS_DISTRIB_LOCAL        |
 
-PostedGroupDialog::PostedGroupDialog(TokenQueue* tokenQueue,  RsPosted* posted, QWidget *parent)
-        :GxsGroupDialog(tokenQueue, POSTED_ENABLE_FLAG, POSTED_CREATE_DEFAULT_FLAG, parent),
-        mPosted(posted)
+                           GXS_GROUP_DEFAULTS_PUBLISH_OPEN         |
+                           //GXS_GROUP_DEFAULTS_PUBLISH_THREADS      |
+                           //GXS_GROUP_DEFAULTS_PUBLISH_REQUIRED     |
+                           //GXS_GROUP_DEFAULTS_PUBLISH_ENCRYPTED    |
+
+                           //GXS_GROUP_DEFAULTS_PERSONAL_GPG         |
+                           GXS_GROUP_DEFAULTS_PERSONAL_REQUIRED    |
+                           //GXS_GROUP_DEFAULTS_PERSONAL_IFNOPUB     |
+
+                           //GXS_GROUP_DEFAULTS_COMMENTS_YES         |
+                           GXS_GROUP_DEFAULTS_COMMENTS_NO          |
+                           0);
+
+
+PostedGroupDialog::PostedGroupDialog(TokenQueue *tokenQueue, QWidget *parent)
+	:GxsGroupDialog(tokenQueue, PostedCreateEnabledFlags, PostedCreateDefaultsFlags, parent)
 {
+
+
 }
 
-PostedGroupDialog::PostedGroupDialog(const RsPostedGroup& grp, Mode mode, QWidget *parent)
-        :GxsGroupDialog(grp.mMeta, mode, parent), mGrp(grp)
+PostedGroupDialog::PostedGroupDialog(const RsPostedGroup &group, QWidget *parent)
+		:GxsGroupDialog(group.mMeta, MODE_SHOW, parent)
 {
+
+
 }
 
 void PostedGroupDialog::initUi()
@@ -65,20 +79,26 @@ void PostedGroupDialog::initUi()
 		setUiText(UITYPE_SERVICE_HEADER, tr("Edit Posted Topic"));
 		break;
 	}
+
+	setUiText(UITYPE_KEY_SHARE_CHECKBOX, tr("Add Topic Admins"));
+	setUiText(UITYPE_CONTACTS_DOCK, tr("Select Topic Admins"));
 }
 
 QPixmap PostedGroupDialog::serviceImage()
 {
-	return QPixmap(":/images/posted_add_64.png");
+	return QPixmap(":/images/resource-group_64.png");
 }
 
 bool PostedGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta)
 {
 	// Specific Function.
-        RsPostedGroup grp;
-        grp.mDescription = getDescription().toStdString();
+	RsPostedGroup grp;
 	grp.mMeta = meta;
+        grp.mDescription = getDescription().toStdString();
+	std::cerr << "PostedGroupDialog::service_CreateGroup() storing to Queue";
+	std::cerr << std::endl;
 
-        rsPosted->submitGroup(token, grp);
+	rsPosted->createGroup(token, grp);
+
 	return true;
 }

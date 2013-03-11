@@ -39,8 +39,8 @@
 #include "retroshare-gui/RsAutoUpdatePage.h"
 #include "PostedUserTypes.h"
 
+#include "gui/gxs/GxsCommentContainer.h"
 
-class CommentHolder;
 
 /*********************** **** **** **** ***********************/
 /** Request / Response of Data ********************************/
@@ -53,12 +53,12 @@ class CommentHolder;
 #define 	POSTEDDIALOG_INSERT_POST		5
 #define 	POSTEDDIALOG_REPLY_MESSAGE		6
 
-class PostedListDialog : public RsAutoUpdatePage, public PostedHolder, public TokenResponse
+class PostedListDialog : public RsAutoUpdatePage, public PostedHolder, public TokenResponse, public GxsServiceDialog
 {
   Q_OBJECT
 
 public:
-        PostedListDialog(CommentHolder* commentHolder, QWidget *parent = 0);
+        PostedListDialog(QWidget *parent = 0);
 
         void showComments(const RsPostedPost& post);
 
@@ -112,8 +112,8 @@ private:
 
     // ranking
 
-    void       loadRankings(const uint32_t& token);
-    void       applyRanking(const PostedRanking& ranks);
+    //void       loadRankings(const uint32_t& token);
+    //void       applyRanking(const PostedRanking& ranks);
 
 
     // update displayed item
@@ -141,7 +141,7 @@ private:
     QMap<RsGxsMessageId, PostedItem*> mPosts;
     TokenQueue *mPostedQueue;
 
-    CommentHolder* mCommentHolder;
+    //CommentHolder* mCommentHolder;
 
     /* UI - from Designer */
     Ui::PostedListDialog ui;

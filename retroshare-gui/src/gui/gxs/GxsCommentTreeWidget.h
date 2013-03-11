@@ -25,6 +25,7 @@
 #include <QTreeWidget>
 
 #include "util/TokenQueue.h"
+#include <retroshare/rsgxscommon.h>
 
 class GxsCommentTreeWidget : public QTreeWidget, public TokenResponse
 {
@@ -32,7 +33,7 @@ class GxsCommentTreeWidget : public QTreeWidget, public TokenResponse
         
 public:
     GxsCommentTreeWidget(QWidget *parent = 0);
-    void setup(RsTokenService *service);
+    void setup(RsTokenService *token_service, RsGxsCommentService *comment_service);
 
     void requestComments(const RsGxsGrpMsgIdPair& threadId);
     void getCurrentMsgId(RsGxsMessageId& parentId);
@@ -73,7 +74,8 @@ protected:
     std::multimap<std::string, QTreeWidgetItem *> mPendingInsertMap;
 
     TokenQueue *mTokenQueue;
-    RsTokenService *mRsService;
+    RsTokenService *mRsTokenService;
+    RsGxsCommentService *mCommentService;
 
 };
 

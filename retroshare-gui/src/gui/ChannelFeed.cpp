@@ -246,6 +246,10 @@ void ChannelFeed::openChat(std::string /*peerId*/)
 {
 }
 
+void ChannelFeed::openComments(uint32_t /*type*/ , const RsGxsGroupId & /*grpId */, const RsGxsMessageId & /*msgId*/)
+{
+}
+
 void ChannelFeed::editChannelDetail(){
     
     EditChanDetails editUi(this, mChannelId);

@@ -32,6 +32,7 @@
 #include "gui/WikiPoos/WikiDialog.h"
 #include "gui/Posted/PostedDialog.h"
 #include "gui/GxsForumsDialog.h"
+#include "gui/gxschannels/ChannelDialog.h"
 
 // THESE HAVE TO BE CONVERTED TO VEG FORMAT
 #if USE_VEG_SERVICE
@@ -57,7 +58,7 @@
 #define IMAGE_GXSFORUMS         ":/images/konversation.png"
 #define IMAGE_WIKI				":/images/wikibook_32.png"
 #define IMAGE_POSTED		    ":/images/posted_32.png"
-
+#define IMAGE_GXSCHANNELS          ":/images/channels.png"
 
 /** Constructor */
 ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
@@ -103,6 +104,7 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     PostedDialog *postedDialog = NULL;
     ui.stackPages->add(postedDialog = new PostedDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_POSTED), tr("Posted Links"), grp));
+    postedDialog->setup();
 
     WikiDialog *wikiDialog = NULL;
     ui.stackPages->add(wikiDialog = new WikiDialog(ui.stackPages),
@@ -111,6 +113,11 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     GxsForumsDialog *gxsforumsDialog = NULL;
     ui.stackPages->add(gxsforumsDialog = new GxsForumsDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_GXSFORUMS), tr("GxsForums"), grp));
+
+    ChannelDialog *gxschannelDialog = NULL;
+    ui.stackPages->add(gxschannelDialog = new ChannelDialog(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_GXSCHANNELS), tr("GxsChannels"), grp));
+    gxschannelDialog->setup();
 
 // THESE HAVE TO BE CONVERTED TO VEG FORMAT
 #if USE_VEG_SERVICE

@@ -18,7 +18,7 @@ void PostedCreatePostDialog::createPost()
     post.mMeta.mMsgName = ui->titleEdit->text().toStdString();
 
     uint32_t token;
-    mPosted->submitPost(token, post);
+    mPosted->createPost(token, post);
     mTokenQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, TOKEN_USER_TYPE_POST);
     close();
 }

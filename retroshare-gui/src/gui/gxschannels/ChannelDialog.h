@@ -1,5 +1,5 @@
 /*
- * Retroshare Posted Dialog
+ * Retroshare Channel Dialog
  *
  * Copyright 2012-2012 by Robert Fernie.
  *
@@ -21,43 +21,45 @@
  *
  */
 
-#ifndef MRK_POSTED_DIALOG_H
-#define MRK_POSTED_DIALOG_H
+#ifndef MRK_CHANNEL_DIALOG_H
+#define MRK_CHANNEL_DIALOG_H
 
-#include <retroshare/rsposted.h>
+
+#include <retroshare/rsgxschannels.h>
 
 #include "gui/gxs/GxsCommentContainer.h"
-#include "gui/Posted/PostedListDialog.h"
+#include "gui/gxschannels/GxsChannelDialog.h"
 
-class PostedDialog : public GxsCommentContainer
+
+class ChannelDialog : public GxsCommentContainer
 {
-  Q_OBJECT
+  //Q_OBJECT
 
 public:
-	PostedDialog(QWidget *parent = 0)
+	ChannelDialog(QWidget *parent = 0)
 	:GxsCommentContainer(parent) { return; }
 
-	virtual GxsServiceDialog *createServiceDialog()
+        virtual GxsServiceDialog *createServiceDialog()
 	{
-		return new PostedListDialog(this);
+		return new GxsChannelDialog(this);
 	}
 
 	virtual QString getServiceName()
 	{
-		return tr("Posted");
+		return tr("GxsChannels");
 	}
 
-	virtual RsTokenService *getTokenService()
+        virtual RsTokenService *getTokenService()
 	{
-		return rsPosted->getTokenService();
+		return rsGxsChannels->getTokenService();
 	}
 
-	virtual RsGxsCommentService *getCommentService()
+        virtual RsGxsCommentService *getCommentService()
 	{
-		return rsPosted;
+		return rsGxsChannels;
 	}
 
-	virtual GxsCommentHeader *createHeaderWidget()
+        virtual GxsCommentHeader *createHeaderWidget()
 	{
 		return NULL;
 	}

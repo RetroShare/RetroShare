@@ -69,6 +69,7 @@ void PostedItem::setContent(const RsPostedPost &post)
 
     uint32_t up, down, nComments;
 
+#if 0
     bool ok = rsPosted->retrieveScores(mPost.mMeta.mServiceString, up, down, nComments);
 
     if(ok)
@@ -82,6 +83,7 @@ void PostedItem::setContent(const RsPostedPost &post)
                                   "style=\" font-size:8pt; font-weight:600;\"> Comments:  "
                                   + QString::number(nComments) + "</span></p>");
     }
+#endif
 
 }
 

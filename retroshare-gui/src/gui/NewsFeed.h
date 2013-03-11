@@ -47,6 +47,7 @@ public:
   virtual QScrollArea *getScrollArea();
   virtual void deleteFeedItem(QWidget *item, uint32_t type);
   virtual void openChat(std::string peerId);
+  virtual void openComments(uint32_t type, const RsGxsGroupId &groupId, const RsGxsMessageId &msgId);
 
   static void testFeeds(uint notifyFlags);
   static void testFeed(FeedNotify *feedNotify);

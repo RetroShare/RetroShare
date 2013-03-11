@@ -24,7 +24,7 @@
 #include <QMenu>
 
 #include "gui/gxs/GxsCommentTreeWidget.h"
-#include "gui/Posted/PostedCreateCommentDialog.h"
+#include "gui/gxs/GxsCreateCommentDialog.h"
 
 #include <iostream>
 
@@ -37,14 +37,12 @@
 
 #define GXSCOMMENTS_LOADTHREAD		1
 
-// Temporarily make this specific.
-#include "retroshare/rsposted.h"
 
 /* Images for context menu icons */
 #define IMAGE_MESSAGE        ":/images/folder-draft.png"
 
 GxsCommentTreeWidget::GxsCommentTreeWidget(QWidget *parent)
-    :QTreeWidget(parent), mRsService(NULL), mTokenQueue(NULL)
+    :QTreeWidget(parent), mRsTokenService(NULL), mCommentService(NULL), mTokenQueue(NULL)
 {
 //    QTreeWidget* widget = this;
 
@@ -88,7 +86,7 @@ void GxsCommentTreeWidget::customPopUpMenu(const QPoint& point)
 
 void GxsCommentTreeWidget::makeComment()
 {
-    PostedCreateCommentDialog pcc(mTokenQueue, mThreadId, mThreadId.second, this);
+    GxsCreateCommentDialog pcc(mTokenQueue, mCommentService, mThreadId, mThreadId.second, this);
     pcc.exec();
 }
 
@@ -97,14 +95,15 @@ void GxsCommentTreeWidget::replyToComment()
     RsGxsGrpMsgIdPair msgId;
     msgId.first = mThreadId.first;
     msgId.second = mCurrentMsgId;
-    PostedCreateCommentDialog pcc(mTokenQueue, msgId, mThreadId.second, this);
+    GxsCreateCommentDialog pcc(mTokenQueue, mCommentService, msgId, mThreadId.second, this);
     pcc.exec();
 }
 
-void GxsCommentTreeWidget::setup(RsTokenService *service)
+void GxsCommentTreeWidget::setup(RsTokenService *token_service, RsGxsCommentService *comment_service)
 {
-    mRsService = service;
-    mTokenQueue = new TokenQueue(service, this);
+    mRsTokenService = token_service;
+    mCommentService = comment_service;
+    mTokenQueue = new TokenQueue(token_service, this);
     connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customPopUpMenu(QPoint)));
     connect(this, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(setCurrentMsgId(QTreeWidgetItem*, QTreeWidgetItem*)));
 
@@ -259,7 +258,7 @@ void GxsCommentTreeWidget::loadThread(const uint32_t &token)
 void GxsCommentTreeWidget::acknowledgeComment(const uint32_t &token)
 {
     RsGxsGrpMsgIdPair msgId;
-    rsPosted->acknowledgeMsg(token, msgId);
+    mCommentService->acknowledgeComment(token, msgId);
 
     // simply reload data
     service_requestComments(mThreadId);
@@ -271,15 +270,14 @@ void GxsCommentTreeWidget::service_loadThread(const uint32_t &token)
     std::cerr << "GxsCommentTreeWidget::service_loadThread() ERROR must be overloaded!";
     std::cerr << std::endl;
 
-    PostedRelatedCommentResult commentResult;
-    rsPosted->getRelatedComment(token, commentResult);
+    std::vector<RsGxsComment> comments;
+    mCommentService->getRelatedComments(token, comments);
 
-    std::vector<RsPostedComment>& commentV = commentResult[mThreadId];
-    std::vector<RsPostedComment>::iterator vit = commentV.begin();
+    std::vector<RsGxsComment>::iterator vit;
 
-    for(; vit != commentV.end(); vit++)
+    for(vit = comments.begin(); vit != comments.end(); vit++)
     {
-        RsPostedComment& comment = *vit;
+        RsGxsComment &comment = *vit;
         /* convert to a QTreeWidgetItem */
         std::cerr << "GxsCommentTreeWidget::service_loadThread() Got Comment: " << comment.mMeta.mMsgId;
         std::cerr << std::endl;
