@@ -65,6 +65,7 @@
  * #define CONTROL_DEBUG 1
  * #define DEBUG_DWLQUEUE 1
  *****/
+#define CONTROL_DEBUG 1
 
 static const int32_t SAVE_TRANSFERS_DELAY 			= 61	; // save transfer progress every 61 seconds.
 static const int32_t INACTIVE_CHUNKS_CHECK_DELAY 	= 240	; // time after which an inactive chunk is released
@@ -911,7 +912,7 @@ bool ftController::completeFile(std::string hash)
 	if(flags & ( RS_FILE_REQ_CACHE | RS_FILE_REQ_EXTRA))// | RS_FILE_HINTS_MEDIA))
 	{
 #ifdef CONTROL_DEBUG
-	  std::cerr << "ftController::completeFile() doing Callback, callbackflags:" << (flags & ( RS_FILE_HINTS_CACHE | RS_FILE_HINTS_EXTRA ));//| RS_FILE_HINTS_MEDIA)) ;
+	  std::cerr << "ftController::completeFile() doing Callback, callbackflags:" << (flags & ( RS_FILE_REQ_CACHE | RS_FILE_REQ_EXTRA ));//| RS_FILE_HINTS_MEDIA)) ;
 	  std::cerr << std::endl;
 #endif
 	  if(flags & RS_FILE_REQ_CACHE)
