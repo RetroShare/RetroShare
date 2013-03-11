@@ -1971,7 +1971,16 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 		int nb_online_ids = onlineIds.size() ;
 
 		if(forward_probability * nb_online_ids < 1.0f && nb_online_ids > 0)
+		{
 			forward_probability = 1.0f / nb_online_ids ;
+
+			// Setting forward_probability to 1/nb_online_ids forces at most one TR up per TR dn. But if we are overflooded by
+			// TR dn, we still need to control them to avoid flooding the pqiHandler outqueue. So we additionally moderate the 
+			// forward probability so as to reduct the output rate accordingly.
+			//
+			if(_traffic_info.tr_dn_Bps / (float)TUNNEL_REQUEST_PACKET_SIZE > _max_tr_up_rate)
+				forward_probability *= _max_tr_up_rate*TUNNEL_REQUEST_PACKET_SIZE / (float)_traffic_info.tr_dn_Bps ;
+		}
 
 #ifdef P3TURTLE_DEBUG
 		std::cerr << "  Forwarding tunnel request: Looking for online peers" << std::endl ;
@@ -2440,7 +2449,12 @@ void p3turtle::getTrafficStatistics(TurtleTrafficStatisticsInfo& info) const
 		float forward_probability	= pow(depth_peer_probability[i],corrected_distance) ;
 
 		if(forward_probability * nb_online_ids < 1.0f && nb_online_ids > 0)
+		{
 			forward_probability = 1.0f / nb_online_ids ;
+
+			if(_traffic_info.tr_dn_Bps / (float)TUNNEL_REQUEST_PACKET_SIZE > _max_tr_up_rate)
+				forward_probability *= _max_tr_up_rate*TUNNEL_REQUEST_PACKET_SIZE / (float)_traffic_info.tr_dn_Bps ;
+		}
 
 		info.forward_probabilities.push_back(forward_probability) ;
 	}
