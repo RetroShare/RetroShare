@@ -39,14 +39,14 @@
 #include "serialiser/rsnxsitems.h"
 
 template<class GxsItem, typename Identity = std::string>
-class GxsPendingSignItem
+class GxsPendingItem
 {
 public:
-	GxsPendingSignItem(GxsItem item, Identity id) :
+	GxsPendingItem(GxsItem item, Identity id) :
 		mItem(item), mId(id), mAttempts(0)
 	{}
 
-	GxsPendingSignItem(const GxsPendingSignItem& gpsi)
+	GxsPendingItem(const GxsPendingItem& gpsi)
 	{
 		this->mItem = gpsi.mItem;
 		this->mId = gpsi.mId;
@@ -61,6 +61,22 @@ public:
 	GxsItem mItem;
 	Identity mId;
 	uint8_t mAttempts;
+};
+
+class GxsGrpPendingSign
+{
+public:
+
+	GxsGrpPendingSign(RsGxsGrpItem* item, uint32_t token): mLastAttemptTS(0), mStartTS(time(NULL)), mToken(token),
+		mItem(item), mHaveKeys(false)
+	{}
+
+	time_t mLastAttemptTS, mStartTS;
+	uint32_t mToken;
+	RsGxsGrpItem* mItem;
+	bool mHaveKeys; // mKeys->first == true if key present
+	RsTlvSecurityKeySet mPrivateKeys;
+	RsTlvSecurityKeySet mPublicKeys;
 };
 
 typedef std::map<RsGxsGroupId, std::vector<RsGxsMsgItem*> > GxsMsgDataMap;
@@ -94,7 +110,7 @@ class RsGenExchange : public RsNxsObserver, public RsThread, public RsGxsIface
 public:
 
 	/// used by class derived for RsGenExchange to indicate if service create passed or not
-	enum ServiceCreate_Return { SERVICE_CREATE_SUCCESS, SERVICE_CREATE_FAIL, SERVICE_FAIL_TRY_LATER } ;
+	enum ServiceCreate_Return { SERVICE_CREATE_SUCCESS, SERVICE_CREATE_FAIL, SERVICE_CREATE_FAIL_TRY_LATER } ;
 
     /*!
      * Constructs a RsGenExchange object, the owner ship of gds, ns, and serviceserialiser passes \n
@@ -646,10 +662,12 @@ private:
 
     std::vector<RsNxsMsg*> mReceivedMsgs;
 
-    typedef std::vector<GxsPendingSignItem<RsNxsGrp*, RsGxsGroupId> > NxsGrpPendValidVect;
+    typedef std::vector<GxsPendingItem<RsNxsGrp*, RsGxsGroupId> > NxsGrpPendValidVect;
     NxsGrpPendValidVect mReceivedGrps;
 
-    std::map<uint32_t, RsGxsGrpItem*> mGrpsToPublish;
+    std::vector<GxsGrpPendingSign> mGrpsToPublish;
+    typedef std::vector<GxsGrpPendingSign> NxsGrpSignPendVect;
+
     std::map<uint32_t, RsGxsMsgItem*> mMsgsToPublish;
 
     std::map<uint32_t, RsGxsGrpMsgIdPair > mMsgNotify;
@@ -666,14 +684,13 @@ private:
     /// authentication policy
     uint32_t mAuthenPolicy;
 
-    std::map<uint32_t, GxsPendingSignItem<RsGxsMsgItem*, uint32_t> >
+    std::map<uint32_t, GxsPendingItem<RsGxsMsgItem*, uint32_t> >
     	mMsgPendingSign;
 
-    std::vector<GxsPendingSignItem<RsNxsMsg*, RsGxsGrpMsgIdPair> > mMsgPendingValidate;
-    typedef std::vector<GxsPendingSignItem<RsNxsMsg*, RsGxsGrpMsgIdPair> > NxsMsgPendingVect;
+    std::vector<GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair> > mMsgPendingValidate;
+    typedef std::vector<GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair> > NxsMsgPendingVect;
 
-    std::vector<GxsPendingSignItem<RsGxsGrpItem*, uint32_t> > mGrpPendingSign;
-    typedef std::vector<GxsPendingSignItem<RsGxsGrpItem*, uint32_t> > NxsGrpSignPendVect;
+
 
 private:
 

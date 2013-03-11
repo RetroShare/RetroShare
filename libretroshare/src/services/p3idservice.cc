@@ -1231,6 +1231,7 @@ static void calcPGPHash(const RsGxsId &id, const PGPFingerprintType &pgp, GxsIdP
 // Must Use meta.
 RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet)
 {
+
 #ifdef DEBUG_IDS
 	std::cerr << "p3IdService::service_CreateGroup()";
 	std::cerr << std::endl;
@@ -1304,6 +1305,8 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 	std::cerr << std::endl;
 #endif // DEBUG_IDS
 
+	ServiceCreate_Return createStatus;
+
 	if (item->group.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID) 
 	{
 		/* create the hash */
@@ -1319,6 +1322,8 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 			ownId = PGPIdType(item->group.mMeta.mAuthorId);
 		}
 #endif
+
+
 
 		if (!AuthGPG::getAuthGPG()->getKeyFingerprint(ownId,ownFinger))
 		{
@@ -1337,6 +1342,7 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 
 		/* do signature */
 
+
 #if ENABLE_PGP_SIGNATURES
 #define MAX_SIGN_SIZE 2048
 		uint8_t signarray[MAX_SIGN_SIZE]; 
@@ -1348,6 +1354,7 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 			/* error */
 			std::cerr << "p3IdService::service_CreateGroup() ERROR Signing stuff";
 			std::cerr << std::endl;
+			createStatus = SERVICE_CREATE_FAIL_TRY_LATER;
 		}
 		else
 		{
@@ -1357,12 +1364,17 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 			{
 				item->group.mPgpIdSign += signarray[i];
 			}
+			createStatus = SERVICE_CREATE_SUCCESS;
 		}
 		/* done! */
 #else
 		item->group.mPgpIdSign = "";
 #endif
 
+	}
+	else
+	{
+		createStatus = SERVICE_CREATE_SUCCESS;
 	}
 
 	// Enforce no AuthorId.
@@ -1374,7 +1386,8 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 	// Reload in a little bit.
 	// HACK to get it to work.
 	RsTickEvent::schedule_in(GXSID_EVENT_CACHEOWNIDS, OWNID_RELOAD_DELAY);
-	return SERVICE_CREATE_SUCCESS;
+
+	return createStatus;
 }
 
 

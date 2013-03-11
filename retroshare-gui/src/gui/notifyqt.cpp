@@ -194,6 +194,7 @@ bool NotifyQt::askForDeferredSelfSignature(const void *data, const uint32_t len,
 		std::map<std::string,SignatureEventData*>::iterator it = _deferred_signature_queue.find(chksum.toStdString()) ;
 
 		if(it != _deferred_signature_queue.end())
+		{
 			if(it->second->signature_result != 0)	// found it. Copy the result, and remove from the queue.
 			{
 				// We should check for the exact data match, for the sake of being totally secure.
@@ -211,6 +212,7 @@ bool NotifyQt::askForDeferredSelfSignature(const void *data, const uint32_t len,
 			}
 			else
 				return false ;		// already registered, but not done yet.
+		}
 
 		// Not found. Store in the queue and emit a signal.
 		//
@@ -228,9 +230,20 @@ void NotifyQt::handleSignatureEvent()
 {
 	std::cerr << "NotifyQt:: performing a deferred signature in the main GUI thread." << std::endl;
 
+	static bool working = false ;
+
+	if(!working)
+	{
+		working = true ;
+
 	for(std::map<std::string,SignatureEventData*>::const_iterator it(_deferred_signature_queue.begin());it!=_deferred_signature_queue.end();++it)
 		it->second->performSignature() ;
+
+	working = false ;
+	}
 }
+
+
 
 bool NotifyQt::askForPassword(const std::string& key_details, bool prev_is_bad, std::string& password)
 {

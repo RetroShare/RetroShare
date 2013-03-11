@@ -309,8 +309,6 @@ uint8_t RsGenExchange::createGroup(RsNxsGrp *grp, RsTlvSecurityKeySet& privateKe
     }else{
     	return CREATE_FAIL;
     }
-
-
 }
 
 int RsGenExchange::createGroupSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinaryData& grpData,
@@ -871,31 +869,34 @@ void RsGenExchange::receiveChanges(std::vector<RsGxsNotify*>& changes)
 void RsGenExchange::msgsChanged(std::map<RsGxsGroupId,
                              std::vector<RsGxsMessageId> >& msgs)
 {
-	RsStackMutex stack(mGenMtx);
-
-	while(!mMsgChange.empty())
+	if(mGenMtx.trylock())
 	{
-		RsGxsMsgChange* mc = mMsgChange.back();
-		msgs = mc->msgChangeMap;
-		mMsgChange.pop_back();
-		delete mc;
+		while(!mMsgChange.empty())
+		{
+			RsGxsMsgChange* mc = mMsgChange.back();
+			msgs = mc->msgChangeMap;
+			mMsgChange.pop_back();
+			delete mc;
+		}
 	}
 }
 
 void RsGenExchange::groupsChanged(std::list<RsGxsGroupId>& grpIds)
 {
-	RsStackMutex stack(mGenMtx);
 
-	while(!mGroupChange.empty())
+	if(mGenMtx.trylock())
 	{
-		RsGxsGroupChange* gc = mGroupChange.back();
-		std::list<RsGxsGroupId>& gList = gc->mGrpIdList;
-		std::list<RsGxsGroupId>::iterator lit = gList.begin();
-		for(; lit != gList.end(); lit++)
-				grpIds.push_back(*lit);
+		while(!mGroupChange.empty())
+		{
+			RsGxsGroupChange* gc = mGroupChange.back();
+			std::list<RsGxsGroupId>& gList = gc->mGrpIdList;
+			std::list<RsGxsGroupId>::iterator lit = gList.begin();
+			for(; lit != gList.end(); lit++)
+					grpIds.push_back(*lit);
 
-		mGroupChange.pop_back();
-		delete gc;
+			mGroupChange.pop_back();
+			delete gc;
+		}
 	}
 }
 
@@ -911,23 +912,34 @@ bool RsGenExchange::subscribeToGroup(uint32_t& token, const RsGxsGroupId& grpId,
 bool RsGenExchange::updated(bool willCallGrpChanged, bool willCallMsgChanged)
 {
 	bool changed = false;
-	{
-		RsStackMutex stack(mGenMtx);
 
+	if(mGenMtx.trylock())
+	{
 		changed =  (!mGroupChange.empty() || !mMsgChange.empty());
+
+		if(!willCallGrpChanged)
+		{
+			while(!mGroupChange.empty())
+			{
+				RsGxsGroupChange* gc = mGroupChange.back();
+				mGroupChange.pop_back();
+				delete gc;
+			}
+		}
+
+		if(!willCallMsgChanged)
+		{
+			while(!mMsgChange.empty())
+			{
+				RsGxsMsgChange* mc = mMsgChange.back();
+				mMsgChange.pop_back();
+				delete mc;
+			}
+		}
+
+		mGenMtx.unlock();
 	}
 
-	if(!willCallGrpChanged)
-	{
-		std::list<RsGxsGroupId> grpIds;
-		groupsChanged(grpIds);
-	}
-
-	if(!willCallMsgChanged)
-	{
-		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgs;
-		msgsChanged(msgs);
-	}
 	return changed;
 }
 
@@ -1232,7 +1244,7 @@ void RsGenExchange::notifyNewGroups(std::vector<RsNxsGrp *> &groups)
     	// TODO: move this to nxs layer to save bandwidth
     	if(received == mReceivedGrps.end())
     	{
-    		GxsPendingSignItem<RsNxsGrp*, RsGxsGroupId> gpsi(grp, grp->grpId);
+    		GxsPendingItem<RsNxsGrp*, RsGxsGroupId> gpsi(grp, grp->grpId);
     		mReceivedGrps.push_back(gpsi);
     	}
     	else
@@ -1272,7 +1284,8 @@ void RsGenExchange::publishGroup(uint32_t& token, RsGxsGrpItem *grpItem)
 
     RsStackMutex stack(mGenMtx);
     token = mDataAccess->generatePublicToken();
-    mGrpsToPublish.insert(std::make_pair(token, grpItem));
+    GxsGrpPendingSign ggps(grpItem, token);
+    mGrpsToPublish.push_back(ggps);
 
 #ifdef GEN_EXCH_DEBUG	
     std::cerr << "RsGenExchange::publishGroup() token: " << token;
@@ -1507,13 +1520,13 @@ void RsGenExchange::publishMsgs()
 	RsStackMutex stack(mGenMtx);
 
 	// stick back msgs pending signature
-	typedef std::map<uint32_t, GxsPendingSignItem<RsGxsMsgItem*, uint32_t> > PendSignMap;
+	typedef std::map<uint32_t, GxsPendingItem<RsGxsMsgItem*, uint32_t> > PendSignMap;
 
 	PendSignMap::iterator sign_it = mMsgPendingSign.begin();
 
 	for(; sign_it != mMsgPendingSign.end(); sign_it++)
 	{
-		GxsPendingSignItem<RsGxsMsgItem*, uint32_t>& item = sign_it->second;
+		GxsPendingItem<RsGxsMsgItem*, uint32_t>& item = sign_it->second;
 		mMsgsToPublish.insert(std::make_pair(sign_it->first, item.mItem));
 	}
 
@@ -1570,7 +1583,7 @@ void RsGenExchange::publishMsgs()
 				// sign attempt
 				if(pit == mMsgPendingSign.end())
 				{
-					GxsPendingSignItem<RsGxsMsgItem*, uint32_t> gsi(msgItem, token);
+					GxsPendingItem<RsGxsMsgItem*, uint32_t> gsi(msgItem, token);
 					mMsgPendingSign.insert(std::make_pair(token, gsi));
 				}
 				else
@@ -1672,7 +1685,8 @@ void RsGenExchange::publishMsgs()
 	mMsgsToPublish.clear();
 }
 
-RsGenExchange::ServiceCreate_Return RsGenExchange::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet)
+RsGenExchange::ServiceCreate_Return RsGenExchange::service_CreateGroup(RsGxsGrpItem* /* grpItem */,
+		RsTlvSecurityKeySet& /* keySet */)
 {
 #ifdef GEN_EXCH_DEBUG
 	std::cerr << "RsGenExchange::service_CreateGroup(): Does nothing"
@@ -1682,49 +1696,56 @@ RsGenExchange::ServiceCreate_Return RsGenExchange::service_CreateGroup(RsGxsGrpI
 }
 
 
-#define GEN_EXCH_GRP_CHUNK 30
+#define PENDING_SIGN_TIMEOUT 10 //  5 seconds
 
 void RsGenExchange::publishGrps()
 {
     RsStackMutex stack(mGenMtx);
+    NxsGrpSignPendVect::iterator vit = mGrpsToPublish.begin();
 
-    NxsGrpSignPendVect::iterator pend_it = mGrpPendingSign.begin();
+    typedef std::pair<bool, RsGxsGroupId> GrpNote;
+    std::map<uint32_t, GrpNote> toNotify;
 
-    for(; pend_it != mGrpPendingSign.end();)
+    while( vit != mGrpsToPublish.end() )
     {
-    	GxsPendingSignItem<RsGxsGrpItem*, uint32_t>& gpsi = *pend_it;
+    	GxsGrpPendingSign& ggps = *vit;
 
-    	if(gpsi.mAttempts == SIGN_MAX_ATTEMPTS)
+    	/* do intial checks to see if this entry has expired */
+    	time_t now = time(NULL) ;
+    	uint32_t token = ggps.mToken;
+
+
+    	if(now > (ggps.mStartTS + PENDING_SIGN_TIMEOUT) )
     	{
-    		pend_it = mGrpPendingSign.erase(pend_it);
+    		// timed out
+    		toNotify.insert(std::make_pair(
+    				token, GrpNote(false, "")));
+    		delete ggps.mItem;
+    		vit = mGrpsToPublish.erase(vit);
+
+    		continue;
     	}
-    	else
-    	{
-    		gpsi.mAttempts++;
-    		mGrpsToPublish.insert(std::make_pair(gpsi.mId, gpsi.mItem));
-    		pend_it++;
-    	}
-    }
-    std::map<uint32_t, RsGxsGrpItem*>::iterator mit = mGrpsToPublish.begin();
-    std::vector<uint32_t> toRemove;
-    int i = 0;
-    for(; mit != mGrpsToPublish.end(); mit++)
-    {
 
-        if(i > GEN_EXCH_GRP_CHUNK-1) break;
-
-        uint32_t token = mit->first;
-        toRemove.push_back(token);
-        i++;
-
+    	RsGxsGroupId grpId;
         RsNxsGrp* grp = new RsNxsGrp(mServType);
-        RsGxsGrpItem* grpItem = mit->second;
+        RsGxsGrpItem* grpItem = ggps.mItem;
 
-        RsTlvSecurityKeySet privatekeySet, publicKeySet, tempKeySet;
-        generateGroupKeys(privatekeySet, publicKeySet,
-                          !(grpItem->meta.mGroupFlags & GXS_SERV::FLAG_PRIVACY_PUBLIC));
+        RsTlvSecurityKeySet privatekeySet, publicKeySet;
 
-        // find private admin key
+        if(!(ggps.mHaveKeys))
+        {
+        	generateGroupKeys(privatekeySet, publicKeySet, true);
+        	ggps.mHaveKeys = true;
+        	ggps.mPrivateKeys = privatekeySet;
+        	ggps.mPublicKeys = publicKeySet;
+        }
+        else
+        {
+        	privatekeySet = ggps.mPrivateKeys;
+        	publicKeySet = ggps.mPublicKeys;
+        }
+
+		// find private admin key
         RsTlvSecurityKey privAdminKey;
         std::map<std::string, RsTlvSecurityKey>::iterator mit_keys = privatekeySet.keys.begin();
 
@@ -1747,20 +1768,30 @@ void RsGenExchange::publishGrps()
 		    // get group id from private admin key id
 			grpItem->meta.mGroupId = grp->grpId = privAdminKey.keyId;
 
+			// what!? this will remove the private keys!
 			privatekeySet.keys.insert(publicKeySet.keys.begin(),
 					publicKeySet.keys.end());
 
 			ServiceCreate_Return ret = service_CreateGroup(grpItem, privatekeySet);
 
-			uint32_t size = mSerialiser->size(grpItem);
-			char *gData = new char[size];
 
-			bool serialOk = mSerialiser->serialise(grpItem, gData, &size);
-			grp->grp.setBinData(gData, size);
+			bool serialOk = false, servCreateOk;
 
-			delete[] gData;
+			if(ret == SERVICE_CREATE_SUCCESS)
+			{
+				uint32_t size = mSerialiser->size(grpItem);
+				char *gData = new char[size];
+				serialOk = mSerialiser->serialise(grpItem, gData, &size);
+				grp->grp.setBinData(gData, size);
+				delete[] gData;
+				servCreateOk = true;
 
-			if(serialOk)
+			}else
+			{
+				servCreateOk = false;
+			}
+
+			if(serialOk && servCreateOk)
 			{
 				grp->metaData = new RsGxsGrpMetaData();
 				grpItem->meta.mPublishTs = time(NULL);
@@ -1783,23 +1814,18 @@ void RsGenExchange::publishGrps()
 
 					if(mDataStore->validSize(grp) && serialOk)
 					{
-						RsGxsGroupId grpId = grp->grpId;
+						grpId = grp->grpId;
 						mDataAccess->addGroupData(grp);
-
-
-
-						std::cerr << "RsGenExchange::publishGrps() ok -> pushing to notifies" << std::endl;
-
-						// add to published to allow acknowledgement
-						mGrpNotify.insert(std::make_pair(mit->first, grpId));
-						mDataAccess->updatePublicRequestStatus(mit->first, RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE);
-
 					}
 					else
 					{
 						create = CREATE_FAIL;
 					}
 				}
+			}
+			else if(ret == SERVICE_CREATE_FAIL_TRY_LATER)
+			{
+				create = CREATE_FAIL_TRY_LATER;
 			}
         }
         else
@@ -1815,56 +1841,49 @@ void RsGenExchange::publishGrps()
 #ifdef GEN_EXCH_DEBUG
         	std::cerr << "RsGenExchange::publishGrps() failed to publish grp " << std::endl;
 #endif
-
             delete grp;
             delete grpItem;
-
-            // add to published to allow acknowledgement, grpid is empty as grp creation failed
-            mGrpNotify.insert(std::make_pair(token, RsGxsGroupId("")));
-            mDataAccess->updatePublicRequestStatus(token, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
+            vit = mGrpsToPublish.erase(vit);
+            toNotify.insert(std::make_pair(
+            		token, GrpNote(false, grpId)));
 
         }
         else if(create == CREATE_FAIL_TRY_LATER)
         {
-        	delete grp;
-
-        	NxsGrpSignPendVect::iterator vit = std::find(mGrpPendingSign.begin(),
-        			mGrpPendingSign.end(), token);
-
-        	if(vit == mGrpPendingSign.end())
-        	{
-        		GxsPendingSignItem<RsGxsGrpItem*, uint32_t> gpsi(grpItem, token);
-				mGrpPendingSign.push_back(gpsi);
-        	}else
-        	{
-        		if(vit->mAttempts == SIGN_MAX_ATTEMPTS)
-        		{
-        			delete vit->mItem;
-        		}
-        	}
+#ifdef GEN_EXCH_DEBUG
+        	std::cerr << "RsGenExchange::publishGrps() failed grp, trying again " << std::endl;
+#endif
+        	ggps.mLastAttemptTS = time(NULL);
+        	vit++;
         }
         else if(create == CREATE_SUCCESS)
         {
         	delete grpItem;
-        }
+        	vit = mGrpsToPublish.erase(vit);
 
-        if((create == CREATE_SUCCESS) || (create == CREATE_FAIL))
-        {
-        	NxsGrpSignPendVect::iterator vit = std::find(mGrpPendingSign.begin(),
-        			mGrpPendingSign.end(), token);
+#ifdef GEN_EXCH_DEBUG
+			std::cerr << "RsGenExchange::publishGrps() ok -> pushing to notifies"
+					  << std::endl;
+#endif
 
-        	// set to max attempts so entry removed in next publish pass
-        	if(vit != mGrpPendingSign.end())
-        	{
-        		vit->mAttempts = SIGN_MAX_ATTEMPTS;
-        	}
+			// add to published to allow acknowledgement
+			toNotify.insert(std::make_pair(token,
+					GrpNote(true,grpId)));
         }
     }
 
-    // clear grp list as we're done publishing them and entries
-    // are invalid
-    for(std::vector<uint32_t>::size_type i = 0; i < toRemove.size(); i++)
-       mGrpsToPublish.erase(toRemove[i]);
+    std::map<uint32_t, GrpNote>::iterator mit = toNotify.begin();
+
+    for(; mit != toNotify.end(); mit++)
+    {
+    	GrpNote& note = mit->second;
+    	uint8_t status = note.first ? RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE
+    			: RsTokenService::GXS_REQUEST_V2_STATUS_FAILED;
+
+    	mGrpNotify.insert(std::make_pair(mit->first, note.second));
+		mDataAccess->updatePublicRequestStatus(mit->first, status);
+    }
+
 }
 
 
@@ -1997,7 +2016,7 @@ void RsGenExchange::processRecvdMessages()
 
     for(; pend_it != mMsgPendingValidate.end();)
     {
-    	GxsPendingSignItem<RsNxsMsg*, RsGxsGrpMsgIdPair>& gpsi = *pend_it;
+    	GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair>& gpsi = *pend_it;
 
     	if(gpsi.mAttempts == VALIDATE_MAX_ATTEMPTS)
     	{
@@ -2093,7 +2112,7 @@ void RsGenExchange::processRecvdMessages()
 
         	if(vit == mMsgPendingValidate.end())
         	{
-        		GxsPendingSignItem<RsNxsMsg*, RsGxsGrpMsgIdPair> item(msg, id);
+        		GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair> item(msg, id);
         		mMsgPendingValidate.push_back(item);
         	}else
         	{
@@ -2128,7 +2147,7 @@ void RsGenExchange::processRecvdGroups()
 
     while( vit != mReceivedGrps.end())
     {
-    	GxsPendingSignItem<RsNxsGrp*, RsGxsGroupId>& gpsi = *vit;
+    	GxsPendingItem<RsNxsGrp*, RsGxsGroupId>& gpsi = *vit;
         RsNxsGrp* grp = gpsi.mItem;
         RsGxsGrpMetaData* meta = new RsGxsGrpMetaData();
         bool deserialOk = meta->deserialise(grp->meta.bin_data, grp->meta.bin_len);
