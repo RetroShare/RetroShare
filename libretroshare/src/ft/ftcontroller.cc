@@ -65,7 +65,6 @@
  * #define CONTROL_DEBUG 1
  * #define DEBUG_DWLQUEUE 1
  *****/
-#define CONTROL_DEBUG 1
 
 static const int32_t SAVE_TRANSFERS_DELAY 			= 61	; // save transfer progress every 61 seconds.
 static const int32_t INACTIVE_CHUNKS_CHECK_DELAY 	= 240	; // time after which an inactive chunk is released
