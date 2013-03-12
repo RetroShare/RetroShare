@@ -48,7 +48,7 @@ ChanNewItem::ChanNewItem(FeedHolder *parent, uint32_t feedId, const std::string 
   /* specific ones */
   connect( subscribeButton, SIGNAL( clicked( void ) ), this, SLOT( subscribeChannel ( void ) ) );
 
-  small();
+  expandFrame->hide();
   updateItemStatic();
   updateItem();
 }
@@ -130,12 +130,6 @@ void ChanNewItem::updateItem()
 	std::cerr << std::endl;
 #endif
 
-}
-
-
-void ChanNewItem::small()
-{
-	expandFrame->hide();
 }
 
 void ChanNewItem::toggle()

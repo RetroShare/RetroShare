@@ -49,7 +49,7 @@ ForumNewItem::ForumNewItem(FeedHolder *parent, uint32_t feedId, const std::strin
   // To Cheeky to post on a brand new forum....
   connect( postButton, SIGNAL( clicked( void ) ), this, SLOT( postToForum ( void ) ) );
 
-  small();
+  expandFrame->hide();
   updateItemStatic();
   updateItem();
 }
@@ -121,11 +121,6 @@ void ForumNewItem::updateItem()
 	std::cerr << std::endl;
 #endif
 
-}
-
-void ForumNewItem::small()
-{
-	expandFrame->hide();
 }
 
 void ForumNewItem::toggle()

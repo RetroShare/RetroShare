@@ -36,7 +36,6 @@ public:
 	ChanNewItem(FeedHolder *parent, uint32_t feedId, const std::string &chanId, bool isHome, bool isNew);
 
 	void updateItemStatic();
-	void small();
 
 private slots:
 	/* default stuff */
