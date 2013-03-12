@@ -547,52 +547,52 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="227"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="228"/>
         <source>The messages will be added to the forum</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="241"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="243"/>
         <source>No name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="302"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="304"/>
         <source>Mark as read</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="305"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="307"/>
         <source>Mark as unread</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="308"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="310"/>
         <source>Mark all as read</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="313"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="315"/>
         <source>Copy link</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="316"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="318"/>
         <source>Remove</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="321"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="323"/>
         <source>Retransform</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="695"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="697"/>
         <source>Hide</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="699"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="701"/>
         <source>Expand</source>
         <translation type="unfinished"></translation>
     </message>

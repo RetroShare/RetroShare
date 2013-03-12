@@ -449,6 +449,10 @@ p, li { white-space: pre-wrap; }
  But Remember: Any data here *WILL* be lost when we upgrade the protocols.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>GxsChannels</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AttachFileItem</name>
@@ -1044,6 +1048,13 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Private - (Private Publish Key required to view Messages)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ChannelDialog</name>
+    <message>
+        <source>GxsChannels</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2936,14 +2947,6 @@ Do you want to save your changes?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Channel security policy prevents you from posting files that you don&apos;t have. If you have these files, you need to share them before, or attach them explicitly:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You can only post files that you do have</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Drop file error.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2983,6 +2986,14 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Attachments:&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Use Drag and Drop / Add Files button, to Hash new files.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Copy/Paste RetroShare links from your shares&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You are about to add files you&apos;re not actually sharing. Do you still want this to happen?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>About to post un-owned files to a channel.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3148,6 +3159,115 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CreateGxsChannelMsg</name>
+    <message>
+        <source>New Channel Post</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Channel Post</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Channel Post to:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Attachments:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Use Drag and Drop / Add Files button, to Hash new files.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Copy/Paste RetroShare links from your shares&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add File to Attach</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Channel Thumbnail</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subject :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Attachments</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Allow channels to get frame for message thumbnail from movie media attachments or not</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto Thumbnail</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drag and Drop Files from Search Results</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New GxsChannel Post</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste RetroShare Links</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste RetroShare Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GxsChannel security policy prevents you from posting files that you don&apos;t have. If you have these files, you need to share them before, or attach them explicitly:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can only post files that you do have</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drop file error.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory can&apos;t be dropped, only files are accepted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File not found or file name not accepted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Extra File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File already Added and Hashed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please add a Subject</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load thumbnail picture</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5762,6 +5882,257 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>GxsChannelDialog</name>
+    <message>
+        <source>Channels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>refresh</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Display</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create Channel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Post to Channel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set all as read</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Auto-Download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>My Channels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subscribed Channels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Popular Channels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other Channels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subscribe to Channel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unsubscribe to Channel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disable Auto-Download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Channel Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restore Publish Rights for Channel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Channel Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Share Channel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy RetroShare Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Publish rights restored.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Publish rights have been restored for this channel.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Publish not restored.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Publish rights can&apos;t be restored for this channel.&lt;br/&gt;You&apos;re not the creator of this channel.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Channel Selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GxsChannelGroupDialog</name>
+    <message>
+        <source>Create New Channel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Channel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Channel</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GxsChannelPostItem</name>
+    <message>
+        <source>Toggle Message Read Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Play</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy RetroShare Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unsubscribe From Channel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set as read and remove item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Channel Feed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Warning! You have less than %1 hours and %2 minute before this file is deleted Consider saving it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GxsCommentContainer</name>
+    <message>
+        <source>Comment Container</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Comments</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GxsCommentDialog</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>/\</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>score</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>\/</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Title this is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title dont you think? yes it is and should wrap around I hope</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>From</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Site</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Top</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Author</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Points</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>GxsCommentTreeWidget</name>
     <message>
         <source>Reply to Comment</source>
@@ -5773,6 +6144,21 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Anonymous</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GxsCreateCommentDialog</name>
+    <message>
+        <source>Make Comment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Comment&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6743,10 +7129,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Transfers</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Messages</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6912,6 +7294,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Chat Lobbies</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File sharing</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8964,88 +9350,6 @@ malicious behavior of crafted plugins.</source>
     </message>
 </context>
 <context>
-    <name>PostedComments</name>
-    <message>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hot</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Top</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Refresh</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>/\</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>score</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>\/</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Title this is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title dont you think? yes it is and should wrap around I hope</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>From</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Site</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Comment</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Author</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Points</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>PostedCreateCommentDialog</name>
-    <message>
-        <source>Make Comment</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Comment&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>PostedCreatePostDialog</name>
     <message>
         <source>Create Post</source>
@@ -9075,15 +9379,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PostedDialog</name>
     <message>
-        <source>Posted Links</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>List</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Comments</source>
+        <source>Posted</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9099,6 +9395,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edit Posted Topic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Topic Admins</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select Topic Admins</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
