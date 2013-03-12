@@ -85,7 +85,7 @@
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="225"/>
         <source>empty</source>
-        <translation type="unfinished"/>
+        <translation>vazio</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="240"/>
@@ -125,7 +125,7 @@
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="339"/>
         <source>Echo Cancellation Processing</source>
-        <translation type="unfinished"/>
+        <translation>Processo Cancelamento de Echo</translation>
     </message>
 </context>
 <context>
@@ -133,37 +133,37 @@
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="98"/>
         <source>Continuous</source>
-        <translation type="unfinished"/>
+        <translation>Contínuo</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="99"/>
         <source>Voice Activity</source>
-        <translation type="unfinished"/>
+        <translation>Atividade de Voz</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="100"/>
         <source>Push To Talk</source>
-        <translation type="unfinished"/>
+        <translation>Push To Talk</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="202"/>
         <source>%1 s</source>
-        <translation type="unfinished"/>
+        <translation>%1 s</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="210"/>
         <source>Off</source>
-        <translation type="unfinished"/>
+        <translation>Off</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="213"/>
         <source>-%1 dB</source>
-        <translation type="unfinished"/>
+        <translation>-%1 dB</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.h" line="72"/>
         <source>VOIP</source>
-        <translation type="unfinished"/>
+        <translation>VOIP</translation>
     </message>
 </context>
 <context>
@@ -171,12 +171,12 @@
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="15"/>
         <source>Mute yourself</source>
-        <translation type="unfinished"/>
+        <translation>Deixar Mudo</translation>
     </message>
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="35"/>
         <source>Deafen yourself</source>
-        <translation type="unfinished"/>
+        <translation>Deixar Surdo</translation>
     </message>
 </context>
 <context>
@@ -396,12 +396,12 @@
     <message>
         <location filename="../gui/AudioWizard.ui" line="86"/>
         <source>Talk normally, and adjust the slider below so that the bar moves into green when you talk, and doesn&apos;t go into the orange zone.</source>
-        <translation type="unfinished"/>
+        <translation>Fale normalmente, e ajuste at</translation>
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="130"/>
         <source>Stop looping echo for this wizard</source>
-        <translation type="unfinished"/>
+        <translation>Para looping echo para este wizard</translation>
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="150"/>
@@ -469,49 +469,49 @@
     <message>
         <location filename="../VOIPPlugin.cpp" line="93"/>
         <source>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt; * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="../VOIPPlugin.cpp" line="94"/>
         <source>&lt;br/&gt;The VOIP plugin adds VOIP to the private chat window of RetroShare. to use it, proceed as follows:&lt;UL&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;br/&gt;O VOIP plugin adiciona  VOIP no chat privado do RetroShare. Para usar, siga as instruções:&lt;UL&gt;</translation>
     </message>
     <message>
         <location filename="../VOIPPlugin.cpp" line="95"/>
         <source>&lt;li&gt; setup microphone levels using the configuration panel&lt;/li&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;li&gt; configure o volume do microfone usando o painel de configuração&lt;/li&gt;</translation>
     </message>
     <message>
         <location filename="../VOIPPlugin.cpp" line="96"/>
         <source>&lt;li&gt; check your microphone by looking at the VU-metters&lt;/li&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;li&gt; check o seu microfone usando VU-metters&lt;/li&gt;</translation>
     </message>
     <message>
         <location filename="../VOIPPlugin.cpp" line="97"/>
         <source>&lt;li&gt; in the private chat, enable sound input/output by clicking on the two VOIP icons&lt;/li&gt;&lt;/ul&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;li&gt; no chat privado, habilite o som entrada/saída clickando nos dois ícones VOIP&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
         <location filename="../VOIPPlugin.cpp" line="98"/>
         <source>Your friend needs to run the plugin to talk/listen to you, or course.</source>
-        <translation type="unfinished"/>
+        <translation>Seu amigo precisa usar o plugin para escutar/falar com você, é claro.</translation>
     </message>
     <message>
         <location filename="../VOIPPlugin.cpp" line="99"/>
         <source>&lt;br/&gt;&lt;br/&gt;This is an experimental feature. Don&apos;t hesitate to send comments and suggestion to the RS dev team.</source>
-        <translation type="unfinished"/>
+        <translation>&lt;br/&gt;&lt;br/&gt;This is an experimental feature. Don&apos;t hesitate to send comments and suggestion to the RS dev team.</translation>
     </message>
     <message>
         <location filename="../VOIPPlugin.cpp" line="117"/>
         <source>RTT Statistics</source>
-        <translation type="unfinished"/>
+        <translation>Estatísticas RTT</translation>
     </message>
     <message>
         <location filename="../gui/VoipStatistics.cpp" line="145"/>
         <location filename="../gui/VoipStatistics.cpp" line="147"/>
         <location filename="../gui/VoipStatistics.cpp" line="149"/>
         <source>secs</source>
-        <translation type="unfinished"/>
+        <translation>secs</translation>
     </message>
     <message>
         <location filename="../gui/VoipStatistics.cpp" line="151"/>
@@ -526,7 +526,7 @@
     <message>
         <location filename="../gui/VoipStatistics.cpp" line="361"/>
         <source>Round Trip Time:</source>
-        <translation type="unfinished"/>
+        <translation>Round Trip Time:</translation>
     </message>
 </context>
 <context>
@@ -534,7 +534,7 @@
     <message>
         <location filename="../VOIPPlugin.cpp" line="153"/>
         <source>This plugin provides voice communication between friends in RetroShare.</source>
-        <translation type="unfinished"/>
+        <translation>Este plugin proporciona comunicação de voz entre amigos no RetroShare.</translation>
     </message>
 </context>
 <context>
@@ -542,7 +542,7 @@
     <message>
         <location filename="../VOIPPlugin.cpp" line="158"/>
         <source>VOIP</source>
-        <translation type="unfinished"/>
+        <translation>VOIP</translation>
     </message>
 </context>
 <context>
@@ -550,7 +550,7 @@
     <message>
         <location filename="../gui/VoipStatistics.ui" line="14"/>
         <source>VoipTest Statistics</source>
-        <translation type="unfinished"/>
+        <translation>Estatísticas VoipTest</translation>
     </message>
 </context>
 </TS>

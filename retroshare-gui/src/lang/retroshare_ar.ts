@@ -442,6 +442,15 @@ p, li { white-space: pre-wrap; }
         <source>GxsForums</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source> Warning: The services here are experimental. Please help us test them. 
+ But Remember: Any data here *WILL* be lost when we upgrade the protocols.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>GxsChannels</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>AttachFileItem</name>
@@ -1041,6 +1050,13 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>ChannelDialog</name>
+    <message>
+        <source>GxsChannels</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>ChannelFeed</name>
     <message>
         <source>Display</source>
@@ -1217,11 +1233,15 @@ Please choose one of it to chat with.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Double click to mute/unmute participant</source>
+        <source>Invite friends to this lobby</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Right click to mute/unmute participants</source>
+        <source>Leave this lobby (Unsubscribe)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Right click to mute/unmute participants&lt;br/&gt;Double click to address this person</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -1284,6 +1304,50 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Chat lobbies</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Selected lobby info</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Lobby name: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Lobby Id: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Topic: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Type: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Private</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Public</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peers: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You&apos;re not subscribed to this lobby; Double click-it to enter and chat.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No lobby selected. 
+
+Select lobbies at left to show details.
+
+Double click lobbies to enter and chat.</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -2881,14 +2945,6 @@ Do you want to save your changes?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Channel security policy prevents you from posting files that you don&apos;t have. If you have these files, you need to share them before, or attach them explicitly:</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>You can only post files that you do have</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Drop file error.</source>
         <translation type="unfinished"/>
     </message>
@@ -2928,6 +2984,14 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;Attachments:&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt; Use Drag and Drop / Add Files button, to Hash new files.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Copy/Paste RetroShare links from your shares&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You are about to add files you&apos;re not actually sharing. Do you still want this to happen?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>About to post un-owned files to a channel.</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -3097,6 +3161,115 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>CreateGxsChannelMsg</name>
+    <message>
+        <source>New Channel Post</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Channel Post</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Channel Post to:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;Attachments:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt; Use Drag and Drop / Add Files button, to Hash new files.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Copy/Paste RetroShare links from your shares&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add File to Attach</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add Channel Thumbnail</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Subject :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Attachments</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Allow channels to get frame for message thumbnail from movie media attachments or not</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Auto Thumbnail</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Drag and Drop Files from Search Results</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>New GxsChannel Post</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Paste RetroShare Links</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Paste RetroShare Link</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>GxsChannel security policy prevents you from posting files that you don&apos;t have. If you have these files, you need to share them before, or attach them explicitly:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can only post files that you do have</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Drop file error.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Directory can&apos;t be dropped, only files are accepted.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>File not found or file name not accepted.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add Extra File</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>File already Added and Hashed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please add a Subject</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Load thumbnail picture</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>CreateGxsForumMsg</name>
     <message>
         <source>Post Forum Message</source>
@@ -3162,6 +3335,14 @@ p, li { white-space: pre-wrap; }
         <source>Paste my certificate link</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>No Forum</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>CreateLobbyDialog</name>
@@ -3221,23 +3402,11 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CryptoPage</name>
     <message>
-        <source>Public Key</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Copy Key</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Save Key</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <source>Include signatures</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Copy RetroShare link to clipboard</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -3269,10 +3438,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Copy my Key to Clipboard</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Save Key into a file</source>
         <translation type="unfinished"/>
     </message>
@@ -3282,6 +3447,58 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Your certificate could not be parsed correctly. Please contact the developers.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Profile Manager</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Public Information</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Name:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Location:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Location ID:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Identity ID:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Number of Friends:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Software Version:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Online since:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Other Information</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Certificate</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Copy link to clipboard</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -3342,79 +3559,11 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>File Name:</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Hash:</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Size:</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Status:</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Priority:</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Type:</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Transfer</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Sources:</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Datarate:</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Completed:</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Chunk size:</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Number of Chunks</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Chunks:</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Remaining:</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Date</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Download time:</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Comments</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <source>retroshare link(s)</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Copy</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -3426,11 +3575,27 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Not Rated</source>
+        <source>Done</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>No Comments</source>
+        <source>Active</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Outstanding</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Needs checking</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>retroshare link</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Copy link to clipboard</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -3936,6 +4101,10 @@ p, li { white-space: pre-wrap; }
         <source>Transferred</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>File name</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>FilesDefs</name>
@@ -4003,11 +4172,11 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Share Type</source>
+        <source>Directory</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Directory</source>
+        <source>Share Flags</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -4168,6 +4337,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Forum</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>New forum</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Open all forums in new tab</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -4706,6 +4883,17 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>FriendSelectionDialog</name>
+    <message>
+        <source>Choose some friends</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Contacts:</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>FriendSelectionWidget</name>
     <message>
         <source>Search for Name:</source>
@@ -4713,6 +4901,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Search Friends</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Name</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -4724,10 +4916,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Display</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Group Chat</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -4807,18 +4995,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Chat lobbies</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Profile</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>News Feed</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Welcome to RetroShare&apos;s group chat.</source>
         <translation type="unfinished"/>
     </message>
@@ -4880,6 +5056,22 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edit your status message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Service permissions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Broadcast</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Local network</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Known people</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -5298,6 +5490,10 @@ Fill in your PGP password when asked, to sign your new key.</source>
         <source>Register retroshare:// as URL protocol (Restart required)</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Launch startup wizard</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>GetStartedDialog</name>
@@ -5684,6 +5880,257 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>GxsChannelDialog</name>
+    <message>
+        <source>Channels</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>refresh</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Display</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create Channel</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Post to Channel</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Set all as read</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enable Auto-Download</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>My Channels</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Subscribed Channels</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Popular Channels</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Other Channels</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Subscribe to Channel</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unsubscribe to Channel</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Disable Auto-Download</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Channel Details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Restore Publish Rights for Channel</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit Channel Details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Share Channel</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Copy RetroShare Link</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Publish rights restored.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Publish rights have been restored for this channel.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Publish not restored.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Publish rights can&apos;t be restored for this channel.&lt;br/&gt;You&apos;re not the creator of this channel.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No Channel Selected</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsChannelGroupDialog</name>
+    <message>
+        <source>Create New Channel</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Channel</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit Channel</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsChannelPostItem</name>
+    <message>
+        <source>Toggle Message Read Status</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Play</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Copy RetroShare Link</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unsubscribe From Channel</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Set as read and remove item</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Channel Feed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Files</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Warning! You have less than %1 hours and %2 minute before this file is deleted Consider saving it.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsCommentContainer</name>
+    <message>
+        <source>Comment Container</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Comments</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsCommentDialog</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>/\</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>score</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>\/</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Title this is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title dont you think? yes it is and should wrap around I hope</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Date</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>From</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Site</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Hot</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Top</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Author</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Points</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>GxsCommentTreeWidget</name>
     <message>
         <source>Reply to Comment</source>
@@ -5695,6 +6142,21 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Anonymous</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsCreateCommentDialog</name>
+    <message>
+        <source>Make Comment</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Comment&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -5883,6 +6345,10 @@ p, li { white-space: pre-wrap; }
         <source>Search Content</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>No name</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>GxsForumsDialog</name>
@@ -5986,6 +6452,10 @@ p, li { white-space: pre-wrap; }
         <source>On %1, %2 wrote:</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Open in new tab</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>GxsForumsFillThread</name>
@@ -6014,10 +6484,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add Icon</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Key recipients can publish to restricted-type Wiki Group, and can view and publish  for private-type channels</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -6133,11 +6599,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Add Wiki Moderators</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Select Wiki Moderators</source>
+        <source>Key recipients can publish to restricted-type group and can view and publish for private-type channels</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -6313,6 +6775,14 @@ p, li { white-space: pre-wrap; }
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;About RetroShare&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare is an Open Source cross-platform, &lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;private and secure decentralized commmunication platform.	&lt;/span&gt;&lt;/p&gt;
@@ -6321,11 +6791,12 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare provides file sharing, chat, messages and channels&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Useful external links to more information:&lt;/span&gt;&lt;/p&gt;
-&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Webpage&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/wiki/index.php/Main_Page&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Wiki&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/forum/&quot;&gt;RetroShare's Forum&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://sourceforge.net/projects/retroshare/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Project Page&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://www.lunamutt.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Lunamutt Homepage.&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Webpage&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Retroshare Wiki&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;RetroShare's Forum&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Retroshare Project Page&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;RetroShare Team Blog&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;RetroShare Dev Twiter&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -6338,21 +6809,15 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;French&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;:Temet&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jarek&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Serbian&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;: Kunalagon Umuhanik &amp;lt;kunalagon@gmail.com&amp;gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Spanish:  &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New,courier';&quot;&gt;Manuel Montero &amp;lt;Senpai&amp;gt; &lt;/span&gt;&lt;a href=&quot;http://pagina.de/senpai&amp;amp;gt&quot;&gt;&lt;span style=&quot; font-family:'Courier New,courier'; text-decoration: underline; color:#0000ff;&quot;&gt;http://pagina.de/senpai&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Swedish:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; dnylander&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Website Translators:&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Swedish: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Daniel Wester&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;wester@speedmail.se&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;German: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Keller&lt;/span&gt;&lt;span style=&quot;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&lt;span style=&quot;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;&lt;span style=&quot;&quot;&gt;Maciej Mrug&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;About RetroShare&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;German: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Keller&lt;/span&gt; &amp;lt;&lt;span style=&quot; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&amp;gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;Maciej Mrug&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -6577,6 +7042,45 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>LocalSharedFilesDialog</name>
+    <message>
+        <source>Create collection file</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit Share Permissions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Checking...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Check files</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit Shared Folder</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Recommend in a message to</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Set command for opening this file</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>MainWindow</source>
@@ -6619,23 +7123,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Network</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Friends</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Search</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Transfers</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Files</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -6796,6 +7284,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare %1 a secure decentralized communication platform</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>News feed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat Lobbies</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>File sharing</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -7914,10 +8414,6 @@ Do you want to save message ?</source>
 <context>
     <name>NetworkDialog</name>
     <message>
-        <source>Network</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Name</source>
         <translation type="unfinished"/>
     </message>
@@ -7939,22 +8435,6 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Peer ID</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Network Status</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Local network</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>UPnP</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>External ip address finder</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -8003,10 +8483,6 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Create a new Profile</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Network View</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -8067,10 +8543,6 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Display</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Search Name</source>
         <translation type="unfinished"/>
     </message>
@@ -8087,7 +8559,11 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Show keys that are not validated by the PGP web of trust</source>
+        <source>Filter:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show all accessible keys</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -8567,6 +9043,14 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Photographer :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Author :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>PhotoShare</name>
@@ -8864,88 +9348,6 @@ malicious behavior of crafted plugins.</source>
     </message>
 </context>
 <context>
-    <name>PostedComments</name>
-    <message>
-        <source>Form</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Hot</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>New</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Top</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Refresh</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>1</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>/\</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>score</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>\/</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Title this is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title dont you think? yes it is and should wrap around I hope</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Date</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>From</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Site</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Comment</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Author</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Points</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
-    <name>PostedCreateCommentDialog</name>
-    <message>
-        <source>Make Comment</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Comment&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
     <name>PostedCreatePostDialog</name>
     <message>
         <source>Create Post</source>
@@ -8975,15 +9377,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PostedDialog</name>
     <message>
-        <source>Posted Links</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>List</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Comments</source>
+        <source>Posted</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -8999,6 +9393,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edit Posted Topic</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add Topic Admins</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Select Topic Admins</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -9632,14 +10034,6 @@ Reported error is: %2</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Directory is browsable for friends from parent groups</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Directory is accessible by anonymous tunnels from friends from parent groups</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Directory is browsable for any friend</source>
         <translation type="unfinished"/>
     </message>
@@ -9668,6 +10062,30 @@ and open the Make Friend Wizard.
     <message>
         <source>Warning: forbidden characters found in filenames. 
 Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replaced by &apos;_&apos;.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Directory is NOT browsable for any friend</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Directory is NOT accessible by anonymous tunnels from any friend</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Directory is browsable for friends from groups</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Directory is accessible by anonymous tunnels from friends from groups</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Directory is NOT browsable for friends from groups</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Directory is NOT accessible by anonymous tunnels from friends from groups</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -9944,6 +10362,17 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>RemoteSharedFilesDialog</name>
+    <message>
+        <source>Download</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Recommend in a message to</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>RetroshareDirModel</name>
     <message>
         <source>NEW</source>
@@ -10211,10 +10640,6 @@ Reducing image to %1x%2 pixels?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Close All Search Results</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Download Selected</source>
         <translation type="unfinished"/>
     </message>
@@ -10231,20 +10656,8 @@ Reducing image to %1x%2 pixels?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Search in friends lists</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Multi-hop search at distance 6 in the network 
 (always reports available files)</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>F2F search</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Limit number of results to :</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -10300,7 +10713,31 @@ Reducing image to %1x%2 pixels?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Include my files</source>
+        <source>Browsable files</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Distant</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Own files</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Filter:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Max results:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Download selected</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -10379,10 +10816,6 @@ Reducing image to %1x%2 pixels?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Not Yet Friends</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Unknown (Incoming) Connect Attempt</source>
         <translation type="unfinished"/>
     </message>
@@ -10418,6 +10851,10 @@ Reducing image to %1x%2 pixels?</source>
         <source>wants to be friend with you on RetroShare</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Connection refused by remote peer</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ServerPage</name>
@@ -10443,10 +10880,6 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Dark Net: None</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Transfer Rates</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -10487,10 +10920,6 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Show Discovery information in statusbar</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>IP Service</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -10535,18 +10964,6 @@ The default value is 20.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Enable anonymous data routing</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Unchecking this disables all anonymous routing activity, except cache cleaning. Incoming tunnel requests are discarded, and no tunnel requests are sent to anyone.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Max. tunnel requests forwarded per second:</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>The DHT allows you to answer connection 
 requests from your friends using BitTorrent's DHT. 
 It greatly improves the connectivity. 
@@ -10559,11 +10976,62 @@ peers still need to trust each other to allow connection. </source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Warning</source>
+        <source>Local network</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>This tab contains hard-core parameters which are unlikely to need modification. Don&apos;t change them unless you really know what you&apos;re doing.</source>
+        <source>External ip address finder</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>UPnP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Known / Previous IPs:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Bandwidth</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Max Transfer Rates</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Unchecking this disables all anonymous routing activity, except cache cleaning. Incoming tunnel requests are discarded, and no tunnel requests are sent to anyone.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enabled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show routing info</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Max. tunnel req. forwarded per second:</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>ServicePermissionDialog</name>
+    <message>
+        <source>Service permissions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Anonymous routing</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Discovery</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forums/Channels</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -10723,10 +11191,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Parent groups</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Apply and close</source>
         <translation type="unfinished"/>
     </message>
@@ -10734,17 +11198,13 @@ p, li { white-space: pre-wrap; }
         <source>Edit Shared Folder</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Groups</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>SharedFilesDialog</name>
-    <message>
-        <source>Friends Folders</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>My Folders</source>
-        <translation type="unfinished"/>
-    </message>
     <message>
         <source>All</source>
         <translation type="unfinished"/>
@@ -10814,38 +11274,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Create collection file</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Open File</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Open Folder</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Checking...</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Check files</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Copy retroshare Link</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Send retroshare Link</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Recommend in a message to</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>RetroShare Link</source>
         <translation type="unfinished"/>
     </message>
@@ -10854,35 +11282,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Set command for opening this file</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>&lt;strong&gt;My Shared Files&lt;/strong&gt;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>&lt;strong&gt;Friends Files&lt;/strong&gt;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>&lt;strong&gt;Files&lt;/strong&gt;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Files</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Split View</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Edit Share Permissions</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Edit Shared Folder</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -11369,12 +11769,16 @@ It is however recommended to leave at least a few slots for cache files.</source
         <translation type="unfinished"/>
     </message>
     <message>
+        <source>Progressive</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt; font-weight:600;&quot;&gt;RetroShare&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt; is capable of transferring data and search requests between peers that are not necessarily friends. This traffic however only transits through a connected list of friends and is anonymous.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans'; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans'; font-size:8pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory in the shared files dialog to be:&lt;/span&gt;&lt;/p&gt;
 &lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:'Sans'; font-size:8pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Browsable by friends&lt;/span&gt;: files are seen by your friends.&lt;/li&gt;
 &lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anonymously shared&lt;/span&gt;: files are anonymously reachable through distant F2F tunnels.&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
@@ -11407,31 +11811,11 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TransfersDialog</name>
     <message>
-        <source>Open Collection</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Show cache transfers</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <source>Uploads</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Selected transfer</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Done</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Active</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Outstanding</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -11505,14 +11889,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hash</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Router Statistics</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Router Requests</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -11668,10 +12044,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Details:</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>File preview</source>
         <translation type="unfinished"/>
     </message>
@@ -11701,10 +12073,6 @@ Try to be patient!</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Needs checking</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Can&apos;t create link for file %1.</source>
         <translation type="unfinished"/>
     </message>
@@ -11714,6 +12082,54 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Downloads</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Friends files</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Download from collection file...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>My files</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Progressive</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Rename file...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Specify...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Set destination directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Choose directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Change file name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please enter a new file name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please enter a new--and valid--filename</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -11760,15 +12176,15 @@ Try to be patient!</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Share Type</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>What&apos;s new</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <source>Groups</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Share Flags</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -12126,18 +12542,6 @@ Try to be patient!</source>
 <context>
     <name>WikiDialog</name>
     <message>
-        <source>Wiki Group</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Page</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Id</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>&lt;&lt;</source>
         <translation type="unfinished"/>
     </message>
@@ -12171,6 +12575,42 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Search</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Page Name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Page Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Orig Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>My Groups</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Subscribed Groups</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Popular Groups</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Other Groups</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Subscribe to Group</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unsubscribe to Group</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -12285,6 +12725,14 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Edit Wiki Group</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add Wiki Moderators</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Select Wiki Moderators</source>
         <translation type="unfinished"/>
     </message>
 </context>

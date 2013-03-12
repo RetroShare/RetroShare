@@ -5,17 +5,17 @@
         <location filename="../AddLinksDialog.ui" line="14"/>
         <location filename="../AddLinksDialog.ui" line="56"/>
         <source>Add Link</source>
-        <translation type="unfinished"/>
+        <translation>Bağlantı Ekleyin</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.ui" line="49"/>
         <source>Cancel</source>
-        <translation>Iptal</translation>
+        <translation>İptal</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.ui" line="82"/>
         <source>Add a new Link</source>
-        <translation type="unfinished"/>
+        <translation>Yeni bir bağlantı ekleyin</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.ui" line="95"/>
@@ -25,57 +25,57 @@
     <message>
         <location filename="../AddLinksDialog.ui" line="102"/>
         <source>Url:</source>
-        <translation type="unfinished"/>
+        <translation>İnternet adresi:</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.ui" line="139"/>
         <source>Add Anonymous Link</source>
-        <translation type="unfinished"/>
+        <translation>Anonim Bağlantı Ekleyin</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.ui" line="147"/>
         <source>+2 Great!</source>
-        <translation type="unfinished"/>
+        <translation>+2 Harika!</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.ui" line="156"/>
         <source>+1 Good</source>
-        <translation type="unfinished"/>
+        <translation>+1 İyi</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.ui" line="165"/>
         <source>0 Okay</source>
-        <translation type="unfinished"/>
+        <translation>0 İdare eder</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.ui" line="174"/>
         <source>-1 Sux</source>
-        <translation type="unfinished"/>
+        <translation>-1 Yaramaz</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.ui" line="183"/>
         <source>-2 Bad Link</source>
-        <translation type="unfinished"/>
+        <translation>-2 Kötü bağlantı</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.cpp" line="44"/>
         <source>Add Link to Cloud</source>
-        <translation type="unfinished"/>
+        <translation>Bağlantıyı Buluta Ekleyin</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.cpp" line="61"/>
         <source>New Link</source>
-        <translation type="unfinished"/>
+        <translation>Bağlantı Ekleyin</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.cpp" line="89"/>
         <source>Add Link Failure</source>
-        <translation type="unfinished"/>
+        <translation>Bağlantı Eklenemedi</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.cpp" line="89"/>
         <source>Missing Link and/or Title</source>
-        <translation type="unfinished"/>
+        <translation>Eksik Bağlantı ya da Başlık</translation>
     </message>
 </context>
 <context>
@@ -83,12 +83,12 @@
     <message>
         <location filename="../LinksCloudPlugin.cpp" line="93"/>
         <source>This plugin provides a set of cached links, and a voting system to promote them.</source>
-        <translation type="unfinished"/>
+        <translation>Bu uyumlu ek, ön belleğe alınmış bağlantıları görüntüler ve oylanmasını sağlar.</translation>
     </message>
     <message>
         <location filename="../LinksCloudPlugin.cpp" line="98"/>
         <source>LinksCloud</source>
-        <translation type="unfinished"/>
+        <translation>BağlantıBulutu</translation>
     </message>
 </context>
 <context>
@@ -96,17 +96,17 @@
     <message>
         <location filename="../LinksDialog.ui" line="45"/>
         <source>Title / Comment</source>
-        <translation type="unfinished"/>
+        <translation>Başlık / Yorum</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="50"/>
         <source>Score</source>
-        <translation type="unfinished"/>
+        <translation>Not</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="55"/>
         <source>Peer / Link</source>
-        <translation type="unfinished"/>
+        <translation>Bağlantı</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="93"/>
@@ -116,37 +116,37 @@
     <message>
         <location filename="../LinksDialog.ui" line="101"/>
         <source>Combo</source>
-        <translation type="unfinished"/>
+        <translation>Bir Arada</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="106"/>
         <source>Time</source>
-        <translation type="unfinished"/>
+        <translation>Zaman</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="115"/>
         <source>Ranking</source>
-        <translation type="unfinished"/>
+        <translation>Derece</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="146"/>
         <source>In last</source>
-        <translation type="unfinished"/>
+        <translation>Son</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="154"/>
         <source>Month</source>
-        <translation type="unfinished"/>
+        <translation>Ay</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="163"/>
         <source>Week</source>
-        <translation type="unfinished"/>
+        <translation>Hafta</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="172"/>
         <source>Day</source>
-        <translation type="unfinished"/>
+        <translation>Gün</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="203"/>
@@ -156,62 +156,62 @@
     <message>
         <location filename="../LinksDialog.ui" line="211"/>
         <source>All Peers</source>
-        <translation type="unfinished"/>
+        <translation>Tüm Bağlantılar</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="220"/>
         <source>Own Links</source>
-        <translation type="unfinished"/>
+        <translation>Kendi Bağlantılarınız</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="251"/>
         <source>Show</source>
-        <translation>Göster</translation>
+        <translation>Görüntüleyin</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="259"/>
         <source>Top 100</source>
-        <translation type="unfinished"/>
+        <translation>Üst 100</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="268"/>
         <source>101-200</source>
-        <translation type="unfinished"/>
+        <translation>101-200</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="273"/>
         <source>201-300</source>
-        <translation type="unfinished"/>
+        <translation>201-300</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="278"/>
         <source>301-400</source>
-        <translation type="unfinished"/>
+        <translation>301-400</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="283"/>
         <source>401-500</source>
-        <translation type="unfinished"/>
+        <translation>401-500</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="288"/>
         <source>Bottom 100</source>
-        <translation type="unfinished"/>
+        <translation>Alt 100</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="318"/>
         <source>Link:</source>
-        <translation type="unfinished"/>
+        <translation>Bağlantı:</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="350"/>
         <source>Add Anonymous Link</source>
-        <translation type="unfinished"/>
+        <translation>Anonim Bağlantı Ekleyin</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="357"/>
         <source>Add Link/Comment</source>
-        <translation type="unfinished"/>
+        <translation>Bağlantı/Yorum Ekleyin</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="368"/>
@@ -221,109 +221,109 @@
     <message>
         <location filename="../LinksDialog.ui" line="384"/>
         <source>Score:</source>
-        <translation type="unfinished"/>
+        <translation>Not:</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="392"/>
         <location filename="../LinksDialog.cpp" line="144"/>
         <source>+2 Great!</source>
-        <translation type="unfinished"/>
+        <translation>+2 Harika!</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="401"/>
         <location filename="../LinksDialog.cpp" line="147"/>
         <source>+1 Good</source>
-        <translation type="unfinished"/>
+        <translation>+1 İyi</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="410"/>
         <location filename="../LinksDialog.cpp" line="150"/>
         <source>0 Okay</source>
-        <translation type="unfinished"/>
+        <translation>0 İdare eder</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="419"/>
         <location filename="../LinksDialog.cpp" line="153"/>
         <source>-1 Sux</source>
-        <translation type="unfinished"/>
+        <translation>-1 Yaramaz</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="428"/>
         <location filename="../LinksDialog.cpp" line="156"/>
         <source>-2 Bad Link</source>
-        <translation type="unfinished"/>
+        <translation>-2 Kötü Bağlantı</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="444"/>
         <source>Url:</source>
-        <translation type="unfinished"/>
+        <translation>İnternet Adresi:</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="531"/>
         <source>Links Cloud</source>
-        <translation type="unfinished"/>
+        <translation>Bağlantı Bulutu</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="551"/>
         <source>Add new link</source>
-        <translation type="unfinished"/>
+        <translation>Bağlantı ekleyin</translation>
     </message>
     <message>
         <location filename="../LinksDialog.cpp" line="137"/>
         <source>Share Link Anonymously</source>
-        <translation type="unfinished"/>
+        <translation>Bağlantıyı Anonim Olarak Paylaşın</translation>
     </message>
     <message>
         <location filename="../LinksDialog.cpp" line="141"/>
         <source>Vote on Link</source>
-        <translation type="unfinished"/>
+        <translation>Bağlantıyı Oylayın</translation>
     </message>
     <message>
         <location filename="../LinksDialog.cpp" line="160"/>
         <source>Download</source>
-        <translation>Indir</translation>
+        <translation>İndirin</translation>
     </message>
     <message>
         <location filename="../LinksDialog.cpp" line="707"/>
         <location filename="../LinksDialog.cpp" line="735"/>
         <location filename="../LinksDialog.cpp" line="743"/>
         <source>Add Link Failure</source>
-        <translation type="unfinished"/>
+        <translation>Bağlantı Eklenemedi</translation>
     </message>
     <message>
         <location filename="../LinksDialog.cpp" line="707"/>
         <source>Missing Link and/or Title</source>
-        <translation type="unfinished"/>
+        <translation>Eksik Bağlantı ya da Başlık</translation>
     </message>
     <message>
         <location filename="../LinksDialog.cpp" line="735"/>
         <source>Missing Link Data</source>
-        <translation type="unfinished"/>
+        <translation>Eksik Bağlantı Verisi</translation>
     </message>
     <message>
         <location filename="../LinksDialog.cpp" line="743"/>
         <source>Missing Comment</source>
-        <translation type="unfinished"/>
+        <translation>Eksik Yorum</translation>
     </message>
     <message>
         <location filename="../LinksDialog.cpp" line="758"/>
         <source>Link Title Not Changed</source>
-        <translation type="unfinished"/>
+        <translation>Bağlantı Başlığı Değişmedi</translation>
     </message>
     <message>
         <location filename="../LinksDialog.cpp" line="758"/>
         <source>Do you want to continue?</source>
-        <translation type="unfinished"/>
+        <translation>Devam etmek istiyor musunuz?</translation>
     </message>
     <message>
         <location filename="../LinksDialog.cpp" line="813"/>
         <source>Expand</source>
-        <translation>Genişlet</translation>
+        <translation>Genişletin</translation>
     </message>
     <message>
         <location filename="../LinksDialog.cpp" line="820"/>
         <source>Hide</source>
-        <translation>Gizle</translation>
+        <translation>Gizleyin</translation>
     </message>
 </context>
 </TS>

@@ -5,7 +5,7 @@
         <location filename="../AddLinksDialog.ui" line="14"/>
         <location filename="../AddLinksDialog.ui" line="56"/>
         <source>Add Link</source>
-        <translation type="unfinished"/>
+        <translation>Lisää linkki</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.ui" line="49"/>
@@ -15,67 +15,67 @@
     <message>
         <location filename="../AddLinksDialog.ui" line="82"/>
         <source>Add a new Link</source>
-        <translation type="unfinished"/>
+        <translation>Lisää uusi linkki</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.ui" line="95"/>
         <source>Title:</source>
-        <translation type="unfinished"/>
+        <translation>Otsikko:</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.ui" line="102"/>
         <source>Url:</source>
-        <translation type="unfinished"/>
+        <translation>Url:</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.ui" line="139"/>
         <source>Add Anonymous Link</source>
-        <translation type="unfinished"/>
+        <translation>Lisää nimetön linkki</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.ui" line="147"/>
         <source>+2 Great!</source>
-        <translation type="unfinished"/>
+        <translation>+2 Loistava!</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.ui" line="156"/>
         <source>+1 Good</source>
-        <translation type="unfinished"/>
+        <translation>+1 Hyvä</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.ui" line="165"/>
         <source>0 Okay</source>
-        <translation type="unfinished"/>
+        <translation>0 Kohtalainen</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.ui" line="174"/>
         <source>-1 Sux</source>
-        <translation type="unfinished"/>
+        <translation>-1 Huono</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.ui" line="183"/>
         <source>-2 Bad Link</source>
-        <translation type="unfinished"/>
+        <translation>-2 Kelvoton linkki</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.cpp" line="44"/>
         <source>Add Link to Cloud</source>
-        <translation type="unfinished"/>
+        <translation>Lisää linkki pilveen</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.cpp" line="61"/>
         <source>New Link</source>
-        <translation type="unfinished"/>
+        <translation>Uusi linkki</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.cpp" line="89"/>
         <source>Add Link Failure</source>
-        <translation type="unfinished"/>
+        <translation>Vika lisättäessä linkkiä</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.cpp" line="89"/>
         <source>Missing Link and/or Title</source>
-        <translation type="unfinished"/>
+        <translation>Puuttuva linkki ja/tai otsikko</translation>
     </message>
 </context>
 <context>
@@ -83,12 +83,12 @@
     <message>
         <location filename="../LinksCloudPlugin.cpp" line="93"/>
         <source>This plugin provides a set of cached links, and a voting system to promote them.</source>
-        <translation type="unfinished"/>
+        <translation>Tämä lisäosa näyttää joukon välimuistissa olevia linkkejä sekä äänestysjärjestelmän.</translation>
     </message>
     <message>
         <location filename="../LinksCloudPlugin.cpp" line="98"/>
         <source>LinksCloud</source>
-        <translation type="unfinished"/>
+        <translation>LinksCloud</translation>
     </message>
 </context>
 <context>
@@ -101,12 +101,12 @@
     <message>
         <location filename="../LinksDialog.ui" line="50"/>
         <source>Score</source>
-        <translation type="unfinished"/>
+        <translation>Pisteet</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="55"/>
         <source>Peer / Link</source>
-        <translation type="unfinished"/>
+        <translation>Vertainen / Linkki</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="93"/>
@@ -116,37 +116,37 @@
     <message>
         <location filename="../LinksDialog.ui" line="101"/>
         <source>Combo</source>
-        <translation type="unfinished"/>
+        <translation>Yhdistelmä</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="106"/>
         <source>Time</source>
-        <translation type="unfinished"/>
+        <translation>Aika</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="115"/>
         <source>Ranking</source>
-        <translation type="unfinished"/>
+        <translation>Sijoitus</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="146"/>
         <source>In last</source>
-        <translation type="unfinished"/>
+        <translation>Viime</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="154"/>
         <source>Month</source>
-        <translation type="unfinished"/>
+        <translation>kuussa</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="163"/>
         <source>Week</source>
-        <translation type="unfinished"/>
+        <translation>viikolla</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="172"/>
         <source>Day</source>
-        <translation type="unfinished"/>
+        <translation>päivänä</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="203"/>
@@ -156,12 +156,12 @@
     <message>
         <location filename="../LinksDialog.ui" line="211"/>
         <source>All Peers</source>
-        <translation type="unfinished"/>
+        <translation>Kaikki vertaiset</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="220"/>
         <source>Own Links</source>
-        <translation type="unfinished"/>
+        <translation>Omat linkit</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="251"/>
@@ -171,157 +171,157 @@
     <message>
         <location filename="../LinksDialog.ui" line="259"/>
         <source>Top 100</source>
-        <translation type="unfinished"/>
+        <translation>Ylimmät 100</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="268"/>
         <source>101-200</source>
-        <translation type="unfinished"/>
+        <translation>101-200</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="273"/>
         <source>201-300</source>
-        <translation type="unfinished"/>
+        <translation>201-300</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="278"/>
         <source>301-400</source>
-        <translation type="unfinished"/>
+        <translation>301-400</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="283"/>
         <source>401-500</source>
-        <translation type="unfinished"/>
+        <translation>401-500</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="288"/>
         <source>Bottom 100</source>
-        <translation type="unfinished"/>
+        <translation>Alimmat 100</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="318"/>
         <source>Link:</source>
-        <translation type="unfinished"/>
+        <translation>Linkki:</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="350"/>
         <source>Add Anonymous Link</source>
-        <translation type="unfinished"/>
+        <translation>Lisää nimetön linkki</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="357"/>
         <source>Add Link/Comment</source>
-        <translation type="unfinished"/>
+        <translation>Lisää linkki/kommentti</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="368"/>
         <source>Title:</source>
-        <translation type="unfinished"/>
+        <translation>Otsikko:</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="384"/>
         <source>Score:</source>
-        <translation type="unfinished"/>
+        <translation>Pisteet:</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="392"/>
-        <location filename="../LinksDialog.cpp" line="143"/>
+        <location filename="../LinksDialog.cpp" line="144"/>
         <source>+2 Great!</source>
-        <translation type="unfinished"/>
+        <translation>+2 Loistava!</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="401"/>
-        <location filename="../LinksDialog.cpp" line="146"/>
+        <location filename="../LinksDialog.cpp" line="147"/>
         <source>+1 Good</source>
-        <translation type="unfinished"/>
+        <translation>+1 Hyvä</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="410"/>
-        <location filename="../LinksDialog.cpp" line="149"/>
+        <location filename="../LinksDialog.cpp" line="150"/>
         <source>0 Okay</source>
-        <translation type="unfinished"/>
+        <translation>0 Kohtalainen</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="419"/>
-        <location filename="../LinksDialog.cpp" line="152"/>
+        <location filename="../LinksDialog.cpp" line="153"/>
         <source>-1 Sux</source>
-        <translation type="unfinished"/>
+        <translation>-1 Huono</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="428"/>
-        <location filename="../LinksDialog.cpp" line="155"/>
+        <location filename="../LinksDialog.cpp" line="156"/>
         <source>-2 Bad Link</source>
-        <translation type="unfinished"/>
+        <translation>-2 Kelvoton linkki</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="444"/>
         <source>Url:</source>
-        <translation type="unfinished"/>
+        <translation>Url:</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.ui" line="532"/>
+        <location filename="../LinksDialog.ui" line="531"/>
         <source>Links Cloud</source>
-        <translation type="unfinished"/>
+        <translation>Links Cloud</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.ui" line="552"/>
+        <location filename="../LinksDialog.ui" line="551"/>
         <source>Add new link</source>
-        <translation type="unfinished"/>
+        <translation>Lisää uusi linkki</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="136"/>
+        <location filename="../LinksDialog.cpp" line="137"/>
         <source>Share Link Anonymously</source>
-        <translation type="unfinished"/>
+        <translation>Jaa linkki nimettömänä</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="140"/>
+        <location filename="../LinksDialog.cpp" line="141"/>
         <source>Vote on Link</source>
-        <translation type="unfinished"/>
+        <translation>Äänestä linkkiä</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="159"/>
+        <location filename="../LinksDialog.cpp" line="160"/>
         <source>Download</source>
         <translation>Lataa</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="706"/>
-        <location filename="../LinksDialog.cpp" line="734"/>
-        <location filename="../LinksDialog.cpp" line="742"/>
+        <location filename="../LinksDialog.cpp" line="707"/>
+        <location filename="../LinksDialog.cpp" line="735"/>
+        <location filename="../LinksDialog.cpp" line="743"/>
         <source>Add Link Failure</source>
-        <translation type="unfinished"/>
+        <translation>Vika lisättäessä linkkiä</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="706"/>
+        <location filename="../LinksDialog.cpp" line="707"/>
         <source>Missing Link and/or Title</source>
-        <translation type="unfinished"/>
+        <translation>Puuttuva linkki ja/tai otsikko</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="734"/>
+        <location filename="../LinksDialog.cpp" line="735"/>
         <source>Missing Link Data</source>
-        <translation type="unfinished"/>
+        <translation>Linkin tiedot puuttuvat</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="742"/>
+        <location filename="../LinksDialog.cpp" line="743"/>
         <source>Missing Comment</source>
-        <translation type="unfinished"/>
+        <translation>Kommentti puuttuu</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="757"/>
+        <location filename="../LinksDialog.cpp" line="758"/>
         <source>Link Title Not Changed</source>
-        <translation type="unfinished"/>
+        <translation>Linkin otsikkoa ei muutettu</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="757"/>
+        <location filename="../LinksDialog.cpp" line="758"/>
         <source>Do you want to continue?</source>
-        <translation type="unfinished"/>
+        <translation>Haluatko jatkaa?</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="812"/>
+        <location filename="../LinksDialog.cpp" line="813"/>
         <source>Expand</source>
         <translation>Laajenna</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="819"/>
+        <location filename="../LinksDialog.cpp" line="820"/>
         <source>Hide</source>
         <translation>Piilota</translation>
     </message>

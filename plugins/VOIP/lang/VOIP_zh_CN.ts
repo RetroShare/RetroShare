@@ -148,7 +148,7 @@
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="202"/>
         <source>%1 s</source>
-        <translation type="unfinished"/>
+        <translation>%1 s</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="210"/>
@@ -158,7 +158,7 @@
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="213"/>
         <source>-%1 dB</source>
-        <translation type="unfinished"/>
+        <translation>-%1 dB</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.h" line="72"/>

@@ -281,7 +281,7 @@
     <message>
         <location filename="../LinksDialog.cpp" line="160"/>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>下载</translation>
     </message>
     <message>
         <location filename="../LinksDialog.cpp" line="707"/>

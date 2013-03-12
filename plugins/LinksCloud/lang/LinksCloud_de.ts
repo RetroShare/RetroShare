@@ -225,31 +225,31 @@
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="392"/>
-        <location filename="../LinksDialog.cpp" line="143"/>
+        <location filename="../LinksDialog.cpp" line="144"/>
         <source>+2 Great!</source>
         <translation>+2 Großartig!</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="401"/>
-        <location filename="../LinksDialog.cpp" line="146"/>
+        <location filename="../LinksDialog.cpp" line="147"/>
         <source>+1 Good</source>
         <translation>+1 Gut</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="410"/>
-        <location filename="../LinksDialog.cpp" line="149"/>
+        <location filename="../LinksDialog.cpp" line="150"/>
         <source>0 Okay</source>
         <translation>0 In Ordnung</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="419"/>
-        <location filename="../LinksDialog.cpp" line="152"/>
+        <location filename="../LinksDialog.cpp" line="153"/>
         <source>-1 Sux</source>
         <translation>-1 Nervt</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="428"/>
-        <location filename="../LinksDialog.cpp" line="155"/>
+        <location filename="../LinksDialog.cpp" line="156"/>
         <source>-2 Bad Link</source>
         <translation>-2 Schlechter Link</translation>
     </message>
@@ -259,69 +259,69 @@
         <translation>Url:</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.ui" line="532"/>
+        <location filename="../LinksDialog.ui" line="531"/>
         <source>Links Cloud</source>
         <translation>Verknüpfungswolke</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.ui" line="552"/>
+        <location filename="../LinksDialog.ui" line="551"/>
         <source>Add new link</source>
         <translation>Neuen Link hinzufügen</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="136"/>
+        <location filename="../LinksDialog.cpp" line="137"/>
         <source>Share Link Anonymously</source>
         <translation>Link anonym verteilen</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="140"/>
+        <location filename="../LinksDialog.cpp" line="141"/>
         <source>Vote on Link</source>
         <translation>Stimme für Link</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="159"/>
+        <location filename="../LinksDialog.cpp" line="160"/>
         <source>Download</source>
         <translation>Herunterladen</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="706"/>
-        <location filename="../LinksDialog.cpp" line="734"/>
-        <location filename="../LinksDialog.cpp" line="742"/>
+        <location filename="../LinksDialog.cpp" line="707"/>
+        <location filename="../LinksDialog.cpp" line="735"/>
+        <location filename="../LinksDialog.cpp" line="743"/>
         <source>Add Link Failure</source>
         <translation>Link hinzufügen fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="706"/>
+        <location filename="../LinksDialog.cpp" line="707"/>
         <source>Missing Link and/or Title</source>
         <translation>Fehlender Link und/oder Titel</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="734"/>
+        <location filename="../LinksDialog.cpp" line="735"/>
         <source>Missing Link Data</source>
         <translation>Fehlende Linkdaten</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="742"/>
+        <location filename="../LinksDialog.cpp" line="743"/>
         <source>Missing Comment</source>
         <translation>Fehlender Kommentar</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="757"/>
+        <location filename="../LinksDialog.cpp" line="758"/>
         <source>Link Title Not Changed</source>
         <translation>Linktitel nicht geändert</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="757"/>
+        <location filename="../LinksDialog.cpp" line="758"/>
         <source>Do you want to continue?</source>
         <translation>Willst du fortfahren?</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="812"/>
+        <location filename="../LinksDialog.cpp" line="813"/>
         <source>Expand</source>
         <translation>Erweitern</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="819"/>
+        <location filename="../LinksDialog.cpp" line="820"/>
         <source>Hide</source>
         <translation>Verbergen</translation>
     </message>
