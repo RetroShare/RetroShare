@@ -104,6 +104,11 @@ virtual void setChannelAutoDownload(uint32_t& token, const RsGxsGroupId& groupId
 virtual bool createGroup(uint32_t &token, RsGxsChannelGroup &group) = 0;
 virtual bool createPost(uint32_t &token, RsGxsChannelPost &post) = 0;
 
+        // File Interface
+virtual bool ExtraFileHash(const std::string &path, std::string filename) = 0;
+virtual bool ExtraFileRemove(const std::string &hash) = 0;
+
+
 };
 
 

@@ -27,6 +27,7 @@
 #include "serialiser/rsgxschannelitems.h"
 
 #include <retroshare/rsidentity.h>
+#include <retroshare/rsfiles.h>
 
 
 #include "retroshare/rsgxsflags.h"
@@ -43,6 +44,8 @@
 
 RsGxsChannels *rsGxsChannels = NULL;
 
+
+#define GXSCHANNEL_STOREPERIOD	(3600 * 24 * 30)
 
 #define	 GXSCHANNELS_SUBSCRIBED_META		1
 #define  GXSCHANNELS_UNPROCESSED_SPECIFIC	2
@@ -708,6 +711,29 @@ bool p3GxsChannels::createPost(uint32_t &token, RsGxsChannelPost &msg)
 	return true;
 }
 
+/********************************************************************************************/
+/********************************************************************************************/
+
+bool p3GxsChannels::ExtraFileHash(const std::string &path, std::string filename)
+{
+	/* extract filename */
+	filename = RsDirUtil::getTopDir(path);
+
+
+        TransferRequestFlags flags = RS_FILE_REQ_ANONYMOUS_ROUTING;
+        if(!rsFiles->ExtraFileHash(path, GXSCHANNEL_STOREPERIOD, flags))
+                return false;
+
+        return true;
+}
+
+
+bool p3GxsChannels::ExtraFileRemove(const std::string &hash)
+{
+        TransferRequestFlags tflags = RS_FILE_REQ_ANONYMOUS_ROUTING | RS_FILE_REQ_EXTRA;
+        return rsFiles->ExtraFileRemove(hash, tflags);
+}
+
 
 /********************************************************************************************/
 /********************************************************************************************/
@@ -715,8 +741,10 @@ bool p3GxsChannels::createPost(uint32_t &token, RsGxsChannelPost &msg)
 /* so we need the same tick idea as wiki for generating dummy channels
  */
 
-#define 	MAX_GEN_GROUPS		5
-#define 	MAX_GEN_MESSAGES	100
+#define 	MAX_GEN_GROUPS		3
+#define 	MAX_GEN_POSTS		8
+#define 	MAX_GEN_COMMENTS	50
+#define 	MAX_GEN_VOTES		500
 
 std::string p3GxsChannels::genRandomId()
 {
@@ -732,7 +760,7 @@ std::string p3GxsChannels::genRandomId()
 bool p3GxsChannels::generateDummyData()
 {
 	mGenCount = 0;
-	mGenRefs.resize(MAX_GEN_MESSAGES);
+	mGenRefs.resize(MAX_GEN_VOTES);
 
 	std::string groupName;
 	rs_sprintf(groupName, "TestChannel_%d", mGenCount);
@@ -755,7 +783,7 @@ void p3GxsChannels::dummy_tick()
 
 	if (mGenActive)
 	{
-		std::cerr << "p3GxsChannels::dummyTick() AboutActive";
+		std::cerr << "p3GxsChannels::dummyTick() Gen Active";
 		std::cerr << std::endl;
 
 		uint32_t status = RsGenExchange::getTokenService()->requestStatus(mGenToken);
@@ -792,7 +820,7 @@ void p3GxsChannels::dummy_tick()
 			ChannelDummyRef ref(groupId, emptyId, emptyId);
 			mGenRefs[mGenCount] = ref;
 		}
-		else if (mGenCount < MAX_GEN_MESSAGES)
+		else if (mGenCount < MAX_GEN_POSTS)
 		{
 			/* get the msg Id, and generate next snapshot */
 			RsGxsGrpMsgIdPair msgId;
@@ -804,7 +832,47 @@ void p3GxsChannels::dummy_tick()
 				return;
 			}
 
-			std::cerr << "p3GxsChannels::dummy_tick() Acknowledged <GroupId: " << msgId.first << ", MsgId: " << msgId.second << ">";
+			std::cerr << "p3GxsChannels::dummy_tick() Acknowledged Post <GroupId: " << msgId.first << ", MsgId: " << msgId.second << ">";
+			std::cerr << std::endl;
+
+			/* store results for later selection */
+
+			ChannelDummyRef ref(msgId.first, mGenThreadId, msgId.second);
+			mGenRefs[mGenCount] = ref;
+		}
+		else if (mGenCount < MAX_GEN_COMMENTS)
+		{
+			/* get the msg Id, and generate next snapshot */
+			RsGxsGrpMsgIdPair msgId;
+			if (!acknowledgeTokenMsg(mGenToken, msgId))
+			{
+				std::cerr << " ERROR ";
+				std::cerr << std::endl;
+				mGenActive = false;
+				return;
+			}
+
+			std::cerr << "p3GxsChannels::dummy_tick() Acknowledged Comment <GroupId: " << msgId.first << ", MsgId: " << msgId.second << ">";
+			std::cerr << std::endl;
+
+			/* store results for later selection */
+
+			ChannelDummyRef ref(msgId.first, mGenThreadId, msgId.second);
+			mGenRefs[mGenCount] = ref;
+		}
+		else if (mGenCount < MAX_GEN_VOTES)
+		{
+			/* get the msg Id, and generate next snapshot */
+			RsGxsGrpMsgIdPair msgId;
+			if (!acknowledgeTokenMsg(mGenToken, msgId))
+			{
+				std::cerr << " ERROR ";
+				std::cerr << std::endl;
+				mGenActive = false;
+				return;
+			}
+
+			std::cerr << "p3GxsChannels::dummy_tick() Acknowledged Vote <GroupId: " << msgId.first << ", MsgId: " << msgId.second << ">";
 			std::cerr << std::endl;
 
 			/* store results for later selection */
@@ -835,10 +903,10 @@ void p3GxsChannels::dummy_tick()
 			/* create a new group */
 			generateGroup(mGenToken, groupName);
 		}
-		else
+		else if (mGenCount < MAX_GEN_POSTS)
 		{
-			/* create a new message */
-			uint32_t idx = (uint32_t) (mGenCount * RSRandom::random_f32());
+			/* create a new post */
+			uint32_t idx = (uint32_t) (MAX_GEN_GROUPS * RSRandom::random_f32());
 			ChannelDummyRef &ref = mGenRefs[idx];
 
 			RsGxsGroupId grpId = ref.mGroupId;
@@ -849,21 +917,59 @@ void p3GxsChannels::dummy_tick()
 				mGenThreadId = parentId;
 			}
 
-			std::cerr << "p3GxsChannels::dummy_tick() Generating Msg ... ";
+			std::cerr << "p3GxsChannels::dummy_tick() Generating Post ... ";
 			std::cerr << " GroupId: " << grpId;
 			std::cerr << " ThreadId: " << mGenThreadId;
 			std::cerr << " ParentId: " << parentId;
 			std::cerr << std::endl;
 
-			if (parentId.empty())
-			{
-				generatePost(mGenToken, grpId);
-			}
-			else
-			{
-				generateComment(mGenToken, grpId, parentId, mGenThreadId);
-			}
+			generatePost(mGenToken, grpId);
 		}
+		else if (mGenCount < MAX_GEN_COMMENTS)
+		{
+			/* create a new post */
+			uint32_t idx = (uint32_t) ((mGenCount - MAX_GEN_GROUPS) * RSRandom::random_f32());
+			ChannelDummyRef &ref = mGenRefs[idx + MAX_GEN_GROUPS];
+
+			RsGxsGroupId grpId = ref.mGroupId;
+			RsGxsMessageId parentId = ref.mMsgId;
+			mGenThreadId = ref.mThreadId;
+			if (mGenThreadId.empty())
+			{
+				mGenThreadId = parentId;
+			}
+
+			std::cerr << "p3GxsChannels::dummy_tick() Generating Comment ... ";
+			std::cerr << " GroupId: " << grpId;
+			std::cerr << " ThreadId: " << mGenThreadId;
+			std::cerr << " ParentId: " << parentId;
+			std::cerr << std::endl;
+
+			generateComment(mGenToken, grpId, parentId, mGenThreadId);
+		}
+		else 
+		{
+			/* create a new post */
+			uint32_t idx = (uint32_t) ((MAX_GEN_COMMENTS - MAX_GEN_POSTS) * RSRandom::random_f32());
+			ChannelDummyRef &ref = mGenRefs[idx + MAX_GEN_POSTS];
+
+			RsGxsGroupId grpId = ref.mGroupId;
+			RsGxsMessageId parentId = ref.mMsgId;
+			mGenThreadId = ref.mThreadId;
+			if (mGenThreadId.empty())
+			{
+				mGenThreadId = parentId;
+			}
+
+			std::cerr << "p3GxsChannels::dummy_tick() Generating Vote ... ";
+			std::cerr << " GroupId: " << grpId;
+			std::cerr << " ThreadId: " << mGenThreadId;
+			std::cerr << " ParentId: " << parentId;
+			std::cerr << std::endl;
+
+			generateVote(mGenToken, grpId, parentId, mGenThreadId);
+		}
+
 	}
 }
 
@@ -920,17 +1026,64 @@ bool p3GxsChannels::generateComment(uint32_t &token, const RsGxsGroupId &grpId, 
 
 	if (it != ownIds.end())
 	{
-		std::cerr << "p3GxsChannels::generateMessage() Author: " << *it;
+		std::cerr << "p3GxsChannels::generateComment() Author: " << *it;
 		std::cerr << std::endl;
 		msg.mMeta.mAuthorId = *it;
 	} 
 	else
 	{
-		std::cerr << "p3GxsChannels::generateMessage() No Author!";
+		std::cerr << "p3GxsChannels::generateComment() No Author!";
 		std::cerr << std::endl;
 	} 
 
 	createComment(token, msg);
+
+	return true;
+}
+
+
+bool p3GxsChannels::generateVote(uint32_t &token, const RsGxsGroupId &grpId, const RsGxsMessageId &parentId, const RsGxsMessageId &threadId)
+{
+	RsGxsVote vote;
+
+	vote.mMeta.mGroupId = grpId;
+	vote.mMeta.mThreadId = threadId;
+	vote.mMeta.mParentId = parentId;
+	vote.mMeta.mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_UNREAD;
+
+	/* chose a random Id to sign with */
+	std::list<RsGxsId> ownIds;
+	std::list<RsGxsId>::iterator it;
+
+	rsIdentity->getOwnIds(ownIds);
+
+	uint32_t idx = (uint32_t) (ownIds.size() * RSRandom::random_f32());
+	uint32_t i = 0;
+	for(it = ownIds.begin(); (it != ownIds.end()) && (i < idx); it++, i++);
+
+	if (it != ownIds.end())
+	{
+		std::cerr << "p3GxsChannels::generateVote() Author: " << *it;
+		std::cerr << std::endl;
+		vote.mMeta.mAuthorId = *it;
+	} 
+	else
+	{
+		std::cerr << "p3GxsChannels::generateVote() No Author!";
+		std::cerr << std::endl;
+	} 
+
+	if (0.7 > RSRandom::random_f32())
+	{
+		// 70 % postive votes 
+		vote.mVoteType = GXS_VOTE_UP;
+	}
+	else
+	{
+		vote.mVoteType = GXS_VOTE_DOWN;
+	}
+
+	createVote(token, vote);
 
 	return true;
 }

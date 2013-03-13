@@ -125,6 +125,10 @@ virtual void subscribeToGroup(const RsGxsGroupId &groupId, bool subscribe);
 virtual void setMessageProcessedStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool processed);
 virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read);
 
+	// File Interface
+virtual bool ExtraFileHash(const std::string &path, std::string filename);
+virtual bool ExtraFileRemove(const std::string &hash);
+
 	protected:
 
 	// Overloaded from GxsTokenQueue for Request callbacks.
@@ -168,6 +172,9 @@ void 	dummy_tick();
 bool generatePost(uint32_t &token, const RsGxsGroupId &grpId);
 bool generateComment(uint32_t &token, const RsGxsGroupId &grpId, 
 		const RsGxsMessageId &parentId, const RsGxsMessageId &threadId);
+bool generateVote(uint32_t &token, const RsGxsGroupId &grpId, 
+		const RsGxsMessageId &parentId, const RsGxsMessageId &threadId);
+
 bool generateGroup(uint32_t &token, std::string groupName);
 
 	class ChannelDummyRef

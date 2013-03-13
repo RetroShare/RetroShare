@@ -47,6 +47,9 @@ class p3GxsCommentService
 	bool createGxsComment(uint32_t &token, RsGxsComment &msg);
 	bool createGxsVote(uint32_t &token, RsGxsVote &msg);
 
+static double calculateBestScore(int upVotes, int downVotes);
+
+
 #if 0
 	void setGxsMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read);
 #endif

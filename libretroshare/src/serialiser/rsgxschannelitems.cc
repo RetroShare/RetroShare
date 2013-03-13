@@ -171,7 +171,8 @@ bool RsGxsChannelGroupItem::toChannelGroup(RsGxsChannelGroup &group, bool moveIm
 	if (moveImage)
 	{
 		group.mImage.take((uint8_t *) mImage.binData.bin_data, mImage.binData.bin_len);
-		mImage.TlvShallowClear();
+		// mImage doesn't have a ShallowClear at the moment!
+		mImage.binData.TlvShallowClear();
 	}
 	else
 	{
@@ -376,7 +377,8 @@ bool RsGxsChannelPostItem::toChannelPost(RsGxsChannelPost &post, bool moveImage)
 	if (moveImage)
 	{
 		post.mThumbnail.take((uint8_t *) mThumbnail.binData.bin_data, mThumbnail.binData.bin_len);
-		mThumbnail.TlvShallowClear();
+		// mThumbnail doesn't have a ShallowClear at the moment!
+		mThumbnail.binData.TlvShallowClear();
 	}
 	else
 	{
@@ -392,7 +394,6 @@ bool RsGxsChannelPostItem::toChannelPost(RsGxsChannelPost &post, bool moveImage)
 		fi.mName = RsDirUtil::getTopDir(fit->name);
 		fi.mSize  = fit->filesize;
 		fi.mHash  = fit->hash;
-		fi.mPath  = fit->path;
 
 		post.mFiles.push_back(fi);
 		post.mCount++;

@@ -29,32 +29,48 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 
 RsGxsComment::RsGxsComment()
 {
 	mUpVotes = 0;
 	mDownVotes = 0;
-	score = 0;
+	mScore = 0;
 }
 
 /********************************************************************************/
 
 RsGxsImage::RsGxsImage()
 {
+	std::cerr << "RsGxsImage(" << this << ")";
+	std::cerr << std::endl;
 	mData = NULL;
 	mSize = 0;
 }
 
+RsGxsImage::RsGxsImage(const RsGxsImage& a)
+{
+	std::cerr << "RsGxsImage(" << this << ") = RsGxsImage(" << (void *) &a << ")";
+	std::cerr << std::endl;
+	mData = NULL;
+	mSize = 0;
+	copy(a.mData, a.mSize);
+}
+	
 
 RsGxsImage::~RsGxsImage()
 {
+	std::cerr << "~RsGxsImage(" << this << ")";
+	std::cerr << std::endl;
 	clear();
 }
 
 
 void RsGxsImage::take(uint8_t *data, uint32_t size)
 {
+	std::cerr << "RsGxsImage(" << this << ")::take(" << (void *) data << "," << size << ")";
+	std::cerr << std::endl;
 	// Copies Pointer.
 	clear();
 	mData = data;
@@ -64,16 +80,23 @@ void RsGxsImage::take(uint8_t *data, uint32_t size)
 // NB Must make sure that we always use malloc/free for this data.
 uint8_t *RsGxsImage::allocate(uint32_t size)
 {
-	return (uint8_t *) malloc(size);
+	uint8_t *val = (uint8_t *) malloc(size);
+	std::cerr << "RsGxsImage()::allocate(" << (void *) val << ")";
+	std::cerr << std::endl;
+	return val;
 }
 
 void RsGxsImage::release(void *data)
 {
+	std::cerr << "RsGxsImage()::release(" << (void *) data << ")";
+	std::cerr << std::endl;
 	free(data);
 }
 
 void RsGxsImage::copy(uint8_t *data, uint32_t size)
 {
+	std::cerr << "RsGxsImage(" << this << ")::copy(" << (void *) data << "," << size << ")";
+	std::cerr << std::endl;
 	// Allocates and Copies.
 	clear(); 
 	if (data && size)
@@ -190,6 +213,7 @@ bool p3GxsCommentService::getGxsCommentData(const uint32_t &token, std::vector<R
 					cit->mDownVotes++;
 				}
 			}
+			cit->mScore = calculateBestScore(cit->mUpVotes, cit->mDownVotes);
 		}
 
 		std::cerr << "p3GxsCommentService::getGxsCommentData() Found " << comments.size() << " Comments";
@@ -272,6 +296,7 @@ bool p3GxsCommentService::getGxsRelatedComments(const uint32_t &token, std::vect
 					cit->mDownVotes++;
 				}
 			}
+			cit->mScore = calculateBestScore(cit->mUpVotes, cit->mDownVotes);
 		}
 
 		std::cerr << "p3GxsCommentService::getGxsRelatedComments() Found " << comments.size() << " Comments";
@@ -288,6 +313,28 @@ bool p3GxsCommentService::getGxsRelatedComments(const uint32_t &token, std::vect
 			
 	return ok;
 }
+
+
+
+double p3GxsCommentService::calculateBestScore(int upVotes, int downVotes)
+{
+	static float z = 1.0;
+
+	float score;
+	int n = upVotes - downVotes;
+	if(n==0)
+	{
+		score = 0.0;
+	}
+	else
+	{
+		float phat = upVotes;
+		score = sqrt(phat+z*z/(2*n)-z*((phat*(1-phat)+z*z/(4*n))/n))/(1+z*z/n);
+	}
+	return score;
+}
+
+
 
 /********************************************************************************************/
 

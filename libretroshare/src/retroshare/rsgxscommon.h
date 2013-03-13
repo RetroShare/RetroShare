@@ -39,7 +39,7 @@ class RsGxsFile
 	std::string mName;
 	std::string mHash;
 	uint64_t    mSize;
-	std::string mPath;
+	//std::string mPath;
 };
 
 class RsGxsImage
@@ -47,6 +47,7 @@ class RsGxsImage
 	public:
 	RsGxsImage();	
 	~RsGxsImage();
+	RsGxsImage(const RsGxsImage& a); // TEMP use copy constructor and duplicate memory.
 
 //NB: Must make sure that we always use methods - to be consistent about malloc/free for this data.
 static uint8_t *allocate(uint32_t size);
@@ -59,6 +60,7 @@ static void release(void *data);
 
 	uint8_t *mData;
 	uint32_t mSize;
+
 };
 
 
@@ -83,10 +85,10 @@ class RsGxsComment
 	// below is calculated.
 	uint32_t mUpVotes;
 	uint32_t mDownVotes;
-	double   score; 
+	double   mScore; 
 
 	// This is filled in if detailed Comment Data is called.
-	std::list<RsGxsVote> votes;
+	std::list<RsGxsVote> mVotes;
 };
 
 
