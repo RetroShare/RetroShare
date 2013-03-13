@@ -93,9 +93,9 @@ void GxsChannelPostItem::setup()
 	connect(readAndClearButton, SIGNAL(clicked()), this, SLOT(readAndClearItem()));
 	connect( unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeChannel ( void ) ) );
 
-	//connect( downloadButton, SIGNAL( clicked( void ) ), this, SLOT( download ( void ) ) );
+	connect( downloadButton, SIGNAL( clicked( void ) ), this, SLOT( download ( void ) ) );
 	// HACK FOR NOW.
-	connect( downloadButton, SIGNAL( clicked( void ) ), this, SLOT( comments ( void ) ) );
+	connect( commentButton, SIGNAL( clicked( void ) ), this, SLOT( comments ( void ) ) );
 
 	connect( playButton, SIGNAL( clicked( void ) ), this, SLOT( play ( void ) ) );
 	connect( copyLinkButton, SIGNAL( clicked( void ) ), this, SLOT( copyLink ( void ) ) );
@@ -124,6 +124,7 @@ void GxsChannelPostItem::setup()
 
 void GxsChannelPostItem::updateItemStatic()
 {
+#if 0
 	/* fill in */
 #ifdef DEBUG_ITEM
 	std::cerr << "GxsChannelPostItem::updateItemStatic()";
@@ -262,6 +263,8 @@ void GxsChannelPostItem::updateItemStatic()
 	}
 
 	m_inUpdateItemStatic = false;
+#endif
+
 }
 
 
@@ -298,7 +301,7 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 			unsubscribeButton->setEnabled(false);
 		}
 		readButton->hide();
-		newLabel->hide();
+		//newLabel->hide();
 		copyLinkButton->hide();
 	}
 	else
@@ -338,13 +341,13 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 			QColor color;
 			if (!IS_MSG_UNREAD(post.mMeta.mMsgStatus))
 			{
-				newLabel->setVisible(false);
+				//newLabel->setVisible(false);
 				newState = false;
 				color = COLOR_NORMAL;
 			} 
 			else 
 			{
-				newLabel->setVisible(true);
+				//newLabel->setVisible(true);
 				newState = true;
 				color = COLOR_NEW;
 			}
@@ -362,7 +365,7 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 		else 
 		{
 			readButton->setVisible(false);
-			newLabel->setVisible(false);
+			//newLabel->setVisible(false);
 		}
 	}
 
@@ -382,17 +385,17 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 		mFileItems.clear();
 	}
 
-#if 0
-	std::list<FileInfo>::iterator it;
-	for(it = cmi.files.begin(); it != cmi.files.end(); it++)
+	std::list<RsGxsFile>::const_iterator it;
+	for(it = post.mFiles.begin(); it != post.mFiles.end(); it++)
 	{
 		/* add file */
-		SubFileItem *fi = new SubFileItem(it->hash, it->fname, it->path, it->size,
+		std::string path;
+		SubFileItem *fi = new SubFileItem(it->mHash, it->mName, path, it->mSize,
 				SFI_STATE_REMOTE | SFI_TYPE_CHANNEL, "");
 		mFileItems.push_back(fi);
 		
 		/* check if the file is a media file */
-		if (!misc::isPreviewable(QFileInfo(QString::fromUtf8(it->fname.c_str())).suffix())) 
+		if (!misc::isPreviewable(QFileInfo(QString::fromUtf8(it->mName.c_str())).suffix())) 
 		  fi->mediatype();
 
 
@@ -400,15 +403,12 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 		layout->addWidget(fi);
 	}
 
-	if(cmi.thumbnail.image_thumbnail != NULL)
+	if(post.mThumbnail.mData != NULL)
 	{
 		QPixmap thumbnail;
-		thumbnail.loadFromData(cmi.thumbnail.image_thumbnail, cmi.thumbnail.im_thumbnail_size, "PNG");
-
+		thumbnail.loadFromData(post.mThumbnail.mData, post.mThumbnail.mSize, "PNG");
 		logoLabel->setPixmap(thumbnail);
 	}
-#endif
-
 }
 
 void GxsChannelPostItem::setFileCleanUpWarning(uint32_t time_left)

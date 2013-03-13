@@ -31,11 +31,15 @@
 #include "CreateGxsChannelMsg.h"
 #include "gui/feeds/SubFileItem.h"
 #include "util/misc.h"
+#include "util/TokenQueue.h"
 
 #include <retroshare/rsgxschannels.h>
 #include <retroshare/rsfiles.h>
 
 #include <iostream>
+
+#define 	 CREATEMSG_CHANNELINFO		0x002
+
 
 /** Constructor */
 CreateGxsChannelMsg::CreateGxsChannelMsg(std::string cId)
@@ -43,6 +47,8 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(std::string cId)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	setupUi(this);
+
+	mChannelQueue = new TokenQueue(rsGxsChannels->getTokenService(), this);
 
 	headerFrame->setHeaderImage(QPixmap(":/images/channels.png"));
 	headerFrame->setHeaderText(tr("New GxsChannel Post"));
@@ -371,9 +377,9 @@ void CreateGxsChannelMsg::addExtraFile()
 
     QStringList files;
     if (misc::getOpenFileNames(this, RshareSettings::LASTDIR_EXTRAFILE, tr("Add Extra File"), "", files)) {
-        for (QStringList::iterator fileIt = files.begin(); fileIt != files.end(); fileIt++) {
-            addAttachment((*fileIt).toUtf8().constData());
-        }
+	for (QStringList::iterator fileIt = files.begin(); fileIt != files.end(); fileIt++) {
+	    addAttachment((*fileIt).toUtf8().constData());
+	}
     }
 }
 
@@ -397,24 +403,23 @@ void CreateGxsChannelMsg::addAttachment(const std::string &path)
 
 		if((*it)->FilePath() == path){
 			QMessageBox::warning(this, tr("RetroShare"),
-	                   tr("File already Added and Hashed"),
-	                   QMessageBox::Ok, QMessageBox::Ok);
+			   tr("File already Added and Hashed"),
+			   QMessageBox::Ok, QMessageBox::Ok);
 
 			return;
 		}
 
 	}
 
-	// channels creates copy of file into channels directory and shares this
-
 	FileInfo fInfo;
-#if 0
-	rsGxsChannels->channelExtraFileHash(path, mChannelId, fInfo);
-#endif
+	std::string filename;
+	uint64_t size = 0;
+	std::string hash = "";
+	rsGxsChannels->ExtraFileHash(path, filename);
 
-	// file is not innitial
-	SubFileItem *file = new SubFileItem(fInfo.hash, fInfo.fname, fInfo.path, fInfo.size,
-			flags, mChannelId); // destroyed when fileFrame (this subfileitem) is destroyed
+	// only path and filename are valid.
+	// destroyed when fileFrame (this subfileitem) is destroyed
+	SubFileItem *file = new SubFileItem(hash, filename, path, size, flags, mChannelId); 
 
 	mAttachments.push_back(file);
 	QLayout *layout = fileFrame->layout();
@@ -525,10 +530,8 @@ void CreateGxsChannelMsg::cancelMsg()
 
 	std::list<SubFileItem* >::const_iterator it;
 
-#if 0
 	for(it = mAttachments.begin(); it != mAttachments.end(); it++)
-		rsGxsChannels->channelExtraFileRemove((*it)->FileHash(), mChannelId);
-#endif
+		rsGxsChannels->ExtraFileRemove((*it)->FileHash());
 
 	close();
 	return;
@@ -539,20 +542,34 @@ void CreateGxsChannelMsg::newChannelMsg()
 	if (!rsGxsChannels)
 		return;
 
-#if 0
-	GxsChannelInfo ci;
-	if (!rsGxsChannels->getGxsChannelInfo(mChannelId, ci))
+	mChannelMetaLoaded = false;
+
+	/* request Data */
 	{
+		RsTokReqOptions opts;
+		opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
 
-		return;
+		std::list<std::string> groupIds;
+		groupIds.push_back(mChannelId);
+
+		std::cerr << "CreateGxsChannelMsg::newChannelMsg() Req Group Summary(" << mChannelId << ")";
+		std::cerr << std::endl;
+
+		uint32_t token;
+		mChannelQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, groupIds, CREATEMSG_CHANNELINFO);
 	}
+}
 
-			
-	channelName->setText(QString::fromStdWString(ci.channelName));
-#endif
 
+void CreateGxsChannelMsg::saveChannelInfo(const RsGroupMetaData &meta)
+{
+	mChannelMeta = meta;
+	mChannelMetaLoaded = true;
+
+	channelName->setText(QString::fromUtf8(mChannelMeta.mGroupName.c_str()));
 	subjectEdit->setFocus();
 }
+
 
 void CreateGxsChannelMsg::sendMsg()
 {
@@ -560,10 +577,10 @@ void CreateGxsChannelMsg::sendMsg()
 	std::cerr << std::endl;
 
 	/* construct message bits */
-	std::wstring subject = misc::removeNewLine(subjectEdit->text()).toStdWString();
-	std::wstring msg     = msgEdit->toPlainText().toStdWString();
+	std::string subject = std::string(misc::removeNewLine(subjectEdit->text()).toUtf8());
+	std::string msg     = std::string(msgEdit->toPlainText().toUtf8());
 
-	std::list<FileInfo> files;
+	std::list<RsGxsFile> files;
 
 	std::list<SubFileItem *>::iterator fit;
 
@@ -571,10 +588,10 @@ void CreateGxsChannelMsg::sendMsg()
 	{
 		if (!(*fit)->isHidden())
 		{
-			FileInfo fi;
-			fi.hash = (*fit)->FileHash();
-			fi.fname = (*fit)->FileName();
-			fi.size = (*fit)->FileSize();
+			RsGxsFile fi;
+			fi.mHash = (*fit)->FileHash();
+			fi.mName = (*fit)->FileName();
+			fi.mSize = (*fit)->FileSize();
 
 			files.push_back(fi);
 
@@ -595,50 +612,49 @@ void CreateGxsChannelMsg::sendMsg()
 
 }
 
-void CreateGxsChannelMsg::sendMessage(std::wstring subject, std::wstring msg, std::list<FileInfo> &files)
+void CreateGxsChannelMsg::sendMessage(const std::string &subject, const std::string &msg, const std::list<RsGxsFile> &files)
 {
-	QString name = misc::removeNewLine(subjectEdit->text());
-
-	if(name.isEmpty())
+	if(subject.empty())
 	{	/* error message */
 		QMessageBox::warning(this, tr("RetroShare"),
-                   tr("Please add a Subject"),
-                   QMessageBox::Ok, QMessageBox::Ok);
-                   
+		   tr("Please add a Subject"),
+		   QMessageBox::Ok, QMessageBox::Ok);
+		   
 		return; //Don't add  an empty Subject!!
 	}
 	else
 	/* rsGxsChannels */
 	if (rsGxsChannels)
 	{
-#if 0
-		GxsChannelMsgInfo msgInfo;
+		RsGxsChannelPost post;
 				
-		msgInfo.channelId = mChannelId;
-		msgInfo.msgId = "";
+		post.mMeta.mGroupId = mChannelId;
+		post.mMeta.mParentId = "";
+		post.mMeta.mThreadId = "";
+		post.mMeta.mMsgId = "";
 				
-		msgInfo.subject = subject;
-		msgInfo.msg = msg;
-		msgInfo.files = files;
+		post.mMeta.mMsgName = subject;
+		post.mMsg = msg;
+		post.mFiles = files;
 
 		QByteArray ba;
 		QBuffer buffer(&ba);
 
-		if(!picture.isNull()){
+		if(!picture.isNull())
+		{
 			// send chan image
 
 			buffer.open(QIODevice::WriteOnly);
 			picture.save(&buffer, "PNG"); // writes image into ba in PNG format
-			msgInfo.thumbnail.image_thumbnail = (unsigned char*) ba.data();
-			msgInfo.thumbnail.im_thumbnail_size = ba.size();
+			post.mThumbnail.copy((uint8_t *) ba.data(), ba.size());
 		}
 				
-		rsGxsChannels->GxsChannelMessageSend(msgInfo);
-#endif
+		uint32_t token;
+		rsGxsChannels->createPost(token, post);
 	}
 			
 	close();
-  return;
+  	return;
 
 }
 
@@ -654,3 +670,52 @@ void CreateGxsChannelMsg::addThumbnail()
 	// to show the selected
 	thumbnail_label->setPixmap(picture);
 }
+
+
+
+void CreateGxsChannelMsg::loadChannelInfo(const uint32_t &token)
+{
+	std::cerr << "CreateGxsChannelMsg::loadChannelInfo()";
+	std::cerr << std::endl;
+
+	std::list<RsGroupMetaData> groupInfo;
+	rsGxsChannels->getGroupSummary(token, groupInfo);
+
+	if (groupInfo.size() == 1)
+	{
+		RsGroupMetaData fi = groupInfo.front();
+		saveChannelInfo(fi);
+	}
+	else
+	{
+		std::cerr << "CreateGxsChannelMsg::loadForumInfo() ERROR INVALID Number of Forums";
+		std::cerr << std::endl;
+	}
+}
+
+
+void CreateGxsChannelMsg::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+{
+	std::cerr << "CreateGxsChannelMsg::loadRequest() UserType: " << req.mUserType;
+	std::cerr << std::endl;
+
+	if (queue == mChannelQueue)
+	{
+		/* now switch on req */
+		switch(req.mUserType)
+		{
+			case CREATEMSG_CHANNELINFO:
+				loadChannelInfo(req.mToken);
+				break;
+			default:
+				std::cerr << "CreateGxsChannelMsg::loadRequest() UNKNOWN UserType ";
+				std::cerr << std::endl;
+
+		}
+	}
+}
+  
+
+
+
+

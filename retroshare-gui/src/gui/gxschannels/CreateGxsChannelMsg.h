@@ -24,15 +24,17 @@
 
 #include "ui_CreateGxsChannelMsg.h"
 #include <stdint.h>
+#include "util/TokenQueue.h"
+#include <retroshare/rsgxschannels.h>
 
 #ifdef CHANNELS_FRAME_CATCHER
 #include "util/framecatcher.h"
 #endif
 
 class SubFileItem;
-class FileInfo;
+class RsGxsFile;
 
-class CreateGxsChannelMsg : public QDialog, private Ui::CreateGxsChannelMsg
+class CreateGxsChannelMsg : public QDialog, public TokenResponse, private Ui::CreateGxsChannelMsg
 {
   Q_OBJECT
 
@@ -50,6 +52,10 @@ public:
 	void newChannelMsg();
 	
 	QPixmap picture;
+
+	// overload from TokenResponse
+virtual void loadRequest(const TokenQueue*, const TokenRequest&);
+
 
 protected:
 virtual void dragEnterEvent(QDragEnterEvent *event);
@@ -69,17 +75,23 @@ private slots:
 
 private:
 
-  void parseRsFileListAttachments(const std::string &attachList);
-  void sendMessage(std::wstring subject, std::wstring msg, std::list<FileInfo> &files);
-  bool setThumbNail(const std::string& path, int frame);
+	void loadChannelInfo(const uint32_t &token);
+	void saveChannelInfo(const RsGroupMetaData &group);
 
+	void parseRsFileListAttachments(const std::string &attachList);
+	void sendMessage(const std::string &subject, const std::string &msg, const std::list<RsGxsFile> &files);
+	bool setThumbNail(const std::string& path, int frame);
   
-  std::string mChannelId;
+  	std::string mChannelId;
+	RsGroupMetaData mChannelMeta;
+	bool mChannelMetaLoaded;
 
 	std::list<SubFileItem *> mAttachments;
 
 	bool mCheckAttachment;
-    bool mAutoMediaThumbNail;
+    	bool mAutoMediaThumbNail;
+
+	TokenQueue *mChannelQueue;
 
 #ifdef CHANNELS_FRAME_CATCHER
     framecatcher* fCatcher;

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>629</width>
-    <height>172</height>
+    <height>177</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout_4">
@@ -225,19 +225,6 @@ p, li { white-space: pre-wrap; }
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="newLabel">
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>21</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>New</string>
-              </property>
-             </widget>
-            </item>
-            <item>
              <widget class="QPushButton" name="downloadButton">
               <property name="font">
                <font/>
@@ -268,6 +255,13 @@ p, li { white-space: pre-wrap; }
               <property name="icon">
                <iconset resource="../images.qrc">
                 <normaloff>:/images/player_play.png</normaloff>:/images/player_play.png</iconset>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="commentButton">
+              <property name="text">
+               <string>Comments</string>
               </property>
              </widget>
             </item>

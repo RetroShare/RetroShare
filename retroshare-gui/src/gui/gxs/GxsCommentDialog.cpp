@@ -40,50 +40,89 @@
 GxsCommentDialog::GxsCommentDialog(QWidget *parent, RsTokenService *token_service, RsGxsCommentService *comment_service)
 :QWidget(parent)
 {
-    ui.setupUi(this);
-    //ui.postFrame->setVisible(false);
+	ui.setupUi(this);
+	//ui.postFrame->setVisible(false);
 
-    ui.treeWidget->setup(token_service, comment_service);
+	ui.treeWidget->setup(token_service, comment_service);
+
+	/* fill in the available OwnIds for signing */
+	ui.idChooser->loadIds(IDCHOOSER_ID_REQUIRED, "");
+
+	connect(ui.refreshButton, SIGNAL(clicked()), this, SLOT(refresh()));
+	connect(ui.idChooser, SIGNAL(currentIndexChanged( int )), this, SLOT(voterSelectionChanged( int )));
+
+	/* force voterId through - first time */
+	voterSelectionChanged( 0 );
 }
 
 void GxsCommentDialog::commentLoad(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId)
 {
-        std::cerr << "GxsCommentDialog::commentLoad(" << grpId << ", " << msgId << ")";
+	std::cerr << "GxsCommentDialog::commentLoad(" << grpId << ", " << msgId << ")";
 	std::cerr << std::endl;
 
 	mGrpId = grpId;
 	mMsgId = msgId;
 
-        RsGxsGrpMsgIdPair threadId;
+	RsGxsGrpMsgIdPair threadId;
 
-        threadId.first = grpId;
-        threadId.second = msgId;
+	threadId.first = grpId;
+	threadId.second = msgId;
 
 	ui.treeWidget->requestComments(threadId);
 }
+
+
+void GxsCommentDialog::refresh()
+{
+	std::cerr << "GxsCommentDialog::refresh()";
+	std::cerr << std::endl;
+
+	commentLoad(mGrpId, mMsgId);
+}
+
+
+void GxsCommentDialog::voterSelectionChanged( int index )
+{
+	std::cerr << "GxsCommentDialog::voterSelectionChanged(" << index << ")";
+	std::cerr << std::endl;
+
+	RsGxsId voterId; 
+	if (ui.idChooser->getChosenId(voterId))
+	{
+		std::cerr << "GxsCommentDialog::voterSelectionChanged() => " << voterId;
+		std::cerr << std::endl;
+		ui.treeWidget->setVoteId(voterId);
+	}
+	else
+	{
+		std::cerr << "GxsCommentDialog::voterSelectionChanged() ERROR nothing selected";
+		std::cerr << std::endl;
+	}
+}
+
 
 
 void GxsCommentDialog::setCommentHeader(GxsCommentHeader *header)
 {
 
 #if 0
-    ui.postFrame->setVisible(true);
+	ui.postFrame->setVisible(true);
 
-    QDateTime qtime;
-    qtime.setTime_t(mCurrentPost.mMeta.mPublishTs);
-    QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
-    ui.dateLabel->setText(timestamp);
-    ui.fromLabel->setText(QString::fromUtf8(mCurrentPost.mMeta.mAuthorId.c_str()));
-    ui.titleLabel->setText("<a href=" + QString::fromStdString(mCurrentPost.mLink) +
-                       "><span style=\" text-decoration: underline; color:#0000ff;\">" +
-                       QString::fromStdString(mCurrentPost.mMeta.mMsgName) + "</span></a>");
-    ui.siteLabel->setText("<a href=" + QString::fromStdString(mCurrentPost.mLink) +
-                       "><span style=\" text-decoration: underline; color:#0000ff;\">" +
-                       QString::fromStdString(mCurrentPost.mLink) + "</span></a>");
+	QDateTime qtime;
+	qtime.setTime_t(mCurrentPost.mMeta.mPublishTs);
+	QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
+	ui.dateLabel->setText(timestamp);
+	ui.fromLabel->setText(QString::fromUtf8(mCurrentPost.mMeta.mAuthorId.c_str()));
+	ui.titleLabel->setText("<a href=" + QString::fromStdString(mCurrentPost.mLink) +
+					   "><span style=\" text-decoration: underline; color:#0000ff;\">" +
+					   QString::fromStdString(mCurrentPost.mMeta.mMsgName) + "</span></a>");
+	ui.siteLabel->setText("<a href=" + QString::fromStdString(mCurrentPost.mLink) +
+					   "><span style=\" text-decoration: underline; color:#0000ff;\">" +
+					   QString::fromStdString(mCurrentPost.mLink) + "</span></a>");
 
-    ui.scoreLabel->setText(QString("0"));
+	ui.scoreLabel->setText(QString("0"));
 
-    ui.notesBrowser->setPlainText(QString::fromStdString(mCurrentPost.mNotes));
+	ui.notesBrowser->setPlainText(QString::fromStdString(mCurrentPost.mNotes));
 #endif
 
 }

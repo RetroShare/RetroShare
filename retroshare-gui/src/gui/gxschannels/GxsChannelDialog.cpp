@@ -1077,6 +1077,13 @@ void GxsChannelDialog::insertChannelPosts(const std::vector<RsGxsChannelPost> &p
 	// can we add that into the request?
 	//msgs.sort(sortChannelMsgSummary);
 
+	/* replace all the messages with new ones */
+	QList<GxsChannelPostItem *>::iterator mit;
+	for (mit = mChannelPostItems.begin(); mit != mChannelPostItems.end(); mit++) {
+		delete (*mit);
+	}
+	mChannelPostItems.clear();
+
 	uint32_t subscribeFlags = 0xffffffff;
 
 	for (it = posts.begin(); it != posts.end(); it++) 

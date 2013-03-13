@@ -25,15 +25,142 @@
 
 #include <iostream>
 
+static bool MakeIdDesc(const RsGxsId &id, QString &str)
+{
+	RsIdentityDetails details;
+	
+	if (!rsIdentity->getIdDetails(id, details))
+	{
+		std::cerr << "GxsIdRSTreeWidgetItem::MakeIdDesc() FAILED TO GET ID";
+		std::cerr << std::endl;
+
+		str = "Loading... " + QString::fromStdString(id.substr(0,5));
+		return false;
+	}
+
+	str = QString::fromUtf8(details.mNickname.c_str());
+
+	bool addCode = true;
+	if (details.mPgpLinked)
+	{
+		str += " (PGP) [";
+		if (details.mPgpKnown)
+		{
+			/* look up real name */
+			std::string authorName = rsPeers->getPeerName(details.mPgpId);
+			str += QString::fromUtf8(authorName.c_str());
+			str += "]";
+
+			addCode = false;
+		}
+	}
+	else
+	{
+		str += " (Anon) [";
+	}
+
+	if (addCode)
+	{
+		str += QString::fromStdString(id.substr(0,5));
+		str += "...]";
+	}
+
+	std::cerr << "GxsIdRSTreeWidgetItem::MakeIdDesc() ID Ok";
+	std::cerr << std::endl;
+
+	return true;
+}
+
+
+
 /** Constructor */
-GxsIdTreeWidgetItem::GxsIdTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, QTreeWidget *parent)
+GxsIdRSTreeWidgetItem::GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, QTreeWidget *parent)
 :RSTreeWidgetItem(compareRole, parent), QObject(NULL), mTimer(NULL), mCount(0), mColumn(0)
 {
 	init();
 }
 
-GxsIdTreeWidgetItem::GxsIdTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, QTreeWidgetItem *parent)
+GxsIdRSTreeWidgetItem::GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, QTreeWidgetItem *parent)
 :RSTreeWidgetItem(compareRole, parent), QObject(NULL), mTimer(NULL), mCount(0), mColumn(0)
+{
+	init();
+}
+
+void GxsIdRSTreeWidgetItem::init()
+{
+	mTimer = new QTimer(this);
+	mTimer->setSingleShot(true);
+	connect(mTimer, SIGNAL(timeout()), this, SLOT(loadId()));
+}
+
+void GxsIdRSTreeWidgetItem::setId(const RsGxsId &id, int column)
+{
+	std::cerr << " GxsIdRSTreeWidgetItem::setId(" << id << "," << column << ")";
+	std::cerr << std::endl;
+
+	mId = id;
+	mColumn = column;
+	if (mId == "")
+	{
+		setText(mColumn, "No Signature");
+	}
+	else
+	{
+		loadId();
+	}
+}
+
+bool GxsIdRSTreeWidgetItem::getId(RsGxsId &id)
+{
+	id = mId;
+	return true;
+}
+
+
+#define MAX_ATTEMPTS 5
+
+void GxsIdRSTreeWidgetItem::loadId()
+{
+	std::cerr << " GxsIdRSTreeWidgetItem::loadId() Id: " << mId << ", mCount: " << mCount;
+	std::cerr << std::endl;
+
+	mCount++;
+
+	/* try and get details - if not there ... set callback */
+	QString desc;
+	bool loaded = MakeIdDesc(mId, desc);
+
+	setText(mColumn, desc);
+
+	if (loaded)
+	{
+		std::cerr << " GxsIdRSTreeWidgetItem::loadId() Loaded Okay";
+		std::cerr << std::endl;
+		return;
+	}
+
+	if (mCount < MAX_ATTEMPTS)
+	{
+		std::cerr << " GxsIdRSTreeWidgetItem::loadId() Starting Timer for re-try";
+		std::cerr << std::endl;
+
+		/* timer event to try again */
+		mTimer->setInterval(mCount * 1000);
+		mTimer->start();
+	}
+}
+
+
+/** Constructor */
+GxsIdTreeWidgetItem::GxsIdTreeWidgetItem(QTreeWidget *parent)
+:QTreeWidgetItem(parent), QObject(NULL), mTimer(NULL), mCount(0), mColumn(0)
+{
+	init();
+}
+
+
+GxsIdTreeWidgetItem::GxsIdTreeWidgetItem(QTreeWidgetItem *parent)
+:QTreeWidgetItem(parent), QObject(NULL), mTimer(NULL), mCount(0), mColumn(0)
 {
 	init();
 }
@@ -68,47 +195,6 @@ bool GxsIdTreeWidgetItem::getId(RsGxsId &id)
 	return true;
 }
 
-static bool MakeIdDesc(const RsGxsId &id, QString &str)
-{
-	RsIdentityDetails details;
-	
-	if (!rsIdentity->getIdDetails(id, details))
-	{
-		str = "Loading... " + QString::fromStdString(id.substr(0,5));
-		return false;
-	}
-
-	str = QString::fromUtf8(details.mNickname.c_str());
-
-	bool addCode = true;
-	if (details.mPgpLinked)
-	{
-		str += " (PGP) [";
-		if (details.mPgpKnown)
-		{
-			/* look up real name */
-			std::string authorName = rsPeers->getPeerName(details.mPgpId);
-			str += QString::fromUtf8(authorName.c_str());
-			str += "]";
-
-			addCode = false;
-		}
-	}
-	else
-	{
-		str += " (Anon) [";
-	}
-
-	if (addCode)
-	{
-		str += QString::fromStdString(id.substr(0,5));
-		str += "...]";
-	}
-
-	return true;
-}
-
-#define MAX_ATTEMPTS 5
 
 void GxsIdTreeWidgetItem::loadId()
 {
@@ -125,11 +211,16 @@ void GxsIdTreeWidgetItem::loadId()
 
 	if (loaded)
 	{
+		std::cerr << " GxsIdTreeWidgetItem::loadId() Loaded Okay";
+		std::cerr << std::endl;
 		return;
 	}
 
 	if (mCount < MAX_ATTEMPTS)
 	{
+		std::cerr << " GxsIdTreeWidgetItem::loadId() Starting Timer for re-try";
+		std::cerr << std::endl;
+
 		/* timer event to try again */
 		mTimer->setInterval(mCount * 1000);
 		mTimer->start();

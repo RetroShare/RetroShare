@@ -38,6 +38,10 @@ public:
         void setCommentHeader(GxsCommentHeader *header);
         void commentLoad(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId);
 
+private slots:
+	void refresh();
+	void voterSelectionChanged( int index );
+
 private:
 
         RsGxsGroupId   mGrpId;

@@ -791,7 +791,7 @@ void GxsForumThreadWidget::forceUpdateDisplay()
 
 QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForumMsg &msg, bool useChildTS, uint32_t filterColumn)
 {
-	GxsIdTreeWidgetItem *item = new GxsIdTreeWidgetItem(mThreadCompareRole);
+	GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole);
 	QString text;
 
 	item->setText(COLUMN_THREAD_TITLE, QString::fromUtf8(msg.mMeta.mMsgName.c_str()));
@@ -871,7 +871,7 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 
 QTreeWidgetItem *GxsForumThreadWidget::generateMissingItem(const std::string &msgId)
 {
-	GxsIdTreeWidgetItem *item = new GxsIdTreeWidgetItem(mThreadCompareRole);
+	GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole);
 	item->setText(COLUMN_THREAD_TITLE, tr("[ ... Missing Message ... ]"));
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID, QString::fromStdString(msgId));
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MISSING, true);

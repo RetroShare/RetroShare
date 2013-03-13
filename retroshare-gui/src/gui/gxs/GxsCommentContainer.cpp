@@ -44,6 +44,9 @@ GxsCommentContainer::GxsCommentContainer(QWidget *parent)
 : MainPage(parent)
 {
 	ui.setupUi(this);
+
+	connect(ui.tabWidget, SIGNAL(tabCloseRequested( int )), this, SLOT(tabCloseRequested( int )));
+
 }
 
 
@@ -70,6 +73,20 @@ void GxsCommentContainer::commentLoad(const RsGxsGroupId &grpId, const RsGxsMess
 	//commentHeader->commentLoad(grpId, msgId);
 
 	ui.tabWidget->addTab(commentDialog, comments);
+}
+
+
+
+void GxsCommentContainer::tabCloseRequested(int index)
+{
+	std::cerr << "GxsCommentContainer::tabCloseRequested(" << index << ")";
+	if (index != 0)
+	{
+		QWidget *comments = ui.tabWidget->widget(index);
+		ui.tabWidget->removeTab(index);
+		delete comments;
+	}
+	std::cerr << "GxsCommentContainer::tabCloseRequested() Not closing First Tab";
 }
 
 

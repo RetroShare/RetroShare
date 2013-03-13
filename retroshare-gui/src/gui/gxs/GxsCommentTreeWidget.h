@@ -26,6 +26,7 @@
 
 #include "util/TokenQueue.h"
 #include <retroshare/rsgxscommon.h>
+#include <retroshare/rsidentity.h>
 
 class GxsCommentTreeWidget : public QTreeWidget, public TokenResponse
 {
@@ -40,6 +41,7 @@ public:
     void applyRankings(std::map<RsGxsMessageId, uint32_t>& positions);
 
     void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+    void setVoteId(const RsGxsId &voterId);
 
 protected:
 
@@ -64,11 +66,23 @@ public slots:
     void makeComment();
     void replyToComment();
 
+    void voteUp();
+    void voteDown();
+
+    void showReputation();
+    void markInteresting();
+    void markSpammer();
+    void banUser();
+
 protected:
+
+	void vote(const RsGxsGroupId &groupId, const RsGxsMessageId &threadId,
+			const RsGxsMessageId &parentId, const RsGxsId &authorId, bool up);
 
     /* Data */
     RsGxsGrpMsgIdPair mThreadId;
     RsGxsMessageId mCurrentMsgId;
+    RsGxsId mVoterId;
 
     std::map<std::string, QTreeWidgetItem *> mLoadingMap;
     std::multimap<std::string, QTreeWidgetItem *> mPendingInsertMap;

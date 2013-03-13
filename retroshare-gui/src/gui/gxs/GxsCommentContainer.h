@@ -62,6 +62,9 @@ public:
         virtual RsGxsCommentService *getCommentService() = 0;
         virtual GxsCommentHeader *createHeaderWidget() = 0;
 
+private slots:
+	void tabCloseRequested(int index);
+
 private:
 
 	GxsServiceDialog *mServiceDialog;

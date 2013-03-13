@@ -28,13 +28,50 @@
 
 #include "gui/common/RSTreeWidgetItem.h"
 
-class GxsIdTreeWidgetItem : public QObject, public RSTreeWidgetItem
+/*****
+ * NOTE: I have investigated why the Timer doesn't work in GxsForums.
+ * It appears that the Timer events occur in the Thread they were created in.
+ * GxsForums uses a short term thread to fill the ForumThread - this finishes, 
+ * and so the Timer Events don't happen.
+ *
+ * The Timer events work fine in Wiki and Comments Dialog.
+ * because they don't use an additional thread.
+ *
+ ***/
+
+
+class GxsIdRSTreeWidgetItem : public QObject, public RSTreeWidgetItem
 {
 	Q_OBJECT
 
 public:
-	GxsIdTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, QTreeWidget *parent = NULL);
-	GxsIdTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, QTreeWidgetItem *parent);
+	GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, QTreeWidget *parent = NULL);
+	GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, QTreeWidgetItem *parent);
+
+	void setId(const RsGxsId &id, int column);
+	bool getId(RsGxsId &id);
+
+private slots:
+	void loadId();
+
+private:
+	void init();
+
+	QTimer *mTimer;
+	RsGxsId mId;
+	int mCount;
+	int mColumn;
+};
+
+
+
+class GxsIdTreeWidgetItem : public QObject, public QTreeWidgetItem
+{
+	Q_OBJECT
+
+public:
+	GxsIdTreeWidgetItem(QTreeWidget *parent = NULL);
+	GxsIdTreeWidgetItem(QTreeWidgetItem *parent);
 
 	void setId(const RsGxsId &id, int column);
 	bool getId(RsGxsId &id);
