@@ -1,4 +1,31 @@
 retroshare (0.5.4-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
+
+  * Improvements
+    - translations updated from transiflex
+    - Major improvements to GXS services (new service: channels, posted) and GUI (Not yet released)
+    - further reduced TR forward probability so as to avoid a crazy increase of TR out when we have a large number of friends
+    - renamed Transfers tab "File Sharing", as it is more appropriate
+    - removed the constraint of sharing own files only in channels. Replaced it by a warning, to allow peers to post from other locations etc.
+    - switched to libssh-0.5.4 (updated README.txt with package deps)
+    - fixed packaging/compilation for ubuntu raring
+    - significantly lowered the cost of the network graph by computing pairwise repulsive forces 8 times less often
+    - Patch from AC to enable completion over chat lobby participants
+    - patch from AC to better handle colors in lobby list
+    - fixed up protobuf files generation
+    - VOIP
+      * Removed special settings for win32 from VOIP.pro
+      * patch from Henry Morgan to unify compilation settings for VOIP
+
+  * Bugs
+    - removed dead-end for peers not answering downloads, that would get file cache transfers to get stuck indefinitly 
+      when peers are too much stressed for a short period. The offline state is entirely given by setPeerState()
+    - fixed a few fixed other uninitialized memory read (In p3NetMgr, ftChunkMap)
+    - do not show msg icon for current lobby (Improved upon patch from AC)
+    - removed auto-clear of search field when searching (Patch from AC)
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Wed, 14 Mar 2013 21:30:00 +0100
+
+retroshare (0.5.4-0.6178~precise) precise; urgency=low
   * Improvements
     - Added dynamic menu for choosing the destination directory for files, and change the name of the des. file
     - Merged branch v0.5-ImprovedGUI. Brings all sorts of changes, the most of which are:
