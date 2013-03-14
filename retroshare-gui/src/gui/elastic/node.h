@@ -110,7 +110,7 @@ private:
 	 std::string _gpg_id ;
 
 	 static const float MASS_FACTOR = 10 ;
-	 static const float FRICTION_FACTOR = 6.8 ;
+	 static const float FRICTION_FACTOR = 10.8 ;
 	 static const float REPULSION_FACTOR = 4 ;
 	 static const float NODE_DISTANCE = 130.0 ;
 };
