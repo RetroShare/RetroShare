@@ -48,6 +48,7 @@ class RsGxsImage
 	RsGxsImage();	
 	~RsGxsImage();
 	RsGxsImage(const RsGxsImage& a); // TEMP use copy constructor and duplicate memory.
+RsGxsImage &operator=(const RsGxsImage &a); // Need this as well?
 
 //NB: Must make sure that we always use methods - to be consistent about malloc/free for this data.
 static uint8_t *allocate(uint32_t size);
@@ -64,6 +65,7 @@ static void release(void *data);
 };
 
 
+#define GXS_VOTE_NONE 	0x0000
 #define GXS_VOTE_DOWN 	0x0001
 #define GXS_VOTE_UP	0x0002
 
@@ -87,6 +89,8 @@ class RsGxsComment
 	uint32_t mDownVotes;
 	double   mScore; 
 
+	uint32_t mOwnVote;
+
 	// This is filled in if detailed Comment Data is called.
 	std::list<RsGxsVote> mVotes;
 };
@@ -108,6 +112,7 @@ virtual bool createComment(uint32_t &token, RsGxsComment &comment) = 0;
 virtual bool createVote(uint32_t &token, RsGxsVote &vote) = 0;
 
 virtual bool acknowledgeComment(const uint32_t& token, std::pair<RsGxsGroupId, RsGxsMessageId>& msgId) = 0;
+virtual bool acknowledgeVote(const uint32_t& token, std::pair<RsGxsGroupId, RsGxsMessageId>& msgId) = 0;
 
 };
 

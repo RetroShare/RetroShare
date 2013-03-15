@@ -26,6 +26,7 @@
 #include "retroshare/rsgxscommon.h"
 #include "services/p3gxscommon.h"
 #include "serialiser/rsgxscommentitems.h"
+#include "util/rsstring.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,6 +38,7 @@ RsGxsComment::RsGxsComment()
 	mUpVotes = 0;
 	mDownVotes = 0;
 	mScore = 0;
+	mOwnVote = 0;
 }
 
 /********************************************************************************/
@@ -64,6 +66,12 @@ RsGxsImage::~RsGxsImage()
 	std::cerr << "~RsGxsImage(" << this << ")";
 	std::cerr << std::endl;
 	clear();
+}
+
+
+RsGxsImage &RsGxsImage::operator=(const RsGxsImage &a)
+{
+	copy(a.mData, a.mSize);
 }
 
 
@@ -112,7 +120,7 @@ void RsGxsImage::clear()
 	// Frees.
 	if (mData)
 	{
-		release(mData);               
+		release(mData);	       
 	}
 	mData = NULL;
 	mSize = 0;
@@ -138,15 +146,47 @@ RsGxsVote::RsGxsVote()
 	mVoteType = 0;
 }
 
+/********************************************************************************/
+
+#define RSGXSCOMMENT_MAX_SERVICE_STRING 16
+
+bool SSGxsComment::load(const std::string &input)
+{
+	//char line[RSGXSCOMMENT_MAX_SERVICE_STRING];
+	int val;
+	mVoteValue = 0;
+	if (1 == sscanf(input.c_str(), "V:%d", &val))
+	{
+		mVoteValue = val;
+	}
+	return true;
+}
+
+
+std::string SSGxsComment::save() const
+{
+	std::string output;
+	rs_sprintf(output, "V:%d", mVoteValue);
+	return output;
+}
+
 
 /********************************************************************************/
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
 
+#define GXSCOMMENTS_VOTE_CHECK		0x0002
+#define GXSCOMMENTS_VOTE_DONE		0x0003
+
 p3GxsCommentService::p3GxsCommentService(RsGenExchange *exchange, uint16_t service_type)
-    : mExchange(exchange), mServiceType(service_type)
+    : GxsTokenQueue(exchange), mExchange(exchange), mServiceType(service_type)
 {
 	return;
+}
+
+void p3GxsCommentService::comment_tick()
+{
+        GxsTokenQueue::checkRequests();
 }
 
 bool p3GxsCommentService::getGxsCommentData(const uint32_t &token, std::vector<RsGxsComment> &comments)
@@ -214,6 +254,11 @@ bool p3GxsCommentService::getGxsCommentData(const uint32_t &token, std::vector<R
 				}
 			}
 			cit->mScore = calculateBestScore(cit->mUpVotes, cit->mDownVotes);
+
+			/* convert serviceString -> mHaveVoted */
+			SSGxsComment ss;
+			ss.load(cit->mMeta.mServiceString);
+			cit->mOwnVote = ss.mVoteValue;
 		}
 
 		std::cerr << "p3GxsCommentService::getGxsCommentData() Found " << comments.size() << " Comments";
@@ -233,6 +278,8 @@ bool p3GxsCommentService::getGxsCommentData(const uint32_t &token, std::vector<R
 		
 	return ok;
 }
+
+
 
 
 bool p3GxsCommentService::getGxsRelatedComments(const uint32_t &token, std::vector<RsGxsComment> &comments)
@@ -297,6 +344,11 @@ bool p3GxsCommentService::getGxsRelatedComments(const uint32_t &token, std::vect
 				}
 			}
 			cit->mScore = calculateBestScore(cit->mUpVotes, cit->mDownVotes);
+
+			/* convert serviceString -> mHaveVoted */
+			SSGxsComment ss;
+			ss.load(cit->mMeta.mServiceString);
+			cit->mOwnVote = ss.mVoteValue;
 		}
 
 		std::cerr << "p3GxsCommentService::getGxsRelatedComments() Found " << comments.size() << " Comments";
@@ -352,9 +404,272 @@ bool p3GxsCommentService::createGxsComment(uint32_t &token, RsGxsComment &msg)
 }
 
 
-bool p3GxsCommentService::createGxsVote(uint32_t &token, RsGxsVote &msg)
+
+bool p3GxsCommentService::createGxsVote(uint32_t &token, RsGxsVote &vote)
 {
-	std::cerr << "p3GxsChannels::createGxsVote() GroupId: " << msg.mMeta.mGroupId;
+	// NOTE Because we cannot do this operation immediately, we create a token, 
+	// and monitor acknowledgeTokenMsg ... to return correct answer.
+
+	std::cerr << "p3GxsChannels::createGxsVote() GroupId: " << vote.mMeta.mGroupId;
+	std::cerr << std::endl;
+
+	/* vote must be associated with another item */
+	if (vote.mMeta.mThreadId.empty())
+	{
+		std::cerr << "p3GxsChannels::createGxsVote() ERROR Missing Required ThreadId";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	if (vote.mMeta.mParentId.empty())
+	{
+		std::cerr << "p3GxsChannels::createGxsVote() ERROR Missing Required ParentId";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	if (vote.mMeta.mGroupId.empty())
+	{
+		std::cerr << "p3GxsChannels::createGxsVote() ERROR Missing Required GroupId";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	if (vote.mMeta.mAuthorId.empty())
+	{
+		std::cerr << "p3GxsChannels::createGxsVote() ERROR Missing Required AuthorId";
+		std::cerr << std::endl;
+		return false;
+	}
+
+
+	/* now queue */
+
+	RsGxsGrpMsgIdPair parentId(vote.mMeta.mGroupId, vote.mMeta.mParentId);
+
+	std::map<RsGxsGrpMsgIdPair, VoteHolder>::iterator it;
+	it = mPendingVotes.find(parentId);
+	if (it != mPendingVotes.end())
+	{
+		std::cerr << "p3GxsChannels::createGxsVote() ERROR Already a pending vote!";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	token = mExchange->generatePublicToken();
+	mPendingVotes[parentId] = VoteHolder(vote, token);
+
+	// request parent, and queue for response.
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_META;
+
+	GxsMsgReq msgIds;
+	std::vector<RsGxsMessageId> &vect_msgIds = msgIds[parentId.first];
+	vect_msgIds.push_back(parentId.second);
+
+	uint32_t int_token;
+	mExchange->getTokenService()->requestMsgInfo(int_token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, msgIds);
+	GxsTokenQueue::queueRequest(int_token, GXSCOMMENTS_VOTE_CHECK);
+
+	return true;
+}
+
+
+
+
+
+
+
+void p3GxsCommentService::load_PendingVoteParent(const uint32_t &token)
+{
+        std::cerr << "p3GxsCommentService::load_PendingVoteParent()";
+	std::cerr << std::endl;
+	GxsMsgMetaMap msginfo;
+        if (!mExchange->getMsgMeta(token, msginfo))
+	{
+                std::cerr << "p3GxsCommentService::load_PendingVoteParent() ERROR Fetching Data";
+		std::cerr << std::endl;
+                std::cerr << "p3GxsCommentService::load_PendingVoteParent() Warning - this means LOST QUEUE ENTRY";
+		std::cerr << std::endl;
+                std::cerr << "p3GxsCommentService::load_PendingVoteParent() Need to track tokens - if this happens";
+		std::cerr << std::endl;
+                return;
+        }
+
+	GxsMsgMetaMap::iterator it;
+	for(it = msginfo.begin(); it != msginfo.end(); it++)
+	{
+		std::vector<RsMsgMetaData>::iterator mit;
+		for(mit = it->second.begin(); mit != it->second.end(); mit++)
+		{
+			/* find the matching Pending Vote */
+			RsMsgMetaData &meta = *mit;
+
+                	std::cerr << "p3GxsCommentService::load_PendingVoteParent() recv (groupId: " << meta.mGroupId;
+			std::cerr << ", msgId: " << meta.mMsgId << ")";
+			std::cerr << std::endl;
+
+			RsGxsGrpMsgIdPair parentId(meta.mGroupId, meta.mMsgId);
+			std::map<RsGxsGrpMsgIdPair, VoteHolder>::iterator pit;
+			pit = mPendingVotes.find(parentId);
+			if (pit == mPendingVotes.end())
+			{
+                		std::cerr << "p3GxsCommentService::load_PendingVoteParent() ERROR Finding Pending Vote";
+				std::cerr << std::endl;
+				continue;
+			}
+
+			/* check Vote serviceString */
+			SSGxsComment ss;
+			ss.load(meta.mServiceString);
+
+			RsGxsVote vote = pit->second.mVote;
+
+			if (ss.mVoteValue)
+			{
+                		std::cerr << "p3GxsCommentService::load_PendingVoteParent() ERROR Already Voted";
+				std::cerr << std::endl;
+                		std::cerr << "mGroupId: " << meta.mGroupId;
+				std::cerr << std::endl;
+                		std::cerr << "mMsgId: " << meta.mMsgId;
+				std::cerr << std::endl;
+
+				pit->second.mStatus = VoteHolder::ERROR;
+				uint32_t status = RsTokenService::GXS_REQUEST_V2_STATUS_FAILED;
+				mExchange->updatePublicRequestStatus(pit->second.mReqToken, status);
+				continue;
+			}
+
+                	std::cerr << "p3GxsCommentService::load_PendingVoteParent() submitting Vote";
+			std::cerr << std::endl;
+
+			ss.mVoteValue = vote.mVoteType;
+			std::string servString = ss.save();
+			
+			uint32_t ss_token;
+			mExchange->setMsgServiceString(ss_token, parentId, servString);	
+
+			uint32_t vote_token;
+			castVote(vote_token, vote);
+			GxsTokenQueue::queueRequest(vote_token, GXSCOMMENTS_VOTE_DONE);
+
+			pit->second.mVoteToken = vote_token;
+			pit->second.mStatus = VoteHolder::SUBMITTED;
+		}
+	}
+}
+
+
+
+void p3GxsCommentService::completeInternalVote(uint32_t &token)
+{
+	std::cerr << "p3GxsChannels::completeInternalVote() token: " << token;
+	std::cerr << std::endl;
+	std::map<RsGxsGrpMsgIdPair, VoteHolder>::iterator it;
+	for (it = mPendingVotes.begin(); it != mPendingVotes.end(); it++)
+	{
+		if (it->second.mVoteToken == token)
+		{
+
+			uint32_t status = mExchange->getTokenService()->requestStatus(token);
+			mExchange->updatePublicRequestStatus(it->second.mReqToken, status);
+
+			std::cerr << "p3GxsChannels::completeInternalVote() Matched to PendingVote. status: " << status;
+			std::cerr << std::endl;
+
+			it->second.mStatus = VoteHolder::READY;
+			return;
+		}
+	}
+
+	std::cerr << "p3GxsChannels::completeInternalVote() ERROR Failed to match PendingVote";
+	std::cerr << std::endl;
+
+	return;
+}
+
+
+bool p3GxsCommentService::acknowledgeVote(const uint32_t& token, RsGxsGrpMsgIdPair& msgId)
+{
+	std::cerr << "p3GxsChannels::acknowledgeVote() token: " << token;
+	std::cerr << std::endl;
+
+	std::map<RsGxsGrpMsgIdPair, VoteHolder>::iterator it;
+	for (it = mPendingVotes.begin(); it != mPendingVotes.end(); it++)
+	{
+		if (it->second.mReqToken == token)
+		{
+			std::cerr << "p3GxsChannels::acknowledgeVote() Matched to PendingVote";
+			std::cerr << std::endl;
+
+			bool ans = false;
+			if (it->second.mStatus == VoteHolder::READY)
+			{
+				std::cerr << "p3GxsChannels::acknowledgeVote() PendingVote = READY";
+				std::cerr << std::endl;
+
+				// Finally finish this Vote off.
+				ans = mExchange->acknowledgeTokenMsg(it->second.mVoteToken, msgId);
+			}
+			else if (it->second.mStatus == VoteHolder::ERROR)
+			{
+				std::cerr << "p3GxsChannels::acknowledgeVote() PendingVote = ERROR ???";
+				std::cerr << std::endl;
+			}
+			else
+			{
+				std::cerr << "p3GxsChannels::acknowledgeVote() PendingVote = OTHER STATUS";
+				std::cerr << std::endl;
+			}
+
+			std::cerr << "p3GxsChannels::acknowledgeVote() cleanup token & PendingVote";
+			std::cerr << std::endl;
+			mExchange->disposeOfPublicToken(it->second.mReqToken);
+			mPendingVotes.erase(it);
+
+			return ans;
+		}
+	}
+
+	std::cerr << "p3GxsChannels::acknowledgeVote() Failed to match PendingVote";
+	std::cerr << std::endl;
+
+	return false;
+}
+
+
+        // Overloaded from GxsTokenQueue for Request callbacks.
+void p3GxsCommentService::handleResponse(uint32_t token, uint32_t req_type)
+{
+        std::cerr << "p3GxsCommentService::handleResponse(" << token << "," << req_type << ")";
+        std::cerr << std::endl;
+
+        // stuff.
+        switch(req_type)
+        {
+		case GXSCOMMENTS_VOTE_CHECK:
+			load_PendingVoteParent(token);
+			break;
+
+		case GXSCOMMENTS_VOTE_DONE:
+			completeInternalVote(token);
+			break;
+
+                default:
+                        /* error */
+                        std::cerr << "p3GxsCommentService::handleResponse() Unknown Request Type: " << req_type;
+                        std::cerr << std::endl;
+                        break;
+        }
+}
+
+
+
+	
+
+bool p3GxsCommentService::castVote(uint32_t &token, RsGxsVote &msg)
+{
+	std::cerr << "p3GxsChannels::castVote() GroupId: " << msg.mMeta.mGroupId;
 	std::cerr << std::endl;
 
 	RsGxsVoteItem* msgItem = new RsGxsVoteItem(mServiceType);
@@ -364,6 +679,11 @@ bool p3GxsCommentService::createGxsVote(uint32_t &token, RsGxsVote &msg)
 	mExchange->publishMsg(token, msgItem);
 	return true;
 }
+
+
+
+
+
 
 
 /********************************************************************************************/

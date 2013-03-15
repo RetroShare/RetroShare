@@ -118,6 +118,16 @@ virtual bool acknowledgeComment(const uint32_t& token, std::pair<RsGxsGroupId, R
 	}
 
 
+virtual bool acknowledgeVote(const uint32_t& token, std::pair<RsGxsGroupId, RsGxsMessageId>& msgId)
+	{
+		if (mCommentService->acknowledgeVote(token, msgId))
+		{
+			return true;
+		}
+		return acknowledgeMsg(token, msgId);
+	}
+
+
 	// Overloaded from RsGxsIface.
 virtual void subscribeToGroup(const RsGxsGroupId &groupId, bool subscribe);
 

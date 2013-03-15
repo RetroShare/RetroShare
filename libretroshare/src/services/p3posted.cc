@@ -108,6 +108,9 @@ void	p3Posted::service_tick()
 {
 	dummy_tick();
 	RsTickEvent::tick_events();
+
+	mCommentService->comment_tick();
+
 	return;
 }
 

@@ -362,6 +362,7 @@ protected:
         return ok;
     }
 
+public:
     /*!
      * Assigns a token value to passed integer
      * The status of the token can still be queried from request status feature
@@ -388,6 +389,7 @@ protected:
      */
     bool disposeOfPublicToken(const uint32_t &token);
 
+protected:
     /*!
      * This gives access to the data store which hold msgs and groups
      * for the service

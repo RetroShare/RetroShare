@@ -112,6 +112,16 @@ virtual bool acknowledgeComment(const uint32_t& token, std::pair<RsGxsGroupId, R
 		return acknowledgeMsg(token, msgId);
 	}
 
+virtual bool acknowledgeVote(const uint32_t& token, std::pair<RsGxsGroupId, RsGxsMessageId>& msgId)
+	{
+		if (mCommentService->acknowledgeVote(token, msgId))
+		{
+			return true;
+		}
+		return acknowledgeMsg(token, msgId);
+	}
+
+
 	private:
 
 static uint32_t postedAuthenPolicy();

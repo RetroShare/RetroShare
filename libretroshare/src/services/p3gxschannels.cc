@@ -138,6 +138,10 @@ void	p3GxsChannels::service_tick()
 {
 	dummy_tick();
 	RsTickEvent::tick_events();
+	GxsTokenQueue::checkRequests();
+
+	mCommentService->comment_tick();
+
 	return;
 }
 
@@ -426,7 +430,16 @@ void p3GxsChannels::request_SpecificUnprocessedPosts(std::list<std::pair<RsGxsGr
 
         uint32_t token = 0;
 
-        RsGenExchange::getTokenService()->requestGroupInfo(token, ansType, opts);
+	/* organise Ids how they want them */
+        GxsMsgReq msgIds;
+	std::list<std::pair<RsGxsGroupId, RsGxsMessageId> >::iterator it;
+	for(it = ids.begin(); it != ids.end(); it++)
+	{
+        	std::vector<RsGxsMessageId> &vect_msgIds = msgIds[it->first];
+        	vect_msgIds.push_back(it->second);
+	}
+
+        RsGenExchange::getTokenService()->requestMsgInfo(token, ansType, opts, msgIds);
         GxsTokenQueue::queueRequest(token, GXSCHANNELS_UNPROCESSED_SPECIFIC);
 }
 
@@ -452,9 +465,9 @@ void p3GxsChannels::request_GroupUnprocessedPosts(const std::list<RsGxsGroupId> 
 void p3GxsChannels::load_SpecificUnprocessedPosts(const uint32_t &token)
 {
 	std::vector<RsGxsChannelPost> posts;
-	if (!getRelatedPosts(token, posts))
+	if (!getPostData(token, posts))
 	{
-		std::cerr << "p3GxsChannels::load_GroupUnprocessedPosts ERROR";
+		std::cerr << "p3GxsChannels::load_SpecificUnprocessedPosts ERROR";
 		return;
 	}
 
@@ -864,7 +877,7 @@ void p3GxsChannels::dummy_tick()
 		{
 			/* get the msg Id, and generate next snapshot */
 			RsGxsGrpMsgIdPair msgId;
-			if (!acknowledgeTokenMsg(mGenToken, msgId))
+			if (!acknowledgeVote(mGenToken, msgId))
 			{
 				std::cerr << " ERROR ";
 				std::cerr << std::endl;
