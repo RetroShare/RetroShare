@@ -34,7 +34,7 @@
 //
 static const int chunk_square_size       = 13 ;
 static const int text_height             = 10 ;	// should be set according to the font size
-static const int block_sep               = 3 ;	// separator between blocks
+static const int block_sep               = 4 ;	// separator between blocks
 static const int ch_num_size             = 50 ;	// size of field for chunk number
 static const int availability_map_size_X = 400 ;// length of availability bar
 static const int availability_map_size_Y = 20 ;	// height of availability bar
@@ -245,6 +245,8 @@ void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info
 	 y += text_height ; painter->drawText(0,y,tr("File info") + ":") ;
 	 y += block_sep ;
 	 y += text_height ; painter->drawText(20,y,tr("File name") + ":") ; painter->drawText(tab_size,y,QString::fromStdString(nfo.fname)) ;
+	 y += block_sep ;
+	 y += text_height ; painter->drawText(20,y,tr("Destination folder") + ":") ; painter->drawText(tab_size,y,QString::fromStdString(nfo.path)) ;
 	 y += block_sep ;
 	 y += text_height ; painter->drawText(20,y,tr("File hash") + ":") ; painter->drawText(tab_size,y,QString::fromStdString(nfo.hash)) ;
 	 y += block_sep ;
