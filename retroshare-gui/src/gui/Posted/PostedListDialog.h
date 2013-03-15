@@ -53,14 +53,18 @@
 #define 	POSTEDDIALOG_INSERT_POST		5
 #define 	POSTEDDIALOG_REPLY_MESSAGE		6
 
-class PostedListDialog : public RsAutoUpdatePage, public PostedHolder, public TokenResponse, public GxsServiceDialog
+class PostedListDialog : public RsAutoUpdatePage, public FeedHolder, public TokenResponse, public GxsServiceDialog
 {
   Q_OBJECT
 
 public:
         PostedListDialog(QWidget *parent = 0);
 
-        void showComments(const RsPostedPost& post);
+	// Overloaded from FeedHolder.
+	virtual QScrollArea *getScrollArea();
+	virtual void deleteFeedItem(QWidget *item, uint32_t type);
+	virtual void openChat(std::string peerId);
+	virtual void openComments(uint32_t type, const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, const QString &title);
 
 private slots:
 

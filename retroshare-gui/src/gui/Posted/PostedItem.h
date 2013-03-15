@@ -27,23 +27,17 @@
 #include "ui_PostedItem.h"
 
 #include <retroshare/rsposted.h>
+#include "gui/feeds/FeedHolder.h"
+#include "gui/gxs/GxsFeedItem.h"
 
-class RsPostedPost;
-class PostedItem;
 
-class PostedHolder
-{
-	public:
-
-    virtual void showComments(const RsPostedPost& post) = 0;
-};
-
-class PostedItem : public QWidget, private Ui::PostedItem
+class PostedItem : public GxsFeedItem, private Ui::PostedItem
 {
   Q_OBJECT
 
 public:
-        PostedItem(PostedHolder *parent, const RsPostedPost &post);
+        PostedItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome);
+        PostedItem(FeedHolder *parent, uint32_t feedId, const RsPostedPost &post, bool isHome);
 
         RsPostedPost getPost() const;
         void setContent(const RsPostedPost& post);
@@ -56,12 +50,16 @@ private slots:
 signals:
         void vote(const RsGxsGrpMsgIdPair& msgId, bool up);
 
+protected:
+	virtual void loadMessage(const uint32_t &token);
+
 private:
+
+	void setup();
+
 	uint32_t     mType;
         bool mSelected;
 
-        std::string mThreadId;
-        PostedHolder *mPostHolder;
         RsPostedPost mPost;
 
 };

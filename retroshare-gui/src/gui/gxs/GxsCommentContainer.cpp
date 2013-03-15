@@ -1,5 +1,5 @@
 /*
- * Retroshare Posted List
+ * Retroshare Comment Container
  *
  * Copyright 2012-2012 by Robert Fernie.
  *
@@ -61,16 +61,23 @@ void GxsCommentContainer::setup()
 }
 
 
-void GxsCommentContainer::commentLoad(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId)
+#define MAX_COMMENT_TITLE 32
+
+void GxsCommentContainer::commentLoad(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, const QString &title)
 {
-	QString comments(tr("Comments"));
+	QString comments = title;
+	if (title.length() > MAX_COMMENT_TITLE)
+	{
+		comments.truncate(MAX_COMMENT_TITLE - 3);
+		comments += "...";
+	}
+
         GxsCommentDialog *commentDialog = new GxsCommentDialog(this, getTokenService(), getCommentService());
 
-	GxsCommentHeader *commentHeader = createHeaderWidget();
+	QWidget *commentHeader = createHeaderWidget(grpId, msgId);
 	commentDialog->setCommentHeader(commentHeader);
 
 	commentDialog->commentLoad(grpId, msgId);
-	//commentHeader->commentLoad(grpId, msgId);
 
 	ui.tabWidget->addTab(commentDialog, comments);
 }
@@ -80,13 +87,18 @@ void GxsCommentContainer::commentLoad(const RsGxsGroupId &grpId, const RsGxsMess
 void GxsCommentContainer::tabCloseRequested(int index)
 {
 	std::cerr << "GxsCommentContainer::tabCloseRequested(" << index << ")";
+	std::cerr << std::endl;
 	if (index != 0)
 	{
 		QWidget *comments = ui.tabWidget->widget(index);
 		ui.tabWidget->removeTab(index);
 		delete comments;
 	}
-	std::cerr << "GxsCommentContainer::tabCloseRequested() Not closing First Tab";
+	else
+	{
+		std::cerr << "GxsCommentContainer::tabCloseRequested() Not closing First Tab";
+		std::cerr << std::endl;
+	}
 }
 
 

@@ -57,10 +57,11 @@ public:
 		return rsPosted;
 	}
 
-	virtual GxsCommentHeader *createHeaderWidget()
-	{
-		return NULL;
-	}
+        virtual QWidget *createHeaderWidget(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId)
+        {
+                return new PostedItem(NULL, 0, grpId, msgId, true);
+        }
+
 };
 
 #endif

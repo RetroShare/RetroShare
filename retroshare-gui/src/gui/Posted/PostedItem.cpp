@@ -37,80 +37,127 @@
 
 
 /** Constructor */
-PostedItem::PostedItem(PostedHolder *postHolder, const RsPostedPost &post)
-:QWidget(NULL), mPostHolder(postHolder), mPost(post)
+
+PostedItem::PostedItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome)
+	:GxsFeedItem(parent, feedId, groupId, messageId, isHome, rsPosted, true)
 {
-    setupUi(this);
-    setAttribute ( Qt::WA_DeleteOnClose, true );
-
-    setContent(mPost);
-
-    connect( commentButton, SIGNAL( clicked() ), this, SLOT( loadComments() ) );
-    connect( voteUpButton, SIGNAL(clicked()), this, SLOT(makeUpVote()));
-    connect( voteDownButton, SIGNAL(clicked()), this, SLOT( makeDownVote()));
-
-    return;
+	setup();
 }
+
+PostedItem::PostedItem(FeedHolder *parent, uint32_t feedId, const RsPostedPost &post, bool isHome)
+	:GxsFeedItem(parent, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsPosted, false),
+	mPost(post)
+{
+	setup();
+
+	setContent(mPost);
+}
+
+
+void PostedItem::setup()
+{
+	setupUi(this);
+	setAttribute ( Qt::WA_DeleteOnClose, true );
+
+	connect( commentButton, SIGNAL( clicked() ), this, SLOT( loadComments() ) );
+	connect( voteUpButton, SIGNAL(clicked()), this, SLOT(makeUpVote()));
+	connect( voteDownButton, SIGNAL(clicked()), this, SLOT( makeDownVote()));
+
+	return;
+}
+
+
+void PostedItem::loadMessage(const uint32_t &token)
+{
+	std::vector<RsPostedPost> posts;
+        if (!rsPosted->getPostData(token, posts))
+        {
+                std::cerr << "GxsChannelPostItem::loadMessage() ERROR getting data";
+                std::cerr << std::endl;
+                return;
+        }
+
+        if (posts.size() != 1)
+        {
+                std::cerr << "GxsChannelPostItem::loadMessage() Wrong number of Items";
+                std::cerr << std::endl;
+                return;
+        }
+
+	mPost = posts[0];
+	setContent(mPost);
+
+	return;
+}
+
+
 
 void PostedItem::setContent(const RsPostedPost &post)
 {
-    mPost = post;
-    QDateTime qtime;
-    qtime.setTime_t(mPost.mMeta.mPublishTs);
-    QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
-    dateLabel->setText(timestamp);
-    fromLabel->setText(QString::fromUtf8(post.mMeta.mAuthorId.c_str()));
-    titleLabel->setText("<a href=" + QString::fromStdString(post.mLink) +
-                       "><span style=\" text-decoration: underline; color:#0000ff;\">" +
-                       QString::fromStdString(post.mMeta.mMsgName) + "</span></a>");
-    siteLabel->setText("<a href=" + QString::fromStdString(post.mLink) +
-                       "><span style=\" text-decoration: underline; color:#0000ff;\">" +
-                       QString::fromStdString(post.mLink) + "</span></a>");
+	mPost = post;
+	QDateTime qtime;
+	qtime.setTime_t(mPost.mMeta.mPublishTs);
+	QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
+	dateLabel->setText(timestamp);
+	fromLabel->setText(QString::fromUtf8(post.mMeta.mAuthorId.c_str()));
+	titleLabel->setText("<a href=" + QString::fromStdString(post.mLink) +
+					   "><span style=\" text-decoration: underline; color:#0000ff;\">" +
+					   QString::fromStdString(post.mMeta.mMsgName) + "</span></a>");
+	siteLabel->setText("<a href=" + QString::fromStdString(post.mLink) +
+					   "><span style=\" text-decoration: underline; color:#0000ff;\">" +
+					   QString::fromStdString(post.mLink) + "</span></a>");
 
-    uint32_t up, down, nComments;
+	uint32_t up, down, nComments;
 
 #if 0
-    bool ok = rsPosted->retrieveScores(mPost.mMeta.mServiceString, up, down, nComments);
+	bool ok = rsPosted->retrieveScores(mPost.mMeta.mServiceString, up, down, nComments);
 
-    if(ok)
-    {
-        int32_t vote = up - down;
-        scoreLabel->setText(QString::number(vote));
+	if(ok)
+	{
+		int32_t vote = up - down;
+		scoreLabel->setText(QString::number(vote));
 
-        numCommentsLabel->setText("<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px;"
-                                  "margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span"
-                                  "style=\" font-size:10pt; font-weight:600;\">#</span><span "
-                                  "style=\" font-size:8pt; font-weight:600;\"> Comments:  "
-                                  + QString::number(nComments) + "</span></p>");
-    }
+		numCommentsLabel->setText("<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px;"
+								  "margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span"
+								  "style=\" font-size:10pt; font-weight:600;\">#</span><span "
+								  "style=\" font-size:8pt; font-weight:600;\"> Comments:  "
+								  + QString::number(nComments) + "</span></p>");
+	}
 #endif
 
 }
 
 RsPostedPost PostedItem::getPost() const
 {
-    return mPost;
+	return mPost;
 }
 
 void PostedItem::makeDownVote()
 {
-    RsGxsGrpMsgIdPair msgId;
-    msgId.first = mPost.mMeta.mGroupId;
-    msgId.second = mPost.mMeta.mMsgId;
-    emit vote(msgId, false);
+	RsGxsGrpMsgIdPair msgId;
+	msgId.first = mPost.mMeta.mGroupId;
+	msgId.second = mPost.mMeta.mMsgId;
+	emit vote(msgId, false);
 }
 
 void PostedItem::makeUpVote()
 {
-    RsGxsGrpMsgIdPair msgId;
-    msgId.first = mPost.mMeta.mGroupId;
-    msgId.second = mPost.mMeta.mMsgId;
-    emit vote(msgId, true);
+	RsGxsGrpMsgIdPair msgId;
+	msgId.first = mPost.mMeta.mGroupId;
+	msgId.second = mPost.mMeta.mMsgId;
+	emit vote(msgId, true);
 }
 
 void PostedItem::loadComments()
 {
-    std::cerr << "PostedItem::loadComments() Requesting for " << mThreadId;
-    std::cerr << std::endl;
-    mPostHolder->showComments(mPost);
+	std::cerr << "PostedItem::loadComments()";
+	std::cerr << std::endl;
+	if (mParent)
+	{
+		QString title = QString::fromUtf8(mPost.mMeta.mMsgName.c_str());
+		mParent->openComments(0, mPost.mMeta.mGroupId, mPost.mMeta.mMsgId, title);
+	}
 }
+
+
+

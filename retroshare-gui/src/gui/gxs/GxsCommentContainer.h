@@ -32,19 +32,7 @@
 
 #include <map>
 
-class GxsCommentHeader
-{
-public:
-
-    /*!
-     * This should be used for loading comments of a message on a main comment viewing page
-     * @param msgId the message id for which comments will be requested
-     */
-    virtual void commentLoad(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId) = 0;
-};
-
 class GxsServiceDialog;
-
 
 class GxsCommentContainer : public MainPage
 {
@@ -54,13 +42,13 @@ public:
 	GxsCommentContainer(QWidget *parent = 0);
 	void setup();
 
-        void commentLoad(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId);
+        void commentLoad(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, const QString &title);
 
         virtual GxsServiceDialog *createServiceDialog() = 0;
         virtual QString getServiceName() = 0;
         virtual RsTokenService *getTokenService() = 0;
         virtual RsGxsCommentService *getCommentService() = 0;
-        virtual GxsCommentHeader *createHeaderWidget() = 0;
+        virtual QWidget *createHeaderWidget(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId) = 0;
 
 private slots:
 	void tabCloseRequested(int index);
@@ -85,9 +73,9 @@ public:
 
 virtual ~GxsServiceDialog() { return; }
 
-	void commentLoad(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId)
+	void commentLoad(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, const QString &title)
 	{
-		mContainer->commentLoad(grpId, msgId);
+		mContainer->commentLoad(grpId, msgId, title);
 	}
 private:
 	GxsCommentContainer *mContainer;

@@ -29,6 +29,7 @@
 
 #include "gui/gxs/GxsCommentContainer.h"
 #include "gui/gxschannels/GxsChannelDialog.h"
+#include "gui/feeds/GxsChannelPostItem.h"
 
 
 class ChannelDialog : public GxsCommentContainer
@@ -59,9 +60,9 @@ public:
 		return rsGxsChannels;
 	}
 
-        virtual GxsCommentHeader *createHeaderWidget()
+        virtual QWidget *createHeaderWidget(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId)
 	{
-		return NULL;
+		return new GxsChannelPostItem(NULL, 0, grpId, msgId, true);
 	}
 };
 

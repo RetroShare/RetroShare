@@ -102,8 +102,23 @@ void GxsCommentDialog::voterSelectionChanged( int index )
 
 
 
-void GxsCommentDialog::setCommentHeader(GxsCommentHeader *header)
+void GxsCommentDialog::setCommentHeader(QWidget *header)
 {
+	if (!header)
+	{
+		std::cerr << "GxsCommentDialog::setCommentHeader() NULL header!";
+		std::cerr << std::endl;
+		return;
+	}
+
+	std::cerr << "GxsCommentDialog::setCommentHeader() Adding header to ui,postFrame";
+	std::cerr << std::endl;
+
+	//header->setParent(ui.postFrame);
+	//ui.postFrame->setVisible(true);
+
+	QLayout *alayout = ui.postFrame->layout();
+	alayout->addWidget(header);
 
 #if 0
 	ui.postFrame->setVisible(true);

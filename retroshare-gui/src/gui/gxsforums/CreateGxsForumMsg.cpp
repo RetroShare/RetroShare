@@ -298,12 +298,19 @@ void  CreateGxsForumMsg::createMsg()
 		{
 			std::cerr << "CreateGxsForumMsg::createMsg() ERROR GETTING AuthorId!";
 			std::cerr << std::endl;
+			QMessageBox::warning(this, tr("RetroShare"),tr("Please choose Signing Id"),
+					 QMessageBox::Ok, QMessageBox::Ok);
+
+			return;
 		}
 	}
 	else
 	{
 		std::cerr << "CreateGxsForumMsg::createMsg() No Signature (for now :)";
 		std::cerr << std::endl;
+		QMessageBox::warning(this, tr("RetroShare"),tr("Please choose Signing Id, it is required"),
+			 QMessageBox::Ok, QMessageBox::Ok);
+		return;
 	}
 
 	uint32_t token;

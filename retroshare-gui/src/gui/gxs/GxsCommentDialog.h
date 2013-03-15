@@ -35,7 +35,7 @@ class GxsCommentDialog: public QWidget
 public:
 	GxsCommentDialog(QWidget *parent, RsTokenService *token_service, RsGxsCommentService *comment_service);
 
-        void setCommentHeader(GxsCommentHeader *header);
+        void setCommentHeader(QWidget *header);
         void commentLoad(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId);
 
 private slots:

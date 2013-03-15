@@ -214,12 +214,34 @@ void PostedListDialog::submitVote(const RsGxsGrpMsgIdPair &msgId, bool up)
 #endif
 } 
 
-void PostedListDialog::showComments(const RsPostedPost& post)
+
+/*****************************************************************************************/
+        // Overloaded from FeedHolder.
+QScrollArea *PostedListDialog::getScrollArea()
 {
-	commentLoad(post.mMeta.mGroupId, post.mMeta.mMsgId);
-	//mCommentHolder->commentLoad(post);
+	return ui.scrollArea;
 }
 
+void PostedListDialog::deleteFeedItem(QWidget *item, uint32_t type)
+{
+	std::cerr << "PostedListDialog::deleteFeedItem() Nah";
+	std::cerr << std::endl;
+	return;
+}
+
+void PostedListDialog::openChat(std::string peerId)
+{
+	std::cerr << "PostedListDialog::openChat() Nah";
+	std::cerr << std::endl;
+	return;
+}
+
+void PostedListDialog::openComments(uint32_t feed_type, const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, const QString &title)
+{
+	commentLoad(groupId, msgId, title);
+}
+
+/*****************************************************************************************/
 
 
 void PostedListDialog::updateDisplay()
@@ -500,7 +522,7 @@ void PostedListDialog::loadGroupThreadData_InsertThreads(const uint32_t &token)
 
 void PostedListDialog::loadPost(const RsPostedPost &post)
 {
-	PostedItem *item = new PostedItem(this, post);
+	PostedItem *item = new PostedItem(this, 0, post, true);
 	connect(item, SIGNAL(vote(RsGxsGrpMsgIdPair,bool)), this, SLOT(submitVote(RsGxsGrpMsgIdPair,bool)));
 	QLayout *alayout = ui.scrollAreaWidgetContents->layout();
 	mPosts.insert(post.mMeta.mMsgId, item);

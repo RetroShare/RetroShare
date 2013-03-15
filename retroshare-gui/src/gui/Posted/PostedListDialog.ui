@@ -220,8 +220,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>426</width>
-            <height>327</height>
+            <width>443</width>
+            <height>316</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -230,24 +230,7 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
-           <item>
-            <spacer name="verticalSpacer">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Minimum</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>309</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
+          <layout class="QVBoxLayout" name="verticalLayout_2"/>
          </widget>
         </widget>
        </item>

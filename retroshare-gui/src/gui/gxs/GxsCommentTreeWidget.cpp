@@ -1,23 +1,25 @@
-/****************************************************************
-*  RetroShare is distributed under the following license:
-*
-*  Copyright (C) 2008 Robert Fernie
-*
-*  This program is free software; you can redistribute it and/or
-*  modify it under the terms of the GNU General Public License
-*  as published by the Free Software Foundation; either version 2
-*  of the License, or (at your option) any later version.
-*
-*  This program is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*
-*  You should have received a copy of the GNU General Public License
-*  along with this program; if not, write to the Free Software
-*  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
-*  Boston, MA  02110-1301, USA.
-****************************************************************/
+/*
+ * Retroshare Gxs Support
+ *
+ * Copyright 2012-2013 by Robert Fernie.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License Version 2.1 as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
+ *
+ * Please report all bugs and problems to "retroshare@lunamutt.com".
+ *
+ */
 
 #include <QMimeData>
 #include <QDateTime>
@@ -35,10 +37,13 @@
 #define PCITEM_COLUMN_SCORE		3
 #define PCITEM_COLUMN_UPVOTES		4
 #define PCITEM_COLUMN_DOWNVOTES		5
-#define PCITEM_COLUMN_MSGID		6
-#define PCITEM_COLUMN_PARENTID		7
+#define PCITEM_COLUMN_OWNVOTE		6
+#define PCITEM_COLUMN_MSGID		7
+#define PCITEM_COLUMN_PARENTID		8
 
 #define GXSCOMMENTS_LOADTHREAD		1
+
+#define COMMENT_VOTE_ACK	0x001234
 
 
 /* Images for context menu icons */
@@ -164,7 +169,7 @@ void GxsCommentTreeWidget::vote(const RsGxsGroupId &groupId, const RsGxsMessageI
 
 	uint32_t token;
         mCommentService->createVote(token, vote);
-        mTokenQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, 0);
+        mTokenQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, COMMENT_VOTE_ACK);
 }
 
 
@@ -373,6 +378,17 @@ void GxsCommentTreeWidget::acknowledgeComment(const uint32_t &token)
 }
 
 
+void GxsCommentTreeWidget::acknowledgeVote(const uint32_t &token)
+{
+	RsGxsGrpMsgIdPair msgId;
+	if (mCommentService->acknowledgeVote(token, msgId))
+	{
+		// reload data if vote was added.
+		service_requestComments(mThreadId);
+	}
+}
+
+
 void GxsCommentTreeWidget::service_loadThread(const uint32_t &token)
 {
 	std::cerr << "GxsCommentTreeWidget::service_loadThread() ERROR must be overloaded!";
@@ -415,6 +431,9 @@ void GxsCommentTreeWidget::service_loadThread(const uint32_t &token)
 
 		text = QString::number(comment.mDownVotes);
 		item->setText(PCITEM_COLUMN_DOWNVOTES, text);
+
+		text = QString::number(comment.mOwnVote);
+		item->setText(PCITEM_COLUMN_OWNVOTE, text);
 
 		text = QString::fromUtf8(comment.mMeta.mMsgId.c_str());
 		item->setText(PCITEM_COLUMN_MSGID, text);
@@ -475,7 +494,14 @@ void GxsCommentTreeWidget::loadRequest(const TokenQueue *queue, const TokenReque
 				switch(req.mAnsType)
 				{
 					case RS_TOKREQ_ANSTYPE_ACK:
-						acknowledgeComment(req.mToken);
+						if (req.mUserType == COMMENT_VOTE_ACK)
+						{
+							acknowledgeVote(req.mToken);
+						}
+						else
+						{
+							acknowledgeComment(req.mToken);
+						}
 						break;
 					case RS_TOKREQ_ANSTYPE_DATA:
 						loadThread(req.mToken);

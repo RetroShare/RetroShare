@@ -132,9 +132,9 @@ GxsChannelDialog::~GxsChannelDialog()
 
 
 // Callback from Widget->FeedHolder->ServiceDialog->CommentContainer->CommentDialog,
-void GxsChannelDialog::openComments(uint32_t type, const RsGxsGroupId &groupId, const RsGxsMessageId &msgId)
+void GxsChannelDialog::openComments(uint32_t type, const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, const QString &title)
 {
-	commentLoad(groupId, msgId);
+	commentLoad(groupId, msgId, title);
 }
 
 
