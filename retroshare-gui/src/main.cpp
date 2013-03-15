@@ -304,7 +304,7 @@ int main(int argc, char *argv[])
 		/* Create event receiver */
 		eventReceiver = new EventReceiver;
 		if (eventReceiver->start()) {
-			QObject::connect(eventReceiver, SIGNAL(linkReceived(const QUrl&)), w, SLOT(linkActivated(const QUrl&)));
+			QObject::connect(eventReceiver, SIGNAL(linkReceived(const QUrl&)), w, SLOT(retroshareLinkActivated(const QUrl&)));
 		}
 	}
 
@@ -312,7 +312,7 @@ int main(int argc, char *argv[])
 		/* Now use link from the command line, because no RetroShare was running */
 		RetroShareLink link(QString::fromStdString(url));
 		if (link.valid()) {
-			w->linkActivated(link.toUrl());
+			w->retroshareLinkActivated(link.toUrl());
 		}
 	}
 

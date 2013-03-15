@@ -161,7 +161,8 @@ public slots:
     void displayDiskSpaceWarning(int loc,int size_limit_mb) ;
     void checkAndSetIdle(int idleTime);
 
-    void linkActivated(const QUrl &url);
+    void retroshareLinkActivated(const QUrl &url);
+    void externalLinkActivated(const QUrl &url);
 
 protected:
     /** Default Constructor */

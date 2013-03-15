@@ -205,7 +205,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     }
 
     /* add url handler for RetroShare links */
-    QDesktopServices::setUrlHandler(RSLINK_SCHEME, this, "linkActivated");
+    QDesktopServices::setUrlHandler(RSLINK_SCHEME, this, "retroshareLinkActivated");
+    QDesktopServices::setUrlHandler("http", this, "externalLinkActivated");
+    QDesktopServices::setUrlHandler("https", this, "externalLinkActivated");
 
     // Setting icons
     this->setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
@@ -1278,8 +1280,29 @@ void MainWindow::statusChangedComboBox(int index)
     /* no object known */
     setStatus(NULL, statusComboBox->itemData(index, Qt::UserRole).toInt());
 }
+void MainWindow::externalLinkActivated(const QUrl &url)
+{
+	static bool already_warned = false ;
 
-void MainWindow::linkActivated(const QUrl &url)
+	if(!already_warned)
+	{
+		QMessageBox mb(QObject::tr("Confirmation"), QObject::tr("Do you want this link to be handled by your system?")+"<br/><br/>"+ url.toString()+"<br/><br/>"+tr("Make sure this link has not been forged to drag you to a malicious website."), QMessageBox::Question, QMessageBox::Yes,QMessageBox::No, 0);
+		mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
+
+		QCheckBox *checkbox = new QCheckBox("Don't ask me again") ;
+		mb.layout()->addWidget(checkbox) ;
+
+		int res = mb.exec() ;
+
+		if (res == QMessageBox::No) 
+			return ;
+		else if(checkbox->isChecked())
+			already_warned = true ;
+	}
+
+	QDesktopServices::openUrl(url) ;
+}
+void MainWindow::retroshareLinkActivated(const QUrl &url)
 {
     RetroShareLink link(url);
 
