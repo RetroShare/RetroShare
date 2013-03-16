@@ -2273,7 +2273,7 @@ int RsServer::StartupRetroShare()
 	std::string currGxsDir = RsInitConfig::configDir + "/GXS_phase1";
 
 #ifdef GXS_DEV_TESTNET // Different Directory for testing.
-	currGxsDir += "_TESTNET";
+	currGxsDir += "_TESTNET2";
 #endif
 
         bool cleanUpGxsDir = false;
@@ -2370,9 +2370,9 @@ int RsServer::StartupRetroShare()
         RsGeneralDataService* posted_ds = new RsDataService(currGxsDir + "/", "posted_db",
                                                             RS_SERVICE_GXSV1_TYPE_POSTED);
 
-//#ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
+#ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         posted_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
-//#endif
+#endif
 
         mPosted = new p3Posted(posted_ds, NULL, mGxsIdService);
 
@@ -2437,9 +2437,9 @@ int RsServer::StartupRetroShare()
         RsGeneralDataService* gxschannels_ds = new RsDataService(currGxsDir + "/", "gxschannels_db",
                                                             RS_SERVICE_GXSV1_TYPE_CHANNELS);
 
-//#ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
-        gxschannels_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
-//#endif
+#ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
+       gxschannels_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
+#endif
 
         mGxsChannels = new p3GxsChannels(gxschannels_ds, NULL, mGxsIdService);
 
