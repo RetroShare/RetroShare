@@ -10,8 +10,8 @@ QT       += core network
 
 QT       -= gui
 
-CONFIG   += gen_exchange_target
-#CONFIG   += nxs_net_test
+#CONFIG   += gen_exchange_target
+CONFIG   += nxs_net_test
 #CONFIG   += dstore_target
 #CONFIG   += gxsdata_target
 
@@ -19,23 +19,22 @@ CONFIG += bitdht
 
 
 
-gen_exchange_target {
+#gen_exchange_target {
 
 #TARGET = gen_exchange_test
 
-}
+#}
 
-nxs_net_test {
+#nxs_net_test {
 
 TARGET = nxs_net_test
 
-}
+#}
 
-gxsdata_target {
+#gxsdata_target {
 
 #TARGET = gxsdata_test
-
-}
+#}
 
 CONFIG   += console
 CONFIG   -= app_bundle
@@ -145,8 +144,6 @@ win32 {
 }
 
 bitdht {
-        LIBS += C:\Development\Rs\v0.5-gxs-b1\libbitdht\libbitdht-build-desktop\lib\libbitdht.a
-        PRE_TARGETDEPS *= C:\Development\Rs\v0.5-gxs-b1\libbitdht\libbitdht-build-desktop\lib\libbitdht.a
 
         # Chris version.
         #LIBS += ../../libbitdht/libbitdht-build-desktop/lib/libbitdht.a
@@ -172,23 +169,35 @@ install_rs {
 }
 
 
-gen_exchange_target {
+#gen_exchange_target {
+
+#        SOURCES += \
+#            support.cc \
+#            genexchangetester.cpp \
+#            genexchangetestservice.cpp \
+#            rsdummyservices.cc \
+#            rsgenexchange_test.cc
+
+#        HEADERS += support.h \
+#            rsdataservice_test.h \
+#            rsdummyservices.h \
+#            data_support.h
+#}
+
+nxs_net_test {
 
         SOURCES += \
             support.cc \
-            genexchangetester.cpp \
-            genexchangetestservice.cpp \
-            rsdummyservices.cc \
-            rsgenexchange_test.cc
+            data_support.cc \
+            nxstesthub.cc \
+            nxstestscenario.cc \
+            rsgxsnetservice_test.cc
 
         HEADERS += support.h \
-            rsdataservice_test.h \
-            rsdummyservices.h \
+            nxstestscenario.h \
+            nxstesthub.h \
             data_support.h
 
-
 }
-
-
 
 INCLUDEPATH += ../../

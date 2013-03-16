@@ -905,9 +905,11 @@ void RsGenExchange::groupsChanged(std::list<RsGxsGroupId>& grpIds)
 bool RsGenExchange::subscribeToGroup(uint32_t& token, const RsGxsGroupId& grpId, bool subscribe)
 {
     if(subscribe)
-        setGroupSubscribeFlags(token, grpId, GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED,  GXS_SERV::GROUP_SUBSCRIBE_MASK);
+        setGroupSubscribeFlags(token, grpId, GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED,
+        		(GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED | GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED));
     else
-        setGroupSubscribeFlags(token, grpId, 0, GXS_SERV::GROUP_SUBSCRIBE_MASK);
+        setGroupSubscribeFlags(token, grpId, GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED,
+        		(GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED | GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED));
 
     return true;
 }
@@ -1502,7 +1504,7 @@ bool RsGenExchange::processGrpMask(const RsGxsGroupId& grpId, ContentValue &grpC
 
     ok &= grpCv.getAsInt32(key+GXS_MASK, mask);
 
-    // remove mask entry so it doesn't affect
+    // remove mask entry so it doesn't affect actual entry
     grpCv.removeKeyValue(key+GXS_MASK);
 
     // apply mask to current value
@@ -1798,7 +1800,10 @@ void RsGenExchange::publishGrps()
 				grp->metaData = new RsGxsGrpMetaData();
 				grpItem->meta.mPublishTs = time(NULL);
 				*(grp->metaData) = grpItem->meta;
-				grp->metaData->mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_ADMIN;
+
+				// TODO: change when publish key optimisation added (public groups don't have publish key
+				grp->metaData->mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_ADMIN | GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED
+						| GXS_SERV::GROUP_SUBSCRIBE_PUBLISH;
 
 				create = createGroup(grp, privatekeySet, publicKeySet);
 
@@ -2164,6 +2169,7 @@ void RsGenExchange::processRecvdGroups()
         	if(ret == VALIDATE_SUCCESS)
         	{
 				meta->mGroupStatus = GXS_SERV::GXS_GRP_STATUS_UNPROCESSED | GXS_SERV::GXS_GRP_STATUS_UNREAD;
+				meta->mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED;
 				grps.insert(std::make_pair(grp, meta));
 				grpIds.push_back(grp->grpId);
 

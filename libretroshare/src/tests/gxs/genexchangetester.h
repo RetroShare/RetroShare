@@ -4,7 +4,6 @@
 #include "genexchangetestservice.h"
 #include "gxs/rsgds.h"
 #include "gxs/rsnxs.h"
-#include "gxs/gxscoreserver.h"
 
 bool operator ==(const RsMsgMetaData& lMeta, const RsMsgMetaData& rMeta);
 bool operator ==(const RsDummyMsg& lMsg, const RsDummyMsg& rMsg);

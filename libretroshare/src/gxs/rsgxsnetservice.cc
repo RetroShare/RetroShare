@@ -30,9 +30,8 @@
 #include "rsgxsnetservice.h"
 #include "retroshare/rsgxsflags.h"
 
-/**
- * #define NXS_NET_DEBUG	1
- **/
+#define NXS_NET_DEBUG	1
+
 
 #define SYNC_PERIOD 12 // in microseconds every 10 seconds (1 second for testing)
 #define TRANSAC_TIMEOUT 5 // 5 seconds
@@ -150,11 +149,14 @@ bool RsGxsNetService::fragmentMsg(RsNxsMsg& msg, MsgFragments& msgFragments) con
 		msgFrag->grpId = msg.grpId;
 		msgFrag->msgId = msg.msgId;
 		msgFrag->meta = msg.meta;
+		msgFrag->transactionNumber = msg.transactionNumber;
 		msgFrag->pos = i;
+		msgFrag->PeerId(msg.PeerId());
 		msgFrag->count = nFragments;
 		uint32_t fragSize = std::min(dataLeft, FRAGMENT_SIZE);
 
 		memcpy(buffer, ((char*)msg.msg.bin_data) + currPos, fragSize);
+		msgFrag->msg.setBinData(buffer, fragSize);
 
 		currPos += fragSize;
 		dataLeft -= fragSize;
@@ -184,6 +186,7 @@ bool RsGxsNetService::fragmentGrp(RsNxsGrp& grp, GrpFragments& grpFragments) con
 		uint32_t fragSize = std::min(dataLeft, FRAGMENT_SIZE);
 
 		memcpy(buffer, ((char*)grp.grp.bin_data) + currPos, fragSize);
+		grpFrag->grp.setBinData(buffer, fragSize);
 
 		currPos += fragSize;
 		dataLeft -= fragSize;
@@ -196,6 +199,17 @@ bool RsGxsNetService::fragmentGrp(RsNxsGrp& grp, GrpFragments& grpFragments) con
 RsNxsMsg* RsGxsNetService::deFragmentMsg(MsgFragments& msgFragments) const
 {
 	if(msgFragments.empty()) return NULL;
+
+	// if there is only one fragment with a count 1 or less then
+	// the fragment is the msg
+	if(msgFragments.size() == 1)
+	{
+		RsNxsMsg* m  = msgFragments.front();
+		if(m->count > 1)
+			return NULL;
+		else
+			return m;
+	}
 
 	// first determine total size for binary data
 	MsgFragments::iterator mit = msgFragments.begin();
@@ -338,12 +352,12 @@ void RsGxsNetService::collateMsgFragments(MsgFragments fragments, std::map<RsGxs
 					MsgFragCollate(msgId));
 
 		// something will always be found for a group id
-		for(vit = fragments.begin(); vit != bound; )
+		for(vit = fragments.begin(); vit != bound; vit++ )
 		{
 			partFragments[msgId].push_back(*vit);
-			vit = fragments.erase(vit);
 		}
 
+		fragments.erase(fragments.begin(), bound);
 		MsgFragments& f = partFragments[msgId];
 		RsNxsMsg* msg = *(f.begin());
 
@@ -362,6 +376,7 @@ void RsGxsNetService::collateMsgFragments(MsgFragments fragments, std::map<RsGxs
 
 	fragments.clear();
 }
+
 
 bool RsGxsNetService::loadList(std::list<RsItem*>& load)
 {
@@ -897,6 +912,22 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
 						}
 					}
 
+#ifdef NSXS_FRAG
+					std::map<RsGxsGroupId, MsgFragments > collatedMsgs;
+					collateMsgFragments(msgs, collatedMsgs);
+
+					msgs.clear();
+
+					std::map<RsGxsGroupId, MsgFragments >::iterator mit = collatedMsgs.begin();
+					for(; mit != collatedMsgs.end(); mit++)
+					{
+						MsgFragments& f = mit->second;
+						RsNxsMsg* msg = deFragmentMsg(f);
+
+						if(msg)
+							msgs.push_back(msg);
+					}
+#endif
 					// notify listener of msgs
 					mObserver->notifyNewMessages(msgs);
 
@@ -1276,8 +1307,22 @@ void RsGxsNetService::locked_genSendMsgsTransaction(NxsTransaction* tr)
 			RsNxsMsg* msg = *vit;
 			msg->PeerId(peerId);
 			msg->transactionNumber = transN;
+			
+#ifndef 	NXS_FRAG		
 			newTr->mItems.push_back(msg);
 			msgSize++;
+#else			
+			MsgFragments fragments;
+			fragmentMsg(*msg, fragments);
+
+			MsgFragments::iterator mit = fragments.begin();
+
+			for(; mit != fragments.end(); mit++)
+			{
+				newTr->mItems.push_back(*mit);
+				msgSize++;
+			}
+#endif			
 		}
 	}
 

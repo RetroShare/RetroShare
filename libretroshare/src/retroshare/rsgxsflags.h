@@ -79,6 +79,10 @@ namespace GXS_SERV {
 
     static const uint32_t GROUP_SUBSCRIBE_NOT_SUBSCRIBED = 0x08;
 
+    /*!
+     * Simply defines the range of bits that deriving services
+     * should not use
+     */
     static const uint32_t GROUP_SUBSCRIBE_MASK = 0x0000000f;
 
     /** END Subscription Flags. (LOCAL) **/
