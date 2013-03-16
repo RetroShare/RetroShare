@@ -36,20 +36,20 @@
  * provides the implementation for any services requiring Comments.
  */
 
-
+#
 class VoteHolder
 {
 	public:
 
-	static const uint32_t ERROR	   	=       0;
-	static const uint32_t QUEUED	  	=       1;
-	static const uint32_t SUBMITTED 	=       2;      
-	static const uint32_t READY		= 	3;
+	static const uint32_t VOTE_ERROR     = 0;
+	static const uint32_t VOTE_QUEUED    = 1;
+	static const uint32_t VOTE_SUBMITTED = 2;
+	static const uint32_t VOTE_READY     = 3;
 
-	VoteHolder() :mVoteToken(0), mReqToken(0), mStatus(ERROR) { return; }
+	VoteHolder() :mVoteToken(0), mReqToken(0), mStatus(VOTE_ERROR) { return; }
 
 	VoteHolder(const RsGxsVote &vote, uint32_t reqToken)
-	:mVote(vote), mVoteToken(0), mReqToken(reqToken), mStatus(QUEUED) { return; }
+	:mVote(vote), mVoteToken(0), mReqToken(reqToken), mStatus(VOTE_QUEUED) { return; }
 
 	RsGxsVote mVote;
 	uint32_t  mVoteToken;

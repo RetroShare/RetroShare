@@ -534,7 +534,7 @@ void p3GxsCommentService::load_PendingVoteParent(const uint32_t &token)
                 		std::cerr << "mMsgId: " << meta.mMsgId;
 				std::cerr << std::endl;
 
-				pit->second.mStatus = VoteHolder::ERROR;
+				pit->second.mStatus = VoteHolder::VOTE_ERROR;
 				uint32_t status = RsTokenService::GXS_REQUEST_V2_STATUS_FAILED;
 				mExchange->updatePublicRequestStatus(pit->second.mReqToken, status);
 				continue;
@@ -554,7 +554,7 @@ void p3GxsCommentService::load_PendingVoteParent(const uint32_t &token)
 			GxsTokenQueue::queueRequest(vote_token, GXSCOMMENTS_VOTE_DONE);
 
 			pit->second.mVoteToken = vote_token;
-			pit->second.mStatus = VoteHolder::SUBMITTED;
+			pit->second.mStatus = VoteHolder::VOTE_SUBMITTED;
 		}
 	}
 }
@@ -577,7 +577,7 @@ void p3GxsCommentService::completeInternalVote(uint32_t &token)
 			std::cerr << "p3GxsChannels::completeInternalVote() Matched to PendingVote. status: " << status;
 			std::cerr << std::endl;
 
-			it->second.mStatus = VoteHolder::READY;
+			it->second.mStatus = VoteHolder::VOTE_READY;
 			return;
 		}
 	}
@@ -603,7 +603,7 @@ bool p3GxsCommentService::acknowledgeVote(const uint32_t& token, RsGxsGrpMsgIdPa
 			std::cerr << std::endl;
 
 			bool ans = false;
-			if (it->second.mStatus == VoteHolder::READY)
+			if (it->second.mStatus == VoteHolder::VOTE_READY)
 			{
 				std::cerr << "p3GxsChannels::acknowledgeVote() PendingVote = READY";
 				std::cerr << std::endl;
@@ -611,7 +611,7 @@ bool p3GxsCommentService::acknowledgeVote(const uint32_t& token, RsGxsGrpMsgIdPa
 				// Finally finish this Vote off.
 				ans = mExchange->acknowledgeTokenMsg(it->second.mVoteToken, msgId);
 			}
-			else if (it->second.mStatus == VoteHolder::ERROR)
+			else if (it->second.mStatus == VoteHolder::VOTE_ERROR)
 			{
 				std::cerr << "p3GxsChannels::acknowledgeVote() PendingVote = ERROR ???";
 				std::cerr << std::endl;

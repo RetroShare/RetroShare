@@ -1112,6 +1112,7 @@ gxsgui {
 		gui/gxs/GxsCommentContainer.h \
 		gui/gxs/GxsCommentDialog.h \
 		gui/gxs/GxsCreateCommentDialog.h \
+		gui/gxs/GxsFeedItem.h \
 		util/TokenQueue.h \
 	
 #		gui/gxs/GxsMsgDialog.h \
@@ -1135,6 +1136,7 @@ gxsgui {
 		gui/gxs/GxsCommentContainer.cpp \
 		gui/gxs/GxsCommentDialog.cpp \
 		gui/gxs/GxsCreateCommentDialog.cpp \
+		gui/gxs/GxsFeedItem.cpp \
 		util/TokenQueue.cpp \
 	
 #		gui/gxs/GxsMsgDialog.cpp \
