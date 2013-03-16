@@ -36,8 +36,6 @@
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
 
-#include <retroshare/rschannels.h>
-
 /****
  * #define DEBUG_ITEM 1
  ****/
@@ -215,9 +213,9 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 
 			readButton->setVisible(true);
 #if 0
-
 			uint32_t status = 0;
 			rsChannels->getMessageStatus(mChanId, mMsgId, status);
+#endif
 
 			if (IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus))
 			{
@@ -229,7 +227,6 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 				readButton->setChecked(false);
 				readButton->setIcon(QIcon(":/images/message-state-read.png"));
 			}
-#endif
 
 			bool newState;
 			QColor color;

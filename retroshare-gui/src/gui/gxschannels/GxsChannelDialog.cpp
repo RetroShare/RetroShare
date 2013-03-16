@@ -31,8 +31,7 @@
 
 #include "GxsChannelDialog.h"
 
-//#include "../feeds/ChanMsgItem.h"
-#include "../feeds/GxsChannelPostItem.h"
+#include "gui/feeds/GxsChannelPostItem.h"
 
 #include "../common/PopularityDefs.h"
 #include "../settings/rsharesettings.h"
@@ -104,8 +103,6 @@ GxsChannelDialog::GxsChannelDialog(QWidget *parent)
 	ui.progressLabel->hide();
 	ui.progressBar->hide();
 
-	fillThread = NULL;
-
 	//added from ahead
 	//updateChannelList();
 	forceUpdateDisplay();
@@ -120,12 +117,6 @@ GxsChannelDialog::GxsChannelDialog(QWidget *parent)
 
 GxsChannelDialog::~GxsChannelDialog()
 {
-	if (fillThread) {
-		fillThread->stop();
-		delete(fillThread);
-		fillThread = NULL;
-	}
-
 	// save settings
 	processSettings(false);
 }
@@ -167,6 +158,95 @@ void GxsChannelDialog::processSettings(bool load)
 
 void GxsChannelDialog::channelListCustomPopupMenu( QPoint /*point*/ )
 {
+	if (mChannelId.empty()) 
+	{
+		return;
+	}
+
+        uint32_t subscribeFlags = ui.treeWidget->subscribeFlags(QString::fromStdString(mChannelId));
+
+	QMenu contextMnu(this);
+
+	bool isAdmin = IS_GROUP_ADMIN(subscribeFlags);
+	bool isPublisher = IS_GROUP_PUBLISHER(subscribeFlags);
+	bool isSubscribed = IS_GROUP_SUBSCRIBED(subscribeFlags);
+	bool autoDownload = rsGxsChannels->getChannelAutoDownload(mChannelId);
+
+	if (isPublisher)
+	{
+		QAction *postchannelAct = new QAction(QIcon(":/images/mail_reply.png"), tr( "Post to Channel" ), &contextMnu);
+		connect( postchannelAct , SIGNAL( triggered() ), this, SLOT( createMsg() ) );
+	  	contextMnu.addAction( postchannelAct );
+		contextMnu.addSeparator();
+	}
+
+	if (isSubscribed)
+	{
+
+		QAction *setallasreadchannelAct = new QAction(QIcon(":/images/message-mail-read.png"), tr( "Set all as read" ), &contextMnu);
+		connect( setallasreadchannelAct , SIGNAL( triggered() ), this, SLOT( setAllAsReadClicked() ) );
+		contextMnu.addAction( setallasreadchannelAct );
+
+		contextMnu.addSeparator();
+
+		QAction *autoAct = new QAction(QIcon(":/images/redled.png"), tr( "Disable Auto-Download" ), &contextMnu);
+		QAction *noautoAct = new QAction(QIcon(":/images/start.png"),tr( "Enable Auto-Download" ), &contextMnu);
+		connect( autoAct , SIGNAL( triggered() ), this, SLOT( toggleAutoDownload() ) );
+		connect( noautoAct , SIGNAL( triggered() ), this, SLOT( toggleAutoDownload() ) );
+
+		contextMnu.addAction( autoAct );
+		contextMnu.addAction( noautoAct );
+
+		autoAct->setEnabled(autoDownload);
+		noautoAct->setEnabled(!autoDownload);
+
+		QAction *unsubscribechannelAct = new QAction(QIcon(":/images/cancel.png"), tr( "Unsubscribe to Channel" ), &contextMnu);
+		connect( unsubscribechannelAct , SIGNAL( triggered() ), this, SLOT( unsubscribeChannel() ) );
+		contextMnu.addAction( unsubscribechannelAct );
+
+	}
+	else
+	{
+		QAction *subscribechannelAct = new QAction(QIcon(":/images/edit_add24.png"), tr( "Subscribe to Channel" ), &contextMnu);
+		connect( subscribechannelAct , SIGNAL( triggered() ), this, SLOT( subscribeChannel() ) );
+		contextMnu.addAction( subscribechannelAct );
+	}
+
+
+	if (isAdmin)
+	{
+		QAction *editChannelDetailAct = new QAction(QIcon(":/images/edit_16.png"), tr("Edit Channel Details"), &contextMnu);
+		connect( editChannelDetailAct, SIGNAL( triggered() ), this, SLOT( editChannelDetail() ) );
+		contextMnu.addAction( editChannelDetailAct);
+	}
+	else
+	{
+		QAction *channeldetailsAct = new QAction(QIcon(":/images/info16.png"), tr( "Show Channel Details" ), &contextMnu);
+		connect( channeldetailsAct , SIGNAL( triggered() ), this, SLOT( showChannelDetails() ) );
+		contextMnu.addAction( channeldetailsAct );
+	}
+
+	if (isPublisher)
+	{
+		QAction *restoreKeysAct = new QAction(QIcon(":/images/settings16.png"), tr("Restore Publish Rights for Channel" ), &contextMnu);
+		connect( restoreKeysAct , SIGNAL( triggered() ), this, SLOT( restoreChannelKeys() ) );
+		contextMnu.addAction( restoreKeysAct );
+	}
+	else
+	{
+		QAction *shareKeyAct = new QAction(QIcon(":/images/gpgp_key_generate.png"), tr("Share Channel"), &contextMnu);
+		connect( shareKeyAct, SIGNAL( triggered() ), this, SLOT( shareKey() ) );
+		contextMnu.addAction( shareKeyAct );
+	}
+
+	contextMnu.addSeparator();
+	QAction *action = contextMnu.addAction(QIcon(":/images/copyrslink.png"), tr("Copy RetroShare Link"), this, SLOT(copyChannelLink()));
+	action->setEnabled(!mChannelId.empty());
+
+	contextMnu.exec(QCursor::pos());
+
+
+#if 0
 	ChannelInfo ci;
 	if (!rsChannels->getChannelInfo(mChannelId, ci)) {
 		return;
@@ -239,6 +319,9 @@ void GxsChannelDialog::channelListCustomPopupMenu( QPoint /*point*/ )
 #endif
 
 	contextMnu.exec(QCursor::pos());
+
+#endif
+
 }
 
 void GxsChannelDialog::createChannel()
@@ -329,12 +412,8 @@ void GxsChannelDialog::selectChannel(const QString &id)
 {
 	mChannelId = id.toStdString();
 
-#if 0
-	bool autoDl = false;
-	rsChannels->channelGetAutoDl(mChannelId, autoDl);
-
+	bool autoDl = rsGxsChannels->getChannelAutoDownload(mChannelId);
 	setAutoDownloadButton(autoDl);
-#endif
 
 	requestPosts(mChannelId);
 	//updateChannelMsgs();
@@ -440,6 +519,8 @@ void GxsChannelDialog::channelMsgReadSatusChanged(const QString& channelId, cons
 
 void GxsChannelDialog::updateMessageSummaryList(const std::string &channelId)
 {
+
+#if 0
 	QTreeWidgetItem *items[2] = { ownChannels, subcribedChannels };
 
 	for (int item = 0; item < 2; item++) {
@@ -467,12 +548,16 @@ void GxsChannelDialog::updateMessageSummaryList(const std::string &channelId)
 			}
 		}
 	}
+#endif
+
 }
 
+#if 0
 static bool sortChannelMsgSummary(const ChannelMsgSummary &msg1, const ChannelMsgSummary &msg2)
 {
 	return (msg1.ts > msg2.ts);
 }
+#endif
 
 #if 0
 void GxsChannelDialog::updateChannelMsgs()
@@ -711,28 +796,22 @@ void GxsChannelDialog::setAllAsReadClicked()
 
 void GxsChannelDialog::toggleAutoDownload()
 {
-#if 0
-
 	if(mChannelId.empty())
 		return;
 
 	bool autoDl = true;
 
-	if(rsChannels->channelGetAutoDl(mChannelId, autoDl)){
 
-		// if auto dl is set true, then set false
-		if(autoDl){
-			rsChannels->channelSetAutoDl(mChannelId, false);
-		}else{
-			rsChannels->channelSetAutoDl(mChannelId, true);
-		}
+	autoDl = rsGxsChannels->getChannelAutoDownload(mChannelId);
+	if (rsGxsChannels->setChannelAutoDownload(mChannelId, !autoDl))
+	{
 		setAutoDownloadButton(!autoDl);
 	}
-	else{
-		std::cerr << "Auto Download failed to set"
-				  << std::endl;
+	else
+	{
+		std::cerr << "GxsChannelDialog::toggleAutoDownload() Auto Download failed to set";
+		std::cerr << std::endl;
 	}
-#endif
 }
 
 bool GxsChannelDialog::navigate(const std::string& channelId, const std::string& msgId)
@@ -776,75 +855,17 @@ bool GxsChannelDialog::navigate(const std::string& channelId, const std::string&
 
 void GxsChannelDialog::setAutoDownloadButton(bool autoDl)
 {
-#if 0
 	if (autoDl) {
-		actionEnable_Auto_Download->setText(tr("Disable Auto-Download"));
+		ui.actionEnable_Auto_Download->setText(tr("Disable Auto-Download"));
 	}else{
-		actionEnable_Auto_Download->setText(tr("Enable Auto-Download"));
+		ui.actionEnable_Auto_Download->setText(tr("Enable Auto-Download"));
 	}
-#endif
-}
-
-
-
-// ForumsFillThread
-GxsChannelFillThread::GxsChannelFillThread(GxsChannelDialog *parent, const std::string &channelId)
-	: QThread(parent)
-{
-	stopped = false;
-	this->channelId = channelId;
-}
-
-GxsChannelFillThread::~GxsChannelFillThread()
-{
-#ifdef CHAN_DEBUG
-	std::cerr << "GxsChannelFillThread::~GxsChannelFillThread" << std::endl;
-#endif
-}
-
-void GxsChannelFillThread::stop()
-{
-	disconnect();
-	stopped = true;
-	QApplication::processEvents();
-	wait();
-}
-
-void GxsChannelFillThread::run()
-{
-#ifdef CHAN_DEBUG
-	std::cerr << "GxsChannelFillThread::run()" << std::endl;
-#endif
-
-	std::list<ChannelMsgSummary> msgs;
-	std::list<ChannelMsgSummary>::iterator it;
-	rsChannels->getChannelMsgList(channelId, msgs);
-
-	msgs.sort(sortChannelMsgSummary);
-
-	int count = msgs.size();
-	int pos = 0;
-
-	for (it = msgs.begin(); it != msgs.end(); it++) {
-		if (stopped) {
-			break;
-		}
-
-		emit addMsg(QString::fromStdString(channelId), QString::fromStdString(it->msgId), ++pos, count);
-	}
-
-#ifdef CHAN_DEBUG
-	std::cerr << "GxsChannelFillThread::run() stopped: " << (wasStopped() ? "yes" : "no") << std::endl;
-#endif
 }
 
 
 
 /**********************************************************************************************
  * New Stuff here.
- *
- *
- *
  *************/
 
 /*********************** **** **** **** ***********************/
@@ -1029,42 +1050,36 @@ void GxsChannelDialog::insertChannelDetails(const RsGxsChannelGroup &group)
 
 	mChannelPostItems.clear();
 
-	/* IMAGE - TODO. */
-#if 0
+	/* IMAGE */
 	QPixmap chanImage;
-	if (ci.pngImageLen != 0) {
-		chanImage.loadFromData(ci.pngChanImage, ci.pngImageLen, "PNG");
+	if (group.mImage.mData != NULL) {
+		chanImage.loadFromData(group.mImage.mData, group.mImage.mSize, "PNG");
 	} else {
 		chanImage = QPixmap(CHAN_DEFAULT_IMAGE);
 	}
-	logoLabel->setPixmap(chanImage);
-	logoLabel->setEnabled(true);
-#endif
+	ui.logoLabel->setPixmap(chanImage);
+	ui.logoLabel->setEnabled(true);
 
 	/* set Channel name */
 	ui.nameLabel->setText(QString::fromUtf8(group.mMeta.mGroupName.c_str()));
 
-#if 0
-	if (group.mMeta.channelFlags & RS_DISTRIB_PUBLISH) 
+	if (group.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH)
 	{
-		postButton->setEnabled(true);
+		ui.postButton->setEnabled(true);
 	} 
 	else 
 	{
-		postButton->setEnabled(false);
+		ui.postButton->setEnabled(false);
 	}
 
-	if (!(ci.channelFlags & RS_DISTRIB_ADMIN) &&
-		 (ci.channelFlags & RS_DISTRIB_SUBSCRIBED)) 
+	if (group.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED) 
 	{
-		actionEnable_Auto_Download->setEnabled(true);
+		ui.actionEnable_Auto_Download->setEnabled(true);
 	} 
 	else 
 	{
-		actionEnable_Auto_Download->setEnabled(false);
+		ui.actionEnable_Auto_Download->setEnabled(false);
 	}
-#endif
-
 }
 
 

@@ -22,7 +22,6 @@
 #ifndef _GXS_CHANNEL_DIALOG_H
 #define _GXS_CHANNEL_DIALOG_H
 
-#include <retroshare/rschannels.h>
 #include <retroshare/rsgxschannels.h>
 
 #include <QStandardItemModel>
@@ -42,7 +41,6 @@
 //class ChanMsgItem;
 class GxsChannelPostItem;
 class QTreeWidgetItem;
-class GxsChannelFillThread;
 
 class GxsChannelDialog : public RsAutoUpdatePage, public TokenResponse, public GxsServiceDialog, 
 			public FeedHolder
@@ -150,33 +148,8 @@ private:
 	QTreeWidgetItem *popularChannels;
 	QTreeWidgetItem *otherChannels;
 
-	GxsChannelFillThread *fillThread;
-
-
 	/* UI - from Designer */
 	Ui::GxsChannelDialog ui;
-};
-
-class GxsChannelFillThread : public QThread
-{
-	Q_OBJECT
-
-public:
-	GxsChannelFillThread(GxsChannelDialog *parent, const std::string &channelId);
-	~GxsChannelFillThread();
-
-	void run();
-	void stop();
-	bool wasStopped() { return stopped; }
-
-signals:
-	void addMsg(const QString &channelId, const QString &channelMsgId, int current, int count);
-
-public:
-	std::string channelId;
-
-private:
-	volatile bool stopped;
 };
 
 #endif
