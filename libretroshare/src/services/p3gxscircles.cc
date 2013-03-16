@@ -1290,6 +1290,10 @@ void p3GxsCircles::generateDummyCircle()
 #endif // DEBUG_CIRCLES
 
 	int npgps = mDummyPgpLinkedIds.size();
+
+	if(npgps == 0)
+		return ;
+
 	RsGxsCircleGroup group;
 
 	std::set<RsGxsId> idset;
