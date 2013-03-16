@@ -66,6 +66,9 @@ virtual void service_tick();
 	protected:
 
 
+	// Overloaded to cache new groups.
+virtual RsGenExchange::ServiceCreate_Return service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet);
+
 virtual void notifyChanges(std::vector<RsGxsNotify*>& changes);
 
         // Overloaded from RsTickEvent.
@@ -89,7 +92,9 @@ virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsGxsChannelPost
 virtual bool createGroup(uint32_t &token, RsGxsChannelGroup &group);
 virtual bool createPost(uint32_t &token, RsGxsChannelPost &post);
 
-virtual void setChannelAutoDownload(uint32_t&, const RsGxsGroupId&, bool);
+// no tokens... should be cached.
+virtual bool setChannelAutoDownload(const RsGxsGroupId &groupId, bool enabled);
+virtual	bool getChannelAutoDownload(const RsGxsGroupId &groupid);
 
 	/* Comment service - Provide RsGxsCommentService - redirect to p3GxsCommentService */
 virtual bool getCommentData(const uint32_t &token, std::vector<RsGxsComment> &msgs)
@@ -164,8 +169,8 @@ static uint32_t channelsAuthenPolicy();
 	// Local Cache of Subscribed Groups. and AutoDownload Flag.
 	void updateSubscribedGroup(const RsGroupMetaData &group);
 	void clearUnsubscribedGroup(const RsGxsGroupId &id);
-	bool autoDownloadEnabled(const RsGxsGroupId &id);
 	bool setAutoDownload(const RsGxsGroupId &groupId, bool enabled);
+	bool autoDownloadEnabled(const RsGxsGroupId &id);
 
 
 

@@ -40,16 +40,17 @@
 /****
  * #define DEBUG_IDS	1
  * #define GXSID_GEN_DUMMY_DATA	1
+ * #define ENABLE_PGP_SIGNATURES 1
  ****/
 
-#define GXSID_GEN_DUMMY_DATA	1
+#define ENABLE_PGP_SIGNATURES 	1
+
 
 #define ID_REQUEST_LIST		0x0001
 #define ID_REQUEST_IDENTITY	0x0002
 #define ID_REQUEST_REPUTATION	0x0003
 #define ID_REQUEST_OPINION	0x0004
 
-#define ENABLE_PGP_SIGNATURES 1
 
 RsIdentity *rsIdentity = NULL;
 
@@ -160,6 +161,48 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
 {
 	std::cerr << "p3IdService::notifyChanges()";
 	std::cerr << std::endl;
+
+	/* iterate through and grab any new messages */
+	std::list<RsGxsGroupId> unprocessedGroups;
+
+	std::vector<RsGxsNotify *>::iterator it;
+	for(it = changes.begin(); it != changes.end(); it++)
+	{
+	       RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(*it);
+	       RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
+	       if (msgChange)
+	       {
+			std::cerr << "p3IdService::notifyChanges() Found Message Change Notification";
+			std::cerr << std::endl;
+
+			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
+			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit;
+			for(mit = msgChangeMap.begin(); mit != msgChangeMap.end(); mit++)
+			{
+				std::cerr << "p3IdService::notifyChanges() Msgs for Group: " << mit->first;
+				std::cerr << std::endl;
+			}
+	       }
+
+	       /* shouldn't need to worry about groups - as they need to be subscribed to */
+		if (groupChange)
+		{
+			std::cerr << "p3IdService::notifyChanges() Found Message Change Notification";
+			std::cerr << std::endl;
+
+			std::list<RsGxsGroupId> &groupList = groupChange->mGrpIdList;
+			std::list<RsGxsGroupId>::iterator git;
+			for(git = groupList.begin(); git != groupList.end(); git++)
+			{
+				std::cerr << "p3IdService::notifyChanges() Auto Subscribe to Incoming Groups: " << *git;
+				std::cerr << std::endl;
+
+				uint32_t token;
+				RsGenExchange::subscribeToGroup(token, *git, true);
+
+			}
+		}
+	}
 
 	RsGxsIfaceHelper::receiveChanges(changes);
 }
@@ -1343,7 +1386,7 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 		/* do signature */
 
 
-#if ENABLE_PGP_SIGNATURES
+#ifdef ENABLE_PGP_SIGNATURES
 #define MAX_SIGN_SIZE 2048
 		uint8_t signarray[MAX_SIGN_SIZE]; 
 		unsigned int sign_size = MAX_SIGN_SIZE;
@@ -1369,6 +1412,7 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 		/* done! */
 #else
 		item->group.mPgpIdSign = "";
+		createStatus = SERVICE_CREATE_SUCCESS;
 #endif
 
 	}
@@ -1685,7 +1729,7 @@ bool p3IdService::checkId(const RsGxsIdGroup &grp, PGPIdType &pgpId)
 			std::cerr << "p3IdService::checkId() HASH MATCH!";
 			std::cerr << std::endl;
 
-#if ENABLE_PGP_SIGNATURES
+#ifdef ENABLE_PGP_SIGNATURES
 			/* miracle match! */
 			/* check signature too */
 			if (AuthGPG::getAuthGPG()->VerifySignBin((void *) hash.toByteArray(), hash.SIZE_IN_BYTES, 

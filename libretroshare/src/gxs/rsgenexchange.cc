@@ -99,15 +99,17 @@ void RsGenExchange::run()
 
 void RsGenExchange::tick()
 {
+	// Meta Changes should happen first.
+	// This is important, as services want to change Meta, then get results.
+	// Services shouldn't rely on this ordering - but some do.
+	processGrpMetaChanges();
+	processMsgMetaChanges();
+
 	mDataAccess->processRequests();
 
 	publishGrps();
 
 	publishMsgs();
-
-	processGrpMetaChanges();
-
-	processMsgMetaChanges();
 
 	processRecvdData();
 
