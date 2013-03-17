@@ -803,16 +803,24 @@ void p3ChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *item)
 #ifdef CHAT_DEBUG
 	std::cerr << "Received ChatLobbyEvent item of type " << (int)(item->event_type) << ", and string=" << item->string1 << std::endl;
 #endif
+	time_t now = time(NULL) ;
 
-	if(time(NULL)+100 > (time_t) item->sendTime + MAX_KEEP_MSG_RECORD)	// the message is older than the max cache keep minus 100 seconds ! It's too old, and is going to make an echo!
+	if(now+100 > (time_t) item->sendTime + MAX_KEEP_MSG_RECORD)	// the message is older than the max cache keep minus 100 seconds ! It's too old, and is going to make an echo!
 	{
-		std::cerr << "Received severely outdated lobby event item! Dropping it!" << std::endl;
+		std::cerr << "Received severely outdated lobby event item (" << now - (time_t)item->sendTime << " in the past)! Dropping it!" << std::endl;
 		std::cerr << "Message item is:" << std::endl;
 		item->print(std::cerr) ;
 		std::cerr << std::endl;
 		return ;
 	}
-
+	if(now+600 < (time_t) item->sendTime)	// the message is from the future more than 10 minutes
+	{
+		std::cerr << "Received event item from the future (" << (time_t)item->sendTime - now << " seconds in the future)! Dropping it!" << std::endl;
+		std::cerr << "Message item is:" << std::endl;
+		item->print(std::cerr) ;
+		std::cerr << std::endl;
+		return ;
+	}
 	if(! bounceLobbyObject(item,item->PeerId()))
 		return ;
 
@@ -920,13 +928,20 @@ bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *ci)
 
 		if(now+100 > (time_t) cli->sendTime + MAX_KEEP_MSG_RECORD)	// the message is older than the max cache keep plus 100 seconds ! It's too old, and is going to make an echo!
 		{
-			std::cerr << "Received severely outdated message!Dropping it!" << std::endl;
+			std::cerr << "Received severely outdated lobby event item (" << now - (time_t)cli->sendTime << " in the past)! Dropping it!" << std::endl;
 			std::cerr << "Message item is:" << std::endl;
 			cli->print(std::cerr) ;
 			std::cerr << std::endl;
 			return false ;
 		}
-
+		if(now+600 < (time_t) cli->sendTime)	// the message is from the future. Drop it. more than 10 minutes
+		{
+			std::cerr << "Received event item from the future (" << (time_t)cli->sendTime - now << " seconds in the future)! Dropping it!" << std::endl;
+			std::cerr << "Message item is:" << std::endl;
+			cli->print(std::cerr) ;
+			std::cerr << std::endl;
+			return false ;
+		}
 		if(!bounceLobbyObject(cli,cli->PeerId()))	// forwards the message to friends, keeps track of subscribers, etc.
 			return false;
 
