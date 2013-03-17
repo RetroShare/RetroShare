@@ -24,20 +24,14 @@
 #ifndef _GXS_ID_TREEWIDGETITEM_H
 #define _GXS_ID_TREEWIDGETITEM_H
 
-#include <QTimer>
 #include <retroshare/rsidentity.h>
 
 #include "gui/common/RSTreeWidgetItem.h"
 
 /*****
- * NOTE: I have investigated why the Timer doesn't work in GxsForums.
- * It appears that the Timer events occur in the Thread they were created in.
- * GxsForums uses a short term thread to fill the ForumThread - this finishes, 
- * and so the Timer Events don't happen.
- *
- * The Timer events work fine in Wiki and Comments Dialog.
- * because they don't use an additional thread.
- *
+ * NOTE: When the tree item is created within a thread you have to move the object
+ * with "moveThreadTo()" QObject into the main thread.
+ * The tick signal to fill the id cannot be processed when the thread is finished.
  ***/
 
 
@@ -58,13 +52,10 @@ private slots:
 private:
 	void init();
 
-	QTimer *mTimer;
 	RsGxsId mId;
 	int mCount;
 	int mColumn;
 };
-
-
 
 class GxsIdTreeWidgetItem : public QObject, public QTreeWidgetItem
 {
@@ -83,11 +74,9 @@ private slots:
 private:
 	void init();
 
-	QTimer *mTimer;
 	RsGxsId mId;
 	int mCount;
 	int mColumn;
 };
 
 #endif
-

@@ -713,10 +713,10 @@ void GxsForumThreadWidget::fillThreadFinished()
 				// clear list
 				thread->mItems.clear();
 			} else {
-				fillThreads (thread->mItems, thread->mExpandNewMessages, thread->mItemToExpand);
+				fillThreads(thread->mItems, thread->mExpandNewMessages, thread->mItemToExpand);
 
 				// cleanup list
-				cleanupItems (thread->mItems);
+				cleanupItems(thread->mItems);
 			}
 
 			ui->threadTreeWidget->setSortingEnabled(true);
@@ -792,6 +792,8 @@ void GxsForumThreadWidget::forceUpdateDisplay()
 QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForumMsg &msg, bool useChildTS, uint32_t filterColumn)
 {
 	GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole);
+	item->moveToThread(ui->threadTreeWidget->thread());
+
 	QString text;
 
 	item->setText(COLUMN_THREAD_TITLE, QString::fromUtf8(msg.mMeta.mMsgName.c_str()));

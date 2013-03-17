@@ -598,6 +598,11 @@ void Rshare::blinkTimer()
 {
     mBlink = !mBlink;
     emit blink(mBlink);
+
+    if (mBlink) {
+        /* Tick every second (create an own timer when needed) */
+        emit secondTick();
+    }
 }
 
 bool Rshare::loadCertificate(const std::string &accountId, bool autoLogin, std::string gpgId)

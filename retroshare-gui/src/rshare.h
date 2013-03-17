@@ -139,6 +139,8 @@ signals:
   void shutdown();
   /** Global blink timer */
   void blink(bool on);
+  /** Global timer every second */
+  void secondTick();
 
 protected:
 #if defined(Q_OS_WIN)

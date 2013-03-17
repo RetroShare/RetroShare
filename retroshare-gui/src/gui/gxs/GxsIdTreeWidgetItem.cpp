@@ -21,12 +21,14 @@
  *
  */
 
-
 #include "GxsIdTreeWidgetItem.h"
+#include "rshare.h"
 
 #include <retroshare/rspeers.h>
 
 #include <iostream>
+
+#define MAX_ATTEMPTS 5
 
 static bool MakeIdDesc(const RsGxsId &id, QString &str)
 {
@@ -74,26 +76,21 @@ static bool MakeIdDesc(const RsGxsId &id, QString &str)
 	return true;
 }
 
-
-
 /** Constructor */
 GxsIdRSTreeWidgetItem::GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, QTreeWidget *parent)
-:RSTreeWidgetItem(compareRole, parent), QObject(NULL), mTimer(NULL), mCount(0), mColumn(0)
+: QObject(NULL), RSTreeWidgetItem(compareRole, parent), mCount(0), mColumn(0)
 {
 	init();
 }
 
 GxsIdRSTreeWidgetItem::GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, QTreeWidgetItem *parent)
-:RSTreeWidgetItem(compareRole, parent), QObject(NULL), mTimer(NULL), mCount(0), mColumn(0)
+: QObject(NULL), RSTreeWidgetItem(compareRole, parent), mCount(0), mColumn(0)
 {
 	init();
 }
 
 void GxsIdRSTreeWidgetItem::init()
 {
-	mTimer = new QTimer(this);
-	mTimer->setSingleShot(true);
-	connect(mTimer, SIGNAL(timeout()), this, SLOT(loadId()));
 }
 
 void GxsIdRSTreeWidgetItem::setId(const RsGxsId &id, int column)
@@ -119,11 +116,10 @@ bool GxsIdRSTreeWidgetItem::getId(RsGxsId &id)
 	return true;
 }
 
-
-#define MAX_ATTEMPTS 5
-
 void GxsIdRSTreeWidgetItem::loadId()
 {
+	disconnect(rApp, SIGNAL(secondTick()), this, SLOT(loadId()));
+
 	std::cerr << " GxsIdRSTreeWidgetItem::loadId() Id: " << mId << ", mCount: " << mCount;
 	std::cerr << std::endl;
 
@@ -148,31 +144,25 @@ void GxsIdRSTreeWidgetItem::loadId()
 		std::cerr << std::endl;
 
 		/* timer event to try again */
-		mTimer->setInterval(mCount * 1000);
-		mTimer->start();
+		connect(rApp, SIGNAL(secondTick()), this, SLOT(loadId()));
 	}
 }
 
-
 /** Constructor */
 GxsIdTreeWidgetItem::GxsIdTreeWidgetItem(QTreeWidget *parent)
-:QTreeWidgetItem(parent), QObject(NULL), mTimer(NULL), mCount(0), mColumn(0)
+: QObject(NULL), QTreeWidgetItem(parent), mCount(0), mColumn(0)
 {
 	init();
 }
 
-
 GxsIdTreeWidgetItem::GxsIdTreeWidgetItem(QTreeWidgetItem *parent)
-:QTreeWidgetItem(parent), QObject(NULL), mTimer(NULL), mCount(0), mColumn(0)
+: QObject(NULL), QTreeWidgetItem(parent), mCount(0), mColumn(0)
 {
 	init();
 }
 
 void GxsIdTreeWidgetItem::init()
 {
-	mTimer = new QTimer(this);
-	mTimer->setSingleShot(true);
-	connect(mTimer, SIGNAL(timeout()), this, SLOT(loadId()));
 }
 
 void GxsIdTreeWidgetItem::setId(const RsGxsId &id, int column)
@@ -198,9 +188,10 @@ bool GxsIdTreeWidgetItem::getId(RsGxsId &id)
 	return true;
 }
 
-
 void GxsIdTreeWidgetItem::loadId()
 {
+	disconnect(rApp, SIGNAL(secondTick()), this, SLOT(loadId()));
+
 	std::cerr << " GxsIdTreeWidgetItem::loadId() Id: " << mId << ", mCount: " << mCount;
 	std::cerr << std::endl;
 
@@ -225,7 +216,6 @@ void GxsIdTreeWidgetItem::loadId()
 		std::cerr << std::endl;
 
 		/* timer event to try again */
-		mTimer->setInterval(mCount * 1000);
-		mTimer->start();
+		connect(rApp, SIGNAL(secondTick()), this, SLOT(loadId()));
 	}
 }
