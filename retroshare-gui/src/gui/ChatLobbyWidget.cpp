@@ -60,6 +60,8 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
 	lobbyTreeWidget->setColumnCount(COLUMN_COUNT);
 	lobbyTreeWidget->sortItems(COLUMN_NAME, Qt::AscendingOrder);
 
+	lobbyTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu) ;
+
 	QTreeWidgetItem *headerItem = lobbyTreeWidget->headerItem();
 	headerItem->setText(COLUMN_NAME, tr("Name"));
 	headerItem->setText(COLUMN_USER_COUNT, tr("Count"));
