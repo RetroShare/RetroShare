@@ -2200,6 +2200,7 @@ void RsGenExchange::processRecvdGroups()
         else
         {
         	delete grp;
+			delete meta;
 			erase = true;
         }
 
