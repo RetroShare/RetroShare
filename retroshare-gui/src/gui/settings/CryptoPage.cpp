@@ -48,6 +48,9 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WFlags flags)
   connect(ui._copyLink_PB, SIGNAL(clicked()), this, SLOT(copyRSLink()));
   connect(ui._useOldFormat_CB, SIGNAL(toggled(bool)), this, SLOT(load()));
 
+  // hide profile manager as it causes bugs when generating a new profile.
+  ui.profile_Button->hide() ;
+
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
