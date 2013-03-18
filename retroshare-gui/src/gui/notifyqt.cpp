@@ -446,6 +446,32 @@ void NotifyQt::notifyCustomState(const std::string& peer_id, const std::string& 
 	emit peerHasNewCustomStateString(QString::fromStdString(peer_id), QString::fromUtf8(status_string.c_str())) ;
 }
 
+void NotifyQt::notifyChatLobbyTimeShift(int shift)
+{
+	{
+		QMutexLocker m(&_mutex) ;
+		if(!_enabled)
+			return ;
+	}
+
+#ifdef NOTIFY_DEBUG
+	std::cerr << "notifyQt: Received chat lobby time shift message: shift = " << shift << std::endl;
+#endif
+	emit chatLobbyTimeShift(shift) ;
+}
+void NotifyQt::handleChatLobbyTimeShift(int shift)
+{
+	static bool already = false ;
+
+	if(!already)
+	{
+		QString string = tr("For the chat lobbies to work properly, the time of your computer needs to be correct. Please check that this is the case (A possible time shift of ")+QString::number(shift)+tr(" seconds with your friends was detected). ") ;
+
+		QMessageBox::warning(NULL,tr("Please check your system clock."),string) ;
+		already = true ;
+	}
+}
+
 void NotifyQt::notifyChatLobbyEvent(uint64_t lobby_id,uint32_t event_type,const std::string& nickname,const std::string& str) 
 {
 	{

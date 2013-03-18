@@ -46,6 +46,8 @@ class NotifyQt: public QObject, public NotifyBase
 		virtual void notifyPeerHasNewAvatar(std::string peer_id) ;
 		virtual void notifyOwnAvatarChanged() ;
 		virtual void notifyChatLobbyEvent(uint64_t /* lobby id */,uint32_t /* event type */,const std::string& /*nickname*/,const std::string& /* any string */) ;
+		virtual void notifyChatLobbyTimeShift(int time_shift) ;
+
 		virtual void notifyOwnStatusMessageChanged() ;
 		virtual void notifyDiskFull(uint32_t loc,uint32_t size_in_mb) ;
 		/* peer has changed the state */
@@ -122,6 +124,7 @@ class NotifyQt: public QObject, public NotifyBase
 		void historyChanged(uint msgId, int type);
 		void chatLobbyInviteReceived() ;
 		void deferredSignatureHandlingRequested() ;
+		void chatLobbyTimeShift(int time_shift) ;
 
 		/* Notify from GUI */
 		void chatStyleChanged(int /*ChatStyle::enumStyleType*/ styleType);
@@ -133,6 +136,7 @@ class NotifyQt: public QObject, public NotifyBase
 	private slots:
 		void runningTick();
 		void handleSignatureEvent() ;
+		void handleChatLobbyTimeShift(int) ;
 
 	private:
 		NotifyQt();

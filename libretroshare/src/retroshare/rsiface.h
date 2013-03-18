@@ -185,6 +185,7 @@ class NotifyBase
 	virtual void notifyErrorMsg(int list, int sev, std::string msg) { (void) list; (void) sev; (void) msg; return; }
 	virtual void notifyChatStatus(const std::string& /* peer_id */, const std::string& /* status_string */ ,bool /* is_private */) {}
 	virtual void notifyChatLobbyEvent(uint64_t /* lobby id */,uint32_t /* event type */,const std::string& /* nickname */,const std::string& /* any string */) {}
+	virtual void notifyChatLobbyTimeShift(int time_shift) {}
 	virtual void notifyCustomState(const std::string& /* peer_id */, const std::string& /* status_string */) {}
 	virtual void notifyHashingInfo(uint32_t type, const std::string& fileinfo) { (void) type; (void)fileinfo; }
 	virtual void notifyTurtleSearchResult(uint32_t /* search_id */ ,const std::list<TurtleFileInfo>& files) { (void)files; }

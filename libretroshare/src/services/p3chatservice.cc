@@ -22,6 +22,7 @@
  * Please report all bugs and problems to "retroshare@lunamutt.com".
  *
  */
+#include <math.h>
 
 #include "util/rsdir.h"
 #include "util/rsrandom.h"
@@ -58,6 +59,7 @@ p3ChatService::p3ChatService(p3LinkMgr *lm, p3HistoryMgr *historyMgr)
 
 	_own_avatar = NULL ;
 	_custom_status_string = "" ;
+	_time_shift_average = 0.0f ;
 	_default_nick_name = rsPeers->getPeerName(rsPeers->getOwnId());
 	_should_reset_lobby_counts = false ;
 	
@@ -798,12 +800,70 @@ void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
 	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
 	_should_reset_lobby_counts = false ;
 }
+
+void p3ChatService::addTimeShiftStatistics(int D)
+{
+	static const int S = 50 ; // accuracy up to 2^50 second. Quite conservative!
+	static int total = 0 ;
+	static std::vector<int> log_delay_histogram(S,0) ;
+
+	int delay = (D<0)?(-D):D ;
+
+	if(delay < 0)
+		delay = -delay ;
+
+	// compute log2.
+	int l = 0 ;
+	while(delay > 0) delay >>= 1, ++l ;
+
+	int bin = std::min(S-1,l) ;
+	++log_delay_histogram[bin] ;
+	++total ;
+
+#ifdef CHAT_DEBUG
+	std::cerr << "New delay stat item. delay=" << D << ", log=" << bin << " total=" << total << ", histogram = " ;
+
+	for(int i=0;i<S;++i)
+		std::cerr << log_delay_histogram[i] << " " ;
+#endif
+
+	if(total > 30)
+	{
+		float t = 0.0f ;
+		int i=0 ;
+		for(;i<S && t<0.5*total;++i)
+			t += log_delay_histogram[i] ;
+
+		if(i == 0) return ;									// cannot happen, since total>0 so i is incremented
+		if(log_delay_histogram[i-1] == 0) return ;	// cannot happen, either, but let's be cautious.
+
+		float expected = ( i * (log_delay_histogram[i-1] - t + total*0.5) + (i-1) * (t - total*0.5) ) / (float)log_delay_histogram[i-1] - 1;
+
+#ifdef CHAT_DEBUG
+		std::cerr << ". Expected delay: " << expected << std::endl ;
+#endif
+
+		if(expected > 9)	// if more than 20 samples
+			rsicontrol->getNotify().notifyChatLobbyTimeShift( (int)pow(2.0f,expected)) ;
+
+		total = 0.0f ;
+		log_delay_histogram.clear() ;
+		log_delay_histogram.resize(S,0) ;
+	}
+#ifdef CHAT_DEBUG
+	else
+		std::cerr << std::endl;
+#endif
+}
+
 void p3ChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *item)
 {
 #ifdef CHAT_DEBUG
 	std::cerr << "Received ChatLobbyEvent item of type " << (int)(item->event_type) << ", and string=" << item->string1 << std::endl;
 #endif
 	time_t now = time(NULL) ;
+
+	addTimeShiftStatistics((int)now - (int)item->sendTime) ;
 
 	if(now+100 > (time_t) item->sendTime + MAX_KEEP_MSG_RECORD)	// the message is older than the max cache keep minus 100 seconds ! It's too old, and is going to make an echo!
 	{

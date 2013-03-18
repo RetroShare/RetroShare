@@ -194,6 +194,8 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 
 		void initRsChatInfo(RsChatMsgItem *c, ChatInfo &i);
 
+		/// make some statistics about time shifts, to prevent various issues. 
+		void addTimeShiftStatistics(int shift) ;
 
 		/// Send avatar info to peer in jpeg format.
 		void sendAvatarJpegData(const std::string& peer_id) ;
@@ -286,6 +288,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		std::map<ChatLobbyId,VisibleChatLobbyRecord> _visible_lobbies ;
 		std::map<std::string,ChatLobbyId> _lobby_ids ;
 		std::string _default_nick_name ;
+		float _time_shift_average ;
 		time_t last_lobby_challenge_time ; // prevents bruteforce attack
 		time_t last_visible_lobby_info_request_time ;	// allows to ask for updates
 		bool _should_reset_lobby_counts ;
