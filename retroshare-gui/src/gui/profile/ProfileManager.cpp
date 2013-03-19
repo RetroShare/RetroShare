@@ -55,13 +55,15 @@ ProfileManager::ProfileManager(QWidget *parent)
 
 	connect(ui.identityTreeWidget, SIGNAL( customContextMenuRequested(QPoint)), this, SLOT( identityTreeWidgetCostumPopupMenu(QPoint)));
 	connect(ui.identityTreeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(identityItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
-	connect(ui.newIdentity_PB, SIGNAL(clicked()), this, SLOT(newIdentity()));
-	connect(ui.importIdentity_PB, SIGNAL(clicked()), this, SLOT(importIdentity()));
+//	connect(ui.newIdentity_PB, SIGNAL(clicked()), this, SLOT(newIdentity()));
+//	connect(ui.importIdentity_PB, SIGNAL(clicked()), this, SLOT(importIdentity()));
 	connect(ui.exportIdentity_PB, SIGNAL(clicked()), this, SLOT(exportIdentity()));
 
-	ui.exportIdentity_PB->setEnabled(false);
+//	ui.newIdentity_PB->hide() ;
+//	ui.importIdentity_PB->hide() ;
 
 	fillIdentities();
+	ui.exportIdentity_PB->setEnabled(false);
 }
 
 void ProfileManager::identityTreeWidgetCostumPopupMenu(QPoint)
