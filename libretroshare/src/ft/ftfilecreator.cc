@@ -287,7 +287,9 @@ int ftFileCreator::locked_initializeFileAttrs()
 }
 ftFileCreator::~ftFileCreator()
 {
+#ifdef FILE_DEBUG
 	std::cerr << "Deleting file creator for " << file_name << std::endl;
+#endif
 
 	// Note: The file is actually closed in the parent, that is always a ftFileProvider.
 	//
