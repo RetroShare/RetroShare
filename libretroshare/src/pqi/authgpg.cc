@@ -439,7 +439,13 @@ bool AuthGPG::getGPGDetails(const std::string& id, RsPeerDetails &d)
 
 	if(id.length() != 16)
 	{
-		std::cerr << "Wrong string passed to getGPGDetails: \"" << id << "\"" << std::endl;
+		static int already = 0 ;
+
+		if(already < 10)
+		{
+			std::cerr << "Wrong string passed to getGPGDetails: \"" << id << "\"" << std::endl;
+			++already ;
+		}
 		return false ;
 	}
 

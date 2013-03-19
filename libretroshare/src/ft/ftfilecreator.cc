@@ -597,7 +597,10 @@ bool ftFileCreator::finished()
 
 bool ftFileCreator::hashReceivedData(std::string& hash)
 {
-	std::cerr << "file creator " << hash << " asked for hashing received data " << file_name << std::endl;
+#ifdef FILE_DEBUG
+	std::cerr << "file creator asked for hashing received data " << file_name << std::endl;
+#endif
+
 	// csoler: No mutex here please !
 	//
 	// This is a bit dangerous, but otherwise we might stuck the GUI for a 
