@@ -3507,10 +3507,6 @@ p, li { white-space: pre-wrap; }
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Security</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>DHTStatus</name>
@@ -8847,6 +8843,14 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <source>This is a test.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>For the chat lobbies to work properly, the time of your computer needs to be correct. Please check that this is the case (A possible time shift of several minutes was detected with your friends). </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please check your system clock.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>OnlineToaster</name>
@@ -9619,14 +9623,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Generate New Identity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Import new identity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Export selected identity</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9644,10 +9640,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>GID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You can manage here your profiles, import, export your profiles or generate one .</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9708,6 +9700,18 @@ and use the import button to load it</source>
     </message>
     <message>
         <source>Certificates (*.pqi *.pem)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Select in the list below an identity to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;When keeping the same identity for your new  location, your friends will automatically accept you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10141,6 +10145,14 @@ Reported error is: %2</source>
     </message>
     <message>
         <source>Start with a RetroShare link is only supported for Windows.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subject: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Participants: </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
