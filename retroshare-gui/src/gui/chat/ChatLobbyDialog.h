@@ -45,7 +45,7 @@ public:
 
 private slots:
 	void showParticipantsFrame(bool show);
-	void participantsTreeWidgetCostumPopupMenu( QPoint point );
+	void participantsTreeWidgetCustomPopupMenu( QPoint point );
 	void inviteFriends() ;
 	void leaveLobby() ;
 

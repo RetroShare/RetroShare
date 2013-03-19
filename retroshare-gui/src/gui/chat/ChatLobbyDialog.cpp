@@ -52,7 +52,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WF
 
 	connect(ui.participantsFrameButton, SIGNAL(toggled(bool)), this, SLOT(showParticipantsFrame(bool)));
 	connect(ui.actionChangeNickname, SIGNAL(triggered()), this, SLOT(changeNickname()));
-	connect(ui.participantsList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(participantsTreeWidgetCostumPopupMenu(QPoint)));
+	connect(ui.participantsList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(participantsTreeWidgetCustomPopupMenu(QPoint)));
 	connect(ui.participantsList, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(participantsTreeWidgetDoubleClicked(QTreeWidgetItem*,int)));
 
 	ui.participantsList->setColumnCount(COLUMN_COUNT);
@@ -122,7 +122,7 @@ void ChatLobbyDialog::inviteFriends()
 	}
 }
 
-void ChatLobbyDialog::participantsTreeWidgetCostumPopupMenu(QPoint)
+void ChatLobbyDialog::participantsTreeWidgetCustomPopupMenu(QPoint)
 {
 	QList<QTreeWidgetItem*> selectedItems = ui.participantsList->selectedItems();
 
@@ -131,6 +131,7 @@ void ChatLobbyDialog::participantsTreeWidgetCostumPopupMenu(QPoint)
 	contextMnu.addAction(muteAct);
 	muteAct->setCheckable(true);
 	muteAct->setEnabled(false);
+	muteAct->setChecked(false);
 	if (selectedItems.size()) {
 		muteAct->setEnabled(true);
 
@@ -141,8 +142,6 @@ void ChatLobbyDialog::participantsTreeWidgetCostumPopupMenu(QPoint)
 				break;
 			}
 		}
-	} else {
-		muteAct->setChecked(false);
 	}
 
 	contextMnu.exec(QCursor::pos());
@@ -282,8 +281,10 @@ void ChatLobbyDialog::addIncomingChatMsg(const ChatInfo& info)
 
 	std::cerr << "message from rsid " << info.rsid.c_str() << std::endl;
 	
-	if(!isParticipantMuted(name)) 
+	if(!isParticipantMuted(name)) {
 	  ui.chatWidget->addChatMsg(true, name, sendTime, recvTime, message, ChatWidget::TYPE_NORMAL);
+		emit messageReceived(id()) ;
+	}
 	
 	// This is a trick to translate HTML into text.
 	QTextEdit editor;
@@ -303,14 +304,12 @@ void ChatLobbyDialog::addIncomingChatMsg(const ChatInfo& info)
 		lastUpdateListTime = now;
 		updateParticipantsList();
 	}
-
-	emit messageReceived(id()) ;
 }
 
 /**
  * Regenerate the QTreeWidget participant list of a Chat Lobby
  * 
- * Show unchecked Checkbox for muted Participants
+ * Show yellow icon for muted Participants
  */
 void ChatLobbyDialog::updateParticipantsList()
 {
@@ -487,7 +486,9 @@ void ChatLobbyDialog::displayLobbyEvent(int event_type, const QString& nickname,
 		break;
 	case RS_CHAT_LOBBY_EVENT_PEER_STATUS:
 		ui.chatWidget->updateStatusString(nickname + " %1", str);
-		emit typingEventReceived(id()) ;
+		if (!isParticipantMuted(nickname)) {
+			emit typingEventReceived(id()) ;
+		}
 		break;
 	case RS_CHAT_LOBBY_EVENT_PEER_CHANGE_NICKNAME:
 		ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 changed his name to: %2").arg(nickname, str), ChatWidget::TYPE_SYSTEM);
