@@ -675,7 +675,7 @@ void RsHtml::optimizeHtml(QTextEdit *textEdit, QString &text, unsigned int flag)
 {
 	if (textEdit->toHtml() == QTextDocument(textEdit->toPlainText()).toHtml()) {
 		text = textEdit->toPlainText();
-		std::cerr << "Optimized text to " << text.length() << " bytes , instead of " << textEdit->toHtml().length() << std::endl;
+//		std::cerr << "Optimized text to " << text.length() << " bytes , instead of " << textEdit->toHtml().length() << std::endl;
 		return;
 	}
 
@@ -712,7 +712,7 @@ void RsHtml::optimizeHtml(QString &text, unsigned int flag, const QColor &backgr
 	::optimizeHtml(doc, body, flag, ::getRelativeLuminance(backgroundColor), desiredContrast);
 	text = doc.toString(-1);
 
-	std::cerr << "Optimized text to " << text.length() << " bytes , instead of " << originalLength << std::endl;
+//	std::cerr << "Optimized text to " << text.length() << " bytes , instead of " << originalLength << std::endl;
 }
 
 QString RsHtml::toHtml(QString text, bool realHtml)
