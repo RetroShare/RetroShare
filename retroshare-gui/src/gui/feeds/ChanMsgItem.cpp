@@ -387,6 +387,8 @@ void ChanMsgItem::unsubscribeChannel()
 
 void ChanMsgItem::download()
 {
+	readToggled(false);
+
 	std::list<SubFileItem *>::iterator it;
 	for(it = mFileItems.begin(); it != mFileItems.end(); it++)
 	{
