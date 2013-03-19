@@ -98,12 +98,6 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <widget class="QTreeWidget" name="lobbyTreeWidget">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Maximum" vsizetype="MinimumExpanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
       <column>
        <property name="text">
         <string notr="true">1</string>

@@ -104,6 +104,11 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
 	lobbyTreeWidget->adjustSize();
 	lobbyTreeWidget->setColumnWidth(0,100);
 
+	// Set initial size of the splitter
+	QList<int> sizes;
+	sizes << 200 << width(); // Qt calculates the right sizes
+	splitter->setSizes(sizes);
+
 	lobbyChanged();
 	showBlankPage(0) ;
 }
