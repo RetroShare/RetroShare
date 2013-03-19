@@ -104,8 +104,7 @@ void RsGxsNetService::syncWithPeers()
         {
             RsGxsGrpMetaData* meta = mit->second;
 
-            if(meta->mSubscribeFlags & (GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED |
-               GXS_SERV::GROUP_SUBSCRIBE_ADMIN) )
+            if(meta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED )
                 grpIds.push_back(mit->first);
 
             delete meta;
@@ -1412,8 +1411,8 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrp* item)
 	{
 		RsGxsGrpMetaData* grpMeta = mit->second;
 
-		if(grpMeta->mSubscribeFlags & (GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED |
-	               GXS_SERV::GROUP_SUBSCRIBE_ADMIN) )
+		if(grpMeta->mSubscribeFlags &
+				GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
 		{
 			RsNxsSyncGrpItem* gItem = new
 				RsNxsSyncGrpItem(mServType);

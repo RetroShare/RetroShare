@@ -880,6 +880,7 @@ void RsGenExchange::msgsChanged(std::map<RsGxsGroupId,
 			mMsgChange.pop_back();
 			delete mc;
 		}
+            mGenMtx.unlock();
 	}
 }
 
@@ -899,6 +900,7 @@ void RsGenExchange::groupsChanged(std::list<RsGxsGroupId>& grpIds)
 			mGroupChange.pop_back();
 			delete gc;
 		}
+            mGenMtx.unlock();
 	}
 }
 
