@@ -91,7 +91,7 @@ void GenCertDialog::init()
 	} else {
 		ui.no_gpg_key_label->setVisible(!mOnlyGenerateIdentity);
 		ui.new_gpg_key_checkbox->setChecked(true);
-		ui.new_gpg_key_checkbox->setEnabled(false);
+		ui.new_gpg_key_checkbox->setEnabled(true);
 		setWindowTitle(tr("Create new Identity"));
 		ui.genButton->setText(tr("Generate new Identity"));
 		ui.headerLabel->setText(tr("Create a new Identity"));
