@@ -97,6 +97,9 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
 	stackedWidget->addWidget(_lobby_blank_page) ;
 
 	lobbyTreeWidget->expandAll();
+	lobbyTreeWidget->setColumnHidden(1,true) ;
+	lobbyTreeWidget->setColumnHidden(2,true) ;
+	lobbyTreeWidget->setSortingEnabled(true) ;
 
 	lobbyChanged();
 	showBlankPage(0) ;
@@ -172,6 +175,7 @@ static void updateItem(QTreeWidgetItem *item, ChatLobbyId id, const std::string 
 	for (int column = 0; column < COLUMN_COUNT; ++column) {
 		item->setTextColor(column, color);
 	}
+	item->setToolTip(0,QObject::tr("Subject: ")+item->text(COLUMN_TOPIC)+"\n"+QObject::tr("Participants: ")+QString::number(count)) ;
 }
 
 void ChatLobbyWidget::addChatPage(ChatLobbyDialog *d)
