@@ -101,6 +101,9 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
 	lobbyTreeWidget->setColumnHidden(2,true) ;
 	lobbyTreeWidget->setSortingEnabled(true) ;
 
+	lobbyTreeWidget->adjustSize();
+	lobbyTreeWidget->setColumnWidth(0,100);
+
 	lobbyChanged();
 	showBlankPage(0) ;
 }
