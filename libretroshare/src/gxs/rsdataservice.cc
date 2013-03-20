@@ -26,6 +26,8 @@
 
 
 #include <fstream>
+#include <util/rsdir.h>
+#include <algorithm>
 
 #include "rsdataservice.h"
 
@@ -166,6 +168,10 @@ RsDataService::RsDataService(const std::string &serviceDir, const std::string &d
     // for retrieving actual grp data
     grpColumns.push_back(KEY_GRP_ID); grpColumns.push_back(KEY_NXS_FILE); grpColumns.push_back(KEY_NXS_FILE_OFFSET);
     grpColumns.push_back(KEY_NXS_FILE_LEN); grpColumns.push_back(KEY_NXS_META);
+
+    // for retrieving msg offsets
+    mMsgOffSetColumns.push_back(KEY_MSG_ID); mMsgOffSetColumns.push_back(KEY_NXS_FILE_OFFSET);
+    mMsgOffSetColumns.push_back(KEY_NXS_FILE_LEN);
 }
 
 RsDataService::~RsDataService(){
@@ -1020,24 +1026,216 @@ int RsDataService::removeGroups(const std::vector<std::string> &grpIds)
 
 int RsDataService::updateGroupMetaData(GrpLocMetaData &meta)
 {
+	RsStackMutex stack(mDbMutex);
     RsGxsGroupId& grpId = meta.grpId;
     return mDb->sqlUpdate(GRP_TABLE_NAME,  KEY_GRP_ID+ "='" + grpId + "'", meta.val) ? 1 : 0;
 }
 
 int RsDataService::updateMessageMetaData(MsgLocMetaData &metaData)
 {
+	RsStackMutex stack(mDbMutex);
     RsGxsGroupId& grpId = metaData.msgId.first;
     RsGxsMessageId& msgId = metaData.msgId.second;
     return mDb->sqlUpdate(MSG_TABLE_NAME,  KEY_GRP_ID+ "='" + grpId
                           + "' AND " + KEY_MSG_ID + "='" + msgId + "'", metaData.val) ? 1 : 0;
 }
 
+MsgOffset offSetAccum(const MsgOffset& x, const MsgOffset& y)
+{
+	MsgOffset m;
+	m.msgLen = y.msgLen + x.msgLen;
+	return m;
+}
 
 int RsDataService::removeMsgs(const GxsMsgReq& msgIds)
 {
-    return 0;
+	RsStackMutex stack(mDbMutex);
+
+	// for each group
+	// first get all message meta, get symmetric difference of message in vector
+	// build a pair of start and end points to copy into the buffer
+
+	GxsMsgReq::const_iterator mit = msgIds.begin();
+
+
+	for(; mit != msgIds.end(); mit++)
+	{
+		MsgUpdates updates;
+		const std::vector<RsGxsMessageId>& msgIdV = mit->second;
+		const RsGxsGroupId& grpId = mit->first;
+
+		GxsMsgReq reqIds;
+		reqIds.insert(std::make_pair(grpId, std::vector<RsGxsMessageId>() ));
+
+		// can get offsets for each file
+		std::vector<MsgOffset> msgOffsets;
+		getMessageOffsets(grpId, msgOffsets);
+
+		std::string oldFileName = mServiceDir + "/" + grpId + "-msgs";
+		std::string newFileName = mServiceDir + "/" + grpId + "-msgs-temp";
+		std::ifstream in(oldFileName.c_str(), std::ios::binary);
+		std::vector<char> dataBuff, newBuffer;
+
+		std::vector<MsgOffset>::iterator vit;
+
+		uint32_t maxSize = 0;
+		for(; vit != msgOffsets.end(); vit++)
+			maxSize += vit->msgLen;
+
+
+		dataBuff.resize(maxSize);
+		newBuffer.resize(maxSize);
+
+		dataBuff.insert(dataBuff.end(),
+				std::istreambuf_iterator<char>(in),
+				std::istreambuf_iterator<char>());
+
+		in.close();
+
+
+		for(std::vector<MsgOffset>::size_type i = 0; msgOffsets.size(); i++)
+		{
+			const MsgOffset& m = msgOffsets[i];
+
+			uint32_t newOffset = 0;
+			if(std::find(msgIdV.begin(), msgIdV.end(), m.msgId) == msgIdV.end())
+			{
+				MsgUpdate up;
+
+				uint32_t msgLen = m.msgLen;
+
+				up.msgId = m.msgId;
+				up.cv.put(KEY_NXS_FILE_OFFSET, (int32_t)msgLen);
+
+				newBuffer.insert(dataBuff.end(), dataBuff.begin()+m.msgOffset,
+						dataBuff.begin()+m.msgOffset+m.msgLen);
+
+				newOffset += msgLen;
+
+				up.cv.put(KEY_NXS_FILE_LEN, (int32_t)newOffset);
+
+				// add msg update
+				updates[grpId].push_back(up);
+			}
+		}
+
+		std::ofstream out(newFileName.c_str(), std::ios::binary);
+
+		std::copy(newBuffer.begin(), newBuffer.end(),
+				std::ostreambuf_iterator<char>(out));
+
+		out.close();
+
+		// now update the new positions in db
+		updateMessageEntries(updates);
+
+		// then delete removed messages
+		GxsMsgReq msgsToDelete;
+		msgsToDelete[grpId] = msgIdV;
+		removeMessageEntries(msgsToDelete);
+
+		// now replace old file location with new file
+		remove(oldFileName.c_str());
+		RsDirUtil::renameFile(newFileName, oldFileName);
+	}
+
+    return 1;
 }
 
+
+
+bool RsDataService::updateMessageEntries(const MsgUpdates& updates)
+{
+    // start a transaction
+    bool ret = mDb->execSQL("BEGIN;");
+
+    MsgUpdates::const_iterator mit = updates.begin();
+
+    for(; mit != updates.end(); mit++)
+    {
+
+    	const RsGxsGroupId& grpId = mit->first;
+    	const std::vector<MsgUpdate>& updateV = mit->second;
+    	std::vector<MsgUpdate>::const_iterator vit = updateV.begin();
+
+    	for(; vit != updateV.end(); vit++)
+    	{
+    		const MsgUpdate& update = *vit;
+    		mDb->sqlUpdate(MSG_TABLE_NAME, KEY_GRP_ID+ "='" + grpId
+                    + "' AND " + KEY_MSG_ID + "='" + update.msgId + "'", update.cv);
+    	}
+    }
+
+    ret &= mDb->execSQL("COMMIT;");
+
+    return ret;
+}
+
+bool RsDataService::removeMessageEntries(const GxsMsgReq& msgIds)
+{
+    // start a transaction
+    bool ret = mDb->execSQL("BEGIN;");
+
+    GxsMsgReq::const_iterator mit = msgIds.begin();
+
+    for(; mit != msgIds.end(); mit++)
+    {
+    	const RsGxsGroupId& grpId = mit->first;
+    	const std::vector<RsGxsMessageId>& msgsV = mit->second;
+    	std::vector<RsGxsMessageId>::const_iterator vit = msgsV.begin();
+
+    	for(; vit != msgsV.end(); vit++)
+    	{
+    		const RsGxsMessageId& msgId = *vit;
+    		mDb->sqlDelete(MSG_TABLE_NAME, KEY_GRP_ID+ "='" + grpId
+                    + "' AND " + KEY_MSG_ID + "='" + msgId + "'", "");
+    	}
+    }
+
+    ret &= mDb->execSQL("COMMIT;");
+
+    return ret;
+}
+
+void RsDataService::getMessageOffsets(const RsGxsGroupId& grpId, std::vector<MsgOffset>& offsets)
+{
+
+	RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, mMsgOffSetColumns, KEY_GRP_ID+ "='" + grpId + "'", "");
+
+    if(c)
+    {
+        bool valid = c->moveToFirst();
+
+        while(valid)
+        {
+        	RsGxsMessageId msgId;
+        	int32_t msgLen;
+        	int32_t msgOffSet;
+            c->getString(0, msgId);
+            msgLen = c->getInt32(1);
+            msgOffSet = c->getInt32(2);
+
+            MsgOffset offset;
+            offset.msgId = msgId;
+            offset.msgLen = msgLen;
+            offset.msgOffset = msgOffSet;
+            offsets.push_back(offset);
+
+            valid = c->moveToNext();
+        }
+        delete c;
+    }
+}
+
+void RsDataService::lockStore()
+{
+	mDbMutex.lock();
+}
+
+void RsDataService::unlockStore()
+{
+	mDbMutex.unlock();
+}
 uint32_t RsDataService::cacheSize() const {
     return 0;
 }

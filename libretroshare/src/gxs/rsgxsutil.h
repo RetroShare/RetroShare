@@ -27,6 +27,8 @@
 #define GXSUTIL_H_
 
 #include <vector>
+#include "serialiser/rsnxsitems.h"
+#include "rsgds.h"
 
 /*!
  * Handy function for cleaning out meta result containers
@@ -54,6 +56,42 @@ inline RsGxsGrpMsgIdPair getMsgIdPair(RsGxsMsgItem& msg)
 {
 	return RsGxsGrpMsgIdPair(std::make_pair(msg.meta.mGroupId, msg.meta.mMsgId));
 }
+
+/*!
+ * Does message clean up based on individual group expirations first
+ * if avialable. If not then deletion s
+ */
+class RsGxsMessageCleanUp : public RsThread
+{
+public:
+
+	/*!
+	 *
+	 * @param dataService
+	 * @param mGroupTS
+	 * @param chunkSize
+	 * @param sleepPeriod
+	 */
+	RsGxsMessageCleanUp(RsGeneralDataService* const dataService, uint32_t messageStorePeriod, uint32_t chunkSize);
+
+	/*!
+	 * On construction this should be called to progress deletions
+	 * Deletion will process by chunk size
+	 * @return true if no more messages to delete, false otherwise
+	 */
+	bool clean();
+
+	/*!
+	 * TODO: Rather manual progressions consider running through a thread
+	 */
+	void run(){}
+
+private:
+
+	RsGeneralDataService* const mDs;
+	const uint32_t MESSAGE_STORE_PERIOD, CHUNK_SIZE;
+	std::vector<RsGxsGroupId> mGrpIds;
+};
 
 
 #endif /* GXSUTIL_H_ */

@@ -651,6 +651,7 @@ gxs {
 		util/contentvalue.cc \
 		gxs/gxssecurity.cc \
 		gxs/gxstokenqueue.cc \
+		gxs/rsgxsutil.cc
 
 	# Identity Service
 	HEADERS += retroshare/rsidentity.h \

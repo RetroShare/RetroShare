@@ -38,6 +38,8 @@
 #include "retroshare/rsgxsservice.h"
 #include "serialiser/rsnxsitems.h"
 
+#define DEFAULT_MSG_STORE_PERIOD 60*60 // 1 hour
+
 template<class GxsItem, typename Identity = std::string>
 class GxsPendingItem
 {
@@ -125,7 +127,8 @@ public:
      * @param authenPolicy This determines the authentication used for verfying authorship of msgs and groups
      */
     RsGenExchange(RsGeneralDataService* gds, RsNetworkExchangeService* ns,
-                  RsSerialType* serviceSerialiser, uint16_t mServType, RsGixs* gixs = NULL, uint32_t authenPolicy = 0);
+                  RsSerialType* serviceSerialiser, uint16_t mServType, RsGixs* gixs = NULL, uint32_t authenPolicy = 0,
+                  uint32_t messageStorePeriod = DEFAULT_MSG_STORE_PERIOD);
 
     virtual ~RsGenExchange();
 
@@ -693,6 +696,7 @@ private:
     typedef std::vector<GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair> > NxsMsgPendingVect;
 
 
+    const uint32_t MESSAGE_STORE_PERIOD;
 
 private:
 

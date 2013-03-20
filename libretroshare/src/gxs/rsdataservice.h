@@ -29,6 +29,24 @@
 #include "gxs/rsgds.h"
 #include "util/retrodb.h"
 
+class MsgOffset
+{
+public:
+
+	MsgOffset() : msgOffset(0), msgLen(0) {}
+	RsGxsMessageId msgId;
+	uint32_t msgOffset, msgLen;
+};
+
+class MsgUpdate
+{
+public:
+
+	MsgUpdate(){}
+	MsgUpdate(const MsgUpdate& ){}
+	RsGxsMessageId msgId;
+	ContentValue cv;
+};
 
 class RsDataService : public RsGeneralDataService
 {
@@ -123,6 +141,18 @@ public:
      */
     int updateGroupMetaData(GrpLocMetaData& meta);
 
+    /*!
+     * Use to lock store when needing to ensure Db contents has not change
+     * @warning ensure you call unlock or you could cause a deadlock
+     * @see RsDataService::unlockStore()
+     */
+    void lockStore();
+
+    /*!
+     * Use to unlock store after locking
+     * @see RsDataService::lockStore()
+     */
+    void unlockStore();
 
     /*!
      * Completely clear out data stored in
@@ -131,7 +161,6 @@ public:
      * @return error code
      */
     int resetDataStore();
-
 
     bool validSize(RsNxsMsg* msg) const;
     bool validSize(RsNxsGrp* grp) const;
@@ -190,6 +219,26 @@ private:
      */
     void initialise();
 
+    /*!
+     * Remove entries for data base
+     * @param msgIds
+     */
+    bool removeMessageEntries(const GxsMsgReq& msgIds);
+
+    typedef std::map<RsGxsGroupId, std::vector<MsgUpdate> > MsgUpdates;
+
+    /*!
+     * Update messages entries with new values
+     * @param msgIds
+     * @param cv contains values to update message entries with
+     */
+    bool updateMessageEntries(const MsgUpdates& updates);
+
+
+private:
+
+    void getMessageOffsets(const RsGxsGroupId& grpId, std::vector<MsgOffset>& msgOffsets);
+
 private:
 
 
@@ -199,6 +248,7 @@ private:
 
     std::list<std::string> msgColumns;
     std::list<std::string> msgMetaColumns;
+    std::list<std::string> mMsgOffSetColumns;
 
     std::list<std::string> grpColumns;
     std::list<std::string> grpMetaColumns;
