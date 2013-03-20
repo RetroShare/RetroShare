@@ -187,7 +187,7 @@ class CacheSource
 		bool 	clearCache(CacheId id);
 
 		/* controls if peer is an accepted receiver for cache items. Default is yes. To be overloaded. */
-		virtual bool isPeerAcceptedAsCacheReceiver(const std::string& peer_id)  { return true ; }
+		virtual bool isPeerAcceptedAsCacheReceiver(const std::string& /*peer_id*/)  { return true ; }
 
 			/* get private data */
 		std::string getCacheDir()    { return cacheDir;   }
@@ -276,7 +276,7 @@ class CacheStore
 			/* virtual functions overloaded by cache implementor */
 
 		/* controls if peer is an accepted provider for cache items. Default is yes. To be overloaded. */
-		virtual bool isPeerAcceptedAsCacheProvider(const std::string& peer_id)  { return true ; }
+		virtual bool isPeerAcceptedAsCacheProvider(const std::string& /*peer_id*/)  { return true ; }
 
 		/*!
 		 * @param data cache data is stored here
