@@ -707,12 +707,13 @@ bool p3Channels::channelGetAutoDl(const std::string& chId, bool& autoDl)
 	statMap::iterator it = mChannelStatus.find(chId);
 
 	if(it != mChannelStatus.end())
-	{
 		autoDl = it->second & RS_CHAN_STATUS_AUTO_DL;
-		return true;
+	else	// create the entry. No particular risk with that.
+	{
+		mChannelStatus[chId] = 0 ;
+		autoDl = false ;
 	}
-
-	return false;
+	return true;
 }
 
 /***************************************************************************************/

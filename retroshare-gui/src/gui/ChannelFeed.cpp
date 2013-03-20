@@ -520,8 +520,7 @@ void ChannelFeed::updateChannelMsgs()
         postButton->setEnabled(false);
     }
 
-    if (!(ci.channelFlags & RS_DISTRIB_ADMIN) &&
-         (ci.channelFlags & RS_DISTRIB_SUBSCRIBED)) {
+    if (ci.channelFlags & RS_DISTRIB_SUBSCRIBED) {
         actionEnable_Auto_Download->setEnabled(true);
     } else {
         actionEnable_Auto_Download->setEnabled(false);
