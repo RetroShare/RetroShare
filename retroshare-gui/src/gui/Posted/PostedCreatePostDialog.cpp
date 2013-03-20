@@ -47,7 +47,7 @@ void PostedCreatePostDialog::createPost()
         std::cerr << "PostedCreatePostDialog::createPost() ERROR GETTING AuthorId!, Post Failed";
         std::cerr << std::endl;
 
-        QMessageBox::warning(this, tr("RetroShare"),tr("Please reate or choose a Signing Id first"),
+        QMessageBox::warning(this, tr("RetroShare"),tr("Please create or choose a Signing Id first"),
             QMessageBox::Ok, QMessageBox::Ok);
 
 	return;
