@@ -263,12 +263,12 @@ p, li { white-space: pre-wrap; }
         <translation>Säg något om detta album...</translation>
     </message>
     <message>
-        <source>Load Album Thumbnail</source>
-        <translation>Läs in albumminiatyr</translation>
-    </message>
-    <message>
         <source>Where were these taken?</source>
         <translation>Var togs dessa bilder?</translation>
+    </message>
+    <message>
+        <source>Load Album Thumbnail</source>
+        <translation>Läs in albumminiatyr</translation>
     </message>
 </context>
 <context>
@@ -400,8 +400,20 @@ p, li { white-space: pre-wrap; }
         <translation>Språk</translation>
     </message>
     <message>
+        <source>Changes to language will only take effect after restarting RetroShare!</source>
+        <translation>Starta om RetoShare för att språkbytet skall få effekt!</translation>
+    </message>
+    <message>
+        <source>Choose the language used in RetroShare</source>
+        <translation>Välj vilket språk som skall användas i RetroShare</translation>
+    </message>
+    <message>
         <source>Style</source>
         <translation>Stil</translation>
+    </message>
+    <message>
+        <source>Choose RetroShare&apos;s interface style</source>
+        <translation>Välj stil för användargränssnittet</translation>
     </message>
     <message>
         <source>Style Sheet</source>
@@ -411,18 +423,6 @@ p, li { white-space: pre-wrap; }
         <source>Appearance</source>
         <translation>Utseende</translation>
     </message>
-    <message>
-        <source>Changes to language will only take effect after restarting RetroShare!</source>
-        <translation>Starta om RetoShare för att språkbytet skall få effekt!</translation>
-    </message>
-    <message>
-        <source>Choose the language used in RetroShare</source>
-        <translation>Välj vilket språk som skall användas i RetroShare</translation>
-    </message>
-    <message>
-        <source>Choose RetroShare&apos;s interface style</source>
-        <translation>Välj stil för användargränssnittet</translation>
-    </message>
 </context>
 <context>
     <name>ApplicationWindow</name>
@@ -431,20 +431,14 @@ p, li { white-space: pre-wrap; }
         <translation>RetroShare</translation>
     </message>
     <message>
+        <source> Warning: The services here are experimental. Please help us test them. 
+ But Remember: Any data here *WILL* be lost when we upgrade the protocols.</source>
+        <translation>Varning! De här tjänsterna är experimentella. Hjälp oss gärna att testa dem.
+Kom bara ihåg... all data här, *KOMMER* att förloras när vi uppgraderar protokollen.</translation>
+    </message>
+    <message>
         <source>Identities</source>
         <translation>Identiteter</translation>
-    </message>
-    <message>
-        <source>Wiki Pages</source>
-        <translation>Wiki</translation>
-    </message>
-    <message>
-        <source>The Wire</source>
-        <translation>The Wire</translation>
-    </message>
-    <message>
-        <source>Posted Links</source>
-        <translation>Postade länkar</translation>
     </message>
     <message>
         <source>Circles</source>
@@ -455,18 +449,24 @@ p, li { white-space: pre-wrap; }
         <translation>Bilddelning</translation>
     </message>
     <message>
+        <source>Posted Links</source>
+        <translation>Postade länkar</translation>
+    </message>
+    <message>
+        <source>Wiki Pages</source>
+        <translation>Wiki</translation>
+    </message>
+    <message>
         <source>GxsForums</source>
         <translation>GxsForum</translation>
     </message>
     <message>
-        <source> Warning: The services here are experimental. Please help us test them. 
- But Remember: Any data here *WILL* be lost when we upgrade the protocols.</source>
-        <translation>Varning! De här tjänsterna är experimentella. Hjälp oss gärna att testa dem.
-Kom bara ihåg... all data här, *KOMMER* att förloras när vi uppgraderar protokollen.</translation>
-    </message>
-    <message>
         <source>GxsChannels</source>
         <translation>Gxs-kanaler</translation>
+    </message>
+    <message>
+        <source>The Wire</source>
+        <translation>The Wire</translation>
     </message>
 </context>
 <context>
@@ -631,6 +631,10 @@ Kom bara ihåg... all data här, *KOMMER* att förloras när vi uppgraderar prot
         <translation>Expandera</translation>
     </message>
     <message>
+        <source>Blog Description</source>
+        <translation>Bloggbeskrivning</translation>
+    </message>
+    <message>
         <source>Unknown Blog</source>
         <translation>Okänd blogg</translation>
     </message>
@@ -645,10 +649,6 @@ Kom bara ihåg... all data här, *KOMMER* att förloras när vi uppgraderar prot
     <message>
         <source>Hide</source>
         <translation>Dölj</translation>
-    </message>
-    <message>
-        <source>Blog Description</source>
-        <translation>Bloggbeskrivning</translation>
     </message>
 </context>
 <context>
@@ -698,6 +698,18 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:14pt; color:#ffffff;&quot;&gt;Bloggnamn&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Unsubscribe To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Avsluta bloggprenumeration&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
         <source>Unsubscribe</source>
         <translation>Avsluta prenumerationen</translation>
     </message>
@@ -728,6 +740,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>ID</source>
         <translation>ID</translation>
+    </message>
+    <message>
+        <source>My Blogs</source>
+        <translation>Mina bloggar</translation>
     </message>
     <message>
         <source>Subscribed Blogs</source>
@@ -768,22 +784,6 @@ Available: %3</source>
         <translation>Popularitet: %1
 Hämtningar: %2
 Tillgänglig: %3</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Unsubscribe To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Avsluta bloggprenumeration&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>My Blogs</source>
-        <translation>Mina bloggar</translation>
     </message>
 </context>
 <context>
@@ -844,12 +844,20 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>BwCtrlWindow</name>
     <message>
-        <source>ID</source>
-        <translation>ID</translation>
+        <source>Bandwidth Control Window</source>
+        <translation>Bandbreddsinformation</translation>
+    </message>
+    <message>
+        <source>Bandwidth Measurements</source>
+        <translation>Bandbreddsmätare</translation>
     </message>
     <message>
         <source>Name</source>
         <translation>Namn</translation>
+    </message>
+    <message>
+        <source>ID</source>
+        <translation>ID</translation>
     </message>
     <message>
         <source>In (KB/s)</source>
@@ -890,14 +898,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Allowed Recvd</source>
         <translation>Tillåtet mottaget</translation>
-    </message>
-    <message>
-        <source>Bandwidth Control Window</source>
-        <translation>Bandbreddsinformation</translation>
-    </message>
-    <message>
-        <source>Bandwidth Measurements</source>
-        <translation>Bandbreddsmätare</translation>
     </message>
 </context>
 <context>
@@ -982,40 +982,40 @@ p, li { white-space: pre-wrap; }
         <translation>Spela upp</translation>
     </message>
     <message>
-        <source>Unsubscribe From Channel</source>
-        <translation>Avsluta kanalprenumerationen</translation>
+        <source>Copy RetroShare Link</source>
+        <translation>Kopiera RetroShare-länk</translation>
     </message>
     <message>
-        <source>Remove Item</source>
-        <translation>Ta bort objektet</translation>
+        <source>Unsubscribe From Channel</source>
+        <translation>Avsluta kanalprenumerationen</translation>
     </message>
     <message>
         <source>Expand</source>
         <translation>Expandera</translation>
     </message>
     <message>
-        <source>Copy RetroShare Link</source>
-        <translation>Kopiera RetroShare-länk</translation>
+        <source>Set as read and remove item</source>
+        <translation>Markera som läst och ta bort objektet</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Ta bort objektet</translation>
     </message>
     <message>
         <source>Channel Feed</source>
         <translation>Kanalflöde</translation>
     </message>
     <message>
-        <source>Hide</source>
-        <translation>Dölj</translation>
-    </message>
-    <message>
         <source>Files</source>
         <translation>Filer</translation>
     </message>
     <message>
-        <source>Set as read and remove item</source>
-        <translation>Markera som läst och ta bort objektet</translation>
-    </message>
-    <message>
         <source>Warning! You have less than %1 hours and %2 minute before this file is deleted Consider saving it.</source>
         <translation>Varning! Du har mindre än %1 timma(r) och %2 minut(er) på dig innan den här filen tas bort. Överväg att spara den.</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Dölj</translation>
     </message>
 </context>
 <context>
@@ -1033,6 +1033,10 @@ p, li { white-space: pre-wrap; }
         <translation>Ta bort objekt</translation>
     </message>
     <message>
+        <source>Channel Description</source>
+        <translation>Kanalbeskrivning</translation>
+    </message>
+    <message>
         <source>Unknown Channel</source>
         <translation>Okänd kanal</translation>
     </message>
@@ -1047,10 +1051,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Hide</source>
         <translation>Dölj</translation>
-    </message>
-    <message>
-        <source>Channel Description</source>
-        <translation>Kanalbeskrivning</translation>
     </message>
 </context>
 <context>
@@ -1106,12 +1106,20 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChannelFeed</name>
     <message>
+        <source>Channels</source>
+        <translation>Kanaler</translation>
+    </message>
+    <message>
         <source>Display</source>
         <translation>Visa</translation>
     </message>
     <message>
         <source>Create Channel</source>
         <translation>Skapa ny kanal</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Läser in</translation>
     </message>
     <message>
         <source>Post to Channel</source>
@@ -1124,6 +1132,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Enable Auto-Download</source>
         <translation>Aktivera automatisk nedladdning</translation>
+    </message>
+    <message>
+        <source>My Channels</source>
+        <translation>Mina kanaler</translation>
     </message>
     <message>
         <source>Subscribed Channels</source>
@@ -1146,6 +1158,10 @@ p, li { white-space: pre-wrap; }
         <translation>Avsluta kanalprenumerationen</translation>
     </message>
     <message>
+        <source>Disable Auto-Download</source>
+        <translation>Inaktivera automatisk nedladdning</translation>
+    </message>
+    <message>
         <source>Show Channel Details</source>
         <translation>Visa kanaldetaljer</translation>
     </message>
@@ -1166,22 +1182,6 @@ p, li { white-space: pre-wrap; }
         <translation>Kopiera RetroShare-länk</translation>
     </message>
     <message>
-        <source>No Channel Selected</source>
-        <translation>Ingen kanal vald</translation>
-    </message>
-    <message>
-        <source>Disable Auto-Download</source>
-        <translation>Inaktivera automatisk nedladdning</translation>
-    </message>
-    <message>
-        <source>Loading</source>
-        <translation>Läser in</translation>
-    </message>
-    <message>
-        <source>Channels</source>
-        <translation>Kanaler</translation>
-    </message>
-    <message>
         <source>Publish rights restored.</source>
         <translation>Publiceringsrättigheter återställda.</translation>
     </message>
@@ -1198,8 +1198,8 @@ p, li { white-space: pre-wrap; }
         <translation>Publiceringsrättigheterna kan inte återställas för den här kanalen.&lt;br/&gt;Du är inte skapare av den här kanalen.</translation>
     </message>
     <message>
-        <source>My Channels</source>
-        <translation>Mina kanaler</translation>
+        <source>No Channel Selected</source>
+        <translation>Ingen kanal vald</translation>
     </message>
 </context>
 <context>
@@ -1220,12 +1220,44 @@ Please choose one of it to chat with.</source>
 <context>
     <name>ChatLobbyDialog</name>
     <message>
+        <source>Participants</source>
+        <translation>Användare</translation>
+    </message>
+    <message>
         <source>Change nick name</source>
         <translation>Byt användarnamn</translation>
     </message>
     <message>
+        <source>Mute participant</source>
+        <translation>Blockera användare</translation>
+    </message>
+    <message>
+        <source>Invite friends to this lobby</source>
+        <translation>Bjud in kontakter till denna lobby</translation>
+    </message>
+    <message>
+        <source>Leave this lobby (Unsubscribe)</source>
+        <translation>Lämna denna lobby (avsluta prenumeration)</translation>
+    </message>
+    <message>
+        <source>Welcome to lobby %1</source>
+        <translation>Välkommen till %1</translation>
+    </message>
+    <message>
+        <source>Topic: %1</source>
+        <translation>Ämne: %1</translation>
+    </message>
+    <message>
         <source>Please enter your new nick name</source>
         <translation>Ange ditt nya användarnamn</translation>
+    </message>
+    <message>
+        <source>Lobby chat</source>
+        <translation>Lobbychatt</translation>
+    </message>
+    <message>
+        <source>Right click to mute/unmute participants&lt;br/&gt;Double click to address this person</source>
+        <translation>Högerklick för att blockera/tillåta deltagare&lt;br/&gt;Dubbelklick för att adressera denna deltagare</translation>
     </message>
     <message>
         <source>Lobby management</source>
@@ -1238,6 +1270,10 @@ Please choose one of it to chat with.</source>
     <message>
         <source>%1 joined the lobby.</source>
         <translation>%1 anslöt till lobbyn.</translation>
+    </message>
+    <message>
+        <source>%1 changed his name to: %2</source>
+        <translation>%1 ändrade sitt användarnamn till: %2</translation>
     </message>
     <message>
         <source>Unsubscribe to lobby</source>
@@ -1255,42 +1291,6 @@ Please choose one of it to chat with.</source>
         <source>Show Participants</source>
         <translation>Visa Användare</translation>
     </message>
-    <message>
-        <source>Welcome to lobby %1</source>
-        <translation>Välkommen till %1</translation>
-    </message>
-    <message>
-        <source>Topic: %1</source>
-        <translation>Ämne: %1</translation>
-    </message>
-    <message>
-        <source>%1 changed his name to: %2</source>
-        <translation>%1 ändrade sitt användarnamn till: %2</translation>
-    </message>
-    <message>
-        <source>Lobby chat</source>
-        <translation>Lobbychatt</translation>
-    </message>
-    <message>
-        <source>Participants</source>
-        <translation>Användare</translation>
-    </message>
-    <message>
-        <source>Mute participant</source>
-        <translation>Blockera användare</translation>
-    </message>
-    <message>
-        <source>Invite friends to this lobby</source>
-        <translation>Bjud in kontakter till denna lobby</translation>
-    </message>
-    <message>
-        <source>Leave this lobby (Unsubscribe)</source>
-        <translation>Lämna denna lobby (avsluta prenumeration)</translation>
-    </message>
-    <message>
-        <source>Right click to mute/unmute participants&lt;br/&gt;Double click to address this person</source>
-        <translation>Högerklick för att blockera/tillåta deltagare&lt;br/&gt;Dubbelklick för att adressera denna deltagare</translation>
-    </message>
 </context>
 <context>
     <name>ChatLobbyToaster</name>
@@ -1302,6 +1302,10 @@ Please choose one of it to chat with.</source>
 <context>
     <name>ChatLobbyWidget</name>
     <message>
+        <source>Chat lobbies</source>
+        <translation>Chattlobbys</translation>
+    </message>
+    <message>
         <source>Create new chat lobby</source>
         <translation>Skapa ny chattlobby</translation>
     </message>
@@ -1312,6 +1316,10 @@ Please choose one of it to chat with.</source>
     <message>
         <source>Count</source>
         <translation>Antal</translation>
+    </message>
+    <message>
+        <source>Topic</source>
+        <translation>Ämne</translation>
     </message>
     <message>
         <source>Private Lobbies</source>
@@ -1334,24 +1342,8 @@ Please choose one of it to chat with.</source>
         <translation>Prenumerera</translation>
     </message>
     <message>
-        <source>Invitation to chat lobby</source>
-        <translation>Inbjudan till chattlobby</translation>
-    </message>
-    <message>
-        <source>%1  invites you to chat lobby named %2</source>
-        <translation>%1 bjuder in dig till chattlobbyn %2</translation>
-    </message>
-    <message>
-        <source>Topic</source>
-        <translation>Ämne</translation>
-    </message>
-    <message>
         <source>[No topic provided]</source>
         <translation>[Ämne saknas]</translation>
-    </message>
-    <message>
-        <source>Chat lobbies</source>
-        <translation>Chattlobbys</translation>
     </message>
     <message>
         <source>Selected lobby info</source>
@@ -1401,6 +1393,14 @@ Välj lobbyer till vänster, för att visa info.
 
 Dubbelklicka lobbyer för att chatta.</translation>
     </message>
+    <message>
+        <source>Invitation to chat lobby</source>
+        <translation>Inbjudan till chattlobby</translation>
+    </message>
+    <message>
+        <source>%1  invites you to chat lobby named %2</source>
+        <translation>%1 bjuder in dig till chattlobbyn %2</translation>
+    </message>
 </context>
 <context>
     <name>ChatMsgItem</name>
@@ -1448,16 +1448,68 @@ Dubbelklicka lobbyer för att chatta.</translation>
         <translation>Chattinställningar</translation>
     </message>
     <message>
+        <source>Enable Emoticons Private Chat</source>
+        <translation>Aktivera uttryckssymboler i privat chatt</translation>
+    </message>
+    <message>
         <source>Enable Emoticons Group Chat</source>
         <translation>Aktivera uttryckssymboler i gruppchatt</translation>
+    </message>
+    <message>
+        <source>Enable custom fonts</source>
+        <translation>Aktivera anpassat teckensnitt</translation>
+    </message>
+    <message>
+        <source>Enable custom font size</source>
+        <translation>Aktivera anpassad teckenstorlek</translation>
+    </message>
+    <message>
+        <source>Enable bold</source>
+        <translation>Aktivera fet stil</translation>
+    </message>
+    <message>
+        <source>Enable italics</source>
+        <translation>Aktivera kursiv stil</translation>
+    </message>
+    <message>
+        <source>Minimum text contrast</source>
+        <translation>Minimum textkontrast</translation>
     </message>
     <message>
         <source>Send message with Ctrl+Return</source>
         <translation>Skicka meddelanden med Ctrl+Retur</translation>
     </message>
     <message>
+        <source>Chat Lobby</source>
+        <translation>Chattlobby</translation>
+    </message>
+    <message>
+        <source>Blink tab icon</source>
+        <translation>Blinka med flikikon</translation>
+    </message>
+    <message>
         <source>Default nickname for chat lobbies:</source>
         <translation>Användarnamn för chattlobbys:</translation>
+    </message>
+    <message>
+        <source>Private Chat</source>
+        <translation>Privatchatt</translation>
+    </message>
+    <message>
+        <source>Open Window for new chat</source>
+        <translation>Öppna ny chatt</translation>
+    </message>
+    <message>
+        <source>Grab Focus when chat arrives</source>
+        <translation>Sätt fokus på nytt chattmeddelande</translation>
+    </message>
+    <message>
+        <source>Use a single tabbed window</source>
+        <translation>Endast en flik i varje fönster</translation>
+    </message>
+    <message>
+        <source>Blink window/tab icon</source>
+        <translation>Blinka med fönster-/flikikon</translation>
     </message>
     <message>
         <source>Chat Font</source>
@@ -1490,10 +1542,6 @@ Dubbelklicka lobbyer för att chatta.</translation>
     <message>
         <source>Load number of messages (0 = off)</source>
         <translation>Antal meddelanden som läses in (0 = inga)</translation>
-    </message>
-    <message>
-        <source>Private Chat</source>
-        <translation>Privatchatt</translation>
     </message>
     <message>
         <source>Style</source>
@@ -1548,10 +1596,6 @@ Dubbelklicka lobbyer för att chatta.</translation>
         <translation>Utgående offline-meddelande</translation>
     </message>
     <message>
-        <source>Chat</source>
-        <translation>Chatt</translation>
-    </message>
-    <message>
         <source>System</source>
         <translation>System</translation>
     </message>
@@ -1560,52 +1604,8 @@ Dubbelklicka lobbyer för att chatta.</translation>
         <translation>Systemmeddelande</translation>
     </message>
     <message>
-        <source>Enable custom fonts</source>
-        <translation>Aktivera anpassat teckensnitt</translation>
-    </message>
-    <message>
-        <source>Enable custom font size</source>
-        <translation>Aktivera anpassad teckenstorlek</translation>
-    </message>
-    <message>
-        <source>Enable bold</source>
-        <translation>Aktivera fet stil</translation>
-    </message>
-    <message>
-        <source>Enable italics</source>
-        <translation>Aktivera kursiv stil</translation>
-    </message>
-    <message>
-        <source>Minimum text contrast</source>
-        <translation>Minimum textkontrast</translation>
-    </message>
-    <message>
-        <source>Enable Emoticons Private Chat</source>
-        <translation>Aktivera uttryckssymboler i privat chatt</translation>
-    </message>
-    <message>
-        <source>Open Window for new chat</source>
-        <translation>Öppna ny chatt</translation>
-    </message>
-    <message>
-        <source>Grab Focus when chat arrives</source>
-        <translation>Sätt fokus på nytt chattmeddelande</translation>
-    </message>
-    <message>
-        <source>Use a single tabbed window</source>
-        <translation>Endast en flik i varje fönster</translation>
-    </message>
-    <message>
-        <source>Chat Lobby</source>
-        <translation>Chattlobby</translation>
-    </message>
-    <message>
-        <source>Blink tab icon</source>
-        <translation>Blinka med flikikon</translation>
-    </message>
-    <message>
-        <source>Blink window/tab icon</source>
-        <translation>Blinka med fönster-/flikikon</translation>
+        <source>Chat</source>
+        <translation>Chatt</translation>
     </message>
 </context>
 <context>
@@ -1656,6 +1656,10 @@ Dubbelklicka lobbyer för att chatta.</translation>
         <translation>Stäng</translation>
     </message>
     <message>
+        <source>Send</source>
+        <translation>Skicka</translation>
+    </message>
+    <message>
         <source>Bold</source>
         <translation>Fet</translation>
     </message>
@@ -1682,10 +1686,6 @@ Dubbelklicka lobbyer för att chatta.</translation>
     <message>
         <source>Add a File for your Friend</source>
         <translation>Skicka en fil till din kontakt</translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation>Skicka</translation>
     </message>
     <message>
         <source>Strike</source>
@@ -1720,8 +1720,20 @@ Dubbelklicka lobbyer för att chatta.</translation>
         <translation>Tar bort all lagrad och visad chatthistorik</translation>
     </message>
     <message>
+        <source>Choose font</source>
+        <translation>Välj teckensnitt</translation>
+    </message>
+    <message>
+        <source>Reset font to default</source>
+        <translation>Återställ standardteckensnitt</translation>
+    </message>
+    <message>
         <source>Paste RetroShare Link</source>
         <translation>Klistra in RetroShare-länk</translation>
+    </message>
+    <message>
+        <source>Paste my certificate link</source>
+        <translation>Klistra in min certifikatlänk</translation>
     </message>
     <message>
         <source>is typing...</source>
@@ -1748,6 +1760,10 @@ Dubbelklicka lobbyer för att chatta.</translation>
         <translation>Textfil (*.txt );;Alla filer (*)</translation>
     </message>
     <message>
+        <source>appears to be Offline.</source>
+        <translation>verkar vara nedkopplad</translation>
+    </message>
+    <message>
         <source>Messages you send will be delivered after Friend is again Online</source>
         <translation>Meddelanden du skickar, kommer att levereras när din kontakt är ansluten igen.</translation>
     </message>
@@ -1762,22 +1778,6 @@ Dubbelklicka lobbyer för att chatta.</translation>
     <message>
         <source>is Busy and may not reply</source>
         <translation>är upptagen och kanske inte svarar.</translation>
-    </message>
-    <message>
-        <source>Choose font</source>
-        <translation>Välj teckensnitt</translation>
-    </message>
-    <message>
-        <source>Reset font to default</source>
-        <translation>Återställ standardteckensnitt</translation>
-    </message>
-    <message>
-        <source>appears to be Offline.</source>
-        <translation>verkar vara nedkopplad</translation>
-    </message>
-    <message>
-        <source>Paste my certificate link</source>
-        <translation>Klistra in min certifikatlänk</translation>
     </message>
 </context>
 <context>
@@ -1882,24 +1882,28 @@ Dubbelklicka lobbyer för att chatta.</translation>
         <translation>Användar-ID</translation>
     </message>
     <message>
-        <source>Last Contact</source>
-        <translation>Senaste kontakt</translation>
+        <source>RetroShare ID</source>
+        <translation>RetroShare-ID</translation>
     </message>
     <message>
-        <source>Version</source>
-        <translation>Version</translation>
+        <source>Other info</source>
+        <translation>Annan information</translation>
     </message>
     <message>
         <source>Loc</source>
         <translation>Plats</translation>
     </message>
     <message>
-        <source>RetroShare ID</source>
-        <translation>RetroShare-ID</translation>
-    </message>
-    <message>
         <source>Status</source>
         <translation>Status</translation>
+    </message>
+    <message>
+        <source>Last Contact</source>
+        <translation>Senaste kontakt</translation>
+    </message>
+    <message>
+        <source>Version</source>
+        <translation>Version</translation>
     </message>
     <message>
         <source>Peer Address</source>
@@ -1946,6 +1950,14 @@ Dubbelklicka lobbyer för att chatta.</translation>
         <translation>Fullt</translation>
     </message>
     <message>
+        <source>PGP Key</source>
+        <translation>PGP-nyckel</translation>
+    </message>
+    <message>
+        <source>Peer has signed my PGP key</source>
+        <translation>Användaren har signerat min PGP-nyckel</translation>
+    </message>
+    <message>
         <source>Show Help for Trust Settings and Signing</source>
         <translation>Visa hjälpen för förtroendeinställningar och signering</translation>
     </message>
@@ -1970,6 +1982,10 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signering av nycklar kan inte ångras, så gör det med eftertanke.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
+        <source>Sign PGP key</source>
+        <translation>Signera GPG-nyckel</translation>
+    </message>
+    <message>
         <source>Deny Friend</source>
         <translation>Avvisa kontakt</translation>
     </message>
@@ -1982,89 +1998,28 @@ p, li { white-space: pre-wrap; }
         <translation>Certifikat</translation>
     </message>
     <message>
-        <source>RetroShare</source>
-        <translation>RetroShare</translation>
-    </message>
-    <message>
-        <source>Error : cannot get peer details.</source>
-        <translation>Fel: Kan inte hämta användaruppgifter.</translation>
-    </message>
-    <message>
-        <source>Peer key is signed by : </source>
-        <translation>Användarnyckeln är signerad av: </translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is ultimate, it&apos;s probably a key you own.</source>
-        <translation>Du har fullt förtroende för denna användare. Det är förmodligen en nyckel som du äger själv.</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is full.</source>
-        <translation>Du har fullt förtroende för denna kontakt.</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is marginal.</source>
-        <translation>Du har begränsat förtroende för denna användare.</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is none.</source>
-        <translation>Du har inget förtroende för denna användare.</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is not set.</source>
-        <translation>Du har inte angett förtroendenivå för denna användare.</translation>
-    </message>
-    <message>
-        <source>Signature Failure</source>
-        <translation>Signatur misslyckades</translation>
-    </message>
-    <message>
-        <source>Maybe password is wrong</source>
-        <translation>Lösenordet kanske är fel</translation>
-    </message>
-    <message>
         <source>Include signatures</source>
         <translation>Inkludera signaturer</translation>
-    </message>
-    <message>
-        <source>The supplied key algorithm is not supported by RetroShare
-(Only RSA keys are supported at the moment)</source>
-        <translation>Angiven nyckelalgoritm stöds inte av RetroShare. (För tillfället stöds endast RSA-nycklar)</translation>
     </message>
     <message>
         <source>Use old key format</source>
         <translation>Använd gammalt nyckelformat</translation>
     </message>
     <message>
-        <source>Other info</source>
-        <translation>Annan information</translation>
-    </message>
-    <message>
-        <source>My key is signed by : </source>
-        <translation>Min nyckel är signerad av:</translation>
-    </message>
-    <message>
-        <source>Peer has authenticated me as a friend and did sign my PGP key</source>
-        <translation>Användaren har autentiserat mig som sin kontakt, och signerat min PGP-nyckel</translation>
-    </message>
-    <message>
-        <source>Peer has not authenticated me as a friend and did not sign my PGP key</source>
-        <translation>Användaren har inte autentiserat mig som sin kontakt, och inte signerat min PGP-nyckel</translation>
-    </message>
-    <message>
-        <source>PGP Key</source>
-        <translation>PGP-nyckel</translation>
-    </message>
-    <message>
-        <source>Peer has signed my PGP key</source>
-        <translation>Användaren har signerat min PGP-nyckel</translation>
-    </message>
-    <message>
-        <source>Sign PGP key</source>
-        <translation>Signera GPG-nyckel</translation>
-    </message>
-    <message>
         <source>Services</source>
         <translation>Tjänster</translation>
+    </message>
+    <message>
+        <source>User service permissions</source>
+        <translation>Tjänståtkomst</translation>
+    </message>
+    <message>
+        <source>This tab allows you to finely tune which services each of your contacts is allowed to use with you.
+
+Some services (Discovery, anonymous routing) can be switched off globally, which always overrides the settings per-user.</source>
+        <translation>Denna flik låter dig justera vilka tjänster var och en av dina kontakter skall ha åtkomst till.
+
+Vissa tjänster (Upptäckt, anonym routning) kan stängas av lokalt, vilket alltid går före inställningarna per användare.</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
@@ -2095,24 +2050,65 @@ p, li { white-space: pre-wrap; }
         <translation>Chatt</translation>
     </message>
     <message>
-        <source>User service permissions</source>
-        <translation>Tjänståtkomst</translation>
+        <source>RetroShare</source>
+        <translation>RetroShare</translation>
     </message>
     <message>
-        <source>This tab allows you to finely tune which services each of your contacts is allowed to use with you.
-
-Some services (Discovery, anonymous routing) can be switched off globally, which always overrides the settings per-user.</source>
-        <translation>Denna flik låter dig justera vilka tjänster var och en av dina kontakter skall ha åtkomst till.
-
-Vissa tjänster (Upptäckt, anonym routning) kan stängas av lokalt, vilket alltid går före inställningarna per användare.</translation>
+        <source>Error : cannot get peer details.</source>
+        <translation>Fel: Kan inte hämta användaruppgifter.</translation>
+    </message>
+    <message>
+        <source>The supplied key algorithm is not supported by RetroShare
+(Only RSA keys are supported at the moment)</source>
+        <translation>Angiven nyckelalgoritm stöds inte av RetroShare. (För tillfället stöds endast RSA-nycklar)</translation>
+    </message>
+    <message>
+        <source>My key is signed by : </source>
+        <translation>Min nyckel är signerad av:</translation>
+    </message>
+    <message>
+        <source>Peer key is signed by : </source>
+        <translation>Användarnyckeln är signerad av: </translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is ultimate, it&apos;s probably a key you own.</source>
+        <translation>Du har fullt förtroende för denna användare. Det är förmodligen en nyckel som du äger själv.</translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is full.</source>
+        <translation>Du har fullt förtroende för denna kontakt.</translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is marginal.</source>
+        <translation>Du har begränsat förtroende för denna användare.</translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is none.</source>
+        <translation>Du har inget förtroende för denna användare.</translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is not set.</source>
+        <translation>Du har inte angett förtroendenivå för denna användare.</translation>
+    </message>
+    <message>
+        <source>Peer has authenticated me as a friend and did sign my PGP key</source>
+        <translation>Användaren har autentiserat mig som sin kontakt, och signerat min PGP-nyckel</translation>
+    </message>
+    <message>
+        <source>Peer has not authenticated me as a friend and did not sign my PGP key</source>
+        <translation>Användaren har inte autentiserat mig som sin kontakt, och inte signerat min PGP-nyckel</translation>
+    </message>
+    <message>
+        <source>Signature Failure</source>
+        <translation>Signatur misslyckades</translation>
+    </message>
+    <message>
+        <source>Maybe password is wrong</source>
+        <translation>Lösenordet kanske är fel</translation>
     </message>
 </context>
 <context>
     <name>ConnectFriendWizard</name>
-    <message>
-        <source>Certificate Load Failed</source>
-        <translation>Certifikatinläsning misslyckades</translation>
-    </message>
     <message>
         <source>Connect Friend Wizard</source>
         <translation>Anslut kontakt ((Steg för steg-guide))</translation>
@@ -2140,6 +2136,12 @@ Vissa tjänster (Upptäckt, anonym routning) kan stängas av lokalt, vilket allt
     <message>
         <source>&amp;Enter RetroShare ID manually</source>
         <translation>Ange &amp;RetroShare-ID manuellt</translation>
+    </message>
+    <message>
+        <source>&amp;Send an Invitation by Email 
+ (She/He receives an email with instructions how to to download RetroShare)</source>
+        <translation>&amp;Skicka inbjudan via e-post 
+(Kontakten får ett e-postmeddelande med instruktioner om hur RetroShare laddas ner)</translation>
     </message>
     <message>
         <source>Text certificate</source>
@@ -2242,6 +2244,10 @@ Vissa tjänster (Upptäckt, anonym routning) kan stängas av lokalt, vilket allt
         <translation>Bjud in kontakter via e-post</translation>
     </message>
     <message>
+        <source>Enter your friends&apos; email addresses (separate each one with a semicolon)</source>
+        <translation>Ange kontaktens e-postadresser (separera med semikolon)</translation>
+    </message>
+    <message>
         <source>Your friends&apos; email addresses:</source>
         <translation>Kontaktens e-postadresser:</translation>
     </message>
@@ -2252,6 +2258,62 @@ Vissa tjänster (Upptäckt, anonym routning) kan stängas av lokalt, vilket allt
     <message>
         <source>Subject:</source>
         <translation>Ämne: </translation>
+    </message>
+    <message>
+        <source>Friend request</source>
+        <translation>Kontaktförfrågan</translation>
+    </message>
+    <message>
+        <source>Details about the request</source>
+        <translation>Fakta om begäran</translation>
+    </message>
+    <message>
+        <source>Peer details</source>
+        <translation>Användarinformation</translation>
+    </message>
+    <message>
+        <source>Name:</source>
+        <translation>Namn:</translation>
+    </message>
+    <message>
+        <source>Email:</source>
+        <translation>E-post:</translation>
+    </message>
+    <message>
+        <source>Location:</source>
+        <translation>Plats:</translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation>Alternativ</translation>
+    </message>
+    <message>
+        <source>Add friend to group:</source>
+        <translation>Lägg till kontakt till grupp:</translation>
+    </message>
+    <message>
+        <source>Authenticate friend (Sign PGP Key)</source>
+        <translation>Autentisera kontakt (Signera PGP-nyckel)</translation>
+    </message>
+    <message>
+        <source>Add as friend to connect with</source>
+        <translation>Lägg till en kontakt att ansluta till</translation>
+    </message>
+    <message>
+        <source>Service permissions</source>
+        <translation>Användartjänster</translation>
+    </message>
+    <message>
+        <source>Anonymous routing</source>
+        <translation>Anonym routning</translation>
+    </message>
+    <message>
+        <source>Discovery</source>
+        <translation>Upptäckt</translation>
+    </message>
+    <message>
+        <source>Forums/channels</source>
+        <translation>Forum/Kanaler</translation>
     </message>
     <message>
         <source>Sorry, some error appeared</source>
@@ -2270,40 +2332,60 @@ Vissa tjänster (Upptäckt, anonym routning) kan stängas av lokalt, vilket allt
         <translation>Fakta om din kontakt:</translation>
     </message>
     <message>
-        <source>Peer details</source>
-        <translation>Användarinformation</translation>
-    </message>
-    <message>
         <source>Key validity:</source>
         <translation>Nyckelvaliditet:</translation>
-    </message>
-    <message>
-        <source>Name:</source>
-        <translation>Namn:</translation>
-    </message>
-    <message>
-        <source>Email:</source>
-        <translation>E-post:</translation>
-    </message>
-    <message>
-        <source>Location:</source>
-        <translation>Plats:</translation>
     </message>
     <message>
         <source>Signers</source>
         <translation>Signerad av:</translation>
     </message>
     <message>
-        <source>Options</source>
-        <translation>Alternativ</translation>
+        <source>This peer is already on your friend list. Adding it might just set it&apos;s ip address.</source>
+        <translation>Denna användare finns redan på din kontaktlista. Att lägga till den kanske bara anger IP-adress.</translation>
     </message>
     <message>
-        <source>Add friend to group:</source>
-        <translation>Lägg till kontakt till grupp:</translation>
+        <source>Abnormal size read is bigger than memory block.</source>
+        <translation>Abnormal size read is bigger than memory block.</translation>
     </message>
     <message>
-        <source>Add as friend to connect with</source>
-        <translation>Lägg till en kontakt att ansluta till</translation>
+        <source>Invalid location id.</source>
+        <translation>Ogiltigt plats-ID.</translation>
+    </message>
+    <message>
+        <source>Invalid external IP.</source>
+        <translation>Ogiltig extern IP-adress</translation>
+    </message>
+    <message>
+        <source>Invalid local IP.</source>
+        <translation>Ogiltig lokal IP-adress</translation>
+    </message>
+    <message>
+        <source>Invalid checksum section.</source>
+        <translation>Ogiltig checksumma</translation>
+    </message>
+    <message>
+        <source>Checksum mismatch. Certificate is corrupted.</source>
+        <translation>Checksumman stämmer inte. Certifikatet är korrupt.</translation>
+    </message>
+    <message>
+        <source>Unknown section type found (Certificate might be corrupted).</source>
+        <translation>En okänd sektion upptäcktes (Certifikatet kan vara korrupt).</translation>
+    </message>
+    <message>
+        <source>Missing checksum.</source>
+        <translation>Checksumma saknas.</translation>
+    </message>
+    <message>
+        <source>Unknown certificate error</source>
+        <translation>Okänt certifikatfel</translation>
+    </message>
+    <message>
+        <source>Certificate Load Failed</source>
+        <translation>Certifikatinläsning misslyckades</translation>
+    </message>
+    <message>
+        <source>Cannot get peer details of PGP key %1</source>
+        <translation>Kan inte hämta användarinformation för PGP-nyckel %1</translation>
     </message>
     <message>
         <source>Any peer I&apos;ve not signed</source>
@@ -2354,6 +2436,10 @@ Vissa tjänster (Upptäckt, anonym routning) kan stängas av lokalt, vilket allt
         <translation>Inget förtroende</translation>
     </message>
     <message>
+        <source>You have a friend request from</source>
+        <translation>Du har en kontaktförfrågan från</translation>
+    </message>
+    <message>
         <source>Certificate Load Failed:can&apos;t read from file %1 </source>
         <translation>Certifikatinläsning misslyckades! Kan inte läsa från filen %1 </translation>
     </message>
@@ -2368,6 +2454,14 @@ Vissa tjänster (Upptäckt, anonym routning) kan stängas av lokalt, vilket allt
     <message>
         <source>This Peer %1 is not available in your Network</source>
         <translation>%1 finns inte tillgänglig i ditt nätverk</translation>
+    </message>
+    <message>
+        <source>Use new certificate format (safer, more robust)</source>
+        <translation>Använd nytt certifikatformat (säkrare, mer robust)</translation>
+    </message>
+    <message>
+        <source>Use old (backward compatible) certificate format</source>
+        <translation>Använd gammalt (bakåtkompatibelt) certifikatformat</translation>
     </message>
     <message>
         <source>Remove signatures</source>
@@ -2402,6 +2496,10 @@ Vissa tjänster (Upptäckt, anonym routning) kan stängas av lokalt, vilket allt
         <translation>Du kan kopiera denna text och skicka den till din kontakt via e-post eller på något annat sätt.</translation>
     </message>
     <message>
+        <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
+        <translation>Ditt certifikat är kopierat till Urklipp, klistra in och skicka det till din kontakt via e-post eller på något annat sätt.</translation>
+    </message>
+    <message>
         <source>Save as...</source>
         <translation>Spara som...</translation>
     </message>
@@ -2432,104 +2530,6 @@ Vissa tjänster (Upptäckt, anonym routning) kan stängas av lokalt, vilket allt
     <message>
         <source>*** None ***</source>
         <translation>*** Ingen ***</translation>
-    </message>
-    <message>
-        <source>Friend request</source>
-        <translation>Kontaktförfrågan</translation>
-    </message>
-    <message>
-        <source>Details about the request</source>
-        <translation>Fakta om begäran</translation>
-    </message>
-    <message>
-        <source>You have a friend request from</source>
-        <translation>Du har en kontaktförfrågan från</translation>
-    </message>
-    <message>
-        <source>Use new certificate format (safer, more robust)</source>
-        <translation>Använd nytt certifikatformat (säkrare, mer robust)</translation>
-    </message>
-    <message>
-        <source>Use old (backward compatible) certificate format</source>
-        <translation>Använd gammalt (bakåtkompatibelt) certifikatformat</translation>
-    </message>
-    <message>
-        <source>&amp;Send an Invitation by Email 
- (She/He receives an email with instructions how to to download RetroShare)</source>
-        <translation>&amp;Skicka inbjudan via e-post 
-(Kontakten får ett e-postmeddelande med instruktioner om hur RetroShare laddas ner)</translation>
-    </message>
-    <message>
-        <source>Enter your friends&apos; email addresses (separate each one with a semicolon)</source>
-        <translation>Ange kontaktens e-postadresser (separera med semikolon)</translation>
-    </message>
-    <message>
-        <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation>Ditt certifikat är kopierat till Urklipp, klistra in och skicka det till din kontakt via e-post eller på något annat sätt.</translation>
-    </message>
-    <message>
-        <source>This peer is already on your friend list. Adding it might just set it&apos;s ip address.</source>
-        <translation>Denna användare finns redan på din kontaktlista. Att lägga till den kanske bara anger IP-adress.</translation>
-    </message>
-    <message>
-        <source>Cannot get peer details of PGP key %1</source>
-        <translation>Kan inte hämta användarinformation för PGP-nyckel %1</translation>
-    </message>
-    <message>
-        <source>Authenticate friend (Sign PGP Key)</source>
-        <translation>Autentisera kontakt (Signera PGP-nyckel)</translation>
-    </message>
-    <message>
-        <source>Service permissions</source>
-        <translation>Användartjänster</translation>
-    </message>
-    <message>
-        <source>Anonymous routing</source>
-        <translation>Anonym routning</translation>
-    </message>
-    <message>
-        <source>Discovery</source>
-        <translation>Upptäckt</translation>
-    </message>
-    <message>
-        <source>Forums/channels</source>
-        <translation>Forum/Kanaler</translation>
-    </message>
-    <message>
-        <source>Abnormal size read is bigger than memory block.</source>
-        <translation>Abnormal size read is bigger than memory block.</translation>
-    </message>
-    <message>
-        <source>Invalid location id.</source>
-        <translation>Ogiltigt plats-ID.</translation>
-    </message>
-    <message>
-        <source>Invalid external IP.</source>
-        <translation>Ogiltig extern IP-adress</translation>
-    </message>
-    <message>
-        <source>Invalid local IP.</source>
-        <translation>Ogiltig lokal IP-adress</translation>
-    </message>
-    <message>
-        <source>Invalid checksum section.</source>
-        <translation>Ogiltig checksumma</translation>
-    </message>
-    <message>
-        <source>Checksum mismatch. Certificate is corrupted.</source>
-        <translation>Checksumman stämmer inte. Certifikatet är korrupt.</translation>
-    </message>
-    <message>
-        <source>Unknown section type found (Certificate might be corrupted).</source>
-        <translation>En okänd sektion upptäcktes (Certifikatet kan vara korrupt).</translation>
-    </message>
-    <message>
-        <source>Missing checksum.</source>
-        <translation>Checksumma saknas.</translation>
-    </message>
-    <message>
-        <source>Unknown certificate error</source>
-        <translation>Okänt certifikatfel</translation>
     </message>
 </context>
 <context>
@@ -2656,6 +2656,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>toolBar_2</source>
         <translation>Verktygsfält_2</translation>
+    </message>
+    <message>
+        <source>blockquote</source>
+        <translation>blockcitat</translation>
     </message>
     <message>
         <source>Increase font Size</source>
@@ -2866,10 +2870,6 @@ Do you want to save your changes?</source>
         <source>Image Files supported (*.png *.jpeg *.jpg *.gif)</source>
         <translation>Bildformat som stöds (*.png *.jpeg *.jpg *.gif)</translation>
     </message>
-    <message>
-        <source>blockquote</source>
-        <translation>blockcitat</translation>
-    </message>
 </context>
 <context>
     <name>CreateChannel</name>
@@ -2938,6 +2938,10 @@ Do you want to save your changes?</source>
         <translation>Lägg till kanal-logotyp</translation>
     </message>
     <message>
+        <source>New Channel</source>
+        <translation>Ny kanal</translation>
+    </message>
+    <message>
         <source>Contacts:</source>
         <translation>Kontakter:</translation>
     </message>
@@ -2948,10 +2952,6 @@ Do you want to save your changes?</source>
     <message>
         <source>Load channel logo</source>
         <translation>Hämta kanal-logotyp</translation>
-    </message>
-    <message>
-        <source>New Channel</source>
-        <translation>Ny kanal</translation>
     </message>
 </context>
 <context>
@@ -2967,6 +2967,22 @@ Do you want to save your changes?</source>
     <message>
         <source>Channel Post to:</source>
         <translation>Kanalinlägg till:</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;Attachments:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt; Use Drag and Drop / Add Files button, to Hash new files.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Copy/Paste RetroShare links from your shares&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Bilagor:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Använd Dra och släpp / Lägg till fil, för att hash-beräkna nya filer.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Kopiera/Klistra in RetroShare-länkar från dina utdelade mappar&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Add File to Attach</source>
@@ -3009,6 +3025,14 @@ Do you want to save your changes?</source>
         <translation>Klistra in RetroShare-länk</translation>
     </message>
     <message>
+        <source>You are about to add files you&apos;re not actually sharing. Do you still want this to happen?</source>
+        <translation>Du är på väg att lägga till filer som du inte delar. Vill du verkligen fortsätta?</translation>
+    </message>
+    <message>
+        <source>About to post un-owned files to a channel.</source>
+        <translation>Om att posta icke delade filer till en kanal</translation>
+    </message>
+    <message>
         <source>Drop file error.</source>
         <translation>Dra &amp; Släpp-fel.</translation>
     </message>
@@ -3039,30 +3063,6 @@ Do you want to save your changes?</source>
     <message>
         <source>Load thumbnail picture</source>
         <translation>Läs in miniatyrbild</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;Attachments:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt; Use Drag and Drop / Add Files button, to Hash new files.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Copy/Paste RetroShare links from your shares&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Bilagor:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Använd Dra och släpp / Lägg till fil, för att hash-beräkna nya filer.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Kopiera/Klistra in RetroShare-länkar från dina utdelade mappar&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>You are about to add files you&apos;re not actually sharing. Do you still want this to happen?</source>
-        <translation>Du är på väg att lägga till filer som du inte delar. Vill du verkligen fortsätta?</translation>
-    </message>
-    <message>
-        <source>About to post un-owned files to a channel.</source>
-        <translation>Om att posta icke delade filer till en kanal</translation>
     </message>
 </context>
 <context>
@@ -3128,16 +3128,16 @@ p, li { white-space: pre-wrap; }
         <translation>Anonyma meddelanden</translation>
     </message>
     <message>
+        <source>New Forum</source>
+        <translation>Nytt Forum</translation>
+    </message>
+    <message>
         <source>Contacts:</source>
         <translation>Kontakter:</translation>
     </message>
     <message>
         <source>Please add a Name</source>
         <translation>Lägg till ett namn</translation>
-    </message>
-    <message>
-        <source>New Forum</source>
-        <translation>Nytt Forum</translation>
     </message>
 </context>
 <context>
@@ -3179,8 +3179,16 @@ p, li { white-space: pre-wrap; }
         <translation>Du kan bifoga filer via Dra &amp; släpp i det här fönstret</translation>
     </message>
     <message>
+        <source>Start New Thread</source>
+        <translation>Starta ny tråd</translation>
+    </message>
+    <message>
         <source>Paste full RetroShare Link</source>
         <translation>Klistra in hela RetroShare-länken</translation>
+    </message>
+    <message>
+        <source>Paste my certificate link</source>
+        <translation>Klistra in min certifikatlänk</translation>
     </message>
     <message>
         <source>In Reply to</source>
@@ -3198,14 +3206,6 @@ p, li { white-space: pre-wrap; }
         <source>Add Extra File</source>
         <translation>Lägg till extra fil</translation>
     </message>
-    <message>
-        <source>Start New Thread</source>
-        <translation>Starta ny tråd</translation>
-    </message>
-    <message>
-        <source>Paste my certificate link</source>
-        <translation>Klistra in min certifikatlänk</translation>
-    </message>
 </context>
 <context>
     <name>CreateGroup</name>
@@ -3222,12 +3222,12 @@ p, li { white-space: pre-wrap; }
         <translation>Ange ett namn för din grupp</translation>
     </message>
     <message>
-        <source>Edit Group</source>
-        <translation>Redigera gruppen</translation>
-    </message>
-    <message>
         <source>Friends</source>
         <translation>Kontakter</translation>
+    </message>
+    <message>
+        <source>Edit Group</source>
+        <translation>Redigera gruppen</translation>
     </message>
 </context>
 <context>
@@ -3392,6 +3392,18 @@ p, li { white-space: pre-wrap; }
         <translation>Klistra in hela RetroShare-länken</translation>
     </message>
     <message>
+        <source>Paste my certificate link</source>
+        <translation>Klistra in min certifikatlänk</translation>
+    </message>
+    <message>
+        <source>No Forum</source>
+        <translation>Inga forum</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Läser in</translation>
+    </message>
+    <message>
         <source>In Reply to</source>
         <translation>Som svar på</translation>
     </message>
@@ -3404,20 +3416,16 @@ p, li { white-space: pre-wrap; }
         <translation>Ange ett forumämne och ett meddelande</translation>
     </message>
     <message>
+        <source>Please choose Signing Id</source>
+        <translation>Välj signatur-ID</translation>
+    </message>
+    <message>
+        <source>Please choose Signing Id, it is required</source>
+        <translation>Välj signatur-ID, det är ett krav</translation>
+    </message>
+    <message>
         <source>Add Extra File</source>
         <translation>Lägg till extra fil</translation>
-    </message>
-    <message>
-        <source>Paste my certificate link</source>
-        <translation>Klistra in min certifikatlänk</translation>
-    </message>
-    <message>
-        <source>No Forum</source>
-        <translation>Inga forum</translation>
-    </message>
-    <message>
-        <source>Loading</source>
-        <translation>Läser in</translation>
     </message>
 </context>
 <context>
@@ -3427,8 +3435,16 @@ p, li { white-space: pre-wrap; }
         <translation>Skapa ny chattlobby</translation>
     </message>
     <message>
+        <source>A chat lobby is a decentralized and anonymous chat group. All participants receive all messages. Once the lobby is created you can invite other friends from the Friends tab.</source>
+        <translation>En chattlobby är en decentraliserad och anonym chattgrupp. Samtliga deltagare tar emot alla meddelanden. När lobbyn är skapad kan du bjuda in andra kontakter via kontakt-fliken</translation>
+    </message>
+    <message>
         <source>Lobby name:</source>
         <translation>Lobbynamn:</translation>
+    </message>
+    <message>
+        <source>Lobby topic:</source>
+        <translation>Lobbyämne:</translation>
     </message>
     <message>
         <source>Your nick name:</source>
@@ -3466,65 +3482,9 @@ p, li { white-space: pre-wrap; }
         <source>Contacts:</source>
         <translation>Kontakter:</translation>
     </message>
-    <message>
-        <source>Lobby topic:</source>
-        <translation>Lobbyämne:</translation>
-    </message>
-    <message>
-        <source>A chat lobby is a decentralized and anonymous chat group. All participants receive all messages. Once the lobby is created you can invite other friends from the Friends tab.</source>
-        <translation>En chattlobby är en decentraliserad och anonym chattgrupp. Samtliga deltagare tar emot alla meddelanden. När lobbyn är skapad kan du bjuda in andra kontakter via kontakt-fliken</translation>
-    </message>
 </context>
 <context>
     <name>CryptoPage</name>
-    <message>
-        <source>Save Key</source>
-        <translation>Spara nyckel</translation>
-    </message>
-    <message>
-        <source>Include signatures</source>
-        <translation>Inkludera signaturer</translation>
-    </message>
-    <message>
-        <source>A RetroShare link with your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation>En RetroShare-länk med din publika nyckel är kopierad till Urklipp, klistra in och skicka den till din kontakt via e-post eller på något annat sätt.</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation>Fel</translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation>RetroShare</translation>
-    </message>
-    <message>
-        <source>Your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation>Din publika nyckel är kopierad till Urklipp, klistra in och skicka den till din kontakt via e-post eller på något annat sätt.</translation>
-    </message>
-    <message>
-        <source>Save as...</source>
-        <translation>Spara som...</translation>
-    </message>
-    <message>
-        <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
-        <translation>RetroShare Certifikat (*.rsc );;Alla filer (*)</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>Säkerhet</translation>
-    </message>
-    <message>
-        <source>Save Key into a file</source>
-        <translation>Spara nyckel som fil</translation>
-    </message>
-    <message>
-        <source>Use old key format</source>
-        <translation>Använd gammalt nyckelformat</translation>
-    </message>
-    <message>
-        <source>Your certificate could not be parsed correctly. Please contact the developers.</source>
-        <translation>Certifikatet kunde inte tolkas på rätt sätt. Kontakta programutvecklaren.</translation>
-    </message>
     <message>
         <source>Profile</source>
         <translation>Profil</translation>
@@ -3576,6 +3536,50 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Copy link to clipboard</source>
         <translation>Kopiera länk till Urklipp</translation>
+    </message>
+    <message>
+        <source>Save Key into a file</source>
+        <translation>Spara nyckel som fil</translation>
+    </message>
+    <message>
+        <source>Save Key</source>
+        <translation>Spara nyckel</translation>
+    </message>
+    <message>
+        <source>Use old key format</source>
+        <translation>Använd gammalt nyckelformat</translation>
+    </message>
+    <message>
+        <source>Include signatures</source>
+        <translation>Inkludera signaturer</translation>
+    </message>
+    <message>
+        <source>A RetroShare link with your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
+        <translation>En RetroShare-länk med din publika nyckel är kopierad till Urklipp, klistra in och skicka den till din kontakt via e-post eller på något annat sätt.</translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation>Fel</translation>
+    </message>
+    <message>
+        <source>Your certificate could not be parsed correctly. Please contact the developers.</source>
+        <translation>Certifikatet kunde inte tolkas på rätt sätt. Kontakta programutvecklaren.</translation>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation>RetroShare</translation>
+    </message>
+    <message>
+        <source>Your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
+        <translation>Din publika nyckel är kopierad till Urklipp, klistra in och skicka den till din kontakt via e-post eller på något annat sätt.</translation>
+    </message>
+    <message>
+        <source>Save as...</source>
+        <translation>Spara som...</translation>
+    </message>
+    <message>
+        <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
+        <translation>RetroShare Certifikat (*.rsc );;Alla filer (*)</translation>
     </message>
 </context>
 <context>
@@ -3635,22 +3639,6 @@ p, li { white-space: pre-wrap; }
         <translation>Allmänt</translation>
     </message>
     <message>
-        <source>Comments</source>
-        <translation>Kommentarer</translation>
-    </message>
-    <message>
-        <source>retroshare link(s)</source>
-        <translation>retroshare-länk(ar)</translation>
-    </message>
-    <message>
-        <source>Rating</source>
-        <translation>Klassificering</translation>
-    </message>
-    <message>
-        <source>File Name</source>
-        <translation>Filnamn</translation>
-    </message>
-    <message>
         <source>Done</source>
         <translation>Klar</translation>
     </message>
@@ -3667,12 +3655,28 @@ p, li { white-space: pre-wrap; }
         <translation>Behöver kontrolleras</translation>
     </message>
     <message>
+        <source>retroshare link(s)</source>
+        <translation>retroshare-länk(ar)</translation>
+    </message>
+    <message>
         <source>retroshare link</source>
         <translation>Retroshare-länk</translation>
     </message>
     <message>
         <source>Copy link to clipboard</source>
         <translation>Kopiera länk till Urklipp</translation>
+    </message>
+    <message>
+        <source>Rating</source>
+        <translation>Klassificering</translation>
+    </message>
+    <message>
+        <source>Comments</source>
+        <translation>Kommentarer</translation>
+    </message>
+    <message>
+        <source>File Name</source>
+        <translation>Filnamn</translation>
     </message>
 </context>
 <context>
@@ -3868,6 +3872,14 @@ you plug it in.</source>
         <translation> minut</translation>
     </message>
     <message>
+        <source>Cache cleaning confirmation</source>
+        <translation>Bekräfta hash-rensning</translation>
+    </message>
+    <message>
+        <source>This will forget any former hash of non shared files. Do you confirm ?</source>
+        <translation>Detta kommer att ta bort alla gamla hash-summor tillhörande filer som inte längre delas. Vill du göra det?</translation>
+    </message>
+    <message>
         <source>Set Incoming Directory</source>
         <translation>Ange mapp för inkommande</translation>
     </message>
@@ -3878,14 +3890,6 @@ you plug it in.</source>
     <message>
         <source>Directories</source>
         <translation>Mappar</translation>
-    </message>
-    <message>
-        <source>Cache cleaning confirmation</source>
-        <translation>Bekräfta hash-rensning</translation>
-    </message>
-    <message>
-        <source>This will forget any former hash of non shared files. Do you confirm ?</source>
-        <translation>Detta kommer att ta bort alla gamla hash-summor tillhörande filer som inte längre delas. Vill du göra det?</translation>
     </message>
 </context>
 <context>
@@ -3963,6 +3967,16 @@ you plug it in.</source>
 <context>
     <name>ExampleDialog</name>
     <message>
+        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Friends&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Kontakter&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
         <source>#</source>
         <translation>#</translation>
     </message>
@@ -3991,6 +4005,10 @@ you plug it in.</source>
         <translation>Senaste kontakt</translation>
     </message>
     <message>
+        <source>Organization</source>
+        <translation>Organisation</translation>
+    </message>
+    <message>
         <source>Location</source>
         <translation>Plats</translation>
     </message>
@@ -4013,20 +4031,6 @@ you plug it in.</source>
     <message>
         <source>Vote Down</source>
         <translation>Flytta ner</translation>
-    </message>
-    <message>
-        <source>Organization</source>
-        <translation>Organisation</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Friends&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Kontakter&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -4133,6 +4137,14 @@ p, li { white-space: pre-wrap; }
         <translation>Filinformation</translation>
     </message>
     <message>
+        <source>File name</source>
+        <translation>Filnamn</translation>
+    </message>
+    <message>
+        <source>Destination folder</source>
+        <translation>Målmapp</translation>
+    </message>
+    <message>
         <source>File hash</source>
         <translation>Hash-summa</translation>
     </message>
@@ -4151,6 +4163,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Number of chunks</source>
         <translation>Antal segment</translation>
+    </message>
+    <message>
+        <source>Transferred</source>
+        <translation>Överfört</translation>
     </message>
     <message>
         <source>Remaining</source>
@@ -4175,14 +4191,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Direct friend transfer / Availability assumed</source>
         <translation>Direkt kontaktöverföring / Tillgänglighet antas</translation>
-    </message>
-    <message>
-        <source>Transferred</source>
-        <translation>Överfört</translation>
-    </message>
-    <message>
-        <source>File name</source>
-        <translation>Filnamn</translation>
     </message>
 </context>
 <context>
@@ -4251,12 +4259,12 @@ p, li { white-space: pre-wrap; }
         <translation>Kontakt</translation>
     </message>
     <message>
-        <source>Directory</source>
-        <translation>Mapp</translation>
-    </message>
-    <message>
         <source>Share Flags</source>
         <translation>Fildelningsregler</translation>
+    </message>
+    <message>
+        <source>Directory</source>
+        <translation>Mapp</translation>
     </message>
 </context>
 <context>
@@ -4325,6 +4333,10 @@ p, li { white-space: pre-wrap; }
         <translation>Expandera</translation>
     </message>
     <message>
+        <source>Set as read and remove item</source>
+        <translation>Markera som läst och ta bort objektet</translation>
+    </message>
+    <message>
         <source>Remove Item</source>
         <translation>Ta bort objektet</translation>
     </message>
@@ -4353,16 +4365,12 @@ p, li { white-space: pre-wrap; }
         <translation>Som svar på</translation>
     </message>
     <message>
-        <source>Please give a Text Message</source>
-        <translation>Skriv ett textmeddelande</translation>
-    </message>
-    <message>
-        <source>Set as read and remove item</source>
-        <translation>Markera som läst och ta bort objektet</translation>
-    </message>
-    <message>
         <source>Hide</source>
         <translation>Dölj</translation>
+    </message>
+    <message>
+        <source>Please give a Text Message</source>
+        <translation>Skriv ett textmeddelande</translation>
     </message>
 </context>
 <context>
@@ -4415,16 +4423,16 @@ p, li { white-space: pre-wrap; }
         <translation>Expandera nya meddelanden</translation>
     </message>
     <message>
-        <source>Forum</source>
-        <translation>Forum</translation>
-    </message>
-    <message>
         <source>New forum</source>
         <translation>Nytt forum</translation>
     </message>
     <message>
         <source>Open all forums in new tab</source>
         <translation>Öppna alla forum i egen flik</translation>
+    </message>
+    <message>
+        <source>Forum</source>
+        <translation>Forum</translation>
     </message>
 </context>
 <context>
@@ -4436,6 +4444,10 @@ p, li { white-space: pre-wrap; }
 </context>
 <context>
     <name>ForumsDialog</name>
+    <message>
+        <source>Forums</source>
+        <translation>Forum</translation>
+    </message>
     <message>
         <source>Display</source>
         <translation>Visa</translation>
@@ -4497,16 +4509,12 @@ p, li { white-space: pre-wrap; }
         <translation>Nästa olästa</translation>
     </message>
     <message>
-        <source>Content</source>
-        <translation>Innehåll</translation>
+        <source>Start new Thread for Selected Forum</source>
+        <translation>Starta ny tråd i aktuellt forum</translation>
     </message>
     <message>
         <source>Reply Message</source>
         <translation>Svarsmeddelande</translation>
-    </message>
-    <message>
-        <source>Start new Thread for Selected Forum</source>
-        <translation>Starta ny tråd i aktuellt forum</translation>
     </message>
     <message>
         <source>Loading</source>
@@ -4521,6 +4529,10 @@ p, li { white-space: pre-wrap; }
         <translation>Förhandsgranskning</translation>
     </message>
     <message>
+        <source>My Forums</source>
+        <translation>Mina forum</translation>
+    </message>
+    <message>
         <source>Subscribed Forums</source>
         <translation>Forumprenumerationer</translation>
     </message>
@@ -4531,6 +4543,26 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Other Forums</source>
         <translation>Andra forum</translation>
+    </message>
+    <message>
+        <source>Search Title</source>
+        <translation>Sök rubrik</translation>
+    </message>
+    <message>
+        <source>Search Date</source>
+        <translation>Sök datum</translation>
+    </message>
+    <message>
+        <source>Search Author</source>
+        <translation>Sök författare</translation>
+    </message>
+    <message>
+        <source>Content</source>
+        <translation>Innehåll</translation>
+    </message>
+    <message>
+        <source>Search Content</source>
+        <translation>Sök i innehåll</translation>
     </message>
     <message>
         <source>Subscribe to Forum</source>
@@ -4617,20 +4649,20 @@ p, li { white-space: pre-wrap; }
         <translation>AUTHD</translation>
     </message>
     <message>
-        <source>RetroShare</source>
-        <translation>RetroShare</translation>
-    </message>
-    <message>
-        <source>No Forum Selected!</source>
-        <translation>Inget forum är valt!</translation>
-    </message>
-    <message>
         <source>[ ... Missing Message ... ]</source>
         <translation>[ ... Meddelande saknas ... ]</translation>
     </message>
     <message>
         <source>Placeholder for missing Message</source>
         <translation>Platshållare för saknat meddelande</translation>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation>RetroShare</translation>
+    </message>
+    <message>
+        <source>No Forum Selected!</source>
+        <translation>Inget forum är valt!</translation>
     </message>
     <message>
         <source>Original Message</source>
@@ -4653,36 +4685,16 @@ p, li { white-space: pre-wrap; }
         <translation>På %1, skrev %2:</translation>
     </message>
     <message>
-        <source>Forums</source>
-        <translation>Forum</translation>
-    </message>
-    <message>
         <source>You can&apos;t reply an Anonymous Author</source>
         <translation>Du kan inte svara en anonym författare</translation>
-    </message>
-    <message>
-        <source>Search Title</source>
-        <translation>Sök rubrik</translation>
-    </message>
-    <message>
-        <source>Search Date</source>
-        <translation>Sök datum</translation>
-    </message>
-    <message>
-        <source>Search Author</source>
-        <translation>Sök författare</translation>
-    </message>
-    <message>
-        <source>Search Content</source>
-        <translation>Sök i innehåll</translation>
-    </message>
-    <message>
-        <source>My Forums</source>
-        <translation>Mina forum</translation>
     </message>
 </context>
 <context>
     <name>ForumsFillThread</name>
+    <message>
+        <source>Unknown</source>
+        <translation>Okänd</translation>
+    </message>
     <message>
         <source>Anonymous</source>
         <translation>Anonym</translation>
@@ -4694,10 +4706,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>none</source>
         <translation>ingen</translation>
-    </message>
-    <message>
-        <source>Unknown</source>
-        <translation>Okänd</translation>
     </message>
 </context>
 <context>
@@ -4979,23 +4987,35 @@ p, li { white-space: pre-wrap; }
         <translation>Sök efter namn:</translation>
     </message>
     <message>
-        <source>Search Friends</source>
-        <translation>Sök kontakter</translation>
-    </message>
-    <message>
         <source>Name</source>
         <translation>Namn</translation>
+    </message>
+    <message>
+        <source>Search Friends</source>
+        <translation>Sök kontakter</translation>
     </message>
 </context>
 <context>
     <name>FriendsDialog</name>
     <message>
-        <source>Add</source>
-        <translation>Lägg till</translation>
+        <source>Friends</source>
+        <translation>Kontakter</translation>
     </message>
     <message>
         <source>Display</source>
         <translation>Visa</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Lägg till</translation>
+    </message>
+    <message>
+        <source>Edit status message</source>
+        <translation>Redigera statusmeddelande</translation>
+    </message>
+    <message>
+        <source>Broadcast</source>
+        <translation>Sändning</translation>
     </message>
     <message>
         <source>Bold</source>
@@ -5046,6 +5066,14 @@ p, li { white-space: pre-wrap; }
         <translation>A</translation>
     </message>
     <message>
+        <source>Set your status message</source>
+        <translation>Ange ditt statusmeddelande</translation>
+    </message>
+    <message>
+        <source>Edit your status message</source>
+        <translation>Redigera ditt statusmeddelande</translation>
+    </message>
+    <message>
         <source>Browse Message History</source>
         <translation>Bläddra i meddelandehistoriken</translation>
     </message>
@@ -5072,6 +5100,34 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Create new Chat lobby</source>
         <translation>Skapa ny chattlobby</translation>
+    </message>
+    <message>
+        <source>Friend Recommendations</source>
+        <translation>Kontaktrekommendationer</translation>
+    </message>
+    <message>
+        <source>Choose Font</source>
+        <translation>Välj teckensnitt</translation>
+    </message>
+    <message>
+        <source>Reset font to default</source>
+        <translation>Återställ standardteckensnitt</translation>
+    </message>
+    <message>
+        <source>Service permissions</source>
+        <translation>Användartjänster</translation>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation>Sök</translation>
+    </message>
+    <message>
+        <source>Local network</source>
+        <translation>Lokalt nätverk</translation>
+    </message>
+    <message>
+        <source>Known people</source>
+        <translation>Kända personer</translation>
     </message>
     <message>
         <source>Welcome to RetroShare&apos;s group chat.</source>
@@ -5104,54 +5160,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Text File (*.txt );;All Files (*)</source>
         <translation>Textfil (*.txt );;Alla Filer (*)</translation>
-    </message>
-    <message>
-        <source>Friend Recommendations</source>
-        <translation>Kontaktrekommendationer</translation>
-    </message>
-    <message>
-        <source>Choose Font</source>
-        <translation>Välj teckensnitt</translation>
-    </message>
-    <message>
-        <source>Reset font to default</source>
-        <translation>Återställ standardteckensnitt</translation>
-    </message>
-    <message>
-        <source>Friends</source>
-        <translation>Kontakter</translation>
-    </message>
-    <message>
-        <source>Search</source>
-        <translation>Sök</translation>
-    </message>
-    <message>
-        <source>Edit status message</source>
-        <translation>Redigera statusmeddelande</translation>
-    </message>
-    <message>
-        <source>Set your status message</source>
-        <translation>Ange ditt statusmeddelande</translation>
-    </message>
-    <message>
-        <source>Edit your status message</source>
-        <translation>Redigera ditt statusmeddelande</translation>
-    </message>
-    <message>
-        <source>Service permissions</source>
-        <translation>Användartjänster</translation>
-    </message>
-    <message>
-        <source>Broadcast</source>
-        <translation>Sändning</translation>
-    </message>
-    <message>
-        <source>Local network</source>
-        <translation>Lokalt nätverk</translation>
-    </message>
-    <message>
-        <source>Known people</source>
-        <translation>Kända personer</translation>
     </message>
 </context>
 <context>
@@ -5294,44 +5302,86 @@ p, li { white-space: pre-wrap; }
         <translation>Skapa ny profil</translation>
     </message>
     <message>
+        <source>You can install retroshare on different locations using the same identity. For this, just export the selected identity, and import it on the new computer, then create a new location with it.</source>
+        <translation>Du kan använda samma identitet till att installera RetroShare på olika enheter. Exportera identiteten och importera den på nästa dator, samt skapa en ny plats med den.</translation>
+    </message>
+    <message>
+        <source>It looks like you don&apos;t own any profile (PGP keys). Please fill in the form below to create one, or import an existing profile.</source>
+        <translation>Det verkar som du inte har någon profil (GPG-nyckel). Fyll i nedanstående formulär för att skapa en, eller importera en befintlig.</translation>
+    </message>
+    <message>
+        <source>Your profile is associated with a PGP key. RetroShare currently ignores DSA keys.</source>
+        <translation>Din profil är associerad med en PGP-nyckel. RetroShare stöder för närvarande inte DSA-nycklar.</translation>
+    </message>
+    <message>
         <source>Name</source>
         <translation>Namn</translation>
+    </message>
+    <message>
+        <source>Enter your nickname here</source>
+        <translation>Ange ditt användarnamn här</translation>
     </message>
     <message>
         <source>Email</source>
         <translation>E-post</translation>
     </message>
     <message>
+        <source>Be careful: this email will be visible to your friends and friends 
+of your friends. This information is required by PGP, but to stay 
+anonymous, you can use a fake email.</source>
+        <translation>Var försiktig! Denna e-postadress kommer att vara synlig för dina kontakter och deras kontakter. PGP kräver denna information, men för att skydda din anonymitet kan du använda en påhittad e-postadress.</translation>
+    </message>
+    <message>
+        <source>This Password is for PGP</source>
+        <translation>Detta lösenord är för PGP</translation>
+    </message>
+    <message>
         <source>Password</source>
         <translation>Lösenord</translation>
+    </message>
+    <message>
+        <source>Put a strong password here. This password protects your PGP key.</source>
+        <translation>Använd ett starkt lösenord. Det skyddar din PGP-nyckel.</translation>
     </message>
     <message>
         <source>Location</source>
         <translation>Plats</translation>
     </message>
     <message>
-        <source>Create new Location</source>
-        <translation>Skapa en ny plats</translation>
+        <source>Put a meaningful location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same identity (PGP key).</source>
+        <translation>Välj en meningsfull plats. Exempelvis Hem, Laptop eller liknande. Platsnamnet används för att särskilja olika installationer med samma identitet (PGP-nyckel).</translation>
     </message>
     <message>
-        <source>Generate new Location</source>
-        <translation>Generera ny plats</translation>
+        <source>Create new identity</source>
+        <translation>Skapa ny identitet</translation>
     </message>
     <message>
-        <source>Create a new Location</source>
-        <translation>Skapa en ny plats</translation>
+        <source>Use identity</source>
+        <translation>Använd identitet</translation>
     </message>
     <message>
-        <source>Location field is required with a minimum of 3 characters</source>
-        <translation>Du måste ange &apos;Plats&apos; med minst 3 tecken</translation>
+        <source>Your profile is associated with a PGP key</source>
+        <translation>Din profil är associerad med en PGP-nyckel</translation>
     </message>
     <message>
-        <source>All fields are required with a minimum of 3 characters</source>
-        <translation>Samtliga indatafält kräver minst 3 tecken</translation>
+        <source>Create a new identity</source>
+        <translation>Skapa en ny identitet</translation>
     </message>
     <message>
-        <source>Generate ID Failure</source>
-        <translation>Kunde inte generera ID</translation>
+        <source>Import new identity</source>
+        <translation>Importera ny identitet</translation>
+    </message>
+    <message>
+        <source>Export selected identity</source>
+        <translation>Exportera markerad identitet</translation>
+    </message>
+    <message>
+        <source>Create a new Identity</source>
+        <translation>Skapa en ny identitet</translation>
+    </message>
+    <message>
+        <source>RetroShare uses PGP keys for identity management.</source>
+        <translation>RetroShare använder PGP-nycklar för identitetshantering.</translation>
     </message>
     <message>
         <source>[Optional] Visible to your friends, and friends of friends.</source>
@@ -5350,16 +5400,16 @@ p, li { white-space: pre-wrap; }
         <translation>[Obligatoriskt] Detta lösenord skyddar din PGP-nyckel.</translation>
     </message>
     <message>
-        <source>Import new identity</source>
-        <translation>Importera ny identitet</translation>
+        <source>Create new Location</source>
+        <translation>Skapa en ny plats</translation>
     </message>
     <message>
-        <source>Export selected identity</source>
-        <translation>Exportera markerad identitet</translation>
+        <source>Generate new Location</source>
+        <translation>Generera ny plats</translation>
     </message>
     <message>
-        <source>Use identity</source>
-        <translation>Använd identitet</translation>
+        <source>Create a new Location</source>
+        <translation>Skapa en ny plats</translation>
     </message>
     <message>
         <source>Create new Identity</source>
@@ -5370,8 +5420,12 @@ p, li { white-space: pre-wrap; }
         <translation>Generera ny identitet</translation>
     </message>
     <message>
-        <source>Create a new Identity</source>
-        <translation>Skapa en ny identitet</translation>
+        <source>You can create a new identity with this form.</source>
+        <translation>Du kan skapa en ny identitet med det här formuläret.</translation>
+    </message>
+    <message>
+        <source>You can use an existing identity (i.e. a PGP key pair), from the list below, or create a new one with this form.</source>
+        <translation>Du kan använda en befintlig identitet (PGP-nyckel) från nedanstående lista, eller skapa en ny med det här formuläret.</translation>
     </message>
     <message>
         <source>Export Identity</source>
@@ -5402,6 +5456,10 @@ och där läsa in den med importfunktionen.</translation>
         <translation>Identiteten sparades inte</translation>
     </message>
     <message>
+        <source>Your identity was not saved. An error occurred.</source>
+        <translation>Din identitet sparades inte. Ett fel uppstod.</translation>
+    </message>
+    <message>
         <source>Identity not loaded</source>
         <translation>Identiteten kunde inte läsas in</translation>
     </message>
@@ -5414,82 +5472,24 @@ och där läsa in den med importfunktionen.</translation>
         <translation>Ny identitet importerad</translation>
     </message>
     <message>
-        <source>You can use it now to create a new location.</source>
-        <translation>Du kan nu använda den till att skapa en ny plats.</translation>
-    </message>
-    <message>
-        <source>You can install retroshare on different locations using the same identity. For this, just export the selected identity, and import it on the new computer, then create a new location with it.</source>
-        <translation>Du kan använda samma identitet till att installera RetroShare på olika enheter. Exportera identiteten och importera den på nästa dator, samt skapa en ny plats med den.</translation>
-    </message>
-    <message>
-        <source>Your identity was not saved. An error occurred.</source>
-        <translation>Din identitet sparades inte. Ett fel uppstod.</translation>
-    </message>
-    <message>
         <source>Your identity was imported successfully:</source>
         <translation>Din identitet importerades korrekt:</translation>
     </message>
     <message>
-        <source>You can create a new identity with this form.</source>
-        <translation>Du kan skapa en ny identitet med det här formuläret.</translation>
-    </message>
-    <message>
-        <source>Failed to Generate your new Certificate, maybe PGP password is wrong!</source>
-        <translation>Kunde inte generera ditt nya certifikat. Ditt PGP-lösenord kanske är fel!</translation>
-    </message>
-    <message>
-        <source>It looks like you don&apos;t own any profile (PGP keys). Please fill in the form below to create one, or import an existing profile.</source>
-        <translation>Det verkar som du inte har någon profil (GPG-nyckel). Fyll i nedanstående formulär för att skapa en, eller importera en befintlig.</translation>
-    </message>
-    <message>
-        <source>Your profile is associated with a PGP key. RetroShare currently ignores DSA keys.</source>
-        <translation>Din profil är associerad med en PGP-nyckel. RetroShare stöder för närvarande inte DSA-nycklar.</translation>
-    </message>
-    <message>
-        <source>Enter your nickname here</source>
-        <translation>Ange ditt användarnamn här</translation>
-    </message>
-    <message>
-        <source>Be careful: this email will be visible to your friends and friends 
-of your friends. This information is required by PGP, but to stay 
-anonymous, you can use a fake email.</source>
-        <translation>Var försiktig! Denna e-postadress kommer att vara synlig för dina kontakter och deras kontakter. PGP kräver denna information, men för att skydda din anonymitet kan du använda en påhittad e-postadress.</translation>
-    </message>
-    <message>
-        <source>This Password is for PGP</source>
-        <translation>Detta lösenord är för PGP</translation>
-    </message>
-    <message>
-        <source>Put a strong password here. This password protects your PGP key.</source>
-        <translation>Använd ett starkt lösenord. Det skyddar din PGP-nyckel.</translation>
-    </message>
-    <message>
-        <source>Put a meaningful location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same identity (PGP key).</source>
-        <translation>Välj en meningsfull plats. Exempelvis Hem, Laptop eller liknande. Platsnamnet används för att särskilja olika installationer med samma identitet (PGP-nyckel).</translation>
-    </message>
-    <message>
-        <source>Create new identity</source>
-        <translation>Skapa ny identitet</translation>
-    </message>
-    <message>
-        <source>Your profile is associated with a PGP key</source>
-        <translation>Din profil är associerad med en PGP-nyckel</translation>
-    </message>
-    <message>
-        <source>Create a new identity</source>
-        <translation>Skapa en ny identitet</translation>
-    </message>
-    <message>
-        <source>RetroShare uses PGP keys for identity management.</source>
-        <translation>RetroShare använder PGP-nycklar för identitetshantering.</translation>
-    </message>
-    <message>
-        <source>You can use an existing identity (i.e. a PGP key pair), from the list below, or create a new one with this form.</source>
-        <translation>Du kan använda en befintlig identitet (PGP-nyckel) från nedanstående lista, eller skapa en ny med det här formuläret.</translation>
+        <source>You can use it now to create a new location.</source>
+        <translation>Du kan nu använda den till att skapa en ny plats.</translation>
     </message>
     <message>
         <source>Generate PGP key Failure</source>
         <translation>Kunde inte generera PGP.nyckel</translation>
+    </message>
+    <message>
+        <source>Location field is required with a minimum of 3 characters</source>
+        <translation>Du måste ange &apos;Plats&apos; med minst 3 tecken</translation>
+    </message>
+    <message>
+        <source>All fields are required with a minimum of 3 characters</source>
+        <translation>Samtliga indatafält kräver minst 3 tecken</translation>
     </message>
     <message>
         <source>Generating new PGP key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
@@ -5498,6 +5498,14 @@ Fill in your PGP password when asked, to sign your new key.</source>
         <translation>Genererar ny PGP-nyckel, ha tålamod. Denna process måste generera stora primtal, och kan ta flera minuter på långsamma maskiner.
 
 Ange ditt PGP-lösenord vid anmodan, för att signera din nya nyckel.</translation>
+    </message>
+    <message>
+        <source>Generate ID Failure</source>
+        <translation>Kunde inte generera ID</translation>
+    </message>
+    <message>
+        <source>Failed to Generate your new Certificate, maybe PGP password is wrong!</source>
+        <translation>Kunde inte generera ditt nya certifikat. Ditt PGP-lösenord kanske är fel!</translation>
     </message>
 </context>
 <context>
@@ -5543,6 +5551,10 @@ Ange ditt PGP-lösenord vid anmodan, för att signera din nya nyckel.</translati
         <translation>Logga in automatiskt</translation>
     </message>
     <message>
+        <source>Register retroshare:// as URL protocol (Restart required)</source>
+        <translation>Registrera retroshare:// som URL-protokoll (Kräver omstart)</translation>
+    </message>
+    <message>
         <source>You need administrator rights to change this option.</source>
         <translation>Kräver administratörsrättigheter, för att ändra.</translation>
     </message>
@@ -5557,6 +5569,10 @@ Ange ditt PGP-lösenord vid anmodan, för att signera din nya nyckel.</translati
     <message>
         <source> seconds</source>
         <translation> sekunder</translation>
+    </message>
+    <message>
+        <source>Launch startup wizard</source>
+        <translation>Starta uppstartsguiden</translation>
     </message>
     <message>
         <source>Error</source>
@@ -5574,14 +5590,6 @@ Ange ditt PGP-lösenord vid anmodan, för att signera din nya nyckel.</translati
         <source>General</source>
         <translation>Allmänt</translation>
     </message>
-    <message>
-        <source>Register retroshare:// as URL protocol (Restart required)</source>
-        <translation>Registrera retroshare:// som URL-protokoll (Kräver omstart)</translation>
-    </message>
-    <message>
-        <source>Launch startup wizard</source>
-        <translation>Starta uppstartsguiden</translation>
-    </message>
 </context>
 <context>
     <name>GetStartedDialog</name>
@@ -5594,6 +5602,28 @@ Ange ditt PGP-lösenord vid anmodan, för att signera din nya nyckel.</translati
         <translation>Bjud in kontakter</translation>
     </message>
     <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;RetroShare is nothing without your Friends. Click on the Button to start the process.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Email an Invitation with your &amp;quot;ID Certificate&amp;quot; to your friends.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Be sure to get their invitation back as well... &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;You can only connect with friends if you have both added each other.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;RetroShare är ingentig utan dina kontakter. Klicka på knappen för att starta processen.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Skicka en inbjudan med ditt certifikat, via e-post, till dina vänner.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Tillse att du får en inbjudan i retur... &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Du kan endast ansluta till kontakter om ni båda har lagt till varandra.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
         <source>Add Your Friends to RetroShare</source>
         <translation>Lägg till dina kontakter i RetroShare</translation>
     </message>
@@ -5602,16 +5632,126 @@ Ange ditt PGP-lösenord vid anmodan, för att signera din nya nyckel.</translati
         <translation>Lägg till kontakter</translation>
     </message>
     <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;When your friends send you a their invitations, Click to open the Add Friends window.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Cut and Paste your Friend&apos;s &amp;quot;ID Certificates&amp;quot; into the window and add them as friends.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;När du fått en inbjudan från någon av dina kontakter, Klicka på &apos;Lägg till kontakt&apos; för att öppna dialogrutan.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Kopiera och klistra in kontaktens ID-certificat i det öppna fönstret, och lägg till som kontakt.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
         <source>Connect To Friends</source>
         <translation>Anslut till kontakter</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Be Online at the same time, and RetroShare will automatically connect you!&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Your client needs to find the RetroShare Network before it can make connections.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;This takes 5-30 minutes the first time you start up RetroShare&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;The DHT indicator (in the Status Bar) turns Green when it can make connections.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;After a couple of minutes, the NAT indicator (also in the Status Bar) switch to Yellow or Green.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;If it remains Red, then you have a Nasty Firewall, that RetroShare struggles to connect through.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Look in the Further Help section for more advice about connecting.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Är ni online samtidigt, kommer RetroShare att koppla ihop er automatiskt!&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Din klient måste hitta RetroShare-nätverket innan den kan öppna anslutningar.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Detta kan ta 5-30 minuter, första gången du startar upp RetroShare&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;DHT-indikatorn (i statusfältet) blir grön när den är redo att koppla upp anslutningar.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Efter några minuter, blir NAT-indikatorn (också i statusfältet) gul eller grön.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Om den fortsätter att vara röd har du en svårforcerad brandvägg, som RetroShare kämpar för att ta sig igenom.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Titta i &apos;Mer hjälp och support&apos; för ytterligare råd om att ansluta.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Advanced: Open Firewall Port</source>
         <translation>Avancerat: Öppna brandväggsport</translation>
     </message>
     <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;You can improve your Retroshare performance by opening an External Port. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;This will speed up connections and allow more people to connect with you &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;The easiest way to do this is by enabling UPnP on your Wireless Box or Router.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;As each router is different, you need to find out your Router Model and Google for instructions.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;If none of this makes sense, don't worry about it Retroshare will still work.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Du kan förbättra RetroShares prestanda genom att öppna en extern port. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Det kommer att förbättra uppkopplingen och låta fler människor ansluta till dig &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Enklaste sättet att göra detta är att aktivera UPnP på ditt trådlösa modem eller Router.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Eftersom alla modem-/router-modeller är olika, måste du ta reda på vilken modell du har, och Googla efter instruktioner.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Om detta verkar för svårt, kan du glömma det. Retroshare kommer att fungera ändå.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
         <source>Further Help and Support</source>
         <translation>Mer hjälp och support</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Having trouble getting started with RetroShare?&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;1) look at the FAQ Wiki. This is a bit old, we trying to bring it up to date.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;2) check out the Online Forums. Ask questions and discuss features.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;3) try the Internal RetroShare Forums &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;	- These come online once you are connected to friends.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;4) If you are still stuck. Email us.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Enjoy Retrosharing&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Har du problem att komma igång med RetroShare?&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;1) Ta en titt i FAQ Wiki. Den är aningen gammal men vi försöker uppdatera den.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;2) Surfa in på vårt Online-forum. Fråga om problem och diskutera funktioner.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;3) Testa ett Internt RetroShare Forum &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;	- Dessa kan anslutas online, när du väl är ansluten till kontakter.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;4) Sitter du fortfarande fast. Skicka e-post till oss!&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Ha så kul med RetroShare!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Open RS Website</source>
@@ -5681,138 +5821,6 @@ Ange ditt PGP-lösenord vid anmodan, för att signera din nya nyckel.</translati
         <source>RetroShare Support</source>
         <translation>RetroShare support</translation>
     </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;RetroShare is nothing without your Friends. Click on the Button to start the process.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Email an Invitation with your &amp;quot;ID Certificate&amp;quot; to your friends.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Be sure to get their invitation back as well... &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;You can only connect with friends if you have both added each other.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;RetroShare är ingentig utan dina kontakter. Klicka på knappen för att starta processen.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Skicka en inbjudan med ditt certifikat, via e-post, till dina vänner.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Tillse att du får en inbjudan i retur... &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Du kan endast ansluta till kontakter om ni båda har lagt till varandra.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;When your friends send you a their invitations, Click to open the Add Friends window.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Cut and Paste your Friend&apos;s &amp;quot;ID Certificates&amp;quot; into the window and add them as friends.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;När du fått en inbjudan från någon av dina kontakter, Klicka på &apos;Lägg till kontakt&apos; för att öppna dialogrutan.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Kopiera och klistra in kontaktens ID-certificat i det öppna fönstret, och lägg till som kontakt.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Be Online at the same time, and RetroShare will automatically connect you!&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Your client needs to find the RetroShare Network before it can make connections.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;This takes 5-30 minutes the first time you start up RetroShare&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;The DHT indicator (in the Status Bar) turns Green when it can make connections.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;After a couple of minutes, the NAT indicator (also in the Status Bar) switch to Yellow or Green.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;If it remains Red, then you have a Nasty Firewall, that RetroShare struggles to connect through.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Look in the Further Help section for more advice about connecting.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Är ni online samtidigt, kommer RetroShare att koppla ihop er automatiskt!&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Din klient måste hitta RetroShare-nätverket innan den kan öppna anslutningar.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Detta kan ta 5-30 minuter, första gången du startar upp RetroShare&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;DHT-indikatorn (i statusfältet) blir grön när den är redo att koppla upp anslutningar.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Efter några minuter, blir NAT-indikatorn (också i statusfältet) gul eller grön.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Om den fortsätter att vara röd har du en svårforcerad brandvägg, som RetroShare kämpar för att ta sig igenom.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Titta i &apos;Mer hjälp och support&apos; för ytterligare råd om att ansluta.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;You can improve your Retroshare performance by opening an External Port. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;This will speed up connections and allow more people to connect with you &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;The easiest way to do this is by enabling UPnP on your Wireless Box or Router.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;As each router is different, you need to find out your Router Model and Google for instructions.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;If none of this makes sense, don't worry about it Retroshare will still work.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Du kan förbättra RetroShares prestanda genom att öppna en extern port. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Det kommer att förbättra uppkopplingen och låta fler människor ansluta till dig &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Enklaste sättet att göra detta är att aktivera UPnP på ditt trådlösa modem eller Router.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Eftersom alla modem-/router-modeller är olika, måste du ta reda på vilken modell du har, och Googla efter instruktioner.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Om detta verkar för svårt, kan du glömma det. Retroshare kommer att fungera ändå.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Having trouble getting started with RetroShare?&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;1) look at the FAQ Wiki. This is a bit old, we trying to bring it up to date.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;2) check out the Online Forums. Ask questions and discuss features.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;3) try the Internal RetroShare Forums &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;	- These come online once you are connected to friends.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;4) If you are still stuck. Email us.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Enjoy Retrosharing&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Har du problem att komma igång med RetroShare?&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;1) Ta en titt i FAQ Wiki. Den är aningen gammal men vi försöker uppdatera den.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;2) Surfa in på vårt Online-forum. Fråga om problem och diskutera funktioner.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;3) Testa ett Internt RetroShare Forum &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;	- Dessa kan anslutas online, när du väl är ansluten till kontakter.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;4) Sitter du fortfarande fast. Skicka e-post till oss!&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Ha så kul med RetroShare!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
 </context>
 <context>
     <name>GraphFrame</name>
@@ -5881,22 +5889,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GroupFlagsWidget</name>
     <message>
-        <source>Only friends in groups </source>
-        <translation>Endast kontakter i grupper </translation>
-    </message>
-    <message>
-        <source>All your friends can relay anonymous tunnels to this directory</source>
-        <translation>Alla dina kontakter kan koppla upp anonyma tunnlar till den här mappen</translation>
-    </message>
-    <message>
-        <source> can relay anonymous tunnels to this directory</source>
-        <translation> kan koppla upp anonyma tunnlar till den här mappen</translation>
-    </message>
-    <message>
-        <source>No one can anonymously access this directory.</source>
-        <translation>Ingen kan ansluta anonymt till den här mappen.</translation>
-    </message>
-    <message>
         <source>All your friends can browse this directory</source>
         <translation>Alla dina kontakter kan bläddra i den här mappen</translation>
     </message>
@@ -5908,6 +5900,22 @@ p, li { white-space: pre-wrap; }
         <source>No one can browse this directory</source>
         <translation>Ingen kan bläddra i den här mappen</translation>
     </message>
+    <message>
+        <source>All your friends can relay anonymous tunnels to this directory</source>
+        <translation>Alla dina kontakter kan koppla upp anonyma tunnlar till den här mappen</translation>
+    </message>
+    <message>
+        <source>Only friends in groups </source>
+        <translation>Endast kontakter i grupper </translation>
+    </message>
+    <message>
+        <source> can relay anonymous tunnels to this directory</source>
+        <translation> kan koppla upp anonyma tunnlar till den här mappen</translation>
+    </message>
+    <message>
+        <source>No one can anonymously access this directory.</source>
+        <translation>Ingen kan ansluta anonymt till den här mappen.</translation>
+    </message>
 </context>
 <context>
     <name>GroupTreeWidget</name>
@@ -5916,8 +5924,16 @@ p, li { white-space: pre-wrap; }
         <translation>Titel</translation>
     </message>
     <message>
+        <source>Search Title</source>
+        <translation>Sök titel</translation>
+    </message>
+    <message>
         <source>Description</source>
         <translation>Beskrivning</translation>
+    </message>
+    <message>
+        <source>Search Description</source>
+        <translation>Sök beskrivning</translation>
     </message>
     <message>
         <source>Sort by Name</source>
@@ -5934,14 +5950,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Private Key Available</source>
         <translation>Privat nyckel tillgänglig</translation>
-    </message>
-    <message>
-        <source>Search Title</source>
-        <translation>Sök titel</translation>
-    </message>
-    <message>
-        <source>Search Description</source>
-        <translation>Sök beskrivning</translation>
     </message>
 </context>
 <context>
@@ -6074,16 +6082,20 @@ p, li { white-space: pre-wrap; }
         <translation>Andra kanaler</translation>
     </message>
     <message>
-        <source>Subscribe to Channel</source>
-        <translation>Abonnera på kanal</translation>
+        <source>Disable Auto-Download</source>
+        <translation>Inaktivera automatisk nedladdning</translation>
     </message>
     <message>
         <source>Unsubscribe to Channel</source>
         <translation>Avsluta kanalabonnemang</translation>
     </message>
     <message>
-        <source>Disable Auto-Download</source>
-        <translation>Inaktivera automatisk nedladdning</translation>
+        <source>Subscribe to Channel</source>
+        <translation>Abonnera på kanal</translation>
+    </message>
+    <message>
+        <source>Edit Channel Details</source>
+        <translation>Redigera kanalinformationen</translation>
     </message>
     <message>
         <source>Show Channel Details</source>
@@ -6092,10 +6104,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Restore Publish Rights for Channel</source>
         <translation>Återställ publiceringsrättigheter för kanal</translation>
-    </message>
-    <message>
-        <source>Edit Channel Details</source>
-        <translation>Redigera kanalinformationen</translation>
     </message>
     <message>
         <source>Share Channel</source>
@@ -6148,16 +6156,16 @@ p, li { white-space: pre-wrap; }
         <translation>Växla meddelandestatus</translation>
     </message>
     <message>
-        <source>New</source>
-        <translation>Nytt</translation>
-    </message>
-    <message>
         <source>Download</source>
         <translation>Ladda ner</translation>
     </message>
     <message>
         <source>Play</source>
         <translation>Spela upp</translation>
+    </message>
+    <message>
+        <source>Comments</source>
+        <translation>Kommentarer</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
@@ -6202,48 +6210,12 @@ p, li { white-space: pre-wrap; }
         <source>Comment Container</source>
         <translation>Kommentarsbehållare</translation>
     </message>
-    <message>
-        <source>Comments</source>
-        <translation>Kommentarer</translation>
-    </message>
 </context>
 <context>
     <name>GxsCommentDialog</name>
     <message>
         <source>Form</source>
         <translation>Formulär</translation>
-    </message>
-    <message>
-        <source>1</source>
-        <translation>1</translation>
-    </message>
-    <message>
-        <source>/\</source>
-        <translation>/\</translation>
-    </message>
-    <message>
-        <source>score</source>
-        <translation>poäng</translation>
-    </message>
-    <message>
-        <source>\/</source>
-        <translation>\/</translation>
-    </message>
-    <message>
-        <source>Title this is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title dont you think? yes it is and should wrap around I hope</source>
-        <translation>Namnet är en mycket mycket lååååångt, tycker du inte? Jo, det är det, och det borde radbrytas tycker jag.</translation>
-    </message>
-    <message>
-        <source>Date</source>
-        <translation>Datum</translation>
-    </message>
-    <message>
-        <source>From</source>
-        <translation>Från</translation>
-    </message>
-    <message>
-        <source>Site</source>
-        <translation>Sida</translation>
     </message>
     <message>
         <source>Hot</source>
@@ -6258,6 +6230,10 @@ p, li { white-space: pre-wrap; }
         <translation>Topp</translation>
     </message>
     <message>
+        <source>Voter ID:</source>
+        <translation>Röst-ID</translation>
+    </message>
+    <message>
         <source>Refresh</source>
         <translation>Uppdatera</translation>
     </message>
@@ -6270,8 +6246,24 @@ p, li { white-space: pre-wrap; }
         <translation>Upphovsman</translation>
     </message>
     <message>
-        <source>Points</source>
+        <source>Date</source>
+        <translation>Datum</translation>
+    </message>
+    <message>
+        <source>Score</source>
         <translation>Poäng</translation>
+    </message>
+    <message>
+        <source>UpVotes</source>
+        <translation>Uppröstningar</translation>
+    </message>
+    <message>
+        <source>DownVotes</source>
+        <translation>Nedröstningar</translation>
+    </message>
+    <message>
+        <source>OwnVote</source>
+        <translation>Egen röstning</translation>
     </message>
 </context>
 <context>
@@ -6285,8 +6277,32 @@ p, li { white-space: pre-wrap; }
         <translation>Posta kommentar</translation>
     </message>
     <message>
-        <source>Anonymous</source>
-        <translation>Anonym</translation>
+        <source>Vote Up</source>
+        <translation>Rösta upp</translation>
+    </message>
+    <message>
+        <source>Vote Down</source>
+        <translation>Rösta ned</translation>
+    </message>
+    <message>
+        <source>Reputation</source>
+        <translation>Anseende</translation>
+    </message>
+    <message>
+        <source>Show Reputation</source>
+        <translation>Visa anseende</translation>
+    </message>
+    <message>
+        <source>Interesting User</source>
+        <translation>Intressant användare</translation>
+    </message>
+    <message>
+        <source>Mark Spammy</source>
+        <translation>Markera som spam</translation>
+    </message>
+    <message>
+        <source>Ban User</source>
+        <translation>Bannlys användare</translation>
     </message>
 </context>
 <context>
@@ -6306,6 +6322,20 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Kommentera&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Signed by</source>
+        <translation>Signerad av</translation>
+    </message>
+    <message>
+        <source>Comment Signing Error</source>
+        <translation>Signeringsfel</translation>
+    </message>
+    <message>
+        <source>You need to create an Identity
+before you can comment</source>
+        <translation>Du måste skapa en identitet
+innan du kan kommentera</translation>
     </message>
 </context>
 <context>
@@ -6394,6 +6424,30 @@ p, li { white-space: pre-wrap; }
         <translation>Uppdatera</translation>
     </message>
     <message>
+        <source>Search Title</source>
+        <translation>Sök titel</translation>
+    </message>
+    <message>
+        <source>Search Date</source>
+        <translation>Sök på datum</translation>
+    </message>
+    <message>
+        <source>Search Author</source>
+        <translation>Sök författare</translation>
+    </message>
+    <message>
+        <source>Content</source>
+        <translation>Innehåll</translation>
+    </message>
+    <message>
+        <source>Search Content</source>
+        <translation>Sökinnehåll</translation>
+    </message>
+    <message>
+        <source>No name</source>
+        <translation>Inget namn</translation>
+    </message>
+    <message>
         <source>Reply</source>
         <translation>Svara</translation>
     </message>
@@ -6473,30 +6527,6 @@ p, li { white-space: pre-wrap; }
         <source>You cant reply to an Anonymous Author</source>
         <translation>Du kan inte svara en anonym upphovsman</translation>
     </message>
-    <message>
-        <source>Search Title</source>
-        <translation>Sök titel</translation>
-    </message>
-    <message>
-        <source>Search Date</source>
-        <translation>Sök på datum</translation>
-    </message>
-    <message>
-        <source>Search Author</source>
-        <translation>Sök författare</translation>
-    </message>
-    <message>
-        <source>Content</source>
-        <translation>Innehåll</translation>
-    </message>
-    <message>
-        <source>Search Content</source>
-        <translation>Sökinnehåll</translation>
-    </message>
-    <message>
-        <source>No name</source>
-        <translation>Inget namn</translation>
-    </message>
 </context>
 <context>
     <name>GxsForumsDialog</name>
@@ -6521,6 +6551,10 @@ p, li { white-space: pre-wrap; }
         <translation>Förhandsgranskning</translation>
     </message>
     <message>
+        <source>My Forums</source>
+        <translation>Mina forum</translation>
+    </message>
+    <message>
         <source>Subscribed Forums</source>
         <translation>Forumprenumerationer</translation>
     </message>
@@ -6539,6 +6573,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Unsubscribe to Forum</source>
         <translation>Avsluta prenumeration på forum</translation>
+    </message>
+    <message>
+        <source>Open in new tab</source>
+        <translation>Öppna i ny flik</translation>
     </message>
     <message>
         <source>New Forum</source>
@@ -6585,24 +6623,16 @@ p, li { white-space: pre-wrap; }
         <translation>Från</translation>
     </message>
     <message>
-        <source>Subject</source>
-        <translation>Ämne</translation>
-    </message>
-    <message>
-        <source>My Forums</source>
-        <translation>Mina forum</translation>
-    </message>
-    <message>
         <source>Sent</source>
         <translation>Skickat</translation>
     </message>
     <message>
-        <source>On %1, %2 wrote:</source>
-        <translation>I %1, skrev %2:</translation>
+        <source>Subject</source>
+        <translation>Ämne</translation>
     </message>
     <message>
-        <source>Open in new tab</source>
-        <translation>Öppna i ny flik</translation>
+        <source>On %1, %2 wrote:</source>
+        <translation>I %1, skrev %2:</translation>
     </message>
 </context>
 <context>
@@ -6633,6 +6663,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Add Icon</source>
         <translation>Lägg till ikon</translation>
+    </message>
+    <message>
+        <source>Key recipients can publish to restricted-type group and can view and publish for private-type channels</source>
+        <translation>Nyckelmottagare kan publicera på begränsad Wiki-grupp, och kan visa och publicera på privata kanaler</translation>
     </message>
     <message>
         <source>Share Publish Key</source>
@@ -6745,10 +6779,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Load Group Logo</source>
         <translation>Läs in grupplogotyp</translation>
-    </message>
-    <message>
-        <source>Key recipients can publish to restricted-type group and can view and publish for private-type channels</source>
-        <translation>Nyckelmottagare kan publicera på begränsad Wiki-grupp, och kan visa och publicera på privata kanaler</translation>
     </message>
 </context>
 <context>
@@ -6904,34 +6934,6 @@ p, li { white-space: pre-wrap; }
         <translation>Om</translation>
     </message>
     <message>
-        <source>Authors</source>
-        <translation>Upphovsmän</translation>
-    </message>
-    <message>
-        <source>Thanks to</source>
-        <translation>Tack till</translation>
-    </message>
-    <message>
-        <source>Translation</source>
-        <translation>Översättning</translation>
-    </message>
-    <message>
-        <source>License Agreement</source>
-        <translation>Licensavtal</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;About RetroShare&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Om RetroShare&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -6966,6 +6968,18 @@ p, li { white-space: pre-wrap; }
 &lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Retroshares Projektsida&lt;/a&gt;&lt;/li&gt;
 &lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;RetroShare Team Blog&lt;/a&gt;&lt;/li&gt;
 &lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;RetroShare Dev Twitter&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Authors</source>
+        <translation>Upphovsmän</translation>
+    </message>
+    <message>
+        <source>Thanks to</source>
+        <translation>Tack till</translation>
+    </message>
+    <message>
+        <source>Translation</source>
+        <translation>Översättning</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -7005,6 +7019,22 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;German: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Keller&lt;/span&gt; &amp;lt;&lt;span style=&quot; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&amp;gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;Maciej Mrug&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
+    <message>
+        <source>License Agreement</source>
+        <translation>Licensavtal</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;About RetroShare&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Om RetroShare&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
 </context>
 <context>
     <name>HelpTextBrowser</name>
@@ -7035,6 +7065,14 @@ p, li { white-space: pre-wrap; }
 </context>
 <context>
     <name>IdDialog</name>
+    <message>
+        <source>Identities</source>
+        <translation>Identiteter</translation>
+    </message>
+    <message>
+        <source>New ID</source>
+        <translation>Nytt ID</translation>
+    </message>
     <message>
         <source>Showing:</source>
         <translation>Visar:</translation>
@@ -7088,10 +7126,6 @@ p, li { white-space: pre-wrap; }
         <translation>Redigera ID</translation>
     </message>
     <message>
-        <source>New ID</source>
-        <translation>Nytt ID</translation>
-    </message>
-    <message>
         <source>Identity Type</source>
         <translation>Identitetstyp</translation>
     </message>
@@ -7116,22 +7150,6 @@ p, li { white-space: pre-wrap; }
         <translation>Nyckel-ID</translation>
     </message>
     <message>
-        <source>Reputation</source>
-        <translation>Rykte</translation>
-    </message>
-    <message>
-        <source>Your Rating</source>
-        <translation>Ditt betyg</translation>
-    </message>
-    <message>
-        <source>Overall Rating</source>
-        <translation>Sammanlagt betyg</translation>
-    </message>
-    <message>
-        <source>Identities</source>
-        <translation>Identiteter</translation>
-    </message>
-    <message>
         <source>PGP Name</source>
         <translation>PGP-namn</translation>
     </message>
@@ -7147,6 +7165,18 @@ p, li { white-space: pre-wrap; }
         <source>PGP Hash</source>
         <translation>Hash-summa</translation>
     </message>
+    <message>
+        <source>Reputation</source>
+        <translation>Rykte</translation>
+    </message>
+    <message>
+        <source>Your Rating</source>
+        <translation>Ditt betyg</translation>
+    </message>
+    <message>
+        <source>Overall Rating</source>
+        <translation>Sammanlagt betyg</translation>
+    </message>
 </context>
 <context>
     <name>IdEditDialog</name>
@@ -7157,22 +7187,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Key ID</source>
         <translation>Nyckel-ID</translation>
-    </message>
-    <message>
-        <source>New Identity</source>
-        <translation>Ny identitet</translation>
-    </message>
-    <message>
-        <source>Pseudonym</source>
-        <translation>Pseudonym</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Avbryt</translation>
-    </message>
-    <message>
-        <source>Create/Update ID</source>
-        <translation>Skapa/Uppdatera ID</translation>
     </message>
     <message>
         <source>PGP Name</source>
@@ -7191,8 +7205,24 @@ p, li { white-space: pre-wrap; }
         <translation>PGP-ID</translation>
     </message>
     <message>
+        <source>New Identity</source>
+        <translation>Ny identitet</translation>
+    </message>
+    <message>
         <source>PGP Associated ID</source>
         <translation>PGP-associerat ID</translation>
+    </message>
+    <message>
+        <source>Pseudonym</source>
+        <translation>Pseudonym</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Avbryt</translation>
+    </message>
+    <message>
+        <source>Create/Update ID</source>
+        <translation>Skapa/Uppdatera ID</translation>
     </message>
 </context>
 <context>
@@ -7308,8 +7338,24 @@ p, li { white-space: pre-wrap; }
         <translation>Snabbstartsguide</translation>
     </message>
     <message>
+        <source>RetroShare %1 a secure decentralized communication platform</source>
+        <translation>RetroShare %1 en säker, decentraliserad kommunikationsplattform</translation>
+    </message>
+    <message>
+        <source>News feed</source>
+        <translation>Nyhetsflöde</translation>
+    </message>
+    <message>
         <source>Friends</source>
         <translation>Kontakter</translation>
+    </message>
+    <message>
+        <source>File sharing</source>
+        <translation>Fildelning</translation>
+    </message>
+    <message>
+        <source>Chat Lobbies</source>
+        <translation>Chatlobbyer</translation>
     </message>
     <message>
         <source>Messages</source>
@@ -7392,6 +7438,10 @@ Frigör mer diskutrymme och klicka OK.</translation>
         <translation>DHT-information</translation>
     </message>
     <message>
+        <source>Bandwidth Details</source>
+        <translation>Bandbreddsinformation</translation>
+    </message>
+    <message>
         <source>Applications</source>
         <translation>Program</translation>
     </message>
@@ -7416,12 +7466,12 @@ Frigör mer diskutrymme och klicka OK.</translation>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <source>%1 new messages</source>
-        <translation>%1 nya meddelanden</translation>
-    </message>
-    <message>
         <source>%1 new message</source>
         <translation>%1 nytt meddelande</translation>
+    </message>
+    <message>
+        <source>%1 new messages</source>
+        <translation>%1 nya meddelanden</translation>
     </message>
     <message>
         <source>Down: %1 (kB/s)</source>
@@ -7460,32 +7510,16 @@ Frigör mer diskutrymme och klicka OK.</translation>
         <translation>Visa</translation>
     </message>
     <message>
+        <source>Make sure this link has not been forged to drag you to a malicious website.</source>
+        <translation>Tillse att den här länken inte leder till en webbsida med skadlig kod.</translation>
+    </message>
+    <message>
         <source>It seems to be an old RetroShare link. Please use copy instead.</source>
         <translation>Det verkar vara en gammal RetroShare-länk.</translation>
     </message>
     <message>
         <source>The file link is malformed.</source>
         <translation>Fillänken är felformaterad.</translation>
-    </message>
-    <message>
-        <source>Bandwidth Details</source>
-        <translation>Bandbreddsinformation</translation>
-    </message>
-    <message>
-        <source>RetroShare %1 a secure decentralized communication platform</source>
-        <translation>RetroShare %1 en säker, decentraliserad kommunikationsplattform</translation>
-    </message>
-    <message>
-        <source>News feed</source>
-        <translation>Nyhetsflöde</translation>
-    </message>
-    <message>
-        <source>Chat Lobbies</source>
-        <translation>Chatlobbyer</translation>
-    </message>
-    <message>
-        <source>File sharing</source>
-        <translation>Fildelning</translation>
     </message>
 </context>
 <context>
@@ -7569,6 +7603,10 @@ Frigör mer diskutrymme och klicka OK.</translation>
     <message>
         <source>Alignment</source>
         <translation>Justering</translation>
+    </message>
+    <message>
+        <source>Add an Image</source>
+        <translation>Lägg till en bild</translation>
     </message>
     <message>
         <source>Sets text font to code style</source>
@@ -7667,6 +7705,30 @@ Frigör mer diskutrymme och klicka OK.</translation>
         <translation>&amp;Justera</translation>
     </message>
     <message>
+        <source>Hello,&lt;br&gt;I recommend a good friend of mine; you can trust them too when you trust me. &lt;br&gt;</source>
+        <translation>Hej! Jag rekommenderar mina kontakter. Du kan autentisera dem också, när du autentiserar mig.</translation>
+    </message>
+    <message>
+        <source>You have a friend recommendation</source>
+        <translation>Du har en kontaktrekommendation</translation>
+    </message>
+    <message>
+        <source>This friend is suggested by</source>
+        <translation>Den här kontakten har föreslagits av</translation>
+    </message>
+    <message>
+        <source>Thanks, &lt;br&gt;The RetroShare Team</source>
+        <translation>Tack! &lt;br&gt;The RetroShare Team</translation>
+    </message>
+    <message>
+        <source>wants to be friends with you on RetroShare</source>
+        <translation>vill bli en av dina kontakter på RetroShare</translation>
+    </message>
+    <message>
+        <source>Hi %1,&lt;br&gt;&lt;br&gt;%2 wants to be friends with you on RetroShare.&lt;br&gt;&lt;br&gt;Respond now:&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Thanks,&lt;br&gt;The RetroShare Team</source>
+        <translation>Hej %1!&lt;br&gt;&lt;br&gt;%2 vill bli en av dina kontakter på RetroShare.&lt;br&gt;&lt;br&gt;Svara nu:&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Tack!&lt;br&gt;RetroShare Team</translation>
+    </message>
+    <message>
         <source>Save Message</source>
         <translation>Spara meddelande</translation>
     </message>
@@ -7701,6 +7763,34 @@ Vill du spara meddelandet i Utkast?</translation>
         <translation>Kontaktinformation</translation>
     </message>
     <message>
+        <source>Original Message</source>
+        <translation>Ursprungligt meddelande</translation>
+    </message>
+    <message>
+        <source>From</source>
+        <translation>Från</translation>
+    </message>
+    <message>
+        <source>To</source>
+        <translation>Till</translation>
+    </message>
+    <message>
+        <source>Cc</source>
+        <translation>Kopia</translation>
+    </message>
+    <message>
+        <source>Sent</source>
+        <translation>Skickat</translation>
+    </message>
+    <message>
+        <source>Subject</source>
+        <translation>Ämne</translation>
+    </message>
+    <message>
+        <source>On %1, %2 wrote:</source>
+        <translation>På %1, skrev %2:</translation>
+    </message>
+    <message>
         <source>Re:</source>
         <translation>Svar:</translation>
     </message>
@@ -7719,14 +7809,6 @@ Vill du spara meddelandet i Utkast?</translation>
     <message>
         <source>Please insert at least one recipient.</source>
         <translation>Ange minst en mottagare.</translation>
-    </message>
-    <message>
-        <source>To</source>
-        <translation>Till</translation>
-    </message>
-    <message>
-        <source>Cc</source>
-        <translation>Kopia</translation>
     </message>
     <message>
         <source>Bcc</source>
@@ -7862,54 +7944,6 @@ Vill du spara meddelandet?</translation>
         <source>Add Extra File</source>
         <translation>Lägg till fil</translation>
     </message>
-    <message>
-        <source>You have a friend recommendation</source>
-        <translation>Du har en kontaktrekommendation</translation>
-    </message>
-    <message>
-        <source>Original Message</source>
-        <translation>Ursprungligt meddelande</translation>
-    </message>
-    <message>
-        <source>From</source>
-        <translation>Från</translation>
-    </message>
-    <message>
-        <source>Sent</source>
-        <translation>Skickat</translation>
-    </message>
-    <message>
-        <source>Subject</source>
-        <translation>Ämne</translation>
-    </message>
-    <message>
-        <source>On %1, %2 wrote:</source>
-        <translation>På %1, skrev %2:</translation>
-    </message>
-    <message>
-        <source>wants to be friends with you on RetroShare</source>
-        <translation>vill bli en av dina kontakter på RetroShare</translation>
-    </message>
-    <message>
-        <source>Hi %1,&lt;br&gt;&lt;br&gt;%2 wants to be friends with you on RetroShare.&lt;br&gt;&lt;br&gt;Respond now:&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Thanks,&lt;br&gt;The RetroShare Team</source>
-        <translation>Hej %1!&lt;br&gt;&lt;br&gt;%2 vill bli en av dina kontakter på RetroShare.&lt;br&gt;&lt;br&gt;Svara nu:&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Tack!&lt;br&gt;RetroShare Team</translation>
-    </message>
-    <message>
-        <source>This friend is suggested by</source>
-        <translation>Den här kontakten har föreslagits av</translation>
-    </message>
-    <message>
-        <source>Thanks, &lt;br&gt;The RetroShare Team</source>
-        <translation>Tack! &lt;br&gt;The RetroShare Team</translation>
-    </message>
-    <message>
-        <source>Hello,&lt;br&gt;I recommend a good friend of mine; you can trust them too when you trust me. &lt;br&gt;</source>
-        <translation>Hej! Jag rekommenderar mina kontakter. Du kan autentisera dem också, när du autentiserar mig.</translation>
-    </message>
-    <message>
-        <source>Add an Image</source>
-        <translation>Lägg till en bild</translation>
-    </message>
 </context>
 <context>
     <name>MessagePage</name>
@@ -7983,6 +8017,10 @@ Vill du spara meddelandet?</translation>
 <context>
     <name>MessageWidget</name>
     <message>
+        <source>Recommended Files</source>
+        <translation>Rekommenderade filer</translation>
+    </message>
+    <message>
         <source>Download all Recommended Files</source>
         <translation>Ladda ner alla rekommenderade filer</translation>
     </message>
@@ -8031,6 +8069,14 @@ Vill du spara meddelandet?</translation>
         <translation>Förhandsgranskning</translation>
     </message>
     <message>
+        <source>Confirm %1 as friend</source>
+        <translation>Bekräfta %1 som kontakt</translation>
+    </message>
+    <message>
+        <source>Add %1 as friend</source>
+        <translation>Lägg till %1 som kontakt</translation>
+    </message>
+    <message>
         <source>No subject</source>
         <translation>Inget ämne</translation>
     </message>
@@ -8070,18 +8116,6 @@ Vill du spara meddelandet?</translation>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
         <translation>HTML-filer (*.htm *.html);;Alla Filer (*)</translation>
     </message>
-    <message>
-        <source>Confirm %1 as friend</source>
-        <translation>Bekräfta %1 som kontakt</translation>
-    </message>
-    <message>
-        <source>Add %1 as friend</source>
-        <translation>Lägg till %1 som kontakt</translation>
-    </message>
-    <message>
-        <source>Recommended Files</source>
-        <translation>Rekommenderade filer</translation>
-    </message>
 </context>
 <context>
     <name>MessageWindow</name>
@@ -8112,6 +8146,10 @@ Vill du spara meddelandet?</translation>
     <message>
         <source>Forward selected message</source>
         <translation>Vidarebefordra markerat meddelande</translation>
+    </message>
+    <message>
+        <source>Forward</source>
+        <translation>Vidarebefordra</translation>
     </message>
     <message>
         <source>Remove selected message</source>
@@ -8181,10 +8219,6 @@ Vill du spara meddelandet?</translation>
         <source>&amp;Quit</source>
         <translation>A&amp;vsluta</translation>
     </message>
-    <message>
-        <source>Forward</source>
-        <translation>Vidarebefordra</translation>
-    </message>
 </context>
 <context>
     <name>MessagesDialog</name>
@@ -8241,26 +8275,6 @@ Vill du spara meddelandet?</translation>
         <translation>Visa</translation>
     </message>
     <message>
-        <source>Attachments</source>
-        <translation>Bilagor</translation>
-    </message>
-    <message>
-        <source>Subject</source>
-        <translation>Ämne</translation>
-    </message>
-    <message>
-        <source>From</source>
-        <translation>Från</translation>
-    </message>
-    <message>
-        <source>Date</source>
-        <translation>Datum</translation>
-    </message>
-    <message>
-        <source>Content</source>
-        <translation>Innehåll</translation>
-    </message>
-    <message>
         <source>Tags</source>
         <translation>Taggar</translation>
     </message>
@@ -8285,16 +8299,16 @@ Vill du spara meddelandet?</translation>
         <translation>Papperskorg</translation>
     </message>
     <message>
-        <source>Quick View</source>
-        <translation>Snabbvy</translation>
-    </message>
-    <message>
         <source>Total Inbox:</source>
         <translation>Totalt inkorg:</translation>
     </message>
     <message>
         <source>Folders</source>
         <translation>Mappar</translation>
+    </message>
+    <message>
+        <source>Quick View</source>
+        <translation>Snabbvy</translation>
     </message>
     <message>
         <source>Print...</source>
@@ -8341,6 +8355,22 @@ Vill du spara meddelandet?</translation>
         <translation>Vidarebefordra meddelande</translation>
     </message>
     <message>
+        <source>Subject</source>
+        <translation>Ämne</translation>
+    </message>
+    <message>
+        <source>From</source>
+        <translation>Från</translation>
+    </message>
+    <message>
+        <source>Date</source>
+        <translation>Datum</translation>
+    </message>
+    <message>
+        <source>Content</source>
+        <translation>Innehåll</translation>
+    </message>
+    <message>
         <source>Click to sort by attachments</source>
         <translation>Klicka för att sortera efter bilagor</translation>
     </message>
@@ -8373,8 +8403,40 @@ Vill du spara meddelandet?</translation>
         <translation>Vidarebefordra markerat meddelande</translation>
     </message>
     <message>
+        <source>Search Subject</source>
+        <translation>Sök på ämne</translation>
+    </message>
+    <message>
+        <source>Search From</source>
+        <translation>Sök på avsändare</translation>
+    </message>
+    <message>
+        <source>Search Date</source>
+        <translation>Sök på datum</translation>
+    </message>
+    <message>
+        <source>Search Content</source>
+        <translation>Sök på innehåll</translation>
+    </message>
+    <message>
+        <source>Search Tags</source>
+        <translation>Sök på taggar</translation>
+    </message>
+    <message>
+        <source>Attachments</source>
+        <translation>Bilagor</translation>
+    </message>
+    <message>
+        <source>Search Attachments</source>
+        <translation>Sök på bilagor</translation>
+    </message>
+    <message>
         <source>Starred</source>
         <translation>Stjärnmärkt</translation>
+    </message>
+    <message>
+        <source>System</source>
+        <translation>System</translation>
     </message>
     <message>
         <source>Open in a new window</source>
@@ -8425,6 +8487,14 @@ Vill du spara meddelandet?</translation>
         <translation>Utkast</translation>
     </message>
     <message>
+        <source>No starred messages available. Stars let you give messages a special status to make them easier to find. To star a message, click on the light gray star beside any message.</source>
+        <translation>Det finns inga stjärnmärkta meddelanden. Stjärnorna ger meddelanden en särskild status, för att dom skall bli lättare att hitta. För att stjärnmärka ett meddelande, klickar du på den grå stjärnan vid sidan av önskat meddelande.</translation>
+    </message>
+    <message>
+        <source>No system messages available.</source>
+        <translation>Det finns inga systemmeddelanden.</translation>
+    </message>
+    <message>
         <source>To</source>
         <translation>Till</translation>
     </message>
@@ -8436,42 +8506,6 @@ Vill du spara meddelandet?</translation>
         <source>Total:</source>
         <translation>Totalt:</translation>
     </message>
-    <message>
-        <source>System</source>
-        <translation>System</translation>
-    </message>
-    <message>
-        <source>No system messages available.</source>
-        <translation>Det finns inga systemmeddelanden.</translation>
-    </message>
-    <message>
-        <source>No starred messages available. Stars let you give messages a special status to make them easier to find. To star a message, click on the light gray star beside any message.</source>
-        <translation>Det finns inga stjärnmärkta meddelanden. Stjärnorna ger meddelanden en särskild status, för att dom skall bli lättare att hitta. För att stjärnmärka ett meddelande, klickar du på den grå stjärnan vid sidan av önskat meddelande.</translation>
-    </message>
-    <message>
-        <source>Search Subject</source>
-        <translation>Sök på ämne</translation>
-    </message>
-    <message>
-        <source>Search From</source>
-        <translation>Sök på avsändare</translation>
-    </message>
-    <message>
-        <source>Search Date</source>
-        <translation>Sök på datum</translation>
-    </message>
-    <message>
-        <source>Search Content</source>
-        <translation>Sök på innehåll</translation>
-    </message>
-    <message>
-        <source>Search Tags</source>
-        <translation>Sök på taggar</translation>
-    </message>
-    <message>
-        <source>Search Attachments</source>
-        <translation>Sök på bilagor</translation>
-    </message>
 </context>
 <context>
     <name>MessengerWindow</name>
@@ -8480,32 +8514,24 @@ Vill du spara meddelandet?</translation>
         <translation>RetroShare kontaktlista</translation>
     </message>
     <message>
-        <source>Add a Friend</source>
-        <translation>Lägg till en kontakt</translation>
-    </message>
-    <message>
         <source>Search Friends</source>
         <translation>Sök kontakter</translation>
     </message>
     <message>
-        <source>Search</source>
-        <translation>Sök</translation>
+        <source>Add a Friend</source>
+        <translation>Lägg till en kontakt</translation>
     </message>
     <message>
         <source>Share files for your friends</source>
         <translation>Dela filer med dina kontakter</translation>
     </message>
+    <message>
+        <source>Search</source>
+        <translation>Sök</translation>
+    </message>
 </context>
 <context>
     <name>MsgItem</name>
-    <message>
-        <source>Expand</source>
-        <translation>Expandera</translation>
-    </message>
-    <message>
-        <source>Remove Item</source>
-        <translation>Ta bort objektet</translation>
-    </message>
     <message>
         <source>Reply to Message</source>
         <translation>Svara på meddelande</translation>
@@ -8521,6 +8547,14 @@ Vill du spara meddelandet?</translation>
     <message>
         <source>Play Media</source>
         <translation>Spela upp media</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Expandera</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Ta bort objektet</translation>
     </message>
     <message>
         <source>Message From</source>
@@ -8605,6 +8639,18 @@ Vill du spara meddelandet?</translation>
 <context>
     <name>NetworkDialog</name>
     <message>
+        <source>Filter:</source>
+        <translation>Filter:</translation>
+    </message>
+    <message>
+        <source>Search Network</source>
+        <translation>Sök i nätverk</translation>
+    </message>
+    <message>
+        <source>Show all accessible keys</source>
+        <translation>Visa alla tillgängliga nycklar</translation>
+    </message>
+    <message>
         <source>Name</source>
         <translation>Namn</translation>
     </message>
@@ -8613,20 +8659,16 @@ Vill du spara meddelandet?</translation>
         <translation>Har jag autentiserat användaren</translation>
     </message>
     <message>
+        <source>Did I sign his PGP key</source>
+        <translation>Har jag signerat denna PGP-nyckel</translation>
+    </message>
+    <message>
         <source>Did peer authenticated me</source>
         <translation>Har användaren autentiserat mig</translation>
     </message>
     <message>
         <source>Cert Id</source>
         <translation>Certifikat-ID</translation>
-    </message>
-    <message>
-        <source>Search Network</source>
-        <translation>Sök i nätverk</translation>
-    </message>
-    <message>
-        <source>Peer ID</source>
-        <translation>Användar-ID</translation>
     </message>
     <message>
         <source>Clear</source>
@@ -8677,6 +8719,18 @@ Vill du spara meddelandet?</translation>
         <translation>Skapa en ny profil</translation>
     </message>
     <message>
+        <source>Search Name</source>
+        <translation>Sök namn</translation>
+    </message>
+    <message>
+        <source>Peer ID</source>
+        <translation>Användar-ID</translation>
+    </message>
+    <message>
+        <source>Search Peer ID</source>
+        <translation>Sök användar-ID</translation>
+    </message>
+    <message>
         <source>Deny friend</source>
         <translation>Avvisa kontakt</translation>
     </message>
@@ -8703,6 +8757,10 @@ Vill du spara meddelandet?</translation>
     <message>
         <source>Personal signature</source>
         <translation>Personligt signerad</translation>
+    </message>
+    <message>
+        <source>PGP key signed by you</source>
+        <translation>PGP-nyckel signerad av dig</translation>
     </message>
     <message>
         <source>Marginally trusted peer</source>
@@ -8733,30 +8791,6 @@ Högerklicka och välj &apos;Skapa kontakt&apos; för att kunna ansluta.</transl
     <message>
         <source>yourself</source>
         <translation>Du själv</translation>
-    </message>
-    <message>
-        <source>Search Name</source>
-        <translation>Sök namn</translation>
-    </message>
-    <message>
-        <source>Search Peer ID</source>
-        <translation>Sök användar-ID</translation>
-    </message>
-    <message>
-        <source>PGP key signed by you</source>
-        <translation>PGP-nyckel signerad av dig</translation>
-    </message>
-    <message>
-        <source>Did I sign his PGP key</source>
-        <translation>Har jag signerat denna PGP-nyckel</translation>
-    </message>
-    <message>
-        <source>Filter:</source>
-        <translation>Filter:</translation>
-    </message>
-    <message>
-        <source>Show all accessible keys</source>
-        <translation>Visa alla tillgängliga nycklar</translation>
     </message>
 </context>
 <context>
@@ -8807,16 +8841,16 @@ Högerklicka och välj &apos;Skapa kontakt&apos; för att kunna ansluta.</transl
 <context>
     <name>NewsFeed</name>
     <message>
-        <source>Remove All</source>
-        <translation>Ta bort alla</translation>
+        <source>News Feed</source>
+        <translation>Nyhetsflöde</translation>
     </message>
     <message>
         <source>Options</source>
         <translation>Alternativ</translation>
     </message>
     <message>
-        <source>News Feed</source>
-        <translation>Nyhetsflöde</translation>
+        <source>Remove All</source>
+        <translation>Ta bort alla</translation>
     </message>
     <message>
         <source>This is a test.</source>
@@ -8862,6 +8896,10 @@ Högerklicka och välj &apos;Skapa kontakt&apos; för att kunna ansluta.</transl
         <translation>Lägg till nya flöden från slutet</translation>
     </message>
     <message>
+        <source>Test</source>
+        <translation>Testa</translation>
+    </message>
+    <message>
         <source>Systray Icon</source>
         <translation>Meddelandefältsikon</translation>
     </message>
@@ -8870,12 +8908,8 @@ Högerklicka och välj &apos;Skapa kontakt&apos; för att kunna ansluta.</transl
         <translation>Meddelande</translation>
     </message>
     <message>
-        <source>Download completed</source>
-        <translation>Nedladdning slutförd</translation>
-    </message>
-    <message>
-        <source>Combined</source>
-        <translation>Kombinerat</translation>
+        <source>Connect attempt</source>
+        <translation>Anslutningsförsök</translation>
     </message>
     <message>
         <source>Toasters</source>
@@ -8890,6 +8924,22 @@ Högerklicka och välj &apos;Skapa kontakt&apos; för att kunna ansluta.</transl
         <translation>Nytt meddelande</translation>
     </message>
     <message>
+        <source>Download completed</source>
+        <translation>Nedladdning slutförd</translation>
+    </message>
+    <message>
+        <source>Private Chat</source>
+        <translation>Privatchatt</translation>
+    </message>
+    <message>
+        <source>Group Chat</source>
+        <translation>Gruppchatt</translation>
+    </message>
+    <message>
+        <source>Chat Lobby</source>
+        <translation>Chattlobby</translation>
+    </message>
+    <message>
         <source>Position</source>
         <translation>Placering</translation>
     </message>
@@ -8902,12 +8952,24 @@ Högerklicka och välj &apos;Skapa kontakt&apos; för att kunna ansluta.</transl
         <translation>Y-marginal</translation>
     </message>
     <message>
-        <source>Private Chat</source>
-        <translation>Privatchatt</translation>
+        <source>Systray message</source>
+        <translation>Systemmeddelande</translation>
     </message>
     <message>
         <source>Group chat</source>
         <translation>Gruppchatt</translation>
+    </message>
+    <message>
+        <source>Chat lobbies</source>
+        <translation>Chattlobby</translation>
+    </message>
+    <message>
+        <source>Combined</source>
+        <translation>Kombinerat</translation>
+    </message>
+    <message>
+        <source>Blink</source>
+        <translation>Blinka</translation>
     </message>
     <message>
         <source>Top Left</source>
@@ -8929,40 +8991,28 @@ Högerklicka och välj &apos;Skapa kontakt&apos; för att kunna ansluta.</transl
         <source>Notify</source>
         <translation>Underrättelser</translation>
     </message>
-    <message>
-        <source>Group Chat</source>
-        <translation>Gruppchatt</translation>
-    </message>
-    <message>
-        <source>Chat Lobby</source>
-        <translation>Chattlobby</translation>
-    </message>
-    <message>
-        <source>Connect attempt</source>
-        <translation>Anslutningsförsök</translation>
-    </message>
-    <message>
-        <source>Systray message</source>
-        <translation>Systemmeddelande</translation>
-    </message>
-    <message>
-        <source>Chat lobbies</source>
-        <translation>Chattlobby</translation>
-    </message>
-    <message>
-        <source>Test</source>
-        <translation>Testa</translation>
-    </message>
-    <message>
-        <source>Blink</source>
-        <translation>Blinka</translation>
-    </message>
 </context>
 <context>
     <name>NotifyQt</name>
     <message>
+        <source>PGP key passphrase</source>
+        <translation>PGP-lösenord</translation>
+    </message>
+    <message>
         <source>Wrong password !</source>
         <translation>Fel lösenord!</translation>
+    </message>
+    <message>
+        <source>Please enter the password to unlock your PGP key:</source>
+        <translation>Ange lösenordet för att låsa upp din PGP-nyckel:</translation>
+    </message>
+    <message>
+        <source>Unregistered plugin/executable</source>
+        <translation>Oregisterad insticks-/programfil</translation>
+    </message>
+    <message>
+        <source>RetroShare has detected an unregistered plugin. This happens in two cases:&lt;UL&gt;&lt;LI&gt;Your RetroShare executable has changed.&lt;/LI&gt;&lt;LI&gt;The plugin has changed&lt;/LI&gt;&lt;/UL&gt;Click on Yes to authorize this plugin, or No to deny it. You can change your mind later in Options -&gt; Plugins, then restart.</source>
+        <translation>RetroShare har upptäckt ett oregistrerat insticksprogram. Detta kan hända i två fall:&lt;UL&gt;&lt;LI&gt;Din RetroShare-startfil har ändrats.&lt;/LI&gt;&lt;LI&gt;Insticksprogrammet har ändrats&lt;/LI&gt;&lt;/UL&gt;Klicka Ja för att tillåta insticket, eller Nej för att neka. Du kan ändra beslutet senare i Alternativ -&gt; Insticksprogram, och sedan starta om programmet.</translation>
     </message>
     <message>
         <source>Examining shared files...</source>
@@ -8977,14 +9027,6 @@ Högerklicka och välj &apos;Skapa kontakt&apos; för att kunna ansluta.</transl
         <translation>Sparar filindex...</translation>
     </message>
     <message>
-        <source>Unregistered plugin/executable</source>
-        <translation>Oregisterad insticks-/programfil</translation>
-    </message>
-    <message>
-        <source>RetroShare has detected an unregistered plugin. This happens in two cases:&lt;UL&gt;&lt;LI&gt;Your RetroShare executable has changed.&lt;/LI&gt;&lt;LI&gt;The plugin has changed&lt;/LI&gt;&lt;/UL&gt;Click on Yes to authorize this plugin, or No to deny it. You can change your mind later in Options -&gt; Plugins, then restart.</source>
-        <translation>RetroShare har upptäckt ett oregistrerat insticksprogram. Detta kan hända i två fall:&lt;UL&gt;&lt;LI&gt;Din RetroShare-startfil har ändrats.&lt;/LI&gt;&lt;LI&gt;Insticksprogrammet har ändrats&lt;/LI&gt;&lt;/UL&gt;Klicka Ja för att tillåta insticket, eller Nej för att neka. Du kan ändra beslutet senare i Alternativ -&gt; Insticksprogram, och sedan starta om programmet.</translation>
-    </message>
-    <message>
         <source>Test</source>
         <translation>Testa</translation>
     </message>
@@ -8993,12 +9035,12 @@ Högerklicka och välj &apos;Skapa kontakt&apos; för att kunna ansluta.</transl
         <translation>Detta är ett test.</translation>
     </message>
     <message>
-        <source>Please enter the password to unlock your PGP key:</source>
-        <translation>Ange lösenordet för att låsa upp din PGP-nyckel:</translation>
+        <source>For the chat lobbies to work properly, the time of your computer needs to be correct. Please check that this is the case (A possible time shift of several minutes was detected with your friends). </source>
+        <translation>För att chattlobbygrupper skall fungera korrekt, måste tidsinställningen på din dator vara korrekt. Kontrollera att så är fallet (en möjlig tidsförskjutning på flera minuter har upptäckts). </translation>
     </message>
     <message>
-        <source>PGP key passphrase</source>
-        <translation>PGP-lösenord</translation>
+        <source>Please check your system clock.</source>
+        <translation>Kontrollera din systemklocka.</translation>
     </message>
 </context>
 <context>
@@ -9047,14 +9089,6 @@ Högerklicka och välj &apos;Skapa kontakt&apos; för att kunna ansluta.</transl
 <context>
     <name>PeerItem</name>
     <message>
-        <source>Expand</source>
-        <translation>Expandera</translation>
-    </message>
-    <message>
-        <source>Remove Item</source>
-        <translation>Ta bort objektet</translation>
-    </message>
-    <message>
         <source>Write a quick Message</source>
         <translation>Skriv ett snabbmeddelande</translation>
     </message>
@@ -9065,6 +9099,14 @@ Högerklicka och välj &apos;Skapa kontakt&apos; för att kunna ansluta.</transl
     <message>
         <source>Start Chat</source>
         <translation>Starta chatt</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Expandera</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Ta bort objektet</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -9327,16 +9369,16 @@ före redigering!</translation>
         <translation>&lt;&lt;</translation>
     </message>
     <message>
+        <source>Stop</source>
+        <translation>Stopp</translation>
+    </message>
+    <message>
         <source>&gt;&gt;</source>
         <translation>&gt;&gt;</translation>
     </message>
     <message>
         <source>Close</source>
         <translation>Stäng</translation>
-    </message>
-    <message>
-        <source>Stop</source>
-        <translation>Stopp</translation>
     </message>
     <message>
         <source>Start</source>
@@ -9361,28 +9403,12 @@ före redigering!</translation>
 <context>
     <name>PluginItem</name>
     <message>
-        <source>Launch configuration panel, if provided by the plugin</source>
-        <translation>Öppna inställningspanel, om det finns i insticksprogrammet</translation>
-    </message>
-    <message>
-        <source>Configure</source>
-        <translation>Konfigurera</translation>
-    </message>
-    <message>
-        <source>File name: </source>
-        <translation>Filnamn:</translation>
-    </message>
-    <message>
-        <source>File hash:</source>
-        <translation>Hash-summa:</translation>
-    </message>
-    <message>
-        <source>Status: </source>
-        <translation>Status: </translation>
-    </message>
-    <message>
         <source>TextLabel</source>
         <translation>Textetikett</translation>
+    </message>
+    <message>
+        <source>Show more details about this plugin</source>
+        <translation>Visa mer information om det här insticksprogrammet</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -9413,16 +9439,32 @@ p, li { white-space: pre-wrap; }
         <translation>Inaktivera</translation>
     </message>
     <message>
+        <source>Launch configuration panel, if provided by the plugin</source>
+        <translation>Öppna inställningspanel, om det finns i insticksprogrammet</translation>
+    </message>
+    <message>
+        <source>Configure</source>
+        <translation>Konfigurera</translation>
+    </message>
+    <message>
         <source>About</source>
         <translation>Om</translation>
     </message>
     <message>
-        <source>will be enabled after your restart RetroShare.</source>
-        <translation>kommer att aktiveras när du startar om RetroShare</translation>
+        <source>File name: </source>
+        <translation>Filnamn:</translation>
     </message>
     <message>
-        <source>Show more details about this plugin</source>
-        <translation>Visa mer information om det här insticksprogrammet</translation>
+        <source>File hash:</source>
+        <translation>Hash-summa:</translation>
+    </message>
+    <message>
+        <source>Status: </source>
+        <translation>Status: </translation>
+    </message>
+    <message>
+        <source>will be enabled after your restart RetroShare.</source>
+        <translation>kommer att aktiveras när du startar om RetroShare</translation>
     </message>
 </context>
 <context>
@@ -9443,16 +9485,28 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PluginsPage</name>
     <message>
-        <source>Loaded plugins</source>
-        <translation>Inlästa insticksprogram</translation>
-    </message>
-    <message>
         <source>Authorize all plugins</source>
         <translation>Tillåt alla insticksprogram</translation>
     </message>
     <message>
+        <source>Loaded plugins</source>
+        <translation>Inlästa insticksprogram</translation>
+    </message>
+    <message>
         <source>Plugin look-up directories</source>
         <translation>Mappar med insticksprogram</translation>
+    </message>
+    <message>
+        <source>Hash rejected. Enable it manually and restart, if you need.</source>
+        <translation>Hash-beräkning avslogs. Aktivera den manuellt och starta om, vid behov.</translation>
+    </message>
+    <message>
+        <source>No API number supplied. Please read plugin development manual.</source>
+        <translation>Inget API-nummer. Läs manualen för insticksutveckling.</translation>
+    </message>
+    <message>
+        <source>No SVN number supplied. Please read plugin development manual.</source>
+        <translation>Inget SVN-nummer. Läs manualen för insticksutveckling.</translation>
     </message>
     <message>
         <source>Loading error.</source>
@@ -9483,6 +9537,10 @@ p, li { white-space: pre-wrap; }
         <translation>Beskrivning ej tillgänglig</translation>
     </message>
     <message>
+        <source>Unknown version</source>
+        <translation>Okänd version</translation>
+    </message>
+    <message>
         <source>Check this for developing plugins. They will not
 be checked for the hash. However, in normal
 times, checking the hash protects you from
@@ -9495,22 +9553,6 @@ felaktigt utformade insticksprogram. </translation>
     <message>
         <source>Plugins</source>
         <translation>Insticksprogram</translation>
-    </message>
-    <message>
-        <source>Hash rejected. Enable it manually and restart, if you need.</source>
-        <translation>Hash-beräkning avslogs. Aktivera den manuellt och starta om, vid behov.</translation>
-    </message>
-    <message>
-        <source>No API number supplied. Please read plugin development manual.</source>
-        <translation>Inget API-nummer. Läs manualen för insticksutveckling.</translation>
-    </message>
-    <message>
-        <source>No SVN number supplied. Please read plugin development manual.</source>
-        <translation>Inget SVN-nummer. Läs manualen för insticksutveckling.</translation>
-    </message>
-    <message>
-        <source>Unknown version</source>
-        <translation>Okänd version</translation>
     </message>
 </context>
 <context>
@@ -9584,17 +9626,29 @@ p, li { white-space: pre-wrap; }
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Link&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt; font-weight:600;&quot;&gt;Link&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Länk&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt; font-weight:600;&quot;&gt;Länk&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Signed by: </source>
+        <translation>Signerad av:</translation>
     </message>
     <message>
         <source>Notes</source>
         <translation>Anteckningar</translation>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation>RetroShare</translation>
+    </message>
+    <message>
+        <source>Please reate or choose a Signing Id first</source>
+        <translation>Skapa eller välj ett signatur-ID först</translation>
     </message>
 </context>
 <context>
@@ -9630,6 +9684,10 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PostedItem</name>
     <message>
+        <source>0</source>
+        <translation>0</translation>
+    </message>
+    <message>
         <source>/\</source>
         <translation>/\</translation>
     </message>
@@ -9640,6 +9698,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>\/</source>
         <translation>\/</translation>
+    </message>
+    <message>
+        <source>This is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title don&apos;t you think? Yes it is and should wrap around I hope</source>
+        <translation>Detta är ett väldigt lååååångt namn, eller hur? Ja, det är det och borde därför radbrytas.</translation>
     </message>
     <message>
         <source>Date</source>
@@ -9654,18 +9716,6 @@ p, li { white-space: pre-wrap; }
         <translation>Webbplats</translation>
     </message>
     <message>
-        <source>View Comments</source>
-        <translation>Visa kommentarer</translation>
-    </message>
-    <message>
-        <source>This is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title don&apos;t you think? Yes it is and should wrap around I hope</source>
-        <translation>Detta är ett väldigt lååååångt namn, eller hur? Ja, det är det och borde därför radbrytas.</translation>
-    </message>
-    <message>
-        <source>0</source>
-        <translation>0</translation>
-    </message>
-    <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -9676,6 +9726,10 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;#&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; Kommentarer:  0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>View Comments</source>
+        <translation>Visa kommentarer</translation>
     </message>
 </context>
 <context>
@@ -9695,6 +9749,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Top</source>
         <translation>Överst</translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation>Uppdatera</translation>
     </message>
     <message>
         <source>Today</source>
@@ -9717,12 +9775,12 @@ p, li { white-space: pre-wrap; }
         <translation>Detta år</translation>
     </message>
     <message>
-        <source>Submit Post</source>
-        <translation>Skicka</translation>
+        <source>New Topic</source>
+        <translation>Ny rubrik</translation>
     </message>
     <message>
-        <source>Refresh</source>
-        <translation>Uppdatera</translation>
+        <source>Submit Post</source>
+        <translation>Skicka</translation>
     </message>
     <message>
         <source>Showing 1-100</source>
@@ -9737,6 +9795,10 @@ p, li { white-space: pre-wrap; }
         <translation>Nästa</translation>
     </message>
     <message>
+        <source>My Topics</source>
+        <translation>Mina rubriker</translation>
+    </message>
+    <message>
         <source>Subscribed Topics</source>
         <translation>Rubrikprenumerationer</translation>
     </message>
@@ -9747,14 +9809,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Other Topics</source>
         <translation>Andra rubriker</translation>
-    </message>
-    <message>
-        <source>My Topics</source>
-        <translation>Mina rubriker</translation>
-    </message>
-    <message>
-        <source>New Topic</source>
-        <translation>Ny rubrik</translation>
     </message>
 </context>
 <context>
@@ -9795,20 +9849,24 @@ p, li { white-space: pre-wrap; }
         <translation>Profilhanterare</translation>
     </message>
     <message>
-        <source>Generate New Identity</source>
-        <translation>Generera ny identitet</translation>
-    </message>
-    <message>
-        <source>Import new identity</source>
-        <translation>Importera ny identitet</translation>
-    </message>
-    <message>
         <source>Export selected identity</source>
         <translation>Exportera markerad identitet</translation>
     </message>
     <message>
         <source>Identities</source>
         <translation>Identiteter</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>Namn</translation>
+    </message>
+    <message>
+        <source>Email</source>
+        <translation>E-post</translation>
+    </message>
+    <message>
+        <source>GID</source>
+        <translation>GID</translation>
     </message>
     <message>
         <source>Export Identity</source>
@@ -9839,6 +9897,14 @@ och där läsa in den med importfunktionen.</translation>
         <translation>Identiteten sparades inte</translation>
     </message>
     <message>
+        <source>Your identity was not saved. An error occurred.</source>
+        <translation>Din identitet sparades inte. Ett fel uppstod.</translation>
+    </message>
+    <message>
+        <source>Import Identity</source>
+        <translation>Importera identitet</translation>
+    </message>
+    <message>
         <source>Identity not loaded</source>
         <translation>Identiteten kunde inte läsas in</translation>
     </message>
@@ -9849,6 +9915,10 @@ och där läsa in den med importfunktionen.</translation>
     <message>
         <source>New identity imported</source>
         <translation>Ny identitet importerad</translation>
+    </message>
+    <message>
+        <source>Your identity was imported successfully:</source>
+        <translation>Din identitet importerades korrekt:</translation>
     </message>
     <message>
         <source>You can use it now to create a new location.</source>
@@ -9863,51 +9933,35 @@ och där läsa in den med importfunktionen.</translation>
         <translation>Certifikat (*.pqi *.pem)</translation>
     </message>
     <message>
-        <source>Name</source>
-        <translation>Namn</translation>
-    </message>
-    <message>
-        <source>Email</source>
-        <translation>E-post</translation>
-    </message>
-    <message>
-        <source>GID</source>
-        <translation>GID</translation>
-    </message>
-    <message>
-        <source>You can manage here your profiles, import, export your profiles or generate one .</source>
-        <translation>Här kan du hantera dina profiler. Importera, exportera eller generera nya.</translation>
-    </message>
-    <message>
-        <source>Import Identity</source>
-        <translation>Importera identitet</translation>
-    </message>
-    <message>
-        <source>Your identity was not saved. An error occurred.</source>
-        <translation>Din identitet sparades inte. Ett fel uppstod.</translation>
-    </message>
-    <message>
-        <source>Your identity was imported successfully:</source>
-        <translation>Din identitet importerades korrekt:</translation>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Select in the list below an identity to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;When keeping the same identity for your new  location, your friends will automatically accept you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Välj en identitet från nedanstående lista, och tryck &amp;quot;Exportera markerad identitet&amp;quot;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;För att använda den på en annan dator,  väljer du identitetshanteraren i inloggningsfönstret. Därifrån kan du importera identitetsfilen och skapa en ny plats för den identiteten. &lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;När du använder samma identitet från den nya platsen, kommer du automatiskt att accepteras av dina kontakter.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
     <name>ProfileWidget</name>
     <message>
+        <source>Edit status message</source>
+        <translation>Redigera statusmeddelande</translation>
+    </message>
+    <message>
         <source>Copy Certificate</source>
         <translation>Kopiera certifikat</translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation>RetroShare</translation>
-    </message>
-    <message>
-        <source>Sorry, create certificate failed</source>
-        <translation>Kunde inte skapa certifikat</translation>
-    </message>
-    <message>
-        <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation>Ditt certifikat är kopierat till Urklipp, klistra in och skicka det till din kontakt via e-post eller på något annat sätt.</translation>
     </message>
     <message>
         <source>Profile Manager</source>
@@ -9930,10 +9984,6 @@ och där läsa in den med importfunktionen.</translation>
         <translation>Användar-ID</translation>
     </message>
     <message>
-        <source>Other Information</source>
-        <translation>Annan information</translation>
-    </message>
-    <message>
         <source>Number of Friends:</source>
         <translation>Antal kontakte:</translation>
     </message>
@@ -9944,6 +9994,10 @@ och där läsa in den med importfunktionen.</translation>
     <message>
         <source>Online since:</source>
         <translation>Ansluten sedan:</translation>
+    </message>
+    <message>
+        <source>Other Information</source>
+        <translation>Annan information</translation>
     </message>
     <message>
         <source>My Address</source>
@@ -9966,8 +10020,16 @@ och där läsa in den med importfunktionen.</translation>
         <translation>Adresslista:</translation>
     </message>
     <message>
-        <source>Edit status message</source>
-        <translation>Redigera statusmeddelande</translation>
+        <source>RetroShare</source>
+        <translation>RetroShare</translation>
+    </message>
+    <message>
+        <source>Sorry, create certificate failed</source>
+        <translation>Kunde inte skapa certifikat</translation>
+    </message>
+    <message>
+        <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
+        <translation>Ditt certifikat är kopierat till Urklipp, klistra in och skicka det till din kontakt via e-post eller på något annat sätt.</translation>
     </message>
 </context>
 <context>
@@ -10035,30 +10097,20 @@ och där läsa in den med importfunktionen.</translation>
 <context>
     <name>QObject</name>
     <message>
-        <source>RetroShare</source>
-        <translation>RetroShare</translation>
+        <source>Confirmation</source>
+        <translation>Bekräftelse</translation>
     </message>
     <message>
-        <source>An unexpected error occured. Please report &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</source>
-        <translation>Ett oväntat fel uppstod. Rapportera &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</translation>
+        <source>Do you want this link to be handled by your system?</source>
+        <translation>Vill du att systemet skall hantera den här länken?</translation>
     </message>
     <message>
-        <source>Multiple instances</source>
-        <translation>Flera instanser</translation>
-    </message>
-    <message>
-        <source>Another RetroShare using the same profile is already running on your system. Please close that instance first
- Lock file:
+        <source>Click to add this RetroShare cert to your PGP keyring
+and open the Make Friend Wizard.
 </source>
-        <translation>En annan instans av RetroShare som använder samma profil, körs redan på ditt system. Avsluta den instansen först. Låsfil:\n</translation>
-    </message>
-    <message>
-        <source>Login Failure</source>
-        <translation>Inloggningsfel</translation>
-    </message>
-    <message>
-        <source>Maybe password is wrong</source>
-        <translation>Lösenordet kanske är fel</translation>
+        <translation>Klicka för att lägga till detta certifikat till din PGP-nyckelring
+ och öppna Skapa kontakt-guiden
+</translation>
     </message>
     <message>
         <source>Add file</source>
@@ -10083,10 +10135,6 @@ och där läsa in den med importfunktionen.</translation>
     <message>
         <source>Do you want to process %1 links ?</source>
         <translation>Vill du bearbeta %1 länkar?</translation>
-    </message>
-    <message>
-        <source>Confirmation</source>
-        <translation>Bekräftelse</translation>
     </message>
     <message>
         <source>%1 of %2 RetroShare link processed.</source>
@@ -10177,6 +10225,22 @@ och där läsa in den med importfunktionen.</translation>
         <translation>Kunde inte hitta kanalmeddelandena</translation>
     </message>
     <message>
+        <source>Recipient not accepted</source>
+        <translation>Mottagaren accepterades inte</translation>
+    </message>
+    <message>
+        <source>Recipients not accepted</source>
+        <translation>Mottagarna accepterades inte</translation>
+    </message>
+    <message>
+        <source>Unkown recipient</source>
+        <translation>Okänd mottagare.</translation>
+    </message>
+    <message>
+        <source>Unkown recipients</source>
+        <translation>Okända mottagare</translation>
+    </message>
+    <message>
         <source>Malformed links</source>
         <translation>Felaktigt utformade länkar</translation>
     </message>
@@ -10185,8 +10249,46 @@ och där läsa in den med importfunktionen.</translation>
         <translation>Ogiltiga länkar</translation>
     </message>
     <message>
+        <source>Warning: forbidden characters found in filenames. 
+Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replaced by &apos;_&apos;.</source>
+        <translation>Varning! Förbjudna tecken hittades i filnamn. 
+Tecknen &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; kommer att ersättas av &apos;_&apos;.</translation>
+    </message>
+    <message>
         <source>Result</source>
         <translation>Resultat</translation>
+    </message>
+    <message>
+        <source>Directory is browsable for friends from groups</source>
+        <translation>Mappen är bläddringsbar, för gruppkontakter</translation>
+    </message>
+    <message>
+        <source>Directory is accessible by anonymous tunnels from friends from groups</source>
+        <translation>Mappen kan nås via anonyma tunnlar, för gruppkontakter</translation>
+    </message>
+    <message>
+        <source>Directory is browsable for any friend</source>
+        <translation>Mappen är bläddringsbar, för alla kontakter</translation>
+    </message>
+    <message>
+        <source>Directory is accessible by anonymous tunnels from any friend</source>
+        <translation>Mappen kan nås via anonyma tunnlar, för alla kontakter</translation>
+    </message>
+    <message>
+        <source>Directory is NOT browsable for friends from groups</source>
+        <translation>Mappen är INTE tillgänglig för gruppkontakter</translation>
+    </message>
+    <message>
+        <source>Directory is NOT accessible by anonymous tunnels from friends from groups</source>
+        <translation>Mappen är INTE tillgänglig via anonym tunnelanslutning för gruppkontakter</translation>
+    </message>
+    <message>
+        <source>Directory is NOT browsable for any friend</source>
+        <translation>Mappen är INTE tillgänglig för några kontakter</translation>
+    </message>
+    <message>
+        <source>Directory is NOT accessible by anonymous tunnels from any friend</source>
+        <translation>Mappen är INTE tillgänglig via anonym tunnelanslutning för några kontakter </translation>
     </message>
     <message>
         <source>Unable to make path</source>
@@ -10195,6 +10297,16 @@ och där läsa in den med importfunktionen.</translation>
     <message>
         <source>Unable to make path:</source>
         <translation>Kunde inte skapa sökvägen:</translation>
+    </message>
+    <message>
+        <source>Failed to process collection file</source>
+        <translation>Kunde inte bearbeta samlingsfilen</translation>
+    </message>
+    <message>
+        <source>The collection file %1 could not be opened.
+Reported error is: %2</source>
+        <translation>Samlingsfilen %1, kunde inte öppnas.
+Rapporterat fel är: %2</translation>
     </message>
     <message>
         <source>Deny friend</source>
@@ -10219,10 +10331,6 @@ och där läsa in den med importfunktionen.</translation>
     </translation>
     </message>
     <message>
-        <source>Start with a RetroShare link is only supported for Windows.</source>
-        <translation>Start via RetroShare-länk, stöds endast i Windows.</translation>
-    </message>
-    <message>
         <source>You appear to have locations associated to DSA keys:</source>
         <translation>Du verkar ha platser associerade med DSA-nycklar:</translation>
     </message>
@@ -10231,34 +10339,38 @@ och där läsa in den med importfunktionen.</translation>
         <translation>DSA-nycklar stöds ännu inte av RetroShare. Alla dessa platser kommer dessvärre att vara obrukbara.</translation>
     </message>
     <message>
+        <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although PGP keys are mentioned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
+        <translation>Denna version av RetroShare använder OpenPGP-SDK. Som sidoeffekt använder den inte systemets delade PGP-nyckelring, utan har sin egen nyckelring som delas av alla RetroShare-instanser. &lt;br&gt;&lt;br&gt;Du verkar inte ha någon sådan nyckelring, även om GPG-nycklar associeras med befintliga RetroShare-konton, troligen för att du just uppgraderat till denna nya version av programmet.</translation>
+    </message>
+    <message>
         <source>Choose between:&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;Ok&lt;/b&gt; to copy the existing keyring from gnupg (safest bet), or &lt;/li&gt;&lt;li&gt;&lt;b&gt;Close without saving&lt;/b&gt; to start fresh with an empty keyring (you will be asked to create a new PGP key to work with RetroShare, or import a previously saved pgp keypair). &lt;/li&gt;&lt;li&gt;&lt;b&gt;Cancel&lt;/b&gt; to quit and forge a keyring by yourself (needs some PGP skills)&lt;/li&gt;&lt;/ul&gt;</source>
         <translation>Välj mellan:&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;OK&lt;/b&gt; för att kopiera befintlig nyckelring från gnupg (säkraste tipset), eller &lt;/li&gt;&lt;li&gt;&lt;b&gt;stäng utan att spara&lt;/b&gt;, för att börja om med en tom nyckelring (du kommer att bli ombedd att skapa en ny PGP-nyckel, eller att importera ett befintligt pgp nyckelpar). &lt;/li&gt;&lt;li&gt;&lt;b&gt;Avbryt&lt;/b&gt; för att avsluta och formatera en nyckelring själv (kräver viss PGP-kunskap)&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
-        <source>Recipient not accepted</source>
-        <translation>Mottagaren accepterades inte</translation>
+        <source>RetroShare</source>
+        <translation>RetroShare</translation>
     </message>
     <message>
-        <source>Recipients not accepted</source>
-        <translation>Mottagarna accepterades inte</translation>
-    </message>
-    <message>
-        <source>Unkown recipient</source>
-        <translation>Okänd mottagare.</translation>
-    </message>
-    <message>
-        <source>Unkown recipients</source>
-        <translation>Okända mottagare</translation>
-    </message>
-    <message>
-        <source>The collection file %1 could not be opened.
-Reported error is: %2</source>
-        <translation>Samlingsfilen %1, kunde inte öppnas.
-Rapporterat fel är: %2</translation>
+        <source>Initialization failed. Wrong or missing installation of PGP.</source>
+        <translation>Initiering misslyckades. Felaktig eller saknad PGP-installation.</translation>
     </message>
     <message>
         <source>An unexpected error occurred. Please report &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</source>
         <translation>Ett oväntat fel uppstod. Rapportera &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</translation>
+    </message>
+    <message>
+        <source>An unexpected error occured. Please report &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</source>
+        <translation>Ett oväntat fel uppstod. Rapportera &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</translation>
+    </message>
+    <message>
+        <source>Multiple instances</source>
+        <translation>Flera instanser</translation>
+    </message>
+    <message>
+        <source>Another RetroShare using the same profile is already running on your system. Please close that instance first
+ Lock file:
+</source>
+        <translation>En annan instans av RetroShare som använder samma profil, körs redan på ditt system. Avsluta den instansen först. Låsfil:\n</translation>
     </message>
     <message>
         <source>An unexpected error occurred when Retroshare tried to acquire the single instance lock
@@ -10269,62 +10381,24 @@ Rapporterat fel är: %2</translation>
 </translation>
     </message>
     <message>
-        <source>Directory is browsable for any friend</source>
-        <translation>Mappen är bläddringsbar, för alla kontakter</translation>
+        <source>Login Failure</source>
+        <translation>Inloggningsfel</translation>
     </message>
     <message>
-        <source>Directory is accessible by anonymous tunnels from any friend</source>
-        <translation>Mappen kan nås via anonyma tunnlar, för alla kontakter</translation>
+        <source>Maybe password is wrong</source>
+        <translation>Lösenordet kanske är fel</translation>
     </message>
     <message>
-        <source>Failed to process collection file</source>
-        <translation>Kunde inte bearbeta samlingsfilen</translation>
+        <source>Start with a RetroShare link is only supported for Windows.</source>
+        <translation>Start via RetroShare-länk, stöds endast i Windows.</translation>
     </message>
     <message>
-        <source>Click to add this RetroShare cert to your PGP keyring
-and open the Make Friend Wizard.
-</source>
-        <translation>Klicka för att lägga till detta certifikat till din PGP-nyckelring
- och öppna Skapa kontakt-guiden
-</translation>
+        <source>Subject: </source>
+        <translation>Ämne:</translation>
     </message>
     <message>
-        <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although PGP keys are mentioned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
-        <translation>Denna version av RetroShare använder OpenPGP-SDK. Som sidoeffekt använder den inte systemets delade PGP-nyckelring, utan har sin egen nyckelring som delas av alla RetroShare-instanser. &lt;br&gt;&lt;br&gt;Du verkar inte ha någon sådan nyckelring, även om GPG-nycklar associeras med befintliga RetroShare-konton, troligen för att du just uppgraderat till denna nya version av programmet.</translation>
-    </message>
-    <message>
-        <source>Initialization failed. Wrong or missing installation of PGP.</source>
-        <translation>Initiering misslyckades. Felaktig eller saknad PGP-installation.</translation>
-    </message>
-    <message>
-        <source>Warning: forbidden characters found in filenames. 
-Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replaced by &apos;_&apos;.</source>
-        <translation>Varning! Förbjudna tecken hittades i filnamn. 
-Tecknen &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; kommer att ersättas av &apos;_&apos;.</translation>
-    </message>
-    <message>
-        <source>Directory is NOT browsable for any friend</source>
-        <translation>Mappen är INTE tillgänglig för några kontakter</translation>
-    </message>
-    <message>
-        <source>Directory is NOT accessible by anonymous tunnels from any friend</source>
-        <translation>Mappen är INTE tillgänglig via anonym tunnelanslutning för några kontakter </translation>
-    </message>
-    <message>
-        <source>Directory is browsable for friends from groups</source>
-        <translation>Mappen är bläddringsbar, för gruppkontakter</translation>
-    </message>
-    <message>
-        <source>Directory is accessible by anonymous tunnels from friends from groups</source>
-        <translation>Mappen kan nås via anonyma tunnlar, för gruppkontakter</translation>
-    </message>
-    <message>
-        <source>Directory is NOT browsable for friends from groups</source>
-        <translation>Mappen är INTE tillgänglig för gruppkontakter</translation>
-    </message>
-    <message>
-        <source>Directory is NOT accessible by anonymous tunnels from friends from groups</source>
-        <translation>Mappen är INTE tillgänglig via anonym tunnelanslutning för gruppkontakter</translation>
+        <source>Participants: </source>
+        <translation>Deltagare:</translation>
     </message>
 </context>
 <context>
@@ -10434,6 +10508,24 @@ p, li { white-space: pre-wrap; }
         <translation>&lt; Tillbaka</translation>
     </message>
     <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;This is a list of shared folders . You can add and remove folders using the button on the left. When you add a new folder, initially all file in that folder are shared.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt; font-weight:600;&quot;&gt;Browsable by friends&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;: files are browsable from your direct friends.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Anonymously shared&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files can be downloaded by anybody through anonymous tunnels.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Detta är en lista över delade mappar. Du kan lägga till och ta bort mappar med knappen till vänster. När du lägger till en ny mapp delas, till en början, alla filer i den mappen ut.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;Du kan sätta upp separata fildelningsregler för varje enskild mapp:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Bläddringsbara för kontakter&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: Filerna är bläddringsbara för dina direkta kontakter.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Anonymt delade&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: Filerna kan laddas ner av vem som helst, genom anonyma tunnlar.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
         <source>Directory</source>
         <translation>Mapp</translation>
     </message>
@@ -10526,24 +10618,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Warning!</source>
         <translation>Varning!</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;This is a list of shared folders . You can add and remove folders using the button on the left. When you add a new folder, initially all file in that folder are shared.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt; font-weight:600;&quot;&gt;Browsable by friends&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;: files are browsable from your direct friends.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Anonymously shared&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files can be downloaded by anybody through anonymous tunnels.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Detta är en lista över delade mappar. Du kan lägga till och ta bort mappar med knappen till vänster. När du lägger till en ny mapp delas, till en början, alla filer i den mappen ut.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;Du kan sätta upp separata fildelningsregler för varje enskild mapp:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Bläddringsbara för kontakter&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: Filerna är bläddringsbara för dina direkta kontakter.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Anonymt delade&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: Filerna kan laddas ner av vem som helst, genom anonyma tunnlar.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -10821,6 +10895,108 @@ Vill du krympa bilden till %1x%2 pixlar?</translation>
 <context>
     <name>SearchDialog</name>
     <message>
+        <source>Enter a keyword here (at least 3 char long)</source>
+        <translation>Ange nyckelord här (minst 3 tecken)</translation>
+    </message>
+    <message>
+        <source>Start Search</source>
+        <translation>Starta sökning</translation>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation>Sök</translation>
+    </message>
+    <message>
+        <source>Advanced Search</source>
+        <translation>Avancerad sökning</translation>
+    </message>
+    <message>
+        <source>Advanced</source>
+        <translation>Avancerat</translation>
+    </message>
+    <message>
+        <source>Search inside &quot;browsable&quot; files of your friends</source>
+        <translation>Sök i &quot;Bläddringsbara&quot; filer hos kontakter</translation>
+    </message>
+    <message>
+        <source>Browsable files</source>
+        <translation>Åtkomliga filer</translation>
+    </message>
+    <message>
+        <source>Multi-hop search at distance 6 in the network 
+(always reports available files)</source>
+        <translation>Multihopp-sökning på 6 nivåer i nätverket
+(rapporterar alltid tillgängliga filer)</translation>
+    </message>
+    <message>
+        <source>Distant</source>
+        <translation>Avlägsna</translation>
+    </message>
+    <message>
+        <source>Include files from your own file list in the search result</source>
+        <translation>Inkludera filer från egen fillista i sökresultatet</translation>
+    </message>
+    <message>
+        <source>Own files</source>
+        <translation>Egna filer</translation>
+    </message>
+    <message>
+        <source>Close all Search Results</source>
+        <translation>Stäng alla sökresultat</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Rensa</translation>
+    </message>
+    <message>
+        <source>KeyWords</source>
+        <translation>Nyckelord</translation>
+    </message>
+    <message>
+        <source>Results</source>
+        <translation>Resultat</translation>
+    </message>
+    <message>
+        <source>Search Id</source>
+        <translation>Sök ID</translation>
+    </message>
+    <message>
+        <source>Filename</source>
+        <translation>Filnamn</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Storlek</translation>
+    </message>
+    <message>
+        <source>Sources</source>
+        <translation>Källor</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation>Typ</translation>
+    </message>
+    <message>
+        <source>Age</source>
+        <translation>Ålder</translation>
+    </message>
+    <message>
+        <source>Hash</source>
+        <translation>Hash-summa</translation>
+    </message>
+    <message>
+        <source>Filter:</source>
+        <translation>Filter:</translation>
+    </message>
+    <message>
+        <source>Filter Search Result</source>
+        <translation>Filtrera sökresultat</translation>
+    </message>
+    <message>
+        <source>Max results:</source>
+        <translation>Maxresultat:</translation>
+    </message>
+    <message>
         <source>Any</source>
         <translation>Alla</translation>
     </message>
@@ -10857,90 +11033,20 @@ Vill du krympa bilden till %1x%2 pixlar?</translation>
         <translation>Mapp</translation>
     </message>
     <message>
-        <source>Start Search</source>
-        <translation>Starta sökning</translation>
+        <source>Download Selected</source>
+        <translation>Ladda ner markerat</translation>
     </message>
     <message>
-        <source>Search</source>
-        <translation>Sök</translation>
-    </message>
-    <message>
-        <source>Advanced Search</source>
-        <translation>Avancerad sökning</translation>
-    </message>
-    <message>
-        <source>Advanced</source>
-        <translation>Avancerat</translation>
-    </message>
-    <message>
-        <source>KeyWords</source>
-        <translation>Nyckelord</translation>
-    </message>
-    <message>
-        <source>Results</source>
-        <translation>Resultat</translation>
-    </message>
-    <message>
-        <source>Search Id</source>
-        <translation>Sök ID</translation>
-    </message>
-    <message>
-        <source>Filter Search Result</source>
-        <translation>Filtrera sökresultat</translation>
+        <source>Download selected</source>
+        <translation>Nedladdning vald</translation>
     </message>
     <message>
         <source>File Name</source>
         <translation>Filnamn</translation>
     </message>
     <message>
-        <source>Filename</source>
-        <translation>Filnamn</translation>
-    </message>
-    <message>
-        <source>Size</source>
-        <translation>Storlek</translation>
-    </message>
-    <message>
-        <source>Sources</source>
-        <translation>Källor</translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation>Typ</translation>
-    </message>
-    <message>
-        <source>Age</source>
-        <translation>Ålder</translation>
-    </message>
-    <message>
-        <source>Hash</source>
-        <translation>Hash-summa</translation>
-    </message>
-    <message>
-        <source>Download Selected</source>
-        <translation>Ladda ner markerat</translation>
-    </message>
-    <message>
         <source>Download</source>
         <translation>Ladda ner</translation>
-    </message>
-    <message>
-        <source>Include files from your own file list in the search result</source>
-        <translation>Inkludera filer från egen fillista i sökresultatet</translation>
-    </message>
-    <message>
-        <source>Search inside &quot;browsable&quot; files of your friends</source>
-        <translation>Sök i &quot;Bläddringsbara&quot; filer hos kontakter</translation>
-    </message>
-    <message>
-        <source>Multi-hop search at distance 6 in the network 
-(always reports available files)</source>
-        <translation>Multihopp-sökning på 6 nivåer i nätverket
-(rapporterar alltid tillgängliga filer)</translation>
-    </message>
-    <message>
-        <source>Enter a keyword here (at least 3 char long)</source>
-        <translation>Ange nyckelord här (minst 3 tecken)</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
@@ -10986,48 +11092,16 @@ Vill du krympa bilden till %1x%2 pixlar?</translation>
         <source>New RetroShare Link(s)</source>
         <translation>Ny RetroShare-länk</translation>
     </message>
-    <message>
-        <source>Close all Search Results</source>
-        <translation>Stäng alla sökresultat</translation>
-    </message>
-    <message>
-        <source>Browsable files</source>
-        <translation>Åtkomliga filer</translation>
-    </message>
-    <message>
-        <source>Distant</source>
-        <translation>Avlägsna</translation>
-    </message>
-    <message>
-        <source>Own files</source>
-        <translation>Egna filer</translation>
-    </message>
-    <message>
-        <source>Clear</source>
-        <translation>Rensa</translation>
-    </message>
-    <message>
-        <source>Filter:</source>
-        <translation>Filter:</translation>
-    </message>
-    <message>
-        <source>Max results:</source>
-        <translation>Maxresultat:</translation>
-    </message>
-    <message>
-        <source>Download selected</source>
-        <translation>Nedladdning vald</translation>
-    </message>
 </context>
 <context>
     <name>SecurityItem</name>
     <message>
-        <source>Expand</source>
-        <translation>Expandera</translation>
+        <source>wants to be friend with you on RetroShare</source>
+        <translation>vill bli en av dina kontakter på RetroShare</translation>
     </message>
     <message>
-        <source>Remove Item</source>
-        <translation>Ta bort objektet</translation>
+        <source>Accept Friend Request</source>
+        <translation>Acceptera kontaktförfrågan</translation>
     </message>
     <message>
         <source>Peer details</source>
@@ -11048,6 +11122,14 @@ Vill du krympa bilden till %1x%2 pixlar?</translation>
     <message>
         <source>Start Chat</source>
         <translation>Starta chatt</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Expandera</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Ta bort objektet</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -11094,6 +11176,10 @@ Vill du krympa bilden till %1x%2 pixlar?</translation>
         <translation>Anslutningsförsök</translation>
     </message>
     <message>
+        <source>Connection refused by remote peer</source>
+        <translation>Anslutning nekades av deltagare</translation>
+    </message>
+    <message>
         <source>Unknown (Incoming) Connect Attempt</source>
         <translation>Okänt (inkommande) anslutningsförsök</translation>
     </message>
@@ -11121,18 +11207,6 @@ Vill du krympa bilden till %1x%2 pixlar?</translation>
         <source>Quick Message</source>
         <translation>Snabbmeddelande</translation>
     </message>
-    <message>
-        <source>Accept Friend Request</source>
-        <translation>Acceptera kontaktförfrågan</translation>
-    </message>
-    <message>
-        <source>wants to be friend with you on RetroShare</source>
-        <translation>vill bli en av dina kontakter på RetroShare</translation>
-    </message>
-    <message>
-        <source>Connection refused by remote peer</source>
-        <translation>Anslutning nekades av deltagare</translation>
-    </message>
 </context>
 <context>
     <name>ServerPage</name>
@@ -11141,114 +11215,16 @@ Vill du krympa bilden till %1x%2 pixlar?</translation>
         <translation>Nätverksinställningar</translation>
     </message>
     <message>
-        <source>Firewalled</source>
-        <translation>Bakom brandvägg</translation>
-    </message>
-    <message>
-        <source>Public: DHT &amp; Discovery</source>
-        <translation>Publikt: DHT och Upptäckt</translation>
-    </message>
-    <message>
-        <source>Private: Discovery Only</source>
-        <translation>Privat: Endast upptäckt</translation>
-    </message>
-    <message>
-        <source>Inverted: DHT Only</source>
-        <translation>Inverterat: Endast DHT</translation>
-    </message>
-    <message>
-        <source>Dark Net: None</source>
-        <translation>DarkNet: Inget</translation>
-    </message>
-    <message>
-        <source>Download (KB/s) </source>
-        <translation>Nerladdning (KB/s) </translation>
-    </message>
-    <message>
-        <source>kB/s</source>
-        <translation>kB/s</translation>
-    </message>
-    <message>
-        <source>Upload (KB/s) </source>
-        <translation>Uppladdning (KB/s) </translation>
-    </message>
-    <message>
-        <source>Allow Tunnel Connection</source>
-        <translation>Tillåt tunnelanslutning</translation>
-    </message>
-    <message>
-        <source>Local Address</source>
-        <translation>Lokal adress</translation>
-    </message>
-    <message>
-        <source>External Address</source>
-        <translation>Extern adress</translation>
-    </message>
-    <message>
-        <source>Dynamic DNS</source>
-        <translation>Dynamisk DNS</translation>
-    </message>
-    <message>
-        <source>Port:</source>
-        <translation>Port:</translation>
-    </message>
-    <message>
-        <source>Acceptable ports range from 1024 to 65535. Ports below 1024 are reserved by your system.</source>
-        <translation>Lämpliga portnummer är 1024 till 65535. Portnummer under 1024 är mestadels reserverade av systemet.</translation>
-    </message>
-    <message>
-        <source>Show Discovery information in statusbar</source>
-        <translation>Visa upptäcktsinformation i statusfältet</translation>
-    </message>
-    <message>
-        <source>Allow RetroShare to ask my ip to these websites:</source>
-        <translation>Låt RetroShare fråga om min externa IP-adress på dessa sidor:</translation>
-    </message>
-    <message>
-        <source>Turtle router</source>
-        <translation>Turtle router</translation>
-    </message>
-    <message>
-        <source>Server</source>
-        <translation>Server</translation>
-    </message>
-    <message>
         <source>Automatic (UPnP)</source>
         <translation>Automatiskt (UPnP)</translation>
     </message>
     <message>
+        <source>Firewalled</source>
+        <translation>Bakom brandvägg</translation>
+    </message>
+    <message>
         <source>Manually Forwarded Port</source>
         <translation>Manuellt öppnad port</translation>
-    </message>
-    <message>
-        <source>If you uncheck this, RetroShare will not use tunnel connection between peers that are firewalled and cannot connect directly. This is independent from F2F routing (turtle router).</source>
-        <translation>Om du avmarkerar detta, kommer RetroShare inte att använda tunnelanslutning mellan användare som sitter bakom brandvägg, och kan inte ansluta direkt. Detta oberoende av P2P-routing (Turtle router).</translation>
-    </message>
-    <message>
-        <source>If you uncheck this, RetroShare can only determine your IP 
-when you connect to somebody. Leaving this checked helps 
-connecting when you have few friends. It also helps if you're 
-behind a firewall or a VPN.</source>
-        <translation>Om du avmarkerar detta, kan RetroShare endast avgör ditt IP 
-när du ansluter till någon. Att låta det här vara markerat 
-är bra för anslutningarna när du har få kontakter. Det är också 
-bra om du sitter bakom en brandvägg eller en VPN-tunnel.</translation>
-    </message>
-    <message>
-        <source>This value controls how many tunnel request your peer can forward per second. 
-
-If you have a large internet bandwidth, you may raise this up to 30-40, to allow
-statistically longer tunnels to pass. Be very careful though, since this generates 
-many small packets that can significantly slow down your own file transfer. 
-
-The default value is 20.</source>
-        <translation>Detta värde avgör hur många tunnelförfrågningar din klient kan hantera per sekund. 
-
-Om du har en Internetuppkoppling med mycket bandbredd, kan du öka detta värde upp 
-mot 30-40, för att låta statistiskt längre tunnlar passera. Var försiktig  dock... 
-detta genererar många små paket som märkbart kan bromsa din egen filöverföring. 
-
-Standardvärdet är 20.</translation>
     </message>
     <message>
         <source>The DHT allows you to answer connection 
@@ -11271,6 +11247,42 @@ Kontaktskapandet är dock aldrig automatiskt, och bägge
 användarna måste fortfarande godkänna varandra för att ansluta. </translation>
     </message>
     <message>
+        <source>Public: DHT &amp; Discovery</source>
+        <translation>Publikt: DHT och Upptäckt</translation>
+    </message>
+    <message>
+        <source>Private: Discovery Only</source>
+        <translation>Privat: Endast upptäckt</translation>
+    </message>
+    <message>
+        <source>Inverted: DHT Only</source>
+        <translation>Inverterat: Endast DHT</translation>
+    </message>
+    <message>
+        <source>Dark Net: None</source>
+        <translation>DarkNet: Inget</translation>
+    </message>
+    <message>
+        <source>Local Address</source>
+        <translation>Lokal adress</translation>
+    </message>
+    <message>
+        <source>External Address</source>
+        <translation>Extern adress</translation>
+    </message>
+    <message>
+        <source>Dynamic DNS</source>
+        <translation>Dynamisk DNS</translation>
+    </message>
+    <message>
+        <source>Port:</source>
+        <translation>Port:</translation>
+    </message>
+    <message>
+        <source>Acceptable ports range from 1024 to 65535. Ports below 1024 are reserved by your system.</source>
+        <translation>Lämpliga portnummer är 1024 till 65535. Portnummer under 1024 är mestadels reserverade av systemet.</translation>
+    </message>
+    <message>
         <source>Local network</source>
         <translation>Lokalt nätverk</translation>
     </message>
@@ -11287,12 +11299,54 @@ användarna måste fortfarande godkänna varandra för att ansluta. </translatio
         <translation>Kända / Tidigare IP:</translation>
     </message>
     <message>
+        <source>Show Discovery information in statusbar</source>
+        <translation>Visa upptäcktsinformation i statusfältet</translation>
+    </message>
+    <message>
+        <source>If you uncheck this, RetroShare can only determine your IP 
+when you connect to somebody. Leaving this checked helps 
+connecting when you have few friends. It also helps if you're 
+behind a firewall or a VPN.</source>
+        <translation>Om du avmarkerar detta, kan RetroShare endast avgör ditt IP 
+när du ansluter till någon. Att låta det här vara markerat 
+är bra för anslutningarna när du har få kontakter. Det är också 
+bra om du sitter bakom en brandvägg eller en VPN-tunnel.</translation>
+    </message>
+    <message>
+        <source>Allow RetroShare to ask my ip to these websites:</source>
+        <translation>Låt RetroShare fråga om min externa IP-adress på dessa sidor:</translation>
+    </message>
+    <message>
         <source>Bandwidth</source>
         <translation>Bandbredd</translation>
     </message>
     <message>
         <source>Max Transfer Rates</source>
         <translation>Max överföringshastighet</translation>
+    </message>
+    <message>
+        <source>Download (KB/s) </source>
+        <translation>Nerladdning (KB/s) </translation>
+    </message>
+    <message>
+        <source>kB/s</source>
+        <translation>kB/s</translation>
+    </message>
+    <message>
+        <source>Upload (KB/s) </source>
+        <translation>Uppladdning (KB/s) </translation>
+    </message>
+    <message>
+        <source>If you uncheck this, RetroShare will not use tunnel connection between peers that are firewalled and cannot connect directly. This is independent from F2F routing (turtle router).</source>
+        <translation>Om du avmarkerar detta, kommer RetroShare inte att använda tunnelanslutning mellan användare som sitter bakom brandvägg, och kan inte ansluta direkt. Detta oberoende av P2P-routing (Turtle router).</translation>
+    </message>
+    <message>
+        <source>Allow Tunnel Connection</source>
+        <translation>Tillåt tunnelanslutning</translation>
+    </message>
+    <message>
+        <source>Turtle router</source>
+        <translation>Turtle router</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Unchecking this disables all anonymous routing activity, except cache cleaning. Incoming tunnel requests are discarded, and no tunnel requests are sent to anyone.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
@@ -11309,6 +11363,26 @@ användarna måste fortfarande godkänna varandra för att ansluta. </translatio
     <message>
         <source>Max. tunnel req. forwarded per second:</source>
         <translation>Max antal tunnelförfrågningar per sekund:</translation>
+    </message>
+    <message>
+        <source>This value controls how many tunnel request your peer can forward per second. 
+
+If you have a large internet bandwidth, you may raise this up to 30-40, to allow
+statistically longer tunnels to pass. Be very careful though, since this generates 
+many small packets that can significantly slow down your own file transfer. 
+
+The default value is 20.</source>
+        <translation>Detta värde avgör hur många tunnelförfrågningar din klient kan hantera per sekund. 
+
+Om du har en Internetuppkoppling med mycket bandbredd, kan du öka detta värde upp 
+mot 30-40, för att låta statistiskt längre tunnlar passera. Var försiktig  dock... 
+detta genererar många små paket som märkbart kan bromsa din egen filöverföring. 
+
+Standardvärdet är 20.</translation>
+    </message>
+    <message>
+        <source>Server</source>
+        <translation>Server</translation>
     </message>
 </context>
 <context>
@@ -11364,16 +11438,16 @@ användarna måste fortfarande godkänna varandra för att ansluta. </translatio
         <translation>Fildelningsregler</translation>
     </message>
     <message>
-        <source>Select A Folder To Share</source>
-        <translation>Välj en mapp att dela</translation>
-    </message>
-    <message>
         <source>Share flags and groups: </source>
         <translation>Regler och grupper:</translation>
     </message>
     <message>
         <source>Edit Shared Folder</source>
         <translation>Redigera delad mapp</translation>
+    </message>
+    <message>
+        <source>Select A Folder To Share</source>
+        <translation>Välj en mapp att dela</translation>
     </message>
 </context>
 <context>
@@ -11391,16 +11465,16 @@ användarna måste fortfarande godkänna varandra för att ansluta. </translatio
         <translation>Dela med kontakt</translation>
     </message>
     <message>
+        <source>Select the Friends with which you want to Share your Channel.</source>
+        <translation>Välj de kontakter du vill dela kanalen med.</translation>
+    </message>
+    <message>
         <source>Contacts:</source>
         <translation>Kontakter:</translation>
     </message>
     <message>
         <source>Please select at least one peer</source>
         <translation>Välj minst en användare</translation>
-    </message>
-    <message>
-        <source>Select the Friends with which you want to Share your Channel.</source>
-        <translation>Välj de kontakter du vill dela kanalen med.</translation>
     </message>
 </context>
 <context>
@@ -11442,6 +11516,14 @@ p, li { white-space: pre-wrap; }
         <translation>Virtuell mapp</translation>
     </message>
     <message>
+        <source>Share flags</source>
+        <translation>Fildelningsregler</translation>
+    </message>
+    <message>
+        <source>Groups</source>
+        <translation>Grupper</translation>
+    </message>
+    <message>
         <source>Add a Share Directory</source>
         <translation>Lägg till en delad katalog</translation>
     </message>
@@ -11458,12 +11540,24 @@ p, li { white-space: pre-wrap; }
         <translation>Ta bort</translation>
     </message>
     <message>
+        <source>Apply and close</source>
+        <translation>Verkställ och stäng</translation>
+    </message>
+    <message>
         <source>Edit selected Shared Directory</source>
         <translation>Redigera markerad mapp</translation>
     </message>
     <message>
         <source>Edit</source>
         <translation>Redigera</translation>
+    </message>
+    <message>
+        <source>Share Manager</source>
+        <translation>Fildelningshanterare</translation>
+    </message>
+    <message>
+        <source>Edit Shared Folder</source>
+        <translation>Redigera delad mapp</translation>
     </message>
     <message>
         <source>Warning!</source>
@@ -11485,44 +11579,12 @@ p, li { white-space: pre-wrap; }
         <source>Directory not found or directory name not accepted.</source>
         <translation>Mappen kan inte hittas, eller ogiltigt mappnamn.</translation>
     </message>
-    <message>
-        <source>Share Manager</source>
-        <translation>Fildelningshanterare</translation>
-    </message>
-    <message>
-        <source>Share flags</source>
-        <translation>Fildelningsregler</translation>
-    </message>
-    <message>
-        <source>Apply and close</source>
-        <translation>Verkställ och stäng</translation>
-    </message>
-    <message>
-        <source>Edit Shared Folder</source>
-        <translation>Redigera delad mapp</translation>
-    </message>
-    <message>
-        <source>Groups</source>
-        <translation>Grupper</translation>
-    </message>
 </context>
 <context>
     <name>SharedFilesDialog</name>
     <message>
-        <source>All</source>
-        <translation>Alla</translation>
-    </message>
-    <message>
-        <source>One day old</source>
-        <translation>En dag</translation>
-    </message>
-    <message>
-        <source>One Week old</source>
-        <translation>En vecka</translation>
-    </message>
-    <message>
-        <source>One month old</source>
-        <translation>En månad</translation>
+        <source>Files</source>
+        <translation>Filer</translation>
     </message>
     <message>
         <source>Search files</source>
@@ -11545,16 +11607,32 @@ p, li { white-space: pre-wrap; }
         <translation>Platt vy</translation>
     </message>
     <message>
+        <source>All</source>
+        <translation>Alla</translation>
+    </message>
+    <message>
+        <source>One day old</source>
+        <translation>En dag</translation>
+    </message>
+    <message>
+        <source>One Week old</source>
+        <translation>En vecka</translation>
+    </message>
+    <message>
+        <source>One month old</source>
+        <translation>En månad</translation>
+    </message>
+    <message>
+        <source>check files</source>
+        <translation>Kontrollera filer</translation>
+    </message>
+    <message>
         <source>Download selected</source>
         <translation>Ladda ner markerat</translation>
     </message>
     <message>
         <source>Download</source>
         <translation>Ladda ner</translation>
-    </message>
-    <message>
-        <source>check files</source>
-        <translation>Kontrollera filer</translation>
     </message>
     <message>
         <source>Copy retroshare Links to Clipboard</source>
@@ -11583,10 +11661,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Recommendation(s)</source>
         <translation>Rekommendation(er)</translation>
-    </message>
-    <message>
-        <source>Files</source>
-        <translation>Filer</translation>
     </message>
 </context>
 <context>
@@ -11628,14 +11702,6 @@ p, li { white-space: pre-wrap; }
         <translation>Nytt meddelande</translation>
     </message>
     <message>
-        <source>Open File</source>
-        <translation>Öppna fil</translation>
-    </message>
-    <message>
-        <source>Sound</source>
-        <translation>Ljud</translation>
-    </message>
-    <message>
         <source>Message</source>
         <translation>Meddelande</translation>
     </message>
@@ -11650,6 +11716,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Download complete</source>
         <translation>Nedladdning slutförd</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>Öppna fil</translation>
+    </message>
+    <message>
+        <source>Sound</source>
+        <translation>Ljud</translation>
     </message>
 </context>
 <context>
@@ -11685,6 +11759,22 @@ p, li { white-space: pre-wrap; }
         <translation>RetroShare</translation>
     </message>
     <message>
+        <source>Login</source>
+        <translation>Inloggning</translation>
+    </message>
+    <message>
+        <source>Name (PGP Id) - location:</source>
+        <translation>Namn (PGP-ID) - Plats:</translation>
+    </message>
+    <message>
+        <source>Remember Password</source>
+        <translation>Kom ihåg lösenordet</translation>
+    </message>
+    <message>
+        <source>Log In</source>
+        <translation>Logga in</translation>
+    </message>
+    <message>
         <source>Opens a dialog for creating a new profile or 
 adding locations to an existing profile. 
 The current identities/locations will not be affected.</source>
@@ -11705,28 +11795,16 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Hantera profiler och platser...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <source>Log In</source>
-        <translation>Logga in</translation>
-    </message>
-    <message>
-        <source>Remember Password</source>
-        <translation>Kom ihåg lösenordet</translation>
-    </message>
-    <message>
-        <source>Warning</source>
-        <translation>Varning</translation>
-    </message>
-    <message>
-        <source>Login</source>
-        <translation>Inloggning</translation>
-    </message>
-    <message>
         <source>Load Person Failure</source>
         <translation>Profilinläsning misslyckades</translation>
     </message>
     <message>
         <source>Missing PGP Certificate</source>
         <translation>PGP-certifikat saknas</translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <translation>Varning</translation>
     </message>
     <message>
         <source>The password to your SSL certificate (your location) will be stored encrypted in your Gnome Keyring. 
@@ -11763,10 +11841,6 @@ This choice can be reverted in settings.</source>
  Ditt PGP-lösenord kommer inte att sparas.
 
 Detta val kan senare ändras i programinställningarna.</translation>
-    </message>
-    <message>
-        <source>Name (PGP Id) - location:</source>
-        <translation>Namn (PGP-ID) - Plats:</translation>
     </message>
 </context>
 <context>
@@ -11824,6 +11898,10 @@ Detta val kan senare ändras i programinställningarna.</translation>
         <translation>Tillgänglig</translation>
     </message>
     <message>
+        <source>Neighbor</source>
+        <translation>Granne</translation>
+    </message>
+    <message>
         <source>Trying tunnel connection</source>
         <translation>Försöker med tunnelanslutning</translation>
     </message>
@@ -11854,10 +11932,6 @@ Detta val kan senare ändras i programinställningarna.</translation>
     <message>
         <source>DHT: Contact</source>
         <translation>DHT: Kontakt</translation>
-    </message>
-    <message>
-        <source>Neighbor</source>
-        <translation>Granne</translation>
     </message>
 </context>
 <context>
@@ -12091,20 +12165,16 @@ Du rekommenderas dock att lämna åtminstone några kanaler för cache-filer.</t
         <translation>Strömmande</translation>
     </message>
     <message>
+        <source>Progressive</source>
+        <translation>Progressiv</translation>
+    </message>
+    <message>
         <source>Random</source>
         <translation>Slumpmässigt</translation>
     </message>
     <message>
         <source> MB</source>
         <translation>MB</translation>
-    </message>
-    <message>
-        <source>Transfer</source>
-        <translation>Överföring</translation>
-    </message>
-    <message>
-        <source>Progressive</source>
-        <translation>Progressiv</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -12125,6 +12195,10 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;Du kan ange dessa separata delningsregler för varje enskild mapp, i hanteraren för delade mappar:&lt;/span&gt;&lt;/p&gt;
 &lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bläddringsbar för kontakter&lt;/span&gt;: Filerna kan ses av dina kontakter.&lt;/li&gt;
 &lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anonymt delade&lt;/span&gt;: Filerna är anonymt åtkomliga genom P2P-tunnelanslutningar.&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Transfer</source>
+        <translation>Överföring</translation>
     </message>
 </context>
 <context>
@@ -12153,8 +12227,8 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TransfersDialog</name>
     <message>
-        <source>Show cache transfers</source>
-        <translation>Visa cache-överföringar</translation>
+        <source>Downloads</source>
+        <translation>Nerladdningar</translation>
     </message>
     <message>
         <source>Uploads</source>
@@ -12232,6 +12306,26 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Hash</source>
         <translation>Hash-summa</translation>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation>Sök</translation>
+    </message>
+    <message>
+        <source>Friends files</source>
+        <translation>Kontakters filer</translation>
+    </message>
+    <message>
+        <source>My files</source>
+        <translation>Mina filer</translation>
+    </message>
+    <message>
+        <source>Show cache transfers</source>
+        <translation>Visa cache-överföringar</translation>
+    </message>
+    <message>
+        <source>Download from collection file...</source>
+        <translation>Ladda ner från samlingsfil...</translation>
     </message>
     <message>
         <source>Pause</source>
@@ -12314,8 +12408,20 @@ p, li { white-space: pre-wrap; }
         <translation>Slumpmässigt</translation>
     </message>
     <message>
+        <source>Progressive</source>
+        <translation>Progressiv</translation>
+    </message>
+    <message>
         <source>Play</source>
         <translation>Spela upp</translation>
+    </message>
+    <message>
+        <source>Rename file...</source>
+        <translation>Byt namn...</translation>
+    </message>
+    <message>
+        <source>Specify...</source>
+        <translation>Specificera</translation>
     </message>
     <message>
         <source>Move in Queue...</source>
@@ -12330,6 +12436,14 @@ p, li { white-space: pre-wrap; }
         <translation>Segmentstrategi</translation>
     </message>
     <message>
+        <source>Set destination directory</source>
+        <translation>Ange målmapp</translation>
+    </message>
+    <message>
+        <source>Choose directory</source>
+        <translation>Välj mapp</translation>
+    </message>
+    <message>
         <source>Failed</source>
         <translation>Misslyckades</translation>
     </message>
@@ -12338,20 +12452,16 @@ p, li { white-space: pre-wrap; }
         <translation>OK</translation>
     </message>
     <message>
-        <source>Transferring</source>
-        <translation>Överför</translation>
-    </message>
-    <message>
-        <source>Complete</source>
-        <translation>Slutfört</translation>
-    </message>
-    <message>
         <source>Waiting</source>
         <translation>Väntar</translation>
     </message>
     <message>
         <source>Downloading</source>
         <translation>Laddar ner</translation>
+    </message>
+    <message>
+        <source>Complete</source>
+        <translation>Slutfört</translation>
     </message>
     <message>
         <source>Queued</source>
@@ -12368,38 +12478,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Unknown</source>
         <translation>Okänt</translation>
-    </message>
-    <message>
-        <source>version: </source>
-        <translation>version: </translation>
-    </message>
-    <message>
-        <source>Uploading</source>
-        <translation>Laddar upp</translation>
-    </message>
-    <message>
-        <source>Are you sure that you want to cancel and delete these files?</source>
-        <translation>Vill du verkligen avbryta, och ta bort dessa filer?</translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation>RetroShare</translation>
-    </message>
-    <message>
-        <source>File preview</source>
-        <translation>Förhandsgranskning</translation>
-    </message>
-    <message>
-        <source>File %1 preview failed.</source>
-        <translation>Förhandsgranskning av %1 misslyckades.</translation>
-    </message>
-    <message>
-        <source>Open Transfer</source>
-        <translation>Öppna överföring</translation>
-    </message>
-    <message>
-        <source>File %1 is not completed. If it is a media file, try to preview it.</source>
-        <translation>%1 är inte slutförd. Är det en mediafil kan du försöka förhandsgranska den.</translation>
     </message>
     <message>
         <source>If the hash of the downloaded data does
@@ -12425,52 +12503,48 @@ Försök ha tålamod!
 </translation>
     </message>
     <message>
+        <source>version: </source>
+        <translation>version: </translation>
+    </message>
+    <message>
+        <source>Transferring</source>
+        <translation>Överför</translation>
+    </message>
+    <message>
+        <source>Uploading</source>
+        <translation>Laddar upp</translation>
+    </message>
+    <message>
+        <source>Are you sure that you want to cancel and delete these files?</source>
+        <translation>Vill du verkligen avbryta, och ta bort dessa filer?</translation>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation>RetroShare</translation>
+    </message>
+    <message>
+        <source>File preview</source>
+        <translation>Förhandsgranskning</translation>
+    </message>
+    <message>
         <source>Can&apos;t create link for file %1.</source>
         <translation>Kan inte skapa länk för filen %1.</translation>
+    </message>
+    <message>
+        <source>File %1 preview failed.</source>
+        <translation>Förhandsgranskning av %1 misslyckades.</translation>
     </message>
     <message>
         <source>Click OK when program terminates!</source>
         <translation>Klicka OK när programmet avslutas!</translation>
     </message>
     <message>
-        <source>Downloads</source>
-        <translation>Nerladdningar</translation>
+        <source>Open Transfer</source>
+        <translation>Öppna överföring</translation>
     </message>
     <message>
-        <source>Search</source>
-        <translation>Sök</translation>
-    </message>
-    <message>
-        <source>Friends files</source>
-        <translation>Kontakters filer</translation>
-    </message>
-    <message>
-        <source>Download from collection file...</source>
-        <translation>Ladda ner från samlingsfil...</translation>
-    </message>
-    <message>
-        <source>My files</source>
-        <translation>Mina filer</translation>
-    </message>
-    <message>
-        <source>Progressive</source>
-        <translation>Progressiv</translation>
-    </message>
-    <message>
-        <source>Rename file...</source>
-        <translation>Byt namn...</translation>
-    </message>
-    <message>
-        <source>Specify...</source>
-        <translation>Specificera</translation>
-    </message>
-    <message>
-        <source>Set destination directory</source>
-        <translation>Ange målmapp</translation>
-    </message>
-    <message>
-        <source>Choose directory</source>
-        <translation>Välj mapp</translation>
+        <source>File %1 is not completed. If it is a media file, try to preview it.</source>
+        <translation>%1 är inte slutförd. Är det en mediafil kan du försöka förhandsgranska den.</translation>
     </message>
     <message>
         <source>Change file name</source>
@@ -12528,16 +12602,16 @@ Försök ha tålamod!
         <translation>Kontakt</translation>
     </message>
     <message>
+        <source>Share Flags</source>
+        <translation>Fildelningsregler</translation>
+    </message>
+    <message>
         <source>What&apos;s new</source>
         <translation>Nyheter</translation>
     </message>
     <message>
         <source>Groups</source>
         <translation>Grupper</translation>
-    </message>
-    <message>
-        <source>Share Flags</source>
-        <translation>Fildelningsregler</translation>
     </message>
 </context>
 <context>
@@ -12553,6 +12627,10 @@ Försök ha tålamod!
     <message>
         <source>Showing: whole network</source>
         <translation>Visar: Hela nätverket</translation>
+    </message>
+    <message>
+        <source>This table normally auto-updates every 10 seconds.</source>
+        <translation>Den här tabellen uppdateras normalt, automatiskt var 10:e sekund.</translation>
     </message>
     <message>
         <source>Self</source>
@@ -12597,10 +12675,6 @@ Försök ha tålamod!
     <message>
         <source>Showing: peers connected to </source>
         <translation>Visar: Användare anslutna till</translation>
-    </message>
-    <message>
-        <source>This table normally auto-updates every 10 seconds.</source>
-        <translation>Den här tabellen uppdateras normalt, automatiskt var 10:e sekund.</translation>
     </message>
 </context>
 <context>
@@ -12894,40 +12968,12 @@ Försök ha tålamod!
 <context>
     <name>WikiDialog</name>
     <message>
-        <source>&lt;&lt;</source>
-        <translation>&lt;&lt;</translation>
-    </message>
-    <message>
-        <source>&gt;&gt;</source>
-        <translation>&gt;&gt;</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <translation>Redigera</translation>
-    </message>
-    <message>
-        <source>New Group</source>
-        <translation>Ny grupp</translation>
-    </message>
-    <message>
-        <source>New Page</source>
-        <translation>Ny sida</translation>
-    </message>
-    <message>
         <source>Wiki Pages</source>
         <translation>Wiki-sidor</translation>
     </message>
     <message>
-        <source>Republish</source>
-        <translation>Återpublicera</translation>
-    </message>
-    <message>
-        <source>Refresh</source>
-        <translation>Uppdatera</translation>
-    </message>
-    <message>
-        <source>Search</source>
-        <translation>Sök</translation>
+        <source>New Group</source>
+        <translation>Ny grupp</translation>
     </message>
     <message>
         <source>Page Name</source>
@@ -12940,6 +12986,34 @@ Försök ha tålamod!
     <message>
         <source>Orig Id</source>
         <translation>Original-ID</translation>
+    </message>
+    <message>
+        <source>&lt;&lt;</source>
+        <translation>&lt;&lt;</translation>
+    </message>
+    <message>
+        <source>&gt;&gt;</source>
+        <translation>&gt;&gt;</translation>
+    </message>
+    <message>
+        <source>Republish</source>
+        <translation>Återpublicera</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Redigera</translation>
+    </message>
+    <message>
+        <source>New Page</source>
+        <translation>Ny sida</translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation>Uppdatera</translation>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation>Sök</translation>
     </message>
     <message>
         <source>My Groups</source>
@@ -12969,36 +13043,16 @@ Försök ha tålamod!
 <context>
     <name>WikiEditDialog</name>
     <message>
-        <source>Wiki Group:</source>
-        <translation>Wiki-grupp:</translation>
-    </message>
-    <message>
-        <source>Page Name:</source>
-        <translation>Sidnamn:</translation>
-    </message>
-    <message>
-        <source>Previous Version</source>
-        <translation>Föregående version</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Avbryt</translation>
-    </message>
-    <message>
-        <source>Revert</source>
-        <translation>Återställ</translation>
-    </message>
-    <message>
-        <source>Submit</source>
-        <translation>Skicka</translation>
-    </message>
-    <message>
         <source>Page Edit History</source>
         <translation>Sidredigeringshistorik</translation>
     </message>
     <message>
         <source>Enable Obsolete Edits</source>
         <translation>Aktivera föråldrade redigeringar</translation>
+    </message>
+    <message>
+        <source>Choose for Merge</source>
+        <translation>Välj för sammanslagning</translation>
     </message>
     <message>
         <source>Merge for Republish (TODO)</source>
@@ -13025,6 +13079,18 @@ Försök ha tålamod!
         <translation>/\</translation>
     </message>
     <message>
+        <source>Wiki Group:</source>
+        <translation>Wiki-grupp:</translation>
+    </message>
+    <message>
+        <source>Page Name:</source>
+        <translation>Sidnamn:</translation>
+    </message>
+    <message>
+        <source>Previous Version</source>
+        <translation>Föregående version</translation>
+    </message>
+    <message>
         <source>Tags</source>
         <translation>Taggar</translation>
     </message>
@@ -13039,6 +13105,18 @@ Försök ha tålamod!
     <message>
         <source>Preview</source>
         <translation>Förhandsgranskning</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Avbryt</translation>
+    </message>
+    <message>
+        <source>Revert</source>
+        <translation>Återställ</translation>
+    </message>
+    <message>
+        <source>Submit</source>
+        <translation>Skicka</translation>
     </message>
     <message>
         <source>Hide Edit History</source>
@@ -13059,10 +13137,6 @@ Försök ha tålamod!
     <message>
         <source>Edit Wiki Page</source>
         <translation>Redigera Wiki-sida</translation>
-    </message>
-    <message>
-        <source>Choose for Merge</source>
-        <translation>Välj för sammanslagning</translation>
     </message>
 </context>
 <context>
@@ -13188,6 +13262,31 @@ Försök ha tålamod!
         <translation>B</translation>
     </message>
     <message>
+        <source> KB</source>
+        <comment>kilobytes (1024 bytes)</comment>
+        <translation> KB</translation>
+    </message>
+    <message>
+        <source> MB</source>
+        <comment>megabytes (1024 kilobytes)</comment>
+        <translation> MB</translation>
+    </message>
+    <message>
+        <source> GB</source>
+        <comment>gigabytes (1024 megabytes)</comment>
+        <translation> GB</translation>
+    </message>
+    <message>
+        <source> TB,</source>
+        <comment>terabytes (1024 gigabytes)</comment>
+        <translation> TB,</translation>
+    </message>
+    <message>
+        <source> TB</source>
+        <comment>terabytes (1024 gigabytes)</comment>
+        <translation> TB</translation>
+    </message>
+    <message>
         <source>Unknown</source>
         <translation>Okänd</translation>
     </message>
@@ -13243,31 +13342,6 @@ Försök ha tålamod!
     <message>
         <source>Pictures (*.png *.xpm *.jpg *.tiff *.gif)</source>
         <translation>Bilder (*.png *.xpm *.jpg *.tiff *.gif)</translation>
-    </message>
-    <message>
-        <source> KB</source>
-        <comment>kilobytes (1024 bytes)</comment>
-        <translation> KB</translation>
-    </message>
-    <message>
-        <source> MB</source>
-        <comment>megabytes (1024 kilobytes)</comment>
-        <translation> MB</translation>
-    </message>
-    <message>
-        <source> GB</source>
-        <comment>gigabytes (1024 megabytes)</comment>
-        <translation> GB</translation>
-    </message>
-    <message>
-        <source> TB,</source>
-        <comment>terabytes (1024 gigabytes)</comment>
-        <translation> TB,</translation>
-    </message>
-    <message>
-        <source> TB</source>
-        <comment>terabytes (1024 gigabytes)</comment>
-        <translation> TB</translation>
     </message>
 </context>
 </TS>
