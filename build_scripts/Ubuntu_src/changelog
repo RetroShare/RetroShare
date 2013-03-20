@@ -12,6 +12,11 @@ retroshare (0.5.4-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
     - Patch from AC to enable completion over chat lobby participants
     - patch from AC to better handle colors in lobby list
     - fixed up protobuf files generation
+    - improved chat lobby layout (removed columns => tool tip)
+    - added a warning in chat lobbies when there's a big time shift between peers.
+    - renamed Security page in settings => Profile
+    - added dest dit to FT details window
+    - added warning when opnning external url
     - VOIP
       * Removed special settings for win32 from VOIP.pro
       * patch from Henry Morgan to unify compilation settings for VOIP
@@ -22,6 +27,11 @@ retroshare (0.5.4-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
     - fixed a few fixed other uninitialized memory read (In p3NetMgr, ftChunkMap)
     - do not show msg icon for current lobby (Improved upon patch from AC)
     - removed auto-clear of search field when searching (Patch from AC)
+    - fixed auto DL for own channels. Apparently the channel status is missing for this special case
+    - allow to import new identity before even creating one
+    - fixed up profile manager to only allow to export (Importing during a session caused a bug)
+    - dropping chat lobby msg for more than 10 mins in the future
+    - re-enabled context menus in chat lobby list
 
  -- Cyril Soler <csoler@users.sourceforge.net>  Wed, 14 Mar 2013 21:30:00 +0100
 
