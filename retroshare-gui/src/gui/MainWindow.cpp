@@ -1289,7 +1289,7 @@ void MainWindow::externalLinkActivated(const QUrl &url)
 		QMessageBox mb(QObject::tr("Confirmation"), QObject::tr("Do you want this link to be handled by your system?")+"<br/><br/>"+ url.toString()+"<br/><br/>"+tr("Make sure this link has not been forged to drag you to a malicious website."), QMessageBox::Question, QMessageBox::Yes,QMessageBox::No, 0);
 		mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
 
-		QCheckBox *checkbox = new QCheckBox("Don't ask me again") ;
+		QCheckBox *checkbox = new QCheckBox(tr("Don't ask me again")) ;
 		mb.layout()->addWidget(checkbox) ;
 
 		int res = mb.exec() ;

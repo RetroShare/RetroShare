@@ -137,10 +137,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Landcapes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Pets</source>
         <translation type="unfinished"></translation>
     </message>
@@ -266,6 +262,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Load Album Thumbnail</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Landscapes</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7333,6 +7333,10 @@ p, li { white-space: pre-wrap; }
         <source>The file link is malformed.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Don&apos;t ask me again</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MessageComposer</name>
@@ -9425,7 +9429,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Please reate or choose a Signing Id first</source>
+        <source>Please create or choose a Signing Id first</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9707,7 +9711,7 @@ and use the import button to load it</source>
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Select in the list below an identity to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Select an identity from the list below to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
