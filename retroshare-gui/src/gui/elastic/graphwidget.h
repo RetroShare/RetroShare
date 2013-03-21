@@ -101,6 +101,7 @@ private:
 	 std::map<std::string,QPointF> _node_cached_positions ;
 
 	 uint32_t _edge_length ;
+	 float _friction_factor ;
 };
 
 #endif

@@ -111,7 +111,7 @@ const QList<Edge *>& Node::edges() const
 //				+di *( (1-dj)*map[2*(i+1+W*j)] + dj*map[2*(i+1+W*(j+1))]) ;
 //}
 
-void Node::calculateForces(const double *map,int width,int height,int W,int H,float x,float y,float /*speedf*/)
+void Node::calculateForces(const double *map,int width,int height,int W,int H,float x,float y,float friction_factor)
 {
 	if (!scene() || scene()->mouseGrabberItem() == this) 
 	{
@@ -192,8 +192,8 @@ void Node::calculateForces(const double *map,int width,int height,int W,int H,fl
 
 	// now time filter:
 
-	_speedx += xforce / MASS_FACTOR;
-	_speedy += yforce / MASS_FACTOR;
+	_speedx += xforce / MASS_FACTOR ;
+	_speedy += yforce / MASS_FACTOR ;
 
 	if(_speedx > 10) _speedx = 10.0f ;
 	if(_speedy > 10) _speedy = 10.0f ;
@@ -201,7 +201,7 @@ void Node::calculateForces(const double *map,int width,int height,int W,int H,fl
 	if(_speedy <-10) _speedy =-10.0f ;
 
 	QRectF sceneRect = scene()->sceneRect();
-	newPos = pos() + QPointF(_speedx, _speedy);
+	newPos = pos() + QPointF(_speedx, _speedy) / friction_factor;
 	newPos.setX(qMin(qMax(newPos.x(), sceneRect.left() + 10), sceneRect.right() - 10));
 	newPos.setY(qMin(qMax(newPos.y(), sceneRect.top() + 10), sceneRect.bottom() - 10));
 }

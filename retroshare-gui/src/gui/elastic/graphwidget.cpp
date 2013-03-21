@@ -134,6 +134,7 @@ GraphWidget::GraphWidget(QWidget *)
     setRenderHint(QPainter::Antialiasing);
     setTransformationAnchor(AnchorUnderMouse);
     setResizeAnchor(AnchorViewCenter);
+	 _friction_factor = 1.0f ;
 
 
 
@@ -158,6 +159,7 @@ void GraphWidget::clearGraph()
 	scene()->setSceneRect(-200, -200, 1000, 1000);
 	_edges.clear();
 	_nodes.clear();
+	_friction_factor = 1.0f ;
 }
 
 GraphWidget::NodeId GraphWidget::addNode(const std::string& node_short_string,const std::string& node_complete_string,NodeType type,AuthType auth,const std::string& ssl_id,const std::string& gpg_id)
@@ -220,6 +222,7 @@ void GraphWidget::itemMoved()
 		 std::cout << "starting timer" << std::endl;
 #endif
         timerId = startTimer(1000 / 25);	// hit timer 25 times per second.
+		  _friction_factor = 1.0f ;
 	 }
 }
 
@@ -342,15 +345,13 @@ void GraphWidget::timerEvent(QTimerEvent *event)
 		 convolveWithGaussian(forceMap,S,20) ;
 	 }
 
-	 static float speedf=1.0f;
-
 	 foreach (Node *node, _nodes)
 	 {
 		 QPointF pos = node->mapToScene(QPointF(0,0)) ;
 		 float x = S*(pos.x()-R.left())/R.width() ;
 		 float y = S*(pos.y()-R.top())/R.height() ;
 
-		 node->calculateForces(forceMap,R.width(),R.height(),S,S,x,y,speedf);
+		 node->calculateForces(forceMap,R.width(),R.height(),S,S,x,y,_friction_factor);
 	 }
 
     bool itemsMoved = false;
@@ -365,6 +366,8 @@ void GraphWidget::timerEvent(QTimerEvent *event)
 #endif
         timerId = 0;
     }
+	 _friction_factor *= 1.001f ;
+//	 std::cerr << "Friction factor = " << _friction_factor << std::endl;
 }
 
 void GraphWidget::setEdgeLength(uint32_t l)
@@ -377,6 +380,7 @@ void GraphWidget::setEdgeLength(uint32_t l)
 		 std::cout << "starting timer" << std::endl;
 #endif
         timerId = startTimer(1000 / 25);
+		  _friction_factor = 1.0f ;
 	}
 }
 
