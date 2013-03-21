@@ -503,7 +503,7 @@ void ChatLobbyWidget::resetLobbyTreeIcons()
 		if(it->second.last_typing_event + 5 <= now)
 		{
 			getTreeWidgetItem(it->first)->setIcon(0,it->second.default_icon) ;
-			std::cerr << "Reseted 1 lobby icon." << std::endl;
+//			std::cerr << "Reseted 1 lobby icon." << std::endl;
 		}
 }
 
