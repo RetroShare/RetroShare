@@ -51,13 +51,12 @@ bool RsGxsMessageCleanUp::clean()
 
 	while(!mGrpIds.empty())
 	{
-
 		RsGxsGroupId grpId = mGrpIds.back();
 		mGrpIds.pop_back();
 		GxsMsgReq req;
 		GxsMsgMetaResult result;
 
-		result[grpId] = std::vector<RsGxsMsgMetaData*>();
+		req[grpId] = std::vector<RsGxsMessageId>();
 		mDs->retrieveGxsMsgMetaData(req, result);
 
 		GxsMsgMetaResult::iterator mit = result.begin();
@@ -72,7 +71,7 @@ bool RsGxsMessageCleanUp::clean()
 			for(; vit != metaV.end(); )
 			{
 				RsGxsMsgMetaData* meta = *vit;
-				if(meta->mPublishTs + MESSAGE_STORE_PERIOD > now)
+				if(meta->mPublishTs + MESSAGE_STORE_PERIOD < now)
 				{
 					req[grpId].push_back(meta->mMsgId);
 				}

@@ -37,8 +37,9 @@
 #include "rsnxsobserver.h"
 #include "retroshare/rsgxsservice.h"
 #include "serialiser/rsnxsitems.h"
+#include "rsgxsutil.h"
 
-#define DEFAULT_MSG_STORE_PERIOD 60*60 // 1 hour
+#define DEFAULT_MSG_STORE_PERIOD 60*60*24 // 1 day
 
 template<class GxsItem, typename Identity = std::string>
 class GxsPendingItem
@@ -697,6 +698,10 @@ private:
 
 
     const uint32_t MESSAGE_STORE_PERIOD;
+
+    bool mCleaning;
+    time_t mLastClean;
+    RsGxsMessageCleanUp* mMsgCleanUp;
 
 private:
 

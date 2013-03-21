@@ -54,6 +54,8 @@
 
 #define GEN_EXCH_DEBUG	1
 
+#define MSG_CLEANUP_PERIOD 60*3 // 3 minutes
+
 RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService *ns,
                              RsSerialType *serviceSerialiser, uint16_t servType, RsGixs* gixs,
                              uint32_t authenPolicy, uint32_t messageStorePeriod)
@@ -61,7 +63,8 @@ RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService
     mServType(servType), mGixs(gixs), mAuthenPolicy(authenPolicy), MESSAGE_STORE_PERIOD(messageStorePeriod),
     CREATE_FAIL(0), CREATE_SUCCESS(1), CREATE_FAIL_TRY_LATER(2), SIGN_MAX_ATTEMPTS(5),
     SIGN_FAIL(0), SIGN_SUCCESS(1), SIGN_FAIL_TRY_LATER(2),
-    VALIDATE_FAIL(0), VALIDATE_SUCCESS(1), VALIDATE_FAIL_TRY_LATER(2), VALIDATE_MAX_ATTEMPTS(5)
+    VALIDATE_FAIL(0), VALIDATE_SUCCESS(1), VALIDATE_FAIL_TRY_LATER(2), VALIDATE_MAX_ATTEMPTS(5),
+    mCleaning(false), mLastClean(time(NULL)), mMsgCleanUp(NULL)
 {
 
     mDataAccess = new RsGxsDataAccess(gds);
@@ -122,6 +125,30 @@ void RsGenExchange::tick()
 
 	// implemented service tick function
 	service_tick();
+
+#ifdef GXS_CLEAN_UP
+	time_t now = time(NULL);
+
+	if((mLastClean + MSG_CLEANUP_PERIOD < now) || mCleaning)
+	{
+		if(mMsgCleanUp)
+		{
+			if(mMsgCleanUp->clean())
+			{
+				mCleaning = false;
+				delete mMsgCleanUp;
+				mMsgCleanUp = NULL;
+				mLastClean = time(NULL);
+			}
+
+		}else
+		{
+			mMsgCleanUp = new RsGxsMessageCleanUp(mDataStore, MESSAGE_STORE_PERIOD, 1);
+			mCleaning = true;
+		}
+	}
+#endif
+
 }
 
 bool RsGenExchange::acknowledgeTokenMsg(const uint32_t& token,

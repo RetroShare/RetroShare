@@ -1052,8 +1052,14 @@ int RsDataService::removeMsgs(const GxsMsgReq& msgIds)
 	RsStackMutex stack(mDbMutex);
 
 	// for each group
-	// first get all message meta, get symmetric difference of message in vector
-	// build a pair of start and end points to copy into the buffer
+	// get for all msgs their offsets and lengths
+	// for message not contained in msg id vector
+	// store their data file segments in buffer
+	// then recalculate the retained messages
+	// new offsets, update db with new offsets
+	// replace old msg file with new file
+	// remove messages that were not retained from
+	// db
 
 	GxsMsgReq::const_iterator mit = msgIds.begin();
 
@@ -1076,13 +1082,14 @@ int RsDataService::removeMsgs(const GxsMsgReq& msgIds)
 		std::ifstream in(oldFileName.c_str(), std::ios::binary);
 		std::vector<char> dataBuff, newBuffer;
 
-		std::vector<MsgOffset>::iterator vit;
+		std::vector<MsgOffset>::iterator vit = msgOffsets.begin();
 
 		uint32_t maxSize = 0;
 		for(; vit != msgOffsets.end(); vit++)
 			maxSize += vit->msgLen;
 
-
+		// may be preferable to determine file len reality
+		// from file? corrupt db?
 		dataBuff.resize(maxSize);
 		newBuffer.resize(maxSize);
 
@@ -1092,8 +1099,7 @@ int RsDataService::removeMsgs(const GxsMsgReq& msgIds)
 
 		in.close();
 
-
-		for(std::vector<MsgOffset>::size_type i = 0; msgOffsets.size(); i++)
+		for(std::vector<MsgOffset>::size_type i = 0; i < msgOffsets.size(); i++)
 		{
 			const MsgOffset& m = msgOffsets[i];
 
@@ -1105,14 +1111,14 @@ int RsDataService::removeMsgs(const GxsMsgReq& msgIds)
 				uint32_t msgLen = m.msgLen;
 
 				up.msgId = m.msgId;
-				up.cv.put(KEY_NXS_FILE_OFFSET, (int32_t)msgLen);
+				up.cv.put(KEY_NXS_FILE_OFFSET, (int32_t)newOffset);
 
 				newBuffer.insert(dataBuff.end(), dataBuff.begin()+m.msgOffset,
 						dataBuff.begin()+m.msgOffset+m.msgLen);
 
 				newOffset += msgLen;
 
-				up.cv.put(KEY_NXS_FILE_LEN, (int32_t)newOffset);
+				up.cv.put(KEY_NXS_FILE_LEN, (int32_t)msgLen);
 
 				// add msg update
 				updates[grpId].push_back(up);
@@ -1212,8 +1218,8 @@ void RsDataService::getMessageOffsets(const RsGxsGroupId& grpId, std::vector<Msg
         	int32_t msgLen;
         	int32_t msgOffSet;
             c->getString(0, msgId);
-            msgLen = c->getInt32(1);
-            msgOffSet = c->getInt32(2);
+            msgOffSet = c->getInt32(1);
+            msgLen = c->getInt32(2);
 
             MsgOffset offset;
             offset.msgId = msgId;
