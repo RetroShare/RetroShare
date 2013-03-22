@@ -1359,6 +1359,9 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 		PGPFingerprintType ownFinger;
 		PGPIdType ownId(AuthGPG::getAuthGPG()->getGPGOwnId());
 
+		std::cerr << "p3IdService::service_CreateGroup() OwnPgpID: " << ownId.toStdString();
+		std::cerr << std::endl;
+
 #ifdef GXSID_GEN_DUMMY_DATA
 		if (item->group.mMeta.mAuthorId != "")
 		{
@@ -1375,13 +1378,17 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 			return SERVICE_CREATE_FAIL; // abandon attempt!
 		}
 
+		std::cerr << "p3IdService::service_CreateGroup() OwnFingerprint: " << ownFinger.toStdString();
+		std::cerr << std::endl;
+
 		calcPGPHash(item->group.mMeta.mGroupId, ownFinger, hash);
 		item->group.mPgpIdHash = hash.toStdString();
 
 #ifdef DEBUG_IDS
+#endif // DEBUG_IDS
+
 		std::cerr << "p3IdService::service_CreateGroup() Calculated PgpIdHash : " << item->group.mPgpIdHash;
 		std::cerr << std::endl;
-#endif // DEBUG_IDS
 
 		/* do signature */
 
@@ -1401,13 +1408,20 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 		}
 		else
 		{
+			std::cerr << "p3IdService::service_CreateGroup() Signature: ";
+			std::string strout;
+
 			/* push binary into string -> really bad! */
 			item->group.mPgpIdSign = "";
 			for(unsigned int i = 0; i < sign_size; i++)
 			{
+				rs_sprintf_append(strout, "%02x", (uint32_t) signarray[i]);
 				item->group.mPgpIdSign += signarray[i];
 			}
 			createStatus = SERVICE_CREATE_SUCCESS;
+
+			std::cerr << strout;
+			std::cerr << std::endl;
 		}
 		/* done! */
 #else
@@ -1730,6 +1744,9 @@ bool p3IdService::checkId(const RsGxsIdGroup &grp, PGPIdType &pgpId)
 			std::cerr << std::endl;
 
 #ifdef ENABLE_PGP_SIGNATURES
+			std::cerr << "p3IdService::checkId() Hash : " << hash.toStdString();
+			std::cerr << std::endl;
+
 			/* miracle match! */
 			/* check signature too */
 			if (AuthGPG::getAuthGPG()->VerifySignBin((void *) hash.toByteArray(), hash.SIZE_IN_BYTES, 
@@ -1746,6 +1763,23 @@ bool p3IdService::checkId(const RsGxsIdGroup &grp, PGPIdType &pgpId)
 			/* error */
 			std::cerr << "p3IdService::checkId() ERROR Signature Failed";
 			std::cerr << std::endl;
+
+			std::cerr << "p3IdService::checkId() Matched PGPID: " << mit->first.toStdString();
+			std::cerr << " Fingerprint: " << mit->second.toStdString();
+			std::cerr << std::endl;
+
+			std::cerr << "p3IdService::checkId() Signature: ";
+			std::string strout;
+
+			/* push binary into string -> really bad! */
+			for(unsigned int i = 0; i < grp.mPgpIdSign.length(); i++)
+			{
+				rs_sprintf_append(strout, "%02x", (uint32_t) ((uint8_t) grp.mPgpIdSign[i]));
+			}
+			std::cerr << strout;
+			std::cerr << std::endl;
+
+
 #else
 			pgpId = mit->first;
 
