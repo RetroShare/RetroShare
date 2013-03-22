@@ -2,11 +2,11 @@
 
 ; Define your application name
 !define APPNAME "RetroShare"
-!define VERSION "0.5.4c"
-!define REVISION "5862"
+!define VERSION "0.5.4e"
+!define REVISION "6268"
 !define APPNAMEANDVERSION "${APPNAME} ${VERSION} ${REVISION}"
 !define QTBASE "d:\qt\2010.05"
-!define RSBASE "d:\Development\retroshare\retroshare-gui\"
+!define RSBASE "d:\Development\retroshare-trunk\retroshare-gui"
 
 ; Main Install settings
 Name "${APPNAMEANDVERSION}"

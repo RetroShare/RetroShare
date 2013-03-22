@@ -1,3 +1,113 @@
+Changes for 0.5.4e
+
+	* Improvements
+		- translations updated from transiflex
+		- Major improvements to GXS services (new service: channels, posted) and GUI (Not yet released)
+		- further reduced TR forward probability so as to avoid a crazy increase of TR out when we have a large number of friends
+		- renamed Transfers tab "File Sharing", as it is more appropriate
+		- removed the constraint of sharing own files only in channels. Replaced it by a warning, to allow peers to post from other locations etc.
+		- switched to libssh-0.5.4 (updated README.txt with package deps)
+		- fixed packaging/compilation for ubuntu raring
+		- significantly lowered the cost of the network graph by computing pairwise repulsive forces 8 times less often
+		- Patch from AC to enable completion over chat lobby participants
+		- patch from AC to better handle colors in lobby list
+		- fixed up protobuf files generation
+		- improved chat lobby layout (removed columns => tool tip)
+		- added a warning in chat lobbies when there's a big time shift between peers.
+		- renamed Security page in settings => Profile
+		- added dest dit to FT details window
+		- added warning when opnning external url
+		- VOIP
+		- Added dynamic menu for choosing the destination directory for files, and change the name of the des. file
+		- Merged branch v0.5-ImprovedGUI. Brings all sorts of changes, the most of which are:
+		  * News feed to be a new tab at the top level.
+		  * improved transfers panel. Some tabs have been moved to Config.
+		  * new Chat lobby panel with improved layout. Removed tabs.
+		  * merged shared files and search into Transfers
+		- Auto-check of shared files after download
+		- Removed Qt flags from nogui .pro file
+		- Packaging of VOIP for ubuntu lucid, and improved packaging scripts
+		- Added new "Progressive" download mode, in between random and streaming. Still random as the 
+		  former and disk-friendly as the later.
+		- Lots of work on ongoing new services (Not released yet): Wiki, GXS, Forums, Identity.
+		- Removed special settings for win32 from VOIP.pro
+		- patch from Henry Morgan to unify compilation settings for VOIP
+		- Added new dialog to set service permissions for friends.
+		- Enabled embedded images in private chat and messages (only for QT version 4.7.0 and higher)
+		- added tooltips to GroupFlagsWidget when buttons are unchecked (Patch from Anonym)
+		- when an unknow user attempt to connect, show the name in the security item (Patch from Anonym)
+		- Load new stylesheets for locale depended things. Loading order: qss.default (internal), qss.<locale> (internal e.g. qss.de_DE)
+			stylesheet.qss (internal or external), stylesheet_<locale>.lqss (parallel to stylesheet)
+		- Added api for news feeds to the plugin interface. Added news feeds to the FeedReader plugin.
+		- Removed toaster for muted participant of a chat lobby.
+		- Removed the policy TabFocus from some gui elements.
+		- Made cert parsing errors translatable
+		- added turkish translation 	 
+    
+    * Packaging
+      - packaging of NewsReader plugin and retroshare-nogui
+      - added patch from bNK to make glib include dir detected on all linux systems. 
+        Removed warnings about gpgme and gpg-error , which have no reason to stay now.
+
+    * FeedReader
+      - Added error handling to xml functions
+      - Added xslt transformation
+      - Added retransform of existing messages
+      - Redesigned preview dialog
+      - Enabled embed images for forum feeds
+      - Changed config format, switching back to an older version results in a loss of all data of the FeedReader
+      - Fixed memory leak in xpath processing
+      - Stop long loops when closing the preview dialog or shutdown
+      - Added drag and drop to xpath lists in preview dialog
+      - Fixed save of xpaths lists
+      - Recalculate message count of the user notify when a feed with new items is deleted.
+      - Set deleted message to read and !new.
+      - Added test feed item in notify settings.
+      - Fixed crash when removing a feed displayed in the main tab.
+      - Fixed reading author of ATOM feeds.
+
+    * libretroshare
+      - fixed inconsistency in parameter naming, causing error_string to be mixed up with gpg id (Not a bug).
+      - removed unimplemented entry loadCertificateFromFile()
+      - removed #ifdef USE_NEW_CHUNK_CHECKING_CODE (enabled by default). Disable assume_availablility to put chunks or 
+        not in checking mode. This was inconsistent. As a side effect, cache files of size > 1MB get chunk-checked as well, which is good
+      - fixed tests: compilation, running, added new util functions, etc. Updated test results.
+      - Added little upnp utility / test.
+      - added checksum for new certificate format. Will be enabled in 0.6.
+      - Fixed up bootstrap singleshot search function. Now returns parameters. Not functioning 100% correctly yet - due 
+        to libbitdht behaviour (TO FIX)
+      - merged GXS branch into trunk. GXS Services are disabled by default.
+
+    * retroshare-nogui
+      - made port non-optional for -S <port> 
+      - Added SystemExternalAccess Function to RPC. This provides ExternalPort + DHTKey to Client. To be 
+        used to find and connect - even if Dynamic IP address changes :)
+      - fixed compilation
+
+    * GXS
+      - lots of improvements to GXSForums. Not released yet.
+      - added pegmarkdown langage to Wiki
+	
+	* Other
+      - added list of non backward compatible changes in README.txt, so that we can track them    
+
+ 
+
+	* Bugs:
+		- removed dead-end for peers not answering downloads, that would get file cache transfers to get stuck indefinitly 
+		  when peers are too much stressed for a short period. The offline state is entirely given by setPeerState()
+		- fixed a few fixed other uninitialized memory read (In p3NetMgr, ftChunkMap)
+		- do not show msg icon for current lobby (Improved upon patch from AC)
+		- removed auto-clear of search field when searching (Patch from AC)
+		- fixed auto DL for own channels. Apparently the channel status is missing for this special case
+		- allow to import new identity before even creating one
+		- fixed up profile manager to only allow to export (Importing during a session caused a bug)
+		- dropping chat lobby msg for more than 10 mins in the future
+		- re-enabled context menus in chat lobby list
+		- Fixed crash when lobby invitation received
+		- Fixed DL getting stalled in streaming mode
+		- fixed the wrong notification of unexpected characters in management of RetroShare Links
+
 Changes for 0.5.4d
 
   * Improvements
