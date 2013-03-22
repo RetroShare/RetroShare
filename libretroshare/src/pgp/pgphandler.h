@@ -88,7 +88,7 @@ class PGPHandler
 		std::string SaveCertificateToString(const PGPIdType& id,bool include_signatures) const ;
 		bool exportPublicKey(const PGPIdType& id,unsigned char *& mem,size_t& mem_size,bool armoured,bool include_signatures) const ;
 
-		bool SignDataBin(const PGPIdType& id,const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen) ;
+		bool SignDataBin(const PGPIdType& id,const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,bool make_raw_signature=false) ;
 		bool VerifySignBin(const void *data, uint32_t data_len, unsigned char *sign, unsigned int sign_len, const PGPFingerprintType& withfingerprint) ;
 		bool privateSignCertificate(const PGPIdType& own_id,const PGPIdType& id_of_key_to_sign) ;
 

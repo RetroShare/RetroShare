@@ -986,7 +986,7 @@ bool PGPHandler::decryptTextFromFile(const PGPIdType&,std::string& text,const st
 	return (bool)res ;
 }
 
-bool PGPHandler::SignDataBin(const PGPIdType& id,const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen)
+bool PGPHandler::SignDataBin(const PGPIdType& id,const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,bool use_raw_signature)
 {
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
 	// need to find the key and to decrypt it.
@@ -1022,7 +1022,8 @@ bool PGPHandler::SignDataBin(const PGPIdType& id,const void *data, const uint32_
 
 	// then do the signature.
 
-	ops_memory_t *memres = ops_sign_buf(data,len,(ops_sig_type_t)0x00,secret_key,ops_false,ops_false) ;
+	ops_boolean_t not_raw = !use_raw_signature ;
+	ops_memory_t *memres = ops_sign_buf(data,len,(ops_sig_type_t)0x00,secret_key,ops_false,ops_false,not_raw,not_raw) ;
 
 	if(!memres)
 		return false ;

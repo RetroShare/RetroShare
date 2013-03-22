@@ -1324,7 +1324,9 @@ ops_memory_t* ops_sign_buf(const void* input, const size_t input_len,
 			   const ops_sig_type_t sig_type,
 			   const ops_secret_key_t *skey,
 			   const ops_boolean_t use_armour,
-				ops_boolean_t include_data)
+				ops_boolean_t include_data,
+				ops_boolean_t include_creation_time,
+				ops_boolean_t include_key_id)
     {
     // \todo allow choice of hash algorithams
     // enforce use of SHA1 for now
@@ -1382,10 +1384,14 @@ ops_memory_t* ops_sign_buf(const void* input, const size_t input_len,
     // - creation time
     // - key id
 
-    ops_signature_add_creation_time(sig, time(NULL));
+	 if(include_creation_time)
+		 ops_signature_add_creation_time(sig, time(NULL));
 
-    ops_keyid(keyid, &skey->public_key);
-    ops_signature_add_issuer_key_id(sig, keyid);
+	 if(include_key_id)
+	 {
+		 ops_keyid(keyid, &skey->public_key);
+		 ops_signature_add_issuer_key_id(sig, keyid);
+	 }
 
     ops_signature_hashed_subpackets_end(sig);
 
