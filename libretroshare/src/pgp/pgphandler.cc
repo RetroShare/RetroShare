@@ -1004,6 +1004,12 @@ bool PGPHandler::SignDataBin(const PGPIdType& id,const void *data, const uint32_
 		uid_hint = std::string((const char *)key->uids[0].user_id) ;
 	uid_hint += "(" + PGPIdType(key->key_id).toStdString()+")" ;
 
+#ifdef DEBUG_PGPHANDLER
+	ops_fingerprint_t f ;
+	ops_fingerprint(&f,&key->key.pkey) ; 
+
+	PGPFingerprintType fp(f.fingerprint) ;
+#endif
 	std::string passphrase = _passphrase_callback(NULL,uid_hint.c_str(),"Please enter passwd for encrypting your key : ",false) ;
 
 	ops_secret_key_t *secret_key = ops_decrypt_secret_key_from_data(key,passphrase.c_str()) ;
@@ -1031,6 +1037,15 @@ bool PGPHandler::SignDataBin(const PGPIdType& id,const void *data, const uint32_
 	ops_secret_key_free(secret_key) ;
 	free(secret_key) ;
 
+#ifdef DEBUG_PGPHANDLER
+	std::cerr << "Signed with fingerprint " << fp.toStdString() << ", length " << std::dec << *signlen << ", literal data length = " << len << std::endl;
+	std::cerr << "Signature body: " << std::endl;
+	hexdump( (unsigned char *)data,     len) ;
+	std::cerr << std::endl;
+	std::cerr << "Data: " << std::endl;
+	hexdump( (unsigned char *)sign,*signlen) ;
+	std::cerr << std::endl;
+#endif
 	return true ;
 }
 
@@ -1152,7 +1167,10 @@ bool PGPHandler::VerifySignBin(const void *literal_data, uint32_t literal_data_l
 #ifdef DEBUG_PGPHANDLER
 	std::cerr << "Verifying signature from fingerprint " << key_fingerprint.toStdString() << ", length " << std::dec << sign_len << ", literal data length = " << literal_data_length << std::endl;
 	std::cerr << "Signature body: " << std::endl;
-	hexdump( sign,sign_len) ;
+	hexdump( (unsigned char *)sign,sign_len) ;
+	std::cerr << std::endl;
+	std::cerr << "Signed data: " << std::endl;
+	hexdump( (unsigned char *)literal_data,     literal_data_length) ;
 	std::cerr << std::endl;
 #endif
 
