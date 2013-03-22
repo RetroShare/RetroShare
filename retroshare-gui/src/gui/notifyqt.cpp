@@ -151,7 +151,6 @@ class SignatureEventData
 {
 	public:
 		SignatureEventData(const void *_data,int32_t _len,unsigned int _signlen)
-			: data(_data),len(_len)
 		{
 			// We need a new memory chnk because there's no guarranty _sign nor _signlen are not in the stack
 
@@ -159,12 +158,16 @@ class SignatureEventData
 			signlen = new unsigned int ;
 			*signlen = _signlen ;
 			signature_result = 0 ;
+			data = malloc(_len) ;
+			len = _len ;
+			memcpy(data,_data,len) ;
 		}
 
 		~SignatureEventData()
 		{
 			free(sign) ;
 			delete signlen ;
+			free(data) ;
 		}
 
 		bool performSignature()
@@ -173,7 +176,7 @@ class SignatureEventData
 				signature_result = 1 ;
 		}
 
-		const void *data ;
+		void *data ;
 		uint32_t len ;
 		unsigned char *sign ;
 		unsigned int *signlen ;
