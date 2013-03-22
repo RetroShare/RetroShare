@@ -1977,7 +1977,18 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	configMap[active_downloads_size_ss] = s ;
 	configMap[download_dir_ss] = getDownloadDirectory();
 	configMap[partial_dir_ss] = getPartialsDirectory();
-	configMap[default_chunk_strategy_ss] = (mDefaultChunkStrategy==FileChunksInfo::CHUNK_STRATEGY_STREAMING) ? "STREAMING" : "RANDOM";
+
+	switch(mDefaultChunkStrategy)
+	{
+		case FileChunksInfo::CHUNK_STRATEGY_STREAMING: 	configMap[default_chunk_strategy_ss] =  "STREAMING" ;
+																	  	break ;
+		case FileChunksInfo::CHUNK_STRATEGY_RANDOM:		configMap[default_chunk_strategy_ss] =  "RANDOM" ;
+																		break ;
+
+		default:
+		case FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE:configMap[default_chunk_strategy_ss] =  "PROGRESSIVE" ;
+																		break ;
+	}
 
 	rs_sprintf(s, "%lu", RsDiscSpace::freeSpaceLimit());
 	configMap[free_space_limit_ss] = s ;
