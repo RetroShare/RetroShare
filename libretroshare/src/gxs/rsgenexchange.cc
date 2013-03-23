@@ -54,7 +54,7 @@
 
 #define GEN_EXCH_DEBUG	1
 
-#define MSG_CLEANUP_PERIOD 60*3 // 3 minute
+#define MSG_CLEANUP_PERIOD 60*5 // 5 minutes
 
 RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService *ns,
                              RsSerialType *serviceSerialiser, uint16_t servType, RsGixs* gixs,

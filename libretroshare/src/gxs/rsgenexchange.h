@@ -39,7 +39,7 @@
 #include "serialiser/rsnxsitems.h"
 #include "rsgxsutil.h"
 
-#define DEFAULT_MSG_STORE_PERIOD 60*60*24 // 1 day
+#define DEFAULT_MSG_STORE_PERIOD 60*60*24*30 // 1 month
 
 template<class GxsItem, typename Identity = std::string>
 class GxsPendingItem
