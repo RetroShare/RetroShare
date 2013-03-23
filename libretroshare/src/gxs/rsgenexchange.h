@@ -283,13 +283,23 @@ public:
 
     bool subscribeToGroup(uint32_t& token, const RsGxsGroupId& grpId, bool subscribe);
 
-protected:
+	/*!
+	 * Gets service statistic for a given services
+	 * @param token value to to retrieve requested stats
+	 * @param stats the status
+	 * @return true if token exists false otherwise
+	 */
+	bool getServiceStatistic(const uint32_t& token, GxsServiceStatistic& stats);
 
-    /*!
-     * @param grpItem
-     * @deprecated only here temporarily for testing
-     */
-    void createDummyGroup(RsGxsGrpItem* grpItem);
+	/*!
+	 * Get group statistic
+	 * @param token to be redeemed
+	 * @param stats the stats associated to token requ
+	 * @return true if token is false otherwise
+	 */
+	bool getGroupStatistic(const uint32_t& token, GxsGroupStatistic& stats);
+
+protected:
 
     /*!
      * retrieves group data associated to a request token
@@ -343,10 +353,16 @@ protected:
                 for(; vit != nxsMsgsV.end(); vit++)
                 {
                     RsNxsMsg*& msg = *vit;
+                    RsItem* item = NULL;
 
-                    RsItem* item = mSerialiser->deserialise(msg->msg.bin_data,
+                    if(msg->msg.bin_len != 0)
+                    	item = mSerialiser->deserialise(msg->msg.bin_data,
                                     &msg->msg.bin_len);
-                    GxsMsgType* mItem = dynamic_cast<GxsMsgType*>(item);
+
+                    GxsMsgType* mItem = NULL;
+
+                    if(item)
+                    	mItem = dynamic_cast<GxsMsgType*>(item);
 
                     if(mItem == NULL)
                     {

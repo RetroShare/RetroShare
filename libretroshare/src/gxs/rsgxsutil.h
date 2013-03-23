@@ -90,7 +90,7 @@ private:
 
 	RsGeneralDataService* const mDs;
 	const uint32_t MESSAGE_STORE_PERIOD, CHUNK_SIZE;
-	std::vector<RsGxsGroupId> mGrpIds;
+	std::vector<RsGxsGrpMetaData*> mGrpMeta;
 };
 
 

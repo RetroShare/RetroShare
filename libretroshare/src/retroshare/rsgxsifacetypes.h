@@ -121,5 +121,26 @@ public:
 
 };
 
+class GxsGroupStatistic
+{
+public:
+
+	/// number of message
+	RsGxsGroupId mGrpId;
+	uint32_t mNumMsgs;
+	uint32_t mTotalSizeOfMsgs;
+};
+
+class GxsServiceStatistic
+{
+public:
+
+	uint32_t mNumMsgs;
+	uint32_t mNumGrps;
+	uint32_t mSizeOfMsgs;
+	uint32_t mSizeOfGrps;
+	uint32_t mNumGrpsSubscribed;
+	uint32_t mSizeStore;
+};
 
 #endif /* RSGXSIFACETYPES_H_ */

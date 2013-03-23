@@ -291,6 +291,7 @@ public:
     std::string grpId; /// group id, forms part of version id
     std::string msgId; /// msg id
     static int refcount;
+
     /*!
      * This should contains all the data
      * which is not specific to the Gxs service data

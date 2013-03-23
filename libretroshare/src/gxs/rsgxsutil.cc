@@ -24,6 +24,7 @@
  */
 
 #include "rsgxsutil.h"
+#include "retroshare/rsgxsflags.h"
 
 
 RsGxsMessageCleanUp::RsGxsMessageCleanUp(RsGeneralDataService* const dataService, uint32_t messageStorePeriod, uint32_t chunkSize)
@@ -37,22 +38,22 @@ RsGxsMessageCleanUp::RsGxsMessageCleanUp(RsGeneralDataService* const dataService
 
 	for(;cit != grpMeta.end(); cit++)
 	{
-		mGrpIds.push_back(cit->first);
-		delete cit->second;
+		mGrpMeta.push_back(cit->second);
 	}
 }
 
 
 bool RsGxsMessageCleanUp::clean()
 {
-	int i = 0;
+	int i = 1;
 
 	time_t now = time(NULL);
 
-	while(!mGrpIds.empty())
+	while(!mGrpMeta.empty())
 	{
-		RsGxsGroupId grpId = mGrpIds.back();
-		mGrpIds.pop_back();
+		RsGxsGrpMetaData* grpMeta = mGrpMeta.back();
+		const RsGxsGroupId& grpId = grpMeta->mGroupId;
+		mGrpMeta.pop_back();
 		GxsMsgReq req;
 		GxsMsgMetaResult result;
 
@@ -71,7 +72,17 @@ bool RsGxsMessageCleanUp::clean()
 			for(; vit != metaV.end(); )
 			{
 				RsGxsMsgMetaData* meta = *vit;
-				if(meta->mPublishTs + MESSAGE_STORE_PERIOD < now)
+
+				// check if expired
+				bool remove = (meta->mPublishTs + MESSAGE_STORE_PERIOD) < now;
+
+				// check client does not want the message kept regardless of age
+				remove &= !(meta->mMsgStatus & GXS_SERV::GXS_MSG_STATUS_KEEP);
+
+				// if not subscribed remove messages (can optimise this really)
+				remove = remove || (grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED);
+
+				if( remove )
 				{
 					req[grpId].push_back(meta->mMsgId);
 				}
@@ -83,9 +94,11 @@ bool RsGxsMessageCleanUp::clean()
 
 		mDs->removeMsgs(req);
 
+		delete grpMeta;
+
 		i++;
 		if(i > CHUNK_SIZE) break;
 	}
 
-	return mGrpIds.empty();
+	return mGrpMeta.empty();
 }

@@ -234,7 +234,7 @@ void RsDataService::initialise(){
 
 }
 
-RsGxsGrpMetaData* RsDataService::getGrpMeta(RetroCursor &c)
+RsGxsGrpMetaData* RsDataService::locked_getGrpMeta(RetroCursor &c)
 {
     RsGxsGrpMetaData* grpMeta = new RsGxsGrpMetaData();
 
@@ -291,7 +291,7 @@ RsGxsGrpMetaData* RsDataService::getGrpMeta(RetroCursor &c)
     return NULL;
 }
 
-RsNxsGrp* RsDataService::getGroup(RetroCursor &c)
+RsNxsGrp* RsDataService::locked_getGroup(RetroCursor &c)
 {
     /*!
      * grpId, pub admin and pub publish key
@@ -345,7 +345,7 @@ RsNxsGrp* RsDataService::getGroup(RetroCursor &c)
     return NULL;
 }
 
-RsGxsMsgMetaData* RsDataService::getMsgMeta(RetroCursor &c)
+RsGxsMsgMetaData* RsDataService::locked_getMsgMeta(RetroCursor &c)
 {
 
     RsGxsMsgMetaData* msgMeta = new RsGxsMsgMetaData();
@@ -395,7 +395,7 @@ RsGxsMsgMetaData* RsDataService::getMsgMeta(RetroCursor &c)
 
 
 
-RsNxsMsg* RsDataService::getMessage(RetroCursor &c)
+RsNxsMsg* RsDataService::locked_getMessage(RetroCursor &c)
 {
 
     RsNxsMsg* msg = new RsNxsMsg(mServType);
@@ -644,7 +644,7 @@ int RsDataService::retrieveNxsGrps(std::map<std::string, RsNxsGrp *> &grp, bool 
         {
                 std::vector<RsNxsGrp*> grps;
 
-                retrieveGroups(c, grps);
+                locked_retrieveGroups(c, grps);
                 std::vector<RsNxsGrp*>::iterator vit = grps.begin();
 
                 for(; vit != grps.end(); vit++)
@@ -670,7 +670,7 @@ int RsDataService::retrieveNxsGrps(std::map<std::string, RsNxsGrp *> &grp, bool 
             if(c)
             {
                 std::vector<RsNxsGrp*> grps;
-                retrieveGroups(c, grps);
+                locked_retrieveGroups(c, grps);
 
                 if(!grps.empty())
                 {
@@ -711,13 +711,13 @@ int RsDataService::retrieveNxsGrps(std::map<std::string, RsNxsGrp *> &grp, bool 
     return 1;
 }
 
-void RsDataService::retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>& grps){
+void RsDataService::locked_retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>& grps){
 
     if(c){
         bool valid = c->moveToFirst();
 
         while(valid){
-            RsNxsGrp* g = getGroup(*c);
+            RsNxsGrp* g = locked_getGroup(*c);
 
             // only add the latest grp info
             if(g)
@@ -752,7 +752,7 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
             RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, msgColumns, KEY_GRP_ID+ "='" + grpId + "'", "");
 
             if(c)
-                retrieveMessages(c, msgSet);
+                locked_retrieveMessages(c, msgSet);
 
             delete c;
         }else{
@@ -769,7 +769,7 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
                                                + "' AND " + KEY_MSG_ID + "='" + msgId + "'", "");
 
                 if(c)
-                    retrieveMessages(c, msgSet);
+                    locked_retrieveMessages(c, msgSet);
 
                 delete c;
             }
@@ -848,11 +848,11 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
     return 1;
 }
 
-void RsDataService::retrieveMessages(RetroCursor *c, std::vector<RsNxsMsg *> &msgs)
+void RsDataService::locked_retrieveMessages(RetroCursor *c, std::vector<RsNxsMsg *> &msgs)
 {
     bool valid = c->moveToFirst();
     while(valid){
-        RsNxsMsg* m = getMessage(*c);
+        RsNxsMsg* m = locked_getMessage(*c);
 
         if(m){
             msgs.push_back(m);;
@@ -882,7 +882,7 @@ int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaRes
         if(msgIdV.empty()){
             RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, msgMetaColumns, KEY_GRP_ID+ "='" + grpId + "'", "");
 
-            retrieveMsgMeta(c, metaSet);
+            locked_retrieveMsgMeta(c, metaSet);
 
         }else{
 
@@ -894,7 +894,7 @@ int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaRes
                 RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, msgMetaColumns, KEY_GRP_ID+ "='" + grpId
                                                + "' AND " + KEY_MSG_ID + "='" + msgId + "'", "");
 
-                retrieveMsgMeta(c, metaSet);
+                locked_retrieveMsgMeta(c, metaSet);
             }
         }
 
@@ -904,14 +904,14 @@ int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaRes
     return 1;
 }
 
-void RsDataService::retrieveMsgMeta(RetroCursor *c, std::vector<RsGxsMsgMetaData *> &msgMeta)
+void RsDataService::locked_retrieveMsgMeta(RetroCursor *c, std::vector<RsGxsMsgMetaData *> &msgMeta)
 {
 
     if(c)
     {
         bool valid = c->moveToFirst();
         while(valid){
-            RsGxsMsgMetaData* m = getMsgMeta(*c);
+            RsGxsMsgMetaData* m = locked_getMsgMeta(*c);
 
             if(m != NULL)
                 msgMeta.push_back(m);
@@ -937,7 +937,7 @@ int RsDataService::retrieveGxsGrpMetaData(std::map<RsGxsGroupId, RsGxsGrpMetaDat
 
             while(valid)
             {
-                RsGxsGrpMetaData* g = getGrpMeta(*c);
+                RsGxsGrpMetaData* g = locked_getGrpMeta(*c);
 
                 if(g)
                 {
@@ -964,7 +964,7 @@ int RsDataService::retrieveGxsGrpMetaData(std::map<RsGxsGroupId, RsGxsGrpMetaDat
 
                 while(valid)
                 {
-                    RsGxsGrpMetaData* g = getGrpMeta(*c);
+                    RsGxsGrpMetaData* g = locked_getGrpMeta(*c);
 
                     if(g)
                     {
@@ -1075,7 +1075,7 @@ int RsDataService::removeMsgs(const GxsMsgReq& msgIds)
 
 		// can get offsets for each file
 		std::vector<MsgOffset> msgOffsets;
-		getMessageOffsets(grpId, msgOffsets);
+		locked_getMessageOffsets(grpId, msgOffsets);
 
 		std::string oldFileName = mServiceDir + "/" + grpId + "-msgs";
 		std::string newFileName = mServiceDir + "/" + grpId + "-msgs-temp";
@@ -1133,12 +1133,12 @@ int RsDataService::removeMsgs(const GxsMsgReq& msgIds)
 		out.close();
 
 		// now update the new positions in db
-		updateMessageEntries(updates);
+		locked_updateMessageEntries(updates);
 
 		// then delete removed messages
 		GxsMsgReq msgsToDelete;
 		msgsToDelete[grpId] = msgIdV;
-		removeMessageEntries(msgsToDelete);
+		locked_removeMessageEntries(msgsToDelete);
 
 		// now replace old file location with new file
 		remove(oldFileName.c_str());
@@ -1150,7 +1150,7 @@ int RsDataService::removeMsgs(const GxsMsgReq& msgIds)
 
 
 
-bool RsDataService::updateMessageEntries(const MsgUpdates& updates)
+bool RsDataService::locked_updateMessageEntries(const MsgUpdates& updates)
 {
     // start a transaction
     bool ret = mDb->execSQL("BEGIN;");
@@ -1177,7 +1177,7 @@ bool RsDataService::updateMessageEntries(const MsgUpdates& updates)
     return ret;
 }
 
-bool RsDataService::removeMessageEntries(const GxsMsgReq& msgIds)
+bool RsDataService::locked_removeMessageEntries(const GxsMsgReq& msgIds)
 {
     // start a transaction
     bool ret = mDb->execSQL("BEGIN;");
@@ -1203,7 +1203,7 @@ bool RsDataService::removeMessageEntries(const GxsMsgReq& msgIds)
     return ret;
 }
 
-void RsDataService::getMessageOffsets(const RsGxsGroupId& grpId, std::vector<MsgOffset>& offsets)
+void RsDataService::locked_getMessageOffsets(const RsGxsGroupId& grpId, std::vector<MsgOffset>& offsets)
 {
 
 	RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, mMsgOffSetColumns, KEY_GRP_ID+ "='" + grpId + "'", "");
@@ -1233,15 +1233,6 @@ void RsDataService::getMessageOffsets(const RsGxsGroupId& grpId, std::vector<Msg
     }
 }
 
-void RsDataService::lockStore()
-{
-	mDbMutex.lock();
-}
-
-void RsDataService::unlockStore()
-{
-	mDbMutex.unlock();
-}
 uint32_t RsDataService::cacheSize() const {
     return 0;
 }

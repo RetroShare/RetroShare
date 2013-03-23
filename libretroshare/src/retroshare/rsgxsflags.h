@@ -89,11 +89,15 @@ namespace GXS_SERV {
 
     /** START GXS Msg status flags **/
 
-    static const uint32_t GXS_MSG_STATUS_UNPROCESSED = 0x000000100;
+    static const uint32_t GXS_MSG_STATUS_UNPROCESSED = 0x0000001;
 
-    static const uint32_t GXS_MSG_STATUS_UNREAD = 0x00000200;
+    static const uint32_t GXS_MSG_STATUS_UNREAD = 0x000002;
 
-    static const uint32_t GXS_MSG_STATUS_READ = 0x00000400;
+    static const uint32_t GXS_MSG_STATUS_READ = 0x000004;
+
+    static const uint32_t GXS_MSG_STATUS_KEEP = 0x000008;
+
+    static const uint32_t GXS_MSG_STATUS_DELETE = 0x0000020;
 
     /** END GXS Msg status flags **/
 
@@ -104,7 +108,6 @@ namespace GXS_SERV {
     static const uint32_t GXS_GRP_STATUS_UNREAD = 0x00000200;
 
     /** END GXS Grp status flags **/
-
 }
 
 

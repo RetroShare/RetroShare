@@ -169,6 +169,21 @@ public:
      */
     virtual bool acknowledgeTokenGrp(const uint32_t& token, RsGxsGroupId& grpId) = 0;
 
+	/*!
+	 * Gets service statistic for a given services
+	 * @param token value to to retrieve requested stats
+	 * @param stats the status
+	 * @return true if token exists false otherwise
+	 */
+	virtual bool getServiceStatistic(const uint32_t& token, GxsServiceStatistic& stats) = 0;
+
+	/*!
+	 *
+	 * @param token to be redeemed
+	 * @param stats the stats associated to token request
+	 * @return true if token is false otherwise
+	 */
+	virtual bool getGroupStatistic(const uint32_t& token, GxsGroupStatistic& stats) = 0;
 };
 
 

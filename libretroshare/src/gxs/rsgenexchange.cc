@@ -54,7 +54,7 @@
 
 #define GEN_EXCH_DEBUG	1
 
-#define MSG_CLEANUP_PERIOD 60*3 // 3 minutes
+#define MSG_CLEANUP_PERIOD 60*3 // 3 minute
 
 RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService *ns,
                              RsSerialType *serviceSerialiser, uint16_t servType, RsGixs* gixs,
@@ -126,7 +126,6 @@ void RsGenExchange::tick()
 	// implemented service tick function
 	service_tick();
 
-#ifdef GXS_CLEAN_UP
 	time_t now = time(NULL);
 
 	if((mLastClean + MSG_CLEANUP_PERIOD < now) || mCleaning)
@@ -147,8 +146,6 @@ void RsGenExchange::tick()
 			mCleaning = true;
 		}
 	}
-#endif
-
 }
 
 bool RsGenExchange::acknowledgeTokenMsg(const uint32_t& token,
@@ -943,6 +940,17 @@ bool RsGenExchange::subscribeToGroup(uint32_t& token, const RsGxsGroupId& grpId,
 
     return true;
 }
+
+bool RsGenExchange::getGroupStatistic(const uint32_t& token, GxsGroupStatistic& stats)
+{
+	return false;
+}
+
+bool RsGenExchange::getServiceStatistic(const uint32_t& token, GxsServiceStatistic& stats)
+{
+	return false;
+}
+
 bool RsGenExchange::updated(bool willCallGrpChanged, bool willCallMsgChanged)
 {
 	bool changed = false;
@@ -1090,10 +1098,13 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 		for(; lit != nxsGrps.end(); lit++)
 		{
 			RsTlvBinaryData& data = (*lit)->grp;
-			RsItem* item = mSerialiser->deserialise(data.bin_data, &data.bin_len);
+			RsItem* item = NULL;
 
-                        if(item)
-                        {
+			if(data.bin_len != 0)
+				item = mSerialiser->deserialise(data.bin_data, &data.bin_len);
+
+			if(item)
+			{
 				RsGxsGrpItem* gItem = dynamic_cast<RsGxsGrpItem*>(item);
 				if (gItem)
 				{
@@ -1139,47 +1150,54 @@ bool RsGenExchange::getMsgData(const uint32_t &token,
             for(; vit != nxsMsgsV.end(); vit++)
             {
                 RsNxsMsg*& msg = *vit;
+                RsItem* item = NULL;
 
-                RsItem* item = mSerialiser->deserialise(msg->msg.bin_data,
+                if(msg->msg.bin_len != 0)
+                	item = mSerialiser->deserialise(msg->msg.bin_data,
                                 &msg->msg.bin_len);
-		if (item)
-		{
-                	RsGxsMsgItem* mItem = dynamic_cast<RsGxsMsgItem*>(item);
-			if (mItem)
-			{
-                		mItem->meta = *((*vit)->metaData); // get meta info from nxs msg
-                		gxsMsgItems.push_back(mItem);
+
+				if (item)
+				{
+					RsGxsMsgItem* mItem = dynamic_cast<RsGxsMsgItem*>(item);
+					if (mItem)
+					{
+								mItem->meta = *((*vit)->metaData); // get meta info from nxs msg
+								gxsMsgItems.push_back(mItem);
+					}
+					else
+					{
+#ifdef GEN_EXCH_DEBUG
+						std::cerr << "RsGenExchange::getMsgData() deserialisation/dynamic_cast ERROR";
+						std::cerr << std::endl;
+#endif
+						delete item;
+					}
+				}
+				else
+				{
+#ifdef GEN_EXCH_DEBUG
+					std::cerr << "RsGenExchange::getMsgData() deserialisation ERROR";
+					std::cerr << std::endl;
+#endif
+				}
+						delete msg;
+					}
+					msgItems[grpId] = gxsMsgItems;
+				}
 			}
-			else
-			{
-				std::cerr << "RsGenExchange::getMsgData() deserialisation/dynamic_cast ERROR";
-				std::cerr << std::endl;
-				delete item;
-			}
-		}
-		else
-		{
-			std::cerr << "RsGenExchange::getMsgData() deserialisation ERROR";
-			std::cerr << std::endl;
-		}
-                delete msg;
-            }
-            msgItems[grpId] = gxsMsgItems;
-        }
-    }
     return ok;
 }
 
 bool RsGenExchange::getMsgRelatedData(const uint32_t &token, GxsMsgRelatedDataMap &msgItems)
 {
-
     RsStackMutex stack(mGenMtx);
     NxsMsgRelatedDataResult msgResult;
     bool ok = mDataAccess->getMsgRelatedData(token, msgResult);
-    NxsMsgRelatedDataResult::iterator mit = msgResult.begin();
+
 
     if(ok)
     {
+    	NxsMsgRelatedDataResult::iterator mit = msgResult.begin();
         for(; mit != msgResult.end(); mit++)
         {
             std::vector<RsGxsMsgItem*> gxsMsgItems;
@@ -1190,30 +1208,33 @@ bool RsGenExchange::getMsgRelatedData(const uint32_t &token, GxsMsgRelatedDataMa
             for(; vit != nxsMsgsV.end(); vit++)
             {
                 RsNxsMsg*& msg = *vit;
+                RsItem* item = NULL;
 
-                RsItem* item = mSerialiser->deserialise(msg->msg.bin_data,
+                if(msg->msg.bin_len != 0)
+                	item = mSerialiser->deserialise(msg->msg.bin_data,
                                 &msg->msg.bin_len);
-		if (item)
-		{
-                	RsGxsMsgItem* mItem = dynamic_cast<RsGxsMsgItem*>(item);
+				if (item)
+				{
+					RsGxsMsgItem* mItem = dynamic_cast<RsGxsMsgItem*>(item);
 
-                	if (mItem)
-                	{
-                    		mItem->meta = *((*vit)->metaData); // get meta info from nxs msg
-                    		gxsMsgItems.push_back(mItem);
-                	}
-			else
-			{
-				std::cerr << "RsGenExchange::getMsgRelatedData() deserialisation/dynamic_cast ERROR";
-				std::cerr << std::endl;
-				delete item;
-			}
-		}
-		else
-		{
-			std::cerr << "RsGenExchange::getMsgRelatedData() deserialisation ERROR";
-			std::cerr << std::endl;
-		}
+					if (mItem)
+					{
+							mItem->meta = *((*vit)->metaData); // get meta info from nxs msg
+							gxsMsgItems.push_back(mItem);
+					}
+					else
+					{
+						std::cerr << "RsGenExchange::getMsgRelatedData() deserialisation/dynamic_cast ERROR";
+						std::cerr << std::endl;
+						delete item;
+					}
+				}
+				else
+				{
+					std::cerr << "RsGenExchange::getMsgRelatedData() deserialisation ERROR";
+					std::cerr << std::endl;
+				}
+
                 delete msg;
             }
             msgItems[msgId] = gxsMsgItems;
@@ -1968,73 +1989,6 @@ bool RsGenExchange::getGroupKeys(const RsGxsGroupId &grpId, RsTlvSecurityKeySet 
     return true;
 }
 
-void RsGenExchange::createDummyGroup(RsGxsGrpItem *grpItem)
-{
-    RsStackMutex stack(mGenMtx);
-
-    RsNxsGrp* grp = new RsNxsGrp(mServType);
-    uint32_t size = mSerialiser->size(grpItem);
-    char gData[size];
-    bool ok = mSerialiser->serialise(grpItem, gData, &size);
-    grp->grp.setBinData(gData, size);
-
-    RsTlvSecurityKeySet privateKeySet, publicKeySet;
-    generateGroupKeys(privateKeySet, publicKeySet,
-                      !(grpItem->meta.mGroupFlags & GXS_SERV::FLAG_PRIVACY_PUBLIC));
-
-    // find private admin key
-    RsTlvSecurityKey privAdminKey;
-    std::map<std::string, RsTlvSecurityKey>::iterator mit_keys = privateKeySet.keys.begin();
-
-    bool privKeyFound = false;
-    for(; mit_keys != privateKeySet.keys.end(); mit_keys++)
-    {
-        RsTlvSecurityKey& key = mit_keys->second;
-
-        if(key.keyFlags == (RSTLV_KEY_DISTRIB_ADMIN | RSTLV_KEY_TYPE_FULL))
-        {
-            privAdminKey = key;
-            privKeyFound = true;
-        }
-    }
-
-
-    if(privKeyFound)
-    {
-        // get group id from private admin key id
-        grpItem->meta.mGroupId = grp->grpId = privAdminKey.keyId;
-    }
-    else
-    {
-        ok = false;
-    }
-
-    service_CreateGroup(grpItem, privateKeySet);
-
-    if(ok)
-    {
-        grp->metaData = new RsGxsGrpMetaData();
-        grpItem->meta.mPublishTs = time(NULL);
-        *(grp->metaData) = grpItem->meta;
-        grp->metaData->mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_ADMIN;
-        createGroup(grp, privateKeySet, publicKeySet);
-
-        mDataAccess->addGroupData(grp);
-    }
-
-    if(!ok)
-    {
-
-#ifdef GEN_EXCH_DEBUG
-#endif
-            std::cerr << "RsGenExchange::createDummyGroup(); failed to publish grp " << std::endl;
-        delete grp;
-    }
-
-    delete grpItem;
-}
-
-
 void RsGenExchange::processRecvdData()
 {
     processRecvdGroups();
@@ -2047,7 +2001,6 @@ void RsGenExchange::processRecvdData()
 void RsGenExchange::processRecvdMessages()
 {
     RsStackMutex stack(mGenMtx);
-
 
     NxsMsgPendingVect::iterator pend_it = mMsgPendingValidate.begin();
 
@@ -2086,7 +2039,12 @@ void RsGenExchange::processRecvdMessages()
     {
         RsNxsMsg* msg = *vit;
         RsGxsMsgMetaData* meta = new RsGxsMsgMetaData();
-        bool ok = meta->deserialise(msg->meta.bin_data, &(msg->meta.bin_len));
+
+        bool ok = false;
+
+        if(msg->meta.bin_len != 0)
+        	ok = meta->deserialise(msg->meta.bin_data, &(msg->meta.bin_len));
+
         msg->metaData = meta;
 
         uint8_t validateReturn = VALIDATE_FAIL;
@@ -2123,8 +2081,8 @@ void RsGenExchange::processRecvdMessages()
         {
 
 #ifdef GXS_GENX_DEBUG
-            std::cerr << "failed to deserialise incoming meta, grpId: "
-                    << msg->grpId << ", msgId: " << msg->msgId << std::endl;
+            std::cerr << "failed to deserialise incoming meta, msgId: "
+            		<< "msg->grpId: " << msg->grpId << ", msgId: " << msg->msgId << std::endl;
 #endif
 
             NxsMsgPendingVect::iterator failed_entry = std::find(mMsgPendingValidate.begin(), mMsgPendingValidate.end(),
@@ -2137,6 +2095,11 @@ void RsGenExchange::processRecvdMessages()
         }
         else if(validateReturn == VALIDATE_FAIL_TRY_LATER)
         {
+
+#ifdef GXS_GENX_DEBUG
+            std::cerr << "failed to validate msg, trying again: "
+                    << "msg->grpId: " << msg->grpId << ", msgId: " << msg->msgId << std::endl;
+#endif
 
         	RsGxsGrpMsgIdPair id;
         	id.first = msg->grpId;
@@ -2187,7 +2150,11 @@ void RsGenExchange::processRecvdGroups()
     	GxsPendingItem<RsNxsGrp*, RsGxsGroupId>& gpsi = *vit;
         RsNxsGrp* grp = gpsi.mItem;
         RsGxsGrpMetaData* meta = new RsGxsGrpMetaData();
-        bool deserialOk = meta->deserialise(grp->meta.bin_data, grp->meta.bin_len);
+        bool deserialOk = false;
+
+        if(grp->meta.bin_len != 0)
+        	deserialOk = meta->deserialise(grp->meta.bin_data, grp->meta.bin_len);
+
         bool erase = true;
 
         if(deserialOk)
@@ -2216,6 +2183,12 @@ void RsGenExchange::processRecvdGroups()
         	}
         	else  if(ret == VALIDATE_FAIL_TRY_LATER)
         	{
+
+#ifdef GXS_GENX_DEBUG
+				std::cerr << "failed to validate incoming grp, trying again. grpId: "
+						<< grp->grpId << std::endl;
+#endif
+
         		if(gpsi.mAttempts == VALIDATE_MAX_ATTEMPTS)
         		{
         			delete grp;

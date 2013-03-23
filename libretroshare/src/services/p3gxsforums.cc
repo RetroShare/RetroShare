@@ -63,17 +63,13 @@ p3GxsForums::p3GxsForums(RsGeneralDataService *gds, RsNetworkExchangeService *ne
 
 uint32_t p3GxsForums::forumsAuthenPolicy()
 {
-	uint32_t policy;
+	uint32_t policy = 0;
 	uint32_t flag = GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN |
 			GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN;
 
 	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::RESTRICTED_GRP_BITS);
 	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PUBLIC_GRP_BITS);
 	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PRIVATE_GRP_BITS);
-
-	flag = GXS_SERV::GRP_OPTION_AUTHEN_AUTHOR_SIGN;
-
-	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::GRP_OPTION_BITS);
 
 	return policy;
 }

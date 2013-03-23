@@ -216,6 +216,28 @@ public:
             return mGxs->acknowledgeTokenGrp(token, grpId);
     }
 
+	/*!
+	 * Gets service statistic for a given services
+	 * @param token value to to retrieve requested stats
+	 * @param stats the status
+	 * @return true if token exists false otherwise
+	 */
+	bool getServiceStatistic(const uint32_t& token, GxsServiceStatistic& stats)
+	{
+		return mGxs->getServiceStatistic(token, stats);
+	}
+
+	/*!
+	 *
+	 * @param token to be redeemed
+	 * @param stats the stats associated to token request
+	 * @return true if token is false otherwise
+	 */
+	bool getGroupStatistic(const uint32_t& token, GxsGroupStatistic& stats)
+	{
+		return mGxs->getGroupStatistic(token, stats);
+	}
+
 private:
 
     RsGxsIface* mGxs;

@@ -269,6 +269,17 @@ bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
         return true;
 }
 
+
+void RsGxsDataAccess::requestServiceStatistic(const uint32_t& token)
+{
+
+}
+
+void RsGxsDataAccess::requestGroupStatistic(const uint32_t& token, const RsGxsGroupId& grpId)
+{
+
+}
+
 bool RsGxsDataAccess::requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts,
                                             const std::vector<RsGxsGrpMsgIdPair> &msgIds)
 {

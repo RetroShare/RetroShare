@@ -94,11 +94,32 @@ public:
      */
     bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::vector<RsGxsGrpMsgIdPair> &msgIds);
 
+    /*!
+     * This request statistics on amount of data held
+     * number of groups
+     * number of groups subscribed
+     * number of messages
+     * size of db store
+     * total size of messages
+     * total size of groups
+     * @param token
+     */
+    void requestServiceStatistic(const uint32_t& token);
+
+	/*!
+	 * To request statistic on a group
+	 * @param token set to value to be redeemed to get statistic
+	 * @param grpId the id of the group
+	 */
+	void requestGroupStatistic(const uint32_t& token, const RsGxsGroupId& grpId);
+
+
     /* Poll */
     uint32_t requestStatus(const uint32_t token);
 
     /* Cancel Request */
     bool cancelRequest(const uint32_t &token);
+
 
     /** E: RsTokenService **/
 

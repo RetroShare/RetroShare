@@ -142,19 +142,6 @@ public:
     int updateGroupMetaData(GrpLocMetaData& meta);
 
     /*!
-     * Use to lock store when needing to ensure Db contents has not change
-     * @warning ensure you call unlock or you could cause a deadlock
-     * @see RsDataService::unlockStore()
-     */
-    void lockStore();
-
-    /*!
-     * Use to unlock store after locking
-     * @see RsDataService::lockStore()
-     */
-    void unlockStore();
-
-    /*!
      * Completely clear out data stored in
      * and returns this to a state
      * as it was when first constructed
@@ -173,45 +160,45 @@ private:
      * @param c cursor to result set
      * @param msgs messages retrieved from cursor are stored here
      */
-    void retrieveMessages(RetroCursor* c, std::vector<RsNxsMsg*>& msgs);
+    void locked_retrieveMessages(RetroCursor* c, std::vector<RsNxsMsg*>& msgs);
 
     /*!
      * Retrieves all the grp results from a cursor
      * @param c cursor to result set
      * @param grps groups retrieved from cursor are stored here
      */
-    void retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>& grps);
+    void locked_retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>& grps);
 
     /*!
      * Retrieves all the msg meta results from a cursor
      * @param c cursor to result set
      * @param metaSet message metadata retrieved from cursor are stored here
      */
-    void retrieveMsgMeta(RetroCursor* c, std::vector<RsGxsMsgMetaData*>& msgMeta);
+    void locked_retrieveMsgMeta(RetroCursor* c, std::vector<RsGxsMsgMetaData*>& msgMeta);
 
     /*!
      * extracts a msg meta item from a cursor at its
      * current position
      */
-    RsGxsMsgMetaData* getMsgMeta(RetroCursor& c);
+    RsGxsMsgMetaData* locked_getMsgMeta(RetroCursor& c);
 
     /*!
      * extracts a grp meta item from a cursor at its
      * current position
      */
-    RsGxsGrpMetaData* getGrpMeta(RetroCursor& c);
+    RsGxsGrpMetaData* locked_getGrpMeta(RetroCursor& c);
 
     /*!
      * extracts a msg item from a cursor at its
      * current position
      */
-    RsNxsMsg* getMessage(RetroCursor& c);
+    RsNxsMsg* locked_getMessage(RetroCursor& c);
 
     /*!
      * extracts a grp item from a cursor at its
      * current position
      */
-    RsNxsGrp* getGroup(RetroCursor& c);
+    RsNxsGrp* locked_getGroup(RetroCursor& c);
 
     /*!
      * Creates an sql database and its associated file
@@ -223,7 +210,7 @@ private:
      * Remove entries for data base
      * @param msgIds
      */
-    bool removeMessageEntries(const GxsMsgReq& msgIds);
+    bool locked_removeMessageEntries(const GxsMsgReq& msgIds);
 
     typedef std::map<RsGxsGroupId, std::vector<MsgUpdate> > MsgUpdates;
 
@@ -232,12 +219,12 @@ private:
      * @param msgIds
      * @param cv contains values to update message entries with
      */
-    bool updateMessageEntries(const MsgUpdates& updates);
+    bool locked_updateMessageEntries(const MsgUpdates& updates);
 
 
 private:
 
-    void getMessageOffsets(const RsGxsGroupId& grpId, std::vector<MsgOffset>& msgOffsets);
+    void locked_getMessageOffsets(const RsGxsGroupId& grpId, std::vector<MsgOffset>& msgOffsets);
 
 private:
 
