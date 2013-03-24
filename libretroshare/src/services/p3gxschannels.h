@@ -134,7 +134,7 @@ virtual bool acknowledgeVote(const uint32_t& token, std::pair<RsGxsGroupId, RsGx
 
 
 	// Overloaded from RsGxsIface.
-virtual void subscribeToGroup(const RsGxsGroupId &groupId, bool subscribe);
+virtual void subscribeToGroup(uint32_t token, const RsGxsGroupId &groupId, bool subscribe);
 
 	// Set Statuses.
 virtual void setMessageProcessedStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool processed);
