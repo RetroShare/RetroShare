@@ -442,7 +442,7 @@ void p3GxsChannels::clearUnsubscribedGroup(const RsGxsGroupId &id)
 }
 
 
-void p3GxsChannels::subscribeToGroup(uint32_t token, const RsGxsGroupId &groupId, bool subscribe)
+bool p3GxsChannels::subscribeToGroup(uint32_t &token, const RsGxsGroupId &groupId, bool subscribe)
 {
 	std::cerr << "p3GxsChannels::subscribedToGroup() id: " << groupId << " subscribe: " << subscribe;
 	std::cerr << std::endl;
@@ -451,10 +451,12 @@ void p3GxsChannels::subscribeToGroup(uint32_t token, const RsGxsGroupId &groupId
 	groups.push_back(groupId);
 
 	// Call down to do the real work.
-	RsGenExchange::subscribeToGroup(token, groupId, subscribe);
+	bool response = RsGenExchange::subscribeToGroup(token, groupId, subscribe);
 
 	// reload Group afterwards.
 	request_SpecificSubscribedGroups(groups);
+
+	return response;
 }
 
 
