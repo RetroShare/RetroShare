@@ -80,6 +80,9 @@ private slots:
 
     void       getRankings();
 
+    void subscribeTopic();
+    void unsubscribeTopic();
+
 private:
 
     void 	clearPosts();
@@ -100,6 +103,9 @@ private:
     void	requestGroupSummary_CurrentForum(const std::string &forumId);
     void 	loadGroupSummary_CurrentForum(const uint32_t &token);
 
+
+    // subscribe/unsubscribe ack.
+    void 	acknowledgeSubscribeChange(const uint32_t &token);
 
     // posts
     void        acknowledgePostMsg(const uint32_t &token);

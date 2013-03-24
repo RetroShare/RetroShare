@@ -64,6 +64,14 @@
 
 #define USE_THREAD
 
+
+#define TOKEN_TYPE_GROUP_CHANGE		1	// THIS MUST MIRROR GxsGroupDialog parameters.
+
+#define TOKEN_TYPE_MESSAGE_CHANGE	4	
+#define TOKEN_TYPE_LISTING       	5
+#define TOKEN_TYPE_GROUP_DATA 	 	6
+#define TOKEN_TYPE_POSTS	 	7
+
 /** Constructor */
 GxsChannelDialog::GxsChannelDialog(QWidget *parent)
 : RsAutoUpdatePage(1000,parent), GxsServiceDialog(dynamic_cast<GxsCommentContainer *>(parent))
@@ -112,7 +120,7 @@ GxsChannelDialog::GxsChannelDialog(QWidget *parent)
 	/* load settings */
 	processSettings(true);
 
-	//updateChannelMsgs();
+	insertChannels();
 }
 
 GxsChannelDialog::~GxsChannelDialog()
@@ -120,6 +128,49 @@ GxsChannelDialog::~GxsChannelDialog()
 	// save settings
 	processSettings(false);
 }
+
+
+void GxsChannelDialog::updateDisplay()
+{
+	if (!rsGxsChannels)
+		return;
+
+	std::list<std::string> groupIds;
+	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgs;
+
+	if (rsGxsChannels->updated(true, true))
+	{
+		/* update Forums List */
+
+		rsGxsChannels->groupsChanged(groupIds);
+		if(!groupIds.empty())
+		{
+			// just always update.
+			insertChannels();
+			//std::list<std::string>::iterator it = std::find(groupIds.begin(), groupIds.end(), mChannelId);
+
+			//if(it != groupIds.end()){
+			//	requestGroupSummary();
+			//	return;
+			//}
+		}
+
+		rsGxsChannels->msgsChanged(msgs);
+		if(!msgs.empty())
+		{
+			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit = msgs.find(mChannelId);
+			if(mit != msgs.end())
+			{
+				requestPosts(mChannelId);
+			}
+		}
+	}
+}
+
+
+
+
+
 
 
 // Callback from Widget->FeedHolder->ServiceDialog->CommentContainer->CommentDialog,
@@ -419,18 +470,6 @@ void GxsChannelDialog::selectChannel(const QString &id)
 	//updateChannelMsgs();
 }
 
-void GxsChannelDialog::updateDisplay()
-{
-	if (!rsGxsChannels) {
-		return;
-	}
-
-	if (rsGxsChannels->updated())
-	{
-		insertChannels();
-	}
-}
-
 void GxsChannelDialog::forceUpdateDisplay()
 {
         std::cerr << "GxsChannelDialog::forceUpdateDisplay()";
@@ -468,12 +507,20 @@ void GxsChannelDialog::insertChannelData(const std::list<RsGroupMetaData> &chann
 		GroupItemInfo groupItemInfo;
 		channelInfoToGroupItemInfo(*it, groupItemInfo);
 
-		if (IS_GROUP_ADMIN(flags)) {
-			adminList.push_back(groupItemInfo);
-		} else if (IS_GROUP_SUBSCRIBED(flags)) {
-			/* subscribed forum */
-			subList.push_back(groupItemInfo);
-		} else {
+		if (IS_GROUP_SUBSCRIBED(flags)) 
+		{
+			if (IS_GROUP_ADMIN(flags) || IS_GROUP_PUBLISHER(flags))
+			{
+				adminList.push_back(groupItemInfo);
+			}
+			else
+			{
+				/* subscribed forum */
+				subList.push_back(groupItemInfo);
+			}
+		} 
+		else 
+		{
 			/* rate the others by popularity */
 			popMap.insert(std::make_pair(it->mPop, groupItemInfo));
 		}
@@ -719,13 +766,12 @@ void GxsChannelDialog::unsubscribeChannel()
 	std::cerr << std::endl;
 #endif
 
-#if 0
-	if (rsChannels) {
-		rsChannels->channelSubscribe(mChannelId, false, false);
-	}
+	if(mChannelId.empty())
+		return;
 
-	updateChannelMsgs();
-#endif
+	uint32_t token = 0;
+	rsGxsChannels->subscribeToGroup(token, mChannelId, false);
+        mChannelQueue->queueRequest(token, 0 , RS_TOKREQ_ANSTYPE_ACK, TOKEN_TYPE_GROUP_CHANGE);
 }
 
 
@@ -736,14 +782,12 @@ void GxsChannelDialog::subscribeChannel()
 	std::cerr << std::endl;
 #endif
 
-#if 0
-	if (rsChannels) {
-		rsChannels->channelSubscribe(mChannelId, true, false);
-	}
+	if(mChannelId.empty())
+		return;
 
-	updateChannelMsgs();
-#endif
-
+	uint32_t token = 0;
+	rsGxsChannels->subscribeToGroup(token, mChannelId, true);
+        mChannelQueue->queueRequest(token, 0 , RS_TOKREQ_ANSTYPE_ACK, TOKEN_TYPE_GROUP_CHANGE);
 }
 
 void GxsChannelDialog::showChannelDetails()
@@ -871,10 +915,6 @@ void GxsChannelDialog::setAutoDownloadButton(bool autoDl)
 /*********************** **** **** **** ***********************/
 /** Request / Response of Data ********************************/
 /*********************** **** **** **** ***********************/
-
-#define TOKEN_TYPE_LISTING       1
-#define TOKEN_TYPE_GROUP_DATA 	 2
-#define TOKEN_TYPE_POSTS	 3
 
 void GxsChannelDialog::insertChannels()
 {
@@ -1012,6 +1052,31 @@ void GxsChannelDialog::loadPosts(const uint32_t &token)
 }
 
 
+void GxsChannelDialog::acknowledgeGroupUpdate(const uint32_t &token)
+{
+        std::cerr << "GxsChannelDialog::acknowledgeGroupUpdate()";
+        std::cerr << std::endl;
+
+	RsGxsGroupId grpId;
+	rsGxsChannels->acknowledgeGrp(token, grpId);
+	insertChannels();
+}
+
+
+void GxsChannelDialog::acknowledgeMessageUpdate(const uint32_t &token)
+{
+        std::cerr << "GxsChannelDialog::acknowledgeMessageUpdate() TODO";
+        std::cerr << std::endl;
+
+	std::pair<RsGxsGroupId, RsGxsMessageId> msgId;
+	rsGxsChannels->acknowledgeMsg(token, msgId);
+	if (msgId.first == mChannelId)
+	{
+		requestPosts(mChannelId);
+	}
+}
+
+
 void GxsChannelDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
         std::cerr << "GxsChannelDialog::loadRequest() UserType: " << req.mUserType;
@@ -1022,6 +1087,12 @@ void GxsChannelDialog::loadRequest(const TokenQueue *queue, const TokenRequest &
                 /* now switch on req */
                 switch(req.mUserType)
                 {
+                case TOKEN_TYPE_GROUP_CHANGE:
+                        acknowledgeGroupUpdate(req.mToken);
+                        break;
+                case TOKEN_TYPE_MESSAGE_CHANGE:
+                        acknowledgeMessageUpdate(req.mToken);
+                        break;
                 case TOKEN_TYPE_LISTING:
                         loadGroupSummary(req.mToken);
                         break;

@@ -25,6 +25,7 @@
 #include <QFileInfo>
 
 #include "gui/Circles/CirclesDialog.h"
+#include "gui/Circles/CreateCircleDialog.h"
 
 #include <retroshare/rsgxscircles.h>
 #include <retroshare/rspeers.h>
@@ -49,6 +50,7 @@ CirclesDialog::CirclesDialog(QWidget *parent)
 	ui.setupUi(this);
 
 	connect( ui.pushButton_refresh, SIGNAL(clicked()), this, SLOT(reloadAll()));
+	connect( ui.pushButton_circle, SIGNAL(clicked()), this, SLOT(create()));
 
 	QTimer *timer = new QTimer(this);
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
@@ -83,6 +85,13 @@ void CirclesDialog::checkUpdate()
 
 #define CIRCLEGROUP_FRIEND_COL_NAME	0
 #define CIRCLEGROUP_FRIEND_COL_ID	1
+
+void CirclesDialog::create()
+{
+	CreateCircleDialog *createDialog = new CreateCircleDialog();
+	createDialog->show();
+}
+
 
 void CirclesDialog::reloadAll()
 {

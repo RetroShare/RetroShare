@@ -24,9 +24,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_publicgroup">
+      <widget class="QPushButton" name="pushButton_circle">
        <property name="text">
-        <string>Create Public Group</string>
+        <string>Create Circle</string>
        </property>
       </widget>
      </item>

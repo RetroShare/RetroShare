@@ -321,12 +321,20 @@ void GxsForumsDialog::insertForumsData(const std::list<RsGroupMetaData> &forumLi
 		GroupItemInfo groupItemInfo;
 		forumInfoToGroupItemInfo(*it, groupItemInfo);
 
-		if (IS_GROUP_ADMIN(flags)) {
-			adminList.push_back(groupItemInfo);
-		} else if (IS_GROUP_SUBSCRIBED(flags)) {
-			/* subscribed forum */
-			subList.push_back(groupItemInfo);
-		} else {
+		if (IS_GROUP_SUBSCRIBED(flags)) 
+		{
+			if (IS_GROUP_ADMIN(flags)) 
+			{
+				adminList.push_back(groupItemInfo);
+			}
+			else
+			{
+				/* subscribed forum */
+				subList.push_back(groupItemInfo);
+			}
+		} 
+		else 
+		{
 			/* rate the others by popularity */
 			popMap.insert(std::make_pair(it->mPop, groupItemInfo));
 		}

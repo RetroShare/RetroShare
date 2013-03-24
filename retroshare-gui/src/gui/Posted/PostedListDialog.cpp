@@ -95,6 +95,8 @@ PostedListDialog::PostedListDialog(QWidget *parent)
 	connect( ui.newTopicButton, SIGNAL( clicked() ), this, SLOT( newTopic() ) );
 	connect(ui.refreshButton, SIGNAL(clicked()), this, SLOT(refreshTopics()));
 	connect(ui.submitPostButton, SIGNAL(clicked()), this, SLOT(newPost()));
+
+	refreshTopics();
 }
 
 void PostedListDialog::getRankings()
@@ -182,10 +184,25 @@ void PostedListDialog::refreshTopics()
 
 void PostedListDialog::groupListCustomPopupMenu( QPoint /*point*/ )
 {
-	QMenu contextMnu( this );
+	if (mCurrTopicId.empty())
+	{
+		return;
+	}
+
+	uint32_t subscribeFlags = ui.groupTreeWidget->subscribeFlags(QString::fromStdString(mCurrTopicId));
+
+	QMenu contextMnu(this);
+
+	//bool isAdmin = IS_GROUP_ADMIN(subscribeFlags);
+	//bool isPublisher = IS_GROUP_PUBLISHER(subscribeFlags);
+	bool isSubscribed = IS_GROUP_SUBSCRIBED(subscribeFlags);
 
 	QAction *action = contextMnu.addAction(QIcon(IMAGE_MESSAGE), tr("Submit Post"), this, SLOT(newPost()));
-	action->setDisabled (mCurrTopicId.empty());
+	action->setEnabled(isSubscribed);
+	action = contextMnu.addAction(QIcon(IMAGE_MESSAGE), tr("Subscribe"), this, SLOT(subscribeTopic()));
+	action->setEnabled(!isSubscribed);
+	action = contextMnu.addAction(QIcon(IMAGE_MESSAGE), tr("Unsubscribe"), this, SLOT(unsubscribeTopic()));
+	action->setEnabled(isSubscribed);
 
 	contextMnu.exec(QCursor::pos());
 }
@@ -195,9 +212,53 @@ void PostedListDialog::newPost()
 	if(mCurrTopicId.empty())
 		return;
 
-	PostedCreatePostDialog cp(mPostedQueue, rsPosted, mCurrTopicId, this);
-	cp.exec();
+	uint32_t subscribeFlags = ui.groupTreeWidget->subscribeFlags(QString::fromStdString(mCurrTopicId));
+	bool isSubscribed = IS_GROUP_SUBSCRIBED(subscribeFlags);
+
+	if (isSubscribed)
+	{
+		PostedCreatePostDialog cp(mPostedQueue, rsPosted, mCurrTopicId, this);
+		cp.exec();
+	}
 }
+
+
+void PostedListDialog::unsubscribeTopic()
+{
+	std::cerr << "PostedListDialog::unsubscribeTopic()";
+	std::cerr << std::endl;
+
+	if(mCurrTopicId.empty())
+		return;
+
+	uint32_t token;
+	rsPosted->subscribeToGroup(token, mCurrTopicId, false);
+	mPostedQueue->queueRequest(token, 0 , RS_TOKREQ_ANSTYPE_ACK, TOKEN_USER_TYPE_SUBSCRIBE_CHANGE);
+}
+
+
+void PostedListDialog::subscribeTopic()
+{
+	std::cerr << "PostedListDialog::subscribeTopic()";
+	std::cerr << std::endl;
+
+	if(mCurrTopicId.empty())
+		return;
+
+	uint32_t token;
+	rsPosted->subscribeToGroup(token, mCurrTopicId, true);
+	mPostedQueue->queueRequest(token, 0 , RS_TOKREQ_ANSTYPE_ACK, TOKEN_USER_TYPE_SUBSCRIBE_CHANGE);
+}
+
+
+
+
+
+
+
+
+
+
 
 void PostedListDialog::submitVote(const RsGxsGrpMsgIdPair &msgId, bool up)
 {
@@ -386,12 +447,12 @@ void PostedListDialog::loadGroupSummary(const uint32_t &token)
 
 		if (groupInfo.size() > 0)
 		{
-		insertGroupData(groupInfo);
+			insertGroupData(groupInfo);
 		}
 		else
 		{
-				std::cerr << "PostedListDialog::loadGroupSummary() ERROR No Groups...";
-				std::cerr << std::endl;
+			std::cerr << "PostedListDialog::loadGroupSummary() ERROR No Groups...";
+			std::cerr << std::endl;
 		}
 }
 
@@ -637,6 +698,19 @@ void PostedListDialog::updateCurrentDisplayComplete(const uint32_t &token)
 	}
 }
 
+
+void PostedListDialog::acknowledgeSubscribeChange(const uint32_t &token)
+{
+	std::cerr << "PostedListDialog::acknowledgeSubscribeChange()";
+	std::cerr << std::endl;
+
+	std::vector<RsPostedPost> posts;
+	RsGxsGroupId groupId;
+	rsPosted->acknowledgeGrp(token, groupId);
+
+	refreshTopics();
+}
+
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
@@ -709,6 +783,8 @@ void PostedListDialog::loadRequest(const TokenQueue *queue, const TokenRequest &
 						std::cerr << "Error, unexpected anstype:" << req.mAnsType << std::endl;
 						break;
 				}
+			case TOKEN_USER_TYPE_SUBSCRIBE_CHANGE:
+				acknowledgeSubscribeChange(req.mToken);
 				break;
 			default:
 				std::cerr << "PostedListDialog::loadRequest() ERROR: INVALID TYPE";
@@ -746,6 +822,7 @@ void PostedListDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo
 	//groupItemInfo.description = QString::fromUtf8(groupInfo.forumDesc);
 	groupItemInfo.popularity = groupInfo.mPop;
 	groupItemInfo.lastpost = QDateTime::fromTime_t(groupInfo.mLastPost);
+        groupItemInfo.subscribeFlags = groupInfo.mSubscribeFlags;
 
 
 }
@@ -761,23 +838,30 @@ void PostedListDialog::insertGroupData(const std::list<RsGroupMetaData> &groupLi
 	QList<GroupItemInfo> otherList;
 	std::multimap<uint32_t, GroupItemInfo> popMap;
 
-	for (it = groupList.begin(); it != groupList.end(); it++) {
+	for (it = groupList.begin(); it != groupList.end(); it++) 
+	{
 		/* sort it into Publish (Own), Subscribed, Popular and Other */
 		uint32_t flags = it->mSubscribeFlags;
 
-	GroupItemInfo groupItemInfo;
-	groupInfoToGroupItemInfo(*it, groupItemInfo);
+		GroupItemInfo groupItemInfo;
+		groupInfoToGroupItemInfo(*it, groupItemInfo);
 
-  //  if (flags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN) {
-	adminList.push_back(groupItemInfo);
-  //  } else if (flags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED) {
-				/* subscribed forum */
- //   subList.push_back(groupItemInfo);
- //   } else {
-				/* rate the others by popularity */
-//	popMap.insert(std::make_pair(it->mPop, groupItemInfo));
+		if (IS_GROUP_SUBSCRIBED(flags))
+		{
+			if (IS_GROUP_ADMIN(flags) || IS_GROUP_PUBLISHER(flags))
+			{
+				adminList.push_back(groupItemInfo);
+			}
+			else
+			{
+				subList.push_back(groupItemInfo);
+			}
 		}
-//	}
+		else
+		{
+			popMap.insert(std::make_pair(it->mPop, groupItemInfo));
+		}
+	}
 
 	/* iterate backwards through popMap - take the top 5 or 10% of list */
 	uint32_t popCount = 5;

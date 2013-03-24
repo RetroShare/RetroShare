@@ -44,6 +44,8 @@ void 	loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 private slots:
 
+void create();
+
 void checkUpdate();
 
 void reloadAll();

@@ -1019,11 +1019,14 @@ circles {
 	
 	HEADERS +=  \
 		gui/Circles/CirclesDialog.h \
+		gui/Circles/CreateCircleDialog.h \
 	
 	FORMS += gui/Circles/CirclesDialog.ui \
+		gui/Circles/CreateCircleDialog.ui \
 	
 	SOURCES +=  \
 		gui/Circles/CirclesDialog.cpp \
+		gui/Circles/CreateCircleDialog.cpp \
 	
 }
 	

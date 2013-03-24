@@ -128,8 +128,8 @@ private:
 	void insertChannelDetails(const RsGxsChannelGroup &group);
 	void insertChannelPosts(const std::vector<RsGxsChannelPost> &posts);
 
-
-
+	void acknowledgeGroupUpdate(const uint32_t &token);
+	void acknowledgeMessageUpdate(const uint32_t &token);
 
 	std::string mChannelId; /* current Channel */
 	TokenQueue *mChannelQueue;
