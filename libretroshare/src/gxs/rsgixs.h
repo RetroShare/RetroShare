@@ -186,8 +186,8 @@ class RsGxsIdExchange:
 	public RsGixs
 {
 public:
-	RsGxsIdExchange(RsGeneralDataService* gds, RsNetworkExchangeService* ns, RsSerialType* serviceSerialiser, uint16_t mServType)
-	:RsGenExchange(gds,ns,serviceSerialiser,mServType, this) { return; }
+	RsGxsIdExchange(RsGeneralDataService* gds, RsNetworkExchangeService* ns, RsSerialType* serviceSerialiser, uint16_t mServType, uint32_t authenPolicy)
+	:RsGenExchange(gds,ns,serviceSerialiser,mServType, this, authenPolicy) { return; }
 virtual ~RsGxsIdExchange() { return; }
 
 };

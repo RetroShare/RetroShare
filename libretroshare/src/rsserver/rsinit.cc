@@ -2329,25 +2329,6 @@ int RsServer::StartupRetroShare()
 
 
         /**** Photo service ****/
-        // create photo authentication policy
-        uint32_t photoAuthenPolicy = 0;
-
-        uint8_t flag = 0;
-
-        flag = GXS_SERV::MSG_AUTHEN_ROOT_PUBLISH_SIGN;
-        RsGenExchange::setAuthenPolicyFlag(flag, photoAuthenPolicy,
-                                           RsGenExchange::RESTRICTED_GRP_BITS);
-
-// Re-enable later, photo not using gixs yet
-        flag = GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN; // should be GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN for comments
-        RsGenExchange::setAuthenPolicyFlag(flag, photoAuthenPolicy,
-                                           RsGenExchange::RESTRICTED_GRP_BITS);
-
-        flag = GXS_SERV::GRP_OPTION_AUTHEN_AUTHOR_SIGN;
-        RsGenExchange::setAuthenPolicyFlag(flag, photoAuthenPolicy,
-                                           RsGenExchange::GRP_OPTION_BITS);
-
-
         RsGeneralDataService* photo_ds = new RsDataService(currGxsDir + "/", "photoV2_db",
                         RS_SERVICE_GXSV1_TYPE_PHOTO, NULL);
 
@@ -2355,9 +2336,8 @@ int RsServer::StartupRetroShare()
         photo_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
 #endif
 
-
         // init gxs services
-        mPhoto = new p3PhotoService(photo_ds, NULL, mGxsIdService, photoAuthenPolicy);
+        mPhoto = new p3PhotoService(photo_ds, NULL, mGxsIdService);
 
         // create GXS photo service
         RsGxsNetService* photo_ns = new RsGxsNetService(
@@ -2409,7 +2389,7 @@ int RsServer::StartupRetroShare()
         wire_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
 #endif
 
-        mWire = new p3Wire(wire_ds, NULL);
+        mWire = new p3Wire(wire_ds, NULL, mGxsIdService);
 
         // create GXS photo service
         RsGxsNetService* wire_ns = new RsGxsNetService(

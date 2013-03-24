@@ -35,10 +35,33 @@
 RsWire *rsWire = NULL;
 
 
-p3Wire::p3Wire(RsGeneralDataService* gds, RsNetworkExchangeService* nes)
-	:RsGenExchange(gds, nes, new RsGxsWireSerialiser(), RS_SERVICE_GXSV1_TYPE_WIRE), RsWire(this), mWireMtx("WireMtx")
+p3Wire::p3Wire(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs *gixs)
+	:RsGenExchange(gds, nes, new RsGxsWireSerialiser(), RS_SERVICE_GXSV1_TYPE_WIRE, gixs, wireAuthenPolicy()),
+	RsWire(this), mWireMtx("WireMtx")
 {
 
+}
+
+
+uint32_t p3Wire::wireAuthenPolicy()
+{
+	uint32_t policy = 0;
+	uint8_t flag = 0;
+
+	// Edits generally need an authors signature.
+
+	flag = GXS_SERV::MSG_AUTHEN_ROOT_PUBLISH_SIGN | GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN;
+	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PUBLIC_GRP_BITS);
+
+	flag |= GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN;
+	flag |= GXS_SERV::MSG_AUTHEN_CHILD_PUBLISH_SIGN;
+	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::RESTRICTED_GRP_BITS);
+	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PRIVATE_GRP_BITS);
+
+	flag = 0;
+	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::GRP_OPTION_BITS);
+
+	return policy;
 }
 
 void p3Wire::service_tick()

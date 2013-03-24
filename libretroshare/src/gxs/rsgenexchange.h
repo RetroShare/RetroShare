@@ -123,12 +123,11 @@ public:
      * @param serviceSerialiser The users service needs this \n
      *        in order for gen exchange to deal with its data types
      * @param mServType This should be service type used by the serialiser
-     * @param gixs This is used for verification of msgs and groups received by Gen Exchange using identities, set to NULL if \n
-     *        identity verification is not wanted
+     * @param gixs This is used for verification of msgs and groups received by Gen Exchange using identities.
      * @param authenPolicy This determines the authentication used for verfying authorship of msgs and groups
      */
     RsGenExchange(RsGeneralDataService* gds, RsNetworkExchangeService* ns,
-                  RsSerialType* serviceSerialiser, uint16_t mServType, RsGixs* gixs = NULL, uint32_t authenPolicy = 0,
+                  RsSerialType* serviceSerialiser, uint16_t mServType, RsGixs* gixs, uint32_t authenPolicy,
                   uint32_t messageStorePeriod = DEFAULT_MSG_STORE_PERIOD);
 
     virtual ~RsGenExchange();

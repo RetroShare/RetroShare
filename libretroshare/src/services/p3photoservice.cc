@@ -86,9 +86,8 @@ std::ostream &operator<<(std::ostream &out, const RsPhotoAlbum &album)
         return out;
 }
 
-p3PhotoService::p3PhotoService(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs* gixs,
-                                   uint32_t authenPolicy)
-    : RsGenExchange(gds, nes, new RsGxsPhotoSerialiser(), RS_SERVICE_GXSV1_TYPE_PHOTO, gixs, authenPolicy),
+p3PhotoService::p3PhotoService(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs* gixs)
+    : RsGenExchange(gds, nes, new RsGxsPhotoSerialiser(), RS_SERVICE_GXSV1_TYPE_PHOTO, gixs, photoAuthenPolicy()),
     mPhotoMutex(std::string("Photo Mutex"))
 {
 
@@ -111,6 +110,25 @@ p3PhotoService::p3PhotoService(RsGeneralDataService* gds, RsNetworkExchangeServi
 #endif
 
 
+}
+
+
+uint32_t p3PhotoService::photoAuthenPolicy()
+{
+        uint32_t policy = 0;
+        uint8_t flag = 0;
+
+        flag = GXS_SERV::MSG_AUTHEN_ROOT_PUBLISH_SIGN | GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN;
+        RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PUBLIC_GRP_BITS);
+
+        flag |= GXS_SERV::MSG_AUTHEN_CHILD_PUBLISH_SIGN;
+        RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::RESTRICTED_GRP_BITS);
+        RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PRIVATE_GRP_BITS);
+
+        flag = GXS_SERV::GRP_OPTION_AUTHEN_AUTHOR_SIGN;
+        RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::GRP_OPTION_BITS);
+
+        return policy;
 }
 
 bool p3PhotoService::updated()

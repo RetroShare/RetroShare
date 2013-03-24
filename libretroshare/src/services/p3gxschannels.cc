@@ -84,12 +84,14 @@ uint32_t p3GxsChannels::channelsAuthenPolicy()
 	uint32_t flag = 0;
 
 	flag = GXS_SERV::MSG_AUTHEN_ROOT_PUBLISH_SIGN | GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN;
-	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::RESTRICTED_GRP_BITS);
+	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PUBLIC_GRP_BITS);
 
 	flag |= GXS_SERV::MSG_AUTHEN_CHILD_PUBLISH_SIGN;
-	//flag |= GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN;
-	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PUBLIC_GRP_BITS);
+	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::RESTRICTED_GRP_BITS);
 	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PRIVATE_GRP_BITS);
+
+	flag = 0;
+	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::GRP_OPTION_BITS);
 
 	return policy;
 }

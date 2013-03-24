@@ -33,15 +33,17 @@
 #include <string>
 
 /* 
- * Wiki Service
+ * Wire Service
  *
  *
  */
 
+
 class p3Wire: public RsGenExchange, public RsWire
 {
 public:
-    p3Wire(RsGeneralDataService* gds, RsNetworkExchangeService* nes);
+    p3Wire(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs *gixs);
+static uint32_t wireAuthenPolicy();
 
 protected:
 
