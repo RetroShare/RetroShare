@@ -18,8 +18,8 @@ enum RequestMsgIds {
 }
 
 enum ResponseMsgIds {
-    MsgId_ResponseStreamDetail  	= 1;  // RESPONSE to 
-    MsgId_StreamData  			= 2;
+    MsgId_ResponseStreamDetail  	= 1;  // RESPONSE to List and Control.
+    MsgId_ResponseStreamData 		= 101;
 }
 
 ///////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ enum StreamState {
     STREAM_STATE_ERROR    = 0;
     STREAM_STATE_RUN      = 1;
     STREAM_STATE_PAUSED   = 2;
-    STREAM_TYPE_FINISHED  = 3;
+    STREAM_STATE_FINISHED  = 3;
 }
 
 message StreamFileDetail {
@@ -52,7 +52,7 @@ message StreamFileDetail {
 message StreamVoipDetail {
 
   // THIS NEEDS MORE DEFINITION.
-  required string           peerId      = 1;
+  required string           peer_id     = 1;
   required uint64           duration    = 2;
   required uint64           offset      = 3;
 
@@ -64,7 +64,7 @@ message StreamDesc {
   required uint32         stream_id     = 1;
   required StreamType     stream_type   = 2;
   required StreamState    stream_state  = 3;
-  required float          rate_kBs	= 4;
+  required float          rate_kbs	= 4;
   optional StreamFileDetail file        = 5;
   optional StreamVoipDetail voip        = 6;
 
@@ -90,11 +90,11 @@ message StreamData {
 message RequestStartFileStream {
 
   required rsctrl.core.File file 	= 1;
-  required float rate_kBs		= 2;
+  required float rate_kbs		= 2;
 
   // byte range. allows to restart transfer!
-  optional uint64 startByte             = 3;
-  optional uint64 endByte               = 4;
+  optional uint64 start_byte            = 3;
+  optional uint64 end_byte              = 4;
 
 }
 
@@ -123,8 +123,8 @@ message RequestControlStream {
 
   required uint32           stream_id   = 1;
   required StreamAction     action      = 2;
-  optional float            rate_kBs    = 3;
-  optional int64            seek_byte   = 4;
+  optional float            rate_kbs    = 3;
+  optional uint64           seek_byte   = 4;
 }
 
 ///////////////////////////////////////////////////////////////

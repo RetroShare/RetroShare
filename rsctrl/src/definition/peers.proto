@@ -89,6 +89,7 @@ message RequestExaminePeer {
 ///////////////////////////////////////////////////////////////
 
 // REQUEST: RequestModifyPeer
+// THIS IS INCOMPLETE... DON'T USE.
 message RequestModifyPeer {
 
   enum ModCmd {
