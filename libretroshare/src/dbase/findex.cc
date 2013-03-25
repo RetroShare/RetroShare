@@ -50,6 +50,8 @@ static const char FILE_CACHE_SEPARATOR_CHAR = '|' ;
  * #define FI_DEBUG_ALL 1
  ****/
 
+#define FI_DEBUG 1
+
 static RsMutex FIndexPtrMtx("FIndexPtrMtx") ;
 std::tr1::unordered_set<void*> FileIndex::_pointers ;
 
@@ -350,7 +352,14 @@ DirEntry *DirEntry::findDirectory(const std::string& fpath)
 		return it->second;
 	}
 
-	return (it->second)->findDirectory(rempath);
+
+	// Adding more lenient directory look up.
+	// returns lower directory to fpath is a FILE.
+	DirEntry *subdir = (it->second)->findDirectory(rempath);
+	if (subdir)
+		return subdir;
+	else
+		return it->second;
 }
 
 
@@ -780,7 +789,7 @@ int FileIndex::loadIndex(const std::string& filename, const std::string& expecte
 #ifdef FI_DEBUG
 		std::cerr << "FileIndex::loadIndex expected hash does not match" << std::endl;
 		std::cerr << "Expected hash: " << expectedHash << std::endl;
-		std::cerr << "Hash found:    " << tmpout.str() << std::endl;
+		std::cerr << "Hash found:    " << tmpout << std::endl;
 #endif
 		return 0;
 	}
