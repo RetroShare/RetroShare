@@ -78,7 +78,7 @@ void protobuf_AssignDesc_stream_2eproto() {
       sizeof(StreamFileDetail));
   StreamVoipDetail_descriptor_ = file->message_type(1);
   static const int StreamVoipDetail_offsets_[3] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamVoipDetail, peerid_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamVoipDetail, peer_id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamVoipDetail, duration_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StreamVoipDetail, offset_),
   };
@@ -137,8 +137,8 @@ void protobuf_AssignDesc_stream_2eproto() {
   static const int RequestStartFileStream_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestStartFileStream, file_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestStartFileStream, rate_kbs_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestStartFileStream, startbyte_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestStartFileStream, endbyte_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestStartFileStream, start_byte_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestStartFileStream, end_byte_),
   };
   RequestStartFileStream_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -286,46 +286,46 @@ void protobuf_AddDesc_stream_2eproto() {
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\014stream.proto\022\rrsctrl.stream\032\ncore.prot"
     "o\"C\n\020StreamFileDetail\022\037\n\004file\030\001 \002(\0132\021.rs"
-    "ctrl.core.File\022\016\n\006offset\030\005 \002(\004\"D\n\020Stream"
-    "VoipDetail\022\016\n\006peerId\030\001 \002(\t\022\020\n\010duration\030\002"
-    " \002(\004\022\016\n\006offset\030\003 \002(\004\"\361\001\n\nStreamDesc\022\021\n\ts"
-    "tream_id\030\001 \002(\r\022.\n\013stream_type\030\002 \002(\0162\031.rs"
-    "ctrl.stream.StreamType\0220\n\014stream_state\030\003"
-    " \002(\0162\032.rsctrl.stream.StreamState\022\020\n\010rate"
-    "_kBs\030\004 \002(\002\022-\n\004file\030\005 \001(\0132\037.rsctrl.stream"
-    ".StreamFileDetail\022-\n\004voip\030\006 \001(\0132\037.rsctrl"
-    ".stream.StreamVoipDetail\"\257\001\n\nStreamData\022"
-    "\021\n\tstream_id\030\001 \002(\r\0220\n\014stream_state\030\002 \002(\016"
-    "2\032.rsctrl.stream.StreamState\022)\n\tsend_tim"
-    "e\030\003 \002(\0132\026.rsctrl.core.Timestamp\022\016\n\006offse"
-    "t\030\004 \002(\004\022\014\n\004size\030\005 \002(\r\022\023\n\013stream_data\030\006 \002"
-    "(\014\"o\n\026RequestStartFileStream\022\037\n\004file\030\001 \002"
-    "(\0132\021.rsctrl.core.File\022\020\n\010rate_kBs\030\002 \002(\002\022"
-    "\021\n\tstartByte\030\003 \001(\004\022\017\n\007endByte\030\004 \001(\004\"g\n\024R"
-    "esponseStreamDetail\022#\n\006status\030\001 \002(\0132\023.rs"
-    "ctrl.core.Status\022*\n\007streams\030\002 \003(\0132\031.rsct"
-    "rl.stream.StreamDesc\"\376\001\n\024RequestControlS"
-    "tream\022\021\n\tstream_id\030\001 \002(\r\022@\n\006action\030\002 \002(\016"
-    "20.rsctrl.stream.RequestControlStream.St"
-    "reamAction\022\020\n\010rate_kBs\030\003 \001(\002\022\021\n\tseek_byt"
-    "e\030\004 \001(\003\"l\n\014StreamAction\022\020\n\014STREAM_START\020"
-    "\001\022\017\n\013STREAM_STOP\020\002\022\020\n\014STREAM_PAUSE\020\003\022\026\n\022"
-    "STREAM_CHANGE_RATE\020\004\022\017\n\013STREAM_SEEK\020\005\"E\n"
-    "\022RequestListStreams\022/\n\014request_type\030\001 \002("
-    "\0162\031.rsctrl.stream.StreamType\"b\n\022Response"
-    "StreamData\022#\n\006status\030\001 \002(\0132\023.rsctrl.core"
-    ".Status\022\'\n\004data\030\002 \002(\0132\031.rsctrl.stream.St"
-    "reamData*o\n\rRequestMsgIds\022 \n\034MsgId_Reque"
-    "stStartFileStream\020\001\022\036\n\032MsgId_RequestCont"
-    "rolStream\020\002\022\034\n\030MsgId_RequestListStreams\020"
-    "\003*F\n\016ResponseMsgIds\022\036\n\032MsgId_ResponseStr"
-    "eamDetail\020\001\022\024\n\020MsgId_StreamData\020\002*e\n\nStr"
-    "eamType\022\023\n\017STREAM_TYPE_ALL\020\001\022\025\n\021STREAM_T"
-    "YPE_FILES\020\002\022\024\n\020STREAM_TYPE_VOIP\020\003\022\025\n\021STR"
-    "EAM_TYPE_OTHER\020\004*n\n\013StreamState\022\026\n\022STREA"
-    "M_STATE_ERROR\020\000\022\024\n\020STREAM_STATE_RUN\020\001\022\027\n"
-    "\023STREAM_STATE_PAUSED\020\002\022\030\n\024STREAM_TYPE_FI"
-    "NISHED\020\003", 1648);
+    "ctrl.core.File\022\016\n\006offset\030\005 \002(\004\"E\n\020Stream"
+    "VoipDetail\022\017\n\007peer_id\030\001 \002(\t\022\020\n\010duration\030"
+    "\002 \002(\004\022\016\n\006offset\030\003 \002(\004\"\361\001\n\nStreamDesc\022\021\n\t"
+    "stream_id\030\001 \002(\r\022.\n\013stream_type\030\002 \002(\0162\031.r"
+    "sctrl.stream.StreamType\0220\n\014stream_state\030"
+    "\003 \002(\0162\032.rsctrl.stream.StreamState\022\020\n\010rat"
+    "e_kbs\030\004 \002(\002\022-\n\004file\030\005 \001(\0132\037.rsctrl.strea"
+    "m.StreamFileDetail\022-\n\004voip\030\006 \001(\0132\037.rsctr"
+    "l.stream.StreamVoipDetail\"\257\001\n\nStreamData"
+    "\022\021\n\tstream_id\030\001 \002(\r\0220\n\014stream_state\030\002 \002("
+    "\0162\032.rsctrl.stream.StreamState\022)\n\tsend_ti"
+    "me\030\003 \002(\0132\026.rsctrl.core.Timestamp\022\016\n\006offs"
+    "et\030\004 \002(\004\022\014\n\004size\030\005 \002(\r\022\023\n\013stream_data\030\006 "
+    "\002(\014\"q\n\026RequestStartFileStream\022\037\n\004file\030\001 "
+    "\002(\0132\021.rsctrl.core.File\022\020\n\010rate_kbs\030\002 \002(\002"
+    "\022\022\n\nstart_byte\030\003 \001(\004\022\020\n\010end_byte\030\004 \001(\004\"g"
+    "\n\024ResponseStreamDetail\022#\n\006status\030\001 \002(\0132\023"
+    ".rsctrl.core.Status\022*\n\007streams\030\002 \003(\0132\031.r"
+    "sctrl.stream.StreamDesc\"\376\001\n\024RequestContr"
+    "olStream\022\021\n\tstream_id\030\001 \002(\r\022@\n\006action\030\002 "
+    "\002(\01620.rsctrl.stream.RequestControlStream"
+    ".StreamAction\022\020\n\010rate_kbs\030\003 \001(\002\022\021\n\tseek_"
+    "byte\030\004 \001(\004\"l\n\014StreamAction\022\020\n\014STREAM_STA"
+    "RT\020\001\022\017\n\013STREAM_STOP\020\002\022\020\n\014STREAM_PAUSE\020\003\022"
+    "\026\n\022STREAM_CHANGE_RATE\020\004\022\017\n\013STREAM_SEEK\020\005"
+    "\"E\n\022RequestListStreams\022/\n\014request_type\030\001"
+    " \002(\0162\031.rsctrl.stream.StreamType\"b\n\022Respo"
+    "nseStreamData\022#\n\006status\030\001 \002(\0132\023.rsctrl.c"
+    "ore.Status\022\'\n\004data\030\002 \002(\0132\031.rsctrl.stream"
+    ".StreamData*o\n\rRequestMsgIds\022 \n\034MsgId_Re"
+    "questStartFileStream\020\001\022\036\n\032MsgId_RequestC"
+    "ontrolStream\020\002\022\034\n\030MsgId_RequestListStrea"
+    "ms\020\003*N\n\016ResponseMsgIds\022\036\n\032MsgId_Response"
+    "StreamDetail\020\001\022\034\n\030MsgId_ResponseStreamDa"
+    "ta\020e*e\n\nStreamType\022\023\n\017STREAM_TYPE_ALL\020\001\022"
+    "\025\n\021STREAM_TYPE_FILES\020\002\022\024\n\020STREAM_TYPE_VO"
+    "IP\020\003\022\025\n\021STREAM_TYPE_OTHER\020\004*o\n\013StreamSta"
+    "te\022\026\n\022STREAM_STATE_ERROR\020\000\022\024\n\020STREAM_STA"
+    "TE_RUN\020\001\022\027\n\023STREAM_STATE_PAUSED\020\002\022\031\n\025STR"
+    "EAM_STATE_FINISHED\020\003", 1660);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "stream.proto", &protobuf_RegisterTypes);
   StreamFileDetail::default_instance_ = new StreamFileDetail();
@@ -378,7 +378,7 @@ const ::google::protobuf::EnumDescriptor* ResponseMsgIds_descriptor() {
 bool ResponseMsgIds_IsValid(int value) {
   switch(value) {
     case 1:
-    case 2:
+    case 101:
       return true;
     default:
       return false;
@@ -698,7 +698,7 @@ StreamVoipDetail::StreamVoipDetail(const StreamVoipDetail& from)
 
 void StreamVoipDetail::SharedCtor() {
   _cached_size_ = 0;
-  peerid_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  peer_id_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   duration_ = GOOGLE_ULONGLONG(0);
   offset_ = GOOGLE_ULONGLONG(0);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -709,8 +709,8 @@ StreamVoipDetail::~StreamVoipDetail() {
 }
 
 void StreamVoipDetail::SharedDtor() {
-  if (peerid_ != &::google::protobuf::internal::kEmptyString) {
-    delete peerid_;
+  if (peer_id_ != &::google::protobuf::internal::kEmptyString) {
+    delete peer_id_;
   }
   if (this != default_instance_) {
   }
@@ -738,9 +738,9 @@ StreamVoipDetail* StreamVoipDetail::New() const {
 
 void StreamVoipDetail::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (has_peerid()) {
-      if (peerid_ != &::google::protobuf::internal::kEmptyString) {
-        peerid_->clear();
+    if (has_peer_id()) {
+      if (peer_id_ != &::google::protobuf::internal::kEmptyString) {
+        peer_id_->clear();
       }
     }
     duration_ = GOOGLE_ULONGLONG(0);
@@ -756,14 +756,14 @@ bool StreamVoipDetail::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required string peerId = 1;
+      // required string peer_id = 1;
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_peerid()));
+                input, this->mutable_peer_id()));
           ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->peerid().data(), this->peerid().length(),
+            this->peer_id().data(), this->peer_id().length(),
             ::google::protobuf::internal::WireFormat::PARSE);
         } else {
           goto handle_uninterpreted;
@@ -822,13 +822,13 @@ bool StreamVoipDetail::MergePartialFromCodedStream(
 
 void StreamVoipDetail::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // required string peerId = 1;
-  if (has_peerid()) {
+  // required string peer_id = 1;
+  if (has_peer_id()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->peerid().data(), this->peerid().length(),
+      this->peer_id().data(), this->peer_id().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
     ::google::protobuf::internal::WireFormatLite::WriteString(
-      1, this->peerid(), output);
+      1, this->peer_id(), output);
   }
   
   // required uint64 duration = 2;
@@ -849,14 +849,14 @@ void StreamVoipDetail::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* StreamVoipDetail::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // required string peerId = 1;
-  if (has_peerid()) {
+  // required string peer_id = 1;
+  if (has_peer_id()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->peerid().data(), this->peerid().length(),
+      this->peer_id().data(), this->peer_id().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->peerid(), target);
+        1, this->peer_id(), target);
   }
   
   // required uint64 duration = 2;
@@ -880,11 +880,11 @@ int StreamVoipDetail::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required string peerId = 1;
-    if (has_peerid()) {
+    // required string peer_id = 1;
+    if (has_peer_id()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->peerid());
+          this->peer_id());
     }
     
     // required uint64 duration = 2;
@@ -928,8 +928,8 @@ void StreamVoipDetail::MergeFrom(const ::google::protobuf::Message& from) {
 void StreamVoipDetail::MergeFrom(const StreamVoipDetail& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_peerid()) {
-      set_peerid(from.peerid());
+    if (from.has_peer_id()) {
+      set_peer_id(from.peer_id());
     }
     if (from.has_duration()) {
       set_duration(from.duration());
@@ -961,7 +961,7 @@ bool StreamVoipDetail::IsInitialized() const {
 
 void StreamVoipDetail::Swap(StreamVoipDetail* other) {
   if (other != this) {
-    std::swap(peerid_, other->peerid_);
+    std::swap(peer_id_, other->peer_id_);
     std::swap(duration_, other->duration_);
     std::swap(offset_, other->offset_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
@@ -985,7 +985,7 @@ void StreamVoipDetail::Swap(StreamVoipDetail* other) {
 const int StreamDesc::kStreamIdFieldNumber;
 const int StreamDesc::kStreamTypeFieldNumber;
 const int StreamDesc::kStreamStateFieldNumber;
-const int StreamDesc::kRateKBsFieldNumber;
+const int StreamDesc::kRateKbsFieldNumber;
 const int StreamDesc::kFileFieldNumber;
 const int StreamDesc::kVoipFieldNumber;
 #endif  // !_MSC_VER
@@ -1124,15 +1124,15 @@ bool StreamDesc::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(37)) goto parse_rate_kBs;
+        if (input->ExpectTag(37)) goto parse_rate_kbs;
         break;
       }
       
-      // required float rate_kBs = 4;
+      // required float rate_kbs = 4;
       case 4: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
-         parse_rate_kBs:
+         parse_rate_kbs:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &rate_kbs_)));
@@ -1207,7 +1207,7 @@ void StreamDesc::SerializeWithCachedSizes(
       3, this->stream_state(), output);
   }
   
-  // required float rate_kBs = 4;
+  // required float rate_kbs = 4;
   if (has_rate_kbs()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(4, this->rate_kbs(), output);
   }
@@ -1249,7 +1249,7 @@ void StreamDesc::SerializeWithCachedSizes(
       3, this->stream_state(), target);
   }
   
-  // required float rate_kBs = 4;
+  // required float rate_kbs = 4;
   if (has_rate_kbs()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(4, this->rate_kbs(), target);
   }
@@ -1298,7 +1298,7 @@ int StreamDesc::ByteSize() const {
         ::google::protobuf::internal::WireFormatLite::EnumSize(this->stream_state());
     }
     
-    // required float rate_kBs = 4;
+    // required float rate_kbs = 4;
     if (has_rate_kbs()) {
       total_size += 1 + 4;
     }
@@ -1847,7 +1847,7 @@ void StreamData::Swap(StreamData* other) {
 
 #ifndef _MSC_VER
 const int RequestStartFileStream::kFileFieldNumber;
-const int RequestStartFileStream::kRateKBsFieldNumber;
+const int RequestStartFileStream::kRateKbsFieldNumber;
 const int RequestStartFileStream::kStartByteFieldNumber;
 const int RequestStartFileStream::kEndByteFieldNumber;
 #endif  // !_MSC_VER
@@ -1871,8 +1871,8 @@ void RequestStartFileStream::SharedCtor() {
   _cached_size_ = 0;
   file_ = NULL;
   rate_kbs_ = 0;
-  startbyte_ = GOOGLE_ULONGLONG(0);
-  endbyte_ = GOOGLE_ULONGLONG(0);
+  start_byte_ = GOOGLE_ULONGLONG(0);
+  end_byte_ = GOOGLE_ULONGLONG(0);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -1912,8 +1912,8 @@ void RequestStartFileStream::Clear() {
       if (file_ != NULL) file_->::rsctrl::core::File::Clear();
     }
     rate_kbs_ = 0;
-    startbyte_ = GOOGLE_ULONGLONG(0);
-    endbyte_ = GOOGLE_ULONGLONG(0);
+    start_byte_ = GOOGLE_ULONGLONG(0);
+    end_byte_ = GOOGLE_ULONGLONG(0);
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -1934,15 +1934,15 @@ bool RequestStartFileStream::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(21)) goto parse_rate_kBs;
+        if (input->ExpectTag(21)) goto parse_rate_kbs;
         break;
       }
       
-      // required float rate_kBs = 2;
+      // required float rate_kbs = 2;
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
-         parse_rate_kBs:
+         parse_rate_kbs:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &rate_kbs_)));
@@ -1950,35 +1950,35 @@ bool RequestStartFileStream::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(24)) goto parse_startByte;
+        if (input->ExpectTag(24)) goto parse_start_byte;
         break;
       }
       
-      // optional uint64 startByte = 3;
+      // optional uint64 start_byte = 3;
       case 3: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_startByte:
+         parse_start_byte:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
-                 input, &startbyte_)));
-          set_has_startbyte();
+                 input, &start_byte_)));
+          set_has_start_byte();
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(32)) goto parse_endByte;
+        if (input->ExpectTag(32)) goto parse_end_byte;
         break;
       }
       
-      // optional uint64 endByte = 4;
+      // optional uint64 end_byte = 4;
       case 4: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_endByte:
+         parse_end_byte:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
-                 input, &endbyte_)));
-          set_has_endbyte();
+                 input, &end_byte_)));
+          set_has_end_byte();
         } else {
           goto handle_uninterpreted;
         }
@@ -2010,19 +2010,19 @@ void RequestStartFileStream::SerializeWithCachedSizes(
       1, this->file(), output);
   }
   
-  // required float rate_kBs = 2;
+  // required float rate_kbs = 2;
   if (has_rate_kbs()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(2, this->rate_kbs(), output);
   }
   
-  // optional uint64 startByte = 3;
-  if (has_startbyte()) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt64(3, this->startbyte(), output);
+  // optional uint64 start_byte = 3;
+  if (has_start_byte()) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt64(3, this->start_byte(), output);
   }
   
-  // optional uint64 endByte = 4;
-  if (has_endbyte()) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt64(4, this->endbyte(), output);
+  // optional uint64 end_byte = 4;
+  if (has_end_byte()) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt64(4, this->end_byte(), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -2040,19 +2040,19 @@ void RequestStartFileStream::SerializeWithCachedSizes(
         1, this->file(), target);
   }
   
-  // required float rate_kBs = 2;
+  // required float rate_kbs = 2;
   if (has_rate_kbs()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(2, this->rate_kbs(), target);
   }
   
-  // optional uint64 startByte = 3;
-  if (has_startbyte()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(3, this->startbyte(), target);
+  // optional uint64 start_byte = 3;
+  if (has_start_byte()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(3, this->start_byte(), target);
   }
   
-  // optional uint64 endByte = 4;
-  if (has_endbyte()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(4, this->endbyte(), target);
+  // optional uint64 end_byte = 4;
+  if (has_end_byte()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(4, this->end_byte(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -2073,23 +2073,23 @@ int RequestStartFileStream::ByteSize() const {
           this->file());
     }
     
-    // required float rate_kBs = 2;
+    // required float rate_kbs = 2;
     if (has_rate_kbs()) {
       total_size += 1 + 4;
     }
     
-    // optional uint64 startByte = 3;
-    if (has_startbyte()) {
+    // optional uint64 start_byte = 3;
+    if (has_start_byte()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::UInt64Size(
-          this->startbyte());
+          this->start_byte());
     }
     
-    // optional uint64 endByte = 4;
-    if (has_endbyte()) {
+    // optional uint64 end_byte = 4;
+    if (has_end_byte()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::UInt64Size(
-          this->endbyte());
+          this->end_byte());
     }
     
   }
@@ -2125,11 +2125,11 @@ void RequestStartFileStream::MergeFrom(const RequestStartFileStream& from) {
     if (from.has_rate_kbs()) {
       set_rate_kbs(from.rate_kbs());
     }
-    if (from.has_startbyte()) {
-      set_startbyte(from.startbyte());
+    if (from.has_start_byte()) {
+      set_start_byte(from.start_byte());
     }
-    if (from.has_endbyte()) {
-      set_endbyte(from.endbyte());
+    if (from.has_end_byte()) {
+      set_end_byte(from.end_byte());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
@@ -2160,8 +2160,8 @@ void RequestStartFileStream::Swap(RequestStartFileStream* other) {
   if (other != this) {
     std::swap(file_, other->file_);
     std::swap(rate_kbs_, other->rate_kbs_);
-    std::swap(startbyte_, other->startbyte_);
-    std::swap(endbyte_, other->endbyte_);
+    std::swap(start_byte_, other->start_byte_);
+    std::swap(end_byte_, other->end_byte_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -2468,7 +2468,7 @@ const int RequestControlStream::StreamAction_ARRAYSIZE;
 #ifndef _MSC_VER
 const int RequestControlStream::kStreamIdFieldNumber;
 const int RequestControlStream::kActionFieldNumber;
-const int RequestControlStream::kRateKBsFieldNumber;
+const int RequestControlStream::kRateKbsFieldNumber;
 const int RequestControlStream::kSeekByteFieldNumber;
 #endif  // !_MSC_VER
 
@@ -2491,7 +2491,7 @@ void RequestControlStream::SharedCtor() {
   stream_id_ = 0u;
   action_ = 1;
   rate_kbs_ = 0;
-  seek_byte_ = GOOGLE_LONGLONG(0);
+  seek_byte_ = GOOGLE_ULONGLONG(0);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -2529,7 +2529,7 @@ void RequestControlStream::Clear() {
     stream_id_ = 0u;
     action_ = 1;
     rate_kbs_ = 0;
-    seek_byte_ = GOOGLE_LONGLONG(0);
+    seek_byte_ = GOOGLE_ULONGLONG(0);
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -2573,15 +2573,15 @@ bool RequestControlStream::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(29)) goto parse_rate_kBs;
+        if (input->ExpectTag(29)) goto parse_rate_kbs;
         break;
       }
       
-      // optional float rate_kBs = 3;
+      // optional float rate_kbs = 3;
       case 3: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
-         parse_rate_kBs:
+         parse_rate_kbs:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &rate_kbs_)));
@@ -2593,13 +2593,13 @@ bool RequestControlStream::MergePartialFromCodedStream(
         break;
       }
       
-      // optional int64 seek_byte = 4;
+      // optional uint64 seek_byte = 4;
       case 4: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_seek_byte:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                   ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
                  input, &seek_byte_)));
           set_has_seek_byte();
         } else {
@@ -2638,14 +2638,14 @@ void RequestControlStream::SerializeWithCachedSizes(
       2, this->action(), output);
   }
   
-  // optional float rate_kBs = 3;
+  // optional float rate_kbs = 3;
   if (has_rate_kbs()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(3, this->rate_kbs(), output);
   }
   
-  // optional int64 seek_byte = 4;
+  // optional uint64 seek_byte = 4;
   if (has_seek_byte()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(4, this->seek_byte(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteUInt64(4, this->seek_byte(), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -2667,14 +2667,14 @@ void RequestControlStream::SerializeWithCachedSizes(
       2, this->action(), target);
   }
   
-  // optional float rate_kBs = 3;
+  // optional float rate_kbs = 3;
   if (has_rate_kbs()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(3, this->rate_kbs(), target);
   }
   
-  // optional int64 seek_byte = 4;
+  // optional uint64 seek_byte = 4;
   if (has_seek_byte()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(4, this->seek_byte(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(4, this->seek_byte(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -2701,15 +2701,15 @@ int RequestControlStream::ByteSize() const {
         ::google::protobuf::internal::WireFormatLite::EnumSize(this->action());
     }
     
-    // optional float rate_kBs = 3;
+    // optional float rate_kbs = 3;
     if (has_rate_kbs()) {
       total_size += 1 + 4;
     }
     
-    // optional int64 seek_byte = 4;
+    // optional uint64 seek_byte = 4;
     if (has_seek_byte()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int64Size(
+        ::google::protobuf::internal::WireFormatLite::UInt64Size(
           this->seek_byte());
     }
     

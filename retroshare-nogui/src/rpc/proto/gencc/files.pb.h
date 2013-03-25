@@ -39,6 +39,8 @@ class RequestTransferList;
 class ResponseTransferList;
 class RequestControlDownload;
 class ResponseControlDownload;
+class RequestShareDirList;
+class ResponseShareDirList;
 
 enum RequestControlDownload_Action {
   RequestControlDownload_Action_ACTION_START = 1,
@@ -64,13 +66,35 @@ inline bool RequestControlDownload_Action_Parse(
   return ::google::protobuf::internal::ParseNamedEnum<RequestControlDownload_Action>(
     RequestControlDownload_Action_descriptor(), name, value);
 }
+enum ResponseShareDirList_ListType {
+  ResponseShareDirList_ListType_DIRQUERY_ROOT = 1,
+  ResponseShareDirList_ListType_DIRQUERY_PERSON = 2,
+  ResponseShareDirList_ListType_DIRQUERY_FILE = 3,
+  ResponseShareDirList_ListType_DIRQUERY_DIR = 4
+};
+bool ResponseShareDirList_ListType_IsValid(int value);
+const ResponseShareDirList_ListType ResponseShareDirList_ListType_ListType_MIN = ResponseShareDirList_ListType_DIRQUERY_ROOT;
+const ResponseShareDirList_ListType ResponseShareDirList_ListType_ListType_MAX = ResponseShareDirList_ListType_DIRQUERY_DIR;
+const int ResponseShareDirList_ListType_ListType_ARRAYSIZE = ResponseShareDirList_ListType_ListType_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* ResponseShareDirList_ListType_descriptor();
+inline const ::std::string& ResponseShareDirList_ListType_Name(ResponseShareDirList_ListType value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    ResponseShareDirList_ListType_descriptor(), value);
+}
+inline bool ResponseShareDirList_ListType_Parse(
+    const ::std::string& name, ResponseShareDirList_ListType* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<ResponseShareDirList_ListType>(
+    ResponseShareDirList_ListType_descriptor(), name, value);
+}
 enum RequestMsgIds {
   MsgId_RequestTransferList = 1,
-  MsgId_RequestControlDownload = 2
+  MsgId_RequestControlDownload = 2,
+  MsgId_RequestShareDirList = 3
 };
 bool RequestMsgIds_IsValid(int value);
 const RequestMsgIds RequestMsgIds_MIN = MsgId_RequestTransferList;
-const RequestMsgIds RequestMsgIds_MAX = MsgId_RequestControlDownload;
+const RequestMsgIds RequestMsgIds_MAX = MsgId_RequestShareDirList;
 const int RequestMsgIds_ARRAYSIZE = RequestMsgIds_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* RequestMsgIds_descriptor();
@@ -85,11 +109,12 @@ inline bool RequestMsgIds_Parse(
 }
 enum ResponseMsgIds {
   MsgId_ResponseTransferList = 1,
-  MsgId_ResponseControlDownload = 2
+  MsgId_ResponseControlDownload = 2,
+  MsgId_ResponseShareDirList = 3
 };
 bool ResponseMsgIds_IsValid(int value);
 const ResponseMsgIds ResponseMsgIds_MIN = MsgId_ResponseTransferList;
-const ResponseMsgIds ResponseMsgIds_MAX = MsgId_ResponseControlDownload;
+const ResponseMsgIds ResponseMsgIds_MAX = MsgId_ResponseShareDirList;
 const int ResponseMsgIds_ARRAYSIZE = ResponseMsgIds_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* ResponseMsgIds_descriptor();
@@ -617,6 +642,266 @@ class ResponseControlDownload : public ::google::protobuf::Message {
   void InitAsDefaultInstance();
   static ResponseControlDownload* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class RequestShareDirList : public ::google::protobuf::Message {
+ public:
+  RequestShareDirList();
+  virtual ~RequestShareDirList();
+  
+  RequestShareDirList(const RequestShareDirList& from);
+  
+  inline RequestShareDirList& operator=(const RequestShareDirList& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const RequestShareDirList& default_instance();
+  
+  void Swap(RequestShareDirList* other);
+  
+  // implements Message ----------------------------------------------
+  
+  RequestShareDirList* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const RequestShareDirList& from);
+  void MergeFrom(const RequestShareDirList& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required string ssl_id = 1;
+  inline bool has_ssl_id() const;
+  inline void clear_ssl_id();
+  static const int kSslIdFieldNumber = 1;
+  inline const ::std::string& ssl_id() const;
+  inline void set_ssl_id(const ::std::string& value);
+  inline void set_ssl_id(const char* value);
+  inline void set_ssl_id(const char* value, size_t size);
+  inline ::std::string* mutable_ssl_id();
+  inline ::std::string* release_ssl_id();
+  
+  // required string path = 2;
+  inline bool has_path() const;
+  inline void clear_path();
+  static const int kPathFieldNumber = 2;
+  inline const ::std::string& path() const;
+  inline void set_path(const ::std::string& value);
+  inline void set_path(const char* value);
+  inline void set_path(const char* value, size_t size);
+  inline ::std::string* mutable_path();
+  inline ::std::string* release_path();
+  
+  // @@protoc_insertion_point(class_scope:rsctrl.files.RequestShareDirList)
+ private:
+  inline void set_has_ssl_id();
+  inline void clear_has_ssl_id();
+  inline void set_has_path();
+  inline void clear_has_path();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::std::string* ssl_id_;
+  ::std::string* path_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_files_2eproto();
+  friend void protobuf_AssignDesc_files_2eproto();
+  friend void protobuf_ShutdownFile_files_2eproto();
+  
+  void InitAsDefaultInstance();
+  static RequestShareDirList* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class ResponseShareDirList : public ::google::protobuf::Message {
+ public:
+  ResponseShareDirList();
+  virtual ~ResponseShareDirList();
+  
+  ResponseShareDirList(const ResponseShareDirList& from);
+  
+  inline ResponseShareDirList& operator=(const ResponseShareDirList& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const ResponseShareDirList& default_instance();
+  
+  void Swap(ResponseShareDirList* other);
+  
+  // implements Message ----------------------------------------------
+  
+  ResponseShareDirList* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const ResponseShareDirList& from);
+  void MergeFrom(const ResponseShareDirList& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  typedef ResponseShareDirList_ListType ListType;
+  static const ListType DIRQUERY_ROOT = ResponseShareDirList_ListType_DIRQUERY_ROOT;
+  static const ListType DIRQUERY_PERSON = ResponseShareDirList_ListType_DIRQUERY_PERSON;
+  static const ListType DIRQUERY_FILE = ResponseShareDirList_ListType_DIRQUERY_FILE;
+  static const ListType DIRQUERY_DIR = ResponseShareDirList_ListType_DIRQUERY_DIR;
+  static inline bool ListType_IsValid(int value) {
+    return ResponseShareDirList_ListType_IsValid(value);
+  }
+  static const ListType ListType_MIN =
+    ResponseShareDirList_ListType_ListType_MIN;
+  static const ListType ListType_MAX =
+    ResponseShareDirList_ListType_ListType_MAX;
+  static const int ListType_ARRAYSIZE =
+    ResponseShareDirList_ListType_ListType_ARRAYSIZE;
+  static inline const ::google::protobuf::EnumDescriptor*
+  ListType_descriptor() {
+    return ResponseShareDirList_ListType_descriptor();
+  }
+  static inline const ::std::string& ListType_Name(ListType value) {
+    return ResponseShareDirList_ListType_Name(value);
+  }
+  static inline bool ListType_Parse(const ::std::string& name,
+      ListType* value) {
+    return ResponseShareDirList_ListType_Parse(name, value);
+  }
+  
+  // accessors -------------------------------------------------------
+  
+  // required .rsctrl.core.Status status = 1;
+  inline bool has_status() const;
+  inline void clear_status();
+  static const int kStatusFieldNumber = 1;
+  inline const ::rsctrl::core::Status& status() const;
+  inline ::rsctrl::core::Status* mutable_status();
+  inline ::rsctrl::core::Status* release_status();
+  
+  // required string ssl_id = 2;
+  inline bool has_ssl_id() const;
+  inline void clear_ssl_id();
+  static const int kSslIdFieldNumber = 2;
+  inline const ::std::string& ssl_id() const;
+  inline void set_ssl_id(const ::std::string& value);
+  inline void set_ssl_id(const char* value);
+  inline void set_ssl_id(const char* value, size_t size);
+  inline ::std::string* mutable_ssl_id();
+  inline ::std::string* release_ssl_id();
+  
+  // required string path = 3;
+  inline bool has_path() const;
+  inline void clear_path();
+  static const int kPathFieldNumber = 3;
+  inline const ::std::string& path() const;
+  inline void set_path(const ::std::string& value);
+  inline void set_path(const char* value);
+  inline void set_path(const char* value, size_t size);
+  inline ::std::string* mutable_path();
+  inline ::std::string* release_path();
+  
+  // required .rsctrl.files.ResponseShareDirList.ListType list_type = 4;
+  inline bool has_list_type() const;
+  inline void clear_list_type();
+  static const int kListTypeFieldNumber = 4;
+  inline ::rsctrl::files::ResponseShareDirList_ListType list_type() const;
+  inline void set_list_type(::rsctrl::files::ResponseShareDirList_ListType value);
+  
+  // repeated .rsctrl.core.File files = 5;
+  inline int files_size() const;
+  inline void clear_files();
+  static const int kFilesFieldNumber = 5;
+  inline const ::rsctrl::core::File& files(int index) const;
+  inline ::rsctrl::core::File* mutable_files(int index);
+  inline ::rsctrl::core::File* add_files();
+  inline const ::google::protobuf::RepeatedPtrField< ::rsctrl::core::File >&
+      files() const;
+  inline ::google::protobuf::RepeatedPtrField< ::rsctrl::core::File >*
+      mutable_files();
+  
+  // @@protoc_insertion_point(class_scope:rsctrl.files.ResponseShareDirList)
+ private:
+  inline void set_has_status();
+  inline void clear_has_status();
+  inline void set_has_ssl_id();
+  inline void clear_has_ssl_id();
+  inline void set_has_path();
+  inline void clear_has_path();
+  inline void set_has_list_type();
+  inline void clear_has_list_type();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::rsctrl::core::Status* status_;
+  ::std::string* ssl_id_;
+  ::std::string* path_;
+  ::google::protobuf::RepeatedPtrField< ::rsctrl::core::File > files_;
+  int list_type_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_files_2eproto();
+  friend void protobuf_AssignDesc_files_2eproto();
+  friend void protobuf_ShutdownFile_files_2eproto();
+  
+  void InitAsDefaultInstance();
+  static ResponseShareDirList* default_instance_;
+};
 // ===================================================================
 
 
@@ -894,6 +1179,323 @@ inline ::rsctrl::core::Status* ResponseControlDownload::release_status() {
   return temp;
 }
 
+// -------------------------------------------------------------------
+
+// RequestShareDirList
+
+// required string ssl_id = 1;
+inline bool RequestShareDirList::has_ssl_id() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void RequestShareDirList::set_has_ssl_id() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void RequestShareDirList::clear_has_ssl_id() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void RequestShareDirList::clear_ssl_id() {
+  if (ssl_id_ != &::google::protobuf::internal::kEmptyString) {
+    ssl_id_->clear();
+  }
+  clear_has_ssl_id();
+}
+inline const ::std::string& RequestShareDirList::ssl_id() const {
+  return *ssl_id_;
+}
+inline void RequestShareDirList::set_ssl_id(const ::std::string& value) {
+  set_has_ssl_id();
+  if (ssl_id_ == &::google::protobuf::internal::kEmptyString) {
+    ssl_id_ = new ::std::string;
+  }
+  ssl_id_->assign(value);
+}
+inline void RequestShareDirList::set_ssl_id(const char* value) {
+  set_has_ssl_id();
+  if (ssl_id_ == &::google::protobuf::internal::kEmptyString) {
+    ssl_id_ = new ::std::string;
+  }
+  ssl_id_->assign(value);
+}
+inline void RequestShareDirList::set_ssl_id(const char* value, size_t size) {
+  set_has_ssl_id();
+  if (ssl_id_ == &::google::protobuf::internal::kEmptyString) {
+    ssl_id_ = new ::std::string;
+  }
+  ssl_id_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* RequestShareDirList::mutable_ssl_id() {
+  set_has_ssl_id();
+  if (ssl_id_ == &::google::protobuf::internal::kEmptyString) {
+    ssl_id_ = new ::std::string;
+  }
+  return ssl_id_;
+}
+inline ::std::string* RequestShareDirList::release_ssl_id() {
+  clear_has_ssl_id();
+  if (ssl_id_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = ssl_id_;
+    ssl_id_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// required string path = 2;
+inline bool RequestShareDirList::has_path() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void RequestShareDirList::set_has_path() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void RequestShareDirList::clear_has_path() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void RequestShareDirList::clear_path() {
+  if (path_ != &::google::protobuf::internal::kEmptyString) {
+    path_->clear();
+  }
+  clear_has_path();
+}
+inline const ::std::string& RequestShareDirList::path() const {
+  return *path_;
+}
+inline void RequestShareDirList::set_path(const ::std::string& value) {
+  set_has_path();
+  if (path_ == &::google::protobuf::internal::kEmptyString) {
+    path_ = new ::std::string;
+  }
+  path_->assign(value);
+}
+inline void RequestShareDirList::set_path(const char* value) {
+  set_has_path();
+  if (path_ == &::google::protobuf::internal::kEmptyString) {
+    path_ = new ::std::string;
+  }
+  path_->assign(value);
+}
+inline void RequestShareDirList::set_path(const char* value, size_t size) {
+  set_has_path();
+  if (path_ == &::google::protobuf::internal::kEmptyString) {
+    path_ = new ::std::string;
+  }
+  path_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* RequestShareDirList::mutable_path() {
+  set_has_path();
+  if (path_ == &::google::protobuf::internal::kEmptyString) {
+    path_ = new ::std::string;
+  }
+  return path_;
+}
+inline ::std::string* RequestShareDirList::release_path() {
+  clear_has_path();
+  if (path_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = path_;
+    path_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// -------------------------------------------------------------------
+
+// ResponseShareDirList
+
+// required .rsctrl.core.Status status = 1;
+inline bool ResponseShareDirList::has_status() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void ResponseShareDirList::set_has_status() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void ResponseShareDirList::clear_has_status() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void ResponseShareDirList::clear_status() {
+  if (status_ != NULL) status_->::rsctrl::core::Status::Clear();
+  clear_has_status();
+}
+inline const ::rsctrl::core::Status& ResponseShareDirList::status() const {
+  return status_ != NULL ? *status_ : *default_instance_->status_;
+}
+inline ::rsctrl::core::Status* ResponseShareDirList::mutable_status() {
+  set_has_status();
+  if (status_ == NULL) status_ = new ::rsctrl::core::Status;
+  return status_;
+}
+inline ::rsctrl::core::Status* ResponseShareDirList::release_status() {
+  clear_has_status();
+  ::rsctrl::core::Status* temp = status_;
+  status_ = NULL;
+  return temp;
+}
+
+// required string ssl_id = 2;
+inline bool ResponseShareDirList::has_ssl_id() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void ResponseShareDirList::set_has_ssl_id() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void ResponseShareDirList::clear_has_ssl_id() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void ResponseShareDirList::clear_ssl_id() {
+  if (ssl_id_ != &::google::protobuf::internal::kEmptyString) {
+    ssl_id_->clear();
+  }
+  clear_has_ssl_id();
+}
+inline const ::std::string& ResponseShareDirList::ssl_id() const {
+  return *ssl_id_;
+}
+inline void ResponseShareDirList::set_ssl_id(const ::std::string& value) {
+  set_has_ssl_id();
+  if (ssl_id_ == &::google::protobuf::internal::kEmptyString) {
+    ssl_id_ = new ::std::string;
+  }
+  ssl_id_->assign(value);
+}
+inline void ResponseShareDirList::set_ssl_id(const char* value) {
+  set_has_ssl_id();
+  if (ssl_id_ == &::google::protobuf::internal::kEmptyString) {
+    ssl_id_ = new ::std::string;
+  }
+  ssl_id_->assign(value);
+}
+inline void ResponseShareDirList::set_ssl_id(const char* value, size_t size) {
+  set_has_ssl_id();
+  if (ssl_id_ == &::google::protobuf::internal::kEmptyString) {
+    ssl_id_ = new ::std::string;
+  }
+  ssl_id_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* ResponseShareDirList::mutable_ssl_id() {
+  set_has_ssl_id();
+  if (ssl_id_ == &::google::protobuf::internal::kEmptyString) {
+    ssl_id_ = new ::std::string;
+  }
+  return ssl_id_;
+}
+inline ::std::string* ResponseShareDirList::release_ssl_id() {
+  clear_has_ssl_id();
+  if (ssl_id_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = ssl_id_;
+    ssl_id_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// required string path = 3;
+inline bool ResponseShareDirList::has_path() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void ResponseShareDirList::set_has_path() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void ResponseShareDirList::clear_has_path() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void ResponseShareDirList::clear_path() {
+  if (path_ != &::google::protobuf::internal::kEmptyString) {
+    path_->clear();
+  }
+  clear_has_path();
+}
+inline const ::std::string& ResponseShareDirList::path() const {
+  return *path_;
+}
+inline void ResponseShareDirList::set_path(const ::std::string& value) {
+  set_has_path();
+  if (path_ == &::google::protobuf::internal::kEmptyString) {
+    path_ = new ::std::string;
+  }
+  path_->assign(value);
+}
+inline void ResponseShareDirList::set_path(const char* value) {
+  set_has_path();
+  if (path_ == &::google::protobuf::internal::kEmptyString) {
+    path_ = new ::std::string;
+  }
+  path_->assign(value);
+}
+inline void ResponseShareDirList::set_path(const char* value, size_t size) {
+  set_has_path();
+  if (path_ == &::google::protobuf::internal::kEmptyString) {
+    path_ = new ::std::string;
+  }
+  path_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* ResponseShareDirList::mutable_path() {
+  set_has_path();
+  if (path_ == &::google::protobuf::internal::kEmptyString) {
+    path_ = new ::std::string;
+  }
+  return path_;
+}
+inline ::std::string* ResponseShareDirList::release_path() {
+  clear_has_path();
+  if (path_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = path_;
+    path_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// required .rsctrl.files.ResponseShareDirList.ListType list_type = 4;
+inline bool ResponseShareDirList::has_list_type() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void ResponseShareDirList::set_has_list_type() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void ResponseShareDirList::clear_has_list_type() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void ResponseShareDirList::clear_list_type() {
+  list_type_ = 1;
+  clear_has_list_type();
+}
+inline ::rsctrl::files::ResponseShareDirList_ListType ResponseShareDirList::list_type() const {
+  return static_cast< ::rsctrl::files::ResponseShareDirList_ListType >(list_type_);
+}
+inline void ResponseShareDirList::set_list_type(::rsctrl::files::ResponseShareDirList_ListType value) {
+  GOOGLE_DCHECK(::rsctrl::files::ResponseShareDirList_ListType_IsValid(value));
+  set_has_list_type();
+  list_type_ = value;
+}
+
+// repeated .rsctrl.core.File files = 5;
+inline int ResponseShareDirList::files_size() const {
+  return files_.size();
+}
+inline void ResponseShareDirList::clear_files() {
+  files_.Clear();
+}
+inline const ::rsctrl::core::File& ResponseShareDirList::files(int index) const {
+  return files_.Get(index);
+}
+inline ::rsctrl::core::File* ResponseShareDirList::mutable_files(int index) {
+  return files_.Mutable(index);
+}
+inline ::rsctrl::core::File* ResponseShareDirList::add_files() {
+  return files_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::rsctrl::core::File >&
+ResponseShareDirList::files() const {
+  return files_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::rsctrl::core::File >*
+ResponseShareDirList::mutable_files() {
+  return &files_;
+}
+
 
 // @@protoc_insertion_point(namespace_scope)
 
@@ -907,6 +1509,10 @@ namespace protobuf {
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::rsctrl::files::RequestControlDownload_Action>() {
   return ::rsctrl::files::RequestControlDownload_Action_descriptor();
+}
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::rsctrl::files::ResponseShareDirList_ListType>() {
+  return ::rsctrl::files::ResponseShareDirList_ListType_descriptor();
 }
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< rsctrl::files::RequestMsgIds>() {

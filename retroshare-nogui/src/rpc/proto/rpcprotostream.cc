@@ -21,12 +21,21 @@
  *
  */
 
-#include "rpc/proto/rpcprotochat.h"
-#include "rpc/proto/gencc/chat.pb.h"
+#include "rpc/proto/rpcprotostream.h"
+#include "rpc/proto/rpcprotoutils.h"
 
-#include <retroshare/rsmsgs.h>
-#include <retroshare/rspeers.h>
-#include <retroshare/rshistory.h>
+#include "rpc/proto/gencc/stream.pb.h"
+#include "rpc/proto/gencc/core.pb.h"
+
+#include <retroshare/rsexpr.h>
+#include <retroshare/rsfiles.h>
+
+// from libretroshare
+#include "util/rsdir.h"
+
+//#include <retroshare/rsmsgs.h>
+//#include <retroshare/rspeers.h>
+//#include <retroshare/rshistory.h>
 
 #include "util/rsstring.h"
 
@@ -37,34 +46,67 @@
 
 #include <set>
 
+#define MAX_DESIRED_RATE 1000.0 // 1Mb/s
+
+#define MIN_STREAM_CHUNK_SIZE	10
+#define MAX_STREAM_CHUNK_SIZE	100000
+
+#define STREAM_STANDARD_MIN_DT		0.1
+#define STREAM_BACKGROUND_MIN_DT	0.5
+
 
 bool fill_stream_details(rsctrl::stream::ResponseStreamDetail &resp, 
 			const std::list<RpcStream> &streams);
-bool fill_stream_detail(rsctrl::stream::StreamDetail &detail, 
+bool fill_stream_desc(rsctrl::stream::StreamDesc &desc, 
 			const RpcStream &stream);
 
-// Helper Functions -> maybe move to libretroshare/utils ??
-bool convertUTF8toWString(const std::string &msg_utf8, std::wstring &msg_wstr);
-bool convertWStringToUTF8(const std::wstring &msg_wstr, std::string &msg_utf8);
+bool fill_stream_data(rsctrl::stream::StreamData &data, const RpcStream &stream);
 
-bool convertStringToLobbyId(const std::string &chat_id, ChatLobbyId &lobby_id);
-bool convertLobbyIdToString(const ChatLobbyId &lobby_id, std::string &chat_id);
-
-bool fillLobbyInfoFromChatLobbyInfo(const ChatLobbyInfo &cfi, rsctrl::stream::ChatLobbyInfo *lobby);
-bool fillLobbyInfoFromVisibleChatLobbyRecord(const VisibleChatLobbyRecord &pclr, rsctrl::stream::ChatLobbyInfo *lobby);
-bool fillLobbyInfoFromChatLobbyInvite(const ChatLobbyInvite &cli, rsctrl::stream::ChatLobbyInfo *lobby);
-
-bool fillChatMessageFromHistoryMsg(const HistoryMsg &histmsg, rsctrl::stream::ChatMessage *rpcmsg);
-
-bool createQueuedEventSendMsg(const ChatInfo &chatinfo, rsctrl::stream::ChatType ctype, 
-			std::string chat_id, const RpcEventRegister &ereg, RpcQueuedMsg &qmsg);
+bool createQueuedStreamMsg(const RpcStream &stream, rsctrl::stream::ResponseStreamData &resp, RpcQueuedMsg &qmsg);
 
 
 RpcProtoStream::RpcProtoStream(uint32_t serviceId)
 	:RpcQueueService(serviceId)
 { 
+	mNextStreamId = 1;
+
 	return; 
 }
+
+
+void RpcProtoStream::reset(uint32_t chan_id)
+{
+	// We should be using a mutex for all stream operations!!!!
+	// TODO
+        //RsStackMutex stack(mQueueMtx); /********** LOCKED MUTEX ***************/
+
+	std::list<uint32_t> toRemove;
+	std::map<uint32_t, RpcStream>::iterator it;
+	for(it = mStreams.begin(); it != mStreams.end(); it++)
+	{
+		if (it->second.chan_id == chan_id)
+		{
+			toRemove.push_back(it->first);
+		}
+	}
+
+	std::list<uint32_t>::iterator rit;
+	for(rit = toRemove.begin(); rit != toRemove.end(); rit++)
+	{
+		it = mStreams.find(*rit);
+		if (it != mStreams.end())
+		{
+			mStreams.erase(it);
+		}
+	}
+
+	// Call the rest of reset.
+	RpcQueueService::reset(chan_id);
+}
+
+
+
+
 
 //RpcProtoStream::msgsAccepted(std::list<uint32_t> &msgIds); /* not used at the moment */
 
@@ -116,17 +158,17 @@ int RpcProtoStream::processMsg(uint32_t chan_id, uint32_t msg_id, uint32_t req_i
         		processReqStartFileStream(chan_id, msg_id, req_id, msg);
 			break;
 
-		case rsctrl::stream::MsgId_RequestCreateLobby:
+		case rsctrl::stream::MsgId_RequestControlStream:
 			processReqControlStream(chan_id, msg_id, req_id, msg);
 			break;
 
-		case rsctrl::stream::MsgId_RequestJoinOrLeaveLobby:
+		case rsctrl::stream::MsgId_RequestListStreams:
 			processReqListStreams(chan_id, msg_id, req_id, msg);
 			break;
 
-		case rsctrl::stream::MsgId_RequestRegisterStreams:
-			processReqRegisterStreams(chan_id, msg_id, req_id, msg);
-			break;
+//		case rsctrl::stream::MsgId_RequestRegisterStreams:
+//			processReqRegisterStreams(chan_id, msg_id, req_id, msg);
+//			break;
 
 		default:
 			std::cerr << "RpcProtoStream::processMsg() ERROR should never get here";
@@ -163,10 +205,15 @@ int RpcProtoStream::processReqStartFileStream(uint32_t chan_id, uint32_t /*msg_i
 	// SETUP STREAM.
 
 	// FIND the FILE.
-        Expression * exp;
+        std::list<std::string> hashes;
+	hashes.push_back(req.file().hash());
+
+        //HashExpression  exp(StringOperator::EqualsString, hashes);
+        HashExpression  exp(EqualsString, hashes);
         std::list<DirDetails> results;
-        FileSearchFlags flags;
-        int ans = rsFiles->SearchBoolExp(exp, results, flags);
+
+        FileSearchFlags flags = RS_FILE_HINTS_LOCAL;
+        int ans = rsFiles->SearchBoolExp(&exp, results, flags);
 
 	// CREATE A STREAM OBJECT.
 	if (results.size() < 1)
@@ -176,23 +223,39 @@ int RpcProtoStream::processReqStartFileStream(uint32_t chan_id, uint32_t /*msg_i
 	}
 	else
 	{
+		DirDetails &dirdetail = results.front();
+
 		RpcStream stream;
-
 		stream.chan_id = chan_id;
+		stream.req_id = req_id;  
 		stream.stream_id = getNextStreamId();
-		stream.state = RUNNING;
+		stream.state = RpcStream::RUNNING;
 
-		stream.path = ... // from results.
+		// Convert to Full local path.
+		std::string virtual_path = RsDirUtil::makePath(dirdetail.path, dirdetail.name);
+                if (!rsFiles->ConvertSharedFilePath(virtual_path, stream.path))
+		{
+			success = false;
+			errorMsg = "Cannot Match to Shared Directory";
+		}
+
+		stream.length = dirdetail.count;
+		stream.hash = dirdetail.hash;
+		stream.name = dirdetail.name;
+
 		stream.offset = 0;
-		stream.length = file.size;
 		stream.start_byte = 0;
 		stream.end_byte = stream.length;
+		stream.desired_rate = req.rate_kbs();
 
-		stream.desired_rate = req.rate_kBs;
+		if (stream.desired_rate > MAX_DESIRED_RATE)
+		{
+			stream.desired_rate = MAX_DESIRED_RATE;
+		}
 
 		// make response
-		rsctrl::stream::StreamDetail &detail = resp.streams_add();
-		if (!fill_stream_detail(detail, stream))
+		rsctrl::stream::StreamDesc *desc = resp.add_streams();
+		if (!fill_stream_desc(*desc, stream))
 		{
 			success = false;
 			errorMsg = "Failed to Invalid Action";
@@ -201,8 +264,16 @@ int RpcProtoStream::processReqStartFileStream(uint32_t chan_id, uint32_t /*msg_i
 		{
 			// insert.
 			mStreams[stream.stream_id] = stream;
+
+			// register the stream too.
+			std::cerr << "RpcProtoStream::processReqStartFileStream() Registering the stream event.";
+			std::cerr << std::endl;
+        		registerForEvents(chan_id, req_id, REGISTRATION_STREAMS);
 		}
 
+		std::cerr << "RpcProtoStream::processReqStartFileStream() List of Registered Streams:";
+		std::cerr << std::endl;
+        	printEventRegister(std::cerr);
 	}
 
 	/* DONE - Generate Reply */
@@ -258,52 +329,78 @@ int RpcProtoStream::processReqControlStream(uint32_t chan_id, uint32_t /*msg_id*
 
 	// FIND MATCHING STREAM.
 	std::map<uint32_t, RpcStream>::iterator it;
-	it = mStreams.find(resp.stream_id);
+	it = mStreams.find(req.stream_id());
 	if (it != mStreams.end())
 	{
 		// TWEAK
-		// FILL IN REPLY.
-		// DONE.
 
-		switch(resp.action)
+		if (it->second.state == RpcStream::STREAMERR)
 		{
-			case STREAM_START:
-				if (it->state == PAUSED)
-				{
-					it->state = RUNNING;
-				}
-				break;
-			case STREAM_STOP:
-				it->state = FINISHED;
-				break;
-			case STREAM_PAUSE:
-				if (it->state == RUNNING)
-				{
-					it->state = PAUSED;
-				}
-				break;
-			case STREAM_CHANGE_RATE:
-				it->desired_rate = req.rate_kBs;
-				break;
-			case STREAM_SEEK:
-				if (req.seek_byte < it-> endByte)
-				{
-					it->offset = req.seek_byte;
-				}
-				break;
-			default:
+			if (req.action() == rsctrl::stream::RequestControlStream::STREAM_STOP)
+			{
+				it->second.state = RpcStream::FINISHED;
+			}
+			else
+			{
 				success = false;
-				errorMsg = "Invalid Action";
+				errorMsg = "Stream Error";
+			}
+		}
+		else
+		{
+			switch(req.action())
+			{
+				case rsctrl::stream::RequestControlStream::STREAM_START:
+					if (it->second.state == RpcStream::PAUSED)
+					{
+						it->second.state = RpcStream::RUNNING;
+					}
+					break;
+	
+				case rsctrl::stream::RequestControlStream::STREAM_STOP:
+					it->second.state = RpcStream::FINISHED;
+					break;
+	
+				case rsctrl::stream::RequestControlStream::STREAM_PAUSE:
+					if (it->second.state == RpcStream::RUNNING)
+					{
+						it->second.state = RpcStream::PAUSED;
+						it->second.transfer_time = 0;	// reset timings.
+					}
+					break;
+	
+				case rsctrl::stream::RequestControlStream::STREAM_CHANGE_RATE:
+					it->second.desired_rate = req.rate_kbs();
+					break;
+	
+				case rsctrl::stream::RequestControlStream::STREAM_SEEK:
+					if (req.seek_byte() < it->second.end_byte)
+					{
+						it->second.offset = req.seek_byte();
+					}
+					break;
+				default:
+					success = false;
+					errorMsg = "Invalid Action";
+			}
 		}
 
+		// FILL IN REPLY.
 		if (success)
 		{
-			rsctrl::stream::StreamDetail &detail = resp.streams_add();
-			if (!fill_stream_detail(detail, it->second))
+			rsctrl::stream::StreamDesc *desc = resp.add_streams();
+			if (!fill_stream_desc(*desc, it->second))
 			{
 				success = false;
 				errorMsg = "Invalid Action";
 			}
+		}
+
+		// Cleanup - TODO, this is explicit at the moment. - should be automatic after finish.
+		if (it->second.state == RpcStream::FINISHED)
+		{
+        		deregisterForEvents(it->second.chan_id, it->second.req_id, REGISTRATION_STREAMS);
+			mStreams.erase(it);			
 		}
 	}
 	else
@@ -366,16 +463,20 @@ int RpcProtoStream::processReqListStreams(uint32_t chan_id, uint32_t /*msg_id*/,
 
 
 
+	std::map<uint32_t, RpcStream>::iterator it;
 	for(it = mStreams.begin(); it != mStreams.end(); it++)
 	{
+		bool match = true;
+
+		// TODO fill in match!
 		/* check that it matches */
 		if (! match)
 		{
 			continue;
 		}
 
-		rsctrl::stream::StreamDetail &detail = resp.streams_add();
-		if (!fill_stream_detail(detail, it->second))
+		rsctrl::stream::StreamDesc *desc = resp.add_streams();
+		if (!fill_stream_desc(*desc, it->second))
 		{
 			success = false;
 			errorMsg = "Some Details Failed to Fill";
@@ -413,106 +514,9 @@ int RpcProtoStream::processReqListStreams(uint32_t chan_id, uint32_t /*msg_id*/,
 }
 
 
-
-
-
-int RpcProtoStream::processReqRegisterStreams(uint32_t chan_id, uint32_t /*msg_id*/, uint32_t req_id, const std::string &msg)
-{
-	std::cerr << "RpcProtoStream::processReqRegisterStreams()";
-	std::cerr << std::endl;
-
-	// parse msg.
-	rsctrl::stream::RequestRegisterStreams req;
-	if (!req.ParseFromString(msg))
-	{
-		std::cerr << "RpcProtoStream::processReqRegisterStreams() ERROR ParseFromString()";
-		std::cerr << std::endl;
-		return 0;
-	}
-
-	// response.
-	rsctrl::stream::ResponseRegisterStreams resp;
-	bool success = true;
-	bool doregister = false;
-	std::string errorMsg;
-
-	switch(req.action())
-	{
-		case rsctrl::stream::RequestRegisterStreams::REGISTER:
-			doregister = true;
-			break;
-		case rsctrl::stream::RequestRegisterStreams::DEREGISTER:
-			doregister = false;
-			break;
-		default:
-			std::cerr << "ERROR action is invalid";
-			std::cerr << std::endl;
-
-			success = false;
-			errorMsg = "RegisterStreams.Action is invalid";
-			break;
-	}
-
-        if (success)
-	{
-		if (doregister)
-		{
-			std::cerr << "Registering for Streams";
-			std::cerr << std::endl;
-
-        		registerForEvents(chan_id, req_id, REGISTRATION_STREAMS);
-		}
-		else
-		{
-			std::cerr << "Deregistering for Streams";
-			std::cerr << std::endl;
-
-        		deregisterForEvents(chan_id, req_id, REGISTRATION_STREAMS);
-		}
-        	printEventRegister(std::cerr);
-	}
-
-
-	/* DONE - Generate Reply */
-        if (success)
-	{
-		rsctrl::core::Status *status = resp.mutable_status();
-		status->set_code(rsctrl::core::Status::SUCCESS);
-	}
-	else
-	{
-		rsctrl::core::Status *status = resp.mutable_status();
-		status->set_code(rsctrl::core::Status::FAILED);
-		status->set_msg(errorMsg);
-	}
-
-	std::string outmsg;
-	if (!resp.SerializeToString(&outmsg))
-	{
-		std::cerr << "RpcProtoStream::processReqCreateLobbies() ERROR SerialiseToString()";
-		std::cerr << std::endl;
-		return 0;
-	}
-	
-	// Correctly Name Message.
-	uint32_t out_msg_id = constructMsgId(rsctrl::core::CORE, rsctrl::core::STREAM, 
-				rsctrl::stream::MsgId_ResponseRegisterStreams, true);
-
-	// queue it.
-	queueResponse(chan_id, out_msg_id, req_id, outmsg);
-	return 1;
-}
-
-
-
-
         // EVENTS. (STREAMS)
-int RpcProtoStream::locked_checkForEvents(uint32_t event, const std::list<RpcEventRegister> &registered, std::list<RpcQueuedMsg> &stream_msgs)
+int RpcProtoStream::locked_checkForEvents(uint32_t event, const std::list<RpcEventRegister> & /* registered */, std::list<RpcQueuedMsg> &stream_msgs)
 {
-	/* Wow - here already! */
-	std::cerr << "locked_checkForEvents()";
-	std::cerr << std::endl;
-
 	/* only one event type for now */
 	if (event !=  REGISTRATION_STREAMS)
 	{
@@ -528,128 +532,204 @@ int RpcProtoStream::locked_checkForEvents(uint32_t event, const std::list<RpcEve
          * NOTE we'll have to something more complex for VoIP!
 	 */
 
-	float ts = getTimeStamp();
-	float dt = ts - mStreamRates.last_ts;
+	double ts = getTimeStamp();
+	double dt = ts - mStreamRates.last_ts;
 	uint32_t data_sent = 0;
 
 #define FILTER_K (0.75)
 
-	if (mStreamRates.last_ts != 0)
+	if (dt < 5.0) //mStreamRates.last_ts != 0)
 	{
 		mStreamRates.avg_dt = FILTER_K * mStreamRates.avg_dt 
 				+ (1.0 - FILTER_K) * dt;
 	}
 	else
 	{
-		mStreamRates.avg_dt = dt;
+		std::cerr << "RpcProtoStream::locked_checkForEvents() Large dT - resetting avg";
+		std::cerr << std::endl;
+		mStreamRates.avg_dt = 0.0;
 	}
+
 	mStreamRates.last_ts = ts;
 
 
-	std::list<uint32_t> to_remove;
 	std::map<uint32_t, RpcStream>::iterator it;
 	for(it = mStreams.begin(); it != mStreams.end(); it++)
 	{
 		RpcStream &stream = it->second;
 
-		if (stream.state == PAUSED)
+		if (!(stream.state == RpcStream::RUNNING))
 		{
 			continue;
 		}
 
-		/* we ignore the Events Register... just use stream info, */
-		int channel_id = stream.chan_id;
-		uint32_t size = stream.desired_rate * mStreamRates.avg_dt;
+		double stream_dt = ts - stream.transfer_time;
+
+		switch(stream.transfer_type)
+		{
+			case RpcStream::REALTIME:
+				// let it go through always.
+				break;
+
+			case RpcStream::STANDARD:
+				if (stream_dt < STREAM_STANDARD_MIN_DT)
+				{
+					continue;
+				}
+				break;
+
+
+			case RpcStream::BACKGROUND:
+				if (stream_dt < STREAM_BACKGROUND_MIN_DT)
+				{
+					continue;
+				}
+				break;
+		}
+
+		if (!stream.transfer_time)
+		{
+			std::cerr << "RpcProtoStream::locked_checkForEvents() Null stream.transfer_time .. resetting";
+			std::cerr << std::endl;
+			stream.transfer_avg_dt = STREAM_STANDARD_MIN_DT;
+		}
+		else
+		{
+			std::cerr << "RpcProtoStream::locked_checkForEvents() stream.transfer_avg_dt: " << stream.transfer_avg_dt;
+			std::cerr << " stream_dt: " << stream_dt;
+			std::cerr << std::endl;
+			stream.transfer_avg_dt = FILTER_K * stream.transfer_avg_dt
+				+ (1.0 - FILTER_K) * stream_dt;
+
+			std::cerr << "RpcProtoStream::locked_checkForEvents() ==> stream.transfer_avg_dt: " << stream.transfer_avg_dt;
+			std::cerr << std::endl;
+		}
+
+		uint32_t size = stream.desired_rate * 1000.0 * stream.transfer_avg_dt;
+		stream.transfer_time = ts;
+
+
+		if (size < MIN_STREAM_CHUNK_SIZE)
+		{
+			size = MIN_STREAM_CHUNK_SIZE;
+		}
+		if (size > MAX_STREAM_CHUNK_SIZE)
+		{
+			size = MAX_STREAM_CHUNK_SIZE;
+		}
+
 
 		/* get data */
 		uint64_t remaining = stream.end_byte - stream.offset;
 		if (remaining < size)
 		{
 			size = remaining;
-			stream.state = FINISHED;
-			to_remove.push_back(it->first);
+			stream.state = RpcStream::FINISHED;
+			std::cerr << "RpcProtoStream::locked_checkForEvents() Sending Remaining: " << size;
+			std::cerr << std::endl;
 		}
 
+		std::cerr << "RpcProtoStream::locked_checkForEvents() Handling Stream: " << stream.stream_id << " state: " << stream.state;
+		std::cerr << std::endl;
+		std::cerr << "path: " << stream.path;
+		std::cerr << std::endl;
+		std::cerr << "offset: " << stream.offset;
+		std::cerr << " avg_dt: " << stream.transfer_avg_dt;
+		std::cerr << " x  desired_rate: " << stream.desired_rate;
+		std::cerr << " => chunk_size: " << size;
+		std::cerr << std::endl;
 
 		/* fill in the answer */
 
-		StreamData data;
-		data.stream_id = stream.stream_id;
-		data.stream_state = stream.state;
-		data.send_time = getTimeStamp();
-		data.offset = stream.offset;
-		data.size = size;
+		rsctrl::stream::ResponseStreamData resp;
+		rsctrl::core::Status *status = resp.mutable_status();
+		status->set_code(rsctrl::core::Status::SUCCESS);
 
-		fill_stream_data(stream, data);
+		rsctrl::stream::StreamData *data = resp.mutable_data();
+		data->set_stream_id(stream.stream_id);
 
-
-
-
-		RpcQueuedMsg qmsg;
-		rsctrl::stream::ChatType ctype = rsctrl::stream::TYPE_GROUP;
-		std::string chat_id = ""; // No ID for group.
-
-		if (createQueuedEventSendMsg(*it, ctype, chat_id, *rit, qmsg))
+		// convert state.
+		switch(stream.state)
 		{
-			std::cerr << "Created MsgEvent";
-			std::cerr << std::endl;
+			case RpcStream::RUNNING:
+				data->set_stream_state(rsctrl::stream::STREAM_STATE_RUN);
+				break;
+			// This case cannot happen.
+			case RpcStream::PAUSED:
+				data->set_stream_state(rsctrl::stream::STREAM_STATE_PAUSED);
+				break;
+			// This can only happen at last chunk.
+			default:
+			case RpcStream::FINISHED:
+				data->set_stream_state(rsctrl::stream::STREAM_STATE_FINISHED);
+				break;
+		}
 
-			events.push_back(qmsg);
+
+		rsctrl::core::Timestamp *ts = data->mutable_send_time();
+		setTimeStamp(ts);
+
+		data->set_offset(stream.offset);
+		data->set_size(size);
+
+		if (fill_stream_data(*data, stream))
+		{
+
+			/* increment seek_location - for next request */
+			stream.offset += size;
+	
+			RpcQueuedMsg qmsg;
+			if (createQueuedStreamMsg(stream, resp, qmsg))
+			{
+				std::cerr << "Created Stream Msg.";
+				std::cerr << std::endl;
+	
+				stream_msgs.push_back(qmsg);
+			}
+			else
+			{
+				std::cerr << "ERROR Creating Stream Msg";
+				std::cerr << std::endl;
+			}
 		}
 		else
 		{
-			std::cerr << "ERROR Creating MsgEvent";
+			stream.state = RpcStream::STREAMERR;
+			std::cerr << "ERROR Filling Stream Data";
 			std::cerr << std::endl;
 		}
+		
 	}
+	return 1;
+}
 
+
+
+// TODO
+int RpcProtoStream::cleanup_checkForEvents(uint32_t /* event */, const std::list<RpcEventRegister> & /* registered */)
+{
+	std::list<uint32_t> to_remove;
 	std::list<uint32_t>::iterator rit;
 	for(rit = to_remove.begin(); rit != to_remove.end(); rit++)
 	{
 		/* kill the stream! */
+		std::map<uint32_t, RpcStream>::iterator it;
 		it = mStreams.find(*rit);
 		if (it != mStreams.end())
 		{
 			mStreams.erase(it);
 		}
 	}
-
 	return 1;
 }
 
 
 /***** HELPER FUNCTIONS *****/
 
-
-bool createQueuedEventSendMsg(const ChatInfo &chatinfo, rsctrl::stream::ChatType ctype, 
-			std::string chat_id, const RpcEventRegister &ereg, RpcQueuedMsg &qmsg)
+bool createQueuedStreamMsg(const RpcStream &stream, rsctrl::stream::ResponseStreamData &resp, RpcQueuedMsg &qmsg)
 {
-
-	rsctrl::stream::EventChatMessage event;
-	rsctrl::stream::ChatMessage *msg = event.mutable_msg();
-	rsctrl::stream::ChatId *id = msg->mutable_id();
-
-	id->set_chat_type(ctype);
-	id->set_chat_id(chat_id);
-
-  	msg->set_peer_nickname(chatinfo.peer_nickname);
-  	msg->set_chat_flags(chatinfo.chatflags);
-  	msg->set_send_time(chatinfo.sendTime);
-  	msg->set_recv_time(chatinfo.recvTime);
-
-	std::string msg_utf8;
-	if (!convertWStringToUTF8(chatinfo.msg, msg_utf8))
-	{
-		std::cerr << "RpcProtoStream::createQueuedEventSendMsg() ERROR Converting Msg";
-		std::cerr << std::endl;
-		return false;
-	}
-
-  	msg->set_msg(msg_utf8);
-
-	/* DONE - Generate Reply */
 	std::string outmsg;
-	if (!event.SerializeToString(&outmsg))
+	if (!resp.SerializeToString(&outmsg))
 	{
 		std::cerr << "RpcProtoStream::createQueuedEventSendMsg() ERROR SerialiseToString()";
 		std::cerr << std::endl;
@@ -657,15 +737,17 @@ bool createQueuedEventSendMsg(const ChatInfo &chatinfo, rsctrl::stream::ChatType
 	}
 	
 	// Correctly Name Message.
-	qmsg.mMsgId = constructMsgId(rsctrl::core::CORE, rsctrl::core::CHAT, 
-				rsctrl::stream::MsgId_EventChatMessage, true);
+	qmsg.mMsgId = constructMsgId(rsctrl::core::CORE, rsctrl::core::STREAM, 
+				rsctrl::stream::MsgId_ResponseStreamData, true);
 
-	qmsg.mChanId = ereg.mChanId;
-	qmsg.mReqId = ereg.mReqId;
+	qmsg.mChanId = stream.chan_id;
+	qmsg.mReqId = stream.req_id;
 	qmsg.mMsg = outmsg;
 
 	return true;
 }
+
+
 
 
 /****************** NEW HELPER FNS ******************/
@@ -673,21 +755,70 @@ bool createQueuedEventSendMsg(const ChatInfo &chatinfo, rsctrl::stream::ChatType
 bool fill_stream_details(rsctrl::stream::ResponseStreamDetail &resp, 
 			const std::list<RpcStream> &streams)
 {
+	std::cerr << "fill_stream_details()";
+	std::cerr << std::endl;
+
+	bool val = true;
 	std::list<RpcStream>::const_iterator it;
 	for (it = streams.begin(); it != streams.end(); it++)
 	{
-		rsctrl::stream::StreamDetail &detail = resp.streams_add();
-		fill_stream_detail(detail, *it);
+		rsctrl::stream::StreamDesc *desc = resp.add_streams();
+		val &= fill_stream_desc(*desc, *it);
 	}
 
 	return val;
 }
 
-bool fill_stream_detail(rsctrl::stream::StreamDetail &detail, 
-			const RpcStream &stream)
+bool fill_stream_desc(rsctrl::stream::StreamDesc &desc, const RpcStream &stream)
 {
+	std::cerr << "fill_stream_desc()";
+	std::cerr << std::endl;
 
-
-
+	return true;
 }
+
+bool fill_stream_data(rsctrl::stream::StreamData &data, const RpcStream &stream)
+{
+	/* fill the StreamData from stream */
+
+	/* open file */
+	FILE *fd = RsDirUtil::rs_fopen(stream.path.c_str(), "rb");
+	if (!fd)
+	{
+		std::cerr << "fill_stream_data() Failed to open file: " << stream.path;
+		std::cerr << std::endl;
+		return false;
+	}
+
+	uint32_t data_size    = data.size();
+	uint64_t base_loc     = data.offset();
+	void *buffer = malloc(data_size);
+
+	/* seek to correct spot */
+	fseeko64(fd, base_loc, SEEK_SET);
+
+	/* copy data into bytes */
+	if (1 != fread(buffer, data_size, 1, fd))
+	{
+		std::cerr << "fill_stream_data() Failed to get data. data_size=" << data_size << ", base_loc=" << base_loc << " !";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	data.set_stream_data(buffer, data_size);
+	free(buffer);
+
+	fclose(fd);
+
+	return true;
+}
+
+
+
+
+uint32_t RpcProtoStream::getNextStreamId()
+{
+	return mNextStreamId++;
+}
+
 

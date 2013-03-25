@@ -94,9 +94,9 @@ int RpcProtoPeers::processMsg(uint32_t chan_id, uint32_t msg_id, uint32_t req_id
 		case rsctrl::peers::MsgId_RequestExaminePeer:
 			processExaminePeer(chan_id, msg_id, req_id, msg);
 			break;
-		case rsctrl::peers::MsgId_RequestModifyPeer:
-			processModifyPeer(chan_id, msg_id, req_id, msg);
-			break;
+		//case rsctrl::peers::MsgId_RequestModifyPeer:
+		//	processModifyPeer(chan_id, msg_id, req_id, msg);
+		//	break;
 		default:
 			std::cerr << "RpcProtoPeers::processMsg() ERROR should never get here";
 			std::cerr << std::endl;

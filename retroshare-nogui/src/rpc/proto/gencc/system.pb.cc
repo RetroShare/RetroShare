@@ -38,6 +38,12 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* ResponseSystemExternalAccess_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   ResponseSystemExternalAccess_reflection_ = NULL;
+const ::google::protobuf::Descriptor* RequestSystemAccount_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  RequestSystemAccount_reflection_ = NULL;
+const ::google::protobuf::Descriptor* ResponseSystemAccount_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  ResponseSystemAccount_reflection_ = NULL;
 const ::google::protobuf::EnumDescriptor* RequestMsgIds_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* ResponseMsgIds_descriptor_ = NULL;
 
@@ -146,6 +152,39 @@ void protobuf_AssignDesc_system_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(ResponseSystemExternalAccess));
+  RequestSystemAccount_descriptor_ = file->message_type(6);
+  static const int RequestSystemAccount_offsets_[1] = {
+  };
+  RequestSystemAccount_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      RequestSystemAccount_descriptor_,
+      RequestSystemAccount::default_instance_,
+      RequestSystemAccount_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestSystemAccount, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestSystemAccount, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(RequestSystemAccount));
+  ResponseSystemAccount_descriptor_ = file->message_type(7);
+  static const int ResponseSystemAccount_offsets_[5] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseSystemAccount, status_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseSystemAccount, pgp_name_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseSystemAccount, location_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseSystemAccount, pgp_id_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseSystemAccount, ssl_id_),
+  };
+  ResponseSystemAccount_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      ResponseSystemAccount_descriptor_,
+      ResponseSystemAccount::default_instance_,
+      ResponseSystemAccount_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseSystemAccount, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseSystemAccount, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(ResponseSystemAccount));
   RequestMsgIds_descriptor_ = file->enum_type(0);
   ResponseMsgIds_descriptor_ = file->enum_type(1);
 }
@@ -172,6 +211,10 @@ void protobuf_RegisterTypes(const ::std::string&) {
     RequestSystemExternalAccess_descriptor_, &RequestSystemExternalAccess::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     ResponseSystemExternalAccess_descriptor_, &ResponseSystemExternalAccess::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    RequestSystemAccount_descriptor_, &RequestSystemAccount::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    ResponseSystemAccount_descriptor_, &ResponseSystemAccount::default_instance());
 }
 
 }  // namespace
@@ -189,6 +232,10 @@ void protobuf_ShutdownFile_system_2eproto() {
   delete RequestSystemExternalAccess_reflection_;
   delete ResponseSystemExternalAccess::default_instance_;
   delete ResponseSystemExternalAccess_reflection_;
+  delete RequestSystemAccount::default_instance_;
+  delete RequestSystemAccount_reflection_;
+  delete ResponseSystemAccount::default_instance_;
+  delete ResponseSystemAccount_reflection_;
 }
 
 void protobuf_AddDesc_system_2eproto() {
@@ -218,13 +265,18 @@ void protobuf_AddDesc_system_2eproto() {
     "estSystemExternalAccess\"f\n\034ResponseSyste"
     "mExternalAccess\022#\n\006status\030\001 \002(\0132\023.rsctrl"
     ".core.Status\022\020\n\010ext_port\030\002 \002(\r\022\017\n\007dht_ke"
-    "y\030\003 \002(\t*r\n\rRequestMsgIds\022\035\n\031MsgId_Reques"
-    "tSystemStatus\020\001\022\033\n\027MsgId_RequestSystemQu"
-    "it\020\002\022%\n!MsgId_RequestSystemExternalAcces"
-    "s\020\003*v\n\016ResponseMsgIds\022\036\n\032MsgId_ResponseS"
-    "ystemStatus\020\001\022\034\n\030MsgId_ResponseSystemQui"
-    "t\020\002\022&\n\"MsgId_ResponseSystemExternalAcces"
-    "s\020\003", 1003);
+    "y\030\003 \002(\t\"\026\n\024RequestSystemAccount\"\200\001\n\025Resp"
+    "onseSystemAccount\022#\n\006status\030\001 \002(\0132\023.rsct"
+    "rl.core.Status\022\020\n\010pgp_name\030\002 \002(\t\022\020\n\010loca"
+    "tion\030\003 \002(\t\022\016\n\006pgp_id\030\004 \002(\t\022\016\n\006ssl_id\030\005 \002"
+    "(\t*\222\001\n\rRequestMsgIds\022\035\n\031MsgId_RequestSys"
+    "temStatus\020\001\022\033\n\027MsgId_RequestSystemQuit\020\002"
+    "\022%\n!MsgId_RequestSystemExternalAccess\020\003\022"
+    "\036\n\032MsgId_RequestSystemAccount\020\004*\227\001\n\016Resp"
+    "onseMsgIds\022\036\n\032MsgId_ResponseSystemStatus"
+    "\020\001\022\034\n\030MsgId_ResponseSystemQuit\020\002\022&\n\"MsgI"
+    "d_ResponseSystemExternalAccess\020\003\022\037\n\033MsgI"
+    "d_ResponseSystemAccount\020\004", 1225);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "system.proto", &protobuf_RegisterTypes);
   RequestSystemStatus::default_instance_ = new RequestSystemStatus();
@@ -233,12 +285,16 @@ void protobuf_AddDesc_system_2eproto() {
   ResponseSystemQuit::default_instance_ = new ResponseSystemQuit();
   RequestSystemExternalAccess::default_instance_ = new RequestSystemExternalAccess();
   ResponseSystemExternalAccess::default_instance_ = new ResponseSystemExternalAccess();
+  RequestSystemAccount::default_instance_ = new RequestSystemAccount();
+  ResponseSystemAccount::default_instance_ = new ResponseSystemAccount();
   RequestSystemStatus::default_instance_->InitAsDefaultInstance();
   ResponseSystemStatus::default_instance_->InitAsDefaultInstance();
   RequestSystemQuit::default_instance_->InitAsDefaultInstance();
   ResponseSystemQuit::default_instance_->InitAsDefaultInstance();
   RequestSystemExternalAccess::default_instance_->InitAsDefaultInstance();
   ResponseSystemExternalAccess::default_instance_->InitAsDefaultInstance();
+  RequestSystemAccount::default_instance_->InitAsDefaultInstance();
+  ResponseSystemAccount::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_system_2eproto);
 }
 
@@ -258,6 +314,7 @@ bool RequestMsgIds_IsValid(int value) {
     case 1:
     case 2:
     case 3:
+    case 4:
       return true;
     default:
       return false;
@@ -273,6 +330,7 @@ bool ResponseMsgIds_IsValid(int value) {
     case 1:
     case 2:
     case 3:
+    case 4:
       return true;
     default:
       return false;
@@ -1775,6 +1833,605 @@ void ResponseSystemExternalAccess::Swap(ResponseSystemExternalAccess* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = ResponseSystemExternalAccess_descriptor_;
   metadata.reflection = ResponseSystemExternalAccess_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+#endif  // !_MSC_VER
+
+RequestSystemAccount::RequestSystemAccount()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void RequestSystemAccount::InitAsDefaultInstance() {
+}
+
+RequestSystemAccount::RequestSystemAccount(const RequestSystemAccount& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void RequestSystemAccount::SharedCtor() {
+  _cached_size_ = 0;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+RequestSystemAccount::~RequestSystemAccount() {
+  SharedDtor();
+}
+
+void RequestSystemAccount::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void RequestSystemAccount::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* RequestSystemAccount::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return RequestSystemAccount_descriptor_;
+}
+
+const RequestSystemAccount& RequestSystemAccount::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_system_2eproto();  return *default_instance_;
+}
+
+RequestSystemAccount* RequestSystemAccount::default_instance_ = NULL;
+
+RequestSystemAccount* RequestSystemAccount::New() const {
+  return new RequestSystemAccount;
+}
+
+void RequestSystemAccount::Clear() {
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool RequestSystemAccount::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+        ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+      return true;
+    }
+    DO_(::google::protobuf::internal::WireFormat::SkipField(
+          input, tag, mutable_unknown_fields()));
+  }
+  return true;
+#undef DO_
+}
+
+void RequestSystemAccount::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* RequestSystemAccount::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int RequestSystemAccount::ByteSize() const {
+  int total_size = 0;
+  
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void RequestSystemAccount::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const RequestSystemAccount* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const RequestSystemAccount*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void RequestSystemAccount::MergeFrom(const RequestSystemAccount& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void RequestSystemAccount::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void RequestSystemAccount::CopyFrom(const RequestSystemAccount& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool RequestSystemAccount::IsInitialized() const {
+  
+  return true;
+}
+
+void RequestSystemAccount::Swap(RequestSystemAccount* other) {
+  if (other != this) {
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata RequestSystemAccount::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = RequestSystemAccount_descriptor_;
+  metadata.reflection = RequestSystemAccount_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int ResponseSystemAccount::kStatusFieldNumber;
+const int ResponseSystemAccount::kPgpNameFieldNumber;
+const int ResponseSystemAccount::kLocationFieldNumber;
+const int ResponseSystemAccount::kPgpIdFieldNumber;
+const int ResponseSystemAccount::kSslIdFieldNumber;
+#endif  // !_MSC_VER
+
+ResponseSystemAccount::ResponseSystemAccount()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void ResponseSystemAccount::InitAsDefaultInstance() {
+  status_ = const_cast< ::rsctrl::core::Status*>(&::rsctrl::core::Status::default_instance());
+}
+
+ResponseSystemAccount::ResponseSystemAccount(const ResponseSystemAccount& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void ResponseSystemAccount::SharedCtor() {
+  _cached_size_ = 0;
+  status_ = NULL;
+  pgp_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  location_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  pgp_id_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  ssl_id_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+ResponseSystemAccount::~ResponseSystemAccount() {
+  SharedDtor();
+}
+
+void ResponseSystemAccount::SharedDtor() {
+  if (pgp_name_ != &::google::protobuf::internal::kEmptyString) {
+    delete pgp_name_;
+  }
+  if (location_ != &::google::protobuf::internal::kEmptyString) {
+    delete location_;
+  }
+  if (pgp_id_ != &::google::protobuf::internal::kEmptyString) {
+    delete pgp_id_;
+  }
+  if (ssl_id_ != &::google::protobuf::internal::kEmptyString) {
+    delete ssl_id_;
+  }
+  if (this != default_instance_) {
+    delete status_;
+  }
+}
+
+void ResponseSystemAccount::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* ResponseSystemAccount::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return ResponseSystemAccount_descriptor_;
+}
+
+const ResponseSystemAccount& ResponseSystemAccount::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_system_2eproto();  return *default_instance_;
+}
+
+ResponseSystemAccount* ResponseSystemAccount::default_instance_ = NULL;
+
+ResponseSystemAccount* ResponseSystemAccount::New() const {
+  return new ResponseSystemAccount;
+}
+
+void ResponseSystemAccount::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (has_status()) {
+      if (status_ != NULL) status_->::rsctrl::core::Status::Clear();
+    }
+    if (has_pgp_name()) {
+      if (pgp_name_ != &::google::protobuf::internal::kEmptyString) {
+        pgp_name_->clear();
+      }
+    }
+    if (has_location()) {
+      if (location_ != &::google::protobuf::internal::kEmptyString) {
+        location_->clear();
+      }
+    }
+    if (has_pgp_id()) {
+      if (pgp_id_ != &::google::protobuf::internal::kEmptyString) {
+        pgp_id_->clear();
+      }
+    }
+    if (has_ssl_id()) {
+      if (ssl_id_ != &::google::protobuf::internal::kEmptyString) {
+        ssl_id_->clear();
+      }
+    }
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool ResponseSystemAccount::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required .rsctrl.core.Status status = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_status()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(18)) goto parse_pgp_name;
+        break;
+      }
+      
+      // required string pgp_name = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_pgp_name:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_pgp_name()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->pgp_name().data(), this->pgp_name().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(26)) goto parse_location;
+        break;
+      }
+      
+      // required string location = 3;
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_location:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_location()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->location().data(), this->location().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(34)) goto parse_pgp_id;
+        break;
+      }
+      
+      // required string pgp_id = 4;
+      case 4: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_pgp_id:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_pgp_id()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->pgp_id().data(), this->pgp_id().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(42)) goto parse_ssl_id;
+        break;
+      }
+      
+      // required string ssl_id = 5;
+      case 5: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_ssl_id:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_ssl_id()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->ssl_id().data(), this->ssl_id().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void ResponseSystemAccount::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required .rsctrl.core.Status status = 1;
+  if (has_status()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, this->status(), output);
+  }
+  
+  // required string pgp_name = 2;
+  if (has_pgp_name()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->pgp_name().data(), this->pgp_name().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      2, this->pgp_name(), output);
+  }
+  
+  // required string location = 3;
+  if (has_location()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->location().data(), this->location().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      3, this->location(), output);
+  }
+  
+  // required string pgp_id = 4;
+  if (has_pgp_id()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->pgp_id().data(), this->pgp_id().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      4, this->pgp_id(), output);
+  }
+  
+  // required string ssl_id = 5;
+  if (has_ssl_id()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->ssl_id().data(), this->ssl_id().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      5, this->ssl_id(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* ResponseSystemAccount::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required .rsctrl.core.Status status = 1;
+  if (has_status()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        1, this->status(), target);
+  }
+  
+  // required string pgp_name = 2;
+  if (has_pgp_name()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->pgp_name().data(), this->pgp_name().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        2, this->pgp_name(), target);
+  }
+  
+  // required string location = 3;
+  if (has_location()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->location().data(), this->location().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        3, this->location(), target);
+  }
+  
+  // required string pgp_id = 4;
+  if (has_pgp_id()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->pgp_id().data(), this->pgp_id().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        4, this->pgp_id(), target);
+  }
+  
+  // required string ssl_id = 5;
+  if (has_ssl_id()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->ssl_id().data(), this->ssl_id().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        5, this->ssl_id(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int ResponseSystemAccount::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required .rsctrl.core.Status status = 1;
+    if (has_status()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+          this->status());
+    }
+    
+    // required string pgp_name = 2;
+    if (has_pgp_name()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->pgp_name());
+    }
+    
+    // required string location = 3;
+    if (has_location()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->location());
+    }
+    
+    // required string pgp_id = 4;
+    if (has_pgp_id()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->pgp_id());
+    }
+    
+    // required string ssl_id = 5;
+    if (has_ssl_id()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->ssl_id());
+    }
+    
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void ResponseSystemAccount::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const ResponseSystemAccount* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const ResponseSystemAccount*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void ResponseSystemAccount::MergeFrom(const ResponseSystemAccount& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_status()) {
+      mutable_status()->::rsctrl::core::Status::MergeFrom(from.status());
+    }
+    if (from.has_pgp_name()) {
+      set_pgp_name(from.pgp_name());
+    }
+    if (from.has_location()) {
+      set_location(from.location());
+    }
+    if (from.has_pgp_id()) {
+      set_pgp_id(from.pgp_id());
+    }
+    if (from.has_ssl_id()) {
+      set_ssl_id(from.ssl_id());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void ResponseSystemAccount::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void ResponseSystemAccount::CopyFrom(const ResponseSystemAccount& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool ResponseSystemAccount::IsInitialized() const {
+  if ((_has_bits_[0] & 0x0000001f) != 0x0000001f) return false;
+  
+  if (has_status()) {
+    if (!this->status().IsInitialized()) return false;
+  }
+  return true;
+}
+
+void ResponseSystemAccount::Swap(ResponseSystemAccount* other) {
+  if (other != this) {
+    std::swap(status_, other->status_);
+    std::swap(pgp_name_, other->pgp_name_);
+    std::swap(location_, other->location_);
+    std::swap(pgp_id_, other->pgp_id_);
+    std::swap(ssl_id_, other->ssl_id_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata ResponseSystemAccount::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = ResponseSystemAccount_descriptor_;
+  metadata.reflection = ResponseSystemAccount_reflection_;
   return metadata;
 }
 

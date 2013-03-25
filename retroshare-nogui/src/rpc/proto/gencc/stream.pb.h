@@ -88,11 +88,11 @@ inline bool RequestMsgIds_Parse(
 }
 enum ResponseMsgIds {
   MsgId_ResponseStreamDetail = 1,
-  MsgId_StreamData = 2
+  MsgId_ResponseStreamData = 101
 };
 bool ResponseMsgIds_IsValid(int value);
 const ResponseMsgIds ResponseMsgIds_MIN = MsgId_ResponseStreamDetail;
-const ResponseMsgIds ResponseMsgIds_MAX = MsgId_StreamData;
+const ResponseMsgIds ResponseMsgIds_MAX = MsgId_ResponseStreamData;
 const int ResponseMsgIds_ARRAYSIZE = ResponseMsgIds_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* ResponseMsgIds_descriptor();
@@ -130,11 +130,11 @@ enum StreamState {
   STREAM_STATE_ERROR = 0,
   STREAM_STATE_RUN = 1,
   STREAM_STATE_PAUSED = 2,
-  STREAM_TYPE_FINISHED = 3
+  STREAM_STATE_FINISHED = 3
 };
 bool StreamState_IsValid(int value);
 const StreamState StreamState_MIN = STREAM_STATE_ERROR;
-const StreamState StreamState_MAX = STREAM_TYPE_FINISHED;
+const StreamState StreamState_MAX = STREAM_STATE_FINISHED;
 const int StreamState_ARRAYSIZE = StreamState_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* StreamState_descriptor();
@@ -296,16 +296,16 @@ class StreamVoipDetail : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required string peerId = 1;
-  inline bool has_peerid() const;
-  inline void clear_peerid();
+  // required string peer_id = 1;
+  inline bool has_peer_id() const;
+  inline void clear_peer_id();
   static const int kPeerIdFieldNumber = 1;
-  inline const ::std::string& peerid() const;
-  inline void set_peerid(const ::std::string& value);
-  inline void set_peerid(const char* value);
-  inline void set_peerid(const char* value, size_t size);
-  inline ::std::string* mutable_peerid();
-  inline ::std::string* release_peerid();
+  inline const ::std::string& peer_id() const;
+  inline void set_peer_id(const ::std::string& value);
+  inline void set_peer_id(const char* value);
+  inline void set_peer_id(const char* value, size_t size);
+  inline ::std::string* mutable_peer_id();
+  inline ::std::string* release_peer_id();
   
   // required uint64 duration = 2;
   inline bool has_duration() const;
@@ -323,8 +323,8 @@ class StreamVoipDetail : public ::google::protobuf::Message {
   
   // @@protoc_insertion_point(class_scope:rsctrl.stream.StreamVoipDetail)
  private:
-  inline void set_has_peerid();
-  inline void clear_has_peerid();
+  inline void set_has_peer_id();
+  inline void clear_has_peer_id();
   inline void set_has_duration();
   inline void clear_has_duration();
   inline void set_has_offset();
@@ -332,7 +332,7 @@ class StreamVoipDetail : public ::google::protobuf::Message {
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
-  ::std::string* peerid_;
+  ::std::string* peer_id_;
   ::google::protobuf::uint64 duration_;
   ::google::protobuf::uint64 offset_;
   
@@ -423,10 +423,10 @@ class StreamDesc : public ::google::protobuf::Message {
   inline rsctrl::stream::StreamState stream_state() const;
   inline void set_stream_state(rsctrl::stream::StreamState value);
   
-  // required float rate_kBs = 4;
+  // required float rate_kbs = 4;
   inline bool has_rate_kbs() const;
   inline void clear_rate_kbs();
-  static const int kRateKBsFieldNumber = 4;
+  static const int kRateKbsFieldNumber = 4;
   inline float rate_kbs() const;
   inline void set_rate_kbs(float value);
   
@@ -681,26 +681,26 @@ class RequestStartFileStream : public ::google::protobuf::Message {
   inline ::rsctrl::core::File* mutable_file();
   inline ::rsctrl::core::File* release_file();
   
-  // required float rate_kBs = 2;
+  // required float rate_kbs = 2;
   inline bool has_rate_kbs() const;
   inline void clear_rate_kbs();
-  static const int kRateKBsFieldNumber = 2;
+  static const int kRateKbsFieldNumber = 2;
   inline float rate_kbs() const;
   inline void set_rate_kbs(float value);
   
-  // optional uint64 startByte = 3;
-  inline bool has_startbyte() const;
-  inline void clear_startbyte();
+  // optional uint64 start_byte = 3;
+  inline bool has_start_byte() const;
+  inline void clear_start_byte();
   static const int kStartByteFieldNumber = 3;
-  inline ::google::protobuf::uint64 startbyte() const;
-  inline void set_startbyte(::google::protobuf::uint64 value);
+  inline ::google::protobuf::uint64 start_byte() const;
+  inline void set_start_byte(::google::protobuf::uint64 value);
   
-  // optional uint64 endByte = 4;
-  inline bool has_endbyte() const;
-  inline void clear_endbyte();
+  // optional uint64 end_byte = 4;
+  inline bool has_end_byte() const;
+  inline void clear_end_byte();
   static const int kEndByteFieldNumber = 4;
-  inline ::google::protobuf::uint64 endbyte() const;
-  inline void set_endbyte(::google::protobuf::uint64 value);
+  inline ::google::protobuf::uint64 end_byte() const;
+  inline void set_end_byte(::google::protobuf::uint64 value);
   
   // @@protoc_insertion_point(class_scope:rsctrl.stream.RequestStartFileStream)
  private:
@@ -708,16 +708,16 @@ class RequestStartFileStream : public ::google::protobuf::Message {
   inline void clear_has_file();
   inline void set_has_rate_kbs();
   inline void clear_has_rate_kbs();
-  inline void set_has_startbyte();
-  inline void clear_has_startbyte();
-  inline void set_has_endbyte();
-  inline void clear_has_endbyte();
+  inline void set_has_start_byte();
+  inline void clear_has_start_byte();
+  inline void set_has_end_byte();
+  inline void clear_has_end_byte();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   ::rsctrl::core::File* file_;
-  ::google::protobuf::uint64 startbyte_;
-  ::google::protobuf::uint64 endbyte_;
+  ::google::protobuf::uint64 start_byte_;
+  ::google::protobuf::uint64 end_byte_;
   float rate_kbs_;
   
   mutable int _cached_size_;
@@ -923,19 +923,19 @@ class RequestControlStream : public ::google::protobuf::Message {
   inline ::rsctrl::stream::RequestControlStream_StreamAction action() const;
   inline void set_action(::rsctrl::stream::RequestControlStream_StreamAction value);
   
-  // optional float rate_kBs = 3;
+  // optional float rate_kbs = 3;
   inline bool has_rate_kbs() const;
   inline void clear_rate_kbs();
-  static const int kRateKBsFieldNumber = 3;
+  static const int kRateKbsFieldNumber = 3;
   inline float rate_kbs() const;
   inline void set_rate_kbs(float value);
   
-  // optional int64 seek_byte = 4;
+  // optional uint64 seek_byte = 4;
   inline bool has_seek_byte() const;
   inline void clear_seek_byte();
   static const int kSeekByteFieldNumber = 4;
-  inline ::google::protobuf::int64 seek_byte() const;
-  inline void set_seek_byte(::google::protobuf::int64 value);
+  inline ::google::protobuf::uint64 seek_byte() const;
+  inline void set_seek_byte(::google::protobuf::uint64 value);
   
   // @@protoc_insertion_point(class_scope:rsctrl.stream.RequestControlStream)
  private:
@@ -952,7 +952,7 @@ class RequestControlStream : public ::google::protobuf::Message {
   
   ::google::protobuf::uint32 stream_id_;
   int action_;
-  ::google::protobuf::int64 seek_byte_;
+  ::google::protobuf::uint64 seek_byte_;
   float rate_kbs_;
   
   mutable int _cached_size_;
@@ -1203,60 +1203,60 @@ inline void StreamFileDetail::set_offset(::google::protobuf::uint64 value) {
 
 // StreamVoipDetail
 
-// required string peerId = 1;
-inline bool StreamVoipDetail::has_peerid() const {
+// required string peer_id = 1;
+inline bool StreamVoipDetail::has_peer_id() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void StreamVoipDetail::set_has_peerid() {
+inline void StreamVoipDetail::set_has_peer_id() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void StreamVoipDetail::clear_has_peerid() {
+inline void StreamVoipDetail::clear_has_peer_id() {
   _has_bits_[0] &= ~0x00000001u;
 }
-inline void StreamVoipDetail::clear_peerid() {
-  if (peerid_ != &::google::protobuf::internal::kEmptyString) {
-    peerid_->clear();
+inline void StreamVoipDetail::clear_peer_id() {
+  if (peer_id_ != &::google::protobuf::internal::kEmptyString) {
+    peer_id_->clear();
   }
-  clear_has_peerid();
+  clear_has_peer_id();
 }
-inline const ::std::string& StreamVoipDetail::peerid() const {
-  return *peerid_;
+inline const ::std::string& StreamVoipDetail::peer_id() const {
+  return *peer_id_;
 }
-inline void StreamVoipDetail::set_peerid(const ::std::string& value) {
-  set_has_peerid();
-  if (peerid_ == &::google::protobuf::internal::kEmptyString) {
-    peerid_ = new ::std::string;
+inline void StreamVoipDetail::set_peer_id(const ::std::string& value) {
+  set_has_peer_id();
+  if (peer_id_ == &::google::protobuf::internal::kEmptyString) {
+    peer_id_ = new ::std::string;
   }
-  peerid_->assign(value);
+  peer_id_->assign(value);
 }
-inline void StreamVoipDetail::set_peerid(const char* value) {
-  set_has_peerid();
-  if (peerid_ == &::google::protobuf::internal::kEmptyString) {
-    peerid_ = new ::std::string;
+inline void StreamVoipDetail::set_peer_id(const char* value) {
+  set_has_peer_id();
+  if (peer_id_ == &::google::protobuf::internal::kEmptyString) {
+    peer_id_ = new ::std::string;
   }
-  peerid_->assign(value);
+  peer_id_->assign(value);
 }
-inline void StreamVoipDetail::set_peerid(const char* value, size_t size) {
-  set_has_peerid();
-  if (peerid_ == &::google::protobuf::internal::kEmptyString) {
-    peerid_ = new ::std::string;
+inline void StreamVoipDetail::set_peer_id(const char* value, size_t size) {
+  set_has_peer_id();
+  if (peer_id_ == &::google::protobuf::internal::kEmptyString) {
+    peer_id_ = new ::std::string;
   }
-  peerid_->assign(reinterpret_cast<const char*>(value), size);
+  peer_id_->assign(reinterpret_cast<const char*>(value), size);
 }
-inline ::std::string* StreamVoipDetail::mutable_peerid() {
-  set_has_peerid();
-  if (peerid_ == &::google::protobuf::internal::kEmptyString) {
-    peerid_ = new ::std::string;
+inline ::std::string* StreamVoipDetail::mutable_peer_id() {
+  set_has_peer_id();
+  if (peer_id_ == &::google::protobuf::internal::kEmptyString) {
+    peer_id_ = new ::std::string;
   }
-  return peerid_;
+  return peer_id_;
 }
-inline ::std::string* StreamVoipDetail::release_peerid() {
-  clear_has_peerid();
-  if (peerid_ == &::google::protobuf::internal::kEmptyString) {
+inline ::std::string* StreamVoipDetail::release_peer_id() {
+  clear_has_peer_id();
+  if (peer_id_ == &::google::protobuf::internal::kEmptyString) {
     return NULL;
   } else {
-    ::std::string* temp = peerid_;
-    peerid_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    ::std::string* temp = peer_id_;
+    peer_id_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
     return temp;
   }
 }
@@ -1377,7 +1377,7 @@ inline void StreamDesc::set_stream_state(rsctrl::stream::StreamState value) {
   stream_state_ = value;
 }
 
-// required float rate_kBs = 4;
+// required float rate_kbs = 4;
 inline bool StreamDesc::has_rate_kbs() const {
   return (_has_bits_[0] & 0x00000008u) != 0;
 }
@@ -1670,7 +1670,7 @@ inline ::rsctrl::core::File* RequestStartFileStream::release_file() {
   return temp;
 }
 
-// required float rate_kBs = 2;
+// required float rate_kbs = 2;
 inline bool RequestStartFileStream::has_rate_kbs() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
@@ -1692,48 +1692,48 @@ inline void RequestStartFileStream::set_rate_kbs(float value) {
   rate_kbs_ = value;
 }
 
-// optional uint64 startByte = 3;
-inline bool RequestStartFileStream::has_startbyte() const {
+// optional uint64 start_byte = 3;
+inline bool RequestStartFileStream::has_start_byte() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void RequestStartFileStream::set_has_startbyte() {
+inline void RequestStartFileStream::set_has_start_byte() {
   _has_bits_[0] |= 0x00000004u;
 }
-inline void RequestStartFileStream::clear_has_startbyte() {
+inline void RequestStartFileStream::clear_has_start_byte() {
   _has_bits_[0] &= ~0x00000004u;
 }
-inline void RequestStartFileStream::clear_startbyte() {
-  startbyte_ = GOOGLE_ULONGLONG(0);
-  clear_has_startbyte();
+inline void RequestStartFileStream::clear_start_byte() {
+  start_byte_ = GOOGLE_ULONGLONG(0);
+  clear_has_start_byte();
 }
-inline ::google::protobuf::uint64 RequestStartFileStream::startbyte() const {
-  return startbyte_;
+inline ::google::protobuf::uint64 RequestStartFileStream::start_byte() const {
+  return start_byte_;
 }
-inline void RequestStartFileStream::set_startbyte(::google::protobuf::uint64 value) {
-  set_has_startbyte();
-  startbyte_ = value;
+inline void RequestStartFileStream::set_start_byte(::google::protobuf::uint64 value) {
+  set_has_start_byte();
+  start_byte_ = value;
 }
 
-// optional uint64 endByte = 4;
-inline bool RequestStartFileStream::has_endbyte() const {
+// optional uint64 end_byte = 4;
+inline bool RequestStartFileStream::has_end_byte() const {
   return (_has_bits_[0] & 0x00000008u) != 0;
 }
-inline void RequestStartFileStream::set_has_endbyte() {
+inline void RequestStartFileStream::set_has_end_byte() {
   _has_bits_[0] |= 0x00000008u;
 }
-inline void RequestStartFileStream::clear_has_endbyte() {
+inline void RequestStartFileStream::clear_has_end_byte() {
   _has_bits_[0] &= ~0x00000008u;
 }
-inline void RequestStartFileStream::clear_endbyte() {
-  endbyte_ = GOOGLE_ULONGLONG(0);
-  clear_has_endbyte();
+inline void RequestStartFileStream::clear_end_byte() {
+  end_byte_ = GOOGLE_ULONGLONG(0);
+  clear_has_end_byte();
 }
-inline ::google::protobuf::uint64 RequestStartFileStream::endbyte() const {
-  return endbyte_;
+inline ::google::protobuf::uint64 RequestStartFileStream::end_byte() const {
+  return end_byte_;
 }
-inline void RequestStartFileStream::set_endbyte(::google::protobuf::uint64 value) {
-  set_has_endbyte();
-  endbyte_ = value;
+inline void RequestStartFileStream::set_end_byte(::google::protobuf::uint64 value) {
+  set_has_end_byte();
+  end_byte_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -1843,7 +1843,7 @@ inline void RequestControlStream::set_action(::rsctrl::stream::RequestControlStr
   action_ = value;
 }
 
-// optional float rate_kBs = 3;
+// optional float rate_kbs = 3;
 inline bool RequestControlStream::has_rate_kbs() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
@@ -1865,7 +1865,7 @@ inline void RequestControlStream::set_rate_kbs(float value) {
   rate_kbs_ = value;
 }
 
-// optional int64 seek_byte = 4;
+// optional uint64 seek_byte = 4;
 inline bool RequestControlStream::has_seek_byte() const {
   return (_has_bits_[0] & 0x00000008u) != 0;
 }
@@ -1876,13 +1876,13 @@ inline void RequestControlStream::clear_has_seek_byte() {
   _has_bits_[0] &= ~0x00000008u;
 }
 inline void RequestControlStream::clear_seek_byte() {
-  seek_byte_ = GOOGLE_LONGLONG(0);
+  seek_byte_ = GOOGLE_ULONGLONG(0);
   clear_has_seek_byte();
 }
-inline ::google::protobuf::int64 RequestControlStream::seek_byte() const {
+inline ::google::protobuf::uint64 RequestControlStream::seek_byte() const {
   return seek_byte_;
 }
-inline void RequestControlStream::set_seek_byte(::google::protobuf::int64 value) {
+inline void RequestControlStream::set_seek_byte(::google::protobuf::uint64 value) {
   set_has_seek_byte();
   seek_byte_ = value;
 }

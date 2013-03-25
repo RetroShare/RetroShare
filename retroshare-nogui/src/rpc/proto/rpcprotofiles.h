@@ -38,6 +38,7 @@ protected:
 
 	int processReqTransferList(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg);
 	int processReqControlDownload(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg);
+	int processReqShareDirList(uint32_t chan_id, uint32_t /* msg_id */, uint32_t req_id, const std::string &msg);
 
 };
 

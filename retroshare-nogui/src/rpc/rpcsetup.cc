@@ -29,6 +29,7 @@
 #include "rpc/proto/rpcprotochat.h"
 #include "rpc/proto/rpcprotosearch.h"
 #include "rpc/proto/rpcprotofiles.h"
+#include "rpc/proto/rpcprotostream.h"
 
 #include "rpc/rpcecho.h"
 
@@ -52,6 +53,9 @@ RpcMediator *CreateRpcSystem(RpcComms *comms, NotifyTxt *notify)
 
 	RpcProtoFiles *files = new RpcProtoFiles(1);
 	server->addService(files);
+
+	RpcProtoStream *streamer = new RpcProtoStream(1);
+	server->addService(streamer);
 
 	/* Finally an Echo Service - which will echo back any unprocesses commands. */
 	RpcEcho *echo = new RpcEcho(1);

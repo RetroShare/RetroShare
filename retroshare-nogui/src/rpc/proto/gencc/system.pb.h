@@ -40,6 +40,8 @@ class RequestSystemQuit;
 class ResponseSystemQuit;
 class RequestSystemExternalAccess;
 class ResponseSystemExternalAccess;
+class RequestSystemAccount;
+class ResponseSystemAccount;
 
 enum ResponseSystemStatus_NetCode {
   ResponseSystemStatus_NetCode_BAD_UNKNOWN = 0,
@@ -89,11 +91,12 @@ inline bool RequestSystemQuit_QuitCode_Parse(
 enum RequestMsgIds {
   MsgId_RequestSystemStatus = 1,
   MsgId_RequestSystemQuit = 2,
-  MsgId_RequestSystemExternalAccess = 3
+  MsgId_RequestSystemExternalAccess = 3,
+  MsgId_RequestSystemAccount = 4
 };
 bool RequestMsgIds_IsValid(int value);
 const RequestMsgIds RequestMsgIds_MIN = MsgId_RequestSystemStatus;
-const RequestMsgIds RequestMsgIds_MAX = MsgId_RequestSystemExternalAccess;
+const RequestMsgIds RequestMsgIds_MAX = MsgId_RequestSystemAccount;
 const int RequestMsgIds_ARRAYSIZE = RequestMsgIds_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* RequestMsgIds_descriptor();
@@ -109,11 +112,12 @@ inline bool RequestMsgIds_Parse(
 enum ResponseMsgIds {
   MsgId_ResponseSystemStatus = 1,
   MsgId_ResponseSystemQuit = 2,
-  MsgId_ResponseSystemExternalAccess = 3
+  MsgId_ResponseSystemExternalAccess = 3,
+  MsgId_ResponseSystemAccount = 4
 };
 bool ResponseMsgIds_IsValid(int value);
 const ResponseMsgIds ResponseMsgIds_MIN = MsgId_ResponseSystemStatus;
-const ResponseMsgIds ResponseMsgIds_MAX = MsgId_ResponseSystemExternalAccess;
+const ResponseMsgIds ResponseMsgIds_MAX = MsgId_ResponseSystemAccount;
 const int ResponseMsgIds_ARRAYSIZE = ResponseMsgIds_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* ResponseMsgIds_descriptor();
@@ -721,6 +725,217 @@ class ResponseSystemExternalAccess : public ::google::protobuf::Message {
   void InitAsDefaultInstance();
   static ResponseSystemExternalAccess* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class RequestSystemAccount : public ::google::protobuf::Message {
+ public:
+  RequestSystemAccount();
+  virtual ~RequestSystemAccount();
+  
+  RequestSystemAccount(const RequestSystemAccount& from);
+  
+  inline RequestSystemAccount& operator=(const RequestSystemAccount& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const RequestSystemAccount& default_instance();
+  
+  void Swap(RequestSystemAccount* other);
+  
+  // implements Message ----------------------------------------------
+  
+  RequestSystemAccount* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const RequestSystemAccount& from);
+  void MergeFrom(const RequestSystemAccount& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // @@protoc_insertion_point(class_scope:rsctrl.system.RequestSystemAccount)
+ private:
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[1];
+  
+  friend void  protobuf_AddDesc_system_2eproto();
+  friend void protobuf_AssignDesc_system_2eproto();
+  friend void protobuf_ShutdownFile_system_2eproto();
+  
+  void InitAsDefaultInstance();
+  static RequestSystemAccount* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class ResponseSystemAccount : public ::google::protobuf::Message {
+ public:
+  ResponseSystemAccount();
+  virtual ~ResponseSystemAccount();
+  
+  ResponseSystemAccount(const ResponseSystemAccount& from);
+  
+  inline ResponseSystemAccount& operator=(const ResponseSystemAccount& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const ResponseSystemAccount& default_instance();
+  
+  void Swap(ResponseSystemAccount* other);
+  
+  // implements Message ----------------------------------------------
+  
+  ResponseSystemAccount* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const ResponseSystemAccount& from);
+  void MergeFrom(const ResponseSystemAccount& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required .rsctrl.core.Status status = 1;
+  inline bool has_status() const;
+  inline void clear_status();
+  static const int kStatusFieldNumber = 1;
+  inline const ::rsctrl::core::Status& status() const;
+  inline ::rsctrl::core::Status* mutable_status();
+  inline ::rsctrl::core::Status* release_status();
+  
+  // required string pgp_name = 2;
+  inline bool has_pgp_name() const;
+  inline void clear_pgp_name();
+  static const int kPgpNameFieldNumber = 2;
+  inline const ::std::string& pgp_name() const;
+  inline void set_pgp_name(const ::std::string& value);
+  inline void set_pgp_name(const char* value);
+  inline void set_pgp_name(const char* value, size_t size);
+  inline ::std::string* mutable_pgp_name();
+  inline ::std::string* release_pgp_name();
+  
+  // required string location = 3;
+  inline bool has_location() const;
+  inline void clear_location();
+  static const int kLocationFieldNumber = 3;
+  inline const ::std::string& location() const;
+  inline void set_location(const ::std::string& value);
+  inline void set_location(const char* value);
+  inline void set_location(const char* value, size_t size);
+  inline ::std::string* mutable_location();
+  inline ::std::string* release_location();
+  
+  // required string pgp_id = 4;
+  inline bool has_pgp_id() const;
+  inline void clear_pgp_id();
+  static const int kPgpIdFieldNumber = 4;
+  inline const ::std::string& pgp_id() const;
+  inline void set_pgp_id(const ::std::string& value);
+  inline void set_pgp_id(const char* value);
+  inline void set_pgp_id(const char* value, size_t size);
+  inline ::std::string* mutable_pgp_id();
+  inline ::std::string* release_pgp_id();
+  
+  // required string ssl_id = 5;
+  inline bool has_ssl_id() const;
+  inline void clear_ssl_id();
+  static const int kSslIdFieldNumber = 5;
+  inline const ::std::string& ssl_id() const;
+  inline void set_ssl_id(const ::std::string& value);
+  inline void set_ssl_id(const char* value);
+  inline void set_ssl_id(const char* value, size_t size);
+  inline ::std::string* mutable_ssl_id();
+  inline ::std::string* release_ssl_id();
+  
+  // @@protoc_insertion_point(class_scope:rsctrl.system.ResponseSystemAccount)
+ private:
+  inline void set_has_status();
+  inline void clear_has_status();
+  inline void set_has_pgp_name();
+  inline void clear_has_pgp_name();
+  inline void set_has_location();
+  inline void clear_has_location();
+  inline void set_has_pgp_id();
+  inline void clear_has_pgp_id();
+  inline void set_has_ssl_id();
+  inline void clear_has_ssl_id();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::rsctrl::core::Status* status_;
+  ::std::string* pgp_name_;
+  ::std::string* location_;
+  ::std::string* pgp_id_;
+  ::std::string* ssl_id_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_system_2eproto();
+  friend void protobuf_AssignDesc_system_2eproto();
+  friend void protobuf_ShutdownFile_system_2eproto();
+  
+  void InitAsDefaultInstance();
+  static ResponseSystemAccount* default_instance_;
+};
 // ===================================================================
 
 
@@ -1030,6 +1245,275 @@ inline ::std::string* ResponseSystemExternalAccess::release_dht_key() {
   } else {
     ::std::string* temp = dht_key_;
     dht_key_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// -------------------------------------------------------------------
+
+// RequestSystemAccount
+
+// -------------------------------------------------------------------
+
+// ResponseSystemAccount
+
+// required .rsctrl.core.Status status = 1;
+inline bool ResponseSystemAccount::has_status() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void ResponseSystemAccount::set_has_status() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void ResponseSystemAccount::clear_has_status() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void ResponseSystemAccount::clear_status() {
+  if (status_ != NULL) status_->::rsctrl::core::Status::Clear();
+  clear_has_status();
+}
+inline const ::rsctrl::core::Status& ResponseSystemAccount::status() const {
+  return status_ != NULL ? *status_ : *default_instance_->status_;
+}
+inline ::rsctrl::core::Status* ResponseSystemAccount::mutable_status() {
+  set_has_status();
+  if (status_ == NULL) status_ = new ::rsctrl::core::Status;
+  return status_;
+}
+inline ::rsctrl::core::Status* ResponseSystemAccount::release_status() {
+  clear_has_status();
+  ::rsctrl::core::Status* temp = status_;
+  status_ = NULL;
+  return temp;
+}
+
+// required string pgp_name = 2;
+inline bool ResponseSystemAccount::has_pgp_name() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void ResponseSystemAccount::set_has_pgp_name() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void ResponseSystemAccount::clear_has_pgp_name() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void ResponseSystemAccount::clear_pgp_name() {
+  if (pgp_name_ != &::google::protobuf::internal::kEmptyString) {
+    pgp_name_->clear();
+  }
+  clear_has_pgp_name();
+}
+inline const ::std::string& ResponseSystemAccount::pgp_name() const {
+  return *pgp_name_;
+}
+inline void ResponseSystemAccount::set_pgp_name(const ::std::string& value) {
+  set_has_pgp_name();
+  if (pgp_name_ == &::google::protobuf::internal::kEmptyString) {
+    pgp_name_ = new ::std::string;
+  }
+  pgp_name_->assign(value);
+}
+inline void ResponseSystemAccount::set_pgp_name(const char* value) {
+  set_has_pgp_name();
+  if (pgp_name_ == &::google::protobuf::internal::kEmptyString) {
+    pgp_name_ = new ::std::string;
+  }
+  pgp_name_->assign(value);
+}
+inline void ResponseSystemAccount::set_pgp_name(const char* value, size_t size) {
+  set_has_pgp_name();
+  if (pgp_name_ == &::google::protobuf::internal::kEmptyString) {
+    pgp_name_ = new ::std::string;
+  }
+  pgp_name_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* ResponseSystemAccount::mutable_pgp_name() {
+  set_has_pgp_name();
+  if (pgp_name_ == &::google::protobuf::internal::kEmptyString) {
+    pgp_name_ = new ::std::string;
+  }
+  return pgp_name_;
+}
+inline ::std::string* ResponseSystemAccount::release_pgp_name() {
+  clear_has_pgp_name();
+  if (pgp_name_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = pgp_name_;
+    pgp_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// required string location = 3;
+inline bool ResponseSystemAccount::has_location() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void ResponseSystemAccount::set_has_location() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void ResponseSystemAccount::clear_has_location() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void ResponseSystemAccount::clear_location() {
+  if (location_ != &::google::protobuf::internal::kEmptyString) {
+    location_->clear();
+  }
+  clear_has_location();
+}
+inline const ::std::string& ResponseSystemAccount::location() const {
+  return *location_;
+}
+inline void ResponseSystemAccount::set_location(const ::std::string& value) {
+  set_has_location();
+  if (location_ == &::google::protobuf::internal::kEmptyString) {
+    location_ = new ::std::string;
+  }
+  location_->assign(value);
+}
+inline void ResponseSystemAccount::set_location(const char* value) {
+  set_has_location();
+  if (location_ == &::google::protobuf::internal::kEmptyString) {
+    location_ = new ::std::string;
+  }
+  location_->assign(value);
+}
+inline void ResponseSystemAccount::set_location(const char* value, size_t size) {
+  set_has_location();
+  if (location_ == &::google::protobuf::internal::kEmptyString) {
+    location_ = new ::std::string;
+  }
+  location_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* ResponseSystemAccount::mutable_location() {
+  set_has_location();
+  if (location_ == &::google::protobuf::internal::kEmptyString) {
+    location_ = new ::std::string;
+  }
+  return location_;
+}
+inline ::std::string* ResponseSystemAccount::release_location() {
+  clear_has_location();
+  if (location_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = location_;
+    location_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// required string pgp_id = 4;
+inline bool ResponseSystemAccount::has_pgp_id() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void ResponseSystemAccount::set_has_pgp_id() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void ResponseSystemAccount::clear_has_pgp_id() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void ResponseSystemAccount::clear_pgp_id() {
+  if (pgp_id_ != &::google::protobuf::internal::kEmptyString) {
+    pgp_id_->clear();
+  }
+  clear_has_pgp_id();
+}
+inline const ::std::string& ResponseSystemAccount::pgp_id() const {
+  return *pgp_id_;
+}
+inline void ResponseSystemAccount::set_pgp_id(const ::std::string& value) {
+  set_has_pgp_id();
+  if (pgp_id_ == &::google::protobuf::internal::kEmptyString) {
+    pgp_id_ = new ::std::string;
+  }
+  pgp_id_->assign(value);
+}
+inline void ResponseSystemAccount::set_pgp_id(const char* value) {
+  set_has_pgp_id();
+  if (pgp_id_ == &::google::protobuf::internal::kEmptyString) {
+    pgp_id_ = new ::std::string;
+  }
+  pgp_id_->assign(value);
+}
+inline void ResponseSystemAccount::set_pgp_id(const char* value, size_t size) {
+  set_has_pgp_id();
+  if (pgp_id_ == &::google::protobuf::internal::kEmptyString) {
+    pgp_id_ = new ::std::string;
+  }
+  pgp_id_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* ResponseSystemAccount::mutable_pgp_id() {
+  set_has_pgp_id();
+  if (pgp_id_ == &::google::protobuf::internal::kEmptyString) {
+    pgp_id_ = new ::std::string;
+  }
+  return pgp_id_;
+}
+inline ::std::string* ResponseSystemAccount::release_pgp_id() {
+  clear_has_pgp_id();
+  if (pgp_id_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = pgp_id_;
+    pgp_id_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// required string ssl_id = 5;
+inline bool ResponseSystemAccount::has_ssl_id() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void ResponseSystemAccount::set_has_ssl_id() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void ResponseSystemAccount::clear_has_ssl_id() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void ResponseSystemAccount::clear_ssl_id() {
+  if (ssl_id_ != &::google::protobuf::internal::kEmptyString) {
+    ssl_id_->clear();
+  }
+  clear_has_ssl_id();
+}
+inline const ::std::string& ResponseSystemAccount::ssl_id() const {
+  return *ssl_id_;
+}
+inline void ResponseSystemAccount::set_ssl_id(const ::std::string& value) {
+  set_has_ssl_id();
+  if (ssl_id_ == &::google::protobuf::internal::kEmptyString) {
+    ssl_id_ = new ::std::string;
+  }
+  ssl_id_->assign(value);
+}
+inline void ResponseSystemAccount::set_ssl_id(const char* value) {
+  set_has_ssl_id();
+  if (ssl_id_ == &::google::protobuf::internal::kEmptyString) {
+    ssl_id_ = new ::std::string;
+  }
+  ssl_id_->assign(value);
+}
+inline void ResponseSystemAccount::set_ssl_id(const char* value, size_t size) {
+  set_has_ssl_id();
+  if (ssl_id_ == &::google::protobuf::internal::kEmptyString) {
+    ssl_id_ = new ::std::string;
+  }
+  ssl_id_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* ResponseSystemAccount::mutable_ssl_id() {
+  set_has_ssl_id();
+  if (ssl_id_ == &::google::protobuf::internal::kEmptyString) {
+    ssl_id_ = new ::std::string;
+  }
+  return ssl_id_;
+}
+inline ::std::string* ResponseSystemAccount::release_ssl_id() {
+  clear_has_ssl_id();
+  if (ssl_id_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = ssl_id_;
+    ssl_id_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
     return temp;
   }
 }

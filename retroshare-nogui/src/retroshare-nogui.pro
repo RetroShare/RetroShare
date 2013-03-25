@@ -216,12 +216,16 @@ protorpc {
 		rpc/proto/rpcprotochat.h \
 		rpc/proto/rpcprotosearch.h \
 		rpc/proto/rpcprotofiles.h \
+		rpc/proto/rpcprotostream.h \
+		rpc/proto/rpcprotoutils.h \
 
 	SOURCES += rpc/proto/rpcprotopeers.cc \
 		rpc/proto/rpcprotosystem.cc \
 		rpc/proto/rpcprotochat.cc \
 		rpc/proto/rpcprotosearch.cc \
 		rpc/proto/rpcprotofiles.cc \
+		rpc/proto/rpcprotostream.cc \
+		rpc/proto/rpcprotoutils.cc \
 
 	# Offical Generated Code (protobuf 2.4.1)
 	HEADERS += rpc/proto/gencc/core.pb.h \
@@ -230,6 +234,7 @@ protorpc {
 		        rpc/proto/gencc/chat.pb.h \
         		rpc/proto/gencc/search.pb.h \
 		        rpc/proto/gencc/files.pb.h \
+		        rpc/proto/gencc/stream.pb.h \
 
 	SOURCES += rpc/proto/gencc/core.pb.cc \
 		        rpc/proto/gencc/peers.pb.cc \
@@ -237,6 +242,7 @@ protorpc {
 		        rpc/proto/gencc/chat.pb.cc \
 		        rpc/proto/gencc/search.pb.cc \
 		        rpc/proto/gencc/files.pb.cc \
+		        rpc/proto/gencc/stream.pb.cc \
 
 	# Generated ProtoBuf Code the RPC System
         # If you are developing, or have a different version of protobuf
@@ -247,6 +253,7 @@ protorpc {
 	#	        ../../rsctrl/src/gencc/chat.pb.h \
         #		../../rsctrl/src/gencc/search.pb.h \
 	#	        ../../rsctrl/src/gencc/files.pb.h \
+	#	        ../../rsctrl/src/gencc/stream.pb.h \
 
 	#SOURCES += ../../rsctrl/src/gencc/core.pb.cc \
 	#	        ../../rsctrl/src/gencc/peers.pb.cc \
@@ -254,6 +261,7 @@ protorpc {
 	#	        ../../rsctrl/src/gencc/chat.pb.cc \
 	#	        ../../rsctrl/src/gencc/search.pb.cc \
 	#	        ../../rsctrl/src/gencc/files.pb.cc \
+	#	        ../../rsctrl/src/gencc/stream.pb.cc \
 
 	!win32 {
 		# unrecognized option

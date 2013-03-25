@@ -34,6 +34,13 @@ const ::google::protobuf::EnumDescriptor* RequestControlDownload_Action_descript
 const ::google::protobuf::Descriptor* ResponseControlDownload_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   ResponseControlDownload_reflection_ = NULL;
+const ::google::protobuf::Descriptor* RequestShareDirList_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  RequestShareDirList_reflection_ = NULL;
+const ::google::protobuf::Descriptor* ResponseShareDirList_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  ResponseShareDirList_reflection_ = NULL;
+const ::google::protobuf::EnumDescriptor* ResponseShareDirList_ListType_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* RequestMsgIds_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* ResponseMsgIds_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* Direction_descriptor_ = NULL;
@@ -128,6 +135,42 @@ void protobuf_AssignDesc_files_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(ResponseControlDownload));
+  RequestShareDirList_descriptor_ = file->message_type(5);
+  static const int RequestShareDirList_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestShareDirList, ssl_id_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestShareDirList, path_),
+  };
+  RequestShareDirList_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      RequestShareDirList_descriptor_,
+      RequestShareDirList::default_instance_,
+      RequestShareDirList_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestShareDirList, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RequestShareDirList, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(RequestShareDirList));
+  ResponseShareDirList_descriptor_ = file->message_type(6);
+  static const int ResponseShareDirList_offsets_[5] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseShareDirList, status_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseShareDirList, ssl_id_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseShareDirList, path_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseShareDirList, list_type_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseShareDirList, files_),
+  };
+  ResponseShareDirList_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      ResponseShareDirList_descriptor_,
+      ResponseShareDirList::default_instance_,
+      ResponseShareDirList_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseShareDirList, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResponseShareDirList, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(ResponseShareDirList));
+  ResponseShareDirList_ListType_descriptor_ = ResponseShareDirList_descriptor_->enum_type(0);
   RequestMsgIds_descriptor_ = file->enum_type(0);
   ResponseMsgIds_descriptor_ = file->enum_type(1);
   Direction_descriptor_ = file->enum_type(2);
@@ -153,6 +196,10 @@ void protobuf_RegisterTypes(const ::std::string&) {
     RequestControlDownload_descriptor_, &RequestControlDownload::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     ResponseControlDownload_descriptor_, &ResponseControlDownload::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    RequestShareDirList_descriptor_, &RequestShareDirList::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    ResponseShareDirList_descriptor_, &ResponseShareDirList::default_instance());
 }
 
 }  // namespace
@@ -168,6 +215,10 @@ void protobuf_ShutdownFile_files_2eproto() {
   delete RequestControlDownload_reflection_;
   delete ResponseControlDownload::default_instance_;
   delete ResponseControlDownload_reflection_;
+  delete RequestShareDirList::default_instance_;
+  delete RequestShareDirList_reflection_;
+  delete ResponseShareDirList::default_instance_;
+  delete ResponseShareDirList_reflection_;
 }
 
 void protobuf_AddDesc_files_2eproto() {
@@ -194,13 +245,23 @@ void protobuf_AddDesc_files_2eproto() {
     "TION_WAIT\020\003\022\020\n\014ACTION_PAUSE\020\004\022\022\n\016ACTION_"
     "RESTART\020\005\022\020\n\014ACTION_CHECK\020\006\022\021\n\rACTION_CA"
     "NCEL\020\007\">\n\027ResponseControlDownload\022#\n\006sta"
-    "tus\030\001 \002(\0132\023.rsctrl.core.Status*P\n\rReques"
-    "tMsgIds\022\035\n\031MsgId_RequestTransferList\020\001\022 "
-    "\n\034MsgId_RequestControlDownload\020\002*S\n\016Resp"
-    "onseMsgIds\022\036\n\032MsgId_ResponseTransferList"
-    "\020\001\022!\n\035MsgId_ResponseControlDownload\020\002*9\n"
-    "\tDirection\022\024\n\020DIRECTION_UPLOAD\020\001\022\026\n\022DIRE"
-    "CTION_DOWNLOAD\020\002", 896);
+    "tus\030\001 \002(\0132\023.rsctrl.core.Status\"3\n\023Reques"
+    "tShareDirList\022\016\n\006ssl_id\030\001 \002(\t\022\014\n\004path\030\002 "
+    "\002(\t\"\224\002\n\024ResponseShareDirList\022#\n\006status\030\001"
+    " \002(\0132\023.rsctrl.core.Status\022\016\n\006ssl_id\030\002 \002("
+    "\t\022\014\n\004path\030\003 \002(\t\022>\n\tlist_type\030\004 \002(\0162+.rsc"
+    "trl.files.ResponseShareDirList.ListType\022"
+    " \n\005files\030\005 \003(\0132\021.rsctrl.core.File\"W\n\010Lis"
+    "tType\022\021\n\rDIRQUERY_ROOT\020\001\022\023\n\017DIRQUERY_PER"
+    "SON\020\002\022\021\n\rDIRQUERY_FILE\020\003\022\020\n\014DIRQUERY_DIR"
+    "\020\004*o\n\rRequestMsgIds\022\035\n\031MsgId_RequestTran"
+    "sferList\020\001\022 \n\034MsgId_RequestControlDownlo"
+    "ad\020\002\022\035\n\031MsgId_RequestShareDirList\020\003*s\n\016R"
+    "esponseMsgIds\022\036\n\032MsgId_ResponseTransferL"
+    "ist\020\001\022!\n\035MsgId_ResponseControlDownload\020\002"
+    "\022\036\n\032MsgId_ResponseShareDirList\020\003*9\n\tDire"
+    "ction\022\024\n\020DIRECTION_UPLOAD\020\001\022\026\n\022DIRECTION"
+    "_DOWNLOAD\020\002", 1291);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "files.proto", &protobuf_RegisterTypes);
   FileTransfer::default_instance_ = new FileTransfer();
@@ -208,11 +269,15 @@ void protobuf_AddDesc_files_2eproto() {
   ResponseTransferList::default_instance_ = new ResponseTransferList();
   RequestControlDownload::default_instance_ = new RequestControlDownload();
   ResponseControlDownload::default_instance_ = new ResponseControlDownload();
+  RequestShareDirList::default_instance_ = new RequestShareDirList();
+  ResponseShareDirList::default_instance_ = new ResponseShareDirList();
   FileTransfer::default_instance_->InitAsDefaultInstance();
   RequestTransferList::default_instance_->InitAsDefaultInstance();
   ResponseTransferList::default_instance_->InitAsDefaultInstance();
   RequestControlDownload::default_instance_->InitAsDefaultInstance();
   ResponseControlDownload::default_instance_->InitAsDefaultInstance();
+  RequestShareDirList::default_instance_->InitAsDefaultInstance();
+  ResponseShareDirList::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_files_2eproto);
 }
 
@@ -231,6 +296,7 @@ bool RequestMsgIds_IsValid(int value) {
   switch(value) {
     case 1:
     case 2:
+    case 3:
       return true;
     default:
       return false;
@@ -245,6 +311,7 @@ bool ResponseMsgIds_IsValid(int value) {
   switch(value) {
     case 1:
     case 2:
+    case 3:
       return true;
     default:
       return false;
@@ -1582,6 +1649,732 @@ void ResponseControlDownload::Swap(ResponseControlDownload* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = ResponseControlDownload_descriptor_;
   metadata.reflection = ResponseControlDownload_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int RequestShareDirList::kSslIdFieldNumber;
+const int RequestShareDirList::kPathFieldNumber;
+#endif  // !_MSC_VER
+
+RequestShareDirList::RequestShareDirList()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void RequestShareDirList::InitAsDefaultInstance() {
+}
+
+RequestShareDirList::RequestShareDirList(const RequestShareDirList& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void RequestShareDirList::SharedCtor() {
+  _cached_size_ = 0;
+  ssl_id_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  path_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+RequestShareDirList::~RequestShareDirList() {
+  SharedDtor();
+}
+
+void RequestShareDirList::SharedDtor() {
+  if (ssl_id_ != &::google::protobuf::internal::kEmptyString) {
+    delete ssl_id_;
+  }
+  if (path_ != &::google::protobuf::internal::kEmptyString) {
+    delete path_;
+  }
+  if (this != default_instance_) {
+  }
+}
+
+void RequestShareDirList::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* RequestShareDirList::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return RequestShareDirList_descriptor_;
+}
+
+const RequestShareDirList& RequestShareDirList::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_files_2eproto();  return *default_instance_;
+}
+
+RequestShareDirList* RequestShareDirList::default_instance_ = NULL;
+
+RequestShareDirList* RequestShareDirList::New() const {
+  return new RequestShareDirList;
+}
+
+void RequestShareDirList::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (has_ssl_id()) {
+      if (ssl_id_ != &::google::protobuf::internal::kEmptyString) {
+        ssl_id_->clear();
+      }
+    }
+    if (has_path()) {
+      if (path_ != &::google::protobuf::internal::kEmptyString) {
+        path_->clear();
+      }
+    }
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool RequestShareDirList::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required string ssl_id = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_ssl_id()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->ssl_id().data(), this->ssl_id().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(18)) goto parse_path;
+        break;
+      }
+      
+      // required string path = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_path:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_path()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->path().data(), this->path().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void RequestShareDirList::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required string ssl_id = 1;
+  if (has_ssl_id()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->ssl_id().data(), this->ssl_id().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      1, this->ssl_id(), output);
+  }
+  
+  // required string path = 2;
+  if (has_path()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->path().data(), this->path().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      2, this->path(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* RequestShareDirList::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required string ssl_id = 1;
+  if (has_ssl_id()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->ssl_id().data(), this->ssl_id().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->ssl_id(), target);
+  }
+  
+  // required string path = 2;
+  if (has_path()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->path().data(), this->path().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        2, this->path(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int RequestShareDirList::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required string ssl_id = 1;
+    if (has_ssl_id()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->ssl_id());
+    }
+    
+    // required string path = 2;
+    if (has_path()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->path());
+    }
+    
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void RequestShareDirList::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const RequestShareDirList* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const RequestShareDirList*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void RequestShareDirList::MergeFrom(const RequestShareDirList& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_ssl_id()) {
+      set_ssl_id(from.ssl_id());
+    }
+    if (from.has_path()) {
+      set_path(from.path());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void RequestShareDirList::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void RequestShareDirList::CopyFrom(const RequestShareDirList& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool RequestShareDirList::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
+  
+  return true;
+}
+
+void RequestShareDirList::Swap(RequestShareDirList* other) {
+  if (other != this) {
+    std::swap(ssl_id_, other->ssl_id_);
+    std::swap(path_, other->path_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata RequestShareDirList::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = RequestShareDirList_descriptor_;
+  metadata.reflection = RequestShareDirList_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+const ::google::protobuf::EnumDescriptor* ResponseShareDirList_ListType_descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return ResponseShareDirList_ListType_descriptor_;
+}
+bool ResponseShareDirList_ListType_IsValid(int value) {
+  switch(value) {
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+      return true;
+    default:
+      return false;
+  }
+}
+
+#ifndef _MSC_VER
+const ResponseShareDirList_ListType ResponseShareDirList::DIRQUERY_ROOT;
+const ResponseShareDirList_ListType ResponseShareDirList::DIRQUERY_PERSON;
+const ResponseShareDirList_ListType ResponseShareDirList::DIRQUERY_FILE;
+const ResponseShareDirList_ListType ResponseShareDirList::DIRQUERY_DIR;
+const ResponseShareDirList_ListType ResponseShareDirList::ListType_MIN;
+const ResponseShareDirList_ListType ResponseShareDirList::ListType_MAX;
+const int ResponseShareDirList::ListType_ARRAYSIZE;
+#endif  // _MSC_VER
+#ifndef _MSC_VER
+const int ResponseShareDirList::kStatusFieldNumber;
+const int ResponseShareDirList::kSslIdFieldNumber;
+const int ResponseShareDirList::kPathFieldNumber;
+const int ResponseShareDirList::kListTypeFieldNumber;
+const int ResponseShareDirList::kFilesFieldNumber;
+#endif  // !_MSC_VER
+
+ResponseShareDirList::ResponseShareDirList()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void ResponseShareDirList::InitAsDefaultInstance() {
+  status_ = const_cast< ::rsctrl::core::Status*>(&::rsctrl::core::Status::default_instance());
+}
+
+ResponseShareDirList::ResponseShareDirList(const ResponseShareDirList& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void ResponseShareDirList::SharedCtor() {
+  _cached_size_ = 0;
+  status_ = NULL;
+  ssl_id_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  path_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  list_type_ = 1;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+ResponseShareDirList::~ResponseShareDirList() {
+  SharedDtor();
+}
+
+void ResponseShareDirList::SharedDtor() {
+  if (ssl_id_ != &::google::protobuf::internal::kEmptyString) {
+    delete ssl_id_;
+  }
+  if (path_ != &::google::protobuf::internal::kEmptyString) {
+    delete path_;
+  }
+  if (this != default_instance_) {
+    delete status_;
+  }
+}
+
+void ResponseShareDirList::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* ResponseShareDirList::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return ResponseShareDirList_descriptor_;
+}
+
+const ResponseShareDirList& ResponseShareDirList::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_files_2eproto();  return *default_instance_;
+}
+
+ResponseShareDirList* ResponseShareDirList::default_instance_ = NULL;
+
+ResponseShareDirList* ResponseShareDirList::New() const {
+  return new ResponseShareDirList;
+}
+
+void ResponseShareDirList::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (has_status()) {
+      if (status_ != NULL) status_->::rsctrl::core::Status::Clear();
+    }
+    if (has_ssl_id()) {
+      if (ssl_id_ != &::google::protobuf::internal::kEmptyString) {
+        ssl_id_->clear();
+      }
+    }
+    if (has_path()) {
+      if (path_ != &::google::protobuf::internal::kEmptyString) {
+        path_->clear();
+      }
+    }
+    list_type_ = 1;
+  }
+  files_.Clear();
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool ResponseShareDirList::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required .rsctrl.core.Status status = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_status()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(18)) goto parse_ssl_id;
+        break;
+      }
+      
+      // required string ssl_id = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_ssl_id:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_ssl_id()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->ssl_id().data(), this->ssl_id().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(26)) goto parse_path;
+        break;
+      }
+      
+      // required string path = 3;
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_path:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_path()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->path().data(), this->path().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(32)) goto parse_list_type;
+        break;
+      }
+      
+      // required .rsctrl.files.ResponseShareDirList.ListType list_type = 4;
+      case 4: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_list_type:
+          int value;
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          if (::rsctrl::files::ResponseShareDirList_ListType_IsValid(value)) {
+            set_list_type(static_cast< ::rsctrl::files::ResponseShareDirList_ListType >(value));
+          } else {
+            mutable_unknown_fields()->AddVarint(4, value);
+          }
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(42)) goto parse_files;
+        break;
+      }
+      
+      // repeated .rsctrl.core.File files = 5;
+      case 5: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_files:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+                input, add_files()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(42)) goto parse_files;
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void ResponseShareDirList::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required .rsctrl.core.Status status = 1;
+  if (has_status()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, this->status(), output);
+  }
+  
+  // required string ssl_id = 2;
+  if (has_ssl_id()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->ssl_id().data(), this->ssl_id().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      2, this->ssl_id(), output);
+  }
+  
+  // required string path = 3;
+  if (has_path()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->path().data(), this->path().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      3, this->path(), output);
+  }
+  
+  // required .rsctrl.files.ResponseShareDirList.ListType list_type = 4;
+  if (has_list_type()) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      4, this->list_type(), output);
+  }
+  
+  // repeated .rsctrl.core.File files = 5;
+  for (int i = 0; i < this->files_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      5, this->files(i), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* ResponseShareDirList::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required .rsctrl.core.Status status = 1;
+  if (has_status()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        1, this->status(), target);
+  }
+  
+  // required string ssl_id = 2;
+  if (has_ssl_id()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->ssl_id().data(), this->ssl_id().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        2, this->ssl_id(), target);
+  }
+  
+  // required string path = 3;
+  if (has_path()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->path().data(), this->path().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        3, this->path(), target);
+  }
+  
+  // required .rsctrl.files.ResponseShareDirList.ListType list_type = 4;
+  if (has_list_type()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      4, this->list_type(), target);
+  }
+  
+  // repeated .rsctrl.core.File files = 5;
+  for (int i = 0; i < this->files_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        5, this->files(i), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int ResponseShareDirList::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required .rsctrl.core.Status status = 1;
+    if (has_status()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+          this->status());
+    }
+    
+    // required string ssl_id = 2;
+    if (has_ssl_id()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->ssl_id());
+    }
+    
+    // required string path = 3;
+    if (has_path()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->path());
+    }
+    
+    // required .rsctrl.files.ResponseShareDirList.ListType list_type = 4;
+    if (has_list_type()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::EnumSize(this->list_type());
+    }
+    
+  }
+  // repeated .rsctrl.core.File files = 5;
+  total_size += 1 * this->files_size();
+  for (int i = 0; i < this->files_size(); i++) {
+    total_size +=
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        this->files(i));
+  }
+  
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void ResponseShareDirList::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const ResponseShareDirList* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const ResponseShareDirList*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void ResponseShareDirList::MergeFrom(const ResponseShareDirList& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  files_.MergeFrom(from.files_);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_status()) {
+      mutable_status()->::rsctrl::core::Status::MergeFrom(from.status());
+    }
+    if (from.has_ssl_id()) {
+      set_ssl_id(from.ssl_id());
+    }
+    if (from.has_path()) {
+      set_path(from.path());
+    }
+    if (from.has_list_type()) {
+      set_list_type(from.list_type());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void ResponseShareDirList::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void ResponseShareDirList::CopyFrom(const ResponseShareDirList& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool ResponseShareDirList::IsInitialized() const {
+  if ((_has_bits_[0] & 0x0000000f) != 0x0000000f) return false;
+  
+  if (has_status()) {
+    if (!this->status().IsInitialized()) return false;
+  }
+  for (int i = 0; i < files_size(); i++) {
+    if (!this->files(i).IsInitialized()) return false;
+  }
+  return true;
+}
+
+void ResponseShareDirList::Swap(ResponseShareDirList* other) {
+  if (other != this) {
+    std::swap(status_, other->status_);
+    std::swap(ssl_id_, other->ssl_id_);
+    std::swap(path_, other->path_);
+    std::swap(list_type_, other->list_type_);
+    files_.Swap(&other->files_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata ResponseShareDirList::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = ResponseShareDirList_descriptor_;
+  metadata.reflection = ResponseShareDirList_reflection_;
   return metadata;
 }
 
