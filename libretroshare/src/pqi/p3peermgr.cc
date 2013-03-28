@@ -564,6 +564,7 @@ bool p3PeerMgrIMPL::addFriend(const std::string& input_id, const std::string& in
 		mLinkMgr->addFriend(id, !(visState & RS_VIS_STATE_NODHT));
 	}
 
+	service_flags &= servicePermissionFlags(gpg_id) ; // Always reduce the permissions. 
 	setServicePermissionFlags(gpg_id,service_flags) ;
 
 #ifdef PEER_DEBUG
