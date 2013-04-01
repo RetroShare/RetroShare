@@ -28,6 +28,7 @@
 #include "util/rsdebug.h"
 #include "util/rsdir.h"
 #include "retroshare/rstypes.h"
+#include "retroshare/rspeers.h"
 const int ftserverzone = 29539;
 
 #include "ft/ftserver.h"
@@ -153,6 +154,7 @@ void ftServer::connectToTurtleRouter(p3turtle *fts)
 	mTurtleRouter = fts ;
 
 	mFtController->setTurtleRouter(fts) ;
+	fts->registerTunnelService(this) ;
 }
 
 void    ftServer::StartupThreads()
@@ -448,6 +450,37 @@ bool ftServer::FileDetails(const std::string &hash, FileSearchFlags hintflags, F
 			return true ;
 
 	return false;
+}
+
+bool ftServer::handleTunnelRequest(const std::string& hash,const std::string& peer_id,std::string& description_info_string)
+{
+	FileInfo info ;
+	bool res = FileDetails(hash, RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_SPEC_ONLY | RS_FILE_HINTS_DOWNLOAD, info);
+
+#ifdef SERVER_DEBUG
+	std::cerr << "ftServer: performing local hash search for hash " << hash << std::endl;
+
+	if(res)
+	{
+		std::cerr << "Found hash: " << std::endl;
+		std::cerr << "   hash  = " << hash << std::endl;
+		std::cerr << "   peer  = " << peer_id << std::endl;
+		std::cerr << "   flags = " << info.storage_permission_flags << std::endl;
+		std::cerr << "   local = " << rsFiles->FileDetails(hash, RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_SPEC_ONLY | RS_FILE_HINTS_DOWNLOAD, info) << std::endl;
+		std::cerr << "   groups= " ; for(std::list<std::string>::const_iterator it(info.parent_groups.begin());it!=info.parent_groups.end();++it) std::cerr << (*it) << ", " ; std::cerr << std::endl;
+		std::cerr << "   clear = " << rsPeers->computePeerPermissionFlags(peer_id,info.storage_permission_flags,info.parent_groups) << std::endl;
+	}
+#endif
+
+	// The call to computeHashPeerClearance() return a combination of RS_FILE_HINTS_NETWORK_WIDE and RS_FILE_HINTS_BROWSABLE
+	// This is an additional computation cost, but the way it's written here, it's only called when res is true.
+	//
+	res = res && (RS_FILE_HINTS_NETWORK_WIDE & rsPeers->computePeerPermissionFlags(peer_id,info.storage_permission_flags,info.parent_groups)) ;
+
+	if(res)
+		description_info_string = info.fname ;
+
+	return res ;
 }
 
 	/***************************************************************/

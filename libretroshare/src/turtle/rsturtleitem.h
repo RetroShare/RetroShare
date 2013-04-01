@@ -18,6 +18,7 @@ const uint8_t RS_TURTLE_SUBTYPE_TUNNEL_CLOSED  			= 0x06 ;
 const uint8_t RS_TURTLE_SUBTYPE_FILE_REQUEST   			= 0x07 ;
 const uint8_t RS_TURTLE_SUBTYPE_FILE_DATA      			= 0x08 ;
 const uint8_t RS_TURTLE_SUBTYPE_REGEXP_SEARCH_REQUEST = 0x09 ;
+const uint8_t RS_TURTLE_SUBTYPE_GENERIC_DATA     		= 0x0a ;
 const uint8_t RS_TURTLE_SUBTYPE_FILE_MAP              = 0x10 ;
 const uint8_t RS_TURTLE_SUBTYPE_FILE_MAP_REQUEST      = 0x11 ;
 const uint8_t RS_TURTLE_SUBTYPE_FILE_CRC              = 0x12 ;
@@ -200,6 +201,28 @@ class RsTurtleFileRequestItem: public RsTurtleGenericTunnelItem
 
 		virtual std::ostream& print(std::ostream& o, uint16_t) ;
 	protected:
+		virtual bool serialize(void *data,uint32_t& size) ;	
+		virtual uint32_t serial_size() ; 
+};
+
+class RsTurtleGenericDataItem: public RsTurtleGenericTunnelItem
+{
+	public:
+		RsTurtleGenericDataItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_GENERIC_DATA) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_GENERIC_DATA) ;}
+		~RsTurtleGenericDataItem() ;
+		RsTurtleGenericDataItem(void *data,uint32_t size) ;		// deserialization
+
+		virtual bool shouldStampTunnel() const { return true ; }
+		virtual TurtleTunnelId tunnelId() const { return tunnel_id ; }
+		virtual Direction travelingDirection() const { return direction ; }
+
+		Direction direction ;	// travel direction for this packet (server/client)
+		uint32_t  tunnel_id ;	// id of the tunnel to travel through
+		uint32_t  data_size ;	// size of the file chunk
+		void     *data      ;	// actual data.
+
+		virtual std::ostream& print(std::ostream& o, uint16_t) ;
+
 		virtual bool serialize(void *data,uint32_t& size) ;	
 		virtual uint32_t serial_size() ; 
 };

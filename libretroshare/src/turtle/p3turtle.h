@@ -150,6 +150,7 @@
 #include "ft/ftsearch.h"
 #include "retroshare/rsturtle.h"
 #include "rsturtleitem.h"
+#include "turtleclientservice.h"
 #include "turtlestatistics.h"
 
 //#define TUNNEL_STATISTICS
@@ -191,15 +192,13 @@ class TurtleTunnel
 
 // This class keeps trace of the activity for the file hashes the turtle router is asked to monitor.
 //
-class TurtleFileHashInfo
+
+class TurtleHashInfo
 {
 	public:
 		std::vector<TurtleTunnelId> tunnels ;		// list of active tunnel ids for this file hash
 		TurtleRequestId last_request ;				// last request for the tunnels of this hash
-		
-		TurtleFileName name ;
 		time_t last_digg_time ;
-		uint64_t size ;
 };
 
 // Subclassing:
@@ -223,14 +222,17 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		virtual void setEnabled(bool) ;	
 		virtual bool enabled() const ;	
 
-                // This is temporary, used by Operating Mode. 
+		// This is temporary, used by Operating Mode. 
 		// Turtle operates when both enabled() && sessionEnabled() are true.
-                virtual void setSessionEnabled(bool);
-                virtual bool sessionEnabled() const;
+		virtual void setSessionEnabled(bool);
+		virtual bool sessionEnabled() const;
 
 		// Lauches a search request through the pipes, and immediately returns
 		// the request id, which will be further used by the gui to store results
 		// as they come back.
+		//
+		// Eventually, search requests should be handled by client services. We will therefore
+		// remove the specific file search packets from the turtle router.
 		//
 		virtual TurtleSearchRequestId turtleSearch(const std::string& string_to_match) ;
 		virtual TurtleSearchRequestId turtleSearch(const LinearizedExpression& expr) ;
@@ -247,12 +249,21 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		//  This function should be called in addition to ftServer::FileRequest() so that the turtle router
 		//  automatically provide tunnels for the file to download.
 		//
-		virtual void monitorFileTunnels(const std::string& name,const std::string& file_hash,uint64_t size) ;
+		virtual void monitorTunnels(const std::string& file_hash) ;
 
 		/// This should be called when canceling a file download, so that the turtle router stops
 		/// handling tunnels for this file.
 		///
-		virtual void stopMonitoringFileTunnels(const std::string& file_hash) ;
+		virtual void stopMonitoringTunnels(const std::string& file_hash) ;
+
+		/// Adds a client tunnel service. This means that the service will be added 
+		/// to the list of services that might respond to tunnel requests.
+		/// Example tunnel services include:
+		///
+		///	p3ChatService:		tunnels correspond to private distant chatting
+		///	ftServer		 : 	tunnels correspond to file data transfer
+		///
+		virtual void registerTunnelService(RsTurtleClientService *service) ;
 
 		/// get info about tunnels
 		virtual void getInfo(std::vector<std::vector<std::string> >&,
@@ -382,7 +393,7 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		void returnSearchResult(RsTurtleSearchResultItem *item) ;
 
 		/// Returns true if the file with given hash is hosted locally, and accessible in anonymous mode the supplied peer.
-		virtual bool performLocalHashSearch(const TurtleFileHash& hash,const std::string& client_peer_id,FileInfo& info) ;
+		virtual bool performLocalHashSearch(const TurtleFileHash& hash,const std::string& client_peer_id,std::string& info) ;
 
 		//--------------------------- Local variables --------------------------------//
 		
@@ -400,10 +411,10 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		std::map<TurtleTunnelRequestId,TurtleRequestInfo> 	_tunnel_requests_origins ; 
 
 		/// stores adequate tunnels for each file hash locally managed
-		std::map<TurtleFileHash,TurtleFileHashInfo>			_incoming_file_hashes ;		
+		std::map<TurtleFileHash,TurtleHashInfo>				_incoming_file_hashes ;		
 
 		/// stores file info for each file we provide.
-		std::map<TurtleFileHash,FileInfo>						_outgoing_file_hashes ;		
+		std::map<TurtleFileHash,std::string>					_outgoing_file_hashes ;		
 
 		/// local tunnels, stored by ids (Either transiting or ending).
 		std::map<TurtleTunnelId,TurtleTunnel > 				_local_tunnels ;				
@@ -413,6 +424,9 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 
 		/// Hashes marked to be deleted.
 		std::vector<TurtleFileHash>								_hashes_to_remove ;			
+
+		/// List of client services that have regitered.
+		std::list<RsTurtleClientService*>						_registered_services ;
 
 		time_t _last_clean_time ;
 		time_t _last_tunnel_management_time ;
