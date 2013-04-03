@@ -90,26 +90,6 @@ p3PhotoService::p3PhotoService(RsGeneralDataService* gds, RsNetworkExchangeServi
     : RsGenExchange(gds, nes, new RsGxsPhotoSerialiser(), RS_SERVICE_GXSV1_TYPE_PHOTO, gixs, photoAuthenPolicy()),
     mPhotoMutex(std::string("Photo Mutex"))
 {
-
-    // create dummy grps
-
-#ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
-
-    RsGxsPhotoAlbumItem* item1 = new RsGxsPhotoAlbumItem(), *item2 = new RsGxsPhotoAlbumItem();
-
-    item1->meta.mGroupName = "Dummy Album 1";
-    item1->meta.mGroupFlags = GXS_SERV::FLAG_PRIVACY_RESTRICTED;
-    item1->album.mCaption = "Dummy 1";
-    item2->meta.mGroupName = "Dummy Album 2";
-    item2->meta.mGroupFlags = GXS_SERV::FLAG_PRIVACY_RESTRICTED;
-    item2->album.mCaption = "Dummy 2";
-
-    createDummyGroup(item1);
-    createDummyGroup(item2);
-
-#endif
-
-
 }
 
 
