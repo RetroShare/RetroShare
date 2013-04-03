@@ -707,7 +707,7 @@ void p3disc::recvPeerDetails(RsDiscReply *item, const std::string &certGpgId)
 #ifdef P3DISC_DEBUG
 					std::cerr << "--> Adding to friends list " << pit->pid << " - " << pit->gpg_id << std::endl;
 #endif
-					mPeerMgr->addFriend(pit->pid, pit->gpg_id, pit->netMode, RS_VIS_STATE_NODISC, 0); 
+					mPeerMgr->addFriend(pit->pid, pit->gpg_id, pit->netMode, RS_VIS_STATE_NODISC,(time_t)0,RS_SERVICE_PERM_ALL); 
 				}
 			}
 

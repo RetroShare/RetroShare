@@ -1813,26 +1813,47 @@ bool p3PeerMgrIMPL::assignPeersToGroup(const std::string &groupId, const std::li
 
 ServicePermissionFlags p3PeerMgrIMPL::servicePermissionFlags_sslid(const std::string& ssl_id)
 {
+	std::string gpg_id ;
+
+	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
+		if(ssl_id.length() != 32)
+		{
+			std::cerr << "(EE) p3PeerMgrIMPL::servicePermissionFlags_sslid() called with inconsistent id " << ssl_id << std::endl;
+			return RS_SERVICE_PERM_ALL ;
+		}
 		std::map<std::string, peerState>::const_iterator it = mFriendList.find(ssl_id);
 
-	if(it == mFriendList.end())
-		return RS_SERVICE_PERM_ALL ;
-	else
-		return servicePermissionFlags(it->second.gpg_id) ;
+		if(it == mFriendList.end())
+			return RS_SERVICE_PERM_ALL ;
+
+		gpg_id = it->second.gpg_id ;
+	}
+
+	return servicePermissionFlags(gpg_id) ;
 }
 
 
 ServicePermissionFlags p3PeerMgrIMPL::servicePermissionFlags(const std::string& pgp_id)
 {
-		// 
+	// 
+	if(pgp_id.length() != 16)
+	{
+		std::cerr << "(EE) p3PeerMgrIMPL::servicePermissionFlags() called with inconsistent id " << pgp_id << std::endl;
+		return RS_SERVICE_PERM_ALL ;
+	}
+
+	{
+		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
 		std::map<std::string,ServicePermissionFlags>::const_iterator it = mFriendsPermissionFlags.find( pgp_id ) ;
 
 		if(it == mFriendsPermissionFlags.end())
 			return RS_SERVICE_PERM_ALL ;
 		else
 			return it->second ;
+	}
 }
 void p3PeerMgrIMPL::setServicePermissionFlags(const std::string& pgp_id, const ServicePermissionFlags& flags)
 {

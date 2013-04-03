@@ -123,7 +123,7 @@ class p3PeerMgr
 virtual ~p3PeerMgr() { return; }
 
 virtual bool 	addFriend(const std::string &ssl_id, const std::string &gpg_id, uint32_t netMode = RS_NET_MODE_UDP,
-	   uint32_t visState = RS_VIS_STATE_STD , time_t lastContact = 0,ServicePermissionFlags = RS_SERVICE_PERM_ALL) = 0;
+	   uint32_t visState = RS_VIS_STATE_STD , time_t lastContact = 0,ServicePermissionFlags = ServicePermissionFlags(RS_SERVICE_PERM_ALL)) = 0;
 virtual bool	removeFriend(const std::string &ssl_id) = 0;
 
 virtual bool	isFriend(const std::string &ssl_id) = 0;
@@ -214,7 +214,7 @@ class p3PeerMgrIMPL: public p3PeerMgr, public p3Config
 /************************************************************************************************/
 
 virtual bool 	addFriend(const std::string &ssl_id, const std::string &gpg_id, uint32_t netMode = RS_NET_MODE_UDP,
-	   uint32_t visState = RS_VIS_STATE_STD , time_t lastContact = 0,ServicePermissionFlags = RS_SERVICE_PERM_ALL);
+	   uint32_t visState = RS_VIS_STATE_STD , time_t lastContact = 0,ServicePermissionFlags = ServicePermissionFlags(RS_SERVICE_PERM_ALL));
 virtual bool	removeFriend(const std::string &ssl_id);
 
 virtual bool	isFriend(const std::string &ssl_id);
