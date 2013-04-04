@@ -1565,7 +1565,7 @@ int 	pqissl::readdata(void *data, int len)
 				}
 
 				rslog(RSL_ALERT, pqisslzone, out);
-				std::cerr << out << std::endl ;
+				//std::cerr << out << std::endl ;
 				return -1;
 			}
 
