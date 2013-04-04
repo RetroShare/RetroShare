@@ -159,12 +159,12 @@ void RsServer::rsGlobalShutDown()
 
 
 #ifdef RS_ENABLE_GXS
-        if(mGxsCircles) mGxsCircles->join();
+        //if(mGxsCircles) mGxsCircles->join();
         if(mGxsForums) mGxsForums->join();
         if(mGxsChannels) mGxsChannels->join();
         if(mGxsIdService) mGxsIdService->join();
         if(mPosted) mPosted->join();
-        if(mPhoto) mPhoto->join();
+        //if(mPhoto) mPhoto->join();
         if(mWiki) mWiki->join();
         if(mWire) mWire->join();
 #endif

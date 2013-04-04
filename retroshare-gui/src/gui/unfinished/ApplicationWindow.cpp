@@ -93,13 +93,13 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(idDialog = new IdDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_LIBRARY), tr("Identities"), grp));
 
-    CirclesDialog *circlesDialog = NULL;
-    ui.stackPages->add(circlesDialog = new CirclesDialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_LIBRARY), tr("Circles"), grp));
+//    CirclesDialog *circlesDialog = NULL;
+//    ui.stackPages->add(circlesDialog = new CirclesDialog(ui.stackPages),
+//                      createPageAction(QIcon(IMAGE_LIBRARY), tr("Circles"), grp));
 
-    PhotoShare *photoShare = NULL;
-    ui.stackPages->add(photoShare = new PhotoShare(ui.stackPages),
-                     createPageAction(QIcon(IMAGE_PHOTO), tr("Photo Share"), grp));
+//    PhotoShare *photoShare = NULL;
+//    ui.stackPages->add(photoShare = new PhotoShare(ui.stackPages),
+//                     createPageAction(QIcon(IMAGE_PHOTO), tr("Photo Share"), grp));
 
     PostedDialog *postedDialog = NULL;
     ui.stackPages->add(postedDialog = new PostedDialog(ui.stackPages),

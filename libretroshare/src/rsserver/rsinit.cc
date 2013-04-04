@@ -2273,7 +2273,7 @@ int RsServer::StartupRetroShare()
 	std::string currGxsDir = RsInitConfig::configDir + "/GXS_phase1";
 
 #ifdef GXS_DEV_TESTNET // Different Directory for testing.
-	currGxsDir += "_TESTNET2";
+	currGxsDir += "_TESTNET3";
 #endif
 
         bool cleanUpGxsDir = false;
@@ -2429,8 +2429,8 @@ int RsServer::StartupRetroShare()
 
         // now add to p3service
         pqih->addService(gxsid_ns);
-        pqih->addService(gxscircles_ns);
-        pqih->addService(photo_ns);
+        //pqih->addService(gxscircles_ns);
+        //pqih->addService(photo_ns);
         pqih->addService(posted_ns);
         pqih->addService(wiki_ns);
         pqih->addService(gxsforums_ns);
@@ -2670,7 +2670,7 @@ int RsServer::StartupRetroShare()
 	/*** start up GXS core runner ***/
 	createThread(*mGxsIdService);
 	createThread(*mGxsCircles);
-	createThread(*mPhoto);
+	//createThread(*mPhoto);
 	createThread(*mPosted);
 	createThread(*mWiki);
 	createThread(*mWire);

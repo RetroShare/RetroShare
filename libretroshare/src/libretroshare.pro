@@ -614,8 +614,8 @@ SOURCES +=	zeroconf/p3zcnatassist.cc \
 gxs {
 	DEFINES *= RS_ENABLE_GXS
 
-	#DEFINES *= GXS_DEV_TESTNET
-	#DEFINES *= GXS_ENABLE_SYNC_MSGS
+#	DEFINES *= GXS_DEV_TESTNET
+#	DEFINES *= GXS_ENABLE_SYNC_MSGS
 
 	HEADERS += serialiser/rsnxsitems.h \
 		gxs/rsgds.h \
