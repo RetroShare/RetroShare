@@ -636,7 +636,15 @@ void p3ChatService::receiveChatQueue()
 			case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated: handleRecvChatLobbyList       (dynamic_cast<RsChatLobbyListItem_deprecated *>(item)) ; break ;
 		
 			default:
-				  std::cerr << "Unhandled item subtype " << item->PacketSubType() << " in p3ChatService: " << std::endl;
+																			{
+																				static int already = false ;
+
+																				if(!already)
+																				{
+																					std::cerr << "Unhandled item subtype " << (int)item->PacketSubType() << " in p3ChatService: " << std::endl;
+																					already = true ;
+																				}
+																			}
 		}
 		delete item ;
 	}
