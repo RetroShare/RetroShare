@@ -1514,7 +1514,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 			std::cerr << "Loaded service permission item: " << std::endl;
 
 			for(uint32_t i=0;i<sitem->pgp_ids.size();++i)
-				if(AuthGPG::getAuthGPG()->isGPGAccepted(sitem->pgp_ids[i]))
+				if(AuthGPG::getAuthGPG()->isGPGAccepted(sitem->pgp_ids[i]) || sitem->pgp_ids[i] == AuthGPG::getAuthGPG()->getGPGOwnId())
 				{
 					mFriendsPermissionFlags[sitem->pgp_ids[i]] = sitem->service_flags[i] ;
 					std::cerr << "   " << sitem->pgp_ids[i] << " - " << sitem->service_flags[i] << std::endl;
