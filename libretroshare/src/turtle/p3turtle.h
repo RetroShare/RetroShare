@@ -352,6 +352,8 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 
 		/// specific routing functions for handling particular packets.
 		void handleRecvGenericTunnelItem(RsTurtleGenericTunnelItem *item);
+		void handleRecvGenericDataItem(RsTurtleGenericDataItem *item);
+		bool getTunnelServiceInfo(TurtleTunnelId, std::string& virtual_peer_id, std::string& hash, RsTurtleClientService*&) ;
 
 		// following functions should go to ftServer
 		void handleSearchRequest(RsTurtleSearchRequestItem *item);		

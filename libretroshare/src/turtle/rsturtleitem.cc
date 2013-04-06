@@ -91,6 +91,17 @@ uint32_t RsTurtleTunnelOkItem::serial_size()
 	return s ;
 }
 
+uint32_t RsTurtleGenericDataItem::serial_size()
+{
+	uint32_t s = 0 ;
+
+	s += 8 ; // header
+	s += 4 ; // tunnel id 
+	s += 4 ; // data size
+	s += data_size ; // data
+
+	return s ;
+}
 //
 // ---------------------------------- Serialization ----------------------------------//
 //
@@ -122,18 +133,8 @@ RsItem *RsTurtleSerialiser::deserialise(void *data, uint32_t *size)
 			case RS_TURTLE_SUBTYPE_SEARCH_RESULT			:	return new RsTurtleSearchResultItem(data,*size) ;
 			case RS_TURTLE_SUBTYPE_OPEN_TUNNEL  			:	return new RsTurtleOpenTunnelItem(data,*size) ;
 			case RS_TURTLE_SUBTYPE_TUNNEL_OK    			:	return new RsTurtleTunnelOkItem(data,*size) ;
+			case RS_TURTLE_SUBTYPE_GENERIC_DATA 			:	return new RsTurtleGenericDataItem(data,*size) ;
 																			
-			// We need to call some client serialiser from there.
-			//
-			// case RS_TURTLE_SUBTYPE_FILE_REQUEST 			:	return new RsTurtleFileRequestItem(data,*size) ;
-			// case RS_TURTLE_SUBTYPE_FILE_DATA    			:	return new RsTurtleFileDataItem(data,*size) ;
-			// case RS_TURTLE_SUBTYPE_FILE_MAP_REQUEST		:	return new RsTurtleFileMapRequestItem(data,*size) ;
-			// case RS_TURTLE_SUBTYPE_FILE_MAP     			:	return new RsTurtleFileMapItem(data,*size) ;
-			// case RS_TURTLE_SUBTYPE_FILE_CRC_REQUEST		:	return new RsTurtleFileCrcRequestItem(data,*size) ;
-			// case RS_TURTLE_SUBTYPE_FILE_CRC     			:	return new RsTurtleFileCrcItem(data,*size) ;
-			// case RS_TURTLE_SUBTYPE_CHUNK_CRC_REQUEST		:	return new RsTurtleChunkCrcRequestItem(data,*size) ;
-			// case RS_TURTLE_SUBTYPE_CHUNK_CRC     			:	return new RsTurtleChunkCrcItem(data,*size) ;
-
 			default:
 																			break ;
 		}
@@ -520,6 +521,84 @@ RsTurtleTunnelOkItem::RsTurtleTunnelOkItem(void *data,uint32_t pktsize)
 #endif
 }
 
+RsTurtleGenericDataItem::RsTurtleGenericDataItem(void *data,uint32_t pktsize)
+	: RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_GENERIC_DATA)
+{
+	setPriorityLevel(QOS_PRIORITY_RS_TURTLE_GENERIC_DATA) ;
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "  type = tunnel ok" << std::endl ;
+#endif
+	uint32_t offset = 8; // skip the header 
+	uint32_t rssize = getRsItemSize(data);
+
+	/* add mandatory parts first */
+
+	bool ok = true ;
+	uint32_t data_size = 0;
+
+	ok &= getRawUInt32(data, pktsize, &offset, &tunnel_id) ;
+	ok &= getRawUInt32(data, pktsize, &offset, &data_size);
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "  request_id=" << (void*)request_id << ", tunnel_id=" << (void*)tunnel_id << std::endl ;
+#endif
+	data_bytes = malloc(data_size) ;
+
+	if(data_bytes != NULL)
+	{
+		memcpy(data_bytes,data+offset,data_size) ;
+		offset += data_size ;
+	}
+	else
+	{
+		std::cerr << "(EE) RsTurtleGenericDataItem: Error. Cannot allocate data for a size of " << data_size <<  " bytes." <<std::endl;
+		offset = 0 ; // generate an error
+	}
+
+#ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
+	UNREFERENCED_LOCAL_VARIABLE(rssize);
+#else
+	if (offset != rssize)
+		throw std::runtime_error("RsTurtleTunnelOkItem::() error while deserializing.") ;
+	if (!ok)
+		throw std::runtime_error("RsTurtleTunnelOkItem::() unknown error while deserializing.") ;
+#endif
+}
+
+bool RsTurtleGenericDataItem::serialize(void *data,uint32_t& pktsize)
+{
+	uint32_t tlvsize = serial_size();
+	uint32_t offset = 0;
+
+	if (pktsize < tlvsize)
+		return false; /* not enough space */
+
+	pktsize = tlvsize;
+
+	bool ok = true;
+
+	ok &= setRsItemHeader(data,tlvsize,PacketId(), tlvsize);
+
+	/* skip the header */
+	offset += 8;
+
+	/* add mandatory parts first */
+
+	ok &= setRawUInt32(data, tlvsize, &offset, tunnel_id);
+	ok &= setRawUInt32(data, tlvsize, &offset, data_size);
+
+	memcpy(data+offset,data_bytes,data_size) ;
+	offset += data_size ;
+
+	if (offset != tlvsize)
+	{
+		ok = false;
+#ifdef RSSERIAL_DEBUG
+		std::cerr << "RsTurtleTunnelOkItem::serialiseTransfer() Size Error! " << std::endl;
+#endif
+	}
+
+	return ok;
+}
 // -----------------------------------------------------------------------------------//
 // -------------------------------------  IO  --------------------------------------- // 
 // -----------------------------------------------------------------------------------//
@@ -587,3 +666,13 @@ std::ostream& RsTurtleTunnelOkItem::print(std::ostream& o, uint16_t)
 	return o ;
 }
 
+std::ostream& RsTurtleGenericDataItem::print(std::ostream& o, uint16_t)
+{
+	o << "Generic Data item:" << std::endl ;
+
+	o << "  Peer id   : " << PeerId() << std::endl ;
+	o << "  data size : " << data_size << std::endl ;
+	o << "  data bytes: " << std::hex << (void*)data_bytes << std::dec << std::endl ;
+
+	return o ;
+}

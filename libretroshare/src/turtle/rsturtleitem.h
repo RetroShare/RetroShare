@@ -181,15 +181,17 @@ class RsTurtleGenericTunnelItem: public RsTurtleItem
 		virtual Direction travelingDirection() const { return direction ; }
 		virtual void setTravelingDirection(Direction d) { direction = d; }
 
-		Direction direction ;
-		uint32_t tunnel_id ;		// id of the tunnel to travel through
+		Direction direction ;	// This does not need to be serialised. It's only used by the client services, optionnally,
+										// and is set by the turtle router according to which direction the item travels.
+										
+		uint32_t tunnel_id ;		// Id of the tunnel to travel through
 };
 
 /***********************************************************************************/
 /*                           Specific Turtle Transfer items                        */
 /***********************************************************************************/
 
-// This item can be used by any service to pass-on data into a tunnel.
+// This item can be used by any service to pass-on arbitrary data into a tunnel.
 //
 class RsTurtleGenericDataItem: public RsTurtleGenericTunnelItem
 {
@@ -197,10 +199,12 @@ class RsTurtleGenericDataItem: public RsTurtleGenericTunnelItem
 		RsTurtleGenericDataItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_GENERIC_DATA) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FILE_REQUEST);}
 		RsTurtleGenericDataItem(void *data,uint32_t size) ;		// deserialization
 
+		virtual ~RsTurtleGenericDataItem() { if(data_bytes != NULL) free(data_bytes) ; }
+
 		virtual bool shouldStampTunnel() const { return true ; }
 
 		uint32_t data_size ;
-		void *data ;
+		void *data_bytes ;
 
 		virtual std::ostream& print(std::ostream& o, uint16_t) ;
 	protected:

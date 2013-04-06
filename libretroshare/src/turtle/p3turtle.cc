@@ -776,6 +776,9 @@ int p3turtle::handleIncoming()
 
 					case RS_TURTLE_SUBTYPE_TUNNEL_OK     : handleTunnelResult(dynamic_cast<RsTurtleTunnelOkItem *>(item)) ;
 																		break ;
+
+					case RS_TURTLE_SUBTYPE_GENERIC_DATA  : handleRecvGenericDataItem(dynamic_cast<RsTurtleGenericDataItem *>(item)) ;
+																		break ;
 					default:
 																		std::cerr << "p3turtle::handleIncoming: Unknown packet subtype " << item->PacketSubType() << std::endl ;
 				}
@@ -1076,48 +1079,66 @@ void p3turtle::handleRecvGenericTunnelItem(RsTurtleGenericTunnelItem *item)
 	std::string vpid ;
 	RsTurtleClientService *service ;
 
-	// Now lock the router
-	{
-		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
-
-		std::map<TurtleTunnelId,TurtleTunnel>::iterator it2(_local_tunnels.find(item->tunnelId())) ;
-
-		if(it2 == _local_tunnels.end())
-		{
-#ifdef P3TURTLE_DEBUG
-			std::cerr << "p3turtle: got file CRC32 map with unknown tunnel id " << (void*)item->tunnelId() << std::endl ;
-#endif
-			return ;
-		}
-
-		TurtleTunnel& tunnel(it2->second) ;
-
-#ifdef P3TURTLE_DEBUG
-		assert(!tunnel.hash.empty()) ;
-
-		std::cerr << "  This is an endpoint for this file map." << std::endl ;
-		std::cerr << "  Forwarding data to the multiplexer." << std::endl ;
-		std::cerr << "  using peer_id=" << tunnel.vpid << ", hash=" << tunnel.hash << std::endl ;
-#endif
-		// We should check that there is no backward call to the turtle router!
-		//
-		vpid = tunnel.vpid ;
-		hash = tunnel.hash ;
-
-		std::map<TurtleFileHash,TurtleHashInfo>::const_iterator it = _incoming_file_hashes.find(hash) ;
-
-		if(it == _incoming_file_hashes.end())
-		{
-			std::cerr << "p3turtle::handleRecvGenericTunnelItem(): hash " << hash << " for tunnel " << (void*)(it2->first) << " has no attached service! Dropping the item. This is a serious consistency error." << std::endl;
-			return ;
-		}
-
-		service = it->second.service ;
-	}
+	if(!getTunnelServiceInfo(item->tunnelId(),vpid,hash,service))
+		return ;
 
 	service->receiveTurtleData(item,hash,vpid,item->travelingDirection()) ;
 }
 
+void p3turtle::handleRecvGenericDataItem(RsTurtleGenericDataItem *item)
+{
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "p3Turtle: received Generic Data item:" << std::endl ;
+	item->print(std::cerr,1) ;
+#endif
+	std::string virtual_peer_id ;
+	std::string hash ;
+	RsTurtleClientService *service ;
+
+	if(!getTunnelServiceInfo(item->tunnelId(),virtual_peer_id,hash,service))
+		return ;
+
+	service->receiveTurtleData(item->data_bytes,item->data_size,hash,virtual_peer_id,item->travelingDirection()) ;
+}
+
+bool p3turtle::getTunnelServiceInfo(TurtleTunnelId tunnel_id,std::string& vpid,std::string& hash,RsTurtleClientService *& service)
+{
+	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
+
+	std::map<TurtleTunnelId,TurtleTunnel>::iterator it2(_local_tunnels.find(tunnel_id)) ;
+
+	if(it2 == _local_tunnels.end())
+	{
+#ifdef P3TURTLE_DEBUG
+		std::cerr << "p3turtle: got file CRC32 map with unknown tunnel id " << (void*)item->tunnelId() << std::endl ;
+#endif
+		return false;
+	}
+
+	TurtleTunnel& tunnel(it2->second) ;
+
+#ifdef P3TURTLE_DEBUG
+	assert(!tunnel.hash.empty()) ;
+
+	std::cerr << "  This is an endpoint for this file map." << std::endl ;
+	std::cerr << "  Forwarding data to the multiplexer." << std::endl ;
+	std::cerr << "  using peer_id=" << tunnel.vpid << ", hash=" << tunnel.hash << std::endl ;
+#endif
+	// We should check that there is no backward call to the turtle router!
+	//
+	vpid = tunnel.vpid ;
+	hash = tunnel.hash ;
+
+	std::map<TurtleFileHash,TurtleHashInfo>::const_iterator it = _incoming_file_hashes.find(hash) ;
+
+	if(it == _incoming_file_hashes.end())
+	{
+		std::cerr << "p3turtle::handleRecvGenericTunnelItem(): hash " << hash << " for tunnel " << (void*)(it2->first) << " has no attached service! Dropping the item. This is a serious consistency error." << std::endl;
+		return false;
+	}
+
+	service = it->second.service ;
+}
 // Send a data request into the correct tunnel for the given file hash
 //
 void p3turtle::sendTurtleData(const std::string& virtual_peer_id,RsTurtleGenericTunnelItem *item)
