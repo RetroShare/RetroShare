@@ -31,6 +31,7 @@
 #include "retroshare/rspeers.h"
 const int ftserverzone = 29539;
 
+#include "ft/ftturtlefiletransferitem.h"
 #include "ft/ftserver.h"
 #include "ft/ftextralist.h"
 #include "ft/ftfilesearch.h"
@@ -154,7 +155,9 @@ void ftServer::connectToTurtleRouter(p3turtle *fts)
 	mTurtleRouter = fts ;
 
 	mFtController->setTurtleRouter(fts) ;
-	fts->registerTunnelService(this) ;
+	mFtController->setFtServer(this) ;
+
+	mTurtleRouter->registerTunnelService(this) ;
 }
 
 void    ftServer::StartupThreads()
@@ -450,6 +453,39 @@ bool ftServer::FileDetails(const std::string &hash, FileSearchFlags hintflags, F
 			return true ;
 
 	return false;
+}
+
+RsTurtleGenericTunnelItem *ftServer::deserialiseItem(void *data,uint32_t size) const
+{
+	uint32_t rstype = getRsItemId(data);
+
+#ifdef SERVER_DEBUG
+	std::cerr << "p3turtle: deserialising packet: " << std::endl ;
+#endif
+#ifdef SERVER_DEBUG
+	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (RS_SERVICE_TYPE_TURTLE != getRsItemService(rstype))) 
+	{
+#ifdef SERVER_DEBUG
+		std::cerr << "  Wrong type !!" << std::endl ;
+#endif
+		return NULL; /* wrong type */
+	}
+#endif
+
+	switch(getRsItemSubType(rstype))
+	{
+		case RS_TURTLE_SUBTYPE_FILE_REQUEST 			:	return new RsTurtleFileRequestItem(data,size) ;
+		case RS_TURTLE_SUBTYPE_FILE_DATA    			:	return new RsTurtleFileDataItem(data,size) ;
+		case RS_TURTLE_SUBTYPE_FILE_MAP_REQUEST		:	return new RsTurtleFileMapRequestItem(data,size) ;
+		case RS_TURTLE_SUBTYPE_FILE_MAP     			:	return new RsTurtleFileMapItem(data,size) ;
+		case RS_TURTLE_SUBTYPE_FILE_CRC_REQUEST		:	return new RsTurtleFileCrcRequestItem(data,size) ;
+		case RS_TURTLE_SUBTYPE_FILE_CRC     			:	return new RsTurtleFileCrcItem(data,size) ;
+		case RS_TURTLE_SUBTYPE_CHUNK_CRC_REQUEST		:	return new RsTurtleChunkCrcRequestItem(data,size) ;
+		case RS_TURTLE_SUBTYPE_CHUNK_CRC     			:	return new RsTurtleChunkCrcItem(data,size) ;
+
+		default:
+																		return NULL ;
+	}
 }
 
 bool ftServer::handleTunnelRequest(const std::string& hash,const std::string& peer_id,std::string& description_info_string)
@@ -842,7 +878,14 @@ bool  ftServer::loadConfigMap(std::map<std::string, std::string> &/*configMap*/)
 bool	ftServer::sendDataRequest(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize)
 {
 	if(mTurtleRouter->isTurtlePeer(peerId))
-		mTurtleRouter->sendDataRequest(peerId,hash,size,offset,chunksize) ;
+	{
+		RsTurtleFileRequestItem *item = new RsTurtleFileRequestItem ;
+
+		item->chunk_offset = offset ;
+		item->chunk_size = chunksize ;
+
+		mTurtleRouter->sendTurtleData(peerId,item) ;
+	}
 	else
 	{
 		/* create a packet */
@@ -869,7 +912,10 @@ bool	ftServer::sendDataRequest(const std::string& peerId, const std::string& has
 bool ftServer::sendChunkMapRequest(const std::string& peerId,const std::string& hash,bool is_client)
 {
 	if(mTurtleRouter->isTurtlePeer(peerId))
-		mTurtleRouter->sendChunkMapRequest(peerId,hash,is_client) ;
+	{
+		RsTurtleFileMapRequestItem *item = new RsTurtleFileMapRequestItem ;
+		mTurtleRouter->sendTurtleData(peerId,item) ;
+	}
 	else
 	{
 		/* create a packet */
@@ -892,7 +938,11 @@ bool ftServer::sendChunkMapRequest(const std::string& peerId,const std::string& 
 bool ftServer::sendChunkMap(const std::string& peerId,const std::string& hash,const CompressedChunkMap& map,bool is_client)
 {
 	if(mTurtleRouter->isTurtlePeer(peerId))
-		mTurtleRouter->sendChunkMap(peerId,hash,map,is_client) ;
+	{
+		RsTurtleFileMapItem *item = new RsTurtleFileMapItem ;
+		item->compressed_map = map ;
+		mTurtleRouter->sendTurtleData(peerId,item) ;
+	}
 	else
 	{
 		/* create a packet */
@@ -915,7 +965,11 @@ bool ftServer::sendChunkMap(const std::string& peerId,const std::string& hash,co
 bool ftServer::sendCRC32MapRequest(const std::string& peerId,const std::string& hash)
 {
 	if(mTurtleRouter->isTurtlePeer(peerId))
-		mTurtleRouter->sendCRC32MapRequest(peerId,hash) ;
+	{
+		RsTurtleFileCrcRequestItem *item = new RsTurtleFileCrcRequestItem;
+
+		mTurtleRouter->sendTurtleData(peerId,item) ;
+	}
 	else
 	{
 		/* create a packet */
@@ -936,7 +990,12 @@ bool ftServer::sendCRC32MapRequest(const std::string& peerId,const std::string& 
 bool ftServer::sendSingleChunkCRCRequest(const std::string& peerId,const std::string& hash,uint32_t chunk_number)
 {
 	if(mTurtleRouter->isTurtlePeer(peerId))
-		mTurtleRouter->sendSingleChunkCRCRequest(peerId,hash,chunk_number) ;
+	{
+		RsTurtleChunkCrcRequestItem *item = new RsTurtleChunkCrcRequestItem;
+		item->chunk_number = chunk_number ;
+
+		mTurtleRouter->sendTurtleData(peerId,item) ;
+	}
 	else
 	{
 		/* create a packet */
@@ -959,7 +1018,12 @@ bool ftServer::sendSingleChunkCRCRequest(const std::string& peerId,const std::st
 bool ftServer::sendCRC32Map(const std::string& peerId,const std::string& hash,const CRC32Map& crcmap)
 {
 	if(mTurtleRouter->isTurtlePeer(peerId))
-		mTurtleRouter->sendCRC32Map(peerId,hash,crcmap) ;
+	{
+		RsTurtleFileCrcItem *item = new RsTurtleFileCrcItem ;
+		item->crc_map = crcmap ;
+
+		mTurtleRouter->sendTurtleData(peerId,item) ;
+	}
 	else
 	{
 		/* create a packet */
@@ -981,7 +1045,13 @@ bool ftServer::sendCRC32Map(const std::string& peerId,const std::string& hash,co
 bool ftServer::sendSingleChunkCRC(const std::string& peerId,const std::string& hash,uint32_t chunk_number,const Sha1CheckSum& crc)
 {
 	if(mTurtleRouter->isTurtlePeer(peerId))
-		mTurtleRouter->sendSingleChunkCRC(peerId,hash,chunk_number,crc) ;
+	{
+		RsTurtleChunkCrcItem *item = new RsTurtleChunkCrcItem;
+		item->chunk_number = chunk_number ;
+		item->check_sum = crc ;
+
+		mTurtleRouter->sendTurtleData(peerId,item) ;
+	}
 	else
 	{
 		/* create a packet */
@@ -1036,7 +1106,23 @@ bool	ftServer::sendData(const std::string& peerId, const std::string& hash, uint
 		/******** New Serialiser Type *******/
 
 		if(mTurtleRouter->isTurtlePeer(peerId))
-			mTurtleRouter->sendFileData(peerId,hash,size,baseoffset+offset,chunk,&(((uint8_t *) data)[offset])) ;
+		{
+			RsTurtleFileDataItem *item = new RsTurtleFileDataItem ;
+
+			item->chunk_offset = offset ;
+			item->chunk_size = chunksize ;
+			item->chunk_data = malloc(chunksize) ;
+
+			if(item->chunk_data == NULL)
+			{
+				std::cerr << "p3turtle: Warning: failed malloc of " << chunksize << " bytes for sending data packet." << std::endl ;
+				delete item;
+				return false;
+			}
+			memcpy(item->chunk_data,(void*)((uint8_t*)data),chunksize) ;
+
+			mTurtleRouter->sendTurtleData(peerId,item) ;
+		}
 		else
 		{
 			RsFileData *rfd = new RsFileData();
@@ -1078,6 +1164,76 @@ bool	ftServer::sendData(const std::string& peerId, const std::string& hash, uint
 	free(data);
 
 	return true;
+}
+
+void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
+											const std::string& hash,
+											const std::string& virtual_peer_id,
+											RsTurtleGenericTunnelItem::Direction direction) 
+{
+	switch(i->PacketSubType())
+	{
+		case RS_TURTLE_SUBTYPE_FILE_REQUEST: 		
+			{
+				RsTurtleFileRequestItem *item = dynamic_cast<RsTurtleFileRequestItem *>(i) ;
+				getMultiplexer()->recvDataRequest(virtual_peer_id,hash,0,item->chunk_offset,item->chunk_size) ;
+			}
+			break ;
+
+		case RS_TURTLE_SUBTYPE_FILE_DATA : 	
+			{
+				RsTurtleFileDataItem *item = dynamic_cast<RsTurtleFileDataItem *>(i) ;
+				getMultiplexer()->recvData(virtual_peer_id,hash,0,item->chunk_offset,item->chunk_size,item->chunk_data) ;
+
+				item->chunk_data = NULL ;	// this prevents deletion in the destructor of RsFileDataItem, because data will be deleted
+				// down _ft_server->getMultiplexer()->recvData()...in ftTransferModule::recvFileData
+
+			}
+			break ;
+
+		case RS_TURTLE_SUBTYPE_FILE_MAP : 	
+			{
+				RsTurtleFileMapItem *item = dynamic_cast<RsTurtleFileMapItem *>(i) ;
+				getMultiplexer()->recvChunkMap(virtual_peer_id,hash,item->compressed_map,direction == RsTurtleGenericTunnelItem::DIRECTION_CLIENT) ;
+			}
+			break ;
+
+		case RS_TURTLE_SUBTYPE_FILE_MAP_REQUEST:	
+			{
+				RsTurtleFileMapRequestItem *item = dynamic_cast<RsTurtleFileMapRequestItem *>(i) ;
+				getMultiplexer()->recvChunkMapRequest(virtual_peer_id,hash,direction == RsTurtleGenericTunnelItem::DIRECTION_CLIENT) ;
+			}
+			break ;
+
+		case RS_TURTLE_SUBTYPE_FILE_CRC : 			
+			{
+				RsTurtleFileCrcItem *item = dynamic_cast<RsTurtleFileCrcItem *>(i) ;
+				getMultiplexer()->recvCRC32Map(virtual_peer_id,hash,item->crc_map) ;
+			}
+			break ;
+
+		case RS_TURTLE_SUBTYPE_FILE_CRC_REQUEST:
+			{
+				getMultiplexer()->recvCRC32MapRequest(virtual_peer_id,hash) ;
+			}
+			break ;
+
+		case RS_TURTLE_SUBTYPE_CHUNK_CRC : 			
+			{
+				RsTurtleChunkCrcItem *item = dynamic_cast<RsTurtleChunkCrcItem *>(i) ;
+				getMultiplexer()->recvSingleChunkCRC(virtual_peer_id,hash,item->chunk_number,item->check_sum) ;
+			}
+			break ;
+
+		case RS_TURTLE_SUBTYPE_CHUNK_CRC_REQUEST:	
+			{
+				RsTurtleChunkCrcRequestItem *item = dynamic_cast<RsTurtleChunkCrcRequestItem *>(i) ;
+				getMultiplexer()->recvSingleChunkCRCRequest(virtual_peer_id,hash,item->chunk_number) ;
+			}
+			break ;
+		default:
+			std::cerr << "WARNING: Unknown packet type received: sub_id=" << reinterpret_cast<void*>(i->PacketSubType()) << ". Is somebody trying to poison you ?" << std::endl ;
+	}
 }
 
 

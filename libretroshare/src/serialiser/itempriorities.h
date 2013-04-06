@@ -23,6 +23,10 @@
  *
  */
 
+#pragma once
+
+#include <stdint.h>
+
 // This file centralises QoS priorities for all transfer RsItems. 
 //
 const uint8_t QOS_PRIORITY_UNKNOWN                    = 0 ;

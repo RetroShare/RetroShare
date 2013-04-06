@@ -108,7 +108,7 @@ class RsTurtle
 		// tunnels for the given hash. The download should be driven by the file
 		// transfer module by calling ftServer::FileRequest().
 		//
-		virtual void monitorTunnels(const std::string& file_hash) = 0 ;
+		virtual void monitorTunnels(const std::string& file_hash,RsTurtleClientService *client_service) = 0 ;
 
 		// Tells the turtle router to stop handling tunnels for the given file hash. Traditionally this should
 		// be called after calling ftServer::fileCancel().

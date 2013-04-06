@@ -42,6 +42,7 @@ class ftFileCreator;
 class ftTransferModule;
 class ftFileProvider;
 class ftSearch;
+class ftServer;
 class ftExtraList;
 class ftDataMultiplex;
 class p3turtle ;
@@ -119,6 +120,7 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 
 		void	setFtSearchNExtra(ftSearch *, ftExtraList *);
 		void	setTurtleRouter(p3turtle *) ;
+		void	setFtServer(ftServer *) ;
 		bool    activate();
 		bool 	isActiveAndNoPending();
 
@@ -234,6 +236,7 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 		ftDataMultiplex *mDataplex;
 		ftExtraList *mExtraList;
 		p3turtle *mTurtle ;
+		ftServer *mFtServer ;
 
 		RsMutex ctrlMutex;
 

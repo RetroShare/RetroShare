@@ -198,7 +198,8 @@ class TurtleHashInfo
 	public:
 		std::vector<TurtleTunnelId> tunnels ;		// list of active tunnel ids for this file hash
 		TurtleRequestId last_request ;				// last request for the tunnels of this hash
-		time_t last_digg_time ;
+		time_t last_digg_time ;							// last time the tunnel digging happenned.
+		RsTurtleClientService *service ; 			// client service to which items should be sent. Never NULL.
 };
 
 // Subclassing:
@@ -249,7 +250,7 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		//  This function should be called in addition to ftServer::FileRequest() so that the turtle router
 		//  automatically provide tunnels for the file to download.
 		//
-		virtual void monitorTunnels(const std::string& file_hash) ;
+		virtual void monitorTunnels(const std::string& file_hash,RsTurtleClientService *client_service) ;
 
 		/// This should be called when canceling a file download, so that the turtle router stops
 		/// handling tunnels for this file.
@@ -288,7 +289,7 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		virtual bool saveList(bool& cleanup, std::list<RsItem*>&) ;
 		virtual bool loadList(std::list<RsItem*>& /*load*/) ;
 
-		/************* Communication with ftserver *******************/
+		/************* Communication with clients *******************/
 		/// Does the turtle router manages tunnels to this peer ? (this is not a
 		/// real id, but a fake one, that the turtle router is capable of connecting with a tunnel id).
 		virtual bool isTurtlePeer(const std::string& peer_id) const ;
@@ -307,28 +308,7 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		void getVirtualPeersList(std::list<pqipeer>& list) ;
 
 		/// Send a data request into the correct tunnel for the given file hash
-		void sendDataRequest(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize) ;
-
-		/// Send file data into the correct tunnel for the given file hash
-		void sendFileData(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t baseoffset, uint32_t chunksize, void *data) ;
-
-		/// Send a request for the chunk map of this file to the given peer
-		void sendChunkMapRequest(const std::string& peerId, const std::string& hash,bool is_client) ;
-
-		/// Send a chunk map of this file to the given peer
-		void sendChunkMap(const std::string& peerId, const std::string& hash,const CompressedChunkMap& cmap,bool is_client) ;
-
-		/// Send a request for the crc32 map of this file to the given peer
-		void sendCRC32MapRequest(const std::string& peerId, const std::string& hash) ;
-
-		/// Send a crc32 map of this file to the given peer
-		void sendCRC32Map(const std::string& peerId, const std::string& hash,const CRC32Map& cmap) ;
-
-		/// Send a request for the CRC of a single chunk of this file to the given peer
-		void sendSingleChunkCRCRequest(const std::string& peerId, const std::string& hash,uint32_t chunk_number) ;
-
-		/// Send a crc32 map of this file to the given peer
-		void sendSingleChunkCRC(const std::string& peerId, const std::string& hash,uint32_t chunk_number,const Sha1CheckSum& sum) ;
+		void sendTurtleData(const std::string& virtual_peer_id, RsTurtleGenericTunnelItem *item) ;
 
 	private:
 		//--------------------------- Admin/Helper functions -------------------------//
@@ -371,18 +351,13 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		void routeGenericTunnelItem(RsTurtleGenericTunnelItem *item) ;
 
 		/// specific routing functions for handling particular packets.
+		void handleRecvGenericTunnelItem(RsTurtleGenericTunnelItem *item);
+
+		// following functions should go to ftServer
 		void handleSearchRequest(RsTurtleSearchRequestItem *item);		
 		void handleSearchResult(RsTurtleSearchResultItem *item);
 		void handleTunnelRequest(RsTurtleOpenTunnelItem *item);		
 		void handleTunnelResult(RsTurtleTunnelOkItem *item);		
-		void handleRecvFileRequest(RsTurtleFileRequestItem *item);		
-		void handleRecvFileData(RsTurtleFileDataItem *item);		
-		void handleRecvFileMapRequest(RsTurtleFileMapRequestItem*);
-		void handleRecvFileMap(RsTurtleFileMapItem*);
-		void handleRecvFileCRC32MapRequest(RsTurtleFileCrcRequestItem*);
-		void handleRecvFileCRC32Map(RsTurtleFileCrcItem*);
-		void handleRecvChunkCRCRequest(RsTurtleChunkCrcRequestItem*);
-		void handleRecvChunkCRC(RsTurtleChunkCrcItem*);
 
 		//------ Functions connecting the turtle router to other components.----------//
 		
@@ -401,6 +376,7 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		p3LinkMgr *mLinkMgr;
 		ftServer *_ft_server ;
 		ftController *_ft_controller ;
+		RsTurtleSerialiser *_serialiser ;
 
 		mutable RsMutex mTurtleMtx;
 

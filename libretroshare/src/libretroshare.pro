@@ -308,7 +308,8 @@ HEADERS +=	ft/ftchunkmap.h \
 			ft/ftfilesearch.h \
 			ft/ftsearch.h \
 			ft/ftserver.h \
-			ft/fttransfermodule.h
+			ft/fttransfermodule.h \
+			ft/ftturtlefiletransferitem.h 
 
 HEADERS +=	pqi/authssl.h \
 			pqi/authgpg.h \
@@ -448,6 +449,7 @@ SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftfilesearch.cc \
 			ft/ftserver.cc \
 			ft/fttransfermodule.cc \
+			ft/ftturtlefiletransferitem.cc 
 
 SOURCES +=	pqi/authgpg.cc \
 			pqi/authssl.cc \
