@@ -877,11 +877,6 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 				res_item = NULL ;
 			}
 		}
-
-#ifdef P3TURTLE_DEBUG
-		else
-			std::cerr << "  Rejecting local search because strategy is FRIENDS_ONLY and item depth=" << item->depth << std::endl ;
-#endif
 	}
 
 	// If search depth not too large, also forward this search request to all other peers.
@@ -1135,16 +1130,28 @@ void p3turtle::sendTurtleData(const std::string& virtual_peer_id,RsTurtleGeneric
 	if(it == _virtual_peers.end())
 	{
 #ifdef P3TURTLE_DEBUG
-		std::cerr << "p3turtle::senddataRequest: cannot find virtual peer " << peerId << " in VP list." << std::endl ;
+		std::cerr << "p3turtle::senddataRequest: cannot find virtual peer " << virtual_peer_id << " in VP list." << std::endl ;
 #endif
+		delete item ;
 		return ;
 	}
 	TurtleTunnelId tunnel_id = it->second ;
-	TurtleTunnel& tunnel(_local_tunnels[tunnel_id]) ;
+	std::map<TurtleTunnelId,TurtleTunnel>::iterator it2( _local_tunnels.find(tunnel_id) ) ;
+
+	if(it2 == _local_tunnels.end())
+	{
+		std::cerr << "p3turtle::client asked to send a packet through tunnel that has previously been deleted. Not a big issue unless it happens in masses." << std::endl;
+		delete item ;
+		return ;
+	}
+	TurtleTunnel& tunnel(it2->second) ;
 
 	item->tunnel_id = tunnel_id ;	// we should randomly select a tunnel, or something more clever.
 
 	std::string ownid = mLinkMgr->getOwnId() ;
+
+	if(item->shouldStampTunnel())
+		tunnel.time_stamp = time(NULL) ;
 
 	if(tunnel.local_src == ownid)
 	{
@@ -2031,14 +2038,14 @@ void p3turtle::dumpState()
 	std::cerr << "  Active incoming file hashes: " << _incoming_file_hashes.size() << std::endl ;
 	for(std::map<TurtleFileHash,TurtleHashInfo>::const_iterator it(_incoming_file_hashes.begin());it!=_incoming_file_hashes.end();++it)
 	{
-		std::cerr << "    hash=0x" << it->first << ", name=" << it->second.name << ", size=" << it->second.size << ", tunnel ids =" ;
+		std::cerr << "    hash=0x" << it->first << ", tunnel ids =" ;
 		for(std::vector<TurtleTunnelId>::const_iterator it2(it->second.tunnels.begin());it2!=it->second.tunnels.end();++it2)
 			std::cerr << " " << (void*)*it2 ;
 		//std::cerr << ", last_req=" << (void*)it->second.last_request << ", time_stamp = " << it->second.time_stamp << "(" << now-it->second.time_stamp << " secs ago)" << std::endl ;
 	}
 	std::cerr << "  Active outgoing file hashes: " << _outgoing_file_hashes.size() << std::endl ;
-	for(std::map<TurtleFileHash,FileInfo>::const_iterator it(_outgoing_file_hashes.begin());it!=_outgoing_file_hashes.end();++it)
-		std::cerr << "    hash=0x" << it->first << ", name=" << it->second.fname << ", size=" << it->second.size << std::endl ;
+	for(std::map<TurtleFileHash,std::string>::const_iterator it(_outgoing_file_hashes.begin());it!=_outgoing_file_hashes.end();++it)
+		std::cerr << "    hash=0x" << it->first << std::endl ;
 
 	std::cerr << "  Local tunnels:" << std::endl ;
 	for(std::map<TurtleTunnelId,TurtleTunnel>::const_iterator it(_local_tunnels.begin());it!=_local_tunnels.end();++it)

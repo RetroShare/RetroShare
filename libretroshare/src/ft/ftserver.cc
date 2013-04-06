@@ -1109,17 +1109,17 @@ bool	ftServer::sendData(const std::string& peerId, const std::string& hash, uint
 		{
 			RsTurtleFileDataItem *item = new RsTurtleFileDataItem ;
 
-			item->chunk_offset = offset ;
-			item->chunk_size = chunksize ;
-			item->chunk_data = malloc(chunksize) ;
+			item->chunk_offset = offset+baseoffset ;
+			item->chunk_size = chunk;
+			item->chunk_data = malloc(chunk) ;
 
 			if(item->chunk_data == NULL)
 			{
-				std::cerr << "p3turtle: Warning: failed malloc of " << chunksize << " bytes for sending data packet." << std::endl ;
+				std::cerr << "p3turtle: Warning: failed malloc of " << chunk << " bytes for sending data packet." << std::endl ;
 				delete item;
 				return false;
 			}
-			memcpy(item->chunk_data,(void*)((uint8_t*)data),chunksize) ;
+			memcpy(item->chunk_data,&(((uint8_t *) data)[offset]),chunk) ;
 
 			mTurtleRouter->sendTurtleData(peerId,item) ;
 		}
