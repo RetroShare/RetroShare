@@ -9,8 +9,8 @@ OPS_TOP_DIR = ../../../../openpgpsdk/src
 include $(RS_TOP_DIR)/tests/scripts/config.mk
 ###############################################################
 
-TESTOBJ  = dirtest.o sha1_test.o
-TESTS  = dirtest sha1_test
+TESTOBJ  = dirtest.o sha1_test.o aes_test.o
+TESTS  = dirtest sha1_test aes_test
 
 all: tests
 
@@ -18,6 +18,8 @@ sha1_test: sha1_test.o
 	$(CC) $(CFLAGS) -o sha1_test sha1_test.o $(LIBS)
 dirtest: dirtest.o 
 	$(CC) $(CFLAGS) -o dirtest dirtest.o $(LIBS)
+dirtest: aes_test.o 
+	$(CC) $(CFLAGS) -o aes_test aes_test.o $(LIBS)
 
 ###############################################################
 include $(RS_TOP_DIR)/tests/scripts/rules.mk
