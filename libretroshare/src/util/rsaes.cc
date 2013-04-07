@@ -57,15 +57,13 @@ bool RsAes::aes_crypt_8_16(const uint8_t *input_data,uint32_t input_data_length,
 	if(output_data_length < (uint32_t)c_len)
 		return false ;
 
-	output_data_length = c_len ;
-
 	/* update ciphertext, c_len is filled with the length of ciphertext generated,
 	 *len is the size of plaintext in bytes */
 
 	EVP_EncryptUpdate(&e_ctx, output_data, &c_len, input_data, input_data_length);
 
 	/* update ciphertext with the final remaining bytes */
-	EVP_EncryptFinal_ex(&e_ctx, const_cast<uint8_t*>(input_data)+c_len, &f_len);
+	EVP_EncryptFinal_ex(&e_ctx, output_data+c_len, &f_len);
 
 	output_data_length = c_len + f_len;
 
@@ -109,7 +107,7 @@ bool RsAes::aes_decrypt_8_16(const uint8_t *input_data,uint32_t input_data_lengt
 	EVP_DecryptUpdate(&e_ctx, output_data, &c_len, input_data, input_data_length);
 
 	/* update ciphertext with the final remaining bytes */
-	EVP_DecryptFinal_ex(&e_ctx, const_cast<uint8_t*>(input_data)+c_len, &f_len);
+	EVP_DecryptFinal_ex(&e_ctx, output_data+c_len, &f_len);
 
 	output_data_length = c_len + f_len;
 

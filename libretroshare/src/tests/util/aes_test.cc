@@ -81,10 +81,10 @@ int main(int argc,char *argv[])
 		for(int j=0;j<8;++j)
 			salt[j] = lrand48() & 0xff ;
 
-		unsigned char output_data[source_string.size() + 1 + 16] ;
-		uint32_t output_data_length = source_string.size() + 1 + 16 ;
+		unsigned char output_data[source_string.size() + 16] ;
+		uint32_t output_data_length = source_string.size() + 16 ;
 
-		CHECK(RsAes::aes_crypt_8_16( (const uint8_t*)source_string.c_str(),source_string.length()+1,key_data,salt,output_data,output_data_length)) ;
+		CHECK(RsAes::aes_crypt_8_16( (const uint8_t*)source_string.c_str(),source_string.length(),key_data,salt,output_data,output_data_length)) ;
 
 		std::cerr << "Round " << i << " salt=" ;
 		printHex(salt,8) ;
@@ -92,19 +92,19 @@ int main(int argc,char *argv[])
 		printHex(output_data,output_data_length) ;
 		std::cerr << std::endl;
 
-		unsigned char output_data2[output_data_length + 1 + 16] ;
-		uint32_t output_data_length2 = output_data_length + 1 + 16 ;
+		unsigned char output_data2[output_data_length + 16] ;
+		uint32_t output_data_length2 = output_data_length + 16 ;
 
 		CHECK(RsAes::aes_decrypt_8_16(output_data,output_data_length,key_data,salt,output_data2,output_data_length2)) ;
 
-//		std::cerr << "                                output_length = " << output_data_length2 << ", decrypted string = " ;
-//		printHex(output_data2,output_data_length2) ;
-//		std::cerr << std::endl;
+		std::cerr << "                                output_length = " << output_data_length2 << ", decrypted string = " ;
+		printHex(output_data2,output_data_length2) ;
+		std::cerr << std::endl;
 	
 		CHECK(std::string( (const char *)output_data2,output_data_length2) == source_string) ;
 	}
 
-	FINALREPORT("Sha1Test") ;
+	FINALREPORT("AESTest") ;
 	return TESTRESULT() ;
 }
 
