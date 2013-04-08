@@ -25,8 +25,10 @@
 #include <math.h>
 
 #include "util/rsdir.h"
+#include "util/rsaes.h"
 #include "util/rsrandom.h"
 #include "util/rsstring.h"
+#include "turtle/p3turtle.h"
 #include "retroshare/rsiface.h"
 #include "retroshare/rspeers.h"
 #include "pqi/pqibin.h"
@@ -55,15 +57,23 @@ static const time_t 	MIN_DELAY_BETWEEN_PUBLIC_LOBBY_REQ =   20 ; // don't ask fo
 p3ChatService::p3ChatService(p3LinkMgr *lm, p3HistoryMgr *historyMgr)
 	:p3Service(RS_SERVICE_TYPE_CHAT), p3Config(CONFIG_TYPE_CHAT), mChatMtx("p3ChatService"), mLinkMgr(lm) , mHistoryMgr(historyMgr)
 {
-	addSerialType(new RsChatSerialiser());
-
+	_serializer = new RsChatSerialiser() ;
 	_own_avatar = NULL ;
 	_custom_status_string = "" ;
 	_time_shift_average = 0.0f ;
 	_default_nick_name = rsPeers->getPeerName(rsPeers->getOwnId());
 	_should_reset_lobby_counts = false ;
+	mTurtle = NULL ;
 	
 	last_visible_lobby_info_request_time = 0 ;
+
+	addSerialType(_serializer) ;
+}
+
+void p3ChatService::connectToTurtleRouter(p3turtle *tr)
+{
+	mTurtle = tr ;
+	tr->registerTunnelService(this) ;
 }
 
 int	p3ChatService::tick()
@@ -608,38 +618,41 @@ void p3ChatService::receiveChatQueue()
 	RsItem *item ;
 
 	while(NULL != (item=recvItem()))
-	{
+		handleIncomingItem(item) ;
+}
+
+void p3ChatService::handleIncomingItem(RsItem *item)
+{
 #ifdef CHAT_DEBUG
-		std::cerr << "p3ChatService::receiveChatQueue() Item:" << (void*)item << std::endl ;
+	std::cerr << "p3ChatService::receiveChatQueue() Item:" << (void*)item << std::endl ;
 #endif
-		// RsChatMsgItems needs dynamic_cast, since they have derived siblings.
-		//
-		RsChatMsgItem *ci = dynamic_cast<RsChatMsgItem*>(item) ; 
-		if(ci != NULL) 
-		{
-			if(!  handleRecvChatMsgItem(ci))
-				delete ci ;
+	// RsChatMsgItems needs dynamic_cast, since they have derived siblings.
+	//
+	RsChatMsgItem *ci = dynamic_cast<RsChatMsgItem*>(item) ; 
+	if(ci != NULL) 
+	{
+		if(!  handleRecvChatMsgItem(ci))
+			delete ci ;
 
-			continue ;	// don't delete! It's handled by handleRecvChatMsgItem in some specific cases only.
-		}
-
-		switch(item->PacketSubType())
-		{
-			case RS_PKT_SUBTYPE_CHAT_STATUS:             handleRecvChatStatusItem      (dynamic_cast<RsChatStatusItem               *>(item)) ; break ;
-			case RS_PKT_SUBTYPE_CHAT_AVATAR:             handleRecvChatAvatarItem      (dynamic_cast<RsChatAvatarItem               *>(item)) ; break ;
-			case RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE:       handleRecvLobbyInvite         (dynamic_cast<RsChatLobbyInviteItem          *>(item)) ; break ;
-			case RS_PKT_SUBTYPE_CHAT_LOBBY_CHALLENGE:    handleConnectionChallenge     (dynamic_cast<RsChatLobbyConnectChallengeItem*>(item)) ; break ;
-			case RS_PKT_SUBTYPE_CHAT_LOBBY_EVENT:        handleRecvChatLobbyEventItem  (dynamic_cast<RsChatLobbyEventItem           *>(item)) ; break ;
-			case RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE:  handleFriendUnsubscribeLobby  (dynamic_cast<RsChatLobbyUnsubscribeItem     *>(item)) ; break ;
-			case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST: handleRecvChatLobbyListRequest(dynamic_cast<RsChatLobbyListRequestItem     *>(item)) ; break ;
-			case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST:         handleRecvChatLobbyList       (dynamic_cast<RsChatLobbyListItem            *>(item)) ; break ;
-			case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated: handleRecvChatLobbyList       (dynamic_cast<RsChatLobbyListItem_deprecated *>(item)) ; break ;
-		
-			default:
-				  std::cerr << "Unhandled item subtype " << item->PacketSubType() << " in p3ChatService: " << std::endl;
-		}
-		delete item ;
+		return ;	// don't delete! It's handled by handleRecvChatMsgItem in some specific cases only.
 	}
+
+	switch(item->PacketSubType())
+	{
+		case RS_PKT_SUBTYPE_CHAT_STATUS:             handleRecvChatStatusItem      (dynamic_cast<RsChatStatusItem               *>(item)) ; break ;
+		case RS_PKT_SUBTYPE_CHAT_AVATAR:             handleRecvChatAvatarItem      (dynamic_cast<RsChatAvatarItem               *>(item)) ; break ;
+		case RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE:       handleRecvLobbyInvite         (dynamic_cast<RsChatLobbyInviteItem          *>(item)) ; break ;
+		case RS_PKT_SUBTYPE_CHAT_LOBBY_CHALLENGE:    handleConnectionChallenge     (dynamic_cast<RsChatLobbyConnectChallengeItem*>(item)) ; break ;
+		case RS_PKT_SUBTYPE_CHAT_LOBBY_EVENT:        handleRecvChatLobbyEventItem  (dynamic_cast<RsChatLobbyEventItem           *>(item)) ; break ;
+		case RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE:  handleFriendUnsubscribeLobby  (dynamic_cast<RsChatLobbyUnsubscribeItem     *>(item)) ; break ;
+		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST: handleRecvChatLobbyListRequest(dynamic_cast<RsChatLobbyListRequestItem     *>(item)) ; break ;
+		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST:         handleRecvChatLobbyList       (dynamic_cast<RsChatLobbyListItem            *>(item)) ; break ;
+		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated: handleRecvChatLobbyList       (dynamic_cast<RsChatLobbyListItem_deprecated *>(item)) ; break ;
+
+		default:
+																		std::cerr << "Unhandled item subtype " << item->PacketSubType() << " in p3ChatService: " << std::endl;
+	}
+	delete item ;
 }
 
 void p3ChatService::handleRecvChatLobbyListRequest(RsChatLobbyListRequestItem *clr)
@@ -2735,6 +2748,148 @@ void p3ChatService::cleanLobbyCaches()
 	//
 	for(std::list<ChatLobbyId>::const_iterator it(send_challenge_lobbies.begin());it!=send_challenge_lobbies.end();++it)
 		sendConnectionChallenge(*it) ;
+}
+
+bool p3ChatService::handleTunnelRequest(const std::string& hash,const std::string& peer_id,std::string& description_info_string) 
+{
+	std::map<TurtleFileHash,DistantChatInvite>::const_iterator it = _distant_chat_invites.find(hash) ;
+
+	std::cerr << "p3ChatService::handleTunnelRequest: received tunnel request for hash " << hash << std::endl;
+
+	if(it == _distant_chat_invites.end())
+		return false ;
+
+	std::cerr << "Responding ok." << std::endl;
+	return true ;
+}
+
+void p3ChatService::receiveTurtleData(	RsTurtleGenericTunnelItem *gitem,const std::string& hash,
+													const std::string& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction)
+{
+	std::cerr << "p3ChatService::receiveTurtleData(): Received turtle data. " << std::endl;
+	std::cerr << "   hash = " << hash << std::endl;
+	std::cerr << "   vpid = " << virtual_peer_id << std::endl;
+	std::cerr << "    dir = " << virtual_peer_id << std::endl;
+
+	RsTurtleGenericDataItem *item = dynamic_cast<RsTurtleGenericDataItem*>(gitem) ;
+
+	if(item == NULL)
+	{
+		std::cerr << "(EE) item is not a data item. That is an error." << std::endl;
+		return ;
+	}
+	std::cerr << "   size = " << item->data_size << std::endl;
+	std::cerr << "   data = " << (void*)item->data_bytes << std::endl;
+
+	uint8_t aes_key[16] ;
+
+	{
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+		std::map<std::string,DistantChatPeerInfo>::iterator it = _distant_chat_peers.find(virtual_peer_id) ;
+
+		if(it == _distant_chat_peers.end())
+		{
+			std::cerr << "(EE) item is not coming out of a registered tunnel. Weird. hash=" << hash << ", peer id = " << virtual_peer_id << std::endl;
+			return ;
+		}
+		it->second.last_contact = time(NULL) ;
+		memcpy(aes_key,it->second.aes_key,8) ;
+	}
+
+	// Call the AES crypto module
+	// - the IV is the first 8 bytes of item->data_bytes
+
+	if(item->data_size < 8)
+	{
+		std::cerr << "(EE) item encrypted data stream is too small: size = " << item->data_size << std::endl;
+		return ;
+	}
+	uint32_t decrypted_size ;
+	uint8_t *decrypted_data = new uint8_t[RsAES::get_buffer_size(item->data_size-8)];
+
+	if(!RsAES::aes_decrypt_8_16((uint8_t*)item->data_bytes+8,item->data_size-8,aes_key,(uint8_t*)item->data_bytes,decrypted_data,decrypted_size))
+	{
+		std::cerr << "(EE) packet decryption failed." << std::endl;
+		delete[] decrypted_data ;
+		return ;
+	}
+
+	std::cerr << "(II) Decrypted data: size=" << decrypted_size << std::endl;
+
+	// Now try deserialise the decrypted data to make an RsItem out of it.
+	//
+	RsItem *citem = _serializer->deserialise(decrypted_data,&decrypted_size) ;
+	delete[] decrypted_data ;
+
+	if(citem == NULL)
+	{
+		std::cerr << "(EE) item could not be de-serialized. That is an error." << std::endl;
+		return ;
+	}
+
+	// Setup the virtual peer to be the origin, and pass it on.
+	//
+	citem->PeerId(virtual_peer_id) ;
+	handleIncomingItem(citem) ; // Treats the item, and deletes it 
+}
+
+void p3ChatService::sendTurtleData(RsChatItem *item, const std::string& virtual_peer_id)
+{
+	uint32_t rssize = item->serial_size();
+	uint8_t *buff = new uint8_t[rssize] ;
+
+	if(!item->serialise(buff,rssize))
+	{
+		std::cerr << "(EE) p3ChatService::sendTurtleData(): Could not serialise item!" << std::endl;
+		delete[] buff ;
+		return ;
+	}
+	
+	uint8_t aes_key[16] ;
+
+	{
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+		std::map<std::string,DistantChatPeerInfo>::iterator it = _distant_chat_peers.find(virtual_peer_id) ;
+
+		if(it == _distant_chat_peers.end())
+		{
+			std::cerr << "(EE) item is not coming out of a registered tunnel. Weird. peer id = " << virtual_peer_id << std::endl;
+			delete[] buff ;
+			return ;
+		}
+		it->second.last_contact = time(NULL) ;
+		memcpy(aes_key,it->second.aes_key,8) ;
+	}
+	// Now encrypt this data using AES.
+	//
+	uint32_t encrypted_size ;
+	uint8_t *encrypted_data = new uint8_t[RsAES::get_buffer_size(rssize)];
+
+	uint64_t IV = RSRandom::random_u64() ; // make a random 8 bytes IV
+
+	if(!RsAES::aes_crypt_8_16(buff,rssize,aes_key,(uint8_t*)&IV,encrypted_data,encrypted_size))
+	{
+		std::cerr << "(EE) packet encryption failed." << std::endl;
+		delete[] encrypted_data ;
+		delete[] buff ;
+		return ;
+	}
+	delete[] buff ;
+
+	// make a TurtleGenericData item out of it:
+	//
+	RsTurtleGenericDataItem *gitem = new RsTurtleGenericDataItem ;
+
+	gitem->data_size  = encrypted_size + 8 ;
+	gitem->data_bytes = malloc(gitem->data_size) ;
+
+	memcpy(gitem->data_bytes  ,&IV,8) ;
+	memcpy(gitem->data_bytes+8,encrypted_data,encrypted_size) ;
+
+	delete[] encrypted_data ;
+	delete item ;
+
+	mTurtle->sendTurtleData(virtual_peer_id,gitem) ;
 }
 
 

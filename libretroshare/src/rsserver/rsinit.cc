@@ -2233,7 +2233,9 @@ int RsServer::StartupRetroShare()
 	p3turtle *tr = new p3turtle(mLinkMgr,ftserver) ;
 	rsTurtle = tr ;
 	pqih -> addService(tr);
+
 	ftserver->connectToTurtleRouter(tr) ;
+	chatSrv->connectToTurtleRouter(tr) ;
 
 	pqih -> addService(ad);
 	pqih -> addService(msgSrv);

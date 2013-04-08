@@ -25,12 +25,12 @@
 
 #include <stdint.h>
 
-class RsAes
+class RsAES
 {
 	public:
 		// Crypt/decrypt data using a 16 bytes key and a 8 bytes salt.
 		//
-		//		output_data allocation is left to the client. The size should be at least input_data_length+16 bytes.
+		//		output_data allocation is left to the client. The size should be at least RsAES::get_buffer_size(input_data_length)
 		//
 		//	Return value:
 		//		true: encryption/decryption ok
@@ -39,5 +39,9 @@ class RsAes
 		//
 		static bool   aes_crypt_8_16(const uint8_t *input_data,uint32_t input_data_length,uint8_t key[16],uint8_t salt[8],uint8_t *output_data,uint32_t& output_data_length) ;
 		static bool aes_decrypt_8_16(const uint8_t *input_data,uint32_t input_data_length,uint8_t key[16],uint8_t salt[8],uint8_t *output_data,uint32_t& output_data_length) ;
+
+		// computes the safe buffer size to store encrypted/decrypted data for the given input stream size
+		//
+		static uint32_t get_buffer_size(uint32_t size) ;
 };
 

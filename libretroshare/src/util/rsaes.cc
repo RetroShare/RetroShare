@@ -28,7 +28,12 @@
 
 #include "rsaes.h"
 
-bool RsAes::aes_crypt_8_16(const uint8_t *input_data,uint32_t input_data_length,uint8_t key_data[16],uint8_t salt[8],uint8_t *output_data,uint32_t& output_data_length)
+uint32_t RsAES::get_buffer_size(uint32_t n)
+{
+	return n + AES_BLOCK_SIZE ;
+}
+
+bool RsAES::aes_crypt_8_16(const uint8_t *input_data,uint32_t input_data_length,uint8_t key_data[16],uint8_t salt[8],uint8_t *output_data,uint32_t& output_data_length)
 {
 	int nrounds = 5;
 	uint8_t key[32], iv[32];
@@ -70,7 +75,7 @@ bool RsAes::aes_crypt_8_16(const uint8_t *input_data,uint32_t input_data_length,
 	return true;
 }
 
-bool RsAes::aes_decrypt_8_16(const uint8_t *input_data,uint32_t input_data_length,uint8_t key_data[16],uint8_t salt[8],uint8_t *output_data,uint32_t& output_data_length)
+bool RsAES::aes_decrypt_8_16(const uint8_t *input_data,uint32_t input_data_length,uint8_t key_data[16],uint8_t salt[8],uint8_t *output_data,uint32_t& output_data_length)
 {
 	int nrounds = 5;
 	uint8_t key[32], iv[32];

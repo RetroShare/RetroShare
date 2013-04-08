@@ -84,7 +84,7 @@ int main(int argc,char *argv[])
 		unsigned char output_data[source_string.size() + 16] ;
 		uint32_t output_data_length = source_string.size() + 16 ;
 
-		CHECK(RsAes::aes_crypt_8_16( (const uint8_t*)source_string.c_str(),source_string.length(),key_data,salt,output_data,output_data_length)) ;
+		CHECK(RsAES::aes_crypt_8_16( (const uint8_t*)source_string.c_str(),source_string.length(),key_data,salt,output_data,output_data_length)) ;
 
 		std::cerr << "Round " << i << " salt=" ;
 		printHex(salt,8) ;
@@ -95,7 +95,7 @@ int main(int argc,char *argv[])
 		unsigned char output_data2[output_data_length + 16] ;
 		uint32_t output_data_length2 = output_data_length + 16 ;
 
-		CHECK(RsAes::aes_decrypt_8_16(output_data,output_data_length,key_data,salt,output_data2,output_data_length2)) ;
+		CHECK(RsAES::aes_decrypt_8_16(output_data,output_data_length,key_data,salt,output_data2,output_data_length2)) ;
 
 		std::cerr << "                                output_length = " << output_data_length2 << ", decrypted string = " ;
 		printHex(output_data2,output_data_length2) ;
