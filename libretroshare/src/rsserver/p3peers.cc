@@ -268,7 +268,16 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 			bool res = getGPGDetails(id, d);
 
 			d.isOnlyGPGdetail = true;
-			d.service_perm_flags = mPeerMgr->servicePermissionFlags(id) ;
+
+			if(id.length() == 16)
+				d.service_perm_flags = mPeerMgr->servicePermissionFlags(id) ;
+			else if(id.length() == 32)
+				d.service_perm_flags = mPeerMgr->servicePermissionFlags_sslid(id) ;
+			else
+			{
+				std::cerr << "p3Peers::getPeerDetails() ERROR not an correct Id: " << id << std::endl;
+				d.service_perm_flags = RS_SERVICE_PERM_NONE ;
+			}
 
 			return res ;
 		}
