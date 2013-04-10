@@ -629,6 +629,15 @@ bool AuthGPG::TrustCertificate(const std::string &id, int trustlvl)
 	return privateTrustCertificate(id, trustlvl) ;
 }
 
+bool AuthGPG::encryptDataBin(const std::string& pgp_id,const void *data, unsigned int datalen, unsigned char *sign, unsigned int *signlen) 
+{
+	return PGPHandler::encryptDataBin(PGPIdType(pgp_id),data,datalen,sign,signlen) ;
+}
+
+bool AuthGPG::decryptDataBin(const void *data, unsigned int datalen, unsigned char *sign, unsigned int *signlen) 
+{
+	return PGPHandler::decryptDataBin(mOwnGpgId,data,datalen,sign,signlen) ;
+}
 bool AuthGPG::SignDataBin(const void *data, unsigned int datalen, unsigned char *sign, unsigned int *signlen) 
 {
 	return DoOwnSignature(data, datalen, sign, signlen);

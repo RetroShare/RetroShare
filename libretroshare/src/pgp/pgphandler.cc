@@ -952,6 +952,49 @@ bool PGPHandler::encryptTextToFile(const PGPIdType& key_id,const std::string& te
 	return true ;
 }
 
+bool PGPHandler::encryptDataBin(const PGPIdType& key_id,const void *data, const uint32_t len, unsigned char *encrypted_data, unsigned int *encrypted_data_len) 
+{
+	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
+
+	const ops_keydata_t *public_key = getPublicKey(key_id) ;
+
+	if(public_key == NULL)
+	{
+		std::cerr << "Cannot get public key of id " << key_id.toStdString() << std::endl;
+		return false ;
+	}
+
+	if(public_key->type != OPS_PTAG_CT_PUBLIC_KEY)
+	{
+		std::cerr << "PGPHandler::encryptTextToFile(): ERROR: supplied id did not return a public key!" << std::endl;
+		return false ;
+	}
+	ops_create_info_t *info;
+	ops_memory_t *buf = NULL ;
+   ops_setup_memory_write(&info, &buf, 0);
+
+	ops_encrypt_stream(info, public_key, NULL, ops_false, ops_false);
+
+	ops_write(data,len,info);
+	ops_writer_close(info);
+	ops_create_info_delete(info);
+
+	int tlen = ops_memory_get_length(buf) ;
+	memcpy(encrypted_data,ops_memory_get_data(buf),tlen) ;
+	*encrypted_data_len = tlen ;
+
+	ops_memory_release(buf) ;
+	free(buf) ;
+
+	return true ;
+}
+
+bool PGPHandler::decryptDataBin(const PGPIdType& key_id,const void *data, const uint32_t len, unsigned char *encrypted_data, unsigned int *encrypted_data_len) 
+{
+	throw std::runtime_error("Not implemented!") ;
+	return false ;
+}
+
 bool PGPHandler::decryptTextFromFile(const PGPIdType&,std::string& text,const std::string& inputfile) 
 {
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.

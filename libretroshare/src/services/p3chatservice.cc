@@ -26,7 +26,9 @@
 
 #include "openssl/rand.h"
 #include "pgp/rscertificate.h"
+#include "pqi/authgpg.h"
 #include "util/rsdir.h"
+#include "util/radix64.h"
 #include "util/rsaes.h"
 #include "util/rsrandom.h"
 #include "util/rsstring.h"
@@ -2937,7 +2939,7 @@ void p3ChatService::sendTurtleData(RsChatItem *item, const std::string& virtual_
 	mTurtle->sendTurtleData(virtual_peer_id,gitem) ;
 }
 
-bool p3ChatService::createDistantChatInvite(PGPIdType pgp_id,time_t time_of_validity,TurtleFileHash& hash) 
+bool p3ChatService::createDistantChatInvite(const std::string& pgp_id,time_t time_of_validity,TurtleFileHash& hash) 
 {
 	// create the invite
 
@@ -2957,11 +2959,6 @@ bool p3ChatService::createDistantChatInvite(PGPIdType pgp_id,time_t time_of_vali
 
 	hash = SSLIdType(hash_bytes).toStdString() ;
 
-	{
-		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
-		_distant_chat_invites[hash] = invite ;
-	}
-
 	std::cerr << "Created new distant chat invite: " << std::endl;
 	std::cerr << "  creation time stamp = " << invite.time_of_creation << std::endl;
 	std::cerr << "  validity time stamp = " << invite.time_of_validity << std::endl;
@@ -2970,6 +2967,51 @@ bool p3ChatService::createDistantChatInvite(PGPIdType pgp_id,time_t time_of_vali
 	static const char outl[16] = { '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f' } ;
 	for(uint32_t j = 0; j < 16; j++) { std::cerr << outl[ (invite.aes_key[j]>>4) ] ; std::cerr << outl[ invite.aes_key[j] & 0xf ] ; }
 	std::cerr << std::endl;
+
+	// Now encrypt the data to create the link info. We need 
+	//
+	// [E] - the hash
+	// [E] - the aes key
+	// [E] - the signature
+	//     - pgp id
+	//     - timestamp
+	//
+	// The link will be
+	//
+	// 	retroshare://chat?time_stamp=3243242&private_data=[radix64 string]
+
+	unsigned char *data = new unsigned char[16+16+400] ; 
+	memcpy(data   ,hash_bytes     ,16) ;
+	memcpy(data+16,invite.aes_key ,16) ;
+
+	PGPIdType own_gpg_id( rsPeers->getOwnId() ) ;
+	uint32_t signlen = 400;
+
+	if(!AuthGPG::getAuthGPG()->SignDataBin(data,32,data+32,&signlen))
+		return false ;
+
+	std::cerr << "Performing signature with id = " << own_gpg_id.toStdString() << std::endl;
+	std::cerr << "Signature length = " << signlen << std::endl;
+
+	// Then encrypt the whole data into a single string.
+
+	unsigned char *encrypted_data = NULL ;
+	uint32_t encrypted_size = 0 ;
+
+	if(!AuthGPG::getAuthGPG()->encryptDataBin(pgp_id,(unsigned char *)data,signlen+32,encrypted_data,&encrypted_size))
+		return false ;
+
+	std::cerr << "Encrypted data size: " << encrypted_size << std::endl;
+
+	std::string encrypted_radix64_string ;
+	Radix64::encode((const char *)encrypted_data,encrypted_size,invite.encrypted_radix64_string) ;
+
+	{
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+		_distant_chat_invites[hash] = invite ;
+	}
+
+	std::cerr << "Encrypted radix64 string: " << invite.encrypted_radix64_string << std::endl;
 
 	return true ;
 }

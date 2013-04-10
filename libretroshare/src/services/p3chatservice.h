@@ -310,6 +310,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 		struct DistantChatInvite
 		{
 			unsigned char aes_key[16] ;
+			std::string encrypted_radix64_string ;
 			time_t time_of_validity ;
 			time_t time_of_creation ;
 			time_t last_hit_time ;
@@ -332,7 +333,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 		// Creates the invite if the public key of the distant peer is available.
 		// Om success, stores the invite in the map above, so that we can respond to tunnel requests.
 		//
-		bool createDistantChatInvite(PGPIdType pgp_id,time_t time_of_validity,TurtleFileHash& hash) ;
+		bool createDistantChatInvite(const std::string& pgp_id,time_t time_of_validity,TurtleFileHash& hash) ;
 
 		// Overloaded from RsTurtleClientService
 
