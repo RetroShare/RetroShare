@@ -306,6 +306,11 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 	public:
 		void connectToTurtleRouter(p3turtle *) ;
 
+		// Creates the invite if the public key of the distant peer is available.
+		// Om success, stores the invite in the map above, so that we can respond to tunnel requests.
+		//
+		bool createDistantChatInvite(const std::string& pgp_id,time_t time_of_validity,TurtleFileHash& hash) ;
+
 	private:
 		struct DistantChatInvite
 		{
@@ -329,11 +334,6 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 		// This maps contains the current peers to talk to with distant chat.
 		//
 		std::map<std::string,DistantChatPeerInfo> _distant_chat_peers ;
-
-		// Creates the invite if the public key of the distant peer is available.
-		// Om success, stores the invite in the map above, so that we can respond to tunnel requests.
-		//
-		bool createDistantChatInvite(const std::string& pgp_id,time_t time_of_validity,TurtleFileHash& hash) ;
 
 		// Overloaded from RsTurtleClientService
 

@@ -28,6 +28,7 @@
 #include <retroshare/rsiface.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsdisc.h>
+#include <retroshare/rsmsgs.h>
 
 #include "common/vmessagebox.h"
 #include "common/RSTreeWidgetItem.h"
@@ -230,6 +231,11 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint /*point*/ )
 
 			connect( makefriendAct , SIGNAL( triggered() ), this, SLOT( makeFriend() ) );
 			contextMnu->addAction( makefriendAct);
+
+			QAction* createChatLinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Create a distant chat invitation..." ), contextMnu );
+
+			connect( createChatLinkAct , SIGNAL( triggered() ), this, SLOT( createChatLink() ) );
+			contextMnu->addAction( createChatLinkAct);
 #ifdef TODO
 			if(detail.validLvl > RS_TRUST_LVL_MARGINAL)		// it's a denied old friend.
 			{
@@ -283,6 +289,19 @@ void NetworkDialog::deleteCert()
 void NetworkDialog::makeFriend()
 {
 	ConfCertDialog::showIt(getCurrentNeighbour()->text(COLUMN_PEERID).toStdString(), ConfCertDialog::PageTrust);
+}
+
+void NetworkDialog::createChatLink()
+{
+	std::string pgp_id = getCurrentNeighbour()->text(COLUMN_PEERID).toStdString() ;
+
+	std::cerr << "Creating chat link for pgp id " << pgp_id << std::endl;
+
+	std::string hash,estr ;
+	rsMsgs->createDistantChatInvite(pgp_id,time(NULL)+3600,estr) ;
+
+	std::cerr << "Created invite:" << std::endl;
+	std::cerr << "  estr = " << estr << std::endl;
 }
 
 /** Shows Peer Information/Auth Dialog */

@@ -2939,7 +2939,7 @@ void p3ChatService::sendTurtleData(RsChatItem *item, const std::string& virtual_
 	mTurtle->sendTurtleData(virtual_peer_id,gitem) ;
 }
 
-bool p3ChatService::createDistantChatInvite(const std::string& pgp_id,time_t time_of_validity,TurtleFileHash& hash) 
+bool p3ChatService::createDistantChatInvite(const std::string& pgp_id,time_t time_of_validity,std::string& encrypted_radix64_string) 
 {
 	// create the invite
 
@@ -2957,12 +2957,12 @@ bool p3ChatService::createDistantChatInvite(const std::string& pgp_id,time_t tim
 	unsigned char hash_bytes[16] ;
 	RAND_bytes( hash_bytes, 16) ;
 
-	hash = SSLIdType(hash_bytes).toStdString() ;
+	std::string hash = SSLIdType(hash_bytes).toStdString() ;
 
 	std::cerr << "Created new distant chat invite: " << std::endl;
 	std::cerr << "  creation time stamp = " << invite.time_of_creation << std::endl;
 	std::cerr << "  validity time stamp = " << invite.time_of_validity << std::endl;
-	std::cerr << "                 hash = " ;
+	std::cerr << "                 hash = " << hash << std::endl;
 	std::cerr << "       encryption key = " ;
 	static const char outl[16] = { '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f' } ;
 	for(uint32_t j = 0; j < 16; j++) { std::cerr << outl[ (invite.aes_key[j]>>4) ] ; std::cerr << outl[ invite.aes_key[j] & 0xf ] ; }
@@ -2984,26 +2984,24 @@ bool p3ChatService::createDistantChatInvite(const std::string& pgp_id,time_t tim
 	memcpy(data   ,hash_bytes     ,16) ;
 	memcpy(data+16,invite.aes_key ,16) ;
 
-	PGPIdType own_gpg_id( rsPeers->getOwnId() ) ;
+	std::cerr << "Performing signature " << std::endl;
 	uint32_t signlen = 400;
 
 	if(!AuthGPG::getAuthGPG()->SignDataBin(data,32,data+32,&signlen))
 		return false ;
 
-	std::cerr << "Performing signature with id = " << own_gpg_id.toStdString() << std::endl;
 	std::cerr << "Signature length = " << signlen << std::endl;
 
 	// Then encrypt the whole data into a single string.
 
-	unsigned char *encrypted_data = NULL ;
-	uint32_t encrypted_size = 0 ;
+	unsigned char *encrypted_data = new unsigned char[2000] ;
+	uint32_t encrypted_size = 2000 ;
 
 	if(!AuthGPG::getAuthGPG()->encryptDataBin(pgp_id,(unsigned char *)data,signlen+32,encrypted_data,&encrypted_size))
 		return false ;
 
 	std::cerr << "Encrypted data size: " << encrypted_size << std::endl;
 
-	std::string encrypted_radix64_string ;
 	Radix64::encode((const char *)encrypted_data,encrypted_size,invite.encrypted_radix64_string) ;
 
 	{
@@ -3035,8 +3033,8 @@ void p3ChatService::cleanDistantChatInvites()
 		}
 		else
 		{
-			++it ;
 			std::cerr << "  Keeping hash " << it->first << std::endl;
+			++it ;
 		}
 }
 

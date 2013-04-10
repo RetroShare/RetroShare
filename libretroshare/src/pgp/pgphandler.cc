@@ -980,13 +980,24 @@ bool PGPHandler::encryptDataBin(const PGPIdType& key_id,const void *data, const 
 	ops_create_info_delete(info);
 
 	int tlen = ops_memory_get_length(buf) ;
-	memcpy(encrypted_data,ops_memory_get_data(buf),tlen) ;
-	*encrypted_data_len = tlen ;
+	bool res ;
+
+	if(*encrypted_data_len >= tlen)
+	{
+		memcpy(encrypted_data,ops_memory_get_data(buf),tlen) ;
+		*encrypted_data_len = tlen ;
+		res = true ;
+	}
+	else
+	{
+		std::cerr << "Not enough room to fit encrypted data. Size given=" << *encrypted_data_len << ", required=" << tlen << std::endl;
+		res = false ;
+	}
 
 	ops_memory_release(buf) ;
 	free(buf) ;
 
-	return true ;
+	return res ;
 }
 
 bool PGPHandler::decryptDataBin(const PGPIdType& key_id,const void *data, const uint32_t len, unsigned char *encrypted_data, unsigned int *encrypted_data_len) 
@@ -1071,10 +1082,21 @@ bool PGPHandler::SignDataBin(const PGPIdType& id,const void *data, const uint32_
 	if(!memres)
 		return false ;
 
-	uint32_t tlen = std::min(*signlen,(uint32_t)ops_memory_get_length(memres)) ;
+	bool res ;
+	uint32_t slen = (uint32_t)ops_memory_get_length(memres);
 
-	memcpy(sign,ops_memory_get_data(memres),tlen) ;
-	*signlen = tlen ;
+	if(*signlen >= slen)
+	{
+		*signlen = slen ;
+
+		memcpy(sign,ops_memory_get_data(memres),*signlen) ;
+		res = true ;
+	}
+	else
+	{
+		std::cerr << "(EE) memory chunk is not large enough for signature packet. Requred size: " << slen << " bytes." << std::endl;
+		res = false ;
+	}
 
 	ops_memory_release(memres) ;
 	free(memres) ;
@@ -1090,7 +1112,7 @@ bool PGPHandler::SignDataBin(const PGPIdType& id,const void *data, const uint32_
 	hexdump( (unsigned char *)sign,*signlen) ;
 	std::cerr << std::endl;
 #endif
-	return true ;
+	return res ;
 }
 
 bool PGPHandler::privateSignCertificate(const PGPIdType& ownId,const PGPIdType& id_of_key_to_sign) 

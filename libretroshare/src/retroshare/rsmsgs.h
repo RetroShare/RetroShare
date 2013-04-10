@@ -211,7 +211,8 @@ class RsMsgs
 virtual ~RsMsgs() { return; }
 
 /****************************************/
-	/* Message Items */
+/*             Message Items            */
+/****************************************/
 
 virtual bool getMessageSummaries(std::list<MsgInfoSummary> &msgList) = 0;
 virtual bool getMessage(const std::string &mId, MessageInfo &msg)  = 0;
@@ -242,7 +243,8 @@ virtual bool setMessageTag(const std::string &msgId, uint32_t tagId, bool set) =
 virtual bool resetMessageStandardTagTypes(MsgTagType& tags) = 0;
 
 /****************************************/
-	/* Chat */
+/*                 Chat                 */
+/****************************************/
 virtual	bool   sendPublicChat(const std::wstring& msg) = 0;
 virtual	bool   sendPrivateChat(const std::string& id, const std::wstring& msg) = 0;
 virtual int     getPublicChatQueueCount() = 0;
@@ -265,6 +267,10 @@ virtual void getAvatarData(const std::string& pid,unsigned char *& data,int& siz
 virtual void setOwnAvatarData(const unsigned char *data,int size) = 0 ;
 virtual void getOwnAvatarData(unsigned char *& data,int& size) = 0 ;
 
+/****************************************/
+/*            Chat lobbies              */
+/****************************************/
+
 virtual bool joinVisibleChatLobby(const ChatLobbyId& lobby_id) = 0 ;
 virtual bool isLobbyId(const std::string& virtual_peer_id,ChatLobbyId& lobby_id) = 0;
 virtual bool getVirtualPeerId(const ChatLobbyId& lobby_id,std::string& vpid) = 0;
@@ -282,7 +288,10 @@ virtual bool getDefaultNickNameForChatLobby(std::string& nick) = 0 ;
 virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const std::string& lobby_topic,const std::list<std::string>& invited_friends,uint32_t lobby_privacy_type) = 0 ;
 
 /****************************************/
+/*            Distant chat              */
+/****************************************/
 
+virtual bool createDistantChatInvite(const std::string& pgp_id,time_t time_of_validity,std::string& encrypted_string) = 0 ;
 };
 
 

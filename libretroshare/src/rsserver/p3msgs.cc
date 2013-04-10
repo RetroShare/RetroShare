@@ -330,5 +330,9 @@ void p3Msgs::getPendingChatLobbyInvites(std::list<ChatLobbyInvite>& invites)
 {
 	mChatSrv->getPendingChatLobbyInvites(invites) ;
 }
+bool p3Msgs::createDistantChatInvite(const std::string& pgp_id,time_t time_of_validity,std::string& encrypted_string)
+{
+	return mChatSrv->createDistantChatInvite(pgp_id,time_of_validity,encrypted_string) ;
+}
 
 

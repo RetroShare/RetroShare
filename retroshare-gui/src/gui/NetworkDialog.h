@@ -68,6 +68,7 @@ private slots:
 
   void makeFriend() ;
   void denyFriend() ;
+  void createChatLink() ;
   void deleteCert() ;
   void peerdetails();
   void copyLink();
