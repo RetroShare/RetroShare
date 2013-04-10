@@ -303,11 +303,16 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 		//         Members related to anonymous distant chat.         //
 		// ===========================================================//
 
+	public:
+		void connectToTurtleRouter(p3turtle *) ;
+
+	private:
 		struct DistantChatInvite
 		{
 			unsigned char aes_key[16] ;
-			time_t validity_time_stamp ;
-			std::string virtual_peer_id ;
+			time_t time_of_validity ;
+			time_t time_of_creation ;
+			time_t last_hit_time ;
 		};
 		struct DistantChatPeerInfo 
 		{
@@ -333,6 +338,8 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 
 		virtual bool handleTunnelRequest(const std::string& hash,const std::string& peer_id,std::string& description_info_string) ;
 		virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const std::string& hash,const std::string& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
+		void addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) ;
+		void removeVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) ;
 
 		// Utility functions
 
@@ -340,8 +347,6 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 		void sendTurtleData(RsChatItem *,const std::string& virtual_peer_id) ;
 
 		p3turtle *mTurtle ;
-	public:
-		void connectToTurtleRouter(p3turtle *) ;
 };
 
 class p3ChatService::StateStringInfo

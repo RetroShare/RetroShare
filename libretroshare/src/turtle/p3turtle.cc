@@ -99,16 +99,13 @@ static const int MAX_TR_FORWARD_PER_SEC_UPPER_LIMIT = 30 ;
 static const int MAX_TR_FORWARD_PER_SEC_LOWER_LIMIT = 10 ;
 static const int DISTANCE_SQUEEZING_POWER 	       =  8 ;
 
-p3turtle::p3turtle(p3LinkMgr *lm,ftServer *fs)
+p3turtle::p3turtle(p3LinkMgr *lm)
 	:p3Service(RS_SERVICE_TYPE_TURTLE), p3Config(CONFIG_TYPE_TURTLE), mLinkMgr(lm), mTurtleMtx("p3turtle")
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
 	_turtle_routing_enabled = true ;
 	_turtle_routing_session_enabled = true;
-
-	_ft_server = fs ;
-	_ft_controller = fs->getController() ;
 
 	_random_bias = RSRandom::random_u32() ;
 	_serialiser = new RsTurtleSerialiser() ;
@@ -260,31 +257,6 @@ int p3turtle::tick()
 // ------------------------------  Tunnel maintenance. ------------------------------ //
 // -----------------------------------------------------------------------------------//
 //
-
-#ifdef TO_REMOVE
-// This method handles peer connexion/deconnexion
-// If A connects, new tunnels should be initiated from A
-// If A disconnects, the tunnels passed through A should be closed.
-//
-void p3turtle::statusChange(const std::list<pqipeer> &plist) // derived from pqiMonitor
-{
-	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
-
-	// We actually do not shut down tunnels when peers get down: Tunnels that
-	// are not working properly get automatically removed after some time.
-
-	// save the list of active peers. This is useful for notifying the ftContoller
-	_online_peers = plist ;
-
-	std::cerr << "p3turtle: status change triggered. Saving list of " << plist.size() << " peers." << std::endl ;
-
-	/* if any have switched to 'connected' then we force digging new tunnels */
-
-	for(std::list<pqipeer>::const_iterator pit =  plist.begin(); pit != plist.end(); pit++)
-		if ((pit->state & RS_PEER_S_FRIEND) && (pit->actions & RS_PEER_CONNECTED))
-			_force_digg_new_tunnels = true ;
-}
-#endif
 
 // adds a virtual peer to the list that is communicated ot ftController.
 //
@@ -520,11 +492,25 @@ void p3turtle::autoWash()
 
 	// File hashes can only be removed by calling the 'stopMonitoringFileTunnels()' command.
 	
-	// All calls to _ft_controller are done off-mutex, to avoir cross-lock
-	if(_ft_controller != NULL)
-		for(uint32_t i=0;i<peers_to_remove.size();++i)
-			_ft_controller->removeFileSource(peers_to_remove[i].first,peers_to_remove[i].second) ;
+	for(uint32_t i=0;i<peers_to_remove.size();++i)
+	{
+		RsTurtleClientService *service = NULL ;
 
+		{
+			RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
+
+			std::map<TurtleFileHash,TurtleHashInfo>::iterator it(_incoming_file_hashes.find(peers_to_remove[i].first)) ;
+
+			if(it != _incoming_file_hashes.end())
+				service = it->second.service ;
+			else
+				std::cerr << "p3turtle::autowash(): ERROR. No service associated to hash " << peers_to_remove[i].first << ": this is super weird." << std::endl;
+		}
+		// All calls to services are done off-mutex, to avoir cross-lock
+		//
+		if(service != NULL)
+			service->removeVirtualPeer(peers_to_remove[i].first,peers_to_remove[i].second) ;
+	}
 }
 
 void p3turtle::locked_closeTunnel(TurtleTunnelId tid,std::vector<std::pair<TurtleFileHash,TurtleVirtualPeerId> >& sources_to_remove)
@@ -777,8 +763,6 @@ int p3turtle::handleIncoming()
 					case RS_TURTLE_SUBTYPE_TUNNEL_OK     : handleTunnelResult(dynamic_cast<RsTurtleTunnelOkItem *>(item)) ;
 																		break ;
 
-					case RS_TURTLE_SUBTYPE_GENERIC_DATA  : handleRecvGenericDataItem(dynamic_cast<RsTurtleGenericDataItem *>(item)) ;
-																		break ;
 					default:
 																		std::cerr << "p3turtle::handleIncoming: Unknown packet subtype " << item->PacketSubType() << std::endl ;
 				}
@@ -1085,21 +1069,21 @@ void p3turtle::handleRecvGenericTunnelItem(RsTurtleGenericTunnelItem *item)
 	service->receiveTurtleData(item,hash,vpid,item->travelingDirection()) ;
 }
 
-void p3turtle::handleRecvGenericDataItem(RsTurtleGenericDataItem *item)
-{
-#ifdef P3TURTLE_DEBUG
-	std::cerr << "p3Turtle: received Generic Data item:" << std::endl ;
-	item->print(std::cerr,1) ;
-#endif
-	std::string virtual_peer_id ;
-	std::string hash ;
-	RsTurtleClientService *service ;
-
-	if(!getTunnelServiceInfo(item->tunnelId(),virtual_peer_id,hash,service))
-		return ;
-
-	service->receiveTurtleData(item->data_bytes,item->data_size,hash,virtual_peer_id,item->travelingDirection()) ;
-}
+//void p3turtle::handleRecvGenericDataItem(RsTurtleGenericDataItem *item)
+//{
+//#ifdef P3TURTLE_DEBUG
+//	std::cerr << "p3Turtle: received Generic Data item:" << std::endl ;
+//	item->print(std::cerr,1) ;
+//#endif
+//	std::string virtual_peer_id ;
+//	std::string hash ;
+//	RsTurtleClientService *service ;
+//
+//	if(!getTunnelServiceInfo(item->tunnelId(),virtual_peer_id,hash,service))
+//		return ;
+//
+//	service->receiveTurtleData(item->data_bytes,item->data_size,hash,virtual_peer_id,item->travelingDirection()) ;
+//}
 
 bool p3turtle::getTunnelServiceInfo(TurtleTunnelId tunnel_id,std::string& vpid,std::string& hash,RsTurtleClientService *& service)
 {
@@ -1543,6 +1527,7 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 	bool new_tunnel = false ;
 	TurtleFileHash new_hash ;
 	std::string new_vpid ;
+	RsTurtleClientService *service = NULL ;
 
 	{
 		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
@@ -1634,6 +1619,7 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 					//
 					new_tunnel = true ;
 					new_hash = it->first ;
+					service = it->second.service ;
 
 					locked_addDistantPeer(new_hash,item->tunnel_id) ;
 					new_vpid = _local_tunnels[item->tunnel_id].vpid ; // save it for off-mutex usage.
@@ -1657,11 +1643,8 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 	// notify the file transfer controller for the new file source. This should be done off-mutex
 	// so we deported this code here.
 	//
-	if(new_tunnel && _ft_controller != NULL)
-	{
-		_ft_controller->addFileSource(new_hash,new_vpid) ;
-		_ft_controller->statusChange(_online_peers) ;
-	}
+	if(new_tunnel && service != NULL)
+		service->addVirtualPeer(new_hash,new_vpid) ;
 }
 
 // -----------------------------------------------------------------------------------//
@@ -2093,8 +2076,8 @@ void p3turtle::dumpState()
 	for(std::map<TurtleVirtualPeerId,TurtleTunnelId>::const_iterator it(_virtual_peers.begin());it!=_virtual_peers.end();++it)
 		std::cerr << "    id=" << it->first << ", tunnel=" << (void*)(it->second) << std::endl ;
 	std::cerr << "  Online peers: " << std::endl ;
-	for(std::list<pqipeer>::const_iterator it(_online_peers.begin());it!=_online_peers.end();++it)
-		std::cerr << "    id=" << it->id << ", name=" << it->name << ", state=" << it->state << ", actions=" << it->actions << std::endl ;
+//	for(std::list<pqipeer>::const_iterator it(_online_peers.begin());it!=_online_peers.end();++it)
+//		std::cerr << "    id=" << it->id << ", name=" << it->name << ", state=" << it->state << ", actions=" << it->actions << std::endl ;
 }
 #endif
 

@@ -118,6 +118,9 @@ class ftServer: public RsFiles, public ftDataSend, public RsTurtleClientService,
 		virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const std::string& hash,const std::string& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
 		virtual RsTurtleGenericTunnelItem *deserialiseItem(void *data,uint32_t size) const ;
 
+		void addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) ;
+		void removeVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) ;
+
 		/***************************************************************/
 		/*************** Control Interface *****************************/
 		/************** (Implements RsFiles) ***************************/

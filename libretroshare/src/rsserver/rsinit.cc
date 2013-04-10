@@ -2230,7 +2230,7 @@ int RsServer::StartupRetroShare()
 	mConnMgr->setP3tunnel(tn);
 #endif
 
-	p3turtle *tr = new p3turtle(mLinkMgr,ftserver) ;
+	p3turtle *tr = new p3turtle(mLinkMgr) ;
 	rsTurtle = tr ;
 	pqih -> addService(tr);
 

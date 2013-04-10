@@ -24,6 +24,8 @@
  */
 #include <math.h>
 
+#include "openssl/rand.h"
+#include "pgp/rscertificate.h"
 #include "util/rsdir.h"
 #include "util/rsaes.h"
 #include "util/rsrandom.h"
@@ -54,6 +56,8 @@ static const time_t  MAX_DELAY_BETWEEN_LOBBY_KEEP_ALIVE =  120 ; // send keep al
 static const time_t 	MAX_KEEP_PUBLIC_LOBBY_RECORD       =   60 ; // keep inactive lobbies records for 60 secs max.
 static const time_t 	MIN_DELAY_BETWEEN_PUBLIC_LOBBY_REQ =   20 ; // don't ask for lobby list more than once every 30 secs.
 
+static const time_t 	DISTANT_CHAT_CLEANING_PERIOD       =   60 ; // don't ask for lobby list more than once every 30 secs.
+
 p3ChatService::p3ChatService(p3LinkMgr *lm, p3HistoryMgr *historyMgr)
 	:p3Service(RS_SERVICE_TYPE_CHAT), p3Config(CONFIG_TYPE_CHAT), mChatMtx("p3ChatService"), mLinkMgr(lm) , mHistoryMgr(historyMgr)
 {
@@ -81,15 +85,21 @@ int	p3ChatService::tick()
 	if(receivedItems()) 
 		receiveChatQueue();
 
-	static time_t last_clean_time = 0 ;
+	static time_t last_clean_time_lobby = 0 ;
+	static time_t last_clean_time_dchat = 0 ;
+
 	time_t now = time(NULL) ;
 
-	if(last_clean_time + LOBBY_CACHE_CLEANING_PERIOD < now)
+	if(last_clean_time_lobby + LOBBY_CACHE_CLEANING_PERIOD < now)
 	{
 		cleanLobbyCaches() ;
-		last_clean_time = now ;
+		last_clean_time_lobby = now ;
 	}
-
+	if(last_clean_time_dchat + DISTANT_CHAT_CLEANING_PERIOD < now)
+	{
+		cleanDistantChatInvites() ;
+		last_clean_time_dchat = now ;
+	}
 	return 0;
 }
 
@@ -2752,7 +2762,9 @@ void p3ChatService::cleanLobbyCaches()
 
 bool p3ChatService::handleTunnelRequest(const std::string& hash,const std::string& peer_id,std::string& description_info_string) 
 {
-	std::map<TurtleFileHash,DistantChatInvite>::const_iterator it = _distant_chat_invites.find(hash) ;
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+	std::map<TurtleFileHash,DistantChatInvite>::iterator it = _distant_chat_invites.find(hash) ;
 
 	std::cerr << "p3ChatService::handleTunnelRequest: received tunnel request for hash " << hash << std::endl;
 
@@ -2763,6 +2775,39 @@ bool p3ChatService::handleTunnelRequest(const std::string& hash,const std::strin
 	return true ;
 }
 
+void p3ChatService::addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id)
+{
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+	std::map<TurtleFileHash,DistantChatInvite>::iterator it = _distant_chat_invites.find(hash) ;
+
+	if(it == _distant_chat_invites.end())
+	{
+		std::cerr << "(EE) Cannot add virtual peer for hash " << hash << ": no chat invite found for that hash." << std::endl;
+		return ;
+	}
+
+	memcpy(_distant_chat_peers[virtual_peer_id].aes_key,it->second.aes_key,8) ;
+
+	time_t now = time(NULL) ;
+	_distant_chat_peers[virtual_peer_id].last_contact = now ;
+	it->second.last_hit_time = now  ;
+}
+
+void p3ChatService::removeVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id)
+{
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+	std::map<std::string,DistantChatPeerInfo>::iterator it = _distant_chat_peers.find(virtual_peer_id) ;
+
+	if(it == _distant_chat_peers.end())
+	{
+		std::cerr << "(EE) Cannot remove virtual peer " << virtual_peer_id << ": not found in chat list!!" << std::endl;
+		return ;
+	}
+
+	_distant_chat_peers.erase(it) ;
+}
 void p3ChatService::receiveTurtleData(	RsTurtleGenericTunnelItem *gitem,const std::string& hash,
 													const std::string& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction)
 {
@@ -2891,5 +2936,78 @@ void p3ChatService::sendTurtleData(RsChatItem *item, const std::string& virtual_
 
 	mTurtle->sendTurtleData(virtual_peer_id,gitem) ;
 }
+
+bool p3ChatService::createDistantChatInvite(PGPIdType pgp_id,time_t time_of_validity,TurtleFileHash& hash) 
+{
+	// create the invite
+
+	time_t now = time(NULL) ;
+
+	DistantChatInvite invite ;
+	invite.time_of_validity = now + time_of_validity ;
+	invite.time_of_creation = now ;
+	invite.last_hit_time = now ;
+
+	RAND_bytes( (unsigned char *)&invite.aes_key[0],16 ) ;	// generate a random AES encryption key
+
+	// Create a random hash for that invite.
+	//
+	unsigned char hash_bytes[16] ;
+	RAND_bytes( hash_bytes, 16) ;
+
+	hash = SSLIdType(hash_bytes).toStdString() ;
+
+	{
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+		_distant_chat_invites[hash] = invite ;
+	}
+
+	std::cerr << "Created new distant chat invite: " << std::endl;
+	std::cerr << "  creation time stamp = " << invite.time_of_creation << std::endl;
+	std::cerr << "  validity time stamp = " << invite.time_of_validity << std::endl;
+	std::cerr << "                 hash = " ;
+	std::cerr << "       encryption key = " ;
+	static const char outl[16] = { '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f' } ;
+	for(uint32_t j = 0; j < 16; j++) { std::cerr << outl[ (invite.aes_key[j]>>4) ] ; std::cerr << outl[ invite.aes_key[j] & 0xf ] ; }
+	std::cerr << std::endl;
+
+	return true ;
+}
+
+void p3ChatService::cleanDistantChatInvites()
+{
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+	time_t now = time(NULL) ;
+
+	std::cerr << "p3ChatService::cleanDistantChatInvites: " << std::endl;
+
+	for(std::map<TurtleFileHash,DistantChatInvite>::iterator it(_distant_chat_invites.begin());it!=_distant_chat_invites.end(); )
+		if(it->second.time_of_validity < now)
+		{
+			std::cerr << "  Removing hash " << it->first << std::endl;
+
+			std::map<TurtleFileHash,DistantChatInvite>::iterator tmp(it) ;
+			++it ;
+			_distant_chat_invites.erase(tmp) ;
+		}
+		else
+		{
+			++it ;
+			std::cerr << "  Keeping hash " << it->first << std::endl;
+		}
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 

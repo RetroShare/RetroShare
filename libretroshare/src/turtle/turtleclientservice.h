@@ -64,14 +64,6 @@ class RsTurtleClientService
 		//
 		// By default (if not overloaded), the method will just free the data, as any subclass should do as well.
 		//
-		virtual void receiveTurtleData(void *data,uint32_t size,const std::string& hash,const std::string& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) 
-		{ 
-			std::cerr << "!!!!!! Received Data from turtle router, but the client service is not handling it !!!!!!!!!!" << std::endl ; 
-		}
-
-		// This method does the exact same job, but the item is already de-serialized. It is kept for 
-		// compatibility reasons only. New services should not use it, only the file transfer should.
-
 		virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const std::string& hash,const std::string& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) 
 		{ 
 			std::cerr << "!!!!!! Received Data from turtle router, but the client service is not handling it !!!!!!!!!!" << std::endl ; 
@@ -83,6 +75,11 @@ class RsTurtleClientService
 		// router: RsTurtleGenericDataItem
 
 		virtual RsTurtleGenericTunnelItem *deserialiseItem(void *data, uint32_t size) const { return NULL ; }
+
+		// These methods are called by the turtle router to add/remove virtual peers when tunnels are created/deleted
+		//
+		virtual void addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id) = 0 ;
+		virtual void removeVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id) = 0 ;
 };
 
 

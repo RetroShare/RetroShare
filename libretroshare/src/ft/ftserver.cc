@@ -488,6 +488,15 @@ RsTurtleGenericTunnelItem *ftServer::deserialiseItem(void *data,uint32_t size) c
 	}
 }
 
+void ftServer::addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id) 
+{
+	mFtController->addFileSource(hash,virtual_peer_id) ;
+}
+void ftServer::removeVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id) 
+{
+	mFtController->removeFileSource(hash,virtual_peer_id) ;
+}
+
 bool ftServer::handleTunnelRequest(const std::string& hash,const std::string& peer_id,std::string& description_info_string)
 {
 	FileInfo info ;

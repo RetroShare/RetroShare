@@ -216,7 +216,7 @@ class TurtleHashInfo
 class p3turtle: public p3Service, public RsTurtle, public p3Config
 {
 	public:
-		p3turtle(p3LinkMgr *lm,ftServer *m);
+		p3turtle(p3LinkMgr *lm) ;
 
 		// Enables/disable the service. Still ticks, but does nothing. Default is true.
 		//
@@ -352,7 +352,6 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 
 		/// specific routing functions for handling particular packets.
 		void handleRecvGenericTunnelItem(RsTurtleGenericTunnelItem *item);
-		void handleRecvGenericDataItem(RsTurtleGenericDataItem *item);
 		bool getTunnelServiceInfo(TurtleTunnelId, std::string& virtual_peer_id, std::string& hash, RsTurtleClientService*&) ;
 
 		// following functions should go to ftServer
@@ -376,8 +375,6 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		
 		/* data */
 		p3LinkMgr *mLinkMgr;
-		ftServer *_ft_server ;
-		ftController *_ft_controller ;
 		RsTurtleSerialiser *_serialiser ;
 
 		mutable RsMutex mTurtleMtx;
