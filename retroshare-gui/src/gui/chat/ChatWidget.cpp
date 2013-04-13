@@ -36,6 +36,7 @@
 #include "ui_ChatWidget.h"
 #include "gui/notifyqt.h"
 #include "gui/RetroShareLink.h"
+#include "gui/CreateMsgLinkDialog.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/settings/RsharePeerSettings.h"
 #include "gui/im_history/ImHistoryBrowser.h"
@@ -549,9 +550,18 @@ void ChatWidget::contextMenu(QPoint point)
 	QAction *action = contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
 	action->setDisabled(RSLinkClipboard::empty());
 	contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste my certificate link"), this, SLOT(pasteOwnCertificateLink()));
+	contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste/Create private chat or Message link..."), this, SLOT(pasteCreateMsgLink()));
 
 	contextMnu->exec(QCursor::pos());
 	delete(contextMnu);
+}
+
+void ChatWidget::pasteCreateMsgLink()
+{
+	CreateMsgLinkDialog dialog ;
+	dialog.exec() ;
+
+	ui->chatTextEdit->insertHtml(RSLinkClipboard::toHtml());
 }
 
 void ChatWidget::contextMenuTextBrowser(QPoint point)

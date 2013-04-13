@@ -52,7 +52,18 @@
 class RetroShareLink
 {
 	public:
-		enum enumType { TYPE_UNKNOWN, TYPE_FILE, TYPE_PERSON, TYPE_FORUM, TYPE_CHANNEL, TYPE_SEARCH, TYPE_MESSAGE, TYPE_CERTIFICATE,TYPE_EXTRAFILE };
+		enum enumType { 	TYPE_UNKNOWN       = 0x00, 
+								TYPE_FILE          = 0x01, 
+								TYPE_PERSON        = 0x02, 
+								TYPE_FORUM         = 0x03, 
+								TYPE_CHANNEL       = 0x04, 
+								TYPE_SEARCH        = 0x05, 
+								TYPE_MESSAGE       = 0x06, 
+								TYPE_CERTIFICATE   = 0x07,
+								TYPE_EXTRAFILE     = 0x08, 
+								TYPE_PRIVATE_CHAT  = 0x09,
+								TYPE_PUBLIC_MSG    = 0x0a
+		};
 
 	public:
 		RetroShareLink();
@@ -67,6 +78,8 @@ class RetroShareLink
 		bool createSearch(const QString& keywords);
 		bool createMessage(const std::string& peerId, const QString& subject);
 		bool createCertificate(const std::string& ssl_or_gpg_id) ;
+		bool createPrivateChatInvite(time_t time_stamp,const QString& gpg_id,const QString& encrypted_chat_info) ;
+		bool createPublicMsgInvite(time_t time_stamp,const QString& pgp_id,const QString& hash) ;
 		bool createUnknwonSslCertificate(const std::string& sslId, const std::string& gpgId = "") ;
 
 		enumType type() const {return _type; }
@@ -83,6 +96,8 @@ class RetroShareLink
 		const QString& localIPAndPort() const { return _loc_ip_port ; }
 		const QString& externalIPAndPort() const { return _ext_ip_port ; }
 		const QString& location() const { return _location ; }
+		const time_t timeStamp() const { return _time_stamp ; }
+		const QString& encryptedPrivateChatInfo() const { return _encrypted_chat_info ; }
 		QString title() const;
 
 		unsigned int subType() const { return _subType; }
@@ -118,8 +133,10 @@ class RetroShareLink
 		void clear();
 		void check();
 		static bool checkHash(const QString& hash);
+		static bool checkRadix64(const QString& s);
 		static bool checkName(const QString& name);
 		static bool checkSSLId(const QString& name);
+		static bool checkPGPId(const QString& name);
 
 		bool     _valid;
 		enumType _type;
@@ -135,6 +152,9 @@ class RetroShareLink
 		QString  _location ;	// location 
 		QString  _ext_ip_port ;
 		QString  _loc_ip_port ;
+		QString  _encrypted_chat_info ; // encrypted data string for the recipient of a chat invite
+		time_t   _time_stamp ; 				// time stamp at which the link will expire.
+
 		unsigned int _subType; // for general use as sub type for _type (RSLINK_SUBTYPE_...)
 };
 

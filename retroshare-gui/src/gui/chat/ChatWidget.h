@@ -47,7 +47,6 @@ class ChatWidget : public QWidget
 public:
 	enum enumChatType { TYPE_NORMAL, TYPE_HISTORY, TYPE_OFFLINE, TYPE_SYSTEM };
 
-public:
 	explicit ChatWidget(QWidget *parent = 0);
 	~ChatWidget();
 
@@ -81,6 +80,7 @@ public:
 	void pasteText(const QString&);
 
 private slots:
+	void pasteCreateMsgLink() ;
 	void clearChatHistory();
 	void deleteChatHistory();
 	void messageHistory();

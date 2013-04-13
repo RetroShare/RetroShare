@@ -275,6 +275,7 @@ HEADERS +=  rshare.h \
             gui/TurtleRouterStatistics.h \
             gui/AboutDialog.h \
             gui/ForumsDialog.h \
+				gui/CreateMsgLinkDialog.h \
             gui/forums/ForumDetails.h \
             gui/forums/EditForumDetails.h \
             gui/forums/CreateForum.h \
@@ -471,6 +472,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/MainWindow.ui \
             gui/TurtleRouterDialog.ui \
             gui/TurtleRouterStatistics.ui \
+				gui/CreateMsgLinkDialog.ui \
             gui/forums/CreateForum.ui \
             gui/forums/CreateForumMsg.ui \
             gui/forums/ForumDetails.ui \
@@ -580,6 +582,7 @@ SOURCES +=  main.cpp \
             gui/TurtleRouterStatistics.cpp \
             gui/MainWindow.cpp \
             gui/ForumsDialog.cpp \
+				gui/CreateMsgLinkDialog.cpp \
             gui/forums/ForumDetails.cpp \
             gui/forums/EditForumDetails.cpp \
             gui/forums/CreateForum.cpp \
