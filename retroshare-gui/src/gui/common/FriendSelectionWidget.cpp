@@ -221,7 +221,7 @@ void FriendSelectionWidget::fillList()
 	}
 
 	std::list<std::string> gpgIdsSelected;
-	if (mShowTypes & SHOW_GPG) {
+	if (mShowTypes & (SHOW_GPG | SHOW_NON_FRIEND_GPG)) {
 		selectedGpgIds(gpgIdsSelected, true);
 	}
 
@@ -235,10 +235,15 @@ void FriendSelectionWidget::fillList()
 
 	std::list<std::string> gpgIds;
 	std::list<std::string>::iterator gpgIt;
-	rsPeers->getGPGAcceptedList(gpgIds);
+
+	if(mShowTypes & SHOW_NON_FRIEND_GPG)
+		rsPeers->getGPGAllList(gpgIds);
+	else
+		rsPeers->getGPGAcceptedList(gpgIds);
 
 	std::list<std::string> sslIds;
 	std::list<std::string>::iterator sslIt;
+
 	if ((mShowTypes & (SHOW_SSL | SHOW_GPG)) == SHOW_SSL) {
 		rsPeers->getFriendList(sslIds);
 	}
@@ -295,7 +300,7 @@ void FriendSelectionWidget::fillList()
 			}
 		}
 
-		if (mShowTypes & SHOW_GPG) {
+		if (mShowTypes & (SHOW_GPG | SHOW_NON_FRIEND_GPG)) {
 			// iterate through gpg ids
 			for (gpgIt = gpgIds.begin(); gpgIt != gpgIds.end(); gpgIt++) {
 				if (groupInfo) {
@@ -466,7 +471,7 @@ void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
 	QString gpgId;
 	int gpgStatus = RS_STATUS_OFFLINE;
 
-	if (mShowTypes & SHOW_GPG) {
+	if (mShowTypes & (SHOW_GPG | SHOW_NON_FRIEND_GPG)) {
 		/* need gpg id and online state */
 		RsPeerDetails detail;
 		if (rsPeers->getPeerDetails(peerId.toStdString(), detail)) {

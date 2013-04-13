@@ -2957,7 +2957,7 @@ bool p3ChatService::createDistantChatInvite(const std::string& pgp_id,time_t tim
 	unsigned char hash_bytes[16] ;
 	RAND_bytes( hash_bytes, 16) ;
 
-	std::string hash = SSLIdType(hash_bytes).toStdString() ;
+	std::string hash = SSLIdType(hash_bytes).toStdString(false) ;
 
 	std::cerr << "Created new distant chat invite: " << std::endl;
 	std::cerr << "  creation time stamp = " << invite.time_of_creation << std::endl;
@@ -3009,6 +3009,7 @@ bool p3ChatService::createDistantChatInvite(const std::string& pgp_id,time_t tim
 		_distant_chat_invites[hash] = invite ;
 	}
 
+	encrypted_radix64_string = invite.encrypted_radix64_string ;
 	std::cerr << "Encrypted radix64 string: " << invite.encrypted_radix64_string << std::endl;
 
 	return true ;

@@ -56,9 +56,10 @@ public:
 	};
 
     enum ShowType {
-        SHOW_GROUP = 1,
-        SHOW_GPG   = 2,
-        SHOW_SSL   = 4
+        SHOW_GROUP            = 1,
+        SHOW_GPG              = 2,
+        SHOW_SSL              = 4,
+        SHOW_NON_FRIEND_GPG   = 8,
     };
 
     Q_DECLARE_FLAGS(ShowTypes, ShowType)

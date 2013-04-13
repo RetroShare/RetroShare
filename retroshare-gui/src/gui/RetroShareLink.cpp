@@ -91,6 +91,7 @@
 
 #define PRIVATE_CHAT_TIME_STAMP  "time_stamp"
 #define PRIVATE_CHAT_STRING      "encrypted_data"
+#define PRIVATE_CHAT_GPG_ID      "gpgid"
 
 #define PUBLIC_MSG_TIME_STAMP  "time_stamp"
 #define PUBLIC_MSG_SRC_PGP_ID  "gpgid"
@@ -116,7 +117,8 @@ void RetroShareLink::fromString(const QString& url)
 #endif
 
     if ((url.startsWith(QString(RSLINK_SCHEME) + "://" + QString(HOST_FILE)) && url.count("|") == 3) ||
-        (url.startsWith(QString(RSLINK_SCHEME) + "://" + QString(HOST_PERSON)) && url.count("|") == 2)) {
+        (url.startsWith(QString(RSLINK_SCHEME) + "://" + QString(HOST_PERSON)) && url.count("|") == 2)) 
+	 {
         /* Old link, we try it */
         QStringList list = url.split ("|");
 
@@ -196,6 +198,7 @@ void RetroShareLink::fromUrl(const QUrl& url)
 		 _type = TYPE_PRIVATE_CHAT ;
 		 _time_stamp = url.queryItemValue(PRIVATE_CHAT_TIME_STAMP).toUInt(&ok) ;
 		 _encrypted_chat_info = url.queryItemValue(PRIVATE_CHAT_STRING) ;
+		 _GPGid = url.queryItemValue(PRIVATE_CHAT_GPG_ID) ;
 
 		 check() ;
             return;
@@ -334,8 +337,10 @@ bool RetroShareLink::createPrivateChatInvite(time_t time_stamp,const QString& gp
 {
 	clear() ;
 
+	_type = TYPE_PRIVATE_CHAT ;
 	_time_stamp = time_stamp ;
 	_encrypted_chat_info = encrypted_chat_info ;
+	_GPGid = gpg_id ;
 
 	check() ;
 
@@ -345,6 +350,7 @@ bool RetroShareLink::createPublicMsgInvite(time_t time_stamp,const QString& pgp_
 {
 	clear() ;
 
+	_type = TYPE_PUBLIC_MSG ;
 	_time_stamp = time_stamp ;
 	_hash = hash ;
 	_GPGid = pgp_id ;
@@ -575,6 +581,7 @@ void RetroShareLink::check()
 
 		case TYPE_PRIVATE_CHAT:
 			if(!checkRadix64(_encrypted_chat_info)) _valid = false ;
+			if(!checkPGPId(_GPGid)) _valid = false ;
 			break ;
 
 		case TYPE_PUBLIC_MSG:
@@ -709,6 +716,7 @@ QString RetroShareLink::toString() const
 			  url.setScheme(RSLINK_SCHEME) ;
 			  url.setHost(HOST_PRIVATE_CHAT) ;
 			  url.addQueryItem(PRIVATE_CHAT_TIME_STAMP,QString::number(_time_stamp)) ;
+			  url.addQueryItem(PRIVATE_CHAT_GPG_ID,_GPGid) ;
 			  url.addQueryItem(PRIVATE_CHAT_STRING,_encrypted_chat_info) ;
 
 			  return url.toString() ;
@@ -830,6 +838,12 @@ QString RetroShareLink::niceName() const
         return PeerDefs::rsid(name().toUtf8().constData(), hash().toStdString());
     }
 
+	if(type() == TYPE_PRIVATE_CHAT) {
+			return QString("Private chat invite (Valid only for key %1)").arg(_GPGid);
+	}
+	if(type() == TYPE_PUBLIC_MSG) {
+		return QString("Click this line to contact %1 (%2)").arg(_GPGid) ;
+	}
 	if(type() == TYPE_CERTIFICATE) {
 		if (_location.isEmpty()) {
 			return QString("RetroShare Certificate (%1)").arg(_name);
@@ -945,9 +959,13 @@ bool RetroShareLink::checkRadix64(const QString& s)
     {
         unsigned char b(qb[i]) ;
 
-		  if(!(  (b > 46 && b < 58) || (b > 64 && b < 91) || (b > 96 && b < 123) || b=='+'))
+		  if(!(  (b > 46 && b < 58) || (b > 64 && b < 91) || (b > 96 && b < 123) || b=='+' || b=='='))
+		  {
+			  std::cerr << "Character not allowed in radix: " << b << std::endl;
 			  return false;
+		  }
 	 }
+	 std::cerr << "Radix check: passed" << std::endl;
 	 return true ;
 }
 
@@ -1178,6 +1196,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					std::cerr << "Opening a private chat window " << std::endl;
 					std::cerr << "      time_stamp = " << link._time_stamp << std::endl;
 					std::cerr << "      enc-string = " << link._encrypted_chat_info.toStdString() << std::endl;
+					std::cerr << "      PGP Id     = " << link._GPGid.toStdString() << std::endl;
 				}
 				break ;
 
