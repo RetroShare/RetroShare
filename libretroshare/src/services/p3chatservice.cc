@@ -3003,6 +3003,7 @@ bool p3ChatService::createDistantChatInvite(const std::string& pgp_id,time_t tim
 	std::cerr << "Encrypted data size: " << encrypted_size << std::endl;
 
 	Radix64::encode((const char *)encrypted_data,encrypted_size,invite.encrypted_radix64_string) ;
+	invite.destination_pgp_id = pgp_id ;
 
 	{
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
@@ -3037,6 +3038,24 @@ void p3ChatService::cleanDistantChatInvites()
 			std::cerr << "  Keeping hash " << it->first << std::endl;
 			++it ;
 		}
+}
+
+bool p3ChatService::getDistantChatInviteList(std::vector<DistantChatInviteInfo>& invites)
+{
+	invites.clear() ;
+
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+	for(std::map<std::string,DistantChatInvite>::const_iterator it(_distant_chat_invites.begin());it!=_distant_chat_invites.end();++it)
+	{
+		DistantChatInviteInfo info ;
+		info.hash = it->first ;
+		info.encrypted_radix64_string = it->second.encrypted_radix64_string ;
+		info.time_of_validity = it->second.time_of_validity ;
+		info.destination_pgp_id = it->second.destination_pgp_id ;
+
+		invites.push_back(info);
+	}
+	return true ;
 }
 
 

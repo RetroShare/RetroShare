@@ -311,11 +311,14 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 		//
 		bool createDistantChatInvite(const std::string& pgp_id,time_t time_of_validity,TurtleFileHash& hash) ;
 
+		bool getDistantChatInviteList(std::vector<DistantChatInviteInfo>& invites) ;
+
 	private:
 		struct DistantChatInvite
 		{
 			unsigned char aes_key[16] ;
 			std::string encrypted_radix64_string ;
+			std::string destination_pgp_id ;
 			time_t time_of_validity ;
 			time_t time_of_creation ;
 			time_t last_hit_time ;

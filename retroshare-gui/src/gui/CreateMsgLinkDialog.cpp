@@ -72,6 +72,24 @@ void CreateMsgLinkDialog::update()
 		_info_TB->setHtml(s) ;
 		_gpg_selection->setHidden(true) ;
 	}
+
+	std::vector<DistantChatInviteInfo> invites ;
+
+	rsMsgs->getDistantChatInviteList(invites) ;
+
+	_existing_links_LW->clear() ;
+
+	for(uint32_t i=0;i<invites.size();++i)
+	{
+		RetroShareLink link ;
+
+		if(!link.createPrivateChatInvite(invites[i].time_of_validity,QString::fromStdString(invites[i].destination_pgp_id),QString::fromStdString(invites[i].encrypted_radix64_string)))
+			std::cerr << "Cannot create link." << std::endl;
+
+		QListWidgetItem *item = new QListWidgetItem(link.toString()) ;
+
+		_existing_links_LW->insertItem(0,item) ;
+	}
 }
 
 time_t CreateMsgLinkDialog::computeValidityDuration() const
@@ -124,7 +142,6 @@ void CreateMsgLinkDialog::createLink()
 			QMessageBox::critical(NULL,tr("Private chat invite creation failed"),tr("The creation of the chat invite failed")) ;
 		else
 			QMessageBox::information(NULL,tr("Private chat invite created"),tr("Your new chat invite has been copied to clipboard. You can now paste it as a Retroshare link.")) ;
-
 	}
 	else
 	{

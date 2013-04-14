@@ -334,5 +334,8 @@ bool p3Msgs::createDistantChatInvite(const std::string& pgp_id,time_t time_of_va
 {
 	return mChatSrv->createDistantChatInvite(pgp_id,time_of_validity,encrypted_string) ;
 }
-
+bool p3Msgs::getDistantChatInviteList(std::vector<DistantChatInviteInfo>& invites)
+{
+	return mChatSrv->getDistantChatInviteList(invites) ;
+}
 

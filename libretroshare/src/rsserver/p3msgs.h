@@ -184,6 +184,7 @@ class p3Msgs: public RsMsgs
 	  virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const std::string& lobby_topic,const std::list<std::string>& invited_friends,uint32_t privacy_type) ;
 
 	  virtual bool createDistantChatInvite(const std::string& pgp_id,time_t time_of_validity,std::string& encrypted_string) ;
+	  virtual bool getDistantChatInviteList(std::vector<DistantChatInviteInfo>& invites);
 
    private:
 

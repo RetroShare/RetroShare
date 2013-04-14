@@ -195,6 +195,14 @@ class ChatLobbyInfo
 		time_t last_activity ;									// last recorded activity. Useful for removing dead lobbies.
 };
 
+struct DistantChatInviteInfo
+{
+	std::string hash ;										// hash to contact the invite and refer to it.
+	std::string encrypted_radix64_string ;				// encrypted radix string used to for the chat link
+	std::string destination_pgp_id ;						// pgp is of the destination of the chat link
+	time_t 		time_of_validity ;   					// time when te invite becomes unusable
+};
+
 std::ostream &operator<<(std::ostream &out, const MessageInfo &info);
 std::ostream &operator<<(std::ostream &out, const ChatInfo &info);
 
@@ -292,6 +300,8 @@ virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const std::str
 /****************************************/
 
 virtual bool createDistantChatInvite(const std::string& pgp_id,time_t time_of_validity,std::string& encrypted_string) = 0 ;
+virtual bool getDistantChatInviteList(std::vector<DistantChatInviteInfo>& invites) = 0;
+
 };
 
 

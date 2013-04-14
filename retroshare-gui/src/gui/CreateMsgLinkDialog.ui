@@ -17,7 +17,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
-      <widget class="QListView" name="_existing_links_LV"/>
+      <widget class="QListWidget" name="_existing_links_LW"/>
      </item>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_4">
