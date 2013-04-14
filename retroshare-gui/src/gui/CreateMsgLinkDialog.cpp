@@ -20,6 +20,7 @@
 
 #include <iostream>
 #include <QMessageBox>
+#include <QTimer>
 #include <retroshare/rsmsgs.h>
 #include "CreateMsgLinkDialog.h"
 #include <gui/common/FriendSelectionWidget.h>
@@ -38,6 +39,7 @@ CreateMsgLinkDialog::CreateMsgLinkDialog(QWidget *parent)
 	QObject::connect(_link_type_CB,SIGNAL(currentIndexChanged(int)),this,SLOT(update())) ;
 	QObject::connect(_create_link_PB,SIGNAL(clicked()),this,SLOT(createLink())) ;
 	QObject::connect(_create_new_PB,SIGNAL(toggled(bool)),this,SLOT(toggleCreateLink(bool))) ;
+	QObject::connect(_existing_links_LW,SIGNAL(currentRowChanged(int)),this,SLOT(updateCurrentRow(int))) ;
 
 	_gpg_selection->setModus(FriendSelectionWidget::MODUS_SINGLE) ;
 	_gpg_selection->setShowType(FriendSelectionWidget::SHOW_NON_FRIEND_GPG | FriendSelectionWidget::SHOW_GPG) ;
@@ -46,6 +48,33 @@ CreateMsgLinkDialog::CreateMsgLinkDialog(QWidget *parent)
 
 	toggleCreateLink(false) ;
 	update() ;
+	updateCurrentRow(-1) ;
+}
+
+void CreateMsgLinkDialog::updateCurrentRow(int r)
+{
+	if(r < 0)
+	{
+		_current_link_type_LE->setText("") ;
+		_current_link_hash_LE->setText("") ;
+		_current_link_dst_LE->setText("") ;
+		_current_link_date_DE->setDateTime(QDateTime::fromMSecsSinceEpoch(0)) ;
+		return  ;
+	}
+
+	QUrl text = _existing_links_LW->item(r)->data(Qt::UserRole).toUrl() ;
+	
+	std::cerr << "Parsing link : " << text.toString().toStdString() << std::endl;
+	RetroShareLink link(text) ;
+
+	if( link.type() == RetroShareLink::TYPE_PRIVATE_CHAT )
+		_current_link_type_LE->setText( tr("Private chat invite") ) ;
+	else
+		_current_link_type_LE->setText( tr("Public message invite") ) ;
+
+	_current_link_hash_LE->setText(link.hash()) ;
+	_current_link_dst_LE->setText(link.GPGId()) ;
+	_current_link_date_DE->setDateTime(QDateTime::fromMSecsSinceEpoch(link.timeStamp() * 1000 )) ;
 }
 
 void CreateMsgLinkDialog::toggleCreateLink(bool b)
@@ -83,10 +112,12 @@ void CreateMsgLinkDialog::update()
 	{
 		RetroShareLink link ;
 
-		if(!link.createPrivateChatInvite(invites[i].time_of_validity,QString::fromStdString(invites[i].destination_pgp_id),QString::fromStdString(invites[i].encrypted_radix64_string)))
+		if(!link.createPrivateChatInvite(invites[i].time_of_validity,QString::fromStdString(invites[i].destination_pgp_id),QString::fromStdString(invites[i].encrypted_radix64_string)));
 			std::cerr << "Cannot create link." << std::endl;
 
-		QListWidgetItem *item = new QListWidgetItem(link.toString()) ;
+		QListWidgetItem *item = new QListWidgetItem;
+		item->setData(Qt::DisplayRole,tr("Private chat invite to ")+QString::fromStdString(invites[i].destination_pgp_id)) ;
+		item->setData(Qt::UserRole,link.toString()) ;
 
 		_existing_links_LW->insertItem(0,item) ;
 	}
@@ -147,5 +178,7 @@ void CreateMsgLinkDialog::createLink()
 	{
 		std::cerr << "Private msg links not yet implemented." << std::endl;
 	}
+
+	QTimer::singleShot(500,this,SLOT(update())) ;
 }
 

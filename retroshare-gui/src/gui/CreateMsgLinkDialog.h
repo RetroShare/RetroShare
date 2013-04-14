@@ -38,6 +38,7 @@ class CreateMsgLinkDialog : public QDialog, public Ui::CreateMsgLinkDialog
 		void createLink();
 		void update() ;
 		void toggleCreateLink(bool) ;
+		void updateCurrentRow(int) ;
 
 	private:
 		time_t computeValidityDuration() const ;

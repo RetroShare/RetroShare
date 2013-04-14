@@ -169,6 +169,7 @@ void RetroShareLink::fromUrl(const QUrl& url)
 
     if (url.scheme() != RSLINK_SCHEME) {
         /* No RetroShare-Link */
+		 std::cerr << "Not a RS link: scheme=" << url.scheme().toStdString() << std::endl;
         return;
     }
 
