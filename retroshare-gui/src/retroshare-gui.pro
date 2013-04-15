@@ -920,7 +920,8 @@ unfinished {
 	
 	
 photoshare {
-	
+	DEFINES += RS_USE_PHOTOSHARE
+
 	HEADERS += \
 		gui/PhotoShare/PhotoDrop.h \
 		gui/PhotoShare/AlbumItem.h \
@@ -1016,7 +1017,8 @@ identities {
 }
 	
 circles {
-	
+	DEFINES += RS_USE_CIRCLES
+
 	HEADERS +=  \
 		gui/Circles/CirclesDialog.h \
 		gui/Circles/CreateCircleDialog.h \

@@ -27,8 +27,12 @@
 #include <retroshare/rsiface.h>
 
 #include "gui/Identity/IdDialog.h"
+#ifdef RS_USE_CIRCLES
 #include "gui/Circles/CirclesDialog.h"
+#endif
+#ifdef RS_USE_PHOTOSHARE
 #include "gui/PhotoShare/PhotoShare.h"
+#endif
 #include "gui/WikiPoos/WikiDialog.h"
 #include "gui/Posted/PostedDialog.h"
 #include "gui/GxsForumsDialog.h"
@@ -56,9 +60,9 @@
 #define IMAGE_LIBRARY           ":/images/library.png"
 #define IMAGE_PLUGINS           ":/images/extension_32.png"
 #define IMAGE_GXSFORUMS         ":/images/konversation.png"
-#define IMAGE_WIKI				":/images/wikibook_32.png"
-#define IMAGE_POSTED		    ":/images/posted_32.png"
-#define IMAGE_GXSCHANNELS          ":/images/channels.png"
+#define IMAGE_WIKI              ":/images/wikibook_32.png"
+#define IMAGE_POSTED            ":/images/posted_32.png"
+#define IMAGE_GXSCHANNELS       ":/images/channels.png"
 
 /** Constructor */
 ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
@@ -93,13 +97,17 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(idDialog = new IdDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_LIBRARY), tr("Identities"), grp));
 
-//    CirclesDialog *circlesDialog = NULL;
-//    ui.stackPages->add(circlesDialog = new CirclesDialog(ui.stackPages),
-//                      createPageAction(QIcon(IMAGE_LIBRARY), tr("Circles"), grp));
+#ifdef RS_USE_CIRCLES
+    CirclesDialog *circlesDialog = NULL;
+    ui.stackPages->add(circlesDialog = new CirclesDialog(ui.stackPages),
+                      createPageAction(QIcon(IMAGE_LIBRARY), tr("Circles"), grp));
+#endif
 
-//    PhotoShare *photoShare = NULL;
-//    ui.stackPages->add(photoShare = new PhotoShare(ui.stackPages),
-//                     createPageAction(QIcon(IMAGE_PHOTO), tr("Photo Share"), grp));
+#ifdef RS_USE_PHOTOSHARE
+    PhotoShare *photoShare = NULL;
+    ui.stackPages->add(photoShare = new PhotoShare(ui.stackPages),
+                     createPageAction(QIcon(IMAGE_PHOTO), tr("Photo Share"), grp));
+#endif
 
     PostedDialog *postedDialog = NULL;
     ui.stackPages->add(postedDialog = new PostedDialog(ui.stackPages),
