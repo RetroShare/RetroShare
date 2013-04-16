@@ -338,4 +338,8 @@ bool p3Msgs::getDistantChatInviteList(std::vector<DistantChatInviteInfo>& invite
 {
 	return mChatSrv->getDistantChatInviteList(invites) ;
 }
+bool p3Msgs::initiateDistantChatConnexion(const std::string& encrypted_str,std::string& hash,uint32_t& error_code)
+{
+	return mChatSrv->initiateDistantChatConnexion(encrypted_str,hash,error_code) ;
+}
 

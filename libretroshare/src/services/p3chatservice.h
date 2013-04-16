@@ -310,8 +310,9 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 		// Om success, stores the invite in the map above, so that we can respond to tunnel requests.
 		//
 		bool createDistantChatInvite(const std::string& pgp_id,time_t time_of_validity,TurtleFileHash& hash) ;
-
 		bool getDistantChatInviteList(std::vector<DistantChatInviteInfo>& invites) ;
+		bool initiateDistantChatConnexion(const std::string& encrypted_string,std::string& hash,uint32_t& error_code) ;
+		virtual uint32_t getDistantChatStatus(const std::string& hash) ;
 
 	private:
 		struct DistantChatInvite

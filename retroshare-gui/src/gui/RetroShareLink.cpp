@@ -1190,6 +1190,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					std::cerr << "      time_stamp = " << link._time_stamp << std::endl;
 					std::cerr << "      hash       = " << link._hash.toStdString() << std::endl;
 					std::cerr << "      PGP Id     = " << link._GPGid.toStdString() << std::endl;
+					std::cerr << "Feature not yet implemented !" << std::endl;
 				}
 				break ;
 			case TYPE_PRIVATE_CHAT:
@@ -1198,6 +1199,20 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					std::cerr << "      time_stamp = " << link._time_stamp << std::endl;
 					std::cerr << "      enc-string = " << link._encrypted_chat_info.toStdString() << std::endl;
 					std::cerr << "      PGP Id     = " << link._GPGid.toStdString() << std::endl;
+
+					if(link._time_stamp < time(NULL))
+					{
+						QMessageBox::information(NULL,tr("Chat link is expired"),tr("This chat link is expired. The destination peer will not answer.")) ;
+						break ;
+					}
+					if(link._GPGid.toStdString() != rsPeers->getGPGOwnId())
+					{
+						QMessageBox::information(NULL,tr("Chat link cannot be decrypted"),tr("This chat link is encrypted with a key that is not yours. You can't used it. Key ID = ")+link._GPGId) ;
+						break ;
+					}
+
+					if(!rsMsgs->initiateDistantChatConnexion(link._encrypted_chat_info.toStdString()))
+						QMessageBox::information(NULL,tr("Chat connexion is not possible"),tr("The distant chat connexion cannot be openned. Sorry.")) ;
 				}
 				break ;
 

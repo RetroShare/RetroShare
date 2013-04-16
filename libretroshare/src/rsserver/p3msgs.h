@@ -185,6 +185,8 @@ class p3Msgs: public RsMsgs
 
 	  virtual bool createDistantChatInvite(const std::string& pgp_id,time_t time_of_validity,std::string& encrypted_string) ;
 	  virtual bool getDistantChatInviteList(std::vector<DistantChatInviteInfo>& invites);
+	  virtual bool initiateDistantChatConnexion(const std::string& encrypted_string,std::string& hash,uint32_t& error_code) ;
+	  virtual uint32_t getDistantChatStatus(const std::string& hash) ;
 
    private:
 

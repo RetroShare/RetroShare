@@ -334,6 +334,7 @@ HEADERS +=  rshare.h \
             gui/profile/StatusMessage.h \
             gui/chat/PopupChatWindow.h \
             gui/chat/PopupChatDialog.h \
+            gui/chat/PopupDistantChatDialog.h \
             gui/chat/ChatTabWidget.h \
             gui/chat/ChatWidget.h \
             gui/chat/ChatDialog.h \
@@ -645,6 +646,7 @@ SOURCES +=  main.cpp \
             gui/channels/ChannelUserNotify.cpp \
             gui/chat/PopupChatWindow.cpp \
             gui/chat/PopupChatDialog.cpp \
+            gui/chat/PopupDistantChatDialog.cpp \
             gui/chat/ChatTabWidget.cpp \
             gui/chat/ChatWidget.cpp \
             gui/chat/ChatDialog.cpp \

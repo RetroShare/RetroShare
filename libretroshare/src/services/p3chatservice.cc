@@ -3016,6 +3016,60 @@ bool p3ChatService::createDistantChatInvite(const std::string& pgp_id,time_t tim
 	return true ;
 }
 
+bool p3ChatService::initiateDistantChatConnexion(const std::string& encrypted_str,std::string& hash,uint32_t& error_code)
+{
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+	// Un-radix the string.
+	//
+	char *encrypted_data_bin = NULL ;
+	size_t encrypted_data_len ;
+
+	Radix64::decode(encrypted_str,encrypted_data_bin,encrypted_data_len) ;
+
+	// Decrypt it.
+	//
+	unsigned char *data = NULL ;
+	uint32_t data_size ;
+
+	if(!AuthGPG::getAuthGPG()->decryptDataBin((unsigned char *)encrypted_data_bin,encrypted_data_len,data,&data_size))
+	{
+		error_code = RS_DISTANT_CHAT_ERROR_DECRYPTION_FAILED ;
+		return false ;
+	}
+	delete[] encrypted_data_bin ;
+
+	std::cerr << "Chat invite was successfuly decrypted!" << std::endl;
+
+	if(!AuthGPG::VerifySignBin(data,32,data+32,data_size-32,fingerprint))
+	{
+		error_code = RS_DISTANT_CHAT_ERROR_SIGNATURE_MISMATCH ;
+		return false ;
+	}
+	std::cerr << "Signature successfuly verified!" << std::endl;
+
+	hash = t_RsGenericIdType<16>(data).toStdString() ;
+	DistantChatPeerInfo info ;
+
+	info.last_contact = time(NULL) ;
+	memcpy(info.aes_key,data+16,16) ;
+
+	_distant_chat_peers[hash] = info ;
+
+	delete[] data ;
+
+	// Now ask the turtle router to manage a tunnel for that hash.
+
+	std::cerr << "Asking turtle router to monitor tunnels for hash " << hash << std::endl;
+
+	mTurtle->monitorTunnels(hash,this) ;
+
+	// And notify about chatting.
+
+	error_code = RS_DISTANT_CHAT_ERROR_NO_ERROR ;
+	return true ;
+}
+
 void p3ChatService::cleanDistantChatInvites()
 {
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
