@@ -630,7 +630,7 @@ bool 	p3Peers::removeFriendLocation(const std::string &sslId)
         std::cerr << "p3Peers::removeFriendLocation() " << sslId << std::endl;
 #endif
 		//will remove if it's a ssl id
-        mPeerMgr->removeFriend(sslId);
+        mPeerMgr->removeFriend(sslId, false);
         return true;
 
 }

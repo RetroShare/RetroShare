@@ -576,7 +576,7 @@ bool p3PeerMgrIMPL::addFriend(const std::string& input_id, const std::string& in
 }
 
 
-bool p3PeerMgrIMPL::removeFriend(const std::string &id)
+bool p3PeerMgrIMPL::removeFriend(const std::string &id, bool removePgpId)
 {
 
 #ifdef PEER_DEBUG
@@ -605,7 +605,8 @@ bool p3PeerMgrIMPL::removeFriend(const std::string &id)
 				peerState peer = it->second;
 
 				sslid_toRemove.push_back(it->second.id);
-				pgpid_toRemove.push_back(it->second.gpg_id);
+				if(removePgpId)
+					pgpid_toRemove.push_back(it->second.gpg_id);
 
 				mOthersList[id] = peer;
 				mStatusChanged = true;
@@ -1889,7 +1890,7 @@ bool p3PeerMgrIMPL::removeAllFriendLocations(const std::string &gpgid)
 	std::list<std::string>::iterator it;
 	for(it = sslIds.begin(); it != sslIds.end(); it++)
 	{
-		removeFriend(*it);
+		removeFriend(*it, true);
 	}
 	
 	return true;
@@ -1979,7 +1980,7 @@ bool p3PeerMgrIMPL::removeUnusedLocations()
 	
 	for(it = toRemove.begin(); it != toRemove.end(); it++)
 	{
-		removeFriend(*it);
+		removeFriend(*it,false);
 	}
 
 	return true;
