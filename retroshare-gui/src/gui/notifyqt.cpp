@@ -258,6 +258,7 @@ bool NotifyQt::askForPassword(const std::string& key_details, bool prev_is_bad, 
 						tr("Please enter the password to unlock your PGP key:") + "\n" + QString::fromUtf8(key_details.c_str()));
 	dialog.setTextEchoMode(QLineEdit::Password);
 	dialog.setWindowIcon(QIcon(":/images/rstray3.png"));
+	dialog.setModal(true);
 
 	int ret = dialog.exec();
 
