@@ -58,7 +58,9 @@ static const time_t  MAX_DELAY_BETWEEN_LOBBY_KEEP_ALIVE =  120 ; // send keep al
 static const time_t 	MAX_KEEP_PUBLIC_LOBBY_RECORD       =   60 ; // keep inactive lobbies records for 60 secs max.
 static const time_t 	MIN_DELAY_BETWEEN_PUBLIC_LOBBY_REQ =   20 ; // don't ask for lobby list more than once every 30 secs.
 
-static const time_t 	DISTANT_CHAT_CLEANING_PERIOD       =   60 ; // don't ask for lobby list more than once every 30 secs.
+static const time_t 	 DISTANT_CHAT_CLEANING_PERIOD      =   60 ; // don't ask for lobby list more than once every 30 secs.
+static const uint32_t DISTANT_CHAT_AES_KEY_SIZE         =   16 ; // size of AES encryption key for distant chat.
+static const uint32_t DISTANT_CHAT_HASH_SIZE            =   16 ; // This is sha1 size in bytes.
 
 p3ChatService::p3ChatService(p3LinkMgr *lm, p3HistoryMgr *historyMgr)
 	:p3Service(RS_SERVICE_TYPE_CHAT), p3Config(CONFIG_TYPE_CHAT), mChatMtx("p3ChatService"), mLinkMgr(lm) , mHistoryMgr(historyMgr)
@@ -2828,7 +2830,7 @@ void p3ChatService::receiveTurtleData(	RsTurtleGenericTunnelItem *gitem,const st
 	std::cerr << "   size = " << item->data_size << std::endl;
 	std::cerr << "   data = " << (void*)item->data_bytes << std::endl;
 
-	uint8_t aes_key[16] ;
+	uint8_t aes_key[DISTANT_CHAT_AES_KEY_SIZE] ;
 
 	{
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
@@ -2892,7 +2894,7 @@ void p3ChatService::sendTurtleData(RsChatItem *item, const std::string& virtual_
 		return ;
 	}
 	
-	uint8_t aes_key[16] ;
+	uint8_t aes_key[DISTANT_CHAT_AES_KEY_SIZE] ;
 
 	{
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
@@ -2950,12 +2952,12 @@ bool p3ChatService::createDistantChatInvite(const std::string& pgp_id,time_t tim
 	invite.time_of_creation = now ;
 	invite.last_hit_time = now ;
 
-	RAND_bytes( (unsigned char *)&invite.aes_key[0],16 ) ;	// generate a random AES encryption key
+	RAND_bytes( (unsigned char *)&invite.aes_key[0],DISTANT_CHAT_AES_KEY_SIZE ) ;	// generate a random AES encryption key
 
 	// Create a random hash for that invite.
 	//
-	unsigned char hash_bytes[16] ;
-	RAND_bytes( hash_bytes, 16) ;
+	unsigned char hash_bytes[DISTANT_CHAT_HASH_SIZE] ;
+	RAND_bytes( hash_bytes, DISTANT_CHAT_HASH_SIZE) ;
 
 	std::string hash = SSLIdType(hash_bytes).toStdString(false) ;
 
@@ -2980,14 +2982,20 @@ bool p3ChatService::createDistantChatInvite(const std::string& pgp_id,time_t tim
 	//
 	// 	retroshare://chat?time_stamp=3243242&private_data=[radix64 string]
 
-	unsigned char *data = new unsigned char[16+16+400] ; 
-	memcpy(data   ,hash_bytes     ,16) ;
-	memcpy(data+16,invite.aes_key ,16) ;
+	uint32_t header_size = DISTANT_CHAT_AES_KEY_SIZE + DISTANT_CHAT_HASH_SIZE + KEY_ID_SIZE;
+	unsigned char *data = new unsigned char[header_size+400] ; 
+
+	PGPFingerprintType fingerprint ;
+	AuthGPG::getAuthGPG()->getKeyFingerprint( PGPIdType(AuthGPG::getAuthGPG()->getGPGOwnId()),fingerprint ) ;
+
+	memcpy(data                                                 ,hash_bytes               ,DISTANT_CHAT_HASH_SIZE) ;
+	memcpy(data+DISTANT_CHAT_HASH_SIZE                          ,invite.aes_key           ,DISTANT_CHAT_AES_KEY_SIZE) ;
+	memcpy(data+DISTANT_CHAT_HASH_SIZE+DISTANT_CHAT_AES_KEY_SIZE,fingerprint.toByteArray(),KEY_ID_SIZE) ;
 
 	std::cerr << "Performing signature " << std::endl;
 	uint32_t signlen = 400;
 
-	if(!AuthGPG::getAuthGPG()->SignDataBin(data,32,data+32,&signlen))
+	if(!AuthGPG::getAuthGPG()->SignDataBin(data,header_size,data+header_size,&signlen))
 		return false ;
 
 	std::cerr << "Signature length = " << signlen << std::endl;
@@ -2997,7 +3005,7 @@ bool p3ChatService::createDistantChatInvite(const std::string& pgp_id,time_t tim
 	unsigned char *encrypted_data = new unsigned char[2000] ;
 	uint32_t encrypted_size = 2000 ;
 
-	if(!AuthGPG::getAuthGPG()->encryptDataBin(pgp_id,(unsigned char *)data,signlen+32,encrypted_data,&encrypted_size))
+	if(!AuthGPG::getAuthGPG()->encryptDataBin(pgp_id,(unsigned char *)data,signlen+header_size,encrypted_data,&encrypted_size))
 		return false ;
 
 	std::cerr << "Encrypted data size: " << encrypted_size << std::endl;
@@ -3041,18 +3049,29 @@ bool p3ChatService::initiateDistantChatConnexion(const std::string& encrypted_st
 
 	std::cerr << "Chat invite was successfuly decrypted!" << std::endl;
 
-	if(!AuthGPG::VerifySignBin(data,32,data+32,data_size-32,fingerprint))
+	uint32_t header_size = DISTANT_CHAT_HASH_SIZE + DISTANT_CHAT_AES_KEY_SIZE + KEY_ID_SIZE ;
+
+	PGPIdType pgp_id( data + DISTANT_CHAT_HASH_SIZE + DISTANT_CHAT_AES_KEY_SIZE ) ;
+
+	PGPFingerprintType fingerprint ;
+	if(!AuthGPG::getAuthGPG()->getKeyFingerprint(pgp_id,fingerprint)) 
+	{
+		error_code = RS_DISTANT_CHAT_ERROR_UNKNOWN_KEY ;
+		return false ;
+	}
+
+	if(!AuthGPG::getAuthGPG()->VerifySignBin(data,header_size,data+header_size,data_size-header_size,fingerprint.toStdString()))
 	{
 		error_code = RS_DISTANT_CHAT_ERROR_SIGNATURE_MISMATCH ;
 		return false ;
 	}
 	std::cerr << "Signature successfuly verified!" << std::endl;
 
-	hash = t_RsGenericIdType<16>(data).toStdString() ;
+	hash = t_RsGenericIdType<DISTANT_CHAT_HASH_SIZE>(data).toStdString() ;
 	DistantChatPeerInfo info ;
 
 	info.last_contact = time(NULL) ;
-	memcpy(info.aes_key,data+16,16) ;
+	memcpy(info.aes_key,data+DISTANT_CHAT_HASH_SIZE,DISTANT_CHAT_AES_KEY_SIZE) ;
 
 	_distant_chat_peers[hash] = info ;
 
