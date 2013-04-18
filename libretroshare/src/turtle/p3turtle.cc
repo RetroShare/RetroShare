@@ -1122,6 +1122,8 @@ bool p3turtle::getTunnelServiceInfo(TurtleTunnelId tunnel_id,std::string& vpid,s
 	}
 
 	service = it->second.service ;
+
+	return true ;
 }
 // Send a data request into the correct tunnel for the given file hash
 //

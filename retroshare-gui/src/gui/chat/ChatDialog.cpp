@@ -98,9 +98,10 @@ void ChatDialog::init(const std::string &peerId, const QString &title)
 		if (rsMsgs->isLobbyId(peerId, lobby_id)) {
 			chatflags = RS_CHAT_OPEN | RS_CHAT_FOCUS; // use own flags
 		}
-		std::string distant_pgp_id = "" ;
 
-		if(distant_peer = rsMsgs->isDistantId(peerId,distant_pgp_id)) {
+		uint32_t distant_peer_status ;
+
+		if(distant_peer_status = rsMsgs->getDistantChatStatus(peerId)) {
 			chatflags = RS_CHAT_OPEN | RS_CHAT_FOCUS; // use own flags
 		}
 
@@ -116,10 +117,10 @@ void ChatDialog::init(const std::string &peerId, const QString &title)
 						cd->init(peerId, QString::fromUtf8((*it).lobby_name.c_str()));
 					}
 				}
-			} else if(distant_peer) {
+			} else if(distant_peer_status > 0) {
 				cd = new PopupDistantChatDialog();
 				chatDialogs[peerId] = cd;
-				cd->init(peerId, tr("Distant peer (PGP id=%1)").arg(distant_pgp_id));
+				cd->init(peerId, tr("Distant peer (PGP id=%1)")) ;
 			} else {
 				RsPeerDetails sslDetails;
 				if (rsPeers->getPeerDetails(peerId, sslDetails)) {

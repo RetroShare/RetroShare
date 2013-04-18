@@ -982,7 +982,7 @@ bool PGPHandler::encryptDataBin(const PGPIdType& key_id,const void *data, const 
 	int tlen = ops_memory_get_length(buf) ;
 	bool res ;
 
-	if(*encrypted_data_len >= tlen)
+	if( (int)*encrypted_data_len >= tlen)
 	{
 		memcpy(encrypted_data,ops_memory_get_data(buf),tlen) ;
 		*encrypted_data_len = tlen ;
@@ -1000,10 +1000,23 @@ bool PGPHandler::encryptDataBin(const PGPIdType& key_id,const void *data, const 
 	return res ;
 }
 
-bool PGPHandler::decryptDataBin(const PGPIdType& key_id,const void *data, const uint32_t len, unsigned char *encrypted_data, unsigned int *encrypted_data_len) 
+bool PGPHandler::decryptDataBin(const PGPIdType& key_id,const void *encrypted_data, const uint32_t encrypted_len, unsigned char *data, unsigned int *data_len) 
 {
-	throw std::runtime_error("Not implemented!") ;
-	return false ;
+	int out_length ;
+	unsigned char *out ;
+	ops_boolean_t res = ops_decrypt_memory((const unsigned char *)encrypted_data,encrypted_len,&out,&out_length,_secring,ops_false,cb_get_passphrase) ;
+
+	if(*data_len < out_length)
+	{
+		std::cerr << "Not enough room to store decrypted data! Please give more."<< std::endl;
+		return false ;
+	}
+
+	*data_len = out_length ;
+	memcpy(data,out,out_length) ;
+	free(out) ;
+
+	return (bool)res ;
 }
 
 bool PGPHandler::decryptTextFromFile(const PGPIdType&,std::string& text,const std::string& inputfile) 

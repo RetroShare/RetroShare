@@ -342,4 +342,8 @@ bool p3Msgs::initiateDistantChatConnexion(const std::string& encrypted_str,std::
 {
 	return mChatSrv->initiateDistantChatConnexion(encrypted_str,hash,error_code) ;
 }
+uint32_t p3Msgs::getDistantChatStatus(const std::string& hash) 
+{
+	return mChatSrv->getDistantChatStatus(hash) ;
+}
 

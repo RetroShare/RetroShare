@@ -328,6 +328,8 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 		{
 			time_t last_contact ; 			// used to send keep alive packets
 			unsigned char aes_key[16] ;	// key to encrypt packets
+			uint32_t status ;					// info: do we have a tunnel ?
+			std::string virtual_peer_id;  // given by the turtle router. Identifies the tunnel.
 		};
 
 		// This map contains the ongoing invites. This is the list where to look to

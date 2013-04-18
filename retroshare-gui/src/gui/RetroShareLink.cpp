@@ -41,6 +41,7 @@
 #include "gui/connect/ConfCertDialog.h"
 
 #include <retroshare/rsfiles.h>
+#include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsforums.h>
 #include <retroshare/rschannels.h>
@@ -1202,17 +1203,30 @@ static void processList(const QStringList &list, const QString &textSingular, co
 
 					if(link._time_stamp < time(NULL))
 					{
-						QMessageBox::information(NULL,tr("Chat link is expired"),tr("This chat link is expired. The destination peer will not answer.")) ;
+						QMessageBox::information(NULL,QObject::tr("Chat link is expired"),QObject::tr("This chat link is expired. The destination peer will not answer.")) ;
 						break ;
 					}
 					if(link._GPGid.toStdString() != rsPeers->getGPGOwnId())
 					{
-						QMessageBox::information(NULL,tr("Chat link cannot be decrypted"),tr("This chat link is encrypted with a key that is not yours. You can't used it. Key ID = ")+link._GPGId) ;
+						QMessageBox::information(NULL,QObject::tr("Chat link cannot be decrypted"),QObject::tr("This chat link is encrypted with a key that is not yours. You can't used it. Key ID = ")+link._GPGid) ;
 						break ;
 					}
 
-					if(!rsMsgs->initiateDistantChatConnexion(link._encrypted_chat_info.toStdString()))
-						QMessageBox::information(NULL,tr("Chat connexion is not possible"),tr("The distant chat connexion cannot be openned. Sorry.")) ;
+					std::string hash  ;
+					uint32_t error_code ;
+
+					if(!rsMsgs->initiateDistantChatConnexion(link._encrypted_chat_info.toStdString(),hash,error_code))
+					{
+						QString error_msg ;
+						switch(error_code)
+						{
+							default:
+							case RS_DISTANT_CHAT_ERROR_DECRYPTION_FAILED:  error_msg = QObject::tr("The link could not be decrypted.") ; break ;
+							case RS_DISTANT_CHAT_ERROR_SIGNATURE_MISMATCH: error_msg = QObject::tr("The link signature cannot be checked.") ; break ;
+							case RS_DISTANT_CHAT_ERROR_UNKNOWN_KEY:        error_msg = QObject::tr("The link is signed by an unknown key.") ; break ;
+						}
+						QMessageBox::information(NULL,QObject::tr("Chat connexion is not possible"),error_msg) ;
+					}
 				}
 				break ;
 
