@@ -333,11 +333,11 @@ void SecurityItem::friendRequest()
 	std::cerr << "SecurityItem::friendReguest()";
 	std::cerr << std::endl;
 #endif
-
-	ConnectFriendWizard *connectFriendWizard = new ConnectFriendWizard;
+	ConfCertDialog::showIt(mGpgId, ConfCertDialog::PageTrust);
+/*	ConnectFriendWizard *connectFriendWizard = new ConnectFriendWizard;
 	connectFriendWizard->setAttribute(Qt::WA_DeleteOnClose, true);
 	connectFriendWizard->setGpgId(mGpgId, true);
-	connectFriendWizard->show();
+	connectFriendWizard->show();*/
 }
 
 void SecurityItem::peerDetails()
