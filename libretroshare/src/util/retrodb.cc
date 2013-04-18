@@ -29,9 +29,10 @@
 #include <inttypes.h>
 
 #include "retrodb.h"
+#include "radix64.h"
 
 //#define RETRODB_DEBUG
-
+//#define RADIX_STRING
 
 
 void free_blob(void* dat){
@@ -261,6 +262,9 @@ bool RetroDb::sqlInsert(const std::string &table, const std::string& nullColumnH
             {
                 std::string value;
                 cv.getAsString(key, value);
+#ifdef RADIX_STRING
+                Radix64::encode(value.c_str(), value.size(), value);
+#endif
                 qValues += "'" + value +"'";
             }
         else if ( ContentValue::INT32_TYPE == type)
@@ -434,6 +438,9 @@ bool RetroDb::sqlUpdate(const std::string &tableName, std::string whereClause, c
             {
                 std::string value;
                 cv.getAsString(key, value);
+#ifdef RADIX_STRING
+                Radix64::encode(value.c_str(), value.size(), value);
+#endif
                 qValues += key + "='" + value + "' ";
             }
         else if( ContentValue::INT32_TYPE == type)
@@ -682,7 +689,22 @@ double RetroCursor::getDouble(int columnIndex){
 void RetroCursor::getString(int columnIndex, std::string &str){
     char* raw_str = (char*)sqlite3_column_text(mStmt, columnIndex);
     if(raw_str != NULL)
+    {
         str.assign(raw_str);
+#ifdef RADIX_STRING
+        		char* buffer = NULL;
+        		size_t buffLen;
+                Radix64::decode(str, buffer, buffLen);
+                str.clear();
+                if(buffLen != 0)
+                {
+                	str.assign(buffer, buffLen);
+                	delete[] buffer;
+                }
+                else
+                	str.clear();
+#endif
+    }
 }
 
 const void* RetroCursor::getData(int columnIndex, uint32_t &datSize){
