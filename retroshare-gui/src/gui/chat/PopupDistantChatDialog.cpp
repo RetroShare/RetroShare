@@ -41,6 +41,7 @@ PopupDistantChatDialog::PopupDistantChatDialog(QWidget *parent, Qt::WFlags flags
 void PopupDistantChatDialog::init(const std::string& hash,const QString & title)
 {
 	_hash = hash ;
+	PopupChatDialog::init(hash,title) ;
 }
 
 void PopupDistantChatDialog::checkTunnel()

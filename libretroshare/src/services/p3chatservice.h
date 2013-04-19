@@ -186,6 +186,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 		virtual void saveDone();
 		virtual bool loadList(std::list<RsItem*>& load) ;
 
+		bool isOnline(const std::string& id) ;
 	private:
 		RsMutex mChatMtx;
 

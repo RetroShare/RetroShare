@@ -35,6 +35,7 @@
 #include "turtle/p3turtle.h"
 #include "retroshare/rsiface.h"
 #include "retroshare/rspeers.h"
+#include "retroshare/rsstatus.h"
 #include "pqi/pqibin.h"
 #include "pqi/pqinotify.h"
 #include "pqi/pqistore.h"
@@ -398,6 +399,17 @@ bool p3ChatService::isLobbyId(const std::string& id,ChatLobbyId& lobby_id)
 	return false ;
 }
 
+bool p3ChatService::isOnline(const std::string& id)
+{
+	// check if the id is a tunnel id or a peer id.
+
+	uint32_t res = getDistantChatStatus(id) ;
+
+	if(!res)
+		return mLinkMgr->isOnline(id) ;
+
+	return res == RS_DISTANT_CHAT_STATUS_TUNNEL_OK ;
+}
 
 bool     p3ChatService::sendPrivateChat(const std::string &id, const std::wstring &msg)
 {
@@ -422,7 +434,8 @@ bool     p3ChatService::sendPrivateChat(const std::string &id, const std::wstrin
 	ci->recvTime = ci->sendTime;
 	ci->message = msg;
 
-	if (!mLinkMgr->isOnline(id)) {
+	if(!isOnline(id))
+	{
 		/* peer is offline, add to outgoing list */
 		{
 			RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
@@ -2781,36 +2794,46 @@ bool p3ChatService::handleTunnelRequest(const std::string& hash,const std::strin
 
 void p3ChatService::addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id)
 {
-	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
-
-	std::map<TurtleFileHash,DistantChatPeerInfo>::iterator it = _distant_chat_peers.find(hash) ;
-
-	if(it == _distant_chat_peers.end())
 	{
-		std::cerr << "(EE) Cannot add virtual peer for hash " << hash << ": no chat invite found for that hash." << std::endl;
-		return ;
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+		std::map<TurtleFileHash,DistantChatPeerInfo>::iterator it = _distant_chat_peers.find(hash) ;
+
+		if(it == _distant_chat_peers.end())
+		{
+			std::cerr << "(EE) Cannot add virtual peer for hash " << hash << ": no chat invite found for that hash." << std::endl;
+			return ;
+		}
+
+		time_t now = time(NULL) ;
+		it->second.last_contact = now ;
+		it->second.status = RS_DISTANT_CHAT_STATUS_TUNNEL_OK ;
+
+		std::cerr << "(II) Adding virtual peer " << virtual_peer_id << " for chat hash " << hash << std::endl;
 	}
+	rsicontrol->getNotify().notifyChatStatus(hash,"tunnel is up again!",true) ;
+	rsicontrol->getNotify().notifyPeerStatusChanged(hash,RS_STATUS_ONLINE) ;
 
-//	memcpy(_distant_chat_peers[virtual_peer_id].aes_key,it->second.aes_key,8) ;
-
-	time_t now = time(NULL) ;
-	it->second.last_contact = now ;
-	it->second.status = RS_DISTANT_CHAT_STATUS_TUNNEL_OK ;
+	getPqiNotify()->AddPopupMessage(RS_POPUP_CHAT, hash, "Distant peer", "Conversation starts...");
 }
 
 void p3ChatService::removeVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id)
 {
-	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
-
-	std::map<std::string,DistantChatPeerInfo>::iterator it = _distant_chat_peers.find(hash) ;
-
-	if(it == _distant_chat_peers.end())
 	{
-		std::cerr << "(EE) Cannot remove virtual peer " << virtual_peer_id << ": not found in chat list!!" << std::endl;
-		return ;
-	}
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
-	it->second.status = RS_DISTANT_CHAT_STATUS_TUNNEL_DN ;
+		std::map<std::string,DistantChatPeerInfo>::iterator it = _distant_chat_peers.find(hash) ;
+
+		if(it == _distant_chat_peers.end())
+		{
+			std::cerr << "(EE) Cannot remove virtual peer " << virtual_peer_id << ": not found in chat list!!" << std::endl;
+			return ;
+		}
+
+		it->second.status = RS_DISTANT_CHAT_STATUS_TUNNEL_DN ;
+	}
+	rsicontrol->getNotify().notifyChatStatus(hash,"tunnel is down...",true) ;
+	rsicontrol->getNotify().notifyPeerStatusChanged(hash,RS_STATUS_OFFLINE) ;
 }
 void p3ChatService::receiveTurtleData(	RsTurtleGenericTunnelItem *gitem,const std::string& hash,
 													const std::string& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction)
@@ -2878,7 +2901,7 @@ void p3ChatService::receiveTurtleData(	RsTurtleGenericTunnelItem *gitem,const st
 
 	// Setup the virtual peer to be the origin, and pass it on.
 	//
-	citem->PeerId(virtual_peer_id) ;
+	citem->PeerId(hash) ;
 	handleIncomingItem(citem) ; // Treats the item, and deletes it 
 }
 
@@ -3139,10 +3162,12 @@ uint32_t p3ChatService::getDistantChatStatus(const std::string& hash)
 {
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
-	if(_distant_chat_peers.find(hash) != _distant_chat_peers.end())
-		return 1 ;
-
-	return 0 ;
+	std::map<TurtleFileHash,DistantChatPeerInfo>::const_iterator it = _distant_chat_peers.find(hash) ;
+	
+	if(it == _distant_chat_peers.end())
+		return RS_DISTANT_CHAT_STATUS_UNKNOWN ;
+	else
+		return it->second.status ;
 }
 
 
