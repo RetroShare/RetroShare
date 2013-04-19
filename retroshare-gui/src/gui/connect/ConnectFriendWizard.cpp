@@ -515,13 +515,18 @@ ServicePermissionFlags ConnectFriendWizard::serviceFlags() const
 {
 	ServicePermissionFlags flags(0) ;
 
-	if(ui->_anonymous_routing_CB_2->isChecked()) flags |= RS_SERVICE_PERM_TURTLE ;
-	if(        ui->_discovery_CB_2->isChecked()) flags |= RS_SERVICE_PERM_DISCOVERY ;
-	if(  ui->_forums_channels_CB_2->isChecked()) flags |= RS_SERVICE_PERM_DISTRIB ;
-
+	if (hasVisitedPage(Page_FriendRequest))
+	{
+		if(ui->_anonymous_routing_CB->isChecked()) flags |= RS_SERVICE_PERM_TURTLE ;
+		if(        ui->_discovery_CB->isChecked()) flags |= RS_SERVICE_PERM_DISCOVERY ;
+		if(  ui->_forums_channels_CB->isChecked()) flags |= RS_SERVICE_PERM_DISTRIB ;
+	} else if (hasVisitedPage(Page_Conclusion)) {
+		if(ui->_anonymous_routing_CB_2->isChecked()) flags |= RS_SERVICE_PERM_TURTLE ;
+		if(        ui->_discovery_CB_2->isChecked()) flags |= RS_SERVICE_PERM_DISCOVERY ;
+		if(  ui->_forums_channels_CB_2->isChecked()) flags |= RS_SERVICE_PERM_DISTRIB ;
+	}
 	return flags ;
 }
-
 void ConnectFriendWizard::accept()
 {
 	bool sign = false;
@@ -560,6 +565,7 @@ void ConnectFriendWizard::accept()
 		} else if (accept_connection) {
 			std::cerr << "ConclusionPage::validatePage() accepting GPG key for connection." << std::endl;
 			rsPeers->addFriend("", peerDetails.gpg_id,serviceFlags()) ;
+			rsPeers->setServicePermissionFlags(peerDetails.gpg_id,serviceFlags()) ;
 		}
 
 		if (!groupId.isEmpty()) {

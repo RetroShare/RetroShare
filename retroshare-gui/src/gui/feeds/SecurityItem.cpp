@@ -326,19 +326,19 @@ void SecurityItem::removeFriend()
 		rsPeers->removeFriend(mGpgId);
 	}
 }
-
 void SecurityItem::friendRequest()
 {
 #ifdef DEBUG_ITEM
 	std::cerr << "SecurityItem::friendReguest()";
 	std::cerr << std::endl;
 #endif
-	ConfCertDialog::showIt(mGpgId, ConfCertDialog::PageTrust);
-/*	ConnectFriendWizard *connectFriendWizard = new ConnectFriendWizard;
+
+	ConnectFriendWizard *connectFriendWizard = new ConnectFriendWizard;
 	connectFriendWizard->setAttribute(Qt::WA_DeleteOnClose, true);
 	connectFriendWizard->setGpgId(mGpgId, true);
-	connectFriendWizard->show();*/
+	connectFriendWizard->show();
 }
+
 
 void SecurityItem::peerDetails()
 {
