@@ -147,7 +147,7 @@
 #define IMAGE_MINIMIZE          ":/images/window_nofullscreen.png"
 #define IMAGE_MAXIMIZE          ":/images/window_fullscreen.png"
 #define IMG_HELP                ":/images/help24.png"
-#define IMAGE_NEWSFEED          ":/images/konqsidebar_news24.png"
+#define IMAGE_NEWSFEED          ":/images/newsfeed128.png"
 #define IMAGE_PLUGINS           ":/images/extension_32.png"
 #define IMAGE_NOONLINE          ":/images/rstray0.png"
 #define IMAGE_ONEONLINE         ":/images/rstray1.png"

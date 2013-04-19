@@ -36,14 +36,17 @@
      </property>
      <item>
       <widget class="QLabel" name="imageLabel">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
+       <property name="maximumSize">
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
        </property>
        <property name="pixmap">
-        <pixmap resource="images.qrc">:/images/konqsidebar_news16.png</pixmap>
+        <pixmap resource="images.qrc">:/images/newsfeed128.png</pixmap>
+       </property>
+       <property name="scaledContents">
+        <bool>true</bool>
        </property>
       </widget>
      </item>

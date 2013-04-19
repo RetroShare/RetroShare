@@ -445,10 +445,6 @@ border-image: url(:/images/btn_26_pressed.png) 4;
             <property name="text">
              <string>Subscribe</string>
             </property>
-            <property name="icon">
-             <iconset resource="../../images.qrc">
-              <normaloff>:/images/konqsidebar_news16.png</normaloff>:/images/konqsidebar_news16.png</iconset>
-            </property>
            </widget>
           </item>
           <item row="0" column="0" colspan="2">
@@ -566,9 +562,6 @@ border-image: url(:/images/btn_26_pressed.png) 4;
   </action>
  </widget>
  <resources>
-  <include location="../../images.qrc"/>
-  <include location="../../images.qrc"/>
-  <include location="../../images.qrc"/>
   <include location="../../images.qrc"/>
  </resources>
  <connections/>
