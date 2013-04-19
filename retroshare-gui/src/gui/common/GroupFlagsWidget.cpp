@@ -17,7 +17,7 @@
 #define INDEX_GROUP_UNCHECKED     4
 #define INDEX_OTHER_UNCHECKED     5
 
-QString GroupFlagsWidget::_tooltips_on[4] = {
+/*QString GroupFlagsWidget::_tooltips_on[4] = {
 	QObject::tr("Directory is browsable for friends from groups"),
 	QObject::tr("Directory is accessible by anonymous tunnels from friends from groups"),
 	QObject::tr("Directory is browsable for any friend"),
@@ -29,7 +29,7 @@ QString GroupFlagsWidget::_tooltips_off[4] = {
 	QObject::tr("Directory is NOT browsable for any friend"),
 	QObject::tr("Directory is NOT accessible by anonymous tunnels from any friend")
 };
-
+*/
 GroupFlagsWidget::GroupFlagsWidget(QWidget *parent,FileStorageFlags flags)
 	: QWidget(parent)
 {
@@ -102,20 +102,42 @@ void GroupFlagsWidget::setFlags(FileStorageFlags flags)
 
 void GroupFlagsWidget::update_button_state(bool b,int button_id)
 {
+  QString tip_on, tip_off;
+  switch (button_id) {
+    case 0:
+      tip_on = tr("Directory is browsable for friends from groups");
+      tip_off = tr("Directory is NOT browsable for friends from groups");
+      break;
+    case 1:
+      tip_on = tr("Directory is accessible by anonymous tunnels from friends from groups");
+      tip_off = tr("Directory is NOT accessible by anonymous tunnels from friends from groups");
+      break;
+    case 2:
+      tip_on = tr("Directory is browsable for any friend");
+      tip_off = tr("Directory is NOT browsable for any friend");
+      break;
+    case 3:
+      tip_on = tr("Directory is accessible by anonymous tunnels from any friend");
+      tip_off = tr("Directory is NOT accessible by anonymous tunnels from any friend");
+      break;
+    default:
+      tip_on = "";
+      tip_off = "";
+  }
 	if(b)
 	{
 		_buttons[button_id]->setIcon(*_icons[button_id]) ;
-		_buttons[button_id]->setToolTip(_tooltips_on[button_id]) ;
+		_buttons[button_id]->setToolTip(tip_on) ;
 	}
 	else if(button_id == INDEX_GROUP_NETWORK_W || button_id == INDEX_GROUP_BROWSABLE)
 	{
 		_buttons[button_id]->setIcon(*_icons[INDEX_GROUP_UNCHECKED]) ;
-		_buttons[button_id]->setToolTip(_tooltips_off[button_id]) ;
+		_buttons[button_id]->setToolTip(tip_off) ;
 	}
 	else
 	{
 		_buttons[button_id]->setIcon(*_icons[INDEX_OTHER_UNCHECKED]) ;
-		_buttons[button_id]->setToolTip(_tooltips_off[button_id]) ;
+		_buttons[button_id]->setToolTip(tip_off) ;
 	}
 }
 
