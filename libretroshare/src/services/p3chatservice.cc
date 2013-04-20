@@ -246,8 +246,25 @@ void p3ChatService::sendStatusString( const std::string& id , const std::string&
 		std::cerr  << "sending chat status packet:" << std::endl ;
 		cs->print(std::cerr) ;
 #endif
-		sendItem(cs);
+		sendPrivateChatItem(cs);
 	}
+}
+
+void p3ChatService::sendPrivateChatItem(RsChatItem *item)
+{
+	bool found = false ;
+
+	{
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+		if(_distant_chat_peers.find(item->PeerId()) != _distant_chat_peers.end()) 
+			found = true ;
+	}
+
+	if(found)
+		sendTurtleData(item) ;
+	else
+		sendItem(item) ;
 }
 
 void p3ChatService::checkSizeAndSendMessage_deprecated(RsChatMsgItem *msg)
@@ -273,9 +290,9 @@ void p3ChatService::checkSizeAndSendMessage_deprecated(RsChatMsgItem *msg)
 		// Indicate that the message is to be continued.
 		//
 		item->chatFlags |= RS_CHAT_FLAG_PARTIAL_MESSAGE ;
-		sendItem(item) ;
+		sendPrivateChatItem(item) ;
 	}
-	sendItem(msg) ;
+	sendPrivateChatItem(msg) ;
 }
 // This function should be used for all types of chat messages. But this requires a non backward compatible change in 
 // chat protocol. To be done for version 0.6
@@ -508,7 +525,7 @@ bool     p3ChatService::sendPrivateChat(const std::string &id, const std::wstrin
 #endif
 		RsChatStatusItem *cs = makeOwnCustomStateStringItem() ;
 		cs->PeerId(id) ;
-		sendItem(cs) ;
+		sendPrivateChatItem(cs) ;
 	}
 
 	return true;
@@ -677,7 +694,7 @@ void p3ChatService::handleIncomingItem(RsItem *item)
 		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated: handleRecvChatLobbyList       (dynamic_cast<RsChatLobbyListItem_deprecated *>(item)) ; break ;
 
 		default:
-																		std::cerr << "Unhandled item subtype " << item->PacketSubType() << " in p3ChatService: " << std::endl;
+																		std::cerr << "Unhandled item subtype " << (int)item->PacketSubType() << " in p3ChatService: " << std::endl;
 	}
 	delete item ;
 }
@@ -1511,17 +1528,19 @@ void p3ChatService::getOwnAvatarJpegData(unsigned char *& data,int& size)
 
 std::string p3ChatService::getCustomStateString(const std::string& peer_id) 
 {
-	// should be a Mutex here.
-	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
-
-	std::map<std::string,StateStringInfo>::iterator it = _state_strings.find(peer_id) ; 
-
-	// has it. Return it strait away.
-	//
-	if(it!=_state_strings.end())
 	{
-	   it->second._peer_is_new = false ;
-	   return it->second._custom_status_string ;
+		// should be a Mutex here.
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+		std::map<std::string,StateStringInfo>::iterator it = _state_strings.find(peer_id) ; 
+
+		// has it. Return it strait away.
+		//
+		if(it!=_state_strings.end())
+		{
+			it->second._peer_is_new = false ;
+			return it->second._custom_status_string ;
+		}
 	}
 
 	sendCustomStateRequest(peer_id);
@@ -1530,33 +1549,35 @@ std::string p3ChatService::getCustomStateString(const std::string& peer_id)
 
 void p3ChatService::getAvatarJpegData(const std::string& peer_id,unsigned char *& data,int& size) 
 {
-	// should be a Mutex here.
-	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
-
-	std::map<std::string,AvatarInfo *>::const_iterator it = _avatars.find(peer_id) ; 
-
-#ifdef CHAT_DEBUG
-	std::cerr << "p3chatservice:: avatar for peer " << peer_id << " requested from above. " << std::endl ;
-#endif
-	// has avatar. Return it straight away.
-	//
-	if(it!=_avatars.end())
 	{
-		uint32_t s=0 ;
-	   it->second->toUnsignedChar(data,s) ;
-		size = s ;
-	   it->second->_peer_is_new = false ;
-#ifdef CHAT_DEBUG
-	   std::cerr << "Already has avatar. Returning it" << std::endl ;
-#endif
-	   return ;
-       } else {
-#ifdef CHAT_DEBUG
-	   std::cerr << "No avatar for this peer. Requesting it by sending request packet." << std::endl ;
-#endif
-       }
+		// should be a Mutex here.
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
-        sendAvatarRequest(peer_id);
+		std::map<std::string,AvatarInfo *>::const_iterator it = _avatars.find(peer_id) ; 
+
+#ifdef CHAT_DEBUG
+		std::cerr << "p3chatservice:: avatar for peer " << peer_id << " requested from above. " << std::endl ;
+#endif
+		// has avatar. Return it straight away.
+		//
+		if(it!=_avatars.end())
+		{
+			uint32_t s=0 ;
+			it->second->toUnsignedChar(data,s) ;
+			size = s ;
+			it->second->_peer_is_new = false ;
+#ifdef CHAT_DEBUG
+			std::cerr << "Already has avatar. Returning it" << std::endl ;
+#endif
+			return ;
+		} else {
+#ifdef CHAT_DEBUG
+			std::cerr << "No avatar for this peer. Requesting it by sending request packet." << std::endl ;
+#endif
+		}
+	}
+
+	sendAvatarRequest(peer_id);
 }
 
 void p3ChatService::sendAvatarRequest(const std::string& peer_id)
@@ -1575,7 +1596,7 @@ void p3ChatService::sendAvatarRequest(const std::string& peer_id)
 	std::cerr << std::endl;
 #endif
 
-	sendItem(ci);
+	sendPrivateChatItem(ci);
 }
 
 void p3ChatService::sendCustomStateRequest(const std::string& peer_id){
@@ -1591,7 +1612,7 @@ void p3ChatService::sendCustomStateRequest(const std::string& peer_id){
 	std::cerr << std::endl;
 #endif
 
-	sendItem(cs);
+	sendPrivateChatItem(cs);
 }
 
 RsChatStatusItem *p3ChatService::makeOwnCustomStateStringItem()
@@ -1633,7 +1654,7 @@ void p3ChatService::sendAvatarJpegData(const std::string& peer_id)
 		std::cerr << std::endl;
 #endif
 
-		sendItem(ci) ;
+		sendPrivateChatItem(ci) ;
 	}
    else {
 #ifdef CHAT_DEBUG
@@ -1651,7 +1672,7 @@ std::cerr << "p3chatservice: sending requested status string for peer " << peer_
 	RsChatStatusItem *cs = makeOwnCustomStateStringItem();
 	cs->PeerId(peer_id);
 
-	sendItem(cs);
+	sendPrivateChatItem(cs);
 }
 
 bool p3ChatService::loadList(std::list<RsItem*>& load)
@@ -2777,7 +2798,7 @@ void p3ChatService::cleanLobbyCaches()
 		sendConnectionChallenge(*it) ;
 }
 
-bool p3ChatService::handleTunnelRequest(const std::string& hash,const std::string& peer_id,std::string& description_info_string) 
+bool p3ChatService::handleTunnelRequest(const std::string& hash,const std::string& peer_id)
 {
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
@@ -2788,14 +2809,19 @@ bool p3ChatService::handleTunnelRequest(const std::string& hash,const std::strin
 	if(it == _distant_chat_invites.end())
 		return false ;
 
-	std::cerr << "Responding ok." << std::endl;
 	return true ;
 }
 
-void p3ChatService::addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id)
+void p3ChatService::addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction dir)
 {
+	std::cerr << "p3ChatService:: adding new virtual peer " << virtual_peer_id << " for hash " << hash << std::endl;
+	time_t now = time(NULL) ;
+
+	if(dir == RsTurtleGenericTunnelItem::DIRECTION_SERVER)
 	{
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+		std::cerr << "  Side is in direction to server." << std::endl;
 
 		std::map<TurtleFileHash,DistantChatPeerInfo>::iterator it = _distant_chat_peers.find(hash) ;
 
@@ -2805,12 +2831,36 @@ void p3ChatService::addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtua
 			return ;
 		}
 
-		time_t now = time(NULL) ;
 		it->second.last_contact = now ;
 		it->second.status = RS_DISTANT_CHAT_STATUS_TUNNEL_OK ;
+		it->second.virtual_peer_id = virtual_peer_id ;
 
 		std::cerr << "(II) Adding virtual peer " << virtual_peer_id << " for chat hash " << hash << std::endl;
 	}
+	
+	if(dir == RsTurtleGenericTunnelItem::DIRECTION_CLIENT)
+	{
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+		std::cerr << "  Side is in direction to client." << std::endl;
+		std::cerr << "  Initing encryption parameters from existing distant chat invites." << std::endl;
+
+		std::map<TurtleFileHash,DistantChatInvite>::iterator it = _distant_chat_invites.find(hash) ;
+
+		if(it == _distant_chat_invites.end())
+		{
+			std::cerr << "(EE) Cannot find distant chat invite for hash " << hash << ": no chat invite found for that hash." << std::endl;
+			return ;
+		}
+		DistantChatPeerInfo info ;
+		info.last_contact = now ;
+		info.status = RS_DISTANT_CHAT_STATUS_TUNNEL_OK ;
+		info.virtual_peer_id = virtual_peer_id ;
+		memcpy(info.aes_key,it->second.aes_key,DISTANT_CHAT_AES_KEY_SIZE) ;
+
+		_distant_chat_peers[hash] = info ;
+	}
+
 	rsicontrol->getNotify().notifyChatStatus(hash,"tunnel is up again!",true) ;
 	rsicontrol->getNotify().notifyPeerStatusChanged(hash,RS_STATUS_ONLINE) ;
 
@@ -2865,7 +2915,7 @@ void p3ChatService::receiveTurtleData(	RsTurtleGenericTunnelItem *gitem,const st
 			return ;
 		}
 		it->second.last_contact = time(NULL) ;
-		memcpy(aes_key,it->second.aes_key,8) ;
+		memcpy(aes_key,it->second.aes_key,DISTANT_CHAT_AES_KEY_SIZE) ;
 	}
 
 	// Call the AES crypto module
@@ -2905,8 +2955,10 @@ void p3ChatService::receiveTurtleData(	RsTurtleGenericTunnelItem *gitem,const st
 	handleIncomingItem(citem) ; // Treats the item, and deletes it 
 }
 
-void p3ChatService::sendTurtleData(RsChatItem *item, const std::string& hash)
+void p3ChatService::sendTurtleData(RsChatItem *item)
 {
+	std::cerr << "p3ChatService::sendTurtleData(): try sending item " << (void*)item << " to tunnel " << item->PeerId() << std::endl;
+
 	uint32_t rssize = item->serial_size();
 	uint8_t *buff = new uint8_t[rssize] ;
 
@@ -2922,7 +2974,7 @@ void p3ChatService::sendTurtleData(RsChatItem *item, const std::string& hash)
 
 	{
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
-		std::map<std::string,DistantChatPeerInfo>::iterator it = _distant_chat_peers.find(hash) ;
+		std::map<std::string,DistantChatPeerInfo>::iterator it = _distant_chat_peers.find(item->PeerId()) ;
 
 		if(it == _distant_chat_peers.end())
 		{
@@ -2934,10 +2986,12 @@ void p3ChatService::sendTurtleData(RsChatItem *item, const std::string& hash)
 		virtual_peer_id = it->second.virtual_peer_id ;
 		memcpy(aes_key,it->second.aes_key,8) ;
 	}
+	std::cerr << "p3ChatService::sendTurtleData(): tunnel found. Encrypting data." << std::endl;
+
 	// Now encrypt this data using AES.
 	//
-	uint32_t encrypted_size ;
 	uint8_t *encrypted_data = new uint8_t[RsAES::get_buffer_size(rssize)];
+	uint32_t encrypted_size = RsAES::get_buffer_size(rssize);
 
 	uint64_t IV = RSRandom::random_u64() ; // make a random 8 bytes IV
 
@@ -2962,6 +3016,8 @@ void p3ChatService::sendTurtleData(RsChatItem *item, const std::string& hash)
 
 	delete[] encrypted_data ;
 	delete item ;
+
+	std::cerr << "p3ChatService::sendTurtleData(): Sending through virtual peer: " << virtual_peer_id << std::endl;
 
 	mTurtle->sendTurtleData(virtual_peer_id,gitem) ;
 }

@@ -344,15 +344,16 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 
 		// Overloaded from RsTurtleClientService
 
-		virtual bool handleTunnelRequest(const std::string& hash,const std::string& peer_id,std::string& description_info_string) ;
+		virtual bool handleTunnelRequest(const std::string& hash,const std::string& peer_id) ;
 		virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const std::string& hash,const std::string& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
-		void addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) ;
+		void addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&,RsTurtleGenericTunnelItem::Direction dir) ;
 		void removeVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) ;
 
 		// Utility functions
 
 		void cleanDistantChatInvites() ;
-		void sendTurtleData(RsChatItem *,const std::string& virtual_peer_id) ;
+		void sendTurtleData(RsChatItem *) ;
+		void sendPrivateChatItem(RsChatItem *) ;
 
 		p3turtle *mTurtle ;
 };

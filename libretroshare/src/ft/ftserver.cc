@@ -488,16 +488,17 @@ RsTurtleGenericTunnelItem *ftServer::deserialiseItem(void *data,uint32_t size) c
 	}
 }
 
-void ftServer::addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id) 
+void ftServer::addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction dir) 
 {
-	mFtController->addFileSource(hash,virtual_peer_id) ;
+	if(dir == RsTurtleGenericTunnelItem::DIRECTION_SERVER)
+		mFtController->addFileSource(hash,virtual_peer_id) ;
 }
 void ftServer::removeVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id) 
 {
 	mFtController->removeFileSource(hash,virtual_peer_id) ;
 }
 
-bool ftServer::handleTunnelRequest(const std::string& hash,const std::string& peer_id,std::string& description_info_string)
+bool ftServer::handleTunnelRequest(const std::string& hash,const std::string& peer_id)
 {
 	FileInfo info ;
 	bool res = FileDetails(hash, RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_SPEC_ONLY | RS_FILE_HINTS_DOWNLOAD, info);
@@ -521,9 +522,6 @@ bool ftServer::handleTunnelRequest(const std::string& hash,const std::string& pe
 	// This is an additional computation cost, but the way it's written here, it's only called when res is true.
 	//
 	res = res && (RS_FILE_HINTS_NETWORK_WIDE & rsPeers->computePeerPermissionFlags(peer_id,info.storage_permission_flags,info.parent_groups)) ;
-
-	if(res)
-		description_info_string = info.fname ;
 
 	return res ;
 }

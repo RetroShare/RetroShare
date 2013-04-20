@@ -578,7 +578,7 @@ void p3turtle::locked_closeTunnel(TurtleTunnelId tid,std::vector<std::pair<Turtl
 #ifdef P3TURTLE_DEBUG
 		std::cerr << "    Tunnel is a ending point. Also removing associated outgoing hash." ;
 #endif
-		std::map<TurtleFileHash,std::string>::iterator itHash = _outgoing_file_hashes.find(it->second.hash);
+		std::map<TurtleFileHash,RsTurtleClientService*>::iterator itHash = _outgoing_file_hashes.find(it->second.hash);
 		if(itHash != _outgoing_file_hashes.end())
 			_outgoing_file_hashes.erase(itHash) ;
 	}
@@ -1094,7 +1094,7 @@ bool p3turtle::getTunnelServiceInfo(TurtleTunnelId tunnel_id,std::string& vpid,s
 	if(it2 == _local_tunnels.end())
 	{
 #ifdef P3TURTLE_DEBUG
-		std::cerr << "p3turtle: got file CRC32 map with unknown tunnel id " << (void*)item->tunnelId() << std::endl ;
+		std::cerr << "p3turtle: unknown tunnel id " << (void*)item->tunnelId() << std::endl ;
 #endif
 		return false;
 	}
@@ -1113,15 +1113,39 @@ bool p3turtle::getTunnelServiceInfo(TurtleTunnelId tunnel_id,std::string& vpid,s
 	vpid = tunnel.vpid ;
 	hash = tunnel.hash ;
 
-	std::map<TurtleFileHash,TurtleHashInfo>::const_iterator it = _incoming_file_hashes.find(hash) ;
+	// Now sort out the case of client vs. server side items.
+	//
+	std::string ownid = mLinkMgr->getOwnId() ;
 
-	if(it == _incoming_file_hashes.end())
+	if(tunnel.local_src == ownid)
 	{
-		std::cerr << "p3turtle::handleRecvGenericTunnelItem(): hash " << hash << " for tunnel " << (void*)(it2->first) << " has no attached service! Dropping the item. This is a serious consistency error." << std::endl;
-		return false;
-	}
+		std::map<TurtleFileHash,TurtleHashInfo>::const_iterator it = _incoming_file_hashes.find(hash) ;
 
-	service = it->second.service ;
+		if(it == _incoming_file_hashes.end())
+		{
+			std::cerr << "p3turtle::handleRecvGenericTunnelItem(): hash " << hash << " for tunnel " << (void*)(it2->first) << " has no attached service! Dropping the item. This is a serious consistency error." << std::endl;
+			return false;
+		}
+
+		service = it->second.service ;
+	}
+	else if(tunnel.local_dst == ownid)
+	{
+		std::map<TurtleFileHash,RsTurtleClientService*>::const_iterator it = _outgoing_file_hashes.find(hash) ;
+
+		if(it == _outgoing_file_hashes.end())
+		{
+			std::cerr << "p3turtle::handleRecvGenericTunnelItem(): hash " << hash << " for tunnel " << (void*)(it2->first) << " has no attached service! Dropping the item. This is a serious consistency error." << std::endl;
+			return false;
+		}
+
+		service = it->second;
+	}
+	else
+	{
+		std::cerr << "p3turtle::handleRecvGenericTunnelItem(): hash " << hash << " for tunnel " << (void*)(it2->first) << ". Tunnel is not a end-point or a starting tunnel!! This is a serious consistency error." << std::endl;
+		return false ;
+	}
 
 	return true ;
 }
@@ -1391,13 +1415,14 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 
 	bool found = false ;
 	std::string info ;
+	RsTurtleClientService *service = NULL ;
 
 	if(item->PeerId() != mLinkMgr->getOwnId())
 	{
 #ifdef P3TURTLE_DEBUG
 		std::cerr << "  Request not from us. Performing local search" << std::endl ;
 #endif
-		found = performLocalHashSearch(item->file_hash,item->PeerId(),info) ;
+		found = performLocalHashSearch(item->file_hash,item->PeerId(),service) ;
 	}
 
 	{
@@ -1435,9 +1460,15 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 
 			// Store some info string about the tunnel.
 			//
-			_outgoing_file_hashes[item->file_hash] = info ;
+			_outgoing_file_hashes[item->file_hash] = service ;
+
+			// Notify the client service that there's a new virtual peer id available as a client.
+			//
+			service->addVirtualPeer(item->file_hash,_local_tunnels[res_item->tunnel_id].vpid,RsTurtleGenericTunnelItem::DIRECTION_CLIENT) ;
 
 			// We return straight, because when something is found, there's no need to digg a tunnel further.
+			//
+
 			return ;
 		}
 #ifdef P3TURTLE_DEBUG
@@ -1646,7 +1677,7 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 	// so we deported this code here.
 	//
 	if(new_tunnel && service != NULL)
-		service->addVirtualPeer(new_hash,new_vpid) ;
+		service->addVirtualPeer(new_hash,new_vpid,RsTurtleGenericTunnelItem::DIRECTION_SERVER) ;
 }
 
 // -----------------------------------------------------------------------------------//
@@ -1857,14 +1888,17 @@ void p3turtle::returnSearchResult(RsTurtleSearchResultItem *item)
 /// Warning: this function should never be called while the turtle mutex is locked.
 /// Otherwize this is a possible source of cross-lock with the File mutex.
 //
-bool p3turtle::performLocalHashSearch(const TurtleFileHash& hash,const std::string& peer_id,std::string& description_string)
+bool p3turtle::performLocalHashSearch(const TurtleFileHash& hash,const std::string& peer_id,RsTurtleClientService *& service)
 {
 	if(_registered_services.empty())
 		std::cerr << "Turtle router has no services registered. Tunnel requests cannot be handled." << std::endl;
 
 	for(std::list<RsTurtleClientService*>::const_iterator it(_registered_services.begin());it!=_registered_services.end();++it)
-		if( (*it)->handleTunnelRequest(hash,peer_id,description_string))
+		if( (*it)->handleTunnelRequest(hash,peer_id))
+		{
+			service = *it ;
 			return true ;
+		}
 
 	return false ;
 }
