@@ -99,6 +99,7 @@ public:
 
     /*!
      * Adds a value to the set
+     * Takes a private copy of data
      * @param key  the name of the value to put
      * @param value  the data for the value to put
      */

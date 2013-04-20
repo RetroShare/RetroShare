@@ -30,8 +30,11 @@
 #include <set>
 #include <list>
 #include <map>
+#include "rsdbbind.h"
 
 #include "contentvalue.h"
+
+
 
 class RetroCursor;
 
@@ -141,6 +144,22 @@ public:
      */
     void vacuum();
 
+
+    /*!
+     * Build the "VALUE" part of an insertiong sql query
+     * @param parameter contains place holder query
+     * @param paramBindings
+     */
+    void buildInsertQueryValue(const std::map<std::string, uint8_t> keyMap, const ContentValue& cv,
+    		std::string& parameter, std::list<RetroBind*>& paramBindings);
+
+    /*!
+     * Build the "VALUE" part of an insertiong sql query
+     * @param parameter contains place holder query
+     * @param paramBindings
+     */
+    void buildUpdateQueryValue(const std::map<std::string, uint8_t> keyMap, const ContentValue& cv,
+    		std::string& parameter, std::list<RetroBind*>& paramBindings);
 public:
 
     static const int OPEN_READONLY;
@@ -149,16 +168,7 @@ public:
 
 private:
 
-    class RetroDbBlob{
-
-    public:
-
-        char* data;
-        uint32_t length;
-        uint32_t index;
-    };
-
-    bool execSQL_bind_blobs(const std::string &query, std::list<RetroDbBlob>& blobs);
+    bool execSQL_bind(const std::string &query, std::list<RetroBind*>& blobs);
 
 private:
 

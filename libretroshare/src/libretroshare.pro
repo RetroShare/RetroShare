@@ -632,6 +632,7 @@ gxs {
 		retroshare/rsgxsservice.h \
 		serialiser/rsgxsitems.h \
 		util/retrodb.h \
+		util/rsdbbind.h \
 		gxs/rsgxsutil.h \
 		util/contentvalue.h \
 		gxs/gxssecurity.h \
@@ -649,9 +650,11 @@ gxs {
 		gxs/rsgxsdataaccess.cc \
 		util/retrodb.cc \
 		util/contentvalue.cc \
+		util/rsdbbind.cc \
 		gxs/gxssecurity.cc \
 		gxs/gxstokenqueue.cc \
 		gxs/rsgxsutil.cc
+
 
 	# Identity Service
 	HEADERS += retroshare/rsidentity.h \

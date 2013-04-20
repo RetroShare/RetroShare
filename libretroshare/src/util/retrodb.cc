@@ -2,7 +2,7 @@
 /*
  * RetroShare : RetroDb functionality
  *
- * Copyright 2012 Christopher Evi-Parker
+ * Copyright 2012-2013 Christopher Evi-Parker
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,18 +30,10 @@
 
 #include "retrodb.h"
 #include "radix64.h"
+#include "rsdbbind.h"
 
 //#define RETRODB_DEBUG
-//#define RADIX_STRING
 
-
-void free_blob(void* dat){
-
-    char* c = (char*) dat;
-    delete[] c;
-    dat = NULL;
-
-}
 
 const int RetroDb::OPEN_READONLY = SQLITE_OPEN_READONLY;
 const int RetroDb::OPEN_READWRITE = SQLITE_OPEN_READWRITE;
@@ -195,7 +187,7 @@ bool RetroDb::isOpen() const {
     return (mDb==NULL ? false : true);
 }
 
-bool RetroDb::sqlInsert(const std::string &table, const std::string& nullColumnHack, const ContentValue &cv){
+bool RetroDb::sqlInsert(const std::string &table, const std::string& /* nullColumnHack */, const ContentValue &cv){
 
     std::map<std::string, uint8_t> keyTypeMap;
     cv.getKeyTypeMap(keyTypeMap);
@@ -214,102 +206,30 @@ bool RetroDb::sqlInsert(const std::string &table, const std::string& nullColumnH
         if(mit == keyTypeMap.end())
             qColumns += ")"; // close bracket if at end
         else
-             qColumns += ",";
+            qColumns += ",";
 
         mit--;
     }
 
     // build values part of insertion
-    std::string qValues = "VALUES(";
-    std::ostringstream oStrStream;
-    uint32_t index = 0;
-    std::list<RetroDbBlob> blobL;
-
-    for(mit=keyTypeMap.begin(); mit!=keyTypeMap.end(); mit++){
-
-        uint8_t type = mit->second;
-        std::string key = mit->first;
-
-
-
-        if(ContentValue::BOOL_TYPE == type)
-            {
-                bool value;
-                cv.getAsBool(key, value);
-                oStrStream << value;
-                qValues += oStrStream.str();
-            }
-        else if( ContentValue::DOUBLE_TYPE == type)
-            {
-                double value;
-                cv.getAsDouble(key, value);
-                oStrStream << value;
-                qValues += oStrStream.str();
-            }
-        else if( ContentValue::DATA_TYPE == type)
-            {
-                char* value;
-                uint32_t len;
-                cv.getAsData(key, len, value);
-                RetroDbBlob b;
-                b.data = value;
-                b.length = len;
-                b.index = ++index;
-                blobL.push_back(b);
-                qValues += "?"; // parameter
-            }
-        else if ( ContentValue::STRING_TYPE == type)
-            {
-                std::string value;
-                cv.getAsString(key, value);
-#ifdef RADIX_STRING
-                Radix64::encode(value.c_str(), value.size(), value);
-#endif
-                qValues += "'" + value +"'";
-            }
-        else if ( ContentValue::INT32_TYPE == type)
-            {
-                int32_t value = 0;
-                cv.getAsInt32(key, value);
-                oStrStream << value;
-                qValues += oStrStream.str();
-            }
-        else if( ContentValue::INT64_TYPE == type)
-            {
-                int64_t value = 0;
-                cv.getAsInt64(key, value);
-                oStrStream << value;
-                qValues += oStrStream.str();
-            }
-
-
-        mit++;
-        if(mit != keyTypeMap.end()){ // add comma if more columns left
-            qValues += ",";
-        }
-        else{ // at end close brackets
-             qValues += ");";
-         }
-        mit--;
-
-        // clear stream strings
-        oStrStream.str("");
-    }
-
+    std::string qValues;
+    std::list<RetroBind*> paramBindings;
+    buildInsertQueryValue(keyTypeMap, cv, qValues, paramBindings);
 
     // complete insertion query
     std::string sqlQuery = "INSERT INTO " + qColumns + " " + qValues;
+
+    execSQL_bind(sqlQuery, paramBindings);
 
 #ifdef RETRODB_DEBUG
     std::cerr << "RetroDb::sqlInsert(): " << sqlQuery << std::endl;
 #endif
 
-    // execute query
-    execSQL_bind_blobs(sqlQuery, blobL);
+
     return true;
 }
 
-bool RetroDb::execSQL_bind_blobs(const std::string &query, std::list<RetroDbBlob> &blobs){
+bool RetroDb::execSQL_bind(const std::string &query, std::list<RetroBind*> &paramBindings){
 
     // prepare statement
     sqlite3_stmt* stm = NULL;
@@ -328,11 +248,19 @@ bool RetroDb::execSQL_bind_blobs(const std::string &query, std::list<RetroDbBlob
         return false;
     }
 
-    std::list<RetroDbBlob>::iterator lit = blobs.begin();
+    std::list<RetroBind*>::iterator lit = paramBindings.begin();
 
-    for(; lit != blobs.end(); lit++){
-        const RetroDbBlob& b = *lit;
-        sqlite3_bind_blob(stm, b.index, b.data, b.length, NULL);
+    for(; lit != paramBindings.end(); lit++){
+        RetroBind* rb = *lit;
+
+        if(!rb->bind(stm))
+        {
+        	std::cerr << "\nBind failed for index: " << rb->getIndex()
+        			  << std::endl;
+        }
+
+        delete rb;
+        rb = NULL;
     }
 
     uint32_t delta = 3;
@@ -381,7 +309,149 @@ bool RetroDb::execSQL_bind_blobs(const std::string &query, std::list<RetroDbBlob
     return ok;
 }
 
-bool RetroDb::sqlDelete(const std::string &tableName, const std::string &whereClause, const std::string &whereArgs){
+void RetroDb::buildInsertQueryValue(const std::map<std::string, uint8_t> keyTypeMap,
+		const ContentValue& cv, std::string& parameter,
+		std::list<RetroBind*>& paramBindings)
+{
+	std::map<std::string, uint8_t>::const_iterator mit = keyTypeMap.begin();
+
+	parameter = "VALUES(";
+	int index = 0;
+    for(mit=keyTypeMap.begin(); mit!=keyTypeMap.end(); mit++)
+    {
+
+        uint8_t type = mit->second;
+        std::string key = mit->first;
+
+        RetroBind* rb = NULL;
+        if(ContentValue::BOOL_TYPE == type)
+            {
+                bool value;
+                cv.getAsBool(key, value);
+                rb = new RsBoolBind(value, ++index);
+            }
+        else if( ContentValue::DOUBLE_TYPE == type)
+            {
+                double value;
+                cv.getAsDouble(key, value);
+                rb = new RsDoubleBind(value, ++index);
+            }
+        else if( ContentValue::DATA_TYPE == type)
+            {
+                char* value;
+                uint32_t len;
+                cv.getAsData(key, len, value);
+                rb = new RsBlobBind(value, len, ++index);
+            }
+        else if ( ContentValue::STRING_TYPE == type)
+            {
+                std::string value;
+                cv.getAsString(key, value);
+                rb = new RsStringBind(value, ++index);
+            }
+        else if ( ContentValue::INT32_TYPE == type)
+            {
+                int32_t value = 0;
+                cv.getAsInt32(key, value);
+                rb = new RsInt32Bind(value, ++index);
+            }
+        else if( ContentValue::INT64_TYPE == type)
+            {
+                int64_t value = 0;
+                cv.getAsInt64(key, value);
+                rb = new RsInt64bind(value, ++index);
+            }
+
+        if(rb)
+        {
+        	paramBindings.push_back(rb);
+
+        	mit++;
+
+        	if(mit == keyTypeMap.end())
+        		parameter += "?";
+        	else
+        		parameter += "?,";
+
+        	mit--;
+        }
+    }
+
+    parameter += ")";
+
+
+}
+
+void RetroDb::buildUpdateQueryValue(const std::map<std::string, uint8_t> keyTypeMap,
+		const ContentValue& cv, std::string& parameter,
+		std::list<RetroBind*>& paramBindings)
+{
+	std::map<std::string, uint8_t>::const_iterator mit = keyTypeMap.begin();
+
+	int index = 0;
+    for(mit=keyTypeMap.begin(); mit!=keyTypeMap.end(); mit++)
+    {
+
+        uint8_t type = mit->second;
+        std::string key = mit->first;
+
+        RetroBind* rb = NULL;
+        if(ContentValue::BOOL_TYPE == type)
+            {
+                bool value;
+                cv.getAsBool(key, value);
+                rb = new RsBoolBind(value, ++index);
+            }
+        else if( ContentValue::DOUBLE_TYPE == type)
+            {
+                double value;
+                cv.getAsDouble(key, value);
+                rb = new RsDoubleBind(value, ++index);
+            }
+        else if( ContentValue::DATA_TYPE == type)
+            {
+                char* value;
+                uint32_t len;
+                cv.getAsData(key, len, value);
+                rb = new RsBlobBind(value, len, ++index);
+            }
+        else if ( ContentValue::STRING_TYPE == type)
+            {
+                std::string value;
+                cv.getAsString(key, value);
+                rb = new RsStringBind(value, ++index);
+            }
+        else if ( ContentValue::INT32_TYPE == type)
+            {
+                int32_t value = 0;
+                cv.getAsInt32(key, value);
+                rb = new RsInt32Bind(value, ++index);
+            }
+        else if( ContentValue::INT64_TYPE == type)
+            {
+                int64_t value = 0;
+                cv.getAsInt64(key, value);
+                rb = new RsInt64bind(value, ++index);
+            }
+
+        if(rb)
+        {
+        	paramBindings.push_back(rb);
+
+        	mit++;
+
+        	if(mit == keyTypeMap.end())
+        		parameter += key + "=?";
+        	else
+        		parameter += key + "=?,";
+
+        	mit--;
+        }
+    }
+
+}
+
+bool RetroDb::sqlDelete(const std::string &tableName, const std::string &whereClause, const std::string &/*whereArgs*/){
 
     std::string sqlQuery = "DELETE FROM " + tableName;
 
@@ -404,69 +474,9 @@ bool RetroDb::sqlUpdate(const std::string &tableName, std::string whereClause, c
     cv.getKeyTypeMap(keyTypeMap);
 
     // build SET part of update
-    std::string qValues = "";
-    std::ostringstream oStrStream;
-
-    for(mit=keyTypeMap.begin(); mit!=keyTypeMap.end(); mit++){
-
-        uint8_t type = mit->second;
-        std::string key = mit->first;
-
-        if( ContentValue::BOOL_TYPE == type)
-            {
-                bool value;
-                cv.getAsBool(key, value);
-                oStrStream << value;
-                qValues += key + "='" + oStrStream.str();
-            }
-        else if( ContentValue::DOUBLE_TYPE == type)
-            {
-                double value;
-                cv.getAsDouble(key, value);
-                oStrStream << value;
-                qValues += key + "='" + oStrStream.str();
-            }
-        else if( ContentValue::DATA_TYPE == type)
-            {
-                char* value;
-                uint32_t len;
-                cv.getAsData(key, len, value);
-                oStrStream.write(value, len);
-                qValues += key + "='" + oStrStream.str() + "' ";
-            }
-        else if( ContentValue::STRING_TYPE == type)
-            {
-                std::string value;
-                cv.getAsString(key, value);
-#ifdef RADIX_STRING
-                Radix64::encode(value.c_str(), value.size(), value);
-#endif
-                qValues += key + "='" + value + "' ";
-            }
-        else if( ContentValue::INT32_TYPE == type)
-            {
-                int32_t value;
-                cv.getAsInt32(key, value);
-                oStrStream << value;
-                qValues += key + "='" + oStrStream.str() + "' ";
-            }
-        else if( ContentValue::INT64_TYPE == type)
-            {
-                int64_t value;
-                cv.getAsInt64(key, value);
-                oStrStream << value;
-                qValues += key + "='" + oStrStream.str() + "' ";
-            }
-
-        mit++;
-        if(mit != keyTypeMap.end()){ // add comma if more columns left
-            qValues += ",";
-        }
-        mit--;
-
-        // clear stream strings
-        oStrStream.str("");
-    }
+    std::string qValues;
+    std::list<RetroBind*> paramBindings;
+    buildUpdateQueryValue(keyTypeMap, cv, qValues, paramBindings);
 
     if(qValues.empty())
         return false;
@@ -482,11 +492,8 @@ bool RetroDb::sqlUpdate(const std::string &tableName, std::string whereClause, c
     }
 
     // execute query
-    return execSQL(sqlQuery);
+    return execSQL_bind(sqlQuery, paramBindings);
 }
-
-
-
 
 
 /********************** RetroCursor ************************/
