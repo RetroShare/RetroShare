@@ -226,10 +226,13 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 {
 	if (obj == ui->chatTextEdit) {
 		if (event->type() == QEvent::KeyPress) {
-			updateStatusTyping();
 
 			QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
 			if (keyEvent) {
+				if (!keyEvent->text().isEmpty()) {
+					updateStatusTyping();
+				}
+
 				if (isChatLobby) {
 					if (keyEvent->key() == Qt::Key_Tab) {
 						completeNickname((bool)(keyEvent->modifiers() & Qt::ShiftModifier));
