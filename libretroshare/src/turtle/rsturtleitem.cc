@@ -534,7 +534,6 @@ RsTurtleGenericDataItem::RsTurtleGenericDataItem(void *data,uint32_t pktsize)
 	/* add mandatory parts first */
 
 	bool ok = true ;
-	uint32_t data_size = 0;
 
 	ok &= getRawUInt32(data, pktsize, &offset, &tunnel_id) ;
 	ok &= getRawUInt32(data, pktsize, &offset, &data_size);

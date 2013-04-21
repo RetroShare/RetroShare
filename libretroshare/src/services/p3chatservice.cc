@@ -2885,6 +2885,18 @@ void p3ChatService::removeVirtualPeer(const TurtleFileHash& hash,const TurtleVir
 	rsicontrol->getNotify().notifyChatStatus(hash,"tunnel is down...",true) ;
 	rsicontrol->getNotify().notifyPeerStatusChanged(hash,RS_STATUS_OFFLINE) ;
 }
+
+static void printBinaryData(void *data,uint32_t size)
+{
+	static const char outl[16] = { '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f' } ;
+
+	for(uint32_t j = 0; j < size; j++) 
+	{ 
+		std::cerr << outl[ ( ((uint8_t*)data)[j]>>4) ] ; 
+		std::cerr << outl[ ((uint8_t*)data)[j] & 0xf ] ; 
+	}
+}
+
 void p3ChatService::receiveTurtleData(	RsTurtleGenericTunnelItem *gitem,const std::string& hash,
 													const std::string& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction)
 {
@@ -2902,6 +2914,11 @@ void p3ChatService::receiveTurtleData(	RsTurtleGenericTunnelItem *gitem,const st
 	}
 	std::cerr << "   size = " << item->data_size << std::endl;
 	std::cerr << "   data = " << (void*)item->data_bytes << std::endl;
+	std::cerr << "     IV = " << std::hex << *(uint64_t*)item->data_bytes << std::dec << std::endl;
+	std::cerr << "   data = " ;
+
+	printBinaryData(item->data_bytes,item->data_size) ;
+	std::cerr << std::endl;
 
 	uint8_t aes_key[DISTANT_CHAT_AES_KEY_SIZE] ;
 
@@ -2926,8 +2943,11 @@ void p3ChatService::receiveTurtleData(	RsTurtleGenericTunnelItem *gitem,const st
 		std::cerr << "(EE) item encrypted data stream is too small: size = " << item->data_size << std::endl;
 		return ;
 	}
-	uint32_t decrypted_size ;
-	uint8_t *decrypted_data = new uint8_t[RsAES::get_buffer_size(item->data_size-8)];
+	uint32_t decrypted_size = RsAES::get_buffer_size(item->data_size-8);
+	uint8_t *decrypted_data = new uint8_t[decrypted_size];
+
+	std::cerr << "   Using IV: " << std::hex << *(uint64_t*)item->data_bytes << std::dec << std::endl;
+	std::cerr << "   Decrypted buffer size: " << decrypted_size << std::endl;
 
 	if(!RsAES::aes_decrypt_8_16((uint8_t*)item->data_bytes+8,item->data_size-8,aes_key,(uint8_t*)item->data_bytes,decrypted_data,decrypted_size))
 	{
@@ -2968,6 +2988,7 @@ void p3ChatService::sendTurtleData(RsChatItem *item)
 		delete[] buff ;
 		return ;
 	}
+	std::cerr << "     Serialized item has size " << rssize << std::endl;
 	
 	uint8_t aes_key[DISTANT_CHAT_AES_KEY_SIZE] ;
 	std::string virtual_peer_id ;
@@ -2995,6 +3016,8 @@ void p3ChatService::sendTurtleData(RsChatItem *item)
 
 	uint64_t IV = RSRandom::random_u64() ; // make a random 8 bytes IV
 
+	std::cerr << "   Using IV: " << std::hex << IV << std::dec << std::endl;
+
 	if(!RsAES::aes_crypt_8_16(buff,rssize,aes_key,(uint8_t*)&IV,encrypted_data,encrypted_size))
 	{
 		std::cerr << "(EE) packet encryption failed." << std::endl;
@@ -3018,6 +3041,11 @@ void p3ChatService::sendTurtleData(RsChatItem *item)
 	delete item ;
 
 	std::cerr << "p3ChatService::sendTurtleData(): Sending through virtual peer: " << virtual_peer_id << std::endl;
+	std::cerr << "   gitem->data_size = " << gitem->data_size << std::endl;
+	std::cerr << "   data = " ;
+
+	printBinaryData(gitem->data_bytes,gitem->data_size) ;
+	std::cerr << std::endl;
 
 	mTurtle->sendTurtleData(virtual_peer_id,gitem) ;
 }

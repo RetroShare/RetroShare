@@ -67,7 +67,7 @@ int main(int argc,char *argv[])
 
 	std::cerr << "Testing AES crypt" << std::endl;
 
-	std::string source_string = "This is a very secret string ;-)" ;
+	std::string source_string = "This is a very secret string, but ultimately it will always be decyphered" ;
 	std::cerr << "Input string: length=" << source_string.length() << ", s=\"" << source_string << "\"" << std::endl;
 
 	unsigned char key_data[16] ;
@@ -76,19 +76,21 @@ int main(int argc,char *argv[])
 	for(int i=0;i<16;++i)
 		key_data[i] = lrand48() & 0xff ;
 
-	for(int i=0;i<50;++i)
+	for(int i=5;i<source_string.length();++i)
 	{
 		for(int j=0;j<8;++j)
 			salt[j] = lrand48() & 0xff ;
 
-		unsigned char output_data[source_string.size() + 16] ;
-		uint32_t output_data_length = source_string.size() + 16 ;
+		std::string S(source_string.c_str(),i) ;
 
-		CHECK(RsAES::aes_crypt_8_16( (const uint8_t*)source_string.c_str(),source_string.length(),key_data,salt,output_data,output_data_length)) ;
+		unsigned char output_data[S.size() + 16] ;
+		uint32_t output_data_length = S.size() + 16 ;
+
+		CHECK(RsAES::aes_crypt_8_16( (const uint8_t*)S.c_str(),S.length(),key_data,salt,output_data,output_data_length)) ;
 
 		std::cerr << "Round " << i << " salt=" ;
 		printHex(salt,8) ;
-		std::cerr << ": " << "output_length = " << output_data_length << ", encrypted string = " ;
+		std::cerr << ": real_length = " << S.length() << ", output_length = " << output_data_length << ", encrypted string = " ;
 		printHex(output_data,output_data_length) ;
 		std::cerr << std::endl;
 
@@ -101,7 +103,7 @@ int main(int argc,char *argv[])
 		printHex(output_data2,output_data_length2) ;
 		std::cerr << std::endl;
 	
-		CHECK(std::string( (const char *)output_data2,output_data_length2) == source_string) ;
+		CHECK(std::string( (const char *)output_data2,output_data_length2) == S) ;
 	}
 
 	FINALREPORT("AESTest") ;
