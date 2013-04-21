@@ -63,16 +63,15 @@ void p3HistoryMgr::addMessage(bool incoming, const std::string &chatPeerId, cons
 			return;
 		}
 
-		if (mPrivateEnable == false && chatPeerId.empty() == false) {
-			// private chat not enabled
-			return;
-		}
-
 		const RsChatLobbyMsgItem *cli = dynamic_cast<const RsChatLobbyMsgItem*>(chatItem);
 
 		if (cli) {
-			// disable history for chat lobbies until they are saved
-			return;
+			// there is currently no setting for chat lobbies
+		} else {
+			if (mPrivateEnable == false && chatPeerId.empty() == false) {
+				// private chat not enabled
+				return;
+			}
 		}
 
 		RsHistoryMsgItem* item = new RsHistoryMsgItem;
@@ -82,6 +81,11 @@ void p3HistoryMgr::addMessage(bool incoming, const std::string &chatPeerId, cons
 		item->peerName = cli ? cli->nick : rsPeers->getPeerName(item->peerId);
 		item->sendTime = chatItem->sendTime;
 		item->recvTime = chatItem->recvTime;
+
+		if (cli) {
+			// disable save to disc for chat lobbies until they are saved
+			item->saveToDisc = false;
+		}
 
 		librs::util::ConvertUtf16ToUtf8(chatItem->message, item->message);
 
@@ -96,7 +100,12 @@ void p3HistoryMgr::addMessage(bool incoming, const std::string &chatPeerId, cons
 			if (chatPeerId.empty()) {
 				limit = mPublicSaveCount;
 			} else {
-				limit = mPrivateSaveCount;
+				if (cli) {
+					// there is currently no setting for chat lobbies
+					limit = 0;
+				} else {
+					limit = mPrivateSaveCount;
+				}
 			}
 
 			if (limit) {
@@ -144,7 +153,9 @@ bool p3HistoryMgr::saveList(bool& cleanup, std::list<RsItem*>& saveData)
 	std::map<uint32_t, RsHistoryMsgItem*>::iterator lit;
 	for (mit = mMessages.begin(); mit != mMessages.end(); mit++) {
 		for (lit = mit->second.begin(); lit != mit->second.end(); lit++) {
-			saveData.push_back(lit->second);
+			if (lit->second->saveToDisc) {
+				saveData.push_back(lit->second);
+			}
 		}
 	}
 

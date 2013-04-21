@@ -183,10 +183,6 @@ void ChatWidget::init(const std::string &peerId, const QString &title)
 		QString customStateString = QString::fromUtf8(rsMsgs->getCustomStateString(peerId).c_str());
 		updatePeersCustomStateString(QString::fromStdString(peerId), customStateString);
 	} else {
-		// currently not possible
-		ui->actionDeleteChatHistory->setVisible(false);
-		ui->actionMessageHistory->setVisible(false);
-
 		updateTitle();
 	}
 

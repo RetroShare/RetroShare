@@ -42,6 +42,7 @@ RsHistoryMsgItem::RsHistoryMsgItem() : RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONF
 	sendTime = 0;
 	recvTime = 0;
 	msgId = 0;
+	saveToDisc = true;
 }
 
 RsHistoryMsgItem::~RsHistoryMsgItem()
@@ -57,6 +58,7 @@ void RsHistoryMsgItem::clear()
 	recvTime = 0;
 	message.clear();
 	msgId = 0;
+	saveToDisc = true;
 }
 
 std::ostream& RsHistoryMsgItem::print(std::ostream &out, uint16_t indent)
