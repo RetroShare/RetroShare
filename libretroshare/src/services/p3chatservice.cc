@@ -2948,6 +2948,8 @@ void p3ChatService::receiveTurtleData(	RsTurtleGenericTunnelItem *gitem,const st
 
 	std::cerr << "   Using IV: " << std::hex << *(uint64_t*)item->data_bytes << std::dec << std::endl;
 	std::cerr << "   Decrypted buffer size: " << decrypted_size << std::endl;
+	std::cerr << "   key  : " ; printBinaryData(aes_key,16) ; std::cerr << std::endl;
+	std::cerr << "   data : " ; printBinaryData(item->data_bytes,item->data_size) ; std::cerr << std::endl;
 
 	if(!RsAES::aes_decrypt_8_16((uint8_t*)item->data_bytes+8,item->data_size-8,aes_key,(uint8_t*)item->data_bytes,decrypted_data,decrypted_size))
 	{
@@ -3005,7 +3007,7 @@ void p3ChatService::sendTurtleData(RsChatItem *item)
 		}
 		it->second.last_contact = time(NULL) ;
 		virtual_peer_id = it->second.virtual_peer_id ;
-		memcpy(aes_key,it->second.aes_key,8) ;
+		memcpy(aes_key,it->second.aes_key,DISTANT_CHAT_AES_KEY_SIZE) ;
 	}
 	std::cerr << "p3ChatService::sendTurtleData(): tunnel found. Encrypting data." << std::endl;
 
@@ -3017,6 +3019,7 @@ void p3ChatService::sendTurtleData(RsChatItem *item)
 	uint64_t IV = RSRandom::random_u64() ; // make a random 8 bytes IV
 
 	std::cerr << "   Using IV: " << std::hex << IV << std::dec << std::endl;
+	std::cerr << "   Using Key: " ; printBinaryData(aes_key,16) ; std::cerr << std::endl;
 
 	if(!RsAES::aes_crypt_8_16(buff,rssize,aes_key,(uint8_t*)&IV,encrypted_data,encrypted_size))
 	{

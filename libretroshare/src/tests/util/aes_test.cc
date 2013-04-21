@@ -76,6 +76,9 @@ int main(int argc,char *argv[])
 	for(int i=0;i<16;++i)
 		key_data[i] = lrand48() & 0xff ;
 
+	std::cerr << "Key: " ; printHex(key_data,16);
+	std::cerr << std::endl;
+
 	for(int i=5;i<source_string.length();++i)
 	{
 		for(int j=0;j<8;++j)
