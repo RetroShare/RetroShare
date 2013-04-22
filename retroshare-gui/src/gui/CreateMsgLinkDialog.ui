@@ -40,13 +40,6 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="label_6">
-             <property name="text">
-              <string>Hash:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
             <widget class="QLabel" name="label_7">
              <property name="text">
               <string>Usable by:</string>
@@ -62,9 +55,6 @@
            </item>
            <item>
             <widget class="QLineEdit" name="_current_link_type_LE"/>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="_current_link_hash_LE"/>
            </item>
            <item>
             <widget class="QLineEdit" name="_current_link_dst_LE"/>
@@ -231,27 +221,6 @@
     </widget>
    </item>
   </layout>
-  <zorder>_link_type_CB</zorder>
-  <zorder>label</zorder>
-  <zorder>dateTimeEdit</zorder>
-  <zorder>label_2</zorder>
-  <zorder>label_4</zorder>
-  <zorder>lineEdit</zorder>
-  <zorder>_create_link_PB</zorder>
-  <zorder>label_2</zorder>
-  <zorder>_existing_links_LV</zorder>
-  <zorder>_current_link_date_DE</zorder>
-  <zorder>label_3</zorder>
-  <zorder>label_5</zorder>
-  <zorder>label_6</zorder>
-  <zorder>label_7</zorder>
-  <zorder>pushButton</zorder>
-  <zorder>_current_link_type_LE</zorder>
-  <zorder>_current_link_dst_LE</zorder>
-  <zorder>_current_link_hash_LE</zorder>
-  <zorder>verticalSpacer</zorder>
-  <zorder>_create_new_PB</zorder>
-  <zorder>_new_link_F</zorder>
  </widget>
  <resources/>
  <connections/>
