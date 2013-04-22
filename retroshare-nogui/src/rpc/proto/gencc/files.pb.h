@@ -146,6 +146,31 @@ inline bool Direction_Parse(
   return ::google::protobuf::internal::ParseNamedEnum<Direction>(
     Direction_descriptor(), name, value);
 }
+enum TransferState {
+  TRANSFER_FAILED = 1,
+  TRANSFER_OKAY = 2,
+  TRANSFER_PAUSED = 3,
+  TRANSFER_QUEUED = 4,
+  TRANSFER_WAITING = 5,
+  TRANSFER_DOWNLOADING = 6,
+  TRANSFER_CHECKING_HASH = 7,
+  TRANSFER_COMPLETE = 8
+};
+bool TransferState_IsValid(int value);
+const TransferState TransferState_MIN = TRANSFER_FAILED;
+const TransferState TransferState_MAX = TRANSFER_COMPLETE;
+const int TransferState_ARRAYSIZE = TransferState_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* TransferState_descriptor();
+inline const ::std::string& TransferState_Name(TransferState value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    TransferState_descriptor(), value);
+}
+inline bool TransferState_Parse(
+    const ::std::string& name, TransferState* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<TransferState>(
+    TransferState_descriptor(), name, value);
+}
 // ===================================================================
 
 class FileTransfer : public ::google::protobuf::Message {
@@ -231,6 +256,13 @@ class FileTransfer : public ::google::protobuf::Message {
   inline float rate_kbs() const;
   inline void set_rate_kbs(float value);
   
+  // required .rsctrl.files.TransferState state = 5;
+  inline bool has_state() const;
+  inline void clear_state();
+  static const int kStateFieldNumber = 5;
+  inline rsctrl::files::TransferState state() const;
+  inline void set_state(rsctrl::files::TransferState value);
+  
   // @@protoc_insertion_point(class_scope:rsctrl.files.FileTransfer)
  private:
   inline void set_has_file();
@@ -241,6 +273,8 @@ class FileTransfer : public ::google::protobuf::Message {
   inline void clear_has_fraction();
   inline void set_has_rate_kbs();
   inline void clear_has_rate_kbs();
+  inline void set_has_state();
+  inline void clear_has_state();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
@@ -248,9 +282,10 @@ class FileTransfer : public ::google::protobuf::Message {
   int direction_;
   float fraction_;
   float rate_kbs_;
+  int state_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
   
   friend void  protobuf_AddDesc_files_2eproto();
   friend void protobuf_AssignDesc_files_2eproto();
@@ -1005,6 +1040,29 @@ inline void FileTransfer::set_rate_kbs(float value) {
   rate_kbs_ = value;
 }
 
+// required .rsctrl.files.TransferState state = 5;
+inline bool FileTransfer::has_state() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void FileTransfer::set_has_state() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void FileTransfer::clear_has_state() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void FileTransfer::clear_state() {
+  state_ = 1;
+  clear_has_state();
+}
+inline rsctrl::files::TransferState FileTransfer::state() const {
+  return static_cast< rsctrl::files::TransferState >(state_);
+}
+inline void FileTransfer::set_state(rsctrl::files::TransferState value) {
+  GOOGLE_DCHECK(rsctrl::files::TransferState_IsValid(value));
+  set_has_state();
+  state_ = value;
+}
+
 // -------------------------------------------------------------------
 
 // RequestTransferList
@@ -1525,6 +1583,10 @@ inline const EnumDescriptor* GetEnumDescriptor< rsctrl::files::ResponseMsgIds>()
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< rsctrl::files::Direction>() {
   return rsctrl::files::Direction_descriptor();
+}
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< rsctrl::files::TransferState>() {
+  return rsctrl::files::TransferState_descriptor();
 }
 
 }  // namespace google

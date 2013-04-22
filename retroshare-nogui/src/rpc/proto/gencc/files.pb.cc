@@ -44,6 +44,7 @@ const ::google::protobuf::EnumDescriptor* ResponseShareDirList_ListType_descript
 const ::google::protobuf::EnumDescriptor* RequestMsgIds_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* ResponseMsgIds_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* Direction_descriptor_ = NULL;
+const ::google::protobuf::EnumDescriptor* TransferState_descriptor_ = NULL;
 
 }  // namespace
 
@@ -55,11 +56,12 @@ void protobuf_AssignDesc_files_2eproto() {
       "files.proto");
   GOOGLE_CHECK(file != NULL);
   FileTransfer_descriptor_ = file->message_type(0);
-  static const int FileTransfer_offsets_[4] = {
+  static const int FileTransfer_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FileTransfer, file_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FileTransfer, direction_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FileTransfer, fraction_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FileTransfer, rate_kbs_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FileTransfer, state_),
   };
   FileTransfer_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -174,6 +176,7 @@ void protobuf_AssignDesc_files_2eproto() {
   RequestMsgIds_descriptor_ = file->enum_type(0);
   ResponseMsgIds_descriptor_ = file->enum_type(1);
   Direction_descriptor_ = file->enum_type(2);
+  TransferState_descriptor_ = file->enum_type(3);
 }
 
 namespace {
@@ -230,38 +233,44 @@ void protobuf_AddDesc_files_2eproto() {
   ::rsctrl::core::protobuf_AddDesc_core_2eproto();
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\013files.proto\022\014rsctrl.files\032\ncore.proto\""
-    "\177\n\014FileTransfer\022\037\n\004file\030\001 \002(\0132\021.rsctrl.c"
-    "ore.File\022*\n\tdirection\030\002 \002(\0162\027.rsctrl.fil"
-    "es.Direction\022\020\n\010fraction\030\003 \002(\002\022\020\n\010rate_k"
-    "Bs\030\004 \002(\002\"A\n\023RequestTransferList\022*\n\tdirec"
-    "tion\030\001 \002(\0162\027.rsctrl.files.Direction\"j\n\024R"
-    "esponseTransferList\022#\n\006status\030\001 \002(\0132\023.rs"
-    "ctrl.core.Status\022-\n\ttransfers\030\002 \003(\0132\032.rs"
-    "ctrl.files.FileTransfer\"\204\002\n\026RequestContr"
-    "olDownload\022\037\n\004file\030\001 \002(\0132\021.rsctrl.core.F"
-    "ile\022;\n\006action\030\002 \002(\0162+.rsctrl.files.Reque"
-    "stControlDownload.Action\"\213\001\n\006Action\022\020\n\014A"
-    "CTION_START\020\001\022\023\n\017ACTION_CONTINUE\020\002\022\017\n\013AC"
-    "TION_WAIT\020\003\022\020\n\014ACTION_PAUSE\020\004\022\022\n\016ACTION_"
-    "RESTART\020\005\022\020\n\014ACTION_CHECK\020\006\022\021\n\rACTION_CA"
-    "NCEL\020\007\">\n\027ResponseControlDownload\022#\n\006sta"
-    "tus\030\001 \002(\0132\023.rsctrl.core.Status\"3\n\023Reques"
-    "tShareDirList\022\016\n\006ssl_id\030\001 \002(\t\022\014\n\004path\030\002 "
-    "\002(\t\"\224\002\n\024ResponseShareDirList\022#\n\006status\030\001"
-    " \002(\0132\023.rsctrl.core.Status\022\016\n\006ssl_id\030\002 \002("
-    "\t\022\014\n\004path\030\003 \002(\t\022>\n\tlist_type\030\004 \002(\0162+.rsc"
-    "trl.files.ResponseShareDirList.ListType\022"
-    " \n\005files\030\005 \003(\0132\021.rsctrl.core.File\"W\n\010Lis"
-    "tType\022\021\n\rDIRQUERY_ROOT\020\001\022\023\n\017DIRQUERY_PER"
-    "SON\020\002\022\021\n\rDIRQUERY_FILE\020\003\022\020\n\014DIRQUERY_DIR"
-    "\020\004*o\n\rRequestMsgIds\022\035\n\031MsgId_RequestTran"
-    "sferList\020\001\022 \n\034MsgId_RequestControlDownlo"
-    "ad\020\002\022\035\n\031MsgId_RequestShareDirList\020\003*s\n\016R"
-    "esponseMsgIds\022\036\n\032MsgId_ResponseTransferL"
-    "ist\020\001\022!\n\035MsgId_ResponseControlDownload\020\002"
-    "\022\036\n\032MsgId_ResponseShareDirList\020\003*9\n\tDire"
-    "ction\022\024\n\020DIRECTION_UPLOAD\020\001\022\026\n\022DIRECTION"
-    "_DOWNLOAD\020\002", 1291);
+    "\253\001\n\014FileTransfer\022\037\n\004file\030\001 \002(\0132\021.rsctrl."
+    "core.File\022*\n\tdirection\030\002 \002(\0162\027.rsctrl.fi"
+    "les.Direction\022\020\n\010fraction\030\003 \002(\002\022\020\n\010rate_"
+    "kBs\030\004 \002(\002\022*\n\005state\030\005 \002(\0162\033.rsctrl.files."
+    "TransferState\"A\n\023RequestTransferList\022*\n\t"
+    "direction\030\001 \002(\0162\027.rsctrl.files.Direction"
+    "\"j\n\024ResponseTransferList\022#\n\006status\030\001 \002(\013"
+    "2\023.rsctrl.core.Status\022-\n\ttransfers\030\002 \003(\013"
+    "2\032.rsctrl.files.FileTransfer\"\204\002\n\026Request"
+    "ControlDownload\022\037\n\004file\030\001 \002(\0132\021.rsctrl.c"
+    "ore.File\022;\n\006action\030\002 \002(\0162+.rsctrl.files."
+    "RequestControlDownload.Action\"\213\001\n\006Action"
+    "\022\020\n\014ACTION_START\020\001\022\023\n\017ACTION_CONTINUE\020\002\022"
+    "\017\n\013ACTION_WAIT\020\003\022\020\n\014ACTION_PAUSE\020\004\022\022\n\016AC"
+    "TION_RESTART\020\005\022\020\n\014ACTION_CHECK\020\006\022\021\n\rACTI"
+    "ON_CANCEL\020\007\">\n\027ResponseControlDownload\022#"
+    "\n\006status\030\001 \002(\0132\023.rsctrl.core.Status\"3\n\023R"
+    "equestShareDirList\022\016\n\006ssl_id\030\001 \002(\t\022\014\n\004pa"
+    "th\030\002 \002(\t\"\224\002\n\024ResponseShareDirList\022#\n\006sta"
+    "tus\030\001 \002(\0132\023.rsctrl.core.Status\022\016\n\006ssl_id"
+    "\030\002 \002(\t\022\014\n\004path\030\003 \002(\t\022>\n\tlist_type\030\004 \002(\0162"
+    "+.rsctrl.files.ResponseShareDirList.List"
+    "Type\022 \n\005files\030\005 \003(\0132\021.rsctrl.core.File\"W"
+    "\n\010ListType\022\021\n\rDIRQUERY_ROOT\020\001\022\023\n\017DIRQUER"
+    "Y_PERSON\020\002\022\021\n\rDIRQUERY_FILE\020\003\022\020\n\014DIRQUER"
+    "Y_DIR\020\004*o\n\rRequestMsgIds\022\035\n\031MsgId_Reques"
+    "tTransferList\020\001\022 \n\034MsgId_RequestControlD"
+    "ownload\020\002\022\035\n\031MsgId_RequestShareDirList\020\003"
+    "*s\n\016ResponseMsgIds\022\036\n\032MsgId_ResponseTran"
+    "sferList\020\001\022!\n\035MsgId_ResponseControlDownl"
+    "oad\020\002\022\036\n\032MsgId_ResponseShareDirList\020\003*9\n"
+    "\tDirection\022\024\n\020DIRECTION_UPLOAD\020\001\022\026\n\022DIRE"
+    "CTION_DOWNLOAD\020\002*\304\001\n\rTransferState\022\023\n\017TR"
+    "ANSFER_FAILED\020\001\022\021\n\rTRANSFER_OKAY\020\002\022\023\n\017TR"
+    "ANSFER_PAUSED\020\003\022\023\n\017TRANSFER_QUEUED\020\004\022\024\n\020"
+    "TRANSFER_WAITING\020\005\022\030\n\024TRANSFER_DOWNLOADI"
+    "NG\020\006\022\032\n\026TRANSFER_CHECKING_HASH\020\007\022\025\n\021TRAN"
+    "SFER_COMPLETE\020\010", 1535);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "files.proto", &protobuf_RegisterTypes);
   FileTransfer::default_instance_ = new FileTransfer();
@@ -332,6 +341,26 @@ bool Direction_IsValid(int value) {
   }
 }
 
+const ::google::protobuf::EnumDescriptor* TransferState_descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return TransferState_descriptor_;
+}
+bool TransferState_IsValid(int value) {
+  switch(value) {
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+    case 7:
+    case 8:
+      return true;
+    default:
+      return false;
+  }
+}
+
 
 // ===================================================================
 
@@ -340,6 +369,7 @@ const int FileTransfer::kFileFieldNumber;
 const int FileTransfer::kDirectionFieldNumber;
 const int FileTransfer::kFractionFieldNumber;
 const int FileTransfer::kRateKBsFieldNumber;
+const int FileTransfer::kStateFieldNumber;
 #endif  // !_MSC_VER
 
 FileTransfer::FileTransfer()
@@ -363,6 +393,7 @@ void FileTransfer::SharedCtor() {
   direction_ = 1;
   fraction_ = 0;
   rate_kbs_ = 0;
+  state_ = 1;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -404,6 +435,7 @@ void FileTransfer::Clear() {
     direction_ = 1;
     fraction_ = 0;
     rate_kbs_ = 0;
+    state_ = 1;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -477,6 +509,27 @@ bool FileTransfer::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
+        if (input->ExpectTag(40)) goto parse_state;
+        break;
+      }
+      
+      // required .rsctrl.files.TransferState state = 5;
+      case 5: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_state:
+          int value;
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          if (rsctrl::files::TransferState_IsValid(value)) {
+            set_state(static_cast< rsctrl::files::TransferState >(value));
+          } else {
+            mutable_unknown_fields()->AddVarint(5, value);
+          }
+        } else {
+          goto handle_uninterpreted;
+        }
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -521,6 +574,12 @@ void FileTransfer::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteFloat(4, this->rate_kbs(), output);
   }
   
+  // required .rsctrl.files.TransferState state = 5;
+  if (has_state()) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      5, this->state(), output);
+  }
+  
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -550,6 +609,12 @@ void FileTransfer::SerializeWithCachedSizes(
   // required float rate_kBs = 4;
   if (has_rate_kbs()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(4, this->rate_kbs(), target);
+  }
+  
+  // required .rsctrl.files.TransferState state = 5;
+  if (has_state()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      5, this->state(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -584,6 +649,12 @@ int FileTransfer::ByteSize() const {
     // required float rate_kBs = 4;
     if (has_rate_kbs()) {
       total_size += 1 + 4;
+    }
+    
+    // required .rsctrl.files.TransferState state = 5;
+    if (has_state()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::EnumSize(this->state());
     }
     
   }
@@ -625,6 +696,9 @@ void FileTransfer::MergeFrom(const FileTransfer& from) {
     if (from.has_rate_kbs()) {
       set_rate_kbs(from.rate_kbs());
     }
+    if (from.has_state()) {
+      set_state(from.state());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -642,7 +716,7 @@ void FileTransfer::CopyFrom(const FileTransfer& from) {
 }
 
 bool FileTransfer::IsInitialized() const {
-  if ((_has_bits_[0] & 0x0000000f) != 0x0000000f) return false;
+  if ((_has_bits_[0] & 0x0000001f) != 0x0000001f) return false;
   
   if (has_file()) {
     if (!this->file().IsInitialized()) return false;
@@ -656,6 +730,7 @@ void FileTransfer::Swap(FileTransfer* other) {
     std::swap(direction_, other->direction_);
     std::swap(fraction_, other->fraction_);
     std::swap(rate_kbs_, other->rate_kbs_);
+    std::swap(state_, other->state_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

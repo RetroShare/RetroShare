@@ -180,6 +180,35 @@ int RpcProtoFiles::processReqTransferList(uint32_t chan_id, uint32_t /* msg_id *
 
 		transfer->set_fraction( (float) info.transfered / info.size );
 		transfer->set_rate_kbs( info.tfRate );
+
+		switch(info.downloadStatus)
+		{
+			case FT_STATE_FAILED:
+				transfer->set_state(rsctrl::files::TRANSFER_FAILED);
+				break;
+			default:
+			case FT_STATE_OKAY:
+				transfer->set_state(rsctrl::files::TRANSFER_OKAY);
+				break;
+			case FT_STATE_PAUSED:
+				transfer->set_state(rsctrl::files::TRANSFER_PAUSED);
+				break;
+			case FT_STATE_QUEUED:
+				transfer->set_state(rsctrl::files::TRANSFER_QUEUED);
+				break;
+			case FT_STATE_WAITING:
+				transfer->set_state(rsctrl::files::TRANSFER_WAITING);
+				break;
+			case FT_STATE_DOWNLOADING:
+				transfer->set_state(rsctrl::files::TRANSFER_DOWNLOADING);
+				break;
+			case FT_STATE_CHECKING_HASH:
+				transfer->set_state(rsctrl::files::TRANSFER_CHECKING_HASH);
+				break;
+			case FT_STATE_COMPLETE:
+				transfer->set_state(rsctrl::files::TRANSFER_COMPLETE);
+				break;
+		}
 	}
 
 	/* DONE - Generate Reply */
