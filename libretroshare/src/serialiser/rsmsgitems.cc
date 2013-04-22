@@ -188,6 +188,30 @@ std::ostream& RsPrivateChatMsgConfigItem::print(std::ostream &out, uint16_t inde
 	printRsItemEnd(out, "RsPrivateChatMsgConfigItem", indent);
 	return out;
 }
+std::ostream& RsPrivateChatDistantInviteConfigItem::print(std::ostream &out, uint16_t indent)
+{
+	printRsItemBase(out, "RsPrivateChatDistantInviteConfigItem", indent);
+	uint16_t int_Indent = indent + 2;
+
+	printIndent(out, int_Indent);
+	out << "radix string: " << encrypted_radix64_string << std::endl;
+
+	printIndent(out, int_Indent);
+	out << "hash: " << hash << std::endl;
+
+	printIndent(out, int_Indent);
+	out << "destination pgp_id:  " << destination_pgp_id  << std::endl;
+
+	printIndent(out, int_Indent);
+	out << "time of validity:  " << time_of_validity  << std::endl;
+
+	printIndent(out, int_Indent);
+	out << "time of last hit:  " << last_hit_time  << std::endl;
+
+	printRsItemEnd(out, "RsPrivateChatDistantInviteConfigItem", indent);
+	return out;
+}
+
 
 std::ostream& RsChatStatusItem::print(std::ostream &out, uint16_t indent)
 {
@@ -195,7 +219,7 @@ std::ostream& RsChatStatusItem::print(std::ostream &out, uint16_t indent)
 	uint16_t int_Indent = indent + 2;
 	printIndent(out, int_Indent);
 	out << "Status string: " << status_string << std::endl;
-	out << "Flags : " << (void*)flags << std::endl;
+	out << "Flags : " << std::hex << flags << std::dec << std::endl;
 
 	printRsItemEnd(out, "RsChatStatusItem", indent);
 	return out;
@@ -245,6 +269,7 @@ RsItem *RsChatSerialiser::deserialise(void *data, uint32_t *pktsize)
 	{
 		case RS_PKT_SUBTYPE_DEFAULT:						return new RsChatMsgItem(data,*pktsize) ;
 		case RS_PKT_SUBTYPE_PRIVATECHATMSG_CONFIG:	return new RsPrivateChatMsgConfigItem(data,*pktsize) ;
+		case RS_PKT_SUBTYPE_DISTANT_INVITE_CONFIG:	return new RsPrivateChatDistantInviteConfigItem(data,*pktsize) ;
 		case RS_PKT_SUBTYPE_CHAT_STATUS:					return new RsChatStatusItem(data,*pktsize) ;
 		case RS_PKT_SUBTYPE_CHAT_AVATAR:					return new RsChatAvatarItem(data,*pktsize) ;
 		case RS_PKT_SUBTYPE_CHAT_LOBBY_MSG:				return new RsChatLobbyMsgItem(data,*pktsize) ;
@@ -387,7 +412,18 @@ uint32_t RsPrivateChatMsgConfigItem::serial_size()
 
 	return s;
 }
+uint32_t RsPrivateChatDistantInviteConfigItem::serial_size()
+{
+	uint32_t s = 8; /* header */
+	s += GetTlvStringSize(hash);
+	s += GetTlvStringSize(encrypted_radix64_string);
+	s += GetTlvStringSize(destination_pgp_id);
+	s += 16; /* aes_key */
+	s += 4; /* time_of_validity */
+	s += 4; /* last_hit_time  */
 
+	return s;
+}
 uint32_t RsChatStatusItem::serial_size()
 {
 	uint32_t s = 8; /* header */
@@ -780,7 +816,49 @@ bool RsPrivateChatMsgConfigItem::serialise(void *data, uint32_t& pktsize)
 
 	return ok;
 }
+bool RsPrivateChatDistantInviteConfigItem::serialise(void *data, uint32_t& pktsize)
+{
+	uint32_t tlvsize = serial_size() ;
+	uint32_t offset = 0;
 
+	if (pktsize < tlvsize)
+		return false; /* not enough space */
+
+	pktsize = tlvsize;
+
+	bool ok = true;
+
+	ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);
+
+#ifdef CHAT_DEBUG
+	std::cerr << "RsChatSerialiser::serialiseItem() Header: " << ok << std::endl;
+	std::cerr << "RsChatSerialiser::serialiseItem() Size: " << tlvsize << std::endl;
+#endif
+
+	/* skip the header */
+	offset += 8;
+
+	/* add mandatory parts first */
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_KEY, hash);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_LINK, encrypted_radix64_string);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GPGID, destination_pgp_id);
+
+	memcpy(&((unsigned char *)data)[offset],aes_key,16) ;
+	offset += 16 ;
+
+	ok &= setRawUInt32(data, tlvsize, &offset, time_of_validity);
+	ok &= setRawUInt32(data, tlvsize, &offset, last_hit_time);
+
+	if (offset != tlvsize)
+	{
+		ok = false;
+#ifdef CHAT_DEBUG
+		std::cerr << "RsChatSerialiser::serialiseItem() Size Error! " << std::endl;
+#endif
+	}
+
+	return ok;
+}
 bool RsChatStatusItem::serialise(void *data, uint32_t& pktsize)
 {
 	uint32_t tlvsize = serial_size() ;
@@ -1121,6 +1199,32 @@ RsPrivateChatMsgConfigItem::RsPrivateChatMsgConfigItem(void *data,uint32_t /*siz
 	ok &= getRawUInt32(data, rssize, &offset, &sendTime);
 	ok &= GetTlvWideString(data, rssize, &offset, TLV_TYPE_WSTR_MSG, message);
 	ok &= getRawUInt32(data, rssize, &offset, &recvTime);
+
+#ifdef CHAT_DEBUG
+	std::cerr << "Building new chat msg config item." << std::endl ;
+#endif
+	if (offset != rssize)
+		std::cerr << "Size error while deserializing." << std::endl ;
+	if (!ok)
+		std::cerr << "Unknown error while deserializing." << std::endl ;
+}
+RsPrivateChatDistantInviteConfigItem::RsPrivateChatDistantInviteConfigItem(void *data,uint32_t /*size*/)
+	: RsChatItem(RS_PKT_SUBTYPE_DISTANT_INVITE_CONFIG)
+{
+	uint32_t offset = 8; // skip the header 
+	uint32_t rssize = getRsItemSize(data);
+	bool ok = true ;
+
+	/* get mandatory parts first */
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_KEY, hash);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_LINK, encrypted_radix64_string);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_GPGID, destination_pgp_id);
+
+	memcpy(aes_key,&((unsigned char*)data)[offset],16) ;
+	offset += 16 ;
+
+	ok &= getRawUInt32(data, rssize, &offset, &time_of_validity);
+	ok &= getRawUInt32(data, rssize, &offset, &last_hit_time);
 
 #ifdef CHAT_DEBUG
 	std::cerr << "Building new chat msg config item." << std::endl ;

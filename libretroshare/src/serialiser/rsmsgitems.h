@@ -64,6 +64,7 @@ const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE       	= 0x0F ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_EVENT       	= 0x10 ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated2	= 0x11 ;	// to be removed (deprecated since 02 Dec. 2012)
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST         	= 0x12 ;
+const uint8_t RS_PKT_SUBTYPE_DISTANT_INVITE_CONFIG   	= 0x13 ;
 
 // for defining tags themselves and msg tags
 const uint8_t RS_PKT_SUBTYPE_MSG_TAG_TYPE 	= 0x03;
@@ -314,6 +315,27 @@ class RsPrivateChatMsgConfigItem: public RsChatItem
 		std::wstring message;
 		uint32_t recvTime;
 };
+class RsPrivateChatDistantInviteConfigItem: public RsChatItem
+{
+	public:
+		RsPrivateChatDistantInviteConfigItem() :RsChatItem(RS_PKT_SUBTYPE_DISTANT_INVITE_CONFIG) {}
+		RsPrivateChatDistantInviteConfigItem(void *data,uint32_t size) ; // deserialization
+
+		virtual ~RsPrivateChatDistantInviteConfigItem() {}
+		virtual void clear() {}
+		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+
+		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
+		virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
+
+		unsigned char aes_key[16] ;
+		std::string hash ;
+		std::string encrypted_radix64_string ;
+		std::string destination_pgp_id ;
+		uint32_t time_of_validity ;
+		uint32_t last_hit_time ;
+};
+
 
 // This class contains activity info for the sending peer: active, idle, typing, etc.
 //

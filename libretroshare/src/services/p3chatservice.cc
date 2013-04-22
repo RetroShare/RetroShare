@@ -1736,6 +1736,24 @@ bool p3ChatService::loadList(std::list<RsItem*>& load)
 			continue;
 		}
 
+		RsPrivateChatDistantInviteConfigItem *ditem = NULL ;
+
+		if(NULL != (ditem = dynamic_cast<RsPrivateChatDistantInviteConfigItem *>(*it)))
+		{
+			DistantChatInvite invite ;
+
+			memcpy(invite.aes_key,ditem->aes_key,DISTANT_CHAT_AES_KEY_SIZE) ;
+			invite.encrypted_radix64_string = ditem->encrypted_radix64_string ;
+			invite.destination_pgp_id = ditem->destination_pgp_id ;
+			invite.time_of_validity = ditem->time_of_validity ;
+			invite.last_hit_time = ditem->last_hit_time ;
+
+			_distant_chat_invites[ditem->hash] = invite ;
+
+			delete *it ;
+			continue ;
+		}
+
 		RsConfigKeyValueSet *vitem = NULL ;
 
 		if(NULL != (vitem = dynamic_cast<RsConfigKeyValueSet*>(*it)))
@@ -1799,6 +1817,21 @@ bool p3ChatService::saveList(bool& cleanup, std::list<RsItem*>& list)
 		list.push_back(ci);
 	}
 
+	/* save ongoing distant chat invites */
+
+	for(std::map<TurtleFileHash,DistantChatInvite>::const_iterator it(_distant_chat_invites.begin());it!=_distant_chat_invites.end();++it)
+	{
+		RsPrivateChatDistantInviteConfigItem *ei = new RsPrivateChatDistantInviteConfigItem ;
+		ei->hash = it->first ;
+		memcpy(ei->aes_key,it->second.aes_key,DISTANT_CHAT_AES_KEY_SIZE) ;
+		ei->encrypted_radix64_string = it->second.encrypted_radix64_string ;
+		ei->destination_pgp_id = it->second.destination_pgp_id ;
+		ei->time_of_validity = it->second.time_of_validity ;
+		ei->last_hit_time = it->second.last_hit_time ;
+
+		list.push_back(ei) ;
+	}
+
 	RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
 	RsTlvKeyValue kv;
 	kv.key = "DEFAULT_NICK_NAME" ;
@@ -1833,10 +1866,14 @@ void p3ChatService::statusChange(const std::list<pqipeer> &plist)
 	for (it = plist.begin(); it != plist.end(); it++) {
 		if (it->state & RS_PEER_S_FRIEND) {
 			if (it->actions & RS_PEER_CONNECTED) {
+				
 				/* send the saved outgoing messages */
 				bool changed = false;
 
-				if (privateOutgoingList.size()) {
+				std::vector<RsChatMsgItem*> to_send ;
+
+				if (privateOutgoingList.size()) 
+				{
 					RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
 					std::string ownId = mLinkMgr->getOwnId();
@@ -1848,7 +1885,7 @@ void p3ChatService::statusChange(const std::list<pqipeer> &plist)
 						if (c->PeerId() == it->id) {
 							mHistoryMgr->addMessage(false, c->PeerId(), ownId, c);
 
-							checkSizeAndSendMessage_deprecated(c); // delete item
+							to_send.push_back(c) ;
 
 							changed = true;
 
@@ -1860,6 +1897,9 @@ void p3ChatService::statusChange(const std::list<pqipeer> &plist)
 						cit++;
 					}
 				} /* UNLOCKED */
+
+				for(uint32_t i=0;i<to_send.size();++i)
+					checkSizeAndSendMessage_deprecated(to_send[i]); // delete item
 
 				if (changed) {
 					rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_PRIVATE_OUTGOING_CHAT, NOTIFY_TYPE_DEL);
@@ -2809,6 +2849,7 @@ bool p3ChatService::handleTunnelRequest(const std::string& hash,const std::strin
 	if(it == _distant_chat_invites.end())
 		return false ;
 
+	it->second.last_hit_time = time(NULL) ;
 	return true ;
 }
 
@@ -2859,6 +2900,7 @@ void p3ChatService::addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtua
 		memcpy(info.aes_key,it->second.aes_key,DISTANT_CHAT_AES_KEY_SIZE) ;
 
 		_distant_chat_peers[hash] = info ;
+		it->second.last_hit_time = now ;
 	}
 
 	rsicontrol->getNotify().notifyChatStatus(hash,"tunnel is up again!",true) ;
@@ -3061,7 +3103,6 @@ bool p3ChatService::createDistantChatInvite(const std::string& pgp_id,time_t tim
 
 	DistantChatInvite invite ;
 	invite.time_of_validity = now + time_of_validity ;
-	invite.time_of_creation = now ;
 	invite.last_hit_time = now ;
 
 	RAND_bytes( (unsigned char *)&invite.aes_key[0],DISTANT_CHAT_AES_KEY_SIZE ) ;	// generate a random AES encryption key
@@ -3074,7 +3115,6 @@ bool p3ChatService::createDistantChatInvite(const std::string& pgp_id,time_t tim
 	std::string hash = SSLIdType(hash_bytes).toStdString(false) ;
 
 	std::cerr << "Created new distant chat invite: " << std::endl;
-	std::cerr << "  creation time stamp = " << invite.time_of_creation << std::endl;
 	std::cerr << "  validity time stamp = " << invite.time_of_validity << std::endl;
 	std::cerr << "                 hash = " << hash << std::endl;
 	std::cerr << "       encryption key = " ;
@@ -3132,6 +3172,7 @@ bool p3ChatService::createDistantChatInvite(const std::string& pgp_id,time_t tim
 	encrypted_radix64_string = invite.encrypted_radix64_string ;
 	std::cerr << "Encrypted radix64 string: " << invite.encrypted_radix64_string << std::endl;
 
+	IndicateConfigChanged();
 	return true ;
 }
 
