@@ -440,16 +440,59 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="QTextEdit" name="certtextEdit">
+        <widget class="QPlainTextEdit" name="certplainTextEdit">
          <property name="font">
           <font>
-           <kerning>false</kerning>
+           <family>Courier New</family>
           </font>
          </property>
-         <property name="acceptRichText">
-          <bool>false</bool>
+         <property name="tabChangesFocus">
+          <bool>true</bool>
+         </property>
+         <property name="lineWrapMode">
+          <enum>QPlainTextEdit::NoWrap</enum>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
          </property>
         </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QCheckBox" name="_includeSignatures_CB">
+           <property name="text">
+            <string>Include signatures</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="_useOldFormat_CB">
+           <property name="text">
+            <string>Use old key format</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
@@ -471,21 +514,17 @@
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="_useOldFormat_CB">
-           <property name="text">
-            <string>Use old key format</string>
+          <spacer name="horizontalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
            </property>
-           <property name="checked">
-            <bool>true</bool>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
            </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="_includeSignatures_CB">
-           <property name="text">
-            <string>Include signatures</string>
-           </property>
-          </widget>
+          </spacer>
          </item>
         </layout>
        </item>

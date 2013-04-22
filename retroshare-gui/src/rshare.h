@@ -108,6 +108,8 @@ public:
   static QString stylesheet() { return _stylesheet; }
   /** Returns Rshare's application version. */
   static QString version() { return RSHARE_VERSION; }
+  /** Returns Rshare's application startup time. */
+  static QDateTime startupTime();
 
   /** Returns the location Rshare uses for its data files. */
   static QString dataDirectory();
@@ -173,6 +175,7 @@ private:
   static QString _language;            /**< The current language.            */
   static QString _dateformat;          /**< The format for dates in feed items etc. */
   static Log _log; 					/**< Logs debugging messages to file or stdout. */
+  static QDateTime mStartupTime;       // startup time
 
   static bool    useConfigDir;
   static QString configDir;
@@ -180,4 +183,3 @@ private:
 };
 
 #endif
-

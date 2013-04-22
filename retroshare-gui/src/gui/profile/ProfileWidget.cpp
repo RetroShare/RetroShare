@@ -27,6 +27,7 @@
 #include "StatusMessage.h"
 #include "ProfileManager.h"
 #include "util/DateTime.h"
+#include "rshare.h"
 
 #include <QApplication>
 #include <QClipboard>
@@ -44,7 +45,7 @@ ProfileWidget::ProfileWidget(QWidget *parent, Qt::WFlags flags)
     connect(ui.CopyCertButton,SIGNAL(clicked()), this, SLOT(copyCert()));
     connect(ui.profile_Button,SIGNAL(clicked()), this, SLOT(profilemanager()));
 
-    ui.onlinesince->setText(DateTime::formatLongDateTime(QDateTime::currentDateTime()));
+    ui.onlinesince->setText(DateTime::formatLongDateTime(Rshare::startupTime()));
 }
 
 void ProfileWidget::showEvent ( QShowEvent * /*event*/ )

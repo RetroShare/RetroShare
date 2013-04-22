@@ -52,8 +52,6 @@ class CryptoPage : public ConfigPage
       bool fileSaveAs();
 
   private:
-      void setCurrentFileName(const QString &fileName);
-      
       QString fileName;
 
       /** Qt Designer generated object */

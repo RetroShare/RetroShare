@@ -61,6 +61,7 @@ QString Rshare::_dateformat;          /**< The format of dates in feed items etc
 Log Rshare::_log;
 bool Rshare::useConfigDir;           
 QString Rshare::configDir;           
+QDateTime Rshare::mStartupTime;
 
 /** Catches debugging messages from Qt and sends them to RetroShare's logs. If Qt
  * emits a QtFatalMsg, we will write the message to the log and then abort().
@@ -95,6 +96,8 @@ Rshare::qt_msg_handler(QtMsgType type, const char *s)
 Rshare::Rshare(QStringList args, int &argc, char **argv, const QString &dir)
 : QApplication(argc, argv)
 {
+  mStartupTime = QDateTime::currentDateTime();
+
   qInstallMsgHandler(qt_msg_handler);
 
 #ifndef __APPLE__
@@ -160,6 +163,11 @@ Rshare::run()
 {
   QTimer::singleShot(0, rApp, SLOT(onEventLoopStarted()));
   return rApp->exec();
+}
+
+QDateTime Rshare::startupTime()
+{
+  return mStartupTime;
 }
 
 /** Called when the application's main event loop has started. This method

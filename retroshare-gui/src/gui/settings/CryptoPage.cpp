@@ -26,6 +26,7 @@
 #include <QTextStream>
 #include <QTextCodec>
 
+#include "rshare.h"
 #include "CryptoPage.h"
 #include "util/misc.h"
 #include "util/DateTime.h"
@@ -57,8 +58,9 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WFlags flags)
 #endif
       connect(ui.profile_Button,SIGNAL(clicked()), this, SLOT(profilemanager()));
 
-    ui.onlinesince->setText(DateTime::formatLongDateTime(QDateTime::currentDateTime()));
+    ui.onlinesince->setText(DateTime::formatLongDateTime(Rshare::startupTime()));
 }
+
 void CryptoPage::profilemanager()
 {
     ProfileManager profilemanager;
@@ -111,12 +113,7 @@ void
 CryptoPage::load()
 {
     /* Loads ouer default Puplickey */
-    QFont font("Courier New",9,50,false) ;
-    ui.certtextEdit->setFont(font) ;
-
-    ui.certtextEdit->setPlainText(QString::fromUtf8(rsPeers->GetRetroshareInvite(ui._includeSignatures_CB->isChecked(),ui._useOldFormat_CB->isChecked()).c_str()));
-    ui.certtextEdit->setReadOnly(true);
-    ui.certtextEdit->setMinimumHeight(200);
+    ui.certplainTextEdit->setPlainText(QString::fromUtf8(rsPeers->GetRetroshareInvite(ui._includeSignatures_CB->isChecked(),ui._useOldFormat_CB->isChecked()).c_str()));
 }
 void
 CryptoPage::copyRSLink()
@@ -148,7 +145,7 @@ CryptoPage::copyPublicKey()
                              tr("Your Public Key is copied to Clipboard, paste and send it to your"
                                 " friend via email or some other way"));
     QClipboard *clipboard = QApplication::clipboard();
-    clipboard->setText(ui.certtextEdit->toPlainText());
+    clipboard->setText(ui.certplainTextEdit->toPlainText());
 }
 
 bool CryptoPage::fileSave()
@@ -161,8 +158,7 @@ bool CryptoPage::fileSave()
         return false;
     QTextStream ts(&file);
     ts.setCodec(QTextCodec::codecForName("UTF-8"));
-    ts << ui.certtextEdit->document()->toPlainText();
-    ui.certtextEdit->document()->setModified(false);
+    ts << ui.certplainTextEdit->document()->toPlainText();
     return true;
 }
 
@@ -170,16 +166,8 @@ bool CryptoPage::fileSaveAs()
 {
     QString fn;
     if (misc::getSaveFileName(this, RshareSettings::LASTDIR_CERT, tr("Save as..."), tr("RetroShare Certificate (*.rsc );;All Files (*)"), fn)) {
-        setCurrentFileName(fn);
+        fileName = fn;
         return fileSave();
     }
     return false;
-}
-
-void CryptoPage::setCurrentFileName(const QString &fileName)
-{
-    this->fileName = fileName;
-    ui.certtextEdit->document()->setModified(false);
-
-    setWindowModified(false);
 }
