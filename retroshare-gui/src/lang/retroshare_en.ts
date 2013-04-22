@@ -1738,10 +1738,6 @@ Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Create Public Group</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1807,6 +1803,10 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Share Category</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create Circle</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2994,6 +2994,149 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Load thumbnail picture</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CreateCircleDialog</name>
+    <message>
+        <source>Circle Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Creator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Distribution</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Public</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Self-Restricted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restricted to:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Circle Membership</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>IDs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;&lt; Add</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&gt;&gt; Remove </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Known Identities</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All IDs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All PGP IDs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Known PGP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nickname</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start New Thread</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Post Forum Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste RetroShare Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste full RetroShare Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste my certificate link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>In Reply to</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please set a Forum Subject and Forum Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please choose Signing Id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please choose Signing Id, it is required</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Extra File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please set a Name your Circle</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5772,6 +5915,38 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>No one can anonymously access this directory.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory is browsable for friends from groups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory is NOT browsable for friends from groups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory is accessible by anonymous tunnels from friends from groups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory is NOT accessible by anonymous tunnels from friends from groups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory is browsable for any friend</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory is NOT browsable for any friend</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory is accessible by anonymous tunnels from any friend</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory is NOT accessible by anonymous tunnels from any friend</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9588,6 +9763,14 @@ p, li { white-space: pre-wrap; }
         <source>Other Topics</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Subscribe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unsubscribe</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PrintPreview</name>
@@ -10019,38 +10202,6 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
     </message>
     <message>
         <source>Result</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Directory is browsable for friends from groups</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Directory is accessible by anonymous tunnels from friends from groups</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Directory is browsable for any friend</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Directory is accessible by anonymous tunnels from any friend</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Directory is NOT browsable for friends from groups</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Directory is NOT accessible by anonymous tunnels from friends from groups</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Directory is NOT browsable for any friend</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Directory is NOT accessible by anonymous tunnels from any friend</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
