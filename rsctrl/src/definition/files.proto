@@ -32,12 +32,26 @@ enum Direction {
     DIRECTION_DOWNLOAD  = 2;
 }
 
+
+enum TransferState {
+    TRANSFER_FAILED   		= 1;
+    TRANSFER_OKAY    		= 2;
+    TRANSFER_PAUSED    		= 3;
+    TRANSFER_QUEUED    		= 4;
+    TRANSFER_WAITING  	 	= 5;
+    TRANSFER_DOWNLOADING    	= 6;
+    TRANSFER_CHECKING_HASH    	= 7;
+    TRANSFER_COMPLETE 	 	= 8;
+}
+
+
 message FileTransfer {
 
   required rsctrl.core.File file 	= 1;
   required Direction direction		= 2;
   required float fraction		= 3;
   required float rate_kBs		= 4;
+  required TransferState state		= 5;
 }
 
 ///////////////////////////////////////////////////////////////
