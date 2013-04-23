@@ -2977,6 +2977,7 @@ void p3ChatService::receiveTurtleData(	RsTurtleGenericTunnelItem *gitem,const st
 		}
 		it->second.last_contact = time(NULL) ;
 		memcpy(aes_key,it->second.aes_key,DISTANT_CHAT_AES_KEY_SIZE) ;
+		it->second.status = RS_DISTANT_CHAT_STATUS_CAN_TALK ;
 	}
 
 	// Call the AES crypto module
