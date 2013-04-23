@@ -230,7 +230,7 @@ sshserver {
 
 protorpc {
 	# Proto Services
-	PROTOS = core.proto peers.proto system.proto chat.proto search.proto files.proto
+	PROTOS = core.proto peers.proto system.proto chat.proto search.proto files.proto stream.proto
 	DESTPATH = $$PWD/rpc/proto/gencc
 	PROTOPATH = $$PWD/../../rsctrl/src/definition
 	CMD = echo Building protobuf files
