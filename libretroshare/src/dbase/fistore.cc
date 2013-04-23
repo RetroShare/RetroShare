@@ -90,17 +90,19 @@ int FileIndexStore::loadCache(const CacheData &data)
 		// from the cache. Doing this, the file list still shows in a session where we deleted a friend, but will be removed
 		// at next restart.
 		//
-		peerState ps;
-		mPeerMgr->getFriendNetStatus(data.pid, ps);
-		std::string peername = ps.name + " (" + ps.location + ")";
 
 		if (finew->loadIndex(data.path + '/' + data.name, data.hash, data.size))
 		{
 #ifdef FIS_DEBUG2
 			std::cerr << "FileIndexStore::loadCache() Succeeded!" << std::endl;
 #endif
-			/* set the name */
-			finew->root->name = peername; // data.pid; // HACK HERE TODO XXX. name;
+			/* This is not the place to set the peername.
+			 * It is a hack, which makes it programmatically impossible
+			 * to get the file data out....
+			 *
+			 * peername should not be used in dbase.
+			 */
+			finew->root->name = data.pid; 
 
 			if (local)
 			{
