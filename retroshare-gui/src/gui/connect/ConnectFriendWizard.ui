@@ -710,6 +710,18 @@
      </widget>
     </item>
     <item>
+     <widget class="QLabel" name="requestinfolabel">
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>To accept the Friend Request, click the Finish button.</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <spacer name="fr_verticalSpacer">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
@@ -946,6 +958,7 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>
