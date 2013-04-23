@@ -21,25 +21,39 @@
  *
  */
 
+#include "rpc/proto/rpcprotoutils.h"
+#include <sys/time.h>
 
-#ifndef RS_RPC_PROTO_FILES_H
-#define RS_RPC_PROTO_FILES_H
 
-#include "rpc/rpcserver.h"
-
-class RpcProtoFiles: public RpcQueueService
+double getTimeStamp()
 {
-public:
-	RpcProtoFiles(uint32_t serviceId);
+	struct timeval tv;
+	double ts = 0;
+	if (0 == gettimeofday(&tv, NULL))
+	{
+		ts = tv.tv_sec + (tv.tv_usec / 1000000.0);
+	}
+	return ts;
+}
 
-	virtual int processMsg(uint32_t chan_id, uint32_t msgId, uint32_t req_id, const std::string &msg);
+bool setTimeStamp(rsctrl::core::Timestamp *ts)
+{
+	struct timeval tv;
+	if (0 != gettimeofday(&tv, NULL))
+	{
+		ts->set_secs(tv.tv_sec);
+		ts->set_microsecs(tv.tv_usec);
+		return true;
+	}
+	else
+	{
+		ts->set_secs(0);
+		ts->set_microsecs(0);
+		return false;
+	}
+	return false;
+}
 
-protected:
 
-	int processReqTransferList(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg);
-	int processReqControlDownload(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg);
-	int processReqShareDirList(uint32_t chan_id, uint32_t /* msg_id */, uint32_t req_id, const std::string &msg);
 
-};
 
-#endif /* RS_PROTO_FILES_H */

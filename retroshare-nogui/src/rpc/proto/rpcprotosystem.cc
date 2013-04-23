@@ -109,7 +109,7 @@ int RpcProtoSystem::processMsg(uint32_t chan_id, uint32_t msg_id, uint32_t req_i
 }
 
 
-int RpcProtoSystem::processSystemStatus(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg)
+int RpcProtoSystem::processSystemStatus(uint32_t chan_id, uint32_t /* msg_id */, uint32_t req_id, const std::string &msg)
 {
 	std::cerr << "RpcProtoSystem::processSystemStatus()";
 	std::cerr << std::endl;
@@ -224,7 +224,7 @@ int RpcProtoSystem::processSystemStatus(uint32_t chan_id, uint32_t msg_id, uint3
 
 
 
-int RpcProtoSystem::processSystemQuit(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg)
+int RpcProtoSystem::processSystemQuit(uint32_t chan_id, uint32_t /* msg_id */, uint32_t req_id, const std::string &msg)
 {
 	std::cerr << "RpcProtoSystem::processSystemQuit()";
 	std::cerr << std::endl;
@@ -291,7 +291,7 @@ int RpcProtoSystem::processSystemQuit(uint32_t chan_id, uint32_t msg_id, uint32_
 }
 
 
-int RpcProtoSystem::processSystemExternalAccess(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg)
+int RpcProtoSystem::processSystemExternalAccess(uint32_t chan_id, uint32_t /* msg_id */, uint32_t req_id, const std::string &msg)
 {
 	std::cerr << "RpcProtoSystem::processSystemExternalAccess()";
 	std::cerr << std::endl;

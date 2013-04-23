@@ -30,6 +30,9 @@
 #include <iostream>
 #include <algorithm>
 
+bool load_person_details(std::string pgp_id, rsctrl::core::Person *person, 
+		bool getLocations, bool onlyConnected);
+
 RpcProtoPeers::RpcProtoPeers(uint32_t serviceId)
 	:RpcQueueService(serviceId)
 { 
@@ -88,9 +91,12 @@ int RpcProtoPeers::processMsg(uint32_t chan_id, uint32_t msg_id, uint32_t req_id
 		case rsctrl::peers::MsgId_RequestAddPeer:
 			processAddPeer(chan_id, msg_id, req_id, msg);
 			break;
-		case rsctrl::peers::MsgId_RequestModifyPeer:
-			processModifyPeer(chan_id, msg_id, req_id, msg);
+		case rsctrl::peers::MsgId_RequestExaminePeer:
+			processExaminePeer(chan_id, msg_id, req_id, msg);
 			break;
+		//case rsctrl::peers::MsgId_RequestModifyPeer:
+		//	processModifyPeer(chan_id, msg_id, req_id, msg);
+		//	break;
 		default:
 			std::cerr << "RpcProtoPeers::processMsg() ERROR should never get here";
 			std::cerr << std::endl;
@@ -102,14 +108,134 @@ int RpcProtoPeers::processMsg(uint32_t chan_id, uint32_t msg_id, uint32_t req_id
 }
 
 
-int RpcProtoPeers::processAddPeer(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg)
+int RpcProtoPeers::processAddPeer(uint32_t chan_id, uint32_t /* msg_id */, uint32_t req_id, const std::string &msg)
 {
-	std::cerr << "RpcProtoPeers::processAddPeer() NOT FINISHED";
+	std::cerr << "RpcProtoPeers::processAddPeer()";
 	std::cerr << std::endl;
 
+
+	// parse msg.
+	rsctrl::peers::RequestAddPeer req;
+	if (!req.ParseFromString(msg))
+	{
+		std::cerr << "RpcProtoPeers::processAddPeer() ERROR ParseFromString()";
+		std::cerr << std::endl;
+		return 0;
+	}
+
 	// response.
-	rsctrl::peers::ResponseAddPeer resp;
+	rsctrl::peers::ResponsePeerList resp;
+	bool success = true;
+	std::string errorMsg;
+
+	/* check if the gpg_id is valid */
+	std::string pgp_id = req.pgp_id();
+	std::string ssl_id;	
+	if (req.has_ssl_id())
+	{
+		ssl_id = req.ssl_id();
+	}
+
+	RsPeerDetails details;
+	if (!rsPeers->getGPGDetails(pgp_id, details))
+	{
+		success = false;
+		errorMsg = "Invalid PGP ID";
+	}
+	else
+	{
+		switch(req.cmd())
+		{
+			default:
+				success = false;
+				errorMsg = "Invalid AddCmd";
+				break;
+			case rsctrl::peers::RequestAddPeer::ADD:
+
+				// TODO. NEED TO HANDLE SERVICE PERMISSION FLAGS.
+  				success = rsPeers->addFriend(ssl_id,pgp_id, RS_SERVICE_PERM_ALL);
+
+				break;
+			case rsctrl::peers::RequestAddPeer::REMOVE:
+
+  				success = rsPeers->removeFriend(pgp_id);
+				break;
+		}
+	
+		if (success)
+		{
+			rsctrl::core::Person *person = resp.add_peers();
+			load_person_details(pgp_id, person, true, false);
+		}
+	}
+	
+        if (success)
+	{
+		rsctrl::core::Status *status = resp.mutable_status();
+		status->set_code(rsctrl::core::Status::SUCCESS);
+	}
+	else
+	{
+		rsctrl::core::Status *status = resp.mutable_status();
+		status->set_code(rsctrl::core::Status::NO_IMPL_YET);
+	}
+
+
+	std::string outmsg;
+	if (!resp.SerializeToString(&outmsg))
+	{
+		std::cerr << "RpcProtoPeers::processAddPeer() ERROR SerialiseToString()";
+		std::cerr << std::endl;
+		return 0;
+	}
+	
+	// Correctly Name Message.
+	uint32_t out_msg_id = constructMsgId(rsctrl::core::CORE, rsctrl::core::PEERS, 
+				rsctrl::peers::MsgId_ResponsePeerList, true);
+
+	// queue it.
+	queueResponse(chan_id, out_msg_id, req_id, outmsg);
+
+	return 1;
+}
+
+
+int RpcProtoPeers::processExaminePeer(uint32_t chan_id, uint32_t /* msg_id */, uint32_t req_id, const std::string &msg)
+{
+	std::cerr << "RpcProtoPeers::processExaminePeer() NOT FINISHED";
+	std::cerr << std::endl;
+
+
+	// parse msg.
+	rsctrl::peers::RequestExaminePeer req;
+	if (!req.ParseFromString(msg))
+	{
+		std::cerr << "RpcProtoPeers::processExaminePeer() ERROR ParseFromString()";
+		std::cerr << std::endl;
+		return 0;
+	}
+
+	// response.
+	rsctrl::peers::ResponsePeerList resp;
 	bool success = false;
+
+	if (success)
+	{	
+		switch(req.cmd())
+		{
+			default:
+				success = false;
+				break;
+			case rsctrl::peers::RequestExaminePeer::IMPORT:
+				break;
+			case rsctrl::peers::RequestExaminePeer::EXAMINE:
+	
+	                // Gets the GPG details, but does not add the key to the keyring.
+	                //virtual bool loadDetailsFromStringCert(const std::string& certGPG, RsPeerDetails &pd,uint32_t& error_code) = 0;
+	
+				break;
+		}
+	}
 
         if (success)
 	{
@@ -133,7 +259,7 @@ int RpcProtoPeers::processAddPeer(uint32_t chan_id, uint32_t msg_id, uint32_t re
 	
 	// Correctly Name Message.
 	uint32_t out_msg_id = constructMsgId(rsctrl::core::CORE, rsctrl::core::PEERS, 
-				rsctrl::peers::MsgId_ResponseAddPeer, true);
+				rsctrl::peers::MsgId_ResponsePeerList, true);
 
 	// queue it.
 	queueResponse(chan_id, out_msg_id, req_id, outmsg);
@@ -142,14 +268,24 @@ int RpcProtoPeers::processAddPeer(uint32_t chan_id, uint32_t msg_id, uint32_t re
 }
 
 
-int RpcProtoPeers::processModifyPeer(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg)
+int RpcProtoPeers::processModifyPeer(uint32_t chan_id, uint32_t /* msg_id */, uint32_t req_id, const std::string &msg)
 {
 	std::cerr << "RpcProtoPeers::processModifyPeer() NOT FINISHED";
 	std::cerr << std::endl;
 
 
+	// parse msg.
+	rsctrl::peers::RequestModifyPeer req;
+	if (!req.ParseFromString(msg))
+	{
+		std::cerr << "RpcProtoPeers::processModifyPeer() ERROR ParseFromString()";
+		std::cerr << std::endl;
+		return 0;
+	}
+
+
 	// response.
-	rsctrl::peers::ResponseModifyPeer resp;
+	rsctrl::peers::ResponsePeerList resp;
 	bool success = false;
 
         if (success)
@@ -174,7 +310,7 @@ int RpcProtoPeers::processModifyPeer(uint32_t chan_id, uint32_t msg_id, uint32_t
 	
 	// Correctly Name Message.
 	uint32_t out_msg_id = constructMsgId(rsctrl::core::CORE, rsctrl::core::PEERS, 
-				rsctrl::peers::MsgId_ResponseModifyPeer, true);
+				rsctrl::peers::MsgId_ResponsePeerList, true);
 
 	// queue it.
 	queueResponse(chan_id, out_msg_id, req_id, outmsg);
@@ -184,7 +320,7 @@ int RpcProtoPeers::processModifyPeer(uint32_t chan_id, uint32_t msg_id, uint32_t
 
 
 
-int RpcProtoPeers::processRequestPeers(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg)
+int RpcProtoPeers::processRequestPeers(uint32_t chan_id, uint32_t /* msg_id */, uint32_t req_id, const std::string &msg)
 {
 	std::cerr << "RpcProtoPeers::processRequestPeers()";
 	std::cerr << std::endl;
@@ -198,10 +334,14 @@ int RpcProtoPeers::processRequestPeers(uint32_t chan_id, uint32_t msg_id, uint32
 		return 0;
 	}
 
+	// response.
+	rsctrl::peers::ResponsePeerList respp;
+        bool success = true;
+	std::string errorMsg;
+
 	// Get the list of gpg_id to generate data for.
 	std::list<std::string> ids;
 	bool onlyConnected = false;
-        bool success = true;
 	switch(reqp.set())
 	{
 		case rsctrl::peers::RequestPeers::OWNID:
@@ -216,9 +356,14 @@ int RpcProtoPeers::processRequestPeers(uint32_t chan_id, uint32_t msg_id, uint32
 		{
 			std::cerr << "RpcProtoPeers::processRequestPeers() LISTED";
 			std::cerr << std::endl;
-			/* extract ids from request (TODO) */
-			std::string own_id = rsPeers->getGPGOwnId();
-			ids.push_back(own_id);
+			int no_pgp_ids = reqp.pgp_ids_size();
+			for (int i = 0; i < no_pgp_ids; i++)
+			{
+				std::string listed_id = reqp.pgp_ids(i);
+				std::cerr << "RpcProtoPeers::processRequestPeers() Adding Id: " << listed_id;
+				std::cerr << std::endl;
+				ids.push_back(listed_id);
+			}
 			break;
 
 		}
@@ -281,117 +426,21 @@ int RpcProtoPeers::processRequestPeers(uint32_t chan_id, uint32_t msg_id, uint32
 			break;
 	}
 
-	// response.
-	rsctrl::peers::ResponsePeerList respp;
 
 	/* now iterate through the peers and fill in the response. */
 	std::list<std::string>::const_iterator git;
 	for(git = ids.begin(); git != ids.end(); git++)
 	{
-
-		RsPeerDetails details;
-		if (!rsPeers->getGPGDetails(*git, details))
-		{
-			continue; /* uhm.. */
-		}
-
 		rsctrl::core::Person *person = respp.add_peers();
-
-		/* fill in key gpg details */
-		person->set_gpg_id(*git);
-		person->set_name(details.name);
-
-		std::cerr << "RpcProtoPeers::processRequestPeers() Adding GPGID: ";
-		std::cerr << *git << " name: " << details.name;
-		std::cerr << std::endl;
-
-		if (details.state & RS_PEER_STATE_FRIEND)
+		if (!load_person_details(*git, person, getLocations, onlyConnected))
 		{
-			person->set_relation(rsctrl::core::Person::FRIEND);
-		}
-		else 
-		{
-			std::list<std::string> common_friends;
-			rsDisc->getDiscGPGFriends(*git, common_friends);
-			int size = common_friends.size();
-			if (size)
-			{
-				if (size > 2)
-				{
-					person->set_relation(rsctrl::core::Person::FRIEND_OF_MANY_FRIENDS);
-				}
-				else
-				{
-					person->set_relation(rsctrl::core::Person::FRIEND_OF_FRIENDS);
-				}
-			}
-			else
-			{
-				person->set_relation(rsctrl::core::Person::UNKNOWN);
-			}
-		}
-		
-		if (getLocations)
-		{
-			std::list<std::string> ssl_ids;
-			std::list<std::string>::const_iterator sit;
+			std::cerr << "RpcProtoPeers::processRequestPeers() ERROR Finding GPGID: ";
+			std::cerr << *git;
+			std::cerr << std::endl;
 
-			if (!rsPeers->getAssociatedSSLIds(*git, ssl_ids))
-			{
-				continue; /* end of this peer */
-			}
-
-			for(sit = ssl_ids.begin(); sit != ssl_ids.end(); sit++)
-			{
-				RsPeerDetails ssldetails;
-				if (!rsPeers->getPeerDetails(*sit, ssldetails))
-				{
-					continue; /* uhm.. */
-				}
-				if ((onlyConnected) && 
-					(!(ssldetails.state & RS_PEER_STATE_CONNECTED)))
-				{
-					continue;
-				}
-
-				rsctrl::core::Location *loc = person->add_locations();
-
-		std::cerr << "RpcProtoPeers::processRequestPeers() \t Adding Location: ";
-		std::cerr << *sit << " loc: " << ssldetails.location;
-		std::cerr << std::endl;
-
-				/* fill in ssl details */
-				loc->set_ssl_id(*sit);
-				loc->set_location(ssldetails.location);
-
-				/* set addresses */
-				rsctrl::core::IpAddr *laddr = loc->mutable_localaddr();
-				laddr->set_addr(ssldetails.localAddr);
-				laddr->set_port(ssldetails.localPort);
-
-				rsctrl::core::IpAddr *eaddr = loc->mutable_extaddr();
-				eaddr->set_addr(ssldetails.extAddr);
-				eaddr->set_port(ssldetails.extPort);
-
-				/* translate status */
-				uint32_t loc_state = 0;
-				//dont think this state should be here.
-				//if (ssldetails.state & RS_PEER_STATE_FRIEND)
-				if (ssldetails.state & RS_PEER_STATE_ONLINE)
-				{
-					loc_state |= (uint32_t) rsctrl::core::Location::ONLINE;
-				}
-				if (ssldetails.state & RS_PEER_STATE_CONNECTED)
-				{
-					loc_state |= (uint32_t) rsctrl::core::Location::CONNECTED;
-				}
-				if (ssldetails.state & RS_PEER_STATE_UNREACHABLE)
-				{
-					loc_state |= (uint32_t) rsctrl::core::Location::UNREACHABLE;
-				}
-
-				loc->set_state(loc_state);
-			}
+			/* cleanup peers */
+			success = false;
+			errorMsg = "Error Loading PeerID";
 		}
 	}
 
@@ -404,7 +453,7 @@ int RpcProtoPeers::processRequestPeers(uint32_t chan_id, uint32_t msg_id, uint32
 	{
 		rsctrl::core::Status *status = respp.mutable_status();
 		status->set_code(rsctrl::core::Status::FAILED);
-		status->set_msg("Unknown ERROR");
+		status->set_msg(errorMsg);
 	}
 
 
@@ -424,6 +473,138 @@ int RpcProtoPeers::processRequestPeers(uint32_t chan_id, uint32_t msg_id, uint32
 	queueResponse(chan_id, out_msg_id, req_id, outmsg);
 
 	return 1;
+}
+
+
+
+
+
+bool load_person_details(std::string pgp_id, rsctrl::core::Person *person, 
+		bool getLocations, bool onlyConnected)
+{
+	RsPeerDetails details;
+	if (!rsPeers->getGPGDetails(pgp_id, details))
+	{
+		std::cerr << "RpcProtoPeers::processRequestPeers() ERROR Finding GPGID: ";
+		std::cerr << pgp_id;
+		std::cerr << std::endl;
+		return false;
+	}
+
+	/* fill in key gpg details */
+	person->set_gpg_id(pgp_id);
+	person->set_name(details.name);
+
+	std::cerr << "RpcProtoPeers::processRequestPeers() Adding GPGID: ";
+	std::cerr << pgp_id << " name: " << details.name;
+	std::cerr << std::endl;
+
+	//if (details.state & RS_PEER_STATE_FRIEND)
+	if (pgp_id == rsPeers->getGPGOwnId())
+	{
+		std::cerr << "RpcProtoPeers::processRequestPeers() Relation YOURSELF";
+		std::cerr << std::endl;
+		person->set_relation(rsctrl::core::Person::YOURSELF);
+	}
+	else if (rsPeers->isGPGAccepted(pgp_id))
+	{
+		std::cerr << "RpcProtoPeers::processRequestPeers() Relation FRIEND";
+		std::cerr << std::endl;
+		person->set_relation(rsctrl::core::Person::FRIEND);
+	}
+	else 
+	{
+		std::list<std::string> common_friends;
+		rsDisc->getDiscGPGFriends(pgp_id, common_friends);
+		int size = common_friends.size();
+		if (size)
+		{
+			if (size > 2)
+			{
+				std::cerr << "RpcProtoPeers::processRequestPeers() Relation FRIEND_OF_MANY_FRIENDS";
+				std::cerr << std::endl;
+				person->set_relation(rsctrl::core::Person::FRIEND_OF_MANY_FRIENDS);
+			}
+			else
+			{
+				std::cerr << "RpcProtoPeers::processRequestPeers() Relation FRIEND_OF_FRIENDS";
+				std::cerr << std::endl;
+				person->set_relation(rsctrl::core::Person::FRIEND_OF_FRIENDS);
+			}
+		}
+		else
+		{
+			std::cerr << "RpcProtoPeers::processRequestPeers() Relation UNKNOWN";
+			std::cerr << std::endl;
+			person->set_relation(rsctrl::core::Person::UNKNOWN);
+		}
+	}
+	
+	if (getLocations)
+	{
+		std::list<std::string> ssl_ids;
+		std::list<std::string>::const_iterator sit;
+
+		if (!rsPeers->getAssociatedSSLIds(pgp_id, ssl_ids))
+		{
+			std::cerr << "RpcProtoPeers::processRequestPeers() No Locations";
+			std::cerr << std::endl;
+			return true; /* end of this peer */
+		}
+
+		for(sit = ssl_ids.begin(); sit != ssl_ids.end(); sit++)
+		{
+			RsPeerDetails ssldetails;
+			if (!rsPeers->getPeerDetails(*sit, ssldetails))
+			{
+				continue; /* uhm.. */
+			}
+			if ((onlyConnected) && 
+				(!(ssldetails.state & RS_PEER_STATE_CONNECTED)))
+			{
+				continue;
+			}
+
+			rsctrl::core::Location *loc = person->add_locations();
+
+			std::cerr << "RpcProtoPeers::processRequestPeers() \t Adding Location: ";
+			std::cerr << *sit << " loc: " << ssldetails.location;
+			std::cerr << std::endl;
+
+			/* fill in ssl details */
+			loc->set_ssl_id(*sit);
+			loc->set_location(ssldetails.location);
+
+			/* set addresses */
+			rsctrl::core::IpAddr *laddr = loc->mutable_localaddr();
+			laddr->set_addr(ssldetails.localAddr);
+			laddr->set_port(ssldetails.localPort);
+
+			rsctrl::core::IpAddr *eaddr = loc->mutable_extaddr();
+			eaddr->set_addr(ssldetails.extAddr);
+			eaddr->set_port(ssldetails.extPort);
+
+			/* translate status */
+			uint32_t loc_state = 0;
+			//dont think this state should be here.
+			//if (ssldetails.state & RS_PEER_STATE_FRIEND)
+			if (ssldetails.state & RS_PEER_STATE_ONLINE)
+			{
+				loc_state |= (uint32_t) rsctrl::core::Location::ONLINE;
+			}
+			if (ssldetails.state & RS_PEER_STATE_CONNECTED)
+			{
+				loc_state |= (uint32_t) rsctrl::core::Location::CONNECTED;
+			}
+			if (ssldetails.state & RS_PEER_STATE_UNREACHABLE)
+			{
+				loc_state |= (uint32_t) rsctrl::core::Location::UNREACHABLE;
+			}
+
+			loc->set_state(loc_state);
+		}
+	}
+	return true; /* end of this peer */
 }
 
 

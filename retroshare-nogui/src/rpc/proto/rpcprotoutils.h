@@ -22,24 +22,14 @@
  */
 
 
-#ifndef RS_RPC_PROTO_FILES_H
-#define RS_RPC_PROTO_FILES_H
+#ifndef RS_RPC_PROTO_UTILS_H
+#define RS_RPC_PROTO_UTILS_H
 
-#include "rpc/rpcserver.h"
 
-class RpcProtoFiles: public RpcQueueService
-{
-public:
-	RpcProtoFiles(uint32_t serviceId);
+#include "rpc/proto/gencc/core.pb.h"
 
-	virtual int processMsg(uint32_t chan_id, uint32_t msgId, uint32_t req_id, const std::string &msg);
+double getTimeStamp();
+bool   setTimeStamp(rsctrl::core::Timestamp *ts);
 
-protected:
 
-	int processReqTransferList(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg);
-	int processReqControlDownload(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg);
-	int processReqShareDirList(uint32_t chan_id, uint32_t /* msg_id */, uint32_t req_id, const std::string &msg);
-
-};
-
-#endif /* RS_PROTO_FILES_H */
+#endif /* RS_RPC_PROTO_UTILS_H */

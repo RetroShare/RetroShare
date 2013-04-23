@@ -144,11 +144,13 @@ introserver {
 
 
 sshserver {
-	LIBSSH_DIR = ../../../../libssh-0.5.4
 
 	# This Requires libssh-0.5.* to compile.
-	# Modify path below to point at it.
-	# Probably will only work on Linux for the moment.
+	# Please use this path below.
+        # (You can modify it locally if required - but dont commit it!)
+
+	LIBSSH_DIR = ../../../lib/libssh-0.5.4
+
 	#
 	# Use the following commend to generate a Server RSA Key.
 	# Key should be in current directory - when run/
@@ -164,7 +166,6 @@ sshserver {
 
 	win32 {
 		DEFINES *= LIBSSH_STATIC
-		LIBSSH_DIR = ../../../libssh-0.5.4
 	}
 
 	INCLUDEPATH += $$LIBSSH_DIR/include/
@@ -243,12 +244,16 @@ protorpc {
 		rpc/proto/rpcprotochat.h \
 		rpc/proto/rpcprotosearch.h \
 		rpc/proto/rpcprotofiles.h \
+		rpc/proto/rpcprotostream.h \
+		rpc/proto/rpcprotoutils.h \
 
 	SOURCES += rpc/proto/rpcprotopeers.cc \
 		rpc/proto/rpcprotosystem.cc \
 		rpc/proto/rpcprotochat.cc \
 		rpc/proto/rpcprotosearch.cc \
 		rpc/proto/rpcprotofiles.cc \
+		rpc/proto/rpcprotostream.cc \
+		rpc/proto/rpcprotoutils.cc \
 
 	# Offical Generated Code (protobuf 2.4.1)
 	HEADERS += rpc/proto/gencc/core.pb.h \
@@ -257,6 +262,7 @@ protorpc {
 		        rpc/proto/gencc/chat.pb.h \
         		rpc/proto/gencc/search.pb.h \
 		        rpc/proto/gencc/files.pb.h \
+		        rpc/proto/gencc/stream.pb.h \
 
 	SOURCES += rpc/proto/gencc/core.pb.cc \
 		        rpc/proto/gencc/peers.pb.cc \
@@ -264,6 +270,7 @@ protorpc {
 		        rpc/proto/gencc/chat.pb.cc \
 		        rpc/proto/gencc/search.pb.cc \
 		        rpc/proto/gencc/files.pb.cc \
+		        rpc/proto/gencc/stream.pb.cc \
 
 	# Generated ProtoBuf Code the RPC System
         # If you are developing, or have a different version of protobuf
@@ -274,6 +281,7 @@ protorpc {
 	#	        ../../rsctrl/src/gencc/chat.pb.h \
         #		../../rsctrl/src/gencc/search.pb.h \
 	#	        ../../rsctrl/src/gencc/files.pb.h \
+	#	        ../../rsctrl/src/gencc/stream.pb.h \
 
 	#SOURCES += ../../rsctrl/src/gencc/core.pb.cc \
 	#	        ../../rsctrl/src/gencc/peers.pb.cc \
@@ -281,6 +289,7 @@ protorpc {
 	#	        ../../rsctrl/src/gencc/chat.pb.cc \
 	#	        ../../rsctrl/src/gencc/search.pb.cc \
 	#	        ../../rsctrl/src/gencc/files.pb.cc \
+	#	        ../../rsctrl/src/gencc/stream.pb.cc \
 
 	INCLUDEPATH *= rpc/proto/gencc
 

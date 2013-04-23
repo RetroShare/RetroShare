@@ -26,6 +26,7 @@
 
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
+#include <retroshare/rshistory.h>
 
 #include "util/rsstring.h"
 
@@ -47,6 +48,8 @@ bool convertLobbyIdToString(const ChatLobbyId &lobby_id, std::string &chat_id);
 bool fillLobbyInfoFromChatLobbyInfo(const ChatLobbyInfo &cfi, rsctrl::chat::ChatLobbyInfo *lobby);
 bool fillLobbyInfoFromVisibleChatLobbyRecord(const VisibleChatLobbyRecord &pclr, rsctrl::chat::ChatLobbyInfo *lobby);
 bool fillLobbyInfoFromChatLobbyInvite(const ChatLobbyInvite &cli, rsctrl::chat::ChatLobbyInfo *lobby);
+
+bool fillChatMessageFromHistoryMsg(const HistoryMsg &histmsg, rsctrl::chat::ChatMessage *rpcmsg);
 
 bool createQueuedEventSendMsg(const ChatInfo &chatinfo, rsctrl::chat::ChatType ctype, 
 			std::string chat_id, const RpcEventRegister &ereg, RpcQueuedMsg &qmsg);
@@ -125,6 +128,10 @@ int RpcProtoChat::processMsg(uint32_t chan_id, uint32_t msg_id, uint32_t req_id,
 
 		case rsctrl::chat::MsgId_RequestSendMessage:
 			processReqSendMessage(chan_id, msg_id, req_id, msg);
+			break;
+
+		case rsctrl::chat::MsgId_RequestChatHistory:
+			processReqChatHistory(chan_id, msg_id, req_id, msg);
 			break;
 
 
@@ -349,7 +356,7 @@ int RpcProtoChat::processReqCreateLobby(uint32_t chan_id, uint32_t /*msg_id*/, u
 	std::string lobby_name = req.lobby_name();
 	std::string lobby_topic = req.lobby_topic();
 	std::list<std::string> invited_friends;
-	uint32_t lobby_privacy_type;
+	uint32_t lobby_privacy_type = 0;
 
 	switch(req.privacy_level())
 	{
@@ -806,6 +813,172 @@ int RpcProtoChat::processReqRegisterEvents(uint32_t chan_id, uint32_t /*msg_id*/
 
 
 
+
+int RpcProtoChat::processReqChatHistory(uint32_t chan_id, uint32_t /*msg_id*/, uint32_t req_id, const std::string &msg)
+{
+	std::cerr << "RpcProtoChat::processReqChatHistory()";
+	std::cerr << std::endl;
+
+	// parse msg.
+	rsctrl::chat::RequestChatHistory req;
+	if (!req.ParseFromString(msg))
+	{
+		std::cerr << "RpcProtoChat::processReqChatHistory() ERROR ParseFromString()";
+		std::cerr << std::endl;
+		return 0;
+	}
+
+	// response.
+	rsctrl::chat::ResponseChatHistory resp;
+	bool success = true;
+	std::string errorMsg;
+
+	// Get the Chat History for specified IDs....
+
+	/* switch depending on type */
+ 	bool private_chat = false;
+ 	bool lobby_chat = false;
+	std::string chat_id;
+
+	// copy the ID over.
+	rsctrl::chat::ChatId *id = resp.mutable_id();
+	*id = req.id();
+
+	switch(req.id().chat_type())
+	{
+		case rsctrl::chat::TYPE_PRIVATE:
+		{
+			// easy one.
+			chat_id = req.id().chat_id();
+			private_chat = true;
+
+			std::cerr << "RpcProtoChat::processReqChatHistory() Getting Private Chat History for: ";
+			std::cerr << chat_id;
+			std::cerr << std::endl;
+
+			break;
+		}
+		case rsctrl::chat::TYPE_LOBBY:
+		{
+			std::cerr << "RpcProtoChat::processReqChatHistory() Lobby Chat History NOT IMPLEMENTED YET";
+			std::cerr << std::endl;
+			success = false;
+ 			lobby_chat = true;
+			errorMsg = "Lobby Chat History Not Implemented";
+
+#if 0
+			/* convert string->ChatLobbyId */
+			ChatLobbyId lobby_id;
+			if (!convertStringToLobbyId(req.msg().id().chat_id(), lobby_id))
+			{
+				std::cerr << "ERROR Failed conversion of Lobby Id";
+				std::cerr << std::endl;
+
+				success = false;
+				errorMsg = "Failed Conversion of Lobby Id";
+			}
+				/* convert lobby id to virtual peer id */
+			else if (!rsMsgs->getVirtualPeerId(lobby_id, chat_id))
+			{
+				std::cerr << "ERROR Invalid Lobby Id";
+				std::cerr << std::endl;
+
+				success = false;
+				errorMsg = "Invalid Lobby Id";
+			}
+			lobby_chat = true;
+			std::cerr << "RpcProtoChat::processReqChatHistory() Getting Lobby Chat History for: ";
+			std::cerr << chat_id;
+			std::cerr << std::endl;
+#endif
+
+			break;
+		}
+		case rsctrl::chat::TYPE_GROUP:
+
+			std::cerr << "RpcProtoChat::processReqChatHistory() Group Chat History NOT IMPLEMENTED YET";
+			std::cerr << std::endl;
+			success = false;
+			errorMsg = "Group Chat History Not Implemented";
+
+			break;
+		default:
+
+			std::cerr << "ERROR Chat Type invalid";
+			std::cerr << std::endl;
+
+			success = false;
+			errorMsg = "Invalid Chat Type";
+			break;
+	}
+
+	// Should be able to reply using the existing message types.
+	if (success)
+	{
+		if (private_chat)
+		{
+			/* extract the history */
+			std::list<HistoryMsg> msgs;
+			std::list<HistoryMsg>::iterator it;
+			rsHistory->getMessages(chat_id, msgs, 0);
+
+			//rsctrl::chat::ChatId *id = resp.mutable_id();
+			//id->set_chat_type(rsctrl::chat::TYPE_PRIVATE);
+			//id->set_chat_id(chat_id);
+
+			for(it = msgs.begin(); it != msgs.end(); it++)
+			{
+				rsctrl::chat::ChatMessage *msg = resp.add_msgs();
+				fillChatMessageFromHistoryMsg(*it, msg);
+
+				std::cerr << "\t Message: " << it->message;
+				std::cerr << std::endl;
+			}
+		}
+#if 0
+		else if (lobby_chat)
+		{
+
+
+		}
+#endif
+	}
+
+
+	/* DONE - Generate Reply */
+        if (success)
+	{
+		rsctrl::core::Status *status = resp.mutable_status();
+		status->set_code(rsctrl::core::Status::SUCCESS);
+	}
+	else
+	{
+		rsctrl::core::Status *status = resp.mutable_status();
+		status->set_code(rsctrl::core::Status::FAILED);
+		status->set_msg(errorMsg);
+	}
+
+	std::string outmsg;
+	if (!resp.SerializeToString(&outmsg))
+	{
+		std::cerr << "RpcProtoChat::processReqChatHistory() ERROR SerialiseToString()";
+		std::cerr << std::endl;
+		return 0;
+	}
+	
+	// Correctly Name Message.
+	uint32_t out_msg_id = constructMsgId(rsctrl::core::CORE, rsctrl::core::CHAT, 
+				rsctrl::chat::MsgId_ResponseChatHistory, true);
+
+	// queue it.
+	queueResponse(chan_id, out_msg_id, req_id, outmsg);
+
+	return 1;
+}
+
+
+
+
 int RpcProtoChat::processReqSendMessage(uint32_t chan_id, uint32_t /*msg_id*/, uint32_t req_id, const std::string &msg)
 {
 	std::cerr << "RpcProtoChat::processReqSendMessage()";
@@ -939,8 +1112,8 @@ int RpcProtoChat::processReqSendMessage(uint32_t chan_id, uint32_t /*msg_id*/, u
 int RpcProtoChat::locked_checkForEvents(uint32_t event, const std::list<RpcEventRegister> &registered, std::list<RpcQueuedMsg> &events)
 {
 	/* Wow - here already! */
-	std::cerr << "locked_checkForEvents()";
-	std::cerr << std::endl;
+	//std::cerr << "locked_checkForEvents()";
+	//std::cerr << std::endl;
 
 	/* only one event type for now */
 	if (event !=  REGISTRATION_EVENT_CHAT)
@@ -1220,6 +1393,25 @@ bool fillLobbyInfoFromChatLobbyInvite(const ChatLobbyInvite &cli, rsctrl::chat::
 }
 
 
+bool fillChatMessageFromHistoryMsg(const HistoryMsg &histmsg, rsctrl::chat::ChatMessage *rpcmsg)
+{
+	rsctrl::chat::ChatId *id = rpcmsg->mutable_id();
+
+	id->set_chat_type(rsctrl::chat::TYPE_PRIVATE);
+	id->set_chat_id(histmsg.chatPeerId);
+
+  	rpcmsg->set_msg(histmsg.message);
+
+	rpcmsg->set_peer_nickname(histmsg.peerName);
+  	rpcmsg->set_chat_flags(0);
+
+	rpcmsg->set_send_time(histmsg.sendTime);
+	rpcmsg->set_recv_time(histmsg.recvTime);
+
+	return true;
+}
+
+
 bool createQueuedEventSendMsg(const ChatInfo &chatinfo, rsctrl::chat::ChatType ctype, 
 			std::string chat_id, const RpcEventRegister &ereg, RpcQueuedMsg &qmsg)
 {
@@ -1265,6 +1457,9 @@ bool createQueuedEventSendMsg(const ChatInfo &chatinfo, rsctrl::chat::ChatType c
 
 	return true;
 }
+
+
+
 
 bool convertUTF8toWString(const std::string &msg_utf8, std::wstring &msg_wstr)
 {

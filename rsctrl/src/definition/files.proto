@@ -13,11 +13,13 @@ import "core.proto";
 enum RequestMsgIds {
     MsgId_RequestTransferList 		= 1;
     MsgId_RequestControlDownload   	= 2;
+    MsgId_RequestShareDirList		= 3;
 }
 
 enum ResponseMsgIds {
     MsgId_ResponseTransferList  	= 1;
     MsgId_ResponseControlDownload  	= 2;
+    MsgId_ResponseShareDirList		= 3;
 }
 
 ///////////////////////////////////////////////////////////////
@@ -30,12 +32,26 @@ enum Direction {
     DIRECTION_DOWNLOAD  = 2;
 }
 
+
+enum TransferState {
+    TRANSFER_FAILED   		= 1;
+    TRANSFER_OKAY    		= 2;
+    TRANSFER_PAUSED    		= 3;
+    TRANSFER_QUEUED    		= 4;
+    TRANSFER_WAITING  	 	= 5;
+    TRANSFER_DOWNLOADING    	= 6;
+    TRANSFER_CHECKING_HASH    	= 7;
+    TRANSFER_COMPLETE 	 	= 8;
+}
+
+
 message FileTransfer {
 
   required rsctrl.core.File file 	= 1;
   required Direction direction		= 2;
   required float fraction		= 3;
   required float rate_kBs		= 4;
+  required TransferState state		= 5;
 }
 
 ///////////////////////////////////////////////////////////////
@@ -86,22 +102,32 @@ message ResponseControlDownload {
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
 // SHARED FILES
-// THIS STUFF IS NOT FINISHED YET!
-//
-//// REQUEST: RequestListShares
-//message RequestListShares {
-//
-//  required uint32 depth = 1;		// HOW Many Directories to drill down.
-//  repeated string ShareLocation = 2;
-//}
-//
-//message ShareLocation {
-//  required string ssl_id = 1;
-//  required string path = 2;
-//}
-//
-//
-//
+
+// REQUEST: RequestShareDirList
+message RequestShareDirList {
+  required string ssl_id = 1; 
+  required string path = 2;
+}
+
+
+// RESPONSE: ResponseShareDirList
+message ResponseShareDirList {
+  required rsctrl.core.Status status = 1;
+
+  enum ListType {
+    DIRQUERY_ROOT 	= 1; 	// the query refers to root.
+    DIRQUERY_PERSON 	= 2; 	// the query refers to person
+    DIRQUERY_FILE 	= 3; 	// the query refers to a file.
+    DIRQUERY_DIR 	= 4; 	// move to top of queue.
+  }
+
+  required string ssl_id 		= 2; 
+  required string path 			= 3;
+  required ListType list_type 		= 4;
+  repeated rsctrl.core.File files 	= 5;
+}
+
+
 //// REQUEST: RequestChangeShares
 //
 //// REQUEST: RequestLiCloseSearch

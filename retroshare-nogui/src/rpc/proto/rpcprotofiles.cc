@@ -25,8 +25,10 @@
 #include "rpc/proto/gencc/files.pb.h"
 
 #include <retroshare/rsfiles.h>
+#include <retroshare/rspeers.h>
 
 #include "util/rsstring.h"
+#include "util/rsdir.h"
 
 #include <stdio.h>
 
@@ -35,6 +37,9 @@
 
 #include <set>
 
+
+bool fill_file_from_details(rsctrl::core::File *file, DirDetails &details);
+bool fill_file_as_dir(rsctrl::core::File *file, const std::string &dir_name);
 
 RpcProtoFiles::RpcProtoFiles(uint32_t serviceId)
 	:RpcQueueService(serviceId)
@@ -93,6 +98,10 @@ int RpcProtoFiles::processMsg(uint32_t chan_id, uint32_t msg_id, uint32_t req_id
 			processReqControlDownload(chan_id, msg_id, req_id, msg);
 			break;
 
+		case rsctrl::files::MsgId_RequestShareDirList:
+			processReqShareDirList(chan_id, msg_id, req_id, msg);
+			break;
+
 		default:
 			std::cerr << "RpcProtoFiles::processMsg() ERROR should never get here";
 			std::cerr << std::endl;
@@ -105,7 +114,7 @@ int RpcProtoFiles::processMsg(uint32_t chan_id, uint32_t msg_id, uint32_t req_id
 
 
 
-int RpcProtoFiles::processReqTransferList(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg)
+int RpcProtoFiles::processReqTransferList(uint32_t chan_id, uint32_t /* msg_id */, uint32_t req_id, const std::string &msg)
 {
 	std::cerr << "RpcProtoFiles::processReqTransferList()";
 	std::cerr << std::endl;
@@ -171,6 +180,35 @@ int RpcProtoFiles::processReqTransferList(uint32_t chan_id, uint32_t msg_id, uin
 
 		transfer->set_fraction( (float) info.transfered / info.size );
 		transfer->set_rate_kbs( info.tfRate );
+
+		switch(info.downloadStatus)
+		{
+			case FT_STATE_FAILED:
+				transfer->set_state(rsctrl::files::TRANSFER_FAILED);
+				break;
+			default:
+			case FT_STATE_OKAY:
+				transfer->set_state(rsctrl::files::TRANSFER_OKAY);
+				break;
+			case FT_STATE_PAUSED:
+				transfer->set_state(rsctrl::files::TRANSFER_PAUSED);
+				break;
+			case FT_STATE_QUEUED:
+				transfer->set_state(rsctrl::files::TRANSFER_QUEUED);
+				break;
+			case FT_STATE_WAITING:
+				transfer->set_state(rsctrl::files::TRANSFER_WAITING);
+				break;
+			case FT_STATE_DOWNLOADING:
+				transfer->set_state(rsctrl::files::TRANSFER_DOWNLOADING);
+				break;
+			case FT_STATE_CHECKING_HASH:
+				transfer->set_state(rsctrl::files::TRANSFER_CHECKING_HASH);
+				break;
+			case FT_STATE_COMPLETE:
+				transfer->set_state(rsctrl::files::TRANSFER_COMPLETE);
+				break;
+		}
 	}
 
 	/* DONE - Generate Reply */
@@ -204,7 +242,7 @@ int RpcProtoFiles::processReqTransferList(uint32_t chan_id, uint32_t msg_id, uin
 	return 1;
 }
 
-int RpcProtoFiles::processReqControlDownload(uint32_t chan_id, uint32_t msg_id, uint32_t req_id, const std::string &msg)
+int RpcProtoFiles::processReqControlDownload(uint32_t chan_id, uint32_t /* msg_id */, uint32_t req_id, const std::string &msg)
 {
 	std::cerr << "RpcProtoFiles::processReqControlDownload()";
 	std::cerr << std::endl;
@@ -340,5 +378,253 @@ int RpcProtoFiles::processReqControlDownload(uint32_t chan_id, uint32_t msg_id, 
 }
 
 
+int RpcProtoFiles::processReqShareDirList(uint32_t chan_id, uint32_t /* msg_id */, uint32_t req_id, const std::string &msg)
+{
+	std::cerr << "RpcProtoFiles::processReqShareDirList()";
+	std::cerr << std::endl;
+
+	// parse msg.
+	rsctrl::files::RequestShareDirList req;
+	if (!req.ParseFromString(msg))
+	{
+		std::cerr << "RpcProtoFiles::processReqShareDirList() ERROR ParseFromString()";
+		std::cerr << std::endl;
+		return 0;
+	}
+
+	// response.
+	rsctrl::files::ResponseShareDirList resp;
+	bool success = true;
+	std::string errorMsg;
+
+
+	std::string uid = req.ssl_id();
+	std::string path = req.path();
+	DirDetails details;
+
+	if (uid.empty())
+	{
+		uid = rsPeers->getOwnId();
+	}
+
+	std::cerr << "RpcProtoFiles::processReqShareDirList() For uid: " << uid << " & path: " << path;
+	std::cerr << std::endl;
+
+	if (path.empty())
+	{
+		/* we have to do a nasty hack to get anything useful.
+		 * we do a ref=NULL to get the pointers to People, 
+		 * then use the correct one to get root directories
+		 */
+		std::cerr << "RpcProtoFiles::processReqShareDirList() Hack to get root Dirs!";
+		std::cerr << std::endl;
+
+		FileSearchFlags flags;
+		if (uid == rsPeers->getOwnId())
+		{
+			flags |= RS_FILE_HINTS_LOCAL;
+		}
+
+		DirDetails root_details;
+		if (!rsFiles->RequestDirDetails(NULL, root_details, flags))
+		{
+			std::cerr << "RpcProtoFiles::processReqShareDirList() ref=NULL Hack failed";
+			std::cerr << std::endl;
+			success = false;
+			errorMsg = "Root Directory Request Failed.";
+		}
+		else
+		{
+			void *person_ref = NULL;
+			std::list<DirStub>::iterator sit;
+			for(sit = root_details.children.begin(); sit != root_details.children.end(); sit++)
+			{
+				//std::cerr << "RpcProtoFiles::processReqShareDirList() Root.child->name : " << sit->name;
+				if (sit->name == uid)
+				{
+					person_ref = sit->ref;
+					break;
+				}
+			}
+
+			if (!person_ref)
+			{
+				std::cerr << "RpcProtoFiles::processReqShareDirList() Person match failed";
+				std::cerr << std::endl;
+				success = false;
+				errorMsg = "Missing Person Root Directory.";
+			}
+			else
+			{
+				// Doing the REAL request!
+				if (!rsFiles->RequestDirDetails(person_ref, details, flags))
+				{
+					std::cerr << "RpcProtoFiles::processReqShareDirList() Personal Shared Dir Hack failed";
+					std::cerr << std::endl;
+					success = false;
+					errorMsg = "Missing Person Shared Directories";
+				}
+			}
+		}
+
+	}
+	else
+	{
+		// Path must begin with / for proper matching.
+		if (path[0] != '/')
+		{
+			path = '/' + path;
+		}
+
+		if (!rsFiles->RequestDirDetails(uid, path, details))
+		{
+			std::cerr << "RpcProtoFiles::processReqShareDirList() ERROR Unknown Dir";
+			std::cerr << std::endl;
+			success = false;
+			errorMsg = "Directory Request Failed.";
+		}
+	}
+
+
+
+
+
+	if (success)
+	{
+		// setup basics of response.
+		resp.set_ssl_id(uid);
+		resp.set_path(path);
+
+		switch(details.type)
+		{
+			case DIR_TYPE_ROOT:
+			{
+				std::cerr << "RpcProtoFiles::processReqShareDirList() Details.type == ROOT ??";
+				std::cerr << std::endl;
+				resp.set_list_type(rsctrl::files::ResponseShareDirList::DIRQUERY_ROOT);
+				rsctrl::core::File *file = resp.add_files();
+				fill_file_as_dir(file, details.name);
+
+			}
+			break;
+
+			case DIR_TYPE_FILE:
+			{
+				std::cerr << "RpcProtoFiles::processReqShareDirList() Details.type == FILE";
+				std::cerr << std::endl;
+				resp.set_list_type(rsctrl::files::ResponseShareDirList::DIRQUERY_FILE);
+				rsctrl::core::File *file = resp.add_files();
+				fill_file_from_details(file, details);
+			}
+			break;
+
+			default:
+				std::cerr << "RpcProtoFiles::processReqShareDirList() Details.type == UNKNOWN => default to DIR";
+				std::cerr << std::endl;
+
+			case DIR_TYPE_PERSON:
+			case DIR_TYPE_DIR:
+			{
+				std::cerr << "RpcProtoFiles::processReqShareDirList() Details.type == DIR or PERSON";
+				std::cerr << std::endl;
+
+				resp.set_list_type(rsctrl::files::ResponseShareDirList::DIRQUERY_DIR);
+
+	        		//std::string dir_path = RsDirUtil::makePath(details.path, details.name);		
+	        		std::string dir_path = details.path;
+
+				std::cerr << "RpcProtoFiles::processReqShareDirList() details.path: " << details.path;
+				std::cerr << " details.name: " << details.name;
+				std::cerr << std::endl;
+
+				std::list<DirStub>::iterator sit;
+				for(sit = details.children.begin(); sit != details.children.end(); sit++)
+				{
+					std::cerr << "RpcProtoFiles::processReqShareDirList() checking child: " << sit->name;
+					std::cerr << std::endl;
+					if (sit->type == DIR_TYPE_FILE)
+					{
+						std::cerr << "RpcProtoFiles::processReqShareDirList() is FILE, fetching details.";
+						std::cerr << std::endl;
+
+						DirDetails child_details;
+	               				std::string child_path = RsDirUtil::makePath(dir_path, sit->name);
+						if (rsFiles->RequestDirDetails(uid, child_path, child_details))
+						{
+							rsctrl::core::File *file = resp.add_files();
+							fill_file_from_details(file, child_details);
+						}
+						else
+						{
+							std::cerr << "RpcProtoFiles::processReqShareDirList() RequestDirDetails(" << child_path << ") Failed!!!";
+							std::cerr << std::endl;
+						}
+					}
+					else
+					{
+						std::cerr << "RpcProtoFiles::processReqShareDirList() is DIR";
+						std::cerr << std::endl;
+
+						rsctrl::core::File *file = resp.add_files();
+						fill_file_as_dir(file, sit->name);
+					}
+				}
+			}
+			break;
+		}
+	}
+
+	/* DONE - Generate Reply */
+        if (success)
+	{
+		rsctrl::core::Status *status = resp.mutable_status();
+		status->set_code(rsctrl::core::Status::SUCCESS);
+	}
+	else
+	{
+		rsctrl::core::Status *status = resp.mutable_status();
+		status->set_code(rsctrl::core::Status::FAILED);
+		status->set_msg(errorMsg);
+	}
+
+	std::string outmsg;
+	if (!resp.SerializeToString(&outmsg))
+	{
+		std::cerr << "RpcProtoFiles::processReqTransferList() ERROR SerialiseToString()";
+		std::cerr << std::endl;
+		return 0;
+	}
+	
+	// Correctly Name Message.
+	uint32_t out_msg_id = constructMsgId(rsctrl::core::CORE, rsctrl::core::FILES, 
+				rsctrl::files::MsgId_ResponseShareDirList, true);
+
+	// queue it.
+	queueResponse(chan_id, out_msg_id, req_id, outmsg);
+
+	return 1;
+}
+
+
 /***** HELPER FUNCTIONS *****/
+
+
+bool fill_file_from_details(rsctrl::core::File *file, DirDetails &details)
+{
+	file->set_hash(details.hash);	
+	file->set_name(details.name);	
+	file->set_size(details.count);
+
+	return true;
+}
+
+
+bool fill_file_as_dir(rsctrl::core::File *file, const std::string &dir_name)
+{
+	file->set_hash("");
+	file->set_name(dir_name);
+	file->set_size(0);
+
+	return true;
+}
 

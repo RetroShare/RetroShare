@@ -1,7 +1,7 @@
 
 EXEC = protoc
-#PROTO = core.proto peers.proto system.proto chat.proto search.proto files.proto  gxs.proto  msgs.proto 
-PROTO = core.proto peers.proto system.proto chat.proto search.proto files.proto
+#PROTO = core.proto peers.proto system.proto chat.proto search.proto files.proto stream.proto  gxs.proto  msgs.proto 
+PROTO = core.proto peers.proto system.proto chat.proto search.proto files.proto stream.proto
 
 PROTOPATH = ./definition
 #CDESTPATH = ./gencc
@@ -15,7 +15,7 @@ HCODE = $(patsubst %.proto,$(CDESTPATH)/%.pb.h, $(PROTO))
 PYCODE = $(patsubst %.proto,$(PYDESTPATH)/%_pb2.py, $(PROTO))
 
 
-all: allc
+all: allc python_proto
 
 allc: $(CCODE) 
 	echo $(CCODE)
