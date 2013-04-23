@@ -73,7 +73,7 @@ public:
 	bool setStyle();
 	const RSStyle *getStyle() { return &style; }
 
-	void addChatButton(QPushButton *button) ;
+	void addChatBarWidget(QWidget *w) ;
 
 	bool isActive();
 	void setDefaultExtraFileFlags(TransferRequestFlags f) ;

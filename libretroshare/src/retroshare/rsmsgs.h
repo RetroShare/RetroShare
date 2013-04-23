@@ -312,7 +312,7 @@ virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const std::str
 virtual bool createDistantChatInvite(const std::string& pgp_id,time_t time_of_validity,std::string& encrypted_string) = 0 ;
 virtual bool getDistantChatInviteList(std::vector<DistantChatInviteInfo>& invites) = 0;
 virtual bool initiateDistantChatConnexion(const std::string& encrypted_string,std::string& hash,uint32_t& error_code) = 0;
-virtual uint32_t getDistantChatStatus(const std::string& hash) = 0;
+virtual bool getDistantChatStatus(const std::string& hash,uint32_t& status,std::string& pgp_id) = 0;
 
 };
 

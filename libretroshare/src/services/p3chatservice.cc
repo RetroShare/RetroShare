@@ -420,12 +420,13 @@ bool p3ChatService::isOnline(const std::string& id)
 {
 	// check if the id is a tunnel id or a peer id.
 
-	uint32_t res = getDistantChatStatus(id) ;
+	uint32_t status ;
+	std::string pgp_id ;
 
-	if(!res)
+	if(!getDistantChatStatus(id,status,pgp_id)) 
 		return mLinkMgr->isOnline(id) ;
 
-	return res == RS_DISTANT_CHAT_STATUS_TUNNEL_OK ;
+	return true ;
 }
 
 bool     p3ChatService::sendPrivateChat(const std::string &id, const std::wstring &msg)
@@ -2897,6 +2898,7 @@ void p3ChatService::addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtua
 		info.last_contact = now ;
 		info.status = RS_DISTANT_CHAT_STATUS_TUNNEL_OK ;
 		info.virtual_peer_id = virtual_peer_id ;
+		info.pgp_id = it->second.destination_pgp_id ;
 		memcpy(info.aes_key,it->second.aes_key,DISTANT_CHAT_AES_KEY_SIZE) ;
 
 		_distant_chat_peers[hash] = info ;
@@ -3226,6 +3228,7 @@ bool p3ChatService::initiateDistantChatConnexion(const std::string& encrypted_st
 
 	info.last_contact = time(NULL) ;
 	info.status = RS_DISTANT_CHAT_STATUS_TUNNEL_DN ;
+	info.pgp_id = pgp_id.toStdString() ;
 	memcpy(info.aes_key,data+DISTANT_CHAT_HASH_SIZE,DISTANT_CHAT_AES_KEY_SIZE) ;
 
 	_distant_chat_peers[hash] = info ;
@@ -3286,16 +3289,19 @@ bool p3ChatService::getDistantChatInviteList(std::vector<DistantChatInviteInfo>&
 	return true ;
 }
 
-uint32_t p3ChatService::getDistantChatStatus(const std::string& hash)
+bool p3ChatService::getDistantChatStatus(const std::string& hash,uint32_t& status,std::string& pgp_id)
 {
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
 	std::map<TurtleFileHash,DistantChatPeerInfo>::const_iterator it = _distant_chat_peers.find(hash) ;
 	
 	if(it == _distant_chat_peers.end())
-		return RS_DISTANT_CHAT_STATUS_UNKNOWN ;
-	else
-		return it->second.status ;
+		return false ;
+
+	status = it->second.status ;
+	pgp_id = it->second.pgp_id ;
+
+	return true ;
 }
 
 

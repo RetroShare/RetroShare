@@ -141,9 +141,9 @@ void PopupChatDialog::addIncomingChatMsg(const ChatInfo& info)
 	}
 }
 
-void PopupChatDialog::addButton(QPushButton *button)
+void PopupChatDialog::addChatBarWidget(QWidget *w)
 {
-	getChatWidget()->addChatButton(button) ;
+	getChatWidget()->addChatBarWidget(w) ;
 }
 
 void PopupChatDialog::onChatChanged(int list, int type)

@@ -140,9 +140,9 @@ void ChatWidget::setDefaultExtraFileFlags(TransferRequestFlags fl)
 	ui->hashBox->setDefaultTransferRequestFlags(fl) ;
 }
 
-void ChatWidget::addChatButton(QPushButton *button)
+void ChatWidget::addChatBarWidget(QWidget *w)
 {
-	ui->toolBarFrame->layout()->addWidget(button) ;
+	ui->toolBarFrame->layout()->addWidget(w) ;
 }
 
 void ChatWidget::init(const std::string &peerId, const QString &title)

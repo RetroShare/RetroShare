@@ -313,7 +313,8 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 		bool createDistantChatInvite(const std::string& pgp_id,time_t time_of_validity,TurtleFileHash& hash) ;
 		bool getDistantChatInviteList(std::vector<DistantChatInviteInfo>& invites) ;
 		bool initiateDistantChatConnexion(const std::string& encrypted_string,std::string& hash,uint32_t& error_code) ;
-		virtual uint32_t getDistantChatStatus(const std::string& hash) ;
+
+		virtual bool getDistantChatStatus(const std::string& hash,uint32_t& status,std::string& pgp_id) ;
 
 	private:
 		struct DistantChatInvite
@@ -330,6 +331,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 			unsigned char aes_key[16] ;	// key to encrypt packets
 			uint32_t status ;					// info: do we have a tunnel ?
 			std::string virtual_peer_id;  // given by the turtle router. Identifies the tunnel.
+			std::string pgp_id ;          // pgp id of the peer we're talking to.
 		};
 
 		// This map contains the ongoing invites. This is the list where to look to

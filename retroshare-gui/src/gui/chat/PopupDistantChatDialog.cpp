@@ -22,6 +22,11 @@
 #include <QTimer>
 #include "PopupDistantChatDialog.h"
 
+#define IMAGE_RED_LED ":/images/redled.png"
+#define IMAGE_YEL_LED ":/images/yellowled.png"
+#define IMAGE_GRN_LED ":/images/greenled.png"
+#define IMAGE_GRY_LED ":/images/grayled.png"
+
 PopupDistantChatDialog::~PopupDistantChatDialog()
 {
 	delete _tunnel_check_timer ;
@@ -36,6 +41,10 @@ PopupDistantChatDialog::PopupDistantChatDialog(QWidget *parent, Qt::WFlags flags
 	QObject::connect(_tunnel_check_timer,SIGNAL(timeout()),this,SLOT(checkTunnel())) ;
 
 	_tunnel_check_timer->start() ;
+	_status_label = new QLabel ;
+
+	addChatBarWidget(_status_label) ;
+	checkTunnel() ;
 }
 
 void PopupDistantChatDialog::init(const std::string& hash,const QString & title)
@@ -53,17 +62,27 @@ void PopupDistantChatDialog::checkTunnel()
 	// make sure about the tunnel status
 	//
 	
-	uint32_t status = rsMsgs->getDistantChatStatus(_hash) ;
+	uint32_t status= RS_DISTANT_CHAT_STATUS_UNKNOWN;
+	std::string pgp_id ;
+	rsMsgs->getDistantChatStatus(_hash,status,pgp_id) ;
 
 	switch(status)
 	{
 		case RS_DISTANT_CHAT_STATUS_UNKNOWN: std::cerr << "Unknown hash. Error!" << std::endl;
+														 _status_label->setPixmap(QPixmap(IMAGE_GRY_LED)) ;
+														  _status_label->setText(tr("Hash error")) ;
 														 break ;
 		case RS_DISTANT_CHAT_STATUS_TUNNEL_DN: std::cerr << "Tunnel asked. Waiting for reponse. " << std::endl;
+														 _status_label->setPixmap(QPixmap(IMAGE_RED_LED)) ;
+														  _status_label->setText(tr("Tunnel is broken")) ;
 														 break ;
 		case RS_DISTANT_CHAT_STATUS_TUNNEL_OK: std::cerr << "Tunnel is ok. " << std::endl;
+														 _status_label->setPixmap(QPixmap(IMAGE_YEL_LED)) ;
+														  _status_label->setText(tr("Tunnel established")) ;
 														 break ;
 		case RS_DISTANT_CHAT_STATUS_CAN_TALK: std::cerr << "Tunnel is ok and works. You can talk!" << std::endl;
+														 _status_label->setPixmap(QPixmap(IMAGE_GRN_LED)) ;
+														  _status_label->setText(tr("Tunnel is working")) ;
 														 break ;
 	}
 }

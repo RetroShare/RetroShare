@@ -49,8 +49,8 @@ AudioPopupChatDialog::AudioPopupChatDialog(QWidget *parent)
 	connect(audioListenToggleButton, SIGNAL(clicked()), this , SLOT(toggleAudioListen()));
 	connect(audioMuteCaptureToggleButton, SIGNAL(clicked()), this , SLOT(toggleAudioMuteCapture()));
 
-	addButton(audioListenToggleButton) ;
-	addButton(audioMuteCaptureToggleButton) ;
+	addChatBarWidget(audioListenToggleButton) ;
+	addChatBarWidget(audioMuteCaptureToggleButton) ;
 
 	//ui.chatWidget->resetStatusBar();
 

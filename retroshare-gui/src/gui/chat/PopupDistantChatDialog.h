@@ -47,6 +47,7 @@ protected:
 	QTimer *_tunnel_check_timer ;
 	std::string _hash ;
 	std::string _virtual_peer_id ;
+	QLabel *_status_label ;
 };
 
 

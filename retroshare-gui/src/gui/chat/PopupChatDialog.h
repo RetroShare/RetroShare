@@ -57,7 +57,7 @@ protected:
 	void processSettings(bool load);
 
 	// used by plugins 
-	void addButton(QPushButton *button) ;
+	void addChatBarWidget(QWidget *w) ;
 
 protected:
 	virtual void addIncomingChatMsg(const ChatInfo& info);
