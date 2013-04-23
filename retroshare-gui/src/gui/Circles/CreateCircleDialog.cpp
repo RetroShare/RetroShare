@@ -563,7 +563,7 @@ void  CreateCircleDialog::createCircle()
 
 	if(name.isEmpty())
 	{	/* error message */
-		QMessageBox::warning(this, tr("RetroShare"),tr("Please set a Name your Circle"),
+		QMessageBox::warning(this, tr("RetroShare"),tr("Please set a name for your Circle"),
 							 QMessageBox::Ok, QMessageBox::Ok);
 
 		return; //Don't add  a empty Subject!!

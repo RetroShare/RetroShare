@@ -2473,6 +2473,10 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
         <source>*** None ***</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>To accept the Friend Request, click the Finish button.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>CreateBlog</name>
@@ -3056,10 +3060,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Known PGP</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Filter</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3136,7 +3136,11 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Please set a Name your Circle</source>
+        <source>Known PGP IDs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please set a name for your Circle</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

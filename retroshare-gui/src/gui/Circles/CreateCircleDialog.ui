@@ -205,7 +205,7 @@
         <item>
          <widget class="QRadioButton" name="radioButton_ListKnownPGP">
           <property name="text">
-           <string>Known PGP</string>
+           <string>Known PGP IDs</string>
           </property>
          </widget>
         </item>
