@@ -42,10 +42,12 @@
 #include "services/p3service.h"
 #include "serialiser/rsmsgitems.h"
 #include "util/rsthreads.h"
+#include "turtle/p3turtle.h"
+#include "turtle/turtleclientservice.h"
 
 class p3LinkMgr;
 
-class p3MsgService: public p3Service, public p3Config, public pqiMonitor
+class p3MsgService: public p3Service, public p3Config, public pqiMonitor, public RsTurtleClientService
 {
 	public:
 	p3MsgService(p3LinkMgr *lm);
@@ -97,7 +99,49 @@ virtual void    statusChange(const std::list<pqipeer> &plist);
 int     checkOutgoingMessages();
 	/*** Overloaded from pqiMonitor ***/
 
+	/*** overloaded from p3turtle   ***/
+
+		void connectToTurtleRouter(p3turtle *) ;
+
+		struct DistantMessengingInvite
+		{
+			time_t time_of_validity ;
+		};
+		struct DistantMessengingContact
+		{
+			time_t last_hit_time ;
+			std::string virtual_peer_id ;
+			uint32_t status ;
+			std::vector<RsMsgItem*> pending_messages ;
+		};
+
+		bool createDistantOfflineMessengingInvite(time_t time_of_validity,TurtleFileHash& hash) ;
+		bool getDistantOfflineMessengingInvites(std::vector<DistantOfflineMessengingInvite>& invites) ;
+		void sendPrivateMsgItem(RsMsgItem *) ;
+
 	private:
+		// This maps contains the current invitations to respond to.
+		//
+		std::map<std::string,DistantMessengingInvite> _messenging_invites ;
+
+		// This contains the ongoing tunnel handling contacts.
+		//
+		std::map<std::string,DistantMessengingContact> _messenging_contacts ;
+
+		// Overloaded from RsTurtleClientService
+
+		virtual bool handleTunnelRequest(const std::string& hash,const std::string& peer_id) ;
+		virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const std::string& hash,const std::string& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
+		void addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&,RsTurtleGenericTunnelItem::Direction dir) ;
+		void removeVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) ;
+
+		// Utility functions
+
+		void manageDistantPeers() ;
+		void sendTurtleData(const std::string& hash,RsMsgItem *) ;
+		void handleIncomingItem(RsMsgItem *) ;
+
+		p3turtle *mTurtle ;
 
 uint32_t getNewUniqueMsgId();
 int     sendMessage(RsMsgItem *item);
@@ -118,6 +162,7 @@ void    initStandardTagTypes();
 	/* Mutex Required for stuff below */
 
 	RsMutex mMsgMtx;
+	RsMsgSerialiser *_serialiser ;
 
 		/* stored list of messages */
 	std::map<uint32_t, RsMsgItem *> imsg;

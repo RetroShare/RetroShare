@@ -63,6 +63,7 @@ class RsTurtleClientService
 		// 			both ways, and their nature cannot suffice to determine where they should be handled.
 		//
 		// By default (if not overloaded), the method will just free the data, as any subclass should do as well.
+		// Note: p3turtle stays owner of the item, so the client should not delete it!
 		//
 		virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const std::string& hash,const std::string& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) 
 		{ 

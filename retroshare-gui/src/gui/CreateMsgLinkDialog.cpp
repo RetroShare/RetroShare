@@ -1,7 +1,7 @@
 /****************************************************************
  *  RetroShare is distributed under the following license:
  *
- *  Copyright (C) 2008 Robert Fernie
+ *  Copyright (C) 2013 Cyril Soler
  *
  *  This program is free software; you can redistribute it and/or
  *  as published by the Free Software Foundation; either version 2
@@ -22,6 +22,7 @@
 #include <QMessageBox>
 #include <QTimer>
 #include <retroshare/rsmsgs.h>
+#include <retroshare/rspeers.h>
 #include "CreateMsgLinkDialog.h"
 #include <gui/common/FriendSelectionWidget.h>
 #include <gui/RetroShareLink.h>
@@ -119,6 +120,28 @@ void CreateMsgLinkDialog::update()
 
 		_existing_links_LW->insertItem(0,item) ;
 	}
+
+	std::vector<DistantOfflineMessengingInvite> invites2 ;
+
+	rsMsgs->getDistantOfflineMessengingInvites(invites2) ;
+
+	for(uint32_t i=0;i<invites2.size();++i)
+	{
+		RetroShareLink link ;
+
+		if(!link.createPublicMsgInvite(invites2[i].time_of_validity,QString::fromStdString(invites2[i].issuer_pgp_id),QString::fromStdString(invites2[i].hash)))
+			std::cerr << "Cannot create link." << std::endl;
+		else
+		{
+			QListWidgetItem *item = new QListWidgetItem;
+			item->setData(Qt::DisplayRole,tr("Private chat invite to ")+QString::fromStdString(invites2[i].issuer_pgp_id)) ;
+			item->setData(Qt::UserRole,link.toString()) ;
+
+			_existing_links_LW->insertItem(0,item) ;
+		}
+	}
+
+
 }
 
 time_t CreateMsgLinkDialog::computeValidityDuration() const
@@ -174,9 +197,31 @@ void CreateMsgLinkDialog::createLink()
 	}
 	else
 	{
-		std::cerr << "Private msg links not yet implemented." << std::endl;
+		time_t validity_duration = computeValidityDuration() ;
+		std::string hash; 
+		std::string issuer_pgp_id = rsPeers->getGPGOwnId() ;
+
+		bool res = rsMsgs->createDistantOfflineMessengingInvite(validity_duration,hash) ;
+
+		RetroShareLink link ;
+
+		if(!link.createPublicMsgInvite(validity_duration + time(NULL),QString::fromStdString(issuer_pgp_id),QString::fromStdString(hash)) )
+		{
+			std::cerr << "Cannot create link." << std::endl;
+			return ;
+		}
+
+		QList<RetroShareLink> links ;
+		links.push_back(link) ;
+
+		RSLinkClipboard::copyLinks(links) ;
+
+		if(!res)
+			QMessageBox::critical(NULL,tr("Messenging invite creation failed"),tr("The creation of the messenging invite failed")) ;
+		else
+			QMessageBox::information(NULL,tr("Messenging invite created"),tr("Your new messenging chat invite has been copied to clipboard. You can now paste it as a Retroshare link.")) ;
 	}
 
-	QTimer::singleShot(500,this,SLOT(update())) ;
+	QTimer::singleShot(100,this,SLOT(update())) ;
 }
 

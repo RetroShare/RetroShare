@@ -348,14 +348,14 @@ bool RetroShareLink::createPrivateChatInvite(time_t time_stamp,const QString& gp
 
 	return valid() ;
 }
-bool RetroShareLink::createPublicMsgInvite(time_t time_stamp,const QString& pgp_id,const QString& hash) 
+bool RetroShareLink::createPublicMsgInvite(time_t time_stamp,const QString& issuer_pgp_id,const QString& hash) 
 {
 	clear() ;
 
 	_type = TYPE_PUBLIC_MSG ;
 	_time_stamp = time_stamp ;
 	_hash = hash ;
-	_GPGid = pgp_id ;
+	_GPGid = issuer_pgp_id ;
 
 	check() ;
 
@@ -844,7 +844,9 @@ QString RetroShareLink::niceName() const
 			return QString("Private chat invite (Valid only for key %1)").arg(_GPGid);
 	}
 	if(type() == TYPE_PUBLIC_MSG) {
-		return QString("Click this line to contact %1 (%2)").arg(_GPGid) ;
+			RsPeerDetails detail;
+			rsPeers->getPeerDetails(_GPGid.toStdString(), detail) ;
+		return QString("Click this link to send a private message to %1 (%2)").arg(QString::fromStdString(detail.name)).arg(_GPGid) ;
 	}
 	if(type() == TYPE_CERTIFICATE) {
 		if (_location.isEmpty()) {
@@ -1190,8 +1192,15 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					std::cerr << "Opening a public msg window " << std::endl;
 					std::cerr << "      time_stamp = " << link._time_stamp << std::endl;
 					std::cerr << "      hash       = " << link._hash.toStdString() << std::endl;
-					std::cerr << "      PGP Id     = " << link._GPGid.toStdString() << std::endl;
-					std::cerr << "Feature not yet implemented !" << std::endl;
+					std::cerr << "      Issuer Id  = " << link._GPGid.toStdString() << std::endl;
+
+					if(link._time_stamp < time(NULL))
+					{
+						QMessageBox::information(NULL,QObject::tr("Messenging link is expired"),QObject::tr("This Messenging link is expired. The destination peer will not receive it.")) ;
+						break ;
+					}
+	
+					 MessageComposer::msgFriend(link._hash.toStdString(), false);
 				}
 				break ;
 			case TYPE_PRIVATE_CHAT:

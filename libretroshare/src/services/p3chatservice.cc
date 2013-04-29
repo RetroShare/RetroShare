@@ -61,7 +61,7 @@ static const time_t 	MIN_DELAY_BETWEEN_PUBLIC_LOBBY_REQ =   20 ; // don't ask fo
 
 static const time_t 	 DISTANT_CHAT_CLEANING_PERIOD      =   60 ; // don't ask for lobby list more than once every 30 secs.
 static const uint32_t DISTANT_CHAT_AES_KEY_SIZE         =   16 ; // size of AES encryption key for distant chat.
-static const uint32_t DISTANT_CHAT_HASH_SIZE            =   16 ; // This is sha1 size in bytes.
+static const uint32_t DISTANT_CHAT_HASH_SIZE            =   20 ; // This is sha1 size in bytes.
 
 p3ChatService::p3ChatService(p3LinkMgr *lm, p3HistoryMgr *historyMgr)
 	:p3Service(RS_SERVICE_TYPE_CHAT), p3Config(CONFIG_TYPE_CHAT), mChatMtx("p3ChatService"), mLinkMgr(lm) , mHistoryMgr(historyMgr)
@@ -3115,7 +3115,7 @@ bool p3ChatService::createDistantChatInvite(const std::string& pgp_id,time_t tim
 	unsigned char hash_bytes[DISTANT_CHAT_HASH_SIZE] ;
 	RAND_bytes( hash_bytes, DISTANT_CHAT_HASH_SIZE) ;
 
-	std::string hash = SSLIdType(hash_bytes).toStdString(false) ;
+	std::string hash = t_RsGenericIdType<DISTANT_CHAT_HASH_SIZE>(hash_bytes).toStdString(false) ;
 
 	std::cerr << "Created new distant chat invite: " << std::endl;
 	std::cerr << "  validity time stamp = " << invite.time_of_validity << std::endl;

@@ -221,6 +221,14 @@ bool operator==(const ChatInfo&, const ChatInfo&);
 class RsMsgs;
 extern RsMsgs   *rsMsgs;
 
+struct DistantOfflineMessengingInvite
+{
+	std::string issuer_pgp_id ;
+	std::string hash ;
+	time_t time_of_validity ;
+};
+
+
 class RsMsgs 
 {
 	public:
@@ -259,6 +267,11 @@ virtual bool getMessageTag(const std::string &msgId, MsgTagInfo& info) = 0;
 virtual bool setMessageTag(const std::string &msgId, uint32_t tagId, bool set) = 0;
 
 virtual bool resetMessageStandardTagTypes(MsgTagType& tags) = 0;
+
+/* private distant messages */
+
+virtual bool createDistantOfflineMessengingInvite(time_t validity_time_stamp, std::string& hash)=0 ;
+virtual bool getDistantOfflineMessengingInvites(std::vector<DistantOfflineMessengingInvite>& invites) = 0 ;
 
 /****************************************/
 /*                 Chat                 */

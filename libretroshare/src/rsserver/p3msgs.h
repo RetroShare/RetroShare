@@ -78,6 +78,9 @@ class p3Msgs: public RsMsgs
 
 	  virtual bool resetMessageStandardTagTypes(MsgTagType& tags);
 
+	  virtual bool createDistantOfflineMessengingInvite(time_t, std::string&) ;
+	  virtual bool getDistantOfflineMessengingInvites(std::vector<DistantOfflineMessengingInvite>&);
+
 	  /*!
 	   * gets avatar from peer, image data in jpeg format
 	   */

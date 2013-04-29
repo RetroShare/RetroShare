@@ -51,6 +51,10 @@ bool RSRandom::seed(uint32_t s)
 	return true ;
 }
 
+void RSRandom::random_bytes(unsigned char *data,uint32_t size) 
+{
+	RAND_bytes(data,size) ;
+}
 void RSRandom::locked_next_state() 
 {
 #ifdef RSRANDOM_USE_SSL

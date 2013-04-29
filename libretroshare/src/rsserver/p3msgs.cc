@@ -96,6 +96,16 @@ bool p3Msgs::MessageSend(MessageInfo &info)
 	return mMsgSrv->MessageSend(info);
 }
 
+bool p3Msgs::createDistantOfflineMessengingInvite(time_t ts, std::string& hash) 
+{
+	return mMsgSrv->createDistantOfflineMessengingInvite(ts,hash) ;
+}
+bool p3Msgs::getDistantOfflineMessengingInvites(std::vector<DistantOfflineMessengingInvite>& invites)
+{
+	return mMsgSrv->getDistantOfflineMessengingInvites(invites);
+}
+
+
 bool p3Msgs::SystemMessage(const std::wstring &title, const std::wstring &message, uint32_t systemFlag)
 {
 	return mMsgSrv->SystemMessage(title, message, systemFlag);

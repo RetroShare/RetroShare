@@ -70,19 +70,19 @@ void PopupDistantChatDialog::checkTunnel()
 	{
 		case RS_DISTANT_CHAT_STATUS_UNKNOWN: std::cerr << "Unknown hash. Error!" << std::endl;
 														 _status_label->setPixmap(QPixmap(IMAGE_GRY_LED)) ;
-														  _status_label->setText(tr("Hash error")) ;
+														  _status_label->setToolTip(tr("Hash error")) ;
 														 break ;
 		case RS_DISTANT_CHAT_STATUS_TUNNEL_DN: std::cerr << "Tunnel asked. Waiting for reponse. " << std::endl;
 														 _status_label->setPixmap(QPixmap(IMAGE_RED_LED)) ;
-														  _status_label->setText(tr("Tunnel is broken")) ;
+														  _status_label->setToolTip(tr("Tunnel is broken")) ;
 														 break ;
 		case RS_DISTANT_CHAT_STATUS_TUNNEL_OK: std::cerr << "Tunnel is ok. " << std::endl;
 														 _status_label->setPixmap(QPixmap(IMAGE_YEL_LED)) ;
-														  _status_label->setText(tr("Tunnel established")) ;
+														  _status_label->setToolTip(tr("Tunnel established")) ;
 														 break ;
 		case RS_DISTANT_CHAT_STATUS_CAN_TALK: std::cerr << "Tunnel is ok and works. You can talk!" << std::endl;
 														 _status_label->setPixmap(QPixmap(IMAGE_GRN_LED)) ;
-														  _status_label->setText(tr("Tunnel is working")) ;
+														  _status_label->setToolTip(tr("Tunnel is working")) ;
 														 break ;
 	}
 }
