@@ -1200,7 +1200,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 						break ;
 					}
 	
-					 MessageComposer::msgFriend(link._hash.toStdString(), false);
+					 MessageComposer::msgDistantPeer(link._hash.toStdString(),link._GPGid.toStdString()) ;
 				}
 				break ;
 			case TYPE_PRIVATE_CHAT:

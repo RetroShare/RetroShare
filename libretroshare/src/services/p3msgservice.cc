@@ -253,10 +253,18 @@ void p3MsgService::checkSizeAndSendMessage(RsMsgItem *msg)
 		// Indicate that the message is to be continued.
 		//
 		item->msgFlags |= RS_MSG_FLAGS_PARTIAL ;
-		sendItem(item) ;
+
+		if(msg->msgFlags & RS_MSG_FLAGS_DISTANT)
+			sendPrivateMsgItem(msg) ;
+		else
+			sendItem(item) ;
 	}
 	std::cerr << "  Chopped off msg of size " << msg->message.size() << std::endl;
-	sendItem(msg) ;
+
+	if(msg->msgFlags & RS_MSG_FLAGS_DISTANT)
+		sendPrivateMsgItem(msg) ;
+	else
+		sendItem(msg) ;
 }
 
 int     p3MsgService::checkOutgoingMessages()
@@ -286,7 +294,7 @@ int     p3MsgService::checkOutgoingMessages()
 			std::string pid = mit->second->PeerId();
 			bool toSend = false;
 
-			if (mLinkMgr->isOnline(pid))
+			if(mit->second.msgFlags & RS_MSG_FLAGS_DISTANT || mLinkMgr->isOnline(pid))
 			{
 				toSend = true;
 			}
@@ -1558,6 +1566,10 @@ RsMsgItem *p3MsgService::initMIRsMsg(MessageInfo &info, const std::string &to)
 	msg -> attachment.title   = info.attach_title;
 	msg -> attachment.comment = info.attach_comment;
 
+	RsPeerDetails details ;
+	if(!rsPeers->getPeerDetails(to,details))
+		msg->msgFlags |= RS_MSG_FLAGS_DISTANT; 
+
 	std::list<FileInfo>::iterator it;
 	for(it = info.files.begin(); it != info.files.end(); it++)
 	{
@@ -1570,13 +1582,10 @@ RsMsgItem *p3MsgService::initMIRsMsg(MessageInfo &info, const std::string &to)
 
 	/* translate flags from outside */
 	if (info.msgflags & RS_MSG_USER_REQUEST)
-	{
 		msg->msgFlags |= RS_MSG_FLAGS_USER_REQUEST;
-	}
+
 	if (info.msgflags & RS_MSG_FRIEND_RECOMMENDATION)
-	{
 		msg->msgFlags |= RS_MSG_FLAGS_FRIEND_RECOMMENDATION;
-	}
 
 	//std::cerr << "p3MsgService::initMIRsMsg()" << std::endl;
 	//msg->print(std::cerr);
@@ -1596,7 +1605,7 @@ bool p3MsgService::createDistantOfflineMessengingInvite(time_t time_of_validity,
 	hash = t_RsGenericIdType<DISTANT_MSG_HASH_SIZE>(hash_bytes).toStdString(false) ;
 
 	DistantMessengingInvite invite ;
-	invite.time_of_validity = time_of_validity ;
+	invite.time_of_validity = time_of_validity + time(NULL);
 
 	{
 		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
@@ -1614,6 +1623,10 @@ bool p3MsgService::getDistantOfflineMessengingInvites(std::vector<DistantOffline
 		invite.hash = it->first ;
 		invite.issuer_pgp_id = AuthGPG::getAuthGPG()->getGPGOwnId() ;
 		invite.time_of_validity = it->second.time_of_validity ;
+
+		invites.push_back(invite) ;
+
+		std::cerr << "   adding invite with hash " << invite.hash << std::endl;
 	}
 
 	return true ;
