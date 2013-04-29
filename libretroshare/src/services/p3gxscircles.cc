@@ -40,6 +40,8 @@
  * #define DEBUG_CIRCLES	 1
  ****/
 
+#define DEBUG_CIRCLES	 1
+
 RsGxsCircles *rsGxsCircles = NULL;
 
 /******
@@ -361,18 +363,16 @@ RsGenExchange::ServiceCreate_Return p3GxsCircles::service_CreateGroup(RsGxsGrpIt
 	}
 
 	// Now copy the GroupId into the mCircleId, and set the mode.
-	// TODO.
-#ifdef HAVE_CIRCLE_META_DATA
-	grpItem->meta.mCircleType = EXTERNAL;
-	grpItem->meta.mCircleId = grpItem->meta.mGroupId;
+	if (item->meta.mCircleType == GXS_CIRCLE_TYPE_EXT_SELF)
+	{
+		item->meta.mCircleType = GXS_CIRCLE_TYPE_EXTERNAL;
+		item->meta.mCircleId = item->meta.mGroupId;
+	}
 
-	grpItem->group.mMeta.mCircleType = grpItem->meta.mCircleType;
-	grpItem->group.mMeta.mCircleId = grpItem->meta.mCircleId;
-#endif
 
 	{
 		RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
-		mCircleIdList.push_back(grpItem->meta.mGroupId);
+		mCircleIdList.push_back(item->meta.mGroupId);
 	}
 
 	return SERVICE_CREATE_SUCCESS;

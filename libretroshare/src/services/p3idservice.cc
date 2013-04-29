@@ -360,8 +360,25 @@ int  p3IdService::getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key)
 /******************* RsGixsReputation     ***************************************/
 /********************************************************************************/
 
-bool p3IdService::getReputation(const RsGxsId &id, const GixsReputation &rep)
+bool p3IdService::haveReputation(const RsGxsId &id)
 {
+	return haveKey(id);
+}
+
+bool p3IdService::loadReputation(const RsGxsId &id)
+{
+	if (haveKey(id))
+		return true;
+	return cache_request_load(id);
+}
+
+bool p3IdService::getReputation(const RsGxsId &id, GixsReputation &rep)
+{
+	/* Inso this is the key part for accepting messages */
+
+
+
+
 	return false;
 }
 
@@ -2107,12 +2124,9 @@ std::string rsIdTypeToString(uint32_t idtype)
  * that we don't block at all. This should be in a background thread.
  * Perhaps a generic method to handle this will be advisable.... but we do that later.
  *
- * To start with we will work from the Posted service.
- *
- * 
  *
  * So Reputation....
- *   Three components:
+ *   4 components:
  *     1) Your Opinion: Should override everything else.
  *     2) Implicit Factors: Know the associated GPG Key.
  *     3) Your Friends Opinions: 
@@ -2156,6 +2170,56 @@ std::string rsIdTypeToString(uint32_t idtype)
  *
  * 
  */
+
+
+/************************************************************************************/
+/*
+ * Scoring system.
+ * -100 to 100 is expected range.
+ * 
+ *
+ * Each Lobby has a publish threshold.
+ *   - As part of Lobby definition. ???
+ *   - Locally Set.
+ *
+ * Threshold:
+ *   50 VIP List.
+ *   20 Dress Code
+ *   10 Limit Riffraff.
+ *   0 Accept All.
+ *
+ * Implicit Scores:
+ *   +50 for known PGP
+ *   +10 for unknown PGP  (want to encourage usage).
+ *   +5 for Anon ID.
+ *
+ * Own Scores:
+ *   +1000 Accepted
+ *   +50 Friend
+ *   +10 Interesting
+ *   0 Mostly Harmless
+ *   -10 Annoying.
+ *   -50 Troll
+ *   -1000 Total Banned
+ *
+ *
+ * 
+
+
+
+Processing Algorithm:
+ *  - Grab all Groups which have received messages. 
+ *  (opt 1)-> grab latest msgs for each of these and process => score.
+ *  (opt 2)-> try incremental system (people probably won't change opinions often -> just set them once)
+ *      --> if not possible, fallback to full calculation.
+ *
+ * 
+ */
+
+
+
+
+
 
 bool 	p3IdService::reputation_start()
 {
@@ -2889,5 +2953,67 @@ void p3IdService::handle_event(uint32_t event_type, const std::string &elabel)
 	}
 }
 
+
+
+
+/***** Conversion fns for RsGxsIdOpinion ****************/
+
+#define REP_OFFSET	10000
+#define REP_RANGE	1000
+
+int limitRep(int ans)
+{
+	if (ans < -REP_RANGE)
+	{
+		ans = -REP_RANGE;
+	}
+	if (ans > REP_RANGE)
+	{
+		ans = REP_RANGE;
+	}
+	return ans;
+}
+
+
+int convertRepToInt(uint32_t rep)
+{
+	if (rep == 0)
+	{
+		return 0;
+	}
+
+	return limitRep(rep - REP_OFFSET);
+}
+
+
+uint32_t convertRepToUint32(int rep)
+{
+	return limitRep(rep) + REP_OFFSET;
+}
+
+
+int RsGxsIdOpinion::getOpinion()
+{
+	return convertRepToInt(mOpinion);
+}
+
+
+int RsGxsIdOpinion::setOpinion(int op)
+{
+	mOpinion = convertRepToUint32(op);
+	return op;
+}
+
+int RsGxsIdOpinion::getReputation()
+{
+	return convertRepToInt(mReputation);
+}
+
+
+int RsGxsIdOpinion::setReputation(int op)
+{
+	mReputation = convertRepToUint32(op);
+	return op;
+}
 
 

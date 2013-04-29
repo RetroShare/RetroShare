@@ -174,7 +174,9 @@ class RsGixsReputation
 {
 public:
 	// get Reputation.
-    virtual bool getReputation(const RsGxsId &id, const GixsReputation &rep) = 0;
+    virtual bool haveReputation(const RsGxsId &id) = 0;
+    virtual bool loadReputation(const RsGxsId &id) = 0;
+    virtual bool getReputation(const RsGxsId &id, GixsReputation &rep) = 0;
 };
 
 

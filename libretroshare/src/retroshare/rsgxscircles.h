@@ -50,6 +50,10 @@ typedef std::string RsCircleInternalId;
 #define GXS_CIRCLE_TYPE_PUBLIC            0x0001
 #define GXS_CIRCLE_TYPE_EXTERNAL          0x0002
 #define GXS_CIRCLE_TYPE_YOUREYESONLY      0x0003
+#define GXS_CIRCLE_TYPE_LOCAL		  0x0004
+
+// A special one - used only by Circles themselves - meaning Circle ID == Group ID.
+#define GXS_CIRCLE_TYPE_EXT_SELF	  0x0005	
 
 /* Permissions is part of GroupMetaData 
  */

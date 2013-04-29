@@ -171,9 +171,9 @@ static	uint32_t idAuthenPolicy();
 
 	// These are exposed via RsIdentity.
 virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> &groups);
+virtual bool getMsgData(const uint32_t &token, std::vector<RsGxsIdOpinion> &opinions);
 
 	// These are local - and not exposed via RsIdentity.
-virtual bool getMsgData(const uint32_t &token, std::vector<RsGxsIdOpinion> &opinions);
 virtual bool createGroup(uint32_t& token, RsGxsIdGroup &group);
 virtual bool createMsg(uint32_t& token, RsGxsIdOpinion &opinion);
 
@@ -218,7 +218,9 @@ virtual int  getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key);
 	 */
 
         // get Reputation.
-virtual bool getReputation(const RsGxsId &id, const GixsReputation &rep);
+virtual bool haveReputation(const RsGxsId &id);
+virtual bool loadReputation(const RsGxsId &id);
+virtual bool getReputation(const RsGxsId &id, GixsReputation &rep);
 
 
 	protected:

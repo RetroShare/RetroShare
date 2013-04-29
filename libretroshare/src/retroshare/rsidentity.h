@@ -100,14 +100,20 @@ class RsGxsIdOpinion
 	//std::string mPeerId; (mAuthorId) ???
 
 	uint32_t mOpinion;
+	std::string mComment;
+	uint32_t mReputation;
 
+
+	/* these convert To/From uint32 to expected scale. */
+	int getOpinion();
+	int getReputation();
+
+	int setOpinion(int op);
+	int setReputation(int rep);
 
 	// NOT SERIALISED YET!
-
-	double mReputation;
 	//int mRating;
 	//int mPeersRating;
-	//std::string mComment;
 };
 
 
@@ -230,6 +236,7 @@ virtual bool createIdentity(uint32_t& token, RsIdentityParameters &params) = 0;
          */
 
 virtual bool    getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> &groups) = 0;
+virtual bool 	getMsgData(const uint32_t &token, std::vector<RsGxsIdOpinion> &opinions) = 0;
 
 };
 
