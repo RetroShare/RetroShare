@@ -108,7 +108,7 @@ RsGxsCircles *rsGxsCircles = NULL;
 
 p3GxsCircles::p3GxsCircles(RsGeneralDataService *gds, RsNetworkExchangeService *nes, p3IdService *identities)
 	: RsGxsCircleExchange(gds, nes, new RsGxsCircleSerialiser(), 
-			RS_SERVICE_GXSV1_TYPE_GXSCIRCLE, identities, circleAuthenPolicy()), 
+			RS_SERVICE_GXSV2_TYPE_GXSCIRCLE, identities, circleAuthenPolicy()), 
 	RsGxsCircles(this), GxsTokenQueue(this), RsTickEvent(), mIdentities(identities), 
 	mCircleMtx("p3GxsCircles"),
         mCircleCache(DEFAULT_MEM_CACHE_SIZE, "GxsCircleCache")

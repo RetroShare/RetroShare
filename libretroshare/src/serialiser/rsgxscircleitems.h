@@ -46,7 +46,7 @@ class RsGxsCircleGroupItem : public RsGxsGrpItem
 
 public:
 
-	RsGxsCircleGroupItem():  RsGxsGrpItem(RS_SERVICE_GXSV1_TYPE_GXSCIRCLE,
+	RsGxsCircleGroupItem():  RsGxsGrpItem(RS_SERVICE_GXSV2_TYPE_GXSCIRCLE,
 			RS_PKT_SUBTYPE_GXSCIRCLE_GROUP_ITEM), 
 			gxsIdSet(GXSCIRCLE_GXSIDSET), 
 			subCircleSet(GXSCIRCLE_SUBCIRCLESET) { return;}
@@ -67,7 +67,7 @@ class RsGxsCircleMsgItem : public RsGxsMsgItem
 {
 public:
 
-	RsGxsCircleMsgItem(): RsGxsMsgItem(RS_SERVICE_GXSV1_TYPE_GXSCIRCLE,
+	RsGxsCircleMsgItem(): RsGxsMsgItem(RS_SERVICE_GXSV2_TYPE_GXSCIRCLE,
 			RS_PKT_SUBTYPE_GXSCIRCLE_MSG_ITEM) {return; }
         virtual ~RsGxsCircleMsgItem() { return;}
         void clear();
@@ -80,7 +80,7 @@ class RsGxsCircleSerialiser : public RsSerialType
 public:
 
 	RsGxsCircleSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXSV1_TYPE_GXSCIRCLE)
+	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXSV2_TYPE_GXSCIRCLE)
 	{ return; }
 	virtual     ~RsGxsCircleSerialiser() { return; }
 

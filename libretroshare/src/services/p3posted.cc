@@ -55,11 +55,11 @@ const uint32_t RsPosted::FLAG_MSGTYPE_MASK = 0x000f;
 /********************************************************************************/
 
 p3Posted::p3Posted(RsGeneralDataService *gds, RsNetworkExchangeService *nes, RsGixs* gixs)
-    : RsGenExchange(gds, nes, new RsGxsPostedSerialiser(), RS_SERVICE_GXSV1_TYPE_POSTED, gixs, postedAuthenPolicy()), RsPosted(this)
+    : RsGenExchange(gds, nes, new RsGxsPostedSerialiser(), RS_SERVICE_GXSV2_TYPE_POSTED, gixs, postedAuthenPolicy()), RsPosted(this)
 {
 	// For Dummy Msgs.
 	mGenActive = false;
-	mCommentService = new p3GxsCommentService(this,  RS_SERVICE_GXSV1_TYPE_POSTED);
+	mCommentService = new p3GxsCommentService(this,  RS_SERVICE_GXSV2_TYPE_POSTED);
 
 	// Test Data disabled in repo.
 	//RsTickEvent::schedule_in(POSTED_TESTEVENT_DUMMYDATA, DUMMYDATA_PERIOD);

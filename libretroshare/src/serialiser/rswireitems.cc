@@ -74,7 +74,7 @@ RsItem* RsGxsWireSerialiser::deserialise(void* data, uint32_t* size)
 	uint32_t rstype = getRsItemId(data);
 		
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXSV1_TYPE_WIRE != getRsItemService(rstype)))
+		(RS_SERVICE_GXSV2_TYPE_WIRE != getRsItemService(rstype)))
 	{
 		return NULL; /* wrong type */
 	}
@@ -196,7 +196,7 @@ RsGxsWireGroupItem* RsGxsWireSerialiser::deserialiseGxsWireGroupItem(void *data,
 	
 	
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXSV1_TYPE_WIRE != getRsItemService(rstype)) ||
+		(RS_SERVICE_GXSV2_TYPE_WIRE != getRsItemService(rstype)) ||
 		(RS_PKT_SUBTYPE_WIRE_GROUP_ITEM != getRsItemSubType(rstype)))
 	{
 #ifdef WIRE_DEBUG
@@ -350,7 +350,7 @@ RsGxsWirePulseItem* RsGxsWireSerialiser::deserialiseGxsWirePulseItem(void *data,
 	
 	
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXSV1_TYPE_WIRE != getRsItemService(rstype)) ||
+		(RS_SERVICE_GXSV2_TYPE_WIRE != getRsItemService(rstype)) ||
 		(RS_PKT_SUBTYPE_WIRE_PULSE_ITEM != getRsItemSubType(rstype)))
 	{
 #ifdef WIRE_DEBUG

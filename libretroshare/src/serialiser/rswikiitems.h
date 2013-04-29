@@ -44,7 +44,7 @@ class RsGxsWikiCollectionItem : public RsGxsGrpItem
 
 public:
 
-	RsGxsWikiCollectionItem():  RsGxsGrpItem(RS_SERVICE_GXSV1_TYPE_WIKI,
+	RsGxsWikiCollectionItem():  RsGxsGrpItem(RS_SERVICE_GXSV2_TYPE_WIKI,
 			RS_PKT_SUBTYPE_WIKI_COLLECTION_ITEM) { return;}
         virtual ~RsGxsWikiCollectionItem() { return;}
 
@@ -59,7 +59,7 @@ class RsGxsWikiSnapshotItem : public RsGxsMsgItem
 {
 public:
 
-	RsGxsWikiSnapshotItem(): RsGxsMsgItem(RS_SERVICE_GXSV1_TYPE_WIKI,
+	RsGxsWikiSnapshotItem(): RsGxsMsgItem(RS_SERVICE_GXSV2_TYPE_WIKI,
 			RS_PKT_SUBTYPE_WIKI_SNAPSHOT_ITEM) {return; }
         virtual ~RsGxsWikiSnapshotItem() { return;}
         void clear();
@@ -71,7 +71,7 @@ class RsGxsWikiCommentItem : public RsGxsMsgItem
 {
 public:
 
-    RsGxsWikiCommentItem(): RsGxsMsgItem(RS_SERVICE_GXSV1_TYPE_WIKI,
+    RsGxsWikiCommentItem(): RsGxsMsgItem(RS_SERVICE_GXSV2_TYPE_WIKI,
                                           RS_PKT_SUBTYPE_WIKI_COMMENT_ITEM) { return; }
     virtual ~RsGxsWikiCommentItem() { return; }
     void clear();
@@ -85,7 +85,7 @@ class RsGxsWikiSerialiser : public RsSerialType
 public:
 
 	RsGxsWikiSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXSV1_TYPE_WIKI)
+	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXSV2_TYPE_WIKI)
 	{ return; }
 	virtual     ~RsGxsWikiSerialiser() { return; }
 

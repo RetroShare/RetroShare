@@ -65,11 +65,11 @@ RsGxsChannels *rsGxsChannels = NULL;
 /********************************************************************************/
 
 p3GxsChannels::p3GxsChannels(RsGeneralDataService *gds, RsNetworkExchangeService *nes, RsGixs* gixs)
-    : RsGenExchange(gds, nes, new RsGxsChannelSerialiser(), RS_SERVICE_GXSV1_TYPE_CHANNELS, gixs, channelsAuthenPolicy()), RsGxsChannels(this), GxsTokenQueue(this)
+    : RsGenExchange(gds, nes, new RsGxsChannelSerialiser(), RS_SERVICE_GXSV2_TYPE_CHANNELS, gixs, channelsAuthenPolicy()), RsGxsChannels(this), GxsTokenQueue(this)
 {
 	// For Dummy Msgs.
 	mGenActive = false;
-	mCommentService = new p3GxsCommentService(this,  RS_SERVICE_GXSV1_TYPE_CHANNELS);
+	mCommentService = new p3GxsCommentService(this,  RS_SERVICE_GXSV2_TYPE_CHANNELS);
 
 	RsTickEvent::schedule_in(CHANNEL_PROCESS, 0);
 

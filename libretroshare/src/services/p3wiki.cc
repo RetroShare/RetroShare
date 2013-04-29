@@ -43,7 +43,7 @@ RsWiki *rsWiki = NULL;
 #define DUMMYTICK_PERIOD	3
 
 p3Wiki::p3Wiki(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs *gixs)
-	:RsGenExchange(gds, nes, new RsGxsWikiSerialiser(), RS_SERVICE_GXSV1_TYPE_WIKI, gixs, wikiAuthenPolicy()), 
+	:RsGenExchange(gds, nes, new RsGxsWikiSerialiser(), RS_SERVICE_GXSV2_TYPE_WIKI, gixs, wikiAuthenPolicy()), 
 	 RsWiki(this)
 {
 	// Setup of dummy Pages.

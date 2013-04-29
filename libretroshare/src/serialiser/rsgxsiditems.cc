@@ -83,7 +83,7 @@ RsItem* RsGxsIdSerialiser::deserialise(void* data, uint32_t* size)
 	uint32_t rstype = getRsItemId(data);
 		
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXSV1_TYPE_GXSID != getRsItemService(rstype)))
+		(RS_SERVICE_GXSV2_TYPE_GXSID != getRsItemService(rstype)))
 	{
 		return NULL; /* wrong type */
 	}
@@ -210,7 +210,7 @@ RsGxsIdGroupItem* RsGxsIdSerialiser::deserialiseGxsIdGroupItem(void *data, uint3
 	
 	
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXSV1_TYPE_GXSID != getRsItemService(rstype)) ||
+		(RS_SERVICE_GXSV2_TYPE_GXSID != getRsItemService(rstype)) ||
 		(RS_PKT_SUBTYPE_GXSID_GROUP_ITEM != getRsItemSubType(rstype)))
 	{
 #ifdef GXSID_DEBUG
@@ -363,7 +363,7 @@ RsGxsIdOpinionItem* RsGxsIdSerialiser::deserialiseGxsIdOpinionItem(void *data, u
 	
 	
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXSV1_TYPE_GXSID != getRsItemService(rstype)) ||
+		(RS_SERVICE_GXSV2_TYPE_GXSID != getRsItemService(rstype)) ||
 		(RS_PKT_SUBTYPE_GXSID_OPINION_ITEM != getRsItemSubType(rstype)))
 	{
 #ifdef GXSID_DEBUG
@@ -505,7 +505,7 @@ RsGxsIdCommentItem* RsGxsIdSerialiser::deserialiseGxsIdCommentItem(void *data, u
 	
 	
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXSV1_TYPE_GXSID != getRsItemService(rstype)) ||
+		(RS_SERVICE_GXSV2_TYPE_GXSID != getRsItemService(rstype)) ||
 		(RS_PKT_SUBTYPE_GXSID_COMMENT_ITEM != getRsItemSubType(rstype)))
 	{
 #ifdef GXSID_DEBUG
