@@ -15,7 +15,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0" colspan="3">
-    <widget class="QGroupBox" name="groupBox_5">
+    <widget class="QGroupBox" name="groupBox_title">
      <property name="title">
       <string>Circle Details</string>
      </property>
@@ -263,14 +263,14 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_publicgroup_2">
+      <widget class="QPushButton" name="pushButton_cancel">
        <property name="text">
         <string>Cancel</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_publicgroup">
+      <widget class="QPushButton" name="pushButton_create">
        <property name="text">
         <string>Create Group</string>
        </property>

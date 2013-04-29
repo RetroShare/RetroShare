@@ -2,13 +2,13 @@ CONFIG += qt gui uic qrc resources uitools idle bitdht
 
 # Below is for GXS services.
 # Should be disabled for releases.
-#CONFIG += gxs debug
+CONFIG += gxs debug
 
 gxs {
-#	CONFIG += photoshare
+	CONFIG += photoshare
 	CONFIG += wikipoos
 	CONFIG += identities
-#	CONFIG += circles
+	CONFIG += circles
 	CONFIG += gxsforums
 	CONFIG += gxschannels
 	CONFIG += posted

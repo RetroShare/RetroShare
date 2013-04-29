@@ -22,6 +22,7 @@
  */
 
 #include "IdDialog.h"
+#include "gui/gxs/GxsIdTreeWidgetItem.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
@@ -39,6 +40,7 @@
 // Data Requests.
 #define IDDIALOG_IDLIST		1
 #define IDDIALOG_IDDETAILS	2
+#define IDDIALOG_REPLIST	3
 
 /****************************************************************
  */
@@ -48,7 +50,10 @@
 #define RSID_COL_KEYID		1
 #define RSID_COL_IDTYPE		2
 
-
+#define RSIDREP_COL_NAME	0
+#define RSIDREP_COL_OPINION	1
+#define RSIDREP_COL_COMMENT	2
+#define RSIDREP_COL_REPUTATION	3
 
 #define RSID_REQ_IDLIST		1
 #define RSID_REQ_IDDETAILS	2
@@ -235,6 +240,28 @@ void IdDialog::insertIdDetails(uint32_t token)
 		ui.pushButton_Delete->setEnabled(false);
 		ui.pushButton_EditId->setEnabled(false);
 	}
+
+
+	/* now fill in the reputation information */
+	ui.line_RatingOverall->setText("Overall Rating TODO");
+	ui.line_RatingOwn->setText("Own Rating TODO");
+
+	if (data.mPgpKnown)
+	{
+		ui.line_RatingImplicit->setText("+50 Known PGP");
+	}
+	else if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
+	{
+		ui.line_RatingImplicit->setText("+10 UnKnown PGP");
+	}
+	else 
+	{
+		ui.line_RatingImplicit->setText("+5 Anon Id");
+	}
+
+	/* request network ratings */
+	requestRepList(data.mMeta.mGroupId);
+
 }
 
 void IdDialog::checkUpdate()
@@ -300,10 +327,8 @@ void IdDialog::requestIdList()
 	uint32_t token;
 	std::list<std::string> groupIds;
 
-        //mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDDIALOG_IDLIST);
         mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, IDDIALOG_IDLIST);
 }
-
 
 void IdDialog::insertIdList(uint32_t token)
 {
@@ -415,6 +440,66 @@ void IdDialog::insertIdList(uint32_t token)
 	updateSelection();
 }
 
+
+void IdDialog::requestRepList(const RsGxsGroupId &aboutId)
+{
+        std::list<RsGxsGroupId> groupIds;
+        groupIds.push_back(aboutId);
+
+        RsTokReqOptions opts;
+        opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+
+        uint32_t token;
+        mIdQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDDIALOG_REPLIST);
+
+}
+
+
+void IdDialog::insertRepList(uint32_t token)
+{
+	QTreeWidget *tree = ui.treeWidget_RepList;
+
+	tree->clear();
+
+	std::list<std::string> ids;
+	std::list<std::string>::iterator it;
+
+	std::vector<RsGxsIdOpinion> opinions;
+	std::vector<RsGxsIdOpinion>::iterator vit;
+	if (!rsIdentity->getMsgData(token, opinions))
+	{
+		std::cerr << "IdDialog::insertRepList() Error getting Opinions";
+		std::cerr << std::endl;
+		return;
+	}
+
+	for(vit = opinions.begin(); vit != opinions.end(); vit++)
+	{
+		RsGxsIdOpinion &op = (*vit);
+		GxsIdTreeWidgetItem *item = new GxsIdTreeWidgetItem();
+
+		/* insert 4 columns */
+
+		/* friend name */
+		item->setId(op.mMeta.mGroupId, RSIDREP_COL_NAME);
+
+		/* score */
+		item->setText(RSIDREP_COL_OPINION, QString::number(op.getOpinion()));
+
+		/* comment */
+		item->setText(RSIDREP_COL_COMMENT, QString::fromUtf8(op.mComment.c_str()));
+
+		/* local reputation */
+		item->setText(RSIDREP_COL_REPUTATION, QString::number(op.getReputation()));
+
+
+                tree->addTopLevelItem(item);
+	}
+
+	// fix up buttons.
+	updateSelection();
+}
+
 void IdDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
         std::cerr << "IdDialog::loadRequest() UserType: " << req.mUserType;
@@ -428,6 +513,10 @@ void IdDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 		
 		case IDDIALOG_IDDETAILS:
 			insertIdDetails(req.mToken);
+			break;
+		
+		case IDDIALOG_REPLIST:
+			insertRepList(req.mToken);
 			break;
 		
 		default:
