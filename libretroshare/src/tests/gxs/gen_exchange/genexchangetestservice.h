@@ -5,16 +5,17 @@
 #include "retroshare/rsgxsifacehelper.h"
 #include "rsdummyservices.h"
 
+typedef std::map<RsGxsGroupId, std::vector<RsDummyMsg*> > DummyMsgMap;
+
 class GenExchangeTestService : public RsGenExchange
 {
 public:
-    GenExchangeTestService(RsGeneralDataService* dataServ, RsNetworkExchangeService*, RsGixs* gixs, uint32_t authenPolicy);
+    GenExchangeTestService(RsGeneralDataService* dataServ, RsNetworkExchangeService* nxs, RsGixs* gixs);
 
     void notifyChanges(std::vector<RsGxsNotify*>& changes);
 
     void publishDummyGrp(uint32_t& token, RsDummyGrp* grp);
     void publishDummyMsg(uint32_t& token, RsDummyMsg* msg);
-
 
     /*!
      * Retrieve group list for a given token
@@ -51,14 +52,16 @@ public:
      * @param token token to be redeemed for grpitem retrieval
      * @param grpItem the items to be retrieved for token are stored here
      */
-    bool getGroupDataTS(const uint32_t &token, std::vector<RsGxsGrpItem*>& grpItem);
+    bool getGroupDataTS(const uint32_t &token, std::vector<RsDummyGrp*>& grpItem);
+
+
 
     /*!
      * retrieves message data associated to a request token
      * @param token token to be redeemed for message item retrieval
      * @param msgItems
      */
-    bool getMsgDataTS(const uint32_t &token, GxsMsgDataMap& msgItems);
+    bool getMsgDataTS(const uint32_t &token, DummyMsgMap& msgItems);
 
     /*!
      * Retrieve msg related list for a given token sectioned by group Ids

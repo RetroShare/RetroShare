@@ -57,6 +57,7 @@
 #define KEY_GRP_CIRCLE_TYPE std::string("circleType")
 #define KEY_GRP_INTERNAL_CIRCLE std::string("internalCircle")
 #define KEY_GRP_ORIGINATOR std::string("originator")
+#define KEY_GRP_AUTHEN_FLAGS std::string("authenFlags")
 
 // grp local
 #define KEY_GRP_SUBCR_FLAG std::string("subscribeFlag")
@@ -108,6 +109,7 @@
 #define COL_GRP_CIRCL_TYPE 16
 #define COL_GRP_INTERN_CIRCLE 17
 #define COL_GRP_ORIGINATOR 18
+#define COL_GRP_AUTHEN_FLAGS 19
 
 
 // msg col numbers
@@ -164,6 +166,7 @@ RsDataService::RsDataService(const std::string &serviceDir, const std::string &d
     grpMetaColumns.push_back(KEY_GRP_LAST_POST); grpMetaColumns.push_back(KEY_ORIG_GRP_ID); grpMetaColumns.push_back(KEY_NXS_SERV_STRING);
     grpMetaColumns.push_back(KEY_GRP_SIGN_FLAGS); grpMetaColumns.push_back(KEY_GRP_CIRCLE_ID); grpMetaColumns.push_back(KEY_GRP_CIRCLE_TYPE);
     grpMetaColumns.push_back(KEY_GRP_INTERNAL_CIRCLE); grpMetaColumns.push_back(KEY_GRP_ORIGINATOR);
+    grpMetaColumns.push_back(KEY_GRP_AUTHEN_FLAGS);
 
     // for retrieving actual grp data
     grpColumns.push_back(KEY_GRP_ID); grpColumns.push_back(KEY_NXS_FILE); grpColumns.push_back(KEY_NXS_FILE_OFFSET);
@@ -225,6 +228,7 @@ void RsDataService::initialise(){
                  KEY_ORIG_GRP_ID + " TEXT," +
                  KEY_NXS_SERV_STRING + " TEXT," +
                  KEY_NXS_FLAGS + " INT," +
+                 KEY_GRP_AUTHEN_FLAGS + " INT," +
                  KEY_GRP_SIGN_FLAGS + " INT," +
                  KEY_GRP_CIRCLE_ID + " TEXT," +
                  KEY_GRP_CIRCLE_TYPE + " INT," +
@@ -281,6 +285,7 @@ RsGxsGrpMetaData* RsDataService::locked_getGrpMeta(RetroCursor &c)
     grpMeta->mCircleType = c.getInt32(COL_GRP_CIRCL_TYPE);
     c.getString(COL_GRP_INTERN_CIRCLE, grpMeta->mInternalCircle);
     c.getString(COL_GRP_ORIGINATOR, grpMeta->mOriginator);
+    grpMeta->mAuthenFlags = c.getInt32(COL_GRP_AUTHEN_FLAGS);
 
 
     if(ok)
@@ -582,6 +587,7 @@ int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
         cv.put(KEY_GRP_CIRCLE_TYPE, (int32_t)grpMetaPtr->mCircleType);
         cv.put(KEY_GRP_INTERNAL_CIRCLE, grpMetaPtr->mInternalCircle);
         cv.put(KEY_GRP_ORIGINATOR, grpMetaPtr->mOriginator);
+        cv.put(KEY_GRP_AUTHEN_FLAGS, (int32_t)grpMetaPtr->mAuthenFlags);
 
         if(! (grpMetaPtr->mAuthorId.empty()) ){
             cv.put(KEY_NXS_IDENTITY, grpMetaPtr->mAuthorId);

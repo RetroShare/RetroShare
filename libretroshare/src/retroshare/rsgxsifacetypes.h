@@ -60,6 +60,7 @@ public:
     // for circles
     std::string mCircleId;
     uint32_t mCircleType;
+    uint32_t mAuthenFlags;
 
     // BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
 

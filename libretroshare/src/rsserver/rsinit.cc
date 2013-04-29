@@ -2270,7 +2270,7 @@ int RsServer::StartupRetroShare()
         // the given ssl user id then this directory is cleaned
         // and deleted
         std::string priorGxsDir = "./" + mLinkMgr->getOwnId() + "/";
-	std::string currGxsDir = RsInitConfig::configDir + "/GXS_phase1";
+	std::string currGxsDir = RsInitConfig::configDir + "/GXS_phase2";
 
 #ifdef GXS_DEV_TESTNET // Different Directory for testing.
 	currGxsDir += "_TESTNET3";

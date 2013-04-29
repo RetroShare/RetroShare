@@ -65,6 +65,7 @@ public:
     RsTlvSecurityKeySet keys;
 
     std::string mServiceString;
+    uint32_t mAuthenFlags;
 
     // BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
 

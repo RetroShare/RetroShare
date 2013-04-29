@@ -13,6 +13,7 @@ class RsDummyNetService: public RsNetworkExchangeService
 public:
 
      RsDummyNetService(){ return;}
+     virtual ~RsDummyNetService() { }
 
      void setSyncAge(uint32_t age){}
 
@@ -53,7 +54,6 @@ public:
 
     RsDummyGrp() : RsGxsGrpItem(RS_SERVICE_TYPE_DUMMY, RS_PKT_SUBTYPE_DUMMY_GRP) { return; }
     virtual ~RsDummyGrp() { return; }
-
 
 
     std::string grpData;
@@ -108,6 +108,8 @@ public:
      * @param dummyId This is is the only id thats exists in this dummy interface
      */
     RsGixsDummy(const RsGxsId& incomingId, const RsGxsId& outgoingId){}
+
+    virtual ~RsGixsDummy(){}
 
     /*!
      *
