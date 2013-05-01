@@ -106,9 +106,13 @@ class RsGxsCircleCache
 	bool getAllowedPeersList(std::list<RsPgpId> &friendlist);
 	bool isAllowedPeer(const RsPgpId &id);
 	bool addAllowedPeer(const RsPgpId &pgpid, const RsGxsId &gxsId);
+	bool addLocalFriend(const RsPgpId &pgpid);
 
 	RsGxsCircleId mCircleId;
 	std::string mCircleName;
+
+	uint32_t      mCircleType;
+	bool	      mIsExternal;
 
 	time_t mUpdateTime;
 	std::set<RsGxsCircleId> mUnprocessedCircles;

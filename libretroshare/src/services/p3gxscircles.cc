@@ -233,6 +233,10 @@ bool p3GxsCircles:: getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails
 			// should also have meta data....
 			details.mCircleId = id;
 			details.mCircleName = data.mCircleName;
+
+			details.mCircleType = data.mCircleType;
+			details.mIsExternal = data.mIsExternal;
+
 			details.mUnknownPeers = data.mUnknownPeers;
 			details.mAllowedPeers = data.mAllowedPeers;
 			return true;
@@ -390,6 +394,8 @@ RsGenExchange::ServiceCreate_Return p3GxsCircles::service_CreateGroup(RsGxsGrpIt
 
 RsGxsCircleCache::RsGxsCircleCache() 
 { 
+	mCircleType = GXS_CIRCLE_TYPE_EXTERNAL;
+	mIsExternal = true;
 	return; 
 }
 
@@ -401,6 +407,9 @@ bool RsGxsCircleCache::loadBaseCircle(const RsGxsCircleGroup &circle)
 	mCircleName = circle.mMeta.mGroupName;
 	mUpdateTime = time(NULL);
 	mProcessedCircles.insert(mCircleId);
+
+	mCircleType = circle.mMeta.mCircleType;
+	mIsExternal = (mCircleType != GXS_CIRCLE_TYPE_LOCAL);
 
 #ifdef DEBUG_CIRCLES
 	std::cerr << "RsGxsCircleCache::loadBaseCircle(" << mCircleId << ")";
@@ -416,9 +425,10 @@ bool RsGxsCircleCache::loadSubCircle(const RsGxsCircleCache &subcircle)
 
 	/* should not be any unprocessed circles or peers */
 #ifdef DEBUG_CIRCLES
+#endif // DEBUG_CIRCLES
+
 	std::cerr << "RsGxsCircleCache::loadSubCircle(" << subcircle.mCircleId << ") TODO";
 	std::cerr << std::endl;
-#endif // DEBUG_CIRCLES
 
 	return true;
 }
@@ -451,6 +461,13 @@ bool RsGxsCircleCache::addAllowedPeer(const RsPgpId &pgpId, const RsGxsId &gxsId
 	return true;
 }
 
+
+bool RsGxsCircleCache::addLocalFriend(const RsPgpId &pgpId)
+{
+	/* empty list as no GxsID associated */
+	std::list<RsGxsId> &gxsList = mAllowedPeers[pgpId];
+	return true;
+}
 
 
 /************************************************************************************/
@@ -765,6 +782,9 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 			it = mLoadingCache.find(id);
 			if (it == mLoadingCache.end())
 			{
+				std::cerr << "p3GxsCircles::cache_load_for_token() Load ERROR: ";
+				std::cerr << item->meta;
+				std::cerr << std::endl;
 				// ERROR.
 				continue;
 			}
@@ -773,81 +793,102 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 			cache.loadBaseCircle(group);
 			delete item;
 
+
 			bool isComplete = true;
 			bool isUnprocessedPeers = false;
 
-			std::list<RsGxsId> &peers = group.mInvitedMembers;
-			std::list<RsGxsId>::const_iterator pit;
 
-			// need to trigger the searches.
-			for(pit = peers.begin(); pit != peers.end(); pit++)
+			if (cache.mIsExternal)
 			{
-				/* check cache */
-				if (mIdentities->haveKey(*pit))
+				std::list<RsGxsId> &peers = group.mInvitedMembers;
+				std::list<RsGxsId>::const_iterator pit;
+	
+				// need to trigger the searches.
+				for(pit = peers.begin(); pit != peers.end(); pit++)
 				{
-					/* we can process now! */
-					RsIdentityDetails details;
-					if (mIdentities->getIdDetails(*pit, details))
+					/* check cache */
+					if (mIdentities->haveKey(*pit))
 					{
-						if (details.mPgpLinked && details.mPgpKnown)
+						/* we can process now! */
+						RsIdentityDetails details;
+						if (mIdentities->getIdDetails(*pit, details))
 						{
-							cache.addAllowedPeer(details.mPgpId, *pit);
+							if (details.mPgpLinked && details.mPgpKnown)
+							{
+								cache.addAllowedPeer(details.mPgpId, *pit);
+							}
+							else
+							{
+								cache.mUnknownPeers.insert(*pit);
+							}
 						}
 						else
 						{
-							cache.mUnknownPeers.insert(*pit);
+							// ERROR.
 						}
 					}
 					else
 					{
-						// ERROR.
+						/* store in to_process queue. */
+						cache.mUnprocessedPeers.insert(*pit);
+	
+						isComplete = false;
+						isUnprocessedPeers = true;
 					}
 				}
-				else
-				{
-					/* store in to_process queue. */
-					cache.mUnprocessedPeers.insert(*pit);
-
-					isComplete = false;
-					isUnprocessedPeers = true;
-				}
-			}
-
+	
 #ifdef HANDLE_SUBCIRCLES
 #if 0
-			std::list<RsGxsCircleId> &circles = group.mSubCircles;
-			std::list<RsGxsCircleId>::const_iterator cit;
-			for(cit = circles.begin(); cit != circles.end(); cit++)
-			{
-				/* if its cached already -> then its complete. */
-				if (mCircleCache.is_loaded(*cit))
+				std::list<RsGxsCircleId> &circles = group.mSubCircles;
+				std::list<RsGxsCircleId>::const_iterator cit;
+				for(cit = circles.begin(); cit != circles.end(); cit++)
 				{
-					RsGxsCircleCache cachedCircle;
-					if (mCircleCache.fetch(&cit, cachedCircle))
+					/* if its cached already -> then its complete. */
+					if (mCircleCache.is_loaded(*cit))
 					{
-						/* copy cached circle into circle */
-						cache.loadSubCircle(cachedCircle);
+						RsGxsCircleCache cachedCircle;
+						if (mCircleCache.fetch(&cit, cachedCircle))
+						{
+							/* copy cached circle into circle */
+							cache.loadSubCircle(cachedCircle);
+						}
+						else
+						{
+							/* error */
+							continue;
+						}
 					}
 					else
 					{
-						/* error */
-						continue;
+						/* push into secondary processing queues */
+						std::list<RsGxsCircleId> &proc_circles = mCacheLoad_SubCircle[*cit];
+						proc_circles.push_back(id);
+	
+						subCirclesToLoad.push_back(*cit);
+	
+						isComplete = false;
+						isUnprocessedCircles = true;
 					}
 				}
-				else
-				{
-					/* push into secondary processing queues */
-					std::list<RsGxsCircleId> &proc_circles = mCacheLoad_SubCircle[*cit];
-					proc_circles.push_back(id);
-
-					subCirclesToLoad.push_back(*cit);
-
-					isComplete = false;
-					isUnprocessedCircles = true;
-				}
+#endif
+#endif
 			}
-#endif
-#endif
+			else
+			{
+				// LOCAL Load.
+				std::list<RsPgpId> &peers = group.mLocalFriends;
+				std::list<RsPgpId>::const_iterator pit;
+	
+				// need to trigger the searches.
+				for(pit = peers.begin(); pit != peers.end(); pit++)
+				{
+					cache.addLocalFriend(*pit);
+				}
+				isComplete = true;
+				isUnprocessedPeers = false;
+			}
+
+
 
 			if (isComplete)
 			{
