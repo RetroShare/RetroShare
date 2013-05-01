@@ -90,8 +90,7 @@ CreateCircleDialog::CreateCircleDialog()
 
 	ui.removeButton->setEnabled(false);
 	ui.addButton->setEnabled(false);
-	ui.radioButton_ListAll->setChecked(true);
-	requestIdentities();
+	ui.radioButton_ListKnownPGP->setChecked(true);
 
 	mIsExistingCircle = false;
 	mIsExternalCircle = true;
@@ -148,9 +147,15 @@ void CreateCircleDialog::editNewId(bool isExternal)
 void CreateCircleDialog::setupForPersonalCircle()
 {
 	mIsExternalCircle = false;
-	ui.groupBox_title->setTitle(tr("Personal Circle Details"));
-	/* hide distribution line */
 
+	/* hide distribution line */
+	ui.groupBox_title->setTitle(tr("Personal Circle Details"));
+	ui.frame_PgpTypes->hide();
+	ui.frame_Distribution->hide();
+	ui.idChooserLabel->hide();
+	ui.idChooser->hide();
+
+	getPgpIdentities();
 }
 
 
@@ -158,9 +163,15 @@ void CreateCircleDialog::setupForPersonalCircle()
 void CreateCircleDialog::setupForExternalCircle()
 {
 	mIsExternalCircle = true;
-	ui.groupBox_title->setTitle(tr("External Circle Details"));
-	/* show distribution line */
 
+	/* show distribution line */
+	ui.groupBox_title->setTitle(tr("External Circle Details"));
+	ui.frame_PgpTypes->show();
+	ui.frame_Distribution->show();
+	ui.idChooserLabel->show();
+	ui.idChooser->show();
+
+	requestGxsIdentities();
 }
 
 
@@ -686,10 +697,19 @@ void  CreateCircleDialog::createCircle()
         	QString keyId = item->text(RSCIRCLEID_COL_KEYID);
 
 		/* insert into circle */
-		circle.mInvitedMembers.push_back(keyId.toStdString());	
+		if (mIsExistingCircle)
+		{
+			circle.mInvitedMembers.push_back(keyId.toStdString());	
+			std::cerr << "CreateCircleDialog::createCircle() Inserting Member: " << keyId.toStdString();
+			std::cerr << std::endl;
+		}
+		else
+		{
+			circle.mLocalFriends.push_back(keyId.toStdString());	
+			std::cerr << "CreateCircleDialog::createCircle() Inserting Friend: " << keyId.toStdString();
+			std::cerr << std::endl;
+		}
 
-		std::cerr << "CreateCircleDialog::createCircle() Inserting Member: " << keyId.toStdString();
-		std::cerr << std::endl;
 	}
 
 	if (mIsExistingCircle)
@@ -827,7 +847,37 @@ void CreateCircleDialog::loadCircle(uint32_t token)
 }
 
 
-void CreateCircleDialog::requestIdentities()
+void CreateCircleDialog::getPgpIdentities()
+{
+	std::cerr << "CreateCircleDialog::getPgpIdentities()";
+	std::cerr << std::endl;
+
+	QTreeWidget *tree = ui.treeWidget_IdList;
+
+	tree->clear();
+
+	std::list<std::string> ids;
+	std::list<std::string>::iterator it;
+
+
+	rsPeers->getGPGAcceptedList(ids);
+	for(it = ids.begin(); it != ids.end(); it++)
+	{
+                QTreeWidgetItem *item = new QTreeWidgetItem();
+                RsPeerDetails details;
+
+                rsPeers->getGPGDetails(*it, details);
+
+                item->setText(RSCIRCLEID_COL_IDTYPE, "PGP Identity");
+                item->setText(RSCIRCLEID_COL_NICKNAME, QString::fromStdString(details.name));
+                item->setText(RSCIRCLEID_COL_KEYID, QString::fromStdString(details.gpg_id));
+
+		tree->addTopLevelItem(item);
+	}
+}
+
+
+void CreateCircleDialog::requestGxsIdentities()
 {
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
@@ -855,7 +905,6 @@ void CreateCircleDialog::loadIdentities(uint32_t token)
 	std::list<std::string> ids;
 	std::list<std::string>::iterator it;
 
-	bool acceptAll = ui.radioButton_ListAll->isChecked();
 	bool acceptAllPGP = ui.radioButton_ListAllPGP->isChecked();
 	bool acceptKnownPGP = ui.radioButton_ListKnownPGP->isChecked();
 
@@ -875,11 +924,7 @@ void CreateCircleDialog::loadIdentities(uint32_t token)
 
 		/* do filtering */
 		bool ok = false;
-		if (acceptAll)
-		{
-			ok = true;
-		}
-		else if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
+		if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
 		{
 			if (acceptAllPGP)
 			{

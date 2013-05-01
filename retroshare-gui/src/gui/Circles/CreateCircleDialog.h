@@ -110,7 +110,8 @@ private:
 	void loadIdentities(uint32_t token);
 
 	void requestCircle(const RsGxsGroupId &groupId);
-	void requestIdentities();
+	void requestGxsIdentities();
+	void getPgpIdentities();
 
 	TokenQueue *mCircleQueue;
 	TokenQueue *mIdQueue;
