@@ -638,6 +638,7 @@ gxs {
 		gxs/gxssecurity.h \
 		gxs/rsgxsifacehelper.h \
 		gxs/gxstokenqueue.h \
+		gxs/rsgxsnetutils.h \
 		gxs/rsgxsiface.h
 
 
@@ -653,6 +654,7 @@ gxs {
 		util/rsdbbind.cc \
 		gxs/gxssecurity.cc \
 		gxs/gxstokenqueue.cc \
+		gxs/rsgxsnetutils.cc \
 		gxs/rsgxsutil.cc
 
 

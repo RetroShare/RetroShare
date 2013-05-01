@@ -175,6 +175,7 @@ public:
 
     /// grpId of grp held by sending peer
     std::string grpId;
+    std::string authorId;
 
 };
 
@@ -257,6 +258,7 @@ public:
     uint8_t flag; // response/req
     std::string grpId;
     std::string msgId;
+    std::string authorId;
 
 };
 

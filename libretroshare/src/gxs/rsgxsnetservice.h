@@ -34,79 +34,9 @@
 #include "rsnxsobserver.h"
 #include "pqi/p3linkmgr.h"
 #include "serialiser/rsnxsitems.h"
-
+#include "rsgxsnetutils.h"
 #include "pqi/p3cfgmgr.h"
-
-
-/*!
- * This represents a transaction made
- * with the NxsNetService in all states
- * of operation until completion
- *
- */
-class NxsTransaction
-{
-
-public:
-
-    static const uint8_t FLAG_STATE_STARTING; // when
-    static const uint8_t FLAG_STATE_RECEIVING; // begin receiving items for incoming trans
-    static const uint8_t FLAG_STATE_SENDING; // begin sending items for outgoing trans
-    static const uint8_t FLAG_STATE_COMPLETED;
-    static const uint8_t FLAG_STATE_FAILED;
-    static const uint8_t FLAG_STATE_WAITING_CONFIRM;
-
-    NxsTransaction();
-    ~NxsTransaction();
-
-    uint32_t mFlag; // current state of transaction
-    uint32_t mTimeOut;
-
-    /*!
-     * this contains who we
-     * c what peer this transaction involves.
-     * c The type of transaction
-     * c transaction id
-     * c timeout set for this transaction
-     * c and itemCount
-     */
-    RsNxsTransac* mTransaction;
-    std::list<RsNxsItem*> mItems; // items received or sent
-};
-
-/*!
- * An abstraction of the net manager
- * for retrieving Rs peers whom you will be synchronising
- * and also you own Id
- * Useful for testing also (abstracts away Rs's p3NetMgr)
- */
-class RsNxsNetMgr
-{
-
-public:
-
-    virtual std::string getOwnId() = 0;
-    virtual void getOnlineList(std::set<std::string>& ssl_peers) = 0;
-
-};
-
-class RsNxsNetMgrImpl : public RsNxsNetMgr
-{
-
-public:
-
-    RsNxsNetMgrImpl(p3LinkMgr* lMgr);
-
-    std::string getOwnId();
-    void getOnlineList(std::set<std::string>& ssl_peers);
-
-private:
-
-    p3LinkMgr* mLinkMgr;
-    RsMutex mNxsNetMgrMtx;
-
-};
-
+#include "rsgixs.h"
 
 /// keep track of transaction number
 typedef std::map<uint32_t, NxsTransaction*> TransactionIdMap;
@@ -139,9 +69,11 @@ public:
      * @param servType service type
      * @param gds The data service which allows read access to a service/store
      * @param nxsObs observer will be notified whenever new messages/grps
+     * @param nxsObs observer will be notified whenever new messages/grps
      * arrive
      */
-    RsGxsNetService(uint16_t servType, RsGeneralDataService* gds, RsNxsNetMgr* netMgr, RsNxsObserver* nxsObs = NULL);
+    RsGxsNetService(uint16_t servType, RsGeneralDataService* gds, RsNxsNetMgr* netMgr,
+    		RsNxsObserver* nxsObs = NULL, RsGixsReputation* repuations = NULL, RsGcxs* circles = NULL);
 
     virtual ~RsGxsNetService();
 
@@ -361,6 +293,12 @@ private:
     /** E: item handlers **/
 
 
+    void runVetting();
+
+    void locked_createTransactionFromPending(MsgRespPending* grpPend);
+    void locked_createTransactionFromPending(GrpRespPending* msgPend);
+    void locked_pushMsgTransactionFromList(std::list<RsNxsItem*>& reqList, const std::string& peerId, const uint32_t& transN);
+    void locked_pushGrpTransactionFromList(std::list<RsNxsItem*>& reqList, const std::string& peerId, const uint32_t& transN);
     void syncWithPeers();
 
 private:
@@ -457,6 +395,11 @@ private:
 
     const uint32_t mSYNC_PERIOD;
 
+    RsGcxs* mCircles;
+    RsGixsReputation* mReputations;
+
+    // need to be verfied
+    std::vector<AuthorPending*> mPendingResp;
 };
 
 #endif // RSGXSNETSERVICE_H

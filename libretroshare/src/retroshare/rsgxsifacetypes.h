@@ -10,6 +10,9 @@
 
 #include <map>
 #include <vector>
+#include <string>
+#include <inttypes.h>
+
 
 typedef std::string RsGxsGroupId;
 typedef std::string RsGxsMessageId;
