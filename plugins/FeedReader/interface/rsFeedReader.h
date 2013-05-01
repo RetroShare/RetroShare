@@ -198,6 +198,8 @@ public:
 	virtual void     setStandardUpdateInterval(uint32_t updateInterval) = 0;
 	virtual bool     getStandardProxy(std::string &proxyAddress, uint16_t &proxyPort) = 0;
 	virtual void     setStandardProxy(bool useProxy, const std::string &proxyAddress, uint16_t proxyPort) = 0;
+	virtual bool     getSaveInBackground() = 0;
+	virtual void     setSaveInBackground(bool saveInBackground) = 0;
 
 	virtual RsFeedAddResult addFolder(const std::string parentId, const std::string &name, std::string &feedId) = 0;
 	virtual RsFeedAddResult setFolder(const std::string &feedId, const std::string &name) = 0;

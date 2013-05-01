@@ -50,6 +50,7 @@ p3FeedReader::p3FeedReader(RsPluginHandler* pgHandler)
 	mStandardProxyPort = 0;
 	mLastClean = 0;
 	mNotify = NULL;
+	mSaveInBackground = false;
 
 	mPreviewDownloadThread = NULL;
 	mPreviewProcessThread = NULL;
@@ -269,6 +270,23 @@ void p3FeedReader::setStandardProxy(bool useProxy, const std::string &proxyAddre
 		mStandardProxyAddress = proxyAddress;
 		mStandardProxyPort = proxyPort;
 		mStandardUseProxy = useProxy;
+		IndicateConfigChanged();
+	}
+}
+
+bool p3FeedReader::getSaveInBackground()
+{
+	RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
+
+	return mSaveInBackground;
+}
+
+void p3FeedReader::setSaveInBackground(bool saveInBackground)
+{
+	RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
+
+	if (saveInBackground != mSaveInBackground) {
+		mSaveInBackground = saveInBackground;
 		IndicateConfigChanged();
 	}
 }
@@ -1344,11 +1362,15 @@ RsSerialiser *p3FeedReader::setupSerialiser()
 	return rss;
 }
 
-bool p3FeedReader::saveList(bool &cleanup, std::list<RsItem *> & saveData)
+bool p3FeedReader::saveList(bool &cleanup, std::list<RsItem *> &saveData)
 {
 	mFeedReaderMtx.lock(); /*********************** LOCK *******/
 
-	cleanup = false;
+	if (mSaveInBackground) {
+		cleanup = true;
+	} else {
+		cleanup = false;
+	}
 
 	RsConfigKeyValueSet *rskv = new RsConfigKeyValueSet();
 
@@ -1373,8 +1395,15 @@ bool p3FeedReader::saveList(bool &cleanup, std::list<RsItem *> & saveData)
 	rs_sprintf(kv.value, "%hu", mStandardProxyPort);
 	rskv->tlvkvs.pairs.push_back(kv);
 
+	kv.key = "SaveInBackground";
+	rs_sprintf(kv.value, "%hu", mSaveInBackground ? 1 : 0);
+	rskv->tlvkvs.pairs.push_back(kv);
+
 	/* Add KeyValue to saveList */
 	saveData.push_back(rskv);
+	if (!cleanup) {
+		cleanSaveData.push_back(rskv);
+	}
 
 	std::map<std::string, RsFeedReaderFeed *>::iterator it1;
 	for (it1 = mFeeds.begin(); it1 != mFeeds.end(); ++it1) {
@@ -1382,12 +1411,26 @@ bool p3FeedReader::saveList(bool &cleanup, std::list<RsItem *> & saveData)
 		if (fi->preview) {
 			continue;
 		}
-		saveData.push_back(fi);
+		if (cleanup) {
+			saveData.push_back(new RsFeedReaderFeed(*fi));
+		} else {
+			saveData.push_back(fi);
+		}
 
 		std::map<std::string, RsFeedReaderMsg*>::iterator it2;
 		for (it2 = fi->msgs.begin(); it2 != fi->msgs.end(); ++it2) {
-			saveData.push_back(it2->second);
+			RsFeedReaderMsg *msg = it2->second;
+
+			if (cleanup) {
+				saveData.push_back(new RsFeedReaderMsg(*msg));
+			} else {
+				saveData.push_back(msg);
+			}
 		}
+	}
+
+	if (mSaveInBackground) {
+		mFeedReaderMtx.unlock(); /*********************** UNLOCK *******/
 	}
 
 	/* list completed! */
@@ -1395,9 +1438,17 @@ bool p3FeedReader::saveList(bool &cleanup, std::list<RsItem *> & saveData)
 }
 
 void p3FeedReader::saveDone()
-{ 
-	mFeedReaderMtx.unlock(); /*********************** UNLOCK *******/
-	return; 
+{
+	/* clean settings items */
+	std::list<RsItem*>::iterator it;
+	for (it = cleanSaveData.begin(); it != cleanSaveData.end(); ++it) {
+		delete(*it);
+	}
+	cleanSaveData.clear();
+
+	if (!mSaveInBackground) {
+		mFeedReaderMtx.unlock(); /*********************** UNLOCK *******/
+	}
 }
 
 bool p3FeedReader::loadList(std::list<RsItem *>& load)
@@ -1465,6 +1516,11 @@ bool p3FeedReader::loadList(std::list<RsItem *>& load)
 					uint16_t value;
 					if (sscanf(kit->value.c_str(), "%hu", &value) == 1) {
 						mStandardProxyPort = value;
+					}
+				} else if (kit->key == "SaveInBackground") {
+					uint16_t value;
+					if (sscanf(kit->value.c_str(), "%hu", &value) == 1) {
+						mSaveInBackground = value == 1 ? true : false;
 					}
 				}
 			}

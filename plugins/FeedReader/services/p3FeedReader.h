@@ -45,6 +45,8 @@ public:
 	virtual void     setStandardUpdateInterval(uint32_t updateInterval);
 	virtual bool     getStandardProxy(std::string &proxyAddress, uint16_t &proxyPort);
 	virtual void     setStandardProxy(bool useProxy, const std::string &proxyAddress, uint16_t proxyPort);
+	virtual bool     getSaveInBackground();
+	virtual void     setSaveInBackground(bool saveInBackground);
 
 	virtual RsFeedAddResult addFolder(const std::string parentId, const std::string &name, std::string &feedId);
 	virtual RsFeedAddResult setFolder(const std::string &feedId, const std::string &name);
@@ -98,6 +100,8 @@ private:
 	RsFeedReaderNotify *mNotify;
 
 	RsMutex mFeedReaderMtx;
+	std::list<RsItem*> cleanSaveData;
+	bool mSaveInBackground;
 	std::list<p3FeedReaderThread*> mThreads;
 	uint32_t mNextFeedId;
 	uint32_t mNextMsgId;

@@ -118,17 +118,24 @@
       <string>Misc</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="openAllInNewTabCheckBox">
+        <property name="text">
+         <string>Open all feeds in new tab</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
        <widget class="QCheckBox" name="setMsgToReadOnActivate">
         <property name="text">
          <string>Set message to read on activate</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QCheckBox" name="openAllInNewTabCheckBox">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="saveInBackgroundCheckBox">
         <property name="text">
-         <string>Open all feeds in new tab</string>
+         <string>Save configuration in background (for slow systems, more memory needed)</string>
         </property>
        </widget>
       </item>
@@ -150,6 +157,16 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>updateIntervalSpinBox</tabstop>
+  <tabstop>storageTimeSpinBox</tabstop>
+  <tabstop>useProxyCheckBox</tabstop>
+  <tabstop>proxyAddressLineEdit</tabstop>
+  <tabstop>proxyPortSpinBox</tabstop>
+  <tabstop>saveInBackgroundCheckBox</tabstop>
+  <tabstop>setMsgToReadOnActivate</tabstop>
+  <tabstop>openAllInNewTabCheckBox</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
