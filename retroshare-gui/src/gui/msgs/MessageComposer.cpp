@@ -1235,7 +1235,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
                     }
                 }
             } else {
-                if (std::find(peers.begin(), peers.end(), id) == peers.end()) {
+                if (_distant_peers.find(id)==_distant_peers.end() && std::find(peers.begin(), peers.end(), id) == peers.end()) {
                     // no friend
                     continue;
                 }

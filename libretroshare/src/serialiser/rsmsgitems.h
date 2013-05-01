@@ -408,6 +408,7 @@ const uint32_t RS_MSG_FLAGS_FRIEND_RECOMMENDATION = 0x1000;
 const uint32_t RS_MSG_FLAGS_SYSTEM                = RS_MSG_FLAGS_USER_REQUEST | RS_MSG_FLAGS_FRIEND_RECOMMENDATION;
 const uint32_t RS_MSG_FLAGS_RETURN_RECEPT         = 0x2000;
 const uint32_t RS_MSG_FLAGS_ENCRYPTED             = 0x4000;
+const uint32_t RS_MSG_FLAGS_DISTANT               = 0x8000;
 
 class RsMsgItem: public RsItem
 {

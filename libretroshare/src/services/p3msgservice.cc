@@ -25,6 +25,7 @@
 
 
 #include "retroshare/rsiface.h"
+#include "retroshare/rspeers.h"
 
 #include "pqi/pqibin.h"
 #include "pqi/pqiarchive.h"
@@ -64,7 +65,8 @@ p3MsgService::p3MsgService(p3LinkMgr *lm)
 	:p3Service(RS_SERVICE_TYPE_MSG), p3Config(CONFIG_TYPE_MSGS),
 	mLinkMgr(lm), mMsgMtx("p3MsgService"), mMsgUniqueId(time(NULL))
 {
-	addSerialType(new RsMsgSerialiser());
+	_serialiser = new RsMsgSerialiser();
+	addSerialType(_serialiser);
 
 	/* Initialize standard tag types */
 	if(lm)
@@ -275,6 +277,7 @@ int     p3MsgService::checkOutgoingMessages()
 	 */
 
 	bool changed = false ;
+	std::list<RsMsgItem*> output_queue ;
 
 	{
 		const std::string ownId = mLinkMgr->getOwnId();
@@ -292,18 +295,8 @@ int     p3MsgService::checkOutgoingMessages()
 
 			/* find the certificate */
 			std::string pid = mit->second->PeerId();
-			bool toSend = false;
 
-			if(mit->second.msgFlags & RS_MSG_FLAGS_DISTANT || mLinkMgr->isOnline(pid))
-			{
-				toSend = true;
-			}
-			else if (pid == ownId) /* FEEDBACK Msg to Ourselves */
-			{
-				toSend = true;
-			}
-
-			if (toSend)
+			if(mit->second->msgFlags & RS_MSG_FLAGS_DISTANT || mLinkMgr->isOnline(pid) || pid == ownId) /* FEEDBACK Msg to Ourselves */
 			{
 				/* send msg */
 				pqioutput(PQL_DEBUG_BASIC, msgservicezone, 
@@ -311,7 +304,7 @@ int     p3MsgService::checkOutgoingMessages()
 				/* remove the pending flag */
 				(mit->second)->msgFlags &= ~RS_MSG_FLAGS_PENDING;
 
-				checkSizeAndSendMessage(mit->second) ;
+				output_queue.push_back(mit->second) ;
 				toErase.push_back(mit->first);
 
 				changed = true ;
@@ -344,6 +337,9 @@ int     p3MsgService::checkOutgoingMessages()
 			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 		}
 	}
+
+	for(std::list<RsMsgItem*>::const_iterator it(output_queue.begin());it!=output_queue.end();++it)
+		checkSizeAndSendMessage(*it) ;
 
 	if(changed)
 		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
@@ -1633,8 +1629,13 @@ bool p3MsgService::getDistantOfflineMessengingInvites(std::vector<DistantOffline
 }
 bool p3MsgService::handleTunnelRequest(const std::string& hash,const std::string& peer_id) 
 {
+	std::cerr << "p3MsgService::handleTunnelRequest: received TR for hash " << hash << std::endl;
+
 	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 	std::map<std::string,DistantMessengingInvite>::const_iterator it = _messenging_invites.find(hash) ;
+
+	if(it != _messenging_invites.end())
+		std::cerr << "Responding OK!" << std::endl;
 
 	return it != _messenging_invites.end() ;
 }
@@ -1651,8 +1652,12 @@ void p3MsgService::manageDistantPeers()
 		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 		for(std::map<std::string,DistantMessengingContact>::iterator it(_messenging_contacts.begin());it!=_messenging_contacts.end();++it)
 			if(it->second.status == RS_DISTANT_MSG_STATUS_TUNNEL_OK)
+			{
 				for(uint32_t i=0;i<it->second.pending_messages.size();++i)
 					to_send.push_back(std::pair<std::string,RsMsgItem*>(it->first,it->second.pending_messages[i])) ;
+
+				it->second.pending_messages.clear() ;
+			}
 	}
 
 	for(uint32_t i=0;i<to_send.size();++i)

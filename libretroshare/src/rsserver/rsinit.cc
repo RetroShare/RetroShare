@@ -2236,6 +2236,7 @@ int RsServer::StartupRetroShare()
 
 	ftserver->connectToTurtleRouter(tr) ;
 	chatSrv->connectToTurtleRouter(tr) ;
+	msgSrv->connectToTurtleRouter(tr) ;
 
 	pqih -> addService(ad);
 	pqih -> addService(msgSrv);
