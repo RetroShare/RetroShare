@@ -33,6 +33,7 @@
 #include "pqi/authgpg.h"
 
 #include "services/p3msgservice.h"
+#include "pgp/pgpkeyutil.h"
 #include "pqi/pqinotify.h"
 
 #include "util/rsdebug.h"
@@ -1537,7 +1538,8 @@ RsMsgItem *p3MsgService::initMIRsMsg(MessageInfo &info, const std::string &to)
 	msg -> recvTime = 0;
 	
 	msg -> subject = info.title;
-	msg -> message = info.msg;
+
+		msg -> message = info.msg;
 
 	std::list<std::string>::iterator pit;
 	for(pit = info.msgto.begin(); pit != info.msgto.end(); pit++)
@@ -1583,9 +1585,76 @@ RsMsgItem *p3MsgService::initMIRsMsg(MessageInfo &info, const std::string &to)
 	if (info.msgflags & RS_MSG_FRIEND_RECOMMENDATION)
 		msg->msgFlags |= RS_MSG_FLAGS_FRIEND_RECOMMENDATION;
 
-	//std::cerr << "p3MsgService::initMIRsMsg()" << std::endl;
+	// See if we need to encrypt this message.  If so, we replace the msg text
+	// by the whole message serialized and binary encrypted, so as to obfuscate
+	// all its content.
+	//
+	bool enc_ok = false ;
+
+	if(info.encryption_keys.find(to) != info.encryption_keys.end())
+		encryptMessage(info.encryption_keys[to],msg) ;
+
+		//std::cerr << "p3MsgService::initMIRsMsg()" << std::endl;
 	//msg->print(std::cerr);
 	return msg;
+}
+
+bool p3MsgService::encryptMessage(const std::string& pgp_id,RsMsgItem *item)
+{
+	std::cerr << "Encrypting message with public key " << pgp_id << " in place." << std::endl;
+
+	// 1 - serialise the whole message item into a binary chunk.
+	//
+	uint32_t rssize = _serialiser->size(item) ;
+	unsigned char *data = new unsigned char[rssize] ;
+
+	if(!_serialiser->serialise(item,data,&rssize))
+	{
+		std::cerr << "(EE) p3MsgService::sendTurtleData(): Serialization error." << std::endl;
+		delete[] data ;
+		return false;
+	}
+
+	// 2 - pgp-encrypt the chunk with the user-supplied public key.
+	//
+	uint32_t encrypted_size = rssize + 1000 ;
+	unsigned char *encrypted_data = new unsigned char[encrypted_size] ;
+
+	if(!AuthGPG::getAuthGPG()->encryptDataBin(pgp_id,data,rssize,encrypted_data,&encrypted_size))
+	{
+		delete[] data ;
+		delete[] encrypted_data ;
+		std::cerr << "Encryption failed!" << std::endl;
+		return false;
+	}
+	delete[] data ;
+
+	// Now turn the binary encrypted chunk into a readable radix string.
+	//
+	std::string armoured_data = PGPKeyManagement::makeArmouredKey(encrypted_data,encrypted_size,"Retroshare encrypted message") ;
+	delete[] encrypted_data ;
+
+	std::wstring encrypted_msg ;
+
+	if(!librs::util::ConvertUtf8ToUtf16(armoured_data,encrypted_msg)) 
+		return false;
+
+	// wipe the item clean and replace the message by the encrypted data.
+
+	item->message = encrypted_msg ;
+	item->subject = L"" ;
+	item->msgcc.ids.clear() ;
+	item->msgbcc.ids.clear() ;
+	item->msgto.ids.clear() ;
+	item->msgFlags |= RS_MSG_FLAGS_ENCRYPTED ;
+
+	return true ;
+}
+
+bool p3MsgService::decryptMessage(RsMsgItem *item)
+{
+	std::cerr << "Not implemented!!" << std::endl;
+	return true ;
 }
 
 void p3MsgService::connectToTurtleRouter(p3turtle *pt)

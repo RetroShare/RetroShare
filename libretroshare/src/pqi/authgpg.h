@@ -221,6 +221,9 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		virtual bool decryptTextFromFile(      std::string& text,const std::string& filename);
 		virtual bool encryptTextToFile  (const std::string& text,const std::string& filename);
 
+//		virtual bool decryptTextFromString(      std::string& encrypted_text,std::string&     clear_string);
+//		virtual bool encryptTextToString  (const std::string& pgp_id,const std::string&     clear_text,std::string& encrypted_string);
+
 		bool getGPGFilteredList(std::list<std::string>& list,bool (*filter)(const PGPCertificateInfo&) = NULL) ;
 
 		//END of PGP public functions

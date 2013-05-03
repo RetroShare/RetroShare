@@ -71,6 +71,7 @@ const uint8_t RS_PKT_SUBTYPE_MSG_TAG_TYPE 	= 0x03;
 const uint8_t RS_PKT_SUBTYPE_MSG_TAGS 			= 0x04;
 const uint8_t RS_PKT_SUBTYPE_MSG_SRC_TAG 		= 0x05;
 const uint8_t RS_PKT_SUBTYPE_MSG_PARENT_TAG 	= 0x06;
+const uint8_t RS_PKT_SUBTYPE_MSG_ENCRYPTED 	= 0x07;
 
 typedef uint64_t 		ChatLobbyId ;
 typedef uint64_t 		ChatLobbyMsgId ;
@@ -443,6 +444,36 @@ std::ostream &print(std::ostream &out, uint16_t indent = 0);
 	RsTlvFileSet attachment;
 };
 
+//     // Encrypted messages encapsulate a whole RsMsgItem into the binary data. The signature is optional.
+//     // There is no To or CC peers since the whole communiation addresses are obfuscated in the encrypted 
+//     // layer, and because of public key encryption, the email can only have one destination peer.
+//     //
+//     class RsEncryptedMsgItem: public RsItem
+//     {
+//     	public:
+//     		RsEncryptedMsgItem() 
+//     			:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_MSG, RS_PKT_SUBTYPE_MSG_ENCRYPTED)
+//     		{ 
+//     			setPriorityLevel(QOS_PRIORITY_RS_MSG_ITEM) ; 
+//     		}
+//     
+//     //		RsEncryptedMsgItem(uint16_t type) 
+//     //			:RsItem(RS_PKT_VERSION_SERVICE, type, RS_PKT_SUBTYPE_DEFAULT)
+//     //		{ 
+//     //			setPriorityLevel(QOS_PRIORITY_RS_MSG_ITEM) ; 
+//     //		}
+//     
+//     		virtual ~RsEncryptedMsgItem(); 
+//     		virtual void clear();
+//     		std::ostream &print(std::ostream &out, uint16_t indent = 0);
+//     
+//     		uint32_t msgId;
+//     		unsigned char *encrypted_bin_data ;
+//     		uint32_t       encrypted_bin_size ;
+//     		unsigned char *signature_bin_data ;
+//     		uint32_t       signature_bin_size ;
+//     };
+
 class RsMsgTagType : public RsItem
 {
 public:
@@ -523,45 +554,48 @@ public:
 class RsMsgSerialiser: public RsSerialType
 {
 	public:
-	RsMsgSerialiser(bool bConfiguration = false)
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_MSG), m_bConfiguration (bConfiguration)
-	{ return; }
-	
-	RsMsgSerialiser(uint16_t type)
-	:RsSerialType(RS_PKT_VERSION_SERVICE, type), m_bConfiguration (false)
-	{ return; }
-	
-virtual     ~RsMsgSerialiser() { return; }
-	
-virtual	uint32_t    size(RsItem *);
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual	RsItem *    deserialise(void *data, uint32_t *size);
+		RsMsgSerialiser(bool bConfiguration = false)
+			:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_MSG), m_bConfiguration (bConfiguration)
+		{ return; }
+
+		RsMsgSerialiser(uint16_t type)
+			:RsSerialType(RS_PKT_VERSION_SERVICE, type), m_bConfiguration (false)
+		{ return; }
+
+		virtual     ~RsMsgSerialiser() { return; }
+
+		virtual	uint32_t    size(RsItem *);
+		virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
+		virtual	RsItem *    deserialise(void *data, uint32_t *size);
 
 
 	private:
 
-virtual	uint32_t    sizeMsgItem(RsMsgItem *);
-virtual	bool        serialiseMsgItem  (RsMsgItem *item, void *data, uint32_t *size);
-virtual	RsMsgItem *deserialiseMsgItem(void *data, uint32_t *size);
+		virtual	uint32_t    sizeMsgItem(RsMsgItem *);
+		virtual	bool        serialiseMsgItem  (RsMsgItem *item, void *data, uint32_t *size);
+		virtual	RsMsgItem *deserialiseMsgItem(void *data, uint32_t *size);
 
-virtual	uint32_t    sizeTagItem(RsMsgTagType *);
-virtual	bool        serialiseTagItem  (RsMsgTagType *item, void *data, uint32_t *size);
-virtual	RsMsgTagType *deserialiseTagItem(void *data, uint32_t *size);
+		virtual	uint32_t    sizeTagItem(RsMsgTagType *);
+		virtual	bool        serialiseTagItem  (RsMsgTagType *item, void *data, uint32_t *size);
+		virtual	RsMsgTagType *deserialiseTagItem(void *data, uint32_t *size);
 
-virtual	uint32_t    sizeMsgTagItem(RsMsgTags *);
-virtual	bool        serialiseMsgTagItem  (RsMsgTags *item, void *data, uint32_t *size);
-virtual	RsMsgTags *deserialiseMsgTagItem(void *data, uint32_t *size);
+		virtual	uint32_t    sizeMsgTagItem(RsMsgTags *);
+		virtual	bool        serialiseMsgTagItem  (RsMsgTags *item, void *data, uint32_t *size);
+		virtual	RsMsgTags *deserialiseMsgTagItem(void *data, uint32_t *size);
 
-virtual	uint32_t    sizeMsgSrcIdItem(RsMsgSrcId *);
-virtual	bool        serialiseMsgSrcIdItem  (RsMsgSrcId *item, void *data, uint32_t *size);
-virtual	RsMsgSrcId *deserialiseMsgSrcIdItem(void *data, uint32_t *size);
+		virtual	uint32_t    sizeMsgSrcIdItem(RsMsgSrcId *);
+		virtual	bool        serialiseMsgSrcIdItem  (RsMsgSrcId *item, void *data, uint32_t *size);
+		virtual	RsMsgSrcId *deserialiseMsgSrcIdItem(void *data, uint32_t *size);
 
-virtual	uint32_t    sizeMsgParentIdItem(RsMsgParentId *);
-virtual	bool        serialiseMsgParentIdItem  (RsMsgParentId *item, void *data, uint32_t *size);
-virtual	RsMsgParentId *deserialiseMsgParentIdItem(void *data, uint32_t *size);
+		virtual	uint32_t    sizeMsgParentIdItem(RsMsgParentId *);
+		virtual	bool        serialiseMsgParentIdItem  (RsMsgParentId *item, void *data, uint32_t *size);
+		virtual	RsMsgParentId *deserialiseMsgParentIdItem(void *data, uint32_t *size);
 
+//		virtual	uint32_t    sizeEncryptedMsgItem(RsEncryptedMsgItem *) ;
+//		virtual	bool        serialiseEncryptedMsgItem(RsEncryptedMsgItem *item, void *data, uint32_t *size);
+//		virtual	RsEncryptedMsgItem *deserialiseEncryptedMsgItem(void *data, uint32_t *size);
 
-	bool m_bConfiguration; // is set to true for saving configuration (enables serialising msgId)
+		bool m_bConfiguration; // is set to true for saving configuration (enables serialising msgId)
 };
 
 /**************************************************************************/

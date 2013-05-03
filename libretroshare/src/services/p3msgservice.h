@@ -137,6 +137,9 @@ int     checkOutgoingMessages();
 
 		// Utility functions
 
+		bool encryptMessage(const std::string& pgp_id,RsMsgItem *msg) ;
+		bool decryptMessage(RsMsgItem *msg) ;
+
 		void manageDistantPeers() ;
 		void sendTurtleData(const std::string& hash,RsMsgItem *) ;
 		void handleIncomingItem(RsMsgItem *) ;

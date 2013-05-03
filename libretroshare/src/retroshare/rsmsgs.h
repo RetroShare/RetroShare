@@ -99,6 +99,7 @@ class MessageInfo
 	std::wstring attach_title;
 	std::wstring attach_comment;
 	std::list<FileInfo> files;
+	std::map<std::string,std::string> encryption_keys ; // for concerned ids only the public pgp key id to encrypt the message with.
 	int size;  /* total of files */
 	int count; /* file count     */
 

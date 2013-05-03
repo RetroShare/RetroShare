@@ -1285,6 +1285,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
             QMessageBox::warning(this, tr("RetroShare"), tr("Please insert at least one recipient."), QMessageBox::Ok);
             return false; // Don't send with no recipient
         }
+		  mi.encryption_keys = _distant_peers ;
 
         if (rsMsgs->MessageSend(mi) == false) {
             return false;

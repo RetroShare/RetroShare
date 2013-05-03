@@ -98,7 +98,9 @@ class PGPHandler
 		bool decryptDataBin(const PGPIdType& key_id,const void *data, const uint32_t len, unsigned char *decrypted_data, unsigned int *decrypted_data_len) ;
 
 		bool encryptTextToFile(const PGPIdType& key_id,const std::string& text,const std::string& outfile) ;
-		bool decryptTextFromFile(const PGPIdType& key_id,std::string& text,const std::string& inputfile) ;
+		bool decryptTextFromFile(const PGPIdType& key_id,std::string& text,const std::string& encrypted_inputfile) ;
+		//bool encryptTextToString(const PGPIdType& key_id,const std::string& text,std::string& outstring) ;
+		//bool decryptTextFromString(const PGPIdType& key_id,const std::string& encrypted_text,std::string& outstring) ;
 
 		bool getKeyFingerprint(const PGPIdType& id,PGPFingerprintType& fp) const ;
 		void setAcceptConnexion(const PGPIdType&,bool) ;

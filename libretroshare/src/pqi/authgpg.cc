@@ -60,10 +60,20 @@ bool AuthGPG::decryptTextFromFile(std::string& text,const std::string& inputfile
 	return PGPHandler::decryptTextFromFile(mOwnGpgId,text,inputfile) ;
 }
 
+// bool AuthGPG::decryptTextFromString(std::string& encrypted_text,std::string& output)
+// {
+// 	return PGPHandler::decryptTextFromString(mOwnGpgId,encrypted_text,output) ;
+// }
+
 bool AuthGPG::encryptTextToFile(const std::string& text,const std::string& outfile)
 {
 	return PGPHandler::encryptTextToFile(mOwnGpgId,text,outfile) ;
 }
+
+// bool AuthGPG::encryptTextToString(const std::string& pgp_id,const std::string& text,std::string& outstr)
+// {
+// 	return PGPHandler::encryptTextToString(PGPIdType(pgp_id),text,outstr) ;
+// }
 
 std::string pgp_pwd_callback(void * /*hook*/, const char *uid_hint, const char * /*passphrase_info*/, int prev_was_bad)
 {
