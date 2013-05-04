@@ -316,28 +316,7 @@
             </spacer>
            </item>
            <item>
-            <widget class="QComboBox" name="localComboBox">
-             <item>
-              <property name="text">
-               <string>Some Friends</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Another Group</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Family?</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Enemies</string>
-              </property>
-             </item>
-            </widget>
+            <widget class="GxsCircleChooser" name="localComboBox"/>
            </item>
           </layout>
          </item>
@@ -481,6 +460,11 @@
    <header>gui/gxs/GxsIdChooser.h</header>
   </customwidget>
   <customwidget>
+   <class>GxsCircleChooser</class>
+   <extends>QComboBox</extends>
+   <header>gui/gxs/GxsCircleChooser.h</header>
+  </customwidget>
+  <customwidget>
    <class>HeaderFrame</class>
    <extends>QFrame</extends>
    <header>gui/common/HeaderFrame.h</header>
@@ -491,11 +475,6 @@
    <extends>QWidget</extends>
    <header>gui/common/FriendSelectionWidget.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>GxsCircleChooser</class>
-   <extends>QComboBox</extends>
-   <header>gui/gxs/GxsCircleChooser.h</header>
   </customwidget>
  </customwidgets>
  <resources>

@@ -94,6 +94,9 @@ CreateCircleDialog::CreateCircleDialog()
 
 	mIsExistingCircle = false;
 	mIsExternalCircle = true;
+
+	ui.idChooser->loadIds(0,"");
+	ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL);
 }
 
 
@@ -697,7 +700,7 @@ void  CreateCircleDialog::createCircle()
         	QString keyId = item->text(RSCIRCLEID_COL_KEYID);
 
 		/* insert into circle */
-		if (mIsExistingCircle)
+		if (mIsExternalCircle)
 		{
 			circle.mInvitedMembers.push_back(keyId.toStdString());	
 			std::cerr << "CreateCircleDialog::createCircle() Inserting Member: " << keyId.toStdString();

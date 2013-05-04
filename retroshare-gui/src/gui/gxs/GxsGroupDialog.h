@@ -194,7 +194,7 @@ private slots:
 	void updateCircleOptions();
 
 private:
-	void setCircleParameters(RsGroupMetaData &meta);
+	bool setCircleParameters(RsGroupMetaData &meta);
 
 	void setGroupSignFlags(uint32_t signFlags);
 	uint32_t getGroupSignFlags();

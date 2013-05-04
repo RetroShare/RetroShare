@@ -613,9 +613,17 @@ void CirclesDialog::loadGroupMeta(const uint32_t &token)
 	personalCirclesItem->setText(0, "Personal Circles");
 	ui.treeWidget_membership->addTopLevelItem(personalCirclesItem);
 
-	QTreeWidgetItem *externalCirclesItem = new QTreeWidgetItem();
-	externalCirclesItem->setText(0, "External Circles");
-	ui.treeWidget_membership->addTopLevelItem(externalCirclesItem);
+	QTreeWidgetItem *externalAdminCirclesItem = new QTreeWidgetItem();
+	externalAdminCirclesItem->setText(0, "External Circles (Admin)");
+	ui.treeWidget_membership->addTopLevelItem(externalAdminCirclesItem);
+
+	QTreeWidgetItem *externalSubCirclesItem = new QTreeWidgetItem();
+	externalSubCirclesItem->setText(0, "External Circles (Subscribed)");
+	ui.treeWidget_membership->addTopLevelItem(externalSubCirclesItem);
+
+	QTreeWidgetItem *externalOtherCirclesItem = new QTreeWidgetItem();
+	externalOtherCirclesItem->setText(0, "External Circles (Other)");
+	ui.treeWidget_membership->addTopLevelItem(externalOtherCirclesItem);
 
         for(vit = groupInfo.begin(); vit != groupInfo.end(); vit++)
         {
@@ -634,7 +642,18 @@ void CirclesDialog::loadGroupMeta(const uint32_t &token)
 		}
 		else
 		{
-			externalCirclesItem->addChild(groupItem);
+			if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
+			{
+				externalAdminCirclesItem->addChild(groupItem);
+			}
+			else if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
+			{
+				externalSubCirclesItem->addChild(groupItem);
+			}
+			else
+			{
+				externalOtherCirclesItem->addChild(groupItem);
+			}
 		}
         }
 }
