@@ -374,11 +374,19 @@ bool p3IdService::loadReputation(const RsGxsId &id)
 
 bool p3IdService::getReputation(const RsGxsId &id, GixsReputation &rep)
 {
-	/* Inso this is the key part for accepting messages */
+	/* this is the key part for accepting messages */
 
-
-
-
+	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+	RsGxsIdCache data;
+	if (mPublicKeyCache.fetch(id, data))
+	{
+		rep.id = id;
+		// Score > 0 is okay.
+		// Will extract score from Cache Info.
+		// For the moment just return positive number.
+		rep.score = 10; 
+		return true;
+	}
 	return false;
 }
 
