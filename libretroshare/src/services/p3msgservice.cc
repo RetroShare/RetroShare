@@ -1656,6 +1656,7 @@ bool p3MsgService::encryptMessage(const std::string& pgp_id,RsMsgItem *item)
 	item->msgbcc.ids.clear() ;
 	item->msgto.ids.clear() ;
 	item->msgFlags |= RS_MSG_FLAGS_ENCRYPTED ;
+	item->attachment.TlvClear() ;
 
 	return true ;
 }
