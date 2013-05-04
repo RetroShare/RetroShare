@@ -165,6 +165,7 @@ public:
 class GixsReputation
 {
 	public:
+	GixsReputation() : score(0) {}
 		RsGxsId id;
 		int score;
 };

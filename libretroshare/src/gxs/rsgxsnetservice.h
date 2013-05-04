@@ -295,10 +295,21 @@ private:
 
     void runVetting();
 
+    /*!
+     * @param peerId
+     * @param grpMeta this is the meta item to determine if it can be sent to given peer
+     * @param toVet items to vet are stored here if needed
+     * @return
+     */
+    bool canSendGrpId(const RsPgpId& peerId, RsGxsGrpMetaData& grpMeta, std::vector<GrpIdCircleVet>& toVet);
+
     void locked_createTransactionFromPending(MsgRespPending* grpPend);
     void locked_createTransactionFromPending(GrpRespPending* msgPend);
+    void locked_createTransactionFromPending(GrpCircleIdRequestVetting* grpPend);
+
     void locked_pushMsgTransactionFromList(std::list<RsNxsItem*>& reqList, const std::string& peerId, const uint32_t& transN);
     void locked_pushGrpTransactionFromList(std::list<RsNxsItem*>& reqList, const std::string& peerId, const uint32_t& transN);
+    void locked_pushGrpRespFromList(std::list<RsNxsItem*>& respList, const std::string& peer, const uint32_t& transN);
     void syncWithPeers();
 
 private:
@@ -400,6 +411,7 @@ private:
 
     // need to be verfied
     std::vector<AuthorPending*> mPendingResp;
+    std::vector<GrpCircleVetting*> mPendingCircleVets;
 };
 
 #endif // RSGXSNETSERVICE_H

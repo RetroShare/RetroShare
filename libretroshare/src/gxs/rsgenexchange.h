@@ -333,6 +333,7 @@ protected:
     }
 
 public:
+
     /*!
      * retrieves message data associated to a request token
      * @param token token to be redeemed for message item retrieval

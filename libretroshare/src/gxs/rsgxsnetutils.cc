@@ -49,7 +49,10 @@ bool AuthorPending::getAuthorRep(GixsReputation& rep,
 {
 	if(mRep->haveReputation(authorId))
 	{
-		return mRep->getReputation(authorId, rep);
+		mRep->getReputation(authorId, rep);
+		// renable after identity comes on live
+		//return mRep->getReputation(authorId, rep);
+		return true;
 	}
 
 	mRep->loadReputation(authorId);
@@ -92,7 +95,7 @@ bool MsgRespPending::accepted()
 		if(!entry.mPassedVetting)
 		{
 			GixsReputation rep;
-
+#ifdef ENABLE_IDENTITY_VETTING
 			if(getAuthorRep(rep, entry.mAuthorId))
 			{
 				if(rep.score > mCutOff)
@@ -101,6 +104,10 @@ bool MsgRespPending::accepted()
 					count++;
 				}
 			}
+#else
+			entry.mPassedVetting = true;
+			count++;
+#endif
 
 		}else
 		{
@@ -209,3 +216,70 @@ void RsNxsNetMgrImpl::getOnlineList(std::set<std::string> &ssl_peers)
         ssl_peers.insert(*lit);
 }
 
+const time_t GrpCircleVetting::EXPIRY_PERIOD_OFFSET = 5; // 10 seconds
+const int GrpCircleVetting::GRP_ID_PEND = 1;
+const int GrpCircleVetting::GRP_ITEM_PEND = 2;
+
+
+GrpIdCircleVet::GrpIdCircleVet(const RsGxsGroupId& grpId, const RsGxsCircleId& circleId)
+ : mGroupId(grpId), mCircleId(circleId), mCleared(false) {}
+
+GrpCircleVetting::GrpCircleVetting(RsGcxs* const circles)
+ : mCircles(circles) {}
+
+GrpCircleVetting::~GrpCircleVetting()
+{
+}
+
+bool GrpCircleVetting::expired()
+{
+	return (mTimeStamp + EXPIRY_PERIOD_OFFSET) < time(NULL);
+}
+bool GrpCircleVetting::canSend(const RsPgpId& peerId, const RsGxsCircleId& circleId)
+{
+#ifdef ENABLE_CIRCLE_VETTING
+	if(mCircles->isLoaded(circleId))
+	{
+		return mCircles->canSend(circleId, peerId);
+	}
+
+	mCircles->loadCircle(circleId);
+
+	return false;
+#endif
+	return true;
+}
+
+GrpCircleIdRequestVetting::GrpCircleIdRequestVetting(
+		RsGcxs* const circles, std::vector<GrpIdCircleVet> grpCircleV, const std::string& peerId)
+ : GrpCircleVetting(circles), mGrpCircleV(grpCircleV), mPeerId(peerId) {}
+
+bool GrpCircleIdRequestVetting::cleared()
+{
+	std::vector<GrpIdCircleVet>::size_type i, count;
+	for(i = 0; i < mGrpCircleV.size(); i++)
+	{
+		GrpIdCircleVet& gic = mGrpCircleV[i];
+
+		if(!gic.mCleared)
+		{
+			if(canSend(mPeerId, gic.mCircleId))
+			{
+				gic.mCleared = true;
+				count++;
+			}
+		}
+		else
+		{
+			count++;
+		}
+
+	}
+
+	return count == mGrpCircleV.size();
+}
+
+int GrpCircleIdRequestVetting::getType() const
+{
+	return GRP_ID_PEND;
+}

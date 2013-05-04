@@ -915,7 +915,7 @@ RsNxsSyncMsgItem* RsNxsSerialiser::deserialNxsSyncMsgItem(void *data, uint32_t *
     ok &= getRawUInt8(data, *size, &offset, &(item->flag));
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_MSGID, item->msgId);
-    ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_MSGID, item->authorId);
+    ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_NAME, item->authorId);
 
     if (offset != rssize)
     {

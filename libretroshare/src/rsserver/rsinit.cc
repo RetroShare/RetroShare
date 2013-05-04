@@ -2306,15 +2306,20 @@ int RsServer::StartupRetroShare()
         // init gxs services
         mGxsIdService = new p3IdService(gxsid_ds, NULL);
 
+        RsGeneralDataService* gxscircles_ds = new RsDataService(currGxsDir + "/", "gxscircles_db",
+                        RS_SERVICE_GXSV2_TYPE_GXSCIRCLE, NULL);
+
+        mGxsCircles = new p3GxsCircles(gxscircles_ds, NULL, mGxsIdService);
+
         // create GXS photo service
         RsGxsNetService* gxsid_ns = new RsGxsNetService(
-                        RS_SERVICE_GXSV2_TYPE_GXSID, gxsid_ds, nxsMgr, mGxsIdService);
+                        RS_SERVICE_GXSV2_TYPE_GXSID, gxsid_ds, nxsMgr,
+                        mGxsIdService, mGxsIdService, mGxsCircles);
 
         /**** GxsCircle service ****/
 
 
-        RsGeneralDataService* gxscircles_ds = new RsDataService(currGxsDir + "/", "gxscircles_db",
-                        RS_SERVICE_GXSV2_TYPE_GXSCIRCLE, NULL);
+
 
 #ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         gxscircles_ds->resetDataStore(); 
@@ -2325,7 +2330,8 @@ int RsServer::StartupRetroShare()
 
         // create GXS Circle service
         RsGxsNetService* gxscircles_ns = new RsGxsNetService(
-                        RS_SERVICE_GXSV2_TYPE_GXSCIRCLE, gxscircles_ds, nxsMgr, mGxsCircles);
+                        RS_SERVICE_GXSV2_TYPE_GXSCIRCLE, gxscircles_ds, nxsMgr,
+                        mGxsCircles, mGxsIdService, mGxsCircles);
 
 
         /**** Photo service ****/
@@ -2341,7 +2347,7 @@ int RsServer::StartupRetroShare()
 
         // create GXS photo service
         RsGxsNetService* photo_ns = new RsGxsNetService(
-                        RS_SERVICE_GXSV2_TYPE_PHOTO, photo_ds, nxsMgr, mPhoto);
+                        RS_SERVICE_GXSV2_TYPE_PHOTO, photo_ds, nxsMgr, mPhoto, mGxsIdService, mGxsCircles);
 
         /**** Posted GXS service ****/
 
@@ -2358,7 +2364,7 @@ int RsServer::StartupRetroShare()
 
         // create GXS photo service
         RsGxsNetService* posted_ns = new RsGxsNetService(
-                        RS_SERVICE_GXSV2_TYPE_POSTED, posted_ds, nxsMgr, mPosted);
+                        RS_SERVICE_GXSV2_TYPE_POSTED, posted_ds, nxsMgr, mPosted, mGxsIdService, mGxsCircles);
 
 
         /**** Wiki GXS service ****/
@@ -2376,7 +2382,7 @@ int RsServer::StartupRetroShare()
 
         // create GXS photo service
         RsGxsNetService* wiki_ns = new RsGxsNetService(
-                        RS_SERVICE_GXSV2_TYPE_WIKI, wiki_ds, nxsMgr, mWiki);
+                        RS_SERVICE_GXSV2_TYPE_WIKI, wiki_ds, nxsMgr, mWiki, mGxsIdService, mGxsCircles);
 
 
         /**** Wire GXS service ****/
@@ -2393,7 +2399,7 @@ int RsServer::StartupRetroShare()
 
         // create GXS photo service
         RsGxsNetService* wire_ns = new RsGxsNetService(
-                        RS_SERVICE_GXSV2_TYPE_WIRE, wire_ds, nxsMgr, mWire);
+                        RS_SERVICE_GXSV2_TYPE_WIRE, wire_ds, nxsMgr, mWire, mGxsIdService, mGxsCircles);
 
 
         /**** Forum GXS service ****/
@@ -2409,7 +2415,8 @@ int RsServer::StartupRetroShare()
 
         // create GXS photo service
         RsGxsNetService* gxsforums_ns = new RsGxsNetService(
-                        RS_SERVICE_GXSV2_TYPE_FORUMS, gxsforums_ds, nxsMgr, mGxsForums);
+                        RS_SERVICE_GXSV2_TYPE_FORUMS, gxsforums_ds, nxsMgr,
+                        mGxsForums, mGxsIdService, mGxsCircles);
 
 
         /**** Channel GXS service ****/
@@ -2425,7 +2432,8 @@ int RsServer::StartupRetroShare()
 
         // create GXS photo service
         RsGxsNetService* gxschannels_ns = new RsGxsNetService(
-                        RS_SERVICE_GXSV2_TYPE_CHANNELS, gxschannels_ds, nxsMgr, mGxsChannels);
+                        RS_SERVICE_GXSV2_TYPE_CHANNELS, gxschannels_ds, nxsMgr,
+                        mGxsChannels, mGxsIdService, mGxsCircles);
 
         // now add to p3service
         pqih->addService(gxsid_ns);

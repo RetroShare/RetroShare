@@ -104,6 +104,12 @@ private:
 
 };
 
+/*!
+ * Partial abstract class
+ * which represents
+ * items waiting to be vetted
+ * on account of their author Id
+ */
 class AuthorPending
 {
 public:
@@ -195,6 +201,59 @@ public:
 	std::string mPeerId;
 	GrpAuthorV mGrpAuthV;
 	int mCutOff;
+};
+
+
+///////////////
+
+class GrpIdCircleVet
+{
+public:
+	GrpIdCircleVet(const RsGxsGroupId& grpId, const RsGxsCircleId& circleId);
+	RsGxsGroupId mGroupId;
+	RsGxsCircleId mCircleId;
+	bool mCleared;
+};
+
+class GrpItemCircleVet
+{
+public:
+	RsNxsGrp* grpItem;
+	RsGxsCircleId mCircleId;
+	bool mCleared;
+};
+
+class GrpCircleVetting
+{
+public:
+
+	static const time_t EXPIRY_PERIOD_OFFSET;
+	static const int GRP_ID_PEND;
+	static const int GRP_ITEM_PEND;
+
+	GrpCircleVetting(RsGcxs* const circles);
+	virtual ~GrpCircleVetting();
+	bool expired();
+	virtual int getType() const = 0;
+	virtual bool cleared() = 0;
+
+protected:
+	bool canSend(const RsPgpId& peerId, const RsGxsCircleId& circleId);
+
+private:
+
+	RsGcxs* const mCircles;
+	time_t mTimeStamp;
+};
+
+class GrpCircleIdRequestVetting : public GrpCircleVetting
+{
+public:
+	GrpCircleIdRequestVetting(RsGcxs* const circles, std::vector<GrpIdCircleVet> mGrpCircleV, const std::string& peerId);
+	bool cleared();
+	int getType() const;
+	std::vector<GrpIdCircleVet> mGrpCircleV;
+	std::string mPeerId;
 };
 
 
