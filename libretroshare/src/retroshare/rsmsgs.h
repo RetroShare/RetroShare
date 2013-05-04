@@ -58,6 +58,7 @@
 #define RS_MSG_USER_REQUEST          0x0400   /* user request */
 #define RS_MSG_FRIEND_RECOMMENDATION 0x0800   /* friend recommendation */
 #define RS_MSG_SYSTEM                (RS_MSG_USER_REQUEST | RS_MSG_FRIEND_RECOMMENDATION)
+#define RS_MSG_ENCRYPTED             0x1000	 /* message is encrypted */
 
 #define RS_CHAT_LOBBY_EVENT_PEER_LEFT   				0x01
 #define RS_CHAT_LOBBY_EVENT_PEER_STATUS 				0x02
@@ -244,6 +245,7 @@ virtual ~RsMsgs() { return; }
 virtual bool getMessageSummaries(std::list<MsgInfoSummary> &msgList) = 0;
 virtual bool getMessage(const std::string &mId, MessageInfo &msg)  = 0;
 virtual void getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox) = 0;
+virtual bool decryptMessage(const std::string& mId) = 0 ;
 
 virtual bool MessageSend(MessageInfo &info) = 0;
 virtual bool SystemMessage(const std::wstring &title, const std::wstring &message, uint32_t systemFlag) = 0;

@@ -39,6 +39,7 @@
 #include "util/rsdebug.h"
 #include "util/rsdir.h"
 #include "util/rsstring.h"
+#include "util/radix64.h"
 #include "util/rsrandom.h"
 
 #include <iomanip>
@@ -125,7 +126,7 @@ void p3MsgService::processMsg(RsMsgItem *mi, bool incoming)
 		{
 			/* from a peer */
 
-			mi->msgFlags &= RS_MSG_FLAGS_SYSTEM; // remove flags
+			mi->msgFlags &= (RS_MSG_FLAGS_ENCRYPTED | RS_MSG_FLAGS_SYSTEM); // remove flags except those
 			mi->msgFlags |= RS_MSG_FLAGS_NEW;
 
 			pqiNotify *notify = getPqiNotify();
@@ -1382,6 +1383,10 @@ void p3MsgService::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 	{
 		mi.msgflags |= RS_MSG_NEW;
 	}
+
+	if (msg->msgFlags & RS_MSG_FLAGS_ENCRYPTED)
+		mi.msgflags |= RS_MSG_ENCRYPTED ;
+
 	if (msg->msgFlags & RS_MSG_FLAGS_TRASH)
 	{
 		mi.msgflags |= RS_MSG_TRASH;
@@ -1466,6 +1471,9 @@ void p3MsgService::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 void p3MsgService::initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis)
 {
 	mis.msgflags = 0;
+
+	if (msg->msgFlags & RS_MSG_FLAGS_ENCRYPTED)
+		mis.msgflags |= RS_MSG_ENCRYPTED ;
 
 	/* translate flags, if we sent it... outgoing */
 	if ((msg->msgFlags & RS_MSG_FLAGS_OUTGOING)
@@ -1631,7 +1639,8 @@ bool p3MsgService::encryptMessage(const std::string& pgp_id,RsMsgItem *item)
 
 	// Now turn the binary encrypted chunk into a readable radix string.
 	//
-	std::string armoured_data = PGPKeyManagement::makeArmouredKey(encrypted_data,encrypted_size,"Retroshare encrypted message") ;
+	std::string armoured_data ;
+	Radix64::encode((char *)encrypted_data,encrypted_size,armoured_data) ;
 	delete[] encrypted_data ;
 
 	std::wstring encrypted_msg ;
@@ -1651,9 +1660,47 @@ bool p3MsgService::encryptMessage(const std::string& pgp_id,RsMsgItem *item)
 	return true ;
 }
 
-bool p3MsgService::decryptMessage(RsMsgItem *item)
+bool p3MsgService::decryptMessage(const std::string& mId)
 {
-	std::cerr << "Not implemented!!" << std::endl;
+	uint32_t msgId = atoi(mId.c_str());
+	std::string encrypted_string ;
+
+	{
+		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+
+		std::map<uint32_t, RsMsgItem *>::iterator mit = imsg.find(msgId);
+
+		if(mit == imsg.end() || !librs::util::ConvertUtf16ToUtf8(mit->second->message,encrypted_string)) 
+			return false;
+	}
+
+	char *encrypted_data ;
+	size_t encrypted_size ;
+
+	Radix64::decode(encrypted_string,encrypted_data,encrypted_size) ;
+
+	uint32_t decrypted_size = encrypted_size + 500 ;
+	unsigned char *decrypted_data = new unsigned char[decrypted_size] ;
+
+	if(!AuthGPG::getAuthGPG()->decryptDataBin(encrypted_data,encrypted_size,decrypted_data,&decrypted_size))
+	{
+		delete[] encrypted_data ;
+		delete[] decrypted_data ;
+		std::cerr << "decryption failed!" << std::endl;
+		return false;
+	}
+
+	RsMsgItem *item = dynamic_cast<RsMsgItem*>(_serialiser->deserialise(decrypted_data,&decrypted_size)) ;
+
+	if(item == NULL)
+		return false ;
+
+	{
+		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+		*imsg[msgId] = *item ;
+	}
+	delete item ;
+
 	return true ;
 }
 

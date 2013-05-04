@@ -23,6 +23,7 @@
 #include <QShortcut>
 #include <QTimer>
 #include <QDateTime>
+#include <QMessageBox>
 #include <QKeyEvent>
 
 #include "MessagesDialog.h"
@@ -118,8 +119,8 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     inChange = false;
     lockUpdate = 0;
 
-    connect(ui.messagestreeView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(messageslistWidgetCostumPopupMenu(QPoint)));
-    connect(ui.listWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(folderlistWidgetCostumPopupMenu(QPoint)));
+    connect(ui.messagestreeView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(messageslistWidgetCustomPopupMenu(QPoint)));
+    connect(ui.listWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(folderlistWidgetCustomPopupMenu(QPoint)));
     connect(ui.messagestreeView, SIGNAL(clicked(const QModelIndex&)) , this, SLOT(clicked(const QModelIndex&)));
     connect(ui.messagestreeView, SIGNAL(doubleClicked(const QModelIndex&)) , this, SLOT(doubleClicked(const QModelIndex&)));
     connect(ui.listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(changeBox(int)));
@@ -507,7 +508,7 @@ bool MessagesDialog::hasMessageStar(int nRow)
     return item->data(ROLE_MSGFLAGS).toInt() & RS_MSG_STAR;
 }
 
-void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint /*point*/ )
+void MessagesDialog::messageslistWidgetCustomPopupMenu( QPoint /*point*/ )
 {
     std::string cid;
     std::string mid;
@@ -587,6 +588,9 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint /*point*/ )
         action->setDisabled(true);
     }
 
+	 if(nCount==1 && (msgInfo.msgflags & RS_MSG_ENCRYPTED))
+		 action = contextMnu.addAction(QIcon(IMAGE_SYSTEM), tr("Decrypt Message"), this, SLOT(decryptSelectedMsg()));
+
     int listrow = ui.listWidget->currentRow();
     if (listrow == ROW_TRASHBOX) {
         action = contextMnu.addAction(tr("Undelete"), this, SLOT(undeletemessage()));
@@ -605,7 +609,7 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint /*point*/ )
     contextMnu.exec(QCursor::pos());
 }
 
-void MessagesDialog::folderlistWidgetCostumPopupMenu(QPoint /*point*/)
+void MessagesDialog::folderlistWidgetCustomPopupMenu(QPoint /*point*/)
 {
     if (ui.listWidget->currentRow() != ROW_TRASHBOX) {
         /* Context menu only neede for trash box */
@@ -1112,7 +1116,11 @@ void MessagesDialog::insertMessages()
             }
 
             // Subject
-            text = QString::fromStdWString(it->title);
+				if(it->msgflags & RS_MSG_ENCRYPTED)
+					text = tr("Encrypted message. Right-click to decrypt it.") ;
+				else
+					text = QString::fromStdWString(it->title);
+
             item[COLUMN_SUBJECT]->setText(text);
             item[COLUMN_SUBJECT]->setData(text + dateString, ROLE_SORT);
 
@@ -1462,6 +1470,26 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
 
     msgWidget->fill(mCurrMsgId);
     updateInterface();
+}
+
+void MessagesDialog::decryptSelectedMsg()
+{
+    MessageInfo msgInfo;
+
+    if (!rsMsgs->getMessage(mCurrMsgId, msgInfo)) 
+		 return ;
+
+	 if(!msgInfo.msgflags & RS_MSG_ENCRYPTED)
+	 {
+		 std::cerr << "This message is not encrypted! Cannot decrypt!" << std::endl;
+		 return ;
+	 }
+
+	 if(!rsMsgs->decryptMessage(mCurrMsgId) )
+		 QMessageBox::warning(NULL,tr("Decryption failed!"),tr("This message could not be decrypted.")) ;
+
+	 //setMsgAsReadUnread(currentIndex.row(), true);
+	 updateMessageSummaryList();
 }
 
 bool MessagesDialog::getCurrentMsg(std::string &cid, std::string &mid)

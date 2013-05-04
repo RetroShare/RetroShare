@@ -57,6 +57,7 @@ bool 	getMessageSummaries(std::list<MsgInfoSummary> &msgList);
 bool 	getMessage(const std::string &mid, MessageInfo &msg);
 void    getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox);
 
+bool decryptMessage(const std::string& mid) ;
 bool    removeMsgId(const std::string &mid); 
 bool    markMsgIdRead(const std::string &mid, bool bUnreadByUser);
 bool    setMsgFlag(const std::string &mid, uint32_t flag, uint32_t mask);
@@ -138,7 +139,6 @@ int     checkOutgoingMessages();
 		// Utility functions
 
 		bool encryptMessage(const std::string& pgp_id,RsMsgItem *msg) ;
-		bool decryptMessage(RsMsgItem *msg) ;
 
 		void manageDistantPeers() ;
 		void sendTurtleData(const std::string& hash,RsMsgItem *) ;
