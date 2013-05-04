@@ -121,7 +121,8 @@ virtual ~RsGxsCircles() { return; }
 
 	/* External Interface (Cached stuff) */
 virtual bool getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails &details) = 0;
-virtual bool getCircleIdList(std::list<RsGxsCircleId> &circleIds) = 0;
+virtual bool getCircleExternalIdList(std::list<RsGxsCircleId> &circleIds) = 0;
+virtual bool getCirclePersonalIdList(std::list<RsGxsCircleId> &circleIds) = 0;
 
 	/* standard load */
 virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsCircleGroup> &groups) = 0;

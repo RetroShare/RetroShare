@@ -38,11 +38,11 @@
 #include <stdio.h>
 
 /****
- * #define DEBUG_IDS	1
  * #define GXSID_GEN_DUMMY_DATA	1
  * #define ENABLE_PGP_SIGNATURES 1
  ****/
 
+#define DEBUG_IDS	1
 #define ENABLE_PGP_SIGNATURES 	1
 
 
@@ -205,7 +205,7 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
 	       /* shouldn't need to worry about groups - as they need to be subscribed to */
 		if (groupChange)
 		{
-			std::cerr << "p3IdService::notifyChanges() Found Message Change Notification";
+			std::cerr << "p3IdService::notifyChanges() Found Group Change Notification";
 			std::cerr << std::endl;
 
 			std::list<RsGxsGroupId> &groupList = groupChange->mGrpIdList;

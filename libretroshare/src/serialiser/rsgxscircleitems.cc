@@ -160,11 +160,15 @@ std::ostream& RsGxsCircleGroupItem::print(std::ostream& out, uint16_t indent)
 	{
 		printRsItemBase(out, "Local Circle: PGP Ids:", indent);
  		pgpIdSet.print(out, int_Indent);
+		printRsItemBase(out, "GXS Ids (should be empty):", indent);
+ 		gxsIdSet.print(out, int_Indent);
 	}
 	else
 	{
 		printRsItemBase(out, "External Circle: GXS Ids", indent);
  		gxsIdSet.print(out, int_Indent);
+		printRsItemBase(out, "PGP Ids (should be empty):", indent);
+ 		pgpIdSet.print(out, int_Indent);
 	}
 
  	subCircleSet.print(out, int_Indent);
