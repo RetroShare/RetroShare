@@ -69,6 +69,21 @@ static void release(void *data);
 #define GXS_VOTE_DOWN 	0x0001
 #define GXS_VOTE_UP	0x0002
 
+
+// Status Flags to indicate Voting....
+// All Services that use the Comment service must not Use This space.
+namespace GXS_SERV {
+	/* Msg Vote Status */
+	static const uint32_t GXS_MSG_STATUS_GXSCOMMENT_MASK  = 0x000f0000;
+	static const uint32_t GXS_MSG_STATUS_VOTE_MASK        = 0x00030000;
+
+	static const uint32_t GXS_MSG_STATUS_VOTE_UP          = 0x00010000;
+	static const uint32_t GXS_MSG_STATUS_VOTE_DOWN        = 0x00020000;
+}
+
+
+
+
 class RsGxsVote
 {
 	public:

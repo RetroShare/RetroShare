@@ -72,6 +72,7 @@ RsGxsImage::~RsGxsImage()
 RsGxsImage &RsGxsImage::operator=(const RsGxsImage &a)
 {
 	copy(a.mData, a.mSize);
+	return *this;
 }
 
 
@@ -145,31 +146,6 @@ RsGxsVote::RsGxsVote()
 {
 	mVoteType = 0;
 }
-
-/********************************************************************************/
-
-#define RSGXSCOMMENT_MAX_SERVICE_STRING 16
-
-bool SSGxsComment::load(const std::string &input)
-{
-	//char line[RSGXSCOMMENT_MAX_SERVICE_STRING];
-	int val;
-	mVoteValue = 0;
-	if (1 == sscanf(input.c_str(), "V:%d", &val))
-	{
-		mVoteValue = val;
-	}
-	return true;
-}
-
-
-std::string SSGxsComment::save() const
-{
-	std::string output;
-	rs_sprintf(output, "V:%d", mVoteValue);
-	return output;
-}
-
 
 /********************************************************************************/
 /******************* Startup / Tick    ******************************************/
@@ -255,10 +231,22 @@ bool p3GxsCommentService::getGxsCommentData(const uint32_t &token, std::vector<R
 			}
 			cit->mScore = calculateBestScore(cit->mUpVotes, cit->mDownVotes);
 
-			/* convert serviceString -> mHaveVoted */
-			SSGxsComment ss;
-			ss.load(cit->mMeta.mServiceString);
-			cit->mOwnVote = ss.mVoteValue;
+			/* convert Status -> mHaveVoted */
+			if (cit->mMeta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_VOTE_MASK)
+			{
+				if (cit->mMeta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_VOTE_UP)
+				{
+					cit->mOwnVote = GXS_VOTE_UP;
+				}
+				else
+				{
+					cit->mOwnVote = GXS_VOTE_DOWN;
+				}
+			}
+			else
+			{
+				cit->mOwnVote = GXS_VOTE_NONE;
+			}
 		}
 
 		std::cerr << "p3GxsCommentService::getGxsCommentData() Found " << comments.size() << " Comments";
@@ -345,10 +333,22 @@ bool p3GxsCommentService::getGxsRelatedComments(const uint32_t &token, std::vect
 			}
 			cit->mScore = calculateBestScore(cit->mUpVotes, cit->mDownVotes);
 
-			/* convert serviceString -> mHaveVoted */
-			SSGxsComment ss;
-			ss.load(cit->mMeta.mServiceString);
-			cit->mOwnVote = ss.mVoteValue;
+			/* convert Status -> mHaveVoted */
+			if (cit->mMeta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_VOTE_MASK)
+			{
+				if (cit->mMeta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_VOTE_UP)
+				{
+					cit->mOwnVote = GXS_VOTE_UP;
+				}
+				else
+				{
+					cit->mOwnVote = GXS_VOTE_DOWN;
+				}
+			}
+			else
+			{
+				cit->mOwnVote = GXS_VOTE_NONE;
+			}
 		}
 
 		std::cerr << "p3GxsCommentService::getGxsRelatedComments() Found " << comments.size() << " Comments";
@@ -519,13 +519,8 @@ void p3GxsCommentService::load_PendingVoteParent(const uint32_t &token)
 				continue;
 			}
 
-			/* check Vote serviceString */
-			SSGxsComment ss;
-			ss.load(meta.mServiceString);
-
 			RsGxsVote vote = pit->second.mVote;
-
-			if (ss.mVoteValue)
+			if (meta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_VOTE_MASK)
 			{
                 		std::cerr << "p3GxsCommentService::load_PendingVoteParent() ERROR Already Voted";
 				std::cerr << std::endl;
@@ -543,11 +538,17 @@ void p3GxsCommentService::load_PendingVoteParent(const uint32_t &token)
                 	std::cerr << "p3GxsCommentService::load_PendingVoteParent() submitting Vote";
 			std::cerr << std::endl;
 
-			ss.mVoteValue = vote.mVoteType;
-			std::string servString = ss.save();
-			
-			uint32_t ss_token;
-			mExchange->setMsgServiceString(ss_token, parentId, servString);	
+			uint32_t status_token;
+			if (vote.mVoteType == GXS_VOTE_UP)
+			{
+				mExchange->setMsgStatusFlags(status_token, parentId, 
+						GXS_SERV::GXS_MSG_STATUS_VOTE_UP, GXS_SERV::GXS_MSG_STATUS_VOTE_MASK);
+			}
+			else
+			{
+				mExchange->setMsgStatusFlags(status_token, parentId, 
+						GXS_SERV::GXS_MSG_STATUS_VOTE_DOWN, GXS_SERV::GXS_MSG_STATUS_VOTE_MASK);
+			}
 
 			uint32_t vote_token;
 			castVote(vote_token, vote);

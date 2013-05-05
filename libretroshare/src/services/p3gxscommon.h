@@ -57,23 +57,6 @@ class VoteHolder
 	uint32_t  mStatus;
 };
 
-// NOTE this ServiceString class must be compatible with other classes
-// that use ServiceString... i.e. it should scan to string for {V:%d }
-// and remember the rest of the string - so it can maintain other settings.
-// TODO.
-
-class SSGxsComment
-{
-	public:
-	SSGxsComment(): mVoteValue(0) { return; }
-bool 	load(const std::string &input);
-std::string save() const;
-
-	std::string mPreString;
-	std::string mPostString;
-	uint32_t    mVoteValue;
-};
-
 
 class p3GxsCommentService: public GxsTokenQueue
 {
