@@ -1490,6 +1490,8 @@ void MessagesDialog::decryptSelectedMsg()
 
 	 //setMsgAsReadUnread(currentIndex.row(), true);
 	 updateMessageSummaryList();
+    insertMessages();
+    insertMsgTxtAndFiles();
 }
 
 bool MessagesDialog::getCurrentMsg(std::string &cid, std::string &mid)

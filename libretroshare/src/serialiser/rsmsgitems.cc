@@ -1382,6 +1382,26 @@ void RsMsgTagType::clear()
 }
 
 
+void RsPublicMsgInviteConfigItem::clear()
+{
+	hash.clear() ;
+	time_stamp = 0 ;
+}
+std::ostream& RsPublicMsgInviteConfigItem::print(std::ostream &out, uint16_t indent)
+{
+	printRsItemBase(out, "RsPublicMsgInviteConfigItem", indent);
+	uint16_t int_Indent = indent + 2;
+
+	printIndent(out, int_Indent);
+	out << "hash : " << hash  << std::endl;
+
+	printIndent(out, int_Indent);
+	out << "timt : " << time_stamp << std::endl;
+
+	printRsItemEnd(out, "RsPublicMsgInviteConfigItem", indent);
+
+	return out;
+}
 void RsMsgTags::clear()
 {
 	msgId = 0;
@@ -1580,7 +1600,15 @@ RsMsgItem *RsMsgSerialiser::deserialiseMsgItem(void *data, uint32_t *pktsize)
 
 	return item;
 }
+uint32_t RsMsgSerialiser::sizePublicMsgInviteConfigItem(RsPublicMsgInviteConfigItem* item)
+{
+	uint32_t s = 8; /* header */
 
+	s += GetTlvStringSize(item->hash);
+	s += 4; /* time_stamp */
+
+	return s;
+}
 
 uint32_t RsMsgSerialiser::sizeTagItem(RsMsgTagType* item)
 {
@@ -1591,6 +1619,44 @@ uint32_t RsMsgSerialiser::sizeTagItem(RsMsgTagType* item)
 	s += 4; /* tag id */
 
 	return s;
+}
+
+bool RsMsgSerialiser::serialisePublicMsgInviteConfigItem(RsPublicMsgInviteConfigItem *item, void *data, uint32_t* pktsize)
+{
+	uint32_t tlvsize = sizePublicMsgInviteConfigItem(item);
+	uint32_t offset = 0;
+
+	if (*pktsize < tlvsize)
+		return false; /* not enough space */
+
+	*pktsize = tlvsize;
+
+	bool ok = true;
+
+	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+
+#ifdef RSSERIAL_DEBUG
+	std::cerr << "RsMsgSerialiser::serialiseMsgTagItem() Header: " << ok << std::endl;
+	std::cerr << "RsMsgSerialiser::serialiseMsgTagItem() Size: " << tlvsize << std::endl;
+#endif
+
+	/* skip the header */
+	offset += 8;
+
+	/* add mandatory parts first */
+
+	ok &= SetTlvString(data,tlvsize,&offset, TLV_TYPE_STR_HASH_SHA1, item->hash);
+	ok &= setRawUInt32(data,tlvsize,&offset, item->time_stamp);
+
+	if (offset != tlvsize)
+	{
+		ok = false;
+#ifdef RSSERIAL_DEBUG
+		std::cerr << "RsMsgSerialiser::serialiseMsgTagItem() Size Error! " << std::endl;
+#endif
+	}
+
+	return ok;
 }
 
 
@@ -1632,6 +1698,59 @@ bool RsMsgSerialiser::serialiseTagItem(RsMsgTagType *item, void *data, uint32_t*
 
 	return ok;
 }
+RsPublicMsgInviteConfigItem* RsMsgSerialiser::deserialisePublicMsgInviteConfigItem(void *data,uint32_t* pktsize)
+{
+	/* get the type and size */
+	uint32_t rstype = getRsItemId(data);
+	uint32_t rssize = getRsItemSize(data);
+
+	uint32_t offset = 0;
+
+	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+		(RS_SERVICE_TYPE_MSG != getRsItemService(rstype)) ||
+		(RS_PKT_SUBTYPE_MSG_INVITE != getRsItemSubType(rstype)))
+	{
+		return NULL; /* wrong type */
+	}
+
+	if (*pktsize < rssize)    /* check size */
+		return NULL; /* not enough data */
+
+	/* set the packet length */
+	*pktsize = rssize;
+
+	bool ok = true;
+
+	/* ready to load */
+	RsPublicMsgInviteConfigItem *item = new RsPublicMsgInviteConfigItem();
+	item->clear();
+
+	/* skip the header */
+	offset += 8;
+
+	/* get mandatory parts first */
+	ok &= GetTlvString(data,rssize,&offset,TLV_TYPE_STR_HASH_SHA1,item->hash);
+
+	uint32_t ts ;
+	ok &= getRawUInt32(data, rssize, &offset, &ts) ;
+	item->time_stamp = ts ;
+
+	if (offset != rssize)
+	{
+		/* error */
+		delete item;
+		return NULL;
+	}
+
+	if (!ok)
+	{
+		delete item;
+		return NULL;
+	}
+
+	return item;
+}
+
 
 RsMsgTagType* RsMsgSerialiser::deserialiseTagItem(void *data,uint32_t* pktsize)
 {
@@ -2110,7 +2229,7 @@ bool     RsMsgSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize)
 	RsMsgParentId* msp;
 	RsMsgTagType *mtt;
 	RsMsgTags *mts;
-
+	RsPublicMsgInviteConfigItem *mtu;
 
 	if (NULL != (mi = dynamic_cast<RsMsgItem *>(i)))
 	{
@@ -2131,6 +2250,10 @@ bool     RsMsgSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize)
 	else if (NULL != (mts = dynamic_cast<RsMsgTags *>(i)))
 	{
 		return serialiseMsgTagItem(mts, data, pktsize);
+	}
+	else if (NULL != (mtu = dynamic_cast<RsPublicMsgInviteConfigItem *>(i)))
+	{
+		return serialisePublicMsgInviteConfigItem(mtu, data, pktsize);
 	}
 
 	return false;
@@ -2164,6 +2287,9 @@ RsItem* RsMsgSerialiser::deserialise(void *data, uint32_t *pktsize)
 			break;
 		case RS_PKT_SUBTYPE_MSG_TAG_TYPE:
 			return deserialiseTagItem(data, pktsize);
+			break;
+		case RS_PKT_SUBTYPE_MSG_INVITE:
+			return deserialisePublicMsgInviteConfigItem(data, pktsize);
 			break;
 		case RS_PKT_SUBTYPE_MSG_TAGS:
 			return deserialiseMsgTagItem(data, pktsize);

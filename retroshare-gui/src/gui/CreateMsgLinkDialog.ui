@@ -17,7 +17,14 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
-      <widget class="QListWidget" name="_existing_links_LW"/>
+      <widget class="QListWidget" name="_existing_links_LW">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
      </item>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -182,6 +189,13 @@
           </item>
          </widget>
         </item>
+        <item>
+         <widget class="QPushButton" name="_create_link_PB">
+          <property name="text">
+           <string>Create!</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
       <item>
@@ -195,27 +209,6 @@
          </item>
         </layout>
        </widget>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QPushButton" name="_create_link_PB">
-          <property name="text">
-           <string>Create!</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_4">
-          <property name="text">
-           <string>Link:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="lineEdit"/>
-        </item>
-       </layout>
       </item>
      </layout>
     </widget>

@@ -122,7 +122,6 @@ void CreateMsgLinkDialog::update()
 	}
 
 	std::vector<DistantOfflineMessengingInvite> invites2 ;
-
 	rsMsgs->getDistantOfflineMessengingInvites(invites2) ;
 
 	for(uint32_t i=0;i<invites2.size();++i)
@@ -134,7 +133,7 @@ void CreateMsgLinkDialog::update()
 		else
 		{
 			QListWidgetItem *item = new QListWidgetItem;
-			item->setData(Qt::DisplayRole,tr("Private chat invite to ")+QString::fromStdString(invites2[i].issuer_pgp_id)) ;
+			item->setData(Qt::DisplayRole,tr("Public message link")) ;
 			item->setData(Qt::UserRole,link.toString()) ;
 
 			_existing_links_LW->insertItem(0,item) ;

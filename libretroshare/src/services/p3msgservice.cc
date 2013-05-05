@@ -383,6 +383,14 @@ bool    p3MsgService::saveList(bool& cleanup, std::list<RsItem*>& itemList)
 	for(mit4 = mParentId.begin();  mit4 != mParentId.end(); mit4++)
 		itemList.push_back(mit4->second);
 
+	for(std::map<std::string,DistantMessengingInvite>::const_iterator it(_messenging_invites.begin());it!=_messenging_invites.end();++it)
+	{
+		RsPublicMsgInviteConfigItem *item = new RsPublicMsgInviteConfigItem ;
+		item->hash = it->first ;
+		item->time_stamp = it->second.time_of_validity ;
+
+		itemList.push_back(item) ;
+	}
 	return true;
 }
 
@@ -447,6 +455,7 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
     RsMsgTags* mti;
     RsMsgSrcId* msi;
     RsMsgParentId* msp;
+    RsPublicMsgInviteConfigItem* msv;
 
     std::list<RsMsgItem*> items;
     std::list<RsItem*>::iterator it;
@@ -468,18 +477,18 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 			items.push_back(mitem);
 		}
 		else if(NULL != (mtt = dynamic_cast<RsMsgTagType *>(*it)))
-                {
-                        // delete standard tags as they are now save in config
-                        if(mTags.end() == (tagIt = mTags.find(mtt->tagId)))
-                        {
-                            mTags.insert(std::pair<uint32_t, RsMsgTagType* >(mtt->tagId, mtt));
-                        }
-                        else
-                        {
-                            delete mTags[mtt->tagId];
-                            mTags.erase(tagIt);
-                            mTags.insert(std::pair<uint32_t, RsMsgTagType* >(mtt->tagId, mtt));
-                        }
+		{
+			// delete standard tags as they are now save in config
+			if(mTags.end() == (tagIt = mTags.find(mtt->tagId)))
+			{
+				mTags.insert(std::pair<uint32_t, RsMsgTagType* >(mtt->tagId, mtt));
+			}
+			else
+			{
+				delete mTags[mtt->tagId];
+				mTags.erase(tagIt);
+				mTags.insert(std::pair<uint32_t, RsMsgTagType* >(mtt->tagId, mtt));
+			}
 
 		}
 		else if(NULL != (mti = dynamic_cast<RsMsgTags *>(*it)))
@@ -494,6 +503,10 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 		else if(NULL != (msp = dynamic_cast<RsMsgParentId *>(*it)))
 		{
 			mParentId.insert(std::pair<uint32_t, RsMsgParentId*>(msp->msgId, msp));
+		}
+		else if(NULL != (msv = dynamic_cast<RsPublicMsgInviteConfigItem *>(*it)))
+		{
+			_messenging_invites[msv->hash].time_of_validity = msv->time_stamp ;
 		}
 	}
 
@@ -1702,6 +1715,8 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 	}
 	delete item ;
 
+	IndicateConfigChanged() ;
+
 	return true ;
 }
 
@@ -1724,6 +1739,8 @@ bool p3MsgService::createDistantOfflineMessengingInvite(time_t time_of_validity,
 		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 		_messenging_invites[hash] = invite ;
 	}
+	IndicateConfigChanged() ;
+
 	return true ;
 }
 bool p3MsgService::getDistantOfflineMessengingInvites(std::vector<DistantOfflineMessengingInvite>& invites) 
