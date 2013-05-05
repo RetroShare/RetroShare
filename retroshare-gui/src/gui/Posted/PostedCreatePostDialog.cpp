@@ -32,7 +32,7 @@ PostedCreatePostDialog::PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted *pos
     ui(new Ui::PostedCreatePostDialog)
 {
     ui->setupUi(this);
-    connect(this, SIGNAL(accepted()), this, SLOT(createPost()));
+    connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(createPost()));
 
     /* fill in the available OwnIds for signing */
     ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, "");
@@ -64,7 +64,7 @@ void PostedCreatePostDialog::createPost()
     uint32_t token;
     mPosted->createPost(token, post);
     mTokenQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, TOKEN_USER_TYPE_POST);
-    close();
+    accept();
 }
 
 PostedCreatePostDialog::~PostedCreatePostDialog()

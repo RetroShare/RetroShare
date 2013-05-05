@@ -355,7 +355,7 @@ void GxsGroupDialog::createGroup()
 	if (!setCircleParameters(meta))
 	{
 			/* error message */
-			QMessageBox::warning(this, "RetroShare", tr("Invalid Circle Selection"), QMessageBox::Ok, QMessageBox::Ok);
+			QMessageBox::warning(this, "RetroShare", tr("Invalid Circle Selection - Personal disabled for now"), QMessageBox::Ok, QMessageBox::Ok);
 			return; //Don't add with invalid circle.
 	}
 
@@ -497,6 +497,9 @@ bool GxsGroupDialog::setCircleParameters(RsGroupMetaData &meta)
 		{
 			return false;
 		}
+
+		// disable Personal circles for the moment.
+		return false;
 	}
 	else
 	{

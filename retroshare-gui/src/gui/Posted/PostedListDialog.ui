@@ -122,6 +122,9 @@
        </item>
       </widget>
      </item>
+     <item>
+      <widget class="GxsIdChooser" name="idChooser"/>
+     </item>
     </layout>
    </item>
    <item>
@@ -188,7 +191,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="QLabel" name="label">
+          <widget class="QLabel" name="showLabel">
            <property name="text">
             <string>Showing 1-100</string>
            </property>
@@ -221,7 +224,7 @@
             <x>0</x>
             <y>0</y>
             <width>443</width>
-            <height>316</height>
+            <height>162</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -241,6 +244,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>GxsIdChooser</class>
+   <extends>QComboBox</extends>
+   <header>gui/gxs/GxsIdChooser.h</header>
+  </customwidget>
   <customwidget>
    <class>GroupTreeWidget</class>
    <extends>QWidget</extends>
