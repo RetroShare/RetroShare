@@ -116,6 +116,8 @@ class RsPostedPost
 		return;
 	}
 
+	bool calculateScores(time_t ref_time);
+
 	RsMsgMetaData mMeta;
 	std::string mLink;
 	std::string mNotes;

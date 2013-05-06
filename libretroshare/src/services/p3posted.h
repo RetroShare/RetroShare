@@ -64,6 +64,9 @@ class PostStats
 	std::list<RsGxsId> voters;
 };
 
+bool encodePostedCache(std::string &str, const PostStats &s);
+bool extractPostedCache(const std::string &str, PostStats &s);
+
 
 class p3Posted: public RsGenExchange, public RsPosted, 
 	public GxsTokenQueue, 
@@ -164,8 +167,6 @@ static uint32_t postedAuthenPolicy();
 	void background_loadAllMsgs(const uint32_t &token);
 	void background_loadMsgs(const uint32_t &token, bool unprocessed);
 
-	bool encodePostedCache(std::string &str, const PostStats &s);
-	bool extractPostedCache(const std::string &str, PostStats &s);
 
 	void background_updateVoteCounts(const uint32_t &token);
 	bool background_cleanup();

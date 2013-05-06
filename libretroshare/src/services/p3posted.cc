@@ -104,7 +104,53 @@ uint32_t p3Posted::postedAuthenPolicy()
 
 void p3Posted::notifyChanges(std::vector<RsGxsNotify *> &changes)
 {
-	 RsGxsIfaceHelper::receiveChanges(changes);
+	std::cerr << "p3Posted::notifyChanges()";
+	std::cerr << std::endl;
+
+	std::vector<RsGxsNotify *> changesForGUI;
+	std::vector<RsGxsNotify *>::iterator it;
+
+	for(it = changes.begin(); it != changes.end(); it++)
+	{
+	       RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(*it);
+	       RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
+	       if (msgChange)
+	       {
+			std::cerr << "p3Posted::notifyChanges() Found Message Change Notification";
+			std::cerr << std::endl;
+
+			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
+			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit;
+			for(mit = msgChangeMap.begin(); mit != msgChangeMap.end(); mit++)
+			{
+				std::cerr << "p3Posted::notifyChanges() Msgs for Group: " << mit->first;
+				std::cerr << std::endl;
+				// To start with we are just going to trigger updates on these groups.
+				// FUTURE OPTIMISATION.
+				// It could be taken a step further and directly request these msgs for an update.
+				addGroupForProcessing(mit->first);
+			}
+			delete msgChange;
+	       }
+
+	       /* pass on Group Changes to GUI */
+		if (groupChange)
+		{
+			std::cerr << "p3Posted::notifyChanges() Found Group Change Notification";
+			std::cerr << std::endl;
+
+			std::list<RsGxsGroupId> &groupList = groupChange->mGrpIdList;
+			std::list<RsGxsGroupId>::iterator git;
+			for(git = groupList.begin(); git != groupList.end(); git++)
+			{
+				std::cerr << "p3Posted::notifyChanges() Incoming Group: " << *git;
+				std::cerr << std::endl;
+			}
+			changesForGUI.push_back(groupChange);
+		}
+	}
+	changes.clear();
+	RsGxsIfaceHelper::receiveChanges(changesForGUI);
 }
 
 void	p3Posted::service_tick()
@@ -164,7 +210,7 @@ bool p3Posted::getPostData(const uint32_t &token, std::vector<RsPostedPost> &msg
 				{
 					RsPostedPost msg = item->mPost;
 					msg.mMeta = item->meta;
-					calculateScores(msg, now);
+					msg.calculateScores(now);
 
 					msgs.push_back(msg);
 					delete item;
@@ -205,7 +251,7 @@ bool p3Posted::getRelatedPosts(const uint32_t &token, std::vector<RsPostedPost> 
 				{
 					RsPostedPost msg = item->mPost;
 					msg.mMeta = item->meta;
-					calculateScores(msg, now);
+					msg.calculateScores(now);
 
 					msgs.push_back(msg);
 					delete item;
@@ -235,34 +281,34 @@ bool p3Posted::getRelatedPosts(const uint32_t &token, std::vector<RsPostedPost> 
  *
  */
 
-bool p3Posted::calculateScores(RsPostedPost &post, time_t ref_time)
+bool RsPostedPost::calculateScores(time_t ref_time)
 {
 	/* so we want to calculate all the scores for this Post. */
 
 	PostStats stats;
-	extractPostedCache(post.mMeta.mServiceString, stats);
+	extractPostedCache(mMeta.mServiceString, stats);
 
-	post.mUpVotes = stats.up_votes;
-	post.mDownVotes = stats.down_votes;
-	post.mComments = stats.comments;
-	post.mHaveVoted = (post.mMeta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_VOTE_MASK);
+	mUpVotes = stats.up_votes;
+	mDownVotes = stats.down_votes;
+	mComments = stats.comments;
+	mHaveVoted = (mMeta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_VOTE_MASK);
 
-	time_t age_secs = ref_time - post.mMeta.mPublishTs;
+	time_t age_secs = ref_time - mMeta.mPublishTs;
 #define POSTED_AGESHIFT (2.0)
 #define POSTED_AGEFACTOR (3600.0)
 
-	post.mTopScore = ((int) post.mUpVotes - (int) post.mDownVotes);
-	if (post.mTopScore > 0)
+	mTopScore = ((int) mUpVotes - (int) mDownVotes);
+	if (mTopScore > 0)
 	{
 		// score drops with time.
-		post.mHotScore =  post.mTopScore / pow(POSTED_AGESHIFT + age_secs / POSTED_AGEFACTOR, 1.5);
+		mHotScore =  mTopScore / pow(POSTED_AGESHIFT + age_secs / POSTED_AGEFACTOR, 1.5);
 	}
 	else
 	{
 		// gets more negative with time.
-		post.mHotScore =  post.mTopScore * pow(POSTED_AGESHIFT + age_secs / POSTED_AGEFACTOR, 1.5);
+		mHotScore =  mTopScore * pow(POSTED_AGESHIFT + age_secs / POSTED_AGEFACTOR, 1.5);
 	}
-	post.mNewScore = -age_secs;
+	mNewScore = -age_secs;
 
 	return true;
 }
@@ -581,7 +627,7 @@ bool p3Posted::generateGroup(uint32_t &token, std::string groupName)
 
 
         // Overloaded from RsTickEvent for Event callbacks.
-void p3Posted::handle_event(uint32_t event_type, const std::string &elabel)
+void p3Posted::handle_event(uint32_t event_type, const std::string & /* elabel */)
 {
 	std::cerr << "p3Posted::handle_event(" << event_type << ")";
 	std::cerr << std::endl;
@@ -609,9 +655,10 @@ void p3Posted::handle_event(uint32_t event_type, const std::string &elabel)
 /*********************************************************************************
  * Background Calculations.
  *
- * At the moment it just cycles through all groups.
- * This can be optimised to only Subscribed.
- * and then to only ones with a vote / comment and affects its score.
+ * Get list of change groups from Notify....
+ * this doesn't imclude your own submissions (at this point). 
+ * So they will not be processed until someone else changes something.
+ * TODO FIX: Must push for that change.
  *
  * Eventually, we should just be able to get the new messages from Notify, 
  * and only process them!
@@ -619,6 +666,8 @@ void p3Posted::handle_event(uint32_t event_type, const std::string &elabel)
 
 void p3Posted::background_tick()
 {
+
+#if 0
 	{
 		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
 		if (mBgGroupList.empty())
@@ -626,6 +675,7 @@ void p3Posted::background_tick()
 			background_requestAllGroups();
 		}
 	}
+#endif
 
 	background_requestUnprocessedGroup();
 
@@ -715,7 +765,7 @@ void p3Posted::background_requestUnprocessedGroup()
 		mBgProcessing = true;
 	}
 
-	background_requestGroupMsgs(grpId, false);
+	background_requestGroupMsgs(grpId, true);
 }
 
 
@@ -769,6 +819,7 @@ void p3Posted::background_loadAllMsgs(const uint32_t &token)
 }
 
 
+/* This function is generalised to support any collection of messages, across multiple groups */
 
 void p3Posted::background_loadMsgs(const uint32_t &token, bool unprocessed)
 {
@@ -796,141 +847,148 @@ void p3Posted::background_loadMsgs(const uint32_t &token, bool unprocessed)
 		mBgIncremental = unprocessed;
 	}
 
+	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > postMap;
+
+	// generate vector of changes to push to the GUI.
+	std::vector<RsGxsNotify *> changes;
+	RsGxsMsgChange *msgChanges = new RsGxsMsgChange();
+
+
 	RsGxsGroupId groupId;
 	std::map<RsGxsGroupId, std::vector<RsGxsMsgItem*> >::iterator mit;
 	std::vector<RsGxsMsgItem*>::iterator vit;
 	for (mit = msgData.begin(); mit != msgData.end(); mit++)
 	{
-	  groupId = mit->first;
-	  for (vit = mit->second.begin(); vit != mit->second.end(); vit++)
-	  {
-		RsGxsMessageId parentId = (*vit)->meta.mParentId;
-		RsGxsMessageId threadId = (*vit)->meta.mThreadId;
-			
-
-		bool inc_counters = false;
-		uint32_t vote_up_inc = 0;
-		uint32_t vote_down_inc = 0;
-		uint32_t comment_inc = 0;
-
-		bool add_voter = false;
-		RsGxsId voterId;
-		RsGxsCommentItem *commentItem;
-		RsGxsVoteItem    *voteItem;
-
-		/* THIS Should be handled by UNPROCESSED Filter - but isn't */
-		if (!IS_MSG_UNPROCESSED((*vit)->meta.mMsgStatus))
-		{
-			RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
-			if (mBgIncremental)
+		  groupId = mit->first;
+		  for (vit = mit->second.begin(); vit != mit->second.end(); vit++)
+		  {
+			RsGxsMessageId parentId = (*vit)->meta.mParentId;
+			RsGxsMessageId threadId = (*vit)->meta.mThreadId;
+				
+	
+			bool inc_counters = false;
+			uint32_t vote_up_inc = 0;
+			uint32_t vote_down_inc = 0;
+			uint32_t comment_inc = 0;
+	
+			bool add_voter = false;
+			RsGxsId voterId;
+			RsGxsCommentItem *commentItem;
+			RsGxsVoteItem    *voteItem;
+	
+			/* THIS Should be handled by UNPROCESSED Filter - but isn't */
+			if (!IS_MSG_UNPROCESSED((*vit)->meta.mMsgStatus))
 			{
-				std::cerr << "p3Posted::background_loadMsgs() Msg already Processed - Skipping";
-				std::cerr << std::endl;
-				continue;
+				RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+				if (mBgIncremental)
+				{
+					std::cerr << "p3Posted::background_loadMsgs() Msg already Processed - Skipping";
+					std::cerr << std::endl;
+					continue;
+				}
 			}
-		}
-
-		/* 3 types expected: PostedPost, Comment and Vote */
-		if (parentId.empty())
-		{
-			std::cerr << "\tIgnoring TopLevel Item";
-			std::cerr << std::endl;
-
-			/* we don't care about top-level (Posts) */
-		}
-		else if (NULL != (commentItem = dynamic_cast<RsGxsCommentItem *>(*vit)))
-		{
-			/* comment - want all */
-			/* Comments are counted by Thread Id */
-			std::cerr << "\tProcessing Comment: " << commentItem;
-			std::cerr << std::endl;
-
-			inc_counters = true;
-			comment_inc = 1;
-		}
-		else if (NULL != (voteItem = dynamic_cast<RsGxsVoteItem *>(*vit)))
-		{
-			/* vote - only care about direct children */
-			if (parentId == threadId)
+	
+			/* 3 types expected: PostedPost, Comment and Vote */
+			if (parentId.empty())
 			{
-				/* Votes are organised by Parent Id,
-				 * ie. you can vote for both Posts and Comments
-				 */
-				std::cerr << "\tProcessing Vote: " << voteItem;
+				/* we don't care about top-level (Posts) */
+				std::cerr << "\tIgnoring TopLevel Item";
 				std::cerr << std::endl;
 
+				/* but we need to notify GUI about them */	
+				msgChanges->msgChangeMap[mit->first].push_back((*vit)->meta.mMsgId);
+			}
+			else if (NULL != (commentItem = dynamic_cast<RsGxsCommentItem *>(*vit)))
+			{
+				/* comment - want all */
+				/* Comments are counted by Thread Id */
+				std::cerr << "\tProcessing Comment: " << commentItem;
+				std::cerr << std::endl;
+	
 				inc_counters = true;
-				add_voter = true;
-				voterId = voteItem->meta.mAuthorId;
-
-				if (voteItem->mMsg.mVoteType == GXS_VOTE_UP)
-				{
-					vote_up_inc = 1;
-				}
-				else
-				{
-					vote_down_inc = 1;
-				}
+				comment_inc = 1;
 			}
-		}
-		else
-		{
-			/* unknown! */
-			std::cerr << "p3Posted::background_processNewMessages() ERROR Strange NEW Message:";
-			std::cerr << std::endl;
-			std::cerr << "\t" << (*vit)->meta;
-			std::cerr << std::endl;
-
-		}
-
-		if (inc_counters)
-		{
-			RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
-
-			std::map<RsGxsMessageId, PostStats>::iterator sit = mBgStatsMap.find(threadId);
-			if (sit == mBgStatsMap.end())
+			else if (NULL != (voteItem = dynamic_cast<RsGxsVoteItem *>(*vit)))
 			{
-				mBgStatsMap[threadId] = PostStats(0,0,0);
-				sit = mBgStatsMap.find(threadId);
-			}
+				/* vote - only care about direct children */
+				if (parentId == threadId)
+				{
+					/* Votes are organised by Parent Id,
+					 * ie. you can vote for both Posts and Comments
+					 */
+					std::cerr << "\tProcessing Vote: " << voteItem;
+					std::cerr << std::endl;
 	
-			sit->second.comments += comment_inc;
-			sit->second.up_votes += vote_up_inc;
-			sit->second.down_votes += vote_down_inc;
-			
-			if (add_voter)
+					inc_counters = true;
+					add_voter = true;
+					voterId = voteItem->meta.mAuthorId;
+	
+					if (voteItem->mMsg.mVoteType == GXS_VOTE_UP)
+					{
+						vote_up_inc = 1;
+					}
+					else
+					{
+						vote_down_inc = 1;
+					}
+				}
+			}
+			else
 			{
-				sit->second.voters.push_back(voterId);
+				/* unknown! */
+				std::cerr << "p3Posted::background_processNewMessages() ERROR Strange NEW Message:";
+				std::cerr << std::endl;
+				std::cerr << "\t" << (*vit)->meta;
+				std::cerr << std::endl;
+	
 			}
 	
-			std::cerr << "\tThreadId: " << threadId;
-			std::cerr << " Comment Total: " << sit->second.comments;
-			std::cerr << " UpVote Total: " << sit->second.up_votes;
-			std::cerr << " DownVote Total: " << sit->second.down_votes;
-			std::cerr << std::endl;
-		}
+			if (inc_counters)
+			{
+				RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
 	
-		/* flag all messages as processed */
-		if ((*vit)->meta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_UNPROCESSED)
-		{
-			uint32_t token_a;
-			RsGxsGrpMsgIdPair msgId = std::make_pair(groupId, (*vit)->meta.mMsgId);
-			RsGenExchange::setMsgStatusFlags(token_a, msgId, 0, GXS_SERV::GXS_MSG_STATUS_UNPROCESSED);
+				std::map<RsGxsMessageId, PostStats>::iterator sit = mBgStatsMap.find(threadId);
+				if (sit == mBgStatsMap.end())
+				{
+					// add to map of ones to update.		
+					postMap[groupId].push_back(threadId);	
+
+					mBgStatsMap[threadId] = PostStats(0,0,0);
+					sit = mBgStatsMap.find(threadId);
+				}
+		
+				sit->second.comments += comment_inc;
+				sit->second.up_votes += vote_up_inc;
+				sit->second.down_votes += vote_down_inc;
+
+
+				if (add_voter)
+				{
+					sit->second.voters.push_back(voterId);
+				}
+		
+				std::cerr << "\tThreadId: " << threadId;
+				std::cerr << " Comment Total: " << sit->second.comments;
+				std::cerr << " UpVote Total: " << sit->second.up_votes;
+				std::cerr << " DownVote Total: " << sit->second.down_votes;
+				std::cerr << std::endl;
+			}
+		
+			/* flag all messages as processed */
+			if ((*vit)->meta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_UNPROCESSED)
+			{
+				uint32_t token_a;
+				RsGxsGrpMsgIdPair msgId = std::make_pair(groupId, (*vit)->meta.mMsgId);
+				RsGenExchange::setMsgStatusFlags(token_a, msgId, 0, GXS_SERV::GXS_MSG_STATUS_UNPROCESSED);
+			}
 		}
-	  }
 	}
 
-	/* now generate list of post Ids */
-	std::vector<RsGxsMessageId> postList;
-	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > postMap;
+	/* push updates of new Posts */
+	if (msgChanges->msgChangeMap.size() > 0)
 	{
-		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
-		std::map<RsGxsMessageId, PostStats>::iterator sit;
-		for(sit = mBgStatsMap.begin(); sit != mBgStatsMap.end(); sit++)
-		{
-			postList.push_back(sit->first);
-		}
-		postMap[groupId] = postList;
+		changes.push_back(msgChanges);
+	 	RsGxsIfaceHelper::receiveChanges(changes);
 	}
 
 	/* request the summary info from the parents */
@@ -946,7 +1004,7 @@ void p3Posted::background_loadMsgs(const uint32_t &token, bool unprocessed)
 
 
 #define RSGXS_MAX_SERVICE_STRING	1024
-bool p3Posted::encodePostedCache(std::string &str, const PostStats &s)
+bool encodePostedCache(std::string &str, const PostStats &s)
 {
 	char line[RSGXS_MAX_SERVICE_STRING];
 
@@ -956,7 +1014,7 @@ bool p3Posted::encodePostedCache(std::string &str, const PostStats &s)
 	return true;
 }
 
-bool p3Posted::extractPostedCache(const std::string &str, PostStats &s)
+bool extractPostedCache(const std::string &str, PostStats &s)
 {
 
 	uint32_t iupvotes, idownvotes, icomments;
@@ -990,71 +1048,75 @@ void p3Posted::background_updateVoteCounts(const uint32_t &token)
 		return;
 	}
 
+	// generate vector of changes to push to the GUI.
+	std::vector<RsGxsNotify *> changes;
+	RsGxsMsgChange *msgChanges = new RsGxsMsgChange();
+
 	for(mit = parentMsgList.begin(); mit != parentMsgList.end(); mit++)
 	{
-          bool updated = false;
-	  for(vit = mit->second.begin(); vit != mit->second.end(); vit++)
-	  {
-		std::cerr << "p3Posted::background_updateVoteCounts() Processing Msg(" << mit->first;
-		std::cerr << ", " << vit->mMsgId << ")";
-		std::cerr << std::endl;
-
-		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
-
-		/* extract current vote count */
-		PostStats stats;
-		if (mBgIncremental)
+		for(vit = mit->second.begin(); vit != mit->second.end(); vit++)
 		{
-			if (!extractPostedCache(vit->mServiceString, stats))
+			std::cerr << "p3Posted::background_updateVoteCounts() Processing Msg(" << mit->first;
+			std::cerr << ", " << vit->mMsgId << ")";
+			std::cerr << std::endl;
+	
+			RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
+	
+			/* extract current vote count */
+			PostStats stats;
+			if (mBgIncremental)
 			{
-				if (!(vit->mServiceString.empty()))
+				if (!extractPostedCache(vit->mServiceString, stats))
 				{
-					std::cerr << "p3Posted::background_updateVoteCounts() Failed to extract Votes";
-					std::cerr << std::endl;
-					std::cerr << "\tFrom String: " << vit->mServiceString;
-					std::cerr << std::endl;
+					if (!(vit->mServiceString.empty()))
+					{
+						std::cerr << "p3Posted::background_updateVoteCounts() Failed to extract Votes";
+						std::cerr << std::endl;
+						std::cerr << "\tFrom String: " << vit->mServiceString;
+						std::cerr << std::endl;
+					}
 				}
 			}
+	
+			/* get increment */
+			std::map<RsGxsMessageId, PostStats>::iterator it;
+			it = mBgStatsMap.find(vit->mMsgId);
+	
+			if (it != mBgStatsMap.end())
+			{
+				stats.increment(it->second);
+				msgChanges->msgChangeMap[mit->first].push_back(vit->mMsgId);
+			}
+			else
+			{
+				// warning.
+				std::cerr << "p3Posted::background_updateVoteCounts() Warning No New Votes found.";
+				std::cerr << " For MsgId: " << vit->mMsgId;
+				std::cerr << std::endl;
+			}
+	
+			std::string str;
+			if (!encodePostedCache(str, stats))
+			{
+				std::cerr << "p3Posted::background_updateVoteCounts() Failed to encode Votes";
+				std::cerr << std::endl;
+			}
+			else
+			{
+				std::cerr << "p3Posted::background_updateVoteCounts() Encoded String: " << str;
+				std::cerr << std::endl;
+				/* store new result */
+				uint32_t token_c;
+				RsGxsGrpMsgIdPair msgId = std::make_pair(vit->mGroupId, vit->mMsgId);
+				RsGenExchange::setMsgServiceString(token_c, msgId, str);
+			}
 		}
+	}
 
-		/* get increment */
-		std::map<RsGxsMessageId, PostStats>::iterator it;
-		it = mBgStatsMap.find(vit->mMsgId);
-
-		if (it != mBgStatsMap.end())
-		{
-			updated = true;
-			stats.increment(it->second);
-		}
-		else
-		{
-			// warning.
-			std::cerr << "p3Posted::background_updateVoteCounts() Warning No New Votes found.";
-			std::cerr << " For MsgId: " << vit->mMsgId;
-			std::cerr << std::endl;
-		}
-
-		std::string str;
-		if (!encodePostedCache(str, stats))
-		{
-			std::cerr << "p3Posted::background_updateVoteCounts() Failed to encode Votes";
-			std::cerr << std::endl;
-		}
-		else
-		{
-			std::cerr << "p3Posted::background_updateVoteCounts() Encoded String: " << str;
-			std::cerr << std::endl;
-			/* store new result */
-			uint32_t token_c;
-			RsGxsGrpMsgIdPair msgId = std::make_pair(vit->mGroupId, vit->mMsgId);
-			RsGenExchange::setMsgServiceString(token_c, msgId, str);
-		}
-	  }
-
-	  if (updated)
-	  {
-		/* Push Notify Change to GUI TODO */
-	  }
+	if (msgChanges->msgChangeMap.size() > 0)
+	{
+		changes.push_back(msgChanges);
+	 	RsGxsIfaceHelper::receiveChanges(changes);
 	}
 
 	// DONE!.
