@@ -623,8 +623,8 @@ void PostedListDialog::loadPost(const RsPostedPost &post)
 {
 	PostedItem *item = new PostedItem(this, 0, post, true);
 	connect(item, SIGNAL(vote(RsGxsGrpMsgIdPair,bool)), this, SLOT(submitVote(RsGxsGrpMsgIdPair,bool)));
-	QLayout *alayout = ui.scrollAreaWidgetContents->layout();
 	mPosts.insert(post.mMeta.mMsgId, item);
+	//QLayout *alayout = ui.scrollAreaWidgetContents->layout();
 	//alayout->addWidget(item);
 	mPostList.push_back(item);
 }
@@ -632,16 +632,20 @@ void PostedListDialog::loadPost(const RsPostedPost &post)
 
 bool CmpPIHot(const PostedItem *a, const PostedItem *b)
 {
-	if (a->mPost.mHotScore == b->mPost.mHotScore);
+	if (a->mPost.mHotScore == b->mPost.mHotScore)
+	{
 		(a->mPost.mNewScore > b->mPost.mNewScore);
+	}
 
 	return (a->mPost.mHotScore > b->mPost.mHotScore);
 }
 
 bool CmpPITop(const PostedItem *a, const PostedItem *b)
 {
-	if (a->mPost.mTopScore == b->mPost.mTopScore);
+	if (a->mPost.mTopScore == b->mPost.mTopScore)
+	{
 		(a->mPost.mNewScore > b->mPost.mNewScore);
+	}
 
 	return (a->mPost.mTopScore > b->mPost.mTopScore);
 }
@@ -839,9 +843,24 @@ void PostedListDialog::updateCurrentDisplayComplete(const uint32_t &token)
 
 		// modify post content
 		if(mPosts.find(p.mMeta.mMsgId) != mPosts.end())
+		{
 			mPosts[p.mMeta.mMsgId]->setContent(p);
-
+		}
+		else
+		{
+			/* insert new entry */
+			loadPost(p);
+		}
 	}
+
+	time_t now = time(NULL);
+	QMap<RsGxsMessageId, PostedItem*>::iterator pit;
+	for(pit = mPosts.begin(); pit != mPosts.end(); pit++)
+	{
+		(*pit)->mPost.calculateScores(now);
+	}
+
+	applyRanking();
 }
 
 

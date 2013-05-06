@@ -111,7 +111,7 @@ void PostedItem::setContent(const RsPostedPost &post)
 	//score += " Top" + QString::number(post.mTopScore); 
 	//score += " New" + QString::number(post.mNewScore);
 
-	QString score = QString::number(post.mHotScore);
+	QString score = QString::number(post.mTopScore);
 
 	scoreLabel->setText(score); 
 
