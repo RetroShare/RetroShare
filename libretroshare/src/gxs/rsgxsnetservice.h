@@ -296,21 +296,29 @@ private:
     void runVetting();
 
     /*!
-     * @param peerId
+     * @param peerId The peer to vet to see if they can receive this groupid
      * @param grpMeta this is the meta item to determine if it can be sent to given peer
-     * @param toVet items to vet are stored here if needed
-     * @return
+     * @param toVet groupid/peer to vet are stored here if their circle id is not cached
+     * @return false, if you cannot send to this peer, true otherwise
      */
-    bool canSendGrpId(const RsPgpId& peerId, RsGxsGrpMetaData& grpMeta, std::vector<GrpIdCircleVet>& toVet);
+    bool canSendGrpId(const std::string& sslId, RsGxsGrpMetaData& grpMeta, std::vector<GrpIdCircleVet>& toVet);
+
+
+    bool canSendMsgIds(const std::vector<RsGxsMsgMetaData*>& msgMetas, const RsGxsGrpMetaData&, const std::string& sslId);
 
     void locked_createTransactionFromPending(MsgRespPending* grpPend);
     void locked_createTransactionFromPending(GrpRespPending* msgPend);
     void locked_createTransactionFromPending(GrpCircleIdRequestVetting* grpPend);
+    void locked_createTransactionFromPending(MsgCircleIdsRequestVetting* grpPend);
 
     void locked_pushMsgTransactionFromList(std::list<RsNxsItem*>& reqList, const std::string& peerId, const uint32_t& transN);
     void locked_pushGrpTransactionFromList(std::list<RsNxsItem*>& reqList, const std::string& peerId, const uint32_t& transN);
     void locked_pushGrpRespFromList(std::list<RsNxsItem*>& respList, const std::string& peer, const uint32_t& transN);
+    void locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, const std::string& sslId, const uint32_t& transN);
     void syncWithPeers();
+    void addGroupItemToList(NxsTransaction*& tr,
+    		const std::string& grpId, uint32_t& transN,
+    		std::list<RsNxsItem*>& reqList);
 
 private:
 

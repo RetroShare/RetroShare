@@ -24,6 +24,8 @@
  */
 
 #include "rsgxsnetutils.h"
+#include "retroshare/rspeers.h"
+
 
  const time_t AuthorPending::EXPIRY_PERIOD_OFFSET = 30; // 30 seconds
  const int AuthorPending::MSG_PEND = 1;
@@ -41,7 +43,7 @@ AuthorPending::~AuthorPending()
 
 bool AuthorPending::expired() const
 {
-	return mTimeStamp > (time(NULL) + EXPIRY_PERIOD_OFFSET);
+	return time(NULL) > (mTimeStamp + EXPIRY_PERIOD_OFFSET);
 }
 
 bool AuthorPending::getAuthorRep(GixsReputation& rep,
@@ -49,10 +51,7 @@ bool AuthorPending::getAuthorRep(GixsReputation& rep,
 {
 	if(mRep->haveReputation(authorId))
 	{
-		mRep->getReputation(authorId, rep);
-		// renable after identity comes on live
-		//return mRep->getReputation(authorId, rep);
-		return true;
+		return mRep->getReputation(authorId, rep);
 	}
 
 	mRep->loadReputation(authorId);
@@ -95,7 +94,6 @@ bool MsgRespPending::accepted()
 		if(!entry.mPassedVetting)
 		{
 			GixsReputation rep;
-#ifdef ENABLE_IDENTITY_VETTING
 			if(getAuthorRep(rep, entry.mAuthorId))
 			{
 				if(rep.score > mCutOff)
@@ -104,10 +102,6 @@ bool MsgRespPending::accepted()
 					count++;
 				}
 			}
-#else
-			entry.mPassedVetting = true;
-			count++;
-#endif
 
 		}else
 		{
@@ -219,6 +213,7 @@ void RsNxsNetMgrImpl::getOnlineList(std::set<std::string> &ssl_peers)
 const time_t GrpCircleVetting::EXPIRY_PERIOD_OFFSET = 5; // 10 seconds
 const int GrpCircleVetting::GRP_ID_PEND = 1;
 const int GrpCircleVetting::GRP_ITEM_PEND = 2;
+const int GrpCircleVetting::MSG_ID_PEND = 3;
 
 
 GrpIdCircleVet::GrpIdCircleVet(const RsGxsGroupId& grpId, const RsGxsCircleId& circleId)
@@ -233,21 +228,19 @@ GrpCircleVetting::~GrpCircleVetting()
 
 bool GrpCircleVetting::expired()
 {
-	return (mTimeStamp + EXPIRY_PERIOD_OFFSET) < time(NULL);
+	return  time(NULL) > (mTimeStamp + EXPIRY_PERIOD_OFFSET);
 }
 bool GrpCircleVetting::canSend(const RsPgpId& peerId, const RsGxsCircleId& circleId)
 {
-#ifdef ENABLE_CIRCLE_VETTING
 	if(mCircles->isLoaded(circleId))
 	{
-		return mCircles->canSend(circleId, peerId);
+		const RsPgpId& pgpId = rsPeers->getGPGId(peerId);
+		return mCircles->canSend(circleId, pgpId);
 	}
 
 	mCircles->loadCircle(circleId);
 
 	return false;
-#endif
-	return true;
 }
 
 GrpCircleIdRequestVetting::GrpCircleIdRequestVetting(
@@ -283,3 +276,26 @@ int GrpCircleIdRequestVetting::getType() const
 {
 	return GRP_ID_PEND;
 }
+
+MsgIdCircleVet::MsgIdCircleVet(const RsGxsMessageId& msgId,
+		const std::string& authorId)
+ : mMsgId(msgId), mAuthorId(authorId) {
+}
+
+MsgCircleIdsRequestVetting::MsgCircleIdsRequestVetting(RsGcxs* const circles,
+		std::vector<MsgIdCircleVet> msgs, const RsGxsGroupId& grpId,
+		const std::string& peerId, const RsGxsCircleId& circleId)
+: GrpCircleVetting(circles), mMsgs(msgs), mGrpId(grpId), mPeerId(peerId), mCircleId(circleId) {}
+
+bool MsgCircleIdsRequestVetting::cleared()
+{
+
+	return canSend(mPeerId, mCircleId);
+
+}
+
+int MsgCircleIdsRequestVetting::getType() const
+{
+	return MSG_ID_PEND;
+}
+

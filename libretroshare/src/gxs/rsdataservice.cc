@@ -1119,7 +1119,7 @@ int RsDataService::removeMsgs(const GxsMsgReq& msgIds)
 				up.msgId = m.msgId;
 				up.cv.put(KEY_NXS_FILE_OFFSET, (int32_t)newOffset);
 
-				newBuffer.insert(dataBuff.end(), dataBuff.begin()+m.msgOffset,
+				newBuffer.insert(newBuffer.end(), dataBuff.begin()+m.msgOffset,
 						dataBuff.begin()+m.msgOffset+m.msgLen);
 
 				newOffset += msgLen;

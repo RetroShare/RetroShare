@@ -30,9 +30,10 @@
 #include "rsgxsnetservice.h"
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsgxscircles.h"
+#include "retroshare/rspeers.h"
 
 #define NXS_NET_DEBUG	1
-
+#define GIXS_CUT_OFF 0
 
 #define SYNC_PERIOD 12 // in microseconds every 10 seconds (1 second for testing)
 #define TRANSAC_TIMEOUT 5 // 5 seconds
@@ -360,6 +361,33 @@ void RsGxsNetService::locked_createTransactionFromPending(GrpCircleIdRequestVett
 	if(!itemL.empty())
 		locked_pushGrpRespFromList(itemL, grpPend->mPeerId, transN);
 }
+
+void RsGxsNetService::locked_createTransactionFromPending(MsgCircleIdsRequestVetting* msgPend)
+{
+	std::vector<MsgIdCircleVet>::iterator vit = msgPend->mMsgs.begin();
+	std::list<RsNxsItem*> itemL;
+
+	uint32_t transN = locked_getTransactionId();
+
+	for(; vit != msgPend->mMsgs.end(); vit++)
+	{
+		MsgIdCircleVet& mic = *vit;
+		RsNxsSyncMsgItem* mItem = new
+		RsNxsSyncMsgItem(mServType);
+		mItem->flag = RsNxsSyncGrpItem::FLAG_RESPONSE;
+		mItem->grpId = msgPend->mGrpId;
+		mItem->msgId = mic.mMsgId;
+		mItem->authorId = mic.mAuthorId;
+		mItem->PeerId(msgPend->mPeerId);
+		mItem->transactionNumber =  transN;
+		itemL.push_back(mItem);
+	}
+
+	if(!itemL.empty())
+		locked_pushMsgRespFromList(itemL, msgPend->mPeerId, transN);
+}
+
+
 
 void RsGxsNetService::collateGrpFragments(GrpFragments fragments,
 		std::map<RsGxsGroupId, GrpFragments>& partFragments) const
@@ -966,12 +994,10 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
 									  << std::endl;
 		#endif
 						}
-
 					}
 
 					// notify listener of grps
 					mObserver->notifyNewGroups(grps);
-
 
 
 				}else if(flag & RsNxsTransac::FLAG_TYPE_MSGS)
@@ -1182,13 +1208,19 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 
 			if(mReputations->haveReputation(syncItem->authorId) || syncItem->authorId.empty())
 			{
-				RsNxsSyncMsgItem* msgItem = new RsNxsSyncMsgItem(mServType);
-				msgItem->grpId = grpId;
-				msgItem->msgId = msgId;
-				msgItem->flag = RsNxsSyncMsgItem::FLAG_REQUEST;
-				msgItem->transactionNumber = transN;
-				msgItem->PeerId(peerFrom);
-				reqList.push_back(msgItem);
+				GixsReputation rep;
+				mReputations->getReputation(syncItem->authorId, rep);
+
+				if(rep.score > GIXS_CUT_OFF)
+				{
+					RsNxsSyncMsgItem* msgItem = new RsNxsSyncMsgItem(mServType);
+					msgItem->grpId = grpId;
+					msgItem->msgId = msgId;
+					msgItem->flag = RsNxsSyncMsgItem::FLAG_REQUEST;
+					msgItem->transactionNumber = transN;
+					msgItem->PeerId(peerFrom);
+					reqList.push_back(msgItem);
+				}
 			}
 			else
 			{
@@ -1235,6 +1267,18 @@ void RsGxsNetService::locked_pushGrpTransactionFromList(
 	if (!locked_addTransaction(newTrans))
 		delete newTrans;
 }
+void RsGxsNetService::addGroupItemToList(NxsTransaction*& tr,
+		const std::string& grpId, uint32_t& transN,
+		std::list<RsNxsItem*>& reqList)
+{
+	RsNxsSyncGrpItem* grpItem = new RsNxsSyncGrpItem(mServType);
+	grpItem->PeerId(tr->mTransaction->PeerId());
+	grpItem->grpId = grpId;
+	grpItem->flag = RsNxsSyncMsgItem::FLAG_REQUEST;
+	grpItem->transactionNumber = transN;
+	reqList.push_back(grpItem);
+}
+
 void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
 {
 
@@ -1255,7 +1299,7 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
 		}else
 		{
 #ifdef NXS_NET_DEBUG
-			std::cerr << "RsGxsNetService::genReqMsgTransaction(): item failed to caste to RsNxsSyncMsgItem* "
+			std::cerr << "RsGxsNetService::genReqGrpTransaction(): item failed to caste to RsNxsSyncMsgItem* "
 					  << std::endl;
 #endif
 			delete item;
@@ -1281,27 +1325,36 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
 
 		if(grpMetaMap.find(grpId) == grpMetaMap.end()){
 
-			if(mReputations->haveReputation(grpSyncItem->authorId)
-					|| grpSyncItem->authorId.empty())
+			// determine if you need to check reputation
+			bool checkRep = !grpSyncItem->authorId.empty();
+
+			// check if you have reputation, if you don't then
+			// place in holding pen
+			if(checkRep)
 			{
+				if(mReputations->haveReputation(grpSyncItem->authorId))
+				{
+					GixsReputation rep;
+					mReputations->getReputation(grpSyncItem->authorId, rep);
 
-
-				RsNxsSyncGrpItem* grpItem = new RsNxsSyncGrpItem(mServType);
-				grpItem->PeerId(tr->mTransaction->PeerId());
-				grpItem->grpId = grpId;
-				grpItem->flag = RsNxsSyncMsgItem::FLAG_REQUEST;
-				grpItem->transactionNumber = transN;
-				reqList.push_back(grpItem);
-
+					if(rep.score > GIXS_CUT_OFF)
+					{
+						addGroupItemToList(tr, grpId, transN, reqList);
+					}
+				}
+				else
+				{
+					// preload reputation for later
+					mReputations->loadReputation(grpSyncItem->authorId);
+					GrpAuthEntry entry;
+					entry.mAuthorId = grpSyncItem->authorId;
+					entry.mGrpId = grpSyncItem->grpId;
+					toVet.push_back(entry);
+				}
 			}
 			else
 			{
-				// preload reputation for later
-				mReputations->loadReputation(grpSyncItem->authorId);
-				GrpAuthEntry entry;
-				entry.mAuthorId = grpSyncItem->authorId;
-				entry.mGrpId = grpSyncItem->grpId;
-				toVet.push_back(entry);
+				addGroupItemToList(tr, grpId, transN, reqList);
 			}
 		}
 	}
@@ -1450,6 +1503,13 @@ void RsGxsNetService::runVetting()
 						static_cast<GrpCircleIdRequestVetting*>(gcv);
 
 				locked_createTransactionFromPending(gcirv);
+			}
+			else if(gcv->getType() == GrpCircleVetting::MSG_ID_PEND)
+			{
+				MsgCircleIdsRequestVetting* mcirv =
+						static_cast<MsgCircleIdsRequestVetting*>(gcv);
+
+				locked_createTransactionFromPending(mcirv);
 			}
 			else
 			{
@@ -1653,7 +1713,7 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrp* item)
 			// check if you can send this id to peer
 			// or if you need to add to the holding
 			// pen for peer to be vetted
-			if(/*canSendGrpId(peer, *grpMeta, toVet)*/true)
+			if(canSendGrpId(peer, *grpMeta, toVet))
 			{
 				RsNxsSyncGrpItem* gItem = new
 					RsNxsSyncGrpItem(mServType);
@@ -1671,14 +1731,16 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrp* item)
 	}
 
 	if(!toVet.empty())
+	{
 		mPendingCircleVets.push_back(new GrpCircleIdRequestVetting(mCircles, toVet, peer));
+	}
 
 	locked_pushGrpRespFromList(itemL, peer, transN);
 
 	return;
 }
 
-bool RsGxsNetService::canSendGrpId(const RsPgpId& peerId, RsGxsGrpMetaData& grpMeta, std::vector<GrpIdCircleVet>& toVet)
+bool RsGxsNetService::canSendGrpId(const std::string& sslId, RsGxsGrpMetaData& grpMeta, std::vector<GrpIdCircleVet>& toVet)
 {
 	// first do the simple checks
 	uint8_t circleType = grpMeta.mCircleType;
@@ -1695,15 +1757,44 @@ bool RsGxsNetService::canSendGrpId(const RsPgpId& peerId, RsGxsGrpMetaData& grpM
 	{
 		if(mCircles->isLoaded(circleId))
 		{
-			return mCircles->canSend(peerId, circleId);
+			const RsPgpId& pgpId = rsPeers->getGPGId(sslId);
+			return mCircles->canSend(circleId, pgpId);
 		}
 
 		toVet.push_back(GrpIdCircleVet(grpMeta.mGroupId, circleId));
 		return false;
 	}
 
+	if(circleType == GXS_CIRCLE_TYPE_YOUREYESONLY)
+	{
+		// a non empty internal circle id means this
+		// is the personal circle owner
+		if(!grpMeta.mInternalCircle.empty())
+		{
+			const RsGxsCircleId& internalCircleId = grpMeta.mCircleId;
+			if(mCircles->isLoaded(internalCircleId))
+			{
+				const RsPgpId& pgpId = rsPeers->getGPGId(sslId);
+				return mCircles->canSend(internalCircleId, pgpId);
+			}
+
+			toVet.push_back(GrpIdCircleVet(grpMeta.mGroupId, internalCircleId));
+			return false;
+		}
+		else
+		{
+			// an empty internal circle id means this peer can only
+			// send circle related info from peer he received it
+			if(grpMeta.mOriginator == sslId)
+				return true;
+			else
+				return false;
+		}
+	}
+
 	return true;
 }
+
 void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsg* item)
 {
 	RsStackMutex stack(mNxsMutex);
@@ -1712,39 +1803,65 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsg* item)
 
 	GxsMsgMetaResult metaResult;
 	GxsMsgReq req;
+
+	std::map<std::string, RsGxsGrpMetaData*> grpMetas;
+	grpMetas[item->grpId] = NULL;
+	mDataStore->retrieveGxsGrpMetaData(grpMetas);
+	RsGxsGrpMetaData* grpMeta = grpMetas[item->grpId];
+
+	if(grpMeta == NULL)
+		return;
+
 	req[item->grpId] = std::vector<std::string>();
 	mDataStore->retrieveGxsMsgMetaData(req, metaResult);
+	std::vector<RsGxsMsgMetaData*>& msgMetas = metaResult[item->grpId];
 
-	std::vector<RsGxsMsgMetaData*>& msgMeta = metaResult[item->grpId];
-
-	if(req.empty()){
+	if(req.empty())
+	{
 		return;
 	}
 
-	std::vector<RsGxsMsgMetaData*>::iterator vit = msgMeta.begin();
-
-	NxsTransaction* tr = new NxsTransaction();
-	std::list<RsNxsItem*>& itemL = tr->mItems;
+	std::list<RsNxsItem*> itemL;
 
 	uint32_t transN = locked_getTransactionId();
 
-
-	for(; vit != msgMeta.end(); vit++)
+	if(/*canSendMsgIds(msgMetas, *grpMeta, peer)*/ true)
 	{
-		RsGxsMsgMetaData* m = *vit;
+		std::vector<RsGxsMsgMetaData*>::iterator vit = msgMetas.begin();
 
-		RsNxsSyncMsgItem* mItem = new
-				RsNxsSyncMsgItem(mServType);
-		mItem->flag = RsNxsSyncGrpItem::FLAG_RESPONSE;
-		mItem->grpId = m->mGroupId;
-		mItem->msgId = m->mMsgId;
-		mItem->authorId = m->mAuthorId;
-		mItem->PeerId(peer);
-		mItem->transactionNumber = transN;
-		itemL.push_back(mItem);
+		for(; vit != msgMetas.end(); vit++)
+		{
+			RsGxsMsgMetaData* m = *vit;
 
+			RsNxsSyncMsgItem* mItem = new
+			RsNxsSyncMsgItem(mServType);
+			mItem->flag = RsNxsSyncGrpItem::FLAG_RESPONSE;
+			mItem->grpId = m->mGroupId;
+			mItem->msgId = m->mMsgId;
+			mItem->authorId = m->mAuthorId;
+			mItem->PeerId(peer);
+			mItem->transactionNumber = transN;
+			itemL.push_back(mItem);
+
+		}
+
+		if(!itemL.empty())
+			locked_pushMsgRespFromList(itemL, peer, transN);
 	}
 
+	std::vector<RsGxsMsgMetaData*>::iterator vit = msgMetas.begin();
+	// release meta resource
+	for(vit = msgMetas.begin(); vit != msgMetas.end(); vit++)
+		delete *vit;
+
+	return;
+}
+
+void RsGxsNetService::locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, const std::string& sslId,
+		const uint32_t& transN)
+{
+	NxsTransaction* tr = new NxsTransaction();
+	tr->mItems = itemL;
 	tr->mFlag = NxsTransaction::FLAG_STATE_WAITING_CONFIRM;
 	RsNxsTransac* trItem = new RsNxsTransac(mServType);
 	trItem->transactFlag = RsNxsTransac::FLAG_BEGIN_P1
@@ -1753,7 +1870,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsg* item)
 	trItem->nItems = itemL.size();
 
 	trItem->timestamp = 0;
-	trItem->PeerId(peer);
+	trItem->PeerId(sslId);
 	trItem->transactionNumber = transN;
 
 	// also make a copy for the resident transaction
@@ -1765,10 +1882,91 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsg* item)
 	sendItem(trItem);
 
 	locked_addTransaction(tr);
-
-	return;
 }
 
+bool RsGxsNetService::canSendMsgIds(const std::vector<RsGxsMsgMetaData*>& msgMetas,
+		const RsGxsGrpMetaData& grpMeta, const std::string& sslId)
+{
+	// first do the simple checks
+	uint8_t circleType = grpMeta.mCircleType;
+
+	if(circleType == GXS_CIRCLE_TYPE_LOCAL)
+		return false;
+
+	if(circleType == GXS_CIRCLE_TYPE_PUBLIC)
+		return true;
+
+	const RsGxsCircleId& circleId = grpMeta.mCircleId;
+
+	if(circleType == GXS_CIRCLE_TYPE_EXTERNAL)
+	{
+		if(mCircles->isLoaded(circleId))
+		{
+			const RsPgpId& pgpId = rsPeers->getGPGId(sslId);
+			return mCircles->canSend(circleId, pgpId);
+		}
+
+		std::vector<MsgIdCircleVet> toVet;
+		std::vector<RsGxsMsgMetaData*>::const_iterator vit = msgMetas.begin();
+
+		for(; vit != msgMetas.end(); vit++)
+		{
+			const RsGxsMsgMetaData* const& meta = *vit;
+
+			MsgIdCircleVet mic(meta->mMsgId, meta->mAuthorId);
+			toVet.push_back(mic);
+		}
+
+		if(!toVet.empty())
+			mPendingCircleVets.push_back(new MsgCircleIdsRequestVetting(mCircles, toVet, grpMeta.mGroupId,
+					sslId, grpMeta.mCircleId));
+
+		return false;
+	}
+
+	if(circleType == GXS_CIRCLE_TYPE_YOUREYESONLY)
+	{
+		// a non empty internal circle id means this
+		// is the personal circle owner
+		if(!grpMeta.mInternalCircle.empty())
+		{
+			const RsGxsCircleId& internalCircleId = grpMeta.mCircleId;
+			if(mCircles->isLoaded(internalCircleId))
+			{
+				const RsPgpId& pgpId = rsPeers->getGPGId(sslId);
+				return mCircles->canSend(internalCircleId, pgpId);
+			}
+
+			std::vector<MsgIdCircleVet> toVet;
+			std::vector<RsGxsMsgMetaData*>::const_iterator vit = msgMetas.begin();
+
+			for(; vit != msgMetas.end(); vit++)
+			{
+				const RsGxsMsgMetaData* const& meta = *vit;
+
+				MsgIdCircleVet mic(meta->mMsgId, meta->mAuthorId);
+				toVet.push_back(mic);
+			}
+
+			if(!toVet.empty())
+				mPendingCircleVets.push_back(new MsgCircleIdsRequestVetting(mCircles, toVet, grpMeta.mGroupId,
+						sslId, grpMeta.mCircleId));
+
+			return false;
+		}
+		else
+		{
+			// an empty internal circle id means this peer can only
+			// send circle related info from peer he received it
+			if(grpMeta.mOriginator == sslId)
+				return true;
+			else
+				return false;
+		}
+	}
+
+	return true;
+}
 
 /** inherited methods **/
 

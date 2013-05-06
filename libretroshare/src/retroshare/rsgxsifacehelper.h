@@ -93,7 +93,7 @@ public:
 
     /*!
      * The msg changed. \n
-     * class can reimplement to use to tailor
+     * class can be reimplemented to use to tailor
      * the msg actually set for ui notification.
      * If receivedChanges is not passed RsGxsNotify changes
      * this function does nothing

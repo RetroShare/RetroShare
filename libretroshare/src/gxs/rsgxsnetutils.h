@@ -215,6 +215,15 @@ public:
 	bool mCleared;
 };
 
+class MsgIdCircleVet
+{
+public:
+	MsgIdCircleVet(const RsGxsMessageId& grpId, const std::string& authorId);
+
+	RsGxsMessageId mMsgId;
+	std::string mAuthorId;
+};
+
 class GrpItemCircleVet
 {
 public:
@@ -230,6 +239,8 @@ public:
 	static const time_t EXPIRY_PERIOD_OFFSET;
 	static const int GRP_ID_PEND;
 	static const int GRP_ITEM_PEND;
+	static const int MSG_ID_PEND;
+
 
 	GrpCircleVetting(RsGcxs* const circles);
 	virtual ~GrpCircleVetting();
@@ -254,6 +265,19 @@ public:
 	int getType() const;
 	std::vector<GrpIdCircleVet> mGrpCircleV;
 	std::string mPeerId;
+};
+
+class MsgCircleIdsRequestVetting : public GrpCircleVetting
+{
+public:
+	MsgCircleIdsRequestVetting(RsGcxs* const circles, std::vector<MsgIdCircleVet> msgs, const RsGxsGroupId& grpId,
+			const std::string& peerId, const RsGxsCircleId& circleId);
+	bool cleared();
+	int getType() const;
+	std::vector<MsgIdCircleVet> mMsgs;
+	RsGxsGroupId mGrpId;
+	std::string mPeerId;
+	RsGxsCircleId mCircleId;
 };
 
 
