@@ -45,6 +45,8 @@
 #include <iomanip>
 #include <map>
 
+#define DEBUG_DISTANT_MSG
+
 const int msgservicezone = 54319;
 
 static const uint32_t RS_DISTANT_MSG_STATUS_TUNNEL_OK = 0x0001 ;
@@ -1622,7 +1624,9 @@ RsMsgItem *p3MsgService::initMIRsMsg(MessageInfo &info, const std::string &to)
 
 bool p3MsgService::encryptMessage(const std::string& pgp_id,RsMsgItem *item)
 {
+#ifdef DEBUG_DISTANT_MSG
 	std::cerr << "Encrypting message with public key " << pgp_id << " in place." << std::endl;
+#endif
 
 	// 1 - serialise the whole message item into a binary chunk.
 	//
@@ -1756,20 +1760,26 @@ bool p3MsgService::getDistantOfflineMessengingInvites(std::vector<DistantOffline
 
 		invites.push_back(invite) ;
 
+#ifdef DEBUG_DISTANT_MSG
 		std::cerr << "   adding invite with hash " << invite.hash << std::endl;
+#endif
 	}
 
 	return true ;
 }
 bool p3MsgService::handleTunnelRequest(const std::string& hash,const std::string& peer_id) 
 {
+#ifdef DEBUG_DISTANT_MSG
 	std::cerr << "p3MsgService::handleTunnelRequest: received TR for hash " << hash << std::endl;
+#endif
 
 	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 	std::map<std::string,DistantMessengingInvite>::const_iterator it = _messenging_invites.find(hash) ;
 
+#ifdef DEBUG_DISTANT_MSG
 	if(it != _messenging_invites.end())
 		std::cerr << "Responding OK!" << std::endl;
+#endif
 
 	return it != _messenging_invites.end() ;
 }
@@ -1778,7 +1788,9 @@ void p3MsgService::manageDistantPeers()
 {
 	// now possibly flush pending messages
 
+#ifdef DEBUG_DISTANT_MSG
 	std::cerr << "p3MsgService::manageDistantPeers()" << std::endl;
+#endif
 
 	std::vector<std::pair<std::string,RsMsgItem*> > to_send ;
 
@@ -1796,7 +1808,9 @@ void p3MsgService::manageDistantPeers()
 
 	for(uint32_t i=0;i<to_send.size();++i)
 	{
+#ifdef DEBUG_DISTANT_MSG
 		std::cerr << "    Flushing msg " << to_send[i].second->msgId << std::endl;
+#endif
 		sendTurtleData(to_send[i].first,to_send[i].second) ;
 	}
 
@@ -1809,7 +1823,9 @@ void p3MsgService::manageDistantPeers()
 		for(std::map<std::string,DistantMessengingInvite>::iterator it(_messenging_invites.begin());it!=_messenging_invites.end();)
 			if(it->second.time_of_validity < now)
 			{
+#ifdef DEBUG_DISTANT_MSG
 				std::cerr << "    Removing outdated invite " << it->second.time_of_validity << ", hash=" << it->first << std::endl;
+#endif
 				std::map<std::string,DistantMessengingInvite>::iterator tmp(it) ;
 				++tmp ;
 				_messenging_invites.erase(it) ;
@@ -1823,7 +1839,9 @@ void p3MsgService::manageDistantPeers()
 		for(std::map<std::string,DistantMessengingContact>::iterator it(_messenging_contacts.begin());it!=_messenging_contacts.end();)
 			if(it->second.pending_messages.empty() && it->second.status == RS_DISTANT_MSG_STATUS_TUNNEL_DN)
 			{
+#ifdef DEBUG_DISTANT_MSG
 				std::cerr << "    Removing dead contact with no pending msgs and dead tunnel. hash=" << it->first << std::endl;
+#endif
 				std::map<std::string,DistantMessengingContact>::iterator tmp(it) ;
 				++tmp ;
 				_messenging_contacts.erase(it) ;
@@ -1847,7 +1865,9 @@ void p3MsgService::addVirtualPeer(const TurtleFileHash& hash, const TurtleVirtua
 	contact.last_hit_time = time(NULL) ;
 	contact.status = RS_DISTANT_MSG_STATUS_TUNNEL_OK ;
 
+#ifdef DEBUG_DISTANT_MSG
 	std::cerr << "p3MsgService::addVirtualPeer(): adding virtual peer " << vpid << " for hash " << hash << std::endl;
+#endif
 }
 void p3MsgService::removeVirtualPeer(const TurtleFileHash& hash, const TurtleVirtualPeerId& vpid) 
 {
@@ -1861,6 +1881,7 @@ void p3MsgService::removeVirtualPeer(const TurtleFileHash& hash, const TurtleVir
 	contact.status = RS_DISTANT_MSG_STATUS_TUNNEL_DN ;
 	contact.virtual_peer_id.clear() ;
 }
+#ifdef DEBUG_DISTANT_MSG
 static void printBinaryData(void *data,uint32_t size)
 {
 	static const char outl[16] = { '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f' } ;
@@ -1871,6 +1892,7 @@ static void printBinaryData(void *data,uint32_t size)
 		std::cerr << outl[ ((uint8_t*)data)[j] & 0xf ] ; 
 	}
 }
+#endif
 
 void p3MsgService::sendTurtleData(const std::string& hash,RsMsgItem *msgitem) 
 {
@@ -1893,8 +1915,10 @@ void p3MsgService::sendTurtleData(const std::string& hash,RsMsgItem *msgitem)
 
 	delete[] data ;
 
+#ifdef DEBUG_DISTANT_MSG
 	printBinaryData(item->data_bytes,item->data_size) ;
 	std::cerr << std::endl;
+#endif
 
 	// do we have a working tunnel for that hash ?
 	// If not, put on the contact's waiting list.
@@ -1918,9 +1942,11 @@ void p3MsgService::sendTurtleData(const std::string& hash,RsMsgItem *msgitem)
 		}
 		virtual_peer_id = it->second.virtual_peer_id ;
 	}
+#ifdef DEBUG_DISTANT_MSG
 	std::cerr << "p3MsgService::sendTurtleData(): Sending through virtual peer: " << virtual_peer_id << std::endl;
 	std::cerr << "   item->data_size = " << item->data_size << std::endl;
 	std::cerr << "   data = " ;
+#endif
 
 	mTurtle->sendTurtleData(virtual_peer_id,item) ;
 }
@@ -1935,11 +1961,13 @@ void p3MsgService::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,const std:
 		std::cerr << "(EE) p3MsgService::receiveTurtleData(): item is not a data item. That is an error." << std::endl;
 		return ;
 	}
+#ifdef DEBUG_DISTANT_MSG
 	std::cerr << "p3MsgService::sendTurtleData(): Receiving through virtual peer: " << virtual_peer_id << std::endl;
 	std::cerr << "   gitem->data_size = " << item->data_size << std::endl;
 	std::cerr << "   data = " ;
 	printBinaryData(item->data_bytes,item->data_size) ;
 	std::cerr << std::endl;
+#endif
 
 	{
 		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
@@ -1973,10 +2001,11 @@ void p3MsgService::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,const std:
 
 void p3MsgService::sendPrivateMsgItem(RsMsgItem *msgitem) 
 {
+#ifdef DEBUG_DISTANT_MSG
 	std::cerr << "p3MsgService::sendDistanteMsgItem(): sending distant msg item to peer " << msgitem->PeerId() << std::endl;
 	std::cerr << "     asking for tunnels" << std::endl;
 	std::cerr << "     recording msg info" << std::endl;
-
+#endif
 	const std::string& hash = msgitem->PeerId() ;
 	rsTurtle->monitorTunnels(hash,this) ;					 // create a tunnel for it, and put the msg on the waiting list.
 
