@@ -32,7 +32,7 @@ bool GenExchangeTestService::getGroupMetaTS(const uint32_t &token, std::list<RsG
     return getGroupMeta(token, groupInfo);
 }
 
-bool GenExchangeTestService::getGroupDataTS(const uint32_t &token, std::vector<RsDummyGrp *> &grpItem)
+bool GenExchangeTestService::getGroupDataTS(const uint32_t &token, std::vector<RsDummyGrp *>& grpItem)
 {
     return getGroupDataT<RsDummyGrp>(token, grpItem);
 }

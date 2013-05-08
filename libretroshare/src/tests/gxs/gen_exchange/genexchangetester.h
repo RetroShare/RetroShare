@@ -81,8 +81,8 @@ protected:
      */
     bool pollForGrpAcknowledgement(uint32_t token, RsGxsGroupId& msgId);
 
-    GenExchangeTestService* const  getTestService();
-    RsTokenService* const getTokenService();
+    GenExchangeTestService* getTestService();
+    RsTokenService* getTokenService();
 //    bool testGrpMetaModRequest();
 //    bool testMsgMetaModRequest();
 
@@ -100,6 +100,14 @@ protected:
     void clearGrpMetaOutList();
     void clearGrpIdInList();
     void clearGrpIdOutList();
+
+    /*!
+     * clears up all internal
+     * IN and OUT data structure for
+     * both msgs and groups
+     * frees resources in relation to allocated data
+     */
+    void clearAllData();
 
     template <class Item>
     void deleteResVector(std::vector<Item*> v) const
@@ -140,12 +148,12 @@ protected:
     template <class Cont, class Item>
     class Comparison<Cont, Item*>
     {
-
     public:
 
 		static bool comparison(const Cont& l, const Cont& r)
 		{
-			if(l.size() != r.size()) return false;
+			if(l.size() != r.size())
+				return false;
 
 			typename Cont::const_iterator vit1 = l.begin(), vit2 = r.begin();
 
@@ -153,7 +161,8 @@ protected:
 			{
 				const Item* item1 = (*vit1);
 				const Item* item2 = (*vit2);
-				if(!(*item1 == *item2)) return false;
+				if(!(*item1 == *item2))
+					return false;
 
 				vit1++;
 				vit2++;

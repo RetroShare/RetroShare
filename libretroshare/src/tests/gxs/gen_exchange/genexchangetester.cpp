@@ -5,7 +5,7 @@
 
 
 GenExchangeTest::GenExchangeTest(GenExchangeTestService* const mTestService, RsGeneralDataService* dataService, int pollingTO)
- : mTestService(mTestService), mTokenService(mTestService->getTokenService()), mDataService(dataService),
+ : mDataService(dataService), mTestService(mTestService), mTokenService(mTestService->getTokenService()),
    mPollingTO(pollingTO)
 {
 }
@@ -21,7 +21,7 @@ void GenExchangeTest::pollForToken(uint32_t token, const RsTokReqOptions &opts, 
     time_t now = time(NULL);
     time_t stopw = now + mPollingTO;
 
-    while(now > stopw)
+    while(now < stopw)
     {
 #ifndef WINDOWS_SYS
     usleep((int) (timeDelta * 1000000));
@@ -110,12 +110,12 @@ bool GenExchangeTest::pollForMsgAcknowledgement(uint32_t token,
     return false;
 }
 
-GenExchangeTestService* const  GenExchangeTest::getTestService()
+GenExchangeTestService* GenExchangeTest::getTestService()
 {
 	return mTestService;
 }
 
-RsTokenService* const GenExchangeTest::getTokenService()
+RsTokenService*  GenExchangeTest::getTokenService()
 {
 	return mTokenService;
 }
@@ -159,7 +159,8 @@ void GenExchangeTest::setUp()
 
 void GenExchangeTest::breakDown()
 {
-	mTestService->stop();
+	mTestService->join();
+	clearAllData();
 }
 
 bool GenExchangeTest::compareMsgDataMaps()
@@ -222,9 +223,16 @@ bool GenExchangeTest::compareMsgRelatedDataMap()
 	return false;
 }
 
+bool grpDataSort(const RsDummyGrp* g1, const RsDummyGrp* g2)
+{
+	return g1->meta.mGroupId < g2->meta.mGroupId;
+}
 
 bool GenExchangeTest::compareGrpData()
 {
+
+	std::sort(mGrpDataIn.begin(), mGrpDataIn.end(), grpDataSort);
+	std::sort(mGrpDataOut.begin(), mGrpDataOut.end(), grpDataSort);
 	bool ok = Comparison<std::vector<RsDummyGrp*>, RsDummyGrp*>::comparison
 			(mGrpDataIn, mGrpDataOut);
 	return ok;
@@ -390,7 +398,21 @@ void GenExchangeTest::storeToGrpDataInList(
 {
 	mGrpDataIn.insert(mGrpDataIn.begin(), grpDataIn.begin(), grpDataIn.end());
 }
-
+void GenExchangeTest::clearAllData()
+{
+	clearMsgDataInMap();
+	clearMsgDataOutMap();
+	clearMsgIdInMap();
+	clearMsgIdOutMap();
+	clearMsgMetaInMap();
+	clearMsgMetaOutMap();
+	clearGrpDataInList();
+	clearGrpDataOutList();
+	clearGrpMetaInList();
+	clearGrpMetaOutList();
+	clearGrpIdInList();
+	clearGrpIdOutList();
+}
 void GenExchangeTest::clearMsgDataInMap()
 {
 	mMsgDataIn.clear();
@@ -516,7 +538,7 @@ bool operator ==(const RsGroupMetaData& lMeta, const RsGroupMetaData& rMeta)
    // if(lMeta.mPublishTs != rMeta.mPublishTs) return false; set in gxs
     if(lMeta.mServiceString != rMeta.mServiceString) return false;
     if(lMeta.mSignFlags != rMeta.mSignFlags) return false;
-    if(lMeta.mSubscribeFlags != rMeta.mSubscribeFlags) return false;
+   // if(lMeta.mSubscribeFlags != rMeta.mSubscribeFlags) return false;
 
     return true;
 }

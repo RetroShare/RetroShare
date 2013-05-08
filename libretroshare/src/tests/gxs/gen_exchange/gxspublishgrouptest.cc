@@ -48,7 +48,7 @@ bool GxsPublishGroupTest::testGrpSubmissionRetrieval()
 	uint32_t token;
 	RsGxsGroupId grpId;
 
-	std::list<RsDummyGrp*> groupsPublished;
+	std::vector<RsDummyGrp*> groupsPublished;
 
 	*dgrp1_copy = *dgrp1;
 	testService->publishDummyGrp(token, dgrp1);
@@ -59,15 +59,17 @@ bool GxsPublishGroupTest::testGrpSubmissionRetrieval()
 	*dgrp2_copy = *dgrp2;
 	testService->publishDummyGrp(token, dgrp2);
 	pollForGrpAcknowledgement(token, grpId);
-	dgrp1_copy->meta.mGroupId = grpId;
+	dgrp2_copy->meta.mGroupId = grpId;
 	groupsPublished.push_back(dgrp2_copy);
 
 	*dgrp3_copy = *dgrp3;
 	testService->publishDummyGrp(token, dgrp3);
 	pollForGrpAcknowledgement(token, grpId);
-	dgrp1_copy->meta.mGroupId = grpId;
+	dgrp3_copy->meta.mGroupId = grpId;
 	groupsPublished.push_back(dgrp3_copy);
 
+
+	storeToGrpDataOutList(groupsPublished);
 
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 	std::list<RsGxsGroupId> grpIds;
@@ -75,8 +77,10 @@ bool GxsPublishGroupTest::testGrpSubmissionRetrieval()
 
 	pollForToken(token, opts, true);
 
+
 	bool ok = compareGrpData();
 
+	usleep((int) (10 * 1000000));
 	breakDown();
 
 	return ok;

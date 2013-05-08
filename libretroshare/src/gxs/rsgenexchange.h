@@ -319,8 +319,10 @@ protected:
     		RsGxsGrpItem* gi = *vit;
     		GrpType* item = dynamic_cast<GrpType*>(gi);
 
-    		if(item == NULL)
+    		if(item != NULL)
+    		{
     			grpItem.push_back(item);
+    		}
     		else
     		{
 #ifdef GXS_DEBUG
