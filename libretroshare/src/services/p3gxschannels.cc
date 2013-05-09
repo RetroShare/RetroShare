@@ -473,6 +473,10 @@ void p3GxsChannels::request_SpecificUnprocessedPosts(std::list<std::pair<RsGxsGr
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
+	// Only Fetch UNPROCESSED messages.
+	opts.mStatusFilter = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED;
+	opts.mStatusMask = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED;
+
 	uint32_t token = 0;
 
 	/* organise Ids how they want them */
@@ -500,6 +504,9 @@ void p3GxsChannels::request_GroupUnprocessedPosts(const std::list<RsGxsGroupId> 
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
+	// Only Fetch UNPROCESSED messages.
+	opts.mStatusFilter = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED;
+	opts.mStatusMask = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED;
 	
 	uint32_t token = 0;
 
@@ -560,6 +567,8 @@ void p3GxsChannels::handleUnprocessedPost(const RsGxsChannelPost &msg)
 	if (!IS_MSG_UNPROCESSED(msg.mMeta.mMsgStatus))
 	{
        		std::cerr << "p3GxsChannels::handleUnprocessedPost() Msg already Processed";
+		std::cerr << std::endl;
+       		std::cerr << "p3GxsChannels::handleUnprocessedPost() ERROR - this should not happen";
 		std::cerr << std::endl;
 		return;
 	}

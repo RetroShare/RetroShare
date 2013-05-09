@@ -884,6 +884,8 @@ void p3Posted::background_loadMsgs(const uint32_t &token, bool unprocessed)
 				{
 					std::cerr << "p3Posted::background_loadMsgs() Msg already Processed - Skipping";
 					std::cerr << std::endl;
+					std::cerr << "p3Posted::background_loadMsgs() ERROR This should not happen";
+					std::cerr << std::endl;
 					continue;
 				}
 			}
