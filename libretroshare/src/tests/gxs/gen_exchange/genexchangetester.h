@@ -110,11 +110,12 @@ protected:
     void clearAllData();
 
     template <class Item>
-    void deleteResVector(std::vector<Item*> v) const
+    void deleteResVector(std::vector<Item*>& v) const
     {
     	typename std::vector<Item*>::iterator vit = v.begin();
     	for(; vit != v.end(); vit++)
     		delete *vit;
+    	v.clear();
     }
 
     // using class to enable partial

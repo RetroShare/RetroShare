@@ -163,16 +163,27 @@ void GenExchangeTest::breakDown()
 	clearAllData();
 }
 
+bool msgDataSort(const RsDummyMsg* m1, const RsDummyMsg* m2)
+{
+	return m1->meta.mMsgId < m2->meta.mMsgId;
+}
+
 bool GenExchangeTest::compareMsgDataMaps()
 {
-	DummyMsgMap::const_iterator mit = mMsgDataOut.begin();
+	DummyMsgMap::iterator mit = mMsgDataOut.begin();
 
 	bool ok = true;
 	for(; mit != mMsgDataOut.end(); mit++)
 	{
 		const RsGxsGroupId& grpId = mit->first;
-		const std::vector<RsDummyMsg*>& v1 = mit->second,
+		std::vector<RsDummyMsg*>& v1 = mit->second,
 				&v2 = mMsgDataIn[grpId];
+
+		if(v1.size() != v2.size())
+			return false;
+
+		std::sort(v1.begin(), v1.end(), msgDataSort);
+		std::sort(v2.begin(), v2.end(), msgDataSort);
 
 		ok &= Comparison<std::vector<RsDummyMsg*>, RsDummyMsg*>::comparison(v1, v2);
 	}
@@ -238,9 +249,16 @@ bool GenExchangeTest::compareGrpData()
 	return ok;
 }
 
+bool operator<(const RsGroupMetaData& l, const RsGroupMetaData& r)
+{
+	return l.mGroupId < r.mGroupId;
+}
 
 bool GenExchangeTest::compareGrpMeta()
 {
+
+	mGrpMetaDataIn.sort();
+	mGrpMetaDataOut.sort();
 
 	bool ok = Comparison<std::list<RsGroupMetaData>, RsGroupMetaData>::comparison
 			(mGrpMetaDataIn, mGrpMetaDataOut);
@@ -250,6 +268,8 @@ bool GenExchangeTest::compareGrpMeta()
 
 bool GenExchangeTest::compareGrpIds()
 {
+	mGrpIdsIn.sort();
+	mGrpIdsOut.sort();
 	bool ok = Comparison<std::list<RsGxsGroupId>, RsGxsGroupId>::comparison
 				(mGrpIdsIn, mGrpIdsOut);
 	return ok;
@@ -262,6 +282,7 @@ void GenExchangeTest::createGrps(uint32_t nGrps,
 	for(uint32_t i=0; i < nGrps; i++)
 	{
 		RsDummyGrp* grp = new RsDummyGrp();
+		init(*grp);
 		uint32_t token;
 		mTestService->publishDummyGrp(token, grp);
 		RsGxsGroupId grpId;
@@ -515,7 +536,7 @@ bool operator ==(const RsMsgMetaData& lMeta, const RsMsgMetaData& rMeta)
     if(lMeta.mMsgFlags != rMeta.mMsgFlags) return false;
     if(lMeta.mMsgId != rMeta.mMsgId) return false;
     if(lMeta.mMsgName != rMeta.mMsgName) return false;
-    if(lMeta.mMsgStatus != rMeta.mMsgStatus) return false;
+    //if(lMeta.mMsgStatus != rMeta.mMsgStatus) return false;
     if(lMeta.mOrigMsgId != rMeta.mOrigMsgId) return false;
     if(lMeta.mParentId != rMeta.mParentId) return false;
     //if(lMeta.mPublishTs != rMeta.mPublishTs) return false; // don't compare this as internally set in gxs

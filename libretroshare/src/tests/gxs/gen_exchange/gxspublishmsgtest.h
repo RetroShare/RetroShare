@@ -10,20 +10,21 @@
 
 #include "genexchangetester.h"
 
-class GxsPublishRequestMsgTest: public GenExchangeTest {
+class GxsPublishMsgTest: public GenExchangeTest {
 public:
-	GxsPublishRequestMsgTest();
-	virtual ~GxsPublishRequestMsgTest();
+	GxsPublishMsgTest(GenExchangeTestService* const testService,
+			RsGeneralDataService* dataService);
+	virtual ~GxsPublishMsgTest();
 
 	void runTests();
 
     // message tests
     bool testMsgSubmissionRetrieval();
-    bool testMsgIdRetrieval();
-    bool testMsgIdRetrieval_OptParents();
-    bool testMsgIdRetrieval_OptOrigMsgId();
-    bool testMsgIdRetrieval_OptLatest();
-    bool testSpecificMsgMetaRetrieval();
+//    bool testMsgIdRetrieval();
+//    bool testMsgIdRetrieval_OptParents();
+//    bool testMsgIdRetrieval_OptOrigMsgId();
+//    bool testMsgIdRetrieval_OptLatest();
+//    bool testSpecificMsgMetaRetrieval();
 
 
 };

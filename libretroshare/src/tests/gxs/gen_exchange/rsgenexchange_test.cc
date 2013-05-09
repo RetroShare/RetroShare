@@ -2,6 +2,7 @@
 
 #include "genexchangetester.h"
 #include "gxspublishgrouptest.h"
+#include "gxspublishmsgtest.h"
 #include "util/utest.h"
 #include "gxs/rsdataservice.h"
 #include "rsdummyservices.h"
@@ -34,25 +35,11 @@ int main()
     // we want to use default authentication which is NO authentication :)
     GenExchangeTestService testService(dataStore, NULL, NULL);
 
-    GxsPublishGroupTest testGrpPublishing(&testService, dataStore);
-    testGrpPublishing.runTests();
-//
+    //GxsPublishGroupTest testGrpPublishing(&testService, dataStore);
+    //testGrpPublishing.runTests();
 
-//    CHECK(tester.testMsgSubmissionRetrieval()); REPORT("testMsgSubmissionRetrieval()");
-//    CHECK(tester.testSpecificMsgMetaRetrieval()); REPORT("testSpecificMsgMetaRetrieval()");
-//    CHECK(tester.testMsgIdRetrieval()); REPORT("tester.testMsgIdRetrieval()");
-//    CHECK(tester.testMsgIdRetrieval_OptParents()); REPORT("tester.testRelatedMsgIdRetrieval_Parents()");
-//    CHECK(tester.testMsgIdRetrieval_OptOrigMsgId()); REPORT("tester.testRelatedMsgIdRetrieval_OrigMsgId()");
-//    CHECK(tester.testMsgIdRetrieval_OptLatest()); REPORT("tester.testRelatedMsgIdRetrieval_Latest()");
-//    CHECK(tester.testMsgMetaModRequest()); REPORT("tester.testMsgMetaModRequest()");
-//        CHECK(tester.testMsgRelatedChildDataRetrieval()); REPORT("tester.testMsgRelatedChildDataRetrieval()");
-//        CHECK(tester.testMsgRelatedChildDataRetrieval_Multi()); REPORT("tester.testMsgRelatedChildDataRetrieval_Multi()");
-//    CHECK(tester.testMsgAllVersions()); REPORT("tester.testMsgAllVersions()");
-//
-//    CHECK(tester.testGrpSubmissionRetrieval()); REPORT("tester.testGrpSubmissionRetrieval()");
-//    CHECK(tester.testGrpMetaRetrieval()); REPORT("tester.testGrpMetaRetrieval()");
-//    CHECK(tester.testGrpIdRetrieval()); REPORT("tester.testGrpIdRetrieval()");
-//    CHECK(tester.testGrpMetaModRequest()); REPORT("tester.testGrpMetaModRequest()");
+    GxsPublishMsgTest testMsgPublishing(&testService, dataStore);
+    testMsgPublishing.runTests();
 
     FINALREPORT("RsGenExchangeTest");
 

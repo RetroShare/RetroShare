@@ -317,9 +317,10 @@ protected:
     	for(; vit != items.end(); vit++)
     	{
     		RsGxsGrpItem* gi = *vit;
+
     		GrpType* item = dynamic_cast<GrpType*>(gi);
 
-    		if(item != NULL)
+    		if(item)
     		{
     			grpItem.push_back(item);
     		}
@@ -328,6 +329,7 @@ protected:
 #ifdef GXS_DEBUG
     			std::cerr << "\nRsGenExchange::getGroupDataT(): Wrong type!\n";
 #endif
+    			delete gi;
     		}
     	}
 
@@ -363,7 +365,14 @@ public:
     			MsgType* mt = dynamic_cast<MsgType*>(mi);
 
     			if(mt != NULL)
+    			{
     				msgItems[grpId].push_back(mt);
+    			}
+    			else
+    			{
+    				std::cerr << "RsGenExchange::getMsgDataT(): bad cast to msg type" << std::endl;
+    				delete mi;
+    			}
     		}
     	}
 
