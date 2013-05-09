@@ -486,7 +486,7 @@ bool GxsGroupDialog::setCircleParameters(RsGroupMetaData &meta)
 			return false;
 		}
 	}
-	else if (ui.typeGroup->isChecked())
+	else if (ui.typeLocal->isChecked())
 	{
 		meta.mCircleType = GXS_CIRCLE_TYPE_YOUREYESONLY;
 		meta.mCircleId.clear();
@@ -497,9 +497,6 @@ bool GxsGroupDialog::setCircleParameters(RsGroupMetaData &meta)
 		{
 			return false;
 		}
-
-		// disable Personal circles for the moment.
-		return false;
 	}
 	else
 	{
