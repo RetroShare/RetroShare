@@ -311,7 +311,22 @@ bool p3GxsCircles::loadCircle(const RsGxsCircleId &circleId)
 	return cache_request_load(circleId);
 }
 
-int p3GxsCircles::canSend(const RsGxsCircleId &circleId, const RsPgpId &id)
+int p3GxsCircles::canSend(const RsGxsCircleId &circleId, const std::string &id)
+{
+	RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
+	if (mCircleCache.is_cached(circleId))
+	{
+		RsGxsCircleCache &data = mCircleCache.ref(circleId);
+		if (data.isAllowedPeer(id))
+		{
+			return 1;
+		}
+		return 0;
+	}
+	return -1;
+}
+
+int p3GxsCircles::canReceive(const RsGxsCircleId &circleId, const RsPgpId &id)
 {
 	RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
 	if (mCircleCache.is_cached(circleId))

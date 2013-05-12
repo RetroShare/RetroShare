@@ -387,7 +387,44 @@ void RsGxsNetService::locked_createTransactionFromPending(MsgCircleIdsRequestVet
 		locked_pushMsgRespFromList(itemL, msgPend->mPeerId, transN);
 }
 
+bool RsGxsNetService::locked_canReceive(const RsGxsGrpMetaData * const grpMeta,
+		const std::string& peerId)
+{
 
+	double timeDelta = 0.2;
+
+	if(grpMeta->mCircleType == GXS_CIRCLE_TYPE_EXTERNAL)
+	{
+		int i=0;
+		mCircles->loadCircle(grpMeta->mCircleId);
+
+		// check 5 times at most
+		// spin for 1 second at most
+		while(i < 5)
+		{
+#ifndef WINDOWS_SYS
+	usleep((int) (timeDelta * 1000000));
+#else
+	Sleep((int) (timeDelta * 1000));
+#endif
+
+			if(mCircles->isLoaded(grpMeta->mCircleId))
+			{
+				const RsPgpId& pgpId = rsPeers->getGPGId(peerId);
+				return mCircles->canSend(grpMeta->mCircleId, pgpId);
+			}
+
+			i++;
+		}
+
+	}else
+	{
+		return true;
+	}
+
+
+	return false;
+}
 
 void RsGxsNetService::collateGrpFragments(GrpFragments fragments,
 		std::map<RsGxsGroupId, GrpFragments>& partFragments) const
@@ -1167,12 +1204,38 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 		}
 	}
 
-        if(msgItemL.empty())
-            return;
+	if(msgItemL.empty())
+		return;
+
+
 
 	// get grp id for this transaction
 	RsNxsSyncMsgItem* item = msgItemL.front();
 	const std::string& grpId = item->grpId;
+
+	std::map<std::string, RsGxsGrpMetaData*> grpMetaMap;
+	grpMetaMap[grpId] = NULL;
+	mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
+	RsGxsGrpMetaData* grpMeta = grpMetaMap[grpId];
+
+	// you want to find out if you can receive it
+	// number polls essentially represent multiple
+	// of sleep interval
+	if(grpMeta)
+	{
+		bool can = locked_canReceive(grpMeta, tr->mTransaction->PeerId());
+
+		delete grpMeta;
+
+		if(!can)
+			return;
+
+	}else
+	{
+		return;
+	}
+
+
 	GxsMsgReq reqIds;
 	reqIds[grpId] = std::vector<RsGxsMessageId>();
 	GxsMsgMetaResult result;
@@ -1504,7 +1567,7 @@ void RsGxsNetService::runVetting()
 
 				locked_createTransactionFromPending(gcirv);
 			}
-			else if(gcv->getType() == GrpCircleVetting::MSG_ID_PEND)
+			else if(gcv->getType() == GrpCircleVetting::MSG_ID_SEND_PEND)
 			{
 				MsgCircleIdsRequestVetting* mcirv =
 						static_cast<MsgCircleIdsRequestVetting*>(gcv);

@@ -320,6 +320,8 @@ private:
     		const std::string& grpId, uint32_t& transN,
     		std::list<RsNxsItem*>& reqList);
 
+    bool locked_canReceive(const RsGxsGrpMetaData * const grpMeta, const std::string& peerId);
+
 private:
 
     typedef std::vector<RsNxsGrp*> GrpFragments;

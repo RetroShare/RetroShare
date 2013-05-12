@@ -239,7 +239,8 @@ public:
 	static const time_t EXPIRY_PERIOD_OFFSET;
 	static const int GRP_ID_PEND;
 	static const int GRP_ITEM_PEND;
-	static const int MSG_ID_PEND;
+	static const int MSG_ID_SEND_PEND;
+	static const int MSG_ID_RECV_PEND;
 
 
 	GrpCircleVetting(RsGcxs* const circles);

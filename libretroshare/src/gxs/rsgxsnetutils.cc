@@ -174,7 +174,9 @@ NxsTransaction::~NxsTransaction(){
 		*lit = NULL;
 	}
 
-	delete mTransaction;
+	if(mTransaction)
+		delete mTransaction;
+
 	mTransaction = NULL;
 }
 
@@ -213,7 +215,8 @@ void RsNxsNetMgrImpl::getOnlineList(std::set<std::string> &ssl_peers)
 const time_t GrpCircleVetting::EXPIRY_PERIOD_OFFSET = 5; // 10 seconds
 const int GrpCircleVetting::GRP_ID_PEND = 1;
 const int GrpCircleVetting::GRP_ITEM_PEND = 2;
-const int GrpCircleVetting::MSG_ID_PEND = 3;
+const int GrpCircleVetting::MSG_ID_SEND_PEND = 3;
+const int GrpCircleVetting::MSG_ID_RECV_PEND = 3;
 
 
 GrpIdCircleVet::GrpIdCircleVet(const RsGxsGroupId& grpId, const RsGxsCircleId& circleId)
@@ -222,9 +225,7 @@ GrpIdCircleVet::GrpIdCircleVet(const RsGxsGroupId& grpId, const RsGxsCircleId& c
 GrpCircleVetting::GrpCircleVetting(RsGcxs* const circles)
  : mCircles(circles) {}
 
-GrpCircleVetting::~GrpCircleVetting()
-{
-}
+GrpCircleVetting::~GrpCircleVetting() {}
 
 bool GrpCircleVetting::expired()
 {
@@ -296,6 +297,6 @@ bool MsgCircleIdsRequestVetting::cleared()
 
 int MsgCircleIdsRequestVetting::getType() const
 {
-	return MSG_ID_PEND;
+	return MSG_ID_SEND_PEND;
 }
 

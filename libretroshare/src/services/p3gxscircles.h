@@ -145,6 +145,7 @@ class p3GxsCircles: public RsGxsCircleExchange, public RsGxsCircles,
 	virtual bool loadCircle(const RsGxsCircleId &circleId);
 
 	virtual int canSend(const RsGxsCircleId &circleId, const RsPgpId &id);
+	virtual int canReceive(const RsGxsCircleId &circleId, const RsPgpId &id);
 	virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist);
 
 

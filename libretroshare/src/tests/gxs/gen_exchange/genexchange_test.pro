@@ -160,10 +160,13 @@ gen_exchange_target {
             genexchangetestservice.cpp \
             rsdummyservices.cc \
             gxspublishgrouptest.cc \
+            gxspublishmsgtest.cc \
             rsgenexchange_test.cc
 
         HEADERS += ../common/support.h \
             ../data_service/rsdataservice_test.h \
+            gxspublishgrouptest.h \
+            gxspublishmsgtest.h \
             rsdummyservices.h \
             ../common/data_support.h \
             ../common/support.h
