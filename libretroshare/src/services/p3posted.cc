@@ -851,7 +851,7 @@ void p3Posted::background_loadMsgs(const uint32_t &token, bool unprocessed)
 
 	// generate vector of changes to push to the GUI.
 	std::vector<RsGxsNotify *> changes;
-	RsGxsMsgChange *msgChanges = new RsGxsMsgChange();
+	RsGxsMsgChange *msgChanges = new RsGxsMsgChange(RsGxsNotify::TYPE_PROCESSED);
 
 
 	RsGxsGroupId groupId;
@@ -1052,7 +1052,7 @@ void p3Posted::background_updateVoteCounts(const uint32_t &token)
 
 	// generate vector of changes to push to the GUI.
 	std::vector<RsGxsNotify *> changes;
-	RsGxsMsgChange *msgChanges = new RsGxsMsgChange();
+	RsGxsMsgChange *msgChanges = new RsGxsMsgChange(RsGxsNotify::TYPE_PROCESSED);
 
 	for(mit = parentMsgList.begin(); mit != parentMsgList.end(); mit++)
 	{

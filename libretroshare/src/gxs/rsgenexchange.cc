@@ -1745,9 +1745,9 @@ void RsGenExchange::publishMsgs()
 
 	if(!msgChangeMap.empty())
 	{
-		RsGxsMsgChange* ch = new RsGxsMsgChange();
+		RsGxsMsgChange* ch = new RsGxsMsgChange(RsGxsNotify::TYPE_PUBLISH);
 		ch->msgChangeMap = msgChangeMap;
-		mMsgChange.push_back(ch);
+		mNotifications.push_back(ch);
 	}
 
 }
@@ -1960,9 +1960,9 @@ void RsGenExchange::publishGrps()
 
     if(!grpChanged.empty())
     {
-    	RsGxsGroupChange* gc = new RsGxsGroupChange();
+    	RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISH);
     	gc->mGrpIdList = grpChanged;
-    	mGroupChange.push_back(gc);
+    	mNotifications.push_back(gc);
     }
 
 }
@@ -2151,7 +2151,7 @@ void RsGenExchange::processRecvdMessages()
     if(!msgIds.empty())
     {
         mDataStore->storeMessage(msgs);
-        RsGxsMsgChange* c = new RsGxsMsgChange();
+        RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_RECEIVE);
         c->msgChangeMap = msgIds;
         mNotifications.push_back(c);
     }
@@ -2242,7 +2242,7 @@ void RsGenExchange::processRecvdGroups()
 
     if(!grpIds.empty())
     {
-        RsGxsGroupChange* c = new RsGxsGroupChange();
+        RsGxsGroupChange* c = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVE);
         c->mGrpIdList = grpIds;
         mNotifications.push_back(c);
         mDataStore->storeGroup(grps);

@@ -18,8 +18,11 @@ typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsMsgMetaData> > GxsMsgRelatedMe
 class RsGxsNotify
 {
 public:
-    RsGxsNotify(){ return; }
+
+	enum NotifyType { TYPE_PUBLISH, TYPE_RECEIVE, TYPE_PROCESSED };
+
     virtual ~RsGxsNotify() {return; }
+    virtual NotifyType getType() = 0;
 
 };
 
@@ -30,7 +33,11 @@ public:
 class RsGxsGroupChange : public RsGxsNotify
 {
 public:
+	RsGxsGroupChange(NotifyType type) : NOTIFY_TYPE(type) {}
     std::list<RsGxsGroupId> mGrpIdList;
+    NotifyType getType(){ return NOTIFY_TYPE;}
+private:
+    const NotifyType NOTIFY_TYPE;
 };
 
 /*!
@@ -40,7 +47,11 @@ public:
 class RsGxsMsgChange : public RsGxsNotify
 {
 public:
+	RsGxsMsgChange(NotifyType type) : NOTIFY_TYPE(type) {}
     std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgChangeMap;
+	NotifyType getType(){ return NOTIFY_TYPE;}
+private:
+    const NotifyType NOTIFY_TYPE;
 };
 
 
