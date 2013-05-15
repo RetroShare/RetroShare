@@ -151,6 +151,9 @@ void p3Posted::notifyChanges(std::vector<RsGxsNotify *> &changes)
 	}
 	changes.clear();
 	RsGxsIfaceHelper::receiveChanges(changesForGUI);
+
+	std::cerr << "p3Posted::notifyChanges() -> receiveChanges()";
+	std::cerr << std::endl;
 }
 
 void	p3Posted::service_tick()
@@ -731,7 +734,12 @@ void p3Posted::addGroupForProcessing(RsGxsGroupId grpId)
 
 	{
 		RsStackMutex stack(mPostedMtx); /********** STACK LOCKED MTX ******/
-		mBgGroupList.push_back(grpId);
+		// no point having multiple lookups queued.
+		if (mBgGroupList.end() == std::find(mBgGroupList.begin(), 
+						mBgGroupList.end(), grpId))
+		{
+			mBgGroupList.push_back(grpId);
+		}
 	}
 }
 
@@ -989,6 +997,9 @@ void p3Posted::background_loadMsgs(const uint32_t &token, bool unprocessed)
 	/* push updates of new Posts */
 	if (msgChanges->msgChangeMap.size() > 0)
 	{
+		std::cerr << "p3Posted::background_processNewMessages() -> receiveChanges()";
+		std::cerr << std::endl;
+
 		changes.push_back(msgChanges);
 	 	RsGxsIfaceHelper::receiveChanges(changes);
 	}
@@ -1086,6 +1097,10 @@ void p3Posted::background_updateVoteCounts(const uint32_t &token)
 	
 			if (it != mBgStatsMap.end())
 			{
+				std::cerr << "p3Posted::background_updateVoteCounts() Adding to msgChangeMap: ";
+				std::cerr << mit->first << " MsgId: " << vit->mMsgId;
+				std::cerr << std::endl;
+
 				stats.increment(it->second);
 				msgChanges->msgChangeMap[mit->first].push_back(vit->mMsgId);
 			}
@@ -1117,6 +1132,9 @@ void p3Posted::background_updateVoteCounts(const uint32_t &token)
 
 	if (msgChanges->msgChangeMap.size() > 0)
 	{
+		std::cerr << "p3Posted::background_updateVoteCounts() -> receiveChanges()";
+		std::cerr << std::endl;
+
 		changes.push_back(msgChanges);
 	 	RsGxsIfaceHelper::receiveChanges(changes);
 	}

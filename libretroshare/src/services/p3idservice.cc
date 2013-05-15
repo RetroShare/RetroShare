@@ -38,11 +38,11 @@
 #include <stdio.h>
 
 /****
+ * #define DEBUG_IDS	1
  * #define GXSID_GEN_DUMMY_DATA	1
  * #define ENABLE_PGP_SIGNATURES 1
  ****/
 
-#define DEBUG_IDS	1
 #define ENABLE_PGP_SIGNATURES 	1
 
 

@@ -353,14 +353,27 @@ void PostedListDialog::updateDisplay()
 
 	if (rsPosted->updated(true, true))
 	{
+		std::cerr << "rsPosted->updated() returned true";
+		std::cerr << std::endl;
 		/* update Forums List */
 
 		rsPosted->groupsChanged(groupIds);
 		if(!groupIds.empty())
 		{
-			std::list<std::string>::iterator it = std::find(groupIds.begin(), groupIds.end(), mCurrTopicId);
+			std::cerr << "rsPosted->groupsChanged():";
+			std::cerr << std::endl;
+			std::list<std::string>::iterator it;
+			for(it = groupIds.begin(); it != groupIds.end(); it++)
+			{
+				std::cerr << "\t" << *it;
+				std::cerr << std::endl;
+			}
 
-			if(it != groupIds.end()){
+			it = std::find(groupIds.begin(), groupIds.end(), mCurrTopicId);
+			if(it != groupIds.end())
+			{
+				std::cerr << "current Group -> requesting Group Summary";
+				std::cerr << std::endl;
 				requestGroupSummary();
 				return;
 			}
@@ -370,11 +383,16 @@ void PostedListDialog::updateDisplay()
 
 		if(!msgs.empty())
 		{
+			std::cerr << "rsPosted->msgsChanged():";
+			std::cerr << std::endl;
 
 
-			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit = msgs.find(mCurrTopicId);
+			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit;
+			mit = msgs.find(mCurrTopicId);
 			if(mit != msgs.end())
 			{
+				std::cerr << "current Group -> updating Displayed Items";
+				std::cerr << std::endl;
 				updateDisplayedItems(mit->second);
 			}
 		}
@@ -397,6 +415,13 @@ void PostedListDialog::updateDisplayedItems(const std::vector<RsGxsMessageId> &m
 
 	std::cerr << "PostedListDialog::updateDisplayedItems(" << mCurrTopicId << ")";
 	std::cerr << std::endl;
+
+	std::vector<RsGxsMessageId>::const_iterator it;
+	for(it = msgIds.begin(); it != msgIds.end(); it++)
+	{
+		std::cerr << "\t\tMsgId: " << *it;
+		std::cerr << std::endl;
+	}
 
 	uint32_t token;
 	mPostedQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgs, TOKEN_USER_TYPE_POST_MOD);
@@ -829,7 +854,7 @@ void PostedListDialog::shallowClearPosts()
 
 void PostedListDialog::updateCurrentDisplayComplete(const uint32_t &token)
 {
-	std::cerr << "PostedListDialog::loadGroupThreadData_InsertThreads()";
+	std::cerr << "PostedListDialog::updateCurrentDisplayComplete()";
 	std::cerr << std::endl;
 
 	std::vector<RsPostedPost> posts;
@@ -844,10 +869,15 @@ void PostedListDialog::updateCurrentDisplayComplete(const uint32_t &token)
 		// modify post content
 		if(mPosts.find(p.mMeta.mMsgId) != mPosts.end())
 		{
+			std::cerr << "PostedListDialog::updateCurrentDisplayComplete() updating MsgId: " << p.mMeta.mMsgId;
+			std::cerr << std::endl;
+
 			mPosts[p.mMeta.mMsgId]->setContent(p);
 		}
 		else
 		{
+			std::cerr << "PostedListDialog::updateCurrentDisplayComplete() loading New MsgId: " << p.mMeta.mMsgId;
+			std::cerr << std::endl;
 			/* insert new entry */
 			loadPost(p);
 		}
