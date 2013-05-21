@@ -459,6 +459,7 @@ bool AuthGPG::getGPGDetails(const std::string& id, RsPeerDetails &d)
 	d.id = id ;
 	d.gpg_id = id ;
 	d.name = cert._name;
+	d.lastUsed = cert._time_stamp;
 	d.email = cert._email;
 	d.trustLvl = cert._trustLvl;
 	d.validLvl = cert._trustLvl;

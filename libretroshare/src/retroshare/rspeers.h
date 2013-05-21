@@ -209,8 +209,9 @@ class RsPeerDetails
 	uint32_t		visState;
 
 	/* basic stats */
-	uint32_t		lastConnect; /* how long ago */
-	uint32_t		connectState; /* RS_PEER_CONNECTSTATE_... */
+	uint32_t		lastConnect;           /* how long ago */
+	uint32_t		lastUsed;              /* how long ago since last used: signature verif, connect attempt, etc */
+	uint32_t		connectState;          /* RS_PEER_CONNECTSTATE_... */
 	std::string		connectStateString; /* Additional string like ip address */
 	uint32_t		connectPeriod;
 	bool			foundDHT;

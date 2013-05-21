@@ -40,6 +40,8 @@ class PGPCertificateInfo
 		uint32_t _flags ;
 		uint32_t _type ;
 
+		mutable time_t _time_stamp ;		// last time the key was used (received, used for signature verification, etc)
+
 		PGPFingerprintType _fpr;           /* fingerprint */
 		PGPIdType          _key_id ;
 
@@ -140,8 +142,8 @@ class PGPHandler
 		//
 		bool validateAndUpdateSignatures(PGPCertificateInfo& cert,const ops_keydata_t *keydata) ;
 
-		const ops_keydata_t *getPublicKey(const PGPIdType&) const ;
-		const ops_keydata_t *getSecretKey(const PGPIdType&) const ;
+		const ops_keydata_t *locked_getPublicKey(const PGPIdType&,bool stamp_the_key) const;
+		const ops_keydata_t *locked_getSecretKey(const PGPIdType&) const ;
 
 		void locked_readPrivateTrustDatabase() ;
 		bool locked_writePrivateTrustDatabase() ;
@@ -168,7 +170,7 @@ class PGPHandler
 		const std::string _pgp_lock_filename ;
 
 		bool _pubring_changed ;
-		bool _trustdb_changed ;
+		mutable bool _trustdb_changed ;
 
 		time_t _pubring_last_update_time ;
 		time_t _secring_last_update_time ;

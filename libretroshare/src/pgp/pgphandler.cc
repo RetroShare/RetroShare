@@ -196,6 +196,7 @@ void PGPHandler::initCertificateInfo(PGPCertificateInfo& cert,const ops_keydata_
 	cert._validLvl = 1 ;	// to be setup accordingly
 	cert._key_index = index ;
 	cert._flags = 0 ;
+	cert._time_stamp = time(NULL) ;
 
 	switch(keydata->key.pkey.algorithm)
 	{
@@ -284,6 +285,7 @@ bool PGPHandler::printKeys() const
 		std::cerr << "\tAccept Connect: " << (it->second._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_ACCEPT_CONNEXION) << std::endl;
 		std::cerr << "\ttrustLvl      : " <<  it->second._trustLvl << std::endl;
 		std::cerr << "\tvalidLvl      : " <<  it->second._validLvl << std::endl;
+		std::cerr << "\tUse time stamp: " <<  it->second._time_stamp << std::endl;
 		std::cerr << "\tfingerprint   : " <<  it->second._fpr.toStdString() << std::endl;
 		std::cerr << "\tSigners       : " << it->second.signers.size() <<  std::endl;
 
@@ -309,7 +311,7 @@ bool PGPHandler::haveSecretKey(const PGPIdType& id) const
 {
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
 
-	return getSecretKey(id) != NULL ;
+	return locked_getSecretKey(id) != NULL ;
 }
 
 const PGPCertificateInfo *PGPHandler::getCertificateInfo(const PGPIdType& id) const
@@ -488,7 +490,7 @@ std::string PGPHandler::makeRadixEncodedPGPKey(const ops_keydata_t *key,bool inc
 	return res ;
 }
 
-const ops_keydata_t *PGPHandler::getSecretKey(const PGPIdType& id) const
+const ops_keydata_t *PGPHandler::locked_getSecretKey(const PGPIdType& id) const
 {
 	std::map<std::string,PGPCertificateInfo>::const_iterator res = _secret_keyring_map.find(id.toStdString()) ;
 
@@ -497,20 +499,35 @@ const ops_keydata_t *PGPHandler::getSecretKey(const PGPIdType& id) const
 	else
 		return ops_keyring_get_key_by_index(_secring,res->second._key_index) ;
 }
-const ops_keydata_t *PGPHandler::getPublicKey(const PGPIdType& id) const
+const ops_keydata_t *PGPHandler::locked_getPublicKey(const PGPIdType& id,bool stamp_the_key) const
 {
 	std::map<std::string,PGPCertificateInfo>::const_iterator res = _public_keyring_map.find(id.toStdString()) ;
 
 	if(res == _public_keyring_map.end())
 		return NULL ;
 	else
+	{
+		if(stamp_the_key)		// Should we stamp the key as used?
+		{
+			static time_t last_update_db_because_of_stamp = 0 ;
+			time_t now = time(NULL) ;
+
+			res->second._time_stamp = now ;
+
+			if(now > last_update_db_because_of_stamp + 3600) // only update database once every hour. No need to do it more often.
+			{
+				_trustdb_changed = true ;
+				last_update_db_because_of_stamp = now ;
+			}
+		}
 		return ops_keyring_get_key_by_index(_pubring,res->second._key_index) ;
+	}
 }
 
 std::string PGPHandler::SaveCertificateToString(const PGPIdType& id,bool include_signatures) const
 {
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
-	const ops_keydata_t *key = getPublicKey(id) ;
+	const ops_keydata_t *key = locked_getPublicKey(id,false) ;
 
 	if(key == NULL)
 	{
@@ -524,7 +541,7 @@ std::string PGPHandler::SaveCertificateToString(const PGPIdType& id,bool include
 bool PGPHandler::exportPublicKey(const PGPIdType& id,unsigned char *& mem_block,size_t& mem_size,bool armoured,bool include_signatures) const
 {
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
-	const ops_keydata_t *key = getPublicKey(id) ;
+	const ops_keydata_t *key = locked_getPublicKey(id,false) ;
 	mem_block = NULL ;
 
 	if(key == NULL)
@@ -565,14 +582,14 @@ bool PGPHandler::exportGPGKeyPair(const std::string& filename,const PGPIdType& e
 {
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
 
-	const ops_keydata_t *pubkey = getPublicKey(exported_key_id) ;
+	const ops_keydata_t *pubkey = locked_getPublicKey(exported_key_id,false) ;
 
 	if(pubkey == NULL)
 	{
 		std::cerr << "Cannot output key " << exported_key_id.toStdString() << ": not found in public keyring." << std::endl;
 		return false ;
 	}
-	const ops_keydata_t *seckey = getSecretKey(exported_key_id) ;
+	const ops_keydata_t *seckey = locked_getSecretKey(exported_key_id) ;
 
 	if(seckey == NULL)
 	{
@@ -770,7 +787,7 @@ bool PGPHandler::importGPGKeyPair(const std::string& filename,PGPIdType& importe
 
 	imported_key_id = PGPIdType(pubkey->key_id) ;
 	
-	if(getSecretKey(imported_key_id) == NULL)
+	if(locked_getSecretKey(imported_key_id) == NULL)
 	{
 		RsStackFileLock flck(_pgp_lock_filename) ;	// lock access to PGP directory.
 
@@ -907,6 +924,7 @@ bool PGPHandler::addOrMergeKey(ops_keyring_t *keyring,std::map<std::string,PGPCe
 		std::cerr << "  Key exists. Merging signatures." << std::endl;
 #endif
 		ret = mergeKeySignatures(const_cast<ops_keydata_t*>(existing_key),keydata) ;
+		res->second._time_stamp = time(NULL) ;
 
 		if(ret)
 			initCertificateInfo(kmap[id.toStdString()],existing_key,res->second._key_index) ;
@@ -925,7 +943,7 @@ bool PGPHandler::encryptTextToFile(const PGPIdType& key_id,const std::string& te
 	ops_create_info_t *info;
 	int fd = ops_setup_file_write(&info, outfile.c_str(), ops_true);
 
-	const ops_keydata_t *public_key = getPublicKey(key_id) ;
+	const ops_keydata_t *public_key = locked_getPublicKey(key_id,true) ;
 
 	if(public_key == NULL)
 	{
@@ -991,7 +1009,7 @@ bool PGPHandler::SignDataBin(const PGPIdType& id,const void *data, const uint32_
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
 	// need to find the key and to decrypt it.
 	
-	const ops_keydata_t *key = getSecretKey(id) ;
+	const ops_keydata_t *key = locked_getSecretKey(id) ;
 
 	if(!key)
 	{
@@ -1054,7 +1072,7 @@ bool PGPHandler::privateSignCertificate(const PGPIdType& ownId,const PGPIdType& 
 {
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
 
-	ops_keydata_t *key_to_sign = const_cast<ops_keydata_t*>(getPublicKey(id_of_key_to_sign)) ;
+	ops_keydata_t *key_to_sign = const_cast<ops_keydata_t*>(locked_getPublicKey(id_of_key_to_sign,true)) ;
 
 	if(key_to_sign == NULL)
 	{
@@ -1064,14 +1082,14 @@ bool PGPHandler::privateSignCertificate(const PGPIdType& ownId,const PGPIdType& 
 
 	// 1 - get decrypted secret key
 	//
-	const ops_keydata_t *skey = getSecretKey(ownId) ;
+	const ops_keydata_t *skey = locked_getSecretKey(ownId) ;
 
 	if(!skey)
 	{
 		std::cerr << "Cannot sign: no secret key with id " << ownId.toStdString() << std::endl;
 		return false ;
 	}
-	const ops_keydata_t *pkey = getPublicKey(ownId) ;
+	const ops_keydata_t *pkey = locked_getPublicKey(ownId,true) ;
 
 	if(!pkey)
 	{
@@ -1128,7 +1146,7 @@ bool PGPHandler::getKeyFingerprint(const PGPIdType& id,PGPFingerprintType& fp) c
 {
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
 
-	const ops_keydata_t *key = getPublicKey(id) ;
+	const ops_keydata_t *key = locked_getPublicKey(id,false) ;
 
 	if(key == NULL)
 		return false ;
@@ -1146,7 +1164,7 @@ bool PGPHandler::VerifySignBin(const void *literal_data, uint32_t literal_data_l
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
 
 	PGPIdType id = PGPIdType(key_fingerprint.toByteArray() + PGPFingerprintType::SIZE_IN_BYTES - PGPIdType::SIZE_IN_BYTES) ;
-	const ops_keydata_t *key = getPublicKey(id) ;
+	const ops_keydata_t *key = locked_getPublicKey(id,true) ;
 
 	if(key == NULL)
 	{
@@ -1309,7 +1327,7 @@ struct PrivateTrustPacket
 {
 	unsigned char user_id[KEY_ID_SIZE] ;  	// pgp id in unsigned char format.
 	uint8_t trust_level ;						// trust level. From 0 to 6.
-	uint32_t flags ;								// not used yet, but who knows?
+	uint32_t time_stamp ;						// last time the cert was ever used, in seconds since the epoch. 0 means not initialized.
 };
 
 void PGPHandler::locked_readPrivateTrustDatabase()
@@ -1345,6 +1363,7 @@ void PGPHandler::locked_readPrivateTrustDatabase()
 		
 		++n_packets ;
 		it->second._trustLvl = trustpacket.trust_level ;
+		it->second._time_stamp = trustpacket.time_stamp ;
 	}
 
 	fclose(fdb) ;
@@ -1370,6 +1389,7 @@ bool PGPHandler::locked_writePrivateTrustDatabase()
 	{
 		memcpy(&trustpacket.user_id,PGPIdType(it->first).toByteArray(),KEY_ID_SIZE) ;
 		trustpacket.trust_level = it->second._trustLvl ;
+		trustpacket.time_stamp = it->second._time_stamp ;
 
 		if(fwrite((void*)&trustpacket,sizeof(PrivateTrustPacket),1,fdb) != 1)
 		{
