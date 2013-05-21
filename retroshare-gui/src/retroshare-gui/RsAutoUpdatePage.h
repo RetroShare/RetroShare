@@ -21,13 +21,23 @@ class RsAutoUpdatePage: public MainPage
 		RsAutoUpdatePage(int ms_update_period = 1000, QWidget *parent = NULL, Qt::WindowFlags flags = 0) ;
 		virtual ~RsAutoUpdatePage() ;
 
-		virtual void updateDisplay() {}
-	
 		static void lockAllEvents() ;
 		static void unlockAllEvents() ;
 		static bool eventsLocked() ;
 
+	public slots:
+		// This method updates the widget only if not locked, and if visible.
+		// This is *the* method to call when on callbacks etc, to avoid locks due
+		// to Qt calling itself through recursive behavior such as passphrase
+		// handling etc.
+		//
+		void securedUpdateDisplay() ;
+
 	protected:
+		// This is overloaded in subclasses.
+		//
+		virtual void updateDisplay() {}
+	
 		virtual void showEvent(QShowEvent *e) ;
 
 	private slots:

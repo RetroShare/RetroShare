@@ -184,20 +184,13 @@ void NetworkDialog::changeEvent(QEvent *e)
     QWidget::changeEvent(e);
     switch (e->type()) {
     case QEvent::StyleChange:
-        insertConnect();
+        securedUpdateDisplay();
         break;
     default:
         // remove compiler warnings
         break;
     }
 }
-
-//void NetworkDialog::updateNewDiscoveryInfo()
-//{
-//	//std::cerr << "Received new p3disc info. Updating networkview." << std::endl;
-//	//networkview->update();
-//	//networkview->updateDisplay();
-//}
 
 void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint /*point*/ )
 {
@@ -263,7 +256,7 @@ void NetworkDialog::denyFriend()
 	std::string peer_id = wi->text(COLUMN_PEERID).toStdString() ;
 	rsPeers->removeFriend(peer_id) ;
 
-	insertConnect() ;
+	securedUpdateDisplay();
 }
 void NetworkDialog::deleteCert()
 {
@@ -276,7 +269,7 @@ void NetworkDialog::deleteCert()
 	std::string peer_id = wi->text(9).toStdString() ;
 	rsPeers->deleteCertificate(peer_id) ;
 
-	insertConnect() ;
+	securedUpdateDisplay();
 #endif
 }
 

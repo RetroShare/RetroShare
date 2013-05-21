@@ -55,7 +55,7 @@ public:
   void setBackgroundColorHasSignedMe(QColor color) { mBackgroundColorHasSignedMe = color; }
   void setBackgroundColorDenied(QColor color) { mBackgroundColorDenied = color; }
 
-public slots:
+private:
   void  insertConnect();
 //  std::string loadneighbour();
   /* void loadneighbour(); */

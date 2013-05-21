@@ -23,6 +23,14 @@ RsAutoUpdatePage::~RsAutoUpdatePage()
 	_timer = NULL ;
 }
 
+void RsAutoUpdatePage::securedUpdateDisplay()
+{
+	if(_locked == false && isVisible()) {
+		updateDisplay();
+		update() ;				// Qt flush
+	}
+}
+
 void RsAutoUpdatePage::showEvent(QShowEvent */*event*/)
 {
         //std::cout << "RsAutoUpdatePage::showEvent() In show event !!" << std::endl ;
@@ -34,14 +42,11 @@ void RsAutoUpdatePage::timerUpdate()
 {
 	// only update when the widget is visible.
 	//
-	if(_locked == false && isVisible()) {
-		updateDisplay();
-		update() ;				// Qt flush
-	}
-
+	securedUpdateDisplay() ;
 	_timer->start() ;
 }
 
 void RsAutoUpdatePage::lockAllEvents() { _locked = true ; }
 void RsAutoUpdatePage::unlockAllEvents() { _locked = false ; }
 bool RsAutoUpdatePage::eventsLocked() { return _locked ; }
+
