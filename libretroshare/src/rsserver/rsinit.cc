@@ -2297,7 +2297,7 @@ int RsServer::StartupRetroShare()
         /**** Identity service ****/
 
         RsGeneralDataService* gxsid_ds = new RsDataService(currGxsDir + "/", "gxsid_db",
-                        RS_SERVICE_GXSV2_TYPE_GXSID, NULL);
+                        RS_SERVICE_GXSV2_TYPE_GXSID, NULL, RsInitConfig::passwd);
 
 #ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         gxsid_ds->resetDataStore(); 
@@ -2307,7 +2307,7 @@ int RsServer::StartupRetroShare()
         mGxsIdService = new p3IdService(gxsid_ds, NULL);
 
         RsGeneralDataService* gxscircles_ds = new RsDataService(currGxsDir + "/", "gxscircles_db",
-                        RS_SERVICE_GXSV2_TYPE_GXSCIRCLE, NULL);
+                        RS_SERVICE_GXSV2_TYPE_GXSCIRCLE, NULL, RsInitConfig::passwd);
 
         mGxsCircles = new p3GxsCircles(gxscircles_ds, NULL, mGxsIdService);
 
@@ -2336,7 +2336,7 @@ int RsServer::StartupRetroShare()
 
         /**** Photo service ****/
         RsGeneralDataService* photo_ds = new RsDataService(currGxsDir + "/", "photoV2_db",
-                        RS_SERVICE_GXSV2_TYPE_PHOTO, NULL);
+                        RS_SERVICE_GXSV2_TYPE_PHOTO, NULL, RsInitConfig::passwd);
 
 #ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         photo_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
@@ -2354,7 +2354,7 @@ int RsServer::StartupRetroShare()
 
 
         RsGeneralDataService* posted_ds = new RsDataService(currGxsDir + "/", "posted_db",
-                                                            RS_SERVICE_GXSV2_TYPE_POSTED);
+                                                            RS_SERVICE_GXSV2_TYPE_POSTED, NULL, RsInitConfig::passwd);
 
 #ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         posted_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
@@ -2372,7 +2372,8 @@ int RsServer::StartupRetroShare()
 
 
         RsGeneralDataService* wiki_ds = new RsDataService(currGxsDir + "/", "wiki_db",
-                                                            RS_SERVICE_GXSV2_TYPE_WIKI);
+                                                            RS_SERVICE_GXSV2_TYPE_WIKI,
+                                                            NULL, RsInitConfig::passwd);
 
 #ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         wiki_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
@@ -2389,7 +2390,7 @@ int RsServer::StartupRetroShare()
 
 
         RsGeneralDataService* wire_ds = new RsDataService(currGxsDir + "/", "wire_db",
-                                                            RS_SERVICE_GXSV2_TYPE_WIRE);
+                                                            RS_SERVICE_GXSV2_TYPE_WIRE, NULL, RsInitConfig::passwd);
 
 #ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         wire_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
@@ -2405,7 +2406,7 @@ int RsServer::StartupRetroShare()
         /**** Forum GXS service ****/
 
         RsGeneralDataService* gxsforums_ds = new RsDataService(currGxsDir + "/", "gxsforums_db",
-                                                            RS_SERVICE_GXSV2_TYPE_FORUMS);
+                                                            RS_SERVICE_GXSV2_TYPE_FORUMS, NULL, RsInitConfig::passwd);
 
 #ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         gxsforums_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
@@ -2422,7 +2423,7 @@ int RsServer::StartupRetroShare()
         /**** Channel GXS service ****/
 
         RsGeneralDataService* gxschannels_ds = new RsDataService(currGxsDir + "/", "gxschannels_db",
-                                                            RS_SERVICE_GXSV2_TYPE_CHANNELS);
+                                                            RS_SERVICE_GXSV2_TYPE_CHANNELS, NULL, RsInitConfig::passwd);
 
 #ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
        gxschannels_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing

@@ -29,7 +29,6 @@
 #include <inttypes.h>
 
 #include "retrodb.h"
-#include "radix64.h"
 #include "rsdbbind.h"
 
 //#define RETRODB_DEBUG
@@ -39,13 +38,24 @@ const int RetroDb::OPEN_READONLY = SQLITE_OPEN_READONLY;
 const int RetroDb::OPEN_READWRITE = SQLITE_OPEN_READWRITE;
 const int RetroDb::OPEN_READWRITE_CREATE = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE;
 
-RetroDb::RetroDb(const std::string &dbPath, int flags) : mDb(NULL) {
+RetroDb::RetroDb(const std::string &dbPath, int flags, const std::string& key) : mDb(NULL), mKey(key) {
 
     int rc = sqlite3_open_v2(dbPath.c_str(), &mDb, flags, NULL);
 
     if(rc){
         std::cerr << "Can't open database, Error code: " <<  sqlite3_errmsg(mDb)
                   << std::endl;
+        sqlite3_close(mDb);
+     }
+
+#ifdef ENABLE_ENCRYPTED_DB
+    rc = sqlite3_key(mDb, mKey.c_str(), mKey.size());
+#endif
+
+    if(rc){
+        std::cerr << "Can't key database: " <<  sqlite3_errmsg(mDb)
+                  << std::endl;
+
         sqlite3_close(mDb);
      }
 }
@@ -227,6 +237,11 @@ bool RetroDb::sqlInsert(const std::string &table, const std::string& /* nullColu
 
 
     return true;
+}
+
+std::string RetroDb::getKey() const
+{
+	return mKey;
 }
 
 bool RetroDb::execSQL_bind(const std::string &query, std::list<RetroBind*> &paramBindings){

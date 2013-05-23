@@ -141,9 +141,9 @@ const std::string RsGeneralDataService::MSG_META_STATUS = KEY_MSG_STATUS;
 const uint32_t RsGeneralDataService::GXS_MAX_ITEM_SIZE = 1572864; // 1.5 Mbytes
 
 RsDataService::RsDataService(const std::string &serviceDir, const std::string &dbName, uint16_t serviceType,
-                             RsGxsSearchModule *mod)
+                             RsGxsSearchModule *mod, const std::string& key)
     : RsGeneralDataService(), mServiceDir(serviceDir), mDbName(mServiceDir + "/" + dbName), mServType(serviceType),
-    mDbMutex("RsDataService"){
+    mDbMutex("RsDataService"), mDb( new RetroDb(mDbName, RetroDb::OPEN_READWRITE_CREATE, key)) {
 
     initialise();
 
@@ -187,7 +187,7 @@ void RsDataService::initialise(){
     RsStackMutex stack(mDbMutex);
 
     // initialise database
-    mDb = new RetroDb(mDbName, RetroDb::OPEN_READWRITE_CREATE);
+
 
     // create table for msg data
     mDb->execSQL("CREATE TABLE " + MSG_TABLE_NAME + "(" +
