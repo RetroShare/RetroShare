@@ -37,6 +37,7 @@
 
 const uint8_t RS_PKT_SUBTYPE_CHANNEL_MSG         = 0x01;
 const uint8_t RS_PKT_SUBTYPE_CHANNEL_READ_STATUS = 0x02;
+const uint8_t RS_PKT_SUBTYPE_CHANNEL_DEST_DIR    = 0x03;
 
 /**************************************************************************/
 
@@ -85,8 +86,25 @@ public:
 	/// a map which contains the read for messages within a forum
 	std::map<std::string, uint32_t> msgReadStatus;
 
+	std::string destination_directory ;
 };
+/*!
+ * This is used to store the destination directories of each channel
+ */
+class RsChannelDestDirConfigItem : public RsDistribChildConfig
+{
+public:
+	RsChannelDestDirConfigItem()
+	: RsDistribChildConfig(RS_SERVICE_TYPE_CHANNEL, RS_PKT_SUBTYPE_CHANNEL_DEST_DIR)
+	{ return; }
 
+	virtual ~RsChannelDestDirConfigItem() {}
+
+	virtual void clear() { dest_dirs.clear() ; }
+	virtual std::ostream& print(std::ostream &out, uint16_t indent);
+
+	std::vector<std::pair<std::string, std::string> > dest_dirs;
+};
 class RsChannelSerialiser: public RsSerialType
 {
 	public:
@@ -111,6 +129,9 @@ virtual uint32_t sizeReadStatus(RsChannelReadStatus* );
 virtual bool serialiseReadStatus(RsChannelReadStatus* item, void* data, uint32_t *size);
 virtual RsChannelReadStatus *deserialiseReadStatus(void* data, uint32_t *size);
 
+virtual uint32_t sizeDestDirConfig(RsChannelDestDirConfigItem* );
+virtual bool serialiseDestDirConfig(RsChannelDestDirConfigItem* item, void* data, uint32_t *size);
+virtual RsChannelDestDirConfigItem *deserialiseDestDirConfig(void* data, uint32_t *size);
 };
 
 /**************************************************************************/

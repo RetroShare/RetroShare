@@ -117,6 +117,7 @@ bool p3Channels::getChannelInfo(const std::string &cId, ChannelInfo &ci)
 
 	ci.pop = gi->sources.size();
 	ci.lastPost = gi->lastPost;
+	ci.destination_directory = (mDestinationDirectories.find(cId)==mDestinationDirectories.end())?"":(mDestinationDirectories[cId]) ;
 
 	ci.pngChanImage = gi->grpIcon.pngImageData;
 
@@ -666,6 +667,16 @@ void p3Channels::getPubKeysAvailableGrpIds(std::list<std::string>& grpIds)
 
 }
 
+bool p3Channels::channelSetDestinationDirectory(const std::string& chId, const std::string& dest_dir)
+{
+	RsStackMutex stack(distribMtx);
+
+	mDestinationDirectories[chId] = dest_dir ;
+	IndicateConfigChanged() ;
+
+	return true ;
+}
+
 bool p3Channels::channelSetAutoDl(const std::string& chId, bool autoDl)
 {
 
@@ -988,18 +999,28 @@ void p3Channels::locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags, bool 
 bool p3Channels::childLoadList(std::list<RsItem* >& configSaves)
 {
 	RsChannelReadStatus* drs = NULL;
-	std::list<RsItem* >::iterator it;
+	RsChannelDestDirConfigItem *dd = NULL ;
 
-	for(it = configSaves.begin(); it != configSaves.end(); it++)
+	for(std::list<RsItem* >::iterator it = configSaves.begin(); it != configSaves.end(); it++)
 	{
 		if(NULL != (drs = dynamic_cast<RsChannelReadStatus* >(*it)))
+			processChanReadStatus(drs);		// don't delete, since it's used later on.
+		else if(NULL != (dd = dynamic_cast<RsChannelDestDirConfigItem*>(*it)))
 		{
-			processChanReadStatus(drs);
+			mDestinationDirectories.clear() ;
+
+			for(uint32_t i=0;i<dd->dest_dirs.size();++i)
+			{
+				mDestinationDirectories[dd->dest_dirs[i].first] = dd->dest_dirs[i].second ;
+
+				std::cerr << "p3Channels: setDestination directory or ChId " << dd->dest_dirs[i].first << " to " <<  dd->dest_dirs[i].second <<std::endl;
+			}
+
+			delete *it ;
 		}
 		else
 		{
-			std::cerr << "p3Channels::childLoadList(): Configs items loaded were incorrect!"
-					  << std::endl;
+			std::cerr << "p3Channels::childLoadList(): Configs items loaded were incorrect!" << std::endl;
 
 			if(*it != NULL)
 				delete *it;
@@ -1011,9 +1032,8 @@ bool p3Channels::childLoadList(std::list<RsItem* >& configSaves)
 
 void p3Channels::processChanReadStatus(RsChannelReadStatus* drs)
 {
+//	mReadStatus.push_back(drs);
 
-
-	mReadStatus.push_back(drs);
 	std::string chId = drs->channelId;
 
 	statMap::iterator sit = drs->msgReadStatus.find(chId);
@@ -1030,13 +1050,10 @@ void p3Channels::processChanReadStatus(RsChannelReadStatus* drs)
 	mReadStatus.push_back(drs);
 
 	saveList.push_back(drs);
-
-
 }
 
 std::list<RsItem *> p3Channels::childSaveList()
 {
-
 	std::list<RsChannelReadStatus* >::iterator lit = mReadStatus.begin();
 	statMap::iterator sit, mit;
 
@@ -1057,7 +1074,17 @@ std::list<RsItem *> p3Channels::childSaveList()
 		}
 	}
 
-	return saveList;
+	// Make a copy of saveList and add additional items we want to save.
+	//
+	std::list<RsItem*> to_return = saveList ;
+	RsChannelDestDirConfigItem *dd = new RsChannelDestDirConfigItem ;
+
+	for(std::map<std::string,std::string>::const_iterator it(mDestinationDirectories.begin());it!=mDestinationDirectories.end();++it)
+		dd->dest_dirs.push_back(*it) ;
+
+	to_return.push_back(dd) ;
+
+	return to_return;
 }
 
 /****************************************/

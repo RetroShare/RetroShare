@@ -85,6 +85,7 @@ virtual bool channelEditInfo(const std::string &chId, ChannelInfo &ci);
 virtual void getPubKeysAvailableGrpIds(std::list<std::string>& grpIds);
 virtual bool channelSetAutoDl(const std::string& chId, bool autoDl);
 virtual bool channelGetAutoDl(const std::string& chId, bool& autoDl);
+virtual bool channelSetDestinationDirectory(const std::string& chId,const std::string& dest_dir) ;
 
 /***************************************************************************************/
 /****************** Event Feedback (Overloaded form p3distrib) *************************/
@@ -123,6 +124,7 @@ void removeChannelReadStatusEntry(const std::string& cId);
 
 	chanStatMap mMsgReadStatus;
 	statMap mChannelStatus;
+	std::map<std::string,std::string> mDestinationDirectories ;
 };
 
 

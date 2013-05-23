@@ -21,6 +21,7 @@
 
 #include <QMenu>
 #include <QTimer>
+#include <QFile>
 #include <QStandardItemModel>
 #include <QMessageBox>
 
@@ -28,6 +29,8 @@
 #include <algorithm>
 #include <set>
 #include <map>
+
+#include <retroshare/rsfiles.h>
 
 #include "ChannelFeed.h"
 
@@ -199,6 +202,51 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint /*point*/ )
 
 	 if(ci.channelFlags & RS_DISTRIB_SUBSCRIBED)
 	 {
+		 QMenu *directoryMenu = contextMnu.addMenu(QIcon(":/images/folderopen.png"),tr("Set destination directory")) ;
+
+		 QAction *specifyDestinationDirectoryAct = new QAction(QIcon(":/images/filefind.png"), tr("Other..."), &contextMnu);
+		 directoryMenu->addAction(specifyDestinationDirectoryAct);
+
+		 // Now get the list of existing directories.
+
+		 std::list<SharedDirInfo> dirs ;
+		 rsFiles->getSharedDirectories(dirs) ;
+		 bool found = false ;
+
+		 for(std::list<SharedDirInfo>::const_iterator it(dirs.begin());it!=dirs.end();++it)
+		 {
+			 // check for existence of directory name
+			 QFile directory(QString::fromUtf8((*it).filename.c_str())) ;
+
+			 if(!directory.exists()) continue ;
+			 if(!(directory.permissions() & QFile::WriteOwner)) continue ;
+
+			 QAction *act ;
+			 
+			 if(ci.destination_directory == (*it).filename)
+			 {
+				 act = new QAction(QIcon(":/images/start.png"),QString::fromUtf8((*it).virtualname.c_str()),directoryMenu) ;
+				 found = true ;
+			 }
+			 else
+				 act = new QAction(QString::fromUtf8((*it).virtualname.c_str()),directoryMenu) ;
+
+			 act->setData(QString::fromUtf8((*it).filename.c_str())) ;
+			 connect(act,SIGNAL(triggered()),this,SLOT(setDestinationDirectory())) ;
+			 directoryMenu->addAction(act) ;
+		 }
+		 QAction *defaultDestinationDirectoryAct = new QAction(tr("[Default]"), &contextMnu);
+		 defaultDestinationDirectoryAct->setData(QString()) ;
+		 connect(defaultDestinationDirectoryAct,SIGNAL(triggered()),this,SLOT(setDestinationDirectory())) ;
+
+		 directoryMenu->addAction(defaultDestinationDirectoryAct);
+
+		 if(!found)
+			 defaultDestinationDirectoryAct->setIcon(QIcon(":/images/start.png")) ;
+	 }
+
+	 if(ci.channelFlags & RS_DISTRIB_SUBSCRIBED)
+	 {
 		 contextMnu.addAction( unsubscribechannelAct );
 		 contextMnu.addAction( restoreKeysAct );
 		 contextMnu.addSeparator();
@@ -219,6 +267,17 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint /*point*/ )
 #endif
 
     contextMnu.exec(QCursor::pos());
+}
+void ChannelFeed::setDestinationDirectory()
+{
+	ChannelInfo ci;
+	if (!rsChannels->getChannelInfo(mChannelId, ci)) 
+		return;
+
+	std::string dest_dir(qobject_cast<QAction*>(sender())->data().toString().toUtf8().data()) ;
+
+	std::cerr << "Setting new directory " << dest_dir << " to channel " << mChannelId << std::endl;
+	rsChannels->channelSetDestinationDirectory(mChannelId,dest_dir) ;
 }
 
 void ChannelFeed::createChannel()

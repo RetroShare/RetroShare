@@ -61,6 +61,7 @@ class ChannelInfo
 	uint32_t pngImageLen;
 
 	time_t lastPost;
+	std::string destination_directory ;
 };
 
 //! for storing a channel msgs thumbnail picture
@@ -263,6 +264,10 @@ virtual void getPubKeysAvailableGrpIds(std::list<std::string>& chanIds) = 0;
  */
 virtual bool channelSetAutoDl(const std::string& chId, bool  autoDl) = 0;
 
+// sets the defautl destination directory for files downloaded in this channel.
+// Default is "" which means Downloads/
+
+virtual bool channelSetDestinationDirectory(const std::string& cid,const std::string& dir) = 0 ;
 
 /*!
  * get what autoDl is set to for the given channel id
