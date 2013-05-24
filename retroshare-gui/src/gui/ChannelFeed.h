@@ -80,6 +80,7 @@ private slots:
     void shareKey();
     void copyChannelLink();
 	 void setDestinationDirectory();
+	 void chooseDestinationDirectory();
 
     void channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status);
 

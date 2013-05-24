@@ -24,6 +24,7 @@
 #include <QFile>
 #include <QStandardItemModel>
 #include <QMessageBox>
+#include <QFileDialog>
 
 #include <iostream>
 #include <algorithm>
@@ -206,6 +207,7 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint /*point*/ )
 
 		 QAction *specifyDestinationDirectoryAct = new QAction(QIcon(":/images/filefind.png"), tr("Other..."), &contextMnu);
 		 directoryMenu->addAction(specifyDestinationDirectoryAct);
+		 connect(specifyDestinationDirectoryAct,SIGNAL(triggered()),this,SLOT(chooseDestinationDirectory())) ;
 
 		 // Now get the list of existing directories.
 
@@ -241,8 +243,10 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint /*point*/ )
 
 		 directoryMenu->addAction(defaultDestinationDirectoryAct);
 
-		 if(!found)
+		 if(ci.destination_directory.empty())
 			 defaultDestinationDirectoryAct->setIcon(QIcon(":/images/start.png")) ;
+		 else if(!found)
+			 specifyDestinationDirectoryAct->setIcon(QIcon(":/images/start.png")) ;
 	 }
 
 	 if(ci.channelFlags & RS_DISTRIB_SUBSCRIBED)
@@ -279,7 +283,20 @@ void ChannelFeed::setDestinationDirectory()
 	std::cerr << "Setting new directory " << dest_dir << " to channel " << mChannelId << std::endl;
 	rsChannels->channelSetDestinationDirectory(mChannelId,dest_dir) ;
 }
+void ChannelFeed::chooseDestinationDirectory()
+{
+	ChannelInfo ci;
+	if (!rsChannels->getChannelInfo(mChannelId, ci)) 
+		return;
 
+	QString dirname = QFileDialog::getExistingDirectory(NULL,tr("Select channel destination directory"),QString::fromStdString(ci.destination_directory),QFileDialog::ShowDirsOnly) ;
+
+	if(dirname.isNull())
+		return ;
+
+	std::cerr << "Setting new directory " << dirname.toStdString() << " to channel " << mChannelId << std::endl;
+	rsChannels->channelSetDestinationDirectory(mChannelId,dirname.toStdString()) ;
+}
 void ChannelFeed::createChannel()
 {
 	CreateChannel *cf = new CreateChannel();
