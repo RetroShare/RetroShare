@@ -1040,8 +1040,6 @@ void p3Channels::processChanReadStatus(RsChannelReadStatus* drs)
 
 	if(sit != drs->msgReadStatus.end()){
 		mChannelStatus[chId] = sit->second;
-		mChanReadStatus.insert(std::make_pair<std::string, RsChannelReadStatus*>
-			(chId, drs));
 	}
 
 	// first pull out the channel id status

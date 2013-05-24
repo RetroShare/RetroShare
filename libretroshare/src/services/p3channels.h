@@ -120,7 +120,6 @@ void removeChannelReadStatusEntry(const std::string& cId);
 	std::list<RsItem *> saveList;
 
 	std::list<RsChannelReadStatus *> mReadStatus;
-	std::map<std::string, RsChannelReadStatus* > mChanReadStatus;
 
 	chanStatMap mMsgReadStatus;
 	statMap mChannelStatus;
