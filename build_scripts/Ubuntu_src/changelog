@@ -1,6 +1,49 @@
 retroshare (0.5.4-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
   * Improvements
+    - GUI
+       * added choice for default auto-download directory per channel.
+       * Removed unused member mChanReadStatus from p3Channels
+       * Ensured that inserConnect() is only called when the widget is visible. This reduces lags due to discovery info.
+       * patch from phenom to all resizing lobby participant lists
+       * Added patch from Henry Morgan, Fixed some typos.
+       * Added a info Label for the Friend Request Page
+       * Fixed online time in profile widget, Fixed width of settings dialog.
+       * patch (from Henry Morgan) to make the tooltips translate-able in the group flags widget
+       * Fixed the perm bug in ConnectFreindWizard (Patch from Henry Morgan)
+       * patch from Henry Morgan to use ConfCertDialog rather than connectFriendWizard from Security item
+       * made passwd box modal
+    - pgp
+       * added ability to keep track of when keys have been last used for signature check, signing and encryption, 
+         so that we can later detect which keys are unused and get rid of them
+    - Chat Lobbies
+       * Enabled history for chat lobbies (not saved to disc)
+    - FeedReader
+       * Added new icon for news feed from Agurer
+       * added new setting to save the config in the background for slow systems
+       * fixed memory leak in p3FeedReader::saveList
+    - retroshare-nogui
+       * Updated version of RPC protocol with fancy new features like streaming, add/remove friends, file listings.
+         (Merging r6107 through r6332 into 'libretroshare')
+    - GXS
+       * lots of ongoing developments.
+  * Bugs
+    - GUI
+       * Fixed sending of status typing in chat. Modifier keys does not send typing anymore.
+       * patch from Henry Morgan to avoid removing peer permission flags when removing locations
+       * fixed remembering flags for own id, tentatively fixed service perm bug
+    - File transfer
+       * changed priority for forwarded turtle traffic. The priority was so low that it explains 
+         why tunnels of length > 2 are so slow
+    - fixed bug in p3peer.cc not calling the correct method
+    - added missing mutex, and warnings if permission flags methods are not called with correct ids
+    - fixed bug that would reset service permission flags when discovery is enabled and discovery info is received
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 25 May 2013 14:00:00 +0100
+
+retroshare (0.5.4-0.6270~precise) precise; urgency=low
+
+  * Improvements
     - translations updated from transiflex
     - Major improvements to GXS services (new service: channels, posted) and GUI (Not yet released)
     - further reduced TR forward probability so as to avoid a crazy increase of TR out when we have a large number of friends
