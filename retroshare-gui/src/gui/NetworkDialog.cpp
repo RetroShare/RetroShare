@@ -55,7 +55,8 @@
 #define IMAGE_TRUSTED        ":/images/rs-2.png"
 
 #define COLUMN_PEERNAME    1
-#define COLUMN_PEERID     4
+#define COLUMN_PEERID      4
+#define COLUMN_LAST_USED   5
 
 RsCertId getNeighRsCertId(QTreeWidgetItem *i);
 
@@ -80,12 +81,12 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     connect( ui.filterLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterItems(QString)));
     connect( ui.filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
 
-    connect( ui.showUnvalidKeys, SIGNAL(clicked()), this, SLOT(insertConnect()));
+    connect( ui.showUnvalidKeys, SIGNAL(clicked()), this, SLOT(securedUpdateDisplay()));
 
     /* hide the Tree +/- */
     ui.connecttreeWidget -> setRootIsDecorated( false );
-    ui.connecttreeWidget -> setColumnCount(5);
-    ui.unvalidGPGkeyWidget-> setColumnCount(5);
+    ui.connecttreeWidget -> setColumnCount(6);
+    ui.unvalidGPGkeyWidget-> setColumnCount(6);
 
     /* Set header resize modes and initial section sizes */
     QHeaderView * _header = ui.connecttreeWidget->header () ;
@@ -94,11 +95,13 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     _header->setResizeMode (2, QHeaderView::Interactive);
     _header->setResizeMode (3, QHeaderView::Interactive);
     _header->setResizeMode (4, QHeaderView::Interactive);
+    _header->setResizeMode (5, QHeaderView::Interactive);
 
     _header->resizeSection ( 0, 25 );
     _header->resizeSection ( 1, 200 );
     _header->resizeSection ( 2, 200 );
     _header->resizeSection ( 3, 200 );
+    _header->resizeSection ( 5, 75 );
 
     // set header text aligment
     QTreeWidgetItem * headerItem = ui.connecttreeWidget->headerItem();
@@ -107,6 +110,7 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     headerItem->setTextAlignment(2, Qt::AlignHCenter | Qt::AlignVCenter);
     headerItem->setTextAlignment(3, Qt::AlignHCenter | Qt::AlignVCenter);
     headerItem->setTextAlignment(4, Qt::AlignVCenter);
+    headerItem->setTextAlignment(5, Qt::AlignVCenter);
 
       /* hide the Tree +/- */
     ui.unvalidGPGkeyWidget -> setRootIsDecorated( false );
@@ -117,11 +121,13 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     ui.unvalidGPGkeyWidget->header()->setResizeMode (2, QHeaderView::Interactive);
     ui.unvalidGPGkeyWidget->header()->setResizeMode (3, QHeaderView::Interactive);
     ui.unvalidGPGkeyWidget->header()->setResizeMode (4, QHeaderView::Interactive);
+    ui.unvalidGPGkeyWidget->header()->setResizeMode (5, QHeaderView::Interactive);
 
     ui.unvalidGPGkeyWidget->header()->resizeSection ( 0, 25 );
     ui.unvalidGPGkeyWidget->header()->resizeSection ( 1, 200 );
     ui.unvalidGPGkeyWidget->header()->resizeSection ( 2, 200 );
     ui.unvalidGPGkeyWidget->header()->resizeSection ( 3, 200 );
+    ui.unvalidGPGkeyWidget->header()->resizeSection ( 5, 75 );
 
     // set header text aligment
     ui.unvalidGPGkeyWidget->headerItem()->setTextAlignment(0, Qt::AlignHCenter | Qt::AlignVCenter);
@@ -129,6 +135,7 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     ui.unvalidGPGkeyWidget->headerItem()->setTextAlignment(2, Qt::AlignHCenter | Qt::AlignVCenter);
     ui.unvalidGPGkeyWidget->headerItem()->setTextAlignment(3, Qt::AlignHCenter | Qt::AlignVCenter);
     ui.unvalidGPGkeyWidget->headerItem()->setTextAlignment(4, Qt::AlignVCenter);
+    ui.unvalidGPGkeyWidget->headerItem()->setTextAlignment(5, Qt::AlignVCenter);
 
     ui.connecttreeWidget->sortItems( 1, Qt::AscendingOrder );
     ui.unvalidGPGkeyWidget->sortItems( 1, Qt::AscendingOrder );
@@ -363,6 +370,7 @@ void NetworkDialog::insertConnect()
 
 	QList<QTreeWidgetItem *> validItems;
 	QList<QTreeWidgetItem *> unvalidItems;
+
 	for(it = neighs.begin(); it != neighs.end(); it++)
 	{
 #ifdef NET_DEBUG
@@ -424,12 +432,29 @@ void NetworkDialog::insertConnect()
 				default: 							item->setText(2,tr("Untrusted peer")) ; break ;
 			}
 
-		QString PeerAuthenticationString = tr("Unknown") ;
 		/* (3) has me auth */
+		QString PeerAuthenticationString ;
+
 		if (detail.hasSignedMe)
 			PeerAuthenticationString = tr("Has authenticated me");
+		else
+			PeerAuthenticationString = tr("Unknown");
 
 		item->setText(3,PeerAuthenticationString) ;
+
+		uint64_t last_time_used = now - detail.lastUsed ;
+		QString lst_used_str ;
+		
+		if(last_time_used < 3600)
+			lst_used_str = tr("Last hour") ;
+		else if(last_time_used < 86400)
+			lst_used_str = tr("Today") ;
+		else if(last_time_used > 86400 * 15000)
+			lst_used_str = tr("Never");
+		else
+			lst_used_str = QString::number( (int)( last_time_used / 86400 ))+" "+tr("days ago") ;
+
+		item->setText(COLUMN_LAST_USED,lst_used_str) ;
 
 		/**
 		 * Determinated the Background Color

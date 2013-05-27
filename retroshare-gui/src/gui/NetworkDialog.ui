@@ -125,6 +125,11 @@
         <string>Cert Id</string>
        </property>
       </column>
+      <column>
+       <property name="text">
+        <string>Last used</string>
+       </property>
+      </column>
      </widget>
      <widget class="QTreeWidget" name="unvalidGPGkeyWidget">
       <property name="contextMenuPolicy">
@@ -168,6 +173,11 @@
       <column>
        <property name="text">
         <string>Cert Id</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Last used</string>
        </property>
       </column>
      </widget>
