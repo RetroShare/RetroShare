@@ -104,6 +104,11 @@ const uint32_t CERTIFICATE_PARSING_ERROR_CHECKSUM_ERROR            = 0x16 ;
 const uint32_t CERTIFICATE_PARSING_ERROR_UNKNOWN_SECTION_PTAG      = 0x17 ;
 const uint32_t CERTIFICATE_PARSING_ERROR_MISSING_CHECKSUM          = 0x18 ;
 
+const uint32_t PGP_KEYRING_REMOVAL_ERROR_NO_ERROR                  = 0x20 ;
+const uint32_t PGP_KEYRING_REMOVAL_ERROR_CANT_REMOVE_SECRET_KEYS   = 0x21 ;
+const uint32_t PGP_KEYRING_REMOVAL_ERROR_CANNOT_CREATE_BACKUP      = 0x22 ;
+const uint32_t PGP_KEYRING_REMOVAL_ERROR_CANNOT_WRITE_BACKUP       = 0x23 ;
+
 /* LinkType Flags */
 
 // CONNECTION
@@ -276,6 +281,9 @@ class RsPeers
 		virtual	bool addFriend(const std::string &ssl_id, const std::string &gpg_id,ServicePermissionFlags flags = RS_SERVICE_PERM_ALL)    = 0;
 		virtual	bool removeFriend(const std::string &ssl_or_gpg_id)  			= 0;
 		virtual bool removeFriendLocation(const std::string &sslId) 			= 0;
+
+		/* keyring management */
+		virtual bool removeKeysFromPGPKeyring(const std::list<std::string>& pgp_ids,std::string& backup_file,uint32_t& error_code)=0 ;
 
 		/* Network Stuff */
 		virtual	bool connectAttempt(const std::string &ssl_id)			= 0;

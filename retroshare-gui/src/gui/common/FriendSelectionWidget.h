@@ -56,9 +56,10 @@ public:
 	};
 
     enum ShowType {
-        SHOW_GROUP = 1,
-        SHOW_GPG   = 2,
-        SHOW_SSL   = 4
+        SHOW_GROUP            = 1,
+        SHOW_GPG              = 2,
+        SHOW_SSL              = 4,
+        SHOW_NON_FRIEND_GPG   = 8,
     };
 
     Q_DECLARE_FLAGS(ShowTypes, ShowType)
@@ -110,6 +111,8 @@ private slots:
 	void contextMenuRequested(const QPoint &pos);
 	void itemDoubleClicked(QTreeWidgetItem *item, int column);
 	void itemChanged(QTreeWidgetItem *item, int column);
+	void selectAll() ;
+	void deselectAll() ;
 
 private:
 	bool filterItem(QTreeWidgetItem *item, const QString &text);
@@ -130,6 +133,8 @@ private:
 	QColor mTextColorOnline;
 
 	Ui::FriendSelectionWidget *ui;
+
+	friend class FriendSelectionDialog ;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(FriendSelectionWidget::ShowTypes)

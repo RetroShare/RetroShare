@@ -101,6 +101,11 @@ class PGPHandler
 		void setAcceptConnexion(const PGPIdType&,bool) ;
 		void updateOwnSignatureFlag(const PGPIdType& ownId) ;
 
+		// Removes the given keys from the keyring. Also backup the keyring to a file which name is automatically generated
+		// and given pack for proper display.
+		//
+		bool removeKeysFromPGPKeyring(const std::list<PGPIdType>& key_ids,std::string& backup_file,uint32_t& error_code) ;
+
 		//bool isKeySupported(const PGPIdType& id) const ;
 
 		bool privateTrustCertificate(const PGPIdType& id,int valid_level) ;	

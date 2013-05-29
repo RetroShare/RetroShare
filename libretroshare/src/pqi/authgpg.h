@@ -173,6 +173,8 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		virtual bool   importProfile(const std::string& filename,std::string& gpg_id,std::string& import_error) ;
 		virtual bool   exportProfile(const std::string& filename,const std::string& gpg_id) ;
 
+		virtual bool   removeKeysFromPGPKeyring(const std::list<std::string>& pgp_ids,std::string& backup_file,uint32_t& error_code) ;
+
 		/*********************************************************************************/
 		/************************* STAGE 4 ***********************************************/
 		/*********************************************************************************/

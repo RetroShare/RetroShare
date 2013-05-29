@@ -22,6 +22,7 @@ extern "C" {
 }
 #include "pgphandler.h"
 #include "retroshare/rsiface.h"		// For rsicontrol.
+#include "retroshare/rspeers.h"		// For rsicontrol.
 #include "util/rsdir.h"		
 #include "pgp/pgpkeyutil.h"
 
@@ -823,6 +824,7 @@ void PGPHandler::addNewKeyToOPSKeyring(ops_keyring_t *kr,const ops_keydata_t& ke
 	memset(&kr->keys[kr->nkeys],0,sizeof(ops_keydata_t)) ;
 	ops_keydata_copy(&kr->keys[kr->nkeys],&key) ;
 	kr->nkeys++ ;
+	kr->nkeys_allocated = kr->nkeys ;
 }
 
 bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,PGPIdType& id,std::string& error_string)
@@ -1539,4 +1541,95 @@ void PGPHandler::mergeKeyringFromDisk(	ops_keyring_t *keyring,
 	ops_keyring_free(tmp_keyring) ;
 }
 
+bool PGPHandler::removeKeysFromPGPKeyring(const std::list<PGPIdType>& keys_to_remove,std::string& backup_file,uint32_t& error_code)
+{
+	// 1 - lock everything.
+	//
+	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
+	RsStackFileLock flck(_pgp_lock_filename) ;	// lock access to PGP directory.
+
+	error_code = PGP_KEYRING_REMOVAL_ERROR_NO_ERROR ;
+
+	for(std::list<PGPIdType>::const_iterator it(keys_to_remove.begin());it!=keys_to_remove.end();++it)
+		if(locked_getSecretKey(*it) != NULL)
+		{
+			std::cerr << "(EE) PGPHandler:: can't remove key " << (*it).toStdString() << " since its shared by a secret key! Operation cancelled." << std::endl;
+			error_code = PGP_KEYRING_REMOVAL_ERROR_CANT_REMOVE_SECRET_KEYS ;
+			return false ;
+		}
+
+	// 2 - sync everything.
+	//
+	locked_syncPublicKeyring() ;
+
+	// 3 - make a backup of the public keyring
+	//
+	char template_name[_pubring_path.length()+8] ;
+	sprintf(template_name,"%s.XXXXXX",_pubring_path.c_str()) ;
+	
+	if(mktemp(template_name) == NULL)
+	{
+		std::cerr << "PGPHandler::removeKeysFromPGPKeyring(): cannot create keyring backup file. Giving up." << std::endl;
+		error_code = PGP_KEYRING_REMOVAL_ERROR_CANNOT_CREATE_BACKUP ;
+		return false ;
+	}
+
+	if(!ops_write_keyring_to_file(_pubring,ops_false,template_name,ops_true)) 
+	{
+		std::cerr << "PGPHandler::removeKeysFromPGPKeyring(): cannot write keyring backup file. Giving up." << std::endl;
+		error_code = PGP_KEYRING_REMOVAL_ERROR_CANNOT_WRITE_BACKUP ;
+		return false ;
+	}
+	backup_file = std::string(template_name,_pubring_path.length()+7) ;
+
+	std::cerr << "Keyring was backed up to file " << backup_file << std::endl;
+
+	// Remove keys from the keyring, and update the keyring map.
+	//
+	for(std::list<PGPIdType>::const_iterator it(keys_to_remove.begin());it!=keys_to_remove.end();++it)
+	{
+		if(locked_getSecretKey(*it) != NULL)
+		{
+			std::cerr << "(EE) PGPHandler:: can't remove key " << (*it).toStdString() << " since its shared by a secret key!" << std::endl;
+			continue ;
+		}
+
+		std::map<std::string,PGPCertificateInfo>::iterator res = _public_keyring_map.find((*it).toStdString()) ;
+
+		if(res == _public_keyring_map.end())
+		{
+			std::cerr << "(EE) PGPHandler:: can't remove key " << (*it).toStdString() << " from keyring: key not found." << std::endl;
+			continue ;
+		}
+
+		// Move the last key to the freed place. This deletes the key in place.
+		//
+		ops_keyring_remove_key(_pubring,res->second._key_index) ;
+
+		// Erase the info from the keyring map.
+		//
+		_public_keyring_map.erase(res) ;
+	}
+
+	// now update all indices back
+	
+	int i=0 ;
+	const ops_keydata_t *keydata ;
+	while( (keydata = ops_keyring_get_key_by_index(_pubring,i)) != NULL )
+	{
+		PGPCertificateInfo& cert(_public_keyring_map[ PGPIdType(keydata->key_id).toStdString() ]) ;
+		cert._key_index = i ;
+		++i ;
+	}
+
+	// Everything went well, sync back the keyring on disk
+	
+	_pubring_changed = true ;
+	_trustdb_changed = true ;
+
+	locked_syncPublicKeyring() ;
+	locked_syncTrustDatabase() ;
+
+	return true ;
+}
 

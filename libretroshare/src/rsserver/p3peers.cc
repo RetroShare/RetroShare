@@ -619,10 +619,10 @@ bool 	p3Peers::addFriend(const std::string &ssl_id, const std::string &gpg_id,Se
 	return mPeerMgr->addFriend(ssl_id, gpg_id, RS_NET_MODE_UDP, RS_VIS_STATE_STD, now, perm_flags);
 }
 
-
-
-
-
+bool 	p3Peers::removeKeysFromPGPKeyring(const std::list<std::string>& pgp_ids,std::string& backup_file,uint32_t& error_code)
+{
+	return AuthGPG::getAuthGPG()->removeKeysFromPGPKeyring(pgp_ids,backup_file,error_code) ;
+}
 
 bool 	p3Peers::removeFriendLocation(const std::string &sslId)
 {

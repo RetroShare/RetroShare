@@ -66,6 +66,7 @@ protected:
 
 private slots:
 
+	void removeUnusedKeys() ;
   void makeFriend() ;
   void denyFriend() ;
   void deleteCert() ;

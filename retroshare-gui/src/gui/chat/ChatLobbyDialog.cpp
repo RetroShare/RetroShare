@@ -106,7 +106,7 @@ void ChatLobbyDialog::inviteFriends()
 {
 	std::cerr << "Inviting friends" << std::endl;
 
-	std::list<std::string> ids = FriendSelectionDialog::selectFriends() ;
+	std::list<std::string> ids = FriendSelectionDialog::selectFriends(NULL,tr("Invite friends"),tr("Select friends to invite:")) ;
 
 	std::cerr << "Inviting these friends:" << std::endl;
 

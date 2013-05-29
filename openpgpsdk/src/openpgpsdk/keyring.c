@@ -156,6 +156,7 @@ void ops_keydata_copy(ops_keydata_t *dst,const ops_keydata_t *src)
 {
 	unsigned n;
 
+	keydata_internal_free(dst) ;
 	memset(dst,0,sizeof(ops_keydata_t)) ;
 
 	dst->uids = (ops_user_id_t*)ops_mallocz(src->nuids * sizeof(ops_user_id_t)) ;
@@ -862,6 +863,29 @@ void ops_keyring_free(ops_keyring_t *keyring)
     keyring->nkeys=0;
     keyring->nkeys_allocated=0;
     }
+
+void ops_keyring_remove_key(ops_keyring_t *keyring,int index)
+{
+	if(index > keyring->nkeys-1)
+	{
+		fprintf(stderr,"ops_keyring_remove_key: ERROR: cannot remove key with index %d > %d.",index,keyring->nkeys-1) ;
+		return ;
+	}
+
+	if(index < keyring->nkeys-1)
+		ops_keydata_copy(&keyring->keys[index],&keyring->keys[keyring->nkeys-1]) ;
+
+	keydata_internal_free(&keyring->keys[keyring->nkeys-1]) ;
+
+	if(NULL == realloc(keyring->keys,(keyring->nkeys-1)*sizeof(ops_keydata_t)) )
+	{
+		fprintf(stderr,"ops_keyring_remove_key: ERROR: cannot re-alloc keyring memory.") ;
+		return ;
+	}
+
+	keyring->nkeys-- ;
+	keyring->nkeys_allocated-- ;
+}
 
 /**
    \ingroup HighLevel_KeyringFind

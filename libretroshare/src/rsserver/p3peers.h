@@ -77,6 +77,9 @@ virtual	bool addFriend(const std::string &ssl_id, const std::string &gpg_id,Serv
 virtual	bool removeFriend(const std::string &ssl_or_gpgid);
 virtual bool removeFriendLocation(const std::string &sslId);
 
+		/* keyring management */
+		virtual bool removeKeysFromPGPKeyring(const std::list<std::string>& pgp_ids,std::string& backup_file,uint32_t& error_code);
+
 	/* Network Stuff */
 virtual	bool connectAttempt(const std::string &id);
 virtual bool setLocation(const std::string &ssl_id, const std::string &location);//location is shown in the gui to differentiate ssl certs

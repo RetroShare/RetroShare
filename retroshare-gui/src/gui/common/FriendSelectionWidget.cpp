@@ -89,6 +89,8 @@ FriendSelectionWidget::FriendSelectionWidget(QWidget *parent) :
 	connect(ui->friendList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequested(QPoint)));
 	connect(ui->friendList, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(itemDoubleClicked(QTreeWidgetItem*,int)));
 	connect(ui->friendList, SIGNAL(itemChanged(QTreeWidgetItem*,int)), this, SLOT(itemChanged(QTreeWidgetItem*,int)));
+	connect(ui->selectAll_PB, SIGNAL(clicked()), this, SLOT(selectAll()));
+	connect(ui->deselectAll_PB, SIGNAL(clicked()), this, SLOT(deselectAll()));
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
 
 	connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(fillList()));
@@ -146,6 +148,17 @@ void FriendSelectionWidget::setModus(Modus modus)
 	case MODUS_MULTI:
 		ui->friendList->setSelectionMode(QAbstractItemView::ExtendedSelection);
 		break;
+	}
+
+	if(modus == MODUS_CHECK)
+	{
+		ui->selectAll_PB->setHidden(false) ;
+		ui->deselectAll_PB->setHidden(false) ;
+	}
+	else
+	{
+		ui->selectAll_PB->setHidden(true) ;
+		ui->deselectAll_PB->setHidden(true) ;
 	}
 
 	fillList();
@@ -221,7 +234,7 @@ void FriendSelectionWidget::fillList()
 	}
 
 	std::list<std::string> gpgIdsSelected;
-	if (mShowTypes & SHOW_GPG) {
+	if (mShowTypes & (SHOW_GPG | SHOW_NON_FRIEND_GPG)) {
 		selectedGpgIds(gpgIdsSelected, true);
 	}
 
@@ -235,10 +248,15 @@ void FriendSelectionWidget::fillList()
 
 	std::list<std::string> gpgIds;
 	std::list<std::string>::iterator gpgIt;
-	rsPeers->getGPGAcceptedList(gpgIds);
+
+	if(mShowTypes & SHOW_NON_FRIEND_GPG)
+		rsPeers->getGPGAllList(gpgIds);
+	else
+		rsPeers->getGPGAcceptedList(gpgIds);
 
 	std::list<std::string> sslIds;
 	std::list<std::string>::iterator sslIt;
+
 	if ((mShowTypes & (SHOW_SSL | SHOW_GPG)) == SHOW_SSL) {
 		rsPeers->getFriendList(sslIds);
 	}
@@ -295,7 +313,7 @@ void FriendSelectionWidget::fillList()
 			}
 		}
 
-		if (mShowTypes & SHOW_GPG) {
+		if (mShowTypes & (SHOW_GPG | SHOW_NON_FRIEND_GPG)) {
 			// iterate through gpg ids
 			for (gpgIt = gpgIds.begin(); gpgIt != gpgIds.end(); gpgIt++) {
 				if (groupInfo) {
@@ -466,7 +484,7 @@ void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
 	QString gpgId;
 	int gpgStatus = RS_STATUS_OFFLINE;
 
-	if (mShowTypes & SHOW_GPG) {
+	if (mShowTypes & (SHOW_GPG | SHOW_NON_FRIEND_GPG)) {
 		/* need gpg id and online state */
 		RsPeerDetails detail;
 		if (rsPeers->getPeerDetails(peerId.toStdString(), detail)) {
@@ -761,6 +779,17 @@ void FriendSelectionWidget::selectedIds(IdType idType, std::list<std::string> &i
 			ids.push_back(id);
 		}
 	}
+}
+
+void FriendSelectionWidget::deselectAll()
+{
+	for(QTreeWidgetItemIterator itemIterator(ui->friendList);*itemIterator!=NULL;++itemIterator)
+		setSelected(mListModus, *itemIterator, false);
+}
+void FriendSelectionWidget::selectAll()
+{
+	for(QTreeWidgetItemIterator itemIterator(ui->friendList);*itemIterator!=NULL;++itemIterator)
+		setSelected(mListModus, *itemIterator, true);
 }
 
 void FriendSelectionWidget::setSelectedIds(IdType idType, const std::list<std::string> &ids, bool add)

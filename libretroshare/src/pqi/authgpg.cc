@@ -60,6 +60,16 @@ bool AuthGPG::decryptTextFromFile(std::string& text,const std::string& inputfile
 	return PGPHandler::decryptTextFromFile(mOwnGpgId,text,inputfile) ;
 }
 
+bool AuthGPG::removeKeysFromPGPKeyring(const std::list<std::string>& pgp_ids,std::string& backup_file,uint32_t& error_code) 
+{
+	std::list<PGPIdType> pids ;
+
+	for(std::list<std::string>::const_iterator it(pgp_ids.begin());it!=pgp_ids.end();++it)
+		pids.push_back(PGPIdType(*it)) ;
+
+	return PGPHandler::removeKeysFromPGPKeyring(pids,backup_file,error_code) ;
+}
+
 bool AuthGPG::encryptTextToFile(const std::string& text,const std::string& outfile)
 {
 	return PGPHandler::encryptTextToFile(mOwnGpgId,text,outfile) ;

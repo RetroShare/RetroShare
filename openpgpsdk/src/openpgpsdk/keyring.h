@@ -77,6 +77,7 @@ unsigned ops_get_user_id_count(const ops_keydata_t *key);
 const unsigned char* ops_get_user_id(const ops_keydata_t *key, unsigned index);
 ops_boolean_t ops_is_key_supported(const ops_keydata_t *key);
 const ops_keydata_t* ops_keyring_get_key_by_index(const ops_keyring_t *keyring, int index);
+void ops_keyring_remove_key(ops_keyring_t *keyring,int index) ;
 
 ops_user_id_t* ops_add_userid_to_keydata(ops_keydata_t* keydata, const ops_user_id_t* userid);
 ops_packet_t* ops_add_packet_to_keydata(ops_keydata_t* keydata, const ops_packet_t* packet);

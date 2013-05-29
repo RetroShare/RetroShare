@@ -31,6 +31,7 @@
 
 #include "common/vmessagebox.h"
 #include "common/RSTreeWidgetItem.h"
+#include <gui/common/FriendSelectionDialog.h>
 #include "NetworkDialog.h"
 //#include "TrustView.h"
 #include "NetworkView.h"
@@ -45,6 +46,7 @@
 #define IMAGE_LOADCERT       ":/images/loadcert16.png"
 #define IMAGE_PEERDETAILS    ":/images/peerdetails_16x16.png"
 #define IMAGE_AUTH           ":/images/encrypted16.png"
+#define IMAGE_CLEAN_UNUSED   ":/images/deletemail24.png"
 #define IMAGE_MAKEFRIEND     ":/images/user/add_user16.png"
 #define IMAGE_EXPORT         ":/images/exportpeers_16x16.png"
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
@@ -218,43 +220,75 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint /*point*/ )
 	if(peer_id != rsPeers->getGPGOwnId())
 	{
 		if(detail.accept_connection)
-		{
-			QAction* denyFriendAct = new QAction(QIcon(IMAGE_DENIED), tr( "Deny friend" ), contextMnu );
-
-			connect( denyFriendAct , SIGNAL( triggered() ), this, SLOT( denyFriend() ) );
-			contextMnu->addAction( denyFriendAct);
-		}
+			contextMnu->addAction(QIcon(IMAGE_DENIED), tr("Deny friend"), this, SLOT(denyFriend()));
 		else	// not a friend
-		{
-			QAction* makefriendAct = new QAction(QIcon(IMAGE_MAKEFRIEND), tr( "Make friend" ), contextMnu );
-
-			connect( makefriendAct , SIGNAL( triggered() ), this, SLOT( makeFriend() ) );
-			contextMnu->addAction( makefriendAct);
-#ifdef TODO
-			if(detail.validLvl > RS_TRUST_LVL_MARGINAL)		// it's a denied old friend.
-			{
-				QAction* deleteCertAct = new QAction(QIcon(IMAGE_PEERDETAILS), tr( "Delete certificate" ), contextMnu );
-				connect( deleteCertAct, SIGNAL( triggered() ), this, SLOT( deleteCert() ) );
-				contextMnu->addAction( deleteCertAct );
-			}
-
-#endif
-		}
+			contextMnu->addAction(QIcon(IMAGE_MAKEFRIEND), tr("Make friend"), this, SLOT(makeFriend()));
 	}
 	if(peer_id == rsPeers->getGPGOwnId())
-	{
-		QAction* exportcertAct = new QAction(QIcon(IMAGE_EXPORT), tr( "Export my Cert" ), contextMnu );
-		connect( exportcertAct , SIGNAL( triggered() ), this, SLOT( on_actionExportKey_activated() ) );
-		contextMnu->addAction( exportcertAct);
-	}
+		contextMnu->addAction(QIcon(IMAGE_EXPORT), tr("Export my certificate..."), this, SLOT(on_actionExportKey_activated()));
 
-	QAction* peerdetailsAct = new QAction(QIcon(IMAGE_PEERDETAILS), tr( "Peer details..." ), contextMnu );
-	connect( peerdetailsAct , SIGNAL( triggered() ), this, SLOT( peerdetails() ) );
-	contextMnu->addAction( peerdetailsAct);
-
+	contextMnu->addAction(QIcon(IMAGE_PEERDETAILS), tr("Peer details..."), this, SLOT(peerdetails()));
 	contextMnu->addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyLink()));
+	contextMnu->addSeparator() ;
+
+	contextMnu->addAction(QIcon(IMAGE_CLEAN_UNUSED), tr("Remove unused keys..."), this, SLOT(removeUnusedKeys()));
 
 	contextMnu->exec(QCursor::pos());
+}
+
+void NetworkDialog::removeUnusedKeys()
+{
+	std::list<std::string> pre_selected ;
+	std::list<std::string> ids ;
+
+	rsPeers->getGPGAllList(ids) ;
+	RsPeerDetails details ;
+	time_t now = time(NULL) ;
+	time_t THREE_MONTHS = 86400*31*3 ;
+
+	for(std::list<std::string>::const_iterator it(ids.begin());it!=ids.end();++it)
+	{
+		rsPeers->getPeerDetails(*it,details) ;
+
+		if(now > THREE_MONTHS + details.lastUsed)
+		{
+			std::cerr << "Adding " << *it << " to pre-selection." << std::endl;
+			pre_selected.push_back(*it) ;
+		}
+	}
+
+	std::list<std::string> selected = FriendSelectionDialog::selectFriends(NULL,
+			tr("Clean keyring"),
+			tr("The selected keys below haven't been used in the last 3 months. \nDo you want to delete them permanently ? \n\nNotes: Your old keyring will be backed up.\n    The removal may fail when running multiple Retroshare instances on the same machine."),FriendSelectionWidget::MODUS_CHECK,FriendSelectionWidget::SHOW_GPG | FriendSelectionWidget::SHOW_NON_FRIEND_GPG,
+			FriendSelectionWidget::IDTYPE_GPG, pre_selected) ;
+	
+	std::cerr << "Removing these keys from the keyring: " << std::endl;
+	for(std::list<std::string>::const_iterator it(selected.begin());it!=selected.end();++it)
+		std::cerr << "  " << *it << std::endl;
+
+	std::string backup_file ;
+	uint32_t error_code ;
+
+	if( rsPeers->removeKeysFromPGPKeyring(selected,backup_file,error_code) )
+		QMessageBox::information(NULL,tr("Keyring info"),tr("%1 keys have been deleted from your keyring. \nFor security, your keyring was previously backed-up to file \n\n").arg(selected.size())+QString::fromStdString(backup_file) ) ;
+	else
+	{
+		QString error_string ;
+
+		switch(error_code)
+		{
+			default:
+			case PGP_KEYRING_REMOVAL_ERROR_NO_ERROR: error_string = tr("Unknown error") ;
+																  break ;
+			case PGP_KEYRING_REMOVAL_ERROR_CANT_REMOVE_SECRET_KEYS: error_string = tr("Cannot delete secret keys") ;
+																					  break ;
+			case PGP_KEYRING_REMOVAL_ERROR_CANNOT_WRITE_BACKUP:
+			case PGP_KEYRING_REMOVAL_ERROR_CANNOT_CREATE_BACKUP: error_string = tr("Cannot create backup file. Check for permissions in pgp directory, disk space, etc.") ;
+																				  break ;
+
+		}
+		QMessageBox::warning(NULL,tr("Keyring info"),tr("Key removal has failed. Your keyring remains intact.\n\nReported error: ")+error_string ) ;
+	}
 }
 
 void NetworkDialog::denyFriend()
