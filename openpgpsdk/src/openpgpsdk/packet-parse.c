@@ -959,7 +959,8 @@ void ops_pk_session_key_free(ops_pk_session_key_t *sk)
 	break;
 
     default:
-	assert(0);
+	 fprintf(stderr,"ops_pk_session_key_free: Unknown algorithm: %d \n",sk->algorithm);
+	//assert(0);
 	}
     }
 
@@ -994,7 +995,8 @@ void ops_public_key_free(ops_public_key_t *p)
 	break;
      
     default:
-	assert(0);
+	 fprintf(stderr,"ops_public_key_free: Unknown algorithm: %d \n",p->algorithm);
+	//assert(0);
 	}
     }
 
@@ -1030,7 +1032,8 @@ void ops_public_key_copy(ops_public_key_t *dst,const ops_public_key_t *src)
 	 //   break;
 
       default:
-	 assert(0);
+	 fprintf(stderr,"ops_public_key_copy: Unknown algorithm: %d \n",src->algorithm);
+	 //assert(0);
    }
 }
 /**
@@ -1302,7 +1305,8 @@ void ops_signature_free(ops_signature_t *sig)
 	break;
 
     default:
-	assert(0);
+	 fprintf(stderr,"ops_signature_free: Unknown algorithm: %d \n",sig->info.key_algorithm);
+	//assert(0);
 	}
     free(sig->info.v4_hashed_data);
     }
