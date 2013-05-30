@@ -7,6 +7,7 @@
 #include <sys/stat.h>
 
 #ifdef WINDOWS_SYS
+#include <io.h>
 #include "util/rsstring.h"
 #include "util/rswin.h"
 #endif
