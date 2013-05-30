@@ -876,15 +876,9 @@ void ops_keyring_remove_key(ops_keyring_t *keyring,int index)
 		ops_keydata_copy(&keyring->keys[index],&keyring->keys[keyring->nkeys-1]) ;
 
 	keydata_internal_free(&keyring->keys[keyring->nkeys-1]) ;
-
-	if(NULL == realloc(keyring->keys,(keyring->nkeys-1)*sizeof(ops_keydata_t)) )
-	{
-		fprintf(stderr,"ops_keyring_remove_key: ERROR: cannot re-alloc keyring memory.") ;
-		return ;
-	}
-
 	keyring->nkeys-- ;
-	keyring->nkeys_allocated-- ;
+
+	// keyring->nkeys_allocated is left untouched intentionnaly. 
 }
 
 /**

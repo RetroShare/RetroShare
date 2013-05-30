@@ -820,11 +820,14 @@ bool PGPHandler::importGPGKeyPair(const std::string& filename,PGPIdType& importe
 
 void PGPHandler::addNewKeyToOPSKeyring(ops_keyring_t *kr,const ops_keydata_t& key)
 {
-	kr->keys = (ops_keydata_t*)realloc(kr->keys,(kr->nkeys+1)*sizeof(ops_keydata_t)) ;
+	if(kr->nkeys >= kr->nkeys_allocated)
+	{
+		kr->keys = (ops_keydata_t *)realloc(kr->keys,(kr->nkeys+1)*sizeof(ops_keydata_t)) ; 
+		kr->nkeys_allocated = kr->nkeys+1;
+	}
 	memset(&kr->keys[kr->nkeys],0,sizeof(ops_keydata_t)) ;
 	ops_keydata_copy(&kr->keys[kr->nkeys],&key) ;
 	kr->nkeys++ ;
-	kr->nkeys_allocated = kr->nkeys ;
 }
 
 bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,PGPIdType& id,std::string& error_string)
