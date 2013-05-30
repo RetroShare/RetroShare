@@ -779,6 +779,7 @@ bool 	p3PeerMgrIMPL::UpdateOwnAddress(const struct sockaddr_in &localAddr, const
 		pqiIpAddress ipAddressTimed;
 		ipAddressTimed.mAddr = localAddr;
 		ipAddressTimed.mSeenTime = time(NULL);
+		ipAddressTimed.mSrc = 0 ;
 		mOwnState.ipAddrs.updateLocalAddrs(ipAddressTimed);
 
 		mOwnState.localaddr = localAddr;
@@ -792,6 +793,7 @@ bool 	p3PeerMgrIMPL::UpdateOwnAddress(const struct sockaddr_in &localAddr, const
 		pqiIpAddress ipAddressTimed;
 		ipAddressTimed.mAddr = extAddr;
 		ipAddressTimed.mSeenTime = time(NULL);
+		ipAddressTimed.mSrc = 0 ;
 		mOwnState.ipAddrs.updateExtAddrs(ipAddressTimed);
 
 		/* Attempted Fix to MANUAL FORWARD Mode....
