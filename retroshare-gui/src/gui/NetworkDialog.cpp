@@ -486,7 +486,7 @@ void NetworkDialog::insertConnect()
 		else if(last_time_used > 86400 * 15000)
 			lst_used_str = tr("Never");
 		else
-			lst_used_str = QString::number( (int)( last_time_used / 86400 ))+" "+tr("days ago") ;
+			lst_used_str = tr("%1 days ago").arg((int)( last_time_used / 86400 )) ;
 
 		item->setText(COLUMN_LAST_USED,lst_used_str) ;
 
