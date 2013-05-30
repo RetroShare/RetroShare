@@ -78,6 +78,7 @@ public:
     uint32_t    mGroupStatus;
     std::string mOriginator;
     std::string mInternalCircle;
+    std::string mHash;
 };
 
 
@@ -116,6 +117,7 @@ public:
 
     uint32_t    mMsgStatus;
     time_t      mChildTs;
+    std::string mHash;
     bool validated;
 
 };

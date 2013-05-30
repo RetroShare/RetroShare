@@ -82,7 +82,7 @@ public:
 	bool clean();
 
 	/*!
-	 * TODO: Rather manual progressions consider running through a thread
+	 * TODO: Rather than manual progressions consider running through a thread
 	 */
 	void run(){}
 
@@ -93,5 +93,33 @@ private:
 	std::vector<RsGxsGrpMetaData*> mGrpMeta;
 };
 
+/*!
+ * Checks the integrity message and groups
+ * in rsDataService using computed hash
+ */
+class RsGxsIntegrityCheck
+{
+
+
+public:
+
+
+	/*!
+	 *
+	 * @param dataService
+	 * @param mGroupTS
+	 * @param chunkSize
+	 * @param sleepPeriod
+	 */
+	RsGxsIntegrityCheck(RsGeneralDataService* const dataService, uint32_t chunkSize);
+
+
+private:
+
+	RsGeneralDataService* const mDs;
+	const uint32_t CHUNK_SIZE;
+	std::vector<RsNxsItem*> mItems;
+
+};
 
 #endif /* GXSUTIL_H_ */

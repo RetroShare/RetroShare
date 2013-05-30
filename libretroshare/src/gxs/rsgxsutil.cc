@@ -102,3 +102,9 @@ bool RsGxsMessageCleanUp::clean()
 
 	return mGrpMeta.empty();
 }
+
+RsGxsIntegrityCheck::RsGxsIntegrityCheck(
+		RsGeneralDataService* const dataService, uint32_t chunkSize) :
+		mDs(dataService), CHUNK_SIZE(chunkSize) {
+}
+

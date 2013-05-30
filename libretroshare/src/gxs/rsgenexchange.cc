@@ -1702,6 +1702,7 @@ void RsGenExchange::publishMsgs()
 				msg->metaData->mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_UNREAD;
 				msgId = msg->msgId;
 				grpId = msg->grpId;
+				computeHash(msg->msg, msg->metaData->mHash);
 				mDataAccess->addMsgData(msg);
 				msgChangeMap[grpId].push_back(msgId);
 
@@ -1885,6 +1886,7 @@ void RsGenExchange::publishGrps()
 					if(mDataStore->validSize(grp) && serialOk)
 					{
 						grpId = grp->grpId;
+						computeHash(grp->grp, grp->metaData->mHash);
 						mDataAccess->addGroupData(grp);
 					}
 					else
@@ -2020,6 +2022,12 @@ void RsGenExchange::processRecvdData()
 }
 
 
+void RsGenExchange::computeHash(const RsTlvBinaryData& data, std::string& hash)
+{
+	pqihash pHash;
+	pHash.addData(data.bin_data, data.bin_len);
+	pHash.Complete(hash);
+}
 
 void RsGenExchange::processRecvdMessages()
 {
@@ -2093,6 +2101,8 @@ void RsGenExchange::processRecvdMessages()
                 		getMsgIdPair(*msg));
 
                 if(validated_entry != mMsgPendingValidate.end()) mMsgPendingValidate.erase(validated_entry);
+
+                computeHash(msg->msg, meta->mHash);
             }
         }
         else
@@ -2194,6 +2204,7 @@ void RsGenExchange::processRecvdGroups()
 				if(meta->mCircleType == GXS_CIRCLE_TYPE_YOUREYESONLY)
 					meta->mOriginator = grp->PeerId();
 
+				computeHash(grp->grp, meta->mHash);
 				grps.insert(std::make_pair(grp, meta));
 				grpIds.push_back(grp->grpId);
 

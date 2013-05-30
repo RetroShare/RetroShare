@@ -52,7 +52,7 @@ class pqihash
 }
 
 
-void    addData(void *data, uint32_t len)
+void    addData(const void *data, uint32_t len)
 {
 	if (doHash)
 	{

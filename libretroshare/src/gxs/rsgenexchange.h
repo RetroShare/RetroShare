@@ -734,6 +734,8 @@ private:
 
     void  groupShareKeys(std::list<std::string> peers);
 
+    static void computeHash(const RsTlvBinaryData& data, std::string& hash);
+
 private:
 
     RsMutex mGenMtx;
