@@ -930,14 +930,16 @@ bool PGPHandler::addOrMergeKey(ops_keyring_t *keyring,std::map<std::string,PGPCe
 		std::cerr << "  Key exists. Merging signatures." << std::endl;
 #endif
 		ret = mergeKeySignatures(const_cast<ops_keydata_t*>(existing_key),keydata) ;
-		res->second._time_stamp = time(NULL) ;
 
 		if(ret)
 			initCertificateInfo(kmap[id.toStdString()],existing_key,res->second._key_index) ;
 	}
 
 	if(ret)
+	{
 		validateAndUpdateSignatures(kmap[id.toStdString()],existing_key) ;
+		kmap[id.toStdString()]._time_stamp = time(NULL) ;
+	}
 
 	return ret ;
 }
