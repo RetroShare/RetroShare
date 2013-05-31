@@ -1617,17 +1617,25 @@ bool PGPHandler::removeKeysFromPGPKeyring(const std::list<PGPIdType>& keys_to_re
 		// Erase the info from the keyring map.
 		//
 		_public_keyring_map.erase(res) ;
+
+		// now update all indices back. This internal look is very costly, but it avoids deleting the wrong keys, since the keyring structure is
+		// changed by ops_keyring_remove_key and therefore indices don't point to the correct location anymore.
+
+		int i=0 ;
+		const ops_keydata_t *keydata ;
+		while( (keydata = ops_keyring_get_key_by_index(_pubring,i)) != NULL )
+		{
+			PGPCertificateInfo& cert(_public_keyring_map[ PGPIdType(keydata->key_id).toStdString() ]) ;
+			cert._key_index = i ;
+			++i ;
+		}
 	}
 
-	// now update all indices back
-	
-	int i=0 ;
-	const ops_keydata_t *keydata ;
-	while( (keydata = ops_keyring_get_key_by_index(_pubring,i)) != NULL )
+	if(_public_keyring_map.size() != _pubring->nkeys)
 	{
-		PGPCertificateInfo& cert(_public_keyring_map[ PGPIdType(keydata->key_id).toStdString() ]) ;
-		cert._key_index = i ;
-		++i ;
+		std::cerr << "Error after removing keys. Operation cancelled." << std::endl;
+
+		// todo
 	}
 
 	// Everything went well, sync back the keyring on disk
