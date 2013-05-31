@@ -1369,7 +1369,9 @@ void PGPHandler::locked_readPrivateTrustDatabase()
 		
 		++n_packets ;
 		it->second._trustLvl = trustpacket.trust_level ;
-		it->second._time_stamp = trustpacket.time_stamp ;
+
+		if(trustpacket.time_stamp > it->second._time_stamp)	// only update time stamp if the loaded time stamp is newer
+		   it->second._time_stamp = trustpacket.time_stamp ;
 	}
 
 	fclose(fdb) ;
