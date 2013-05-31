@@ -46,6 +46,7 @@ virtual bool OthersChanged();
 	/* Peer Details (Net & Auth) */
 virtual std::string getOwnId();
 
+		virtual bool   haveSecretKey(const std::string& gpg_id) ;
 
 
 virtual bool	getOnlineList(std::list<std::string> &ids);

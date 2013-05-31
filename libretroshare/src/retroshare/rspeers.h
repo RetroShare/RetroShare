@@ -108,6 +108,7 @@ const uint32_t PGP_KEYRING_REMOVAL_ERROR_NO_ERROR                  = 0x20 ;
 const uint32_t PGP_KEYRING_REMOVAL_ERROR_CANT_REMOVE_SECRET_KEYS   = 0x21 ;
 const uint32_t PGP_KEYRING_REMOVAL_ERROR_CANNOT_CREATE_BACKUP      = 0x22 ;
 const uint32_t PGP_KEYRING_REMOVAL_ERROR_CANNOT_WRITE_BACKUP       = 0x23 ;
+const uint32_t PGP_KEYRING_REMOVAL_ERROR_DATA_INCONSISTENCY        = 0x24 ;
 
 /* LinkType Flags */
 
@@ -252,6 +253,8 @@ class RsPeers
 
 		/* Peer Details (Net & Auth) */
 		virtual std::string getOwnId()					= 0;
+
+		virtual bool   haveSecretKey(const std::string& gpg_id) = 0 ;
 
 		virtual bool	getOnlineList(std::list<std::string> &ssl_ids)	= 0;
 		virtual bool	getFriendList(std::list<std::string> &ssl_ids)	= 0;

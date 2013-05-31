@@ -250,6 +250,11 @@ void NetworkDialog::removeUnusedKeys()
 	{
 		rsPeers->getPeerDetails(*it,details) ;
 
+		if(rsPeers->haveSecretKey(*it))
+		{
+			std::cerr << "Skipping public/secret key pair " << *it << std::endl;
+			continue ;
+		}
 		if(now > THREE_MONTHS + details.lastUsed)
 		{
 			std::cerr << "Adding " << *it << " to pre-selection." << std::endl;
@@ -269,6 +274,9 @@ void NetworkDialog::removeUnusedKeys()
 	std::string backup_file ;
 	uint32_t error_code ;
 
+	if(selected.empty())
+		return ;
+
 	if( rsPeers->removeKeysFromPGPKeyring(selected,backup_file,error_code) )
 		QMessageBox::information(NULL,tr("Keyring info"),tr("%1 keys have been deleted from your keyring. \nFor security, your keyring was previously backed-up to file \n\n").arg(selected.size())+QString::fromStdString(backup_file) ) ;
 	else
@@ -285,10 +293,13 @@ void NetworkDialog::removeUnusedKeys()
 			case PGP_KEYRING_REMOVAL_ERROR_CANNOT_WRITE_BACKUP:
 			case PGP_KEYRING_REMOVAL_ERROR_CANNOT_CREATE_BACKUP: error_string = tr("Cannot create backup file. Check for permissions in pgp directory, disk space, etc.") ;
 																				  break ;
+			case PGP_KEYRING_REMOVAL_ERROR_DATA_INCONSISTENCY: 	error_string = tr("Data iconsistency in the keyring. This is most probably a bug. Please contact the developers.") ;
+																				  break ;
 
 		}
 		QMessageBox::warning(NULL,tr("Keyring info"),tr("Key removal has failed. Your keyring remains intact.\n\nReported error: ")+error_string ) ;
 	}
+	insertConnect() ;
 }
 
 void NetworkDialog::denyFriend()
@@ -355,7 +366,7 @@ void NetworkDialog::updateDisplay()
 /* get the list of Neighbours from the RsIface.  */
 void NetworkDialog::insertConnect()
 {
-	static time_t last_time = 0 ;
+//	static time_t last_time = 0 ;
 
 	if (!rsPeers)
 		return;
@@ -366,12 +377,12 @@ void NetworkDialog::insertConnect()
 		ui.unvalidGPGkeyWidget->hide();
 	}
 
-	// Because this is called from a qt signal, there's no limitation between calls.
+//	// Because this is called from a qt signal, there's no limitation between calls.
 	time_t now = time(NULL);
-	if(last_time + 5 > now)		// never update more often then every 5 seconds.
-		return ;
-
-	last_time = now ;
+//	if(last_time + 5 > now)		// never update more often then every 5 seconds.
+//		return ;
+//
+//	last_time = now ;
 
 	std::list<std::string> neighs; //these are GPG ids
 	std::list<std::string>::iterator it;

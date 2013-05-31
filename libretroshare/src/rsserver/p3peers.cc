@@ -237,6 +237,10 @@ bool    p3Peers::isFriend(const std::string &ssl_id)
         return mPeerMgr->isFriend(ssl_id);
 }
 
+bool p3Peers::haveSecretKey(const std::string& id)
+{
+	return AuthGPG::getAuthGPG()->haveSecretKey(id) ;
+}
 
 /* There are too many dependancies of this function
  * to shift it immeidately

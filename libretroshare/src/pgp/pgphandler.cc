@@ -1610,6 +1610,13 @@ bool PGPHandler::removeKeysFromPGPKeyring(const std::list<PGPIdType>& keys_to_re
 			continue ;
 		}
 
+		if(res->second._key_index >= _pubring->nkeys || PGPIdType(_pubring->keys[res->second._key_index].key_id) != *it)
+		{
+			std::cerr << "(EE) PGPHandler:: can't remove key " << (*it).toStdString() << ". Inconsistency found." << std::endl;
+			error_code = PGP_KEYRING_REMOVAL_ERROR_DATA_INCONSISTENCY ;
+			return false ;
+		}
+
 		// Move the last key to the freed place. This deletes the key in place.
 		//
 		ops_keyring_remove_key(_pubring,res->second._key_index) ;
@@ -1629,13 +1636,6 @@ bool PGPHandler::removeKeysFromPGPKeyring(const std::list<PGPIdType>& keys_to_re
 			cert._key_index = i ;
 			++i ;
 		}
-	}
-
-	if(_public_keyring_map.size() != _pubring->nkeys)
-	{
-		std::cerr << "Error after removing keys. Operation cancelled." << std::endl;
-
-		// todo
 	}
 
 	// Everything went well, sync back the keyring on disk
