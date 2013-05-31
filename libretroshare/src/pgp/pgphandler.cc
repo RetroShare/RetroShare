@@ -198,7 +198,7 @@ void PGPHandler::initCertificateInfo(PGPCertificateInfo& cert,const ops_keydata_
 	cert._validLvl = 1 ;	// to be setup accordingly
 	cert._key_index = index ;
 	cert._flags = 0 ;
-	cert._time_stamp = time(NULL) ;
+	cert._time_stamp = 0 ;// "never" by default. Will be updated by trust database, and effective key usage.
 
 	switch(keydata->key.pkey.algorithm)
 	{
