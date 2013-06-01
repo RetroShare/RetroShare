@@ -863,7 +863,11 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, con
 		}
 		else
 		{
-			localpath = ""; // forces dl to default directory
+			if(mDestinationDirectories.find(grpId) != mDestinationDirectories.end())
+				localpath = mDestinationDirectories[grpId] ;
+			else
+				localpath = ""; // forces dl to default directory
+
 			flags = RS_FILE_REQ_BACKGROUND | RS_FILE_REQ_ANONYMOUS_ROUTING;
 		}
 
@@ -879,7 +883,7 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, con
 #endif
 
         if(size < MAX_AUTO_DL)
-        	mRsFiles->FileRequest(fname, hash, size, localpath, flags, srcIds);
+			  mRsFiles->FileRequest(fname, hash, size, localpath, flags, srcIds);
 	}
 
 	if(lit != mReadStatus.end()){
