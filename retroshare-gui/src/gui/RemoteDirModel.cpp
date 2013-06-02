@@ -310,7 +310,7 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 		switch(coln)
 		{
 			case 0:
-				return (RemoteMode)?(QString::fromUtf8(details.name.c_str())):tr("My files") ;
+				return (RemoteMode)?(QString::fromUtf8(rsPeers->getPeerName(details.id).c_str())):tr("My files");
 			case 1:
 				return QString() ;
 			case 2:
