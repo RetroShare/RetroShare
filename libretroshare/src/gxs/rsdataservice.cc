@@ -1032,12 +1032,6 @@ int RsDataService::resetDataStore()
     return 1;
 }
 
-int RsDataService::removeGroups(const std::vector<std::string> &grpIds)
-{
-
-    return 0;
-}
-
 int RsDataService::updateGroupMetaData(GrpLocMetaData &meta)
 {
 	RsStackMutex stack(mDbMutex);
@@ -1069,7 +1063,7 @@ int RsDataService::removeMsgs(const GxsMsgReq& msgIds)
 	// get for all msgs their offsets and lengths
 	// for message not contained in msg id vector
 	// store their data file segments in buffer
-	// then recalculate the retained messages
+	// then recalculate the retained messages'
 	// new offsets, update db with new offsets
 	// replace old msg file with new file
 	// remove messages that were not retained from
@@ -1162,6 +1156,26 @@ int RsDataService::removeMsgs(const GxsMsgReq& msgIds)
     return 1;
 }
 
+int RsDataService::removeGroups(const std::vector<std::string> &grpIds)
+{
+
+	RsStackMutex stack(mDbMutex);
+
+	// the grp id is the group file name
+	// first remove file then remove group
+	// from db
+
+	std::vector<std::string>::const_iterator vit = grpIds.begin();
+	for(; vit != grpIds.end(); vit++)
+	{
+		const std::string grpFileName = mServiceDir + "/" + *vit;
+		remove(grpFileName.c_str());
+	}
+
+	locked_removeGroupEntries(grpIds);
+
+    return 1;
+}
 
 
 bool RsDataService::locked_updateMessageEntries(const MsgUpdates& updates)
@@ -1217,6 +1231,24 @@ bool RsDataService::locked_removeMessageEntries(const GxsMsgReq& msgIds)
     return ret;
 }
 
+bool RsDataService::locked_removeGroupEntries(const std::vector<std::string>& grpIds)
+{
+    // start a transaction
+    bool ret = mDb->execSQL("BEGIN;");
+
+    std::vector<std::string>::const_iterator vit = grpIds.begin();
+
+    for(; vit != grpIds.end(); vit++)
+    {
+
+		const RsGxsGroupId& grpId = *vit;
+		mDb->sqlDelete(GRP_TABLE_NAME, KEY_GRP_ID+ "='" + grpId + "'", "");
+    }
+
+    ret &= mDb->execSQL("COMMIT;");
+
+    return ret;
+}
 void RsDataService::locked_getMessageOffsets(const RsGxsGroupId& grpId, std::vector<MsgOffset>& offsets)
 {
 

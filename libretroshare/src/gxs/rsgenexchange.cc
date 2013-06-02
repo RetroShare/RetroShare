@@ -56,6 +56,7 @@
 #define GEN_EXCH_DEBUG	1
 
 #define MSG_CLEANUP_PERIOD 60*5 // 5 minutes
+#define INTEGRITY_CHECK_PERIOD 60*30 //  30 minutes
 
 RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService *ns,
                              RsSerialType *serviceSerialiser, uint16_t servType, RsGixs* gixs,
@@ -65,7 +66,8 @@ RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService
     CREATE_FAIL(0), CREATE_SUCCESS(1), CREATE_FAIL_TRY_LATER(2), SIGN_MAX_ATTEMPTS(5),
     SIGN_FAIL(0), SIGN_SUCCESS(1), SIGN_FAIL_TRY_LATER(2),
     VALIDATE_FAIL(0), VALIDATE_SUCCESS(1), VALIDATE_FAIL_TRY_LATER(2), VALIDATE_MAX_ATTEMPTS(5),
-    mCleaning(false), mLastClean(time(NULL)), mMsgCleanUp(NULL)
+    mCleaning(false), mLastClean(time(NULL)), mMsgCleanUp(NULL), mChecking(false), mIntegrityCheck(NULL),
+    mLastCheck(time(NULL))
 {
 
     mDataAccess = new RsGxsDataAccess(gds);
@@ -145,6 +147,28 @@ void RsGenExchange::tick()
 		{
 			mMsgCleanUp = new RsGxsMessageCleanUp(mDataStore, MESSAGE_STORE_PERIOD, 1);
 			mCleaning = true;
+		}
+	}
+
+	now = time(NULL);
+	if(mChecking || (mLastCheck + INTEGRITY_CHECK_PERIOD < now))
+	{
+		if(mIntegrityCheck)
+		{
+			if(mIntegrityCheck->isDone())
+			{
+				mIntegrityCheck->join();
+				delete mIntegrityCheck;
+				mIntegrityCheck = NULL;
+				mLastCheck = time(NULL);
+				mChecking = false;
+			}
+		}
+		else
+		{
+			mIntegrityCheck = new RsGxsIntegrityCheck(mDataStore);
+			mIntegrityCheck->start();
+			mChecking = true;
 		}
 	}
 }

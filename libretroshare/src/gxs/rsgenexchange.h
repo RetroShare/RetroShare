@@ -784,6 +784,11 @@ private:
     time_t mLastClean;
     RsGxsMessageCleanUp* mMsgCleanUp;
 
+
+    bool mChecking, mCheckStarted;
+    time_t mLastCheck;
+    RsGxsIntegrityCheck* mIntegrityCheck;
+
 private:
 
     std::vector<RsGxsNotify*> mChanges;

@@ -212,6 +212,7 @@ private:
      * @param msgIds
      */
     bool locked_removeMessageEntries(const GxsMsgReq& msgIds);
+    bool locked_removeGroupEntries(const std::vector<std::string>& grpIds);
 
     typedef std::map<RsGxsGroupId, std::vector<MsgUpdate> > MsgUpdates;
 

@@ -97,9 +97,10 @@ private:
  * Checks the integrity message and groups
  * in rsDataService using computed hash
  */
-class RsGxsIntegrityCheck
+class RsGxsIntegrityCheck : public RsThread
 {
 
+	enum CheckState { CheckStart, CheckChecking };
 
 public:
 
@@ -111,14 +112,20 @@ public:
 	 * @param chunkSize
 	 * @param sleepPeriod
 	 */
-	RsGxsIntegrityCheck(RsGeneralDataService* const dataService, uint32_t chunkSize);
+	RsGxsIntegrityCheck(RsGeneralDataService* const dataService);
 
+
+	bool check();
+	bool isDone();
+
+	void run();
 
 private:
 
 	RsGeneralDataService* const mDs;
-	const uint32_t CHUNK_SIZE;
 	std::vector<RsNxsItem*> mItems;
+	bool mDone;
+	RsMutex mIntegrityMutex;
 
 };
 
