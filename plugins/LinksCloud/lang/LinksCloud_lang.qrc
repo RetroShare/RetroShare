@@ -1,16 +1,18 @@
 <RCC>
   <qresource prefix="/lang">
     <file>LinksCloud_cs.qm</file>
-    <file>LinksCloud_en.qm</file>
-    <file>LinksCloud_es.qm</file>
     <file>LinksCloud_da.qm</file>
     <file>LinksCloud_de.qm</file>
-	<file>LinksCloud_fi.qm</file>
+    <file>LinksCloud_el.qm</file>
+    <file>LinksCloud_en.qm</file>
+    <file>LinksCloud_es.qm</file>
+    <file>LinksCloud_fi.qm</file>
     <file>LinksCloud_fr.qm</file>
     <file>LinksCloud_hu.qm</file>
     <file>LinksCloud_it.qm</file>
     <file>LinksCloud_ja_JP.qm</file>
     <file>LinksCloud_ko.qm</file>
+    <file>LinksCloud_nl.qm</file>
     <file>LinksCloud_pl.qm</file>
     <file>LinksCloud_ru.qm</file>
     <file>LinksCloud_sv.qm</file>

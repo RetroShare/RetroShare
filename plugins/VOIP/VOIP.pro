@@ -59,6 +59,7 @@ TRANSLATIONS +=  \
             lang/VOIP_cs.ts \
             lang/VOIP_da.ts \
             lang/VOIP_de.ts \
+            lang/VOIP_el.ts \
             lang/VOIP_en.ts \
             lang/VOIP_es.ts \
             lang/VOIP_fi.ts \
@@ -67,6 +68,7 @@ TRANSLATIONS +=  \
             lang/VOIP_it.ts \
             lang/VOIP_ja_JP.ts \
             lang/VOIP_ko.ts \
+            lang/VOIP_nl.ts \
             lang/VOIP_pl.ts \
             lang/VOIP_ru.ts \
             lang/VOIP_sv.ts \

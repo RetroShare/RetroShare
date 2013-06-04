@@ -262,12 +262,17 @@
         <translation>Verschiedenes</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderConfig.ui" line="124"/>
+        <location filename="../gui/FeedReaderConfig.ui" line="131"/>
         <source>Set message to read on activate</source>
         <translation>Beitrag beim Aktivieren als gelesen markieren</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderConfig.ui" line="131"/>
+        <location filename="../gui/FeedReaderConfig.ui" line="138"/>
+        <source>Save configuration in background (for slow systems, more memory needed)</source>
+        <translation>Konfiguration im Hintergrund speichern (für langsame Systeme, benötigt mehr Speicher)</translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderConfig.ui" line="124"/>
         <source>Open all feeds in new tab</source>
         <translation>Alle Feeds in neuem Reiter öffnen</translation>
     </message>

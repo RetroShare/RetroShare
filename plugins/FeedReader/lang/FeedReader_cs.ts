@@ -124,7 +124,7 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="361"/>
         <source>Misc</source>
-        <translation type="unfinished"/>
+        <translation>Ostatní</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="367"/>
@@ -259,15 +259,20 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="118"/>
         <source>Misc</source>
-        <translation type="unfinished"/>
+        <translation>Ostatní</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderConfig.ui" line="124"/>
+        <location filename="../gui/FeedReaderConfig.ui" line="131"/>
         <source>Set message to read on activate</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gui/FeedReaderConfig.ui" line="131"/>
+        <location filename="../gui/FeedReaderConfig.ui" line="138"/>
+        <source>Save configuration in background (for slow systems, more memory needed)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderConfig.ui" line="124"/>
         <source>Open all feeds in new tab</source>
         <translation type="unfinished"/>
     </message>
@@ -312,7 +317,7 @@
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="293"/>
         <source>Folder</source>
-        <translation type="unfinished"/>
+        <translation>Složka</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="301"/>
@@ -522,17 +527,17 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="91"/>
         <source>Search Title</source>
-        <translation type="unfinished"/>
+        <translation>Hledat podle jména fóra</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="92"/>
         <source>Search Date</source>
-        <translation type="unfinished"/>
+        <translation>Hledat podle datumu</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="93"/>
         <source>Search Author</source>
-        <translation type="unfinished"/>
+        <translation>Hledat podle autora</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="105"/>
@@ -648,7 +653,7 @@
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="67"/>
         <source>Downloading</source>
-        <translation type="unfinished"/>
+        <translation>Stahuji</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="69"/>
@@ -860,7 +865,7 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="426"/>
         <source>Edit</source>
-        <translation type="unfinished"/>
+        <translation>Nastavení</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="432"/>

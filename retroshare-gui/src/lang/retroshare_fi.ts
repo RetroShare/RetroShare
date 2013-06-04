@@ -135,7 +135,7 @@
         <translation>Loma</translation>
     </message>
     <message>
-        <source>Landcapes</source>
+        <source>Landscapes</source>
         <translation>Maisemat</translation>
     </message>
     <message>
@@ -1178,8 +1178,24 @@ p, li { white-space: pre-wrap; }
         <translation>Jaa kanava</translation>
     </message>
     <message>
+        <source>Set destination directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Other...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>[Default]</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <source>Copy RetroShare Link</source>
         <translation>Kopioi RetroShare-linkki</translation>
+    </message>
+    <message>
+        <source>Select channel destination directory</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Publish rights restored.</source>
@@ -1222,7 +1238,7 @@ Ole hyvä ja valitse niistä yksi keskustellaksesi.</translation>
     <name>ChatLobbyDialog</name>
     <message>
         <source>Participants</source>
-        <translation>Osanottajat</translation>
+        <translation>Osallistujat</translation>
     </message>
     <message>
         <source>Change nick name</source>
@@ -1239,6 +1255,14 @@ Ole hyvä ja valitse niistä yksi keskustellaksesi.</translation>
     <message>
         <source>Leave this lobby (Unsubscribe)</source>
         <translation>Poistu aulasta</translation>
+    </message>
+    <message>
+        <source>Invite friends</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Select friends to invite:</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Welcome to lobby %1</source>
@@ -1388,7 +1412,7 @@ Ole hyvä ja valitse niistä yksi keskustellaksesi.</translation>
 Select lobbies at left to show details.
 
 Double click lobbies to enter and chat.</source>
-        <translation>Aulaa ei valittuna. 
+        <translation>Aulaa ei ole valittu. 
 
 Valitse auloja vasemmalta nähdäksesi tietoja.
 
@@ -1788,8 +1812,8 @@ Kaksoisnapauta auloja siirtyäksesi keskustelemaan.</translation>
         <translation>Luo henkilökohtainen ryhmä</translation>
     </message>
     <message>
-        <source>Create Public Group</source>
-        <translation>Luo julkinen ryhmä</translation>
+        <source>Create Circle</source>
+        <translation>Luo ympyrä</translation>
     </message>
     <message>
         <source>Refresh</source>
@@ -2315,6 +2339,10 @@ Jotkut palvelut (etsintä, nimetön reititys) voi kytkeä pois yleisellä tasoll
     <message>
         <source>Forums/channels</source>
         <translation>Foorumit/kanavat</translation>
+    </message>
+    <message>
+        <source>To accept the Friend Request, click the Finish button.</source>
+        <translation>Paina Valmis-painiketta hyväksyäksesi ystäväpyynnön</translation>
     </message>
     <message>
         <source>Sorry, some error appeared</source>
@@ -3068,6 +3096,149 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>CreateCircleDialog</name>
+    <message>
+        <source>Circle Details</source>
+        <translation>Ympyrän tiedot</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>Nimi</translation>
+    </message>
+    <message>
+        <source>Creator</source>
+        <translation>Luoja</translation>
+    </message>
+    <message>
+        <source>Distribution</source>
+        <translation>Jakelu</translation>
+    </message>
+    <message>
+        <source>Public</source>
+        <translation>Julkinen</translation>
+    </message>
+    <message>
+        <source>Self-Restricted</source>
+        <translation>Itserajoitettu</translation>
+    </message>
+    <message>
+        <source>Restricted to:</source>
+        <translation>Rajoitettu näihin:</translation>
+    </message>
+    <message>
+        <source>Circle Membership</source>
+        <translation>Ympyrän jäsenyys</translation>
+    </message>
+    <message>
+        <source>IDs</source>
+        <translation>Tunnisteet</translation>
+    </message>
+    <message>
+        <source>&lt;&lt; Add</source>
+        <translation>&lt;&lt; Lisää</translation>
+    </message>
+    <message>
+        <source>&gt;&gt; Remove </source>
+        <translation>&gt;&gt; Poista</translation>
+    </message>
+    <message>
+        <source>Known Identities</source>
+        <translation>Tiedetyt henkilöllisyydet</translation>
+    </message>
+    <message>
+        <source>All IDs</source>
+        <translation>Kaikki tunnisteet</translation>
+    </message>
+    <message>
+        <source>All PGP IDs</source>
+        <translation>Kaikki PGP-tunnisteet</translation>
+    </message>
+    <message>
+        <source>Known PGP IDs</source>
+        <translation>Tiedetyt PGP-tunnisteet</translation>
+    </message>
+    <message>
+        <source>Filter</source>
+        <translation>Suodata</translation>
+    </message>
+    <message>
+        <source>Nickname</source>
+        <translation>Nimimerkki</translation>
+    </message>
+    <message>
+        <source>ID</source>
+        <translation>Tunniste</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation>Tyyppi</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Peru</translation>
+    </message>
+    <message>
+        <source>Create Group</source>
+        <translation>Luo ryhmä</translation>
+    </message>
+    <message>
+        <source>Start New Thread</source>
+        <translation>Aloita uusi viestiketju</translation>
+    </message>
+    <message>
+        <source>Post Forum Message</source>
+        <translation>Lähetä viesti foorumiin</translation>
+    </message>
+    <message>
+        <source>Paste RetroShare Link</source>
+        <translation>Liitä RetroShare-linkki</translation>
+    </message>
+    <message>
+        <source>Paste full RetroShare Link</source>
+        <translation>Liitä kokonainen RetroShare-linkki</translation>
+    </message>
+    <message>
+        <source>Paste my certificate link</source>
+        <translation>Liitä varmennelinkkini</translation>
+    </message>
+    <message>
+        <source>No Forum</source>
+        <translation>Ei foorumia</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Ladataan</translation>
+    </message>
+    <message>
+        <source>In Reply to</source>
+        <translation>Vastauksena viestiin</translation>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation>RetroShare</translation>
+    </message>
+    <message>
+        <source>Please set a Forum Subject and Forum Message</source>
+        <translation>Ole hyvä ja aseta foorumin aihe ja foorumiviesti</translation>
+    </message>
+    <message>
+        <source>Please choose Signing Id</source>
+        <translation>Valitse allekirjoitustunniste</translation>
+    </message>
+    <message>
+        <source>Please choose Signing Id, it is required</source>
+        <translation>Valitse allekirjoitustunniste, se on pakollinen</translation>
+    </message>
+    <message>
+        <source>Add Extra File</source>
+        <translation>Lisää ylimääräinen tiedosto</translation>
+    </message>
+    <message>
+        <source>Please set a name for your Circle</source>
+        <translation>Anna ympyrällesi nim</translation>
+    </message>
+</context>
+<context>
     <name>CreateForum</name>
     <message>
         <source>Create new Forum</source>
@@ -3419,11 +3590,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please choose Signing Id</source>
-        <translation type="unfinished"/>
+        <translation>Valitse allekirjoitustunniste</translation>
     </message>
     <message>
         <source>Please choose Signing Id, it is required</source>
-        <translation type="unfinished"/>
+        <translation>Valitse allekirjoitustunniste, se on pakollinen</translation>
     </message>
     <message>
         <source>Add Extra File</source>
@@ -3536,6 +3707,14 @@ p, li { white-space: pre-wrap; }
         <translation>Varmenne</translation>
     </message>
     <message>
+        <source>Include signatures</source>
+        <translation>Sisällytä allekirjoitukset</translation>
+    </message>
+    <message>
+        <source>Use old key format</source>
+        <translation>Käytä vanhaa avainformaattia</translation>
+    </message>
+    <message>
         <source>Copy link to clipboard</source>
         <translation>Kopioi linkki leikepöydälle</translation>
     </message>
@@ -3546,14 +3725,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Save Key</source>
         <translation>Tallenna avain</translation>
-    </message>
-    <message>
-        <source>Use old key format</source>
-        <translation>Käytä vanhaa avainformaattia</translation>
-    </message>
-    <message>
-        <source>Include signatures</source>
-        <translation>Sisällytä allekirjoitukset</translation>
     </message>
     <message>
         <source>A RetroShare link with your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
@@ -4147,7 +4318,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Destination folder</source>
-        <translation type="unfinished"/>
+        <translation>Kohdekansio</translation>
     </message>
     <message>
         <source>File hash</source>
@@ -4975,21 +5146,18 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>FriendSelectionDialog</name>
-    <message>
-        <source>Choose some friends</source>
-        <translation>Valitse ystäviä</translation>
-    </message>
-    <message>
-        <source>Contacts:</source>
-        <translation>Kontaktit:</translation>
-    </message>
-</context>
-<context>
     <name>FriendSelectionWidget</name>
     <message>
-        <source>Search for Name:</source>
-        <translation>Etsi nimellä:</translation>
+        <source>Search :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>All</source>
+        <translation>Kaikki</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>Ei mikään</translation>
     </message>
     <message>
         <source>Name</source>
@@ -5896,6 +6064,38 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GroupFlagsWidget</name>
     <message>
+        <source>Directory is browsable for friends from groups</source>
+        <translation>Hakemisto on ryhmissä olevien ystävien selattavissa</translation>
+    </message>
+    <message>
+        <source>Directory is NOT browsable for friends from groups</source>
+        <translation>Hakemisto EI ole ryhmissä olevien ystävien selattavissa</translation>
+    </message>
+    <message>
+        <source>Directory is accessible by anonymous tunnels from friends from groups</source>
+        <translation>Hakemisto on ryhmissä olevien ystävien selattavissa nimettömien tunneleiden kautta</translation>
+    </message>
+    <message>
+        <source>Directory is NOT accessible by anonymous tunnels from friends from groups</source>
+        <translation>Hakemisto EI ole ryhmissä olevien ystävien selattavissa nimettömien tunneleiden kautta</translation>
+    </message>
+    <message>
+        <source>Directory is browsable for any friend</source>
+        <translation>Hakemisto on minkä hyvänsä ystävän selattavissa.</translation>
+    </message>
+    <message>
+        <source>Directory is NOT browsable for any friend</source>
+        <translation>Hakemisto EI ole minkä hyvänsä ystävän selattavissa.</translation>
+    </message>
+    <message>
+        <source>Directory is accessible by anonymous tunnels from any friend</source>
+        <translation>Hakemisto on minkä hyvänsä ystävän selattavissa nimettömien tunneleiden kautta.</translation>
+    </message>
+    <message>
+        <source>Directory is NOT accessible by anonymous tunnels from any friend</source>
+        <translation>Hakemisto EI ole minkä hyvänsä ystävän selattavissa nimettömien tunneleiden kautta.</translation>
+    </message>
+    <message>
         <source>All your friends can browse this directory</source>
         <translation>Kaikki ystäväsi voivat selata tätä hakemistoa</translation>
     </message>
@@ -6238,7 +6438,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Voter ID:</source>
-        <translation type="unfinished"/>
+        <translation>Äänestäjän tunniste:</translation>
     </message>
     <message>
         <source>Refresh</source>
@@ -6262,15 +6462,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>UpVotes</source>
-        <translation type="unfinished"/>
+        <translation>Äänet ylös</translation>
     </message>
     <message>
         <source>DownVotes</source>
-        <translation type="unfinished"/>
+        <translation>Äänet alas</translation>
     </message>
     <message>
         <source>OwnVote</source>
-        <translation type="unfinished"/>
+        <translation>Oma ääni</translation>
     </message>
 </context>
 <context>
@@ -6285,31 +6485,31 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Vote Up</source>
-        <translation type="unfinished"/>
+        <translation>Äänestä ylös</translation>
     </message>
     <message>
         <source>Vote Down</source>
-        <translation type="unfinished"/>
+        <translation>Äänestä alas</translation>
     </message>
     <message>
         <source>Reputation</source>
-        <translation type="unfinished"/>
+        <translation>Maine</translation>
     </message>
     <message>
         <source>Show Reputation</source>
-        <translation type="unfinished"/>
+        <translation>Näytä maine</translation>
     </message>
     <message>
         <source>Interesting User</source>
-        <translation type="unfinished"/>
+        <translation>Kiinnostava käyttäjä</translation>
     </message>
     <message>
         <source>Mark Spammy</source>
-        <translation type="unfinished"/>
+        <translation>Merkitse roskapostiksi</translation>
     </message>
     <message>
         <source>Ban User</source>
-        <translation type="unfinished"/>
+        <translation>Estä käyttäjä</translation>
     </message>
 </context>
 <context>
@@ -6332,16 +6532,17 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Signed by</source>
-        <translation type="unfinished"/>
+        <translation>Allekirjoittaja</translation>
     </message>
     <message>
         <source>Comment Signing Error</source>
-        <translation type="unfinished"/>
+        <translation>Virhe allekirjoitettaessa kommenttia</translation>
     </message>
     <message>
         <source>You need to create an Identity
 before you can comment</source>
-        <translation type="unfinished"/>
+        <translation>Sinun on luotava identiteetti, ennen
+kuin voit kommentoida</translation>
     </message>
 </context>
 <context>
@@ -7516,7 +7717,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Make sure this link has not been forged to drag you to a malicious website.</source>
-        <translation type="unfinished"/>
+        <translation>Varmista, että tämä linkki ei ole huijaus, joka johtaa haitalliselle sivustolle.</translation>
+    </message>
+    <message>
+        <source>Don&apos;t ask me again</source>
+        <translation>Älä kysy uudestaan</translation>
     </message>
     <message>
         <source>It seems to be an old RetroShare link. Please use copy instead.</source>
@@ -8676,6 +8881,10 @@ Haluatko tallentaa viestin?</translation>
         <translation>Varmennetunniste</translation>
     </message>
     <message>
+        <source>Last used</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <source>Clear</source>
         <translation>Tyhjennä</translation>
     </message>
@@ -8744,12 +8953,8 @@ Haluatko tallentaa viestin?</translation>
         <translation>Ystävysty</translation>
     </message>
     <message>
-        <source>Delete certificate</source>
-        <translation>Tuhoa varmenne</translation>
-    </message>
-    <message>
-        <source>Export my Cert</source>
-        <translation>Vie varmenteeni</translation>
+        <source>Export my certificate...</source>
+        <translation>Vie varmenteeni...</translation>
     </message>
     <message>
         <source>Peer details...</source>
@@ -8758,6 +8963,51 @@ Haluatko tallentaa viestin?</translation>
     <message>
         <source>Copy RetroShare Link</source>
         <translation>Kopioi RetroShare-linkki</translation>
+    </message>
+    <message>
+        <source>Remove unused keys...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Clean keyring</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The selected keys below haven't been used in the last 3 months. 
+Do you want to delete them permanently ? 
+
+Notes: Your old keyring will be backed up.
+    The removal may fail when running multiple Retroshare instances on the same machine.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Keyring info</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 keys have been deleted from your keyring. 
+For security, your keyring was previously backed-up to file 
+
+</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown error</source>
+        <translation>Tuntematon virhe</translation>
+    </message>
+    <message>
+        <source>Cannot delete secret keys</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot create backup file. Check for permissions in pgp directory, disk space, etc.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Key removal has failed. Your keyring remains intact.
+
+Reported error: </source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Personal signature</source>
@@ -8780,12 +9030,28 @@ Haluatko tallentaa viestin?</translation>
         <translation>Ei-luotettu vertainen</translation>
     </message>
     <message>
+        <source>Has authenticated me</source>
+        <translation>On varmentanut minut</translation>
+    </message>
+    <message>
         <source>Unknown</source>
         <translation>Tuntematon</translation>
     </message>
     <message>
-        <source>Has authenticated me</source>
-        <translation>On varmentanut minut</translation>
+        <source>Last hour</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Today</source>
+        <translation>Tänään</translation>
+    </message>
+    <message>
+        <source>Never</source>
+        <translation>Ei koskaan</translation>
+    </message>
+    <message>
+        <source>%1 days ago</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> has authenticated you. 
@@ -9020,6 +9286,14 @@ Paina hiiren oikeaa nappia ja valitse &quot;ystävysty&quot; saadaksesi yhteyden
         <translation>RetroShare on havainnut rekisteröimättömän lisäosan. Tämä voi tapahtua kahdesta syystä:&lt;UL&gt;&lt;LI&gt;RetroSharen käynnistystiedosto on muuttunut.&lt;/LI&gt;&lt;LI&gt;Lisäosa on muuttunut&lt;/LI&gt;&lt;/UL&gt;Paina Kyllä hyväksyäksesi lisäosan tai Ei estääksesi sen. Voit muuttaa asetuksen myöhemmin menemällä Asetukset -&gt; Lisäosat, ja käynnistämällä RS:n uudelleen.</translation>
     </message>
     <message>
+        <source>For the chat lobbies to work properly, the time of your computer needs to be correct. Please check that this is the case (A possible time shift of several minutes was detected with your friends). </source>
+        <translation>Keskusteluaulojen toiminnan varmistamiseksi tietokoneesi ajan on oltava oikeassa. Tarkista, että näin on (mahdollinen useiden minuuttien aikasiirtymä havaittiin ystävilläsi). </translation>
+    </message>
+    <message>
+        <source>Please check your system clock.</source>
+        <translation>Tarkista järjestelmän kello.</translation>
+    </message>
+    <message>
         <source>Examining shared files...</source>
         <translation>Tarkastellaan jaettuja tiedostoja...</translation>
     </message>
@@ -9038,14 +9312,6 @@ Paina hiiren oikeaa nappia ja valitse &quot;ystävysty&quot; saadaksesi yhteyden
     <message>
         <source>This is a test.</source>
         <translation>This is a test.</translation>
-    </message>
-    <message>
-        <source>For the chat lobbies to work properly, the time of your computer needs to be correct. Please check that this is the case (A possible time shift of several minutes was detected with your friends). </source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Please check your system clock.</source>
-        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9633,11 +9899,15 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt; font-weight:600;&quot;&gt;Link&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt; font-weight:600;&quot;&gt;Linkki&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Signed by: </source>
-        <translation type="unfinished"/>
+        <translation>Allekirjoitettu:</translation>
     </message>
     <message>
         <source>Notes</source>
@@ -9648,8 +9918,8 @@ p, li { white-space: pre-wrap; }
         <translation>RetroShare</translation>
     </message>
     <message>
-        <source>Please reate or choose a Signing Id first</source>
-        <translation type="unfinished"/>
+        <source>Please create or choose a Signing Id first</source>
+        <translation>Luo tai valitse ensin allekirjoitustunniste</translation>
     </message>
 </context>
 <context>
@@ -9811,6 +10081,14 @@ p, li { white-space: pre-wrap; }
         <source>Other Topics</source>
         <translation>Muut viestiketjut</translation>
     </message>
+    <message>
+        <source>Subscribe</source>
+        <translation>Aloita tilaus</translation>
+    </message>
+    <message>
+        <source>Unsubscribe</source>
+        <translation>Lopeta tilaus</translation>
+    </message>
 </context>
 <context>
     <name>PrintPreview</name>
@@ -9850,8 +10128,24 @@ p, li { white-space: pre-wrap; }
         <translation>Profiilin hallinta</translation>
     </message>
     <message>
-        <source>Export selected identity</source>
-        <translation>Vie valittu henkilöllisyys</translation>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Select an identity from the list below to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;When keeping the same identity for your new  location, your friends will automatically accept you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Valitse luettelosta identiteetti, jota haluat käyttää toisessa tietokoneessa ja paina &amp;quot;Vie valittu identiteetti&amp;quot;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Käyttääksesi sitä toisessa tietokoneessa, valitse identiteettien hallinta kirjautumisikkunassa. Sieltä voit tuoda identiteettitiedoston ja luoda uuden sijainnin identiteetille.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Kun käytät samaa identiteettiä uudessa sijainnissa, ystäväsi hyväksyvät sinut automaattisesti.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Identities</source>
@@ -9868,6 +10162,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>GID</source>
         <translation>Ryhmätunnus(GID)</translation>
+    </message>
+    <message>
+        <source>Export selected identity</source>
+        <translation>Vie valittu henkilöllisyys</translation>
     </message>
     <message>
         <source>Export Identity</source>
@@ -9932,18 +10230,6 @@ ja käyttää &quot;Tuo&quot;-painiketta ladataksesi sen</translation>
     <message>
         <source>Certificates (*.pqi *.pem)</source>
         <translation>Varmenteet (*.pqi *.pem)</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Select in the list below an identity to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;When keeping the same identity for your new  location, your friends will automatically accept you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -10090,12 +10376,20 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QObject</name>
     <message>
+        <source>Subject: </source>
+        <translation>Aihe:</translation>
+    </message>
+    <message>
+        <source>Participants: </source>
+        <translation>Osallistujat:</translation>
+    </message>
+    <message>
         <source>Confirmation</source>
         <translation>Vahvistus</translation>
     </message>
     <message>
         <source>Do you want this link to be handled by your system?</source>
-        <translation type="unfinished"/>
+        <translation>Haluatko, että järjestelmäsi käsittelee linkin?</translation>
     </message>
     <message>
         <source>Click to add this RetroShare cert to your PGP keyring
@@ -10252,38 +10546,6 @@ Merkit &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; korvataan merkillä
         <translation>Tulos</translation>
     </message>
     <message>
-        <source>Directory is browsable for friends from groups</source>
-        <translation>Hakemisto on ryhmissä olevien ystävien selattavissa</translation>
-    </message>
-    <message>
-        <source>Directory is accessible by anonymous tunnels from friends from groups</source>
-        <translation>Hakemisto on ryhmissä olevien ystävien selattavissa nimettömien tunneleiden kautta</translation>
-    </message>
-    <message>
-        <source>Directory is browsable for any friend</source>
-        <translation>Hakemisto on minkä hyvänsä ystävän selattavissa.</translation>
-    </message>
-    <message>
-        <source>Directory is accessible by anonymous tunnels from any friend</source>
-        <translation>Hakemisto on minkä hyvänsä ystävän selattavissa nimettömien tunneleiden kautta.</translation>
-    </message>
-    <message>
-        <source>Directory is NOT browsable for friends from groups</source>
-        <translation>Hakemisto EI ole ryhmissä olevien ystävien selattavissa</translation>
-    </message>
-    <message>
-        <source>Directory is NOT accessible by anonymous tunnels from friends from groups</source>
-        <translation>Hakemisto EI ole ryhmissä olevien ystävien selattavissa nimettömien tunneleiden kautta</translation>
-    </message>
-    <message>
-        <source>Directory is NOT browsable for any friend</source>
-        <translation>Hakemisto EI ole minkä hyvänsä ystävän selattavissa.</translation>
-    </message>
-    <message>
-        <source>Directory is NOT accessible by anonymous tunnels from any friend</source>
-        <translation>Hakemisto EI ole minkä hyvänsä ystävän selattavissa nimettömien tunneleiden kautta.</translation>
-    </message>
-    <message>
         <source>Unable to make path</source>
         <translation>Polun luominen epäonnistui</translation>
     </message>
@@ -10386,14 +10648,6 @@ Lukitustiedosto:
     <message>
         <source>Start with a RetroShare link is only supported for Windows.</source>
         <translation>Käynnistys RetroShare-linkistä on mahdollinen ainoastaan Windowsia käytettäessä.</translation>
-    </message>
-    <message>
-        <source>Subject: </source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Participants: </source>
-        <translation type="unfinished"/>
     </message>
 </context>
 <context>

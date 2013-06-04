@@ -281,7 +281,7 @@
     <message>
         <location filename="../LinksDialog.cpp" line="160"/>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>ダウンロード</translation>
     </message>
     <message>
         <location filename="../LinksDialog.cpp" line="707"/>
@@ -318,12 +318,12 @@
     <message>
         <location filename="../LinksDialog.cpp" line="813"/>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>展開</translation>
     </message>
     <message>
         <location filename="../LinksDialog.cpp" line="820"/>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>非表示</translation>
     </message>
 </context>
 </TS>

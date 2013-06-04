@@ -89,7 +89,7 @@
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>取消 </translation>
     </message>
     <message>
         <source>Perform the advanced search.</source>
@@ -135,7 +135,7 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Landcapes</source>
+        <source>Landscapes</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -172,7 +172,7 @@
     </message>
     <message>
         <source>Description:</source>
-        <translation type="unfinished"/>
+        <translation>描述:</translation>
     </message>
     <message>
         <source>Share Options</source>
@@ -307,7 +307,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Description:</source>
-        <translation type="unfinished"/>
+        <translation>描述:</translation>
     </message>
     <message>
         <source>Share Options</source>
@@ -354,7 +354,7 @@ p, li { white-space: pre-wrap; }
     <name>AlbumItem</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>表單</translation>
     </message>
     <message>
         <source>TextLabel</source>
@@ -522,7 +522,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>取消 </translation>
     </message>
     <message>
         <source>Since:</source>
@@ -565,7 +565,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>取消 </translation>
     </message>
     <message>
         <source>OK</source>
@@ -580,11 +580,11 @@ p, li { white-space: pre-wrap; }
     <name>BlogMsgItem</name>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>刪除項目</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>展開</translation>
     </message>
     <message>
         <source>Subject</source>
@@ -596,14 +596,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>隱藏</translation>
     </message>
 </context>
 <context>
     <name>BlogNewItem</name>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>刪除項目</translation>
     </message>
     <message>
         <source>Subscribe to Blog</source>
@@ -611,7 +611,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>展開</translation>
     </message>
     <message>
         <source>Blog Description</source>
@@ -631,14 +631,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>隱藏</translation>
     </message>
 </context>
 <context>
     <name>BlogsDialog</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>表單</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -650,7 +650,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>添加</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -751,7 +751,7 @@ Available: %3</source>
     <name>BlogsMsgItem</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>表單</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -771,11 +771,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>展開</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>刪除項目</translation>
     </message>
     <message>
         <source>Unsubscribe From Channel</source>
@@ -791,7 +791,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>隱藏</translation>
     </message>
 </context>
 <context>
@@ -857,7 +857,7 @@ p, li { white-space: pre-wrap; }
     <name>CalDialog</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>表單</translation>
     </message>
     <message>
         <source>Local Calendars</source>
@@ -873,7 +873,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>名稱:</translation>
     </message>
     <message>
         <source>Location:</source>
@@ -881,7 +881,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"/>
+        <translation>...</translation>
     </message>
     <message>
         <source>Status:</source>
@@ -905,11 +905,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>添加</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"/>
+        <translation>刪除</translation>
     </message>
     <message>
         <source>Peer Calendars</source>
@@ -924,11 +924,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"/>
+        <translation>新建</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>下載</translation>
     </message>
     <message>
         <source>Play</source>
@@ -944,15 +944,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>展開</translation>
     </message>
     <message>
         <source>Set as read and remove item</source>
-        <translation type="unfinished"/>
+        <translation>設置為已讀并刪除項目</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>刪除項目</translation>
     </message>
     <message>
         <source>Channel Feed</source>
@@ -968,7 +968,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>隱藏</translation>
     </message>
 </context>
 <context>
@@ -979,11 +979,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>展開</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>刪除項目</translation>
     </message>
     <message>
         <source>Channel Description</source>
@@ -1003,7 +1003,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>隱藏</translation>
     </message>
 </context>
 <context>
@@ -1038,7 +1038,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation>類型</translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
@@ -1131,7 +1131,23 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
+        <source>Set destination directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Other...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>[Default]</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <source>Copy RetroShare Link</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Select channel destination directory</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -1190,6 +1206,14 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Leave this lobby (Unsubscribe)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invite friends</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Select friends to invite:</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -1355,7 +1379,7 @@ Double click lobbies to enter and chat.</source>
     <name>ChatMsgItem</name>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>刪除項目</translation>
     </message>
     <message>
         <source>Write a quick Message</source>
@@ -1379,7 +1403,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>取消 </translation>
     </message>
     <message>
         <source>Quick Message</source>
@@ -1510,7 +1534,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Description:</source>
-        <translation type="unfinished"/>
+        <translation>描述:</translation>
     </message>
     <message>
         <source>Private chat</source>
@@ -1736,7 +1760,7 @@ Double click lobbies to enter and chat.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Create Public Group</source>
+        <source>Create Circle</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -2213,7 +2237,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>名稱:</translation>
     </message>
     <message>
         <source>Email:</source>
@@ -2253,6 +2277,10 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Forums/channels</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>To accept the Friend Request, click the Finish button.</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -2496,7 +2524,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Type:</source>
-        <translation type="unfinished"/>
+        <translation>類型</translation>
     </message>
     <message>
         <source>Public - Anyone can read and publish (Shared Publish Key)</source>
@@ -2532,7 +2560,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>取消 </translation>
     </message>
     <message>
         <source>Create</source>
@@ -2623,7 +2651,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"/>
+        <translation>新建</translation>
     </message>
     <message>
         <source>Code</source>
@@ -2831,7 +2859,7 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Type:</source>
-        <translation type="unfinished"/>
+        <translation>類型</translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
@@ -2996,6 +3024,149 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>CreateCircleDialog</name>
+    <message>
+        <source>Circle Details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Creator</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Distribution</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Public</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Self-Restricted</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Restricted to:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Circle Membership</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IDs</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;&lt; Add</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&gt;&gt; Remove </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Known Identities</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>All IDs</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>All PGP IDs</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Known PGP IDs</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Filter</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Nickname</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>ID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation>類型</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>取消 </translation>
+    </message>
+    <message>
+        <source>Create Group</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Start New Thread</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Post Forum Message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Paste RetroShare Link</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Paste full RetroShare Link</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Paste my certificate link</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No Forum</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>In Reply to</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please set a Forum Subject and Forum Message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please choose Signing Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please choose Signing Id, it is required</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add Extra File</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please set a name for your Circle</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>CreateForum</name>
     <message>
         <source>Create new Forum</source>
@@ -3019,7 +3190,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Type:</source>
-        <translation type="unfinished"/>
+        <translation>類型</translation>
     </message>
     <message>
         <source>Public - Anyone can read and publish (Shared Publish Key)</source>
@@ -3078,7 +3249,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Forum</source>
-        <translation type="unfinished"/>
+        <translation>論壇</translation>
     </message>
     <message>
         <source>Subject</source>
@@ -3277,7 +3448,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Forum</source>
-        <translation type="unfinished"/>
+        <translation>論壇</translation>
     </message>
     <message>
         <source>Subject</source>
@@ -3423,7 +3594,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>名稱:</translation>
     </message>
     <message>
         <source>Location:</source>
@@ -3458,15 +3629,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Copy link to clipboard</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Save Key into a file</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Save Key</source>
+        <source>Include signatures</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -3474,7 +3637,15 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Include signatures</source>
+        <source>Copy link to clipboard</source>
+        <translation>復制鏈接到剪切板</translation>
+    </message>
+    <message>
+        <source>Save Key into a file</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Save Key</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -3588,7 +3759,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Copy link to clipboard</source>
-        <translation type="unfinished"/>
+        <translation>復制鏈接到剪切板</translation>
     </message>
     <message>
         <source>Rating</source>
@@ -3719,7 +3890,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Proxy</source>
-        <translation type="unfinished"/>
+        <translation>代理</translation>
     </message>
     <message>
         <source>Destination</source>
@@ -4251,15 +4422,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>展開</translation>
     </message>
     <message>
         <source>Set as read and remove item</source>
-        <translation type="unfinished"/>
+        <translation>設置為已讀并刪除項目</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>刪除項目</translation>
     </message>
     <message>
         <source>Send</source>
@@ -4287,7 +4458,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>隱藏</translation>
     </message>
     <message>
         <source>Please give a Text Message</source>
@@ -4302,11 +4473,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>展開</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>刪除項目</translation>
     </message>
     <message>
         <source>Forum Description</source>
@@ -4326,18 +4497,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>隱藏</translation>
     </message>
 </context>
 <context>
     <name>ForumPage</name>
     <message>
         <source>Misc</source>
-        <translation type="unfinished"/>
+        <translation>雜項</translation>
     </message>
     <message>
         <source>Set message to read on activate</source>
-        <translation type="unfinished"/>
+        <translation>選中時自動設置消息為已讀</translation>
     </message>
     <message>
         <source>Expand new messages</source>
@@ -4353,7 +4524,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Forum</source>
-        <translation type="unfinished"/>
+        <translation>論壇</translation>
     </message>
 </context>
 <context>
@@ -4395,15 +4566,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Title</source>
-        <translation type="unfinished"/>
+        <translation>標題</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"/>
+        <translation>日期</translation>
     </message>
     <message>
         <source>Author</source>
-        <translation type="unfinished"/>
+        <translation>作者</translation>
     </message>
     <message>
         <source>Signed</source>
@@ -4467,15 +4638,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Search Title</source>
-        <translation type="unfinished"/>
+        <translation>搜索標題</translation>
     </message>
     <message>
         <source>Search Date</source>
-        <translation type="unfinished"/>
+        <translation>搜索日期</translation>
     </message>
     <message>
         <source>Search Author</source>
-        <translation type="unfinished"/>
+        <translation>搜索作者</translation>
     </message>
     <message>
         <source>Content</source>
@@ -4519,7 +4690,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Mark all as read</source>
-        <translation type="unfinished"/>
+        <translation>全部標為已讀</translation>
     </message>
     <message>
         <source>Mark all as unread</source>
@@ -4547,7 +4718,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Mark as read</source>
-        <translation type="unfinished"/>
+        <translation>標為已讀</translation>
     </message>
     <message>
         <source>with children</source>
@@ -4555,15 +4726,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Mark as unread</source>
-        <translation type="unfinished"/>
+        <translation>標為未讀</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>隱藏</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>展開</translation>
     </message>
     <message>
         <source>AUTHD</source>
@@ -4591,7 +4762,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished"/>
+        <translation>來自</translation>
     </message>
     <message>
         <source>Sent</source>
@@ -4614,7 +4785,7 @@ p, li { white-space: pre-wrap; }
     <name>ForumsFillThread</name>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>未知</translation>
     </message>
     <message>
         <source>Anonymous</source>
@@ -4809,7 +4980,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Show</source>
-        <translation type="unfinished"/>
+        <translation>顯示</translation>
     </message>
     <message>
         <source>Unsubscribe</source>
@@ -4845,7 +5016,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Sort by</source>
-        <translation type="unfinished"/>
+        <translation>排序方式</translation>
     </message>
 </context>
 <context>
@@ -4891,20 +5062,17 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>FriendSelectionDialog</name>
-    <message>
-        <source>Choose some friends</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Contacts:</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
     <name>FriendSelectionWidget</name>
     <message>
-        <source>Search for Name:</source>
+        <source>Search :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>All</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>None</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -4928,7 +5096,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>添加</translation>
     </message>
     <message>
         <source>Edit status message</source>
@@ -5087,7 +5255,7 @@ p, li { white-space: pre-wrap; }
     <name>GamesDialog</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>表單</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -5114,7 +5282,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Title / Comment</source>
-        <translation type="unfinished"/>
+        <translation>標題/評論</translation>
     </message>
     <message>
         <source>Create New Game</source>
@@ -5130,7 +5298,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Server</source>
-        <translation type="unfinished"/>
+        <translation>服務器地址</translation>
     </message>
     <message>
         <source>Status</source>
@@ -5162,7 +5330,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation>刪除</translation>
     </message>
     <message>
         <source>Move Player</source>
@@ -5255,7 +5423,7 @@ anonymous, you can use a fake email.</source>
     </message>
     <message>
         <source>Password</source>
-        <translation type="unfinished"/>
+        <translation>密碼</translation>
     </message>
     <message>
         <source>Put a strong password here. This password protects your PGP key.</source>
@@ -5448,7 +5616,7 @@ Fill in your PGP password when asked, to sign your new key.</source>
     </message>
     <message>
         <source>Misc</source>
-        <translation type="unfinished"/>
+        <translation>雜項</translation>
     </message>
     <message>
         <source>Do not show the Quit RetroShare MessageBox</source>
@@ -5745,6 +5913,38 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GroupFlagsWidget</name>
     <message>
+        <source>Directory is browsable for friends from groups</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Directory is NOT browsable for friends from groups</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Directory is accessible by anonymous tunnels from friends from groups</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Directory is NOT accessible by anonymous tunnels from friends from groups</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Directory is browsable for any friend</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Directory is NOT browsable for any friend</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Directory is accessible by anonymous tunnels from any friend</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Directory is NOT accessible by anonymous tunnels from any friend</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <source>All your friends can browse this directory</source>
         <translation type="unfinished"/>
     </message>
@@ -5777,11 +5977,11 @@ p, li { white-space: pre-wrap; }
     <name>GroupTreeWidget</name>
     <message>
         <source>Title</source>
-        <translation type="unfinished"/>
+        <translation>標題</translation>
     </message>
     <message>
         <source>Search Title</source>
-        <translation type="unfinished"/>
+        <translation>搜索標題</translation>
     </message>
     <message>
         <source>Description</source>
@@ -5840,7 +6040,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"/>
+        <translation>日期</translation>
     </message>
     <message>
         <source>Size</source>
@@ -6013,7 +6213,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>下載</translation>
     </message>
     <message>
         <source>Play</source>
@@ -6033,15 +6233,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>展開</translation>
     </message>
     <message>
         <source>Set as read and remove item</source>
-        <translation type="unfinished"/>
+        <translation>設置為已讀并刪除項目</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>刪除項目</translation>
     </message>
     <message>
         <source>Channel Feed</source>
@@ -6057,7 +6257,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>隱藏</translation>
     </message>
 </context>
 <context>
@@ -6071,7 +6271,7 @@ p, li { white-space: pre-wrap; }
     <name>GxsCommentDialog</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>表單</translation>
     </message>
     <message>
         <source>Hot</source>
@@ -6079,7 +6279,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"/>
+        <translation>新建</translation>
     </message>
     <message>
         <source>Top</source>
@@ -6099,15 +6299,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Author</source>
-        <translation type="unfinished"/>
+        <translation>作者</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"/>
+        <translation>日期</translation>
     </message>
     <message>
         <source>Score</source>
-        <translation type="unfinished"/>
+        <translation>得分</translation>
     </message>
     <message>
         <source>UpVotes</source>
@@ -6197,7 +6397,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Forum</source>
-        <translation type="unfinished"/>
+        <translation>論壇</translation>
     </message>
     <message>
         <source>Edit Forum</source>
@@ -6208,7 +6408,7 @@ before you can comment</source>
     <name>GxsForumThreadWidget</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>表單</translation>
     </message>
     <message>
         <source>Start new Thread for Selected Forum</source>
@@ -6216,7 +6416,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Search forums</source>
-        <translation type="unfinished"/>
+        <translation>搜索論壇</translation>
     </message>
     <message>
         <source>Last Post</source>
@@ -6232,15 +6432,15 @@ before you can comment</source>
     </message>
     <message>
         <source>Title</source>
-        <translation type="unfinished"/>
+        <translation>標題</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"/>
+        <translation>日期</translation>
     </message>
     <message>
         <source>Author</source>
-        <translation type="unfinished"/>
+        <translation>作者</translation>
     </message>
     <message>
         <source>Signed</source>
@@ -6276,15 +6476,15 @@ before you can comment</source>
     </message>
     <message>
         <source>Search Title</source>
-        <translation type="unfinished"/>
+        <translation>搜索標題</translation>
     </message>
     <message>
         <source>Search Date</source>
-        <translation type="unfinished"/>
+        <translation>搜索日期</translation>
     </message>
     <message>
         <source>Search Author</source>
-        <translation type="unfinished"/>
+        <translation>搜索作者</translation>
     </message>
     <message>
         <source>Content</source>
@@ -6296,7 +6496,7 @@ before you can comment</source>
     </message>
     <message>
         <source>No name</source>
-        <translation type="unfinished"/>
+        <translation>未命名</translation>
     </message>
     <message>
         <source>Reply</source>
@@ -6320,7 +6520,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Mark as read</source>
-        <translation type="unfinished"/>
+        <translation>標為已讀</translation>
     </message>
     <message>
         <source>with children</source>
@@ -6328,7 +6528,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Mark as unread</source>
-        <translation type="unfinished"/>
+        <translation>標為未讀</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
@@ -6336,11 +6536,11 @@ before you can comment</source>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>隱藏</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>展開</translation>
     </message>
     <message>
         <source>Anonymous</source>
@@ -6427,7 +6627,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Open in new tab</source>
-        <translation type="unfinished"/>
+        <translation>在新標簽中打開</translation>
     </message>
     <message>
         <source>New Forum</source>
@@ -6455,7 +6655,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Mark all as read</source>
-        <translation type="unfinished"/>
+        <translation>全部標為已讀</translation>
     </message>
     <message>
         <source>Mark all as unread</source>
@@ -6471,7 +6671,7 @@ before you can comment</source>
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished"/>
+        <translation>來自</translation>
     </message>
     <message>
         <source>Sent</source>
@@ -6925,7 +7125,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation>類型</translation>
     </message>
     <message>
         <source>Delete ID</source>
@@ -7032,7 +7232,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>取消 </translation>
     </message>
     <message>
         <source>Create/Update ID</source>
@@ -7051,7 +7251,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"/>
+        <translation>刪除</translation>
     </message>
     <message>
         <source>Mark all</source>
@@ -7059,7 +7259,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation>刪除</translation>
     </message>
     <message>
         <source>Clear history</source>
@@ -7313,14 +7513,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>隱藏</translation>
     </message>
     <message>
         <source>Show</source>
-        <translation type="unfinished"/>
+        <translation>顯示</translation>
     </message>
     <message>
         <source>Make sure this link has not been forged to drag you to a malicious website.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Don&apos;t ask me again</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -7577,7 +7781,7 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished"/>
+        <translation>來自</translation>
     </message>
     <message>
         <source>To</source>
@@ -7625,7 +7829,7 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>未知</translation>
     </message>
     <message>
         <source>Unknown friend</source>
@@ -7761,7 +7965,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Set message to read on activate</source>
-        <translation type="unfinished"/>
+        <translation>選中時自動設置消息為已讀</translation>
     </message>
     <message>
         <source>Open messages in</source>
@@ -7777,15 +7981,15 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>添加</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"/>
+        <translation>編輯</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation>刪除</translation>
     </message>
     <message>
         <source>Default</source>
@@ -7890,7 +8094,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>下載</translation>
     </message>
     <message>
         <source>Download all</source>
@@ -7898,11 +8102,11 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>隱藏</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>展開</translation>
     </message>
     <message>
         <source>File</source>
@@ -7965,7 +8169,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation>刪除</translation>
     </message>
     <message>
         <source>Print selected message</source>
@@ -8068,7 +8272,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation>刪除</translation>
     </message>
     <message>
         <source>Print selected message</source>
@@ -8168,11 +8372,11 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished"/>
+        <translation>來自</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"/>
+        <translation>日期</translation>
     </message>
     <message>
         <source>Content</source>
@@ -8220,7 +8424,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Search Date</source>
-        <translation type="unfinished"/>
+        <translation>搜索日期</translation>
     </message>
     <message>
         <source>Search Content</source>
@@ -8256,11 +8460,11 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Mark as read</source>
-        <translation type="unfinished"/>
+        <translation>標為已讀</translation>
     </message>
     <message>
         <source>Mark as unread</source>
-        <translation type="unfinished"/>
+        <translation>標為未讀</translation>
     </message>
     <message>
         <source>Add Star</source>
@@ -8268,7 +8472,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"/>
+        <translation>編輯</translation>
     </message>
     <message>
         <source>Edit as new</source>
@@ -8358,11 +8562,11 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>展開</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>刪除項目</translation>
     </message>
     <message>
         <source>Message From</source>
@@ -8382,7 +8586,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>隱藏</translation>
     </message>
 </context>
 <context>
@@ -8479,6 +8683,10 @@ Do you want to save message ?</source>
         <translation type="unfinished"/>
     </message>
     <message>
+        <source>Last used</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <source>Clear</source>
         <translation type="unfinished"/>
     </message>
@@ -8547,11 +8755,7 @@ Do you want to save message ?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Delete certificate</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Export my Cert</source>
+        <source>Export my certificate...</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -8560,6 +8764,51 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove unused keys...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Clean keyring</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The selected keys below haven't been used in the last 3 months. 
+Do you want to delete them permanently ? 
+
+Notes: Your old keyring will be backed up.
+    The removal may fail when running multiple Retroshare instances on the same machine.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Keyring info</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 keys have been deleted from your keyring. 
+For security, your keyring was previously backed-up to file 
+
+</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown error</source>
+        <translation>未知錯誤</translation>
+    </message>
+    <message>
+        <source>Cannot delete secret keys</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot create backup file. Check for permissions in pgp directory, disk space, etc.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Key removal has failed. Your keyring remains intact.
+
+Reported error: </source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -8583,11 +8832,27 @@ Do you want to save message ?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Unknown</source>
+        <source>Has authenticated me</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Has authenticated me</source>
+        <source>Unknown</source>
+        <translation>未知</translation>
+    </message>
+    <message>
+        <source>Last hour</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Today</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Never</source>
+        <translation>從未</translation>
+    </message>
+    <message>
+        <source>%1 days ago</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -8630,7 +8895,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>名稱:</translation>
     </message>
     <message>
         <source>Choose color</source>
@@ -8642,7 +8907,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>取消 </translation>
     </message>
 </context>
 <context>
@@ -8704,7 +8969,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Test</source>
-        <translation type="unfinished"/>
+        <translation>測試</translation>
     </message>
     <message>
         <source>Systray Icon</source>
@@ -8822,6 +9087,14 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation type="unfinished"/>
     </message>
     <message>
+        <source>For the chat lobbies to work properly, the time of your computer needs to be correct. Please check that this is the case (A possible time shift of several minutes was detected with your friends). </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please check your system clock.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <source>Examining shared files...</source>
         <translation type="unfinished"/>
     </message>
@@ -8835,18 +9108,10 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Test</source>
-        <translation type="unfinished"/>
+        <translation>測試</translation>
     </message>
     <message>
         <source>This is a test.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>For the chat lobbies to work properly, the time of your computer needs to be correct. Please check that this is the case (A possible time shift of several minutes was detected with your friends). </source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Please check your system clock.</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -8887,7 +9152,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <name>PeerDefs</name>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>未知</translation>
     </message>
 </context>
 <context>
@@ -8906,15 +9171,15 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>展開</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>刪除項目</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>取消 </translation>
     </message>
     <message>
         <source>Send</source>
@@ -8922,7 +9187,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>名稱:</translation>
     </message>
     <message>
         <source>Peer ID:</source>
@@ -8978,7 +9243,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>隱藏</translation>
     </message>
     <message>
         <source>Quick Message</source>
@@ -9004,7 +9269,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <name>PhotoCommentItem</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>表單</translation>
     </message>
 </context>
 <context>
@@ -9047,7 +9312,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"/>
+        <translation>...</translation>
     </message>
     <message>
         <source>Add Comment</source>
@@ -9062,7 +9327,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <name>PhotoItem</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>表單</translation>
     </message>
     <message>
         <source>TextLabel</source>
@@ -9097,7 +9362,7 @@ p, li { white-space: pre-wrap; }
     <name>PhotoShare</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>表單</translation>
     </message>
     <message>
         <source>Create Album</source>
@@ -9188,7 +9453,7 @@ requesting to edit it!</source>
     <name>PluginFrame</name>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"/>
+        <translation>刪除</translation>
     </message>
 </context>
 <context>
@@ -9423,7 +9688,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Please reate or choose a Signing Id first</source>
+        <source>Please create or choose a Signing Id first</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -9481,11 +9746,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"/>
+        <translation>日期</translation>
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished"/>
+        <translation>來自</translation>
     </message>
     <message>
         <source>Site</source>
@@ -9508,7 +9773,7 @@ p, li { white-space: pre-wrap; }
     <name>PostedListDialog</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>表單</translation>
     </message>
     <message>
         <source>Hot</source>
@@ -9516,7 +9781,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"/>
+        <translation>新建</translation>
     </message>
     <message>
         <source>Top</source>
@@ -9564,7 +9829,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Next</source>
-        <translation type="unfinished"/>
+        <translation>下一個</translation>
     </message>
     <message>
         <source>My Topics</source>
@@ -9580,6 +9845,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Other Topics</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Subscribe</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unsubscribe</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -9621,7 +9894,15 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Export selected identity</source>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Select an identity from the list below to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;When keeping the same identity for your new  location, your friends will automatically accept you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -9638,6 +9919,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>GID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export selected identity</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -9700,18 +9985,6 @@ and use the import button to load it</source>
         <source>Certificates (*.pqi *.pem)</source>
         <translation type="unfinished"/>
     </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Select in the list below an identity to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;When keeping the same identity for your new  location, your friends will automatically accept you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
-    </message>
 </context>
 <context>
     <name>ProfileWidget</name>
@@ -9733,7 +10006,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>名稱:</translation>
     </message>
     <message>
         <source>Location:</source>
@@ -9832,7 +10105,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>取消 </translation>
     </message>
     <message>
         <source>Post Pulse to Wire</source>
@@ -9843,19 +10116,27 @@ p, li { white-space: pre-wrap; }
     <name>PulseItem</name>
     <message>
         <source>From</source>
-        <translation type="unfinished"/>
+        <translation>來自</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"/>
+        <translation>日期</translation>
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"/>
+        <translation>...</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
+    <message>
+        <source>Subject: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Participants: </source>
+        <translation type="unfinished"/>
+    </message>
     <message>
         <source>Confirmation</source>
         <translation type="unfinished"/>
@@ -9952,7 +10233,7 @@ and open the Make Friend Wizard.
     </message>
     <message>
         <source>Forum not found</source>
-        <translation type="unfinished"/>
+        <translation>論壇未找到</translation>
     </message>
     <message>
         <source>Forums not found</source>
@@ -10013,38 +10294,6 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
     </message>
     <message>
         <source>Result</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Directory is browsable for friends from groups</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Directory is accessible by anonymous tunnels from friends from groups</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Directory is browsable for any friend</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Directory is accessible by anonymous tunnels from any friend</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Directory is NOT browsable for friends from groups</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Directory is NOT accessible by anonymous tunnels from friends from groups</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Directory is NOT browsable for any friend</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Directory is NOT accessible by anonymous tunnels from any friend</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -10143,14 +10392,6 @@ Reported error is: %2</source>
     </message>
     <message>
         <source>Start with a RetroShare link is only supported for Windows.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Subject: </source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Participants: </source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -10269,11 +10510,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>添加</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"/>
+        <translation>刪除</translation>
     </message>
     <message>
         <source>Automatically share incoming directory (Recommended)</source>
@@ -10430,7 +10671,7 @@ p, li { white-space: pre-wrap; }
     <name>RemoteSharedFilesDialog</name>
     <message>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>下載</translation>
     </message>
     <message>
         <source>Recommend in a message to</source>
@@ -10472,7 +10713,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>取消 </translation>
     </message>
     <message>
         <source>Download!</source>
@@ -10687,7 +10928,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation>類型</translation>
     </message>
     <message>
         <source>Age</source>
@@ -10759,7 +11000,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>下載</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
@@ -10791,7 +11032,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"/>
+        <translation>刪除</translation>
     </message>
     <message>
         <source>Remove All</source>
@@ -10799,7 +11040,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Folder</source>
-        <translation type="unfinished"/>
+        <translation>文件夾</translation>
     </message>
     <message>
         <source>New RetroShare Link(s)</source>
@@ -10838,15 +11079,15 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>展開</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>刪除項目</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>取消 </translation>
     </message>
     <message>
         <source>Send</source>
@@ -10854,7 +11095,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>名稱:</translation>
     </message>
     <message>
         <source>Peer ID:</source>
@@ -10910,7 +11151,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>隱藏</translation>
     </message>
     <message>
         <source>Do you want to remove this Friend?</source>
@@ -11078,7 +11319,7 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Server</source>
-        <translation type="unfinished"/>
+        <translation>服務器地址</translation>
     </message>
 </context>
 <context>
@@ -11217,7 +11458,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>添加</translation>
     </message>
     <message>
         <source>Stop sharing selected Directory</source>
@@ -11225,7 +11466,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"/>
+        <translation>刪除</translation>
     </message>
     <message>
         <source>Apply and close</source>
@@ -11237,7 +11478,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"/>
+        <translation>編輯</translation>
     </message>
     <message>
         <source>Share Manager</source>
@@ -11320,7 +11561,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>下載</translation>
     </message>
     <message>
         <source>Copy retroshare Links to Clipboard</source>
@@ -11399,7 +11640,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>下載</translation>
     </message>
     <message>
         <source>Download complete</source>
@@ -11682,7 +11923,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>下載</translation>
     </message>
     <message>
         <source>Play File</source>
@@ -11990,7 +12231,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>取消 </translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -12106,7 +12347,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Downloading</source>
-        <translation type="unfinished"/>
+        <translation>下載中</translation>
     </message>
     <message>
         <source>Complete</source>
@@ -12126,7 +12367,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>未知</translation>
     </message>
     <message>
         <source>If the hash of the downloaded data does
@@ -12261,7 +12502,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Update</source>
-        <translation type="unfinished"/>
+        <translation>更新</translation>
     </message>
     <message>
         <source>Showing: whole network</source>
@@ -12466,7 +12707,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>取消 </translation>
     </message>
     <message>
         <source>Yes</source>
@@ -12545,7 +12786,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Description:</source>
-        <translation type="unfinished"/>
+        <translation>描述:</translation>
     </message>
     <message>
         <source>Share Options</source>
@@ -12640,7 +12881,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"/>
+        <translation>編輯</translation>
     </message>
     <message>
         <source>New Page</source>
@@ -12743,11 +12984,11 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Preview</source>
-        <translation type="unfinished"/>
+        <translation>預覽</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>取消 </translation>
     </message>
     <message>
         <source>Revert</source>
@@ -12825,7 +13066,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"/>
+        <translation>新建</translation>
     </message>
     <message>
         <source>from</source>
@@ -12893,7 +13134,7 @@ Try to be patient!</source>
     <message>
         <source>Unknown</source>
         <comment>Unknown (size)</comment>
-        <translation type="unfinished"/>
+        <translation>未知</translation>
     </message>
     <message>
         <source> B</source>
@@ -12927,7 +13168,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>未知</translation>
     </message>
     <message>
         <source>&lt; 1m</source>

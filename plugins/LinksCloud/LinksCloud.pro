@@ -14,6 +14,7 @@ TRANSLATIONS +=  \
 			lang/LinksCloud_cs.ts \
 			lang/LinksCloud_da.ts \
 			lang/LinksCloud_de.ts \
+			lang/LinksCloud_el.ts \
 			lang/LinksCloud_en.ts \
 			lang/LinksCloud_es.ts \
 			lang/LinksCloud_fi.ts \
@@ -22,6 +23,7 @@ TRANSLATIONS +=  \
 			lang/LinksCloud_it.ts \
 			lang/LinksCloud_ja_JP.ts \
 			lang/LinksCloud_ko.ts \
+			lang/LinksCloud_nl.ts \
 			lang/LinksCloud_pl.ts \
 			lang/LinksCloud_ru.ts \
 			lang/LinksCloud_sv.ts \

@@ -336,7 +336,7 @@
     <message>
         <location filename="../gui/AudioStats.ui" line="265"/>
         <source>This shows the power spectrum of the current input signal (red line) and the current noise estimate (filled blue).&lt;br /&gt;All amplitudes are multiplied by 30 to show the interesting parts (how much more signal than noise is present in each waveband).&lt;br /&gt;This is probably only of interest if you&apos;re trying to fine-tune noise conditions on your microphone. Under good conditions, there should be just a tiny flutter of blue at the bottom. If the blue is more than halfway up on the graph, you have a seriously noisy environment.</source>
-        <translation type="unfinished"/>
+        <translation>这显示了当前输入信号(红色线)和电流噪声估值(填充蓝色)的功率谱。&lt;br /&gt;所有的幅度乘以30，就是可能有用的部分 (显示的是每个波段信号和噪音的比例)。&lt;br /&gt;如果你想调整麦克风的噪音，那这就可用到这个。在良好的条件，底部应该只是一个蓝色的微小颤动。如果蓝色面积超过一半，那么你的环境噪音就太大了。</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="281"/>
@@ -351,7 +351,7 @@
     <message>
         <location filename="../gui/AudioStats.ui" line="296"/>
         <source>This shows the weights of the echo canceller, with time increasing downwards and frequency increasing to the right.&lt;br /&gt;Ideally, this should be black, indicating no echo exists at all. More commonly, you&apos;ll have one or more horizontal stripes of bluish color representing time delayed echo. You should be able to see the weights updated in real time.&lt;br /&gt;Please note that as long as you have nothing to echo off, you won&apos;t see much useful data here. Play some music and things should stabilize. &lt;br /&gt;You can choose to view the real or imaginary parts of the frequency-domain weights, or alternately the computed modulus and phase. The most useful of these will likely be modulus, which is the amplitude of the echo, and shows you how much of the outgoing signal is being removed at that time step. The other viewing modes are mostly useful to people who want to tune the echo cancellation algorithms.&lt;br /&gt;Please note: If the entire image fluctuates massively while in modulus mode, the echo canceller fails to find any correlation whatsoever between the two input sources (speakers and microphone). Either you have a very long delay on the echo, or one of the input sources is configured wrong.</source>
-        <translation type="unfinished"/>
+        <translation>这个能显示回声消除器的比重，时间向下增加，频率向右增加。&lt;br /&gt;理想情况下这应该是黑色的，表示无回声的存在。一般常见的是，有一个或多个偏蓝色的横条纹，代表时间延迟回声。你应该能看到这比例是实时更新的。&lt;br/&gt;请注意，只要没有任何回音，在这里你是不会看到有用的数据。播放一些音乐或干别的什么应该会稳定。 &lt;br /&gt;你可以选择查看频域比重的实或虚部分，或交替计算出的弹性模量和相位。其中最有用的可能会是弹性模量，这代表回波的振幅，并显示有多少输出信号在该时间步长会被删除。其他能看到的东西大多数只对想调整回声消除算法的人有用。&lt;br/&gt;请注意：如果在弹性模量模式中整个图像有大规模波动，那么代表回声消除未能将两个输入源(扬声器和麦克风)关联起来。要么是回声延迟太大，要么是某一输入源配置错误。</translation>
     </message>
 </context>
 <context>

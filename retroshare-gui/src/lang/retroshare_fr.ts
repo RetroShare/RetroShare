@@ -136,7 +136,7 @@
         <translation>Vacance</translation>
     </message>
     <message>
-        <source>Landcapes</source>
+        <source>Landscapes</source>
         <translation>Paysages</translation>
     </message>
     <message>
@@ -1179,8 +1179,24 @@ p, li { white-space: pre-wrap; }
         <translation>Partager les droits de la chaîne</translation>
     </message>
     <message>
+        <source>Set destination directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Other...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>[Default]</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <source>Copy RetroShare Link</source>
         <translation>Copier le lien Retroshare</translation>
+    </message>
+    <message>
+        <source>Select channel destination directory</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Publish rights restored.</source>
@@ -1240,6 +1256,14 @@ Choisissez celui avec lequel vous voulez tchater.</translation>
     <message>
         <source>Leave this lobby (Unsubscribe)</source>
         <translation>Quitter ce salon (se désabonner)</translation>
+    </message>
+    <message>
+        <source>Invite friends</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Select friends to invite:</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Welcome to lobby %1</source>
@@ -1789,8 +1813,8 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
         <translation>Créer un groupe personnel</translation>
     </message>
     <message>
-        <source>Create Public Group</source>
-        <translation>Créer un groupe public</translation>
+        <source>Create Circle</source>
+        <translation>Créer un cercle</translation>
     </message>
     <message>
         <source>Refresh</source>
@@ -2317,6 +2341,10 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
         <translation>Forums/Chaînes</translation>
     </message>
     <message>
+        <source>To accept the Friend Request, click the Finish button.</source>
+        <translation>Pour accepter la demande d&apos;amitié, cliquez sur le bouton Terminer.</translation>
+    </message>
+    <message>
         <source>Sorry, some error appeared</source>
         <translation>Désolé, des erreurs sont survenues</translation>
     </message>
@@ -2438,7 +2466,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>You have a friend request from</source>
-        <translation>Vous avez une demande d&apos;ami de</translation>
+        <translation>Vous avez une demande d&apos;amitié de</translation>
     </message>
     <message>
         <source>Certificate Load Failed:can&apos;t read from file %1 </source>
@@ -3068,6 +3096,149 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>CreateCircleDialog</name>
+    <message>
+        <source>Circle Details</source>
+        <translation>Détails du cercle</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>Nom</translation>
+    </message>
+    <message>
+        <source>Creator</source>
+        <translation>Créateur</translation>
+    </message>
+    <message>
+        <source>Distribution</source>
+        <translation>Distribution</translation>
+    </message>
+    <message>
+        <source>Public</source>
+        <translation>Public</translation>
+    </message>
+    <message>
+        <source>Self-Restricted</source>
+        <translation>Self-Restricted</translation>
+    </message>
+    <message>
+        <source>Restricted to:</source>
+        <translation>Limité à :</translation>
+    </message>
+    <message>
+        <source>Circle Membership</source>
+        <translation>Membre du cercle</translation>
+    </message>
+    <message>
+        <source>IDs</source>
+        <translation>IDs</translation>
+    </message>
+    <message>
+        <source>&lt;&lt; Add</source>
+        <translation>&lt;&lt; Ajouter</translation>
+    </message>
+    <message>
+        <source>&gt;&gt; Remove </source>
+        <translation>&gt;&gt; Supprimer</translation>
+    </message>
+    <message>
+        <source>Known Identities</source>
+        <translation>Identités connues</translation>
+    </message>
+    <message>
+        <source>All IDs</source>
+        <translation>Toutes les IDs</translation>
+    </message>
+    <message>
+        <source>All PGP IDs</source>
+        <translation>Toutes les IDs PGP</translation>
+    </message>
+    <message>
+        <source>Known PGP IDs</source>
+        <translation>IDs PGP connues</translation>
+    </message>
+    <message>
+        <source>Filter</source>
+        <translation>Filtre</translation>
+    </message>
+    <message>
+        <source>Nickname</source>
+        <translation>Surnom</translation>
+    </message>
+    <message>
+        <source>ID</source>
+        <translation>ID</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation>Type</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Annuler</translation>
+    </message>
+    <message>
+        <source>Create Group</source>
+        <translation>Créer un groupe</translation>
+    </message>
+    <message>
+        <source>Start New Thread</source>
+        <translation>Lancer un nouveau fil</translation>
+    </message>
+    <message>
+        <source>Post Forum Message</source>
+        <translation>Poster un message sur le forum</translation>
+    </message>
+    <message>
+        <source>Paste RetroShare Link</source>
+        <translation>Coller le lien Retroshare</translation>
+    </message>
+    <message>
+        <source>Paste full RetroShare Link</source>
+        <translation>Coller le lien Retroshare entier</translation>
+    </message>
+    <message>
+        <source>Paste my certificate link</source>
+        <translation>Collez le lien de votre certificat</translation>
+    </message>
+    <message>
+        <source>No Forum</source>
+        <translation>Aucun forum</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Chargement</translation>
+    </message>
+    <message>
+        <source>In Reply to</source>
+        <translation>En réponse à</translation>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation>Retroshare</translation>
+    </message>
+    <message>
+        <source>Please set a Forum Subject and Forum Message</source>
+        <translation>Veuillez renseigner le sujet ainsi que le message du forum</translation>
+    </message>
+    <message>
+        <source>Please choose Signing Id</source>
+        <translation>S&apos;il vous plaît choisir une Signing Id</translation>
+    </message>
+    <message>
+        <source>Please choose Signing Id, it is required</source>
+        <translation>S&apos;il vous plaît choisir une Signing Id, c&apos;est obligatoire</translation>
+    </message>
+    <message>
+        <source>Add Extra File</source>
+        <translation>Ajouter un fichier supplémentaire</translation>
+    </message>
+    <message>
+        <source>Please set a name for your Circle</source>
+        <translation>S&apos;il vous plaît donnez un nom à votre cercle</translation>
+    </message>
+</context>
+<context>
     <name>CreateForum</name>
     <message>
         <source>Create new Forum</source>
@@ -3419,11 +3590,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please choose Signing Id</source>
-        <translation type="unfinished"/>
+        <translation>S&apos;il vous plaît choisir une Signing Id</translation>
     </message>
     <message>
         <source>Please choose Signing Id, it is required</source>
-        <translation type="unfinished"/>
+        <translation>S&apos;il vous plaît choisir une Signing Id, c&apos;est obligatoire</translation>
     </message>
     <message>
         <source>Add Extra File</source>
@@ -3536,6 +3707,14 @@ p, li { white-space: pre-wrap; }
         <translation>Certificat</translation>
     </message>
     <message>
+        <source>Include signatures</source>
+        <translation>Inclure les signatures</translation>
+    </message>
+    <message>
+        <source>Use old key format</source>
+        <translation>Utiliser l&apos;ancien format de clé</translation>
+    </message>
+    <message>
         <source>Copy link to clipboard</source>
         <translation>Copier le lien dans le clipboard</translation>
     </message>
@@ -3546,14 +3725,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Save Key</source>
         <translation>Enregistrer la clé</translation>
-    </message>
-    <message>
-        <source>Use old key format</source>
-        <translation>Utiliser l&apos;ancien format de clé</translation>
-    </message>
-    <message>
-        <source>Include signatures</source>
-        <translation>Inclure les signatures</translation>
     </message>
     <message>
         <source>A RetroShare link with your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
@@ -4963,7 +5134,7 @@ p, li { white-space: pre-wrap; }
     <name>FriendRequestToaster</name>
     <message>
         <source>Confirm Friend Request</source>
-        <translation>Accepter la demande d&apos;ami</translation>
+        <translation>Accepter la demande d&apos;amitié</translation>
     </message>
     <message>
         <source>wants to be friend with you on RetroShare</source>
@@ -4975,21 +5146,18 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>FriendSelectionDialog</name>
-    <message>
-        <source>Choose some friends</source>
-        <translation>Sélectionner quelques amis</translation>
-    </message>
-    <message>
-        <source>Contacts:</source>
-        <translation>Contacts :</translation>
-    </message>
-</context>
-<context>
     <name>FriendSelectionWidget</name>
     <message>
-        <source>Search for Name:</source>
-        <translation>Recherche par nom :</translation>
+        <source>Search :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>All</source>
+        <translation>Tout</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>Aucune</translation>
     </message>
     <message>
         <source>Name</source>
@@ -5132,7 +5300,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Known people</source>
-        <translation>Personnes connus</translation>
+        <translation>Personnes connues</translation>
     </message>
     <message>
         <source>Welcome to RetroShare&apos;s group chat.</source>
@@ -5894,6 +6062,38 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GroupFlagsWidget</name>
     <message>
+        <source>Directory is browsable for friends from groups</source>
+        <translation>Le répertoire est consultable pour les amis des groupes</translation>
+    </message>
+    <message>
+        <source>Directory is NOT browsable for friends from groups</source>
+        <translation>Le répertoire n&apos;est PAS consultable pour les amis des groupes</translation>
+    </message>
+    <message>
+        <source>Directory is accessible by anonymous tunnels from friends from groups</source>
+        <translation>Le répertoire est accessible par des tunnels anonymes provenant des amis des groupes</translation>
+    </message>
+    <message>
+        <source>Directory is NOT accessible by anonymous tunnels from friends from groups</source>
+        <translation>Le répertoire n&apos;est PAS accessible par des tunnels anonymes provenant des amis des groupes</translation>
+    </message>
+    <message>
+        <source>Directory is browsable for any friend</source>
+        <translation>Le répertoire est consultable par tous les amis</translation>
+    </message>
+    <message>
+        <source>Directory is NOT browsable for any friend</source>
+        <translation>Le répertoire n&apos;est consultable par AUCUN ami</translation>
+    </message>
+    <message>
+        <source>Directory is accessible by anonymous tunnels from any friend</source>
+        <translation>Le répertoire est accessible par les tunnels anonymes de tous les amis</translation>
+    </message>
+    <message>
+        <source>Directory is NOT accessible by anonymous tunnels from any friend</source>
+        <translation>Le répertoire n&apos;est PAS accessible par les tunnels anonymes d&apos;aucun ami</translation>
+    </message>
+    <message>
         <source>All your friends can browse this directory</source>
         <translation>Tous vos amis peuvent consulter ce dossier</translation>
     </message>
@@ -6261,15 +6461,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>UpVotes</source>
-        <translation type="unfinished"/>
+        <translation>Votes+</translation>
     </message>
     <message>
         <source>DownVotes</source>
-        <translation type="unfinished"/>
+        <translation>Votes-</translation>
     </message>
     <message>
         <source>OwnVote</source>
-        <translation type="unfinished"/>
+        <translation>VosVotes</translation>
     </message>
 </context>
 <context>
@@ -6284,15 +6484,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Vote Up</source>
-        <translation type="unfinished"/>
+        <translation>Voter +</translation>
     </message>
     <message>
         <source>Vote Down</source>
-        <translation type="unfinished"/>
+        <translation>Voter -</translation>
     </message>
     <message>
         <source>Reputation</source>
-        <translation type="unfinished"/>
+        <translation>Réputation</translation>
     </message>
     <message>
         <source>Show Reputation</source>
@@ -6300,15 +6500,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Interesting User</source>
-        <translation type="unfinished"/>
+        <translation>Utilisateur intéressant</translation>
     </message>
     <message>
         <source>Mark Spammy</source>
-        <translation type="unfinished"/>
+        <translation>Signaler comme spam</translation>
     </message>
     <message>
         <source>Ban User</source>
-        <translation type="unfinished"/>
+        <translation>Bannir l&apos;utilisateur</translation>
     </message>
 </context>
 <context>
@@ -7352,7 +7552,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File sharing</source>
-        <translation>Partage de fichier</translation>
+        <translation>Partage de fichiers</translation>
     </message>
     <message>
         <source>Chat Lobbies</source>
@@ -7512,7 +7712,11 @@ Veuillez libérer de l&apos;espace disque et cliquer sur Ok.</translation>
     </message>
     <message>
         <source>Make sure this link has not been forged to drag you to a malicious website.</source>
-        <translation type="unfinished"/>
+        <translation>Assurez-vous que ce lien n&apos;a pas été créé pour vous emmener vers un site Web malveillant.</translation>
+    </message>
+    <message>
+        <source>Don&apos;t ask me again</source>
+        <translation>Ne plus me demander</translation>
     </message>
     <message>
         <source>It seems to be an old RetroShare link. Please use copy instead.</source>
@@ -8672,6 +8876,10 @@ Voulez-vous enregistrer votre message ?</translation>
         <translation>ID du certificat</translation>
     </message>
     <message>
+        <source>Last used</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <source>Clear</source>
         <translation>Effacer</translation>
     </message>
@@ -8740,12 +8948,8 @@ Voulez-vous enregistrer votre message ?</translation>
         <translation>Devenir ami</translation>
     </message>
     <message>
-        <source>Delete certificate</source>
-        <translation>Supprimer le certificat</translation>
-    </message>
-    <message>
-        <source>Export my Cert</source>
-        <translation>Exporter mon certificat</translation>
+        <source>Export my certificate...</source>
+        <translation>Exporter mon certificat...</translation>
     </message>
     <message>
         <source>Peer details...</source>
@@ -8754,6 +8958,51 @@ Voulez-vous enregistrer votre message ?</translation>
     <message>
         <source>Copy RetroShare Link</source>
         <translation>Copier le lien Retroshare</translation>
+    </message>
+    <message>
+        <source>Remove unused keys...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Clean keyring</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The selected keys below haven't been used in the last 3 months. 
+Do you want to delete them permanently ? 
+
+Notes: Your old keyring will be backed up.
+    The removal may fail when running multiple Retroshare instances on the same machine.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Keyring info</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 keys have been deleted from your keyring. 
+For security, your keyring was previously backed-up to file 
+
+</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown error</source>
+        <translation>Erreur inconnu</translation>
+    </message>
+    <message>
+        <source>Cannot delete secret keys</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot create backup file. Check for permissions in pgp directory, disk space, etc.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Key removal has failed. Your keyring remains intact.
+
+Reported error: </source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Personal signature</source>
@@ -8776,12 +9025,28 @@ Voulez-vous enregistrer votre message ?</translation>
         <translation>Non fiable</translation>
     </message>
     <message>
+        <source>Has authenticated me</source>
+        <translation>M&apos;a authentifié</translation>
+    </message>
+    <message>
         <source>Unknown</source>
         <translation>Inconnu</translation>
     </message>
     <message>
-        <source>Has authenticated me</source>
-        <translation>M&apos;a authentifié</translation>
+        <source>Last hour</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Today</source>
+        <translation>Aujourd&apos;hui</translation>
+    </message>
+    <message>
+        <source>Never</source>
+        <translation>Jamais</translation>
+    </message>
+    <message>
+        <source>%1 days ago</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source> has authenticated you. 
@@ -9016,6 +9281,14 @@ Clic droit et sélectionnez &apos;Devenir ami&apos; pour vous connecter.</transl
         <translation>Retroshare a détecté une extension non enregistrée. Cela se produit dans deux cas: &lt;UL&gt; &lt;LI&gt;Votre exécutable Retroshare a changé.&lt;/LI&gt;&lt;LI&gt;L&apos;extension a changé&lt;/LI&gt; &lt;/UL&gt;Cliquez sur Oui pour autoriser cette extension, ou Non pour la refuser. Vous pouvez changer d&apos;avis plus tard dans Options -&gt; Extensions, puis redémarrez.</translation>
     </message>
     <message>
+        <source>For the chat lobbies to work properly, the time of your computer needs to be correct. Please check that this is the case (A possible time shift of several minutes was detected with your friends). </source>
+        <translation>Pour que les salons de chat fonctionnent correctement, l&apos;heure de votre ordinateur doit être correcte. S&apos;il vous plaît vérifier que c&apos;est bien le cas (Un possible décalage temporel de plusieurs minutes a été détecté avec vos amis).</translation>
+    </message>
+    <message>
+        <source>Please check your system clock.</source>
+        <translation>S&apos;il vous plaît vérifier votre horloge système.</translation>
+    </message>
+    <message>
         <source>Examining shared files...</source>
         <translation>Analyse des fichiers partagés...</translation>
     </message>
@@ -9034,14 +9307,6 @@ Clic droit et sélectionnez &apos;Devenir ami&apos; pour vous connecter.</transl
     <message>
         <source>This is a test.</source>
         <translation>C&apos;est un test.</translation>
-    </message>
-    <message>
-        <source>For the chat lobbies to work properly, the time of your computer needs to be correct. Please check that this is the case (A possible time shift of several minutes was detected with your friends). </source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Please check your system clock.</source>
-        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9629,11 +9894,15 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt; font-weight:600;&quot;&gt;Link&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt; font-weight:600;&quot;&gt;Lien&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Signed by: </source>
-        <translation type="unfinished"/>
+        <translation>Signé par :</translation>
     </message>
     <message>
         <source>Notes</source>
@@ -9644,8 +9913,8 @@ p, li { white-space: pre-wrap; }
         <translation>Retroshare</translation>
     </message>
     <message>
-        <source>Please reate or choose a Signing Id first</source>
-        <translation type="unfinished"/>
+        <source>Please create or choose a Signing Id first</source>
+        <translation>S&apos;il vous plaît créer ou choisir une Signing Id en premier</translation>
     </message>
 </context>
 <context>
@@ -9807,6 +10076,14 @@ p, li { white-space: pre-wrap; }
         <source>Other Topics</source>
         <translation>Autres sujets</translation>
     </message>
+    <message>
+        <source>Subscribe</source>
+        <translation>S&apos;abonner</translation>
+    </message>
+    <message>
+        <source>Unsubscribe</source>
+        <translation>Se désabonner</translation>
+    </message>
 </context>
 <context>
     <name>PrintPreview</name>
@@ -9846,8 +10123,24 @@ p, li { white-space: pre-wrap; }
         <translation>Gestionnaire de profil</translation>
     </message>
     <message>
-        <source>Export selected identity</source>
-        <translation>Exporter l&apos;identité selectionnée</translation>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Select an identity from the list below to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;When keeping the same identity for your new  location, your friends will automatically accept you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Sélectionnez une identité dans la liste ci-dessous à utiliser sur un autre ordinateur et appuyez sur &amp;quot;Exporter l&apos;identité séléctionnée&amp;quot;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Pour l&apos;utiliser sur un autre ordinateur, sélectionnez le gestionnaire d&apos;identité dans la fenêtre de connexion. De là, vous pouvez importer le fichier d&apos;identité et créer un nouvel emplacement pour celle-ci.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;En gardant la même identité pour votre nouvel emplacement, vos amis seront automatiquement acceptés.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Identities</source>
@@ -9864,6 +10157,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>GID</source>
         <translation>GID</translation>
+    </message>
+    <message>
+        <source>Export selected identity</source>
+        <translation>Exporter l&apos;identité selectionnée</translation>
     </message>
     <message>
         <source>Export Identity</source>
@@ -9928,18 +10225,6 @@ et utiliser le bouton d&apos;importation pour la charger</translation>
     <message>
         <source>Certificates (*.pqi *.pem)</source>
         <translation>Certificats (*.pqi *.pem)</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Select in the list below an identity to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;When keeping the same identity for your new  location, your friends will automatically accept you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -10086,12 +10371,20 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QObject</name>
     <message>
+        <source>Subject: </source>
+        <translation>Sujet :</translation>
+    </message>
+    <message>
+        <source>Participants: </source>
+        <translation>Participants :</translation>
+    </message>
+    <message>
         <source>Confirmation</source>
         <translation>Confirmation</translation>
     </message>
     <message>
         <source>Do you want this link to be handled by your system?</source>
-        <translation type="unfinished"/>
+        <translation>Voulez-vous que ce lien soit traité par votre système ?</translation>
     </message>
     <message>
         <source>Click to add this RetroShare cert to your PGP keyring
@@ -10247,38 +10540,6 @@ Les caractères &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; seront rem
         <translation>Résultat</translation>
     </message>
     <message>
-        <source>Directory is browsable for friends from groups</source>
-        <translation>Le répertoire est consultable pour les amis des groupes</translation>
-    </message>
-    <message>
-        <source>Directory is accessible by anonymous tunnels from friends from groups</source>
-        <translation>Le répertoire est accessible par des tunnels anonymes provenant des amis des groupes</translation>
-    </message>
-    <message>
-        <source>Directory is browsable for any friend</source>
-        <translation>Le dossier est consultable par tous les amis</translation>
-    </message>
-    <message>
-        <source>Directory is accessible by anonymous tunnels from any friend</source>
-        <translation>Le dossier est accessible par les tunnels anonymes de tous les amis</translation>
-    </message>
-    <message>
-        <source>Directory is NOT browsable for friends from groups</source>
-        <translation>Le répertoire n&apos;est PAS consultable pour les amis des groupes</translation>
-    </message>
-    <message>
-        <source>Directory is NOT accessible by anonymous tunnels from friends from groups</source>
-        <translation>Le répertoire n&apos;est PAS accessible par des tunnels anonymes provenant des amis des groupes</translation>
-    </message>
-    <message>
-        <source>Directory is NOT browsable for any friend</source>
-        <translation>Le répertoire n&apos;est consultable par AUCUN ami</translation>
-    </message>
-    <message>
-        <source>Directory is NOT accessible by anonymous tunnels from any friend</source>
-        <translation>Le répertoire n&apos;est PAS accessible par les tunnels anonymes de tous les amis</translation>
-    </message>
-    <message>
         <source>Unable to make path</source>
         <translation>Impossible de créer le chemin</translation>
     </message>
@@ -10381,14 +10642,6 @@ L&apos;erreur reportée est : %2 </translation>
     <message>
         <source>Start with a RetroShare link is only supported for Windows.</source>
         <translation>Démarrer avec un lien Retroshare est seulement possible sous Windows.</translation>
-    </message>
-    <message>
-        <source>Subject: </source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Participants: </source>
-        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -11091,7 +11344,7 @@ Réduire l&apos;image par %1x%2 pixels ?</translation>
     </message>
     <message>
         <source>Accept Friend Request</source>
-        <translation>Accepter la demande d&apos;ami</translation>
+        <translation>Accepter la demande d&apos;amitié</translation>
     </message>
     <message>
         <source>Peer details</source>

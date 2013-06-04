@@ -45,11 +45,12 @@ LanguageSupport::languages()
     languages.insert("cs",    QString::fromUtf8("\304\214esky"));
     languages.insert("de",    "Deutsch");
     languages.insert("da",    "Dansk");
+    languages.insert("nl",    "Dutch");
     languages.insert("en",    "English");
     languages.insert("es",    QString::fromUtf8("Espa\303\261ol"));
     languages.insert("fr",    QString::fromUtf8("Fran\303\247ais"));
     languages.insert("fi",    "Suomi");
-    //languages.insert("gr",    "Greek");
+    languages.insert("el",    "Greek");
     languages.insert("hu",    "Magyar");
     languages.insert("it",    "Italiano");
     languages.insert("ja_JP",    QString::fromUtf8("\346\227\245\346\234\254\350\252\236"));
@@ -77,11 +78,12 @@ LanguageSupport::locales()
     locales.insert("cs", QLocale(QLocale::Czech, QLocale::CzechRepublic));
     locales.insert("de", QLocale(QLocale::German, QLocale::Germany));
     locales.insert("da", QLocale(QLocale::Danish, QLocale::Denmark));
+    locales.insert("nl", QLocale(QLocale::Dutch, QLocale::Netherlands));
     locales.insert("en", QLocale(QLocale::English, QLocale::UnitedStates));
     locales.insert("es", QLocale(QLocale::Spanish, QLocale::Spain));
     locales.insert("fr", QLocale(QLocale::French, QLocale::France));
     locales.insert("fi", QLocale(QLocale::Finnish, QLocale::Finland));
-    //locales.insert("gr", QLocale(QLocale::Greek, QLocale::Greece));
+    locales.insert("el", QLocale(QLocale::Greek, QLocale::Greece));
     locales.insert("hu", QLocale(QLocale::Hungarian, QLocale::Hungary));
     locales.insert("it", QLocale(QLocale::Italian, QLocale::Italy));
     locales.insert("ja", QLocale(QLocale::Japanese, QLocale::Japan));

@@ -94,7 +94,7 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="51"/>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation>タイプ</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="71"/>
@@ -159,7 +159,7 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="316"/>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>名前:</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="63"/>
@@ -214,7 +214,7 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>フォーム</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="20"/>
@@ -262,12 +262,17 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gui/FeedReaderConfig.ui" line="124"/>
+        <location filename="../gui/FeedReaderConfig.ui" line="131"/>
         <source>Set message to read on activate</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gui/FeedReaderConfig.ui" line="131"/>
+        <location filename="../gui/FeedReaderConfig.ui" line="138"/>
+        <source>Save configuration in background (for slow systems, more memory needed)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderConfig.ui" line="124"/>
         <source>Open all feeds in new tab</source>
         <translation type="unfinished"/>
     </message>
@@ -302,7 +307,7 @@
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="288"/>
         <source>New</source>
-        <translation type="unfinished"/>
+        <translation>新規</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="289"/>
@@ -408,7 +413,7 @@
         <location filename="../gui/FeedReaderFeedItem.ui" line="196"/>
         <location filename="../gui/FeedReaderFeedItem.cpp" line="109"/>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>展開</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedItem.ui" line="222"/>
@@ -418,7 +423,7 @@
     <message>
         <location filename="../gui/FeedReaderFeedItem.ui" line="248"/>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>アイテムを削除</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedItem.cpp" line="80"/>
@@ -433,7 +438,7 @@
     <message>
         <location filename="../gui/FeedReaderFeedItem.cpp" line="103"/>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>非表示</translation>
     </message>
 </context>
 <context>
@@ -464,7 +469,7 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>フォーム</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="66"/>
@@ -474,7 +479,7 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="69"/>
         <source>...</source>
-        <translation type="unfinished"/>
+        <translation>...</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="86"/>
@@ -577,7 +582,7 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="318"/>
         <source>Remove</source>
-        <translation type="unfinished"/>
+        <translation>削除</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="323"/>
@@ -587,12 +592,12 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="697"/>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>非表示</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="701"/>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>展開</translation>
     </message>
 </context>
 <context>
@@ -795,7 +800,7 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="61"/>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>名前:</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="68"/>
@@ -855,7 +860,7 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="423"/>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>追加</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="426"/>

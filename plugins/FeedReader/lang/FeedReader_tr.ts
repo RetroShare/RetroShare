@@ -262,12 +262,17 @@
         <translation>Diğer</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderConfig.ui" line="124"/>
+        <location filename="../gui/FeedReaderConfig.ui" line="131"/>
         <source>Set message to read on activate</source>
         <translation>Etkinleştirildiğinde ileti okunmuş olarak işaretlensin</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderConfig.ui" line="131"/>
+        <location filename="../gui/FeedReaderConfig.ui" line="138"/>
+        <source>Save configuration in background (for slow systems, more memory needed)</source>
+        <translation>Arkaplanda yapılandırmayı kaydedin (yavaş bilgisayarlar için, daha fazla alan gerektirir)</translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderConfig.ui" line="124"/>
         <source>Open all feeds in new tab</source>
         <translation>Tüm akışlar yeni sekmede açılsın</translation>
     </message>

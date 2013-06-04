@@ -764,13 +764,15 @@ TRANSLATIONS +=  \
             lang/retroshare_cs.ts \
             lang/retroshare_da.ts \
             lang/retroshare_de.ts \
+            lang/retroshare_el.ts \
             lang/retroshare_en.ts \
             lang/retroshare_es.ts \
-			lang/retroshare_fi.ts \
+            lang/retroshare_fi.ts \
             lang/retroshare_fr.ts \
             lang/retroshare_hu.ts \
             lang/retroshare_it.ts \
             lang/retroshare_ja_JP.ts \
+            lang/retroshare_nl.ts \
             lang/retroshare_ko.ts \
             lang/retroshare_pl.ts \
             lang/retroshare_ru.ts \
@@ -783,8 +785,6 @@ unfinishedtranslations {
        TRANSLATIONS +=  \
             lang/retroshare_bg.ts \
             lang/retroshare_af.ts  \
-            lang/retroshare_gr.ts  \
-            lang/retroshare_nl.ts \
             lang/retroshare_pt.ts  \
             lang/retroshare_sl.ts \
             lang/retroshare_sr.ts \

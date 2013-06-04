@@ -4,7 +4,7 @@
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="17"/>
         <source>Audio Wizard</source>
-        <translation type="unfinished"/>
+        <translation>オーディオ設定ウィザード</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="30"/>
@@ -29,7 +29,7 @@
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="63"/>
         <source>DoublePush Time</source>
-        <translation>二重押し時間</translation>
+        <translation>二重押しの時間</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="73"/>
@@ -85,7 +85,7 @@
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="225"/>
         <source>empty</source>
-        <translation type="unfinished"/>
+        <translation>空</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="240"/>
@@ -110,7 +110,7 @@
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="294"/>
         <source>Amplification</source>
-        <translation type="unfinished"/>
+        <translation>増幅</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="304"/>
@@ -125,7 +125,7 @@
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="339"/>
         <source>Echo Cancellation Processing</source>
-        <translation type="unfinished"/>
+        <translation>エコーキャンセル処理</translation>
     </message>
 </context>
 <context>
@@ -133,37 +133,37 @@
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="98"/>
         <source>Continuous</source>
-        <translation type="unfinished"/>
+        <translation>続行</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="99"/>
         <source>Voice Activity</source>
-        <translation type="unfinished"/>
+        <translation>発声</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="100"/>
         <source>Push To Talk</source>
-        <translation type="unfinished"/>
+        <translation>プッシュ・トゥ・トーク</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="202"/>
         <source>%1 s</source>
-        <translation type="unfinished"/>
+        <translation>%1 s</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="210"/>
         <source>Off</source>
-        <translation type="unfinished"/>
+        <translation>オフ</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="213"/>
         <source>-%1 dB</source>
-        <translation type="unfinished"/>
+        <translation>-%1 dB</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.h" line="72"/>
         <source>VOIP</source>
-        <translation type="unfinished"/>
+        <translation>VOIP</translation>
     </message>
 </context>
 <context>
@@ -296,7 +296,7 @@
     <message>
         <location filename="../gui/AudioStats.ui" line="184"/>
         <source>This is the audio bitrate of the last compressed frame (20 ms), and as such will jump up and down as the VBR adjusts the quality. The peak bitrate can be adjusted in the Settings dialog.</source>
-        <translation type="unfinished"/>
+        <translation>直近の圧縮されたフレーム(20 ms)における音声ビットレートです。VBRが品質を調整するので値は上下します。ピークビットレートを調整するには、設定ダイアログで調整できます。</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="194"/>
@@ -369,12 +369,12 @@
     <message>
         <location filename="../gui/AudioWizard.ui" line="21"/>
         <source>Welcome to the RetroShare Audio Wizard</source>
-        <translation type="unfinished"/>
+        <translation>RetroShareオーディオウィザードにようこそ</translation>
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="32"/>
         <source>This is the audio tuning wizard for RetroShare. This will help you correctly set the input levels of your sound card, and also set the correct parameters for sound processing in Retroshare. </source>
-        <translation type="unfinished"/>
+        <translation>これはRetroShareのオーディオ設定ウィザードです。これは、サウンドカードの入力レベルを適切にしたり、RetroShareの音声処理を正しく設定する助けになります。</translation>
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="56"/>
@@ -390,17 +390,18 @@
         <location filename="../gui/AudioWizard.ui" line="70"/>
         <source>&lt;p &gt;Open your sound control panel and go to the recording settings. Make sure the microphone is selected as active input with maximum recording volume. If there's an option to enable a &amp;quot;Microphone boost&amp;quot; make sure it's checked. &lt;/p&gt;
 &lt;p&gt;Speak loudly, as when you are annoyed or excited. Decrease the volume in the sound control panel until the bar below stays as high as possible in the green and orange but not the red zone while you speak. &lt;/p&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;p &gt;サウンドコントロールパネルを開き、録音設定に進んでください。録音ボリュームが最大か、マイクが選択されているかを確認して下さい。マイクブーストのオプションがある場合は、有効にしてください。&lt;/p&gt;
+&lt;p&gt;イライラしたり、興奮している時のような大声でも、レッドゾーンに届かないよう、音量を下げてください。&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="86"/>
         <source>Talk normally, and adjust the slider below so that the bar moves into green when you talk, and doesn&apos;t go into the orange zone.</source>
-        <translation type="unfinished"/>
+        <translation>普通に話した時に、バーが緑へ移動し、オレンジのゾーンには入らないよう、スライダーを調整してください。</translation>
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="130"/>
         <source>Stop looping echo for this wizard</source>
-        <translation type="unfinished"/>
+        <translation>このウィザードのためにルーピングエコーを停止</translation>
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="150"/>
@@ -420,7 +421,7 @@
     <message>
         <location filename="../gui/AudioWizard.ui" line="166"/>
         <source>Letting RetroShare figure out when you&apos;re talking and when you&apos;re silent.</source>
-        <translation type="unfinished"/>
+        <translation>話しているときと、話していないときを検出する</translation>
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="172"/>
@@ -430,12 +431,12 @@
     <message>
         <location filename="../gui/AudioWizard.ui" line="184"/>
         <source>Push To Talk:</source>
-        <translation>プッシュ・トゥ・トーク:</translation>
+        <translation>プッシュ・トゥ・トーク</translation>
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="213"/>
         <source>Voice Detection</source>
-        <translation type="unfinished"/>
+        <translation>音声の検出</translation>
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="226"/>
@@ -455,12 +456,12 @@
     <message>
         <location filename="../gui/AudioWizard.ui" line="301"/>
         <source>Enjoy using RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>RetroShareを楽しんでください</translation>
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="312"/>
         <source>Congratulations. You should now be ready to enjoy a richer sound experience with Retroshare.</source>
-        <translation type="unfinished"/>
+        <translation>おめでとうございます。あなたは今、Retroshareで豊かなサウンド体験を楽しむ準備ができました。</translation>
     </message>
 </context>
 <context>
@@ -541,7 +542,7 @@
     <message>
         <location filename="../VOIPPlugin.cpp" line="158"/>
         <source>VOIP</source>
-        <translation type="unfinished"/>
+        <translation>VOIP</translation>
     </message>
 </context>
 <context>

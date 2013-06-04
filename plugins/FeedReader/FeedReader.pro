@@ -57,6 +57,7 @@ TRANSLATIONS +=  \
 			lang/FeedReader_cs.ts \
 			lang/FeedReader_da.ts \
 			lang/FeedReader_de.ts \
+			lang/FeedReader_el.ts \
 			lang/FeedReader_en.ts \
 			lang/FeedReader_es.ts \
 			lang/FeedReader_fi.ts \
@@ -65,6 +66,7 @@ TRANSLATIONS +=  \
 			lang/FeedReader_it.ts \
 			lang/FeedReader_ja_JP.ts \
 			lang/FeedReader_ko.ts \
+			lang/FeedReader_nl.ts \
 			lang/FeedReader_pl.ts \
 			lang/FeedReader_ru.ts \
 			lang/FeedReader_sv.ts \

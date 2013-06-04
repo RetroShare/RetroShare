@@ -135,7 +135,7 @@
         <translation>Semester</translation>
     </message>
     <message>
-        <source>Landcapes</source>
+        <source>Landscapes</source>
         <translation>Landskap</translation>
     </message>
     <message>
@@ -1178,8 +1178,24 @@ p, li { white-space: pre-wrap; }
         <translation>Dela kanalen</translation>
     </message>
     <message>
+        <source>Set destination directory</source>
+        <translation>Ange målmapp</translation>
+    </message>
+    <message>
+        <source>Other...</source>
+        <translation>Annat...</translation>
+    </message>
+    <message>
+        <source>[Default]</source>
+        <translation>[Standard]</translation>
+    </message>
+    <message>
         <source>Copy RetroShare Link</source>
         <translation>Kopiera RetroShare-länk</translation>
+    </message>
+    <message>
+        <source>Select channel destination directory</source>
+        <translation>Välj kanalens målmapp</translation>
     </message>
     <message>
         <source>Publish rights restored.</source>
@@ -1238,6 +1254,14 @@ Please choose one of it to chat with.</source>
     <message>
         <source>Leave this lobby (Unsubscribe)</source>
         <translation>Lämna denna lobby (avsluta prenumeration)</translation>
+    </message>
+    <message>
+        <source>Invite friends</source>
+        <translation>Bjud in kontakter</translation>
+    </message>
+    <message>
+        <source>Select friends to invite:</source>
+        <translation>Välj kontakter att bjuda in:</translation>
     </message>
     <message>
         <source>Welcome to lobby %1</source>
@@ -1787,8 +1811,8 @@ Dubbelklicka lobbyer för att chatta.</translation>
         <translation>Skapa privat grupp</translation>
     </message>
     <message>
-        <source>Create Public Group</source>
-        <translation>Skapa publik grupp</translation>
+        <source>Create Circle</source>
+        <translation>Skapa cirkel</translation>
     </message>
     <message>
         <source>Refresh</source>
@@ -2314,6 +2338,10 @@ Vissa tjänster (Upptäckt, anonym routning) kan stängas av lokalt, vilket allt
     <message>
         <source>Forums/channels</source>
         <translation>Forum/Kanaler</translation>
+    </message>
+    <message>
+        <source>To accept the Friend Request, click the Finish button.</source>
+        <translation>Klicka på &apos;Slutför&apos; för att acceptera denna kontaktförfrågan</translation>
     </message>
     <message>
         <source>Sorry, some error appeared</source>
@@ -3066,6 +3094,149 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>CreateCircleDialog</name>
+    <message>
+        <source>Circle Details</source>
+        <translation>Cirkeldetaljer</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>Namn</translation>
+    </message>
+    <message>
+        <source>Creator</source>
+        <translation>Skapare</translation>
+    </message>
+    <message>
+        <source>Distribution</source>
+        <translation>Distribution</translation>
+    </message>
+    <message>
+        <source>Public</source>
+        <translation>Publik</translation>
+    </message>
+    <message>
+        <source>Self-Restricted</source>
+        <translation>Självbegränsad</translation>
+    </message>
+    <message>
+        <source>Restricted to:</source>
+        <translation>Begränsad till:</translation>
+    </message>
+    <message>
+        <source>Circle Membership</source>
+        <translation>Cirkelmedlemskap</translation>
+    </message>
+    <message>
+        <source>IDs</source>
+        <translation>ID</translation>
+    </message>
+    <message>
+        <source>&lt;&lt; Add</source>
+        <translation>&lt;&lt;Lägg till</translation>
+    </message>
+    <message>
+        <source>&gt;&gt; Remove </source>
+        <translation>&gt;&gt;Ta bort</translation>
+    </message>
+    <message>
+        <source>Known Identities</source>
+        <translation>Kända identiteter</translation>
+    </message>
+    <message>
+        <source>All IDs</source>
+        <translation>Alla ID</translation>
+    </message>
+    <message>
+        <source>All PGP IDs</source>
+        <translation>Alla PGP-ID</translation>
+    </message>
+    <message>
+        <source>Known PGP IDs</source>
+        <translation>Kända PGP-ID</translation>
+    </message>
+    <message>
+        <source>Filter</source>
+        <translation>Filter</translation>
+    </message>
+    <message>
+        <source>Nickname</source>
+        <translation>Användarnamn</translation>
+    </message>
+    <message>
+        <source>ID</source>
+        <translation>ID</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation>Typ</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Avbryt</translation>
+    </message>
+    <message>
+        <source>Create Group</source>
+        <translation>Skapa grupp</translation>
+    </message>
+    <message>
+        <source>Start New Thread</source>
+        <translation>Starta ny tråd</translation>
+    </message>
+    <message>
+        <source>Post Forum Message</source>
+        <translation>Posta foruminlägg</translation>
+    </message>
+    <message>
+        <source>Paste RetroShare Link</source>
+        <translation>Klistra in RetroShare-länk</translation>
+    </message>
+    <message>
+        <source>Paste full RetroShare Link</source>
+        <translation>Klistra in hela RetroShare-länken</translation>
+    </message>
+    <message>
+        <source>Paste my certificate link</source>
+        <translation>Klistra in min certifikatlänk</translation>
+    </message>
+    <message>
+        <source>No Forum</source>
+        <translation>Inget forum</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Läser in</translation>
+    </message>
+    <message>
+        <source>In Reply to</source>
+        <translation>Som svar på</translation>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation>RetroShare</translation>
+    </message>
+    <message>
+        <source>Please set a Forum Subject and Forum Message</source>
+        <translation>Ange ett forumämne och ett meddelande</translation>
+    </message>
+    <message>
+        <source>Please choose Signing Id</source>
+        <translation>Välj signatur-ID</translation>
+    </message>
+    <message>
+        <source>Please choose Signing Id, it is required</source>
+        <translation>Välj signatur-ID, det är ett krav</translation>
+    </message>
+    <message>
+        <source>Add Extra File</source>
+        <translation>Lägg till fil</translation>
+    </message>
+    <message>
+        <source>Please set a name for your Circle</source>
+        <translation>Ange ett namn för din cirkel</translation>
+    </message>
+</context>
+<context>
     <name>CreateForum</name>
     <message>
         <source>Create new Forum</source>
@@ -3534,6 +3705,14 @@ p, li { white-space: pre-wrap; }
         <translation>Certifikat</translation>
     </message>
     <message>
+        <source>Include signatures</source>
+        <translation>Inkludera signaturer</translation>
+    </message>
+    <message>
+        <source>Use old key format</source>
+        <translation>Använd gammalt nyckelformat</translation>
+    </message>
+    <message>
         <source>Copy link to clipboard</source>
         <translation>Kopiera länk till Urklipp</translation>
     </message>
@@ -3544,14 +3723,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Save Key</source>
         <translation>Spara nyckel</translation>
-    </message>
-    <message>
-        <source>Use old key format</source>
-        <translation>Använd gammalt nyckelformat</translation>
-    </message>
-    <message>
-        <source>Include signatures</source>
-        <translation>Inkludera signaturer</translation>
     </message>
     <message>
         <source>A RetroShare link with your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
@@ -4970,21 +5141,18 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>FriendSelectionDialog</name>
-    <message>
-        <source>Choose some friends</source>
-        <translation>Välj kontakter</translation>
-    </message>
-    <message>
-        <source>Contacts:</source>
-        <translation>Kontakter:</translation>
-    </message>
-</context>
-<context>
     <name>FriendSelectionWidget</name>
     <message>
-        <source>Search for Name:</source>
-        <translation>Sök efter namn:</translation>
+        <source>Search :</source>
+        <translation>Sök:</translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation>Alla</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>Ingen</translation>
     </message>
     <message>
         <source>Name</source>
@@ -5888,6 +6056,38 @@ p, li { white-space: pre-wrap; }
 </context>
 <context>
     <name>GroupFlagsWidget</name>
+    <message>
+        <source>Directory is browsable for friends from groups</source>
+        <translation>Platsen är åtkomlig för gruppkontakter</translation>
+    </message>
+    <message>
+        <source>Directory is NOT browsable for friends from groups</source>
+        <translation>Platsen är INTE åtkomlig för gruppkontakter</translation>
+    </message>
+    <message>
+        <source>Directory is accessible by anonymous tunnels from friends from groups</source>
+        <translation>Platsen är åtkomlig via anonym tunnelanslutning för gruppkontakter</translation>
+    </message>
+    <message>
+        <source>Directory is NOT accessible by anonymous tunnels from friends from groups</source>
+        <translation>Platsen är INTE åtkomlig via anonym tunnelanslutning för gruppkontakter</translation>
+    </message>
+    <message>
+        <source>Directory is browsable for any friend</source>
+        <translation>Mappen är bläddringsbar, för alla kontakter</translation>
+    </message>
+    <message>
+        <source>Directory is NOT browsable for any friend</source>
+        <translation>Platsen är INTE åtkomlig för någon kontakt</translation>
+    </message>
+    <message>
+        <source>Directory is accessible by anonymous tunnels from any friend</source>
+        <translation>Mappen kan nås via anonyma tunnlar, för alla kontakter</translation>
+    </message>
+    <message>
+        <source>Directory is NOT accessible by anonymous tunnels from any friend</source>
+        <translation>Platsen är INTE åtkomlig via anonym tunnelanslutning för någon kontakt</translation>
+    </message>
     <message>
         <source>All your friends can browse this directory</source>
         <translation>Alla dina kontakter kan bläddra i den här mappen</translation>
@@ -7514,6 +7714,10 @@ Frigör mer diskutrymme och klicka OK.</translation>
         <translation>Tillse att den här länken inte leder till en webbsida med skadlig kod.</translation>
     </message>
     <message>
+        <source>Don&apos;t ask me again</source>
+        <translation>Fråga inte igen</translation>
+    </message>
+    <message>
         <source>It seems to be an old RetroShare link. Please use copy instead.</source>
         <translation>Det verkar vara en gammal RetroShare-länk.</translation>
     </message>
@@ -8671,6 +8875,10 @@ Vill du spara meddelandet?</translation>
         <translation>Certifikat-ID</translation>
     </message>
     <message>
+        <source>Last used</source>
+        <translation>Använd senast</translation>
+    </message>
+    <message>
         <source>Clear</source>
         <translation>Rensa</translation>
     </message>
@@ -8739,12 +8947,8 @@ Vill du spara meddelandet?</translation>
         <translation>Skapa kontakt</translation>
     </message>
     <message>
-        <source>Delete certificate</source>
-        <translation>Tar bort certifikat</translation>
-    </message>
-    <message>
-        <source>Export my Cert</source>
-        <translation>Exportera mitt certifikat</translation>
+        <source>Export my certificate...</source>
+        <translation>Exportera mitt certifikat...</translation>
     </message>
     <message>
         <source>Peer details...</source>
@@ -8753,6 +8957,60 @@ Vill du spara meddelandet?</translation>
     <message>
         <source>Copy RetroShare Link</source>
         <translation>Kopiera RetroShare-länk</translation>
+    </message>
+    <message>
+        <source>Remove unused keys...</source>
+        <translation>Ta bort oanvända nycklar...</translation>
+    </message>
+    <message>
+        <source>Clean keyring</source>
+        <translation>Rensa nyckelringen</translation>
+    </message>
+    <message>
+        <source>The selected keys below haven't been used in the last 3 months. 
+Do you want to delete them permanently ? 
+
+Notes: Your old keyring will be backed up.
+    The removal may fail when running multiple Retroshare instances on the same machine.</source>
+        <translation>De markerade nycklarna nedan, har inte använts de senaste 3 månaderna. 
+Vill du ta bort dem permanent? 
+
+Notera: Din gamla nyckelring kommer att säkerhetskopieras.
+     Borttagningen kan misslyckas om du kör flera Retroshare-instanser på samma maskin.</translation>
+    </message>
+    <message>
+        <source>Keyring info</source>
+        <translation>Nyckelringsinformation</translation>
+    </message>
+    <message>
+        <source>%1 keys have been deleted from your keyring. 
+For security, your keyring was previously backed-up to file 
+
+</source>
+        <translation>%1 nycklar har tagits bort från din nyckelring. 
+För din säkerhet har din nyckelring säkerhetskopierats till filen 
+
+</translation>
+    </message>
+    <message>
+        <source>Unknown error</source>
+        <translation>Okänt fel</translation>
+    </message>
+    <message>
+        <source>Cannot delete secret keys</source>
+        <translation>Kan inte ta bort hemliga nycklar</translation>
+    </message>
+    <message>
+        <source>Cannot create backup file. Check for permissions in pgp directory, disk space, etc.</source>
+        <translation>Kan inte skapa säkerhetskopia. Kontrollera åtkomstbehörighet, diskutrymme etc. för pgp-mappen.</translation>
+    </message>
+    <message>
+        <source>Key removal has failed. Your keyring remains intact.
+
+Reported error: </source>
+        <translation>Nyckelborttagningen misslyckades. Din nyckelring är fortfarande intakt.
+
+Rapporterat fel:</translation>
     </message>
     <message>
         <source>Personal signature</source>
@@ -8775,12 +9033,28 @@ Vill du spara meddelandet?</translation>
         <translation>Ej betrodd</translation>
     </message>
     <message>
+        <source>Has authenticated me</source>
+        <translation>Har autentiserat mig</translation>
+    </message>
+    <message>
         <source>Unknown</source>
         <translation>Okänt</translation>
     </message>
     <message>
-        <source>Has authenticated me</source>
-        <translation>Har autentiserat mig</translation>
+        <source>Last hour</source>
+        <translation>Senaste timmen</translation>
+    </message>
+    <message>
+        <source>Today</source>
+        <translation>I dag</translation>
+    </message>
+    <message>
+        <source>Never</source>
+        <translation>Aldrig</translation>
+    </message>
+    <message>
+        <source>%1 days ago</source>
+        <translation>%1 dag(ar) sedan</translation>
     </message>
     <message>
         <source> has authenticated you. 
@@ -9015,6 +9289,14 @@ Högerklicka och välj &apos;Skapa kontakt&apos; för att kunna ansluta.</transl
         <translation>RetroShare har upptäckt ett oregistrerat insticksprogram. Detta kan hända i två fall:&lt;UL&gt;&lt;LI&gt;Din RetroShare-startfil har ändrats.&lt;/LI&gt;&lt;LI&gt;Insticksprogrammet har ändrats&lt;/LI&gt;&lt;/UL&gt;Klicka Ja för att tillåta insticket, eller Nej för att neka. Du kan ändra beslutet senare i Alternativ -&gt; Insticksprogram, och sedan starta om programmet.</translation>
     </message>
     <message>
+        <source>For the chat lobbies to work properly, the time of your computer needs to be correct. Please check that this is the case (A possible time shift of several minutes was detected with your friends). </source>
+        <translation>För att chattlobbygrupper skall fungera korrekt, måste tidsinställningen på din dator vara korrekt. Kontrollera att så är fallet (en möjlig tidsförskjutning på flera minuter har upptäckts). </translation>
+    </message>
+    <message>
+        <source>Please check your system clock.</source>
+        <translation>Kontrollera din systemklocka.</translation>
+    </message>
+    <message>
         <source>Examining shared files...</source>
         <translation>Undersöker delade filer...</translation>
     </message>
@@ -9033,14 +9315,6 @@ Högerklicka och välj &apos;Skapa kontakt&apos; för att kunna ansluta.</transl
     <message>
         <source>This is a test.</source>
         <translation>Detta är ett test.</translation>
-    </message>
-    <message>
-        <source>For the chat lobbies to work properly, the time of your computer needs to be correct. Please check that this is the case (A possible time shift of several minutes was detected with your friends). </source>
-        <translation>För att chattlobbygrupper skall fungera korrekt, måste tidsinställningen på din dator vara korrekt. Kontrollera att så är fallet (en möjlig tidsförskjutning på flera minuter har upptäckts). </translation>
-    </message>
-    <message>
-        <source>Please check your system clock.</source>
-        <translation>Kontrollera din systemklocka.</translation>
     </message>
 </context>
 <context>
@@ -9647,8 +9921,8 @@ p, li { white-space: pre-wrap; }
         <translation>RetroShare</translation>
     </message>
     <message>
-        <source>Please reate or choose a Signing Id first</source>
-        <translation>Skapa eller välj ett signatur-ID först</translation>
+        <source>Please create or choose a Signing Id first</source>
+        <translation>Skapa nytt eller välj ett befintligt signatur-ID först</translation>
     </message>
 </context>
 <context>
@@ -9810,6 +10084,14 @@ p, li { white-space: pre-wrap; }
         <source>Other Topics</source>
         <translation>Andra rubriker</translation>
     </message>
+    <message>
+        <source>Subscribe</source>
+        <translation>Prenumerera</translation>
+    </message>
+    <message>
+        <source>Unsubscribe</source>
+        <translation>Avsluta prenumerationen</translation>
+    </message>
 </context>
 <context>
     <name>PrintPreview</name>
@@ -9849,8 +10131,24 @@ p, li { white-space: pre-wrap; }
         <translation>Profilhanterare</translation>
     </message>
     <message>
-        <source>Export selected identity</source>
-        <translation>Exportera markerad identitet</translation>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Select an identity from the list below to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;When keeping the same identity for your new  location, your friends will automatically accept you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Välj en identitet från nedanstående lista och tryck &amp;quot;Exportera markerad identitet&amp;quot;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;För att använda den på en annan dator, väljer du identitetshanteraren i inloggningsfönstret. Därifrån kan du importera identitetsfilen och skapa en ny plats för den identiteten. &lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;När du behåller samma identitet från en annan plats, kommer du automatiskt att accepteras av dina kontakter.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Identities</source>
@@ -9867,6 +10165,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>GID</source>
         <translation>GID</translation>
+    </message>
+    <message>
+        <source>Export selected identity</source>
+        <translation>Exportera markerad identitet</translation>
     </message>
     <message>
         <source>Export Identity</source>
@@ -9931,26 +10233,6 @@ och där läsa in den med importfunktionen.</translation>
     <message>
         <source>Certificates (*.pqi *.pem)</source>
         <translation>Certifikat (*.pqi *.pem)</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Select in the list below an identity to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;When keeping the same identity for your new  location, your friends will automatically accept you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Välj en identitet från nedanstående lista, och tryck &amp;quot;Exportera markerad identitet&amp;quot;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;För att använda den på en annan dator,  väljer du identitetshanteraren i inloggningsfönstret. Därifrån kan du importera identitetsfilen och skapa en ny plats för den identiteten. &lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;När du använder samma identitet från den nya platsen, kommer du automatiskt att accepteras av dina kontakter.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -10096,6 +10378,14 @@ p, li { white-space: pre-wrap; }
 </context>
 <context>
     <name>QObject</name>
+    <message>
+        <source>Subject: </source>
+        <translation>Ämne:</translation>
+    </message>
+    <message>
+        <source>Participants: </source>
+        <translation>Deltagare:</translation>
+    </message>
     <message>
         <source>Confirmation</source>
         <translation>Bekräftelse</translation>
@@ -10259,38 +10549,6 @@ Tecknen &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; kommer att ersätt
         <translation>Resultat</translation>
     </message>
     <message>
-        <source>Directory is browsable for friends from groups</source>
-        <translation>Mappen är bläddringsbar, för gruppkontakter</translation>
-    </message>
-    <message>
-        <source>Directory is accessible by anonymous tunnels from friends from groups</source>
-        <translation>Mappen kan nås via anonyma tunnlar, för gruppkontakter</translation>
-    </message>
-    <message>
-        <source>Directory is browsable for any friend</source>
-        <translation>Mappen är bläddringsbar, för alla kontakter</translation>
-    </message>
-    <message>
-        <source>Directory is accessible by anonymous tunnels from any friend</source>
-        <translation>Mappen kan nås via anonyma tunnlar, för alla kontakter</translation>
-    </message>
-    <message>
-        <source>Directory is NOT browsable for friends from groups</source>
-        <translation>Mappen är INTE tillgänglig för gruppkontakter</translation>
-    </message>
-    <message>
-        <source>Directory is NOT accessible by anonymous tunnels from friends from groups</source>
-        <translation>Mappen är INTE tillgänglig via anonym tunnelanslutning för gruppkontakter</translation>
-    </message>
-    <message>
-        <source>Directory is NOT browsable for any friend</source>
-        <translation>Mappen är INTE tillgänglig för några kontakter</translation>
-    </message>
-    <message>
-        <source>Directory is NOT accessible by anonymous tunnels from any friend</source>
-        <translation>Mappen är INTE tillgänglig via anonym tunnelanslutning för några kontakter </translation>
-    </message>
-    <message>
         <source>Unable to make path</source>
         <translation>Kunde inte skapa sökväg</translation>
     </message>
@@ -10391,14 +10649,6 @@ Rapporterat fel är: %2</translation>
     <message>
         <source>Start with a RetroShare link is only supported for Windows.</source>
         <translation>Start via RetroShare-länk, stöds endast i Windows.</translation>
-    </message>
-    <message>
-        <source>Subject: </source>
-        <translation>Ämne:</translation>
-    </message>
-    <message>
-        <source>Participants: </source>
-        <translation>Deltagare:</translation>
     </message>
 </context>
 <context>
@@ -11749,7 +11999,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Create interface</source>
-        <translation>Skapa gränssnitt</translation>
+        <translation>Skapar gränssnitt</translation>
     </message>
 </context>
 <context>
