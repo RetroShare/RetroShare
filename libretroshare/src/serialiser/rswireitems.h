@@ -43,7 +43,7 @@ class RsGxsWireGroupItem : public RsGxsGrpItem
 
 public:
 
-	RsGxsWireGroupItem():  RsGxsGrpItem(RS_SERVICE_GXSV1_TYPE_WIRE,
+	RsGxsWireGroupItem():  RsGxsGrpItem(RS_SERVICE_GXSV2_TYPE_WIRE,
 			RS_PKT_SUBTYPE_WIRE_GROUP_ITEM) { return;}
         virtual ~RsGxsWireGroupItem() { return;}
 
@@ -58,7 +58,7 @@ class RsGxsWirePulseItem : public RsGxsMsgItem
 {
 public:
 
-	RsGxsWirePulseItem(): RsGxsMsgItem(RS_SERVICE_GXSV1_TYPE_WIRE,
+	RsGxsWirePulseItem(): RsGxsMsgItem(RS_SERVICE_GXSV2_TYPE_WIRE,
 			RS_PKT_SUBTYPE_WIRE_PULSE_ITEM) {return; }
         virtual ~RsGxsWirePulseItem() { return;}
         void clear();
@@ -71,7 +71,7 @@ class RsGxsWireSerialiser : public RsSerialType
 public:
 
 	RsGxsWireSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXSV1_TYPE_WIRE)
+	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXSV2_TYPE_WIRE)
 	{ return; }
 	virtual     ~RsGxsWireSerialiser() { return; }
 

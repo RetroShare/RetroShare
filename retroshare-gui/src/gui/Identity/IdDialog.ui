@@ -13,8 +13,8 @@
   <property name="windowTitle">
    <string/>
   </property>
-  <layout class="QGridLayout" name="gridLayout_5">
-   <item row="0" column="0">
+  <layout class="QHBoxLayout" name="horizontalLayout_4">
+   <item>
     <layout class="QGridLayout" name="gridLayout_3">
      <property name="bottomMargin">
       <number>6</number>
@@ -168,12 +168,9 @@
      </item>
     </layout>
    </item>
-   <item row="0" column="1">
-    <layout class="QGridLayout" name="gridLayout_4">
-     <property name="verticalSpacing">
-      <number>0</number>
-     </property>
-     <item row="0" column="0">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout_5">
+     <item>
       <widget class="QFrame" name="frame">
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <property name="margin">
@@ -216,7 +213,7 @@
        </layout>
       </widget>
      </item>
-     <item row="1" column="0">
+     <item>
       <widget class="QGroupBox" name="groupBox_2">
        <property name="title">
         <string>Identity Type</string>
@@ -403,34 +400,79 @@
        </layout>
       </widget>
      </item>
-     <item row="2" column="0">
+     <item>
       <widget class="QGroupBox" name="groupBox_3">
        <property name="title">
         <string>Reputation</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="0" column="0">
-         <widget class="QLabel" name="label_6">
-          <property name="text">
-           <string>Your Rating</string>
-          </property>
-         </widget>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Overall Rating</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_11">
+            <property name="text">
+             <string>Implicit Score</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_6">
+            <property name="text">
+             <string>Your Rating</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item row="0" column="1">
-         <widget class="QSpinBox" name="spinBox"/>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QLineEdit" name="line_RatingOverall"/>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="line_RatingImplicit"/>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="line_RatingOwn"/>
+          </item>
+         </layout>
         </item>
-        <item row="0" column="2">
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>Overall Rating</string>
-          </property>
+        <item row="1" column="0" colspan="2">
+         <widget class="QTreeWidget" name="treeWidget_RepList">
+          <column>
+           <property name="text">
+            <string>Friend</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Rating</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Comment</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Local Reputation</string>
+           </property>
+          </column>
          </widget>
-        </item>
-        <item row="0" column="3">
-         <widget class="QLineEdit" name="lineEdit_3"/>
-        </item>
-        <item row="1" column="0" colspan="4">
-         <widget class="QListWidget" name="listWidget"/>
         </item>
        </layout>
       </widget>

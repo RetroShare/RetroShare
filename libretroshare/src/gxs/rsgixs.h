@@ -165,6 +165,7 @@ public:
 class GixsReputation
 {
 	public:
+	GixsReputation() : score(0) {}
 		RsGxsId id;
 		int score;
 };
@@ -174,7 +175,9 @@ class RsGixsReputation
 {
 public:
 	// get Reputation.
-    virtual bool getReputation(const RsGxsId &id, const GixsReputation &rep) = 0;
+    virtual bool haveReputation(const RsGxsId &id) = 0;
+    virtual bool loadReputation(const RsGxsId &id) = 0;
+    virtual bool getReputation(const RsGxsId &id, GixsReputation &rep) = 0;
 };
 
 
@@ -206,6 +209,7 @@ class RsGcxs
         virtual bool loadCircle(const RsGxsCircleId &circleId) = 0;
 
         virtual int canSend(const RsGxsCircleId &circleId, const RsPgpId &id) = 0;
+        virtual int canReceive(const RsGxsCircleId &circleId, const RsPgpId &id) = 0;
         virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist) = 0;
 };
 

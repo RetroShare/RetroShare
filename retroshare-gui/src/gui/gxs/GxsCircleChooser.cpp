@@ -67,7 +67,14 @@ bool MakeGxsCircleDesc(const RsGxsCircleId &id, QString &desc)
 void GxsCircleChooser::loadGxsCircles()
 {
 	std::list<RsGxsCircleId> ids;
-	rsGxsCircles->getCircleIdList(ids);
+	if (mFlags & GXS_CIRCLE_CHOOSER_EXTERNAL)
+	{
+		rsGxsCircles->getCircleExternalIdList(ids);
+	}
+	if (mFlags & GXS_CIRCLE_CHOOSER_PERSONAL)
+	{
+		rsGxsCircles->getCirclePersonalIdList(ids);
+	}
 
 	if (ids.empty())
 	{

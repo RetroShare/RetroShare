@@ -1,8 +1,8 @@
 #include "genexchangetestservice.h"
 
 GenExchangeTestService::GenExchangeTestService(RsGeneralDataService *dataServ, RsNetworkExchangeService * netService,
-                                               RsGixs* gixs, uint32_t authenPolicy)
-    : RsGenExchange(dataServ, netService, new RsDummySerialiser(), RS_SERVICE_TYPE_DUMMY, gixs, authenPolicy)
+                                               RsGixs* gixs)
+    : RsGenExchange(dataServ, netService, new RsDummySerialiser(), RS_SERVICE_TYPE_DUMMY, gixs, 0)
 {
 
 }
@@ -32,14 +32,14 @@ bool GenExchangeTestService::getGroupMetaTS(const uint32_t &token, std::list<RsG
     return getGroupMeta(token, groupInfo);
 }
 
-bool GenExchangeTestService::getGroupDataTS(const uint32_t &token, std::vector<RsGxsGrpItem *> &grpItem)
+bool GenExchangeTestService::getGroupDataTS(const uint32_t &token, std::vector<RsDummyGrp *>& grpItem)
 {
-    return getGroupData(token, grpItem);
+    return getGroupDataT<RsDummyGrp>(token, grpItem);
 }
 
-bool GenExchangeTestService::getMsgDataTS(const uint32_t &token, GxsMsgDataMap &msgItems)
+bool GenExchangeTestService::getMsgDataTS(const uint32_t &token, DummyMsgMap &msgItems)
 {
-    return getMsgData(token, msgItems);
+    return getMsgDataT<RsDummyMsg>(token, msgItems);
 }
 
 bool GenExchangeTestService::getMsgRelatedDataTS(const uint32_t &token, GxsMsgRelatedDataMap &msgItems)

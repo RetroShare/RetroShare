@@ -36,7 +36,7 @@ RsWire *rsWire = NULL;
 
 
 p3Wire::p3Wire(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs *gixs)
-	:RsGenExchange(gds, nes, new RsGxsWireSerialiser(), RS_SERVICE_GXSV1_TYPE_WIRE, gixs, wireAuthenPolicy()),
+	:RsGenExchange(gds, nes, new RsGxsWireSerialiser(), RS_SERVICE_GXSV2_TYPE_WIRE, gixs, wireAuthenPolicy()),
 	RsWire(this), mWireMtx("WireMtx")
 {
 

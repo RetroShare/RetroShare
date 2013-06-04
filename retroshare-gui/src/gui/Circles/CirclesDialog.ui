@@ -17,16 +17,23 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QPushButton" name="pushButton_localgroup">
+      <widget class="QPushButton" name="pushButton_localCircle">
        <property name="text">
-        <string>Create Personal Group</string>
+        <string>Create Personal Circle</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_circle">
+      <widget class="QPushButton" name="pushButton_extCircle">
        <property name="text">
-        <string>Create Circle</string>
+        <string>Create External Circle</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_editCircle">
+       <property name="text">
+        <string>Edit Circle</string>
        </property>
       </widget>
      </item>
@@ -157,6 +164,9 @@
      </item>
      <item>
       <widget class="QGroupBox" name="groupBox_3">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="title">
         <string>Permissions</string>
        </property>

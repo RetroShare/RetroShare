@@ -307,13 +307,77 @@ protected:
      */
     bool getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem*>& grpItem);
 
+    template<class GrpType>
+    bool getGroupDataT(const uint32_t &token, std::vector<GrpType*>& grpItem)
+    {
+    	std::vector<RsGxsGrpItem*> items;
+    	bool ok = getGroupData(token, items);
+    	std::vector<RsGxsGrpItem*>::iterator vit = items.begin();
+
+    	for(; vit != items.end(); vit++)
+    	{
+    		RsGxsGrpItem* gi = *vit;
+
+    		GrpType* item = dynamic_cast<GrpType*>(gi);
+
+    		if(item)
+    		{
+    			grpItem.push_back(item);
+    		}
+    		else
+    		{
+#ifdef GXS_DEBUG
+    			std::cerr << "\nRsGenExchange::getGroupDataT(): Wrong type!\n";
+#endif
+    			delete gi;
+    		}
+    	}
+
+    	return ok;
+    }
+
 public:
+
     /*!
      * retrieves message data associated to a request token
      * @param token token to be redeemed for message item retrieval
      * @param msgItems
      */
     bool getMsgData(const uint32_t &token, GxsMsgDataMap& msgItems);
+
+    template <class MsgType>
+    bool getMsgDataT(const uint32_t &token, std::map<RsGxsGroupId,
+    		std::vector<MsgType*> >& msgItems)
+    {
+    	GxsMsgDataMap msgData;
+    	bool ok = getMsgData(token, msgData);
+
+    	GxsMsgDataMap::iterator mit = msgData.begin();
+
+    	for(; mit != msgData.end(); mit++)
+    	{
+    		const RsGxsGroupId& grpId = mit->first;
+    		std::vector<RsGxsMsgItem*>& mv = mit->second;
+    		std::vector<RsGxsMsgItem*>::iterator vit = mv.begin();
+    		for(; vit != mv.end(); vit++)
+    		{
+    			RsGxsMsgItem* mi = *vit;
+    			MsgType* mt = dynamic_cast<MsgType*>(mi);
+
+    			if(mt != NULL)
+    			{
+    				msgItems[grpId].push_back(mt);
+    			}
+    			else
+    			{
+    				std::cerr << "RsGenExchange::getMsgDataT(): bad cast to msg type" << std::endl;
+    				delete mi;
+    			}
+    		}
+    	}
+
+    	return ok;
+    }
 
     /*!
      * retrieves message related data associated to a request token
@@ -670,6 +734,8 @@ private:
 
     void  groupShareKeys(std::list<std::string> peers);
 
+    static void computeHash(const RsTlvBinaryData& data, std::string& hash);
+
 private:
 
     RsMutex mGenMtx;
@@ -717,6 +783,11 @@ private:
     bool mCleaning;
     time_t mLastClean;
     RsGxsMessageCleanUp* mMsgCleanUp;
+
+
+    bool mChecking, mCheckStarted;
+    time_t mLastCheck;
+    RsGxsIntegrityCheck* mIntegrityCheck;
 
 private:
 

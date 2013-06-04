@@ -74,7 +74,7 @@ RsItem* RsGxsCircleSerialiser::deserialise(void* data, uint32_t* size)
 	uint32_t rstype = getRsItemId(data);
 		
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXSV1_TYPE_GXSCIRCLE != getRsItemService(rstype)))
+		(RS_SERVICE_GXSV2_TYPE_GXSCIRCLE != getRsItemService(rstype)))
 	{
 		return NULL; /* wrong type */
 	}
@@ -107,6 +107,7 @@ RsItem* RsGxsCircleSerialiser::deserialise(void* data, uint32_t* size)
 
 void RsGxsCircleGroupItem::clear()
 {
+	pgpIdSet.TlvClear();
 	gxsIdSet.TlvClear();
 	subCircleSet.TlvClear();
 }
@@ -116,7 +117,16 @@ bool RsGxsCircleGroupItem::convertFrom(const RsGxsCircleGroup &group)
 	clear();
 
 	meta = group.mMeta;
-	gxsIdSet.ids = group.mInvitedMembers;
+
+	// Enforce the local rules.
+	if (meta.mCircleType == GXS_CIRCLE_TYPE_LOCAL)
+	{
+		pgpIdSet.ids = group.mLocalFriends;
+	}
+	else
+	{
+		gxsIdSet.ids = group.mInvitedMembers;
+	}
 	subCircleSet.ids = group.mSubCircles;
 	return true;
 }
@@ -124,7 +134,18 @@ bool RsGxsCircleGroupItem::convertFrom(const RsGxsCircleGroup &group)
 bool RsGxsCircleGroupItem::convertTo(RsGxsCircleGroup &group) const
 {
 	group.mMeta = meta;
-	group.mInvitedMembers = gxsIdSet.ids;
+
+	// Enforce the local rules.
+	if (meta.mCircleType ==  GXS_CIRCLE_TYPE_LOCAL)
+	{
+		group.mLocalFriends = pgpIdSet.ids;
+		group.mInvitedMembers.clear();
+	}
+	else
+	{
+		group.mLocalFriends.clear();
+		group.mInvitedMembers = gxsIdSet.ids;
+	}
 	group.mSubCircles = subCircleSet.ids;
 	return true;
 }
@@ -135,9 +156,22 @@ std::ostream& RsGxsCircleGroupItem::print(std::ostream& out, uint16_t indent)
 	printRsItemBase(out, "RsGxsCircleGroupItem", indent);
 	uint16_t int_Indent = indent + 2;
 
- 	gxsIdSet.print(out, int_Indent);
+	if (meta.mCircleType == GXS_CIRCLE_TYPE_LOCAL)
+	{
+		printRsItemBase(out, "Local Circle: PGP Ids:", indent);
+ 		pgpIdSet.print(out, int_Indent);
+		printRsItemBase(out, "GXS Ids (should be empty):", indent);
+ 		gxsIdSet.print(out, int_Indent);
+	}
+	else
+	{
+		printRsItemBase(out, "External Circle: GXS Ids", indent);
+ 		gxsIdSet.print(out, int_Indent);
+		printRsItemBase(out, "PGP Ids (should be empty):", indent);
+ 		pgpIdSet.print(out, int_Indent);
+	}
+
  	subCircleSet.print(out, int_Indent);
- 
 	printRsItemEnd(out ,"RsGxsCircleGroupItem", indent);
 	return out;
 }
@@ -147,6 +181,7 @@ uint32_t RsGxsCircleSerialiser::sizeGxsCircleGroupItem(RsGxsCircleGroupItem *ite
 {
 	uint32_t s = 8; // header
 
+	s += item->pgpIdSet.TlvSize();
 	s += item->gxsIdSet.TlvSize();
 	s += item->subCircleSet.TlvSize();
 
@@ -181,6 +216,7 @@ bool RsGxsCircleSerialiser::serialiseGxsCircleGroupItem(RsGxsCircleGroupItem *it
 	offset += 8;
 	
 	/* GxsCircleGroupItem */
+	ok &= item->pgpIdSet.SetTlv(data, tlvsize, &offset);
 	ok &= item->gxsIdSet.SetTlv(data, tlvsize, &offset);
 	ok &= item->subCircleSet.SetTlv(data, tlvsize, &offset);
 	
@@ -216,7 +252,7 @@ RsGxsCircleGroupItem* RsGxsCircleSerialiser::deserialiseGxsCircleGroupItem(void 
 	
 	
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXSV1_TYPE_GXSCIRCLE != getRsItemService(rstype)) ||
+		(RS_SERVICE_GXSV2_TYPE_GXSCIRCLE != getRsItemService(rstype)) ||
 		(RS_PKT_SUBTYPE_GXSCIRCLE_GROUP_ITEM != getRsItemSubType(rstype)))
 	{
 #ifdef CIRCLE_DEBUG
@@ -242,6 +278,7 @@ RsGxsCircleGroupItem* RsGxsCircleSerialiser::deserialiseGxsCircleGroupItem(void 
 	/* skip the header */
 	offset += 8;
 	
+	ok &= item->pgpIdSet.GetTlv(data, rssize, &offset);
 	ok &= item->gxsIdSet.GetTlv(data, rssize, &offset);
 	ok &= item->subCircleSet.GetTlv(data, rssize, &offset);
 	
@@ -365,7 +402,7 @@ RsGxsCircleMsgItem* RsGxsCircleSerialiser::deserialiseGxsCircleMsgItem(void *dat
 	
 	
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXSV1_TYPE_GXSCIRCLE != getRsItemService(rstype)) ||
+		(RS_SERVICE_GXSV2_TYPE_GXSCIRCLE != getRsItemService(rstype)) ||
 		(RS_PKT_SUBTYPE_GXSCIRCLE_MSG_ITEM != getRsItemSubType(rstype)))
 	{
 #ifdef CIRCLE_DEBUG

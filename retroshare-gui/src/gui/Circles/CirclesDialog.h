@@ -44,7 +44,9 @@ void 	loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 private slots:
 
-void create();
+void createExternalCircle();
+void createPersonalCircle();
+void editExistingCircle();
 
 void checkUpdate();
 

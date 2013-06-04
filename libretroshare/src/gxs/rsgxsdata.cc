@@ -48,6 +48,7 @@ uint32_t RsGxsGrpMetaData::serial_size()
     s += keys.TlvSize();
     s += 4; // for mCircleType
     s += GetTlvStringSize(mCircleId);
+    s += 4; // mAuthenFlag
 
     return s;
 }
@@ -72,6 +73,7 @@ void RsGxsGrpMetaData::clear(){
     mInternalCircle.clear();
     mOriginator.clear();
     mCircleType = 0;
+    mAuthenFlags = 0;
 
 }
 
@@ -105,9 +107,11 @@ bool RsGxsGrpMetaData::serialise(void *data, uint32_t &pktsize)
     ok &= setRawUInt32(data, tlvsize, &offset, mGroupFlags);
     ok &= setRawUInt32(data, tlvsize, &offset, mPublishTs);
     ok &= setRawUInt32(data, tlvsize, &offset, mCircleType);
+    ok &= setRawUInt32(data, tlvsize, &offset, mAuthenFlags);
     ok &= SetTlvString(data, tlvsize, &offset, 0, mAuthorId);
     ok &= SetTlvString(data, tlvsize, &offset, 0, mServiceString);
     ok &= SetTlvString(data, tlvsize, &offset, 0, mCircleId);
+
     ok &= signSet.SetTlv(data, tlvsize, &offset);
     ok &= keys.SetTlv(data, tlvsize, &offset);
 
@@ -133,6 +137,7 @@ bool RsGxsGrpMetaData::deserialise(void *data, uint32_t &pktsize)
     ok &= getRawUInt32(data, pktsize, &offset, &mGroupFlags);
     ok &= getRawUInt32(data, pktsize, &offset, &mPublishTs);
     ok &= getRawUInt32(data, pktsize, &offset, &mCircleType);
+    ok &= getRawUInt32(data, pktsize, &offset, &mAuthenFlags);
     ok &= GetTlvString(data, pktsize, &offset, 0, mAuthorId);
     ok &= GetTlvString(data, pktsize, &offset, 0, mServiceString);
     ok &= GetTlvString(data, pktsize, &offset, 0, mCircleId);
@@ -278,6 +283,7 @@ void RsGxsGrpMetaData::operator =(const RsGroupMetaData& rMeta)
         this->mCircleType = rMeta.mCircleType;
         this->mInternalCircle = rMeta.mInternalCircle;
         this->mOriginator = rMeta.mOriginator;
+        this->mAuthenFlags = rMeta.mAuthenFlags;
 }
 
 void RsGxsMsgMetaData::operator =(const RsMsgMetaData& rMeta)

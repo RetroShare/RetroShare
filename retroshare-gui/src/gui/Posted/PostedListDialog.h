@@ -83,7 +83,13 @@ private slots:
     void subscribeTopic();
     void unsubscribeTopic();
 
+
+    void showNext();
+    void showPrev();
+
 private:
+
+    void 	updateShowText();
 
     void 	clearPosts();
 
@@ -124,6 +130,7 @@ private:
 
     //void       loadRankings(const uint32_t& token);
     //void       applyRanking(const PostedRanking& ranks);
+    void       applyRanking();
 
 
     // update displayed item
@@ -143,12 +150,19 @@ private:
     QTreeWidgetItem *popularTopics;
     QTreeWidgetItem *otherTopics;
 
+    int	mSortMethod;
+    int	mLastSortMethod;
+    int	mPostIndex;
+    int	mPostShow;
 
     bool mThreadLoading;
     RsGxsGroupId mCurrTopicId;
 
     QMap<RsGxsGroupId, RsPostedGroup> mGroups;
     QMap<RsGxsMessageId, PostedItem*> mPosts;
+    std::list<PostedItem *> mPostList;
+
+
     TokenQueue *mPostedQueue;
 
     //CommentHolder* mCommentHolder;

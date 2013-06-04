@@ -75,8 +75,8 @@ class RsPosted : public RsGxsIfaceHelper, public RsGxsCommentService
 
 	enum RankType {TopRankType, HotRankType, NewRankType };
 
-	static const uint32_t FLAG_MSGTYPE_POST;
-	static const uint32_t FLAG_MSGTYPE_MASK;
+	//static const uint32_t FLAG_MSGTYPE_POST;
+	//static const uint32_t FLAG_MSGTYPE_MASK;
 
 	RsPosted(RsGxsIface* gxs) : RsGxsIfaceHelper(gxs) { return; }
 virtual ~RsPosted() { return; }
@@ -86,15 +86,6 @@ virtual ~RsPosted() { return; }
 virtual bool getGroupData(const uint32_t &token, std::vector<RsPostedGroup> &groups) = 0;
 virtual bool getPostData(const uint32_t &token, std::vector<RsPostedPost> &posts) = 0;
 virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsPostedPost> &posts) = 0;
-
-
-	// SPECIAL RANKING FNS.
-virtual bool requestPostRankings(uint32_t &token, const RankType &rType, uint32_t count, uint32_t page_no, const RsGxsGroupId &groupId) = 0;
-
-virtual bool getPostRanking(const uint32_t &token, std::vector<RsPostedPost> &msgs) = 0;
-
-
-//virtual bool getPostRanking(const uint32_t& token, std::vector<RsPostedPost> &ranking) = 0;
 
 	    /* From RsGxsCommentService */
 //virtual bool getCommentData(const uint32_t &token, std::vector<RsGxsComment> &comments) = 0;
@@ -108,25 +99,6 @@ virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgI
 virtual bool createGroup(uint32_t &token, RsPostedGroup &group) = 0;
 virtual bool createPost(uint32_t &token, RsPostedPost &post) = 0;
 
-	//virtual bool retrieveScores(const std::string& serviceString, uint32_t& upVotes, uint32_t& downVotes, uint32_t& nComments) const = 0;
-
-	    // Special Ranking Request.
-	/*!
-	 * Makes request for posts of a topic
-	 * @param token
-	 * @param rType
-	 * @param groupId
-	 */
-	//virtual bool requestPostRankings(uint32_t &token, const RankType& rType, const RsGxsGroupId& groupId) = 0;
-
-	/*!
-	 * Makes request for ranking of comments for a post
-	 * @param token
-	 * @param rType type of ranking to collect
-	 * @param msgId message id of post as groupid-messageid pair
-	 */
-	//virtual bool requestCommentRankings(uint32_t &token, const RankType& rType, const RsGxsGrpMsgIdPair& msgId) = 0;
-
 };
 
 
@@ -136,21 +108,27 @@ class RsPostedPost
 	public:
 	RsPostedPost()
 	{
-		mMeta.mMsgFlags = RsPosted::FLAG_MSGTYPE_POST;
+		//mMeta.mMsgFlags = RsPosted::FLAG_MSGTYPE_POST;
 		mUpVotes = 0;
 		mDownVotes = 0;
 		mComments = 0;
+		mHaveVoted = false;
 		return;
 	}
+
+	bool calculateScores(time_t ref_time);
 
 	RsMsgMetaData mMeta;
 	std::string mLink;
 	std::string mNotes;
 
+	bool     mHaveVoted;
+
 	// Calculated.
 	uint32_t mUpVotes;
 	uint32_t mDownVotes;
 	uint32_t mComments;
+
 
 	// and Calculated Scores:???
 	double  mHotScore;

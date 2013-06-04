@@ -3,7 +3,7 @@
  *
  * RetroShare C++ Interface.
  *
- * Copyright 2012-2012 by Robert Fernie, Christopher Evi-Parker
+ * Copyright 2012-2013 by Robert Fernie, Christopher Evi-Parker
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public

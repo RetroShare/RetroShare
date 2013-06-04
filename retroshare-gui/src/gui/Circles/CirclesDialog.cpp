@@ -50,7 +50,9 @@ CirclesDialog::CirclesDialog(QWidget *parent)
 	ui.setupUi(this);
 
 	connect( ui.pushButton_refresh, SIGNAL(clicked()), this, SLOT(reloadAll()));
-	connect( ui.pushButton_circle, SIGNAL(clicked()), this, SLOT(create()));
+	connect( ui.pushButton_extCircle, SIGNAL(clicked()), this, SLOT(createExternalCircle()));
+	connect( ui.pushButton_localCircle, SIGNAL(clicked()), this, SLOT(createPersonalCircle()));
+	connect( ui.pushButton_editCircle, SIGNAL(clicked()), this, SLOT(editExistingCircle()));
 
 	QTimer *timer = new QTimer(this);
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
@@ -86,10 +88,31 @@ void CirclesDialog::checkUpdate()
 #define CIRCLEGROUP_FRIEND_COL_NAME	0
 #define CIRCLEGROUP_FRIEND_COL_ID	1
 
-void CirclesDialog::create()
+void CirclesDialog::createExternalCircle()
 {
 	CreateCircleDialog *createDialog = new CreateCircleDialog();
+	createDialog->editNewId(true);
 	createDialog->show();
+
+}
+
+
+void CirclesDialog::createPersonalCircle()
+{
+	CreateCircleDialog *createDialog = new CreateCircleDialog();
+	createDialog->editNewId(false);
+	createDialog->show();
+}
+
+
+void CirclesDialog::editExistingCircle()
+{
+#if 0
+	std::string id;
+	CreateCircleDialog *createDialog = new CreateCircleDialog();
+	createDialog->editExistingId(id);
+	createDialog->show();
+#endif
 }
 
 
@@ -586,9 +609,21 @@ void CirclesDialog::loadGroupMeta(const uint32_t &token)
         }
 
 	/* add the top level item */
-	QTreeWidgetItem *circlesItem = new QTreeWidgetItem();
-	circlesItem->setText(0, "Circles");
-	ui.treeWidget_membership->addTopLevelItem(circlesItem);
+	QTreeWidgetItem *personalCirclesItem = new QTreeWidgetItem();
+	personalCirclesItem->setText(0, "Personal Circles");
+	ui.treeWidget_membership->addTopLevelItem(personalCirclesItem);
+
+	QTreeWidgetItem *externalAdminCirclesItem = new QTreeWidgetItem();
+	externalAdminCirclesItem->setText(0, "External Circles (Admin)");
+	ui.treeWidget_membership->addTopLevelItem(externalAdminCirclesItem);
+
+	QTreeWidgetItem *externalSubCirclesItem = new QTreeWidgetItem();
+	externalSubCirclesItem->setText(0, "External Circles (Subscribed)");
+	ui.treeWidget_membership->addTopLevelItem(externalSubCirclesItem);
+
+	QTreeWidgetItem *externalOtherCirclesItem = new QTreeWidgetItem();
+	externalOtherCirclesItem->setText(0, "External Circles (Other)");
+	ui.treeWidget_membership->addTopLevelItem(externalOtherCirclesItem);
 
         for(vit = groupInfo.begin(); vit != groupInfo.end(); vit++)
         {
@@ -600,7 +635,26 @@ void CirclesDialog::loadGroupMeta(const uint32_t &token)
 		QTreeWidgetItem *groupItem = new QTreeWidgetItem();
 		groupItem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromStdString(vit->mGroupName));
 		groupItem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, QString::fromStdString(vit->mGroupId));
-		circlesItem->addChild(groupItem);
+
+		if (vit->mCircleType == GXS_CIRCLE_TYPE_LOCAL)
+		{
+			personalCirclesItem->addChild(groupItem);
+		}
+		else
+		{
+			if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
+			{
+				externalAdminCirclesItem->addChild(groupItem);
+			}
+			else if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
+			{
+				externalSubCirclesItem->addChild(groupItem);
+			}
+			else
+			{
+				externalOtherCirclesItem->addChild(groupItem);
+			}
+		}
         }
 }
 

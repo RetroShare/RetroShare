@@ -76,7 +76,7 @@ RsItem* RsGxsForumSerialiser::deserialise(void* data, uint32_t* size)
 	uint32_t rstype = getRsItemId(data);
 		
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXSV1_TYPE_FORUMS != getRsItemService(rstype)))
+		(RS_SERVICE_GXSV2_TYPE_FORUMS != getRsItemService(rstype)))
 	{
 		return NULL; /* wrong type */
 	}
@@ -198,7 +198,7 @@ RsGxsForumGroupItem* RsGxsForumSerialiser::deserialiseGxsForumGroupItem(void *da
 	
 	
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXSV1_TYPE_FORUMS != getRsItemService(rstype)) ||
+		(RS_SERVICE_GXSV2_TYPE_FORUMS != getRsItemService(rstype)) ||
 		(RS_PKT_SUBTYPE_GXSFORUM_GROUP_ITEM != getRsItemSubType(rstype)))
 	{
 #ifdef GXSFORUM_DEBUG
@@ -346,7 +346,7 @@ RsGxsForumMsgItem* RsGxsForumSerialiser::deserialiseGxsForumMsgItem(void *data, 
 	
 	
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXSV1_TYPE_FORUMS != getRsItemService(rstype)) ||
+		(RS_SERVICE_GXSV2_TYPE_FORUMS != getRsItemService(rstype)) ||
 		(RS_PKT_SUBTYPE_GXSFORUM_MESSAGE_ITEM != getRsItemSubType(rstype)))
 	{
 #ifdef GXSFORUM_DEBUG

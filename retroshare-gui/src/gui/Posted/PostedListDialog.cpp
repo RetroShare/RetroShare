@@ -65,6 +65,8 @@
 
 // token types to deal with
 
+#define  POSTED_DEFAULT_LISTING_LENGTH	 10
+#define POSTED_MAX_INDEX 10000
 
 /** Constructor */
 PostedListDialog::PostedListDialog(QWidget *parent)
@@ -83,6 +85,14 @@ PostedListDialog::PostedListDialog(QWidget *parent)
 	connect(ui.hotSortButton, SIGNAL(clicked()), this, SLOT(getRankings()));
 	connect(ui.newSortButton, SIGNAL(clicked()), this, SLOT(getRankings()));
 	connect(ui.topSortButton, SIGNAL(clicked()), this, SLOT(getRankings()));
+	connect(ui.nextButton, SIGNAL(clicked()), this, SLOT(showNext()));
+	connect(ui.prevButton, SIGNAL(clicked()), this, SLOT(showPrev()));
+
+	// default sort method.
+	mSortMethod = RsPosted::HotRankType;
+	mLastSortMethod = RsPosted::TopRankType; // to be different.
+	mPostIndex = 0;
+	mPostShow = POSTED_DEFAULT_LISTING_LENGTH;
 
 	/* create posted tree */
 	yourTopics = ui.groupTreeWidget->addCategoryItem(tr("My Topics"), QIcon(IMAGE_FOLDER), true);
@@ -99,76 +109,76 @@ PostedListDialog::PostedListDialog(QWidget *parent)
 	refreshTopics();
 }
 
+
+void PostedListDialog::showNext()
+{
+	mPostIndex += mPostShow;
+	if (mPostIndex > POSTED_MAX_INDEX)
+		mPostIndex = POSTED_MAX_INDEX;
+	applyRanking();
+	updateShowText();
+}
+
+
+void PostedListDialog::showPrev()
+{
+	mPostIndex -= mPostShow;
+	if (mPostIndex < 0)
+		mPostIndex = 0;
+	applyRanking();
+	updateShowText();
+}
+
+
+void PostedListDialog::updateShowText()
+{
+	QString showText = tr("Showing");
+	showText += " ";
+	showText += QString::number(mPostIndex + 1);
+	showText += "-";
+	showText += QString::number(mPostIndex + mPostShow);
+	ui.showLabel->setText(showText);
+}
+
+
+
 void PostedListDialog::getRankings()
 {
-#if 0
 	if(mCurrTopicId.empty())
 		return;
 
-	std::cerr << "PostedListDialog::getHotRankings()";
+	std::cerr << "PostedListDialog::getRankings()";
 	std::cerr << std::endl;
 
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
-	uint32_t token;
+	int oldSortMethod = mSortMethod;
 
 	QObject* button = sender();
 	if(button == ui.hotSortButton)
 	{
-		rsPosted->requestPostRankings(token, RsPosted::HotRankType, mCurrTopicId);
-	}else if(button == ui.topSortButton)
+		mSortMethod = RsPosted::HotRankType;
+	}
+	else if(button == ui.topSortButton)
 	{
-		rsPosted->requestPostRankings(token, RsPosted::TopRankType, mCurrTopicId);
-	}else if(button == ui.newSortButton)
+		mSortMethod = RsPosted::TopRankType;
+	}
+	else if(button == ui.newSortButton)
 	{
-		rsPosted->requestPostRankings(token, RsPosted::NewRankType, mCurrTopicId);
-	}else{
+		mSortMethod = RsPosted::NewRankType;
+	}
+	else
+	{
 		return;
 	}
 
-	mPostedQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_DATA, TOKEN_USER_TYPE_POST_RANKINGS);
-#endif
-}
-
-#if 0
-void PostedListDialog::loadRankings(const uint32_t &token)
-{
-	RsPostedPostRanking rankings;
-
-	if(!rsPosted->getPostRanking(token, rankings))
-		return;
-
-	if(rankings.grpId != mCurrTopicId)
-		return;
-
-	applyRanking(rankings.ranking);
-}
-#endif
-
-#if 0
-void PostedListDialog::applyRanking(const PostedRanking& ranks)
-{
-	std::cerr << "PostedListDialog::loadGroupThreadData_InsertThreads()";
-	std::cerr << std::endl;
-
-	shallowClearPosts();
-
-	QLayout *alayout = ui.scrollAreaWidgetContents->layout();
-
-	PostedRanking::const_iterator mit = ranks.begin();
-
-	for(; mit != ranks.end(); mit++)
+	if (oldSortMethod != mSortMethod)
 	{
-		const RsGxsMessageId& msgId = mit->second;
-
-		if(mPosts.find(msgId) != mPosts.end())
-			alayout->addWidget(mPosts[msgId]);
+		/* Reset Counter */
+		mPostIndex = 0;
+		updateShowText();
 	}
 
-	return;
+	applyRanking();
 }
-
-#endif
 
 
 void PostedListDialog::refreshTopics()
@@ -180,6 +190,12 @@ void PostedListDialog::refreshTopics()
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
 	uint32_t token;
 	mPostedQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_SUMMARY, opts, TOKEN_USER_TYPE_TOPIC);
+
+
+	/* refresh Id Chooser Too */
+	RsGxsId currentId = "";
+	ui.idChooser->getChosenId(currentId);
+	ui.idChooser->loadIds(IDCHOOSER_ID_REQUIRED, currentId);
 }
 
 void PostedListDialog::groupListCustomPopupMenu( QPoint /*point*/ )
@@ -251,28 +267,48 @@ void PostedListDialog::subscribeTopic()
 }
 
 
-
-
-
-
-
-
-
-
-
 void PostedListDialog::submitVote(const RsGxsGrpMsgIdPair &msgId, bool up)
 {
-#if 0
-	uint32_t token;
-	RsPostedVote vote;
+	/* must grab AuthorId from Layout */
+	RsGxsId authorId;
+	if (!ui.idChooser->getChosenId(authorId))
+	{
+		std::cerr << "PostedListDialog::createPost() ERROR GETTING AuthorId!, Vote Failed";
+		std::cerr << std::endl;
+
+		QMessageBox::warning(this, tr("RetroShare"),tr("Please create or choose a Signing Id before Voting"),
+	    		QMessageBox::Ok, QMessageBox::Ok);
+
+		return;
+	}
+
+	RsGxsVote vote;
 
 	vote.mMeta.mGroupId = msgId.first;
+	vote.mMeta.mThreadId = msgId.second;
 	vote.mMeta.mParentId = msgId.second;
-	vote.mDirection = (uint8_t)up;
-	rsPosted->submitVote(token, vote);
+	vote.mMeta.mAuthorId = authorId;
 
-	mPostedQueue->queueRequest(token, 0 , RS_TOKREQ_ANSTYPE_ACK, TOKEN_USER_TYPE_VOTE);
-#endif
+	if (up)
+	{
+		vote.mVoteType = GXS_VOTE_UP;
+	}
+	else
+	{
+		vote.mVoteType = GXS_VOTE_DOWN;
+	}
+
+	std::cerr << "PostedListDialog::submitVote()";
+	std::cerr << std::endl;
+
+	std::cerr << "GroupId : " << vote.mMeta.mGroupId << std::endl;
+	std::cerr << "ThreadId : " << vote.mMeta.mThreadId << std::endl;
+	std::cerr << "ParentId : " << vote.mMeta.mParentId << std::endl;
+	std::cerr << "AuthorId : " << vote.mMeta.mAuthorId << std::endl;
+
+	uint32_t token;
+	rsPosted->createVote(token, vote);
+	mPostedQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, TOKEN_USER_TYPE_VOTE);
 } 
 
 
@@ -317,14 +353,27 @@ void PostedListDialog::updateDisplay()
 
 	if (rsPosted->updated(true, true))
 	{
+		std::cerr << "rsPosted->updated() returned true";
+		std::cerr << std::endl;
 		/* update Forums List */
 
 		rsPosted->groupsChanged(groupIds);
 		if(!groupIds.empty())
 		{
-			std::list<std::string>::iterator it = std::find(groupIds.begin(), groupIds.end(), mCurrTopicId);
+			std::cerr << "rsPosted->groupsChanged():";
+			std::cerr << std::endl;
+			std::list<std::string>::iterator it;
+			for(it = groupIds.begin(); it != groupIds.end(); it++)
+			{
+				std::cerr << "\t" << *it;
+				std::cerr << std::endl;
+			}
 
-			if(it != groupIds.end()){
+			it = std::find(groupIds.begin(), groupIds.end(), mCurrTopicId);
+			if(it != groupIds.end())
+			{
+				std::cerr << "current Group -> requesting Group Summary";
+				std::cerr << std::endl;
 				requestGroupSummary();
 				return;
 			}
@@ -334,11 +383,16 @@ void PostedListDialog::updateDisplay()
 
 		if(!msgs.empty())
 		{
+			std::cerr << "rsPosted->msgsChanged():";
+			std::cerr << std::endl;
 
 
-			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit = msgs.find(mCurrTopicId);
+			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit;
+			mit = msgs.find(mCurrTopicId);
 			if(mit != msgs.end())
 			{
+				std::cerr << "current Group -> updating Displayed Items";
+				std::cerr << std::endl;
 				updateDisplayedItems(mit->second);
 			}
 		}
@@ -361,6 +415,13 @@ void PostedListDialog::updateDisplayedItems(const std::vector<RsGxsMessageId> &m
 
 	std::cerr << "PostedListDialog::updateDisplayedItems(" << mCurrTopicId << ")";
 	std::cerr << std::endl;
+
+	std::vector<RsGxsMessageId>::const_iterator it;
+	for(it = msgIds.begin(); it != msgIds.end(); it++)
+	{
+		std::cerr << "\t\tMsgId: " << *it;
+		std::cerr << std::endl;
+	}
 
 	uint32_t token;
 	mPostedQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgs, TOKEN_USER_TYPE_POST_MOD);
@@ -465,7 +526,7 @@ void PostedListDialog::acknowledgeVoteMsg(const uint32_t &token)
 {
 	RsGxsGrpMsgIdPair msgId;
 
-	rsPosted->acknowledgeMsg(token, msgId);
+	rsPosted->acknowledgeVote(token, msgId);
 }
 
 void PostedListDialog::loadVoteData(const uint32_t &token)
@@ -546,19 +607,19 @@ void PostedListDialog::loadCurrentTopicThreads(const std::string &topicId)
 
 void PostedListDialog::requestGroupThreadData_InsertThreads(const std::string &groupId)
 {
-		RsTokReqOptions opts;
+	RsTokReqOptions opts;
 
-		opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-		opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+	opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
 	
-		std::list<RsGxsGroupId> grpIds;
+	std::list<RsGxsGroupId> grpIds;
 	grpIds.push_back(groupId);
 
-		std::cerr << "PostedListDialog::requestGroupThreadData_InsertThreads(" << groupId << ")";
-		std::cerr << std::endl;
+	std::cerr << "PostedListDialog::requestGroupThreadData_InsertThreads(" << groupId << ")";
+	std::cerr << std::endl;
 
 	uint32_t token;	
-		mPostedQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds, TOKEN_USER_TYPE_POST);
+	mPostedQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds, TOKEN_USER_TYPE_POST);
 }
 
 
@@ -579,15 +640,128 @@ void PostedListDialog::loadGroupThreadData_InsertThreads(const uint32_t &token)
 		loadPost(p);
 	}
 
+	applyRanking();
+
 }
 
 void PostedListDialog::loadPost(const RsPostedPost &post)
 {
 	PostedItem *item = new PostedItem(this, 0, post, true);
 	connect(item, SIGNAL(vote(RsGxsGrpMsgIdPair,bool)), this, SLOT(submitVote(RsGxsGrpMsgIdPair,bool)));
-	QLayout *alayout = ui.scrollAreaWidgetContents->layout();
 	mPosts.insert(post.mMeta.mMsgId, item);
-	alayout->addWidget(item);
+	//QLayout *alayout = ui.scrollAreaWidgetContents->layout();
+	//alayout->addWidget(item);
+	mPostList.push_back(item);
+}
+
+
+bool CmpPIHot(const PostedItem *a, const PostedItem *b)
+{
+	if (a->mPost.mHotScore == b->mPost.mHotScore)
+	{
+		(a->mPost.mNewScore > b->mPost.mNewScore);
+	}
+
+	return (a->mPost.mHotScore > b->mPost.mHotScore);
+}
+
+bool CmpPITop(const PostedItem *a, const PostedItem *b)
+{
+	if (a->mPost.mTopScore == b->mPost.mTopScore)
+	{
+		(a->mPost.mNewScore > b->mPost.mNewScore);
+	}
+
+	return (a->mPost.mTopScore > b->mPost.mTopScore);
+}
+
+bool CmpPINew(const PostedItem *a, const PostedItem *b)
+{
+	return (a->mPost.mNewScore > b->mPost.mNewScore);
+}
+
+
+void PostedListDialog::applyRanking()
+{
+	/* uses current settings to sort posts, then add to layout */
+	std::cerr << "PostedListDialog::applyRanking()";
+	std::cerr << std::endl;
+
+	shallowClearPosts();
+
+	/* sort */
+	switch(mSortMethod)
+	{
+		default:
+		case RsPosted::HotRankType:
+			std::cerr << "PostedListDialog::applyRanking() HOT";
+			std::cerr << std::endl;
+			mPostList.sort(CmpPIHot);
+			break;
+		case RsPosted::NewRankType:
+			std::cerr << "PostedListDialog::applyRanking() NEW";
+			std::cerr << std::endl;
+			mPostList.sort(CmpPINew);
+			break;
+		case RsPosted::TopRankType:
+			std::cerr << "PostedListDialog::applyRanking() TOP";
+			std::cerr << std::endl;
+			mPostList.sort(CmpPITop);
+			break;
+	}
+	mLastSortMethod = mSortMethod;
+
+	std::cerr << "PostedListDialog::applyRanking() Sorted mPostList";
+	std::cerr << std::endl;
+
+	/* go through list (skipping out-of-date items) to get */
+	QLayout *alayout = ui.scrollAreaWidgetContents->layout();
+	int counter = 0;
+	time_t min_ts = 0;
+	std::list<PostedItem *>::iterator it;
+	for(it = mPostList.begin(); it != mPostList.end(); it++)
+	{
+		PostedItem *item = (*it);
+		std::cerr << "PostedListDialog::applyRanking() Item: " << item;
+		std::cerr << std::endl;
+		
+		if (item->mPost.mMeta.mPublishTs < min_ts)
+		{
+			std::cerr << "\t Skipping OLD";
+			std::cerr << std::endl;
+			item->hide();
+			continue;
+		}
+
+
+		if (counter >= mPostIndex + mPostShow)
+		{
+			std::cerr << "\t END - Counter too high";
+			std::cerr << std::endl;
+			item->hide();
+		}
+		else if (counter >= mPostIndex)
+		{
+			std::cerr << "\t Adding to Layout";
+			std::cerr << std::endl;
+			/* add it in! */
+			item->show();
+			alayout->addWidget(item);
+		}
+		else
+		{
+			std::cerr << "\t Skipping to Low";
+			std::cerr << std::endl;
+			item->hide();
+		}
+		counter++;
+	}
+
+	std::cerr << "PostedListDialog::applyRanking() Loaded New Order";
+	std::cerr << std::endl;
+
+	// trigger a redraw.
+	ui.scrollAreaWidgetContents->update();
 }
 
 
@@ -633,11 +807,12 @@ void PostedListDialog::clearPosts()
 	}
 
 	mPosts.clear();
+	mPostList.clear();
 }
 
 void PostedListDialog::shallowClearPosts()
 {
-	std::cerr << "PostedListDialog::clearPosts()" << std::endl;
+	std::cerr << "PostedListDialog::shallowClearPosts()" << std::endl;
 
 	std::list<PostedItem *> postedItems;
 	std::list<PostedItem *>::iterator pit;
@@ -649,7 +824,7 @@ void PostedListDialog::shallowClearPosts()
 			QLayoutItem *litem = alayout->itemAt(i);
 			if (!litem)
 			{
-					std::cerr << "PostedListDialog::clearPosts() missing litem";
+					std::cerr << "PostedListDialog::shallowClearPosts() missing litem";
 					std::cerr << std::endl;
 					continue;
 			}
@@ -657,14 +832,14 @@ void PostedListDialog::shallowClearPosts()
 			PostedItem *item = dynamic_cast<PostedItem *>(litem->widget());
 			if (item)
 			{
-					std::cerr << "PostedListDialog::clearPosts() item: " << item;
+					std::cerr << "PostedListDialog::shallowClearPosts() item: " << item;
 					std::cerr << std::endl;
 
 					postedItems.push_back(item);
 			}
 			else
 			{
-					std::cerr << "PostedListDialog::clearPosts() Found Child, which is not a PostedItem???";
+					std::cerr << "PostedListDialog::shallowClearPosts() Found Child, which is not a PostedItem???";
 					std::cerr << std::endl;
 			}
 	}
@@ -679,7 +854,7 @@ void PostedListDialog::shallowClearPosts()
 
 void PostedListDialog::updateCurrentDisplayComplete(const uint32_t &token)
 {
-	std::cerr << "PostedListDialog::loadGroupThreadData_InsertThreads()";
+	std::cerr << "PostedListDialog::updateCurrentDisplayComplete()";
 	std::cerr << std::endl;
 
 	std::vector<RsPostedPost> posts;
@@ -693,9 +868,29 @@ void PostedListDialog::updateCurrentDisplayComplete(const uint32_t &token)
 
 		// modify post content
 		if(mPosts.find(p.mMeta.mMsgId) != mPosts.end())
-			mPosts[p.mMeta.mMsgId]->setContent(p);
+		{
+			std::cerr << "PostedListDialog::updateCurrentDisplayComplete() updating MsgId: " << p.mMeta.mMsgId;
+			std::cerr << std::endl;
 
+			mPosts[p.mMeta.mMsgId]->setContent(p);
+		}
+		else
+		{
+			std::cerr << "PostedListDialog::updateCurrentDisplayComplete() loading New MsgId: " << p.mMeta.mMsgId;
+			std::cerr << std::endl;
+			/* insert new entry */
+			loadPost(p);
+		}
 	}
+
+	time_t now = time(NULL);
+	QMap<RsGxsMessageId, PostedItem*>::iterator pit;
+	for(pit = mPosts.begin(); pit != mPosts.end(); pit++)
+	{
+		(*pit)->mPost.calculateScores(now);
+	}
+
+	applyRanking();
 }
 
 

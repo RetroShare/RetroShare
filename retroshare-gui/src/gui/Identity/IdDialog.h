@@ -63,6 +63,9 @@ private:
 	void requestIdData(std::list<std::string> &ids);
 	void insertIdList(uint32_t token);
 
+	void requestRepList(const RsGxsGroupId &aboutId);
+	void insertRepList(uint32_t token);
+
 	void requestIdEdit(std::string &id);
 	void showIdEdit(uint32_t token);
 

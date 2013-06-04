@@ -7,7 +7,7 @@ CONFIG += test_voip
 
  #GXS Stuff.
 # This should be disabled for releases until further notice.
-#CONFIG += gxs debug
+CONFIG += gxs debug
 
 # Beware: All data of the stripped services are lost
 DEFINES *= PQI_DISABLE_TUNNEL
@@ -198,46 +198,47 @@ win32-x-g++ {
 ################################# Windows ##########################################
 
 
+
 win32 {
-	QMAKE_CC = g++
-	OBJECTS_DIR = temp/obj
-	MOC_DIR = temp/moc
-	DEFINES *= WINDOWS_SYS WIN32 STATICLIB MINGW
-	DEFINES *= MINIUPNPC_VERSION=13
-	DESTDIR = lib
+        QMAKE_CC = g++
+        OBJECTS_DIR = temp/obj
+        MOC_DIR = temp/moc
+        DEFINES *= WINDOWS_SYS WIN32 STATICLIB MINGW
+        DEFINES *= MINIUPNPC_VERSION=13
+        DESTDIR = lib
 
-	# Switch on extra warnings
-	QMAKE_CFLAGS += -Wextra
-	QMAKE_CXXFLAGS += -Wextra
+        # Switch on extra warnings
+        QMAKE_CFLAGS += -Wextra
+        QMAKE_CXXFLAGS += -Wextra
 
-	# Switch off optimization for release version
-	QMAKE_CXXFLAGS_RELEASE -= -O2
-	QMAKE_CXXFLAGS_RELEASE += -O0
-	QMAKE_CFLAGS_RELEASE -= -O2
-	QMAKE_CFLAGS_RELEASE += -O0
+        # Switch off optimization for release version
+        QMAKE_CXXFLAGS_RELEASE -= -O2
+        QMAKE_CXXFLAGS_RELEASE += -O0
+        QMAKE_CFLAGS_RELEASE -= -O2
+        QMAKE_CFLAGS_RELEASE += -O0
 
-	# Switch on optimization for debug version
-	#QMAKE_CXXFLAGS_DEBUG += -O2
-	#QMAKE_CFLAGS_DEBUG += -O2
+        # Switch on optimization for debug version
+        #QMAKE_CXXFLAGS_DEBUG += -O2
+        #QMAKE_CFLAGS_DEBUG += -O2
 
-	DEFINES += USE_CMD_ARGS
+        DEFINES += USE_CMD_ARGS
 
-	CONFIG += upnp_miniupnpc
+        CONFIG += upnp_miniupnpc
 
-	UPNPC_DIR = ../../../miniupnpc-1.3
+            UPNPC_DIR = ../../../lib/miniupnpc-1.3
+            PTHREADS_DIR = ../../../lib/pthreads-w32-2-8-0-release
+            ZLIB_DIR = ../../../lib/zlib-1.2.3
+            SSL_DIR = ../../../OpenSSL
+            OPENPGPSDK_DIR = ../../openpgpsdk/src
 
-	PTHREADS_DIR = ../../../pthreads-w32-2-8-0-release
-	ZLIB_DIR = ../../../zlib-1.2.3
-	SSL_DIR = ../../../openssl-1.0.1c
-	OPENPGPSDK_DIR = ../../openpgpsdk/src
+        INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR} $${OPENPGPSDK_DIR}
 
-	INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR} $${OPENPGPSDK_DIR}
-
-	# SQLite include path is required to compile GXS.
-	gxs {
-		SQLITE_DIR = ../../../sqlite-autoconf-3070900
-		INCLUDEPATH += $${SQLITE_DIR}
-	}
+        # SQLite include path is required to compile GXS.
+        gxs {
+                SQLITE_DIR = ../../../../Libraries/sqlite/sqlite-autoconf-3070900
+                INCLUDEPATH += . \
+                    $${SQLITE_DIR}
+        }
 }
 
 
@@ -614,8 +615,8 @@ SOURCES +=	zeroconf/p3zcnatassist.cc \
 gxs {
 	DEFINES *= RS_ENABLE_GXS
 
-#	DEFINES *= GXS_DEV_TESTNET
-#	DEFINES *= GXS_ENABLE_SYNC_MSGS
+	DEFINES *= GXS_DEV_TESTNET
+	DEFINES *= GXS_ENABLE_SYNC_MSGS
 
 	HEADERS += serialiser/rsnxsitems.h \
 		gxs/rsgds.h \
@@ -638,6 +639,7 @@ gxs {
 		gxs/gxssecurity.h \
 		gxs/rsgxsifacehelper.h \
 		gxs/gxstokenqueue.h \
+		gxs/rsgxsnetutils.h \
 		gxs/rsgxsiface.h
 
 
@@ -653,6 +655,7 @@ gxs {
 		util/rsdbbind.cc \
 		gxs/gxssecurity.cc \
 		gxs/gxstokenqueue.cc \
+		gxs/rsgxsnetutils.cc \
 		gxs/rsgxsutil.cc
 
 

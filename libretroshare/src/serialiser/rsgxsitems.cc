@@ -46,6 +46,7 @@
 		this->mCircleType = rGxsMeta.mCircleType;
 		this->mInternalCircle = rGxsMeta.mInternalCircle;
 		this->mOriginator = rGxsMeta.mOriginator;
+		this->mAuthenFlags = rGxsMeta.mAuthenFlags;
 	}
 
 

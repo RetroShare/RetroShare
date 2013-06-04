@@ -33,14 +33,43 @@
 
 #include "util/rstickevent.h"
 
+#include <retroshare/rsidentity.h>
+
 #include <map>
 #include <string>
+#include <list>
 
 /* 
  *
  */
 
+
+class PostStats
+{
+	public:
+	PostStats() :up_votes(0), down_votes(0), comments(0) { return; }
+	PostStats(int up, int down, int c) :up_votes(up), down_votes(down), comments(c) { return; }
+
+	void increment(const PostStats &s) 
+	{ 
+		up_votes += s.up_votes;
+		down_votes += s.down_votes;
+		comments += s.comments;
+		return;
+	}
+
+	int up_votes;
+	int down_votes;
+	int comments;
+	std::list<RsGxsId> voters;
+};
+
+bool encodePostedCache(std::string &str, const PostStats &s);
+bool extractPostedCache(const std::string &str, PostStats &s);
+
+
 class p3Posted: public RsGenExchange, public RsPosted, 
+	public GxsTokenQueue, 
 	public RsTickEvent	/* only needed for testing - remove after */
 {
 	public:
@@ -54,6 +83,9 @@ virtual void service_tick();
 
 virtual void notifyChanges(std::vector<RsGxsNotify*>& changes);
 
+        // Overloaded from GxsTokenQueue for Request callbacks.
+virtual void handleResponse(uint32_t token, uint32_t req_type);
+
         // Overloaded from RsTickEvent.
 virtual void handle_event(uint32_t event_type, const std::string &elabel);
 
@@ -66,13 +98,6 @@ virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsPostedPost> &p
 
         //////////////////////////////////////////////////////////////////////////////
 
-	// SPECIAL REQUEST.
-virtual bool requestPostRankings(uint32_t &token, const RankType &rType, uint32_t count, uint32_t page_no, const RsGxsGroupId &groupId);
-
-virtual bool getPostRanking(const uint32_t &token, std::vector<RsPostedPost> &msgs);
-
-
-        //////////////////////////////////////////////////////////////////////////////
 virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read);
 
 //virtual bool setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask);
@@ -126,6 +151,36 @@ virtual bool acknowledgeVote(const uint32_t& token, std::pair<RsGxsGroupId, RsGx
 
 static uint32_t postedAuthenPolicy();
 
+	bool calculateScores(RsPostedPost &post, time_t ref_time);
+
+	// Background processing.
+	void background_tick();
+
+	bool background_requestAllGroups();
+	void background_loadGroups(const uint32_t &token);
+
+	void addGroupForProcessing(RsGxsGroupId grpId);
+	void background_requestUnprocessedGroup();
+
+	void background_requestGroupMsgs(const RsGxsGroupId &grpId, bool unprocessedOnly);
+	void background_loadUnprocessedMsgs(const uint32_t &token);
+	void background_loadAllMsgs(const uint32_t &token);
+	void background_loadMsgs(const uint32_t &token, bool unprocessed);
+
+
+	void background_updateVoteCounts(const uint32_t &token);
+	bool background_cleanup();
+
+
+	RsMutex mPostedMtx; 
+
+	bool mBgProcessing;
+	bool mBgIncremental;
+        std::list<RsGxsGroupId> mBgGroupList;
+        std::map<RsGxsMessageId, PostStats> mBgStatsMap; 
+
+
+
 
 // DUMMY DATA,
 virtual bool generateDummyData();
@@ -159,5 +214,13 @@ bool generateGroup(uint32_t &token, std::string groupName);
 
 	p3GxsCommentService *mCommentService;	
 };
+
+
+
+
+
+
+
+
 
 #endif 

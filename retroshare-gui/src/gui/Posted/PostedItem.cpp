@@ -99,13 +99,58 @@ void PostedItem::setContent(const RsPostedPost &post)
 	qtime.setTime_t(mPost.mMeta.mPublishTs);
 	QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
 	dateLabel->setText(timestamp);
-	fromLabel->setText(QString::fromUtf8(post.mMeta.mAuthorId.c_str()));
+	fromLabel->setId(post.mMeta.mAuthorId);
 	titleLabel->setText("<a href=" + QString::fromStdString(post.mLink) +
 					   "><span style=\" text-decoration: underline; color:#0000ff;\">" +
 					   QString::fromStdString(post.mMeta.mMsgName) + "</span></a>");
 	siteLabel->setText("<a href=" + QString::fromStdString(post.mLink) +
 					   "><span style=\" text-decoration: underline; color:#0000ff;\">" +
 					   QString::fromStdString(post.mLink) + "</span></a>");
+
+	//QString score = "Hot" + QString::number(post.mHotScore);
+	//score += " Top" + QString::number(post.mTopScore); 
+	//score += " New" + QString::number(post.mNewScore);
+
+	QString score = QString::number(post.mTopScore);
+
+	scoreLabel->setText(score); 
+
+	// FIX THIS UP LATER.
+	//notes->setPlainText(QString::fromUtf8(post.mNotes.c_str()));
+	// differences between Feed or Top of Comment.
+	if (mParent)
+	{
+		// feed.
+		//frame_notes->hide();
+		//frame_comment->show();
+		commentButton->show();
+
+		if (post.mComments)
+		{
+			QString commentText = QString::number(post.mComments);
+			commentText += " ";
+			commentText += tr("Comments");
+			commentButton->setText(commentText);
+		}
+		else
+		{
+			commentButton->setText(tr("Comment"));
+		}
+	}
+	else
+	{
+		// no feed.
+		//frame_notes->show();
+		//frame_comment->hide();
+		commentButton->hide();
+	}
+
+	// disable voting buttons - if they have already voted.
+	if (post.mMeta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_VOTE_MASK)
+	{
+		voteUpButton->setEnabled(false);
+		voteDownButton->setEnabled(false);
+	}
 
 	uint32_t up, down, nComments;
 
@@ -137,6 +182,9 @@ void PostedItem::makeDownVote()
 	RsGxsGrpMsgIdPair msgId;
 	msgId.first = mPost.mMeta.mGroupId;
 	msgId.second = mPost.mMeta.mMsgId;
+
+	voteUpButton->setEnabled(false);
+	voteDownButton->setEnabled(false);
 	emit vote(msgId, false);
 }
 
@@ -145,6 +193,10 @@ void PostedItem::makeUpVote()
 	RsGxsGrpMsgIdPair msgId;
 	msgId.first = mPost.mMeta.mGroupId;
 	msgId.second = mPost.mMeta.mMsgId;
+
+	voteUpButton->setEnabled(false);
+	voteDownButton->setEnabled(false);
+
 	emit vote(msgId, true);
 }
 

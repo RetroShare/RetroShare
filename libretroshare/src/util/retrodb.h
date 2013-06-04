@@ -52,12 +52,17 @@ public:
      * @param dbPath path to data base file
      * @param flags determine where to open read only or read/write
      */
-    RetroDb(const std::string& dbPath, int flags);
+    RetroDb(const std::string& dbPath, int flags, const std::string& key = "");
 
     /*!
      * closes db if it is not already closed
      */
     ~RetroDb();
+
+    /*!
+     * @return key used to encrypt database
+     */
+    std::string getKey() const;
 
     /*!
      * opens sqlite data base
@@ -173,7 +178,7 @@ private:
 private:
 
     sqlite3* mDb;
-
+    const std::string mKey;
 };
 
 /*!

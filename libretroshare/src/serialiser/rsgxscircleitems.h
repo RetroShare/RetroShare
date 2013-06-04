@@ -38,16 +38,18 @@
 const uint8_t RS_PKT_SUBTYPE_GXSCIRCLE_GROUP_ITEM = 0x02;
 const uint8_t RS_PKT_SUBTYPE_GXSCIRCLE_MSG_ITEM = 0x03;
 
-const uint16_t GXSCIRCLE_GXSIDSET	= 0x0001;
-const uint16_t GXSCIRCLE_SUBCIRCLESET	= 0x0002;
+const uint16_t GXSCIRCLE_PGPIDSET	= 0x0001;
+const uint16_t GXSCIRCLE_GXSIDSET	= 0x0002;
+const uint16_t GXSCIRCLE_SUBCIRCLESET	= 0x0003;
 
 class RsGxsCircleGroupItem : public RsGxsGrpItem
 {
 
 public:
 
-	RsGxsCircleGroupItem():  RsGxsGrpItem(RS_SERVICE_GXSV1_TYPE_GXSCIRCLE,
+	RsGxsCircleGroupItem():  RsGxsGrpItem(RS_SERVICE_GXSV2_TYPE_GXSCIRCLE,
 			RS_PKT_SUBTYPE_GXSCIRCLE_GROUP_ITEM), 
+			pgpIdSet(GXSCIRCLE_PGPIDSET), 
 			gxsIdSet(GXSCIRCLE_GXSIDSET), 
 			subCircleSet(GXSCIRCLE_SUBCIRCLESET) { return;}
         virtual ~RsGxsCircleGroupItem() { return;}
@@ -59,7 +61,8 @@ public:
 	bool convertTo(RsGxsCircleGroup &group) const;
 
 	// DIFFERENT FROM OTHER ONES, as stupid serialisation otherwise.
-	RsTlvStringSet gxsIdSet;
+	RsTlvStringSet pgpIdSet; // For Local Groups.
+	RsTlvStringSet gxsIdSet; // For External Groups.
 	RsTlvStringSet subCircleSet;
 };
 
@@ -67,7 +70,7 @@ class RsGxsCircleMsgItem : public RsGxsMsgItem
 {
 public:
 
-	RsGxsCircleMsgItem(): RsGxsMsgItem(RS_SERVICE_GXSV1_TYPE_GXSCIRCLE,
+	RsGxsCircleMsgItem(): RsGxsMsgItem(RS_SERVICE_GXSV2_TYPE_GXSCIRCLE,
 			RS_PKT_SUBTYPE_GXSCIRCLE_MSG_ITEM) {return; }
         virtual ~RsGxsCircleMsgItem() { return;}
         void clear();
@@ -80,7 +83,7 @@ class RsGxsCircleSerialiser : public RsSerialType
 public:
 
 	RsGxsCircleSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXSV1_TYPE_GXSCIRCLE)
+	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXSV2_TYPE_GXSCIRCLE)
 	{ return; }
 	virtual     ~RsGxsCircleSerialiser() { return; }
 

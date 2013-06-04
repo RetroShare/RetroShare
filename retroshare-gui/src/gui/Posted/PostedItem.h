@@ -42,6 +42,9 @@ public:
         RsPostedPost getPost() const;
         void setContent(const RsPostedPost& post);
 
+	// Make this public so we can sort based on it.
+        RsPostedPost mPost;
+
 private slots:
         void loadComments();
         void makeUpVote();
@@ -54,13 +57,11 @@ protected:
 	virtual void loadMessage(const uint32_t &token);
 
 private:
-
 	void setup();
 
 	uint32_t     mType;
         bool mSelected;
 
-        RsPostedPost mPost;
 
 };
 

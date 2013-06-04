@@ -89,7 +89,7 @@ RsItem* RsGxsChannelSerialiser::deserialise(void* data, uint32_t* size)
 	uint32_t rstype = getRsItemId(data);
 		
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXSV1_TYPE_CHANNELS != getRsItemService(rstype)))
+		(RS_SERVICE_GXSV2_TYPE_CHANNELS != getRsItemService(rstype)))
 	{
 #ifdef GXSCHANNEL_DEBUG
 		std::cerr << "RsGxsChannelSerialiser::deserialise() ERROR Wrong Type" << std::endl;
@@ -255,7 +255,7 @@ RsGxsChannelGroupItem* RsGxsChannelSerialiser::deserialiseGxsChannelGroupItem(vo
 	
 	
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXSV1_TYPE_CHANNELS != getRsItemService(rstype)) ||
+		(RS_SERVICE_GXSV2_TYPE_CHANNELS != getRsItemService(rstype)) ||
 		(RS_PKT_SUBTYPE_GXSCHANNEL_GROUP_ITEM != getRsItemSubType(rstype)))
 	{
 #ifdef GXSCHANNEL_DEBUG
@@ -478,7 +478,7 @@ RsGxsChannelPostItem* RsGxsChannelSerialiser::deserialiseGxsChannelPostItem(void
 	
 	
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXSV1_TYPE_CHANNELS != getRsItemService(rstype)) ||
+		(RS_SERVICE_GXSV2_TYPE_CHANNELS != getRsItemService(rstype)) ||
 		(RS_PKT_SUBTYPE_GXSCHANNEL_POST_ITEM != getRsItemSubType(rstype)))
 	{
 #ifdef GXSCHANNEL_DEBUG

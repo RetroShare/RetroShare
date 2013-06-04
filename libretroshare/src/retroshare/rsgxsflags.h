@@ -89,15 +89,23 @@ namespace GXS_SERV {
 
     /** START GXS Msg status flags **/
 
-    static const uint32_t GXS_MSG_STATUS_UNPROCESSED = 0x0000001;
+    /*!
+     * Two lower bytes are reserved for Generic STATUS Flags listed here.
+     * Services are free to use the two upper bytes. (16 flags).
+     *
+     * NOTE: RsGxsCommentService uses 0x000f0000.
+     */
+    static const uint32_t GXS_MSG_STATUS_GEN_MASK  = 0x0000ffff;
 
-    static const uint32_t GXS_MSG_STATUS_UNREAD = 0x000002;
+    static const uint32_t GXS_MSG_STATUS_UNPROCESSED = 0x00000001;
 
-    static const uint32_t GXS_MSG_STATUS_READ = 0x000004;
+    static const uint32_t GXS_MSG_STATUS_UNREAD = 0x00000002;
 
-    static const uint32_t GXS_MSG_STATUS_KEEP = 0x000008;
+    static const uint32_t GXS_MSG_STATUS_READ = 0x00000004;
 
-    static const uint32_t GXS_MSG_STATUS_DELETE = 0x0000020;
+    static const uint32_t GXS_MSG_STATUS_KEEP = 0x00000008;
+
+    static const uint32_t GXS_MSG_STATUS_DELETE = 0x000000020;
 
     /** END GXS Msg status flags **/
 

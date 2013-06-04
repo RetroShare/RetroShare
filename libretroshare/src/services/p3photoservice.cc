@@ -87,7 +87,7 @@ std::ostream &operator<<(std::ostream &out, const RsPhotoAlbum &album)
 }
 
 p3PhotoService::p3PhotoService(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs* gixs)
-    : RsGenExchange(gds, nes, new RsGxsPhotoSerialiser(), RS_SERVICE_GXSV1_TYPE_PHOTO, gixs, photoAuthenPolicy()),
+    : RsGenExchange(gds, nes, new RsGxsPhotoSerialiser(), RS_SERVICE_GXSV2_TYPE_PHOTO, gixs, photoAuthenPolicy()),
     mPhotoMutex(std::string("Photo Mutex"))
 {
 }

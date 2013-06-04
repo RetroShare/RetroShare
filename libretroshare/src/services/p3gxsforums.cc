@@ -51,7 +51,7 @@ RsGxsForums *rsGxsForums = NULL;
 /********************************************************************************/
 
 p3GxsForums::p3GxsForums(RsGeneralDataService *gds, RsNetworkExchangeService *nes, RsGixs* gixs)
-    : RsGenExchange(gds, nes, new RsGxsForumSerialiser(), RS_SERVICE_GXSV1_TYPE_FORUMS, gixs, forumsAuthenPolicy()), RsGxsForums(this)
+    : RsGenExchange(gds, nes, new RsGxsForumSerialiser(), RS_SERVICE_GXSV2_TYPE_FORUMS, gixs, forumsAuthenPolicy()), RsGxsForums(this)
 {
 	// For Dummy Msgs.
 	mGenActive = false;

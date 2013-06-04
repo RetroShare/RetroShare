@@ -205,6 +205,7 @@ bool RsNxsSerialiser::serialiseNxsSynMsgItem(RsNxsSyncMsgItem *item, void *data,
     ok &= setRawUInt8(data, *size, &offset, item->flag);
     ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
     ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_MSGID, item->msgId);
+    ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_NAME, item->authorId);
 
     if(offset != tlvsize){
 #ifdef RSSERIAL_DEBUG
@@ -454,6 +455,7 @@ bool RsNxsSerialiser::serialiseNxsSyncGrpItem(RsNxsSyncGrpItem *item, void *data
     ok &= setRawUInt8(data, *size, &offset, item->flag);
     ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
     ok &= setRawUInt32(data, *size, &offset, item->publishTs);
+    ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_NAME, item->authorId);
 
     if(offset != tlvsize){
 #ifdef RSSERIAL_DEBUG
@@ -777,6 +779,7 @@ RsNxsSyncGrpItem* RsNxsSerialiser::deserialNxsSyncGrpItem(void *data, uint32_t *
     ok &= getRawUInt8(data, *size, &offset, &(item->flag));
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
     ok &= getRawUInt32(data, *size, &offset, &(item->publishTs));
+    ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_NAME, item->authorId);
 
     if (offset != rssize)
     {
@@ -912,6 +915,7 @@ RsNxsSyncMsgItem* RsNxsSerialiser::deserialNxsSyncMsgItem(void *data, uint32_t *
     ok &= getRawUInt8(data, *size, &offset, &(item->flag));
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_MSGID, item->msgId);
+    ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_NAME, item->authorId);
 
     if (offset != rssize)
     {
@@ -1066,6 +1070,7 @@ uint32_t RsNxsSerialiser::sizeNxsSyncGrpItem(RsNxsSyncGrpItem *item)
     s += 4; // publishTs
     s += 1; // flag
     s += GetTlvStringSize(item->grpId);
+    s += GetTlvStringSize(item->authorId);
 
     return s;
 }
@@ -1094,6 +1099,7 @@ uint32_t RsNxsSerialiser::sizeNxsSyncMsgItem(RsNxsSyncMsgItem *item)
     s += 1; // flag
     s += GetTlvStringSize(item->grpId);
     s += GetTlvStringSize(item->msgId);
+    s += GetTlvStringSize(item->authorId);
 
     return s;
 }
@@ -1152,6 +1158,7 @@ void RsNxsSyncGrpItem::clear()
     flag = 0;
     publishTs = 0;
     grpId.clear();
+    authorId.clear();
 }
 
 void RsNxsSyncMsgItem::clear()
@@ -1159,6 +1166,7 @@ void RsNxsSyncMsgItem::clear()
     flag = 0;
     msgId.clear();
     grpId.clear();
+    authorId.clear();
 }
 
 void RsNxsTransac::clear(){
@@ -1230,6 +1238,8 @@ std::ostream& RsNxsSyncGrpItem::print(std::ostream &out, uint16_t indent)
     out << "grpId: " << grpId << std::endl;
     printIndent(out , int_Indent);
     out << "publishTs: " << publishTs << std::endl;
+    printIndent(out , int_Indent);
+	out << "authorId: " << authorId << std::endl;
 
     printRsItemEnd(out , "RsNxsSyncGrpItem", indent);
     return out;
@@ -1249,6 +1259,8 @@ std::ostream& RsNxsSyncMsgItem::print(std::ostream &out, uint16_t indent)
     printIndent(out , int_Indent);
     out << "msgId: " << msgId << std::endl;
     printIndent(out , int_Indent);
+    out << "authorId: " << authorId << std::endl;
+	printIndent(out , int_Indent);
 
     printRsItemEnd(out ,"RsNxsSyncMsgItem", indent);
     return out;

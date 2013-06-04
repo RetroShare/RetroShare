@@ -2270,7 +2270,7 @@ int RsServer::StartupRetroShare()
         // the given ssl user id then this directory is cleaned
         // and deleted
         std::string priorGxsDir = "./" + mLinkMgr->getOwnId() + "/";
-	std::string currGxsDir = RsInitConfig::configDir + "/GXS_phase1";
+	std::string currGxsDir = RsInitConfig::configDir + "/GXS_phase2";
 
 #ifdef GXS_DEV_TESTNET // Different Directory for testing.
 	currGxsDir += "_TESTNET3";
@@ -2297,7 +2297,7 @@ int RsServer::StartupRetroShare()
         /**** Identity service ****/
 
         RsGeneralDataService* gxsid_ds = new RsDataService(currGxsDir + "/", "gxsid_db",
-                        RS_SERVICE_GXSV1_TYPE_GXSID, NULL);
+                        RS_SERVICE_GXSV2_TYPE_GXSID, NULL, RsInitConfig::passwd);
 
 #ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         gxsid_ds->resetDataStore(); 
@@ -2306,15 +2306,20 @@ int RsServer::StartupRetroShare()
         // init gxs services
         mGxsIdService = new p3IdService(gxsid_ds, NULL);
 
+        RsGeneralDataService* gxscircles_ds = new RsDataService(currGxsDir + "/", "gxscircles_db",
+                        RS_SERVICE_GXSV2_TYPE_GXSCIRCLE, NULL, RsInitConfig::passwd);
+
+        mGxsCircles = new p3GxsCircles(gxscircles_ds, NULL, mGxsIdService);
+
         // create GXS photo service
         RsGxsNetService* gxsid_ns = new RsGxsNetService(
-                        RS_SERVICE_GXSV1_TYPE_GXSID, gxsid_ds, nxsMgr, mGxsIdService);
+                        RS_SERVICE_GXSV2_TYPE_GXSID, gxsid_ds, nxsMgr,
+                        mGxsIdService, mGxsIdService, mGxsCircles);
 
         /**** GxsCircle service ****/
 
 
-        RsGeneralDataService* gxscircles_ds = new RsDataService(currGxsDir + "/", "gxscircles_db",
-                        RS_SERVICE_GXSV1_TYPE_GXSCIRCLE, NULL);
+
 
 #ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         gxscircles_ds->resetDataStore(); 
@@ -2325,12 +2330,13 @@ int RsServer::StartupRetroShare()
 
         // create GXS Circle service
         RsGxsNetService* gxscircles_ns = new RsGxsNetService(
-                        RS_SERVICE_GXSV1_TYPE_GXSCIRCLE, gxscircles_ds, nxsMgr, mGxsCircles);
+                        RS_SERVICE_GXSV2_TYPE_GXSCIRCLE, gxscircles_ds, nxsMgr,
+                        mGxsCircles, mGxsIdService, mGxsCircles);
 
 
         /**** Photo service ****/
         RsGeneralDataService* photo_ds = new RsDataService(currGxsDir + "/", "photoV2_db",
-                        RS_SERVICE_GXSV1_TYPE_PHOTO, NULL);
+                        RS_SERVICE_GXSV2_TYPE_PHOTO, NULL, RsInitConfig::passwd);
 
 #ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         photo_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
@@ -2341,14 +2347,14 @@ int RsServer::StartupRetroShare()
 
         // create GXS photo service
         RsGxsNetService* photo_ns = new RsGxsNetService(
-                        RS_SERVICE_GXSV1_TYPE_PHOTO, photo_ds, nxsMgr, mPhoto);
+                        RS_SERVICE_GXSV2_TYPE_PHOTO, photo_ds, nxsMgr, mPhoto, mGxsIdService, mGxsCircles);
 
         /**** Posted GXS service ****/
 
 
 
         RsGeneralDataService* posted_ds = new RsDataService(currGxsDir + "/", "posted_db",
-                                                            RS_SERVICE_GXSV1_TYPE_POSTED);
+                                                            RS_SERVICE_GXSV2_TYPE_POSTED, NULL, RsInitConfig::passwd);
 
 #ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         posted_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
@@ -2358,7 +2364,7 @@ int RsServer::StartupRetroShare()
 
         // create GXS photo service
         RsGxsNetService* posted_ns = new RsGxsNetService(
-                        RS_SERVICE_GXSV1_TYPE_POSTED, posted_ds, nxsMgr, mPosted);
+                        RS_SERVICE_GXSV2_TYPE_POSTED, posted_ds, nxsMgr, mPosted, mGxsIdService, mGxsCircles);
 
 
         /**** Wiki GXS service ****/
@@ -2366,7 +2372,8 @@ int RsServer::StartupRetroShare()
 
 
         RsGeneralDataService* wiki_ds = new RsDataService(currGxsDir + "/", "wiki_db",
-                                                            RS_SERVICE_GXSV1_TYPE_WIKI);
+                                                            RS_SERVICE_GXSV2_TYPE_WIKI,
+                                                            NULL, RsInitConfig::passwd);
 
 #ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         wiki_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
@@ -2376,14 +2383,14 @@ int RsServer::StartupRetroShare()
 
         // create GXS photo service
         RsGxsNetService* wiki_ns = new RsGxsNetService(
-                        RS_SERVICE_GXSV1_TYPE_WIKI, wiki_ds, nxsMgr, mWiki);
+                        RS_SERVICE_GXSV2_TYPE_WIKI, wiki_ds, nxsMgr, mWiki, mGxsIdService, mGxsCircles);
 
 
         /**** Wire GXS service ****/
 
 
         RsGeneralDataService* wire_ds = new RsDataService(currGxsDir + "/", "wire_db",
-                                                            RS_SERVICE_GXSV1_TYPE_WIRE);
+                                                            RS_SERVICE_GXSV2_TYPE_WIRE, NULL, RsInitConfig::passwd);
 
 #ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         wire_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
@@ -2393,13 +2400,13 @@ int RsServer::StartupRetroShare()
 
         // create GXS photo service
         RsGxsNetService* wire_ns = new RsGxsNetService(
-                        RS_SERVICE_GXSV1_TYPE_WIRE, wire_ds, nxsMgr, mWire);
+                        RS_SERVICE_GXSV2_TYPE_WIRE, wire_ds, nxsMgr, mWire, mGxsIdService, mGxsCircles);
 
 
         /**** Forum GXS service ****/
 
         RsGeneralDataService* gxsforums_ds = new RsDataService(currGxsDir + "/", "gxsforums_db",
-                                                            RS_SERVICE_GXSV1_TYPE_FORUMS);
+                                                            RS_SERVICE_GXSV2_TYPE_FORUMS, NULL, RsInitConfig::passwd);
 
 #ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         gxsforums_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
@@ -2409,13 +2416,14 @@ int RsServer::StartupRetroShare()
 
         // create GXS photo service
         RsGxsNetService* gxsforums_ns = new RsGxsNetService(
-                        RS_SERVICE_GXSV1_TYPE_FORUMS, gxsforums_ds, nxsMgr, mGxsForums);
+                        RS_SERVICE_GXSV2_TYPE_FORUMS, gxsforums_ds, nxsMgr,
+                        mGxsForums, mGxsIdService, mGxsCircles);
 
 
         /**** Channel GXS service ****/
 
         RsGeneralDataService* gxschannels_ds = new RsDataService(currGxsDir + "/", "gxschannels_db",
-                                                            RS_SERVICE_GXSV1_TYPE_CHANNELS);
+                                                            RS_SERVICE_GXSV2_TYPE_CHANNELS, NULL, RsInitConfig::passwd);
 
 #ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
        gxschannels_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
@@ -2425,12 +2433,13 @@ int RsServer::StartupRetroShare()
 
         // create GXS photo service
         RsGxsNetService* gxschannels_ns = new RsGxsNetService(
-                        RS_SERVICE_GXSV1_TYPE_CHANNELS, gxschannels_ds, nxsMgr, mGxsChannels);
+                        RS_SERVICE_GXSV2_TYPE_CHANNELS, gxschannels_ds, nxsMgr,
+                        mGxsChannels, mGxsIdService, mGxsCircles);
 
         // now add to p3service
         pqih->addService(gxsid_ns);
-        //pqih->addService(gxscircles_ns);
-        //pqih->addService(photo_ns);
+        pqih->addService(gxscircles_ns);
+        pqih->addService(photo_ns);
         pqih->addService(posted_ns);
         pqih->addService(wiki_ns);
         pqih->addService(gxsforums_ns);
@@ -2670,7 +2679,7 @@ int RsServer::StartupRetroShare()
 	/*** start up GXS core runner ***/
 	createThread(*mGxsIdService);
 	createThread(*mGxsCircles);
-	//createThread(*mPhoto);
+	createThread(*mPhoto);
 	createThread(*mPosted);
 	createThread(*mWiki);
 	createThread(*mWire);

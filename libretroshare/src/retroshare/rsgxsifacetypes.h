@@ -10,6 +10,9 @@
 
 #include <map>
 #include <vector>
+#include <string>
+#include <inttypes.h>
+
 
 typedef std::string RsGxsGroupId;
 typedef std::string RsGxsMessageId;
@@ -60,6 +63,7 @@ public:
     // for circles
     std::string mCircleId;
     uint32_t mCircleType;
+    uint32_t mAuthenFlags;
 
     // BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
 

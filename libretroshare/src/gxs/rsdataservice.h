@@ -52,7 +52,8 @@ class RsDataService : public RsGeneralDataService
 {
 public:
 
-    RsDataService(const std::string& serviceDir, const std::string& dbName, uint16_t serviceType, RsGxsSearchModule* mod = NULL);
+    RsDataService(const std::string& serviceDir, const std::string& dbName, uint16_t serviceType,
+    		RsGxsSearchModule* mod = NULL, const std::string& key = "");
     virtual ~RsDataService();
 
     /*!
@@ -211,6 +212,7 @@ private:
      * @param msgIds
      */
     bool locked_removeMessageEntries(const GxsMsgReq& msgIds);
+    bool locked_removeGroupEntries(const std::vector<std::string>& grpIds);
 
     typedef std::map<RsGxsGroupId, std::vector<MsgUpdate> > MsgUpdates;
 
@@ -228,9 +230,6 @@ private:
 
 private:
 
-
-    RetroDb* mDb;
-
     RsMutex mDbMutex;
 
     std::list<std::string> msgColumns;
@@ -242,6 +241,8 @@ private:
 
     std::string mServiceDir, mDbName;
     uint16_t mServType;
+
+    RetroDb* mDb;
 };
 
 #endif // RSDATASERVICE_H

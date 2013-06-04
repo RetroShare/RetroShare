@@ -87,7 +87,7 @@ RsItem* RsGxsPostedSerialiser::deserialise(void *data, uint32_t *size)
 	uint32_t rstype = getRsItemId(data);
 
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-			(RS_SERVICE_GXSV1_TYPE_POSTED != getRsItemService(rstype)))
+			(RS_SERVICE_GXSV2_TYPE_POSTED != getRsItemService(rstype)))
 	{
 			std::cerr << "RsGxsPostedSerialiser::deserialise() ERROR Wrong Type";
 			std::cerr << std::endl;
@@ -207,7 +207,7 @@ RsGxsPostedPostItem* RsGxsPostedSerialiser::deserialiseGxsPostedPostItem(void *d
 	uint32_t offset = 0;
 
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-			(RS_SERVICE_GXSV1_TYPE_POSTED != getRsItemService(rstype)) ||
+			(RS_SERVICE_GXSV2_TYPE_POSTED != getRsItemService(rstype)) ||
 			(RS_PKT_SUBTYPE_POSTED_POST_ITEM != getRsItemSubType(rstype)))
 	{
 			std::cerr << "RsGxsPostedSerialiser::deserialiseGxsPostedPostItem() FAIL wrong type" << std::endl;
@@ -347,7 +347,7 @@ RsGxsPostedGroupItem* RsGxsPostedSerialiser::deserialiseGxsPostedGroupItem(void 
 
 
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-			(RS_SERVICE_GXSV1_TYPE_POSTED != getRsItemService(rstype)) ||
+			(RS_SERVICE_GXSV2_TYPE_POSTED != getRsItemService(rstype)) ||
 			(RS_PKT_SUBTYPE_POSTED_GRP_ITEM != getRsItemSubType(rstype)))
 	{
 			std::cerr << "RsGxsPostedSerialiser::deserialiseGxsPostedGroupItem() FAIL wrong type" << std::endl;

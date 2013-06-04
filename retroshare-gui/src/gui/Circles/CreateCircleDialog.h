@@ -39,6 +39,9 @@ public:
 	CreateCircleDialog();
 	~CreateCircleDialog();
 
+	void editNewId(bool isExternal);
+	void editExistingId(std::string circleId);
+
 #if 0
 	void newMsg(); /* cleanup */
 #endif
@@ -52,6 +55,9 @@ private slots:
 
 	void selectedId(QTreeWidgetItem*, QTreeWidgetItem*);
 	void selectedMember(QTreeWidgetItem*, QTreeWidgetItem*);
+
+	void createCircle();
+	void cancelDialog();
 
 #if 0
 	/** Create the context popup menu and it's submenus */
@@ -94,13 +100,18 @@ private:
 	RsGroupMetaData mForumMeta;
 #endif
 
-	void  createCircle();
+	void setupForPersonalCircle();
+	void setupForExternalCircle();
+
+	bool mIsExistingCircle;
+	bool mIsExternalCircle;
 
 	void loadCircle(uint32_t token);
 	void loadIdentities(uint32_t token);
 
 	void requestCircle(const RsGxsGroupId &groupId);
-	void requestIdentities();
+	void requestGxsIdentities();
+	void getPgpIdentities();
 
 	TokenQueue *mCircleQueue;
 	TokenQueue *mIdQueue;

@@ -25,6 +25,7 @@
 
 #include "rsgxsutil.h"
 #include "retroshare/rsgxsflags.h"
+#include "pqi/pqihash.h"
 
 
 RsGxsMessageCleanUp::RsGxsMessageCleanUp(RsGeneralDataService* const dataService, uint32_t messageStorePeriod, uint32_t chunkSize)
@@ -102,3 +103,79 @@ bool RsGxsMessageCleanUp::clean()
 
 	return mGrpMeta.empty();
 }
+
+RsGxsIntegrityCheck::RsGxsIntegrityCheck(
+		RsGeneralDataService* const dataService) :
+		mDs(dataService), mDone(false), mIntegrityMutex("integrity")
+{ }
+
+void RsGxsIntegrityCheck::run()
+{
+	check();
+}
+
+bool RsGxsIntegrityCheck::check()
+{
+
+	// first take out all the groups
+	std::map<RsGxsGroupId, RsNxsGrp*> grp;
+	mDs->retrieveNxsGrps(grp, true, true);
+	std::vector<RsGxsGroupId> grpsToDel;
+
+	// compute hash and compare to stored value, if it fails then simply add it
+	// to list
+	std::map<RsGxsGroupId, RsNxsGrp*>::iterator git = grp.begin();
+	for(; git != grp.end(); git++)
+	{
+		RsNxsGrp* grp = git->second;
+		std::string currHash;
+		pqihash pHash;
+		pHash.addData(grp->grp.bin_data, grp->grp.bin_len);
+		pHash.Complete(currHash);
+
+		if(currHash != grp->metaData->mHash) grpsToDel.push_back(grp->grpId);
+		delete grp;
+	}
+
+	mDs->removeGroups(grpsToDel);
+
+	// now messages
+	GxsMsgReq msgsToDel;
+	GxsMsgResult msgs;
+
+	mDs->retrieveNxsMsgs(msgsToDel, msgs, false, true);
+
+	GxsMsgResult::iterator mit = msgs.begin();
+
+	for(; mit != msgs.begin(); mit++)
+	{
+		std::vector<RsNxsMsg*>& msgV = mit->second;
+		std::vector<RsNxsMsg*>::iterator vit = msgV.begin();
+
+		for(; vit != msgV.end(); vit++)
+		{
+			RsNxsMsg* msg = *vit;
+			std::string currHash;
+			pqihash pHash;
+			pHash.addData(msg->msg.bin_data, msg->msg.bin_len);
+			pHash.Complete(currHash);
+
+			if(currHash != msg->metaData->mHash) msgsToDel[msg->grpId].push_back(msg->msgId);
+			delete msg;
+		}
+	}
+
+	mDs->removeMsgs(msgsToDel);
+
+	RsStackMutex stack(mIntegrityMutex);
+	mDone = true;
+
+	return true;
+}
+
+bool RsGxsIntegrityCheck::isDone()
+{
+	RsStackMutex stack(mIntegrityMutex);
+	return mDone;
+}
+

@@ -65,11 +65,11 @@ RsGxsChannels *rsGxsChannels = NULL;
 /********************************************************************************/
 
 p3GxsChannels::p3GxsChannels(RsGeneralDataService *gds, RsNetworkExchangeService *nes, RsGixs* gixs)
-    : RsGenExchange(gds, nes, new RsGxsChannelSerialiser(), RS_SERVICE_GXSV1_TYPE_CHANNELS, gixs, channelsAuthenPolicy()), RsGxsChannels(this), GxsTokenQueue(this)
+    : RsGenExchange(gds, nes, new RsGxsChannelSerialiser(), RS_SERVICE_GXSV2_TYPE_CHANNELS, gixs, channelsAuthenPolicy()), RsGxsChannels(this), GxsTokenQueue(this)
 {
 	// For Dummy Msgs.
 	mGenActive = false;
-	mCommentService = new p3GxsCommentService(this,  RS_SERVICE_GXSV1_TYPE_CHANNELS);
+	mCommentService = new p3GxsCommentService(this,  RS_SERVICE_GXSV2_TYPE_CHANNELS);
 
 	RsTickEvent::schedule_in(CHANNEL_PROCESS, 0);
 
@@ -473,6 +473,10 @@ void p3GxsChannels::request_SpecificUnprocessedPosts(std::list<std::pair<RsGxsGr
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
+	// Only Fetch UNPROCESSED messages.
+	opts.mStatusFilter = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED;
+	opts.mStatusMask = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED;
+
 	uint32_t token = 0;
 
 	/* organise Ids how they want them */
@@ -500,6 +504,9 @@ void p3GxsChannels::request_GroupUnprocessedPosts(const std::list<RsGxsGroupId> 
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
+	// Only Fetch UNPROCESSED messages.
+	opts.mStatusFilter = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED;
+	opts.mStatusMask = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED;
 	
 	uint32_t token = 0;
 
@@ -560,6 +567,8 @@ void p3GxsChannels::handleUnprocessedPost(const RsGxsChannelPost &msg)
 	if (!IS_MSG_UNPROCESSED(msg.mMeta.mMsgStatus))
 	{
        		std::cerr << "p3GxsChannels::handleUnprocessedPost() Msg already Processed";
+		std::cerr << std::endl;
+       		std::cerr << "p3GxsChannels::handleUnprocessedPost() ERROR - this should not happen";
 		std::cerr << std::endl;
 		return;
 	}

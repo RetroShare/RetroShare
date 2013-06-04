@@ -83,7 +83,7 @@ RsItem* RsGxsIdSerialiser::deserialise(void* data, uint32_t* size)
 	uint32_t rstype = getRsItemId(data);
 		
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXSV1_TYPE_GXSID != getRsItemService(rstype)))
+		(RS_SERVICE_GXSV2_TYPE_GXSID != getRsItemService(rstype)))
 	{
 		return NULL; /* wrong type */
 	}
@@ -210,7 +210,7 @@ RsGxsIdGroupItem* RsGxsIdSerialiser::deserialiseGxsIdGroupItem(void *data, uint3
 	
 	
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXSV1_TYPE_GXSID != getRsItemService(rstype)) ||
+		(RS_SERVICE_GXSV2_TYPE_GXSID != getRsItemService(rstype)) ||
 		(RS_PKT_SUBTYPE_GXSID_GROUP_ITEM != getRsItemSubType(rstype)))
 	{
 #ifdef GXSID_DEBUG
@@ -271,9 +271,8 @@ RsGxsIdGroupItem* RsGxsIdSerialiser::deserialiseGxsIdGroupItem(void *data, uint3
 void RsGxsIdOpinionItem::clear()
 {
 	opinion.mOpinion = 0;
-
-	// Others that aren't serialised. - but should be cleared anyway
 	opinion.mReputation = 0;
+	opinion.mComment = "";
 }
 
 std::ostream& RsGxsIdOpinionItem::print(std::ostream& out, uint16_t indent)
@@ -283,6 +282,10 @@ std::ostream& RsGxsIdOpinionItem::print(std::ostream& out, uint16_t indent)
 
 	printIndent(out, int_Indent);
 	out << "Opinion: " << opinion.mOpinion << std::endl;
+	printIndent(out, int_Indent);
+	out << "Reputation: " << opinion.mReputation << std::endl;
+	printIndent(out, int_Indent);
+	out << "Comment: " << opinion.mComment << std::endl;
   
 	printRsItemEnd(out ,"RsGxsIdOpinionItem", indent);
 	return out;
@@ -296,6 +299,8 @@ uint32_t RsGxsIdSerialiser::sizeGxsIdOpinionItem(RsGxsIdOpinionItem *item)
 	uint32_t s = 8; // header
 
 	s += 4; // mOpinion.
+	s += 4; // mReputation.
+	s += GetTlvStringSize(opinion.mComment);
 
 	return s;
 }
@@ -326,6 +331,8 @@ bool RsGxsIdSerialiser::serialiseGxsIdOpinionItem(RsGxsIdOpinionItem *item, void
 	
 	/* GxsIdOpinionItem */
 	ok &= setRawUInt32(data, tlvsize, &offset, item->opinion.mOpinion);
+	ok &= setRawUInt32(data, tlvsize, &offset, item->opinion.mReputation);
+	ok &= SetTlvString(data, tlvsize, &offset, 1, item->opinion.mComment);
 	
 	if(offset != tlvsize)
 	{
@@ -356,7 +363,7 @@ RsGxsIdOpinionItem* RsGxsIdSerialiser::deserialiseGxsIdOpinionItem(void *data, u
 	
 	
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXSV1_TYPE_GXSID != getRsItemService(rstype)) ||
+		(RS_SERVICE_GXSV2_TYPE_GXSID != getRsItemService(rstype)) ||
 		(RS_PKT_SUBTYPE_GXSID_OPINION_ITEM != getRsItemSubType(rstype)))
 	{
 #ifdef GXSID_DEBUG
@@ -383,6 +390,8 @@ RsGxsIdOpinionItem* RsGxsIdSerialiser::deserialiseGxsIdOpinionItem(void *data, u
 	offset += 8;
 	
 	ok &= getRawUInt32(data, rssize, &offset, &(item->opinion.mOpinion));
+	ok &= getRawUInt32(data, rssize, &offset, &(item->opinion.mReputation));
+	ok &= GetTlvString(data, rssize, &offset, 1, item->opinion.mComment);
 	
 	if (offset != rssize)
 	{
@@ -496,7 +505,7 @@ RsGxsIdCommentItem* RsGxsIdSerialiser::deserialiseGxsIdCommentItem(void *data, u
 	
 	
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXSV1_TYPE_GXSID != getRsItemService(rstype)) ||
+		(RS_SERVICE_GXSV2_TYPE_GXSID != getRsItemService(rstype)) ||
 		(RS_PKT_SUBTYPE_GXSID_COMMENT_ITEM != getRsItemSubType(rstype)))
 	{
 #ifdef GXSID_DEBUG

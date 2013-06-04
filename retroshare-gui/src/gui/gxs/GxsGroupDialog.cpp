@@ -102,7 +102,8 @@ void GxsGroupDialog::init()
 	/* Setup Reasonable Defaults */
 
 	ui.idChooser->loadIds(0,"");
-	ui.circleComboBox->loadCircles(0);
+	ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL);
+	ui.localComboBox->loadCircles(GXS_CIRCLE_CHOOSER_PERSONAL);
 
 	initMode();
 }
@@ -351,7 +352,14 @@ void GxsGroupDialog::createGroup()
 	meta.mGroupFlags = flags;
 	meta.mSignFlags = getGroupSignFlags();
 
-	setCircleParameters(meta);
+	if (!setCircleParameters(meta))
+	{
+			/* error message */
+			QMessageBox::warning(this, "RetroShare", tr("Invalid Circle Selection - Personal disabled for now"), QMessageBox::Ok, QMessageBox::Ok);
+			return; //Don't add with invalid circle.
+	}
+
+
     	ui.idChooser->getChosenId(meta.mAuthorId);
 
 	if (service_CreateGroup(token, meta))
@@ -458,9 +466,13 @@ void GxsGroupDialog::updateCircleOptions()
 	}
 }
 
-void GxsGroupDialog::setCircleParameters(RsGroupMetaData &meta)
+bool GxsGroupDialog::setCircleParameters(RsGroupMetaData &meta)
 {
-	bool problem = false;
+	meta.mCircleType = GXS_CIRCLE_TYPE_PUBLIC;
+	meta.mCircleId.clear();
+	meta.mOriginator.clear();
+	meta.mInternalCircle.clear();
+
 	if (ui.typePublic->isChecked())
 	{
 		meta.mCircleType = GXS_CIRCLE_TYPE_PUBLIC;
@@ -471,31 +483,26 @@ void GxsGroupDialog::setCircleParameters(RsGroupMetaData &meta)
 		meta.mCircleType = GXS_CIRCLE_TYPE_EXTERNAL;
 		if (!ui.circleComboBox->getChosenCircle(meta.mCircleId))
 		{
-			problem = true;
+			return false;
 		}
 	}
-	else if (ui.typeGroup->isChecked())
+	else if (ui.typeLocal->isChecked())
 	{
 		meta.mCircleType = GXS_CIRCLE_TYPE_YOUREYESONLY;
 		meta.mCircleId.clear();
 		meta.mOriginator.clear();
 		meta.mInternalCircle = "Internal Circle Id";
 	
-		problem = true;
+		if (!ui.localComboBox->getChosenCircle(meta.mInternalCircle))
+		{
+			return false;
+		}
 	}
 	else
 	{
-		problem = true;
+		return false;
 	}
-
-	if (problem)
-	{
-		// error.
-		meta.mCircleType = GXS_CIRCLE_TYPE_PUBLIC;
-		meta.mCircleId.clear();
-		meta.mOriginator.clear();
-		meta.mInternalCircle.clear();
-	}
+	return true;
 }
 
 

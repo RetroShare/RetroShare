@@ -36,6 +36,7 @@
 #include "gxssecurity.h"
 #include "util/contentvalue.h"
 #include "retroshare/rsgxsflags.h"
+#include "retroshare/rsgxscircles.h"
 #include "rsgixs.h"
 #include "rsgxsutil.h"
 
@@ -55,6 +56,7 @@
 #define GEN_EXCH_DEBUG	1
 
 #define MSG_CLEANUP_PERIOD 60*5 // 5 minutes
+#define INTEGRITY_CHECK_PERIOD 60*30 //  30 minutes
 
 RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService *ns,
                              RsSerialType *serviceSerialiser, uint16_t servType, RsGixs* gixs,
@@ -64,7 +66,8 @@ RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService
     CREATE_FAIL(0), CREATE_SUCCESS(1), CREATE_FAIL_TRY_LATER(2), SIGN_MAX_ATTEMPTS(5),
     SIGN_FAIL(0), SIGN_SUCCESS(1), SIGN_FAIL_TRY_LATER(2),
     VALIDATE_FAIL(0), VALIDATE_SUCCESS(1), VALIDATE_FAIL_TRY_LATER(2), VALIDATE_MAX_ATTEMPTS(5),
-    mCleaning(false), mLastClean(time(NULL)), mMsgCleanUp(NULL)
+    mCleaning(false), mLastClean(time(NULL)), mMsgCleanUp(NULL), mChecking(false), mIntegrityCheck(NULL),
+    mLastCheck(time(NULL))
 {
 
     mDataAccess = new RsGxsDataAccess(gds);
@@ -144,6 +147,28 @@ void RsGenExchange::tick()
 		{
 			mMsgCleanUp = new RsGxsMessageCleanUp(mDataStore, MESSAGE_STORE_PERIOD, 1);
 			mCleaning = true;
+		}
+	}
+
+	now = time(NULL);
+	if(mChecking || (mLastCheck + INTEGRITY_CHECK_PERIOD < now))
+	{
+		if(mIntegrityCheck)
+		{
+			if(mIntegrityCheck->isDone())
+			{
+				mIntegrityCheck->join();
+				delete mIntegrityCheck;
+				mIntegrityCheck = NULL;
+				mLastCheck = time(NULL);
+				mChecking = false;
+			}
+		}
+		else
+		{
+			mIntegrityCheck = new RsGxsIntegrityCheck(mDataStore);
+			mIntegrityCheck->start();
+			mChecking = true;
 		}
 	}
 }
@@ -1585,6 +1610,7 @@ void RsGenExchange::publishMsgs()
 		mMsgsToPublish.insert(std::make_pair(sign_it->first, item.mItem));
 	}
 
+	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgChangeMap;
 	std::map<uint32_t, RsGxsMsgItem*>::iterator mit = mMsgsToPublish.begin();
 
 	for(; mit != mMsgsToPublish.end(); mit++)
@@ -1700,13 +1726,16 @@ void RsGenExchange::publishMsgs()
 				msg->metaData->mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_UNREAD;
 				msgId = msg->msgId;
 				grpId = msg->grpId;
+				computeHash(msg->msg, msg->metaData->mHash);
 				mDataAccess->addMsgData(msg);
+				msgChangeMap[grpId].push_back(msgId);
 
 				delete[] metaDataBuff;
 
 				// add to published to allow acknowledgement
 				mMsgNotify.insert(std::make_pair(mit->first, std::make_pair(grpId, msgId)));
 				mDataAccess->updatePublicRequestStatus(mit->first, RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE);
+
 			}
 			else
 			{
@@ -1738,6 +1767,14 @@ void RsGenExchange::publishMsgs()
 	// clear msg item map as we're done publishing them and all
 	// entries are invalid
 	mMsgsToPublish.clear();
+
+	if(!msgChangeMap.empty())
+	{
+		RsGxsMsgChange* ch = new RsGxsMsgChange(RsGxsNotify::TYPE_PUBLISH);
+		ch->msgChangeMap = msgChangeMap;
+		mNotifications.push_back(ch);
+	}
+
 }
 
 RsGenExchange::ServiceCreate_Return RsGenExchange::service_CreateGroup(RsGxsGrpItem* /* grpItem */,
@@ -1873,6 +1910,7 @@ void RsGenExchange::publishGrps()
 					if(mDataStore->validSize(grp) && serialOk)
 					{
 						grpId = grp->grpId;
+						computeHash(grp->grp, grp->metaData->mHash);
 						mDataAccess->addGroupData(grp);
 					}
 					else
@@ -1932,6 +1970,7 @@ void RsGenExchange::publishGrps()
 
     std::map<uint32_t, GrpNote>::iterator mit = toNotify.begin();
 
+    std::list<RsGxsGroupId> grpChanged;
     for(; mit != toNotify.end(); mit++)
     {
     	GrpNote& note = mit->second;
@@ -1940,6 +1979,16 @@ void RsGenExchange::publishGrps()
 
     	mGrpNotify.insert(std::make_pair(mit->first, note.second));
 		mDataAccess->updatePublicRequestStatus(mit->first, status);
+
+		if(note.first)
+			grpChanged.push_back(note.second);
+    }
+
+    if(!grpChanged.empty())
+    {
+    	RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISH);
+    	gc->mGrpIdList = grpChanged;
+    	mNotifications.push_back(gc);
     }
 
 }
@@ -1997,6 +2046,12 @@ void RsGenExchange::processRecvdData()
 }
 
 
+void RsGenExchange::computeHash(const RsTlvBinaryData& data, std::string& hash)
+{
+	pqihash pHash;
+	pHash.addData(data.bin_data, data.bin_len);
+	pHash.Complete(hash);
+}
 
 void RsGenExchange::processRecvdMessages()
 {
@@ -2070,6 +2125,8 @@ void RsGenExchange::processRecvdMessages()
                 		getMsgIdPair(*msg));
 
                 if(validated_entry != mMsgPendingValidate.end()) mMsgPendingValidate.erase(validated_entry);
+
+                computeHash(msg->msg, meta->mHash);
             }
         }
         else
@@ -2128,7 +2185,7 @@ void RsGenExchange::processRecvdMessages()
     if(!msgIds.empty())
     {
         mDataStore->storeMessage(msgs);
-        RsGxsMsgChange* c = new RsGxsMsgChange();
+        RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_RECEIVE);
         c->msgChangeMap = msgIds;
         mNotifications.push_back(c);
     }
@@ -2167,6 +2224,11 @@ void RsGenExchange::processRecvdGroups()
         	{
 				meta->mGroupStatus = GXS_SERV::GXS_GRP_STATUS_UNPROCESSED | GXS_SERV::GXS_GRP_STATUS_UNREAD;
 				meta->mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED;
+
+				if(meta->mCircleType == GXS_CIRCLE_TYPE_YOUREYESONLY)
+					meta->mOriginator = grp->PeerId();
+
+				computeHash(grp->grp, meta->mHash);
 				grps.insert(std::make_pair(grp, meta));
 				grpIds.push_back(grp->grpId);
 
@@ -2215,7 +2277,7 @@ void RsGenExchange::processRecvdGroups()
 
     if(!grpIds.empty())
     {
-        RsGxsGroupChange* c = new RsGxsGroupChange();
+        RsGxsGroupChange* c = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVE);
         c->mGrpIdList = grpIds;
         mNotifications.push_back(c);
         mDataStore->storeGroup(grps);

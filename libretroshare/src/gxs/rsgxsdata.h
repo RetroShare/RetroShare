@@ -65,6 +65,7 @@ public:
     RsTlvSecurityKeySet keys;
 
     std::string mServiceString;
+    uint32_t mAuthenFlags;
 
     // BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
 
@@ -77,6 +78,7 @@ public:
     uint32_t    mGroupStatus;
     std::string mOriginator;
     std::string mInternalCircle;
+    std::string mHash;
 };
 
 
@@ -115,6 +117,7 @@ public:
 
     uint32_t    mMsgStatus;
     time_t      mChildTs;
+    std::string mHash;
     bool validated;
 
 };

@@ -50,6 +50,10 @@ typedef std::string RsCircleInternalId;
 #define GXS_CIRCLE_TYPE_PUBLIC            0x0001
 #define GXS_CIRCLE_TYPE_EXTERNAL          0x0002
 #define GXS_CIRCLE_TYPE_YOUREYESONLY      0x0003
+#define GXS_CIRCLE_TYPE_LOCAL		  0x0004
+
+// A special one - used only by Circles themselves - meaning Circle ID == Group ID.
+#define GXS_CIRCLE_TYPE_EXT_SELF	  0x0005	
 
 /* Permissions is part of GroupMetaData 
  */
@@ -71,6 +75,7 @@ class RsGxsCircleGroup
 	public:
 	RsGroupMetaData mMeta; // includes GxsPermissions, for control of group distribution.
 
+	std::list<RsPgpId> mLocalFriends;
 	std::list<RsGxsId> mInvitedMembers;
 	std::list<RsGxsCircleId> mSubCircles;
 
@@ -94,6 +99,10 @@ class RsGxsCircleDetails
         public:
         RsGxsCircleId mCircleId;
         std::string mCircleName;
+
+	uint32_t    mCircleType;
+	bool 	    mIsExternal;
+
         std::set<RsGxsId> mUnknownPeers;
         std::map<RsPgpId, std::list<RsGxsId> > mAllowedPeers;
 };
@@ -112,7 +121,8 @@ virtual ~RsGxsCircles() { return; }
 
 	/* External Interface (Cached stuff) */
 virtual bool getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails &details) = 0;
-virtual bool getCircleIdList(std::list<RsGxsCircleId> &circleIds) = 0;
+virtual bool getCircleExternalIdList(std::list<RsGxsCircleId> &circleIds) = 0;
+virtual bool getCirclePersonalIdList(std::list<RsGxsCircleId> &circleIds) = 0;
 
 	/* standard load */
 virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsCircleGroup> &groups) = 0;
