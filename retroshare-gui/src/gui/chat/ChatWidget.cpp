@@ -550,7 +550,9 @@ void ChatWidget::contextMenu(QPoint point)
 	QAction *action = contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
 	action->setDisabled(RSLinkClipboard::empty());
 	contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste my certificate link"), this, SLOT(pasteOwnCertificateLink()));
+#ifdef ENABLE_DISTANT_CHAT_AND_MSGS
 	contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste/Create private chat or Message link..."), this, SLOT(pasteCreateMsgLink()));
+#endif
 
 	contextMnu->exec(QCursor::pos());
 	delete(contextMnu);
