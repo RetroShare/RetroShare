@@ -243,6 +243,7 @@ void ConnectFriendWizard::initializePage(int id)
 			ui->_anonymous_routing_CB_2->setChecked(peerDetails.service_perm_flags & RS_SERVICE_PERM_TURTLE) ;
 			ui->_discovery_CB_2        ->setChecked(peerDetails.service_perm_flags & RS_SERVICE_PERM_DISCOVERY) ;
 			ui->_forums_channels_CB_2  ->setChecked(peerDetails.service_perm_flags & RS_SERVICE_PERM_DISTRIB) ;
+			ui->_direct_transfer_CB_2  ->setChecked(peerDetails.service_perm_flags & RS_SERVICE_PERM_DIRECT_DL) ;
 
 			//set the radio button to sign the GPG key
 			if (peerDetails.accept_connection && !peerDetails.ownsign) {
@@ -520,10 +521,12 @@ ServicePermissionFlags ConnectFriendWizard::serviceFlags() const
 		if(ui->_anonymous_routing_CB->isChecked()) flags |= RS_SERVICE_PERM_TURTLE ;
 		if(        ui->_discovery_CB->isChecked()) flags |= RS_SERVICE_PERM_DISCOVERY ;
 		if(  ui->_forums_channels_CB->isChecked()) flags |= RS_SERVICE_PERM_DISTRIB ;
+		if(  ui->_direct_transfer_CB->isChecked()) flags |= RS_SERVICE_PERM_DIRECT_DL ;
 	} else if (hasVisitedPage(Page_Conclusion)) {
 		if(ui->_anonymous_routing_CB_2->isChecked()) flags |= RS_SERVICE_PERM_TURTLE ;
 		if(        ui->_discovery_CB_2->isChecked()) flags |= RS_SERVICE_PERM_DISCOVERY ;
 		if(  ui->_forums_channels_CB_2->isChecked()) flags |= RS_SERVICE_PERM_DISTRIB ;
+		if(  ui->_direct_transfer_CB_2->isChecked()) flags |= RS_SERVICE_PERM_DIRECT_DL ;
 	}
 	return flags ;
 }

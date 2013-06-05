@@ -137,6 +137,7 @@ void ConfCertDialog::setServiceFlags()
 	 if(ui._anonymous_routing_CB->isChecked()) flags = flags | RS_SERVICE_PERM_TURTLE ;
 	 if(        ui._discovery_CB->isChecked()) flags = flags | RS_SERVICE_PERM_DISCOVERY ;
 	 if(  ui._forums_channels_CB->isChecked()) flags = flags | RS_SERVICE_PERM_DISTRIB ;
+	 if(  ui._direct_transfer_CB->isChecked()) flags = flags | RS_SERVICE_PERM_DIRECT_DL ;
 
 	 rsPeers->setServicePermissionFlags(detail.gpg_id,flags) ;
 }
@@ -175,6 +176,7 @@ void ConfCertDialog::load()
 	 ui._anonymous_routing_CB->setChecked(detail.service_perm_flags & RS_SERVICE_PERM_TURTLE    ) ;
 	 ui._discovery_CB->setChecked(        detail.service_perm_flags & RS_SERVICE_PERM_DISCOVERY ) ;
 	 ui._forums_channels_CB->setChecked(  detail.service_perm_flags & RS_SERVICE_PERM_DISTRIB   ) ;
+	 ui._direct_transfer_CB->setChecked(  detail.service_perm_flags & RS_SERVICE_PERM_DIRECT_DL ) ;
 
     ui.name->setText(QString::fromUtf8(detail.name.c_str()));
     ui.peerid->setText(QString::fromStdString(detail.id));

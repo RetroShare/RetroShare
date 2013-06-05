@@ -56,6 +56,7 @@
 #include "pqi/pqinotify.h"
 
 #include "retroshare/rsiface.h"
+#include "retroshare/rspeers.h"
 
 #include "serialiser/rsconfigitems.h"
 #include <stdio.h>
@@ -293,8 +294,9 @@ void ftController::searchForDirectSources()
 
 				if(mSearch->search(it->first, RS_FILE_HINTS_REMOTE | RS_FILE_HINTS_SPEC_ONLY, info))
 					for(std::list<TransferInfo>::const_iterator pit = info.peers.begin(); pit != info.peers.end(); pit++)
-						if(it->second->mTransfer->addFileSource(pit->peerId)) /* if the sources don't exist already - add in */
-							setPeerState(it->second->mTransfer, pit->peerId, FT_CNTRL_STANDARD_RATE, mLinkMgr->isOnline( pit->peerId ));
+						if(rsPeers->servicePermissionFlags_sslid(pit->peerId) & RS_SERVICE_PERM_DIRECT_DL)
+							if(it->second->mTransfer->addFileSource(pit->peerId)) /* if the sources don't exist already - add in */
+								setPeerState(it->second->mTransfer, pit->peerId, FT_CNTRL_STANDARD_RATE, mLinkMgr->isOnline( pit->peerId ));
 			}
 }
 

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>603</width>
-    <height>474</height>
+    <height>624</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -701,6 +701,13 @@
               </property>
              </widget>
             </item>
+            <item>
+             <widget class="QCheckBox" name="_direct_transfer_CB">
+              <property name="text">
+               <string>Use as direct source, when available</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </widget>
          </item>
@@ -916,6 +923,13 @@
         <widget class="QCheckBox" name="_discovery_CB_2">
          <property name="text">
           <string>Discovery</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="_direct_transfer_CB_2">
+         <property name="text">
+          <string>Direct source</string>
          </property>
         </widget>
        </item>
