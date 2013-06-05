@@ -47,8 +47,8 @@
 
 /****
  * #define CHAT_DEBUG 1
+ * #define DEBUG_DISTANT_CHAT 1
  ****/
-#define DEBUG_DISTANT_CHAT 
 
 static const int 		CONNECTION_CHALLENGE_MAX_COUNT 	  =   20 ; // sends a connexion challenge every 20 messages
 static const time_t	CONNECTION_CHALLENGE_MAX_MSG_AGE	  =   30 ; // maximum age of a message to be used in a connexion challenge

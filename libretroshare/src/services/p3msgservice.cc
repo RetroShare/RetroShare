@@ -45,7 +45,7 @@
 #include <iomanip>
 #include <map>
 
-#define DEBUG_DISTANT_MSG
+//#define DEBUG_DISTANT_MSG
 
 const int msgservicezone = 54319;
 
