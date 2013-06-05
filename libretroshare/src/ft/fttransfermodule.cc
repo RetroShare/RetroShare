@@ -27,8 +27,6 @@
  * #define FT_DEBUG 1
  *****/
 
-#define USE_NEW_CHUNK_CHECKING_CODE
-
 #include "retroshare/rsturtle.h"
 #include "fttransfermodule.h"
 
@@ -630,17 +628,9 @@ void ftTransferModule::forceCheck()
 	std::cerr << "ftTransferModule::forceCheck(): setting flags to force check." << std::endl ;
 #endif
 
-#ifndef USE_NEW_CHUNK_CHECKING_CODE
-	mFlag = FT_TM_FLAG_CHUNK_CRC ;	// Ask for CRC map.
-
-	 // setup flags for CRC state machine to work properly
-	_crcmap_state = FT_TM_CRC_MAP_STATE_DONT_HAVE ;
-	_crcmap_last_asked_time = 0 ;
-#else
 	mFileCreator->forceCheck() ;
 	mFlag = FT_TM_FLAG_DOWNLOADING ;	// Ask for CRC map.
 	mFileStatus.stat = ftFileStatus::PQIFILE_DOWNLOADING;
-#endif
 }
 
 bool ftTransferModule::checkCRC()
