@@ -172,7 +172,7 @@ void PeerNode::provideFileHash(const std::string& hash)
 void PeerNode::manageFileHash(const std::string& hash)
 {
 	_managed_hashes.insert(hash) ;
-	_turtle->monitorFileTunnels("file 1",hash,10000) ;
+	_turtle->monitorTunnels(hash,_ftserver) ;
 }
 
 void PeerNode::getTrafficInfo(NodeTrafficInfo& info)
