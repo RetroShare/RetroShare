@@ -26,6 +26,7 @@
 #include "ChatDialog.h"
 #include "gui/common/PeerDefs.h"
 #include "PopupChatDialog.h"
+#include "PopupDistantChatDialog.h"
 #include "ChatLobbyDialog.h"
 #include "PopupChatWindow.h"
 #include "gui/settings/rsharesettings.h"
@@ -91,10 +92,18 @@ void ChatDialog::init(const std::string &peerId, const QString &title)
 	ChatDialog *cd = getExistingChat(peerId);
 
 	if (cd == NULL) {
-		ChatLobbyId lobby_id;
+		ChatLobbyId lobby_id = 0;
+		bool distant_peer = false ;
+
 		if (rsMsgs->isLobbyId(peerId, lobby_id)) {
 			chatflags = RS_CHAT_OPEN | RS_CHAT_FOCUS; // use own flags
 		}
+
+		uint32_t distant_peer_status ;
+		std::string distant_chat_pgp_id ;
+
+		if(rsMsgs->getDistantChatStatus(peerId,distant_peer_status,distant_chat_pgp_id)) 
+			chatflags = RS_CHAT_OPEN | RS_CHAT_FOCUS; // use own flags
 
 		if (chatflags & RS_CHAT_OPEN) {
 			if (lobby_id) {
@@ -108,6 +117,12 @@ void ChatDialog::init(const std::string &peerId, const QString &title)
 						cd->init(peerId, QString::fromUtf8((*it).lobby_name.c_str()));
 					}
 				}
+			} else if(distant_peer_status > 0) {
+				cd = new PopupDistantChatDialog();
+				chatDialogs[peerId] = cd;
+				std::string peer_name = rsPeers->getGPGName(distant_chat_pgp_id) ;
+				cd->init(peerId, tr("Talking to ")+QString::fromStdString(peer_name)+" (PGP id="+QString::fromStdString(distant_chat_pgp_id)+")") ;
+
 			} else {
 				RsPeerDetails sslDetails;
 				if (rsPeers->getPeerDetails(peerId, sslDetails)) {

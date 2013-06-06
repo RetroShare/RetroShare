@@ -26,6 +26,7 @@
 #include "ui_NewsFeed.h"
 
 #include "gui/feeds/FeedHolder.h"
+#include <retroshare-gui/RsAutoUpdatePage.h>
 class RsFeedItem;
 
 class ForumNewItem;
@@ -33,7 +34,7 @@ class ChanMsgItem;
 class ChatMsgItem;
 class FeedNotify;
 
-class NewsFeed : public MainPage, public FeedHolder, private Ui::NewsFeed
+class NewsFeed : public RsAutoUpdatePage, public FeedHolder, private Ui::NewsFeed
 {
   Q_OBJECT
 
@@ -52,6 +53,7 @@ public:
   static void testFeeds(uint notifyFlags);
   static void testFeed(FeedNotify *feedNotify);
 
+  virtual void updateDisplay();
 signals:
   void newsFeedChanged(int count);
 
@@ -59,7 +61,6 @@ private slots:
  // void toggleChanMsgItems(bool on);
   void feedoptions();
  
-  void updateFeed();
   void removeAll();
   void itemDestroyed(QObject*);
 

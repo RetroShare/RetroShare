@@ -4,6 +4,7 @@
 #include <iostream>
 #include "turtletypes.h"
 #include "rsturtleitem.h"
+#include "turtleclientservice.h"
 
 //#define P3TURTLE_DEBUG
 // -----------------------------------------------------------------------------------//
@@ -90,98 +91,14 @@ uint32_t RsTurtleTunnelOkItem::serial_size()
 	return s ;
 }
 
-uint32_t RsTurtleFileRequestItem::serial_size()
+uint32_t RsTurtleGenericDataItem::serial_size()
 {
 	uint32_t s = 0 ;
 
 	s += 8 ; // header
 	s += 4 ; // tunnel id 
-	s += 8 ; // file offset
-	s += 4 ; // chunk size
-
-	return s ;
-}
-
-uint32_t RsTurtleFileDataItem::serial_size()
-{
-	uint32_t s = 0 ;
-
-	s += 8 ; // header
-	s += 4 ; // tunnel id 
-	s += 8 ; // file offset
-	s += 4 ; // chunk size
-	s += chunk_size ;	// actual data size.
-
-	return s ;
-}
-
-uint32_t RsTurtleFileMapRequestItem::serial_size()
-{
-	uint32_t s = 0 ;
-
-	s += 8 ; // header
-	s += 4 ; // tunnel id 
-	s += 4 ; // direction
-
-	return s ;
-}
-
-uint32_t RsTurtleFileMapItem::serial_size()
-{
-	uint32_t s = 0 ;
-
-	s += 8 ; // header
-	s += 4 ; // tunnel id 
-	s += 4 ; // direction
-	s += 4 ; // compressed_map.size()
-
-	s += 4 * compressed_map._map.size() ;
-
-	return s ;
-}
-
-uint32_t RsTurtleFileCrcRequestItem::serial_size()
-{
-	uint32_t s = 0 ;
-
-	s += 8 ; // header
-	s += 4 ; // tunnel id 
-
-	return s ;
-}
-uint32_t RsTurtleChunkCrcItem::serial_size()
-{
-	uint32_t s = 0 ;
-
-	s += 8 ; // header
-	s += 4 ; // tunnel id 
-	s += 4 ; // chunk number
-	s += 20 ; // check_sum 
-
-	return s ;
-}
-uint32_t RsTurtleChunkCrcRequestItem::serial_size()
-{
-	uint32_t s = 0 ;
-
-	s += 8 ; // header
-	s += 4 ; // tunnel id 
-	s += 4 ; // chunk number
-
-	return s ;
-}
-uint32_t RsTurtleFileCrcItem::serial_size()
-{
-	uint32_t s = 0 ;
-
-	s += 8 ; // header
-	s += 4 ; // tunnel id 
-
-	s += 4 ; // size of _map
-	s += 4 ; // size of _crcs
-
-	s += 4 * crc_map._crcs.size() ;
-	s += 4 * crc_map._ccmap._map.size() ;
+	s += 4 ; // data size
+	s += data_size ; // data
 
 	return s ;
 }
@@ -216,19 +133,21 @@ RsItem *RsTurtleSerialiser::deserialise(void *data, uint32_t *size)
 			case RS_TURTLE_SUBTYPE_SEARCH_RESULT			:	return new RsTurtleSearchResultItem(data,*size) ;
 			case RS_TURTLE_SUBTYPE_OPEN_TUNNEL  			:	return new RsTurtleOpenTunnelItem(data,*size) ;
 			case RS_TURTLE_SUBTYPE_TUNNEL_OK    			:	return new RsTurtleTunnelOkItem(data,*size) ;
-			case RS_TURTLE_SUBTYPE_FILE_REQUEST 			:	return new RsTurtleFileRequestItem(data,*size) ;
-			case RS_TURTLE_SUBTYPE_FILE_DATA    			:	return new RsTurtleFileDataItem(data,*size) ;
-			case RS_TURTLE_SUBTYPE_FILE_MAP_REQUEST		:	return new RsTurtleFileMapRequestItem(data,*size) ;
-			case RS_TURTLE_SUBTYPE_FILE_MAP     			:	return new RsTurtleFileMapItem(data,*size) ;
-			case RS_TURTLE_SUBTYPE_FILE_CRC_REQUEST		:	return new RsTurtleFileCrcRequestItem(data,*size) ;
-			case RS_TURTLE_SUBTYPE_FILE_CRC     			:	return new RsTurtleFileCrcItem(data,*size) ;
-			case RS_TURTLE_SUBTYPE_CHUNK_CRC_REQUEST		:	return new RsTurtleChunkCrcRequestItem(data,*size) ;
-			case RS_TURTLE_SUBTYPE_CHUNK_CRC     			:	return new RsTurtleChunkCrcItem(data,*size) ;
-
+			case RS_TURTLE_SUBTYPE_GENERIC_DATA 			:	return new RsTurtleGenericDataItem(data,*size) ;
+																			
 			default:
-																std::cerr << "Unknown packet type in RsTurtle!" << std::endl ;
-																return NULL ;
+																			break ;
 		}
+		// now try all client services
+		//
+		RsItem *item = NULL ;
+
+		for(uint32_t i=0;i<_client_services.size();++i)
+			if((item = _client_services[i]->deserialiseItem(data,*size)) != NULL)
+				return item ;
+
+		std::cerr << "Unknown packet type in RsTurtle (not even handled by client services)!" << std::endl ;
+		return NULL ;
 #ifndef WINDOWS_SYS
 	}
 	catch(std::exception& e)
@@ -240,224 +159,6 @@ RsItem *RsTurtleSerialiser::deserialise(void *data, uint32_t *size)
 
 }
 
-bool RsTurtleFileMapRequestItem::serialize(void *data,uint32_t& pktsize)
-{
-	uint32_t tlvsize = serial_size();
-	uint32_t offset = 0;
-
-	if (pktsize < tlvsize)
-		return false; /* not enough space */
-
-	pktsize = tlvsize;
-
-	bool ok = true;
-
-	ok &= setRsItemHeader(data,tlvsize,PacketId(), tlvsize);
-
-	/* skip the header */
-	offset += 8;
-
-	/* add mandatory parts first */
-
-	ok &= setRawUInt32(data, tlvsize, &offset, tunnel_id);
-	ok &= setRawUInt32(data, tlvsize, &offset, direction);
-
-	if (offset != tlvsize)
-	{
-		ok = false;
-#ifdef RSSERIAL_DEBUG
-		std::cerr << "RsFileConfigSerialiser::serialiseTransfer() Size Error! " << std::endl;
-#endif
-	}
-
-	return ok;
-}
-
-bool RsTurtleFileMapItem::serialize(void *data,uint32_t& pktsize)
-{
-	uint32_t tlvsize = serial_size();
-	uint32_t offset = 0;
-
-	if (pktsize < tlvsize)
-		return false; /* not enough space */
-
-	pktsize = tlvsize;
-
-	bool ok = true;
-
-	ok &= setRsItemHeader(data,tlvsize,PacketId(), tlvsize);
-
-	/* skip the header */
-	offset += 8;
-
-	/* add mandatory parts first */
-
-	ok &= setRawUInt32(data, tlvsize, &offset, tunnel_id);
-	ok &= setRawUInt32(data, tlvsize, &offset, direction);
-	ok &= setRawUInt32(data, tlvsize, &offset, compressed_map._map.size());
-
-	for(uint32_t i=0;i<compressed_map._map.size() && ok;++i)
-		ok &= setRawUInt32(data, tlvsize, &offset, compressed_map._map[i]);
-
-	if (offset != tlvsize)
-	{
-		ok = false;
-#ifdef RSSERIAL_DEBUG
-		std::cerr << "RsFileConfigSerialiser::serialiseTransfer() Size Error! " << std::endl;
-#endif
-	}
-
-	return ok;
-}
-
-bool RsTurtleFileCrcRequestItem::serialize(void *data,uint32_t& pktsize)
-{
-#ifdef P3TURTLE_DEBUG
-	std::cerr << "RsTurtleFileCrcRequestItem::serialize(): serializing packet:" << std::endl ;
-	print(std::cerr,2) ;
-#endif
-	uint32_t tlvsize = serial_size();
-	uint32_t offset = 0;
-
-	if (pktsize < tlvsize)
-		return false; /* not enough space */
-
-	pktsize = tlvsize;
-
-	bool ok = true;
-
-	ok &= setRsItemHeader(data,tlvsize,PacketId(), tlvsize);
-
-	/* skip the header */
-	offset += 8;
-
-	/* add mandatory parts first */
-
-	ok &= setRawUInt32(data, tlvsize, &offset, tunnel_id);
-
-	if (offset != tlvsize)
-	{
-		ok = false;
-		std::cerr << "RsFileConfigSerialiser::serialiseTransfer() Size Error! " << std::endl;
-	}
-
-	return ok;
-}
-
-bool RsTurtleChunkCrcRequestItem::serialize(void *data,uint32_t& pktsize)
-{
-#ifdef P3TURTLE_DEBUG
-	std::cerr << "RsTurtleChunkCrcRequestItem::serialize(): serializing packet:" << std::endl ;
-	print(std::cerr,2) ;
-#endif
-	uint32_t tlvsize = serial_size();
-	uint32_t offset = 0;
-
-	if (pktsize < tlvsize)
-		return false; /* not enough space */
-
-	pktsize = tlvsize;
-
-	bool ok = true;
-
-	ok &= setRsItemHeader(data,tlvsize,PacketId(), tlvsize);
-
-	/* skip the header */
-	offset += 8;
-
-	/* add mandatory parts first */
-
-	ok &= setRawUInt32(data, tlvsize, &offset, tunnel_id);
-	ok &= setRawUInt32(data, tlvsize, &offset, chunk_number);
-
-	if (offset != tlvsize)
-	{
-		ok = false;
-		std::cerr << "RsFileConfigSerialiser::serialiseTransfer() Size Error! " << std::endl;
-	}
-
-	return ok;
-}
-bool RsTurtleFileCrcItem::serialize(void *data,uint32_t& pktsize)
-{
-#ifdef P3TURTLE_DEBUG
-	std::cerr << "RsTurtleFileCrcItem::serialize(): serializing packet:" << std::endl ;
-	print(std::cerr,2) ;
-#endif
-	uint32_t tlvsize = serial_size();
-	uint32_t offset = 0;
-
-	if (pktsize < tlvsize)
-		return false; /* not enough space */
-
-	pktsize = tlvsize;
-
-	bool ok = true;
-
-	ok &= setRsItemHeader(data,tlvsize,PacketId(), tlvsize);
-
-	/* skip the header */
-	offset += 8;
-
-	/* add mandatory parts first */
-
-	ok &= setRawUInt32(data, tlvsize, &offset, tunnel_id);
-	ok &= setRawUInt32(data, tlvsize, &offset, crc_map._ccmap._map.size());
-	ok &= setRawUInt32(data, tlvsize, &offset, crc_map._crcs.size());
-
-	for(uint32_t i=0;i<crc_map._ccmap._map.size() && ok;++i)
-		ok &= setRawUInt32(data, tlvsize, &offset, crc_map._ccmap._map[i]);
-
-	for(uint32_t i=0;i<crc_map._crcs.size() && ok;++i)
-		ok &= setRawUInt32(data, tlvsize, &offset, crc_map._crcs[i]);
-
-	if (offset != tlvsize)
-	{
-		ok = false;
-		std::cerr << "RsFileConfigSerialiser::serialiseTransfer() Size Error! " << std::endl;
-	}
-
-	return ok;
-}
-bool RsTurtleChunkCrcItem::serialize(void *data,uint32_t& pktsize)
-{
-#ifdef P3TURTLE_DEBUG
-	std::cerr << "RsTurtleChunkCrcRequestItem::serialize(): serializing packet:" << std::endl ;
-	print(std::cerr,2) ;
-#endif
-	uint32_t tlvsize = serial_size();
-	uint32_t offset = 0;
-
-	if (pktsize < tlvsize)
-		return false; /* not enough space */
-
-	pktsize = tlvsize;
-
-	bool ok = true;
-
-	ok &= setRsItemHeader(data,tlvsize,PacketId(), tlvsize);
-
-	/* skip the header */
-	offset += 8;
-
-	/* add mandatory parts first */
-
-	ok &= setRawUInt32(data, tlvsize, &offset, tunnel_id);
-	ok &= setRawUInt32(data, tlvsize, &offset, chunk_number);
-	ok &= setRawUInt32(data, tlvsize, &offset, check_sum.fourbytes[0]);
-	ok &= setRawUInt32(data, tlvsize, &offset, check_sum.fourbytes[1]);
-	ok &= setRawUInt32(data, tlvsize, &offset, check_sum.fourbytes[2]);
-	ok &= setRawUInt32(data, tlvsize, &offset, check_sum.fourbytes[3]);
-	ok &= setRawUInt32(data, tlvsize, &offset, check_sum.fourbytes[4]);
-
-	if (offset != tlvsize)
-	{
-		ok = false;
-		std::cerr << "RsFileConfigSerialiser::serialiseTransfer() Size Error! " << std::endl;
-	}
-
-	return ok;
-}
 bool RsTurtleStringSearchRequestItem::serialize(void *data,uint32_t& pktsize)
 {
 	uint32_t tlvsize = serial_size();
@@ -648,169 +349,6 @@ bool RsTurtleSearchResultItem::serialize(void *data,uint32_t& pktsize)
 	return ok;
 }
 
-RsTurtleFileMapItem::RsTurtleFileMapItem(void *data,uint32_t pktsize)
-	: RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_MAP)
-{
-	setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FILE_MAP) ;
-#ifdef P3TURTLE_DEBUG
-	std::cerr << "  type = file map item" << std::endl ;
-#endif
-	uint32_t offset = 8; // skip the header 
-
-	/* add mandatory parts first */
-
-	bool ok = true ;
-	uint32_t s,d ;
-	ok &= getRawUInt32(data, pktsize, &offset, &tunnel_id);
-	ok &= getRawUInt32(data, pktsize, &offset, &d);
-	direction = d ;
-	ok &= getRawUInt32(data, pktsize, &offset, &s) ;
-
-	compressed_map._map.resize(s) ;
-
-	for(uint32_t i=0;i<s && ok;++i)
-		ok &= getRawUInt32(data, pktsize, &offset, &(compressed_map._map[i])) ;
-
-#ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
-#else
-	if (offset != pktsize)
-		throw std::runtime_error("Size error while deserializing.") ;
-	if (!ok)
-		throw std::runtime_error("Unknown error while deserializing.") ;
-#endif
-}
-
-RsTurtleFileMapRequestItem::RsTurtleFileMapRequestItem(void *data,uint32_t pktsize)
-	: RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_MAP_REQUEST)
-{
-	setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FILE_MAP_REQUEST) ;
-#ifdef P3TURTLE_DEBUG
-	std::cerr << "  type = file map request item" << std::endl ;
-#endif
-	uint32_t offset = 8; // skip the header 
-
-	/* add mandatory parts first */
-
-	bool ok = true ;
-	ok &= getRawUInt32(data, pktsize, &offset, &tunnel_id);
-	ok &= getRawUInt32(data, pktsize, &offset, &direction);
-
-#ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
-#else
-	if (offset != pktsize)
-		throw std::runtime_error("Size error while deserializing.") ;
-	if (!ok)
-		throw std::runtime_error("Unknown error while deserializing.") ;
-#endif
-}
-
-RsTurtleFileCrcItem::RsTurtleFileCrcItem(void *data,uint32_t pktsize)
-	: RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_CRC)
-{
-	setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FILE_CRC) ;
-#ifdef P3TURTLE_DEBUG
-	std::cerr << "  type = file map item" << std::endl ;
-#endif
-	uint32_t offset = 8; // skip the header 
-
-	/* add mandatory parts first */
-
-	bool ok = true ;
-	uint32_t s1,s2 ;
-	ok &= getRawUInt32(data, pktsize, &offset, &tunnel_id);
-	ok &= getRawUInt32(data, pktsize, &offset, &s1) ;
-	ok &= getRawUInt32(data, pktsize, &offset, &s2) ;
-
-	crc_map._ccmap._map.resize(s1) ;
-	crc_map._crcs.resize(s2) ;
-
-	for(uint32_t i=0;i<s1 && ok;++i)
-		ok &= getRawUInt32(data, pktsize, &offset, &(crc_map._ccmap._map[i])) ;
-
-	for(uint32_t i=0;i<s2 && ok;++i)
-		ok &= getRawUInt32(data, pktsize, &offset, &(crc_map._crcs[i])) ;
-
-#ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
-#else
-	if (offset != pktsize)
-		throw std::runtime_error("Size error while deserializing.") ;
-	if (!ok)
-		throw std::runtime_error("Unknown error while deserializing.") ;
-#endif
-}
-RsTurtleChunkCrcItem::RsTurtleChunkCrcItem(void *data,uint32_t pktsize)
-	: RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_CHUNK_CRC)
-{
-	setPriorityLevel(QOS_PRIORITY_RS_TURTLE_CHUNK_CRC) ;
-#ifdef P3TURTLE_DEBUG
-	std::cerr << "  type = file map item" << std::endl ;
-#endif
-	uint32_t offset = 8; // skip the header 
-
-	/* add mandatory parts first */
-
-	bool ok = true ;
-	ok &= getRawUInt32(data, pktsize, &offset, &tunnel_id) ;
-	ok &= getRawUInt32(data, pktsize, &offset, &chunk_number) ;
-	ok &= getRawUInt32(data, pktsize, &offset, &check_sum.fourbytes[0]) ;
-	ok &= getRawUInt32(data, pktsize, &offset, &check_sum.fourbytes[1]) ;
-	ok &= getRawUInt32(data, pktsize, &offset, &check_sum.fourbytes[2]) ;
-	ok &= getRawUInt32(data, pktsize, &offset, &check_sum.fourbytes[3]) ;
-	ok &= getRawUInt32(data, pktsize, &offset, &check_sum.fourbytes[4]) ;
-
-#ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
-#else
-	if (offset != pktsize)
-		throw std::runtime_error("Size error while deserializing.") ;
-	if (!ok)
-		throw std::runtime_error("Unknown error while deserializing.") ;
-#endif
-}
-RsTurtleFileCrcRequestItem::RsTurtleFileCrcRequestItem(void *data,uint32_t pktsize)
-	: RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_CRC_REQUEST)
-{
-	setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FILE_CRC_REQUEST) ;
-#ifdef P3TURTLE_DEBUG
-	std::cerr << "  type = file map request item" << std::endl ;
-#endif
-	uint32_t offset = 8; // skip the header 
-
-	/* add mandatory parts first */
-
-	bool ok = true ;
-	ok &= getRawUInt32(data, pktsize, &offset, &tunnel_id);
-
-#ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
-#else
-	if (offset != pktsize)
-		throw std::runtime_error("Size error while deserializing.") ;
-	if (!ok)
-		throw std::runtime_error("Unknown error while deserializing.") ;
-#endif
-}
-RsTurtleChunkCrcRequestItem::RsTurtleChunkCrcRequestItem(void *data,uint32_t pktsize)
-	: RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_CHUNK_CRC_REQUEST)
-{
-	setPriorityLevel(QOS_PRIORITY_RS_TURTLE_CHUNK_CRC_REQUEST) ;
-#ifdef P3TURTLE_DEBUG
-	std::cerr << "  type = file map item" << std::endl ;
-#endif
-	uint32_t offset = 8; // skip the header 
-
-	/* add mandatory parts first */
-
-	bool ok = true ;
-	ok &= getRawUInt32(data, pktsize, &offset, &tunnel_id) ;
-	ok &= getRawUInt32(data, pktsize, &offset, &chunk_number) ;
-
-#ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
-#else
-	if (offset != pktsize)
-		throw std::runtime_error("Size error while deserializing.") ;
-	if (!ok)
-		throw std::runtime_error("Unknown error while deserializing.") ;
-#endif
-}
 RsTurtleSearchResultItem::RsTurtleSearchResultItem(void *data,uint32_t pktsize)
 	: RsTurtleItem(RS_TURTLE_SUBTYPE_SEARCH_RESULT)
 {
@@ -983,46 +521,12 @@ RsTurtleTunnelOkItem::RsTurtleTunnelOkItem(void *data,uint32_t pktsize)
 #endif
 }
 
-bool RsTurtleFileRequestItem::serialize(void *data,uint32_t& pktsize)
+RsTurtleGenericDataItem::RsTurtleGenericDataItem(void *data,uint32_t pktsize)
+	: RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_GENERIC_DATA)
 {
-	uint32_t tlvsize = serial_size();
-	uint32_t offset = 0;
-
-	if (pktsize < tlvsize)
-		return false; /* not enough space */
-
-	pktsize = tlvsize;
-
-	bool ok = true;
-
-	ok &= setRsItemHeader(data,tlvsize,PacketId(), tlvsize);
-
-	/* skip the header */
-	offset += 8;
-
-	/* add mandatory parts first */
-
-	ok &= setRawUInt32(data, tlvsize, &offset, tunnel_id) ;
-	ok &= setRawUInt64(data, tlvsize, &offset, chunk_offset);
-	ok &= setRawUInt32(data, tlvsize, &offset, chunk_size);
-
-	if (offset != tlvsize)
-	{
-		ok = false;
-#ifdef RSSERIAL_DEBUG
-		std::cerr << "RsTurtleTunnelOkItem::serialiseTransfer() Size Error! " << std::endl;
-#endif
-	}
-
-	return ok;
-}
-
-RsTurtleFileRequestItem::RsTurtleFileRequestItem(void *data,uint32_t pktsize)
-	: RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_REQUEST)
-{
-	setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FILE_REQUEST) ;
+	setPriorityLevel(QOS_PRIORITY_RS_TURTLE_GENERIC_DATA) ;
 #ifdef P3TURTLE_DEBUG
-	std::cerr << "  type = file request" << std::endl ;
+	std::cerr << "  type = tunnel ok" << std::endl ;
 #endif
 	uint32_t offset = 8; // skip the header 
 	uint32_t rssize = getRsItemSize(data);
@@ -1030,12 +534,24 @@ RsTurtleFileRequestItem::RsTurtleFileRequestItem(void *data,uint32_t pktsize)
 	/* add mandatory parts first */
 
 	bool ok = true ;
+
 	ok &= getRawUInt32(data, pktsize, &offset, &tunnel_id) ;
-	ok &= getRawUInt64(data, pktsize, &offset, &chunk_offset);
-	ok &= getRawUInt32(data, pktsize, &offset, &chunk_size);
+	ok &= getRawUInt32(data, pktsize, &offset, &data_size);
 #ifdef P3TURTLE_DEBUG
-	std::cerr << "  tunnel_id=" << (void*)tunnel_id << ", chunk_offset=" << chunk_offset << ", chunk_size=" << chunk_size << std::endl ;
+	std::cerr << "  request_id=" << (void*)request_id << ", tunnel_id=" << (void*)tunnel_id << std::endl ;
 #endif
+	data_bytes = malloc(data_size) ;
+
+	if(data_bytes != NULL)
+	{
+		memcpy(data_bytes,data+offset,data_size) ;
+		offset += data_size ;
+	}
+	else
+	{
+		std::cerr << "(EE) RsTurtleGenericDataItem: Error. Cannot allocate data for a size of " << data_size <<  " bytes." <<std::endl;
+		offset = 0 ; // generate an error
+	}
 
 #ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
 	UNREFERENCED_LOCAL_VARIABLE(rssize);
@@ -1046,48 +562,8 @@ RsTurtleFileRequestItem::RsTurtleFileRequestItem(void *data,uint32_t pktsize)
 		throw std::runtime_error("RsTurtleTunnelOkItem::() unknown error while deserializing.") ;
 #endif
 }
-	
-RsTurtleFileDataItem::~RsTurtleFileDataItem()
-{
-	free(chunk_data) ;
-}
-RsTurtleFileDataItem::RsTurtleFileDataItem(void *data,uint32_t pktsize)
-	: RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_DATA)
-{
-	setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FILE_DATA) ;
-#ifdef P3TURTLE_DEBUG
-	std::cerr << "  type = file request" << std::endl ;
-#endif
-	uint32_t offset = 8; // skip the header 
-	uint32_t rssize = getRsItemSize(data);
 
-	/* add mandatory parts first */
-
-	bool ok = true ;
-	ok &= getRawUInt32(data, pktsize, &offset, &tunnel_id) ;
-	ok &= getRawUInt64(data, pktsize, &offset, &chunk_offset);
-	ok &= getRawUInt32(data, pktsize, &offset, &chunk_size);
-
-	chunk_data = (void*)malloc(chunk_size) ;
-	memcpy(chunk_data,(void*)((unsigned char*)data+offset),chunk_size) ;
-
-	offset += chunk_size ;
-
-#ifdef P3TURTLE_DEBUG
-	std::cerr << "  tunnel_id=" << (void*)tunnel_id << ", chunk_offset=" << chunk_offset << ", chunk_size=" << chunk_size << std::endl ;
-#endif
-
-#ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
-	UNREFERENCED_LOCAL_VARIABLE(rssize);
-#else
-	if (offset != rssize)
-		throw std::runtime_error("RsTurtleFileDataItem::() error while deserializing.") ;
-	if (!ok)
-		throw std::runtime_error("RsTurtleFileDataItem::() unknown error while deserializing.") ;
-#endif
-}
-
-bool RsTurtleFileDataItem::serialize(void *data,uint32_t& pktsize)
+bool RsTurtleGenericDataItem::serialize(void *data,uint32_t& pktsize)
 {
 	uint32_t tlvsize = serial_size();
 	uint32_t offset = 0;
@@ -1106,12 +582,11 @@ bool RsTurtleFileDataItem::serialize(void *data,uint32_t& pktsize)
 
 	/* add mandatory parts first */
 
-	ok &= setRawUInt32(data, tlvsize, &offset, tunnel_id) ;
-	ok &= setRawUInt64(data, tlvsize, &offset, chunk_offset);
-	ok &= setRawUInt32(data, tlvsize, &offset, chunk_size);
+	ok &= setRawUInt32(data, tlvsize, &offset, tunnel_id);
+	ok &= setRawUInt32(data, tlvsize, &offset, data_size);
 
-	memcpy((void*)((unsigned char*)data+offset),chunk_data,chunk_size) ;
-	offset += chunk_size ;
+	memcpy(data+offset,data_bytes,data_size) ;
+	offset += data_size ;
 
 	if (offset != tlvsize)
 	{
@@ -1190,95 +665,13 @@ std::ostream& RsTurtleTunnelOkItem::print(std::ostream& o, uint16_t)
 	return o ;
 }
 
-std::ostream& RsTurtleFileRequestItem::print(std::ostream& o, uint16_t)
+std::ostream& RsTurtleGenericDataItem::print(std::ostream& o, uint16_t)
 {
-	o << "File request item:" << std::endl ;
+	o << "Generic Data item:" << std::endl ;
 
-	o << "  tunnel id : " << std::hex << tunnel_id << std::dec << std::endl ;
-	o << "  offset    : " << chunk_offset << std::endl ;
-	o << "  chunk size: " << chunk_size << std::endl ;
+	o << "  Peer id   : " << PeerId() << std::endl ;
+	o << "  data size : " << data_size << std::endl ;
+	o << "  data bytes: " << std::hex << (void*)data_bytes << std::dec << std::endl ;
 
 	return o ;
 }
-
-std::ostream& RsTurtleFileDataItem::print(std::ostream& o, uint16_t)
-{
-	o << "File request item:" << std::endl ;
-
-	o << "  tunnel id : " << std::hex << tunnel_id << std::dec << std::endl ;
-	o << "  offset    : " << chunk_offset << std::endl ;
-	o << "  chunk size: " << chunk_size << std::endl ;
-	o << "  data      : " << std::hex << chunk_data << std::dec << std::endl ;
-
-	return o ;
-}
-
-std::ostream& RsTurtleFileMapItem::print(std::ostream& o, uint16_t)
-{
-	o << "File map item:" << std::endl ;
-
-	o << "  tunnel id : " << std::hex << tunnel_id << std::dec << std::endl ;
-	o << "  direction : " << direction << std::endl ;
-	o << "  map      : " ;
-
-	for(uint32_t i=0;i<compressed_map._map.size();++i)
-		o << std::hex << compressed_map._map[i] << std::dec << std::endl ;
-
-	return o ;
-}
-
-std::ostream& RsTurtleFileMapRequestItem::print(std::ostream& o, uint16_t)
-{
-	o << "File map request item:" << std::endl ;
-
-	o << "  tunnel id : " << std::hex << tunnel_id << std::dec << std::endl ;
-	o << "  direction : " << direction << std::endl ;
-
-	return o ;
-}
-
-std::ostream& RsTurtleFileCrcItem::print(std::ostream& o, uint16_t)
-{
-	o << "File CRC item:" << std::endl ;
-
-	o << "  tunnel id : " << std::hex << tunnel_id << std::dec << std::endl ;
-	o << "  map      : " ;
-
-	for(uint32_t i=0;i<crc_map._ccmap._map.size();++i)
-		o << std::hex << crc_map._ccmap._map[i] << std::endl ;
-
-	o << "  CRC      : " ;
-
-	for(uint32_t i=0;i<crc_map._crcs.size();++i)
-		o << std::hex << crc_map._crcs[i] << std::dec << std::endl ;
-
-	return o ;
-}
-std::ostream& RsTurtleFileCrcRequestItem::print(std::ostream& o, uint16_t)
-{
-	o << "File CRC request item:" << std::endl ;
-
-	o << "  tunnel id : " << std::hex << tunnel_id << std::dec << std::endl ;
-
-	return o ;
-}
-std::ostream& RsTurtleChunkCrcRequestItem::print(std::ostream& o, uint16_t)
-{
-	o << "Chunk CRC request item:" << std::endl ;
-
-	o << "  tunnel id : " << std::hex << tunnel_id << std::dec << std::endl ;
-	o << "  chunk num : " << chunk_number << std::endl ;
-
-	return o ;
-}
-std::ostream& RsTurtleChunkCrcItem::print(std::ostream& o, uint16_t)
-{
-	o << "Chunk CRC request item:" << std::endl ;
-
-	o << "  tunnel id : " << std::hex << tunnel_id << std::dec << std::endl ;
-	o << "  chunk num : " << chunk_number << std::endl ;
-	o << "   sha1 sum : " << check_sum.toStdString() << std::endl ;
-
-	return o ;
-}
-

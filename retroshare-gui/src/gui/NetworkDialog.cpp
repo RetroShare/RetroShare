@@ -28,6 +28,7 @@
 #include <retroshare/rsiface.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsdisc.h>
+#include <retroshare/rsmsgs.h>
 
 #include "common/vmessagebox.h"
 #include "common/RSTreeWidgetItem.h"
@@ -230,7 +231,10 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint /*point*/ )
 	contextMnu->addAction(QIcon(IMAGE_PEERDETAILS), tr("Peer details..."), this, SLOT(peerdetails()));
 	contextMnu->addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyLink()));
 	contextMnu->addSeparator() ;
-
+#ifdef ENABLE_DISTANT_CHAT_AND_MSGS
+	contextMnu->addAction(QIcon(IMAGE_COPYLINK), tr("Create a distant chat invitation..."), this, SLOT(createChatLink()));
+	contextMnu->addSeparator() ;
+#endif
 	contextMnu->addAction(QIcon(IMAGE_CLEAN_UNUSED), tr("Remove unused keys..."), this, SLOT(removeUnusedKeys()));
 
 	contextMnu->exec(QCursor::pos());
@@ -328,6 +332,19 @@ void NetworkDialog::deleteCert()
 void NetworkDialog::makeFriend()
 {
 	ConfCertDialog::showIt(getCurrentNeighbour()->text(COLUMN_PEERID).toStdString(), ConfCertDialog::PageTrust);
+}
+
+void NetworkDialog::createChatLink()
+{
+	std::string pgp_id = getCurrentNeighbour()->text(COLUMN_PEERID).toStdString() ;
+
+	std::cerr << "Creating chat link for pgp id " << pgp_id << std::endl;
+
+	std::string hash,estr ;
+	rsMsgs->createDistantChatInvite(pgp_id,time(NULL)+3600,estr) ;
+
+	std::cerr << "Created invite:" << std::endl;
+	std::cerr << "  estr = " << estr << std::endl;
 }
 
 /** Shows Peer Information/Auth Dialog */

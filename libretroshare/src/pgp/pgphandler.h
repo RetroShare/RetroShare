@@ -94,8 +94,15 @@ class PGPHandler
 		bool VerifySignBin(const void *data, uint32_t data_len, unsigned char *sign, unsigned int sign_len, const PGPFingerprintType& withfingerprint) ;
 		bool privateSignCertificate(const PGPIdType& own_id,const PGPIdType& id_of_key_to_sign) ;
 
+		// The client should supply a memory chunk to store the data. The length will be updated to the real length of the data.
+		//
+		bool encryptDataBin(const PGPIdType& key_id,const void *data, const uint32_t len, unsigned char *encrypted_data, unsigned int *encrypted_data_len) ;
+		bool decryptDataBin(const PGPIdType& key_id,const void *data, const uint32_t len, unsigned char *decrypted_data, unsigned int *decrypted_data_len) ;
+
 		bool encryptTextToFile(const PGPIdType& key_id,const std::string& text,const std::string& outfile) ;
-		bool decryptTextFromFile(const PGPIdType& key_id,std::string& text,const std::string& inputfile) ;
+		bool decryptTextFromFile(const PGPIdType& key_id,std::string& text,const std::string& encrypted_inputfile) ;
+		//bool encryptTextToString(const PGPIdType& key_id,const std::string& text,std::string& outstring) ;
+		//bool decryptTextFromString(const PGPIdType& key_id,const std::string& encrypted_text,std::string& outstring) ;
 
 		bool getKeyFingerprint(const PGPIdType& id,PGPFingerprintType& fp) const ;
 		void setAcceptConnexion(const PGPIdType&,bool) ;

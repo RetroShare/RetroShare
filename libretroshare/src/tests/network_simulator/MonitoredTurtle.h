@@ -4,7 +4,7 @@ class MonitoredTurtleRouter: public p3turtle
 {
 	public:
 		MonitoredTurtleRouter(p3LinkMgr *lmgr,ftServer *fts)
-			: p3turtle(lmgr,fts)
+			: p3turtle(lmgr)
 		{
 		}
 

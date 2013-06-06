@@ -33,10 +33,13 @@
 
 #include "serialiser/rsmsgitems.h"
 #include "services/p3service.h"
+#include "pgp/pgphandler.h"
+#include "turtle/turtleclientservice.h"
 #include "retroshare/rsmsgs.h"
 
 class p3LinkMgr;
 class p3HistoryMgr;
+class p3turtle ;
 
 //!The basic Chat service.
  /**
@@ -45,7 +48,7 @@ class p3HistoryMgr;
   * This service uses rsnotify (callbacks librs clients (e.g. rs-gui))
   * @see NotifyBase
   */
-class p3ChatService: public p3Service, public p3Config, public pqiMonitor
+class p3ChatService: public p3Service, public p3Config, public pqiMonitor, public RsTurtleClientService
 {
 	public:
 		p3ChatService(p3LinkMgr *cm, p3HistoryMgr *historyMgr);
@@ -183,6 +186,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		virtual void saveDone();
 		virtual bool loadList(std::list<RsItem*>& load) ;
 
+		bool isOnline(const std::string& id) ;
 	private:
 		RsMutex mChatMtx;
 
@@ -191,6 +195,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 
 		// Receive chat queue
 		void receiveChatQueue();
+		void handleIncomingItem(RsItem *);	// called by the former, and turtle handler for incoming encrypted items
 
 		void initRsChatInfo(RsChatMsgItem *c, ChatInfo &i);
 
@@ -289,9 +294,69 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		std::map<std::string,ChatLobbyId> _lobby_ids ;
 		std::string _default_nick_name ;
 		float _time_shift_average ;
-		time_t last_lobby_challenge_time ; // prevents bruteforce attack
+		time_t last_lobby_challenge_time ; 					// prevents bruteforce attack
 		time_t last_visible_lobby_info_request_time ;	// allows to ask for updates
 		bool _should_reset_lobby_counts ;
+
+		RsChatSerialiser *_serializer ;
+
+		// ===========================================================//
+		//         Members related to anonymous distant chat.         //
+		// ===========================================================//
+
+	public:
+		void connectToTurtleRouter(p3turtle *) ;
+
+		// Creates the invite if the public key of the distant peer is available.
+		// Om success, stores the invite in the map above, so that we can respond to tunnel requests.
+		//
+		bool createDistantChatInvite(const std::string& pgp_id,time_t time_of_validity,TurtleFileHash& hash) ;
+		bool getDistantChatInviteList(std::vector<DistantChatInviteInfo>& invites) ;
+		bool initiateDistantChatConnexion(const std::string& encrypted_string,std::string& hash,uint32_t& error_code) ;
+
+		virtual bool getDistantChatStatus(const std::string& hash,uint32_t& status,std::string& pgp_id) ;
+
+	private:
+		struct DistantChatInvite
+		{
+			unsigned char aes_key[16] ;
+			std::string encrypted_radix64_string ;
+			std::string destination_pgp_id ;
+			time_t time_of_validity ;
+			time_t last_hit_time ;
+		};
+		struct DistantChatPeerInfo 
+		{
+			time_t last_contact ; 			// used to send keep alive packets
+			unsigned char aes_key[16] ;	// key to encrypt packets
+			uint32_t status ;					// info: do we have a tunnel ?
+			std::string virtual_peer_id;  // given by the turtle router. Identifies the tunnel.
+			std::string pgp_id ;          // pgp id of the peer we're talking to.
+		};
+
+		// This map contains the ongoing invites. This is the list where to look to
+		// handle tunnel requests.
+		//
+		std::map<TurtleFileHash,DistantChatInvite> _distant_chat_invites ;
+
+		// This maps contains the current peers to talk to with distant chat.
+		//
+		std::map<std::string,DistantChatPeerInfo> _distant_chat_peers ;
+
+		// Overloaded from RsTurtleClientService
+
+		virtual bool handleTunnelRequest(const std::string& hash,const std::string& peer_id) ;
+		virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const std::string& hash,const std::string& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
+		void addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&,RsTurtleGenericTunnelItem::Direction dir) ;
+		void removeVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) ;
+
+		// Utility functions
+
+		void cleanDistantChatInvites() ;
+		void sendTurtleData(RsChatItem *) ;
+		void sendPrivateChatItem(RsChatItem *) ;
+
+		p3turtle *mTurtle ;
 };
 
 class p3ChatService::StateStringInfo

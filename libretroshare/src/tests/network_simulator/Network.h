@@ -47,6 +47,7 @@ class PeerNode
 	private:
 		p3ServiceServer *_service_server ;
 		MonitoredTurtleRouter *_turtle ;
+		ftServer *_ftserver ;
 		std::string _id ;
 
 		std::set<TurtleFileHash> _provided_hashes ;

@@ -58,6 +58,7 @@
 #define RS_MSG_USER_REQUEST          0x0400   /* user request */
 #define RS_MSG_FRIEND_RECOMMENDATION 0x0800   /* friend recommendation */
 #define RS_MSG_SYSTEM                (RS_MSG_USER_REQUEST | RS_MSG_FRIEND_RECOMMENDATION)
+#define RS_MSG_ENCRYPTED             0x1000	 /* message is encrypted */
 
 #define RS_CHAT_LOBBY_EVENT_PEER_LEFT   				0x01
 #define RS_CHAT_LOBBY_EVENT_PEER_STATUS 				0x02
@@ -99,6 +100,7 @@ class MessageInfo
 	std::wstring attach_title;
 	std::wstring attach_comment;
 	std::list<FileInfo> files;
+	std::map<std::string,std::string> encryption_keys ; // for concerned ids only the public pgp key id to encrypt the message with.
 	int size;  /* total of files */
 	int count; /* file count     */
 
@@ -143,6 +145,16 @@ public:
 #define RS_CHAT_PUBLIC 				0x0001
 #define RS_CHAT_PRIVATE 			0x0002
 #define RS_CHAT_AVATAR_AVAILABLE 	0x0004
+
+#define RS_DISTANT_CHAT_STATUS_UNKNOWN			0x0000
+#define RS_DISTANT_CHAT_STATUS_TUNNEL_DN		0x0001
+#define RS_DISTANT_CHAT_STATUS_TUNNEL_OK		0x0002
+#define RS_DISTANT_CHAT_STATUS_CAN_TALK		0x0003
+
+#define RS_DISTANT_CHAT_ERROR_NO_ERROR            0x0000 
+#define RS_DISTANT_CHAT_ERROR_DECRYPTION_FAILED   0x0001 
+#define RS_DISTANT_CHAT_ERROR_SIGNATURE_MISMATCH  0x0002 
+#define RS_DISTANT_CHAT_ERROR_UNKNOWN_KEY         0x0003 
 
 class ChatInfo
 {
@@ -195,6 +207,14 @@ class ChatLobbyInfo
 		time_t last_activity ;									// last recorded activity. Useful for removing dead lobbies.
 };
 
+struct DistantChatInviteInfo
+{
+	std::string hash ;										// hash to contact the invite and refer to it.
+	std::string encrypted_radix64_string ;				// encrypted radix string used to for the chat link
+	std::string destination_pgp_id ;						// pgp is of the destination of the chat link
+	time_t 		time_of_validity ;   					// time when te invite becomes unusable
+};
+
 std::ostream &operator<<(std::ostream &out, const MessageInfo &info);
 std::ostream &operator<<(std::ostream &out, const ChatInfo &info);
 
@@ -202,6 +222,14 @@ bool operator==(const ChatInfo&, const ChatInfo&);
 
 class RsMsgs;
 extern RsMsgs   *rsMsgs;
+
+struct DistantOfflineMessengingInvite
+{
+	std::string issuer_pgp_id ;
+	std::string hash ;
+	time_t time_of_validity ;
+};
+
 
 class RsMsgs 
 {
@@ -211,11 +239,13 @@ class RsMsgs
 virtual ~RsMsgs() { return; }
 
 /****************************************/
-	/* Message Items */
+/*             Message Items            */
+/****************************************/
 
 virtual bool getMessageSummaries(std::list<MsgInfoSummary> &msgList) = 0;
 virtual bool getMessage(const std::string &mId, MessageInfo &msg)  = 0;
 virtual void getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox) = 0;
+virtual bool decryptMessage(const std::string& mId) = 0 ;
 
 virtual bool MessageSend(MessageInfo &info) = 0;
 virtual bool SystemMessage(const std::wstring &title, const std::wstring &message, uint32_t systemFlag) = 0;
@@ -241,8 +271,14 @@ virtual bool setMessageTag(const std::string &msgId, uint32_t tagId, bool set) =
 
 virtual bool resetMessageStandardTagTypes(MsgTagType& tags) = 0;
 
+/* private distant messages */
+
+virtual bool createDistantOfflineMessengingInvite(time_t validity_time_stamp, std::string& hash)=0 ;
+virtual bool getDistantOfflineMessengingInvites(std::vector<DistantOfflineMessengingInvite>& invites) = 0 ;
+
 /****************************************/
-	/* Chat */
+/*                 Chat                 */
+/****************************************/
 virtual	bool   sendPublicChat(const std::wstring& msg) = 0;
 virtual	bool   sendPrivateChat(const std::string& id, const std::wstring& msg) = 0;
 virtual int     getPublicChatQueueCount() = 0;
@@ -265,6 +301,10 @@ virtual void getAvatarData(const std::string& pid,unsigned char *& data,int& siz
 virtual void setOwnAvatarData(const unsigned char *data,int size) = 0 ;
 virtual void getOwnAvatarData(unsigned char *& data,int& size) = 0 ;
 
+/****************************************/
+/*            Chat lobbies              */
+/****************************************/
+
 virtual bool joinVisibleChatLobby(const ChatLobbyId& lobby_id) = 0 ;
 virtual bool isLobbyId(const std::string& virtual_peer_id,ChatLobbyId& lobby_id) = 0;
 virtual bool getVirtualPeerId(const ChatLobbyId& lobby_id,std::string& vpid) = 0;
@@ -282,6 +322,13 @@ virtual bool getDefaultNickNameForChatLobby(std::string& nick) = 0 ;
 virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const std::string& lobby_topic,const std::list<std::string>& invited_friends,uint32_t lobby_privacy_type) = 0 ;
 
 /****************************************/
+/*            Distant chat              */
+/****************************************/
+
+virtual bool createDistantChatInvite(const std::string& pgp_id,time_t time_of_validity,std::string& encrypted_string) = 0 ;
+virtual bool getDistantChatInviteList(std::vector<DistantChatInviteInfo>& invites) = 0;
+virtual bool initiateDistantChatConnexion(const std::string& encrypted_string,std::string& hash,uint32_t& error_code) = 0;
+virtual bool getDistantChatStatus(const std::string& hash,uint32_t& status,std::string& pgp_id) = 0;
 
 };
 

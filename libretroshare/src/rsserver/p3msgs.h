@@ -58,6 +58,7 @@ class p3Msgs: public RsMsgs
 	  virtual void getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox);
 
 	  virtual bool MessageSend(MessageInfo &info);
+	  virtual bool decryptMessage(const std::string& mid);
 	  virtual bool SystemMessage(const std::wstring &title, const std::wstring &message, uint32_t systemFlag);
 	  virtual bool MessageToDraft(MessageInfo &info, const std::string &msgParentId);
 	  virtual bool MessageToTrash(const std::string &mid, bool bTrash);
@@ -77,6 +78,9 @@ class p3Msgs: public RsMsgs
 	  virtual bool setMessageTag(const std::string &msgId, uint32_t tagId, bool set);
 
 	  virtual bool resetMessageStandardTagTypes(MsgTagType& tags);
+
+	  virtual bool createDistantOfflineMessengingInvite(time_t, std::string&) ;
+	  virtual bool getDistantOfflineMessengingInvites(std::vector<DistantOfflineMessengingInvite>&);
 
 	  /*!
 	   * gets avatar from peer, image data in jpeg format
@@ -182,6 +186,11 @@ class p3Msgs: public RsMsgs
 	  virtual bool setDefaultNickNameForChatLobby(const std::string&) ;
 	  virtual bool getDefaultNickNameForChatLobby(std::string& nick) ;
 	  virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const std::string& lobby_topic,const std::list<std::string>& invited_friends,uint32_t privacy_type) ;
+
+	  virtual bool createDistantChatInvite(const std::string& pgp_id,time_t time_of_validity,std::string& encrypted_string) ;
+	  virtual bool getDistantChatInviteList(std::vector<DistantChatInviteInfo>& invites);
+	  virtual bool initiateDistantChatConnexion(const std::string& encrypted_string,std::string& hash,uint32_t& error_code) ;
+	  virtual bool getDistantChatStatus(const std::string& hash,uint32_t& status,std::string& pgp_id) ;
 
    private:
 

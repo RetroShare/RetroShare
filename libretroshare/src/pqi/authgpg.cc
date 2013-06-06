@@ -70,10 +70,20 @@ bool AuthGPG::removeKeysFromPGPKeyring(const std::list<std::string>& pgp_ids,std
 	return PGPHandler::removeKeysFromPGPKeyring(pids,backup_file,error_code) ;
 }
 
+// bool AuthGPG::decryptTextFromString(std::string& encrypted_text,std::string& output)
+// {
+// 	return PGPHandler::decryptTextFromString(mOwnGpgId,encrypted_text,output) ;
+// }
+
 bool AuthGPG::encryptTextToFile(const std::string& text,const std::string& outfile)
 {
 	return PGPHandler::encryptTextToFile(mOwnGpgId,text,outfile) ;
 }
+
+// bool AuthGPG::encryptTextToString(const std::string& pgp_id,const std::string& text,std::string& outstr)
+// {
+// 	return PGPHandler::encryptTextToString(PGPIdType(pgp_id),text,outstr) ;
+// }
 
 std::string pgp_pwd_callback(void * /*hook*/, const char *uid_hint, const char * /*passphrase_info*/, int prev_was_bad)
 {
@@ -640,6 +650,15 @@ bool AuthGPG::TrustCertificate(const std::string &id, int trustlvl)
 	return privateTrustCertificate(id, trustlvl) ;
 }
 
+bool AuthGPG::encryptDataBin(const std::string& pgp_id,const void *data, unsigned int datalen, unsigned char *sign, unsigned int *signlen) 
+{
+	return PGPHandler::encryptDataBin(PGPIdType(pgp_id),data,datalen,sign,signlen) ;
+}
+
+bool AuthGPG::decryptDataBin(const void *data, unsigned int datalen, unsigned char *sign, unsigned int *signlen) 
+{
+	return PGPHandler::decryptDataBin(mOwnGpgId,data,datalen,sign,signlen) ;
+}
 bool AuthGPG::SignDataBin(const void *data, unsigned int datalen, unsigned char *sign, unsigned int *signlen) 
 {
 	return DoOwnSignature(data, datalen, sign, signlen);

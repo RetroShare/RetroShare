@@ -64,12 +64,14 @@ const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE       	= 0x0F ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_EVENT       	= 0x10 ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated2	= 0x11 ;	// to be removed (deprecated since 02 Dec. 2012)
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST         	= 0x12 ;
+const uint8_t RS_PKT_SUBTYPE_DISTANT_INVITE_CONFIG   	= 0x13 ;
 
 // for defining tags themselves and msg tags
 const uint8_t RS_PKT_SUBTYPE_MSG_TAG_TYPE 	= 0x03;
 const uint8_t RS_PKT_SUBTYPE_MSG_TAGS 			= 0x04;
 const uint8_t RS_PKT_SUBTYPE_MSG_SRC_TAG 		= 0x05;
 const uint8_t RS_PKT_SUBTYPE_MSG_PARENT_TAG 	= 0x06;
+const uint8_t RS_PKT_SUBTYPE_MSG_INVITE    	= 0x07;
 
 typedef uint64_t 		ChatLobbyId ;
 typedef uint64_t 		ChatLobbyMsgId ;
@@ -314,6 +316,27 @@ class RsPrivateChatMsgConfigItem: public RsChatItem
 		std::wstring message;
 		uint32_t recvTime;
 };
+class RsPrivateChatDistantInviteConfigItem: public RsChatItem
+{
+	public:
+		RsPrivateChatDistantInviteConfigItem() :RsChatItem(RS_PKT_SUBTYPE_DISTANT_INVITE_CONFIG) {}
+		RsPrivateChatDistantInviteConfigItem(void *data,uint32_t size) ; // deserialization
+
+		virtual ~RsPrivateChatDistantInviteConfigItem() {}
+		virtual void clear() {}
+		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+
+		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
+		virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
+
+		unsigned char aes_key[16] ;
+		std::string hash ;
+		std::string encrypted_radix64_string ;
+		std::string destination_pgp_id ;
+		uint32_t time_of_validity ;
+		uint32_t last_hit_time ;
+};
+
 
 // This class contains activity info for the sending peer: active, idle, typing, etc.
 //
@@ -384,6 +407,9 @@ const uint32_t RS_MSG_FLAGS_PARTIAL               = 0x0400;
 const uint32_t RS_MSG_FLAGS_USER_REQUEST          = 0x0800;
 const uint32_t RS_MSG_FLAGS_FRIEND_RECOMMENDATION = 0x1000;
 const uint32_t RS_MSG_FLAGS_SYSTEM                = RS_MSG_FLAGS_USER_REQUEST | RS_MSG_FLAGS_FRIEND_RECOMMENDATION;
+const uint32_t RS_MSG_FLAGS_RETURN_RECEPT         = 0x2000;
+const uint32_t RS_MSG_FLAGS_ENCRYPTED             = 0x4000;
+const uint32_t RS_MSG_FLAGS_DISTANT               = 0x8000;
 
 class RsMsgItem: public RsItem
 {
@@ -474,6 +500,24 @@ public:
 	std::string srcId;
 
 };
+class RsPublicMsgInviteConfigItem : public RsItem
+{
+
+public:
+	RsPublicMsgInviteConfigItem()
+	: RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_MSG,
+				RS_PKT_SUBTYPE_MSG_INVITE)
+	{ return;}
+
+	std::ostream &print(std::ostream &out, uint16_t indent = 0);
+
+	virtual ~RsPublicMsgInviteConfigItem() {}
+	virtual void clear();
+
+	std::string hash ;
+	time_t time_stamp ;
+};
+
 
 class RsMsgParentId : public RsItem
 {
@@ -498,45 +542,48 @@ public:
 class RsMsgSerialiser: public RsSerialType
 {
 	public:
-	RsMsgSerialiser(bool bConfiguration = false)
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_MSG), m_bConfiguration (bConfiguration)
-	{ return; }
-	
-	RsMsgSerialiser(uint16_t type)
-	:RsSerialType(RS_PKT_VERSION_SERVICE, type), m_bConfiguration (false)
-	{ return; }
-	
-virtual     ~RsMsgSerialiser() { return; }
-	
-virtual	uint32_t    size(RsItem *);
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual	RsItem *    deserialise(void *data, uint32_t *size);
+		RsMsgSerialiser(bool bConfiguration = false)
+			:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_MSG), m_bConfiguration (bConfiguration)
+		{ return; }
+
+		RsMsgSerialiser(uint16_t type)
+			:RsSerialType(RS_PKT_VERSION_SERVICE, type), m_bConfiguration (false)
+		{ return; }
+
+		virtual     ~RsMsgSerialiser() { return; }
+
+		virtual	uint32_t    size(RsItem *);
+		virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
+		virtual	RsItem *    deserialise(void *data, uint32_t *size);
 
 
 	private:
 
-virtual	uint32_t    sizeMsgItem(RsMsgItem *);
-virtual	bool        serialiseMsgItem  (RsMsgItem *item, void *data, uint32_t *size);
-virtual	RsMsgItem *deserialiseMsgItem(void *data, uint32_t *size);
+		virtual	uint32_t    sizeMsgItem(RsMsgItem *);
+		virtual	bool        serialiseMsgItem  (RsMsgItem *item, void *data, uint32_t *size);
+		virtual	RsMsgItem *deserialiseMsgItem(void *data, uint32_t *size);
 
-virtual	uint32_t    sizeTagItem(RsMsgTagType *);
-virtual	bool        serialiseTagItem  (RsMsgTagType *item, void *data, uint32_t *size);
-virtual	RsMsgTagType *deserialiseTagItem(void *data, uint32_t *size);
+		virtual	uint32_t    sizeTagItem(RsMsgTagType *);
+		virtual	bool        serialiseTagItem  (RsMsgTagType *item, void *data, uint32_t *size);
+		virtual	RsMsgTagType *deserialiseTagItem(void *data, uint32_t *size);
 
-virtual	uint32_t    sizeMsgTagItem(RsMsgTags *);
-virtual	bool        serialiseMsgTagItem  (RsMsgTags *item, void *data, uint32_t *size);
-virtual	RsMsgTags *deserialiseMsgTagItem(void *data, uint32_t *size);
+		virtual	uint32_t    sizeMsgTagItem(RsMsgTags *);
+		virtual	bool        serialiseMsgTagItem  (RsMsgTags *item, void *data, uint32_t *size);
+		virtual	RsMsgTags *deserialiseMsgTagItem(void *data, uint32_t *size);
 
-virtual	uint32_t    sizeMsgSrcIdItem(RsMsgSrcId *);
-virtual	bool        serialiseMsgSrcIdItem  (RsMsgSrcId *item, void *data, uint32_t *size);
-virtual	RsMsgSrcId *deserialiseMsgSrcIdItem(void *data, uint32_t *size);
+		virtual	uint32_t    sizeMsgSrcIdItem(RsMsgSrcId *);
+		virtual	bool        serialiseMsgSrcIdItem  (RsMsgSrcId *item, void *data, uint32_t *size);
+		virtual	RsMsgSrcId *deserialiseMsgSrcIdItem(void *data, uint32_t *size);
 
-virtual	uint32_t    sizeMsgParentIdItem(RsMsgParentId *);
-virtual	bool        serialiseMsgParentIdItem  (RsMsgParentId *item, void *data, uint32_t *size);
-virtual	RsMsgParentId *deserialiseMsgParentIdItem(void *data, uint32_t *size);
+		virtual	uint32_t    sizeMsgParentIdItem(RsMsgParentId *);
+		virtual	bool        serialiseMsgParentIdItem  (RsMsgParentId *item, void *data, uint32_t *size);
+		virtual	RsMsgParentId *deserialiseMsgParentIdItem(void *data, uint32_t *size);
 
+		virtual	uint32_t    sizePublicMsgInviteConfigItem(RsPublicMsgInviteConfigItem *) ;
+		virtual	bool        serialisePublicMsgInviteConfigItem(RsPublicMsgInviteConfigItem *item, void *data, uint32_t *size);
+		virtual	RsPublicMsgInviteConfigItem *deserialisePublicMsgInviteConfigItem(void *data, uint32_t *size);
 
-	bool m_bConfiguration; // is set to true for saving configuration (enables serialising msgId)
+		bool m_bConfiguration; // is set to true for saving configuration (enables serialising msgId)
 };
 
 /**************************************************************************/

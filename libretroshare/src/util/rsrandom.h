@@ -46,6 +46,7 @@ class RSRandom
 		static bool     seed(uint32_t s) ;
 
 		static std::string random_alphaNumericString(uint32_t length) ; 
+		static void random_bytes(unsigned char *data,uint32_t length) ; 
 
 	private:
 		static RsMutex rndMtx ;

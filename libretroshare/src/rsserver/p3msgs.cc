@@ -96,6 +96,20 @@ bool p3Msgs::MessageSend(MessageInfo &info)
 	return mMsgSrv->MessageSend(info);
 }
 
+bool p3Msgs::decryptMessage(const std::string& mId)
+{
+	return mMsgSrv->decryptMessage(mId);
+}
+bool p3Msgs::createDistantOfflineMessengingInvite(time_t ts, std::string& hash) 
+{
+	return mMsgSrv->createDistantOfflineMessengingInvite(ts,hash) ;
+}
+bool p3Msgs::getDistantOfflineMessengingInvites(std::vector<DistantOfflineMessengingInvite>& invites)
+{
+	return mMsgSrv->getDistantOfflineMessengingInvites(invites);
+}
+
+
 bool p3Msgs::SystemMessage(const std::wstring &title, const std::wstring &message, uint32_t systemFlag)
 {
 	return mMsgSrv->SystemMessage(title, message, systemFlag);
@@ -330,5 +344,20 @@ void p3Msgs::getPendingChatLobbyInvites(std::list<ChatLobbyInvite>& invites)
 {
 	mChatSrv->getPendingChatLobbyInvites(invites) ;
 }
-
+bool p3Msgs::createDistantChatInvite(const std::string& pgp_id,time_t time_of_validity,std::string& encrypted_string)
+{
+	return mChatSrv->createDistantChatInvite(pgp_id,time_of_validity,encrypted_string) ;
+}
+bool p3Msgs::getDistantChatInviteList(std::vector<DistantChatInviteInfo>& invites)
+{
+	return mChatSrv->getDistantChatInviteList(invites) ;
+}
+bool p3Msgs::initiateDistantChatConnexion(const std::string& encrypted_str,std::string& hash,uint32_t& error_code)
+{
+	return mChatSrv->initiateDistantChatConnexion(encrypted_str,hash,error_code) ;
+}
+bool p3Msgs::getDistantChatStatus(const std::string& hash,uint32_t& status,std::string& pgp_id) 
+{
+	return mChatSrv->getDistantChatStatus(hash,status,pgp_id) ;
+}
 

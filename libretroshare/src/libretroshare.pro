@@ -306,12 +306,14 @@ HEADERS +=	ft/ftchunkmap.h \
 			ft/ftfilesearch.h \
 			ft/ftsearch.h \
 			ft/ftserver.h \
-			ft/fttransfermodule.h
+			ft/fttransfermodule.h \
+			ft/ftturtlefiletransferitem.h 
 
 HEADERS +=	pqi/authssl.h \
 			pqi/authgpg.h \
 			pgp/pgphandler.h \
 			pgp/pgpkeyutil.h \
+			pgp/rsaes.h \
 			pgp/rscertificate.h \
 			pqi/p3cfgmgr.h \
 			pqi/p3peermgr.h \
@@ -446,6 +448,7 @@ SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftfilesearch.cc \
 			ft/ftserver.cc \
 			ft/fttransfermodule.cc \
+			ft/ftturtlefiletransferitem.cc 
 
 SOURCES +=	pqi/authgpg.cc \
 			pqi/authssl.cc \
@@ -565,6 +568,7 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsthreads.cc \
 			util/rsversion.cc \
 			util/rswin.cc \
+			util/rsaes.cc \
 			util/rsrandom.cc \
 			util/rstickevent.cc \
 

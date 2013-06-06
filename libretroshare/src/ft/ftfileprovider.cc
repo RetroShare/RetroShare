@@ -153,6 +153,12 @@ bool ftFileProvider::getFileData(const std::string& peer_id,uint64_t offset, uin
 	 * FIXME: Warning of comparison between unsigned and signed int?
 	 */
 
+	if(offset >= mSize)
+	{
+		std::cerr << "ftFileProvider::getFileData(): request (" << offset << ") exceeds file size (" << mSize << "! " << std::endl;
+		return false ;
+	}
+
 	uint32_t data_size    = chunk_size;
 	uint64_t base_loc     = offset;
 	

@@ -34,6 +34,7 @@
 #include <vector>
 
 class LinearizedExpression ;
+class RsTurtleClientService ;
 
 class RsTurtle;
 extern RsTurtle   *rsTurtle ;
@@ -83,8 +84,6 @@ class TurtleTrafficStatisticsInfo
 class RsTurtle
 {
 	public:
-		enum FileSharingStrategy { SHARE_ENTIRE_NETWORK, SHARE_FRIENDS_ONLY } ;
-
 		RsTurtle() {}
 		virtual ~RsTurtle() {}
 
@@ -103,23 +102,27 @@ class RsTurtle
 		virtual TurtleRequestId turtleSearch(const std::string& match_string) = 0 ;
 		virtual TurtleRequestId turtleSearch(const LinearizedExpression& expr) = 0 ;
 
-		// Sets the file sharing strategy. It concerns all local files. It would
-		// be better to handle this for each file, of course.
-
-		void setFileSharingStrategy(FileSharingStrategy f) { _sharing_strategy = f ; }
-
 		// Initiates tunnel handling for the given file hash.  tunnels.  Launches
 		// an exception if an error occurs during the initialization process. The
 		// turtle router itself does not initiate downloads, it only maintains
 		// tunnels for the given hash. The download should be driven by the file
 		// transfer module by calling ftServer::FileRequest().
 		//
-		virtual void monitorFileTunnels(const std::string& name,const std::string& file_hash,uint64_t size) = 0 ;
+		virtual void monitorTunnels(const std::string& file_hash,RsTurtleClientService *client_service) = 0 ;
 
 		// Tells the turtle router to stop handling tunnels for the given file hash. Traditionally this should
 		// be called after calling ftServer::fileCancel().
 		//
-		virtual void stopMonitoringFileTunnels(const std::string& file_hash) = 0 ;
+		virtual void stopMonitoringTunnels(const std::string& file_hash) = 0 ;
+
+		/// Adds a client tunnel service. This means that the service will be added 
+		/// to the list of services that might respond to tunnel requests.
+		/// Example tunnel services include:
+		///
+		///	p3ChatService:		tunnels correspond to private distant chatting
+		///	ftServer		 : 	tunnels correspond to file data transfer
+		///
+		virtual void registerTunnelService(RsTurtleClientService *service) = 0;
 
 		// Get info from the turtle router. I use std strings to hide the internal structs.
 		//
@@ -136,8 +139,6 @@ class RsTurtle
 		// Hardcore handles
 		virtual void setMaxTRForwardRate(int max_tr_up_rate) = 0 ;
 		virtual int getMaxTRForwardRate() const = 0 ;
-	protected:
-		FileSharingStrategy _sharing_strategy ;
 };
 
 #endif

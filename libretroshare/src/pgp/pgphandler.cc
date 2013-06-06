@@ -943,7 +943,37 @@ bool PGPHandler::addOrMergeKey(ops_keyring_t *keyring,std::map<std::string,PGPCe
 
 	return ret ;
 }
-
+//   bool PGPHandler::encryptTextToString(const PGPIdType& key_id,const std::string& text,std::string& outstring) 
+//   {
+//   	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
+//   
+//   	const ops_keydata_t *public_key = getPublicKey(key_id) ;
+//   
+//   	if(public_key == NULL)
+//   	{
+//   		std::cerr << "Cannot get public key of id " << key_id.toStdString() << std::endl;
+//   		return false ;
+//   	}
+//   
+//   	if(public_key->type != OPS_PTAG_CT_PUBLIC_KEY)
+//   	{
+//   		std::cerr << "PGPHandler::encryptTextToFile(): ERROR: supplied id did not return a public key!" << std::endl;
+//   		return false ;
+//   	}
+//   
+//   	ops_create_info_t *info;
+//   	ops_memory_t *buf = NULL ;
+//      ops_setup_memory_write(&info, &buf, 0);
+//   
+//   	ops_encrypt_stream(info, public_key, NULL, ops_false, ops_true);
+//   	ops_write(text.c_str(), text.length(), info);
+//   	ops_writer_close(info);
+//   
+//   	outstring = std::string((char *)ops_memory_get_data(buf),ops_memory_get_length(buf)) ;
+//   	ops_create_info_delete(info);
+//   
+//   	return true ;
+//   }
 bool PGPHandler::encryptTextToFile(const PGPIdType& key_id,const std::string& text,const std::string& outfile) 
 {
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
@@ -976,6 +1006,73 @@ bool PGPHandler::encryptTextToFile(const PGPIdType& key_id,const std::string& te
 	ops_create_info_delete(info);
 
 	return true ;
+}
+
+bool PGPHandler::encryptDataBin(const PGPIdType& key_id,const void *data, const uint32_t len, unsigned char *encrypted_data, unsigned int *encrypted_data_len) 
+{
+	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
+
+	const ops_keydata_t *public_key = locked_getPublicKey(key_id,true) ;
+
+	if(public_key == NULL)
+	{
+		std::cerr << "Cannot get public key of id " << key_id.toStdString() << std::endl;
+		return false ;
+	}
+
+	if(public_key->type != OPS_PTAG_CT_PUBLIC_KEY)
+	{
+		std::cerr << "PGPHandler::encryptTextToFile(): ERROR: supplied id did not return a public key!" << std::endl;
+		return false ;
+	}
+	ops_create_info_t *info;
+	ops_memory_t *buf = NULL ;
+   ops_setup_memory_write(&info, &buf, 0);
+
+	ops_encrypt_stream(info, public_key, NULL, ops_false, ops_false);
+
+	ops_write(data,len,info);
+	ops_writer_close(info);
+	ops_create_info_delete(info);
+
+	int tlen = ops_memory_get_length(buf) ;
+	bool res ;
+
+	if( (int)*encrypted_data_len >= tlen)
+	{
+		memcpy(encrypted_data,ops_memory_get_data(buf),tlen) ;
+		*encrypted_data_len = tlen ;
+		res = true ;
+	}
+	else
+	{
+		std::cerr << "Not enough room to fit encrypted data. Size given=" << *encrypted_data_len << ", required=" << tlen << std::endl;
+		res = false ;
+	}
+
+	ops_memory_release(buf) ;
+	free(buf) ;
+
+	return res ;
+}
+
+bool PGPHandler::decryptDataBin(const PGPIdType& key_id,const void *encrypted_data, const uint32_t encrypted_len, unsigned char *data, unsigned int *data_len) 
+{
+	int out_length ;
+	unsigned char *out ;
+	ops_boolean_t res = ops_decrypt_memory((const unsigned char *)encrypted_data,encrypted_len,&out,&out_length,_secring,ops_false,cb_get_passphrase) ;
+
+	if(*data_len < out_length)
+	{
+		std::cerr << "Not enough room to store decrypted data! Please give more."<< std::endl;
+		return false ;
+	}
+
+	*data_len = out_length ;
+	memcpy(data,out,out_length) ;
+	free(out) ;
+
+	return (bool)res ;
 }
 
 bool PGPHandler::decryptTextFromFile(const PGPIdType&,std::string& text,const std::string& inputfile) 
@@ -1054,10 +1151,21 @@ bool PGPHandler::SignDataBin(const PGPIdType& id,const void *data, const uint32_
 	if(!memres)
 		return false ;
 
-	uint32_t tlen = std::min(*signlen,(uint32_t)ops_memory_get_length(memres)) ;
+	bool res ;
+	uint32_t slen = (uint32_t)ops_memory_get_length(memres);
 
-	memcpy(sign,ops_memory_get_data(memres),tlen) ;
-	*signlen = tlen ;
+	if(*signlen >= slen)
+	{
+		*signlen = slen ;
+
+		memcpy(sign,ops_memory_get_data(memres),*signlen) ;
+		res = true ;
+	}
+	else
+	{
+		std::cerr << "(EE) memory chunk is not large enough for signature packet. Requred size: " << slen << " bytes." << std::endl;
+		res = false ;
+	}
 
 	ops_memory_release(memres) ;
 	free(memres) ;
@@ -1073,7 +1181,7 @@ bool PGPHandler::SignDataBin(const PGPIdType& id,const void *data, const uint32_
 	hexdump( (unsigned char *)sign,*signlen) ;
 	std::cerr << std::endl;
 #endif
-	return true ;
+	return res ;
 }
 
 bool PGPHandler::privateSignCertificate(const PGPIdType& ownId,const PGPIdType& id_of_key_to_sign) 

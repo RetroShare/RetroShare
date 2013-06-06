@@ -1085,7 +1085,7 @@ bool	ftDataMultiplex::locked_handleServerRequest(ftFileProvider *provider,
 		std::string peerId, std::string hash, uint64_t size, 
 			uint64_t offset, uint32_t chunksize)
 {
-	if(chunksize > std::min(size,uint64_t(10*1024*1024)))
+	if(chunksize > uint32_t(10*1024*1024))
 	{
 		std::cerr << "Warning: peer " << peerId << " is asking a large chunk (s=" << chunksize << ") for hash " << hash << ", filesize=" << size << ". This is unexpected." << std::endl ;
 		return false ;

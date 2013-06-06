@@ -71,7 +71,7 @@ static NewsFeed *instance = NULL;
 
 /** Constructor */
 NewsFeed::NewsFeed(QWidget *parent)
-: MainPage (parent)
+: RsAutoUpdatePage(1000,parent)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	setupUi(this);
@@ -83,9 +83,9 @@ NewsFeed::NewsFeed(QWidget *parent)
 	connect(removeAllButton, SIGNAL(clicked()), this, SLOT(removeAll()));
 	connect(feedOptionsButton, SIGNAL(clicked()), this, SLOT(feedoptions()));
 
-	QTimer *timer = new QTimer(this);
-	timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateFeed()));
-	timer->start(1000);
+//	QTimer *timer = new QTimer(this);
+//	timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateFeed()));
+//	timer->start(1000);
 }
 
 NewsFeed::~NewsFeed()
@@ -95,7 +95,7 @@ NewsFeed::~NewsFeed()
 	}
 }
 
-void NewsFeed::updateFeed()
+void NewsFeed::updateDisplay()
 {
 	if (!rsNotify)
 		return;

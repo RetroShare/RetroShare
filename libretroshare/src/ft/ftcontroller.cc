@@ -47,6 +47,7 @@
 #include "ft/ftsearch.h"
 #include "ft/ftdatamultiplex.h"
 #include "ft/ftextralist.h"
+#include "ft/ftserver.h"
 
 #include "turtle/p3turtle.h"
 
@@ -102,6 +103,7 @@ ftController::ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string /
 	last_clean_time(0),
 	mDataplex(dm),
 	mTurtle(NULL), 
+	mFtServer(NULL), 
 	ctrlMutex("ftController"),
 	doneMutex("ftController"),
 	mFtActive(false),
@@ -112,10 +114,9 @@ ftController::ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string /
 	/* TODO */
 }
 
-void ftController::setTurtleRouter(p3turtle *pt)
-{
-	mTurtle = pt ;
-}
+void ftController::setTurtleRouter(p3turtle *pt) { mTurtle = pt ; }
+void ftController::setFtServer(ftServer *ft) { mFtServer = ft ; }
+
 void ftController::setFtSearchNExtra(ftSearch *search, ftExtraList *list)
 {
 	mSearch = search;
@@ -646,7 +647,7 @@ void ftController::locked_checkQueueElement(uint32_t pos)
 		_queue[pos]->mState = ftFileControl::DOWNLOADING ;
 
 		if(_queue[pos]->mFlags & RS_FILE_REQ_ANONYMOUS_ROUTING)
-			mTurtle->monitorFileTunnels(_queue[pos]->mName,_queue[pos]->mHash,_queue[pos]->mSize) ;
+			mTurtle->monitorTunnels(_queue[pos]->mHash,mFtServer) ;
 	}
 
 	if(pos >= _max_active_downloads && _queue[pos]->mState != ftFileControl::QUEUED && _queue[pos]->mState != ftFileControl::PAUSED)
@@ -655,7 +656,7 @@ void ftController::locked_checkQueueElement(uint32_t pos)
 		_queue[pos]->mCreator->closeFile() ;
 
 		if(_queue[pos]->mFlags & RS_FILE_REQ_ANONYMOUS_ROUTING)
-			mTurtle->stopMonitoringFileTunnels(_queue[pos]->mHash) ;
+			mTurtle->stopMonitoringTunnels(_queue[pos]->mHash) ;
 	}
 }
 
@@ -899,7 +900,7 @@ bool ftController::completeFile(std::string hash)
 		mDownloads.erase(it);
 
 		if(flags & RS_FILE_REQ_ANONYMOUS_ROUTING)
-			mTurtle->stopMonitoringFileTunnels(hash_to_suppress) ;
+			mTurtle->stopMonitoringTunnels(hash_to_suppress) ;
 
 	} /******* UNLOCKED ********/
 
@@ -1264,7 +1265,7 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
   // We check that flags are consistent.  
   
   	if(flags & RS_FILE_REQ_ANONYMOUS_ROUTING)
-		mTurtle->monitorFileTunnels(fname,hash,size) ;
+		mTurtle->monitorTunnels(hash,mFtServer) ;
 
 	bool assume_availability = flags & RS_FILE_REQ_CACHE ;	// assume availability for cache files
 
@@ -1365,7 +1366,7 @@ bool ftController::setChunkStrategy(const std::string& hash,FileChunksInfo::Chun
 
 bool 	ftController::FileCancel(const std::string& hash)
 {
-	rsTurtle->stopMonitoringFileTunnels(hash) ;
+	rsTurtle->stopMonitoringTunnels(hash) ;
 
 #ifdef CONTROL_DEBUG
 	std::cerr << "ftController::FileCancel" << std::endl;

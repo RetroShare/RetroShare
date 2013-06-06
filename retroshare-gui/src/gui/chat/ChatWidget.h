@@ -47,7 +47,6 @@ class ChatWidget : public QWidget
 public:
 	enum enumChatType { TYPE_NORMAL, TYPE_HISTORY, TYPE_OFFLINE, TYPE_SYSTEM };
 
-public:
 	explicit ChatWidget(QWidget *parent = 0);
 	~ChatWidget();
 
@@ -74,13 +73,14 @@ public:
 	bool setStyle();
 	const RSStyle *getStyle() { return &style; }
 
-	void addChatButton(QPushButton *button) ;
+	void addChatBarWidget(QWidget *w) ;
 
 	bool isActive();
 	void setDefaultExtraFileFlags(TransferRequestFlags f) ;
 	void pasteText(const QString&);
 
 private slots:
+	void pasteCreateMsgLink() ;
 	void clearChatHistory();
 	void deleteChatHistory();
 	void messageHistory();

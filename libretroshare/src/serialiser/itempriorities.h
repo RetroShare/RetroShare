@@ -23,6 +23,10 @@
  *
  */
 
+#pragma once
+
+#include <stdint.h>
+
 // This file centralises QoS priorities for all transfer RsItems. 
 //
 const uint8_t QOS_PRIORITY_UNKNOWN                    = 0 ;
@@ -45,6 +49,7 @@ const uint8_t QOS_PRIORITY_RS_TURTLE_CHUNK_CRC        = 5 ;
 const uint8_t QOS_PRIORITY_RS_TURTLE_FILE_MAP         = 3 ;
 const uint8_t QOS_PRIORITY_RS_TURTLE_GENERIC_ITEM     = 3 ;
 const uint8_t QOS_PRIORITY_RS_TURTLE_FORWARD_FILE_DATA= 3 ;
+const uint8_t QOS_PRIORITY_RS_TURTLE_GENERIC_DATA     = 5 ;
 
 // File transfer
 //

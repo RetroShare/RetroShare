@@ -352,6 +352,22 @@ void MessageComposer::processSettings(bool bLoad)
 
     Settings->endGroup();
 }
+/*static*/ void MessageComposer::msgDistantPeer(const std::string& hash,const std::string& pgp_id)
+{
+//    std::cerr << "MessageComposer::msgfriend()" << std::endl;
+
+    /* create a message */
+
+    MessageComposer *pMsgDialog = MessageComposer::newMsg();
+    if (pMsgDialog == NULL) 
+        return;
+
+	 pMsgDialog->addRecipient(TO, hash,pgp_id) ;
+    pMsgDialog->show();
+
+    /* window will destroy itself! */
+}
+
 
 /*static*/ void MessageComposer::msgFriend(const std::string &id, bool group)
 {
@@ -1219,7 +1235,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
                     }
                 }
             } else {
-                if (std::find(peers.begin(), peers.end(), id) == peers.end()) {
+                if (_distant_peers.find(id)==_distant_peers.end() && std::find(peers.begin(), peers.end(), id) == peers.end()) {
                     // no friend
                     continue;
                 }
@@ -1269,6 +1285,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
             QMessageBox::warning(this, tr("RetroShare"), tr("Please insert at least one recipient."), QMessageBox::Ok);
             return false; // Don't send with no recipient
         }
+		  mi.encryption_keys = _distant_peers ;
 
         if (rsMsgs->MessageSend(mi) == false) {
             return false;
@@ -1402,7 +1419,13 @@ void MessageComposer::setRecipientToRow(int row, enumType type, std::string id, 
             }
         } else {
             RsPeerDetails details;
-            if (rsPeers->getPeerDetails(id, details)) {
+				if(_distant_peers.find(id) != _distant_peers.end())
+				{
+					name = tr("Distant peer (PGP key: %1)").arg(QString::fromStdString(_distant_peers[id])) ;
+					icon = QIcon(StatusDefs::imageUser(RS_STATUS_ONLINE));
+				}
+				else if (rsPeers->getPeerDetails(id, details)) 
+				{
                 name = PeerDefs::nameWithLocation(details);
 
                 StatusInfo peerStatusInfo;
@@ -1546,6 +1569,32 @@ void MessageComposer::editingRecipientFinished()
     lineEdit->setText(text);
 }
 
+void MessageComposer::addRecipient(enumType type, const std::string& hash,const std::string& pgp_id)
+{
+	_distant_peers[hash] = pgp_id ;
+
+	int rowCount = ui.recipientWidget->rowCount();
+	int row;
+	for (row = 0; row < rowCount; row++) 
+	{
+		enumType rowType;
+		std::string rowId;
+		bool rowGroup;
+
+		if (getRecipientFromRow(row, rowType, rowId, rowGroup) == true) 
+		{
+			if (rowId.empty()) // use row
+				break;
+
+			if (rowId == hash && rowType == type) // existing row
+				break;
+		} 
+		else // use row
+			break;
+	}
+
+	setRecipientToRow(row, type, hash, false);
+}
 void MessageComposer::addRecipient(enumType type, const std::string &id, bool group)
 {
     std::list<std::string> sslIds;

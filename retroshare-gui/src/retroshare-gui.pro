@@ -275,6 +275,7 @@ HEADERS +=  rshare.h \
             gui/TurtleRouterStatistics.h \
             gui/AboutDialog.h \
             gui/ForumsDialog.h \
+				gui/CreateMsgLinkDialog.h \
             gui/forums/ForumDetails.h \
             gui/forums/EditForumDetails.h \
             gui/forums/CreateForum.h \
@@ -333,6 +334,7 @@ HEADERS +=  rshare.h \
             gui/profile/StatusMessage.h \
             gui/chat/PopupChatWindow.h \
             gui/chat/PopupChatDialog.h \
+            gui/chat/PopupDistantChatDialog.h \
             gui/chat/ChatTabWidget.h \
             gui/chat/ChatWidget.h \
             gui/chat/ChatDialog.h \
@@ -471,6 +473,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/MainWindow.ui \
             gui/TurtleRouterDialog.ui \
             gui/TurtleRouterStatistics.ui \
+				gui/CreateMsgLinkDialog.ui \
             gui/forums/CreateForum.ui \
             gui/forums/CreateForumMsg.ui \
             gui/forums/ForumDetails.ui \
@@ -580,6 +583,7 @@ SOURCES +=  main.cpp \
             gui/TurtleRouterStatistics.cpp \
             gui/MainWindow.cpp \
             gui/ForumsDialog.cpp \
+				gui/CreateMsgLinkDialog.cpp \
             gui/forums/ForumDetails.cpp \
             gui/forums/EditForumDetails.cpp \
             gui/forums/CreateForum.cpp \
@@ -642,6 +646,7 @@ SOURCES +=  main.cpp \
             gui/channels/ChannelUserNotify.cpp \
             gui/chat/PopupChatWindow.cpp \
             gui/chat/PopupChatDialog.cpp \
+            gui/chat/PopupDistantChatDialog.cpp \
             gui/chat/ChatTabWidget.cpp \
             gui/chat/ChatWidget.cpp \
             gui/chat/ChatDialog.cpp \

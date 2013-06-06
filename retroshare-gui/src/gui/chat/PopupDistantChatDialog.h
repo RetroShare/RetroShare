@@ -1,7 +1,8 @@
+
 /****************************************************************
  *  RetroShare is distributed under the following license:
  *
- *  Copyright (C) 2006, crypton
+ *  Copyright (C) 2013, Cyril Soler
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -19,56 +20,34 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#pragma once 
 
-#ifndef _POPUPCHATDIALOG_H
-#define _POPUPCHATDIALOG_H
+#include "PopupChatDialog.h"
 
-#include "ui_PopupChatDialog.h"
-#include "ChatDialog.h"
+class QTimer ;
 
-#include <retroshare/rsmsgs.h>
-
-class PopupChatDialog : public ChatDialog
+class PopupDistantChatDialog: public PopupChatDialog 
 {
 	Q_OBJECT
 
 	friend class ChatDialog;
 
-private slots:
-	void showAvatarFrame(bool show);
-	void clearOfflineMessages();
-	void chatStatusChanged(const QString &peerId, const QString &statusString, bool isPrivateChat);
-	void statusChanged(int);
+	public slots:
+		void checkTunnel() ;
 
 protected:
 	/** Default constructor */
-	PopupChatDialog(QWidget *parent = 0, Qt::WFlags flags = 0);
+	PopupDistantChatDialog(QWidget *parent = 0, Qt::WFlags flags = 0);
 	/** Default destructor */
-	virtual ~PopupChatDialog();
+	virtual ~PopupDistantChatDialog();
 
-	virtual void init(const std::string &peerId, const QString &title);
-	virtual void showDialog(uint chatflags);
-	virtual ChatWidget *getChatWidget();
-	virtual bool hasPeerStatus() { return true; }
-	virtual bool notifyBlink();
-
+	virtual void init(const std::string& _hash, const QString &title);
 	virtual void updateStatus(int /*status*/) {}
 
-	void processSettings(bool load);
-
-	// used by plugins 
-	void addChatBarWidget(QWidget *w) ;
-
-protected:
-	virtual void addIncomingChatMsg(const ChatInfo& info);
-	virtual void onChatChanged(int list, int type);
-
-private:
-	bool manualDelete;
-	std::list<ChatInfo> savedOfflineChat;
-
-	/** Qt Designer generated object */
-	Ui::PopupChatDialog ui;
+	QTimer *_tunnel_check_timer ;
+	std::string _hash ;
+	std::string _virtual_peer_id ;
+	QLabel *_status_label ;
 };
 
-#endif
+

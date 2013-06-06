@@ -41,6 +41,7 @@
 #include "gui/connect/ConfCertDialog.h"
 
 #include <retroshare/rsfiles.h>
+#include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsforums.h>
 #include <retroshare/rschannels.h>
@@ -55,7 +56,9 @@
 #define HOST_MESSAGE     "message"
 #define HOST_SEARCH      "search"
 #define HOST_CERTIFICATE "certificate"
-#define HOST_REGEXP      "file|person|forum|channel|search|message|certificate"
+#define HOST_PUBLIC_MSG  "public_msg"
+#define HOST_PRIVATE_CHAT "private_chat"
+#define HOST_REGEXP      "file|person|forum|channel|search|message|certificate|private_chat|public_msg"
 
 #define FILE_NAME       "name"
 #define FILE_SIZE       "size"
@@ -87,6 +90,14 @@
 #define CERTIFICATE_EXT_IPPORT   "extipp"
 #define CERTIFICATE_LOC_IPPORT   "locipp"
 
+#define PRIVATE_CHAT_TIME_STAMP  "time_stamp"
+#define PRIVATE_CHAT_STRING      "encrypted_data"
+#define PRIVATE_CHAT_GPG_ID      "gpgid"
+
+#define PUBLIC_MSG_TIME_STAMP  "time_stamp"
+#define PUBLIC_MSG_SRC_PGP_ID  "gpgid"
+#define PUBLIC_MSG_HASH        "hash"
+
 RetroShareLink::RetroShareLink(const QUrl& url)
 {
     fromUrl(url);
@@ -107,7 +118,8 @@ void RetroShareLink::fromString(const QString& url)
 #endif
 
     if ((url.startsWith(QString(RSLINK_SCHEME) + "://" + QString(HOST_FILE)) && url.count("|") == 3) ||
-        (url.startsWith(QString(RSLINK_SCHEME) + "://" + QString(HOST_PERSON)) && url.count("|") == 2)) {
+        (url.startsWith(QString(RSLINK_SCHEME) + "://" + QString(HOST_PERSON)) && url.count("|") == 2)) 
+	 {
         /* Old link, we try it */
         QStringList list = url.split ("|");
 
@@ -158,6 +170,7 @@ void RetroShareLink::fromUrl(const QUrl& url)
 
     if (url.scheme() != RSLINK_SCHEME) {
         /* No RetroShare-Link */
+		 std::cerr << "Not a RS link: scheme=" << url.scheme().toStdString() << std::endl;
         return;
     }
 
@@ -180,6 +193,29 @@ void RetroShareLink::fromUrl(const QUrl& url)
             return;
         }
     }
+
+	 if(url.host() == HOST_PRIVATE_CHAT) 
+	 {
+		 bool ok ;
+		 _type = TYPE_PRIVATE_CHAT ;
+		 _time_stamp = url.queryItemValue(PRIVATE_CHAT_TIME_STAMP).toUInt(&ok) ;
+		 _encrypted_chat_info = url.queryItemValue(PRIVATE_CHAT_STRING) ;
+		 _GPGid = url.queryItemValue(PRIVATE_CHAT_GPG_ID) ;
+
+		 check() ;
+            return;
+	 }
+	 if(url.host() == HOST_PUBLIC_MSG) 
+	 {
+		 bool ok ;
+		 _type = TYPE_PUBLIC_MSG ;
+		 _hash = url.queryItemValue(PUBLIC_MSG_HASH) ;
+		 _time_stamp = url.queryItemValue(PUBLIC_MSG_TIME_STAMP).toUInt(&ok) ;
+		 _GPGid = url.queryItemValue(PUBLIC_MSG_SRC_PGP_ID) ;
+
+		 check() ;
+            return;
+	 }
 
     if (url.host() == HOST_EXTRAFILE) {
         bool ok ;
@@ -299,6 +335,32 @@ bool RetroShareLink::createFile(const QString& name, uint64_t size, const QStrin
     return valid();
 }
 
+bool RetroShareLink::createPrivateChatInvite(time_t time_stamp,const QString& gpg_id,const QString& encrypted_chat_info) 
+{
+	clear() ;
+
+	_type = TYPE_PRIVATE_CHAT ;
+	_time_stamp = time_stamp ;
+	_encrypted_chat_info = encrypted_chat_info ;
+	_GPGid = gpg_id ;
+
+	check() ;
+
+	return valid() ;
+}
+bool RetroShareLink::createPublicMsgInvite(time_t time_stamp,const QString& issuer_pgp_id,const QString& hash) 
+{
+	clear() ;
+
+	_type = TYPE_PUBLIC_MSG ;
+	_time_stamp = time_stamp ;
+	_hash = hash ;
+	_GPGid = issuer_pgp_id ;
+
+	check() ;
+
+	return valid() ;
+}
 bool RetroShareLink::createPerson(const std::string& id)
 {
     clear();
@@ -491,78 +553,93 @@ void RetroShareLink::clear()
     _hash = "" ;
     _size = 0 ;
     _name = "" ;
+	 _GPGid = "" ;
+	 _time_stamp = 0 ;
+	 _encrypted_chat_info = "" ;
 }
 
 void RetroShareLink::check()
 {
 	_valid = true;
 
-	switch (_type) {
-	case TYPE_UNKNOWN:
-		_valid = false;
-		break;
-	case TYPE_EXTRAFILE:
-		if(!checkSSLId(_SSLid))
-			_valid = false;			// no break! We also test file stuff below.
-	case TYPE_FILE:
-		if(_size > (((uint64_t)1)<<40))	// 1TB. Who has such large files?
+	switch (_type) 
+	{
+		case TYPE_UNKNOWN:
 			_valid = false;
+			break;
+		case TYPE_EXTRAFILE:
+			if(!checkSSLId(_SSLid))
+				_valid = false;			// no break! We also test file stuff below.
+		case TYPE_FILE:
+			if(_size > (((uint64_t)1)<<40))	// 1TB. Who has such large files?
+				_valid = false;
 
-		if(!checkName(_name))
-			_valid = false;
+			if(!checkName(_name))
+				_valid = false;
 
-		if(!checkHash(_hash))
-			_valid = false;
-		break;
-	case TYPE_PERSON:
-		if(_size != 0)
-			_valid = false;
+			if(!checkHash(_hash))
+				_valid = false;
+			break;
 
-		if(_name.isEmpty())
-			_valid = false;
+		case TYPE_PRIVATE_CHAT:
+			if(!checkRadix64(_encrypted_chat_info)) _valid = false ;
+			if(!checkPGPId(_GPGid)) _valid = false ;
+			break ;
 
-		if(_hash.isEmpty())
-			_valid = false;
-		break;
-	case TYPE_FORUM:
-		if(_size != 0)
-			_valid = false;
+		case TYPE_PUBLIC_MSG:
+			if(!checkHash(_hash)) _valid = false ;
+			if(!checkPGPId(_GPGid)) _valid = false ;
+			break ;
 
-		if(_name.isEmpty())
-			_valid = false;
+		case TYPE_PERSON:
+			if(_size != 0)
+				_valid = false;
 
-		if(_hash.isEmpty())
-			_valid = false;
-		break;
-	case TYPE_CHANNEL:
-		if(_size != 0)
-			_valid = false;
+			if(_name.isEmpty())
+				_valid = false;
 
-		if(_name.isEmpty())
-			_valid = false;
+			if(_hash.isEmpty())
+				_valid = false;
+			break;
+		case TYPE_FORUM:
+			if(_size != 0)
+				_valid = false;
 
-		if(_hash.isEmpty())
-			_valid = false;
-		break;
-	case TYPE_SEARCH:
-		if(_size != 0)
-			_valid = false;
+			if(_name.isEmpty())
+				_valid = false;
 
-		if(_name.isEmpty())
-			_valid = false;
+			if(_hash.isEmpty())
+				_valid = false;
+			break;
+		case TYPE_CHANNEL:
+			if(_size != 0)
+				_valid = false;
 
-		if(!_hash.isEmpty())
-			_valid = false;
-		break;
-	case TYPE_MESSAGE:
-		if(_size != 0)
-			_valid = false;
+			if(_name.isEmpty())
+				_valid = false;
 
-		if(_hash.isEmpty())
-			_valid = false;
-		break;
-	case TYPE_CERTIFICATE:
-		break;
+			if(_hash.isEmpty())
+				_valid = false;
+			break;
+		case TYPE_SEARCH:
+			if(_size != 0)
+				_valid = false;
+
+			if(_name.isEmpty())
+				_valid = false;
+
+			if(!_hash.isEmpty())
+				_valid = false;
+			break;
+		case TYPE_MESSAGE:
+			if(_size != 0)
+				_valid = false;
+
+			if(_hash.isEmpty())
+				_valid = false;
+			break;
+		case TYPE_CERTIFICATE:
+			break;
 	}
 
 	if (!_valid) {
@@ -579,6 +656,22 @@ QString RetroShareLink::title() const
 	switch (_type) {
 	case TYPE_UNKNOWN:
 		break;
+	case TYPE_PUBLIC_MSG:
+		{
+			RsPeerDetails detail;
+			rsPeers->getPeerDetails(_GPGid.toStdString(), detail) ;
+			return QString("Click to send a private message to %1 (%2).").arg(QString::fromStdString(detail.name)).arg(_GPGid) ;
+		}
+	case TYPE_PRIVATE_CHAT:
+		{
+			RsPeerDetails detail;
+			rsPeers->getPeerDetails(_GPGid.toStdString(), detail) ;
+
+			if (_GPGid.toStdString() == rsPeers->getGPGOwnId()) 
+				return QString("Click to open a private chat canal to %1 (%2).").arg(QString::fromStdString(detail.name)).arg(_GPGid) ;
+			else
+				return QString("This is a private chat invite for %1 (%2). You can't use it.").arg(QString::fromStdString(detail.name)).arg(_GPGid) ;
+		}
 	case TYPE_EXTRAFILE:
 		return QString("%1 (%2, Extra - Source included)").arg(hash()).arg(misc::friendlyUnit(size()));
 	case TYPE_FILE:
@@ -619,6 +712,29 @@ QString RetroShareLink::toString() const
 
             return url.toString();
         }
+	 case TYPE_PRIVATE_CHAT:
+		  {
+			  QUrl url;
+			  url.setScheme(RSLINK_SCHEME) ;
+			  url.setHost(HOST_PRIVATE_CHAT) ;
+			  url.addQueryItem(PRIVATE_CHAT_TIME_STAMP,QString::number(_time_stamp)) ;
+			  url.addQueryItem(PRIVATE_CHAT_GPG_ID,_GPGid) ;
+			  url.addQueryItem(PRIVATE_CHAT_STRING,_encrypted_chat_info) ;
+
+			  return url.toString() ;
+		  }
+	 case TYPE_PUBLIC_MSG:
+		  {
+			  QUrl url;
+			  url.setScheme(RSLINK_SCHEME) ;
+			  url.setHost(HOST_PUBLIC_MSG) ;
+			  url.addQueryItem(PUBLIC_MSG_TIME_STAMP,QString::number(_time_stamp)) ;
+			  url.addQueryItem(PUBLIC_MSG_HASH,_hash) ;
+			  url.addQueryItem(PUBLIC_MSG_SRC_PGP_ID,_GPGid) ;
+
+			  return url.toString() ;
+		  }
+
 	 case TYPE_EXTRAFILE:
         {
             QUrl url;
@@ -724,6 +840,14 @@ QString RetroShareLink::niceName() const
         return PeerDefs::rsid(name().toUtf8().constData(), hash().toStdString());
     }
 
+	if(type() == TYPE_PRIVATE_CHAT) {
+			return QString("Private chat invite (Valid only for key %1)").arg(_GPGid);
+	}
+	if(type() == TYPE_PUBLIC_MSG) {
+			RsPeerDetails detail;
+			rsPeers->getPeerDetails(_GPGid.toStdString(), detail) ;
+		return QString("Click this link to send a private message to %1 (%2)").arg(QString::fromStdString(detail.name)).arg(_GPGid) ;
+	}
 	if(type() == TYPE_CERTIFICATE) {
 		if (_location.isEmpty()) {
 			return QString("RetroShare Certificate (%1)").arg(_name);
@@ -814,6 +938,41 @@ bool RetroShareLink::checkSSLId(const QString& ssl_id)
 
     return true ;
 }
+bool RetroShareLink::checkPGPId(const QString& pgp_id)
+{
+    if(pgp_id.length() != 16)
+        return false ;
+
+    QByteArray qb(pgp_id.toAscii()) ;
+
+    for(int i=0;i<qb.length();++i)
+    {
+        unsigned char b(qb[i]) ;
+
+        if(!((b>47 && b<58) || (b>64 && b<71)))
+            return false ;
+    }
+
+    return true ;
+}
+bool RetroShareLink::checkRadix64(const QString& s)
+{
+	QByteArray qb(s.toAscii()) ;
+
+    for(int i=0;i<qb.length();++i)
+    {
+        unsigned char b(qb[i]) ;
+
+		  if(!(  (b > 46 && b < 58) || (b > 64 && b < 91) || (b > 96 && b < 123) || b=='+' || b=='='))
+		  {
+			  std::cerr << "Character not allowed in radix: " << b << std::endl;
+			  return false;
+		  }
+	 }
+	 std::cerr << "Radix check: passed" << std::endl;
+	 return true ;
+}
+
 bool RetroShareLink::checkHash(const QString& hash)
 {
     if(hash.length() != 40)
@@ -1025,6 +1184,58 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					connectFriendWizard.setCertificate(RS_Certificate, (link.subType() == RSLINK_SUBTYPE_CERTIFICATE_USER_REQUEST) ? true : false);
 					connectFriendWizard.exec();
 					needNotifySuccess = false;
+				}
+				break ;
+
+			case TYPE_PUBLIC_MSG:
+				{
+					std::cerr << "Opening a public msg window " << std::endl;
+					std::cerr << "      time_stamp = " << link._time_stamp << std::endl;
+					std::cerr << "      hash       = " << link._hash.toStdString() << std::endl;
+					std::cerr << "      Issuer Id  = " << link._GPGid.toStdString() << std::endl;
+
+					if(link._time_stamp < time(NULL))
+					{
+						QMessageBox::information(NULL,QObject::tr("Messenging link is expired"),QObject::tr("This Messenging link is expired. The destination peer will not receive it.")) ;
+						break ;
+					}
+	
+					 MessageComposer::msgDistantPeer(link._hash.toStdString(),link._GPGid.toStdString()) ;
+				}
+				break ;
+			case TYPE_PRIVATE_CHAT:
+				{
+					std::cerr << "Opening a private chat window " << std::endl;
+					std::cerr << "      time_stamp = " << link._time_stamp << std::endl;
+					std::cerr << "      enc-string = " << link._encrypted_chat_info.toStdString() << std::endl;
+					std::cerr << "      PGP Id     = " << link._GPGid.toStdString() << std::endl;
+
+					if(link._time_stamp < time(NULL))
+					{
+						QMessageBox::information(NULL,QObject::tr("Chat link is expired"),QObject::tr("This chat link is expired. The destination peer will not answer.")) ;
+						break ;
+					}
+					if(link._GPGid.toStdString() != rsPeers->getGPGOwnId())
+					{
+						QMessageBox::information(NULL,QObject::tr("Chat link cannot be decrypted"),QObject::tr("This chat link is encrypted with a key that is not yours. You can't used it. Key ID = ")+link._GPGid) ;
+						break ;
+					}
+
+					std::string hash  ;
+					uint32_t error_code ;
+
+					if(!rsMsgs->initiateDistantChatConnexion(link._encrypted_chat_info.toStdString(),hash,error_code))
+					{
+						QString error_msg ;
+						switch(error_code)
+						{
+							default:
+							case RS_DISTANT_CHAT_ERROR_DECRYPTION_FAILED:  error_msg = QObject::tr("The link could not be decrypted.") ; break ;
+							case RS_DISTANT_CHAT_ERROR_SIGNATURE_MISMATCH: error_msg = QObject::tr("The link signature cannot be checked.") ; break ;
+							case RS_DISTANT_CHAT_ERROR_UNKNOWN_KEY:        error_msg = QObject::tr("The link is signed by an unknown key.") ; break ;
+						}
+						QMessageBox::information(NULL,QObject::tr("Chat connexion is not possible"),error_msg) ;
+					}
 				}
 				break ;
 

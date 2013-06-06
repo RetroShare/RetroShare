@@ -78,7 +78,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WF
 
 	connect(inviteFriendsButton, SIGNAL(clicked()), this , SLOT(inviteFriends()));
 
-	getChatWidget()->addChatButton(inviteFriendsButton) ;
+	getChatWidget()->addChatBarWidget(inviteFriendsButton) ;
 
 	unsubscribeButton = new QPushButton ;
 	unsubscribeButton->setMinimumSize(QSize(28,28)) ;
@@ -95,7 +95,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WF
 
 	connect(unsubscribeButton, SIGNAL(clicked()), this , SLOT(leaveLobby()));
 
-	getChatWidget()->addChatButton(unsubscribeButton) ;
+	getChatWidget()->addChatBarWidget(unsubscribeButton) ;
 }
 
 void ChatLobbyDialog::leaveLobby()
