@@ -1233,16 +1233,17 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
                                 std::cerr << "\tSource: " << pit->peerId;
 				std::cerr << std::endl;
 #endif
+				// Because this is auto-add, we only add sources that we allow to DL from using direct transfers.
 
-				if (srcIds.end() == std::find( srcIds.begin(), srcIds.end(), pit->peerId))
+				if ((srcIds.end() == std::find( srcIds.begin(), srcIds.end(), pit->peerId)) && (RS_SERVICE_PERM_DIRECT_DL & rsPeers->servicePermissionFlags_sslid(pit->peerId)))
 				{
 					srcIds.push_back(pit->peerId);
 
 #ifdef CONTROL_DEBUG
-                                        std::cerr << "\tAdding in: " << pit->peerId;
+					std::cerr << "\tAdding in: " << pit->peerId;
 					std::cerr << std::endl;
 #endif
-                                }
+				}
 			}
 		}
 	}
