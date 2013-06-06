@@ -19,6 +19,7 @@
  ****************************************************************/
 
 #include <iostream>
+#include <time.h>
 #include <QMessageBox>
 #include <QTimer>
 #include <retroshare/rsmsgs.h>
