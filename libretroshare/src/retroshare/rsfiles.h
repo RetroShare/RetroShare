@@ -188,7 +188,7 @@ class RsFiles
 		virtual void ForceDirectoryCheck() = 0;
 		virtual void updateSinceGroupPermissionsChanged() = 0;
 		virtual bool InDirectoryCheck() = 0;
-		virtual bool CopyFile(const std::string& source,const std::string& dest) = 0;
+		virtual bool copyFile(const std::string& source,const std::string& dest) = 0;
 
 		/***
 		 * Directory Control

@@ -692,7 +692,7 @@ bool    ftServer::InDirectoryCheck()
 	return mFiMon->inDirectoryCheck();
 }
 
-bool ftServer::CopyFile(const std::string& source, const std::string& dest)
+bool ftServer::copyFile(const std::string& source, const std::string& dest)
 {
 	return mFtController->copyFile(source, dest);
 }

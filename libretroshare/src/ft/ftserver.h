@@ -200,7 +200,7 @@ class ftServer: public RsFiles, public ftDataSend, public RsTurtleClientService,
 		virtual void ForceDirectoryCheck();
 		virtual void updateSinceGroupPermissionsChanged() ;
 		virtual bool InDirectoryCheck();
-		virtual bool CopyFile(const std::string& source, const std::string& dest);
+		virtual bool copyFile(const std::string& source, const std::string& dest);
 
 		/***
 		 * Directory Handling
