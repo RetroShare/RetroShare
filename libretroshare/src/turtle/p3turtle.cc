@@ -871,7 +871,7 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 	// We use a random factor on the depth test that is biased by a mix between the session id and the partial tunnel id
 	// to scramble a possible search-by-depth attack.
 	//
-	bool random_bypass = (item->depth == TURTLE_MAX_SEARCH_DEPTH && (((_random_bias ^ item->request_id)&0x7)==2)) ;
+	bool random_bypass = (item->depth >= TURTLE_MAX_SEARCH_DEPTH && (((_random_bias ^ item->request_id)&0x7)==2)) ;
 	bool random_dshift = (item->depth == 1                       && (((_random_bias ^ item->request_id)&0x7)==6)) ;
 
 	if(item->depth < TURTLE_MAX_SEARCH_DEPTH || random_bypass)
@@ -1123,7 +1123,7 @@ bool p3turtle::getTunnelServiceInfo(TurtleTunnelId tunnel_id,std::string& vpid,s
 
 		if(it == _incoming_file_hashes.end())
 		{
-			std::cerr << "p3turtle::handleRecvGenericTunnelItem(): hash " << hash << " for tunnel " << (void*)(it2->first) << " has no attached service! Dropping the item. This is a serious consistency error." << std::endl;
+			std::cerr << "p3turtle::handleRecvGenericTunnelItem(): hash " << hash << " for tunnel " << std::hex << it2->first << std::dec << " has no attached service! Dropping the item. This is a serious consistency error." << std::endl;
 			return false;
 		}
 
@@ -1135,7 +1135,7 @@ bool p3turtle::getTunnelServiceInfo(TurtleTunnelId tunnel_id,std::string& vpid,s
 
 		if(it == _outgoing_file_hashes.end())
 		{
-			std::cerr << "p3turtle::handleRecvGenericTunnelItem(): hash " << hash << " for tunnel " << (void*)(it2->first) << " has no attached service! Dropping the item. This is a serious consistency error." << std::endl;
+			std::cerr << "p3turtle::handleRecvGenericTunnelItem(): hash " << hash << " for tunnel " << std::hex << it2->first  << std::dec<< " has no attached service! Dropping the item. This is a serious consistency error." << std::endl;
 			return false;
 		}
 
@@ -1143,7 +1143,7 @@ bool p3turtle::getTunnelServiceInfo(TurtleTunnelId tunnel_id,std::string& vpid,s
 	}
 	else
 	{
-		std::cerr << "p3turtle::handleRecvGenericTunnelItem(): hash " << hash << " for tunnel " << (void*)(it2->first) << ". Tunnel is not a end-point or a starting tunnel!! This is a serious consistency error." << std::endl;
+		std::cerr << "p3turtle::handleRecvGenericTunnelItem(): hash " << hash << " for tunnel " << std::hex << it2->first << std::dec << ". Tunnel is not a end-point or a starting tunnel!! This is a serious consistency error." << std::endl;
 		return false ;
 	}
 
