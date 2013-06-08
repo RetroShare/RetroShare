@@ -59,7 +59,7 @@ void CreateMsgLinkDialog::updateCurrentRow(int r)
 	{
 		_current_link_type_LE->setText("") ;
 		_current_link_dst_LE->setText("") ;
-		_current_link_date_DE->setDateTime(QDateTime::fromMSecsSinceEpoch(0)) ;
+		_current_link_date_DE->setDateTime(QDateTime::fromTime_t(0)) ;
 		return  ;
 	}
 
@@ -74,7 +74,7 @@ void CreateMsgLinkDialog::updateCurrentRow(int r)
 		_current_link_type_LE->setText( tr("Public message invite") ) ;
 
 	_current_link_dst_LE->setText(link.GPGId()) ;
-	_current_link_date_DE->setDateTime(QDateTime::fromMSecsSinceEpoch(link.timeStamp() * 1000 )) ;
+	_current_link_date_DE->setDateTime(QDateTime::fromTime_t(link.timeStamp())) ;
 }
 
 void CreateMsgLinkDialog::toggleCreateLink(bool b)
