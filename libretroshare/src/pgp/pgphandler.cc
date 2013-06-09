@@ -1058,7 +1058,7 @@ bool PGPHandler::encryptDataBin(const PGPIdType& key_id,const void *data, const 
 	return res ;
 }
 
-bool PGPHandler::decryptDataBin(const PGPIdType& key_id,const void *encrypted_data, const uint32_t encrypted_len, unsigned char *data, unsigned int *data_len) 
+bool PGPHandler::decryptDataBin(const PGPIdType& /*key_id*/,const void *encrypted_data, const uint32_t encrypted_len, unsigned char *data, unsigned int *data_len)
 {
 	int out_length ;
 	unsigned char *out ;

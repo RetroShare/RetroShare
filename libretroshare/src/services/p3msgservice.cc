@@ -1612,7 +1612,6 @@ RsMsgItem *p3MsgService::initMIRsMsg(MessageInfo &info, const std::string &to)
 	// by the whole message serialized and binary encrypted, so as to obfuscate
 	// all its content.
 	//
-	bool enc_ok = false ;
 
 	if(info.encryption_keys.find(to) != info.encryption_keys.end())
 		encryptMessage(info.encryption_keys[to],msg) ;
@@ -1767,7 +1766,7 @@ bool p3MsgService::getDistantOfflineMessengingInvites(std::vector<DistantOffline
 
 	return true ;
 }
-bool p3MsgService::handleTunnelRequest(const std::string& hash,const std::string& peer_id) 
+bool p3MsgService::handleTunnelRequest(const std::string& hash,const std::string& /*peer_id*/)
 {
 #ifdef DEBUG_DISTANT_MSG
 	std::cerr << "p3MsgService::handleTunnelRequest: received TR for hash " << hash << std::endl;
@@ -1852,7 +1851,7 @@ void p3MsgService::manageDistantPeers()
 	}
 }
 
-void p3MsgService::addVirtualPeer(const TurtleFileHash& hash, const TurtleVirtualPeerId& vpid,RsTurtleGenericTunnelItem::Direction dir) 
+void p3MsgService::addVirtualPeer(const TurtleFileHash& hash, const TurtleVirtualPeerId& vpid,RsTurtleGenericTunnelItem::Direction /*dir*/)
 {
 	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 	// A new tunnel has been created. We need to flush pending messages for the corresponding peer.
@@ -1869,7 +1868,7 @@ void p3MsgService::addVirtualPeer(const TurtleFileHash& hash, const TurtleVirtua
 	std::cerr << "p3MsgService::addVirtualPeer(): adding virtual peer " << vpid << " for hash " << hash << std::endl;
 #endif
 }
-void p3MsgService::removeVirtualPeer(const TurtleFileHash& hash, const TurtleVirtualPeerId& vpid) 
+void p3MsgService::removeVirtualPeer(const TurtleFileHash& hash, const TurtleVirtualPeerId& /*vpid*/)
 {
 	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 	// A new tunnel has been created. We need to flush pending messages for the corresponding peer.
@@ -1952,7 +1951,7 @@ void p3MsgService::sendTurtleData(const std::string& hash,RsMsgItem *msgitem)
 }
 
 void p3MsgService::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,const std::string& hash,
-												const std::string& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) 
+												const std::string& virtual_peer_id,RsTurtleGenericTunnelItem::Direction /*direction*/)
 {
 	RsTurtleGenericDataItem *item = dynamic_cast<RsTurtleGenericDataItem*>(gitem) ;
 
@@ -1967,6 +1966,8 @@ void p3MsgService::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,const std:
 	std::cerr << "   data = " ;
 	printBinaryData(item->data_bytes,item->data_size) ;
 	std::cerr << std::endl;
+#else
+	(void) virtual_peer_id;
 #endif
 
 	{

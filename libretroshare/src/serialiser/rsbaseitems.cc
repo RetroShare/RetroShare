@@ -1371,7 +1371,6 @@ RsFileSingleChunkCrcRequest *RsFileItemSerialiser::deserialiseChunkCrcReq(void *
 
 	/* skip the header */
 	offset += 8;
-	uint8_t tmp ;
 	ok &= GetTlvString(data, *pktsize, &offset, TLV_TYPE_STR_VALUE, item->hash); 	// file hash
 	ok &= getRawUInt32(data, rssize, &offset, &(item->chunk_number));
 
@@ -1420,7 +1419,6 @@ RsFileSingleChunkCrc *RsFileItemSerialiser::deserialiseChunkCrc(void *data, uint
 
 	/* skip the header */
 	offset += 8;
-	uint8_t tmp ;
 	ok &= GetTlvString(data, *pktsize, &offset, TLV_TYPE_STR_VALUE, item->hash); 	// file hash
 	ok &= getRawUInt32(data, rssize, &offset, &(item->chunk_number));
 	ok &= getRawUInt32(data, rssize, &offset, &(item->check_sum.fourbytes[0]));

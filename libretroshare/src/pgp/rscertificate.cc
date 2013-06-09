@@ -799,7 +799,7 @@ std::string RsCertificate::toStdString_oldFormat() const
 	return res ;
 }
 
-bool RsCertificate::initFromString_oldFormat(const std::string& certstr,uint32_t& err_code)
+bool RsCertificate::initFromString_oldFormat(const std::string& certstr,uint32_t& /*err_code*/)
 {
 	//parse the text to get ip address
 	try 

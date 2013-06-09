@@ -495,6 +495,8 @@ bool ftDataMultiplex::recvSingleChunkCRC(const std::string& peerId, const std::s
 
 #ifdef MPLEX_DEBUG
 	std::cerr << "ftDataMultiplex::recvSingleChunkCrc() Received crc of file " << hash << ", from peer id " << peerId << ", chunk " << chunk_number << ", crc=" << crc.toStdString() << std::endl;
+#else
+	(void) peerId;
 #endif
 	// remove this chunk from the request list as well.
 	

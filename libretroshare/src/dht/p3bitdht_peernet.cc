@@ -1109,9 +1109,9 @@ int p3BitDht::minuteTick()
 		getRelayRates(relayRead, relayWrite, relayRelayed);
 		getDhtRates(dhtRead, dhtWrite);
 		
+#ifdef DEBUG_PEERNET_COMMON
 		double denom = deltaT;
 
-#ifdef DEBUG_PEERNET_COMMON
 		std::cerr << "p3BitDht::minuteTick() ";
 		std::cerr << "DhtRead: " << dhtRead / denom << " kB/s ";
 		std::cerr << "DhtWrite: " << dhtWrite / denom << " kB/s ";

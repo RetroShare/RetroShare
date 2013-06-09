@@ -2848,7 +2848,7 @@ void p3ChatService::cleanLobbyCaches()
 		sendConnectionChallenge(*it) ;
 }
 
-bool p3ChatService::handleTunnelRequest(const std::string& hash,const std::string& peer_id)
+bool p3ChatService::handleTunnelRequest(const std::string& hash,const std::string& /*peer_id*/)
 {
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
@@ -2963,7 +2963,7 @@ static void printBinaryData(void *data,uint32_t size)
 #endif
 
 void p3ChatService::receiveTurtleData(	RsTurtleGenericTunnelItem *gitem,const std::string& hash,
-													const std::string& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction)
+													const std::string& virtual_peer_id,RsTurtleGenericTunnelItem::Direction /*direction*/)
 {
 #ifdef DEBUG_DISTANT_CHAT
 	std::cerr << "p3ChatService::receiveTurtleData(): Received turtle data. " << std::endl;

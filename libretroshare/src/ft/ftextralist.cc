@@ -275,7 +275,7 @@ bool	ftExtraList::cleanupOldFiles()
 }
 
 
-bool	ftExtraList::cleanupEntry(std::string /*path*/, TransferRequestFlags flags)
+bool	ftExtraList::cleanupEntry(std::string /*path*/, TransferRequestFlags /*flags*/)
 {
 //	if (flags & RS_FILE_CONFIG_CLEANUP_DELETE)
 //	{
