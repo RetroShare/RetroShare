@@ -30,6 +30,7 @@
 
 #include <stdexcept>
 #include <string>
+#include <string.h>
 #include <stdint.h>
 #include <util/rsrandom.h>
 
