@@ -106,7 +106,11 @@ class PGPHandler
 
 		bool getKeyFingerprint(const PGPIdType& id,PGPFingerprintType& fp) const ;
 		void setAcceptConnexion(const PGPIdType&,bool) ;
+
 		void updateOwnSignatureFlag(const PGPIdType& ownId) ;
+		void updateOwnSignatureFlag(const PGPIdType& pgp_id,const PGPIdType& ownId) ;
+
+		void locked_updateOwnSignatureFlag(PGPCertificateInfo&, const std::string&, PGPCertificateInfo&, const std::string&) ;
 
 		// Removes the given keys from the keyring. Also backup the keyring to a file which name is automatically generated
 		// and given pack for proper display.
@@ -163,8 +167,8 @@ class PGPHandler
 		bool locked_syncPublicKeyring() ;
 		bool locked_syncTrustDatabase() ;
 
-		void mergeKeyringFromDisk(ops_keyring_t *keyring, std::map<std::string,PGPCertificateInfo>& kmap, const std::string& keyring_file) ;
-		bool addOrMergeKey(ops_keyring_t *keyring,std::map<std::string,PGPCertificateInfo>& kmap,const ops_keydata_t *keydata) ;
+		void locked_mergeKeyringFromDisk(ops_keyring_t *keyring, std::map<std::string,PGPCertificateInfo>& kmap, const std::string& keyring_file) ;
+		bool locked_addOrMergeKey(ops_keyring_t *keyring,std::map<std::string,PGPCertificateInfo>& kmap,const ops_keydata_t *keydata) ;
 
 		// Members.
 		//

@@ -584,7 +584,13 @@ bool AuthGPG::LoadCertificateFromString(const std::string &str, PGPIdType& gpg_i
 {
 	RsStackMutex stack(gpgMtxEngine); /******* LOCKED ******/
 
-	return PGPHandler::LoadCertificateFromString(str,gpg_id,error_string) ;
+	if(PGPHandler::LoadCertificateFromString(str,gpg_id,error_string))
+	{
+		updateOwnSignatureFlag(gpg_id,mOwnGpgId) ;
+		return true ;
+	}
+
+	return false ;
 }
 
 /*****************************************************************
