@@ -654,7 +654,7 @@ void SubFileItem::save()
 				{
 
 					destpath += "/" + fInfo.fname;
-					rsFiles->CopyFile(fInfo.path, destpath);
+					rsFiles->copyFile(fInfo.path, destpath);
 				}
 			}
 		}
