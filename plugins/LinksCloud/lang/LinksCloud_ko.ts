@@ -166,7 +166,7 @@
     <message>
         <location filename="../LinksDialog.ui" line="251"/>
         <source>Show</source>
-        <translation type="unfinished"/>
+        <translation>표시</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="259"/>

@@ -109,7 +109,7 @@
     </message>
     <message>
         <source>Album Name:</source>
-        <translation type="unfinished"/>
+        <translation>Albüm Adi:</translation>
     </message>
     <message>
         <source>Category:</source>
@@ -153,7 +153,7 @@
     </message>
     <message>
         <source>Work</source>
-        <translation type="unfinished"/>
+        <translation>Is</translation>
     </message>
     <message>
         <source>Random</source>
@@ -161,7 +161,7 @@
     </message>
     <message>
         <source>Caption:</source>
-        <translation type="unfinished"/>
+        <translation>Baslik:</translation>
     </message>
     <message>
         <source>Where:</source>
@@ -169,7 +169,7 @@
     </message>
     <message>
         <source>Photographer:</source>
-        <translation type="unfinished"/>
+        <translation>Fotografçi:</translation>
     </message>
     <message>
         <source>Description:</source>
@@ -177,7 +177,7 @@
     </message>
     <message>
         <source>Share Options</source>
-        <translation type="unfinished"/>
+        <translation>Paylas seçenekleri</translation>
     </message>
     <message>
         <source>Policy:</source>
@@ -201,15 +201,15 @@
     </message>
     <message>
         <source>Restricted</source>
-        <translation type="unfinished"/>
+        <translation>Sinirli</translation>
     </message>
     <message>
         <source>Resize Images (&lt; 1Mb)</source>
-        <translation type="unfinished"/>
+        <translation>Yeniden boyutlandir (&lt; 1Mb)</translation>
     </message>
     <message>
         <source>Resize Images (&lt; 10Mb)</source>
-        <translation type="unfinished"/>
+        <translation>Yeniden boyutlandir (&lt; 10Mb)</translation>
     </message>
     <message>
         <source>Send Original Images</source>
@@ -221,11 +221,11 @@
     </message>
     <message>
         <source>Authenticated Comments</source>
-        <translation type="unfinished"/>
+        <translation>Dogrulanmis Yorumlar</translation>
     </message>
     <message>
         <source>Any Comments Allowed</source>
-        <translation type="unfinished"/>
+        <translation>Herkese Açik </translation>
     </message>
     <message>
         <source>Publish with Identity</source>
@@ -241,7 +241,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Back</source>
-        <translation type="unfinished"/>
+        <translation>Geri</translation>
     </message>
     <message>
         <source>Add Photos</source>
@@ -249,7 +249,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Publish Album</source>
-        <translation type="unfinished"/>
+        <translation>Albümü yayinla</translation>
     </message>
     <message>
         <source>Untitle Album</source>
@@ -288,19 +288,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Album Title:</source>
-        <translation type="unfinished"/>
+        <translation>Albüm Basligi:</translation>
     </message>
     <message>
         <source>Category:</source>
-        <translation type="unfinished"/>
+        <translation>Kategori:</translation>
     </message>
     <message>
         <source>Caption</source>
-        <translation type="unfinished"/>
+        <translation>Baslik</translation>
     </message>
     <message>
         <source>Where:</source>
-        <translation type="unfinished"/>
+        <translation>Nerede:</translation>
     </message>
     <message>
         <source>When</source>
@@ -312,7 +312,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Share Options</source>
-        <translation type="unfinished"/>
+        <translation>Paylas seçenekleri</translation>
     </message>
     <message>
         <source>Comments</source>
@@ -344,7 +344,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Delete Photo</source>
-        <translation type="unfinished"/>
+        <translation>Fotograf sil</translation>
     </message>
     <message>
         <source>Publish Photos</source>
@@ -1368,7 +1368,7 @@ Sohbet için birini seçin.</translation>
     </message>
     <message>
         <source>Type: </source>
-        <translation type="unfinished"/>
+        <translation>Tip:</translation>
     </message>
     <message>
         <source>Private</source>
@@ -1784,14 +1784,6 @@ Double click lobbies to enter and chat.</source>
 <context>
     <name>CirclesDialog</name>
     <message>
-        <source>Create Personal Group</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Create Circle</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Refresh</source>
         <translation>Yenile</translation>
     </message>
@@ -1833,15 +1825,15 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Friends</source>
-        <translation type="unfinished"/>
+        <translation>Arkadaslar</translation>
     </message>
     <message>
         <source>Friends of Friends</source>
-        <translation type="unfinished"/>
+        <translation>Arkadaslarimin Arkadaslari</translation>
     </message>
     <message>
         <source>Others</source>
-        <translation type="unfinished"/>
+        <translation>Digerler</translation>
     </message>
     <message>
         <source>Permissions</source>
@@ -1857,6 +1849,18 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Share Category</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create Personal Circle</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create External Circle</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit Circle</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -3114,10 +3118,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>All IDs</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>All PGP IDs</source>
         <translation type="unfinished"/>
     </message>
@@ -3203,6 +3203,26 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please set a name for your Circle</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Personal Circle Details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>External Circle Details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot Edit Existing Circles Yet</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No Restriction Circle Selected</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No Circle Limitations Selected</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -3397,7 +3417,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add File to Attach</source>
-        <translation type="unfinished"/>
+        <translation>Dosya Ekle</translation>
     </message>
     <message>
         <source>Add Channel Thumbnail</source>
@@ -3413,7 +3433,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Attachments</source>
-        <translation type="unfinished"/>
+        <translation>Eklentiler</translation>
     </message>
     <message>
         <source>Allow channels to get frame for message thumbnail from movie media attachments or not</source>
@@ -3433,7 +3453,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Paste RetroShare Links</source>
-        <translation type="unfinished"/>
+        <translation>Yapistir retroshare Link</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
@@ -3445,7 +3465,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>You can only post files that you do have</source>
-        <translation type="unfinished"/>
+        <translation>Yalnizca var dosyalari gönderebilir</translation>
     </message>
     <message>
         <source>Drop file error.</source>
@@ -3453,11 +3473,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation type="unfinished"/>
+        <translation>Yalnizca dosyalar kabul edilir,dizinler birakilamaz.</translation>
     </message>
     <message>
         <source>File not found or file name not accepted.</source>
-        <translation type="unfinished"/>
+        <translation>Dosya bulunamadi veya isim kabul edilmedi .</translation>
     </message>
     <message>
         <source>Add Extra File</source>
@@ -3492,7 +3512,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subject</source>
-        <translation type="unfinished"/>
+        <translation>Konu</translation>
     </message>
     <message>
         <source>Attach File</source>
@@ -3622,7 +3642,7 @@ p, li { white-space: pre-wrap; }
     <name>CryptoPage</name>
     <message>
         <source>Profile</source>
-        <translation type="unfinished"/>
+        <translation>Profil</translation>
     </message>
     <message>
         <source>Profile Manager</source>
@@ -3630,7 +3650,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Public Information</source>
-        <translation type="unfinished"/>
+        <translation>Genel Bilgi</translation>
     </message>
     <message>
         <source>Name:</source>
@@ -3638,7 +3658,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Location:</source>
-        <translation type="unfinished"/>
+        <translation>Yer:</translation>
     </message>
     <message>
         <source>Location ID:</source>
@@ -3650,7 +3670,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Number of Friends:</source>
-        <translation type="unfinished"/>
+        <translation>Arkadaslar sayisi:</translation>
     </message>
     <message>
         <source>Software Version:</source>
@@ -3658,15 +3678,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Online since:</source>
-        <translation type="unfinished"/>
+        <translation>Beri online:</translation>
     </message>
     <message>
         <source>Other Information</source>
-        <translation type="unfinished"/>
+        <translation>Diger Bilgiler</translation>
     </message>
     <message>
         <source>Certificate</source>
-        <translation type="unfinished"/>
+        <translation>Sertifika</translation>
     </message>
     <message>
         <source>Include signatures</source>
@@ -3775,19 +3795,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Done</source>
-        <translation type="unfinished"/>
+        <translation>Olmus</translation>
     </message>
     <message>
         <source>Active</source>
-        <translation type="unfinished"/>
+        <translation>Aktif</translation>
     </message>
     <message>
         <source>Outstanding</source>
-        <translation type="unfinished"/>
+        <translation>Tamamlanmamis</translation>
     </message>
     <message>
         <source>Needs checking</source>
-        <translation type="unfinished"/>
+        <translation>kontrol Ihtiyaçi var</translation>
     </message>
     <message>
         <source>retroshare link(s)</source>
@@ -4396,7 +4416,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Share Flags</source>
-        <translation type="unfinished"/>
+        <translation>Paylas Isaret</translation>
     </message>
     <message>
         <source>Directory</source>
@@ -5256,7 +5276,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Local network</source>
-        <translation type="unfinished"/>
+        <translation>Yerel ag</translation>
     </message>
     <message>
         <source>Known people</source>
@@ -6142,7 +6162,7 @@ p, li { white-space: pre-wrap; }
     <name>GxsChannelDialog</name>
     <message>
         <source>Channels</source>
-        <translation type="unfinished"/>
+        <translation>Kanallar</translation>
     </message>
     <message>
         <source>refresh</source>
@@ -6150,11 +6170,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Display</source>
-        <translation type="unfinished"/>
+        <translation>Görüntü</translation>
     </message>
     <message>
         <source>Create Channel</source>
-        <translation type="unfinished"/>
+        <translation>Kanal olustur</translation>
     </message>
     <message>
         <source>Loading</source>
@@ -6162,15 +6182,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Post to Channel</source>
-        <translation type="unfinished"/>
+        <translation>Kanala yaz</translation>
     </message>
     <message>
         <source>Set all as read</source>
-        <translation type="unfinished"/>
+        <translation>Hepsini Isaretle Okunmus olarak</translation>
     </message>
     <message>
         <source>Enable Auto-Download</source>
-        <translation type="unfinished"/>
+        <translation>Otomatik Indirmeyi Etkinlestirin</translation>
     </message>
     <message>
         <source>My Channels</source>
@@ -6178,23 +6198,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subscribed Channels</source>
-        <translation type="unfinished"/>
+        <translation>Abone Kanallar</translation>
     </message>
     <message>
         <source>Popular Channels</source>
-        <translation type="unfinished"/>
+        <translation>Popüler Kanallar</translation>
     </message>
     <message>
         <source>Other Channels</source>
-        <translation type="unfinished"/>
+        <translation>Diger Kanallar</translation>
     </message>
     <message>
         <source>Disable Auto-Download</source>
-        <translation type="unfinished"/>
+        <translation>Otomatik Indirme etkisizlestir</translation>
     </message>
     <message>
         <source>Unsubscribe to Channel</source>
-        <translation type="unfinished"/>
+        <translation>Kanaldan Iptal Ol</translation>
     </message>
     <message>
         <source>Subscribe to Channel</source>
@@ -6202,19 +6222,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edit Channel Details</source>
-        <translation type="unfinished"/>
+        <translation>Kanal Detaylari düzenle</translation>
     </message>
     <message>
         <source>Show Channel Details</source>
-        <translation type="unfinished"/>
+        <translation>Kanal Detaylari göster</translation>
     </message>
     <message>
         <source>Restore Publish Rights for Channel</source>
-        <translation type="unfinished"/>
+        <translation>Kanal yayin haklarini onar</translation>
     </message>
     <message>
         <source>Share Channel</source>
-        <translation type="unfinished"/>
+        <translation>Paylaş Kanali </translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
@@ -6222,23 +6242,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Publish rights restored.</source>
-        <translation type="unfinished"/>
+        <translation>Yayinla haklari onarilmis.</translation>
     </message>
     <message>
         <source>Publish rights have been restored for this channel.</source>
-        <translation type="unfinished"/>
+        <translation>Yayinla haklari bu kanal için onarilmis.</translation>
     </message>
     <message>
         <source>Publish not restored.</source>
-        <translation type="unfinished"/>
+        <translation>Yayinla haklari oonarilmamis.</translation>
     </message>
     <message>
         <source>Publish rights can&apos;t be restored for this channel.&lt;br/&gt;You&apos;re not the creator of this channel.</source>
-        <translation type="unfinished"/>
+        <translation>Yayin haklari bu kanal için geri alinamaz.&lt;br/&gt; Bu kanalin yaraticisi degilsiniz.</translation>
     </message>
     <message>
         <source>No Channel Selected</source>
-        <translation type="unfinished"/>
+        <translation>Kanal seçmediniz</translation>
     </message>
 </context>
 <context>
@@ -6260,7 +6280,7 @@ p, li { white-space: pre-wrap; }
     <name>GxsChannelPostItem</name>
     <message>
         <source>Toggle Message Read Status</source>
-        <translation type="unfinished"/>
+        <translation>Degistir Mesaj  okuma durumu</translation>
     </message>
     <message>
         <source>Download</source>
@@ -6268,7 +6288,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Play</source>
-        <translation type="unfinished"/>
+        <translation>Baslat</translation>
     </message>
     <message>
         <source>Comments</source>
@@ -6296,7 +6316,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Channel Feed</source>
-        <translation type="unfinished"/>
+        <translation>Kanal kaynagi</translation>
     </message>
     <message>
         <source>Files</source>
@@ -6464,7 +6484,7 @@ bir kimlik oluşturmalısınız</translation>
     </message>
     <message>
         <source>Start new Thread for Selected Forum</source>
-        <translation type="unfinished"/>
+        <translation>Seçilmis Forum için yeni Konu Baslat</translation>
     </message>
     <message>
         <source>Search forums</source>
@@ -6476,11 +6496,11 @@ bir kimlik oluşturmalısınız</translation>
     </message>
     <message>
         <source>Threaded View</source>
-        <translation type="unfinished"/>
+        <translation>Zincirleme Görünüm</translation>
     </message>
     <message>
         <source>Flat View</source>
-        <translation type="unfinished"/>
+        <translation>Düz Görünüm</translation>
     </message>
     <message>
         <source>Title</source>
@@ -6496,7 +6516,7 @@ bir kimlik oluşturmalısınız</translation>
     </message>
     <message>
         <source>Signed</source>
-        <translation type="unfinished"/>
+        <translation>imzali</translation>
     </message>
     <message>
         <source>Loading</source>
@@ -6508,19 +6528,19 @@ bir kimlik oluşturmalısınız</translation>
     </message>
     <message>
         <source>Previous Thread</source>
-        <translation type="unfinished"/>
+        <translation>Önceki Konu</translation>
     </message>
     <message>
         <source>Next Thread</source>
-        <translation type="unfinished"/>
+        <translation>Sonraki Konu</translation>
     </message>
     <message>
         <source>Download all files</source>
-        <translation type="unfinished"/>
+        <translation>Tüm dosyalari indir</translation>
     </message>
     <message>
         <source>Next unread</source>
-        <translation type="unfinished"/>
+        <translation>Sonraki okunmamis </translation>
     </message>
     <message>
         <source>Refresh</source>
@@ -6540,7 +6560,7 @@ bir kimlik oluşturmalısınız</translation>
     </message>
     <message>
         <source>Content</source>
-        <translation type="unfinished"/>
+        <translation>Içindekiler</translation>
     </message>
     <message>
         <source>Search Content</source>
@@ -6552,7 +6572,7 @@ bir kimlik oluşturmalısınız</translation>
     </message>
     <message>
         <source>Reply</source>
-        <translation type="unfinished"/>
+        <translation>Yanitla</translation>
     </message>
     <message>
         <source>Start New Thread</source>
@@ -6560,15 +6580,15 @@ bir kimlik oluşturmalısınız</translation>
     </message>
     <message>
         <source>Reply to Author</source>
-        <translation type="unfinished"/>
+        <translation>Yazara yanitla</translation>
     </message>
     <message>
         <source>Expand all</source>
-        <translation type="unfinished"/>
+        <translation>Tüm genisletin</translation>
     </message>
     <message>
         <source>Collapse all</source>
-        <translation type="unfinished"/>
+        <translation>Tümünü daralt</translation>
     </message>
     <message>
         <source>Mark as read</source>
@@ -6576,7 +6596,7 @@ bir kimlik oluşturmalısınız</translation>
     </message>
     <message>
         <source>with children</source>
-        <translation type="unfinished"/>
+        <translation>çocuklu</translation>
     </message>
     <message>
         <source>Mark as unread</source>
@@ -6596,19 +6616,19 @@ bir kimlik oluşturmalısınız</translation>
     </message>
     <message>
         <source>Anonymous</source>
-        <translation type="unfinished"/>
+        <translation>Anonim</translation>
     </message>
     <message>
         <source>signed</source>
-        <translation type="unfinished"/>
+        <translation>Imzali</translation>
     </message>
     <message>
         <source>none</source>
-        <translation type="unfinished"/>
+        <translation>yok</translation>
     </message>
     <message>
         <source>[ ... Missing Message ... ]</source>
-        <translation type="unfinished"/>
+        <translation>[... Mesaj Eksik ... ]</translation>
     </message>
     <message>
         <source>By</source>
@@ -6620,15 +6640,15 @@ bir kimlik oluşturmalısınız</translation>
     </message>
     <message>
         <source>No Forum Selected!</source>
-        <translation type="unfinished"/>
+        <translation>Forum seçmediniz!</translation>
     </message>
     <message>
         <source>You cant reply to a non-existant Message</source>
-        <translation type="unfinished"/>
+        <translation>Sen var olmayan Mesaja cevap veremesin</translation>
     </message>
     <message>
         <source>You cant reply to an Anonymous Author</source>
-        <translation type="unfinished"/>
+        <translation>Bir Anonim Yazara yanit veremiyoruz</translation>
     </message>
 </context>
 <context>
@@ -6639,19 +6659,19 @@ bir kimlik oluşturmalısınız</translation>
     </message>
     <message>
         <source>Display</source>
-        <translation type="unfinished"/>
+        <translation>Görüntü</translation>
     </message>
     <message>
         <source>Create Forum</source>
-        <translation type="unfinished"/>
+        <translation>Forum olustur</translation>
     </message>
     <message>
         <source>Print</source>
-        <translation type="unfinished"/>
+        <translation>Yazdir</translation>
     </message>
     <message>
         <source>PrintPreview</source>
-        <translation type="unfinished"/>
+        <translation>Baski Önizleme</translation>
     </message>
     <message>
         <source>My Forums</source>
@@ -6659,15 +6679,15 @@ bir kimlik oluşturmalısınız</translation>
     </message>
     <message>
         <source>Subscribed Forums</source>
-        <translation type="unfinished"/>
+        <translation>Abone Forumlar</translation>
     </message>
     <message>
         <source>Popular Forums</source>
-        <translation type="unfinished"/>
+        <translation>Popüler Forumlar</translation>
     </message>
     <message>
         <source>Other Forums</source>
-        <translation type="unfinished"/>
+        <translation>Diger Forumlar</translation>
     </message>
     <message>
         <source>Subscribe to Forum</source>
@@ -6675,7 +6695,7 @@ bir kimlik oluşturmalısınız</translation>
     </message>
     <message>
         <source>Unsubscribe to Forum</source>
-        <translation type="unfinished"/>
+        <translation>Foruma iptal ol</translation>
     </message>
     <message>
         <source>Open in new tab</source>
@@ -6687,11 +6707,11 @@ bir kimlik oluşturmalısınız</translation>
     </message>
     <message>
         <source>Show Forum Details</source>
-        <translation type="unfinished"/>
+        <translation>Forum bilgilerini göster</translation>
     </message>
     <message>
         <source>Edit Forum Details</source>
-        <translation type="unfinished"/>
+        <translation>Forum Detaylari düzenle</translation>
     </message>
     <message>
         <source>Share Forum</source>
@@ -6719,7 +6739,7 @@ bir kimlik oluşturmalısınız</translation>
     </message>
     <message>
         <source>Original Message</source>
-        <translation type="unfinished"/>
+        <translation>Orijinal Mesaj</translation>
     </message>
     <message>
         <source>From</source>
@@ -6727,22 +6747,22 @@ bir kimlik oluşturmalısınız</translation>
     </message>
     <message>
         <source>Sent</source>
-        <translation type="unfinished"/>
+        <translation>Gönderildi</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation type="unfinished"/>
+        <translation>Konu</translation>
     </message>
     <message>
         <source>On %1, %2 wrote:</source>
-        <translation type="unfinished"/>
+        <translation>%1 üzerinde,%2 yazdi:</translation>
     </message>
 </context>
 <context>
     <name>GxsForumsFillThread</name>
     <message>
         <source>Waiting</source>
-        <translation type="unfinished"/>
+        <translation>Bekliyor</translation>
     </message>
     <message>
         <source>Retrieving</source>
@@ -6804,28 +6824,12 @@ bir kimlik oluşturmalısınız</translation>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Some Friends</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Another Group</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Family?</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Enemies</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Publish Signatures</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <source>Open</source>
-        <translation type="unfinished"/>
+        <translation>Aç</translation>
     </message>
     <message>
         <source>New Thread</source>
@@ -6865,7 +6869,7 @@ bir kimlik oluşturmalısınız</translation>
     </message>
     <message>
         <source>No Comments</source>
-        <translation type="unfinished"/>
+        <translation>Yorum Yok</translation>
     </message>
     <message>
         <source>Contacts:</source>
@@ -6881,6 +6885,10 @@ bir kimlik oluşturmalısınız</translation>
     </message>
     <message>
         <source>Load Group Logo</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid Circle Selection - Personal disabled for now</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -7133,7 +7141,7 @@ p, li { white-space: pre-wrap; }
     <name>IdDialog</name>
     <message>
         <source>Identities</source>
-        <translation type="unfinished"/>
+        <translation>Kimlikler</translation>
     </message>
     <message>
         <source>New ID</source>
@@ -7243,6 +7251,22 @@ p, li { white-space: pre-wrap; }
         <source>Overall Rating</source>
         <translation>Genel degerlendirme</translation>
     </message>
+    <message>
+        <source>Implicit Score</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Rating</source>
+        <translation>Oran</translation>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Local Reputation</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>IdEditDialog</name>
@@ -7326,7 +7350,7 @@ p, li { white-space: pre-wrap; }
     <name>LocalSharedFilesDialog</name>
     <message>
         <source>Create collection file</source>
-        <translation type="unfinished"/>
+        <translation>Koleksiyon dosyasi olustur</translation>
     </message>
     <message>
         <source>Open File</source>
@@ -7334,7 +7358,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Open Folder</source>
-        <translation type="unfinished"/>
+        <translation>Klasör Aç</translation>
     </message>
     <message>
         <source>Edit Share Permissions</source>
@@ -7342,11 +7366,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Checking...</source>
-        <translation type="unfinished"/>
+        <translation>Kontrol ediliyor ...</translation>
     </message>
     <message>
         <source>Check files</source>
-        <translation type="unfinished"/>
+        <translation>Onayla dosyalari</translation>
     </message>
     <message>
         <source>Edit Shared Folder</source>
@@ -7409,7 +7433,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>News feed</source>
-        <translation type="unfinished"/>
+        <translation>Haber Kaynagi</translation>
     </message>
     <message>
         <source>Friends</source>
@@ -8922,6 +8946,10 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <source>yourself</source>
         <translation>kendin</translation>
     </message>
+    <message>
+        <source>Data iconsistency in the keyring. This is most probably a bug. Please contact the developers.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>NetworkPage</name>
@@ -9350,15 +9378,15 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Summary</source>
-        <translation type="unfinished"/>
+        <translation>Özet</translation>
     </message>
     <message>
         <source>Caption</source>
-        <translation type="unfinished"/>
+        <translation>Baslik</translation>
     </message>
     <message>
         <source>Where:</source>
-        <translation type="unfinished"/>
+        <translation>Nerede:</translation>
     </message>
     <message>
         <source>Photo Title:</source>
@@ -9366,7 +9394,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>When</source>
-        <translation type="unfinished"/>
+        <translation>Ne zaman</translation>
     </message>
     <message>
         <source>...</source>
@@ -9795,10 +9823,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>score</source>
-        <translation>skor</translation>
-    </message>
-    <message>
         <source>\/</source>
         <translation type="unfinished"/>
     </message>
@@ -9819,16 +9843,16 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;#&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; Comments:  0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>View Comments</source>
         <translation>Yorumlari Göster</translation>
+    </message>
+    <message>
+        <source>Comments</source>
+        <translation>Yorumlar </translation>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9883,7 +9907,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Showing 1-100</source>
-        <translation type="unfinished"/>
+        <translation>1-100 gösteriliyor</translation>
     </message>
     <message>
         <source>Prev</source>
@@ -9916,6 +9940,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Unsubscribe</source>
         <translation>Iptal</translation>
+    </message>
+    <message>
+        <source>Showing</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation>Retroshare</translation>
+    </message>
+    <message>
+        <source>Please create or choose a Signing Id before Voting</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -10205,7 +10241,7 @@ ve yüklemek için ithalat dügmesini kullanin</translation>
     <name>QObject</name>
     <message>
         <source>Subject: </source>
-        <translation type="unfinished"/>
+        <translation>Konu:</translation>
     </message>
     <message>
         <source>Participants: </source>
@@ -10997,7 +11033,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Clear</source>
-        <translation type="unfinished"/>
+        <translation>Temizle</translation>
     </message>
     <message>
         <source>KeyWords</source>
@@ -11089,7 +11125,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Download selected</source>
-        <translation type="unfinished"/>
+        <translation>Indir</translation>
     </message>
     <message>
         <source>File Name</source>
@@ -11327,11 +11363,11 @@ peers still need to trust each other to allow connection. </source>
     </message>
     <message>
         <source>Local network</source>
-        <translation type="unfinished"/>
+        <translation>Yerel ag</translation>
     </message>
     <message>
         <source>External ip address finder</source>
-        <translation type="unfinished"/>
+        <translation>Dis IP adres bulucu</translation>
     </message>
     <message>
         <source>UPnP</source>
@@ -11358,7 +11394,7 @@ behind a firewall or a VPN.</source>
     </message>
     <message>
         <source>Bandwidth</source>
-        <translation type="unfinished"/>
+        <translation>Bant Genisligi</translation>
     </message>
     <message>
         <source>Max Transfer Rates</source>
@@ -11394,7 +11430,7 @@ behind a firewall or a VPN.</source>
     </message>
     <message>
         <source>Enabled</source>
-        <translation type="unfinished"/>
+        <translation>Etkin</translation>
     </message>
     <message>
         <source>Show routing info</source>
@@ -12086,7 +12122,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Open</source>
-        <translation type="unfinished"/>
+        <translation>Aç</translation>
     </message>
     <message>
         <source>Open File</source>
@@ -12314,7 +12350,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>My files</source>
-        <translation type="unfinished"/>
+        <translation>Benim Dosyalar</translation>
     </message>
     <message>
         <source>Show cache transfers</source>
@@ -12590,7 +12626,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Share Flags</source>
-        <translation type="unfinished"/>
+        <translation>Paylas Isaret</translation>
     </message>
     <message>
         <source>What&apos;s new</source>
@@ -12956,7 +12992,7 @@ Try to be patient!</source>
     <name>WikiDialog</name>
     <message>
         <source>Wiki Pages</source>
-        <translation type="unfinished"/>
+        <translation>Wiki Sayfalari</translation>
     </message>
     <message>
         <source>New Group</source>
@@ -13079,7 +13115,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Tags</source>
-        <translation type="unfinished"/>
+        <translation>Etiketler</translation>
     </message>
     <message>
         <source>Show Edit History</source>
@@ -13087,7 +13123,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"/>
+        <translation>Durum</translation>
     </message>
     <message>
         <source>Preview</source>
@@ -13134,7 +13170,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Wiki Group</source>
-        <translation type="unfinished"/>
+        <translation>Wiki Grup</translation>
     </message>
     <message>
         <source>Edit Wiki Group</source>
@@ -13271,7 +13307,7 @@ Try to be patient!</source>
     <message>
         <source> TB</source>
         <comment>terabytes (1024 gigabytes)</comment>
-        <translation type="unfinished"/>
+        <translation>Kime</translation>
     </message>
     <message>
         <source>Unknown</source>

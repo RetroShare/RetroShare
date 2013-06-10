@@ -184,7 +184,7 @@
     </message>
     <message>
         <source>Quality:</source>
-        <translation type="unfinished"/>
+        <translation>화질:</translation>
     </message>
     <message>
         <source>Comments:</source>
@@ -482,11 +482,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Show Settings</source>
-        <translation type="unfinished"/>
+        <translation>옵션</translation>
     </message>
     <message>
         <source>Reset</source>
-        <translation type="unfinished"/>
+        <translation>초기화</translation>
     </message>
     <message>
         <source>Receive Rate</source>
@@ -518,7 +518,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Save</source>
-        <translation type="unfinished"/>
+        <translation>저장하기</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -650,7 +650,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>추가</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -873,7 +873,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>이름:</translation>
     </message>
     <message>
         <source>Location:</source>
@@ -881,7 +881,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"/>
+        <translation>...</translation>
     </message>
     <message>
         <source>Status:</source>
@@ -905,7 +905,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>추가</translation>
     </message>
     <message>
         <source>Remove</source>
@@ -1018,7 +1018,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Channel Name</source>
-        <translation type="unfinished"/>
+        <translation>채널 이름</translation>
     </message>
     <message>
         <source>Popularity</source>
@@ -1340,7 +1340,7 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Type: </source>
-        <translation type="unfinished"/>
+        <translation>유형:</translation>
     </message>
     <message>
         <source>Private</source>
@@ -1506,7 +1506,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Enable</source>
-        <translation type="unfinished"/>
+        <translation>사용</translation>
     </message>
     <message>
         <source>Number of saved messages (0 = unlimited)</source>
@@ -1530,7 +1530,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Author:</source>
-        <translation type="unfinished"/>
+        <translation>저자 :</translation>
     </message>
     <message>
         <source>Description:</source>
@@ -1756,14 +1756,6 @@ Double click lobbies to enter and chat.</source>
 <context>
     <name>CirclesDialog</name>
     <message>
-        <source>Create Personal Group</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Create Circle</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Refresh</source>
         <translation type="unfinished"/>
     </message>
@@ -1797,7 +1789,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"/>
+        <translation>상태</translation>
     </message>
     <message>
         <source>ID</source>
@@ -1829,6 +1821,18 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Share Category</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create Personal Circle</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create External Circle</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit Circle</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -1868,7 +1872,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"/>
+        <translation>상태</translation>
     </message>
     <message>
         <source>Last Contact</source>
@@ -2237,7 +2241,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>이름:</translation>
     </message>
     <message>
         <source>Email:</source>
@@ -2249,7 +2253,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished"/>
+        <translation>옵션</translation>
     </message>
     <message>
         <source>Add friend to group:</source>
@@ -2397,7 +2401,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished"/>
+        <translation>없음</translation>
     </message>
     <message>
         <source>No Trust</source>
@@ -2524,7 +2528,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Type:</source>
-        <translation type="unfinished"/>
+        <translation>유형:</translation>
     </message>
     <message>
         <source>Public - Anyone can read and publish (Shared Publish Key)</source>
@@ -2859,7 +2863,7 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Type:</source>
-        <translation type="unfinished"/>
+        <translation>유형:</translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
@@ -3074,10 +3078,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>All IDs</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>All PGP IDs</source>
         <translation type="unfinished"/>
     </message>
@@ -3165,6 +3165,26 @@ p, li { white-space: pre-wrap; }
         <source>Please set a name for your Circle</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Personal Circle Details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>External Circle Details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot Edit Existing Circles Yet</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No Restriction Circle Selected</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No Circle Limitations Selected</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>CreateForum</name>
@@ -3190,7 +3210,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Type:</source>
-        <translation type="unfinished"/>
+        <translation>유형:</translation>
     </message>
     <message>
         <source>Public - Anyone can read and publish (Shared Publish Key)</source>
@@ -3594,7 +3614,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>이름:</translation>
     </message>
     <message>
         <source>Location:</source>
@@ -3886,7 +3906,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Source</source>
-        <translation type="unfinished"/>
+        <translation>소스</translation>
     </message>
     <message>
         <source>Proxy</source>
@@ -3894,7 +3914,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Destination</source>
-        <translation type="unfinished"/>
+        <translation>목표</translation>
     </message>
     <message>
         <source>Class</source>
@@ -4021,7 +4041,7 @@ you plug it in.</source>
     </message>
     <message>
         <source>Channel Name</source>
-        <translation type="unfinished"/>
+        <translation>채널 이름</translation>
     </message>
     <message>
         <source>Channel Description</source>
@@ -4074,7 +4094,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"/>
+        <translation>상태</translation>
     </message>
     <message>
         <source>Person</source>
@@ -4797,7 +4817,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>none</source>
-        <translation type="unfinished"/>
+        <translation>없음</translation>
     </message>
 </context>
 <context>
@@ -4808,7 +4828,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"/>
+        <translation>상태</translation>
     </message>
     <message>
         <source>Last Contact</source>
@@ -4824,7 +4844,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>State</source>
-        <translation type="unfinished"/>
+        <translation>상태</translation>
     </message>
     <message>
         <source>Sort by State</source>
@@ -4980,7 +5000,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Show</source>
-        <translation type="unfinished"/>
+        <translation>표시</translation>
     </message>
     <message>
         <source>Unsubscribe</source>
@@ -5073,7 +5093,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished"/>
+        <translation>없음</translation>
     </message>
     <message>
         <source>Name</source>
@@ -5096,7 +5116,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>추가</translation>
     </message>
     <message>
         <source>Edit status message</source>
@@ -5302,7 +5322,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"/>
+        <translation>상태</translation>
     </message>
     <message>
         <source>Comment</source>
@@ -5330,7 +5350,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation>삭제</translation>
     </message>
     <message>
         <source>Move Player</source>
@@ -6028,7 +6048,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Path</source>
-        <translation type="unfinished"/>
+        <translation>경로</translation>
     </message>
     <message>
         <source>Extension</source>
@@ -6552,7 +6572,7 @@ before you can comment</source>
     </message>
     <message>
         <source>none</source>
-        <translation type="unfinished"/>
+        <translation>없음</translation>
     </message>
     <message>
         <source>[ ... Missing Message ... ]</source>
@@ -6752,28 +6772,12 @@ before you can comment</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Some Friends</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Another Group</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Family?</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Enemies</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Publish Signatures</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <source>Open</source>
-        <translation type="unfinished"/>
+        <translation>열기</translation>
     </message>
     <message>
         <source>New Thread</source>
@@ -6831,6 +6835,10 @@ before you can comment</source>
         <source>Load Group Logo</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Invalid Circle Selection - Personal disabled for now</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>HashBox</name>
@@ -6867,7 +6875,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Case sensitive</source>
-        <translation type="unfinished"/>
+        <translation>대소문자 구분</translation>
     </message>
     <message>
         <source>Whole words only</source>
@@ -7191,6 +7199,22 @@ p, li { white-space: pre-wrap; }
         <source>Overall Rating</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Implicit Score</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Rating</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Local Reputation</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>IdEditDialog</name>
@@ -7247,7 +7271,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Copy</source>
-        <translation type="unfinished"/>
+        <translation>복사하기</translation>
     </message>
     <message>
         <source>Remove</source>
@@ -7259,7 +7283,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation>삭제</translation>
     </message>
     <message>
         <source>Clear history</source>
@@ -7329,7 +7353,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished"/>
+        <translation>옵션</translation>
     </message>
     <message>
         <source>Messenger</source>
@@ -7425,7 +7449,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"/>
+        <translation>상태</translation>
     </message>
     <message>
         <source>Notify</source>
@@ -7457,7 +7481,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Help</source>
-        <translation type="unfinished"/>
+        <translation>도움말</translation>
     </message>
     <message>
         <source>Minimize</source>
@@ -7517,7 +7541,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Show</source>
-        <translation type="unfinished"/>
+        <translation>표시</translation>
     </message>
     <message>
         <source>Make sure this link has not been forged to drag you to a malicious website.</source>
@@ -7676,7 +7700,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Save</source>
-        <translation type="unfinished"/>
+        <translation>저장하기</translation>
     </message>
     <message>
         <source>Save this message</source>
@@ -7981,7 +8005,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>추가</translation>
     </message>
     <message>
         <source>Edit</source>
@@ -7989,11 +8013,11 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation>삭제</translation>
     </message>
     <message>
         <source>Default</source>
-        <translation type="unfinished"/>
+        <translation>기본값</translation>
     </message>
     <message>
         <source>A new tab</source>
@@ -8042,11 +8066,11 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>From:</source>
-        <translation type="unfinished"/>
+        <translation>어디에서 :</translation>
     </message>
     <message>
         <source>To:</source>
-        <translation type="unfinished"/>
+        <translation>어디로 :</translation>
     </message>
     <message>
         <source>Cc:</source>
@@ -8169,7 +8193,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation>삭제</translation>
     </message>
     <message>
         <source>Print selected message</source>
@@ -8272,7 +8296,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation>삭제</translation>
     </message>
     <message>
         <source>Print selected message</source>
@@ -8864,6 +8888,10 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <source>yourself</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Data iconsistency in the keyring. This is most probably a bug. Please contact the developers.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>NetworkPage</name>
@@ -8895,7 +8923,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>이름:</translation>
     </message>
     <message>
         <source>Choose color</source>
@@ -8918,7 +8946,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished"/>
+        <translation>옵션</translation>
     </message>
     <message>
         <source>Remove All</source>
@@ -9187,7 +9215,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>이름:</translation>
     </message>
     <message>
         <source>Peer ID:</source>
@@ -9312,7 +9340,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"/>
+        <translation>...</translation>
     </message>
     <message>
         <source>Add Comment</source>
@@ -9480,7 +9508,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Enable</source>
-        <translation type="unfinished"/>
+        <translation>사용</translation>
     </message>
     <message>
         <source>Disable this plugin (restart required)</source>
@@ -9733,10 +9761,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>score</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>\/</source>
         <translation type="unfinished"/>
     </message>
@@ -9757,15 +9781,15 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;#&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; Comments:  0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>View Comments</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>View Comments</source>
+        <source>Comments</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Comment</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -9853,6 +9877,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unsubscribe</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Showing</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation>Retroshare (뒤에몫) </translation>
+    </message>
+    <message>
+        <source>Please create or choose a Signing Id before Voting</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -10006,7 +10042,7 @@ and use the import button to load it</source>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>이름:</translation>
     </message>
     <message>
         <source>Location:</source>
@@ -10124,7 +10160,7 @@ and use the import button to load it</source>
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"/>
+        <translation>...</translation>
     </message>
 </context>
 <context>
@@ -10510,7 +10546,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>추가</translation>
     </message>
     <message>
         <source>Remove</source>
@@ -11095,7 +11131,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>이름:</translation>
     </message>
     <message>
         <source>Peer ID:</source>
@@ -11345,7 +11381,7 @@ The default value is 20.</source>
     <name>Settings</name>
     <message>
         <source>Options</source>
-        <translation type="unfinished"/>
+        <translation>옵션</translation>
     </message>
 </context>
 <context>
@@ -11458,7 +11494,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>추가</translation>
     </message>
     <message>
         <source>Stop sharing selected Directory</source>
@@ -11525,7 +11561,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Reset</source>
-        <translation type="unfinished"/>
+        <translation>초기화</translation>
     </message>
     <message>
         <source>Tree view</source>
@@ -11600,7 +11636,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Filename:</source>
-        <translation type="unfinished"/>
+        <translation>파일명:</translation>
     </message>
     <message>
         <source>Browse</source>
@@ -11896,7 +11932,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished"/>
+        <translation>없음</translation>
     </message>
     <message>
         <source>Solid</source>
@@ -11979,7 +12015,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Open</source>
-        <translation type="unfinished"/>
+        <translation>열기</translation>
     </message>
     <message>
         <source>Open File</source>
@@ -12155,7 +12191,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"/>
+        <translation>상태</translation>
     </message>
     <message>
         <source>Speed / Queue position</source>
@@ -12339,7 +12375,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Okay</source>
-        <translation type="unfinished"/>
+        <translation>확인</translation>
     </message>
     <message>
         <source>Waiting</source>
@@ -12502,7 +12538,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Update</source>
-        <translation type="unfinished"/>
+        <translation>업데이트</translation>
     </message>
     <message>
         <source>Showing: whole network</source>
@@ -12719,7 +12755,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Help</source>
-        <translation type="unfinished"/>
+        <translation>도움말</translation>
     </message>
     <message>
         <source>Retry</source>
@@ -12731,11 +12767,11 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Show Settings</source>
-        <translation type="unfinished"/>
+        <translation>옵션</translation>
     </message>
     <message>
         <source>Continue</source>
-        <translation type="unfinished"/>
+        <translation>계속</translation>
     </message>
     <message>
         <source>Quit</source>
@@ -12980,11 +13016,11 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"/>
+        <translation>상태</translation>
     </message>
     <message>
         <source>Preview</source>
-        <translation type="unfinished"/>
+        <translation>미리보기</translation>
     </message>
     <message>
         <source>Cancel</source>

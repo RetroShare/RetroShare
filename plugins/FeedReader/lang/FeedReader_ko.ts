@@ -159,7 +159,7 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="316"/>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>이름:</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="63"/>
@@ -219,7 +219,7 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="20"/>
         <source>Update</source>
-        <translation type="unfinished"/>
+        <translation>업데이트</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="26"/>
@@ -332,12 +332,12 @@
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="314"/>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation>삭제</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="326"/>
         <source>Update</source>
-        <translation type="unfinished"/>
+        <translation>업데이트</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="329"/>
@@ -479,7 +479,7 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="69"/>
         <source>...</source>
-        <translation type="unfinished"/>
+        <translation>...</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="86"/>
@@ -795,12 +795,12 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="14"/>
         <source>Preview</source>
-        <translation type="unfinished"/>
+        <translation>미리보기</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="61"/>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>이름:</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="68"/>
@@ -860,7 +860,7 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="423"/>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>추가</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="426"/>
@@ -870,7 +870,7 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="432"/>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation>삭제</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="547"/>

@@ -239,7 +239,7 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="78"/>
         <source>Proxy</source>
-        <translation type="unfinished"/>
+        <translation>Proxy</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="84"/>
@@ -249,7 +249,7 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="91"/>
         <source>Server</source>
-        <translation type="unfinished"/>
+        <translation>Kiszolgáló</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="108"/>
@@ -259,7 +259,7 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="118"/>
         <source>Misc</source>
-        <translation type="unfinished"/>
+        <translation>Vegyes</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="131"/>
@@ -337,7 +337,7 @@
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="326"/>
         <source>Update</source>
-        <translation type="unfinished"/>
+        <translation>Frissítés</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="329"/>
@@ -865,12 +865,12 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="426"/>
         <source>Edit</source>
-        <translation type="unfinished"/>
+        <translation>Szerkesztés</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="432"/>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation>Törlés</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="547"/>

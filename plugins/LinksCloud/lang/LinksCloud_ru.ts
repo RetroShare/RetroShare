@@ -20,7 +20,7 @@
     <message>
         <location filename="../AddLinksDialog.ui" line="95"/>
         <source>Title:</source>
-        <translation type="unfinished"/>
+        <translation>Заголовок:</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.ui" line="102"/>
@@ -216,7 +216,7 @@
     <message>
         <location filename="../LinksDialog.ui" line="368"/>
         <source>Title:</source>
-        <translation type="unfinished"/>
+        <translation>Заголовок:</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="384"/>

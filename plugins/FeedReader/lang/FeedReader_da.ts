@@ -159,7 +159,7 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="316"/>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>Navn:</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="63"/>
@@ -800,7 +800,7 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="61"/>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>Navn:</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="68"/>

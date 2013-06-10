@@ -19,11 +19,11 @@
     </message>
     <message>
         <source>Max score: %1</source>
-        <translation>Meilleur score :%1</translation>
+        <translation>Meilleur score : %1</translation>
     </message>
     <message>
         <source>Score: %1</source>
-        <translation>Score :%1</translation>
+        <translation>Score : %1</translation>
     </message>
     <message>
         <source>Level: %1</source>
@@ -62,7 +62,7 @@
     <message>
         <source>Sorry, can't determine system default command for this file
 </source>
-        <translation>Impossible de déterminer la commande système par défaut pour ce fichier
+        <translation>Impossible de déterminer la commande système par défaut pour ce fichier⏎
 </translation>
     </message>
 </context>
@@ -1180,15 +1180,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Set destination directory</source>
-        <translation type="unfinished"/>
+        <translation>Spécifier le dossier de destination</translation>
     </message>
     <message>
         <source>Other...</source>
-        <translation type="unfinished"/>
+        <translation>Autre...</translation>
     </message>
     <message>
         <source>[Default]</source>
-        <translation type="unfinished"/>
+        <translation>[Par défaut]</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
@@ -1196,7 +1196,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Select channel destination directory</source>
-        <translation type="unfinished"/>
+        <translation>Spécifier le dossier de destination de la chaîne</translation>
     </message>
     <message>
         <source>Publish rights restored.</source>
@@ -1259,11 +1259,11 @@ Choisissez celui avec lequel vous voulez tchater.</translation>
     </message>
     <message>
         <source>Invite friends</source>
-        <translation type="unfinished"/>
+        <translation>Inviter des amis</translation>
     </message>
     <message>
         <source>Select friends to invite:</source>
-        <translation type="unfinished"/>
+        <translation>Selectionner les amis à inviter :</translation>
     </message>
     <message>
         <source>Welcome to lobby %1</source>
@@ -1809,14 +1809,6 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
 <context>
     <name>CirclesDialog</name>
     <message>
-        <source>Create Personal Group</source>
-        <translation>Créer un groupe personnel</translation>
-    </message>
-    <message>
-        <source>Create Circle</source>
-        <translation>Créer un cercle</translation>
-    </message>
-    <message>
         <source>Refresh</source>
         <translation>Rafraîchir</translation>
     </message>
@@ -1883,6 +1875,18 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
     <message>
         <source>Share Category</source>
         <translation>Catégorie de partage</translation>
+    </message>
+    <message>
+        <source>Create Personal Circle</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create External Circle</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit Circle</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3146,10 +3150,6 @@ p, li { white-space: pre-wrap; }
         <translation>Identités connues</translation>
     </message>
     <message>
-        <source>All IDs</source>
-        <translation>Toutes les IDs</translation>
-    </message>
-    <message>
         <source>All PGP IDs</source>
         <translation>Toutes les IDs PGP</translation>
     </message>
@@ -3236,6 +3236,26 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Please set a name for your Circle</source>
         <translation>S&apos;il vous plaît donnez un nom à votre cercle</translation>
+    </message>
+    <message>
+        <source>Personal Circle Details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>External Circle Details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot Edit Existing Circles Yet</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No Restriction Circle Selected</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No Circle Limitations Selected</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5149,7 +5169,7 @@ p, li { white-space: pre-wrap; }
     <name>FriendSelectionWidget</name>
     <message>
         <source>Search :</source>
-        <translation type="unfinished"/>
+        <translation>Rechercher :</translation>
     </message>
     <message>
         <source>All</source>
@@ -6907,22 +6927,6 @@ avant de pouvoir commenter</translation>
         <translation>Seulement pour vos amis</translation>
     </message>
     <message>
-        <source>Some Friends</source>
-        <translation>Quelques amis</translation>
-    </message>
-    <message>
-        <source>Another Group</source>
-        <translation>Un autre groupe</translation>
-    </message>
-    <message>
-        <source>Family?</source>
-        <translation>Famille ?</translation>
-    </message>
-    <message>
-        <source>Enemies</source>
-        <translation>Enemies</translation>
-    </message>
-    <message>
         <source>Publish Signatures</source>
         <translation>Signatures publiées</translation>
     </message>
@@ -6985,6 +6989,10 @@ avant de pouvoir commenter</translation>
     <message>
         <source>Load Group Logo</source>
         <translation>Charger le logo du groupe</translation>
+    </message>
+    <message>
+        <source>Invalid Circle Selection - Personal disabled for now</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7377,6 +7385,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Overall Rating</source>
         <translation>Évaluation générale</translation>
+    </message>
+    <message>
+        <source>Implicit Score</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Rating</source>
+        <translation>Évaluation</translation>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation>Commentaire</translation>
+    </message>
+    <message>
+        <source>Local Reputation</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8877,7 +8901,7 @@ Voulez-vous enregistrer votre message ?</translation>
     </message>
     <message>
         <source>Last used</source>
-        <translation type="unfinished"/>
+        <translation>Dernier utilisé</translation>
     </message>
     <message>
         <source>Clear</source>
@@ -8961,11 +8985,11 @@ Voulez-vous enregistrer votre message ?</translation>
     </message>
     <message>
         <source>Remove unused keys...</source>
-        <translation type="unfinished"/>
+        <translation>Suppression des clés inutilisées...</translation>
     </message>
     <message>
         <source>Clean keyring</source>
-        <translation type="unfinished"/>
+        <translation>Nettoyer le trousseau</translation>
     </message>
     <message>
         <source>The selected keys below haven't been used in the last 3 months. 
@@ -8973,18 +8997,25 @@ Do you want to delete them permanently ?
 
 Notes: Your old keyring will be backed up.
     The removal may fail when running multiple Retroshare instances on the same machine.</source>
-        <translation type="unfinished"/>
+        <translation>Les clés sélectionnées ci-dessous n&apos;ont pas été utilisées dans les 3 derniers mois. ⏎
+Voulez-vous les supprimer définitivement ? ⏎
+⏎
+Remarques : Votre ancien trousseau sera sauvegardé. ⏎
+La suppression peut échouer lors de l&apos;exécution de plusieurs instances de Retroshare sur la même machine.</translation>
     </message>
     <message>
         <source>Keyring info</source>
-        <translation type="unfinished"/>
+        <translation>Info du trousseau</translation>
     </message>
     <message>
         <source>%1 keys have been deleted from your keyring. 
 For security, your keyring was previously backed-up to file 
 
 </source>
-        <translation type="unfinished"/>
+        <translation>%1 clés ont été supprimées de votre trousseau.
+Par mesure de sécurité votre trousseau précédent à été sauvegardé sous forme de fichier
+
+</translation>
     </message>
     <message>
         <source>Unknown error</source>
@@ -8992,17 +9023,19 @@ For security, your keyring was previously backed-up to file
     </message>
     <message>
         <source>Cannot delete secret keys</source>
-        <translation type="unfinished"/>
+        <translation>Impossible de supprimer les clés secrêtes</translation>
     </message>
     <message>
         <source>Cannot create backup file. Check for permissions in pgp directory, disk space, etc.</source>
-        <translation type="unfinished"/>
+        <translation>Impossible de créer le fichier de sauvegarde. Vérifiez les permissions du répertoire PGP, espace disque, etc..</translation>
     </message>
     <message>
         <source>Key removal has failed. Your keyring remains intact.
 
 Reported error: </source>
-        <translation type="unfinished"/>
+        <translation>La suppression des clés a échouée. Votre trousseau reste intacte
+
+Analyse d&apos;erreur :</translation>
     </message>
     <message>
         <source>Personal signature</source>
@@ -9034,7 +9067,7 @@ Reported error: </source>
     </message>
     <message>
         <source>Last hour</source>
-        <translation type="unfinished"/>
+        <translation>Dernière heure</translation>
     </message>
     <message>
         <source>Today</source>
@@ -9046,7 +9079,7 @@ Reported error: </source>
     </message>
     <message>
         <source>%1 days ago</source>
-        <translation type="unfinished"/>
+        <translation>il y a %1 jours</translation>
     </message>
     <message>
         <source> has authenticated you. 
@@ -9057,6 +9090,10 @@ Clic droit et sélectionnez &apos;Devenir ami&apos; pour vous connecter.</transl
     <message>
         <source>yourself</source>
         <translation>Moi</translation>
+    </message>
+    <message>
+        <source>Data iconsistency in the keyring. This is most probably a bug. Please contact the developers.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9958,10 +9995,6 @@ p, li { white-space: pre-wrap; }
         <translation>/\</translation>
     </message>
     <message>
-        <source>score</source>
-        <translation>score</translation>
-    </message>
-    <message>
         <source>\/</source>
         <translation>\/</translation>
     </message>
@@ -9982,20 +10015,16 @@ p, li { white-space: pre-wrap; }
         <translation>Site</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;#&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; Comments:  0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;#&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; Commentaires:  0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>View Comments</source>
         <translation>Afficher les commentaires</translation>
+    </message>
+    <message>
+        <source>Comments</source>
+        <translation>Commentaires</translation>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation>Commentaire</translation>
     </message>
 </context>
 <context>
@@ -10083,6 +10112,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Unsubscribe</source>
         <translation>Se désabonner</translation>
+    </message>
+    <message>
+        <source>Showing</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation>Retroshare</translation>
+    </message>
+    <message>
+        <source>Please create or choose a Signing Id before Voting</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>

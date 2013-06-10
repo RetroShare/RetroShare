@@ -1809,14 +1809,6 @@ Haga doble clic en las salas para entrar y charlar.</translation>
 <context>
     <name>CirclesDialog</name>
     <message>
-        <source>Create Personal Group</source>
-        <translation>Crear grupo personal</translation>
-    </message>
-    <message>
-        <source>Create Circle</source>
-        <translation>Crear círculo</translation>
-    </message>
-    <message>
         <source>Refresh</source>
         <translation>Refrescar</translation>
     </message>
@@ -1883,6 +1875,18 @@ Haga doble clic en las salas para entrar y charlar.</translation>
     <message>
         <source>Share Category</source>
         <translation>Compartir categoría</translation>
+    </message>
+    <message>
+        <source>Create Personal Circle</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create External Circle</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit Circle</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3148,10 +3152,6 @@ p, li { white-space: pre-wrap; }
         <translation>Identidades conocidas</translation>
     </message>
     <message>
-        <source>All IDs</source>
-        <translation>Todas las IDs</translation>
-    </message>
-    <message>
         <source>All PGP IDs</source>
         <translation>Todas las IDs PGP</translation>
     </message>
@@ -3238,6 +3238,26 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Please set a name for your Circle</source>
         <translation>Por favor elija un nombre para su círculo</translation>
+    </message>
+    <message>
+        <source>Personal Circle Details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>External Circle Details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot Edit Existing Circles Yet</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No Restriction Circle Selected</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No Circle Limitations Selected</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6858,22 +6878,6 @@ before you can comment</source>
         <translation>Sólo para sus amigos</translation>
     </message>
     <message>
-        <source>Some Friends</source>
-        <translation>Algunos amigos</translation>
-    </message>
-    <message>
-        <source>Another Group</source>
-        <translation>Otro grupo</translation>
-    </message>
-    <message>
-        <source>Family?</source>
-        <translation>¿Familia?</translation>
-    </message>
-    <message>
-        <source>Enemies</source>
-        <translation>Enemigos</translation>
-    </message>
-    <message>
         <source>Publish Signatures</source>
         <translation>Publicar firmas</translation>
     </message>
@@ -6936,6 +6940,10 @@ before you can comment</source>
     <message>
         <source>Load Group Logo</source>
         <translation>Cargar el logo del grupo</translation>
+    </message>
+    <message>
+        <source>Invalid Circle Selection - Personal disabled for now</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7333,6 +7341,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Overall Rating</source>
         <translation>Valoración general</translation>
+    </message>
+    <message>
+        <source>Implicit Score</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Rating</source>
+        <translation>Valoración</translation>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation>Comentario</translation>
+    </message>
+    <message>
+        <source>Local Reputation</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9014,6 +9038,10 @@ botón derecho y seleccione hacer amigo para conectar.</translation>
         <source>yourself</source>
         <translation>usted mismo</translation>
     </message>
+    <message>
+        <source>Data iconsistency in the keyring. This is most probably a bug. Please contact the developers.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>NetworkPage</name>
@@ -9906,10 +9934,6 @@ p, li { white-space: pre-wrap; }
         <translation>/\</translation>
     </message>
     <message>
-        <source>score</source>
-        <translation>Calificación</translation>
-    </message>
-    <message>
         <source>\/</source>
         <translation>\/</translation>
     </message>
@@ -9930,16 +9954,16 @@ p, li { white-space: pre-wrap; }
         <translation>Lugar</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;#&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; Comments:  0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt; &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt; p, li { white-space: pre-wrap; } &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt; &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;#&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; Comentarios: 0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>View Comments</source>
         <translation>Ver comentarios</translation>
+    </message>
+    <message>
+        <source>Comments</source>
+        <translation>Comentarios</translation>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation>Comentario</translation>
     </message>
 </context>
 <context>
@@ -10027,6 +10051,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Unsubscribe</source>
         <translation>Anular suscripción</translation>
+    </message>
+    <message>
+        <source>Showing</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation>RetroShare</translation>
+    </message>
+    <message>
+        <source>Please create or choose a Signing Id before Voting</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>

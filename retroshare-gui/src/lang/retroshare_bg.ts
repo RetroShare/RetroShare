@@ -89,7 +89,7 @@
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Отмяна</translation>
     </message>
     <message>
         <source>Perform the advanced search.</source>
@@ -184,7 +184,7 @@
     </message>
     <message>
         <source>Quality:</source>
-        <translation type="unfinished"/>
+        <translation>Качество:</translation>
     </message>
     <message>
         <source>Comments:</source>
@@ -482,11 +482,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Show Settings</source>
-        <translation type="unfinished"/>
+        <translation>Настройки</translation>
     </message>
     <message>
         <source>Reset</source>
-        <translation type="unfinished"/>
+        <translation>Връщане</translation>
     </message>
     <message>
         <source>Receive Rate</source>
@@ -518,11 +518,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Save</source>
-        <translation type="unfinished"/>
+        <translation>Запазване</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Отмяна</translation>
     </message>
     <message>
         <source>Since:</source>
@@ -565,7 +565,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Отмяна</translation>
     </message>
     <message>
         <source>OK</source>
@@ -650,7 +650,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>Добавяне</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -698,7 +698,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Име</translation>
     </message>
     <message>
         <source>ID</source>
@@ -806,7 +806,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Име</translation>
     </message>
     <message>
         <source>ID</source>
@@ -873,7 +873,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>Име:</translation>
     </message>
     <message>
         <source>Location:</source>
@@ -881,7 +881,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"/>
+        <translation>...</translation>
     </message>
     <message>
         <source>Status:</source>
@@ -905,7 +905,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>Добавяне</translation>
     </message>
     <message>
         <source>Remove</source>
@@ -1018,7 +1018,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Channel Name</source>
-        <translation type="unfinished"/>
+        <translation>Име на канала</translation>
     </message>
     <message>
         <source>Popularity</source>
@@ -1288,7 +1288,7 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Име</translation>
     </message>
     <message>
         <source>Count</source>
@@ -1403,7 +1403,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Отмяна</translation>
     </message>
     <message>
         <source>Quick Message</source>
@@ -1506,7 +1506,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Enable</source>
-        <translation type="unfinished"/>
+        <translation>Включване</translation>
     </message>
     <message>
         <source>Number of saved messages (0 = unlimited)</source>
@@ -1530,7 +1530,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Author:</source>
-        <translation type="unfinished"/>
+        <translation>Автор:</translation>
     </message>
     <message>
         <source>Description:</source>
@@ -1756,14 +1756,6 @@ Double click lobbies to enter and chat.</source>
 <context>
     <name>CirclesDialog</name>
     <message>
-        <source>Create Personal Group</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Create Circle</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Refresh</source>
         <translation type="unfinished"/>
     </message>
@@ -1777,7 +1769,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Име</translation>
     </message>
     <message>
         <source>IDs</source>
@@ -1797,7 +1789,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"/>
+        <translation>Статус</translation>
     </message>
     <message>
         <source>ID</source>
@@ -1831,6 +1823,18 @@ Double click lobbies to enter and chat.</source>
         <source>Share Category</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Create Personal Circle</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create External Circle</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit Circle</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ConfCertDialog</name>
@@ -1848,7 +1852,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Име</translation>
     </message>
     <message>
         <source>Peer ID</source>
@@ -1868,7 +1872,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"/>
+        <translation>Статус</translation>
     </message>
     <message>
         <source>Last Contact</source>
@@ -2237,7 +2241,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>Име:</translation>
     </message>
     <message>
         <source>Email:</source>
@@ -2249,7 +2253,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished"/>
+        <translation>Настройки</translation>
     </message>
     <message>
         <source>Add friend to group:</source>
@@ -2397,7 +2401,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished"/>
+        <translation>Без</translation>
     </message>
     <message>
         <source>No Trust</source>
@@ -2516,7 +2520,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Име</translation>
     </message>
     <message>
         <source>Description</source>
@@ -2560,7 +2564,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Отмяна</translation>
     </message>
     <message>
         <source>Create</source>
@@ -2843,7 +2847,7 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Име</translation>
     </message>
     <message>
         <source>check peers you would like to share private publish key with</source>
@@ -3031,7 +3035,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Име</translation>
     </message>
     <message>
         <source>Creator</source>
@@ -3074,10 +3078,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>All IDs</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>All PGP IDs</source>
         <translation type="unfinished"/>
     </message>
@@ -3103,7 +3103,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Отмяна</translation>
     </message>
     <message>
         <source>Create Group</source>
@@ -3165,6 +3165,26 @@ p, li { white-space: pre-wrap; }
         <source>Please set a name for your Circle</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Personal Circle Details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>External Circle Details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot Edit Existing Circles Yet</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No Restriction Circle Selected</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No Circle Limitations Selected</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>CreateForum</name>
@@ -3174,7 +3194,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Име</translation>
     </message>
     <message>
         <source>check peers you would like to share private publish key with</source>
@@ -3316,7 +3336,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Group Name</source>
-        <translation type="unfinished"/>
+        <translation>Име</translation>
     </message>
     <message>
         <source>Enter a name for your group</source>
@@ -3594,7 +3614,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>Име:</translation>
     </message>
     <message>
         <source>Location:</source>
@@ -3818,7 +3838,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Име</translation>
     </message>
     <message>
         <source>PeerId</source>
@@ -3886,7 +3906,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Source</source>
-        <translation type="unfinished"/>
+        <translation>Източник</translation>
     </message>
     <message>
         <source>Proxy</source>
@@ -3894,7 +3914,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Destination</source>
-        <translation type="unfinished"/>
+        <translation>Цел</translation>
     </message>
     <message>
         <source>Class</source>
@@ -4021,7 +4041,7 @@ you plug it in.</source>
     </message>
     <message>
         <source>Channel Name</source>
-        <translation type="unfinished"/>
+        <translation>Име на канала</translation>
     </message>
     <message>
         <source>Channel Description</source>
@@ -4074,7 +4094,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"/>
+        <translation>Статус</translation>
     </message>
     <message>
         <source>Person</source>
@@ -4797,7 +4817,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>none</source>
-        <translation type="unfinished"/>
+        <translation>без</translation>
     </message>
 </context>
 <context>
@@ -4808,7 +4828,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"/>
+        <translation>Статус</translation>
     </message>
     <message>
         <source>Last Contact</source>
@@ -4824,7 +4844,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>State</source>
-        <translation type="unfinished"/>
+        <translation>Статус</translation>
     </message>
     <message>
         <source>Sort by State</source>
@@ -4848,7 +4868,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Име</translation>
     </message>
     <message>
         <source>Sort by Name</source>
@@ -4980,7 +5000,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Show</source>
-        <translation type="unfinished"/>
+        <translation>Показване</translation>
     </message>
     <message>
         <source>Unsubscribe</source>
@@ -5073,11 +5093,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished"/>
+        <translation>Без</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Име</translation>
     </message>
     <message>
         <source>Search Friends</source>
@@ -5096,7 +5116,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>Добавяне</translation>
     </message>
     <message>
         <source>Edit status message</source>
@@ -5302,7 +5322,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"/>
+        <translation>Статус</translation>
     </message>
     <message>
         <source>Comment</source>
@@ -5330,7 +5350,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation>Изтриване</translation>
     </message>
     <message>
         <source>Move Player</source>
@@ -5401,7 +5421,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Име</translation>
     </message>
     <message>
         <source>Enter your nickname here</source>
@@ -6024,11 +6044,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Име</translation>
     </message>
     <message>
         <source>Path</source>
-        <translation type="unfinished"/>
+        <translation>Пътека</translation>
     </message>
     <message>
         <source>Extension</source>
@@ -6552,7 +6572,7 @@ before you can comment</source>
     </message>
     <message>
         <source>none</source>
-        <translation type="unfinished"/>
+        <translation>без</translation>
     </message>
     <message>
         <source>[ ... Missing Message ... ]</source>
@@ -6709,7 +6729,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Име</translation>
     </message>
     <message>
         <source>Add Icon</source>
@@ -6752,28 +6772,12 @@ before you can comment</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Some Friends</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Another Group</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Family?</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Enemies</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Publish Signatures</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <source>Open</source>
-        <translation type="unfinished"/>
+        <translation>Отваряне</translation>
     </message>
     <message>
         <source>New Thread</source>
@@ -6831,6 +6835,10 @@ before you can comment</source>
         <source>Load Group Logo</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Invalid Circle Selection - Personal disabled for now</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>HashBox</name>
@@ -6867,7 +6875,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Case sensitive</source>
-        <translation type="unfinished"/>
+        <translation>Чувствителност към регистъра</translation>
     </message>
     <message>
         <source>Whole words only</source>
@@ -7191,6 +7199,22 @@ p, li { white-space: pre-wrap; }
         <source>Overall Rating</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Implicit Score</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Rating</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Local Reputation</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>IdEditDialog</name>
@@ -7232,7 +7256,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Отмяна</translation>
     </message>
     <message>
         <source>Create/Update ID</source>
@@ -7247,7 +7271,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Copy</source>
-        <translation type="unfinished"/>
+        <translation>Копиране</translation>
     </message>
     <message>
         <source>Remove</source>
@@ -7259,7 +7283,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation>Изтриване</translation>
     </message>
     <message>
         <source>Clear history</source>
@@ -7329,7 +7353,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished"/>
+        <translation>Настройки</translation>
     </message>
     <message>
         <source>Messenger</source>
@@ -7425,7 +7449,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"/>
+        <translation>Статус</translation>
     </message>
     <message>
         <source>Notify</source>
@@ -7457,7 +7481,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Help</source>
-        <translation type="unfinished"/>
+        <translation>Помощ</translation>
     </message>
     <message>
         <source>Minimize</source>
@@ -7517,7 +7541,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Show</source>
-        <translation type="unfinished"/>
+        <translation>Показване</translation>
     </message>
     <message>
         <source>Make sure this link has not been forged to drag you to a malicious website.</source>
@@ -7676,7 +7700,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Save</source>
-        <translation type="unfinished"/>
+        <translation>Запазване</translation>
     </message>
     <message>
         <source>Save this message</source>
@@ -7981,7 +8005,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>Добавяне</translation>
     </message>
     <message>
         <source>Edit</source>
@@ -7989,11 +8013,11 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation>Изтриване</translation>
     </message>
     <message>
         <source>Default</source>
-        <translation type="unfinished"/>
+        <translation>По подразбиране</translation>
     </message>
     <message>
         <source>A new tab</source>
@@ -8042,11 +8066,11 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>From:</source>
-        <translation type="unfinished"/>
+        <translation>От:</translation>
     </message>
     <message>
         <source>To:</source>
-        <translation type="unfinished"/>
+        <translation>До:</translation>
     </message>
     <message>
         <source>Cc:</source>
@@ -8169,7 +8193,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation>Изтриване</translation>
     </message>
     <message>
         <source>Print selected message</source>
@@ -8272,7 +8296,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation>Изтриване</translation>
     </message>
     <message>
         <source>Print selected message</source>
@@ -8664,7 +8688,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Име</translation>
     </message>
     <message>
         <source>Did I authenticated peer</source>
@@ -8864,6 +8888,10 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <source>yourself</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Data iconsistency in the keyring. This is most probably a bug. Please contact the developers.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>NetworkPage</name>
@@ -8895,7 +8923,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>Име:</translation>
     </message>
     <message>
         <source>Choose color</source>
@@ -8907,7 +8935,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Отмяна</translation>
     </message>
 </context>
 <context>
@@ -8918,7 +8946,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished"/>
+        <translation>Настройки</translation>
     </message>
     <message>
         <source>Remove All</source>
@@ -9179,7 +9207,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Отмяна</translation>
     </message>
     <message>
         <source>Send</source>
@@ -9187,7 +9215,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>Име:</translation>
     </message>
     <message>
         <source>Peer ID:</source>
@@ -9312,7 +9340,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"/>
+        <translation>...</translation>
     </message>
     <message>
         <source>Add Comment</source>
@@ -9480,7 +9508,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Enable</source>
-        <translation type="unfinished"/>
+        <translation>Включване</translation>
     </message>
     <message>
         <source>Disable this plugin (restart required)</source>
@@ -9733,10 +9761,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>score</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>\/</source>
         <translation type="unfinished"/>
     </message>
@@ -9757,15 +9781,15 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;#&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; Comments:  0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>View Comments</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>View Comments</source>
+        <source>Comments</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Comment</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -9855,6 +9879,18 @@ p, li { white-space: pre-wrap; }
         <source>Unsubscribe</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Showing</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please create or choose a Signing Id before Voting</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>PrintPreview</name>
@@ -9911,7 +9947,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Име</translation>
     </message>
     <message>
         <source>Email</source>
@@ -10006,7 +10042,7 @@ and use the import button to load it</source>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>Име:</translation>
     </message>
     <message>
         <source>Location:</source>
@@ -10105,7 +10141,7 @@ and use the import button to load it</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Отмяна</translation>
     </message>
     <message>
         <source>Post Pulse to Wire</source>
@@ -10124,7 +10160,7 @@ and use the import button to load it</source>
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"/>
+        <translation>...</translation>
     </message>
 </context>
 <context>
@@ -10510,7 +10546,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>Добавяне</translation>
     </message>
     <message>
         <source>Remove</source>
@@ -10713,7 +10749,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Отмяна</translation>
     </message>
     <message>
         <source>Download!</source>
@@ -11087,7 +11123,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Отмяна</translation>
     </message>
     <message>
         <source>Send</source>
@@ -11095,7 +11131,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>Име:</translation>
     </message>
     <message>
         <source>Peer ID:</source>
@@ -11345,7 +11381,7 @@ The default value is 20.</source>
     <name>Settings</name>
     <message>
         <source>Options</source>
-        <translation type="unfinished"/>
+        <translation>Настройки</translation>
     </message>
 </context>
 <context>
@@ -11458,7 +11494,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>Добавяне</translation>
     </message>
     <message>
         <source>Stop sharing selected Directory</source>
@@ -11525,7 +11561,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Reset</source>
-        <translation type="unfinished"/>
+        <translation>Връщане</translation>
     </message>
     <message>
         <source>Tree view</source>
@@ -11600,7 +11636,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Filename:</source>
-        <translation type="unfinished"/>
+        <translation>Име на файла:</translation>
     </message>
     <message>
         <source>Browse</source>
@@ -11896,7 +11932,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished"/>
+        <translation>Без</translation>
     </message>
     <message>
         <source>Solid</source>
@@ -11979,7 +12015,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Open</source>
-        <translation type="unfinished"/>
+        <translation>Отваряне</translation>
     </message>
     <message>
         <source>Open File</source>
@@ -12127,7 +12163,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Name</source>
         <comment>i.e: file name</comment>
-        <translation type="unfinished"/>
+        <translation>Име</translation>
     </message>
     <message>
         <source>Size</source>
@@ -12155,7 +12191,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"/>
+        <translation>Статус</translation>
     </message>
     <message>
         <source>Speed / Queue position</source>
@@ -12231,7 +12267,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Отмяна</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -12502,7 +12538,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Update</source>
-        <translation type="unfinished"/>
+        <translation>Обновяване</translation>
     </message>
     <message>
         <source>Showing: whole network</source>
@@ -12707,7 +12743,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Отмяна</translation>
     </message>
     <message>
         <source>Yes</source>
@@ -12719,7 +12755,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Help</source>
-        <translation type="unfinished"/>
+        <translation>Помощ</translation>
     </message>
     <message>
         <source>Retry</source>
@@ -12731,11 +12767,11 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Show Settings</source>
-        <translation type="unfinished"/>
+        <translation>Настройки</translation>
     </message>
     <message>
         <source>Continue</source>
-        <translation type="unfinished"/>
+        <translation>Продължение</translation>
     </message>
     <message>
         <source>Quit</source>
@@ -12980,15 +13016,15 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"/>
+        <translation>Статус</translation>
     </message>
     <message>
         <source>Preview</source>
-        <translation type="unfinished"/>
+        <translation>Преглед</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Отмяна</translation>
     </message>
     <message>
         <source>Revert</source>

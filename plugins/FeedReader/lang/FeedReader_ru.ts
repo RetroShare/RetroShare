@@ -219,7 +219,7 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="20"/>
         <source>Update</source>
-        <translation type="unfinished"/>
+        <translation>Обновлять</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="26"/>
@@ -239,7 +239,7 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="78"/>
         <source>Proxy</source>
-        <translation type="unfinished"/>
+        <translation>Прокси</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="84"/>
@@ -249,7 +249,7 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="91"/>
         <source>Server</source>
-        <translation type="unfinished"/>
+        <translation>Сервер</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="108"/>
@@ -337,7 +337,7 @@
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="326"/>
         <source>Update</source>
-        <translation type="unfinished"/>
+        <translation>Обновлять</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="329"/>
@@ -795,7 +795,7 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="14"/>
         <source>Preview</source>
-        <translation type="unfinished"/>
+        <translation>Предпросмотр</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="61"/>
@@ -835,7 +835,7 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="328"/>
         <source>Title:</source>
-        <translation type="unfinished"/>
+        <translation>Заголовок:</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="520"/>
@@ -870,7 +870,7 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="432"/>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation>Удалить</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="547"/>

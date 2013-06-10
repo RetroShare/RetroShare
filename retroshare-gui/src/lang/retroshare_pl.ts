@@ -1376,11 +1376,11 @@ Wybierz, z którą chcesz rozmawiać.</translation>
     </message>
     <message>
         <source>Type: </source>
-        <translation type="unfinished"/>
+        <translation>Typ:</translation>
     </message>
     <message>
         <source>Private</source>
-        <translation type="unfinished"/>
+        <translation>Prywatny</translation>
     </message>
     <message>
         <source>Public</source>
@@ -1792,14 +1792,6 @@ Double click lobbies to enter and chat.</source>
 <context>
     <name>CirclesDialog</name>
     <message>
-        <source>Create Personal Group</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Create Circle</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Refresh</source>
         <translation>Odśwież</translation>
     </message>
@@ -1865,6 +1857,18 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Share Category</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create Personal Circle</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create External Circle</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit Circle</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -2434,7 +2438,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished"/>
+        <translation>Brak</translation>
     </message>
     <message>
         <source>No Trust</source>
@@ -2561,7 +2565,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Type:</source>
-        <translation type="unfinished"/>
+        <translation>Typ:</translation>
     </message>
     <message>
         <source>Public - Anyone can read and publish (Shared Publish Key)</source>
@@ -3111,10 +3115,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>All IDs</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>All PGP IDs</source>
         <translation type="unfinished"/>
     </message>
@@ -3200,6 +3200,26 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please set a name for your Circle</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Personal Circle Details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>External Circle Details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot Edit Existing Circles Yet</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No Restriction Circle Selected</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No Circle Limitations Selected</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -3635,7 +3655,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Location:</source>
-        <translation type="unfinished"/>
+        <translation>Miejsce:</translation>
     </message>
     <message>
         <source>Location ID:</source>
@@ -3923,7 +3943,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Source</source>
-        <translation type="unfinished"/>
+        <translation>Źródło</translation>
     </message>
     <message>
         <source>Proxy</source>
@@ -3931,7 +3951,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Destination</source>
-        <translation type="unfinished"/>
+        <translation>Cel</translation>
     </message>
     <message>
         <source>Class</source>
@@ -4114,7 +4134,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"/>
+        <translation>Stan</translation>
     </message>
     <message>
         <source>Person</source>
@@ -4848,7 +4868,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"/>
+        <translation>Stan</translation>
     </message>
     <message>
         <source>Last Contact</source>
@@ -4864,7 +4884,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>State</source>
-        <translation type="unfinished"/>
+        <translation>Stan</translation>
     </message>
     <message>
         <source>Sort by State</source>
@@ -5113,7 +5133,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished"/>
+        <translation>Brak</translation>
     </message>
     <message>
         <source>Name</source>
@@ -5342,7 +5362,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"/>
+        <translation>Stan</translation>
     </message>
     <message>
         <source>Comment</source>
@@ -6070,7 +6090,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Path</source>
-        <translation type="unfinished"/>
+        <translation>Ścieżka</translation>
     </message>
     <message>
         <source>Extension</source>
@@ -6145,7 +6165,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Create Channel</source>
-        <translation type="unfinished"/>
+        <translation>Stwórz kanał</translation>
     </message>
     <message>
         <source>Loading</source>
@@ -6153,15 +6173,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Post to Channel</source>
-        <translation type="unfinished"/>
+        <translation>Napisz post na kanale</translation>
     </message>
     <message>
         <source>Set all as read</source>
-        <translation type="unfinished"/>
+        <translation>Oznacz wszystkie jako przeczytane</translation>
     </message>
     <message>
         <source>Enable Auto-Download</source>
-        <translation type="unfinished"/>
+        <translation>Włącz auto-pobieranie</translation>
     </message>
     <message>
         <source>My Channels</source>
@@ -6169,43 +6189,43 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subscribed Channels</source>
-        <translation type="unfinished"/>
+        <translation>Subskrybowane kanały</translation>
     </message>
     <message>
         <source>Popular Channels</source>
-        <translation type="unfinished"/>
+        <translation>Popularne kanały</translation>
     </message>
     <message>
         <source>Other Channels</source>
-        <translation type="unfinished"/>
+        <translation>Inne kanały</translation>
     </message>
     <message>
         <source>Disable Auto-Download</source>
-        <translation type="unfinished"/>
+        <translation>Wyłącz auto-pobieranie</translation>
     </message>
     <message>
         <source>Unsubscribe to Channel</source>
-        <translation type="unfinished"/>
+        <translation>Wypisz się z kanału</translation>
     </message>
     <message>
         <source>Subscribe to Channel</source>
-        <translation type="unfinished"/>
+        <translation>Zapisz się na kanał</translation>
     </message>
     <message>
         <source>Edit Channel Details</source>
-        <translation type="unfinished"/>
+        <translation>Edytuj szczegóły kanału</translation>
     </message>
     <message>
         <source>Show Channel Details</source>
-        <translation type="unfinished"/>
+        <translation>Pokaż szczegóły kanału</translation>
     </message>
     <message>
         <source>Restore Publish Rights for Channel</source>
-        <translation type="unfinished"/>
+        <translation>Przywróć prawa do publikacji dla kanału</translation>
     </message>
     <message>
         <source>Share Channel</source>
-        <translation type="unfinished"/>
+        <translation>Udostępnij kanał</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
@@ -6229,7 +6249,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>No Channel Selected</source>
-        <translation type="unfinished"/>
+        <translation>Nie wybrano kanału</translation>
     </message>
 </context>
 <context>
@@ -6251,7 +6271,7 @@ p, li { white-space: pre-wrap; }
     <name>GxsChannelPostItem</name>
     <message>
         <source>Toggle Message Read Status</source>
-        <translation type="unfinished"/>
+        <translation>Przełącz status przeczytanej wiadomości</translation>
     </message>
     <message>
         <source>Download</source>
@@ -6259,7 +6279,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Play</source>
-        <translation type="unfinished"/>
+        <translation>Odtwórz</translation>
     </message>
     <message>
         <source>Comments</source>
@@ -6271,7 +6291,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unsubscribe From Channel</source>
-        <translation type="unfinished"/>
+        <translation>Wypisz się z kanału</translation>
     </message>
     <message>
         <source>Expand</source>
@@ -6287,11 +6307,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Channel Feed</source>
-        <translation type="unfinished"/>
+        <translation>Lista wiadomości kanału</translation>
     </message>
     <message>
         <source>Files</source>
-        <translation type="unfinished"/>
+        <translation>Pliki</translation>
     </message>
     <message>
         <source>Warning! You have less than %1 hours and %2 minute before this file is deleted Consider saving it.</source>
@@ -6797,22 +6817,6 @@ before you can comment</source>
         <translation>Tylko Dla Twoich Przyjaciół</translation>
     </message>
     <message>
-        <source>Some Friends</source>
-        <translation>Niektórzy Przyjaciele</translation>
-    </message>
-    <message>
-        <source>Another Group</source>
-        <translation>Inna Grupa</translation>
-    </message>
-    <message>
-        <source>Family?</source>
-        <translation>Rodzina?</translation>
-    </message>
-    <message>
-        <source>Enemies</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Publish Signatures</source>
         <translation>Publiczne Podpisy</translation>
     </message>
@@ -6876,6 +6880,10 @@ before you can comment</source>
         <source>Load Group Logo</source>
         <translation>Załaduj Logo Grupy</translation>
     </message>
+    <message>
+        <source>Invalid Circle Selection - Personal disabled for now</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>HashBox</name>
@@ -6912,7 +6920,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Case sensitive</source>
-        <translation type="unfinished"/>
+        <translation>Rozróżnianie wielkości liter</translation>
     </message>
     <message>
         <source>Whole words only</source>
@@ -7240,6 +7248,22 @@ p, li { white-space: pre-wrap; }
         <source>Overall Rating</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Implicit Score</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Rating</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation>Skomentuj</translation>
+    </message>
+    <message>
+        <source>Local Reputation</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>IdEditDialog</name>
@@ -7296,7 +7320,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Copy</source>
-        <translation type="unfinished"/>
+        <translation>Skopiuj</translation>
     </message>
     <message>
         <source>Remove</source>
@@ -7378,7 +7402,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished"/>
+        <translation>Opcje</translation>
     </message>
     <message>
         <source>Messenger</source>
@@ -7474,7 +7498,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"/>
+        <translation>Stan</translation>
     </message>
     <message>
         <source>Notify</source>
@@ -8042,7 +8066,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Default</source>
-        <translation type="unfinished"/>
+        <translation>Domyślne</translation>
     </message>
     <message>
         <source>A new tab</source>
@@ -8091,11 +8115,11 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>From:</source>
-        <translation type="unfinished"/>
+        <translation>Od klatki:</translation>
     </message>
     <message>
         <source>To:</source>
-        <translation type="unfinished"/>
+        <translation>Do klatki:</translation>
     </message>
     <message>
         <source>Cc:</source>
@@ -8913,6 +8937,10 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <source>yourself</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Data iconsistency in the keyring. This is most probably a bug. Please contact the developers.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>NetworkPage</name>
@@ -8967,7 +8995,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished"/>
+        <translation>Opcje</translation>
     </message>
     <message>
         <source>Remove All</source>
@@ -9573,7 +9601,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Status: </source>
-        <translation type="unfinished"/>
+        <translation>Status:</translation>
     </message>
     <message>
         <source>will be enabled after your restart RetroShare.</source>
@@ -9798,10 +9826,6 @@ p, li { white-space: pre-wrap; }
         <translation>/\</translation>
     </message>
     <message>
-        <source>score</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>\/</source>
         <translation>\/</translation>
     </message>
@@ -9822,20 +9846,16 @@ p, li { white-space: pre-wrap; }
         <translation>Strona</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;#&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; Comments:  0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;#&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; Komentarze: 0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>View Comments</source>
         <translation>Pokaż Komentarze</translation>
+    </message>
+    <message>
+        <source>Comments</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation>Skomentuj</translation>
     </message>
 </context>
 <context>
@@ -9923,6 +9943,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Unsubscribe</source>
         <translation>Wypisz się</translation>
+    </message>
+    <message>
+        <source>Showing</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation>RetroShare</translation>
+    </message>
+    <message>
+        <source>Please create or choose a Signing Id before Voting</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -11422,7 +11454,7 @@ The default value is 20.</source>
     <name>Settings</name>
     <message>
         <source>Options</source>
-        <translation type="unfinished"/>
+        <translation>Opcje</translation>
     </message>
 </context>
 <context>
@@ -11677,7 +11709,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Filename:</source>
-        <translation type="unfinished"/>
+        <translation>Nazwa pliku:</translation>
     </message>
     <message>
         <source>Browse</source>
@@ -11977,7 +12009,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished"/>
+        <translation>Brak</translation>
     </message>
     <message>
         <source>Solid</source>
@@ -12032,7 +12064,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>DOWNLOAD</source>
-        <translation type="unfinished"/>
+        <translation>Pobierz</translation>
     </message>
     <message>
         <source>LOCAL</source>
@@ -12420,7 +12452,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Okay</source>
-        <translation type="unfinished"/>
+        <translation>Ok</translation>
     </message>
     <message>
         <source>Waiting</source>
@@ -12816,7 +12848,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Continue</source>
-        <translation type="unfinished"/>
+        <translation>Kontynuuj</translation>
     </message>
     <message>
         <source>Quit</source>

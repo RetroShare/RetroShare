@@ -1371,11 +1371,11 @@ které z nich chcete použít ke konverzaci.</translation>
     </message>
     <message>
         <source>Type: </source>
-        <translation type="unfinished"/>
+        <translation>Typ:</translation>
     </message>
     <message>
         <source>Private</source>
-        <translation type="unfinished"/>
+        <translation>Soukromé</translation>
     </message>
     <message>
         <source>Public</source>
@@ -1787,14 +1787,6 @@ Double click lobbies to enter and chat.</source>
 <context>
     <name>CirclesDialog</name>
     <message>
-        <source>Create Personal Group</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Create Circle</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Refresh</source>
         <translation type="unfinished"/>
     </message>
@@ -1828,7 +1820,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"/>
+        <translation>Status</translation>
     </message>
     <message>
         <source>ID</source>
@@ -1840,7 +1832,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Friends of Friends</source>
-        <translation type="unfinished"/>
+        <translation>Kontakty kontaktů</translation>
     </message>
     <message>
         <source>Others</source>
@@ -1860,6 +1852,18 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Share Category</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create Personal Circle</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create External Circle</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit Circle</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -3125,10 +3129,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>All IDs</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>All PGP IDs</source>
         <translation type="unfinished"/>
     </message>
@@ -3214,6 +3214,26 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please set a name for your Circle</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Personal Circle Details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>External Circle Details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot Edit Existing Circles Yet</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No Restriction Circle Selected</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No Circle Limitations Selected</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -3386,11 +3406,11 @@ p, li { white-space: pre-wrap; }
     <name>CreateGxsChannelMsg</name>
     <message>
         <source>New Channel Post</source>
-        <translation type="unfinished"/>
+        <translation>Přidat příspěvek</translation>
     </message>
     <message>
         <source>Channel Post</source>
-        <translation type="unfinished"/>
+        <translation>Zpráva</translation>
     </message>
     <message>
         <source>Channel Post to:</source>
@@ -3420,11 +3440,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subject :</source>
-        <translation type="unfinished"/>
+        <translation>Předmět:</translation>
     </message>
     <message>
         <source>Attachments</source>
-        <translation type="unfinished"/>
+        <translation>Přílohy</translation>
     </message>
     <message>
         <source>Allow channels to get frame for message thumbnail from movie media attachments or not</source>
@@ -3432,11 +3452,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Auto Thumbnail</source>
-        <translation type="unfinished"/>
+        <translation>Auto miniatura</translation>
     </message>
     <message>
         <source>Drag and Drop Files from Search Results</source>
-        <translation type="unfinished"/>
+        <translation>Přetáhněte soubory z výsledků vyhledávání</translation>
     </message>
     <message>
         <source>New GxsChannel Post</source>
@@ -3444,7 +3464,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Paste RetroShare Links</source>
-        <translation type="unfinished"/>
+        <translation>Vložit RetroShare odkazy</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
@@ -3456,7 +3476,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>You can only post files that you do have</source>
-        <translation type="unfinished"/>
+        <translation>Můžete přidat jen ty soubory, které máte</translation>
     </message>
     <message>
         <source>Drop file error.</source>
@@ -3464,11 +3484,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation type="unfinished"/>
+        <translation>Přetáhnout lze pouze soubory, nikoliv adresáře.</translation>
     </message>
     <message>
         <source>File not found or file name not accepted.</source>
-        <translation type="unfinished"/>
+        <translation>Soubor nebyl nalezen a nebo má neplatné jméno.</translation>
     </message>
     <message>
         <source>Add Extra File</source>
@@ -3480,15 +3500,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File already Added and Hashed</source>
-        <translation type="unfinished"/>
+        <translation>Soubor je již přidán a zatříděn</translation>
     </message>
     <message>
         <source>Please add a Subject</source>
-        <translation type="unfinished"/>
+        <translation>Prosím zadejte předmět</translation>
     </message>
     <message>
         <source>Load thumbnail picture</source>
-        <translation type="unfinished"/>
+        <translation>Nahrát miniaturu</translation>
     </message>
 </context>
 <context>
@@ -3503,15 +3523,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subject</source>
-        <translation type="unfinished"/>
+        <translation>Předmět</translation>
     </message>
     <message>
         <source>Attach File</source>
-        <translation type="unfinished"/>
+        <translation>Přiložit soubor</translation>
     </message>
     <message>
         <source>Sign Message</source>
-        <translation type="unfinished"/>
+        <translation>Podepsat zprávu</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
@@ -3519,15 +3539,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Forum Post</source>
-        <translation type="unfinished"/>
+        <translation>Zpráva</translation>
     </message>
     <message>
         <source>Attach files via drag and drop</source>
-        <translation type="unfinished"/>
+        <translation>Přetáhnutím přiložíte soubory</translation>
     </message>
     <message>
         <source>You can attach files via drag and drop here in this window</source>
-        <translation type="unfinished"/>
+        <translation>Přetáhnutím do tohoto okna můžete přiložit soubory </translation>
     </message>
     <message>
         <source>Start New Thread</source>
@@ -3633,7 +3653,7 @@ p, li { white-space: pre-wrap; }
     <name>CryptoPage</name>
     <message>
         <source>Profile</source>
-        <translation type="unfinished"/>
+        <translation>Profil</translation>
     </message>
     <message>
         <source>Profile Manager</source>
@@ -3649,7 +3669,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Location:</source>
-        <translation type="unfinished"/>
+        <translation>Umístění:</translation>
     </message>
     <message>
         <source>Location ID:</source>
@@ -3677,7 +3697,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Certificate</source>
-        <translation type="unfinished"/>
+        <translation>Certifikát</translation>
     </message>
     <message>
         <source>Include signatures</source>
@@ -5120,11 +5140,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>All</source>
-        <translation type="unfinished"/>
+        <translation>Udělat</translation>
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished"/>
+        <translation>Nic</translation>
     </message>
     <message>
         <source>Name</source>
@@ -6160,7 +6180,7 @@ Při používání sítě proto pokud možno používejte pouhou přezdívku, ne
     <name>GxsChannelDialog</name>
     <message>
         <source>Channels</source>
-        <translation type="unfinished"/>
+        <translation>Kanály</translation>
     </message>
     <message>
         <source>refresh</source>
@@ -6168,11 +6188,11 @@ Při používání sítě proto pokud možno používejte pouhou přezdívku, ne
     </message>
     <message>
         <source>Display</source>
-        <translation type="unfinished"/>
+        <translation>Zobrazit</translation>
     </message>
     <message>
         <source>Create Channel</source>
-        <translation type="unfinished"/>
+        <translation>Vytvořit kanál</translation>
     </message>
     <message>
         <source>Loading</source>
@@ -6180,15 +6200,15 @@ Při používání sítě proto pokud možno používejte pouhou přezdívku, ne
     </message>
     <message>
         <source>Post to Channel</source>
-        <translation type="unfinished"/>
+        <translation>Přidat příspěvek do kanálu</translation>
     </message>
     <message>
         <source>Set all as read</source>
-        <translation type="unfinished"/>
+        <translation>Označit vše jako přečtené</translation>
     </message>
     <message>
         <source>Enable Auto-Download</source>
-        <translation type="unfinished"/>
+        <translation>Zapnout automatické stahování</translation>
     </message>
     <message>
         <source>My Channels</source>
@@ -6200,63 +6220,63 @@ Při používání sítě proto pokud možno používejte pouhou přezdívku, ne
     </message>
     <message>
         <source>Popular Channels</source>
-        <translation type="unfinished"/>
+        <translation>Populární kanály</translation>
     </message>
     <message>
         <source>Other Channels</source>
-        <translation type="unfinished"/>
+        <translation>Ostatní kanály</translation>
     </message>
     <message>
         <source>Disable Auto-Download</source>
-        <translation type="unfinished"/>
+        <translation>Vypnout automatické stahování</translation>
     </message>
     <message>
         <source>Unsubscribe to Channel</source>
-        <translation type="unfinished"/>
+        <translation>Zrušit odebírání kanálu</translation>
     </message>
     <message>
         <source>Subscribe to Channel</source>
-        <translation type="unfinished"/>
+        <translation>Odebírat kanál</translation>
     </message>
     <message>
         <source>Edit Channel Details</source>
-        <translation type="unfinished"/>
+        <translation>Změnit detaily kanálu</translation>
     </message>
     <message>
         <source>Show Channel Details</source>
-        <translation type="unfinished"/>
+        <translation>Zobrazit detaily kanálu</translation>
     </message>
     <message>
         <source>Restore Publish Rights for Channel</source>
-        <translation type="unfinished"/>
+        <translation>Obnovit publikovací práva kanálu</translation>
     </message>
     <message>
         <source>Share Channel</source>
-        <translation type="unfinished"/>
+        <translation>Sdílet kanál</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>Kopírovat RetroShare odkaz</translation>
     </message>
     <message>
         <source>Publish rights restored.</source>
-        <translation type="unfinished"/>
+        <translation>Publikační práva obnovena.</translation>
     </message>
     <message>
         <source>Publish rights have been restored for this channel.</source>
-        <translation type="unfinished"/>
+        <translation>Byla obnovena publikační práva pro tento kanál.</translation>
     </message>
     <message>
         <source>Publish not restored.</source>
-        <translation type="unfinished"/>
+        <translation>Publikace nebyla obnovena.</translation>
     </message>
     <message>
         <source>Publish rights can&apos;t be restored for this channel.&lt;br/&gt;You&apos;re not the creator of this channel.</source>
-        <translation type="unfinished"/>
+        <translation>Publikační práva pro tento kanál nemohou být obnovena.&lt;br/&gt;Nejste tvůrce tohoto kanálu.</translation>
     </message>
     <message>
         <source>No Channel Selected</source>
-        <translation type="unfinished"/>
+        <translation>Není vybrán žádný kanál</translation>
     </message>
 </context>
 <context>
@@ -6278,7 +6298,7 @@ Při používání sítě proto pokud možno používejte pouhou přezdívku, ne
     <name>GxsChannelPostItem</name>
     <message>
         <source>Toggle Message Read Status</source>
-        <translation type="unfinished"/>
+        <translation>Označit zprávu za přečtenou</translation>
     </message>
     <message>
         <source>Download</source>
@@ -6286,7 +6306,7 @@ Při používání sítě proto pokud možno používejte pouhou přezdívku, ne
     </message>
     <message>
         <source>Play</source>
-        <translation type="unfinished"/>
+        <translation>Přehrát</translation>
     </message>
     <message>
         <source>Comments</source>
@@ -6294,11 +6314,11 @@ Při používání sítě proto pokud možno používejte pouhou přezdívku, ne
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>Kopírovat RetroShare odkaz</translation>
     </message>
     <message>
         <source>Unsubscribe From Channel</source>
-        <translation type="unfinished"/>
+        <translation>Neodebírat kanál</translation>
     </message>
     <message>
         <source>Expand</source>
@@ -6314,11 +6334,11 @@ Při používání sítě proto pokud možno používejte pouhou přezdívku, ne
     </message>
     <message>
         <source>Channel Feed</source>
-        <translation type="unfinished"/>
+        <translation>Přehled kanálů</translation>
     </message>
     <message>
         <source>Files</source>
-        <translation type="unfinished"/>
+        <translation>Soubory</translation>
     </message>
     <message>
         <source>Warning! You have less than %1 hours and %2 minute before this file is deleted Consider saving it.</source>
@@ -6364,7 +6384,7 @@ Při používání sítě proto pokud možno používejte pouhou přezdívku, ne
     </message>
     <message>
         <source>Comment</source>
-        <translation type="unfinished"/>
+        <translation>Komentáře</translation>
     </message>
     <message>
         <source>Author</source>
@@ -6403,11 +6423,11 @@ Při používání sítě proto pokud možno používejte pouhou přezdívku, ne
     </message>
     <message>
         <source>Vote Up</source>
-        <translation type="unfinished"/>
+        <translation>Palec nahoru</translation>
     </message>
     <message>
         <source>Vote Down</source>
-        <translation type="unfinished"/>
+        <translation>Palec dolu</translation>
     </message>
     <message>
         <source>Reputation</source>
@@ -6481,7 +6501,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Start new Thread for Selected Forum</source>
-        <translation type="unfinished"/>
+        <translation>Založit nové vlákno ve vybraném fóru</translation>
     </message>
     <message>
         <source>Search forums</source>
@@ -6489,15 +6509,15 @@ before you can comment</source>
     </message>
     <message>
         <source>Last Post</source>
-        <translation type="unfinished"/>
+        <translation>Poslední příspěvek</translation>
     </message>
     <message>
         <source>Threaded View</source>
-        <translation type="unfinished"/>
+        <translation>podle vláken</translation>
     </message>
     <message>
         <source>Flat View</source>
-        <translation type="unfinished"/>
+        <translation>Vše za sebou</translation>
     </message>
     <message>
         <source>Title</source>
@@ -6513,7 +6533,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Signed</source>
-        <translation type="unfinished"/>
+        <translation>Podepsáno</translation>
     </message>
     <message>
         <source>Loading</source>
@@ -6525,19 +6545,19 @@ before you can comment</source>
     </message>
     <message>
         <source>Previous Thread</source>
-        <translation type="unfinished"/>
+        <translation>Předchozí vlákno</translation>
     </message>
     <message>
         <source>Next Thread</source>
-        <translation type="unfinished"/>
+        <translation>Následující vlákno</translation>
     </message>
     <message>
         <source>Download all files</source>
-        <translation type="unfinished"/>
+        <translation>Stáhnout všechny soubory</translation>
     </message>
     <message>
         <source>Next unread</source>
-        <translation type="unfinished"/>
+        <translation>Další nepřečtený</translation>
     </message>
     <message>
         <source>Refresh</source>
@@ -6577,15 +6597,15 @@ before you can comment</source>
     </message>
     <message>
         <source>Reply to Author</source>
-        <translation type="unfinished"/>
+        <translation>Odpovědět autorovi</translation>
     </message>
     <message>
         <source>Expand all</source>
-        <translation type="unfinished"/>
+        <translation>Rozbalit vše</translation>
     </message>
     <message>
         <source>Collapse all</source>
-        <translation type="unfinished"/>
+        <translation>Zabalit vše</translation>
     </message>
     <message>
         <source>Mark as read</source>
@@ -6593,7 +6613,7 @@ before you can comment</source>
     </message>
     <message>
         <source>with children</source>
-        <translation type="unfinished"/>
+        <translation>včetně zanořených</translation>
     </message>
     <message>
         <source>Mark as unread</source>
@@ -6601,7 +6621,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>Kopírovat RetroShare odkaz</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -6613,19 +6633,19 @@ before you can comment</source>
     </message>
     <message>
         <source>Anonymous</source>
-        <translation type="unfinished"/>
+        <translation>Anonymní sdílení</translation>
     </message>
     <message>
         <source>signed</source>
-        <translation type="unfinished"/>
+        <translation>podepsáno</translation>
     </message>
     <message>
         <source>none</source>
-        <translation type="unfinished"/>
+        <translation>žádný</translation>
     </message>
     <message>
         <source>[ ... Missing Message ... ]</source>
-        <translation type="unfinished"/>
+        <translation>[ ... chybějící zpráva ... ]</translation>
     </message>
     <message>
         <source>By</source>
@@ -6637,15 +6657,15 @@ before you can comment</source>
     </message>
     <message>
         <source>No Forum Selected!</source>
-        <translation type="unfinished"/>
+        <translation>Nebylo vybráno žádné fórum!</translation>
     </message>
     <message>
         <source>You cant reply to a non-existant Message</source>
-        <translation type="unfinished"/>
+        <translation>Nemůžete odpovědět na neexistující příspěvek</translation>
     </message>
     <message>
         <source>You cant reply to an Anonymous Author</source>
-        <translation type="unfinished"/>
+        <translation>Nemůžete odpovědět anonymnímu autorovi</translation>
     </message>
 </context>
 <context>
@@ -6656,11 +6676,11 @@ before you can comment</source>
     </message>
     <message>
         <source>Display</source>
-        <translation type="unfinished"/>
+        <translation>Zobrazit</translation>
     </message>
     <message>
         <source>Create Forum</source>
-        <translation type="unfinished"/>
+        <translation>Vytvořit fórum</translation>
     </message>
     <message>
         <source>Print</source>
@@ -6668,7 +6688,7 @@ before you can comment</source>
     </message>
     <message>
         <source>PrintPreview</source>
-        <translation type="unfinished"/>
+        <translation>Náhled tisku</translation>
     </message>
     <message>
         <source>My Forums</source>
@@ -6676,15 +6696,15 @@ before you can comment</source>
     </message>
     <message>
         <source>Subscribed Forums</source>
-        <translation type="unfinished"/>
+        <translation>Odebíraná fóra</translation>
     </message>
     <message>
         <source>Popular Forums</source>
-        <translation type="unfinished"/>
+        <translation>Oblíbená fóra</translation>
     </message>
     <message>
         <source>Other Forums</source>
-        <translation type="unfinished"/>
+        <translation>Ostatní fóra</translation>
     </message>
     <message>
         <source>Subscribe to Forum</source>
@@ -6692,7 +6712,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Unsubscribe to Forum</source>
-        <translation type="unfinished"/>
+        <translation>Neodebírat fórum</translation>
     </message>
     <message>
         <source>Open in new tab</source>
@@ -6704,7 +6724,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Show Forum Details</source>
-        <translation type="unfinished"/>
+        <translation>Zobrazit detaily fóra</translation>
     </message>
     <message>
         <source>Edit Forum Details</source>
@@ -6720,7 +6740,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>Kopírovat RetroShare odkaz</translation>
     </message>
     <message>
         <source>Mark all as read</source>
@@ -6748,7 +6768,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Subject</source>
-        <translation type="unfinished"/>
+        <translation>Předmět</translation>
     </message>
     <message>
         <source>On %1, %2 wrote:</source>
@@ -6798,11 +6818,11 @@ before you can comment</source>
     </message>
     <message>
         <source>Share Key With</source>
-        <translation type="unfinished"/>
+        <translation>Sdílet klíč s</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"/>
+        <translation>Popis</translation>
     </message>
     <message>
         <source>Message Distribution</source>
@@ -6818,22 +6838,6 @@ before you can comment</source>
     </message>
     <message>
         <source>Only For Your Friends</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Some Friends</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Another Group</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Family?</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Enemies</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -6882,11 +6886,11 @@ before you can comment</source>
     </message>
     <message>
         <source>No Comments</source>
-        <translation type="unfinished"/>
+        <translation>Žádné komentáře</translation>
     </message>
     <message>
         <source>Contacts:</source>
-        <translation type="unfinished"/>
+        <translation>Kontakty:</translation>
     </message>
     <message>
         <source>Create Group</source>
@@ -6894,10 +6898,14 @@ before you can comment</source>
     </message>
     <message>
         <source>Please add a Name</source>
-        <translation type="unfinished"/>
+        <translation>Detaily</translation>
     </message>
     <message>
         <source>Load Group Logo</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid Circle Selection - Personal disabled for now</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -6936,7 +6944,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Case sensitive</source>
-        <translation type="unfinished"/>
+        <translation>Citlivost velikost písmen</translation>
     </message>
     <message>
         <source>Whole words only</source>
@@ -7258,6 +7266,22 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Overall Rating</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Implicit Score</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Rating</source>
+        <translation>Hodnocení</translation>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation>Komentáře</translation>
+    </message>
+    <message>
+        <source>Local Reputation</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -8935,6 +8959,10 @@ na něj pravým tlačítkem myši a zvolte &apos;Důvěřovat&apos;.</translatio
         <source>yourself</source>
         <translation>tohle jste vy</translation>
     </message>
+    <message>
+        <source>Data iconsistency in the keyring. This is most probably a bug. Please contact the developers.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>NetworkPage</name>
@@ -9359,7 +9387,7 @@ na něj pravým tlačítkem myši a zvolte &apos;Důvěřovat&apos;.</translatio
     </message>
     <message>
         <source>Comment</source>
-        <translation type="unfinished"/>
+        <translation>Komentáře</translation>
     </message>
     <message>
         <source>Summary</source>
@@ -9804,10 +9832,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>score</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>\/</source>
         <translation type="unfinished"/>
     </message>
@@ -9828,16 +9852,16 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;#&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; Comments:  0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>View Comments</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>View Comments</source>
-        <translation type="unfinished"/>
+        <source>Comments</source>
+        <translation>Komentáře</translation>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation>Komentáře</translation>
     </message>
 </context>
 <context>
@@ -9925,6 +9949,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Unsubscribe</source>
         <translation>Neodebírat</translation>
+    </message>
+    <message>
+        <source>Showing</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation>RetroShare</translation>
+    </message>
+    <message>
+        <source>Please create or choose a Signing Id before Voting</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -11327,7 +11363,7 @@ peers still need to trust each other to allow connection. </source>
     </message>
     <message>
         <source>UPnP</source>
-        <translation type="unfinished"/>
+        <translation>UPnP</translation>
     </message>
     <message>
         <source>Known / Previous IPs:</source>
@@ -11719,7 +11755,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>go Online</source>
-        <translation type="unfinished"/>
+        <translation>Připojen</translation>
     </message>
     <message>
         <source>Chatmessage</source>
@@ -12619,7 +12655,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Update</source>
-        <translation type="unfinished"/>
+        <translation>Aktualizace</translation>
     </message>
     <message>
         <source>Showing: whole network</source>
@@ -12966,7 +13002,7 @@ Try to be patient!</source>
     <name>WikiDialog</name>
     <message>
         <source>Wiki Pages</source>
-        <translation type="unfinished"/>
+        <translation>Stránky Wiki</translation>
     </message>
     <message>
         <source>New Group</source>
@@ -13097,11 +13133,11 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"/>
+        <translation>Status</translation>
     </message>
     <message>
         <source>Preview</source>
-        <translation type="unfinished"/>
+        <translation>Náhled</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -13144,7 +13180,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Wiki Group</source>
-        <translation type="unfinished"/>
+        <translation>skupina Wiki</translation>
     </message>
     <message>
         <source>Edit Wiki Group</source>

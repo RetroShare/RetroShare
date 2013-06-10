@@ -1362,7 +1362,7 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Type: </source>
-        <translation type="unfinished"/>
+        <translation>Tipo:</translation>
     </message>
     <message>
         <source>Private</source>
@@ -1778,14 +1778,6 @@ Double click lobbies to enter and chat.</source>
 <context>
     <name>CirclesDialog</name>
     <message>
-        <source>Create Personal Group</source>
-        <translation>Creare gruppo personale</translation>
-    </message>
-    <message>
-        <source>Create Circle</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Refresh</source>
         <translation>Aggiornamento</translation>
     </message>
@@ -1852,6 +1844,18 @@ Double click lobbies to enter and chat.</source>
     <message>
         <source>Share Category</source>
         <translation>Condividi categoria</translation>
+    </message>
+    <message>
+        <source>Create Personal Circle</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create External Circle</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit Circle</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3108,10 +3112,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>All IDs</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>All PGP IDs</source>
         <translation type="unfinished"/>
     </message>
@@ -3197,6 +3197,26 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please set a name for your Circle</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Personal Circle Details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>External Circle Details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot Edit Existing Circles Yet</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No Restriction Circle Selected</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No Circle Limitations Selected</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -5119,7 +5139,7 @@ Puoi solo riscriverti se gli amici ti invitano.</translation>
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished"/>
+        <translation>Nessuna</translation>
     </message>
     <message>
         <source>Name</source>
@@ -6807,22 +6827,6 @@ before you can comment</source>
         <translation>Solo per i tuoi amici</translation>
     </message>
     <message>
-        <source>Some Friends</source>
-        <translation>Alcuni amici</translation>
-    </message>
-    <message>
-        <source>Another Group</source>
-        <translation>Un altro gruppo</translation>
-    </message>
-    <message>
-        <source>Family?</source>
-        <translation>Famiglia?</translation>
-    </message>
-    <message>
-        <source>Enemies</source>
-        <translation>Nemici</translation>
-    </message>
-    <message>
         <source>Publish Signatures</source>
         <translation>Pubblicare le firme</translation>
     </message>
@@ -6885,6 +6889,10 @@ before you can comment</source>
     <message>
         <source>Load Group Logo</source>
         <translation>caricamento Logo Gruppo</translation>
+    </message>
+    <message>
+        <source>Invalid Circle Selection - Personal disabled for now</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7249,6 +7257,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Overall Rating</source>
         <translation>Valutazione complessiva</translation>
+    </message>
+    <message>
+        <source>Implicit Score</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Rating</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Local Reputation</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8930,6 +8954,10 @@ Clic-destro e seleziona &apos;fatti amico&apos; per poterti connettere.</transla
         <source>yourself</source>
         <translation>te stesso</translation>
     </message>
+    <message>
+        <source>Data iconsistency in the keyring. This is most probably a bug. Please contact the developers.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>NetworkPage</name>
@@ -9810,10 +9838,6 @@ p, li { white-space: pre-wrap; }
         <translation>/\</translation>
     </message>
     <message>
-        <source>score</source>
-        <translation>punteggio</translation>
-    </message>
-    <message>
         <source>\/</source>
         <translation>\/</translation>
     </message>
@@ -9834,16 +9858,16 @@ p, li { white-space: pre-wrap; }
         <translation>Sito</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;#&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; Comments:  0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>View Comments</source>
+        <translation>Vedi Commenti</translation>
+    </message>
+    <message>
+        <source>Comments</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>View Comments</source>
-        <translation>Vedi Commenti</translation>
+        <source>Comment</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9930,6 +9954,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unsubscribe</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Showing</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please create or choose a Signing Id before Voting</source>
         <translation type="unfinished"/>
     </message>
 </context>
